@@ -74,9 +74,9 @@ text_buddh = div_all[random_quote_index].text
 out_buddhism= '\n \nBuddhism \n---------------------------------------------------------------- \n' + text_buddh
 
 #%% Hindu 
-section = soup_hind.find('section', class_='daily-content box-border-decoration add-more-padding text-center')
+section = soup_hind.find('div', class_='quote-body')
 text_hind = section.find('p').text
-source_hind = section.find('div', class_='quote-source').text
+source_hind = soup_hind.find('div', class_='quote-source').text
 
 verse_hind = f'{text_hind} \n{source_hind}'
 
