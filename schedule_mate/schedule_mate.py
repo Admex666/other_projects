@@ -79,28 +79,16 @@ def check_new_session_constraints(new_session, scheduled_sessions):
     temp.append(new_session)
     temp.sort(key=lambda x: x["start"])
     index = temp.index(new_session)
-    # Ellenőrizzük az előző feladatot, ha van
-    if index > 0:
-        prev = temp[index - 1]
-        if (new_session["start"] - prev["end"]).total_seconds() < 60 and prev["task"] == new_session["task"]:
-            return False
-    # Ellenőrizzük a következő feladatot, ha van
-    if index < len(temp) - 1:
-        nxt = temp[index + 1]
-        if (nxt["start"] - new_session["end"]).total_seconds() < 60 and nxt["task"] == new_session["task"]:
-            return False
-    # Ellenőrizzük a task_type egymás utáni sorrendet
-    count = 1
-    j = index - 1
-    while j >= 0 and temp[j]["task_type"] == new_session["task_type"]:
-        count += 1
-        j -= 1
-    j = index + 1
-    while j < len(temp) and temp[j]["task_type"] == new_session["task_type"]:
-        count += 1
-        j += 1
-    if count > 2:
+    
+    # Ellenőrizzük az előző feladat nevét
+    if index > 0 and temp[index - 1]["task"] == new_session["task"]:
         return False
+    
+    # Ellenőrizzük, hogy az előző kettő feladat típusa ugyanaz-e, mint az újé
+    if index > 1 and temp[index - 1]["task_type"] == new_session["task_type"] \
+            and temp[index - 2]["task_type"] == new_session["task_type"]:
+        return False
+    
     return True
 
 
