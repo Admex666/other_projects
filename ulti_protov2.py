@@ -412,10 +412,17 @@ class Game:
     
     def play_round(self):
         self.setup_round()
+        
+        # Log the game data after setup
+        game_round = self  # The current Game instance is the game round
         if self.bidding_phase():
             self.declaration_phase()
             self.play_phase()
             self.scoring_phase()
+            # After the round is over, log the round data
+            winner = self.declarer  # Assuming declarer wins for simplicity
+            points = 10
+            log_round_data(game_round, winner, points)  # Log the data for the round
         else:
             print("Nincs felvevő, új kör kezdődik.")
     
@@ -428,3 +435,93 @@ if __name__ == "__main__":
     # Játék indítása és egy kör lejátszása
     game = Game(players)
     game.play_round()
+
+#%% ML model
+import pandas as pd
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+import numpy as np
+
+# Adatok táblázatos formában történő rögzítése.
+data = []
+
+def log_round_data(game_round, winner, points):
+    round_data = {
+        'player_1_hand': [str(game_round.players[0].hand)],
+        'player_2_hand': [str(game_round.players[1].hand)],
+        'player_3_hand': [str(game_round.players[2].hand)],
+        'bids': [str([player.bid for player in game_round.players])],
+        'tricks': [str([card.rank for player, card in trick.cards_played]) for trick in game_round.tricks],
+        'winner': winner.name,
+        'points': points
+    }
+    data.append(round_data)
+    return pd.DataFrame(data)
+
+def encode_hand(hand):
+    suit_mapping = {"Piros": 0, "Makk": 1, "Zöld": 2, "Tök": 3}
+    rank_mapping = {"7": 0, "8": 1, "9": 2, "Alsó": 3, "Felső": 4, "Király": 5, "10": 6, "Ász": 7}
+    encoded_hand = [suit_mapping[card.suit] * 8 + rank_mapping[card.rank] for card in hand]
+    return encoded_hand
+
+def encode_bids(game_round):
+    bid_mapping = {"Parti": 0, "40-100": 1, "Ulti": 2, "Betli": 3, "Durchmars": 4, "20-100": 5}
+    encoded_bids = [bid_mapping[player.bid] if player.bid else -1 for player in game_round.players]  # -1 for 'pass'
+    return encoded_bids
+
+def encode_played_cards(game_round):
+    suit_mapping = {"Piros": 0, "Makk": 1, "Zöld": 2, "Tök": 3}
+    rank_mapping = {"7": 0, "8": 1, "9": 2, "Alsó": 3, "Felső": 4, "Király": 5, "10": 6, "Ász": 7}
+    
+    # Flatten the played cards into a single list of encoded cards
+    encoded_cards = []
+    for trick in game_round.tricks:
+        for player, card in trick.cards_played:
+            encoded_card = suit_mapping[card.suit] * 8 + rank_mapping[card.rank]
+            encoded_cards.append(encoded_card)
+    return encoded_cards
+
+# Modell definíciója
+def create_model(input_size, output_size):
+    model = Sequential()
+    model.add(Dense(128, input_dim=input_size, activation='relu'))
+    model.add(Dense(64, activation='relu'))
+    model.add(Dense(output_size, activation='softmax'))
+    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+    return model
+
+# Adat előkészítés
+def prepare_data_for_training(game_round):
+    # Encode hands of all players
+    player_hands = [encode_hand(player.hand) for player in game_round.players]
+    
+    # Encode bids
+    bids = encode_bids(game_round)
+    
+    # Encode played cards
+    played_cards = encode_played_cards(game_round)
+    
+    # Combine all features for input
+    X = np.array([player_hands + [bids] + [played_cards]])  # Flattened into one array for simplicity
+    
+    # For output, predict winner of the round (or any other game result you'd want to predict)
+    y = np.array([game_round.cards_played[-1][0].name])  # Predict the winner of the last trick
+    return X, y
+
+X, y = prepare_data_for_training(game_round)
+model = create_model(input_size=X.shape[1], output_size=len(players))
+
+# Fit model on multiple rounds (this would be in a training loop)
+model.fit(X, y, epochs=10, batch_size=32, validation_split=0.2)
+
+
+# Predikció a játékban
+def make_prediction(game_state):
+    X_input = prepare_data_for_training(game_state)
+    prediction = model.predict(X_input)
+    return prediction
+
+# Játékosok döntéseinek optimalizálása
+for player in self.players:
+    move = make_prediction(game_state)  # A modell előrejelzése
+    player.make_move(move)
