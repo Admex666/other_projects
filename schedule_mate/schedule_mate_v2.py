@@ -60,11 +60,49 @@ free_slots['duration'] = free_slots.end - free_slots.start
 free_slots.duration.sum()
 
 # Add flex tasks to free slots
-def redefine_free_slots(free_slots, task_start, task_end):
-
-def add_tasks_flex(tasks_flex_df, tasks_fix_df, free_slots):
+def schedule_tasks_flex(tasks_flex_df, tasks_fix_df, free_slots):
+    # Make priorities in flex tasks
+    tasks_flex_df['priority_score'] = tasks_flex_df['importance'] * 2 + tasks_flex_df['priority']
+    tasks_flex_df = tasks_flex_df.sort_values(by='priority_score', ascending=False).reset_index(drop=True)
     
-    schedule = pd.concat([tasks_fix, ]).sort_values(by='start')
+    scheduled_tasks = []
+    remaining_slots = free_slots.copy()
+    
+    for _, task in tasks_flex_df.iterrows():
+        task_duration_min = timedelta(hours=task['time(h)_per_session_min'])
+        task_duration_max = timedelta(hours=task['time(h)_per_session_max'])
+        
+        for i, slot in remaining_slots.iterrows():
+            slot_duration = slot['duration']
+            # check if it fits the slots
+            if task_duration_min <= slot_duration:
+                scheduled_start = slot['start']
+                scheduled_end = slot['start'] + task_duration_min
+                
+            scheduled_duration = (scheduled_end - scheduled_start).total_seconds() / 3600
+            diff_points = task['difficulty_point_per_hour']*scheduled_duration
+            
+            scheduled_tasks.append({'task': task['task'],
+                                    'task_type': task['task_type'],
+                                    'start_date': scheduled_start,
+                                    'end_date': scheduled_end,
+                                    'time(h)': scheduled_duration,
+                                    'difficulty_points': diff_points,
+                                    'priority': task['priority'],
+                                    'importance': task['importance']})
+            
+            # Update or delete slot
+            remaining_duration = slot_duration - task_duration_min
+            if remaining_duration.total_seconds() > 0:
+                remaining_slots[i] = {
+                    'start': scheduled_end,
+                    'end': slot['end'],
+                    'duration': remaining_duration
+                }
+            else:
+                remaining_slots.drop(index=i, inplace=True)
+    
+    schedule = pd.DataFrame(scheduled_tasks)
     return schedule
 
-add_tasks_flex(tasks_flex_df, tasks_fix_df, free_slots)
+schedule_tasks_flex(tasks_flex_df, tasks_fix_df, free_slots)
