@@ -6,6 +6,9 @@ input_tasks_flex_df = pd.read_excel(input_file, sheet_name="Tasks_flex")
 input_tasks_fix_df = pd.read_excel(input_file, sheet_name="Tasks_fix")
 output_file = 'schedule_mate_output.xlsx'
 
+rules_file = 'schedule_mate_rules.xlsx'
+rules_daylimit = pd.read_excel(rules_file, sheet_name='daily_task_hours')
+
 week_start = datetime(2025, 3, 17, 0, 0)
 week_end = datetime(2025, 3, 23, 23, 59)
 
@@ -70,6 +73,19 @@ def schedule_tasks_flex(tasks_flex_df, tasks_fix_df, free_slots):
     scheduled_tasks = []
     remaining_slots = free_slots.copy()
     
+    daily_task_hours = {day: {task_type: 0 for task_type in rules_daylimit['task_type']} for day in free_slots['start'].dt.date.unique()}
+    # add fix task hours as well
+    for _, fix_task in tasks_fix_df.iterrows():
+        fix_task_start = fix_task['start_date']
+        fix_task_end = fix_task['end_date']
+        fix_task_duration = (fix_task_end - fix_task_start).total_seconds() / 3600
+        
+        day = fix_task_start.date()
+        task_type = fix_task['task_type']
+        
+        # Napi órák növelése a fix feladatok idejével
+        daily_task_hours[day][task_type] += fix_task_duration
+    
     for _, task in tasks_flex_df.iterrows():
         task_duration_min = timedelta(hours=task['time(h)_per_session_min'])
         task_duration_max = timedelta(hours=task['time(h)_per_session_max'])
@@ -79,6 +95,14 @@ def schedule_tasks_flex(tasks_flex_df, tasks_fix_df, free_slots):
         
         for i, slot in remaining_slots.iterrows():
             slot_duration = slot['duration']
+            
+            day = slot['start'].date()
+            # Ellenőrizzük, hogy a napi limit nem lett-e túllépve
+            task_type = task['task_type']
+            daily_hours_used = daily_task_hours[day][task_type]
+            if daily_hours_used + task_duration_min.total_seconds() / 3600 > rules_daylimit[rules_daylimit['task_type'] == task_type]['limit'].values[0]:
+                continue  # Ha túllépné a limitet, hagyjuk ki ezt a slotot
+            
             # check if it fits the slots
             if (task_duration_min <= slot_duration) and (time_sofar < time_planned*1.25):
                 # Calculate duration
@@ -104,6 +128,9 @@ def schedule_tasks_flex(tasks_flex_df, tasks_fix_df, free_slots):
                 time_sofar += scheduled_duration
                 tasks_flex_df.loc[_,['sessions_so_far', 'time_so_far']] = sesh_sofar, time_sofar 
                 
+                # Frissítjük a napi órák számát
+                daily_task_hours[day][task_type] += scheduled_duration
+                
                 # Update or delete slot
                 remaining_duration = slot_duration - duration_to_use
                 if remaining_duration.total_seconds() > 0:
@@ -128,14 +155,54 @@ schedule_output.to_excel(output_file, index=False)
 #%%plot
 import matplotlib.pyplot as plt
 from matplotlib import colormaps
+import numpy as np
 
-schedule_output['hours_to_start'] = (schedule_output['start_date'] - schedule_output.loc[0, 'start_date']).dt.total_seconds() / 3600
+# Időpontok szétválasztása a napokra
+schedule_output['date_only'] = schedule_output['start_date'].dt.date
 
+# Egyedi napok listája
+unique_days = schedule_output['date_only'].unique()
+
+# Colormap kiválasztása
 cmap = colormaps['rainbow_r']
 unique_types = schedule_output['task_type'].unique()
 type_to_color = {t: cmap(i / len(unique_types)) for i, t in enumerate(unique_types)}
-colors = schedule_output['task_type'].map(type_to_color)
 
-plt.barh(y=schedule_output['task'], width=schedule_output['time(h)'], 
-         left=schedule_output['hours_to_start'], color=colors)
+# Színek hozzárendelése
+schedule_output['color'] = schedule_output['task_type'].map(type_to_color)
+
+# Subplots létrehozása, annyi subplot-tal, ahány nap
+n_cols = (len(unique_days) + 1) // 2
+fig, axes = plt.subplots(nrows=2, ncols=n_cols, figsize=(6*n_cols, 6))
+
+# Ha csak egy nap van, akkor az axes egyetlen objektum lesz, ezt listává kell alakítani.
+if len(unique_days) == 1:
+    axes = [axes]
+
+# Ha csak egy nap van, akkor az axes egyetlen objektum lesz, ezt listává kell alakítani.
+axes = axes.flatten()
+
+# Minden napra külön ábrát rajzolunk
+for i, day in enumerate(unique_days):
+    ax = axes[i]
+    day_data = schedule_output[schedule_output['date_only'] == day]
+    
+    # Az időpontok órákra átváltása
+    day_data['hours_to_start'] = (day_data['start_date'] - day_data['start_date'].min()).dt.total_seconds() / 3600
+    
+    ax.barh(
+        y=day_data['task'],
+        width=day_data['time(h)'],
+        left=day_data['hours_to_start'],
+        color=day_data['color']
+    )
+    
+    ax.set_title(f"Feladatok - {day}")
+    ax.set_xlabel("Órák a nap kezdete után")
+
+# Ha maradt üres subplot (pl. ha páratlan napok száma), eltüntetjük
+for j in range(i + 1, len(axes)):
+    axes[j].axis('off')
+
+plt.tight_layout()  # A subplots közötti helyek optimalizálása
 plt.show()
