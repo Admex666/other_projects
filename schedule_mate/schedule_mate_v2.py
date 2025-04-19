@@ -23,6 +23,16 @@ def compare_day_end(day_end, date_to_check):
     comparison_time = datetime.combine(date_to_check.date(), day_end)
     return True if date_to_check <= comparison_time else False
 
+def calculate_break_duration_minutes(difficulty_point):
+    if difficulty_point < 1.0:
+        return 5
+    elif difficulty_point < 2.0:
+        return 10
+    elif difficulty_point < 3.0:
+        return 20
+    else:
+        return 30
+
 # calculate free slots; df of start and end times
 def find_free_slots(tasks_fix_df, week_start, week_end, day_start, day_end):
     free_slots = []
@@ -65,92 +75,119 @@ free_slots.duration.sum()
 
 # Add flex tasks to free slots
 def schedule_tasks_flex(tasks_flex_df, tasks_fix_df, free_slots):
-    # Make priorities in flex tasks
     tasks_flex_df['priority_score'] = tasks_flex_df['importance'] * 2 + tasks_flex_df['priority']
     tasks_flex_df = tasks_flex_df.sort_values(by='priority_score', ascending=False).reset_index(drop=True)
     tasks_flex_df[['sessions_so_far', 'time_so_far']] = 0
-    
+
     scheduled_tasks = []
     remaining_slots = free_slots.copy()
     
+    # Init daily task hours (include all task types from rules)
     daily_task_hours = {day: {task_type: 0 for task_type in rules_daylimit['task_type']} for day in free_slots['start'].dt.date.unique()}
-    # add fix task hours as well
+
+    # Add fix tasks to schedule and accumulate daily hours
     for _, fix_task in tasks_fix_df.iterrows():
-        fix_task_start = fix_task['start_date']
-        fix_task_end = fix_task['end_date']
-        fix_task_duration = (fix_task_end - fix_task_start).total_seconds() / 3600
-        
-        day = fix_task_start.date()
-        task_type = fix_task['task_type']
-        
-        # Napi órák növelése a fix feladatok idejével
-        daily_task_hours[day][task_type] += fix_task_duration
-    
-    for _, task in tasks_flex_df.iterrows():
-        task_duration_min = timedelta(hours=task['time(h)_per_session_min'])
-        task_duration_max = timedelta(hours=task['time(h)_per_session_max'])
-        time_planned, sesh_max = task[['time(h)_per_week','sessions_per_week_max']]
-        sesh_sofar = task['sessions_so_far']
-        time_sofar = task['time_so_far']
-        
-        for i, slot in remaining_slots.iterrows():
-            slot_duration = slot['duration']
-            
-            day = slot['start'].date()
-            # Ellenőrizzük, hogy a napi limit nem lett-e túllépve
+        start, end = fix_task['start_date'], fix_task['end_date']
+        duration = (end - start).total_seconds() / 3600
+        day = start.date()
+        t_type = fix_task['task_type']
+        daily_task_hours[day][t_type] += duration
+
+        scheduled_tasks.append({
+            'task': fix_task['task'],
+            'task_type': fix_task['task_type'],
+            'start_date': start,
+            'end_date': end,
+            'time(h)': duration,
+            'difficulty_points': fix_task['difficulty_points'],
+            'priority': fix_task.get('priority'),
+            'importance': fix_task.get('importance')
+        })
+
+    # Haladás időrendben slot szerint
+    for i, slot in remaining_slots.iterrows():
+        slot_start = slot['start']
+        slot_end = slot['end']
+        slot_duration = slot['duration']
+        day = slot_start.date()
+
+        # Nézd meg, hogy mi volt az utolsó task előtte
+        prior_tasks = [t for t in scheduled_tasks if t['end_date'] <= slot_start]
+        if prior_tasks:
+            last_task = max(prior_tasks, key=lambda t: t['end_date'])
+            last_task_end = last_task['end_date']
+            last_task_difficulty = last_task['difficulty_points']
+        else:
+            last_task_end = None
+            last_task_difficulty = 0
+
+        for idx, task in tasks_flex_df.iterrows():
             task_type = task['task_type']
-            daily_hours_used = daily_task_hours[day][task_type]
-            if daily_hours_used + task_duration_min.total_seconds() / 3600 > rules_daylimit[rules_daylimit['task_type'] == task_type]['limit'].values[0]:
-                continue  # Ha túllépné a limitet, hagyjuk ki ezt a slotot
-            
-            # check if it fits the slots
-            if (task_duration_min <= slot_duration) and (time_sofar < time_planned*1.25):
-                # Calculate duration
-                duration_to_use = task_duration_max if task_duration_max <= slot_duration else slot_duration
-                
-                scheduled_start = slot['start']
-                scheduled_end = slot['start'] + duration_to_use
-                
-                scheduled_duration = (scheduled_end - scheduled_start).total_seconds() / 3600
-                diff_points = task['difficulty_point_per_hour']*scheduled_duration
-                
-                scheduled_tasks.append({'task': task['task'],
-                                        'task_type': task['task_type'],
-                                        'start_date': scheduled_start,
-                                        'end_date': scheduled_end,
-                                        'time(h)': scheduled_duration,
-                                        'difficulty_points': diff_points,
-                                        'priority': task['priority'],
-                                        'importance': task['importance']})
-                
-                # Update sessions & time so far
-                sesh_sofar += 1
-                time_sofar += scheduled_duration
-                tasks_flex_df.loc[_,['sessions_so_far', 'time_so_far']] = sesh_sofar, time_sofar 
-                
-                # Frissítjük a napi órák számát
-                daily_task_hours[day][task_type] += scheduled_duration
-                
-                # Update or delete slot
-                remaining_duration = slot_duration - duration_to_use
-                if remaining_duration.total_seconds() > 0:
-                    remaining_slots.loc[i] = {
-                        'start': scheduled_end,
-                        'end': slot['end'],
-                        'duration': remaining_duration
-                    }
+            min_dur = timedelta(hours=task['time(h)_per_session_min'])
+            max_dur = timedelta(hours=task['time(h)_per_session_max'])
+            time_planned, sesh_max = task[['time(h)_per_week','sessions_per_week_max']]
+            sesh_sofar = task['sessions_so_far']
+            time_sofar = task['time_so_far']
+
+            if sesh_sofar >= sesh_max or time_sofar >= time_planned * 1.25:
+                continue
+
+            if daily_task_hours[day][task_type] + min_dur.total_seconds() / 3600 > rules_daylimit[rules_daylimit['task_type'] == task_type]['limit'].values[0]:
+                continue
+
+            if min_dur <= slot_duration:
+                actual_dur = min(max_dur, slot_duration)
+                scheduled_start = slot_start
+                scheduled_end = scheduled_start + actual_dur
+                duration_h = actual_dur.total_seconds() / 3600
+                difficulty_points = task['difficulty_point_per_hour'] * duration_h
+
+                # Break
+                if last_task_end:
+                    break_minutes = calculate_break_duration_minutes(last_task_difficulty)
+                    break_dur = timedelta(minutes=break_minutes)
+                    break_start = scheduled_end
+                    break_end = break_start + break_dur
                 else:
-                    remaining_slots.drop(index=i, inplace=True)
-    
-    schedule = pd.DataFrame(scheduled_tasks)
-    schedule_with_fix = pd.concat([schedule, tasks_fix_df]).sort_values(by='start_date').reset_index(drop=True)
-    
-    return schedule_with_fix
+                    break_minutes = 0
+                    break_dur = timedelta()
+                    break_start = break_end = scheduled_end
+
+                # Schedule task
+                scheduled_tasks.append({
+                    'task': task['task'],
+                    'task_type': task_type,
+                    'start_date': scheduled_start,
+                    'end_date': scheduled_end,
+                    'time(h)': duration_h,
+                    'difficulty_points': difficulty_points,
+                    'priority': task['priority'],
+                    'importance': task['importance']
+                })
+
+                # Schedule break
+                scheduled_tasks.append({
+                    'task': 'Szünet',
+                    'task_type': 'Szünet',
+                    'start_date': break_start,
+                    'end_date': break_end,
+                    'time(h)': break_minutes / 60,
+                    'difficulty_points': 0,
+                    'priority': None,
+                    'importance': None
+                })
+
+                # Update task info
+                tasks_flex_df.at[idx, 'sessions_so_far'] += 1
+                tasks_flex_df.at[idx, 'time_so_far'] += duration_h
+                daily_task_hours[day][task_type] += duration_h
+
+                break  # Ezzel a slottal már nem foglalkozunk tovább
+
+    schedule = pd.DataFrame(scheduled_tasks).sort_values(by='start_date').reset_index(drop=True)
+    return schedule
 
 schedule_output = schedule_tasks_flex(input_tasks_flex_df, input_tasks_fix_df, free_slots)
-
-#%% to excel
-schedule_output.to_excel(output_file, index=False)
 
 #%%plot
 import matplotlib.pyplot as plt
@@ -167,6 +204,7 @@ unique_days = schedule_output['date_only'].unique()
 cmap = colormaps['rainbow_r']
 unique_types = schedule_output['task_type'].unique()
 type_to_color = {t: cmap(i / len(unique_types)) for i, t in enumerate(unique_types)}
+type_to_color['Szünet'] = '#cccccc'
 
 # Színek hozzárendelése
 schedule_output['color'] = schedule_output['task_type'].map(type_to_color)
@@ -206,3 +244,6 @@ for j in range(i + 1, len(axes)):
 
 plt.tight_layout()  # A subplots közötti helyek optimalizálása
 plt.show()
+
+#%% to excel
+schedule_output.to_excel(output_file, index=False)
