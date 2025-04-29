@@ -1,4 +1,4 @@
-#%% Imports, functions
+#%% Imports, ebay functions
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -50,7 +50,6 @@ def output(productslist):
     print(productsdf)
     return productsdf
 
-# Fetch sold items data from ebay
 #%% Import fbref big5 dataframe
 import TSDP.fbref.fbref_module as fbref
 url_big5 = 'https://fbref.com/en/comps/Big5/stats/players/Big-5-European-Leagues-Stats'
@@ -63,13 +62,16 @@ df_big5 = df_big5[df_big5.Rk != 'Rk']
 df_big5['Age_float'] = ((df_big5.Age.str.split('-').str[0]).astype(float)+(df_big5.Age.str.split('-').str[1]).astype(float)/365)
 df_big5['Playing Time_90s'] = df_big5['Playing Time_90s'].astype(float)
 ## Filter: age<23, 90s>5
-filter_ = (df_big5['Playing Time_90s'] >= 5) & (df_big5['Age_int'] <= 23)
-df_big5_filter = df_fbref[filter_].reset_index(drop=True)
-## Get links to profile
-response_big5 = requests.get(url_fbref)
+filter_ = (df_big5['Playing Time_90s'] >= 10) & (df_big5['Age_float'] <= 23)
+df_big5_filter = df_big5[filter_].reset_index(drop=True)
+
+#%% Find rookie years on fbref
+"""
+## Get links to player profiles
+response_big5 = requests.get(url_big5)
 soup_big5 = BeautifulSoup(response_big5.text, 'html.parser')
 
-for i, row in df_big5_filter[:10].iterrows(): 
+for i, row in df_big5_filter[:30].iterrows(): 
     playerrows = soup_big5.find_all('td', {'data-stat': 'player'})
     for playerrow in playerrows:
         if playerrow.find('a').text == row['Player']:
@@ -77,12 +79,59 @@ for i, row in df_big5_filter[:10].iterrows():
             break
     ## 'stats_standard_dom_lg' table -> (seasons.unique = only this year)? -> if true add to list
     df_player = fbref.format_column_names(fbref.scrape(url_player, 'stats_standard_dom_lg'))
-    first_pro_season = df_player.loc[df_player.Comp.str[:2]=='1.', 'Season'].iloc[0]
+    first_season = df_player.loc[df_player.Comp.str[:2]=='1.', 'Season'].iloc[0]
+    first_big5_season = df_player.loc[df_player.Comp.str.contains('Ligue 1') \
+                  | df_player.Comp.str.contains('La Liga') \
+                  | df_player.Comp.str.contains('Premier League') \
+                  | df_player.Comp.str.contains('Bundesliga') \
+                  | df_player.Comp.str.contains('Serie A'), 
+                          'Season'].iloc[0]
     # Modify dataframe
-    df_big5_filter.loc[i, 'first_pro_season'] = first_pro_season
-    
-#%% Search on tcdb
+    df_big5_filter.loc[i, 'first_season'] = first_season
+    df_big5_filter.loc[i, 'first_big5_season'] = first_big5_season
+    print(i, row['Player'])
 
+df_big5_filter['season_year'] = df_big5_filter.first_season.str.split('-').str[0].astype(float)
+df_big5_filter['big5_season_year'] = df_big5_filter.first_big5_season.str.split('-').str[0].astype(float)
+"""
+#%% Save big5 database to Excel or load it
+path_big5 = 'other_projects/ebay scrape/big5_youngsters.xlsx'
+if df_big5_filter: # save
+    df_big5_filter.to_excel(path_big5, index=False)
+else: # load
+    df_big5_filter = pd.read_excel(path_big5)
+
+#%% Search players on tcdb
+searchterm_player = df_big5_filter.loc[13, 'Player'].replace(' ', '+')
+
+def find_tcdb_player_url(searchterm_player):
+    url_tcdb = f'https://www.tcdb.com/Search.cfm?SearchCategory=Soccer&cx=partner-pub-2387250451295121%3Ahes0ib-44xp&cof=FORID%3A10&ie=ISO-8859-1&q={searchterm_player}'
+    from selenium import webdriver
+    from selenium.webdriver.common.by import By
+    from selenium.webdriver.support.ui import WebDriverWait
+    from selenium.webdriver.support import expected_conditions as EC
+    from selenium.webdriver.chrome.service import Service
+    from webdriver_manager.chrome import ChromeDriverManager
+    from io import StringIO
+    
+    options = webdriver.ChromeOptions()
+    #options.add_argument('--headless')
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+    driver.get(url_tcdb)
+    a_elements = driver.find_elements(By.TAG_NAME, "a")
+    # Find urls
+    for a in a_elements:
+        href = a.get_attribute("href")
+        text = a.text
+        if pd.isna(href) == False:
+            if ('Person.cfm' in href): # first one = right one for us
+                url_tcdb_player = href
+                break
+    driver.quit()
+    return url_tcdb_player
+
+url_tcdb_player = find_tcdb_player_url(searchterm_player)
+tcdb_id = url_tcdb_player.split('pid/')[-1].split('/')[0] # Player id for later
 
 #%% Search each on ebay -> create dataframe
 
@@ -102,7 +151,7 @@ def fetch_sold_items(searchterm, pages_nr=1)
         time.sleep(random.uniform(2, 10))
     return df_multi
 
-df = fetch_sold_items(searchterm, pages_nr)
+df_ebay = fetch_sold_items(searchterm, pages_nr)
 
 #%% Format, build data table
 df['soldprice_fact'] = df['soldprice'].str.split(' to ').str[0].str.replace('$', '').str.replace(',', '').astype(float)
