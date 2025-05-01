@@ -4,7 +4,15 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import time
 import random
+import numpy as np
 # and activate VPN for English&USD !!!
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+from io import StringIO
 
 def get_data(searchterm, page_num):
    url = (f'https://www.ebay.com/sch/i.html?_nkw={searchterm}&_pgn={page_num}'
@@ -51,6 +59,7 @@ def output(productslist):
     return productsdf
 
 #%% Import fbref big5 dataframe
+"""
 import TSDP.fbref.fbref_module as fbref
 url_big5 = 'https://fbref.com/en/comps/Big5/stats/players/Big-5-European-Leagues-Stats'
 df_big5 = fbref.format_column_names(fbref.scrape(url_big5, 'stats_standard'))
@@ -66,7 +75,7 @@ filter_ = (df_big5['Playing Time_90s'] >= 10) & (df_big5['Age_float'] <= 23)
 df_big5_filter = df_big5[filter_].reset_index(drop=True)
 
 #%% Find rookie years on fbref
-"""
+
 ## Get links to player profiles
 response_big5 = requests.get(url_big5)
 soup_big5 = BeautifulSoup(response_big5.text, 'html.parser')
@@ -96,51 +105,119 @@ df_big5_filter['big5_season_year'] = df_big5_filter.first_big5_season.str.split(
 """
 #%% Save big5 database to Excel or load it
 path_big5 = 'other_projects/ebay scrape/big5_youngsters.xlsx'
-if df_big5_filter: # save
+if 'df_big5_filter' in locals(): 
+    # save
     df_big5_filter.to_excel(path_big5, index=False)
-else: # load
+else: 
+    # load
     df_big5_filter = pd.read_excel(path_big5)
 
 #%% Search players on tcdb
-searchterm_player = df_big5_filter.loc[13, 'Player'].replace(' ', '+')
-
-def find_tcdb_player_url(searchterm_player):
+def find_tcdb_player_url(player_name):
+    searchterm_player = player_name.replace(' ', '+')
     url_tcdb = f'https://www.tcdb.com/Search.cfm?SearchCategory=Soccer&cx=partner-pub-2387250451295121%3Ahes0ib-44xp&cof=FORID%3A10&ie=ISO-8859-1&q={searchterm_player}'
-    from selenium import webdriver
-    from selenium.webdriver.common.by import By
-    from selenium.webdriver.support.ui import WebDriverWait
-    from selenium.webdriver.support import expected_conditions as EC
-    from selenium.webdriver.chrome.service import Service
-    from webdriver_manager.chrome import ChromeDriverManager
-    from io import StringIO
     
     options = webdriver.ChromeOptions()
-    #options.add_argument('--headless')
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
     driver.get(url_tcdb)
     a_elements = driver.find_elements(By.TAG_NAME, "a")
     # Find urls
     for a in a_elements:
         href = a.get_attribute("href")
-        text = a.text
         if pd.isna(href) == False:
             if ('Person.cfm' in href): # first one = right one for us
                 url_tcdb_player = href
+                print(f'Player tcdb url: {url_tcdb_player}')
                 break
     driver.quit()
     return url_tcdb_player
 
-url_tcdb_player = find_tcdb_player_url(searchterm_player)
-tcdb_id = url_tcdb_player.split('pid/')[-1].split('/')[0] # Player id for later
+def find_tcdb_rookie_cards(tcdb_id, first_big5_season):
+    url_rookie = f'https://www.tcdb.com/Person.cfm/pid/{tcdb_id}/col/1/yea/{first_big5_season}/'
+    
+    options = webdriver.ChromeOptions()
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+    driver.get(url_rookie)
+    time.sleep(5)
+    td_elements = driver.find_elements(By.CSS_SELECTOR, 'td.vertical')
+    # Find urls
+    url_df= pd.DataFrame()
+    for td in td_elements:
+        a_tag = td.find_element(By.TAG_NAME, 'a') if td.find_elements(By.TAG_NAME, 'a') else None
+        if a_tag:
+            href = a_tag.get_attribute("href")
+            if 'ViewCard.cfm' in href:
+                card_text = a_tag.text.strip()
+                full_td_text = td.text.strip()  # Ebben lehet a ritkaság pl. "Fireworks Red"
+                # Próbáld kivenni belőle a ritkaságot, ha van
+                extra_info = full_td_text.replace(card_text, '').strip()
+
+                new_row = len(url_df)
+                url_df.loc[new_row, 'player_fbref'] = player_name
+                url_df.loc[new_row, 'player_tcdb'] = player_tcdb
+                url_df.loc[new_row, 'tcdb_id'] = tcdb_id
+                url_df.loc[new_row, 'season'] = first_big5_season
+                url_df.loc[new_row, 'card_url'] = href
+                url_df.loc[new_row, 'card_text'] = card_text
+                url_df.loc[new_row, 'extra'] = extra_info
+    
+    url_df = url_df[url_df.card_text != '']
+    print(f'Number of cards found: {len(url_df)}')
+    driver.quit()
+    return url_df
+
+# Find manufacturer, set_name, card_number, autograph, memo, rarity(SN)
+def format_card_data(url_df):
+    ## tcdb IDs
+    url_ends = url_df['card_url'].str.split('sid/').str[-1].str.split('/')
+    url_df['set_id'], url_df['card_id'] = url_ends.str[0], url_ends.str[2]
+    
+    ## Manufacturer
+    manufacturers = ['Donruss', 'Merlin', 'Topps', 'Panini', 'Futera']
+    def extract_manufacturer(text):
+        for m in manufacturers:
+            if m.lower() in text.lower():
+                return m
+        return 'Unknown' 
+    
+    url_df['manufacturer'] = url_df['card_text'].apply(extract_manufacturer)
+    
+    ## set_name
+    url_df['set_name'] = url_df['card_text'].str.split(' - ').str[0]
+    ## card_number
+    url_df['card_nr'] = url_df['card_text'].str.split('#').str[1].str.split(' ').str[0]
+    ## autograph
+    url_df['auto'] = url_df.extra.str.contains('AU')
+    ## memo
+    url_df['memo'] = url_df.extra.str.contains('MEM')
+    ## SN
+    import re
+    def extract_sn(text):
+        match = re.search(r'\bSN(\d+)\b', str(text))
+        if match:
+            return int(match.group(1))
+        return None
+    
+    url_df['SN'] = url_df['extra'].apply(extract_sn)
+    
+    return url_df
+
+# Find player profile site
+player_name = df_big5_filter.loc[13, 'Player']
+first_big5_season = df_big5_filter.loc[13, 'first_big5_season']
+url_tcdb_player = find_tcdb_player_url(player_name)
+player_tcdb = url_tcdb_player.split('/')[-1]
+tcdb_id = url_tcdb_player.split('pid/')[-1].split('/')[0] # Player id
+# Find rookie card URLs
+rookie_url_df = find_tcdb_rookie_cards(tcdb_id, first_big5_season)
+# Fetch the data of these cards
+rookie_cards_df = format_card_data(rookie_url_df)
 
 #%% Search each on ebay -> create dataframe
 
-# Dataframe: searchterm, card_id, playername, fabrique, set name, year, cardnumber, rarity, PSA grade, +ebay data
+# Dataframe: searchterm, card_id, playername, manufacturer, set name, year, cardnumber, rarity, PSA grade, +ebay data
 
-searchterm = 'Lamine+Yamal+cards'
-pages_nr = 1
-
-def fetch_sold_items(searchterm, pages_nr=1)
+def fetch_sold_items(searchterm, pages_nr=1):
     df_multi = pd.DataFrame()
     for page_num in range(1, pages_nr+1):
         soup = get_data(searchterm, page_num)
@@ -150,6 +227,10 @@ def fetch_sold_items(searchterm, pages_nr=1)
         df_multi = pd.concat([df_multi, df], ignore_index=True)
         time.sleep(random.uniform(2, 10))
     return df_multi
+
+for searchterm in
+searchterm = 'Lamine+Yamal+cards'
+pages_nr = 1
 
 df_ebay = fetch_sold_items(searchterm, pages_nr)
 
