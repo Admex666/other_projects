@@ -22,6 +22,7 @@ url_big5 = 'https://fbref.com/en/comps/Big5/stats/players/Big-5-European-Leagues
 df_big5 = fbref.format_column_names(fbref.scrape(url_big5, 'stats_standard'))
 
 #%% Modify fbref dataframe
+
 # Drop header rows
 df_big5 = df_big5[df_big5.Rk != 'Rk']
 # Convert age to numeric
@@ -31,37 +32,10 @@ df_big5['Playing Time_90s'] = df_big5['Playing Time_90s'].astype(float)
 filter_ = (df_big5['Playing Time_90s'] >= 10) & (df_big5['Age_float'] <= 23)
 df_big5_filter = df_big5[filter_].reset_index(drop=True)
 
-#%% Find rookie years on fbref
-
-## Get links to player profiles
-response_big5 = requests.get(url_big5)
-soup_big5 = BeautifulSoup(response_big5.text, 'html.parser')
-
-for i, row in df_big5_filter[:30].iterrows(): 
-    playerrows = soup_big5.find_all('td', {'data-stat': 'player'})
-    for playerrow in playerrows:
-        if playerrow.find('a').text == row['Player']:
-            url_player = 'https://www.fbref.com' + playerrow.find('a')['href']
-            break
-    ## 'stats_standard_dom_lg' table -> (seasons.unique = only this year)? -> if true add to list
-    df_player = fbref.format_column_names(fbref.scrape(url_player, 'stats_standard_dom_lg'))
-    first_season = df_player.loc[df_player.Comp.str[:2]=='1.', 'Season'].iloc[0]
-    first_big5_season = df_player.loc[df_player.Comp.str.contains('Ligue 1') \
-                  | df_player.Comp.str.contains('La Liga') \
-                  | df_player.Comp.str.contains('Premier League') \
-                  | df_player.Comp.str.contains('Bundesliga') \
-                  | df_player.Comp.str.contains('Serie A'), 
-                          'Season'].iloc[0]
-    # Modify dataframe
-    df_big5_filter.loc[i, 'first_season'] = first_season
-    df_big5_filter.loc[i, 'first_big5_season'] = first_big5_season
-    print(i, row['Player'])
-
-df_big5_filter['season_year'] = df_big5_filter.first_season.str.split('-').str[0].astype(float)
-df_big5_filter['big5_season_year'] = df_big5_filter.first_big5_season.str.split('-').str[0].astype(float)
 """
 #%% Save big5 database to Excel or load it
-path_big5 = 'other_projects/ebay scrape/big5_youngsters.xlsx'
+folder = 'other_projects/ebay scrape/'
+path_big5 = folder+ 'big5_youngsters.xlsx'
 if 'df_big5_filter' in locals(): 
     # save
     df_big5_filter.to_excel(path_big5, index=False)
@@ -174,7 +148,7 @@ def find_tcdb_rookie_cards(tcdb_id, player_tcdb, season_short, page_nr):
     return url_df
 
 # Find manufacturer, set_name, card_number, autograph, memo, rarity(SN)
-manufacturers = ['Donruss', 'Merlin', 'Topps', 'Panini', 'Futera', 'Score']
+manufacturers = ['Donruss', 'Merlin', 'Topps', 'Panini', 'Futera', 'Score', 'Bowman']
 def format_card_data(url_df):
     ## tcdb IDs
     url_ends = url_df['card_url'].str.split('sid/').str[-1].str.split('/')
@@ -215,7 +189,7 @@ def format_card_data(url_df):
     'White', 'Yellow', 'Bronze', 'Teal', 'Aqua', 'Turquoise', 'Magenta',
     
     # Topps parallels
-    'Refractor', 'Blue Refractor', 'Purple Refractor', 'Gold Refractor', 'Orange Refractor',
+    'Blue Refractor', 'Purple Refractor', 'Gold Refractor', 'Orange Refractor',
     'Red Refractor', 'SuperFractor', 'X-Fractor', 'Sepia Refractor', 'Negative Refractor',
     'Speckle Refractor', 'RayWave Refractor', 'Lava Refractor', 'Blue Lava Refractor',
     'Sapphire', 'Black & White Mini Diamond', 'Aqua Wave Refractor', 'Pink Wave Refractor',
@@ -261,6 +235,8 @@ def format_card_data(url_df):
         return 'Base'
     
     url_df['parallel'] = url_df['card_text'].apply(extract_parallel)
+    
+    print(f"Parallels not found: {len(url_df[(url_df.parallel == 'Base') & (pd.notna(url_df.SN))])}")
 
     return url_df
 
@@ -334,20 +310,50 @@ def fetch_sold_items(searchterm, pages_nr=1):
         time.sleep(random.uniform(2, 10))
     return df_multi
 
-#%% execute
-# tcdb: Find player profile site
-rookie_cards_df_merged = pd.DataFrame()
-df_ebay_merged = pd.DataFrame()
-
-for i in range(len(df_big5_filter[1:3])):
+#%% create dataframe for players' tcdb data
+"""
+tcdb_list = []
+for i in df_big5_filter[0:40].index:
     player_name = df_big5_filter.loc[i, 'Player']
     url_tcdb_player = find_tcdb_player_url(player_name)
     player_tcdb = url_tcdb_player.split('/')[-1]
-    tcdb_id = url_tcdb_player.split('pid/')[-1].split('/')[0] # Player id
-    # Find first season
-    first_tcdb_season = find_first_tcdb_season(tcdb_id)
-    # Find rookie card URLs
-    pages_nr = rookie_pages_number(tcdb_id, player_tcdb, first_tcdb_season)
+    tcdb_id = url_tcdb_player.split('pid/')[-1].split('/')[0]
+    
+    tcdb_dict_player = {'player_fbref': player_name,
+                        'player_tcdb': player_tcdb,
+                        'tcdb_id': int(tcdb_id),
+                        'url': url_tcdb_player,
+                        'first_season': '',
+                        'pages_nr': 0
+                        }
+    tcdb_list.append(tcdb_dict_player)
+
+df_tcdb = pd.DataFrame(tcdb_list)
+"""
+#%% execute tcdb: Find player profile site
+path_tcdb = folder+'df_tcdb.csv'
+if 'df_tcdb' in locals():
+    pass
+else:
+    df_tcdb = pd.read_csv(path_tcdb)
+
+rookie_cards_df_merged = pd.DataFrame()
+df_ebay_merged = pd.DataFrame()
+
+for i in df_big5_filter[0:3].index:
+    player_name = df_big5_filter.loc[i, 'Player']
+    if player_name not in df_tcdb
+        url_tcdb_player = find_tcdb_player_url(player_name)
+        player_tcdb = url_tcdb_player.split('/')[-1]
+        tcdb_id = url_tcdb_player.split('pid/')[-1].split('/')[0] # Player id
+        # Find first season
+        first_tcdb_season = find_first_tcdb_season(tcdb_id)
+        # Find rookie card URLs
+        pages_nr = rookie_pages_number(tcdb_id, player_tcdb, first_tcdb_season)
+    else:
+        row_tcdb = df_tcdb[df_tcdb.player_fbref == player_name]
+        player_tcdb, tcdb_id, url_tcdb_player, first_tcdb_season, pages_nr = row_tcdb.iloc[0][1:]
+        
     rookie_cards_df = pd.DataFrame()
     for page_nr in range(1, pages_nr+1):
         rookie_url_df_page = find_tcdb_rookie_cards(tcdb_id, player_tcdb, first_tcdb_season, page_nr)
@@ -356,8 +362,12 @@ for i in range(len(df_big5_filter[1:3])):
         rookie_cards_df = pd.concat([rookie_cards_df, rookie_cards_df_page], ignore_index=True)
     rookie_cards_df_merged = pd.concat([rookie_cards_df_merged, rookie_cards_df], ignore_index=True)
     
-    # ebay: find sold items
-    df_ebay = pd.DataFrame()
+#%% ebay: find sold items
+df_ebay = pd.DataFrame()
+for i in df_big5_filter[1:4].index:
+    player_name = df_big5_filter.loc[i, 'Player']
+    rookie_cards_df = rookie_cards_df_merged[rookie_cards_df_merged.player_fbref == player_name].copy()
+    first_tcdb_season = rookie_cards_df.season.unique()[0]
     for manufacturer in rookie_cards_df['manufacturer'].unique():
         searchterm =  f'{first_tcdb_season} {manufacturer} {player_name}'
         pages_nr = 2
@@ -440,15 +450,18 @@ for i in range(len(df_big5_filter[1:3])):
 # cardnumber, SN, PSA grade, +ebay data
 
 #%% Save tables to xlsx
-out_path = 'other_projects/ebay scrape/'
-path_ebay = out_path+'df_ebay.csv'
-path_rookiecards = out_path+'rookie_cards_df.csv'
+path_ebay = folder+'df_ebay.csv'
+path_rookiecards = folder+'rookie_cards_df.csv'
 # read previous
 prev_ebay = pd.read_csv(path_ebay)
 prev_rookiecards = pd.read_csv(path_rookiecards)
+prev_tcdb = pd.read_csv(path_tcdb)
 # merge
 new_ebay = pd.concat([prev_ebay, df_ebay_merged], ignore_index=True).drop_duplicates(subset=['title', 'seller_name', 'solddate_dt'])
 new_rookiecards = pd.concat([prev_rookiecards, rookie_cards_df_merged], ignore_index=True).drop_duplicates(subset=['card_text', 'card_url'])
+if 'df_tcdb' in locals():
+    new_tcdb = pd.concat([prev_tcdb, df_tcdb], ignore_index=True).drop_duplicates()
+    new_tcdb.to_csv(path_tcdb, index=False)
 # save
 new_ebay.to_csv(path_ebay, index=False)
 new_rookiecards.to_csv(path_rookiecards, index=False)
