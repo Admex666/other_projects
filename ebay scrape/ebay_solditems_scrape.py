@@ -265,41 +265,87 @@ for set_id in rookie_cards_df.set_id.unique():
         year = rookie_cards_df[rookie_cards_df.set_id == set_id]['season'].iloc[0]
         set_dict = {'set_id': set_id, 'set_name': set_name, 'year': year}
         sets_list.append(set_dict)
+        
 df_tcdb_sets_new = pd.DataFrame(sets_list)
 df_tcdb_sets = pd.concat([df_tcdb_sets, df_tcdb_sets_new], ignore_index=True).drop_duplicates(subset='set_id', keep="first")   
 
 print(f'Missing set urls: {len(df_tcdb_sets[pd.isna(df_tcdb_sets.url)])}/{len(df_tcdb_sets)}')
-base_set_list = []
+# find base sets for every year
 for year_set in range(2020, 2025):
     year_set = str(year_set)
+    df_tcdb_sets_year = df_tcdb_sets[df_tcdb_sets.year.str.split('-').str[0] == year_set]
     url_sets_year = f'https://www.tcdb.com/ViewAll.cfm/sp/Soccer/year/{year_set}'
+    
     options = webdriver.ChromeOptions()
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
     driver.get(url_sets_year)
     time.sleep(5)
+    
     a_elements = driver.find_elements(By.TAG_NAME, "a")
     
-    for i in df_tcdb_sets[df_tcdb_sets.year.str.split('-').str[0] == year_set].index:
-        # only fetch if there is no url
-        if pd.notna(df_tcdb_sets.loc[i, 'set_name']) and pd.isna(df_tcdb_sets.loc[i, 'url']):
-            # Find urls
-            for a in a_elements:
-                href = a.get_attribute("href")
-                text = a.text
-                if pd.notna(href):
-                    if 'ViewSet.cfm/' in href:
-                        set_id_url = int(href.split('sid/')[1].split('/')[0])
-                        base_set_list.append({'set_id':set_id_url, 'year_set': year_set, 'url':href})
-                                
+    for a in a_elements:
+        href = a.get_attribute("href")
+        text = a.text
+        if pd.notna(href):
+            # find urks with 'viewset'
+            if 'ViewSet.cfm/' in href:
+                set_id_url = int(href.split('sid/')[1].split('/')[0])
+                # check if set_id in dataframe
+                if (set_id_url in df_tcdb_sets_year.set_id.unique()):
+                    # find row and fill in url
+                    row_tcdb_set = df_tcdb_sets[df_tcdb_sets.set_id == set_id_url]
+                    if pd.isna(row_tcdb_set['url'].iloc[0]):
+                        row_index = row_tcdb_set.index[0]
+                        df_tcdb_sets.loc[row_index, 'url'] = href
+                        print(f'{set_id_url} found.')
+                else:
+                    continue
+                            
     driver.quit()
-    
-print(f'Still missing: {len(df_tcdb_sets[pd.isna(df_tcdb_sets.url)])}/{len(df_tcdb_sets)}')
 
-for i_i, r_i in df_tcdb_sets[df_tcdb_sets.set_id.isin(set_id_url_dict.keys())].iterrows():
-    set_id_insert = r_i['set_id']
-    if f'{set_id_insert}/' in href:
-        print(f'set found: {set_id_insert}')
-        df_tcdb_sets.loc[i_i, 'url'] = href
+df_tcdb_sets['base_set'] = np.where(df_tcdb_sets.url.str.contains('---'), False, True)
+
+mask_base = df_tcdb_sets.base_set == True
+df_tcdb_sets_base = df_tcdb_sets[mask_base]
+for i in df_tcdb_sets_base.index:
+    set_name = df_tcdb_sets.loc[i, 'set_name']
+    set_id = df_tcdb_sets.loc[i, 'set_id']
+    url_set_ins = f'https://www.tcdb.com/Inserts.cfm/sid/{set_id}'
+    mask_setname = df_tcdb_sets.set_name == set_name
+    df_tcdb_sets_samename = df_tcdb_sets[mask_setname]
+    if any(pd.isna(df_tcdb_sets_samename.url)):        
+        options = webdriver.ChromeOptions()
+        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+        driver.get(url_set_ins)
+        time.sleep(5)
+        
+        a_elements = driver.find_elements(By.TAG_NAME, "a")
+        
+        for a in a_elements:
+            href = a.get_attribute("href")
+            if pd.notna(href):
+                if 'Checklist.cfm/sid/' in href:
+                    set_id_url = int(href.split('sid/')[1][0:6])
+                    # check if set_id in dataframe
+                    if (set_id_url in df_tcdb_sets.set_id.unique()):
+                        # find row and fill in url
+                        row_tcdb_set = df_tcdb_sets[df_tcdb_sets.set_id == set_id_url]
+                        if pd.isna(row_tcdb_set['url'].iloc[0]):
+                            row_index = row_tcdb_set.index[0]
+                            df_tcdb_sets.loc[row_index, 'url'] = href
+                            print(f'{set_id_url} found.')
+                    else:
+                        continue
+        
+        driver.quit()
+
+# drop if set_id doesn't match url
+for i, row in df_tcdb_sets.iterrows():
+    if pd.notna(row['url']):
+        if str(row['set_id']) not in row['url']:
+            df_tcdb_sets.loc[i, 'url'] = None
+            
+print(f'Still missing: {len(df_tcdb_sets[pd.isna(df_tcdb_sets.url)])}/{len(df_tcdb_sets)}')
 
 # parse data
 for i, row in df_tcdb_sets.iterrows():
@@ -384,8 +430,7 @@ if 'df_ebay' in locals():
 else:
     df_ebay = pd.read_csv(path_ebay)
 
-df_ebay = pd.DataFrame()
-for i in df_big5_filter[6:12].index:
+for i in df_big5_filter[0:12].index:
     player_name = df_big5_filter.loc[i, 'Player']
     print(f'Player: {player_name}')
     tcdb_id = df_tcdb[df_tcdb.player_fbref == player_name]['tcdb_id'].unique()[0]
@@ -476,6 +521,7 @@ for i_ebay in df_ebay.index:
     title_lower = str(df_ebay.loc[i_ebay, 'title']).lower()
     best_score = 0
     best_idx = None
+    best_cardid = None
     
     searched_player_id = df_ebay.loc[i_ebay, 'tcdb_id']
     rookie_cards_df_player = rookie_cards_df[rookie_cards_df.tcdb_id == searched_player_id]
@@ -504,15 +550,16 @@ for i_ebay in df_ebay.index:
             if score > best_score:
                 best_score = score
                 best_idx = i_rc
+                best_cardid = rookie_cards_df_player.loc[best_idx, 'card_id']
 
     if best_idx is not None:
         df_ebay.at[i_ebay, 'matched_text']  = rookie_cards_df_player.at[best_idx, 'card_text']
         df_ebay.at[i_ebay, 'match_score']   = best_score
-        df_ebay.at[i_ebay, 'rookie_row_id'] = best_idx
+        df_ebay.at[i_ebay, 'card_id'] = best_cardid
 
 print(f'Cards over match score 25: {len(df_ebay[df_ebay.match_score>25])}/{len(df_ebay)}')
 print(df_ebay.match_score.describe())
-        
+
 # Dataframe: searchterm, card_id, playername, manufacturer, set name, year, 
 # cardnumber, SN, PSA grade, +ebay data
 
