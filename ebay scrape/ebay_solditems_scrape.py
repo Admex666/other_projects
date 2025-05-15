@@ -34,7 +34,7 @@ filter_ = (df_big5['Playing Time_90s'] >= 10) & (df_big5['Age_float'] <= 23)
 df_big5_filter = df_big5[filter_].reset_index(drop=True)
 
 """
-#%% Save big5 database to Excel or load it
+#%% import previously stored files
 folder = 'other_projects/ebay scrape/'
 path_big5 = folder+ 'big5_youngsters.xlsx'
 if 'df_big5_filter' in locals(): 
@@ -43,6 +43,30 @@ if 'df_big5_filter' in locals():
 else: 
     # load
     df_big5_filter = pd.read_excel(path_big5)
+
+path_tcdb = folder+'df_tcdb.csv'
+if 'df_tcdb' in locals():
+    pass
+else:
+    df_tcdb = pd.read_csv(path_tcdb)
+
+path_rookiecards = folder+'rookie_cards_df.csv'
+if 'rookie_cards_df' in locals():
+    pass
+else:
+    rookie_cards_df = pd.read_csv(path_rookiecards)
+    
+path_sets = folder+'tcdb_sets.csv'
+if 'df_tcdb_sets' in locals():
+    pass
+else:
+    df_tcdb_sets = pd.read_csv(path_sets) 
+    
+path_ebay = folder+'df_ebay.csv'
+if 'df_ebay' in locals():
+    pass
+else:
+    df_ebay = pd.read_csv(path_ebay)
 
 #%% Functions: Search players on tcdb
 def find_tcdb_player_url(player_name):
@@ -214,34 +238,15 @@ for i in df_big5_filter[0:40].index:
 
 df_tcdb = pd.DataFrame(tcdb_list)
 """
+
 #%% execute tcdb: Find player profile site
-path_tcdb = folder+'df_tcdb.csv'
-if 'df_tcdb' in locals():
-    pass
-else:
-    df_tcdb = pd.read_csv(path_tcdb)
-
-path_rookiecards = folder+'rookie_cards_df.csv'
-if 'rookie_cards_df' in locals():
-    pass
-else:
-    rookie_cards_df = pd.read_csv(path_rookiecards)
-
-for i in df_big5_filter[6:12].index:
-    player_name = df_big5_filter.loc[i, 'Player']
+df_tcdb_slice = df_tcdb[12:20].copy()
+for i in df_tcdb_slice.index:
+    player_name = df_tcdb_slice.loc[i, 'player_fbref']
     print(player_name)
-    if player_name not in df_tcdb.player_fbref.values:
-        url_tcdb_player = find_tcdb_player_url(player_name)
-        player_tcdb = url_tcdb_player.split('/')[-1]
-        tcdb_id = url_tcdb_player.split('pid/')[-1].split('/')[0] # Player id
-        # Find first season
-        first_tcdb_season = find_first_tcdb_season(tcdb_id)
-        # Find rookie card URLs
-        pages_nr = rookie_pages_number(tcdb_id, player_tcdb, first_tcdb_season)
-    else:
-        row_tcdb = df_tcdb[df_tcdb.player_fbref == player_name]
-        player_tcdb, tcdb_id, url_tcdb_player, first_tcdb_season, pages_nr = row_tcdb.iloc[0][1:]
-        
+    row_tcdb = df_tcdb.iloc[i,:]
+    player_tcdb, tcdb_id, url_tcdb_player, first_tcdb_season, pages_nr = row_tcdb[1:]
+    
     rookie_cards_df_player = pd.DataFrame()
     for page_nr in range(1, pages_nr+1):
         rookie_url_df_page = find_tcdb_rookie_cards(tcdb_id, player_tcdb, first_tcdb_season, page_nr)
@@ -251,13 +256,10 @@ for i in df_big5_filter[6:12].index:
     rookie_cards_df = pd.concat([rookie_cards_df, rookie_cards_df_player], ignore_index=True)
 rookie_cards_df[['set_id', 'card_id']] = rookie_cards_df[['set_id', 'card_id']].astype(int)
 
-#%% Create dataframe of sets on tcdb
-path_sets = folder+'tcdb_sets.csv'
-if 'df_tcdb_sets' in locals():
-    pass
-else:
-    df_tcdb_sets = pd.read_csv(path_sets) 
+rookie_cards_df = rookie_cards_df.drop_duplicates(subset=['card_id', 'card_text']).reset_index(drop=True)
+rookie_cards_df.to_csv(path_rookiecards, index=False)
 
+#%% Create dataframe of sets on tcdb
 sets_list = []
 for set_id in rookie_cards_df.set_id.unique():
     if set_id not in df_tcdb_sets.set_id.unique():
@@ -268,6 +270,7 @@ for set_id in rookie_cards_df.set_id.unique():
         
 df_tcdb_sets_new = pd.DataFrame(sets_list)
 df_tcdb_sets = pd.concat([df_tcdb_sets, df_tcdb_sets_new], ignore_index=True).drop_duplicates(subset='set_id', keep="first")   
+print(f'New sets found: {len(df_tcdb_sets_new)}')
 
 print(f'Missing set urls: {len(df_tcdb_sets[pd.isna(df_tcdb_sets.url)])}/{len(df_tcdb_sets)}')
 # find base sets for every year
@@ -324,7 +327,7 @@ for i in df_tcdb_sets_base.index:
         for a in a_elements:
             href = a.get_attribute("href")
             if pd.notna(href):
-                if 'Checklist.cfm/sid/' in href:
+                if ('Checklist.cfm/sid/' in href) or ('ViewSet.cfm/sid/' in href):
                     set_id_url = int(href.split('sid/')[1][0:6])
                     # check if set_id in dataframe
                     if (set_id_url in df_tcdb_sets.set_id.unique()):
@@ -352,6 +355,9 @@ for i, row in df_tcdb_sets.iterrows():
     if pd.notna(row['url']) and pd.notna(row['set_name']):
         set_name, url = row['set_name'], row['url']
         df_tcdb_sets.loc[i, ['manufacturer', 'set_short', 'parallel']] = parse_set_data(set_name, url)
+
+df_tcdb_sets = df_tcdb_sets.drop_duplicates(subset='set_id').reset_index(drop=True)
+df_tcdb_sets.to_csv(path_sets, index=False)
 
 #%% ebay functions: Search each on ebay -> create dataframe
 def get_data(searchterm, page_num):
@@ -424,20 +430,14 @@ def fetch_sold_items(searchterm, pages_nr=1):
     return df_multi
 
 #%% ebay: find sold items
-path_ebay = folder+'df_ebay.csv'
-if 'df_ebay' in locals():
-    pass
-else:
-    df_ebay = pd.read_csv(path_ebay)
-
-for i in df_big5_filter[0:12].index:
-    player_name = df_big5_filter.loc[i, 'Player']
+for i in df_tcdb_slice.index:
+    player_name = df_tcdb_slice.loc[i, 'player_fbref']
     print(f'Player: {player_name}')
-    tcdb_id = df_tcdb[df_tcdb.player_fbref == player_name]['tcdb_id'].unique()[0]
+    tcdb_id = df_tcdb.loc[i, 'tcdb_id']
     rookie_cards_df_player = rookie_cards_df[rookie_cards_df.tcdb_id == tcdb_id].copy()
     first_tcdb_season = rookie_cards_df_player.season.unique()[0]
     if pd.notna(first_tcdb_season):
-        df_ebay_player = pd.DataFrame({'player_fbref': []})
+        df_ebay_player = pd.DataFrame()
         set_ids = pd.Series(rookie_cards_df_player.set_id).to_list()
         manufacturers_player = df_tcdb_sets[df_tcdb_sets.set_id.isin(set_ids) & pd.notna(df_tcdb_sets.manufacturer)].manufacturer.unique()
         for manufacturer in manufacturers_player:
@@ -456,6 +456,7 @@ for i in df_big5_filter[0:12].index:
         
         df_ebay = pd.concat([df_ebay, df_ebay_player], ignore_index=True)
 df_ebay.drop_duplicates(subset=['title', 'solddate', 'seller_name', 'soldprice'], inplace=True)
+df_ebay.to_csv(path_ebay, index=False)
 
 #%% Functions: matching cards with ebay sales
 def tokenize(title):
@@ -560,28 +561,86 @@ for i_ebay in df_ebay.index:
 print(f'Cards over match score 25: {len(df_ebay[df_ebay.match_score>25])}/{len(df_ebay)}')
 print(df_ebay.match_score.describe())
 
-# Dataframe: searchterm, card_id, playername, manufacturer, set name, year, 
-# cardnumber, SN, PSA grade, +ebay data
+df_ebay.drop_duplicates(subset=['title', 'solddate', 'seller_name', 'soldprice'], inplace=True)
+df_ebay.to_csv(path_ebay, index=False)
 
-#%% Save tables to xlsx
-# read previous
-prev_ebay = pd.read_csv(path_ebay)
-prev_rookiecards = pd.read_csv(path_rookiecards)
-prev_tcdb = pd.read_csv(path_tcdb)
-prev_tcdb_sets = pd.read_csv(path_sets)
-# merge
-new_ebay = pd.concat([prev_ebay, df_ebay], ignore_index=True).drop_duplicates(subset=['title', 'seller_name', 'solddate_dt'])
-new_rookiecards = pd.concat([prev_rookiecards, rookie_cards_df], ignore_index=True).drop_duplicates(subset=['card_text', 'card_url'])
-if 'df_tcdb' in locals():
-    new_tcdb = pd.concat([prev_tcdb, df_tcdb], ignore_index=True).drop_duplicates()
-    new_tcdb.to_csv(path_tcdb, index=False)
-    print(f"New rows (players): {len(df_tcdb)}")
-new_tcdb_sets = pd.concat([prev_tcdb_sets, df_tcdb_sets], ignore_index=True).drop_duplicates
+#%% Build machine learning model
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from xgboost import XGBRegressor
 
-# save
-new_ebay.to_csv(path_ebay, index=False)
-new_rookiecards.to_csv(path_rookiecards, index=False)
-new_tcdb_sets.to_csv(path_sets, index=False)
-print(f"New rows (ebay): {len(df_ebay)}")
-print(f"New rows (rookie cards): {len(rookie_cards_df)}")
-print(f"New rows (sets): {len(df_tcdb_sets)}")
+# 1. Merge dataframes
+df = pd.merge(df_ebay, rookie_cards_df, on='card_id', suffixes=('', '_replace'))
+df = pd.merge(df, df_tcdb_sets, on='set_id', suffixes=('', '_replace'))
+df.drop(columns=[col for col in df.columns if '_replace' in col], inplace=True)
+
+# 2. Basic feature engineering
+# Hiányzó 'SN' → nagy értékkel pótoljuk (pl. nincs sorszámozás = nem limitált)
+df['SN'] = pd.to_numeric(df['SN'], errors='coerce').fillna(10000)
+
+# Text to binary → 1/0
+df['auto'] = df['auto'].map({'IGAZ': 1, 'HAMIS': 0})
+df['memo'] = df['memo'].map({'IGAZ': 1, 'HAMIS': 0})
+df['base_set'] = df['base_set'].map({'IGAZ': 1, 'HAMIS': 0})
+
+# Time
+df['solddate_dt'] = pd.to_datetime(df['solddate_dt'], format='mixed')
+df['sold_year'] = df['solddate_dt'].dt.year
+df['sold_month'] = df['solddate_dt'].dt.month
+
+# Seller sales log transformation
+df['seller_sales'] = df['seller_sales'].apply(lambda x: np.log1p(x))
+
+# Target: price
+y = df['soldprice_fact'].astype(float)
+
+# Used features
+features = [
+    'SN', 'auto', 'memo', 'base_set',
+    'seller_sales', 'seller_rating', 'match_score',
+    'sold_year', 'sold_month',
+    'parallel', 'extra', 'manufacturer', 'set_name'
+]
+
+X = df[features]
+
+# Categories and numeric
+cat_features = ['parallel', 'extra', 'manufacturer', 'set_name']
+num_features = [col for col in features if col not in cat_features]
+
+# 3. Pipeline: transformation + model
+preprocessor = ColumnTransformer(
+    transformers=[
+        ('num', StandardScaler(), num_features),
+        ('cat', OneHotEncoder(handle_unknown='ignore'), cat_features)
+    ]
+)
+
+model = Pipeline(steps=[
+    ('preprocessor', preprocessor),
+    ('regressor', XGBRegressor(n_estimators=100, learning_rate=0.1, random_state=1))
+])
+
+# 4. Teach and test
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
+
+model.fit(X_train, y_train)
+
+# 5. Predict and evaluate
+y_pred = model.predict(X_test)
+
+print(f'MAE: {mean_absolute_error(y_test, y_pred):.2f}')
+print(f'RMSE: {np.sqrt(mean_squared_error(y_test, y_pred)):.2f}')
+print(f'R²: {r2_score(y_test, y_pred):.2f}')
+
+# 6. Maradványérték = alul-/felülértékeltség becslése
+df_test = X_test.copy()
+df_test['actual'] = y_test
+df_test['predicted'] = y_pred
+df_test['residual'] = df_test['actual'] - df_test['predicted']
+
+# Opcionális: sort by most undervalued
+print(df_test.sort_values('residual', ascending=False).head(10))
