@@ -570,77 +570,108 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
-from xgboost import XGBRegressor
 
-# 1. Merge dataframes
+# Modellek
+from sklearn.linear_model import Ridge
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
+
+# 1. Adatok összefűzése
 df = pd.merge(df_ebay, rookie_cards_df, on='card_id', suffixes=('', '_replace'))
 df = pd.merge(df, df_tcdb_sets, on='set_id', suffixes=('', '_replace'))
+df = pd.merge(df, df_tcdb, on='tcdb_id', suffixes=('', '_replace'))
+df = pd.merge(df, df_big5_filter, left_on='player_fbref', right_on='Player', suffixes=('', '_replace'))
 df.drop(columns=[col for col in df.columns if '_replace' in col], inplace=True)
 
-# 2. Basic feature engineering
-# Hiányzó 'SN' → nagy értékkel pótoljuk (pl. nincs sorszámozás = nem limitált)
+# 2. Feature engineering
 df['SN'] = pd.to_numeric(df['SN'], errors='coerce').fillna(10000)
-
-# Text to binary → 1/0
-df['auto'] = df['auto'].map({'IGAZ': 1, 'HAMIS': 0})
-df['memo'] = df['memo'].map({'IGAZ': 1, 'HAMIS': 0})
-df['base_set'] = df['base_set'].map({'IGAZ': 1, 'HAMIS': 0})
-
-# Time
+df['auto'] = df['auto'].map({True: 1, False: 0})
+df['memo'] = df['memo'].map({True: 1, False: 0})
 df['solddate_dt'] = pd.to_datetime(df['solddate_dt'], format='mixed')
 df['sold_year'] = df['solddate_dt'].dt.year
 df['sold_month'] = df['solddate_dt'].dt.month
-
-# Seller sales log transformation
 df['seller_sales'] = df['seller_sales'].apply(lambda x: np.log1p(x))
-
-# Target: price
 y = df['soldprice_fact'].astype(float)
 
-# Used features
+stats = [col for col in df_big5_filter.columns if df_big5_filter[col].dtype == 'float64'][:-3]
+
 features = [
-    'SN', 'auto', 'memo', 'base_set',
+    'SN', 'auto', 'memo',
     'seller_sales', 'seller_rating', 'match_score',
     'sold_year', 'sold_month',
     'parallel', 'extra', 'manufacturer', 'set_name'
-]
-
+] + stats
 X = df[features]
 
-# Categories and numeric
 cat_features = ['parallel', 'extra', 'manufacturer', 'set_name']
 num_features = [col for col in features if col not in cat_features]
 
-# 3. Pipeline: transformation + model
-preprocessor = ColumnTransformer(
-    transformers=[
-        ('num', StandardScaler(), num_features),
-        ('cat', OneHotEncoder(handle_unknown='ignore'), cat_features)
-    ]
-)
-
-model = Pipeline(steps=[
-    ('preprocessor', preprocessor),
-    ('regressor', XGBRegressor(n_estimators=100, learning_rate=0.1, random_state=1))
+# 3. Preprocessing
+preprocessor = ColumnTransformer([
+    ('num', StandardScaler(), num_features),
+    ('cat', OneHotEncoder(handle_unknown='ignore'), cat_features)
 ])
 
-# 4. Teach and test
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
+# 4. Modellek definiálása
+models = {
+    "Ridge": Ridge(alpha=1.0),
+    "Random Forest": RandomForestRegressor(n_estimators=100, random_state=42),
+    "Gradient Boosting": GradientBoostingRegressor(n_estimators=100, random_state=42)
+}
 
-model.fit(X_train, y_train)
+# 5. Train-test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# 5. Predict and evaluate
-y_pred = model.predict(X_test)
+# 6. Modell lefuttatás és értékelés
+results = []
 
-print(f'MAE: {mean_absolute_error(y_test, y_pred):.2f}')
-print(f'RMSE: {np.sqrt(mean_squared_error(y_test, y_pred)):.2f}')
-print(f'R²: {r2_score(y_test, y_pred):.2f}')
+for name, model in models.items():
+    pipeline = Pipeline([
+        ('preprocessor', preprocessor),
+        ('regressor', model)
+    ])
+    
+    pipeline.fit(X_train, y_train)
+    y_pred = pipeline.predict(X_test)
+    
+    mae = mean_absolute_error(y_test, y_pred)
+    rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+    r2 = r2_score(y_test, y_pred)
+    
+    results.append({
+        "Model": name,
+        "MAE": mae,
+        "RMSE": rmse,
+        "R2": r2
+    })
 
-# 6. Maradványérték = alul-/felülértékeltség becslése
-df_test = X_test.copy()
-df_test['actual'] = y_test
-df_test['predicted'] = y_pred
-df_test['residual'] = df_test['actual'] - df_test['predicted']
+# 7. Eredmények kiírása
+results_df = pd.DataFrame(results).sort_values("RMSE")
+print(results_df)
 
-# Opcionális: sort by most undervalued
-print(df_test.sort_values('residual', ascending=False).head(10))
+#%%
+import matplotlib.pyplot as plt
+
+# Kiválasztott modell: pl. Random Forest
+model_name = "Random Forest"
+pipeline = Pipeline([
+    ('preprocessor', preprocessor),
+    ('regressor', models[model_name])
+])
+pipeline.fit(X_train, y_train)
+
+# Feature nevek kibontása
+ohe = pipeline.named_steps['preprocessor'].named_transformers_['cat']
+cat_feature_names = ohe.get_feature_names_out(cat_features)
+feature_names = num_features + list(cat_feature_names)
+
+# Feature importance
+importances = pipeline.named_steps['regressor'].feature_importances_
+
+# Top 20 fontos változó
+indices = np.argsort(importances)[::-1][:20]
+plt.figure(figsize=(10, 6))
+plt.title(f"{model_name} - Top 20 Feature Importance")
+plt.barh(np.array(feature_names)[indices][::-1], importances[indices][::-1])
+plt.xlabel("Importance")
+plt.tight_layout()
+plt.show()
