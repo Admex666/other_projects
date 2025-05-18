@@ -44,6 +44,12 @@ else:
     # load
     df_big5_filter = pd.read_excel(path_big5)
 
+path_tm = folder+'transfermarkt.csv'
+if 'df_tm' in locals():
+    pass
+else:
+    df_tm = pd.read_csv(path_tm)
+
 path_tcdb = folder+'df_tcdb.csv'
 if 'df_tcdb' in locals():
     pass
@@ -238,6 +244,48 @@ for i in df_big5_filter[0:40].index:
 
 df_tcdb = pd.DataFrame(tcdb_list)
 """
+
+#%% Get market value from Transfermarkt
+def get_market_value(url_transfermarkt):
+    options = webdriver.ChromeOptions()
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+    driver.get(url_transfermarkt)
+    time.sleep(5)
+    
+    market_value_element = driver.find_element(By.CLASS_NAME, "data-header__market-value-wrapper")
+    full_text = market_value_element.text
+    
+    if 'Last update:' in full_text:
+        market_value, last_update = full_text.split("Last update:")
+        market_value, last_update = market_value.strip(), last_update.strip()
+        
+        market_value_noeur = market_value.replace('€', '')
+        if 'k' in market_value:
+            market_value_float = float(market_value_noeur.replace('k', ''))
+            market_value_mill = market_value_float / 1000
+        elif 'm' in market_value:
+            market_value_float = float(market_value_noeur.replace('m', ''))
+            market_value_mill = market_value_float
+        else:
+            market_value_mill = None
+            
+        last_update_dt = pd.to_datetime(last_update).date()
+    else:
+        market_value_mill, last_update_dt = None, None
+    
+    driver.quit()
+    
+    return market_value_mill, last_update_dt
+
+for i, row in df_tm[pd.notna(df_tm.url_tm)].iterrows():
+    if row['MV'] == 0:
+        print(row['player_fbref'])
+        mv, last_upd = get_market_value(row['url_tm'])
+        print(f'Market value: {mv}')
+        print('')
+        df_tm.loc[i,['MV', 'update']] = mv, last_upd
+
+df_tm.to_csv(path_tm, index=False)
 
 #%% execute tcdb: Find player profile site
 df_tcdb_slice = df_tcdb[12:20].copy()
@@ -574,12 +622,14 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 # Modellek
 from sklearn.linear_model import Ridge
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
+from sklearn.neural_network import MLPRegressor
 
 # 1. Adatok összefűzése
 df = pd.merge(df_ebay, rookie_cards_df, on='card_id', suffixes=('', '_replace'))
 df = pd.merge(df, df_tcdb_sets, on='set_id', suffixes=('', '_replace'))
 df = pd.merge(df, df_tcdb, on='tcdb_id', suffixes=('', '_replace'))
 df = pd.merge(df, df_big5_filter, left_on='player_fbref', right_on='Player', suffixes=('', '_replace'))
+df = pd.merge(df, df_tm, on='tcdb_id', suffixes=('', '_replace'))
 df.drop(columns=[col for col in df.columns if '_replace' in col], inplace=True)
 
 # 2. Feature engineering
@@ -590,19 +640,20 @@ df['solddate_dt'] = pd.to_datetime(df['solddate_dt'], format='mixed')
 df['sold_year'] = df['solddate_dt'].dt.year
 df['sold_month'] = df['solddate_dt'].dt.month
 df['seller_sales'] = df['seller_sales'].apply(lambda x: np.log1p(x))
-y = df['soldprice_fact'].astype(float)
+y = np.log1p(df['soldprice_fact'].astype(float))
 
 stats = [col for col in df_big5_filter.columns if df_big5_filter[col].dtype == 'float64'][:-3]
 
 features = [
+    'Age_float', 'Comp',
     'SN', 'auto', 'memo',
-    'seller_sales', 'seller_rating', 'match_score',
-    'sold_year', 'sold_month',
-    'parallel', 'extra', 'manufacturer', 'set_name'
+    'seller_sales', 'seller_rating',
+    'sold_year', 'sold_month', 'manufacturer',
+    'MV'
 ] + stats
 X = df[features]
 
-cat_features = ['parallel', 'extra', 'manufacturer', 'set_name']
+cat_features = ['manufacturer', 'Comp']
 num_features = [col for col in features if col not in cat_features]
 
 # 3. Preprocessing
@@ -612,14 +663,16 @@ preprocessor = ColumnTransformer([
 ])
 
 # 4. Modellek definiálása
+state = 1
 models = {
     "Ridge": Ridge(alpha=1.0),
-    "Random Forest": RandomForestRegressor(n_estimators=100, random_state=42),
-    "Gradient Boosting": GradientBoostingRegressor(n_estimators=100, random_state=42)
+    "Random Forest": RandomForestRegressor(n_estimators=100, random_state=state),
+    "Gradient Boosting": GradientBoostingRegressor(n_estimators=100, random_state=state),
+    "Neural Net": MLPRegressor(hidden_layer_sizes=(200, 100, 50), max_iter=1000, learning_rate_init=0.0005, random_state=state)
 }
 
 # 5. Train-test split
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=state)
 
 # 6. Modell lefuttatás és értékelés
 results = []
@@ -632,10 +685,15 @@ for name, model in models.items():
     
     pipeline.fit(X_train, y_train)
     y_pred = pipeline.predict(X_test)
+
+    # Inverz transzformáció
+    y_pred_exp = np.expm1(y_pred)
+    y_test_exp = np.expm1(y_test)
     
-    mae = mean_absolute_error(y_test, y_pred)
-    rmse = np.sqrt(mean_squared_error(y_test, y_pred))
-    r2 = r2_score(y_test, y_pred)
+    # Értékelés
+    mae = mean_absolute_error(y_test_exp, y_pred_exp)
+    rmse = np.sqrt(mean_squared_error(y_test_exp, y_pred_exp))
+    r2 = r2_score(y_test_exp, y_pred_exp)
     
     results.append({
         "Model": name,
