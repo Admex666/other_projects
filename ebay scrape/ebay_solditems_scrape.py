@@ -44,17 +44,17 @@ else:
     # load
     df_big5_filter = pd.read_excel(path_big5)
 
-path_tm = folder+'transfermarkt.csv'
+path_tm = folder+'transfermarkt.xlsx'
 if 'df_tm' in locals():
     pass
 else:
-    df_tm = pd.read_csv(path_tm)
+    df_tm = pd.read_excel(path_tm)
 
-path_tcdb = folder+'df_tcdb.csv'
+path_tcdb = folder+'df_tcdb.xlsx'
 if 'df_tcdb' in locals():
     pass
 else:
-    df_tcdb = pd.read_csv(path_tcdb)
+    df_tcdb = pd.read_excel(path_tcdb)
 
 path_rookiecards = folder+'rookie_cards_df.csv'
 if 'rookie_cards_df' in locals():
@@ -285,10 +285,10 @@ for i, row in df_tm[pd.notna(df_tm.url_tm)].iterrows():
         print('')
         df_tm.loc[i,['MV', 'update']] = mv, last_upd
 
-df_tm.to_csv(path_tm, index=False)
+df_tm.to_excel(path_tm, index=False)
 
 #%% execute tcdb: Find player profile site
-df_tcdb_slice = df_tcdb[12:20].copy()
+df_tcdb_slice = df_tcdb[20:30].copy()
 for i in df_tcdb_slice.index:
     player_name = df_tcdb_slice.loc[i, 'player_fbref']
     print(player_name)
@@ -480,6 +480,7 @@ def fetch_sold_items(searchterm, pages_nr=1):
 #%% ebay: find sold items
 for i in df_tcdb_slice.index:
     player_name = df_tcdb_slice.loc[i, 'player_fbref']
+    player_name_short = player_name.split(' ')[-1]
     print(f'Player: {player_name}')
     tcdb_id = df_tcdb.loc[i, 'tcdb_id']
     rookie_cards_df_player = rookie_cards_df[rookie_cards_df.tcdb_id == tcdb_id].copy()
@@ -498,7 +499,7 @@ for i in df_tcdb_slice.index:
         if len(df_ebay_player) != 0:
             df_ebay_player.drop_duplicates(subset='title')
             df_ebay_player.dropna(subset='title', inplace=True)
-            df_ebay_player = df_ebay_player[df_ebay_player['title'].str.contains(player_name)]
+            df_ebay_player = df_ebay_player[df_ebay_player['title'].str.contains(player_name_short)]
             df_ebay_player = df_ebay_player[df_ebay_player['title'].str.contains(first_tcdb_season)]
             df_ebay_player['tcdb_id'] = tcdb_id
         
@@ -612,14 +613,14 @@ print(df_ebay.match_score.describe())
 df_ebay.drop_duplicates(subset=['title', 'solddate', 'seller_name', 'soldprice'], inplace=True)
 df_ebay.to_csv(path_ebay, index=False)
 
-#%% Build machine learning model
+#%% Build machine learning model: Price Prediction
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
-# Modellek
+# Models
 from sklearn.linear_model import Ridge
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from sklearn.neural_network import MLPRegressor
@@ -632,29 +633,55 @@ df = pd.merge(df, df_big5_filter, left_on='player_fbref', right_on='Player', suf
 df = pd.merge(df, df_tm, on='tcdb_id', suffixes=('', '_replace'))
 df.drop(columns=[col for col in df.columns if '_replace' in col], inplace=True)
 
+df = df[(df['soldprice_fact'] > 0) & (df['soldprice_fact'] < 100)]
+
 # 2. Feature engineering
 df['SN'] = pd.to_numeric(df['SN'], errors='coerce').fillna(10000)
+def categorize_rarity(value):
+    if value > 200:
+        return 'Common'
+    elif 200 >= value > 15:
+        return 'Rare'
+    elif 15 >= value > 0:
+        return 'Legendary'
+    else:
+        return 'Unknown'
+df['SN_cat'] = df['SN'].apply(categorize_rarity)
+
 df['auto'] = df['auto'].map({True: 1, False: 0})
 df['memo'] = df['memo'].map({True: 1, False: 0})
 df['solddate_dt'] = pd.to_datetime(df['solddate_dt'], format='mixed')
 df['sold_year'] = df['solddate_dt'].dt.year
 df['sold_month'] = df['solddate_dt'].dt.month
 df['seller_sales'] = df['seller_sales'].apply(lambda x: np.log1p(x))
+df['MV/SN'] = df.MV / df.SN
+
+
 y = np.log1p(df['soldprice_fact'].astype(float))
 
 stats = [col for col in df_big5_filter.columns if df_big5_filter[col].dtype == 'float64'][:-3]
 
-features = [
-    'Age_float', 'Comp',
-    'SN', 'auto', 'memo',
-    'seller_sales', 'seller_rating',
-    'sold_year', 'sold_month', 'manufacturer',
-    'MV'
-] + stats
-X = df[features]
+which_feature = 'most_important'
+if which_feature == 'all':
+    features = [
+        'Age_float', 'Comp',
+        'SN', 'auto', 'memo',
+        'seller_sales', 'seller_rating',
+        'sold_year', 'sold_month', 'manufacturer',
+        'MV', 'MV/SN'
+    ] + stats
 
-cat_features = ['manufacturer', 'Comp']
-num_features = [col for col in features if col not in cat_features]
+    cat_features = ['manufacturer', 'Comp']
+    num_features = [col for col in features if col not in cat_features]
+    
+elif which_feature == 'most_important':
+    features = ['seller_sales', 'seller_rating', 'SN', 'auto', 'sold_month', 
+                'Per 90 Minutes_Ast', 'Expected_npxG+xAG', 'Expected_xAG', 
+                'MV', 'MV/SN', 'manufacturer']
+    cat_features = ['manufacturer']
+    num_features = [col for col in features if col not in cat_features]
+
+X = df[features]
 
 # 3. Preprocessing
 preprocessor = ColumnTransformer([
@@ -663,10 +690,20 @@ preprocessor = ColumnTransformer([
 ])
 
 # 4. Modellek definiálása
-state = 1
+state = 2
+
+best_rf = RandomForestRegressor(
+    n_estimators=200,
+    max_depth=10,
+    max_features='sqrt',
+    min_samples_split=2,
+    min_samples_leaf=1,
+    random_state=state
+)
+
 models = {
     "Ridge": Ridge(alpha=1.0),
-    "Random Forest": RandomForestRegressor(n_estimators=100, random_state=state),
+    "Random Forest": best_rf,
     "Gradient Boosting": GradientBoostingRegressor(n_estimators=100, random_state=state),
     "Neural Net": MLPRegressor(hidden_layer_sizes=(200, 100, 50), max_iter=1000, learning_rate_init=0.0005, random_state=state)
 }
@@ -706,7 +743,53 @@ for name, model in models.items():
 results_df = pd.DataFrame(results).sort_values("RMSE")
 print(results_df)
 
-#%%
+#%% Pred vs Actual plot
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+sns.scatterplot(x=y_test_exp, y=y_pred_exp)
+plt.xscale('log')
+plt.yscale('log')
+plt.xlabel("Actual Price")
+plt.ylabel("Predicted Price")
+plt.title("Predicted vs Actual (Log scale)")
+plt.plot([y_test_exp.min(), y_test_exp.max()], [y_test_exp.min(), y_test_exp.max()], 'r--')
+plt.show()
+
+#%% Error histogram
+errors = y_test_exp - y_pred_exp
+plt.hist(errors, bins=50)
+plt.xlabel("Prediction Error")
+plt.title("Prediction Error Distribution")
+plt.show()
+
+#%% SHAP
+import shap
+
+# Preprocessing pipeline külön: előfeldolgozott adat kell
+X_transformed = preprocessor.fit_transform(X_train)
+model = models["Random Forest"]
+model.fit(X_transformed, y_train)
+
+# SHAP TreeExplainer csak tree alapú modellekhez
+explainer = shap.Explainer(model)
+shap_values = explainer(X_transformed)
+
+# 1. Globális fontosság - Summary plot
+shap.summary_plot(shap_values, X_transformed, feature_names=features)
+
+#%% Crossval
+from sklearn.model_selection import cross_val_score
+
+for name, model in models.items():
+    pipeline = Pipeline([
+        ('preprocessor', preprocessor),
+        ('regressor', model)
+    ])
+    scores = cross_val_score(pipeline, X, y, cv=5, scoring='r2')
+    print(f"{name}: R2 mean={scores.mean():.4f}, std={scores.std():.4f}")
+
+#%% Feature importance
 import matplotlib.pyplot as plt
 
 # Kiválasztott modell: pl. Random Forest
@@ -726,10 +809,224 @@ feature_names = num_features + list(cat_feature_names)
 importances = pipeline.named_steps['regressor'].feature_importances_
 
 # Top 20 fontos változó
-indices = np.argsort(importances)[::-1][:20]
+indices = np.argsort(importances)[::-1][:5]
 plt.figure(figsize=(10, 6))
-plt.title(f"{model_name} - Top 20 Feature Importance")
+plt.title(f"{model_name} - Top 5 Feature Importance")
 plt.barh(np.array(feature_names)[indices][::-1], importances[indices][::-1])
 plt.xlabel("Importance")
 plt.tight_layout()
 plt.show()
+
+#%% Hyperparam tuning
+from sklearn.model_selection import GridSearchCV
+
+# Pipeline újra definiálása
+pipeline = Pipeline([
+    ('preprocessor', preprocessor),
+    ('regressor', RandomForestRegressor(random_state=state))
+])
+
+# Paraméterrács
+param_grid = {
+    'regressor__n_estimators': [100, 200, 300],
+    'regressor__max_depth': [None, 10, 20],
+    'regressor__min_samples_split': [2, 5],
+    'regressor__min_samples_leaf': [1, 2],
+    'regressor__max_features': ['sqrt', 'log2']
+}
+
+# Grid search
+grid_search = GridSearchCV(
+    pipeline,
+    param_grid,
+    cv=5,
+    scoring='neg_mean_squared_error',
+    n_jobs=-1,  # párhuzamosítás, ha van több magod
+    verbose=2
+)
+
+# Illesztés
+grid_search.fit(X_train, y_train)
+
+# Legjobb modell
+best_model = grid_search.best_estimator_
+
+# Predikció
+y_pred = best_model.predict(X_test)
+y_pred_exp = np.expm1(y_pred)
+y_test_exp = np.expm1(y_test)
+
+# Kiértékelés
+mae = mean_absolute_error(y_test_exp, y_pred_exp)
+rmse = np.sqrt(mean_squared_error(y_test_exp, y_pred_exp))
+r2 = r2_score(y_test_exp, y_pred_exp)
+
+print(f"Best Params: {grid_search.best_params_}")
+print(f"MAE: {mae:.2f}, RMSE: {rmse:.2f}, R2: {r2:.3f}")
+
+
+#%% ML model: Price to increase or not
+import pandas as pd
+
+df['player_sncat'] = df[['player_fbref', 'SN_cat']].astype(str).agg('|'.join, axis=1)
+df['solddate_dt'] = pd.to_datetime(df['solddate_dt'])
+df = df.sort_values(['player_sncat', 'solddate_dt'])
+
+from tqdm import tqdm
+
+# Feltételezzük, hogy minden sor egy konkrét eladás
+future_avg_prices = []
+
+# Ciklus minden sorra
+for idx, row in tqdm(df.iterrows(), total=len(df)):
+    player = row['player_sncat']
+    curr_date = row['solddate_dt']
+    
+    # Szűrés: ugyanazon játékos eladásai 0-90 nappal később
+    future_sales = df[
+        (df['player_sncat'] == player) &
+        (df['solddate_dt'] > curr_date) &
+        (df['solddate_dt'] <= curr_date + pd.Timedelta(days=90))
+    ]
+    
+    # Átlagos jövőbeli ár
+    if not future_sales.empty:
+        avg_price = future_sales['soldprice_fact'].mean()
+    else:
+        avg_price = None
+    
+    future_avg_prices.append(avg_price)
+
+df['future_avg_price_3m'] = future_avg_prices
+
+# Label: emelkedett az ár?
+df['price_increase'] = (
+    df['future_avg_price_3m'] > df['soldprice_fact']
+).astype(int)
+
+print(df.groupby('price_increase').price_increase.count())
+
+features = [
+    'SN', 'MV',
+    'Performance_Gls', 'Performance_Ast', 'Expected_xG', 'Expected_xAG',
+    'Per 90 Minutes_Gls', 'Per 90 Minutes_xG', 
+    'manufacturer', 'Pos', 'Age_float'
+]
+
+print(df[['soldprice_fact', 'future_avg_price_3m']].corr())
+
+#%% MLclass fitting
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
+
+# Szétválasztás
+X = df[features]
+y = df['price_increase']
+
+
+# Előfeldolgozás
+categorical = ['manufacturer', 'Pos']
+numerical = list(set(features) - set(categorical))
+
+preprocessor = ColumnTransformer(transformers=[
+    ('num', 'passthrough', numerical),
+    ('cat', OneHotEncoder(handle_unknown='ignore'), categorical)
+])
+
+# Modell pipeline
+clf = Pipeline(steps=[
+    ('preprocessor', preprocessor),
+    ('classifier', RandomForestClassifier(n_estimators=227, max_depth=10,
+                                          max_features='log2', min_samples_leaf=4,
+                                          min_samples_split=2, random_state=1, 
+                                          class_weight='balanced'))
+])
+
+# Train-test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=42)
+
+# Tanítás
+clf.fit(X_train, y_train)
+
+#%% MLclass matrix, report
+from sklearn.metrics import classification_report, confusion_matrix
+
+y_pred = clf.predict(X_test)
+print(classification_report(y_test, y_pred))
+print(confusion_matrix(y_test, y_pred))
+
+#%% MLclass feature importance
+import numpy as np
+import matplotlib.pyplot as plt
+
+# 1. Modell és preprocessor kiszedése a pipeline-ból
+model = clf.named_steps['classifier']
+preprocessor = clf.named_steps['preprocessor']
+
+# 2. Kódolt feature nevek (numerikus + OHE kategóriák)
+num_features = preprocessor.transformers_[0][2]  # 'num' rész
+cat_features = preprocessor.transformers_[1][1].get_feature_names_out(preprocessor.transformers_[1][2])  # 'cat' rész
+
+# 3. Összefűzés
+all_features = np.concatenate([num_features, cat_features])
+
+# 4. Importance sorrendben
+importances = model.feature_importances_
+indices = np.argsort(importances)[::-1]
+
+# 5. Kiíratás vagy ábra
+for i in range(10):  # top 10
+    print(f"{i+1}. {all_features[indices[i]]}: {importances[indices[i]]:.4f}")
+
+# 6. Opcionálisan ábra
+plt.figure(figsize=(10, 6))
+plt.title("Top 10 Feature Importances")
+plt.bar(range(10), importances[indices[:10]])
+plt.xticks(range(10), all_features[indices[:10]], rotation=45, ha='right')
+plt.tight_layout()
+plt.show()
+
+#%% MLclass tuning
+from sklearn.model_selection import RandomizedSearchCV
+from scipy.stats import randint
+
+# Paraméterrács
+param_dist = {
+    'classifier__n_estimators': randint(100, 500),
+    'classifier__max_depth': [None, 5, 10, 20, 30],
+    'classifier__min_samples_split': randint(2, 10),
+    'classifier__min_samples_leaf': randint(1, 10),
+    'classifier__max_features': ['auto', 'sqrt', 'log2'],
+    'classifier__bootstrap': [True, False]
+}
+
+# RandomSearch setup
+random_search = RandomizedSearchCV(
+    clf,                # pipeline
+    param_distributions=param_dist,
+    n_iter=50,          # próbálkozások száma
+    cv=5,               # 5-fold cross-validation
+    scoring='f1',       # vagy: 'accuracy', 'roc_auc', stb.
+    verbose=2,
+    random_state=42,
+    n_jobs=-1           # párhuzamos futtatás
+)
+
+# Fit
+random_search.fit(X_train, y_train)
+
+print("Best parameters:", random_search.best_params_)
+print("Best CV score:", random_search.best_score_)
+
+# A legjobb modellt elmented
+best_model = random_search.best_estimator_
+
+# Teszten megnézed a teljesítményét
+from sklearn.metrics import classification_report, confusion_matrix
+
+y_pred_best = best_model.predict(X_test)
+print(classification_report(y_test, y_pred_best))
+print(confusion_matrix(y_test, y_pred_best))

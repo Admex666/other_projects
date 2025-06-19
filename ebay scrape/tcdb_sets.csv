@@ -786,16 +786,16 @@ set_id,set_name,url,year,manufacturer,parallel,set_short,base_set
 424143,2023-24 Score Ligue 1,https://www.tcdb.com/Checklist.cfm/sid/424143/2023-24-Score-Ligue-1---Swirl,2023-24,Score,Swirl,2023-24  Ligue 1,False
 424153,2023-24 Score Ligue 1,https://www.tcdb.com/Checklist.cfm/sid/424153/2023-24-Score-Ligue-1---Teal-Swirl,2023-24,Score,Teal Swirl,2023-24  Ligue 1,False
 387869,2023-24 Panini Adrenalyn XL Ligue 1,https://www.tcdb.com/ViewSet.cfm/sid/387869/2023-24-Panini-Adrenalyn-XL-Ligue-1,2023-24,Panini,Base,2023-24  Adrenalyn XL Ligue 1,True
-490061,2023-24 Topps Bundesliga 60 Years Celebration,,2023-24,,,,False
-479611,2023-24 Topps Bundesliga 60 Years Celebration,,2023-24,,,,False
-479612,2023-24 Topps Bundesliga 60 Years Celebration,,2023-24,,,,False
-480628,2023-24 Topps Bundesliga 60 Years Celebration,,2023-24,,,,False
-480624,2023-24 Topps Bundesliga 60 Years Celebration,,2023-24,,,,False
-480630,2023-24 Topps Bundesliga 60 Years Celebration,,2023-24,,,,False
-480625,2023-24 Topps Bundesliga 60 Years Celebration,,2023-24,,,,False
-480626,2023-24 Topps Bundesliga 60 Years Celebration,,2023-24,,,,False
-480627,2023-24 Topps Bundesliga 60 Years Celebration,,2023-24,,,,False
-480629,2023-24 Topps Bundesliga 60 Years Celebration,,2023-24,,,,False
+490061,2023-24 Topps Bundesliga 60 Years Celebration,https://www.tcdb.com/Checklist.cfm/sid/490061/2023-24-Topps-Bundesliga-60-Years-Celebration---DFL-Autograph-Relic-Red-Diamond,2023-24,Topps,DFL Autograph Relic Red Diamond,2023-24  Bundesliga 60 Years Celebration,False
+479611,2023-24 Topps Bundesliga 60 Years Celebration,https://www.tcdb.com/Checklist.cfm/sid/479611/2023-24-Topps-Bundesliga-60-Years-Celebration---DFL-Autograph-Relics,2023-24,Topps,DFL Autograph Relics,2023-24  Bundesliga 60 Years Celebration,False
+479612,2023-24 Topps Bundesliga 60 Years Celebration,https://www.tcdb.com/Checklist.cfm/sid/479612/2023-24-Topps-Bundesliga-60-Years-Celebration---Relics,2023-24,Topps,Relics,2023-24  Bundesliga 60 Years Celebration,False
+480628,2023-24 Topps Bundesliga 60 Years Celebration,https://www.tcdb.com/Checklist.cfm/sid/480628/2023-24-Topps-Bundesliga-60-Years-Celebration---Relics-Black,2023-24,Topps,Relics Black,2023-24  Bundesliga 60 Years Celebration,False
+480624,2023-24 Topps Bundesliga 60 Years Celebration,https://www.tcdb.com/Checklist.cfm/sid/480624/2023-24-Topps-Bundesliga-60-Years-Celebration---Relics-Bundesliga-60-Years,2023-24,Topps,Relics Bundesliga 60 Years,2023-24  Bundesliga 60 Years Celebration,False
+480630,2023-24 Topps Bundesliga 60 Years Celebration,https://www.tcdb.com/Checklist.cfm/sid/480630/2023-24-Topps-Bundesliga-60-Years-Celebration---Relics-Bundesliga-Red-Diamond,2023-24,Topps,Relics Bundesliga Red Diamond,2023-24  Bundesliga 60 Years Celebration,False
+480625,2023-24 Topps Bundesliga 60 Years Celebration,https://www.tcdb.com/Checklist.cfm/sid/480625/2023-24-Topps-Bundesliga-60-Years-Celebration---Relics-Gold,2023-24,Topps,Relics Gold,2023-24  Bundesliga 60 Years Celebration,False
+480626,2023-24 Topps Bundesliga 60 Years Celebration,https://www.tcdb.com/Checklist.cfm/sid/480626/2023-24-Topps-Bundesliga-60-Years-Celebration---Relics-Green,2023-24,Topps,Relics Green,2023-24  Bundesliga 60 Years Celebration,False
+480627,2023-24 Topps Bundesliga 60 Years Celebration,https://www.tcdb.com/Checklist.cfm/sid/480627/2023-24-Topps-Bundesliga-60-Years-Celebration---Relics-Orange,2023-24,Topps,Relics Orange,2023-24  Bundesliga 60 Years Celebration,False
+480629,2023-24 Topps Bundesliga 60 Years Celebration,https://www.tcdb.com/Checklist.cfm/sid/480629/2023-24-Topps-Bundesliga-60-Years-Celebration---Relics-Red,2023-24,Topps,Relics Red,2023-24  Bundesliga 60 Years Celebration,False
 468993,2023-24 Topps Bundesliga Jade Edition,https://www.tcdb.com/ViewSet.cfm/sid/468993/2023-24-Topps-Bundesliga-Jade-Edition,2023-24,Topps,Base,2023-24  Bundesliga Jade Edition,True
 480495,2023-24 Topps Bundesliga Jade Edition,https://www.tcdb.com/Checklist.cfm/sid/480495/2023-24-Topps-Bundesliga-Jade-Edition---Autographs,2023-24,Topps,Autographs,2023-24  Bundesliga Jade Edition,False
 480498,2023-24 Topps Bundesliga Jade Edition,https://www.tcdb.com/Checklist.cfm/sid/480498/2023-24-Topps-Bundesliga-Jade-Edition---Autographs-Imperial-Jade,2023-24,Topps,Autographs Imperial Jade,2023-24  Bundesliga Jade Edition,False
@@ -1586,3 +1586,925 @@ set_id,set_name,url,year,manufacturer,parallel,set_short,base_set
 469909,2022-23 Topps Finest Flashbacks UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/469909/2022-23-Topps-Finest-Flashbacks-UEFA-Club-Competitions---SuperFractor,2022-23,Topps,SuperFractor,Finest Flashbacks UEFA Club Competitions,False
 366312,2022-23 Topps UEFA Club Competitions,,2022-23,,,,False
 362463,2022-23 Topps UEFA Club Competitions 1st Edition,,2022-23,,,,False
+466104,2023-24 Topps Bundesliga 60 Years Celebration,https://www.tcdb.com/ViewSet.cfm/sid/466104/2023-24-Topps-Bundesliga-60-Years-Celebration,2023-24,Topps,Base,2023-24  Bundesliga 60 Years Celebration,True
+479609,2023-24 Topps Bundesliga 60 Years Celebration,https://www.tcdb.com/Checklist.cfm/sid/479609/2023-24-Topps-Bundesliga-60-Years-Celebration---Autographs,2023-24,Topps,Autographs,2023-24  Bundesliga 60 Years Celebration,False
+480240,2023-24 Topps Bundesliga 60 Years Celebration,https://www.tcdb.com/Checklist.cfm/sid/480240/2023-24-Topps-Bundesliga-60-Years-Celebration---Autographs-Black,2023-24,Topps,Autographs Black,2023-24  Bundesliga 60 Years Celebration,False
+480236,2023-24 Topps Bundesliga 60 Years Celebration,https://www.tcdb.com/Checklist.cfm/sid/480236/2023-24-Topps-Bundesliga-60-Years-Celebration---Autographs-Bundesliga-60-Years,2023-24,Topps,Autographs Bundesliga 60 Years,2023-24  Bundesliga 60 Years Celebration,False
+480242,2023-24 Topps Bundesliga 60 Years Celebration,https://www.tcdb.com/Checklist.cfm/sid/480242/2023-24-Topps-Bundesliga-60-Years-Celebration---Autographs-Bundesliga-Red-Diamond,2023-24,Topps,Autographs Bundesliga Red Diamond,2023-24  Bundesliga 60 Years Celebration,False
+480237,2023-24 Topps Bundesliga 60 Years Celebration,https://www.tcdb.com/Checklist.cfm/sid/480237/2023-24-Topps-Bundesliga-60-Years-Celebration---Autographs-Gold,2023-24,Topps,Autographs Gold,2023-24  Bundesliga 60 Years Celebration,False
+480238,2023-24 Topps Bundesliga 60 Years Celebration,https://www.tcdb.com/Checklist.cfm/sid/480238/2023-24-Topps-Bundesliga-60-Years-Celebration---Autographs-Green,2023-24,Topps,Autographs Green,2023-24  Bundesliga 60 Years Celebration,False
+480239,2023-24 Topps Bundesliga 60 Years Celebration,https://www.tcdb.com/Checklist.cfm/sid/480239/2023-24-Topps-Bundesliga-60-Years-Celebration---Autographs-Orange,2023-24,Topps,Autographs Orange,2023-24  Bundesliga 60 Years Celebration,False
+480241,2023-24 Topps Bundesliga 60 Years Celebration,https://www.tcdb.com/Checklist.cfm/sid/480241/2023-24-Topps-Bundesliga-60-Years-Celebration---Autographs-Red,2023-24,Topps,Autographs Red,2023-24  Bundesliga 60 Years Celebration,False
+467606,2023-24 Topps Bundesliga 60 Years Celebration,https://www.tcdb.com/Checklist.cfm/sid/467606/2023-24-Topps-Bundesliga-60-Years-Celebration---Heroes-of-Today,2023-24,Topps,Heroes of Today,2023-24  Bundesliga 60 Years Celebration,False
+479596,2023-24 Topps Bundesliga 60 Years Celebration,https://www.tcdb.com/Checklist.cfm/sid/479596/2023-24-Topps-Bundesliga-60-Years-Celebration---Heroes-of-Today-Autographs,2023-24,Topps,Heroes of Today Autographs,2023-24  Bundesliga 60 Years Celebration,False
+479599,2023-24 Topps Bundesliga 60 Years Celebration,https://www.tcdb.com/Checklist.cfm/sid/479599/2023-24-Topps-Bundesliga-60-Years-Celebration---Heroes-of-Today-Autographs-Bundesliga-Red-Diamond,2023-24,Topps,Heroes of Today Autographs Bundesliga Red Diamond,2023-24  Bundesliga 60 Years Celebration,False
+479597,2023-24 Topps Bundesliga 60 Years Celebration,https://www.tcdb.com/Checklist.cfm/sid/479597/2023-24-Topps-Bundesliga-60-Years-Celebration---Heroes-of-Today-Autographs-Orange,2023-24,Topps,Heroes of Today Autographs Orange,2023-24  Bundesliga 60 Years Celebration,False
+479598,2023-24 Topps Bundesliga 60 Years Celebration,https://www.tcdb.com/Checklist.cfm/sid/479598/2023-24-Topps-Bundesliga-60-Years-Celebration---Heroes-of-Today-Autographs-Red,2023-24,Topps,Heroes of Today Autographs Red,2023-24  Bundesliga 60 Years Celebration,False
+479578,2023-24 Topps Bundesliga 60 Years Celebration,https://www.tcdb.com/Checklist.cfm/sid/479578/2023-24-Topps-Bundesliga-60-Years-Celebration---Heroes-of-Today-Black,2023-24,Topps,Heroes of Today Black,2023-24  Bundesliga 60 Years Celebration,False
+479575,2023-24 Topps Bundesliga 60 Years Celebration,https://www.tcdb.com/Checklist.cfm/sid/479575/2023-24-Topps-Bundesliga-60-Years-Celebration---Heroes-of-Today-Bundesliga-60-Years,2023-24,Topps,Heroes of Today Bundesliga 60 Years,2023-24  Bundesliga 60 Years Celebration,False
+479579,2023-24 Topps Bundesliga 60 Years Celebration,https://www.tcdb.com/Checklist.cfm/sid/479579/2023-24-Topps-Bundesliga-60-Years-Celebration---Heroes-of-Today-Bundesliga-Red-Diamond,2023-24,Topps,Heroes of Today Bundesliga Red Diamond,2023-24  Bundesliga 60 Years Celebration,False
+479576,2023-24 Topps Bundesliga 60 Years Celebration,https://www.tcdb.com/Checklist.cfm/sid/479576/2023-24-Topps-Bundesliga-60-Years-Celebration---Heroes-of-Today-Orange,2023-24,Topps,Heroes of Today Orange,2023-24  Bundesliga 60 Years Celebration,False
+479577,2023-24 Topps Bundesliga 60 Years Celebration,https://www.tcdb.com/Checklist.cfm/sid/479577/2023-24-Topps-Bundesliga-60-Years-Celebration---Heroes-of-Today-Red,2023-24,Topps,Heroes of Today Red,2023-24  Bundesliga 60 Years Celebration,False
+469267,2023-24 Topps Bundesliga Stars of the Season,https://www.tcdb.com/ViewSet.cfm/sid/469267/2023-24-Topps-Bundesliga-Stars-of-the-Season,2023-24,Topps,Base,2023-24  Bundesliga Stars of the Season,True
+476744,2023-24 Topps Bundesliga Stars of the Season,https://www.tcdb.com/Checklist.cfm/sid/476744/2023-24-Topps-Bundesliga-Stars-of-the-Season---Autographs,2023-24,Topps,Autographs,2023-24  Bundesliga Stars of the Season,False
+478110,2023-24 Topps Bundesliga Stars of the Season,https://www.tcdb.com/Checklist.cfm/sid/478110/2023-24-Topps-Bundesliga-Stars-of-the-Season---Green,2023-24,Topps,Green,2023-24  Bundesliga Stars of the Season,False
+478075,2023-24 Topps Bundesliga Stars of the Season,https://www.tcdb.com/Checklist.cfm/sid/478075/2023-24-Topps-Bundesliga-Stars-of-the-Season---Purple,2023-24,Topps,Purple,2023-24  Bundesliga Stars of the Season,False
+519482,2023-24 Topps Bundesliga Stars of the Season,https://www.tcdb.com/Checklist.cfm/sid/519482/2023-24-Topps-Bundesliga-Stars-of-the-Season---Rainbow,2023-24,Topps,Rainbow,2023-24  Bundesliga Stars of the Season,False
+473777,2023-24 Topps Midnight Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/473777/2023-24-Topps-Midnight-Bundesliga---Autograph-Relic-Cards,2023-24,Topps,Autograph Relic Cards,2023-24  Midnight Bundesliga,False
+462543,2023-24 Topps Midnight Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/462543/2023-24-Topps-Midnight-Bundesliga---Autograph-Relic-Cards-Black-Light,2023-24,Topps,Autograph Relic Cards Black Light,2023-24  Midnight Bundesliga,False
+462542,2023-24 Topps Midnight Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/462542/2023-24-Topps-Midnight-Bundesliga---Autograph-Relic-Cards-Daybreak,2023-24,Topps,Autograph Relic Cards Daybreak,2023-24  Midnight Bundesliga,False
+462541,2023-24 Topps Midnight Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/462541/2023-24-Topps-Midnight-Bundesliga---Autograph-Relic-Cards-Midnight,2023-24,Topps,Autograph Relic Cards Midnight,2023-24  Midnight Bundesliga,False
+462539,2023-24 Topps Midnight Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/462539/2023-24-Topps-Midnight-Bundesliga---Autograph-Relic-Cards-Moon-Beam,2023-24,Topps,Autograph Relic Cards Moon Beam,2023-24  Midnight Bundesliga,False
+462540,2023-24 Topps Midnight Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/462540/2023-24-Topps-Midnight-Bundesliga---Autograph-Relic-Cards-Moonrise,2023-24,Topps,Autograph Relic Cards Moonrise,2023-24  Midnight Bundesliga,False
+462469,2023-24 Topps Midnight Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/462469/2023-24-Topps-Midnight-Bundesliga---Constellations,2023-24,Topps,Constellations,2023-24  Midnight Bundesliga,False
+462515,2023-24 Topps Midnight Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/462515/2023-24-Topps-Midnight-Bundesliga---Constellations-Black-Light,2023-24,Topps,Constellations Black Light,2023-24  Midnight Bundesliga,False
+462514,2023-24 Topps Midnight Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/462514/2023-24-Topps-Midnight-Bundesliga---Constellations-Daybreak,2023-24,Topps,Constellations Daybreak,2023-24  Midnight Bundesliga,False
+462513,2023-24 Topps Midnight Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/462513/2023-24-Topps-Midnight-Bundesliga---Constellations-Midnight,2023-24,Topps,Constellations Midnight,2023-24  Midnight Bundesliga,False
+462511,2023-24 Topps Midnight Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/462511/2023-24-Topps-Midnight-Bundesliga---Constellations-Moon-Beam,2023-24,Topps,Constellations Moon Beam,2023-24  Midnight Bundesliga,False
+462512,2023-24 Topps Midnight Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/462512/2023-24-Topps-Midnight-Bundesliga---Constellations-Moonrise,2023-24,Topps,Constellations Moonrise,2023-24  Midnight Bundesliga,False
+462486,2023-24 Topps Midnight Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/462486/2023-24-Topps-Midnight-Bundesliga---Relic-Autographs,2023-24,Topps,Relic Autographs,2023-24  Midnight Bundesliga,False
+381674,2023-24 Topps Now Bundesliga English,https://www.tcdb.com/ViewSet.cfm/sid/381674/2023-24-Topps-Now-Bundesliga-English,2023-24,Topps,Base,2023-24  Now Bundesliga English,True
+381675,2023-24 Topps Now Bundesliga German,https://www.tcdb.com/ViewSet.cfm/sid/381675/2023-24-Topps-Now-Bundesliga-German,2023-24,Topps,Base,2023-24  Now Bundesliga German,True
+504013,2023-24 Topps Platinum Bundesliga Lothar Matthäus Curated,https://www.tcdb.com/ViewSet.cfm/sid/504013/2023-24-Topps-Platinum-Bundesliga-Lothar-Matth%C3%A4us-Curated,2023-24,Topps,Base,2023-24  Platinum Bundesliga Lothar Matthäus Curated,True
+504027,2023-24 Topps Platinum Bundesliga Lothar Matthäus Curated,https://www.tcdb.com/Checklist.cfm/sid/504027/2023-24-Topps-Platinum-Bundesliga-Lothar-Matth%C3%A4us-Curated---Autographs,2023-24,Topps,Autographs,2023-24  Platinum Bundesliga Lothar Matthäus Curated,False
+504029,2023-24 Topps Platinum Bundesliga Lothar Matthäus Curated,https://www.tcdb.com/Checklist.cfm/sid/504029/2023-24-Topps-Platinum-Bundesliga-Lothar-Matth%C3%A4us-Curated---Autographs-Blue,2023-24,Topps,Autographs Blue,2023-24  Platinum Bundesliga Lothar Matthäus Curated,False
+504034,2023-24 Topps Platinum Bundesliga Lothar Matthäus Curated,https://www.tcdb.com/Checklist.cfm/sid/504034/2023-24-Topps-Platinum-Bundesliga-Lothar-Matth%C3%A4us-Curated---Autographs-Gold,2023-24,Topps,Autographs Gold,2023-24  Platinum Bundesliga Lothar Matthäus Curated,False
+504030,2023-24 Topps Platinum Bundesliga Lothar Matthäus Curated,https://www.tcdb.com/Checklist.cfm/sid/504030/2023-24-Topps-Platinum-Bundesliga-Lothar-Matth%C3%A4us-Curated---Autographs-Green,2023-24,Topps,Autographs Green,2023-24  Platinum Bundesliga Lothar Matthäus Curated,False
+504031,2023-24 Topps Platinum Bundesliga Lothar Matthäus Curated,https://www.tcdb.com/Checklist.cfm/sid/504031/2023-24-Topps-Platinum-Bundesliga-Lothar-Matth%C3%A4us-Curated---Autographs-Purple,2023-24,Topps,Autographs Purple,2023-24  Platinum Bundesliga Lothar Matthäus Curated,False
+504033,2023-24 Topps Platinum Bundesliga Lothar Matthäus Curated,https://www.tcdb.com/Checklist.cfm/sid/504033/2023-24-Topps-Platinum-Bundesliga-Lothar-Matth%C3%A4us-Curated---Autographs-Rainbow,2023-24,Topps,Autographs Rainbow,2023-24  Platinum Bundesliga Lothar Matthäus Curated,False
+504032,2023-24 Topps Platinum Bundesliga Lothar Matthäus Curated,https://www.tcdb.com/Checklist.cfm/sid/504032/2023-24-Topps-Platinum-Bundesliga-Lothar-Matth%C3%A4us-Curated---Autographs-Red,2023-24,Topps,Autographs Red,2023-24  Platinum Bundesliga Lothar Matthäus Curated,False
+504021,2023-24 Topps Platinum Bundesliga Lothar Matthäus Curated,https://www.tcdb.com/Checklist.cfm/sid/504021/2023-24-Topps-Platinum-Bundesliga-Lothar-Matth%C3%A4us-Curated---Blue,2023-24,Topps,Blue,2023-24  Platinum Bundesliga Lothar Matthäus Curated,False
+504026,2023-24 Topps Platinum Bundesliga Lothar Matthäus Curated,https://www.tcdb.com/Checklist.cfm/sid/504026/2023-24-Topps-Platinum-Bundesliga-Lothar-Matth%C3%A4us-Curated---Gold,2023-24,Topps,Gold,2023-24  Platinum Bundesliga Lothar Matthäus Curated,False
+504022,2023-24 Topps Platinum Bundesliga Lothar Matthäus Curated,https://www.tcdb.com/Checklist.cfm/sid/504022/2023-24-Topps-Platinum-Bundesliga-Lothar-Matth%C3%A4us-Curated---Green,2023-24,Topps,Green,2023-24  Platinum Bundesliga Lothar Matthäus Curated,False
+504023,2023-24 Topps Platinum Bundesliga Lothar Matthäus Curated,https://www.tcdb.com/Checklist.cfm/sid/504023/2023-24-Topps-Platinum-Bundesliga-Lothar-Matth%C3%A4us-Curated---Purple,2023-24,Topps,Purple,2023-24  Platinum Bundesliga Lothar Matthäus Curated,False
+504025,2023-24 Topps Platinum Bundesliga Lothar Matthäus Curated,https://www.tcdb.com/Checklist.cfm/sid/504025/2023-24-Topps-Platinum-Bundesliga-Lothar-Matth%C3%A4us-Curated---Rainbow,2023-24,Topps,Rainbow,2023-24  Platinum Bundesliga Lothar Matthäus Curated,False
+504024,2023-24 Topps Platinum Bundesliga Lothar Matthäus Curated,https://www.tcdb.com/Checklist.cfm/sid/504024/2023-24-Topps-Platinum-Bundesliga-Lothar-Matth%C3%A4us-Curated---Red,2023-24,Topps,Red,2023-24  Platinum Bundesliga Lothar Matthäus Curated,False
+453586,2024-25 Panini Adrenalyn XL Calciatori,https://www.tcdb.com/ViewSet.cfm/sid/453586/2024-25-Panini-Adrenalyn-XL-Calciatori,2024-25,Panini,Base,2024-25  Adrenalyn XL Calciatori,True
+478068,2024-25 Panini Calciatori Stickers,https://www.tcdb.com/ViewSet.cfm/sid/478068/2024-25-Panini-Calciatori-Stickers,2024-25,Panini,Base,2024-25  Calciatori Stickers,True
+511359,2024-25 Panini Calciatori Stickers,https://www.tcdb.com/Checklist.cfm/sid/511359/2024-25-Panini-Calciatori-Stickers---Upgrade,2024-25,Panini,Upgrade,2024-25  Calciatori Stickers,False
+428835,2020-21 All Sports (unlicensed),,2020-21,,,,False
+428837,2020-21 All Sports (unlicensed),,2020-21,,,,False
+428838,2020-21 All Sports (unlicensed),,2020-21,,,,False
+428836,2020-21 All Sports (unlicensed),,2020-21,,,,False
+264426,2020-21 Daka Borussia Dortmund,https://www.tcdb.com/ViewSet.cfm/sid/264426/2020-21-Daka-Borussia-Dortmund,2020-21,Unknown,Base,2020-21 Daka Borussia Dortmund,True
+264829,2020-21 Daka Borussia Dortmund,https://www.tcdb.com/Checklist.cfm/sid/264829/2020-21-Daka-Borussia-Dortmund---/1,2020-21,Unknown,/1,2020-21 Daka Borussia Dortmund,False
+264828,2020-21 Daka Borussia Dortmund,https://www.tcdb.com/Checklist.cfm/sid/264828/2020-21-Daka-Borussia-Dortmund---/10,2020-21,Unknown,/10,2020-21 Daka Borussia Dortmund,False
+264827,2020-21 Daka Borussia Dortmund,https://www.tcdb.com/Checklist.cfm/sid/264827/2020-21-Daka-Borussia-Dortmund---/25,2020-21,Unknown,/25,2020-21 Daka Borussia Dortmund,False
+264826,2020-21 Daka Borussia Dortmund,https://www.tcdb.com/Checklist.cfm/sid/264826/2020-21-Daka-Borussia-Dortmund---/99,2020-21,Unknown,/99,2020-21 Daka Borussia Dortmund,False
+264837,2020-21 Daka Borussia Dortmund,https://www.tcdb.com/Checklist.cfm/sid/264837/2020-21-Daka-Borussia-Dortmund---Black-and-Gold-Autographs,2020-21,Unknown,Black and Gold Autographs,2020-21 Daka Borussia Dortmund,False
+264830,2020-21 Daka Borussia Dortmund,https://www.tcdb.com/Checklist.cfm/sid/264830/2020-21-Daka-Borussia-Dortmund---Future-Star,2020-21,Unknown,Future Star,2020-21 Daka Borussia Dortmund,False
+264831,2020-21 Daka Borussia Dortmund,https://www.tcdb.com/Checklist.cfm/sid/264831/2020-21-Daka-Borussia-Dortmund---New-Signings,2020-21,Unknown,New Signings,2020-21 Daka Borussia Dortmund,False
+264832,2020-21 Daka Borussia Dortmund,https://www.tcdb.com/Checklist.cfm/sid/264832/2020-21-Daka-Borussia-Dortmund---Rated-Rookies,2020-21,Unknown,Rated Rookies,2020-21 Daka Borussia Dortmund,False
+263564,2020-21 Finest Bundesliga,https://www.tcdb.com/ViewSet.cfm/sid/263564/2020-21-Finest-Bundesliga,2020-21,Unknown,Base,2020-21 Finest Bundesliga,True
+278207,2020-21 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/278207/2020-21-Finest-Bundesliga---Autographs,2020-21,Unknown,Autographs,2020-21 Finest Bundesliga,False
+278208,2020-21 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/278208/2020-21-Finest-Bundesliga---Autographs-Blue,2020-21,Unknown,Autographs Blue,2020-21 Finest Bundesliga,False
+278209,2020-21 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/278209/2020-21-Finest-Bundesliga---Autographs-Gold,2020-21,Unknown,Autographs Gold,2020-21 Finest Bundesliga,False
+278210,2020-21 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/278210/2020-21-Finest-Bundesliga---Autographs-Green,2020-21,Unknown,Autographs Green,2020-21 Finest Bundesliga,False
+278211,2020-21 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/278211/2020-21-Finest-Bundesliga---Autographs-Green-Wave,2020-21,Unknown,Autographs Green Wave,2020-21 Finest Bundesliga,False
+278212,2020-21 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/278212/2020-21-Finest-Bundesliga---Autographs-Orange,2020-21,Unknown,Autographs Orange,2020-21 Finest Bundesliga,False
+278213,2020-21 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/278213/2020-21-Finest-Bundesliga---Autographs-Orange-Wave,2020-21,Unknown,Autographs Orange Wave,2020-21 Finest Bundesliga,False
+278214,2020-21 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/278214/2020-21-Finest-Bundesliga---Autographs-Red,2020-21,Unknown,Autographs Red,2020-21 Finest Bundesliga,False
+278215,2020-21 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/278215/2020-21-Finest-Bundesliga---Autographs-SuperFractor,2020-21,Unknown,Autographs SuperFractor,2020-21 Finest Bundesliga,False
+278196,2020-21 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/278196/2020-21-Finest-Bundesliga---Blue,2020-21,Unknown,Blue,2020-21 Finest Bundesliga,False
+278197,2020-21 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/278197/2020-21-Finest-Bundesliga---Blue-Wave,2020-21,Unknown,Blue Wave,2020-21 Finest Bundesliga,False
+278234,2020-21 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/278234/2020-21-Finest-Bundesliga---Finest-Young-Talents-Die-Cut,2020-21,Unknown,Finest Young Talents Die Cut,2020-21 Finest Bundesliga,False
+278235,2020-21 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/278235/2020-21-Finest-Bundesliga---Finest-Young-Talents-Die-Cut-Autographs,2020-21,Unknown,Finest Young Talents Die Cut Autographs,2020-21 Finest Bundesliga,False
+278236,2020-21 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/278236/2020-21-Finest-Bundesliga---Finest-Young-Talents-Die-Cut-Gold,2020-21,Unknown,Finest Young Talents Die Cut Gold,2020-21 Finest Bundesliga,False
+278237,2020-21 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/278237/2020-21-Finest-Bundesliga---Finest-Young-Talents-Die-Cut-Red,2020-21,Unknown,Finest Young Talents Die Cut Red,2020-21 Finest Bundesliga,False
+278238,2020-21 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/278238/2020-21-Finest-Bundesliga---Finest-Young-Talents-Die-Cut-SuperFractor,2020-21,Unknown,Finest Young Talents Die Cut SuperFractor,2020-21 Finest Bundesliga,False
+278198,2020-21 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/278198/2020-21-Finest-Bundesliga---Gold,2020-21,Unknown,Gold,2020-21 Finest Bundesliga,False
+278199,2020-21 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/278199/2020-21-Finest-Bundesliga---Green,2020-21,Unknown,Green,2020-21 Finest Bundesliga,False
+278200,2020-21 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/278200/2020-21-Finest-Bundesliga---Green-Wave,2020-21,Unknown,Green Wave,2020-21 Finest Bundesliga,False
+278201,2020-21 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/278201/2020-21-Finest-Bundesliga---Orange,2020-21,Unknown,Orange,2020-21 Finest Bundesliga,False
+278202,2020-21 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/278202/2020-21-Finest-Bundesliga---Purple,2020-21,Unknown,Purple,2020-21 Finest Bundesliga,False
+278203,2020-21 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/278203/2020-21-Finest-Bundesliga---Purple-Wave,2020-21,Unknown,Purple Wave,2020-21 Finest Bundesliga,False
+278204,2020-21 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/278204/2020-21-Finest-Bundesliga---Red,2020-21,Unknown,Red,2020-21 Finest Bundesliga,False
+278205,2020-21 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/278205/2020-21-Finest-Bundesliga---Refractor,2020-21,Unknown,Refractor,2020-21 Finest Bundesliga,False
+278206,2020-21 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/278206/2020-21-Finest-Bundesliga---SuperFractor,2020-21,Unknown,SuperFractor,2020-21 Finest Bundesliga,False
+250101,2020-21 Finest UEFA Champions League,https://www.tcdb.com/ViewSet.cfm/sid/250101/2020-21-Finest-UEFA-Champions-League,2020-21,Unknown,Base,2020-21 Finest UEFA Champions League,True
+274836,2020-21 Finest UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/274836/2020-21-Finest-UEFA-Champions-League---Aqua-Refractor,2020-21,Unknown,Aqua Refractor,2020-21 Finest UEFA Champions League,False
+274852,2020-21 Finest UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/274852/2020-21-Finest-UEFA-Champions-League---Autographs,2020-21,Unknown,Autographs,2020-21 Finest UEFA Champions League,False
+274853,2020-21 Finest UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/274853/2020-21-Finest-UEFA-Champions-League---Autographs-Blue-Refractor,2020-21,Unknown,Autographs Blue Refractor,2020-21 Finest UEFA Champions League,False
+275783,2020-21 Finest UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/275783/2020-21-Finest-UEFA-Champions-League---Autographs-Gold-Refractor,2020-21,Unknown,Autographs Gold Refractor,2020-21 Finest UEFA Champions League,False
+274854,2020-21 Finest UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/274854/2020-21-Finest-UEFA-Champions-League---Autographs-Neon-Green-Refractor,2020-21,Unknown,Autographs Neon Green Refractor,2020-21 Finest UEFA Champions League,False
+274855,2020-21 Finest UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/274855/2020-21-Finest-UEFA-Champions-League---Autographs-Neon-Green-Wave-Refractor,2020-21,Unknown,Autographs Neon Green Wave Refractor,2020-21 Finest UEFA Champions League,False
+274856,2020-21 Finest UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/274856/2020-21-Finest-UEFA-Champions-League---Autographs-Orange-Refractor,2020-21,Unknown,Autographs Orange Refractor,2020-21 Finest UEFA Champions League,False
+274857,2020-21 Finest UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/274857/2020-21-Finest-UEFA-Champions-League---Autographs-Orange-Wave-Refractor,2020-21,Unknown,Autographs Orange Wave Refractor,2020-21 Finest UEFA Champions League,False
+274858,2020-21 Finest UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/274858/2020-21-Finest-UEFA-Champions-League---Autographs-Red-Refractor,2020-21,Unknown,Autographs Red Refractor,2020-21 Finest UEFA Champions League,False
+274859,2020-21 Finest UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/274859/2020-21-Finest-UEFA-Champions-League---Autographs-Red-Wave-Refractor,2020-21,Unknown,Autographs Red Wave Refractor,2020-21 Finest UEFA Champions League,False
+274860,2020-21 Finest UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/274860/2020-21-Finest-UEFA-Champions-League---Autographs-SuperFractor,2020-21,Unknown,Autographs SuperFractor,2020-21 Finest UEFA Champions League,False
+274837,2020-21 Finest UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/274837/2020-21-Finest-UEFA-Champions-League---Blue-Refractor,2020-21,Unknown,Blue Refractor,2020-21 Finest UEFA Champions League,False
+274838,2020-21 Finest UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/274838/2020-21-Finest-UEFA-Champions-League---Gold-Refractor,2020-21,Unknown,Gold Refractor,2020-21 Finest UEFA Champions League,False
+411124,2020-21 Finest UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/411124/2020-21-Finest-UEFA-Champions-League---Mini-Diamond-Refractor,2020-21,Unknown,Mini Diamond Refractor,2020-21 Finest UEFA Champions League,False
+274839,2020-21 Finest UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/274839/2020-21-Finest-UEFA-Champions-League---Neon-Green-Refractor,2020-21,Unknown,Neon Green Refractor,2020-21 Finest UEFA Champions League,False
+274840,2020-21 Finest UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/274840/2020-21-Finest-UEFA-Champions-League---Orange-Refractor,2020-21,Unknown,Orange Refractor,2020-21 Finest UEFA Champions League,False
+274841,2020-21 Finest UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/274841/2020-21-Finest-UEFA-Champions-League---Pink-Refractor,2020-21,Unknown,Pink Refractor,2020-21 Finest UEFA Champions League,False
+274870,2020-21 Finest UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/274870/2020-21-Finest-UEFA-Champions-League---Prized-Footballers,2020-21,Unknown,Prized Footballers,2020-21 Finest UEFA Champions League,False
+274871,2020-21 Finest UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/274871/2020-21-Finest-UEFA-Champions-League---Prized-Footballers-Autographs,2020-21,Unknown,Prized Footballers Autographs,2020-21 Finest UEFA Champions League,False
+274872,2020-21 Finest UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/274872/2020-21-Finest-UEFA-Champions-League---Prized-Footballers-Autographs-SuperFractor,2020-21,Unknown,Prized Footballers Autographs SuperFractor,2020-21 Finest UEFA Champions League,False
+355772,2020-21 Finest UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/355772/2020-21-Finest-UEFA-Champions-League---Prized-Footballers-Fusion-Black/Gold,2020-21,Unknown,Prized Footballers Fusion Black/Gold,2020-21 Finest UEFA Champions League,False
+319400,2020-21 Finest UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/319400/2020-21-Finest-UEFA-Champions-League---Prized-Footballers-Fusion-Blue/Red,2020-21,Unknown,Prized Footballers Fusion Blue/Red,2020-21 Finest UEFA Champions League,False
+355769,2020-21 Finest UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/355769/2020-21-Finest-UEFA-Champions-League---Prized-Footballers-Fusion-Green/Red,2020-21,Unknown,Prized Footballers Fusion Green/Red,2020-21 Finest UEFA Champions League,False
+355768,2020-21 Finest UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/355768/2020-21-Finest-UEFA-Champions-League---Prized-Footballers-Fusion-Orange/Red,2020-21,Unknown,Prized Footballers Fusion Orange/Red,2020-21 Finest UEFA Champions League,False
+355770,2020-21 Finest UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/355770/2020-21-Finest-UEFA-Champions-League---Prized-Footballers-Fusion-Pink/Red,2020-21,Unknown,Prized Footballers Fusion Pink/Red,2020-21 Finest UEFA Champions League,False
+355771,2020-21 Finest UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/355771/2020-21-Finest-UEFA-Champions-League---Prized-Footballers-Fusion-Red/Red,2020-21,Unknown,Prized Footballers Fusion Red/Red,2020-21 Finest UEFA Champions League,False
+355773,2020-21 Finest UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/355773/2020-21-Finest-UEFA-Champions-League---Prized-Footballers-Fusion-Rose/Gold,2020-21,Unknown,Prized Footballers Fusion Rose/Gold,2020-21 Finest UEFA Champions League,False
+274873,2020-21 Finest UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/274873/2020-21-Finest-UEFA-Champions-League---Prized-Footballers-Fusion-Yellow/Red,2020-21,Unknown,Prized Footballers Fusion Yellow/Red,2020-21 Finest UEFA Champions League,False
+274874,2020-21 Finest UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/274874/2020-21-Finest-UEFA-Champions-League---Prized-Footballers-Gold-Refractor,2020-21,Unknown,Prized Footballers Gold Refractor,2020-21 Finest UEFA Champions League,False
+274875,2020-21 Finest UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/274875/2020-21-Finest-UEFA-Champions-League---Prized-Footballers-Red-Refractor,2020-21,Unknown,Prized Footballers Red Refractor,2020-21 Finest UEFA Champions League,False
+274876,2020-21 Finest UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/274876/2020-21-Finest-UEFA-Champions-League---Prized-Footballers-SuperFractor,2020-21,Unknown,Prized Footballers SuperFractor,2020-21 Finest UEFA Champions League,False
+274842,2020-21 Finest UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/274842/2020-21-Finest-UEFA-Champions-League---Purple-Refractor,2020-21,Unknown,Purple Refractor,2020-21 Finest UEFA Champions League,False
+274843,2020-21 Finest UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/274843/2020-21-Finest-UEFA-Champions-League---Red-Refractor,2020-21,Unknown,Red Refractor,2020-21 Finest UEFA Champions League,False
+274616,2020-21 Finest UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/274616/2020-21-Finest-UEFA-Champions-League---Refractor,2020-21,Unknown,Refractor,2020-21 Finest UEFA Champions League,False
+274844,2020-21 Finest UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/274844/2020-21-Finest-UEFA-Champions-League---Speckle-Refractor,2020-21,Unknown,Speckle Refractor,2020-21 Finest UEFA Champions League,False
+274845,2020-21 Finest UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/274845/2020-21-Finest-UEFA-Champions-League---SuperFractor,2020-21,Unknown,SuperFractor,2020-21 Finest UEFA Champions League,False
+255816,2020-21 Merlin UEFA Champions League,https://www.tcdb.com/ViewSet.cfm/sid/255816/2020-21-Merlin-UEFA-Champions-League,2020-21,Merlin,Base,2020-21  UEFA Champions League,True
+275956,2020-21 Merlin UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/275956/2020-21-Merlin-UEFA-Champions-League---Aqua,2020-21,Merlin,Aqua,2020-21  UEFA Champions League,False
+275957,2020-21 Merlin UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/275957/2020-21-Merlin-UEFA-Champions-League---Aqua-Prism,2020-21,Merlin,Aqua Prism,2020-21  UEFA Champions League,False
+285785,2020-21 Merlin UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/285785/2020-21-Merlin-UEFA-Champions-League---Aqua-Speckle,2020-21,Merlin,Aqua Speckle,2020-21  UEFA Champions League,False
+275958,2020-21 Merlin UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/275958/2020-21-Merlin-UEFA-Champions-League---Atomic,2020-21,Merlin,Atomic,2020-21  UEFA Champions League,False
+275959,2020-21 Merlin UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/275959/2020-21-Merlin-UEFA-Champions-League---Black,2020-21,Merlin,Black,2020-21  UEFA Champions League,False
+275960,2020-21 Merlin UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/275960/2020-21-Merlin-UEFA-Champions-League---Blue,2020-21,Merlin,Blue,2020-21  UEFA Champions League,False
+275961,2020-21 Merlin UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/275961/2020-21-Merlin-UEFA-Champions-League---Blue-Shimmer,2020-21,Merlin,Blue Shimmer,2020-21  UEFA Champions League,False
+275980,2020-21 Merlin UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/275980/2020-21-Merlin-UEFA-Champions-League---Chrome-Autographs,2020-21,Merlin,Chrome Autographs,2020-21  UEFA Champions League,False
+275981,2020-21 Merlin UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/275981/2020-21-Merlin-UEFA-Champions-League---Chrome-Autographs-Blue,2020-21,Merlin,Chrome Autographs Blue,2020-21  UEFA Champions League,False
+275982,2020-21 Merlin UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/275982/2020-21-Merlin-UEFA-Champions-League---Chrome-Autographs-Gold,2020-21,Merlin,Chrome Autographs Gold,2020-21  UEFA Champions League,False
+275983,2020-21 Merlin UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/275983/2020-21-Merlin-UEFA-Champions-League---Chrome-Autographs-Mojo,2020-21,Merlin,Chrome Autographs Mojo,2020-21  UEFA Champions League,False
+275984,2020-21 Merlin UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/275984/2020-21-Merlin-UEFA-Champions-League---Chrome-Autographs-Orange,2020-21,Merlin,Chrome Autographs Orange,2020-21  UEFA Champions League,False
+275985,2020-21 Merlin UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/275985/2020-21-Merlin-UEFA-Champions-League---Chrome-Autographs-Red,2020-21,Merlin,Chrome Autographs Red,2020-21  UEFA Champions League,False
+275986,2020-21 Merlin UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/275986/2020-21-Merlin-UEFA-Champions-League---Chrome-Autographs-Speckle,2020-21,Merlin,Chrome Autographs Speckle,2020-21  UEFA Champions League,False
+275987,2020-21 Merlin UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/275987/2020-21-Merlin-UEFA-Champions-League---Chrome-Autographs-SuperFractor,2020-21,Merlin,Chrome Autographs SuperFractor,2020-21  UEFA Champions League,False
+275962,2020-21 Merlin UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/275962/2020-21-Merlin-UEFA-Champions-League---Gold,2020-21,Merlin,Gold,2020-21  UEFA Champions League,False
+275963,2020-21 Merlin UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/275963/2020-21-Merlin-UEFA-Champions-League---Gold-Atomic,2020-21,Merlin,Gold Atomic,2020-21  UEFA Champions League,False
+275964,2020-21 Merlin UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/275964/2020-21-Merlin-UEFA-Champions-League---Green,2020-21,Merlin,Green,2020-21  UEFA Champions League,False
+275965,2020-21 Merlin UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/275965/2020-21-Merlin-UEFA-Champions-League---Green-Mojo,2020-21,Merlin,Green Mojo,2020-21  UEFA Champions League,False
+275966,2020-21 Merlin UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/275966/2020-21-Merlin-UEFA-Champions-League---Orange,2020-21,Merlin,Orange,2020-21  UEFA Champions League,False
+275967,2020-21 Merlin UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/275967/2020-21-Merlin-UEFA-Champions-League---Purple,2020-21,Merlin,Purple,2020-21  UEFA Champions League,False
+275968,2020-21 Merlin UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/275968/2020-21-Merlin-UEFA-Champions-League---Red,2020-21,Merlin,Red,2020-21  UEFA Champions League,False
+275969,2020-21 Merlin UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/275969/2020-21-Merlin-UEFA-Champions-League---Red-Wave,2020-21,Merlin,Red Wave,2020-21  UEFA Champions League,False
+275970,2020-21 Merlin UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/275970/2020-21-Merlin-UEFA-Champions-League---Refractor,2020-21,Merlin,Refractor,2020-21  UEFA Champions League,False
+275971,2020-21 Merlin UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/275971/2020-21-Merlin-UEFA-Champions-League---Speckle,2020-21,Merlin,Speckle,2020-21  UEFA Champions League,False
+275972,2020-21 Merlin UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/275972/2020-21-Merlin-UEFA-Champions-League---SuperFractor,2020-21,Merlin,SuperFractor,2020-21  UEFA Champions League,False
+261678,2020-21 Panini Obsidian,https://www.tcdb.com/ViewSet.cfm/sid/261678/2020-21-Panini-Obsidian,2020-21,Panini,Base,2020-21  Obsidian,True
+265800,2020-21 Panini Obsidian,https://www.tcdb.com/Checklist.cfm/sid/265800/2020-21-Panini-Obsidian---Blue,2020-21,Panini,Blue,2020-21  Obsidian,False
+265808,2020-21 Panini Obsidian,https://www.tcdb.com/Checklist.cfm/sid/265808/2020-21-Panini-Obsidian---Blue-Finite,2020-21,Panini,Blue Finite,2020-21  Obsidian,False
+265806,2020-21 Panini Obsidian,https://www.tcdb.com/Checklist.cfm/sid/265806/2020-21-Panini-Obsidian---Contra,2020-21,Panini,Contra,2020-21  Obsidian,False
+265803,2020-21 Panini Obsidian,https://www.tcdb.com/Checklist.cfm/sid/265803/2020-21-Panini-Obsidian---Green,2020-21,Panini,Green,2020-21  Obsidian,False
+265799,2020-21 Panini Obsidian,https://www.tcdb.com/Checklist.cfm/sid/265799/2020-21-Panini-Obsidian---Orange,2020-21,Panini,Orange,2020-21  Obsidian,False
+265798,2020-21 Panini Obsidian,https://www.tcdb.com/Checklist.cfm/sid/265798/2020-21-Panini-Obsidian---Purple,2020-21,Panini,Purple,2020-21  Obsidian,False
+265807,2020-21 Panini Obsidian,https://www.tcdb.com/Checklist.cfm/sid/265807/2020-21-Panini-Obsidian---Red,2020-21,Panini,Red,2020-21  Obsidian,False
+265801,2020-21 Panini Obsidian,https://www.tcdb.com/Checklist.cfm/sid/265801/2020-21-Panini-Obsidian---Red-Flood,2020-21,Panini,Red Flood,2020-21  Obsidian,False
+265802,2020-21 Panini Obsidian,https://www.tcdb.com/Checklist.cfm/sid/265802/2020-21-Panini-Obsidian---Red-Pulsar,2020-21,Panini,Red Pulsar,2020-21  Obsidian,False
+265804,2020-21 Panini Obsidian,https://www.tcdb.com/Checklist.cfm/sid/265804/2020-21-Panini-Obsidian---White-Pulsar,2020-21,Panini,White Pulsar,2020-21  Obsidian,False
+265805,2020-21 Panini Obsidian,https://www.tcdb.com/Checklist.cfm/sid/265805/2020-21-Panini-Obsidian---Yellow,2020-21,Panini,Yellow,2020-21  Obsidian,False
+264072,2020-21 Stadium Club Chrome UEFA Champions League,https://www.tcdb.com/ViewSet.cfm/sid/264072/2020-21-Stadium-Club-Chrome-UEFA-Champions-League,2020-21,Unknown,Base,2020-21 Stadium Club Chrome UEFA Champions League,True
+278892,2020-21 Stadium Club Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/278892/2020-21-Stadium-Club-Chrome-UEFA-Champions-League---Aqua-Refractor,2020-21,Unknown,Aqua Refractor,2020-21 Stadium Club Chrome UEFA Champions League,False
+278893,2020-21 Stadium Club Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/278893/2020-21-Stadium-Club-Chrome-UEFA-Champions-League---Aqua/Green-Electric-Refractor,2020-21,Unknown,Aqua/Green Electric Refractor,2020-21 Stadium Club Chrome UEFA Champions League,False
+278914,2020-21 Stadium Club Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/278914/2020-21-Stadium-Club-Chrome-UEFA-Champions-League---Autographs,2020-21,Unknown,Autographs,2020-21 Stadium Club Chrome UEFA Champions League,False
+278915,2020-21 Stadium Club Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/278915/2020-21-Stadium-Club-Chrome-UEFA-Champions-League---Autographs-Black-Refractor,2020-21,Unknown,Autographs Black Refractor,2020-21 Stadium Club Chrome UEFA Champions League,False
+278916,2020-21 Stadium Club Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/278916/2020-21-Stadium-Club-Chrome-UEFA-Champions-League---Autographs-Blue-Wave-Refractor,2020-21,Unknown,Autographs Blue Wave Refractor,2020-21 Stadium Club Chrome UEFA Champions League,False
+278917,2020-21 Stadium Club Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/278917/2020-21-Stadium-Club-Chrome-UEFA-Champions-League---Autographs-Gold-Refractor,2020-21,Unknown,Autographs Gold Refractor,2020-21 Stadium Club Chrome UEFA Champions League,False
+278918,2020-21 Stadium Club Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/278918/2020-21-Stadium-Club-Chrome-UEFA-Champions-League---Autographs-Neon-Green-Refractor,2020-21,Unknown,Autographs Neon Green Refractor,2020-21 Stadium Club Chrome UEFA Champions League,False
+278919,2020-21 Stadium Club Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/278919/2020-21-Stadium-Club-Chrome-UEFA-Champions-League---Autographs-Orange-Prism-Refractor,2020-21,Unknown,Autographs Orange Prism Refractor,2020-21 Stadium Club Chrome UEFA Champions League,False
+278920,2020-21 Stadium Club Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/278920/2020-21-Stadium-Club-Chrome-UEFA-Champions-League---Autographs-Red-Wave-Refractor,2020-21,Unknown,Autographs Red Wave Refractor,2020-21 Stadium Club Chrome UEFA Champions League,False
+278921,2020-21 Stadium Club Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/278921/2020-21-Stadium-Club-Chrome-UEFA-Champions-League---Autographs-SuperFractor,2020-21,Unknown,Autographs SuperFractor,2020-21 Stadium Club Chrome UEFA Champions League,False
+278904,2020-21 Stadium Club Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/278904/2020-21-Stadium-Club-Chrome-UEFA-Champions-League---Base-Rookie-Image-Variation-Autographs,2020-21,Unknown,Base Rookie Image Variation Autographs,2020-21 Stadium Club Chrome UEFA Champions League,False
+278905,2020-21 Stadium Club Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/278905/2020-21-Stadium-Club-Chrome-UEFA-Champions-League---Base-Rookie-Image-Variation-Autographs-SuperFractor,2020-21,Unknown,Base Rookie Image Variation Autographs SuperFractor,2020-21 Stadium Club Chrome UEFA Champions League,False
+278906,2020-21 Stadium Club Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/278906/2020-21-Stadium-Club-Chrome-UEFA-Champions-League---Black-Refractor,2020-21,Unknown,Black Refractor,2020-21 Stadium Club Chrome UEFA Champions League,False
+278929,2020-21 Stadium Club Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/278929/2020-21-Stadium-Club-Chrome-UEFA-Champions-League---Glimpses-of-Gold,2020-21,Unknown,Glimpses of Gold,2020-21 Stadium Club Chrome UEFA Champions League,False
+278930,2020-21 Stadium Club Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/278930/2020-21-Stadium-Club-Chrome-UEFA-Champions-League---Glimpses-of-Gold-Autographs,2020-21,Unknown,Glimpses of Gold Autographs,2020-21 Stadium Club Chrome UEFA Champions League,False
+278931,2020-21 Stadium Club Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/278931/2020-21-Stadium-Club-Chrome-UEFA-Champions-League---Glimpses-of-Gold-Autographs-SuperFractor,2020-21,Unknown,Glimpses of Gold Autographs SuperFractor,2020-21 Stadium Club Chrome UEFA Champions League,False
+278932,2020-21 Stadium Club Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/278932/2020-21-Stadium-Club-Chrome-UEFA-Champions-League---Glimpses-of-Gold-Black-Refractor,2020-21,Unknown,Glimpses of Gold Black Refractor,2020-21 Stadium Club Chrome UEFA Champions League,False
+278933,2020-21 Stadium Club Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/278933/2020-21-Stadium-Club-Chrome-UEFA-Champions-League---Glimpses-of-Gold-Gold-Refractor,2020-21,Unknown,Glimpses of Gold Gold Refractor,2020-21 Stadium Club Chrome UEFA Champions League,False
+278934,2020-21 Stadium Club Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/278934/2020-21-Stadium-Club-Chrome-UEFA-Champions-League---Glimpses-of-Gold-Red-Refractor,2020-21,Unknown,Glimpses of Gold Red Refractor,2020-21 Stadium Club Chrome UEFA Champions League,False
+278935,2020-21 Stadium Club Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/278935/2020-21-Stadium-Club-Chrome-UEFA-Champions-League---Glimpses-of-Gold-SuperFractor,2020-21,Unknown,Glimpses of Gold SuperFractor,2020-21 Stadium Club Chrome UEFA Champions League,False
+278894,2020-21 Stadium Club Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/278894/2020-21-Stadium-Club-Chrome-UEFA-Champions-League---Gold-Refractor,2020-21,Unknown,Gold Refractor,2020-21 Stadium Club Chrome UEFA Champions League,False
+278895,2020-21 Stadium Club Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/278895/2020-21-Stadium-Club-Chrome-UEFA-Champions-League---Green-Refractor,2020-21,Unknown,Green Refractor,2020-21 Stadium Club Chrome UEFA Champions League,False
+278896,2020-21 Stadium Club Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/278896/2020-21-Stadium-Club-Chrome-UEFA-Champions-League---Green/Yellow-Electric-Refractor,2020-21,Unknown,Green/Yellow Electric Refractor,2020-21 Stadium Club Chrome UEFA Champions League,False
+278897,2020-21 Stadium Club Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/278897/2020-21-Stadium-Club-Chrome-UEFA-Champions-League---Orange-Refractor,2020-21,Unknown,Orange Refractor,2020-21 Stadium Club Chrome UEFA Champions League,False
+278898,2020-21 Stadium Club Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/278898/2020-21-Stadium-Club-Chrome-UEFA-Champions-League---Orange/Blue-Electric-Refractor,2020-21,Unknown,Orange/Blue Electric Refractor,2020-21 Stadium Club Chrome UEFA Champions League,False
+278899,2020-21 Stadium Club Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/278899/2020-21-Stadium-Club-Chrome-UEFA-Champions-League---Orange/Yellow-Electric-Wave-Refractor,2020-21,Unknown,Orange/Yellow Electric Wave Refractor,2020-21 Stadium Club Chrome UEFA Champions League,False
+278900,2020-21 Stadium Club Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/278900/2020-21-Stadium-Club-Chrome-UEFA-Champions-League---Red-Refractor,2020-21,Unknown,Red Refractor,2020-21 Stadium Club Chrome UEFA Champions League,False
+278901,2020-21 Stadium Club Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/278901/2020-21-Stadium-Club-Chrome-UEFA-Champions-League---Red/Orange-Electric-Refractor,2020-21,Unknown,Red/Orange Electric Refractor,2020-21 Stadium Club Chrome UEFA Champions League,False
+278902,2020-21 Stadium Club Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/278902/2020-21-Stadium-Club-Chrome-UEFA-Champions-League---Refractor,2020-21,Unknown,Refractor,2020-21 Stadium Club Chrome UEFA Champions League,False
+278903,2020-21 Stadium Club Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/278903/2020-21-Stadium-Club-Chrome-UEFA-Champions-League---SuperFractor,2020-21,Unknown,SuperFractor,2020-21 Stadium Club Chrome UEFA Champions League,False
+258304,2020-21 Topps Chrome BVB Borussia Dortmund,,2020-21,,,,False
+258308,2020-21 Topps Chrome BVB Borussia Dortmund,,2020-21,,,,False
+274903,2020-21 Topps Chrome Match Attax Bundesliga,https://www.tcdb.com/ViewSet.cfm/sid/274903/2020-21-Topps-Chrome-Match-Attax-Bundesliga,2020-21,Topps,Base,2020-21  Chrome Match Attax Bundesliga,True
+274904,2020-21 Topps Chrome Match Attax Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/274904/2020-21-Topps-Chrome-Match-Attax-Bundesliga---Autogramm,2020-21,Topps,Autogramm,2020-21  Chrome Match Attax Bundesliga,False
+370372,2020-21 Topps Chrome Match Attax Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/370372/2020-21-Topps-Chrome-Match-Attax-Bundesliga---Autographs-Orange,2020-21,Topps,Autographs Orange,2020-21  Chrome Match Attax Bundesliga,False
+292751,2020-21 Topps Chrome Match Attax Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/292751/2020-21-Topps-Chrome-Match-Attax-Bundesliga---Autographs-Red,2020-21,Topps,Autographs Red,2020-21  Chrome Match Attax Bundesliga,False
+282330,2020-21 Topps Chrome Match Attax Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/282330/2020-21-Topps-Chrome-Match-Attax-Bundesliga---Autographs-Superfractor,2020-21,Topps,Autographs Superfractor,2020-21  Chrome Match Attax Bundesliga,False
+274909,2020-21 Topps Chrome Match Attax Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/274909/2020-21-Topps-Chrome-Match-Attax-Bundesliga---Blue,2020-21,Topps,Blue,2020-21  Chrome Match Attax Bundesliga,False
+274911,2020-21 Topps Chrome Match Attax Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/274911/2020-21-Topps-Chrome-Match-Attax-Bundesliga---Gold,2020-21,Topps,Gold,2020-21  Chrome Match Attax Bundesliga,False
+274910,2020-21 Topps Chrome Match Attax Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/274910/2020-21-Topps-Chrome-Match-Attax-Bundesliga---Green,2020-21,Topps,Green,2020-21  Chrome Match Attax Bundesliga,False
+274912,2020-21 Topps Chrome Match Attax Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/274912/2020-21-Topps-Chrome-Match-Attax-Bundesliga---Orange,2020-21,Topps,Orange,2020-21  Chrome Match Attax Bundesliga,False
+274907,2020-21 Topps Chrome Match Attax Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/274907/2020-21-Topps-Chrome-Match-Attax-Bundesliga---Purple,2020-21,Topps,Purple,2020-21  Chrome Match Attax Bundesliga,False
+274913,2020-21 Topps Chrome Match Attax Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/274913/2020-21-Topps-Chrome-Match-Attax-Bundesliga---Red,2020-21,Topps,Red,2020-21  Chrome Match Attax Bundesliga,False
+274905,2020-21 Topps Chrome Match Attax Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/274905/2020-21-Topps-Chrome-Match-Attax-Bundesliga---Refractor,2020-21,Topps,Refractor,2020-21  Chrome Match Attax Bundesliga,False
+274914,2020-21 Topps Chrome Match Attax Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/274914/2020-21-Topps-Chrome-Match-Attax-Bundesliga---SuperFractor,2020-21,Topps,SuperFractor,2020-21  Chrome Match Attax Bundesliga,False
+274908,2020-21 Topps Chrome Match Attax Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/274908/2020-21-Topps-Chrome-Match-Attax-Bundesliga---X-Fractor,2020-21,Topps,X Fractor,2020-21  Chrome Match Attax Bundesliga,False
+256990,2020-21 Topps Chrome Match Attax UEFA Champions League,https://www.tcdb.com/ViewSet.cfm/sid/256990/2020-21-Topps-Chrome-Match-Attax-UEFA-Champions-League,2020-21,Topps,Base,2020-21  Chrome Match Attax UEFA Champions League,True
+256994,2020-21 Topps Chrome Match Attax UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/256994/2020-21-Topps-Chrome-Match-Attax-UEFA-Champions-League---Blue,2020-21,Topps,Blue,2020-21  Chrome Match Attax UEFA Champions League,False
+256996,2020-21 Topps Chrome Match Attax UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/256996/2020-21-Topps-Chrome-Match-Attax-UEFA-Champions-League---Gold,2020-21,Topps,Gold,2020-21  Chrome Match Attax UEFA Champions League,False
+256995,2020-21 Topps Chrome Match Attax UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/256995/2020-21-Topps-Chrome-Match-Attax-UEFA-Champions-League---Green,2020-21,Topps,Green,2020-21  Chrome Match Attax UEFA Champions League,False
+256997,2020-21 Topps Chrome Match Attax UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/256997/2020-21-Topps-Chrome-Match-Attax-UEFA-Champions-League---Orange,2020-21,Topps,Orange,2020-21  Chrome Match Attax UEFA Champions League,False
+256993,2020-21 Topps Chrome Match Attax UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/256993/2020-21-Topps-Chrome-Match-Attax-UEFA-Champions-League---Purple,2020-21,Topps,Purple,2020-21  Chrome Match Attax UEFA Champions League,False
+256998,2020-21 Topps Chrome Match Attax UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/256998/2020-21-Topps-Chrome-Match-Attax-UEFA-Champions-League---Red,2020-21,Topps,Red,2020-21  Chrome Match Attax UEFA Champions League,False
+256991,2020-21 Topps Chrome Match Attax UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/256991/2020-21-Topps-Chrome-Match-Attax-UEFA-Champions-League---Refractor,2020-21,Topps,Refractor,2020-21  Chrome Match Attax UEFA Champions League,False
+256999,2020-21 Topps Chrome Match Attax UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/256999/2020-21-Topps-Chrome-Match-Attax-UEFA-Champions-League---Superfractor,2020-21,Topps,Superfractor,2020-21  Chrome Match Attax UEFA Champions League,False
+256992,2020-21 Topps Chrome Match Attax UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/256992/2020-21-Topps-Chrome-Match-Attax-UEFA-Champions-League---X-Fractor,2020-21,Topps,X Fractor,2020-21  Chrome Match Attax UEFA Champions League,False
+275280,2020-21 Topps Chrome Sapphire Edition Bundesliga,https://www.tcdb.com/ViewSet.cfm/sid/275280/2020-21-Topps-Chrome-Sapphire-Edition-Bundesliga,2020-21,Topps,Base,2020-21  Chrome Sapphire Edition Bundesliga,True
+275284,2020-21 Topps Chrome Sapphire Edition Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/275284/2020-21-Topps-Chrome-Sapphire-Edition-Bundesliga---Gold,2020-21,Topps,Gold,2020-21  Chrome Sapphire Edition Bundesliga,False
+275283,2020-21 Topps Chrome Sapphire Edition Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/275283/2020-21-Topps-Chrome-Sapphire-Edition-Bundesliga---Green,2020-21,Topps,Green,2020-21  Chrome Sapphire Edition Bundesliga,False
+275281,2020-21 Topps Chrome Sapphire Edition Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/275281/2020-21-Topps-Chrome-Sapphire-Edition-Bundesliga---Orange,2020-21,Topps,Orange,2020-21  Chrome Sapphire Edition Bundesliga,False
+275287,2020-21 Topps Chrome Sapphire Edition Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/275287/2020-21-Topps-Chrome-Sapphire-Edition-Bundesliga---Padparadscha,2020-21,Topps,Padparadscha,2020-21  Chrome Sapphire Edition Bundesliga,False
+275285,2020-21 Topps Chrome Sapphire Edition Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/275285/2020-21-Topps-Chrome-Sapphire-Edition-Bundesliga---Purple,2020-21,Topps,Purple,2020-21  Chrome Sapphire Edition Bundesliga,False
+275286,2020-21 Topps Chrome Sapphire Edition Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/275286/2020-21-Topps-Chrome-Sapphire-Edition-Bundesliga---Red,2020-21,Topps,Red,2020-21  Chrome Sapphire Edition Bundesliga,False
+275282,2020-21 Topps Chrome Sapphire Edition Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/275282/2020-21-Topps-Chrome-Sapphire-Edition-Bundesliga---Yellow,2020-21,Topps,Yellow,2020-21  Chrome Sapphire Edition Bundesliga,False
+275807,2020-21 Topps Chrome Sapphire Edition UEFA Champions League,https://www.tcdb.com/ViewSet.cfm/sid/275807/2020-21-Topps-Chrome-Sapphire-Edition-UEFA-Champions-League,2020-21,Topps,Base,2020-21  Chrome Sapphire Edition UEFA Champions League,True
+275808,2020-21 Topps Chrome Sapphire Edition UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/275808/2020-21-Topps-Chrome-Sapphire-Edition-UEFA-Champions-League---Aqua,2020-21,Topps,Aqua,2020-21  Chrome Sapphire Edition UEFA Champions League,False
+275810,2020-21 Topps Chrome Sapphire Edition UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/275810/2020-21-Topps-Chrome-Sapphire-Edition-UEFA-Champions-League---Green,2020-21,Topps,Green,2020-21  Chrome Sapphire Edition UEFA Champions League,False
+275811,2020-21 Topps Chrome Sapphire Edition UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/275811/2020-21-Topps-Chrome-Sapphire-Edition-UEFA-Champions-League---Orange,2020-21,Topps,Orange,2020-21  Chrome Sapphire Edition UEFA Champions League,False
+275814,2020-21 Topps Chrome Sapphire Edition UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/275814/2020-21-Topps-Chrome-Sapphire-Edition-UEFA-Champions-League---Padparadscha,2020-21,Topps,Padparadscha,2020-21  Chrome Sapphire Edition UEFA Champions League,False
+275812,2020-21 Topps Chrome Sapphire Edition UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/275812/2020-21-Topps-Chrome-Sapphire-Edition-UEFA-Champions-League---Purple,2020-21,Topps,Purple,2020-21  Chrome Sapphire Edition UEFA Champions League,False
+275813,2020-21 Topps Chrome Sapphire Edition UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/275813/2020-21-Topps-Chrome-Sapphire-Edition-UEFA-Champions-League---Red,2020-21,Topps,Red,2020-21  Chrome Sapphire Edition UEFA Champions League,False
+275809,2020-21 Topps Chrome Sapphire Edition UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/275809/2020-21-Topps-Chrome-Sapphire-Edition-UEFA-Champions-League---Yellow,2020-21,Topps,Yellow,2020-21  Chrome Sapphire Edition UEFA Champions League,False
+248049,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/ViewSet.cfm/sid/248049/2020-21-Topps-Chrome-UEFA-Champions-League,2020-21,Topps,Base,2020-21  Chrome UEFA Champions League,True
+273134,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273134/2020-21-Topps-Chrome-UEFA-Champions-League---Aqua-Bubbles-Refractor,2020-21,Topps,Aqua Bubbles Refractor,2020-21  Chrome UEFA Champions League,False
+273132,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273132/2020-21-Topps-Chrome-UEFA-Champions-League---Aqua-Refractor,2020-21,Topps,Aqua Refractor,2020-21  Chrome UEFA Champions League,False
+273133,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273133/2020-21-Topps-Chrome-UEFA-Champions-League---Aqua-Wave-Refractor,2020-21,Topps,Aqua Wave Refractor,2020-21  Chrome UEFA Champions League,False
+273152,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273152/2020-21-Topps-Chrome-UEFA-Champions-League---Autographs,2020-21,Topps,Autographs,2020-21  Chrome UEFA Champions League,False
+299997,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/299997/2020-21-Topps-Chrome-UEFA-Champions-League---Autographs-Aqua-Refractor,2020-21,Topps,Autographs Aqua Refractor,2020-21  Chrome UEFA Champions League,False
+273153,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273153/2020-21-Topps-Chrome-UEFA-Champions-League---Autographs-Blue-Refractor,2020-21,Topps,Autographs Blue Refractor,2020-21  Chrome UEFA Champions League,False
+273155,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273155/2020-21-Topps-Chrome-UEFA-Champions-League---Autographs-Blue-Wave-Refractor,2020-21,Topps,Autographs Blue Wave Refractor,2020-21  Chrome UEFA Champions League,False
+273157,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273157/2020-21-Topps-Chrome-UEFA-Champions-League---Autographs-Gold-Bubbles-Refractor,2020-21,Topps,Autographs Gold Bubbles Refractor,2020-21  Chrome UEFA Champions League,False
+273156,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273156/2020-21-Topps-Chrome-UEFA-Champions-League---Autographs-Gold-Refractor,2020-21,Topps,Autographs Gold Refractor,2020-21  Chrome UEFA Champions League,False
+273154,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273154/2020-21-Topps-Chrome-UEFA-Champions-League---Autographs-Neon-Green-Refractor,2020-21,Topps,Autographs Neon Green Refractor,2020-21  Chrome UEFA Champions League,False
+273159,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273159/2020-21-Topps-Chrome-UEFA-Champions-League---Autographs-Orange-Bubbles-Refractor,2020-21,Topps,Autographs Orange Bubbles Refractor,2020-21  Chrome UEFA Champions League,False
+273158,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273158/2020-21-Topps-Chrome-UEFA-Champions-League---Autographs-Orange-Refractor,2020-21,Topps,Autographs Orange Refractor,2020-21  Chrome UEFA Champions League,False
+273160,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273160/2020-21-Topps-Chrome-UEFA-Champions-League---Autographs-Red-Refractor,2020-21,Topps,Autographs Red Refractor,2020-21  Chrome UEFA Champions League,False
+273161,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273161/2020-21-Topps-Chrome-UEFA-Champions-League---Autographs-Red-Wave-Refractor,2020-21,Topps,Autographs Red Wave Refractor,2020-21  Chrome UEFA Champions League,False
+273162,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273162/2020-21-Topps-Chrome-UEFA-Champions-League---Autographs-SuperFractor,2020-21,Topps,Autographs SuperFractor,2020-21  Chrome UEFA Champions League,False
+273138,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273138/2020-21-Topps-Chrome-UEFA-Champions-League---Blue-Bubbles-Refractor,2020-21,Topps,Blue Bubbles Refractor,2020-21  Chrome UEFA Champions League,False
+273137,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273137/2020-21-Topps-Chrome-UEFA-Champions-League---Blue-Refractor,2020-21,Topps,Blue Refractor,2020-21  Chrome UEFA Champions League,False
+273141,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273141/2020-21-Topps-Chrome-UEFA-Champions-League---Blue-Wave-Refractor,2020-21,Topps,Blue Wave Refractor,2020-21  Chrome UEFA Champions League,False
+273143,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273143/2020-21-Topps-Chrome-UEFA-Champions-League---Gold-Bubbles-Refractor,2020-21,Topps,Gold Bubbles Refractor,2020-21  Chrome UEFA Champions League,False
+273142,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273142/2020-21-Topps-Chrome-UEFA-Champions-League---Gold-Refractor,2020-21,Topps,Gold Refractor,2020-21  Chrome UEFA Champions League,False
+273179,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273179/2020-21-Topps-Chrome-UEFA-Champions-League---Joga-Bonito,2020-21,Topps,Joga Bonito,2020-21  Chrome UEFA Champions League,False
+273180,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273180/2020-21-Topps-Chrome-UEFA-Champions-League---Joga-Bonito-Aqua,2020-21,Topps,Joga Bonito Aqua,2020-21  Chrome UEFA Champions League,False
+273165,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273165/2020-21-Topps-Chrome-UEFA-Champions-League---Joga-Bonito-Autographs,2020-21,Topps,Joga Bonito Autographs,2020-21  Chrome UEFA Champions League,False
+273166,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273166/2020-21-Topps-Chrome-UEFA-Champions-League---Joga-Bonito-Autographs-SuperFractor,2020-21,Topps,Joga Bonito Autographs SuperFractor,2020-21  Chrome UEFA Champions League,False
+273181,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273181/2020-21-Topps-Chrome-UEFA-Champions-League---Joga-Bonito-Gold,2020-21,Topps,Joga Bonito Gold,2020-21  Chrome UEFA Champions League,False
+299998,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/299998/2020-21-Topps-Chrome-UEFA-Champions-League---Joga-Bonito-Gold-Bubbles,2020-21,Topps,Joga Bonito Gold Bubbles,2020-21  Chrome UEFA Champions League,False
+273182,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273182/2020-21-Topps-Chrome-UEFA-Champions-League---Joga-Bonito-Orange,2020-21,Topps,Joga Bonito Orange,2020-21  Chrome UEFA Champions League,False
+450586,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/450586/2020-21-Topps-Chrome-UEFA-Champions-League---Joga-Bonito-Orange-Bubbles,2020-21,Topps,Joga Bonito Orange Bubbles,2020-21  Chrome UEFA Champions League,False
+273183,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273183/2020-21-Topps-Chrome-UEFA-Champions-League---Joga-Bonito-Red,2020-21,Topps,Joga Bonito Red,2020-21  Chrome UEFA Champions League,False
+273184,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273184/2020-21-Topps-Chrome-UEFA-Champions-League---Joga-Bonito-SuperFractor,2020-21,Topps,Joga Bonito SuperFractor,2020-21  Chrome UEFA Champions League,False
+273140,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273140/2020-21-Topps-Chrome-UEFA-Champions-League---Neon-Green-Bubbles-Refractor,2020-21,Topps,Neon Green Bubbles Refractor,2020-21  Chrome UEFA Champions League,False
+273139,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273139/2020-21-Topps-Chrome-UEFA-Champions-League---Neon-Green-Refractor,2020-21,Topps,Neon Green Refractor,2020-21  Chrome UEFA Champions League,False
+273145,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273145/2020-21-Topps-Chrome-UEFA-Champions-League---Orange-Bubbles-Refractor,2020-21,Topps,Orange Bubbles Refractor,2020-21  Chrome UEFA Champions League,False
+273144,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273144/2020-21-Topps-Chrome-UEFA-Champions-League---Orange-Refractor,2020-21,Topps,Orange Refractor,2020-21  Chrome UEFA Champions League,False
+273136,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273136/2020-21-Topps-Chrome-UEFA-Champions-League---Pink-Mini-Diamond-Refractor,2020-21,Topps,Pink Mini Diamond Refractor,2020-21  Chrome UEFA Champions League,False
+273135,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273135/2020-21-Topps-Chrome-UEFA-Champions-League---Pink-Refractor,2020-21,Topps,Pink Refractor,2020-21  Chrome UEFA Champions League,False
+273127,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273127/2020-21-Topps-Chrome-UEFA-Champions-League---Pink-X-Fractor,2020-21,Topps,Pink X Fractor,2020-21  Chrome UEFA Champions League,False
+273131,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273131/2020-21-Topps-Chrome-UEFA-Champions-League---Purple-Carbon-Fiber-Refractor,2020-21,Topps,Purple Carbon Fiber Refractor,2020-21  Chrome UEFA Champions League,False
+273130,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273130/2020-21-Topps-Chrome-UEFA-Champions-League---Purple-Mini-Diamond-Refractor,2020-21,Topps,Purple Mini Diamond Refractor,2020-21  Chrome UEFA Champions League,False
+273129,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273129/2020-21-Topps-Chrome-UEFA-Champions-League---Purple-Refractor,2020-21,Topps,Purple Refractor,2020-21  Chrome UEFA Champions League,False
+273146,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273146/2020-21-Topps-Chrome-UEFA-Champions-League---Red-Carbon-Fiber-Refractor,2020-21,Topps,Red Carbon Fiber Refractor,2020-21  Chrome UEFA Champions League,False
+273147,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273147/2020-21-Topps-Chrome-UEFA-Champions-League---Red-Refractor,2020-21,Topps,Red Refractor,2020-21  Chrome UEFA Champions League,False
+273148,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273148/2020-21-Topps-Chrome-UEFA-Champions-League---Red-Wave-Refractor,2020-21,Topps,Red Wave Refractor,2020-21  Chrome UEFA Champions League,False
+273125,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273125/2020-21-Topps-Chrome-UEFA-Champions-League---Refractor,2020-21,Topps,Refractor,2020-21  Chrome UEFA Champions League,False
+273126,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273126/2020-21-Topps-Chrome-UEFA-Champions-League---Speckle-Refractor,2020-21,Topps,Speckle Refractor,2020-21  Chrome UEFA Champions League,False
+273149,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273149/2020-21-Topps-Chrome-UEFA-Champions-League---SuperFractor,2020-21,Topps,SuperFractor,2020-21  Chrome UEFA Champions League,False
+273128,2020-21 Topps Chrome UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/273128/2020-21-Topps-Chrome-UEFA-Champions-League---Yellow-Mini-Diamond-Refractor,2020-21,Topps,Yellow Mini Diamond Refractor,2020-21  Chrome UEFA Champions League,False
+286638,2020-21 Topps Chrome X Steve Aoki UEFA Champions League Neon Future,https://www.tcdb.com/ViewSet.cfm/sid/286638/2020-21-Topps-Chrome-X-Steve-Aoki-UEFA-Champions-League-Neon-Future,2020-21,Topps,Base,2020-21  Chrome X Steve Aoki UEFA Champions League Neon Future,True
+287890,2020-21 Topps Chrome X Steve Aoki UEFA Champions League Neon Future,https://www.tcdb.com/Checklist.cfm/sid/287890/2020-21-Topps-Chrome-X-Steve-Aoki-UEFA-Champions-League-Neon-Future---Aqua-Refractor,2020-21,Topps,Aqua Refractor,2020-21  Chrome X Steve Aoki UEFA Champions League Neon Future,False
+292282,2020-21 Topps Chrome X Steve Aoki UEFA Champions League Neon Future,https://www.tcdb.com/Checklist.cfm/sid/292282/2020-21-Topps-Chrome-X-Steve-Aoki-UEFA-Champions-League-Neon-Future---Autographs-Blue,2020-21,Topps,Autographs Blue,2020-21  Chrome X Steve Aoki UEFA Champions League Neon Future,False
+292280,2020-21 Topps Chrome X Steve Aoki UEFA Champions League Neon Future,https://www.tcdb.com/Checklist.cfm/sid/292280/2020-21-Topps-Chrome-X-Steve-Aoki-UEFA-Champions-League-Neon-Future---Autographs-Gold,2020-21,Topps,Autographs Gold,2020-21  Chrome X Steve Aoki UEFA Champions League Neon Future,False
+292281,2020-21 Topps Chrome X Steve Aoki UEFA Champions League Neon Future,https://www.tcdb.com/Checklist.cfm/sid/292281/2020-21-Topps-Chrome-X-Steve-Aoki-UEFA-Champions-League-Neon-Future---Autographs-Orange,2020-21,Topps,Autographs Orange,2020-21  Chrome X Steve Aoki UEFA Champions League Neon Future,False
+292283,2020-21 Topps Chrome X Steve Aoki UEFA Champions League Neon Future,https://www.tcdb.com/Checklist.cfm/sid/292283/2020-21-Topps-Chrome-X-Steve-Aoki-UEFA-Champions-League-Neon-Future---Autographs-Red,2020-21,Topps,Autographs Red,2020-21  Chrome X Steve Aoki UEFA Champions League Neon Future,False
+292284,2020-21 Topps Chrome X Steve Aoki UEFA Champions League Neon Future,https://www.tcdb.com/Checklist.cfm/sid/292284/2020-21-Topps-Chrome-X-Steve-Aoki-UEFA-Champions-League-Neon-Future---Autographs-SuperFractor,2020-21,Topps,Autographs SuperFractor,2020-21  Chrome X Steve Aoki UEFA Champions League Neon Future,False
+287883,2020-21 Topps Chrome X Steve Aoki UEFA Champions League Neon Future,https://www.tcdb.com/Checklist.cfm/sid/287883/2020-21-Topps-Chrome-X-Steve-Aoki-UEFA-Champions-League-Neon-Future---Gold-Refractor,2020-21,Topps,Gold Refractor,2020-21  Chrome X Steve Aoki UEFA Champions League Neon Future,False
+287896,2020-21 Topps Chrome X Steve Aoki UEFA Champions League Neon Future,https://www.tcdb.com/Checklist.cfm/sid/287896/2020-21-Topps-Chrome-X-Steve-Aoki-UEFA-Champions-League-Neon-Future---Neon-Future-I-(White),2020-21,Topps,Neon Future I (White),2020-21  Chrome X Steve Aoki UEFA Champions League Neon Future,False
+287889,2020-21 Topps Chrome X Steve Aoki UEFA Champions League Neon Future,https://www.tcdb.com/Checklist.cfm/sid/287889/2020-21-Topps-Chrome-X-Steve-Aoki-UEFA-Champions-League-Neon-Future---Neon-Future-II-(Black),2020-21,Topps,Neon Future II (Black),2020-21  Chrome X Steve Aoki UEFA Champions League Neon Future,False
+287888,2020-21 Topps Chrome X Steve Aoki UEFA Champions League Neon Future,https://www.tcdb.com/Checklist.cfm/sid/287888/2020-21-Topps-Chrome-X-Steve-Aoki-UEFA-Champions-League-Neon-Future---Neon-Future-III-(Light-Purple),2020-21,Topps,Neon Future III (Light Purple),2020-21  Chrome X Steve Aoki UEFA Champions League Neon Future,False
+288945,2020-21 Topps Chrome X Steve Aoki UEFA Champions League Neon Future,https://www.tcdb.com/Checklist.cfm/sid/288945/2020-21-Topps-Chrome-X-Steve-Aoki-UEFA-Champions-League-Neon-Future---Neon-Future-IV,2020-21,Topps,Neon Future IV,2020-21  Chrome X Steve Aoki UEFA Champions League Neon Future,False
+288946,2020-21 Topps Chrome X Steve Aoki UEFA Champions League Neon Future,https://www.tcdb.com/Checklist.cfm/sid/288946/2020-21-Topps-Chrome-X-Steve-Aoki-UEFA-Champions-League-Neon-Future---Neon-Red,2020-21,Topps,Neon Red,2020-21  Chrome X Steve Aoki UEFA Champions League Neon Future,False
+287910,2020-21 Topps Chrome X Steve Aoki UEFA Champions League Neon Future,https://www.tcdb.com/Checklist.cfm/sid/287910/2020-21-Topps-Chrome-X-Steve-Aoki-UEFA-Champions-League-Neon-Future---Singularity,2020-21,Topps,Singularity,2020-21  Chrome X Steve Aoki UEFA Champions League Neon Future,False
+287912,2020-21 Topps Chrome X Steve Aoki UEFA Champions League Neon Future,https://www.tcdb.com/Checklist.cfm/sid/287912/2020-21-Topps-Chrome-X-Steve-Aoki-UEFA-Champions-League-Neon-Future---Singularity-Neon-Orange,2020-21,Topps,Singularity Neon Orange,2020-21  Chrome X Steve Aoki UEFA Champions League Neon Future,False
+287913,2020-21 Topps Chrome X Steve Aoki UEFA Champions League Neon Future,https://www.tcdb.com/Checklist.cfm/sid/287913/2020-21-Topps-Chrome-X-Steve-Aoki-UEFA-Champions-League-Neon-Future---Singularity-Neon-Red,2020-21,Topps,Singularity Neon Red,2020-21  Chrome X Steve Aoki UEFA Champions League Neon Future,False
+287911,2020-21 Topps Chrome X Steve Aoki UEFA Champions League Neon Future,https://www.tcdb.com/Checklist.cfm/sid/287911/2020-21-Topps-Chrome-X-Steve-Aoki-UEFA-Champions-League-Neon-Future---Singularity-Neon-Yellow,2020-21,Topps,Singularity Neon Yellow,2020-21  Chrome X Steve Aoki UEFA Champions League Neon Future,False
+287914,2020-21 Topps Chrome X Steve Aoki UEFA Champions League Neon Future,https://www.tcdb.com/Checklist.cfm/sid/287914/2020-21-Topps-Chrome-X-Steve-Aoki-UEFA-Champions-League-Neon-Future---Singularity-SuperFractor,2020-21,Topps,Singularity SuperFractor,2020-21  Chrome X Steve Aoki UEFA Champions League Neon Future,False
+288947,2020-21 Topps Chrome X Steve Aoki UEFA Champions League Neon Future,https://www.tcdb.com/Checklist.cfm/sid/288947/2020-21-Topps-Chrome-X-Steve-Aoki-UEFA-Champions-League-Neon-Future---SuperFractor,2020-21,Topps,SuperFractor,2020-21  Chrome X Steve Aoki UEFA Champions League Neon Future,False
+279686,2020-21 Topps Inception UEFA Champions League,https://www.tcdb.com/ViewSet.cfm/sid/279686/2020-21-Topps-Inception-UEFA-Champions-League,2020-21,Topps,Base,2020-21  Inception UEFA Champions League,True
+283460,2020-21 Topps Inception UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/283460/2020-21-Topps-Inception-UEFA-Champions-League---Autographs,2020-21,Topps,Autographs,2020-21  Inception UEFA Champions League,False
+283462,2020-21 Topps Inception UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/283462/2020-21-Topps-Inception-UEFA-Champions-League---Autographs-Blue,2020-21,Topps,Autographs Blue,2020-21  Inception UEFA Champions League,False
+283466,2020-21 Topps Inception UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/283466/2020-21-Topps-Inception-UEFA-Champions-League---Autographs-Gold,2020-21,Topps,Autographs Gold,2020-21  Inception UEFA Champions League,False
+283461,2020-21 Topps Inception UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/283461/2020-21-Topps-Inception-UEFA-Champions-League---Autographs-Green,2020-21,Topps,Autographs Green,2020-21  Inception UEFA Champions League,False
+283465,2020-21 Topps Inception UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/283465/2020-21-Topps-Inception-UEFA-Champions-League---Autographs-Orange,2020-21,Topps,Autographs Orange,2020-21  Inception UEFA Champions League,False
+283463,2020-21 Topps Inception UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/283463/2020-21-Topps-Inception-UEFA-Champions-League---Autographs-Purple,2020-21,Topps,Autographs Purple,2020-21  Inception UEFA Champions League,False
+283464,2020-21 Topps Inception UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/283464/2020-21-Topps-Inception-UEFA-Champions-League---Autographs-Red,2020-21,Topps,Autographs Red,2020-21  Inception UEFA Champions League,False
+283099,2020-21 Topps Inception UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/283099/2020-21-Topps-Inception-UEFA-Champions-League---Blue,2020-21,Topps,Blue,2020-21  Inception UEFA Champions League,False
+283101,2020-21 Topps Inception UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/283101/2020-21-Topps-Inception-UEFA-Champions-League---Gold,2020-21,Topps,Gold,2020-21  Inception UEFA Champions League,False
+283098,2020-21 Topps Inception UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/283098/2020-21-Topps-Inception-UEFA-Champions-League---Green,2020-21,Topps,Green,2020-21  Inception UEFA Champions League,False
+283100,2020-21 Topps Inception UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/283100/2020-21-Topps-Inception-UEFA-Champions-League---Orange,2020-21,Topps,Orange,2020-21  Inception UEFA Champions League,False
+283102,2020-21 Topps Inception UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/283102/2020-21-Topps-Inception-UEFA-Champions-League---Purple,2020-21,Topps,Purple,2020-21  Inception UEFA Champions League,False
+283103,2020-21 Topps Inception UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/283103/2020-21-Topps-Inception-UEFA-Champions-League---Red,2020-21,Topps,Red,2020-21  Inception UEFA Champions League,False
+287500,2020-21 Topps Inception UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/287500/2020-21-Topps-Inception-UEFA-Champions-League---Short-Print-Autographs,2020-21,Topps,Short Print Autographs,2020-21  Inception UEFA Champions League,False
+287502,2020-21 Topps Inception UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/287502/2020-21-Topps-Inception-UEFA-Champions-League---Short-Print-Autographs-Gold,2020-21,Topps,Short Print Autographs Gold,2020-21  Inception UEFA Champions League,False
+287501,2020-21 Topps Inception UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/287501/2020-21-Topps-Inception-UEFA-Champions-League---Short-Print-Autographs-Orange,2020-21,Topps,Short Print Autographs Orange,2020-21  Inception UEFA Champions League,False
+250729,2020-21 Topps Match Attax Bundesliga,https://www.tcdb.com/ViewSet.cfm/sid/250729/2020-21-Topps-Match-Attax-Bundesliga,2020-21,Topps,Base,2020-21  Match Attax Bundesliga,True
+371958,2020-21 Topps Match Attax Bundesliga Heroes 1,https://www.tcdb.com/ViewSet.cfm/sid/371958/2020-21-Topps-Match-Attax-Bundesliga-Heroes-1,2020-21,Topps,Base,2020-21  Match Attax Bundesliga Heroes 1,True
+253019,2020-21 Topps Match Attax UEFA Champions League,,2020-21,,,,False
+253777,2020-21 Topps Match Attax UEFA Champions League,,2020-21,,,,False
+261751,2020-21 Topps Match Attax UEFA Champions League Extra,,2020-21,,,,False
+280635,2020-21 Topps Match Attax UEFA Champions League On-Demand,,2020-21,,,,False
+280636,2020-21 Topps Match Attax UEFA Champions League On-Demand,,2020-21,,,,False
+269754,2020-21 Topps Merlin Heritage 95,https://www.tcdb.com/ViewSet.cfm/sid/269754/2020-21-Topps-Merlin-Heritage-95,2020-21,Merlin,Base,2020-21 Topps  Heritage 95,True
+272924,2020-21 Topps Merlin Heritage 95,https://www.tcdb.com/Checklist.cfm/sid/272924/2020-21-Topps-Merlin-Heritage-95---Autographs,2020-21,Merlin,Autographs,2020-21 Topps  Heritage 95,False
+273904,2020-21 Topps Merlin Heritage 95,https://www.tcdb.com/Checklist.cfm/sid/273904/2020-21-Topps-Merlin-Heritage-95---Autographs-Black-&-White-Background,2020-21,Merlin,Autographs Black & White Background,2020-21 Topps  Heritage 95,False
+272925,2020-21 Topps Merlin Heritage 95,https://www.tcdb.com/Checklist.cfm/sid/272925/2020-21-Topps-Merlin-Heritage-95---Autographs-Blue,2020-21,Merlin,Autographs Blue,2020-21 Topps  Heritage 95,False
+273886,2020-21 Topps Merlin Heritage 95,https://www.tcdb.com/Checklist.cfm/sid/273886/2020-21-Topps-Merlin-Heritage-95---Autographs-Gold,2020-21,Merlin,Autographs Gold,2020-21 Topps  Heritage 95,False
+273885,2020-21 Topps Merlin Heritage 95,https://www.tcdb.com/Checklist.cfm/sid/273885/2020-21-Topps-Merlin-Heritage-95---Autographs-Orange,2020-21,Merlin,Autographs Orange,2020-21 Topps  Heritage 95,False
+273883,2020-21 Topps Merlin Heritage 95,https://www.tcdb.com/Checklist.cfm/sid/273883/2020-21-Topps-Merlin-Heritage-95---Autographs-Purple,2020-21,Merlin,Autographs Purple,2020-21 Topps  Heritage 95,False
+273884,2020-21 Topps Merlin Heritage 95,https://www.tcdb.com/Checklist.cfm/sid/273884/2020-21-Topps-Merlin-Heritage-95---Autographs-Red,2020-21,Merlin,Autographs Red,2020-21 Topps  Heritage 95,False
+269755,2020-21 Topps Merlin Heritage 95,https://www.tcdb.com/Checklist.cfm/sid/269755/2020-21-Topps-Merlin-Heritage-95---Black-and-White-Background,2020-21,Merlin,Black and White Background,2020-21 Topps  Heritage 95,False
+269756,2020-21 Topps Merlin Heritage 95,https://www.tcdb.com/Checklist.cfm/sid/269756/2020-21-Topps-Merlin-Heritage-95---Blue,2020-21,Merlin,Blue,2020-21 Topps  Heritage 95,False
+269760,2020-21 Topps Merlin Heritage 95,https://www.tcdb.com/Checklist.cfm/sid/269760/2020-21-Topps-Merlin-Heritage-95---Gold,2020-21,Merlin,Gold,2020-21 Topps  Heritage 95,False
+269759,2020-21 Topps Merlin Heritage 95,https://www.tcdb.com/Checklist.cfm/sid/269759/2020-21-Topps-Merlin-Heritage-95---Orange,2020-21,Merlin,Orange,2020-21 Topps  Heritage 95,False
+269757,2020-21 Topps Merlin Heritage 95,https://www.tcdb.com/Checklist.cfm/sid/269757/2020-21-Topps-Merlin-Heritage-95---Purple,2020-21,Merlin,Purple,2020-21 Topps  Heritage 95,False
+269758,2020-21 Topps Merlin Heritage 95,https://www.tcdb.com/Checklist.cfm/sid/269758/2020-21-Topps-Merlin-Heritage-95---Red,2020-21,Merlin,Red,2020-21 Topps  Heritage 95,False
+250783,2020-21 Topps Museum Collection UEFA Champions League,https://www.tcdb.com/ViewSet.cfm/sid/250783/2020-21-Topps-Museum-Collection-UEFA-Champions-League,2020-21,Topps,Base,2020-21  Museum Collection UEFA Champions League,True
+266275,2020-21 Topps Museum Collection UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/266275/2020-21-Topps-Museum-Collection-UEFA-Champions-League---Copper,2020-21,Topps,Copper,2020-21  Museum Collection UEFA Champions League,False
+266279,2020-21 Topps Museum Collection UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/266279/2020-21-Topps-Museum-Collection-UEFA-Champions-League---Emerald,2020-21,Topps,Emerald,2020-21  Museum Collection UEFA Champions League,False
+266277,2020-21 Topps Museum Collection UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/266277/2020-21-Topps-Museum-Collection-UEFA-Champions-League---Gold,2020-21,Topps,Gold,2020-21  Museum Collection UEFA Champions League,False
+266297,2020-21 Topps Museum Collection UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/266297/2020-21-Topps-Museum-Collection-UEFA-Champions-League---Museum-Autograph-Jumbo-Relics,2020-21,Topps,Museum Autograph Jumbo Relics,2020-21  Museum Collection UEFA Champions League,False
+266300,2020-21 Topps Museum Collection UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/266300/2020-21-Topps-Museum-Collection-UEFA-Champions-League---Museum-Autograph-Jumbo-Relics-Emerald,2020-21,Topps,Museum Autograph Jumbo Relics Emerald,2020-21  Museum Collection UEFA Champions League,False
+266298,2020-21 Topps Museum Collection UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/266298/2020-21-Topps-Museum-Collection-UEFA-Champions-League---Museum-Autograph-Jumbo-Relics-Gold,2020-21,Topps,Museum Autograph Jumbo Relics Gold,2020-21  Museum Collection UEFA Champions League,False
+266299,2020-21 Topps Museum Collection UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/266299/2020-21-Topps-Museum-Collection-UEFA-Champions-League---Museum-Autograph-Jumbo-Relics-Ruby,2020-21,Topps,Museum Autograph Jumbo Relics Ruby,2020-21  Museum Collection UEFA Champions League,False
+266278,2020-21 Topps Museum Collection UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/266278/2020-21-Topps-Museum-Collection-UEFA-Champions-League---Ruby,2020-21,Topps,Ruby,2020-21  Museum Collection UEFA Champions League,False
+266276,2020-21 Topps Museum Collection UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/266276/2020-21-Topps-Museum-Collection-UEFA-Champions-League---Sapphire,2020-21,Topps,Sapphire,2020-21  Museum Collection UEFA Champions League,False
+244866,2020-21 Topps Now Bundesliga English,https://www.tcdb.com/ViewSet.cfm/sid/244866/2020-21-Topps-Now-Bundesliga-English,2020-21,Topps,Base,2020-21  Now Bundesliga English,True
+244867,2020-21 Topps Now Bundesliga German,https://www.tcdb.com/ViewSet.cfm/sid/244867/2020-21-Topps-Now-Bundesliga-German,2020-21,Topps,Base,2020-21  Now Bundesliga German,True
+249921,2020-21 Topps Now UEFA Champions League,https://www.tcdb.com/ViewSet.cfm/sid/249921/2020-21-Topps-Now-UEFA-Champions-League,2020-21,Topps,Base,2020-21  Now UEFA Champions League,True
+280912,2020-21 Topps Now UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/280912/2020-21-Topps-Now-UEFA-Champions-League---/99,2020-21,Topps,/99,2020-21  Now UEFA Champions League,False
+280914,2020-21 Topps Now UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/280914/2020-21-Topps-Now-UEFA-Champions-League---Blue,2020-21,Topps,Blue,2020-21  Now UEFA Champions League,False
+280913,2020-21 Topps Now UEFA Champions League,https://www.tcdb.com/Checklist.cfm/sid/280913/2020-21-Topps-Now-UEFA-Champions-League---Gold,2020-21,Topps,Gold,2020-21  Now UEFA Champions League,False
+271484,2020-21 Topps Tier One Bundesliga,,2020-21,,,,False
+271485,2020-21 Topps Tier One Bundesliga,,2020-21,,,,False
+271492,2020-21 Topps Tier One Bundesliga,,2020-21,,,,False
+271493,2020-21 Topps Tier One Bundesliga,,2020-21,,,,False
+271486,2020-21 Topps Tier One Bundesliga,,2020-21,,,,False
+271490,2020-21 Topps Tier One Bundesliga,,2020-21,,,,False
+271487,2020-21 Topps Tier One Bundesliga,,2020-21,,,,False
+271488,2020-21 Topps Tier One Bundesliga,,2020-21,,,,False
+271489,2020-21 Topps Tier One Bundesliga,,2020-21,,,,False
+271477,2020-21 Topps Tier One Bundesliga,,2020-21,,,,False
+271478,2020-21 Topps Tier One Bundesliga,,2020-21,,,,False
+271480,2020-21 Topps Tier One Bundesliga,,2020-21,,,,False
+271479,2020-21 Topps Tier One Bundesliga,,2020-21,,,,False
+258240,2020-21 Topps UEFA Champions League Best of the Best,https://www.tcdb.com/ViewSet.cfm/sid/258240/2020-21-Topps-UEFA-Champions-League-Best-of-the-Best,2020-21,Topps,Base,2020-21  UEFA Champions League Best of the Best,True
+297847,2020-21 Topps UEFA Champions League Japan Edition,https://www.tcdb.com/ViewSet.cfm/sid/297847/2020-21-Topps-UEFA-Champions-League-Japan-Edition,2020-21,Topps,Base,2020-21  UEFA Champions League Japan Edition,True
+297849,2020-21 Topps UEFA Champions League Japan Edition,https://www.tcdb.com/Checklist.cfm/sid/297849/2020-21-Topps-UEFA-Champions-League-Japan-Edition---Aqua,2020-21,Topps,Aqua,2020-21  UEFA Champions League Japan Edition,False
+297853,2020-21 Topps UEFA Champions League Japan Edition,https://www.tcdb.com/Checklist.cfm/sid/297853/2020-21-Topps-UEFA-Champions-League-Japan-Edition---Blue,2020-21,Topps,Blue,2020-21  UEFA Champions League Japan Edition,False
+297851,2020-21 Topps UEFA Champions League Japan Edition,https://www.tcdb.com/Checklist.cfm/sid/297851/2020-21-Topps-UEFA-Champions-League-Japan-Edition---Fuchsia,2020-21,Topps,Fuchsia,2020-21  UEFA Champions League Japan Edition,False
+297854,2020-21 Topps UEFA Champions League Japan Edition,https://www.tcdb.com/Checklist.cfm/sid/297854/2020-21-Topps-UEFA-Champions-League-Japan-Edition---Gold,2020-21,Topps,Gold,2020-21  UEFA Champions League Japan Edition,False
+297852,2020-21 Topps UEFA Champions League Japan Edition,https://www.tcdb.com/Checklist.cfm/sid/297852/2020-21-Topps-UEFA-Champions-League-Japan-Edition---Green,2020-21,Topps,Green,2020-21  UEFA Champions League Japan Edition,False
+297855,2020-21 Topps UEFA Champions League Japan Edition,https://www.tcdb.com/Checklist.cfm/sid/297855/2020-21-Topps-UEFA-Champions-League-Japan-Edition---Orange,2020-21,Topps,Orange,2020-21  UEFA Champions League Japan Edition,False
+297856,2020-21 Topps UEFA Champions League Japan Edition,https://www.tcdb.com/Checklist.cfm/sid/297856/2020-21-Topps-UEFA-Champions-League-Japan-Edition---Red,2020-21,Topps,Red,2020-21  UEFA Champions League Japan Edition,False
+297848,2020-21 Topps UEFA Champions League Japan Edition,https://www.tcdb.com/Checklist.cfm/sid/297848/2020-21-Topps-UEFA-Champions-League-Japan-Edition---Refractor,2020-21,Topps,Refractor,2020-21  UEFA Champions League Japan Edition,False
+297857,2020-21 Topps UEFA Champions League Japan Edition,https://www.tcdb.com/Checklist.cfm/sid/297857/2020-21-Topps-UEFA-Champions-League-Japan-Edition---SuperFractor,2020-21,Topps,SuperFractor,2020-21  UEFA Champions League Japan Edition,False
+297850,2020-21 Topps UEFA Champions League Japan Edition,https://www.tcdb.com/Checklist.cfm/sid/297850/2020-21-Topps-UEFA-Champions-League-Japan-Edition---Yellow,2020-21,Topps,Yellow,2020-21  UEFA Champions League Japan Edition,False
+463880,2022-23 DoC Deck of Cards (unlicensed),,2022-23,,,,False
+381795,2022-23 Merlin UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/381795/2022-23-Merlin-UEFA-Club-Competitions---U21-Stars,2022-23,Merlin,U21 Stars,UEFA Club Competitions,False
+381796,2022-23 Merlin UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/381796/2022-23-Merlin-UEFA-Club-Competitions---U21-Stars-Blue-Refractor,2022-23,Merlin,U21 Stars Blue Refractor,UEFA Club Competitions,False
+381797,2022-23 Merlin UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/381797/2022-23-Merlin-UEFA-Club-Competitions---U21-Stars-Gold-Refractor,2022-23,Merlin,U21 Stars Gold Refractor,UEFA Club Competitions,False
+381798,2022-23 Merlin UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/381798/2022-23-Merlin-UEFA-Club-Competitions---U21-Stars-Orange-Refractor,2022-23,Merlin,U21 Stars Orange Refractor,UEFA Club Competitions,False
+381799,2022-23 Merlin UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/381799/2022-23-Merlin-UEFA-Club-Competitions---U21-Stars-Red-Refractor,2022-23,Merlin,U21 Stars Red Refractor,UEFA Club Competitions,False
+381800,2022-23 Merlin UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/381800/2022-23-Merlin-UEFA-Club-Competitions---U21-Stars-SuperFractor,2022-23,Merlin,U21 Stars SuperFractor,UEFA Club Competitions,False
+475853,2023-24 Panini Foot Stickers,https://www.tcdb.com/Checklist.cfm/sid/475853/2023-24-Panini-Foot-Stickers---Mercato-d'Hiver,2023-24,Panini,Mercato d'Hiver,2023-24  Foot Stickers,False
+421111,2023-24 Topps Match Attax UEFA Club Competitions Extra,https://www.tcdb.com/Checklist.cfm/sid/421111/2023-24-Topps-Match-Attax-UEFA-Club-Competitions-Extra---New-Transfers,2023-24,Topps,New Transfers,2023-24  Match Attax UEFA Club Competitions Extra,False
+478299,2024-25 Panini Premier League Stickers,https://www.tcdb.com/ViewSet.cfm/sid/478299/2024-25-Panini-Premier-League-Stickers,2024-25,Panini,Base,2024-25  Premier League Stickers,True
+481484,2024-25 Panini Prizm Premier League,https://www.tcdb.com/ViewSet.cfm/sid/481484/2024-25-Panini-Prizm-Premier-League,2024-25,Panini,Base,2024-25  Prizm Premier League,True
+481513,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/481513/2024-25-Panini-Prizm-Premier-League---Black,2024-25,Panini,Black,2024-25  Prizm Premier League,False
+481500,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/481500/2024-25-Panini-Prizm-Premier-League---Black-and-White-Checker,2024-25,Panini,Black and White Checker,2024-25  Prizm Premier League,False
+481531,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/481531/2024-25-Panini-Prizm-Premier-League---Black-Breakaway,2024-25,Panini,Black Breakaway,2024-25  Prizm Premier League,False
+511916,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/511916/2024-25-Panini-Prizm-Premier-League---Black-Finite,2024-25,Panini,Black Finite,2024-25  Prizm Premier League,False
+481511,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/481511/2024-25-Panini-Prizm-Premier-League---Black-Gold,2024-25,Panini,Black Gold,2024-25  Prizm Premier League,False
+511915,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/511915/2024-25-Panini-Prizm-Premier-League---Black-Shimmer,2024-25,Panini,Black Shimmer,2024-25  Prizm Premier League,False
+481503,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/481503/2024-25-Panini-Prizm-Premier-League---Blue,2024-25,Panini,Blue,2024-25  Prizm Premier League,False
+481526,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/481526/2024-25-Panini-Prizm-Premier-League---Blue-Breakaway,2024-25,Panini,Blue Breakaway,2024-25  Prizm Premier League,False
+481506,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/481506/2024-25-Panini-Prizm-Premier-League---Blue-Ice,2024-25,Panini,Blue Ice,2024-25  Prizm Premier League,False
+511919,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/511919/2024-25-Panini-Prizm-Premier-League---Blue-Mosaic,2024-25,Panini,Blue Mosaic,2024-25  Prizm Premier League,False
+511914,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/511914/2024-25-Panini-Prizm-Premier-League---Blue-Shimmer,2024-25,Panini,Blue Shimmer,2024-25  Prizm Premier League,False
+481523,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/481523/2024-25-Panini-Prizm-Premier-League---Breakaway,2024-25,Panini,Breakaway,2024-25  Prizm Premier League,False
+511920,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/511920/2024-25-Panini-Prizm-Premier-League---Choice,2024-25,Panini,Choice,2024-25  Prizm Premier League,False
+511921,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/511921/2024-25-Panini-Prizm-Premier-League---Choice-Cherry-Blossom,2024-25,Panini,Choice Cherry Blossom,2024-25  Prizm Premier League,False
+511922,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/511922/2024-25-Panini-Prizm-Premier-League---Choice-Green,2024-25,Panini,Choice Green,2024-25  Prizm Premier League,False
+511923,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/511923/2024-25-Panini-Prizm-Premier-League---Choice-Nebula,2024-25,Panini,Choice Nebula,2024-25  Prizm Premier League,False
+511924,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/511924/2024-25-Panini-Prizm-Premier-League---Choice-Red,2024-25,Panini,Choice Red,2024-25  Prizm Premier League,False
+511925,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/511925/2024-25-Panini-Prizm-Premier-League---Choice-Red-White-and-Blue,2024-25,Panini,Choice Red White and Blue,2024-25  Prizm Premier League,False
+511926,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/511926/2024-25-Panini-Prizm-Premier-League---Choice-Tiger-Stripe,2024-25,Panini,Choice Tiger Stripe,2024-25  Prizm Premier League,False
+511927,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/511927/2024-25-Panini-Prizm-Premier-League---Choice-Zebra,2024-25,Panini,Choice Zebra,2024-25  Prizm Premier League,False
+481488,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/481488/2024-25-Panini-Prizm-Premier-League---Emergent,2024-25,Panini,Emergent,2024-25  Prizm Premier League,False
+481518,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/481518/2024-25-Panini-Prizm-Premier-League---Emergent-Black,2024-25,Panini,Emergent Black,2024-25  Prizm Premier League,False
+512049,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/512049/2024-25-Panini-Prizm-Premier-League---Emergent-Black-Shimmer,2024-25,Panini,Emergent Black Shimmer,2024-25  Prizm Premier League,False
+481517,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/481517/2024-25-Panini-Prizm-Premier-League---Emergent-Green,2024-25,Panini,Emergent Green,2024-25  Prizm Premier League,False
+481515,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/481515/2024-25-Panini-Prizm-Premier-League---Emergent-Orange,2024-25,Panini,Emergent Orange,2024-25  Prizm Premier League,False
+481514,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/481514/2024-25-Panini-Prizm-Premier-League---Emergent-Silver,2024-25,Panini,Emergent Silver,2024-25  Prizm Premier League,False
+481498,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/481498/2024-25-Panini-Prizm-Premier-League---Genesis,2024-25,Panini,Genesis,2024-25  Prizm Premier League,False
+511928,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/511928/2024-25-Panini-Prizm-Premier-League---Glitter,2024-25,Panini,Glitter,2024-25  Prizm Premier League,False
+481510,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/481510/2024-25-Panini-Prizm-Premier-League---Gold,2024-25,Panini,Gold,2024-25  Prizm Premier League,False
+481529,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/481529/2024-25-Panini-Prizm-Premier-League---Gold-Breakaway,2024-25,Panini,Gold Breakaway,2024-25  Prizm Premier League,False
+511929,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/511929/2024-25-Panini-Prizm-Premier-League---Gold-Pulsar,2024-25,Panini,Gold Pulsar,2024-25  Prizm Premier League,False
+481512,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/481512/2024-25-Panini-Prizm-Premier-League---Green,2024-25,Panini,Green,2024-25  Prizm Premier League,False
+481530,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/481530/2024-25-Panini-Prizm-Premier-League---Green-Breakaway,2024-25,Panini,Green Breakaway,2024-25  Prizm Premier League,False
+511930,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/511930/2024-25-Panini-Prizm-Premier-League---Green-Ice,2024-25,Panini,Green Ice,2024-25  Prizm Premier League,False
+511917,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/511917/2024-25-Panini-Prizm-Premier-League---Green-Pulsar,2024-25,Panini,Green Pulsar,2024-25  Prizm Premier League,False
+481494,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/481494/2024-25-Panini-Prizm-Premier-League---Hyper,2024-25,Panini,Hyper,2024-25  Prizm Premier League,False
+481495,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/481495/2024-25-Panini-Prizm-Premier-League---Ice,2024-25,Panini,Ice,2024-25  Prizm Premier League,False
+481496,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/481496/2024-25-Panini-Prizm-Premier-League---Lazer,2024-25,Panini,Lazer,2024-25  Prizm Premier League,False
+481532,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/481532/2024-25-Panini-Prizm-Premier-League---Lotus-Flower,2024-25,Panini,Lotus Flower,2024-25  Prizm Premier League,False
+511918,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/511918/2024-25-Panini-Prizm-Premier-League---Lucky-Envelope,2024-25,Panini,Lucky Envelope,2024-25  Prizm Premier League,False
+481497,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/481497/2024-25-Panini-Prizm-Premier-League---Mojo,2024-25,Panini,Mojo,2024-25  Prizm Premier League,False
+481524,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/481524/2024-25-Panini-Prizm-Premier-League---Orange-Breakaway,2024-25,Panini,Orange Breakaway,2024-25  Prizm Premier League,False
+481502,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/481502/2024-25-Panini-Prizm-Premier-League---Orange-Hyper,2024-25,Panini,Orange Hyper,2024-25  Prizm Premier League,False
+511931,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/511931/2024-25-Panini-Prizm-Premier-League---Orange-Mosaic,2024-25,Panini,Orange Mosaic,2024-25  Prizm Premier League,False
+481525,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/481525/2024-25-Panini-Prizm-Premier-League---Pink-Breakaway,2024-25,Panini,Pink Breakaway,2024-25  Prizm Premier League,False
+511932,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/511932/2024-25-Panini-Prizm-Premier-League---Pink-Mojo,2024-25,Panini,Pink Mojo,2024-25  Prizm Premier League,False
+511933,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/511933/2024-25-Panini-Prizm-Premier-League---Pink-Mosaic,2024-25,Panini,Pink Mosaic,2024-25  Prizm Premier League,False
+511934,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/511934/2024-25-Panini-Prizm-Premier-League---Pink-Stars,2024-25,Panini,Pink Stars,2024-25  Prizm Premier League,False
+511935,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/511935/2024-25-Panini-Prizm-Premier-League---Plum-Blossom,2024-25,Panini,Plum Blossom,2024-25  Prizm Premier League,False
+481501,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/481501/2024-25-Panini-Prizm-Premier-League---Purple,2024-25,Panini,Purple,2024-25  Prizm Premier League,False
+481505,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/481505/2024-25-Panini-Prizm-Premier-League---Purple-and-White-Stripes,2024-25,Panini,Purple and White Stripes,2024-25  Prizm Premier League,False
+481528,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/481528/2024-25-Panini-Prizm-Premier-League---Purple-Breakaway,2024-25,Panini,Purple Breakaway,2024-25  Prizm Premier League,False
+481509,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/481509/2024-25-Panini-Prizm-Premier-League---Purple-Mojo,2024-25,Panini,Purple Mojo,2024-25  Prizm Premier League,False
+511936,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/511936/2024-25-Panini-Prizm-Premier-League---Purple-Mosaic,2024-25,Panini,Purple Mosaic,2024-25  Prizm Premier League,False
+511937,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/511937/2024-25-Panini-Prizm-Premier-League---Purple-Pulsar,2024-25,Panini,Purple Pulsar,2024-25  Prizm Premier League,False
+481504,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/481504/2024-25-Panini-Prizm-Premier-League---Red,2024-25,Panini,Red,2024-25  Prizm Premier League,False
+481527,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/481527/2024-25-Panini-Prizm-Premier-League---Red-Breakaway,2024-25,Panini,Red Breakaway,2024-25  Prizm Premier League,False
+481507,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/481507/2024-25-Panini-Prizm-Premier-League---Red-Lazer,2024-25,Panini,Red Lazer,2024-25  Prizm Premier League,False
+511938,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/511938/2024-25-Panini-Prizm-Premier-League---Red-Mosaic,2024-25,Panini,Red Mosaic,2024-25  Prizm Premier League,False
+511939,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/511939/2024-25-Panini-Prizm-Premier-League---Red-Stars,2024-25,Panini,Red Stars,2024-25  Prizm Premier League,False
+481493,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/481493/2024-25-Panini-Prizm-Premier-League---Silver,2024-25,Panini,Silver,2024-25  Prizm Premier League,False
+481499,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/481499/2024-25-Panini-Prizm-Premier-League---Snakeskin,2024-25,Panini,Snakeskin,2024-25  Prizm Premier League,False
+481508,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/481508/2024-25-Panini-Prizm-Premier-League---White,2024-25,Panini,White,2024-25  Prizm Premier League,False
+511940,2024-25 Panini Prizm Premier League,https://www.tcdb.com/Checklist.cfm/sid/511940/2024-25-Panini-Prizm-Premier-League---White-Sparkle,2024-25,Panini,White Sparkle,2024-25  Prizm Premier League,False
+508327,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/ViewSet.cfm/sid/508327/2024-25-Topps-Chrome-UEFA-Club-Competitions,2024-25,Topps,Base,2024-25  Chrome UEFA Club Competitions,True
+520739,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520739/2024-25-Topps-Chrome-UEFA-Club-Competitions---Aqua-Lava-Refractor,2024-25,Topps,Aqua Lava Refractor,2024-25  Chrome UEFA Club Competitions,False
+520740,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520740/2024-25-Topps-Chrome-UEFA-Club-Competitions---Aqua-Prism-Refractor,2024-25,Topps,Aqua Prism Refractor,2024-25  Chrome UEFA Club Competitions,False
+520738,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520738/2024-25-Topps-Chrome-UEFA-Club-Competitions---Aqua-Refractor,2024-25,Topps,Aqua Refractor,2024-25  Chrome UEFA Club Competitions,False
+520762,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520762/2024-25-Topps-Chrome-UEFA-Club-Competitions---Black-Lava-Refractor,2024-25,Topps,Black Lava Refractor,2024-25  Chrome UEFA Club Competitions,False
+520763,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520763/2024-25-Topps-Chrome-UEFA-Club-Competitions---Black-Prism-Refractor,2024-25,Topps,Black Prism Refractor,2024-25  Chrome UEFA Club Competitions,False
+520761,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520761/2024-25-Topps-Chrome-UEFA-Club-Competitions---Black-Refractor,2024-25,Topps,Black Refractor,2024-25  Chrome UEFA Club Competitions,False
+520744,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520744/2024-25-Topps-Chrome-UEFA-Club-Competitions---Blue-Lava-Refractor,2024-25,Topps,Blue Lava Refractor,2024-25  Chrome UEFA Club Competitions,False
+520745,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520745/2024-25-Topps-Chrome-UEFA-Club-Competitions---Blue-Prism-Refractor,2024-25,Topps,Blue Prism Refractor,2024-25  Chrome UEFA Club Competitions,False
+520743,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520743/2024-25-Topps-Chrome-UEFA-Club-Competitions---Blue-Refractor,2024-25,Topps,Blue Refractor,2024-25  Chrome UEFA Club Competitions,False
+520782,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520782/2024-25-Topps-Chrome-UEFA-Club-Competitions---Chrome-Autographs,2024-25,Topps,Chrome Autographs,2024-25  Chrome UEFA Club Competitions,False
+520788,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520788/2024-25-Topps-Chrome-UEFA-Club-Competitions---Chrome-Autographs-Aqua-Lava-Refractor,2024-25,Topps,Chrome Autographs Aqua Lava Refractor,2024-25  Chrome UEFA Club Competitions,False
+520787,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520787/2024-25-Topps-Chrome-UEFA-Club-Competitions---Chrome-Autographs-Aqua-Refractor,2024-25,Topps,Chrome Autographs Aqua Refractor,2024-25  Chrome UEFA Club Competitions,False
+520805,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520805/2024-25-Topps-Chrome-UEFA-Club-Competitions---Chrome-Autographs-Black-Geometric-Refractor,2024-25,Topps,Chrome Autographs Black Geometric Refractor,2024-25  Chrome UEFA Club Competitions,False
+520804,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520804/2024-25-Topps-Chrome-UEFA-Club-Competitions---Chrome-Autographs-Black-Lava-Refractor,2024-25,Topps,Chrome Autographs Black Lava Refractor,2024-25  Chrome UEFA Club Competitions,False
+520803,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520803/2024-25-Topps-Chrome-UEFA-Club-Competitions---Chrome-Autographs-Black-Refractor,2024-25,Topps,Chrome Autographs Black Refractor,2024-25  Chrome UEFA Club Competitions,False
+520790,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520790/2024-25-Topps-Chrome-UEFA-Club-Competitions---Chrome-Autographs-Blue-Lava-Refractor,2024-25,Topps,Chrome Autographs Blue Lava Refractor,2024-25  Chrome UEFA Club Competitions,False
+520789,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520789/2024-25-Topps-Chrome-UEFA-Club-Competitions---Chrome-Autographs-Blue-Refractor,2024-25,Topps,Chrome Autographs Blue Refractor,2024-25  Chrome UEFA Club Competitions,False
+520783,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520783/2024-25-Topps-Chrome-UEFA-Club-Competitions---Chrome-Autographs-Geometric-Refractor,2024-25,Topps,Chrome Autographs Geometric Refractor,2024-25  Chrome UEFA Club Competitions,False
+520799,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520799/2024-25-Topps-Chrome-UEFA-Club-Competitions---Chrome-Autographs-Gold-Geometric-Refractor,2024-25,Topps,Chrome Autographs Gold Geometric Refractor,2024-25  Chrome UEFA Club Competitions,False
+520798,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520798/2024-25-Topps-Chrome-UEFA-Club-Competitions---Chrome-Autographs-Gold-Lava-Refractor,2024-25,Topps,Chrome Autographs Gold Lava Refractor,2024-25  Chrome UEFA Club Competitions,False
+520797,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520797/2024-25-Topps-Chrome-UEFA-Club-Competitions---Chrome-Autographs-Gold-Refractor,2024-25,Topps,Chrome Autographs Gold Refractor,2024-25  Chrome UEFA Club Competitions,False
+520792,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520792/2024-25-Topps-Chrome-UEFA-Club-Competitions---Chrome-Autographs-Green-Lava-Refractor,2024-25,Topps,Chrome Autographs Green Lava Refractor,2024-25  Chrome UEFA Club Competitions,False
+520791,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520791/2024-25-Topps-Chrome-UEFA-Club-Competitions---Chrome-Autographs-Green-Refractor,2024-25,Topps,Chrome Autographs Green Refractor,2024-25  Chrome UEFA Club Competitions,False
+520784,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520784/2024-25-Topps-Chrome-UEFA-Club-Competitions---Chrome-Autographs-Hongbao-Red-Refractor,2024-25,Topps,Chrome Autographs Hongbao Red Refractor,2024-25  Chrome UEFA Club Competitions,False
+520795,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520795/2024-25-Topps-Chrome-UEFA-Club-Competitions---Chrome-Autographs-Magenta-Geometric-Refractor,2024-25,Topps,Chrome Autographs Magenta Geometric Refractor,2024-25  Chrome UEFA Club Competitions,False
+520794,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520794/2024-25-Topps-Chrome-UEFA-Club-Competitions---Chrome-Autographs-Magenta-Lava-Refractor,2024-25,Topps,Chrome Autographs Magenta Lava Refractor,2024-25  Chrome UEFA Club Competitions,False
+520793,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520793/2024-25-Topps-Chrome-UEFA-Club-Competitions---Chrome-Autographs-Magenta-Refractor,2024-25,Topps,Chrome Autographs Magenta Refractor,2024-25  Chrome UEFA Club Competitions,False
+520802,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520802/2024-25-Topps-Chrome-UEFA-Club-Competitions---Chrome-Autographs-Orange-Geometric-Refractor,2024-25,Topps,Chrome Autographs Orange Geometric Refractor,2024-25  Chrome UEFA Club Competitions,False
+520801,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520801/2024-25-Topps-Chrome-UEFA-Club-Competitions---Chrome-Autographs-Orange-Lava-Refractor,2024-25,Topps,Chrome Autographs Orange Lava Refractor,2024-25  Chrome UEFA Club Competitions,False
+520800,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520800/2024-25-Topps-Chrome-UEFA-Club-Competitions---Chrome-Autographs-Orange-Refractor,2024-25,Topps,Chrome Autographs Orange Refractor,2024-25  Chrome UEFA Club Competitions,False
+520786,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520786/2024-25-Topps-Chrome-UEFA-Club-Competitions---Chrome-Autographs-Pink-Lava-Refractor,2024-25,Topps,Chrome Autographs Pink Lava Refractor,2024-25  Chrome UEFA Club Competitions,False
+520785,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520785/2024-25-Topps-Chrome-UEFA-Club-Competitions---Chrome-Autographs-Pink-Refractor,2024-25,Topps,Chrome Autographs Pink Refractor,2024-25  Chrome UEFA Club Competitions,False
+520808,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520808/2024-25-Topps-Chrome-UEFA-Club-Competitions---Chrome-Autographs-Red-Geometric-Refractor,2024-25,Topps,Chrome Autographs Red Geometric Refractor,2024-25  Chrome UEFA Club Competitions,False
+520807,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520807/2024-25-Topps-Chrome-UEFA-Club-Competitions---Chrome-Autographs-Red-Lava-Refractor,2024-25,Topps,Chrome Autographs Red Lava Refractor,2024-25  Chrome UEFA Club Competitions,False
+520806,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520806/2024-25-Topps-Chrome-UEFA-Club-Competitions---Chrome-Autographs-Red-Refractor,2024-25,Topps,Chrome Autographs Red Refractor,2024-25  Chrome UEFA Club Competitions,False
+520809,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520809/2024-25-Topps-Chrome-UEFA-Club-Competitions---Chrome-Autographs-SuperFractor,2024-25,Topps,Chrome Autographs SuperFractor,2024-25  Chrome UEFA Club Competitions,False
+520796,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520796/2024-25-Topps-Chrome-UEFA-Club-Competitions---Chrome-Autographs-ToppsFractor,2024-25,Topps,Chrome Autographs ToppsFractor,2024-25  Chrome UEFA Club Competitions,False
+520885,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520885/2024-25-Topps-Chrome-UEFA-Club-Competitions---Chrome-Dual-Autographs,2024-25,Topps,Chrome Dual Autographs,2024-25  Chrome UEFA Club Competitions,False
+520887,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520887/2024-25-Topps-Chrome-UEFA-Club-Competitions---Chrome-Dual-Autographs-Black-Refractor,2024-25,Topps,Chrome Dual Autographs Black Refractor,2024-25  Chrome UEFA Club Competitions,False
+520886,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520886/2024-25-Topps-Chrome-UEFA-Club-Competitions---Chrome-Dual-Autographs-Orange-Refractor,2024-25,Topps,Chrome Dual Autographs Orange Refractor,2024-25  Chrome UEFA Club Competitions,False
+520888,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520888/2024-25-Topps-Chrome-UEFA-Club-Competitions---Chrome-Dual-Autographs-Red-Refractor,2024-25,Topps,Chrome Dual Autographs Red Refractor,2024-25  Chrome UEFA Club Competitions,False
+520889,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520889/2024-25-Topps-Chrome-UEFA-Club-Competitions---Chrome-Dual-Autographs-Superfractor,2024-25,Topps,Chrome Dual Autographs Superfractor,2024-25  Chrome UEFA Club Competitions,False
+520768,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520768/2024-25-Topps-Chrome-UEFA-Club-Competitions---Club-&-Country-Refractor,2024-25,Topps,Club & Country Refractor,2024-25  Chrome UEFA Club Competitions,False
+520730,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520730/2024-25-Topps-Chrome-UEFA-Club-Competitions---Geometric-Refractor,2024-25,Topps,Geometric Refractor,2024-25  Chrome UEFA Club Competitions,False
+520755,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520755/2024-25-Topps-Chrome-UEFA-Club-Competitions---Gold-Lava-Refractor,2024-25,Topps,Gold Lava Refractor,2024-25  Chrome UEFA Club Competitions,False
+520756,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520756/2024-25-Topps-Chrome-UEFA-Club-Competitions---Gold-Prism-Refractor,2024-25,Topps,Gold Prism Refractor,2024-25  Chrome UEFA Club Competitions,False
+520754,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520754/2024-25-Topps-Chrome-UEFA-Club-Competitions---Gold-Refractor,2024-25,Topps,Gold Refractor,2024-25  Chrome UEFA Club Competitions,False
+520748,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520748/2024-25-Topps-Chrome-UEFA-Club-Competitions---Green-Lava-Refractor,2024-25,Topps,Green Lava Refractor,2024-25  Chrome UEFA Club Competitions,False
+520749,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520749/2024-25-Topps-Chrome-UEFA-Club-Competitions---Green-Prism-Refractor,2024-25,Topps,Green Prism Refractor,2024-25  Chrome UEFA Club Competitions,False
+520747,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520747/2024-25-Topps-Chrome-UEFA-Club-Competitions---Green-Refractor,2024-25,Topps,Green Refractor,2024-25  Chrome UEFA Club Competitions,False
+520728,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520728/2024-25-Topps-Chrome-UEFA-Club-Competitions---Hongbao-Red-Refractor,2024-25,Topps,Hongbao Red Refractor,2024-25  Chrome UEFA Club Competitions,False
+520751,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520751/2024-25-Topps-Chrome-UEFA-Club-Competitions---Magenta-Lava-Refractor,2024-25,Topps,Magenta Lava Refractor,2024-25  Chrome UEFA Club Competitions,False
+520752,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520752/2024-25-Topps-Chrome-UEFA-Club-Competitions---Magenta-Prism-Refractor,2024-25,Topps,Magenta Prism Refractor,2024-25  Chrome UEFA Club Competitions,False
+520750,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520750/2024-25-Topps-Chrome-UEFA-Club-Competitions---Magenta-Refractor,2024-25,Topps,Magenta Refractor,2024-25  Chrome UEFA Club Competitions,False
+520727,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520727/2024-25-Topps-Chrome-UEFA-Club-Competitions---Magenta-Shimmer-Refractor,2024-25,Topps,Magenta Shimmer Refractor,2024-25  Chrome UEFA Club Competitions,False
+520746,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520746/2024-25-Topps-Chrome-UEFA-Club-Competitions---Neon-Green-RayWave-Refractor,2024-25,Topps,Neon Green RayWave Refractor,2024-25  Chrome UEFA Club Competitions,False
+520742,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520742/2024-25-Topps-Chrome-UEFA-Club-Competitions---Neon-Pink-Prism-Refractor,2024-25,Topps,Neon Pink Prism Refractor,2024-25  Chrome UEFA Club Competitions,False
+520741,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520741/2024-25-Topps-Chrome-UEFA-Club-Competitions---Neon-Pink-RayWave-Refractor,2024-25,Topps,Neon Pink RayWave Refractor,2024-25  Chrome UEFA Club Competitions,False
+520737,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520737/2024-25-Topps-Chrome-UEFA-Club-Competitions---Night-Vision-RayWave-Refractor,2024-25,Topps,Night Vision RayWave Refractor,2024-25  Chrome UEFA Club Competitions,False
+520758,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520758/2024-25-Topps-Chrome-UEFA-Club-Competitions---Orange-Lava-Refractor,2024-25,Topps,Orange Lava Refractor,2024-25  Chrome UEFA Club Competitions,False
+520759,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520759/2024-25-Topps-Chrome-UEFA-Club-Competitions---Orange-Prism-Refractor,2024-25,Topps,Orange Prism Refractor,2024-25  Chrome UEFA Club Competitions,False
+520757,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520757/2024-25-Topps-Chrome-UEFA-Club-Competitions---Orange-Refractor,2024-25,Topps,Orange Refractor,2024-25  Chrome UEFA Club Competitions,False
+520736,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520736/2024-25-Topps-Chrome-UEFA-Club-Competitions---Pink-Lava-Refractor,2024-25,Topps,Pink Lava Refractor,2024-25  Chrome UEFA Club Competitions,False
+520735,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520735/2024-25-Topps-Chrome-UEFA-Club-Competitions---Pink-Refractor,2024-25,Topps,Pink Refractor,2024-25  Chrome UEFA Club Competitions,False
+520731,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520731/2024-25-Topps-Chrome-UEFA-Club-Competitions---Pulsar-Refractor,2024-25,Topps,Pulsar Refractor,2024-25  Chrome UEFA Club Competitions,False
+520726,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520726/2024-25-Topps-Chrome-UEFA-Club-Competitions---Red-Gold-Refractor,2024-25,Topps,Red Gold Refractor,2024-25  Chrome UEFA Club Competitions,False
+520765,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520765/2024-25-Topps-Chrome-UEFA-Club-Competitions---Red-Lava-Refractor,2024-25,Topps,Red Lava Refractor,2024-25  Chrome UEFA Club Competitions,False
+520766,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520766/2024-25-Topps-Chrome-UEFA-Club-Competitions---Red-Prism-Refractor,2024-25,Topps,Red Prism Refractor,2024-25  Chrome UEFA Club Competitions,False
+520764,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520764/2024-25-Topps-Chrome-UEFA-Club-Competitions---Red-Refractor,2024-25,Topps,Red Refractor,2024-25  Chrome UEFA Club Competitions,False
+520725,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520725/2024-25-Topps-Chrome-UEFA-Club-Competitions---Refractor,2024-25,Topps,Refractor,2024-25  Chrome UEFA Club Competitions,False
+520729,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520729/2024-25-Topps-Chrome-UEFA-Club-Competitions---Speckle-Refractor,2024-25,Topps,Speckle Refractor,2024-25  Chrome UEFA Club Competitions,False
+520767,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520767/2024-25-Topps-Chrome-UEFA-Club-Competitions---SuperFractor,2024-25,Topps,SuperFractor,2024-25  Chrome UEFA Club Competitions,False
+520753,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520753/2024-25-Topps-Chrome-UEFA-Club-Competitions---ToppsFractor,2024-25,Topps,ToppsFractor,2024-25  Chrome UEFA Club Competitions,False
+520734,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520734/2024-25-Topps-Chrome-UEFA-Club-Competitions---Violet-Prism-Refractor,2024-25,Topps,Violet Prism Refractor,2024-25  Chrome UEFA Club Competitions,False
+520733,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520733/2024-25-Topps-Chrome-UEFA-Club-Competitions---Violet-Refractor,2024-25,Topps,Violet Refractor,2024-25  Chrome UEFA Club Competitions,False
+520732,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520732/2024-25-Topps-Chrome-UEFA-Club-Competitions---Wave-Refractor,2024-25,Topps,Wave Refractor,2024-25  Chrome UEFA Club Competitions,False
+521088,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/521088/2024-25-Topps-Chrome-UEFA-Club-Competitions---Wonderkids,2024-25,Topps,Wonderkids,2024-25  Chrome UEFA Club Competitions,False
+521090,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/521090/2024-25-Topps-Chrome-UEFA-Club-Competitions---Wonderkids-Aqua-Refractor,2024-25,Topps,Wonderkids Aqua Refractor,2024-25  Chrome UEFA Club Competitions,False
+521023,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/521023/2024-25-Topps-Chrome-UEFA-Club-Competitions---Wonderkids-Autographs,2024-25,Topps,Wonderkids Autographs,2024-25  Chrome UEFA Club Competitions,False
+521028,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/521028/2024-25-Topps-Chrome-UEFA-Club-Competitions---Wonderkids-Autographs-Black-Refractor,2024-25,Topps,Wonderkids Autographs Black Refractor,2024-25  Chrome UEFA Club Competitions,False
+521026,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/521026/2024-25-Topps-Chrome-UEFA-Club-Competitions---Wonderkids-Autographs-Gold-Refractor,2024-25,Topps,Wonderkids Autographs Gold Refractor,2024-25  Chrome UEFA Club Competitions,False
+521024,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/521024/2024-25-Topps-Chrome-UEFA-Club-Competitions---Wonderkids-Autographs-Hongbao-Red-Refractor,2024-25,Topps,Wonderkids Autographs Hongbao Red Refractor,2024-25  Chrome UEFA Club Competitions,False
+521025,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/521025/2024-25-Topps-Chrome-UEFA-Club-Competitions---Wonderkids-Autographs-Magenta-Refractor,2024-25,Topps,Wonderkids Autographs Magenta Refractor,2024-25  Chrome UEFA Club Competitions,False
+521027,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/521027/2024-25-Topps-Chrome-UEFA-Club-Competitions---Wonderkids-Autographs-Orange-Refractor,2024-25,Topps,Wonderkids Autographs Orange Refractor,2024-25  Chrome UEFA Club Competitions,False
+521029,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/521029/2024-25-Topps-Chrome-UEFA-Club-Competitions---Wonderkids-Autographs-Red-Refractor,2024-25,Topps,Wonderkids Autographs Red Refractor,2024-25  Chrome UEFA Club Competitions,False
+521030,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/521030/2024-25-Topps-Chrome-UEFA-Club-Competitions---Wonderkids-Autographs-SuperFractor,2024-25,Topps,Wonderkids Autographs SuperFractor,2024-25  Chrome UEFA Club Competitions,False
+521096,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/521096/2024-25-Topps-Chrome-UEFA-Club-Competitions---Wonderkids-Black-Refractor,2024-25,Topps,Wonderkids Black Refractor,2024-25  Chrome UEFA Club Competitions,False
+521091,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/521091/2024-25-Topps-Chrome-UEFA-Club-Competitions---Wonderkids-Blue-Refractor,2024-25,Topps,Wonderkids Blue Refractor,2024-25  Chrome UEFA Club Competitions,False
+521094,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/521094/2024-25-Topps-Chrome-UEFA-Club-Competitions---Wonderkids-Gold-Refractor,2024-25,Topps,Wonderkids Gold Refractor,2024-25  Chrome UEFA Club Competitions,False
+521092,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/521092/2024-25-Topps-Chrome-UEFA-Club-Competitions---Wonderkids-Green-Refractor,2024-25,Topps,Wonderkids Green Refractor,2024-25  Chrome UEFA Club Competitions,False
+521089,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/521089/2024-25-Topps-Chrome-UEFA-Club-Competitions---Wonderkids-Hongbao-Red-Refractor,2024-25,Topps,Wonderkids Hongbao Red Refractor,2024-25  Chrome UEFA Club Competitions,False
+521093,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/521093/2024-25-Topps-Chrome-UEFA-Club-Competitions---Wonderkids-Magenta-Refractor,2024-25,Topps,Wonderkids Magenta Refractor,2024-25  Chrome UEFA Club Competitions,False
+521095,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/521095/2024-25-Topps-Chrome-UEFA-Club-Competitions---Wonderkids-Orange-Refractor,2024-25,Topps,Wonderkids Orange Refractor,2024-25  Chrome UEFA Club Competitions,False
+521097,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/521097/2024-25-Topps-Chrome-UEFA-Club-Competitions---Wonderkids-Red-Refractor,2024-25,Topps,Wonderkids Red Refractor,2024-25  Chrome UEFA Club Competitions,False
+521098,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/521098/2024-25-Topps-Chrome-UEFA-Club-Competitions---Wonderkids-SuperFractor,2024-25,Topps,Wonderkids SuperFractor,2024-25  Chrome UEFA Club Competitions,False
+520760,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/520760/2024-25-Topps-Chrome-UEFA-Club-Competitions---XI-Refractor,2024-25,Topps,XI Refractor,2024-25  Chrome UEFA Club Competitions,False
+521099,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/521099/2024-25-Topps-Chrome-UEFA-Club-Competitions---YouthQuake,2024-25,Topps,YouthQuake,2024-25  Chrome UEFA Club Competitions,False
+521104,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/521104/2024-25-Topps-Chrome-UEFA-Club-Competitions---YouthQuake-Black-Refractor,2024-25,Topps,YouthQuake Black Refractor,2024-25  Chrome UEFA Club Competitions,False
+521101,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/521101/2024-25-Topps-Chrome-UEFA-Club-Competitions---YouthQuake-Gold-Refractor,2024-25,Topps,YouthQuake Gold Refractor,2024-25  Chrome UEFA Club Competitions,False
+521100,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/521100/2024-25-Topps-Chrome-UEFA-Club-Competitions---YouthQuake-Neon-Green-Refractor,2024-25,Topps,YouthQuake Neon Green Refractor,2024-25  Chrome UEFA Club Competitions,False
+521102,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/521102/2024-25-Topps-Chrome-UEFA-Club-Competitions---YouthQuake-Orange-Refractor,2024-25,Topps,YouthQuake Orange Refractor,2024-25  Chrome UEFA Club Competitions,False
+521105,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/521105/2024-25-Topps-Chrome-UEFA-Club-Competitions---YouthQuake-Red-Refractor,2024-25,Topps,YouthQuake Red Refractor,2024-25  Chrome UEFA Club Competitions,False
+521106,2024-25 Topps Chrome UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/521106/2024-25-Topps-Chrome-UEFA-Club-Competitions---YouthQuake-SuperFractor,2024-25,Topps,YouthQuake SuperFractor,2024-25  Chrome UEFA Club Competitions,False
+480058,2024-25 Topps Deco UEFA Club Competitions,,2024-25,,,,False
+480057,2024-25 Topps Deco UEFA Club Competitions,,2024-25,,,,False
+477847,2024-25 Topps Deco UEFA Club Competitions,,2024-25,,,,False
+480045,2024-25 Topps Deco UEFA Club Competitions,,2024-25,,,,False
+480049,2024-25 Topps Deco UEFA Club Competitions,,2024-25,,,,False
+480044,2024-25 Topps Deco UEFA Club Competitions,,2024-25,,,,False
+480048,2024-25 Topps Deco UEFA Club Competitions,,2024-25,,,,False
+480046,2024-25 Topps Deco UEFA Club Competitions,,2024-25,,,,False
+480047,2024-25 Topps Deco UEFA Club Competitions,,2024-25,,,,False
+483962,2024-25 Topps Deco UEFA Club Competitions,,2024-25,,,,False
+483970,2024-25 Topps Deco UEFA Club Competitions,,2024-25,,,,False
+484002,2024-25 Topps Deco UEFA Club Competitions,,2024-25,,,,False
+483973,2024-25 Topps Deco UEFA Club Competitions,,2024-25,,,,False
+480149,2024-25 Topps Deco UEFA Club Competitions,,2024-25,,,,False
+483972,2024-25 Topps Deco UEFA Club Competitions,,2024-25,,,,False
+483971,2024-25 Topps Deco UEFA Club Competitions,,2024-25,,,,False
+500507,2024-25 Topps Gold UEFA Club Competitions,https://www.tcdb.com/ViewSet.cfm/sid/500507/2024-25-Topps-Gold-UEFA-Club-Competitions,2024-25,Topps,Base,2024-25  Gold UEFA Club Competitions,True
+519802,2024-25 Topps Gold UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/519802/2024-25-Topps-Gold-UEFA-Club-Competitions---Autograph,2024-25,Topps,Autograph,2024-25  Gold UEFA Club Competitions,False
+519811,2024-25 Topps Gold UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/519811/2024-25-Topps-Gold-UEFA-Club-Competitions---Autograph-Blue,2024-25,Topps,Autograph Blue,2024-25  Gold UEFA Club Competitions,False
+519819,2024-25 Topps Gold UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/519819/2024-25-Topps-Gold-UEFA-Club-Competitions---Autograph-Gold,2024-25,Topps,Autograph Gold,2024-25  Gold UEFA Club Competitions,False
+519820,2024-25 Topps Gold UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/519820/2024-25-Topps-Gold-UEFA-Club-Competitions---Autograph-Green,2024-25,Topps,Autograph Green,2024-25  Gold UEFA Club Competitions,False
+519821,2024-25 Topps Gold UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/519821/2024-25-Topps-Gold-UEFA-Club-Competitions---Autograph-Orange,2024-25,Topps,Autograph Orange,2024-25  Gold UEFA Club Competitions,False
+519822,2024-25 Topps Gold UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/519822/2024-25-Topps-Gold-UEFA-Club-Competitions---Autograph-Pink,2024-25,Topps,Autograph Pink,2024-25  Gold UEFA Club Competitions,False
+519823,2024-25 Topps Gold UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/519823/2024-25-Topps-Gold-UEFA-Club-Competitions---Autograph-Purple,2024-25,Topps,Autograph Purple,2024-25  Gold UEFA Club Competitions,False
+519824,2024-25 Topps Gold UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/519824/2024-25-Topps-Gold-UEFA-Club-Competitions---Autograph-Red,2024-25,Topps,Autograph Red,2024-25  Gold UEFA Club Competitions,False
+519797,2024-25 Topps Gold UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/519797/2024-25-Topps-Gold-UEFA-Club-Competitions---Blue,2024-25,Topps,Blue,2024-25  Gold UEFA Club Competitions,False
+519801,2024-25 Topps Gold UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/519801/2024-25-Topps-Gold-UEFA-Club-Competitions---Gold,2024-25,Topps,Gold,2024-25  Gold UEFA Club Competitions,False
+519795,2024-25 Topps Gold UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/519795/2024-25-Topps-Gold-UEFA-Club-Competitions---Green,2024-25,Topps,Green,2024-25  Gold UEFA Club Competitions,False
+519800,2024-25 Topps Gold UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/519800/2024-25-Topps-Gold-UEFA-Club-Competitions---Orange,2024-25,Topps,Orange,2024-25  Gold UEFA Club Competitions,False
+519796,2024-25 Topps Gold UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/519796/2024-25-Topps-Gold-UEFA-Club-Competitions---Pink,2024-25,Topps,Pink,2024-25  Gold UEFA Club Competitions,False
+519798,2024-25 Topps Gold UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/519798/2024-25-Topps-Gold-UEFA-Club-Competitions---Purple,2024-25,Topps,Purple,2024-25  Gold UEFA Club Competitions,False
+519799,2024-25 Topps Gold UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/519799/2024-25-Topps-Gold-UEFA-Club-Competitions---Red,2024-25,Topps,Red,2024-25  Gold UEFA Club Competitions,False
+485952,2024-25 Topps Match Attax Extra UEFA Club Competitions,https://www.tcdb.com/ViewSet.cfm/sid/485952/2024-25-Topps-Match-Attax-Extra-UEFA-Club-Competitions,2024-25,Topps,Base,2024-25  Match Attax Extra UEFA Club Competitions,True
+499999,2024-25 Topps Summer Signings Here We Go By Fabrizio Romano UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/499999/2024-25-Topps-Summer-Signings-Here-We-Go-By-Fabrizio-Romano-UEFA-Club-Competitions---Autographs,2024-25,Topps,Autographs,2024-25  Summer Signings Here We Go By Fabrizio Romano UEFA Club Competitions,False
+500002,2024-25 Topps Summer Signings Here We Go By Fabrizio Romano UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/500002/2024-25-Topps-Summer-Signings-Here-We-Go-By-Fabrizio-Romano-UEFA-Club-Competitions---Autographs-Blue,2024-25,Topps,Autographs Blue,2024-25  Summer Signings Here We Go By Fabrizio Romano UEFA Club Competitions,False
+500006,2024-25 Topps Summer Signings Here We Go By Fabrizio Romano UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/500006/2024-25-Topps-Summer-Signings-Here-We-Go-By-Fabrizio-Romano-UEFA-Club-Competitions---Autographs-Gold,2024-25,Topps,Autographs Gold,2024-25  Summer Signings Here We Go By Fabrizio Romano UEFA Club Competitions,False
+500000,2024-25 Topps Summer Signings Here We Go By Fabrizio Romano UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/500000/2024-25-Topps-Summer-Signings-Here-We-Go-By-Fabrizio-Romano-UEFA-Club-Competitions---Autographs-Green,2024-25,Topps,Autographs Green,2024-25  Summer Signings Here We Go By Fabrizio Romano UEFA Club Competitions,False
+500005,2024-25 Topps Summer Signings Here We Go By Fabrizio Romano UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/500005/2024-25-Topps-Summer-Signings-Here-We-Go-By-Fabrizio-Romano-UEFA-Club-Competitions---Autographs-Orange,2024-25,Topps,Autographs Orange,2024-25  Summer Signings Here We Go By Fabrizio Romano UEFA Club Competitions,False
+500001,2024-25 Topps Summer Signings Here We Go By Fabrizio Romano UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/500001/2024-25-Topps-Summer-Signings-Here-We-Go-By-Fabrizio-Romano-UEFA-Club-Competitions---Autographs-Pink,2024-25,Topps,Autographs Pink,2024-25  Summer Signings Here We Go By Fabrizio Romano UEFA Club Competitions,False
+500003,2024-25 Topps Summer Signings Here We Go By Fabrizio Romano UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/500003/2024-25-Topps-Summer-Signings-Here-We-Go-By-Fabrizio-Romano-UEFA-Club-Competitions---Autographs-Purple,2024-25,Topps,Autographs Purple,2024-25  Summer Signings Here We Go By Fabrizio Romano UEFA Club Competitions,False
+500004,2024-25 Topps Summer Signings Here We Go By Fabrizio Romano UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/500004/2024-25-Topps-Summer-Signings-Here-We-Go-By-Fabrizio-Romano-UEFA-Club-Competitions---Autographs-Red,2024-25,Topps,Autographs Red,2024-25  Summer Signings Here We Go By Fabrizio Romano UEFA Club Competitions,False
+467821,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/ViewSet.cfm/sid/467821/2024-25-Topps-UEFA-Club-Competitions,2024-25,Topps,Base,2024-25  UEFA Club Competitions,True
+471109,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/471109/2024-25-Topps-UEFA-Club-Competitions---Base-Autographs,2024-25,Topps,Base Autographs,2024-25  UEFA Club Competitions,False
+474211,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474211/2024-25-Topps-UEFA-Club-Competitions---Base-Autographs-FoilFractor,2024-25,Topps,Base Autographs FoilFractor,2024-25  UEFA Club Competitions,False
+474207,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474207/2024-25-Topps-UEFA-Club-Competitions---Base-Autographs-Gold-Foilboard,2024-25,Topps,Base Autographs Gold Foilboard,2024-25  UEFA Club Competitions,False
+474206,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474206/2024-25-Topps-UEFA-Club-Competitions---Base-Autographs-Green-Foilboard,2024-25,Topps,Base Autographs Green Foilboard,2024-25  UEFA Club Competitions,False
+474209,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474209/2024-25-Topps-UEFA-Club-Competitions---Base-Autographs-Icy-Black,2024-25,Topps,Base Autographs Icy Black,2024-25  UEFA Club Competitions,False
+474202,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474202/2024-25-Topps-UEFA-Club-Competitions---Base-Autographs-Neon-Green-Foilboard,2024-25,Topps,Base Autographs Neon Green Foilboard,2024-25  UEFA Club Competitions,False
+474204,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474204/2024-25-Topps-UEFA-Club-Competitions---Base-Autographs-Northern-Lights,2024-25,Topps,Base Autographs Northern Lights,2024-25  UEFA Club Competitions,False
+474208,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474208/2024-25-Topps-UEFA-Club-Competitions---Base-Autographs-Orange-Foilboard,2024-25,Topps,Base Autographs Orange Foilboard,2024-25  UEFA Club Competitions,False
+474210,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474210/2024-25-Topps-UEFA-Club-Competitions---Base-Autographs-Red-Foilboard,2024-25,Topps,Base Autographs Red Foilboard,2024-25  UEFA Club Competitions,False
+474156,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474156/2024-25-Topps-UEFA-Club-Competitions---Black-&-White-Icy,2024-25,Topps,Black & White Icy,2024-25  UEFA Club Competitions,False
+474161,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474161/2024-25-Topps-UEFA-Club-Competitions---Black-FlowFractor,2024-25,Topps,Black FlowFractor,2024-25  UEFA Club Competitions,False
+474182,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474182/2024-25-Topps-UEFA-Club-Competitions---Black-Inferno,2024-25,Topps,Black Inferno,2024-25  UEFA Club Competitions,False
+474152,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474152/2024-25-Topps-UEFA-Club-Competitions---Blue-Foilboard,2024-25,Topps,Blue Foilboard,2024-25  UEFA Club Competitions,False
+474150,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474150/2024-25-Topps-UEFA-Club-Competitions---Blue-Inferno,2024-25,Topps,Blue Inferno,2024-25  UEFA Club Competitions,False
+474190,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474190/2024-25-Topps-UEFA-Club-Competitions---First-Card,2024-25,Topps,First Card,2024-25  UEFA Club Competitions,False
+474191,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474191/2024-25-Topps-UEFA-Club-Competitions---FoilFractor,2024-25,Topps,FoilFractor,2024-25  UEFA Club Competitions,False
+474172,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474172/2024-25-Topps-UEFA-Club-Competitions---Gold-Foilboard,2024-25,Topps,Gold Foilboard,2024-25  UEFA Club Competitions,False
+474167,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474167/2024-25-Topps-UEFA-Club-Competitions---Gold-Inferno,2024-25,Topps,Gold Inferno,2024-25  UEFA Club Competitions,False
+474177,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474177/2024-25-Topps-UEFA-Club-Competitions---Golden-FlowFractor,2024-25,Topps,Golden FlowFractor,2024-25  UEFA Club Competitions,False
+474149,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474149/2024-25-Topps-UEFA-Club-Competitions---Green-FlowFractor,2024-25,Topps,Green FlowFractor,2024-25  UEFA Club Competitions,False
+474162,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474162/2024-25-Topps-UEFA-Club-Competitions---Green-Foilboard,2024-25,Topps,Green Foilboard,2024-25  UEFA Club Competitions,False
+474158,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474158/2024-25-Topps-UEFA-Club-Competitions---Green-Inferno,2024-25,Topps,Green Inferno,2024-25  UEFA Club Competitions,False
+474185,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474185/2024-25-Topps-UEFA-Club-Competitions---Icy-Black,2024-25,Topps,Icy Black,2024-25  UEFA Club Competitions,False
+474166,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474166/2024-25-Topps-UEFA-Club-Competitions---Icy-Blue,2024-25,Topps,Icy Blue,2024-25  UEFA Club Competitions,False
+474308,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474308/2024-25-Topps-UEFA-Club-Competitions---Mindgame,2024-25,Topps,Mindgame,2024-25  UEFA Club Competitions,False
+474309,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474309/2024-25-Topps-UEFA-Club-Competitions---Mojo,2024-25,Topps,Mojo,2024-25  UEFA Club Competitions,False
+474144,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474144/2024-25-Topps-UEFA-Club-Competitions---Navy-Blue-Foilboard,2024-25,Topps,Navy Blue Foilboard,2024-25  UEFA Club Competitions,False
+474146,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474146/2024-25-Topps-UEFA-Club-Competitions---Neon-Green-Foilboard,2024-25,Topps,Neon Green Foilboard,2024-25  UEFA Club Competitions,False
+474147,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474147/2024-25-Topps-UEFA-Club-Competitions---Neon-Green-Inferno,2024-25,Topps,Neon Green Inferno,2024-25  UEFA Club Competitions,False
+474174,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474174/2024-25-Topps-UEFA-Club-Competitions---New-Chapter,2024-25,Topps,New Chapter,2024-25  UEFA Club Competitions,False
+474138,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474138/2024-25-Topps-UEFA-Club-Competitions---Northern-Lights,2024-25,Topps,Northern Lights,2024-25  UEFA Club Competitions,False
+474180,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474180/2024-25-Topps-UEFA-Club-Competitions---Orange-Foilboard,2024-25,Topps,Orange Foilboard,2024-25  UEFA Club Competitions,False
+474179,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474179/2024-25-Topps-UEFA-Club-Competitions---Orange-Inferno,2024-25,Topps,Orange Inferno,2024-25  UEFA Club Competitions,False
+474159,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474159/2024-25-Topps-UEFA-Club-Competitions---Pink-Inferno,2024-25,Topps,Pink Inferno,2024-25  UEFA Club Competitions,False
+474140,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474140/2024-25-Topps-UEFA-Club-Competitions---Pink-Sparkle,2024-25,Topps,Pink Sparkle,2024-25  UEFA Club Competitions,False
+474143,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474143/2024-25-Topps-UEFA-Club-Competitions---Purple-FlowFractor,2024-25,Topps,Purple FlowFractor,2024-25  UEFA Club Competitions,False
+474183,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474183/2024-25-Topps-UEFA-Club-Competitions---Purple-Foilboard,2024-25,Topps,Purple Foilboard,2024-25  UEFA Club Competitions,False
+474141,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474141/2024-25-Topps-UEFA-Club-Competitions---Purple-Inferno,2024-25,Topps,Purple Inferno,2024-25  UEFA Club Competitions,False
+474139,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474139/2024-25-Topps-UEFA-Club-Competitions---Rain-Drops,2024-25,Topps,Rain Drops,2024-25  UEFA Club Competitions,False
+474164,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474164/2024-25-Topps-UEFA-Club-Competitions---Red-FlowFractor,2024-25,Topps,Red FlowFractor,2024-25  UEFA Club Competitions,False
+474186,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474186/2024-25-Topps-UEFA-Club-Competitions---Red-Foilboard,2024-25,Topps,Red Foilboard,2024-25  UEFA Club Competitions,False
+474188,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474188/2024-25-Topps-UEFA-Club-Competitions---Red-Inferno,2024-25,Topps,Red Inferno,2024-25  UEFA Club Competitions,False
+474176,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474176/2024-25-Topps-UEFA-Club-Competitions---Team-Logo-Border,2024-25,Topps,Team Logo Border,2024-25  UEFA Club Competitions,False
+474153,2024-25 Topps UEFA Club Competitions,https://www.tcdb.com/Checklist.cfm/sid/474153/2024-25-Topps-UEFA-Club-Competitions---Yellow-Foilboard,2024-25,Topps,Yellow Foilboard,2024-25  UEFA Club Competitions,False
+399796,2023-24 Panini Adrenalyn XL Calciatori,,2023-24,,,,False
+401137,2023-24 Panini Calciatori Stickers,https://www.tcdb.com/ViewSet.cfm/sid/401137/2023-24-Panini-Calciatori-Stickers,2023-24,Panini,Base,2023-24  Calciatori Stickers,True
+421842,2023-24 Panini Select Serie A,https://www.tcdb.com/ViewSet.cfm/sid/421842/2023-24-Panini-Select-Serie-A,2023-24,Panini,Base,2023-24  Select Serie A,True
+440488,2023-24 Panini Select Serie A,https://www.tcdb.com/Checklist.cfm/sid/440488/2023-24-Panini-Select-Serie-A---Black,2023-24,Panini,Black,2023-24  Select Serie A,False
+440489,2023-24 Panini Select Serie A,https://www.tcdb.com/Checklist.cfm/sid/440489/2023-24-Panini-Select-Serie-A---Blue,2023-24,Panini,Blue,2023-24  Select Serie A,False
+440490,2023-24 Panini Select Serie A,https://www.tcdb.com/Checklist.cfm/sid/440490/2023-24-Panini-Select-Serie-A---Gold,2023-24,Panini,Gold,2023-24  Select Serie A,False
+440491,2023-24 Panini Select Serie A,https://www.tcdb.com/Checklist.cfm/sid/440491/2023-24-Panini-Select-Serie-A---Gold-Wave,2023-24,Panini,Gold Wave,2023-24  Select Serie A,False
+440492,2023-24 Panini Select Serie A,https://www.tcdb.com/Checklist.cfm/sid/440492/2023-24-Panini-Select-Serie-A---Green,2023-24,Panini,Green,2023-24  Select Serie A,False
+440493,2023-24 Panini Select Serie A,https://www.tcdb.com/Checklist.cfm/sid/440493/2023-24-Panini-Select-Serie-A---Green-Ice,2023-24,Panini,Green Ice,2023-24  Select Serie A,False
+440494,2023-24 Panini Select Serie A,https://www.tcdb.com/Checklist.cfm/sid/440494/2023-24-Panini-Select-Serie-A---Multi-Color,2023-24,Panini,Multi Color,2023-24  Select Serie A,False
+440495,2023-24 Panini Select Serie A,https://www.tcdb.com/Checklist.cfm/sid/440495/2023-24-Panini-Select-Serie-A---Peacock,2023-24,Panini,Peacock,2023-24  Select Serie A,False
+440496,2023-24 Panini Select Serie A,https://www.tcdb.com/Checklist.cfm/sid/440496/2023-24-Panini-Select-Serie-A---Pink-Wave,2023-24,Panini,Pink Wave,2023-24  Select Serie A,False
+440497,2023-24 Panini Select Serie A,https://www.tcdb.com/Checklist.cfm/sid/440497/2023-24-Panini-Select-Serie-A---Purple,2023-24,Panini,Purple,2023-24  Select Serie A,False
+440498,2023-24 Panini Select Serie A,https://www.tcdb.com/Checklist.cfm/sid/440498/2023-24-Panini-Select-Serie-A---Red,2023-24,Panini,Red,2023-24  Select Serie A,False
+440499,2023-24 Panini Select Serie A,https://www.tcdb.com/Checklist.cfm/sid/440499/2023-24-Panini-Select-Serie-A---Red-Wave,2023-24,Panini,Red Wave,2023-24  Select Serie A,False
+440530,2023-24 Panini Select Serie A,https://www.tcdb.com/Checklist.cfm/sid/440530/2023-24-Panini-Select-Serie-A---Select-Future,2023-24,Panini,Select Future,2023-24  Select Serie A,False
+440531,2023-24 Panini Select Serie A,https://www.tcdb.com/Checklist.cfm/sid/440531/2023-24-Panini-Select-Serie-A---Select-Future-Black,2023-24,Panini,Select Future Black,2023-24  Select Serie A,False
+440532,2023-24 Panini Select Serie A,https://www.tcdb.com/Checklist.cfm/sid/440532/2023-24-Panini-Select-Serie-A---Select-Future-Gold,2023-24,Panini,Select Future Gold,2023-24  Select Serie A,False
+440533,2023-24 Panini Select Serie A,https://www.tcdb.com/Checklist.cfm/sid/440533/2023-24-Panini-Select-Serie-A---Select-Future-Green,2023-24,Panini,Select Future Green,2023-24  Select Serie A,False
+440534,2023-24 Panini Select Serie A,https://www.tcdb.com/Checklist.cfm/sid/440534/2023-24-Panini-Select-Serie-A---Select-Future-Peacock,2023-24,Panini,Select Future Peacock,2023-24  Select Serie A,False
+440535,2023-24 Panini Select Serie A,https://www.tcdb.com/Checklist.cfm/sid/440535/2023-24-Panini-Select-Serie-A---Select-Future-Pink,2023-24,Panini,Select Future Pink,2023-24  Select Serie A,False
+440536,2023-24 Panini Select Serie A,https://www.tcdb.com/Checklist.cfm/sid/440536/2023-24-Panini-Select-Serie-A---Select-Future-Tie-Dye,2023-24,Panini,Select Future Tie Dye,2023-24  Select Serie A,False
+440500,2023-24 Panini Select Serie A,https://www.tcdb.com/Checklist.cfm/sid/440500/2023-24-Panini-Select-Serie-A---Silver,2023-24,Panini,Silver,2023-24  Select Serie A,False
+440501,2023-24 Panini Select Serie A,https://www.tcdb.com/Checklist.cfm/sid/440501/2023-24-Panini-Select-Serie-A---Tie-Dye,2023-24,Panini,Tie Dye,2023-24  Select Serie A,False
+440502,2023-24 Panini Select Serie A,https://www.tcdb.com/Checklist.cfm/sid/440502/2023-24-Panini-Select-Serie-A---White,2023-24,Panini,White,2023-24  Select Serie A,False
+440503,2023-24 Panini Select Serie A,https://www.tcdb.com/Checklist.cfm/sid/440503/2023-24-Panini-Select-Serie-A---White-Sparkle,2023-24,Panini,White Sparkle,2023-24  Select Serie A,False
+440504,2023-24 Panini Select Serie A,https://www.tcdb.com/Checklist.cfm/sid/440504/2023-24-Panini-Select-Serie-A---Winter-Camo,2023-24,Panini,Winter Camo,2023-24  Select Serie A,False
+440505,2023-24 Panini Select Serie A,https://www.tcdb.com/Checklist.cfm/sid/440505/2023-24-Panini-Select-Serie-A---Zebra,2023-24,Panini,Zebra,2023-24  Select Serie A,False
+412148,2023-24 Score Serie A,https://www.tcdb.com/ViewSet.cfm/sid/412148/2023-24-Score-Serie-A,2023-24,Score,Base,2023-24  Serie A,True
+444544,2023-24 Score Serie A,https://www.tcdb.com/Checklist.cfm/sid/444544/2023-24-Score-Serie-A---Black-Laser,2023-24,Score,Black Laser,2023-24  Serie A,False
+444438,2023-24 Score Serie A,https://www.tcdb.com/Checklist.cfm/sid/444438/2023-24-Score-Serie-A---Blue-Laser,2023-24,Score,Blue Laser,2023-24  Serie A,False
+444442,2023-24 Score Serie A,https://www.tcdb.com/Checklist.cfm/sid/444442/2023-24-Score-Serie-A---Bronze-Laza,2023-24,Score,Bronze Laza,2023-24  Serie A,False
+444440,2023-24 Score Serie A,https://www.tcdb.com/Checklist.cfm/sid/444440/2023-24-Score-Serie-A---Gold-Lava,2023-24,Score,Gold Lava,2023-24  Serie A,False
+444448,2023-24 Score Serie A,https://www.tcdb.com/Checklist.cfm/sid/444448/2023-24-Score-Serie-A---Green-Laser,2023-24,Score,Green Laser,2023-24  Serie A,False
+444444,2023-24 Score Serie A,https://www.tcdb.com/Checklist.cfm/sid/444444/2023-24-Score-Serie-A---Green-Lava,2023-24,Score,Green Lava,2023-24  Serie A,False
+420496,2023-24 Score Serie A,https://www.tcdb.com/Checklist.cfm/sid/420496/2023-24-Score-Serie-A---Hot-Rookies,2023-24,Score,Hot Rookies,2023-24  Serie A,False
+444446,2023-24 Score Serie A,https://www.tcdb.com/Checklist.cfm/sid/444446/2023-24-Score-Serie-A---Laser,2023-24,Score,Laser,2023-24  Serie A,False
+420501,2023-24 Score Serie A,https://www.tcdb.com/Checklist.cfm/sid/420501/2023-24-Score-Serie-A---Next-Up,2023-24,Score,Next Up,2023-24  Serie A,False
+444439,2023-24 Score Serie A,https://www.tcdb.com/Checklist.cfm/sid/444439/2023-24-Score-Serie-A---Orange-Laser,2023-24,Score,Orange Laser,2023-24  Serie A,False
+444445,2023-24 Score Serie A,https://www.tcdb.com/Checklist.cfm/sid/444445/2023-24-Score-Serie-A---Pink-Lava,2023-24,Score,Pink Lava,2023-24  Serie A,False
+444447,2023-24 Score Serie A,https://www.tcdb.com/Checklist.cfm/sid/444447/2023-24-Score-Serie-A---Purple-Laser,2023-24,Score,Purple Laser,2023-24  Serie A,False
+444441,2023-24 Score Serie A,https://www.tcdb.com/Checklist.cfm/sid/444441/2023-24-Score-Serie-A---Red-Lava,2023-24,Score,Red Lava,2023-24  Serie A,False
+444443,2023-24 Score Serie A,https://www.tcdb.com/Checklist.cfm/sid/444443/2023-24-Score-Serie-A---Swirl,2023-24,Score,Swirl,2023-24  Serie A,False
+346539,2022 Leaf Continuum,,2022.0,,,,False
+309292,2022 Leaf Metal,,2022.0,,,,False
+393431,2022 Leaf Metal,,2022.0,,,,False
+329967,2022 Leaf Metal,,2022.0,,,,False
+329968,2022 Leaf Metal,,2022.0,,,,False
+329969,2022 Leaf Metal,,2022.0,,,,False
+329970,2022 Leaf Metal,,2022.0,,,,False
+329971,2022 Leaf Metal,,2022.0,,,,False
+329972,2022 Leaf Metal,,2022.0,,,,False
+329973,2022 Leaf Metal,,2022.0,,,,False
+329974,2022 Leaf Metal,,2022.0,,,,False
+329975,2022 Leaf Metal,,2022.0,,,,False
+329976,2022 Leaf Metal,,2022.0,,,,False
+329977,2022 Leaf Metal,,2022.0,,,,False
+329978,2022 Leaf Metal,,2022.0,,,,False
+329979,2022 Leaf Metal,,2022.0,,,,False
+329980,2022 Leaf Metal,,2022.0,,,,False
+329981,2022 Leaf Metal,,2022.0,,,,False
+329982,2022 Leaf Metal,,2022.0,,,,False
+330068,2022 Leaf Metal,,2022.0,,,,False
+330069,2022 Leaf Metal,,2022.0,,,,False
+330070,2022 Leaf Metal,,2022.0,,,,False
+330071,2022 Leaf Metal,,2022.0,,,,False
+330072,2022 Leaf Metal,,2022.0,,,,False
+330073,2022 Leaf Metal,,2022.0,,,,False
+330074,2022 Leaf Metal,,2022.0,,,,False
+330075,2022 Leaf Metal,,2022.0,,,,False
+330076,2022 Leaf Metal,,2022.0,,,,False
+330077,2022 Leaf Metal,,2022.0,,,,False
+358658,2022 Leaf Metal,,2022.0,,,,False
+358667,2022 Leaf Metal,,2022.0,,,,False
+358634,2022 Leaf Metal,,2022.0,,,,False
+358663,2022 Leaf Metal,,2022.0,,,,False
+358666,2022 Leaf Metal,,2022.0,,,,False
+358665,2022 Leaf Metal,,2022.0,,,,False
+358662,2022 Leaf Metal,,2022.0,,,,False
+358664,2022 Leaf Metal,,2022.0,,,,False
+367809,2022 Leaf Metal,,2022.0,,,,False
+330078,2022 Leaf Metal,,2022.0,,,,False
+330079,2022 Leaf Metal,,2022.0,,,,False
+330080,2022 Leaf Metal,,2022.0,,,,False
+330081,2022 Leaf Metal,,2022.0,,,,False
+330082,2022 Leaf Metal,,2022.0,,,,False
+330083,2022 Leaf Metal,,2022.0,,,,False
+330084,2022 Leaf Metal,,2022.0,,,,False
+358654,2022 Leaf Metal,,2022.0,,,,False
+358656,2022 Leaf Metal,,2022.0,,,,False
+358649,2022 Leaf Metal,,2022.0,,,,False
+358650,2022 Leaf Metal,,2022.0,,,,False
+358659,2022 Leaf Metal,,2022.0,,,,False
+358647,2022 Leaf Metal,,2022.0,,,,False
+358648,2022 Leaf Metal,,2022.0,,,,False
+358653,2022 Leaf Metal,,2022.0,,,,False
+358651,2022 Leaf Metal,,2022.0,,,,False
+358652,2022 Leaf Metal,,2022.0,,,,False
+358657,2022 Leaf Metal,,2022.0,,,,False
+358660,2022 Leaf Metal,,2022.0,,,,False
+358655,2022 Leaf Metal,,2022.0,,,,False
+321778,2022 Leaf Signature Series,,2022.0,,,,False
+321779,2022 Leaf Signature Series,,2022.0,,,,False
+321780,2022 Leaf Signature Series,,2022.0,,,,False
+321781,2022 Leaf Signature Series,,2022.0,,,,False
+321782,2022 Leaf Signature Series,,2022.0,,,,False
+321783,2022 Leaf Signature Series,,2022.0,,,,False
+321784,2022 Leaf Signature Series,,2022.0,,,,False
+321785,2022 Leaf Signature Series,,2022.0,,,,False
+321786,2022 Leaf Signature Series,,2022.0,,,,False
+321787,2022 Leaf Signature Series,,2022.0,,,,False
+321788,2022 Leaf Signature Series,,2022.0,,,,False
+321789,2022 Leaf Signature Series,,2022.0,,,,False
+321790,2022 Leaf Signature Series,,2022.0,,,,False
+321791,2022 Leaf Signature Series,,2022.0,,,,False
+321792,2022 Leaf Signature Series,,2022.0,,,,False
+321793,2022 Leaf Signature Series,,2022.0,,,,False
+321794,2022 Leaf Signature Series,,2022.0,,,,False
+321795,2022 Leaf Signature Series,,2022.0,,,,False
+321796,2022 Leaf Signature Series,,2022.0,,,,False
+321797,2022 Leaf Signature Series,,2022.0,,,,False
+321759,2022 Leaf Signature Series,,2022.0,,,,False
+321760,2022 Leaf Signature Series,,2022.0,,,,False
+321761,2022 Leaf Signature Series,,2022.0,,,,False
+321762,2022 Leaf Signature Series,,2022.0,,,,False
+321763,2022 Leaf Signature Series,,2022.0,,,,False
+321764,2022 Leaf Signature Series,,2022.0,,,,False
+321765,2022 Leaf Signature Series,,2022.0,,,,False
+321766,2022 Leaf Signature Series,,2022.0,,,,False
+321767,2022 Leaf Signature Series,,2022.0,,,,False
+321768,2022 Leaf Signature Series,,2022.0,,,,False
+321769,2022 Leaf Signature Series,,2022.0,,,,False
+321770,2022 Leaf Signature Series,,2022.0,,,,False
+321758,2022 Leaf Signature Series,,2022.0,,,,False
+321771,2022 Leaf Signature Series,,2022.0,,,,False
+321772,2022 Leaf Signature Series,,2022.0,,,,False
+321773,2022 Leaf Signature Series,,2022.0,,,,False
+321774,2022 Leaf Signature Series,,2022.0,,,,False
+321775,2022 Leaf Signature Series,,2022.0,,,,False
+321777,2022 Leaf Signature Series,,2022.0,,,,False
+321776,2022 Leaf Signature Series,,2022.0,,,,False
+382188,2022 Leaf Ultimate,,2022.0,,,,False
+346522,2022 Leaf Vivid,,2022.0,,,,False
+358938,2022 Leaf Vivid,,2022.0,,,,False
+358935,2022 Leaf Vivid,,2022.0,,,,False
+358937,2022 Leaf Vivid,,2022.0,,,,False
+358939,2022 Leaf Vivid,,2022.0,,,,False
+406838,2022 Leaf Vivid,,2022.0,,,,False
+463857,2022 Leaf Vivid,,2022.0,,,,False
+398783,2022 Leaf Vivid,,2022.0,,,,False
+463856,2022 Leaf Vivid,,2022.0,,,,False
+398784,2022 Leaf Vivid,,2022.0,,,,False
+465564,2022 Leaf Vivid,,2022.0,,,,False
+442977,2022 Leaf Vivid,,2022.0,,,,False
+406839,2022 Leaf Vivid,,2022.0,,,,False
+463858,2022 Leaf Vivid,,2022.0,,,,False
+463859,2022 Leaf Vivid,,2022.0,,,,False
+443950,2022 Leaf Vivid,,2022.0,,,,False
+465565,2022 Leaf Vivid,,2022.0,,,,False
+463860,2022 Leaf Vivid,,2022.0,,,,False
+381379,2022 Leaf Vivid,,2022.0,,,,False
+381377,2022 Leaf Vivid,,2022.0,,,,False
+381378,2022 Leaf Vivid,,2022.0,,,,False
+381376,2022 Leaf Vivid,,2022.0,,,,False
+358940,2022 Leaf Vivid,,2022.0,,,,False
+358936,2022 Leaf Vivid,,2022.0,,,,False
+358941,2022 Leaf Vivid,,2022.0,,,,False
+381252,2022-23 Finest Bundesliga,https://www.tcdb.com/ViewSet.cfm/sid/381252/2022-23-Finest-Bundesliga,2022-23,Unknown,Base,Finest Bundesliga,True
+384226,2022-23 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/384226/2022-23-Finest-Bundesliga---Autographs,2022-23,Unknown,Autographs,Finest Bundesliga,False
+384227,2022-23 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/384227/2022-23-Finest-Bundesliga---Autographs-Black-Refractor,2022-23,Unknown,Autographs Black Refractor,Finest Bundesliga,False
+384230,2022-23 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/384230/2022-23-Finest-Bundesliga---Autographs-Blue-Refractor,2022-23,Unknown,Autographs Blue Refractor,Finest Bundesliga,False
+384233,2022-23 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/384233/2022-23-Finest-Bundesliga---Autographs-Gold-Refractor,2022-23,Unknown,Autographs Gold Refractor,Finest Bundesliga,False
+384231,2022-23 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/384231/2022-23-Finest-Bundesliga---Autographs-Green-Refractor,2022-23,Unknown,Autographs Green Refractor,Finest Bundesliga,False
+384232,2022-23 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/384232/2022-23-Finest-Bundesliga---Autographs-Green-Wave-Refractor,2022-23,Unknown,Autographs Green Wave Refractor,Finest Bundesliga,False
+384234,2022-23 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/384234/2022-23-Finest-Bundesliga---Autographs-Orange-Refractor,2022-23,Unknown,Autographs Orange Refractor,Finest Bundesliga,False
+384235,2022-23 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/384235/2022-23-Finest-Bundesliga---Autographs-Orange-Wave-Refractor,2022-23,Unknown,Autographs Orange Wave Refractor,Finest Bundesliga,False
+384228,2022-23 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/384228/2022-23-Finest-Bundesliga---Autographs-Purple-Refractor,2022-23,Unknown,Autographs Purple Refractor,Finest Bundesliga,False
+384229,2022-23 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/384229/2022-23-Finest-Bundesliga---Autographs-Purple-Wave-Refractor,2022-23,Unknown,Autographs Purple Wave Refractor,Finest Bundesliga,False
+384236,2022-23 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/384236/2022-23-Finest-Bundesliga---Autographs-Red-Refractor,2022-23,Unknown,Autographs Red Refractor,Finest Bundesliga,False
+384237,2022-23 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/384237/2022-23-Finest-Bundesliga---Autographs-SuperFractor,2022-23,Unknown,Autographs SuperFractor,Finest Bundesliga,False
+384216,2022-23 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/384216/2022-23-Finest-Bundesliga---Black-Refractor,2022-23,Unknown,Black Refractor,Finest Bundesliga,False
+384217,2022-23 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/384217/2022-23-Finest-Bundesliga---Black-Wave-Refractor,2022-23,Unknown,Black Wave Refractor,Finest Bundesliga,False
+384218,2022-23 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/384218/2022-23-Finest-Bundesliga---Blue-Refractor,2022-23,Unknown,Blue Refractor,Finest Bundesliga,False
+384219,2022-23 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/384219/2022-23-Finest-Bundesliga---Blue-Wave-Refractor,2022-23,Unknown,Blue Wave Refractor,Finest Bundesliga,False
+384222,2022-23 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/384222/2022-23-Finest-Bundesliga---Gold-Refractor,2022-23,Unknown,Gold Refractor,Finest Bundesliga,False
+384220,2022-23 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/384220/2022-23-Finest-Bundesliga---Green-Refractor,2022-23,Unknown,Green Refractor,Finest Bundesliga,False
+384221,2022-23 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/384221/2022-23-Finest-Bundesliga---Green-Wave-Refractor,2022-23,Unknown,Green Wave Refractor,Finest Bundesliga,False
+384223,2022-23 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/384223/2022-23-Finest-Bundesliga---Orange-Refractor,2022-23,Unknown,Orange Refractor,Finest Bundesliga,False
+384213,2022-23 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/384213/2022-23-Finest-Bundesliga---Pink-Refractor,2022-23,Unknown,Pink Refractor,Finest Bundesliga,False
+384214,2022-23 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/384214/2022-23-Finest-Bundesliga---Purple-Refractor,2022-23,Unknown,Purple Refractor,Finest Bundesliga,False
+384215,2022-23 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/384215/2022-23-Finest-Bundesliga---Purple-Wave-Refractor,2022-23,Unknown,Purple Wave Refractor,Finest Bundesliga,False
+384224,2022-23 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/384224/2022-23-Finest-Bundesliga---Red-Refractor,2022-23,Unknown,Red Refractor,Finest Bundesliga,False
+384212,2022-23 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/384212/2022-23-Finest-Bundesliga---Refractor,2022-23,Unknown,Refractor,Finest Bundesliga,False
+384225,2022-23 Finest Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/384225/2022-23-Finest-Bundesliga---SuperFractor,2022-23,Unknown,SuperFractor,Finest Bundesliga,False
+395533,2022-23 Topps Bundesliga Jade Edition,https://www.tcdb.com/ViewSet.cfm/sid/395533/2022-23-Topps-Bundesliga-Jade-Edition,2022-23,Topps,Base,Bundesliga Jade Edition,True
+395563,2022-23 Topps Bundesliga Jade Edition,https://www.tcdb.com/Checklist.cfm/sid/395563/2022-23-Topps-Bundesliga-Jade-Edition---Autographs,2022-23,Topps,Autographs,Bundesliga Jade Edition,False
+395571,2022-23 Topps Bundesliga Jade Edition,https://www.tcdb.com/Checklist.cfm/sid/395571/2022-23-Topps-Bundesliga-Jade-Edition---Autographs-Imperial-Jade-FoilFractor,2022-23,Topps,Autographs Imperial Jade FoilFractor,Bundesliga Jade Edition,False
+395569,2022-23 Topps Bundesliga Jade Edition,https://www.tcdb.com/Checklist.cfm/sid/395569/2022-23-Topps-Bundesliga-Jade-Edition---Autographs-Lavender-Jade,2022-23,Topps,Autographs Lavender Jade,Bundesliga Jade Edition,False
+395570,2022-23 Topps Bundesliga Jade Edition,https://www.tcdb.com/Checklist.cfm/sid/395570/2022-23-Topps-Bundesliga-Jade-Edition---Autographs-Red-Jade,2022-23,Topps,Autographs Red Jade,Bundesliga Jade Edition,False
+395534,2022-23 Topps Bundesliga Jade Edition,https://www.tcdb.com/Checklist.cfm/sid/395534/2022-23-Topps-Bundesliga-Jade-Edition---Chinese-New-Year,2022-23,Topps,Chinese New Year,Bundesliga Jade Edition,False
+395540,2022-23 Topps Bundesliga Jade Edition,https://www.tcdb.com/Checklist.cfm/sid/395540/2022-23-Topps-Bundesliga-Jade-Edition---Imperial-Jade-FoilFractor,2022-23,Topps,Imperial Jade FoilFractor,Bundesliga Jade Edition,False
+395538,2022-23 Topps Bundesliga Jade Edition,https://www.tcdb.com/Checklist.cfm/sid/395538/2022-23-Topps-Bundesliga-Jade-Edition---Lavender-Jade,2022-23,Topps,Lavender Jade,Bundesliga Jade Edition,False
+395537,2022-23 Topps Bundesliga Jade Edition,https://www.tcdb.com/Checklist.cfm/sid/395537/2022-23-Topps-Bundesliga-Jade-Edition---Orange-Jade,2022-23,Topps,Orange Jade,Bundesliga Jade Edition,False
+395539,2022-23 Topps Bundesliga Jade Edition,https://www.tcdb.com/Checklist.cfm/sid/395539/2022-23-Topps-Bundesliga-Jade-Edition---Red-Jade,2022-23,Topps,Red Jade,Bundesliga Jade Edition,False
+395535,2022-23 Topps Bundesliga Jade Edition,https://www.tcdb.com/Checklist.cfm/sid/395535/2022-23-Topps-Bundesliga-Jade-Edition---Year-of-the-Rabbit,2022-23,Topps,Year of the Rabbit,Bundesliga Jade Edition,False
+395536,2022-23 Topps Bundesliga Jade Edition,https://www.tcdb.com/Checklist.cfm/sid/395536/2022-23-Topps-Bundesliga-Jade-Edition---Yellow-Jade,2022-23,Topps,Yellow Jade,Bundesliga Jade Edition,False
+373722,2022-23 Topps Chrome Bundesliga,https://www.tcdb.com/ViewSet.cfm/sid/373722/2022-23-Topps-Chrome-Bundesliga,2022-23,Topps,Base,Chrome Bundesliga,True
+380325,2022-23 Topps Chrome Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/380325/2022-23-Topps-Chrome-Bundesliga---Aqua-Bubble-Refractor,2022-23,Topps,Aqua Bubble Refractor,Chrome Bundesliga,False
+380326,2022-23 Topps Chrome Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/380326/2022-23-Topps-Chrome-Bundesliga---Aqua-Bubble-Wave-Refractor,2022-23,Topps,Aqua Bubble Wave Refractor,Chrome Bundesliga,False
+380366,2022-23 Topps Chrome Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/380366/2022-23-Topps-Chrome-Bundesliga---Autographs,2022-23,Topps,Autographs,Chrome Bundesliga,False
+380373,2022-23 Topps Chrome Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/380373/2022-23-Topps-Chrome-Bundesliga---Autographs-Black-Refractor,2022-23,Topps,Autographs Black Refractor,Chrome Bundesliga,False
+380371,2022-23 Topps Chrome Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/380371/2022-23-Topps-Chrome-Bundesliga---Autographs-Gold-Refractor,2022-23,Topps,Autographs Gold Refractor,Chrome Bundesliga,False
+380369,2022-23 Topps Chrome Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/380369/2022-23-Topps-Chrome-Bundesliga---Autographs-Green-Refractor,2022-23,Topps,Autographs Green Refractor,Chrome Bundesliga,False
+380368,2022-23 Topps Chrome Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/380368/2022-23-Topps-Chrome-Bundesliga---Autographs-Magenta-Refractor,2022-23,Topps,Autographs Magenta Refractor,Chrome Bundesliga,False
+380372,2022-23 Topps Chrome Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/380372/2022-23-Topps-Chrome-Bundesliga---Autographs-Orange-Refractor,2022-23,Topps,Autographs Orange Refractor,Chrome Bundesliga,False
+380370,2022-23 Topps Chrome Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/380370/2022-23-Topps-Chrome-Bundesliga---Autographs-Pink-Refractor,2022-23,Topps,Autographs Pink Refractor,Chrome Bundesliga,False
+380367,2022-23 Topps Chrome Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/380367/2022-23-Topps-Chrome-Bundesliga---Autographs-Prism-Refractor,2022-23,Topps,Autographs Prism Refractor,Chrome Bundesliga,False
+380374,2022-23 Topps Chrome Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/380374/2022-23-Topps-Chrome-Bundesliga---Autographs-Red-Refractor,2022-23,Topps,Autographs Red Refractor,Chrome Bundesliga,False
+380375,2022-23 Topps Chrome Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/380375/2022-23-Topps-Chrome-Bundesliga---Autographs-SuperFractor,2022-23,Topps,Autographs SuperFractor,Chrome Bundesliga,False
+380338,2022-23 Topps Chrome Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/380338/2022-23-Topps-Chrome-Bundesliga---Black-Refractor,2022-23,Topps,Black Refractor,Chrome Bundesliga,False
+380329,2022-23 Topps Chrome Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/380329/2022-23-Topps-Chrome-Bundesliga---Blue-Refractor,2022-23,Topps,Blue Refractor,Chrome Bundesliga,False
+380330,2022-23 Topps Chrome Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/380330/2022-23-Topps-Chrome-Bundesliga---Blue-Wave-Refractor,2022-23,Topps,Blue Wave Refractor,Chrome Bundesliga,False
+380346,2022-23 Topps Chrome Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/380346/2022-23-Topps-Chrome-Bundesliga---Bright-Future,2022-23,Topps,Bright Future,Chrome Bundesliga,False
+380387,2022-23 Topps Chrome Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/380387/2022-23-Topps-Chrome-Bundesliga---Bright-Future-Autographs,2022-23,Topps,Bright Future Autographs,Chrome Bundesliga,False
+380347,2022-23 Topps Chrome Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/380347/2022-23-Topps-Chrome-Bundesliga---Bright-Future-Gold-Refractor,2022-23,Topps,Bright Future Gold Refractor,Chrome Bundesliga,False
+380348,2022-23 Topps Chrome Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/380348/2022-23-Topps-Chrome-Bundesliga---Bright-Future-Orange-Refractor,2022-23,Topps,Bright Future Orange Refractor,Chrome Bundesliga,False
+380349,2022-23 Topps Chrome Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/380349/2022-23-Topps-Chrome-Bundesliga---Bright-Future-Red-Refractor,2022-23,Topps,Bright Future Red Refractor,Chrome Bundesliga,False
+380350,2022-23 Topps Chrome Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/380350/2022-23-Topps-Chrome-Bundesliga---Bright-Future-SuperFractor,2022-23,Topps,Bright Future SuperFractor,Chrome Bundesliga,False
+380335,2022-23 Topps Chrome Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/380335/2022-23-Topps-Chrome-Bundesliga---Gold-Refractor,2022-23,Topps,Gold Refractor,Chrome Bundesliga,False
+380336,2022-23 Topps Chrome Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/380336/2022-23-Topps-Chrome-Bundesliga---Gold-Wave-Refractor,2022-23,Topps,Gold Wave Refractor,Chrome Bundesliga,False
+380331,2022-23 Topps Chrome Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/380331/2022-23-Topps-Chrome-Bundesliga---Green-Refractor,2022-23,Topps,Green Refractor,Chrome Bundesliga,False
+380332,2022-23 Topps Chrome Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/380332/2022-23-Topps-Chrome-Bundesliga---Green-Wave-Refractor,2022-23,Topps,Green Wave Refractor,Chrome Bundesliga,False
+380337,2022-23 Topps Chrome Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/380337/2022-23-Topps-Chrome-Bundesliga---Orange-Refractor,2022-23,Topps,Orange Refractor,Chrome Bundesliga,False
+380333,2022-23 Topps Chrome Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/380333/2022-23-Topps-Chrome-Bundesliga---Pink-Refractor,2022-23,Topps,Pink Refractor,Chrome Bundesliga,False
+380334,2022-23 Topps Chrome Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/380334/2022-23-Topps-Chrome-Bundesliga---Pink-Wave-Refractor,2022-23,Topps,Pink Wave Refractor,Chrome Bundesliga,False
+380328,2022-23 Topps Chrome Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/380328/2022-23-Topps-Chrome-Bundesliga---Prism-Refractor,2022-23,Topps,Prism Refractor,Chrome Bundesliga,False
+380324,2022-23 Topps Chrome Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/380324/2022-23-Topps-Chrome-Bundesliga---Purple-Refractor,2022-23,Topps,Purple Refractor,Chrome Bundesliga,False
+380339,2022-23 Topps Chrome Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/380339/2022-23-Topps-Chrome-Bundesliga---Red-Refractor,2022-23,Topps,Red Refractor,Chrome Bundesliga,False
+380323,2022-23 Topps Chrome Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/380323/2022-23-Topps-Chrome-Bundesliga---Refractor,2022-23,Topps,Refractor,Chrome Bundesliga,False
+380340,2022-23 Topps Chrome Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/380340/2022-23-Topps-Chrome-Bundesliga---SuperFractor,2022-23,Topps,SuperFractor,Chrome Bundesliga,False
+380327,2022-23 Topps Chrome Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/380327/2022-23-Topps-Chrome-Bundesliga---X-Fractor,2022-23,Topps,X Fractor,Chrome Bundesliga,False
+329418,2022-23 Topps Match Attax Bundesliga,https://www.tcdb.com/ViewSet.cfm/sid/329418/2022-23-Topps-Match-Attax-Bundesliga,2022-23,Topps,Base,Match Attax Bundesliga,True
+344595,2022-23 Topps Match Attax Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/344595/2022-23-Topps-Match-Attax-Bundesliga---Blue,2022-23,Topps,Blue,Match Attax Bundesliga,False
+344598,2022-23 Topps Match Attax Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/344598/2022-23-Topps-Match-Attax-Bundesliga---Green,2022-23,Topps,Green,Match Attax Bundesliga,False
+344596,2022-23 Topps Match Attax Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/344596/2022-23-Topps-Match-Attax-Bundesliga---Orange,2022-23,Topps,Orange,Match Attax Bundesliga,False
+344597,2022-23 Topps Match Attax Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/344597/2022-23-Topps-Match-Attax-Bundesliga---Purple,2022-23,Topps,Purple,Match Attax Bundesliga,False
+344599,2022-23 Topps Match Attax Bundesliga,https://www.tcdb.com/Checklist.cfm/sid/344599/2022-23-Topps-Match-Attax-Bundesliga---Red,2022-23,Topps,Red,Match Attax Bundesliga,False
+321384,2022-23 Topps Now Bundesliga English,https://www.tcdb.com/ViewSet.cfm/sid/321384/2022-23-Topps-Now-Bundesliga-English,2022-23,Topps,Base,Now Bundesliga English,True
+321383,2022-23 Topps Now Bundesliga German,https://www.tcdb.com/ViewSet.cfm/sid/321383/2022-23-Topps-Now-Bundesliga-German,2022-23,Topps,Base,Now Bundesliga German,True
+396892,2022-23 Topps Tier One Bundesliga,,2022-23,,,,False
+396893,2022-23 Topps Tier One Bundesliga,,2022-23,,,,False
+396894,2022-23 Topps Tier One Bundesliga,,2022-23,,,,False
+396895,2022-23 Topps Tier One Bundesliga,,2022-23,,,,False
+396861,2022-23 Topps Tier One Bundesliga,,2022-23,,,,False
+396863,2022-23 Topps Tier One Bundesliga,,2022-23,,,,False
+396865,2022-23 Topps Tier One Bundesliga,,2022-23,,,,False
+396862,2022-23 Topps Tier One Bundesliga,,2022-23,,,,False
+396864,2022-23 Topps Tier One Bundesliga,,2022-23,,,,False
+396897,2022-23 Topps Tier One Bundesliga,,2022-23,,,,False
+396898,2022-23 Topps Tier One Bundesliga,,2022-23,,,,False
+396899,2022-23 Topps Tier One Bundesliga,,2022-23,,,,False
+396907,2022-23 Topps Tier One Bundesliga,,2022-23,,,,False
+396881,2022-23 Topps Tier One Bundesliga,,2022-23,,,,False
+396883,2022-23 Topps Tier One Bundesliga,,2022-23,,,,False
+396885,2022-23 Topps Tier One Bundesliga,,2022-23,,,,False
+396882,2022-23 Topps Tier One Bundesliga,,2022-23,,,,False
+396884,2022-23 Topps Tier One Bundesliga,,2022-23,,,,False
