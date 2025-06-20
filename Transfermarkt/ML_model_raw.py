@@ -252,6 +252,7 @@ for player_id in players_value_history.player_id.unique():
             + coef_age * age
             + coef_log_mv_since_peak * log_mv_since_peak
         )
+        pred_mv = round(marketValue * (1 + pred_change), 1)
         pred_change_low = pred_change - CV_MAE
         pred_change_high = pred_change + CV_MAE
 
@@ -261,15 +262,30 @@ for player_id in players_value_history.player_id.unique():
         data.append(
             {'player_id': player_id,
              'playerName': player['player_name'].iloc[0], 
-             'clubName':,
+             'clubName': clubs[
+                 clubs.club_id == player['club_id'].iloc[0]]['club_name'].iloc[0],
              'age': age,
-             'marketVal':,
-             'mv_std_rel':,
-             'mv_since_peak':,
-             'pred_change_low':,
-             'pred_change_high':,
-             'pred_change':,
-             'pred_mv':}
+             'marketVal': marketValue,
+             'mv_std_rel': mv_std_rel,
+             'mv_since_peak': mv_since_peak,
+             'pred_change_low': pred_change_low,
+             'pred_change_high': pred_change_high,
+             'pred_change': pred_change,
+             'pred_mv': pred_mv}
                     )
 
 df_pred = pd.DataFrame(data)
+
+#%% Random forest pred
+X_input = df_pred[['mv_std_rel', 'mv_since_peak', 'age']]
+X_input['log_mv_since_peak'] = np.log1p(X_input['mv_since_peak'])
+X_input = X_input.drop(columns='mv_since_peak')
+X_input.rename(columns= {'age': 'age_'}, inplace=True)
+
+df_pred['pred_change_RF'] = pipe.predict(X_input)
+
+#%% Compare
+df_pred[['pred_change', 'pred_change_RF']].describe()
+
+df_pred[['playerName', 'clubName', 'age', 'marketVal', 'pred_change', 'pred_change_RF']
+        ].sort_values(by='pred_change_RF', ascending=False).to_excel('pred_change.xlsx', index=False)

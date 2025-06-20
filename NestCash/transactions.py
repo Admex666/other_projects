@@ -245,7 +245,7 @@ AMT_BOUNDS = {
     },
     'arerzekeny': {
         'lakber': (60000, 90000),
-        'rezsi': (30000, 45000),
+        'rezsi': (20000, 35000),
         'elelmiszer': (40000, 60000),
         'kozlekedes': (8000, 12000),
         'gyogyszer': (3000, 8000),
@@ -437,10 +437,17 @@ def generate_user_transactions(user, months=3):
                     cimke = ", ".join(random.sample(CATEGORIES[ttype]["cimkek"].get(category, ["altalanos"]), k=1))
                     cel_valasztek = CATEGORIES[ttype]["celok"].get(category, [""])
                     celhoz_kotott = random.choice(cel_valasztek)
+                    leiras = fake.sentence(nb_words=3)
                     
                     balance -= amount
                     if ttype == "megtakaritas":
-                        egyeb_befektetes += amount
+                        bef_tipus = random.choice(['egyeb', 'reszveny'])
+                        if bef_tipus == 'egyeb':
+                            egyeb_befektetes += amount
+                        elif bef_tipus == 'reszveny':
+                            reszvenyek += amount
+                        leiras = f'{int(amount)}Ft -> {bef_tipus}'
+                        amount = 0 # nincs cash-flow hatás
 
                     data.append({
                         "datum": date,
@@ -453,7 +460,7 @@ def generate_user_transactions(user, months=3):
                         "user_id": user_id,
                         "profil": profile_name,
                         "tipus": ttype,
-                        "leiras": fake.sentence(nb_words=3),
+                        "leiras": leiras,
                         "forras": forras,
                         "ismetlodo": ismetlodo,
                         "fix_koltseg": fix_koltseg,
@@ -512,9 +519,8 @@ df_all = pd.concat(dfs, ignore_index=True)
 
 print(df_all.head(10))
 
-[df_all[df_all.user_id == usernr]['assets'].to_list()[-1] for usernr in range(1, total_users)] 
-net = df_all.groupby(['user_id']).osszeg.sum().reset_index()
-print(net)
+balances = {usernr:df_all[df_all.user_id == usernr]['assets'].to_list()[-1] for usernr in range(1, total_users)}
+print(balances.values())
 
 #%% Save
 df_all.sort_values("datum", inplace=True)
