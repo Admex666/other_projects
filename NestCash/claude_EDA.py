@@ -276,7 +276,7 @@ class FinancialEDA:
         print("="*60)
         
         # Hónap szerinti elemzés
-        monthly_patterns = self.df.groupby(['honap_num', 'kategoria'])['abs_osszeg'].sum().unstack(fill_value=0)
+        monthly_patterns = self.df[df.osszeg<0].groupby(['honap_num', 'kategoria'])['abs_osszeg'].sum().unstack(fill_value=0)
         
         # Hét napjai szerinti mintázatok
         weekday_patterns = self.df.groupby(['nap_hete', 'kategoria'])['abs_osszeg'].sum().unstack(fill_value=0)

@@ -16,7 +16,7 @@ PROFILES = {
         "megtakaritas": 0.10,
         "impulzus_prob": 0.3,
         "weight": 0.21,
-        "income": 200000
+        "income": (180_000, 220_000)
     },
     "kozeposztaly": {
         "alap": 0.75,
@@ -24,7 +24,7 @@ PROFILES = {
         "megtakaritas": 0.10,
         "impulzus_prob": 0.2,
         "weight": 0.50,
-        "income": 350000
+        "income": (325_000, 375_000)
     },
     "magas_jov": {
         "alap": 0.65,
@@ -32,7 +32,7 @@ PROFILES = {
         "megtakaritas": 0.15,
         "impulzus_prob": 0.2,
         "weight": 0.20,
-        "income": 600000
+        "income": (540_000, 660_000)
     },
     "arerzekeny": {
         "alap": 0.70,
@@ -40,7 +40,7 @@ PROFILES = {
         "megtakaritas": 0.15,
         "impulzus_prob": 0.1,
         "weight": 0.09,
-        "income": 250000
+        "income": (225_000, 275_000)
     }
 }
 
@@ -106,23 +106,20 @@ CATEGORIES = {
         }
     },
     "impulzus": {
-        "kategorialista": ["csoki", "kave", "snack", "apro vasarlas", "online rendeles"],
+        "kategorialista": ["kave", "snack", "apro vasarlas", "online rendeles"],
         "helyszinek": {
-            "csoki": ["Lidl", "Tesco", "bolt"],
             "kave": ["Costa", "Starbucks", "helyi kavezo"],
             "snack": ["bolt", "Lidl", "Spar"],
             "apro vasarlas": ["helyi bolt", "piac"],
             "online rendeles": ["eMAG", "Aliexpress", "Amazon"]
         },
         "cimkek": {
-            "csoki": ["napi rutin", "extra"],
             "kave": ["napi rutin", "szorakozas"],
             "snack": ["napi rutin", "szukseges"],
             "apro vasarlas": ["extra"],
             "online rendeles": ["extra", "luxus"]
         },
         "celok": {
-            "csoki": [""],
             "kave": [""],
             "snack": [""],
             "apro vasarlas": [""],
@@ -140,9 +137,8 @@ MONTHLY_FREQUENCY = {
         'utazas': (0, 1),
         'kutyu': (0, 1),
         'megtakaritas': (1, 1),  # havonta egyszer
-        'csoki': (5, 15),
-        'kave': (8, 20),
-        'snack': (3, 10),
+        'kave': (3, 12),
+        'snack': (2, 10),
         'apro vasarlas': (2, 8),
         'online rendeles': (1, 3),
     },
@@ -153,9 +149,8 @@ MONTHLY_FREQUENCY = {
         'utazas': (0, 2),
         'kutyu': (1, 3),
         'megtakaritas': (1, 1),
-        'csoki': (10, 25),
-        'kave': (10, 25),
-        'snack': (8, 20),
+        'kave': (3, 16),
+        'snack': (2, 10),
         'apro vasarlas': (5, 15),
         'online rendeles': (1, 5),
     },
@@ -166,9 +161,8 @@ MONTHLY_FREQUENCY = {
         'utazas': (1, 3),
         'kutyu': (2, 5),
         'megtakaritas': (1, 2),
-        'csoki': (15, 30),
-        'kave': (15, 30),
-        'snack': (10, 25),
+        'kave': (5, 22),
+        'snack': (3, 15),
         'apro vasarlas': (8, 20),
         'online rendeles': (2, 7),
     },
@@ -179,9 +173,8 @@ MONTHLY_FREQUENCY = {
         'utazas': (0, 1),
         'kutyu': (0, 1),
         'megtakaritas': (1, 1),
-        'csoki': (3, 8),
-        'kave': (4, 10),
-        'snack': (2, 6),
+        'kave': (2, 7),
+        'snack': (1, 6),
         'apro vasarlas': (1, 5),
         'online rendeles': (0, 2),
     },
@@ -495,7 +488,7 @@ for profile_name, profile in PROFILES.items():
         users.append({
             "user_id": user_counter,
             "profil": profile_name,
-            "monthly_income": profile["income"],
+            "monthly_income": random.randint(profile["income"][0], profile["income"][1]),
             "fixed_costs": {
                 "lakber": random.randint(AMT_BOUNDS[profile_name]['lakber'][0],AMT_BOUNDS[profile_name]['lakber'][1]),
                 "rezsi":random.randint(AMT_BOUNDS[profile_name]['rezsi'][0],AMT_BOUNDS[profile_name]['rezsi'][1]),
