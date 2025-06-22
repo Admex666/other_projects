@@ -14109,3 +14109,8 @@ datum,honap,het,nap_sorszam,tranzakcio_id,osszeg,kategoria,user_id,profil,tipus,
 2025-06-18,2025-05,25,2,31_20250618_3727,-12600.0,etterem,31,kozeposztaly,vagy,Commodi aperiam ut culpa.,manualis,False,False,luxus,web,McDonald's,HUF,extra,,61074,26288,176498,263860
 2025-06-18,2025-05,25,2,5_20250618_6183,-1700.0,mozi,5,alacsony_jov,vagy,Minima recusandae odio.,manualis,False,False,luxus,bolt,Cinema City,HUF,szorakozas,,47431,10269,56513,114213
 2025-06-18,2025-05,25,2,49_20250618_7428,-2600.0,kave,49,arerzekeny,impulzus,Provident rem.,manualis,False,False,luxus,bolt,Costa,HUF,napi rutin,,38899,17620,156424,212943
+2025-06-22,2025-06,25,6,1_20250622_1750578992,10000.0,fizetes,1,alacsony_jov,alap,,user,False,False,bevetel,utalas,Egyéb,HUF,,False,54808,0,0,257913
+2027-01-01,2027-01,53,4,404_20270101_1750579082,-20000.0,szórakozás,404,kozeposztaly,alap,loremipsumloermipsum,user,False,False,szukseglet,készpénz,Egyéb,HUF,,False,-20000,0,0,-20000
+2027-01-01,2027-01,53,4,404_20270101_1750579119,250000.0,fizetes,404,kozeposztaly,alap,loremipsumloermipsum,user,False,False,bevetel,készpénz,Egyéb,HUF,,False,230000,0,0,230000
+2027-01-01,2027-01,53,4,404_20270101_1750579149,50000.0,elelmiszer,404,kozeposztaly,alap,loremipsumloermipsum,user,False,False,bevetel,készpénz,Egyéb,HUF,,False,280000,0,0,280000
+2027-01-01,2027-01,53,4,404_20270101_1750579174,-60000.0,snack,404,kozeposztaly,alap,loremipsumloermipsum,user,False,False,luxus,web,Egyéb,HUF,,False,220000,0,0,220000
