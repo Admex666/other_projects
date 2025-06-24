@@ -40,9 +40,7 @@ class UserFinancialEDA:
         self.df['het_num'] = self.df['datum'].dt.isocalendar().week
         self.df['nap_hete'] = self.df['datum'].dt.dayofweek
         self.df['nap_hete_nev'] = self.df['datum'].dt.day_name()
-        
-        print(f"Adatok betöltve: {len(self.df)} tranzakció, {self.df['user_id'].nunique()} felhasználó")
-    
+            
     def prepare_user_data(self, user_data):
         """Adatok előkészítése dashboardhoz (külön metódusba kiszervezve)"""
         user_data = user_data.copy()
@@ -72,15 +70,11 @@ class UserFinancialEDA:
         user_id: Elemzendő felhasználó ID
         show_plots: Vizualizációk megjelenítése
         """
-        print(f"\n{'='*80}")
-        print(f"🎯 SZEMÉLYES PÉNZÜGYI JELENTÉS - User ID: {user_id}")
-        print(f"{'='*80}")
         
         # User adatok szűrése
         user_data = self.df[self.df['user_id'] == user_id].copy()
         
         if len(user_data) == 0:
-            print(f"❌ Nincs adat a {user_id} user-hez!")
             return None
             
         user_profile = user_data['profil'].iloc[0]
@@ -88,9 +82,6 @@ class UserFinancialEDA:
         # Benchmark adatok (hasonló profil + összes user)
         profile_data = self.df[self.df['profil'] == user_profile].copy()
         all_data = self.df.copy()
-        
-        print(f"📊 Elemzett időszak: {user_data['datum'].min().strftime('%Y-%m-%d')} - {user_data['datum'].max().strftime('%Y-%m-%d')}")
-        print(f"📈 Tranzakciók száma: {len(user_data)}")
         
         # 1. ALAPSTATISZTIKÁK ÉS BENCHMARKING
         self._basic_user_stats(user_data, profile_data, all_data, user_profile)
@@ -144,8 +135,6 @@ class UserFinancialEDA:
     
     def _basic_user_stats(self, user_data, profile_data, all_data, user_profile):
         """Alapstatisztikák user vs benchmark"""
-        print(f"\n📊 ALAPSTATISZTIKÁK ÉS BENCHMARKING")
-        print("-" * 50)
         
         # User statisztikák
         user_income = user_data[user_data['is_income']]['osszeg'].sum()
@@ -165,24 +154,10 @@ class UserFinancialEDA:
         benchmark_income = profile_users['bevetel'].mean()
         benchmark_expenses = profile_users['kiadas'].mean()
         benchmark_savings_rate = profile_users['savings_rate'].mean()
-        
-        print(f"💰 Havi bevétel: {user_income:,.0f} HUF")
-        print(f"   📈 Profil átlag: {benchmark_income:,.0f} HUF ({self._compare_to_benchmark(user_income, benchmark_income)})")
-        
-        print(f"💸 Havi kiadás: {user_expenses:,.0f} HUF")
-        print(f"   📈 Profil átlag: {benchmark_expenses:,.0f} HUF ({self._compare_to_benchmark(user_expenses, benchmark_expenses, reverse=True)})")
-        
-        print(f"💎 Nettó megtakarítás: {user_net:,.0f} HUF")
-        print(f"🎯 Megtakarítási ráta: {user_savings_rate:.1f}%")
-        print(f"   📈 Profil átlag: {benchmark_savings_rate:.1f}% ({self._compare_to_benchmark(user_savings_rate, benchmark_savings_rate)})")
-        
+
         # Percentilis rangsor
         user_rank_income = (profile_users['bevetel'] < user_income).mean() * 100
         user_rank_savings = (profile_users['savings_rate'] < user_savings_rate).mean() * 100
-        
-        print(f"\n🏆 RANGSOR A PROFILON BELÜL:")
-        print(f"   💰 Bevétel: {user_rank_income:.0f}. percentilis")
-        print(f"   💎 Megtakarítási ráta: {user_rank_savings:.0f}. percentilis")
         
         # Adatgyűjtés dictionary létrehozása
         stats = {
@@ -201,27 +176,25 @@ class UserFinancialEDA:
     
     def _cashflow_analysis(self, user_data, profile_data, user_profile):
         """Cashflow elemzés és trend"""
-        print(f"\n💹 CASHFLOW ELEMZÉS")
-        print("-" * 30)
         
         # Havi cashflow trend
         monthly_flow = user_data.groupby('honap')['osszeg'].sum()
         
-        print(f"📅 HAVI CASHFLOW TREND:")
         for month, flow in monthly_flow.items():
             trend_emoji = "📈" if flow > 0 else "📉" if flow < -50000 else "➡️"
-            print(f"   {month}: {flow:,.0f} HUF {trend_emoji}")
         
         # Trend elemzés
         if len(monthly_flow) > 1:
             trend = monthly_flow.pct_change().mean()
             if abs(trend) < 0.1:
-                trend_msg = "Stabil cashflow 📊"
+                trend_msg = "Stabil 📊"
             elif trend > 0:
                 trend_msg = f"Javuló trend (+{trend*100:.1f}% havi átlag) 📈"
             else:
                 trend_msg = f"Romló trend ({trend*100:.1f}% havi átlag) 📉"
-            print(f"\n🔍 Trend értékelés: {trend_msg}")
+        else:
+            trend = None
+            trend_msg = None
     
         cashflow_data = {
             'monthly_flow': monthly_flow.to_dict(),
@@ -233,8 +206,6 @@ class UserFinancialEDA:
     
     def _spending_patterns(self, user_data, profile_data, user_profile):
         """Költési szokások elemzése"""
-        print(f"\n🛒 KÖLTÉSI SZOKÁSOK ELEMZÉSE")
-        print("-" * 35)
         
         user_expenses = user_data[~user_data['is_income']]
         
@@ -242,11 +213,9 @@ class UserFinancialEDA:
         spending_types = user_expenses.groupby('tipus')['abs_osszeg'].sum()
         total_expenses = spending_types.sum()
         
-        print(f"💳 KÖLTÉSI TÍPUSOK:")
         for stype, amount in spending_types.items():
             percentage = (amount / total_expenses * 100)
             emoji = {"alap": "🏠", "impulzus": "⚡", "vagy": "🤔"}.get(stype, "💸")
-            print(f"   {emoji} {stype}: {amount:,.0f} HUF ({percentage:.1f}%)")
         
         # Impulzus vásárlási hajlam vs benchmark
         user_impulse_pct = (spending_types.get('impulzus', 0) / total_expenses * 100)
@@ -254,23 +223,10 @@ class UserFinancialEDA:
         profile_impulse = profile_data[~profile_data['is_income']].groupby('tipus')['abs_osszeg'].sum()
         profile_impulse_pct = (profile_impulse.get('impulzus', 0) / profile_impulse.sum() * 100)
         
-        print(f"\n⚡ IMPULZUS VÁSÁRLÁSI HAJLAM:")
-        print(f"   Te: {user_impulse_pct:.1f}%")
-        print(f"   Profil átlag: {profile_impulse_pct:.1f}%")
-        
-        if user_impulse_pct > profile_impulse_pct * 1.2:
-            print(f"   ⚠️ Átlag feletti impulzus vásárlási hajlam!")
-        elif user_impulse_pct < profile_impulse_pct * 0.8:
-            print(f"   ✅ Átlag alatti impulzus vásárlási hajlam - jó önkontroll!")
-        
         # Fix vs változó költségek
         fixed_costs = user_expenses[user_expenses['fix_koltseg'] == True]['abs_osszeg'].sum()
         variable_costs = user_expenses[user_expenses['fix_koltseg'] == False]['abs_osszeg'].sum()
-        
-        print(f"\n🏠 FIX VS VÁLTOZÓ KÖLTSÉGEK:")
-        print(f"   🔒 Fix költségek: {fixed_costs:,.0f} HUF ({fixed_costs/total_expenses*100:.1f}%)")
-        print(f"   🔄 Változó költségek: {variable_costs:,.0f} HUF ({variable_costs/total_expenses*100:.1f}%)")
-        
+
         spending_data = {
             'spending_types': spending_types.to_dict(),
             'total_expenses': float(total_expenses),
@@ -285,8 +241,6 @@ class UserFinancialEDA:
         
     def _category_benchmark(self, user_data, profile_data, user_profile):
         """Kategória szintű benchmarking"""
-        print(f"\n🏷️ KATEGÓRIA BENCHMARKING")
-        print("-" * 30)
         
         user_expenses = user_data[~user_data['is_income']]
         profile_expenses = profile_data[~profile_data['is_income']]
@@ -299,7 +253,6 @@ class UserFinancialEDA:
         profile_users_cat = profile_expenses.groupby(['user_id', 'kategoria'])['abs_osszeg'].sum().reset_index()
         profile_avg_cat = profile_users_cat.groupby('kategoria')['abs_osszeg'].mean()
         
-        print(f"🏆 TOP 5 KÖLTSÉGKATEGÓRIA:")
         top_categories = {}
         for i, (category, amount) in enumerate(user_categories.head(5).items(), 1):
             percentage = (amount / total_user_expenses * 100)
@@ -311,18 +264,10 @@ class UserFinancialEDA:
             
             if profile_avg > 0:
                 comparison = self._compare_to_benchmark(amount, profile_avg, reverse=True)
-                print(f"   {i}. {category}: {amount:,.0f} HUF ({percentage:.1f}%) - {comparison} (profil átlaghoz képest)")
-            else:
-                print(f"   {i}. {category}: {amount:,.0f} HUF ({percentage:.1f}%)")
         
         # Hiányzó alapvető kategóriák ellenőrzése
         essential_categories = ['elelmiszer', 'lakber', 'kozlekedes', 'egeszseg']
         missing_essentials = [cat for cat in essential_categories if cat not in user_categories.index]
-        
-        if missing_essentials:
-            print(f"\n⚠️ HIÁNYZÓ ALAPVETŐ KATEGÓRIÁK:")
-            for cat in missing_essentials:
-                print(f"   ❌ {cat}")
 
         category_data = {
             'user_categories': user_categories.to_dict(),
@@ -334,8 +279,6 @@ class UserFinancialEDA:
         
     def _temporal_analysis(self, user_data, user_profile):
         """Időbeli költési minták"""
-        print(f"\n📅 IDŐBELI KÖLTÉSI MINTÁK")
-        print("-" * 30)
         
         user_expenses = user_data[~user_data['is_income']]
         
@@ -346,21 +289,11 @@ class UserFinancialEDA:
         
         max_day = weekly_spending.idxmax()
         min_day = weekly_spending.idxmin()
-        
-        print(f"📊 HETI KÖLTÉSI MINTÁK:")
-        print(f"   💸 Legköltekenyebb nap: {max_day} ({weekly_spending[max_day]:,.0f} HUF)")
-        print(f"   💰 Legspórolósabb nap: {min_day} ({weekly_spending[min_day]:,.0f} HUF)")
-        
+
         # Hétvége vs hétköznap
         weekend_days = ['Saturday', 'Sunday']
         weekday_avg = weekly_spending[~weekly_spending.index.isin(weekend_days)].mean()
         weekend_avg = weekly_spending[weekly_spending.index.isin(weekend_days)].mean()
-        
-        print(f"   🏢 Hétköznapi átlag: {weekday_avg:,.0f} HUF")
-        print(f"   🏖️ Hétvégi átlag: {weekend_avg:,.0f} HUF")
-        
-        if weekend_avg > weekday_avg * 1.3:
-            print(f"   ⚠️ Jelentősen magasabb hétvégi költések!")
     
         temporal_data = {
             'weekly_spending': weekly_spending.to_dict(),
@@ -380,8 +313,6 @@ class UserFinancialEDA:
             
     def _risk_analysis(self, user_data, profile_data, user_profile):
         """Pénzügyi kockázati elemzés"""
-        print(f"\n⚠️ PÉNZÜGYI KOCKÁZATI ELEMZÉS")
-        print("-" * 35)
         
         user_income = user_data[user_data['is_income']]['osszeg'].sum()
         user_expenses = user_data[~user_data['is_income']]['abs_osszeg'].sum()
@@ -403,20 +334,10 @@ class UserFinancialEDA:
             risk_level = "🌟 KIVÁLÓ"
             risk_msg = "Egészséges pénzügyi helyzet"
         
-        print(f"🎯 Kockázati szint: {risk_level}")
-        print(f"📊 Kiadási arány: {expense_ratio:.1f}%")
-        print(f"💡 Értékelés: {risk_msg}")
-        
         # Fix költségek aránya
         user_expenses_detail = user_data[~user_data['is_income']]
         fixed_costs = user_expenses_detail[user_expenses_detail['fix_koltseg'] == True]['abs_osszeg'].sum()
         fixed_ratio = (fixed_costs / user_income * 100) if user_income > 0 else 0
-        
-        print(f"\n🔒 Fix költségek aránya: {fixed_ratio:.1f}%")
-        if fixed_ratio > 60:
-            print(f"   ⚠️ Magas fix költség arány - korlátozott rugalmasság!")
-        elif fixed_ratio < 40:
-            print(f"   ✅ Alacsony fix költség arány - jó rugalmasság!")
         
         risk_data = {
             'expense_ratio': float(expense_ratio),
@@ -430,8 +351,6 @@ class UserFinancialEDA:
         
     def _generate_recommendations(self, user_data, profile_data, user_profile):
         """Személyre szabott javaslatok generálása"""
-        print(f"\n💡 SZEMÉLYRE SZABOTT JAVASLATOK")
-        print("-" * 40)
         
         recommendations = []
         
@@ -443,11 +362,11 @@ class UserFinancialEDA:
         
         # 1. Megtakarítási ráta alapú javaslatok
         if savings_rate < 0:
-            recommendations.append("🚨 AZONNALI CSELEKVÉS: Kiadások csökkentése szükséges!")
-            recommendations.append("💡 Vizsgáld felül a nem alapvető kiadásokat")
+            recommendations.append("🚨 AZONNALI CSELEKEDJ: Csökkentened kell a kiadásaidat!")
+            recommendations.append("💡 Vizsgáld felül a nem alapvető kiadásokat!")
         elif savings_rate < 10:
-            recommendations.append("📈 Cél: 10-20% megtakarítási ráta elérése")
-            recommendations.append("💡 Keresi a költségoptimalizálási lehetőségeket")
+            recommendations.append("📈 Érd el a 10-20% megtakarítási rátát!")
+            recommendations.append("💡 Keress költségoptimalizálási lehetőségeket!")
         elif savings_rate > 30:
             recommendations.append("🌟 Kiváló megtakarítási ráta!")
             recommendations.append("💡 Befektetési lehetőségek mérlegelése")
@@ -483,10 +402,6 @@ class UserFinancialEDA:
         
         if weekend_spending > weekday_spending * 0.5:  # hétvégén több mint a hét felét költi
             recommendations.append("🏖️ Hétvégi költések tudatosabb tervezése")
-        
-        # Javaslatok kiírása
-        for i, rec in enumerate(recommendations, 1):
-            print(f"   {i}. {rec}")
         
         return recommendations
     
@@ -606,8 +521,6 @@ def run_user_eda(df, user_id=None):
     df: DataFrame a tranzakciókkal
     user_id: Vizsgálandó user ID (None esetén random user)
     """
-    print("🚀 PÉNZÜGYI ELEMZÉS INDÍTÁSA")
-    print(f"Összes felhasználó: {df['user_id'].nunique()} fő")
     
     # EDA objektum létrehozása
     eda = UserFinancialEDA(df)
@@ -616,18 +529,7 @@ def run_user_eda(df, user_id=None):
     if user_id is None:
         all_users = eda.get_all_users()
         user_id = np.random.choice(all_users)
-        print(f"\n🔍 Véletlenszerűen kiválasztott felhasználó: {user_id}")
-    
-    # Elemzés futtatása
-    print("\n" + "="*100)
-    print("📊 ELEMZÉS INDÍTÁSA")
-    print("="*100)
     
     result = eda.analyze_user(user_id, show_plots=True)
-    
-    # Összegzés
-    print("\n" + "="*100)
-    print("✅ ELEMZÉS BEFEJEZVE")
-    print("="*100)
     
     return result

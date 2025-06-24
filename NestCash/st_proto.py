@@ -5,6 +5,7 @@ from datetime import datetime
 import time
 from PenzugyiElemzo import PenzugyiElemzo
 from UserFinancialEDA import UserFinancialEDA, run_user_eda
+from MLinsight import MLinsight
 
 # Adatbázis kezelése
 def load_data():
@@ -68,15 +69,16 @@ if st.session_state.selected_user is not None:
     # Az aktuális felhasználó adatainak kinyerése
     user_df = df[df["user_id"] == current_user]
     balance = user_df['balance'].iloc[-1]
-    st.write(f"Készpénz: **{balance:,.0f}Ft**")
     reszvenyek = user_df['reszvenyek'].iloc[-1]
-    st.write(f"Részvények: **{reszvenyek:,.0f}Ft**")
     egyeb_befektetes = user_df['egyeb_befektetes'].iloc[-1]
-    st.write(f"Egyéb befektetés: **{egyeb_befektetes:,.0f}Ft**")
+    cols = st.columns(3)
+    cols[0].metric("Készpénz", f"{balance:,.0f}Ft")
+    cols[1].metric("Részvények", f"{reszvenyek:,.0f}Ft")
+    cols[2].metric("Egyéb befektetés", f"{egyeb_befektetes:,.0f}Ft")
     
     
     # Új adat bevitele - CSAK A KIVÁLASZTOTT FELHASZNÁLÓHOZ
-    with st.expander(f"➕ Új tranzakció hozzáadása (Felhasználó {st.session_state.selected_user})"):
+    with st.expander(f"➕ Új tranzakció hozzáadása (Felhasználó {current_user})"):
         with st.form("uj_tranzakcio"):
             col1, col2 = st.columns(2)
             datum = col1.date_input("Dátum", datetime.today())
@@ -126,10 +128,10 @@ if st.session_state.selected_user is not None:
                     "honap": datum.strftime("%Y-%m"),
                     "het": datum.isocalendar()[1],
                     "nap_sorszam": datum.weekday(),
-                    "tranzakcio_id": f"{st.session_state.selected_user}_{datum.strftime('%Y%m%d')}_{int(time.time())}",
+                    "tranzakcio_id": f"{current_user}_{datum.strftime('%Y%m%d')}_{int(time.time())}",
                     "osszeg": osszeg if bev_kiad_tipus == "bevetel" else -abs(osszeg),
                     "kategoria": kategoria,
-                    "user_id": st.session_state.selected_user,
+                    "user_id": current_user,
                     "profil": profil,
                     "tipus": tipus,
                     "leiras": leiras,
@@ -166,7 +168,7 @@ if st.session_state.selected_user is not None:
                 st.experimental_rerun()
 
     # Adatok megtekintése - CSAK A KIVÁLASZTOTT FELHASZNÁLÓ ADATAI
-    if st.checkbox(f"Adatok megtekintése (Felhasználó {st.session_state.selected_user})"):
+    if st.checkbox(f"Nyers adatok megtekintése (Felhasználó {current_user})"):
         current_user_df = df[df["user_id"] == current_user]
         if not current_user_df.empty:
             st.dataframe(current_user_df)
@@ -174,159 +176,158 @@ if st.session_state.selected_user is not None:
             st.warning("Nincsenek tranzakciók ehhez a felhasználóhoz.")
 
     # Elemzés szekció - CSAK A KIVÁLASZTOTT FELHASZNÁLÓRA
-    st.header(f"Pénzügyi Elemzés - Felhasználó {st.session_state.selected_user}")
+    st.header(f"Pénzügyek Elemzése (Felhasználó {current_user})")
     
     if not df.empty and not user_df.empty:
-        if st.button("Elemzés indítása", type="primary"):
-            with st.spinner("Elemzés folyamatban..."):
-                elemzo = PenzugyiElemzo(df)
-                jelentés = elemzo.generate_comprehensive_report(st.session_state.selected_user)
+        eredmenyek = run_user_eda(df, current_user)
+        elemzo = PenzugyiElemzo(df)
+        jelentés = elemzo.generate_comprehensive_report(current_user)
+        ml_insight = MLinsight(df, current_user)
+        
+        honapok = len(user_df.honap.unique())
+        with st.expander("Pénzügyek elemzése"):
+            # 1. Alapadatok
+            st.subheader("📌 Alapadatok")
+            st.metric("Időszak", f"{eredmenyek['time_period']['start']} - {eredmenyek['time_period']['end']}")
+            
+            # 2. Alap statisztikák
+            col1, col2 = st.columns(2)
+            col1.metric("Átlag havi bevétel", f"{eredmenyek['basic_stats']['user_income']/honapok:,.0f} Ft",
+                        f"hasonló profil átlag: {eredmenyek['basic_stats']['benchmark_income']/honapok:,.0f} Ft")
+            col2.metric("Átlag havi kiadás", f"{eredmenyek['basic_stats']['user_expenses']/honapok:,.0f} Ft")
+            col4, col5 = st.columns(2)
+            col4.metric("Megtakarítási ráta", f"{eredmenyek['basic_stats']['user_savings_rate']:.1f}%", 
+                        f"hasonló profil átlag: {eredmenyek['basic_stats']['benchmark_savings_rate']:.1f}%")
+            col5.metric("Tranzakciók száma", eredmenyek['transaction_count'])
+            
+            # Benchmark adatok
+            st.subheader("Benchmark összehasonlítás")
+            st.write(f"**Jövedelem rangsor:** Top {eredmenyek['basic_stats']['user_rank_income']:.1f}%")
+            st.write(f"**Megtakarítás rangsor:** Top {eredmenyek['basic_stats']['user_rank_savings']:.1f}%")
+        
+            # 3. Cashflow elemzés
+            st.subheader("💸 Cashflow elemzés")
+            st.line_chart(pd.DataFrame.from_dict(eredmenyek['cashflow']['monthly_flow'], orient='index', columns=['Havi nettó']))
+            st.write(f"**Trend:** {eredmenyek['cashflow']['trend_msg']}")
+            
+            # 4. Kiadási minták
+            st.subheader("🧮 Kiadási minták")
+            cols = st.columns(3)
+            cols[0].metric("Fix költségek", f"{eredmenyek['spending_patterns']['fixed_costs']:,.0f} Ft", 
+                           f"{eredmenyek['spending_patterns']['fixed_ratio']:.1f}%")
+            cols[1].metric("Változó költségek", f"{eredmenyek['spending_patterns']['variable_costs']:,.0f} Ft",
+                           f"{eredmenyek['spending_patterns']['variable_ratio']:.1f}%")
+            cols[2].metric("Impulzusvásárlások", f"{eredmenyek['spending_patterns']['user_impulse_pct']:.1f}%",
+                           f"profil átlag: {eredmenyek['spending_patterns']['profile_impulse_pct']:.1f}%")
+            
+            # 5. Kategória elemzés
+            st.subheader("🏷️ Kategória elemzés")
+            top_cats = eredmenyek['category_analysis']['top_category']
+            for rank in sorted(top_cats.keys()):
+                cat = top_cats[rank]
+                st.progress(cat['percentage']/100, 
+                            text=f"{rank}. {cat['name']}: {cat['amount']:,.0f} Ft ({cat['percentage']:.1f}%)")
+            
+            if eredmenyek['category_analysis']['missing_essentials']:
+                st.warning("Hiányzó alapkategóriák: " + ", ".join(eredmenyek['category_analysis']['missing_essentials']))
+            
+            # Spórolási lehetőségek
+            st.subheader("💡 Spórolási Optimalizáció")
+            sporolas = jelentés["sporolas_optimalizacio"]
+            
+            if 'pareto_analysis' in sporolas:
+                st.write("**Pareto elemzés (80/20 szabály):**")
+                kat_darab = len(sporolas['pareto_analysis'].get('pareto_kategoriak', []))
+                st.write(f"A kiadások {sporolas['pareto_analysis'].get('pareto_arany_pct', 'N/A')}%-a {kat_darab} kategóriából származik")
+                for kat in sporolas['pareto_analysis'].get('pareto_kategoriak', [])[:kat_darab]:
+                    st.write(f"- {kat}")
+            
+            # 6. Időbeli elemzés
+            st.subheader("⏰ Időbeli minták")
+            week_data = eredmenyek['temporal_analysis']['weekly_spending']
+            # Napok sorrendjének meghatározása
+            nap_rend = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+            # Átrendezés a megfelelő sorrendbe
+            rendezett_heti_adat = {nap: week_data.get(nap, 0) for nap in nap_rend}
+            st.bar_chart(pd.DataFrame.from_dict(rendezett_heti_adat, orient='index', columns=['Kiadás']))
+            cols = st.columns(2)
+            cols[0].metric("Legtöbb kiadás", f"{eredmenyek['temporal_analysis']['max_day']['name']}",
+                           f"{eredmenyek['temporal_analysis']['max_day']['amount']:,.0f} Ft")
+            cols[1].metric("Legkevesebb kiadás", f"{eredmenyek['temporal_analysis']['min_day']['name']}",
+                           f"{eredmenyek['temporal_analysis']['min_day']['amount']:,.0f} Ft")
+            
+            # 8. Ajánlások
+            st.subheader("💡 Javaslatok")
+            for rec in eredmenyek['recommendations']:
+                st.write(f"- {rec}")
+            
+            # Executive Summary
+            st.subheader("📊 Összefoglaló")
+            exec_summary = jelentés["executive_summary"]
+            st.write(f"**Pénzügyi egészség pontszám:** {exec_summary.get('penzugyi_egeszseg_pontszam', 'N/A')}")
+            st.write(f"**Általános értékelés:** {exec_summary.get('altalanos_ertekeles', 'N/A')}")
+            
+            # Cash Flow Elemzés
+            st.subheader("💸 Cash Flow Elemzés")
+            cash_flow = jelentés["cash_flow_elemzes"]
+            
+            st.write(f"**Havi átlagos szükséglet kiadások:** {cash_flow['burn_rate'].get('havi_atlag_szukseglet', 'N/A'):,.0f} Ft")
+            st.write(f"**Havi átlagos luxus kiadások:** {cash_flow['burn_rate'].get('havi_atlag_luxus', 'N/A'):,.0f} Ft")
+            st.write(f"**Teljes havi átlagos kiadások:** {cash_flow['burn_rate'].get('total_burn_rate', 'N/A'):,.0f} Ft")
+            
+            st.write("**Mennyi ideig élnél meg a jelenlegi vagyonoddal?**")
+            runway = cash_flow['runway'].get('runway_honapok', {})
+            st.write(f"- Csak készpénz: {runway.get('csak_keszpenz', 'N/A')} hónap")
+            st.write(f"- Összes asset: {runway.get('osszes_asset', 'N/A')} hónap")
+            st.warning("Ajánlott tartalék: 3-6 hónap")
+            
+            # Befektetési tanácsok
+            st.subheader("📈 Befektetési Tanácsok")
+            befektetes = jelentés["befektetesi_elemzes"]
+            
+            if 'portfolio_suggestions' in befektetes:
+                col1, col2 = st.columns(2)
                 
-                # Eredmények megjelenítése
-                st.success("Elemzés kész!")
-                
-                # Executive Summary
-                st.subheader("📊 Összefoglaló")
-                exec_summary = jelentés["executive_summary"]
-                st.write(f"**Pénzügyi egészség pontszám:** {exec_summary.get('penzugyi_egeszseg_pontszam', 'N/A')}")
-                st.write(f"**Általános értékelés:** {exec_summary.get('altalanos_ertekeles', 'N/A')}")
-                
-                st.write("**Fő erősségek:**")
-                for erosseg in exec_summary.get('fo_erosegek', []):
-                    st.write(f"- {erosseg}")
-                
-                st.write("**Fő kihívások:**")
-                for kihivas in exec_summary.get('fo_kihivasok', []):
-                    st.write(f"- {kihivas}")
-                
-                st.write("**Legfontosabb ajánlások:**")
-                for ajanlas in exec_summary.get('legfontosabb_ajanlasok', []):
-                    st.write(f"- {ajanlas}")
-                
-                # Cash Flow Elemzés
-                st.subheader("💸 Cash Flow Elemzés")
-                cash_flow = jelentés["cash_flow_elemzes"]
-                
-                st.write(f"**Havi átlagos szükséglet kiadások:** {cash_flow['burn_rate'].get('havi_atlag_szukseglet', 'N/A'):,.0f} Ft")
-                st.write(f"**Havi átlagos luxus kiadások:** {cash_flow['burn_rate'].get('havi_atlag_luxus', 'N/A'):,.0f} Ft")
-                st.write(f"**Teljes burn rate:** {cash_flow['burn_rate'].get('total_burn_rate', 'N/A'):,.0f} Ft")
-                
-                st.write("**Runway elemzés:**")
-                runway = cash_flow['runway'].get('runway_honapok', {})
-                st.write(f"- Csak készpénz: {runway.get('csak_keszpenz', 'N/A')} hónap")
-                st.write(f"- Összes asset: {runway.get('osszes_asset', 'N/A')} hónap")
-                
-                # Spórolási lehetőségek
-                st.subheader("💡 Spórolási Optimalizáció")
-                sporolas = jelentés["sporolas_optimalizacio"]
-                
-                if 'pareto_analysis' in sporolas:
-                    st.write(f"**Pareto elemzés (80/20 szabály):**")
-                    st.write(f"A kiadások {sporolas['pareto_analysis'].get('pareto_arany_pct', 'N/A')}%-a {len(sporolas['pareto_analysis'].get('pareto_kategoriak', []))} kategóriából származik")
-                    st.write("Top kategóriák:")
-                    for kat in sporolas['pareto_analysis'].get('pareto_kategoriak', [])[:3]:
-                        st.write(f"- {kat}")
-                
-                # Befektetési tanácsok
-                st.subheader("📈 Befektetési Tanácsok")
-                befektetes = jelentés["befektetesi_elemzes"]
-                
-                if 'portfolio_suggestions' in befektetes:
+                with col1:
                     st.write("**Jelenlegi portfólió allokáció:**")
                     for asset, pct in befektetes['portfolio_suggestions'].get('jelenlegi_allokaciok', {}).items():
                         st.write(f"- {asset}: {pct:.0f}%")
-                    
+                
+                with col2:
                     st.write("**Javasolt portfólió allokáció:**")
                     for asset, pct in befektetes['portfolio_suggestions'].get('javasolt_allokaciok', {}).items():
                         st.write(f"- {asset}: {pct:.0f}%")
+                
+                st.write("**Eladási és vételi javaslatok:**")
+                for action in befektetes['portfolio_suggestions'].get('rebalancing_actions', []):
+                    st.write(f"- {action}")
                     
-                    st.write("**Rebalancing javaslatok:**")
-                    for action in befektetes['portfolio_suggestions'].get('rebalancing_actions', []):
-                        st.write(f"- {action}")
+            # ML Insight elemzés            
+            st.subheader("Kockázatelemzés")
+            # Színkódolás a kockázat alapján
+            if "nem kerülsz mínuszba" in ml_insight['risk_msg']:
+                st.success(ml_insight['risk_msg'])
+            else:
+                st.warning(ml_insight['risk_msg'])
+            
+            st.subheader("Mozgóátlagok")
+            col1, col2, col3 = st.columns(3)
+            col1.metric("7 napos átlagköltés", f"{abs(ml_insight['rolling_avg']['roll7']):,.0f} Ft")
+            col2.metric("30 napos átlagköltés", f"{abs(ml_insight['rolling_avg']['roll30']):,.0f} Ft")
+            col3.metric("90 napos átlagköltés", f"{abs(ml_insight['rolling_avg']['roll90']):,.0f} Ft")
+            
+            st.subheader("Költési diverzitás: mennyire oszlanak meg a költségeid?")
+            st.metric("Diverzitási indexed", f"{ml_insight['diversity']['div_user']:.4f}",
+                        f"hasonló profil átlag: {ml_insight['diversity']['div_benchmark']:.4f}")
+            
+            st.subheader("Trendek")
+            st.metric("Megtakarítás változása az előző hónaphoz képest", 
+                      f"{ml_insight['savings_trend_pp']:.1%}pont")
+            
+            st.subheader("Fix költségek")
+            st.metric("Fix költségeid aránya", f"{ml_insight['fix_cost']['fix_user']:.1%}",
+                      f"hasonló profil átlag: {ml_insight['fix_cost']['fix_benchmark']:.1%}")
+            
+            st.metric("Ilyen helyzetben átlagosan elérhető vagyon", f"{ml_insight['suggested_assets']:,.0f} Ft")
     else:
         st.warning("Nincs elég adat az elemzéshez. Kérjük, adj hozzá új tranzakciókat.")
-     
-    eredmenyek = run_user_eda(df, current_user)        
-    # Elemzés eredményeinek megjelenítése
-    st.header(f"Pénzügyi Elemzés - Felhasználó {eredmenyek['user_id']}")
-    
-    # Dashboard generálása
-    dashboard_fig = UserFinancialEDA(df)._create_user_dashboard(
-        user_data=user_df,
-        profile_data=profile_df,
-        user_profile=profil
-    )
-    
-    # Dashboard megjelenítése
-    st.subheader("📈 Pénzügyi Dashboard")
-    st.pyplot(dashboard_fig)
-
-    # 1. Alapadatok
-    with st.expander("📌 Alapadatok"):
-        col1, col2, col3 = st.columns(3)
-        col1.metric("Profil", eredmenyek['profile'])
-        col2.metric("Időszak", f"{eredmenyek['time_period']['start']} - {eredmenyek['time_period']['end']}")
-        col3.metric("Tranzakciók száma", eredmenyek['transaction_count'])
-    
-    # 2. Alap statisztikák
-    st.subheader("📊 Alap statisztikák")
-    cols = st.columns(4)
-    cols[0].metric("Összes bevétel", f"{eredmenyek['basic_stats']['user_income']:,.0f} Ft")
-    cols[1].metric("Összes kiadás", f"{eredmenyek['basic_stats']['user_expenses']:,.0f} Ft")
-    cols[2].metric("Nettó", f"{eredmenyek['basic_stats']['user_net']:,.0f} Ft")
-    cols[3].metric("Megtakarítási ráta", f"{eredmenyek['basic_stats']['user_savings_rate']:.1f}%")
-    
-    # Benchmark adatok
-    with st.expander("Benchmark összehasonlítás"):
-        st.write(f"**Hasonló profil átlag jövedelem:** {eredmenyek['basic_stats']['benchmark_income']:,.0f} Ft")
-        st.write(f"**Hasonló profil átlag megtakarítási ráta:** {eredmenyek['basic_stats']['benchmark_savings_rate']:.1f}%")
-        st.write(f"**Jövedelem rangsor:** Top {eredmenyek['basic_stats']['user_rank_income']}%")
-        st.write(f"**Megtakarítás rangsor:** Top {eredmenyek['basic_stats']['user_rank_savings']}%")
-    
-    # 3. Cashflow elemzés
-    st.subheader("💸 Cashflow elemzés")
-    st.line_chart(pd.DataFrame.from_dict(eredmenyek['cashflow']['monthly_flow'], orient='index', columns=['Havi nettó']))
-    st.write(f"**Trend:** {eredmenyek['cashflow']['trend_msg']}")
-    
-    # 4. Kiadási minták
-    st.subheader("🧮 Kiadási minták")
-    cols = st.columns(3)
-    cols[0].metric("Fix költségek", f"{eredmenyek['spending_patterns']['fixed_costs']:,.0f} Ft", 
-                   f"{eredmenyek['spending_patterns']['fixed_ratio']:.1f}%")
-    cols[1].metric("Változó költségek", f"{eredmenyek['spending_patterns']['variable_costs']:,.0f} Ft",
-                   f"{eredmenyek['spending_patterns']['variable_ratio']:.1f}%")
-    cols[2].metric("Impulzusvásárlások", f"{eredmenyek['spending_patterns']['user_impulse_pct']:.1f}%",
-                   f"profil átlag: {eredmenyek['spending_patterns']['profile_impulse_pct']:.1f}%")
-    
-    # 5. Kategória elemzés
-    st.subheader("🏷️ Kategória elemzés")
-    top_cats = eredmenyek['category_analysis']['top_category']
-    for rank in sorted(top_cats.keys()):
-        cat = top_cats[rank]
-        st.progress(cat['percentage']/100, 
-                    text=f"{rank}. {cat['name']}: {cat['amount']:,.0f} Ft ({cat['percentage']:.1f}%)")
-    
-    if eredmenyek['category_analysis']['missing_essentials']:
-        st.warning("Hiányzó alapkategóriák: " + ", ".join(eredmenyek['category_analysis']['missing_essentials']))
-    
-    # 6. Időbeli elemzés
-    st.subheader("⏰ Időbeli minták")
-    week_data = eredmenyek['temporal_analysis']['weekly_spending']
-    st.bar_chart(pd.DataFrame.from_dict(week_data, orient='index', columns=['Kiadás']))
-    cols = st.columns(2)
-    cols[0].metric("Legtöbb kiadás", f"{eredmenyek['temporal_analysis']['max_day']['name']}",
-                   f"{eredmenyek['temporal_analysis']['max_day']['amount']:,.0f} Ft")
-    cols[1].metric("Legkevesebb kiadás", f"{eredmenyek['temporal_analysis']['min_day']['name']}",
-                   f"{eredmenyek['temporal_analysis']['min_day']['amount']:,.0f} Ft")
-    
-    # 7. Kockázatelemzés
-    st.subheader("⚠️ Kockázatelemzés")
-    risk = eredmenyek['risk_analysis']
-    st.write(f"**Kockázati szint:** {risk['risk_level']}")
-    st.write(risk['risk_msg'])
-    st.write(f"Fix költségek/jövedelem arány: {risk['fixed_ratio']:.1f}%")
-    
-    # 8. Ajánlások
-    st.subheader("💡 Javaslatok")
-    for rec in eredmenyek['recommendations']:
-        st.write(f"- {rec}")
