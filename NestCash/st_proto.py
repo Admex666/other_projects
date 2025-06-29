@@ -3,6 +3,8 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 import time
+import hashlib
+import os
 from PenzugyiElemzo import PenzugyiElemzo
 from UserFinancialEDA import UserFinancialEDA, run_user_eda
 from MLinsight import MLinsight
@@ -26,48 +28,139 @@ def save_data(df):
 
 # Streamlit alkalmazás
 st.title("💰 NestCash prototípus")
-st.subheader("Tranzakciók bevitele és elemzés")
 
 # Adatok betöltése
 df = load_data()
 
+#%% Registration, sign-in
+# Adjuk hozzá az importokhoz
+import hashlib
+import os
+
+# Felhasználók betöltése
+def load_users():
+    try:
+        return pd.read_csv("users.csv")
+    except:
+        return pd.DataFrame(columns=["user_id", "username", "password", "email", "registration_date"])
+
+# Felhasználó mentése
+def save_users(users_df):
+    users_df.to_csv("users.csv", index=False)
+
+# Jelszó hash-elése
+def hash_password(password):
+    return hashlib.sha256(password.encode()).hexdigest()
+
+# Felhasználó authentikálása
+def authenticate_user(username, password):
+    users_df = load_users()
+    hashed_pw = hash_password(password)
+    user = users_df[(users_df["username"] == username) & (users_df["password"] == hashed_pw)]
+    return user.iloc[0] if not user.empty else None
+
 # Session state inicializálása
-if 'selected_user' not in st.session_state:
-    st.session_state.selected_user = None
-
-# User kiválasztása
-if not df.empty:
-    available_users = df["user_id"].unique().tolist()
-else:
-    available_users = []
-
-# Ha nincs még felhasználó, lehetőség új létrehozására
-if not available_users:
-    st.info("Nincsenek még felhasználók az adatbázisban. Kérjük, hozzon létre egy új felhasználót.")
-    new_user_id = st.number_input("Új felhasználó ID", min_value=1, value=1)
-    if st.button("Felhasználó létrehozása"):
-        st.session_state.selected_user = new_user_id
-        st.success(f"Felhasználó {new_user_id} létrehozva! Most már hozzáadhat tranzakciókat.")
-else:
-    # User kiválasztása
-    selected_user = st.selectbox(
-        "Válaszd ki a felhasználódat", 
-        available_users,
-        index=available_users.index(st.session_state.selected_user) if st.session_state.selected_user else 0
-    )
+if 'logged_in' not in st.session_state:
+    st.session_state.logged_in = False
+    st.session_state.current_user = None
+    st.session_state.user_id = None
+    st.session_state.username = None
+ 
+# Felület
+# Ha nincs bejelentkezve felhasználó
+if not st.session_state.logged_in:
+    tab1, tab2 = st.tabs(["Bejelentkezés", "Regisztráció"])
     
-    # Session state frissítése
-    if selected_user != st.session_state.selected_user:
-        st.session_state.selected_user = selected_user
+    with tab1:
+        with st.form("Bejelentkezés"):
+            username = st.text_input("Felhasználónév")
+            password = st.text_input("Jelszó", type="password")
+            submitted = st.form_submit_button("Bejelentkezés")
+            
+            if submitted:
+                user = authenticate_user(username, password)
+                if user is not None:
+                    st.session_state.logged_in = True
+                    st.session_state.current_user = user
+                    st.session_state.user_id = user["user_id"]
+                    st.session_state.username = user["username"]
+                    st.success("Sikeres bejelentkezés!")
+                    st.rerun()
+                else:
+                    st.error("Hibás felhasználónév vagy jelszó!")
+    
+    with tab2:
+        with st.form("Regisztráció"):
+            new_username = st.text_input("Új felhasználónév")
+            new_password = st.text_input("Új jelszó", type="password")
+            confirm_password = st.text_input("Jelszó megerősítése", type="password")
+            email = st.text_input("E-mail cím")
+            submitted = st.form_submit_button("Regisztráció")
+            
+            if submitted:
+                users_df = load_users()
+                
+                # Validációk
+                if new_password != confirm_password:
+                    st.error("A jelszavak nem egyeznek!")
+                elif new_username in users_df["username"].values:
+                    st.error("Ez a felhasználónév már foglalt!")
+                else:
+                    # Új user_id generálása
+                    new_user_id = users_df["user_id"].max() + 1 if not users_df.empty else 1
+                    
+                    new_user = {
+                        "user_id": new_user_id,
+                        "username": new_username,
+                        "password": hash_password(new_password),
+                        "email": email,
+                        "registration_date": datetime.now().strftime("%Y-%m-%d")
+                    }
+                    
+                    users_df = pd.concat([users_df, pd.DataFrame([new_user])], ignore_index=True)
+                    save_users(users_df)
+                    
+                    st.session_state.logged_in = True
+                    st.session_state.current_user = new_user
+                    st.session_state.user_id = new_user_id
+                    st.session_state.username = new_username
+                    username = new_username
+                    
+                    st.success("Sikeres regisztráció! Automatikusan bejelentkeztél.")
+                    st.rerun()
+    
+    st.stop()  # Ne jelenjen meg a tartalom, ha nincs bejelentkezve
+    
+# Ha be van jelentkezve, jelenítsük meg a kijelentkezés gombot
+if st.session_state.logged_in:
+    current_user = st.session_state.user_id
+    username = st.session_state.username
+    st.success(f"Bejelentkezve mint: {username} (ID: {current_user})")
+    
+    # Kijelentkezés gomb
+    if st.button("Kijelentkezés", key="logout_btn"):
+        st.session_state.logged_in = False
+        st.session_state.current_user = None
+        st.session_state.user_id = None
+        st.session_state.username = None
+        st.success("Sikeresen kijelentkeztél!")
         st.rerun()
-    
-    st.success(f"Bejelentkezve mint: Felhasználó {st.session_state.selected_user}")
 
-# Csak akkor folytatjuk, ha van kiválasztott felhasználó
-if st.session_state.selected_user is not None:
-    current_user = st.session_state.selected_user
-    # Az aktuális felhasználó adatainak kinyerése
+    #%% Az aktuális felhasználó adatainak kinyerése
+    st.subheader("Tranzakciók bevitele és elemzés")
+    
     user_df = df[df["user_id"] == current_user]
+    
+    if user_df.empty:
+        balance = 0
+        reszvenyek = 0
+        egyeb_befektetes = 0
+        profil = 'alap'  # Alapértelmezett profil
+    else:
+        balance = user_df['balance'].iloc[-1]
+        reszvenyek = user_df['reszvenyek'].iloc[-1]
+        egyeb_befektetes = user_df['egyeb_befektetes'].iloc[-1]
+        profil = user_df['profil'].iloc[-1]
     
     profil = user_df['profil'].iloc[-1] if current_user in df.user_id.unique() else None
     if pd.isna(profil):
@@ -81,17 +174,13 @@ if st.session_state.selected_user is not None:
             else 'kozeposztaly' if atlag_fizu < 500_000 else 'magas_jov'
     profile_df = df[df.profil == profil].copy()
     
-    balance = user_df['balance'].iloc[-1]
-    reszvenyek = user_df['reszvenyek'].iloc[-1]
-    egyeb_befektetes = user_df['egyeb_befektetes'].iloc[-1]
-    
     cols = st.columns(3)
     cols[0].metric("Készpénz", f"{balance:,.0f}Ft")
     cols[1].metric("Részvények", f"{reszvenyek:,.0f}Ft")
     cols[2].metric("Egyéb befektetés", f"{egyeb_befektetes:,.0f}Ft")
     
     # Számlák közti pénzmozgatás
-    with st.expander(f"Pénz mozgatása számlák között (Felhasználó {current_user})"):
+    with st.expander(f"Pénz mozgatása számlák között"):
         with st.form("szamlak_kozott"):
             col1, col2 = st.columns(2)
             forras = col1.selectbox("Forrás számla", ["balance", "reszvenyek", "egyeb_befektetes"])
@@ -145,7 +234,7 @@ if st.session_state.selected_user is not None:
                 st.error("A forrás és cél számla nem lehet ugyanaz!")
     
     # Új adat bevitele - CSAK A KIVÁLASZTOTT FELHASZNÁLÓHOZ
-    with st.expander(f"➕ Új tranzakció hozzáadása (Felhasználó {current_user})"):
+    with st.expander(f"➕ Új tranzakció hozzáadása"):
         with st.form("uj_tranzakcio"):
             col1, col2 = st.columns(2)
             datum = col1.date_input("Dátum", datetime.today())
@@ -224,7 +313,7 @@ if st.session_state.selected_user is not None:
                 st.rerun()
 
     # Adatok megtekintése - CSAK A KIVÁLASZTOTT FELHASZNÁLÓ ADATAI
-    if st.checkbox(f"Nyers adatok megtekintése (Felhasználó {current_user})"):
+    if st.checkbox(f"Nyers adatok megtekintése"):
         current_user_df = df[df["user_id"] == current_user]
         if not current_user_df.empty:
             st.dataframe(current_user_df)
@@ -232,9 +321,9 @@ if st.session_state.selected_user is not None:
             st.warning("Nincsenek tranzakciók ehhez a felhasználóhoz.")
 
     # Elemzés szekció - CSAK A KIVÁLASZTOTT FELHASZNÁLÓRA
-    st.header(f"Pénzügyek Elemzése (Felhasználó {current_user})")
+    st.header(f"Pénzügyek Elemzése")
     
-    if not df.empty and not user_df.empty:
+    if not (len(df) < 20) and not (len(user_df) < 20):
         eredmenyek = run_user_eda(df, current_user)
         elemzo = PenzugyiElemzo(df)
         jelentés = elemzo.generate_comprehensive_report(current_user)
