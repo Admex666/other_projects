@@ -100,7 +100,7 @@ def train_save_model(df):
         'diversity': div,
         'fixed_ratio': fixed_ratio,
     })
-    # target: assets or balance increase
+    # target: assets increase
     target = df.groupby('user_id')['assets'].last()
     X_train, X_test, y_train, y_test = train_test_split(feats, target, test_size=0.2, random_state=42)
     model = RandomForestRegressor(n_estimators=100, random_state=42)

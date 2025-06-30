@@ -265,9 +265,9 @@ def generate_user_transactions(user, months=3):
     user_id = user["user_id"]
 
     data = []
-    balance = 0
-    egyeb_befektetes = user["befektetesek"]["egyeb"]
-    reszvenyek = user["befektetesek"]["reszveny"]
+    likvid = 0
+    megtakaritas = user["szamlak"]["megtakaritas"]
+    befektetes = user["szamlak"]["befektetes"]
 
     for month_offset in range(months):
         start_date = datetime.today() - pd.DateOffset(months=month_offset + 1)
@@ -276,7 +276,7 @@ def generate_user_transactions(user, months=3):
         spending_limit = monthly_income * 0.95  # kÃ¶ltÃ©si plafon
 
         # Fizu 
-        balance += monthly_income
+        likvid += monthly_income
         data.append({
             "datum": payday.date(),
             "honap": honap,
@@ -298,17 +298,17 @@ def generate_user_transactions(user, months=3):
             "deviza": "HUF",
             "cimke": "jovedelem, fix",
             "celhoz_kotott": "",
-            "balance": round(balance),
-            "reszvenyek": round(reszvenyek),
-            "egyeb_befektetes": round(egyeb_befektetes)
+            "likvid": round(likvid),
+            "befektetes": round(befektetes),
+            "megtakaritas": round(megtakaritas)
         })
         
         # Befektetési hozamok hozzáadása portfolió alapján
-        for bef_tipus, alap in user.get("befektetesek", {}).items():
+        for bef_tipus, alap in user.get("szamlak", {}).items():
             if alap <= 0:
                 continue
             # Éves hozam 4-10%, leosztva hónapra
-            hozam_szazalek = random.uniform(0.01, 0.04) / 12 if bef_tipus == "egyeb" else random.uniform(0.05, 0.12) / 12
+            hozam_szazalek = random.uniform(0.01, 0.04) / 12 if bef_tipus == "megtakaritas" else random.uniform(0.05, 0.12) / 12
             hozam = round(alap * hozam_szazalek, -1)
             
             hozam_date = fake.date_between_dates(
@@ -316,10 +316,10 @@ def generate_user_transactions(user, months=3):
                 date_end=start_date + pd.DateOffset(days=20)
             )
             
-            if bef_tipus == "egyeb":
-                egyeb_befektetes += hozam
-            elif bef_tipus == "reszveny":
-                reszvenyek += hozam
+            if bef_tipus == "megtakaritas":
+                megtakaritas += hozam
+            elif bef_tipus == "befektetes":
+                befektetes += hozam
             data.append({
                 "datum": hozam_date,
                 "honap": honap,
@@ -341,12 +341,12 @@ def generate_user_transactions(user, months=3):
                 "deviza": "HUF",
                 "cimke": "hozam, befektetes",
                 "celhoz_kotott": bef_tipus,
-                "balance": round(balance),
-                "reszvenyek": round(reszvenyek),
-                "egyeb_befektetes": round(egyeb_befektetes)
+                "likvid": round(likvid),
+                "befektetes": round(befektetes),
+                "megtakaritas": round(megtakaritas)
             })
         
-        user["befektetesek"][bef_tipus] += hozam
+        user["szamlak"][bef_tipus] += hozam
         
         month_spent = 0
 
@@ -358,7 +358,7 @@ def generate_user_transactions(user, months=3):
             )
             month_spent += amount
             
-            balance -= amount
+            likvid -= amount
             data.append({
                 "datum": date,
                 "honap": honap,
@@ -380,9 +380,9 @@ def generate_user_transactions(user, months=3):
                 "deviza": "HUF",
                 "cimke": "fix, rezsi",
                 "celhoz_kotott": "",
-                "balance": round(balance),
-                "reszvenyek": round(reszvenyek),
-                "egyeb_befektetes": round(egyeb_befektetes)
+                "likvid": round(likvid),
+                "befektetes": round(befektetes),
+                "megtakaritas": round(megtakaritas)
             })
 
         # Változó költségek - gyakoriság alapú
@@ -404,7 +404,7 @@ def generate_user_transactions(user, months=3):
                         continue
                     
                     if ttype == "megtakaritas":
-                        user["befektetesek"]['egyeb'] += amount
+                        user["szamlak"]['megtakaritas'] += amount
 
                     date = fake.date_between_dates(
                         date_start=start_date,
@@ -432,13 +432,13 @@ def generate_user_transactions(user, months=3):
                     celhoz_kotott = random.choice(cel_valasztek)
                     leiras = fake.sentence(nb_words=3)
                     
-                    balance -= amount
+                    likvid -= amount
                     if ttype == "megtakaritas":
-                        bef_tipus = random.choice(['egyeb', 'reszveny'])
-                        if bef_tipus == 'egyeb':
-                            egyeb_befektetes += amount
-                        elif bef_tipus == 'reszveny':
-                            reszvenyek += amount
+                        bef_tipus = random.choice(['megtakaritas', 'befektetes'])
+                        if bef_tipus == 'megtakaritas':
+                            megtakaritas += amount
+                        elif bef_tipus == 'befektetes':
+                            befektetes += amount
                         leiras = f'{int(amount)}Ft -> {bef_tipus}'
                         amount = 0 # nincs cash-flow hatás
 
@@ -463,15 +463,15 @@ def generate_user_transactions(user, months=3):
                         "deviza": "HUF",
                         "cimke": cimke,
                         "celhoz_kotott": celhoz_kotott,
-                        "balance": round(balance),
-                        "reszvenyek": round(reszvenyek),
-                        "egyeb_befektetes": round(egyeb_befektetes)
+                        "likvid": round(likvid),
+                        "befektetes": round(befektetes),
+                        "megtakaritas": round(megtakaritas)
                     })
 
                     month_spent += amount
             
     df = pd.DataFrame(data)
-    df['assets'] = df.balance + df.reszvenyek + df.egyeb_befektetes
+    df['assets'] = df.likvid + df.befektetes + df.megtakaritas
     
     return df
 
@@ -496,9 +496,9 @@ for profile_name, profile in PROFILES.items():
                 "elelmiszer": random.randint(AMT_BOUNDS[profile_name]['elelmiszer'][0],AMT_BOUNDS[profile_name]['elelmiszer'][1]),
             },
             "variable_spending_limit_ratio": 0.8,
-            "befektetesek": {
-                "reszveny": random.randint(0, 50000),
-                "egyeb": random.randint(0, 200000)
+            "szamlak": {
+                "befektetes": random.randint(0, 50000),
+                "megtakaritas": random.randint(0, 200000)
             }
         })
         user_counter += 1
@@ -512,9 +512,23 @@ df_all = pd.concat(dfs, ignore_index=True)
 
 print(df_all.head(10))
 
-balances = {usernr:df_all[df_all.user_id == usernr]['assets'].to_list()[-1] for usernr in range(1, total_users)}
-print(balances.values())
+vagyonok = {usernr:df_all[df_all.user_id == usernr]['assets'].to_list()[-1] for usernr in range(1, total_users)}
+print(vagyonok.values())
 
 #%% Save
 df_all.sort_values("datum", inplace=True)
 df_all.to_csv("szintetikus_tranzakciok.csv", index=False)
+
+#%% Save accounts
+import json
+accounts = {}
+for user_id in df_all.user_id.unique():
+    user_id_str = str(user_id)
+    accounts[user_id_str] = {}
+    for account in ['likvid', 'befektetes', 'megtakaritas']:
+        foosszeg = df_all[df_all.user_id == user_id][account].iloc[-1]
+        accounts[user_id_str][account] = {'foosszeg': int(foosszeg)}
+            
+with open("accounts.json", "w") as f:
+    json.dump(accounts, f)
+    

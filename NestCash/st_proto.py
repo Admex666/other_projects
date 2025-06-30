@@ -5,6 +5,7 @@ from datetime import datetime
 import time
 import hashlib
 import os
+import json
 from PenzugyiElemzo import PenzugyiElemzo
 from UserFinancialEDA import UserFinancialEDA, run_user_eda
 from MLinsight import MLinsight
@@ -19,8 +20,8 @@ def load_data():
             "osszeg", "kategoria", "user_id", "profil", "tipus", 
             "leiras", "forras", "ismetlodo", "fix_koltseg", 
             "bev_kiad_tipus", "platform", "helyszin", "deviza", 
-            "cimke", "celhoz_kotott", "balance", "reszvenyek", 
-            "egyeb_befektetes", "assets"
+            "cimke", "celhoz_kotott", "likvid", "befektetes", 
+            "megtakaritas", "assets"
         ])
 
 def save_data(df):
@@ -147,19 +148,19 @@ if st.session_state.logged_in:
         st.rerun()
 
     #%% Az aktuális felhasználó adatainak kinyerése
-    st.subheader("Tranzakciók bevitele és elemzés")
+    st.subheader("Tranzakciók bevitele, számlák kezelése")
     
     user_df = df[df["user_id"] == current_user]
     
     if user_df.empty:
-        balance = 0
-        reszvenyek = 0
-        egyeb_befektetes = 0
+        likvid = 0
+        befektetes = 0
+        megtakaritas = 0
         profil = 'alap'  # Alapértelmezett profil
     else:
-        balance = user_df['balance'].iloc[-1]
-        reszvenyek = user_df['reszvenyek'].iloc[-1]
-        egyeb_befektetes = user_df['egyeb_befektetes'].iloc[-1]
+        likvid = user_df['likvid'].iloc[-1]
+        befektetes = user_df['befektetes'].iloc[-1]
+        megtakaritas = user_df['megtakaritas'].iloc[-1]
         profil = user_df['profil'].iloc[-1]
     
     profil = user_df['profil'].iloc[-1] if current_user in df.user_id.unique() else None
@@ -175,66 +176,162 @@ if st.session_state.logged_in:
     profile_df = df[df.profil == profil].copy()
     
     cols = st.columns(3)
-    cols[0].metric("Készpénz", f"{balance:,.0f}Ft")
-    cols[1].metric("Részvények", f"{reszvenyek:,.0f}Ft")
-    cols[2].metric("Egyéb befektetés", f"{egyeb_befektetes:,.0f}Ft")
+    cols[0].metric("Likvid", f"{likvid:,.0f}Ft")
+    cols[1].metric("Befektetések", f"{befektetes:,.0f}Ft")
+    cols[2].metric("Megtakarítások", f"{megtakaritas:,.0f}Ft")
     
-    # Számlák közti pénzmozgatás
-    with st.expander(f"Pénz mozgatása számlák között"):
-        with st.form("szamlak_kozott"):
-            col1, col2 = st.columns(2)
-            forras = col1.selectbox("Forrás számla", ["balance", "reszvenyek", "egyeb_befektetes"])
-            cel = col2.selectbox("Cél számla", ["balance", "reszvenyek", "egyeb_befektetes"])
-            osszeg = st.number_input("Összeg (Ft)", min_value=0, value=0)
-            datum = st.date_input("Dátum", datetime.today())
-            
-            submitted = st.form_submit_button("Átutalás")
-            
-            if submitted and forras != cel:
-                # Forrás számla csökkentése
-                new_row = {
-                    "datum": datum.strftime("%Y-%m-%d"),
-                    "honap": datum.strftime("%Y-%m"),
-                    "het": datum.isocalendar()[1],
-                    "nap_sorszam": datum.weekday(),
-                    "tranzakcio_id": f"{current_user}_{datum.strftime('%Y%m%d')}_{int(time.time())}_from",
-                    "osszeg": 0,
-                    "kategoria": "szamlak_kozott",
-                    "user_id": current_user,
-                    "profil": profil,
-                    "tipus": "megtakaritas",
-                    "leiras": f"{osszeg}Ft ({forras} → {cel})",
-                    "forras": "internal_transfer",
-                    "ismetlodo": False,
-                    "fix_koltseg": False,
-                    "bev_kiad_tipus": "szukseglet",
-                    "platform": "utalas",
-                    "helyszin": "Egyéb",
-                    "deviza": "HUF",
-                    "cimke": "",
-                    "celhoz_kotott": False,
-                    forras: user_df[forras].iloc[-1] - osszeg,
-                    cel: user_df[cel].iloc[-1] + osszeg,
-                    "assets": user_df["assets"].iloc[-1]  # assets nem változik
-                }
-                
-                last_row = user_df.iloc[-1]
-                # többi számla egyenlege változatlan
-                for col in user_df.columns:
-                    if col not in new_row.keys():
-                        new_row[col] = last_row[col]
-                
-                # Mindkét sor hozzáadása
-                df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
-                save_data(df)
-                st.success("Pénzmozgatás sikeresen rögzítve!")
-                st.rerun()
-
-            elif submitted and forras == cel:
-                st.error("A forrás és cél számla nem lehet ugyanaz!")
+    #%% Számlák közti pénzmozgatás, számlakezelés
+    def load_accounts():
+        try:
+            with open("accounts.json", "r") as f:
+                return json.load(f)
+        except:
+            return {}
     
-    # Új adat bevitele - CSAK A KIVÁLASZTOTT FELHASZNÁLÓHOZ
-    with st.expander(f"➕ Új tranzakció hozzáadása"):
+    def save_accounts(accounts_dict):
+        with open("accounts.json", "w") as f:
+            json.dump(accounts_dict, f)
+    
+    def get_user_accounts(user_id):
+        accounts = load_accounts()
+        user_id_str = str(user_id)
+        
+        if user_id_str not in accounts:
+            # Alapértelmezett számlák létrehozása
+            accounts[user_id_str] = {
+                "likvid": {"foosszeg": 0},
+                "befektetes": {"foosszeg": 0},
+                "megtakaritas": {"foosszeg": 0}
+            }
+            save_accounts(accounts)
+        
+        return accounts[user_id_str]
+    
+    def update_account_balance(user_id, foszamla, alszamla, amount):
+        accounts = load_accounts()
+        user_id_str = str(user_id)
+        
+        if user_id_str not in accounts:
+            accounts[user_id_str] = get_user_accounts(user_id)
+        
+        if foszamla not in accounts[user_id_str]:
+            accounts[user_id_str][foszamla] = {}
+        
+        if alszamla not in accounts[user_id_str][foszamla]:
+            accounts[user_id_str][foszamla][alszamla] = 0
+        
+        accounts[user_id_str][foszamla][alszamla] += amount
+        save_accounts(accounts)
+        return accounts[user_id_str][foszamla][alszamla]
+    
+    # Alszámlák kezelése (az egyenlegek megjelenítése után)
+    with st.expander("💼 Számlák kezelése"):
+        tab1, tab2, tab3 = st.tabs(["Alszámlák", "Alszámlák létrehozása", "Pénzmozgatás számlák közt"])
+        
+        with tab2:
+            with st.form("uj_alszamla"):
+                foszamla = st.selectbox("Főszámla", ["likvid", "befektetes", "megtakaritas"])
+                alszamla_nev = st.text_input("Alszámla neve")
+                
+                if st.form_submit_button("Létrehozás"):
+                    user_accounts = get_user_accounts(current_user)
+                    
+                    if foszamla not in user_accounts:
+                        user_accounts[foszamla] = {}
+                    
+                    if alszamla_nev in user_accounts[foszamla]:
+                        st.error("Ez az alszámla már létezik!")
+                    else:
+                        user_accounts[foszamla][alszamla_nev] = 0
+                        accounts = load_accounts()
+                        accounts[str(current_user)] = user_accounts
+                        save_accounts(accounts)
+                        st.success(f"Alszámla létrehozva: {alszamla_nev} a {foszamla} alatt")
+                        st.rerun()
+        
+        with tab1:
+            user_accounts = get_user_accounts(current_user)
+            st.write("### Alszámlák és egyenlegek")
+            
+            for foszamla, alszamlak in user_accounts.items():
+                st.write(f"**{foszamla.capitalize()}**")
+                for alszamla, egyenleg in alszamlak.items():
+                    st.write(f"- {alszamla}: {egyenleg:,.0f} Ft")
+    
+        # Számlák közti pénzmozgatás bővítése alszámlákkal
+        with tab3:
+            with st.form("szamlak_kozott"):
+                col1, col2 = st.columns(2)
+                
+                # Forrás oldal
+                with col1:
+                    forras_foszamla = st.selectbox("Forrás főszámla", ["likvid", "befektetes", "megtakaritas"])
+                    user_accounts = get_user_accounts(current_user)
+                    forras_alszamlak = list(user_accounts.get(forras_foszamla, {}).keys())
+                    forras_alszamla = st.selectbox("Forrás alszámla", forras_alszamlak)
+                
+                # Cél oldal
+                with col2:
+                    cel_foszamla = st.selectbox("Cél főszámla", ["likvid", "befektetes", "megtakaritas"])
+                    cel_alszamlak = list(user_accounts.get(cel_foszamla, {}).keys())
+                    cel_alszamla = st.selectbox("Cél alszámla", cel_alszamlak)
+                
+                osszeg = st.number_input("Összeg (Ft)", min_value=0, value=0)
+                datum = st.date_input("Dátum", datetime.today())
+                
+                submitted = st.form_submit_button("Átutalás")
+                
+                if submitted:
+                    # Ellenőrzés
+                    if forras_foszamla == cel_foszamla and forras_alszamla == cel_alszamla:
+                        st.error("A forrás és cél számla nem lehet ugyanaz!")
+                    else:
+                        # Forrás számla frissítése
+                        update_account_balance(current_user, forras_foszamla, forras_alszamla, -osszeg)
+                        # Cél számla frissítése
+                        update_account_balance(current_user, cel_foszamla, cel_alszamla, osszeg)
+                        
+                        # Főszámlák frissítése
+                        user_accounts = get_user_accounts(current_user)
+                        likvid_osszeg = sum(user_accounts["likvid"].values())
+                        befektetes_osszeg = sum(user_accounts["befektetes"].values())
+                        megtakaritas_osszeg = sum(user_accounts["megtakaritas"].values())
+                        
+                        new_row = {
+                            "datum": datum.strftime("%Y-%m-%d"),
+                            "honap": datum.strftime("%Y-%m"),
+                            "het": datum.isocalendar()[1],
+                            "nap_sorszam": datum.weekday(),
+                            "tranzakcio_id": f"{current_user}_{datum.strftime('%Y%m%d')}_{int(time.time())}_from",
+                            "osszeg": 0,
+                            "kategoria": "szamlak_kozott",
+                            "user_id": current_user,
+                            "profil": profil,
+                            "tipus": "megtakaritas",
+                            "leiras": f"{osszeg}Ft ({forras_alszamla} → {cel_alszamla})",
+                            "forras": "internal_transfer",
+                            "ismetlodo": False,
+                            "fix_koltseg": False,
+                            "bev_kiad_tipus": "szukseglet",
+                            "platform": "utalas",
+                            "helyszin": "Egyéb",
+                            "deviza": "HUF",
+                            "cimke": "",
+                            "celhoz_kotott": False,
+                            "likvid": likvid_osszeg,
+                            "befektetes": befektetes_osszeg,
+                            "megtakaritas": megtakaritas_osszeg,
+                            "assets": user_df["assets"].iloc[-1]  # assets nem változik
+                        }
+                        
+                        # Új sor hozzáadása
+                        df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
+                        save_data(df)
+                        st.success("Pénzmozgatás sikeresen rögzítve!")
+                        st.rerun()
+    
+    #%% Új adat bevitele - CSAK A KIVÁLASZTOTT FELHASZNÁLÓHOZ
+    with st.expander("➕ Új tranzakció hozzáadása"):
         with st.form("uj_tranzakcio"):
             col1, col2 = st.columns(2)
             datum = col1.date_input("Dátum", datetime.today())
@@ -259,6 +356,12 @@ if st.session_state.logged_in:
             bev_kiad_tipus = st.selectbox("Bevétel/Kiadás típus", [
                 "bevetel", "szukseglet", "luxus"
             ])
+            
+            # Számla kiválasztása
+            foszamla = st.selectbox("Főszámla", ["likvid", "befektetes", "megtakaritas"])
+            user_accounts = get_user_accounts(current_user)
+            alszamlak = list(user_accounts.get(foszamla, {}).keys())
+            alszamla = st.selectbox("Alszámla", alszamlak)
             
             leiras = st.text_input("Leírás")
             platform = st.selectbox("Platform", ["utalas", "készpénz", "kártya", "web"])
@@ -287,23 +390,40 @@ if st.session_state.logged_in:
                     "deviza": "HUF",
                     "cimke": "",
                     "celhoz_kotott": False,
-                    "balance": 0,
+                    "likvid": 0,
                     "assets": 0
                 }
                 
-                # Balance számítás - CSAK AZ ADOTT FELHASZNÁLÓ ADATAIBAN
+                # Alszámla egyenleg frissítése
+                new_balance = update_account_balance(current_user, foszamla, alszamla, new_row["osszeg"])
+                
+                # Főszámla egyenlegek újraszámolása
+                user_accounts = get_user_accounts(current_user)
+                likvid_osszeg = sum(user_accounts["likvid"].values())
+                befektetes_osszeg = sum(user_accounts["befektetes"].values())
+                megtakaritas_osszeg = sum(user_accounts["megtakaritas"].values())
+                
+                # Főszámla értékek beállítása
+                new_row["likvid"] = likvid_osszeg
+                new_row["befektetes"] = befektetes_osszeg
+                new_row["megtakaritas"] = megtakaritas_osszeg
+                new_row["foszamla"] = foszamla
+                new_row["alszamla"] = alszamla
+                
+                """
+                # likvid számítás - CSAK AZ ADOTT FELHASZNÁLÓ ADATAIBAN
                 if not user_df.empty:
                     last_row = user_df.iloc[-1]
-                    new_row["balance"] = last_row["balance"] + new_row["osszeg"]
+                    new_row["likvid"] = last_row["likvid"] + new_row["osszeg"]
                     new_row["assets"] = last_row["assets"] + new_row["osszeg"]
-                    new_row["reszvenyek"] = last_row["reszvenyek"]
-                    new_row["egyeb_befektetes"] = last_row["egyeb_befektetes"]
+                    new_row["befektetes"] = last_row["befektetes"]
+                    new_row["megtakaritas"] = last_row["megtakaritas"]
                 else:
-                    new_row["balance"] = new_row["osszeg"]
+                    new_row["likvid"] = new_row["osszeg"]
                     new_row["assets"] = new_row["osszeg"]
-                    new_row["reszvenyek"] = 0
-                    new_row["egyeb_befektetes"] = 0
-                
+                    new_row["befektetes"] = 0
+                    new_row["megtakaritas"] = 0
+                """
                 # Új sor hozzáadása az eredeti DF-hez
                 df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
                 save_data(df)

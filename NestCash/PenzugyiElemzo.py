@@ -45,8 +45,8 @@ class PenzugyiElemzo:
                 szukseglet_sum = abs(havi_df[havi_df['bev_kiad_tipus'] == 'szukseglet']['osszeg'].sum())
                 luxus_sum = abs(havi_df[havi_df['bev_kiad_tipus'] == 'luxus']['osszeg'].sum())
                 
-                # Balance az adott hónap végén
-                balance = havi_df['balance'].iloc[-1] if len(havi_df) > 0 else 0
+                # likvid az adott hónap végén
+                likvid = havi_df['likvid'].iloc[-1] if len(havi_df) > 0 else 0
                 assets = havi_df['assets'].iloc[-1] if len(havi_df) > 0 else 0
                 
                 monthly_data.append({
@@ -57,7 +57,7 @@ class PenzugyiElemzo:
                     'luxus': luxus_sum,
                     'total_kiadas': szukseglet_sum + luxus_sum,
                     'netto_cashflow': bevetel_sum - (szukseglet_sum + luxus_sum),
-                    'balance': balance,
+                    'likvid': likvid,
                     'total_assets': assets,
                     'profil': havi_df['profil'].iloc[0] if len(havi_df) > 0 else 'ismeretlen'
                 })
@@ -118,21 +118,21 @@ class PenzugyiElemzo:
             return burn_rate_data
         
         user_data = self.havi_osszesites[self.havi_osszesites['user_id'] == user_id]
-        current_balance = user_data['balance'].iloc[-1]
+        current_likvid = user_data['likvid'].iloc[-1]
         current_assets = user_data['total_assets'].iloc[-1]
         
         burn_rate = burn_rate_data['total_burn_rate']
         
         # Különböző forgatókönyvek
         scenarios = {
-            'csak_keszpenz': current_balance / burn_rate if burn_rate > 0 else float('inf'),
+            'csak_keszpenz': current_likvid / burn_rate if burn_rate > 0 else float('inf'),
             'osszes_asset': current_assets / burn_rate if burn_rate > 0 else float('inf'),
-            'csak_szukseglet': current_balance / burn_rate_data['havi_atlag_szukseglet'] if burn_rate_data['havi_atlag_szukseglet'] > 0 else float('inf')
+            'csak_szukseglet': current_likvid / burn_rate_data['havi_atlag_szukseglet'] if burn_rate_data['havi_atlag_szukseglet'] > 0 else float('inf')
         }
         
         return {
             'user_id': user_id,
-            'jelenlegi_balance': current_balance,
+            'jelenlegi_likvid': current_likvid,
             'osszes_asset': current_assets,
             'havi_burn_rate': burn_rate,
             'runway_honapok': {
@@ -181,24 +181,24 @@ class PenzugyiElemzo:
             return burn_rate_data
         
         user_data = self.havi_osszesites[self.havi_osszesites['user_id'] == user_id]
-        current_balance = user_data['balance'].iloc[-1]
+        current_likvid = user_data['likvid'].iloc[-1]
         havi_szukseglet = burn_rate_data['havi_atlag_szukseglet']
         
         # Ajánlott tartalék: 3-6 hónap szükséglet
         ajanlott_min = havi_szukseglet * 3
         ajanlott_max = havi_szukseglet * 6
         
-        jelenlegi_fedezet = current_balance / havi_szukseglet if havi_szukseglet > 0 else float('inf')
+        jelenlegi_fedezet = current_likvid / havi_szukseglet if havi_szukseglet > 0 else float('inf')
         
         return {
             'user_id': user_id,
-            'jelenlegi_tartalek': current_balance,
+            'jelenlegi_tartalek': current_likvid,
             'havi_szukseglet': havi_szukseglet,
             'ajanlott_minimum': ajanlott_min,
             'ajanlott_optimalis': ajanlott_max,
             'jelenlegi_fedezet_honapok': round(jelenlegi_fedezet, 1),
             'megfeleloseg': 'megfelelő' if jelenlegi_fedezet >= 3 else 'eleg' if jelenlegi_fedezet >= 1.5 else 'elegtelen',
-            'hiany': max(0, ajanlott_min - current_balance),
+            'hiany': max(0, ajanlott_min - current_likvid),
             'ajanlasok': self._emergency_fund_ajanlasok(jelenlegi_fedezet)
         }
     
@@ -511,21 +511,21 @@ class PenzugyiElemzo:
         if user_data.empty:
             return {'error': f'Nincs adat a {user_id} felhasználóhoz'}
         
-        current_balance = user_data['balance'].iloc[-1]
+        current_likvid = user_data['likvid'].iloc[-1]
         current_assets = user_data['total_assets'].iloc[-1]
         
         # Jelenlegi allokáció a CSV-ből
         latest_data = self.df[self.df['user_id'] == user_id].iloc[-1]
-        reszvenyek = latest_data['reszvenyek']
-        egyeb_befektetes = latest_data['egyeb_befektetes']
-        keszpenz = current_balance
+        befektetes = latest_data['befektetes']
+        megtakaritas = latest_data['megtakaritas']
+        keszpenz = current_likvid
         
-        total_assets = reszvenyek + egyeb_befektetes + keszpenz
+        total_assets = befektetes + megtakaritas + keszpenz
         
         jelenlegi_allokaciok = {
             'keszpenz': keszpenz / total_assets * 100 if total_assets > 0 else 0,
-            'reszvenyek': reszvenyek / total_assets * 100 if total_assets > 0 else 0,
-            'egyeb_befektetes': egyeb_befektetes / total_assets * 100 if total_assets > 0 else 0
+            'befektetes': befektetes / total_assets * 100 if total_assets > 0 else 0,
+            'megtakaritas': megtakaritas / total_assets * 100 if total_assets > 0 else 0
         }
         
         # Kockázattűrés felmérés
@@ -641,8 +641,8 @@ class PenzugyiElemzo:
         cash_pct = 100 - equity_pct - bond_other_pct
         
         return {
-            'reszvenyek': equity_pct,
-            'egyeb_befektetes': bond_other_pct,
+            'befektetes': equity_pct,
+            'megtakaritas': bond_other_pct,
             'keszpenz': cash_pct
         }
     
@@ -704,8 +704,8 @@ class PenzugyiElemzo:
         """Várható hozam számítása allokáció alapján"""
         # Feltételezett éves hozamok (%)
         expected_returns = {
-            'reszvenyek': 8.0,      # Hosszú távú részvénypiaci átlag
-            'egyeb_befektetes': 4.0, # Kötvények/alternatív befektetések
+            'befektetes': 8.0,      # Hosszú távú részvénypiaci átlag
+            'megtakaritas': 4.0, # Kötvények/alternatív befektetések
             'keszpenz': 1.0         # Betéti kamatok
         }
         
