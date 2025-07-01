@@ -2,7 +2,8 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
-from app import get_user_accounts, update_account_balance, save_data
+import time
+from app import get_user_accounts, update_account_balance, save_data, update_transaction, delete_transaction
 
 # Get data from session state
 if 'logged_in' not in st.session_state or not st.session_state.logged_in:
@@ -98,13 +99,6 @@ with st.expander("➕ Új tranzakció hozzáadása"):
             
             st.success("Tranzakció sikeresen hozzáadva!")
             st.rerun()
-
-# View transactions
-with st.expander("Nyers tranzakciók listája"):
-    if not user_df.empty:
-        st.dataframe(user_df.sort_values("datum", ascending=False))
-    else:
-        st.warning("Nincsenek tranzakciók ehhez a felhasználóhoz.")
         
 if not user_df.empty:
     # Tranzakció szerkesztése/törlése
@@ -126,10 +120,22 @@ if not user_df.empty:
                 
                 # Mezők előzetes kitöltése a jelenlegi értékekkel
                 new_amount = st.number_input("Összeg (Ft)", value=abs(transaction_data["osszeg"]))
-                new_category = st.selectbox("Kategória", CATEGORIES, 
-                          index=CATEGORIES.index(transaction_data["kategoria"]))
-                new_type = st.selectbox("Típus", TYPES,
-                      index=TYPES.index(transaction_data["tipus"]))
+                try:
+                    cat_index = CATEGORIES.index(transaction_data["kategoria"])
+                except ValueError:
+                    cat_index = 0  # Alapértelmezett érték, ha nem találja a kategóriát
+                    CATEGORIES.append(transaction_data["kategoria"])  # Hozzáadjuk a hiányzó kategóriát
+                
+                new_category = st.selectbox("Kategória", CATEGORIES, index=cat_index)
+                
+                try:
+                    type_index = TYPES.index(transaction_data["tipus"])
+                except ValueError:
+                    type_index = 0
+                    TYPES.append(transaction_data["tipus"])
+                
+                new_type = st.selectbox("Típus", TYPES, index=type_index)
+                
                 new_description = st.text_input("Leírás", value=transaction_data["leiras"])
                 
                 submitted = st.form_submit_button("Módosítások mentése")
@@ -169,3 +175,12 @@ if not user_df.empty:
                         st.error("Hiba történt a tranzakció törlése közben!")
 else:
     st.warning("Nincsenek tranzakciók ehhez a felhasználóhoz.")
+    
+# View transactions
+with st.expander("Nyers tranzakciók listája"):
+    df = st.session_state.df
+    user_df = df[df["user_id"] == current_user]
+    if not user_df.empty:
+        st.dataframe(user_df.sort_values("datum", ascending=False))
+    else:
+        st.warning("Nincsenek tranzakciók ehhez a felhasználóhoz.")

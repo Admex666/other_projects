@@ -12,23 +12,24 @@ current_user = st.session_state.user_id
 username = st.session_state.username
 
 # Adatbetöltési függvények
+# Módosítsd a fórum fájlkezelő függvényeket:
 def load_forum_posts():
     try:
-        return pd.read_csv("forum_posts.csv")
+        return pd.read_csv("datafiles/forum_posts.csv")
     except:
         return pd.DataFrame(columns=["post_id", "user_id", "username", "timestamp", "title", "content", "category"])
 
 def load_comments():
     try:
-        return pd.read_csv("forum_comments.csv")
+        return pd.read_csv("datafiles/forum_comments.csv")
     except:
         return pd.DataFrame(columns=["comment_id", "post_id", "user_id", "username", "timestamp", "content"])
 
 def save_forum_posts(posts_df):
-    posts_df.to_csv("forum_posts.csv", index=False)
+    posts_df.to_csv("datafiles/forum_posts.csv", index=False)
 
 def save_comments(comments_df):
-    comments_df.to_csv("forum_comments.csv", index=False)
+    comments_df.to_csv("datafiles/forum_comments.csv", index=False)
 
 # Fő fórum oldal
 st.title("💬 Közösségi Fórum")

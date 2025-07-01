@@ -9,9 +9,10 @@ import os
 import json
 
 # Common functions and session state management
+# Módosítsd a fájlbetöltő függvényeket így:
 def load_data():
     try:
-        return pd.read_csv("szintetikus_tranzakciok.csv")
+        return pd.read_csv("datafiles/szintetikus_tranzakciok.csv")
     except:
         return pd.DataFrame(columns=[
             "datum", "honap", "het", "nap_sorszam", "tranzakcio_id", 
@@ -23,16 +24,16 @@ def load_data():
         ])
 
 def save_data(df):
-    df.to_csv("szintetikus_tranzakciok.csv", index=False)
+    df.to_csv("datafiles/szintetikus_tranzakciok.csv", index=False)
 
 def load_users():
     try:
-        return pd.read_csv("users.csv")
+        return pd.read_csv("datafiles/users.csv")
     except:
         return pd.DataFrame(columns=["user_id", "username", "password", "email", "registration_date"])
 
 def save_users(users_df):
-    users_df.to_csv("users.csv", index=False)
+    users_df.to_csv("datafiles/users.csv", index=False)
 
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
@@ -45,13 +46,13 @@ def authenticate_user(username, password):
 
 def load_accounts():
     try:
-        with open("accounts.json", "r") as f:
+        with open("datafiles/accounts.json", "r") as f:
             return json.load(f)
     except:
         return {}
 
 def save_accounts(accounts_dict):
-    with open("accounts.json", "w") as f:
+    with open("datafiles/accounts.json", "w") as f:
         json.dump(accounts_dict, f)
 
 def get_user_accounts(user_id):
@@ -105,7 +106,7 @@ def delete_transaction(transaction_id):
 
 def log_transaction_change(user_id, action, transaction_id, old_values=None, new_values=None):
     try:
-        log_df = pd.read_csv("transaction_changes_log.csv")
+        log_df = pd.read_csv("datafiles/transaction_changes_log.csv")
     except:
         log_df = pd.DataFrame(columns=[
             "timestamp", "user_id", "action", "transaction_id", 
@@ -122,7 +123,7 @@ def log_transaction_change(user_id, action, transaction_id, old_values=None, new
     }
     
     log_df = pd.concat([log_df, pd.DataFrame([new_log])], ignore_index=True)
-    log_df.to_csv("transaction_changes_log.csv", index=False)
+    log_df.to_csv("datafiles/transaction_changes_log.csv", index=False)
     
 def update_transaction(transaction_id, updated_data):
     df = load_data()

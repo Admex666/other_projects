@@ -143,16 +143,18 @@ with tab3:
                 st.success(f"Alszámla létrehozva: {alszamla_nev} a {foszamla} alatt")
                 st.rerun()
                 
+
+# Módosítsd a célokat kezelő függvényeket:
 def load_goals():
     try:
-        return pd.read_csv("user_goals.csv")
+        return pd.read_csv("datafiles/user_goals.csv")
     except:
         return pd.DataFrame(columns=["goal_id", "user_id", "title", "target_amount", 
                                    "current_amount", "target_date", "category", 
                                    "priority", "status", "created_at"])
 
 def save_goals(goals_df):
-    goals_df.to_csv("user_goals.csv", index=False)
+    goals_df.to_csv("datafiles/user_goals.csv", index=False)
     
 with tab4:
     st.header("Célok kezelése")
