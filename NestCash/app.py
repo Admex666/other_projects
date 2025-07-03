@@ -14,13 +14,8 @@ from dotenv import load_dotenv
 
 # 1. Környezeti változók betöltése
 load_dotenv()
-MONGO_URI = os.getenv("MONGODB_URI")
-
-# 2. Kapcsolódás MongoDB-hez
-client = MongoClient(MONGO_URI)
-db = client["nestcash"]
-
-db['accounts'].find_one()
+client = MongoClient(st.secrets["mongo"]["uri"])
+db = client.dbname
 
 #%% Common functions and session state management
 def load_data():
