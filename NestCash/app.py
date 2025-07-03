@@ -40,16 +40,6 @@ except Exception as e:
     st.error(f"⚠️ Critical error initializing database: {e}")
     st.stop()
 
-# Temporary debug section
-with st.expander("Connection Debug Info"):
-    try:
-        st.write("### MongoDB Connection Test")
-        st.write("Server info:", client.server_info())
-        st.write("Database stats:", db.command("dbstats"))
-        st.write("Collections:", db.list_collection_names())
-    except Exception as e:
-        st.error(f"Debug failed: {e}")
-
 #%% Common functions and session state management
 def load_data():
     """Tranzakciók betöltése"""
