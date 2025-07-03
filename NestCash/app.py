@@ -35,7 +35,7 @@ def get_mongo_client():
 # Initialize connection
 try:
     client = get_mongo_client()
-    db = client.dbname  # Your database name
+    db = client["nestcash"]
 except Exception as e:
     st.error(f"⚠️ Critical error initializing database: {e}")
     st.stop()
