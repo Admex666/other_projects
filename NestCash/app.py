@@ -306,10 +306,6 @@ if 'logged_in' not in st.session_state:
     st.session_state.username = None
     st.session_state.df = load_data()
     
-    with st.expander("Debug DataFrame Info"):
-        st.write("DataFrame columns:", st.session_state.df.columns.tolist())
-        st.write("First few rows:", st.session_state.df.head())
-    
     # Típuskonverziók csak akkor, ha van adat
     if not st.session_state.df.empty:
         numeric_columns = ['assets', 'befektetes', 'likvid', 'megtakaritas', 'osszeg']
