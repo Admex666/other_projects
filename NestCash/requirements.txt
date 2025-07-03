@@ -5,7 +5,6 @@ plotly
 scikit-learn
 firebase-admin
 python-dateutil
-hashlib
 pymongo
 dnspython
 python-dotenv
