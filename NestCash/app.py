@@ -11,11 +11,44 @@ from pathlib import Path
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from dotenv import load_dotenv
+from pymongo.errors import ConnectionFailure, ServerSelectionTimeoutError
+import streamlit as st
 
-# 1. Környezeti változók betöltése
-load_dotenv()
-client = MongoClient(st.secrets["mongo"]["uri"])
-db = client.dbname
+def get_mongo_client():
+    try:
+        client = MongoClient(
+            st.secrets["mongo"]["uri"],
+            serverSelectionTimeoutMS=5000,  # 5 second timeout
+            connectTimeoutMS=30000,  # 30 second connection timeout
+            socketTimeoutMS=30000  # 30 second socket timeout
+        )
+        # Test the connection
+        client.admin.command('ping')
+        return client
+    except ServerSelectionTimeoutError:
+        st.error("⚠️ Could not connect to MongoDB: Timeout occurred")
+        st.stop()
+    except ConnectionFailure as e:
+        st.error(f"⚠️ MongoDB connection failed: {e}")
+        st.stop()
+
+# Initialize connection
+try:
+    client = get_mongo_client()
+    db = client.dbname  # Your database name
+except Exception as e:
+    st.error(f"⚠️ Critical error initializing database: {e}")
+    st.stop()
+
+# Temporary debug section
+with st.expander("Connection Debug Info"):
+    try:
+        st.write("### MongoDB Connection Test")
+        st.write("Server info:", client.server_info())
+        st.write("Database stats:", db.command("dbstats"))
+        st.write("Collections:", db.list_collection_names())
+    except Exception as e:
+        st.error(f"Debug failed: {e}")
 
 #%% Common functions and session state management
 def load_data():
