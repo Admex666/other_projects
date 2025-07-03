@@ -128,104 +128,104 @@ with st.expander("➕ Új tranzakció hozzáadása"):
 
 # Tranzakciók listázása és módosítása
 if not user_df.empty:
-    st.subheader("Tranzakciók módosítása")
+    with st.expander("Tranzakciók módosítása"):
     
-    # Tranzakciók listázása dropdown-ban
-    transaction_options = []
-    for _, row in user_df.sort_values("datum", ascending=False).iterrows():
-        display_text = f"{row['datum']} - {row['kategoria']} - {row['osszeg']}Ft - {row['leiras'][:30]}..."
-        transaction_options.append((row['tranzakcio_id'], display_text))
-    
-    selected_transaction_id = st.selectbox(
-        "Válassz tranzakciót módosításra",
-        options=[t[0] for t in transaction_options],
-        format_func=lambda x: next(t[1] for t in transaction_options if t[0] == x),
-        key="transaction_select"
-    )
-    
-    if selected_transaction_id:
-        # Tranzakció adatainak lekérése MongoDB-ből
-        transaction_data = db.transactions.find_one({"tranzakcio_id": selected_transaction_id})
+        # Tranzakciók listázása dropdown-ban
+        transaction_options = []
+        for _, row in user_df.sort_values("datum", ascending=False).iterrows():
+            display_text = f"{row['datum']} - {row['kategoria']} - {row['osszeg']}Ft - {row['leiras'][:30]}..."
+            transaction_options.append((row['tranzakcio_id'], display_text))
         
-        if transaction_data:
-            selected_transaction_obj_id = transaction_data["_id"]
-            tab_edit, tab_delete = st.tabs(["Szerkesztés", "Törlés"])
+        selected_transaction_id = st.selectbox(
+            "Válassz tranzakciót módosításra",
+            options=[t[0] for t in transaction_options],
+            format_func=lambda x: next(t[1] for t in transaction_options if t[0] == x),
+            key="transaction_select"
+        )
+        
+        if selected_transaction_id:
+            # Tranzakció adatainak lekérése MongoDB-ből
+            transaction_data = db.transactions.find_one({"tranzakcio_id": selected_transaction_id})
             
-            with tab_edit:
-                with st.form("edit_transaction_form"):
-                    st.write(f"**Tranzakció szerkesztése:** {selected_transaction_id}")
-                    
-                    # Mezők előzetes kitöltése
-                    new_amount = st.number_input(
-                        "Összeg (Ft)", 
-                        value=abs(float(transaction_data.get("osszeg", 0)))
-                    )
-                    
-                    # Kategória kiválasztása
-                    try:
-                        cat_index = CATEGORIES.index(transaction_data.get("kategoria", ""))
-                    except ValueError:
-                        cat_index = 0
-                    new_category = st.selectbox("Kategória", CATEGORIES, index=cat_index)
-                    
-                    # Típus kiválasztása
-                    try:
-                        type_index = TYPES.index(transaction_data.get("tipus", ""))
-                    except ValueError:
-                        type_index = 0
-                    new_type = st.selectbox("Típus", TYPES, index=type_index)
-                    
-                    new_description = st.text_input(
-                        "Leírás", 
-                        value=transaction_data.get("leiras", "")
-                    )
-                    
-                    submitted = st.form_submit_button("Módosítások mentése")
-                    
-                    if submitted:
-                        # Meghatározzuk az előjelet
-                        is_income = transaction_data.get("bev_kiad_tipus") == "bevetel"
-                        final_amount = float(new_amount) if is_income else -float(new_amount)
-                        
-                        updated_data = {
-                            "osszeg": final_amount,
-                            "kategoria": new_category,
-                            "tipus": new_type,
-                            "leiras": new_description
-                        }
-                        
-                        if update_transaction(selected_transaction_obj_id, updated_data):
-                            st.success("Tranzakció sikeresen frissítve!")
-                            
-                            # Session state frissítése
-                            st.session_state.df = load_data()
-                            st.rerun()
-                        else:
-                            st.error("Hiba történt a tranzakció frissítése közben!")
-            
-            with tab_delete:
-                st.warning("⚠️ **VIGYÁZAT:** A tranzakció törlése nem vonható vissza!")
+            if transaction_data:
+                selected_transaction_obj_id = transaction_data["_id"]
+                tab_edit, tab_delete = st.tabs(["Szerkesztés", "Törlés"])
                 
-                with st.form("delete_transaction_form"):
-                    st.write(f"**Törlésre kijelölve:** {selected_transaction_id}")
-                    st.write(f"**Összeg:** {transaction_data.get('osszeg', 0)} Ft")
-                    st.write(f"**Kategória:** {transaction_data.get('kategoria', 'N/A')}")
-                    st.write(f"**Leírás:** {transaction_data.get('leiras', 'N/A')}")
-                    
-                    confirm_delete = st.checkbox("Biztosan törölni szeretnéd ezt a tranzakciót?")
-                    submitted_delete = st.form_submit_button("Tranzakció törlése")
-                    
-                    if submitted_delete and confirm_delete:
-                        if delete_transaction(selected_transaction_id):
-                            st.success("Tranzakció sikeresen törölve!")
+                with tab_edit:
+                    with st.form("edit_transaction_form"):
+                        st.write(f"**Tranzakció szerkesztése:** {selected_transaction_id}")
+                        
+                        # Mezők előzetes kitöltése
+                        new_amount = st.number_input(
+                            "Összeg (Ft)", 
+                            value=abs(float(transaction_data.get("osszeg", 0)))
+                        )
+                        
+                        # Kategória kiválasztása
+                        try:
+                            cat_index = CATEGORIES.index(transaction_data.get("kategoria", ""))
+                        except ValueError:
+                            cat_index = 0
+                        new_category = st.selectbox("Kategória", CATEGORIES, index=cat_index)
+                        
+                        # Típus kiválasztása
+                        try:
+                            type_index = TYPES.index(transaction_data.get("tipus", ""))
+                        except ValueError:
+                            type_index = 0
+                        new_type = st.selectbox("Típus", TYPES, index=type_index)
+                        
+                        new_description = st.text_input(
+                            "Leírás", 
+                            value=transaction_data.get("leiras", "")
+                        )
+                        
+                        submitted = st.form_submit_button("Módosítások mentése")
+                        
+                        if submitted:
+                            # Meghatározzuk az előjelet
+                            is_income = transaction_data.get("bev_kiad_tipus") == "bevetel"
+                            final_amount = float(new_amount) if is_income else -float(new_amount)
                             
-                            # Session state frissítése
-                            st.session_state.df = load_data()
-                            st.rerun()
-                        else:
-                            st.error("Hiba történt a tranzakció törlése közben!")
-        else:
-            st.error("A tranzakció nem található az adatbázisban!")
+                            updated_data = {
+                                "osszeg": final_amount,
+                                "kategoria": new_category,
+                                "tipus": new_type,
+                                "leiras": new_description
+                            }
+                            
+                            if update_transaction(selected_transaction_obj_id, updated_data):
+                                st.success("Tranzakció sikeresen frissítve!")
+                                
+                                # Session state frissítése
+                                st.session_state.df = load_data()
+                                st.rerun()
+                            else:
+                                st.error("Hiba történt a tranzakció frissítése közben!")
+                
+                with tab_delete:
+                    st.warning("⚠️ **VIGYÁZAT:** A tranzakció törlése nem vonható vissza!")
+                    
+                    with st.form("delete_transaction_form"):
+                        st.write(f"**Törlésre kijelölve:** {selected_transaction_id}")
+                        st.write(f"**Összeg:** {transaction_data.get('osszeg', 0)} Ft")
+                        st.write(f"**Kategória:** {transaction_data.get('kategoria', 'N/A')}")
+                        st.write(f"**Leírás:** {transaction_data.get('leiras', 'N/A')}")
+                        
+                        confirm_delete = st.checkbox("Biztosan törölni szeretnéd ezt a tranzakciót?")
+                        submitted_delete = st.form_submit_button("Tranzakció törlése")
+                        
+                        if submitted_delete and confirm_delete:
+                            if delete_transaction(selected_transaction_id):
+                                st.success("Tranzakció sikeresen törölve!")
+                                
+                                # Session state frissítése
+                                st.session_state.df = load_data()
+                                st.rerun()
+                            else:
+                                st.error("Hiba történt a tranzakció törlése közben!")
+            else:
+                st.error("A tranzakció nem található az adatbázisban!")
 
 else:
     st.info("Nincsenek tranzakciók ehhez a felhasználóhoz.")
