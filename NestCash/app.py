@@ -14,10 +14,13 @@ from dotenv import load_dotenv
 from pymongo.errors import ConnectionFailure, ServerSelectionTimeoutError
 import streamlit as st
 
+load_dotenv()
+mongo_uri = os.environ['MONGODB_URI']
+
 def get_mongo_client():
     try:
         client = MongoClient(
-            st.secrets["mongo"]["uri"],
+            mongo_uri,
             serverSelectionTimeoutMS=5000,  # 5 second timeout
             connectTimeoutMS=30000,  # 30 second connection timeout
             socketTimeoutMS=30000  # 30 second socket timeout
