@@ -14,7 +14,26 @@ current_user = st.session_state.user_id
 df = st.session_state.df
 user_df = df[df["user_id"] == current_user]
 
-st.title("📊 Pénzügyi elemzés")
+st.title("💰 NestCash prototípus")
+st.success(f"Bejelentkezve mint: {st.session_state.username} (ID: {current_user})")
+if user_df.empty:
+    likvid = 0
+    befektetes = 0
+    megtakaritas = 0
+    profil = 'alap'
+else:
+    likvid = user_df['likvid'].iloc[-1]
+    befektetes = user_df['befektetes'].iloc[-1]
+    megtakaritas = user_df['megtakaritas'].iloc[-1]
+    profil = user_df['profil'].iloc[-1]
+
+cols = st.columns(3)
+cols[0].metric("Likvid", f"{likvid:,.0f}Ft")
+cols[1].metric("Befektetések", f"{befektetes:,.0f}Ft")
+cols[2].metric("Megtakarítások", f"{megtakaritas:,.0f}Ft")
+
+st.header("")
+st.header("📊 Pénzügyi elemzés")
 
 if not (len(df) < 20) and not (len(user_df) < 20):
     eredmenyek = run_user_eda(df, current_user)

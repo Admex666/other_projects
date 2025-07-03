@@ -1,4 +1,4 @@
-# app.py - Main application file
+# app.py - Main application file (javított verzió)
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -7,166 +7,295 @@ import time
 import hashlib
 import os
 import json
+from pathlib import Path
+from pymongo import MongoClient
+from bson.objectid import ObjectId
+from dotenv import load_dotenv
 
-# Common functions and session state management
-# Módosítsd a fájlbetöltő függvényeket így:
+# 1. Környezeti változók betöltése
+load_dotenv()
+MONGO_URI = os.getenv("MONGODB_URI")
+
+# 2. Kapcsolódás MongoDB-hez
+client = MongoClient(MONGO_URI)
+db = client["nestcash"]
+
+db['accounts'].find_one()
+
+#%% Common functions and session state management
 def load_data():
-    try:
-        return pd.read_csv("datafiles/szintetikus_tranzakciok.csv")
-    except:
-        return pd.DataFrame(columns=[
-            "datum", "honap", "het", "nap_sorszam", "tranzakcio_id", 
-            "osszeg", "kategoria", "user_id", "profil", "tipus", 
-            "leiras", "forras", "ismetlodo", "fix_koltseg", 
-            "bev_kiad_tipus", "platform", "helyszin", "deviza", 
-            "cimke", "celhoz_kotott", "likvid", "befektetes", 
-            "megtakaritas", "assets"
-        ])
+    """Tranzakciók betöltése"""
+    transactions = list(db["transactions"].find({}, {'_id': 0}))
+    return pd.DataFrame(transactions) if transactions else pd.DataFrame()
 
 def save_data(df):
-    df.to_csv("datafiles/szintetikus_tranzakciok.csv", index=False)
+    """Tranzakciók mentése - Period objektumok kezelésével"""
+    if df.empty:
+        return
+    
+    # Pandas Period objektumok átalakítása stringgé
+    if 'ho' in df.columns:
+        df['ho'] = df['ho'].astype(str)
+    
+    # NaN és inf értékek kezelése
+    df = df.replace([np.inf, -np.inf], np.nan)
+    df = df.fillna('')
+    
+    # DataFrame konvertálása dictionary listává
+    records = df.to_dict("records")
+    
+    # Összes problémás típus konvertálása
+    for record in records:
+        for key, value in record.items():
+            # Period objektumok kezelése
+            if hasattr(value, 'strftime'):
+                record[key] = str(value)
+            # NaN értékek kezelése
+            elif pd.isna(value):
+                record[key] = None
+            # Numpy típusok kezelése
+            elif isinstance(value, (np.integer, np.floating)):
+                if pd.isna(value):
+                    record[key] = None
+                else:
+                    record[key] = float(value) if isinstance(value, np.floating) else int(value)
+    
+    # Régi adatok törlése és újak beszúrása
+    db["transactions"].delete_many({})
+    if records:
+        db["transactions"].insert_many(records)
 
 def load_users():
-    try:
-        return pd.read_csv("datafiles/users.csv")
-    except:
+    users = get_collection("users")
+    if not users:
         return pd.DataFrame(columns=["user_id", "username", "password", "email", "registration_date"])
+    return pd.DataFrame.from_dict(users, orient='index')
 
 def save_users(users_df):
-    users_df.to_csv("datafiles/users.csv", index=False)
+    users_dict = users_df.set_index(users_df['user_id'].astype(str)).to_dict(orient='index')
+    update_collection("users", users_dict)
+
+def get_collection(collection_name):
+    """MongoDB kollekció lekérése dictionary-ként"""
+    docs = list(db[collection_name].find({}))
+    return {str(doc["_id"]): doc for doc in docs} if docs else {}
+
+def update_collection(collection_name, data_dict):
+    """MongoDB kollekció frissítése"""
+    try:
+        if collection_name == "accounts":
+            # Az accounts speciális kezelése
+            existing_accounts = db[collection_name].find_one()
+            
+            if existing_accounts is None:
+                # Ha nincs accounts dokumentum, létrehozzuk
+                db[collection_name].insert_one(data_dict)
+            else:
+                # Frissítjük a meglévő adatokat
+                update_data = {k: v for k, v in data_dict.items() if k != "_id"}
+                db[collection_name].update_one(
+                    {"_id": existing_accounts["_id"]},
+                    {"$set": update_data},
+                    upsert=True
+                )
+        else:
+            # Egyéb kollekciók kezelése
+            for doc_id, data in data_dict.items():
+                try:
+                    # Csak akkor próbálunk ObjectId-t létrehozni, ha az doc_id valid formátumú
+                    if len(doc_id) == 24 and all(c in '0123456789abcdefABCDEF' for c in doc_id):
+                        object_id = ObjectId(doc_id)
+                    else:
+                        # Ha nem valid ObjectId, akkor keressük más módon
+                        existing_doc = db[collection_name].find_one({"user_id": doc_id})
+                        if existing_doc:
+                            object_id = existing_doc["_id"]
+                        else:
+                            # Ha nincs ilyen dokumentum, hozzunk létre újat
+                            data["user_id"] = doc_id
+                            result = db[collection_name].insert_one(data)
+                            continue
+                    
+                    db[collection_name].update_one(
+                        {"_id": object_id},
+                        {"$set": data},
+                        upsert=True
+                    )
+                except Exception as e:
+                    st.error(f"Hiba a dokumentum frissítésekor: {e}")
+                    continue
+                    
+    except Exception as e:
+        st.error(f"Hiba történt a kollekció frissítésekor: {e}")
 
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
 def authenticate_user(username, password):
-    users_df = load_users()
-    hashed_pw = hash_password(password)
-    user = users_df[(users_df["username"] == username) & (users_df["password"] == hashed_pw)]
-    return user.iloc[0] if not user.empty else None
-
-def load_accounts():
-    try:
-        with open("datafiles/accounts.json", "r") as f:
-            return json.load(f)
-    except:
-        return {}
-
-def save_accounts(accounts_dict):
-    with open("datafiles/accounts.json", "w") as f:
-        json.dump(accounts_dict, f)
+    user = db.users.find_one({"username": username})
+    if user and user.get("password") == hash_password(password):
+        st.session_state.user_id = user["user_id"]
+        return user
+    return None
 
 def get_user_accounts(user_id):
-    accounts = load_accounts()
-    user_id_str = str(user_id)
-    
-    if user_id_str not in accounts:
-        accounts[user_id_str] = {
+    """Felhasználói számlák lekérése az accounts dokumentumból"""
+    try:
+        user_id_str = str(user_id)
+        accounts_data = db["accounts"].find_one()
+        
+        if accounts_data and user_id_str in accounts_data:
+            return accounts_data[user_id_str]
+        
+        # Alapértelmezett struktúra, ha nincs ilyen felhasználó
+        default_accounts = {
             "likvid": {"foosszeg": 0},
             "befektetes": {"foosszeg": 0},
             "megtakaritas": {"foosszeg": 0}
         }
-        save_accounts(accounts)
-    
-    return accounts[user_id_str]
+        
+        # Hozzáadjuk az alapértelmezett struktúrát az adatbázishoz
+        if accounts_data is None:
+            db["accounts"].insert_one({user_id_str: default_accounts})
+        else:
+            db["accounts"].update_one(
+                {"_id": accounts_data["_id"]},
+                {"$set": {user_id_str: default_accounts}}
+            )
+        
+        return default_accounts
+        
+    except Exception as e:
+        st.error(f"Hiba történt a számlaadatok lekérésekor: {e}")
+        return {
+            "likvid": {"foosszeg": 0},
+            "befektetes": {"foosszeg": 0},
+            "megtakaritas": {"foosszeg": 0}
+        }
 
 def update_account_balance(user_id, foszamla, alszamla, amount):
-    accounts = load_accounts()
-    user_id_str = str(user_id)
-    
-    if user_id_str not in accounts:
-        accounts[user_id_str] = get_user_accounts(user_id)
-    
-    if foszamla not in accounts[user_id_str]:
-        accounts[user_id_str][foszamla] = {}
-    
-    if alszamla not in accounts[user_id_str][foszamla]:
-        accounts[user_id_str][foszamla][alszamla] = 0
-    
-    accounts[user_id_str][foszamla][alszamla] += amount
-    save_accounts(accounts)
-    return accounts[user_id_str][foszamla][alszamla]
+    """Számlegyenleg frissítése"""
+    try:
+        user_id_str = str(user_id)
+        
+        accounts_data = db["accounts"].find_one()
+        
+        if not accounts_data:
+            accounts_data = {}
+        
+        if user_id_str not in accounts_data:
+            accounts_data[user_id_str] = {
+                "likvid": {"foosszeg": 0},
+                "befektetes": {"foosszeg": 0},
+                "megtakaritas": {"foosszeg": 0}
+            }
+
+        db["accounts"].update_one(
+            {"_id": accounts_data["_id"]} if "_id" in accounts_data else {},
+            {"$inc": {f'{user_id_str}.{foszamla}.{alszamla}': amount}}
+        )
+        
+        
+        return db["accounts"].find_one()[user_id_str][foszamla][alszamla]
+        
+    except Exception as e:
+        st.error(f"Hiba történt az egyenleg frissítésekor: {e}")
+        return 0
+
+def load_accounts():
+    accounts = get_collection("accounts")
+    return accounts if accounts else {}
+
+def save_accounts(accounts_dict):
+    """Speciális accounts mentési logika"""
+    try:
+        # Ellenőrizzük, hogy van-e adat
+        if not accounts_dict:
+            st.warning("Nincsenek mentendő számlaadatok")
+            return False
+        
+        # Az accounts dokumentum teljes lekérése
+        existing_accounts = db["accounts"].find_one()
+        
+        if existing_accounts is None:
+            # Ha nincs accounts dokumentum, létrehozzuk
+            db["accounts"].insert_one(accounts_dict)
+        else:
+            # Frissítjük a meglévő adatokat
+            for user_id, user_data in accounts_dict.items():
+                existing_accounts[user_id] = user_data
+            
+            # Mentjük vissza az adatbázisba
+            db["accounts"].update_one(
+                {"_id": existing_accounts["_id"]},
+                {"$set": {k: v for k, v in existing_accounts.items() if k != "_id"}},
+                upsert=True
+            )
+        
+        return True
+        
+    except Exception as e:
+        st.error(f"Hiba történt az accounts mentésekor: {e}")
+        return False
+
+def add_transaction(new_transaction):
+    try:
+        if "tranzakcio_id" not in new_transaction:
+            new_transaction["tranzakcio_id"] = f"{new_transaction['user_id']}_{datetime.now().strftime('%Y%m%d')}_{int(time.time())}"
+            
+        result = db.transactions.insert_one(new_transaction)
+        return result.inserted_id is not None
+    except Exception as e:
+        st.error(f"Error adding transaction: {e}")
+        return False
 
 def update_transaction(transaction_id, updated_data):
-    df = load_data()
-    if transaction_id in df['tranzakcio_id'].values:
-        idx = df.index[df['tranzakcio_id'] == transaction_id].tolist()[0]
-        for key, value in updated_data.items():
-            df.at[idx, key] = value
-        save_data(df)
-        return True
-    return False
+    try:
+        result = db.transactions.update_one(
+            {"tranzakcio_id": transaction_id},
+            {"$set": updated_data}
+        )
+        return result.modified_count > 0
+    except Exception as e:
+        st.error(f"Error updating transaction: {e}")
+        return False
 
 def delete_transaction(transaction_id):
-    df = load_data()
-    if transaction_id in df['tranzakcio_id'].values:
-        df = df[df['tranzakcio_id'] != transaction_id]
-        save_data(df)
-        return True
-    return False
+    try:
+        result = db.transactions.delete_one({"tranzakcio_id": transaction_id})
+        return result.deleted_count > 0
+    except Exception as e:
+        st.error(f"Error deleting transaction: {e}")
+        return False
 
 def log_transaction_change(user_id, action, transaction_id, old_values=None, new_values=None):
-    try:
-        log_df = pd.read_csv("datafiles/transaction_changes_log.csv")
-    except:
-        log_df = pd.DataFrame(columns=[
-            "timestamp", "user_id", "action", "transaction_id", 
-            "old_values", "new_values"
-        ])
-    
-    new_log = {
+    log_data = {
         "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M"),
-        "user_id": user_id,
+        "user_id": str(user_id),
         "action": action,
         "transaction_id": transaction_id,
         "old_values": str(old_values) if old_values else None,
         "new_values": str(new_values) if new_values else None
     }
     
-    log_df = pd.concat([log_df, pd.DataFrame([new_log])], ignore_index=True)
-    log_df.to_csv("datafiles/transaction_changes_log.csv", index=False)
-    
-def update_transaction(transaction_id, updated_data):
-    df = load_data()
-    if transaction_id in df['tranzakcio_id'].values:
-        idx = df.index[df['tranzakcio_id'] == transaction_id].tolist()[0]
-        old_values = df.loc[idx].to_dict()
-        
-        for key, value in updated_data.items():
-            df.at[idx, key] = value
-        
-        save_data(df)
-        log_transaction_change(
-            st.session_state.user_id,
-            "update",
-            transaction_id,
-            old_values,
-            df.loc[idx].to_dict()
-        )
-        return True
-    return False
+    db.transaction_logs.insert_one(log_data)
 
-def delete_transaction(transaction_id):
-    df = load_data()
-    if transaction_id in df['tranzakcio_id'].values:
-        old_values = df[df['tranzakcio_id'] == transaction_id].iloc[0].to_dict()
-        df = df[df['tranzakcio_id'] != transaction_id]
-        save_data(df)
-        log_transaction_change(
-            st.session_state.user_id,
-            "delete",
-            transaction_id,
-            old_values
-        )
-        return True
-    return False
-
-# Initialize session state
+#%% Initialize session state
 if 'logged_in' not in st.session_state:
     st.session_state.logged_in = False
     st.session_state.current_user = None
     st.session_state.user_id = None
     st.session_state.username = None
     st.session_state.df = load_data()
+    
+    # Típuskonverziók csak akkor, ha van adat
+    if not st.session_state.df.empty:
+        numeric_columns = ['assets', 'befektetes', 'likvid', 'megtakaritas', 'osszeg']
+        for col in numeric_columns:
+            if col in st.session_state.df.columns:
+                st.session_state.df[col] = pd.to_numeric(st.session_state.df[col], errors='coerce').fillna(0)
+    
+    st.session_state.accounts = load_accounts()
 
 # Main app
 st.title("💰 NestCash prototípus")
@@ -202,14 +331,16 @@ if not st.session_state.logged_in:
             submitted = st.form_submit_button("Regisztráció")
             
             if submitted:
-                users_df = load_users()
-                
-                if new_password != confirm_password:
-                    st.error("A jelszavak nem egyeznek!")
-                elif new_username in users_df["username"].values:
+                if db.users.find_one({"username": new_username}):
                     st.error("Ez a felhasználónév már foglalt!")
+                elif new_password != confirm_password:
+                    st.error("A jelszavak nem egyeznek!")
                 else:
-                    new_user_id = users_df["user_id"].max() + 1 if not users_df.empty else 1
+                    last_user = db.users.find_one(sort=[("user_id", -1)])
+                    new_user_id = 1 if last_user is None else last_user["user_id"] + 1
+                    
+                    while db.users.find_one({"user_id": new_user_id}) is not None:
+                        new_user_id += 1
                     
                     new_user = {
                         "user_id": new_user_id,
@@ -219,29 +350,28 @@ if not st.session_state.logged_in:
                         "registration_date": datetime.now().strftime("%Y-%m-%d")
                     }
                     
-                    users_df = pd.concat([users_df, pd.DataFrame([new_user])], ignore_index=True)
-                    save_users(users_df)
+                    db.users.insert_one(new_user)
                     
                     st.session_state.logged_in = True
                     st.session_state.current_user = new_user
                     st.session_state.user_id = new_user_id
                     st.session_state.username = new_username
-                    
-                    st.success("Sikeres regisztráció! Automatikusan bejelentkeztél.")
+                    st.success("Sikeres regisztráció!")
                     st.rerun()
-    
     st.stop()
 
 # If logged in, show the main interface
 if st.session_state.logged_in:
-    current_user = st.session_state.user_id
     username = st.session_state.username
+    st.session_state.user_id = db.users.find_one({"username": username})['user_id']
+    current_user = st.session_state.user_id
     st.success(f"Bejelentkezve mint: {username} (ID: {current_user})")
+    st.header(f"Üdvözlünk, {username}!")
     
     # Show user metrics
     user_df = st.session_state.df[st.session_state.df["user_id"] == current_user]
     if user_df.empty:
-        st.session_state.profil = 'alap'  # Alapértelmezett profil
+        st.session_state.profil = 'alap'
     else:
         st.session_state.profil = user_df['profil'].iloc[-1]
     

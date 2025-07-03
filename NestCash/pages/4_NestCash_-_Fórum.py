@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
-from app import load_data, save_data
+from app import load_data, save_data, get_collection, update_collection, db
 
 # Get data from session state
 if 'logged_in' not in st.session_state or not st.session_state.logged_in:
@@ -10,29 +10,65 @@ if 'logged_in' not in st.session_state or not st.session_state.logged_in:
 
 current_user = st.session_state.user_id
 username = st.session_state.username
+df = st.session_state.df
+user_df = df[df["user_id"] == current_user]
+
 
 # Adatbetöltési függvények
 # Módosítsd a fórum fájlkezelő függvényeket:
+# Fórum posztok kezelése MongoDB-vel
 def load_forum_posts():
-    try:
-        return pd.read_csv("datafiles/forum_posts.csv")
-    except:
-        return pd.DataFrame(columns=["post_id", "user_id", "username", "timestamp", "title", "content", "category"])
-
-def load_comments():
-    try:
-        return pd.read_csv("datafiles/forum_comments.csv")
-    except:
-        return pd.DataFrame(columns=["comment_id", "post_id", "user_id", "username", "timestamp", "content"])
+    posts = list(db.forum_posts.find({}))
+    return pd.DataFrame(posts) if posts else pd.DataFrame(columns=[
+        "post_id", "user_id", "username", "timestamp", 
+        "title", "content", "category"
+    ])
 
 def save_forum_posts(posts_df):
-    posts_df.to_csv("datafiles/forum_posts.csv", index=False)
+    # Töröljük a régi posztokat
+    db.forum_posts.delete_many({})
+    
+    if not posts_df.empty:
+        # Új posztok beszúrása
+        db.forum_posts.insert_many(posts_df.to_dict("records"))
+
+# Hozzászólások kezelése
+def load_comments():
+    comments = list(db.forum_comments.find({}))
+    return pd.DataFrame(comments) if comments else pd.DataFrame(columns=[
+        "comment_id", "post_id", "user_id", "username",
+        "timestamp", "content"
+    ])
 
 def save_comments(comments_df):
-    comments_df.to_csv("datafiles/forum_comments.csv", index=False)
+    # Töröljük a régi hozzászólásokat
+    db.forum_comments.delete_many({})
+    
+    if not comments_df.empty:
+        # Új hozzászólások beszúrása
+        db.forum_comments.insert_many(comments_df.to_dict("records"))
 
 # Fő fórum oldal
-st.title("💬 Közösségi Fórum")
+st.title("💰 NestCash prototípus")
+st.success(f"Bejelentkezve mint: {st.session_state.username} (ID: {current_user})")
+if user_df.empty:
+    likvid = 0
+    befektetes = 0
+    megtakaritas = 0
+    profil = 'alap'
+else:
+    likvid = user_df['likvid'].iloc[-1]
+    befektetes = user_df['befektetes'].iloc[-1]
+    megtakaritas = user_df['megtakaritas'].iloc[-1]
+    profil = user_df['profil'].iloc[-1]
+
+cols = st.columns(3)
+cols[0].metric("Likvid", f"{likvid:,.0f}Ft")
+cols[1].metric("Befektetések", f"{befektetes:,.0f}Ft")
+cols[2].metric("Megtakarítások", f"{megtakaritas:,.0f}Ft")
+
+st.header("")
+st.header("💬 Közösségi Fórum")
 
 # Kategóriák
 categories = [
@@ -53,13 +89,14 @@ with st.expander("➕ Új bejegyzés létrehozása", expanded=False):
         
         submitted = st.form_submit_button("Közzététel")
         
+        # Új bejegyzés létrehozásának javított része
         if submitted:
             if not title or not content:
                 st.error("A csillaggal (*) jelölt mezők kitöltése kötelező!")
             else:
                 posts_df = load_forum_posts()
-                new_post_id = posts_df["post_id"].max() + 1 if not posts_df.empty else 1
-                
+                new_post_id = str(posts_df["post_id"].max() + 1)
+                # MongoDB-ben egyedi ID generálása
                 new_post = {
                     "post_id": new_post_id,
                     "user_id": current_user,
@@ -70,8 +107,9 @@ with st.expander("➕ Új bejegyzés létrehozása", expanded=False):
                     "category": category
                 }
                 
-                posts_df = pd.concat([posts_df, pd.DataFrame([new_post])], ignore_index=True)
-                save_forum_posts(posts_df)
+                # Beszúrás és az automatikusan generált _id lekérése
+                db.forum_posts.insert_one(new_post)
+                
                 st.success("Bejegyzés sikeresen közzétéve!")
                 st.rerun()
 

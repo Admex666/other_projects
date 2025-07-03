@@ -5,7 +5,7 @@ import json
 from datetime import datetime
 import time
 import plotly.express as px
-from app import get_user_accounts, update_account_balance, save_data
+from app import get_user_accounts, update_account_balance, save_data, load_accounts, save_accounts, get_collection, update_collection, db
 
 # Get data from session state
 if 'logged_in' not in st.session_state or not st.session_state.logged_in:
@@ -15,8 +15,28 @@ if 'logged_in' not in st.session_state or not st.session_state.logged_in:
 current_user = st.session_state.user_id
 df = st.session_state.df
 user_df = df[df["user_id"] == current_user]
+user_accounts = get_user_accounts(current_user)
 
-st.title("💼 Számlák kezelése")
+st.title("💰 NestCash prototípus")
+st.success(f"Bejelentkezve mint: {st.session_state.username} (ID: {current_user})")
+if user_df.empty:
+    likvid = 0
+    befektetes = 0
+    megtakaritas = 0
+    profil = 'alap'
+else:
+    likvid = user_df['likvid'].iloc[-1]
+    befektetes = user_df['befektetes'].iloc[-1]
+    megtakaritas = user_df['megtakaritas'].iloc[-1]
+    profil = user_df['profil'].iloc[-1]
+
+cols = st.columns(3)
+cols[0].metric("Likvid", f"{likvid:,.0f}Ft")
+cols[1].metric("Befektetések", f"{befektetes:,.0f}Ft")
+cols[2].metric("Megtakarítások", f"{megtakaritas:,.0f}Ft")
+
+st.header("")
+st.header("💼 Számlák kezelése")
 
 # Account management
 tab1, tab2, tab3, tab4 = st.tabs(["Alszámlák", 
@@ -25,9 +45,8 @@ tab1, tab2, tab3, tab4 = st.tabs(["Alszámlák",
                                   "Célok kezelése"])
 
 with tab1:
-    user_accounts = get_user_accounts(current_user)
     st.write("### Alszámlák és egyenlegek")
-    
+
     # Pie chart for each main account
     for foszamla, alszamlak in user_accounts.items():
         if alszamlak:  # Only show if there are sub-accounts
@@ -58,7 +77,6 @@ with tab2:
         
         with col1:
             forras_foszamla = st.selectbox("Forrás főszámla", ["likvid", "befektetes", "megtakaritas"])
-            user_accounts = get_user_accounts(current_user)
             forras_alszamlak = list(user_accounts.get(forras_foszamla, {}).keys())
             forras_alszamla = st.selectbox("Forrás alszámla", forras_alszamlak)
         
@@ -79,7 +97,6 @@ with tab2:
                 update_account_balance(current_user, forras_foszamla, forras_alszamla, -osszeg)
                 update_account_balance(current_user, cel_foszamla, cel_alszamla, osszeg)
                 
-                user_accounts = get_user_accounts(current_user)
                 likvid_osszeg = sum(user_accounts["likvid"].values())
                 befektetes_osszeg = sum(user_accounts["befektetes"].values())
                 megtakaritas_osszeg = sum(user_accounts["megtakaritas"].values())
@@ -128,33 +145,61 @@ with tab3:
         alszamla_nev = st.text_input("Alszámla neve")
         
         if st.form_submit_button("Létrehozás"):
-            user_accounts = get_user_accounts(current_user)
-            
-            if foszamla not in user_accounts:
-                user_accounts[foszamla] = {}
-            
-            if alszamla_nev in user_accounts[foszamla]:
-                st.error("Ez az alszámla már létezik!")
+            if not alszamla_nev.strip():
+                st.error("Kérjük, adja meg az alszámla nevét!")
             else:
-                user_accounts[foszamla][alszamla_nev] = 0
-                accounts = load_accounts()
-                accounts[str(current_user)] = user_accounts
-                save_accounts(accounts)
-                st.success(f"Alszámla létrehozva: {alszamla_nev} a {foszamla} alatt")
-                st.rerun()
+                try:
+                    # Frissített user_accounts lekérése
+                    user_accounts = get_user_accounts(current_user)
+                    
+                    if foszamla not in user_accounts:
+                        user_accounts[foszamla] = {}
+                    
+                    if alszamla_nev in user_accounts[foszamla]:
+                        st.error("Ez az alszámla már létezik!")
+                    else:
+                        # Új alszámla hozzáadása
+                        user_accounts[foszamla][alszamla_nev] = 0
+                        
+                        # Accounts frissítése az adatbázisban
+                        accounts_data = db["accounts"].find_one()
+                        user_id_str = str(current_user)
+                        
+                        if accounts_data is None:
+                            # Ha nincs accounts dokumentum, létrehozzuk
+                            db["accounts"].insert_one({user_id_str: user_accounts})
+                        else:
+                            # Frissítjük a meglévő adatokat
+                            db["accounts"].update_one(
+                                {"_id": accounts_data["_id"]},
+                                {"$set": {user_id_str: user_accounts}}
+                            )
+                        
+                        st.success(f"Alszámla létrehozva: {alszamla_nev} a {foszamla} alatt")
+                        st.rerun()
+                        
+                except Exception as e:
+                    st.error(f"Hiba történt az alszámla létrehozásakor: {e}")
+                    st.error(f"Részletes hiba: {str(e)}")
                 
 
 # Módosítsd a célokat kezelő függvényeket:
+# Célok kezelése MongoDB-vel
 def load_goals():
-    try:
-        return pd.read_csv("datafiles/user_goals.csv")
-    except:
-        return pd.DataFrame(columns=["goal_id", "user_id", "title", "target_amount", 
-                                   "current_amount", "target_date", "category", 
-                                   "priority", "status", "created_at"])
+    goals = list(db.goals.find({"user_id": str(current_user)}))
+    return pd.DataFrame(goals) if goals else pd.DataFrame(columns=[
+        "goal_id", "user_id", "title", "target_amount", 
+        "current_amount", "target_date", "category",
+        "priority", "status", "created_at"
+    ])
 
 def save_goals(goals_df):
-    goals_df.to_csv("datafiles/user_goals.csv", index=False)
+    # Töröljük a régi célokat
+    db.goals.delete_many({"user_id": str(current_user)})
+    
+    if not goals_df.empty:
+        # Új célok beszúrása
+        db.goals.insert_many(goals_df.to_dict("records"))
     
 with tab4:
     st.header("Célok kezelése")
@@ -200,7 +245,8 @@ with tab4:
     else:
         for _, goal in user_goals.iterrows():
             with st.expander(f"{goal['title']} ({goal['status']})"):
-                progress = min(goal['current_amount'] / goal['target_amount'], 1.0)
+                progress = min(int(goal['current_amount']) / 
+                               int(goal['target_amount']), 1.0)
                 st.progress(progress, text=f"Haladás: {goal['current_amount']:,}Ft / {goal['target_amount']:,}Ft ({progress*100:.1f}%)")
                 
                 cols = st.columns(3)
