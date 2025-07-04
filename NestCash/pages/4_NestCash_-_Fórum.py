@@ -50,7 +50,7 @@ def save_comments(comments_df):
 
 # Fő fórum oldal
 st.title("💰 NestCash prototípus")
-st.success(f"Bejelentkezve mint: {st.session_state.username} (ID: {current_user})")
+st.success(f"👤 Bejelentkezve mint: {st.session_state.username} (ID: {current_user})")
 if user_df.empty:
     likvid = 0
     befektetes = 0
@@ -63,9 +63,9 @@ else:
     profil = user_df['profil'].iloc[-1]
 
 cols = st.columns(3)
-cols[0].metric("Likvid", f"{likvid:,.0f}Ft")
-cols[1].metric("Befektetések", f"{befektetes:,.0f}Ft")
-cols[2].metric("Megtakarítások", f"{megtakaritas:,.0f}Ft")
+cols[0].metric("💵 Likvid", f"{likvid:,.0f}Ft")
+cols[1].metric("📈 Befektetések", f"{befektetes:,.0f}Ft")
+cols[2].metric("🏦 Megtakarítások", f"{megtakaritas:,.0f}Ft")
 
 st.header("")
 st.header("💬 Közösségi Fórum")

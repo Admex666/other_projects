@@ -383,7 +383,7 @@ if st.session_state.logged_in:
     username = st.session_state.username
     st.session_state.user_id = db.users.find_one({"username": username})['user_id']
     current_user = st.session_state.user_id
-    st.success(f"Bejelentkezve mint: {username} (ID: {current_user})")
+    st.success(f"👤 Bejelentkezve mint: {username} (ID: {current_user})")
     st.header(f"Üdvözlünk, {username}!")
     
     # Show user metrics
@@ -405,9 +405,9 @@ if st.session_state.logged_in:
         profil = user_df['profil'].iloc[-1]
     
     cols = st.columns(3)
-    cols[0].metric("Likvid", f"{likvid:,.0f}Ft")
-    cols[1].metric("Befektetések", f"{befektetes:,.0f}Ft")
-    cols[2].metric("Megtakarítások", f"{megtakaritas:,.0f}Ft")
+    cols[0].metric("💵 Likvid", f"{likvid:,.0f}Ft")
+    cols[1].metric("📈 Befektetések", f"{befektetes:,.0f}Ft")
+    cols[2].metric("🏦 Megtakarítások", f"{megtakaritas:,.0f}Ft")
     
     if st.button("Kijelentkezés", key="logout_btn"):
         st.session_state.logged_in = False

@@ -18,7 +18,7 @@ user_df = df[df["user_id"] == current_user]
 user_accounts = get_user_accounts(current_user)
 
 st.title("💰 NestCash prototípus")
-st.success(f"Bejelentkezve mint: {st.session_state.username} (ID: {current_user})")
+st.success(f"👤 Bejelentkezve mint: {st.session_state.username} (ID: {current_user})")
 if user_df.empty:
     likvid = 0
     befektetes = 0
@@ -31,9 +31,9 @@ else:
     profil = user_df['profil'].iloc[-1]
 
 cols = st.columns(3)
-cols[0].metric("Likvid", f"{likvid:,.0f}Ft")
-cols[1].metric("Befektetések", f"{befektetes:,.0f}Ft")
-cols[2].metric("Megtakarítások", f"{megtakaritas:,.0f}Ft")
+cols[0].metric("💵 Likvid", f"{likvid:,.0f}Ft")
+cols[1].metric("📈 Befektetések", f"{befektetes:,.0f}Ft")
+cols[2].metric("🏦 Megtakarítások", f"{megtakaritas:,.0f}Ft")
 
 st.header("")
 st.header("💼 Számlák kezelése")
@@ -44,33 +44,64 @@ tab1, tab2, tab3, tab4 = st.tabs(["Alszámlák",
                                   "Új alszámla létrehozása",
                                   "Célok kezelése"])
 
+# A tab1 tartalmát cseréld le erre:
 with tab1:
-    st.write("### Alszámlák és egyenlegek")
-
-    # Pie chart for each main account
+    st.write("### Alszámlák és egyenlegek - Teljes pénzügyi struktúra")
+    
+    # Összes adat előkészítése a sunburst chart-hoz
+    sunburst_data = []
+    
     for foszamla, alszamlak in user_accounts.items():
-        if alszamlak:  # Only show if there are sub-accounts
-            # Prepare data for pie chart
-            labels = list(alszamlak.keys())
-            values = list(alszamlak.values())
-            
-            # Create pie chart
-            fig = px.pie(
-                names=labels,
-                values=values,
-                title=f"{foszamla.capitalize()} számla megoszlása",
-                hover_data=[values],
-                labels={'names': 'Alszámla', 'values': 'Egyenleg (Ft)'}
-            )
-            
-            # Display the pie chart
-            st.plotly_chart(fig, use_container_width=True)
-            
-            # Optional: Display the raw numbers in an expander
-            with st.expander(f"Részletes egyenlegek ({foszamla})"):
-                for alszamla, egyenleg in alszamlak.items():
-                    st.write(f"- {alszamla}: {egyenleg:,.0f} Ft")
-
+        if alszamlak:  # Csak ha vannak alszámlák
+            # NEM adjuk hozzá külön a főszámlát, mert a parent mezőből automatikusan létrejön
+            # Alszámlák hozzáadása
+            for alszamla, egyenleg in alszamlak.items():
+                sunburst_data.append({
+                    'name': alszamla,
+                    'parent': foszamla.capitalize(),  # Ez fogja létrehozni a főszámla szintet
+                    'value': egyenleg,
+                    'type': 'alszámla'
+                })
+    
+    # Sunburst chart létrehozása
+    if sunburst_data:
+        df_sunburst = pd.DataFrame(sunburst_data)
+        
+        fig = px.sunburst(
+            df_sunburst,
+            path=['parent', 'name'],  # Hierarchia: főszámla -> alszámla
+            values='value',
+            color='parent',  # Most a főszámla szerint színezzük
+            title='Teljes pénzügyi struktúra',
+            hover_data={'value': ':.0f Ft'},
+            width=800,
+            height=800
+        )
+        
+        # Formázás
+        fig.update_traces(
+            textinfo="label+percent parent+value",
+            texttemplate="<b>%{label}</b><br>%{percentParent:.1%}<br>%{value:,.0f} Ft",
+            hovertemplate="<b>%{label}</b><br>Összeg: %{value:,.0f} Ft<br>%{percentParent:.1%} of %{parent}"
+        )
+        
+        fig.update_layout(
+            margin=dict(t=50, l=0, r=0, b=0),
+            uniformtext=dict(minsize=12, mode='hide'),
+            showlegend=True
+        )
+        
+        st.plotly_chart(fig, use_container_width=True)
+        
+        # Részletes egyenlegek expanderben
+        with st.expander("📊 Részletes egyenlegek"):
+            for foszamla, alszamlak in user_accounts.items():
+                if alszamlak:
+                    st.write(f"#### {foszamla.capitalize()} (összesen: {sum(alszamlak.values()):,.0f} Ft)")
+                    for alszamla, egyenleg in alszamlak.items():
+                        st.write(f"- {alszamla}: {egyenleg:,.0f} Ft")
+    else:
+        st.info("Nincsenek alszámlák a megjelenítéshez. Hozz létre újat a 'Új alszámla létrehozása' fülön!")
 with tab2:
     with st.form("szamlak_kozott"):
         col1, col2 = st.columns(2)
