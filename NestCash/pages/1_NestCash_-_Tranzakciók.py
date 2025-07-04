@@ -3,7 +3,7 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 import time
-from app import load_data, get_user_accounts, update_account_balance, save_data, update_transaction, delete_transaction, db
+from database import load_data, get_user_accounts, update_account_balance, save_data, update_transaction, delete_transaction, db, check_automatic_habits
 
 # Get data from session state
 if 'logged_in' not in st.session_state or not st.session_state.logged_in:
@@ -122,6 +122,8 @@ with st.expander("➕ Új tranzakció hozzáadása"):
             df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
             st.session_state.df = df
             save_data(df)
+            
+            check_automatic_habits(current_user, new_row)
             
             st.success("Tranzakció sikeresen hozzáadva!")
             st.rerun()

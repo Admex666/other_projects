@@ -5,7 +5,7 @@ import json
 from datetime import datetime
 import time
 import plotly.express as px
-from app import get_user_accounts, update_account_balance, save_data, load_accounts, save_accounts, get_collection, update_collection, db
+from database import get_user_accounts, update_account_balance, save_data, load_accounts, save_accounts, get_collection, update_collection, db
 
 # Get data from session state
 if 'logged_in' not in st.session_state or not st.session_state.logged_in:

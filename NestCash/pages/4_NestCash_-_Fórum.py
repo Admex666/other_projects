@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
-from app import load_data, save_data, get_collection, update_collection, db
+from database import load_data, save_data, get_collection, update_collection, db
 
 # Get data from session state
 if 'logged_in' not in st.session_state or not st.session_state.logged_in:
