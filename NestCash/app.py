@@ -18,7 +18,13 @@ from database import (get_mongo_client, load_data, load_accounts,
 
 #%% Execution
 if __name__ == "__main__":
-# Initialize session state
+    st.set_page_config(
+        page_title="Főmenü",  # Böngészőlapon megjelenő cím
+        page_icon="",         # Opcionális ikon (pl. emoji vagy fájl)
+        layout="wide"                 # Opcionális elrendezés
+    )
+
+    # Initialize session state
     if 'logged_in' not in st.session_state:
         st.session_state.logged_in = False
         st.session_state.current_user = None

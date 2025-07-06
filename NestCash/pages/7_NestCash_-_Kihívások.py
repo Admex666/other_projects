@@ -1,5 +1,9 @@
 import streamlit as st
 
+if 'logged_in' not in st.session_state or not st.session_state.logged_in:
+    st.warning("Kérjük, először jelentkezzen be!")
+    st.stop()
+
 current_user = st.session_state.user_id
 username = st.session_state.username
 df = st.session_state.df
