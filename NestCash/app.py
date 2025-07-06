@@ -18,7 +18,7 @@ from database import (get_mongo_client, load_data, load_accounts,
 
 #%% Execution
 if __name__ == "__main__":
-#%% Initialize session state
+# Initialize session state
     if 'logged_in' not in st.session_state:
         st.session_state.logged_in = False
         st.session_state.current_user = None

@@ -459,3 +459,14 @@ def get_habit_suggestions(user_id):
     except Exception as e:
         print(f"Hiba a javaslatok generálásában: {e}")
         return []
+    
+def format_accounts(user_accounts):
+    """Formázza a számlákat 'főszámla/alszámla' formátumba"""
+    formatted = []
+    for foszamla, alszamlak in user_accounts.items():
+        if alszamlak:
+            for alszamla in alszamlak.keys():
+                formatted.append(f"{foszamla}/{alszamla}")
+        else:
+            formatted.append(f"{foszamla}/")  # Ha nincs alszámla
+    return formatted
