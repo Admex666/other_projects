@@ -40,6 +40,7 @@ jelentés = elemzo.generate_comprehensive_report(current_user)
 ml_insight = MLinsight(df, current_user)
 honapok = len(user_df.honap.unique())
 
+
 # 1. ÁTTEKINTŰ IRÁNYTŰ
 with st.expander("🎯 Pénzügyi Egészség - Gyorsjelentés", expanded=True):
     st.metric("📅 Időszak", f"{eredmenyek['time_period']['start']} - {eredmenyek['time_period']['end']}")
@@ -110,6 +111,111 @@ with st.expander("🔄 Cashflow Elemzés"):
         st.line_chart(pd.DataFrame.from_dict(eredmenyek['cashflow']['monthly_flow'], 
                      orient='index', columns=['Havi nettó']))
         st.write(f"**Trend:** {eredmenyek['cashflow']['trend_msg']}")
+        
+with st.expander("📅 Havi korlátok haladása", expanded=True):
+    from database import calculate_monthly_progress
+    from datetime import datetime
+    
+    current_month = datetime.now().strftime("%Y-%m")
+    progress_data = calculate_monthly_progress(current_user, current_month)
+    
+    if progress_data:
+        # Kategóriánként megjelenítés
+        for category, data in progress_data.items():
+            with st.container():
+                st.write(f"### {category.capitalize()}")
+                
+                # Színkódolás a haladás alapján
+                if data["limit_type"] == "maximum":
+                    # Kiadási korlát
+                    if data["current_amount"] > data["limit_amount"]:
+                        status_color = "🔴"
+                        status_text = "Túllépve"
+                    elif data["current_amount"] > data["limit_amount"] * 0.8:
+                        status_color = "🟡"
+                        status_text = "Közel a korláthoz"
+                    else:
+                        status_color = "🟢"
+                        status_text = "Rendben"
+                else:
+                    # Bevételi minimum
+                    if data["current_amount"] < data["limit_amount"]:
+                        status_color = "🔴"
+                        status_text = "Alatta"
+                    elif data["current_amount"] < data["limit_amount"] * 1.2:
+                        status_color = "🟡"
+                        status_text = "Közel a célhoz"
+                    else:
+                        status_color = "🟢"
+                        status_text = "Cél elérve"
+                
+                # Metrikák megjelenítése
+                col1, col2, col3, col4 = st.columns(4)
+                
+                col1.metric(
+                    f"{status_color} Jelenlegi", 
+                    f"{data['current_amount']:,.0f} Ft",
+                    f"{data['progress_percentage']:.1f}%"
+                )
+                
+                col2.metric(
+                    "Havi korlát/cél", 
+                    f"{data['limit_amount']:,.0f} Ft",
+                    f"{data['limit_type']}"
+                )
+                
+                if data["limit_type"] == "maximum":
+                    col3.metric(
+                        "Még elkölthető", 
+                        f"{max(0, data['remaining']):,.0f} Ft",
+                        f"{status_text}"
+                    )
+                else:
+                    col3.metric(
+                        "Még szükséges", 
+                        f"{max(0, -data['remaining']):,.0f} Ft",
+                        f"{status_text}"
+                    )
+                
+                # Napi elemzés
+                daily_status = "🔴⬆️ Túl gyors" if data["daily_difference"] > 0 else "🟢⬇ Alacsony"
+                if abs(data["daily_difference"]) < data["limit_amount"] * 0.1:
+                    daily_status = "➡️ Ideális"
+                
+                col4.metric(
+                    "Napi átlagos tempó", 
+                    f"{abs(data['daily_difference']):,.0f} Ft",
+                    daily_status
+                )
+                
+                # Progress bar
+                progress_value = min(data["progress_percentage"] / 100, 1.0)
+                if data["limit_type"] == "maximum":
+                    st.progress(progress_value, 
+                              text=f"Felhasználva: {data['current_amount']:,.0f} Ft / {data['limit_amount']:,.0f} Ft")
+                else:
+                    st.progress(progress_value, 
+                              text=f"Teljesítve: {data['current_amount']:,.0f} Ft / {data['limit_amount']:,.0f} Ft")
+                
+                # Részletes napi elemzés
+                with st.expander(f"Részletes napi elemzés - {category}"):
+                    st.write(f"**Ideális összeg:** {data['daily_ideal']:,.0f} Ft")
+                    st.write(f"**Eltérés az ideálistól:** {data['daily_difference']:+,.0f} Ft")
+                    
+                    if data["limit_type"] == "maximum":
+                        if data["daily_difference"] > 0:
+                            st.warning(f"🚨 Túllépted az átlagos költési tempót! {data['daily_difference']:,.0f} Ft-tal több, mint az ideális napi összeg.")
+                        else:
+                            st.success(f"👍 Jó tempó! {abs(data['daily_difference']):,.0f} Ft-tal kevesebb, mint az ideális napi összeg.")
+                    else:
+                        if data["daily_difference"] > 0:
+                            st.warning(f"🚨 Lassú tempó! {data['daily_difference']:,.0f} Ft-tal kevesebb, mint az ideális napi összeg.")
+                        else:
+                            st.success(f"👍 Jó tempó! {abs(data['daily_difference']):,.0f} Ft-tal több, mint az ideális napi összeg.")
+                
+                st.divider()
+    else:
+        st.info("Nincsenek beállított havi korlátok. Állíts be korlátokat a Tranzakciók oldalon!")
 
 # 3. MEGTAKARÍTÁS & BEFEKTETÉS
 with st.expander("🚀 Jövőtervezés"):

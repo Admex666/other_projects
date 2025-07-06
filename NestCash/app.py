@@ -104,6 +104,13 @@ if __name__ == "__main__":
         st.session_state.user_id = db.users.find_one({"username": username})['user_id']
         current_user = st.session_state.user_id
         st.success(f"👤 Bejelentkezve mint: {username} (ID: {current_user})")
+        if st.button("Kijelentkezés", key="logout_btn"):
+            st.session_state.logged_in = False
+            st.session_state.current_user = None
+            st.session_state.user_id = None
+            st.session_state.username = None
+            st.success("Sikeresen kijelentkeztél!")
+            st.rerun()
         st.header(f"Üdvözlünk, {username}!")
         
         # Show user metrics
@@ -129,10 +136,23 @@ if __name__ == "__main__":
         cols[1].metric("📈 Befektetések", f"{befektetes:,.0f}Ft")
         cols[2].metric("🏦 Megtakarítások", f"{megtakaritas:,.0f}Ft")
         
-        if st.button("Kijelentkezés", key="logout_btn"):
-            st.session_state.logged_in = False
-            st.session_state.current_user = None
-            st.session_state.user_id = None
-            st.session_state.username = None
-            st.success("Sikeresen kijelentkeztél!")
-            st.rerun()
+        
+            
+st.header("")
+st.header("👤 Profilod")
+
+st.write("### Kitűzők")
+st.write("#### (fejlesztés alatt...)")
+st.header("")
+
+st.write("### Ismerőseid")
+st.write("#### (fejlesztés alatt...)")
+st.header("")
+
+st.write("### Bejegyzéseid")
+st.write("#### (fejlesztés alatt...)")
+st.header("")
+
+st.write("### Kihívásaid")
+st.write("#### (fejlesztés alatt...)")
+st.header("")

@@ -179,12 +179,6 @@ cols[2].metric("🏦 Megtakarítások", f"{megtakaritas:,.0f}Ft")
 st.header("")
 st.header("🔔 Értesítési Központ")
 
-# Teszt adatok gomb (fejlesztési célra)
-if st.button("🧪 Teszt értesítések létrehozása"):
-    create_test_notifications()
-    st.success("Teszt értesítések létrehozva!")
-    st.rerun()
-
 # Statisztikák betöltése
 stats = get_notification_stats()
 

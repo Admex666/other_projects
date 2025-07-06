@@ -1,8 +1,10 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime, timedelta
-from database import load_data, save_data, get_collection, update_collection, db
 import time
+from bson import ObjectId
+from database import load_data, save_data, get_collection, update_collection, db
+
 
 # Get data from session state
 if 'logged_in' not in st.session_state or not st.session_state.logged_in:
@@ -20,34 +22,14 @@ user_df = df[df["user_id"] == current_user]
 def load_forum_posts():
     posts = list(db.forum_posts.find({}))
     return pd.DataFrame(posts) if posts else pd.DataFrame(columns=[
-        "_id", "post_id", "user_id", "username", "timestamp", 
+        "post_id", "user_id", "username", "timestamp", 
         "title", "content", "category", "privacy_level", "like_count", "comment_count"
     ])
 
 def save_forum_posts(posts_df):
-    # First delete all existing posts
     db.forum_posts.delete_many({})
-    
     if not posts_df.empty:
-        # Ensure we have proper _id values
-        if '_id' not in posts_df.columns:
-            posts_df['_id'] = posts_df['post_id']
-        
-        # Clean the data - remove rows with NaN _id or post_id
-        posts_df = posts_df.dropna(subset=['_id', 'post_id'])
-        
-        # Convert to records and insert one by one
-        records = posts_df.to_dict("records")
-        for record in records:
-            try:
-                # Ensure _id exists and is valid
-                if '_id' not in record or pd.isna(record['_id']):
-                    record['_id'] = record.get('post_id', str(int(time.time() * 1000)))
-                
-                db.forum_posts.insert_one(record)
-            except Exception as e:
-                st.error(f"Hiba történt a poszt mentésekor: {str(e)}")
-                continue
+        db.forum_posts.insert_many(posts_df.to_dict("records"))
 
 # Hozzászólások kezelése
 def load_comments():
@@ -60,10 +42,8 @@ def load_comments():
 def save_comments(comments_df):
     db.forum_comments.delete_many({})
     if not comments_df.empty:
-        # NaN értékek kezelése
-        comments_df = comments_df.dropna(subset=['comment_id', 'post_id', 'user_id'])
         db.forum_comments.insert_many(comments_df.to_dict("records"))
-        
+
 # Like-ok kezelése
 def load_likes():
     likes = list(db.forum_likes.find({}))
@@ -100,27 +80,7 @@ def load_notifications():
 def save_notifications(notifications_df):
     db.notifications.delete_many({})
     if not notifications_df.empty:
-        # NaN értékek eltávolítása és típuskonverziók
-        notifications_df = notifications_df.dropna(subset=['user_id', 'notification_id'])
-        
-        # Ellenőrizzük, hogy van-e _id oszlop, ha nincs, hozzuk létre
-        if '_id' not in notifications_df.columns:
-            notifications_df['_id'] = notifications_df['notification_id']
-            
-        # Numerikus oszlopok tisztítása
-        notifications_df['user_id'] = notifications_df['user_id'].astype(int)
-        if 'from_user' in notifications_df.columns:
-            notifications_df['from_user'] = notifications_df['from_user'].fillna(0).astype(int)
-        
-        # NaN _id értékek eltávolítása
-        notifications_df = notifications_df.dropna(subset=['_id'])
-        
-        # Rekordok konvertálása és beszúrás
-        records = notifications_df.to_dict("records")
-        try:
-            db.notifications.insert_many(records)
-        except Exception as e:
-            st.error(f"Hiba történt az értesítések mentésekor: {str(e)}")
+        db.notifications.insert_many(notifications_df.to_dict("records"))
 
 # ===== SEGÉDFÜGGVÉNYEK =====
 
@@ -133,20 +93,18 @@ def create_notification(user_id, notification_type, message, related_id=None, fr
         return  # Ne hozz létre értesítést, ha valamelyik user_id NaN
     
     new_notification = {
-        "_id": str(int(time.time() * 1000)),  # Explicit _id beállítás
         "notification_id": str(int(time.time() * 1000)),
         "user_id": int(user_id),  # Explicit int konverzió
         "type": notification_type,
         "message": message,
         "related_id": related_id,
-        "from_user": int(from_user) if from_user is not None else None,  # Explicit int konverzió
+        "from_user": int(from_user) if from_user is not None else None,
         "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M"),
         "read": False,
         "action_url": None
     }
     
-    notifications_df = pd.concat([notifications_df, pd.DataFrame([new_notification])], ignore_index=True)
-    save_notifications(notifications_df)
+    db.notifications.insert_one(new_notification)
 
 def get_user_friends(user_id):
     """Felhasználó barátainak lekérése"""
@@ -179,7 +137,7 @@ def toggle_like(post_id, user_id, username):
     posts_df = load_forum_posts()
     
     existing_like = likes_df[
-        (likes_df["post_id"] == post_id) & 
+        (likes_df["post_id"] == str(post_id)) & 
         (likes_df["user_id"] == user_id)
     ]
     
@@ -187,26 +145,34 @@ def toggle_like(post_id, user_id, username):
         # Új like
         new_like = {
             "like_id": str(int(time.time() * 1000)),
-            "post_id": post_id,
+            "post_id": str(post_id),
             "user_id": user_id,
             "username": username,
             "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M")
         }
-        likes_df = pd.concat([likes_df, pd.DataFrame([new_like])], ignore_index=True)
         
-        # Értesítés létrehozása - csak ha érvényes post_owner
-        try:
-            post_owner = posts_df[posts_df["post_id"] == post_id]["user_id"].iloc[0]
-            if not pd.isna(post_owner) and post_owner != user_id:
-                create_notification(
-                    int(post_owner),
-                    "like", 
-                    f"{username} kedvelte a bejegyzésedet", 
-                    post_id, 
-                    int(user_id)
-                )
-        except Exception as e:
-            st.error(f"Hiba történt az értesítés létrehozásakor: {str(e)}")
+        db.forum_likes.insert_one(new_like)
+        
+       # Értesítés létrehozása
+        post_owner = posts_df[posts_df["post_id"] == post_id]["user_id"].iloc[0]
+        # Ellenőrizni, hogy a post_owner nem NaN
+        if not pd.isna(post_owner) and post_owner != user_id:
+            create_notification(
+                int(post_owner),
+                "like", 
+                f"{username} kedvelte a bejegyzésedet", 
+                post_id, 
+                int(user_id)
+            )
+    else:
+        # Like törlése
+        db.forum_likes.delete_one({'_id': existing_like['_id'].iloc[0]})
+       
+    # Post like count frissítése
+    likes_df = load_likes()
+    post_likes = len(likes_df[likes_df["post_id"] == post_id])
+    posts_df.loc[posts_df["post_id"] == post_id, "like_count"] = post_likes
+    save_forum_posts(posts_df)
 
 # ===== MAIN APP =====
 
@@ -250,10 +216,11 @@ tab1, tab2, tab3, tab4 = st.tabs([
 ])
 
 # ===== FŐOLDAL TAB =====
+likes_df = load_likes()
 with tab1:
     # Új bejegyzés létrehozása
     with st.expander("➕ Új bejegyzés létrehozása", expanded=False):
-       with st.form("new_post_form"):
+        with st.form("new_post_form"):
             col1, col2 = st.columns(2)
             title = col1.text_input("Cím*")
             category = col2.selectbox("Kategória*", [
@@ -286,13 +253,10 @@ with tab1:
                         "comment_count": 0
                     }
                     
-                    # Directly insert the new post instead of concat+save
-                    try:
-                        db.forum_posts.insert_one(new_post)
-                        st.success("Bejegyzés sikeresen közzétéve!")
-                        st.rerun()
-                    except Exception as e:
-                        st.error(f"Hiba történt a poszt közzétételekor: {str(e)}")
+                    db.forum_posts.insert_one(new_post)
+                    
+                    st.success("Bejegyzés sikeresen közzétéve!")
+                    st.rerun()
 
     # Feed testreszabása
     col1, col2, col3 = st.columns(3)
@@ -399,24 +363,20 @@ with tab1:
                                     "content": new_comment
                                 }
                                 
-                                try:
-                                    db.forum_comments.insert_one(new_comment_row)
-                                    # Értesítés a poszt szerzőjének
-                                    if post["user_id"] != current_user:
-                                        create_notification(
-                                            post["user_id"], 
-                                            "comment", 
-                                            f"{username} hozzászólt a bejegyzésedhez", 
-                                            post["post_id"], 
-                                            current_user
-                                        )
-                                    
-                                    st.success("Hozzászólás sikeresen elküldve!")
-                                    st.rerun()
-                                except Exception as e:
-                                    st.error(f"Hiba történt a poszt közzétételekor: {str(e)}")
+                                db.forum_comments.insert_one(new_comment_row)
                                 
+                                # Értesítés a poszt szerzőjének
+                                if post["user_id"] != current_user:
+                                    create_notification(
+                                        post["user_id"], 
+                                        "comment", 
+                                        f"{username} hozzászólt a bejegyzésedhez", 
+                                        post["post_id"], 
+                                        current_user
+                                    )
                                 
+                                st.success("Hozzászólás elküldve!")
+                                st.rerun()
                     
                     st.divider()
     else:

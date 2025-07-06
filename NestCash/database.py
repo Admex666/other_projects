@@ -470,3 +470,75 @@ def format_accounts(user_accounts):
         else:
             formatted.append(f"{foszamla}/")  # Ha nincs alszámla
     return formatted
+
+def get_user_monthly_limits(user_id):
+    """Felhasználó havi korlátainak lekérése"""
+    limits_data = db.monthly_limits.find_one({"user_id": user_id})
+    return limits_data.get("limits", {}) if limits_data else {}
+
+def save_user_monthly_limits(user_id, limits):
+    """Felhasználó havi korlátainak mentése"""
+    db.monthly_limits.update_one(
+        {"user_id": user_id},
+        {"$set": {"limits": limits}},
+        upsert=True
+    )
+
+def calculate_monthly_progress(user_id, current_month):
+    """Havi haladás számítása kategóriánként"""
+    from datetime import datetime
+    import calendar
+    
+    # Aktuális hónap adatainak lekérése
+    current_transactions = db.transactions.find({
+        "user_id": user_id,
+        "ho": current_month
+    })
+    
+    # Kategóriánkénti összesítés
+    category_totals = {}
+    for transaction in current_transactions:
+        category = transaction.get("kategoria", "")
+        amount = transaction.get("osszeg", 0)
+        
+        if category not in category_totals:
+            category_totals[category] = 0
+        category_totals[category] += amount
+    
+    # Havi korlátok lekérése
+    limits = get_user_monthly_limits(user_id)
+    
+    # Haladás számítása
+    progress = {}
+    current_date = datetime.now()
+    days_in_month = calendar.monthrange(current_date.year, current_date.month)[1]
+    current_day = current_date.day
+    
+    for category, limit_data in limits.items():
+        limit_type = limit_data.get("type", "maximum")  # maximum vagy minimum
+        limit_amount = limit_data.get("amount", 0)
+        
+        current_spent = abs(category_totals.get(category, 0))
+        
+        if limit_type == "maximum":
+            # Kiadási korlát esetén
+            remaining = limit_amount - current_spent
+            daily_ideal = (limit_amount / days_in_month) * current_day
+            daily_difference = current_spent - daily_ideal
+        else:
+            # Bevételi minimum esetén
+            remaining = current_spent - limit_amount
+            daily_ideal = (limit_amount / days_in_month) * current_day
+            daily_difference = daily_ideal - current_spent
+        
+        progress[category] = {
+            "limit_amount": limit_amount,
+            "current_amount": current_spent,
+            "remaining": remaining,
+            "daily_ideal": daily_ideal,
+            "daily_difference": daily_difference,
+            "progress_percentage": (current_spent / limit_amount * 100) if limit_amount > 0 else 0,
+            "limit_type": limit_type
+        }
+    
+    return progress

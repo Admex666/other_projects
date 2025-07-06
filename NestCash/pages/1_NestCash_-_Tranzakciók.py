@@ -125,11 +125,77 @@ with st.expander("➕ Új tranzakció hozzáadása"):
             
             check_automatic_habits(current_user, new_row)
             
+            # Havi korlát ellenőrzés
+            from database import get_user_monthly_limits, calculate_monthly_progress
+            from datetime import datetime
+            
+            current_month = datetime.now().strftime("%Y-%m")
+            limits = get_user_monthly_limits(current_user)
+            
+            if kategoria in limits:
+                progress = calculate_monthly_progress(current_user, current_month)
+                if kategoria in progress:
+                    limit_data = progress[kategoria]
+                    
+                    if limit_data["limit_type"] == "maximum":
+                        if limit_data["current_amount"] > limit_data["limit_amount"]:
+                            st.warning(f"⚠️ Figyelem! Túllépte a {kategoria} kategória havi korlátját ({limit_data['limit_amount']:,.0f} Ft)!")
+                        elif limit_data["current_amount"] > limit_data["limit_amount"] * 0.8:
+                            st.info(f"ℹ️ Közel a havi korláthoz: {kategoria} ({limit_data['current_amount']:,.0f} / {limit_data['limit_amount']:,.0f} Ft)")
+            
             st.success("Tranzakció sikeresen hozzáadva!")
             st.rerun()
 
 # Tranzakciók listázása és módosítása
 if not user_df.empty:
+    with st.expander("🎯 Havi korlátok beállítása"):
+        from database import get_user_monthly_limits, save_user_monthly_limits
+        
+        st.subheader("Kategóriánkénti havi korlátok")
+        
+        # Meglévő korlátok betöltése
+        current_limits = get_user_monthly_limits(current_user)
+        
+        # Új korlát hozzáadása
+        with st.form("new_limit_form"):
+            st.write("**Új korlát hozzáadása**")
+            col1, col2, col3 = st.columns(3)
+            
+            limit_category = col1.selectbox("Kategória", CATEGORIES, key="limit_category")
+            limit_type = col2.selectbox("Típus", ["maximum", "minimum"], key="limit_type")
+            limit_amount = col3.number_input("Összeg (Ft)", min_value=0, key="limit_amount")
+            
+            if st.form_submit_button("Korlát hozzáadása"):
+                if limit_category not in current_limits:
+                    current_limits[limit_category] = {}
+                
+                current_limits[limit_category] = {
+                    "type": limit_type,
+                    "amount": limit_amount
+                }
+                
+                save_user_monthly_limits(current_user, current_limits)
+                st.success(f"Korlát beállítva: {limit_category} - {limit_type} {limit_amount:,.0f} Ft")
+                st.rerun()
+        
+        # Meglévő korlátok megjelenítése és szerkesztése
+        if current_limits:
+            st.write("**Jelenlegi korlátok:**")
+            for category, limit_data in current_limits.items():
+                col1, col2, col3, col4 = st.columns(4)
+                
+                col1.write(f"**{category}**")
+                col2.write(f"{limit_data['type']}")
+                col3.write(f"{limit_data['amount']:,.0f} Ft")
+                
+                if col4.button("Törlés", key=f"delete_{category}"):
+                    del current_limits[category]
+                    save_user_monthly_limits(current_user, current_limits)
+                    st.success(f"Korlát törölve: {category}")
+                    st.rerun()
+        else:
+            st.info("Nincsenek beállított korlátok. Adj hozzá újat!")
+        
     with st.expander("Tranzakciók módosítása"):
     
         # Tranzakciók listázása dropdown-ban
