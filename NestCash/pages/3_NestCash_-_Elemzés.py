@@ -142,24 +142,22 @@ with st.expander("🎯 Pénzügyi Egészség - Gyorsjelentés", expanded=True):
     
 # 2. BEVÉTELEK & KIADÁSOK
 with st.expander("🔄 Pénzmozgás Elemzés"):
-    tab1, tab2, tab3 = st.tabs(["Bevételek", "Kiadások", "Trendek"])
+    tab1, tab2 = st.tabs(["Bevételek és Kiadások", "Trendek"])
     
     with tab1:
-        col1, col2 = st.columns(2)
-        col1.metric("💰 Átlag havi bevétel", f"{eredmenyek['basic_stats']['user_income']/honapok:,.0f} Ft",
+        st.subheader("Bevételek")
+        st.metric("💰 Átlag havi bevétel", f"{eredmenyek['basic_stats']['user_income']/honapok:,.0f} Ft",
                    f"hasonló profil: {eredmenyek['basic_stats']['benchmark_income']/honapok:,.0f} Ft",
                    delta_color="off")
-        col2.metric("🏆 Jövedelem rangsor", f"Top {eredmenyek['basic_stats']['user_rank_income']:.1f}%")
         
-    with tab2:
         st.subheader("Kiadási szerkezet")
         col1, col2 = st.columns(2)
         col1.metric("🧾 Fix költségek", f"{eredmenyek['spending_patterns']['fixed_costs']/honapok:,.0f} Ft",
-                   f"{eredmenyek['spending_patterns']['fixed_ratio']:.1f}%", 
-                   delta_color="inverse")
+                   f"{eredmenyek['spending_patterns']['fixed_ratio']:.1f}%-a az összesnek", 
+                   delta_color="off")
         col2.metric("🎭 Változó költségek", f"{eredmenyek['spending_patterns']['variable_costs']/honapok:,.0f} Ft",
-                   f"{eredmenyek['spending_patterns']['variable_ratio']:.1f}%",
-                   delta_color="inverse")
+                   f"{eredmenyek['spending_patterns']['variable_ratio']:.1f}%-a az összesnek",
+                   delta_color="off")
         
         st.subheader("Kategóriákra bontva")
         
@@ -193,11 +191,12 @@ with st.expander("🔄 Pénzmozgás Elemzés"):
         
         # Régi progress bar-ok helyett csak a top3 kategória
         st.write("**Legnagyobb kiadási kategóriák:**")
-        for rank in sorted(eredmenyek['category_analysis']['top_category'].keys())[:3]:
-            cat = eredmenyek['category_analysis']['top_category'][rank]
-            st.write(f"{rank}. {cat['name']}: {cat['amount']:,.0f} Ft")
+        with st.container(border=True):
+            for rank in sorted(eredmenyek['category_analysis']['top_category'].keys())[:5]:
+                cat = eredmenyek['category_analysis']['top_category'][rank]
+                st.write(f"{rank}. {cat['name']}: {cat['amount']:,.0f} Ft")
             
-    with tab3:
+    with tab2:
         st.line_chart(pd.DataFrame.from_dict(eredmenyek['cashflow']['monthly_flow'], 
                      orient='index', columns=['Havi nettó']))
         st.write(f"**Trend:** {eredmenyek['cashflow']['trend_msg']}")
@@ -273,8 +272,8 @@ with st.expander("📅 Havi korlátok haladása", expanded=True):
                     daily_status = "➡️ Ideális"
                 
                 col4.metric(
-                    "Napi átlagos tempó", 
-                    f"{abs(data['daily_difference']):,.0f} Ft",
+                    "Eltérés napi átlagos tempótól", 
+                    f"{abs(data['daily_difference']):+,.0f} Ft",
                     daily_status
                 )
                 
@@ -316,15 +315,14 @@ with st.expander("🚀 Jövőtervezés"):
         col1.metric("💎 Megtakarítási ráta", f"{eredmenyek['basic_stats']['user_savings_rate']:.1f}%",
                    f"átlag: {eredmenyek['basic_stats']['benchmark_savings_rate']:.1f}%",
                    delta_color="off")
-        col2.metric("🏅 Megtakarítás rangsor", f"Top {eredmenyek['basic_stats']['user_rank_savings']:.1f}%")
         
         st.subheader("Tartalék elemzés")
         runway = jelentés["cash_flow_elemzes"]['runway'].get('runway_honapok', {})
-        col1, col2, col3 = st.columns(3)
+        col1, col2 = st.columns(2)
         col1.metric("Készpénzfedezet", f"{runway.get('csak_keszpenz', 'N/A')} hónap")
-        col2.metric("Teljes fedezet", f"{runway.get('osszes_asset', 'N/A')} hónap")
-        col3.metric("Ajánlott", "3-6 hónap")
-    
+        col2.metric("Teljes vagyon fedezet", f"{runway.get('osszes_asset', 'N/A')} hónap")
+        st.info("3-6 hónapnyi tartalék ajánlott a hirtelen kiadások fedezésére.")
+        
     with tab2:
         st.subheader("Portfólió állapot")
         col1, col2 = st.columns(2)

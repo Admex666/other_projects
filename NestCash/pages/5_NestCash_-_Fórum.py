@@ -1,3 +1,4 @@
+# pages/5_Fórum.py
 import streamlit as st
 import pandas as pd
 from datetime import datetime, timedelta
@@ -320,7 +321,7 @@ with tab1:
                     # Like gomb
                     with col2:
                         user_liked = not likes_df[
-                            (likes_df["post_id"] == post["post_id"]) & 
+                            (likes_df["post_id"] == str(post["post_id"])) & 
                             (likes_df["user_id"] == current_user)
                         ].empty
                         
@@ -329,6 +330,20 @@ with tab1:
                                    key=f"like_{post['post_id']}"):
                             toggle_like(post["post_id"], current_user, username)
                             st.rerun()
+                    
+                    # Törlés gomb (csak a saját posztoknál jelenik meg)
+                    with col3:
+                        if post['user_id'] == current_user:
+                            if st.button("🗑️", key=f"delete_{post['post_id']}", help="Bejegyzés törlése"):
+                                post_id_to_delete = post["post_id"]
+                                
+                                # Poszt, hozzászólások és like-ok törlése az adatbázisból
+                                db.forum_posts.delete_one({"post_id": post_id_to_delete})
+                                db.forum_comments.delete_many({"post_id": post_id_to_delete})
+                                db.forum_likes.delete_many({"post_id": post_id_to_delete})
+                                
+                                st.success("A bejegyzés és a hozzá tartozó adatok sikeresen törölve!")
+                                st.rerun()
                     
                     # Post content
                     st.markdown(post['content'])
