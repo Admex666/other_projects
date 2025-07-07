@@ -15,7 +15,7 @@ username = st.session_state.username
 df = st.session_state.df
 user_df = df[df["user_id"] == current_user]
 
-# ===== ADATBETÖLTŐ FÜGGVÉNYEK =====
+#%% ===== ADATBETÖLTŐ FÜGGVÉNYEK =====
 
 def load_notifications():
     notifications = list(db.notifications.find({}))
@@ -153,7 +153,7 @@ def create_test_notifications():
     
     save_notifications(notifications_df)
 
-# ===== MAIN APP =====
+#%% ===== MAIN APP =====
 
 # Fejléc
 st.title("💰 NestCash prototípus")
@@ -366,11 +366,11 @@ if not user_notifications.empty:
     if not user_notifications_with_date.empty:
         # Utolsó 7 nap
         last_week = [(datetime.now().date() - timedelta(days=i)) for i in range(7)]
-        daily_counts = []
         
+        daily_counts = []
         for date in reversed(last_week):
             count = len(user_notifications_with_date[user_notifications_with_date['date'] == date])
-            daily_counts.append({"Dátum": date.strftime("%m-%d"), "Értesítések": count})
+            daily_counts.append({"Dátum": date.strftime("%Y-%m-%d"), "Értesítések": count})
         
         if daily_counts:
             fig = px.bar(daily_counts, x="Dátum", y="Értesítések", 

@@ -269,7 +269,7 @@ with tab1:
             ["Összes bejegyzés", "Csak követettek", "Saját bejegyzések"])
     with col3:
         sort_order = st.radio("Rendezés", 
-            ["Legújabb elől", "Legnépszerűbb", "Legrégebbi elől"])
+            ["Legújabb előre", "Legnépszerűbb", "Legrégebbi előre"])
 
     # Bejegyzések betöltése és szűrése
     posts_df = load_forum_posts()
@@ -297,7 +297,7 @@ with tab1:
             filtered_posts = filtered_posts[filtered_posts["user_id"] == current_user]
         
         # Rendezés
-        if sort_order == "Legújabb elől":
+        if sort_order == "Legújabb előre":
             filtered_posts = filtered_posts.sort_values("timestamp", ascending=False)
         elif sort_order == "Legnépszerűbb":
             filtered_posts = filtered_posts.sort_values("like_count", ascending=False)

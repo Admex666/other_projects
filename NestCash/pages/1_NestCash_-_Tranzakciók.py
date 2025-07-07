@@ -22,8 +22,7 @@ CATEGORIES = [
 ]
 
 TYPES = [
-    'bevetel', 'alap', 'impulzus', 'vagy', 
-    'megtakaritas', 'befektetes_hozam'
+    'bevetel', 'kiadas'
 ]
 
 st.title("💰 NestCash prototípus")
@@ -56,24 +55,29 @@ with st.expander("➕ Új tranzakció hozzáadása"):
         
         col3, col4 = st.columns(2)
         kategoria = col3.selectbox("Kategória", CATEGORIES)
-        tipus = col4.selectbox("Típus", TYPES)
+        #tipus = col4.selectbox("Típus", TYPES)
         
-        bev_kiad_tipus = st.selectbox("Bevétel/Kiadás típus", [
-            "bevetel", "szukseglet", "luxus"
-        ])
+        bev_kiad_tipus = col4.selectbox("Típus", options=[
+            {"name": "Bevétel", "value": "bevetel"}, 
+            {"name": "Kiadás (alapvető)", "value": "szukseglet"}, 
+            {"name": "Kiadás (nem alapvető)", "value": "luxus"}
+        ],
+            format_func=lambda x: x["name"])["value"]
         
-        foszamla = st.selectbox("Főszámla", ["likvid", "befektetes", "megtakaritas"])
         user_accounts = get_user_accounts(current_user)
-        alszamlak = list(user_accounts.get(foszamla, {}).keys())
+        szamla_lista = [f'{foszamla}/{alszamla}' for foszamla in user_accounts.keys() for alszamla in user_accounts[foszamla].keys()]
         
-        if not alszamlak:
-            st.warning(f"Nincs alszámla a {foszamla} főszámlához. Kérjük, hozzon létre egyet a Számlák oldalon!")
-            alszamla = st.selectbox("Alszámla", ["foosszeg"])  # Alapértelmezett
-        else:
-            alszamla = st.selectbox("Alszámla", alszamlak)
+        szamla = st.selectbox("Számla", szamla_lista)
+        
+        foszamla, alszamla = szamla.split('/')
         
         leiras = st.text_input("Leírás")
-        platform = st.selectbox("Platform", ["utalas", "készpénz", "kártya", "web"])
+        platform = st.selectbox("Platform", options=[
+            {"name": "Utalás","value": "utalas"}, 
+            {"name": "Készpénz", "value": "készpénz"}, 
+            {"name": "Kártya", "value": "kártya"}
+            ],
+            format_func=lambda x: x['name'])["value"]
         
         submitted = st.form_submit_button("Hozzáadás")
         
@@ -88,7 +92,7 @@ with st.expander("➕ Új tranzakció hozzáadása"):
                 "kategoria": kategoria,
                 "user_id": current_user,
                 "profil": st.session_state.get('profil', 'alap'),
-                "tipus": tipus,
+                "tipus": None,
                 "leiras": leiras,
                 "forras": "user",
                 "ismetlodo": False,

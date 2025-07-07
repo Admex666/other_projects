@@ -5,6 +5,96 @@ from PenzugyiElemzo import PenzugyiElemzo
 from UserFinancialEDA import UserFinancialEDA, run_user_eda
 from MLinsight import MLinsight
 import plotly.express as px
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+import numpy as np
+from datetime import datetime, timedelta
+
+def run_whatif_analysis(current_user, df, scenarios):
+    """
+    What-If elemzés futtatása különböző forgatókönyvekkel
+    """
+    results = {}
+    user_df = df[df["user_id"] == current_user]
+    
+    # Jelenlegi alapadatok
+    current_monthly_income = user_df[user_df['bev_kiad_tipus'] == 'bevetel']['osszeg'].sum() / len(user_df['honap'].unique())
+    current_monthly_expenses = abs(user_df[user_df['bev_kiad_tipus'] != 'bevetel']['osszeg'].sum()) / len(user_df['honap'].unique())
+    current_savings_rate = (current_monthly_income - current_monthly_expenses) / current_monthly_income if current_monthly_income > 0 else 0
+    
+    # Jelenlegi vagyonelemek
+    current_liquid = user_df['likvid'].iloc[-1] if not user_df.empty else 0
+    current_investments = user_df['befektetes'].iloc[-1] if not user_df.empty else 0
+    current_savings = user_df['megtakaritas'].iloc[-1] if not user_df.empty else 0
+    
+    for scenario_name, scenario in scenarios.items():
+        # Módosított paraméterek
+        new_income = current_monthly_income * (1 + scenario['income_change'])
+        new_expenses = current_monthly_expenses * (1 + scenario['expense_change'])
+        new_monthly_savings = (new_income - new_expenses) + scenario.get('extra_monthly_savings', 0)
+        
+        # Idősorok generálása
+        months = scenario['months']
+        timeline = []
+        liquid_timeline = []
+        investment_timeline = []
+        total_timeline = []
+        
+        liquid = current_liquid
+        investments = current_investments
+        savings = current_savings
+        
+        investment_return = scenario.get('investment_return', 0.07) / 12  # havi hozam
+        
+        for month in range(months):
+            timeline.append(month)
+            
+            # Havi megtakarítás allokálása
+            if new_monthly_savings > 0:
+                liquid += new_monthly_savings * scenario.get('liquid_allocation', 0.3)
+                investments += new_monthly_savings * scenario.get('investment_allocation', 0.4)
+                savings += new_monthly_savings * scenario.get('savings_allocation', 0.3)
+            
+            # Befektetések hozama
+            investments *= (1 + investment_return)
+            
+            liquid_timeline.append(liquid)
+            investment_timeline.append(investments)
+            total_timeline.append(liquid + investments + savings)
+        
+        # Konfidencia intervallumok (Monte Carlo szimuláció egyszerűsített változata)
+        volatility = scenario.get('volatility', 0.1)
+        confidence_intervals = []
+        
+        for month in range(months):
+            base_value = total_timeline[month]
+            std_dev = base_value * volatility * np.sqrt(month / 12)  # idővel növekvő volatilitás
+            
+            # 95% konfidencia intervallum
+            lower_bound = base_value - 1.96 * std_dev
+            upper_bound = base_value + 1.96 * std_dev
+            
+            confidence_intervals.append({
+                'month': month,
+                'lower': max(0, lower_bound),  # nem lehet negatív
+                'upper': upper_bound,
+                'base': base_value
+            })
+        
+        results[scenario_name] = {
+            'timeline': timeline,
+            'liquid': liquid_timeline,
+            'investments': investment_timeline,
+            'total': total_timeline,
+            'confidence_intervals': confidence_intervals,
+            'final_total': total_timeline[-1],
+            'monthly_savings': new_monthly_savings,
+            'new_income': new_income,
+            'new_expenses': new_expenses
+        }
+    
+    return results
+
 
 # --- INIT ---
 if 'logged_in' not in st.session_state or not st.session_state.logged_in:
@@ -51,7 +141,7 @@ with st.expander("🎯 Pénzügyi Egészség - Gyorsjelentés", expanded=True):
     st.metric("📊 Állapot", jelentés["executive_summary"].get('altalanos_ertekeles', 'N/A'))
     
 # 2. BEVÉTELEK & KIADÁSOK
-with st.expander("🔄 Cashflow Elemzés"):
+with st.expander("🔄 Pénzmozgás Elemzés"):
     tab1, tab2, tab3 = st.tabs(["Bevételek", "Kiadások", "Trendek"])
     
     with tab1:
@@ -253,7 +343,7 @@ with st.expander("🚀 Jövőtervezés"):
                 st.metric(asset, f"{pct:.0f}%", 
                           delta=f"{pct - jelentés['befektetesi_elemzes']['portfolio_suggestions']['jelenlegi_allokaciok'].get(asset,0):+.0f}%pont")
 
-# 4. GÉPI TANULÁS ÉLMEZÉNYEK
+# 4. GÉPI TANULÁS ELEMZÉSEK
 with st.expander("🤖 Intelligens elemzések"):
     tab1, tab2 = st.tabs(["Kockázat", "Trendek"])
     
@@ -318,3 +408,292 @@ if st.session_state.get('show_simulator', False):
             st.metric("Összes megtakarítás", f"{total:,.0f} Ft")
             st.metric("Kamatos kamattal", f"{compounded:,.0f} Ft", 
                      delta=f"+{(compounded-total):,.0f} Ft")
+
+# 6. WHAT-IF ELEMZÉS
+with st.expander("🔮 What-If Elemzés", expanded=True):
+    st.subheader("Tervezd meg a jövődet - különböző forgatókönyvekkel!")
+    
+    # Első lépés: Forgatókönyv választása
+    st.write("#### 🎯 Forgatókönyv választása")
+    
+    scenarios_quick = {
+        "Konzervatív": {"income": 0, "expense": 0, "extra": 20000, "return": 0.04},
+        "Kiegyensúlyozott": {"income": 0.05, "expense": 0, "extra": 50000, "return": 0.07},
+        "Agresszív": {"income": 0.1, "expense": -0.1, "extra": 100000, "return": 0.12},
+        "Krízis": {"income": -0.2, "expense": 0.1, "extra": 0, "return": 0.02}
+    }
+    
+    selected_scenario = st.selectbox("Válassz forgatókönyvet", 
+                                   ["Egyéni beállítás"] + list(scenarios_quick.keys()))
+    
+    # Forgatókönyv leírása
+    scenario_descriptions = {
+        "Konzervatív": "Biztonságos megközelítés alacsony kockázattal és stabil hozammal",
+        "Kiegyensúlyozott": "Mérsékelt kockázat és közepes hozamelvárás",
+        "Agresszív": "Magas kockázat, magas hozamelvárás",
+        "Krízis": "Gazdasági nehézségek modellezése",
+        "Egyéni beállítás": "Saját paraméterek megadása"
+    }
+    
+    st.info(f"**{selected_scenario}:** {scenario_descriptions[selected_scenario]}")
+    
+    # Forgatókönyv beállítások
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.write("#### 📊 Paraméterek")
+        
+        # Alapbeállítások
+        analysis_months = st.slider("Elemzési időszak (hónap)", 3, 60, 12)
+        
+        # Ha előre definiált forgatókönyv van kiválasztva, akkor azok az értékek
+        if selected_scenario != "Egyéni beállítás":
+            scenario = scenarios_quick[selected_scenario]
+            default_income = int(scenario["income"] * 100)
+            default_expense = int(scenario["expense"] * 100)
+            default_extra = scenario["extra"]
+            default_return = scenario["return"] * 100
+            
+            # Csak olvasható megjelenítés
+            st.info(f"**{selected_scenario} forgatókönyv alkalmazva:**")
+            st.write(f"- Jövedelem változás: {default_income}%")
+            st.write(f"- Kiadás változás: {default_expense}%")
+            st.write(f"- Extra megtakarítás: {default_extra:,} Ft")
+            st.write(f"- Várható hozam: {default_return:.1f}%")
+            
+            # Értékek beállítása
+            income_change = scenario["income"]
+            expense_change = scenario["expense"]
+            extra_savings = scenario["extra"]
+            investment_return = scenario["return"]
+            
+        else:
+            # Egyéni beállításoknál a sliderek aktívak
+            st.write("Állítsd be a paramétereket:")
+            
+            # Jövedelem változás
+            income_change = st.slider("Jövedelem változás (%)", -50, 100, 0) / 100
+            
+            # Kiadás változás
+            expense_change = st.slider("Kiadások változása (%)", -50, 50, 0) / 100
+            
+            # Extra megtakarítás
+            extra_savings = st.number_input("Extra havi megtakarítás (Ft)", 0, 500000, 0)
+            
+            # Befektetési hozam
+            investment_return = st.slider("Várható éves hozam (%)", 0.0, 20.0, 7.0) / 100
+        
+        # Volatilitás mindig beállítható
+        volatility = st.slider("Piaci ingadozás (%)", 0.0, 30.0, 10.0) / 100
+    
+    with col2:
+        st.write("#### 💰 Allokáció")
+        
+        # Megtakarítások allokálása
+        liquid_alloc = st.slider("Likvid eszközök (%)", 0, 100, 30) / 100
+        investment_alloc = st.slider("Befektetések (%)", 0, 100, 40) / 100
+        savings_alloc = st.slider("Megtakarítások (%)", 0, 100, 30) / 100
+        
+        # Ellenőrzés
+        total_alloc = liquid_alloc + investment_alloc + savings_alloc
+        if abs(total_alloc - 1.0) > 0.01:
+            st.warning(f"⚠️ Az allokáció összege {total_alloc:.0%} (nem 100%)")
+    
+    # Forgatókönyv összeállítása
+    scenario_config = {
+        "Választott forgatókönyv": {
+            'income_change': income_change,
+            'expense_change': expense_change,
+            'extra_monthly_savings': extra_savings,
+            'investment_return': investment_return,
+            'volatility': volatility,
+            'months': analysis_months,
+            'liquid_allocation': liquid_alloc,
+            'investment_allocation': investment_alloc,
+            'savings_allocation': savings_alloc
+        }
+    }
+    
+    # Összehasonlítás a jelenlegi helyzettel
+    scenario_config["Jelenlegi trend"] = {
+        'income_change': 0,
+        'expense_change': 0,
+        'extra_monthly_savings': 0,
+        'investment_return': 0.03,  # alacsony alap hozam
+        'volatility': 0.05,
+        'months': analysis_months,
+        'liquid_allocation': 0.5,
+        'investment_allocation': 0.3,
+        'savings_allocation': 0.2
+    }
+    
+    if st.button("🚀 Elemzés futtatása"):
+        # What-If elemzés futtatása
+        results = run_whatif_analysis(current_user, df, scenario_config)
+        
+        # Eredmények megjelenítése
+        st.subheader("📈 Eredmények")
+        
+        # Összefoglaló metrikák
+        col1, col2, col3 = st.columns(3)
+        
+        chosen_result = results["Választott forgatókönyv"]
+        current_result = results["Jelenlegi trend"]
+        
+        col1.metric(
+            "Várható vagyon", 
+            f"{chosen_result['final_total']:,.0f} Ft",
+            f"{chosen_result['final_total'] - current_result['final_total']:+,.0f} Ft"
+        )
+        
+        col2.metric(
+            "Havi megtakarítás",
+            f"{chosen_result['monthly_savings']:,.0f} Ft",
+            f"{chosen_result['monthly_savings'] - current_result['monthly_savings']:+,.0f} Ft"
+        )
+        
+        col3.metric(
+            "Megtakarítási ráta",
+            f"{chosen_result['monthly_savings']/chosen_result['new_income']:.1%}" if chosen_result['new_income'] > 0 else "N/A",
+            f"{(chosen_result['monthly_savings']/chosen_result['new_income'] - current_result['monthly_savings']/current_result['new_income']):.1%}pont" if chosen_result['new_income'] > 0 and current_result['new_income'] > 0 else ""
+        )
+        
+        # Interaktív grafikon
+        fig = make_subplots(
+            rows=2, cols=2,
+            subplot_titles=('Összesített vagyon alakulása', 'Vagyonelemek összetétele', 
+                          'Becslési tartományok', 'Havi cash flow'),
+            specs=[[{"secondary_y": False}, {"type": "pie"}],
+                   [{"secondary_y": True}, {"secondary_y": False}]]
+        )
+        
+        # 1. Összesített vagyon alakulása
+        for scenario_name, result in results.items():
+            fig.add_trace(
+                go.Scatter(
+                    x=result['timeline'],
+                    y=result['total'],
+                    name=scenario_name,
+                    mode='lines+markers'
+                ),
+                row=1, col=1
+            )
+        
+        # 2. Vagyonelemek összetétele (utolsó hónap)
+        chosen_result = results["Választott forgatókönyv"]
+        fig.add_trace(
+            go.Pie(
+                values=[chosen_result['liquid'][-1], chosen_result['investments'][-1], 
+                       chosen_result['final_total'] - chosen_result['liquid'][-1] - chosen_result['investments'][-1]],
+                labels=['Likvid', 'Befektetések', 'Megtakarítások'],
+                name="Portfólió"
+            ),
+            row=1, col=2
+        )
+        
+        # 3. Konfidencia intervallumok
+        conf_intervals = chosen_result['confidence_intervals']
+        
+        # Alsó határ
+        fig.add_trace(
+            go.Scatter(
+                x=[ci['month'] for ci in conf_intervals],
+                y=[ci['lower'] for ci in conf_intervals],
+                name='Alsó határ (95%)',
+                line=dict(color='rgba(255,0,0,0.3)'),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+        
+        # Felső határ
+        fig.add_trace(
+            go.Scatter(
+                x=[ci['month'] for ci in conf_intervals],
+                y=[ci['upper'] for ci in conf_intervals],
+                name='Felső határ (95%)',
+                fill='tonexty',
+                fillcolor='rgba(0,100,80,0.2)',
+                line=dict(color='rgba(0,100,80,0.3)'),
+                showlegend=False
+            ),
+            row=2, col=1
+        )
+        
+        # Várható érték
+        fig.add_trace(
+            go.Scatter(
+                x=[ci['month'] for ci in conf_intervals],
+                y=[ci['base'] for ci in conf_intervals],
+                name='Várható érték',
+                line=dict(color='blue', width=3)
+            ),
+            row=2, col=1
+        )
+        
+        # 4. Havi cash flow
+        monthly_cashflow = [chosen_result['monthly_savings']] * len(chosen_result['timeline'])
+        fig.add_trace(
+            go.Bar(
+                x=chosen_result['timeline'],
+                y=monthly_cashflow,
+                name='Havi nettó megtakarítás',
+                marker_color='green' if chosen_result['monthly_savings'] > 0 else 'red'
+            ),
+            row=2, col=2
+        )
+        
+        fig.update_layout(
+            height=800,
+            title_text="What-If Elemzés - Részletes Eredmények",
+            showlegend=True
+        )
+        
+        st.plotly_chart(fig, use_container_width=True)
+        
+        # Kockázati értékelés
+        st.subheader("⚠️ Kockázati értékelés")
+        
+        # Számítsuk ki a valószínűségeket
+        negative_months = sum(1 for ci in conf_intervals if ci['lower'] < 0)
+        probability_loss = negative_months / len(conf_intervals) * 100
+        
+        col1, col2, col3 = st.columns(3)
+        
+        col1.metric(
+            "Veszteség kockázata",
+            f"{probability_loss:.1f}%",
+            "A portfólió értéke a becslési tartomány alapján"
+        )
+        
+        volatility_score = chosen_result['confidence_intervals'][-1]['upper'] - chosen_result['confidence_intervals'][-1]['lower']
+        col2.metric(
+            "Ingadozás",
+            f"{volatility_score:,.0f} Ft",
+            "Becsült tartomány szélessége"
+        )
+        
+        # Stressz teszt
+        stress_scenario = chosen_result['confidence_intervals'][-1]['lower']
+        col3.metric(
+            "Stressz teszt",
+            f"{stress_scenario:,.0f} Ft",
+            "Legrosszabb esetben várható vagyon"
+        )
+        
+        # Akciós javaslatok
+        st.subheader("💡 Személyre szabott javaslatok")
+        
+        if chosen_result['monthly_savings'] < 0:
+            st.error("🚨 Negatív megtakarítási ráta! Csökkentsd a kiadásokat vagy növeld a bevételeket.")
+        elif chosen_result['monthly_savings'] < 50000:
+            st.warning("⚠️ Alacsony megtakarítási ráta. Próbálj meg legalább 50.000 Ft-ot havonta megtakarítani.")
+        else:
+            st.success("✅ Egészséges megtakarítási ráta!")
+        
+        if probability_loss > 20:
+            st.error("🚨 Magas kockázat! Fontold meg a konzervatívabb befektetési stratégiát.")
+        elif probability_loss > 10:
+            st.warning("⚠️ Közepes kockázat. Diverzifikáld a portfóliódat.")
+        else:
+            st.success("✅ Alacsony kockázat!")

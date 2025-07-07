@@ -145,7 +145,7 @@ if __name__ == "__main__":
         
             
 st.header("")
-st.header("👤 Profilod")
+st.header("👤 Profil")
 
 st.write("### Kitűzők")
 st.write("#### (fejlesztés alatt...)")
