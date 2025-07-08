@@ -87,7 +87,14 @@ class AlsosGame:
         self.tricks = {player: [] for player in self.players}
         self.scores = {player: 0 for player in self.players}
         self.bonus_announcements = {}
-        
+    
+    SUIT_ORDER = {
+        Suit.HEARTS: 4,
+        Suit.BELLS: 3,
+        Suit.LEAVES: 2,
+        Suit.ACORNS: 1
+    }    
+    
     def _create_deck(self) -> List[Card]:
         """Create a 32-card Hungarian deck"""
         deck = []
@@ -145,6 +152,10 @@ class AlsosGame:
                         if self.deck:
                             self.hands[player].append(self.deck.pop())
             
+            # Sort hands after initial deal
+            for player in self.players:
+                self.hands[player] = self._sort_cards(self.hands[player])
+            
             # Trump indicator
             self.trump_indicator = self.deck.pop()
             
@@ -158,6 +169,10 @@ class AlsosGame:
                 for _ in range(6):
                     if self.deck:
                         self.hands[player].append(self.deck.pop())
+            
+            # Sort hands after initial deal
+            for player in active_players:
+                self.hands[player] = self._sort_cards(self.hands[player])
             
             # Trump indicator
             self.trump_indicator = self.deck.pop()
@@ -256,6 +271,8 @@ class AlsosGame:
                 for _ in range(remaining_cards):
                     if self.talon:  # Check if there are cards left
                         self.hands[player].append(self.talon.pop())
+                # Sort hand after adding cards
+                self.hands[player] = self._sort_cards(self.hands[player])
         else:  # 3-4 players
             # Deal 3 more cards to each active player (total 9)
             active_players = self.players[:3] if self.num_players == 4 else self.players
@@ -264,9 +281,11 @@ class AlsosGame:
                 for _ in range(remaining_cards):
                     if self.talon:  # Check if there are cards left
                         self.hands[player].append(self.talon.pop())
+                # Sort hand after adding cards
+                self.hands[player] = self._sort_cards(self.hands[player])
     
     def find_sequences(self, cards: List[Card]) -> List[Meld]:
-        """Find all sequences in a hand"""
+        """Find all sequences in a hand where cards of same suit have consecutive ranks"""
         sequences = []
         suits = {}
         
@@ -276,14 +295,14 @@ class AlsosGame:
                 suits[card.suit] = []
             suits[card.suit].append(card)
         
-        # Sort cards in each suit
+        # Sort cards in each suit by rank value
         for suit in suits:
             suits[suit].sort(key=lambda c: c.rank.value)
             
             # Find consecutive sequences
             current_seq = [suits[suit][0]]
             for i in range(1, len(suits[suit])):
-                if suits[suit][i].rank.value == suits[suit][i-1].rank.value + 1:
+                if suits[suit][i].rank.value == current_seq[-1].rank.value + 1:
                     current_seq.append(suits[suit][i])
                 else:
                     if len(current_seq) >= 3:
@@ -418,6 +437,8 @@ class AlsosGame:
                 else:
                     print(f"Must follow {led_suit.value}")
                 
+                # Show valid cards in sorted order
+                valid_cards = self._sort_cards(valid_cards)
                 print(f"Valid cards: {[f'{j}: {card}' for j, card in enumerate(valid_cards)]}")
                 print("Choose a card to play (enter number): ")
                 
@@ -467,26 +488,12 @@ class AlsosGame:
         
         return best_player
     
-    def calculate_game_points(self, player: str) -> int:
-        """Calculate total game points for a player"""
-        card_points = 0
-        for card in self.tricks[player]:
-            is_trump = (self.trump_suit is not None and card.suit == self.trump_suit)
-            card_points += self._get_card_points(card, is_trump)
+    def calculate_game_points(self, player: str) -> Tuple[int, int, int]:
+        """Calculate points for a player and return (card_points, meld_points, bonus_points)"""
+        # Calculate card points
+        card_points = sum(self._get_card_points(c, c.suit == self.trump_suit) for c in self.tricks[player])
         
-        # Add 10 points for last trick (simplified)
-        game_points = card_points
-        
-        # Add meld points (simplified - would need to track actual melds)
-        sequences = self.find_sequences(self.hands[player] + self.tricks[player])
-        vannaks = self.find_vannaks(self.hands[player] + self.tricks[player])
-        
-        for seq in sequences:
-            game_points += seq.points
-        for vannak in vannaks:
-            game_points += vannak.points
-        
-        return game_points
+        return card_points
     
     def play_game(self):
         """Play a complete game"""
@@ -530,22 +537,37 @@ class AlsosGame:
         if self.game_type not in [GameType.BETLI, GameType.KLOPITZKY]:
             self.conduct_front_announcements()
         
-        # Play tricks
-        current_leader = self.players[(self.current_dealer + 1) % len(self.players)]
-        trick_num = 1
+        # Initialize current_leader - in Klopitzky it's the dealer's right, otherwise non-dealer
+        if self.game_type == GameType.KLOPITZKY:
+            current_leader = self.players[(self.current_dealer + 1) % len(self.players)]
+        else:
+            current_leader = self.players[(self.current_dealer + 1) % len(self.players)]  # Same for now, adjust if needed
         
-        while any(self.hands[player] for player in self.players):
-            current_leader = self.play_trick(current_leader, trick_num)
-            trick_num += 1
+        # Evaluate melds before playing any tricks (based on initial hand)
+        self.evaluate_melds()
+
+        # Play first trick
+        current_leader = self.play_trick(current_leader, 1)
+        
+        # Continue with remaining tricks
+        for trick_num in range(2, 13):
+            if any(self.hands[player] for player in self.players):
+                current_leader = self.play_trick(current_leader, trick_num)
         
         # Calculate final scores
         print("\n=== FINAL RESULTS ===")
         for player in self.players:
-            points = self.calculate_game_points(player)
-            bonus_points = self.evaluate_bonuses(player)
-            self.scores[player] = points
-            print(f"{player}: {points} points")
-            print(f"{player}: {bonus_points} bonus points")
+            # Get card points for the tricks won
+            card_pts = self.calculate_game_points(player)
+
+            # self.scores[player] already contains the meld points (Vannak, Sequences)
+            # that were added in the evaluate_melds method.
+            total_score = card_pts + self.scores[player]
+
+            print(f"{player}:")
+            print(f"  Card points from tricks: {card_pts}")
+            print(f"  Meld points from declarations: {self.scores[player]}") # This includes Vannak and Sequence points
+            print(f"  TOTAL: {total_score}")
         
         # Determine winner based on game type
         if self.game_type == GameType.BETLI:
@@ -660,7 +682,72 @@ class AlsosGame:
                 bonus_points -= points
                     
         return bonus_points
+    
+    def evaluate_melds(self):
+        """Evaluate all melds after first trick to determine which players score points"""
+        # Collect all sequences and vannaks from all players
+        all_sequences = []
+        all_vannaks = []
         
+        for player in self.players:
+            # Find sequences and vannaks in player's hand + won tricks
+            player_cards = self.hands[player] + self.tricks[player]
+            sequences = self.find_sequences(player_cards)
+            vannaks = self.find_vannaks(player_cards)
+            
+            # Add player info to melds
+            for seq in sequences:
+                all_sequences.append((player, seq))
+            for vannak in vannaks:
+                all_vannaks.append((player, vannak))
+        
+        # Evaluate sequences - only the strongest sequence scores points
+        if all_sequences:
+            # Find all sequences and sort them by length (descending), then by highest card
+            all_sequences.sort(key=lambda x: (
+                -len(x[1].cards),  # Longer sequences first
+                -x[1].cards[-1].rank.value,  # Higher rank first
+                -self.SUIT_ORDER[x[1].cards[-1].suit]  # Higher suit first
+            ))
+            
+            # The first sequence in the sorted list is the winner
+            winner, winning_seq = all_sequences[0]
+            self.scores[winner] += winning_seq.points
+            print(f"{winner} wins sequence contest with {winning_seq.name} (+{winning_seq.points})")
+        
+        # Evaluate vannaks - same logic as before
+        if all_vannaks:
+            # Find highest rank vannak
+            highest_rank = None
+            winning_vannak = None
+            winner = None
+            
+            for player, vannak in all_vannaks:
+                # Vannak cards are all same rank, just check first one
+                card_rank = vannak.cards[0].rank
+                
+                if highest_rank is None:
+                    highest_rank = card_rank
+                    winning_vannak = vannak
+                    winner = player
+                else:
+                    if self._get_card_value_for_comparison(vannak.cards[0]) > self._get_card_value_for_comparison(winning_vannak.cards[0]):
+                        highest_rank = card_rank
+                        winning_vannak = vannak
+                        winner = player
+            
+            if winner:
+                self.scores[winner] += winning_vannak.points
+                print(f"{winner} wins vannak contest with {winning_vannak.name} (+{winning_vannak.points})")
+            
+    def _sort_cards(self, cards: List[Card]) -> List[Card]:
+        """Sort cards by suit (hearts > bells > leaves > acorns) and point value (high to low)"""
+        return sorted(cards, 
+                     key=lambda c: (
+                         -self.SUIT_ORDER[c.suit],  # Higher suit value first
+                         -self._get_card_points(c, c.suit == self.trump_suit)  # Higher points first
+                     ))
+            
 def main():
     print("Welcome to Alsós!")
     print("Choose number of players (2-4): ")
