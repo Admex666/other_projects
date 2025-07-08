@@ -211,7 +211,9 @@ with st.expander("**🏆 Kitűzők**", expanded=True):
     def calculate_badge_metrics():
         metrics = {
             "transactions_days": user_transactions['datum'].nunique() if not user_transactions.empty else 0,
-            "savings_amount": user_transactions[user_transactions['bev_kiad_tipus'] == 'bevetel']['osszeg'].sum() if not user_transactions.empty else 0,
+            "savings_rate": round(1 - (user_transactions[user_transactions['bev_kiad_tipus'] != 'bevetel']['osszeg'].abs().sum() / 
+                user_transactions[user_transactions['bev_kiad_tipus'] == 'bevetel']['osszeg'].sum()), 3) \
+                if not user_transactions.empty else 0,
             "active_habits": len([h for h in user_habits if h.get("is_active", True)]),
             "habit_streak": max([h.get("best_streak", 0) for h in user_habits]) if user_habits else 0,
             "forum_posts": len(user_posts),
@@ -274,24 +276,25 @@ with st.expander("**🏆 Kitűzők**", expanded=True):
                 "name": "💰 Spóroló",
                 "icon": "💰",
                 "desc": "Megtakarított összeg",
-                "current_value": metrics["savings_amount"],
+                "current_value": metrics["savings_rate"],
                 "tiers": [
-                    {"requirement": 1000, "name": "Fillérgyűjtő", "reward": "1.000 Ft megtakarítás"},
-                    {"requirement": 10000, "name": "Spóroló", "reward": "10.000 Ft megtakarítás"},
-                    {"requirement": 50000, "name": "Takarékos", "reward": "50.000 Ft megtakarítás"},
-                    {"requirement": 100000, "name": "Befektető", "reward": "100.000 Ft megtakarítás"},
+                    {"requirement": 0.10, "name": "Fillérgyűjtő", "reward": "10% megtakarítási ráta"},
+                    {"requirement": 0.17, "name": "Spóroló", "reward": "17% megtakarítási ráta"},
+                    {"requirement": 0.24, "name": "Takarékos", "reward": "24% megtakarítási ráta"},
+                    {"requirement": 0.31, "name": "Megtakarítás Mestere", "reward": "31% megtakarítási ráta"},
                 ]
             },
             "tracking": {
-                "name": "📊 Nyomon Követő",
+                "name": "📊 Nyomonkövető",
                 "icon": "📊",
                 "desc": "Tranzakciók rögzítése",
                 "current_value": metrics["transactions_days"],
                 "tiers": [
-                    {"requirement": 1, "name": "Első Bejegyzés", "reward": "Első tranzakció rögzítése"},
-                    {"requirement": 7, "name": "Heti Rendszeres", "reward": "7 napos nyomon követés"},
-                    {"requirement": 30, "name": "Havi Rendszeres", "reward": "30 napos nyomon követés"},
+                    {"requirement": 1, "name": "Első Rögzítés", "reward": "Első tranzakció rögzítése"},
+                    {"requirement": 7, "name": "Heti Rendszeresség", "reward": "7 napos nyomon követés"},
+                    {"requirement": 30, "name": "Havi Rendszeresség", "reward": "30 napos nyomon követés"},
                     {"requirement": 90, "name": "Elkötelezett", "reward": "90 napos nyomon követés"},
+                    {"requirement": 180, "name": "Nyomon követés Mestere", "reward": "180 napos nyomon követés"},
                 ]
             }
         },
