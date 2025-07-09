@@ -12,6 +12,8 @@ from GOAT.visualize import plot_goat_bar, plot_goat_scatter, plot_driver_career
 @st.cache_data(show_spinner=True)
 def prepare_data(data_path='datafiles'):
     data = load_all_data(data_path)
+    st.write("Loaded keys from data:", list(data.keys()))
+
 
     results_norm = apply_normalized_points(data['results'])
     driver_metrics = calculate_driver_metrics(results_norm, data['qualifying'])
