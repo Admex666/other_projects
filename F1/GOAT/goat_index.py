@@ -24,11 +24,11 @@ def calculate_goat_index(
 
     if weights is None:
         weights = {
-            'points': 0.30,
-            'win_rate': 0.25,
-            'pole_rate': 0.15,
-            'avg_finish': 0.15,
-            'teammate_score': 0.15,
+            'points': 0.15,
+            'avg_points': 0.20,
+            'win_rate': 0.20,
+            'pole_rate': 0.10,
+            'teammate_score': 0.35,
         }
 
     df = driver_metrics.copy()
@@ -37,31 +37,29 @@ def calculate_goat_index(
     # Arányos mutatók számítása
     df['win_rate'] = df['wins'] / df['races']
     df['pole_rate'] = df['poles'] / df['races']
+    df['avg_points'] = df['total_points'] / df['races']
 
     # Csapattársi adat hozzáfűzése
     df = df.merge(teammate_df[['driverId', 'teammate_score']], on='driverId', how='left')
     df['teammate_score'] = df['teammate_score'].fillna(0.5)
 
-    # Invertált érték az átlagos helyezésre (mert alacsonyabb = jobb)
-    df['inv_avg_finish'] = 1 / (df['avg_finish'] + 1e-6)
-
     # Skálázás (min-max minden mutatóra 0-1 közé)
     scaler = MinMaxScaler()
     scaled_features = scaler.fit_transform(df[[
-        'total_points', 'win_rate', 'pole_rate', 'inv_avg_finish', 'teammate_score'
+        'total_points', 'avg_points', 'win_rate', 'pole_rate', 'teammate_score'
     ]])
 
     df_scaled = pd.DataFrame(scaled_features, columns=[
-        'points_scaled', 'win_scaled', 'pole_scaled', 'finish_scaled', 'teammate_scaled'
+        'points_scaled', 'avg_points_scaled', 'win_scaled', 'pole_scaled', 'teammate_scaled'
     ])
     df_scaled.index = df.index
 
     # GOAT-index kiszámítása súlyozottan
     df['goat_index'] = (
         df_scaled['points_scaled'] * weights['points'] +
+        df_scaled['avg_points_scaled'] * weights['avg_points'] +
         df_scaled['win_scaled'] * weights['win_rate'] +
         df_scaled['pole_scaled'] * weights['pole_rate'] +
-        df_scaled['finish_scaled'] * weights['avg_finish'] +
         df_scaled['teammate_scaled'] * weights['teammate_score']
     )
 

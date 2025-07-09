@@ -96,7 +96,7 @@ class HumanPlayerAgent(PlayerAgent):
         print(f"Hand:")
         current_hand = game_state.hands[player_name]
         for j, card in enumerate(current_hand):
-            print(f"{j}: {game_state._format_card_with_points(card)}")
+            print(f"{j}: {card}")
         
         # Display valid cards with their original indices from player's hand for human input
         valid_card_indices = []
@@ -270,6 +270,9 @@ class AlsosGame:
         self.current_bonus_phase = "" # New: To pass to bonus agent for context
         self.game_log = [] # New: To store game data for database
         self.game_id = None # New: To identify each game session
+        self.bonus_results = {player: [] for player in self.players}  # To store bonus outcomes
+        self.bonus_scores = {player: 0 for player in self.players}
+
     
     SUIT_ORDER = {
         Suit.HEARTS: 4,
@@ -546,40 +549,40 @@ class AlsosGame:
     
     def announce_bonuses(self, player: str, phase: str):
         """Handle bonus announcements for a player in a specific phase using agents."""
-        # print(f"Available bonuses:") # Keep for human, but not strictly needed for agents
         available_bonuses_info = []
+        already_announced = {bt for bt, ph in self.bonus_announcements.get(player, [])}
+        
         for i, bonus_type in enumerate(BonusType):
-            # print(f"{i+1}: {bonus_type.value}") # Keep for human
-            available_bonuses_info.append((i+1, (bonus_type, phase))) # Store (num, (BonusType, phase))
-
-        self.current_bonus_phase = phase # Set this for agent to use
-        choice = self.agents[player].choose_bonus_announcements(self, player, available_bonuses_info).strip() # MODIFIED
-
+            if bonus_type not in already_announced:  # Only show bonuses not already announced
+                available_bonuses_info.append((i+1, (bonus_type, phase)))
+    
+        self.current_bonus_phase = phase
+        choice = self.agents[player].choose_bonus_announcements(self, player, available_bonuses_info).strip()
+    
         if choice.lower() == 'pass':
             print(f"{player} passes")
             return
-
+    
         try:
             choices = [int(c.strip()) for c in choice.split(',')]
-            for choice_num in choices: # Renamed 'choice' to 'choice_num' to avoid conflict
+            for choice_num in choices:
                 if 1 <= choice_num <= len(BonusType):
                     bonus_type = list(BonusType)[choice_num-1]
                     if bonus_type == BonusType.KASSZA and player != self.taker:
                         print("Only taker can announce Kassza!")
                         continue
-
-                    self.bonus_announcements[player].append((bonus_type, phase))
-                    print(f"{player} announces {bonus_type.value} ({phase})")
-                    # Log bonus announcement
-                    self.game_log.append({ # NEW
-                        "event": "bonus_announced",
-                        "player": player,
-                        "bonus_type": bonus_type.value,
-                        "phase": phase
-                    })
+                    if bonus_type not in already_announced:  # Additional check
+                        self.bonus_announcements[player].append((bonus_type, phase))
+                        print(f"{player} announces {bonus_type.value} ({phase})")
+                        self.game_log.append({
+                            "event": "bonus_announced",
+                            "player": player,
+                            "bonus_type": bonus_type.value,
+                            "phase": phase
+                        })
         except ValueError:
-            print("Invalid input for bonus announcement, skipping.") # MODIFIED print message
-    
+            print("Invalid input for bonus announcement, skipping.")
+        
     def play_trick(self, lead_player: str, trick_num: int) -> str:
         """Play a single trick using player agents."""
         trick_cards = {}
@@ -791,7 +794,7 @@ class AlsosGame:
         for player in self.players:
             print(f"\n{player}'s hand after dealing:")
             for i, card in enumerate(self.hands[player]):
-                print(f"{i}: {self._format_card_with_points(card)}")
+                print(f"{i}: {card}")
         
         # Log hands after dealing remaining cards (12 cards total)
         final_hands_data = {p: [str(c) for c in self.hands[p]] for p in self.players}
@@ -818,29 +821,52 @@ class AlsosGame:
             if any(self.hands[player] for player in self.players):
                 current_leader = self.play_trick(current_leader, trick_num)
         
-        # Calculate final scores
+
+        # Calculate game points (card + meld) and bonus points separately
+        game_points = {player: 0 for player in self.players}
+        bonus_points = {player: 0 for player in self.players}
+        
+        # First calculate all bonus points from announcements
+        for player in self.players:
+            bonus_points[player] = self.evaluate_bonuses(player)
+        
+        # Then calculate game points (card + meld)
+        for player in self.players:
+            card_pts = self.calculate_game_points(player)
+            meld_pts = self.scores[player]  # From evaluate_melds()
+            game_points[player] = card_pts + meld_pts
+        
+        # Add +1 bonus point to player with highest game points
+        max_game_points = max(game_points.values())
+        winners = [p for p, pts in game_points.items() if pts == max_game_points]
+        if len(winners) == 1:  # Only add if there's a clear winner
+            bonus_points[winners[0]] += 1
+            self.bonus_results[winners[0]].append(("Game points winner", "+1"))
+        
+        # Display final results
         print("\n=== FINAL RESULTS ===")
         final_scores_data = {}
         for player in self.players:
-            # Get card points for the tricks won
-            card_pts = self.calculate_game_points(player)
-
-            # self.scores[player] already contains the meld points (Vannak, Sequences)
-            # that were added in the evaluate_melds method.
-            total_score = card_pts + self.scores[player]
-
             print(f"{player}:")
-            print(f"  Card points from tricks: {card_pts}")
-            print(f"  Meld points from declarations: {self.scores[player]}") # This includes Vannak and Sequence points
-            print(f"  TOTAL: {total_score}")
-        
+            print(f"  Game points (card + meld): {game_points[player]}")
+            
+            # Print bonus results
+            if self.bonus_results[player]:
+                print("  Bonus announcements:")
+                for announcement, result in self.bonus_results[player]:
+                    print(f"    - {announcement}: {result}")
+                print(f"  Total bonus points: {bonus_points[player]:+}")
+            
+            print("")  # Empty line for separation
+            
             final_scores_data[player] = {
-                "card_points": card_pts,
-                "meld_points_awarded": self.scores[player], # Points added by evaluate_melds
-                "total_score": card_pts + self.scores[player]
+                "game_points": game_points[player],
+                "bonus_points": bonus_points[player],
+                "bonus_results": [f"{announcement}: {result}" 
+                                 for announcement, result in self.bonus_results.get(player, [])]
             }
-
-        # Determine the actual game winner based on the complex logic
+        
+        # Determine the actual game winner based on game points
         game_winner_status = "Undetermined"
         if self.game_type == GameType.BETLI:
             game_winner_status = f"{self.taker} wins Betli!" if len(self.tricks[self.taker]) == 0 else f"{self.taker} fails Betli!"
@@ -849,19 +875,14 @@ class AlsosGame:
             winners = [player for player in self.players if len(self.tricks[player]) == min_tricks]
             game_winner_status = f"{', '.join(winners)} wins Klopitzky!" if len(winners) > 0 else "Klopitzky is a tie!"
         else: # Trump or No-Trump
-            if self.taker:
-                taker_total_score = final_scores_data[self.taker]["total_score"]
-                opponent_total_scores = [final_scores_data[p]["total_score"] for p in self.players if p != self.taker]
-                # Assuming a simple comparison for now, detailed win conditions might apply
-                if taker_total_score > max(opponent_total_scores): # Simplified example
-                     game_winner_status = f"{self.taker} wins the game!"
-                else:
-                    game_winner_status = f"{self.taker} fails to make the game!"
-            else: # Should not happen if taker is always set
-                game_winner_status = "No taker specified, game winner undetermined."
-
-
-        self.game_log.append({ # NEW
+            max_points = max(game_points.values())
+            winners = [p for p, pts in game_points.items() if pts == max_points]
+            if len(winners) == 1:
+                game_winner_status = f"{winners[0]} wins the game with {max_points} points!"
+            else:
+                game_winner_status = f"Tie between {', '.join(winners)} with {max_points} points each!"
+    
+        self.game_log.append({
             "event": "game_end",
             "final_scores": final_scores_data,
             "game_outcome": game_winner_status
@@ -953,9 +974,11 @@ class AlsosGame:
             if success:
                 print(f"{player} succeeded {bonus_type.value} ({phase}) +{points}")
                 bonus_points += points
+                self.bonus_results[player].append((f"{bonus_type.value} ({phase})", f"+{points}"))
             else:
                 print(f"{player} failed {bonus_type.value} ({phase}) -{points}")
                 bonus_points -= points
+                self.bonus_results[player].append((f"{bonus_type.value} ({phase})", f"-{points}"))
                     
         return bonus_points
     

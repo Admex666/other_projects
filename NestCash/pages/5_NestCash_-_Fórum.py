@@ -417,7 +417,7 @@ with tab2:
         st.info("Nincsenek értesítések.")
     else:
         for _, notification in user_notifications.iterrows():
-            read_status = "✅" if notification["read"] else "🔔"
+            read_status = "(Read)" if notification["read"] else "(!)"
             st.markdown(f"{read_status} **{notification['message']}**")
             st.caption(f"📅 {notification['timestamp']}")
             

@@ -209,6 +209,11 @@ with st.expander("**🏆 Kitűzők**", expanded=True):
     
     # Calculate badge metrics
     def calculate_badge_metrics():
+        lessons_completed_count = db.lesson_completions.count_documents({
+                "user_id": current_user, 
+                "completed": True
+            })
+        
         metrics = {
             "transactions_days": user_transactions['datum'].nunique() if not user_transactions.empty else 0,
             "savings_rate": round(1 - (user_transactions[user_transactions['bev_kiad_tipus'] != 'bevetel']['osszeg'].abs().sum() / 
@@ -218,7 +223,7 @@ with st.expander("**🏆 Kitűzők**", expanded=True):
             "habit_streak": max([h.get("best_streak", 0) for h in user_habits]) if user_habits else 0,
             "forum_posts": len(user_posts),
             "following_count": len(user_follows),
-            "lessons_completed": 0,  # Placeholder
+            "lessons_completed": lessons_completed_count,
             "quizzes_completed": 0,  # Placeholder
         }
         return metrics

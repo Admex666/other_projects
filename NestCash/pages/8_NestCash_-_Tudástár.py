@@ -1,59 +1,27 @@
+# 8_Tudástár.py
 import streamlit as st
+from datetime import datetime
+from database import db
+
+def load_lesson_states(user_id):
+    """Betölti a felhasználó lecke-teljesítéseit a MongoDB-ből."""
+    # Alapértelmezett állapot (minden lecke befejezetlen)
+    lesson_keys = [
+        "költségvetés", "be_nem_vallott_kiadasok", "koltsegvetesi_modszerek",
+        "bevetel_kiadas_merleg", "mini_rutin_szokas", "penzugyi_kovetes_ritmusa"
+    ]
+    status = {key: False for key in lesson_keys}
+
+    # Elvégzett leckék lekérdezése az adatbázisból
+    completed_records = db.lesson_completions.find({"user_id": user_id, "completed": True})
+    for record in completed_records:
+        if record["lesson_key"] in status:
+            status[record["lesson_key"]] = True
+    return status
 
 if 'logged_in' not in st.session_state or not st.session_state.logged_in:
     st.warning("Kérjük, először jelentkezzen be!")
     st.stop()
-    
-st.set_page_config(layout="wide")
-
-# Oldal fejléc
-col1, col2 = st.columns([1, 4])
-with col1:
-    st.image("https://i.ytimg.com/vi/vhl9wWLv2Yo/hqdefault.jpg", width=100)  # Ide jöhet a Tudástár ikon
-with col2:
-    st.title("Tudástár (szemléltető oldal, fejlesztés alatt...)")
-    st.caption("Rövid, könnyen emészthető pénzügyi leckék - Mindennapi pénzügyi tudatosságért")
-
-# Gamifikációs elemek
-st.subheader("🏆 Saját tanulási statisztikáim")
-with st.container(border=True):
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.metric("Tanulási streak", "🔥 3 nap")
-    with col2:
-        # A teljesített leckék számának dinamikus frissítése
-        if 'completed_lessons' not in st.session_state:
-            st.session_state.completed_lessons = 0
-        st.metric("Teljesített leckék", f"{st.session_state.completed_lessons}/24")
-    with col3:
-        st.metric("Gyűjtött kitűzők", "2")
-
-st.divider()
-
-# Napi tanulási ajánlás
-st.subheader("⏳ Tanulj ma is 5 perc alatt:")
-with st.container(border=True):
-    st.markdown("**Mi az a vésztartalék, és hogyan építsd fel?**")
-    st.caption("2 perces lecke · Kezdő szint")
-    if st.button("Tanulás megkezdése", key="daily_lesson"):
-        st.session_state.current_lesson = "vésztartalék"
-
-st.divider()
-
-# Választó sáv a témakörök között
-selected_category = st.radio(
-    "Témakörök:",
-    options=[{"name": "Pénzügyi alapok", "value": "alapok"}, 
-             {"name": "Spórolás", "value": "spórolás"}, 
-             {"name": "Pénzügyi gondolkodás", "value": "gondolkodás"}, 
-             {"name": "Haladó", "value": "haladó"}, 
-             {"name": "Gyakorlat", "value": "gyakorlati"}, 
-             ],
-    format_func=lambda x: x["name"],
-    horizontal=True
-)["value"]
-
-st.divider()
 
 # Lecke tartalom definíciója
 lesson_contents = {
@@ -114,26 +82,67 @@ lesson_contents = {
     ]
 
 
-
-
 }
+
+
+st.set_page_config(layout="wide")
+
+# Oldal fejléc
+col1, col2 = st.columns([1, 4])
+with col1:
+    st.image("https://i.ytimg.com/vi/vhl9wWLv2Yo/hqdefault.jpg", width=100)  # Ide jöhet a Tudástár ikon
+with col2:
+    st.title("Tudástár (szemléltető oldal, fejlesztés alatt...)")
+    st.caption("Rövid, könnyen emészthető pénzügyi leckék - Mindennapi pénzügyi tudatosságért")
+
+# Gamifikációs elemek
+st.subheader("🏆 Saját tanulási statisztikáim")
+with st.container(border=True):
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.metric("Tanulási streak", "🔥 3 nap")
+    with col2:
+        # A teljesített leckék számának dinamikus frissítése
+        if 'completed_lessons' not in st.session_state:
+            st.session_state.completed_lessons = 0
+        st.metric("Teljesített leckék", f"{st.session_state.completed_lessons}/{len(lesson_contents)}")
+    with col3:
+        st.metric("Gyűjtött kitűzők", "2")
+
+st.divider()
+
+# Napi tanulási ajánlás
+st.subheader("⏳ Tanulj ma is 5 perc alatt:")
+with st.container(border=True):
+    st.markdown("**Mi az a vésztartalék, és hogyan építsd fel?**")
+    st.caption("2 perces lecke · Kezdő szint")
+    if st.button("Tanulás megkezdése", key="daily_lesson"):
+        st.session_state.current_lesson = "vésztartalék"
+
+st.divider()
+
+# Választó sáv a témakörök között
+selected_category = st.radio(
+    "Témakörök:",
+    options=[{"name": "Pénzügyi alapok", "value": "alapok"}, 
+             {"name": "Spórolás", "value": "spórolás"}, 
+             {"name": "Pénzügyi gondolkodás", "value": "gondolkodás"}, 
+             {"name": "Haladó", "value": "haladó"}, 
+             {"name": "Gyakorlat", "value": "gyakorlati"}, 
+             ],
+    format_func=lambda x: x["name"],
+    horizontal=True
+)["value"]
+
+st.divider()
 
 # Aktuális lecke állapota
 if 'current_lesson_key' not in st.session_state:
     st.session_state.current_lesson_key = None # Jelenleg olvasott lecke kulcsa
 if 'lesson_page' not in st.session_state:
     st.session_state.lesson_page = 0
-if 'lesson_completion_status' not in st.session_state:
-    st.session_state.lesson_completion_status = {
-        "költségvetés": False,
-        "be_nem_vallott_kiadasok": False,
-        "koltsegvetesi_modszerek": False,
-        "bevetel_kiadas_merleg": False,
-        "mini_rutin_szokas": False,
-        "penzugyi_kovetes_ritmusa": False,
-        # Ide jönnek majd a többi lecke kulcsai és állapotai
-    }
-
+st.session_state.lesson_completion_status = load_lesson_states(st.session_state.user_id)
+st.session_state.completed_lessons = sum(st.session_state.lesson_completion_status.values())
 
 # Segéd függvény a leckék kezeléséhez
 def display_lesson(lesson_key, lesson_title):
@@ -165,9 +174,23 @@ def display_lesson(lesson_key, lesson_title):
                     st.rerun()
             else:
                 if st.button("Lecke befejezése", key=f"complete_{lesson_key}"):
+                    # <<< MÓDOSÍTÁS KEZDETE >>>
+                    # Lokális állapot frissítése
+                    if not st.session_state.lesson_completion_status.get(lesson_key, False):
+                        st.session_state.completed_lessons += 1
                     st.session_state.lesson_completion_status[lesson_key] = True
+                    
+                    # Adatbázis frissítése: upsert=True biztosítja, hogy ha már létezik, frissíti, ha nem, létrehozza.
+                    db.lesson_completions.update_one(
+                        {"user_id": st.session_state.user_id, "lesson_key": lesson_key},
+                        {"$set": {
+                            "completed": True, 
+                            "completed_at": datetime.now()
+                        }},
+                        upsert=True
+                    )
+                    
                     st.session_state.current_lesson_key = None # Kilépés az olvasó módból
-                    st.session_state.completed_lessons += 1
                     st.success(f"Gratulálunk, befejezted a leckét: {lesson_title}! 🎉")
                     st.rerun()
     else:
