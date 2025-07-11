@@ -215,6 +215,11 @@ with st.expander("**🏆 Kitűzők**", expanded=True):
                 "completed": True
             })
         
+        quizzes_completed_count = db.lesson_completions.count_documents({
+                "user_id": current_user,
+                "quiz_score": {"$ne": None}  # $ne = not equal (nem egyenlő)
+            })
+        
         metrics = {
             "transactions_days": user_transactions['datum'].nunique() if not user_transactions.empty else 0,
             "savings_rate": round(1 - (user_transactions[user_transactions['bev_kiad_tipus'] != 'bevetel']['osszeg'].abs().sum() / 
@@ -225,7 +230,7 @@ with st.expander("**🏆 Kitűzők**", expanded=True):
             "forum_posts": len(user_posts),
             "following_count": len(user_follows),
             "lessons_completed": lessons_completed_count,
-            "quizzes_completed": 0,  # Placeholder
+            "quizzes_completed": quizzes_completed_count,  # Placeholder
         }
         
         return metrics
@@ -358,7 +363,7 @@ with st.expander("**🏆 Kitűzők**", expanded=True):
                     new_notification = {
                         "notification_id": notification_id,
                         "user_id": current_user,
-                        "type": "badge",
+                        "type": "🎖️ Kitűzők",
                         "message": f"Gratulálunk! Megszerezted a {current_tier_info['name']} szintű {badge_data['name']} kitűzőt!",
                         "related_id": f"badge_{badge_key}_{current_tier}",
                         "from_user": 0,  # 0 = rendszer
