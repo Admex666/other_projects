@@ -4,6 +4,11 @@ from typing import List, Dict, Optional, Tuple
 from dataclasses import dataclass
 import json
 import uuid
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.preprocessing import OneHotEncoder
+import joblib
+import pandas as pd
 
 class Suit(Enum):
     ACORNS = "Acorns 🌰"
@@ -223,6 +228,223 @@ class RuleBasedPlayerAgent(PlayerAgent):
             valid_cards.sort(key=lambda c: (game_state._get_card_points(c, c.suit == game_state.trump_suit), c.rank.value))
             return valid_cards[0] # Play the lowest point card if unable to win
 
+class LearningPlayerAgent(PlayerAgent):
+    def __init__(self, model_path=None):
+        self.model = RandomForestClassifier(n_estimators=100)
+        self.encoder = OneHotEncoder(handle_unknown='ignore')
+        self.initialize_encoder()  # Initialize with expected features
+        self.model_path = "alsos_agent_model.pkl"
+        self.load_models()
+    
+    def initialize_encoder(self):
+        """Initialize encoder with expected feature names"""
+        dummy_features = {
+            'game_type': 'Trump',
+            'trump_suit': 'Hearts ❤️',
+            'is_taker': 0,
+            'current_trick_count': 0,
+            'hand_size': 8,
+            'valid_cards_count': 4,
+            'high_card_count': 2,
+            'trump_card_count': 2,
+            'led_suit': 'Hearts ❤️',
+            'is_trump_led': 1,
+            'current_high_value': 10
+        }
+        df = pd.DataFrame([dummy_features])
+        self.encoder.fit(df)
+    
+    def load_models(self):
+        # Load card play model
+        try:
+            loaded = joblib.load(self.model_path)
+            self.model = loaded['model']
+            self.encoder = loaded['encoder']
+            if hasattr(self.model, 'estimators_'):
+                print("Loaded pre-trained card play model")
+            else:
+                print("Card play model not fitted, initializing new one")
+                self.model = RandomForestClassifier(n_estimators=100)
+                self.encoder = OneHotEncoder(handle_unknown='ignore')
+        except:
+            self.model = RandomForestClassifier(n_estimators=100)
+            self.encoder = OneHotEncoder(handle_unknown='ignore')
+            
+        # Load bonus announcement model
+        try:
+            loaded = joblib.load(self.bonus_model_path)
+            self.bonus_model = loaded['model']
+            self.bonus_encoder = loaded['encoder']
+            if hasattr(self.bonus_model, 'estimators_'):
+                print("Loaded pre-trained bonus model")
+            else:
+                print("Bonus model not fitted, initializing new one")
+                self.bonus_model = RandomForestClassifier(n_estimators=100)
+                self.bonus_encoder = OneHotEncoder(handle_unknown='ignore')
+        except:
+            self.bonus_model = RandomForestClassifier(n_estimators=100)
+            self.bonus_encoder = OneHotEncoder(handle_unknown='ignore')
+            
+    def save_models(self):
+        # Save card play model
+        if hasattr(self.model, 'estimators_'):
+            joblib.dump({'model': self.model, 'encoder': self.encoder}, self.model_path)
+        
+        # Save bonus model
+        if hasattr(self.bonus_model, 'estimators_'):
+            joblib.dump({'model': self.bonus_model, 'encoder': self.bonus_encoder}, self.bonus_model_path)
+          
+    def choose_bid(self, game_state: 'AlsosGame', player_name: str, options: List[str], current_bid_context: Optional[str] = None) -> str:
+        # Extract features for bidding decision
+        features = self.extract_bid_features(game_state, player_name, options, current_bid_context)
+        
+        # If we have a trained model, use it
+        if hasattr(self.model, 'estimators_'):
+            try:
+                # Convert features to DataFrame and encode
+                import pandas as pd
+                df = pd.DataFrame([features])
+                X = self.encoder.transform(df)
+                
+                # Predict probabilities for each option
+                probas = self.model.predict_proba(X)[0]
+                best_option_idx = np.argmax(probas)
+                best_option = options[best_option_idx]
+                return best_option
+            except Exception as e:
+                print(f"Bid model prediction failed: {e}")
+        
+        # Fallback to rule-based bidding
+        rule_based_agent = RuleBasedPlayerAgent()
+        return rule_based_agent.choose_bid(game_state, player_name, options, current_bid_context)
+    
+    def extract_card_features(self, game_state, player_name, current_trick, valid_cards):
+        """Extract features for card play decisions with consistent feature names"""
+        hand = game_state.hands[player_name]
+        
+        features = {
+            'game_type': game_state.game_type.value,
+            'trump_suit': game_state.trump_suit.value if game_state.trump_suit else 'None',
+            'is_taker': int(player_name == game_state.taker),
+            'current_trick_count': len(current_trick),
+            'hand_size': len(hand),
+            'valid_cards_count': len(valid_cards),
+            'high_card_count': sum(1 for c in hand if c.rank in [Rank.ACE, Rank.X, Rank.KING]),
+            'trump_card_count': sum(1 for c in hand if game_state.trump_suit and c.suit == game_state.trump_suit),
+        }
+        
+        if current_trick:
+            led_card = list(current_trick.values())[0]
+            features.update({
+                'led_suit': led_card.suit.value,
+                'is_trump_led': int(game_state.trump_suit and led_card.suit == game_state.trump_suit),
+                'current_high_value': max(game_state._get_card_value_for_comparison(c) for c in current_trick.values()),
+            })
+        
+        return features
+    
+    def extract_bid_features(self, game_state, player_name, options, current_bid_context):
+        """Extract features for bidding decisions"""
+        hand = game_state.hands[player_name]
+        trump_indicator_suit = game_state.trump_indicator.suit if game_state.trump_indicator else None
+        
+        features = {
+            'context': current_bid_context or 'initial',
+            'hand_size': len(hand),
+            'trump_indicator_suit': trump_indicator_suit.value if trump_indicator_suit else 'None',
+            'trump_cards': sum(1 for c in hand if trump_indicator_suit and c.suit == trump_indicator_suit),
+            'high_cards': sum(1 for c in hand if c.rank in [Rank.ACE, Rank.X, Rank.KING]),
+            'hearts_count': sum(1 for c in hand if c.suit == Suit.HEARTS),
+            'bells_count': sum(1 for c in hand if c.suit == Suit.BELLS),
+            'leaves_count': sum(1 for c in hand if c.suit == Suit.LEAVES),
+            'acorns_count': sum(1 for c in hand if c.suit == Suit.ACORNS),
+            'total_points': sum(game_state._get_card_points(c) for c in hand),
+            'options': ','.join(options)
+        }
+        
+        return features
+    
+    def extract_bonus_features(self, game_state, player_name, available_bonuses_info):
+        """Extract features for bonus announcement decisions"""
+        hand = game_state.hands[player_name]
+        
+        features = {
+            'game_type': game_state.game_type.value,
+            'trump_suit': game_state.trump_suit.value if game_state.trump_suit else 'None',
+            'is_taker': player_name == game_state.taker,
+            'phase': game_state.current_bonus_phase,
+            'hand_size': len(hand),
+            'high_cards': sum(1 for c in hand if c.rank in [Rank.ACE, Rank.X, Rank.KING]),
+            'trump_cards': sum(1 for c in hand if game_state.trump_suit and c.suit == game_state.trump_suit),
+            'hearts_count': sum(1 for c in hand if c.suit == Suit.HEARTS),
+            'bells_count': sum(1 for c in hand if c.suit == Suit.BELLS),
+            'leaves_count': sum(1 for c in hand if c.suit == Suit.LEAVES),
+            'acorns_count': sum(1 for c in hand if c.suit == Suit.ACORNS),
+            'total_points': sum(game_state._get_card_points(c) for c in hand),
+        }
+        
+        return features    
+    
+    def choose_bonus_announcements(self, game_state: 'AlsosGame', player_name: str, 
+                                 available_bonuses_info: List[Tuple[int, Tuple['BonusType', str]]]) -> str:
+        # Extract base features
+        base_features = self.extract_bonus_features(game_state, player_name, available_bonuses_info)
+        
+        # If we have a trained model, use it
+        if hasattr(self.bonus_model, 'estimators_'):
+            try:
+                # Evaluate each available bonus
+                bonus_scores = []
+                for num, (bonus_type, phase) in available_bonuses_info:
+                    features = base_features.copy()
+                    features['bonus_type'] = bonus_type.value
+                    features['bonus_number'] = num
+                    features['phase'] = phase
+                    
+                    # Encode features and predict
+                    X = self.bonus_encoder.transform([features])
+                    score = self.bonus_model.predict_proba(X)[0][1]  # Probability of announcing
+                    bonus_scores.append((num, score))
+                
+                # Filter bonuses with score > 0.5 and sort by score
+                good_bonuses = [str(num) for num, score in bonus_scores if score > 0.5]
+                good_bonuses.sort(key=lambda x: -[s for n, s in bonus_scores if str(n) == x][0])
+                
+                if good_bonuses:
+                    return ','.join(good_bonuses)
+            except Exception as e:
+                print(f"Bonus model prediction failed: {e}")
+        
+        # Fallback to simple rule: announce if we're the taker and it's back phase
+        if game_state.current_bonus_phase == 'back' and player_name == game_state.taker:
+            return '1'  # Announce first available bonus
+        return 'pass'
+    
+    def choose_card_to_play(self, game_state: 'AlsosGame', player_name: str, current_trick: Dict[str, 'Card'], valid_cards: List['Card']) -> 'Card':
+        # If we have a trained model, use it
+        if hasattr(self.model, 'estimators_'):
+            try:
+                # Extract features for card play decision
+                features = self.extract_card_features(game_state, player_name, current_trick, valid_cards)
+                
+                # Convert features to DataFrame and encode
+                import pandas as pd
+                df = pd.DataFrame([features])
+                X = self.encoder.transform(df)
+                
+                # Predict probabilities for each card
+                probas = self.model.predict_proba(X)[0]
+                
+                # Choose card with highest probability
+                best_card_idx = np.argmax(probas)
+                return valid_cards[best_card_idx]
+            except Exception as e:
+                print(f"Card play model prediction failed: {e}")
+        
+        # Fallback to rule-based strategy
+        rule_based_agent = RuleBasedPlayerAgent()
+        return rule_based_agent.choose_card_to_play(game_state, player_name, current_trick, valid_cards)
+    
 # Add this enum class
 class BonusType(Enum):
     KASSZA = "Kassza"
@@ -381,6 +603,25 @@ class AlsosGame:
            return True
 
        response = self.agents[dealer].choose_bid(self, dealer, ['y', 'n'], current_bid_context=context_phase1)
+       decision_context = {
+            'bid_context': context_phase1,
+            'hand': [str(c) for c in self.hands[non_dealer]],
+            'trump_indicator_suit': self.trump_indicator.suit.value if self.trump_indicator else None,
+            'trump_cards': sum(1 for c in self.hands[non_dealer] if self.trump_indicator and c.suit == self.trump_indicator.suit),
+            'high_cards': sum(1 for c in self.hands[non_dealer] if c.rank in [Rank.ACE, Rank.X, Rank.KING]),
+            'hearts_count': sum(1 for c in self.hands[non_dealer] if c.suit == Suit.HEARTS),
+            'bells_count': sum(1 for c in self.hands[non_dealer] if c.suit == Suit.BELLS),
+            'leaves_count': sum(1 for c in self.hands[non_dealer] if c.suit == Suit.LEAVES),
+            'acorns_count': sum(1 for c in self.hands[non_dealer] if c.suit == Suit.ACORNS),
+            'total_points': sum(self._get_card_points(c) for c in self.hands[non_dealer]),
+            'options': ['y', 'n'],
+            'chosen_option': response
+        }
+       self.game_log.append({
+            'event': 'bidding_decision',
+            'player': non_dealer,
+            'context': decision_context
+        })
        print(f"{dealer} chose: {response}")
        if response.lower() == 'y':
            self.trump_suit = self.trump_indicator.suit
@@ -404,6 +645,25 @@ class AlsosGame:
                return True
 
            response = self.agents[dealer].choose_bid(self, dealer, ['y', 'n'], current_bid_context=context_phase2)
+           decision_context = {
+                'bid_context': context_phase2,
+                'hand': [str(c) for c in self.hands[non_dealer]],
+                'trump_indicator_suit': self.trump_indicator.suit.value if self.trump_indicator else None,
+                'trump_cards': sum(1 for c in self.hands[non_dealer] if self.trump_indicator and c.suit == self.trump_indicator.suit),
+                'high_cards': sum(1 for c in self.hands[non_dealer] if c.rank in [Rank.ACE, Rank.X, Rank.KING]),
+                'hearts_count': sum(1 for c in self.hands[non_dealer] if c.suit == Suit.HEARTS),
+                'bells_count': sum(1 for c in self.hands[non_dealer] if c.suit == Suit.BELLS),
+                'leaves_count': sum(1 for c in self.hands[non_dealer] if c.suit == Suit.LEAVES),
+                'acorns_count': sum(1 for c in self.hands[non_dealer] if c.suit == Suit.ACORNS),
+                'total_points': sum(self._get_card_points(c) for c in self.hands[non_dealer]),
+                'options': ['y', 'n'],
+                'chosen_option': response
+            }
+           self.game_log.append({
+                'event': 'bidding_decision',
+                'player': non_dealer,
+                'context': decision_context
+            })
            print(f"{dealer} chose: {response}")
            if response.lower() == 'y':
                self.trump_suit = suit
@@ -421,6 +681,25 @@ class AlsosGame:
            return True
 
        response = self.agents[dealer].choose_bid(self, dealer, ['y', 'n'], current_bid_context=context_phase3)
+       decision_context = {
+            'bid_context': context_phase3,
+            'hand': [str(c) for c in self.hands[non_dealer]],
+            'trump_indicator_suit': self.trump_indicator.suit.value if self.trump_indicator else None,
+            'trump_cards': sum(1 for c in self.hands[non_dealer] if self.trump_indicator and c.suit == self.trump_indicator.suit),
+            'high_cards': sum(1 for c in self.hands[non_dealer] if c.rank in [Rank.ACE, Rank.X, Rank.KING]),
+            'hearts_count': sum(1 for c in self.hands[non_dealer] if c.suit == Suit.HEARTS),
+            'bells_count': sum(1 for c in self.hands[non_dealer] if c.suit == Suit.BELLS),
+            'leaves_count': sum(1 for c in self.hands[non_dealer] if c.suit == Suit.LEAVES),
+            'acorns_count': sum(1 for c in self.hands[non_dealer] if c.suit == Suit.ACORNS),
+            'total_points': sum(self._get_card_points(c) for c in self.hands[non_dealer]),
+            'options': ['y', 'n'],
+            'chosen_option': response
+        }
+       self.game_log.append({
+            'event': 'bidding_decision',
+            'player': non_dealer,
+            'context': decision_context
+        })
        print(f"{dealer} chose: {response}")
        if response.lower() == 'y':
            self.game_type = GameType.NO_TRUMP
@@ -439,6 +718,25 @@ class AlsosGame:
            return True
 
        response = self.agents[dealer].choose_bid(self, dealer, ['y', 'n'], current_bid_context=context_phase4)
+       decision_context = {
+            'bid_context': context_phase4,
+            'hand': [str(c) for c in self.hands[non_dealer]],
+            'trump_indicator_suit': self.trump_indicator.suit.value if self.trump_indicator else None,
+            'trump_cards': sum(1 for c in self.hands[non_dealer] if self.trump_indicator and c.suit == self.trump_indicator.suit),
+            'high_cards': sum(1 for c in self.hands[non_dealer] if c.rank in [Rank.ACE, Rank.X, Rank.KING]),
+            'hearts_count': sum(1 for c in self.hands[non_dealer] if c.suit == Suit.HEARTS),
+            'bells_count': sum(1 for c in self.hands[non_dealer] if c.suit == Suit.BELLS),
+            'leaves_count': sum(1 for c in self.hands[non_dealer] if c.suit == Suit.LEAVES),
+            'acorns_count': sum(1 for c in self.hands[non_dealer] if c.suit == Suit.ACORNS),
+            'total_points': sum(self._get_card_points(c) for c in self.hands[non_dealer]),
+            'options': ['y', 'n'],
+            'chosen_option': response
+        }
+       self.game_log.append({
+            'event': 'bidding_decision',
+            'player': non_dealer,
+            'context': decision_context
+        })
        print(f"{dealer} chose: {response}")
        if response.lower() == 'y':
            self.game_type = GameType.BETLI
@@ -610,14 +908,6 @@ class AlsosGame:
                 self.hands[current_player].remove(played_card)
                 trick_cards[current_player] = played_card
                 print(f"{current_player} plays {played_card}")
-                self.game_log.append({ 
-                    "event": "card_played",
-                    "trick_num": trick_num,
-                    "player": current_player,
-                    "card": str(played_card),
-                    "suit": played_card.suit.value,
-                    "rank": played_card.rank.name
-                })
             else:
                 led_suit = list(trick_cards.values())[0].suit
                 valid_cards = [card for card in self.hands[current_player] if card.suit == led_suit]
@@ -656,13 +946,19 @@ class AlsosGame:
         self.tricks[winner].extend(list(trick_cards.values())) # Ensure it's a list for extend
         print(f"\n{winner} wins the trick!")
 
-        # Log trick winner and contents
-        self.game_log.append({ # NEW
-            "event": "trick_completed",
+        decision_context = {
+            "player": current_player,
             "trick_num": trick_num,
-            "leader": lead_player,
-            "played_cards": {p: str(c) for p, c in trick_cards.items()},
-            "winner": winner
+            "current_trick": {p: str(c) for p, c in trick_cards.items()},
+            "valid_cards": [str(c) for c in valid_cards],
+            "chosen_card": str(played_card),
+            "hand": [str(c) for c in self.hands[current_player]],
+            "game_type": self.game_type.value,
+            "trump_suit": self.trump_suit.value if self.trump_suit else None
+        }
+        self.game_log.append({
+            "event": "player_decision",
+            "context": decision_context
         })
 
         return winner
@@ -1059,7 +1355,7 @@ def main():
     print("Welcome to Alsós!")
     
     # Configuration for simulation vs. human play
-    game_type = "human_vs_ai" # simulation, human_vs_ai, human_solo
+    game_type = "simulation" # simulation, human_vs_ai, human_solo
     num_simulations = 1000
 
     if game_type == "simulation":
@@ -1067,7 +1363,7 @@ def main():
         
         # Define agents for simulation
         # For simple simulation, use RuleBasedPlayerAgent for all players
-        sim_agents = {f"Player {i+1}": RuleBasedPlayerAgent() for i in range(num_players_sim)}
+        sim_agents = {f"Player {i+1}": LearningPlayerAgent() for i in range(num_players_sim)}
 
         for i in range(num_simulations):
             print(f"\n--- Simulating Game {i+1} of {num_simulations} ---")
@@ -1096,7 +1392,7 @@ def main():
         # Define agents for human vs. AI play
         human_vs_ai_agents = {
             "Player 1": HumanPlayerAgent(),     # Player 1 is controlled by a human
-            "Player 2": RuleBasedPlayerAgent()  # Player 2 is controlled by the RuleBasedPlayerAgent
+            "Player 2": LearningPlayerAgent()  # Player 2 is controlled by the Agent
         }
         
         # Create the game instance with the specified agents
