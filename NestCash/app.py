@@ -207,6 +207,7 @@ with st.expander("**🏆 Kitűzők**", expanded=True):
     user_posts = list(db.forum_posts.find({"user_id": current_user}))
     user_follows = list(db.user_follows.find({"follower_id": current_user}))
     
+    
     # Calculate badge metrics
     def calculate_badge_metrics():
         lessons_completed_count = db.lesson_completions.count_documents({
@@ -226,9 +227,160 @@ with st.expander("**🏆 Kitűzők**", expanded=True):
             "lessons_completed": lessons_completed_count,
             "quizzes_completed": 0,  # Placeholder
         }
+        
         return metrics
-    
-    metrics = calculate_badge_metrics()
+        
+    def check_and_update_badges(metrics):
+        # Előző badge állapot betöltése
+        previous_badge_state = db.user_badge_progress.find_one({"user_id": current_user}) or {}
+        
+        # Badge definíciók
+        badge_definitions = {
+            "learning": {
+                "lessons": {
+                    "name": "📚 Tudásgyűjtő",
+                    "icon": "📚",
+                    "desc": "Tanulási anyagok elvégzése",
+                    "current_value": metrics["lessons_completed"],
+                    "tiers": [
+                        {"requirement": 1, "name": "Tudáscsíra", "reward": "Első lecke elvégzése"},
+                        {"requirement": 5, "name": "Tanuló", "reward": "5 lecke elvégzése"},
+                        {"requirement": 15, "name": "Tudásvágy", "reward": "15 lecke elvégzése"},
+                        {"requirement": 30, "name": "Tudásmester", "reward": "30 lecke elvégzése"},
+                    ]
+                },
+                "quizzes": {
+                    "name": "🎯 Kvízharcos",
+                    "icon": "🎯",
+                    "desc": "Kvízek sikeres kitöltése",
+                    "current_value": metrics["quizzes_completed"],
+                    "tiers": [
+                        {"requirement": 1, "name": "Első Kvíz", "reward": "Első kvíz kitöltése"},
+                        {"requirement": 5, "name": "Kvízkedvelő", "reward": "5 kvíz kitöltése"},
+                        {"requirement": 15, "name": "Kvízharcos", "reward": "15 kvíz kitöltése"},
+                        {"requirement": 25, "name": "Kvízmester", "reward": "25 kvíz kitöltése"},
+                    ]
+                }
+            },
+            "saving": {
+                "amount": {
+                    "name": "💰 Spóroló",
+                    "icon": "💰",
+                    "desc": "Megtakarított összeg",
+                    "current_value": metrics["savings_rate"],
+                    "tiers": [
+                        {"requirement": 0.10, "name": "Fillérgyűjtő", "reward": "10% megtakarítási ráta"},
+                        {"requirement": 0.17, "name": "Spóroló", "reward": "17% megtakarítási ráta"},
+                        {"requirement": 0.24, "name": "Takarékos", "reward": "24% megtakarítási ráta"},
+                        {"requirement": 0.31, "name": "Megtakarítás Mestere", "reward": "31% megtakarítási ráta"},
+                    ]
+                },
+                "tracking": {
+                    "name": "📊 Nyomonkövető",
+                    "icon": "📊",
+                    "desc": "Tranzakciók rögzítése",
+                    "current_value": metrics["transactions_days"],
+                    "tiers": [
+                        {"requirement": 1, "name": "Első Rögzítés", "reward": "Első tranzakció rögzítése"},
+                        {"requirement": 7, "name": "Heti Rendszeresség", "reward": "7 napos nyomon követés"},
+                        {"requirement": 30, "name": "Havi Rendszeresség", "reward": "30 napos nyomon követés"},
+                        {"requirement": 90, "name": "Elkötelezett", "reward": "90 napos nyomon követés"},
+                        {"requirement": 180, "name": "Nyomon követés Mestere", "reward": "180 napos nyomon követés"},
+                    ]
+                }
+            },
+            "habit": {
+                "creation": {
+                    "name": "🔄 Szokásépítő",
+                    "icon": "🔄",
+                    "desc": "Szokások létrehozása",
+                    "current_value": len(user_habits),
+                    "tiers": [
+                        {"requirement": 1, "name": "Első Szokás", "reward": "Első szokás létrehozása"},
+                        {"requirement": 3, "name": "Szokásgyűjtő", "reward": "3 szokás létrehozása"},
+                        {"requirement": 5, "name": "Szokásmester", "reward": "5 szokás létrehozása"},
+                        {"requirement": 10, "name": "Szokásguru", "reward": "10 szokás létrehozása"},
+                    ]
+                },
+                "streak": {
+                    "name": "⚡ Kitartó",
+                    "icon": "⚡",
+                    "desc": "Leghosszabb szokás sorozat",
+                    "current_value": metrics["habit_streak"],
+                    "tiers": [
+                        {"requirement": 3, "name": "Kezdő Kitartás", "reward": "3 napos sorozat"},
+                        {"requirement": 7, "name": "Heti Kitartás", "reward": "7 napos sorozat"},
+                        {"requirement": 21, "name": "Szokássá Váló", "reward": "21 napos sorozat"},
+                        {"requirement": 66, "name": "Megszilárdult", "reward": "66 napos sorozat"},
+                    ]
+                }
+            },
+            "community": {
+                "posts": {
+                    "name": "💬 Beszélgetős",
+                    "icon": "💬",
+                    "desc": "Fórum bejegyzések",
+                    "current_value": metrics["forum_posts"],
+                    "tiers": [
+                        {"requirement": 1, "name": "Első Hang", "reward": "Első fórum bejegyzés"},
+                        {"requirement": 5, "name": "Aktív Tag", "reward": "5 fórum bejegyzés"},
+                        {"requirement": 15, "name": "Beszélgetős", "reward": "15 fórum bejegyzés"},
+                        {"requirement": 50, "name": "Közösség Motorja", "reward": "50 fórum bejegyzés"},
+                    ]
+                },
+                "following": {
+                    "name": "🤝 Kapcsolatépítő",
+                    "icon": "🤝",
+                    "desc": "Követett felhasználók",
+                    "current_value": metrics["following_count"],
+                    "tiers": [
+                        {"requirement": 1, "name": "Első Kapcsolat", "reward": "Első felhasználó követése"},
+                        {"requirement": 3, "name": "Társaságkedvelő", "reward": "3 felhasználó követése"},
+                        {"requirement": 10, "name": "Kapcsolatépítő", "reward": "10 felhasználó követése"},
+                        {"requirement": 25, "name": "Közösségi Háló", "reward": "25 felhasználó követése"},
+                    ]
+                }
+            }
+        }
+        
+        # Új badge szintek ellenőrzése és értesítések küldése
+        for category_name, category in badge_definitions.items():
+            for badge_key, badge_data in category.items():
+                current_value = metrics.get(badge_key, badge_data["current_value"])
+                previous_value = previous_badge_state.get(badge_key, {}).get("value", 0)
+                
+                current_tier, current_tier_info, _, _ = get_current_tier(current_value, badge_data["tiers"])
+                previous_tier, _, _, _ = get_current_tier(previous_value, badge_data["tiers"])
+                
+                # Ha új szintet értünk el
+                if current_tier > previous_tier and current_tier_info:
+                    notification_id = str(int(time.time() * 1000))
+                    new_notification = {
+                        "notification_id": notification_id,
+                        "user_id": current_user,
+                        "type": "badge",
+                        "message": f"Gratulálunk! Megszerezted a {current_tier_info['name']} szintű {badge_data['name']} kitűzőt!",
+                        "related_id": f"badge_{badge_key}_{current_tier}",
+                        "from_user": 0,  # 0 = rendszer
+                        "from_username": "NestCash Rendszer",
+                        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M"),
+                        "read": False,
+                        "action_url": None
+                    }
+                    db.notifications.insert_one(new_notification)
+        
+        # Jelenlegi állapot mentése
+        db.user_badge_progress.update_one(
+            {"user_id": current_user},
+            {"$set": {
+                "user_id": current_user,
+                "metrics": metrics,
+                "last_updated": datetime.now().strftime("%Y-%m-%d %H:%M")
+            }},
+            upsert=True
+        )
+        
+        return badge_definitions
     
     # Define tiered badges (multi-level)
     def get_current_tier(value, tiers):
@@ -247,141 +399,6 @@ with st.expander("**🏆 Kitűzők**", expanded=True):
         max_tier = len(tiers)
         
         return current_tier, current_tier_info, next_tier, max_tier
-    
-    # Badge definitions with tiers
-    tiered_badges = {
-        "learning": {
-            "lessons": {
-                "name": "📚 Tudásgyűjtő",
-                "icon": "📚",
-                "desc": "Tanulási anyagok elvégzése",
-                "current_value": metrics["lessons_completed"],
-                "tiers": [
-                    {"requirement": 1, "name": "Tudáscsíra", "reward": "Első lecke elvégzése"},
-                    {"requirement": 5, "name": "Tanuló", "reward": "5 lecke elvégzése"},
-                    {"requirement": 15, "name": "Tudásvágy", "reward": "15 lecke elvégzése"},
-                    {"requirement": 30, "name": "Tudásmester", "reward": "30 lecke elvégzése"},
-                ]
-            },
-            "quizzes": {
-                "name": "🎯 Kvízharcos",
-                "icon": "🎯",
-                "desc": "Kvízek sikeres kitöltése",
-                "current_value": metrics["quizzes_completed"],
-                "tiers": [
-                    {"requirement": 1, "name": "Első Kvíz", "reward": "Első kvíz kitöltése"},
-                    {"requirement": 5, "name": "Kvízkedvelő", "reward": "5 kvíz kitöltése"},
-                    {"requirement": 15, "name": "Kvízharcos", "reward": "15 kvíz kitöltése"},
-                    {"requirement": 25, "name": "Kvízmester", "reward": "25 kvíz kitöltése"},
-                ]
-            }
-        },
-        "saving": {
-            "amount": {
-                "name": "💰 Spóroló",
-                "icon": "💰",
-                "desc": "Megtakarított összeg",
-                "current_value": metrics["savings_rate"],
-                "tiers": [
-                    {"requirement": 0.10, "name": "Fillérgyűjtő", "reward": "10% megtakarítási ráta"},
-                    {"requirement": 0.17, "name": "Spóroló", "reward": "17% megtakarítási ráta"},
-                    {"requirement": 0.24, "name": "Takarékos", "reward": "24% megtakarítási ráta"},
-                    {"requirement": 0.31, "name": "Megtakarítás Mestere", "reward": "31% megtakarítási ráta"},
-                ]
-            },
-            "tracking": {
-                "name": "📊 Nyomonkövető",
-                "icon": "📊",
-                "desc": "Tranzakciók rögzítése",
-                "current_value": metrics["transactions_days"],
-                "tiers": [
-                    {"requirement": 1, "name": "Első Rögzítés", "reward": "Első tranzakció rögzítése"},
-                    {"requirement": 7, "name": "Heti Rendszeresség", "reward": "7 napos nyomon követés"},
-                    {"requirement": 30, "name": "Havi Rendszeresség", "reward": "30 napos nyomon követés"},
-                    {"requirement": 90, "name": "Elkötelezett", "reward": "90 napos nyomon követés"},
-                    {"requirement": 180, "name": "Nyomon követés Mestere", "reward": "180 napos nyomon követés"},
-                ]
-            }
-        },
-        "habit": {
-            "creation": {
-                "name": "🔄 Szokásépítő",
-                "icon": "🔄",
-                "desc": "Szokások létrehozása",
-                "current_value": len(user_habits),
-                "tiers": [
-                    {"requirement": 1, "name": "Első Szokás", "reward": "Első szokás létrehozása"},
-                    {"requirement": 3, "name": "Szokásgyűjtő", "reward": "3 szokás létrehozása"},
-                    {"requirement": 5, "name": "Szokásmester", "reward": "5 szokás létrehozása"},
-                    {"requirement": 10, "name": "Szokásguru", "reward": "10 szokás létrehozása"},
-                ]
-            },
-            "streak": {
-                "name": "⚡ Kitartó",
-                "icon": "⚡",
-                "desc": "Leghosszabb szokás sorozat",
-                "current_value": metrics["habit_streak"],
-                "tiers": [
-                    {"requirement": 3, "name": "Kezdő Kitartás", "reward": "3 napos sorozat"},
-                    {"requirement": 7, "name": "Heti Kitartás", "reward": "7 napos sorozat"},
-                    {"requirement": 21, "name": "Szokássá Váló", "reward": "21 napos sorozat"},
-                    {"requirement": 66, "name": "Megszilárdult", "reward": "66 napos sorozat"},
-                ]
-            }
-        },
-        "community": {
-            "posts": {
-                "name": "💬 Beszélgetős",
-                "icon": "💬",
-                "desc": "Fórum bejegyzések",
-                "current_value": metrics["forum_posts"],
-                "tiers": [
-                    {"requirement": 1, "name": "Első Hang", "reward": "Első fórum bejegyzés"},
-                    {"requirement": 5, "name": "Aktív Tag", "reward": "5 fórum bejegyzés"},
-                    {"requirement": 15, "name": "Beszélgetős", "reward": "15 fórum bejegyzés"},
-                    {"requirement": 50, "name": "Közösség Motorja", "reward": "50 fórum bejegyzés"},
-                ]
-            },
-            "following": {
-                "name": "🤝 Kapcsolatépítő",
-                "icon": "🤝",
-                "desc": "Követett felhasználók",
-                "current_value": metrics["following_count"],
-                "tiers": [
-                    {"requirement": 1, "name": "Első Kapcsolat", "reward": "Első felhasználó követése"},
-                    {"requirement": 3, "name": "Társaságkedvelő", "reward": "3 felhasználó követése"},
-                    {"requirement": 10, "name": "Kapcsolatépítő", "reward": "10 felhasználó követése"},
-                    {"requirement": 25, "name": "Közösségi Háló", "reward": "25 felhasználó követése"},
-                ]
-            }
-        }
-    }
-    
-    # Calculate total badges and progress
-    total_current_tiers = 0
-    total_possible_tiers = 0
-    
-    for category in tiered_badges.values():
-        for badge in category.values():
-            current_tier, _, _, max_tier = get_current_tier(badge["current_value"], badge["tiers"])
-            total_current_tiers += current_tier
-            total_possible_tiers += max_tier
-    
-    # Header with stats
-    col1, col2 = st.columns([3, 1])
-    with col1:
-        st.markdown(f"### 🏆 Kitűzők ({total_current_tiers}/{total_possible_tiers})")
-    with col2:
-        progress_percent = (total_current_tiers / total_possible_tiers) * 100 if total_possible_tiers > 0 else 0
-        st.metric("Teljesítés", f"{progress_percent:.0f}%")
-    
-    # Progress bar
-    st.progress(total_current_tiers / total_possible_tiers if total_possible_tiers > 0 else 0)
-    
-    st.markdown("---")
-    
-    # Badge categories
-    tab1, tab2, tab3, tab4 = st.tabs(["🧠 Tanulás", "💰 Spórolás", "🔁 Szokások", "👥 Közösség"])
     
     def render_tiered_badge(badge_data):
         """Render a single tiered badge"""
@@ -447,8 +464,38 @@ with st.expander("**🏆 Kitűzők**", expanded=True):
                     st.markdown(f"🎯 **{i+1}. szint:** {tier['name']} ({tier['requirement']} - {tier['reward']})")
                 else:
                     st.markdown(f"🔒 **{i+1}. szint:** {tier['name']} ({tier['requirement']} - {tier['reward']})")
+
+    metrics = calculate_badge_metrics()
     
-        st.markdown("---")
+    tiered_badges = check_and_update_badges(metrics)
+    
+    # Calculate total badges and progress
+    total_current_tiers = 0
+    total_possible_tiers = 0
+    
+    for category in tiered_badges.values():
+        for badge in category.values():
+            current_tier, _, _, max_tier = get_current_tier(badge["current_value"], badge["tiers"])
+            total_current_tiers += current_tier
+            total_possible_tiers += max_tier
+    
+    # Header with stats
+    col1, col2 = st.columns([3, 1])
+    with col1:
+        st.markdown(f"### 🏆 Kitűzők ({total_current_tiers}/{total_possible_tiers})")
+    with col2:
+        progress_percent = (total_current_tiers / total_possible_tiers) * 100 if total_possible_tiers > 0 else 0
+        st.metric("Teljesítés", f"{progress_percent:.0f}%")
+    
+    # Progress bar
+    st.progress(total_current_tiers / total_possible_tiers if total_possible_tiers > 0 else 0)
+    
+    st.markdown("---")
+    
+    # Badge categories
+    tab1, tab2, tab3, tab4 = st.tabs(["🧠 Tanulás", "💰 Spórolás", "🔁 Szokások", "👥 Közösség"])
+    
+    st.markdown("---")
     
     # Render each category
     with tab1:

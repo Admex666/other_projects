@@ -27,11 +27,6 @@ def load_forum_posts():
         "title", "content", "category", "privacy_level", "like_count", "comment_count"
     ])
 
-def save_forum_posts(posts_df):
-    db.forum_posts.delete_many({})
-    if not posts_df.empty:
-        db.forum_posts.insert_many(posts_df.to_dict("records"))
-
 # Hozzászólások kezelése
 def load_comments():
     comments = list(db.forum_comments.find({}))
@@ -40,22 +35,12 @@ def load_comments():
         "timestamp", "content"
     ])
 
-def save_comments(comments_df):
-    db.forum_comments.delete_many({})
-    if not comments_df.empty:
-        db.forum_comments.insert_many(comments_df.to_dict("records"))
-
 # Like-ok kezelése
 def load_likes():
     likes = list(db.forum_likes.find({}))
     return pd.DataFrame(likes) if likes else pd.DataFrame(columns=[
         "like_id", "post_id", "user_id", "username", "timestamp"
     ])
-
-def save_likes(likes_df):
-    db.forum_likes.delete_many({})
-    if not likes_df.empty:
-        db.forum_likes.insert_many(likes_df.to_dict("records"))
 
 # Követés kezelése
 def load_follows():
@@ -65,11 +50,6 @@ def load_follows():
         "following_username", "timestamp", "status"
     ])
 
-def save_follows(follows_df):
-    db.user_follows.delete_many({})
-    if not follows_df.empty:
-        db.user_follows.insert_many(follows_df.to_dict("records"))
-
 # Értesítések kezelése
 def load_notifications():
     notifications = list(db.notifications.find({}))
@@ -78,12 +58,7 @@ def load_notifications():
         "from_user", "timestamp", "read", "action_url"
     ])
 
-def save_notifications(notifications_df):
-    db.notifications.delete_many({})
-    if not notifications_df.empty:
-        db.notifications.insert_many(notifications_df.to_dict("records"))
-
-# ===== SEGÉDFÜGGVÉNYEK =====
+#%% ===== SEGÉDFÜGGVÉNYEK =====
 
 def create_notification(user_id, notification_type, message, related_id=None, from_user=None):
     """Új értesítés létrehozása"""
@@ -135,8 +110,6 @@ def can_view_post(post, viewer_id):
 def toggle_like(post_id, user_id, username):
     """Like toggle funkció"""
     likes_df = load_likes()
-    posts_df = load_forum_posts()
-    
     existing_like = likes_df[
         (likes_df["post_id"] == str(post_id)) & 
         (likes_df["user_id"] == user_id)
@@ -154,28 +127,78 @@ def toggle_like(post_id, user_id, username):
         
         db.forum_likes.insert_one(new_like)
         
-       # Értesítés létrehozása
-        post_owner = posts_df[posts_df["post_id"] == post_id]["user_id"].iloc[0]
-        # Ellenőrizni, hogy a post_owner nem NaN
-        if not pd.isna(post_owner) and post_owner != user_id:
+        # Értesítés létrehozása
+        post = db.forum_posts.find_one({"post_id": str(post_id)})
+        if post and post["user_id"] != user_id:
             create_notification(
-                int(post_owner),
+                post["user_id"],
                 "like", 
                 f"{username} kedvelte a bejegyzésedet", 
                 post_id, 
-                int(user_id)
+                user_id
             )
     else:
         # Like törlése
-        db.forum_likes.delete_one({'_id': existing_like['_id'].iloc[0]})
-       
+        db.forum_likes.delete_one({"like_id": existing_like.iloc[0]["like_id"]})
+    
     # Post like count frissítése
-    likes_df = load_likes()
-    post_likes = len(likes_df[likes_df["post_id"] == post_id])
-    posts_df.loc[posts_df["post_id"] == post_id, "like_count"] = post_likes
-    save_forum_posts(posts_df)
+    post_likes = db.forum_likes.count_documents({"post_id": str(post_id)})
+    db.forum_posts.update_one(
+        {"post_id": str(post_id)},
+        {"$set": {"like_count": post_likes}}
+    )
+    
+# Értesítés olvasottá tétele
+def mark_notification_read(notification_id):
+    db.notifications.update_one(
+        {"notification_id": notification_id},
+        {"$set": {"read": True}}
+    )
 
-# ===== MAIN APP =====
+# Összes értesítés olvasottá tétele
+def mark_all_notifications_read(user_id):
+    db.notifications.update_many(
+        {"user_id": user_id, "read": False},
+        {"$set": {"read": True}}
+    )
+
+# Értesítés törlése
+def delete_notification(notification_id):
+    db.notifications.delete_one({"notification_id": notification_id})
+    
+# Követés hozzáadása
+def add_follow(follower_id, follower_username, following_id, following_username):
+    follow_id = str(int(time.time() * 1000))
+    new_follow = {
+        "follow_id": follow_id,
+        "follower_id": follower_id,
+        "following_id": following_id,
+        "follower_username": follower_username,
+        "following_username": following_username,
+        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "status": "accepted"
+    }
+    db.user_follows.insert_one(new_follow)
+    
+    # Értesítés küldése
+    create_notification(
+        following_id,
+        "follow",
+        f"{follower_username} követni kezdett téged",
+        None,
+        follower_id
+    )
+    return new_follow
+
+# Követés törlése
+def remove_follow(follower_id, following_username):
+    result = db.user_follows.delete_one({
+        "follower_id": follower_id,
+        "following_username": following_username
+    })
+    return result.deleted_count > 0
+
+#%% ===== MAIN APP =====
 
 # Fejléc
 st.title("💰 NestCash prototípus")
@@ -401,43 +424,44 @@ with tab1:
 with tab2:
     st.subheader("🔔 Értesítések")
     
+    unread_count = db.notifications.count_documents({
+        "user_id": current_user,
+        "read": False
+    })
+    
     if unread_count > 0:
         if st.button("Összes megjelölése olvasottként"):
-            notifications_df.loc[
-                notifications_df["user_id"] == current_user, "read"
-            ] = True
-            save_notifications(notifications_df)
+            mark_all_notifications_read(current_user)
             st.rerun()
     
-    user_notifications = notifications_df[
-        notifications_df["user_id"] == current_user
-    ].sort_values("timestamp", ascending=False)
+    user_notifications = list(db.notifications.find(
+        {"user_id": current_user},
+        sort=[("timestamp", -1)]
+    ))
     
-    if user_notifications.empty:
+    if not user_notifications:
         st.info("Nincsenek értesítések.")
     else:
-        for _, notification in user_notifications.iterrows():
-            read_status = "(Read)" if notification["read"] else "(!)"
+        for notification in user_notifications:
+            read_status = "(Olvasott)" if notification.get("read", False) else "(! Új)"
             st.markdown(f"{read_status} **{notification['message']}**")
             st.caption(f"📅 {notification['timestamp']}")
             
-            if not notification["read"]:
+            if not notification.get("read", False):
                 if st.button("Megjelölés olvasottként", 
                            key=f"read_{notification['notification_id']}"):
-                    notifications_df.loc[
-                        notifications_df["notification_id"] == notification["notification_id"], 
-                        "read"
-                    ] = True
-                    save_notifications(notifications_df)
+                    mark_notification_read(notification['notification_id'])
                     st.rerun()
+            
+            if st.button("Törlés", key=f"delete_{notification['notification_id']}"):
+                delete_notification(notification['notification_id'])
+                st.rerun()
             
             st.divider()
 
 # ===== KÖVETÉS TAB =====
 with tab3:
     st.subheader("👥 Követés kezelése")
-    
-    follows_df = load_follows()
     
     # Követés keresése
     col1, col2 = st.columns(2)
@@ -446,70 +470,59 @@ with tab3:
         search_user = st.text_input("Felhasználónév keresése")
         
         if search_user:
-            # Felhasználók keresése a posts alapján
-            all_users = posts_df["username"].unique()
-            matching_users = [user for user in all_users if search_user.lower() in user.lower()]
+            # Felhasználók keresése közvetlenül az adatbázisból
+            matching_users = db.forum_posts.distinct("username", 
+                {"username": {"$regex": search_user, "$options": "i"}})
             
             for user in matching_users:
-                if user != username:  # Saját magát ne mutassa
+                if user != username:
                     col_user, col_button = st.columns([3, 1])
                     with col_user:
                         st.write(f"👤 {user}")
                     with col_button:
                         # Ellenőrzi, hogy már követi-e
-                        is_following = not follows_df[
-                            (follows_df["follower_id"] == current_user) & 
-                            (follows_df["following_username"] == user)
-                        ].empty
+                        is_following = db.user_follows.count_documents({
+                            "follower_id": current_user,
+                            "following_username": user
+                        }) > 0
                         
                         if is_following:
                             if st.button("Követés megszüntetése", key=f"unfollow_{user}"):
-                                follows_df = follows_df[~(
-                                    (follows_df["follower_id"] == current_user) & 
-                                    (follows_df["following_username"] == user)
-                                )]
-                                save_follows(follows_df)
-                                st.rerun()
+                                if remove_follow(current_user, user):
+                                    st.success(f"Már nem követed {user}-t")
+                                    st.rerun()
                         else:
                             if st.button("Követés", key=f"follow_{user}"):
                                 # Felhasználó ID lekérése
-                                user_id = posts_df[posts_df["username"] == user]["user_id"].iloc[0]
-                                
-                                new_follow = {
-                                    "follow_id": str(int(time.time() * 1000)),
-                                    "follower_id": current_user,
-                                    "following_id": user_id,
-                                    "follower_username": username,
-                                    "following_username": user,
-                                    "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M"),
-                                    "status": "accepted"
-                                }
-                                
-                                follows_df = pd.concat([follows_df, pd.DataFrame([new_follow])], 
-                                                     ignore_index=True)
-                                save_follows(follows_df)
-                                
-                                # Értesítés küldése
-                                create_notification(
-                                    user_id, 
-                                    "follow", 
-                                    f"{username} követni kezdett téged", 
-                                    None, 
-                                    current_user
+                                user_data = db.forum_posts.find_one(
+                                    {"username": user},
+                                    {"user_id": 1}
                                 )
-                                
-                                st.success(f"Követed {user}-t!")
-                                st.rerun()
+                                if user_data:
+                                    add_follow(
+                                        current_user,
+                                        username,
+                                        user_data["user_id"],
+                                        user
+                                    )
+                                    st.success(f"Követed {user}-t!")
+                                    st.rerun()
     
     with col2:
         st.markdown("#### Követettek listája")
-        my_follows = follows_df[follows_df["follower_id"] == current_user]
+        my_follows = list(db.user_follows.find(
+            {"follower_id": current_user},
+            {"following_username": 1}
+        ))
         
-        if my_follows.empty:
+        if not my_follows:
             st.info("Még nem követsz senkit.")
         else:
-            for _, follow in my_follows.iterrows():
+            for follow in my_follows:
                 st.write(f"👤 {follow['following_username']}")
+                if st.button("Követés megszüntetése", key=f"unfollow_list_{follow['following_username']}"):
+                    if remove_follow(current_user, follow['following_username']):
+                        st.rerun()
 
 # ===== BEÁLLÍTÁSOK TAB =====
 with tab4:
@@ -535,6 +548,7 @@ with tab4:
     st.markdown("#### Statisztikák")
     my_posts = len(posts_df[posts_df["user_id"] == current_user])
     my_likes = len(likes_df[likes_df["user_id"] == current_user])
+    follows_df = load_follows()
     my_followers = len(follows_df[follows_df["following_id"] == current_user])
     my_following = len(follows_df[follows_df["follower_id"] == current_user])
     
