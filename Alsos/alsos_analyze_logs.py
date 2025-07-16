@@ -9,6 +9,7 @@ import joblib
 import matplotlib.pyplot as plt
 import seaborn as sns
 from collections import defaultdict, Counter
+import numpy as np
 
 def prepare_training_data(game_data):
     """Játéknaplókból kinyeri a tanító adatokat"""
@@ -218,6 +219,9 @@ def analyze_opening_plays(game_data):
     opening_plays = defaultdict(list)
     suit_openings = defaultdict(list)
     
+    bonus_points_p1 = []
+    bonus_points_p2 = []
+    
     for game in game_data:
         for event in game['log']:
             if event.get('event') == 'player_decision' and event['context']['trick_num'] == 1:
@@ -236,8 +240,20 @@ def analyze_opening_plays(game_data):
                     'trump_suit': event['context']['trump_suit'],
                     'hand_size': len(event['context']['hand'])
                 })
+            
+            if 'final_scores' in event:
+                bonus_points_p1.append(
+                        event['final_scores']['Player 1']['bonus_points']
+                        )
+                bonus_points_p2.append(
+                        event['final_scores']['Player 2']['bonus_points']
+                        )
     
     print("=== OPENING PLAY ANALYSIS ===")
+    
+    print(f"\nPlayer 1 average bonus points: {np.array(bonus_points_p1).mean()}")
+    print(f"\nPlayer 2 average bonus points: {np.array(bonus_points_p2).mean()}")
+    
     for player, plays in opening_plays.items():
         print(f"\n{player} Opening Plays:")
         
@@ -299,55 +315,6 @@ def analyze_suit_length_strategy(game_data):
         for suit, lengths in suit_avg_length.items():
             avg_length = sum(lengths) / len(lengths)
             print(f"  {suit}: avg length {avg_length:.1f} (played {len(lengths)} times)")
-
-def analyze_trump_usage(game_data):
-    """Analyze how and when players use trump cards"""
-    trump_usage = defaultdict(list)
-    
-    for game in game_data:
-        trump_suit = None
-        for event in game['log']:
-            if event.get('event') == 'bidding_result':
-                trump_suit = event.get('trump_suit')
-            elif event.get('event') == 'player_decision' and trump_suit:
-                player = event['context']['player']
-                chosen_card = event['context']['chosen_card']
-                current_trick = event['context']['current_trick']
-                
-                chosen_suit = chosen_card.split(' of ')[1].split(' ')[0]
-                is_trump_played = trump_suit in chosen_suit
-                
-                # Determine if trump was led or played to follow
-                led_suit = None
-                if current_trick:
-                    first_card = list(current_trick.values())[0]
-                    led_suit = first_card.split(' of ')[1].split(' ')[0]
-                
-                trump_usage[player].append({
-                    'is_trump': is_trump_played,
-                    'trick_num': event['context']['trick_num'],
-                    'led_suit': led_suit,
-                    'is_leading': led_suit is None or player == list(current_trick.keys())[0],
-                    'hand_size': len(event['context']['hand'])
-                })
-    
-    print("\n=== TRUMP USAGE ANALYSIS ===")
-    for player, usage in trump_usage.items():
-        trump_plays = [u for u in usage if u['is_trump']]
-        total_plays = len(usage)
-        trump_count = len(trump_plays)
-        
-        print(f"\n{player} Trump Usage:")
-        print(f"  Trump played: {trump_count}/{total_plays} times ({trump_count/total_plays*100:.1f}%)")
-        
-        if trump_plays:
-            # When do they lead trump?
-            trump_leads = [t for t in trump_plays if t['is_leading']]
-            print(f"  Trump leads: {len(trump_leads)}/{trump_count} trump plays ({len(trump_leads)/trump_count*100:.1f}%)")
-            
-            # At what hand sizes do they play trump?
-            hand_sizes = [t['hand_size'] for t in trump_plays]
-            print(f"  Avg hand size when playing trump: {sum(hand_sizes)/len(hand_sizes):.1f}")
 
 def analyze_card_sequence_patterns(game_data):
     """Analyze patterns in card play sequences"""
@@ -528,7 +495,6 @@ def analyze_game_logs(filename="simulated_game_logs.jsonl"):
     
     analyze_opening_plays(game_data)
     analyze_suit_length_strategy(game_data)
-    analyze_trump_usage(game_data)
     analyze_card_sequence_patterns(game_data)
     
     # Create visualizations
@@ -572,3 +538,4 @@ def analyze_game_logs(filename="simulated_game_logs.jsonl"):
 if __name__ == "__main__":
     filename = "simulated_game_logs.jsonl" # simulate_game_logs OR human_vs_ai_game_logs
     analyze_game_logs(filename)
+
