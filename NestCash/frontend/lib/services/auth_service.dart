@@ -14,13 +14,14 @@ class AuthService {
   const AuthService({this.baseUrl = 'http://10.0.2.2:8000'});
 
   /// Regisztráció
-  Future<bool> register(String username, String email, String password) async {
+  Future<bool> register(String username, String email, String password, {String? mobile,}) async {
     final resp = await http.post(
       Uri.parse('$baseUrl/auth/register'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'username': username,
         'email': email,
+        if (mobile != null && mobile.isNotEmpty) 'mobile': mobile,
         'password': password,
       }),
     );

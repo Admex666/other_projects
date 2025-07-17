@@ -9,6 +9,7 @@ class NestCashDashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'NestCash Dashboard',
       theme: ThemeData(
         primarySwatch: Colors.teal,

@@ -50,6 +50,7 @@ async def register_user(
             "username": data.username,
             "email": data.email,
             "password": hashed_pw,
+            "mobile": data.mobile,
             "registration_date": str(datetime.now()),
         }
     )
@@ -58,4 +59,5 @@ async def register_user(
         "id": str(result.inserted_id),
         "username": data.username,
         "email": data.email,
+        "mobile": data.mobile,
     }
