@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../services/auth_service.dart';
 import 'register_screen.dart';
-import '../dashboard_screen.dart';
 import 'auth_wrapper.dart';
 
 /// LoginScreen – NestCash bejelentkezés modern (gradient) dizájnnal.

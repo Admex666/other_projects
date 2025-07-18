@@ -1,24 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class NestCashDashboard extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'NestCash Dashboard',
-      theme: ThemeData(
-        primarySwatch: Colors.teal,
-      ),
-      home: DashboardScreen(username: 'DemoUser'),
-    );
-  }
-}
-
 class DashboardScreen extends StatefulWidget {
   final String username;
 
-  const DashboardScreen({required this.username}); // új kötelező paraméter
+  const DashboardScreen({required this.username});
 
   @override
   _DashboardScreenState createState() => _DashboardScreenState();
@@ -320,26 +306,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: Container(
-        padding: EdgeInsets.symmetric(vertical: 8),
-        decoration: BoxDecoration(
-          color: Color(0xFFF0F8F0),
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            _buildNavItem(Icons.home, 0),
-            _buildNavItem(Icons.bar_chart, 1),
-            _buildNavItem(Icons.swap_horiz, 2),
-            _buildNavItem(Icons.layers, 3),
-            _buildNavItem(Icons.person, 4),
-          ],
-        ),
-      ),
     );
   }
 
@@ -492,22 +458,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ],
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildNavItem(IconData icon, int index) {
-    bool isSelected = index == 0; // Home is selected by default
-    return Container(
-      padding: EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: isSelected ? Color(0xFF00D4A3) : Colors.transparent,
-        shape: BoxShape.circle,
-      ),
-      child: Icon(
-        icon,
-        color: isSelected ? Colors.white : Colors.grey[600],
-        size: 24,
       ),
     );
   }

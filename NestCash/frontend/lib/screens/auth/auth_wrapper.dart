@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../services/auth_service.dart';
 import 'login_screen.dart';
-import '../dashboard_screen.dart';
+import '/main.dart';
 
 class AuthWrapper extends StatefulWidget {
   const AuthWrapper({super.key}); // + key
@@ -52,7 +52,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
   Widget build(BuildContext context) {
     if (_isLoading) return Center(child: CircularProgressIndicator());
     return _isLoggedIn && _username != null
-        ? DashboardScreen(username: _username!)
+        ? MainScreen(username: _username!)
         : LoginScreen();
   }
 }

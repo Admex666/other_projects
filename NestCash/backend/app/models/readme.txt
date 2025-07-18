@@ -11,3 +11,5 @@ The data models include user and item models.
 * `user.py`: Defines the user model.
 * `item.py`: Defines the item model.
 * `reg.py`: Defines the registration request model.
+* `transaction.py`: Defines the transaction model.
+* `transaction_schemas.py`: Defines the Pydantic schemas for transactions.
