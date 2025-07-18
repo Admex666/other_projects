@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../services/auth_service.dart';
 import 'register_screen.dart';
 import '../dashboard_screen.dart';
+import 'auth_wrapper.dart';
 
 /// LoginScreen – NestCash bejelentkezés modern (gradient) dizájnnal.
 ///
@@ -338,7 +339,7 @@ class _LoginScreenState extends State<LoginScreen> {
       );
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => DashboardScreen()),
+        MaterialPageRoute(builder: (_) => const AuthWrapper()),
       );
     } else {
       setState(() => _errorMsg = 'Hibás felhasználónév/email vagy jelszó.');

@@ -27,7 +27,7 @@ async def get_me(current_user: User = Depends(get_current_user)):
     return {
         "username": current_user.username,
         "email": current_user.email,
-        "user_id": current_user.user_id
+        "user_id": str(current_user.id),
     }
 
 @router.post("/register", status_code=201)

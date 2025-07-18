@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-void main() {
-  runApp(NestCashDashboard());
-}
-
 class NestCashDashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -14,12 +10,16 @@ class NestCashDashboard extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.teal,
       ),
-      home: DashboardScreen(),
+      home: DashboardScreen(username: 'DemoUser'),
     );
   }
 }
 
 class DashboardScreen extends StatefulWidget {
+  final String username;
+
+  const DashboardScreen({required this.username}); // új kötelező paraméter
+
   @override
   _DashboardScreenState createState() => _DashboardScreenState();
 }
@@ -55,16 +55,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '16:04',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          'Üdv Újra, User1!',
+                          'Üdv újra, ${widget.username}!',
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 24,

@@ -61,4 +61,22 @@ class AuthService {
   Future<String?> getToken() async {
     return _storage.read(key: 'token');
   }
+
+  Future<String?> getCurrentUsername() async {
+    final token = await getToken();
+    if (token == null) return null;
+
+    final resp = await http.get(
+      Uri.parse('$baseUrl/auth/me'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (resp.statusCode == 200) {
+      final data = jsonDecode(resp.body);
+      return data['username'] as String?;
+    }
+    return null;
+  }
 }
