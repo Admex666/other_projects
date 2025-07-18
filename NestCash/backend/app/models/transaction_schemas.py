@@ -1,13 +1,11 @@
 # app/models/transaction_schemas.py
 from pydantic import BaseModel, Field
 from typing import Optional, List
-from datetime import date
+from datetime import date # Import date hozzáadása
 
-# Bemenet létrehozáshoz
 class TransactionCreate(BaseModel):
-    datum: str                           # 'YYYY-MM-DD'
+    datum: date # Módosítás itt: str helyett date
     osszeg: float
-    user_id: int
     kategoria: Optional[str] = None
     tipus: Optional[str] = None
     bev_kiad_tipus: Optional[str] = None
@@ -26,7 +24,6 @@ class TransactionCreate(BaseModel):
     cel_alszamla: Optional[str] = None
     transfer_amount: Optional[str] = None
 
-    # snapshot mezők opcionálisak; ha küldöd, eltároljuk
     likvid: Optional[float] = None
     befektetes: Optional[float] = None
     megtakaritas: Optional[float] = None
@@ -36,7 +33,7 @@ class TransactionRead(BaseModel):
     id: str = Field(..., description="Mongo _id string")
     datum: str
     osszeg: float
-    user_id: int
+    user_id: str
     kategoria: Optional[str] = None
     tipus: Optional[str] = None
     bev_kiad_tipus: Optional[str] = None
@@ -45,8 +42,6 @@ class TransactionRead(BaseModel):
     nap_sorszam: Optional[int] = None
     leiras: Optional[str] = None
     deviza: Optional[str] = None
-
-    # stb. – ha több mezőre szükség lesz, bővíthető
 
 class TransactionListResponse(BaseModel):
     total: int

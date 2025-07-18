@@ -1,15 +1,16 @@
 # app/models/transaction.py
 from __future__ import annotations
-from beanie import Document
+from beanie import Document, PydanticObjectId
 from pydantic import BaseModel, Field
 from typing import Optional
 from datetime import datetime
+from bson import ObjectId
 
 class Transaction(Document):
     # Alap
     datum: str                         # ISO dátum 'YYYY-MM-DD'
     osszeg: float
-    user_id: int
+    user_id: PydanticObjectId
     kategoria: Optional[str] = None
     tipus: Optional[str] = None        # 'bevetel' / 'kiadas' / 'impulzus' stb.
     bev_kiad_tipus: Optional[str] = None
@@ -65,9 +66,23 @@ class Transaction(Document):
         """
         try:
             dt = datetime.strptime(self.datum, "%Y-%m-%d").date()
+            self.honap = dt.strftime("%Y-%m")
+            self.ho = self.honap
+            self.het = dt.isocalendar().week
+            self.nap_sorszam = dt.weekday()
+        except ValueError:
+            # Hiba kezelése: Ha a dátum formátuma nem megfelelő,
+            # állítsunk be alapértelmezett értékeket, vagy kezeljük másképp.
+            # Jelenleg a "test" dátum miatt nem kerülnek be az adatok.
+            # Az alábbi sorok biztosítják, hogy legalább a mezők létezzenek,
+            # de a helyes működéshez továbbra is érvényes dátum szükséges a POST-ban.
+            self.honap = None  # vagy valamilyen alapértelmezett érték
+            self.ho = None
+            self.het = None
+            self.nap_sorszam = None
         except Exception:
-            return
-        self.honap = dt.strftime("%Y-%m")
-        self.ho = self.honap  # backward compat
-        self.het = dt.isocalendar().week  # ISO hét
-        self.nap_sorszam = dt.weekday()   # 0=hétfő
+            # Általánosabb kivétel kezelése
+            self.honap = None
+            self.ho = None
+            self.het = None
+            self.nap_sorszam = None

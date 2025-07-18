@@ -3,7 +3,7 @@ import hashlib
 from datetime import datetime, timedelta
 from jose import jwt
 from passlib.context import CryptContext
-from app.models.user import User
+from app.models.user import UserDocument
 from app.core.security import SECRET_KEY, ALGORITHM
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -18,7 +18,7 @@ async def authenticate_user(login: str, password_plain: str):
     """
     # Ha emailt is engedsz majd, cseréld erre:
     # user = await User.find_one({"$or": [{"username": login}, {"email": login}]})
-    user = await User.find_one({"username": login})
+    user = await UserDocument.find_one({"username": login})
     if not user:
         return None
 
