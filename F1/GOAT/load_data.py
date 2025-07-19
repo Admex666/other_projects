@@ -2,6 +2,7 @@
 
 import pandas as pd
 import os
+import streamlit as st
 
 def load_all_data(data_dir='datafiles'):
     """
@@ -41,9 +42,9 @@ def load_all_data(data_dir='datafiles'):
             df = pd.read_csv(path)
             data[name] = df
         except FileNotFoundError:
-            print(f"[HIBA] Nem található: {path}")
+            st.error(f"[HIBA] Nem található adatfájl: {path}")
         except Exception as e:
-            print(f"[HIBA] Nem sikerült betölteni: {path} -> {e}")
+            st.error(f"[HIBA] Nem sikerült betölteni: {path} -> {e}")
 
     # ----- Típus- és dátumkonverziók -----
 

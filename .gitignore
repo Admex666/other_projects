@@ -1,0 +1,3 @@
+NestCash/backend/.env
+NestCash/st/.env
+NestCash/st/.streamlit/secrets.toml
