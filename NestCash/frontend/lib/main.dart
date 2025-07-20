@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/screens/auth/auth_wrapper.dart';
-import 'package:frontend/screens/auth/login_screen.dart';
 import 'package:frontend/screens/dashboard_screen.dart';
 import 'package:frontend/screens/add_expenses_screen.dart';
 import 'package:frontend/screens/profile/profile_screen.dart';  
+import 'package:frontend/screens/profile/edit_profile_screen.dart';
 
 void main() {
   runApp(NestCashApp());
@@ -47,6 +47,7 @@ class _MainScreenState extends State<MainScreen> {
       AddExpensesScreen(), // Your Add Expenses Screen
       Text('Layers Screen'), // Placeholder for Layers
       ProfileScreen(username: widget.username, userId: widget.userId), // Your Profile Screen
+      EditProfileScreen(username: widget.username, userId: widget.userId, email: 'example@example.com')
     ];
   }
 

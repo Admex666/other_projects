@@ -57,3 +57,54 @@ async def register_user(
         "email": data.email,
         "mobile": data.mobile,
     }
+
+@router.put("/update-profile")
+async def update_profile(
+    data: dict,  # Egyszerű dict a frissítendő mezőkhöz
+    current_user: User = Depends(get_current_user),
+    db: AsyncIOMotorDatabase = Depends(get_db),
+):
+    users_collection = db["users"]
+    
+    # Frissítendő mezők előkészítése
+    update_data = {}
+    
+    if "username" in data and data["username"]:
+        # Ellenőrizd, hogy nem foglalt-e már a username
+        existing_user = await users_collection.find_one(
+            {"username": data["username"], "_id": {"$ne": current_user.id}}
+        )
+        if existing_user:
+            raise HTTPException(status_code=400, detail="Username already exists")
+        update_data["username"] = data["username"]
+    
+    if "email" in data and data["email"]:
+        # Ellenőrizd, hogy nem foglalt-e már az email
+        existing_user = await users_collection.find_one(
+            {"email": data["email"], "_id": {"$ne": current_user.id}}
+        )
+        if existing_user:
+            raise HTTPException(status_code=400, detail="Email already exists")
+        update_data["email"] = data["email"]
+    
+    if "mobile" in data:
+        update_data["mobile"] = data["mobile"]
+    
+    if "password" in data and data["password"]:
+        # Jelszó hash-elése
+        hashed_pw = pwd_context.hash(data["password"])
+        update_data["password"] = hashed_pw
+    
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No data to update")
+    
+    # Frissítés a MongoDB-ben
+    result = await users_collection.update_one(
+        {"_id": current_user.id},
+        {"$set": update_data}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    return {"message": "Profile updated successfully", "updated_fields": list(update_data.keys())}

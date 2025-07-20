@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/services/auth_service.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final String username;
@@ -57,6 +58,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               padding: const EdgeInsets.all(16.0),
               child: Row(
                 children: [
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back, color: Colors.black),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
                   const Expanded(
                     child: Text(
                       "Profil szerkesztése",
@@ -128,16 +135,55 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       // Mentés gomb
                       Center(
                         child: ElevatedButton(
-                          onPressed: () {
-                            // TODO: Implementáld a profil adatok mentését (pl. AuthService.updateProfile)
-                            // Ehhez egy új metódusra lenne szükség az AuthService-ben és egy backend végpontra.
-                            debugPrint('Mentés gomb megnyomva!');
-                            debugPrint('Felhasználónév: ${usernameController.text}');
-                            debugPrint('Email: ${emailController.text}');
-                            debugPrint('Telefonszám: ${phoneController.text}');
-                            debugPrint('Új Jelszó: ${passwordController.text}');
-                            // Példa: Navigator.pop(context) a mentés után
-                            Navigator.pop(context);
+                          onPressed: () async {
+                            try {
+                              // Loading állapot mutatása (opcionális)
+                              showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (context) => const Center(child: CircularProgressIndicator()),
+                              );
+                              
+                              // AuthService meghívása
+                              final authService = AuthService(); // vagy ahogy inicializálod
+                              final success = await authService.updateProfile(
+                                username: usernameController.text.trim(),
+                                email: emailController.text.trim(),
+                                mobile: phoneController.text.trim(),
+                                password: passwordController.text.trim().isNotEmpty ? passwordController.text.trim() : null,
+                              );
+                              
+                              // Loading dialog bezárása
+                              Navigator.of(context).pop();
+                              
+                              if (success) {
+                                // Sikeres mentés
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Profil sikeresen frissítve!'),
+                                    backgroundColor: Colors.green,
+                                  ),
+                                );
+                                Navigator.pop(context); // Vissza a profil oldalra
+                              } else {
+                                // Hiba esetén
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Hiba történt a profil frissítése során!'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
+                            } catch (e) {
+                              // Loading dialog bezárása hiba esetén is
+                              Navigator.of(context).pop();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Hiba: $e'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF00D4A3),

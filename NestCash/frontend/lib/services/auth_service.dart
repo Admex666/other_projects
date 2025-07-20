@@ -96,4 +96,40 @@ class AuthService {
     }
     return null;
   }
+
+  Future<bool> updateProfile({
+    String? username,
+    String? email,
+    String? mobile,
+    String? password,
+  }) async {
+    try {
+      final token = await getToken(); // A tárolt token lekérése
+      
+      Map<String, dynamic> updateData = {};
+      if (username != null && username.isNotEmpty) updateData['username'] = username;
+      if (email != null && email.isNotEmpty) updateData['email'] = email;
+      if (mobile != null) updateData['mobile'] = mobile;
+      if (password != null && password.isNotEmpty) updateData['password'] = password;
+      
+      final response = await http.put(
+        Uri.parse('$baseUrl/auth/update-profile'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: json.encode(updateData),
+      );
+      
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        print('Profile update failed: ${response.body}');
+        return false;
+      }
+    } catch (e) {
+      print('Error updating profile: $e');
+      return false;
+    }
+  }
 }
