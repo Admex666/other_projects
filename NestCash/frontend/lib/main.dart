@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/screens/auth/auth_wrapper.dart';
+import 'package:frontend/screens/auth/login_screen.dart';
 import 'package:frontend/screens/dashboard_screen.dart';
 import 'package:frontend/screens/add_expenses_screen.dart';
+import 'package:frontend/screens/profile/profile_screen.dart';  
 
 void main() {
   runApp(NestCashApp());
@@ -22,8 +24,9 @@ class NestCashApp extends StatelessWidget {
 // Global navigation
 class MainScreen extends StatefulWidget {
   final String username;
+  final String userId;
 
-  const MainScreen({required this.username});
+  const MainScreen({required this.username, required this.userId});
 
   @override
   _MainScreenState createState() => _MainScreenState();
@@ -43,7 +46,7 @@ class _MainScreenState extends State<MainScreen> {
       Text('Statistics Screen'), // Placeholder for Statistics
       AddExpensesScreen(), // Your Add Expenses Screen
       Text('Layers Screen'), // Placeholder for Layers
-      Text('Profile Screen'), // Placeholder for Profile
+      ProfileScreen(username: widget.username, userId: widget.userId), // Your Profile Screen
     ];
   }
 

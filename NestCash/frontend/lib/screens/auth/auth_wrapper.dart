@@ -15,6 +15,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
   bool _isLoading = true;
   bool _isLoggedIn = false;
   String? _username;
+  String? _userId; // Győződj meg róla, hogy ez a sor megvan
 
   @override
   void initState() {
@@ -23,36 +24,42 @@ class _AuthWrapperState extends State<AuthWrapper> {
   }
 
   Future<void> _checkAuth() async {
-  final token = await _authService.getToken();
-  debugPrint('AuthWrapper: token? ${token != null}');
+    final token = await _authService.getToken();
+    debugPrint('AuthWrapper: token? ${token != null}');
 
-  if (token != null) {
-    final username = await _authService.getCurrentUsername();
-    debugPrint('AuthWrapper: /auth/me username = $username');
+    if (token != null) {
+      final username = await _authService.getCurrentUsername(); // Győződj meg róla, hogy ez a metódus létezik és működik
+      final userId = await _authService.getUserId();     // Győződj meg róla, hogy ez a metódus létezik és működik
+      debugPrint('AuthWrapper: username = $username, userId = $userId');
+
+      setState(() {
+        // Ellenőrizzük, hogy mind a felhasználónév, mind az ID megvan-e
+        _isLoggedIn = username != null && userId != null;
+        _username = username;
+        _userId = userId;
+      });
+    } else {
+      setState(() {
+        _isLoggedIn = false;
+        _username = null;
+        _userId = null;
+      });
+    }
 
     setState(() {
-      _isLoggedIn = username != null;
-      _username = username;
-    });
-  } else {
-    // Fontos: explicit töröljük a korábbi állapotot
-    setState(() {
-      _isLoggedIn = false;
-      _username = null;
+      _isLoading = false;
     });
   }
 
-  setState(() {
-    _isLoading = false;
-  });
-}
-
-
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) return Center(child: CircularProgressIndicator());
-    return _isLoggedIn && _username != null
-        ? MainScreen(username: _username!)
-        : LoginScreen();
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    } else {
+      // Itt a kulcs: ha be van jelentkezve, akkor MainScreen-re, különben LoginScreen-re
+      return _isLoggedIn && _username != null && _userId != null
+          ? MainScreen(username: _username!, userId: _userId!) // Itt adod át a MainScreen-nek
+          : const LoginScreen();
+    }
   }
 }

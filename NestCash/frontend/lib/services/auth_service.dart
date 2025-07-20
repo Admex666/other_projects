@@ -46,10 +46,19 @@ class AuthService {
     if (resp.statusCode == 200) {
       final data = jsonDecode(resp.body);
       final token = data['access_token'] as String?;
+      final userId = data['user_id'] as String?;
+      final username = data['username'] as String?;
+
       if (token != null) {
-        await _storage.write(key: 'token', value: token);
-        return true;
-      }
+            await _storage.write(key: 'token', value: token);
+            if (userId != null) {
+                await _storage.write(key: 'user_id', value: userId);
+            }
+            if (username != null) {
+                await _storage.write(key: 'username', value: username);
+            }
+            return true;
+        }
     }
     return false;
   }
@@ -63,19 +72,27 @@ class AuthService {
   }
 
   Future<String?> getCurrentUsername() async {
+    return _storage.read(key: 'username');
+  }
+
+  Future<String?> getUserId() async {
+    return _storage.read(key: 'user_id');
+  }
+
+  Future<Map<String, dynamic>?> getUserProfile() async {
     final token = await getToken();
     if (token == null) return null;
 
     final resp = await http.get(
       Uri.parse('$baseUrl/auth/me'),
       headers: {
+        'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       },
     );
 
     if (resp.statusCode == 200) {
-      final data = jsonDecode(resp.body);
-      return data['username'] as String?;
+      return jsonDecode(resp.body) as Map<String, dynamic>;
     }
     return null;
   }

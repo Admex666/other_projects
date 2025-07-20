@@ -356,14 +356,6 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                 child: Row(
                   children: [
-                    GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: Icon(
-                        Icons.arrow_back,
-                        color: Colors.white, // Fehér nyíl, hogy látszódjon a sötétebb háttéren
-                        size: 24,
-                      ),
-                    ),
                     Expanded(
                       child: Text(
                         'Költés hozzáadása',
@@ -373,18 +365,6 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
                           color: Colors.black87, // Marad fekete, vagy változtatható fehérre
                         ),
                         textAlign: TextAlign.center,
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Icon(
-                        Icons.notifications_outlined,
-                        color: Colors.black87, // Marad fekete, vagy változtatható fehérre
-                        size: 20,
                       ),
                     ),
                   ],
