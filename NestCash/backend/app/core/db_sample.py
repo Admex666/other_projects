@@ -51,6 +51,5 @@ def dump_db_overview(uri: str, db_name: str, coll_name: str, sample_size: int = 
 
 # --- Használat ---
 if __name__ == "__main__":
-    # FIGYELEM: ne hagyd jelszóval commitban!
     URI = os.getenv("MONGODB_URI")
-    dump_db_overview(URI, "nestcash", 'transactions', sample_size=5)
+    dump_db_overview(URI, "nestcash", 'accounts', sample_size=5)

@@ -118,13 +118,13 @@ class AuthService {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
         },
-        body: json.encode(updateData),
+        body: json.encode(updateData), // This is correctly encoding the map to JSON
       );
       
       if (response.statusCode == 200) {
         return true;
       } else {
-        print('Profile update failed: ${response.body}');
+        print('Profile update failed: ${response.body}'); // This line is crucial for debugging
         return false;
       }
     } catch (e) {

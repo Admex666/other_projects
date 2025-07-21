@@ -3,7 +3,7 @@ import 'package:frontend/screens/auth/auth_wrapper.dart';
 import 'package:frontend/screens/dashboard_screen.dart';
 import 'package:frontend/screens/add_expenses_screen.dart';
 import 'package:frontend/screens/profile/profile_screen.dart';  
-import 'package:frontend/screens/profile/edit_profile_screen.dart';
+import 'package:frontend/screens/add_incomes_screen.dart';
 
 void main() {
   runApp(NestCashApp());
@@ -44,17 +44,99 @@ class _MainScreenState extends State<MainScreen> {
     _widgetOptions = <Widget>[
       DashboardScreen(username: widget.username),
       Text('Statistics Screen'), // Placeholder for Statistics
-      AddExpensesScreen(), // Your Add Expenses Screen
+      const SizedBox.shrink(), // Your Add Expenses Screen
       Text('Layers Screen'), // Placeholder for Layers
       ProfileScreen(username: widget.username, userId: widget.userId), // Your Profile Screen
-      EditProfileScreen(username: widget.username, userId: widget.userId, email: 'example@example.com')
     ];
   }
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    if (index == 2) { // Ha a "swap_horiz" ikonra kattintott
+      _showAddTransactionOptions(context);
+    } else {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
+  }
+
+  void _showAddTransactionOptions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent, // Átlátszó háttér a lekerekített sarkokhoz
+      builder: (BuildContext bc) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+          ),
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min, // A tartalomhoz igazodik
+            children: <Widget>[
+              // Bevétel gomb
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context); // Bezárjuk a bottom sheet-et
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AddIncomesScreen(userId: widget.userId),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.add, color: Colors.white),
+                  label: const Text(
+                    'Bevétel hozzáadása',
+                    style: TextStyle(fontSize: 18, color: Colors.white),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF00D4A3), // Zöld szín
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 15),
+              // Költség gomb
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context); // Bezárjuk a bottom sheet-et
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AddExpensesScreen(userId: widget.userId),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.remove, color: Colors.white),
+                  label: const Text(
+                    'Kiadás hozzáadása',
+                    style: TextStyle(fontSize: 18, color: Colors.white),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.redAccent, // Piros szín
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -89,15 +171,17 @@ class _MainScreenState extends State<MainScreen> {
     return GestureDetector(
       onTap: () => _onItemTapped(index),
       child: Container(
-        padding: EdgeInsets.all(12),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isSelected ? Color(0xFF00D4A3) : Colors.transparent,
+          color: isSelected && index != 2 ? const Color(0xFF00D4A3) : Colors.transparent,
+          // A "swap_horiz" ikon ne legyen zölden kiemelve, ha rákattintunk,
+          // mert az nem egy képernyőre visz, hanem egy felugró menüt nyit meg.
           shape: BoxShape.circle,
         ),
         child: Icon(
           icon,
-          color: isSelected ? Colors.white : Colors.grey[600],
-          size: 24,
+          color: isSelected && index != 2 ? Colors.white : Colors.grey[600],
+          size: 26,
         ),
       ),
     );

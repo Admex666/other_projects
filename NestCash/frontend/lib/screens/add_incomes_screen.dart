@@ -1,30 +1,52 @@
-// add_expenses_screen.dart
+// frontend/screens/add_incomes_screen.dart
 import 'package:flutter/material.dart';
-import 'package:frontend/services/auth_service.dart'; // Add this import
-import 'package:http/http.dart' as http; // Add this import
-import 'dart:convert'; // Add this import
+import 'package:frontend/services/auth_service.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class AddExpensesScreen extends StatefulWidget {
+class AddIncomesScreen extends StatefulWidget {
   final String userId;
 
-  const AddExpensesScreen({Key? key, required this.userId}) : super(key: key);
+  const AddIncomesScreen({Key? key, required this.userId}) : super(key: key);
 
   @override
-  _AddExpensesScreenState createState() => _AddExpensesScreenState();
+  _AddIncomesScreenState createState() => _AddIncomesScreenState();
 }
 
-class _AddExpensesScreenState extends State<AddExpensesScreen> {
+class _AddIncomesScreenState extends State<AddIncomesScreen> {
   final AuthService _authService = AuthService();
   final _formKey = GlobalKey<FormState>();
   final _amountController = TextEditingController();
   final _titleController = TextEditingController();
   final _messageController = TextEditingController();
-  
+
   String _selectedDate = 'April 30, 2024';
   String _selectedCategory = 'Válassz kategóriát';
   String _selectedCurrency = 'HUF';
 
-  Future<void> _saveExpense() async {
+  final List<String> _incomeCategories = [
+    'Fizetés', 
+    'Ajándék', 
+    'Befektetés', 
+    'Kamat', 
+    'Egyéb bevétel'
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedDate = '${_getMonthName(DateTime.now().month)} ${DateTime.now().day}, ${DateTime.now().year}';
+  }
+
+  @override
+  void dispose() {
+    _amountController.dispose();
+    _titleController.dispose();
+    _messageController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _saveIncome() async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -32,10 +54,20 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
     final amountText = _amountController.text.replaceAll(RegExp(r'[^\d.]'), '');
     final double? amount = double.tryParse(amountText);
 
-    if (amount == null) {
+    if (amount == null || amount <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Please enter a valid amount.'),
+          content: Text('Kérjük érvényes, pozitív összeget adjon meg.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    if (_selectedCategory == 'Válassz kategóriát') {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Kérjük válasszon kategóriát.'),
           backgroundColor: Colors.red,
         ),
       );
@@ -55,11 +87,11 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
 
     final transactionData = {
       'datum': DateTime.now().toIso8601String().split('T')[0], // YYYY-MM-DD format
-      'osszeg': -amount, // Assuming expenses are negative
-      'kategoria': _selectedCategory != 'Select the category' ? _selectedCategory : null,
+      'osszeg': amount, // Bevételnél pozitív összeg
+      'kategoria': _selectedCategory != 'Válassz kategóriát' ? _selectedCategory : null,
       'leiras': _messageController.text.isNotEmpty ? _messageController.text : null,
-      'tipus': 'kiadas',
-      'bev_kiad_tipus': 'kiadas',
+      'tipus': 'bevetel',
+      'bev_kiad_tipus': 'bevetel',
       'deviza': _selectedCurrency,
     };
 
@@ -76,23 +108,23 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
       if (resp.statusCode == 201) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Expense saved successfully!'),
+            content: Text('Bevétel sikeresen elmentve!'),
             backgroundColor: Color(0xFF00D4AA),
           ),
         );
-        // Optionally clear fields or navigate back
+        // Clear fields
         _amountController.clear();
         _titleController.clear();
         _messageController.clear();
         setState(() {
-          _selectedCategory = 'Select the category';
+          _selectedCategory = 'Válassz kategóriát';
           _selectedDate = '${_getMonthName(DateTime.now().month)} ${DateTime.now().day}, ${DateTime.now().year}';
         });
       } else {
         final errorData = jsonDecode(resp.body);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to save expense: ${errorData['detail'] ?? resp.statusCode}'),
+            content: Text('Failed to save income: ${errorData['detail'] ?? resp.statusCode}'),
             backgroundColor: Colors.red,
           ),
         );
@@ -105,14 +137,6 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
         ),
       );
     }
-  }
-
-  @override
-  void dispose() {
-    _amountController.dispose();
-    _titleController.dispose();
-    _messageController.dispose();
-    super.dispose();
   }
 
   Widget _buildInputField({
@@ -200,7 +224,7 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
                     value,
                     style: TextStyle(
                       fontSize: 16,
-                      color: value == 'Select the category' 
+                      color: value == 'Válassz kategóriát' 
                           ? Colors.grey[600] 
                           : Colors.black87,
                     ),
@@ -221,7 +245,7 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
   void _selectDate() async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime(2024, 4, 30),
+      initialDate: DateTime.now(),
       firstDate: DateTime(2020),
       lastDate: DateTime(2030),
     );
@@ -239,18 +263,6 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
-        final categories = [
-          'Food & Dining',
-          'Transportation',
-          'Shopping',
-          'Entertainment',
-          'Bills & Utilities',
-          'Healthcare',
-          'Education',
-          'Travel',
-          'Other'
-        ];
-        
         return Container(
           padding: EdgeInsets.all(20),
           child: Column(
@@ -258,14 +270,14 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Select Category',
+                'Kategória kiválasztása',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               SizedBox(height: 20),
-              ...categories.map((category) => ListTile(
+              ..._incomeCategories.map((category) => ListTile(
                 title: Text(category),
                 onTap: () {
                   setState(() {
@@ -301,7 +313,7 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Select Currency',
+                'Deviza kiválasztása',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -335,9 +347,6 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // A Scaffold háttérszíne most már nem szükséges, mivel a body egy gradiens Container lesz
-      // backgroundColor: Color(0xFF00D4AA), // Ezt a sort töröld vagy kommenteld ki
-
       body: SafeArea(
         child: Container(
           decoration: BoxDecoration(
@@ -353,7 +362,7 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
             ),
           ),
           child: Column(
-            mainAxisSize: MainAxisSize.max, // Fontos: a Column kitölti a rendelkezésre álló magasságot
+            mainAxisSize: MainAxisSize.max,
             children: [
               // Header rész (ez marad a gradiens háttéren)
               Container(
@@ -368,11 +377,11 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
                     ),
                     Expanded(
                       child: Text(
-                        'Költés hozzáadása',
+                        'Bevétel hozzáadása',
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black87, // Marad fekete, vagy változtatható fehérre
+                          color: Colors.black87,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -382,9 +391,9 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
               ),
 
               // Form Container (ez lesz a fehér, lekerekített sarkú rész)
-              Expanded( // Expanded-be tesszük, hogy kitöltse a maradék helyet
+              Expanded(
                 child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 0), // Eltávolítjuk a margin-t
+                  margin: EdgeInsets.symmetric(horizontal: 0),
                   decoration: BoxDecoration(
                     color: Color(0xFFF5F5F5), // Fehér vagy világosszürke háttér
                     borderRadius: BorderRadius.only(
@@ -433,7 +442,7 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
 
                           SizedBox(height: 16),
 
-                          // Deviza Dropdown (feltételezve, hogy már hozzáadtad a _buildDropdownField-et a deviza kezeléséhez)
+                          // Currency Dropdown
                           _buildDropdownField(
                             label: 'Deviza',
                             value: _selectedCurrency,
@@ -442,11 +451,11 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
 
                           SizedBox(height: 16),
 
-                          // Expense Title Field
+                          // Income Title Field
                           _buildInputField(
-                            label: 'Költség neve',
+                            label: 'Bevétel neve',
                             controller: _titleController,
-                            hintText: 'Vacsora',
+                            hintText: 'Fizetés',
                           ),
 
                           SizedBox(height: 16),
@@ -478,7 +487,7 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
                                     color: Colors.black87,
                                   ),
                                   decoration: InputDecoration(
-                                    hintText: 'Adj megjegyzést ehhez a költéshez...',
+                                    hintText: 'Adj megjegyzést ehhez a bevételhez...',
                                     hintStyle: TextStyle(
                                       color: Colors.grey[600],
                                       fontSize: 16,
@@ -498,7 +507,7 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
                             width: double.infinity,
                             height: 56,
                             child: ElevatedButton(
-                              onPressed: _saveExpense,
+                              onPressed: _saveIncome,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Color(0xFF00D4AA),
                                 foregroundColor: Colors.white,

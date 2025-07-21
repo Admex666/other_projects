@@ -19,7 +19,8 @@ async def init_db():
     mongo_uri = os.getenv("MONGODB_URI")
     _client = AsyncIOMotorClient(mongo_uri)
     _db = _client["nestcash"]
-    await init_beanie(database=_db, document_models=[UserDocument, Item, Transaction])
+    # Csak azokat a modelleket inicializáljuk, amiket Beanie-vel kezelünk
+    await init_beanie(database=_db, document_models=[UserDocument, Item, Transaction]) 
 
 def get_db() -> AsyncIOMotorDatabase:
     """Használható route-okból; feltételezi, hogy init_db már lefutott."""

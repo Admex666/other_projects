@@ -279,19 +279,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         
                         _buildProfileMenuItem(
                         icon: Icons.logout,
-                        title: "Logout",
+                        title: "Kijelentkezés",
                         backgroundColor: Colors.red,
                         onTap: () {
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
-                                title: Text('Logout'),
-                                content: Text('Are you sure you want to log out?'),
+                                title: Text('Kijelentkezés'),
+                                content: Text('Biztosan ki szeretnél jelentkezni?'),
                                 actions: <Widget>[
                                   TextButton(
                                     onPressed: () => Navigator.pop(context),
-                                    child: Text('Cancel'),
+                                    child: Text('Bezárás'),
                                   ),
                                   TextButton(
                                     onPressed: () async {

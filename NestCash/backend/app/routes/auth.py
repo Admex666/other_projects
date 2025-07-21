@@ -3,6 +3,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from passlib.context import CryptContext
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from datetime import datetime
+from bson import ObjectId
 
 from app.services.auth import authenticate_user, create_access_token
 from app.core.security import get_current_user
@@ -66,22 +67,27 @@ async def update_profile(
 ):
     users_collection = db["users"]
     
+    # Átalakítjuk a current_user.id-t ObjectId típussá a MongoDB lekérdezésekhez.
+    # A security.py-ban a User modell stringként tárolja az id-t,
+    # de a MongoDB-ben az _id ObjectId típusú.
+    current_user_obj_id = ObjectId(current_user.id) # Ez az új sor!
+    
     # Frissítendő mezők előkészítése
     update_data = {}
     
     if "username" in data and data["username"]:
-        # Ellenőrizd, hogy nem foglalt-e már a username
+        # Ellenőrizd, hogy nem foglalt-e már a username, KIVÉVE a jelenlegi felhasználót.
         existing_user = await users_collection.find_one(
-            {"username": data["username"], "_id": {"$ne": current_user.id}}
+            {"username": data["username"], "_id": {"$ne": current_user_obj_id}} # Itt használjuk az ObjectId-t
         )
         if existing_user:
             raise HTTPException(status_code=400, detail="Username already exists")
         update_data["username"] = data["username"]
     
     if "email" in data and data["email"]:
-        # Ellenőrizd, hogy nem foglalt-e már az email
+        # Ellenőrizd, hogy nem foglalt-e már az email, KIVÉVE a jelenlegi felhasználót.
         existing_user = await users_collection.find_one(
-            {"email": data["email"], "_id": {"$ne": current_user.id}}
+            {"email": data["email"], "_id": {"$ne": current_user_obj_id}} # Itt használjuk az ObjectId-t
         )
         if existing_user:
             raise HTTPException(status_code=400, detail="Email already exists")
@@ -100,7 +106,7 @@ async def update_profile(
     
     # Frissítés a MongoDB-ben
     result = await users_collection.update_one(
-        {"_id": current_user.id},
+        {"_id": current_user_obj_id}, # Itt is az ObjectId-t használjuk
         {"$set": update_data}
     )
     
