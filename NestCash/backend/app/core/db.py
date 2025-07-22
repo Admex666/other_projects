@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from app.models.user import UserDocument
 from app.models.item import Item
 from app.models.transaction import Transaction
+from app.models.account import AllUserAccountsDocument
 
 load_dotenv()
 
@@ -20,7 +21,7 @@ async def init_db():
     _client = AsyncIOMotorClient(mongo_uri)
     _db = _client["nestcash"]
     # Csak azokat a modelleket inicializáljuk, amiket Beanie-vel kezelünk
-    await init_beanie(database=_db, document_models=[UserDocument, Item, Transaction]) 
+    await init_beanie(database=_db, document_models=[UserDocument, Item, Transaction, AllUserAccountsDocument]) 
 
 def get_db() -> AsyncIOMotorDatabase:
     """Használható route-okból; feltételezi, hogy init_db már lefutott."""

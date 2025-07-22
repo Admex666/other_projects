@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:frontend/screens/auth/auth_wrapper.dart';
 import 'package:frontend/screens/dashboard_screen.dart';
 import 'package:frontend/screens/add_expenses_screen.dart';
-import 'package:frontend/screens/profile/profile_screen.dart';  
+import 'package:frontend/screens/profile/profile_screen.dart';
 import 'package:frontend/screens/add_incomes_screen.dart';
+import 'package:frontend/screens/manage_accounts_screen.dart'; 
 
 void main() {
   runApp(NestCashApp());
@@ -35,7 +36,6 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
-  // List of widgets to display in the body
   late final List<Widget> _widgetOptions;
 
   @override
@@ -43,15 +43,15 @@ class _MainScreenState extends State<MainScreen> {
     super.initState();
     _widgetOptions = <Widget>[
       DashboardScreen(username: widget.username),
-      Text('Statistics Screen'), // Placeholder for Statistics
-      const SizedBox.shrink(), // Your Add Expenses Screen
-      Text('Layers Screen'), // Placeholder for Layers
-      ProfileScreen(username: widget.username, userId: widget.userId), // Your Profile Screen
+      Text('Statistics Screen'),
+      const SizedBox.shrink(),
+      Text('Layers Screen'),
+      ProfileScreen(username: widget.username, userId: widget.userId),
     ];
   }
 
   void _onItemTapped(int index) {
-    if (index == 2) { // Ha a "swap_horiz" ikonra kattintott
+    if (index == 2) {
       _showAddTransactionOptions(context);
     } else {
       setState(() {
@@ -63,7 +63,7 @@ class _MainScreenState extends State<MainScreen> {
   void _showAddTransactionOptions(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.transparent, // Átlátszó háttér a lekerekített sarkokhoz
+      backgroundColor: Colors.transparent,
       builder: (BuildContext bc) {
         return Container(
           decoration: const BoxDecoration(
@@ -75,14 +75,14 @@ class _MainScreenState extends State<MainScreen> {
           ),
           padding: const EdgeInsets.all(20),
           child: Column(
-            mainAxisSize: MainAxisSize.min, // A tartalomhoz igazodik
+            mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               // Bevétel gomb
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   onPressed: () {
-                    Navigator.pop(context); // Bezárjuk a bottom sheet-et
+                    Navigator.pop(context);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -96,7 +96,7 @@ class _MainScreenState extends State<MainScreen> {
                     style: TextStyle(fontSize: 18, color: Colors.white),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF00D4A3), // Zöld szín
+                    backgroundColor: const Color(0xFF00D4A3),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
@@ -110,7 +110,7 @@ class _MainScreenState extends State<MainScreen> {
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   onPressed: () {
-                    Navigator.pop(context); // Bezárjuk a bottom sheet-et
+                    Navigator.pop(context);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -124,7 +124,35 @@ class _MainScreenState extends State<MainScreen> {
                     style: TextStyle(fontSize: 18, color: Colors.white),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.redAccent, // Piros szín
+                    backgroundColor: Colors.redAccent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 15), // <- ÚJ ELVÁLASZTÓ
+              // Számlák kezelése gomb
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context); // Bezárjuk a bottom sheet-et
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ManageAccountsScreen(userId: widget.userId),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.account_balance_wallet, color: Colors.white),
+                  label: const Text(
+                    'Számlák kezelése',
+                    style: TextStyle(fontSize: 18, color: Colors.white),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blueAccent, // Kék szín
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
@@ -142,7 +170,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _widgetOptions.elementAt(_selectedIndex), // Display the selected screen
+      body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: Container(
         padding: EdgeInsets.symmetric(vertical: 8),
         decoration: BoxDecoration(
@@ -174,8 +202,6 @@ class _MainScreenState extends State<MainScreen> {
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: isSelected && index != 2 ? const Color(0xFF00D4A3) : Colors.transparent,
-          // A "swap_horiz" ikon ne legyen zölden kiemelve, ha rákattintunk,
-          // mert az nem egy képernyőre visz, hanem egy felugró menüt nyit meg.
           shape: BoxShape.circle,
         ),
         child: Icon(

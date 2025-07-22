@@ -1,58 +1,59 @@
 # app/models/transaction.py
+
 from __future__ import annotations
 from beanie import Document, PydanticObjectId
-from pydantic import BaseModel, Field
-from typing import Optional
+from pydantic import Field
+from typing import Optional, Literal
 from datetime import datetime
-from bson import ObjectId
+from enum import Enum # Hozzáadva: Enum importálása
+
+# Enum a tranzakció típusokhoz, most már az enum.Enum-ot is használva
+class TransactionType(str, Enum): # Módosítva
+    INCOME = "income"
+    EXPENSE = "expense"
+    # További típusok, ha vannak
+    TRANSFER = "transfer" # Hozzáadva, ha van transzfer funkcionalitás
+    ADJUSTMENT = "adjustment" # Hozzáadva, ha van korrekció
+    # ...
 
 class Transaction(Document):
-    # Alap
-    datum: str                         # ISO dátum 'YYYY-MM-DD'
-    osszeg: float
+    # Alap mezők
+    date: datetime = Field(default_factory=datetime.now, description="A tranzakció dátuma és ideje")
+    amount: float = Field(..., description="A tranzakció összege")
     user_id: PydanticObjectId
+    
+    # Számla hivatkozások
+    main_account: Literal["likvid", "befektetes", "megtakaritas"] = Field(..., description="A tranzakcióhoz tartozó főszámla típusa (likvid, befektetes, megtakaritas)")
+    sub_account_name: str = Field(..., description="A tranzakcióhoz tartozó alszámla neve")
+
+    # Módosított és megtartott mezők
     kategoria: Optional[str] = None
-    tipus: Optional[str] = None        # 'bevetel' / 'kiadas' / 'impulzus' stb.
-    bev_kiad_tipus: Optional[str] = None
+    type: TransactionType = Field(..., description="A tranzakció típusa (income/expense/transfer/adjustment)") # Most már a TransactionType enumot használja
+    currency: str = Field("HUF", description="A tranzakció devizaneme (az alszámlából származik)")
 
     # Meta
     tranzakcio_id: Optional[str] = None
     profil: Optional[str] = None
-    leiras: Optional[str] = None
+    description: Optional[str] = None
     forras: Optional[str] = None
     platform: Optional[str] = None
     helyszin: Optional[str] = None
-    deviza: Optional[str] = "HUF"
     cimke: Optional[str] = None
     celhoz_kotott: Optional[str] = None
 
-    # Dátum derived
-    honap: Optional[str] = None  # 'YYYY-MM'
+    # Dátum derived mezők
+    honap: Optional[str] = None
     het: Optional[int] = None
     nap_sorszam: Optional[int] = None
-    ho: Optional[str] = None     # redundáns a mintában – hagyjuk
 
     # Flags
     ismetlodo: Optional[bool] = None
     fix_koltseg: Optional[bool] = None
 
-    # Snapshot egyenlegek
-    likvid: Optional[float] = None
-    befektetes: Optional[float] = None
-    megtakaritas: Optional[float] = None
-    assets: Optional[float] = None
-
-    # Transfer routing
-    foszamla: Optional[str] = None
-    alszamla: Optional[str] = None
-    cel_foszamla: Optional[str] = None
-    cel_alszamla: Optional[str] = None
-    transfer_amount: Optional[str] = None
-
     class Settings:
         name = "transactions"
 
-    # Opcionális: auto kitöltés mentés előtt
+    # Auto kitöltés mentés előtt
     async def before_insert(self):
         self._fill_derived_date_fields()
 
@@ -61,28 +62,13 @@ class Transaction(Document):
 
     def _fill_derived_date_fields(self):
         """
-        Derive honap, het, nap_sorszam from datum if possible.
-        datum expected 'YYYY-MM-DD'.
+        Derive honap, het, nap_sorszam from date if possible.
         """
-        try:
-            dt = datetime.strptime(self.datum, "%Y-%m-%d").date()
-            self.honap = dt.strftime("%Y-%m")
-            self.ho = self.honap
-            self.het = dt.isocalendar().week
-            self.nap_sorszam = dt.weekday()
-        except ValueError:
-            # Hiba kezelése: Ha a dátum formátuma nem megfelelő,
-            # állítsunk be alapértelmezett értékeket, vagy kezeljük másképp.
-            # Jelenleg a "test" dátum miatt nem kerülnek be az adatok.
-            # Az alábbi sorok biztosítják, hogy legalább a mezők létezzenek,
-            # de a helyes működéshez továbbra is érvényes dátum szükséges a POST-ban.
-            self.honap = None  # vagy valamilyen alapértelmezett érték
-            self.ho = None
-            self.het = None
-            self.nap_sorszam = None
-        except Exception:
-            # Általánosabb kivétel kezelése
+        if self.date:
+            self.honap = self.date.strftime("%Y-%m")
+            self.het = self.date.isocalendar().week
+            self.nap_sorszam = self.date.weekday()
+        else:
             self.honap = None
-            self.ho = None
             self.het = None
             self.nap_sorszam = None

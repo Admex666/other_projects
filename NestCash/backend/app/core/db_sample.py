@@ -52,4 +52,4 @@ def dump_db_overview(uri: str, db_name: str, coll_name: str, sample_size: int = 
 # --- Használat ---
 if __name__ == "__main__":
     URI = os.getenv("MONGODB_URI")
-    dump_db_overview(URI, "nestcash", 'accounts', sample_size=5)
+    dump_db_overview(URI, "nestcash", 'users', sample_size=5)
