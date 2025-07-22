@@ -5,36 +5,33 @@ from beanie import Document, PydanticObjectId
 from pydantic import Field
 from typing import Optional, Literal
 from datetime import datetime
-from enum import Enum # Hozzáadva: Enum importálása
+from enum import Enum
 
-# Enum a tranzakció típusokhoz, most már az enum.Enum-ot is használva
-class TransactionType(str, Enum): # Módosítva
+class TransactionType(str, Enum):
     INCOME = "income"
     EXPENSE = "expense"
-    # További típusok, ha vannak
-    TRANSFER = "transfer" # Hozzáadva, ha van transzfer funkcionalitás
-    ADJUSTMENT = "adjustment" # Hozzáadva, ha van korrekció
-    # ...
+    TRANSFER = "transfer"
+    ADJUSTMENT = "adjustment"
 
 class Transaction(Document):
     # Alap mezők
     date: datetime = Field(default_factory=datetime.now, description="A tranzakció dátuma és ideje")
     amount: float = Field(..., description="A tranzakció összege")
     user_id: PydanticObjectId
-    
+
     # Számla hivatkozások
     main_account: Literal["likvid", "befektetes", "megtakaritas"] = Field(..., description="A tranzakcióhoz tartozó főszámla típusa (likvid, befektetes, megtakaritas)")
     sub_account_name: str = Field(..., description="A tranzakcióhoz tartozó alszámla neve")
 
     # Módosított és megtartott mezők
     kategoria: Optional[str] = None
-    type: TransactionType = Field(..., description="A tranzakció típusa (income/expense/transfer/adjustment)") # Most már a TransactionType enumot használja
+    type: TransactionType = Field(..., description="A tranzakció típusa (income/expense/transfer/adjustment)")
     currency: str = Field("HUF", description="A tranzakció devizaneme (az alszámlából származik)")
 
     # Meta
     tranzakcio_id: Optional[str] = None
     profil: Optional[str] = None
-    description: Optional[str] = None
+    description: Optional[str] = None # leiras helyett description
     forras: Optional[str] = None
     platform: Optional[str] = None
     helyszin: Optional[str] = None

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:frontend/services/auth_service.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:frontend/services/category_service.dart';
+import 'package:frontend/models/category.dart';
 import 'package:intl/intl.dart'; // Import for date formatting
 
 class AddIncomesScreen extends StatefulWidget {
@@ -18,11 +20,9 @@ class _AddIncomesScreenState extends State<AddIncomesScreen> {
   final AuthService _authService = AuthService();
   final _formKey = GlobalKey<FormState>();
   final _amountController = TextEditingController();
-  final _titleController = TextEditingController(); // Description is now title
-  final _messageController = TextEditingController(); // This seems unused, assuming it's for extra notes or similar, keeping it for now
+  final _titleController = TextEditingController();
 
   DateTime _selectedDate = DateTime.now();
-  String _selectedCategory = 'Válassz kategóriát'; // Default or initial value
 
   Map<String, dynamic>? _accountsData;
   String? _selectedMainAccount;
@@ -30,21 +30,21 @@ class _AddIncomesScreenState extends State<AddIncomesScreen> {
   List<String> _mainAccountKeys = [];
   List<String> _subAccountKeys = [];
 
-  final List<String> _incomeCategories = [
-    'Fizetés', 'Ajándék', 'Befektetés', 'Kamat', 'Egyéb bevétel'
-  ];
+  final CategoryService _categoryService = CategoryService();
+  List<Category> _incomeCategories = [];
+  String? _selectedCategory;
 
   @override
   void initState() {
     super.initState();
     _fetchAccounts();
+    _fetchCategories();
   }
 
   Future<void> _fetchAccounts() async {
     try {
       final token = await _authService.getToken();
       if (token == null) {
-        // Handle no token
         return;
       }
 
@@ -66,7 +66,6 @@ class _AddIncomesScreenState extends State<AddIncomesScreen> {
           }
         });
       } else {
-        // Handle error
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to load accounts: ${response.body}')),
         );
@@ -92,6 +91,23 @@ class _AddIncomesScreenState extends State<AddIncomesScreen> {
     }
   }
 
+  Future<void> _fetchCategories() async {
+    try {
+      final fetchedCategories = await _categoryService.getCategories(type: 'income');
+      setState(() {
+        _incomeCategories = fetchedCategories;
+        if (_incomeCategories.isNotEmpty) {
+          _selectedCategory = _incomeCategories.first.name;
+        }
+      });
+    } catch (e) {
+      print('Error fetching income categories: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Hiba a kategóriák betöltésekor: $e')),
+      );
+    }
+  }
+
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -111,7 +127,7 @@ class _AddIncomesScreenState extends State<AddIncomesScreen> {
       return;
     }
     if (_selectedMainAccount == null || _selectedSubAccount == null) {
-       ScaffoldMessenger.of(context).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Please select both main and sub-account.')),
       );
       return;
@@ -130,13 +146,13 @@ class _AddIncomesScreenState extends State<AddIncomesScreen> {
     final String formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate);
 
     final payload = {
-      'datum': formattedDate,
-      'osszeg': amount, // Incomes are positive
+      'date': formattedDate,
+      'amount': amount,
       'kategoria': _selectedCategory == 'Válassz kategóriát' ? null : _selectedCategory,
-      'leiras': _titleController.text,
-      'tipus': 'bevetel',
-      'foszamla': _selectedMainAccount,
-      'alszamla': _selectedSubAccount,
+      'description': _titleController.text,
+      'type': 'income',
+      'main_account': _selectedMainAccount,
+      'sub_account_name': _selectedSubAccount,
       'user_id': widget.userId,
     };
 
@@ -160,7 +176,10 @@ class _AddIncomesScreenState extends State<AddIncomesScreen> {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Bevétel sikeresen mentve!')),
+          SnackBar(
+            content: Text('Bevétel sikeresen mentve!'),
+            backgroundColor: Color(0xFF00D4AA),
+          ),
         );
         _amountController.clear();
         _titleController.clear();
@@ -183,209 +202,349 @@ class _AddIncomesScreenState extends State<AddIncomesScreen> {
     }
   }
 
-  String _getMonthName(int month) {
-    switch (month) {
-      case 1: return 'Január';
-      case 2: return 'Február';
-      case 3: return 'Március';
-      case 4: return 'Április';
-      case 5: return 'Május';
-      case 6: return 'Június';
-      case 7: return 'Július';
-      case 8: return 'Augusztus';
-      case 9: return 'Szeptember';
-      case 10: return 'Október';
-      case 11: return 'November';
-      case 12: return 'December';
-      default: return '';
-    }
+  Widget _buildInputField({
+    required TextEditingController controller,
+    required String labelText,
+    required String hintText,
+    required IconData icon,
+    TextInputType keyboardType = TextInputType.text,
+    String? Function(String?)? validator,
+  }) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 16),
+      child: TextFormField(
+        controller: controller,
+        keyboardType: keyboardType,
+        style: TextStyle(
+          fontSize: 16,
+          color: Colors.black87,
+        ),
+        decoration: InputDecoration(
+          labelText: labelText,
+          hintText: hintText,
+          labelStyle: TextStyle(
+            color: Colors.grey[600],
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+          hintStyle: TextStyle(
+            color: Colors.grey[400],
+            fontSize: 14,
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.grey[300]!),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Color(0xFF00D4AA), width: 2),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.grey[300]!),
+          ),
+          filled: true,
+          fillColor: Colors.white,
+          prefixIcon: Icon(icon, color: Colors.grey[600]),
+          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        ),
+        validator: validator,
+      ),
+    );
+  }
+
+  Widget _buildDropdownField({
+    required String labelText,
+    required IconData icon,
+    required String? value,
+    required List<String> items,
+    required void Function(String?) onChanged,
+    String? Function(String?)? validator,
+    String? hintText,
+  }) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 16),
+      child: DropdownButtonFormField<String>(
+        value: value,
+        style: TextStyle(
+          fontSize: 16,
+          color: Colors.black87,
+        ),
+        decoration: InputDecoration(
+          labelText: labelText,
+          labelStyle: TextStyle(
+            color: Colors.grey[600],
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.grey[300]!),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Color(0xFF00D4AA), width: 2),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.grey[300]!),
+          ),
+          filled: true,
+          fillColor: Colors.white,
+          prefixIcon: Icon(icon, color: Colors.grey[600]),
+          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        ),
+        hint: Text(
+          hintText ?? 'Válasszon',
+          style: TextStyle(
+            color: Colors.grey[400],
+            fontSize: 14,
+          ),
+        ),
+        items: items.map((String item) {
+          return DropdownMenuItem<String>(
+            value: item,
+            child: Text(item),
+          );
+        }).toList(),
+        onChanged: onChanged,
+        validator: validator,
+      ),
+    );
+  }
+
+  Widget _buildDateSelector() {
+    return Container(
+      margin: EdgeInsets.only(bottom: 16),
+      child: InkWell(
+        onTap: () => _selectDate(context),
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey[300]!),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.calendar_today, color: Colors.grey[600]),
+              SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Dátum',
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      DateFormat('yyyy. MM. dd.').format(_selectedDate),
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.arrow_forward_ios, color: Colors.grey[400], size: 16),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Új Bevétel', style: TextStyle(color: Colors.white)),
-        backgroundColor: Color(0xFF00D4AA),
-        iconTheme: IconThemeData(color: Colors.white),
-      ),
+      backgroundColor: Color(0xFF00D4AA),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        child: Column(
+          children: [
+            // Header
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              child: Row(
                 children: [
-                  TextFormField(
-                    controller: _amountController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      labelText: 'Összeg',
-                      hintText: 'Pl. 10000',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      prefixIcon: Icon(Icons.attach_money),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Kérjük, adja meg az összeget';
-                      }
-                      final cleaned = value
-                          .replaceAll(' ', '')      // szóköz eltávolítása
-                          .replaceAll(',', '.');    // vesszőből pont
-                      if (double.tryParse(cleaned) == null) {
-                        return 'Kérjük, érvényes számot adjon meg';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 20),
-                  TextFormField(
-                    controller: _titleController,
-                    decoration: InputDecoration(
-                      labelText: 'Leírás / Megjegyzés',
-                      hintText: 'Pl. Fizetés',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      prefixIcon: Icon(Icons.description),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Kérjük, adjon meg egy leírást';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 20),
-                  ListTile(
-                    title: Text('Dátum: ${DateFormat('yyyy. MM. dd.').format(_selectedDate)}'),
-                    trailing: Icon(Icons.calendar_today),
-                    onTap: () => _selectDate(context),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      side: BorderSide(color: Colors.grey.shade400),
+                  IconButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: Colors.black87,
+                      size: 24,
                     ),
                   ),
-                  SizedBox(height: 20),
-                  DropdownButtonFormField<String>(
-                    value: _selectedCategory == 'Válassz kategóriát' ? null : _selectedCategory,
-                    decoration: InputDecoration(
-                      labelText: 'Kategória',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                  Expanded(
+                    child: Text(
+                      'Új Bevétel rögzítése',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
                       ),
-                      prefixIcon: Icon(Icons.category),
-                    ),
-                    hint: Text('Válassz kategóriát'),
-                    items: _incomeCategories.map((String category) {
-                      return DropdownMenuItem<String>(
-                        value: category,
-                        child: Text(category),
-                      );
-                    }).toList(),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        _selectedCategory = newValue!;
-                      });
-                    },
-                    validator: (value) {
-                      if (value == null || value == 'Válassz kategóriát') {
-                        return 'Kérjük, válasszon kategóriát';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 20),
-                  DropdownButtonFormField<String>(
-                    value: _selectedMainAccount,
-                    decoration: InputDecoration(
-                      labelText: 'Főszámla',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      prefixIcon: Icon(Icons.account_balance),
-                    ),
-                    hint: Text('Válassz főszámlát'),
-                    items: _mainAccountKeys.map((String account) {
-                      return DropdownMenuItem<String>(
-                        value: account,
-                        child: Text(account),
-                      );
-                    }).toList(),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        _selectedMainAccount = newValue;
-                        _updateSubAccounts();
-                      });
-                    },
-                    validator: (value) {
-                      if (value == null) {
-                        return 'Kérjük, válasszon főszámlát';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 20),
-                  DropdownButtonFormField<String>(
-                    value: _selectedSubAccount,
-                    decoration: InputDecoration(
-                      labelText: 'Alszámla',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      prefixIcon: Icon(Icons.account_balance_wallet),
-                    ),
-                    hint: Text('Válassz alszámlát'),
-                    items: _subAccountKeys.map((String subAccount) {
-                      return DropdownMenuItem<String>(
-                        value: subAccount,
-                        child: Text(subAccount),
-                      );
-                    }).toList(),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        _selectedSubAccount = newValue;
-                      });
-                    },
-                    validator: (value) {
-                      if (value == null) {
-                        return 'Kérjük, válasszon alszámlát';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 40),
-                  Container(
-                    width: double.infinity,
-                    height: 56,
-                    child: ElevatedButton(
-                      onPressed: _saveIncome,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF00D4AA),
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                      ),
-                      child: Text(
-                        'Mentés',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+                      textAlign: TextAlign.center,
                     ),
                   ),
-                  SizedBox(height: 30),
+                  SizedBox(width: 48), // Balance the back button
                 ],
               ),
             ),
-          ),
+            
+            // Content Container
+            Expanded(
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Color(0xFFF5F5F5),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(30),
+                    topRight: Radius.circular(30),
+                  ),
+                ),
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: EdgeInsets.all(24),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 10),
+                          
+                          _buildInputField(
+                            controller: _amountController,
+                            labelText: 'Összeg',
+                            hintText: 'Pl. 10000',
+                            icon: Icons.attach_money,
+                            keyboardType: TextInputType.number,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Kérjük, adja meg az összeget';
+                              }
+                              final cleaned = value
+                                  .replaceAll(' ', '')      // szóköz eltávolítása
+                                  .replaceAll(',', '.');    // vesszőből pont
+                              if (double.tryParse(cleaned) == null) {
+                                return 'Kérjük, érvényes számot adjon meg';
+                              }
+                              return null;
+                            },
+                          ),
+                          
+                          _buildDateSelector(),
+                          
+                          _buildDropdownField(
+                            labelText: 'Kategória',
+                            icon: Icons.category,
+                            value: _selectedCategory == 'Válassz kategóriát' ? null : _selectedCategory,
+                            items: _incomeCategories.map((category) => category.name).toList(), // Itt módosítva
+                            hintText: 'Válassz kategóriát',
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                _selectedCategory = newValue;
+                              });
+                            },
+                            validator: (value) {
+                              if (value == null || value == 'Válassz kategóriát') {
+                                return 'Kérjük, válasszon kategóriát';
+                              }
+                              return null;
+                            },
+                          ),
+                          
+                          _buildDropdownField(
+                            labelText: 'Főszámla',
+                            icon: Icons.account_balance,
+                            value: _selectedMainAccount,
+                            items: _mainAccountKeys,
+                            hintText: 'Válassz főszámlát',
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                _selectedMainAccount = newValue;
+                                _updateSubAccounts();
+                              });
+                            },
+                            validator: (value) {
+                              if (value == null) {
+                                return 'Kérjük, válasszon főszámlát';
+                              }
+                              return null;
+                            },
+                          ),
+                          
+                          _buildDropdownField(
+                            labelText: 'Alszámla',
+                            icon: Icons.account_balance_wallet,
+                            value: _selectedSubAccount,
+                            items: _subAccountKeys,
+                            hintText: 'Válassz alszámlát',
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                _selectedSubAccount = newValue;
+                              });
+                            },
+                            validator: (value) {
+                              if (value == null) {
+                                return 'Kérjük, válasszon alszámlát';
+                              }
+                              return null;
+                            },
+                          ),
+                          
+                          _buildInputField(
+                            controller: _titleController,
+                            labelText: 'Leírás / Megjegyzés',
+                            hintText: 'Pl. Fizetés',
+                            icon: Icons.description,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Kérjük, adjon meg egy leírást';
+                              }
+                              return null;
+                            },
+                          ),
+
+                          SizedBox(height: 24),
+                          
+                          Container(
+                            width: double.infinity,
+                            height: 56,
+                            child: ElevatedButton(
+                              onPressed: _saveIncome,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Color(0xFF00D4AA),
+                                foregroundColor: Colors.white,
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                              ),
+                              child: Text(
+                                'Mentés',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                          
+                          SizedBox(height: 30),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
