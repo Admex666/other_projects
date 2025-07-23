@@ -32,9 +32,28 @@ async def create_transaction(
     elif transaction_data.type == 'income' and amount_to_save < 0:
         amount_to_save *= -1
 
+    # Alszámla devaizájának lekérzése
+    all_accounts_doc = await AllUserAccountsDocument.find_one()
+    if not all_accounts_doc or current_user.id not in all_accounts_doc.accounts_by_user:
+        raise HTTPException(status_code=404, detail="Accounts not found for user")
+    
+    user_accounts = all_accounts_doc.accounts_by_user[current_user.id]
+    main_account_details = getattr(user_accounts, transaction_data.main_account, None)
+
+    if not main_account_details or transaction_data.sub_account_name not in main_account_details.alszamlak:
+        # Ha az alszámla nem létezik, feltételezzük, hogy "HUF" az alapértelmezett deviza
+        # vagy hibát dobunk, attól függően, hogy milyen üzleti logika a kívánatos.
+        # Jelenleg a update_sub_account_balance létrehozza, ha nem létezik.
+        # Itt is beállíthatjuk az alapértelmezett értéket.
+        currency_to_save = "HUF" 
+    else:
+        currency_to_save = main_account_details.alszamlak[transaction_data.sub_account_name].currency
+
     new_transaction = Transaction(
-        **transaction_data.model_dump(exclude_unset=True),
-        user_id=PydanticObjectId(current_user.id)
+        **transaction_data.model_dump(exclude={"amount"}),
+        user_id=PydanticObjectId(current_user.id),
+        amount=amount_to_save, # Beállítjuk a már előjellel ellátott összeget
+        currency=currency_to_save # Hozzáadjuk a devizát
     )
 
     # If it's a transfer, process it (ezt a részt felül kell vizsgálni a TransactionCreate séma alapján)
@@ -83,7 +102,7 @@ async def create_transaction(
         sub_account_name=new_transaction.sub_account_name,
         kategoria=new_transaction.kategoria,
         type=new_transaction.type,
-        currency=new_transaction.currency,
+        currency=new_transaction.currency, # Itt is visszaadjuk a currencyt
         tranzakcio_id=new_transaction.tranzakcio_id,
         profil=new_transaction.profil,
         description=new_transaction.description,
@@ -174,17 +193,16 @@ async def list_transactions(
         read_transactions = [
             TransactionRead(
                 id=str(doc.id),
-                datum=doc.datum,
-                osszeg=doc.osszeg,
+                date=doc.date,
+                amount=doc.amount,
                 user_id=str(doc.user_id),
                 kategoria=doc.kategoria,
-                tipus=doc.tipus,
-                bev_kiad_tipus=doc.bev_kiad_tipus,
+                type=doc.type,
+                currency=doc.currency, # Itt is beállítjuk a currencyt
                 honap=doc.honap,
                 het=doc.het,
                 nap_sorszam=doc.nap_sorszam,
-                leiras=doc.leiras,
-                deviza=doc.deviza,
+                description=doc.description,
                 profil=doc.profil,
                 forras=doc.forras,
                 platform=doc.platform,
@@ -192,21 +210,22 @@ async def list_transactions(
                 cimke=doc.cimke,
                 ismetlodo=doc.ismetlodo,
                 fix_koltseg=doc.fix_koltseg,
-                foszamla=doc.foszamla,
-                alszamla=doc.alszamla,
+                main_account=doc.main_account,
+                sub_account_name=doc.sub_account_name,
                 cel_foszamla=doc.cel_foszamla,
                 cel_alszamla=doc.cel_alszamla,
                 transfer_amount=doc.transfer_amount,
-                likvid=doc.likvid,
-                befektetes=doc.befektetes,
-                megtakaritas=doc.megtakaritas,
-                assets=doc.assets,
+                celhoz_kotott=doc.celhoz_kotott, # Ez a mező hiányzott
+                # likvid=doc.likvid, # Ezek a mezők már nem részei a TransactionRead-nek a sémában
+                # befektetes=doc.befektetes,
+                # megtakaritas=doc.megtakaritas,
+                # assets=doc.assets,
             ) for doc in transactions
         ]
 
         return TransactionListResponse(
             transactions=read_transactions,
-            total=total_count,
+            total_count=total_count, # total helyett total_count
             skip=skip,
             limit=limit
         )
@@ -220,8 +239,8 @@ async def get_summary(current_user: User = Depends(get_current_user)):
         # Összes tranzakció lekérdezése a felhasználóhoz
         transactions = await Transaction.find({"user_id": ObjectId(current_user.id)}).to_list()
 
-        total_income = sum(t.osszeg for t in transactions if t.osszeg > 0)
-        total_expense = sum(t.osszeg for t in transactions if t.osszeg < 0)
+        total_income = sum(t.amount for t in transactions if t.amount > 0)
+        total_expense = sum(t.amount for t in transactions if t.amount < 0)
         net_balance = total_income + total_expense
 
         # Kategóriák szerinti összesítés
@@ -230,10 +249,10 @@ async def get_summary(current_user: User = Depends(get_current_user)):
             if t.kategoria:
                 if t.kategoria not in category_summary:
                     category_summary[t.kategoria] = {"income": 0.0, "expense": 0.0}
-                if t.osszeg > 0:
-                    category_summary[t.kategoria]["income"] += t.osszeg
+                if t.amount > 0:
+                    category_summary[t.kategoria]["income"] += t.amount
                 else:
-                    category_summary[t.kategoria]["expense"] += t.osszeg
+                    category_summary[t.kategoria]["expense"] += t.amount
 
         return {
             "total_income": total_income,
@@ -264,17 +283,16 @@ async def get_transaction(tx_id: str, current_user: User = Depends(get_current_u
 
         return TransactionRead(
             id=str(doc.id),
-            datum=doc.datum,
-            osszeg=doc.osszeg,
+            date=doc.date,
+            amount=doc.amount,
             user_id=str(doc.user_id),
             kategoria=doc.kategoria,
-            tipus=doc.tipus,
-            bev_kiad_tipus=doc.bev_kiad_tipus,
+            type=doc.type,
+            currency=doc.currency, # Itt is visszaadjuk a currencyt
             honap=doc.honap,
             het=doc.het,
             nap_sorszam=doc.nap_sorszam,
-            leiras=doc.leiras,
-            deviza=doc.deviza,
+            description=doc.description,
             profil=doc.profil,
             forras=doc.forras,
             platform=doc.platform,
@@ -282,15 +300,16 @@ async def get_transaction(tx_id: str, current_user: User = Depends(get_current_u
             cimke=doc.cimke,
             ismetlodo=doc.ismetlodo,
             fix_koltseg=doc.fix_koltseg,
-            foszamla=doc.foszamla,
-            alszamla=doc.alszamla,
+            main_account=doc.main_account,
+            sub_account_name=doc.sub_account_name,
             cel_foszamla=doc.cel_foszamla,
             cel_alszamla=doc.cel_alszamla,
             transfer_amount=doc.transfer_amount,
-            likvid=doc.likvid,
-            befektetes=doc.befektetes,
-            megtakaritas=doc.megtakaritas,
-            assets=doc.assets,
+            celhoz_kotott=doc.celhoz_kotott, # Ez a mező hiányzott
+            # likvid=doc.likvid, # Ezek a mezők már nem részei a TransactionRead-nek a sémában
+            # befektetes=doc.befektetes,
+            # megtakaritas=doc.megtakaritas,
+            # assets=doc.assets,
         )
     except Exception as e:
         logger.error(f"Error getting transaction {tx_id}: {e}")
@@ -319,6 +338,50 @@ async def update_transaction(
     # Frissítjük a dokumentumot a bejövő adatokkal
     # Csak azokat a mezőket frissítjük, amik a transaction_data-ban be vannak állítva
     update_data = transaction_data.model_dump(exclude_unset=True) # exclude_unset=True ensures only provided fields are updated
+
+    # Ellenőrizzük, hogy a 'type' és az 'amount' konzisztens legyen, ha módosul
+    if 'amount' in update_data and 'type' in update_data:
+        amount_to_save = update_data['amount']
+        if update_data['type'] == 'expense' and amount_to_save > 0:
+            update_data['amount'] *= -1
+        elif update_data['type'] == 'income' and amount_to_save < 0:
+            update_data['amount'] *= -1
+    elif 'amount' in update_data and doc.type: # Ha csak az amount változik, de a type már létezik
+        amount_to_save = update_data['amount']
+        if doc.type == 'expense' and amount_to_save > 0:
+            update_data['amount'] *= -1
+        elif doc.type == 'income' and amount_to_save < 0:
+            update_data['amount'] *= -1
+    elif 'type' in update_data and doc.amount: # Ha csak a type változik, de az amount már létezik
+        amount_to_save = doc.amount
+        if update_data['type'] == 'expense' and amount_to_save > 0:
+            update_data['amount'] = -amount_to_save
+        elif update_data['type'] == 'income' and amount_to_save < 0:
+            update_data['amount'] = -amount_to_save
+
+
+    # Alszámla devizájának frissítése, ha a fő- vagy alszámla változik
+    # Fontos: Ha a fő- vagy alszámla változik, akkor a devizát is újra kell kérni
+    # a `transactions.py` file elején definiált `AllUserAccountsDocument`-ből
+    if 'main_account' in update_data or 'sub_account_name' in update_data:
+        all_accounts_doc = await AllUserAccountsDocument.find_one()
+        if not all_accounts_doc or current_user.id not in all_accounts_doc.accounts_by_user:
+            raise HTTPException(status_code=404, detail="Accounts not found for user")
+        
+        user_accounts = all_accounts_doc.accounts_by_user[current_user.id]
+        
+        # A frissített fő- és alszámla nevek, vagy az eredeti dokumentumból
+        updated_main_account = update_data.get('main_account', doc.main_account)
+        updated_sub_account_name = update_data.get('sub_account_name', doc.sub_account_name)
+
+        main_account_details = getattr(user_accounts, updated_main_account, None)
+
+        if not main_account_details or updated_sub_account_name not in main_account_details.alszamlak:
+            # Ha az alszámla nem létezik, feltételezzük, hogy "HUF" az alapértelmezett deviza
+            update_data['currency'] = "HUF" 
+        else:
+            update_data['currency'] = main_account_details.alszamlak[updated_sub_account_name].currency
+
     for key, value in update_data.items():
         setattr(doc, key, value)
 

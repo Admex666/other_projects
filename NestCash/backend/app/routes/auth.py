@@ -19,9 +19,17 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     user = await authenticate_user(form_data.username, form_data.password)
     if not user:
         raise HTTPException(status_code=400, detail="Incorrect username or password")
+    
+    user_model = User(
+        id=str(user.id), # A Beanie documentumok _id attribútum neve id
+        username=user.username,
+        email=user.email,
+        mobile=user.mobile,
+        registration_date=user.registration_date,
+    )
 
-    token = create_access_token({"sub": str(user.id)})
-    return {"access_token": token, "token_type": "bearer", "user_id": str(user.id), "username": user.username,}
+    token = create_access_token({"sub": str(user_model.id)})
+    return {"access_token": token, "token_type": "bearer", "user_id": str(user_model.id), "username": user_model.username,}
 
 @router.get("/me", response_model=User)
 async def get_me(current_user: User = Depends(get_current_user)):

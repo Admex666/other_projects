@@ -37,8 +37,10 @@ class TransactionRead(BaseModel):
     kategoria: Optional[str] = None
     type: str # Kimeneten elegendő str (tipus helyett type)
     currency: str # deviza helyett currency
-
+    
+    # tranzakcio_id hiányzott a TransactionRead-ből
     tranzakcio_id: Optional[str] = None
+
     profil: Optional[str] = None
     description: Optional[str] = None # leiras helyett description
     forras: Optional[str] = None
@@ -53,10 +55,21 @@ class TransactionRead(BaseModel):
 
     ismetlodo: Optional[bool] = None
     fix_koltseg: Optional[bool] = None
+    
+    # Ezek a mezők a korábbi TransactionRead-ben szerepeltek, de a TransactionCreate-ben nem voltak.
+    # Ha a Transaction modell tartalmazza őket és szeretnénk, hogy a TransactionRead is visszaadja,
+    # akkor itt hagyni kell őket, különben ki lehet törölni.
+    cel_foszamla: Optional[str] = None
+    cel_alszamla: Optional[str] = None
+    transfer_amount: Optional[float] = None
+    # likvid: Optional[float] = None
+    # befektetes: Optional[float] = None
+    # megtakaritas: Optional[float] = None
+    # assets: Optional[float] = None
 
     class Config:
         populate_by_name = True
 
 class TransactionListResponse(BaseModel):
-    total_count: int
+    total_count: int # total helyett total_count
     transactions: List[TransactionRead]
