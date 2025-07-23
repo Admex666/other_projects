@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.db import init_db
 from app.routes import auth
@@ -6,13 +7,32 @@ from app.routes import transactions
 from app.routes import accounts
 from app.routes import categories
 from app.routes import analysis
+from app.routes import knowledge
+from app.routes import knowledge_admin
 
-app = FastAPI()
+app = FastAPI(
+    title="NestCash API",
+    description="Personal Finance Management API with Knowledge Base",
+    version="1.0.0"
+)
+
+# CORS middleware hozzáadása
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Fejlesztésben, production-ben korlátozni kell
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Router-ek hozzáadása
 app.include_router(auth.router)
 app.include_router(transactions.router)
 app.include_router(accounts.router)
 app.include_router(categories.router)
 app.include_router(analysis.router)
+app.include_router(knowledge.router)
+app.include_router(knowledge_admin.router)
 
 @app.on_event("startup")
 async def startup_event():
@@ -20,5 +40,20 @@ async def startup_event():
 
 @app.get("/")
 async def root():
-    return {"message": "NestCash API works!"}
+    return {
+        "message": "NestCash API works!",
+        "version": "1.0.0",
+        "features": [
+            "Authentication",
+            "Financial Transactions",
+            "Account Management", 
+            "Categories",
+            "Financial Analysis",
+            "Knowledge Base",
+            "Admin Panel"
+        ]
+    }
 
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy", "message": "API is running"}

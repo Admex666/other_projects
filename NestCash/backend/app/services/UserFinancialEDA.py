@@ -43,460 +43,39 @@ class UserFinancialEDA:
             self.df['ev'] = self.df['datum'].dt.year
             self.df['honap'] = self.df['datum'].dt.to_period('M') 
             self.df['het'] = self.df['datum'].dt.isocalendar().week.astype(int)
-            # A 'nap_sorszam' átnevezése 'nap_hete' névre, hogy egyezzen a 'recommendations' részben használt névvel
             self.df['nap_hete'] = self.df['datum'].dt.dayofweek 
             self.df['nap_hete_nev'] = self.df['datum'].dt.day_name(locale='hu_HU') 
+            self.df['ora'] = self.df['datum'].dt.hour # ÚJ: Hozzáadva az óra a temporális elemzéshez
         else:
             print("WARNING: 'datum' oszlop hiányzik vagy DataFrame üres a dátumfeldolgozáshoz.")
 
         # Rendezés dátum szerint
         self.df.sort_values(by='datum', inplace=True)
-            
-    def prepare_user_data(self, user_data):
-        """Adatok előkészítése dashboardhoz (külön metódusba kiszervezve)"""
-        user_data = user_data.copy()
-        
-        # Dátum konverzió
-        user_data['datum'] = pd.to_datetime(user_data['datum'])
-        
-        # Összeg numerikus konverzió
-        user_data['osszeg'] = pd.to_numeric(user_data['osszeg'], errors='coerce')
-        
-        # Bevétel/kiadás szétválasztása
-        user_data['is_income'] = user_data['osszeg'] > 0
-        user_data['abs_osszeg'] = abs(user_data['osszeg'])
-        
-        # Időbélyegek hozzáadása
-        user_data['honap'] = user_data['datum'].dt.strftime('%Y-%m')
-        user_data['nap_hete'] = user_data['datum'].dt.dayofweek
-        user_data['nap_hete_nev'] = user_data['datum'].dt.day_name()
-        
-        return user_data
-    
-    def analyze_user(self, user_id, show_plots=True):
-        """
-        Egy adott user részletes elemzése benchmarkolással
-        
-        Parameters:
-        user_id: Elemzendő felhasználó ID
-        show_plots: Vizualizációk megjelenítése
-        """
-        
-        # User adatok szűrése
-        user_data = self.df[self.df['user_id'] == user_id].copy()
-        
-        if len(user_data) == 0:
-            return None
-            
-        user_profile = user_data['profil'].iloc[0]
-        
-        # Benchmark adatok (hasonló profil + összes user)
-        profile_data = self.df[self.df['profil'] == user_profile].copy()
-        all_data = self.df.copy()
-        
-        # 1. ALAPSTATISZTIKÁK ÉS BENCHMARKING
-        self._basic_user_stats(user_data, profile_data, all_data, user_profile)
-        
-        # 2. CASH FLOW ELEMZÉS
-        self._cashflow_analysis(user_data, profile_data, user_profile)
-        
-        # 3. KÖLTÉSI SZOKÁSOK ELEMZÉSE
-        self._spending_patterns(user_data, profile_data, user_profile)
-        
-        # 4. KATEGÓRIA ELEMZÉS BENCHMARKOLÁSSAL
-        self._category_benchmark(user_data, profile_data, user_profile)
-        
-        # 5. IDŐBELI TRENDEK
-        self._temporal_analysis(user_data, user_profile)
-        
-        # 6. KOCKÁZATI ELEMZÉS
-        self._risk_analysis(user_data, profile_data, user_profile)
-        
-        # 7. SZEMÉLYRE SZABOTT JAVASLATOK
-        recommendations = self._generate_recommendations(user_data, profile_data, user_profile)
-            
-        # Fő report dictionary
-        report = {}
-        
-        # 1. Alapstatisztikák
-        report['basic_stats'] = self._basic_user_stats(user_data, profile_data, all_data, user_profile)
-        
-        # 2. Cashflow elemzés
-        report['cashflow'] = self._cashflow_analysis(user_data, profile_data, user_profile)
-        
-        # 3. Költési szokások
-        report['spending_patterns'] = self._spending_patterns(user_data, profile_data, user_profile)
-                
+
+    def _get_user_profile(self, user_id_str: str):
+        # Ez egy mockup, itt kellene az aktuális user profil adatokat betölteni
+        # Pl. adatbázisból vagy egy másik service-ből
         return {
-            'user_id': user_id,
-            'profile': user_profile,
-            'time_period': {
-                'start': user_data['datum'].min().strftime('%Y-%m-%d'),
-                'end': user_data['datum'].max().strftime('%Y-%m-%d')
-            },
-            'transaction_count': len(user_data),
-            'basic_stats': self._basic_user_stats(user_data, profile_data, all_data, user_profile),
-            'cashflow': self._cashflow_analysis(user_data, profile_data, user_profile),
-            'spending_patterns': self._spending_patterns(user_data, profile_data, user_profile),
-            'category_analysis': self._category_benchmark(user_data, profile_data, user_profile),
-            'temporal_analysis': self._temporal_analysis(user_data, user_profile),
-            'risk_analysis': self._risk_analysis(user_data, profile_data, user_profile),
-            'recommendations': self._generate_recommendations(user_data, profile_data, user_profile),
+            "user_id": user_id_str,
+            "liquid_assets_balance": 100000.0, # Példa érték
+            "total_debt": 50000.0 # Példa érték
         }
-    
-    def _basic_user_stats(self, user_data, profile_data, all_data, user_profile):
-        """Alapstatisztikák user vs benchmark"""
-        
-        # User statisztikák
-        user_income = user_data[user_data['is_income']]['osszeg'].sum()
-        user_expenses = user_data[~user_data['is_income']]['abs_osszeg'].sum()
-        user_net = user_income - user_expenses
-        user_savings_rate = (user_net / user_income * 100) if user_income > 0 else 0
-        
-        # Benchmark statisztikák (profil átlag)
-        profile_users = profile_data.groupby('user_id').agg({
-            'osszeg': lambda x: x[x > 0].sum(),  # bevételek
-            'abs_osszeg': lambda x: x[profile_data.loc[x.index, 'osszeg'] < 0].sum()  # kiadások
-        }).rename(columns={'osszeg': 'bevetel', 'abs_osszeg': 'kiadas'})
-        
-        profile_users['net'] = profile_users['bevetel'] - profile_users['kiadas']
-        profile_users['savings_rate'] = (profile_users['net'] / profile_users['bevetel'] * 100).fillna(0)
-        
-        benchmark_income = profile_users['bevetel'].mean()
-        benchmark_expenses = profile_users['kiadas'].mean()
-        benchmark_savings_rate = profile_users['savings_rate'].mean()
 
-        # Percentilis rangsor
-        user_rank_income = (profile_users['bevetel'] < user_income).mean() * 100
-        user_rank_savings = (profile_users['savings_rate'] < user_savings_rate).mean() * 100
-        
-        # Adatgyűjtés dictionary létrehozása
-        stats = {
-            'user_income': user_income,
-            'user_expenses': user_expenses,
-            'user_net': user_net,
-            'user_savings_rate': user_savings_rate,
-            'benchmark_income': benchmark_income,
-            'benchmark_expenses': benchmark_expenses,
-            'benchmark_savings_rate': benchmark_savings_rate,
-            'user_rank_income': user_rank_income,
-            'user_rank_savings': user_rank_savings
-        }
-        
-        return stats
-    
-    def _cashflow_analysis(self, user_data, profile_data, user_profile):
-        """Cashflow elemzés és trend"""
-        
-        # Havi cashflow trend
-        monthly_flow = user_data.groupby('honap')['osszeg'].sum()
-        
-        for month, flow in monthly_flow.items():
-            trend_emoji = "📈" if flow > 0 else "📉" if flow < -50000 else "➡️"
-        
-        # Trend elemzés
-        if len(monthly_flow) > 1:
-            trend = monthly_flow.pct_change().mean()
-            if abs(trend) < 0.1:
-                trend_msg = "Stabil 📊"
-            elif trend > 0:
-                trend_msg = f"Javuló trend (+{trend*100:.1f}% havi átlag) 📈"
-            else:
-                trend_msg = f"Romló trend ({trend*100:.1f}% havi átlag) 📉"
-        else:
-            trend = None
-            trend_msg = None
-    
-        cashflow_data = {
-            'monthly_flow': monthly_flow.to_dict(),
-            'trend': trend,
-            'trend_msg': trend_msg
-        }
-        
-        return cashflow_data
-    
-    def _spending_patterns(self, user_data, profile_data, user_profile):
-        """Költési szokások elemzése"""
-        
-        user_expenses = user_data[~user_data['is_income']]
-        
-        # Költési típusok
-        spending_types = user_expenses.groupby('tipus')['abs_osszeg'].sum()
-        total_expenses = spending_types.sum()
-        
-        for stype, amount in spending_types.items():
-            percentage = (amount / total_expenses * 100)
-            emoji = {"alap": "🏠", "impulzus": "⚡", "vagy": "🤔"}.get(stype, "💸")
-        
-        # Impulzus vásárlási hajlam vs benchmark
-        user_impulse_pct = (spending_types.get('impulzus', 0) / total_expenses * 100)
-        
-        profile_impulse = profile_data[~profile_data['is_income']].groupby('tipus')['abs_osszeg'].sum()
-        profile_impulse_pct = (profile_impulse.get('impulzus', 0) / profile_impulse.sum() * 100)
-        
-        # Fix vs változó költségek
-        fixed_costs = user_expenses[user_expenses['fix_koltseg'] == True]['abs_osszeg'].sum()
-        variable_costs = user_expenses[user_expenses['fix_koltseg'] == False]['abs_osszeg'].sum()
+    def _comparison_text(self, value, benchmark, reverse=False):
+        """
+        Generál egy összehasonlító szöveget egy érték és egy benchmark alapján.
+        Reverse=True esetén kisebb érték a jobb (pl. kiadások).
+        """
+        if benchmark == 0 and value == 0:
+            return "➡️ hasonló"
+        if benchmark == 0 and value != 0:
+            return "🔴 jelentősen magasabb" if not reverse else "🌟 jelentősen alacsonyabb"
+        if benchmark is None or benchmark == 0:
+            return "Nincs elegendő összehasonlítási adat"
 
-        spending_data = {
-            'spending_types': spending_types.to_dict(),
-            'total_expenses': float(total_expenses),
-            'user_impulse_pct': float(user_impulse_pct),
-            'profile_impulse_pct': float(profile_impulse_pct),
-            'fixed_costs': float(fixed_costs),
-            'variable_costs': float(variable_costs),
-            'fixed_ratio': float(fixed_costs / total_expenses * 100) if total_expenses > 0 else 0,
-            'variable_ratio': float(variable_costs / total_expenses * 100) if total_expenses > 0 else 0
-        }
-        return spending_data  # Beszúrás a metódus végére
-        
-    def _category_benchmark(self, user_data, profile_data, user_profile):
-        """Kategória szintű benchmarking"""
-        
-        user_expenses = user_data[~user_data['is_income']]
-        profile_expenses = profile_data[~profile_data['is_income']]
-        
-        # User kategóriák
-        user_categories = user_expenses.groupby('kategoria')['abs_osszeg'].sum().sort_values(ascending=False)
-        total_user_expenses = user_categories.sum()
-        
-        # Profil átlag kategóriák (user átlagban)
-        profile_users_cat = profile_expenses.groupby(['user_id', 'kategoria'])['abs_osszeg'].sum().reset_index()
-        profile_avg_cat = profile_users_cat.groupby('kategoria')['abs_osszeg'].mean()
-        
-        top_categories = {}
-        for i, (category, amount) in enumerate(user_categories.head(5).items(), 1):
-            percentage = (amount / total_user_expenses * 100)
-            profile_avg = profile_avg_cat.get(category, 0)
-            top_categories[i] = {'name': category,
-                                 'amount': amount,
-                                 'percentage': percentage
-                                 }
-            
-            if profile_avg > 0:
-                comparison = self._compare_to_benchmark(amount, profile_avg, reverse=True)
-        
-        # Hiányzó alapvető kategóriák ellenőrzése
-        essential_categories = ['elelmiszer', 'lakber', 'kozlekedes', 'egeszseg']
-        missing_essentials = [cat for cat in essential_categories if cat not in user_categories.index]
 
-        category_data = {
-            'user_categories': user_categories.to_dict(),
-            'top_category': top_categories,
-            'missing_essentials': missing_essentials,
-            'profile_avg_categories': profile_avg_cat.to_dict()
-        }
-        return category_data  # Beszúrás a metódus végére
-        
-    def _temporal_analysis(self, user_data, user_profile):
-        """Időbeli költési minták"""
-        
-        user_expenses = user_data[~user_data['is_income']]
-        
-        # Heti minták
-        weekly_spending = user_expenses.groupby('nap_hete_nev')['abs_osszeg'].sum()
-        weekday_names = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-        weekly_spending = weekly_spending.reindex(weekday_names, fill_value=0)
-        
-        max_day = weekly_spending.idxmax()
-        min_day = weekly_spending.idxmin()
-
-        # Hétvége vs hétköznap
-        weekend_days = ['Saturday', 'Sunday']
-        weekday_avg = weekly_spending[~weekly_spending.index.isin(weekend_days)].mean()
-        weekend_avg = weekly_spending[weekly_spending.index.isin(weekend_days)].mean()
-    
-        temporal_data = {
-            'weekly_spending': weekly_spending.to_dict(),
-            'max_day': {
-                'name': max_day,
-                'amount': float(weekly_spending[max_day])
-            },
-            'min_day': {
-                'name': min_day,
-                'amount': float(weekly_spending[min_day])
-            },
-            'weekday_avg': float(weekday_avg),
-            'weekend_avg': float(weekend_avg),
-            'weekend_spending_ratio': float(weekend_avg / weekday_avg) if weekday_avg > 0 else 0
-        }
-        return temporal_data  # Beszúrás a metódus végére
-            
-    def _risk_analysis(self, user_data, profile_data, user_profile):
-        """Pénzügyi kockázati elemzés"""
-        
-        user_income = user_data[user_data['is_income']]['osszeg'].sum()
-        user_expenses = user_data[~user_data['is_income']]['abs_osszeg'].sum()
-        
-        # Expense ratio
-        expense_ratio = (user_expenses / user_income * 100) if user_income > 0 else 0
-        
-        # Kockázati kategóriák
-        if expense_ratio >= 100:
-            risk_level = "🔴 MAGAS KOCKÁZAT"
-            risk_msg = "Kiadások meghaladják a bevételeket!"
-        elif expense_ratio >= 90:
-            risk_level = "🟡 KÖZEPES KOCKÁZAT"
-            risk_msg = "Nagyon alacsony megtakarítási ráta"
-        elif expense_ratio >= 80:
-            risk_level = "🟢 ALACSONY KOCKÁZAT"
-            risk_msg = "Elfogadható pénzügyi helyzet"
-        else:
-            risk_level = "🌟 KIVÁLÓ"
-            risk_msg = "Egészséges pénzügyi helyzet"
-        
-        # Fix költségek aránya
-        user_expenses_detail = user_data[~user_data['is_income']]
-        fixed_costs = user_expenses_detail[user_expenses_detail['fix_koltseg'] == True]['abs_osszeg'].sum()
-        fixed_ratio = (fixed_costs / user_income * 100) if user_income > 0 else 0
-        
-        risk_data = {
-            'expense_ratio': float(expense_ratio),
-            'risk_level': risk_level,
-            'risk_msg': risk_msg,
-            'fixed_ratio': float(fixed_ratio),
-            'income': float(user_income),
-            'expenses': float(user_expenses)
-        }
-        return risk_data  # Beszúrás a metódus végére
-        
-    def _generate_recommendations(self, user_data, profile_data, user_profile):
-        """Személyre szabott javaslatok generálása"""
-        
-        recommendations = []
-        
-        user_income = user_data[user_data['is_income']]['osszeg'].sum()
-        user_expenses = user_data[~user_data['is_income']]['abs_osszeg'].sum()
-        savings_rate = ((user_income - user_expenses) / user_income * 100) if user_income > 0 else 0
-        
-        user_expenses_detail = user_data[~user_data['is_income']]
-        
-        # 1. Megtakarítási ráta alapú javaslatok
-        if savings_rate < 0:
-            recommendations.append("🚨 AZONNALI CSELEKEDJ: Csökkentened kell a kiadásaidat!")
-            recommendations.append("💡 Vizsgáld felül a nem alapvető kiadásokat!")
-        elif savings_rate < 10:
-            recommendations.append("📈 Érd el a 10-20% megtakarítási rátát!")
-            recommendations.append("💡 Keress költségoptimalizálási lehetőségeket!")
-        elif savings_rate > 30:
-            recommendations.append("🌟 Kiváló megtakarítási ráta!")
-            recommendations.append("💡 Befektetési lehetőségek mérlegelése")
-        
-        # 2. Impulzus vásárlások
-        impulse_spending = user_expenses_detail[user_expenses_detail['tipus'] == 'impulzus']['abs_osszeg'].sum()
-        impulse_pct = (impulse_spending / user_expenses * 100) if user_expenses > 0 else 0
-        
-        if impulse_pct > 15:
-            recommendations.append(f"⚡ Impulzus vásárlások csökkentése ({impulse_pct:.1f}%)")
-            recommendations.append("💡 24 órás gondolkodási idő nagy vásárlásoknál")
-        
-        # 3. Kategória specifikus javaslatok
-        categories = user_expenses_detail.groupby('kategoria')['abs_osszeg'].sum()
-        top_category = categories.idxmax()
-        top_amount = categories.max()
-        top_pct = (top_amount / user_expenses * 100)
-        
-        if top_pct > 40:
-            recommendations.append(f"🎯 {top_category} kategória optimalizálása ({top_pct:.1f}%)")
-        
-        # 4. Fix költségek
-        fixed_costs = user_expenses_detail[user_expenses_detail['fix_koltseg'] == True]['abs_osszeg'].sum()
-        fixed_ratio = (fixed_costs / user_income * 100) if user_income > 0 else 0
-        
-        if fixed_ratio > 60:
-            recommendations.append("🔒 Fix költségek felülvizsgálata szükséges")
-            recommendations.append("💡 Szerződések újratárgyalása, szolgáltatók váltása")
-        
-        # 5. Időbeli minták
-        weekend_spending = user_expenses_detail[user_expenses_detail['nap_hete'].isin([5, 6])]['abs_osszeg'].sum()
-        weekday_spending = user_expenses_detail[~user_expenses_detail['nap_hete'].isin([5, 6])]['abs_osszeg'].sum()
-        
-        if weekend_spending > weekday_spending * 0.5:  # hétvégén több mint a hét felét költi
-            recommendations.append("🏖️ Hétvégi költések tudatosabb tervezése")
-        
-        return recommendations
-    
-    def _create_user_dashboard(self, user_data, profile_data, user_profile):
-        """User dashboard létrehozása"""
-        # Adatok előkészítése
-        user_data = self.prepare_user_data(user_data)
-        profile_data = self.prepare_user_data(profile_data)
-        
-        # Dashboard létrehozása
-        fig, axes = plt.subplots(2, 3, figsize=(18, 12))
-        fig.suptitle(f'Személyes Pénzügyi Dashboard - {user_profile} profil', 
-                    fontsize=16, fontweight='bold')
-    
-        user_expenses = user_data[~user_data['is_income']]
-        
-        # 1. Havi cashflow
-        monthly_flow = user_data.groupby('honap')['osszeg'].sum()
-        colors = ['green' if x > 0 else 'red' for x in monthly_flow.values]
-        monthly_flow.plot(kind='bar', ax=axes[0,0], color=colors)
-        axes[0,0].set_title('Havi Cashflow')
-        axes[0,0].set_ylabel('HUF')
-        axes[0,0].axhline(y=0, color='black', linestyle='-', alpha=0.5)
-        axes[0,0].tick_params(axis='x', rotation=45)
-        
-        # 2. Kategória megoszlás
-        categories = user_expenses.groupby('kategoria')['abs_osszeg'].sum().head(8)
-        axes[0,1].pie(categories.values, labels=categories.index, autopct='%1.1f%%')
-        axes[0,1].set_title('Költségkategóriák megoszlása')
-        
-        # 3. Költési típusok
-        spending_types = user_expenses.groupby('tipus')['abs_osszeg'].sum()
-        spending_types.plot(kind='bar', ax=axes[0,2], color=['skyblue', 'orange', 'lightgreen'])
-        axes[0,2].set_title('Költési típusok')
-        axes[0,2].set_ylabel('HUF')
-        axes[0,2].tick_params(axis='x', rotation=45)
-        
-        # 4. Heti költési minták
-        weekly_spending = user_expenses.groupby('nap_hete_nev')['abs_osszeg'].sum()
-        weekday_names = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-        weekly_spending = weekly_spending.reindex(weekday_names, fill_value=0)
-        weekly_spending.plot(kind='bar', ax=axes[1,0], color='lightcoral')
-        axes[1,0].set_title('Heti költési minták')
-        axes[1,0].set_ylabel('HUF')
-        axes[1,0].tick_params(axis='x', rotation=45)
-        
-        # 5. Benchmarking - megtakarítási ráta
-        user_income = user_data[~user_data['is_income']]['osszeg'].sum()
-        user_expenses_sum = user_expenses['abs_osszeg'].sum()
-        user_savings_rate = ((user_income - user_expenses_sum) / user_income * 100) if user_income > 0 else 0
-        
-        # Profil benchmark
-        profile_users = profile_data.groupby('user_id').agg({
-            'osszeg': lambda x: x[x > 0].sum(),
-            'abs_osszeg': lambda x: x[profile_data.loc[x.index, 'osszeg'] < 0].sum()
-        }).rename(columns={'osszeg': 'bevetel', 'abs_osszeg': 'kiadas'})
-        profile_users['savings_rate'] = ((profile_users['bevetel'] - profile_users['kiadas']) / profile_users['bevetel'] * 100).fillna(0)
-        
-        axes[1,1].hist(profile_users['savings_rate'], bins=15, alpha=0.7, color='lightblue', label=f'{user_profile} profil')
-        axes[1,1].axvline(user_savings_rate, color='red', linestyle='--', linewidth=2, label='Te')
-        axes[1,1].set_title('Megtakarítási ráta összehasonlítás')
-        axes[1,1].set_xlabel('Megtakarítási ráta (%)')
-        axes[1,1].set_ylabel('Felhasználók száma')
-        axes[1,1].legend()
-        
-        # 6. Fix vs változó költségek
-        fixed_costs = user_expenses[user_expenses['fix_koltseg'] == True]['abs_osszeg'].sum()
-        variable_costs = user_expenses[user_expenses['fix_koltseg'] == False]['abs_osszeg'].sum()
-        
-        cost_types = pd.Series([fixed_costs, variable_costs], index=['Fix költségek', 'Változó költségek'])
-        cost_types.plot(kind='pie', ax=axes[1,2], autopct='%1.1f%%', colors=['lightsteelblue', 'lightsalmon'])
-        axes[1,2].set_title('Fix vs Változó költségek')
-        
-        plt.tight_layout()
-        return fig
-    
-    def _compare_to_benchmark(self, user_value, benchmark_value, reverse=False):
-        """Benchmark összehasonlítás szöveges kiértékelése"""
-        if benchmark_value == 0:
-            return "nincs összehasonlítási alap"
-        
-        ratio = user_value / benchmark_value
-        
-        if reverse:  # kisebb érték jobb (pl. kiadások)
+        ratio = value / benchmark
+        if reverse:  # kisebb érték jobb (pl. kiadások, adósság)
             if ratio < 0.8:
                 return "✅ jelentősen alacsonyabb"
             elif ratio < 0.95:
@@ -507,7 +86,7 @@ class UserFinancialEDA:
                 return "⚠️ magasabb"
             else:
                 return "🔴 jelentősen magasabb"
-        else:  # nagyobb érték jobb (pl. bevétel, megtakarítás)
+        else:  # nagyobb érték jobb (pl. bevétel, megtakarítás, vészhelyzeti alap)
             if ratio > 1.2:
                 return "🌟 jelentősen magasabb"
             elif ratio > 1.05:
@@ -519,6 +98,382 @@ class UserFinancialEDA:
             else:
                 return "🔴 jelentősen alacsonyabb"
     
+    def _basic_stats_analysis(self, user_data):
+        total_income = user_data[user_data['is_income']]['abs_osszeg'].sum()
+        total_expenses = user_data[~user_data['is_income']]['abs_osszeg'].sum()
+        net_balance = total_income - total_expenses
+
+        if not user_data.empty:
+            days_in_period = (user_data['datum'].max() - user_data['datum'].min()).days + 1
+            daily_avg_spending = total_expenses / days_in_period if days_in_period > 0 else 0
+            
+            num_months = user_data['honap'].nunique()
+            monthly_avg_spending = total_expenses / num_months if num_months > 0 else 0
+        else:
+            days_in_period = 0
+            daily_avg_spending = 0
+            monthly_avg_spending = 0
+
+        # Most aktív nap/óra (kiadások alapján)
+        most_active_day_of_week = "N/A"
+        most_active_hour = "N/A"
+        if not user_data.empty:
+            expenses_data = user_data[~user_data['is_income']]
+            if not expenses_data.empty:
+                if 'nap_hete_nev' in expenses_data.columns:
+                    most_active_day_of_week = expenses_data['nap_hete_nev'].mode().iloc[0]
+                if 'ora' in expenses_data.columns:
+                    most_active_hour = expenses_data['ora'].mode().iloc[0]
+        
+        return {
+            "total_income_huf": total_income,
+            "total_expenses_huf": total_expenses,
+            "net_balance_huf": net_balance,
+            "average_daily_spending_huf": daily_avg_spending,
+            "average_monthly_spending_huf": monthly_avg_spending,
+            "most_active_day_of_week": most_active_day_of_week,
+            "most_active_hour": str(most_active_hour), # Konvertálás stringgé a konzisztencia érdekében
+        }
+
+    def _cashflow_analysis(self, user_data):
+        total_income = user_data[user_data['is_income']]['abs_osszeg'].sum()
+        total_expenses = user_data[~user_data['is_income']]['abs_osszeg'].sum()
+        net_balance = total_income - total_expenses
+
+        if not user_data.empty:
+            days_in_period = (user_data['datum'].max() - user_data['datum'].min()).days + 1
+            daily_avg_spending = total_expenses / days_in_period if days_in_period > 0 else 0
+            num_months = user_data['honap'].nunique()
+            monthly_avg_spending = total_expenses / num_months if num_months > 0 else 0
+        else:
+            daily_avg_spending = 0
+            monthly_avg_spending = 0
+            
+        # Havi cashflow
+        monthly_flow_dict = {}
+        if 'honap' in user_data.columns and not user_data.empty:
+            monthly_flow_series = user_data.groupby('honap').apply(
+                lambda x: x[x['is_income']]['abs_osszeg'].sum() - x[~x['is_income']]['abs_osszeg'].sum()
+            ).rename('monthly_flow')
+            
+            monthly_flow_dict = {str(period): flow for period, flow in monthly_flow_series.items()}
+        
+        # Heti cashflow
+        weekly_flow_dict = {}
+        if 'het' in user_data.columns and not user_data.empty:
+            weekly_flow_series = user_data.groupby('het').apply(
+                lambda x: x[x['is_income']]['abs_osszeg'].sum() - x[~x['is_income']]['abs_osszeg'].sum()
+            ).rename('weekly_flow')
+            
+            weekly_flow_dict = {str(week_num): flow for week_num, flow in weekly_flow_series.items()}
+
+        # Trend és trendüzenet
+        trend = "Stabil"
+        trend_msg = "A cashflow stabilan alakul."
+        if monthly_flow_dict:
+            flows = list(monthly_flow_dict.values())
+            if len(flows) >= 2:
+                # Egyszerű trend elemzés
+                if flows[-1] > flows[-2] * 1.1: # több mint 10% növekedés
+                    trend = "Növekvő"
+                    trend_msg = "A cashflow pozitív tendenciát mutat, egyre jobban állsz!"
+                elif flows[-1] < flows[-2] * 0.9: # több mint 10% csökkenés
+                    trend = "Csökkenő"
+                    trend_msg = "A cashflow negatív tendenciát mutat, érdemes áttekinteni a kiadásokat."
+
+        return {
+            "monthly_flow": monthly_flow_dict,
+            "weekly_flow": weekly_flow_dict,
+            "total_income": total_income,
+            "total_expenses": total_expenses,
+            "net_balance": net_balance,
+            "avg_daily_spending": daily_avg_spending,
+            "avg_monthly_spending": monthly_avg_spending,
+            "trend": trend, # ÚJ: cashflow trend
+            "trend_msg": trend_msg, # ÚJ: cashflow trend üzenet
+        }
+
+    def _spending_patterns_analysis(self, user_data):
+        monthly_spending_trend = []
+        weekly_spending_trend = []
+        daily_spending_average = [] # Ezt már máshol is számoljuk, de itt a trend része
+
+        if not user_data.empty:
+            # Havi kiadási trend
+            if 'honap' in user_data.columns:
+                monthly_spending_series = user_data[~user_data['is_income']].groupby('honap')['abs_osszeg'].sum()
+                monthly_spending_trend = [{"period": str(period), "amount": amount} for period, amount in monthly_spending_series.items()]
+
+            # Heti kiadási trend
+            if 'het' in user_data.columns:
+                weekly_spending_series = user_data[~user_data['is_income']].groupby('het')['abs_osszeg'].sum()
+                weekly_spending_trend = [{"period": str(week_num), "amount": amount} for week_num, amount in weekly_spending_series.items()]
+            
+            # Napi átlagos költés naponként (a hét napjai szerint)
+            if 'nap_hete_nev' in user_data.columns:
+                daily_avg_spending_by_day_of_week = user_data[~user_data['is_income']].groupby('nap_hete_nev')['abs_osszeg'].mean()
+                daily_spending_average = [{"day": day, "average_amount": amount} for day, amount in daily_avg_spending_by_day_of_week.items()]
+
+        return {
+            "monthly_spending_trend": monthly_spending_trend,
+            "weekly_spending_trend": weekly_spending_trend,
+            "daily_spending_average": daily_spending_average,
+        }
+
+    def _category_analysis(self, user_data):
+        user_expenses = user_data[~user_data['is_income']]
+
+        # Top 3 kategória (kiadások)
+        top_category_dict = {}
+        category_summary_dict = {}
+        if not user_expenses.empty and 'kategoria' in user_expenses.columns and 'abs_osszeg' in user_expenses.columns:
+            top_category_series = user_expenses.groupby('kategoria')['abs_osszeg'].sum().nlargest(3)
+            top_category_dict = top_category_series.to_dict() 
+            
+            category_summary_series = user_expenses.groupby('kategoria')['abs_osszeg'].sum()
+            category_summary_dict = category_summary_series.to_dict() 
+            
+        # ÚJ: user_categories - megegyezik a category_summary-val
+        user_categories_dict = category_summary_dict
+
+        # ÚJ: missing_essentials - placeholder, valós logika hiányában
+        missing_essentials_list = [] # Pl. ['Élelmiszer', 'Lakhatás'] ha ezekből nincs kiadás
+
+        # ÚJ: profile_avg_categories - placeholder, valós logika hiányában
+        profile_avg_categories_dict = {} # Pl. {'Élelmiszer': 50000, 'Lakhatás': 100000}
+
+        return {
+            "top_category": top_category_dict,
+            "category_summary": category_summary_dict,
+            "user_categories": user_categories_dict,
+            "missing_essentials": missing_essentials_list,
+            "profile_avg_categories": profile_avg_categories_dict,
+        }
+
+    def _temporal_analysis(self, user_data):
+        transactions_by_day_of_week = {}
+        transactions_by_hour_of_day = {}
+
+        if not user_data.empty:
+            # Tranzakciók a hét napjai szerint
+            if 'nap_hete_nev' in user_data.columns:
+                day_of_week_counts = user_data['nap_hete_nev'].value_counts().to_dict()
+                transactions_by_day_of_week = day_of_week_counts
+            
+            # Tranzakciók a nap órái szerint
+            if 'ora' in user_data.columns:
+                hour_of_day_counts = user_data['ora'].value_counts().to_dict()
+                transactions_by_hour_of_day = {str(hour): count for hour, count in hour_of_day_counts.items()} # Óra szám stringgé konvertálása
+
+        return {
+            "transactions_by_day_of_week": transactions_by_day_of_week,
+            "transactions_by_hour_of_day": transactions_by_hour_of_day,
+        }
+
+
+    def _risk_analysis(self, user_data, user_profile):
+        total_income = user_data[user_data['is_income']]['abs_osszeg'].sum()
+        total_expenses = user_data[~user_data['is_income']]['abs_osszeg'].sum()
+
+        expense_ratio = (total_expenses / total_income) * 100 if total_income > 0 else 100.0
+        savings_rate = ((total_income - total_expenses) / total_income) * 100 if total_income > 0 else 0.0
+
+        emergency_fund_months = 0.0
+        if user_profile and 'liquid_assets_balance' in user_profile and total_expenses > 0:
+            num_months_data = user_data['honap'].nunique()
+            if num_months_data > 0:
+                avg_monthly_expenses = total_expenses / num_months_data
+                if avg_monthly_expenses > 0:
+                    emergency_fund_months = user_profile['liquid_assets_balance'] / avg_monthly_expenses
+            
+        debt_to_income = 0.0
+        if user_profile and 'total_debt' in user_profile and total_income > 0:
+            debt_to_income = (user_profile['total_debt'] / total_income) * 100
+
+        avg_debt_to_income_benchmark = 36.0 
+        avg_emergency_fund_months_benchmark = 4.0 
+
+        debt_to_income_comparison = self._comparison_text(debt_to_income, avg_debt_to_income_benchmark, reverse=True)
+        emergency_fund_comparison = self._comparison_text(emergency_fund_months, avg_emergency_fund_months_benchmark, reverse=False)
+
+        # ÚJ: risk_level számítása
+        risk_level = "Alacsony"
+        if savings_rate < 10 or expense_ratio > 80:
+            risk_level = "Magas"
+        elif savings_rate < 20 or expense_ratio > 70 or emergency_fund_months < 3 or debt_to_income > 40:
+            risk_level = "Közepes"
+            
+        return {
+            "expense_ratio": expense_ratio,
+            "savings_rate": savings_rate,
+            "debt_to_income": debt_to_income,
+            "emergency_fund_months": emergency_fund_months,
+            "debt_to_income_comparison": debt_to_income_comparison, 
+            "emergency_fund_comparison": emergency_fund_comparison,
+            "risk_level": risk_level, # ÚJ: Kockázati szint
+        }
+    
+    def _generate_recommendations(self, user_data, risk_data, user_profile):
+        recommendations = []
+        
+        # Recommendation 1: Savings Rate
+        if risk_data['savings_rate'] < 10: 
+            recommendations.append({
+                "category": "Megtakarítás",
+                "advice": f"Jelenlegi megtakarítási rátád: {risk_data['savings_rate']:.1f}%. Próbálj legalább 10-20%-ot félretenni bevételeidből a jövőbeli céljaid eléréséhez.",
+                "priority": "Magas"
+            })
+        elif risk_data['savings_rate'] < 20:
+             recommendations.append({
+                "category": "Megtakarítás",
+                "advice": f"Jelenlegi megtakarítási rátád: {risk_data['savings_rate']:.1f}%. Jó úton haladsz, de a 20% körüli megtakarítási ráta még nagyobb pénzügyi biztonságot nyújthat.",
+                "priority": "Közepes"
+            })
+
+        # Recommendation 2: Expense Optimization (if expense ratio is high)
+        if risk_data['expense_ratio'] > 70: 
+            recommendations.append({
+                "category": "Költségcsökkentés",
+                "advice": f"Kiadásaid aránya a bevételeidhez képest {risk_data['expense_ratio']:.1f}%. Tekintsd át a kiadásaidat, és keress olyan területeket, ahol csökkenteni tudod őket.",
+                "priority": "Magas"
+            })
+
+        # Recommendation 3: Top Category Optimization
+        if risk_data and 'category_analysis' in risk_data and 'top_category' in risk_data['category_analysis'] and risk_data['category_analysis']['top_category']:
+            # Find the category with the highest spending (first item if dict not empty)
+            top_cat_name = next(iter(risk_data['category_analysis']['top_category'].keys()), None) 
+            if top_cat_name:
+                top_cat_amount = risk_data['category_analysis']['top_category'][top_cat_name]
+                total_expenses = user_data[~user_data['is_income']]['abs_osszeg'].sum()
+                
+                if total_expenses > 0 and (top_cat_amount / total_expenses) > 0.3: 
+                    recommendations.append({
+                        "category": "Kategória elemzés",
+                        "advice": f"A(z) {top_cat_name} kategória teszi ki kiadásaid jelentős részét. Érdemes lehet megvizsgálni, hogyan csökkentheted az ehhez kapcsolódó költségeidet.",
+                        "priority": "Közepes"
+                    })
+        
+        # Recommendation 4: Emergency Fund (if low)
+        if risk_data['emergency_fund_months'] < 3: 
+            recommendations.append({
+                "category": "Vészhelyzeti alap",
+                "advice": f"Jelenlegi vészhelyzeti alapod mindössze {risk_data['emergency_fund_months']:.1f} hónapnyi kiadást fedez. Célként tűzz ki legalább 3-6 hónapnyi kiadásnak megfelelő összeget.",
+                "priority": "Magas"
+            })
+            
+        # Recommendation 5: Debt (if high)
+        if risk_data['debt_to_income'] > 40: 
+            recommendations.append({
+                "category": "Adósság",
+                "advice": f"Adósság/bevétel arányod {risk_data['debt_to_income']:.1f}%. Az adósság csökkentése javíthatja pénzügyi helyzetedet és rugalmasságodat.",
+                "priority": "Magas"
+            })
+
+        return recommendations
+
+
+    def analyze_user(self, user_id_str: str, show_plots: bool = False):
+        user_data = self.df[self.df['user_id'] == user_id_str].copy()
+        
+        # Alapértelmezett üres/hiányzó adatok eredmény struktúra
+        default_empty_analysis_result = {
+            "user_id": user_id_str,
+            "time_period": "Nincs elegendő adat",
+            "transaction_count": 0,
+            "basic_stats": {
+                "total_income_huf": 0.0,
+                "total_expenses_huf": 0.0,
+                "net_balance_huf": 0.0,
+                "average_daily_spending_huf": 0.0,
+                "average_monthly_spending_huf": 0.0,
+                "most_active_day_of_week": "N/A",
+                "most_active_hour": "N/A",
+            },
+            "cashflow": {
+                "monthly_flow": {},
+                "weekly_flow": {},
+                "total_income": 0.0,
+                "total_expenses": 0.0,
+                "net_balance": 0.0,
+                "avg_daily_spending": 0.0,
+                "avg_monthly_spending": 0.0,
+                "trend": "Nincs elegendő adat",
+                "trend_msg": "Nincs elegendő adat",
+            },
+            "spending_patterns": {
+                "monthly_spending_trend": [],
+                "weekly_spending_trend": [],
+                "daily_spending_average": [],
+            },
+            "category_analysis": {
+                "top_category": {},
+                "category_summary": {},
+                "user_categories": {},
+                "missing_essentials": [],
+                "profile_avg_categories": {},
+            },
+            "temporal_analysis": {
+                "transactions_by_day_of_week": {},
+                "transactions_by_hour_of_day": {},
+            },
+            "risk_analysis": {
+                "expense_ratio": 0.0,
+                "savings_rate": 0.0,
+                "debt_to_income": 0.0, 
+                "emergency_fund_months": 0.0,
+                "debt_to_income_comparison": "Nincs elegendő adat",
+                "emergency_fund_comparison": "Nincs elegendő adat",
+                "risk_level": "Alacsony",
+            },
+            "recommendations": [
+                {"category": "Általános", "advice": "Nincs elegendő adat az elemzéshez.", "priority": "Alacsony"}
+            ]
+        }
+
+        # Kezeljük az eseteket, amikor nincs adat
+        if user_data.empty:
+            return default_empty_analysis_result
+
+        # Ellenőrzés: legalább 7 napnyi tranzakciós előzmény
+        first_transaction_date = user_data['datum'].min()
+        last_transaction_date = user_data['datum'].max()
+        time_difference = last_transaction_date - first_transaction_date
+
+        if time_difference.days < 7:
+            # Frissítjük a javaslatot a 7 napos limit miatt
+            insufficient_data_result = default_empty_analysis_result.copy()
+            insufficient_data_result['recommendations'] = [
+                {"category": "Általános", "advice": "Legalább 7 napnyi tranzakciós előzmény szükséges.", "priority": "Magas"}
+            ]
+            return insufficient_data_result
+
+        # Ha elegendő adat van, futtassuk a teljes elemzést
+        user_profile = self._get_user_profile(user_id_str)
+        
+        basic_stats_data = self._basic_stats_analysis(user_data)
+        cashflow_data = self._cashflow_analysis(user_data)
+        spending_patterns_data = self._spending_patterns_analysis(user_data)
+        category_data = self._category_analysis(user_data)
+        temporal_analysis_data = self._temporal_analysis(user_data)
+        risk_data = self._risk_analysis(user_data, user_profile) 
+        recommendations = self._generate_recommendations(user_data, risk_data, user_profile) 
+
+        analysis_result = {
+            "user_id": user_id_str, 
+            "time_period": f"{first_transaction_date.strftime('%Y.%m.%d')} - {last_transaction_date.strftime('%Y.%m.%d')}",
+            "transaction_count": user_data.shape[0],
+            "basic_stats": basic_stats_data,
+            "cashflow": cashflow_data,
+            "spending_patterns": spending_patterns_data,
+            "category_analysis": category_data,
+            "temporal_analysis": temporal_analysis_data,
+            "risk_analysis": risk_data,
+            "recommendations": recommendations
+        }
+        
+        return analysis_result
+
+
     def get_all_users(self):
         """Összes user ID visszaadása"""
         return sorted(self.df['user_id'].unique())
@@ -532,15 +487,17 @@ def run_user_eda(df, user_id=None):
     df: DataFrame a tranzakciókkal
     user_id: Vizsgálandó user ID (None esetén random user)
     """
-    
-    # EDA objektum létrehozása
     eda = UserFinancialEDA(df)
     
-    # User ID meghatározása
-    if user_id is None:
+    if user_id:
+        target_user_id = user_id
+    else:
         all_users = eda.get_all_users()
-        user_id = np.random.choice(all_users)
-    
-    result = eda.analyze_user(user_id, show_plots=True)
-    
-    return result
+        if not all_users:
+            print("Nincs elérhető felhasználó az adatokban.")
+            return
+        target_user_id = all_users[0] # Válasszuk az első felhasználót, ha nincs megadva
+        print(f"Nincs megadva user ID, elemzés a következő felhasználóval: {target_user_id}")
+            
+    analysis_result = eda.analyze_user(target_user_id)
+    return analysis_result
