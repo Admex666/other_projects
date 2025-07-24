@@ -7,6 +7,8 @@ import 'package:frontend/screens/add_incomes_screen.dart';
 import 'package:frontend/screens/manage_accounts_screen.dart'; 
 import 'package:frontend/screens/manage_categories_screen.dart';
 import 'package:frontend/screens/knowledge/knowledge_screen.dart';
+import 'package:frontend/screens/analysis_screen.dart';
+import 'package:frontend/screens/forum/forum_main_screen.dart';
 
 void main() {
   runApp(NestCashApp());
@@ -45,8 +47,9 @@ class _MainScreenState extends State<MainScreen> {
     super.initState();
     _widgetOptions = <Widget>[
       DashboardScreen(username: widget.username),
-      Text('Statistics Screen'),
+      AnalysisScreen(userId: widget.userId),
       const SizedBox.shrink(),
+      ForumMainScreen(userId: widget.userId, username: widget.username,),
       KnowledgeScreen(userId: widget.userId),
       ProfileScreen(username: widget.username, userId: widget.userId),
     ];
@@ -217,8 +220,9 @@ void _showAddTransactionOptions(BuildContext context) {
             _buildNavItem(Icons.home_outlined, 0),
             _buildNavItem(Icons.bar_chart_outlined, 1),
             _buildNavItem(Icons.swap_horiz_outlined, 2),
-            _buildNavItem(Icons.school_outlined, 3),
-            _buildNavItem(Icons.person_outline, 4),
+            _buildNavItem(Icons.forum_outlined, 3),
+            _buildNavItem(Icons.school_outlined, 4),
+            _buildNavItem(Icons.person_outline, 5),
           ],
         ),
       ),

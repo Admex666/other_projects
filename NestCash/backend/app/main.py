@@ -9,6 +9,12 @@ from app.routes import categories
 from app.routes import analysis
 from app.routes import knowledge
 from app.routes import knowledge_admin
+from app.routes import random_data
+from app.routes import forum_posts
+from app.routes import forum_interactions
+from app.routes import forum_follow
+from app.routes import forum_notifications
+from app.routes import forum_settings
 
 app = FastAPI(
     title="NestCash API",
@@ -33,6 +39,10 @@ app.include_router(categories.router)
 app.include_router(analysis.router)
 app.include_router(knowledge.router)
 app.include_router(knowledge_admin.router)
+app.include_router(random_data.router)
+app.include_router(forum_posts.router)
+app.include_router(forum_interactions.router)
+app.include_router(forum_follow.router)
 
 @app.on_event("startup")
 async def startup_event():

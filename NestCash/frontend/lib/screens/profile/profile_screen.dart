@@ -156,15 +156,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
             
             // Profile Picture (positioned to overlap)
             Container(
-              height: 60,
+              height: 100,
               child: Stack(
                 children: [
                   Positioned(
-                    top: 20,
+                    top: 40,
                     left: 0,
                     right: 0,
                     child: Container(
-                      height: 40,
+                      height: 60,
                       decoration: BoxDecoration(
                         color: Color(0xFFF5F5F5),
                         borderRadius: BorderRadius.only(
@@ -195,13 +195,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         child: CircleAvatar(
                           radius: 48,
-                          backgroundImage: AssetImage('assets/profile_image.jpg'), // You'll need to add this asset
-                          backgroundColor: Colors.grey[300],
-                          child: Icon(
-                            Icons.person,
-                            size: 40,
-                            color: Colors.grey[600],
-                          ), // Fallback icon if image is not available
+                          backgroundColor: Color(0xFF00D4AA),
+                          child: Text(
+                            currentUsername.isNotEmpty ? currentUsername[0].toUpperCase() : '?',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 36, // Nagyobb betűméret a nagyobb avatar miatt
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -222,7 +224,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     padding: EdgeInsets.symmetric(horizontal: 24),
                     child: Column(
                       children: [
-                        SizedBox(height: 50), // Space for profile picture
+                        SizedBox(height: 30), // Space for profile picture
                         
                         // User Info
                         Text(

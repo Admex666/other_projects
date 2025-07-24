@@ -15,7 +15,7 @@ class KnowledgeScreen extends StatefulWidget {
 }
 
 class _KnowledgeScreenState extends State<KnowledgeScreen> {
-  final AuthService _authService = AuthService(); // AuthService példány létrehozása
+  final AuthService _authService = AuthService();
   List<CategoryWithLessons> categories = [];
   UserStats? userStats;
   bool isLoading = true;
@@ -187,21 +187,21 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
       appBar: AppBar(
         title: const Text(
           'Tudástár',
           style: TextStyle(
-            color: Colors.white,
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
         ),
         backgroundColor: const Color(0xFF00D4A3),
+        iconTheme: const IconThemeData(color: Colors.black),
+        centerTitle: true,
         elevation: 0,
         actions: [
           PopupMenuButton<String>(
-            icon: const Icon(Icons.filter_list, color: Colors.white),
+            icon: const Icon(Icons.filter_list, color: Colors.black),
             onSelected: (value) {
               setState(() {
                 selectedDifficulty = value == 'all' ? null : value;

@@ -10,6 +10,10 @@ from app.models.transaction import Transaction
 from app.models.account import AllUserAccountsDocument
 from app.models.category import Category
 from app.models.knowledge import KnowledgeCategory, Lesson, UserProgress
+from app.models.forum_models import (
+    ForumPostDocument, CommentDocument, LikeDocument, FollowDocument,
+    NotificationDocument, UserForumSettingsDocument
+)
 
 load_dotenv()
 
@@ -27,7 +31,10 @@ async def init_db():
         database=_db, 
         document_models=[
             UserDocument, Item, Transaction, AllUserAccountsDocument, Category,
-            KnowledgeCategory, Lesson, UserProgress]
+            KnowledgeCategory, Lesson, UserProgress,
+            ForumPostDocument, CommentDocument, LikeDocument, FollowDocument,
+            NotificationDocument, UserForumSettingsDocument
+            ]
             ) 
 
 def get_db() -> AsyncIOMotorDatabase:

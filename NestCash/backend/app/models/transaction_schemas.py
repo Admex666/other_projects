@@ -1,75 +1,190 @@
 # app/models/transaction_schemas.py
-
-from pydantic import BaseModel, Field
-from typing import Optional, List, Literal
+from pydantic import BaseModel, Field, validator
+from typing import Optional, List
 from datetime import datetime
 
 class TransactionCreate(BaseModel):
-    date: datetime = Field(default_factory=datetime.now, description="A tranzakció dátuma és ideje")
-    amount: float = Field(..., description="A tranzakció összege") # Módosítva: elengedve a gt=0 validáció, ha kiadást is kezelünk
-
-    main_account: Literal["likvid", "befektetes", "megtakaritas"] = Field(..., description="A tranzakcióhoz tartozó főszámla típusa (likvid, befektetes, megtakaritas)")
-    sub_account_name: str = Field(..., description="A tranzakcióhoz tartozó alszámla neve")
-
-    kategoria: Optional[str] = None
-    type: Literal["income", "expense", "transfer", "adjustment"] = Field(..., description="A tranzakció típusa (income/expense/transfer/adjustment)")
-    description: Optional[str] = None # Már Optional
-
-    # A deviza mező továbbra is hiányzik a bemenetről, a backend fogja feltölteni az alszámla alapján
-
-    profil: Optional[str] = None
-    forras: Optional[str] = None
-    platform: Optional[str] = None
-    helyszin: Optional[str] = None
-    cimke: Optional[str] = None
-    ismetlodo: Optional[bool] = None
-    fix_koltseg: Optional[bool] = None
+    """Tranzakció létrehozásához használt séma"""
+    date: str = Field(..., description="Tranzakció dátuma YYYY-MM-DD formátumban")
+    amount: float = Field(..., description="Összeg (mindig pozitív, a type alapján lesz előjelezve)")
+    main_account: str = Field(..., description="Főszámla típusa (likvid, befektetes, megtakaritas)")
+    sub_account_name: str = Field(..., description="Alszámla neve")
+    kategoria: Optional[str] = Field(None, description="Kategória")
+    type: str = Field(..., description="Tranzakció típusa: income, expense, transfer")
+    description: Optional[str] = Field(None, description="Leírás")
+    hour: Optional[int] = Field(12, description="Óra (0-23)", ge=0, le=23)
+    
+    # Opcionális mezők
+    profil: Optional[str] = Field(None, description="Profil")
+    forras: Optional[str] = Field(None, description="Forrás")
+    platform: Optional[str] = Field(None, description="Platform")
+    helyszin: Optional[str] = Field(None, description="Helyszín")
+    ismetlodo: Optional[bool] = Field(False, description="Ismétlődő tranzakció")
+    fix_koltseg: Optional[bool] = Field(False, description="Fix költség")
+    celhoz_kotott: Optional[bool] = Field(False, description="Célhoz kötött")
+        
+    @validator('date')
+    def validate_date_format(cls, v):
+        try:
+            datetime.strptime(v, '%Y-%m-%d')
+            return v
+        except ValueError:
+            raise ValueError('A dátumnak YYYY-MM-DD formátumúnak kell lennie')
+    
+    @validator('type')
+    def validate_type(cls, v):
+        if v not in ['income', 'expense', 'transfer']:
+            raise ValueError('A típusnak income, expense vagy transfer értékűnek kell lennie')
+        return v
+    
+    @validator('main_account')
+    def validate_main_account(cls, v):
+        if v not in ['likvid', 'befektetes', 'megtakaritas']:
+            raise ValueError('A főszámlának likvid, befektetes vagy megtakaritas értékűnek kell lennie')
+        return v
 
 class TransactionRead(BaseModel):
-    id: str = Field(..., description="Mongo _id string")
+    """Tranzakció válaszhoz használt séma"""
+    id: str
     user_id: str
-    date: datetime # datum helyett date
-    amount: float # osszeg helyett amount
-
-    main_account: str # foszamla helyett main_account
-    sub_account_name: str # alszamla helyett sub_account_name
-
+    date: str
+    amount: float
+    currency: str = "HUF"
+    main_account: str
+    sub_account_name: str
     kategoria: Optional[str] = None
-    type: str # Kimeneten elegendő str (tipus helyett type)
-    currency: str # deviza helyett currency
+    type: str
+    description: Optional[str] = None
     
-    # tranzakcio_id hiányzott a TransactionRead-ből
-    tranzakcio_id: Optional[str] = None
-
+    # Időbélyegek
+    honap: Optional[str] = None
+    het: Optional[str] = None
+    nap_sorszam: Optional[int] = None
+    hour: Optional[int] = None
+    year: Optional[int] = None
+    month: Optional[int] = None
+    day: Optional[int] = None
+    weekday: Optional[str] = None
+    
+    # Opcionális mezők
     profil: Optional[str] = None
-    description: Optional[str] = None # leiras helyett description
-    forras: Optional[str] = None
     platform: Optional[str] = None
     helyszin: Optional[str] = None
     cimke: Optional[str] = None
-    celhoz_kotott: Optional[str] = None
-
-    honap: Optional[str] = None
-    het: Optional[int] = None
-    nap_sorszam: Optional[int] = None
-
-    ismetlodo: Optional[bool] = None
-    fix_koltseg: Optional[bool] = None
+    ismetlodo: Optional[bool] = False
+    fix_koltseg: Optional[bool] = False
+    celhoz_kotott: Optional[bool] = False
     
-    # Ezek a mezők a korábbi TransactionRead-ben szerepeltek, de a TransactionCreate-ben nem voltak.
-    # Ha a Transaction modell tartalmazza őket és szeretnénk, hogy a TransactionRead is visszaadja,
-    # akkor itt hagyni kell őket, különben ki lehet törölni.
+    # Transzfer specifikus mezők
     cel_foszamla: Optional[str] = None
     cel_alszamla: Optional[str] = None
     transfer_amount: Optional[float] = None
-    # likvid: Optional[float] = None
-    # befektetes: Optional[float] = None
-    # megtakaritas: Optional[float] = None
-    # assets: Optional[float] = None
+    
+    # Számított mezők
+    is_income: Optional[bool] = None
+    is_expense: Optional[bool] = None
+    absolute_amount: Optional[float] = None
+    formatted_date: Optional[str] = None
+    quarter: Optional[str] = None
+    is_weekend: Optional[bool] = None
+    time_of_day: Optional[str] = None
 
-    class Config:
-        populate_by_name = True
+class TransactionUpdate(BaseModel):
+    """Tranzakció frissítéséhez használt séma"""
+    date: Optional[str] = Field(None, description="Tranzakció dátuma YYYY-MM-DD formátumban")
+    amount: Optional[float] = Field(None, description="Összeg")
+    main_account: Optional[str] = Field(None, description="Főszámla típusa")
+    sub_account_name: Optional[str] = Field(None, description="Alszámla neve")
+    kategoria: Optional[str] = Field(None, description="Kategória")
+    type: Optional[str] = Field(None, description="Tranzakció típusa")
+    description: Optional[str] = Field(None, description="Leírás")
+    hour: Optional[int] = Field(None, description="Óra (0-23)", ge=0, le=23)
+    
+    # Opcionális mezők
+    profil: Optional[str] = None
+    forras: Optional[str] = None
+    platform: Optional[str] = None
+    helyszin: Optional[str] = None
+    cimke: Optional[str] = None
+    ismetlodo: Optional[bool] = None
+    fix_koltseg: Optional[bool] = None
+    celhoz_kotott: Optional[bool] = None
+    
+    @validator('date')
+    def validate_date_format(cls, v):
+        if v is not None:
+            try:
+                datetime.strptime(v, '%Y-%m-%d')
+            except ValueError:
+                raise ValueError('A dátumnak YYYY-MM-DD formátumúnak kell lennie')
+        return v
+    
+    @validator('type')
+    def validate_type(cls, v):
+        if v is not None and v not in ['income', 'expense', 'transfer']:
+            raise ValueError('A típusnak income, expense vagy transfer értékűnek kell lennie')
+        return v
 
 class TransactionListResponse(BaseModel):
-    total_count: int # total helyett total_count
+    """Tranzakció lista válasz séma"""
     transactions: List[TransactionRead]
+    total_count: int
+    skip: int
+    limit: int
+    has_more: Optional[bool] = None
+    
+    def __init__(self, **data):
+        super().__init__(**data)
+        # has_more automatikus számítása
+        if self.has_more is None:
+            self.has_more = (self.skip + len(self.transactions)) < self.total_count
+
+class TransactionSummary(BaseModel):
+    """Tranzakció összesítő séma"""
+    total_income: float
+    total_expense: float
+    net_balance: float
+    transaction_count: int
+    category_summary: dict
+    period_start: str
+    period_end: str
+
+class CategorySummary(BaseModel):
+    """Kategória összesítő séma"""
+    category: str
+    income_total: float
+    expense_total: float
+    net_total: float
+    transaction_count: int
+    avg_transaction_amount: float
+
+class MonthlyTrend(BaseModel):
+    """Havi trend séma"""
+    month: str  # YYYY-MM
+    income: float
+    expense: float
+    net: float
+    transaction_count: int
+
+class WeeklyTrend(BaseModel):
+    """Heti trend séma"""
+    week: str  # YYYY-WXX
+    income: float
+    expense: float
+    net: float
+    transaction_count: int
+
+class DailyPattern(BaseModel):
+    """Napi minta séma"""
+    weekday: str
+    avg_income: float
+    avg_expense: float
+    transaction_count: int
+    peak_hour: int
+
+class HourlyPattern(BaseModel):
+    """Órás minta séma"""
+    hour: int
+    transaction_count: int
+    avg_amount: float
+    time_of_day: str  # reggel, délután, este, éjszaka
