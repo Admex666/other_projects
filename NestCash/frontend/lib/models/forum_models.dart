@@ -123,11 +123,20 @@ class ForumUser {
 
   factory ForumUser.fromJson(Map<String, dynamic> json) {
     return ForumUser(
-      id: json['id'],
-      username: json['username'],
-      isFollowing: json['is_following'] ?? false,
-      isFollowedBy: json['is_followed_by'] ?? false,
+      id: json['id']?.toString() ?? '',
+      username: json['username']?.toString() ?? 'Ismeretlen felhasználó',
+      isFollowing: json['is_following'] == true,
+      isFollowedBy: json['is_followed_by'] == true,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'username': username,
+      'is_following': isFollowing,
+      'is_followed_by': isFollowedBy,
+    };
   }
 }
 

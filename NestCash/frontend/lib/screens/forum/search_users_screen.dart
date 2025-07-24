@@ -38,9 +38,7 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
 
   Future<void> _loadFollowing() async {
     try {
-      final response = await _forumService.getFollowing();
-      final List<dynamic> usersJson = response['following'];
-      final List<ForumUser> users = usersJson.map((json) => ForumUser.fromJson(json)).toList();
+      final users = await _forumService.getFollowing();
       
       setState(() {
         _following = users;
@@ -58,9 +56,7 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
 
   Future<void> _loadFollowers() async {
     try {
-      final response = await _forumService.getFollowers();
-      final List<dynamic> usersJson = response['followers'];
-      final List<ForumUser> users = usersJson.map((json) => ForumUser.fromJson(json)).toList();
+      final users = await _forumService.getFollowers();
       
       setState(() {
         _followers = users;
@@ -77,7 +73,7 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
   }
 
   Future<void> _searchUsers(String query) async {
-    if (query.trim().isEmpty) {
+    if (query.trim().isEmpty || query.trim().length < 3) {
       setState(() {
         _searchResults.clear();
       });
@@ -89,21 +85,22 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
     });
 
     try {
-      final response = await _forumService.searchUsers(query.trim());
-      final List<dynamic> usersJson = response['users'];
-      final List<ForumUser> users = usersJson.map((json) => ForumUser.fromJson(json)).toList();
+      final users = await _forumService.searchUsers(query.trim());
       
       setState(() {
         _searchResults = users;
       });
     } catch (e) {
+      String errorMessage;
+      if (e.toString().contains('min_length') || e.toString().contains('Query parameter')) {
+        errorMessage = 'Legalább 3 karakter szükséges a kereséshez';
+      } else {
+        errorMessage = 'Hiba a keresés során';
+      }
+      
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hiba a keresés során: $e')),
+        SnackBar(content: Text(errorMessage)),
       );
-    } finally {
-      setState(() {
-        _isSearching = false;
-      });
     }
   }
 

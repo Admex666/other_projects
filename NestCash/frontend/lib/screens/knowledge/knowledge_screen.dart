@@ -392,10 +392,10 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
                 ),
                 Text(
                   isCompleted 
-                    ? 'Szuper! Holnap folytathatod a sorozatot.'
-                    : 'Tanulj 5 percet a mai napra!',
+                    ? 'Szuper vagy! Holnap folytathatod a sorozatot.'
+                    : 'Tanulj 5 percet a mai napon is!',
                   style: const TextStyle(
-                    fontSize: 14,
+                    fontSize: 13,
                     color: Colors.grey,
                   ),
                 ),

@@ -180,60 +180,91 @@ class _ForumMainScreenState extends State<ForumMainScreen> {
   void _showFilterDialog() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Szűrők és rendezés'),
-        content: StatefulBuilder(
-          builder: (context, setDialogState) => Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Feed típusa:', style: TextStyle(fontWeight: FontWeight.bold)),
-              ...FeedType.values.map((type) => RadioListTile<FeedType>(
-                title: Text(type.displayName),
-                value: type,
-                groupValue: _currentFeedType,
-                onChanged: (value) => setDialogState(() => _currentFeedType = value!),
-              )).toList(),
-              
-              SizedBox(height: 16),
-              Text('Rendezés:', style: TextStyle(fontWeight: FontWeight.bold)),
-              ...SortBy.values.map((sort) => RadioListTile<SortBy>(
-                title: Text(sort.displayName),
-                value: sort,
-                groupValue: _currentSortBy,
-                onChanged: (value) => setDialogState(() => _currentSortBy = value!),
-              )).toList(),
-              
-              SizedBox(height: 16),
-              Text('Kategória:', style: TextStyle(fontWeight: FontWeight.bold)),
-              RadioListTile<PostCategory?>(
-                title: Text('Összes'),
-                value: null,
-                groupValue: _selectedCategory,
-                onChanged: (value) => setDialogState(() => _selectedCategory = value),
-              ),
-              ...PostCategory.values.map((category) => RadioListTile<PostCategory?>(
-                title: Text(category.displayName),
-                value: category,
-                groupValue: _selectedCategory,
-                onChanged: (value) => setDialogState(() => _selectedCategory = value),
-              )).toList(),
-            ],
+      builder: (context) => DefaultTabController(
+        length: 3,
+        child: AlertDialog(
+          title: Text('Szűrők és rendezés'),
+          content: Container(
+            width: double.maxFinite,
+            height: 400, // Fix magasság
+            child: Column(
+              children: [
+                TabBar(
+                  labelColor: Color(0xFF00D4AA),
+                  unselectedLabelColor: Colors.grey,
+                  indicatorColor: Color(0xFF00D4AA),
+                  tabs: [
+                    Tab(text: 'Feed'),
+                    Tab(text: 'Rendezés'),
+                    Tab(text: 'Kategória'),
+                  ],
+                ),
+                Expanded(
+                  child: TabBarView(
+                    children: [
+                      // Feed típusa tab
+                      StatefulBuilder(
+                        builder: (context, setDialogState) => ListView(
+                          children: FeedType.values.map((type) => RadioListTile<FeedType>(
+                            title: Text(type.displayName),
+                            value: type,
+                            groupValue: _currentFeedType,
+                            onChanged: (value) => setDialogState(() => _currentFeedType = value!),
+                          )).toList(),
+                        ),
+                      ),
+                      
+                      // Rendezés tab
+                      StatefulBuilder(
+                        builder: (context, setDialogState) => ListView(
+                          children: SortBy.values.map((sort) => RadioListTile<SortBy>(
+                            title: Text(sort.displayName),
+                            value: sort,
+                            groupValue: _currentSortBy,
+                            onChanged: (value) => setDialogState(() => _currentSortBy = value!),
+                          )).toList(),
+                        ),
+                      ),
+                      
+                      // Kategória tab
+                      StatefulBuilder(
+                        builder: (context, setDialogState) => ListView(
+                          children: [
+                            RadioListTile<PostCategory?>(
+                              title: Text('Összes'),
+                              value: null,
+                              groupValue: _selectedCategory,
+                              onChanged: (value) => setDialogState(() => _selectedCategory = value),
+                            ),
+                            ...PostCategory.values.map((category) => RadioListTile<PostCategory?>(
+                              title: Text(category.displayName),
+                              value: category,
+                              groupValue: _selectedCategory,
+                              onChanged: (value) => setDialogState(() => _selectedCategory = value),
+                            )).toList(),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('Mégse'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                _loadPosts();
+              },
+              child: Text('Alkalmazás'),
+            ),
+          ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('Mégse'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              _loadPosts();
-            },
-            child: Text('Alkalmazás'),
-          ),
-        ],
       ),
     );
   }

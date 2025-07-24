@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:frontend/services/auth_service.dart';
+import 'package:frontend/models/forum_models.dart';
 
 class ForumService {
   final AuthService _authService = AuthService();
@@ -146,7 +147,7 @@ class ForumService {
   }
 
   // === FOLLOW ===
-  Future<Map<String, dynamic>> searchUsers(String query, {int skip = 0, int limit = 20}) async {
+  Future<List<ForumUser>> searchUsers(String query, {int skip = 0, int limit = 20}) async {
     final queryParams = {
       'q': query,
       'skip': skip.toString(),
@@ -157,9 +158,141 @@ class ForumService {
     final response = await http.get(uri, headers: await _getHeaders());
 
     if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+      final data = jsonDecode(response.body);
+      
+      if (data == null) {
+        return <ForumUser>[];
+      }
+      
+      if (data is List) {
+        return data
+            .where((item) => item != null)
+            .map((json) => ForumUser.fromJson(json as Map<String, dynamic>))
+            .toList();
+      }
+      
+      if (data is Map<String, dynamic>) {
+        final usersList = data['users'] ?? data['results'] ?? data['data'] ?? [];
+        
+        if (usersList is List) {
+          return usersList
+              .where((item) => item != null)
+              .map((json) => ForumUser.fromJson(json as Map<String, dynamic>))
+              .toList();
+        }
+      }
+      
+      return <ForumUser>[];
     }
     throw Exception('Failed to search users: ${response.body}');
+  }
+
+  Future<List<ForumUser>> getFollowing({int skip = 0, int limit = 50}) async {
+    final queryParams = {
+      'skip': skip.toString(),
+      'limit': limit.toString(),
+    };
+
+    final uri = Uri.parse('$baseUrl/forum/follow/following').replace(queryParameters: queryParams);
+    final response = await http.get(uri, headers: await _getHeaders());
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      
+      // Null-safe kezelés
+      if (data == null) {
+        return <ForumUser>[];
+      }
+      
+      // Ha a response közvetlenül lista
+      if (data is List) {
+        return data
+            .where((item) => item != null)
+            .map((json) => ForumUser.fromJson(json as Map<String, dynamic>))
+            .toList();
+      }
+      
+      // Ha a response objektum, ami tartalmaz egy 'follows' mezőt (FollowListResponse)
+      if (data is Map<String, dynamic>) {
+        final followsList = data['follows'] ?? data['following'] ?? data['users'] ?? data['data'] ?? [];
+        
+        if (followsList is List) {
+          return followsList
+              .where((item) => item != null)
+              .map((json) {
+                // Ha FollowRead objektum, akkor átalakítjuk ForumUser-ré
+                if (json.containsKey('following_id') && json.containsKey('following_username')) {
+                  return ForumUser(
+                    id: json['following_id'],
+                    username: json['following_username'],
+                    isFollowing: true, // Mivel ez a követettek listája
+                    isFollowedBy: false, // Ezt nem tudjuk ebből a kontextusból
+                  );
+                }
+                // Ha már ForumUser formátumú
+                return ForumUser.fromJson(json as Map<String, dynamic>);
+              })
+              .toList();
+        }
+      }
+      
+      return <ForumUser>[];
+    }
+    throw Exception('Failed to load following: ${response.body}');
+  }
+
+  Future<List<ForumUser>> getFollowers({int skip = 0, int limit = 50}) async {
+    final queryParams = {
+      'skip': skip.toString(),
+      'limit': limit.toString(),
+    };
+
+    final uri = Uri.parse('$baseUrl/forum/follow/followers').replace(queryParameters: queryParams);
+    final response = await http.get(uri, headers: await _getHeaders());
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      
+      // Null-safe kezelés
+      if (data == null) {
+        return <ForumUser>[];
+      }
+      
+      // Ha a response közvetlenül lista
+      if (data is List) {
+        return data
+            .where((item) => item != null)
+            .map((json) => ForumUser.fromJson(json as Map<String, dynamic>))
+            .toList();
+      }
+      
+      // Ha a response objektum, ami tartalmaz egy 'follows' mezőt (FollowListResponse)
+      if (data is Map<String, dynamic>) {
+        final followersList = data['follows'] ?? data['followers'] ?? data['users'] ?? data['data'] ?? [];
+        
+        if (followersList is List) {
+          return followersList
+              .where((item) => item != null)
+              .map((json) {
+                // Ha FollowRead objektum, akkor átalakítjuk ForumUser-ré
+                if (json.containsKey('follower_id') && json.containsKey('follower_username')) {
+                  return ForumUser(
+                    id: json['follower_id'],
+                    username: json['follower_username'],
+                    isFollowing: false, // Ezt nem tudjuk ebből a kontextusból
+                    isFollowedBy: true, // Mivel ez a követők listája
+                  );
+                }
+                // Ha már ForumUser formátumú
+                return ForumUser.fromJson(json as Map<String, dynamic>);
+              })
+              .toList();
+        }
+      }
+      
+      return <ForumUser>[];
+    }
+    throw Exception('Failed to load followers: ${response.body}');
   }
 
   Future<void> followUser(String userId) async {
@@ -182,36 +315,6 @@ class ForumService {
     if (response.statusCode != 204) {
       throw Exception('Failed to unfollow user: ${response.body}');
     }
-  }
-
-  Future<Map<String, dynamic>> getFollowing({int skip = 0, int limit = 50}) async {
-    final queryParams = {
-      'skip': skip.toString(),
-      'limit': limit.toString(),
-    };
-
-    final uri = Uri.parse('$baseUrl/forum/follow/following').replace(queryParameters: queryParams);
-    final response = await http.get(uri, headers: await _getHeaders());
-
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    }
-    throw Exception('Failed to load following: ${response.body}');
-  }
-
-  Future<Map<String, dynamic>> getFollowers({int skip = 0, int limit = 50}) async {
-    final queryParams = {
-      'skip': skip.toString(),
-      'limit': limit.toString(),
-    };
-
-    final uri = Uri.parse('$baseUrl/forum/follow/followers').replace(queryParameters: queryParams);
-    final response = await http.get(uri, headers: await _getHeaders());
-
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    }
-    throw Exception('Failed to load followers: ${response.body}');
   }
 
   // === NOTIFICATIONS ===
