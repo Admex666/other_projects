@@ -184,38 +184,11 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
     }
   }
 
+  // Az AppBar teljes eltávolítása:
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Tudástár',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        backgroundColor: const Color(0xFF00D4A3),
-        iconTheme: const IconThemeData(color: Colors.black),
-        centerTitle: true,
-        elevation: 0,
-        actions: [
-          PopupMenuButton<String>(
-            icon: const Icon(Icons.filter_list, color: Colors.black),
-            onSelected: (value) {
-              setState(() {
-                selectedDifficulty = value == 'all' ? null : value;
-              });
-              _loadCategories();
-            },
-            itemBuilder: (context) => [
-              const PopupMenuItem(value: 'all', child: Text('Összes szint')),
-              const PopupMenuItem(value: 'beginner', child: Text('🟢 Kezdő')),
-              const PopupMenuItem(value: 'professional', child: Text('🔵 Profi')),
-            ],
-          ),
-        ],
-      ),
+      // AppBar teljes eltávolítása
       body: isLoading
           ? const Center(child: CircularProgressIndicator(color: Color(0xFF00D4A3)))
           : RefreshIndicator(
@@ -223,21 +196,48 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
               color: const Color(0xFF00D4A3),
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 16), // Felső padding hozzáadása
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (userStats != null) _buildStatsCard(),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 40),
                     _buildDailyChallengeCard(),
-                    const SizedBox(height: 20),
-                    const Text(
-                      'Kategóriák',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF2D3748),
-                      ),
+                    const SizedBox(height: 40),
+                    // Kategóriák cím és filter gomb egy sorban
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Kategóriák',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF2D3748),
+                          ),
+                        ),
+                        // Filter gomb ide kerül
+                        Container(
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF00D4A3),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: PopupMenuButton<String>(
+                            icon: const Icon(Icons.filter_list, color: Colors.white),
+                            onSelected: (value) {
+                              setState(() {
+                                selectedDifficulty = value == 'all' ? null : value;
+                              });
+                              _loadCategories();
+                            },
+                            itemBuilder: (context) => [
+                              const PopupMenuItem(value: 'all', child: Text('Összes szint')),
+                              const PopupMenuItem(value: 'beginner', child: Text('🟢 Kezdő')),
+                              const PopupMenuItem(value: 'professional', child: Text('🔵 Profi')),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 16),
                     ...categories.map((category) => _buildCategoryCard(category)),

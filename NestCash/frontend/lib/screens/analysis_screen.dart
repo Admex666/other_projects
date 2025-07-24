@@ -170,54 +170,6 @@ class _AnalysisScreenState extends State<AnalysisScreen>
           ),
           child: Column(
             children: [
-              // Header
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                child: Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back, color: Colors.black87),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                    Expanded(
-                      child: Text(
-                        'Pénzügyi Elemzések',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    // Időszak választó
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.9),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: DropdownButton<String>(
-                        value: _selectedPeriod,
-                        underline: SizedBox(),
-                        items: [
-                          DropdownMenuItem(value: '3', child: Text('3 hónap')),
-                          DropdownMenuItem(value: '6', child: Text('6 hónap')),
-                          DropdownMenuItem(value: '12', child: Text('1 év')),
-                          DropdownMenuItem(value: '24', child: Text('2 év')),
-                        ],
-                        onChanged: _onPeriodChanged,
-                        style: TextStyle(
-                          color: Colors.black87,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
               // Tab Bar
               Container(
                 margin: EdgeInsets.symmetric(horizontal: 20),
@@ -257,6 +209,50 @@ class _AnalysisScreenState extends State<AnalysisScreen>
                         break;
                     }
                   },
+                ),
+              ),
+
+              SizedBox(height: 16),
+
+              // Időszak választó
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(width: 36),
+                    Text(
+                      'Elemzési időszak:',
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.9),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: DropdownButton<String>(
+                        value: _selectedPeriod,
+                        underline: SizedBox(),
+                        items: [
+                          DropdownMenuItem(value: '3', child: Text('3 hónap')),
+                          DropdownMenuItem(value: '6', child: Text('6 hónap')),
+                          DropdownMenuItem(value: '12', child: Text('1 év')),
+                          DropdownMenuItem(value: '24', child: Text('2 év')),
+                        ],
+                        onChanged: _onPeriodChanged,
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
 

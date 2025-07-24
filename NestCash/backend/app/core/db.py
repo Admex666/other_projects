@@ -12,8 +12,9 @@ from app.models.category import Category
 from app.models.knowledge import KnowledgeCategory, Lesson, UserProgress
 from app.models.forum_models import (
     ForumPostDocument, CommentDocument, LikeDocument, FollowDocument,
-    NotificationDocument, UserForumSettingsDocument
+    UserForumSettingsDocument
 )
+from app.models.notification import NotificationDocument
 
 load_dotenv()
 

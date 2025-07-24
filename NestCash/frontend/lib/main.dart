@@ -9,6 +9,7 @@ import 'package:frontend/screens/manage_categories_screen.dart';
 import 'package:frontend/screens/knowledge/knowledge_screen.dart';
 import 'package:frontend/screens/analysis_screen.dart';
 import 'package:frontend/screens/forum/forum_main_screen.dart';
+import 'package:frontend/widgets/notification_badge.dart';
 
 void main() {
   runApp(NestCashApp());
@@ -201,10 +202,25 @@ void _showAddTransactionOptions(BuildContext context) {
   );
 }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: _widgetOptions.elementAt(_selectedIndex),
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: _selectedIndex != 2 ? AppBar(
+      backgroundColor: const Color(0xFF00D4A3),
+      elevation: 0,
+      automaticallyImplyLeading: false,
+      title: Text(
+        _getScreenTitle(_selectedIndex),
+        style: const TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      actions: [
+        AppBarNotificationBadge(userId: widget.userId),
+      ],
+    ) : null,
+    body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: Container(
         padding: EdgeInsets.symmetric(vertical: 8),
         decoration: BoxDecoration(
@@ -227,6 +243,24 @@ void _showAddTransactionOptions(BuildContext context) {
         ),
       ),
     );
+  }
+
+  // Helper method hozzáadása a screen címekhez:
+String _getScreenTitle(int index) {
+    switch (index) {
+      case 0:
+        return 'Üdv újra, ${widget.username}!';
+      case 1:
+        return 'Elemzések';
+      case 3:
+        return 'Fórum';
+      case 4:
+        return 'Tudástár';
+      case 5:
+        return 'Profil';
+      default:
+        return 'NestCash';
+    }
   }
 
   Widget _buildNavItem(IconData icon, int index) {
