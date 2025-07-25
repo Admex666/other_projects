@@ -16,6 +16,7 @@ from app.routes import forum_follow
 from app.routes import forum_notifications
 from app.routes import forum_settings
 from app.routes import notifications
+from app.routes import limits
 
 app = FastAPI(
     title="NestCash API",
@@ -45,6 +46,7 @@ app.include_router(forum_posts.router)
 app.include_router(forum_interactions.router)
 app.include_router(forum_follow.router)
 app.include_router(notifications.router) 
+app.include_router(limits.router)
 
 @app.on_event("startup")
 async def startup_event():
@@ -62,7 +64,8 @@ async def root():
             "Categories",
             "Financial Analysis",
             "Knowledge Base",
-            "Admin Panel"
+            "Admin Panel",
+            "Spending Limits"
         ]
     }
 

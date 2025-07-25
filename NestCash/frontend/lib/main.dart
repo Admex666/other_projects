@@ -10,6 +10,7 @@ import 'package:frontend/screens/knowledge/knowledge_screen.dart';
 import 'package:frontend/screens/analysis_screen.dart';
 import 'package:frontend/screens/forum/forum_main_screen.dart';
 import 'package:frontend/widgets/notification_badge.dart';
+import 'package:frontend/screens/manage_limits_screen.dart';
 
 void main() {
   runApp(NestCashApp());
@@ -168,7 +169,7 @@ void _showAddTransactionOptions(BuildContext context) {
               ),
             ),
             const SizedBox(height: 15),
-            // Kategóriák kezelése gomb (ÚJ)
+            // Kategóriák kezelése gomb
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
@@ -188,6 +189,34 @@ void _showAddTransactionOptions(BuildContext context) {
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.purpleAccent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                ),
+              ),
+            ),
+            const SizedBox(height: 15),
+            // Limitek kezelése gomb (ÚJ)
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ManageLimitsScreen(userId: widget.userId),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.speed, color: Colors.white),
+                label: const Text(
+                  'Limitek kezelése',
+                  style: TextStyle(fontSize: 18, color: Colors.white),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),

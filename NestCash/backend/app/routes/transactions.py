@@ -11,10 +11,10 @@ from app.models.transaction_schemas import (
     TransactionRead,
     TransactionListResponse,
 )
-
 from app.core.security import get_current_user
 from app.models.user import User
 from app.models.account import AllUserAccountsDocument, SubAccountDetails # Import AllUserAccountsDocument és SubAccountDetails
+from app.services.limit_service import LimitService
 
 router = APIRouter(prefix="/transactions", tags=["transactions"])
 logger = logging.getLogger(__name__)
@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 # ----------- POST /transactions/ -----------
 @router.post("/", response_model=TransactionRead, status_code=201)
 async def create_transaction(
-    transaction_data: TransactionCreate, # Ez a séma most már jobban egyezik
+    transaction_data: TransactionCreate,
     current_user: User = Depends(get_current_user)
 ):
     # Az osszeg (amount) előjelének kezelése a 'type' alapján
@@ -31,6 +31,22 @@ async def create_transaction(
         amount_to_save *= -1
     elif transaction_data.type == 'income' and amount_to_save < 0:
         amount_to_save *= -1
+
+    # ÚJ: Limit ellenőrzés kiadásoknál
+    if transaction_data.type == 'expense':
+        limit_check = await LimitService.check_transaction_against_limits(
+            user_id=current_user.id,
+            amount=amount_to_save,
+            category=transaction_data.kategoria,
+            main_account=transaction_data.main_account,
+            sub_account_name=transaction_data.sub_account_name
+        )
+        
+        if not limit_check.is_allowed:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Tranzakció limitek miatt elutasítva: {limit_check.message}"
+            )
 
     # Alszámla devaizájának lekérzése
     all_accounts_doc = await AllUserAccountsDocument.find_one()

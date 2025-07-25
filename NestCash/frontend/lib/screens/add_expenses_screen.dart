@@ -6,6 +6,8 @@ import 'dart:convert';
 import 'package:frontend/models/category.dart';
 import 'package:frontend/services/category_service.dart';
 import 'package:intl/intl.dart'; // Import for date formatting
+import '../services/limit_service.dart';
+import '../models/limit.dart';
 
 class AddExpensesScreen extends StatefulWidget {
   final String userId;
@@ -21,6 +23,7 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
   final _formKey = GlobalKey<FormState>();
   final _amountController = TextEditingController();
   final _titleController = TextEditingController(); // Description is now title
+  final LimitService _limitService = LimitService();
 
   DateTime _selectedDate = DateTime.now();
     
@@ -201,6 +204,67 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Hálózati hiba: $e')),
       );
+    }
+  }
+
+  Future<bool> _checkLimits(double amount, String? category, String mainAccount, String subAccount) async {
+    try {
+      final result = await _limitService.checkLimits(
+        amount: -amount, // Negatív, mert kiadás
+        category: category,
+        mainAccount: mainAccount,
+        subAccountName: subAccount,
+      );
+      
+      if (!result.isAllowed) {
+        // Megerősítő dialógus megjelenítése
+        final confirm = await showDialog<bool>(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Limit figyelmeztetés'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(result.message ?? 'Egy vagy több limit túllépne.'),
+                  if (result.exceededLimits.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    const Text('Túllépett limitek:', style: TextStyle(fontWeight: FontWeight.bold)),
+                    ...result.exceededLimits.map((limit) => Text('• $limit')),
+                  ],
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: const Text('Mégse'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  style: TextButton.styleFrom(foregroundColor: Colors.red),
+                  child: const Text('Folytatás'),
+                ),
+              ],
+            );
+          },
+        );
+        
+        return confirm ?? false;
+      } else if (result.warnings.isNotEmpty) {
+        // Figyelmeztetés megjelenítése, de engedélyezés
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(result.message ?? 'Figyelem: közel vagy a limithez'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
+      
+      return true;
+    } catch (e) {
+      // Hiba esetén engedjük a tranzakciót
+      return true;
     }
   }
 
