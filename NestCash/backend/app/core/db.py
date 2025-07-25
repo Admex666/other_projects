@@ -16,6 +16,7 @@ from app.models.forum_models import (
 )
 from app.models.notification import NotificationDocument
 from app.models.limit import Limit
+from app.models.challenge import ChallengeDocument, UserChallengeDocument
 
 load_dotenv()
 
@@ -35,7 +36,8 @@ async def init_db():
             UserDocument, Item, Transaction, AllUserAccountsDocument, Category,
             KnowledgeCategory, Lesson, UserProgress,
             ForumPostDocument, CommentDocument, LikeDocument, FollowDocument,
-            NotificationDocument, UserForumSettingsDocument, Limit 
+            NotificationDocument, UserForumSettingsDocument, Limit,
+            ChallengeDocument, UserChallengeDocument
             ]
             ) 
 

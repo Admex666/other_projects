@@ -11,6 +11,7 @@ import 'package:frontend/screens/analysis_screen.dart';
 import 'package:frontend/screens/forum/forum_main_screen.dart';
 import 'package:frontend/widgets/notification_badge.dart';
 import 'package:frontend/screens/manage_limits_screen.dart';
+import 'package:frontend/screens/challenges/challenges_main_screen.dart';
 
 void main() {
   runApp(NestCashApp());
@@ -60,6 +61,8 @@ class _MainScreenState extends State<MainScreen> {
   void _onItemTapped(int index) {
     if (index == 2) {
       _showAddTransactionOptions(context);
+    } else if (index == 3) {
+      _showForumChallengesOptions(context);
     } else {
       setState(() {
         _selectedIndex = index;
@@ -217,6 +220,85 @@ void _showAddTransactionOptions(BuildContext context) {
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+
+void _showForumChallengesOptions(BuildContext context) {
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: Colors.transparent,
+    builder: (BuildContext bc) {
+      return Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+        ),
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            // Fórum gomb
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.pop(context);
+                  setState(() {
+                    _selectedIndex = 3;
+                  });
+                },
+                icon: const Icon(Icons.forum, color: Colors.white),
+                label: const Text(
+                  'Fórum',
+                  style: TextStyle(fontSize: 18, color: Colors.white),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF00D4A3),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                ),
+              ),
+            ),
+            const SizedBox(height: 15),
+            // Kihívások gomb
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ChallengesMainScreen(
+                        userId: widget.userId,
+                        username: widget.username,
+                      ),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.emoji_events, color: Colors.white),
+                label: const Text(
+                  'Kihívások',
+                  style: TextStyle(fontSize: 18, color: Colors.white),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepPurple,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
