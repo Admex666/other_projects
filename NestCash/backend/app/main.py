@@ -20,6 +20,7 @@ from app.routes import limits
 from app.routes import challenges
 from app.routes import badges
 from app.routes import badge_admin
+from app.routes import habits
 
 app = FastAPI(
     title="NestCash API",
@@ -53,6 +54,7 @@ app.include_router(limits.router)
 app.include_router(challenges.router)
 app.include_router(badges.router)
 app.include_router(badge_admin.router)
+app.include_router(habits.router)
 
 @app.on_event("startup")
 async def startup_event():
@@ -80,7 +82,8 @@ async def root():
             "Admin Panel",
             "Spending Limits",
             "Challenges",
-            "Badge System"
+            "Badge System",
+            "Habit Tracking"
         ]
     }
 

@@ -12,6 +12,7 @@ import 'package:frontend/screens/forum/forum_main_screen.dart';
 import 'package:frontend/widgets/notification_badge.dart';
 import 'package:frontend/screens/manage_limits_screen.dart';
 import 'package:frontend/screens/challenges/challenges_main_screen.dart';
+import 'package:frontend/screens/habits/habits_main_screen.dart';
 
 void main() {
   runApp(NestCashApp());
@@ -220,6 +221,38 @@ void _showAddTransactionOptions(BuildContext context) {
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                ),
+              ),
+            ),
+            
+            const SizedBox(height: 15),
+            // Szokások gomb (ÚJ)
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => HabitsMainScreen(
+                        userId: widget.userId,
+                        username: widget.username,
+                      ),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.psychology, color: Colors.white),
+                label: const Text(
+                  'Szokások kezelése',
+                  style: TextStyle(fontSize: 18, color: Colors.white),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.teal,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),

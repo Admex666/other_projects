@@ -18,6 +18,7 @@ from app.models.notification import NotificationDocument
 from app.models.limit import Limit
 from app.models.challenge import ChallengeDocument, UserChallengeDocument
 from app.models.badge import BadgeType, UserBadge, BadgeProgress
+from app.models.habit import Habit, HabitLog
 
 load_dotenv()
 
@@ -39,7 +40,8 @@ async def init_db():
             ForumPostDocument, CommentDocument, LikeDocument, FollowDocument,
             NotificationDocument, UserForumSettingsDocument, Limit,
             ChallengeDocument, UserChallengeDocument,
-            BadgeType, UserBadge, BadgeProgress
+            BadgeType, UserBadge, BadgeProgress,
+            Habit, HabitLog
             ]
             ) 
 
