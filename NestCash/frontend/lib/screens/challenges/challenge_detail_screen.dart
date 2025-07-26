@@ -258,7 +258,8 @@ class _ChallengeDetailScreenState extends State<ChallengeDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
-      body: _isLoading 
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat, // Ezt a sort add hozzá
+      body: _isLoading
           ? const Center(child: CircularProgressIndicator(color: Color(0xFF00D4A3)))
           : _error.isNotEmpty
               ? _buildErrorState()
@@ -324,7 +325,7 @@ class _ChallengeDetailScreenState extends State<ChallengeDetailScreen> {
                               ),
                             ),
                             const SizedBox(height: 24),
-                            
+
                             _buildChallengeDetails(),
                           ],
                         ),
@@ -734,7 +735,7 @@ class _ChallengeDetailScreenState extends State<ChallengeDetailScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildStatItem('Résztvevők', '${challenge.participantCount}'),
+              _buildStatItem('Résztvevő', '${challenge.participantCount}'),
               _buildStatItem('Befejezés', '${challenge.completionRate.toInt()}%'),
               _buildStatItem('Napok', '${challenge.durationDays}'),
             ],

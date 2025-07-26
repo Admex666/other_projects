@@ -26,6 +26,16 @@ class ChallengeService:
         Kiszámítja a felhasználó haladását egy kihívásban
         """
         try:
+            # Ellenőrizzük, hogy van-e user_challenge objektum
+            if user_challenge is None:
+                target_value = challenge.target_amount or 0.0
+                return ChallengeProgress(
+                    current_value=0.0,
+                    target_value=target_value,
+                    unit="HUF" if challenge.challenge_type != ChallengeType.HABIT_STREAK else "nap",
+                    percentage=0.0
+                )
+            
             # Időszak meghatározása
             start_date = user_challenge.started_at or user_challenge.joined_at
             end_date = start_date + timedelta(days=challenge.duration_days)

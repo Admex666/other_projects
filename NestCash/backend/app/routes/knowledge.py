@@ -3,6 +3,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from typing import List, Optional
 from datetime import datetime, timedelta
+from pydantic import BaseModel
 
 from app.core.security import get_current_user
 from app.models.user import User
@@ -11,7 +12,7 @@ from app.models.knowledge import (
     CategoryWithLessons, LessonSummary, UserStats, QuizResult,
     QuizQuestion, DifficultyLevel
 )
-from pydantic import BaseModel
+from app.services.badge_service import badge_service
 
 router = APIRouter(prefix="/knowledge", tags=["knowledge"])
 
@@ -225,6 +226,18 @@ async def submit_quiz(
     
     # Ha sikeresen teljesítette, frissítjük a statisztikákat
     if passed:
+        try:
+            earned_badges = await badge_service.check_and_award_badges(
+                user_id=current_user.id,
+                trigger_event="lesson_completed",
+                context={
+                    "lesson_id": lesson_id,
+                    "quiz_score": score,
+                    "lesson_difficulty": lesson.difficulty.value
+                }
+            )
+        except Exception as e:
+            logger.error(f"Badge check failed: {e}")
         await _update_user_stats(user_progress, lesson.estimated_minutes)
     
     # Statisztikák frissítése

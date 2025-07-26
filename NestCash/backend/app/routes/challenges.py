@@ -11,7 +11,8 @@ from app.models.challenge import (
     ChallengeDocument, UserChallengeDocument,
     ChallengeType, ChallengeDifficulty, ChallengeStatus, ParticipationStatus,
     ChallengeCreate, ChallengeUpdate, ChallengeRead, ChallengeListResponse,
-    UserChallengeJoin, UserChallengeUpdate, UserChallengeRead, UserChallengeListResponse
+    UserChallengeJoin, UserChallengeUpdate, UserChallengeRead, UserChallengeListResponse,
+    ChallengeProgress 
 )
 from app.core.security import get_current_user
 from app.models.user import User
@@ -114,7 +115,7 @@ async def list_challenges(
                 image_url=challenge.image_url,
                 tags=challenge.tags,
                 creator_username=challenge.creator_username,
-                is_participating=participation is not None,
+                is_participating=participation is not None and participation.status == ParticipationStatus.ACTIVE,
                 my_progress=participation.progress if participation else None,
                 my_status=participation.status if participation else None
             )
@@ -174,7 +175,7 @@ async def get_challenge(
             image_url=challenge.image_url,
             tags=challenge.tags,
             creator_username=challenge.creator_username,
-            is_participating=participation is not None,
+            is_participating=participation is not None and participation.status == ParticipationStatus.ACTIVE,
             my_progress=participation.progress if participation else None,
             my_status=participation.status if participation else None
         )
@@ -207,20 +208,67 @@ async def join_challenge(
         if challenge.status != ChallengeStatus.ACTIVE:
             raise HTTPException(status_code=400, detail="Challenge is not active")
         
-        # Ellenőrizzük, hogy már csatlakozott-e
+        # Ellenőrizzük a meglévő részvételt
         existing_participation = await UserChallengeDocument.find_one({
             "user_id": ObjectId(current_user.id),
             "challenge_id": oid
         })
-        
+
         if existing_participation:
-            raise HTTPException(status_code=400, detail="Already participating in this challenge")
+            if existing_participation.status == ParticipationStatus.ACTIVE:
+                raise HTTPException(status_code=400, detail="Already participating in this challenge")
+            elif existing_participation.status == ParticipationStatus.ABANDONED:
+                # Reaktiváljuk az elhagyott kihívást
+                existing_participation.status = ParticipationStatus.ACTIVE
+                existing_participation.personal_target = join_data.personal_target or existing_participation.personal_target
+                existing_participation.notes = join_data.notes or existing_participation.notes
+                existing_participation.started_at = datetime.utcnow()  # Új kezdés
+                existing_participation.updated_at = datetime.utcnow()
+                
+                # Haladás újraszámítása
+                updated_progress = await ChallengeService.calculate_challenge_progress(
+                    current_user.id, challenge, existing_participation
+                )
+                existing_participation.progress = updated_progress
+                
+                await existing_participation.save()
+                
+                # Kihívás statisztikáinak frissítése
+                await ChallengeService.update_challenge_statistics(challenge_id)
+                
+                return UserChallengeRead(
+                    id=str(existing_participation.id),
+                    user_id=str(existing_participation.user_id),
+                    username=existing_participation.username,
+                    challenge_id=str(existing_participation.challenge_id),
+                    status=existing_participation.status,
+                    joined_at=existing_participation.joined_at,
+                    started_at=existing_participation.started_at,
+                    completed_at=existing_participation.completed_at,
+                    updated_at=existing_participation.updated_at,
+                    progress=existing_participation.progress,
+                    personal_target=existing_participation.personal_target,
+                    notes=existing_participation.notes,
+                    earned_points=existing_participation.earned_points,
+                    earned_badges=existing_participation.earned_badges,
+                    best_streak=existing_participation.best_streak,
+                    current_streak=existing_participation.current_streak,
+                    challenge_title=challenge.title,
+                    challenge_type=challenge.challenge_type,
+                    challenge_difficulty=challenge.difficulty
+                )
+            else:
+                raise HTTPException(status_code=400, detail="Cannot rejoin completed or failed challenge")
         
-        # Kezdeti haladás számítása
-        initial_progress = await ChallengeService.calculate_challenge_progress(
-            current_user.id, challenge, None
+        # Kezdeti haladás létrehozása
+        target_value = join_data.personal_target or challenge.target_amount or 0.0
+        initial_progress = ChallengeProgress(
+            current_value=0.0,
+            target_value=target_value,
+            unit="HUF" if challenge.challenge_type != ChallengeType.HABIT_STREAK else "nap",
+            percentage=0.0
         )
-        
+
         # Részvétel létrehozása
         user_challenge = UserChallengeDocument(
             user_id=PydanticObjectId(current_user.id),
@@ -228,10 +276,25 @@ async def join_challenge(
             challenge_id=oid,
             personal_target=join_data.personal_target,
             notes=join_data.notes,
-            progress=initial_progress
+            progress=initial_progress,
+            started_at=datetime.utcnow()  # Azonnal beállítjuk a kezdés időpontját
         )
-        
+
         await user_challenge.insert()
+
+        # Most már frissíthetjük a haladást a létrehozott objektummal
+        updated_progress = await ChallengeService.calculate_challenge_progress(
+            current_user.id, challenge, user_challenge
+        )
+        user_challenge.progress = updated_progress
+        
+        # Frissítsd az objektumot az adatbázisban
+        await UserChallengeDocument.find_one({"_id": user_challenge.id}).update({
+            "$set": {"progress": updated_progress.dict()}
+        })
+
+        # Frissítsd a memóriában lévő objektumot is a válaszhoz
+        user_challenge.progress = updated_progress
         
         # Kihívás statisztikáinak frissítése
         await ChallengeService.update_challenge_statistics(challenge_id)
@@ -446,7 +509,7 @@ async def get_recommended_challenges(
                 image_url=challenge.image_url,
                 tags=challenge.tags,
                 creator_username=challenge.creator_username,
-                is_participating=participation is not None,
+                is_participating=participation is not None and participation.status == ParticipationStatus.ACTIVE,
                 my_progress=participation.progress if participation else None,
                 my_status=participation.status if participation else None
             ))

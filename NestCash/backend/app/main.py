@@ -18,6 +18,8 @@ from app.routes import forum_settings
 from app.routes import notifications
 from app.routes import limits
 from app.routes import challenges
+from app.routes import badges
+from app.routes import badge_admin
 
 app = FastAPI(
     title="NestCash API",
@@ -49,10 +51,19 @@ app.include_router(forum_follow.router)
 app.include_router(notifications.router) 
 app.include_router(limits.router)
 app.include_router(challenges.router)
+app.include_router(badges.router)
+app.include_router(badge_admin.router)
 
 @app.on_event("startup")
 async def startup_event():
     await init_db()
+
+    # Badge rendszer inicializálása
+    try:
+        from app.services.badge_init import initialize_badge_system
+        await initialize_badge_system()
+    except Exception as e:
+        print(f"Badge system initialization failed: {e}")
 
 @app.get("/")
 async def root():
@@ -68,7 +79,8 @@ async def root():
             "Knowledge Base",
             "Admin Panel",
             "Spending Limits",
-            "Challenges"
+            "Challenges",
+            "Badge System"
         ]
     }
 

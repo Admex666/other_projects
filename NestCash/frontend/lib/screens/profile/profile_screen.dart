@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/screens/profile/edit_profile_screen.dart';
 import 'package:frontend/screens/auth/login_screen.dart';  
 import 'package:frontend/services/auth_service.dart';
+import 'package:frontend/widgets/badge_summary_widget.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String username;
@@ -226,6 +227,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         
                         SizedBox(height: 40),
                         
+                        BadgeSummaryWidget(
+                          userId: currentUserId,
+                          username: currentUsername,
+                        ),
+
+                        SizedBox(height: 20),
+
                         // Profile Menu Items
                         _buildProfileMenuItem(
                           icon: Icons.person_outline,
@@ -244,7 +252,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             );
                           },
                         ),
-                        
+
                         _buildProfileMenuItem(
                           icon: Icons.settings_outlined,
                           title: 'Beállítások',

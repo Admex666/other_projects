@@ -15,6 +15,7 @@ from app.core.security import get_current_user
 from app.models.user import User
 from app.models.account import AllUserAccountsDocument, SubAccountDetails # Import AllUserAccountsDocument és SubAccountDetails
 from app.services.limit_service import LimitService
+from app.services.badge_service import badge_service
 
 router = APIRouter(prefix="/transactions", tags=["transactions"])
 logger = logging.getLogger(__name__)
@@ -71,7 +72,25 @@ async def create_transaction(
         amount=amount_to_save, # Beállítjuk a már előjellel ellátott összeget
         currency=currency_to_save # Hozzáadjuk a devizát
     )
-
+    # Badge ellenőrzés a tranzakció létrehozása után
+    try:
+        earned_badges = await badge_service.check_and_award_badges(
+            user_id=current_user.id,
+            trigger_event="transaction_created",
+            context={
+                "transaction_id": str(new_transaction.id),
+                "amount": abs(new_transaction.amount),
+                "type": new_transaction.type,
+                "category": new_transaction.kategoria
+            }
+        )
+        
+        # Itt lehetne értesítést küldeni a megszerzett badge-ekről
+        if earned_badges:
+            logger.info(f"User {current_user.id} earned {len(earned_badges)} badges")
+            
+    except Exception as e:
+        logger.error(f"Badge check failed: {e}")
     # If it's a transfer, process it (ezt a részt felül kell vizsgálni a TransactionCreate séma alapján)
     # Jelenleg a TransactionCreate séma nem tartalmazza a forrás és cél számla mezőket transzferhez.
     # Ha transzfert is szeretnénk kezelni, a TransactionCreate sémát ki kell egészíteni a szükséges mezőkkel,
