@@ -81,7 +81,6 @@ st.markdown("""
 
 # FRISSÍTETT: Valódi predictor betöltése
 @st.cache_resource
-@st.cache_resource
 def load_predictor():
     """
     Betöltjük a valódi betanított modellt
