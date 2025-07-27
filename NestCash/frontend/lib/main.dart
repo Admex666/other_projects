@@ -13,6 +13,7 @@ import 'package:frontend/widgets/notification_badge.dart';
 import 'package:frontend/screens/manage_limits_screen.dart';
 import 'package:frontend/screens/challenges/challenges_main_screen.dart';
 import 'package:frontend/screens/habits/habits_main_screen.dart';
+import 'package:frontend/screens/pti/pti_main_screen.dart';
 
 void main() {
   runApp(NestCashApp());
@@ -53,8 +54,7 @@ class _MainScreenState extends State<MainScreen> {
       DashboardScreen(username: widget.username),
       AnalysisScreen(userId: widget.userId),
       const SizedBox.shrink(),
-      ForumMainScreen(userId: widget.userId, username: widget.username,),
-      KnowledgeScreen(userId: widget.userId),
+      const SizedBox.shrink(),
       ProfileScreen(username: widget.username, userId: widget.userId),
     ];
   }
@@ -284,15 +284,52 @@ void _showForumChallengesOptions(BuildContext context) {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
+            // PTI gomb (ÚJ)
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PTIMainScreen(
+                        userId: widget.userId,
+                        username: widget.username,
+                      ),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.trending_up, color: Colors.white),
+                label: const Text(
+                  'PTI - Pénzügyi Tudatosság Index',
+                  style: TextStyle(fontSize: 18, color: Colors.white),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF6C63FF),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                ),
+              ),
+            ),
+            const SizedBox(height: 15),
             // Fórum gomb
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
                 onPressed: () {
                   Navigator.pop(context);
-                  setState(() {
-                    _selectedIndex = 3;
-                  });
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ForumMainScreen(
+                        userId: widget.userId,
+                        username: widget.username,
+                      ),
+                    ),
+                  );
                 },
                 icon: const Icon(Icons.forum, color: Colors.white),
                 label: const Text(
@@ -332,6 +369,36 @@ void _showForumChallengesOptions(BuildContext context) {
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.deepPurple,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                ),
+              ),
+            ),
+            const SizedBox(height: 15),
+            // Tudástár gomb
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => KnowledgeScreen(
+                        userId: widget.userId,
+                      ),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.school_outlined, color: Colors.white),
+                label: const Text(
+                  'Tudástár',
+                  style: TextStyle(fontSize: 18, color: Colors.white),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepOrange,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
@@ -381,8 +448,7 @@ Widget build(BuildContext context) {
             _buildNavItem(Icons.bar_chart_outlined, 1),
             _buildNavItem(Icons.swap_horiz_outlined, 2),
             _buildNavItem(Icons.forum_outlined, 3),
-            _buildNavItem(Icons.school_outlined, 4),
-            _buildNavItem(Icons.person_outline, 5),
+            _buildNavItem(Icons.person_outline, 4),
           ],
         ),
       ),
@@ -399,8 +465,6 @@ String _getScreenTitle(int index) {
       case 3:
         return 'Fórum';
       case 4:
-        return 'Tudástár';
-      case 5:
         return 'Profil';
       default:
         return 'NestCash';

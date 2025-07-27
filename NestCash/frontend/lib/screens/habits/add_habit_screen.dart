@@ -691,9 +691,9 @@ class _AddHabitScreenState extends State<AddHabitScreen>
   String _getTrackingTypeLabel(TrackingType type) {
     switch (type) {
       case TrackingType.boolean:
-        return 'Igen/Nem (Boolean)';
+        return 'Igen/Nem';
       case TrackingType.numeric:
-        return 'Numerikus érték';
+        return 'Számszerű érték';
     }
   }
 

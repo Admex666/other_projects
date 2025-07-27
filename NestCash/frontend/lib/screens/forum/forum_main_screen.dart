@@ -272,168 +272,230 @@ class _ForumMainScreenState extends State<ForumMainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFF00D4A3),
       body: SafeArea(
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Color(0xFF00D4A3),
-                Color(0xFFE8F6F3),
-              ],
-              stops: [0.0, 0.4],
-            ),
-          ),
-          child: Column(
-            children: [
-              // Content area
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Color(0xFFF5F5F5),
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(30),
+        child: Column(
+          children: [
+            // Header
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              child: Row(
+                children: [
+                  IconButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: Colors.black87,
+                      size: 24,
                     ),
                   ),
-                  child: Column(
+                  Expanded(
+                    child: Text(
+                      'Fórum',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  Stack(
                     children: [
-                      // Filter and action buttons
-                      Container(
-                        padding: EdgeInsets.all(20),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: ElevatedButton.icon(
-                                onPressed: _showFilterDialog,
-                                icon: Icon(Icons.filter_list, color: Colors.white, size: 18),
-                                label: Text(
-                                  'Szűrők',
-                                  style: TextStyle(color: Colors.white, fontSize: 14),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Color(0xFF00D4AA),
-                                  padding: EdgeInsets.symmetric(vertical: 12),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                              ),
+                      IconButton(
+                        onPressed: () async {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => NotificationsScreen(),
                             ),
-                            SizedBox(width: 12),
-                            Expanded(
-                              child: ElevatedButton.icon(
-                                onPressed: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => SearchUsersScreen(),
-                                  ),
-                                ),
-                                icon: Icon(Icons.search, color: Colors.white, size: 18),
-                                label: Text(
-                                  'Keresés',
-                                  style: TextStyle(color: Colors.white, fontSize: 14),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.blueAccent,
-                                  padding: EdgeInsets.symmetric(vertical: 12),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 12),
-                            Expanded(
-                              child: ElevatedButton.icon(
-                                onPressed: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ForumSettingsScreen(),
-                                  ),
-                                ),
-                                icon: Icon(Icons.settings, color: Colors.white, size: 18),
-                                label: Text(
-                                  'Beállítások',
-                                  style: TextStyle(color: Colors.white, fontSize: 14),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.grey[600],
-                                  padding: EdgeInsets.symmetric(vertical: 12),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
+                          );
+                          _loadUnreadNotificationCount();
+                        },
+                        icon: Icon(
+                          Icons.notifications_outlined,
+                          color: Colors.black87,
+                          size: 24,
                         ),
                       ),
-
-                      // Posts list
-                      Expanded(
-                        child: RefreshIndicator(
-                          onRefresh: _loadPosts,
-                          child: _posts.isEmpty && !_isLoading
-                              ? Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.forum_outlined,
-                                        size: 64,
-                                        color: Colors.grey[400],
-                                      ),
-                                      SizedBox(height: 16),
-                                      Text(
-                                        'Még nincsenek posztok',
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          color: Colors.grey[600],
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                      SizedBox(height: 8),
-                                      Text(
-                                        'Legyél te az első, aki megosztja gondolatait!',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.grey[500],
-                                        ),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              : ListView.builder(
-                                  controller: _scrollController,
-                                  padding: EdgeInsets.symmetric(horizontal: 16),
-                                  itemCount: _posts.length + (_isLoading ? 1 : 0),
-                                  itemBuilder: (context, index) {
-                                    if (index == _posts.length) {
-                                      return Center(
-                                        child: Padding(
-                                          padding: EdgeInsets.all(20),
-                                          child: CircularProgressIndicator(
-                                            color: Color(0xFF00D4AA),
-                                          ),
-                                        ),
-                                      );
-                                    }
-
-                                    final post = _posts[index];
-                                    return _buildPostCard(post);
-                                  },
-                                ),
+                      if (_unreadNotificationCount > 0)
+                        Positioned(
+                          right: 8,
+                          top: 8,
+                          child: Container(
+                            padding: EdgeInsets.all(2),
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            constraints: BoxConstraints(
+                              minWidth: 16,
+                              minHeight: 16,
+                            ),
+                            child: Text(
+                              '$_unreadNotificationCount',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
                         ),
-                      ),
                     ],
                   ),
+                ],
+              ),
+            ),
+            
+            // Content Container
+            Expanded(
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Color(0xFFF5F5F5),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(30),
+                    topRight: Radius.circular(30),
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    // Filter and action buttons
+                    Container(
+                      padding: EdgeInsets.all(20),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed: _showFilterDialog,
+                              icon: Icon(Icons.filter_list, color: Colors.white, size: 18),
+                              label: Text(
+                                'Szűrők',
+                                style: TextStyle(color: Colors.white, fontSize: 14),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Color(0xFF00D4AA),
+                                padding: EdgeInsets.symmetric(vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 12),
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SearchUsersScreen(),
+                                ),
+                              ),
+                              icon: Icon(Icons.search, color: Colors.white, size: 18),
+                              label: Text(
+                                'Keresés',
+                                style: TextStyle(color: Colors.white, fontSize: 14),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blueAccent,
+                                padding: EdgeInsets.symmetric(vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 12),
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              onPressed: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ForumSettingsScreen(),
+                                ),
+                              ),
+                              icon: Icon(Icons.settings, color: Colors.white, size: 18),
+                              label: Text(
+                                'Beállítások',
+                                style: TextStyle(color: Colors.white, fontSize: 14),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.grey[600],
+                                padding: EdgeInsets.symmetric(vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Posts list
+                    Expanded(
+                      child: RefreshIndicator(
+                        onRefresh: _loadPosts,
+                        child: _posts.isEmpty && !_isLoading
+                            ? Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.forum_outlined,
+                                      size: 64,
+                                      color: Colors.grey[400],
+                                    ),
+                                    SizedBox(height: 16),
+                                    Text(
+                                      'Még nincsenek posztok',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        color: Colors.grey[600],
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    SizedBox(height: 8),
+                                    Text(
+                                      'Legyél te az első, aki megosztja gondolatait!',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey[500],
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : ListView.builder(
+                                controller: _scrollController,
+                                padding: EdgeInsets.symmetric(horizontal: 16),
+                                itemCount: _posts.length + (_isLoading ? 1 : 0),
+                                itemBuilder: (context, index) {
+                                  if (index == _posts.length) {
+                                    return Center(
+                                      child: Padding(
+                                        padding: EdgeInsets.all(20),
+                                        child: CircularProgressIndicator(
+                                          color: Color(0xFF00D4AA),
+                                        ),
+                                      ),
+                                    );
+                                  }
+
+                                  final post = _posts[index];
+                                  return _buildPostCard(post);
+                                },
+                              ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
       floatingActionButton: FloatingActionButton(

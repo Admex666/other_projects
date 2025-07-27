@@ -184,67 +184,114 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
     }
   }
 
-  // Az AppBar teljes eltávolítása:
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // AppBar teljes eltávolítása
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator(color: Color(0xFF00D4A3)))
-          : RefreshIndicator(
-              onRefresh: _loadData,
-              color: const Color(0xFF00D4A3),
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 16), // Felső padding hozzáadása
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (userStats != null) _buildStatsCard(),
-                    const SizedBox(height: 40),
-                    _buildDailyChallengeCard(),
-                    const SizedBox(height: 40),
-                    // Kategóriák cím és filter gomb egy sorban
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Kategóriák',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF2D3748),
-                          ),
-                        ),
-                        // Filter gomb ide kerül
-                        Container(
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF00D4A3),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: PopupMenuButton<String>(
-                            icon: const Icon(Icons.filter_list, color: Colors.white),
-                            onSelected: (value) {
-                              setState(() {
-                                selectedDifficulty = value == 'all' ? null : value;
-                              });
-                              _loadCategories();
-                            },
-                            itemBuilder: (context) => [
-                              const PopupMenuItem(value: 'all', child: Text('Összes szint')),
-                              const PopupMenuItem(value: 'beginner', child: Text('🟢 Kezdő')),
-                              const PopupMenuItem(value: 'professional', child: Text('🔵 Profi')),
+      backgroundColor: Color(0xFF00D4A3),
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Header
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              child: Row(
+                children: [
+                  IconButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: Colors.black87,
+                      size: 24,
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      'Tudástár',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  SizedBox(width: 48), // Balance the back button
+                ],
+              ),
+            ),
+            
+            // Content Container
+            Expanded(
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Color(0xFFF5F5F5),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(30),
+                    topRight: Radius.circular(30),
+                  ),
+                ),
+                child: isLoading
+                    ? const Center(child: CircularProgressIndicator(color: Color(0xFF00D4A3)))
+                    : RefreshIndicator(
+                        onRefresh: _loadData,
+                        color: const Color(0xFF00D4A3),
+                        child: SingleChildScrollView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (userStats != null) _buildStatsCard(),
+                              const SizedBox(height: 40),
+                              _buildDailyChallengeCard(),
+                              const SizedBox(height: 40),
+                              // Kategóriák cím és filter gomb egy sorban
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text(
+                                    'Kategóriák',
+                                    style: TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF2D3748),
+                                    ),
+                                  ),
+                                  // Filter gomb ide kerül
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFF00D4A3),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: PopupMenuButton<String>(
+                                      icon: const Icon(Icons.filter_list, color: Colors.white),
+                                      onSelected: (value) {
+                                        setState(() {
+                                          selectedDifficulty = value == 'all' ? null : value;
+                                        });
+                                        _loadCategories();
+                                      },
+                                      itemBuilder: (context) => [
+                                        const PopupMenuItem(value: 'all', child: Text('Összes szint')),
+                                        const PopupMenuItem(value: 'beginner', child: Text('🟢 Kezdő')),
+                                        const PopupMenuItem(value: 'professional', child: Text('🔵 Profi')),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 16),
+                              ...categories.map((category) => _buildCategoryCard(category)),
                             ],
                           ),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    ...categories.map((category) => _buildCategoryCard(category)),
-                  ],
-                ),
+                      ),
               ),
             ),
+          ],
+        ),
+      ),
     );
   }
 

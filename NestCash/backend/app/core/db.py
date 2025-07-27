@@ -19,6 +19,7 @@ from app.models.limit import Limit
 from app.models.challenge import ChallengeDocument, UserChallengeDocument
 from app.models.badge import BadgeType, UserBadge, BadgeProgress
 from app.models.habit import Habit, HabitLog
+from app.models.pti import PTIScore, PTIHistory, UserPTISettings
 
 load_dotenv()
 
@@ -41,7 +42,8 @@ async def init_db():
             NotificationDocument, UserForumSettingsDocument, Limit,
             ChallengeDocument, UserChallengeDocument,
             BadgeType, UserBadge, BadgeProgress,
-            Habit, HabitLog
+            Habit, HabitLog,
+            PTIScore, PTIHistory, UserPTISettings
             ]
             ) 
 
