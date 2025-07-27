@@ -288,7 +288,7 @@ def main():
                 st.markdown(f"""
                 <div class="outcome-home">
                     <h3>1 - Home Win</h3>
-                    <h2>{probs['home']:.1%}</h2>
+                    <h2>{probs['home']:.1%} ({1/probs['home']:.2f})</h2>
                     <p>{home_team} Victory</p>
                 </div>
                 """, unsafe_allow_html=True)
@@ -297,7 +297,7 @@ def main():
                 st.markdown(f"""
                 <div class="outcome-draw">
                     <h3>X - Draw</h3>
-                    <h2>{probs['draw']:.1%}</h2>
+                    <h2>{probs['draw']:.1%} ({1/probs['draw']:.2f})</h2>
                     <p>Match Tied</p>
                 </div>
                 """, unsafe_allow_html=True)
@@ -306,7 +306,7 @@ def main():
                 st.markdown(f"""
                 <div class="outcome-away">
                     <h3>2 - Away Win</h3>
-                    <h2>{probs['away']:.1%}</h2>
+                    <h2>{probs['away']:.1%} ({1/probs['away']:.2f})</h2>
                     <p>{away_team} Victory</p>
                 </div>
                 """, unsafe_allow_html=True)
