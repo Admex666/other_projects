@@ -87,7 +87,7 @@ def load_predictor():
     """
     st.write(f"Current working directory: {os.getcwd()}") #
     st.write(f"Files in current directory: {os.listdir('.')}") #
-    model_path = 'trained_predictor.pkl'
+    model_path = 'live_xG/trained_predictor.pkl'
     
     if not os.path.exists(model_path):
         st.error(f"❌ Model fájl nem található: {model_path}")
