@@ -85,6 +85,8 @@ def load_predictor():
     """
     Betöltjük a valódi betanított modellt
     """
+    st.write(f"Current working directory: {os.getcwd()}") #
+    st.write(f"Files in current directory: {os.listdir('.')}") #
     model_path = 'trained_predictor.pkl'
     
     if not os.path.exists(model_path):
