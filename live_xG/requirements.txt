@@ -2,4 +2,3 @@ scipy
 plotly
 joblib
 scikit-learn
-pickle
