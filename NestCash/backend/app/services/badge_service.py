@@ -396,25 +396,27 @@ class BadgeService:
             badge_types = await BadgeType.find({"code": {"$in": badge_codes}}).to_list()
             badge_type_dict = {bt.code: bt for bt in badge_types}
             
-            # Statisztikák számítása
-            total_points = sum(
-                badge_type_dict.get(ub.badge_code, BadgeType()).points * ub.level 
-                for ub in user_badges
-            )
-            
+            # Statisztikák számítása - JAVÍTOTT RÉSZ
+            total_points = 0
             badges_by_category = {}
             badges_by_rarity = {}
             
             for user_badge in user_badges:
                 badge_type = badge_type_dict.get(user_badge.badge_code)
-                if badge_type:
+                if badge_type:  # Csak akkor számoljuk, ha létezik a badge típus
+                    # Pontok számítása
+                    total_points += badge_type.points * user_badge.level
+                    
                     # Kategória szerint
                     category = badge_type.category.value
                     badges_by_category[category] = badges_by_category.get(category, 0) + 1
                     
-                    # Ritkaság szerint
+                    # Ritkaság szerint  
                     rarity = badge_type.rarity.value
                     badges_by_rarity[rarity] = badges_by_rarity.get(rarity, 0) + 1
+                else:
+                    # Log warning ha hiányzik badge típus
+                    logger.warning(f"Badge type not found for code: {user_badge.badge_code}")
             
             # Legutóbbi badge-ek (top 5)
             recent_badges = sorted(user_badges, key=lambda x: x.earned_at, reverse=True)[:5]
@@ -440,7 +442,15 @@ class BadgeService:
             
         except Exception as e:
             logger.error(f"Error getting user badge stats: {e}")
-            return {}
+            return {
+                "total_badges": 0,
+                "total_points": 0,
+                "badges_by_category": {},
+                "badges_by_rarity": {},
+                "recent_badges": [],
+                "favorite_badges": [],
+                "in_progress_count": 0
+            }
     
     async def get_badge_progress(self, user_id: str) -> List[Dict[str, Any]]:
         """Felhasználó badge haladásának lekérése"""

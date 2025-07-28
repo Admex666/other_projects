@@ -51,7 +51,7 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     super.initState();
     _widgetOptions = <Widget>[
-      DashboardScreen(username: widget.username),
+      DashboardScreen(username: widget.username, userId: widget.userId,),
       AnalysisScreen(userId: widget.userId),
       const SizedBox.shrink(),
       const SizedBox.shrink(),
@@ -447,7 +447,7 @@ Widget build(BuildContext context) {
             _buildNavItem(Icons.home_outlined, 0),
             _buildNavItem(Icons.bar_chart_outlined, 1),
             _buildNavItem(Icons.swap_horiz_outlined, 2),
-            _buildNavItem(Icons.forum_outlined, 3),
+            _buildNavItem(Icons.mood_outlined, 3),
             _buildNavItem(Icons.person_outline, 4),
           ],
         ),

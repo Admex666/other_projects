@@ -1,125 +1,427 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
+import 'package:frontend/models/challenge.dart';
+import 'package:frontend/models/limit.dart';
+import 'package:frontend/services/challenge_service.dart';
+import 'package:frontend/services/transaction_service.dart';
+import 'package:frontend/services/account_service.dart';
+import 'package:frontend/services/limit_service.dart';
+import 'package:frontend/widgets/pti_summary_widget.dart';
+import 'package:frontend/screens/add_expenses_screen.dart';
+import 'package:frontend/screens/add_incomes_screen.dart';
+import 'package:frontend/screens/challenges/challenges_main_screen.dart';
+import 'package:frontend/services/auth_service.dart';
+import 'package:frontend/screens/transactions_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   final String username;
+  final String? userId;
 
-  const DashboardScreen({required this.username});
+  const DashboardScreen({
+    required this.username, 
+    this.userId,
+  });
 
   @override
   _DashboardScreenState createState() => _DashboardScreenState();
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  int _selectedIndex = 0;
+  final ChallengeService _challengeService = ChallengeService();
+  final AuthService _authService = AuthService();
+  
+  bool _isLoading = true;
+  List<Challenge> _recommendedChallenges = [];
+  
+  // Placeholder data - ezeket API hívásokkal kell lecserélni
+  double _netBalance = 0.0;
+  double _totalIncome = 0.0;
+  double _totalExpenses = 0.0;
+  List<Map<String, dynamic>> _recentTransactions = [];
+  List<Limit> _warningLimits = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDashboardData();
+  }
+
+  void _handleAuthError() {
+    // Token érvénytelen vagy hiányzik - kijelentkeztetés és visszairányítás
+    _authService.logout();
+    
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('A munkamenet lejárt. Kérjük, jelentkezzen be újra.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      
+      // Navigáció a bejelentkező képernyőre
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        '/', // Vagy ahogy a bejelentkező route-od hívják
+        (route) => false,
+      );
+    }
+  }
+
+  Future<void> _loadDashboardData() async {
+    print('Loading dashboard data...');
+    setState(() => _isLoading = true);
+    
+    // Párhuzamosan töltjük be az adatokat, de külön-külön kezeljük a hibákat
+    final results = await Future.wait([
+      _loadBalanceDataSafely(),
+      _loadRecentTransactionsSafely(), 
+      _loadLimitWarningsSafely(),
+      _loadRecommendedChallengesSafely(),
+    ]);
+    
+    final hasAnyError = results.any((result) => result == false);
+    
+    if (hasAnyError && mounted) {
+      // Csak akkor mutatunk hibaüzenetet, ha kritikus hiba van
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Egyes adatok betöltése nem sikerült, de az alkalmazás használható.'),
+          backgroundColor: Colors.orange,
+          duration: Duration(seconds: 3),
+        ),
+      );
+    }
+    
+    if (mounted) {
+      setState(() => _isLoading = false);
+    }
+    
+    print('Dashboard data loading completed');
+  }
+
+  bool _isAuthError(dynamic error) {
+    final errorStr = error.toString().toLowerCase();
+    return errorStr.contains('401') || 
+          errorStr.contains('unauthorized') || 
+          errorStr.contains('not authenticated') ||
+          errorStr.contains('token') && (errorStr.contains('invalid') || errorStr.contains('expired'));
+  }
+
+  Future<bool> _loadBalanceDataSafely() async {
+    try {
+      await _loadBalanceData();
+      return true;
+    } catch (e) {
+      print('Balance loading failed: $e');
+
+      if (_isAuthError(e)) {
+      _handleAuthError();
+    }
+    
+      return false;
+    }
+  }
+
+  // Biztonságos tranzakció betöltés  
+  Future<bool> _loadRecentTransactionsSafely() async {
+    try {
+      await _loadRecentTransactions();
+      return true;
+    } catch (e) {
+      print('Recent transactions loading failed: $e');
+      
+      if (_isAuthError(e)) {
+      _handleAuthError();
+    }
+
+      return false;
+    }
+  }
+
+  // Biztonságos limit figyelmeztetések betöltés
+  Future<bool> _loadLimitWarningsSafely() async {
+    try {
+      await _loadLimitWarnings();
+      return true;
+    } catch (e) {
+      print('Limit warnings loading failed: $e');
+
+      if (_isAuthError(e)) {
+      _handleAuthError();
+    }
+      // Üres lista esetén nincs hiba
+      setState(() => _warningLimits = []);
+      return true;
+    }
+  }
+
+  // Biztonságos kihívások betöltés
+  Future<bool> _loadRecommendedChallengesSafely() async {
+    try {
+      await _loadRecommendedChallenges();
+      return true;
+    } catch (e) {
+      print('Recommended challenges loading failed: $e');
+
+      if (_isAuthError(e)) {
+      _handleAuthError();
+    }
+      
+      // Üres lista esetén nincs hiba
+      setState(() => _recommendedChallenges = []);
+      return true;
+    }
+  }
+
+  // Debug segédfüggvény a backend állapot ellenőrzésére
+  Future<void> _checkBackendStatus() async {
+    try {
+      final response = await http.get(
+        Uri.parse('http://10.0.2.2:8000/'),
+        headers: {'Content-Type': 'application/json'},
+      );
+      print('Backend status: ${response.statusCode}');
+    } catch (e) {
+      print('Backend connection failed: $e');
+    }
+  }
+
+  // Javított _loadBalanceData() metódus implementálása
+  Future<void> _loadBalanceData() async {
+    try {
+      final accountService = AccountService();
+      final transactionService = TransactionService();
+      
+      // Számlák összesítésének lekérése (ez adja a valós egyenlegeket)
+      final accountSummary = await accountService.getAccountSummary();
+      
+      // Havi tranzakciós statisztikák lekérése (bevételek/kiadások)
+      final monthlyStats = await transactionService.getMonthlyStats();
+      
+      setState(() {
+        // A valós számlaegyenleg az AccountService-ből jön
+        _netBalance = accountSummary['total'] ?? 0.0;
+        
+        // A havi bevételek és kiadások a TransactionService-ből jönnek
+        _totalIncome = (monthlyStats['total_income'] as num?)?.toDouble() ?? 0.0;
+        _totalExpenses = (monthlyStats['total_expenses'] as num?)?.toDouble() ?? 0.0;
+      });
+    } catch (e) {
+      print('Error loading balance data: $e');
+      // Fallback: próbáljuk meg csak az AccountService-t használni
+      try {
+        final accountService = AccountService();
+        final accountSummary = await accountService.getAccountSummary();
+        
+        setState(() {
+          _netBalance = accountSummary['total'] ?? 0.0;
+          // Ha a TransactionService nem működik, akkor placeholder adatok
+          _totalIncome = 450000.0;
+          _totalExpenses = 320000.0;
+        });
+      } catch (e2) {
+        print('Error loading account data: $e2');
+        // Végső fallback adatok
+        setState(() {
+          _totalIncome = 450000.0;
+          _totalExpenses = 320000.0;
+          _netBalance = _totalIncome - _totalExpenses;
+        });
+      }
+    }
+  }
+
+  // A _loadRecentTransactions() metódus implementálása
+  Future<void> _loadRecentTransactions() async {
+    try {
+      final transactionService = TransactionService();
+      final transactions = await transactionService.getRecentTransactions(limit: 5);
+      
+      print('Loaded ${transactions.length} recent transactions'); // Debug log
+      
+      setState(() {
+        _recentTransactions = transactions.map((transaction) {
+          try {
+            // Több lehetséges mező nevvel számolunk (angol/magyar backend szerint)
+            final type = transaction['type'] ?? transaction['tipus'];
+            final amount = (transaction['amount'] ?? transaction['osszeg'] ?? 0 as num).toDouble();
+            final description = transaction['description'] ?? transaction['leiras'] ?? 'Ismeretlen tranzakció';
+            final category = transaction['kategoria'] ?? transaction['category'] ?? 'Egyéb';
+            final dateStr = transaction['date'] ?? transaction['datum'];
+            
+            // Dátum parse-olás több formátummal
+            DateTime date = DateTime.now();
+            if (dateStr != null) {
+              try {
+                date = DateTime.parse(dateStr.toString());
+              } catch (e) {
+                print('Error parsing date: $dateStr, using current date');
+              }
+            }
+            
+            // Típus meghatározása
+            bool isExpense = false;
+            if (type != null) {
+              isExpense = type == 'expense' || type == 'kiadas';
+            } else {
+              // Ha nincs típus, az összeg alapján döntünk
+              isExpense = amount < 0;
+            }
+            
+            return {
+              'id': transaction['id'] ?? transaction['_id'] ?? '',
+              'title': description,
+              'amount': amount,
+              'category': category,
+              'date': date,
+              'isExpense': isExpense,
+              'icon': _getTransactionIcon(category, isExpense),
+            };
+          } catch (e) {
+            print('Error processing transaction: $transaction, error: $e');
+            // Fallback transaction
+            return {
+              'id': '',
+              'title': 'Hibás tranzakció',
+              'amount': 0.0,
+              'category': 'Egyéb',
+              'date': DateTime.now(),
+              'isExpense': false,
+              'icon': Icons.error,
+            };
+          }
+        }).toList();
+      });
+      
+      print('Successfully processed ${_recentTransactions.length} transactions'); // Debug log
+    } catch (e) {
+      print('Error loading recent transactions: $e');
+      // Fallback: megtartjuk a placeholder adatokat, de jelezzük, hogy nem sikerült betölteni
+      setState(() {
+        _recentTransactions = [
+          {
+            'id': 'error',
+            'title': 'Tranzakciók betöltése sikertelen',
+            'amount': 0.0,
+            'category': 'Hiba',
+            'date': DateTime.now(),
+            'isExpense': false,
+            'icon': Icons.error_outline,
+          }
+        ];
+      });
+    }
+  }
+
+  // Segéd metódus ikonok meghatározásához
+IconData _getTransactionIcon(String category, bool isExpense) {
+    if (!isExpense) {
+      return Icons.attach_money;
+    }
+    
+    switch (category.toLowerCase()) {
+      case 'élelmiszer':
+      case 'food':
+        return Icons.restaurant;
+      case 'lakhatás':
+      case 'housing':
+        return Icons.home;
+      case 'közlekedés':
+      case 'transport':
+        return Icons.directions_car;
+      case 'szórakozás':
+      case 'entertainment':
+        return Icons.movie;
+      case 'ruházat':
+      case 'clothing':
+        return Icons.shopping_bag;
+      case 'egészség':
+      case 'health':
+        return Icons.local_hospital;
+      case 'oktatás':
+      case 'education':
+        return Icons.school;
+      default:
+        return Icons.shopping_cart;
+    }
+  }
+
+  Future<void> _loadLimitWarnings() async {
+    try {
+      final limitService = LimitService();
+      final limits = await limitService.getLimits(activeOnly: true);
+      
+      // Csak azokat a limiteket mutatjuk, amelyek túllépés közelében vannak (80% felett)
+      final warningLimits = limits.where((limit) {
+        final usagePercentage = limit.usagePercentage ?? 0.0;
+        return usagePercentage >= 0.8; // 80% felett figyelmeztetés
+      }).toList();
+      
+      setState(() {
+        _warningLimits = warningLimits;
+      });
+    } catch (e) {
+      print('Error loading limit warnings: $e');
+      // Üres lista marad
+    }
+  }
+
+  Future<void> _loadRecommendedChallenges() async {
+    try {
+      final challenges = await _challengeService.getRecommendedChallenges(limit: 3);
+      setState(() {
+        _recommendedChallenges = challenges;
+      });
+    } catch (e) {
+      print('Error loading recommended challenges: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF00D4A3)),
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       body: SafeArea(
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Color(0xFF00D4A3),
-                Color(0xFFE8F6F3),
-              ],
-              stops: [0.0, 0.4],
-            ),
-          ),
-          child: Column(
-            children: [
-              // Balance Cards
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: _buildBalanceCard(
-                        'Összes Vagyon',
-                        '\$7,783.00',
-                        Colors.white,
-                        Colors.black,
-                      ),
-                    ),
-                    SizedBox(width: 16),
-                    Expanded(
-                      child: _buildBalanceCard(
-                        'Összes Költség',
-                        '-\$1,187.40',
-                        Colors.white,
-                        Colors.blue,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              
-              SizedBox(height: 20),
-              
-              // Progress Bar
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.0),
-                child: Column(
-                  children: [
-                    Container(
-                      height: 8,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(4),
-                        color: Colors.white,
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: MediaQuery.of(context).size.width * 0.3,
-                            decoration: BoxDecoration(
-                              color: Colors.black,
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                          ),
-                          Expanded(child: Container()),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          '30%',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 12,
-                          ),
-                        ),
-                        Text(
-                          '\$20,000.00',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 12,
-                          ),
-                        ),
+        child: RefreshIndicator(
+          onRefresh: _loadDashboardData,
+          color: Color(0xFF00D4A3),
+          child: SingleChildScrollView(
+            physics: AlwaysScrollableScrollPhysics(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Fejléc gradient háttér
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Color(0xFF00D4A3),
+                        Color(0xFFE8F6F3),
                       ],
+                      stops: [0.0, 1.0],
                     ),
-                    SizedBox(height: 8),
-                    Text(
-                      'A költségeid 30%-a, jónak tűnik.',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
+                  ),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 20),
+                      _buildSummaryCards(),
+                      SizedBox(height: 20),
+                    ],
+                  ),
                 ),
-              ),
-              
-              SizedBox(height: 20),
-              
-              // Main Content
-              Expanded(
-                child: Container(
+
+                // Fő tartalom
+                Container(
                   decoration: BoxDecoration(
                     color: Color(0xFFF0F8F0),
                     borderRadius: BorderRadius.only(
@@ -129,295 +431,100 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                   child: Column(
                     children: [
-                      // Savings Card
-                      Container(
-                        margin: EdgeInsets.all(16),
-                        padding: EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Color(0xFF00D4A3),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.2),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                Icons.savings_outlined,
-                                color: Colors.white,
-                                size: 24,
-                              ),
-                            ),
-                            SizedBox(width: 16),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Megtakarítás',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  Text(
-                                    'haladás',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text(
-                                  'Bevétel múlt héten',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                Text(
-                                  '\$4,000.00',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                SizedBox(height: 8),
-                                Text(
-                                  'Étterem múlt héten',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                Text(
-                                  '-\$100.00',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
+                      SizedBox(height: 20),
                       
-                      // Tab Bar
-                      Container(
-                        margin: EdgeInsets.symmetric(horizontal: 16),
-                        child: Row(
-                          children: [
-                            _buildTabButton('Napi', 0),
-                            _buildTabButton('Heti', 1),
-                            _buildTabButton('Havi', 2),
-                          ],
-                        ),
-                      ),
+                      // Korlát figyelmeztetések
+                      if (_warningLimits.isNotEmpty) _buildLimitWarnings(),
                       
-                      SizedBox(height: 16),
-                      
-                      // Transaction List
-                      Expanded(
-                        child: ListView(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
-                          children: [
-                            _buildTransactionItem(
-                              'Fizetés',
-                              '18:27 - Apr. 30',
-                              'Havi',
-                              '\$4,000.00',
-                              Colors.blue,
-                              Icons.attach_money,
-                              false,
-                            ),
-                            _buildTransactionItem(
-                              'Bevásárlás',
-                              '17:00 - Apr. 24',
-                              'Élelmiszer',
-                              '-\$100.00',
-                              Colors.blue,
-                              Icons.shopping_bag_outlined,
-                              true,
-                            ),
-                            _buildTransactionItem(
-                              'Lakbér',
-                              '8:30 - Apr. 15',
-                              'Lakhatás',
-                              '-\$674.40',
-                              Colors.blue,
-                              Icons.home_outlined,
-                              true,
-                            ),
-                          ],
+                      // PTI Widget
+                      if (widget.userId != null)
+                        PTISummaryWidget(
+                          userId: widget.userId!,
+                          username: widget.username,
                         ),
-                      ),
+                      
+                      // Ajánlott kihívások
+                      if (_recommendedChallenges.isNotEmpty) _buildRecommendedChallenges(),
+                      
+                      // Legutóbbi tranzakciók
+                      _buildRecentTransactions(),
+                      
+                      SizedBox(height: 100), // Bottom navigation padding
                     ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBalanceCard(String title, String amount, Color bgColor, Color textColor) {
-    return Container(
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: TextStyle(
-              color: textColor.withOpacity(0.7),
-              fontSize: 12,
-            ),
-          ),
-          SizedBox(height: 8),
-          Text(
-            amount,
-            style: TextStyle(
-              color: textColor,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTabButton(String text, int index) {
-    bool isSelected = _selectedIndex == index;
-    return Expanded(
-      child: GestureDetector(
-        onTap: () {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-        child: Container(
-          padding: EdgeInsets.symmetric(vertical: 12),
-          margin: EdgeInsets.only(right: index < 2 ? 8 : 0),
-          decoration: BoxDecoration(
-            color: isSelected ? Color(0xFF00D4A3) : Colors.grey[300],
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Text(
-            text,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: isSelected ? Colors.white : Colors.grey[600],
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTransactionItem(
-    String title,
-    String time,
-    String category,
-    String amount,
-    Color iconColor,
-    IconData icon,
-    bool isExpense,
-  ) {
-    return Container(
-      padding: EdgeInsets.all(16),
-      margin: EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 5,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: iconColor.withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              icon,
-              color: iconColor,
-              size: 24,
-            ),
-          ),
-          SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                Text(
-                  time,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
                   ),
                 ),
               ],
             ),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+      floatingActionButton: _buildQuickAddButton(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    );
+  }
+
+  Widget _buildSummaryCards() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 24),
+      child: Column(
+        children: [
+          // Nettó egyenleg kártya
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 10,
+                  offset: Offset(0, 5),
                 ),
-                child: Text(
-                  category,
+              ],
+            ),
+            child: Column(
+              children: [
+                Text(
+                  'Nettó egyenleg',
                   style: TextStyle(
-                    fontSize: 12,
                     color: Colors.grey[600],
+                    fontSize: 14,
                   ),
                 ),
+                SizedBox(height: 8),
+                Text(
+                  '${_formatCurrency(_netBalance)}',
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: _netBalance >= 0 ? Colors.green : Colors.red,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          
+          SizedBox(height: 16),
+          
+          // Bevétel és kiadás kártyák
+          Row(
+            children: [
+              Expanded(
+                child: _buildBalanceCard(
+                  'Bevételek',
+                  _totalIncome,
+                  Color(0xFF00D4A3),
+                  Icons.trending_up,
+                ),
               ),
-              SizedBox(height: 4),
-              Text(
-                amount,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: isExpense ? Colors.red : Colors.green,
+              SizedBox(width: 16),
+              Expanded(
+                child: _buildBalanceCard(
+                  'Kiadások',
+                  _totalExpenses,
+                  Colors.redAccent,
+                  Icons.trending_down,
                 ),
               ),
             ],
@@ -425,5 +532,536 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ],
       ),
     );
+  }
+
+  Widget _buildBalanceCard(String title, double amount, Color color, IconData icon) {
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(icon, color: color, size: 20),
+              ),
+              Spacer(),
+            ],
+          ),
+          SizedBox(height: 12),
+          Text(
+            title,
+            style: TextStyle(
+              color: Colors.grey[600],
+              fontSize: 12,
+            ),
+          ),
+          SizedBox(height: 4),
+          Text(
+            _formatCurrency(amount),
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLimitWarnings() {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Figyelmeztetések',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+          SizedBox(height: 12),
+          ..._warningLimits.map((limit) => _buildLimitWarningCard(limit)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLimitWarningCard(Limit limit) {
+    // Százalék számítás javítása
+    double percentage = (limit.usagePercentage ?? 0);
+    
+    // Ha az érték nagyobb mint 1, akkor már százalékban van
+    if (percentage > 1) {
+      percentage = percentage / 100;
+    }
+    
+    return Container(
+      margin: EdgeInsets.only(bottom: 12),
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.orange.shade50,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.orange.shade200),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.warning,
+            color: Colors.orange,
+            size: 24,
+          ),
+          SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  limit.name,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                Text(
+                  '${_formatCurrency(limit.currentSpending ?? 0)} / ${_formatCurrency(limit.amount)}',
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Text(
+            '${(percentage * 100).toStringAsFixed(0)}%', // Javítás itt
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.orange,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRecommendedChallenges() {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Ajánlott kihívások',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                     context,
+                     MaterialPageRoute(
+                       builder: (context) => ChallengesMainScreen(
+                        userId: widget.userId!, 
+                        username: widget.username,
+                        ),
+                     ),
+                   );
+                },
+                child: Text(
+                  'Összes',
+                  style: TextStyle(color: Color(0xFF00D4A3)),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 12),
+          SizedBox(
+            height: 175,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: _recommendedChallenges.length,
+              itemBuilder: (context, index) {
+                final challenge = _recommendedChallenges[index];
+                return _buildChallengeCard(challenge);
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildChallengeCard(Challenge challenge) {
+    return Container(
+      width: 280,
+      margin: EdgeInsets.only(right: 16),
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Color(0xFF00D4A3).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  challenge.difficulty.displayName,
+                  style: TextStyle(
+                    color: Color(0xFF00D4A3),
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Spacer(),
+              Text(
+                '${challenge.durationDays} nap',
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 12),
+          Text(
+            challenge.title,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          SizedBox(height: 8),
+          Text(
+            challenge.shortDescription ?? challenge.description,
+            style: TextStyle(
+              color: Colors.grey[600],
+              fontSize: 12,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          Spacer(),
+          Row(
+            children: [
+              Icon(
+                Icons.people,
+                size: 16,
+                color: Colors.grey[600],
+              ),
+              SizedBox(width: 4),
+              Text(
+                '${challenge.participantCount} résztvevő',
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontSize: 12,
+                ),
+              ),
+              Spacer(),
+              Icon(
+                Icons.emoji_events,
+                size: 16,
+                color: Colors.amber,
+              ),
+              SizedBox(width: 4),
+              Text(
+                '${challenge.rewards.points} pont',
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRecentTransactions() {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Legutóbbi tranzakciók',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TransactionsScreen(
+                        userId: widget.userId!,
+                        username: widget.username,
+                      ),
+                    ),
+                  );
+                },
+                child: Text(
+                  'Összes',
+                  style: TextStyle(color: Color(0xFF00D4A3)),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 12),
+          ..._recentTransactions.take(5).map((transaction) => _buildTransactionItem(transaction)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTransactionItem(Map<String, dynamic> transaction) {
+    final isExpense = transaction['isExpense'] as bool;
+    final amount = transaction['amount'] as double;
+    final date = transaction['date'] as DateTime;
+    
+    return Container(
+      margin: EdgeInsets.only(bottom: 12),
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: InkWell(
+        onTap: () {
+          // Navigate to transaction details
+        },
+        child: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: (isExpense ? Colors.red : Colors.green).withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                transaction['icon'] as IconData,
+                color: isExpense ? Colors.red : Colors.green,
+                size: 24,
+              ),
+            ),
+            SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    transaction['title'] as String,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                  Text(
+                    '${_formatDate(date)} • ${transaction['category']}',
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Text(
+              _formatCurrency(amount),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: isExpense ? Colors.red : Colors.green,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildQuickAddButton() {
+    return Container(
+      margin: EdgeInsets.only(bottom: 40),
+      child: FloatingActionButton.extended(
+        onPressed: _showQuickAddDialog,
+        backgroundColor: Color(0xFF00D4A3),
+        icon: Icon(Icons.add, color: Colors.white),
+        label: Text(
+          'Gyors hozzáadás',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
+  }
+
+  void _showQuickAddDialog() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return Container(
+          padding: EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Gyors hozzáadás',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        if (widget.userId != null) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AddIncomesScreen(userId: widget.userId!),
+                            ),
+                          );
+                        }
+                      },
+                      icon: Icon(Icons.add, color: Colors.white),
+                      label: Text('Bevétel', style: TextStyle(color: Colors.white)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFF00D4A3),
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        if (widget.userId != null) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AddExpensesScreen(userId: widget.userId!),
+                            ),
+                          );
+                        }
+                      },
+                      icon: Icon(Icons.remove, color: Colors.white),
+                      label: Text('Kiadás', style: TextStyle(color: Colors.white)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.redAccent,
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  String _formatCurrency(double amount) {
+    final absAmount = amount.abs();
+    final sign = amount < 0 ? '-' : '';
+    
+    if (absAmount >= 1000000) {
+      return '${sign}${(absAmount / 1000000).toStringAsFixed(1)}M Ft';
+    } else if (absAmount >= 1000) {
+      return '${sign}${(absAmount / 1000).toStringAsFixed(0)}k Ft';
+    } else {
+      return '${sign}${absAmount.toStringAsFixed(0)} Ft';
+    }
+  }
+
+  String _formatDate(DateTime date) {
+    final now = DateTime.now();
+    final difference = now.difference(date).inDays;
+    
+    if (difference == 0) {
+      return 'Ma';
+    } else if (difference == 1) {
+      return 'Tegnap';
+    } else if (difference < 7) {
+      return '${difference} napja';
+    } else {
+      return '${date.month}/${date.day}';
+    }
   }
 }

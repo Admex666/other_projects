@@ -354,7 +354,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
           
           _buildComponentItem(
             '📚 Tanulás',
-            components.learningPoints,
+            components.learningContribution,
             30,
             Colors.blue,
             'Pénzügyi ismeretek és képzések',
@@ -363,7 +363,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
           
           _buildComponentItem(
             '💪 Szokások',
-            components.habitScore,
+            components.habitContribution,
             30,
             Colors.green,
             'Napi pénzügyi szokások követése',
@@ -372,7 +372,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
           
           _buildComponentItem(
             '🏆 Kitűzők',
-            components.badgeScore,
+            components.badgeContribution,
             20,
             Colors.orange,
             'Elért eredmények és mérföldkövek',
@@ -381,7 +381,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
           
           _buildComponentItem(
             '📊 Limitek',
-            components.limitScore,
+            components.limitContribution,
             20,
             Colors.purple,
             'Költségvetési korlátok betartása',

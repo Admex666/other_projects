@@ -4,6 +4,7 @@ from typing import Optional, List
 from beanie import PydanticObjectId
 from bson import ObjectId
 import logging
+from datetime import datetime
 
 from app.models.transaction import Transaction
 from app.models.transaction_schemas import (
@@ -182,93 +183,122 @@ async def list_transactions(
     current_user: User = Depends(get_current_user),
     limit: int = Query(50, ge=1, le=500),
     skip: int = Query(0, ge=0),
-    from_date: Optional[str] = Query(None, description="YYYY-MM-DD"),
-    to_date: Optional[str] = Query(None, description="YYYY-MM-DD (inclusive)"),
+    start_date: Optional[str] = Query(None, description="YYYY-MM-DD"),
+    end_date: Optional[str] = Query(None, description="YYYY-MM-DD (inclusive)"),
     category: Optional[str] = Query(None, alias="kategoria"),
-    income_only: Optional[bool] = Query(None, description="Return only bevetel (osszeg>0)"),
-    expense_only: Optional[bool] = Query(None, description="Return only kiadas (osszeg<0)"),
+    type: Optional[str] = Query(None, description="income vagy expense"),
 ):
     try:
-        # alapfilter: csak a bevetel vagy csak a kiadas
+        # Alapfilter: user_id
         query_filter = {"user_id": ObjectId(current_user.id)}
 
-        if income_only:
-            query_filter["osszeg"] = {"$gt": 0}
-        if expense_only:
-            query_filter["osszeg"] = {"$lt": 0}
+        # Típus szerinti szűrés
+        if type == "income":
+            query_filter["amount"] = {"$gt": 0}
+        elif type == "expense":
+            query_filter["amount"] = {"$lt": 0}
 
         # Dátum szerinti szűrés
-        if from_date and to_date:
-            query_filter["datum"] = {"$gte": from_date, "$lte": to_date}
-        elif from_date:
-            query_filter["datum"] = {"$gte": from_date}
-        elif to_date:
-            query_filter["datum"] = {"$lte": to_date}
+        if start_date and end_date:
+            query_filter["date"] = {"$gte": start_date, "$lte": end_date}
+        elif start_date:
+            query_filter["date"] = {"$gte": start_date}
+        elif end_date:
+            query_filter["date"] = {"$lte": end_date}
 
         # Kategória szűrés
         if category:
             query_filter["kategoria"] = category
 
-        total_count = await Transaction.find(query_filter).count()
-        transactions = await Transaction.find(query_filter)\
-            .sort(-Transaction.datum)\
-            .skip(skip)\
-            .limit(limit)\
-            .to_list()
+        # MÓDOSÍTÁS: Közvetlenül a MongoDB collection-t használjuk a Pydantic validáció elkerülése érdekében
+        collection = Transaction.get_motor_collection()
+        
+        total_count = await collection.count_documents(query_filter)
+        
+        # Raw dokumentumok lekérése
+        cursor = collection.find(query_filter).sort("date", -1).skip(skip).limit(limit)
+        raw_docs = await cursor.to_list(length=limit)
 
         # Konvertálás TransactionRead modellekké
-        read_transactions = [
-            TransactionRead(
-                id=str(doc.id),
-                date=doc.date,
-                amount=doc.amount,
-                user_id=str(doc.user_id),
-                kategoria=doc.kategoria,
-                type=doc.type,
-                currency=doc.currency, # Itt is beállítjuk a currencyt
-                honap=doc.honap,
-                het=doc.het,
-                nap_sorszam=doc.nap_sorszam,
-                description=doc.description,
-                profil=doc.profil,
-                forras=doc.forras,
-                platform=doc.platform,
-                helyszin=doc.helyszin,
-                cimke=doc.cimke,
-                ismetlodo=doc.ismetlodo,
-                fix_koltseg=doc.fix_koltseg,
-                main_account=doc.main_account,
-                sub_account_name=doc.sub_account_name,
-                cel_foszamla=doc.cel_foszamla,
-                cel_alszamla=doc.cel_alszamla,
-                transfer_amount=doc.transfer_amount,
-                celhoz_kotott=doc.celhoz_kotott, # Ez a mező hiányzott
-                # likvid=doc.likvid, # Ezek a mezők már nem részei a TransactionRead-nek a sémában
-                # befektetes=doc.befektetes,
-                # megtakaritas=doc.megtakaritas,
-                # assets=doc.assets,
-            ) for doc in transactions
-        ]
+        read_transactions = []
+        for doc in raw_docs:
+            try:
+                # Dátum konvertálása string-re ha szükséges
+                date_str = doc.get("date", "")
+                if isinstance(date_str, datetime):
+                    date_str = date_str.strftime('%Y-%m-%d')
+                elif hasattr(date_str, 'strftime'):  # date objektum
+                    date_str = date_str.strftime('%Y-%m-%d')
+                
+                read_transactions.append(TransactionRead(
+                    id=str(doc["_id"]),
+                    date=date_str,
+                    amount=doc.get("amount", 0),
+                    user_id=str(doc.get("user_id", "")),
+                    kategoria=doc.get("kategoria"),
+                    type=doc.get("type", ""),
+                    currency=doc.get("currency", "HUF"),
+                    honap=doc.get("honap"),
+                    het=doc.get("het"),
+                    nap_sorszam=doc.get("nap_sorszam"),
+                    hour=doc.get("hour"),
+                    year=doc.get("year"),
+                    month=doc.get("month"),
+                    day=doc.get("day"),
+                    weekday=doc.get("weekday"),
+                    description=doc.get("description"),
+                    profil=doc.get("profil"),
+                    platform=doc.get("platform"),
+                    helyszin=doc.get("helyszin"),
+                    ismetlodo=doc.get("ismetlodo", False),
+                    fix_koltseg=doc.get("fix_koltseg", False),
+                    main_account=doc.get("main_account", ""),
+                    sub_account_name=doc.get("sub_account_name", ""),
+                    celhoz_kotott=doc.get("celhoz_kotott", False),
+                    # Computed fields
+                    is_income=doc.get("amount", 0) > 0,
+                    is_expense=doc.get("amount", 0) < 0,
+                    absolute_amount=abs(doc.get("amount", 0)),
+                ))
+            except Exception as e:
+                logger.error(f"Error processing transaction {doc.get('_id')}: {e}")
+                continue
 
         return TransactionListResponse(
             transactions=read_transactions,
-            total_count=total_count, # total helyett total_count
+            total_count=total_count,
             skip=skip,
             limit=limit
         )
     except Exception as e:
         logger.error(f"Error listing transactions: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to list transactions: {e}")
+
 # ----------- GET /summary ----------
 @router.get("/summary", response_model=dict)
-async def get_summary(current_user: User = Depends(get_current_user)):
+async def get_summary(
+    current_user: User = Depends(get_current_user),
+    start_date: Optional[str] = Query(None, description="YYYY-MM-DD"),
+    end_date: Optional[str] = Query(None, description="YYYY-MM-DD"),
+):
     try:
-        # Összes tranzakció lekérdezése a felhasználóhoz
-        transactions = await Transaction.find({"user_id": ObjectId(current_user.id)}).to_list()
+        # Query filter felépítése
+        query_filter = {"user_id": ObjectId(current_user.id)}
+        
+        # Dátum szerinti szűrés
+        if start_date and end_date:
+            query_filter["date"] = {"$gte": start_date, "$lte": end_date}
+        elif start_date:
+            query_filter["date"] = {"$gte": start_date}
+        elif end_date:
+            query_filter["date"] = {"$lte": end_date}
+
+        # Tranzakciók lekérdezése
+        transactions = await Transaction.find(query_filter).to_list()
 
         total_income = sum(t.amount for t in transactions if t.amount > 0)
-        total_expense = sum(t.amount for t in transactions if t.amount < 0)
-        net_balance = total_income + total_expense
+        total_expenses = abs(sum(t.amount for t in transactions if t.amount < 0))  # Pozitív érték
+        net_balance = total_income - total_expenses
 
         # Kategóriák szerinti összesítés
         category_summary = {}
@@ -279,17 +309,20 @@ async def get_summary(current_user: User = Depends(get_current_user)):
                 if t.amount > 0:
                     category_summary[t.kategoria]["income"] += t.amount
                 else:
-                    category_summary[t.kategoria]["expense"] += t.amount
+                    category_summary[t.kategoria]["expense"] += abs(t.amount)
 
         return {
             "total_income": total_income,
-            "total_expense": total_expense,
+            "total_expenses": total_expenses,  # total_expense helyett total_expenses
             "net_balance": net_balance,
-            "category_summary": category_summary
+            "transaction_count": len(transactions),
+            "category_summary": category_summary,
+            "period_start": start_date,
+            "period_end": end_date,
         }
     except Exception as e:
         logger.error(f"Error generating summary: {e}")
-        raise HTTPException(status_code=500, detail="Failed to generate summary")
+        raise HTTPException(status_code=500, detail=f"Failed to generate summary: {e}")
 
 # ----------- GET /{id} -----------
 @router.get("/{tx_id}", response_model=TransactionRead)
@@ -300,43 +333,53 @@ async def get_transaction(tx_id: str, current_user: User = Depends(get_current_u
         raise HTTPException(status_code=400, detail="Invalid transaction id")
 
     try:
-        doc = await Transaction.get(oid)
+        # Raw dokumentum lekérése
+        collection = Transaction.get_motor_collection()
+        doc = await collection.find_one({"_id": ObjectId(tx_id)})
+        
         if not doc:
             raise HTTPException(status_code=404, detail="Transaction not found")
 
         # Security: csak a sajat user tranzakciója
-        if str(doc.user_id) != current_user.id:  # Módosítás itt: str(doc.user_id)
+        if str(doc["user_id"]) != current_user.id:
             raise HTTPException(status_code=403, detail="Not authorized to view this transaction")
 
+        # Dátum konvertálása
+        date_str = doc.get("date", "")
+        if isinstance(date_str, datetime):
+            date_str = date_str.strftime('%Y-%m-%d')
+        elif hasattr(date_str, 'strftime'):
+            date_str = date_str.strftime('%Y-%m-%d')
+
         return TransactionRead(
-            id=str(doc.id),
-            date=doc.date,
-            amount=doc.amount,
-            user_id=str(doc.user_id),
-            kategoria=doc.kategoria,
-            type=doc.type,
-            currency=doc.currency, # Itt is visszaadjuk a currencyt
-            honap=doc.honap,
-            het=doc.het,
-            nap_sorszam=doc.nap_sorszam,
-            description=doc.description,
-            profil=doc.profil,
-            forras=doc.forras,
-            platform=doc.platform,
-            helyszin=doc.helyszin,
-            cimke=doc.cimke,
-            ismetlodo=doc.ismetlodo,
-            fix_koltseg=doc.fix_koltseg,
-            main_account=doc.main_account,
-            sub_account_name=doc.sub_account_name,
-            cel_foszamla=doc.cel_foszamla,
-            cel_alszamla=doc.cel_alszamla,
-            transfer_amount=doc.transfer_amount,
-            celhoz_kotott=doc.celhoz_kotott, # Ez a mező hiányzott
-            # likvid=doc.likvid, # Ezek a mezők már nem részei a TransactionRead-nek a sémában
-            # befektetes=doc.befektetes,
-            # megtakaritas=doc.megtakaritas,
-            # assets=doc.assets,
+            id=str(doc["_id"]),
+            date=date_str,
+            amount=doc.get("amount", 0),
+            user_id=str(doc.get("user_id", "")),
+            kategoria=doc.get("kategoria"),
+            type=doc.get("type", ""),
+            currency=doc.get("currency", "HUF"),
+            honap=doc.get("honap"),
+            het=doc.get("het"),
+            nap_sorszam=doc.get("nap_sorszam"),
+            hour=doc.get("hour"),
+            year=doc.get("year"),
+            month=doc.get("month"),
+            day=doc.get("day"),
+            weekday=doc.get("weekday"),
+            description=doc.get("description"),
+            profil=doc.get("profil"),
+            platform=doc.get("platform"),
+            helyszin=doc.get("helyszin"),
+            ismetlodo=doc.get("ismetlodo", False),
+            fix_koltseg=doc.get("fix_koltseg", False),
+            main_account=doc.get("main_account", ""),
+            sub_account_name=doc.get("sub_account_name", ""),
+            celhoz_kotott=doc.get("celhoz_kotott", False),
+            # Computed fields
+            is_income=doc.get("amount", 0) > 0,
+            is_expense=doc.get("amount", 0) < 0,
+            absolute_amount=abs(doc.get("amount", 0)),
         )
     except Exception as e:
         logger.error(f"Error getting transaction {tx_id}: {e}")
@@ -433,3 +476,13 @@ async def delete_transaction(tx_id: str, current_user: User = Depends(get_curren
 
     await doc.delete()
     return {"message": "Transaction deleted successfully"}
+
+# ----------- STATS -----------
+@router.get("/stats", response_model=dict)
+async def get_stats(
+    current_user: User = Depends(get_current_user),
+    start_date: Optional[str] = Query(None, description="YYYY-MM-DD"),
+    end_date: Optional[str] = Query(None, description="YYYY-MM-DD"),
+):
+    """Stats endpoint - ugyanaz mint a summary, de más néven"""
+    return await get_summary(current_user, start_date, end_date)

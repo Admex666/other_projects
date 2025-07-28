@@ -212,7 +212,7 @@ class _PTIComparisonScreenState extends State<PTIComparisonScreen>
 
   Widget _buildChangeSummaryCard() {
     final current = _comparisonData!.currentPeriod;
-    final previous = _comparisonData!.previousPeriod;
+    //final previous = _comparisonData!.previousPeriod;
     final ptiChange = _comparisonData!.ptiChange;
     final rankChange = _comparisonData!.rankChange;
 

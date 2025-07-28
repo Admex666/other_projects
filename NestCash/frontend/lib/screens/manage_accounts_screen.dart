@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:frontend/services/auth_service.dart';
+import 'package:frontend/services/sunburst_chart.dart';
 
 class ManageAccountsScreen extends StatefulWidget {
   final String userId;
@@ -461,85 +462,109 @@ class _ManageAccountsScreenState extends State<ManageAccountsScreen> {
                           )
                         else if (_accountsData != null)
                           Expanded(
-                            child: ListView(
-                              children: (_accountsData!.entries).map((entry) {
-                                return Container(
-                                  margin: EdgeInsets.only(bottom: 16),
-                                  decoration: BoxDecoration(
-                                    color: Color(0xFFE8F5E8),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          entry.key.toUpperCase(), // likvid, befektetes, stb.
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black87,
-                                          ),
+                            child: SingleChildScrollView(
+                              child: Column(
+                                children: [
+                                  // Sunburst diagram hozzáadása
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 24),
+                                    padding: EdgeInsets.all(16),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(12),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey.withOpacity(0.1),
+                                          spreadRadius: 1,
+                                          blurRadius: 4,
+                                          offset: Offset(0, 2),
                                         ),
-                                        SizedBox(height: 8),
-                                        ...(entry.value['alszamlak'] as Map<String, dynamic>).entries.map((subEntry) {
-                                          final subAccountBalance = subEntry.value['balance'];
-                                          final subAccountCurrency = subEntry.value['currency'];
-                                          return Padding(
-                                            padding: const EdgeInsets.only(left: 16.0, top: 4),
-                                            child: Row(
+                                      ],
+                                    ),
+                                    child: AccountsSunburstChart(accountsData: _accountsData),
+                                  ),
+                                  
+                                  // Eredeti lista megjelenítés
+                                  ...(_accountsData!.entries).map((entry) {
+                                    return Container(
+                                      margin: EdgeInsets.only(bottom: 16),
+                                      decoration: BoxDecoration(
+                                        color: Color(0xFFE8F5E8),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              entry.key.toUpperCase(),
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black87,
+                                              ),
+                                            ),
+                                            SizedBox(height: 8),
+                                            ...(entry.value['alszamlak'] as Map<String, dynamic>).entries.map((subEntry) {
+                                              final subAccountBalance = subEntry.value['balance'];
+                                              final subAccountCurrency = subEntry.value['currency'];
+                                              return Padding(
+                                                padding: const EdgeInsets.only(left: 16.0, top: 4),
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      subEntry.key,
+                                                      style: TextStyle(
+                                                        fontSize: 16,
+                                                        color: Colors.black87,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      '${subAccountBalance.toStringAsFixed(2)} ${subAccountCurrency}',
+                                                      style: TextStyle(
+                                                        fontSize: 16,
+                                                        color: Colors.black87,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            }).toList(),
+                                            Container(
+                                              margin: EdgeInsets.symmetric(vertical: 8),
+                                              height: 1,
+                                              color: Colors.grey[400],
+                                            ),
+                                            Row(
                                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                               children: [
                                                 Text(
-                                                  subEntry.key,
+                                                  'Főösszeg',
                                                   style: TextStyle(
                                                     fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
                                                     color: Colors.black87,
                                                   ),
                                                 ),
                                                 Text(
-                                                  '${subAccountBalance.toStringAsFixed(2)} ${subAccountCurrency}',
+                                                  '${entry.value['foosszeg'].toStringAsFixed(2)} Ft',
                                                   style: TextStyle(
                                                     fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
                                                     color: Colors.black87,
                                                   ),
                                                 ),
                                               ],
-                                            ),
-                                          );
-                                        }).toList(),
-                                        Container(
-                                          margin: EdgeInsets.symmetric(vertical: 8),
-                                          height: 1,
-                                          color: Colors.grey[400],
-                                        ),
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              'Főösszeg',
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black87,
-                                              ),
-                                            ),
-                                            Text(
-                                              '${entry.value['foosszeg'].toStringAsFixed(2)} Ft',
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black87,
-                                              ),
-                                            ),
+                                            )
                                           ],
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+                                ],
+                              ),
                             ),
                           ),
                       ],

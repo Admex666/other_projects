@@ -197,6 +197,8 @@ class PTIService:
                 elif habit.streak_count >= 3:
                     habit_score *= 1.1  # 10% bónusz 3+ napos streak
                 
+                habit_score = min(habit_score, 25.0)
+
                 # Célteljesítés bónusz (ha van cél beállítva)
                 if habit.has_goal and habit.target_value:
                     # Itt lehetne egy célteljesítési számítást csinálni
@@ -205,6 +207,8 @@ class PTIService:
                         habit_score += 2.0
                     elif completion_rate >= 0.8:
                         habit_score += 1.0
+
+                    habit_score = min(habit_score, 25.0)
                 
                 total_score += habit_score
             
@@ -304,7 +308,7 @@ class PTIService:
             ).to_list()
             
             if not limits:
-                return 50.0  # Alappontszám ha nincs limit beállítva
+                return 0.0  # Alappontszám ha nincs limit beállítva
             
             total_score = 0.0
             limit_scores = []
@@ -353,11 +357,11 @@ class PTIService:
                 
                 return min(avg_score, 100.0)
             
-            return 50.0  # Alappontszám
+            return 0.0  # Alappontszám
             
         except Exception as e:
             logger.error(f"Error calculating limit score for user {user_id}: {e}")
-            return 50.0  # Alappontszám hiba esetén
+            return 0.0  # Alappontszám hiba esetén
     
     @staticmethod
     async def calculate_pti_score(
