@@ -13,6 +13,7 @@ from app.models.limit_schemas import (
 from app.models.transaction import Transaction
 from app.core.security import get_current_user
 from app.models.user import User
+from app.models.notification import NotificationPriority
 
 router = APIRouter(prefix="/limits", tags=["limits"])
 logger = logging.getLogger(__name__)
@@ -237,6 +238,31 @@ async def check_limits(
             message = f"A következő limitek túllépnének: {', '.join(exceeded_limits)}"
         elif warnings:
             message = f"Figyelem: {', '.join(warnings)}"
+
+        # Értesítések küldése a figyelmeztetésekről
+        if warnings:
+            from app.services.notification_service import NotificationService
+            for warning in warnings:
+                await NotificationService.create_system_notification(
+                    user_id=current_user.id,
+                    title="Költségkeret figyelmeztetés",
+                    message=warning,
+                    priority=NotificationPriority.HIGH,
+                    action_url="/limits",
+                    action_text="Limitek megtekintése"
+                )
+
+        # Limit túllépés értesítés
+        if exceeded_limits:
+            from app.services.notification_service import NotificationService
+            await NotificationService.create_system_notification(
+                user_id=current_user.id,
+                title="Költségkeret túllépve!",
+                message=f"A következő limitek túllépnének: {', '.join(exceeded_limits)}",
+                priority=NotificationPriority.URGENT,
+                action_url="/limits",
+                action_text="Limitek megtekintése"
+            )
         
         return LimitCheckResult(
             is_allowed=is_allowed,

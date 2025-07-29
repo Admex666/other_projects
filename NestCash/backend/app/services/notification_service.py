@@ -264,3 +264,63 @@ class NotificationService:
             count += 1
         
         return count
+    
+    @staticmethod
+    async def create_limit_warning_notification(
+        user_id: str,
+        limit_name: str,
+        usage_percentage: float,
+        current_amount: float,
+        limit_amount: float
+    ) -> NotificationDocument:
+        """Limit figyelmeztetés értesítés"""
+        
+        notification = NotificationCreate(
+            type=NotificationType.BUDGET_EXCEEDED,
+            title="Költségkeret figyelmeztetés",
+            message=f"A '{limit_name}' limit {usage_percentage:.1f}%-án jársz ({current_amount:,.0f}/{limit_amount:,.0f} HUF)",
+            priority=NotificationPriority.HIGH,
+            action_url="/limits",
+            action_text="Limitek kezelése"
+        )
+        
+        return await NotificationService.create_notification(user_id, notification)
+
+    @staticmethod
+    async def create_lesson_completion_notification(
+        user_id: str,
+        lesson_title: str,
+        score: int,
+        lesson_id: str
+    ) -> NotificationDocument:
+        """Lecke teljesítés értesítés"""
+        
+        notification = NotificationCreate(
+            type=NotificationType.KNOWLEDGE_PROGRESS,
+            title="Lecke teljesítve!",
+            message=f"Sikeresen teljesítetted: '{lesson_title}' ({score}%)",
+            priority=NotificationPriority.MEDIUM,
+            action_url=f"/knowledge/lessons/{lesson_id}",
+            action_text="Lecke megtekintése"
+        )
+        
+        return await NotificationService.create_notification(user_id, notification)
+
+    @staticmethod
+    async def create_badge_earned_notification(
+        user_id: str,
+        badge_name: str,
+        badge_description: str
+    ) -> NotificationDocument:
+        """Badge megszerzés értesítés"""
+        
+        notification = NotificationCreate(
+            type=NotificationType.SYSTEM_MESSAGE,
+            title="Új kitüntetés szerzett!",
+            message=f"Gratulálunk! Megszerezted a '{badge_name}' kitüntetést: {badge_description}",
+            priority=NotificationPriority.MEDIUM,
+            action_url="/badges",
+            action_text="Kitüntetések megtekintése"
+        )
+        
+        return await NotificationService.create_notification(user_id, notification)

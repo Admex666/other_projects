@@ -73,6 +73,10 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
         setState(() {
           categories = data.map((json) => CategoryWithLessons.fromJson(json)).toList();
         });
+        print('Categories loaded: ${categories.length}'); // Debug
+        for (var cat in categories) {
+          print('Category: ${cat.name}, completed: ${cat.completedLessons}/${cat.totalLessons}'); // Debug
+        }
       } else if (response.statusCode == 401) {
         _handleAuthError();
       } else {
@@ -97,10 +101,15 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
         headers: {'Authorization': 'Bearer $token'},
       );
 
+      print('Stats response status: ${response.statusCode}'); // Debug
+      print('Stats response body: ${response.body}'); // Debug
+
       if (response.statusCode == 200) {
+        final statsData = json.decode(response.body);
         setState(() {
-          userStats = UserStats.fromJson(json.decode(response.body));
+          userStats = UserStats.fromJson(statsData);
         });
+        print('UserStats loaded: ${userStats?.totalLessonsCompleted} lessons completed'); // Debug
       } else if (response.statusCode == 401) {
         _handleAuthError();
       } else {
@@ -887,15 +896,16 @@ class UserStats {
   });
 
   factory UserStats.fromJson(Map<String, dynamic> json) {
+    print('Parsing UserStats from JSON: $json'); // Debug
     return UserStats(
-      currentStreak: json['current_streak'],
-      longestStreak: json['longest_streak'],
-      totalLessonsCompleted: json['total_lessons_completed'],
-      totalQuizAttempts: json['total_quiz_attempts'],
-      averageQuizScore: json['average_quiz_score'].toDouble(),
-      totalStudyMinutes: json['total_study_minutes'],
-      dailyChallengeCompletedToday: json['daily_challenge_completed_today'],
-      dailyChallengeStreak: json['daily_challenge_streak'],
+      currentStreak: json['current_streak'] ?? 0,
+      longestStreak: json['longest_streak'] ?? 0,
+      totalLessonsCompleted: json['total_lessons_completed'] ?? 0,
+      totalQuizAttempts: json['total_quiz_attempts'] ?? 0,
+      averageQuizScore: (json['average_quiz_score'] ?? 0.0).toDouble(),
+      totalStudyMinutes: json['total_study_minutes'] ?? 0,
+      dailyChallengeCompletedToday: json['daily_challenge_completed_today'] ?? false,
+      dailyChallengeStreak: json['daily_challenge_streak'] ?? 0,
     );
-    }
+  }
 }

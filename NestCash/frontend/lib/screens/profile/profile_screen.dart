@@ -3,6 +3,7 @@ import 'package:frontend/screens/profile/edit_profile_screen.dart';
 import 'package:frontend/screens/auth/login_screen.dart';  
 import 'package:frontend/services/auth_service.dart';
 import 'package:frontend/widgets/badge_summary_widget.dart';
+import 'package:frontend/screens/auth/auth_wrapper.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String username;
@@ -24,19 +25,75 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _fetchUserProfile();
   }
 
+    @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Minden alkalommal újra ellenőrizzük a profilt amikor erre a screen-re navigálunk
+    if (mounted) {
+      _fetchUserProfile();
+    }
+  }
+
+  void _handleAuthError() {
+    // Token érvénytelen vagy hiányzik - kijelentkeztetés és visszairányítás
+    _authService.logout();
+    
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('A munkamenet lejárt. Kérjük, jelentkezzen be újra.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      
+      // Navigáció az AuthWrapper-re (ami kezeli a bejelentkezést)
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => AuthWrapper()),
+        (Route<dynamic> route) => false,
+      );
+    }
+  }
+
+  bool _isAuthError(dynamic error) {
+    final errorStr = error.toString().toLowerCase();
+    return errorStr.contains('401') || 
+          errorStr.contains('unauthorized') || 
+          errorStr.contains('not authenticated') ||
+          errorStr.contains('token') && (errorStr.contains('invalid') || errorStr.contains('expired'));
+  }
+
   Future<void> _fetchUserProfile() async {
+    setState(() => _isLoading = true);
+    
     try {
       final profile = await _authService.getUserProfile();
-      setState(() {
-        _userProfile = profile;
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _userProfile = profile;
+          _isLoading = false;
+        });
+      }
     } catch (e) {
       debugPrint('Error fetching user profile: $e');
-      setState(() {
-        _isLoading = false;
-      });
-      // Kezelj hibaeseteket, pl. SnackBar üzenet
+      
+      if (_isAuthError(e)) {
+        _handleAuthError();
+        return;
+      }
+      
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Profil betöltése sikertelen: ${e.toString()}'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
     }
   }
 

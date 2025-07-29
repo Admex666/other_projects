@@ -93,6 +93,85 @@ class _NotificationsScreenState extends State<NotificationsScreen>
     );
   }
 
+  void _showNotificationDetail(NotificationItem notification) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => Container(
+        height: MediaQuery.of(context).size.height * 0.7,
+        padding: const EdgeInsets.all(20),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: NotificationUtils.getPriorityColor(notification.priority).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  child: Icon(
+                    NotificationUtils.getTypeIcon(notification.type),
+                    color: NotificationUtils.getPriorityColor(notification.priority),
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        notification.title,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        NotificationUtils.formatRelativeTime(notification.createdAt),
+                        style: TextStyle(
+                          color: Colors.grey[500],
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: const Icon(Icons.close),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Text(
+                  notification.message,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    height: 1.5,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildNotificationItem(NotificationItem notification) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -213,7 +292,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
             if (!notification.isRead) {
               _markAsRead(notification.id);
             }
-            NotificationUtils.handleNotificationTap(context, notification, widget.userId);
+            _showNotificationDetail(notification);
           },
         ),
       ),

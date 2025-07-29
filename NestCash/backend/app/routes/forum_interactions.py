@@ -70,13 +70,12 @@ async def toggle_like(
             
             # Értesítés küldése (ha nem saját poszt)
             if str(post.user_id) != current_user.id:
-                await forum_service.create_notification(
+                from app.services.notification_service import NotificationService
+                await NotificationService.create_forum_like_notification(
                     user_id=str(post.user_id),
-                    from_user_id=current_user.id,
-                    from_username=current_user.username,
-                    notification_type=NotificationType.LIKE,
+                    liker_username=current_user.username,
                     post_id=str(post.id),
-                    message=f"{current_user.username} liked your post: {post.title[:50]}..."
+                    post_title=post.title
                 )
             
             return {
@@ -184,13 +183,12 @@ async def create_comment(
         
         # Értesítés küldése (ha nem saját poszt)
         if str(post.user_id) != current_user.id:
-            await forum_service.create_notification(
+            from app.services.notification_service import NotificationService
+            await NotificationService.create_forum_comment_notification(
                 user_id=str(post.user_id),
-                from_user_id=current_user.id,
-                from_username=current_user.username,
-                notification_type=NotificationType.COMMENT,
+                commenter_username=current_user.username,
                 post_id=str(post.id),
-                message=f"{current_user.username} commented on your post: {post.title[:50]}..."
+                post_title=post.title
             )
         
         return CommentRead(

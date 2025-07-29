@@ -4,7 +4,8 @@ import 'package:frontend/services/notification_service.dart';
 class NotificationUtils {
   
   /// Értesítés típus alapján visszaadja a megfelelő ikont
-  static IconData getTypeIcon(String type) {
+  /// Értesítés típus alapján visszaadja a megfelelő ikont
+static IconData getTypeIcon(String type) {
     switch (type) {
       case 'transaction_added':
         return Icons.account_balance_wallet;
@@ -24,28 +25,23 @@ class NotificationUtils {
         return Icons.info;
       case 'knowledge_progress':
         return Icons.school;
+      case 'badge_earned':
+        return Icons.emoji_events;
+      case 'challenge_started':
+        return Icons.flag;
+      case 'challenge_completed':
+        return Icons.check_circle;
+      case 'limit_warning':
+        return Icons.warning_amber;
+      case 'pti_ranking':
+        return Icons.leaderboard;
+      case 'daily_lesson_reminder':
+        return Icons.alarm;
       default:
         return Icons.notifications;
     }
   }
 
-  /// Prioritás alapján visszaadja a megfelelő színt
-  static Color getPriorityColor(String priority) {
-    switch (priority.toLowerCase()) {
-      case 'urgent':
-        return Colors.red;
-      case 'high':
-        return Colors.orange;
-      case 'medium':
-        return Colors.blue;
-      case 'low':
-        return Colors.green;
-      default:
-        return Colors.grey;
-    }
-  }
-
-  /// Értesítés típus alapján visszaadja a magyar nyelvű nevet
   static String getTypeDisplayName(String type) {
     switch (type) {
       case 'transaction_added':
@@ -66,8 +62,57 @@ class NotificationUtils {
         return 'Rendszerüzenet';
       case 'knowledge_progress':
         return 'Tanulási haladás';
+      case 'badge_earned':
+        return 'Kitüntetés megszerzése';
+      case 'challenge_started':
+        return 'Kihívás indult';
+      case 'challenge_completed':
+        return 'Kihívás teljesítve';
+      case 'limit_warning':
+        return 'Limit figyelmeztetés';
+      case 'pti_ranking':
+        return 'PTI ranglista';
+      case 'daily_lesson_reminder':
+        return 'Napi lecke emlékeztető';
       default:
         return 'Értesítés';
+    }
+  }
+
+  // Új típusok listájához hozzáadás:
+  static List<String> getNotificationTypes() {
+    return [
+      'transaction_added',
+      'account_balance_low',
+      'monthly_summary',
+      'budget_exceeded',
+      'forum_like',
+      'forum_comment',
+      'forum_follow',
+      'system_message',
+      'knowledge_progress',
+      'badge_earned',
+      'challenge_started',
+      'challenge_completed',
+      'limit_warning',
+      'pti_ranking',
+      'daily_lesson_reminder',
+    ];
+  }
+
+  /// Prioritás alapján visszaadja a megfelelő színt
+  static Color getPriorityColor(String priority) {
+    switch (priority.toLowerCase()) {
+      case 'urgent':
+        return Colors.red;
+      case 'high':
+        return Colors.orange;
+      case 'medium':
+        return Colors.blue;
+      case 'low':
+        return Colors.green;
+      default:
+        return Colors.grey;
     }
   }
 
@@ -108,6 +153,18 @@ class NotificationUtils {
         return Colors.grey.withOpacity(0.1);
       case 'knowledge_progress':
         return Colors.teal.withOpacity(0.1);
+      case 'badge_earned':
+        return Colors.amber.withOpacity(0.1);
+      case 'challenge_started':
+        return Colors.cyan.withOpacity(0.1);
+      case 'challenge_completed':
+        return Colors.green.withOpacity(0.1);
+      case 'limit_warning':
+        return Colors.orange.withOpacity(0.1);
+      case 'pti_ranking':
+        return Colors.deepPurple.withOpacity(0.1);
+      case 'daily_lesson_reminder':
+        return Colors.lightBlue.withOpacity(0.1);
       default:
         return Colors.grey.withOpacity(0.1);
     }
@@ -188,21 +245,6 @@ class NotificationUtils {
     );
   }
 
-  /// Értesítési filterek lista
-  static List<String> getNotificationTypes() {
-    return [
-      'transaction_added',
-      'account_balance_low',
-      'monthly_summary',
-      'budget_exceeded',
-      'forum_like',
-      'forum_comment',
-      'forum_follow',
-      'system_message',
-      'knowledge_progress',
-    ];
-  }
-
   /// Prioritási szintek lista
   static List<String> getPriorityLevels() {
     return [
@@ -226,7 +268,7 @@ class NotificationUtils {
 ${notification.actionText != null ? '- Művelet: ${notification.actionText}' : ''}
     ''';
   }
-
+  
   /// Batch operations helper
   static Future<void> performBatchOperation(
     List<NotificationItem> notifications,
@@ -256,4 +298,6 @@ ${notification.actionText != null ? '- Művelet: ${notification.actionText}' : '
       onError('$successCount sikeres, $errorCount sikertelen művelet');
     }
   }
+
+  
 }

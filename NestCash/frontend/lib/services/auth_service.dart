@@ -93,8 +93,11 @@ class AuthService {
 
     if (resp.statusCode == 200) {
       return jsonDecode(resp.body) as Map<String, dynamic>;
+    } else if (resp.statusCode == 401) {
+      throw Exception('401: Unauthorized'); // Explicit 401 kivétel
     }
-    return null;
+    
+    throw Exception('HTTP ${resp.statusCode}: ${resp.body}'); // Egyéb hibák
   }
 
   Future<bool> updateProfile({

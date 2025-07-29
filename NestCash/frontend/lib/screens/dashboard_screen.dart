@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:frontend/models/challenge.dart';
 import 'package:frontend/models/limit.dart';
 import 'package:frontend/services/challenge_service.dart';
@@ -12,6 +11,8 @@ import 'package:frontend/screens/add_incomes_screen.dart';
 import 'package:frontend/screens/challenges/challenges_main_screen.dart';
 import 'package:frontend/services/auth_service.dart';
 import 'package:frontend/screens/transactions_screen.dart';
+import 'package:frontend/screens/auth/auth_wrapper.dart';
+import 'package:intl/intl.dart';
 
 class DashboardScreen extends StatefulWidget {
   final String username;
@@ -48,6 +49,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   void _handleAuthError() {
     // Token érvénytelen vagy hiányzik - kijelentkeztetés és visszairányítás
+    print('AUTH ERROR HANDLER CALLED!');
     _authService.logout();
     
     if (mounted) {
@@ -59,8 +61,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
       );
       
       // Navigáció a bejelentkező képernyőre
-      Navigator.of(context).pushNamedAndRemoveUntil(
-        '/', // Vagy ahogy a bejelentkező route-od hívják
+      Navigator.of(context).pushAndRemoveUntil( // pushNamedAndRemoveUntil helyett pushAndRemoveUntil, mert közvetlenül az útvonalat adjuk meg
+        MaterialPageRoute(builder: (context) => const AuthWrapper()), // Itt volt a hiba
         (route) => false,
       );
     }
@@ -99,6 +101,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   bool _isAuthError(dynamic error) {
+    print('Checking for auth error: $error');
     final errorStr = error.toString().toLowerCase();
     return errorStr.contains('401') || 
           errorStr.contains('unauthorized') || 
@@ -112,9 +115,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
       return true;
     } catch (e) {
       print('Balance loading failed: $e');
+      print('Error type: ${e.runtimeType}'); // Add this
+      print('Error string for auth check: ${e.toString().toLowerCase()}'); // Add this
 
       if (_isAuthError(e)) {
+      print('Authentication error detected! Calling _handleAuthError().');
       _handleAuthError();
+    } else {
+      print('Not an authentication error according to _isAuthError.');
     }
     
       return false;
@@ -169,19 +177,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       // Üres lista esetén nincs hiba
       setState(() => _recommendedChallenges = []);
       return true;
-    }
-  }
-
-  // Debug segédfüggvény a backend állapot ellenőrzésére
-  Future<void> _checkBackendStatus() async {
-    try {
-      final response = await http.get(
-        Uri.parse('http://10.0.2.2:8000/'),
-        headers: {'Content-Type': 'application/json'},
-      );
-      print('Backend status: ${response.statusCode}');
-    } catch (e) {
-      print('Backend connection failed: $e');
     }
   }
 
@@ -512,7 +507,7 @@ IconData _getTransactionIcon(String category, bool isExpense) {
             children: [
               Expanded(
                 child: _buildBalanceCard(
-                  'Bevételek',
+                  'Bevételek (havi)',
                   _totalIncome,
                   Color(0xFF00D4A3),
                   Icons.trending_up,
@@ -521,7 +516,7 @@ IconData _getTransactionIcon(String category, bool isExpense) {
               SizedBox(width: 16),
               Expanded(
                 child: _buildBalanceCard(
-                  'Kiadások',
+                  'Kiadások (havi)',
                   _totalExpenses,
                   Colors.redAccent,
                   Icons.trending_down,
@@ -1036,18 +1031,19 @@ IconData _getTransactionIcon(String category, bool isExpense) {
       },
     );
   }
-
+  
   String _formatCurrency(double amount) {
     final absAmount = amount.abs();
     final sign = amount < 0 ? '-' : '';
+
+    // Használjuk az intl csomag NumberFormat osztályát a szám tagolásához
+    // A 'hu' locale használatával a magyar formátumot kapjuk, ami szóközzel tagol
+    final formatter = NumberFormat('#,##0', 'hu'); 
     
-    if (absAmount >= 1000000) {
-      return '${sign}${(absAmount / 1000000).toStringAsFixed(1)}M Ft';
-    } else if (absAmount >= 1000) {
-      return '${sign}${(absAmount / 1000).toStringAsFixed(0)}k Ft';
-    } else {
-      return '${sign}${absAmount.toStringAsFixed(0)} Ft';
-    }
+    // Formázzuk az abszolút értéket
+    final formattedAmount = formatter.format(absAmount);
+
+    return '$sign$formattedAmount Ft';
   }
 
   String _formatDate(DateTime date) {
