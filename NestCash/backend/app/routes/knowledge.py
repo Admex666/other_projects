@@ -5,6 +5,7 @@ from typing import List, Optional
 from datetime import datetime, timedelta
 from pydantic import BaseModel
 import logging
+from beanie import PydanticObjectId
 
 from app.core.security import get_current_user
 from app.models.user import User
@@ -35,86 +36,95 @@ async def get_categories_with_lessons(
     difficulty: Optional[DifficultyLevel] = Query(None, description="Szűrés nehézségi szint alapján")
 ):
     """Összes kategória lekérése a hozzájuk tartozó leckékkel és haladással"""
-    print(f"DEBUG: get_categories called for user {current_user.id} (type: {type(current_user.id)})")
+    
+    # ÚJ DEBUG SOROK:
+    print(f"DEBUG: get_categories_with_lessons called for user ID: {current_user.id} (type: {type(current_user.id)})")
+    
+    try:
+        query_user_id = PydanticObjectId(current_user.id)
+        print(f"DEBUG: Querying user_progress with converted ID: {query_user_id} (type: {type(query_user_id)})")
+    except Exception as e:
+        print(f"ERROR: Could not convert current_user.id to PydanticObjectId: {current_user.id} - {e}")
+        return [] # Vagy megfelelő hibakezelés
 
-    # Felhasználó haladásának lekérése
-    user_progress = await UserProgress.find_one({"user_id": current_user.id})
-    print(f"DEBUG: Searching for user_progress with user_id: {current_user.id}")
-    completed_lesson_ids = []
-    lesson_scores = {}
-
-    # Lista az összes UserProgress dokumentumról (csak debug céljából)
-    all_progress = await UserProgress.find({}).to_list()
-    print(f"DEBUG: Total UserProgress documents in DB: {len(all_progress)}")
-    for i, prog in enumerate(all_progress):
-        print(f"  Progress {i}: user_id={prog.user_id} (type: {type(prog.user_id)}), id={prog.id}")
-   
+    # 1. Felhasználó haladásának lekérése
+    user_progress = await UserProgress.find_one({"user_id": query_user_id})
+    
+    # ÚJ DEBUG SOROK:
     if user_progress:
-        print(f"Found user_progress document: {user_progress.id}")
-        print(f"User progress has {len(user_progress.completed_lessons)} completed_lessons entries")
-        
-        for i, comp in enumerate(user_progress.completed_lessons):
+        print(f"DEBUG: UserProgress document FOUND for user {current_user.id}.")
+        # Csak akkor írd ki a completed_lessons tartalmát, ha a user_progress létezik
+        if user_progress.completed_lessons is not None:
+            print(f"DEBUG: Raw user_progress.completed_lessons (length {len(user_progress.completed_lessons)}): {user_progress.completed_lessons}")
+        else:
+            print(f"DEBUG: user_progress.completed_lessons is None.")
+    else:
+        print(f"DEBUG: UserProgress document NOT FOUND for user {current_user.id}.")
+        # Ha nincs felhasználói haladás, térjünk vissza üres listával vagy alapértelmezett értékkel
+        print(f"DEBUG: No user_progress found or no completed lessons.") # Ez a korábbi debug üzenet
+        return [] # Ebben az esetben nincs mit feldolgozni
+    
+    # 2. Egyszerű dictionary a teljesített leckékről
+    completed_lessons = {}
+    
+    # CSAK AKKOR FOG LEFUTNI, HA user_progress LÉTEZIK ÉS completed_lessons NEM ÜRES/NONE
+    if user_progress.completed_lessons: 
+        for comp in user_progress.completed_lessons:
             lesson_id = str(comp.lesson_id)
             
-            # FIX: Proper lesson completion logic
-            pages_done = comp.pages_completed >= comp.total_pages
+            pages_ok = comp.pages_completed >= comp.total_pages
+            quiz_ok = comp.quiz_score is None or comp.quiz_score >= 70
             
-            # FIX: Check if lesson has quiz questions first
-            lesson = await Lesson.get(comp.lesson_id)
-            has_quiz = lesson and len(lesson.quiz_questions) > 0
+            completed_lessons[lesson_id] = {
+                'is_completed': pages_ok and quiz_ok,
+                'quiz_score': comp.best_quiz_score or comp.quiz_score,
+                'pages_completed': comp.pages_completed,
+                'total_pages': comp.total_pages
+            }
             
-            # If lesson has quiz, check quiz score; if no quiz, only check pages
-            if has_quiz:
-                quiz_passed = comp.quiz_score is not None and comp.quiz_score >= 70
-            else:
-                quiz_passed = True  # No quiz means quiz is automatically "passed"
-            
-            is_completed = pages_done and quiz_passed
-            
-            print(f"  Lesson {i}: ID={lesson_id}")
-            print(f"    pages: {comp.pages_completed}/{comp.total_pages} (done: {pages_done})")
-            print(f"    has_quiz: {has_quiz}")
-            print(f"    quiz_score: {comp.quiz_score} (passed: {quiz_passed})")
-            print(f"    overall completed: {is_completed}")
-            
-            if is_completed:
-                completed_lesson_ids.append(lesson_id)
-            
-            if comp.best_quiz_score is not None:
-                lesson_scores[lesson_id] = comp.best_quiz_score
-            elif comp.quiz_score is not None:
-                lesson_scores[lesson_id] = comp.quiz_score
-        
-        print(f"Total completed lesson IDs: {completed_lesson_ids}")
+            print(f"DEBUG: Lesson {lesson_id} - pages: {comp.pages_completed}/{comp.total_pages}, quiz: {comp.quiz_score}, completed: {pages_ok and quiz_ok}")
     else:
-        print(f"No user_progress document found for user {current_user.id}")
+        print(f"DEBUG: No user_progress found or no completed lessons")
     
-    print(f"User {current_user.id} progress: {len(completed_lesson_ids)} completed lessons")
-
-    # Kategóriák lekérése
+    print(f"DEBUG: Completed lessons dict: {completed_lessons}")
+    print(f"DEBUG: User {current_user.id} completed lessons (after processing): {completed_lessons}")
+    
+    # 3. Kategóriák lekérése
     categories = await KnowledgeCategory.find({"is_active": True}).sort("order").to_list()
     result = []
-
+    
     for category in categories:
-        # Leckék lekérése a kategóriához
+        print(f"DEBUG: Processing category {category.name} (ID: {category.id})")
+        
+        # 4. Leckék lekérése kategóriánként - ObjectId konverzió itt is fontos
         lesson_filter = {"category_id": category.id, "is_published": True}
         if difficulty:
             lesson_filter["difficulty"] = difficulty
             
         lessons = await Lesson.find(lesson_filter).sort("order").to_list()
+        print(f"DEBUG: Found {len(lessons)} lessons for category {category.name}")
         
         lesson_summaries = []
         completed_count = 0
         
-        print(f"\nCategory: {category.name} has {len(lessons)} lessons")
-        
         for lesson in lessons:
+            # JAVÍTÁS: Ez a kulcsfontosságú rész - ObjectId -> string
             lesson_id = str(lesson.id)
-            is_completed = lesson_id in completed_lesson_ids
+            
+            print(f"DEBUG: Checking lesson {lesson.title}")
+            print(f"DEBUG: - Lesson ObjectId: {lesson.id}")
+            print(f"DEBUG: - Lesson string ID: {lesson_id}")
+            print(f"DEBUG: - Is in completed_lessons? {lesson_id in completed_lessons}")
+            
+            # 5. Ellenőrizzük, hogy teljesítve van-e
+            completion_data = completed_lessons.get(lesson_id, {})
+            is_completed = completion_data.get('is_completed', False)
+            quiz_score = completion_data.get('quiz_score')
+            
             if is_completed:
                 completed_count += 1
             
-            print(f"  Lesson: {lesson.title} (ID: {lesson_id}) - completed: {is_completed}")
+            print(f"DEBUG: Lesson {lesson.title} ({lesson_id}): completed={is_completed}, quiz_score={quiz_score}")
             
             lesson_summaries.append(LessonSummary(
                 id=lesson_id,
@@ -125,14 +135,12 @@ async def get_categories_with_lessons(
                 total_pages=len(lesson.pages),
                 has_quiz=len(lesson.quiz_questions) > 0,
                 is_completed=is_completed,
-                quiz_score=lesson_scores.get(lesson_id),
+                quiz_score=quiz_score,
                 category_name=category.name
             ))
         
-        print(f"Category {category.name}: {completed_count}/{len(lesson_summaries)} lessons completed")
-
         result.append(CategoryWithLessons(
-            id=str(category.id),
+            id=str(category.id),  # JAVÍTÁS: ObjectId -> string itt is
             name=category.name,
             description=category.description,
             icon=category.icon,
@@ -141,6 +149,8 @@ async def get_categories_with_lessons(
             total_lessons=len(lesson_summaries),
             completed_lessons=completed_count
         ))
+        
+        print(f"DEBUG: Category {category.name}: {completed_count}/{len(lesson_summaries)} completed")
     
     return result
 
@@ -156,7 +166,7 @@ async def get_lesson_detail(
         raise HTTPException(status_code=404, detail="Lesson not found")
     
     # Felhasználó haladásának ellenőrzése
-    user_progress = await UserProgress.find_one({"user_id": current_user.id})
+    user_progress = await UserProgress.find_one({"user_id": PydanticObjectId(current_user.id)})
     completion_data = None
     
     if user_progress:
@@ -187,11 +197,11 @@ async def update_lesson_progress(
         raise HTTPException(status_code=404, detail="Lesson not found")
     
     # Felhasználó haladásának lekérése/létrehozása
-    user_progress = await UserProgress.find_one({"user_id": current_user.id})
+    user_progress = await UserProgress.find_one({"user_id": PydanticObjectId(current_user.id)})
     print(f"DEBUG: Found user_progress: {user_progress is not None}")
     
     if not user_progress:
-        user_progress = UserProgress(user_id=current_user.id)
+        user_progress = UserProgress(user_id=PydanticObjectId(current_user.id))
         print(f"DEBUG: Created new UserProgress with user_id: {user_progress.user_id} (type: {type(user_progress.user_id)})")
         await user_progress.insert()
         print(f"DEBUG: UserProgress inserted, ID: {user_progress.id}")
@@ -267,11 +277,11 @@ async def submit_quiz(
     passed = score >= 70  # 70% a sikeres teljesítés küszöbe
     
     # Felhasználó haladásának frissítése
-    user_progress = await UserProgress.find_one({"user_id": current_user.id})
+    user_progress = await UserProgress.find_one({"user_id": PydanticObjectId(current_user.id)})
     print(f"DEBUG: Found user_progress: {user_progress is not None}")
     
     if not user_progress:
-        user_progress = UserProgress(user_id=current_user.id)
+        user_progress = UserProgress(user_id=PydanticObjectId(current_user.id))
         print(f"DEBUG: Created new UserProgress with user_id: {user_progress.user_id} (type: {type(user_progress.user_id)})")
         await user_progress.insert()
         print(f"DEBUG: UserProgress inserted, ID: {user_progress.id}")
@@ -342,9 +352,13 @@ async def submit_quiz(
 async def get_user_stats(current_user: User = Depends(get_current_user)):
     """Felhasználó tanulási statisztikáinak lekérése"""
     
-    user_progress = await UserProgress.find_one({"user_id": current_user.id})
+    # Debug: A bejelentkezett felhasználó ID-jének kiírása
+    print(f"DEBUG: get_user_stats called for user ID: {current_user.id} (type: {type(current_user.id)})")
+    
+    user_progress = await UserProgress.find_one({"user_id": PydanticObjectId(current_user.id)})
     
     if not user_progress:
+        print(f"DEBUG: No user_progress found for user {current_user.id}. Returning default UserStats.")
         return UserStats(
             current_streak=0,
             longest_streak=0,
@@ -355,6 +369,19 @@ async def get_user_stats(current_user: User = Depends(get_current_user)):
             daily_challenge_completed_today=False,
             daily_challenge_streak=0
         )
+    
+    # Debug: A talált user_progress objektum attribútumainak kiírása
+    print(f"DEBUG: Found user_progress for user {current_user.id}:")
+    print(f"  - _id: {user_progress.id}")
+    print(f"  - user_id: {user_progress.user_id}")
+    print(f"  - current_streak: {user_progress.current_streak}")
+    print(f"  - longest_streak: {user_progress.longest_streak}")
+    print(f"  - total_lessons_completed: {user_progress.total_lessons_completed}")
+    print(f"  - total_quiz_attempts: {user_progress.total_quiz_attempts}")
+    print(f"  - average_quiz_score: {user_progress.average_quiz_score}")
+    print(f"  - total_study_minutes: {user_progress.total_study_minutes}")
+    print(f"  - daily_challenge_completed_today: {user_progress.daily_challenge_completed_today}")
+    print(f"  - daily_challenge_streak: {user_progress.daily_challenge_streak}")
     
     return UserStats(
         current_streak=user_progress.current_streak,
@@ -371,9 +398,9 @@ async def get_user_stats(current_user: User = Depends(get_current_user)):
 async def complete_daily_challenge(current_user: User = Depends(get_current_user)):
     """Napi kihívás teljesítése (5 perces tanulás)"""
     
-    user_progress = await UserProgress.find_one({"user_id": current_user.id})
+    user_progress = await UserProgress.find_one({"user_id": PydanticObjectId(current_user.id)})
     if not user_progress:
-        user_progress = UserProgress(user_id=current_user.id)
+        user_progress = UserProgress(user_id=PydanticObjectId(current_user.id))
         await user_progress.insert()
     
     today = datetime.now().date()
@@ -524,7 +551,7 @@ async def _complete_lesson(user_progress: UserProgress, lesson: Lesson, completi
 async def fix_user_progress(current_user: User = Depends(get_current_user)):
     """Ideiglenes endpoint a user progress javításához"""
     
-    user_progress = await UserProgress.find_one({"user_id": current_user.id})
+    user_progress = await UserProgress.find_one({"user_id": PydanticObjectId(current_user.id)})
     if not user_progress:
         return {"message": "No progress found"}
     
