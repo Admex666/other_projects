@@ -188,23 +188,40 @@ class BadgeService:
         return total_saved >= target_amount, total_saved
     
     async def _check_knowledge_lessons(self, user_id: str, config: Dict[str, Any]) -> tuple[bool, float]:
-        """Tudásbeli lecke teljesítés ellenőrzése"""
-        target_lessons = config.get("target_lessons", 0)
-        min_quiz_score = config.get("min_quiz_score", 0)
+        """Tudás alapú badge feltétel ellenőrzése (leckék száma)"""
+        target_lessons = config.get("target_lessons", 1)
+        min_quiz_score = config.get("min_quiz_score") # Optional
         
+        logger.debug(f"[_check_knowledge_lessons] User ID: {user_id}, Target lessons: {target_lessons}, Min quiz score: {min_quiz_score}")
+
         user_progress = await UserProgress.find_one({"user_id": ObjectId(user_id)})
-        if not user_progress:
-            return False, 0
+        if not user_progress or not user_progress.completed_lessons:
+            logger.debug(f"[_check_knowledge_lessons] No user progress or no completed lessons for user {user_id}.")
+            return False, 0.0
         
-        # Teljesített leckék számolása
-        completed_lessons = [
-            comp for comp in user_progress.completed_lessons
-            if comp.pages_completed >= comp.total_pages and
-               (comp.best_quiz_score is None or comp.best_quiz_score >= min_quiz_score)
-        ]
+        completed_count = 0
+        for lesson_comp in user_progress.completed_lessons:
+            pages_completed_ok = lesson_comp.pages_completed >= lesson_comp.total_pages
+            quiz_score_ok = True
+            
+            lesson_id_str = str(lesson_comp.lesson_id) # Logoláshoz
+            
+            if min_quiz_score is not None:
+                quiz_score_ok = lesson_comp.best_quiz_score is not None and lesson_comp.best_quiz_score >= min_quiz_score
+                logger.debug(f"[_check_knowledge_lessons] Lesson {lesson_id_str}: Pages OK: {pages_completed_ok}, Best Quiz Score: {lesson_comp.best_quiz_score}, Min Quiz Score: {min_quiz_score}, Quiz OK: {quiz_score_ok}")
+            else:
+                logger.debug(f"[_check_knowledge_lessons] Lesson {lesson_id_str}: Pages OK: {pages_completed_ok}, No min_quiz_score required.")
+            
+            if pages_completed_ok and quiz_score_ok:
+                completed_count += 1
+                logger.debug(f"[_check_knowledge_lessons] Lesson {lesson_id_str} considered completed for badge purposes. Current count: {completed_count}")
         
-        current_count = len(completed_lessons)
-        return current_count >= target_lessons, current_count
+        progress = (completed_count / target_lessons) * 100 if target_lessons > 0 else 0.0
+        is_earned = completed_count >= target_lessons
+        
+        logger.debug(f"[_check_knowledge_lessons] Final result for user {user_id}: Completed lessons count: {completed_count}, Is earned: {is_earned}, Progress: {progress:.2f}%")
+        
+        return is_earned, progress
     
     async def _check_knowledge_streak(self, user_id: str, config: Dict[str, Any]) -> tuple[bool, float]:
         """Tudásbeli sorozat ellenőrzése"""
@@ -482,3 +499,7 @@ class BadgeService:
 
 # Globális badge service instance
 badge_service = BadgeService()
+
+def get_badge_service() -> BadgeService:
+    """FastAPI függőség injektáláshoz használható függvény."""
+    return badge_service

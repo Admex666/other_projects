@@ -253,39 +253,39 @@ async def submit_quiz(
     """Kvíz beküldése és eredmény kiértékelése"""
 
     print(f"DEBUG: submit_quiz called for user {current_user.id} (type: {type(current_user.id)})")
-    
+
     lesson = await Lesson.get(lesson_id)
     if not lesson:
         raise HTTPException(status_code=404, detail="Lesson not found")
-    
+
     if not lesson.quiz_questions:
         raise HTTPException(status_code=400, detail="This lesson has no quiz")
-    
+
     if len(submission.answers) != len(lesson.quiz_questions):
         raise HTTPException(status_code=400, detail="Number of answers doesn't match number of questions")
-    
+
     # Válaszok kiértékelése
     correct_count = 0
     total_questions = len(lesson.quiz_questions)
-    
+
     for i, (user_answers, question) in enumerate(zip(submission.answers, lesson.quiz_questions)):
         # Rendezni kell mindkét listát az összehasonlításhoz
         if sorted(user_answers) == sorted(question.correct_answers):
             correct_count += 1
-    
+
     score = int((correct_count / total_questions) * 100)
     passed = score >= 70  # 70% a sikeres teljesítés küszöbe
-    
+
     # Felhasználó haladásának frissítése
     user_progress = await UserProgress.find_one({"user_id": PydanticObjectId(current_user.id)})
     print(f"DEBUG: Found user_progress: {user_progress is not None}")
-    
+
     if not user_progress:
         user_progress = UserProgress(user_id=PydanticObjectId(current_user.id))
         print(f"DEBUG: Created new UserProgress with user_id: {user_progress.user_id} (type: {type(user_progress.user_id)})")
         await user_progress.insert()
         print(f"DEBUG: UserProgress inserted, ID: {user_progress.id}")
-    
+
     # Lecke teljesítés keresése vagy létrehozása
     lesson_completion = None
     completion_index = -1
@@ -294,7 +294,7 @@ async def submit_quiz(
             lesson_completion = comp
             completion_index = i
             break
-    
+
     if not lesson_completion:
         lesson_completion = LessonCompletion(
             lesson_id=lesson_id,
@@ -302,42 +302,43 @@ async def submit_quiz(
         )
         user_progress.completed_lessons.append(lesson_completion)
         completion_index = len(user_progress.completed_lessons) - 1
-    
+
     # JAVÍTÁS: Ha kvízt csinál, akkor feltételezzük, hogy minden oldalt elolvasott
     lesson_completion.pages_completed = len(lesson.pages)
     lesson_completion.total_pages = len(lesson.pages)
-    
+
     # Kvíz eredmény mentése
     lesson_completion.quiz_attempts += 1
     is_best_score = False
-    
+
     if lesson_completion.best_quiz_score is None or score > lesson_completion.best_quiz_score:
         lesson_completion.best_quiz_score = score
         is_best_score = True
-    
+
     lesson_completion.quiz_score = score
-    
+
     # Ha sikeresen teljesítette, frissítjük a statisztikákat
     if passed:
-        was_already_completed = _is_lesson_already_completed(user_progress, lesson_id)
+        # FIX: Az _is_lesson_already_completed függvény most már pontosabban ellenőriz
+        was_already_completed = await _is_lesson_already_completed(user_progress, lesson_id) 
         if not was_already_completed:
             await _complete_lesson(user_progress, lesson, completion_index)
         else:
             # Már teljesített lecke, csak a statisztikákat frissítjük
             await _update_user_stats(user_progress, lesson.estimated_minutes)
-    
+
     # Statisztikák frissítése
     user_progress.total_quiz_attempts += 1
-    
+
     # Átlagos kvíz eredmény újraszámítása
     all_scores = [comp.best_quiz_score for comp in user_progress.completed_lessons 
                   if comp.best_quiz_score is not None]
     if all_scores:
         user_progress.average_quiz_score = sum(all_scores) / len(all_scores)
-    
+
     user_progress.updated_at = datetime.now()
     await user_progress.save()
-    
+
     return QuizResult(
         score=score,
         correct_answers=correct_count,
@@ -439,14 +440,14 @@ async def complete_daily_challenge(current_user: User = Depends(get_current_user
 
 async def _update_user_stats(user_progress: UserProgress, study_minutes: int):
     """Felhasználói statisztikák frissítése"""
-    
+
     today = datetime.now().date()
-    
+
     # Streak számítás
     if user_progress.last_activity_date:
         last_date = user_progress.last_activity_date.date()
         days_diff = (today - last_date).days
-        
+
         if days_diff == 0:
             # Ma már tanult
             pass
@@ -459,61 +460,49 @@ async def _update_user_stats(user_progress: UserProgress, study_minutes: int):
     else:
         # Első tanulás
         user_progress.current_streak = 1
-    
+
     # Leghosszabb streak frissítése
     if user_progress.current_streak > user_progress.longest_streak:
         user_progress.longest_streak = user_progress.current_streak
-    
+
     # Utolsó aktivitás frissítése
     user_progress.last_activity_date = datetime.now()
-    
+
     # Statisztikák frissítése
     user_progress.total_study_minutes += study_minutes
-    
+
     # FIX: Teljesített leckék számának HELYES újraszámítása
     completed_count = 0
     for comp in user_progress.completed_lessons:
-        pages_done = comp.pages_completed >= comp.total_pages
-        
-        # Fetch lesson to check if it has quiz
-        try:
-            lesson = await Lesson.get(comp.lesson_id)
-            has_quiz = lesson and len(lesson.quiz_questions) > 0
-            
-            if has_quiz:
-                quiz_passed = comp.quiz_score is not None and comp.quiz_score >= 70
-            else:
-                quiz_passed = True  # No quiz means automatically passed
-                
-        except:
-            # If lesson fetch fails, use fallback logic
-            quiz_passed = comp.quiz_score is None or comp.quiz_score >= 70
-        
-        if pages_done and quiz_passed:
+        # Az aszinkron helper funkció használata
+        if await _is_lesson_already_completed(user_progress, str(comp.lesson_id)):
             completed_count += 1
-    
+
     user_progress.total_lessons_completed = completed_count
-    
+
     # Napi kihívás reset éjfélkor (ezt egy cron job-nak kellene csinálnia)
     if user_progress.last_activity_date and user_progress.last_activity_date.date() != today:
         user_progress.daily_challenge_completed_today = False
 
-def _is_lesson_already_completed(user_progress: UserProgress, lesson_id: str) -> bool:
-    """Ellenőrzi, hogy a lecke már teljesítve van-e"""
+async def _is_lesson_already_completed(user_progress: UserProgress, lesson_id: str) -> bool:
+    """Ellenőrzi, hogy a lecke már teljesítve van-e az összes feltétel alapján (oldalak + kvíz, ha van)"""
+    lesson = await Lesson.get(lesson_id)
+    if not lesson:
+        # Ha a lecke nem található (pl. törölték), akkor nem tekintjük teljesítettnek
+        return False
+
+    has_quiz = len(lesson.quiz_questions) > 0
+
     for comp in user_progress.completed_lessons:
         if str(comp.lesson_id) == lesson_id:
             pages_done = comp.pages_completed >= comp.total_pages
-            
-            # Check if we need to verify quiz score
-            # Note: This is a simplified check. In a real scenario, you'd want to 
-            # fetch the lesson to check if it has quiz questions
-            if comp.quiz_score is not None:
-                # Lesson has quiz, check if passed
-                quiz_passed = comp.quiz_score >= 70
+
+            if has_quiz:
+                quiz_passed = comp.best_quiz_score is not None and comp.best_quiz_score >= 70
             else:
-                # No quiz attempted or no quiz exists, consider passed
+                # Ha nincs kvíz a leckénél, akkor a quiz_passed mindig True
                 quiz_passed = True
-                
+
             return pages_done and quiz_passed
     return False
 
@@ -529,7 +518,7 @@ async def _complete_lesson(user_progress: UserProgress, lesson: Lesson, completi
                 "lesson_difficulty": lesson.difficulty.value
             }
         )
-        
+
         # Értesítés küldése
         from app.services.notification_service import NotificationService
         await NotificationService.create_system_notification(
@@ -542,8 +531,9 @@ async def _complete_lesson(user_progress: UserProgress, lesson: Lesson, completi
         )
     except Exception as e:
         logger.error(f"Error in lesson completion handling: {e}")
-    
+
     # Statisztikák frissítése
+    # Itt kellene frissíteni a `total_lessons_completed` értéket
     await _update_user_stats(user_progress, lesson.estimated_minutes)
 
 # Hozz létre egy új endpoint-ot ideiglenes javításhoz
