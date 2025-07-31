@@ -13,7 +13,7 @@ class AuthService {
 
   const AuthService({this.baseUrl = 'http://10.0.2.2:8000'});
 
-  /// Regisztráció
+  /// Regisztráció + automatikus bejelentkezés
   Future<bool> register(String username, String email, String password, {String? mobile,}) async {
     final resp = await http.post(
       Uri.parse('$baseUrl/auth/register'),
@@ -26,8 +26,14 @@ class AuthService {
       }),
     );
 
-    // Backend implementációtól függ – igazítsd ha más kódot ad vissza
-    return resp.statusCode == 201 || resp.statusCode == 200;
+    // Ha sikeres a regisztráció
+    if (resp.statusCode == 201 || resp.statusCode == 200) {
+      // Automatikus bejelentkezés
+      final loginSuccess = await login(username, password);
+      return loginSuccess;
+    }
+    
+    return false;
   }
 
   /// Bejelentkezés

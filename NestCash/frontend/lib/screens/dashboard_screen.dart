@@ -48,7 +48,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   void _handleAuthError() {
-    // Token érvénytelen vagy hiányzik - kijelentkeztetés és visszairányítás
     print('AUTH ERROR HANDLER CALLED!');
     _authService.logout();
     
@@ -60,10 +59,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
       );
       
-      // Navigáció a bejelentkező képernyőre
-      Navigator.of(context).pushAndRemoveUntil( // pushNamedAndRemoveUntil helyett pushAndRemoveUntil, mert közvetlenül az útvonalat adjuk meg
-        MaterialPageRoute(builder: (context) => const AuthWrapper()), // Itt volt a hiba
-        (route) => false,
+      // Navigáció az AuthWrapper-re (ugyanúgy mint a ProfileScreen-ben)
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => AuthWrapper()),
+        (Route<dynamic> route) => false,
       );
     }
   }
@@ -102,11 +102,32 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   bool _isAuthError(dynamic error) {
     print('Checking for auth error: $error');
+    print('Error type: ${error.runtimeType}');
+    
+    // Ha HTTP hiba, akkor ellenőrizzük a status kódot
+    if (error.toString().contains('HTTP 401') || 
+        error.toString().contains('401:')) {
+      print('401 HTTP error detected');
+      return true;
+    }
+    
+    // Az AuthService-ben dobott explicit 401-es Exception-t is ellenőrizzük
+    if (error.toString().contains('401: Unauthorized')) {
+      print('AuthService 401 exception detected');
+      return true;
+    }
+    
     final errorStr = error.toString().toLowerCase();
-    return errorStr.contains('401') || 
+    bool isAuth = errorStr.contains('401') || 
           errorStr.contains('unauthorized') || 
           errorStr.contains('not authenticated') ||
-          errorStr.contains('token') && (errorStr.contains('invalid') || errorStr.contains('expired'));
+          errorStr.contains('unauthenticated') ||
+          (errorStr.contains('token') && (errorStr.contains('invalid') || errorStr.contains('expired'))) ||
+          errorStr.contains('authentication failed') ||
+          errorStr.contains('access denied');
+          
+    print('Is auth error: $isAuth');
+    return isAuth;
   }
 
   Future<bool> _loadBalanceDataSafely() async {

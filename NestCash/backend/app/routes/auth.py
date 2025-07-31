@@ -57,6 +57,12 @@ async def register_user(
             "password": hashed_pw,
             "mobile": data.mobile,
             "registration_date": str(datetime.now()),
+            # Onboarding mezők hozzáadása
+            "user_type": None,
+            "selected_intents": [],
+            "onboarding_completed": False,
+            "onboarding_step": 0,
+            "preferred_currency": "HUF",
         }
     )
 

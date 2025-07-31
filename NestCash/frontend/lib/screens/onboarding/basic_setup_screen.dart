@@ -1,0 +1,640 @@
+// lib/screens/onboarding/basic_setup_screen.dart
+
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import '../../models/onboarding_model.dart';
+import '../../services/onboarding_service.dart';
+import 'package:frontend/screens/onboarding/user_intent_screen.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import '../../services/auth_service.dart';
+
+
+class BasicSetupScreen extends StatefulWidget {
+  const BasicSetupScreen({Key? key}) : super(key: key);
+
+  @override
+  _BasicSetupScreenState createState() => _BasicSetupScreenState();
+}
+
+class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProviderStateMixin {
+  final OnboardingService _onboardingService = OnboardingService();
+  final _formKey = GlobalKey<FormState>();
+  final _balanceController = TextEditingController();
+  final _subAccountNameController = TextEditingController(); // Módosítva: alszámla név
+  final _accountNameController = TextEditingController();
+
+  String _selectedCurrency = 'HUF';
+  String _selectedMainAccount = 'likvid'; // ÚJ: főszámla választás
+  bool _isLoading = false;
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
+
+  final List<String> _currencies = [
+    'HUF',
+    'EUR',
+    'USD',
+    'GBP',
+    'CHF',
+  ];
+
+  // ÚJ: Főszámlák
+  final Map<String, String> _mainAccounts = {
+    'likvid': 'Likvid számla',
+    'befektetes': 'Befektetési számla',
+    'megtakaritas': 'Megtakarítási számla',
+  };
+
+  final Map<String, String> _currencySymbols = {
+    'HUF': 'Ft',
+    'EUR': '€',
+    'USD': '\$',
+    'GBP': '£',
+    'CHF': 'CHF',
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: Duration(milliseconds: 800),
+      vsync: this,
+    );
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    _balanceController.dispose();
+    _accountNameController.dispose();
+    super.dispose();
+  }
+
+  String _formatCurrency(String value) {
+    if (value.isEmpty) return '';
+    
+    // Remove any non-digit characters except decimal point
+    String cleanValue = value.replaceAll(RegExp(r'[^\d.]'), '');
+    
+    if (cleanValue.isEmpty) return '';
+    
+    double? amount = double.tryParse(cleanValue);
+    if (amount == null) return value;
+    
+    // Format with thousands separator
+    String formatted = amount.toStringAsFixed(0);
+    RegExp reg = RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
+    formatted = formatted.replaceAllMapped(reg, (Match match) => '${match[1]} ');
+    
+    return '$formatted ${_currencySymbols[_selectedCurrency]}';
+  }
+
+  Future<void> _saveBasicSetupAndContinue() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      // Parse balance
+      String balanceText = _balanceController.text;
+      double initialBalance = 0.0;
+      
+      if (balanceText.isNotEmpty) {
+        String cleanBalance = balanceText.replaceAll(RegExp(r'[^\d.]'), '');
+        initialBalance = double.tryParse(cleanBalance) ?? 0.0;
+      }
+
+      // Először mentjük az alapbeállításokat
+      final setupData = BasicSetupData(
+        preferredCurrency: _selectedCurrency,
+        initialBalance: initialBalance,
+        mainAccountName: _subAccountNameController.text.trim(),
+      );
+
+      await _onboardingService.saveBasicSetup(setupData);
+
+      // Majd létrehozzuk az első alszámlát (ha van egyenleg és név)
+      if (initialBalance > 0 && _subAccountNameController.text.trim().isNotEmpty) {
+        await _createFirstSubAccount(initialBalance);
+      }
+      
+      if (mounted) {
+        // Navigate to tutorial screen
+        _navigateToTutorial();
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Beállítások mentve!'),
+            backgroundColor: Color(0xFF00D4A3),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Hiba történt: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  // ÚJ: Első alszámla létrehozása
+  Future<void> _createFirstSubAccount(double balance) async {
+    final AuthService authService = AuthService();
+    final token = await authService.getToken();
+    
+    if (token == null) return;
+
+    final subAccountName = _subAccountNameController.text.trim();
+    final response = await http.put(
+      Uri.parse('http://10.0.2.2:8000/accounts/me/$_selectedMainAccount/$subAccountName'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({
+        'balance': balance,
+        'currency': _selectedCurrency,
+      }),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Alszámla létrehozása sikertelen');
+    }
+  }
+
+  void _navigateToTutorial() {
+    // TODO: Navigate to appropriate tutorial screen
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Beállítás kész!'),
+        content: Text('Az első számlád létrehozva!'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              // TODO: Navigate to main app or tutorial
+            },
+            child: Text('Folytatás'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFF00D4A3),
+              Color(0xFFE8F6F3),
+            ],
+            stops: [0.0, 0.4],
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Header
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.arrow_back, color: Colors.white),
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          PageRouteBuilder(
+                            pageBuilder: (context, animation, secondaryAnimation) => UserIntentScreen(),
+                            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                              return SlideTransition(
+                                position: Tween<Offset>(
+                                  begin: Offset(-1.0, 0.0),
+                                  end: Offset.zero,
+                                ).animate(animation),
+                                child: child,
+                              );
+                            },
+                            transitionDuration: Duration(milliseconds: 300),
+                          ),
+                        );
+                      },
+                    ),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Text(
+                            '2. lépés',
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.8),
+                              fontSize: 14,
+                            ),
+                          ),
+                          Text(
+                            'Alapbeállítások',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Progress indicator
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Center(
+                        child: Text(
+                          '2/3',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Content
+              Expanded(
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 0),
+                  decoration: BoxDecoration(
+                    color: Color(0xFFF5F5F5),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30),
+                    ),
+                  ),
+                  child: FadeTransition(
+                    opacity: _fadeAnimation,
+                    child: SingleChildScrollView(
+                      padding: EdgeInsets.all(24),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(height: 16),
+                            
+                            // Title and Description módosítása:
+                            Text(
+                              'Hozzáadod az első számládat?',
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            SizedBox(height: 12),
+                            Text(
+                              'Válassz egy számlát és add hozzá az első alszámládat egyenleggel.',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey[600],
+                                height: 1.4,
+                              ),
+                            ),
+
+                            SizedBox(height: 40),
+
+                            // ÚJ: Főszámla választás
+                            Text(
+                              'Melyik főszámlához?',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            SizedBox(height: 12),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(color: Colors.grey[300]!),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.05),
+                                    blurRadius: 8,
+                                    offset: Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: DropdownButtonFormField<String>(
+                                value: _selectedMainAccount,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                                  prefixIcon: Icon(
+                                    Icons.account_balance,
+                                    color: Color(0xFF00D4A3),
+                                  ),
+                                ),
+                                items: _mainAccounts.entries.map((entry) {
+                                  return DropdownMenuItem(
+                                    value: entry.key,
+                                    child: Text(entry.value),
+                                  );
+                                }).toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    _selectedMainAccount = value!;
+                                  });
+                                },
+                              ),
+                            ),
+
+                            SizedBox(height: 32),
+
+                            // Currency Selection
+                            Text(
+                              'Preferált deviza',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            SizedBox(height: 12),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(color: Colors.grey[300]!),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.05),
+                                    blurRadius: 8,
+                                    offset: Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: DropdownButtonFormField<String>(
+                                value: _selectedCurrency,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                                  hintText: 'Válassz devizát',
+                                ),
+                                items: _currencies.map((currency) {
+                                  return DropdownMenuItem(
+                                    value: currency,
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          _currencySymbols[currency]!,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(0xFF00D4A3),
+                                          ),
+                                        ),
+                                        SizedBox(width: 12),
+                                        Text(currency),
+                                      ],
+                                    ),
+                                  );
+                                }).toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    _selectedCurrency = value!;
+                                  });
+                                },
+                              ),
+                            ),
+
+                            SizedBox(height: 32),
+
+                            // Initial Balance
+                            Text(
+                              'Kezdő egyenleg (opcionális)',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            SizedBox(height: 12),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(color: Colors.grey[300]!),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.05),
+                                    blurRadius: 8,
+                                    offset: Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: TextFormField(
+                                controller: _balanceController,
+                                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(RegExp(r'[\d\s.,]')),
+                                ],
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                                  hintText: '0 ${_currencySymbols[_selectedCurrency]}',
+                                  hintStyle: TextStyle(color: Colors.grey[400]),
+                                  prefixIcon: Icon(
+                                    Icons.account_balance_wallet_outlined,
+                                    color: Color(0xFF00D4A3),
+                                  ),
+                                ),
+                                onChanged: (value) {
+                                  // Live formatting would go here if needed
+                                },
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(left: 16, top: 8),
+                              child: Text(
+                                'Add meg a jelenlegi egyenleged, ha szeretnéd nyomon követni',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey[500],
+                                ),
+                              ),
+                            ),
+
+                            SizedBox(height: 32),
+
+                            // Account Name
+                            Text(
+                              'Alszámla neve',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            SizedBox(height: 12),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(color: Colors.grey[300]!),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.05),
+                                    blurRadius: 8,
+                                    offset: Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: TextFormField(
+                                controller: _subAccountNameController,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                                  hintText: 'pl. Készpénz, Bankszámla',
+                                  hintStyle: TextStyle(color: Colors.grey[400]),
+                                  prefixIcon: Icon(
+                                    Icons.account_circle_outlined,
+                                    color: Color(0xFF00D4A3),
+                                  ),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return 'Kérjük, add meg az alszámla nevét';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+
+                            SizedBox(height: 48),
+
+                            // Info Box
+                            Container(
+                              padding: EdgeInsets.all(20),
+                              decoration: BoxDecoration(
+                                color: Color(0xFF00D4A3).withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(
+                                  color: Color(0xFF00D4A3).withOpacity(0.3),
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.info_outline,
+                                    color: Color(0xFF00D4A3),
+                                    size: 24,
+                                  ),
+                                  SizedBox(width: 16),
+                                  Expanded(
+                                    child: Text(
+                                      'Ezeket a beállításokat később is módosíthatod a profil menüben.',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Color(0xFF00D4A3),
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            SizedBox(height: 40),
+
+                            // Continue Button
+                            Container(
+                              width: double.infinity,
+                              height: 56,
+                              child: ElevatedButton(
+                                onPressed: _isLoading ? null : _saveBasicSetupAndContinue,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Color(0xFF00D4A3),
+                                  foregroundColor: Colors.white,
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(28),
+                                  ),
+                                ),
+                                child: _isLoading
+                                    ? CircularProgressIndicator(color: Colors.white)
+                                    : Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            'Beállítások mentése',
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                          SizedBox(width: 8),
+                                          Icon(Icons.arrow_forward, size: 20),
+                                        ],
+                                      ),
+                              ),
+                            ),
+
+                            SizedBox(height: 16),
+
+                            // Skip Button
+                            Center(
+                              child: TextButton(
+                                onPressed: _isLoading ? null : () {
+                                  // Save with default values
+                                  _saveBasicSetupAndContinue();
+                                },
+                                child: Text(
+                                  'Alapértelmezett beállításokkal',
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontSize: 16,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            SizedBox(height: 32),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

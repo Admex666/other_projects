@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../services/auth_service.dart';
 import 'login_screen.dart';
+import 'package:frontend/screens/onboarding/welcome_screen.dart';
 
 /// RegisterScreen – NestCash fiók létrehozása modern (gradient) dizájnnal.
 ///
@@ -119,10 +120,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     if (ok) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Sikeres regisztráció. Jelentkezz be!')),
+        const SnackBar(content: Text('Sikeres regisztráció!')),
       );
+      // Auto-login után onboarding indítása
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const LoginScreen()),
+        MaterialPageRoute(builder: (_) => const WelcomeScreen()),
       );
     } else {
       setState(() => _error = 'Regisztráció sikertelen.');

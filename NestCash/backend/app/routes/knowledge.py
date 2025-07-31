@@ -511,7 +511,7 @@ async def _complete_lesson(user_progress: UserProgress, lesson: Lesson, completi
     try:
         # Badge ellenőrzés
         earned_badges = await badge_service.check_and_award_badges(
-            user_id=user_progress.user_id,
+            user_id=str(user_progress.user_id),  # Biztosítjuk, hogy string legyen
             trigger_event="lesson_completed",
             context={
                 "lesson_id": str(lesson.id),
@@ -519,10 +519,16 @@ async def _complete_lesson(user_progress: UserProgress, lesson: Lesson, completi
             }
         )
 
+        # Ha szerzett badge-eket, logoljuk
+        if earned_badges:
+            print(f"DEBUG: User {user_progress.user_id} earned {len(earned_badges)} badges for completing lesson {lesson.id}")
+            for badge in earned_badges:
+                print(f"DEBUG: Earned badge: {badge.badge_name} ({badge.badge_code})")
+
         # Értesítés küldése
         from app.services.notification_service import NotificationService
         await NotificationService.create_system_notification(
-            user_id=user_progress.user_id,
+            user_id=str(user_progress.user_id),  # String konverzió
             title="Lecke sikeresen teljesítve!",
             message=f"Gratulálunk! Sikeresen teljesítetted a '{lesson.title}' leckét.",
             priority=NotificationPriority.MEDIUM,
@@ -533,7 +539,6 @@ async def _complete_lesson(user_progress: UserProgress, lesson: Lesson, completi
         logger.error(f"Error in lesson completion handling: {e}")
 
     # Statisztikák frissítése
-    # Itt kellene frissíteni a `total_lessons_completed` értéket
     await _update_user_stats(user_progress, lesson.estimated_minutes)
 
 # Hozz létre egy új endpoint-ot ideiglenes javításhoz
@@ -579,3 +584,29 @@ async def fix_user_progress(current_user: User = Depends(get_current_user)):
         "total_completed": completed_count,
         "progress": user_progress.dict()
     }
+
+@router.post("/debug/trigger-badge-check")
+async def trigger_badge_check(current_user: User = Depends(get_current_user)):
+    """Debug endpoint - badge ellenőrzés manuális kiváltása"""
+    try:
+        earned_badges = await badge_service.check_and_award_badges(
+            user_id=current_user.id,
+            trigger_event="lesson_completed",
+            context={"debug": True}
+        )
+        
+        return {
+            "message": "Badge check completed",
+            "earned_badges": [
+                {
+                    "badge_code": badge.badge_code,
+                    "badge_name": badge.badge_name,
+                    "points": badge.points_earned,
+                    "level": badge.level,
+                    "is_new": badge.is_new_badge
+                }
+                for badge in earned_badges
+            ]
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Badge check failed: {str(e)}")

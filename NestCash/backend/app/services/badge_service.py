@@ -204,22 +204,39 @@ class BadgeService:
             pages_completed_ok = lesson_comp.pages_completed >= lesson_comp.total_pages
             quiz_score_ok = True
             
-            lesson_id_str = str(lesson_comp.lesson_id) # Logoláshoz
+            lesson_id_str = str(lesson_comp.lesson_id)
             
+            # JAVÍTÁS: Ha van quiz score requirement, akkor ellenőrizzük
+            # Ha nincs quiz (quiz_score is None), és nincs min_quiz_score requirement, akkor OK
             if min_quiz_score is not None:
-                quiz_score_ok = lesson_comp.best_quiz_score is not None and lesson_comp.best_quiz_score >= min_quiz_score
-                logger.debug(f"[_check_knowledge_lessons] Lesson {lesson_id_str}: Pages OK: {pages_completed_ok}, Best Quiz Score: {lesson_comp.best_quiz_score}, Min Quiz Score: {min_quiz_score}, Quiz OK: {quiz_score_ok}")
+                # Ha van minimum score követelmény
+                if lesson_comp.quiz_score is not None:
+                    # Van quiz eredmény
+                    quiz_score_ok = lesson_comp.quiz_score >= min_quiz_score
+                elif lesson_comp.best_quiz_score is not None:
+                    # Van legjobb quiz eredmény
+                    quiz_score_ok = lesson_comp.best_quiz_score >= min_quiz_score
+                else:
+                    # Nincs quiz eredmény, de van követelmény - nem teljesült
+                    quiz_score_ok = False
             else:
-                logger.debug(f"[_check_knowledge_lessons] Lesson {lesson_id_str}: Pages OK: {pages_completed_ok}, No min_quiz_score required.")
+                # Nincs minimum score követelmény
+                # Ha van quiz, akkor legalább 70% kell (alapértelmezett)
+                if lesson_comp.quiz_score is not None or lesson_comp.best_quiz_score is not None:
+                    best_score = lesson_comp.best_quiz_score or lesson_comp.quiz_score or 0
+                    quiz_score_ok = best_score >= 70
+                # Ha nincs quiz a leckénél, akkor OK
+            
+            logger.debug(f"[_check_knowledge_lessons] Lesson {lesson_id_str}: Pages OK: {pages_completed_ok}, Quiz Score: {lesson_comp.quiz_score}, Best Quiz Score: {lesson_comp.best_quiz_score}, Quiz OK: {quiz_score_ok}")
             
             if pages_completed_ok and quiz_score_ok:
                 completed_count += 1
                 logger.debug(f"[_check_knowledge_lessons] Lesson {lesson_id_str} considered completed for badge purposes. Current count: {completed_count}")
         
-        progress = (completed_count / target_lessons) * 100 if target_lessons > 0 else 0.0
         is_earned = completed_count >= target_lessons
+        progress = completed_count  # A jelenlegi értéket adjuk vissza, nem százalékot
         
-        logger.debug(f"[_check_knowledge_lessons] Final result for user {user_id}: Completed lessons count: {completed_count}, Is earned: {is_earned}, Progress: {progress:.2f}%")
+        logger.debug(f"[_check_knowledge_lessons] Final result for user {user_id}: Completed lessons count: {completed_count}, Is earned: {is_earned}, Progress: {progress}")
         
         return is_earned, progress
     
