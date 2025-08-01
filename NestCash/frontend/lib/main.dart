@@ -14,6 +14,8 @@ import 'package:frontend/screens/manage_limits_screen.dart';
 import 'package:frontend/screens/challenges/challenges_main_screen.dart';
 import 'package:frontend/screens/habits/habits_main_screen.dart';
 import 'package:frontend/screens/pti/pti_main_screen.dart';
+import 'package:frontend/screens/onboarding/welcome_screen.dart';
+import 'package:frontend/services/auth_service.dart';
 
 void main() {
   runApp(NestCashApp());
@@ -26,17 +28,17 @@ class NestCashApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'NestCash',
       theme: ThemeData(primarySwatch: Colors.teal),
-      home: AuthWrapper(),
+      home: WelcomeScreen(),
     );
   }
 }
 
 // Global navigation
 class MainScreen extends StatefulWidget {
-  final String username;
   final String userId;
-
-  const MainScreen({required this.username, required this.userId});
+  final String? username;
+  
+  const MainScreen({required this.userId, this.username});
 
   @override
   _MainScreenState createState() => _MainScreenState();
@@ -44,19 +46,38 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
+  String _currentUsername = 'User'; // Alapértelmezett érték
+  final AuthService _authService = AuthService(); // AuthService hozzáadása
 
   late final List<Widget> _widgetOptions;
 
   @override
   void initState() {
     super.initState();
+    _loadUsername(); // Username betöltése
     _widgetOptions = <Widget>[
-      DashboardScreen(username: widget.username, userId: widget.userId,),
+      DashboardScreen(username: _currentUsername, userId: widget.userId,),
       AnalysisScreen(userId: widget.userId),
       const SizedBox.shrink(),
       const SizedBox.shrink(),
-      ProfileScreen(username: widget.username, userId: widget.userId),
+      ProfileScreen(username: _currentUsername, userId: widget.userId),
     ];
+  }
+
+  Future<void> _loadUsername() async {
+    try {
+      final username = widget.username ?? await _authService.getCurrentUsername();
+      if (username != null && mounted) {
+        setState(() {
+          _currentUsername = username;
+          // Widget options újraépítése az új username-mel
+          _widgetOptions[0] = DashboardScreen(username: _currentUsername, userId: widget.userId);
+          _widgetOptions[4] = ProfileScreen(username: _currentUsername, userId: widget.userId);
+        });
+      }
+    } catch (e) {
+      print('Error loading username: $e');
+    }
   }
 
   void _onItemTapped(int index) {
@@ -69,6 +90,11 @@ class _MainScreenState extends State<MainScreen> {
         _selectedIndex = index;
       });
     }
+  }
+
+  bool _shouldShowAppBar() {
+    // Ne jelenjen meg AppBar az AnalysisScreen (index 1) és a középső opció (index 2) esetében
+    return _selectedIndex != 1 && _selectedIndex != 2;
   }
 
   // Módosítsd a _showAddTransactionOptions metódust a main.dart fájlban
@@ -241,7 +267,7 @@ void _showAddTransactionOptions(BuildContext context) {
                     MaterialPageRoute(
                       builder: (context) => HabitsMainScreen(
                         userId: widget.userId,
-                        username: widget.username,
+                        username: _currentUsername,
                       ),
                     ),
                   );
@@ -295,7 +321,7 @@ void _showForumChallengesOptions(BuildContext context) {
                     MaterialPageRoute(
                       builder: (context) => PTIMainScreen(
                         userId: widget.userId,
-                        username: widget.username,
+                        username: _currentUsername,
                       ),
                     ),
                   );
@@ -326,7 +352,6 @@ void _showForumChallengesOptions(BuildContext context) {
                     MaterialPageRoute(
                       builder: (context) => ForumMainScreen(
                         userId: widget.userId,
-                        username: widget.username,
                       ),
                     ),
                   );
@@ -357,7 +382,7 @@ void _showForumChallengesOptions(BuildContext context) {
                     MaterialPageRoute(
                       builder: (context) => ChallengesMainScreen(
                         userId: widget.userId,
-                        username: widget.username,
+                        username: _currentUsername,
                       ),
                     ),
                   );
@@ -416,7 +441,7 @@ void _showForumChallengesOptions(BuildContext context) {
 @override
 Widget build(BuildContext context) {
   return Scaffold(
-    appBar: _selectedIndex != 2 ? AppBar(
+    appBar: _shouldShowAppBar() ? AppBar(
       backgroundColor: const Color(0xFF00D4A3),
       elevation: 0,
       automaticallyImplyLeading: false,
@@ -459,7 +484,7 @@ Widget build(BuildContext context) {
 String _getScreenTitle(int index) {
     switch (index) {
       case 0:
-        return 'Üdv újra, ${widget.username}!';
+        return 'Üdv újra, $_currentUsername!';
       case 1:
         return 'Elemzések';
       case 3:

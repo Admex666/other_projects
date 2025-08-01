@@ -66,11 +66,12 @@ class _UserIntentScreenState extends State<UserIntentScreen> with TickerProvider
       final result = await _onboardingService.saveUserIntents(_selectedIntents.toList());
       
       if (mounted) {
-        // Navigáció a következő lépésre
+        final determinedTypeString = result['determined_type']?.toString().split('.').last ?? 'aware_spender';
+
         Navigator.push(
           context,
           PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) => BasicSetupScreen(),
+            pageBuilder: (context, animation, secondaryAnimation) => BasicSetupScreen(userType: determinedTypeString),
             transitionsBuilder: (context, animation, secondaryAnimation, child) {
               return SlideTransition(
                 position: Tween<Offset>(

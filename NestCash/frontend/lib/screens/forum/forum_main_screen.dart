@@ -7,15 +7,14 @@ import 'package:frontend/screens/forum/post_detail_screen.dart';
 import 'package:frontend/screens/forum/search_users_screen.dart';
 import 'package:frontend/screens/forum/notifications_screen.dart';
 import 'package:frontend/screens/forum/forum_settings_screen.dart';
+import 'package:frontend/services/auth_service.dart';  // ÚJ import
 
 class ForumMainScreen extends StatefulWidget {
   final String userId;
-  final String username;
 
   const ForumMainScreen({
     Key? key,
     required this.userId,
-    required this.username,
   }) : super(key: key);
 
   @override
@@ -24,6 +23,7 @@ class ForumMainScreen extends StatefulWidget {
 
 class _ForumMainScreenState extends State<ForumMainScreen> {
   final ForumService _forumService = ForumService();
+    final AuthService _authService = AuthService(); 
   final ScrollController _scrollController = ScrollController();
   
   List<ForumPost> _posts = [];
@@ -37,13 +37,29 @@ class _ForumMainScreenState extends State<ForumMainScreen> {
   PostCategory? _selectedCategory;
   
   int _unreadNotificationCount = 0;
+  String _currentUsername = 'User';
 
   @override
   void initState() {
     super.initState();
+    _loadUserData();  // ÚJ: user adatok betöltése
     _loadPosts();
     _loadUnreadNotificationCount();
     _scrollController.addListener(_onScroll);
+  }
+
+  Future<void> _loadUserData() async {
+    try {
+      final username = await _authService.getCurrentUsername();
+      if (username != null) {
+        setState(() {
+          _currentUsername = username;
+        });
+      }
+    } catch (e) {
+      print('Error loading username: $e');
+      // Fallback: _currentUsername marad 'User'
+    }
   }
 
   @override

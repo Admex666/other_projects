@@ -5,13 +5,15 @@ import 'package:flutter/services.dart';
 import '../../models/onboarding_model.dart';
 import '../../services/onboarding_service.dart';
 import 'package:frontend/screens/onboarding/user_intent_screen.dart';
+import 'tutorial_screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../../services/auth_service.dart';
 
 
 class BasicSetupScreen extends StatefulWidget {
-  const BasicSetupScreen({Key? key}) : super(key: key);
+  final String userType;
+  const BasicSetupScreen({Key? key, required this.userType}) : super(key: key);
 
   @override
   _BasicSetupScreenState createState() => _BasicSetupScreenState();
@@ -151,6 +153,72 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
     }
   }
 
+  // Alapértelmezett alszámla létrehozása
+  Future<void> _createDefaultSubAccount() async {
+    final AuthService authService = AuthService();
+    final token = await authService.getToken();
+    
+    if (token == null) return;
+
+    final response = await http.put(
+      Uri.parse('http://10.0.2.2:8000/accounts/me/$_selectedMainAccount/Alapértelmezett'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({
+        'balance': 0.0,
+        'currency': _selectedCurrency,
+      }),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Alapértelmezett alszámla létrehozása sikertelen');
+    }
+  }
+
+  Future<void> _saveWithDefaultsAndContinue() async {
+    setState(() => _isLoading = true);
+
+    try {
+      // Alapértelmezett értékek beállítása
+      final setupData = BasicSetupData(
+        preferredCurrency: _selectedCurrency,
+        initialBalance: 0.0, // Alapértelmezett: 0
+        mainAccountName: 'Alapértelmezett számla', // Alapértelmezett név
+      );
+
+      await _onboardingService.saveBasicSetup(setupData);
+
+      // Alapértelmezett alszámla létrehozása ha szükséges
+      await _createDefaultSubAccount();
+      
+      if (mounted) {
+        _navigateToTutorial();
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Alapértelmezett beállítások mentve!'),
+            backgroundColor: Color(0xFF00D4A3),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Hiba történt: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
   // ÚJ: Első alszámla létrehozása
   Future<void> _createFirstSubAccount(double balance) async {
     final AuthService authService = AuthService();
@@ -182,12 +250,18 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Beállítás kész!'),
-        content: Text('Az első számlád létrehozva!'),
+        content: Text('Sikeres számla beállítás! Folytassuk a bemutatóval?'),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
-              // TODO: Navigate to main app or tutorial
+              
+              final userTypeEnum = UserTypeExtension.fromString(widget.userType); // Konvertálás a statikus metódussal
+
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => TutorialScreen(userType: userTypeEnum,)),
+              );
             },
             child: Text('Folytatás'),
           ),
@@ -608,12 +682,9 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
                             // Skip Button
                             Center(
                               child: TextButton(
-                                onPressed: _isLoading ? null : () {
-                                  // Save with default values
-                                  _saveBasicSetupAndContinue();
-                                },
+                                onPressed: _isLoading ? null : _saveWithDefaultsAndContinue, // Módosítva
                                 child: Text(
-                                  'Alapértelmezett beállításokkal',
+                                  'Beállítom később',
                                   style: TextStyle(
                                     color: Colors.grey[600],
                                     fontSize: 16,

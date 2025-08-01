@@ -4,11 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:frontend/services/analysis_service.dart';
 import 'package:frontend/models/analysis.dart';
 import 'package:frontend/utils/number_formatter.dart';
+import '/main.dart';
 
 class AnalysisScreen extends StatefulWidget {
   final String userId;
+  final bool fromTutorial;
 
-  const AnalysisScreen({Key? key, required this.userId}) : super(key: key);
+  const AnalysisScreen({
+    Key? key, 
+    required this.userId,
+    this.fromTutorial = false,
+    }) : super(key: key);
 
   @override
   _AnalysisScreenState createState() => _AnalysisScreenState();
@@ -155,6 +161,47 @@ class _AnalysisScreenState extends State<AnalysisScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color(0xFF00D4A3),
+        foregroundColor: Colors.black,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            if (widget.fromTutorial) {
+              Navigator.pop(context);
+            } else {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MainScreen(
+                    userId: widget.userId,
+                  ),
+                ),
+              );
+            }
+          },
+        ),
+        title: Center(
+          child: Text(
+            'Elemzések',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.notifications_outlined),
+            onPressed: () {
+              // Értesítések navigáció - implementáld igény szerint
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Értesítések - Hamarosan elérhető!')),
+              );
+          },
+        ),
+      ],
+    ),
       body: SafeArea(
         child: Container(
           decoration: BoxDecoration(

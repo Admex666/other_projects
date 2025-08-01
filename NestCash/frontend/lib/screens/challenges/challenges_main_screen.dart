@@ -4,15 +4,16 @@ import 'package:frontend/models/challenge.dart';
 import 'package:frontend/services/challenge_service.dart';
 import 'package:frontend/screens/challenges/challenge_detail_screen.dart';
 import 'package:frontend/screens/challenges/my_challenges_screen.dart';
+import 'package:frontend/services/auth_service.dart';
 
 class ChallengesMainScreen extends StatefulWidget {
   final String userId;
-  final String username;
+  final String? username;
 
   const ChallengesMainScreen({
     Key? key,
     required this.userId,
-    required this.username,
+    this.username,
   }) : super(key: key);
 
   @override
@@ -20,10 +21,12 @@ class ChallengesMainScreen extends StatefulWidget {
 }
 
 class _ChallengesMainScreenState extends State<ChallengesMainScreen>
-    with SingleTickerProviderStateMixin {
+  with SingleTickerProviderStateMixin {
   final ChallengeService _challengeService = ChallengeService();
   late TabController _tabController;
 
+  String _currentUsername = 'User';
+  final AuthService _authService = AuthService();
   List<Challenge> _allChallenges = [];
   List<Challenge> _recommendedChallenges = [];
   bool _isLoading = true;
@@ -38,14 +41,24 @@ class _ChallengesMainScreenState extends State<ChallengesMainScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    _loadUsername();
     _loadChallenges();
   }
-
+  
   @override
   void dispose() {
     _tabController.dispose();
     _searchController.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadUsername() async {
+    final username = widget.username ?? await _authService.getCurrentUsername();
+    if (username != null && mounted) {
+      setState(() {
+        _currentUsername = username;
+      });
+    }
   }
 
   Future<void> _loadChallenges() async {

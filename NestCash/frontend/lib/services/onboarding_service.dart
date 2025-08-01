@@ -1,4 +1,4 @@
-// lib/services/onboarding_service.dart
+// lib/services/onboarding_service.dart - Frissített verzió
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -123,7 +123,7 @@ class OnboardingService {
     }
   }
 
-  // Tutorial tartalom lekérdezése
+  // Tutorial tartalom lekérdezése - ÚJ!
   Future<TutorialContent> getTutorialContent(UserType userType) async {
     try {
       final headers = await _getHeaders();
