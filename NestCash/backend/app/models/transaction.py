@@ -2,13 +2,13 @@
 from __future__ import annotations
 from beanie import Document, PydanticObjectId
 from pydantic import BaseModel, Field, validator, computed_field
-from typing import Optional
+from typing import Optional, Union
 from datetime import datetime
 import calendar
 
 class Transaction(Document):
     user_id: PydanticObjectId
-    date: str = Field(..., description="Tranzakció dátuma YYYY-MM-DD formátumban")
+    date: Union[str, datetime] = Field(..., description="Tranzakció dátuma YYYY-MM-DD formátumban")
     amount: float = Field(..., description="Összeg (pozitív: bevétel, negatív: kiadás)")
     currency: str = Field(default="HUF", description="Deviza")
     main_account: str = Field(..., description="Főszámla típusa (likvid, befektetes, megtakaritas)")
@@ -35,14 +35,18 @@ class Transaction(Document):
     day: Optional[int] = Field(None, description="Nap")
     weekday: Optional[str] = Field(None, description="Hét napja")
     
-    @validator('date')
+    @validator('date', pre=True)
     def validate_date_format(cls, v):
-        """Dátum formátum ellenőrzése"""
-        try:
-            datetime.strptime(v, '%Y-%m-%d')
-            return v
-        except ValueError:
-            raise ValueError('A dátumnak YYYY-MM-DD formátumúnak kell lennie')
+        """Dátum formátum ellenőrzése és konvertálása"""
+        if isinstance(v, datetime):
+            return v.strftime('%Y-%m-%d')
+        if isinstance(v, str):
+            try:
+                datetime.strptime(v, '%Y-%m-%d')
+                return v
+            except ValueError:
+                raise ValueError('A dátumnak YYYY-MM-DD formátumúnak kell lennie')
+        raise ValueError('A dátumnak string vagy datetime típusúnak kell lennie')
     
     @validator('hour')
     def validate_hour(cls, v):
@@ -60,7 +64,12 @@ class Transaction(Document):
         """Időbélyegek automatikus generálása a dátum alapján"""
         if self.date:
             try:
-                date_obj = datetime.strptime(self.date, '%Y-%m-%d')
+                # Ha már datetime objektum, akkor azt használjuk
+                if isinstance(self.date, datetime):
+                    date_obj = self.date
+                else:
+                    # Ha string, akkor parse-oljuk
+                    date_obj = datetime.strptime(self.date, '%Y-%m-%d')
                 
                 # Alapvető időbélyegek
                 self.year = date_obj.year
@@ -78,7 +87,7 @@ class Transaction(Document):
                 # Hét napjának sorszáma (0=hétfő, 6=vasárnap)
                 self.nap_sorszam = date_obj.weekday()
                 
-            except ValueError:
+            except (ValueError, TypeError):
                 pass  # Ha hibás a dátum formátum, nem generálunk időbélyegeket
     
     @computed_field

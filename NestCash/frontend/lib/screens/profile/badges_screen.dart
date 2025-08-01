@@ -5,12 +5,10 @@ import 'package:frontend/models/badge_models.dart';
 
 class BadgesScreen extends StatefulWidget {
   final String userId;
-  final String username;
 
   const BadgesScreen({
     Key? key, 
     required this.userId, 
-    required this.username
   }) : super(key: key);
 
   @override

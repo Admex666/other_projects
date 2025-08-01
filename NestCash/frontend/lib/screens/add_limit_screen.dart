@@ -275,7 +275,6 @@ class _AddLimitScreenState extends State<AddLimitScreen> {
         );
 
       case LimitType.spending:
-      default:
         return const SizedBox.shrink();
     }
   }

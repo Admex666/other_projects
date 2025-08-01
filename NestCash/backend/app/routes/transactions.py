@@ -456,7 +456,10 @@ async def update_transaction(
         setattr(doc, key, value)
 
     await doc.save()
-    return TransactionRead(**doc.model_dump())
+    doc_dict = doc.model_dump()
+    doc_dict['id'] = str(doc.id)
+    doc_dict['user_id'] = str(doc.user_id)
+    return TransactionRead(**doc_dict)
 
 # ----------- DELETE /{id} -----------
 @router.delete("/{tx_id}", status_code=204) # 204 No Content for successful deletion

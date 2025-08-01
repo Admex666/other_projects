@@ -85,16 +85,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFF00D4A3),
-              Color(0xFF4ECDC4),
-              Color(0xFFE8F6F3),
-            ],
-            stops: [0.0, 0.5, 1.0],
-          ),
+          color: Color(0xFF00D4A3),
         ),
         child: SafeArea(
           child: Padding(

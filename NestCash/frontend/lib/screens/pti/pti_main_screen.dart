@@ -6,15 +6,14 @@ import 'package:frontend/services/pti_service.dart';
 import 'package:frontend/screens/pti/pti_ranking_screen.dart';
 import 'package:frontend/screens/pti/pti_settings_screen.dart';
 import 'package:frontend/screens/pti/pti_comparison_screen.dart';
+import 'package:frontend/services/auth_service.dart';
 
 class PTIMainScreen extends StatefulWidget {
   final String userId;
-  final String username;
 
   const PTIMainScreen({
     Key? key,
     required this.userId,
-    required this.username,
   }) : super(key: key);
 
   @override
@@ -23,22 +22,49 @@ class PTIMainScreen extends StatefulWidget {
 
 class _PTIMainScreenState extends State<PTIMainScreen> {
   final PTIService _ptiService = PTIService();
+  final AuthService _authService = AuthService(); // Hozzáadás
   PTIDashboardResponse? _dashboardData;
+  String? _username; // Hozzáadás
   bool _isLoading = true;
   String? _error;
 
   @override
   void initState() {
     super.initState();
-    _loadDashboard();
+    _loadUserData();
   }
 
-  Future<void> _loadDashboard() async {
+  Future<void> _loadUserData() async {
     setState(() {
       _isLoading = true;
       _error = null;
     });
 
+    try {
+      // Username lekérése az AuthService-ből
+      final username = await _authService.getCurrentUsername();
+      if (username != null) {
+        setState(() {
+          _username = username;
+        });
+        await _loadDashboard();
+      } else {
+        setState(() {
+          _error = 'Nem sikerült betölteni a felhasználói adatokat';
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _error = 'Hiba történt: $e';
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _loadDashboard() async {
+    // A korábbi _isLoading és _error beállítás eltávolítható innen,
+    // mivel a _loadUserData kezeli
     try {
       final dashboard = await _ptiService.getDashboard();
       if (dashboard != null) {
@@ -92,7 +118,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
         ],
       ),
       body: RefreshIndicator(
-        onRefresh: _loadDashboard,
+        onRefresh: _loadUserData,
         child: _buildBody(),
       ),
     );
@@ -505,7 +531,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
                     MaterialPageRoute(
                       builder: (context) => PTIRankingScreen(
                         userId: widget.userId,
-                        username: widget.username,
+                        username: _username!,
                       ),
                     ),
                   );
@@ -864,7 +890,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
                       MaterialPageRoute(
                         builder: (context) => PTIRankingScreen(
                           userId: widget.userId,
-                          username: widget.username,
+                          username: _username!,
                         ),
                       ),
                     );

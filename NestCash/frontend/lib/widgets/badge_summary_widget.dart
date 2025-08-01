@@ -96,7 +96,6 @@ class _BadgeSummaryWidgetState extends State<BadgeSummaryWidget> {
             MaterialPageRoute(
               builder: (context) => BadgesScreen(
                 userId: widget.userId,
-                username: widget.username,
               ),
             ),
           );

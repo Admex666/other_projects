@@ -14,7 +14,6 @@ import 'package:frontend/screens/manage_limits_screen.dart';
 import 'package:frontend/screens/challenges/challenges_main_screen.dart';
 import 'package:frontend/screens/habits/habits_main_screen.dart';
 import 'package:frontend/screens/pti/pti_main_screen.dart';
-import 'package:frontend/screens/onboarding/welcome_screen.dart';
 import 'package:frontend/services/auth_service.dart';
 
 void main() {
@@ -28,7 +27,7 @@ class NestCashApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'NestCash',
       theme: ThemeData(primarySwatch: Colors.teal),
-      home: WelcomeScreen(),
+      home: AuthWrapper(),
     );
   }
 }
@@ -321,7 +320,6 @@ void _showForumChallengesOptions(BuildContext context) {
                     MaterialPageRoute(
                       builder: (context) => PTIMainScreen(
                         userId: widget.userId,
-                        username: _currentUsername,
                       ),
                     ),
                   );

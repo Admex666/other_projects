@@ -132,7 +132,7 @@ class _UserIntentScreenState extends State<UserIntentScreen> with TickerProvider
                 child: Row(
                   children: [
                     IconButton(
-                      icon: Icon(Icons.arrow_back, color: Colors.white),
+                      icon: Icon(Icons.arrow_back, color: Colors.black),
                       onPressed: () {
                         Navigator.pushReplacement(
                           context,
@@ -158,14 +158,14 @@ class _UserIntentScreenState extends State<UserIntentScreen> with TickerProvider
                           Text(
                             '1. lépés',
                             style: TextStyle(
-                              color: Colors.white.withOpacity(0.8),
+                              color: Colors.black.withOpacity(0.8),
                               fontSize: 14,
                             ),
                           ),
                           Text(
                             'Célfelmérés',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: Colors.black,
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                             ),
@@ -178,14 +178,14 @@ class _UserIntentScreenState extends State<UserIntentScreen> with TickerProvider
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.grey.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Center(
                         child: Text(
                           '1/3',
                           style: TextStyle(
-                            color: Colors.white,
+                            color: Colors.black,
                             fontWeight: FontWeight.bold,
                           ),
                         ),

@@ -1,7 +1,6 @@
 // lib/screens/onboarding/tutorial_screen.dart
 
 import 'package:flutter/material.dart';
-import 'package:frontend/models/challenge.dart';
 import '../../models/onboarding_model.dart';
 import '../../services/onboarding_service.dart';
 import '../../services/auth_service.dart'; // ÚJ: AuthService import
@@ -14,6 +13,7 @@ import 'package:frontend/screens/forum/forum_main_screen.dart';
 import 'package:frontend/screens/challenges/challenges_main_screen.dart';
 import 'package:frontend/screens/pti/pti_main_screen.dart';
 import 'package:frontend/screens/profile/badges_screen.dart';
+import 'package:frontend/screens/knowledge/knowledge_screen.dart';
 
 class TutorialScreen extends StatefulWidget {
   final UserType userType;
@@ -142,13 +142,13 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
     if (title.contains('Elemzés') || title.contains('elemzés')) return Icons.analytics;
     if (title.contains('Korlát') || title.contains('korlát')) return Icons.warning_amber;
     if (title.contains('Közösség') || title.contains('közösség')) return Icons.people;
-    if (title.contains('Kihívás') || title.contains('kihívás')) return Icons.emoji_events;
+    if (title.contains('Kitűzők') || title.contains('kitűző')) return Icons.emoji_events;
     if (title.contains('Tudás') || title.contains('tudás')) return Icons.school;
     if (title.contains('Kvíz') || title.contains('kvíz')) return Icons.quiz;
     if (title.contains('Import') || title.contains('import')) return Icons.upload_file;
     if (title.contains('Szabály') || title.contains('szabály')) return Icons.settings;
     if (title.contains('Ranglista') || title.contains('ranglista')) return Icons.leaderboard;
-    if (title.contains('PTI') || title.contains('pont')) return Icons.speed;
+    if (title.contains('Kihívások') || title.contains('kihívás')) return Icons.speed;
     return Icons.lightbulb;
   }
 
@@ -231,7 +231,7 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
         actionText: 'Fórum böngészése',
       ),
       TutorialPageData(
-        title: 'Kihívások és célok',
+        title: 'Kihívások',
         description: 'Vegyél részt közös pénzügyi kihívásokban',
         iconData: Icons.emoji_events,
         color: Color(0xFFE91E63),
@@ -284,16 +284,16 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
         actionText: 'Első kvíz megoldása',
       ),
       TutorialPageData(
-        title: 'Személyre szabott tanulás',
-        description: 'Az app megtanulja, mi érdekel és ajánl új tartalmakat',
-        iconData: Icons.lightbulb,
+        title: 'Tanulás másokkal',
+        description: 'Beszélj és tanulj más felhasználókkal pénzügyi témákról',
+        iconData: Icons.people,
         color: Color(0xFFFF5722),
         features: [
-          'Intelligens ajánlások',
-          'Fejlődési terv',
-          'Tanulási statisztikák',
+          'Tippek és tapasztalatok',
+          'Kérdések és válaszok',
+          'Motiváció és támogatás',
         ],
-        actionText: 'Tanulási preferenciák',
+        actionText: 'Fórum felfedezése',
       ),
     ];
   }
@@ -313,16 +313,16 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
         actionText: 'Adatok importálása',
       ),
       TutorialPageData(
-        title: 'Szabályok és automatizmusok',
-        description: 'Hozz létre intelligens szabályokat a tranzakciókhoz',
+        title: 'Limitek létrehozása',
+        description: 'Terveidnek megfelelően állíts be korlátokat',
         iconData: Icons.settings,
         color: Color(0xFF795548),
         features: [
-          'Automatikus kategorizálás',
-          'Ismétlődő tranzakciók',
-          'Feltételes műveletvégzés',
+          'Globális limitek',
+          'Számla limitek',
+          'Költségkategória limitek',
         ],
-        actionText: 'Első szabály létrehozása',
+        actionText: 'Első korlát létrehozása',
       ),
       TutorialPageData(
         title: 'Haladó elemzések',
@@ -342,19 +342,19 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
   List<TutorialPageData> _getCompetitiveTutorial() {
     return [
       TutorialPageData(
-        title: 'Ranglisták és versenyek',
-        description: 'Nézd meg, hogyan állsz másokhoz képest',
+        title: 'Kihívások',
+        description: 'Csatlakozz másokhoz, és fejlesszétek közösen pénzügyeiteket',
         iconData: Icons.leaderboard,
         color: Color(0xFFFF6F00),
         features: [
-          'Havi rangsorok',
-          'Kategória versenyek',
-          'Regionális összehasonlítás',
+          'Havi kihívások',
+          'Limitált események',
+          'Elérhető jutalmak',
         ],
-        actionText: 'Ranglisták megtekintése',
+        actionText: 'Kihívások megtekintése',
       ),
       TutorialPageData(
-        title: 'PTI Index és pontszámok',
+        title: 'PTI Index és ranglisták',
         description: 'Kövesd nyomon a pénzügyi teljesítményedet',
         iconData: Icons.speed,
         color: Color(0xFFE65100),
@@ -366,16 +366,16 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
         actionText: 'PTI számítás indítása',
       ),
       TutorialPageData(
-        title: 'Kihívások és trófeák',
-        description: 'Szerezz el különleges elismeréseket',
+        title: 'Kitűzők',
+        description: 'Szerezz meg különleges elismeréseket',
         iconData: Icons.military_tech,
         color: Color(0xFFBF360C),
         features: [
-          'Különleges kihívások',
-          'Ritka trófeák',
-          'Exkluzív címek',
+          'Limitált kitűzők',
+          'Különböző ritkaságok',
+          'Pontszerzés',
         ],
-        actionText: 'Első trófea szerzése',
+        actionText: 'Első kitűző megszerzése',
       ),
     ];
   }
@@ -417,31 +417,29 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
       // _navigateToScreenWithUserId(_createManageLimitsScreen, actionText);
       _navigateToScreenWithUserId(_createManageLimitsScreen, actionText);
       
-    } else if (actionText.contains('Fórum böngészése')) {
-      // _navigateToScreenWithUserId(_createForumMainScreen, actionText);
+    } else if (actionText.contains('Fórum')) {
       _navigateToScreenWithUserId(_createForumMainScreen, actionText);
       
-    } else if (actionText.contains('Kihívás választása')) {
-      // _navigateToScreenWithUserId(_createChallengesScreen, actionText);
-      _showComingSoonMessage(actionText);
+    } else if (actionText.contains('Kihívás')) {
+      _navigateToScreenWithUserId(_createChallengesMainScreen, actionText);
       
     } else if (actionText.contains('lecke indítása') || 
               actionText.contains('kvíz megoldása') || 
               actionText.contains('Tanulási preferenciák')) {
-      // _navigateToScreenWithUserId(_createLearningScreen, actionText);
-      _showComingSoonMessage(actionText);
+      _navigateToScreenWithUserId(_createKnowledgeScreen, actionText);
       
     } else if (actionText.contains('Adatok importálása') || 
               actionText.contains('szabály létrehozása') || 
               actionText.contains('Haladó elemzések')) {
-      // _navigateToScreenWithUserId(_createAdvancedScreen, actionText);
+      // _navigateToScreenWithUserId(_createLearningScreen, actionText);
       _showComingSoonMessage(actionText);
       
     } else if (actionText.contains('Ranglisták') || 
-              actionText.contains('PTI számítás') || 
-              actionText.contains('trófea szerzése')) {
-      // _navigateToScreenWithUserId(_createCompetitiveScreen, actionText);
-      _showComingSoonMessage(actionText);
+              actionText.contains('PTI számítás')) {
+      _navigateToScreenWithUserId(_createPTIMainScreen, actionText);
+
+    } else if (actionText.contains('kitűző')) {
+      _navigateToScreenWithUserId(_createBadgesScreen, actionText);
       
     } else {
       _showComingSoonMessage(actionText);
@@ -566,6 +564,7 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
   Widget _createChallengesMainScreen(String userId) => ChallengesMainScreen(userId: userId);
   Widget _createPTIMainScreen(String userId) => PTIMainScreen(userId: userId);
   Widget _createBadgesScreen(String userId) => BadgesScreen(userId: userId);
+  Widget _createKnowledgeScreen(String userId) => KnowledgeScreen(userId: userId);
 
   @override
   Widget build(BuildContext context) {
@@ -614,25 +613,26 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
                 child: Row(
                   children: [
                     IconButton(
-                      icon: Icon(Icons.arrow_back, color: Colors.white),
+                      icon: Icon(Icons.arrow_back, color: Colors.black),
                       onPressed: _currentPage > 0 ? _previousPage : () {
                         Navigator.of(context).pop();
                       },
                     ),
+                    SizedBox(width: 30),
                     Expanded(
                       child: Column(
                         children: [
                           Text(
                             '3. lépés',
                             style: TextStyle(
-                              color: Colors.white.withOpacity(0.8),
+                              color: Colors.black.withOpacity(0.8),
                               fontSize: 14,
                             ),
                           ),
                           Text(
-                            'Bemutató - ${widget.userType.displayName}',
+                            'Bemutató',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: Colors.black,
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
@@ -645,8 +645,8 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
                       child: Text(
                         'Kihagyás',
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.8),
-                          fontSize: 16,
+                          color: Colors.black.withOpacity(0.8),
+                          fontSize: 15,
                         ),
                       ),
                     ),
@@ -667,8 +667,8 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
                             margin: EdgeInsets.symmetric(horizontal: 2),
                             decoration: BoxDecoration(
                               color: index <= _currentPage 
-                                  ? Colors.white 
-                                  : Colors.white.withOpacity(0.3),
+                                  ? Colors.black 
+                                  : Colors.black.withOpacity(0.3),
                               borderRadius: BorderRadius.circular(2),
                             ),
                           ),
@@ -679,7 +679,7 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
                     Text(
                       '${_currentPage + 1} / ${_tutorialPages.length}',
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.black.withOpacity(0.8),
                         fontSize: 14,
                       ),
                     ),

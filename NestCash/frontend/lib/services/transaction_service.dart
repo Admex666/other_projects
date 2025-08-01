@@ -134,6 +134,32 @@ class TransactionService {
     }
   }
 
+  /// Tranzakció frissítése
+  Future<void> updateTransaction(String transactionId, Map<String, dynamic> transactionData) async {
+    try {
+      final token = await _getToken();
+      if (token == null) throw Exception('Nincs autentikációs token');
+
+      final response = await http.put(
+        Uri.parse('$baseUrl/transactions/$transactionId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(transactionData),
+      );
+
+      if (response.statusCode != 200) {
+        final errorData = jsonDecode(response.body);
+        final error = errorData['detail'] ?? 'Ismeretlen hiba';
+        throw Exception(error);
+      }
+    } catch (e) {
+      print('Error updating transaction: $e');
+      throw Exception('Failed to update transaction: $e');
+    }
+  }
+
   /// Tranzakció törlése
   Future<void> deleteTransaction(String transactionId) async {
     try {

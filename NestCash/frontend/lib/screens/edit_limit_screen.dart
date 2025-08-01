@@ -296,7 +296,6 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
         );
 
       case LimitType.spending:
-      default:
         return const SizedBox.shrink();
     }
   }
@@ -662,7 +661,7 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
                                   value: _notifyOnExceed,
                                   onChanged: (value) {
                                     setState(() {
-                                      _notifyOnExceed = value ?? true;
+                                      _notifyOnExceed = value;
                                     });
                                   },
                                   activeColor: Color(0xFF00D4AA),
@@ -716,7 +715,7 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
                                   value: _isActive,
                                   onChanged: (value) {
                                     setState(() {
-                                      _isActive = value ?? true;
+                                      _isActive = value;
                                     });
                                   },
                                   activeColor: Color(0xFF00D4AA),

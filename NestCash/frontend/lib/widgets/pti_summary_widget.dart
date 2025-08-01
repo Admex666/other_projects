@@ -98,7 +98,6 @@ class _PTISummaryWidgetState extends State<PTISummaryWidget> {
             MaterialPageRoute(
               builder: (context) => PTIMainScreen(
                 userId: widget.userId,
-                username: widget.username,
               ),
             ),
           );

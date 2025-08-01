@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:frontend/services/transaction_service.dart';
 import 'package:frontend/screens/add_expenses_screen.dart';
 import 'package:frontend/screens/add_incomes_screen.dart';
+import 'package:frontend/screens/edit_transaction_screen.dart';
+import 'package:intl/intl.dart';
 
 class TransactionsScreen extends StatefulWidget {
   final String userId;
@@ -51,6 +53,77 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
     if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200 &&
         !_isLoading && _hasMore) {
       _loadMoreTransactions();
+    }
+  }
+
+  void _editTransaction(Map<String, dynamic> transaction) {
+  final isExpense = transaction['isExpense'] as bool;
+  
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => EditTransactionScreen(
+        userId: widget.userId,
+        transaction: transaction,
+        isExpense: isExpense,
+      ),
+    ),
+  ).then((result) {
+    // Ha sikeres volt a módosítás, frissítsük a listát
+    if (result == true) {
+      _loadTransactions(refresh: true);
+    }
+  });
+}
+
+void _deleteTransaction(Map<String, dynamic> transaction) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Tranzakció törlése'),
+        content: Text('Biztosan törölni szeretnéd ezt a tranzakciót?\n\n"${transaction['title']}"'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Mégse'),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              await _performDelete(transaction['id']);
+            },
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: Text('Törlés'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+Future<void> _performDelete(String transactionId) async {
+    try {
+      await _transactionService.deleteTransaction(transactionId);
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Tranzakció sikeresen törölve!'),
+            backgroundColor: Color(0xFF00D4A3),
+          ),
+        );
+        _loadTransactions(refresh: true);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Hiba a törlés során: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
@@ -693,12 +766,53 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
               _buildDetailRow('Alszámla:', transaction['sub_account_name']),
               _buildDetailRow('Típus:', transaction['isExpense'] ? 'Kiadás' : 'Bevétel'),
               SizedBox(height: 20),
+              // Cseréld le a bezárás gombot ezekkel a gombokkal:
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        _editTransaction(transaction);
+                      },
+                      icon: Icon(Icons.edit, color: Color(0xFF00D4A3)),
+                      label: Text('Módosítás', style: TextStyle(color: Color(0xFF00D4A3))),
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(color: Color(0xFF00D4A3)),
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        _deleteTransaction(transaction);
+                      },
+                      icon: Icon(Icons.delete, color: Colors.red),
+                      label: Text('Törlés', style: TextStyle(color: Colors.red)),
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(color: Colors.red),
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 12),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () => Navigator.pop(context),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF00D4A3),
+                    backgroundColor: Colors.grey[300],
                     padding: EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -706,7 +820,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                   ),
                   child: Text(
                     'Bezárás',
-                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                    style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
@@ -845,14 +959,15 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
   String _formatCurrency(double amount) {
     final absAmount = amount.abs();
     final sign = amount < 0 ? '-' : '';
+
+    // Használjuk az intl csomag NumberFormat osztályát a szám tagolásához
+    // A 'hu' locale használatával a magyar formátumot kapjuk, ami szóközzel tagol
+    final formatter = NumberFormat('#,##0', 'hu'); 
     
-    if (absAmount >= 1000000) {
-      return '${sign}${(absAmount / 1000000).toStringAsFixed(1)}M Ft';
-    } else if (absAmount >= 1000) {
-      return '${sign}${(absAmount / 1000).toStringAsFixed(0)}k Ft';
-    } else {
-      return '${sign}${absAmount.toStringAsFixed(0)} Ft';
-    }
+    // Formázzuk az abszolút értéket
+    final formattedAmount = formatter.format(absAmount);
+
+    return '$sign$formattedAmount Ft';
   }
 
   String _formatDate(DateTime date) {
