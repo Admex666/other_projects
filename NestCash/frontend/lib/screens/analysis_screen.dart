@@ -29,6 +29,13 @@ class _AnalysisScreenState extends State<AnalysisScreen>
   BasicStats? _basicStats;
   RiskAnalysis? _riskAnalysis;
   CategoryAnalysis? _categoryAnalysis;
+
+  // ÚJ ML VÁLTOZÓK:
+  ForecastResponse? _forecastData;
+  AnomalyResponse? _anomalyData;
+  MLBudgetResponse? _mlBudgetData;
+  WhatIfResponse? _whatIfData;
+  Map<String, dynamic>? _advancedInsights;
   
   bool _isLoading = false;
   String _selectedPeriod = '6'; // hónapok száma
@@ -36,7 +43,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 6, vsync: this); // 4-ről 6-ra
     _loadBasicStats();
   }
 
@@ -126,6 +133,135 @@ class _AnalysisScreenState extends State<AnalysisScreen>
     }
   }
 
+  Future<void> _loadForecastData() async {
+  setState(() {
+    _isLoading = true;
+  });
+
+  try {
+    final monthsBack = int.parse(_selectedPeriod);
+    final forecast = await _analysisService.getSpendingForecast(
+      forecastType: 'monthly',
+      periodsAhead: 6,
+      monthsHistory: monthsBack,
+    );
+    setState(() {
+      _forecastData = forecast;
+    });
+  } catch (e) {
+    _showError('Hiba az előrejelzés betöltésekor: $e');
+  } finally {
+    setState(() {
+      _isLoading = false;
+    });
+  }
+}
+
+Future<void> _loadAnomalyData() async {
+  setState(() {
+    _isLoading = true;
+  });
+
+  try {
+    final monthsBack = int.parse(_selectedPeriod);
+    final anomaly = await _analysisService.getAnomalyDetection(
+      monthsBack: monthsBack,
+      sensitivity: 0.1,
+    );
+    setState(() {
+      _anomalyData = anomaly;
+    });
+  } catch (e) {
+    _showError('Hiba az anomália detektálás betöltésekor: $e');
+  } finally {
+    setState(() {
+      _isLoading = false;
+    });
+  }
+}
+
+Future<void> _loadMLBudgetData() async {
+  setState(() {
+    _isLoading = true;
+  });
+
+  try {
+    final monthsBack = int.parse(_selectedPeriod);
+    final mlBudget = await _analysisService.getMLBudgetRecommendations(
+      monthsBack: monthsBack,
+    );
+    setState(() {
+      _mlBudgetData = mlBudget;
+    });
+  } catch (e) {
+    _showError('Hiba az ML költségvetés betöltésekor: $e');
+  } finally {
+    setState(() {
+      _isLoading = false;
+    });
+  }
+}
+
+Future<void> _loadAdvancedInsights() async {
+  setState(() {
+    _isLoading = true;
+  });
+
+  try {
+    final monthsBack = int.parse(_selectedPeriod);
+    
+    // Próbáljuk meg az anomália detektálást külön betölteni
+    try {
+      await _loadAnomalyData();
+    } catch (e) {
+      print('Anomália betöltési hiba: $e');
+    }
+    
+    // Próbáljuk meg az ML költségvetést külön betölteni
+    try {
+      await _loadMLBudgetData();
+    } catch (e) {
+      print('ML költségvetés betöltési hiba: $e');
+    }
+    
+    // Alap insights betöltése
+    try {
+      final insights = await _analysisService.getAdvancedInsights(
+        monthsBack: monthsBack,
+      );
+      setState(() {
+        _advancedInsights = insights;
+      });
+    } catch (e) {
+      print('Alapvető insights hiba: $e');
+      // Ha minden más nem működik, adj vissza egy üres Map-et
+      setState(() {
+        _advancedInsights = {
+          'status': 'partial_load',
+          'message': 'Egyes elemzések nem elérhetők, de az anomália detektálás és ML költségvetés működhet.',
+          'loaded_at': DateTime.now().toIso8601String(),
+        };
+      });
+    }
+    
+  } catch (e) {
+    print('Hiba részletesen: $e');
+    _showError('Hiba a fejlett betekintések betöltésekor: $e');
+    // Üres insights beállítása, hogy ne crasheljen
+    setState(() {
+      _advancedInsights = {
+        'error': true,
+        'message': 'A fejlett betekintések jelenleg nem elérhetők.',
+        'error_details': e.toString(),
+      };
+    });
+  } finally {
+    setState(() {
+      _isLoading = false;
+    });
+  }
+}
+
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -153,6 +289,12 @@ class _AnalysisScreenState extends State<AnalysisScreen>
           break;
         case 3:
           _loadComprehensiveAnalysis();
+          break;
+        case 4: // ÚJ
+          _loadForecastData();
+          break;
+        case 5: // ÚJ
+          _loadAdvancedInsights();
           break;
       }
     }
@@ -232,13 +374,17 @@ class _AnalysisScreenState extends State<AnalysisScreen>
                   ),
                   labelColor: Colors.white,
                   unselectedLabelColor: Colors.black54,
-                  labelStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
-                  unselectedLabelStyle: TextStyle(fontSize: 12),
+                  labelStyle: TextStyle(fontSize: 13, fontWeight: FontWeight.w600), // 10-ről 13-ra
+                  unselectedLabelStyle: TextStyle(fontSize: 12), // 10-ről 12-re
+                  labelPadding: EdgeInsets.symmetric(horizontal: 12), // padding hozzáadása
+                  isScrollable: true,
                   tabs: [
                     Tab(text: 'Alapok'),
                     Tab(text: 'Kockázat'),
-                    Tab(text: 'Kategóriák'),
+                    Tab(text: 'Kategória'),
                     Tab(text: 'Átfogó'),
+                    Tab(text: 'Előrejelzés'),
+                    Tab(text: 'Betekintés'),
                   ],
                   onTap: (index) {
                     switch (index) {
@@ -253,6 +399,12 @@ class _AnalysisScreenState extends State<AnalysisScreen>
                         break;
                       case 3:
                         if (_comprehensiveAnalysis == null) _loadComprehensiveAnalysis();
+                        break;
+                      case 4: // ÚJ
+                        if (_forecastData == null) _loadForecastData();
+                        break;
+                      case 5: // ÚJ
+                        if (_advancedInsights == null) _loadAdvancedInsights();
                         break;
                     }
                   },
@@ -322,6 +474,8 @@ class _AnalysisScreenState extends State<AnalysisScreen>
                       _buildRiskAnalysisTab(),
                       _buildCategoryAnalysisTab(),
                       _buildComprehensiveAnalysisTab(),
+                      _buildForecastTab(), // ÚJ
+                      _buildAdvancedInsightsTab(), // ÚJ
                     ],
                   ),
                 ),
@@ -916,6 +1070,510 @@ class _AnalysisScreenState extends State<AnalysisScreen>
               ],
             ),
           )).toList(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildForecastTab() {
+    if (_isLoading) {
+      return Center(
+        child: CircularProgressIndicator(color: Color(0xFF00D4A3)),
+      );
+    }
+
+    if (_forecastData == null) {
+      return Center(
+        child: ElevatedButton(
+          onPressed: _loadForecastData,
+          child: Text('Előrejelzés betöltése'),
+          style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF00D4A3)),
+        ),
+      );
+    }
+
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Modell pontosság
+          _buildStatCard(
+            'Modell pontosság', 
+            '${_forecastData!.modelAccuracy > 1 ? (_forecastData!.modelAccuracy).toStringAsFixed(1) : (_forecastData!.modelAccuracy * 100).toStringAsFixed(1)}%',
+            Icons.verified,
+            (_forecastData!.modelAccuracy > 1 ? _forecastData!.modelAccuracy : _forecastData!.modelAccuracy * 100) > 80 ? Colors.green : Colors.orange,
+          ),
+          SizedBox(height: 12),
+          
+          // Trend
+          _buildStatCard(
+            'Előrejelzett trend',
+            _forecastData!.trend.toUpperCase(),
+            _forecastData!.trend == 'növekvő' ? Icons.trending_up :
+            _forecastData!.trend == 'csökkenő' ? Icons.trending_down : Icons.trending_flat,
+            _forecastData!.trend == 'növekvő' ? Colors.green :
+            _forecastData!.trend == 'csökkenő' ? Colors.red : Colors.blue,
+          ),
+          SizedBox(height: 12),
+
+          // Szezonális minta
+          if (_forecastData!.seasonalPatternDetected)
+            Container(
+              padding: EdgeInsets.all(16),
+              margin: EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                color: Colors.blue.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.blue.withOpacity(0.3)),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.autorenew, color: Colors.blue),
+                  SizedBox(width: 12),
+                  Text(
+                    'Szezonális minta felismert',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.blue[800],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+          SizedBox(height: 16),
+          Text(
+            'Következő ${_forecastData!.periodsAhead} hónap előrejelzése',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+          SizedBox(height: 16),
+
+          // Előrejelzések listája
+          ...(_forecastData!.forecasts.take(6).map((forecast) => 
+            Container(
+              margin: EdgeInsets.only(bottom: 12),
+              padding: EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 4,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    forecast.period,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Bevétel', style: TextStyle(color: Colors.grey[600])),
+                          Text(
+                            NumberFormatter.formatCurrency(forecast.predictedIncome),
+                            style: TextStyle(color: Colors.green, fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Kiadás', style: TextStyle(color: Colors.grey[600])),
+                          Text(
+                            NumberFormatter.formatCurrency(forecast.predictedExpense),
+                            style: TextStyle(color: Colors.red, fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Egyenleg', style: TextStyle(color: Colors.grey[600])),
+                          Text(
+                            NumberFormatter.formatCurrency(forecast.predictedNet),
+                            style: TextStyle(
+                              color: forecast.predictedNet >= 0 ? Colors.green : Colors.red,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    'Bizonytalansági sáv: ${NumberFormatter.formatCurrency(forecast.confidenceLower)} - ${NumberFormatter.formatCurrency(forecast.confidenceUpper)}',
+                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                  ),
+                ],
+              ),
+            ),
+          ).toList()),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAdvancedInsightsTab() {
+    if (_isLoading) {
+      return Center(
+        child: CircularProgressIndicator(color: Color(0xFF00D4A3)),
+      );
+    }
+
+    if (_advancedInsights == null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: _loadAdvancedInsights,
+              child: Text('Betekintések betöltése'),
+              style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF00D4A3)),
+            ),
+            SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _loadAnomalyData,
+              child: Text('Anomáliák betöltése'),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
+            ),
+            SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _loadMLBudgetData,
+              child: Text('ML Költségvetés'),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.purple),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Anomáliák szekció
+          if (_anomalyData != null) ...[
+            Text(
+              'Költési anomáliák',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+            SizedBox(height: 16),
+            
+            Row(
+              children: [
+                Expanded(
+                  child: _buildStatCard(
+                    'Összesen',
+                    '${_anomalyData!.totalAnomalies}',
+                    Icons.warning_amber,
+                    Colors.orange,
+                  ),
+                ),
+                SizedBox(width: 12),
+                Expanded(
+                  child: _buildStatCard(
+                    'Magas rizikó',
+                    '${_anomalyData!.anomaliesBySeverity['high'] ?? 0}',
+                    Icons.error,
+                    Colors.red,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 16),
+
+            // Legutóbbi anomáliák
+            if (_anomalyData!.recentAnomalies.isNotEmpty) ...[
+              Text(
+                'Legutóbbi anomáliák',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              SizedBox(height: 12),
+              ...(_anomalyData!.recentAnomalies.take(3).map((anomaly) =>
+                Container(
+                  margin: EdgeInsets.only(bottom: 8),
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.red.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.red.withOpacity(0.3)),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.warning,
+                        color: anomaly.severity == 'high' ? Colors.red : Colors.orange,
+                        size: 20,
+                      ),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${anomaly.category} - ${NumberFormatter.formatCurrency(anomaly.amount)}',
+                              style: TextStyle(fontWeight: FontWeight.w600),
+                            ),
+                            Text(
+                              anomaly.date,
+                              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Text(
+                        anomaly.severity.toUpperCase(),
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: anomaly.severity == 'high' ? Colors.red : Colors.orange,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ).toList()),
+            ],
+            SizedBox(height: 24),
+          ],
+
+          // ML Költségvetés szekció
+          if (_mlBudgetData != null) ...[
+            Text(
+              'ML Költségvetési javaslatok',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+            SizedBox(height: 16),
+
+            _buildStatCard(
+              'Ajánlott havi költségvetés',
+              NumberFormatter.formatCurrency(_mlBudgetData!.totalRecommendedBudget),
+              Icons.account_balance_wallet,
+              Colors.green,
+            ),
+            SizedBox(height: 12),
+
+            _buildStatCard(
+              'Költési minta pontszám',
+              () {
+                double normalizedScore;
+                if (_mlBudgetData!.spendingPatternScore > 1) {
+                  // Ha nagyobb mint 1, akkor már százalék formában van, csak normalizáljuk 0-100 közé
+                  normalizedScore = (_mlBudgetData!.spendingPatternScore).clamp(0.0, 100.0);
+                } else {
+                  // Ha 0-1 között van, akkor szorozzuk 100-zal
+                  normalizedScore = (_mlBudgetData!.spendingPatternScore * 100).clamp(0.0, 100.0);
+                }
+                return '${normalizedScore.toStringAsFixed(0)}/100';
+              }(),
+              Icons.score,
+              () {
+                double normalizedScore = _mlBudgetData!.spendingPatternScore > 1 
+                  ? _mlBudgetData!.spendingPatternScore.clamp(0.0, 100.0)
+                  : (_mlBudgetData!.spendingPatternScore * 100).clamp(0.0, 100.0);
+                return normalizedScore > 70 ? Colors.green : normalizedScore > 40 ? Colors.orange : Colors.red;
+              }(),
+            ),
+            SizedBox(height: 16),
+
+            // Top kategória ajánlások
+            Text(
+              'Kategória ajánlások',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+            SizedBox(height: 12),
+
+            ...(_mlBudgetData!.categoryRecommendations.take(5).map((rec) =>
+              Container(
+                margin: EdgeInsets.only(bottom: 8),
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 2,
+                      offset: Offset(0, 1),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          rec.category,
+                          style: TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: rec.priority == 'high' ? Colors.red :
+                                  rec.priority == 'medium' ? Colors.orange : Colors.green,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            rec.priority.toUpperCase(),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 4),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Ajánlott: ${NumberFormatter.formatCurrency(rec.recommendedLimit)}',
+                          style: TextStyle(color: Colors.green, fontSize: 12),
+                        ),
+                        Text(
+                          'Jelenlegi: ${NumberFormatter.formatCurrency(rec.currentSpending)}',
+                          style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                        ),
+                      ],
+                    ),
+                    if (rec.reasoning.isNotEmpty) ...[
+                      SizedBox(height: 4),
+                      Text(
+                        rec.reasoning,
+                        style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ).toList()),
+
+            SizedBox(height: 16),
+
+            // Személyre szabott tippek
+            if (_mlBudgetData!.personalizedTips.isNotEmpty) ...[
+              Text(
+                'Személyre szabott tippek',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              SizedBox(height: 12),
+              Container(
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.blue.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.blue.withOpacity(0.3)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: _mlBudgetData!.personalizedTips.map((tip) => 
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 8),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(Icons.lightbulb, color: Colors.blue, size: 16),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              tip,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.blue[800],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ).toList(),
+                ),
+              ),
+            ],
+          ],
+
+          // Fejlett betekintések az insights adatokból
+          if (_advancedInsights != null && _advancedInsights!.isNotEmpty) ...[
+            SizedBox(height: 24),
+            Text(
+              'Fejlett betekintések',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+            SizedBox(height: 16),
+            
+            // Itt feldolgozhatod az _advancedInsights Map tartalmát
+            // A backend válaszának struktúrájától függ, hogyan jeleníted meg
+            Container(
+              padding: EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 4,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Text(
+                'Fejlett elemzési adatok feldolgozás alatt...',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey[600],
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );

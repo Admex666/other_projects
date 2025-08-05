@@ -96,7 +96,7 @@ class MLAnalysisService:
         # Isolation Forest modell
         iso_forest = IsolationForest(
             n_estimators=100,
-            contamination=contamination,
+            contamination=float(contamination),
             random_state=42
         )
         

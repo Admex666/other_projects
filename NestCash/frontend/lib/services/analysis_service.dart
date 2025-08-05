@@ -91,4 +91,104 @@ class AnalysisService {
       throw Exception('Sikertelen kategóriaelemzés lekérés: ${response.body}');
     }
   }
+
+  // ÚJ METÓDUSOK hozzáadása a meglévő kódhoz
+
+  // Költési előrejelzés
+  Future<ForecastResponse> getSpendingForecast({
+    String forecastType = 'monthly',
+    int periodsAhead = 6,
+    int monthsHistory = 12,
+  }) async {
+    final headers = await _getHeaders();
+    
+    final response = await http.get(
+      Uri.parse('$baseUrl/analysis/forecast?forecast_type=$forecastType&periods_ahead=$periodsAhead&months_history=$monthsHistory'),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return ForecastResponse.fromJson(data);
+    } else {
+      throw Exception('Sikertelen előrejelzés lekérés: ${response.body}');
+    }
+  }
+
+  // Anomália detektálás
+  Future<AnomalyResponse> getAnomalyDetection({
+    int monthsBack = 6,
+    double sensitivity = 0.1,
+  }) async {
+    final headers = await _getHeaders();
+    
+    final response = await http.get(
+      Uri.parse('$baseUrl/analysis/anomaly-detection?months_back=$monthsBack&sensitivity=$sensitivity'),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return AnomalyResponse.fromJson(data);
+    } else {
+      throw Exception('Sikertelen anomália detektálás: ${response.body}');
+    }
+  }
+
+  // ML költségvetési javaslatok
+  Future<MLBudgetResponse> getMLBudgetRecommendations({
+    int monthsBack = 6,
+  }) async {
+    final headers = await _getHeaders();
+    
+    final response = await http.get(
+      Uri.parse('$baseUrl/analysis/ml-budget-recommendations?months_back=$monthsBack'),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return MLBudgetResponse.fromJson(data);
+    } else {
+      throw Exception('Sikertelen ML költségvetési javaslat lekérés: ${response.body}');
+    }
+  }
+
+  // What-If szimulációk
+  Future<WhatIfResponse> getWhatIfScenarios({
+    required double targetSavings,
+    int monthsBack = 6,
+  }) async {
+    final headers = await _getHeaders();
+    
+    final response = await http.post(
+      Uri.parse('$baseUrl/analysis/what-if-scenarios?target_savings=$targetSavings&months_back=$monthsBack'),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return WhatIfResponse.fromJson(data);
+    } else {
+      throw Exception('Sikertelen What-If szimuláció: ${response.body}');
+    }
+  }
+
+  // Fejlett betekintések (kombinált)
+  Future<Map<String, dynamic>> getAdvancedInsights({
+    int monthsBack = 6,
+  }) async {
+    final headers = await _getHeaders();
+    
+    final response = await http.get(
+      Uri.parse('$baseUrl/analysis/spending-insights?months_back=$monthsBack'),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Sikertelen fejlett betekintések lekérés: ${response.body}');
+    }
+  }
 }

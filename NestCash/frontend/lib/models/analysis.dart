@@ -193,3 +193,235 @@ class FinancialAnalysis {
     );
   }
 }
+
+// ÚJ MODELLEK - add hozzá a meglévő modellek mellé
+
+class ForecastData {
+  final String period;
+  final double predictedIncome;
+  final double predictedExpense;
+  final double predictedNet;
+  final double confidenceLower;
+  final double confidenceUpper;
+  final double seasonalFactor;
+
+  ForecastData({
+    required this.period,
+    required this.predictedIncome,
+    required this.predictedExpense,
+    required this.predictedNet,
+    required this.confidenceLower,
+    required this.confidenceUpper,
+    required this.seasonalFactor,
+  });
+
+  factory ForecastData.fromJson(Map<String, dynamic> json) {
+    return ForecastData(
+      period: json['period'] ?? '',
+      predictedIncome: (json['predicted_income'] ?? 0).toDouble(),
+      predictedExpense: (json['predicted_expense'] ?? 0).toDouble(),
+      predictedNet: (json['predicted_net'] ?? 0).toDouble(),
+      confidenceLower: (json['confidence_lower'] ?? 0).toDouble(),
+      confidenceUpper: (json['confidence_upper'] ?? 0).toDouble(),
+      seasonalFactor: (json['seasonal_factor'] ?? 1.0).toDouble(),
+    );
+  }
+}
+
+class ForecastResponse {
+  final String forecastType;
+  final int periodsAhead;
+  final List<ForecastData> forecasts;
+  final double modelAccuracy;
+  final bool seasonalPatternDetected;
+  final String trend;
+
+  ForecastResponse({
+    required this.forecastType,
+    required this.periodsAhead,
+    required this.forecasts,
+    required this.modelAccuracy,
+    required this.seasonalPatternDetected,
+    required this.trend,
+  });
+
+  factory ForecastResponse.fromJson(Map<String, dynamic> json) {
+    return ForecastResponse(
+      forecastType: json['forecast_type'] ?? 'monthly',
+      periodsAhead: json['periods_ahead'] ?? 0,
+      forecasts: (json['forecasts'] as List<dynamic>?)
+          ?.map((item) => ForecastData.fromJson(item))
+          .toList() ?? [],
+      modelAccuracy: (json['model_accuracy'] ?? 0).toDouble(),
+      seasonalPatternDetected: json['seasonal_pattern_detected'] ?? false,
+      trend: json['trend'] ?? 'stabil',
+    );
+  }
+}
+
+class AnomalyData {
+  final String transactionId;
+  final String date;
+  final double amount;
+  final String category;
+  final double anomalyScore;
+  final String anomalyType;
+  final String severity;
+
+  AnomalyData({
+    required this.transactionId,
+    required this.date,
+    required this.amount,
+    required this.category,
+    required this.anomalyScore,
+    required this.anomalyType,
+    required this.severity,
+  });
+
+  factory AnomalyData.fromJson(Map<String, dynamic> json) {
+    return AnomalyData(
+      transactionId: json['transaction_id'] ?? '',
+      date: json['date'] ?? '',
+      amount: (json['amount'] ?? 0).toDouble(),
+      category: json['category'] ?? '',
+      anomalyScore: (json['anomaly_score'] ?? 0).toDouble(),
+      anomalyType: json['anomaly_type'] ?? '',
+      severity: json['severity'] ?? 'low',
+    );
+  }
+}
+
+class AnomalyResponse {
+  final int totalAnomalies;
+  final Map<String, int> anomaliesBySeverity;
+  final List<AnomalyData> recentAnomalies;
+  final Map<String, int> anomalyTrends;
+  final List<String> recommendations;
+
+  AnomalyResponse({
+    required this.totalAnomalies,
+    required this.anomaliesBySeverity,
+    required this.recentAnomalies,
+    required this.anomalyTrends,
+    required this.recommendations,
+  });
+
+  factory AnomalyResponse.fromJson(Map<String, dynamic> json) {
+    return AnomalyResponse(
+      totalAnomalies: json['total_anomalies'] ?? 0,
+      anomaliesBySeverity: Map<String, int>.from(json['anomalies_by_severity'] ?? {}),
+      recentAnomalies: (json['recent_anomalies'] as List<dynamic>?)
+          ?.map((item) => AnomalyData.fromJson(item))
+          .toList() ?? [],
+      anomalyTrends: Map<String, int>.from(json['anomaly_trends'] ?? {}),
+      recommendations: List<String>.from(json['recommendations'] ?? []),
+    );
+  }
+}
+
+class BudgetRecommendation {
+  final String category;
+  final double recommendedLimit;
+  final double currentSpending;
+  final double confidence;
+  final String reasoning;
+  final String priority;
+
+  BudgetRecommendation({
+    required this.category,
+    required this.recommendedLimit,
+    required this.currentSpending,
+    required this.confidence,
+    required this.reasoning,
+    required this.priority,
+  });
+
+  factory BudgetRecommendation.fromJson(Map<String, dynamic> json) {
+    return BudgetRecommendation(
+      category: json['category'] ?? '',
+      recommendedLimit: (json['recommended_limit'] ?? 0).toDouble(),
+      currentSpending: (json['current_spending'] ?? 0).toDouble(),
+      confidence: (json['confidence'] ?? 0).toDouble(),
+      reasoning: json['reasoning'] ?? '',
+      priority: json['priority'] ?? 'low',
+    );
+  }
+}
+
+class MLBudgetResponse {
+  final double totalRecommendedBudget;
+  final List<BudgetRecommendation> categoryRecommendations;
+  final double spendingPatternScore;
+  final String riskLevel;
+  final List<String> personalizedTips;
+
+  MLBudgetResponse({
+    required this.totalRecommendedBudget,
+    required this.categoryRecommendations,
+    required this.spendingPatternScore,
+    required this.riskLevel,
+    required this.personalizedTips,
+  });
+
+  factory MLBudgetResponse.fromJson(Map<String, dynamic> json) {
+    return MLBudgetResponse(
+      totalRecommendedBudget: (json['total_recommended_budget'] ?? 0).toDouble(),
+      categoryRecommendations: (json['category_recommendations'] as List<dynamic>?)
+          ?.map((item) => BudgetRecommendation.fromJson(item))
+          .toList() ?? [],
+      spendingPatternScore: (json['spending_pattern_score'] ?? 0).toDouble(),
+      riskLevel: json['risk_level'] ?? 'medium',
+      personalizedTips: List<String>.from(json['personalized_tips'] ?? []),
+    );
+  }
+}
+
+class WhatIfScenario {
+  final String scenarioName;
+  final Map<String, double> changes;
+  final double monthlyImpact;
+  final double annualSavings;
+  final String feasibility;
+
+  WhatIfScenario({
+    required this.scenarioName,
+    required this.changes,
+    required this.monthlyImpact,
+    required this.annualSavings,
+    required this.feasibility,
+  });
+
+  factory WhatIfScenario.fromJson(Map<String, dynamic> json) {
+    return WhatIfScenario(
+      scenarioName: json['scenario_name'] ?? '',
+      changes: Map<String, double>.from(
+        (json['changes'] ?? {}).map((key, value) => MapEntry(key, value.toDouble()))
+      ),
+      monthlyImpact: (json['monthly_impact'] ?? 0).toDouble(),
+      annualSavings: (json['annual_savings'] ?? 0).toDouble(),
+      feasibility: json['feasibility'] ?? 'medium',
+    );
+  }
+}
+
+class WhatIfResponse {
+  final List<WhatIfScenario> scenarios;
+  final String recommendedScenario;
+  final double totalPotentialSavings;
+
+  WhatIfResponse({
+    required this.scenarios,
+    required this.recommendedScenario,
+    required this.totalPotentialSavings,
+  });
+
+  factory WhatIfResponse.fromJson(Map<String, dynamic> json) {
+    return WhatIfResponse(
+      scenarios: (json['scenarios'] as List<dynamic>?)
+          ?.map((item) => WhatIfScenario.fromJson(item))
+          .toList() ?? [],
+      recommendedScenario: json['recommended_scenario'] ?? '',
+      totalPotentialSavings: (json['total_potential_savings'] ?? 0).toDouble(),
+    );
+  }
+}
