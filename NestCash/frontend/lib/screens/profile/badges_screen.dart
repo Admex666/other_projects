@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/services/badge_service.dart';
 import 'package:frontend/models/badge_models.dart';
+import 'package:frontend/services/sharing_service.dart';
 
 class BadgesScreen extends StatefulWidget {
   final String userId;
@@ -978,6 +979,16 @@ class _BadgesScreenState extends State<BadgesScreen> with SingleTickerProviderSt
               _buildDetailRow('Pontok:', badge.badgePoints.toString()),
             if (badge.badgeRarity != null)
               _buildDetailRow('Ritkaság:', badge.badgeRarity!.displayName),
+            
+            // Megosztás gomb hozzáadása
+            const SizedBox(height: 16),
+            Center(
+              child: ShareAchievementButton(
+                achievementType: 'badge',
+                achievementId: badge.id,
+                achievementName: badge.badgeName ?? badge.badgeCode,
+              ),
+            ),
           ],
         ),
         actions: [

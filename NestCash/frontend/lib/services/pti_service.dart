@@ -245,4 +245,62 @@ class PTIService {
       return null;
     }
   }
+
+  /// Időszak információk lekérése
+  Future<PTIPeriodInfo?> getPeriodInfo({
+    PTIPeriod period = PTIPeriod.weekly,
+  }) async {
+    try {
+      final headers = await _getHeaders();
+      final queryParams = {
+        'period': period.value,
+      };
+      
+      final uri = Uri.parse('$baseUrl/pti/period-info').replace(
+        queryParameters: queryParams,
+      );
+
+      final response = await http.get(uri, headers: headers);
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return PTIPeriodInfo.fromJson(data);
+      }
+      return null;
+    } catch (e) {
+      print('Error getting period info: $e');
+      return null;
+    }
+  }
+
+  /// PTI történet lekérése
+  Future<PTIHistoryResponse?> getPTIHistory({
+    PTIPeriod period = PTIPeriod.weekly,
+    int limit = 10,
+    int offset = 0,
+  }) async {
+    try {
+      final headers = await _getHeaders();
+      final queryParams = {
+        'period': period.value,
+        'limit': limit.toString(),
+        'offset': offset.toString(),
+      };
+      
+      final uri = Uri.parse('$baseUrl/pti/history').replace(
+        queryParameters: queryParams,
+      );
+
+      final response = await http.get(uri, headers: headers);
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return PTIHistoryResponse.fromJson(data);
+      }
+      return null;
+    } catch (e) {
+      print('Error getting PTI history: $e');
+      return null;
+    }
+  }
 }

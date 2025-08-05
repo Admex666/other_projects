@@ -24,6 +24,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
   final PTIService _ptiService = PTIService();
   final AuthService _authService = AuthService(); // Hozzáadás
   PTIDashboardResponse? _dashboardData;
+  PTIPeriodInfo? _periodInfo; // Új
   String? _username; // Hozzáadás
   bool _isLoading = true;
   String? _error;
@@ -1032,5 +1033,500 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
     } else {
       return 'Jelentős fejlesztési lehetőség 🎯';
     }
+  }
+
+  Widget _buildPeriodInfoCard() {
+    if (_periodInfo == null) return SizedBox.shrink();
+    
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.schedule,
+                color: Color(0xFF00D4A3),
+                size: 20,
+              ),
+              SizedBox(width: 8),
+              Text(
+                'Aktuális ${_getPeriodDisplayName(_periodInfo!.period)} időszak',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 12),
+          
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Időszak vége:',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  Text(
+                    _formatPeriodEnd(_periodInfo!.periodEnd),
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    'Hátralévő napok:',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  Text(
+                    '${_periodInfo!.daysRemaining} nap',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: _periodInfo!.daysRemaining <= 2 
+                          ? Colors.red[600] 
+                          : _periodInfo!.daysRemaining <= 7
+                              ? Colors.orange[600]
+                              : Colors.green[600],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          SizedBox(height: 12),
+          
+          // Progress bar
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Időszak haladása: ${_periodInfo!.progressPercentage.toStringAsFixed(1)}%',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey[600],
+                ),
+              ),
+              SizedBox(height: 6),
+              LinearProgressIndicator(
+                value: _periodInfo!.progressPercentage / 100,
+                backgroundColor: Colors.grey[200],
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF00D4A3)),
+                minHeight: 6,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showHistoryBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => _buildHistoryBottomSheet(),
+    );
+  }
+
+  Widget _buildHistoryBottomSheet() {
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.8,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
+      child: Column(
+        children: [
+          // Handle
+          Container(
+            margin: EdgeInsets.only(top: 12),
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: Colors.grey[300],
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          
+          // Header
+          Padding(
+            padding: EdgeInsets.all(20),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.history,
+                  color: Color(0xFF00D4A3),
+                  size: 24,
+                ),
+                SizedBox(width: 12),
+                Text(
+                  'PTI Történet',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Spacer(),
+                IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: Icon(Icons.close),
+                ),
+              ],
+            ),
+          ),
+          
+          // History content
+          Expanded(
+            child: _buildHistoryContent(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHistoryContent() {
+    return FutureBuilder<PTIHistoryResponse?>(
+      future: _ptiService.getPTIHistory(period: PTIPeriod.weekly, limit: 20),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF00D4A3)),
+            ),
+          );
+        }
+
+        if (snapshot.hasError || !snapshot.hasData) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.error_outline,
+                  size: 48,
+                  color: Colors.grey[400],
+                ),
+                SizedBox(height: 16),
+                Text(
+                  'Nem sikerült betölteni a történetet',
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+
+        final history = snapshot.data!;
+        final allEntries = <PTIHistoryEntry>[];
+        
+        // Aktuális időszak hozzáadása
+        if (history.currentPeriod != null) {
+          allEntries.add(history.currentPeriod!);
+        }
+        
+        // Történeti bejegyzések hozzáadása
+        allEntries.addAll(history.entries);
+
+        if (allEntries.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.history,
+                  size: 48,
+                  color: Colors.grey[400],
+                ),
+                SizedBox(height: 16),
+                Text(
+                  'Még nincs PTI történet',
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+
+        return ListView.builder(
+          padding: EdgeInsets.symmetric(horizontal: 20),
+          itemCount: allEntries.length,
+          itemBuilder: (context, index) {
+            final entry = allEntries[index];
+            final isCurrentPeriod = index == 0 && history.currentPeriod != null;
+            final previousEntry = index < allEntries.length - 1 ? allEntries[index + 1] : null;
+            
+            return _buildHistoryItem(entry, isCurrentPeriod, previousEntry);
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildHistoryItem(PTIHistoryEntry entry, bool isCurrentPeriod, PTIHistoryEntry? previousEntry) {
+    // Változás számítása az előző időszakhoz képest
+    double? change;
+    bool? isImprovement;
+    
+    if (previousEntry != null) {
+      change = entry.ptiScore - previousEntry.ptiScore;
+      isImprovement = change > 0;
+    }
+
+    return Container(
+      margin: EdgeInsets.only(bottom: 16),
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isCurrentPeriod ? Color(0xFF00D4A3).withOpacity(0.1) : Colors.grey[50],
+        borderRadius: BorderRadius.circular(12),
+        border: isCurrentPeriod ? Border.all(
+          color: Color(0xFF00D4A3).withOpacity(0.3),
+          width: 2,
+        ) : null,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  if (isCurrentPeriod) ...[
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Color(0xFF00D4A3),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        'AKTUÁLIS',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                  ],
+                  Text(
+                    _formatPeriodKey(entry.periodKey),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: isCurrentPeriod ? Color(0xFF00D4A3) : Colors.black,
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Text(
+                    '${entry.ptiScore.toStringAsFixed(1)}',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: isCurrentPeriod ? Color(0xFF00D4A3) : Colors.black,
+                    ),
+                  ),
+                  if (change != null) ...[
+                    SizedBox(width: 8),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: isImprovement! ? Colors.green : Colors.red,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            isImprovement ? Icons.arrow_upward : Icons.arrow_downward,
+                            color: Colors.white,
+                            size: 12,
+                          ),
+                          SizedBox(width: 2),
+                          Text(
+                            '${change.abs().toStringAsFixed(1)}',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ],
+          ),
+          SizedBox(height: 8),
+          
+          // Időszak információ
+          Text(
+            '${_formatDateShort(entry.periodStart)} - ${_formatDateShort(entry.periodEnd)}',
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey[600],
+            ),
+          ),
+          
+          if (entry.rank != null) ...[
+            SizedBox(height: 4),
+            Text(
+              '${entry.rank}. helyezés ${entry.totalUsers != null ? "/ ${entry.totalUsers}" : ""}',
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey[600],
+              ),
+            ),
+          ],
+          SizedBox(height: 12),
+          
+          // Komponensek mini előnézet
+          Row(
+            children: [
+              _buildMiniComponent('📚', entry.components.learningContribution, 30, Colors.blue),
+              SizedBox(width: 8),
+              _buildMiniComponent('💪', entry.components.habitContribution, 30, Colors.green),
+              SizedBox(width: 8),
+              _buildMiniComponent('🏆', entry.components.badgeContribution, 20, Colors.orange),
+              SizedBox(width: 8),
+              _buildMiniComponent('📊', entry.components.limitContribution, 20, Colors.purple),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMiniComponent(String emoji, double score, int maxScore, Color color) {
+    final percentage = (score / maxScore) * 100;
+    
+    return Expanded(
+      child: Column(
+        children: [
+          Text(
+            emoji,
+            style: TextStyle(fontSize: 16),
+          ),
+          SizedBox(height: 4),
+          Container(
+            height: 4,
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(2),
+            ),
+            child: FractionallySizedBox(
+              alignment: Alignment.centerLeft,
+              widthFactor: (percentage / 100).clamp(0.0, 1.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: color,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 2),
+          Text(
+            '${score.toStringAsFixed(0)}',
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+              color: color,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _getPeriodDisplayName(PTIPeriod period) {
+    switch (period) {
+      case PTIPeriod.weekly:
+        return 'heti';
+      case PTIPeriod.monthly:
+        return 'havi';
+      case PTIPeriod.yearly:
+        return 'éves';
+    }
+  }
+
+  String _formatPeriodEnd(DateTime date) {
+    final now = DateTime.now();
+    final difference = date.difference(now).inDays;
+    
+    if (difference == 0) {
+      return 'Ma ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
+    } else if (difference == 1) {
+      return 'Holnap';
+    } else {
+      return '${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')}.';
+    }
+  }
+
+  String _formatPeriodKey(String periodKey) {
+    // 2025-W03 -> 2025. 3. hét
+    // 2025-01 -> 2025. január
+    // 2025 -> 2025. év
+    
+    if (periodKey.contains('-W')) {
+      final parts = periodKey.split('-W');
+      return '${parts[0]}. ${parts[1]}. hét';
+    } else if (periodKey.contains('-')) {
+      final parts = periodKey.split('-');
+      final monthNames = [
+        'január', 'február', 'március', 'április', 'május', 'június',
+        'július', 'augusztus', 'szeptember', 'október', 'november', 'december'
+      ];
+      final monthIndex = int.parse(parts[1]) - 1;
+      return '${parts[0]}. ${monthNames[monthIndex]}';
+    } else {
+      return '$periodKey. év';
+    }
+  }
+
+  String _formatDateShort(DateTime date) {
+    return '${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')}.';
   }
 }

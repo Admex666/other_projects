@@ -6,6 +6,16 @@ from collections import defaultdict, Counter
 import calendar
 from statistics import mean
 from bson import ObjectId
+import pandas as pd
+import numpy as np
+from sklearn.ensemble import IsolationForest
+from sklearn.preprocessing import StandardScaler
+from statsmodels.tsa.seasonal import seasonal_decompose
+from statsmodels.tsa.holtwinters import ExponentialSmoothing
+from scipy import stats
+from datetime import datetime, timedelta
+import warnings
+warnings.filterwarnings('ignore')
 
 from app.models.transaction import Transaction
 from app.models.user import User
@@ -71,6 +81,62 @@ class FinancialAnalysis(BaseModel):
     time_analysis: TimeAnalysis
     risk_analysis: RiskAnalysis
     recommendations: Recommendations
+
+# ÚJ PYDANTIC MODELLEK - add hozzá a meglévő modellek mellé
+class ForecastData(BaseModel):
+    period: str  # "2024-02" vagy "2024-W05"
+    predicted_income: float
+    predicted_expense: float
+    predicted_net: float
+    confidence_lower: float
+    confidence_upper: float
+    seasonal_factor: float
+
+class ForecastResponse(BaseModel):
+    forecast_type: str  # "monthly" vagy "weekly"
+    periods_ahead: int
+    forecasts: List[ForecastData]
+    model_accuracy: float
+    seasonal_pattern_detected: bool
+    trend: str  # "növekvő", "csökkenő", "stabil"
+
+class SeasonalAnalysis(BaseModel):
+    has_seasonality: bool
+    seasonal_periods: List[str]  # ["december", "január"] vagy ["2024-W52", "2024-W01"]
+    peak_seasons: Dict[str, float]  # Időszak -> átlagos kiadás
+    seasonal_recommendations: List[str]
+
+class AnomalyData(BaseModel):
+    transaction_id: str
+    date: str
+    amount: float
+    category: str
+    anomaly_score: float
+    anomaly_type: str  # "high_spending", "unusual_category", "time_anomaly"
+    severity: str  # "low", "medium", "high"
+
+class AnomalyResponse(BaseModel):
+    total_anomalies: int
+    anomalies_by_severity: Dict[str, int]
+    recent_anomalies: List[AnomalyData]
+    anomaly_trends: Dict[str, int]  # Hónap -> anomáliák száma
+    recommendations: List[str]
+
+class BudgetRecommendation(BaseModel):
+    category: str
+    recommended_limit: float
+    current_spending: float
+    confidence: float
+    reasoning: str
+    priority: str  # "high", "medium", "low"
+
+class MLBudgetResponse(BaseModel):
+    total_recommended_budget: float
+    category_recommendations: List[BudgetRecommendation]
+    spending_pattern_score: float  # 0-100, mennyire kiszámítható a költés
+    risk_level: str
+    personalized_tips: List[str]
+
 
 @router.get("/comprehensive", response_model=FinancialAnalysis)
 async def get_comprehensive_analysis(
@@ -486,3 +552,542 @@ async def get_category_analysis(
     }).to_list()
     
     return await _analyze_categories(transactions)
+
+# ÚJ ROUTE-OK - add hozzá a meglévő route-ok mellé
+
+@router.get("/forecast", response_model=ForecastResponse)
+async def get_spending_forecast(
+    current_user: User = Depends(get_current_user),
+    forecast_type: str = Query("monthly", regex="^(monthly|weekly)$"),
+    periods_ahead: int = Query(6, ge=1, le=12),
+    months_history: int = Query(12, ge=3, le=24)
+):
+    """Havi/heti kiadások előrejelzése idősor elemzéssel"""
+    try:
+        # Historikus adatok lekérése
+        end_date = datetime.now()
+        start_date = end_date - timedelta(days=months_history * 30)
+        
+        transactions = await Transaction.find({
+            "user_id": ObjectId(current_user.id),
+            "date": {"$gte": start_date.strftime("%Y-%m-%d"), "$lte": end_date.strftime("%Y-%m-%d")}
+        }).to_list()
+        
+        if len(transactions) < 30:
+            raise HTTPException(status_code=400, detail="Nincs elegendő historikus adat az előrejelzéshez (min. 30 tranzakció)")
+        
+        # DataFrame készítése
+        df = pd.DataFrame([{
+            'date': t.date,
+            'amount': t.amount,
+            'is_income': t.amount > 0,
+            'is_expense': t.amount < 0
+        } for t in transactions])
+        
+        df['date'] = pd.to_datetime(df['date'])
+        df = df.sort_values('date')
+        
+        # Időszak szerint csoportosítás
+        if forecast_type == "monthly":
+            df['period'] = df['date'].dt.to_period('M')
+            freq = 'M'
+        else:  # weekly
+            df['period'] = df['date'].dt.to_period('W')
+            freq = 'W'
+        
+        # Aggregálás időszakonként
+        period_data = df.groupby('period').agg({
+            'amount': lambda x: x[x > 0].sum() if len(x[x > 0]) > 0 else 0,  # income
+        }).rename(columns={'amount': 'income'})
+        
+        period_data['expense'] = df.groupby('period').agg({
+            'amount': lambda x: abs(x[x < 0].sum()) if len(x[x < 0]) > 0 else 0
+        })['amount']
+        
+        period_data['net'] = period_data['income'] - period_data['expense']
+        period_data = period_data.fillna(0)
+        
+        if len(period_data) < 3:
+            raise HTTPException(status_code=400, detail="Nincs elegendő időszak az előrejelzéshez")
+        
+        # Előrejelzés készítése
+        forecasts = []
+        model_accuracy = 0.0
+        seasonal_detected = False
+        trend = "stabil"
+        
+        # Expense előrejelzés (ezt általában jobban lehet előre jelezni)
+        expense_series = period_data['expense'].values
+        
+        try:
+            # Exponential Smoothing modell
+            if len(expense_series) >= 8:  # Minimum szezonalitás detektálásához
+                model = ExponentialSmoothing(
+                    expense_series, 
+                    trend='add', 
+                    seasonal='add' if len(expense_series) >= 12 else None,
+                    seasonal_periods=12 if forecast_type == "monthly" else 52
+                ).fit()
+                seasonal_detected = model.params.get('smoothing_seasonal', 0) > 0.1
+            else:
+                model = ExponentialSmoothing(expense_series, trend='add').fit()
+            
+            # Előrejelzés
+            forecast_values = model.forecast(periods_ahead)
+            confidence_intervals = model.predict(
+                start=len(expense_series), 
+                end=len(expense_series) + periods_ahead - 1, 
+                return_conf_int=True
+            )
+            
+            # Model accuracy (MAE alapú)
+            fitted_values = model.fittedvalues
+            model_accuracy = max(0, 100 - (np.mean(np.abs(expense_series[1:] - fitted_values)) / np.mean(expense_series) * 100))
+            
+        except Exception as e:
+            # Fallback: simple linear trend
+            x = np.arange(len(expense_series))
+            slope, intercept = np.polyfit(x, expense_series, 1)
+            forecast_values = [slope * (len(expense_series) + i) + intercept for i in range(periods_ahead)]
+            confidence_intervals = [(f * 0.8, f * 1.2) for f in forecast_values]
+            model_accuracy = 70.0
+        
+        # Income egyszerűbb előrejelzés (gyakran stabilabb)
+        income_mean = period_data['income'].mean()
+        income_std = period_data['income'].std()
+        
+        # Trend meghatározása
+        recent_expenses = expense_series[-3:]
+        older_expenses = expense_series[-6:-3] if len(expense_series) >= 6 else expense_series[:-3]
+        if len(older_expenses) > 0:
+            if np.mean(recent_expenses) > np.mean(older_expenses) * 1.05:
+                trend = "növekvő"
+            elif np.mean(recent_expenses) < np.mean(older_expenses) * 0.95:
+                trend = "csökkenő"
+        
+        # Forecasts létrehozása
+        for i in range(periods_ahead):
+            current_period = period_data.index[-1] + i + 1
+            
+            pred_expense = float(forecast_values[i])
+            pred_income = income_mean  # Egyszerűsített
+            pred_net = pred_income - pred_expense
+            
+            conf_lower = float(confidence_intervals[i][0]) if hasattr(confidence_intervals[i], '__getitem__') else pred_expense * 0.8
+            conf_upper = float(confidence_intervals[i][1]) if hasattr(confidence_intervals[i], '__getitem__') else pred_expense * 1.2
+            
+            # Szezonális faktor (egyszerűsített)
+            seasonal_factor = 1.0
+            if seasonal_detected and forecast_type == "monthly":
+                month = (current_period.month - 1) if hasattr(current_period, 'month') else (datetime.now().month + i) % 12
+                if month in [11, 0]:  # December, január
+                    seasonal_factor = 1.2
+                elif month in [6, 7]:  # Július, augusztus
+                    seasonal_factor = 1.1
+            
+            forecasts.append(ForecastData(
+                period=str(current_period),
+                predicted_income=pred_income,
+                predicted_expense=pred_expense * seasonal_factor,
+                predicted_net=pred_income - (pred_expense * seasonal_factor),
+                confidence_lower=conf_lower * seasonal_factor,
+                confidence_upper=conf_upper * seasonal_factor,
+                seasonal_factor=seasonal_factor
+            ))
+        
+        return ForecastResponse(
+            forecast_type=forecast_type,
+            periods_ahead=periods_ahead,
+            forecasts=forecasts,
+            model_accuracy=min(100.0, max(0.0, model_accuracy)),
+            seasonal_pattern_detected=seasonal_detected,
+            trend=trend
+        )
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Előrejelzési hiba: {str(e)}")
+
+@router.get("/seasonal-analysis", response_model=SeasonalAnalysis)
+async def get_seasonal_analysis(
+    current_user: User = Depends(get_current_user),
+    months_back: int = Query(24, ge=12, le=36)
+):
+    """Szezonalitás elemzése"""
+    try:
+        # Adatok lekérése
+        end_date = datetime.now()
+        start_date = end_date - timedelta(days=months_back * 30)
+        
+        transactions = await Transaction.find({
+            "user_id": ObjectId(current_user.id),
+            "amount": {"$lt": 0},  # Csak kiadások
+            "date": {"$gte": start_date.strftime("%Y-%m-%d"), "$lte": end_date.strftime("%Y-%m-%d")}
+        }).to_list()
+        
+        if len(transactions) < 100:
+            return SeasonalAnalysis(
+                has_seasonality=False,
+                seasonal_periods=[],
+                peak_seasons={},
+                seasonal_recommendations=["Nincs elegendő adat a szezonalitás elemzéséhez"]
+            )
+        
+        # DataFrame készítése
+        df = pd.DataFrame([{
+            'date': t.date,
+            'amount': abs(t.amount),
+            'month': datetime.strptime(t.date, '%Y-%m-%d').month,
+            'month_name': datetime.strptime(t.date, '%Y-%m-%d').strftime('%B'),
+            'category': t.kategoria or 'Egyéb'
+        } for t in transactions])
+        
+        df['date'] = pd.to_datetime(df['date'])
+        
+        # Havi aggregálás
+        monthly_spending = df.groupby([df['date'].dt.to_period('M')])['amount'].sum()
+        
+        # Szezonalitás detektálás
+        has_seasonality = False
+        seasonal_periods = []
+        peak_seasons = {}
+        
+        if len(monthly_spending) >= 12:
+            try:
+                # Szezonális dekompozíció
+                decomposition = seasonal_decompose(monthly_spending.values, period=12, model='additive')
+                seasonal_component = decomposition.seasonal
+                
+                # Szezonalitás erősségének mérése
+                seasonal_strength = np.std(seasonal_component) / np.std(monthly_spending.values)
+                has_seasonality = seasonal_strength > 0.1
+                
+                if has_seasonality:
+                    # Csúcs hónapok azonosítása
+                    month_avg = df.groupby('month')['amount'].mean()
+                    overall_avg = month_avg.mean()
+                    
+                    for month, avg_spending in month_avg.items():
+                        if avg_spending > overall_avg * 1.15:  # 15%-kal több mint az átlag
+                            month_name = datetime(2000, month, 1).strftime('%B')
+                            seasonal_periods.append(month_name)
+                            peak_seasons[month_name] = float(avg_spending)
+                    
+            except Exception:
+                # Fallback: egyszerű statisztikai elemzés
+                month_stats = df.groupby('month')['amount'].agg(['mean', 'std']).fillna(0)
+                overall_mean = month_stats['mean'].mean()
+                overall_std = month_stats['mean'].std()
+                
+                has_seasonality = overall_std > overall_mean * 0.15
+                
+                if has_seasonality:
+                    for month, row in month_stats.iterrows():
+                        if row['mean'] > overall_mean + overall_std:
+                            month_name = datetime(2000, month, 1).strftime('%B')
+                            seasonal_periods.append(month_name)
+                            peak_seasons[month_name] = float(row['mean'])
+        
+        # Ajánlások generálása
+        recommendations = []
+        if has_seasonality:
+            if 'December' in peak_seasons or 'November' in peak_seasons:
+                recommendations.append("Karácsonyi időszakban készülj fel magasabb kiadásokra - tervezz előre!")
+            if 'January' in peak_seasons:
+                recommendations.append("Januárban gyakran magasabbak a kiadások az új év fogadalmai miatt")
+            if len(peak_seasons) > 0:
+                highest_month = max(peak_seasons, key=peak_seasons.get)
+                recommendations.append(f"A legmagasabb kiadásaid {highest_month}-ban vannak - érdemes erre a hónapra külön költségvetést készíteni")
+        else:
+            recommendations.append("Költési szokásaid egyenletesek az év során - ez jó költségvetési fegyelem jele!")
+        
+        return SeasonalAnalysis(
+            has_seasonality=has_seasonality,
+            seasonal_periods=seasonal_periods,
+            peak_seasons=peak_seasons,
+            seasonal_recommendations=recommendations
+        )
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Szezonális elemzési hiba: {str(e)}")
+
+@router.get("/anomaly-detection", response_model=AnomalyResponse)
+async def detect_anomalies(
+    current_user: User = Depends(get_current_user),
+    months_back: int = Query(6, ge=3, le=12),
+    sensitivity: float = Query(0.1, ge=0.05, le=0.3, description="Anomália érzékenység (alacsonyabb = szigorúbb)")
+):
+    """Rendkívüli kiadások azonosítása anomália detektálással"""
+    try:
+        # Adatok lekérése
+        end_date = datetime.now()
+        start_date = end_date - timedelta(days=months_back * 30)
+        
+        transactions = await Transaction.find({
+            "user_id": ObjectId(current_user.id),
+            "amount": {"$lt": 0},  # Csak kiadások
+            "date": {"$gte": start_date.strftime("%Y-%m-%d"), "$lte": end_date.strftime("%Y-%m-%d")}
+        }).to_list()
+        
+        if len(transactions) < 50:
+            raise HTTPException(status_code=400, detail="Nincs elegendő tranzakció az anomália detektáláshoz")
+        
+        # Feature engineering
+        features_list = []
+        anomaly_candidates = []
+        
+        for t in transactions:
+            date_obj = datetime.strptime(t.date, '%Y-%m-%d')
+            
+            features = {
+                'amount': abs(t.amount),
+                'hour': t.hour or 12,
+                'weekday': date_obj.weekday(),
+                'is_weekend': date_obj.weekday() >= 5,
+                'month': date_obj.month,
+                'day_of_month': date_obj.day,
+                'category_encoded': hash(t.kategoria or 'Egyéb') % 100,  # Egyszerű encoding
+            }
+            
+            features_list.append(list(features.values()))
+            anomaly_candidates.append({
+                'transaction': t,
+                'features': features,
+                'date_obj': date_obj
+            })
+        
+        # Isolation Forest modell
+        features_array = np.array(features_list)
+        
+        # Normalizálás
+        scaler = StandardScaler()
+        features_scaled = scaler.fit_transform(features_array)
+        
+        # Anomália detektálás
+        iso_forest = IsolationForest(
+            n_estimators=100,
+            contamination=sensitivity,
+            random_state=42
+        )
+        
+        anomaly_labels = iso_forest.fit_predict(features_scaled)
+        anomaly_scores = iso_forest.score_samples(features_scaled)
+        
+        # Anomáliák feldolgozása
+        anomalies = []
+        anomaly_trends = defaultdict(int)
+        severity_counts = {"low": 0, "medium": 0, "high": 0}
+        
+        for i, (label, score, candidate) in enumerate(zip(anomaly_labels, anomaly_scores, anomaly_candidates)):
+            if label == -1:  # Anomália
+                t = candidate['transaction']
+                
+                # Anomália típus meghatározása
+                anomaly_type = "high_spending"
+                amount = abs(t.amount)
+                
+                # Kategórián belüli átlagtól való eltérés
+                category_transactions = [abs(tr.amount) for tr in transactions if tr.kategoria == t.kategoria]
+                if category_transactions:
+                    category_avg = np.mean(category_transactions)
+                    category_std = np.std(category_transactions)
+                    if amount > category_avg + 2 * category_std:
+                        anomaly_type = "unusual_category"
+                
+                # Időbeli anomália (szokatlan időpontban)
+                if t.hour and (t.hour < 6 or t.hour > 22):
+                    anomaly_type = "time_anomaly"
+                
+                # Severity meghatározása
+                severity = "low"
+                if score < -0.6:
+                    severity = "high"
+                elif score < -0.4:
+                    severity = "medium"
+                
+                severity_counts[severity] += 1
+                
+                anomalies.append(AnomalyData(
+                    transaction_id=str(t.id),
+                    date=t.date,
+                    amount=amount,
+                    category=t.kategoria or "Egyéb",
+                    anomaly_score=float(score),
+                    anomaly_type=anomaly_type,
+                    severity=severity
+                ))
+                
+                # Trend számítás
+                month_key = candidate['date_obj'].strftime('%Y-%m')
+                anomaly_trends[month_key] += 1
+        
+        # Rendezés severity és score szerint
+        anomalies.sort(key=lambda x: (x.severity == "high", x.severity == "medium", abs(x.anomaly_score)), reverse=True)
+        
+        # Ajánlások
+        recommendations = []
+        if len(anomalies) > len(transactions) * 0.15:  # Ha túl sok anomália
+            recommendations.append("Sok szokatlan tranzakciót észleltünk - érdemes átnézni a költési szokásaidat")
+        
+        high_severity_count = severity_counts["high"]
+        if high_severity_count > 0:
+            recommendations.append(f"{high_severity_count} magas kockázatú szokatlan kiadást találtunk")
+            recommendations.append("Ellenőrizd ezeket a tranzakciókat - lehetnek hibás vagy váratlan költések")
+        
+        if any(a.anomaly_type == "time_anomaly" for a in anomalies):
+            recommendations.append("Szokatlan időpontokban történt vásárlásokat észleltünk")
+        
+        if not recommendations:
+            recommendations.append("Költési szokásaid stabilak és kiszámíthatóak!")
+        
+        return AnomalyResponse(
+            total_anomalies=len(anomalies),
+            anomalies_by_severity=dict(severity_counts),
+            recent_anomalies=anomalies[:20],  # Top 20
+            anomaly_trends=dict(anomaly_trends),
+            recommendations=recommendations
+        )
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Anomália detektálási hiba: {str(e)}")
+
+@router.get("/ml-budget-recommendations", response_model=MLBudgetResponse)
+async def get_ml_budget_recommendations(
+    current_user: User = Depends(get_current_user),
+    months_back: int = Query(6, ge=3, le=12)
+):
+    """ML alapú költségvetési korlátok javaslása kategóriánként"""
+    try:
+        # Adatok lekérése
+        end_date = datetime.now()
+        start_date = end_date - timedelta(days=months_back * 30)
+        
+        transactions = await Transaction.find({
+            "user_id": ObjectId(current_user.id),
+            "amount": {"$lt": 0},  # Csak kiadások
+            "date": {"$gte": start_date.strftime("%Y-%m-%d"), "$lte": end_date.strftime("%Y-%m-%d")}
+        }).to_list()
+        
+        if len(transactions) < 30:
+            raise HTTPException(status_code=400, detail="Nincs elegendő tranzakció a költségvetési javaslatokhoz")
+        
+        # Kategóriánkénti elemzés
+        category_data = defaultdict(list)
+        for t in transactions:
+            category = t.kategoria or "Egyéb"
+            amount = abs(t.amount)
+            date_obj = datetime.strptime(t.date, '%Y-%m-%d')
+            
+            category_data[category].append({
+                'amount': amount,
+                'date': date_obj,
+                'month': date_obj.strftime('%Y-%m')
+            })
+        
+        recommendations = []
+        total_recommended = 0.0
+        spending_patterns = []
+        
+        for category, cat_transactions in category_data.items():
+            if len(cat_transactions) < 5:  # Túl kevés adat
+                continue
+            
+            amounts = [t['amount'] for t in cat_transactions]
+            
+            # Statisztikai mutatók
+            mean_spending = np.mean(amounts)
+            std_spending = np.std(amounts)
+            median_spending = np.median(amounts)
+            percentile_75 = np.percentile(amounts, 75)
+            percentile_90 = np.percentile(amounts, 90)
+            
+            # Havi összesítés a stabilabb becslésért
+            monthly_totals = defaultdict(float)
+            for t in cat_transactions:
+                monthly_totals[t['month']] += t['amount']
+            
+            monthly_amounts = list(monthly_totals.values())
+            if monthly_amounts:
+                monthly_mean = np.mean(monthly_amounts)
+                monthly_std = np.std(monthly_amounts)
+                cv = monthly_std / monthly_mean if monthly_mean > 0 else 1  # Coefficient of variation
+            else:
+                monthly_mean = mean_spending
+                cv = 1
+            
+            # Kiszámíthatóság score (0-100)
+            predictability = max(0, min(100, (1 - cv) * 100))
+            spending_patterns.append(predictability)
+            
+            # Ajánlott limit számítása
+            if cv < 0.3:  # Stabil költés
+                recommended_limit = monthly_mean * 1.1  # 10% buffer
+                confidence = 0.9
+                reasoning = "Stabil költési mintázat alapján"
+            elif cv < 0.6:  # Közepesen változó
+                recommended_limit = monthly_mean * 1.25  # 25% buffer
+                confidence = 0.75
+                reasoning = "Változó költési mintázat miatt nagyobb tartalékkal"
+            else:  # Nagyon változó
+                recommended_limit = max(monthly_mean * 1.5, percentile_90)  # 50% buffer vagy 90. percentilis
+                confidence = 0.6
+                reasoning = "Kiszámíthatatlan költési mintázat miatt biztonsági tartalékkal"
+            
+            # Prioritás meghatározása
+            if category.lower() in ['élelmiszer', 'lakhatás', 'közlekedés', 'egészségügy']:
+                priority = "high"
+            elif category.lower() in ['ruházat', 'kommunikáció', 'oktatás']:
+                priority = "medium" 
+            else:
+                priority = "low"
+            
+            total_recommended += recommended_limit
+            
+            recommendations.append(BudgetRecommendation(
+                category=category,
+                recommended_limit=float(recommended_limit),
+                current_spending=float(monthly_mean),
+                confidence=float(confidence),
+                reasoning=reasoning,
+                priority=priority
+            ))
+        
+        # Összesített mutatók
+        overall_predictability = np.mean(spending_patterns) if spending_patterns else 50
+        
+        # Kockázati szint
+        if overall_predictability > 80:
+            risk_level = "low"
+        elif overall_predictability > 60:
+            risk_level = "medium"
+        else:
+            risk_level = "high"
+        
+        # Személyre szabott tippek
+        tips = []
+        if overall_predictability < 60:
+            tips.append("Költési szokásaid kiszámíthatatlanok - próbálj rendszeresebb költségvetést vezetni")
+        
+        high_priority_categories = [r for r in recommendations if r.priority == "high"]
+        if len(high_priority_categories) < 4:
+            tips.append("Add hozzá az alapvető kategóriákat (élelmiszer, lakhatás, közlekedés)")
+        
+        variable_categories = [r for r in recommendations if r.confidence < 0.7]
+        if variable_categories:
+            tips.append(f"Ezekben a kategóriákban változékony a költésed: {', '.join([r.category for r in variable_categories[:3]])}")
+        
+        if not tips:
+            tips.append("Jól strukturált költési szokásaid vannak!")
+        
+        # Prioritás szerinti rendezés
+        recommendations.sort(key=lambda x: (x.priority == "high", x.priority == "medium", x.confidence), reverse=True)
+        
+        return MLBudgetResponse(
+            total_recommended_budget=float(total_recommended),
+            category_recommendations=recommendations,
+            spending_pattern_score=float(overall_predictability),
+            risk_level=risk_level,
+            personalized_tips=tips
+        )
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"ML költségvetési javaslat hiba: {str(e)}")

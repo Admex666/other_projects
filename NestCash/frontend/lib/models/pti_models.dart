@@ -384,3 +384,113 @@ class PTIComparisonResponse {
     );
   }
 }
+
+// Új modellek hozzáadása a pti_models.dart végéhez
+
+class PTIPeriodInfo {
+  final PTIPeriod period;
+  final String periodKey;
+  final DateTime periodStart;
+  final DateTime periodEnd;
+  final int daysRemaining;
+  final double progressPercentage;
+
+  PTIPeriodInfo({
+    required this.period,
+    required this.periodKey,
+    required this.periodStart,
+    required this.periodEnd,
+    required this.daysRemaining,
+    required this.progressPercentage,
+  });
+
+  factory PTIPeriodInfo.fromJson(Map<String, dynamic> json) {
+    return PTIPeriodInfo(
+      period: PTIPeriod.values.firstWhere(
+        (e) => e.value == json['period'],
+        orElse: () => PTIPeriod.weekly,
+      ),
+      periodKey: json['period_key'] ?? '',
+      periodStart: DateTime.parse(json['period_start']),
+      periodEnd: DateTime.parse(json['period_end']),
+      daysRemaining: json['days_remaining'] ?? 0,
+      progressPercentage: (json['progress_percentage'] ?? 0.0).toDouble(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'period': period.value,
+      'period_key': periodKey,
+      'period_start': periodStart.toIso8601String(),
+      'period_end': periodEnd.toIso8601String(),
+      'days_remaining': daysRemaining,
+      'progress_percentage': progressPercentage,
+    };
+  }
+}
+
+class PTIHistoryEntry {
+  final String periodKey;
+  final DateTime periodStart;
+  final DateTime periodEnd;
+  final double ptiScore;
+  final PTIComponentBreakdown components;
+  final int? rank;
+  final int? totalUsers;
+  final DateTime calculatedAt;
+
+  PTIHistoryEntry({
+    required this.periodKey,
+    required this.periodStart,
+    required this.periodEnd,
+    required this.ptiScore,
+    required this.components,
+    this.rank,
+    this.totalUsers,
+    required this.calculatedAt,
+  });
+
+  factory PTIHistoryEntry.fromJson(Map<String, dynamic> json) {
+    return PTIHistoryEntry(
+      periodKey: json['period_key'] ?? '',
+      periodStart: DateTime.parse(json['period_start']),
+      periodEnd: DateTime.parse(json['period_end']),
+      ptiScore: (json['pti_score'] ?? 0.0).toDouble(),
+      components: PTIComponentBreakdown.fromJson(json['components'] ?? {}),
+      rank: json['rank'],
+      totalUsers: json['total_users'],
+      calculatedAt: DateTime.parse(json['calculated_at']),
+    );
+  }
+}
+
+class PTIHistoryResponse {
+  final PTIPeriod period;
+  final List<PTIHistoryEntry> entries;
+  final PTIHistoryEntry? currentPeriod;
+  final int totalEntries;
+
+  PTIHistoryResponse({
+    required this.period,
+    required this.entries,
+    this.currentPeriod,
+    required this.totalEntries,
+  });
+
+  factory PTIHistoryResponse.fromJson(Map<String, dynamic> json) {
+    return PTIHistoryResponse(
+      period: PTIPeriod.values.firstWhere(
+        (e) => e.value == json['period'],
+        orElse: () => PTIPeriod.weekly,
+      ),
+      entries: (json['entries'] as List<dynamic>?)
+          ?.map((item) => PTIHistoryEntry.fromJson(item))
+          .toList() ?? [],
+      currentPeriod: json['current_period'] != null
+          ? PTIHistoryEntry.fromJson(json['current_period'])
+          : null,
+      totalEntries: json['total_entries'] ?? 0,
+    );
+  }
+}

@@ -165,3 +165,36 @@ class PTIAnalyticsResponse(BaseModel):
     
     # Javaslatok prioritási sorrendben
     improvement_recommendations: List[Dict[str, str]] = []
+
+class PTIHistoryRequest(BaseModel):
+    """PTI történet lekérés kérés"""
+    period: PTIPeriod = PTIPeriod.WEEKLY
+    limit: int = Field(default=10, ge=1, le=50)
+    offset: int = Field(default=0, ge=0)
+
+class PTIHistoryEntry(BaseModel):
+    """PTI történet bejegyzés"""
+    period_key: str
+    period_start: datetime
+    period_end: datetime
+    pti_score: float
+    components: PTIComponentBreakdown
+    rank: Optional[int] = None
+    total_users: Optional[int] = None
+    calculated_at: datetime
+
+class PTIHistoryResponse(BaseModel):
+    """PTI történet válasz"""
+    period: PTIPeriod
+    entries: List[PTIHistoryEntry]
+    current_period: PTIHistoryEntry
+    total_entries: int
+
+class PTIPeriodInfo(BaseModel):
+    """Aktuális időszak információk"""
+    period: PTIPeriod
+    period_key: str
+    period_start: datetime
+    period_end: datetime
+    days_remaining: int
+    progress_percentage: float  # Hány %-a telt el az időszaknak

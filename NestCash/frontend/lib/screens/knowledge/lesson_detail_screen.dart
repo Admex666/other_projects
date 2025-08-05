@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:frontend/services/auth_service.dart';
+import 'package:frontend/services/sharing_service.dart';
 
 class LessonDetailScreen extends StatefulWidget {
   final String lessonId;
@@ -172,6 +173,17 @@ class _LessonDetailScreenState extends State<LessonDetailScreen> {
                 result.feedback!,
                 textAlign: TextAlign.center,
                 style: const TextStyle(fontSize: 14, color: Colors.grey),
+              ),
+            ],
+            // ÚJ RÉSZ - Megosztás gomb sikeres teljesítés esetén
+            if (result.score >= 70) ...[
+              const SizedBox(height: 16),
+              Center(
+                child: ShareAchievementButton(
+                  achievementType: 'lesson',
+                  achievementId: widget.lessonId,
+                  achievementName: lesson?.title ?? 'Lecke',
+                ),
               ),
             ],
           ],
@@ -854,8 +866,9 @@ Widget _buildListItem(String item) {
         });
       };
     } else {
+      // ÚJ RÉSZ - kvíz nélküli lecke befejezése
       return () {
-        Navigator.pop(context);
+        _showLessonCompletionDialog();
       };
     }
   }
@@ -887,6 +900,69 @@ Widget _buildListItem(String item) {
       }
     }
     return true;
+  }
+
+  void _showLessonCompletionDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Column(
+          children: [
+            Icon(
+              Icons.check_circle,
+              size: 64,
+              color: Colors.green,
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Lecke befejezve!',
+              style: TextStyle(
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Sikeresen befejezted a leckét: ${lesson?.title ?? ''}',
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 16),
+            ),
+            const SizedBox(height: 16),
+            Center(
+              child: ShareAchievementButton(
+                achievementType: 'lesson',
+                achievementId: widget.lessonId,
+                achievementName: lesson?.title ?? 'Lecke',
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF00D4A3),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            child: const Text(
+              'Befejezés',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 

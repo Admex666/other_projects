@@ -17,6 +17,7 @@ from app.models.limit import Limit
 from app.models.transaction import Transaction
 from app.services.limit_service import LimitService
 from app.models.user import UserDocument
+from app.models.pti_schemas import PTIHistoryResponse, PTIPeriodInfo
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +31,7 @@ class PTIService:
     LIMIT_WEIGHT = 0.20
     
     @staticmethod
-    def get_period_key(period: PTIPeriod, reference_date: datetime = None) -> str:
+    def get_period_info(period: PTIPeriod, reference_date: datetime = None):
         """Időszak kulcs generálása"""
         if reference_date is None:
             reference_date = datetime.utcnow()
@@ -688,3 +689,140 @@ class PTIService:
         except Exception as e:
             logger.error(f"Error generating improvement suggestions for user {user_id}: {e}")
             return ["📈 Folytasd a pénzügyi tudatosság fejlesztését minden területen!"]
+        
+
+    # Új metódusok hozzáadása a PTIService osztályhoz
+
+    @staticmethod
+    def get_period_info(period: PTIPeriod, reference_date: datetime = None) -> 'PTIPeriodInfo':
+        """Aktuális időszak információk lekérése"""
+        if reference_date is None:
+            reference_date = datetime.utcnow()
+        
+        period_key = PTIService.get_period_key(period, reference_date)
+        start_date, end_date = PTIService.get_period_dates(period, period_key)
+        
+        # Hátralévő napok számítása
+        days_remaining = max(0, (end_date - reference_date).days)
+        
+        # Időszak haladásának számítása
+        total_duration = (end_date - start_date).total_seconds()
+        elapsed_duration = (reference_date - start_date).total_seconds()
+        progress_percentage = min((elapsed_duration / total_duration) * 100, 100) if total_duration > 0 else 0
+        
+        from app.models.pti_schemas import PTIPeriodInfo
+        return PTIPeriodInfo(
+            period=period,
+            period_key=period_key,
+            period_start=start_date,
+            period_end=end_date,
+            days_remaining=days_remaining,
+            progress_percentage=progress_percentage
+        )
+
+    @staticmethod
+    async def get_user_pti_history(
+        user_id: str, 
+        period: PTIPeriod, 
+        limit: int = 10, 
+        offset: int = 0
+    ):
+        """Felhasználó PTI történetének lekérése"""
+        try:
+            from app.models.pti_schemas import PTIHistoryResponse, PTIHistoryEntry
+            
+            # Összes PTI score lekérése az adott időszakra, időrend szerint
+            historical_scores = await PTIScore.find(
+                PTIScore.user_id == PydanticObjectId(user_id),
+                PTIScore.period == period
+            ).sort([("period_key", -1)]).limit(limit).skip(offset).to_list()
+            
+            # Összes bejegyzés számának lekérése
+            total_entries = await PTIScore.find(
+                PTIScore.user_id == PydanticObjectId(user_id),
+                PTIScore.period == period
+            ).count()
+            
+            # History bejegyzések összeállítása
+            history_entries = []
+            current_entry = None
+            current_period_key = PTIService.get_period_key(period)
+            
+            for score in historical_scores:
+                start_date, end_date = PTIService.get_period_dates(period, score.period_key)
+                
+                components = PTIComponentBreakdown(
+                    learning_points=score.learning_points,
+                    learning_contribution=score.learning_points * PTIService.LEARNING_WEIGHT,
+                    habit_score=score.habit_score,
+                    habit_contribution=score.habit_score * PTIService.HABIT_WEIGHT,
+                    badge_score=score.badge_score,
+                    badge_contribution=score.badge_score * PTIService.BADGE_WEIGHT,
+                    limit_score=score.limit_score,
+                    limit_contribution=score.limit_score * PTIService.LIMIT_WEIGHT,
+                    total_pti=score.normalized_pti
+                )
+                
+                entry = PTIHistoryEntry(
+                    period_key=score.period_key,
+                    period_start=start_date,
+                    period_end=end_date,
+                    pti_score=score.normalized_pti,
+                    components=components,
+                    rank=score.global_rank,
+                    total_users=score.total_users,
+                    calculated_at=score.calculated_at
+                )
+                
+                if score.period_key == current_period_key:
+                    current_entry = entry
+                else:
+                    history_entries.append(entry)
+            
+            # Ha nincs aktuális időszak adat, számítsuk ki
+            if current_entry is None:
+                current_components = await PTIService.calculate_pti_score(user_id, period)
+                start_date, end_date = PTIService.get_period_dates(period, current_period_key)
+                
+                current_entry = PTIHistoryEntry(
+                    period_key=current_period_key,
+                    period_start=start_date,
+                    period_end=end_date,
+                    pti_score=current_components.total_pti,
+                    components=current_components,
+                    rank=None,
+                    total_users=None,
+                    calculated_at=datetime.utcnow()
+                )
+            
+            return PTIHistoryResponse(
+                period=period,
+                entries=history_entries,
+                current_period=current_entry,
+                total_entries=total_entries
+            )
+            
+        except Exception as e:
+            logger.error(f"Error getting PTI history for user {user_id}: {e}")
+            return PTIHistoryResponse(
+                period=period,
+                entries=[],
+                current_period=None,
+                total_entries=0
+            )
+        
+    @staticmethod
+    def get_period_key(period: PTIPeriod, reference_date: datetime = None) -> str:
+        """Időszak kulcs generálása - alias a get_period_info metódushoz"""
+        if reference_date is None:
+            reference_date = datetime.utcnow()
+            
+        if period == PTIPeriod.WEEKLY:
+            year, week, _ = reference_date.isocalendar()
+            return f"{year}-W{week:02d}"
+        elif period == PTIPeriod.MONTHLY:
+            return reference_date.strftime("%Y-%m")
+        elif period == PTIPeriod.YEARLY:
+            return str(reference_date.year)
+        
+        return reference_date.strftime("%Y-%m-%d")

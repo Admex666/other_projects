@@ -522,3 +522,35 @@ async def recalculate_all_users(
     except Exception as e:
         logger.error(f"Error starting recalculation: {e}")
         raise HTTPException(status_code=500, detail="Hiba az újraszámítás indításakor")
+    
+@router.get("/period-info")
+async def get_period_info(
+    period: PTIPeriod = Query(PTIPeriod.WEEKLY),
+    current_user: User = Depends(get_current_user)
+):
+    """Aktuális időszak információk lekérése"""
+    try:
+        period_info = PTIService.get_period_info(period)
+        return period_info.dict()
+        
+    except Exception as e:
+        logger.error(f"Error getting period info: {e}")
+        raise HTTPException(status_code=500, detail="Hiba az időszak információk lekérésekor")
+
+@router.get("/history")
+async def get_pti_history(
+    period: PTIPeriod = Query(PTIPeriod.WEEKLY),
+    limit: int = Query(10, ge=1, le=50),
+    offset: int = Query(0, ge=0),
+    current_user: User = Depends(get_current_user)
+):
+    """PTI történet lekérése"""
+    try:
+        history = await PTIService.get_user_pti_history(
+            current_user.id, period, limit, offset
+        )
+        return history.dict()
+        
+    except Exception as e:
+        logger.error(f"Error getting PTI history for user {current_user.id}: {e}")
+        raise HTTPException(status_code=500, detail="Hiba a PTI történet lekérésekor")

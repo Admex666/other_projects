@@ -1,6 +1,6 @@
 # app/models/forum_models.py
 from datetime import datetime
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Any
 from pydantic import BaseModel, Field
 from beanie import Document, PydanticObjectId
 from enum import Enum
@@ -47,6 +47,8 @@ class ForumPostDocument(Document):
     updated_at: datetime = Field(default_factory=datetime.utcnow)
     like_count: int = Field(default=0)
     comment_count: int = Field(default=0)
+    achievement_type: Optional[str] = Field(None, description="Teljesítmény típusa ha megosztás")
+    achievement_data: Optional[Dict[str, Any]] = Field(None, description="Teljesítmény adatok")
     
     class Settings:
         name = "forum_posts"

@@ -1,8 +1,13 @@
 # app/models/user.py
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 from pydantic import BaseModel, EmailStr, Field
 from beanie import Document
+
+class SharedAchievement(BaseModel):
+    type: str = Field(..., description="Teljesítmény típusa (badge, lesson, challenge)")
+    achievement_id: str = Field(..., description="Teljesítmény egyedi azonosítója")
+    shared_at: datetime = Field(default_factory=datetime.utcnow)
 
 # Beanie Document a MongoDB-hez
 class UserDocument(Document):
@@ -16,6 +21,7 @@ class UserDocument(Document):
     onboarding_completed: bool = False
     onboarding_step: int = 0  # Jelenlegi onboarding lépés (0-6)
     preferred_currency: str = "HUF"  # Alapértelmezett deviza
+    shared_achievements: List[SharedAchievement] = Field(default_factory=list, description="Megosztott teljesítmények")
 
     class Settings:
         name = "users"
