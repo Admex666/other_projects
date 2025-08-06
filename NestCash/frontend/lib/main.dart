@@ -231,7 +231,7 @@ void _showAddTransactionOptions(BuildContext context) {
                 },
                 icon: const Icon(Icons.account_balance_wallet, color: Colors.white),
                 label: const Text(
-                  'Számlák kezelése',
+                  'Számlák',
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
                 style: ElevatedButton.styleFrom(
@@ -259,7 +259,7 @@ void _showAddTransactionOptions(BuildContext context) {
                 },
                 icon: const Icon(Icons.category, color: Colors.white),
                 label: const Text(
-                  'Kategóriák kezelése',
+                  'Kategóriák',
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
                 style: ElevatedButton.styleFrom(
@@ -287,7 +287,7 @@ void _showAddTransactionOptions(BuildContext context) {
                 },
                 icon: const Icon(Icons.speed, color: Colors.white),
                 label: const Text(
-                  'Limitek kezelése',
+                  'Limitek',
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
                 style: ElevatedButton.styleFrom(
@@ -319,7 +319,7 @@ void _showAddTransactionOptions(BuildContext context) {
                 },
                 icon: const Icon(Icons.psychology, color: Colors.white),
                 label: const Text(
-                  'Szokások kezelése',
+                  'Szokások',
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
                 style: ElevatedButton.styleFrom(

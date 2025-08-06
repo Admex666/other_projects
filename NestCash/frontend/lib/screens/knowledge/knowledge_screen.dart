@@ -4,6 +4,12 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../../services/auth_service.dart'; // AuthService import hozzáadása
 import 'lesson_detail_screen.dart';
+import 'package:provider/provider.dart';
+import '../../providers/subscription_provider.dart';
+import '../../widgets/subscription/feature_locked_widget.dart';
+import '../../models/subscription.dart';
+import '../../utils/subscription_utils.dart';
+import '../../widgets/subscription/subscription_widgets.dart';
 
 class KnowledgeScreen extends StatefulWidget {
   final String userId;
@@ -20,11 +26,43 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
   UserStats? userStats;
   bool isLoading = true;
   String? selectedDifficulty;
+  bool _hasKnowledgeAccess = false;
+  int _dailyLessonCount = 0;
+  bool _isCheckingAccess = false;
 
   @override
   void initState() {
     super.initState();
-    _loadData();
+    _checkKnowledgeAccess();
+  }
+
+  Future<void> _checkKnowledgeAccess() async {
+    setState(() => _isCheckingAccess = true);
+    
+    try {
+      final subscriptionProvider = Provider.of<SubscriptionProvider>(context, listen: false);
+      
+      // Ellenőrizzük a knowledge base hozzáférést
+      final accessCheck = await subscriptionProvider.checkFeature(
+        'knowledge_base',
+        context: {'dailyLessonCount': _dailyLessonCount},
+      );
+      
+      setState(() {
+        _hasKnowledgeAccess = accessCheck.hasAccess;
+      });
+      
+      if (_hasKnowledgeAccess) {
+        _loadData();
+      }
+    } catch (e) {
+      print('Error checking knowledge access: $e');
+      // Ha hibás az ellenőrzés, alapértelmezett hozzáférés
+      setState(() => _hasKnowledgeAccess = true);
+      _loadData();
+    } finally {
+      setState(() => _isCheckingAccess = false);
+    }
   }
 
   Future<void> _loadData() async {
@@ -205,7 +243,7 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Header
+            // Header változatlan...
             Container(
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               child: Row(
@@ -229,7 +267,19 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  SizedBox(width: 48), // Balance the back button
+                  // USAGE INDICATOR HOZZÁADÁSA
+                  Consumer<SubscriptionProvider>(
+                    builder: (context, provider, child) {
+                      if (!provider.hasFullKnowledge) {
+                        return InlineUsageIndicator(
+                          current: _dailyLessonCount,
+                          limit: 1,
+                          color: Color(0xFF00D4A3),
+                        );
+                      }
+                      return SizedBox(width: 48);
+                    },
+                  ),
                 ],
               ),
             ),
@@ -245,62 +295,68 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
                     topRight: Radius.circular(30),
                   ),
                 ),
-                child: isLoading
+                child: _isCheckingAccess
                     ? const Center(child: CircularProgressIndicator(color: Color(0xFF00D4A3)))
-                    : RefreshIndicator(
-                        onRefresh: _loadData,
-                        color: const Color(0xFF00D4A3),
-                        child: SingleChildScrollView(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              if (userStats != null) _buildStatsCard(),
-                              const SizedBox(height: 40),
-                              _buildDailyChallengeCard(),
-                              const SizedBox(height: 40),
-                              // Kategóriák cím és filter gomb egy sorban
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text(
-                                    'Kategóriák',
-                                    style: TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF2D3748),
-                                    ),
+                    : !_hasKnowledgeAccess
+                        ? FeatureLockedWidget(
+                            featureName: 'Tudástár',
+                            description: 'Hozzáférés korlátlan leckékhez és tanulási útvonalakhoz',
+                            requiredTier: SubscriptionTier.plus,
+                          )
+                        : isLoading
+                            ? const Center(child: CircularProgressIndicator(color: Color(0xFF00D4A3)))
+                            : RefreshIndicator(
+                                onRefresh: _loadData,
+                                color: const Color(0xFF00D4A3),
+                                child: SingleChildScrollView(
+                                  physics: const AlwaysScrollableScrollPhysics(),
+                                  padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      if (userStats != null) _buildStatsCard(),
+                                      const SizedBox(height: 40),
+                                      _buildDailyChallengeCard(),
+                                      const SizedBox(height: 40),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          const Text(
+                                            'Kategóriák',
+                                            style: TextStyle(
+                                              fontSize: 24,
+                                              fontWeight: FontWeight.bold,
+                                              color: Color(0xFF2D3748),
+                                            ),
+                                          ),
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              color: const Color(0xFF00D4A3),
+                                              borderRadius: BorderRadius.circular(12),
+                                            ),
+                                            child: PopupMenuButton<String>(
+                                              icon: const Icon(Icons.filter_list, color: Colors.white),
+                                              onSelected: (value) {
+                                                setState(() {
+                                                  selectedDifficulty = value == 'all' ? null : value;
+                                                });
+                                                _loadCategories();
+                                              },
+                                              itemBuilder: (context) => [
+                                                const PopupMenuItem(value: 'all', child: Text('Összes szint')),
+                                                const PopupMenuItem(value: 'beginner', child: Text('🟢 Kezdő')),
+                                                const PopupMenuItem(value: 'professional', child: Text('🔵 Profi')),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 16),
+                                      ...categories.map((category) => _buildCategoryCard(category)),
+                                    ],
                                   ),
-                                  // Filter gomb ide kerül
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFF00D4A3),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: PopupMenuButton<String>(
-                                      icon: const Icon(Icons.filter_list, color: Colors.white),
-                                      onSelected: (value) {
-                                        setState(() {
-                                          selectedDifficulty = value == 'all' ? null : value;
-                                        });
-                                        _loadCategories();
-                                      },
-                                      itemBuilder: (context) => [
-                                        const PopupMenuItem(value: 'all', child: Text('Összes szint')),
-                                        const PopupMenuItem(value: 'beginner', child: Text('🟢 Kezdő')),
-                                        const PopupMenuItem(value: 'professional', child: Text('🔵 Profi')),
-                                      ],
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
-                              const SizedBox(height: 16),
-                              ...categories.map((category) => _buildCategoryCard(category)),
-                            ],
-                          ),
-                        ),
-                      ),
               ),
             ),
           ],
@@ -684,7 +740,27 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
-          onTap: () {
+          onTap: () async {
+            // JOGOSULTSÁG ELLENŐRZÉSE LECKE INDÍTÁSAKOR
+            final subscriptionProvider = Provider.of<SubscriptionProvider>(context, listen: false);
+            _dailyLessonCount++; // Növeljük a napi lecke számlálót
+            
+            final accessCheck = await subscriptionProvider.checkFeature(
+              'knowledge_base',
+              context: {'dailyLessonCount': _dailyLessonCount},
+            );
+            
+            if (!accessCheck.hasAccess) {
+              // Mutassuk az upgrade dialógust
+              SubscriptionUtils.showUpgradeDialog(
+                context,
+                feature: 'Tudástár lecke',
+                requiredTier: accessCheck.requiredTier ?? SubscriptionTier.plus,
+              );
+              _dailyLessonCount--; // Visszavonjuk a növelést
+              return;
+            }
+            
             Navigator.pop(context);
             Navigator.push(
               context,

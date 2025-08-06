@@ -4,6 +4,11 @@ import 'package:frontend/models/habit.dart';
 import 'package:frontend/services/habit_service.dart';
 import 'package:frontend/screens/habits/add_habit_screen.dart';
 import 'package:frontend/screens/habits/habit_detail_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:frontend/providers/subscription_provider.dart';
+import 'package:frontend/widgets/subscription/usage_indicator.dart';
+import 'package:frontend/utils/subscription_utils.dart';
+import 'package:frontend/models/subscription.dart';
 
 class HabitsMainScreen extends StatefulWidget {
   final String userId;
@@ -25,6 +30,7 @@ class _HabitsMainScreenState extends State<HabitsMainScreen> {
   List<Habit> _habits = [];
   UserHabitOverview? _overview;
   bool _isLoading = true;
+  bool _isCheckingFeatureAccess = false;
   String _errorMessage = '';
   
   HabitCategory? _selectedCategory;
@@ -77,6 +83,53 @@ class _HabitsMainScreenState extends State<HabitsMainScreen> {
         _errorMessage = e.toString();
         _isLoading = false;
       });
+    }
+  }
+
+  // Új metódus - jogosultság ellenőrzés
+  Future<bool> _checkCanCreateHabit() async {
+    final subscriptionProvider = context.read<SubscriptionProvider>();
+    
+    try {
+      setState(() => _isCheckingFeatureAccess = true);
+      
+      final canCreate = await subscriptionProvider.canCreateHabit();
+      
+      if (!canCreate) {
+        _showHabitLimitReached();
+        return false;
+      }
+      
+      return true;
+    } finally {
+      setState(() => _isCheckingFeatureAccess = false);
+    }
+  }
+
+  void _showHabitLimitReached() {
+    SubscriptionUtils.showUpgradeDialog(
+      context,
+      feature: 'További szokások hozzáadása',
+      description: 'Az ingyenes verzióban maximum 5 szokást követhetsz nyomon. Frissíts a korlátlan szokás követésért!',
+      requiredTier: SubscriptionTier.plus,
+    );
+  }
+
+  Future<void> _onAddHabitPressed() async {
+    if (_isCheckingFeatureAccess) return;
+    
+    final canCreate = await _checkCanCreateHabit();
+    if (!canCreate) return;
+    
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddHabitScreen(userId: widget.userId),
+      ),
+    );
+    
+    if (result == true) {
+      _loadData();
     }
   }
 
@@ -489,6 +542,26 @@ class _HabitsMainScreenState extends State<HabitsMainScreen> {
     );
   }
 
+  Widget _buildUsageIndicator() {
+    return Consumer<SubscriptionProvider>(
+      builder: (context, subscriptionProvider, child) {
+        final currentTier = subscriptionProvider.currentTier;
+        final habitsLimit = currentTier == SubscriptionTier.free ? 5 : null;
+        
+        return UsageIndicator(
+          featureName: 'Szokások',
+          current: _habits.length,
+          limit: habitsLimit,
+          onUpgradePressed: () => SubscriptionUtils.showUpgradeDialog(
+            context,
+            feature: 'Korlátlan szokás követés',
+            requiredTier: SubscriptionTier.plus,
+          ),
+        );
+      },
+    );
+  }
+
   Color _getCategoryColor(HabitCategory category) {
     switch (category) {
       case HabitCategory.financial:
@@ -619,113 +692,148 @@ class _HabitsMainScreenState extends State<HabitsMainScreen> {
                             ),
                           )
                         : SingleChildScrollView(
-                            child: Padding(
-                              padding: const EdgeInsets.all(24),
-                              child: Column(
-                                children: [
-                                  SizedBox(height: 10),
-                                  
-                                  // Add button
-                                  Container(
-                                    width: double.infinity,
-                                    height: 48,
-                                    child: ElevatedButton.icon(
-                                      onPressed: () async {
-                                        final result = await Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => AddHabitScreen(userId: widget.userId),
+                            child: Column(
+                              children: [
+                                SizedBox(height: 10),
+                                
+                                // Usage Indicator hozzáadása
+                                _buildUsageIndicator(),
+                                SizedBox(height: 16),
+                                
+                                // Add button módosítása - betöltés állapot és jogosultság ellenőrzés
+                                Container(
+                                  width: double.infinity,
+                                  height: 48,
+                                  child: Consumer<SubscriptionProvider>(
+                                    builder: (context, subscriptionProvider, child) {
+                                      final isAtLimit = subscriptionProvider.currentTier == SubscriptionTier.free && 
+                                                      _habits.length >= 5;
+                                      
+                                      return ElevatedButton.icon(
+                                        onPressed: _isCheckingFeatureAccess ? null : _onAddHabitPressed,
+                                        icon: _isCheckingFeatureAccess 
+                                            ? SizedBox(
+                                                width: 16,
+                                                height: 16,
+                                                child: CircularProgressIndicator(strokeWidth: 2),
+                                              )
+                                            : Icon(
+                                                isAtLimit ? Icons.lock : Icons.add,
+                                                color: Colors.white,
+                                              ),
+                                        label: Text(
+                                          isAtLimit ? 'Frissítés szükséges' : 'Új szokás',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.white,
                                           ),
-                                        );
-                                        
-                                        if (result == true) {
-                                          _loadData();
-                                        }
-                                      },
-                                      icon: Icon(Icons.add, color: Colors.white),
-                                      label: Text(
-                                        'Új szokás',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.white,
                                         ),
-                                      ),
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.orange,
-                                        elevation: 0,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(12),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: isAtLimit ? Colors.grey : Colors.orange,
+                                          elevation: 0,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
                                         ),
-                                      ),
-                                    ),
+                                      );
+                                    },
                                   ),
+                                ),
 
-                                  SizedBox(height: 24),
+                                SizedBox(height: 24),
 
-                                  _buildOverviewCard(),
-                                  
-                                  _buildCategoryFilter(),
+                                _buildOverviewCard(),
+                                
+                                _buildCategoryFilter(),
 
-                                  if (_habits.isEmpty)
-                                    Container(
-                                      padding: const EdgeInsets.all(40),
-                                      child: Column(
-                                        children: [
-                                          Icon(
-                                            Icons.psychology_outlined,
-                                            size: 64,
-                                            color: Colors.grey[400],
-                                          ),
-                                          const SizedBox(height: 16),
-                                          Text(
-                                            'Még nincsenek szokások',
-                                            style: TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w600,
-                                              color: Colors.grey[600],
+                                // Empty state módosítása jogosultság-tudatos üzenettel
+                                if (_habits.isEmpty)
+                                  Consumer<SubscriptionProvider>(
+                                    builder: (context, subscriptionProvider, child) {
+                                      final isAtLimit = subscriptionProvider.currentTier == SubscriptionTier.free;
+                                      
+                                      return Container(
+                                        padding: const EdgeInsets.all(40),
+                                        child: Column(
+                                          children: [
+                                            Icon(
+                                              Icons.psychology_outlined,
+                                              size: 64,
+                                              color: Colors.grey[400],
                                             ),
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            'Hozd létre az első szokásod!',
-                                            style: TextStyle(
-                                              color: Colors.grey[500],
+                                            const SizedBox(height: 16),
+                                            Text(
+                                              'Még nincsenek szokások',
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w600,
+                                                color: Colors.grey[600],
+                                              ),
                                             ),
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  else
-                                    ...(_habits.map((habit) => _buildHabitCard(habit)).toList()),
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              isAtLimit 
+                                                  ? 'Az ingyenes verzióban 5 szokást követhetsz nyomon.\nHozd létre az elsőt!'
+                                                  : 'Hozd létre az első szokásod!',
+                                              style: TextStyle(
+                                                color: Colors.grey[500],
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            if (isAtLimit) ...[
+                                              const SizedBox(height: 16),
+                                              TextButton.icon(
+                                                onPressed: () => SubscriptionUtils.showUpgradeDialog(
+                                                  context,
+                                                  feature: 'Korlátlan szokás követés',
+                                                  requiredTier: SubscriptionTier.plus,
+                                                ),
+                                                icon: Icon(Icons.upgrade),
+                                                label: Text('Frissítés a korlátlan használatért'),
+                                              ),
+                                            ],
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  )
+                                else
+                                  ...(_habits.map((habit) => _buildHabitCard(habit)).toList()),
 
-                                  SizedBox(height: 100), // Extra space for FAB
-                                ],
-                              ),
+                                SizedBox(height: 100), // Extra space for FAB
+                              ],
                             ),
                           ),
-              ),
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          final result = await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AddHabitScreen(userId: widget.userId),
-            ),
-          );
-          
-          if (result == true) {
-            _loadData();
-          }
-        },
-        backgroundColor: Colors.orange,
-        child: const Icon(Icons.add, color: Colors.white),
-      ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                floatingActionButton: Consumer<SubscriptionProvider>(
+                  builder: (context, subscriptionProvider, child) {
+                    final isAtLimit = subscriptionProvider.currentTier == SubscriptionTier.free && 
+                                    _habits.length >= 5;
+                    
+                    return FloatingActionButton(
+                      onPressed: _isCheckingFeatureAccess ? null : _onAddHabitPressed,
+                      backgroundColor: isAtLimit ? Colors.grey : Colors.orange,
+                      child: _isCheckingFeatureAccess
+                          ? SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation(Colors.white),
+                              ),
+                            )
+                          : Icon(
+                              isAtLimit ? Icons.lock : Icons.add,
+                              color: Colors.white,
+                            ),
+                    );
+                  },
+                ),
     );
   }
 }

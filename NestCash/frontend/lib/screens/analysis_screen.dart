@@ -5,6 +5,12 @@ import 'package:frontend/services/analysis_service.dart';
 import 'package:frontend/models/analysis.dart';
 import 'package:frontend/utils/number_formatter.dart';
 import '/main.dart';
+import 'package:provider/provider.dart';
+import '../providers/subscription_provider.dart';
+import '../widgets/subscription/feature_locked_widget.dart';
+import '../models/subscription.dart';
+import '../utils/subscription_utils.dart';
+import '../../widgets/subscription/subscription_widgets.dart';
 
 class AnalysisScreen extends StatefulWidget {
   final String userId;
@@ -21,7 +27,7 @@ class AnalysisScreen extends StatefulWidget {
 }
 
 class _AnalysisScreenState extends State<AnalysisScreen>
-    with SingleTickerProviderStateMixin {
+  with SingleTickerProviderStateMixin {
   final AnalysisService _analysisService = AnalysisService();
   late TabController _tabController;
   
@@ -40,11 +46,47 @@ class _AnalysisScreenState extends State<AnalysisScreen>
   bool _isLoading = false;
   String _selectedPeriod = '6'; // hónapok száma
 
+  bool _hasBasicAnalyticsAccess = true;
+  bool _hasAdvancedAnalyticsAccess = false;
+  bool _isCheckingAccess = false;
+
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 6, vsync: this); // 4-ről 6-ra
-    _loadBasicStats();
+    _tabController = TabController(length: 6, vsync: this);
+    _checkAnalyticsAccess();
+  }
+
+  Future<void> _checkAnalyticsAccess() async {
+    setState(() => _isCheckingAccess = true);
+    
+    try {
+      final subscriptionProvider = Provider.of<SubscriptionProvider>(context, listen: false);
+      
+      // Alapvető elemzésekhez mindig van hozzáférés
+      _hasBasicAnalyticsAccess = true;
+      
+      // Fejlett elemzések ellenőrzése
+      final advancedAccessCheck = await subscriptionProvider.checkFeature(
+        'analysis_insights',
+        context: {'analysisType': 'advanced'},
+      );
+      
+      setState(() {
+        _hasAdvancedAnalyticsAccess = advancedAccessCheck.hasAccess;
+      });
+      
+      _loadBasicStats();
+    } catch (e) {
+      print('Error checking analytics access: $e');
+      setState(() {
+        _hasBasicAnalyticsAccess = true;
+        _hasAdvancedAnalyticsAccess = false;
+      });
+      _loadBasicStats();
+    } finally {
+      setState(() => _isCheckingAccess = false);
+    }
   }
 
   @override
@@ -74,6 +116,11 @@ class _AnalysisScreenState extends State<AnalysisScreen>
   }
 
   Future<void> _loadComprehensiveAnalysis() async {
+    if (!_hasAdvancedAnalyticsAccess) {
+      _showUpgradeForFeature('Átfogó elemzés', SubscriptionTier.plus);
+      return;
+    }
+    
     setState(() {
       _isLoading = true;
     });
@@ -134,133 +181,151 @@ class _AnalysisScreenState extends State<AnalysisScreen>
   }
 
   Future<void> _loadForecastData() async {
-  setState(() {
-    _isLoading = true;
-  });
-
-  try {
-    final monthsBack = int.parse(_selectedPeriod);
-    final forecast = await _analysisService.getSpendingForecast(
-      forecastType: 'monthly',
-      periodsAhead: 6,
-      monthsHistory: monthsBack,
-    );
-    setState(() {
-      _forecastData = forecast;
-    });
-  } catch (e) {
-    _showError('Hiba az előrejelzés betöltésekor: $e');
-  } finally {
-    setState(() {
-      _isLoading = false;
-    });
-  }
-}
-
-Future<void> _loadAnomalyData() async {
-  setState(() {
-    _isLoading = true;
-  });
-
-  try {
-    final monthsBack = int.parse(_selectedPeriod);
-    final anomaly = await _analysisService.getAnomalyDetection(
-      monthsBack: monthsBack,
-      sensitivity: 0.1,
-    );
-    setState(() {
-      _anomalyData = anomaly;
-    });
-  } catch (e) {
-    _showError('Hiba az anomália detektálás betöltésekor: $e');
-  } finally {
-    setState(() {
-      _isLoading = false;
-    });
-  }
-}
-
-Future<void> _loadMLBudgetData() async {
-  setState(() {
-    _isLoading = true;
-  });
-
-  try {
-    final monthsBack = int.parse(_selectedPeriod);
-    final mlBudget = await _analysisService.getMLBudgetRecommendations(
-      monthsBack: monthsBack,
-    );
-    setState(() {
-      _mlBudgetData = mlBudget;
-    });
-  } catch (e) {
-    _showError('Hiba az ML költségvetés betöltésekor: $e');
-  } finally {
-    setState(() {
-      _isLoading = false;
-    });
-  }
-}
-
-Future<void> _loadAdvancedInsights() async {
-  setState(() {
-    _isLoading = true;
-  });
-
-  try {
-    final monthsBack = int.parse(_selectedPeriod);
-    
-    // Próbáljuk meg az anomália detektálást külön betölteni
-    try {
-      await _loadAnomalyData();
-    } catch (e) {
-      print('Anomália betöltési hiba: $e');
+    if (!_hasAdvancedAnalyticsAccess) {
+      _showUpgradeForFeature('Előrejelzés', SubscriptionTier.pro);
+      return;
     }
     
-    // Próbáljuk meg az ML költségvetést külön betölteni
+    setState(() {
+      _isLoading = true;
+    });
+
     try {
-      await _loadMLBudgetData();
+      final monthsBack = int.parse(_selectedPeriod);
+      final forecast = await _analysisService.getSpendingForecast(
+        forecastType: 'monthly',
+        periodsAhead: 6,
+        monthsHistory: monthsBack,
+      );
+      setState(() {
+        _forecastData = forecast;
+      });
     } catch (e) {
-      print('ML költségvetés betöltési hiba: $e');
+      _showError('Hiba az előrejelzés betöltésekor: $e');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
-    
-    // Alap insights betöltése
+  }
+
+  Future<void> _loadAnomalyData() async {
+    setState(() {
+      _isLoading = true;
+    });
+
     try {
-      final insights = await _analysisService.getAdvancedInsights(
+      final monthsBack = int.parse(_selectedPeriod);
+      final anomaly = await _analysisService.getAnomalyDetection(
+        monthsBack: monthsBack,
+        sensitivity: 0.1,
+      );
+      setState(() {
+        _anomalyData = anomaly;
+      });
+    } catch (e) {
+      _showError('Hiba az anomália detektálás betöltésekor: $e');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _loadMLBudgetData() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final monthsBack = int.parse(_selectedPeriod);
+      final mlBudget = await _analysisService.getMLBudgetRecommendations(
         monthsBack: monthsBack,
       );
       setState(() {
-        _advancedInsights = insights;
+        _mlBudgetData = mlBudget;
       });
     } catch (e) {
-      print('Alapvető insights hiba: $e');
-      // Ha minden más nem működik, adj vissza egy üres Map-et
+      _showError('Hiba az ML költségvetés betöltésekor: $e');
+    } finally {
       setState(() {
-        _advancedInsights = {
-          'status': 'partial_load',
-          'message': 'Egyes elemzések nem elérhetők, de az anomália detektálás és ML költségvetés működhet.',
-          'loaded_at': DateTime.now().toIso8601String(),
-        };
+        _isLoading = false;
       });
     }
-    
-  } catch (e) {
-    print('Hiba részletesen: $e');
-    _showError('Hiba a fejlett betekintések betöltésekor: $e');
-    // Üres insights beállítása, hogy ne crasheljen
-    setState(() {
-      _advancedInsights = {
-        'error': true,
-        'message': 'A fejlett betekintések jelenleg nem elérhetők.',
-        'error_details': e.toString(),
-      };
-    });
-  } finally {
-    setState(() {
-      _isLoading = false;
-    });
   }
-}
+
+  Future<void> _loadAdvancedInsights() async {
+    if (!_hasAdvancedAnalyticsAccess) {
+    _showUpgradeForFeature('Fejlett betekintések', SubscriptionTier.pro);
+    return;
+  }
+    
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final monthsBack = int.parse(_selectedPeriod);
+      
+      // Próbáljuk meg az anomália detektálást külön betölteni
+      try {
+        await _loadAnomalyData();
+      } catch (e) {
+        print('Anomália betöltési hiba: $e');
+      }
+      
+      // Próbáljuk meg az ML költségvetést külön betölteni
+      try {
+        await _loadMLBudgetData();
+      } catch (e) {
+        print('ML költségvetés betöltési hiba: $e');
+      }
+      
+      // Alap insights betöltése
+      try {
+        final insights = await _analysisService.getAdvancedInsights(
+          monthsBack: monthsBack,
+        );
+        setState(() {
+          _advancedInsights = insights;
+        });
+      } catch (e) {
+        print('Alapvető insights hiba: $e');
+        // Ha minden más nem működik, adj vissza egy üres Map-et
+        setState(() {
+          _advancedInsights = {
+            'status': 'partial_load',
+            'message': 'Egyes elemzések nem elérhetők, de az anomália detektálás és ML költségvetés működhet.',
+            'loaded_at': DateTime.now().toIso8601String(),
+          };
+        });
+      }
+      
+    } catch (e) {
+      print('Hiba részletesen: $e');
+      _showError('Hiba a fejlett betekintések betöltésekor: $e');
+      // Üres insights beállítása, hogy ne crasheljen
+      setState(() {
+        _advancedInsights = {
+          'error': true,
+          'message': 'A fejlett betekintések jelenleg nem elérhetők.',
+          'error_details': e.toString(),
+        };
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _showUpgradeForFeature(String featureName, SubscriptionTier requiredTier) {
+    SubscriptionUtils.showUpgradeDialog(
+      context,
+      feature: featureName,
+      requiredTier: requiredTier,
+    );
+  }
 
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -333,17 +398,28 @@ Future<void> _loadAdvancedInsights() async {
           ),
         ),
         actions: [
+          // TIER BADGE HOZZÁADÁSA
+          Consumer<SubscriptionProvider>(
+            builder: (context, provider, child) {
+              return AppBarTierBadge(
+                tier: provider.currentTier,
+                onTap: () {
+                  // Navigálás a subscription képernyőre
+                  Navigator.pushNamed(context, '/subscription');
+                },
+              );
+            },
+          ),
           IconButton(
             icon: Icon(Icons.notifications_outlined),
             onPressed: () {
-              // Értesítések navigáció - implementáld igény szerint
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text('Értesítések - Hamarosan elérhető!')),
               );
-          },
-        ),
-      ],
-    ),
+            },
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Container(
           decoration: BoxDecoration(
@@ -473,9 +549,30 @@ Future<void> _loadAdvancedInsights() async {
                       _buildBasicStatsTab(),
                       _buildRiskAnalysisTab(),
                       _buildCategoryAnalysisTab(),
-                      _buildComprehensiveAnalysisTab(),
-                      _buildForecastTab(), // ÚJ
-                      _buildAdvancedInsightsTab(), // ÚJ
+                      // ÁTFOGÓ ELEMZÉS LOCKED WIDGET
+                      _hasAdvancedAnalyticsAccess 
+                          ? _buildComprehensiveAnalysisTab() 
+                          : FeatureLockedWidget(
+                              featureName: 'Átfogó pénzügyi elemzés',
+                              description: 'Részletes cashflow elemzés és személyre szabott pénzügyi tanácsok',
+                              requiredTier: SubscriptionTier.plus,
+                            ),
+                      // ELŐREJELZÉS LOCKED WIDGET
+                      _hasAdvancedAnalyticsAccess
+                          ? _buildForecastTab()
+                          : FeatureLockedWidget(
+                              featureName: 'AI Előrejelzés',
+                              description: 'Gépi tanulás alapú költségvetési előrejelzés és trend elemzés',
+                              requiredTier: SubscriptionTier.pro,
+                            ),
+                      // FEJLETT BETEKINTÉSEK LOCKED WIDGET
+                      _hasAdvancedAnalyticsAccess
+                          ? _buildAdvancedInsightsTab()
+                          : FeatureLockedWidget(
+                              featureName: 'Fejlett AI Betekintések',
+                              description: 'Anomália detektálás, ML költségvetési javaslatok és személyre szabott insights',
+                              requiredTier: SubscriptionTier.pro,
+                            ),
                     ],
                   ),
                 ),

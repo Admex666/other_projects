@@ -5,6 +5,12 @@ import 'package:frontend/services/challenge_service.dart';
 import 'package:frontend/screens/challenges/challenge_detail_screen.dart';
 import 'package:frontend/screens/challenges/my_challenges_screen.dart';
 import 'package:frontend/services/auth_service.dart';
+import 'package:provider/provider.dart';
+import 'package:frontend/providers/subscription_provider.dart';
+import 'package:frontend/widgets/subscription/usage_indicator.dart';
+import 'package:frontend/widgets/subscription/tier_badge.dart';
+import 'package:frontend/utils/subscription_utils.dart';
+import 'package:frontend/models/subscription.dart';
 
 class ChallengesMainScreen extends StatefulWidget {
   final String userId;
@@ -30,6 +36,8 @@ class _ChallengesMainScreenState extends State<ChallengesMainScreen>
   List<Challenge> _allChallenges = [];
   List<Challenge> _recommendedChallenges = [];
   bool _isLoading = true;
+  bool _isCheckingFeatureAccess = false;
+  int _activeChallengesCount = 0;
   String _error = '';
 
   ChallengeType? _selectedType;
@@ -61,7 +69,7 @@ class _ChallengesMainScreenState extends State<ChallengesMainScreen>
     }
   }
 
-  Future<void> _loadChallenges() async {
+   Future<void> _loadChallenges() async {
     setState(() {
       _isLoading = true;
       _error = '';
@@ -78,6 +86,10 @@ class _ChallengesMainScreenState extends State<ChallengesMainScreen>
         _challengeService.getRecommendedChallenges(),
       ]);
 
+      // Aktív kihívások számának meghatározása
+      final allChallenges = futures[0];
+      _activeChallengesCount = allChallenges.where((c) => c.isParticipating).length;
+
       setState(() {
         _allChallenges = futures[0];
         _recommendedChallenges = futures[1];
@@ -89,6 +101,34 @@ class _ChallengesMainScreenState extends State<ChallengesMainScreen>
         _isLoading = false;
       });
     }
+  }
+
+  Future<bool> _checkCanJoinChallenge() async {
+    final subscriptionProvider = context.read<SubscriptionProvider>();
+    
+    try {
+      setState(() => _isCheckingFeatureAccess = true);
+      
+      final canJoin = await subscriptionProvider.canCreateChallenge();
+      
+      if (!canJoin) {
+        _showChallengeJoinLimitReached();
+        return false;
+      }
+      
+      return true;
+    } finally {
+      setState(() => _isCheckingFeatureAccess = false);
+    }
+  }
+
+  void _showChallengeJoinLimitReached() {
+    SubscriptionUtils.showUpgradeDialog(
+      context,
+      feature: 'További kihívások',
+      description: 'Az ingyenes verzióban csak 1 aktív kihívásban vehetsz részt egyszerre. Frissíts a korlátlan kihívásokért!',
+      requiredTier: SubscriptionTier.plus,
+    );
   }
 
   void _showFilterBottomSheet() {
@@ -296,6 +336,136 @@ class _ChallengesMainScreenState extends State<ChallengesMainScreen>
     );
   }
 
+  Widget _buildUsageIndicator() {
+    return Consumer<SubscriptionProvider>(
+      builder: (context, subscriptionProvider, child) {
+        final currentTier = subscriptionProvider.currentTier;
+        final challengesLimit = currentTier == SubscriptionTier.free ? 1 : null;
+        
+        return Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: UsageIndicator(
+            featureName: 'Aktív kihívások',
+            current: _activeChallengesCount,
+            limit: challengesLimit,
+            onUpgradePressed: () => SubscriptionUtils.showUpgradeDialog(
+              context,
+              feature: 'Korlátlan kihívások',
+              requiredTier: SubscriptionTier.plus,
+            ),
+          ),
+        );
+      },
+    );
+  }  
+
+  Widget _buildHeader() {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      decoration: BoxDecoration(
+        color: Color(0xFF00D4A3),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          // Back arrow, cím és tier badge
+          Row(
+            children: [
+              GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF00D4A3).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.arrow_back_ios,
+                    color: Colors.black87,
+                    size: 20,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              const Expanded(
+                child: Text(
+                  'Kihívások',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+              ),
+              // Tier Badge hozzáadása
+              Consumer<SubscriptionProvider>(
+                builder: (context, subscriptionProvider, child) {
+                  return AppBarTierBadge(
+                    tier: subscriptionProvider.currentTier,
+                    onTap: () => SubscriptionUtils.showUpgradeDialog(
+                      context,
+                      feature: 'Előfizetés kezelése',
+                      requiredTier: SubscriptionTier.plus,
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          
+          // Keresés és szűrők
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF5F5F5),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: const InputDecoration(
+                      hintText: 'Kihívások keresése...',
+                      prefixIcon: Icon(Icons.search, color: Color(0xFF00D4A3)),
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                      hintStyle: TextStyle(color: Colors.grey),
+                    ),
+                    onSubmitted: (_) => _loadChallenges(),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              GestureDetector(
+                onTap: _showFilterBottomSheet,
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF00D4A3),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: const Icon(
+                    Icons.filter_list,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -303,98 +473,11 @@ class _ChallengesMainScreenState extends State<ChallengesMainScreen>
       body: SafeArea(
         child: Column(
           children: [
-            // Header - KnowledgeScreen stílusában
-            Container(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-              decoration: BoxDecoration(
-                color: Color(0xFF00D4A3),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.1),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  // Back arrow és cím
-                  Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF00D4A3).withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Icon(
-                            Icons.arrow_back_ios,
-                            color: Colors.black87,
-                            size: 20,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      const Expanded(
-                        child: Text(
-                          'Kihívások',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  
-                  // Keresés és szűrők
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFF5F5F5),
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: TextField(
-                            controller: _searchController,
-                            decoration: const InputDecoration(
-                              hintText: 'Kihívások keresése...',
-                              prefixIcon: Icon(Icons.search, color: Color(0xFF00D4A3)),
-                              border: InputBorder.none,
-                              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                              hintStyle: TextStyle(color: Colors.grey),
-                            ),
-                            onSubmitted: (_) => _loadChallenges(),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      GestureDetector(
-                        onTap: _showFilterBottomSheet,
-                        child: Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF00D4A3),
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: const Icon(
-                            Icons.filter_list,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                ],
-              ),
-            ),
+            // Header módosított verzió
+            _buildHeader(),
+
+            // Usage Indicator hozzáadása
+            _buildUsageIndicator(),
 
             // Tab Bar
             Container(
@@ -431,71 +514,7 @@ class _ChallengesMainScreenState extends State<ChallengesMainScreen>
     );
   }
 
-  Widget _buildChallengesList(List<Challenge> challenges) {
-    if (_isLoading) {
-      return const Center(child: CircularProgressIndicator(color: Color(0xFF00D4A3)));
-    }
-
-    if (_error.isNotEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.error_outline, size: 64, color: Colors.grey),
-            const SizedBox(height: 16),
-            Text(_error, textAlign: TextAlign.center),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _loadChallenges,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF00D4A3),
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: const Text('Újrapróbálás'),
-            ),
-          ],
-        ),
-      );
-    }
-
-    if (challenges.isEmpty) {
-      return const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.emoji_events_outlined, size: 64, color: Colors.grey),
-            SizedBox(height: 16),
-            Text(
-              'Nincs elérhető kihívás',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Próbálj meg más szűrőket használni',
-              style: TextStyle(color: Colors.grey),
-            ),
-          ],
-        ),
-      );
-    }
-
-    return RefreshIndicator(
-      onRefresh: _loadChallenges,
-      color: const Color(0xFF00D4A3),
-      child: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: challenges.length,
-        itemBuilder: (context, index) {
-          final challenge = challenges[index];
-          return _buildChallengeCard(challenge);
-        },
-      ),
-    );
-  }
-
+  // _buildChallengeCard módosítása - jogosultság ellenőrzéssel
   Widget _buildChallengeCard(Challenge challenge) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -513,15 +532,27 @@ class _ChallengesMainScreenState extends State<ChallengesMainScreen>
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ChallengeDetailScreen(
-                challengeId: challenge.id,
-                userId: widget.userId,
+          onTap: () async {
+            // Ha még nem vesz részt és elérte a limitet, ellenőrizzük
+            if (!challenge.isParticipating) {
+              final subscriptionProvider = context.read<SubscriptionProvider>();
+              if (subscriptionProvider.currentTier == SubscriptionTier.free && 
+                  _activeChallengesCount >= 1) {
+                _showChallengeJoinLimitReached();
+                return;
+              }
+            }
+            
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ChallengeDetailScreen(
+                  challengeId: challenge.id,
+                  userId: widget.userId,
+                ),
               ),
-            ),
-          ).then((_) => _loadChallenges()),
+            ).then((_) => _loadChallenges());
+          },
           borderRadius: BorderRadius.circular(15),
           child: Padding(
             padding: const EdgeInsets.all(20),
@@ -578,17 +609,52 @@ class _ChallengesMainScreenState extends State<ChallengesMainScreen>
                             fontWeight: FontWeight.w600,
                           ),
                         ),
+                      )
+                    else
+                      // Jogosultság figyelmeztető jelzés
+                      Consumer<SubscriptionProvider>(
+                        builder: (context, subscriptionProvider, child) {
+                          final isAtLimit = subscriptionProvider.currentTier == SubscriptionTier.free && 
+                                           _activeChallengesCount >= 1;
+                          
+                          if (isAtLimit) {
+                            return Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: Colors.grey,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.lock, size: 12, color: Colors.white),
+                                  SizedBox(width: 4),
+                                  Text(
+                                    'Limit elérve',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+                          
+                          return Icon(
+                            Icons.arrow_forward_ios,
+                            color: Colors.grey,
+                            size: 16,
+                          );
+                        },
                       ),
-                    const Icon(
-                      Icons.arrow_forward_ios,
-                      color: Colors.grey,
-                      size: 16,
-                    ),
                   ],
                 ),
+                
+                // Rest of the existing card content remains the same
                 const SizedBox(height: 16),
 
-                // Cím és leírás
                 Text(
                   challenge.title,
                   style: const TextStyle(
@@ -687,6 +753,71 @@ class _ChallengesMainScreenState extends State<ChallengesMainScreen>
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildChallengesList(List<Challenge> challenges) {
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator(color: Color(0xFF00D4A3)));
+    }
+
+    if (_error.isNotEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline, size: 64, color: Colors.grey),
+            const SizedBox(height: 16),
+            Text(_error, textAlign: TextAlign.center),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _loadChallenges,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF00D4A3),
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: const Text('Újrapróbálás'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (challenges.isEmpty) {
+      return const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.emoji_events_outlined, size: 64, color: Colors.grey),
+            SizedBox(height: 16),
+            Text(
+              'Nincs elérhető kihívás',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Próbálj meg más szűrőket használni',
+              style: TextStyle(color: Colors.grey),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return RefreshIndicator(
+      onRefresh: _loadChallenges,
+      color: const Color(0xFF00D4A3),
+      child: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: challenges.length,
+        itemBuilder: (context, index) {
+          final challenge = challenges[index];
+          return _buildChallengeCard(challenge);
+        },
       ),
     );
   }

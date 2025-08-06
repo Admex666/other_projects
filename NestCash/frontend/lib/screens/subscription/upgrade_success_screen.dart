@@ -124,11 +124,12 @@ class _UpgradeSuccessScreenState extends State<UpgradeSuccessScreen>
                   ),
                   
                   Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // Success icon with animation
-                        ScaleTransition(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // Success icon with animation
+                          ScaleTransition(
                           scale: _scaleAnimation,
                           child: Container(
                             padding: const EdgeInsets.all(24),
@@ -199,12 +200,11 @@ class _UpgradeSuccessScreenState extends State<UpgradeSuccessScreen>
                         // Features unlocked
                         FadeTransition(
                           opacity: _fadeAnimation,
-                          child: SingleChildScrollView(
-                            child: _buildUnlockedFeatures(),
-                          ),
+                          child: _buildUnlockedFeatures(),
                         ),
                       ],
                     ),
+                  ),
                   ),
                   
                   // Action buttons
