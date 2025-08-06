@@ -20,6 +20,7 @@ from app.models.challenge import ChallengeDocument, UserChallengeDocument
 from app.models.badge import BadgeType, UserBadge, BadgeProgress
 from app.models.habit import Habit, HabitLog
 from app.models.pti import PTIScore, PTIHistory, UserPTISettings
+from app.models.subscription import UserSubscriptionDocument
 
 load_dotenv()
 
@@ -43,7 +44,8 @@ async def init_db():
             ChallengeDocument, UserChallengeDocument,
             BadgeType, UserBadge, BadgeProgress,
             Habit, HabitLog,
-            PTIScore, PTIHistory, UserPTISettings
+            PTIScore, PTIHistory, UserPTISettings,
+            UserSubscriptionDocument
             ]
             ) 
 

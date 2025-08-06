@@ -867,6 +867,10 @@ async def detect_anomalies(
 ):
     """Rendkívüli kiadások azonosítása anomália detektálással"""
     try:
+        # JAVÍTÁS: Paraméter validálás és konverzió
+        sensitivity = float(sensitivity) if not isinstance(sensitivity, float) else sensitivity
+        months_back = int(months_back) if not isinstance(months_back, int) else months_back
+        
         # Adatok lekérése
         end_date = datetime.now()
         start_date = end_date - timedelta(days=months_back * 30)
@@ -1582,7 +1586,7 @@ async def get_advanced_spending_insights(
     """Fejlett költési betekintések kombinálva"""
     try:
         # Párhuzamos lekérdezések különböző elemzésekhez
-        anomaly_result = await detect_anomalies(current_user, months_back)
+        anomaly_result = await detect_anomalies(current_user, months_back, 0.1)
         forecast_result = await get_spending_forecast(current_user, "monthly", 6, months_back)
         seasonal_result = await get_seasonal_analysis(current_user, months_back * 2)
         
