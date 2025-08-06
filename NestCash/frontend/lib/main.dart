@@ -15,6 +15,11 @@ import 'package:frontend/screens/challenges/challenges_main_screen.dart';
 import 'package:frontend/screens/habits/habits_main_screen.dart';
 import 'package:frontend/screens/pti/pti_main_screen.dart';
 import 'package:frontend/services/auth_service.dart';
+import 'package:provider/provider.dart';
+import 'package:frontend/providers/subscription_provider.dart';
+import 'package:frontend/services/subscription_service.dart';
+import 'package:frontend/screens/subscription/subscription_screen.dart';
+import 'package:frontend/screens/subscription/plans_screen.dart';
 
 void main() {
   runApp(NestCashApp());
@@ -23,11 +28,46 @@ void main() {
 class NestCashApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'NestCash',
-      theme: ThemeData(primarySwatch: Colors.teal),
-      home: AuthWrapper(),
+    return MultiProvider(
+      providers: [
+        // AuthService - singleton
+        Provider<AuthService>(
+          create: (_) => AuthService(),
+        ),
+        
+        // SubscriptionService - depends on AuthService
+        ProxyProvider<AuthService, SubscriptionService>(
+          create: (context) => SubscriptionService(
+            authService: context.read<AuthService>(),
+          ),
+          update: (context, auth, previous) => SubscriptionService(
+            authService: auth,
+          ),
+        ),
+        
+        // SubscriptionProvider - depends on SubscriptionService
+        ChangeNotifierProxyProvider<SubscriptionService, SubscriptionProvider>(
+          create: (context) => SubscriptionProvider(
+            subscriptionService: context.read<SubscriptionService>(),
+          ),
+          update: (context, subscriptionService, previous) => 
+            previous ?? SubscriptionProvider(
+              subscriptionService: subscriptionService,
+            ),
+        ),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'NestCash',
+        theme: ThemeData(primarySwatch: Colors.teal),
+        home: AuthWrapper(),
+        routes: {
+          '/subscription': (context) => const SubscriptionScreen(),
+          '/plans': (context) => PlansScreen(
+            currentTier: context.read<SubscriptionProvider>().currentTier,
+          ),
+        },
+      ),
     );
   }
 }
@@ -53,7 +93,13 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
-    _loadUsername(); // Username betöltése
+    _loadUsername();
+    
+    // Subscription data betöltése a bejelentkezés után
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<SubscriptionProvider>().loadSubscriptionInfo();
+    });
+    
     _widgetOptions = <Widget>[
       DashboardScreen(username: _currentUsername, userId: widget.userId,),
       AnalysisScreen(userId: widget.userId),

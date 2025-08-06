@@ -7,7 +7,9 @@ enum SubscriptionTier {
   const SubscriptionTier(this.value);
   final String value;
 
-  static SubscriptionTier fromString(String value) {
+  static SubscriptionTier fromString(String? value) {
+    if (value == null) return SubscriptionTier.free;
+    
     switch (value.toLowerCase()) {
       case 'free':
         return SubscriptionTier.free;
@@ -52,7 +54,9 @@ enum SubscriptionStatus {
   const SubscriptionStatus(this.value);
   final String value;
 
-  static SubscriptionStatus fromString(String value) {
+  static SubscriptionStatus fromString(String? value) {
+    if (value == null) return SubscriptionStatus.active;
+    
     switch (value.toLowerCase()) {
       case 'active':
         return SubscriptionStatus.active;
@@ -86,10 +90,10 @@ class SubscriptionPlan {
   factory SubscriptionPlan.fromJson(Map<String, dynamic> json) {
     return SubscriptionPlan(
       tier: SubscriptionTier.fromString(json['tier']),
-      name: json['name'],
-      price: (json['price'] as num).toDouble(),
-      durationDays: json['duration_days'],
-      features: json['features'] as Map<String, dynamic>,
+      name: json['name'] ?? '',
+      price: (json['price'] as num?)?.toDouble() ?? 0.0,
+      durationDays: json['duration_days'] ?? 30,
+      features: json['features'] as Map<String, dynamic>? ?? {},
     );
   }
 
@@ -180,16 +184,26 @@ class UserSubscription {
   });
 
   factory UserSubscription.fromJson(Map<String, dynamic> json) {
-    return UserSubscription(
-      id: json['id'],
-      userId: json['user_id'],
-      tier: SubscriptionTier.fromString(json['tier']),
-      status: SubscriptionStatus.fromString(json['status']),
-      subscribedAt: DateTime.parse(json['subscribed_at']),
-      expiresAt: json['expires_at'] != null ? DateTime.parse(json['expires_at']) : null,
-      daysUntilExpiry: json['days_until_expiry'],
-      plan: SubscriptionPlan.fromJson(json['plan']),
-    );
+    try {
+      return UserSubscription(
+        id: json['id']?.toString() ?? '',
+        userId: json['user_id']?.toString() ?? '',
+        tier: SubscriptionTier.fromString(json['tier']),
+        status: SubscriptionStatus.fromString(json['status']),
+        subscribedAt: json['subscribed_at'] != null 
+            ? DateTime.parse(json['subscribed_at']) 
+            : DateTime.now(),
+        expiresAt: json['expires_at'] != null 
+            ? DateTime.parse(json['expires_at']) 
+            : null,
+        daysUntilExpiry: json['days_until_expiry'],
+        plan: SubscriptionPlan.fromJson(json['plan'] ?? {}),
+      );
+    } catch (e) {
+      print('Error parsing UserSubscription: $e');
+      print('JSON data: $json');
+      rethrow;
+    }
   }
 
   bool get isActive => status == SubscriptionStatus.active;
@@ -247,16 +261,16 @@ class FeatureAccess {
 
   factory FeatureAccess.fromJson(Map<String, dynamic> json) {
     return FeatureAccess(
-      feature: json['feature'],
-      hasAccess: json['has_access'],
+      feature: json['feature']?.toString() ?? '',
+      hasAccess: json['has_access'] ?? false,
       currentLimit: json['current_limit'],
       usageCount: json['usage_count'],
       remaining: json['remaining'],
-      upgradeRequired: json['upgrade_required'],
+      upgradeRequired: json['upgrade_required'] ?? false,
       requiredTier: json['required_tier'] != null 
           ? SubscriptionTier.fromString(json['required_tier']) 
           : null,
-      message: json['message'],
+      message: json['message']?.toString(),
     );
   }
 
@@ -292,10 +306,18 @@ class FeaturesSummary {
   });
 
   factory FeaturesSummary.fromJson(Map<String, dynamic> json) {
-    return FeaturesSummary(
-      subscription: UserSubscription.fromJson(json['subscription']),
-      plan: SubscriptionPlan.fromJson(json['plan']),
-      accessSummary: Map<String, bool>.from(json['access_summary']),
-    );
+    try {
+      print('FeaturesSummary parsing JSON: $json'); // Debug log
+      
+      return FeaturesSummary(
+        subscription: UserSubscription.fromJson(json['subscription'] ?? {}),
+        plan: SubscriptionPlan.fromJson(json['plan'] ?? {}),
+        accessSummary: Map<String, bool>.from(json['access_summary'] ?? {}),
+      );
+    } catch (e) {
+      print('Error parsing FeaturesSummary: $e');
+      print('JSON data: $json');
+      rethrow;
+    }
   }
 }

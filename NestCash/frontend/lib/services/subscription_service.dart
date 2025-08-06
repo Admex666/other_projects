@@ -33,23 +33,28 @@ class SubscriptionService {
 
     final uri = Uri.parse('$baseUrl$endpoint');
 
-    switch (method.toUpperCase()) {
-      case 'GET':
-        return await http.get(uri, headers: headers);
-      case 'POST':
-        return await http.post(
-          uri,
-          headers: headers,
-          body: body != null ? jsonEncode(body) : null,
-        );
-      case 'PUT':
-        return await http.put(
-          uri,
-          headers: headers,
-          body: body != null ? jsonEncode(body) : null,
-        );
-      default:
-        throw Exception('Nem támogatott HTTP metódus: $method');
+    try {
+      switch (method.toUpperCase()) {
+        case 'GET':
+          return await http.get(uri, headers: headers);
+        case 'POST':
+          return await http.post(
+            uri,
+            headers: headers,
+            body: body != null ? jsonEncode(body) : null,
+          );
+        case 'PUT':
+          return await http.put(
+            uri,
+            headers: headers,
+            body: body != null ? jsonEncode(body) : null,
+          );
+        default:
+          throw Exception('Nem támogatott HTTP metódus: $method');
+      }
+    } catch (e) {
+      print('HTTP request error to $endpoint: $e');
+      rethrow;
     }
   }
 
@@ -57,6 +62,9 @@ class SubscriptionService {
   Future<UserSubscription> getMySubscription() async {
     try {
       final response = await _makeRequest('GET', '/subscription/me');
+      
+      print('getMySubscription response status: ${response.statusCode}');
+      print('getMySubscription response body: ${response.body}');
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -64,9 +72,10 @@ class SubscriptionService {
       } else if (response.statusCode == 401) {
         throw Exception('Nincs jogosultság - bejelentkezés szükséges');
       } else {
-        throw Exception('Előfizetés lekérése sikertelen: ${response.statusCode}');
+        throw Exception('Előfizetés lekérése sikertelen: ${response.statusCode} - ${response.body}');
       }
     } catch (e) {
+      print('Error in getMySubscription: $e');
       throw Exception('Előfizetés lekérése sikertelen: $e');
     }
   }
@@ -91,16 +100,29 @@ class SubscriptionService {
   Future<FeaturesSummary> getMyFeatures() async {
     try {
       final response = await _makeRequest('GET', '/subscription/features');
+      
+      print('getMyFeatures response status: ${response.statusCode}');
+      print('getMyFeatures response body: ${response.body}');
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        final responseBody = response.body;
+        if (responseBody.isEmpty) {
+          throw Exception('Üres válasz a szervertől');
+        }
+        
+        final data = jsonDecode(responseBody);
+        if (data == null) {
+          throw Exception('Null válasz a szervertől');
+        }
+        
         return FeaturesSummary.fromJson(data);
       } else if (response.statusCode == 401) {
         throw Exception('Nincs jogosultság - bejelentkezés szükséges');
       } else {
-        throw Exception('Funkciók lekérése sikertelen: ${response.statusCode}');
+        throw Exception('Funkciók lekérése sikertelen: ${response.statusCode} - ${response.body}');
       }
     } catch (e) {
+      print('Error in getMyFeatures: $e');
       throw Exception('Funkciók lekérése sikertelen: $e');
     }
   }

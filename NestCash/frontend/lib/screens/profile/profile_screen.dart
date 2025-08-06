@@ -4,6 +4,7 @@ import 'package:frontend/screens/auth/login_screen.dart';
 import 'package:frontend/services/auth_service.dart';
 import 'package:frontend/widgets/badge_summary_widget.dart';
 import 'package:frontend/screens/auth/auth_wrapper.dart';
+import 'package:frontend/screens/subscription/subscription_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String username;
@@ -306,6 +307,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 email: currentEmail,
                                 mobile: currentMobile,
                               )),
+                            );
+                          },
+                        ),
+
+                        _buildProfileMenuItem(
+                          icon: Icons.card_membership,
+                          title: 'Előfizetésem',
+                          backgroundColor: Colors.purple[400]!,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const SubscriptionScreen()),
                             );
                           },
                         ),
