@@ -272,7 +272,10 @@
             let selectedCardIndex = null;
             let isPlayerAttacker = false;
             let botDefenseOrder = [];
-            
+            let waitingForDefenderCard = false;
+            let currentDefenderCard = null;
+            let gamePhase = 'setup'; // 'setup', 'waiting_for_defender', 'choosing_attacker_card'
+                        
             // Új játék indítása
             $('#start-as-attacker').click(function() {
                 startGame(true);
@@ -302,11 +305,13 @@
                         updateGameStatus();
                         
                         if (isPlayerAttacker) {
-                            $('#game-status').text('Te vagy a támadó');
-                            enableCardSelection();
+                            $('#game-status').text('Te vagy a támadó - válassz egy lapot a kör megkezdéséhez');
+                            enableInitialCardSelection();
                         } else {
                             $('#game-status').text('A bot támad');
-                            playBotTurn();
+                            setTimeout(() => {
+                                getDefenderCard();
+                            }, 1000);
                         }
                     },
                     error: function(xhr, status, error) {
@@ -359,50 +364,39 @@
             $('#play-btn').click(function() {
                 if (selectedCardIndex === null) return;
                 
-                $.ajax({
-                    url: '/play_round',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({
-                        card_index: selectedCardIndex
-                    }),
-                    success: function(data) {
-                        showRoundResult(data);
-                        updatePlayerHands(data.player_attack_hand, data.player_defense_hand);
-                        updateStats(data);
-                        
-                        if (data.game_over) {
-                            endGame(data.winner);
-                        } else if (!isPlayerAttacker) {
-                            isPlayerAttacker = true;
-                            $('#game-status').text('Te vagy a támadó');
-                            enableCardSelection();
-                        }
-                    },
-                    error: function() {
-                        alert('Hiba történt a kör lejátszásakor!');
-                    }
-                });
+                if (gamePhase === 'choosing_attacker_card') {
+                    // Támadó lap kijátszása válaszként
+                    respondToDefender(selectedCardIndex);
+                } else if (gamePhase === 'setup') {
+                    // Első kör indítása
+                    gamePhase = 'waiting_for_defender';
+                    $('#play-btn').prop('disabled', true);
+                    getDefenderCard();
+                }
             });
             
             // Kör eredményének megjelenítése
             function showRoundResult(data) {
                 const resultArea = $('#result-area');
-                const playerRole = isPlayerAttacker ? 'Támadó' : 'Védő';
-                const botRole = isPlayerAttacker ? 'Védő' : 'Támadó';
+                
+                // A szerepek meghatározása a tényleges adatok alapján
+                const attackerName = isPlayerAttacker ? 'Te (Támadó)' : 'Bot (Támadó)';
+                const defenderName = isPlayerAttacker ? 'Bot (Védő)' : 'Te (Védő)';
                 
                 let resultHtml = `
                     <div class="round-result">
-                        <strong>${playerRole} (Te):</strong> ${data.player_card}<br>
-                        <strong>${botRole} (Bot):</strong> ${data.bot_card}<br>
+                        <strong>${defenderName}:</strong> ${data.defender_card}<br>
+                        <strong>${attackerName}:</strong> ${data.attacker_card}<br>
                 `;
                 
                 if (data.damage > 0) {
-                    resultHtml += `<strong>Sebzés:</strong> ${data.damage} pont<br>`;
+                    const damageTarget = isPlayerAttacker ? 'Bot' : 'Te';
+                    resultHtml += `<strong>Sebzés:</strong> ${data.damage} pont (${damageTarget})<br>`;
                 }
                 
                 if (data.injury) {
-                    resultHtml += `<strong>Súlyos sérülés!</strong><br>`;
+                    const injuredPlayer = isPlayerAttacker ? 'Te' : 'Bot';
+                    resultHtml += `<strong>Súlyos sérülés!</strong> (${injuredPlayer})<br>`;
                 }
                 
                 if (data.special_rule) {
@@ -469,6 +463,142 @@
                 $('#new-game-btn').click(function() {
                     location.reload();
                 });
+            }
+
+            // Védő lap lekérése (új funkció)
+            function getDefenderCard() {
+                $.ajax({
+                    url: '/get_defender_card',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({}),
+                    success: function(data) {
+                        currentDefenderCard = data.defender_card;
+                        showDefenderCard(data.defender_card, data.is_player_attacker);
+                        
+                        if (data.is_player_attacker) {
+                            // Játékos a támadó, most választhat
+                            gamePhase = 'choosing_attacker_card';
+                            $('#game-status').text(`Védő lapja: ${data.defender_card} - Válaszd ki a támadó lapod!`);
+                            enableAttackerCardSelection();
+                        } else {
+                            // Bot a támadó, automatikusan válaszol
+                            setTimeout(() => {
+                                respondWithBotCard();
+                            }, 1500);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error getting defender card:", error);
+                        alert('Hiba a védő lap lekérésekor!');
+                    }
+                });
+            }
+
+            // Védő lap megjelenítése (új funkció)
+            function showDefenderCard(defenderCard, isPlayerAttacker) {
+                const resultArea = $('#result-area');
+                const defenderName = isPlayerAttacker ? 'Bot (Védő)' : 'Te (Védő)';
+                
+                const cardColor = defenderCard.includes('♥') || defenderCard.includes('♦') ? 'red' : 'black';
+                
+                resultArea.prepend(`
+                    <div class="round-result" id="current-round-display">
+                        <strong>${defenderName} lapja:</strong> 
+                        <span class="card ${cardColor}" style="display: inline-block; width: 50px; height: 70px; line-height: 70px; margin: 0 10px;">${defenderCard}</span>
+                        <br>
+                        <em>Várakozás a támadó lapjára...</em>
+                    </div>
+                `);
+            }
+
+            // Támadó válasza a védő lapjára
+            function respondToDefender(attackerCardIndex) {
+                $.ajax({
+                    url: '/respond_to_defender',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        card_index: attackerCardIndex
+                    }),
+                    success: function(data) {
+                        // Aktuális kör display frissítése a teljes eredménnyel
+                        $('#current-round-display').remove();
+                        showRoundResult(data);
+                        updatePlayerHands(data.player_attack_hand, data.player_defense_hand);
+                        updateStats(data);
+                        
+                        selectedCardIndex = null;
+                        $('.card').removeClass('selected');
+                        $('#play-btn').prop('disabled', true);
+                        
+                        if (data.game_over) {
+                            endGame(data.winner);
+                        } else {
+                            // Következő kör előkészítése
+                            setTimeout(() => {
+                                startNextRound();
+                            }, 2000);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error responding to defender:", error);
+                        alert('Hiba a támadó lap kijátszásakor!');
+                    }
+                });
+            }
+
+            // Bot automatikus válasza (ha bot a támadó)
+            function respondWithBotCard() {
+                $.ajax({
+                    url: '/respond_to_defender',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        card_index: 0 // Bot mindig az első lapját játssza
+                    }),
+                    success: function(data) {
+                        $('#current-round-display').remove();
+                        showRoundResult(data);
+                        updatePlayerHands(data.player_attack_hand, data.player_defense_hand);
+                        updateStats(data);
+                        
+                        if (data.game_over) {
+                            endGame(data.winner);
+                        } else {
+                            setTimeout(() => {
+                                startNextRound();
+                            }, 2000);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error with bot response:", error);
+                        alert('Hiba a bot válaszánál!');
+                    }
+                });
+            }
+
+            // Következő kör indítása
+            function startNextRound() {
+                gamePhase = 'waiting_for_defender';
+                $('#game-status').text('Új kör kezdődik...');
+                getDefenderCard();
+            }
+
+            // Támadó kártyaválasztás engedélyezése
+            function enableAttackerCardSelection() {
+                $('.card[data-index]').removeClass('selected').off('click').click(function() {
+                    selectCard(parseInt($(this).data('index')));
+                });
+                $('#play-btn').text('Támadás!').prop('disabled', true);
+            }
+
+            // Kezdeti kártyaválasztás engedélyezése (első kör)
+            function enableInitialCardSelection() {
+                $('.card[data-index]').off('click').click(function() {
+                    selectCard(parseInt($(this).data('index')));
+                });
+                $('#play-btn').text('Kör kezdése').prop('disabled', true);
             }
         });
     </script>
