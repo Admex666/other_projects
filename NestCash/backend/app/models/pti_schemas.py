@@ -2,7 +2,7 @@
 from pydantic import BaseModel, Field, validator
 from typing import Optional, List, Dict
 from datetime import datetime
-from app.models.pti import PTIPeriod, RankingScope, PTIComponentBreakdown, PTIRankingEntry
+from app.models.pti import PTIPeriod, RankingScope, PTIComponentBreakdown, PTIRankingEntry, PTIComponent
 
 # Request modellek
 class PTISettingsUpdate(BaseModel):
@@ -109,23 +109,55 @@ class PTILeaderboardStats(BaseModel):
     most_badges: List[PTIRankingEntry] = []  # Top 3 badge-ben
     best_limit_keepers: List[PTIRankingEntry] = []  # Top 3 limit betartásban
 
+# Komponens ranglista kérés
+class PTIComponentRankingRequest(BaseModel):
+    period: PTIPeriod = PTIPeriod.WEEKLY
+    component: PTIComponent = PTIComponent.TOTAL
+    scope: RankingScope = RankingScope.GLOBAL
+    limit: int = Field(default=50, ge=1, le=100)
+    offset: int = Field(default=0, ge=0)
+
+# Komponens ranglista bejegyzés válasz
+class PTIComponentRankingEntry(BaseModel):
+    rank: int
+    user_id: str
+    username: Optional[str] = None
+    anonymous_name: Optional[str] = None
+    is_anonymous: bool = False
+    component_score: float
+    percentile: float
+    is_current_user: bool = False
+
+# Komponens ranglista válasz
+class PTIComponentRankingResponse(BaseModel):
+    period: PTIPeriod
+    period_key: str
+    component: PTIComponent
+    component_display_name: str
+    scope: RankingScope
+    rankings: List[PTIComponentRankingEntry]
+    user_rank: Optional[int] = None
+    user_score: Optional[float] = None
+    user_percentile: Optional[float] = None
+    total_participants: int
+    generated_at: datetime
+
+# Dashboard bővítése komponens rangsorokkal
 class PTIDashboardResponse(BaseModel):
-    """PTI dashboard összes adat"""
     current_pti: PTIScoreResponse
-    
-    # Rangsorok
     weekly_ranking: Optional[PTIRankingEntry] = None
     monthly_ranking: Optional[PTIRankingEntry] = None
     yearly_ranking: Optional[PTIRankingEntry] = None
     
-    # Trendek
-    last_7_days: List[Dict[str, float]] = []  # Utolsó 7 nap PTI értékei
-    last_4_weeks: List[Dict[str, float]] = []  # Utolsó 4 hét
-    last_12_months: List[Dict[str, float]] = []  # Utolsó 12 hónap
+    # Komponens rangsorok hozzáadása
+    component_rankings: Dict[str, PTIComponentRankingEntry] = {}  # component_name -> ranking_entry
     
-    # Célok teljesítése
-    weekly_goal_progress: Optional[float] = None  # %
-    monthly_goal_progress: Optional[float] = None  # %
+    weekly_goal_progress: Optional[float] = None
+    monthly_goal_progress: Optional[float] = None
+    next_actions: List[str] = []
+    last_7_days: List[Dict[str, float]] = []
+    last_4_weeks: List[Dict[str, float]] = []
+    last_12_months: List[Dict[str, float]] = []
     
     # Javaslatok
     next_actions: List[str] = []  # Mit tegyen legközelebb a PTI javításához

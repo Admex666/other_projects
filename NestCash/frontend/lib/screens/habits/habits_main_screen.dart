@@ -78,6 +78,17 @@ class _HabitsMainScreenState extends State<HabitsMainScreen> {
         _overview = overview;
         _isLoading = false;
       });
+      
+      // *** MÓDOSÍTVA: Async módon frissítjük a provider-t ***
+      final subscriptionProvider = context.read<SubscriptionProvider>();
+      
+      // Ne várjunk rá, hogy ne blokkolja a UI-t, de frissítsük a cache-t
+      subscriptionProvider.getCurrentHabitsCount().then((_) {
+        // Opcionálisan értesíthetjük a provider-t ha szükséges
+      }).catchError((e) {
+        debugPrint('Error updating habits count in provider: $e');
+      });
+      
     } catch (e) {
       setState(() {
         _errorMessage = e.toString();
@@ -93,6 +104,7 @@ class _HabitsMainScreenState extends State<HabitsMainScreen> {
     try {
       setState(() => _isCheckingFeatureAccess = true);
       
+      // Most már az adatbázisból kéri le a tényleges számot
       final canCreate = await subscriptionProvider.canCreateHabit();
       
       if (!canCreate) {
@@ -100,6 +112,16 @@ class _HabitsMainScreenState extends State<HabitsMainScreen> {
         return false;
       }
       
+      return true;
+    } catch (e) {
+      debugPrint('Error checking habit creation permission: $e');
+      
+      // Fallback: cached érték alapján
+      if (subscriptionProvider.currentTier == SubscriptionTier.free && 
+          subscriptionProvider.cachedHabitsCount >= 5) {
+        _showHabitLimitReached();
+        return false;
+      }
       return true;
     } finally {
       setState(() => _isCheckingFeatureAccess = false);
@@ -130,6 +152,9 @@ class _HabitsMainScreenState extends State<HabitsMainScreen> {
     
     if (result == true) {
       _loadData();
+      // Cache frissítése a provider-ben
+      final subscriptionProvider = context.read<SubscriptionProvider>();
+      subscriptionProvider.getCurrentHabitsCount();
     }
   }
 
@@ -548,15 +573,24 @@ class _HabitsMainScreenState extends State<HabitsMainScreen> {
         final currentTier = subscriptionProvider.currentTier;
         final habitsLimit = currentTier == SubscriptionTier.free ? 5 : null;
         
-        return UsageIndicator(
-          featureName: 'Szokások',
-          current: _habits.length,
-          limit: habitsLimit,
-          onUpgradePressed: () => SubscriptionUtils.showUpgradeDialog(
-            context,
-            feature: 'Korlátlan szokás követés',
-            requiredTier: SubscriptionTier.plus,
-          ),
+        return FutureBuilder<int>(
+          // Adatbázisból kérjük le minden alkalommal
+          future: subscriptionProvider.getCurrentHabitsCount(),
+          builder: (context, snapshot) {
+            // Loading közben a cached értéket mutatjuk
+            final habitsCount = snapshot.data ?? subscriptionProvider.cachedHabitsCount;
+            
+            return UsageIndicator(
+              featureName: 'Szokások',
+              current: habitsCount,
+              limit: habitsLimit,
+              onUpgradePressed: () => SubscriptionUtils.showUpgradeDialog(
+                context,
+                feature: 'Korlátlan szokás követés',
+                requiredTier: SubscriptionTier.plus,
+              ),
+            );
+          },
         );
       },
     );
@@ -706,36 +740,42 @@ class _HabitsMainScreenState extends State<HabitsMainScreen> {
                                   height: 48,
                                   child: Consumer<SubscriptionProvider>(
                                     builder: (context, subscriptionProvider, child) {
-                                      final isAtLimit = subscriptionProvider.currentTier == SubscriptionTier.free && 
-                                                      _habits.length >= 5;
-                                      
-                                      return ElevatedButton.icon(
-                                        onPressed: _isCheckingFeatureAccess ? null : _onAddHabitPressed,
-                                        icon: _isCheckingFeatureAccess 
-                                            ? SizedBox(
-                                                width: 16,
-                                                height: 16,
-                                                child: CircularProgressIndicator(strokeWidth: 2),
-                                              )
-                                            : Icon(
-                                                isAtLimit ? Icons.lock : Icons.add,
+                                      return FutureBuilder<int>(
+                                        future: subscriptionProvider.getCurrentHabitsCount(),
+                                        builder: (context, snapshot) {
+                                          final habitsCount = snapshot.data ?? _habits.length;
+                                          final isAtLimit = subscriptionProvider.currentTier == SubscriptionTier.free && 
+                                                          habitsCount >= 5;
+                                          
+                                          return ElevatedButton.icon(
+                                            onPressed: _isCheckingFeatureAccess ? null : _onAddHabitPressed,
+                                            icon: _isCheckingFeatureAccess 
+                                                ? SizedBox(
+                                                    width: 16,
+                                                    height: 16,
+                                                    child: CircularProgressIndicator(strokeWidth: 2),
+                                                  )
+                                                : Icon(
+                                                    isAtLimit ? Icons.lock : Icons.add,
+                                                    color: Colors.white,
+                                                  ),
+                                            label: Text(
+                                              isAtLimit ? 'Frissítés szükséges' : 'Új szokás',
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600,
                                                 color: Colors.white,
                                               ),
-                                        label: Text(
-                                          isAtLimit ? 'Frissítés szükséges' : 'Új szokás',
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: isAtLimit ? Colors.grey : Colors.orange,
-                                          elevation: 0,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(12),
-                                          ),
-                                        ),
+                                            ),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: isAtLimit ? Colors.grey : Colors.orange,
+                                              elevation: 0,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(12),
+                                              ),
+                                            ),
+                                          );
+                                        },
                                       );
                                     },
                                   ),
@@ -751,50 +791,55 @@ class _HabitsMainScreenState extends State<HabitsMainScreen> {
                                 if (_habits.isEmpty)
                                   Consumer<SubscriptionProvider>(
                                     builder: (context, subscriptionProvider, child) {
-                                      final isAtLimit = subscriptionProvider.currentTier == SubscriptionTier.free;
-                                      
-                                      return Container(
-                                        padding: const EdgeInsets.all(40),
-                                        child: Column(
-                                          children: [
-                                            Icon(
-                                              Icons.psychology_outlined,
-                                              size: 64,
-                                              color: Colors.grey[400],
-                                            ),
-                                            const SizedBox(height: 16),
-                                            Text(
-                                              'Még nincsenek szokások',
-                                              style: TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.w600,
-                                                color: Colors.grey[600],
-                                              ),
-                                            ),
-                                            const SizedBox(height: 8),
-                                            Text(
-                                              isAtLimit 
-                                                  ? 'Az ingyenes verzióban 5 szokást követhetsz nyomon.\nHozd létre az elsőt!'
-                                                  : 'Hozd létre az első szokásod!',
-                                              style: TextStyle(
-                                                color: Colors.grey[500],
-                                              ),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                            if (isAtLimit) ...[
-                                              const SizedBox(height: 16),
-                                              TextButton.icon(
-                                                onPressed: () => SubscriptionUtils.showUpgradeDialog(
-                                                  context,
-                                                  feature: 'Korlátlan szokás követés',
-                                                  requiredTier: SubscriptionTier.plus,
+                                      return FutureBuilder<int>(
+                                        future: subscriptionProvider.getCurrentHabitsCount(),
+                                        builder: (context, snapshot) {
+                                          final isAtLimit = subscriptionProvider.currentTier == SubscriptionTier.free;
+                                          
+                                          return Container(
+                                            padding: const EdgeInsets.all(40),
+                                            child: Column(
+                                              children: [
+                                                Icon(
+                                                  Icons.psychology_outlined,
+                                                  size: 64,
+                                                  color: Colors.grey[400],
                                                 ),
-                                                icon: Icon(Icons.upgrade),
-                                                label: Text('Frissítés a korlátlan használatért'),
-                                              ),
-                                            ],
-                                          ],
-                                        ),
+                                                const SizedBox(height: 16),
+                                                Text(
+                                                  'Még nincsenek szokások',
+                                                  style: TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Colors.grey[600],
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 8),
+                                                Text(
+                                                  isAtLimit 
+                                                      ? 'Az ingyenes verzióban 5 szokást követhetsz nyomon.\nHozd létre az elsőt!'
+                                                      : 'Hozd létre az első szokásod!',
+                                                  style: TextStyle(
+                                                    color: Colors.grey[500],
+                                                  ),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                                if (isAtLimit) ...[
+                                                  const SizedBox(height: 16),
+                                                  TextButton.icon(
+                                                    onPressed: () => SubscriptionUtils.showUpgradeDialog(
+                                                      context,
+                                                      feature: 'Korlátlan szokás követés',
+                                                      requiredTier: SubscriptionTier.plus,
+                                                    ),
+                                                    icon: Icon(Icons.upgrade),
+                                                    label: Text('Frissítés a korlátlan használatért'),
+                                                  ),
+                                                ],
+                                              ],
+                                            ),
+                                          );
+                                        },
                                       );
                                     },
                                   )
@@ -812,25 +857,31 @@ class _HabitsMainScreenState extends State<HabitsMainScreen> {
                 ),
                 floatingActionButton: Consumer<SubscriptionProvider>(
                   builder: (context, subscriptionProvider, child) {
-                    final isAtLimit = subscriptionProvider.currentTier == SubscriptionTier.free && 
-                                    _habits.length >= 5;
-                    
-                    return FloatingActionButton(
-                      onPressed: _isCheckingFeatureAccess ? null : _onAddHabitPressed,
-                      backgroundColor: isAtLimit ? Colors.grey : Colors.orange,
-                      child: _isCheckingFeatureAccess
-                          ? SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation(Colors.white),
-                              ),
-                            )
-                          : Icon(
-                              isAtLimit ? Icons.lock : Icons.add,
-                              color: Colors.white,
-                            ),
+                    return FutureBuilder<int>(
+                      future: subscriptionProvider.getCurrentHabitsCount(),
+                      builder: (context, snapshot) {
+                        final habitsCount = snapshot.data ?? _habits.length;
+                        final isAtLimit = subscriptionProvider.currentTier == SubscriptionTier.free && 
+                                        habitsCount >= 5;
+                        
+                        return FloatingActionButton(
+                          onPressed: _isCheckingFeatureAccess ? null : _onAddHabitPressed,
+                          backgroundColor: isAtLimit ? Colors.grey : Colors.orange,
+                          child: _isCheckingFeatureAccess
+                              ? SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation(Colors.white),
+                                  ),
+                                )
+                              : Icon(
+                                  isAtLimit ? Icons.lock : Icons.add,
+                                  color: Colors.white,
+                                ),
+                        );
+                      },
                     );
                   },
                 ),

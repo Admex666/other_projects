@@ -63,18 +63,44 @@ class _AnalysisScreenState extends State<AnalysisScreen>
     try {
       final subscriptionProvider = Provider.of<SubscriptionProvider>(context, listen: false);
       
+      // Várjuk meg, hogy a provider inicializálódjon
+      if (!subscriptionProvider.isInitialized) {
+        await subscriptionProvider.loadSubscriptionInfo(forceRefresh: true);
+      }
+      
       // Alapvető elemzésekhez mindig van hozzáférés
       _hasBasicAnalyticsAccess = true;
       
-      // Fejlett elemzések ellenőrzése
-      final advancedAccessCheck = await subscriptionProvider.checkFeature(
-        'analysis_insights',
-        context: {'analysisType': 'advanced'},
-      );
+      print('Current subscription tier: ${subscriptionProvider.currentTier}');
+      print('Is active: ${subscriptionProvider.isActive}');
+      print('Is Plus or higher: ${subscriptionProvider.isPlusOrHigher}');
       
-      setState(() {
-        _hasAdvancedAnalyticsAccess = advancedAccessCheck.hasAccess;
-      });
+      // Egyszerű tier-alapú ellenőrzés először
+      if (subscriptionProvider.isPlusOrHigher) {
+        setState(() {
+          _hasAdvancedAnalyticsAccess = true;
+        });
+        print('Access granted based on tier');
+      } else {
+        // Részletes feature check ha kétséges
+        try {
+          final advancedAccessCheck = await subscriptionProvider.checkFeature(
+            'analysis_insights',
+            context: {'analysisType': 'advanced'},
+          );
+          
+          setState(() {
+            _hasAdvancedAnalyticsAccess = advancedAccessCheck.hasAccess;
+          });
+          
+          print('Feature check result: ${advancedAccessCheck.hasAccess}');
+        } catch (e) {
+          print('Feature check failed, falling back to tier: $e');
+          setState(() {
+            _hasAdvancedAnalyticsAccess = subscriptionProvider.isPlusOrHigher;
+          });
+        }
+      }
       
       _loadBasicStats();
     } catch (e) {

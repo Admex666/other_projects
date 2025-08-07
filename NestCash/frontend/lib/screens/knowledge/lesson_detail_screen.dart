@@ -211,8 +211,8 @@ class _LessonDetailScreenState extends State<LessonDetailScreen> {
             ),
           ElevatedButton(
             onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
+              Navigator.pop(context); // Dialog bezárása
+              Navigator.pop(context, true); // Screen bezárása + return true (lecke befejezve)
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF00D4A3),
@@ -946,8 +946,8 @@ Widget _buildListItem(String item) {
         actions: [
           ElevatedButton(
             onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
+              Navigator.pop(context); // Dialog bezárása  
+              Navigator.pop(context, true); // Screen bezárása + return true (lecke befejezve)
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF00D4A3),

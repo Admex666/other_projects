@@ -29,36 +29,68 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
   bool _hasKnowledgeAccess = false;
   int _dailyLessonCount = 0;
   bool _isCheckingAccess = false;
+  Map<String, dynamic>? _dailyStats;
 
   @override
   void initState() {
     super.initState();
-    _checkKnowledgeAccess();
+    _checkKnowledgeAccess(); // Ez rögtön ellenőrzi a jogosultságot
   }
 
+  // Új metódus
+  Future<void> _loadDailyStats() async {
+    final token = await _authService.getToken();
+    if (token == null) return;
+
+    try {
+      final response = await http.get(
+        Uri.parse('http://10.0.2.2:8000/knowledge/daily-stats'),
+        headers: {'Authorization': 'Bearer $token'},
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        setState(() {
+          _dailyStats = data;
+          _dailyLessonCount = data['daily_lessons_completed'] ?? 0;
+        });
+        print('Daily stats loaded: $_dailyStats');
+      }
+    } catch (e) {
+      print('Error loading daily stats: $e');
+    }
+  }
+
+  // _checkKnowledgeAccess metódus
   Future<void> _checkKnowledgeAccess() async {
     setState(() => _isCheckingAccess = true);
     
     try {
       final subscriptionProvider = Provider.of<SubscriptionProvider>(context, listen: false);
       
-      // Ellenőrizzük a knowledge base hozzáférést
-      final accessCheck = await subscriptionProvider.checkFeature(
-        'knowledge_base',
-        context: {'dailyLessonCount': _dailyLessonCount},
-      );
+      // DAILY STATS BETÖLTÉSE ELŐSZÖR
+      await _loadDailyStats();
+      
+      // Ha van full access, akkor mindent engedélyezünk
+      if (subscriptionProvider.hasFullKnowledge) {
+        setState(() {
+          _hasKnowledgeAccess = true;
+        });
+        _loadData();
+        return;
+      }
+      
+      // Free felhasználók esetén ellenőrizzük a napi limitet
+      final canTakeMoreLessons = _dailyStats?['can_take_more_lessons'] ?? true;
       
       setState(() {
-        _hasKnowledgeAccess = accessCheck.hasAccess;
+        _hasKnowledgeAccess = true; // Mindig engedjük a belépést
       });
       
-      if (_hasKnowledgeAccess) {
-        _loadData();
-      }
+      _loadData();
     } catch (e) {
       print('Error checking knowledge access: $e');
-      // Ha hibás az ellenőrzés, alapértelmezett hozzáférés
-      setState(() => _hasKnowledgeAccess = true);
+      setState(() => _hasKnowledgeAccess = true); // Hiba esetén is engedjük
       _loadData();
     } finally {
       setState(() => _isCheckingAccess = false);
@@ -271,9 +303,12 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
                   Consumer<SubscriptionProvider>(
                     builder: (context, provider, child) {
                       if (!provider.hasFullKnowledge) {
+                        final current = _dailyStats?['daily_lessons_completed'] ?? 0;
+                        final limit = _dailyStats?['daily_lessons_limit'] ?? 1;
+                        
                         return InlineUsageIndicator(
-                          current: _dailyLessonCount,
-                          limit: 1,
+                          current: current,
+                          limit: limit,
                           color: Color(0xFF00D4A3),
                         );
                       }
@@ -741,36 +776,52 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
           onTap: () async {
-            // JOGOSULTSÁG ELLENŐRZÉSE LECKE INDÍTÁSAKOR
             final subscriptionProvider = Provider.of<SubscriptionProvider>(context, listen: false);
-            _dailyLessonCount++; // Növeljük a napi lecke számlálót
             
-            final accessCheck = await subscriptionProvider.checkFeature(
-              'knowledge_base',
-              context: {'dailyLessonCount': _dailyLessonCount},
-            );
+            bool canAccess = false;
             
-            if (!accessCheck.hasAccess) {
-              // Mutassuk az upgrade dialógust
-              SubscriptionUtils.showUpgradeDialog(
-                context,
-                feature: 'Tudástár lecke',
-                requiredTier: accessCheck.requiredTier ?? SubscriptionTier.plus,
-              );
-              _dailyLessonCount--; // Visszavonjuk a növelést
-              return;
+            if (subscriptionProvider.hasFullKnowledge) {
+              // Fizetős felhasználók mindig hozzáférhetnek
+              canAccess = true;
+            } else {
+              // Free felhasználók: ellenőrizzük a napi limitet
+              final canTakeMoreLessons = _dailyStats?['can_take_more_lessons'] ?? true;
+              
+              if (canTakeMoreLessons) {
+                canAccess = true;
+              } else {
+                // Itt jelenítjük meg az upgrade dialógust
+                SubscriptionUtils.showUpgradeDialog(
+                  context,
+                  feature: 'További leckék ma',
+                  requiredTier: SubscriptionTier.plus,
+                );
+                return;
+              }
             }
             
-            Navigator.pop(context);
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => LessonDetailScreen(
-                  lessonId: lesson.id,
-                  userId: widget.userId,
+            if (canAccess) {
+              Navigator.pop(context);
+              final result = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => LessonDetailScreen(
+                    lessonId: lesson.id,
+                    userId: widget.userId,
+                  ),
                 ),
-              ),
-            );
+              );
+              
+              // Ha visszajött a lecke képernyőről és teljesítette, frissítjük a daily stats-ot
+              if (result == true) {
+                await Future.wait([
+                  _loadDailyStats(),
+                  _loadCategories(),
+                  _loadUserStats(),
+                ]);
+                setState(() {}); // UI frissítés
+              }
+            }
           },
           child: Padding(
             padding: const EdgeInsets.all(16),

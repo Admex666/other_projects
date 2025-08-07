@@ -50,20 +50,23 @@ class RulesEngine:
         elif raw_damage < 0:
             serious_injury_to_attacker = True
         # If raw_damage is 0, initial_damage_before_bonuses remains 0, serious_injury_to_attacker remains False
+        
+        # 4-es lap szabálya
+        if attacker_card.value == 4:
+            if raw_damage < 0:  # Ha a védő erősebb lapot játszott
+                print("  4 card neutralizes defender's advantage!")
+                return 0, False, 0  # Se sebzés, se sérülés
 
         return initial_damage_before_bonuses, serious_injury_to_attacker, two_vs_figure_bonus_applied
 
     def check_phase_end(self, attacker_serious_injuries, rounds_played):
-        """
-        Checks if the current duel phase should end.
-        """
-        if attacker_serious_injuries >= 3:
+        if attacker_serious_injuries >= 2:  # 3 helyett 2
             return True
         if rounds_played >= 6:
             return True
         return False
 
-    def apply_bonuses(self, attacker_card_history: list[Card], attacker_card: Card, initial_damage: int, serious_injury_occurred: bool, two_vs_figure_bonus_applied: int):
+    def apply_bonuses(self, attacker_card_history, attacker_card, initial_damage, serious_injury_occurred, two_vs_figure_bonus_applied):
         """
         Applies bonus damage based on consecutive card plays and winning cards.
         Returns a dictionary with breakdown of damage sources.
@@ -104,13 +107,14 @@ class RulesEngine:
                 final_damage += range_5_8_bonus
 
             # Rule: 9-essel nyert ütés esetén a sebzés duplázódik
-            if attacker_card.value == 9:
-                print(f"  Bonus: Winning with a 9 doubles the damage.")
-                # The 9-multiplier applies to the damage accumulated so far (base + 2_vs_figure + 5_8_bonus)
-                # To calculate the 'bonus' from doubling, we find the current total and subtract it from the doubled total.
-                damage_before_nine_double = final_damage # This is initial_damage + range_5_8_bonus
-                final_damage *= 2
-                nine_multiplier_bonus = final_damage - damage_before_nine_double
+            if attacker_card.value == 9 and initial_damage > 0:
+                # Csak az alapsebzés duplázódik
+                base_damage = initial_damage - two_vs_figure_bonus_applied
+                doubled_damage = base_damage * 2
+                nine_multiplier_bonus = doubled_damage - base_damage
+                
+                # Csak az alapsebzés helyettesítése duplázott értékkel
+                final_damage = doubled_damage + two_vs_figure_bonus_applied
         
         # Combo bonuses (applied if initial_damage > 0)
         # These bonuses are added to the final_damage AFTER the number-based bonuses and doubling.
@@ -153,7 +157,19 @@ class RulesEngine:
                 suit_bonus *= 2 # Double the component for reporting
                 color_group_bonus *= 2 # Double the component for reporting
 
-        total_bonus_damage = suit_bonus + color_group_bonus + range_5_8_bonus + nine_multiplier_bonus + two_vs_figure_bonus_applied
+        # Új bónusz: két egymás utáni <=5-ös lap
+        consecutive_low_bonus = 0
+        if initial_damage > 0 and len(attacker_card_history) >= 2:
+            last_card = attacker_card_history[-1]
+            second_last = attacker_card_history[-2]
+            
+            if (last_card.get_score_value() <= 5 and 
+                second_last.get_score_value() <= 5):
+                consecutive_low_bonus = 10
+                final_damage += consecutive_low_bonus
+                print("  Bonus: Two consecutive low cards (+10 damage)")
+
+        total_bonus_damage = suit_bonus + color_group_bonus + range_5_8_bonus + nine_multiplier_bonus + two_vs_figure_bonus_applied + consecutive_low_bonus
 
         return {
             'final_damage': final_damage,
@@ -163,5 +179,6 @@ class RulesEngine:
             'range_5_8_bonus': range_5_8_bonus,
             'nine_multiplier_bonus': nine_multiplier_bonus,
             'two_vs_figure_bonus': two_vs_figure_bonus_applied,
-            'total_bonus_damage': total_bonus_damage # Sum of all specific bonuses
+            'consecutive_low_bonus': consecutive_low_bonus,  # Új sor
+            'total_bonus_damage': total_bonus_damage
         }

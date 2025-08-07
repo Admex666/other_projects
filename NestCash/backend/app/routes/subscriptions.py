@@ -1,5 +1,5 @@
 # app/routes/subscriptions.py
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from typing import List, Optional
 from datetime import datetime
 
@@ -58,14 +58,14 @@ async def get_my_features(current_user: User = Depends(get_current_user)):
 
 @router.post("/check-feature")
 async def check_feature_access(
-    feature: str,
     current_user: User = Depends(get_current_user),
-    current_usage_count: Optional[int] = None,
-    current_active_challenges: Optional[int] = None,
-    current_habit_count: Optional[int] = None,
-    daily_lesson_count: Optional[int] = None,
-    current_partner_count: Optional[int] = None,
-    analysis_type: Optional[str] = None
+    feature: str = Query(..., description="Feature name"),
+    current_usage_count: Optional[int] = Query(None),
+    current_active_challenges: Optional[int] = Query(None),
+    current_habit_count: Optional[int] = Query(None),
+    daily_lesson_count: Optional[int] = Query(None),
+    current_partner_count: Optional[int] = Query(None),
+    analysis_type: Optional[str] = Query(None)
 ):
     """
     Konkrét funkció hozzáférésének ellenőrzése
@@ -104,9 +104,10 @@ async def check_feature_access(
         }
         
     except Exception as e:
+        print(f"Feature check error: {str(e)}")  # Debug log
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Funkció ellenőrzés sikertelen"
+            detail=f"Funkció ellenőrzés sikertelen: {str(e)}"
         )
 
 @router.post("/upgrade")

@@ -3,6 +3,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:frontend/services/auth_service.dart';
 import 'package:frontend/services/sunburst_chart.dart';
+import 'package:frontend/screens/add_expenses_screen.dart';
+import 'package:frontend/screens/add_incomes_screen.dart';
 
 class ManageAccountsScreen extends StatefulWidget {
   final String userId;
@@ -359,7 +361,75 @@ class _ManageAccountsScreenState extends State<ManageAccountsScreen> {
                       children: [
                         SizedBox(height: 16),
 
-                        // Gombok
+                        // Bevétel hozzáadása gomb (ÚJ)
+                        Container(
+                          width: double.infinity,
+                          height: 48,
+                          child: ElevatedButton.icon(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AddIncomesScreen(userId: widget.userId),
+                                ),
+                              );
+                            },
+                            icon: Icon(Icons.add, color: Colors.white),
+                            label: Text(
+                              'Bevétel hozzáadása',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Color(0xFF00D4A3),
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(height: 12),
+
+                        // Kiadás hozzáadása gomb (ÚJ)
+                        Container(
+                          width: double.infinity,
+                          height: 48,
+                          child: ElevatedButton.icon(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AddExpensesScreen(userId: widget.userId),
+                                ),
+                              );
+                            },
+                            icon: Icon(Icons.remove, color: Colors.white),
+                            label: Text(
+                              'Kiadás hozzáadása',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.redAccent,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(height: 30),
+
+                        // Számlák frissítése gomb
                         Container(
                           width: double.infinity,
                           height: 48,
@@ -384,8 +454,8 @@ class _ManageAccountsScreenState extends State<ManageAccountsScreen> {
                           ),
                         ),
 
+                        // Gombok
                         SizedBox(height: 12),
-
                         Container(
                           width: double.infinity,
                           height: 48,

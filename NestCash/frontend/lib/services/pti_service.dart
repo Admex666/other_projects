@@ -303,4 +303,72 @@ class PTIService {
       return null;
     }
   }
+
+  /// Komponens ranglista lekérése
+  Future<PTIComponentRankingResponse?> getComponentRanking({
+    PTIPeriod period = PTIPeriod.weekly,
+    PTIComponent component = PTIComponent.total,
+    RankingScope scope = RankingScope.global,
+    int limit = 50,
+    int offset = 0,
+  }) async {
+    try {
+      final headers = await _getHeaders();
+      final queryParams = {
+        'period': period.value,
+        'component': component.value,
+        'scope': scope.value,
+        'limit': limit.toString(),
+        'offset': offset.toString(),
+      };
+      
+      final uri = Uri.parse('$baseUrl/pti/component-ranking').replace(
+        queryParameters: queryParams,
+      );
+
+      final response = await http.get(uri, headers: headers);
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return PTIComponentRankingResponse.fromJson(data);
+      }
+      return null;
+    } catch (e) {
+      print('Error getting PTI component ranking: $e');
+      return null;
+    }
+  }
+
+  /// Minden komponens ranglista lekérése egyszerre
+  Future<Map<PTIComponent, PTIComponentRankingResponse>> getAllComponentRankings({
+    PTIPeriod period = PTIPeriod.weekly,
+    RankingScope scope = RankingScope.global,
+    int limit = 10, // Kevesebb limit, mert több komponens
+  }) async {
+    final results = <PTIComponent, PTIComponentRankingResponse>{};
+    
+    final components = [
+      PTIComponent.learning,
+      PTIComponent.habits,
+      PTIComponent.badges,
+      PTIComponent.limits,
+      PTIComponent.total,
+    ];
+
+    await Future.wait(
+      components.map((component) async {
+        final ranking = await getComponentRanking(
+          period: period,
+          component: component,
+          scope: scope,
+          limit: limit,
+        );
+        if (ranking != null) {
+          results[component] = ranking;
+        }
+      }),
+    );
+
+    return results;
+  }
 }

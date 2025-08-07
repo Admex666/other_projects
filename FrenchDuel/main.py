@@ -33,6 +33,11 @@ def run_large_simulation_and_analyze():
     num_matches_to_run = 1000
     log_filename = "simulation_log.json"
 
+    # Töröljük a régi log fájlt, ha létezik
+    import os
+    if os.path.exists(log_filename):
+        os.remove(log_filename)
+
     # Define the two strategies to compare
     strategy_a = RandomStrategy()
     strategy_b = GreedyHighestValueStrategy()
@@ -55,6 +60,10 @@ def run_large_simulation_and_analyze():
     analyzer.analyze_win_rate_by_drafted_cards()
     analyzer.analyze_draft_rate_vs_win_rate()
     analyzer.analyze_bot_performance_stability()
+    
+    # --- ÚJ ELEMZÉSEK HÍVÁSA ---
+    analyzer.analyze_win_rate_by_hand_features()
+    analyzer.analyze_draft_distribution_vs_expected()
 
 
 if __name__ == "__main__":

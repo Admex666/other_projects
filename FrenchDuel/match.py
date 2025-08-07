@@ -35,10 +35,10 @@ class Match:
 
     def _draft_attack_cards(self):
         """
-        Each player drafts 7 attack cards openly.
+        Each player drafts 7 attack cards.
+        Felváltva húznak 2-2 lapot a pakliból. Ebből 1 lapot nyíltan eldobnak, 1 lapot rejtve megtartanak.
         """
         print("\n--- Attack Card Draft Phase ---")
-        # Each player draws 2 cards, keeps 1, discards 1. Repeats 7 times for 7 cards.
         for player in [self.player1, self.player2]:
             print(f"\n{player.name}'s Attack Draft:")
             for i in range(7): # Repeat 7 times to get 7 cards
@@ -49,7 +49,8 @@ class Match:
                 # Player chooses 1 to keep, 1 to discard
                 # For bot, it will just keep 1 and discard 1 randomly
                 card_to_keep = player.choose_draft_card(drawn_cards, 'attack')
-                card_to_discard = [c for c in drawn_cards if c != card_to_keep][0] # The other card
+                # Find the card to discard (the one not chosen to keep)
+                card_to_discard = [c for c in drawn_cards if c != card_to_keep][0] 
 
                 player.add_attack_card(card_to_keep)
                 self.discard_pile.add_card(card_to_discard)
@@ -172,12 +173,12 @@ class Match:
 
         self._assign_roles(starting_attacker_name)
 
-        # Store initial hands for analysis later
-        initial_attacker_hand_cards = [str(card) for card in self.attacker.attack_hand.cards]
-        initial_defender_hand_cards = [str(card) for card in self.defender.defense_hand.cards]
-
         self._draft_attack_cards()
         self._draft_defense_cards()
+        
+        initial_attacker_hand_cards = [repr(card) for card in self.attacker.attack_hand.cards] 
+        initial_defender_hand_cards = [repr(card) for card in self.defender.defense_hand.cards]
+
         self._action_phase()
 
         # Determine phase winner

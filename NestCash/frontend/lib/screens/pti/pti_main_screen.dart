@@ -7,6 +7,7 @@ import 'package:frontend/screens/pti/pti_ranking_screen.dart';
 import 'package:frontend/screens/pti/pti_settings_screen.dart';
 import 'package:frontend/screens/pti/pti_comparison_screen.dart';
 import 'package:frontend/services/auth_service.dart';
+import 'package:frontend/screens/pti/pti_component_ranking_screen.dart';
 
 class PTIMainScreen extends StatefulWidget {
   final String userId;
@@ -370,11 +371,76 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'PTI Komponensek',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'PTI Komponensek',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              TextButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PTIComponentRankingScreen(
+                        userId: widget.userId,
+                        username: _username!,
+                      ),
+                    ),
+                  );
+                },
+                icon: Icon(
+                  Icons.leaderboard,
+                  size: 16,
+                  color: Color(0xFF00D4A3),
+                ),
+                label: Text(
+                  'Minden ranglista',
+                  style: TextStyle(
+                    color: Color(0xFF00D4A3),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 16),
+          
+          // Info szöveg, hogy jelezzük a felhasználónak, hogy a komponensek kattinthatók
+          Container(
+            padding: EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Color(0xFF00D4A3).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: Color(0xFF00D4A3).withOpacity(0.3),
+                width: 1,
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.info_outline,
+                  color: Color(0xFF00D4A3),
+                  size: 16,
+                ),
+                SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Koppints bármely komponensre a ranglistájának megtekintéséhez',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Color(0xFF00D4A3),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           SizedBox(height: 20),
@@ -385,6 +451,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
             30,
             Colors.blue,
             'Pénzügyi ismeretek és képzések',
+            PTIComponent.learning,
           ),
           SizedBox(height: 16),
           
@@ -394,6 +461,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
             30,
             Colors.green,
             'Napi pénzügyi szokások követése',
+            PTIComponent.habits,
           ),
           SizedBox(height: 16),
           
@@ -403,6 +471,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
             20,
             Colors.orange,
             'Elért eredmények és mérföldkövek',
+            PTIComponent.badges,
           ),
           SizedBox(height: 16),
           
@@ -412,6 +481,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
             20,
             Colors.purple,
             'Költségvetési korlátok betartása',
+            PTIComponent.limits,
           ),
         ],
       ),
@@ -424,76 +494,123 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
     int maxWeight,
     Color color,
     String description,
+    PTIComponent component,
   ) {
     final percentage = (currentScore / maxWeight) * 100;
     
-    return Container(
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+    return InkWell(
+      onTap: () {
+        // Navigálás az adott komponens ranglistájához
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PTIComponentRankingScreen(
+              userId: widget.userId,
+              username: _username!,
+              initialComponent: component, // Előre kiválasztott komponens
+            ),
+          ),
+        );
+      },
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: color.withOpacity(0.3),
+            width: 1,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    // Kis ranglista ikon jelzi, hogy kattintható
+                    Icon(
+                      Icons.leaderboard,
+                      size: 16,
+                      color: color,
+                    ),
+                  ],
+                ),
+                Text(
+                  '${currentScore.toStringAsFixed(1)} / $maxWeight',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 8),
+            Text(
+              description,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[600],
+              ),
+            ),
+            SizedBox(height: 12),
+            
+            // Progress bar
+            Container(
+              height: 8,
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: FractionallySizedBox(
+                alignment: Alignment.centerLeft,
+                widthFactor: (percentage / 100).clamp(0.0, 1.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: color,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
                 ),
               ),
-              Text(
-                '${currentScore.toStringAsFixed(1)} / $maxWeight',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: color,
+            ),
+            SizedBox(height: 8),
+            
+            // Kiegészítő információ row
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '${percentage.toStringAsFixed(1)}%',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: color,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-              ),
-            ],
-          ),
-          SizedBox(height: 8),
-          Text(
-            description,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[600],
-            ),
-          ),
-          SizedBox(height: 12),
-          
-          // Progress bar
-          Container(
-            height: 8,
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: FractionallySizedBox(
-              alignment: Alignment.centerLeft,
-              widthFactor: (percentage / 100).clamp(0.0, 1.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: color,
-                  borderRadius: BorderRadius.circular(4),
+                Text(
+                  'Ranglista megtekintése →',
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: color.withOpacity(0.8),
+                    fontStyle: FontStyle.italic,
+                  ),
                 ),
-              ),
+              ],
             ),
-          ),
-          SizedBox(height: 4),
-          Text(
-            '${percentage.toStringAsFixed(1)}%',
-            style: TextStyle(
-              fontSize: 12,
-              color: color,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

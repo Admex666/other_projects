@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/screens/auth/auth_wrapper.dart';
 import 'package:frontend/screens/dashboard_screen.dart';
-import 'package:frontend/screens/add_expenses_screen.dart';
 import 'package:frontend/screens/profile/profile_screen.dart';
-import 'package:frontend/screens/add_incomes_screen.dart';
 import 'package:frontend/screens/manage_accounts_screen.dart'; 
 import 'package:frontend/screens/manage_categories_screen.dart';
 import 'package:frontend/screens/knowledge/knowledge_screen.dart';
@@ -160,62 +158,6 @@ void _showAddTransactionOptions(BuildContext context) {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            // Bevétel gomb
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => AddIncomesScreen(userId: widget.userId),
-                    ),
-                  );
-                },
-                icon: const Icon(Icons.add, color: Colors.white),
-                label: const Text(
-                  'Bevétel hozzáadása',
-                  style: TextStyle(fontSize: 18, color: Colors.white),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF00D4A3),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                ),
-              ),
-            ),
-            const SizedBox(height: 15),
-            // Költség gomb
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => AddExpensesScreen(userId: widget.userId),
-                    ),
-                  );
-                },
-                icon: const Icon(Icons.remove, color: Colors.white),
-                label: const Text(
-                  'Kiadás hozzáadása',
-                  style: TextStyle(fontSize: 18, color: Colors.white),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.redAccent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                ),
-              ),
-            ),
-            const SizedBox(height: 15),
             // Számlák kezelése gomb
             SizedBox(
               width: double.infinity,
@@ -272,7 +214,7 @@ void _showAddTransactionOptions(BuildContext context) {
               ),
             ),
             const SizedBox(height: 15),
-            // Limitek kezelése gomb (ÚJ)
+            // Limitek kezelése gomb
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
@@ -292,38 +234,6 @@ void _showAddTransactionOptions(BuildContext context) {
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.orange,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                ),
-              ),
-            ),
-            
-            const SizedBox(height: 15),
-            // Szokások gomb (ÚJ)
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => HabitsMainScreen(
-                        userId: widget.userId,
-                        username: _currentUsername,
-                      ),
-                    ),
-                  );
-                },
-                icon: const Icon(Icons.psychology, color: Colors.white),
-                label: const Text(
-                  'Szokások',
-                  style: TextStyle(fontSize: 18, color: Colors.white),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.teal,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
@@ -355,7 +265,7 @@ void _showForumChallengesOptions(BuildContext context) {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            // PTI gomb (ÚJ)
+            // PTI gomb
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
@@ -377,6 +287,37 @@ void _showForumChallengesOptions(BuildContext context) {
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF6C63FF),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                ),
+              ),
+            ),
+            const SizedBox(height: 15),
+            // Szokások gomb (ide helyezzük át)
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => HabitsMainScreen(
+                        userId: widget.userId,
+                        username: _currentUsername,
+                      ),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.psychology, color: Colors.white),
+                label: const Text(
+                  'Szokások',
+                  style: TextStyle(fontSize: 18, color: Colors.white),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.teal,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),

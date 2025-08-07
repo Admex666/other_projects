@@ -128,7 +128,7 @@ class SubscriptionService {
   }
 
   /// Konkrét funkció hozzáférésének ellenőrzése
-  Future<FeatureAccess> checkFeatureAccess(
+Future<FeatureAccess> checkFeatureAccess(
     String feature, {
     int? currentUsageCount,
     int? currentActiveChallenges,
@@ -138,17 +138,22 @@ class SubscriptionService {
     String? analysisType,
   }) async {
     try {
-      final body = <String, dynamic>{
+      // POST body helyett query paramétereket használunk
+      final queryParams = <String, String>{
         'feature': feature,
-        if (currentUsageCount != null) 'current_usage_count': currentUsageCount,
-        if (currentActiveChallenges != null) 'current_active_challenges': currentActiveChallenges,
-        if (currentHabitCount != null) 'current_habit_count': currentHabitCount,
-        if (dailyLessonCount != null) 'daily_lesson_count': dailyLessonCount,
-        if (currentPartnerCount != null) 'current_partner_count': currentPartnerCount,
+        if (currentUsageCount != null) 'current_usage_count': currentUsageCount.toString(),
+        if (currentActiveChallenges != null) 'current_active_challenges': currentActiveChallenges.toString(),
+        if (currentHabitCount != null) 'current_habit_count': currentHabitCount.toString(),
+        if (dailyLessonCount != null) 'daily_lesson_count': dailyLessonCount.toString(),
+        if (currentPartnerCount != null) 'current_partner_count': currentPartnerCount.toString(),
         if (analysisType != null) 'analysis_type': analysisType,
       };
 
-      final response = await _makeRequest('POST', '/subscription/check-feature', body: body);
+      final uri = Uri.parse('$baseUrl/subscription/check-feature').replace(queryParameters: queryParams);
+      final response = await http.post(uri, headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${await _authService.getToken()}',
+      });
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -156,9 +161,11 @@ class SubscriptionService {
       } else if (response.statusCode == 401) {
         throw Exception('Nincs jogosultság - bejelentkezés szükséges');
       } else {
+        print('Feature check error: ${response.statusCode} - ${response.body}');
         throw Exception('Funkció ellenőrzés sikertelen: ${response.statusCode}');
       }
     } catch (e) {
+      print('checkFeatureAccess error: $e');
       throw Exception('Funkció ellenőrzés sikertelen: $e');
     }
   }

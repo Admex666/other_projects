@@ -105,6 +105,73 @@ class UserPTISettings(Document):
         indexes = ["user_id"]
 
 # Response modellek
+class PTIComponent(str, Enum):
+    LEARNING = "learning"
+    HABITS = "habits" 
+    BADGES = "badges"
+    LIMITS = "limits"
+    TOTAL = "total"
+
+    @property
+    def value(self):
+        """Enum érték visszaadása - Pydantic kompatibilitásért"""
+        return self._value_
+
+    @property
+    def display_name(self):
+        names = {
+            "learning": "📚 Tanulás",
+            "habits": "💪 Szokások", 
+            "badges": "🏆 Kitűzők",
+            "limits": "📊 Limitek",
+            "total": "🏆 Összesített PTI"
+        }
+        return names.get(self.value, self.value)
+
+# Komponens ranglista bejegyzés
+ASCENDING = 1
+DESCENDING = -1
+class PTIComponentRanking(Document):
+    period: str = Field(..., description="Időszak típusa (string formában)")  # Változás: str
+    period_key: str
+    component: str = Field(..., description="Komponens típusa (string formában)")  # Változás: str
+    scope: str = Field(..., description="Rangsor scope (string formában)")  # Változás: str
+    
+    user_id: PydanticObjectId
+    username: Optional[str] = None
+    is_anonymous: bool = False
+    anonymous_name: Optional[str] = None
+    
+    component_score: float
+    rank: int
+    total_participants: int
+    percentile: float
+    
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    
+    class Settings:
+        name = "pti_component_rankings"
+        indexes = [
+            [
+                ("period", ASCENDING),
+                ("period_key", ASCENDING),
+                ("component", ASCENDING),
+                ("scope", ASCENDING),
+                ("rank", ASCENDING)
+            ],
+            [
+                ("user_id", ASCENDING),
+                ("period", ASCENDING),
+                ("component", ASCENDING)
+            ],
+            [
+                ("period", ASCENDING),
+                ("period_key", ASCENDING),
+                ("component", ASCENDING),
+                ("component_score", DESCENDING)
+            ]
+        ]
+
 class PTIComponentBreakdown(BaseModel):
     """PTI komponensek részletezése"""
     learning_points: float

@@ -262,11 +262,18 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           const SizedBox(height: 12),
           
           // Habits usage
-          UsageIndicator(
-            featureName: 'Szokások',
-            current: provider.getCurrentHabitsCount(),
-            limit: provider.getHabitsLimit() == -1 ? null : provider.getHabitsLimit(),
-            showUpgradeButton: !provider.canCreateUnlimitedHabits,
+          FutureBuilder<int>(
+            future: provider.getCurrentHabitsCount(),
+            builder: (context, snapshot) {
+              final habitsCount = snapshot.data ?? provider.cachedHabitsCount;
+              
+              return UsageIndicator(
+                featureName: 'Szokások',
+                current: habitsCount,
+                limit: provider.getHabitsLimit() == -1 ? null : provider.getHabitsLimit(),
+                showUpgradeButton: !provider.canCreateUnlimitedHabits,
+              );
+            },
           ),
           
           const SizedBox(height: 12),

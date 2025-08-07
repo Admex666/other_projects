@@ -1,5 +1,25 @@
 // lib/models/pti_models.dart
 
+// Komponens típusok
+enum PTIComponent {
+  learning('learning', '📚 Tanulás'),
+  habits('habits', '💪 Szokások'),
+  badges('badges', '🏆 Kitűzők'),
+  limits('limits', '📊 Limitek'),
+  total('total', '🏆 Összesített PTI');
+
+  const PTIComponent(this.value, this.displayName);
+  final String value;
+  final String displayName;
+
+  static PTIComponent fromString(String value) {
+    return PTIComponent.values.firstWhere(
+      (component) => component.value == value,
+      orElse: () => PTIComponent.total,
+    );
+  }
+}
+
 enum PTIPeriod {
   weekly('weekly', 'Heti'),
   monthly('monthly', 'Havi'),
@@ -491,6 +511,96 @@ class PTIHistoryResponse {
           ? PTIHistoryEntry.fromJson(json['current_period'])
           : null,
       totalEntries: json['total_entries'] ?? 0,
+    );
+  }
+}
+
+// Komponens ranglista bejegyzés
+class PTIComponentRankingEntry {
+  final int rank;
+  final String userId;
+  final String? username;
+  final String? anonymousName;
+  final bool isAnonymous;
+  final double componentScore;
+  final double percentile;
+  final bool isCurrentUser;
+
+  const PTIComponentRankingEntry({
+    required this.rank,
+    required this.userId,
+    this.username,
+    this.anonymousName,
+    required this.isAnonymous,
+    required this.componentScore,
+    required this.percentile,
+    this.isCurrentUser = false,
+  });
+
+  factory PTIComponentRankingEntry.fromJson(Map<String, dynamic> json) {
+    return PTIComponentRankingEntry(
+      rank: json['rank'] ?? 0,
+      userId: json['user_id'] ?? '',
+      username: json['username'],
+      anonymousName: json['anonymous_name'],
+      isAnonymous: json['is_anonymous'] ?? false,
+      componentScore: (json['component_score'] ?? 0).toDouble(),
+      percentile: (json['percentile'] ?? 0).toDouble(),
+      isCurrentUser: json['is_current_user'] ?? false,
+    );
+  }
+
+  String get displayName {
+    if (isAnonymous && anonymousName != null) {
+      return anonymousName!;
+    }
+    return username ?? 'Ismeretlen';
+  }
+}
+
+// Komponens ranglista válasz
+class PTIComponentRankingResponse {
+  final PTIPeriod period;
+  final String periodKey;
+  final PTIComponent component;
+  final String componentDisplayName;
+  final RankingScope scope;
+  final List<PTIComponentRankingEntry> rankings;
+  final int? userRank;
+  final double? userScore;
+  final double? userPercentile;
+  final int totalParticipants;
+  final DateTime generatedAt;
+
+  const PTIComponentRankingResponse({
+    required this.period,
+    required this.periodKey,
+    required this.component,
+    required this.componentDisplayName,
+    required this.scope,
+    required this.rankings,
+    this.userRank,
+    this.userScore,
+    this.userPercentile,
+    required this.totalParticipants,
+    required this.generatedAt,
+  });
+
+  factory PTIComponentRankingResponse.fromJson(Map<String, dynamic> json) {
+    return PTIComponentRankingResponse(
+      period: PTIPeriod.fromString(json['period'] ?? 'weekly'),
+      periodKey: json['period_key'] ?? '',
+      component: PTIComponent.fromString(json['component'] ?? 'total'),
+      componentDisplayName: json['component_display_name'] ?? '',
+      scope: RankingScope.fromString(json['scope'] ?? 'global'),
+      rankings: (json['rankings'] as List<dynamic>? ?? [])
+          .map((ranking) => PTIComponentRankingEntry.fromJson(ranking))
+          .toList(),
+      userRank: json['user_rank'],
+      userScore: json['user_score']?.toDouble(),
+      userPercentile: json['user_percentile']?.toDouble(),
+      totalParticipants: json['total_participants'] ?? 0,
+      generatedAt: DateTime.parse(json['generated_at'] ?? DateTime.now().toIso8601String()),
     );
   }
 }

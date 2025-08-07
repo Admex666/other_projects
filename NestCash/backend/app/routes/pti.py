@@ -6,7 +6,7 @@ import logging
 
 from app.core.security import get_current_user
 from app.models.user import User
-from app.models.pti import PTIPeriod, RankingScope, UserPTISettings
+from app.models.pti import PTIPeriod, RankingScope, UserPTISettings, PTIComponent
 from app.models.pti_schemas import (
     PTISettingsUpdate, PTIUserSettings, PTIScoreResponse,
     PTIRankingRequest, PTIComparisonResponse, PTIDashboardResponse,
@@ -27,7 +27,7 @@ async def get_pti_dashboard(current_user: User = Depends(get_current_user)):
         # Aktuális PTI számítás minden időszakra
         results = await PTIService.calculate_and_save_all_periods(user_id)
         
-        # Rangsorok lekérése
+        # Alap rangsorok lekérése
         weekly_ranking = await PTIService.get_user_ranking(
             user_id, PTIPeriod.WEEKLY, RankingScope.GLOBAL, 1, 0
         )
@@ -37,6 +37,21 @@ async def get_pti_dashboard(current_user: User = Depends(get_current_user)):
         yearly_ranking = await PTIService.get_user_ranking(
             user_id, PTIPeriod.YEARLY, RankingScope.GLOBAL, 1, 0
         )
+        
+        # Komponens ranglisták lekérése (csak a felhasználó pozíciója)
+        component_rankings = {}
+        components = [PTIComponent.LEARNING, PTIComponent.HABITS, PTIComponent.BADGES, PTIComponent.LIMITS]
+        
+        for component in components:
+            try:
+                comp_ranking = await PTIService.get_component_ranking(
+                    user_id, PTIPeriod.WEEKLY, component, RankingScope.GLOBAL, 1, 0
+                )
+                if comp_ranking.rankings:
+                    component_rankings[component.value] = comp_ranking.rankings[0]
+            except Exception as e:
+                logger.warning(f"Could not get component ranking for {component}: {e}")
+                continue
         
         # User beállítások
         user_settings = await UserPTISettings.find_one(
@@ -77,10 +92,11 @@ async def get_pti_dashboard(current_user: User = Depends(get_current_user)):
             weekly_ranking=weekly_ranking.rankings[0] if weekly_ranking.rankings else None,
             monthly_ranking=monthly_ranking.rankings[0] if monthly_ranking.rankings else None,
             yearly_ranking=yearly_ranking.rankings[0] if yearly_ranking.rankings else None,
+            component_rankings=component_rankings,  # Új komponens ranglisták
             weekly_goal_progress=weekly_goal_progress,
             monthly_goal_progress=monthly_goal_progress,
             next_actions=next_actions,
-            last_7_days=[],  # TODO: Implementálni a trend adatokat
+            last_7_days=[],
             last_4_weeks=[],
             last_12_months=[]
         )
@@ -554,3 +570,28 @@ async def get_pti_history(
     except Exception as e:
         logger.error(f"Error getting PTI history for user {current_user.id}: {e}")
         raise HTTPException(status_code=500, detail="Hiba a PTI történet lekérésekor")
+    
+@router.get("/component-ranking", response_model=dict)
+async def get_component_ranking(
+    period: PTIPeriod = Query(PTIPeriod.WEEKLY),
+    component: PTIComponent = Query(PTIComponent.TOTAL),
+    scope: RankingScope = Query(RankingScope.GLOBAL),
+    limit: int = Query(50, ge=1, le=100),
+    offset: int = Query(0, ge=0),
+    current_user: User = Depends(get_current_user)
+):
+    """Komponens-specifikus ranglista lekérése"""
+    try:
+        ranking = await PTIService.get_component_ranking(
+            component=component,  # Paraméter név hozzáadása
+            period=period,
+            scope=scope,
+            limit=limit,
+            offset=offset,
+            user_id=current_user.id
+        )
+        return ranking.dict()
+        
+    except Exception as e:
+        logger.error(f"Error getting component ranking: {e}")
+        raise HTTPException(status_code=500, detail="Hiba a komponens ranglista lekérésekor")

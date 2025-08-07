@@ -2,23 +2,60 @@
 import 'package:flutter/foundation.dart';
 import '../models/subscription.dart';
 import '../services/subscription_service.dart';
-import '../services/auth_service.dart';
+import '../services/habit_service.dart';
 
 class SubscriptionProvider extends ChangeNotifier {
   final SubscriptionService _subscriptionService;
+  final HabitService _habitService = HabitService(); // ÚJ sor
   
+  int _currentHabitsCount = 0;
+
+  int _dailyLessonCount = 0;
+  DateTime? _lastLessonCountReset;
+  int get dailyLessonCount => _dailyLessonCount;
+
   UserSubscription? _subscriptionInfo;
   FeaturesSummary? _featuresSummary;
   List<SubscriptionPlan>? _availablePlans;
   bool _isLoading = false;
   String? _error;
+  bool _isInitialized = false;
   
   // Cache timestamps
   DateTime? _lastFetchTime;
   static const Duration _cacheValidDuration = Duration(minutes: 5);
 
   SubscriptionProvider({required SubscriptionService subscriptionService})
-      : _subscriptionService = subscriptionService;
+      : _subscriptionService = subscriptionService {
+    // Auto-inicializálás amikor létrejön a provider
+    _initialize();
+  }
+
+  // Auto inicializálás
+  Future<void> _initialize() async {
+    if (!_isInitialized) {
+      await loadSubscriptionInfo();
+      _isInitialized = true;
+    }
+  }
+
+  // Új metódusok hozzáadása
+  void incrementDailyLessonCount() {
+    _checkAndResetDailyCount();
+    _dailyLessonCount++;
+    notifyListeners();
+  }
+
+  void _checkAndResetDailyCount() {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    
+    if (_lastLessonCountReset == null || 
+        _lastLessonCountReset!.isBefore(today)) {
+      _dailyLessonCount = 0;
+      _lastLessonCountReset = today;
+    }
+  }
 
   // Getters
   UserSubscription? get subscriptionInfo => _subscriptionInfo;
@@ -27,11 +64,12 @@ class SubscriptionProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get error => _error;
   SubscriptionTier get currentTier => _subscriptionInfo?.tier ?? SubscriptionTier.free;
+  bool get isInitialized => _isInitialized; 
 
-  // Convenience getters
-  bool get isSubscribed => currentTier != SubscriptionTier.free;
-  bool get isPlusOrHigher => currentTier == SubscriptionTier.plus || currentTier == SubscriptionTier.pro;
-  bool get isPro => currentTier == SubscriptionTier.pro;
+  // Convenience getters - JAVÍTOTT logika
+  bool get isSubscribed => currentTier != SubscriptionTier.free && isActive;
+  bool get isPlusOrHigher => (currentTier == SubscriptionTier.plus || currentTier == SubscriptionTier.pro) && isActive;
+  bool get isPro => currentTier == SubscriptionTier.pro && isActive;
   bool get isActive => _subscriptionInfo?.isActive ?? false;
 
   // Feature access convenience getters (based on subscription plan)
@@ -180,10 +218,19 @@ class SubscriptionProvider extends ChangeNotifier {
     return -1; // -1 means unlimited
   }
 
-  int getCurrentHabitsCount() {
-    // This should be implemented based on how you track current usage
-    return 0;
+  Future<int> getCurrentHabitsCount() async {
+    try {
+      final habits = await _habitService.getHabits(activeOnly: true);
+      _currentHabitsCount = habits.length; // Cache-eljük a helyi változóban is
+      return habits.length;
+    } catch (e) {
+      debugPrint('Error getting habits count from database: $e');
+      return _currentHabitsCount; // Fallback a cached értékre
+    }
   }
+
+  // Új getter a cached értékhez (szinkron használathoz)
+  int get cachedHabitsCount => _currentHabitsCount;
 
   int getHabitsLimit() {
     if (currentTier == SubscriptionTier.free) return 5;
@@ -201,8 +248,8 @@ class SubscriptionProvider extends ChangeNotifier {
   }
 
   int getDailyLessonCount() {
-    // This should be implemented based on how you track daily usage
-    return 0;
+    _checkAndResetDailyCount();
+    return _dailyLessonCount;
   }
 
   // Feature check shortcuts
@@ -213,9 +260,27 @@ class SubscriptionProvider extends ChangeNotifier {
   }
 
   Future<bool> canCreateHabit() async {
-    final currentCount = getCurrentHabitsCount();
-    final access = await _subscriptionService.canCreateHabit(currentCount);
-    return access.hasAccess;
+    try {
+      // Ellenőrizzük a tier alapján
+      if (currentTier != SubscriptionTier.free) {
+        return true; // Plus/Pro felhasználók korlátlanul hozhatnak létre
+      }
+      
+      // Free felhasználóknál adatbázisból kérjük le az aktuális számot
+      final currentCount = await getCurrentHabitsCount(); // Ez már frissíti a cache-t is
+      if (currentCount >= 5) {
+        return false;
+      }
+      
+      // Ha van backend ellenőrzés is
+      final access = await _subscriptionService.canCreateHabit(currentCount);
+      return access.hasAccess;
+    } catch (e) {
+      debugPrint('Error in canCreateHabit: $e');
+      // Ha hiba van, fallback a tier alapú ellenőrzésre és cached értékre
+      if (currentTier != SubscriptionTier.free) return true;
+      return _currentHabitsCount < 5;
+    }
   }
 
   Future<bool> canAddPartner() async {
@@ -233,6 +298,27 @@ class SubscriptionProvider extends ChangeNotifier {
   Future<bool> canAccessAnalytics(String analysisType) async {
     final access = await _subscriptionService.canAccessAnalytics(analysisType);
     return access.hasAccess;
+  }
+
+  // Knowledge base specifikus ellenőrzés
+  Future<bool> canAccessLessonToday() async {
+    if (hasFullKnowledge) return true;
+    
+    try {
+      final access = await checkFeature(
+        'knowledge_base',
+        context: {'dailyLessonCount': getDailyLessonCount()},
+      );
+      return access.hasAccess;
+    } catch (e) {
+      debugPrint('Error checking lesson access: $e');
+      return getDailyLessonCount() < 1; // Fallback
+    }
+  }
+
+  void updateHabitsCount(int count) {
+    _currentHabitsCount = count;
+    notifyListeners();
   }
 
   /// Refresh subscription data

@@ -45,51 +45,48 @@ async def get_categories_with_lessons(
         print(f"DEBUG: Querying user_progress with converted ID: {query_user_id} (type: {type(query_user_id)})")
     except Exception as e:
         print(f"ERROR: Could not convert current_user.id to PydanticObjectId: {current_user.id} - {e}")
-        return [] # Vagy megfelelő hibakezelés
-
-    # 1. Felhasználó haladásának lekérése
-    user_progress = await UserProgress.find_one({"user_id": query_user_id})
-    
-    # ÚJ DEBUG SOROK:
-    if user_progress:
-        print(f"DEBUG: UserProgress document FOUND for user {current_user.id}.")
-        # Csak akkor írd ki a completed_lessons tartalmát, ha a user_progress létezik
-        if user_progress.completed_lessons is not None:
-            print(f"DEBUG: Raw user_progress.completed_lessons (length {len(user_progress.completed_lessons)}): {user_progress.completed_lessons}")
+        # Ha nem sikerül konvertálni az ID-t, akkor üres completed_lessons-szal folytatunk
+        completed_lessons = {}
+    else:
+        # 1. Felhasználó haladásának lekérése
+        user_progress = await UserProgress.find_one({"user_id": query_user_id})
+        
+        # 2. Egyszerű dictionary a teljesített leckékről
+        completed_lessons = {}
+        
+        # ÚJ DEBUG SOROK:
+        if user_progress:
+            print(f"DEBUG: UserProgress document FOUND for user {current_user.id}.")
+            # Csak akkor írd ki a completed_lessons tartalmát, ha a user_progress létezik
+            if user_progress.completed_lessons is not None:
+                print(f"DEBUG: Raw user_progress.completed_lessons (length {len(user_progress.completed_lessons)}): {user_progress.completed_lessons}")
+                
+                # CSAK AKKOR FOG LEFUTNI, HA user_progress LÉTEZIK ÉS completed_lessons NEM ÜRES/NONE
+                for comp in user_progress.completed_lessons:
+                    lesson_id = str(comp.lesson_id)
+                    
+                    pages_ok = comp.pages_completed >= comp.total_pages
+                    quiz_ok = comp.quiz_score is None or comp.quiz_score >= 70
+                    
+                    completed_lessons[lesson_id] = {
+                        'is_completed': pages_ok and quiz_ok,
+                        'quiz_score': comp.best_quiz_score or comp.quiz_score,
+                        'pages_completed': comp.pages_completed,
+                        'total_pages': comp.total_pages
+                    }
+                    
+                    print(f"DEBUG: Lesson {lesson_id} - pages: {comp.pages_completed}/{comp.total_pages}, quiz: {comp.quiz_score}, completed: {pages_ok and quiz_ok}")
+            else:
+                print(f"DEBUG: user_progress.completed_lessons is None.")
         else:
-            print(f"DEBUG: user_progress.completed_lessons is None.")
-    else:
-        print(f"DEBUG: UserProgress document NOT FOUND for user {current_user.id}.")
-        # Ha nincs felhasználói haladás, térjünk vissza üres listával vagy alapértelmezett értékkel
-        print(f"DEBUG: No user_progress found or no completed lessons.") # Ez a korábbi debug üzenet
-        return [] # Ebben az esetben nincs mit feldolgozni
-    
-    # 2. Egyszerű dictionary a teljesített leckékről
-    completed_lessons = {}
-    
-    # CSAK AKKOR FOG LEFUTNI, HA user_progress LÉTEZIK ÉS completed_lessons NEM ÜRES/NONE
-    if user_progress.completed_lessons: 
-        for comp in user_progress.completed_lessons:
-            lesson_id = str(comp.lesson_id)
-            
-            pages_ok = comp.pages_completed >= comp.total_pages
-            quiz_ok = comp.quiz_score is None or comp.quiz_score >= 70
-            
-            completed_lessons[lesson_id] = {
-                'is_completed': pages_ok and quiz_ok,
-                'quiz_score': comp.best_quiz_score or comp.quiz_score,
-                'pages_completed': comp.pages_completed,
-                'total_pages': comp.total_pages
-            }
-            
-            print(f"DEBUG: Lesson {lesson_id} - pages: {comp.pages_completed}/{comp.total_pages}, quiz: {comp.quiz_score}, completed: {pages_ok and quiz_ok}")
-    else:
-        print(f"DEBUG: No user_progress found or no completed lessons")
+            print(f"DEBUG: UserProgress document NOT FOUND for user {current_user.id}.")
+            # JAVÍTÁS: Ne térjünk vissza üres listával, hanem folytassuk üres completed_lessons-szal
+            print(f"DEBUG: No user_progress found, continuing with empty completed_lessons.")
     
     print(f"DEBUG: Completed lessons dict: {completed_lessons}")
     print(f"DEBUG: User {current_user.id} completed lessons (after processing): {completed_lessons}")
     
-    # 3. Kategóriák lekérése
+    # 3. Kategóriák lekérése - EZ MINDIG LEFUSSON
     categories = await KnowledgeCategory.find({"is_active": True}).sort("order").to_list()
     result = []
     
@@ -511,7 +508,7 @@ async def _complete_lesson(user_progress: UserProgress, lesson: Lesson, completi
     try:
         # Badge ellenőrzés
         earned_badges = await badge_service.check_and_award_badges(
-            user_id=str(user_progress.user_id),  # Biztosítjuk, hogy string legyen
+            user_id=str(user_progress.user_id),  
             trigger_event="lesson_completed",
             context={
                 "lesson_id": str(lesson.id),
@@ -522,13 +519,11 @@ async def _complete_lesson(user_progress: UserProgress, lesson: Lesson, completi
         # Ha szerzett badge-eket, logoljuk
         if earned_badges:
             print(f"DEBUG: User {user_progress.user_id} earned {len(earned_badges)} badges for completing lesson {lesson.id}")
-            for badge in earned_badges:
-                print(f"DEBUG: Earned badge: {badge.badge_name} ({badge.badge_code})")
 
         # Értesítés küldése
         from app.services.notification_service import NotificationService
         await NotificationService.create_system_notification(
-            user_id=str(user_progress.user_id),  # String konverzió
+            user_id=str(user_progress.user_id),  
             title="Lecke sikeresen teljesítve!",
             message=f"Gratulálunk! Sikeresen teljesítetted a '{lesson.title}' leckét.",
             priority=NotificationPriority.MEDIUM,
@@ -540,6 +535,10 @@ async def _complete_lesson(user_progress: UserProgress, lesson: Lesson, completi
 
     # Statisztikák frissítése
     await _update_user_stats(user_progress, lesson.estimated_minutes)
+    
+    # ÚJDONSÁG: Lecke teljesítés dátumának frissítése
+    lesson_completion = user_progress.completed_lessons[completion_index]
+    lesson_completion.completed_at = datetime.now()
 
 # Hozz létre egy új endpoint-ot ideiglenes javításhoz
 @router.post("/debug/fix-progress")
@@ -610,3 +609,48 @@ async def trigger_badge_check(current_user: User = Depends(get_current_user)):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Badge check failed: {str(e)}")
+    
+@router.get("/daily-stats")
+async def get_daily_stats(current_user: User = Depends(get_current_user)):
+    """Napi tanulási statisztikák lekérése (lecke számok, progress)"""
+    
+    user_progress = await UserProgress.find_one({"user_id": PydanticObjectId(current_user.id)})
+    
+    if not user_progress:
+        return {
+            "daily_lessons_completed": 0,
+            "daily_lessons_limit": 1,  
+            "can_take_more_lessons": True,
+            "daily_challenge_completed": False,
+            "current_streak": 0
+        }
+    
+    # Mai nap kezdete
+    today_start = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    
+    # Mai teljesített leckék számolása - JAVÍTOTT logika
+    daily_lessons_count = 0
+    for comp in user_progress.completed_lessons:
+        # Ellenőrizzük, hogy ma teljesítették-e ÉS tényleg teljesítve van-e
+        if (comp.completed_at and comp.completed_at >= today_start):
+            pages_done = comp.pages_completed >= comp.total_pages
+            
+            # Lecke objektum lekérése a kvíz ellenőrzéshez
+            lesson = await Lesson.get(str(comp.lesson_id))
+            if lesson:
+                has_quiz = len(lesson.quiz_questions) > 0
+                if has_quiz:
+                    quiz_passed = comp.best_quiz_score is not None and comp.best_quiz_score >= 70
+                else:
+                    quiz_passed = True
+                
+                if pages_done and quiz_passed:
+                    daily_lessons_count += 1
+    
+    return {
+        "daily_lessons_completed": daily_lessons_count,
+        "daily_lessons_limit": 1,  
+        "can_take_more_lessons": daily_lessons_count < 1,
+        "daily_challenge_completed": user_progress.daily_challenge_completed_today,
+        "current_streak": user_progress.current_streak
+    }
