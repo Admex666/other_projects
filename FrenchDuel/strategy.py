@@ -9,10 +9,10 @@ class BaseStrategy:
     def choose_draft_card(self, available_cards: list[Card], hand_type: str) -> Card:
         raise NotImplementedError
     
-    def choose_attack_card(self, hand: list[Card]) -> Card:
+    def choose_attack_order(self, hand: list[Card]) -> Card:
         raise NotImplementedError
     
-    def choose_defense_order(self, hand: list[Card]) -> list[Card]:
+    def choose_defense_card(self, hand: list[Card]) -> list[Card]:
         raise NotImplementedError
     
     def discard_draft_card(self, hand: list[Card], hand_type: str) -> Card:
@@ -26,13 +26,13 @@ class RandomStrategy(BaseStrategy):
     def choose_draft_card(self, available_cards: list[Card], hand_type: str) -> Card:
         return random.choice(available_cards)
     
-    def choose_attack_card(self, hand: list[Card]) -> Card:
-        return random.choice(hand)
-    
-    def choose_defense_order(self, hand: list[Card]) -> list[Card]:
-        ordered_hand = list(hand) # Make a copy
+    def choose_attack_order(self, hand: list[Card]) -> list[Card]:
+        ordered_hand = list(hand)
         random.shuffle(ordered_hand)
         return ordered_hand
+        
+    def choose_defense_card(self, hand: list[Card]) -> Card:
+        return random.choice(hand)
     
     def discard_draft_card(self, hand: list[Card], hand_type: str) -> Card:
         return random.choice(hand)
@@ -45,14 +45,13 @@ class GreedyHighestValueStrategy(BaseStrategy):
         # Pick the highest scoring card
         return max(available_cards, key=lambda card: card.get_score_value())
     
-    def choose_attack_card(self, hand: list[Card]) -> Card:
-        # Play the highest scoring card
+    def choose_attack_order(self, hand: list[Card]) -> list[Card]:
+        # Csökkenő sorrendben játszuk a legnagyobb értékű kártyákat először
+        return sorted(hand, key=lambda card: card.get_score_value(), reverse=True)
+        
+    def choose_defense_card(self, hand: list[Card]) -> Card:
+        # A legnagyobb értékű védőkártyát játsszuk
         return max(hand, key=lambda card: card.get_score_value())
-    
-    def choose_defense_order(self, hand: list[Card]) -> list[Card]:
-        # Play cards in ascending order to hold high cards for later.
-        # This is a simple defensive strategy.
-        return sorted(hand, key=lambda card: card.get_score_value())
     
     def discard_draft_card(self, hand: list[Card], hand_type: str) -> Card:
         # Discard the lowest value card

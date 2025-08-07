@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FrenchDuel - Kártyajáték</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: var(--dark-color);
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        h1, h2, h3 {
+            color: var(--primary-color);
+        }
+        
+        .card {
+            display: inline-block;
+            width: 70px;
+            height: 100px;
+            margin: 5px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            text-align: center;
+            line-height: 100px;
+            font-size: 24px;
+            cursor: pointer;
+            background: white;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .card.selected {
+            border: 3px solid var(--accent-color);
+            transform: translateY(-10px);
+        }
+        
+        .card.red {
+            color: #e74c3c;
+        }
+        
+        .card.black {
+            color: #2c3e50;
+        }
+        
+        .card-back {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            font-size: 14px;
+            line-height: 1.4;
+            padding-top: 30px;
+        }
+        
+        .game-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .player-area, .bot-area {
+            flex: 1;
+            min-width: 300px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .player-area {
+            border-top: 5px solid var(--secondary-color);
+        }
+        
+        .bot-area {
+            border-top: 5px solid var(--accent-color);
+        }
+        
+        .hand {
+            min-height: 120px;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px dashed #ccc;
+            border-radius: 5px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: var(--light-color);
+            border-radius: 5px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        
+        #result-area {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .round-result {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-left: 4px solid var(--secondary-color);
+            background-color: var(--light-color);
+        }
+        
+        .special-rule {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+        
+        button {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        button:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        
+        .game-over {
+            text-align: center;
+            padding: 20px;
+            margin-top: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 8px;
+            font-size: 1.5em;
+        }
+        
+        .setup-area {
+            text-align: center;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .game-area {
+                flex-direction: column;
+            }
+            
+            .card {
+                width: 50px;
+                height: 75px;
+                line-height: 75px;
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>FrenchDuel Kártyajáték</h1>
+    
+    <div id="setup-area" class="setup-area">
+        <h2>Játék beállítása</h2>
+        <p>Válaszd ki, hogy szeretnél kezdeni:</p>
+        <button id="start-as-attacker">Kezdjek én támadóként</button>
+        <button id="start-as-defender">Kezdjen a bot támadóként</button>
+    </div>
+    
+    <div id="game-container" class="hidden">
+        <div class="game-area">
+            <div class="player-area">
+                <h2>Játékos</h2>
+                <div class="stats">
+                    <div class="stat-item">
+                        <div>Sebzés</div>
+                        <div class="stat-value" id="player-damage">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div>Sérülés</div>
+                        <div class="stat-value" id="player-injuries">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div>Kör</div>
+                        <div class="stat-value" id="current-round">0/6</div>
+                    </div>
+                </div>
+                
+                <h3>Támadókártyák</h3>
+                <div id="player-attack-hand" class="hand"></div>
+                
+                <h3>Védőkártyák</h3>
+                <div id="player-defense-hand" class="hand"></div>
+            </div>
+            
+            <div class="bot-area">
+                <h2>Bot</h2>
+                <div class="stats">
+                    <div class="stat-item">
+                        <div>Sebzés</div>
+                        <div class="stat-value" id="bot-damage">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div>Sérülés</div>
+                        <div class="stat-value" id="bot-injuries">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div>Státusz</div>
+                        <div class="stat-value" id="game-status">-</div>
+                    </div>
+                </div>
+                
+                <h3>Bot kártyái</h3>
+                <div id="bot-cards" class="hand"></div>
+            </div>
+        </div>
+        
+        <div id="action-area">
+            <button id="play-btn" disabled>Kártya kijátszása</button>
+            <button id="end-turn-btn" class="hidden">Kör befejezése</button>
+        </div>
+        
+        <div id="result-area"></div>
+    </div>
+    
+    <div id="game-over-area" class="game-over hidden"></div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            let selectedCardIndex = null;
+            let isPlayerAttacker = false;
+            let botDefenseOrder = [];
+            
+            // Új játék indítása
+            $('#start-as-attacker').click(function() {
+                startGame(true);
+            });
+            
+            $('#start-as-defender').click(function() {
+                startGame(false);
+            });
+            
+            function startGame(startAsAttacker) {
+                $.ajax({
+                    url: '/new_game',
+                    type: 'POST',
+                    contentType: 'application/json',  // Explicit JSON content type
+                    data: JSON.stringify({
+                        start_as_attacker: startAsAttacker
+                    }),
+                    success: function(data) {
+                        $('#setup-area').hide();
+                        $('#game-container').removeClass('hidden');
+                        
+                        isPlayerAttacker = data.is_attacker;
+                        botDefenseOrder = data.bot_defense_order || [];
+                        
+                        updatePlayerHands(data.player_attack_hand, data.player_defense_hand);
+                        updateBotCards();
+                        updateGameStatus();
+                        
+                        if (isPlayerAttacker) {
+                            $('#game-status').text('Te vagy a támadó');
+                            enableCardSelection();
+                        } else {
+                            $('#game-status').text('A bot támad');
+                            playBotTurn();
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error:", error);
+                        alert('Hiba történt a játék indításakor! ' + error);
+                    }
+                });
+            }
+            
+            // Kártyák frissítése
+            function updatePlayerHands(attackHand, defenseHand) {
+                const attackHandDiv = $('#player-attack-hand');
+                attackHandDiv.empty();
+                
+                attackHand.forEach((card, index) => {
+                    const cardColor = card.includes('♥') || card.includes('♦') ? 'red' : 'black';
+                    const cardElement = $(`<div class="card ${cardColor}" data-index="${index}">${card}</div>`);
+                    cardElement.click(() => selectCard(index));
+                    attackHandDiv.append(cardElement);
+                });
+                
+                const defenseHandDiv = $('#player-defense-hand');
+                defenseHandDiv.empty();
+                
+                defenseHand.forEach((card, index) => {
+                    const cardColor = card.includes('♥') || card.includes('♦') ? 'red' : 'black';
+                    defenseHandDiv.append(`<div class="card ${cardColor} card-back" title="${card}">?</div>`);
+                });
+            }
+            
+            function updateBotCards() {
+                const botCardsDiv = $('#bot-cards');
+                botCardsDiv.empty();
+                
+                // Bot kártyáinak megjelenítése (csak hátulja látszik)
+                for (let i = 0; i < 7; i++) {
+                    botCardsDiv.append('<div class="card card-back">?</div>');
+                }
+            }
+            
+            // Kártya kiválasztása
+            function selectCard(index) {
+                $('.card').removeClass('selected');
+                $(`.card[data-index="${index}"]`).addClass('selected');
+                selectedCardIndex = index;
+                $('#play-btn').prop('disabled', false);
+            }
+            
+            // Kártya kijátszása
+            $('#play-btn').click(function() {
+                if (selectedCardIndex === null) return;
+                
+                $.ajax({
+                    url: '/play_round',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        card_index: selectedCardIndex
+                    }),
+                    success: function(data) {
+                        showRoundResult(data);
+                        updatePlayerHands(data.player_attack_hand, data.player_defense_hand);
+                        updateStats(data);
+                        
+                        if (data.game_over) {
+                            endGame(data.winner);
+                        } else if (!isPlayerAttacker) {
+                            isPlayerAttacker = true;
+                            $('#game-status').text('Te vagy a támadó');
+                            enableCardSelection();
+                        }
+                    },
+                    error: function() {
+                        alert('Hiba történt a kör lejátszásakor!');
+                    }
+                });
+            });
+            
+            // Kör eredményének megjelenítése
+            function showRoundResult(data) {
+                const resultArea = $('#result-area');
+                const playerRole = isPlayerAttacker ? 'Támadó' : 'Védő';
+                const botRole = isPlayerAttacker ? 'Védő' : 'Támadó';
+                
+                let resultHtml = `
+                    <div class="round-result">
+                        <strong>${playerRole} (Te):</strong> ${data.player_card}<br>
+                        <strong>${botRole} (Bot):</strong> ${data.bot_card}<br>
+                `;
+                
+                if (data.damage > 0) {
+                    resultHtml += `<strong>Sebzés:</strong> ${data.damage} pont<br>`;
+                }
+                
+                if (data.injury) {
+                    resultHtml += `<strong>Súlyos sérülés!</strong><br>`;
+                }
+                
+                if (data.special_rule) {
+                    resultHtml += `<span class="special-rule">${data.special_rule}</span>`;
+                }
+                
+                resultHtml += `</div>`;
+                
+                resultArea.prepend(resultHtml);
+            }
+            
+            // Statisztikák frissítése
+            function updateStats(data) {
+                $('#player-damage').text(data.player_damage);
+                $('#player-injuries').text(data.player_injuries);
+                $('#bot-damage').text(data.bot_damage);
+                $('#bot-injuries').text(data.bot_injuries);
+                $('#current-round').text(`${data.round}/6`);
+            }
+            
+            // Bot lépése
+            function playBotTurn() {
+                // Egyszerűsített bot lépés szimulálása
+                setTimeout(function() {
+                    $.post('/play_round', JSON.stringify({
+                        card_index: 0  // A bot mindig az első kártyáját játssza
+                    }), function(data) {
+                        showRoundResult(data);
+                        updatePlayerHands(data.player_attack_hand, data.player_defense_hand);
+                        updateStats(data);
+                        
+                        if (data.game_over) {
+                            endGame(data.winner);
+                        } else {
+                            // Most jön a játékos támadása
+                            isPlayerAttacker = true;
+                            $('#game-status').text('Te vagy a támadó');
+                            enableCardSelection();
+                        }
+                    });
+                }, 1500);
+            }
+            
+            // Kártyaválasztás engedélyezése
+            function enableCardSelection() {
+                $('.card[data-index]').click(function() {
+                    selectCard(parseInt($(this).data('index')));
+                });
+                $('#play-btn').prop('disabled', true);
+            }
+            
+            // Játék vége
+            function endGame(winner) {
+                $('#game-container').addClass('hidden');
+                const gameOverDiv = $('#game-over-area');
+                gameOverDiv.removeClass('hidden');
+                
+                if (winner === 'Játékos') {
+                    gameOverDiv.html('<h2>Gratulálok, nyertél!</h2><p>A bot sebzése: ' + $('#bot-damage').text() + '</p><button id="new-game-btn">Új játék</button>');
+                } else {
+                    gameOverDiv.html('<h2>Vesztettél!</h2><p>A te sebzésed: ' + $('#player-damage').text() + '</p><button id="new-game-btn">Új játék</button>');
+                }
+                
+                $('#new-game-btn').click(function() {
+                    location.reload();
+                });
+            }
+        });
+    </script>
+</body>
+</html>

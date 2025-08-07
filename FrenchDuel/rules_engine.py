@@ -60,7 +60,7 @@ class RulesEngine:
         return initial_damage_before_bonuses, serious_injury_to_attacker, two_vs_figure_bonus_applied
 
     def check_phase_end(self, attacker_serious_injuries, rounds_played):
-        if attacker_serious_injuries >= 2:  # 3 helyett 2
+        if attacker_serious_injuries >= 3:
             return True
         if rounds_played >= 6:
             return True
@@ -163,8 +163,8 @@ class RulesEngine:
             last_card = attacker_card_history[-1]
             second_last = attacker_card_history[-2]
             
-            if (last_card.get_score_value() <= 5 and 
-                second_last.get_score_value() <= 5):
+            if (last_card.get_score_value() <= 6 and 
+                second_last.get_score_value() <= 6):
                 consecutive_low_bonus = 10
                 final_damage += consecutive_low_bonus
                 print("  Bonus: Two consecutive low cards (+10 damage)")

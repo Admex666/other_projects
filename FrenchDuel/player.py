@@ -40,16 +40,16 @@ class Player:
         self.serious_injuries += 1
         # print(f"{self.name} suffered a serious injury! Total serious injuries this phase: {self.serious_injuries}")
 
-    def choose_attack_card(self):
+    def choose_attack_order(self):
         """
-        Placeholder for choosing an attack card.
+        Returns the ordered list of attack cards to be played.
         Must be implemented by subclasses.
         """
         raise NotImplementedError
-
-    def choose_defense_order(self):
+        
+    def choose_defense_card(self):
         """
-        Placeholder for choosing the order of defense cards.
+        Chooses a card to play as defender.
         Must be implemented by subclasses.
         """
         raise NotImplementedError
@@ -80,15 +80,23 @@ class BotPlayer(Player):
         # If no strategy is provided, use the default RandomStrategy
         self.strategy = strategy if strategy else RandomStrategy()
 
-    def choose_attack_card(self):
-        chosen_card = self.strategy.choose_attack_card(self.attack_hand.cards)
-        self.attack_hand.remove_card(chosen_card)
+    def choose_attack_order(self):
+        """
+        Returns the ordered list of attack cards to be played.
+        """
+        ordered_cards = self.strategy.choose_attack_order(self.attack_hand.cards)
+        return ordered_cards
+        
+    def choose_defense_card(self):
+        """
+        Chooses a card to play as defender.
+        """
+        if not self.defense_hand.cards:
+            return None
+        
+        chosen_card = self.strategy.choose_defense_card(self.defense_hand.cards)
+        self.defense_hand.remove_card(chosen_card)
         return chosen_card
-
-    def choose_defense_order(self):
-        ordered_cards = self.strategy.choose_defense_order(self.defense_hand.cards)
-        self.defense_hand.cards = ordered_cards
-        return self.defense_hand.cards
 
     def discard_draft_card(self, hand_type):
         if hand_type == 'attack':

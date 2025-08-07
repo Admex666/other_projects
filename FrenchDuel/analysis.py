@@ -153,6 +153,7 @@ class Analyzer:
                     'range_5_8_bonus': round_log['damage_breakdown'].get('range_5_8_bonus', 0),
                     'nine_multiplier_bonus': round_log['damage_breakdown'].get('nine_multiplier_bonus', 0),
                     'two_vs_figure_bonus': round_log['damage_breakdown'].get('two_vs_figure_bonus', 0),
+                    'consecutive_low_bonus': round_log['damage_breakdown'].get('consecutive_low_bonus', 0),
                     'total_bonus_damage_round': round_log['damage_breakdown'].get('total_bonus_damage', 0),
                 }
                 flattened_data.append(round_data)

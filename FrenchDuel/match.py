@@ -90,9 +90,9 @@ class Match:
         rounds_played = 0
         attacker_card_history = [] # To keep track of attacker's played cards for combo bonuses
 
-        # Defender pre-determines defense order
-        defender_ordered_cards = self.defender.choose_defense_order()
-        print(f"{self.defender.name} pre-determined defense order: {[str(c) for c in defender_ordered_cards]}")
+        # Attacker pre-determines attack order (módosítottuk, hogy a támadó állítsa előre a sorrendet)
+        attacker_ordered_cards = self.attacker.choose_attack_order()
+        print(f"{self.attacker.name} pre-determined attack order: {[str(c) for c in attacker_ordered_cards]}")
 
         while rounds_played < 6:
             # Check for phase end conditions before starting a new round
@@ -102,63 +102,63 @@ class Match:
             rounds_played += 1
             print(f"\n--- Round {rounds_played} ---")
 
-            attacker_played_card = self.attacker.choose_attack_card()
+            # Védő kezdeményez (a védő választ kártyát a saját kezéből)
+            defender_played_card = self.defender.choose_defense_card()
+            if not defender_played_card:
+                print(f"{self.defender.name} has no cards left to defend with. Phase ends early.")
+                break
+
+            # Támadó válaszol (a előre meghatározott sorrendből veszi a következő kártyát)
+            attacker_played_card = attacker_ordered_cards.pop(0)
             if not attacker_played_card:
                 print(f"{self.attacker.name} has no cards left to attack with. Phase ends early.")
                 break
 
-            # Defender plays the next card in their pre-determined order
-            defender_played_card = defender_ordered_cards.pop(0)
+            print(f"{self.defender.name} (Defender) plays: {defender_played_card}")
+            print(f"{self.attacker.name} (Attacker) responds with: {attacker_played_card}")
 
-            print(f"{self.attacker.name} plays: {attacker_played_card}")
-            print(f"{self.defender.name} plays: {defender_played_card}")
+            # Eredmény számítás (itt felcseréljük a támadó és védő szerepét a számításnál)
+            initial_damage, serious_injury_to_defender, two_vs_figure_bonus_applied = \
+                self.rules_engine.calculate_round_outcome(defender_played_card, attacker_played_card)
 
-            # Calculate initial outcome (base damage, serious injury, special +6 from 2 vs figure)
-            initial_damage, serious_injury_to_attacker, two_vs_figure_bonus_applied = \
-                self.rules_engine.calculate_round_outcome(attacker_played_card, defender_played_card)
-
-            # Append the current attacker card to the history BEFORE applying bonuses,
-            # as combos look at previous cards, including the current one.
+            # A támadó kártyatörténetéhez hozzáadjuk a kártyát
             attacker_card_history.append(attacker_played_card)
 
-            # Apply bonuses and get detailed breakdown
+            # Bónuszok alkalmazása
             damage_breakdown = self.rules_engine.apply_bonuses(
-                attacker_card_history, attacker_played_card, initial_damage, serious_injury_to_attacker, two_vs_figure_bonus_applied
+                attacker_card_history, attacker_played_card, initial_damage, serious_injury_to_defender, two_vs_figure_bonus_applied
             )
             final_damage = damage_breakdown['final_damage']
 
-            if serious_injury_to_attacker:
-                self.attacker.suffer_serious_injury()
-                print(f"  {self.attacker.name} suffered a serious injury.")
-                # Ensure damage dealt is 0 if serious injury occurs
-                final_damage = 0 # This ensures the defender doesn't take damage if attacker is injured
+            if serious_injury_to_defender:
+                self.defender.suffer_serious_injury()
+                print(f"  {self.defender.name} suffered a serious injury.")
+                final_damage = 0
             elif final_damage > 0:
-                self.defender.take_damage(final_damage)
-                print(f"  {self.attacker.name} dealt {final_damage} damage to {self.defender.name}.")
+                self.attacker.take_damage(final_damage)
+                print(f"  {self.defender.name} dealt {final_damage} damage to {self.attacker.name}.")
             else:
                 print("  Round neutralized. No damage, no injury.")
 
             self.round_logs.append({
                 'round': rounds_played,
-                'attacker': self.attacker.name,
                 'defender': self.defender.name,
-                'attacker_card': str(attacker_played_card),
+                'attacker': self.attacker.name,
                 'defender_card': str(defender_played_card),
-                'damage_dealt': final_damage, # This is the total final damage
-                'attacker_serious_injury': serious_injury_to_attacker,
-                'attacker_total_injuries': self.attacker.serious_injuries,
-                'defender_total_damage': self.defender.damage,
-                # Store detailed damage breakdown
-                'damage_breakdown': damage_breakdown 
+                'attacker_card': str(attacker_played_card),
+                'damage_dealt': final_damage,
+                'defender_serious_injury': serious_injury_to_defender,
+                'defender_total_injuries': self.defender.serious_injuries,
+                'attacker_total_damage': self.attacker.damage,
+                'damage_breakdown': damage_breakdown
             })
 
-            self.discard_pile.add_card(attacker_played_card)
             self.discard_pile.add_card(defender_played_card)
+            self.discard_pile.add_card(attacker_played_card)
 
         print("\n--- Action Phase End ---")
-        print(f"Attacker ({self.attacker.name}) serious injuries: {self.attacker.serious_injuries}")
-        print(f"Defender ({self.defender.name}) total damage: {self.defender.damage}")
-
+        print(f"Defender ({self.defender.name}) serious injuries: {self.defender.serious_injuries}")
+        print(f"Attacker ({self.attacker.name}) total damage: {self.attacker.damage}")
 
     def play_duel_phase(self, starting_attacker_name):
         """
