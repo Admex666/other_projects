@@ -35,6 +35,8 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
   String? _selectedCategory;
   DateTime? _startDate;
   DateTime? _endDate;
+  String _sortBy = 'date'; // 'date', 'amount', 'category', 'title'
+  bool _sortDescending = true; // alapból legújabb először
   
   @override
   void initState() {
@@ -50,31 +52,32 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200 &&
+    if (_scrollController.position.pixels >= 
+        _scrollController.position.maxScrollExtent - 200 &&
         !_isLoading && _hasMore) {
       _loadMoreTransactions();
     }
   }
 
   void _editTransaction(Map<String, dynamic> transaction) {
-  final isExpense = transaction['isExpense'] as bool;
-  
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => EditTransactionScreen(
-        userId: widget.userId,
-        transaction: transaction,
-        isExpense: isExpense,
+    final isExpense = transaction['isExpense'] as bool;
+    
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditTransactionScreen(
+          userId: widget.userId,
+          transaction: transaction,
+          isExpense: isExpense,
+        ),
       ),
-    ),
-  ).then((result) {
-    // Ha sikeres volt a módosítás, frissítsük a listát
-    if (result == true) {
-      _loadTransactions(refresh: true);
-    }
-  });
-}
+    ).then((result) {
+      // Ha sikeres volt a módosítás, frissítsük a listát
+      if (result == true) {
+        _loadTransactions(refresh: true);
+      }
+    });
+  }
 
 void _deleteTransaction(Map<String, dynamic> transaction) {
   showDialog(
@@ -128,15 +131,19 @@ Future<void> _performDelete(String transactionId) async {
   }
 
   Future<void> _loadTransactions({bool refresh = false}) async {
+    // Megakadályozzuk a dupla betöltést
+    if (_isLoading && !refresh) return;
+    
     if (refresh) {
       setState(() {
         _transactions.clear();
         _currentSkip = 0;
         _hasMore = true;
+        _isLoading = true; // Fontos: itt is beállítjuk
       });
+    } else {
+      setState(() => _isLoading = true);
     }
-
-    setState(() => _isLoading = true);
 
     try {
       final transactions = await _transactionService.getTransactions(
@@ -148,18 +155,33 @@ Future<void> _performDelete(String transactionId) async {
         endDate: _endDate,
       );
 
+      // Csak akkor frissítjük az állapotot, ha még mounted
+      if (!mounted) return;
+
       setState(() {
         if (refresh) {
           _transactions = _processTransactions(transactions);
         } else {
           _transactions.addAll(_processTransactions(transactions));
         }
+        
+        // Rendezés alkalmazása
+        _sortTransactions();
+        
         _hasMore = transactions.length == _pageSize;
-        _currentSkip += transactions.length;
+        if (refresh) {
+          _currentSkip = transactions.length;
+        } else {
+          _currentSkip += transactions.length;
+        }
+        _isLoading = false; // Itt állítjuk vissza
       });
     } catch (e) {
       print('Error loading transactions: $e');
       if (mounted) {
+        setState(() {
+          _isLoading = false; // Hiba esetén is visszaállítjuk
+        });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Hiba a tranzakciók betöltésekor: $e'),
@@ -167,9 +189,30 @@ Future<void> _performDelete(String transactionId) async {
           ),
         );
       }
-    } finally {
-      setState(() => _isLoading = false);
     }
+  }
+
+  void _sortTransactions() {
+    _transactions.sort((a, b) {
+      int comparison = 0;
+      
+      switch (_sortBy) {
+        case 'date':
+          comparison = (a['date'] as DateTime).compareTo(b['date'] as DateTime);
+          break;
+        case 'amount':
+          comparison = (a['amount'] as double).compareTo(b['amount'] as double);
+          break;
+        case 'category':
+          comparison = (a['category'] as String).compareTo(b['category'] as String);
+          break;
+        case 'title':
+          comparison = (a['title'] as String).compareTo(b['title'] as String);
+          break;
+      }
+      
+      return _sortDescending ? -comparison : comparison;
+    });
   }
 
   Future<void> _loadMoreTransactions() async {
@@ -446,6 +489,232 @@ Future<void> _performDelete(String transactionId) async {
     );
   }
 
+  void _showSortDialog() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setModalState) => Container(
+            padding: EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Rendezés',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 20),
+                
+                Text('Rendezés alapja:', style: TextStyle(fontWeight: FontWeight.bold)),
+                SizedBox(height: 12),
+                
+                _buildSortOption(
+                  'date', 
+                  'Dátum szerint', 
+                  Icons.calendar_today,
+                  setModalState,
+                ),
+                _buildSortOption(
+                  'amount', 
+                  'Összeg szerint', 
+                  Icons.attach_money,
+                  setModalState,
+                ),
+                _buildSortOption(
+                  'category', 
+                  'Kategória szerint', 
+                  Icons.category,
+                  setModalState,
+                ),
+                _buildSortOption(
+                  'title', 
+                  'Név szerint', 
+                  Icons.title,
+                  setModalState,
+                ),
+                
+                SizedBox(height: 16),
+                Divider(),
+                SizedBox(height: 8),
+                
+                Row(
+                  children: [
+                    Icon(
+                      _sortDescending ? Icons.arrow_downward : Icons.arrow_upward,
+                      color: Color(0xFF00D4A3),
+                    ),
+                    SizedBox(width: 8),
+                    Text(
+                      'Sorrend:',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                setModalState(() {
+                                  _sortDescending = true;
+                                });
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                                decoration: BoxDecoration(
+                                  color: _sortDescending ? Color(0xFF00D4A3) : Colors.grey[200],
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  'Csökkenő',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: _sortDescending ? Colors.white : Colors.black,
+                                    fontWeight: _sortDescending ? FontWeight.bold : FontWeight.normal,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                setModalState(() {
+                                  _sortDescending = false;
+                                });
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                                decoration: BoxDecoration(
+                                  color: !_sortDescending ? Color(0xFF00D4A3) : Colors.grey[200],
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  'Növekvő',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: !_sortDescending ? Colors.white : Colors.black,
+                                    fontWeight: !_sortDescending ? FontWeight.bold : FontWeight.normal,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                
+                SizedBox(height: 24),
+                
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      setState(() {
+                        _sortTransactions();
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF00D4A3),
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      'Alkalmazás',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildSortOption(String value, String label, IconData icon, StateSetter setModalState) {
+    final isSelected = _sortBy == value;
+    
+    return GestureDetector(
+      onTap: () {
+        setModalState(() {
+          _sortBy = value;
+        });
+      },
+      child: Container(
+        margin: EdgeInsets.only(bottom: 8),
+        padding: EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: isSelected ? Color(0xFF00D4A3).withOpacity(0.1) : Colors.transparent,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: isSelected ? Color(0xFF00D4A3) : Colors.grey[300]!,
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              color: isSelected ? Color(0xFF00D4A3) : Colors.grey[600],
+            ),
+            SizedBox(width: 12),
+            Text(
+              label,
+              style: TextStyle(
+                color: isSelected ? Color(0xFF00D4A3) : Colors.black,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
+            Spacer(),
+            if (isSelected)
+              Icon(
+                Icons.check,
+                color: Color(0xFF00D4A3),
+                size: 20,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _getSortLabel() {
+    switch (_sortBy) {
+      case 'date':
+        return 'Dátum';
+      case 'amount':
+        return 'Összeg';
+      case 'category':
+        return 'Kategória';
+      case 'title':
+        return 'Név';
+      default:
+        return 'Dátum';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -454,15 +723,21 @@ Future<void> _performDelete(String transactionId) async {
           'Tranzakciók',
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            ),
+          ),
         ),
         backgroundColor: Color(0xFF00D4A3),
         foregroundColor: Colors.black87,
         elevation: 0,
         actions: [
           IconButton(
+            icon: Icon(Icons.sort),
+            onPressed: _showSortDialog,
+            tooltip: 'Rendezés',
+          ),
+          IconButton(
             icon: Icon(Icons.filter_list),
             onPressed: _showFilterDialog,
+            tooltip: 'Szűrők',
           ),
         ],
       ),
@@ -549,14 +824,17 @@ Future<void> _performDelete(String transactionId) async {
                   ),
                 ),
                 child: RefreshIndicator(
-                  onRefresh: () => _loadTransactions(refresh: true),
+                  onRefresh: () async {
+                    // Explicit módon várjuk meg a befejezést
+                    await _loadTransactions(refresh: true);
+                  },
                   color: Color(0xFF00D4A3),
                   child: _transactions.isEmpty && !_isLoading
                       ? _buildEmptyState()
                       : ListView.builder(
                           controller: _scrollController,
                           padding: EdgeInsets.only(top: 20, left: 16, right: 16, bottom: 100),
-                          itemCount: _transactions.length + (_hasMore ? 1 : 0),
+                          itemCount: _transactions.length + (_hasMore && _isLoading ? 1 : 0),
                           itemBuilder: (context, index) {
                             if (index == _transactions.length) {
                               return _buildLoadingIndicator();

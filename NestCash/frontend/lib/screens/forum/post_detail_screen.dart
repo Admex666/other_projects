@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/services/forum_service.dart';
 import 'package:frontend/models/forum_models.dart';
+import 'package:frontend/screens/messages/chat_screen.dart';
 
 class PostDetailScreen extends StatefulWidget {
   final String postId;
@@ -305,6 +306,128 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     }
   }
 
+  void _showUserProfileModal(String userId, String username) {
+    // Ne jelenítse meg a modált saját magának
+    if (userId == _post!.userId) return;  // Feltételezve, hogy van currentUserId
+
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => Container(
+        padding: EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // User info
+            Row(
+              children: [
+                CircleAvatar(
+                  backgroundColor: Color(0xFF00D4AA),
+                  radius: 30,
+                  child: Text(
+                    username.isNotEmpty ? username[0].toUpperCase() : '?',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  ),
+                ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: Text(
+                    username,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            
+            SizedBox(height: 20),
+            
+            // Action buttons
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      _handleFollowUser(userId);
+                    },
+                    icon: Icon(Icons.person_add, color: Colors.white),
+                    label: Text('Követés', style: TextStyle(color: Colors.white)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF00D4AA),
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      _openPrivateMessage(userId, username);
+                    },
+                    icon: Icon(Icons.message, color: Colors.white),
+                    label: Text('Üzenet', style: TextStyle(color: Colors.white)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueAccent,
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            
+            SizedBox(height: 10),
+            
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('Bezárás'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _handleFollowUser(String userId) async {
+    try {
+      await _forumService.followUser(userId);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Felhasználó sikeresen követve!')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Hiba a követés során: $e')),
+    );
+  }
+  }
+
+  void _openPrivateMessage(String userId, String username) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => ChatScreen(
+        otherUserId: userId,
+        otherUsername: username,
+      ),
+    ),
+  );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -391,40 +514,47 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                   // Post header
                                   Row(
                                     children: [
-                                      CircleAvatar(
-                                        backgroundColor: Color(0xFF00D4AA),
-                                        radius: 24,
-                                        child: Text(
-                                          _post!.username.isNotEmpty
-                                              ? _post!.username[0].toUpperCase()
-                                              : '?',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 18,
+                                      GestureDetector(  // ÚJ wrapper
+                                        onTap: () => _showUserProfileModal(_post!.userId, _post!.username),
+                                        child: CircleAvatar(
+                                          backgroundColor: Color(0xFF00D4AA),
+                                          radius: 24,
+                                          child: Text(
+                                            _post!.username.isNotEmpty
+                                                ? _post!.username[0].toUpperCase()
+                                                : '?',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18,
+                                            ),
                                           ),
                                         ),
                                       ),
                                       SizedBox(width: 12),
                                       Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              _post!.username,
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16,
+                                        child: GestureDetector( // ÚJ wrapper a username-re is
+                                          onTap: () => _showUserProfileModal(_post!.userId, _post!.username),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                _post!.username,
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                  color: Colors.blue, // Jelzi, hogy kattintható
+                                                ),
                                               ),
-                                            ),
-                                            Text(
-                                              _formatDateTime(_post!.createdAt),
-                                              style: TextStyle(
-                                                color: Colors.grey[600],
-                                                fontSize: 12,
+                                              Text(
+                                                _formatDateTime(_post!.createdAt),
+                                                style: TextStyle(
+                                                  color: Colors.grey[600],
+                                                  fontSize: 12,
+                                                ),
                                               ),
-                                            ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
                                       ),
                                       Container(

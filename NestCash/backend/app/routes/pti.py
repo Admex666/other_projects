@@ -10,7 +10,8 @@ from app.models.pti import PTIPeriod, RankingScope, UserPTISettings, PTIComponen
 from app.models.pti_schemas import (
     PTISettingsUpdate, PTIUserSettings, PTIScoreResponse,
     PTIRankingRequest, PTIComparisonResponse, PTIDashboardResponse,
-    PTICalculationRequest
+    PTICalculationRequest, PTIComponentRankingEntry, PTIRankingEntry,
+    PTIComponentBreakdown
 )
 from app.services.pti_service import PTIService
 from beanie import PydanticObjectId
@@ -27,28 +28,40 @@ async def get_pti_dashboard(current_user: User = Depends(get_current_user)):
         # Aktuális PTI számítás minden időszakra
         results = await PTIService.calculate_and_save_all_periods(user_id)
         
-        # Alap rangsorok lekérése
+        # Mindhárom időszakra külön ranglista lekérés
         weekly_ranking = await PTIService.get_user_ranking(
-            user_id, PTIPeriod.WEEKLY, RankingScope.GLOBAL, 1, 0
+            user_id, PTIPeriod.WEEKLY, RankingScope.GLOBAL, 50, 0  # Több elemet kérünk le
         )
         monthly_ranking = await PTIService.get_user_ranking(
-            user_id, PTIPeriod.MONTHLY, RankingScope.GLOBAL, 1, 0
+            user_id, PTIPeriod.MONTHLY, RankingScope.GLOBAL, 50, 0
         )
         yearly_ranking = await PTIService.get_user_ranking(
-            user_id, PTIPeriod.YEARLY, RankingScope.GLOBAL, 1, 0
+            user_id, PTIPeriod.YEARLY, RankingScope.GLOBAL, 50, 0
         )
         
-        # Komponens ranglisták lekérése (csak a felhasználó pozíciója)
+        # Komponens ranglisták lekérése
         component_rankings = {}
         components = [PTIComponent.LEARNING, PTIComponent.HABITS, PTIComponent.BADGES, PTIComponent.LIMITS]
         
         for component in components:
             try:
                 comp_ranking = await PTIService.get_component_ranking(
-                    user_id, PTIPeriod.WEEKLY, component, RankingScope.GLOBAL, 1, 0
+                    component=component,
+                    period=PTIPeriod.WEEKLY,
+                    scope=RankingScope.GLOBAL,
+                    limit=1,
+                    offset=0,
+                    user_id=user_id
                 )
-                if comp_ranking.rankings:
-                    component_rankings[component.value] = comp_ranking.rankings[0]
+                if comp_ranking.user_rank:
+                    component_rankings[component.value] = {
+                        "rank": comp_ranking.user_rank,
+                        "user_id": user_id,
+                        "username": current_user.username,
+                        "component_score": comp_ranking.user_score or 0.0,
+                        "percentile": comp_ranking.user_percentile or 0.0,
+                        "is_current_user": True
+                    }
             except Exception as e:
                 logger.warning(f"Could not get component ranking for {component}: {e}")
                 continue
@@ -87,12 +100,87 @@ async def get_pti_dashboard(current_user: User = Depends(get_current_user)):
             calculated_at=datetime.utcnow()
         )
         
+        # Felhasználó saját pozíciójának megkeresése minden időszakra
+        weekly_user_entry = None
+        monthly_user_entry = None
+        yearly_user_entry = None
+        
+        # Heti pozíció keresése
+        for entry in weekly_ranking.rankings:
+            if entry.is_current_user:
+                weekly_user_entry = entry
+                break
+        
+        # Ha nincs a listában, akkor hozzuk létre
+        if weekly_user_entry is None and weekly_ranking.user_rank:
+            weekly_user_entry = PTIRankingEntry(
+                rank=weekly_ranking.user_rank,
+                user_id=user_id,
+                username=current_user.username,
+                is_anonymous=False,
+                pti_score=weekly_ranking.user_score or 0.0,
+                components=results.get("weekly", PTIComponentBreakdown(
+                    learning_points=0, learning_contribution=0,
+                    habit_score=0, habit_contribution=0,
+                    badge_score=0, badge_contribution=0,
+                    limit_score=0, limit_contribution=0,
+                    total_pti=0
+                )),
+                is_current_user=True
+            )
+        
+        # Havi pozíció keresése
+        for entry in monthly_ranking.rankings:
+            if entry.is_current_user:
+                monthly_user_entry = entry
+                break
+                
+        if monthly_user_entry is None and monthly_ranking.user_rank:
+            monthly_user_entry = PTIRankingEntry(
+                rank=monthly_ranking.user_rank,
+                user_id=user_id,
+                username=current_user.username,
+                is_anonymous=False,
+                pti_score=monthly_ranking.user_score or 0.0,
+                components=results.get("monthly", PTIComponentBreakdown(
+                    learning_points=0, learning_contribution=0,
+                    habit_score=0, habit_contribution=0,
+                    badge_score=0, badge_contribution=0,
+                    limit_score=0, limit_contribution=0,
+                    total_pti=0
+                )),
+                is_current_user=True
+            )
+        
+        # Éves pozíció keresése
+        for entry in yearly_ranking.rankings:
+            if entry.is_current_user:
+                yearly_user_entry = entry
+                break
+                
+        if yearly_user_entry is None and yearly_ranking.user_rank:
+            yearly_user_entry = PTIRankingEntry(
+                rank=yearly_ranking.user_rank,
+                user_id=user_id,
+                username=current_user.username,
+                is_anonymous=False,
+                pti_score=yearly_ranking.user_score or 0.0,
+                components=results.get("yearly", PTIComponentBreakdown(
+                    learning_points=0, learning_contribution=0,
+                    habit_score=0, habit_contribution=0,
+                    badge_score=0, badge_contribution=0,
+                    limit_score=0, limit_contribution=0,
+                    total_pti=0
+                )),
+                is_current_user=True
+            )
+        
         return PTIDashboardResponse(
             current_pti=current_pti,
-            weekly_ranking=weekly_ranking.rankings[0] if weekly_ranking.rankings else None,
-            monthly_ranking=monthly_ranking.rankings[0] if monthly_ranking.rankings else None,
-            yearly_ranking=yearly_ranking.rankings[0] if yearly_ranking.rankings else None,
-            component_rankings=component_rankings,  # Új komponens ranglisták
+            weekly_ranking=weekly_user_entry,  # Most a felhasználó saját pozíciója
+            monthly_ranking=monthly_user_entry,  # Most a felhasználó saját pozíciója
+            yearly_ranking=yearly_user_entry,  # Most a felhasználó saját pozíciója
+            component_rankings=component_rankings,
             weekly_goal_progress=weekly_goal_progress,
             monthly_goal_progress=monthly_goal_progress,
             next_actions=next_actions,

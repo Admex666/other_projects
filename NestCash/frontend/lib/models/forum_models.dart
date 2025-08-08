@@ -302,6 +302,12 @@ enum SortBy {
   mostCommented,
 }
 
+enum PrivacyLevel {
+  public,
+  mutualFollowing,  // Régi friends helyett
+  private,
+}
+
 extension SortByExtension on SortBy {
   String get value {
     switch (this) {
@@ -322,6 +328,30 @@ extension SortByExtension on SortBy {
         return 'Legnépszerűbb';
       case SortBy.mostCommented:
         return 'Legtöbb komment';
+    }
+  }
+}
+
+extension PrivacyLevelExtension on PrivacyLevel {
+  String get value {
+    switch (this) {
+      case PrivacyLevel.public:
+        return 'public';
+      case PrivacyLevel.mutualFollowing:
+        return 'mutual_following';
+      case PrivacyLevel.private:
+        return 'private';
+    }
+  }
+
+  String get displayName {
+    switch (this) {
+      case PrivacyLevel.public:
+        return 'Nyilvános';
+      case PrivacyLevel.mutualFollowing:
+        return 'Kölcsönös követés';
+      case PrivacyLevel.private:
+        return 'Privát';
     }
   }
 }

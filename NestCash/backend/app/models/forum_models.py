@@ -7,7 +7,7 @@ from enum import Enum
 
 class PrivacyLevel(str, Enum):
     PUBLIC = "public"          # Mindenki láthatja
-    FRIENDS = "friends"        # Csak követők láthatják
+    MUTUAL_FOLLOWING = "mutual_following"        # Csak kölcsönös követők láthatják
     PRIVATE = "private"        # Csak saját maga láthatja
 
 class PostCategory(str, Enum):

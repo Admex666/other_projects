@@ -648,28 +648,6 @@ class PTIService:
             )
     
     @staticmethod
-    async def calculate_and_save_all_periods(user_id: str) -> Dict[str, PTIComponentBreakdown]:
-        """Felhasználó PTI számítása és mentése minden időszakra"""
-        try:
-            results = {}
-            reference_date = datetime.utcnow()
-            
-            for period in [PTIPeriod.WEEKLY, PTIPeriod.MONTHLY, PTIPeriod.YEARLY]:
-                components = await PTIService.calculate_pti_score(user_id, period, reference_date)
-                await PTIService.save_pti_score(user_id, period, components, reference_date)
-                results[period.value] = components
-                
-                # Rangsorok frissítése
-                period_key = PTIService.get_period_key(period, reference_date)
-                await PTIService.update_rankings(period, period_key)
-            
-            return results
-            
-        except Exception as e:
-            logger.error(f"Error calculating all periods for user {user_id}: {e}")
-            return {}
-    
-    @staticmethod
     async def get_improvement_suggestions(user_id: str) -> List[str]:
         """Fejlesztési javaslatok generálása a PTI komponensek alapján"""
         try:
@@ -980,92 +958,6 @@ class PTIService:
             return 0.0
 
     @staticmethod
-    async def get_component_ranking(
-        component: PTIComponent,
-        period: PTIPeriod = PTIPeriod.WEEKLY,
-        scope: RankingScope = RankingScope.GLOBAL,
-        limit: int = 50,
-        offset: int = 0,
-        user_id: Optional[str] = None
-    ) -> PTIComponentRankingResponse:
-        """Komponens ranglista lekérése"""
-        try:
-            period_key = PTIService.get_period_key(period)
-            
-            # Ranglista lekérése - javítás: .value használata
-            query = {
-                "period": period.value,  # .value hozzáadása
-                "period_key": period_key,
-                "component": component.value,  # .value hozzáadása
-                "scope": scope.value  # .value hozzáadása
-            }
-            
-            rankings = await PTIComponentRanking.find(query)\
-                .sort("rank")\
-                .skip(offset)\
-                .limit(limit)\
-                .to_list()
-            
-            # User specifikus adatok - javítás: .value használata
-            user_rank = None
-            user_score = None
-            user_percentile = None
-            
-            if user_id:
-                user_ranking = await PTIComponentRanking.find_one(
-                    PTIComponentRanking.period == period.value,  # .value hozzáadása
-                    PTIComponentRanking.period_key == period_key,
-                    PTIComponentRanking.component == component.value,  # .value hozzáadása
-                    PTIComponentRanking.scope == scope.value,  # .value hozzáadása
-                    PTIComponentRanking.user_id == PydanticObjectId(user_id)
-                )
-                
-                if user_ranking:
-                    user_rank = user_ranking.rank
-                    user_score = user_ranking.component_score
-                    user_percentile = user_ranking.percentile
-            
-            # Összesített résztvevők száma
-            total_participants = await PTIComponentRanking.find(query).count() if rankings else 0
-            
-            # Válasz összeállítása
-            ranking_entries = []
-            for ranking in rankings:
-                display_name = ranking.username
-                if ranking.is_anonymous and ranking.anonymous_name:
-                    display_name = ranking.anonymous_name
-                
-                entry = PTIComponentRankingEntry(
-                    rank=ranking.rank,
-                    user_id=str(ranking.user_id),
-                    username=display_name,
-                    anonymous_name=ranking.anonymous_name,
-                    is_anonymous=ranking.is_anonymous,
-                    component_score=ranking.component_score,
-                    percentile=ranking.percentile,
-                    is_current_user=str(ranking.user_id) == user_id if user_id else False
-                )
-                ranking_entries.append(entry)
-            
-            return PTIComponentRankingResponse(
-                period=period,
-                period_key=period_key,
-                component=component,
-                component_display_name=component.display_name,
-                scope=scope,
-                rankings=ranking_entries,
-                user_rank=user_rank,
-                user_score=user_score,
-                user_percentile=user_percentile,
-                total_participants=total_participants,
-                generated_at=datetime.utcnow()
-            )
-            
-        except Exception as e:
-            logger.error(f"Error getting component ranking: {e}")
-            raise
-
-    @staticmethod
     async def get_user_component_rankings(user_id: str, period: PTIPeriod = PTIPeriod.WEEKLY) -> Dict[str, PTIComponentRankingEntry]:
         """Felhasználó komponens rangsorai"""
         try:
@@ -1103,7 +995,7 @@ class PTIService:
     # A calculate_and_save_all_periods módszer módosítása
     @staticmethod
     async def calculate_and_save_all_periods(user_id: str) -> Dict[str, PTIComponentBreakdown]:
-        """PTI számítás és mentés minden időszakra + komponens rangsorok frissítése"""
+        """PTI számítás és mentés minden időszakra"""
         results = {}
         
         try:
@@ -1113,35 +1005,33 @@ class PTIService:
                 await PTIService.save_pti_score(user_id, period, components)
                 results[period.value] = components
                 
-                # Rangsorok frissítése
+                # Alap rangsorok frissítése
                 period_key = PTIService.get_period_key(period)
                 await PTIService.update_rankings(period, period_key)
                 
-                # ÚJ: Komponens rangsorok frissítése
-                await PTIService.update_component_rankings(period, period_key)
+                # Komponens rangsorok frissítése csak globálisan (a tömeges frissítés helyett)
+                # Ez kevésbé terhelő és egyszerűbb
                 
             return results
             
         except Exception as e:
             logger.error(f"Error calculating PTI for user {user_id}: {e}")
             raise
-
+    
+    @staticmethod
     async def get_component_ranking(
-        user_id: str,
-        period: PTIPeriod,
         component: PTIComponent,
+        period: PTIPeriod = PTIPeriod.WEEKLY,
         scope: RankingScope = RankingScope.GLOBAL,
         limit: int = 50,
-        offset: int = 0
+        offset: int = 0,
+        user_id: Optional[str] = None
     ) -> PTIComponentRankingResponse:
-        """Komponens-specifikus ranglista lekérése"""
+        """Komponens ranglista lekérése"""
         try:
-            from app.models.pti import PTIScore
-            from app.models.pti_schemas import PTIComponentRankingResponse, PTIComponentRankingEntry
+            period_key = PTIService.get_period_key(period)
             
-            period_key = cls.get_period_key(period)
-            
-            # Komponens-specifikus pontszám lekérdezés
+            # Komponens-specifikus pontszám lekérdezés a PTIScore-ból
             component_field_map = {
                 PTIComponent.LEARNING: "learning_points",
                 PTIComponent.HABITS: "habit_score", 
@@ -1154,75 +1044,98 @@ class PTIService:
             if not field_name:
                 raise ValueError(f"Unknown component: {component}")
             
-            # Ranglista lekérdezés
-            pipeline = [
-                {"$match": {
-                    "period": period.value,  # Explicit .value használata
-                    "period_key": period_key
-                }},
-                {"$sort": {field_name: -1}},
-                {"$skip": offset},
-                {"$limit": limit}
-            ]
+            # Alap query PTIScore collection-hez
+            query = {
+                "period": period,  # Enum objektum, nem .value
+                "period_key": period_key
+            }
             
-            if scope == RankingScope.FRIENDS:
-                # TODO: Barátok szűrése
-                pass
+            # Scope szerinti szűrés (barátok esetén)
+            if scope == RankingScope.FRIENDS and user_id:
+                from app.models.forum_models import FollowDocument
+                follows = await FollowDocument.find(
+                    FollowDocument.follower_id == PydanticObjectId(user_id)
+                ).to_list()
+                
+                friend_ids = [follow.following_id for follow in follows]
+                friend_ids.append(PydanticObjectId(user_id))
+                query["user_id"] = {"$in": friend_ids}
             
-            scores = await PTIScore.aggregate(pipeline).to_list()
+            # PTI pontszámok lekérése és rendezése
+            scores = await PTIScore.find(query)\
+                .sort([(field_name, -1)])\
+                .skip(offset)\
+                .limit(limit)\
+                .to_list()
             
             # Felhasználó saját pozíciójának meghatározása
-            user_score = await PTIScore.find_one(
-                PTIScore.user_id == PydanticObjectId(user_id),
-                PTIScore.period == period,
-                PTIScore.period_key == period_key
-            )
-            
             user_rank = None
             user_score_value = None
+            user_percentile = None
             
-            if user_score:
-                user_score_value = getattr(user_score, field_name)
-                # Rangsor számítása
-                better_count = await PTIScore.find(
+            if user_id:
+                user_score = await PTIScore.find_one(
+                    PTIScore.user_id == PydanticObjectId(user_id),
                     PTIScore.period == period,
-                    PTIScore.period_key == period_key,
-                    getattr(PTIScore, field_name) > user_score_value
-                ).count()
-                user_rank = better_count + 1
+                    PTIScore.period_key == period_key
+                )
+                
+                if user_score:
+                    user_score_value = getattr(user_score, field_name)
+                    
+                    # Rangsor számítása - hány felhasználó előzi meg
+                    better_count = await PTIScore.find({
+                        **query,
+                        field_name: {"$gt": user_score_value}
+                    }).count()
+                    user_rank = better_count + 1
+                    
+                    # Percentilis számítás
+                    total_count = await PTIScore.find(query).count()
+                    if total_count > 0:
+                        user_percentile = ((total_count - user_rank + 1) / total_count) * 100
             
             # Ranglista bejegyzések összeállítása
             rankings = []
             for idx, score in enumerate(scores):
                 # Felhasználó adatok lekérése
-                from app.models.user import UserDocument
                 user = await UserDocument.get(score.user_id)
-                
+                if not user:
+                    continue
+                    
                 # Beállítások lekérése anonimizáláshoz
                 settings = await UserPTISettings.find_one(
                     UserPTISettings.user_id == score.user_id
                 )
                 
                 is_anonymous = settings.is_anonymous if settings else False
-                display_name = settings.anonymous_name if is_anonymous else user.username
+                username = None
+                anonymous_name = None
+                
+                if is_anonymous and settings and settings.anonymous_name:
+                    anonymous_name = settings.anonymous_name
+                else:
+                    username = user.username
+                
+                # Percentilis számítás ehhez a bejegyzéshez
+                total_count = await PTIScore.find(query).count()
+                rank = offset + idx + 1
+                percentile = ((total_count - rank + 1) / total_count) * 100 if total_count > 0 else 0
                 
                 entry = PTIComponentRankingEntry(
-                    rank=offset + idx + 1,
+                    rank=rank,
                     user_id=str(score.user_id),
-                    username=display_name if not is_anonymous else None,
-                    anonymous_name=display_name if is_anonymous else None,
+                    username=username,
+                    anonymous_name=anonymous_name,
                     is_anonymous=is_anonymous,
                     component_score=getattr(score, field_name),
-                    percentile=0.0,  # TODO: Percentilis számítás
+                    percentile=percentile,
                     is_current_user=(str(score.user_id) == user_id)
                 )
                 rankings.append(entry)
             
             # Összes résztvevő száma
-            total_participants = await PTIScore.find(
-                PTIScore.period == period,
-                PTIScore.period_key == period_key
-            ).count()
+            total_participants = await PTIScore.find(query).count()
             
             return PTIComponentRankingResponse(
                 period=period,
@@ -1233,11 +1146,11 @@ class PTIService:
                 rankings=rankings,
                 user_rank=user_rank,
                 user_score=user_score_value,
-                user_percentile=0.0,  # TODO: Percentilis számítás
+                user_percentile=user_percentile,
                 total_participants=total_participants,
                 generated_at=datetime.utcnow()
             )
             
         except Exception as e:
-            logger.error(f"Error calculating component ranking for {component}: {e}")
+            logger.error(f"Error getting component ranking for {component}: {e}")
             raise

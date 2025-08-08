@@ -7,7 +7,8 @@ import 'package:frontend/screens/forum/post_detail_screen.dart';
 import 'package:frontend/screens/forum/search_users_screen.dart';
 import 'package:frontend/screens/forum/notifications_screen.dart';
 import 'package:frontend/screens/forum/forum_settings_screen.dart';
-import 'package:frontend/services/auth_service.dart';  // ÚJ import
+import 'package:frontend/services/auth_service.dart';  
+import 'package:frontend/screens/messages/conversations_screen.dart';
 
 class ForumMainScreen extends StatefulWidget {
   final String userId;
@@ -315,6 +316,27 @@ class _ForumMainScreenState extends State<ForumMainScreen> {
                       ),
                       textAlign: TextAlign.center,
                     ),
+                  ),
+                  // Header részben az értesítések ikonja után:
+                  Stack(
+                    children: [
+                      IconButton(
+                        onPressed: () async {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ConversationsScreen(),
+                            ),
+                          );
+                        },
+                        icon: Icon(
+                          Icons.message_outlined,
+                          color: Colors.black87,
+                          size: 24,
+                        ),
+                      ),
+                      // Unread message count badge hasonlóan az értesítésekhez
+                    ],
                   ),
                   Stack(
                     children: [

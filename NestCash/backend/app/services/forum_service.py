@@ -32,30 +32,46 @@ class ForumService:
             if post.privacy_level == PrivacyLevel.PRIVATE:
                 return False
             
-            # "Friends" szintű posztok csak követőknek láthatók
-            if post.privacy_level == PrivacyLevel.FRIENDS:
-                follow_relationship = await FollowDocument.find_one({
+            # "Mutual following" szintű posztok csak kölcsönös követőknek láthatók
+            if post.privacy_level == PrivacyLevel.MUTUAL_FOLLOWING:
+                # Ellenőrizzük, hogy kölcsönös követés van-e
+                user_follows_author = await FollowDocument.find_one({
                     "follower_id": ObjectId(user_id),
                     "following_id": post.user_id
                 })
-                return follow_relationship is not None
+                
+                author_follows_user = await FollowDocument.find_one({
+                    "follower_id": post.user_id,
+                    "following_id": ObjectId(user_id)
+                })
+                
+                return user_follows_author is not None and author_follows_user is not None
             
             return False
             
         except Exception as e:
             logger.error(f"Error checking post visibility: {e}")
             return False
-    
+
     async def build_visibility_filter(self, user_id: str) -> Dict:
         """
         Építi a láthatósági szűrőt a posztok lekérdezéséhez
         """
         try:
             # Követett felhasználók ID-jainak lekérése
-            following = await FollowDocument.find(
+            user_following = await FollowDocument.find(
                 {"follower_id": ObjectId(user_id)}
             ).to_list()
-            following_ids = [follow.following_id for follow in following]
+            user_following_ids = [follow.following_id for follow in user_following]
+            
+            # Engem követő felhasználók ID-jainak lekérése
+            user_followers = await FollowDocument.find(
+                {"following_id": ObjectId(user_id)}
+            ).to_list()
+            user_follower_ids = [follow.follower_id for follow in user_followers]
+            
+            # Kölcsönös követés: akiket követek ÉS akik engem is követnek
+            mutual_following_ids = list(set(user_following_ids) & set(user_follower_ids))
             
             # Láthatósági szűrő összeállítása
             visibility_filter = {
@@ -64,10 +80,10 @@ class ForumService:
                     {"privacy_level": PrivacyLevel.PUBLIC},
                     # Saját posztok
                     {"user_id": ObjectId(user_id)},
-                    # "Friends" szintű posztok követett felhasználóktól
+                    # "Mutual following" szintű posztok kölcsönös követőktől
                     {
-                        "privacy_level": PrivacyLevel.FRIENDS,
-                        "user_id": {"$in": following_ids}
+                        "privacy_level": PrivacyLevel.MUTUAL_FOLLOWING,
+                        "user_id": {"$in": mutual_following_ids}
                     }
                 ]
             }

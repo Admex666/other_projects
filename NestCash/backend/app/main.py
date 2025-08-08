@@ -25,6 +25,7 @@ from app.routes import pti
 from app.routes import onboarding
 from app.routes import sharing
 from app.routes import subscriptions
+from app.routes import messages
 
 app = FastAPI(
     title="NestCash API",
@@ -63,6 +64,7 @@ app.include_router(pti.router)
 app.include_router(onboarding.router)
 app.include_router(sharing.router)
 app.include_router(subscriptions.router)
+app.include_router(messages.router)
 
 @app.on_event("startup")
 async def startup_event():

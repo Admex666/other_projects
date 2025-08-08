@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/services/forum_service.dart';
 import 'package:frontend/models/forum_models.dart';
+import 'package:frontend/screens/messages/chat_screen.dart'; // Hozzáadva
 
 class SearchUsersScreen extends StatefulWidget {
   const SearchUsersScreen({Key? key}) : super(key: key);
@@ -101,6 +102,10 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(errorMessage)),
       );
+    } finally {
+      setState(() {
+        _isSearching = false;
+      });
     }
   }
 
@@ -146,6 +151,35 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Hiba a követéskor: $e')),
+      );
+    }
+  }
+
+  // Új funkció: beszélgetés indítása
+  Future<void> _startConversation(ForumUser user) async {
+    try {
+      final result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ChatScreen(
+            otherUserId: user.id,
+            otherUsername: user.username,
+          ),
+        ),
+      );
+      
+      // Ha sikeresen elindult a beszélgetés, mutassunk sikeres üzenetet
+      if (result != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Beszélgetés elindítva ${user.username} felhasználóval'),
+            backgroundColor: Color(0xFF00D4AA),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Hiba a beszélgetés indításakor: $e')),
       );
     }
   }
@@ -536,51 +570,48 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
             fontSize: 16,
           ),
         ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        subtitle: SizedBox(height: 4),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(height: 4),
-            /*
-            Row(
-              children: [
-                Text(
-                  '${user.followerCount} követő',
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 12,
-                  ),
-                ),
-                SizedBox(width: 16),
-                Text(
-                  '${user.followingCount} követett',
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 12,
-                  ),
-                ),
-              ],
+            // Üzenet gomb
+            ElevatedButton(
+              onPressed: () => _startConversation(user),
+              child: Icon(
+                Icons.message,
+                size: 18,
+                color: Colors.white,
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFF00D4AA),
+                elevation: 0,
+                padding: EdgeInsets.all(8),
+                shape: CircleBorder(),
+                minimumSize: Size(36, 36),
+              ),
             ),
-            */
+            SizedBox(width: 8),
+            // Követés gomb
+            ElevatedButton(
+              onPressed: () => _toggleFollow(user),
+              child: Text(
+                user.isFollowing ? 'Követve' : 'Követés',
+                style: TextStyle(
+                  color: user.isFollowing ? Colors.grey[700] : Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: user.isFollowing ? Colors.grey[200] : Color(0xFF00D4AA),
+                elevation: 0,
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+            ),
           ],
-        ),
-        trailing: ElevatedButton(
-          onPressed: () => _toggleFollow(user),
-          child: Text(
-            user.isFollowing ? 'Követés megszüntetése' : 'Követés',
-            style: TextStyle(
-              color: user.isFollowing ? Colors.grey[700] : Colors.white,
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: user.isFollowing ? Colors.grey[200] : Color(0xFF00D4AA),
-            elevation: 0,
-            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-          ),
         ),
       ),
     );

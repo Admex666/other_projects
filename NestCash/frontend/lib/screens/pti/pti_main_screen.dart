@@ -37,6 +37,8 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
   }
 
   Future<void> _loadUserData() async {
+    if (!mounted) return; // Ellenőrzés a metódus elején
+    
     setState(() {
       _isLoading = true;
       _error = null;
@@ -46,17 +48,20 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
       // Username lekérése az AuthService-ből
       final username = await _authService.getCurrentUsername();
       if (username != null) {
+        if (!mounted) return; // Ellenőrzés aszinkron művelet után
         setState(() {
           _username = username;
         });
         await _loadDashboard();
       } else {
+        if (!mounted) return; // Ellenőrzés aszinkron művelet után
         setState(() {
           _error = 'Nem sikerült betölteni a felhasználói adatokat';
           _isLoading = false;
         });
       }
     } catch (e) {
+      if (!mounted) return; // Ellenőrzés catch blokban
       setState(() {
         _error = 'Hiba történt: $e';
         _isLoading = false;
@@ -70,17 +75,20 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
     try {
       final dashboard = await _ptiService.getDashboard();
       if (dashboard != null) {
+        if (!mounted) return; // Ellenőrzés aszinkron művelet után
         setState(() {
           _dashboardData = dashboard;
           _isLoading = false;
         });
       } else {
+        if (!mounted) return; // Ellenőrzés aszinkron művelet után
         setState(() {
           _error = 'Nem sikerült betölteni a PTI adatokat';
           _isLoading = false;
         });
       }
     } catch (e) {
+      if (!mounted) return; // Ellenőrzés catch blokban
       setState(() {
         _error = 'Hiba történt: $e';
         _isLoading = false;
@@ -1046,7 +1054,9 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
                   Colors.orange,
                   () async {
                     await _ptiService.calculatePTI();
+                    if (!mounted) return; // Ellenőrzés aszinkron művelet után
                     _loadDashboard();
+                    if (!mounted) return; // Ellenőrzés ScaffoldMessenger előtt
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text('PTI újraszámítás elindítva'),

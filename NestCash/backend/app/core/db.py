@@ -21,6 +21,7 @@ from app.models.badge import BadgeType, UserBadge, BadgeProgress
 from app.models.habit import Habit, HabitLog
 from app.models.pti import PTIScore, PTIHistory, UserPTISettings
 from app.models.subscription import UserSubscriptionDocument
+from app.models.message_models import MessageDocument, ConversationDocument
 
 load_dotenv()
 
@@ -45,7 +46,8 @@ async def init_db():
             BadgeType, UserBadge, BadgeProgress,
             Habit, HabitLog,
             PTIScore, PTIHistory, UserPTISettings,
-            UserSubscriptionDocument
+            UserSubscriptionDocument,
+            MessageDocument, ConversationDocument
             ]
             ) 
 
