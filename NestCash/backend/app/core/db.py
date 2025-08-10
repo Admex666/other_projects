@@ -22,6 +22,7 @@ from app.models.habit import Habit, HabitLog
 from app.models.pti import PTIScore, PTIHistory, UserPTISettings
 from app.models.subscription import UserSubscriptionDocument
 from app.models.message_models import MessageDocument, ConversationDocument
+from app.models.accountability_models import AccountabilityProfile, Partnership, CheckIn
 
 load_dotenv()
 
@@ -47,7 +48,8 @@ async def init_db():
             Habit, HabitLog,
             PTIScore, PTIHistory, UserPTISettings,
             UserSubscriptionDocument,
-            MessageDocument, ConversationDocument
+            MessageDocument, ConversationDocument,
+            AccountabilityProfile, Partnership, CheckIn
             ]
             ) 
 
