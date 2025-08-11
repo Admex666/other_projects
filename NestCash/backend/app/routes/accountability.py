@@ -2,6 +2,9 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from typing import List, Optional
 from beanie import PydanticObjectId
+from datetime import datetime
+import logging
+logger = logging.getLogger(__name__)
 
 from app.core.security import get_current_user
 from app.models.user import User, UserDocument
@@ -105,12 +108,21 @@ async def get_my_partnerships(
     # Partner adatok lekérése és konvertálás
     result = []
     for partnership in partnerships:
-        # Másik felhasználó ID-ja
-        partner_id = (partnership.requested_id 
-                     if str(partnership.requester_id) == current_user.id 
-                     else partnership.requester_id)
+        # JAVÍTÁS: is_incoming logika javítása
+        # is_incoming = True ha a current_user a requested_id (őt kérték meg)
+        is_incoming = str(partnership.requested_id) == current_user.id
+        
+        # Partner ID meghatározása
+        partner_id = (partnership.requester_id 
+                     if is_incoming  # ha bejövő, akkor a requester a partner
+                     else partnership.requested_id)  # ha kimenő, akkor a requested a partner
         
         partner_user = await UserDocument.get(partner_id)
+        
+        # DEBUG logging
+        logger.info(f"Partnership {partnership.id}: current_user={current_user.id}, "
+                   f"requester={partnership.requester_id}, requested={partnership.requested_id}, "
+                   f"is_incoming={is_incoming}, partner_id={partner_id}")
         
         result.append(PartnershipRead(
             id=str(partnership.id),
@@ -122,7 +134,8 @@ async def get_my_partnerships(
             created_at=partnership.created_at,
             accepted_at=partnership.accepted_at,
             total_checkins=partnership.total_checkins,
-            successful_checkins=partnership.successful_checkins
+            successful_checkins=partnership.successful_checkins,
+            is_incoming=is_incoming  # Ez a kulcs mező!
         ))
     
     return result
@@ -196,3 +209,54 @@ async def create_checkin(
         notes=checkin.notes,
         created_at=checkin.created_at
     )
+
+@router.post("/partnerships/{partnership_id}/respond", status_code=200)
+async def respond_to_partnership(
+    partnership_id: str,
+    response_data: PartnershipResponse,
+    current_user: User = Depends(get_current_user)
+):
+    """Partnership kérelemre válaszadás (elfogadás/elutasítás)"""
+    try:
+        # Partnership lekérése
+        partnership = await Partnership.get(PydanticObjectId(partnership_id))
+        if not partnership:
+            raise HTTPException(status_code=404, detail="Partnership nem található")
+        
+        # Debug logging
+        logger.info(f"Current user ID: {current_user.id}")
+        logger.info(f"Partnership requester_id: {partnership.requester_id}")
+        logger.info(f"Partnership requested_id: {partnership.requested_id}")
+        logger.info(f"Partnership status: {partnership.status}")
+        
+        # Ellenőrizzük, hogy a felhasználó jogosult-e válaszolni
+        # Csak a requested_id (megkért felhasználó) válaszolhat
+        current_user_obj_id = PydanticObjectId(current_user.id)
+        if partnership.requested_id != current_user_obj_id:
+            logger.warning(f"Access denied. User {current_user.id} tried to respond to partnership where they are not the requested party. Requester: {partnership.requester_id}, Requested: {partnership.requested_id}")
+            raise HTTPException(status_code=403, detail="Csak a megkért felhasználó válaszolhat a kérelemre")
+        
+        # Ellenőrizzük, hogy még pending státuszban van-e
+        if partnership.status != PartnershipStatus.PENDING:
+            raise HTTPException(status_code=400, detail="Ez a partnership kérelem már feldolgozva lett")
+        
+        # Válasz feldolgozása
+        if response_data.accept:
+            partnership.status = PartnershipStatus.ACTIVE
+            partnership.accepted_at = datetime.utcnow()
+        else:
+            partnership.status = PartnershipStatus.DECLINED
+        
+        await partnership.save()
+        
+        return {
+            "message": "Partnership elfogadva" if response_data.accept else "Partnership elutasítva",
+            "partnership_id": str(partnership.id),
+            "status": partnership.status.value
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error responding to partnership: {e}")
+        raise HTTPException(status_code=500, detail="Hiba a partnership válasz feldolgozása során")

@@ -4,9 +4,11 @@ import 'package:flutter/foundation.dart';
 import '../models/accountability_models.dart';
 import '../services/accountability_service.dart';
 import 'package:flutter/widgets.dart';
+import 'package:frontend/services/auth_service.dart';
 
 class AccountabilityProvider extends ChangeNotifier {
   final AccountabilityService _service;
+  String? _currentUserId;
 
   AccountabilityProvider({required AccountabilityService service}) : _service = service;
 
@@ -29,6 +31,7 @@ class AccountabilityProvider extends ChangeNotifier {
       _partnerships.where((p) => p.status == PartnershipStatus.pending).toList();
   List<PartnerSuggestion> get suggestions => _suggestions;
   List<CheckIn> get recentCheckIns => _recentCheckIns;
+  String? get currentUserId => _currentUserId;
   
   bool get isLoading => _isLoading;
   String? get error => _error;
@@ -52,16 +55,44 @@ class AccountabilityProvider extends ChangeNotifier {
     
     _setLoading(true);
     try {
+      // Current user ID betöltése ELSŐ lépésként
+      await _loadCurrentUserId();
+      debugPrint('After _loadCurrentUserId: $_currentUserId');
+      
+      if (_currentUserId == null) {
+        throw Exception('User ID not found - user might not be logged in');
+      }
+      
       await loadProfile();
       if (_profile != null) {
         await loadPartnerships();
       }
       _isInitialized = true;
     } catch (e) {
+      debugPrint('AccountabilityProvider initialization error: $e');
       _setError(e.toString());
     } finally {
       _setLoading(false);
     }
+  }
+
+  Future<void> _loadCurrentUserId() async {
+    try {
+      // AuthService instance létrehozása (nem const!)
+      final authService = AuthService();
+      final userId = await authService.getUserId();
+      _currentUserId = userId;
+      
+      debugPrint('Loaded current user ID: $_currentUserId');
+    } catch (e) {
+      debugPrint('Error loading current user ID: $e');
+      _currentUserId = null;
+    }
+  }
+
+  Future<void> refreshCurrentUser() async {
+    await _loadCurrentUserId();
+    notifyListeners();
   }
 
   // === PROFILE MANAGEMENT ===
@@ -264,6 +295,36 @@ class AccountabilityProvider extends ChangeNotifier {
         p.partnerUserId == userId && 
         p.status == PartnershipStatus.pending
     );
+  }
+
+    // Módosított metódus debuggolással
+  bool isIncomingRequest(Partnership partnership) {
+    debugPrint('=== DEBUG isIncomingRequest ===');
+    debugPrint('Current user ID: $_currentUserId');
+    debugPrint('Partnership ID: ${partnership.id}');
+    debugPrint('Partnership partnerUserId: ${partnership.partnerUserId}');
+    debugPrint('Partnership status: ${partnership.status}');
+    
+    if (_currentUserId == null) {
+      debugPrint('Current user ID is null - trying to reload');
+      // Aszinkron módon megpróbáljuk újratölteni
+      _loadCurrentUserId().then((_) {
+        debugPrint('After reload attempt: $_currentUserId');
+        notifyListeners(); // UI frissítése
+      });
+      return false;
+    }
+    
+    if (partnership.status != PartnershipStatus.pending) {
+      debugPrint('Partnership is not pending - returning false');
+      return false;
+    }
+    
+    final isIncoming = partnership.isIncoming && partnership.status == PartnershipStatus.pending;
+    debugPrint('isIncomingRequest result: $isIncoming');
+    debugPrint('=== END DEBUG ===');
+    
+    return isIncoming;
   }
 
   // === UTILITY METHODS ===

@@ -232,6 +232,7 @@ class Partnership {
   final DateTime? acceptedAt;
   final int totalCheckins;
   final int successfulCheckins;
+  final bool isIncoming;
 
   const Partnership({
     required this.id,
@@ -244,10 +245,11 @@ class Partnership {
     this.acceptedAt,
     this.totalCheckins = 0,
     this.successfulCheckins = 0,
+    this.isIncoming = false,
   });
 
   factory Partnership.fromJson(Map<String, dynamic> json) {
-    return Partnership(
+    final partnership = Partnership(
       id: json['id'] ?? '',
       partnerUserId: json['partner_user_id'] ?? '',
       partnerUsername: json['partner_username'] ?? '',
@@ -258,7 +260,14 @@ class Partnership {
       acceptedAt: json['accepted_at'] != null ? DateTime.parse(json['accepted_at']) : null,
       totalCheckins: json['total_checkins'] ?? 0,
       successfulCheckins: json['successful_checkins'] ?? 0,
+      isIncoming: json['is_incoming'] ?? false, // Ez a kulcs!
     );
+    print('Partnership parsed: id=${partnership.id}, '
+            'partnerUserId=${partnership.partnerUserId}, '
+            'status=${partnership.status}, '
+            'isIncoming=${partnership.isIncoming}');
+      
+    return partnership;
   }
 
   double get successRate {
@@ -268,6 +277,12 @@ class Partnership {
 
   String get statusDisplayName => status.displayName;
   
+  // Új getter: meghatározza, hogy ez bejövő kérelem-e az adott felhasználó számára
+  bool isIncomingRequest(String currentUserId) {
+    final result = isIncoming && status == PartnershipStatus.pending;
+    print('isIncomingRequest: isIncoming=$isIncoming, status=$status, result=$result');
+    return result;
+  }
   bool get isActive => status == PartnershipStatus.active;
   bool get isPending => status == PartnershipStatus.pending;
 }

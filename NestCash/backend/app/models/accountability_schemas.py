@@ -49,7 +49,6 @@ class PartnershipRequest(BaseModel):
     message: Optional[str] = None
 
 class PartnershipResponse(BaseModel):
-    partnership_id: str
     accept: bool
     message: Optional[str] = None
 
@@ -64,6 +63,7 @@ class PartnershipRead(BaseModel):
     accepted_at: Optional[datetime]
     total_checkins: int
     successful_checkins: int
+    is_incoming: bool  # Új mező
 
 # Check-in schemas
 class CheckInCreate(BaseModel):
