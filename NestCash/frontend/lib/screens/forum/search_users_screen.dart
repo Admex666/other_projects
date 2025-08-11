@@ -250,7 +250,7 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
       final request = PartnershipRequest(
         targetUserId: user.id,
         message: result['message'] ?? '',
-        checkinFrequency: result['frequency'] ?? CheckinFrequency.weekly,
+        checkinFrequency: result['frequency'] ?? CheckInFrequency.weekly,
         sharedGoals: result['goals'] ?? [],
       );
 
@@ -277,7 +277,7 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
   // ÚJ FUNKCIÓ: Partnership kérelem dialógus
   Widget _buildPartnershipRequestDialog(ForumUser user) {
     final TextEditingController messageController = TextEditingController();
-    CheckinFrequency selectedFrequency = CheckinFrequency.weekly;
+    CheckInFrequency selectedFrequency = CheckInFrequency.weekly;
     List<String> selectedGoals = [];
     
     final availableGoals = [
@@ -348,7 +348,7 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
                   style: TextStyle(fontWeight: FontWeight.w600),
                 ),
                 SizedBox(height: 8),
-                DropdownButtonFormField<CheckinFrequency>(
+                DropdownButtonFormField<CheckInFrequency>(
                   value: selectedFrequency,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
@@ -356,7 +356,7 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
                     ),
                     contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   ),
-                  items: CheckinFrequency.values.map((freq) {
+                  items: CheckInFrequency.values.map((freq) {
                     return DropdownMenuItem(
                       value: freq,
                       child: Text(freq.displayName),

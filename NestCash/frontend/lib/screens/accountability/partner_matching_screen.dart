@@ -1,11 +1,11 @@
-// lib/screens/partner_matching_screen.dart
+// lib/screens/accountability/partner_matching_screen.dart
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/accountability_models.dart';
-import '../providers/accountability_provider.dart';
-import '../providers/subscription_provider.dart';
-import '../widgets/swipeable_card.dart';
+import 'package:frontend/models/accountability_models.dart';
+import 'package:frontend/providers/accountability_provider.dart';
+import 'package:frontend/providers/subscription_provider.dart';
+import 'package:frontend/widgets/swipeable_card.dart';
 
 class PartnerMatchingScreen extends StatefulWidget {
   const PartnerMatchingScreen({Key? key}) : super(key: key);
@@ -416,7 +416,7 @@ class _PartnershipRequestDialogState extends State<_PartnershipRequestDialog> {
             SizedBox(height: 16),
             
             Text('Check-in gyakoriság:', style: TextStyle(fontWeight: FontWeight.bold)),
-            DropdownButton<CheckInFrequency>(
+            DropdownButton<CheckInFrequency>(  // CheckInFrequency típus
               value: _frequency,
               isExpanded: true,
               onChanged: (frequency) {
@@ -424,7 +424,7 @@ class _PartnershipRequestDialogState extends State<_PartnershipRequestDialog> {
                   _frequency = frequency!;
                 });
               },
-              items: CheckInFrequency.values.map((freq) {
+              items: CheckInFrequency.values.map((freq) {  // CheckInFrequency.values
                 return DropdownMenuItem(
                   value: freq,
                   child: Text(freq.displayName),

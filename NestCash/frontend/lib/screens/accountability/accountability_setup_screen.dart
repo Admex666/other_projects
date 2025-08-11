@@ -1,9 +1,9 @@
-// lib/screens/accountability_setup_screen.dart
+// lib/screens/accountability/accountability_setup_screen.dart
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/accountability_models.dart';
-import '../providers/accountability_provider.dart';
+import 'package:frontend/models/accountability_models.dart';
+import 'package:frontend/providers/accountability_provider.dart';
 
 class AccountabilitySetupScreen extends StatefulWidget {
   final bool isEdit;

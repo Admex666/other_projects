@@ -1,11 +1,11 @@
-// lib/screens/partnership_detail_screen.dart
+// lib/screens/accountability/partnership_detail_screen.dart
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/accountability_models.dart';
-import '../providers/accountability_provider.dart';
+import 'package:frontend/models/accountability_models.dart';
+import 'package:frontend/providers/accountability_provider.dart';
 import 'checkin_screen.dart';
-import '../services/auth_service.dart';
+import 'package:frontend/services/auth_service.dart';
 
 class PartnershipDetailScreen extends StatefulWidget {
   final Partnership partnership;

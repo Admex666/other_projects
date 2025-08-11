@@ -6,7 +6,8 @@ import logging
 
 from app.models.accountability_models import (
     AccountabilityProfile, Partnership, CheckIn, PartnershipStatus,
-    CheckInFrequency, GoalCategory, MatchScore, PartnerSuggestion
+    CheckInFrequency, GoalCategory, MatchScore, PartnerSuggestion,
+    MotivationStyle, PersonalityType
 )
 from app.models.user import UserDocument
 from app.services.permission_service import PermissionService
@@ -267,3 +268,76 @@ class AccountabilityService:
             
         except Exception as e:
             logger.error(f"Error updating partnership stats: {e}")
+
+    @staticmethod
+    def _are_compatible_motivation_styles(style1: MotivationStyle, style2: MotivationStyle) -> bool:
+        """Ellenőrzi, hogy két motivációs stílus kompatibilis-e egymással"""
+        # Kompatibilis párok meghatározása
+        compatible_pairs = {
+            (MotivationStyle.POSITIVE_REINFORCEMENT, MotivationStyle.FLEXIBLE),
+            (MotivationStyle.CHALLENGE_BASED, MotivationStyle.STRUCTURED),
+            (MotivationStyle.STRUCTURED, MotivationStyle.FLEXIBLE),
+        }
+        
+        # Mindkét irányban ellenőrizzük
+        return (style1, style2) in compatible_pairs or (style2, style1) in compatible_pairs
+    
+    @staticmethod
+    def _are_compatible_personalities(type1: PersonalityType, type2: PersonalityType) -> bool:
+        """Ellenőrzi, hogy két személyiség típus kompatibilis-e egymással"""
+        # Kompatibilis párok meghatározása
+        compatible_pairs = {
+            (PersonalityType.COMPETITIVE_DIRECT, PersonalityType.BALANCED),
+            (PersonalityType.SUPPORTIVE_GENTLE, PersonalityType.BALANCED),
+        }
+        
+        # Mindkét irányban ellenőrizzük
+        return (type1, type2) in compatible_pairs or (type2, type1) in compatible_pairs
+    
+    @staticmethod
+    def _get_common_goals(profile1: AccountabilityProfile, profile2: AccountabilityProfile) -> List[str]:
+        """Közös célok meghatározása két profil között"""
+        common_categories = set(profile1.goal_categories) & set(profile2.goal_categories)
+        
+        # GoalCategory enum értékeket display name-re konvertáljuk
+        goal_display_names = {
+            GoalCategory.FINANCIAL: "Pénzügyek",
+            GoalCategory.SAVINGS: "Megtakarítás", 
+            GoalCategory.INVESTMENT: "Befektetés",
+            GoalCategory.SPENDING_CONTROL: "Kiadások kontroll",
+            GoalCategory.HABIT_BUILDING: "Szokásépítés"
+        }
+        
+        return [goal_display_names.get(category, category.value) for category in common_categories]
+    
+    @staticmethod
+    def _get_matching_factors(profile1: AccountabilityProfile, profile2: AccountabilityProfile) -> Dict[str, str]:
+        """Matching faktorok meghatározása két profil között"""
+        factors = {}
+        
+        # Közös célok száma
+        common_goals_count = len(set(profile1.goal_categories) & set(profile2.goal_categories))
+        if common_goals_count > 0:
+            factors["common_goals"] = f"{common_goals_count} közös cél"
+        
+        # Check-in gyakoriság
+        if profile1.checkin_frequency == profile2.checkin_frequency:
+            factors["checkin_frequency"] = "Azonos check-in gyakoriság"
+        
+        # Motivációs stílus
+        if profile1.motivation_style == profile2.motivation_style:
+            factors["motivation_style"] = "Azonos motivációs stílus"
+        elif AccountabilityService._are_compatible_motivation_styles(profile1.motivation_style, profile2.motivation_style):
+            factors["motivation_style"] = "Kompatibilis motivációs stílus"
+        
+        # Személyiség típus
+        if profile1.personality_type == profile2.personality_type:
+            factors["personality_type"] = "Azonos személyiség típus"
+        elif AccountabilityService._are_compatible_personalities(profile1.personality_type, profile2.personality_type):
+            factors["personality_type"] = "Kompatibilis személyiség típus"
+        
+        # Időzóna
+        if profile1.timezone == profile2.timezone:
+            factors["timezone"] = "Azonos időzóna"
+        
+        return factors

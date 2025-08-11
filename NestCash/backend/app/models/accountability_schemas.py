@@ -43,7 +43,7 @@ class AccountabilityProfileRead(BaseModel):
 
 # Partnership schemas
 class PartnershipRequest(BaseModel):
-    requested_user_id: str
+    target_user_id: str  # <-- "requested_user_id" helyett "target_user_id"
     checkin_frequency: CheckInFrequency
     shared_goals: List[str] = Field(default_factory=list)
     message: Optional[str] = None

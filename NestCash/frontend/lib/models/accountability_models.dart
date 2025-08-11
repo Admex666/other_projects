@@ -92,26 +92,6 @@ enum GoalCategory {
   }
 }
 
-enum CheckinFrequency {
-  daily,
-  weekly,
-  biweekly,
-  monthly;
-
-  String get displayName {
-    switch (this) {
-      case CheckinFrequency.daily:
-        return 'Napi';
-      case CheckinFrequency.weekly:
-        return 'Heti';
-      case CheckinFrequency.biweekly:
-        return 'Kétheti';
-      case CheckinFrequency.monthly:
-        return 'Havi';
-    }
-  }
-}
-
 class AccountabilityProfile {
   final String id;
   final String userId;
@@ -149,25 +129,44 @@ class AccountabilityProfile {
 
   factory AccountabilityProfile.fromJson(Map<String, dynamic> json) {
     return AccountabilityProfile(
-      id: json['id'] ?? '',
-      userId: json['user_id'] ?? '',
+      id: json['id']?.toString() ?? '',
+      userId: json['user_id']?.toString() ?? '',
       goalCategories: (json['goal_categories'] as List?)
           ?.map((e) => GoalCategory.fromString(e.toString()))
           .toList() ?? [],
-      checkinFrequency: CheckInFrequency.fromString(json['checkin_frequency'] ?? 'weekly'),
-      motivationStyle: MotivationStyle.fromString(json['motivation_style'] ?? 'balanced'),
-      personalityType: PersonalityType.fromString(json['personality_type'] ?? 'balanced'),
-      timezone: json['timezone'] ?? 'Europe/Budapest',
-      availabilityHours: Map<String, List<String>>.from(
-        json['availability_hours'] ?? {},
+      checkinFrequency: CheckInFrequency.fromString(
+        json['checkin_frequency']?.toString() ?? 'weekly'
       ),
-      bio: json['bio'],
-      maxAgeDifference: json['max_age_difference'],
-      preferredExperienceLevel: json['preferred_experience_level'],
+      motivationStyle: MotivationStyle.fromString(
+        json['motivation_style']?.toString() ?? 'balanced'
+      ),
+      personalityType: PersonalityType.fromString(
+        json['personality_type']?.toString() ?? 'balanced'
+      ),
+      timezone: json['timezone']?.toString() ?? 'Europe/Budapest',
+      availabilityHours: json['availability_hours'] != null 
+          ? Map<String, List<String>>.from(
+              (json['availability_hours'] as Map).map(
+                (key, value) => MapEntry(
+                  key.toString(), 
+                  List<String>.from(value ?? [])
+                )
+              )
+            )
+          : {},
+      bio: json['bio']?.toString(),
+      maxAgeDifference: json['max_age_difference'] is int 
+          ? json['max_age_difference'] 
+          : null,
+      preferredExperienceLevel: json['preferred_experience_level']?.toString(),
       isActive: json['is_active'] ?? true,
       isLookingForPartners: json['is_looking_for_partners'] ?? true,
-      createdAt: DateTime.parse(json['created_at']),
-      updatedAt: DateTime.parse(json['updated_at']),
+      createdAt: json['created_at'] != null 
+          ? DateTime.parse(json['created_at'].toString()) 
+          : DateTime.now(),
+      updatedAt: json['updated_at'] != null 
+          ? DateTime.parse(json['updated_at'].toString()) 
+          : DateTime.now(),
     );
   }
 
@@ -362,7 +361,7 @@ class PartnerSuggestion {
 class PartnershipRequest {
   final String targetUserId;
   final String message;
-  final CheckinFrequency checkinFrequency;
+  final CheckInFrequency checkinFrequency;
   final List<String> sharedGoals;
 
   const PartnershipRequest({
@@ -376,7 +375,7 @@ class PartnershipRequest {
     return {
       'target_user_id': targetUserId,
       'message': message,
-      'checkin_frequency': checkinFrequency.name,
+      'checkin_frequency': checkinFrequency.value,
       'shared_goals': sharedGoals,
     };
   }

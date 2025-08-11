@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/screens/auth/auth_wrapper.dart';
 import 'package:frontend/screens/dashboard_screen.dart';
-import 'package:frontend/screens/partnerships_screen.dart';
+import 'package:frontend/screens/accountability/partnerships_screen.dart';
 import 'package:frontend/screens/profile/profile_screen.dart';
 import 'package:frontend/screens/manage_accounts_screen.dart'; 
 import 'package:frontend/screens/manage_categories_screen.dart';
@@ -21,6 +21,7 @@ import 'package:frontend/screens/subscription/subscription_screen.dart';
 import 'package:frontend/screens/subscription/plans_screen.dart';
 import 'package:frontend/providers/accountability_provider.dart';
 import 'package:frontend/services/accountability_service.dart';
+import 'package:frontend/screens/accountability/accountability_setup_screen.dart';
 
 void main() {
   runApp(NestCashApp());
@@ -344,14 +345,40 @@ void _showForumChallengesOptions(BuildContext context) {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: () {
+                onPressed: () async {
                   Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PartnershipsScreen(),
-                    ),
-                  );
+                  
+                  // Ellenőrizzük, hogy van-e már profil
+                  final provider = Provider.of<AccountabilityProvider>(context, listen: false);
+                  await provider.loadProfile();
+                  
+                  if (provider.hasProfile) {
+                    // Van profil -> PartnershipsScreen-re
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PartnershipsScreen(),
+                      ),
+                    );
+                  } else {
+                    // Nincs profil -> AccountabilitySetupScreen-re
+                    final result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AccountabilitySetupScreen(),
+                      ),
+                    );
+                    
+                    // Ha sikeresen létrehozta a profilt, akkor navigáljunk a PartnershipsScreen-re
+                    if (result == true) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PartnershipsScreen(),
+                        ),
+                      );
+                    }
+                  }
                 },
                 icon: const Icon(Icons.people_alt_outlined, color: Colors.white),
                 label: const Text(

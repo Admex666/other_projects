@@ -145,7 +145,7 @@ async def request_partnership(
     # Létrehozás
     partnership = await AccountabilityService.create_partnership_request(
         requester_id=current_user.id,
-        requested_id=request_data.requested_user_id,
+        requested_id=request_data.target_user_id,  # <-- "requested_user_id" helyett "target_user_id"
         checkin_frequency=request_data.checkin_frequency,
         shared_goals=request_data.shared_goals
     )

@@ -1,12 +1,13 @@
-// lib/screens/partnerships_screen.dart
+// lib/screens/accountability/partnerships_screen.dart
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/accountability_models.dart';
-import '../providers/accountability_provider.dart';
-import '../providers/subscription_provider.dart';
+import 'package:frontend/models/accountability_models.dart';
+import 'package:frontend/providers/accountability_provider.dart';
+import 'package:frontend/providers/subscription_provider.dart';
 import 'partner_matching_screen.dart';
-import '../screens/forum/search_users_screen.dart';
+import 'accountability_setup_screen.dart';
+import 'package:frontend/screens/forum/search_users_screen.dart';
 import 'partnership_detail_screen.dart';
 
 class PartnershipsScreen extends StatefulWidget {
@@ -78,6 +79,7 @@ class _PartnershipsScreenState extends State<PartnershipsScreen>
               child: Row(
                 children: [
                   Expanded(
+                    flex: 2,
                     child: Consumer<SubscriptionProvider>(
                       builder: (context, subscription, child) {
                         return Container(
@@ -92,7 +94,6 @@ class _PartnershipsScreenState extends State<PartnershipsScreen>
                                   ),
                                 ).then((_) => _loadData());
                               } else {
-                                // Módosított rész: SearchUsersScreen partner móddal
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -115,6 +116,52 @@ class _PartnershipsScreenState extends State<PartnershipsScreen>
                             ),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.orange,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: Consumer<AccountabilityProvider>(
+                      builder: (context, provider, child) {
+                        return Container(
+                          height: 44,
+                          child: ElevatedButton.icon(
+                            onPressed: () async {
+                              final result = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AccountabilitySetupScreen(
+                                    isEdit: true,
+                                    existingProfile: provider.profile,
+                                  ),
+                                ),
+                              );
+                              
+                              if (result == true) {
+                                _loadData();
+                              }
+                            },
+                            icon: Icon(
+                              Icons.edit,
+                              color: Colors.white,
+                              size: 18,
+                            ),
+                            label: Text(
+                              'Profil',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Color(0xFF00D4AA),
                               elevation: 0,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
