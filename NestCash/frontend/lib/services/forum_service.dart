@@ -155,36 +155,47 @@ class ForumService {
     };
 
     final uri = Uri.parse('$baseUrl/forum/follow/search').replace(queryParameters: queryParams);
-    final response = await http.get(uri, headers: await _getHeaders());
+    
+    try {
+      final response = await http.get(
+        uri, 
+        headers: await _getHeaders(),
+      ).timeout(Duration(seconds: 10)); // Timeout hozzáadása
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      
-      if (data == null) {
-        return <ForumUser>[];
-      }
-      
-      if (data is List) {
-        return data
-            .where((item) => item != null)
-            .map((json) => ForumUser.fromJson(json as Map<String, dynamic>))
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        
+        if (data == null || data is! Map<String, dynamic>) {
+          return <ForumUser>[];
+        }
+        
+        // Egyszerűbb parsing
+        final usersList = data['users'] ?? data['results'] ?? data['data'] ?? data;
+        
+        if (usersList is! List) {
+          return <ForumUser>[];
+        }
+        
+        return usersList
+            .where((item) => item != null && item is Map<String, dynamic>)
+            .map((json) {
+              try {
+                return ForumUser.fromJson(json as Map<String, dynamic>);
+              } catch (e) {
+                print('Error parsing user: $e');
+                return null;
+              }
+            })
+            .where((user) => user != null)
+            .cast<ForumUser>()
             .toList();
       }
       
-      if (data is Map<String, dynamic>) {
-        final usersList = data['users'] ?? data['results'] ?? data['data'] ?? [];
-        
-        if (usersList is List) {
-          return usersList
-              .where((item) => item != null)
-              .map((json) => ForumUser.fromJson(json as Map<String, dynamic>))
-              .toList();
-        }
-      }
-      
-      return <ForumUser>[];
+      throw Exception('Server returned ${response.statusCode}');
+    } catch (e) {
+      print('Search error: $e');
+      rethrow;
     }
-    throw Exception('Failed to search users: ${response.body}');
   }
 
   Future<List<ForumUser>> getFollowing({int skip = 0, int limit = 50}) async {

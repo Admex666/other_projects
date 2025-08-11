@@ -91,7 +91,7 @@ class _PartnerMatchingScreenState extends State<PartnerMatchingScreen> {
 
       if (result != null) {
         final request = PartnershipRequest(
-          requestedUserId: suggestion.userId,
+          targetUserId: suggestion.userId,
           checkinFrequency: result['frequency'],
           sharedGoals: result['goals'],
           message: result['message'],

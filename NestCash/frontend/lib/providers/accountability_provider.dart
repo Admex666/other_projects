@@ -3,6 +3,7 @@
 import 'package:flutter/foundation.dart';
 import '../models/accountability_models.dart';
 import '../services/accountability_service.dart';
+import 'package:flutter/widgets.dart';
 
 class AccountabilityProvider extends ChangeNotifier {
   final AccountabilityService _service;
@@ -298,16 +299,23 @@ class AccountabilityProvider extends ChangeNotifier {
 
   void _setLoading(bool loading) {
     _isLoading = loading;
-    notifyListeners();
+    // Schedule notifyListeners for after the current build cycle
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
   }
 
   void _setError(String error) {
     _error = error;
-    notifyListeners();
+    // Schedule notifyListeners for after the current build cycle
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
   }
 
   void _clearError() {
     _error = null;
+    // This doesn't need notifyListeners as it's usually called before other operations
   }
 
   @override

@@ -6,7 +6,7 @@ import '../models/accountability_models.dart';
 import '../providers/accountability_provider.dart';
 import '../providers/subscription_provider.dart';
 import 'partner_matching_screen.dart';
-import 'partner_search_screen.dart';
+import '../screens/forum/search_users_screen.dart';
 import 'partnership_detail_screen.dart';
 
 class PartnershipsScreen extends StatefulWidget {
@@ -92,10 +92,11 @@ class _PartnershipsScreenState extends State<PartnershipsScreen>
                                   ),
                                 ).then((_) => _loadData());
                               } else {
+                                // Módosított rész: SearchUsersScreen partner móddal
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => PartnerSearchScreen(),
+                                    builder: (context) => SearchUsersScreen(isPartnerSearch: true),
                                   ),
                                 ).then((_) => _loadData());
                               }
@@ -210,20 +211,21 @@ class _PartnershipsScreenState extends State<PartnershipsScreen>
             title: 'Nincs aktív partner',
             message: 'Kezdj el új kapcsolatokat építeni!',
             actionText: 'Partner keresése',
-            onAction: () {
-              final subscription = Provider.of<SubscriptionProvider>(context, listen: false);
-              if (subscription.isPlusOrHigher) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => PartnerMatchingScreen()),
-                ).then((_) => _loadData());
-              } else {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => PartnerSearchScreen()),
-                ).then((_) => _loadData());
-              }
-            },
+              onAction: () {
+                final subscription = Provider.of<SubscriptionProvider>(context, listen: false);
+                if (subscription.isPlusOrHigher) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => PartnerMatchingScreen()),
+                  ).then((_) => _loadData());
+                } else {
+                  // Módosított rész: SearchUsersScreen partner móddal
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SearchUsersScreen(isPartnerSearch: true)),
+                  ).then((_) => _loadData());
+                }
+              },
           );
         }
 

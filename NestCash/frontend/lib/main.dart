@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/screens/auth/auth_wrapper.dart';
 import 'package:frontend/screens/dashboard_screen.dart';
+import 'package:frontend/screens/partnerships_screen.dart';
 import 'package:frontend/screens/profile/profile_screen.dart';
 import 'package:frontend/screens/manage_accounts_screen.dart'; 
 import 'package:frontend/screens/manage_categories_screen.dart';
@@ -18,6 +19,8 @@ import 'package:frontend/providers/subscription_provider.dart';
 import 'package:frontend/services/subscription_service.dart';
 import 'package:frontend/screens/subscription/subscription_screen.dart';
 import 'package:frontend/screens/subscription/plans_screen.dart';
+import 'package:frontend/providers/accountability_provider.dart';
+import 'package:frontend/services/accountability_service.dart';
 
 void main() {
   runApp(NestCashApp());
@@ -51,6 +54,17 @@ class NestCashApp extends StatelessWidget {
           update: (context, subscriptionService, previous) => 
             previous ?? SubscriptionProvider(
               subscriptionService: subscriptionService,
+            ),
+        ),
+
+        // ÚJ: AccountabilityProvider hozzáadása
+        ChangeNotifierProxyProvider<AuthService, AccountabilityProvider>(
+          create: (context) => AccountabilityProvider(
+            service: AccountabilityService(),
+          ),
+          update: (context, authService, previous) => 
+            previous ?? AccountabilityProvider(
+              service: AccountabilityService(),
             ),
         ),
       ],
@@ -318,6 +332,34 @@ void _showForumChallengesOptions(BuildContext context) {
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.teal,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                ),
+              ),
+            ),
+            const SizedBox(height: 15),
+            // Partner gomb
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PartnershipsScreen(),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.people_alt_outlined, color: Colors.white),
+                label: const Text(
+                  'Accountability Partner',
+                  style: TextStyle(fontSize: 18, color: Colors.white),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 212, 60, 0),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),

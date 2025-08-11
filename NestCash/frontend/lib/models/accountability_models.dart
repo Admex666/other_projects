@@ -40,8 +40,8 @@ enum CheckInFrequency {
 enum MotivationStyle {
   positiveReinforcement('positive_reinforcement', 'Pozitív megerősítés'),
   challengeBased('challenge_based', 'Kihívás alapú'),
-  structured('structured', 'Strukturált'),
-  flexible('flexible', 'Rugalmas');
+  flexible('flexible', 'Rugalmas'),
+  balanced('balanced', 'Kiegyensúlyozott');
 
   const MotivationStyle(this.value, this.displayName);
   final String value;
@@ -89,6 +89,26 @@ enum GoalCategory {
       (category) => category.value == value,
       orElse: () => GoalCategory.financial,
     );
+  }
+}
+
+enum CheckinFrequency {
+  daily,
+  weekly,
+  biweekly,
+  monthly;
+
+  String get displayName {
+    switch (this) {
+      case CheckinFrequency.daily:
+        return 'Napi';
+      case CheckinFrequency.weekly:
+        return 'Heti';
+      case CheckinFrequency.biweekly:
+        return 'Kétheti';
+      case CheckinFrequency.monthly:
+        return 'Havi';
+    }
   }
 }
 
@@ -340,24 +360,24 @@ class PartnerSuggestion {
 }
 
 class PartnershipRequest {
-  final String requestedUserId;
-  final CheckInFrequency checkinFrequency;
+  final String targetUserId;
+  final String message;
+  final CheckinFrequency checkinFrequency;
   final List<String> sharedGoals;
-  final String? message;
 
   const PartnershipRequest({
-    required this.requestedUserId,
+    required this.targetUserId,
+    this.message = '',
     required this.checkinFrequency,
     this.sharedGoals = const [],
-    this.message,
   });
 
   Map<String, dynamic> toJson() {
     return {
-      'requested_user_id': requestedUserId,
-      'checkin_frequency': checkinFrequency.value,
+      'target_user_id': targetUserId,
+      'message': message,
+      'checkin_frequency': checkinFrequency.name,
       'shared_goals': sharedGoals,
-      if (message != null) 'message': message,
     };
   }
 }
