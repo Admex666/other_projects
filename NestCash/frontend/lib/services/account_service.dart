@@ -2,12 +2,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:frontend/config/config.dart';
 
 class AccountService {
   static const _storage = FlutterSecureStorage();
-  final String baseUrl;
-
-  const AccountService({this.baseUrl = 'http://10.0.2.2:8000'});
 
   Future<String?> _getToken() async {
     return await _storage.read(key: 'token');
@@ -20,7 +18,7 @@ class AccountService {
       if (token == null) throw Exception('Not authenticated');
 
       final response = await http.get(
-        Uri.parse('$baseUrl/accounts/me'),
+        Uri.parse('${ApiConfig.baseUrl}/accounts/me'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -101,7 +99,7 @@ class AccountService {
       if (token == null) throw Exception('Not authenticated');
 
       final response = await http.put(
-        Uri.parse('$baseUrl/accounts/me/$mainAccount/$subAccountName'),
+        Uri.parse('${ApiConfig.baseUrl}/accounts/me/$mainAccount/$subAccountName'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -129,7 +127,7 @@ class AccountService {
       if (token == null) throw Exception('Not authenticated');
 
       final response = await http.delete(
-        Uri.parse('$baseUrl/accounts/me/$mainAccount/$subAccountName'),
+        Uri.parse('${ApiConfig.baseUrl}/accounts/me/$mainAccount/$subAccountName'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -154,7 +152,7 @@ class AccountService {
       if (token == null) throw Exception('Not authenticated');
 
       final response = await http.patch(
-        Uri.parse('$baseUrl/accounts/me/$mainAccount/$subAccountName/balance'),
+        Uri.parse('${ApiConfig.baseUrl}/accounts/me/$mainAccount/$subAccountName/balance'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',

@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:frontend/services/auth_service.dart';
 import 'package:frontend/services/sharing_service.dart';
+import 'package:frontend/config/config.dart';
 
 class LessonDetailScreen extends StatefulWidget {
   final String lessonId;
@@ -20,7 +21,7 @@ class LessonDetailScreen extends StatefulWidget {
 }
 
 class _LessonDetailScreenState extends State<LessonDetailScreen> {
-  final AuthService _authService = const AuthService();
+  final AuthService _authService = AuthService();
   LessonDetail? lesson;
   LessonCompletion? completion;
   bool isLoading = true;
@@ -42,7 +43,7 @@ class _LessonDetailScreenState extends State<LessonDetailScreen> {
       final token = await _authService.getToken();
 
       final response = await http.get(
-        Uri.parse('${_authService.baseUrl}/knowledge/lessons/${widget.lessonId}'),
+        Uri.parse('${ApiConfig.baseUrl}/knowledge/lessons/${widget.lessonId}'),
         headers: {'Authorization': 'Bearer $token'},
       );
 
@@ -88,7 +89,7 @@ class _LessonDetailScreenState extends State<LessonDetailScreen> {
     };
 
     await http.post(
-      Uri.parse('${_authService.baseUrl}/knowledge/lessons/${widget.lessonId}/progress'),
+      Uri.parse('${ApiConfig.baseUrl}/knowledge/lessons/${widget.lessonId}/progress'),
       headers: {
         'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
@@ -108,7 +109,7 @@ class _LessonDetailScreenState extends State<LessonDetailScreen> {
 
     try {
       final response = await http.post(
-        Uri.parse('${_authService.baseUrl}/knowledge/lessons/${widget.lessonId}/quiz'),
+        Uri.parse('${ApiConfig.baseUrl}/knowledge/lessons/${widget.lessonId}/quiz'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',

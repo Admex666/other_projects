@@ -4,12 +4,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../models/accountability_models.dart';
+import 'package:frontend/config/config.dart';
 
 class AccountabilityService {
   static const _storage = FlutterSecureStorage();
-  final String baseUrl;
-
-  const AccountabilityService({this.baseUrl = 'http://10.0.2.2:8000'});
 
   Future<String?> _getToken() async {
     return await _storage.read(key: 'token');
@@ -30,7 +28,7 @@ class AccountabilityService {
     try {
       final headers = await _getHeaders();
       final response = await http.post(
-        Uri.parse('$baseUrl/accountability/profile'),
+        Uri.parse('${ApiConfig.baseUrl}/accountability/profile'),
         headers: headers,
         body: jsonEncode(profile.toJson()),
       );
@@ -53,7 +51,7 @@ class AccountabilityService {
     try {
       final headers = await _getHeaders();
       final response = await http.get(
-        Uri.parse('$baseUrl/accountability/profile'),
+        Uri.parse('${ApiConfig.baseUrl}/accountability/profile'),
         headers: headers,
       );
 
@@ -76,7 +74,7 @@ class AccountabilityService {
     try {
       final headers = await _getHeaders();
       final response = await http.put(
-        Uri.parse('$baseUrl/accountability/profile'),
+        Uri.parse('${ApiConfig.baseUrl}/accountability/profile'),
         headers: headers,
         body: jsonEncode(updates),
       );
@@ -100,7 +98,7 @@ class AccountabilityService {
   Future<List<PartnerSuggestion>> getPartnerSuggestions({int limit = 10}) async {
     try {
       final headers = await _getHeaders();
-      final uri = Uri.parse('$baseUrl/accountability/suggestions').replace(
+      final uri = Uri.parse('${ApiConfig.baseUrl}/accountability/suggestions').replace(
         queryParameters: {'limit': limit.toString()},
       );
       
@@ -131,7 +129,7 @@ class AccountabilityService {
         queryParams['status'] = status.value;
       }
 
-      final uri = Uri.parse('$baseUrl/accountability/partnerships').replace(
+      final uri = Uri.parse('${ApiConfig.baseUrl}/accountability/partnerships').replace(
         queryParameters: queryParams.isNotEmpty ? queryParams : null,
       );
       
@@ -154,7 +152,7 @@ class AccountabilityService {
     try {
       final headers = await _getHeaders();
       final response = await http.post(
-        Uri.parse('$baseUrl/accountability/partnerships/request'),
+        Uri.parse('${ApiConfig.baseUrl}/accountability/partnerships/request'),
         headers: headers,
         body: jsonEncode(request.toJson()),
       );
@@ -180,7 +178,7 @@ class AccountabilityService {
     try {
       final headers = await _getHeaders();
       final response = await http.post(
-        Uri.parse('$baseUrl/accountability/partnerships/$partnershipId/respond'),
+        Uri.parse('${ApiConfig.baseUrl}/accountability/partnerships/$partnershipId/respond'),
         headers: headers,
         body: jsonEncode({
           'accept': accept,
@@ -200,7 +198,7 @@ class AccountabilityService {
     try {
       final headers = await _getHeaders();
       final response = await http.post(
-        Uri.parse('$baseUrl/accountability/partnerships/$partnershipId/end'),
+        Uri.parse('${ApiConfig.baseUrl}/accountability/partnerships/$partnershipId/end'),
         headers: headers,
         body: jsonEncode({
           if (reason != null) 'reason': reason,
@@ -221,7 +219,7 @@ class AccountabilityService {
     try {
       final headers = await _getHeaders();
       final response = await http.post(
-        Uri.parse('$baseUrl/accountability/partnerships/$partnershipId/checkins'),
+        Uri.parse('${ApiConfig.baseUrl}/accountability/partnerships/$partnershipId/checkins'),
         headers: headers,
         body: jsonEncode(checkIn.toJson()),
       );
@@ -247,7 +245,7 @@ class AccountabilityService {
       if (limit != null) queryParams['limit'] = limit.toString();
       if (userId != null) queryParams['user_id'] = userId;
 
-      final uri = Uri.parse('$baseUrl/accountability/partnerships/$partnershipId/checkins').replace(
+      final uri = Uri.parse('${ApiConfig.baseUrl}/accountability/partnerships/$partnershipId/checkins').replace(
         queryParameters: queryParams.isNotEmpty ? queryParams : null,
       );
       
@@ -284,7 +282,7 @@ class AccountabilityService {
   Future<List<PartnerSuggestion>> searchUsers(String query, {int limit = 20}) async {
     try {
       final headers = await _getHeaders();
-      final uri = Uri.parse('$baseUrl/accountability/search').replace(
+      final uri = Uri.parse('${ApiConfig.baseUrl}/accountability/search').replace(
         queryParameters: {
           'q': query,
           'limit': limit.toString(),

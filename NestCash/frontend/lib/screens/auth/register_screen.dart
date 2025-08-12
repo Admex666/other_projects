@@ -26,7 +26,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _mobileCtrl = TextEditingController();
   final _pwCtrl = TextEditingController();
   final _pw2Ctrl = TextEditingController();
-  final _authService = const AuthService();
+  final _authService = AuthService();
 
   bool _pwVisible = false;
   bool _pw2Visible = false;

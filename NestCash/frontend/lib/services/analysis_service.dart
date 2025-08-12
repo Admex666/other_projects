@@ -3,13 +3,13 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:frontend/models/analysis.dart';
-import 'package:frontend/services/auth_service.dart'; // AuthService import hozzáadása
+import 'package:frontend/services/auth_service.dart'; 
+import 'package:frontend/config/config.dart';
 
 class AnalysisService {
-  static const String baseUrl = 'http://10.0.2.2:8000';
   
   // AuthService instance létrehozása
-  final AuthService _authService = const AuthService();
+  final AuthService _authService = AuthService();
 
   // Token lekérése az AuthService-ből
   Future<String?> _getToken() async {
@@ -29,7 +29,7 @@ class AnalysisService {
     final headers = await _getHeaders();
     
     final response = await http.get(
-      Uri.parse('$baseUrl/analysis/comprehensive?months_back=$monthsBack'),
+      Uri.parse('${ApiConfig.baseUrl}/analysis/comprehensive?months_back=$monthsBack'),
       headers: headers,
     );
 
@@ -46,7 +46,7 @@ class AnalysisService {
     final headers = await _getHeaders();
     
     final response = await http.get(
-      Uri.parse('$baseUrl/analysis/basic-stats?months_back=$monthsBack'),
+      Uri.parse('${ApiConfig.baseUrl}/analysis/basic-stats?months_back=$monthsBack'),
       headers: headers,
     );
 
@@ -63,7 +63,7 @@ class AnalysisService {
     final headers = await _getHeaders();
     
     final response = await http.get(
-      Uri.parse('$baseUrl/analysis/risk-analysis?months_back=$monthsBack'),
+      Uri.parse('${ApiConfig.baseUrl}/analysis/risk-analysis?months_back=$monthsBack'),
       headers: headers,
     );
 
@@ -80,7 +80,7 @@ class AnalysisService {
     final headers = await _getHeaders();
     
     final response = await http.get(
-      Uri.parse('$baseUrl/analysis/category-analysis?months_back=$monthsBack'),
+      Uri.parse('${ApiConfig.baseUrl}/analysis/category-analysis?months_back=$monthsBack'),
       headers: headers,
     );
 
@@ -103,7 +103,7 @@ class AnalysisService {
     final headers = await _getHeaders();
     
     final response = await http.get(
-      Uri.parse('$baseUrl/analysis/forecast?forecast_type=$forecastType&periods_ahead=$periodsAhead&months_history=$monthsHistory'),
+      Uri.parse('${ApiConfig.baseUrl}/analysis/forecast?forecast_type=$forecastType&periods_ahead=$periodsAhead&months_history=$monthsHistory'),
       headers: headers,
     );
 
@@ -123,7 +123,7 @@ class AnalysisService {
     final headers = await _getHeaders();
     
     final response = await http.get(
-      Uri.parse('$baseUrl/analysis/anomaly-detection?months_back=$monthsBack&sensitivity=$sensitivity'),
+      Uri.parse('${ApiConfig.baseUrl}/analysis/anomaly-detection?months_back=$monthsBack&sensitivity=$sensitivity'),
       headers: headers,
     );
 
@@ -142,7 +142,7 @@ class AnalysisService {
     final headers = await _getHeaders();
     
     final response = await http.get(
-      Uri.parse('$baseUrl/analysis/ml-budget-recommendations?months_back=$monthsBack'),
+      Uri.parse('${ApiConfig.baseUrl}/analysis/ml-budget-recommendations?months_back=$monthsBack'),
       headers: headers,
     );
 
@@ -162,7 +162,7 @@ class AnalysisService {
     final headers = await _getHeaders();
     
     final response = await http.post(
-      Uri.parse('$baseUrl/analysis/what-if-scenarios?target_savings=$targetSavings&months_back=$monthsBack'),
+      Uri.parse('${ApiConfig.baseUrl}/analysis/what-if-scenarios?target_savings=$targetSavings&months_back=$monthsBack'),
       headers: headers,
     );
 
@@ -181,7 +181,7 @@ class AnalysisService {
     final headers = await _getHeaders();
     
     final response = await http.get(
-      Uri.parse('$baseUrl/analysis/spending-insights?months_back=$monthsBack'),
+      Uri.parse('${ApiConfig.baseUrl}/analysis/spending-insights?months_back=$monthsBack'),
       headers: headers,
     );
 

@@ -19,7 +19,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _loginCtrl = TextEditingController(); // username OR email
   final TextEditingController _pwCtrl = TextEditingController();
-  final AuthService _auth = const AuthService();
+  final AuthService _auth = AuthService();
 
   bool _isPasswordVisible = false;
   bool _isLoading = false;

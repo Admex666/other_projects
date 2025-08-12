@@ -104,3 +104,17 @@ async def root():
 @app.get("/health")
 async def health_check():
     return {"status": "healthy", "message": "API is running"}
+
+if __name__ == "__main__":
+    import uvicorn
+    import os
+    
+    # Render.com automatikusan beállítja a PORT környezeti változót
+    port = int(os.environ.get("PORT", 8000))
+    
+    uvicorn.run(
+        "main:app",
+        host="0.0.0.0",  # Fontos: 0.0.0.0 nem localhost!
+        port=port,
+        reload=False  # Production-ben ne legyen reload
+    )
