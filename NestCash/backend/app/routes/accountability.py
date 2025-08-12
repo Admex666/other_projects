@@ -210,6 +210,52 @@ async def create_checkin(
         created_at=checkin.created_at
     )
 
+# === CHECK-INS LEKÉRÉSE ===
+
+@router.get("/partnerships/{partnership_id}/checkins", response_model=List[CheckInRead])
+async def get_partnership_checkins(
+    partnership_id: str,
+    current_user: User = Depends(get_current_user),
+    limit: int = Query(10, ge=1, le=100),
+    user_id: Optional[str] = Query(None)
+):
+    """Partnership check-in-ek lekérése"""
+    # Partnership ellenőrzése
+    partnership = await Partnership.get(PydanticObjectId(partnership_id))
+    if not partnership:
+        raise HTTPException(status_code=404, detail="Partnership nem található")
+    
+    user_in_partnership = (
+        str(partnership.requester_id) == current_user.id or 
+        str(partnership.requested_id) == current_user.id
+    )
+    
+    if not user_in_partnership:
+        raise HTTPException(status_code=403, detail="Nincs jogosultság ehhez a partnership-hez")
+    
+    # Check-in-ek lekérése
+    query_filter = {"partnership_id": PydanticObjectId(partnership_id)}
+    
+    # Ha user_id meg van adva, csak az adott felhasználó check-in-jeit
+    if user_id:
+        query_filter["user_id"] = PydanticObjectId(user_id)
+    
+    checkins = await CheckIn.find(query_filter).sort(-CheckIn.created_at).limit(limit).to_list()
+    
+    return [
+        CheckInRead(
+            id=str(checkin.id),
+            partnership_id=str(checkin.partnership_id),
+            user_id=str(checkin.user_id),
+            date=checkin.date,
+            goals_met=checkin.goals_met,
+            progress_rating=checkin.progress_rating,
+            notes=checkin.notes,
+            created_at=checkin.created_at
+        )
+        for checkin in checkins
+    ]
+
 @router.post("/partnerships/{partnership_id}/respond", status_code=200)
 async def respond_to_partnership(
     partnership_id: str,

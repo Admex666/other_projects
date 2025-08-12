@@ -214,10 +214,19 @@ class AccountabilityProvider extends ChangeNotifier {
       _setLoading(false);
       notifyListeners();
     } catch (e) {
-      _setError(e.toString());
       _setLoading(false);
+      // Ellenőrizzük, hogy ez egy előfizetési hiba-e
+      if (e.toString().contains('csak Plus és Pro előfizetőknek elérhető') || 
+          e.toString().contains('403')) {
+        _setError('SUBSCRIPTION_REQUIRED');
+      } else {
+        _setError(e.toString());
+      }
     }
   }
+
+  // Új getter az előfizetési hiba ellenőrzéséhez
+  bool get isSubscriptionError => _error == 'SUBSCRIPTION_REQUIRED';
 
   Future<List<PartnerSuggestion>> searchUsers(String query, {int limit = 20}) async {
     try {
@@ -232,10 +241,12 @@ class AccountabilityProvider extends ChangeNotifier {
 
   Future<void> loadRecentCheckIns(String partnershipId, {int limit = 10}) async {
     try {
+      // Használjuk a service-t a check-in-ek betöltéséhez
       _recentCheckIns = await _service.getCheckIns(partnershipId, limit: limit);
       notifyListeners();
     } catch (e) {
       debugPrint('Error loading check-ins: $e');
+      _setError('Hiba a check-in-ek betöltésekor: $e');
     }
   }
 

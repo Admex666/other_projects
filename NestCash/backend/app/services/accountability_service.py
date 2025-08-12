@@ -341,3 +341,24 @@ class AccountabilityService:
             factors["timezone"] = "Azonos időzóna"
         
         return factors
+    
+    @staticmethod
+    async def get_checkins(
+        partnership_id: str,
+        user_id: Optional[str] = None,
+        limit: int = 10
+    ) -> List[CheckIn]:
+        """Check-in-ek lekérése egy partnership-hez"""
+        try:
+            query_filter = {"partnership_id": PydanticObjectId(partnership_id)}
+            
+            if user_id:
+                query_filter["user_id"] = PydanticObjectId(user_id)
+            
+            checkins = await CheckIn.find(query_filter).sort(-CheckIn.created_at).limit(limit).to_list()
+            
+            return checkins
+            
+        except Exception as e:
+            logger.error(f"Error getting checkins: {e}")
+            return []

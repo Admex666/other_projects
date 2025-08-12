@@ -6,6 +6,7 @@ import 'package:frontend/models/accountability_models.dart';
 import 'package:frontend/providers/accountability_provider.dart';
 import 'checkin_screen.dart';
 import 'package:frontend/services/auth_service.dart';
+import 'package:frontend/screens/messages/chat_screen.dart';
 
 class PartnershipDetailScreen extends StatefulWidget {
   final Partnership partnership;
@@ -364,6 +365,36 @@ class _PartnershipDetailScreenState extends State<PartnershipDetailScreen>
                     ),
                   ],
                 ),
+                
+                // Chat gomb hozzáadása
+                SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChatScreen(
+                            otherUserId: widget.partnership.partnerUserId,
+                            otherUsername: widget.partnership.partnerUsername,
+                          ),
+                        ),
+                      );
+                    },
+                    icon: Icon(Icons.chat_bubble_outline, size: 18),
+                    label: Text('Chat megnyitása'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Color(0xFF00D4AA),
+                      side: BorderSide(color: Color(0xFF00D4AA)),
+                      padding: EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                  ),
+                ),
+                
                 if (widget.partnership.acceptedAt != null) ...[
                   SizedBox(height: 16),
                   Text(
@@ -510,22 +541,53 @@ class _PartnershipDetailScreenState extends State<PartnershipDetailScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  checkIn.date,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      checkIn.date,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    // Felhasználó megjelenítése
+                    Consumer<AccountabilityProvider>(
+                      builder: (context, provider, child) {
+                        final isMyCheckIn = provider.currentUserId == checkIn.userId;
+                        return Container(
+                          padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: isMyCheckIn 
+                                ? Color(0xFF00D4AA).withOpacity(0.1)
+                                : Colors.orange.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            isMyCheckIn ? 'Te' : widget.partnership.partnerUsername,
+                            style: TextStyle(
+                              color: isMyCheckIn ? Color(0xFF00D4AA) : Colors.orange[700],
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
                 ),
                 if (checkIn.notes != null && checkIn.notes!.isNotEmpty)
-                  Text(
-                    checkIn.notes!,
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 12,
+                  Padding(
+                    padding: EdgeInsets.only(top: 4),
+                    child: Text(
+                      checkIn.notes!,
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 12,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
                   ),
               ],
             ),
@@ -619,13 +681,46 @@ class _PartnershipDetailScreenState extends State<PartnershipDetailScreen>
                 ),
                 SizedBox(width: 12),
                 Expanded(
-                  child: Text(
-                    checkIn.date,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        checkIn.date,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      // Felhasználó megjelenítése
+                      Consumer<AccountabilityProvider>(
+                        builder: (context, provider, child) {
+                          final isMyCheckIn = provider.currentUserId == checkIn.userId;
+                          return Row(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: isMyCheckIn 
+                                      ? Color(0xFF00D4AA).withOpacity(0.1)
+                                      : Colors.orange.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  isMyCheckIn ? 'Te' : widget.partnership.partnerUsername,
+                                  style: TextStyle(
+                                    color: isMyCheckIn ? Color(0xFF00D4AA) : Colors.orange[700],
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ),
                 Container(

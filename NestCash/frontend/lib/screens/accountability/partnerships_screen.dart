@@ -9,6 +9,8 @@ import 'partner_matching_screen.dart';
 import 'accountability_setup_screen.dart';
 import 'package:frontend/screens/forum/search_users_screen.dart';
 import 'partnership_detail_screen.dart';
+import 'package:frontend/widgets/subscription/upgrade_dialog.dart';
+import 'package:frontend/models/subscription.dart';
 
 class PartnershipsScreen extends StatefulWidget {
   const PartnershipsScreen({Key? key}) : super(key: key);
@@ -95,47 +97,67 @@ class _PartnershipsScreenState extends State<PartnershipsScreen>
                     flex: 2,
                     child: Consumer<SubscriptionProvider>(
                       builder: (context, subscription, child) {
-                        return Container(
-                          height: 44,
-                          child: ElevatedButton.icon(
-                            onPressed: () {
-                              if (subscription.isPlusOrHigher) {
+                        if (subscription.isPlusOrHigher) {
+                          return Container(
+                            height: 44,
+                            child: ElevatedButton.icon(
+                              onPressed: () {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => PartnerMatchingScreen(),
                                   ),
                                 ).then((_) => _loadData());
-                              } else {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => SearchUsersScreen(isPartnerSearch: true),
+                              },
+                              icon: Icon(Icons.auto_awesome, color: Colors.white, size: 20),
+                              label: Text(
+                                'Matching',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.orange,
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            ),
+                          );
+                        } else {
+                          return Container(
+                            height: 44,
+                            child: ElevatedButton.icon(
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => UpgradeDialog(
+                                    featureName: 'AI Matching',
+                                    description: 'Az AI alapú partner matching funkció Plus előfizetéssel érhető el.',
+                                    requiredTier: SubscriptionTier.plus,
                                   ),
-                                ).then((_) => _loadData());
-                              }
-                            },
-                            icon: Icon(
-                              subscription.isPlusOrHigher ? Icons.auto_awesome : Icons.search,
-                              color: Colors.white,
-                              size: 20,
-                            ),
-                            label: Text(
-                              subscription.isPlusOrHigher ? 'Matching' : 'Keresés',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
+                                );
+                              },
+                              icon: Icon(Icons.lock, color: Colors.white, size: 20),
+                              label: Text(
+                                'Matching',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.orange.withOpacity(0.7),
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
                               ),
                             ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.orange,
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                          ),
-                        );
+                          );
+                        }
                       },
                     ),
                   ),
