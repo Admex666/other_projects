@@ -2,10 +2,23 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/config/config.dart';
+import 'dart:async';
+import 'dart:io';
 
 class AuthService {
   // Secure storage instance
   static const _storage = FlutterSecureStorage();
+
+  // HTTP Client konfigurálása
+  static final http.Client _httpClient = http.Client();
+  
+  // HTTP Client konfigurálása SSL problémákhoz
+  static HttpClient _getHttpClient() {
+    HttpClient httpClient = HttpClient();
+    httpClient.badCertificateCallback = (X509Certificate cert, String host, int port) => true;
+    httpClient.connectionTimeout = const Duration(seconds: 10);
+    return httpClient;
+  }
 
   /// Regisztráció + automatikus bejelentkezés
   Future<bool> register(String username, String email, String password, {String? mobile,}) async {
@@ -32,28 +45,38 @@ class AuthService {
 
   /// Bejelentkezés
   Future<bool> login(String usernameOrEmail, String password) async {
-    print('🔐 Login attempt to: ${ApiConfig.baseUrl}/auth/token');
-    print('📧 Username/Email: $usernameOrEmail');
+    print('🔐 Starting login process...');
     
     try {
-      final resp = await http.post(
+      // Egyszerű GET teszt előbb
+      print('🧪 Testing simple GET request...');
+      final getResponse = await http.get(
+        Uri.parse('${ApiConfig.baseUrl}/health'),
+      ).timeout(const Duration(seconds: 5));
+      
+      print('✅ GET test successful: ${getResponse.statusCode}');
+      
+      // Most a POST kérés
+      print('🚀 Sending POST request...');
+      
+      final postData = 'username=$usernameOrEmail&password=$password&grant_type=password';
+      print('📤 POST data: $postData');
+      
+      final response = await http.post(
         Uri.parse('${ApiConfig.baseUrl}/auth/token'),
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
           'Accept': 'application/json',
         },
-        body: {
-          'username': usernameOrEmail,
-          'password': password,
-          'grant_type': 'password', // Ez volt a hiányzó rész!
-        },
-      );
+        body: postData,
+      ).timeout(const Duration(seconds: 10));
 
-      print('📤 Response status: ${resp.statusCode}');
-      print('📤 Response body: ${resp.body}');
+      print('📬 POST Response received!');
+      print('📊 Status: ${response.statusCode}');
+      print('📝 Body: ${response.body}');
 
-      if (resp.statusCode == 200) {
-        final data = jsonDecode(resp.body);
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
         final token = data['access_token'] as String?;
         final userId = data['user_id'] as String?;
         final username = data['username'] as String?;
@@ -66,15 +89,12 @@ class AuthService {
           if (username != null) {
             await _storage.write(key: 'username', value: username);
           }
-          print('✅ Login successful!');
           return true;
         }
-      } else {
-        print('❌ Login failed with status: ${resp.statusCode}');
-        print('❌ Error response: ${resp.body}');
       }
     } catch (e) {
-      print('🚨 Login exception: $e');
+      print('🚨 Exception caught: $e');
+      print('🚨 Exception type: ${e.runtimeType}');
     }
     
     return false;
