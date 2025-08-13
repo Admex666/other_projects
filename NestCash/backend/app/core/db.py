@@ -33,9 +33,10 @@ async def init_db():
     """App startup-kor meghívva: kapcsolat + Beanie init."""
     global _client, _db
     mongo_uri = os.getenv("MONGODB_URI")
-    print(f"MongoDB URI (first 20 chars): {mongo_uri[:20] if mongo_uri else 'None'}")  # Debug log
+    print(f"📊 MongoDB URI exists: {mongo_uri is not None}")
     
     if not mongo_uri:
+        print("❌ MONGODB_URI environment variable is not set")
         raise RuntimeError("MONGODB_URI environment variable is not set")
     
     _client = AsyncIOMotorClient(mongo_uri)
@@ -43,10 +44,15 @@ async def init_db():
     
     # Kapcsolat tesztelése
     try:
-        await _client.admin.command('ping')
-        print("MongoDB connection successful!")
+        result = await _client.admin.command('ping')
+        print(f"✅ MongoDB ping successful: {result}")
+        
+        # Users collection ellenőrzése
+        users_count = await _db.users.count_documents({})
+        print(f"📊 Users in database: {users_count}")
+        
     except Exception as e:
-        print(f"MongoDB connection failed: {e}")
+        print(f"❌ MongoDB connection failed: {e}")
         raise
     
     # Csak azokat a modelleket inicializáljuk, amiket Beanie-vel kezelünk
