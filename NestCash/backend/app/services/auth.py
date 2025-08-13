@@ -28,8 +28,11 @@ async def authenticate_user(login: str, password_plain: str):
     if stored.startswith("$2"):
         try:
             if not pwd_context.verify(password_plain, stored):
+                print(f"Bcrypt password verification failed for user: {login}")
                 return None
-        except Exception:
+            print(f"Bcrypt password verification successful for user: {login}")
+        except Exception as e:
+            print(f"Bcrypt verification exception: {e}")
             return None
         return user
 

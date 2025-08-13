@@ -69,7 +69,7 @@ class AuthService {
           'Accept': 'application/json',
         },
         body: postData,
-      ).timeout(const Duration(seconds: 10));
+      ).timeout(const Duration(seconds: 30));
 
       print('📬 POST Response received!');
       print('📊 Status: ${response.statusCode}');
