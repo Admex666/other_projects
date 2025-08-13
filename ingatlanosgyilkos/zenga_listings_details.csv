@@ -1,15 +1,6 @@
-url,title,price,area_m2,floor,rooms,location,description,type,total_floors,condition,heating,construction_year,balcony,energy_class,scrape_date
-https://www.zenga.hu/ingatlan/elado-panellakas-budapest-xv-kerulet/8592730?page=1&pos=1&cr=700,Budapest XV. kerület eladó panellakás 4 szobás: 77 millió Ft,77,68,földszint,4,"Eladó lakás, Budapest 15. ker.","Eladó Budapest XV kerületében, Újpalota parkos részén egy egyedi jellemző kell rendelkező felújított 68nm es lakás!A lakás 3 szobás és amerikai konyhás nappalival rendelkezik, az ingatlan a 1. emeleten helyezkedik el. A fűtés házközponti egyedi mérős. A hűtést két légkondicionáló biztosítja . A lakásban külön van a WC és fürdőszoba . Annak ellenére, hogy nincs erkély, a lakást egy hatalmas, zöld park veszi körül, amely szinte az erkély szerepét tölti be. Az ingatlan három szintes a részt vett a panelprogramban per-, teher- és igénymentes.A lakás környezete és elhelyezkedése egyszerűen kiváló. A Kőrakás park központi részén helyezkedik el, gyönyörű, zöld környezetben. Kiváló a közlekedés és a teljes infrastruktúra, a tömegközlekedési lehetőségek (például a 196, 96, 296, 196A, 130, 146, 7, 7E, 8E, 108E, 133E, 46-os buszok) mindössze 5 perc sétával elérhetőek. Szintén 5 percnyi sétával elérhető több bevásárlási lehetőség, mint az Aldi és a Lidl, továbbá a Pólus Center és az Ázsia Center (WorldMall). Az óvoda, iskola, gyógyszertár, drogéria, játszótér, teniszpálya és pingpongasztalok szintén a közelben találhatóak. A házzal szemben lévő erdő és a Szilas patak közelében tökéletes hosszú sétákhoz vagy kutyasétáltatáshoz. A parkolás ingyenes a ház körül, a lakáshoz pedig egy zárható tároló is tartozik a pincében. A lakók által gondozott kis kertek veszik körül az épületet, biztosítva a kellemes környezetet.Ez a lakás a tökéletes választás azok számára, akik a zöldövezeti nyugalmat, mégis a remek közlekedési lehetőségeket és infrastruktúrát keresik. Ne hagyja ki ezt a rendkívüli lehetőséget Újpalota legkeresettebb részén!
-""Amennyiben a Duna House által hirdetett bármelyik ingatlan felkeltette az érdeklődését, további információra van szüksége, meg szeretné tekinteni, abban is állok rendelkezésére. 
-MIBEN SEGÍTÜNK MÉG ÖNNEK?
-- Jogi háttér biztosításában, 
-- HITEL CENTRUM teljeskörű, bank semleges tanácsadásával és díjmentes hitel-ügyintézéssel, családtámogatási kedvezmények igénybevételének eligazodásában. FONTOS: NEMCSAK A NÁLUNK VÁSÁROLT INGATLANOK ESETÉBEN!
-- Energetikai tanúsítvány beszerzésében.""
-Jöjjön el,nézze meg és tegyen egy ajánlatot !!!
-Érd: Szovák Ferenc, Tel: 06/30 1845915, e-mail: szovak.ferenc@dh.hu
-
-Referencia szám: LK021605",Panellakás,,Távfűtés egyedi méréssel,,1970.0,,,2025-08-13
-https://www.zenga.hu/ingatlan/elado-teglalakas-budapest-xiv-kerulet-alsorakos/8628719?page=1&pos=2&cr=650,Budapest XIV. kerület eladó téglalakás 3 szobás: 98 millió Ft,98,63,földszint,3,"Eladó kertkapcsolatos új építésű lakás családi házas övezetben hőszivattyús fűtéssel, kocsibeállóval","Tervezze meg álmai otthonát egy modern, energiatakarékos lakásban!
+url,title,price,area_m2,floor,rooms,location,description,scrape_date,Típus,Szintek száma,Állapot,Fűtés,Építés éve,Terasz,Energetikai besorolás,Napelem,Erkély,Átlagos rezsiköltség
+https://www.zenga.hu/ingatlan/elado-panellakas-budapest-xv-kerulet/8592730?page=1&pos=1&cr=700,None,,,None,,nan,None,2025-08-13,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan
+https://www.zenga.hu/ingatlan/elado-teglalakas-budapest-xiv-kerulet-alsorakos/8628719?page=1&pos=2&cr=650,Budapest XIV. kerület eladó téglalakás 3 szobás: 98 millió Ft,98.0,63.0,földszint,3.0,nan,"Tervezze meg álmai otthonát egy modern, energiatakarékos lakásban!
 
 Eladó hivatalosan új építésű, gyakorlatban újjáépített földszinti lakás Budapest XIV. kerületében, csendes, családi házas övezetben, egy háromlakásos társasházban, amely közös kerttel rendelkezik. 2025 második negyedévben várható átadással és használatbavételi engedéllyel, CSOK Plusz hitelezhető – ideális otthon családoknak és pároknak!
 
@@ -29,8 +20,8 @@ Fedett kocsibeálló
 
 Ne hagyja ki ezt a kivételes lehetőséget! Alakítsa ki saját ízlése szerint új otthonát!
 
-Hívjon bizalommal a részletekért és a megtekintésért!",Téglalakás,2.0,Új építésű,Hőszivattyú,2025.0,14.0,A++,2025-08-13
-https://www.zenga.hu/ingatlan/elado-teglalakas-budapest-iv-kerulet-ujpest/8604171?page=1&pos=3&cr=601,"Budapest IV. kerület eladó téglalakás 2 szobás: 47,9 millió Ft",47,56,félemelet,2,Leírás,"Felújítandó, jól alakítható 2 szobás téglalakás eladó Újpesten, a Stop Shop közelében!
+Hívjon bizalommal a részletekért és a megtekintésért!",2025-08-13,Téglalakás,2,Új építésű,Hőszivattyú,2025,14 m²,A++,Nincs,nan,nan
+https://www.zenga.hu/ingatlan/elado-teglalakas-budapest-iv-kerulet-ujpest/8604171?page=1&pos=3&cr=601,"Budapest IV. kerület eladó téglalakás 2 szobás: 47,9 millió Ft",47.0,56.0,félemelet,2.0,"Budapest IV. kerület, Újpest","Felújítandó, jól alakítható 2 szobás téglalakás eladó Újpesten, a Stop Shop közelében!
 
 Eladásra kínálunk egy magasföldszinti, 2 szobás, felújítandó téglalakást Újpest csendes, zöldövezeti részén, a Stop Shop bevásárlóközpont közvetlen közelében.
 
@@ -62,12 +53,12 @@ Közlekedés:
 
 Tömegközlekedés: 25, 104, 104A, 121, 170, 196, 204, 270-es busz, M3-as metró, S70 és S71-es vonatok
 
-Autóval 10 percen belül elérhető az M0-s, M2-es, M3-as autópálya, valamint a Váci út is.",Téglalakás,1.0,Felújítandó,,,1960.0,Nem adta meg a hirdető,2025-08-13
-https://www.zenga.hu/ingatlan/elado-tarsashazi-lakas-budapest-vi-kerulet-nagykoruton-beluli-terulet/7899058?page=1&pos=4&cr=600,"Budapest VI. kerület eladó társasházi lakás 1+1 fél szobás: 72,72 millió Ft",72,45,2. emelet,1,Eladó Zichy utcai lakás,"Eladó a Budapest, VI. kerületi Zichy utcában egy ténylegesen 48 nm, a tulajdoni lapon 45 nm bruttó alapterületű, másfél szobás, felújított, galériázható, társasházi lakás 72.720.000 Fornt (182.250 Euro) irányáron.
+Autóval 10 percen belül elérhető az M0-s, M2-es, M3-as autópálya, valamint a Váci út is.",2025-08-13,Téglalakás,1,Felújítandó,Gáz (konvektor),1960,nan,nan,nan,nan,nan
+https://www.zenga.hu/ingatlan/elado-tarsashazi-lakas-budapest-vi-kerulet-nagykoruton-beluli-terulet/7899058?page=1&pos=4&cr=600,"Budapest VI. kerület eladó társasházi lakás 1+1 fél szobás: 72,72 millió Ft",72.0,45.0,2. emelet,1.0,"Budapest VI. kerület, Nagykörúton belüli terület","Eladó a Budapest, VI. kerületi Zichy utcában egy ténylegesen 48 nm, a tulajdoni lapon 45 nm bruttó alapterületű, másfél szobás, felújított, galériázható, társasházi lakás 72.720.000 Fornt (182.250 Euro) irányáron.
 A társasházban jelenleg kb. 2 millió Ft összegű felújítási alap létesült.
 A lakás kapcsán a havi a közös költség jelenleg 19.125,- Ft, amely már a vízfogyasztást is tartalmazza. 
-(A hideghívások helyett a további ingatlanközvetítő önkéntes jelentkezésére, ajánlatokra emailben van lehetőség.)",Társasházi lakás,3.0,Jó állapotú,,,,Nincs,2025-08-13
-https://www.zenga.hu/ingatlan/elado-teglalakas-budapest-viii-kerulet/8639628?page=1&pos=5&cr=600,"Budapest VIII. kerület eladó téglalakás 3 szobás: 73,9 millió Ft",73,66,1. emelet,3,"Eladó Lakás, Budapest 8. ker.","Az ingatlan modernizálásra szorul, azonban fekvésének és elosztásának köszönhetően elképesztő lehetőségeket rejt magában. A klasszikus nagypolgári hangulat, a nagy belmagasság és a széles utcára néző ablakok mind-mind olyan adottságok, melyekből állomotthon vagy akár prémium befektetés is vállhat.
+(A hideghívások helyett a további ingatlanközvetítő önkéntes jelentkezésére, ajánlatokra emailben van lehetőség.)",2025-08-13,Társasházi lakás,3,Jó állapotú,Gázkazán,nan,nan,G,Nincs,nan,nan
+https://www.zenga.hu/ingatlan/elado-teglalakas-budapest-viii-kerulet/8639628?page=1&pos=5&cr=600,"Budapest VIII. kerület eladó téglalakás 3 szobás: 73,9 millió Ft",73.0,66.0,1. emelet,3.0,Budapest VIII. kerület,"Az ingatlan modernizálásra szorul, azonban fekvésének és elosztásának köszönhetően elképesztő lehetőségeket rejt magában. A klasszikus nagypolgári hangulat, a nagy belmagasság és a széles utcára néző ablakok mind-mind olyan adottságok, melyekből állomotthon vagy akár prémium befektetés is vállhat.
 
 Főbb jellemzők:
 - kiváló lokáció: a város egyik legkeresettebb környékén, kulturális és közlekedési központok közelében,
@@ -79,8 +70,8 @@ Kérdés esetén keressen bizalommal!
 
  73900000 Ft
 
-Referencia szám: M307067-ZE",,,Gáz (konvektor),,1930.0,,,2025-08-13
-https://www.zenga.hu/ingatlan/elado-teglalakas-budapest-xiii-kerulet-vizafogo/8608201?page=1&pos=6&cr=600,Budapest XIII. kerület eladó téglalakás 2 szobás: 159 millió Ft,159,66,5. emelet,2,ÖRÖK DUNAI PANORÁMÁS LUXUSLAKÁS A MARINA PARTON,"?ÖRÖK DUNAI PANORÁMÁS LUXUSLAKÁS A MARINA PARTON – DÍJNYERTES ENTERIŐRREL!?
+Referencia szám: M307067-ZE",2025-08-13,Téglalakás,nan,Átlagos,Gáz (konvektor),1930,nan,F,nan,nan,nan
+https://www.zenga.hu/ingatlan/elado-teglalakas-budapest-xiii-kerulet-vizafogo/8608201?page=1&pos=6&cr=600,Budapest XIII. kerület eladó téglalakás 2 szobás: 159 millió Ft,159.0,66.0,5. emelet,2.0,"Budapest XIII. kerület, Vizafogó","?ÖRÖK DUNAI PANORÁMÁS LUXUSLAKÁS A MARINA PARTON – DÍJNYERTES ENTERIŐRREL!?
 Magazinlakás – Frissen megjelent az Otthon & Megoldások magazinban!
 
 ? Álomotthon elérhető közelségben! Budapest egyik legkedveltebb vízparti lakóövezetében, a Marina Part legnagyobb sétálóutcájában kínáljuk eladásra ezt az 5. emeleti, 66 m²-es + 12 m²-es teraszos, dél-nyugati tájolású luxuslakást örök panorámával a Dunára! 
@@ -126,8 +117,8 @@ Ne csak lakást vásároljon – válasszon életstílust a Duna partján! ?✨
 
 Irányár: 159 000 000 Ft
 ? Keressen bizalommal a megtekintésért!
-06706786688",Téglalakás,8.0,Újszerű,Mennyezeti hűtés-fűtés,2024.0,12.0,A+,2025-08-13
-https://www.zenga.hu/ingatlan/elado-panellakas-budapest-xix-kerulet-felso-kispest/8661974?page=1&pos=7&cr=595,"Budapest XIX. kerület eladó panellakás 2+2 fél szobás: 79,9 millió Ft",79,67,2. emelet,2,Teljes bútorzattal! - Felújított 4 szobás lakás a XIX. kerületben ➖kivételes lehetőség!,"Szeretett otthonunk új lakóit várja.
+06706786688",2025-08-13,Téglalakás,8,Újszerű,Mennyezeti hűtés-fűtés,2024,nan,A+,nan,12 m²,nan
+https://www.zenga.hu/ingatlan/elado-panellakas-budapest-xix-kerulet-felso-kispest/8661974?page=1&pos=7&cr=595,"Budapest XIX. kerület eladó panellakás 2+2 fél szobás: 79,9 millió Ft",79.0,67.0,2. emelet,2.0,"Budapest XIX. kerület, Felső Kispest","Szeretett otthonunk új lakóit várja.
 
 A 67 nm-es 2+2 fél szobás amerikai konyhás 2. emeleti lakás a kerület egyik legjobb részén (Bem utcában), központi helyen, mégis csendes környezetben helyezkedik el. Bevásárló lehetőségek (Spar, kispesti piac, Köki, Lidl, Aldi, Shopmark) gyógyszertár, önkormányzat, orvosi rendelő, iskola, óvoda, uszoda mind sétatávolságra, a Határ úti metró is villamossal mindössze 10 perc alatt elérhető. 
 
@@ -145,8 +136,8 @@ Ide tényleg csak költözni kell, idén tavasszal a szobák új festést is kap
 
 ✨✨✨Az ár alkuképes, de alku nélkül a lakás akár teljes berendezéssel együtt is eladó.
 
-Ingatlanos segítségét köszönjük, nem kérjük‼️‼️",Panellakás,5.0,Újszerű,Távfűtés egyedi méréssel,1984.0,,Nincs,2025-08-13
-https://www.zenga.hu/ingatlan/elado-teglalakas-budapest-vii-kerulet-ligetvaros/8655552?page=1&pos=8&cr=575,Budapest VII. kerület eladó téglalakás 3+1 fél szobás: 109 millió Ft,109,101,3. emelet,3,"Frissen felújított, körbenapozott saroklakás kitűnő helyen","Felújított, körbenapozott, SAROKLAKÁS lakás a VII. kerületben, a Városligetnél, az ország infrastrukturálisan legjobban ellátott területén.
+Ingatlanos segítségét köszönjük, nem kérjük‼️‼️",2025-08-13,Panellakás,5,Újszerű,Távfűtés egyedi méréssel,1984,nan,nan,Nincs,nan,nan
+https://www.zenga.hu/ingatlan/elado-teglalakas-budapest-vii-kerulet-ligetvaros/8655552?page=1&pos=8&cr=575,Budapest VII. kerület eladó téglalakás 3+1 fél szobás: 109 millió Ft,109.0,101.0,3. emelet,3.0,"Budapest VII. kerület, Ligetváros, István utca 41-43.","Felújított, körbenapozott, SAROKLAKÁS lakás a VII. kerületben, a Városligetnél, az ország infrastrukturálisan legjobban ellátott területén.
 
 Ha fontos Önnek vagy befektetőként bérlőjének, hogy a pesti oldal egyik legtisztább levegőjű és élettel teli környezetében, a Városligetnél és Hősök terénél / a Keleti-pályaudvarnál legyen lakása akkor ezt ajánljuk szíves figyelmébe.
 
@@ -185,8 +176,8 @@ ELÉRHETŐ SZOLGÁLTATÁSOK („Itt minden van.”):
 
 INGATLANOSOKNAK!
 Kérem, ha hirdetni szeretné ne hívjon, abban nem tud segíteni.
-Amennyiben viszont KONKRÉT érdeklődője van, akkor várom jelentkezését!",Téglalakás,5.0,Felújított,,,,38 000 Ft/hó,2025-08-13
-https://www.zenga.hu/ingatlan/elado-teglalakas-budapest-vii-kerulet/8656053?page=1&pos=9&cr=550,Budapest VII. kerület eladó téglalakás 2 szobás: 55 millió Ft,55,45,földszint,2,"Eladó Lakás, Budapest 7. ker.","Eladó egy 45 nm-es, földszinti, teljeskörűen felújított, napsütötte időben világos lakás a város egyik legkedveltebb részén, a Városligettől mindössze 3 perc sétára, Ligetváros egyik legtisztább levegőjű utcájában! 
+Amennyiben viszont KONKRÉT érdeklődője van, akkor várom jelentkezését!",2025-08-13,Téglalakás,5,Felújított,Gázkazán,nan,nan,nan,nan,nan,38 000 Ft/hó
+https://www.zenga.hu/ingatlan/elado-teglalakas-budapest-vii-kerulet/8656053?page=1&pos=9&cr=550,Budapest VII. kerület eladó téglalakás 2 szobás: 55 millió Ft,55.0,45.0,földszint,2.0,Budapest VII. kerület,"Eladó egy 45 nm-es, földszinti, teljeskörűen felújított, napsütötte időben világos lakás a város egyik legkedveltebb részén, a Városligettől mindössze 3 perc sétára, Ligetváros egyik legtisztább levegőjű utcájában! 
 
 A lakás 2 különbejáratú szobával, hatalmas ablakokkal, ide tervezett és beépített konyhával, kondenzációs kombi gázkazán fűtéssel rendelkezik egy frissen felújított társasházban. Az ablakok egy hátsó, zárt, tiszta és világos udvarra néznek. Az ingatlan így egy csendes oázis a lüktető városban! 
 
@@ -194,4 +185,32 @@ Elhelyezkedése kiváló, a Múzeum negyed a Városligetben, éttermek, boltok, 
 
 Ha szeretne egy igényes, azonnal költözhető lakást Budapest egyik legjobb környékén, ez a lehetőség Önnek szól!
 
-Referencia szám: M307003",Téglalakás,,Gázkazán,,1920.0,,,2025-08-13
+Referencia szám: M307003",2025-08-13,Téglalakás,nan,Felújított,Gázkazán,1920,nan,D,nan,nan,nan
+https://www.zenga.hu/ingatlan/elado-teglalakas-budapest-xiii-kerulet/8643398?page=1&pos=10&cr=550,Budapest XIII. kerület eladó téglalakás 2 szobás: 99 millió Ft,99.0,61.0,1. emelet,2.0,Budapest XIII. kerület,"Eladó különleges polgári lakás Újlipótváros szívében!
+Főbb jellemzők: Lokáció: Budapest XIII. kerület, Csanády utca. Méret: 61 m² + 6 m² erkély. Elosztás: 2 szoba, konyha, fürdőszoba, vendég WC, erkély. Kilátás: Ősfás, parkosított belső kertre néz. Emelet: 1. emelet, van lift. Berendezés: Eredeti állapotú, teljesen korhű, akár bútorzattal együtt eladó. Különlegesség: Szenes Iván, a híres magyar zeneszerző egykori lakása – itt születtek művei, itt gyűjtött ihletet . Klasszikus polgári hangulat, természetközeli megoldások A lakás időtálló eleganciát sugároz, megőrizve eredeti karakterét. A beépített bútorok és falburkolatok kizárólag természetes mediterrán fából készültek. A tágas nappaliból erkély nyílik, ahonnan a csendes, gondozott belső kertre lehet kilépni. A hálószobához egy privát fürdőszoba kapcsolódik káddal, zuhanyzóval és külön toalettel.
+ Kiváló lokáció, remek közlekedéssel. A lakás Budapest egyik legkedveltebb részén található, Újlipótvárosban, ahol, a környék tömegközlekedési szempontból is kiemelkedő, néhány perces sétával elérhetők: M3-as metró (Lehel tér, Nyugati pályaudvar) 4-6-os villamos (Nyugati tér) 75-ös és 76-os trolibuszok Buszok és éjszakai járatok Vonatkapcsolat a Nyugati pályaudvarról XIII. kerület – biztos ingatlanbefektetés. A XIII. kerület az egyik legdinamikusabban fejlődő városrész, ahol az ingatlanok értéke folyamatosan növekszik. Újlipótváros különösen keresett a polgári lakásai, kiváló infrastruktúrája és egyedi hangulata miatt. A közelben számtalan kávézó, étterem, bolt és kulturális lehetőség található, így az itt vásárolt ingatlan értékálló befektetés mind kiadás, mind saját célú használat szempontjából. Ne hagyja ki ezt az egyedülálló lehetőséget! Nem mindennap adódik alkalom arra, hogy egy híres magyar művész egykori otthonát vásárolják meg – ráadásul egy biztos értéktartó befektetésként is!
+
+További információkért keressen bizalommal.
+
+Referencia szám: LK066325",2025-08-13,Téglalakás,nan,Jó állapotú,Távfűtés,1950,nan,nan,nan,nan,nan
+https://www.zenga.hu/ingatlan/elado-teglalakas-budapest-xiv-kerulet-alsorakos/8654229?page=1&pos=11&cr=550,Budapest XIV. kerület eladó téglalakás 2 szobás: 94 millió Ft,94.0,48.0,1. emelet,2.0,"Budapest XIV. kerület, Alsórákos","HAMAROSAN KÖLTÖZHETŐ!
+AJÁNDÉK LAKBERENDEZŐI KONZULTÁCIÓVAL!
+
+Zugló egyik legszebb városrészén, kínálunk megvételre amerikai konyhás nappali + hálós, 22m2-es erkéllyel rendelkezőlakást egy exkluzív, új építésű lakóparkban.
+Várható átadás: 2025. október
+
+A vásárláshoz szükséges minimum önerő mértéke: 50%
+
+A lakás kifejezetten elegáns burkolatokkal, valamint zuhanyfülkés fürdőszobával készült; melyhez igény szerint megvásárolható a konyhabútor, mely már a lakásban van.
+
+A lakás fekvése déli, viszont a társasház kialakításának köszönhetően a terasz végig fedett, így a nyári napsütés nem közvetlenül melegíti fel a lakást, azonban még is kifejezetten világos.
+
+A hőkomfortról környezetbarát levegős-hőszivattyús rendszer gondoskodik, amely rejtett mennyezeti hűtő-fűtő megoldással biztosítja az egyenletes hőmérsékletet. A lakás egyedi mérőórával felszerelt, a meleg víz előállítását központi gépészeti rendszerek biztosítják. A közös területek energiaellátását napelemek segítik, így az épületek fenntartható és költséghatékony működést garantálnak.
+
+Teremgarázshely beállóhely (8,9 M Ft-tól) valamint tároló (850 ezer Ft/nm-től) vásárlása opcionális.
+
+Irodánk teljes körű hitelügyintézéssel áll ügyfelei rendelkezésére. Előzetes hitelbírálat és kalkuláció készítése 10 percen belül.
+
+A lakás új tulajdonosát egy egyórás, személyre szabott lakberendezői konzultációval ajándékozzuk meg, hogy az otthon valóban Önre szabott legyen.
+
+További részletekről és a fizetési konstrukciókról értékesítő kollégáink szívesen tájékoztatják.",2025-08-13,Téglalakás,5,Új építésű,Hőszivattyú,2025,nan,A+,nan,22 m²,nan
