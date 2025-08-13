@@ -105,28 +105,6 @@ async def root():
 async def health_check():
     return {"status": "healthy", "message": "API is running"}
 
-from core.db import get_db
-@app.get("/test-db")
-async def test_db():
-    try:
-        db = get_db()
-        users_count = await db.users.count_documents({})
-        
-        # Egy konkrét user keresése
-        test_user = await db.users.find_one({"username": "user22"})
-        
-        return {
-            "db_connected": True,
-            "users_count": users_count,
-            "test_user_exists": test_user is not None,
-            "test_user_id": str(test_user["_id"]) if test_user else None
-        }
-    except Exception as e:
-        return {
-            "db_connected": False,
-            "error": str(e)
-        }
-
 if __name__ == "__main__":
     import uvicorn
     import os
