@@ -4,12 +4,12 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../models/limit.dart';
+import 'package:frontend/config/config.dart';
 
 class LimitService {
   static const _storage = FlutterSecureStorage();
-  final String baseUrl;
 
-  const LimitService({this.baseUrl = 'http://10.0.2.2:8000'});
+  const LimitService();
 
   Future<String?> _getToken() async {
     return await _storage.read(key: 'token');
@@ -32,7 +32,7 @@ class LimitService {
       if (activeOnly) queryParams['active_only'] = 'true';
       if (type != null) queryParams['limit_type'] = type.value;
       
-      final uri = Uri.parse('$baseUrl/limits').replace(queryParameters: queryParams);
+      final uri = Uri.parse('${ApiConfig.baseUrl}/limits').replace(queryParameters: queryParams);
       final response = await http.get(uri, headers: headers);
 
       if (response.statusCode == 200) {
@@ -55,7 +55,7 @@ class LimitService {
     try {
       final headers = await _getHeaders();
       final response = await http.post(
-        Uri.parse('$baseUrl/limits/'),
+        Uri.parse('${ApiConfig.baseUrl}/limits/'),
         headers: headers,
         body: jsonEncode(limitData),
       );
@@ -78,7 +78,7 @@ class LimitService {
     try {
       final headers = await _getHeaders();
       final response = await http.put(
-        Uri.parse('$baseUrl/limits/$limitId'),
+        Uri.parse('${ApiConfig.baseUrl}/limits/$limitId'),
         headers: headers,
         body: jsonEncode(updateData),
       );
@@ -101,7 +101,7 @@ class LimitService {
     try {
       final headers = await _getHeaders();
       final response = await http.delete(
-        Uri.parse('$baseUrl/limits/$limitId'),
+        Uri.parse('${ApiConfig.baseUrl}/limits/$limitId'),
         headers: headers,
       );
 
@@ -128,7 +128,7 @@ class LimitService {
         if (subAccountName != null) 'sub_account_name': subAccountName,
       };
 
-      final uri = Uri.parse('$baseUrl/limits/check').replace(queryParameters: queryParams);
+      final uri = Uri.parse('${ApiConfig.baseUrl}/limits/check').replace(queryParameters: queryParams);
       final response = await http.post(uri, headers: headers);
 
       if (response.statusCode == 200) {
@@ -150,7 +150,7 @@ class LimitService {
     try {
       final headers = await _getHeaders();
       final response = await http.get(
-        Uri.parse('$baseUrl/limits/status/overview'),
+        Uri.parse('${ApiConfig.baseUrl}/limits/status/overview'),
         headers: headers,
       );
 
@@ -171,7 +171,7 @@ class LimitService {
     try {
       final headers = await _getHeaders();
       final response = await http.get(
-        Uri.parse('$baseUrl/limits/$limitId'),
+        Uri.parse('${ApiConfig.baseUrl}/limits/$limitId'),
         headers: headers,
       );
 

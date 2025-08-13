@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'package:frontend/models/category.dart';
 import 'package:frontend/services/category_service.dart';
 import 'package:intl/intl.dart';
+import 'package:frontend/config/config.dart';
 
 class EditTransactionScreen extends StatefulWidget {
   final String userId;
@@ -103,7 +104,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
       }
 
       final response = await http.get(
-        Uri.parse('http://10.0.2.2:8000/accounts/me'),
+        Uri.parse('${ApiConfig.baseUrl}/accounts/me'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',

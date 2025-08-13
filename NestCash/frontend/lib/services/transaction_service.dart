@@ -2,12 +2,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:frontend/config/config.dart';
 
 class TransactionService {
   static const _storage = FlutterSecureStorage();
-  final String baseUrl;
 
-  const TransactionService({this.baseUrl = 'http://10.0.2.2:8000'});
+  const TransactionService();
 
   Future<String?> _getToken() async {
     return await _storage.read(key: 'token');
@@ -42,7 +42,7 @@ class TransactionService {
         queryParams['end_date'] = _formatDate(endDate);
       }
 
-      final uri = Uri.parse('$baseUrl/transactions/').replace(
+      final uri = Uri.parse('${ApiConfig.baseUrl}/transactions/').replace(
         queryParameters: queryParams.isNotEmpty ? queryParams : null,
       );
 
@@ -114,7 +114,7 @@ class TransactionService {
       };
 
       final response = await http.post(
-        Uri.parse('$baseUrl/transactions/'),
+        Uri.parse('${ApiConfig.baseUrl}/transactions/'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -141,7 +141,7 @@ class TransactionService {
       if (token == null) throw Exception('Nincs autentikációs token');
 
       final response = await http.put(
-        Uri.parse('$baseUrl/transactions/$transactionId'),
+        Uri.parse('${ApiConfig.baseUrl}/transactions/$transactionId'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -167,7 +167,7 @@ class TransactionService {
       if (token == null) throw Exception('Not authenticated');
 
       final response = await http.delete(
-        Uri.parse('$baseUrl/transactions/$transactionId'),
+        Uri.parse('${ApiConfig.baseUrl}/transactions/$transactionId'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -198,7 +198,7 @@ class TransactionService {
 
       // Először próbáljuk a /summary endpoint-ot
       try {
-        final summaryUri = Uri.parse('$baseUrl/transactions/summary').replace(
+        final summaryUri = Uri.parse('${ApiConfig.baseUrl}/transactions/summary').replace(
           queryParameters: {
             'start_date': _formatDate(startDate),
             'end_date': _formatDate(endDate),
@@ -227,7 +227,7 @@ class TransactionService {
 
       // Ha a /summary nem működik, próbáljuk a /stats endpoint-ot
       try {
-        final statsUri = Uri.parse('$baseUrl/transactions/stats').replace(
+        final statsUri = Uri.parse('${ApiConfig.baseUrl}/transactions/stats').replace(
           queryParameters: {
             'start_date': _formatDate(startDate),
             'end_date': _formatDate(endDate),

@@ -3,12 +3,12 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:frontend/services/auth_service.dart';
 import 'package:frontend/models/forum_models.dart';
+import 'package:frontend/config/config.dart';
 
 class ForumService {
   final AuthService _authService = AuthService();
-  final String baseUrl;
 
-  ForumService({this.baseUrl = 'http://10.0.2.2:8000'});
+  ForumService();
 
   Future<Map<String, String>> _getHeaders() async {
     final token = await _authService.getToken();
@@ -39,7 +39,7 @@ class ForumService {
       if (category != null) 'category': category,
     };
 
-    final uri = Uri.parse('$baseUrl/forum/posts/').replace(queryParameters: queryParams);
+    final uri = Uri.parse('${ApiConfig.baseUrl}/forum/posts/').replace(queryParameters: queryParams);
     final response = await http.get(uri, headers: await _getHeaders());
 
     if (response.statusCode == 200) {
@@ -55,7 +55,7 @@ class ForumService {
     String privacyLevel = 'public',
   }) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/forum/posts/'),
+      Uri.parse('${ApiConfig.baseUrl}/forum/posts/'),
       headers: await _getHeaders(),
       body: jsonEncode({
         'title': title,
@@ -73,7 +73,7 @@ class ForumService {
 
   Future<Map<String, dynamic>> getPost(String postId) async {
     final response = await http.get(
-      Uri.parse('$baseUrl/forum/posts/$postId'),
+      Uri.parse('${ApiConfig.baseUrl}/forum/posts/$postId'),
       headers: await _getHeaders(),
     );
 
@@ -85,7 +85,7 @@ class ForumService {
 
   Future<void> deletePost(String postId) async {
     final response = await http.delete(
-      Uri.parse('$baseUrl/forum/posts/$postId'),
+      Uri.parse('${ApiConfig.baseUrl}/forum/posts/$postId'),
       headers: await _getHeaders(),
     );
 
@@ -97,7 +97,7 @@ class ForumService {
   // === LIKES ===
   Future<void> toggleLike(String postId) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/forum/posts/$postId/like'),
+      Uri.parse('${ApiConfig.baseUrl}/forum/posts/$postId/like'),
       headers: await _getHeaders(),
     );
 
@@ -113,7 +113,7 @@ class ForumService {
       'limit': limit.toString(),
     };
 
-    final uri = Uri.parse('$baseUrl/forum/posts/$postId/comments').replace(queryParameters: queryParams);
+    final uri = Uri.parse('${ApiConfig.baseUrl}/forum/posts/$postId/comments').replace(queryParameters: queryParams);
     final response = await http.get(uri, headers: await _getHeaders());
 
     if (response.statusCode == 200) {
@@ -124,7 +124,7 @@ class ForumService {
 
   Future<Map<String, dynamic>> createComment(String postId, String content) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/forum/posts/$postId/comments'),
+      Uri.parse('${ApiConfig.baseUrl}/forum/posts/$postId/comments'),
       headers: await _getHeaders(),
       body: jsonEncode({'content': content}),
     );
@@ -137,7 +137,7 @@ class ForumService {
 
   Future<void> deleteComment(String commentId) async {
     final response = await http.delete(
-      Uri.parse('$baseUrl/forum/comments/$commentId'),
+      Uri.parse('${ApiConfig.baseUrl}/forum/comments/$commentId'),
       headers: await _getHeaders(),
     );
 
@@ -154,7 +154,7 @@ class ForumService {
       'limit': limit.toString(),
     };
 
-    final uri = Uri.parse('$baseUrl/forum/follow/search').replace(queryParameters: queryParams);
+    final uri = Uri.parse('${ApiConfig.baseUrl}/forum/follow/search').replace(queryParameters: queryParams);
     
     try {
       final response = await http.get(
@@ -204,7 +204,7 @@ class ForumService {
       'limit': limit.toString(),
     };
 
-    final uri = Uri.parse('$baseUrl/forum/follow/following').replace(queryParameters: queryParams);
+    final uri = Uri.parse('${ApiConfig.baseUrl}/forum/follow/following').replace(queryParameters: queryParams);
     final response = await http.get(uri, headers: await _getHeaders());
 
     if (response.statusCode == 200) {
@@ -258,7 +258,7 @@ class ForumService {
       'limit': limit.toString(),
     };
 
-    final uri = Uri.parse('$baseUrl/forum/follow/followers').replace(queryParameters: queryParams);
+    final uri = Uri.parse('${ApiConfig.baseUrl}/forum/follow/followers').replace(queryParameters: queryParams);
     final response = await http.get(uri, headers: await _getHeaders());
 
     if (response.statusCode == 200) {
@@ -308,7 +308,7 @@ class ForumService {
 
   Future<void> followUser(String userId) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/forum/follow/users/$userId'),
+      Uri.parse('${ApiConfig.baseUrl}/forum/follow/users/$userId'),
       headers: await _getHeaders(),
     );
 
@@ -319,7 +319,7 @@ class ForumService {
 
   Future<void> unfollowUser(String userId) async {
     final response = await http.delete(
-      Uri.parse('$baseUrl/forum/follow/users/$userId'),
+      Uri.parse('${ApiConfig.baseUrl}/forum/follow/users/$userId'),
       headers: await _getHeaders(),
     );
 
@@ -335,7 +335,7 @@ class ForumService {
       'limit': limit.toString(),
     };
 
-    final uri = Uri.parse('$baseUrl/forum/notifications/').replace(queryParameters: queryParams);
+    final uri = Uri.parse('${ApiConfig.baseUrl}/forum/notifications/').replace(queryParameters: queryParams);
     final response = await http.get(uri, headers: await _getHeaders());
 
     if (response.statusCode == 200) {
@@ -346,7 +346,7 @@ class ForumService {
 
   Future<void> markNotificationAsRead(String notificationId) async {
     final response = await http.put(
-      Uri.parse('$baseUrl/forum/notifications/$notificationId/read'),
+      Uri.parse('${ApiConfig.baseUrl}/forum/notifications/$notificationId/read'),
       headers: await _getHeaders(),
     );
 
@@ -357,7 +357,7 @@ class ForumService {
 
   Future<void> markAllNotificationsAsRead() async {
     final response = await http.put(
-      Uri.parse('$baseUrl/forum/notifications/mark-all-read'),
+      Uri.parse('${ApiConfig.baseUrl}/forum/notifications/mark-all-read'),
       headers: await _getHeaders(),
     );
 
@@ -368,7 +368,7 @@ class ForumService {
 
   Future<void> deleteNotification(String notificationId) async {
     final response = await http.delete(
-      Uri.parse('$baseUrl/forum/notifications/$notificationId'),
+      Uri.parse('${ApiConfig.baseUrl}/forum/notifications/$notificationId'),
       headers: await _getHeaders(),
     );
 
@@ -379,7 +379,7 @@ class ForumService {
 
   Future<int> getUnreadNotificationCount() async {
     final response = await http.get(
-      Uri.parse('$baseUrl/forum/notifications/unread-count'),
+      Uri.parse('${ApiConfig.baseUrl}/forum/notifications/unread-count'),
       headers: await _getHeaders(),
     );
 
@@ -393,7 +393,7 @@ class ForumService {
   // === SETTINGS ===
   Future<Map<String, dynamic>> getForumSettings() async {
     final response = await http.get(
-      Uri.parse('$baseUrl/forum/settings/'),
+      Uri.parse('${ApiConfig.baseUrl}/forum/settings/'),
       headers: await _getHeaders(),
     );
 
@@ -405,7 +405,7 @@ class ForumService {
 
   Future<Map<String, dynamic>> getForumStats() async {
     final response = await http.get(
-      Uri.parse('$baseUrl/forum/settings/stats'),
+      Uri.parse('${ApiConfig.baseUrl}/forum/settings/stats'),
       headers: await _getHeaders(),
     );
 
@@ -424,7 +424,7 @@ class ForumService {
     if (notificationsEnabled != null) body['notifications_enabled'] = notificationsEnabled;
 
     final response = await http.put(
-      Uri.parse('$baseUrl/forum/settings/'),
+      Uri.parse('${ApiConfig.baseUrl}/forum/settings/'),
       headers: await _getHeaders(),
       body: jsonEncode(body),
     );

@@ -2,12 +2,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:frontend/config/config.dart';
 
 class BadgeService {
   static const _storage = FlutterSecureStorage();
-  final String baseUrl;
 
-  const BadgeService({this.baseUrl = 'http://10.0.2.2:8000'});
+  const BadgeService();
 
   Future<String?> getToken() async {
     return _storage.read(key: 'token');
@@ -18,7 +18,7 @@ class BadgeService {
     final token = await getToken();
     if (token == null) return null;
 
-    String url = '$baseUrl/badges/my-badges';
+    String url = '${ApiConfig.baseUrl}/badges/my-badges';
     List<String> queryParams = [];
     
     if (category != null) queryParams.add('category=$category');
@@ -54,7 +54,7 @@ class BadgeService {
 
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/badges/progress'),
+        Uri.parse('${ApiConfig.baseUrl}/badges/progress'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -78,7 +78,7 @@ class BadgeService {
 
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/badges/stats'),
+        Uri.parse('${ApiConfig.baseUrl}/badges/stats'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -106,7 +106,7 @@ class BadgeService {
 
     try {
       final response = await http.put(
-        Uri.parse('$baseUrl/badges/my-badges/$badgeId'),
+        Uri.parse('${ApiConfig.baseUrl}/badges/my-badges/$badgeId'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -128,7 +128,7 @@ class BadgeService {
 
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/badges/categories/$category/stats'),
+        Uri.parse('${ApiConfig.baseUrl}/badges/categories/$category/stats'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -152,7 +152,7 @@ class BadgeService {
 
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/badges/leaderboard?limit=$limit'),
+        Uri.parse('${ApiConfig.baseUrl}/badges/leaderboard?limit=$limit'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',

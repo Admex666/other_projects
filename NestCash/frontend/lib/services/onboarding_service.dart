@@ -4,12 +4,12 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../models/onboarding_model.dart';
+import 'package:frontend/config/config.dart';
 
 class OnboardingService {
   static const _storage = FlutterSecureStorage();
-  final String baseUrl;
 
-  const OnboardingService({this.baseUrl = 'http://10.0.2.2:8000'});
+  const OnboardingService();
 
   Future<String?> _getToken() async {
     return await _storage.read(key: 'token');
@@ -28,7 +28,7 @@ class OnboardingService {
     try {
       final headers = await _getHeaders();
       final response = await http.get(
-        Uri.parse('$baseUrl/onboarding/status'),
+        Uri.parse('${ApiConfig.baseUrl}/onboarding/status'),
         headers: headers,
       );
 
@@ -53,7 +53,7 @@ class OnboardingService {
       final request = UpdateOnboardingStepRequest(step: stepNumber, data: data);
       
       final response = await http.post(
-        Uri.parse('$baseUrl/onboarding/step/$stepNumber'),
+        Uri.parse('${ApiConfig.baseUrl}/onboarding/step/$stepNumber'),
         headers: headers,
         body: jsonEncode(request.toJson()),
       );
@@ -79,7 +79,7 @@ class OnboardingService {
       final request = UserIntentSelection(intents: intents);
       
       final response = await http.post(
-        Uri.parse('$baseUrl/onboarding/intents'),
+        Uri.parse('${ApiConfig.baseUrl}/onboarding/intents'),
         headers: headers,
         body: jsonEncode(request.toJson()),
       );
@@ -104,7 +104,7 @@ class OnboardingService {
       final headers = await _getHeaders();
       
       final response = await http.post(
-        Uri.parse('$baseUrl/onboarding/basic-setup'),
+        Uri.parse('${ApiConfig.baseUrl}/onboarding/basic-setup'),
         headers: headers,
         body: jsonEncode(setupData.toJson()),
       );
@@ -128,7 +128,7 @@ class OnboardingService {
     try {
       final headers = await _getHeaders();
       final response = await http.get(
-        Uri.parse('$baseUrl/onboarding/tutorial/${userType.value}'),
+        Uri.parse('${ApiConfig.baseUrl}/onboarding/tutorial/${userType.value}'),
         headers: headers,
       );
 
@@ -152,7 +152,7 @@ class OnboardingService {
       final headers = await _getHeaders();
       
       final response = await http.post(
-        Uri.parse('$baseUrl/onboarding/complete'),
+        Uri.parse('${ApiConfig.baseUrl}/onboarding/complete'),
         headers: headers,
       );
 
@@ -176,7 +176,7 @@ class OnboardingService {
       final headers = await _getHeaders();
       
       final response = await http.post(
-        Uri.parse('$baseUrl/onboarding/restart'),
+        Uri.parse('${ApiConfig.baseUrl}/onboarding/restart'),
         headers: headers,
       );
 
@@ -199,7 +199,7 @@ class OnboardingService {
     try {
       final headers = await _getHeaders();
       final response = await http.get(
-        Uri.parse('$baseUrl/onboarding/user-types'),
+        Uri.parse('${ApiConfig.baseUrl}/onboarding/user-types'),
         headers: headers,
       );
 

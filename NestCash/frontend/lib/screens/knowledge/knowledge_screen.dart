@@ -10,6 +10,7 @@ import '../../widgets/subscription/feature_locked_widget.dart';
 import '../../models/subscription.dart';
 import '../../utils/subscription_utils.dart';
 import '../../widgets/subscription/subscription_widgets.dart';
+import 'package:frontend/config/config.dart'; 
 
 class KnowledgeScreen extends StatefulWidget {
   final String userId;
@@ -44,7 +45,7 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
 
     try {
       final response = await http.get(
-        Uri.parse('http://10.0.2.2:8000/knowledge/daily-stats'),
+        Uri.parse('${ApiConfig.baseUrl}/knowledge/daily-stats'),
         headers: {'Authorization': 'Bearer $token'},
       );
 
@@ -127,7 +128,7 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
       return;
     }
     
-    String url = 'http://10.0.2.2:8000/knowledge/categories';
+    String url = '${ApiConfig.baseUrl}/knowledge/categories';
     if (selectedDifficulty != null) {
       url += '?difficulty=$selectedDifficulty';
     }
@@ -167,7 +168,7 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
 
     try {
       final response = await http.get(
-        Uri.parse('http://10.0.2.2:8000/knowledge/stats'),
+        Uri.parse('${ApiConfig.baseUrl}/knowledge/stats'),
         headers: {'Authorization': 'Bearer $token'},
       );
 
@@ -205,7 +206,7 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8000/knowledge/daily-challenge'),
+        Uri.parse('${ApiConfig.baseUrl}/knowledge/daily-challenge'),
         headers: {'Authorization': 'Bearer $token'},
       );
 

@@ -8,6 +8,7 @@ import 'package:frontend/services/category_service.dart';
 import 'package:intl/intl.dart'; // Import for date formatting
 import '../services/limit_service.dart';
 import '../models/limit.dart';
+import 'package:frontend/config/config.dart';
 
 class AddExpensesScreen extends StatefulWidget {
   final String userId;
@@ -70,7 +71,7 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
       }
 
       final response = await http.get(
-        Uri.parse('http://10.0.2.2:8000/accounts/me'),
+        Uri.parse('${ApiConfig.baseUrl}/accounts/me'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -171,7 +172,7 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
       }
 
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8000/transactions/'),
+        Uri.parse('${ApiConfig.baseUrl}/transactions/'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',

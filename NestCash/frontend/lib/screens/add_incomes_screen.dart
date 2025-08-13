@@ -5,7 +5,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:frontend/services/category_service.dart';
 import 'package:frontend/models/category.dart';
-import 'package:intl/intl.dart'; // Import for date formatting
+import 'package:intl/intl.dart'; 
+import 'package:frontend/config/config.dart';
 
 class AddIncomesScreen extends StatefulWidget {
   final String userId;
@@ -49,7 +50,7 @@ class _AddIncomesScreenState extends State<AddIncomesScreen> {
       }
 
       final response = await http.get(
-        Uri.parse('http://10.0.2.2:8000/accounts/me'),
+        Uri.parse('${ApiConfig.baseUrl}/accounts/me'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -166,7 +167,7 @@ class _AddIncomesScreenState extends State<AddIncomesScreen> {
       }
 
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8000/transactions/'),
+        Uri.parse('${ApiConfig.baseUrl}/transactions/'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',

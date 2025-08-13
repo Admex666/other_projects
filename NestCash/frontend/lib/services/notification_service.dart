@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:frontend/config/config.dart';
 
 class NotificationService {
   static const _storage = FlutterSecureStorage();
-  final String baseUrl;
 
-  const NotificationService({this.baseUrl = 'http://10.0.2.2:8000'});
+  const NotificationService();
 
   Future<String?> _getToken() async {
     return await _storage.read(key: 'token');
@@ -44,7 +44,7 @@ class NotificationService {
         queryParams['priority'] = priority;
       }
       
-      final uri = Uri.parse('$baseUrl/notifications/').replace(
+      final uri = Uri.parse('${ApiConfig.baseUrl}/notifications/').replace(
         queryParameters: queryParams,
       );
       
@@ -66,7 +66,7 @@ class NotificationService {
     try {
       final headers = await _getHeaders();
       final response = await http.get(
-        Uri.parse('$baseUrl/notifications/stats'),
+        Uri.parse('${ApiConfig.baseUrl}/notifications/stats'),
         headers: headers,
       );
       
@@ -86,7 +86,7 @@ class NotificationService {
     try {
       final headers = await _getHeaders();
       final response = await http.put(
-        Uri.parse('$baseUrl/notifications/$notificationId/read'),
+        Uri.parse('${ApiConfig.baseUrl}/notifications/$notificationId/read'),
         headers: headers,
       );
       
@@ -102,7 +102,7 @@ class NotificationService {
     try {
       final headers = await _getHeaders();
       final response = await http.put(
-        Uri.parse('$baseUrl/notifications/mark-all-read'),
+        Uri.parse('${ApiConfig.baseUrl}/notifications/mark-all-read'),
         headers: headers,
       );
       
@@ -118,7 +118,7 @@ class NotificationService {
     try {
       final headers = await _getHeaders();
       final response = await http.delete(
-        Uri.parse('$baseUrl/notifications/$notificationId'),
+        Uri.parse('${ApiConfig.baseUrl}/notifications/$notificationId'),
         headers: headers,
       );
       
@@ -134,7 +134,7 @@ class NotificationService {
     try {
       final headers = await _getHeaders();
       final response = await http.get(
-        Uri.parse('$baseUrl/notifications/$notificationId'),
+        Uri.parse('${ApiConfig.baseUrl}/notifications/$notificationId'),
         headers: headers,
       );
       

@@ -5,6 +5,7 @@ import 'package:frontend/services/auth_service.dart';
 import 'package:frontend/services/sunburst_chart.dart';
 import 'package:frontend/screens/add_expenses_screen.dart';
 import 'package:frontend/screens/add_incomes_screen.dart';
+import 'package:frontend/config/config.dart';
 
 class ManageAccountsScreen extends StatefulWidget {
   final String userId;
@@ -55,7 +56,7 @@ class _ManageAccountsScreenState extends State<ManageAccountsScreen> {
       }
 
       final response = await http.get(
-        Uri.parse('http://10.0.2.2:8000/accounts/me'),
+        Uri.parse('${ApiConfig.baseUrl}/accounts/me'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -172,7 +173,7 @@ class _ManageAccountsScreenState extends State<ManageAccountsScreen> {
       }
 
       final response = await http.put(
-        Uri.parse('http://10.0.2.2:8000/accounts/me/$mainAccount/$subAccountName'),
+        Uri.parse('${ApiConfig.baseUrl}/accounts/me/$mainAccount/$subAccountName'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -260,7 +261,7 @@ class _ManageAccountsScreenState extends State<ManageAccountsScreen> {
       }
 
       final response = await http.delete(
-        Uri.parse('http://10.0.2.2:8000/accounts/me/$mainAccount/$subAccountName'),
+        Uri.parse('${ApiConfig.baseUrl}/accounts/me/$mainAccount/$subAccountName'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -359,154 +360,162 @@ class _ManageAccountsScreenState extends State<ManageAccountsScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        SizedBox(height: 16),
+                        SizedBox(height: 8),
 
-                        // Bevétel hozzáadása gomb (ÚJ)
                         Container(
-                          width: double.infinity,
-                          height: 48,
-                          child: ElevatedButton.icon(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => AddIncomesScreen(userId: widget.userId),
+                            height: 100, // Fix magasság a 4 gombnak
+                            child: Column(
+                              children: [
+                                // Első sor
+                                Row(
+                                  children: [
+                                    // Bevétel hozzáadása
+                                    Expanded(
+                                      child: Container(
+                                        height: 44, // Csökkentett magasság
+                                        margin: EdgeInsets.only(right: 6),
+                                        child: ElevatedButton.icon(
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => AddIncomesScreen(userId: widget.userId),
+                                              ),
+                                            );
+                                          },
+                                          icon: Icon(Icons.add, size: 18, color: Colors.white),
+                                          label: Text(
+                                            'Bevétel',
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Color(0xFF00D4A3),
+                                            elevation: 0,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(10),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    // Kiadás hozzáadása
+                                    Expanded(
+                                      child: Container(
+                                        height: 44,
+                                        margin: EdgeInsets.only(left: 6),
+                                        child: ElevatedButton.icon(
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => AddExpensesScreen(userId: widget.userId),
+                                              ),
+                                            );
+                                          },
+                                          icon: Icon(Icons.remove, size: 18, color: Colors.white),
+                                          label: Text(
+                                            'Kiadás',
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.redAccent,
+                                            elevation: 0,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(10),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              );
-                            },
-                            icon: Icon(Icons.add, color: Colors.white),
-                            label: Text(
-                              'Bevétel hozzáadása',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                              ),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFF00D4A3),
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        SizedBox(height: 12),
-
-                        // Kiadás hozzáadása gomb (ÚJ)
-                        Container(
-                          width: double.infinity,
-                          height: 48,
-                          child: ElevatedButton.icon(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => AddExpensesScreen(userId: widget.userId),
+                                
+                                SizedBox(height: 12),
+                                
+                                // Második sor
+                                Row(
+                                  children: [
+                                    // Új alszámla
+                                    Expanded(
+                                      child: Container(
+                                        height: 44,
+                                        margin: EdgeInsets.only(right: 6),
+                                        child: ElevatedButton.icon(
+                                          onPressed: _showAddSubAccountDialog,
+                                          icon: Icon(Icons.account_balance_wallet, size: 18, color: Colors.white),
+                                          label: Text(
+                                            'Új számla',
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.green,
+                                            elevation: 0,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(10),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    // Frissítés + Törlés kombinált
+                                    Expanded(
+                                      child: Container(
+                                        height: 44,
+                                        margin: EdgeInsets.only(left: 6),
+                                        child: Row(
+                                          children: [
+                                            // Frissítés
+                                            Expanded(
+                                              child: ElevatedButton(
+                                                onPressed: _fetchAccounts,
+                                                child: Icon(Icons.refresh, size: 18, color: Colors.white),
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: Color(0xFF00D4AA),
+                                                  elevation: 0,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.circular(10),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(width: 4),
+                                            // Törlés
+                                            Expanded(
+                                              child: ElevatedButton(
+                                                onPressed: _showDeleteSubAccountDialog,
+                                                child: Icon(Icons.delete, size: 18, color: Colors.white),
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: Colors.red,
+                                                  elevation: 0,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.circular(10),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              );
-                            },
-                            icon: Icon(Icons.remove, color: Colors.white),
-                            label: Text(
-                              'Kiadás hozzáadása',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                              ),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.redAccent,
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
+                              ],
                             ),
                           ),
-                        ),
 
-                        SizedBox(height: 30),
-
-                        // Számlák frissítése gomb
-                        Container(
-                          width: double.infinity,
-                          height: 48,
-                          child: ElevatedButton.icon(
-                            onPressed: _fetchAccounts,
-                            icon: Icon(Icons.refresh, color: Colors.white),
-                            label: Text(
-                              'Számlák frissítése',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                              ),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFF00D4AA),
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        // Gombok
-                        SizedBox(height: 12),
-                        Container(
-                          width: double.infinity,
-                          height: 48,
-                          child: ElevatedButton.icon(
-                            onPressed: _showAddSubAccountDialog,
-                            icon: Icon(Icons.add, color: Colors.white),
-                            label: Text(
-                              'Új alszámla',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                              ),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green,
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        SizedBox(height: 12),
-
-                        Container(
-                          width: double.infinity,
-                          height: 48,
-                          child: ElevatedButton.icon(
-                            onPressed: _showDeleteSubAccountDialog,
-                            icon: Icon(Icons.delete, color: Colors.white),
-                            label: Text(
-                              'Alszámla törlése',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                              ),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        SizedBox(height: 24),
+                          SizedBox(height: 16),
 
                         // Tartalom megjelenítése
                         if (_isLoading)
@@ -537,102 +546,30 @@ class _ManageAccountsScreenState extends State<ManageAccountsScreen> {
                                 children: [
                                   // Sunburst diagram hozzáadása
                                   Container(
-                                    margin: EdgeInsets.only(bottom: 24),
-                                    padding: EdgeInsets.all(16),
+                                    margin: EdgeInsets.only(bottom: 32),
                                     decoration: BoxDecoration(
                                       color: Colors.white,
-                                      borderRadius: BorderRadius.circular(12),
+                                      borderRadius: BorderRadius.circular(20),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: Colors.grey.withOpacity(0.1),
-                                          spreadRadius: 1,
-                                          blurRadius: 4,
-                                          offset: Offset(0, 2),
+                                          color: Colors.grey.withOpacity(0.08),
+                                          spreadRadius: 0,
+                                          blurRadius: 20,
+                                          offset: Offset(0, 4),
+                                        ),
+                                        BoxShadow(
+                                          color: Colors.grey.withOpacity(0.05),
+                                          spreadRadius: 0,
+                                          blurRadius: 40,
+                                          offset: Offset(0, 8),
                                         ),
                                       ],
                                     ),
-                                    child: AccountsSunburstChart(accountsData: _accountsData),
+                                    child: Padding(
+                                      padding: EdgeInsets.all(8),
+                                      child: AccountsSunburstChart(accountsData: _accountsData),
+                                    ),
                                   ),
-                                  
-                                  // Eredeti lista megjelenítés
-                                  ...(_accountsData!.entries).map((entry) {
-                                    return Container(
-                                      margin: EdgeInsets.only(bottom: 16),
-                                      decoration: BoxDecoration(
-                                        color: Color(0xFFE8F5E8),
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(16.0),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              entry.key.toUpperCase(),
-                                              style: TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black87,
-                                              ),
-                                            ),
-                                            SizedBox(height: 8),
-                                            ...(entry.value['alszamlak'] as Map<String, dynamic>).entries.map((subEntry) {
-                                              final subAccountBalance = subEntry.value['balance'];
-                                              final subAccountCurrency = subEntry.value['currency'];
-                                              return Padding(
-                                                padding: const EdgeInsets.only(left: 16.0, top: 4),
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      subEntry.key,
-                                                      style: TextStyle(
-                                                        fontSize: 16,
-                                                        color: Colors.black87,
-                                                      ),
-                                                    ),
-                                                    Text(
-                                                      '${subAccountBalance.toStringAsFixed(2)} ${subAccountCurrency}',
-                                                      style: TextStyle(
-                                                        fontSize: 16,
-                                                        color: Colors.black87,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              );
-                                            }).toList(),
-                                            Container(
-                                              margin: EdgeInsets.symmetric(vertical: 8),
-                                              height: 1,
-                                              color: Colors.grey[400],
-                                            ),
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                Text(
-                                                  'Főösszeg',
-                                                  style: TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black87,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  '${entry.value['foosszeg'].toStringAsFixed(2)} Ft',
-                                                  style: TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black87,
-                                                  ),
-                                                ),
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  }).toList(),
                                 ],
                               ),
                             ),

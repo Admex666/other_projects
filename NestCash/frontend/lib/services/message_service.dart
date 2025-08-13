@@ -2,12 +2,12 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:frontend/services/auth_service.dart';
 import 'package:frontend/models/message_models.dart';
+import 'package:frontend/config/config.dart';
 
 class MessageService {
   final AuthService _authService = AuthService();
-  final String baseUrl;
 
-  MessageService({this.baseUrl = 'http://10.0.2.2:8000'});
+  MessageService();
 
   Future<Map<String, String>> _getHeaders() async {
     final token = await _authService.getToken();
@@ -28,7 +28,7 @@ class MessageService {
       'limit': limit.toString(),
     };
 
-    final uri = Uri.parse('$baseUrl/messages/conversations').replace(queryParameters: queryParams);
+    final uri = Uri.parse('${ApiConfig.baseUrl}/messages/conversations').replace(queryParameters: queryParams);
     final response = await http.get(uri, headers: await _getHeaders());
 
     if (response.statusCode == 200) {
@@ -45,7 +45,7 @@ class MessageService {
       'limit': limit.toString(),
     };
 
-    final uri = Uri.parse('$baseUrl/messages/conversations/$otherUserId').replace(queryParameters: queryParams);
+    final uri = Uri.parse('${ApiConfig.baseUrl}/messages/conversations/$otherUserId').replace(queryParameters: queryParams);
     final response = await http.get(uri, headers: await _getHeaders());
 
     if (response.statusCode == 200) {
@@ -58,7 +58,7 @@ class MessageService {
 
   Future<PrivateMessage> sendMessage(String otherUserId, String content) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/messages/conversations/$otherUserId'),
+      Uri.parse('${ApiConfig.baseUrl}/messages/conversations/$otherUserId'),
       headers: await _getHeaders(),
       body: jsonEncode({'content': content}),
     );
@@ -71,7 +71,7 @@ class MessageService {
 
   Future<int> getUnreadMessageCount() async {
     final response = await http.get(
-      Uri.parse('$baseUrl/messages/unread-count'),
+      Uri.parse('${ApiConfig.baseUrl}/messages/unread-count'),
       headers: await _getHeaders(),
     );
 

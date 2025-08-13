@@ -3,12 +3,12 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/models/habit.dart';
+import 'package:frontend/config/config.dart';
 
 class HabitService {
   static const _storage = FlutterSecureStorage();
-  final String baseUrl;
 
-  const HabitService({this.baseUrl = 'http://10.0.2.2:8000'});
+  const HabitService();
 
   Future<String?> _getToken() async {
     return await _storage.read(key: 'token');
@@ -42,7 +42,7 @@ class HabitService {
         queryParams['category'] = category.value;
       }
 
-      final uri = Uri.parse('$baseUrl/habits/').replace(
+      final uri = Uri.parse('${ApiConfig.baseUrl}/habits/').replace(
         queryParameters: queryParams,
       );
 
@@ -70,7 +70,7 @@ class HabitService {
       if (token == null) throw Exception('Not authenticated');
 
       final response = await http.get(
-        Uri.parse('$baseUrl/habits/$habitId'),
+        Uri.parse('${ApiConfig.baseUrl}/habits/$habitId'),
         headers: _getHeaders(token),
       );
 
@@ -93,7 +93,7 @@ class HabitService {
       if (token == null) throw Exception('Not authenticated');
 
       final response = await http.post(
-        Uri.parse('$baseUrl/habits/'),
+        Uri.parse('${ApiConfig.baseUrl}/habits/'),
         headers: _getHeaders(token),
         body: jsonEncode(habit.toJson()),
       );
@@ -118,7 +118,7 @@ class HabitService {
       if (token == null) throw Exception('Not authenticated');
 
       final response = await http.put(
-        Uri.parse('$baseUrl/habits/$habitId'),
+        Uri.parse('${ApiConfig.baseUrl}/habits/$habitId'),
         headers: _getHeaders(token),
         body: jsonEncode(updates),
       );
@@ -143,7 +143,7 @@ class HabitService {
       if (token == null) throw Exception('Not authenticated');
 
       final response = await http.delete(
-        Uri.parse('$baseUrl/habits/$habitId'),
+        Uri.parse('${ApiConfig.baseUrl}/habits/$habitId'),
         headers: _getHeaders(token),
       );
 
@@ -178,7 +178,7 @@ class HabitService {
       if (date != null) body['date'] = date;
 
       final response = await http.post(
-        Uri.parse('$baseUrl/habits/$habitId/logs'),
+        Uri.parse('${ApiConfig.baseUrl}/habits/$habitId/logs'),
         headers: _getHeaders(token),
         body: jsonEncode(body),
       );
@@ -216,7 +216,7 @@ class HabitService {
       if (fromDate != null) queryParams['from_date'] = fromDate;
       if (toDate != null) queryParams['to_date'] = toDate;
 
-      final uri = Uri.parse('$baseUrl/habits/$habitId/logs').replace(
+      final uri = Uri.parse('${ApiConfig.baseUrl}/habits/$habitId/logs').replace(
         queryParameters: queryParams,
       );
 
@@ -243,7 +243,7 @@ class HabitService {
       final token = await _getToken();
       if (token == null) throw Exception('Not authenticated');
 
-      final uri = Uri.parse('$baseUrl/habits/$habitId/stats').replace(
+      final uri = Uri.parse('${ApiConfig.baseUrl}/habits/$habitId/stats').replace(
         queryParameters: {'days': days.toString()},
       );
 
@@ -268,7 +268,7 @@ class HabitService {
       if (token == null) throw Exception('Not authenticated');
 
       final response = await http.get(
-        Uri.parse('$baseUrl/habits/overview/stats'),
+        Uri.parse('${ApiConfig.baseUrl}/habits/overview/stats'),
         headers: _getHeaders(token),
       );
 
@@ -291,7 +291,7 @@ class HabitService {
       if (token == null) throw Exception('Not authenticated');
 
       final response = await http.get(
-        Uri.parse('$baseUrl/habits/predefined/list'),
+        Uri.parse('${ApiConfig.baseUrl}/habits/predefined/list'),
         headers: _getHeaders(token),
       );
 
@@ -327,7 +327,7 @@ class HabitService {
       if (token == null) throw Exception('Not authenticated');
 
       final response = await http.post(
-        Uri.parse('$baseUrl/habits/predefined/${category.value}/$habitIndex'),
+        Uri.parse('${ApiConfig.baseUrl}/habits/predefined/${category.value}/$habitIndex'),
         headers: _getHeaders(token),
       );
 
@@ -355,7 +355,7 @@ class HabitService {
       if (token == null) throw Exception('Not authenticated');
 
       final response = await http.put(
-        Uri.parse('$baseUrl/habits/$habitId/logs/$logId'),
+        Uri.parse('${ApiConfig.baseUrl}/habits/$habitId/logs/$logId'),
         headers: _getHeaders(token),
         body: jsonEncode(updates),
       );
@@ -380,7 +380,7 @@ class HabitService {
       if (token == null) throw Exception('Not authenticated');
 
       final response = await http.delete(
-        Uri.parse('$baseUrl/habits/$habitId/logs/$logId'),
+        Uri.parse('${ApiConfig.baseUrl}/habits/$habitId/logs/$logId'),
         headers: _getHeaders(token),
       );
 

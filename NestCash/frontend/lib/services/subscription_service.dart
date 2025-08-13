@@ -4,14 +4,13 @@ import 'package:http/http.dart' as http;
 
 import '../models/subscription.dart';
 import 'auth_service.dart';
+import 'package:frontend/config/config.dart';
 
 class SubscriptionService {
   final AuthService _authService;
-  final String baseUrl;
 
   SubscriptionService({
     required AuthService authService,
-    this.baseUrl = 'http://10.0.2.2:8000',
   }) : _authService = authService;
 
   /// Általános HTTP kérés wrapper auth kezeléssel
@@ -31,7 +30,7 @@ class SubscriptionService {
       'Authorization': 'Bearer $token',
     };
 
-    final uri = Uri.parse('$baseUrl$endpoint');
+    final uri = Uri.parse('${ApiConfig.baseUrl}$endpoint');
 
     try {
       switch (method.toUpperCase()) {
@@ -149,7 +148,7 @@ Future<FeatureAccess> checkFeatureAccess(
         if (analysisType != null) 'analysis_type': analysisType,
       };
 
-      final uri = Uri.parse('$baseUrl/subscription/check-feature').replace(queryParameters: queryParams);
+      final uri = Uri.parse('${ApiConfig.baseUrl}/subscription/check-feature').replace(queryParameters: queryParams);
       final response = await http.post(uri, headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ${await _authService.getToken()}',

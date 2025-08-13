@@ -4,12 +4,12 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/models/pti_models.dart';
+import 'package:frontend/config/config.dart';
 
 class PTIService {
   static const _storage = FlutterSecureStorage();
-  final String baseUrl;
 
-  const PTIService({this.baseUrl = 'http://10.0.2.2:8000'});
+  const PTIService();
 
   Future<String?> _getToken() async {
     return await _storage.read(key: 'token');
@@ -28,7 +28,7 @@ class PTIService {
     try {
       final headers = await _getHeaders();
       final response = await http.get(
-        Uri.parse('$baseUrl/pti/dashboard'),
+        Uri.parse('${ApiConfig.baseUrl}/pti/dashboard'),
         headers: headers,
       );
 
@@ -55,7 +55,7 @@ class PTIService {
         'calculate': calculate.toString(),
       };
       
-      final uri = Uri.parse('$baseUrl/pti/score').replace(
+      final uri = Uri.parse('${ApiConfig.baseUrl}/pti/score').replace(
         queryParameters: queryParams,
       );
 
@@ -85,7 +85,7 @@ class PTIService {
       });
 
       final response = await http.post(
-        Uri.parse('$baseUrl/pti/calculate'),
+        Uri.parse('${ApiConfig.baseUrl}/pti/calculate'),
         headers: headers,
         body: body,
       );
@@ -113,7 +113,7 @@ class PTIService {
         'offset': offset.toString(),
       };
       
-      final uri = Uri.parse('$baseUrl/pti/ranking').replace(
+      final uri = Uri.parse('${ApiConfig.baseUrl}/pti/ranking').replace(
         queryParameters: queryParams,
       );
 
@@ -135,7 +135,7 @@ class PTIService {
     try {
       final headers = await _getHeaders();
       final response = await http.get(
-        Uri.parse('$baseUrl/pti/settings'),
+        Uri.parse('${ApiConfig.baseUrl}/pti/settings'),
         headers: headers,
       );
 
@@ -157,7 +157,7 @@ class PTIService {
       final body = jsonEncode(settings.toJson());
 
       final response = await http.put(
-        Uri.parse('$baseUrl/pti/settings'),
+        Uri.parse('${ApiConfig.baseUrl}/pti/settings'),
         headers: headers,
         body: body,
       );
@@ -183,7 +183,7 @@ class PTIService {
         'period': period.value,
       };
       
-      final uri = Uri.parse('$baseUrl/pti/comparison').replace(
+      final uri = Uri.parse('${ApiConfig.baseUrl}/pti/comparison').replace(
         queryParameters: queryParams,
       );
 
@@ -205,7 +205,7 @@ class PTIService {
     try {
       final headers = await _getHeaders();
       final response = await http.get(
-        Uri.parse('$baseUrl/pti/suggestions'),
+        Uri.parse('${ApiConfig.baseUrl}/pti/suggestions'),
         headers: headers,
       );
 
@@ -230,7 +230,7 @@ class PTIService {
         'period': period.value,
       };
       
-      final uri = Uri.parse('$baseUrl/pti/leaderboard/stats').replace(
+      final uri = Uri.parse('${ApiConfig.baseUrl}/pti/leaderboard/stats').replace(
         queryParameters: queryParams,
       );
 
@@ -256,7 +256,7 @@ class PTIService {
         'period': period.value,
       };
       
-      final uri = Uri.parse('$baseUrl/pti/period-info').replace(
+      final uri = Uri.parse('${ApiConfig.baseUrl}/pti/period-info').replace(
         queryParameters: queryParams,
       );
 
@@ -287,7 +287,7 @@ class PTIService {
         'offset': offset.toString(),
       };
       
-      final uri = Uri.parse('$baseUrl/pti/history').replace(
+      final uri = Uri.parse('${ApiConfig.baseUrl}/pti/history').replace(
         queryParameters: queryParams,
       );
 
@@ -322,7 +322,7 @@ class PTIService {
         'offset': offset.toString(),
       };
       
-      final uri = Uri.parse('$baseUrl/pti/component-ranking').replace(
+      final uri = Uri.parse('${ApiConfig.baseUrl}/pti/component-ranking').replace(
         queryParameters: queryParams,
       );
 

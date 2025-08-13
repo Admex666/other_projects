@@ -3,12 +3,12 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/models/challenge.dart';
+import 'package:frontend/config/config.dart';
 
 class ChallengeService {
   static const _storage = FlutterSecureStorage();
-  final String baseUrl;
 
-  const ChallengeService({this.baseUrl = 'http://10.0.2.2:8000'});
+  const ChallengeService();
 
   Future<String?> _getToken() async {
     return await _storage.read(key: 'token');
@@ -45,7 +45,7 @@ class ChallengeService {
         queryParams['search'] = search;
       }
 
-      final uri = Uri.parse('$baseUrl/challenges/').replace(
+      final uri = Uri.parse('${ApiConfig.baseUrl}/challenges/').replace(
         queryParameters: queryParams,
       );
 
@@ -79,7 +79,7 @@ class ChallengeService {
       if (token == null) throw Exception('Not authenticated');
 
       final response = await http.get(
-        Uri.parse('$baseUrl/challenges/$challengeId'),
+        Uri.parse('${ApiConfig.baseUrl}/challenges/$challengeId'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -113,7 +113,7 @@ class ChallengeService {
       if (notes != null && notes.isNotEmpty) body['notes'] = notes;
 
       final response = await http.post(
-        Uri.parse('$baseUrl/challenges/$challengeId/join'),
+        Uri.parse('${ApiConfig.baseUrl}/challenges/$challengeId/join'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -144,7 +144,7 @@ class ChallengeService {
       if (token == null) throw Exception('Not authenticated');
 
       final response = await http.delete(
-        Uri.parse('$baseUrl/challenges/$challengeId/leave'),
+        Uri.parse('${ApiConfig.baseUrl}/challenges/$challengeId/leave'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -184,7 +184,7 @@ class ChallengeService {
         queryParams['challenge_type'] = challengeType.value;
       }
 
-      final uri = Uri.parse('$baseUrl/challenges/my/participations').replace(
+      final uri = Uri.parse('${ApiConfig.baseUrl}/challenges/my/participations').replace(
         queryParameters: queryParams,
       );
 
@@ -217,7 +217,7 @@ class ChallengeService {
       final token = await _getToken();
       if (token == null) throw Exception('Not authenticated');
 
-      final uri = Uri.parse('$baseUrl/challenges/recommendations/for-me').replace(
+      final uri = Uri.parse('${ApiConfig.baseUrl}/challenges/recommendations/for-me').replace(
         queryParameters: {'limit': limit.toString()},
       );
 
@@ -251,7 +251,7 @@ class ChallengeService {
       if (token == null) throw Exception('Not authenticated');
 
       final response = await http.post(
-        Uri.parse('$baseUrl/challenges/$challengeId/update-progress'),
+        Uri.parse('${ApiConfig.baseUrl}/challenges/$challengeId/update-progress'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
