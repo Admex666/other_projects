@@ -3,6 +3,7 @@ annotated-types==0.7.0
 anyio==4.9.0
 asttokens==3.0.0
 attrs==25.3.0
+bcrypt
 beanie==1.30.0
 beautifulsoup4==4.13.4
 blinker==1.9.0
