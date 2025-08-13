@@ -105,6 +105,7 @@ async def root():
 async def health_check():
     return {"status": "healthy", "message": "API is running"}
 
+from core.db import get_db
 @app.get("/test-db")
 async def test_db():
     try:
