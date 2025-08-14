@@ -5,6 +5,7 @@ import '../../models/subscription.dart';
 import '../../providers/subscription_provider.dart';
 import '../../widgets/subscription/tier_badge.dart';
 import '../../utils/subscription_utils.dart';
+import '../../utils/anchoring_utils.dart';
 import 'upgrade_success_screen.dart';
 
 class PlansScreen extends StatefulWidget {
@@ -210,13 +211,30 @@ class _PlansScreenState extends State<PlansScreen> {
                 const SizedBox(height: 8),
                 
                 // Price
-                Text(
-                  plan.tier.displayPrice,
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: tierColor,
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      plan.tier.displayPrice,
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: tierColor,
+                      ),
+                    ),
+                    if (plan.tier != SubscriptionTier.free)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Text(
+                          AnchoringUtils.getDailyCostDescription(plan.tier),
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey[600],
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
               ],
             ),

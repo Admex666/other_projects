@@ -5,8 +5,9 @@ import '../../models/subscription.dart';
 import '../../providers/subscription_provider.dart';
 import '../../utils/subscription_utils.dart';
 import '../../screens/subscription/plans_screen.dart';
+import '../../utils/anchoring_utils.dart';
 
-class UpgradeDialog extends StatelessWidget {
+class UpgradeDialog extends StatefulWidget {
   final String featureName;
   final SubscriptionTier requiredTier;
   final String? description;
@@ -19,11 +20,26 @@ class UpgradeDialog extends StatelessWidget {
   });
 
   @override
+  State<UpgradeDialog> createState() => _UpgradeDialogState();
+}
+
+class _UpgradeDialogState extends State<UpgradeDialog> {
+  late final AnchoringComparison anchoringComparison;
+
+  @override
+  void initState() {
+    super.initState();
+    // Véletlenszerű anchoring összehasonlítás kiválasztása
+    anchoringComparison = AnchoringUtils.getRandomComparison(widget.requiredTier);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final tierColor = SubscriptionUtils.getTierColor(requiredTier);
-    final tierIcon = SubscriptionUtils.getTierIcon(requiredTier);
-    final tierName = SubscriptionUtils.formatTierName(requiredTier);
-    final price = requiredTier.displayPrice;
+    final tierColor = SubscriptionUtils.getTierColor(widget.requiredTier);
+    final tierIcon = SubscriptionUtils.getTierIcon(widget.requiredTier);
+    final tierName = SubscriptionUtils.formatTierName(widget.requiredTier);
+    final price = widget.requiredTier.displayPrice;
+    final dailyCost = AnchoringUtils.getDailyCost(widget.requiredTier);
 
     return Dialog(
       shape: RoundedRectangleBorder(
@@ -89,7 +105,7 @@ class UpgradeDialog extends StatelessWidget {
             
             // Feature name
             Text(
-              featureName,
+              widget.featureName,
               style: TextStyle(
                 fontSize: 18,
                 color: tierColor,
@@ -102,8 +118,8 @@ class UpgradeDialog extends StatelessWidget {
             
             // Description
             Text(
-              description ?? 
-              'A $featureName funkció használatához $tierName előfizetés szükséges.',
+              widget.description ?? 
+              'A ${widget.featureName} funkció használatához $tierName előfizetés szükséges.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14,
@@ -114,7 +130,7 @@ class UpgradeDialog extends StatelessWidget {
             
             const SizedBox(height: 24),
             
-            // Tier info card
+            // Tier info card with pricing
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -124,31 +140,113 @@ class UpgradeDialog extends StatelessWidget {
                   color: tierColor.withOpacity(0.3),
                 ),
               ),
-              child: Row(
+              child: Column(
                 children: [
-                  Icon(tierIcon, color: tierColor, size: 24),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          tierName,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: tierColor,
-                          ),
+                  // Tier header
+                  Row(
+                    children: [
+                      Icon(tierIcon, color: tierColor, size: 24),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              tierName,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: tierColor,
+                              ),
+                            ),
+                            Text(
+                              price,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ],
                         ),
+                      ),
+                    ],
+                  ),
+                  
+                  const SizedBox(height: 12),
+                  
+                  // Daily cost
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.7),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.calendar_today,
+                          size: 16,
+                          color: Colors.grey[600],
+                        ),
+                        const SizedBox(width: 6),
                         Text(
-                          price,
+                          'Mindössze $dailyCost naponta',
                           style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey[600],
+                            fontSize: 13,
+                            color: Colors.grey[700],
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ],
                     ),
+                  ),
+                ],
+              ),
+            ),
+            
+            const SizedBox(height: 16),
+            
+            // Anchoring comparison card
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.orange.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: Colors.orange.withOpacity(0.3),
+                ),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        anchoringComparison.icon,
+                        style: const TextStyle(fontSize: 24),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          anchoringComparison.title,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    anchoringComparison.description,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[600],
+                      height: 1.3,
+                    ),
+                    textAlign: TextAlign.left,
                   ),
                 ],
               ),
@@ -188,7 +286,7 @@ class UpgradeDialog extends StatelessWidget {
                         MaterialPageRoute(
                           builder: (context) => PlansScreen(
                             currentTier: context.read<SubscriptionProvider>().currentTier,
-                            highlightTier: requiredTier,
+                            highlightTier: widget.requiredTier,
                           ),
                         ),
                       );

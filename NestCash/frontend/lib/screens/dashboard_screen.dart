@@ -104,16 +104,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
     print('Checking for auth error: $error');
     print('Error type: ${error.runtimeType}');
     
-    // Ha HTTP hiba, akkor ellenőrizzük a status kódot
-    if (error.toString().contains('HTTP 401') || 
-        error.toString().contains('401:')) {
-      print('401 HTTP error detected');
+    // Explicit AuthService kivételek
+    if (error.toString().contains('401: Unauthorized')) {
+      print('AuthService 401 exception detected');
       return true;
     }
     
-    // Az AuthService-ben dobott explicit 401-es Exception-t is ellenőrizzük
-    if (error.toString().contains('401: Unauthorized')) {
-      print('AuthService 401 exception detected');
+    // HTTP státusz kódok ellenőrzése
+    if (error.toString().contains('HTTP 401') || 
+        error.toString().contains('401:')) {
+      print('401 HTTP error detected');
       return true;
     }
     
@@ -136,16 +136,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
       return true;
     } catch (e) {
       print('Balance loading failed: $e');
-      print('Error type: ${e.runtimeType}'); // Add this
-      print('Error string for auth check: ${e.toString().toLowerCase()}'); // Add this
+      print('Error type: ${e.runtimeType}');
+      print('Error string for auth check: ${e.toString().toLowerCase()}');
 
       if (_isAuthError(e)) {
-      print('Authentication error detected! Calling _handleAuthError().');
-      _handleAuthError();
-    } else {
-      print('Not an authentication error according to _isAuthError.');
-    }
-    
+        print('Authentication error detected! Calling _handleAuthError().');
+        _handleAuthError();
+        return false; // Fontos: return false auth error esetén
+      } else {
+        print('Not an authentication error according to _isAuthError.');
+      }
+      
       return false;
     }
   }
@@ -407,7 +408,15 @@ IconData _getTransactionIcon(String category, bool isExpense) {
     return Scaffold(
       body: SafeArea(
         child: RefreshIndicator(
-          onRefresh: _loadDashboardData,
+          onRefresh: () async {
+            try {
+              await _loadDashboardData();
+            } catch (e) {
+              if (_isAuthError(e)) {
+                _handleAuthError();
+              }
+            }
+          },
           color: Color(0xFF00D4A3),
           child: SingleChildScrollView(
             physics: AlwaysScrollableScrollPhysics(),
