@@ -47,49 +47,68 @@ async def get_all_health_scores(current_user: User = Depends(get_current_user)):
         raise HTTPException(status_code=403, detail="Admin access required")
     
     try:
-        # Get latest health scores for all users
-        pipeline = [
-            {"$sort": {"user_id": 1, "calculated_at": -1}},
-            {"$group": {
-                "_id": "$user_id",
-                "latest_score": {"$first": "$$ROOT"}
-            }},
-            {"$replaceRoot": {"newRoot": "$latest_score"}}
-        ]
+        # Get all users
+        all_users = await UserDocument.find_all().to_list()
         
-        health_scores = await UserHealthScore.aggregate(pipeline).to_list()
-        
-        # Get user details for each score
         result = []
-        for score_dict in health_scores:  # score_dict most dict, nem UserHealthScore object
-            user = await UserDocument.find_one({"_id": score_dict["user_id"]})
-            if user:
-                result.append({
-                    "user_id": score_dict["user_id"],
-                    "username": user.username,
-                    "email": user.email,
-                    "overall_score": score_dict["overall_score"],
-                    "health_level": score_dict["health_level"],
-                    "calculated_at": score_dict["calculated_at"],
-                    "login_frequency_score": score_dict["login_frequency_score"],
-                    "feature_usage_score": score_dict["feature_usage_score"],
-                    "engagement_score": score_dict["engagement_score"],
-                    "details": {
-                        "days_since_last_login": score_dict["days_since_last_login"],
-                        "total_sessions": score_dict["total_sessions"],
-                        "transaction_count": score_dict["transaction_count"],
-                        "onboarding_completed": score_dict["onboarding_completed"],
-                        "badge_progress_count": score_dict["badge_progress_count"],
-                        "forum_posts_count": score_dict["forum_posts_count"],
-                        "forum_comments_count": score_dict["forum_comments_count"],
-                        "has_active_partnership": score_dict["has_active_partnership"]
-                    }
-                })
+        for user in all_users:
+            try:
+                # Get latest health score for user
+                latest_score = await UserHealthScore.find_one(
+                    {"user_id": user.id}, 
+                    sort=[("calculated_at", -1)]
+                )
+                
+                # If no score exists or score is older than 24 hours, calculate new one
+                should_calculate = (
+                    latest_score is None or 
+                    (datetime.utcnow() - latest_score.calculated_at).total_seconds() > 86400  # 24 hours
+                )
+                
+                if should_calculate:
+                    print(f"Calculating health score for user: {user.username}")
+                    # Calculate new health score
+                    health_score_response = await HealthScoreService.calculate_health_score(user.id)
+                    
+                    # Get the saved record from database
+                    latest_score = await UserHealthScore.find_one(
+                        {"user_id": user.id}, 
+                        sort=[("calculated_at", -1)]
+                    )
+                
+                if latest_score:
+                    result.append({
+                        "user_id": latest_score.user_id,
+                        "username": user.username,
+                        "email": user.email,
+                        "overall_score": latest_score.overall_score,
+                        "health_level": latest_score.health_level,
+                        "calculated_at": latest_score.calculated_at,
+                        "login_frequency_score": latest_score.login_frequency_score,
+                        "feature_usage_score": latest_score.feature_usage_score,
+                        "engagement_score": latest_score.engagement_score,
+                        "details": {
+                            "days_since_last_login": latest_score.days_since_last_login,
+                            "total_sessions": latest_score.total_sessions,
+                            "transaction_count": latest_score.transaction_count,
+                            "onboarding_completed": latest_score.onboarding_completed,
+                            "badge_progress_count": latest_score.badge_progress_count,
+                            "forum_posts_count": latest_score.forum_posts_count,
+                            "forum_comments_count": latest_score.forum_comments_count,
+                            "has_active_partnership": latest_score.has_active_partnership
+                        }
+                    })
+            except Exception as e:
+                print(f"Error calculating health score for user {user.username}: {str(e)}")
+                # Skip this user but continue with others
+                continue
         
         return result
     except Exception as e:
+        print(f"Error in get_all_health_scores: {str(e)}")
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Failed to get health scores: {str(e)}")
-
 
 @router.get("/admin/stats", response_model=Dict[str, Any])
 async def get_admin_stats(current_user: User = Depends(get_current_user)):
@@ -101,14 +120,33 @@ async def get_admin_stats(current_user: User = Depends(get_current_user)):
         # Total users
         total_users = await UserDocument.find_all().count()
         
-        # Active users (last 7 days) - egyszerűsített verzió
+        # Active users (last 7 days)
         seven_days_ago = datetime.utcnow() - timedelta(days=7)
         active_sessions = await UserSessionTracking.find(
             {"session_start": {"$gte": seven_days_ago}}
         ).to_list()
         active_users_count = len(set([session.user_id for session in active_sessions]))
         
-        # Health distribution - aggregation pipeline használata
+        # Ensure we have recent health scores for statistics
+        # Get all users and make sure they have recent health scores
+        all_users = await UserDocument.find_all().to_list()
+        for user in all_users[:10]:  # Limit to first 10 users to avoid timeout
+            try:
+                latest_score = await UserHealthScore.find_one(
+                    {"user_id": user.id}, 
+                    sort=[("calculated_at", -1)]
+                )
+                
+                # Calculate if no score or score is old
+                if (latest_score is None or 
+                    (datetime.utcnow() - latest_score.calculated_at).total_seconds() > 86400):
+                    print(f"Calculating health score for stats - user: {user.username}")
+                    await HealthScoreService.calculate_health_score(user.id)
+            except Exception as e:
+                print(f"Error ensuring health score for {user.username}: {e}")
+                continue
+        
+        # Health distribution
         health_distribution_pipeline = [
             {"$sort": {"user_id": 1, "calculated_at": -1}},
             {"$group": {
@@ -124,7 +162,7 @@ async def get_admin_stats(current_user: User = Depends(get_current_user)):
         health_dist_result = await UserHealthScore.aggregate(health_distribution_pipeline).to_list()
         health_distribution = {item["_id"]: item["count"] for item in health_dist_result}
         
-        # Average scores - aggregation pipeline használata
+        # Average scores
         avg_scores_pipeline = [
             {"$sort": {"user_id": 1, "calculated_at": -1}},
             {"$group": {
@@ -173,3 +211,36 @@ async def get_admin_stats(current_user: User = Depends(get_current_user)):
         import traceback
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Failed to get admin stats: {str(e)}")
+    
+@router.post("/admin/recalculate-all-health-scores")
+async def recalculate_all_health_scores(current_user: User = Depends(get_current_user)):
+    """Recalculate health scores for all users (admin only)"""
+    if current_user.username != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    try:
+        # Get all users
+        all_users = await UserDocument.find_all().to_list()
+        
+        success_count = 0
+        error_count = 0
+        
+        for user in all_users:
+            try:
+                await HealthScoreService.calculate_health_score(user.id)
+                success_count += 1
+                print(f"Recalculated health score for: {user.username}")
+            except Exception as e:
+                error_count += 1
+                print(f"Failed to calculate health score for {user.username}: {str(e)}")
+        
+        return {
+            "message": "Health score recalculation completed",
+            "total_users": len(all_users),
+            "success_count": success_count,
+            "error_count": error_count
+        }
+        
+    except Exception as e:
+        print(f"Error in recalculate_all_health_scores: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to recalculate health scores: {str(e)}")

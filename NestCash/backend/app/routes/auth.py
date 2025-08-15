@@ -10,6 +10,7 @@ from app.core.security import get_current_user
 from app.models.user import User
 from app.models.reg import RegisterRequest
 from app.core.db import get_db
+from app.services.health_score_service import HealthScoreService
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -27,6 +28,8 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
         mobile=user.mobile,
         registration_date=user.registration_date,
     )
+
+    await HealthScoreService.track_session(user.id)
 
     token = create_access_token({"sub": str(user_model.id)})
     return {"access_token": token, "token_type": "bearer", "user_id": str(user_model.id), "username": user_model.username,}
