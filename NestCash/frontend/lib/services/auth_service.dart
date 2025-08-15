@@ -4,6 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/config/config.dart';
 import 'dart:async';
 import 'dart:io';
+import '../services/analytics_service.dart';
 
 class AuthService {
   // Secure storage instance
@@ -89,6 +90,17 @@ class AuthService {
           if (username != null) {
             await _storage.write(key: 'username', value: username);
           }
+
+          // Session tracking
+          try {
+            final analyticsService = AnalyticsService();
+            await analyticsService.trackSession();
+            print('✅ Session tracked successfully');
+          } catch (e) {
+            print('⚠️ Session tracking failed: $e');
+            // Ne akadályozza meg a bejelentkezést
+          }
+
           return true;
         }
       }

@@ -23,6 +23,7 @@ from app.models.pti import PTIScore, PTIHistory, UserPTISettings
 from app.models.subscription import UserSubscriptionDocument
 from app.models.message_models import MessageDocument, ConversationDocument
 from app.models.accountability_models import AccountabilityProfile, Partnership, CheckIn
+from app.models.analytics import UserHealthScore, UserSessionTracking, FeatureUsageTracking
 
 load_dotenv()
 
@@ -69,7 +70,8 @@ async def init_db():
             PTIScore, PTIHistory, UserPTISettings,
             UserSubscriptionDocument,
             MessageDocument, ConversationDocument,
-            AccountabilityProfile, Partnership, CheckIn
+            AccountabilityProfile, Partnership, CheckIn,
+            UserHealthScore, UserSessionTracking, FeatureUsageTracking
             ]
             ) 
 
