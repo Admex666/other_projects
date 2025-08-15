@@ -5,7 +5,7 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from datetime import datetime
 from bson import ObjectId
 
-from app.services.auth import authenticate_user, create_access_token
+from app.services.auth_service import authenticate_user, create_access_token
 from app.core.security import get_current_user
 from app.models.user import User
 from app.models.reg import RegisterRequest
@@ -27,9 +27,15 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
         email=user.email,
         mobile=user.mobile,
         registration_date=user.registration_date,
+        user_type=user.user_type,  # JAVÍTÁS: user_type hozzáadása
+        selected_intents=user.selected_intents,  # JAVÍTÁS: selected_intents hozzáadása
+        onboarding_completed=user.onboarding_completed,  # JAVÍTÁS: onboarding_completed hozzáadása
+        onboarding_step=user.onboarding_step,  # JAVÍTÁS: onboarding_step hozzáadása
+        preferred_currency=user.preferred_currency,  # JAVÍTÁS: preferred_currency hozzáadása
     )
 
-    await HealthScoreService.track_session(user.id)
+    # JAVÍTÁS: Session tracking konzisztens user_id-val
+    await HealthScoreService.track_session(str(user.id))
 
     token = create_access_token({"sub": str(user_model.id)})
     return {"access_token": token, "token_type": "bearer", "user_id": str(user_model.id), "username": user_model.username,}

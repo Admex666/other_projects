@@ -91,14 +91,13 @@ class AuthService {
             await _storage.write(key: 'username', value: username);
           }
 
-          // Session tracking
+          // JAVÍTÁS: Session tracking minden bejelentkezésnél
           try {
             final analyticsService = AnalyticsService();
             await analyticsService.trackSession();
-            print('✅ Session tracked successfully');
+            print('✅ Login successful with session tracking');
           } catch (e) {
-            print('⚠️ Session tracking failed: $e');
-            // Ne akadályozza meg a bejelentkezést
+            print('⚠️ Session tracking failed, but login successful: $e');
           }
 
           return true;
@@ -111,6 +110,21 @@ class AuthService {
     
     return false;
   }
+
+  // ÚJ: Session tracking indítása app induláskor
+  Future<void> initializeSessionTracking() async {
+    final token = await getToken();
+    if (token != null) {
+      try {
+        final analyticsService = AnalyticsService();
+        await analyticsService.trackSession();
+        print('✅ Session initialized successfully');
+      } catch (e) {
+        print('⚠️ Session initialization failed: $e');
+      }
+    }
+  }
+
 
   Future<void> logout() async {
     await _storage.delete(key: 'token');

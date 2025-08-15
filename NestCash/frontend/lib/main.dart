@@ -23,6 +23,7 @@ import 'package:frontend/providers/accountability_provider.dart';
 import 'package:frontend/services/accountability_service.dart';
 import 'package:frontend/screens/accountability/accountability_setup_screen.dart';
 import 'package:frontend/screens/admin_dashboard_screen.dart';
+import 'package:frontend/services/analytics_service.dart';
 
 void main() {
   runApp(NestCashApp());
@@ -109,9 +110,17 @@ class _MainScreenState extends State<MainScreen> {
     super.initState();
     _loadUsername();
     
-    // Subscription data betöltése a bejelentkezés után
+    // JAVÍTÁS: Session tracking az app indításakor is
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<SubscriptionProvider>().loadSubscriptionInfo();
+      
+      // Session tracking indítása
+      try {
+        final analyticsService = AnalyticsService();
+        analyticsService.trackSession();
+      } catch (e) {
+        print('Session tracking failed on screen init: $e');
+      }
     });
     
     _widgetOptions = <Widget>[

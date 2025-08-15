@@ -78,7 +78,7 @@ async def get_all_health_scores(current_user: User = Depends(get_current_user)):
                 
                 if latest_score:
                     result.append({
-                        "user_id": latest_score.user_id,
+                        "user_id": str(latest_score.user_id),  # Explicit string konverzió
                         "username": user.username,
                         "email": user.email,
                         "overall_score": latest_score.overall_score,
