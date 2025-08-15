@@ -1,11 +1,11 @@
 # app/models/analytics.py
 from datetime import datetime
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, Union
 from pydantic import BaseModel, Field
-from beanie import Document
+from beanie import Document, PydanticObjectId
 
 class UserHealthScore(Document):
-    user_id: str
+    user_id: Union[str, PydanticObjectId]
     overall_score: float = Field(..., ge=0, le=100, description="Overall health score 0-100")
     login_frequency_score: float = Field(..., ge=0, le=100)
     feature_usage_score: float = Field(..., ge=0, le=100) 

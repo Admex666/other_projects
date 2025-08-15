@@ -247,11 +247,15 @@ class HealthScoreService:
     @staticmethod
     async def track_session(user_id: str) -> None:
         """Track user session"""
-        session = UserSessionTracking(user_id=user_id)
+        # Biztosítjuk, hogy user_id string legyen
+        user_id_str = str(user_id)
+        session = UserSessionTracking(user_id=user_id_str)
         await session.save()
-    
+
     @staticmethod
     async def track_feature_usage(user_id: str, feature_name: str) -> None:
         """Track feature usage"""
-        usage = FeatureUsageTracking(user_id=user_id, feature_name=feature_name)
+        # Biztosítjuk, hogy user_id string legyen
+        user_id_str = str(user_id)
+        usage = FeatureUsageTracking(user_id=user_id_str, feature_name=feature_name)
         await usage.save()
