@@ -127,13 +127,16 @@ class HealthScoreService:
         badge_score = min(20, (badge_count / 5) * 20)  # Max at 5 badges
         score += badge_score
         
-        # Recent feature usage (20 points)
+        # Recent feature usage (20 points) - módosítás itt
         thirty_days_ago = datetime.utcnow() - timedelta(days=30)
-        recent_features = await FeatureUsageTracking.find(
-            {"user_id": user_id, "used_at": {"$gte": thirty_days_ago}}
-        ).distinct("feature_name")
+        recent_features_pipeline = [
+            {"$match": {"user_id": user_id, "used_at": {"$gte": thirty_days_ago}}},
+            {"$group": {"_id": "$feature_name"}},
+            {"$group": {"_id": None, "count": {"$sum": 1}}}
+        ]
         
-        unique_features_used = len(recent_features)
+        result = await FeatureUsageTracking.aggregate(recent_features_pipeline).to_list()
+        unique_features_used = result[0]["count"] if result else 0
         feature_variety_score = min(20, (unique_features_used / 5) * 20)  # Max at 5 different features
         score += feature_variety_score
         

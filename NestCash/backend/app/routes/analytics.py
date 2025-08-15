@@ -61,34 +61,35 @@ async def get_all_health_scores(current_user: User = Depends(get_current_user)):
         
         # Get user details for each score
         result = []
-        for score in health_scores:
-            user = await UserDocument.find_one({"_id": score.user_id})
+        for score_dict in health_scores:  # score_dict most dict, nem UserHealthScore object
+            user = await UserDocument.find_one({"_id": score_dict["user_id"]})
             if user:
                 result.append({
-                    "user_id": score.user_id,
+                    "user_id": score_dict["user_id"],
                     "username": user.username,
                     "email": user.email,
-                    "overall_score": score.overall_score,
-                    "health_level": score.health_level,
-                    "calculated_at": score.calculated_at,
-                    "login_frequency_score": score.login_frequency_score,
-                    "feature_usage_score": score.feature_usage_score,
-                    "engagement_score": score.engagement_score,
+                    "overall_score": score_dict["overall_score"],
+                    "health_level": score_dict["health_level"],
+                    "calculated_at": score_dict["calculated_at"],
+                    "login_frequency_score": score_dict["login_frequency_score"],
+                    "feature_usage_score": score_dict["feature_usage_score"],
+                    "engagement_score": score_dict["engagement_score"],
                     "details": {
-                        "days_since_last_login": score.days_since_last_login,
-                        "total_sessions": score.total_sessions,
-                        "transaction_count": score.transaction_count,
-                        "onboarding_completed": score.onboarding_completed,
-                        "badge_progress_count": score.badge_progress_count,
-                        "forum_posts_count": score.forum_posts_count,
-                        "forum_comments_count": score.forum_comments_count,
-                        "has_active_partnership": score.has_active_partnership
+                        "days_since_last_login": score_dict["days_since_last_login"],
+                        "total_sessions": score_dict["total_sessions"],
+                        "transaction_count": score_dict["transaction_count"],
+                        "onboarding_completed": score_dict["onboarding_completed"],
+                        "badge_progress_count": score_dict["badge_progress_count"],
+                        "forum_posts_count": score_dict["forum_posts_count"],
+                        "forum_comments_count": score_dict["forum_comments_count"],
+                        "has_active_partnership": score_dict["has_active_partnership"]
                     }
                 })
         
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to get health scores: {str(e)}")
+
 
 @router.get("/admin/stats", response_model=Dict[str, Any])
 async def get_admin_stats(current_user: User = Depends(get_current_user)):
@@ -100,50 +101,75 @@ async def get_admin_stats(current_user: User = Depends(get_current_user)):
         # Total users
         total_users = await UserDocument.find_all().count()
         
-        # Active users (logged in last 7 days)
+        # Active users (last 7 days) - egyszerűsített verzió
         seven_days_ago = datetime.utcnow() - timedelta(days=7)
-        active_users = await UserSessionTracking.find(
+        active_sessions = await UserSessionTracking.find(
             {"session_start": {"$gte": seven_days_ago}}
-        ).distinct("user_id")
-        active_users_count = len(set(active_users))
+        ).to_list()
+        active_users_count = len(set([session.user_id for session in active_sessions]))
         
-        # Health score distribution
-        health_scores = await UserHealthScore.aggregate([
+        # Health distribution - aggregation pipeline használata
+        health_distribution_pipeline = [
             {"$sort": {"user_id": 1, "calculated_at": -1}},
-            {"$group": {"_id": "$user_id", "latest_score": {"$first": "$$ROOT"}}},
             {"$group": {
-                "_id": "$latest_score.health_level",
+                "_id": "$user_id",
+                "latest_health_level": {"$first": "$health_level"}
+            }},
+            {"$group": {
+                "_id": "$latest_health_level",
                 "count": {"$sum": 1}
             }}
-        ]).to_list()
+        ]
         
-        health_distribution = {item["_id"]: item["count"] for item in health_scores}
+        health_dist_result = await UserHealthScore.aggregate(health_distribution_pipeline).to_list()
+        health_distribution = {item["_id"]: item["count"] for item in health_dist_result}
         
-        # Average scores
-        avg_pipeline = [
+        # Average scores - aggregation pipeline használata
+        avg_scores_pipeline = [
             {"$sort": {"user_id": 1, "calculated_at": -1}},
-            {"$group": {"_id": "$user_id", "latest_score": {"$first": "$$ROOT"}}},
+            {"$group": {
+                "_id": "$user_id",
+                "latest_overall": {"$first": "$overall_score"},
+                "latest_login": {"$first": "$login_frequency_score"},
+                "latest_feature": {"$first": "$feature_usage_score"},
+                "latest_engagement": {"$first": "$engagement_score"}
+            }},
             {"$group": {
                 "_id": None,
-                "avg_overall": {"$avg": "$latest_score.overall_score"},
-                "avg_login": {"$avg": "$latest_score.login_frequency_score"},
-                "avg_feature": {"$avg": "$latest_score.feature_usage_score"},
-                "avg_engagement": {"$avg": "$latest_score.engagement_score"}
+                "avg_overall": {"$avg": "$latest_overall"},
+                "avg_login": {"$avg": "$latest_login"},
+                "avg_feature": {"$avg": "$latest_feature"},
+                "avg_engagement": {"$avg": "$latest_engagement"}
             }}
         ]
-        avg_scores = await UserHealthScore.aggregate(avg_pipeline).to_list()
-        averages = avg_scores[0] if avg_scores else {}
         
-        return {
-            "total_users": total_users,
-            "active_users": active_users_count,
-            "health_distribution": health_distribution,
-            "average_scores": {
+        avg_result = await UserHealthScore.aggregate(avg_scores_pipeline).to_list()
+        
+        if avg_result:
+            averages = avg_result[0]
+            average_scores = {
                 "overall": round(averages.get("avg_overall", 0), 1),
                 "login_frequency": round(averages.get("avg_login", 0), 1),
                 "feature_usage": round(averages.get("avg_feature", 0), 1),
                 "engagement": round(averages.get("avg_engagement", 0), 1)
             }
+        else:
+            average_scores = {
+                "overall": 0.0,
+                "login_frequency": 0.0,
+                "feature_usage": 0.0,
+                "engagement": 0.0
+            }
+
+        return {
+            "total_users": total_users,
+            "active_users": active_users_count,
+            "health_distribution": health_distribution,
+            "average_scores": average_scores
         }
+        
     except Exception as e:
+        print(f"Error in get_admin_stats: {str(e)}")
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Failed to get admin stats: {str(e)}")
