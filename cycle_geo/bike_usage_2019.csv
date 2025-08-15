@@ -1,0 +1,182 @@
+City,Country,Bicycle Usage,Bicycle Roads,Bicycle Rental Stations,Bicycle Stolen
+
+Utrecht,Netherlands,51.0,60.78,21.77,78.99
+
+Munster,Germany,39.1,53.05,35.52,83.04
+
+Antwerp,Belgium,28.9,53.37,78.87,84.61
+
+Copenhagen,Denmark,29.0,61.6,12.17,66.62
+
+Amsterdam,Netherlands,32.0,61.71,32.06,84.49
+
+Malmo,Sweden,30.0,52.4,10.8,90.87
+
+Hangzhou,China,30.0,35.06,46.15,74.48
+
+Bern,Switzerland,15.0,65.46,71.6,75.78
+
+Bremen,Germany,21.0,55.96,19.32,87.34
+
+Hannover,Germany,19.0,51.51,27.33,91.23
+
+Strasbourg,France,16.0,58.82,12.77,61.8
+
+Bordeaux,France,10.0,59.4,100.0,83.16
+
+Hamburg,Germany,15.0,54.9,19.84,87.53
+
+Leipzig,Germany,15.2,51.05,25.2,75.11
+
+Bristol,United Kingdom,14.0,56.17,3.64,92.11
+
+Montreal,Canada,18.2,44.12,7.42,94.79
+
+Nuremberg,Germany,13.0,52.95,18.43,92.31
+
+Innsbruck,Austria,17.0,56.18,28.79,86.78
+
+Berlin,Germany,15.0,50.79,10.36,86.91
+
+Melbourne,Australia,16.1,43.19,4.37,97.05
+
+Cologne,Germany,12.0,50.04,13.84,87.73
+
+Dresden,Germany,12.0,54.27,19.89,90.7
+
+Frankfurt,Germany,12.5,51.89,41.47,90.31
+
+Tokyo,Japan,15.0,53.85,1.97,97.14
+
+Dusseldorf,Germany,12.4,50.87,13.56,89.96
+
+Bonn,Germany,12.0,51.72,16.04,87.43
+
+Nice,France,8.0,55.04,35.58,86.49
+
+Nantes,France,6.0,64.62,66.32,96.42
+
+Geneva,Switzerland,7.0,66.49,8.16,77.8
+
+Wellington,New Zealand,10.0,55.82,14.08,93.01
+
+Seville,Spain,7.0,52.18,36.18,97.8
+
+Paris,France,3.0,58.51,69.24,69.64
+
+Vienna,Austria,7.0,53.44,15.85,92.63
+
+Munich,Germany,10.0,53.95,24.13,92.95
+
+Helsinki,Finland,10.0,51.96,36.87,88.75
+
+Tel Aviv,Israel,9.0,37.88,59.5,79.85
+
+Vancouver,Canada,7.0,51.09,42.72,86.97
+
+Beijing,China,14.0,32.11,13.7,85.32
+
+San Francisco,United States,3.9,56.12,37.95,85.15
+
+Sydney,Australia,10.0,39.8,1.43,97.04
+
+Portland,United States,6.3,61.96,45.14,79.37
+
+Casablanca,Morocco,12.0,21.3,1.1,94.23
+
+Ljubljana,Slovenia,10.0,34.75,52.13,93.79
+
+Madrid,Spain,6.0,46.6,12.34,92.21
+
+Dortmund,Germany,6.4,48.71,19.44,92.46
+
+Barcelona,Spain,2.5,54.15,28.66,59.17
+
+Stuttgart,Germany,5.0,49.25,26.81,95.44
+
+Reykjavik,Iceland,3.0,61.99,15.95,91.69
+
+Auckland,New Zealand,8.0,38.83,1.08,98.01
+
+Seattle,United States,3.5,56.73,10.84,82.14
+
+Shanghai,China,10.0,32.75,16.11,88.81
+
+Singapore,Singapore,1.0,56.79,27.69,100.0
+
+Washington,United States,4.6,48.32,6.43,85.34
+
+Edinburgh,United Kingdom,3.0,52.85,11.57,84.37
+
+Oslo,Norway,7.0,38.58,42.86,83.65
+
+Brussels,Belgium,3.0,40.75,40.86,90.47
+
+Los Angeles,United States,1.1,50.65,7.41,85.29
+
+Santiago,Chile,3.9,34.34,5.96,90.79
+
+Warsaw,Poland,5.0,29.5,24.13,95.94
+
+Dublin,Ireland,3.0,43.56,47.07,81.95
+
+Boston,United States,2.4,54.2,32.0,82.81
+
+London,United Kingdom,2.0,42.61,6.58,90.06
+
+Lisbon,Portugal,1.0,44.94,10.42,97.68
+
+Stockholm,Sweden,1.0,51.97,20.94,89.63
+
+Milan,Italy,6.0,35.26,29.24,85.34
+
+Athens,Greece,2.0,32.47,2.82,83.85
+
+New York,United States,1.2,48.2,23.98,85.19
+
+Krakow,Poland,1.2,33.39,40.12,96.73
+
+Seoul,South Korea,1.5,43.62,1.18,98.74
+
+Rome,Italy,1.0,34.17,2.04,88.38
+
+Chicago,United States,1.7,49.65,16.25,85.3
+
+Detroit,United States,1.0,55.79,4.31,59.15
+
+Prague,Czech Republic,1.0,37.34,7.04,96.51
+
+Istanbul,Turkey,0.5,31.71,3.11,88.95
+
+Cairo,Egypt,5.0,18.35,1.06,93.94
+
+Sao Paulo,Brazil,5.1,12.04,2.5,18.86
+
+Johannesburg,South Africa,0.2,57.11,6.95,1.0
+
+Nairobi,Kenya,2.0,24.1,1.76,83.16
+
+New Delhi,India,4.0,23.38,1.25,88.96
+
+Mexico City,Mexico,0.08,23.45,4.46,47.19
+
+Bogota,Colombia,4.0,17.3,1.0,28.51
+
+Cali,Colombia,4.5,13.07,1.14,29.75
+
+Buenos Aires,Argentina,1.2,16.94,7.17,84.15
+
+Hong Kong,SAR China,0.5,34.89,13.78,98.16
+
+Jakarta,Indonesia,2.0,21.24,1.29,93.87
+
+Moscow,Russia,3.0,13.84,4.15,69.64
+
+Tbilisi,Georgia,0.03,14.85,2.63,97.43
+
+Bangkok,Thailand,0.25,24.75,10.85,91.93
+
+Medellin,Colombia,0.5,9.27,5.54,29.56
+
+Lagos,Nigeria,0.14,1.43,1.01,73.72
+
