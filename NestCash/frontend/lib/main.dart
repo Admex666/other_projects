@@ -22,6 +22,7 @@ import 'package:frontend/screens/subscription/plans_screen.dart';
 import 'package:frontend/providers/accountability_provider.dart';
 import 'package:frontend/services/accountability_service.dart';
 import 'package:frontend/screens/accountability/accountability_setup_screen.dart';
+import 'package:frontend/screens/admin_dashboard_screen.dart';
 
 void main() {
   runApp(NestCashApp());
@@ -280,6 +281,36 @@ void _showForumChallengesOptions(BuildContext context) {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
+            // ADMIN DASHBOARD GOMB - ÚJ!
+            if (_currentUsername == 'admin') ...[
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AdminDashboardScreen(),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.admin_panel_settings, color: Colors.white),
+                  label: const Text(
+                    'Admin Dashboard',
+                    style: TextStyle(fontSize: 18, color: Colors.white),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red[600],
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 15),
+            ],
             // PTI gomb
             SizedBox(
               width: double.infinity,
