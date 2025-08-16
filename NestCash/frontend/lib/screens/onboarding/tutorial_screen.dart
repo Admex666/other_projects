@@ -3,7 +3,8 @@
 import 'package:flutter/material.dart';
 import '../../models/onboarding_model.dart';
 import '../../services/onboarding_service.dart';
-import '../../services/auth_service.dart'; // ÚJ: AuthService import
+import '../../services/auth_service.dart';
+import '../../services/analytics_service.dart';
 import '/main.dart';
 
 import 'package:frontend/screens/add_incomes_screen.dart';
@@ -29,6 +30,7 @@ class TutorialScreen extends StatefulWidget {
 
 class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStateMixin {
   final OnboardingService _onboardingService = OnboardingService();
+  final AnalyticsService _analyticsService = AnalyticsService();
   final AuthService _authService = AuthService(); // ÚJ: AuthService instance
   final PageController _pageController = PageController();
   
@@ -69,6 +71,15 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
   // ÚJ: User adatok lekérése és tutorial inicializálása
   Future<void> _initializeUserDataAndTutorial() async {
     try {
+      // Track tutorial screen view
+      await _analyticsService.trackOnboardingProgress(
+        stepNumber: 3,
+        stepType: 'tutorial_started',
+        additionalData: {
+          'user_type': widget.userType.toString().split('.').last,
+        },
+      );
+
       // User adatok lekérése az AuthService-ból
       _currentUserId = await _authService.getUserId();
       _currentUsername = await _authService.getCurrentUsername();
@@ -382,6 +393,7 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
 
   void _nextPage() {
     if (_currentPage < _tutorialPages.length - 1) {
+      _analyticsService.trackFeatureUsage('tutorial_page_${_currentPage + 1}_completed');
       _pageController.nextPage(
         duration: Duration(milliseconds: 300),
         curve: Curves.easeInOut,
@@ -402,6 +414,9 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
 
   // MÓDOSÍTOTT: userId átadása az AddIncomesScreen-nek
   void _navigateToFeature(String actionText, String title) {
+    // Track feature exploration
+    _analyticsService.trackFeatureUsage('tutorial_feature_explored_${actionText.toLowerCase().replaceAll(' ', '_')}');
+
     // Képernyő mapping actionText alapján
     if (actionText.contains('tranzakció hozzáadása') || 
         actionText.contains('Első tranzakció')) {
@@ -469,7 +484,24 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
     setState(() => _isLoading = true);
 
     try {
+      await _analyticsService.trackOnboardingProgress(
+        stepNumber: 6,
+        stepType: 'tutorial_completed',
+        additionalData: {
+          'user_type': widget.userType.toString().split('.').last,
+          'pages_viewed': _currentPage + 1,
+          'total_pages': _tutorialPages.length,
+        },
+      );
+
       await _onboardingService.completeOnboarding();
+
+      // Track final completion
+      await _analyticsService.trackMultipleFeatures([
+        'onboarding_fully_completed',
+        'time_to_value_achieved',
+        'first_time_user_journey_completed',
+      ]);
       
       if (mounted) {
         // MÓDOSÍTOTT: Lekért felhasználói adatok használata
@@ -510,6 +542,15 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
   }
 
   void _skipTutorial() {
+    _analyticsService.trackOnboardingProgress(
+      stepNumber: 3,
+      stepType: 'tutorial_skipped',
+      additionalData: {
+        'skipped_at_page': _currentPage + 1,
+        'total_pages': _tutorialPages.length,
+      },
+    );
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(

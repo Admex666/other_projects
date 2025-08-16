@@ -9,6 +9,7 @@ import 'tutorial_screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../../services/auth_service.dart';
+import '../../services/analytics_service.dart';
 
 
 class BasicSetupScreen extends StatefulWidget {
@@ -21,6 +22,8 @@ class BasicSetupScreen extends StatefulWidget {
 
 class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProviderStateMixin {
   final OnboardingService _onboardingService = OnboardingService();
+  final AnalyticsService _analyticsService = AnalyticsService();
+
   final _formKey = GlobalKey<FormState>();
   final _balanceController = TextEditingController();
   final _subAccountNameController = TextEditingController(); // Módosítva: alszámla név
@@ -58,6 +61,7 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
   @override
   void initState() {
     super.initState();
+    _trackBasicSetupScreenView();
     _animationController = AnimationController(
       duration: Duration(milliseconds: 800),
       vsync: this,
@@ -76,6 +80,17 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
     super.dispose();
   }
 
+  Future<void> _trackBasicSetupScreenView() async {
+    try {
+      await _analyticsService.trackOnboardingProgress(
+        stepNumber: 2,
+        stepType: 'basic_setup_started',
+      );
+    } catch (e) {
+      print('Analytics tracking error: $e');
+    }
+  }
+  /*
   String _formatCurrency(String value) {
     if (value.isEmpty) return '';
     
@@ -94,6 +109,7 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
     
     return '$formatted ${_currencySymbols[_selectedCurrency]}';
   }
+  */
 
   Future<void> _saveBasicSetupAndContinue() async {
     if (!_formKey.currentState!.validate()) {
@@ -103,6 +119,18 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
     setState(() => _isLoading = true);
 
     try {
+      // Track setup data
+      await _analyticsService.trackOnboardingProgress(
+        stepNumber: 2,
+        stepType: 'basic_setup_completed',
+        additionalData: {
+          'currency': _selectedCurrency,
+          'main_account': _selectedMainAccount,
+          'has_initial_balance': _balanceController.text.isNotEmpty,
+          'has_sub_account_name': _subAccountNameController.text.isNotEmpty,
+        },
+      );
+
       // Parse balance
       String balanceText = _balanceController.text;
       double initialBalance = 0.0;
@@ -124,10 +152,11 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
       // Majd létrehozzuk az első alszámlát (ha van egyenleg és név)
       if (initialBalance > 0 && _subAccountNameController.text.trim().isNotEmpty) {
         await _createFirstSubAccount(initialBalance);
+        await _analyticsService.trackFeatureUsage('first_sub_account_created');
       }
       
       if (mounted) {
-        // Navigate to tutorial screen
+        await _analyticsService.trackFeatureUsage('basic_setup_navigation_to_tutorial');
         _navigateToTutorial();
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -181,6 +210,14 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
     setState(() => _isLoading = true);
 
     try {
+      await _analyticsService.trackOnboardingProgress(
+        stepNumber: 2,
+        stepType: 'basic_setup_skipped',
+        additionalData: {
+          'skipped_reason': 'user_chose_defaults',
+        },
+      );
+
       // Alapértelmezett értékek beállítása
       final setupData = BasicSetupData(
         preferredCurrency: _selectedCurrency,
@@ -443,6 +480,7 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
                                   setState(() {
                                     _selectedMainAccount = value!;
                                   });
+                                  _analyticsService.trackFeatureUsage('main_account_selected_$value');
                                 },
                               ),
                             ),
@@ -501,6 +539,7 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
                                   setState(() {
                                     _selectedCurrency = value!;
                                   });
+                                  _analyticsService.trackFeatureUsage('currency_selected_$value');
                                 },
                               ),
                             ),

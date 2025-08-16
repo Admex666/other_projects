@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'user_intent_screen.dart';
 import '/main.dart';
+import '../../services/analytics_service.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({Key? key}) : super(key: key);
@@ -12,6 +13,8 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateMixin {
+  final AnalyticsService _analyticsService = AnalyticsService();
+
   late AnimationController _fadeController;
   late AnimationController _slideController;
   late Animation<double> _fadeAnimation;
@@ -20,6 +23,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
   @override
   void initState() {
     super.initState();
+    _trackWelcomeScreenView();
     
     _fadeController = AnimationController(
       duration: Duration(milliseconds: 1500),
@@ -59,6 +63,15 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
     _fadeController.dispose();
     _slideController.dispose();
     super.dispose();
+  }
+
+  Future<void> _trackWelcomeScreenView() async {
+    try {
+      await _analyticsService.trackFeatureUsage('onboarding_welcome_screen');
+      await _analyticsService.trackSession();
+    } catch (e) {
+      print('Analytics tracking error: $e');
+    }
   }
 
   void _navigateToNextStep() {

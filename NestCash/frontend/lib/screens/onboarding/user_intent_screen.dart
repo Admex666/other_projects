@@ -5,6 +5,7 @@ import '../../models/onboarding_model.dart';
 import '../../services/onboarding_service.dart';
 import 'basic_setup_screen.dart';
 import 'package:frontend/screens/onboarding/welcome_screen.dart';
+import '../../services/analytics_service.dart';
 
 class UserIntentScreen extends StatefulWidget {
   const UserIntentScreen({Key? key}) : super(key: key);
@@ -15,6 +16,8 @@ class UserIntentScreen extends StatefulWidget {
 
 class _UserIntentScreenState extends State<UserIntentScreen> with TickerProviderStateMixin {
   final OnboardingService _onboardingService = OnboardingService();
+  final AnalyticsService _analyticsService = AnalyticsService();
+
   final Set<UserIntent> _selectedIntents = {};
   bool _isLoading = false;
   late AnimationController _animationController;
@@ -23,6 +26,7 @@ class _UserIntentScreenState extends State<UserIntentScreen> with TickerProvider
   @override
   void initState() {
     super.initState();
+    _trackIntentScreenView();
     _animationController = AnimationController(
       duration: Duration(milliseconds: 800),
       vsync: this,
@@ -39,12 +43,25 @@ class _UserIntentScreenState extends State<UserIntentScreen> with TickerProvider
     super.dispose();
   }
 
+  Future<void> _trackIntentScreenView() async {
+    try {
+      await _analyticsService.trackOnboardingProgress(
+        stepNumber: 1,
+        stepType: 'intent_selection_started',
+      );
+    } catch (e) {
+      print('Analytics tracking error: $e');
+    }
+  }
+
   void _toggleIntent(UserIntent intent) {
     setState(() {
       if (_selectedIntents.contains(intent)) {
         _selectedIntents.remove(intent);
       } else {
         _selectedIntents.add(intent);
+        // Track intent selection
+        _analyticsService.trackFeatureUsage('intent_selected_${intent.toString().split('.').last}');
       }
     });
   }
@@ -63,9 +80,22 @@ class _UserIntentScreenState extends State<UserIntentScreen> with TickerProvider
     setState(() => _isLoading = true);
 
     try {
+      // Track completion
+      await _analyticsService.trackOnboardingProgress(
+        stepNumber: 1,
+        stepType: 'intent_selection_completed',
+        additionalData: {
+          'selected_intents': _selectedIntents.map((e) => e.toString()).toList(),
+          'intent_count': _selectedIntents.length,
+        },
+      );
+
       final result = await _onboardingService.saveUserIntents(_selectedIntents.toList());
       
       if (mounted) {
+        // Track user type determination
+        await _analyticsService.trackFeatureUsage('user_type_determined');
+
         final determinedTypeString = result['determined_type']?.toString().split('.').last ?? 'aware_spender';
 
         Navigator.push(

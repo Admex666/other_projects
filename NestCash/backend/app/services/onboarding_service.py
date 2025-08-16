@@ -141,20 +141,25 @@ class OnboardingService:
         if not user:
             raise ValueError("User not found")
         
+        # Előző lépés mentése a progress trackinghez
+        previous_step = user.onboarding_step
         user.onboarding_step = step
         
         if data:
             if step == 1 and "selected_intents" in data:
                 # Célfelmérés lépés
                 user.selected_intents = data["selected_intents"]
-                user.user_type = OnboardingService.determine_user_type(
+                determined_type = OnboardingService.determine_user_type(
                     [UserIntent(intent) for intent in data["selected_intents"]]
                 )
+                user.user_type = determined_type.value
+                
             elif step == 2 and "basic_setup" in data:
                 # Alap beállítások lépés
                 user.preferred_currency = data["basic_setup"].get("preferred_currency", "HUF")
-        
+    
         await user.save()
+        print(f"Onboarding progress: User {user_id} moved from step {previous_step} to {step}")
         return user
     
     @staticmethod

@@ -41,6 +41,10 @@ class UserSessionTracking(Document):
     
     class Settings:
         name = "user_sessions"
+        # HOZZÁADÁS: Index a gyorsabb lekérdezéshez
+        indexes = [
+            [("user_id", 1), ("session_start", -1)]
+        ]
 
 class FeatureUsageTracking(Document):
     user_id: PydanticObjectId
@@ -52,6 +56,7 @@ class FeatureUsageTracking(Document):
 
 # Response models
 class HealthScoreResponse(BaseModel):
+    user_id: Optional[PydanticObjectId] = None
     overall_score: float
     login_frequency_score: float
     feature_usage_score: float

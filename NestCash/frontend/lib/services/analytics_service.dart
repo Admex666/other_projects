@@ -89,6 +89,100 @@ class AnalyticsService {
     }
   }
 
+  /// Automatikus onboarding tracking segédfüggvény
+  Future<void> trackOnboardingProgress({
+    required int stepNumber,
+    String? stepType,
+    Map<String, dynamic>? additionalData,
+  }) async {
+    final features = <String>[
+      'onboarding_step_$stepNumber',
+    ];
+    
+    if (stepType != null) {
+      features.add('onboarding_$stepType');
+    }
+    
+    // Speciális lépések külön tracking-je
+    switch (stepNumber) {
+      case 1:
+        features.add('user_intent_selection');
+        break;
+      case 2:
+        features.add('basic_setup_completion');
+        break;
+      case 6:
+        features.addAll(['onboarding_completed', 'full_onboarding']);
+        break;
+    }
+    
+    await trackMultipleFeatures(features);
+  }
+
+  /// Onboarding teljesítési idő mérése
+  Future<void> trackTimeToValue({
+    required String userId,
+    required String valueAction, // pl. 'first_transaction', 'onboarding_completed'
+    DateTime? registrationTime,
+  }) async {
+    try {
+      final features = [
+        'time_to_value_$valueAction',
+        'user_achieved_value',
+      ];
+      
+      if (registrationTime != null) {
+        final timeToValue = DateTime.now().difference(registrationTime);
+        features.add('ttv_duration_${timeToValue.inHours}h');
+        
+        // Kategorizálás
+        if (timeToValue.inMinutes <= 10) {
+          features.add('ttv_category_immediate');
+        } else if (timeToValue.inHours <= 1) {
+          features.add('ttv_category_fast');
+        } else if (timeToValue.inDays <= 1) {
+          features.add('ttv_category_same_day');
+        } else {
+          features.add('ttv_category_delayed');
+        }
+      }
+      
+      await trackMultipleFeatures(features);
+    } catch (e) {
+      print('Error tracking time to value: $e');
+    }
+  }
+
+  /// Onboarding funnel tracking
+  Future<void> trackOnboardingFunnel({
+    required String step,
+    required String action, // 'started', 'completed', 'abandoned'
+    Map<String, dynamic>? metadata,
+  }) async {
+    try {
+      final features = [
+        'onboarding_funnel_${step}_$action',
+      ];
+      
+      if (metadata != null) {
+        // Metadata alapján további tracking
+        if (metadata.containsKey('error')) {
+          features.add('onboarding_error_${step}');
+        }
+        if (metadata.containsKey('time_spent')) {
+          final timeSpent = metadata['time_spent'] as int? ?? 0;
+          if (timeSpent > 300) { // 5 perc felett
+            features.add('onboarding_slow_${step}');
+          }
+        }
+      }
+      
+      await trackMultipleFeatures(features);
+    } catch (e) {
+      print('Error tracking onboarding funnel: $e');
+    }
+}
+
   /// Admin - összes felhasználó health score-ja
   Future<List<AdminUserHealthScore>> getAllHealthScores() async {
     try {

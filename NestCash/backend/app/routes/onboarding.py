@@ -11,6 +11,7 @@ from app.models.onboarding import (
     OnboardingStatusResponse, CompleteOnboardingRequest
 )
 from app.services.onboarding_service import OnboardingService
+from app.services.health_score_service import HealthScoreService
 
 router = APIRouter(prefix="/onboarding", tags=["onboarding"])
 
@@ -18,6 +19,8 @@ router = APIRouter(prefix="/onboarding", tags=["onboarding"])
 async def get_onboarding_status(current_user: User = Depends(get_current_user)):
     """Visszaadja a felhasználó jelenlegi onboarding állapotát"""
     
+    await HealthScoreService.track_feature_usage(current_user.id, "onboarding_status_check")
+
     user_doc = await UserDocument.find_one(UserDocument.id == PydanticObjectId(current_user.id))
     if not user_doc:
         raise HTTPException(status_code=404, detail="User not found")
@@ -51,6 +54,19 @@ async def update_onboarding_step(
         updated_user = await OnboardingService.update_user_onboarding_progress(
             current_user.id, step_number, request.data
         )
+
+        # Feature tracking - minden lépéshez külön
+        await HealthScoreService.track_feature_usage(
+            current_user.id, 
+            f"onboarding_step_{step_number}"
+        )
+
+        # Ha befejezett egy lépést, azt is trackeljük
+        if step_number > 0:
+            await HealthScoreService.track_feature_usage(
+                current_user.id, 
+                f"onboarding_step_{step_number}_completed"
+            )
         
         return {
             "message": f"Onboarding step {step_number} updated successfully",
@@ -67,6 +83,10 @@ async def save_user_intents(
 ):
     """Elmenti a felhasználó által kiválasztott szándékokat és meghatározza a típusát"""
     
+    # Feature tracking
+    await HealthScoreService.track_feature_usage(current_user.id, "onboarding_intents_selection")
+    await HealthScoreService.track_feature_usage(current_user.id, "user_type_determination")
+
     # Meghatározzuk a user típusát a szándékok alapján
     determined_type = OnboardingService.determine_user_type(intents.intents)
     
@@ -95,6 +115,10 @@ async def save_basic_setup(
     """Elmenti az alapbeállításokat és létrehozza a kezdeti számlát"""
     
     try:
+        # Feature tracking
+        await HealthScoreService.track_feature_usage(current_user.id, "onboarding_basic_setup")
+        await HealthScoreService.track_feature_usage(current_user.id, "initial_account_creation")
+
         # Onboarding állapot frissítése
         await OnboardingService.update_user_onboarding_progress(
             current_user.id,
@@ -131,6 +155,10 @@ async def complete_onboarding(current_user: User = Depends(get_current_user)):
     try:
         completed_user = await OnboardingService.complete_onboarding(current_user.id)
         
+        # Feature tracking - fontos mérföldkő!
+        await HealthScoreService.track_feature_usage(current_user.id, "onboarding_completed")
+        await HealthScoreService.track_feature_usage(current_user.id, "onboarding_full_completion")
+
         return {
             "message": "Onboarding completed successfully!",
             "user_type": completed_user.user_type,

@@ -21,6 +21,12 @@ class HealthScoreService:
         except:
             raise ValueError(f"Invalid user_id format: {user_id}")
         
+        # DEBUG: Ellenőrizzük a sessions adatokat
+        debug_sessions = await UserSessionTracking.find({"user_id": user_obj_id}).to_list()
+        print(f"DEBUG - Found {len(debug_sessions)} sessions for user {user_id}")
+        if debug_sessions:
+            print(f"DEBUG - Latest session: {debug_sessions[0].session_start if debug_sessions else 'None'}")
+    
         # Lekérdezzük a UserDocument-et
         user_doc = await UserDocument.get(user_obj_id)
         if not user_doc:
@@ -80,9 +86,23 @@ class HealthScoreService:
         await health_score_doc.save()
         
         return HealthScoreResponse(
-            user_id=str(user_obj_id),
+            user_id=user_obj_id,
             overall_score=overall_score,
+            login_frequency_score=login_score,
+            feature_usage_score=feature_score,
+            engagement_score=engagement_score,
             health_level=health_level,
+            calculated_at=datetime.utcnow(),
+            details={
+                "days_since_last_login": days_since_last_login,
+                "total_sessions": total_sessions,
+                "transaction_count": transaction_count,
+                "onboarding_completed": onboarding_completed,
+                "badge_progress_count": badge_progress_count,
+                "forum_posts_count": forum_posts_count,
+                "forum_comments_count": forum_comments_count,
+                "has_active_partnership": has_active_partnership
+            },
             recommendations=HealthScoreService._get_recommendations(health_score_doc)
         )
     
@@ -90,16 +110,39 @@ class HealthScoreService:
     async def _calculate_login_frequency_score(user_obj_id: PydanticObjectId) -> (float, int, int):
         """Calculate login frequency score and return details"""
         
-        sessions = await UserSessionTracking.find({"user_id": user_obj_id}).sort("-session_start").to_list()
-        total_sessions = len(sessions)
+        # DEBUG: Ellenőrizzük az ObjectId formátumot
+        print(f"DEBUG - Looking for sessions with user_id: {user_obj_id} (type: {type(user_obj_id)})")
         
-        if not sessions:
+        # JAVÍTÁS: Közvetlenül a MongoDB collection-t használjuk
+        from app.core.db import get_db
+        db = get_db()
+        sessions_collection = db["user_sessions"]
+        
+        # Raw MongoDB lekérdezés ObjectId-val
+        sessions_cursor = sessions_collection.find(
+            {"user_id": user_obj_id}
+        ).sort("session_start", -1)
+        
+        sessions_list = await sessions_cursor.to_list(length=None)
+        total_sessions = len(sessions_list)
+        
+        print(f"DEBUG - Found {total_sessions} sessions for user {user_obj_id}")
+        
+        if not sessions_list:
             return 0.0, 999, 0
             
-        last_session = sessions[0]
-        days_since_last_login = (datetime.utcnow() - last_session.session_start).days
+        last_session = sessions_list[0]
+        last_session_date = last_session["session_start"]
         
-        # Egyszerűsített pontszámítás
+        print(f"DEBUG - Last session date: {last_session_date}")
+        
+        # Timezone-aware összehasonlítás
+        now = datetime.utcnow()
+        days_since_last_login = (now - last_session_date).days
+        
+        print(f"DEBUG - Days since last login: {days_since_last_login}")
+        
+        # Pontszámítás
         if days_since_last_login <= 1:
             score = 100
         elif days_since_last_login <= 3:
@@ -111,25 +154,58 @@ class HealthScoreService:
         else:
             score = 0
             
-        return score, days_since_last_login, total_sessions
+        return float(score), days_since_last_login, total_sessions
     
     @staticmethod
     async def _calculate_feature_usage_score(user_obj_id: PydanticObjectId, onboarding_completed: bool) -> (float, bool, int):
         """Calculate feature usage score and return details"""
         
         transaction_count = await Transaction.find({"user_id": user_obj_id}).count()
-        # A valós funkcióhasználat pontszámítása további logikát igényelne
-        # pl. hány különböző funkciót használt a felhasználó
         
+        # HOZZÁADÁS: Feature usage tracking elemzése
+        feature_usage_count = await FeatureUsageTracking.find({"user_id": user_obj_id}).count()
+
+        # Onboarding specifikus feature-ök számolása
+        onboarding_features = await FeatureUsageTracking.find({
+            "user_id": user_obj_id,
+            "feature_name": {"$regex": "^onboarding"}
+        }).count()
+        
+        # Egyéb fontos feature-ök
+        important_features = await FeatureUsageTracking.find({
+            "user_id": user_obj_id,
+            "feature_name": {"$in": [
+                "create_transaction", "view_dashboard", "set_limit", 
+                "join_challenge", "forum_post", "knowledge_lesson"
+            ]}
+        }).count()
+        
+        print(f"DEBUG - Feature usage for user {user_obj_id}: total={feature_usage_count}, onboarding={onboarding_features}, important={important_features}")
+    
+
         score_base = 0
         
-        # A tranzakciók hozzáadása egy fontos metrika
-        if transaction_count > 0:
-            score_base += 50
-            
-        # Onboarding befejezés (ez a user dokumentumból jön)
+        # Onboarding befejezés (alapvető)
         if onboarding_completed:
-            score_base += 50
+            score_base += 30
+        
+        # Tranzakciók létrehozása
+        if transaction_count > 0:
+            score_base += 25
+            if transaction_count >= 5:
+                score_base += 10
+            if transaction_count >= 20:
+                score_base += 10
+        
+        # Feature használat aktivitás
+        if feature_usage_count > 5:
+            score_base += 15
+        if feature_usage_count > 20:
+            score_base += 10
+        
+        # Fontos feature-ök használata
+        if important_features > 0:
+            score_base += 10
         
         return float(score_base), onboarding_completed, transaction_count
     
@@ -237,12 +313,30 @@ class HealthScoreService:
                 print(f"New session created for user: {user_id}")
             else:
                 # Frissítjük a session_end időt, ha van aktív session
-                await UserSessionTracking.update_one(
-                    {"_id": recent_session.id},
-                    {"$set": {"session_end": datetime.utcnow()}}
-                )
+                recent_session.session_end = datetime.utcnow()
+                await recent_session.save()  # JAVÍTÁS: .save() használata .update_one() helyett
                 print(f"Active session updated for user: {user_id}")
                 
         except Exception as e:
             print(f"Error tracking session for user {user_id}: {e}")
+            raise
+
+    @staticmethod
+    async def track_feature_usage(user_id: str, feature_name: str) -> None:
+        """Track feature usage"""
+        try:
+            from beanie import PydanticObjectId
+            user_obj_id = PydanticObjectId(user_id)
+            
+            # Új feature usage tracking
+            feature_usage = FeatureUsageTracking(
+                user_id=user_obj_id,
+                feature_name=feature_name,
+                used_at=datetime.utcnow()
+            )
+            await feature_usage.save()
+            print(f"Feature usage tracked: {feature_name} for user: {user_id}")
+            
+        except Exception as e:
+            print(f"Error tracking feature usage for user {user_id}: {e}")
             raise
