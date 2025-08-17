@@ -213,9 +213,10 @@ class HealthScoreService:
     async def _calculate_engagement_score(user_obj_id: PydanticObjectId) -> (float, int, int, bool, int):
         """Calculate engagement score and return details"""
         
-        forum_posts_count = await ForumPostDocument.find({"author_id": user_obj_id}).count()
-        forum_comments_count = await CommentDocument.find({"author_id": user_obj_id}).count()
-        
+        # JAVÍTÁS: user_id mezőt használjuk author_id helyett
+        forum_posts_count = await ForumPostDocument.find({"user_id": user_obj_id}).count()
+        forum_comments_count = await CommentDocument.find({"user_id": user_obj_id}).count()
+            
         # Partnerships
         has_active_partnership = await Partnership.find_one({
             "$or": [{"user1_id": user_obj_id}, {"user2_id": user_obj_id}],
@@ -233,6 +234,10 @@ class HealthScoreService:
         if badge_progress_count > 0:
             score_base += 20
         
+        # DEBUG információ hozzáadása
+        print(f"DEBUG - Engagement for user {user_obj_id}: posts={forum_posts_count}, comments={forum_comments_count}, partnership={has_active_partnership}, badges={badge_progress_count}")
+   
+   
         return float(score_base), forum_posts_count, forum_comments_count, has_active_partnership, badge_progress_count
 
     
