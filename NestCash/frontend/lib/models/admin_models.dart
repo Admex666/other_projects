@@ -69,6 +69,15 @@ class AdminHealthDetails {
   final int forumPostsCount;
   final int forumCommentsCount;
   final bool hasActivePartnership;
+  final int? knowledgeActivityCount;
+  final int? messagesActivityCount; 
+  final int? knowledgeLessonsCompleted;
+  final int? messagesSentCount;
+  final int? habitsActivityCount;
+  final int? limitsActivityCount;
+  final int? ptiActivityCount;
+  final int? badgeActivityCount;
+
 
   const AdminHealthDetails({
     required this.daysSinceLastLogin,
@@ -79,6 +88,14 @@ class AdminHealthDetails {
     required this.forumPostsCount,
     required this.forumCommentsCount,
     required this.hasActivePartnership,
+    required this.knowledgeActivityCount,
+    required this.messagesActivityCount,
+    required this.knowledgeLessonsCompleted,
+    required this.messagesSentCount,
+    required this.habitsActivityCount,
+    required this.limitsActivityCount,
+    required this.ptiActivityCount,
+    required this.badgeActivityCount,
   });
 
   factory AdminHealthDetails.fromJson(Map<String, dynamic> json) {
@@ -91,6 +108,14 @@ class AdminHealthDetails {
       forumPostsCount: json['forum_posts_count'] ?? 0,
       forumCommentsCount: json['forum_comments_count'] ?? 0,
       hasActivePartnership: json['has_active_partnership'] ?? false,
+      knowledgeActivityCount: json['knowledge_activity_count'] ?? 0,
+      messagesActivityCount: json['messages_activity_count'] ?? 0,
+      knowledgeLessonsCompleted: json['knowledge_lessons_completed'] ?? 0,
+      messagesSentCount: json['messages_sent_count'] ?? 0,
+      habitsActivityCount: json['habits_activity_count'] ?? 0,
+      limitsActivityCount: json['limits_activity_count'] ?? 0,
+      ptiActivityCount: json['pti_activity_count'] ?? 0,
+      badgeActivityCount: json['badge_activity_count'] ?? 0,
     );
   }
 }

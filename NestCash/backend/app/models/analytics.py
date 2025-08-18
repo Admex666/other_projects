@@ -25,6 +25,14 @@ class UserHealthScore(Document):
     forum_posts_count: int = 0
     forum_comments_count: int = 0
     has_active_partnership: bool = False
+    knowledge_activity_count: int = 0
+    messages_activity_count: int = 0
+    knowledge_lessons_completed: int = 0
+    messages_sent_count: int = 0
+    habits_activity_count: int = 0
+    limits_active_count: int = 0
+    pti_activity_count: int = 0
+    badge_activity_count: int = 0
     
     # Meta
     calculated_at: datetime = Field(default_factory=datetime.utcnow)

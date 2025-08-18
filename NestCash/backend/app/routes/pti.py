@@ -175,6 +175,16 @@ async def get_pti_dashboard(current_user: User = Depends(get_current_user)):
                 is_current_user=True
             )
         
+        # Feature usage tracking
+        try:
+            from app.models.analytics import FeatureUsageTracking
+            await FeatureUsageTracking(
+                user_id=PydanticObjectId(current_user.id),
+                feature_name="pti_dashboard_viewed"
+            ).insert()
+        except Exception as e:
+            logger.error(f"Feature tracking failed: {e}")
+
         return PTIDashboardResponse(
             current_pti=current_pti,
             weekly_ranking=weekly_user_entry,  # Most a felhasználó saját pozíciója
@@ -312,6 +322,17 @@ async def get_ranking(
         ranking = await PTIService.get_user_ranking(
             current_user.id, period, scope, limit, offset
         )
+
+        # Feature usage tracking
+        try:
+            from app.models.analytics import FeatureUsageTracking
+            await FeatureUsageTracking(
+                user_id=PydanticObjectId(current_user.id),
+                feature_name="pti_ranking_viewed"
+            ).insert()
+        except Exception as e:
+            logger.error(f"Feature tracking failed: {e}")
+
         return ranking.dict()
         
     except Exception as e:
@@ -678,6 +699,17 @@ async def get_component_ranking(
             offset=offset,
             user_id=current_user.id
         )
+
+        # Feature usage tracking
+        try:
+            from app.models.analytics import FeatureUsageTracking
+            await FeatureUsageTracking(
+                user_id=PydanticObjectId(current_user.id),
+                feature_name="pti_component_ranking_viewed"
+            ).insert()
+        except Exception as e:
+            logger.error(f"Feature tracking failed: {e}")
+            
         return ranking.dict()
         
     except Exception as e:

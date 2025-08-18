@@ -32,11 +32,32 @@ class HealthScoreService:
         if not user_doc:
             raise ValueError(f"User with id {user_id} not found")
 
+        # BŐVÍTÉS: Tudástár aktivitás számolása
+        knowledge_features = await FeatureUsageTracking.find({
+            "user_id": user_obj_id,
+            "feature_name": {"$regex": "^knowledge"}
+        }).count()
+        
+        # BŐVÍTÉS: Üzenetek aktivitás számolása
+        messages_features = await FeatureUsageTracking.find({
+            "user_id": user_obj_id,
+            "feature_name": {"$regex": "^messages"}
+        }).count()
+
+        # BŐVÍTÉS: Tudástár teljesített leckék
+        from app.models.knowledge import UserProgress
+        user_progress = await UserProgress.find_one({"user_id": user_obj_id})
+        knowledge_lessons_completed = user_progress.total_lessons_completed if user_progress else 0
+        
+        # BŐVÍTÉS: Elküldött üzenetek száma
+        from app.models.message_models import MessageDocument
+        messages_sent_count = await MessageDocument.find({"sender_id": user_obj_id}).count()
+    
         # 1. Login Frequency Score (30%)
         login_score, days_since_last_login, total_sessions = await HealthScoreService._calculate_login_frequency_score(user_obj_id)
         
         # 2. Feature Usage Score (40%)
-        feature_score, onboarding_completed, transaction_count = await HealthScoreService._calculate_feature_usage_score(user_obj_id, user_doc.onboarding_completed)
+        feature_score, onboarding_completed, transaction_count, habits_usage, limits_usage, pti_usage, badge_usage = await HealthScoreService._calculate_feature_usage_score(user_obj_id, user_doc.onboarding_completed)
         
         # 3. Engagement Score (30%)
         engagement_score, forum_posts_count, forum_comments_count, has_active_partnership, badge_progress_count = await HealthScoreService._calculate_engagement_score(user_obj_id)
@@ -64,6 +85,14 @@ class HealthScoreService:
                 forum_posts_count=forum_posts_count,
                 forum_comments_count=forum_comments_count,
                 has_active_partnership=has_active_partnership,
+                knowledge_activity_count=knowledge_features,
+                messages_activity_count=messages_features,
+                knowledge_lessons_completed=knowledge_lessons_completed,
+                messages_sent_count=messages_sent_count,
+                habits_activity_count=habits_usage,
+                limits_active_count=limits_usage,
+                pti_activity_count=pti_usage,
+                badge_activity_count=badge_usage,
                 health_level=health_level,
                 calculated_at=datetime.utcnow()
             )
@@ -80,6 +109,14 @@ class HealthScoreService:
             health_score_doc.forum_posts_count = forum_posts_count
             health_score_doc.forum_comments_count = forum_comments_count
             health_score_doc.has_active_partnership = has_active_partnership
+            health_score_doc.knowledge_activity_count = knowledge_features
+            health_score_doc.messages_activity_count = messages_features
+            health_score_doc.knowledge_lessons_completed = knowledge_lessons_completed
+            health_score_doc.messages_sent_count = messages_sent_count
+            health_score_doc.habits_activity_count = habits_usage  # Új mező hozzáadása a modellhez
+            health_score_doc.limits_activity_count = limits_usage  # Új mező hozzáadása a modellhez
+            health_score_doc.pti_activity_count = pti_usage  # Új mező hozzáadása a modellhez
+            health_score_doc.badge_activity_count = badge_usage  # Új mező hozzáadása a modellhez
             health_score_doc.health_level = health_level
             health_score_doc.calculated_at = datetime.utcnow()
             
@@ -101,7 +138,11 @@ class HealthScoreService:
                 "badge_progress_count": badge_progress_count,
                 "forum_posts_count": forum_posts_count,
                 "forum_comments_count": forum_comments_count,
-                "has_active_partnership": has_active_partnership
+                "has_active_partnership": has_active_partnership,
+                "knowledge_activity_count": knowledge_features,
+                "messages_activity_count": messages_features,
+                "knowledge_lessons_completed": knowledge_lessons_completed,
+                "messages_sent_count": messages_sent_count
             },
             recommendations=HealthScoreService._get_recommendations(health_score_doc)
         )
@@ -170,13 +211,54 @@ class HealthScoreService:
             "user_id": user_obj_id,
             "feature_name": {"$regex": "^onboarding"}
         }).count()
+
+        # Tudástár aktivitás
+        knowledge_features = await FeatureUsageTracking.find({
+            "user_id": user_obj_id,
+            "feature_name": {"$regex": "^knowledge"}
+        }).count()
         
+        # Üzenetek aktivitás
+        messages_features = await FeatureUsageTracking.find({
+            "user_id": user_obj_id,
+            "feature_name": {"$regex": "^messages"}
+        }).count()
+
+        # Habits usage
+        habits_usage = await FeatureUsageTracking.find({
+            "user_id": user_obj_id,
+            "feature_name": {"$in": ["habit_created", "habit_log_created", "habit_stats_viewed"]},
+            "used_at": {"$gte": datetime.utcnow() - timedelta(days=30)}
+        }).count()
+        
+        # Limits usage  
+        limits_usage = await FeatureUsageTracking.find({
+            "user_id": user_obj_id,
+            "feature_name": {"$in": ["limit_created", "limit_checked", "limits_status_viewed"]},
+            "used_at": {"$gte": datetime.utcnow() - timedelta(days=30)}
+        }).count()
+        
+        # PTI usage
+        pti_usage = await FeatureUsageTracking.find({
+            "user_id": user_obj_id,
+            "feature_name": {"$in": ["pti_dashboard_viewed", "pti_ranking_viewed", "pti_component_ranking_viewed"]},
+            "used_at": {"$gte": datetime.utcnow() - timedelta(days=30)}
+        }).count()
+        
+        # Badge usage
+        badge_usage = await FeatureUsageTracking.find({
+            "user_id": user_obj_id,
+            "feature_name": {"$in": ["badges_viewed", "badge_leaderboard_viewed", "badge_updated"]},
+            "used_at": {"$gte": datetime.utcnow() - timedelta(days=30)}
+        }).count()
+              
         # Egyéb fontos feature-ök
         important_features = await FeatureUsageTracking.find({
             "user_id": user_obj_id,
             "feature_name": {"$in": [
                 "create_transaction", "view_dashboard", "set_limit", 
-                "join_challenge", "forum_post", "knowledge_lesson"
+                "join_challenge", "forum_post", "knowledge_lesson_progress",
+                "knowledge_quiz_submit", "messages_send_message"
             ]}
         }).count()
         
@@ -187,27 +269,62 @@ class HealthScoreService:
         
         # Onboarding befejezés (alapvető)
         if onboarding_completed:
-            score_base += 30
+            score_base += 25
         
         # Tranzakciók létrehozása
         if transaction_count > 0:
-            score_base += 25
+            score_base += 11
             if transaction_count >= 5:
-                score_base += 10
+                score_base += 8
             if transaction_count >= 20:
+                score_base += 15
+
+        # Tudástár használat
+        if knowledge_features > 0:
+            score_base += 15
+            if knowledge_features >= 5:
                 score_base += 10
+
+        # Üzenetek használat
+        if messages_features > 0:
+            score_base += 10
+            if messages_features >= 3:
+                score_base += 5
+
+        if habits_usage > 0:
+            score_base += 10
+            if habits_usage >= 3:
+                score_base += 5
+
+        if limits_usage > 0:
+            score_base += 10
+            if limits_usage >= 3:
+                score_base += 5
+        
+        if pti_usage > 0:
+            score_base += 10
+            if pti_usage >= 3:
+                score_base += 5
+
+        if badge_usage > 0:
+            score_base += 10
+            if badge_usage >= 3:
+                score_base += 5
         
         # Feature használat aktivitás
         if feature_usage_count > 5:
-            score_base += 15
-        if feature_usage_count > 20:
             score_base += 10
+        if feature_usage_count > 20:
+            score_base += 5
         
         # Fontos feature-ök használata
         if important_features > 0:
-            score_base += 10
+            score_base += 5
+
+        max_exp_score = 110 # max: 144
+        normalized_score = min(100, (score_base / max_exp_score) * 100)
         
-        return float(score_base), onboarding_completed, transaction_count
+        return float(normalized_score), onboarding_completed, transaction_count, habits_usage, limits_usage, pti_usage, badge_usage
     
     @staticmethod
     async def _calculate_engagement_score(user_obj_id: PydanticObjectId) -> (float, int, int, bool, int):

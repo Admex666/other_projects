@@ -10,6 +10,7 @@ from app.models.message_models import (
 from app.core.security import get_current_user
 from app.models.user import User
 from app.services.message_service import MessageService
+from app.services.health_score_service import HealthScoreService
 
 router = APIRouter(prefix="/messages", tags=["messages"])
 logger = logging.getLogger(__name__)
@@ -28,6 +29,9 @@ async def get_conversations(
         
         conversations = [ConversationRead(**conv) for conv in conversations_data]
         
+        # Feature usage tracking hozzáadása
+        await HealthScoreService.track_feature_usage(current_user.id, "messages_view_conversations")
+
         return ConversationListResponse(
             conversations=conversations,
             total_count=total_count
@@ -59,6 +63,9 @@ async def get_messages(
         )
         
         messages = [MessageRead(**msg) for msg in messages_data]
+
+        # Feature usage tracking hozzáadása
+        await HealthScoreService.track_feature_usage(current_user.id, "messages_view_conversation")
         
         return MessageListResponse(
             messages=messages,
@@ -89,6 +96,9 @@ async def send_message(
             current_user.id, other_user_id, message_data.content
         )
         
+        # Feature usage tracking hozzáadása
+        await HealthScoreService.track_feature_usage(current_user.id, "messages_send_message")
+
         return MessageRead(
             id=str(message.id),
             sender_id=str(message.sender_id),

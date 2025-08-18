@@ -16,6 +16,7 @@ from app.models.knowledge import (
 )
 from app.services.badge_service import badge_service
 from app.models.notification import NotificationPriority
+from app.services.health_score_service import HealthScoreService
 
 router = APIRouter(prefix="/knowledge", tags=["knowledge"])
 logger = logging.getLogger(__name__)
@@ -39,7 +40,10 @@ async def get_categories_with_lessons(
     
     # ÚJ DEBUG SOROK:
     print(f"DEBUG: get_categories_with_lessons called for user ID: {current_user.id} (type: {type(current_user.id)})")
-    
+
+    # Feature usage tracking hozzáadása a függvény elején
+    await HealthScoreService.track_feature_usage(current_user.id, "knowledge_browse_categories")
+
     try:
         query_user_id = PydanticObjectId(current_user.id)
         print(f"DEBUG: Querying user_progress with converted ID: {query_user_id} (type: {type(query_user_id)})")
@@ -172,6 +176,9 @@ async def get_lesson_detail(
                 completion_data = comp
                 break
     
+    # Feature usage tracking hozzáadása
+    await HealthScoreService.track_feature_usage(current_user.id, "knowledge_view_lesson")
+    
     return {
         "lesson": lesson.dict(),
         "completion": completion_data.dict() if completion_data else None
@@ -238,6 +245,9 @@ async def update_lesson_progress(
     
     user_progress.updated_at = datetime.now()
     await user_progress.save()
+    
+    # Feature usage tracking hozzáadása
+    await HealthScoreService.track_feature_usage(current_user.id, "knowledge_lesson_progress")
     
     return {"message": "Progress updated successfully"}
 
@@ -336,6 +346,9 @@ async def submit_quiz(
     user_progress.updated_at = datetime.now()
     await user_progress.save()
 
+    # Feature usage tracking hozzáadása
+    await HealthScoreService.track_feature_usage(current_user.id, "knowledge_quiz_submit")
+
     return QuizResult(
         score=score,
         correct_answers=correct_count,
@@ -428,6 +441,9 @@ async def complete_daily_challenge(current_user: User = Depends(get_current_user
     user_progress.updated_at = datetime.now()
     await user_progress.save()
     
+    # Feature usage tracking hozzáadása
+    await HealthScoreService.track_feature_usage(current_user.id, "knowledge_daily_challenge")
+
     return {
         "message": "Daily challenge completed!",
         "streak": user_progress.daily_challenge_streak

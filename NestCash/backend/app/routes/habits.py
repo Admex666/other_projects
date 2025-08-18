@@ -16,6 +16,7 @@ from app.models.habit_schemas import (
 )
 from app.services.habit_service import HabitService
 from app.services.badge_service import badge_service
+from app.models.analytics import FeatureUsageTracking
 
 router = APIRouter(prefix="/habits", tags=["habits"])
 logger = logging.getLogger(__name__)
@@ -61,6 +62,15 @@ async def create_habit(
             )
         except Exception as e:
             logger.error(f"Badge check failed: {e}")
+
+        # Feature usage tracking
+        try:
+            await FeatureUsageTracking(
+                user_id=PydanticObjectId(current_user.id),
+                feature_name="habit_created"
+            ).insert()
+        except Exception as e:
+            logger.error(f"Feature tracking failed: {e}")
         
         return await _convert_habit_to_read(new_habit, current_user.id)
         
@@ -239,6 +249,15 @@ async def create_habit_log(
                 )
         except Exception as e:
             logger.error(f"Badge check failed: {e}")
+
+        # Feature usage tracking
+        try:
+            await FeatureUsageTracking(
+                user_id=PydanticObjectId(current_user.id),
+                feature_name="habit_log_created"
+            ).insert()
+        except Exception as e:
+            logger.error(f"Feature tracking failed: {e}")
         
         return HabitLogRead(
             id=str(habit_log.id),
@@ -429,6 +448,15 @@ async def get_habit_stats(
         weekly_stats = await HabitService.get_weekly_stats(habit_id, current_user.id)
         monthly_stats = await HabitService.get_monthly_stats(habit_id, current_user.id)
         
+        # Feature usage tracking
+        try:
+            await FeatureUsageTracking(
+                user_id=PydanticObjectId(current_user.id),
+                feature_name="habit_stats_viewed"
+            ).insert()
+        except Exception as e:
+            logger.error(f"Feature tracking failed: {e}")
+
         return HabitStatsResponse(
             habit_id=habit_id,
             habit_title=habit.title,

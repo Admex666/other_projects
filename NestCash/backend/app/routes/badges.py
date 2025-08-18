@@ -2,6 +2,9 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from typing import List, Optional
 from beanie import PydanticObjectId
+import logging
+
+logger = logging.getLogger(__name__)
 
 from app.core.security import get_current_user
 from app.models.user import User
@@ -56,6 +59,16 @@ async def get_my_badges(
             badges_read.append(badge_read)
             total_points += badge_type.points * user_badge.level
         
+        # Feature usage tracking
+        try:
+            from app.models.analytics import FeatureUsageTracking
+            await FeatureUsageTracking(
+                user_id=PydanticObjectId(current_user.id),
+                feature_name="badges_viewed"
+            ).insert()
+        except Exception as e:
+            logger.error(f"Feature tracking failed: {e}")
+
         return BadgeListResponse(
             badges=badges_read,
             total_count=len(badges_read),
@@ -187,6 +200,16 @@ async def update_my_badge(
         
         await user_badge.save()
         
+        # Feature usage tracking
+        try:
+            from app.models.analytics import FeatureUsageTracking
+            await FeatureUsageTracking(
+                user_id=PydanticObjectId(current_user.id),
+                feature_name="badge_updated"
+            ).insert()
+        except Exception as e:
+            logger.error(f"Feature tracking failed: {e}")
+            
         return UserBadgeRead(
             id=str(user_badge.id),
             user_id=str(user_badge.user_id),
@@ -327,6 +350,16 @@ async def get_badge_leaderboard(
                     ) if stats["recent_badge"] else None
                 })
         
+        # Feature usage tracking
+        try:
+            from app.models.analytics import FeatureUsageTracking
+            await FeatureUsageTracking(
+                user_id=PydanticObjectId(current_user.id),
+                feature_name="badge_leaderboard_viewed"
+            ).insert()
+        except Exception as e:
+            logger.error(f"Feature tracking failed: {e}")
+
         return BadgeLeaderboardResponse(
             leaderboard=leaderboard,
             user_rank=user_rank,

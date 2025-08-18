@@ -14,6 +14,7 @@ from app.models.transaction import Transaction
 from app.core.security import get_current_user
 from app.models.user import User
 from app.models.notification import NotificationPriority
+from app.models.analytics import FeatureUsageTracking
 
 router = APIRouter(prefix="/limits", tags=["limits"])
 logger = logging.getLogger(__name__)
@@ -43,6 +44,16 @@ async def create_limit(
         )
         await new_limit.insert()
         
+        # Feature usage tracking
+        try:
+            from app.models.analytics import FeatureUsageTracking
+            await FeatureUsageTracking(
+                user_id=PydanticObjectId(current_user.id),
+                feature_name="limit_created"
+            ).insert()
+        except Exception as e:
+            logger.error(f"Feature tracking failed: {e}")
+            
         return LimitRead(
             id=str(new_limit.id),
             user_id=str(new_limit.user_id),
@@ -296,6 +307,16 @@ async def get_limits_status(current_user: User = Depends(get_current_user)):
                   usage_percentage >= limit.notification_threshold):
                 warning_count += 1
         
+        # Feature usage tracking
+        try:
+            from app.models.analytics import FeatureUsageTracking
+            await FeatureUsageTracking(
+                user_id=PydanticObjectId(current_user.id),
+                feature_name="limits_status_viewed"
+            ).insert()
+        except Exception as e:
+            logger.error(f"Feature tracking failed: {e}")
+            
         return LimitStatus(
             total_limits=len(all_limits),
             active_limits=len(active_limits),

@@ -583,6 +583,14 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
         _buildDetailRow('Forum bejegyzések', details.forumPostsCount.toString()),
         _buildDetailRow('Forum hozzászólások', details.forumCommentsCount.toString()),
         _buildDetailRow('Aktív partnership', details.hasActivePartnership ? 'Igen' : 'Nem'),
+        _buildDetailRow('Tudástár aktivitás', details.knowledgeActivityCount?.toString() ?? '0'),
+        _buildDetailRow('Teljesített leckék', details.knowledgeLessonsCompleted?.toString() ?? '0'),
+        _buildDetailRow('Üzenet aktivitás', details.messagesActivityCount?.toString() ?? '0'),
+        _buildDetailRow('Elküldött üzenetek', details.messagesSentCount?.toString() ?? '0'),
+        _buildDetailRow('Szokások használat', details.habitsActivityCount?.toString() ?? '0'),
+        _buildDetailRow('Korlátok használat', details.limitsActivityCount?.toString() ?? '0'),
+        _buildDetailRow('PTI használat', details.ptiActivityCount?.toString() ?? '0'),
+        _buildDetailRow('Badge használat', details.badgeActivityCount?.toString() ?? '0'),
       ],
     );
   }
