@@ -18,6 +18,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
   AdminStats? _stats;
   List<AdminUserHealthScore>? _healthScores;
   bool _isLoading = true;
+  bool _isRecalculating = false; // Új állapot az újraszámításhoz
   String? _errorMessage;
 
   @override
@@ -56,6 +57,73 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
     }
   }
 
+  // Új metódus a health score-ok újraszámításához
+  Future<void> _recalculateHealthScores() async {
+    // Megerősítő dialog
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Health Score-ok újraszámítása'),
+        content: const Text(
+          'Biztosan újra szeretnéd számítani az összes felhasználó health score-ját? '
+          'Ez eltarthat egy ideig és az adatok átmenetileg változhatnak.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Mégse'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.indigo,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Újraszámítás'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+
+    setState(() {
+      _isRecalculating = true;
+    });
+
+    try {
+      await _analyticsService.recalculateAllHealthScores();
+      
+      // Sikeres üzenet
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Health score-ok sikeresen újraszámítva!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+      
+      // Adatok újratöltése
+      await _loadData();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Hiba történt az újraszámítás során: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isRecalculating = false;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,6 +131,24 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
         title: const Text('Admin Dashboard'),
         backgroundColor: Colors.indigo,
         foregroundColor: Colors.white,
+        // Újraszámítás gomb az AppBar-ban
+        actions: [
+          if (!_isLoading) // Csak akkor jelenjen meg, ha nem töltünk
+            IconButton(
+              onPressed: _isRecalculating ? null : _recalculateHealthScores,
+              icon: _isRecalculating 
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                  : const Icon(Icons.refresh),
+              tooltip: 'Health Score-ok újraszámítása',
+            ),
+        ],
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: Colors.white,
@@ -85,6 +171,25 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
                     _buildUsersTab(),
                   ],
                 ),
+      // Alternatív: FloatingActionButton az újraszámításhoz
+      floatingActionButton: !_isLoading && _errorMessage == null 
+          ? FloatingActionButton.extended(
+              onPressed: _isRecalculating ? null : _recalculateHealthScores,
+              backgroundColor: _isRecalculating ? Colors.grey : Colors.indigo,
+              foregroundColor: Colors.white,
+              icon: _isRecalculating 
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                  : const Icon(Icons.calculate),
+              label: Text(_isRecalculating ? 'Számítás...' : 'Újraszámítás'),
+            )
+          : null,
     );
   }
 
@@ -137,25 +242,68 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> with Single
     );
   }
 
+  // lib/screens/admin_dashboard_screen.dart
+
   Widget _buildOverviewCards() {
-    return Row(
+    return Column(
       children: [
-        Expanded(
-          child: _buildStatCard(
-            'Összes felhasználó',
-            _stats!.totalUsers.toString(),
-            Icons.people_outline,
-            Colors.blue,
-          ),
+        Row(
+          children: [
+            Expanded(
+              child: _buildStatCard(
+                'Összes felhasználó',
+                _stats!.totalUsers.toString(),
+                Icons.people_outline,
+                Colors.blue,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: _buildStatCard(
+                'Aktív felhasználók\n(7 nap)',
+                '${_stats!.activeUsers}',
+                Icons.people,
+                Colors.green,
+              ),
+            ),
+          ],
         ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: _buildStatCard(
-            'Aktív felhasználók\n(7 nap)',
-            '${_stats!.activeUsers} (${_stats!.activeUserPercentage.toStringAsFixed(1)}%)',
-            Icons.people,
-            Colors.green,
-          ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: _buildStatCard(
+                'Onboarding Befejezési Arány',
+                '${_stats!.onboardingCompletionRate.toStringAsFixed(1)}%',
+                Icons.check_circle_outline,
+                Colors.purple,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: _buildStatCard(
+                'Átlagos TTV',
+                '${_stats!.averageTTVMinutes.toStringAsFixed(1)} perc',
+                Icons.trending_up,
+                Colors.deepOrange,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Row( // Új sor az inaktív felhasználóknak
+          children: [
+            Expanded(
+              child: _buildStatCard(
+                'Inaktív felhasználók aránya\n(30+ nap)',
+                '${_stats!.inactiveUserRate.toStringAsFixed(1)}%',
+                Icons.person_off_outlined,
+                Colors.red,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(child: Container()), // Helykitöltő
+          ],
         ),
       ],
     );

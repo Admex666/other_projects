@@ -5,7 +5,7 @@ from datetime import timedelta, datetime
 
 from app.core.security import get_current_user
 from app.models.user import User, UserDocument
-from app.models.analytics import HealthScoreResponse
+from app.models.analytics import HealthScoreResponse, FeatureUsageTracking
 from app.services.health_score_service import HealthScoreService, UserHealthScore, UserSessionTracking
 
 router = APIRouter(prefix="/analytics", tags=["analytics"])
@@ -118,7 +118,23 @@ async def get_admin_stats(current_user: User = Depends(get_current_user)):
     
     try:
         # Total users
-        total_users = await UserDocument.find_all().count()
+        all_users = await UserDocument.find_all().to_list()
+        total_users = len(all_users)
+
+        # Inaktív felhasználók számítása
+        thirty_days_ago = datetime.utcnow() - timedelta(days=30)
+        inactive_users_count = 0
+        for user in all_users:
+            latest_session = await UserSessionTracking.find_one(
+                {"user_id": user.id},
+                sort=[("session_start", -1)]
+            )
+            if latest_session and latest_session.session_start < thirty_days_ago:
+                inactive_users_count += 1
+        
+        inactive_user_rate = 0.0
+        if total_users > 0:
+            inactive_user_rate = (inactive_users_count / total_users) * 100
         
         # Active users (last 7 days)
         seven_days_ago = datetime.utcnow() - timedelta(days=7)
@@ -127,10 +143,13 @@ async def get_admin_stats(current_user: User = Depends(get_current_user)):
         ).to_list()
         active_users_count = len(set([session.user_id for session in active_sessions]))
         
+        # TTV és Onboarding Completion Rate számítása
+        completed_onboarding_users_count = 0
+        ttv_durations_seconds = []
+
         # Ensure we have recent health scores for statistics
         # Get all users and make sure they have recent health scores
-        all_users = await UserDocument.find_all().to_list()
-        for user in all_users[:10]:  # Limit to first 10 users to avoid timeout
+        for user in all_users:
             try:
                 latest_score = await UserHealthScore.find_one(
                     {"user_id": user.id}, 
@@ -145,7 +164,29 @@ async def get_admin_stats(current_user: User = Depends(get_current_user)):
             except Exception as e:
                 print(f"Error ensuring health score for {user.username}: {e}")
                 continue
+
+            if user.onboarding_completed:
+                completed_onboarding_users_count += 1
+
+                # Keresd meg a TTV eseményt (onboarding befejezés)
+                ttv_event = await FeatureUsageTracking.find_one(
+                    {"user_id": user.id, "feature_name": "onboarding_full_completion"},
+                    sort=[("used_at", 1)]
+                )
+
+                if ttv_event and user.registration_date:
+                    ttv_duration = (ttv_event.used_at - user.registration_date).total_seconds()
+                    ttv_durations_seconds.append(ttv_duration)
         
+        onboarding_completion_rate = 0.0
+        if total_users > 0:
+            onboarding_completion_rate = (completed_onboarding_users_count / total_users) * 100
+
+        average_ttv_seconds = 0
+        if ttv_durations_seconds:
+            average_ttv_seconds = sum(ttv_durations_seconds) / len(ttv_durations_seconds)
+        average_ttv_minutes = average_ttv_seconds / 60
+
         # Health distribution
         health_distribution_pipeline = [
             {"$sort": {"user_id": 1, "calculated_at": -1}},
@@ -203,7 +244,10 @@ async def get_admin_stats(current_user: User = Depends(get_current_user)):
             "total_users": total_users,
             "active_users": active_users_count,
             "health_distribution": health_distribution,
-            "average_scores": average_scores
+            "average_scores": average_scores,
+            "onboarding_completion_rate": round(onboarding_completion_rate, 1),
+            "average_ttv_minutes": round(average_ttv_minutes, 1) if average_ttv_minutes > 0 else 0.0,
+            "inactive_user_rate": round(inactive_user_rate, 2),
         }
         
     except Exception as e:

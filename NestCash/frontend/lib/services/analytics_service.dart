@@ -80,6 +80,22 @@ class AnalyticsService {
     }
   }
 
+  Future<void> recalculateAllHealthScores() async {
+    try {
+      final headers = await _getHeaders();
+      final response = await http.post(
+          Uri.parse('${ApiConfig.baseUrl}/analytics/admin/recalculate-all-health-scores'),
+          headers: headers,
+        );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to recalculate health scores: ${response.body}');
+      }
+    } catch (e) {
+      print('Error recalculating health scores: $e');
+    }
+  }
+
   /// Bulk feature tracking (több feature egyszerre)
   Future<void> trackMultipleFeatures(List<String> featureNames) async {
     for (final feature in featureNames) {

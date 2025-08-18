@@ -100,12 +100,18 @@ class AdminStats {
   final int activeUsers;
   final Map<String, int> healthDistribution;
   final AdminAverageScores averageScores;
+  final double onboardingCompletionRate;
+  final double averageTTVMinutes;
+  final double inactiveUserRate;
 
   const AdminStats({
     required this.totalUsers,
     required this.activeUsers,
     required this.healthDistribution,
     required this.averageScores,
+    required this.onboardingCompletionRate,
+    required this.averageTTVMinutes,
+    required this.inactiveUserRate,
   });
 
   factory AdminStats.fromJson(Map<String, dynamic> json) {
@@ -114,6 +120,9 @@ class AdminStats {
       activeUsers: json['active_users'] ?? 0,
       healthDistribution: Map<String, int>.from(json['health_distribution'] ?? {}),
       averageScores: AdminAverageScores.fromJson(json['average_scores'] ?? {}),
+      onboardingCompletionRate: (json['onboarding_completion_rate'] ?? 0.0),
+      averageTTVMinutes: (json['average_ttv_minutes'] ?? 0.0),
+      inactiveUserRate: (json['inactive_user_rate'] as num).toDouble(),
     );
   }
 
