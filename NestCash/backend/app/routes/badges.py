@@ -14,6 +14,7 @@ from app.models.badge_schemas import (
     BadgeCategoryStats, BadgeLeaderboardResponse
 )
 from app.services.badge_service import badge_service
+from app.services.health_score_service import HealthScoreService
 
 router = APIRouter(prefix="/badges", tags=["badges"])
 
@@ -61,11 +62,8 @@ async def get_my_badges(
         
         # Feature usage tracking
         try:
-            from app.models.analytics import FeatureUsageTracking
-            await FeatureUsageTracking(
-                user_id=PydanticObjectId(current_user.id),
-                feature_name="badges_viewed"
-            ).insert()
+            # Feature usage tracking hozzáadása
+            await HealthScoreService.track_feature_usage(current_user.id, "badges_viewed")
         except Exception as e:
             logger.error(f"Feature tracking failed: {e}")
 
@@ -202,11 +200,8 @@ async def update_my_badge(
         
         # Feature usage tracking
         try:
-            from app.models.analytics import FeatureUsageTracking
-            await FeatureUsageTracking(
-                user_id=PydanticObjectId(current_user.id),
-                feature_name="badge_updated"
-            ).insert()
+            # Feature usage tracking hozzáadása
+            await HealthScoreService.track_feature_usage(current_user.id, "badge_updated")
         except Exception as e:
             logger.error(f"Feature tracking failed: {e}")
             
@@ -352,11 +347,7 @@ async def get_badge_leaderboard(
         
         # Feature usage tracking
         try:
-            from app.models.analytics import FeatureUsageTracking
-            await FeatureUsageTracking(
-                user_id=PydanticObjectId(current_user.id),
-                feature_name="badge_leaderboard_viewed"
-            ).insert()
+            await HealthScoreService.track_feature_usage(current_user.id, "badge_leaderboard_viewed")
         except Exception as e:
             logger.error(f"Feature tracking failed: {e}")
 

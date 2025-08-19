@@ -16,7 +16,7 @@ from app.models.habit_schemas import (
 )
 from app.services.habit_service import HabitService
 from app.services.badge_service import badge_service
-from app.models.analytics import FeatureUsageTracking
+from app.services.health_score_service import HealthScoreService
 
 router = APIRouter(prefix="/habits", tags=["habits"])
 logger = logging.getLogger(__name__)
@@ -65,10 +65,7 @@ async def create_habit(
 
         # Feature usage tracking
         try:
-            await FeatureUsageTracking(
-                user_id=PydanticObjectId(current_user.id),
-                feature_name="habit_created"
-            ).insert()
+            await HealthScoreService.track_feature_usage(current_user.id, "habit_created")
         except Exception as e:
             logger.error(f"Feature tracking failed: {e}")
         
@@ -252,10 +249,7 @@ async def create_habit_log(
 
         # Feature usage tracking
         try:
-            await FeatureUsageTracking(
-                user_id=PydanticObjectId(current_user.id),
-                feature_name="habit_log_created"
-            ).insert()
+            await HealthScoreService.track_feature_usage(current_user.id, "habit_log_created")
         except Exception as e:
             logger.error(f"Feature tracking failed: {e}")
         
@@ -450,10 +444,7 @@ async def get_habit_stats(
         
         # Feature usage tracking
         try:
-            await FeatureUsageTracking(
-                user_id=PydanticObjectId(current_user.id),
-                feature_name="habit_stats_viewed"
-            ).insert()
+            await HealthScoreService.track_feature_usage(current_user.id, "habit_stats_viewed")
         except Exception as e:
             logger.error(f"Feature tracking failed: {e}")
 

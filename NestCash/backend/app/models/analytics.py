@@ -30,7 +30,7 @@ class UserHealthScore(Document):
     knowledge_lessons_completed: int = 0
     messages_sent_count: int = 0
     habits_activity_count: int = 0
-    limits_active_count: int = 0
+    limits_activity_count: int = 0
     pti_activity_count: int = 0
     badge_activity_count: int = 0
     

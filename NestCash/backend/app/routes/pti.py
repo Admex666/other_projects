@@ -14,6 +14,7 @@ from app.models.pti_schemas import (
     PTIComponentBreakdown
 )
 from app.services.pti_service import PTIService
+from app.services.health_score_service import HealthScoreService
 from beanie import PydanticObjectId
 
 router = APIRouter(prefix="/pti", tags=["PTI"])
@@ -177,11 +178,7 @@ async def get_pti_dashboard(current_user: User = Depends(get_current_user)):
         
         # Feature usage tracking
         try:
-            from app.models.analytics import FeatureUsageTracking
-            await FeatureUsageTracking(
-                user_id=PydanticObjectId(current_user.id),
-                feature_name="pti_dashboard_viewed"
-            ).insert()
+            await HealthScoreService.track_feature_usage(current_user.id, "pti_dashboard_viewed")
         except Exception as e:
             logger.error(f"Feature tracking failed: {e}")
 
@@ -325,11 +322,7 @@ async def get_ranking(
 
         # Feature usage tracking
         try:
-            from app.models.analytics import FeatureUsageTracking
-            await FeatureUsageTracking(
-                user_id=PydanticObjectId(current_user.id),
-                feature_name="pti_ranking_viewed"
-            ).insert()
+            await HealthScoreService.track_feature_usage(current_user.id, "pti_ranking_viewed")
         except Exception as e:
             logger.error(f"Feature tracking failed: {e}")
 
@@ -702,11 +695,7 @@ async def get_component_ranking(
 
         # Feature usage tracking
         try:
-            from app.models.analytics import FeatureUsageTracking
-            await FeatureUsageTracking(
-                user_id=PydanticObjectId(current_user.id),
-                feature_name="pti_component_ranking_viewed"
-            ).insert()
+            await HealthScoreService.track_feature_usage(current_user.id, "pti_component_ranking_viewed")
         except Exception as e:
             logger.error(f"Feature tracking failed: {e}")
             

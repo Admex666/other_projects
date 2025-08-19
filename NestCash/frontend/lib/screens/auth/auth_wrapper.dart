@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../services/auth_service.dart';
 import 'login_screen.dart';
 import '/main.dart';
+import 'package:frontend/screens/loading_screen.dart';
 
 class AuthWrapper extends StatefulWidget {
   const AuthWrapper({super.key}); // + key
@@ -24,6 +25,10 @@ class _AuthWrapperState extends State<AuthWrapper> {
   }
 
   Future<void> _checkAuth() async {
+    // Minimum megjelenítési idő (pl. 2 másodperc)
+    const minDisplayTime = Duration(seconds: 3);
+    final startTime = DateTime.now();
+
     final token = await _authService.getToken();
     debugPrint('AuthWrapper: token? ${token != null}');
 
@@ -46,6 +51,13 @@ class _AuthWrapperState extends State<AuthWrapper> {
       });
     }
 
+    // Ellenőrizzük, hogy eltelt-e a minimum idő
+    final elapsedTime = DateTime.now().difference(startTime);
+    if (elapsedTime < minDisplayTime) {
+      final remainingTime = minDisplayTime - elapsedTime;
+      await Future.delayed(remainingTime);
+    }
+
     setState(() {
       _isLoading = false;
     });
@@ -54,7 +66,10 @@ class _AuthWrapperState extends State<AuthWrapper> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const LoadingScreen(
+        message: 'Alkalmazás betöltése...',
+        showLogo: true,
+      );
     } else {
       // Itt a kulcs: ha be van jelentkezve, akkor MainScreen-re, különben LoginScreen-re
       return _isLoggedIn && _username != null && _userId != null

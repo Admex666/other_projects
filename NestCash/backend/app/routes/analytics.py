@@ -101,7 +101,7 @@ async def get_all_health_scores(current_user: User = Depends(get_current_user)):
                             "knowledge_lessons_completed": latest_score.knowledge_lessons_completed,
                             "messages_sent_count": latest_score.messages_sent_count,
                             "habits_activity_count": latest_score.habits_activity_count,
-                            "limits_active_count": latest_score.limits_active_count,
+                            "limits_active_count": latest_score.limits_activity_count,
                             "pti_activity_count": latest_score.pti_activity_count,
                             "badge_activity_count": latest_score.badge_activity_count
                         }

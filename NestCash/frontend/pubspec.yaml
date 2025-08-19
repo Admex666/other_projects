@@ -48,6 +48,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_launcher_icons: "^0.13.1"
+  flutter_native_splash: ^2.3.2
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -62,6 +63,10 @@ flutter_launcher_icons:
   image_path: "assets/logo.png"
   min_sdk_android: 21
 
+#flutter_native_splash:
+#  color: "#00D4A3"  # A te teal színed
+#  image: "assets/logo.png"  # Ha van logód
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
@@ -72,6 +77,8 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  #assets:
+  #  - assets/
 
   # To add assets to your application, add an assets section, like this:
   # assets:
