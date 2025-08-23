@@ -1,25 +1,29 @@
-// lib/screens/onboarding/user_intent_screen.dart
+// lib/screens/onboarding/referral_screen.dart
 
 import 'package:flutter/material.dart';
-import '../../models/onboarding_model.dart';
-import '../../services/onboarding_service.dart';
-import 'basic_setup_screen.dart';
-import 'package:frontend/screens/onboarding/welcome_screen.dart';
+import '../../models/referral_model.dart';
 import '../../services/analytics_service.dart';
-import 'package:frontend/screens/onboarding/referral_screen.dart';
+import 'basic_setup_screen.dart';
 
-class UserIntentScreen extends StatefulWidget {
-  const UserIntentScreen({Key? key}) : super(key: key);
+class ReferralScreen extends StatefulWidget {
+  final String userType;
+
+  const ReferralScreen({
+    Key? key,
+    required this.userType,
+  }) : super(key: key);
 
   @override
-  _UserIntentScreenState createState() => _UserIntentScreenState();
+  _ReferralScreenState createState() => _ReferralScreenState();
 }
 
-class _UserIntentScreenState extends State<UserIntentScreen> with TickerProviderStateMixin {
-  final OnboardingService _onboardingService = OnboardingService();
+class _ReferralScreenState extends State<ReferralScreen> with TickerProviderStateMixin {
   final AnalyticsService _analyticsService = AnalyticsService();
-
-  final Set<UserIntent> _selectedIntents = {};
+  
+  ReferralSource? _selectedSource;
+  String? _otherDetails;
+  final TextEditingController _detailsController = TextEditingController();
+  
   bool _isLoading = false;
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
@@ -27,7 +31,7 @@ class _UserIntentScreenState extends State<UserIntentScreen> with TickerProvider
   @override
   void initState() {
     super.initState();
-    _trackIntentScreenView();
+    _trackReferralScreenView();
     _animationController = AnimationController(
       duration: Duration(milliseconds: 800),
       vsync: this,
@@ -41,37 +45,35 @@ class _UserIntentScreenState extends State<UserIntentScreen> with TickerProvider
   @override
   void dispose() {
     _animationController.dispose();
+    _detailsController.dispose();
     super.dispose();
   }
 
-  Future<void> _trackIntentScreenView() async {
+  Future<void> _trackReferralScreenView() async {
     try {
       await _analyticsService.trackOnboardingProgress(
-        stepNumber: 1,
-        stepType: 'intent_selection_started',
+        stepNumber: 2,
+        stepType: 'referral_selection_started',
       );
     } catch (e) {
       print('Analytics tracking error: $e');
     }
   }
 
-  void _toggleIntent(UserIntent intent) {
+  void _selectSource(ReferralSource source) {
     setState(() {
-      if (_selectedIntents.contains(intent)) {
-        _selectedIntents.remove(intent);
-      } else {
-        _selectedIntents.add(intent);
-        // Track intent selection
-        _analyticsService.trackFeatureUsage('intent_selected_${intent.toString().split('.').last}');
-      }
+      _selectedSource = source;
     });
+    
+    // Track referral source selection
+    _analyticsService.trackFeatureUsage('referral_source_selected_${source.value}');
   }
 
-  Future<void> _saveIntentsAndContinue() async {
-    if (_selectedIntents.isEmpty) {
+  Future<void> _continueToBasicSetup() async {
+    if (_selectedSource == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Kérjük, válassz legalább egy opciót!'),
+          content: Text('Kérjük, válassz egy opciót!'),
           backgroundColor: Colors.orange,
         ),
       );
@@ -83,26 +85,23 @@ class _UserIntentScreenState extends State<UserIntentScreen> with TickerProvider
     try {
       // Track completion
       await _analyticsService.trackOnboardingProgress(
-        stepNumber: 1,
-        stepType: 'intent_selection_completed',
+        stepNumber: 2,
+        stepType: 'referral_selection_completed',
         additionalData: {
-          'selected_intents': _selectedIntents.map((e) => e.toString()).toList(),
-          'intent_count': _selectedIntents.length,
+          'referral_source': _selectedSource!.value,
+          'has_details': _otherDetails?.isNotEmpty ?? false,
         },
       );
 
-      final result = await _onboardingService.saveUserIntents(_selectedIntents.toList());
-      
       if (mounted) {
-        // Track user type determination
-        await _analyticsService.trackFeatureUsage('user_type_determined');
-
-        final determinedTypeString = result['determined_type']?.toString().split('.').last ?? 'aware_spender';
-
         Navigator.push(
           context,
           PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) => ReferralScreen(userType: determinedTypeString),
+            pageBuilder: (context, animation, secondaryAnimation) => BasicSetupScreen(
+              userType: widget.userType,
+              referralSource: _selectedSource!,
+              referralDetails: _otherDetails,
+            ),
             transitionsBuilder: (context, animation, secondaryAnimation, child) {
               return SlideTransition(
                 position: Tween<Offset>(
@@ -113,13 +112,6 @@ class _UserIntentScreenState extends State<UserIntentScreen> with TickerProvider
               );
             },
             transitionDuration: Duration(milliseconds: 300),
-          ),
-        );
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Szuper! Meghatároztuk a típusodat: ${result['determined_type']?.toString().split('.').last ?? 'Ismeretlen'}'),
-            backgroundColor: Color(0xFF00D4A3),
           ),
         );
       }
@@ -164,37 +156,20 @@ class _UserIntentScreenState extends State<UserIntentScreen> with TickerProvider
                   children: [
                     IconButton(
                       icon: Icon(Icons.arrow_back, color: Colors.black),
-                      onPressed: () {
-                        Navigator.pushReplacement(
-                          context,
-                          PageRouteBuilder(
-                            pageBuilder: (context, animation, secondaryAnimation) => WelcomeScreen(),
-                            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                              return SlideTransition(
-                                position: Tween<Offset>(
-                                  begin: Offset(-1.0, 0.0), // balról jön be
-                                  end: Offset.zero,
-                                ).animate(animation),
-                                child: child,
-                              );
-                            },
-                            transitionDuration: Duration(milliseconds: 300),
-                          ),
-                        );
-                      },
+                      onPressed: () => Navigator.pop(context),
                     ),
                     Expanded(
                       child: Column(
                         children: [
                           Text(
-                            '1. lépés',
+                            '2. lépés',
                             style: TextStyle(
                               color: Colors.black.withOpacity(0.8),
                               fontSize: 14,
                             ),
                           ),
                           Text(
-                            'Célfelmérés',
+                            'Honnan hallottál rólunk?',
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 20,
@@ -204,7 +179,6 @@ class _UserIntentScreenState extends State<UserIntentScreen> with TickerProvider
                         ],
                       ),
                     ),
-                    // Progress indicator
                     Container(
                       width: 40,
                       height: 40,
@@ -214,7 +188,7 @@ class _UserIntentScreenState extends State<UserIntentScreen> with TickerProvider
                       ),
                       child: Center(
                         child: Text(
-                          '1/4',
+                          '2/4',
                           style: TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.bold,
@@ -249,7 +223,7 @@ class _UserIntentScreenState extends State<UserIntentScreen> with TickerProvider
                           child: Column(
                             children: [
                               Text(
-                                'Mit szeretnél elérni a NestCash-sel?',
+                                'Segíts megértenünk!',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 24,
@@ -259,7 +233,7 @@ class _UserIntentScreenState extends State<UserIntentScreen> with TickerProvider
                               ),
                               SizedBox(height: 12),
                               Text(
-                                'Válassz ki minden opciót, ami érdekel. Ez alapján személyre szabjuk a funkciókat.',
+                                'Honnan hallottál a NestCash-ről? Ez segít nekünk jobban megérteni, hogyan találnak meg minket az emberek.',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 16,
@@ -273,17 +247,41 @@ class _UserIntentScreenState extends State<UserIntentScreen> with TickerProvider
 
                         SizedBox(height: 32),
 
-                        // Intent Options
+                        // Referral Source Options
                         Expanded(
                           child: SingleChildScrollView(
                             padding: EdgeInsets.symmetric(horizontal: 24),
                             child: Column(
-                              children: UserIntent.values.map((intent) {
+                              children: ReferralSource.values.map((source) {
                                 return Container(
                                   margin: EdgeInsets.only(bottom: 16),
-                                  child: _buildIntentCard(intent),
+                                  child: _buildSourceCard(source),
                                 );
-                              }).toList(),
+                              }).toList() + [
+                                // Extra details field for "other"
+                                if (_selectedSource == ReferralSource.other) ...[
+                                  //SizedBox(height: 16),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(16),
+                                      border: Border.all(color: Colors.grey[300]!),
+                                    ),
+                                    child: TextField(
+                                      controller: _detailsController,
+                                      decoration: InputDecoration(
+                                        hintText: 'Írd le részletesebben...',
+                                        border: InputBorder.none,
+                                        contentPadding: EdgeInsets.all(20),
+                                      ),
+                                      maxLines: 3,
+                                      onChanged: (value) {
+                                        _otherDetails = value.trim().isEmpty ? null : value.trim();
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ],
                             ),
                           ),
                         ),
@@ -297,7 +295,7 @@ class _UserIntentScreenState extends State<UserIntentScreen> with TickerProvider
                                 width: double.infinity,
                                 height: 56,
                                 child: ElevatedButton(
-                                  onPressed: _isLoading ? null : _saveIntentsAndContinue,
+                                  onPressed: _isLoading ? null : _continueToBasicSetup,
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Color(0xFF00D4A3),
                                     foregroundColor: Colors.white,
@@ -325,13 +323,37 @@ class _UserIntentScreenState extends State<UserIntentScreen> with TickerProvider
                                 ),
                               ),
                               
+                              // Skip option
                               SizedBox(height: 16),
-                              
-                              Text(
-                                '${_selectedIntents.length} opció kiválasztva',
-                                style: TextStyle(
-                                  color: Colors.grey[600],
-                                  fontSize: 14,
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    PageRouteBuilder(
+                                      pageBuilder: (context, animation, secondaryAnimation) => BasicSetupScreen(
+                                        userType: widget.userType,
+                                        referralSource: null,
+                                        referralDetails: null,
+                                      ),
+                                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                        return SlideTransition(
+                                          position: Tween<Offset>(
+                                            begin: Offset(1.0, 0.0),
+                                            end: Offset.zero,
+                                          ).animate(animation),
+                                          child: child,
+                                        );
+                                      },
+                                      transitionDuration: Duration(milliseconds: 300),
+                                    ),
+                                  );
+                                },
+                                child: Text(
+                                  'Kihagyás',
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontSize: 16,
+                                  ),
                                 ),
                               ),
                             ],
@@ -349,11 +371,11 @@ class _UserIntentScreenState extends State<UserIntentScreen> with TickerProvider
     );
   }
 
-  Widget _buildIntentCard(UserIntent intent) {
-    final isSelected = _selectedIntents.contains(intent);
+  Widget _buildSourceCard(ReferralSource source) {
+    final isSelected = _selectedSource == source;
     
     return GestureDetector(
-      onTap: () => _toggleIntent(intent),
+      onTap: () => _selectSource(source),
       child: AnimatedContainer(
         duration: Duration(milliseconds: 200),
         padding: EdgeInsets.all(20),
@@ -399,7 +421,7 @@ class _UserIntentScreenState extends State<UserIntentScreen> with TickerProvider
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    intent.displayName,
+                    source.displayName,
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
@@ -408,7 +430,7 @@ class _UserIntentScreenState extends State<UserIntentScreen> with TickerProvider
                   ),
                   SizedBox(height: 4),
                   Text(
-                    intent.description,
+                    source.description,
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey[600],

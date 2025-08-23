@@ -10,11 +10,20 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../../services/auth_service.dart';
 import '../../services/analytics_service.dart';
+import '../../models/referral_model.dart';
+import '../../config/config.dart';
 
 
 class BasicSetupScreen extends StatefulWidget {
   final String userType;
-  const BasicSetupScreen({Key? key, required this.userType}) : super(key: key);
+  final ReferralSource? referralSource;
+  final String? referralDetails;
+  const BasicSetupScreen({
+      Key? key, 
+      required this.userType,
+      this.referralSource,
+      this.referralDetails,
+    }) : super(key: key);
 
   @override
   _BasicSetupScreenState createState() => _BasicSetupScreenState();
@@ -145,6 +154,8 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
         preferredCurrency: _selectedCurrency,
         initialBalance: initialBalance,
         mainAccountName: _subAccountNameController.text.trim(),
+        referralSource: widget.referralSource,
+        referralDetails: widget.referralDetails,
       );
 
       await _onboardingService.saveBasicSetup(setupData);
@@ -190,7 +201,7 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
     if (token == null) return;
 
     final response = await http.put(
-      Uri.parse('http://10.0.2.2:8000/accounts/me/$_selectedMainAccount/Alapértelmezett'),
+      Uri.parse('${ApiConfig.baseUrl}/accounts/me/$_selectedMainAccount/Alapértelmezett'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
@@ -265,7 +276,7 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
 
     final subAccountName = _subAccountNameController.text.trim();
     final response = await http.put(
-      Uri.parse('http://10.0.2.2:8000/accounts/me/$_selectedMainAccount/$subAccountName'),
+      Uri.parse('${ApiConfig.baseUrl}/accounts/me/$_selectedMainAccount/$subAccountName'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
@@ -355,7 +366,7 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
                       child: Column(
                         children: [
                           Text(
-                            '2. lépés',
+                            '3. lépés',
                             style: TextStyle(
                               color: Colors.black.withOpacity(0.8),
                               fontSize: 14,
@@ -382,7 +393,7 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
                       ),
                       child: Center(
                         child: Text(
-                          '2/3',
+                          '3/4',
                           style: TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.bold,

@@ -119,6 +119,13 @@ async def save_basic_setup(
         await HealthScoreService.track_feature_usage(current_user.id, "onboarding_basic_setup")
         await HealthScoreService.track_feature_usage(current_user.id, "initial_account_creation")
 
+        # Referral source tracking
+        if setup_data.referral_source:
+            await HealthScoreService.track_feature_usage(
+                current_user.id, 
+                f"referral_source_{setup_data.referral_source.value}"
+            )
+
         # Onboarding állapot frissítése
         await OnboardingService.update_user_onboarding_progress(
             current_user.id,
@@ -135,7 +142,8 @@ async def save_basic_setup(
             "message": "Basic setup completed successfully",
             "accounts_created": True,
             "preferred_currency": setup_data.preferred_currency,
-            "initial_balance": setup_data.initial_balance
+            "initial_balance": setup_data.initial_balance,
+            "referral_source": setup_data.referral_source.value if setup_data.referral_source else None
         }
         
     except Exception as e:
@@ -220,3 +228,52 @@ async def get_available_user_types():
     }
     
     return types_info
+
+@router.get("/referral-sources")
+async def get_referral_sources():
+    """Visszaadja az elérhető referral forrásokat leírásokkal"""
+    
+    sources_info = {
+        "social_media": {
+            "name": "Közösségi média",
+            "description": "Facebook, Instagram, TikTok, Twitter, stb.",
+            "icon": "share"
+        },
+        "friend_family": {
+            "name": "Barát/családtag ajánlása",
+            "description": "Valaki ajánlotta neked",
+            "icon": "people"
+        },
+        "advertisement": {
+            "name": "Hirdetés",
+            "description": "Online vagy offline reklám",
+            "icon": "campaign"
+        },
+        "search_engine": {
+            "name": "Keresőmotor",
+            "description": "Google, Bing keresés",
+            "icon": "search"
+        },
+        "blog_article": {
+            "name": "Blog/cikk",
+            "description": "Online cikk vagy blog poszt",
+            "icon": "article"
+        },
+        "podcast": {
+            "name": "Podcast",
+            "description": "Podcastban hallottam róla",
+            "icon": "podcast"
+        },
+        "app_store": {
+            "name": "App áruház",
+            "description": "Google Play vagy App Store böngészés",
+            "icon": "store"
+        },
+        "other": {
+            "name": "Egyéb",
+            "description": "Máshol hallottam róla",
+            "icon": "more"
+        }
+    }
+    
+    return sources_info

@@ -156,8 +156,15 @@ class OnboardingService:
                 
             elif step == 2 and "basic_setup" in data:
                 # Alap beállítások lépés
+                setup_data = data["basic_setup"]
                 user.preferred_currency = data["basic_setup"].get("preferred_currency", "HUF")
-    
+
+                # Referral source mentése - ÚJ!
+                if "referral_source" in setup_data:
+                    user.referral_source = setup_data["referral_source"]
+                if "referral_details" in setup_data:
+                    user.referral_details = setup_data["referral_details"]
+
         await user.save()
         print(f"Onboarding progress: User {user_id} moved from step {previous_step} to {step}")
         return user

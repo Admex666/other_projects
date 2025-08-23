@@ -19,6 +19,16 @@ class UserIntent(str, Enum):
     ADVANCED_FEATURES = "advanced_features"
     NOT_SURE = "not_sure"
 
+class ReferralSource(str, Enum):
+    SOCIAL_MEDIA = "social_media"
+    FRIEND_FAMILY = "friend_family"
+    ADVERTISEMENT = "advertisement"
+    SEARCH_ENGINE = "search_engine"
+    BLOG_ARTICLE = "blog_article"
+    PODCAST = "podcast"
+    APP_STORE = "app_store"
+    OTHER = "other"
+
 class OnboardingStep(BaseModel):
     step_number: int
     completed: bool = False
@@ -31,6 +41,8 @@ class BasicSetupData(BaseModel):
     preferred_currency: str = "HUF"
     initial_balance: Optional[float] = None
     main_account_name: Optional[str] = "Fő számla"
+    referral_source: Optional[ReferralSource] = None
+    referral_details: Optional[str] = None  # További részletek, ha "other" vagy pontosítás
 
 class OnboardingProgress(BaseModel):
     current_step: int = 0
@@ -38,6 +50,8 @@ class OnboardingProgress(BaseModel):
     user_type: Optional[UserType] = None
     selected_intents: List[UserIntent] = Field(default_factory=list)
     basic_setup: Optional[BasicSetupData] = None
+    referral_source: Optional[ReferralSource] = None
+    referral_details: Optional[str] = None
     tutorial_completed: bool = False
     onboarding_completed: bool = False
 

@@ -53,7 +53,7 @@ class AuthService {
       print('🧪 Testing simple GET request...');
       final getResponse = await http.get(
         Uri.parse('${ApiConfig.baseUrl}/health'),
-      ).timeout(const Duration(seconds: 5));
+      ).timeout(const Duration(seconds: 15));
       
       print('✅ GET test successful: ${getResponse.statusCode}');
       

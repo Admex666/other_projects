@@ -1,4 +1,5 @@
 // lib/models/onboarding_model.dart
+import 'package:frontend/models/referral_model.dart';
 
 enum UserType {
   awareSpender,
@@ -188,15 +189,20 @@ class OnboardingStep {
   }
 }
 
+// BasicSetupData osztály frissítése
 class BasicSetupData {
   final String preferredCurrency;
   final double? initialBalance;
   final String? mainAccountName;
+  final ReferralSource? referralSource;
+  final String? referralDetails;
 
-  BasicSetupData({
+  const BasicSetupData({
     this.preferredCurrency = 'HUF',
     this.initialBalance,
     this.mainAccountName = 'Fő számla',
+    this.referralSource,
+    this.referralDetails, 
   });
 
   factory BasicSetupData.fromJson(Map<String, dynamic> json) {
@@ -204,6 +210,10 @@ class BasicSetupData {
       preferredCurrency: json['preferred_currency'] ?? 'HUF',
       initialBalance: json['initial_balance']?.toDouble(),
       mainAccountName: json['main_account_name'] ?? 'Fő számla',
+      referralSource: json['referral_source'] != null 
+          ? ReferralSource.fromString(json['referral_source'])
+          : null,  
+      referralDetails: json['referral_details'], 
     );
   }
 
@@ -212,6 +222,8 @@ class BasicSetupData {
       'preferred_currency': preferredCurrency,
       'initial_balance': initialBalance,
       'main_account_name': mainAccountName,
+      'referral_source': referralSource?.value, 
+      'referral_details': referralDetails, 
     };
   }
 }

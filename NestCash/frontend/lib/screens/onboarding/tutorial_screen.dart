@@ -664,7 +664,7 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
                       child: Column(
                         children: [
                           Text(
-                            '3. lépés',
+                            '4. lépés',
                             style: TextStyle(
                               color: Colors.black.withOpacity(0.8),
                               fontSize: 14,

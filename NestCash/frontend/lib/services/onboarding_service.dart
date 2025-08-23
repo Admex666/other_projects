@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../models/onboarding_model.dart';
 import 'package:frontend/config/config.dart';
+import 'package:frontend/models/referral_model.dart';
 
 class OnboardingService {
   static const _storage = FlutterSecureStorage();
@@ -212,6 +213,35 @@ class OnboardingService {
       }
     } catch (e) {
       print('Error fetching user types: $e');
+      rethrow;
+    }
+  }
+
+  // Új metódus a referral források lekérdezéséhez
+  Future<Map<String, ReferralSourceInfo>> getReferralSources() async {
+    try {
+      final headers = await _getHeaders();
+      final response = await http.get(
+        Uri.parse('${ApiConfig.baseUrl}/onboarding/referral-sources'),
+        headers: headers,
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body) as Map<String, dynamic>;
+        final Map<String, ReferralSourceInfo> sources = {};
+        
+        data.forEach((key, value) {
+          sources[key] = ReferralSourceInfo.fromJson(value);
+        });
+        
+        return sources;
+      } else if (response.statusCode == 401) {
+        throw Exception('401: Unauthorized');
+      } else {
+        throw Exception('Failed to load referral sources: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching referral sources: $e');
       rethrow;
     }
   }

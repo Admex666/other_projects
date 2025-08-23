@@ -21,6 +21,8 @@ class UserDocument(Document):
     onboarding_completed: bool = False
     onboarding_step: int = 0  # Jelenlegi onboarding lépés (0-6)
     preferred_currency: str = "HUF"  # Alapértelmezett deviza
+    referral_source: Optional[str] = None
+    referral_details: Optional[str] = None 
     shared_achievements: List[SharedAchievement] = Field(default_factory=list, description="Megosztott teljesítmények")
 
     class Settings:
@@ -38,6 +40,8 @@ class User(BaseModel):
     onboarding_completed: bool = False
     onboarding_step: int = 0
     preferred_currency: str = "HUF"
+    referral_source: Optional[str] = None
+    referral_details: Optional[str] = None
 
 # Belső használatra (benne van a password)
 class UserInDB(User):

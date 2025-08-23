@@ -4,7 +4,7 @@ class ApiConfig {
   static const String _prodBaseUrl = 'https://other-projects-ofaj.onrender.com';
   
   // Automatikus környezet észlelés vagy manuális beállítás
-  static const bool _isProduction = bool.fromEnvironment('dart.vm.product');
+  static const bool _isProduction = true;//bool.fromEnvironment('dart.vm.product');
   
   // Aktuális BASE URL
   static String get baseUrl => _isProduction ? _prodBaseUrl : _devBaseUrl;
