@@ -69,6 +69,7 @@ class _ReferralScreenState extends State<ReferralScreen> with TickerProviderStat
     _analyticsService.trackFeatureUsage('referral_source_selected_${source.value}');
   }
 
+
   Future<void> _continueToBasicSetup() async {
     if (_selectedSource == null) {
       ScaffoldMessenger.of(context).showSnackBar(

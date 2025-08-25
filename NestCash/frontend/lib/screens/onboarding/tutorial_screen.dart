@@ -175,52 +175,85 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
   }
 
   List<String> _getFeaturesForStep(String title) {
-    if (title.contains('Tranzakció')) return ['Gyors hozzáadás', 'Automatikus kategorizálás', 'Ismétlődő tranzakciók'];
-    if (title.contains('Elemzés')) return ['Kategóriánkénti bontás', 'Trendek és előrejelzések', 'Havi összehasonlítás'];
-    if (title.contains('Korlát')) return ['Kategóriánkénti korlátok', 'Automatikus figyelmeztetések', 'Havi és heti limitek'];
-    if (title.contains('Közösség')) return ['Tippek és tapasztalatok', 'Kérdések és válaszok', 'Motiváció és támogatás'];
-    if (title.contains('Kihívás')) return ['Havi kihívások', 'Közös célok', 'Jutalmak és elismerések'];
-    if (title.contains('Tudás')) return ['Interaktív leckék', 'Gyakorlati példák', 'Haladás követése'];
-    if (title.contains('Import')) return ['CSV és Excel import', 'Banki kapcsolat', 'Automatikus kategorizálás'];
-    if (title.contains('Ranglista')) return ['Havi rangsorok', 'Kategória versenyek', 'Regionális összehasonlítás'];
-    return ['Hasznos funkciók', 'Személyre szabott élmény', 'Egyszerű használat'];
+    // Átalakítás funkciókról megoldásokra és előnyökre
+    if (title.contains('Tranzakció')) return [
+      '📊 Mindig tudod, mennyi pénzed van',
+      '⏰ Másodpercek alatt rögzítesz egy kiadást',
+      '🎯 Látod, hová megy a pénzed valójában'
+    ];
+    if (title.contains('Elemzés')) return [
+      '💡 Felfedezed a rejtett költési mintáidat',
+      '📈 Előre látod, mikor fogyhat el a pénzed',
+      '🚨 Időben észreveszed a túlköltekezést'
+    ];
+    if (title.contains('Korlát')) return [
+      '✅ Sosem léped túl a tervezett költségvetést',
+      '💪 Automatikus figyelmeztetések segítenek',
+      '🎉 Büszke lehetsz a megtakarításaidra'
+    ];
+    if (title.contains('Közösség')) return [
+      '🤝 Nem vagy egyedül a pénzügyi utadon',
+      '💎 Értékes tippeket kapsz valódi emberektől',
+      '🏆 Motiválódsz mások sikereitől'
+    ];
+    if (title.contains('Kihívás')) return [
+      '🎯 Játékosan éred el a megtakarítási céljaidat',
+      '👥 Közösen könnyebb a változás',
+      '🏅 Elismerést kapsz az eredményeidért'
+    ];
+    if (title.contains('Tudás')) return [
+      '🧠 Magabiztosabb leszel pénzügyi döntésekben',
+      '💰 Megtanulod, hogyan növeld a megtakarításaid',
+      '📚 Saját tempódban fejlődhetsz'
+    ];
+    if (title.contains('Import')) return [
+      '⚡ Automatikusan szinkronizálod a bankszámládat',
+      '🎯 Pontos képet kapsz a pénzügyi helyzetedről',
+      '⏱️ Órákat spórolsz meg a kézi adatbevitellel'
+    ];
+    if (title.contains('Ranglista')) return [
+      '🏁 Látod, hol állsz a társaidhoz képest',
+      '🔥 Motiválódsz a jobb eredményekért',
+      '🎖️ Elismerést kapsz a teljesítményedért'
+    ];
+    return ['🚀 Személyre szabott pénzügyi élmény', '📱 Egyszerű és hatékony használat', '💡 Okos megoldások a céljaival'];
   }
 
   List<TutorialPageData> _getAwareSpenderTutorial() {
     return [
       TutorialPageData(
-        title: 'Tranzakcióid nyomon követése',
-        description: 'Rögzítsd minden bevételedet és kiadásodat egyszerűen',
+        title: 'Véget a pénzügyi káosznak',
+        description: 'Lásd tisztán, hová megy a pénzed, és vedd vissza az irányítást',
         iconData: Icons.receipt_long,
         color: Color(0xFF4CAF50),
         features: [
-          'Gyors hozzáadás egy érintéssel',
-          'Automatikus kategorizálás',
-          'Ismétlődő tranzakciók',
+          '📊 Mindig tudod, mennyi pénzed van',
+          '⏰ 30 másodperc alatt rögzítesz egy kiadást',
+          '🎯 Látod, hová megy a pénzed valójában',
         ],
         actionText: 'Első tranzakció hozzáadása',
       ),
       TutorialPageData(
-        title: 'Részletes elemzések',
-        description: 'Lásd tisztán, mire és mennyit költesz havonta',
+        title: 'Felfedezed a rejtett mintáidat',
+        description: 'Olyan kiadási szokásokra jössz rá, amikről eddig nem is tudtál',
         iconData: Icons.analytics,
         color: Color(0xFF2196F3),
         features: [
-          'Kategóriánkénti bontás',
-          'Trendek és előrejelzések',
-          'Havi összehasonlítás',
+          '💡 Felfedezed a rejtett költési mintáidat',
+          '📈 Előre látod, mikor fogyhat el a pénzed',
+          '🚨 Időben észreveszed a túlköltekezést',
         ],
         actionText: 'Elemzések megtekintése',
       ),
       TutorialPageData(
-        title: 'Költési korlátok',
-        description: 'Állíts be havi limiteket és maradj a tervben',
+        title: 'Sosem léped túl a terveidet',
+        description: 'Automatikus figyelmeztetések segítenek betartani a költségvetésedet',
         iconData: Icons.warning_amber,
         color: Color(0xFFFF9800),
         features: [
-          'Kategóriánkénti korlátok',
-          'Automatikus figyelmeztetések',
-          'Havi és heti limitek',
+          '✅ Sosem léped túl a tervezett költségvetést',
+          '💪 Automatikus figyelmeztetések segítenek',
+          '🎉 Büszke lehetsz a megtakarításaidra',
         ],
         actionText: 'Első korlát beállítása',
       ),
@@ -230,38 +263,38 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
   List<TutorialPageData> _getCommunityDrivenTutorial() {
     return [
       TutorialPageData(
-        title: 'Csatlakozz a közösséghez',
-        description: 'Oszd meg tapasztalataidat és tanulj másoktól',
+        title: 'Nem vagy egyedül az utadon',
+        description: 'Csatlakozz olyan emberekhez, akik ugyanazokat a pénzügyi célokat járják',
         iconData: Icons.people,
         color: Color(0xFF9C27B0),
         features: [
-          'Tippek és tapasztalatok',
-          'Kérdések és válaszok',
-          'Motiváció és támogatás',
+          '🤝 Nem vagy egyedül a pénzügyi utadon',
+          '💎 Értékes tippeket kapsz valódi emberektől',
+          '🏆 Motiválódsz mások sikereitől',
         ],
         actionText: 'Fórum böngészése',
       ),
       TutorialPageData(
-        title: 'Kihívások',
-        description: 'Vegyél részt közös pénzügyi kihívásokban',
+        title: 'Játékosan éred el a céljaidat',
+        description: 'Közösen könnyebb változtatni - vegyél részt kihívásokban!',
         iconData: Icons.emoji_events,
         color: Color(0xFFE91E63),
         features: [
-          'Havi megtakarítási kihívások',
-          'Közös célok elérése',
-          'Jutalmak és elismerések',
+          '🎯 Játékosan éred el a megtakarítási céljaidat',
+          '👥 Közösen könnyebb a változás',
+          '🏅 Elismerést kapsz az eredményeidért',
         ],
         actionText: 'Kihívás választása',
       ),
       TutorialPageData(
-        title: 'Fejlődj együtt másokkal',
-        description: 'Motiváld egymást a pénzügyi célok elérésében',
+        title: 'Együtt még erősebbek vagytok',
+        description: 'A közösség ereje segít átalakítani a pénzügyi szokásaidat',
         iconData: Icons.trending_up,
         color: Color(0xFF00BCD4),
         features: [
-          'Csoportos kihívások',
-          'Tapasztalatok megosztása',
-          'Közös sikerek ünneplése',
+          '🔥 Motiválódsz a csapattagjaid sikereitől',
+          '💪 Támogatást kapsz nehéz pillanatokban',
+          '🎊 Együtt ünneplitek a sikereket',
         ],
         actionText: 'Első csoport keresése',
       ),
@@ -271,38 +304,38 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
   List<TutorialPageData> _getLearnerTutorial() {
     return [
       TutorialPageData(
-        title: 'Pénzügyi tudástár',
-        description: 'Tanulj új pénzügyi fogalmakat és stratégiákat',
+        title: 'Magabiztos leszel pénzügyi döntésekben',
+        description: 'Érthetően, saját tempódban sajátítsd el a pénzügyek fortélyait',
         iconData: Icons.school,
         color: Color(0xFF3F51B5),
         features: [
-          'Interaktív leckék',
-          'Gyakorlati példák',
-          'Haladás követése',
+          '🧠 Magabiztosabb leszel pénzügyi döntésekben',
+          '💰 Megtanulod, hogyan növeld a megtakarításaid',
+          '📚 Saját tempódban fejlődhetsz',
         ],
         actionText: 'Első lecke indítása',
       ),
       TutorialPageData(
-        title: 'Kvízek és tesztek',
-        description: 'Teszteld tudásodat és szerezz pontokat',
+        title: 'Teszteld és mélyítsd tudásod',
+        description: 'Játékos kvízekkel ellenőrizheted, mennyire sajátítottad el az anyagot',
         iconData: Icons.quiz,
         color: Color(0xFF673AB7),
         features: [
-          'Különböző nehézségi szintek',
-          'Azonnali visszajelzés',
-          'Pontszerzés és szintek',
+          '🎯 Azonnal látod, mit tanultál meg',
+          '🎮 Játékosan mélyíted el a tudásod',
+          '⭐ Pontokat szerzesz és szinteket lépsz',
         ],
         actionText: 'Első kvíz megoldása',
       ),
       TutorialPageData(
-        title: 'Tanulás másokkal',
-        description: 'Beszélj és tanulj más felhasználókkal pénzügyi témákról',
+        title: 'Tanulj a közösségtől is',
+        description: 'A legjobb tanácsokat valódi emberektől kapod, akik már átélték',
         iconData: Icons.people,
         color: Color(0xFFFF5722),
         features: [
-          'Tippek és tapasztalatok',
-          'Kérdések és válaszok',
-          'Motiváció és támogatás',
+          '🤝 Nem vagy egyedül a pénzügyi utadon',
+          '💎 Értékes tippeket kapsz valódi emberektől',
+          '❓ Bármilyen kérdést feltehetsz bizalommal',
         ],
         actionText: 'Fórum felfedezése',
       ),
@@ -312,38 +345,38 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
   List<TutorialPageData> _getAdvancedTutorial() {
     return [
       TutorialPageData(
-        title: 'Adatimport és automatizálás',
-        description: 'Importálj banki adatokat és automatizáld a folyamatokat',
+        title: 'Automatizáld a pénzügyi életed',
+        description: 'Spórolj időt az okos importálással és automata kategorizálással',
         iconData: Icons.upload_file,
         color: Color(0xFF607D8B),
         features: [
-          'CSV és Excel import',
-          'Banki kapcsolat (jövőbeli)',
-          'Automatikus kategorizálás',
+          '⚡ Automatikusan szinkronizálod a bankszámládat',
+          '🎯 Pontos képet kapsz a pénzügyi helyzetedről',
+          '⏱️ Órákat spórolsz meg a kézi adatbevitellel',
         ],
         actionText: 'Adatok importálása',
       ),
       TutorialPageData(
-        title: 'Limitek létrehozása',
-        description: 'Terveidnek megfelelően állíts be korlátokat',
+        title: 'Precíz kontroll minden részletben',
+        description: 'Finomhangoló beállításokkal pontosan olyan rendszert alakíts ki, amilyet szeretnél',
         iconData: Icons.settings,
         color: Color(0xFF795548),
         features: [
-          'Globális limitek',
-          'Számla limitek',
-          'Költségkategória limitek',
+          '🎚️ Minden paramétert személyre szabhatsz',
+          '🔒 Soha nem fogsz véletlenül túlköltekezni',
+          '⚙️ Haladó szabályokkal automatizálhatsz',
         ],
         actionText: 'Első korlát létrehozása',
       ),
       TutorialPageData(
-        title: 'Haladó elemzések',
-        description: 'Mélyebb betekintés a pénzügyi szokásaidba',
+        title: 'Mély betekintés a jövőbe',
+        description: 'Láthatod előre, hogyan alakulnak a pénzügyeid a következő hónapokban',
         iconData: Icons.insights,
         color: Color(0xFF009688),
         features: [
-          'Cashflow előrejelzés',
-          'Trend analízis',
-          'Részletes riportok',
+          '🔮 Előre látod a várható cashflow alakulást',
+          '📊 Részletes trendanalízisek készülnek',
+          '📋 Profi szintű riportokat generálhatsz',
         ],
         actionText: 'Haladó elemzések',
       ),
@@ -353,38 +386,38 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
   List<TutorialPageData> _getCompetitiveTutorial() {
     return [
       TutorialPageData(
-        title: 'Kihívások',
-        description: 'Csatlakozz másokhoz, és fejlesszétek közösen pénzügyeiteket',
+        title: 'Versenyezz és fejlődj közösen',
+        description: 'Tedd izgalmassá a megtakarítást - kihívások és versenyek várnak!',
         iconData: Icons.leaderboard,
         color: Color(0xFFFF6F00),
         features: [
-          'Havi kihívások',
-          'Limitált események',
-          'Elérhető jutalmak',
+          '🎯 Játékosan éred el a megtakarítási céljaidat',
+          '🏃‍♂️ Izgalmas havi kihívások motiválnak',
+          '🏆 Különleges jutalmakat szerezhetsz',
         ],
         actionText: 'Kihívások megtekintése',
       ),
       TutorialPageData(
-        title: 'PTI Index és ranglisták',
-        description: 'Kövesd nyomon a pénzügyi teljesítményedet',
+        title: 'Mérd magad másokhoz',
+        description: 'Látd, hol állsz a kortársaidhoz képest, és motiválódj a fejlődésre',
         iconData: Icons.speed,
         color: Color(0xFFE65100),
         features: [
-          'Személyes PTI pontszám',
-          'Havi fejlődés tracking',
-          'Benchmarking másokkal',
+          '🏁 Látod, hol állsz a kortársaidhoz képest',
+          '📈 Követheted a havi fejlődésedet',
+          '🔥 Motiválódsz a jobb eredményekért',
         ],
         actionText: 'PTI számítás indítása',
       ),
       TutorialPageData(
-        title: 'Kitűzők',
-        description: 'Szerezz meg különleges elismeréseket',
+        title: 'Gyűjtsd a ritka elismeréseket',
+        description: 'Szerezz meg különleges kitűzőket és mutasd meg, mire vagy képes',
         iconData: Icons.military_tech,
         color: Color(0xFFBF360C),
         features: [
-          'Limitált kitűzők',
-          'Különböző ritkaságok',
-          'Pontszerzés',
+          '🏅 Ritka kitűzőket szerezhetsz meg',
+          '🎖️ Elismerést kapsz a teljesítményedért',
+          '⭐ Gyűjthetsz pontokat és trófeákat',
         ],
         actionText: 'Első kitűző megszerzése',
       ),
