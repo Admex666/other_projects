@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../services/auth_service.dart';
 import 'register_screen.dart';
 import 'auth_wrapper.dart';
@@ -41,8 +42,8 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             children: [
               const SizedBox(height: 40),
-              const Text(
-                'Üdvözlünk!',
+              Text(
+                'welcome'.tr(),
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 32,
@@ -91,12 +92,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         const SizedBox(height: 8),
                         _buildInputField(
                           controller: _loginCtrl,
-                          hintText: 'minta@minta.com',
+                          hintText: 'username_email_hint'.tr(),
                           keyboardType: TextInputType.emailAddress,
                         ),
                         const SizedBox(height: 24),
-                        const Text(
-                          'Jelszó',
+                        Text(
+                          'password'.tr(),
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -128,8 +129,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                       strokeWidth: 2,
                                     ),
                                   )
-                                : const Text(
-                                    'Bejelentkezés',
+                                : Text(
+                                    'login'.tr(),
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.w600,
@@ -152,8 +153,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                               backgroundColor: Colors.white.withOpacity(0.7),
                             ),
-                            child: const Text(
-                              'Kezdjünk bele!',
+                            child: Text(
+                              'lets_start'.tr(),
                               style: TextStyle(
                                 color: Color(0xFF00D4AA),
                                 fontSize: 18,
@@ -167,7 +168,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: TextButton(
                             onPressed: _isLoading ? null : _onForgotPassword,
                             child: Text(
-                              'Elfelejtett Jelszó?',
+                              'forgot_password'.tr(),
                               style: TextStyle(
                                 color: Colors.grey[600],
                                 fontSize: 14,
@@ -263,7 +264,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Column(
       children: [
         Text(
-          'vagy jelentkezz be',
+          'or_login_with'.tr(),
           style: TextStyle(
             color: Colors.grey[600],
             fontSize: 14,
@@ -314,7 +315,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final pw = _pwCtrl.text;
 
     if (login.isEmpty || pw.isEmpty) {
-      setState(() => _errorMsg = 'Kérlek tölts ki minden mezőt.');
+      setState(() => _errorMsg = 'fill_all_fields'.tr());
       return;
     }
 
@@ -332,7 +333,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (ok) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Sikeres bejelentkezés!'),
+          content: Text('login_success'),
           backgroundColor: Color(0xFF00D4A3),
         ),
       );
@@ -341,7 +342,7 @@ class _LoginScreenState extends State<LoginScreen> {
         MaterialPageRoute(builder: (_) => const AuthWrapper()),
       );
     } else {
-      setState(() => _errorMsg = 'Hibás felhasználónév/email vagy jelszó.');
+      setState(() => _errorMsg = 'wrong_credentials'.tr());
     }
   }
 
@@ -354,7 +355,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _onForgotPassword() {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Password reset TODO.')),
+      const SnackBar(content: Text('password_reset_todo')),
     );
   }
 

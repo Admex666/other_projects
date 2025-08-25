@@ -33,7 +33,7 @@ class _BadgeSummaryWidgetState extends State<BadgeSummaryWidget> {
   Future<void> _loadBadgeStats() async {
     try {
       final statsResponse = await _badgeService.getBadgeStats();
-      if (statsResponse != null) {
+      if (statsResponse != null && mounted) { // mounted ellenőrzés hozzáadva
         setState(() {
           _badgeStats = BadgeStats.fromJson(statsResponse);
           _recentBadges = _badgeStats!.recentBadges.take(3).toList();
@@ -42,7 +42,9 @@ class _BadgeSummaryWidgetState extends State<BadgeSummaryWidget> {
       }
     } catch (e) {
       print('Error loading badge stats: $e');
-      setState(() => _isLoading = false);
+      if (mounted) { // mounted ellenőrzés hozzáadva
+        setState(() => _isLoading = false);
+      }
     }
   }
 

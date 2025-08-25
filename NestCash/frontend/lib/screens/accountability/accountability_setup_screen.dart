@@ -1,6 +1,7 @@
 // lib/screens/accountability/accountability_setup_screen.dart
 
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/models/accountability_models.dart';
 import 'package:frontend/providers/accountability_provider.dart';
@@ -111,14 +112,14 @@ class _AccountabilitySetupScreenState extends State<AccountabilitySetupScreen> {
       Navigator.of(context).pop(true);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(widget.isEdit ? 'Profil frissítve!' : 'Profil létrehozva!'),
+          content: Text(widget.isEdit ? 'profile_updated'.tr() : 'profile_updated'.tr()),
           backgroundColor: Colors.green,
         ),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(provider.error ?? 'Hiba történt'),
+          content: Text(provider.error ?? 'an_error_occurred'.tr()),
           backgroundColor: Colors.red,
         ),
       );
@@ -143,7 +144,7 @@ class _AccountabilitySetupScreenState extends State<AccountabilitySetupScreen> {
                   ),
                   Expanded(
                     child: Text(
-                      widget.isEdit ? 'Profil szerkesztése' : 'Accountability profil',
+                      widget.isEdit ? 'edit_profile'.tr() : 'accountability_profile'.tr(),
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -306,7 +307,7 @@ class _AccountabilitySetupScreenState extends State<AccountabilitySetupScreen> {
         children: [
           SizedBox(height: 20),
           Text(
-            'Mik a céljaid?',
+            'goals_title'.tr(),
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -315,7 +316,7 @@ class _AccountabilitySetupScreenState extends State<AccountabilitySetupScreen> {
           ),
           SizedBox(height: 8),
           Text(
-            'Válaszd ki azokat a területeket, amelyekben accountability partnert keresel.',
+            'goals_question'.tr(),
             style: TextStyle(
               fontSize: 16,
               color: Colors.grey[600],
@@ -398,7 +399,7 @@ class _AccountabilitySetupScreenState extends State<AccountabilitySetupScreen> {
         children: [
           SizedBox(height: 20),
           Text(
-            'Milyen gyakran szeretnél beszámolni?',
+            'frequency_title'.tr(),
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -407,7 +408,7 @@ class _AccountabilitySetupScreenState extends State<AccountabilitySetupScreen> {
           ),
           SizedBox(height: 8),
           Text(
-            'Válaszd ki a számodra ideális check-in gyakoriságot.',
+            'frequency_question'.tr(),
             style: TextStyle(
               fontSize: 16,
               color: Colors.grey[600],
@@ -502,7 +503,7 @@ class _AccountabilitySetupScreenState extends State<AccountabilitySetupScreen> {
         children: [
           SizedBox(height: 20),
           Text(
-            'Mi motivál téged?',
+            'motivation_title'.tr(),
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -511,7 +512,7 @@ class _AccountabilitySetupScreenState extends State<AccountabilitySetupScreen> {
           ),
           SizedBox(height: 8),
           Text(
-            'Válaszd ki a számodra leghatékonyabb motivációs stílust.',
+            'motivation_question'.tr(),
             style: TextStyle(
               fontSize: 16,
               color: Colors.grey[600],
@@ -608,7 +609,7 @@ class _AccountabilitySetupScreenState extends State<AccountabilitySetupScreen> {
         children: [
           SizedBox(height: 20),
           Text(
-            'Milyen a személyiséged?',
+            'personality_title'.tr(),
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -617,7 +618,7 @@ class _AccountabilitySetupScreenState extends State<AccountabilitySetupScreen> {
           ),
           SizedBox(height: 8),
           Text(
-            'Ez segít megtalálni a veled kompatibilis partnereket.',
+            'personality_question'.tr(),
             style: TextStyle(
               fontSize: 16,
               color: Colors.grey[600],
@@ -714,7 +715,7 @@ class _AccountabilitySetupScreenState extends State<AccountabilitySetupScreen> {
         children: [
           SizedBox(height: 20),
           Text(
-            'Mutatkozz be röviden',
+            'bio_title'.tr(),
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -723,7 +724,7 @@ class _AccountabilitySetupScreenState extends State<AccountabilitySetupScreen> {
           ),
           SizedBox(height: 8),
           Text(
-            'Írj magadról pár mondatot, hogy a partnerek megismerhessenek. (Opcionális)',
+            'bio_question'.tr(),
             style: TextStyle(
               fontSize: 16,
               color: Colors.grey[600],
@@ -747,7 +748,7 @@ class _AccountabilitySetupScreenState extends State<AccountabilitySetupScreen> {
               maxLines: 8,
               maxLength: 500,
               decoration: InputDecoration(
-                hintText: 'Pl.: Szia! Szoftver fejlesztő vagyok, és segítségre van szükségem a pénzügyi céljaim elérésében. Szeretek strukturáltan dolgozni és motiváló beszélgetéseket folytatni.',
+                hintText: 'bio_example'.tr(),
                 hintStyle: TextStyle(color: Colors.grey[400]),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
@@ -773,7 +774,7 @@ class _AccountabilitySetupScreenState extends State<AccountabilitySetupScreen> {
                 SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'Tipp: Egy jó bemutatkozás növeli az esélyét a sikeres partnerkapcsolatoknak!',
+                    'bio_tip'.tr(),
                     style: TextStyle(
                       color: Colors.blue[700],
                       fontSize: 14,

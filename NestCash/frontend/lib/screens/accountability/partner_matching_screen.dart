@@ -1,6 +1,7 @@
 // lib/screens/accountability/partner_matching_screen.dart
 
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/models/accountability_models.dart';
 import 'package:frontend/providers/accountability_provider.dart';
@@ -38,7 +39,7 @@ class _PartnerMatchingScreenState extends State<PartnerMatchingScreen> {
       // Check if user has access to matching
       if (!subscriptionProvider.isPlusOrHigher) {
         setState(() {
-          _error = 'Matching funkció csak Plus és Pro előfizetőknek elérhető';
+          _error = 'matching_plus_pro_only'.tr();
           _isLoading = false;
         });
         return;
@@ -102,7 +103,7 @@ class _PartnerMatchingScreenState extends State<PartnerMatchingScreen> {
         if (success) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Partnership kérelem elküldve ${suggestion.username} felhasználónak!'),
+              content: Text('request_sent'.tr(namedArgs: {'username': suggestion.username})),
               backgroundColor: Colors.green,
             ),
           );
@@ -136,7 +137,7 @@ class _PartnerMatchingScreenState extends State<PartnerMatchingScreen> {
                   ),
                   Expanded(
                     child: Text(
-                      'Partner keresés',
+                      'find_partner'.tr(),
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -182,7 +183,7 @@ class _PartnerMatchingScreenState extends State<PartnerMatchingScreen> {
             CircularProgressIndicator(color: Color(0xFF00D4AA)),
             SizedBox(height: 16),
             Text(
-              'Partner javaslatok betöltése...',
+              'parntership_recommendations'.tr(),
               style: TextStyle(
                 color: Colors.grey[600],
                 fontSize: 16,
@@ -207,7 +208,7 @@ class _PartnerMatchingScreenState extends State<PartnerMatchingScreen> {
               ),
               SizedBox(height: 16),
               Text(
-                'Hiba történt',
+                'an_error_occurred'.tr(),
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -229,7 +230,7 @@ class _PartnerMatchingScreenState extends State<PartnerMatchingScreen> {
                   backgroundColor: Color(0xFF00D4AA),
                   foregroundColor: Colors.white,
                 ),
-                child: Text('Újrapróbálás'),
+                child: Text('try_again'.tr()),
               ),
             ],
           ),

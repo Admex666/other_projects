@@ -1,6 +1,7 @@
 // lib/screens/accountability/checkin_screen.dart
 
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/models/accountability_models.dart';
 import 'package:frontend/providers/accountability_provider.dart';
@@ -46,7 +47,7 @@ class _CheckInScreenState extends State<CheckInScreen> {
                     child: Column(
                       children: [
                         Text(
-                          'Check-in',
+                          'checkin_title'.tr(),
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -54,7 +55,7 @@ class _CheckInScreenState extends State<CheckInScreen> {
                           ),
                         ),
                         Text(
-                          'Partner: ${widget.partnerName}',
+                          'checkin_partner'.tr(namedArgs: {'partnerName': widget.partnerName}),
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.black54,
@@ -108,7 +109,7 @@ class _CheckInScreenState extends State<CheckInScreen> {
                             ),
                             SizedBox(width: 12),
                             Text(
-                              'Mai check-in - ${_formatDate(DateTime.now())}',
+                              'today_checkin'.tr(namedArgs: {'date': DateFormat.yMd().format(DateTime.now())}),
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
@@ -140,7 +141,7 @@ class _CheckInScreenState extends State<CheckInScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Elérted a mai céljaidat?',
+                              'goals_met_question'.tr(),
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -173,7 +174,7 @@ class _CheckInScreenState extends State<CheckInScreen> {
                                           ),
                                           SizedBox(width: 8),
                                           Text(
-                                            'Igen',
+                                            'yes'.tr(),
                                             style: TextStyle(
                                               color: _goalsMet ? Colors.white : Colors.grey[600],
                                               fontWeight: FontWeight.w600,
@@ -208,7 +209,7 @@ class _CheckInScreenState extends State<CheckInScreen> {
                                           ),
                                           SizedBox(width: 8),
                                           Text(
-                                            'Nem',
+                                            'no'.tr(),
                                             style: TextStyle(
                                               color: !_goalsMet ? Colors.white : Colors.grey[600],
                                               fontWeight: FontWeight.w600,
@@ -246,7 +247,7 @@ class _CheckInScreenState extends State<CheckInScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Hogyan értékeled a mai haladásod?',
+                              'progress_rating_question'.tr(),
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -255,7 +256,7 @@ class _CheckInScreenState extends State<CheckInScreen> {
                             ),
                             SizedBox(height: 8),
                             Text(
-                              '1 = Gyenge, 5 = Kiváló',
+                              '1 - ${'rating_1'.tr()}\n5 - ${'rating_5'.tr()}',
                               style: TextStyle(
                                 color: Colors.grey[600],
                                 fontSize: 14,
@@ -296,33 +297,6 @@ class _CheckInScreenState extends State<CheckInScreen> {
                               }),
                             ),
                             SizedBox(height: 16),
-                            // Progress rating labels
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Gyenge',
-                                  style: TextStyle(
-                                    color: Colors.grey[500],
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                Text(
-                                  'Közepes',
-                                  style: TextStyle(
-                                    color: Colors.grey[500],
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                Text(
-                                  'Kiváló',
-                                  style: TextStyle(
-                                    color: Colors.grey[500],
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ],
-                            ),
                           ],
                         ),
                       ),
@@ -349,7 +323,7 @@ class _CheckInScreenState extends State<CheckInScreen> {
                             Padding(
                               padding: EdgeInsets.fromLTRB(20, 20, 20, 16),
                               child: Text(
-                                'Jegyzetek (opcionális)',
+                                'notes_title'.tr(),
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
@@ -364,7 +338,7 @@ class _CheckInScreenState extends State<CheckInScreen> {
                                 maxLines: 4,
                                 maxLength: 500,
                                 decoration: InputDecoration(
-                                  hintText: 'Írj magadról, hogyan telt a napod, milyen kihívásokkal találkoztál, vagy milyen sikereket értél el...',
+                                  hintText: 'notes_hint'.tr(),
                                   hintStyle: TextStyle(color: Colors.grey[400]),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
@@ -414,7 +388,7 @@ class _CheckInScreenState extends State<CheckInScreen> {
                                         ),
                                         SizedBox(width: 12),
                                         Text(
-                                          'Elküldés...',
+                                          'send_checkin'.tr(),
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.w600,
@@ -423,7 +397,7 @@ class _CheckInScreenState extends State<CheckInScreen> {
                                       ],
                                     )
                                   : Text(
-                                      'Check-in elküldése',
+                                      'send_checkin'.tr(),
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w600,
@@ -476,14 +450,14 @@ class _CheckInScreenState extends State<CheckInScreen> {
         Navigator.of(context).pop(true);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Check-in sikeresen elküldve!'),
+            content: Text('checkin_success'.tr()),
             backgroundColor: Colors.green,
           ),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(provider.error ?? 'Hiba történt a check-in küldése során'),
+            content: Text(provider.error ?? 'checkin_error'.tr()),
             backgroundColor: Colors.red,
           ),
         );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:frontend/screens/profile/edit_profile_screen.dart';
 import 'package:frontend/screens/auth/login_screen.dart';  
 import 'package:frontend/services/auth_service.dart';
@@ -42,7 +43,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('A munkamenet lejárt. Kérjük, jelentkezzen be újra.'),
+          content: Text('session_expired'),
           backgroundColor: Colors.red,
         ),
       );
@@ -90,7 +91,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Profil betöltése sikertelen: ${e.toString()}'),
+            content: Text('profile_load_error'.tr(args: [e.toString()])),
             backgroundColor: Colors.orange,
           ),
         );
@@ -145,12 +146,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Beállítások'),
-          content: Text('A beállítások itt lesznek implementálva.'),
+          title: Text('settings_dialog_title'.tr()), // volt: 'Beállítások'
+          content: Text('settings_dialog_content'.tr()), // volt: 'A beállítások itt lesznek implementálva.'
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Bezárás'),
+              child: Text('close'.tr()), // volt: 'Bezárás'
             ),
           ],
         );
@@ -163,12 +164,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Visszajelzés'),
-          content: Text('A visszajelzés itt lesz implementálva.'),  
+          title: Text('feedback_dialog_title'.tr()), // volt: 'Visszajelzés'
+          content: Text('feedback_dialog_content'.tr()), // volt: 'A visszajelzés itt lesz implementálva.'
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Bezárás'),
+              child: Text('close'.tr()), // volt: 'Bezárás'
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Nyelváltó dialógus
+  void _showLanguageDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('change_language'.tr()),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Text('🇭🇺'),
+                title: const Text('Magyar'),
+                onTap: () {
+                  context.setLocale(const Locale('hu', 'HU'));
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: const Text('🇬🇧'),
+                title: const Text('English'),
+                onTap: () {
+                  context.setLocale(const Locale('en', 'US'));
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('close'.tr()),
             ),
           ],
         );
@@ -295,7 +335,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         // Profile Menu Items
                         _buildProfileMenuItem(
                           icon: Icons.person_outline,
-                          title: 'Profil szerkesztése',
+                          title: 'edit_profile'.tr(),
                           backgroundColor: Colors.blue[400]!,
                           onTap: () {
                             // Navigálás az EditProfileScreen-re
@@ -313,7 +353,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                         _buildProfileMenuItem(
                           icon: Icons.card_membership,
-                          title: 'Előfizetésem',
+                          title: 'my_subscription'.tr(),
                           backgroundColor: Colors.purple[400]!,
                           onTap: () {
                             Navigator.push(
@@ -325,33 +365,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                         _buildProfileMenuItem(
                           icon: Icons.settings_outlined,
-                          title: 'Beállítások',
+                          title: 'settings'.tr(),
                           backgroundColor: Colors.blue[600]!,
                           onTap: _showSettingsDialog,
                         ),
                         
                         _buildProfileMenuItem(
                           icon: Icons.help_outline,
-                          title: 'Visszajelzés',
+                          title: 'feedback'.tr(),
                           backgroundColor: Colors.blue[300]!,
                           onTap: _showHelpDialog,
+                        ),
+
+                        // Nyelváltó gomb hozzáadása
+                        _buildProfileMenuItem(
+                          icon: Icons.language,
+                          title: 'change_language'.tr(),
+                          backgroundColor: Colors.green[400]!,
+                          onTap: _showLanguageDialog,
                         ),
                         
                         _buildProfileMenuItem(
                         icon: Icons.logout,
-                        title: "Kijelentkezés",
+                        title: 'logout'.tr(),
                         backgroundColor: Colors.red,
                         onTap: () {
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
-                                title: Text('Kijelentkezés'),
-                                content: Text('Biztosan ki szeretnél jelentkezni?'),
+                                title: Text('logout_title'.tr()),
+                                content: Text('logout_confirm'.tr()),
                                 actions: <Widget>[
                                   TextButton(
                                     onPressed: () => Navigator.pop(context),
-                                    child: Text('Bezárás'),
+                                    child: Text('close'.tr()),
                                   ),
                                   TextButton(
                                     onPressed: () async {
@@ -359,7 +407,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       if (!mounted) return;
                                       ScaffoldMessenger.of(context).showSnackBar(
                                         const SnackBar(
-                                          content: Text('Sikeres kijelentkezés'),
+                                          content: Text('logout_success'),
                                           backgroundColor: Color(0xFF00D4AA),
                                         ),
                                       );
@@ -370,7 +418,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       );
                                     },
                                     child: Text(
-                                      'Kijelentkezés',
+                                      'logout'.tr(),
                                       style: TextStyle(color: Colors.red),
                                     ),
                                   ),

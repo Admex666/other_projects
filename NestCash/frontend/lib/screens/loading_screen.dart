@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math' as math;
 
 /// LoadingScreen - NestCash alkalmazás töltőképernyője
 /// A meglévő design nyelvezetet követi: teal/green színek, gradient háttér
@@ -21,7 +22,12 @@ class LoadingScreen extends StatefulWidget {
 class _LoadingScreenState extends State<LoadingScreen>
     with TickerProviderStateMixin {
   late AnimationController _progressController;
+  late AnimationController _logoController;
+  late AnimationController _pulseController; 
   late Animation<double> _progressValue;
+  late Animation<double> _logoScale;
+  late Animation<double> _logoOpacity;
+  late Animation<double> _pulseAnimation;
 
   @override
   void initState() {
@@ -33,81 +39,173 @@ class _LoadingScreenState extends State<LoadingScreen>
       vsync: this,
     );
 
+    // Logo animáció controller
+    _logoController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+
+    // Pulse animáció controller
+    _pulseController = AnimationController(
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    );
+
     // Animáció definiálása
     _progressValue = Tween<double>(
       begin: 0.0,
       end: 1.0,
     ).animate(_progressController);
 
+    // Logo scale animáció
+    _logoScale = Tween<double>(
+      begin: 0.3,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _logoController,
+      curve: Curves.elasticOut,
+    ));
+
+    // Logo opacity animáció
+    _logoOpacity = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _logoController,
+      curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+    ));
+
+    // Pulse animáció
+    _pulseAnimation = Tween<double>(
+      begin: 1.0,
+      end: 1.1,
+    ).animate(CurvedAnimation(
+      parent: _pulseController,
+      curve: Curves.easeInOut,
+    ));
+
     // Animáció indítása
     _startAnimations();
   }
 
   void _startAnimations() {
-    _progressController.forward();
+    // Logo animáció indítása először
+    _logoController.forward();
+    // Pulse animáció ismétlése
+    _pulseController.repeat(reverse: true);
+    // Progress animáció késleltetett indítása
+    Future.delayed(const Duration(milliseconds: 500), () {
+      _progressController.forward();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.black, // Netflix-stílusú fekete háttér
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (widget.showLogo) // Hozzáadott feltétel, hogy a logo csak akkor jelenjen meg, ha a showLogo értéke true
-              Stack(
-                alignment: Alignment.center, // Ez az igazítás a Stack összes gyermekét középre helyezi
-                children: [
-                  // A kör alakú progress indicator
-                  SizedBox(
-                    width: 150,
-                    height: 150,
-                    child: AnimatedBuilder(
-                      animation: _progressValue,
-                      builder: (context, child) {
-                        return CircularProgressIndicator(
-                          value: _progressValue.value,
-                          strokeWidth: 5.0,
-                          backgroundColor: Colors.grey.shade200,
-                          valueColor: const AlwaysStoppedAnimation<Color>(
-                            Color(0xFF00D4A3),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  /* 
-                  // A logó
-                  Container(
-                    width: 120,
-                    height: 120,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 20,
-                          offset: const Offset(0, 10),
+            if (widget.showLogo)
+              AnimatedBuilder(
+                animation: Listenable.merge([
+                  _logoController,
+                  _pulseController,
+                  _progressController
+                ]),
+                builder: (context, child) {
+                  return Transform.scale(
+                    scale: _logoScale.value * _pulseAnimation.value,
+                    child: Opacity(
+                      opacity: _logoOpacity.value,
+                      child: Container(
+                        width: 120,
+                        height: 120,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF00D4A3).withOpacity(0.3),
+                              blurRadius: 20,
+                              spreadRadius: 5,
+                            ),
+                          ],
                         ),
-                      ],
-                      image: const DecorationImage(
-                        image: AssetImage(Icons.money),
-                        fit: BoxFit.contain, // Változtatás: BoxFit.cover helyett BoxFit.contain, hogy a kép ne vágódjon le
+                        child: ClipOval(
+                          child: Image.asset(
+                            'assets/logo.png',
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              // Fallback ha nincs logo
+                              return Container(
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFF00D4A3),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    'N',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 48,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            const SizedBox(height: 40),
+            
+            // Netflix-stílusú progress bar
+            AnimatedBuilder(
+              animation: _progressValue,
+              builder: (context, child) {
+                return Container(
+                  width: 200,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(2),
+                    color: Colors.grey[800],
+                  ),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Container(
+                      width: 200 * _progressValue.value,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(2),
+                        color: const Color(0xFF00D4A3),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFF00D4A3).withOpacity(0.5),
+                            blurRadius: 8,
+                            spreadRadius: 1,
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                  */
-                ],
-              ),
-            const SizedBox(height: 40),
+                );
+              },
+            ),
+            
+            const SizedBox(height: 20),
+            
             if (widget.message != null)
               Text(
                 widget.message!,
                 style: const TextStyle(
                   fontSize: 16,
-                  color: Colors.black54,
+                  color: Colors.white70,
+                  fontWeight: FontWeight.w300,
                 ),
               ),
           ],
@@ -119,6 +217,8 @@ class _LoadingScreenState extends State<LoadingScreen>
   @override
   void dispose() {
     _progressController.dispose();
+    _logoController.dispose(); // ÚJ
+    _pulseController.dispose(); // ÚJ
     super.dispose();
   }
 }

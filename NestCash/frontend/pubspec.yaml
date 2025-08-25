@@ -32,7 +32,7 @@ dependencies:
     sdk: flutter
   http: ^1.2.1 # Vagy a legfrissebb verzió
   shared_preferences: ^2.0.15 # Vagy a legfrissebb verzió
-  intl: ^0.18.1 # Vagy a legfrissebb verzió
+  intl: 0.20.2 # Vagy a legfrissebb verzió
   # Biztonságos token tárolás (Android/iOS)
   flutter_secure_storage: ^9.0.0
   # (Opcionális) JSON annotációk későbbi modellezéshez
@@ -43,6 +43,7 @@ dependencies:
   timeago: ^3.2.0
   fl_chart: ^0.64.0
   provider: ^6.1.1
+  easy_localization: ^3.0.3
 
 dev_dependencies:
   flutter_test:
@@ -63,10 +64,6 @@ flutter_launcher_icons:
   image_path: "assets/logo.png"
   min_sdk_android: 21
 
-#flutter_native_splash:
-#  color: "#00D4A3"  # A te teal színed
-#  image: "assets/logo.png"  # Ha van logód
-
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
@@ -77,8 +74,9 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
-  #assets:
-  #  - assets/
+  assets:
+    - assets/logo.png
+    - assets/translations/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

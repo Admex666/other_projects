@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:frontend/screens/auth/auth_wrapper.dart';
 import 'package:frontend/screens/dashboard_screen.dart';
 import 'package:frontend/screens/accountability/partnerships_screen.dart';
@@ -25,63 +26,79 @@ import 'package:frontend/screens/accountability/accountability_setup_screen.dart
 import 'package:frontend/screens/admin_dashboard_screen.dart';
 import 'package:frontend/services/analytics_service.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
+
   runApp(NestCashApp());
 }
 
 class NestCashApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        // AuthService - singleton
-        Provider<AuthService>(
-          create: (_) => AuthService(),
-        ),
-        
-        // SubscriptionService - depends on AuthService
-        ProxyProvider<AuthService, SubscriptionService>(
-          create: (context) => SubscriptionService(
-            authService: context.read<AuthService>(),
+    return EasyLocalization(
+        supportedLocales: const [
+        Locale('hu', 'HU'),
+        Locale('en', 'US'),
+      ],
+      path: 'assets/translations',
+      fallbackLocale: const Locale('hu', 'HU'),
+      child: MultiProvider(
+        providers: [
+          // AuthService - singleton
+          Provider<AuthService>(
+            create: (_) => AuthService(),
           ),
-          update: (context, auth, previous) => SubscriptionService(
-            authService: auth,
-          ),
-        ),
-        
-        // SubscriptionProvider - depends on SubscriptionService
-        ChangeNotifierProxyProvider<SubscriptionService, SubscriptionProvider>(
-          create: (context) => SubscriptionProvider(
-            subscriptionService: context.read<SubscriptionService>(),
-          ),
-          update: (context, subscriptionService, previous) => 
-            previous ?? SubscriptionProvider(
-              subscriptionService: subscriptionService,
+          
+          // SubscriptionService - depends on AuthService
+          ProxyProvider<AuthService, SubscriptionService>(
+            create: (context) => SubscriptionService(
+              authService: context.read<AuthService>(),
             ),
-        ),
-
-        // ÚJ: AccountabilityProvider hozzáadása
-        ChangeNotifierProxyProvider<AuthService, AccountabilityProvider>(
-          create: (context) => AccountabilityProvider(
-            service: AccountabilityService(),
+            update: (context, auth, previous) => SubscriptionService(
+              authService: auth,
+            ),
           ),
-          update: (context, authService, previous) => 
-            previous ?? AccountabilityProvider(
+          
+          // SubscriptionProvider - depends on SubscriptionService
+          ChangeNotifierProxyProvider<SubscriptionService, SubscriptionProvider>(
+            create: (context) => SubscriptionProvider(
+              subscriptionService: context.read<SubscriptionService>(),
+            ),
+            update: (context, subscriptionService, previous) => 
+              previous ?? SubscriptionProvider(
+                subscriptionService: subscriptionService,
+              ),
+          ),
+      
+          // ÚJ: AccountabilityProvider hozzáadása
+          ChangeNotifierProxyProvider<AuthService, AccountabilityProvider>(
+            create: (context) => AccountabilityProvider(
               service: AccountabilityService(),
             ),
-        ),
-      ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'NestCash',
-        theme: ThemeData(primarySwatch: Colors.teal),
-        home: AuthWrapper(),
-        routes: {
-          '/subscription': (context) => const SubscriptionScreen(),
-          '/plans': (context) => PlansScreen(
-            currentTier: context.read<SubscriptionProvider>().currentTier,
+            update: (context, authService, previous) => 
+              previous ?? AccountabilityProvider(
+                service: AccountabilityService(),
+              ),
           ),
-        },
+        ],
+        child: Builder(
+          builder: (context) => MaterialApp(
+            localizationsDelegates: context.localizationDelegates,
+            supportedLocales: context.supportedLocales,
+            locale: context.locale,
+            debugShowCheckedModeBanner: false,
+            title: 'NestCash',
+            theme: ThemeData(primarySwatch: Colors.teal),
+            home: AuthWrapper(),
+            routes: {
+              '/subscription': (context) => const SubscriptionScreen(),
+              '/plans': (context) => PlansScreen(
+                currentTier: context.read<SubscriptionProvider>().currentTier,
+              ),
+            },
+          ),
+        ),
       ),
     );
   }
@@ -197,8 +214,8 @@ void _showAddTransactionOptions(BuildContext context) {
                   );
                 },
                 icon: const Icon(Icons.account_balance_wallet, color: Colors.white),
-                label: const Text(
-                  'Számlák',
+                label: Text(
+                  'accounts'.tr(),
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
                 style: ElevatedButton.styleFrom(
@@ -225,8 +242,8 @@ void _showAddTransactionOptions(BuildContext context) {
                   );
                 },
                 icon: const Icon(Icons.category, color: Colors.white),
-                label: const Text(
-                  'Kategóriák',
+                label: Text(
+                  'categories'.tr(),
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
                 style: ElevatedButton.styleFrom(
@@ -253,8 +270,8 @@ void _showAddTransactionOptions(BuildContext context) {
                   );
                 },
                 icon: const Icon(Icons.speed, color: Colors.white),
-                label: const Text(
-                  'Limitek',
+                label: Text(
+                  'limits'.tr(),
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
                 style: ElevatedButton.styleFrom(
@@ -305,8 +322,8 @@ void _showForumChallengesOptions(BuildContext context) {
                     );
                   },
                   icon: const Icon(Icons.admin_panel_settings, color: Colors.white),
-                  label: const Text(
-                    'Admin Dashboard',
+                  label: Text(
+                    'admin_dashboard'.tr(),
                     style: TextStyle(fontSize: 18, color: Colors.white),
                   ),
                   style: ElevatedButton.styleFrom(
@@ -336,8 +353,8 @@ void _showForumChallengesOptions(BuildContext context) {
                   );
                 },
                 icon: const Icon(Icons.trending_up, color: Colors.white),
-                label: const Text(
-                  'PTI - Pénzügyi Tudatosság Index',
+                label: Text(
+                  'pti_full'.tr(),
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
                 style: ElevatedButton.styleFrom(
@@ -367,8 +384,8 @@ void _showForumChallengesOptions(BuildContext context) {
                   );
                 },
                 icon: const Icon(Icons.psychology, color: Colors.white),
-                label: const Text(
-                  'Szokások',
+                label: Text(
+                  'habits'.tr(),
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
                 style: ElevatedButton.styleFrom(
@@ -421,8 +438,8 @@ void _showForumChallengesOptions(BuildContext context) {
                   }
                 },
                 icon: const Icon(Icons.people_alt_outlined, color: Colors.white),
-                label: const Text(
-                  'Accountability Partner',
+                label: Text(
+                  'accountability_partner'.tr(),
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
                 style: ElevatedButton.styleFrom(
@@ -451,8 +468,8 @@ void _showForumChallengesOptions(BuildContext context) {
                   );
                 },
                 icon: const Icon(Icons.forum, color: Colors.white),
-                label: const Text(
-                  'Fórum',
+                label: Text(
+                  'forum'.tr(),
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
                 style: ElevatedButton.styleFrom(
@@ -482,8 +499,8 @@ void _showForumChallengesOptions(BuildContext context) {
                   );
                 },
                 icon: const Icon(Icons.emoji_events, color: Colors.white),
-                label: const Text(
-                  'Kihívások',
+                label: Text(
+                  'challenges'.tr(),
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
                 style: ElevatedButton.styleFrom(
@@ -512,8 +529,8 @@ void _showForumChallengesOptions(BuildContext context) {
                   );
                 },
                 icon: const Icon(Icons.school_outlined, color: Colors.white),
-                label: const Text(
-                  'Tudástár',
+                label: Text(
+                  'knowledge_base'.tr(),
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
                 style: ElevatedButton.styleFrom(
@@ -578,13 +595,13 @@ Widget build(BuildContext context) {
 String _getScreenTitle(int index) {
     switch (index) {
       case 0:
-        return 'Üdv újra, $_currentUsername!';
+        return 'welcome_back'.tr(namedArgs: {'username':_currentUsername});
       case 1:
-        return 'Elemzések';
+        return 'analyses'.tr();
       case 3:
-        return 'Fórum';
+        return 'forum'.tr();
       case 4:
-        return 'Profil';
+        return 'profile'.tr();
       default:
         return 'NestCash';
     }
