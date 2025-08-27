@@ -406,8 +406,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       await _authService.logout();
                                       if (!mounted) return;
                                       ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(
-                                          content: Text('logout_success'),
+                                        SnackBar(
+                                          content: Text('logout_success'.tr()),
                                           backgroundColor: Color(0xFF00D4AA),
                                         ),
                                       );

@@ -1,5 +1,6 @@
 // lib/screens/forum/forum_main_screen.dart
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:frontend/services/forum_service.dart';
 import 'package:frontend/models/forum_models.dart';
 import 'package:frontend/screens/forum/create_post_screen.dart';
@@ -106,7 +107,7 @@ class _ForumMainScreenState extends State<ForumMainScreen> {
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hiba a posztok betöltésekor: $e')),
+        SnackBar(content: Text('${'an_error_occurred'.tr()}: $e')),
       );
     } finally {
       setState(() {
@@ -141,7 +142,7 @@ class _ForumMainScreenState extends State<ForumMainScreen> {
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hiba a posztok betöltésekor: $e')),
+        SnackBar(content: Text('${'an_error_occurred'.tr()}: $e')),
       );
     } finally {
       setState(() {
@@ -189,7 +190,7 @@ class _ForumMainScreenState extends State<ForumMainScreen> {
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hiba a kedvelés során: $e')),
+        SnackBar(content: Text('${'an_error_occurred'.tr()}: $e')),
       );
     }
   }

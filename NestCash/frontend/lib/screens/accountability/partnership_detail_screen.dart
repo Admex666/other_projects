@@ -779,7 +779,7 @@ class _PartnershipDetailScreenState extends State<PartnershipDetailScreen>
             Row(
               children: [
                 Text(
-                  'progress_label'.tr(),
+                  'progress'.tr(),
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     color: Colors.grey[700],

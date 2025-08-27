@@ -1,5 +1,6 @@
 // lib/screens/forum/create_post_screen.dart
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:frontend/services/forum_service.dart';
 import 'package:frontend/models/forum_models.dart';
 
@@ -42,7 +43,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Poszt sikeresen létrehozva!'),
+          content: Text('post_creation_success'.tr()),
           backgroundColor: Colors.green,
         ),
       );
@@ -51,7 +52,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Hiba a poszt létrehozásakor: $e'),
+          content: Text('${'post_creation_error'.tr()}$e'),
           backgroundColor: Colors.red,
         ),
       );
@@ -91,7 +92,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                     ),
                     Expanded(
                       child: Text(
-                        'Új poszt létrehozása',
+                        'create_new_post'.tr(),
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -103,7 +104,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                     TextButton(
                       onPressed: _isLoading ? null : _createPost,
                       child: Text(
-                        'Közzététel',
+                        'publish'.tr(),
                         style: TextStyle(
                           color: _isLoading ? Colors.grey : Colors.black87,
                           fontWeight: FontWeight.bold,
@@ -131,7 +132,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       children: [
                         // Title field
                         Text(
-                          'Cím',
+                          'title'.tr(),
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -142,7 +143,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         TextFormField(
                           controller: _titleController,
                           decoration: InputDecoration(
-                            hintText: 'Add meg a poszt címét...',
+                            hintText: 'title_placeholder'.tr(),
                             filled: true,
                             fillColor: Colors.white,
                             border: OutlineInputBorder(
@@ -156,13 +157,13 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                           ),
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
-                              return 'A cím megadása kötelező';
+                              return 'title_required'.tr();
                             }
                             if (value.trim().length < 3) {
-                              return 'A cím legalább 3 karakter hosszú legyen';
+                              return 'title_min_length'.tr();
                             }
                             if (value.trim().length > 200) {
-                              return 'A cím maximum 200 karakter hosszú lehet';
+                              return 'title_max_length'.tr();
                             }
                             return null;
                           },
@@ -172,7 +173,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
                         // Category selection
                         Text(
-                          'Kategória',
+                          'category'.tr(),
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -215,7 +216,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
                         // Privacy level selection
                         Text(
-                          'Láthatóság',
+                          'visibility'.tr(),
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -247,7 +248,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                   children: [
                                     Icon(Icons.public, size: 20, color: Colors.green),
                                     SizedBox(width: 8),
-                                    Text('Nyilvános'),
+                                    Text('public'.tr()),
                                   ],
                                 ),
                               ),
@@ -257,7 +258,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                   children: [
                                     Icon(Icons.group, size: 20, color: Colors.orange),
                                     SizedBox(width: 8),
-                                    Text('Csak követők'),
+                                    Text('followers_only'.tr()),
                                   ],
                                 ),
                               ),
@@ -267,7 +268,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                   children: [
                                     Icon(Icons.lock, size: 20, color: Colors.red),
                                     SizedBox(width: 8),
-                                    Text('Privát'),
+                                    Text('private'.tr()),
                                   ],
                                 ),
                               ),
@@ -284,7 +285,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
                         // Content field
                         Text(
-                          'Tartalom',
+                          'content'.tr(),
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -296,7 +297,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                           controller: _contentController,
                           maxLines: 12,
                           decoration: InputDecoration(
-                            hintText: 'Írd le, amit szeretnél megosztani...',
+                            hintText: 'content_placeholder'.tr(),
                             filled: true,
                             fillColor: Colors.white,
                             border: OutlineInputBorder(
@@ -308,13 +309,13 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                           ),
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
-                              return 'A tartalom megadása kötelező';
+                              return 'content_required'.tr();
                             }
                             if (value.trim().length < 10) {
-                              return 'A tartalom legalább 10 karakter hosszú legyen';
+                              return 'content_min_length'.tr();
                             }
                             if (value.trim().length > 5000) {
-                              return 'A tartalom maximum 5000 karakter hosszú lehet';
+                              return 'content_max_length'.tr();
                             }
                             return null;
                           },
@@ -345,7 +346,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                     ),
                                   )
                                 : Text(
-                                    'Poszt közzététele',
+                                    'publish_post'.tr(),
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 16,
@@ -372,7 +373,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                   Icon(Icons.info_outline, color: Colors.blue, size: 20),
                                   SizedBox(width: 8),
                                   Text(
-                                    'Tippek',
+                                    'tips'.tr(),
                                     style: TextStyle(
                                       color: Colors.blue,
                                       fontWeight: FontWeight.bold,
@@ -382,9 +383,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                               ),
                               SizedBox(height: 8),
                               Text(
-                                '• Válaszd ki a megfelelő kategóriát a jobb láthatóság érdekében\n'
-                                '• Írj informatív címet, ami tükrözi a poszt tartalmát\n'
-                                '• A tisztelettudó kommunikáció mindenkinek jó',
+                                '• ${'tip1'.tr()}\n'
+                                '• ${'tip2'.tr()}\n'
+                                '• ${'tip3'.tr()}',
                                 style: TextStyle(
                                   color: Colors.blue[700],
                                   fontSize: 14,
