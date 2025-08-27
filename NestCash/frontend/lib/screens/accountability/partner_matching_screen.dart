@@ -252,7 +252,7 @@ class _PartnerMatchingScreenState extends State<PartnerMatchingScreen> {
               ),
               SizedBox(height: 16),
               Text(
-                'Minden javaslatot megnéztél!',
+                'all_suggestions_viewed'.tr(),
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -261,7 +261,7 @@ class _PartnerMatchingScreenState extends State<PartnerMatchingScreen> {
               ),
               SizedBox(height: 8),
               Text(
-                'Próbálkozz újra később új javaslatok eléréséhez.',
+                'try_later_new_suggestions'.tr(),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.grey[500],
@@ -274,7 +274,7 @@ class _PartnerMatchingScreenState extends State<PartnerMatchingScreen> {
                   backgroundColor: Color(0xFF00D4AA),
                   foregroundColor: Colors.white,
                 ),
-                child: Text('Új javaslatok'),
+                child: Text('new_suggestions'.tr()),
               ),
             ],
           ),
@@ -413,10 +413,10 @@ class _PartnershipRequestDialogState extends State<_PartnershipRequestDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Partner: ${widget.suggestion.username}'),
+            Text('partner_label'.tr(namedArgs: {'username': widget.suggestion.username})),
             SizedBox(height: 16),
             
-            Text('Check-in gyakoriság:', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text('checkin_frequency_label'.tr(), style: TextStyle(fontWeight: FontWeight.bold)),
             DropdownButton<CheckInFrequency>(  // CheckInFrequency típus
               value: _frequency,
               isExpanded: true,
@@ -434,7 +434,7 @@ class _PartnershipRequestDialogState extends State<_PartnershipRequestDialog> {
             ),
             
             SizedBox(height: 16),
-            Text('Közös célok:', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text('common_goals_label'.tr(), style: TextStyle(fontWeight: FontWeight.bold)),
             ...widget.suggestion.commonGoals.map((goal) {
               return CheckboxListTile(
                 title: Text(goal),
@@ -452,12 +452,12 @@ class _PartnershipRequestDialogState extends State<_PartnershipRequestDialog> {
             }).toList(),
             
             SizedBox(height: 16),
-            Text('Üzenet (opcionális):', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text('message_optional'.tr(), style: TextStyle(fontWeight: FontWeight.bold)),
             TextField(
               controller: _messageController,
               maxLines: 3,
               decoration: InputDecoration(
-                hintText: 'Írj egy rövid bemutatkozó üzenetet...',
+                hintText: 'intro_message_hint'.tr(),
                 border: OutlineInputBorder(),
               ),
             ),
@@ -467,7 +467,7 @@ class _PartnershipRequestDialogState extends State<_PartnershipRequestDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text('Mégse'),
+          child: Text('cancel'.tr()),
         ),
         ElevatedButton(
           onPressed: () {
@@ -477,7 +477,7 @@ class _PartnershipRequestDialogState extends State<_PartnershipRequestDialog> {
               'message': _messageController.text.isNotEmpty ? _messageController.text : null,
             });
           },
-          child: Text('Küldés'),
+          child: Text('send'.tr()),
         ),
       ],
     );

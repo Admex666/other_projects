@@ -66,7 +66,7 @@ class _PartnershipDetailScreenState extends State<PartnershipDetailScreen>
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hiba az adatok betöltésekor: $e')),
+        SnackBar(content: Text('loading_error'.tr(namedArgs: {'error': e.toString()}))),
       );
     } finally {
       setState(() => _isLoading = false);
@@ -110,7 +110,7 @@ class _PartnershipDetailScreenState extends State<PartnershipDetailScreen>
                           children: [
                             Icon(Icons.close, color: Colors.red, size: 20),
                             SizedBox(width: 8),
-                            Text('Partnership lezárása'),
+                            Text('end_partnership'.tr()),
                           ],
                         ),
                       ),
@@ -120,7 +120,7 @@ class _PartnershipDetailScreenState extends State<PartnershipDetailScreen>
                           children: [
                             Icon(Icons.block, color: Colors.red, size: 20),
                             SizedBox(width: 8),
-                            Text('Felhasználó blokkolása'),
+                            Text('block_user'.tr()),
                           ],
                         ),
                       ),
@@ -137,7 +137,7 @@ class _PartnershipDetailScreenState extends State<PartnershipDetailScreen>
                 children: [
                   Expanded(
                     child: _buildStatCard(
-                      'Összes check-in',
+                      'total_checkins'.tr(),
                       widget.partnership.totalCheckins.toString(),
                       Icons.check_circle,
                       Color(0xFF4CAF50),
@@ -146,7 +146,7 @@ class _PartnershipDetailScreenState extends State<PartnershipDetailScreen>
                   SizedBox(width: 12),
                   Expanded(
                     child: _buildStatCard(
-                      'Sikeresség',
+                      'success_rate'.tr(),
                       '${widget.partnership.successRate.toStringAsFixed(0)}%',
                       Icons.trending_up,
                       Color(0xFF2196F3),
@@ -155,7 +155,7 @@ class _PartnershipDetailScreenState extends State<PartnershipDetailScreen>
                   SizedBox(width: 12),
                   Expanded(
                     child: _buildStatCard(
-                      'Gyakoriság',
+                      'frequency'.tr(),
                       widget.partnership.checkinFrequency.displayName,
                       Icons.schedule,
                       Color(0xFF9C27B0),
@@ -204,9 +204,9 @@ class _PartnershipDetailScreenState extends State<PartnershipDetailScreen>
                         unselectedLabelColor: Colors.grey[600],
                         labelStyle: TextStyle(fontWeight: FontWeight.w600),
                         tabs: [
-                          Tab(text: 'Áttekintés'),
-                          Tab(text: 'Check-in-ek'),
-                          Tab(text: 'Célok'),
+                          Tab(text: 'overview'.tr()),
+                          Tab(text: 'checkins_tab'.tr()),
+                          Tab(text: 'goals_tab'.tr()),
                         ],
                       ),
                     ),
@@ -384,7 +384,7 @@ class _PartnershipDetailScreenState extends State<PartnershipDetailScreen>
                       );
                     },
                     icon: Icon(Icons.chat_bubble_outline, size: 18),
-                    label: Text('Chat megnyitása'),
+                    label: Text('open_chat'.tr()),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Color(0xFF00D4AA),
                       side: BorderSide(color: Color(0xFF00D4AA)),
@@ -399,7 +399,8 @@ class _PartnershipDetailScreenState extends State<PartnershipDetailScreen>
                 if (widget.partnership.acceptedAt != null) ...[
                   SizedBox(height: 16),
                   Text(
-                    'Partnership kezdete: ${_formatDate(widget.partnership.acceptedAt!)}',
+                    'partnership_started'.tr(namedArgs: {'date': _formatDate(widget.partnership.acceptedAt!)}
+                    ),
                     style: TextStyle(
                       color: Colors.grey[600],
                       fontSize: 14,
@@ -431,7 +432,7 @@ class _PartnershipDetailScreenState extends State<PartnershipDetailScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Mai állapot',
+                  'todays_status'.tr(),
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -449,9 +450,9 @@ class _PartnershipDetailScreenState extends State<PartnershipDetailScreen>
                     SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        _hasCheckedInToday 
-                            ? 'Már beszámoltál ma!' 
-                            : 'Még nem számoltál be ma',
+                          _hasCheckedInToday 
+                            ? 'already_checked_in'.tr()
+                            : 'not_checked_in_yet'.tr(),
                         style: TextStyle(
                           color: _hasCheckedInToday ? Colors.green : Colors.grey[600],
                           fontWeight: FontWeight.w500,
@@ -463,7 +464,7 @@ class _PartnershipDetailScreenState extends State<PartnershipDetailScreen>
                 if (!_hasCheckedInToday) ...[
                   SizedBox(height: 12),
                   Text(
-                    'Ne felejtsd el leadni a mai check-in-ed!',
+                    'dont_forget_checkin'.tr(),
                     style: TextStyle(
                       color: Colors.orange[700],
                       fontSize: 14,
@@ -495,7 +496,7 @@ class _PartnershipDetailScreenState extends State<PartnershipDetailScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Legutóbbi aktivitás',
+                  'recent_activity'.tr(),
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -507,7 +508,7 @@ class _PartnershipDetailScreenState extends State<PartnershipDetailScreen>
                   ..._checkIns.take(3).map((checkIn) => _buildRecentCheckInItem(checkIn)),
                 ] else ...[
                   Text(
-                    'Még nincsenek check-in-ek',
+                    'no_checkins_yet'.tr(),
                     style: TextStyle(
                       color: Colors.grey[600],
                       fontSize: 14,
@@ -565,7 +566,7 @@ class _PartnershipDetailScreenState extends State<PartnershipDetailScreen>
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
-                            isMyCheckIn ? 'Te' : widget.partnership.partnerUsername,
+                            isMyCheckIn ? 'you'.tr() : widget.partnership.partnerUsername,
                             style: TextStyle(
                               color: isMyCheckIn ? Color(0xFF00D4AA) : Colors.orange[700],
                               fontSize: 10,
@@ -624,7 +625,7 @@ class _PartnershipDetailScreenState extends State<PartnershipDetailScreen>
             ),
             SizedBox(height: 16),
             Text(
-              'Még nincsenek check-in-ek',
+              'no_checkins_yet'.tr(),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
@@ -746,7 +747,7 @@ class _PartnershipDetailScreenState extends State<PartnershipDetailScreen>
 
             // Status
             Text(
-              checkIn.goalsMet ? 'Célok teljesítve' : 'Célok nem teljesítve',
+              checkIn.goalsMet ? 'goals_met'.tr() : 'goals_not_met'.tr(),
               style: TextStyle(
                 color: checkIn.goalsMet ? Colors.green : Colors.red,
                 fontWeight: FontWeight.w500,
@@ -757,7 +758,7 @@ class _PartnershipDetailScreenState extends State<PartnershipDetailScreen>
             if (checkIn.notes != null && checkIn.notes!.isNotEmpty) ...[
               SizedBox(height: 12),
               Text(
-                'Jegyzetek:',
+                'notes_label'.tr(),
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
                   color: Colors.grey[700],
@@ -778,7 +779,7 @@ class _PartnershipDetailScreenState extends State<PartnershipDetailScreen>
             Row(
               children: [
                 Text(
-                  'Haladás: ',
+                  'progress_label'.tr(),
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     color: Colors.grey[700],
@@ -824,7 +825,7 @@ class _PartnershipDetailScreenState extends State<PartnershipDetailScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Közös célok',
+                  'shared_goals'.tr(),
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -836,7 +837,7 @@ class _PartnershipDetailScreenState extends State<PartnershipDetailScreen>
                   ...widget.partnership.sharedGoals.map((goal) => _buildGoalItem(goal)),
                 ] else ...[
                   Text(
-                    'Nincsenek meghatározott közös célok',
+                    'no_shared_goals'.tr(),
                     style: TextStyle(
                       color: Colors.grey[600],
                       fontSize: 14,
@@ -868,7 +869,7 @@ class _PartnershipDetailScreenState extends State<PartnershipDetailScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Check-in beállítások',
+                  'checkin_settings'.tr(),
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -881,7 +882,7 @@ class _PartnershipDetailScreenState extends State<PartnershipDetailScreen>
                     Icon(Icons.schedule, color: Color(0xFF00D4AA), size: 20),
                     SizedBox(width: 8),
                     Text(
-                      'Gyakoriság: ${widget.partnership.checkinFrequency.displayName}',
+                      'frequency_display'.tr(namedArgs: {'frequency': widget.partnership.checkinFrequency.displayName}),
                       style: TextStyle(
                         color: Colors.grey[700],
                         fontSize: 14,
@@ -972,17 +973,17 @@ class _PartnershipDetailScreenState extends State<PartnershipDetailScreen>
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Partnership lezárása'),
-        content: Text('Biztosan le szeretnéd zárni ezt a partnership-et?'),
+        title: Text('end_partnership'.tr()),
+        content: Text('end_partnership_message'.tr()),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text('Mégse'),
+            child: Text('cancel'.tr()),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: Text('Lezárás'),
+            child: Text('close_action'.tr()),
           ),
         ],
       ),
@@ -996,14 +997,14 @@ class _PartnershipDetailScreenState extends State<PartnershipDetailScreen>
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Partnership lezárva'),
+            content: Text('partnership_ended'.tr()),
             backgroundColor: Colors.green,
           ),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Hiba: ${provider.error}'),
+            content: Text('error_occurred'.tr(namedArgs: {'error': provider.error ?? ''})),
             backgroundColor: Colors.red,
           ),
         );
@@ -1015,17 +1016,17 @@ class _PartnershipDetailScreenState extends State<PartnershipDetailScreen>
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Felhasználó blokkolása'),
-        content: Text('Biztosan blokkolni szeretnéd ${widget.partnership.partnerUsername} felhasználót?'),
+        title: Text('block_user'.tr()),
+        content: Text('block_user_message'.tr(namedArgs: {'username': widget.partnership.partnerUsername})),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text('Mégse'),
+            child: Text('cancel'.tr()),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: Text('Blokkolás'),
+            child: Text('block_action'.tr()),
           ),
         ],
       ),
@@ -1036,7 +1037,7 @@ class _PartnershipDetailScreenState extends State<PartnershipDetailScreen>
       // Jelenleg nincs backend API hozzá a meglévő service-ben
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Blokkolás funkció még nem implementált'),
+          content: Text('block_not_implemented'.tr()),
           backgroundColor: Colors.orange,
         ),
       );

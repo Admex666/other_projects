@@ -1,5 +1,6 @@
 // lib/screens/challenges/challenge_detail_screen.dart
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:frontend/models/challenge.dart';
 import 'package:frontend/services/challenge_service.dart';
 
@@ -79,8 +80,8 @@ class _ChallengeDetailScreenState extends State<ChallengeDetailScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Sikeresen csatlakoztál a kihíváshoz!'),
+          SnackBar(
+            content: Text('successfully_joined'.tr()),
             backgroundColor: Colors.green,
           ),
         );
@@ -107,12 +108,12 @@ class _ChallengeDetailScreenState extends State<ChallengeDetailScreen> {
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        title: const Text('Kihívás elhagyása'),
-        content: const Text('Biztosan el szeretnéd hagyni ezt a kihívást?'),
+        title: Text('leave_challenge'.tr()),
+        content: Text('confirm_leave'.tr()),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Mégse'),
+            child: Text('cancel'.tr()),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
@@ -131,8 +132,8 @@ class _ChallengeDetailScreenState extends State<ChallengeDetailScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Sikeresen elhagytad a kihívást'),
+          SnackBar(
+            content: Text('successfully_left'.tr()),
             backgroundColor: Colors.orange,
           ),
         );
@@ -161,8 +162,8 @@ class _ChallengeDetailScreenState extends State<ChallengeDetailScreen> {
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Haladás frissítve!'),
+          SnackBar(
+            content: Text('progress_updated'.tr()),
             backgroundColor: Colors.green,
           ),
         );
@@ -171,7 +172,7 @@ class _ChallengeDetailScreenState extends State<ChallengeDetailScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Hiba a frissítés során: $e'),
+            content: Text('error_updating'.tr(namedArgs: {'error': e.toString()})),
             backgroundColor: Colors.red,
           ),
         );
@@ -184,7 +185,7 @@ class _ChallengeDetailScreenState extends State<ChallengeDetailScreen> {
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        title: const Text('Csatlakozás a kihíváshoz'),
+        title: Text('join_challenge'.tr()),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -198,8 +199,8 @@ class _ChallengeDetailScreenState extends State<ChallengeDetailScreen> {
                   controller: _personalTargetController,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
-                    labelText: 'Személyes cél (opcionális)',
-                    hintText: 'Alapértelmezett: ${_formatAmount(_challenge!.targetAmount!)} HUF',
+                    labelText: 'personal_goal_optional'.tr(),
+                    hintText: 'default_amount'.tr(namedArgs: {'amount': _challenge!.targetAmount.toString()}),
                     border: InputBorder.none,
                     contentPadding: const EdgeInsets.all(16),
                   ),
@@ -214,9 +215,9 @@ class _ChallengeDetailScreenState extends State<ChallengeDetailScreen> {
               child: TextField(
                 controller: _notesController,
                 maxLines: 3,
-                decoration: const InputDecoration(
-                  labelText: 'Jegyzet (opcionális)',
-                  hintText: 'Miért szeretnél csatlakozni?',
+                decoration: InputDecoration(
+                  labelText: 'note_optional'.tr(),
+                  hintText: 'why_join'.tr(),
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.all(16),
                 ),
@@ -227,7 +228,7 @@ class _ChallengeDetailScreenState extends State<ChallengeDetailScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Mégse'),
+            child: Text('cancel'.tr()),
           ),
           ElevatedButton(
             onPressed: _isJoining ? null : () {
@@ -247,7 +248,7 @@ class _ChallengeDetailScreenState extends State<ChallengeDetailScreen> {
                     height: 16,
                     child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                   )
-                : const Text('Csatlakozás'),
+                : Text('join'.tr()),
           ),
         ],
       ),
@@ -264,7 +265,7 @@ class _ChallengeDetailScreenState extends State<ChallengeDetailScreen> {
           : _error.isNotEmpty
               ? _buildErrorState()
               : _challenge == null
-                  ? const Center(child: Text('Kihívás nem található'))
+                  ? Center(child: Text('challenge_not_found'.tr()))
                   : RefreshIndicator(
                       onRefresh: _loadChallenge,
                       color: const Color(0xFF00D4A3),
@@ -295,9 +296,9 @@ class _ChallengeDetailScreenState extends State<ChallengeDetailScreen> {
                                     ),
                                   ),
                                   const SizedBox(width: 16),
-                                  const Expanded(
+                                  Expanded(
                                     child: Text(
-                                      'Kihívás részletei',
+                                      'challenge_details'.tr(),
                                       style: TextStyle(
                                         fontSize: 24,
                                         fontWeight: FontWeight.bold,
@@ -364,9 +365,9 @@ class _ChallengeDetailScreenState extends State<ChallengeDetailScreen> {
                     ),
                   ),
                   const SizedBox(width: 16),
-                  const Expanded(
+                  Expanded(
                     child: Text(
-                      'Kihívás részletei',
+                      'challenge_details'.tr(),
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -391,7 +392,7 @@ class _ChallengeDetailScreenState extends State<ChallengeDetailScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: const Text('Újrapróbálás'),
+              child: Text('retry'.tr()),
             ),
           ],
         ),
@@ -500,8 +501,8 @@ class _ChallengeDetailScreenState extends State<ChallengeDetailScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Haladásod',
+              Text(
+                'your_progress'.tr(),
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -555,8 +556,8 @@ class _ChallengeDetailScreenState extends State<ChallengeDetailScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Alapadatok',
+          Text(
+            'basic_info'.tr(),
             style: TextStyle(
               fontSize: 18, 
               fontWeight: FontWeight.bold,
@@ -564,15 +565,15 @@ class _ChallengeDetailScreenState extends State<ChallengeDetailScreen> {
             ),
           ),
           const SizedBox(height: 12),
-          _buildInfoRow(Icons.timer, 'Időtartam', '${challenge.durationDays} nap'),
+          _buildInfoRow(Icons.timer, 'duration'.tr(), '${challenge.durationDays} nap'),
           if (challenge.targetAmount != null)
-            _buildInfoRow(Icons.attach_money, 'Cél összeg', 
+            _buildInfoRow(Icons.attach_money, 'target_amount'.tr(), 
                 '${_formatAmount(challenge.targetAmount!)} HUF'),
-          _buildInfoRow(Icons.people, 'Résztvevők', '${challenge.participantCount} fő'),
-          _buildInfoRow(Icons.trending_up, 'Befejezési arány', 
+          _buildInfoRow(Icons.people, 'participants'.tr(), '${challenge.participantCount} fő'),
+          _buildInfoRow(Icons.trending_up, 'completion_rate'.tr(), 
               '${challenge.completionRate.toStringAsFixed(1)}%'),
           if (challenge.creatorUsername != null)
-            _buildInfoRow(Icons.person, 'Létrehozó', challenge.creatorUsername!),
+            _buildInfoRow(Icons.person, 'creator'.tr(), challenge.creatorUsername!),
         ],
       ),
     );
@@ -619,8 +620,8 @@ class _ChallengeDetailScreenState extends State<ChallengeDetailScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Szabályok',
+          Text(
+            'rules'.tr(),
             style: TextStyle(
               fontSize: 18, 
               fontWeight: FontWeight.bold,
@@ -663,8 +664,8 @@ class _ChallengeDetailScreenState extends State<ChallengeDetailScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Jutalmak',
+          Text(
+            'rewards'.tr(),
             style: TextStyle(
               fontSize: 18, 
               fontWeight: FontWeight.bold,
@@ -676,7 +677,7 @@ class _ChallengeDetailScreenState extends State<ChallengeDetailScreen> {
             children: [
               const Icon(Icons.star, color: Colors.amber),
               const SizedBox(width: 8),
-              Text('${rewards.points} pont'),
+              Text('${rewards.points} ${'points'.tr()}'),
             ],
           ),
           if (rewards.badges.isNotEmpty) ...[
@@ -686,7 +687,7 @@ class _ChallengeDetailScreenState extends State<ChallengeDetailScreen> {
                 const Icon(Icons.military_tech, color: Colors.blue),
                 const SizedBox(width: 8),
                 Expanded(
-                  child: Text('Kitűzők: ${rewards.badges.join(', ')}'),
+                  child: Text('${'badges'.tr()}: ${rewards.badges.join(', ')}'),
                 ),
               ],
             ),
@@ -697,7 +698,7 @@ class _ChallengeDetailScreenState extends State<ChallengeDetailScreen> {
               children: [
                 const Icon(Icons.title, color: Colors.purple),
                 const SizedBox(width: 8),
-                Expanded(child: Text('Cím: ${rewards.title}')),
+                Expanded(child: Text('${'title'.tr()}: ${rewards.title}')),
               ],
             ),
           ],
@@ -723,8 +724,8 @@ class _ChallengeDetailScreenState extends State<ChallengeDetailScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Statisztikák',
+          Text(
+            'statistics'.tr(),
             style: TextStyle(
               fontSize: 18, 
               fontWeight: FontWeight.bold,
@@ -735,9 +736,9 @@ class _ChallengeDetailScreenState extends State<ChallengeDetailScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildStatItem('Résztvevő', '${challenge.participantCount}'),
-              _buildStatItem('Befejezés', '${challenge.completionRate.toInt()}%'),
-              _buildStatItem('Napok', '${challenge.durationDays}'),
+              _buildStatItem('participants'.tr(), '${challenge.participantCount}'),
+              _buildStatItem('completion_rate'.tr(), '${challenge.completionRate.toInt()}%'),
+              _buildStatItem('days'.tr(), '${challenge.durationDays}'),
             ],
           ),
         ],
@@ -785,7 +786,7 @@ class _ChallengeDetailScreenState extends State<ChallengeDetailScreen> {
                             height: 20,
                             child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                           )
-                        : const Text('Elhagyás'),
+                        : Text('leave_challenge'.tr()),
                     icon: _isJoining ? null : const Icon(Icons.exit_to_app),
                   ),
                 ),
@@ -796,7 +797,7 @@ class _ChallengeDetailScreenState extends State<ChallengeDetailScreen> {
                     backgroundColor: const Color(0xFF00D4A3),
                     foregroundColor: Colors.white,
                     heroTag: "update",
-                    label: const Text('Frissítés'),
+                    label: Text('update_progress'.tr()),
                     icon: const Icon(Icons.refresh),
                   ),
                 ),
@@ -816,8 +817,8 @@ class _ChallengeDetailScreenState extends State<ChallengeDetailScreen> {
                         valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                       ),
                     )
-                  : const Text(
-                      'Csatlakozás a kihíváshoz',
+                  : Text(
+                      'join_challenge'.tr(),
                       style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
               icon: _isJoining ? null : const Icon(Icons.add),

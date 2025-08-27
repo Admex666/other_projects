@@ -430,7 +430,7 @@ class _CheckInScreenState extends State<CheckInScreen> {
       final userId = await authService.getUserId(); // getUserId() hívás
       
       if (userId == null) {
-        throw Exception('Nincs bejelentkezett felhasználó');
+        throw Exception('no_logged_in_user'.tr());
       }
 
       final checkIn = CheckIn(
@@ -465,7 +465,7 @@ class _CheckInScreenState extends State<CheckInScreen> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Hiba: $e'),
+          content: Text('error_occurred'.tr(namedArgs: {'error': e.toString()})),
           backgroundColor: Colors.red,
         ),
       );

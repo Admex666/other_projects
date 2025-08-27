@@ -3,23 +3,12 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/config/config.dart';
 import 'dart:async';
-import 'dart:io';
 import '../services/analytics_service.dart';
+import '../services/http_service.dart';
 
 class AuthService {
   // Secure storage instance
   static const _storage = FlutterSecureStorage();
-
-  // HTTP Client konfigurálása
-  static final http.Client _httpClient = http.Client();
-  
-  // HTTP Client konfigurálása SSL problémákhoz
-  static HttpClient _getHttpClient() {
-    HttpClient httpClient = HttpClient();
-    httpClient.badCertificateCallback = (X509Certificate cert, String host, int port) => true;
-    httpClient.connectionTimeout = const Duration(seconds: 10);
-    return httpClient;
-  }
 
   /// Regisztráció + automatikus bejelentkezés
   Future<bool> register(String username, String email, String password, {String? mobile,}) async {
@@ -79,11 +68,13 @@ class AuthService {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final token = data['access_token'] as String?;
+        final refreshToken = data['refresh_token'] as String?;
         final userId = data['user_id'] as String?;
         final username = data['username'] as String?;
 
-        if (token != null) {
+        if (token != null && refreshToken != null) {
           await _storage.write(key: 'token', value: token);
+          await _storage.write(key: 'refresh_token', value: refreshToken);
           if (userId != null) {
             await _storage.write(key: 'user_id', value: userId);
           }
@@ -111,6 +102,39 @@ class AuthService {
     return false;
   }
 
+  Future<String?> getRefreshToken() async {
+    return _storage.read(key: 'refresh_token');
+  }
+
+  Future<bool> refreshToken() async {
+    final refreshToken = await getRefreshToken();
+    if (refreshToken == null) return false;
+
+    try {
+      final response = await http.post(
+        Uri.parse('${ApiConfig.baseUrl}/auth/refresh'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'refresh_token': refreshToken}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final newAccessToken = data['access_token'] as String?;
+        final newRefreshToken = data['refresh_token'] as String?;
+
+        if (newAccessToken != null && newRefreshToken != null) {
+          await _storage.write(key: 'token', value: newAccessToken);
+          await _storage.write(key: 'refresh_token', value: newRefreshToken);
+          return true;
+        }
+      }
+    } catch (e) {
+      print('Refresh token error: $e');
+    }
+    
+    return false;
+  }
+
   // ÚJ: Session tracking indítása app induláskor
   Future<void> initializeSessionTracking() async {
     final token = await getToken();
@@ -128,6 +152,9 @@ class AuthService {
 
   Future<void> logout() async {
     await _storage.delete(key: 'token');
+    await _storage.delete(key: 'refresh_token');
+    await _storage.delete(key: 'user_id');
+    await _storage.delete(key: 'username');
   }
 
   Future<String?> getToken() async {
@@ -143,24 +170,25 @@ class AuthService {
   }
 
   Future<Map<String, dynamic>?> getUserProfile() async {
-    final token = await getToken();
-    if (token == null) return null;
+    try {
+      final response = await HttpService.authenticatedRequest(
+        method: 'GET',
+        url: '${ApiConfig.baseUrl}/auth/me',
+      );
 
-    final resp = await http.get(
-      Uri.parse('${ApiConfig.baseUrl}/auth/me'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-    );
-
-    if (resp.statusCode == 200) {
-      return jsonDecode(resp.body) as Map<String, dynamic>;
-    } else if (resp.statusCode == 401) {
-      throw Exception('401: Unauthorized'); // Explicit 401 kivétel
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body) as Map<String, dynamic>;
+      } else if (response.statusCode == 401) {
+        // Ha még mindig 401, akkor kijelentkeztetjük
+        await logout();
+        throw Exception('401: Unauthorized');
+      }
+      
+      throw Exception('HTTP ${response.statusCode}: ${response.body}');
+    } catch (e) {
+      print('Error getting user profile: $e');
+      return null;
     }
-    
-    throw Exception('HTTP ${resp.statusCode}: ${resp.body}'); // Egyéb hibák
   }
 
   Future<bool> updateProfile({

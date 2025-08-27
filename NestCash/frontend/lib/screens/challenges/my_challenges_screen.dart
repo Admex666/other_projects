@@ -1,5 +1,6 @@
 // lib/screens/challenges/my_challenges_screen.dart
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:frontend/models/challenge.dart';
 import 'package:frontend/services/challenge_service.dart';
 import 'package:frontend/screens/challenges/challenge_detail_screen.dart';
@@ -87,9 +88,9 @@ class _MyChallengesScreenState extends State<MyChallengesScreen> {
                   children: [
                     const Icon(Icons.filter_list, color: Colors.white, size: 28),
                     const SizedBox(width: 16),
-                    const Expanded(
+                    Expanded(
                       child: Text(
-                        'Szűrők',
+                        'filters'.tr(),
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -112,8 +113,8 @@ class _MyChallengesScreenState extends State<MyChallengesScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Státusz szűrő
-                      const Text(
-                        'Státusz',
+                      Text(
+                        'status'.tr(),
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -126,7 +127,7 @@ class _MyChallengesScreenState extends State<MyChallengesScreen> {
                         runSpacing: 8,
                         children: [
                           _buildFilterChip(
-                            'Összes',
+                            'all'.tr(),
                             _selectedStatus == null,
                             () {
                               setState(() => _selectedStatus = null);
@@ -148,8 +149,8 @@ class _MyChallengesScreenState extends State<MyChallengesScreen> {
                       const SizedBox(height: 24),
 
                       // Típus szűrő
-                      const Text(
-                        'Típus',
+                      Text(
+                        'type'.tr(),
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -162,7 +163,7 @@ class _MyChallengesScreenState extends State<MyChallengesScreen> {
                         runSpacing: 8,
                         children: [
                           _buildFilterChip(
-                            'Összes',
+                            'all'.tr(),
                             _selectedType == null,
                             () {
                               setState(() => _selectedType = null);
@@ -235,8 +236,8 @@ class _MyChallengesScreenState extends State<MyChallengesScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Saját kihívásaim',
+              Text(
+                'my_challenges'.tr(),
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -286,7 +287,7 @@ class _MyChallengesScreenState extends State<MyChallengesScreen> {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _loadMyChallenges,
-              child: const Text('Újrapróbálás'),
+              child: Text('retry'.tr()),
             ),
           ],
         ),
@@ -294,19 +295,19 @@ class _MyChallengesScreenState extends State<MyChallengesScreen> {
     }
 
     if (_userChallenges.isEmpty) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.assignment_outlined, size: 64, color: Colors.grey),
             SizedBox(height: 16),
             Text(
-              'Még nincs kihívásod',
+              'no_challenges_yet'.tr(),
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
             SizedBox(height: 8),
             Text(
-              'Csatlakozz kihívásokhoz a Felfedezés tabon!',
+              'join_from_discovery'.tr(),
               style: TextStyle(color: Colors.grey),
               textAlign: TextAlign.center,
             ),
@@ -416,7 +417,7 @@ class _MyChallengesScreenState extends State<MyChallengesScreen> {
 
               // Haladás
               Text(
-                'Haladás',
+                'progress'.tr(),
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
@@ -464,13 +465,13 @@ class _MyChallengesScreenState extends State<MyChallengesScreen> {
               // Statisztikák és időpontok
               _buildInfoRow(
                 Icons.calendar_month,
-                'Csatlakozás: ${_formatDate(userChallenge.joinedAt)}',
+                'joined_on'.tr(namedArgs: {'date': _formatDate(userChallenge.joinedAt)}),
                 Colors.grey[600]!,
               ),
               if (userChallenge.earnedPoints > 0)
                 _buildInfoRow(
                   Icons.star,
-                  '${userChallenge.earnedPoints} pont',
+                  '${userChallenge.earnedPoints} ${'points'.tr()}',
                   Colors.amber,
                 ),
 
@@ -478,7 +479,7 @@ class _MyChallengesScreenState extends State<MyChallengesScreen> {
               if (userChallenge.completedAt != null)
                 _buildInfoRow(
                   Icons.check_circle,
-                  'Befejezve: ${_formatDate(userChallenge.completedAt!)}',
+                  'completed_on'.tr(namedArgs: {'date': _formatDate(userChallenge.completedAt!)}),
                   Colors.green,
                 ),
 
@@ -492,13 +493,13 @@ class _MyChallengesScreenState extends State<MyChallengesScreen> {
                       Icon(Icons.local_fire_department, size: 18, color: Colors.orange),
                       const SizedBox(width: 6),
                       Text(
-                        'Jelenlegi sorozat: ${userChallenge.currentStreak} nap',
+                        'current_streak'.tr(namedArgs: {'days': '${userChallenge.currentStreak}'}),
                         style: TextStyle(color: Colors.grey[700], fontSize: 13),
                       ),
                       if (userChallenge.bestStreak > userChallenge.currentStreak) ...[
                         const SizedBox(width: 16),
                         Text(
-                          'Legjobb: ${userChallenge.bestStreak} nap',
+                          'best_streak'.tr(namedArgs: {'days': '${userChallenge.bestStreak}'}),
                           style: TextStyle(color: Colors.grey[700], fontSize: 13),
                         ),
                       ],

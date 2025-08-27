@@ -1,5 +1,6 @@
 // lib/screens/challenges/challenges_main_screen.dart
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:frontend/models/challenge.dart';
 import 'package:frontend/services/challenge_service.dart';
 import 'package:frontend/screens/challenges/challenge_detail_screen.dart';
@@ -125,8 +126,8 @@ class _ChallengesMainScreenState extends State<ChallengesMainScreen>
   void _showChallengeJoinLimitReached() {
     SubscriptionUtils.showUpgradeDialog(
       context,
-      feature: 'További kihívások',
-      description: 'Az ingyenes verzióban csak 1 aktív kihívásban vehetsz részt egyszerre. Frissíts a korlátlan kihívásokért!',
+      feature: 'further_challenges'.tr(),
+      description: 'free_version_limit'.tr(),
       requiredTier: SubscriptionTier.plus,
     );
   }
@@ -163,9 +164,9 @@ class _ChallengesMainScreenState extends State<ChallengesMainScreen>
                   children: [
                     const Icon(Icons.filter_list, color: Colors.white, size: 28),
                     const SizedBox(width: 16),
-                    const Expanded(
+                    Expanded(
                       child: Text(
-                        'Szűrők',
+                        'filters'.tr(),
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -188,8 +189,8 @@ class _ChallengesMainScreenState extends State<ChallengesMainScreen>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Típus szűrő
-                      const Text(
-                        'Típus',
+                      Text(
+                        'type'.tr(),
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -202,7 +203,7 @@ class _ChallengesMainScreenState extends State<ChallengesMainScreen>
                         runSpacing: 8,
                         children: [
                           _buildFilterChip(
-                            'Összes',
+                            'all'.tr(),
                             _selectedType == null,
                             () {
                               setState(() => _selectedType = null);
@@ -224,8 +225,8 @@ class _ChallengesMainScreenState extends State<ChallengesMainScreen>
                       const SizedBox(height: 24),
                       
                       // Nehézség szűrő
-                      const Text(
-                        'Nehézség',
+                      Text(
+                        'difficulty'.tr(),
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -238,7 +239,7 @@ class _ChallengesMainScreenState extends State<ChallengesMainScreen>
                         runSpacing: 8,
                         children: [
                           _buildFilterChip(
-                            'Összes',
+                            'all'.tr(),
                             _selectedDifficulty == null,
                             () {
                               setState(() => _selectedDifficulty = null);
@@ -260,8 +261,8 @@ class _ChallengesMainScreenState extends State<ChallengesMainScreen>
                       const SizedBox(height: 24),
                       
                       // Rendezés
-                      const Text(
-                        'Rendezés',
+                      Text(
+                        'sort'.tr(),
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -274,7 +275,7 @@ class _ChallengesMainScreenState extends State<ChallengesMainScreen>
                         runSpacing: 8,
                         children: [
                           _buildFilterChip(
-                            'Legújabb',
+                            'newest'.tr(),
                             _sortBy == 'newest',
                             () {
                               setState(() => _sortBy = 'newest');
@@ -283,7 +284,7 @@ class _ChallengesMainScreenState extends State<ChallengesMainScreen>
                             },
                           ),
                           _buildFilterChip(
-                            'Népszerű',
+                            'popular'.tr(),
                             _sortBy == 'popular',
                             () {
                               setState(() => _sortBy = 'popular');
@@ -292,7 +293,7 @@ class _ChallengesMainScreenState extends State<ChallengesMainScreen>
                             },
                           ),
                           _buildFilterChip(
-                            'Nehézség',
+                            'difficulty'.tr(),
                             _sortBy == 'difficulty',
                             () {
                               setState(() => _sortBy = 'difficulty');
@@ -345,12 +346,12 @@ class _ChallengesMainScreenState extends State<ChallengesMainScreen>
         return Container(
           margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: UsageIndicator(
-            featureName: 'Aktív kihívások',
+            featureName: 'active_challenges'.tr(),
             current: _activeChallengesCount,
             limit: challengesLimit,
             onUpgradePressed: () => SubscriptionUtils.showUpgradeDialog(
               context,
-              feature: 'Korlátlan kihívások',
+              feature: 'unlimited_challenges'.tr(),
               requiredTier: SubscriptionTier.plus,
             ),
           ),
@@ -393,9 +394,9 @@ class _ChallengesMainScreenState extends State<ChallengesMainScreen>
                 ),
               ),
               const SizedBox(width: 16),
-              const Expanded(
+              Expanded(
                 child: Text(
-                  'Kihívások',
+                  'challenges'.tr(),
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -410,7 +411,7 @@ class _ChallengesMainScreenState extends State<ChallengesMainScreen>
                     tier: subscriptionProvider.currentTier,
                     onTap: () => SubscriptionUtils.showUpgradeDialog(
                       context,
-                      feature: 'Előfizetés kezelése',
+                      feature: 'manage_subscriptions'.tr(),
                       requiredTier: SubscriptionTier.plus,
                     ),
                   );
@@ -431,8 +432,8 @@ class _ChallengesMainScreenState extends State<ChallengesMainScreen>
                   ),
                   child: TextField(
                     controller: _searchController,
-                    decoration: const InputDecoration(
-                      hintText: 'Kihívások keresése...',
+                    decoration: InputDecoration(
+                      hintText: 'search_challenges'.tr(),
                       prefixIcon: Icon(Icons.search, color: Color(0xFF00D4A3)),
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -484,10 +485,10 @@ class _ChallengesMainScreenState extends State<ChallengesMainScreen>
               color: Colors.white,
               child: TabBar(
                 controller: _tabController,
-                tabs: const [
-                  Tab(text: 'Felfedezés'),
-                  Tab(text: 'Ajánlott'),
-                  Tab(text: 'Saját kihívások'),
+                tabs: [
+                  Tab(text: 'discovery'.tr()),
+                  Tab(text: 'recommended'.tr()),
+                  Tab(text: 'my_challenges_tab'.tr()),
                 ],
                 labelColor: const Color(0xFF00D4A3),
                 unselectedLabelColor: Colors.grey,
@@ -601,8 +602,8 @@ class _ChallengesMainScreenState extends State<ChallengesMainScreen>
                           color: Colors.green,
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: const Text(
-                          'Részt veszel',
+                        child: Text(
+                          'participating'.tr(),
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 12,
@@ -630,7 +631,7 @@ class _ChallengesMainScreenState extends State<ChallengesMainScreen>
                                   Icon(Icons.lock, size: 12, color: Colors.white),
                                   SizedBox(width: 4),
                                   Text(
-                                    'Limit elérve',
+                                    'limit_reached'.tr(),
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 12,
@@ -683,7 +684,7 @@ class _ChallengesMainScreenState extends State<ChallengesMainScreen>
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Haladás: ${challenge.myProgress!.percentage.toStringAsFixed(1)}%',
+                            '${'progress'.tr()}: ${challenge.myProgress!.percentage.toStringAsFixed(1)}%',
                             style: const TextStyle(
                               fontWeight: FontWeight.w600,
                               color: Color(0xFF2D3748),
@@ -719,7 +720,7 @@ class _ChallengesMainScreenState extends State<ChallengesMainScreen>
                           Icon(Icons.people, size: 16, color: Colors.grey[600]),
                           const SizedBox(width: 4),
                           Text(
-                            '${challenge.participantCount} résztvevő',
+                            '${challenge.participantCount} ${'participants'.tr()}',
                             style: TextStyle(color: Colors.grey[600], fontSize: 12),
                           ),
                         ],
@@ -731,7 +732,7 @@ class _ChallengesMainScreenState extends State<ChallengesMainScreen>
                           Icon(Icons.timer, size: 16, color: Colors.grey[600]),
                           const SizedBox(width: 4),
                           Text(
-                            '${challenge.durationDays} nap',
+                            '${challenge.durationDays} ${'days'.tr()}',
                             style: TextStyle(color: Colors.grey[600], fontSize: 12),
                           ),
                         ],
@@ -742,7 +743,7 @@ class _ChallengesMainScreenState extends State<ChallengesMainScreen>
                         Icon(Icons.star, size: 16, color: Colors.grey[600]),
                         const SizedBox(width: 4),
                         Text(
-                          '${challenge.rewards.points} pont',
+                          '${challenge.rewards.points} ${'points'.tr()}',
                           style: TextStyle(color: Colors.grey[600], fontSize: 12),
                         ),
                       ],
@@ -780,7 +781,7 @@ class _ChallengesMainScreenState extends State<ChallengesMainScreen>
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: const Text('Újrapróbálás'),
+              child: Text('retry'.tr()),
             ),
           ],
         ),
@@ -788,19 +789,19 @@ class _ChallengesMainScreenState extends State<ChallengesMainScreen>
     }
 
     if (challenges.isEmpty) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.emoji_events_outlined, size: 64, color: Colors.grey),
             SizedBox(height: 16),
             Text(
-              'Nincs elérhető kihívás',
+              'no_challenges_available'.tr(),
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
             SizedBox(height: 8),
             Text(
-              'Próbálj meg más szűrőket használni',
+              'try_different_filters'.tr(),
               style: TextStyle(color: Colors.grey),
             ),
           ],

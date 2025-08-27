@@ -5,9 +5,9 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from datetime import datetime
 from bson import ObjectId
 
-from app.services.auth_service import authenticate_user, create_access_token
+from app.services.auth_service import authenticate_user, create_access_token, create_refresh_token, verify_refresh_token
 from app.core.security import get_current_user
-from app.models.user import User
+from app.models.user import User, UserDocument
 from app.models.reg import RegisterRequest
 from app.core.db import get_db
 from app.services.health_score_service import HealthScoreService
@@ -22,23 +22,50 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
         raise HTTPException(status_code=400, detail="Incorrect username or password")
     
     user_model = User(
-        id=str(user.id), # A Beanie documentumok _id attribútum neve id
+        id=str(user.id),
         username=user.username,
         email=user.email,
         mobile=user.mobile,
         registration_date=user.registration_date,
-        user_type=user.user_type,  # JAVÍTÁS: user_type hozzáadása
-        selected_intents=user.selected_intents,  # JAVÍTÁS: selected_intents hozzáadása
-        onboarding_completed=user.onboarding_completed,  # JAVÍTÁS: onboarding_completed hozzáadása
-        onboarding_step=user.onboarding_step,  # JAVÍTÁS: onboarding_step hozzáadása
-        preferred_currency=user.preferred_currency,  # JAVÍTÁS: preferred_currency hozzáadása
+        user_type=user.user_type,
+        selected_intents=user.selected_intents,
+        onboarding_completed=user.onboarding_completed,
+        onboarding_step=user.onboarding_step,
+        preferred_currency=user.preferred_currency,
     )
 
-    # JAVÍTÁS: Session tracking konzisztens user_id-val
     await HealthScoreService.track_session(str(user.id))
 
-    token = create_access_token({"sub": str(user_model.id)})
-    return {"access_token": token, "token_type": "bearer", "user_id": str(user_model.id), "username": user_model.username,}
+    access_token = create_access_token({"sub": str(user_model.id)})
+    refresh_token = create_refresh_token({"sub": str(user_model.id)})
+    
+    return {
+        "access_token": access_token, 
+        "refresh_token": refresh_token,
+        "token_type": "bearer", 
+        "user_id": str(user_model.id), 
+        "username": user_model.username
+    }
+
+@router.post("/refresh")
+async def refresh_token(refresh_token: str):
+    user_id = verify_refresh_token(refresh_token)
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Invalid refresh token")
+    
+    # Ellenőrizzük, hogy a user még létezik
+    user = await UserDocument.get(user_id)
+    if not user:
+        raise HTTPException(status_code=401, detail="User not found")
+    
+    new_access_token = create_access_token({"sub": user_id})
+    new_refresh_token = create_refresh_token({"sub": user_id})
+    
+    return {
+        "access_token": new_access_token,
+        "refresh_token": new_refresh_token,
+        "token_type": "bearer"
+    }
 
 @router.get("/me", response_model=User)
 async def get_me(current_user: User = Depends(get_current_user)):

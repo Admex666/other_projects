@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../services/auth_service.dart';
 import 'login_screen.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:frontend/screens/onboarding/welcome_screen.dart';
 
 /// RegisterScreen – NestCash fiók létrehozása modern (gradient) dizájnnal.
@@ -120,14 +121,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     if (ok) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Sikeres regisztráció!')),
+        SnackBar(content: Text('registration_successful'.tr())),
       );
       // Auto-login után onboarding indítása
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_) => const WelcomeScreen()),
       );
     } else {
-      setState(() => _error = 'Regisztráció sikertelen.');
+      setState(() => _error = 'registration_failed'.tr());
     }
   }
 
@@ -142,8 +143,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(24),
-              child: const Text(
-                'Hozz létre egy fiókot!',
+              child: Text(
+                'create_account'.tr(),
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
@@ -172,16 +173,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         const SizedBox(height: 20),
                         // Username Field (Full Name helyett)
                         _buildInputField(
-                          label: 'Felhasználónév',
+                          label: 'username'.tr(),
                           controller: _usernameCtrl,
-                          hintText: 'pl. adam123',
+                          hintText: 'username_hint'.tr(),
                           keyboardType: TextInputType.name,
                           validator: (v) {
                             if (v == null || v.trim().isEmpty) {
-                              return 'Add meg a felhasználónevet';
+                              return 'enter_username'.tr();
                             }
                             if (v.trim().length < 3) {
-                              return 'Legalább 3 karakter';
+                              return 'min_3_chars'.tr();
                             }
                             return null;
                           },
@@ -189,17 +190,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         const SizedBox(height: 20),
                         // Email Field
                         _buildInputField(
-                          label: 'E‑mail',
+                          label: 'email'.tr(),
                           controller: _emailCtrl,
-                          hintText: 'example@example.com',
+                          hintText: 'email_hint'.tr(),
                           keyboardType: TextInputType.emailAddress,
                           validator: (v) {
                             if (v == null || v.trim().isEmpty) {
-                              return 'Add meg az e‑mail címet';
+                              return 'enter_email'.tr();
                             }
                             final emailRegex = RegExp(r'^.+@.+\..+$');
                             if (!emailRegex.hasMatch(v.trim())) {
-                              return 'Érvénytelen e‑mail';
+                              return 'invalid_email'.tr();
                             }
                             return null;
                           },
@@ -207,9 +208,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         const SizedBox(height: 20),
                         // Mobile (nem kötelező)
                         _buildInputField(
-                          label: 'Telefonszám (nem kötelező)',
+                          label: 'phone_optional'.tr(),
                           controller: _mobileCtrl,
-                          hintText: '+36 30 123 4567',
+                          hintText: 'phone_hint'.tr(),
                           keyboardType: TextInputType.phone,
                           validator: (v) {
                             // Üres -> OK
@@ -222,9 +223,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         const SizedBox(height: 20),
                         // Password
                         _buildInputField(
-                          label: 'Jelszó',
+                          label: 'password'.tr(),
                           controller: _pwCtrl,
-                          hintText: '● ● ● ● ● ● ● ●',
+                          hintText: 'password_dots'.tr(),
                           isPassword: true,
                           isVisible: _pwVisible,
                           onVisibilityToggle: () {
@@ -232,10 +233,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           },
                           validator: (v) {
                             if (v == null || v.isEmpty) {
-                              return 'Adj meg egy jelszót';
+                              return 'enter_password'.tr();
                             }
                             if (v.length < 6) {
-                              return 'Legalább 6 karakter';
+                              return 'min_6_chars'.tr();
                             }
                             return null;
                           },
@@ -243,9 +244,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         const SizedBox(height: 20),
                         // Confirm Password
                         _buildInputField(
-                          label: 'Jelszó megerősítése',
+                          label: 'password_confirm'.tr(),
                           controller: _pw2Ctrl,
-                          hintText: '● ● ● ● ● ● ● ●',
+                          hintText: 'password_dots'.tr(),
                           isPassword: true,
                           isVisible: _pw2Visible,
                           onVisibilityToggle: () {
@@ -253,10 +254,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           },
                           validator: (v) {
                             if (v == null || v.isEmpty) {
-                              return 'Ismételd meg a jelszót';
+                              return 'repeat_password'.tr();
                             }
                             if (v != _pwCtrl.text) {
-                              return 'A jelszavak nem egyeznek';
+                              return 'passwords_not_match'.tr();
                             }
                             return null;
                           },
@@ -271,18 +272,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               color: Colors.grey[600],
                               height: 1.5,
                             ),
-                            children: const [
-                              TextSpan(text: 'A folytatással elfogadod a\n'),
+                            children: [
+                              TextSpan(text: 'terms_accept'.tr()),
                               TextSpan(
-                                text: 'Felhasználási feltételeket',
+                                text: 'terms_of_use'.tr(),
                                 style: TextStyle(
                                   color: Color(0xFF00D4AA),
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
-                              TextSpan(text: ' és a '),
+                              TextSpan(text: 'and'.tr()),
                               TextSpan(
-                                text: 'Adatkezelési tájékoztatót',
+                                text: 'privacy_policy'.tr(),
                                 style: TextStyle(
                                   color: Color(0xFF00D4AA),
                                   fontWeight: FontWeight.w500,
@@ -325,8 +326,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       color: Colors.white,
                                     ),
                                   )
-                                : const Text(
-                                    'Regisztrálok',
+                                : Text(
+                                    'register'.tr(),
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.w600,
@@ -340,7 +341,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              'Már van fiókod? ',
+                              'already_have_account'.tr(),
                               style: TextStyle(
                                 fontSize: 14,
                                 color: Colors.grey[600],
@@ -354,8 +355,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   ),
                                 );
                               },
-                              child: const Text(
-                                'Bejelentkezés',
+                              child: Text(
+                                'login_link'.tr(),
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: Color(0xFF00D4AA),

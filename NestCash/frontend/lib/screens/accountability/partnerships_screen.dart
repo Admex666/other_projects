@@ -72,7 +72,7 @@ class _PartnershipsScreenState extends State<PartnershipsScreen>
                   ),
                   Expanded(
                     child: Text(
-                      'Accountability partnerek',
+                      'accountability_partners'.tr(),
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -112,7 +112,7 @@ class _PartnershipsScreenState extends State<PartnershipsScreen>
                               },
                               icon: Icon(Icons.auto_awesome, color: Colors.white, size: 20),
                               label: Text(
-                                'Matching',
+                                'matching'.tr(),
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w600,
@@ -135,15 +135,15 @@ class _PartnershipsScreenState extends State<PartnershipsScreen>
                                 showDialog(
                                   context: context,
                                   builder: (context) => UpgradeDialog(
-                                    featureName: 'AI Matching',
-                                    description: 'Az AI alapú partner matching funkció Plus előfizetéssel érhető el.',
+                                    featureName: 'ai_matching'.tr(),
+                                    description: 'ai_matching_description'.tr(),
                                     requiredTier: SubscriptionTier.plus,
                                   ),
                                 );
                               },
                               icon: Icon(Icons.lock, color: Colors.white, size: 20),
                               label: Text(
-                                'Matching',
+                                'matching'.tr(),
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w600,
@@ -190,7 +190,7 @@ class _PartnershipsScreenState extends State<PartnershipsScreen>
                               size: 18,
                             ),
                             label: Text(
-                              'Profil',
+                              'profile'.tr(),
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w600,
@@ -251,8 +251,8 @@ class _PartnershipsScreenState extends State<PartnershipsScreen>
                         unselectedLabelColor: Colors.grey[600],
                         labelStyle: TextStyle(fontWeight: FontWeight.w600),
                         tabs: [
-                          Tab(text: 'Aktív'),
-                          Tab(text: 'Kérelmek'),
+                          Tab(text: 'active_tab'.tr()),
+                          Tab(text: 'requests_tab'.tr()),
                         ],
                       ),
                     ),
@@ -291,9 +291,9 @@ class _PartnershipsScreenState extends State<PartnershipsScreen>
         if (activePartners.isEmpty) {
           return _buildEmptyState(
             icon: Icons.group,
-            title: 'Nincs aktív partner',
-            message: 'Kezdj el új kapcsolatokat építeni!',
-            actionText: 'Partner keresése',
+            title: 'no_active_partners'.tr(),
+            message: 'start_building_connections'.tr(),
+            actionText: 'search_partner'.tr(),
               onAction: () {
                 final subscription = Provider.of<SubscriptionProvider>(context, listen: false);
                 if (subscription.isPlusOrHigher) {
@@ -337,8 +337,8 @@ class _PartnershipsScreenState extends State<PartnershipsScreen>
         if (pendingPartners.isEmpty) {
           return _buildEmptyState(
             icon: Icons.hourglass_empty,
-            title: 'Nincs függő kérelem',
-            message: 'Itt jelennek meg a partnership kérelmek.',
+            title: 'no_pending_requests'.tr(),
+            message: 'requests_appear_here'.tr(),
           );
         }
 
@@ -508,7 +508,7 @@ class _PartnershipsScreenState extends State<PartnershipsScreen>
                                   ),
                                 ),
                                 child: Text(
-                                  'Elutasítás',
+                                  'reject'.tr(),
                                   style: TextStyle(
                                     color: Colors.red,
                                     fontSize: 12,
@@ -532,7 +532,7 @@ class _PartnershipsScreenState extends State<PartnershipsScreen>
                                   ),
                                 ),
                                 child: Text(
-                                  'Elfogadás',
+                                  'accept'.tr(),
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 12,
@@ -558,7 +558,7 @@ class _PartnershipsScreenState extends State<PartnershipsScreen>
                             Icon(Icons.schedule, color: Colors.orange, size: 16),
                             SizedBox(width: 8),
                             Text(
-                              'Válaszra vár...',
+                              'waiting_for_response'.tr(),
                               style: TextStyle(
                                 color: Colors.orange,
                                 fontSize: 12,
@@ -575,7 +575,7 @@ class _PartnershipsScreenState extends State<PartnershipsScreen>
                   if (partnership.sharedGoals.isNotEmpty) ...[
                     SizedBox(height: 16),
                     Text(
-                      'Közös célok:',
+                      'common_goals_label'.tr(),
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -608,7 +608,7 @@ class _PartnershipsScreenState extends State<PartnershipsScreen>
                       Padding(
                         padding: EdgeInsets.only(top: 4),
                         child: Text(
-                          '+${partnership.sharedGoals.length - 3} további',
+                          'additional_goals'.tr(namedArgs: {'count': (partnership.sharedGoals.length - 3).toString()}),
                           style: TextStyle(
                             color: Colors.grey[500],
                             fontSize: 11,
@@ -738,7 +738,7 @@ class _PartnershipsScreenState extends State<PartnershipsScreen>
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(accept ? 'Partnership elfogadva!' : 'Partnership elutasítva'),
+          content: Text(accept ? 'partnership_accepted'.tr() : 'partnership_declined'.tr()),
           backgroundColor: accept ? Colors.green : Colors.orange,
         ),
       );
@@ -746,7 +746,7 @@ class _PartnershipsScreenState extends State<PartnershipsScreen>
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Hiba történt: ${provider.error}'),
+          content: Text('error_occurred'.tr(namedArgs: {'error': provider.error ?? ''})),
           backgroundColor: Colors.red,
         ),
       );
