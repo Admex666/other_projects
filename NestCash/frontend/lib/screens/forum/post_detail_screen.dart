@@ -1,5 +1,6 @@
 // lib/screens/forum/post_detail_screen.dart
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:frontend/services/forum_service.dart';
 import 'package:frontend/models/forum_models.dart';
 import 'package:frontend/screens/messages/chat_screen.dart';
@@ -65,7 +66,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
         _isLoadingPost = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hiba a poszt betöltésekor: $e')),
+        SnackBar(content: Text('${'post_loading_error'.tr()} $e')),
       );
     }
   }
@@ -94,7 +95,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
         _isLoadingComments = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hiba a kommentek betöltésekor: $e')),
+        SnackBar(content: Text('error_loading_comments'.tr(namedArgs: {'error': e.toString()}))),
       );
     }
   }
@@ -125,7 +126,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hiba a kommentek betöltésekor: $e')),
+        SnackBar(content: Text('error_loading_comments'.tr(namedArgs: {'error': e.toString()}))),
       );
     } finally {
       setState(() {
@@ -159,7 +160,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hiba a kedvelés során: $e')),
+        SnackBar(content: Text('error_liking'.tr(namedArgs: {'error': e.toString()}))),
       );
     }
   }
@@ -202,11 +203,11 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Komment sikeresen elküldve!')),
+        SnackBar(content: Text('comment_deleted_successfully'.tr())),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hiba a komment küldésekor: $e')),
+        SnackBar(content: Text('error_sending_comment'.tr(namedArgs: {'error': e.toString()}))),
       );
     } finally {
       setState(() {
@@ -219,16 +220,16 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Komment törlése'),
-        content: Text('Biztosan törölni szeretnéd ezt a kommentet?'),
+        title: Text('delete_comment'.tr()),
+        content: Text('confirm_delete_comment'.tr()),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text('Mégse'),
+            child: Text('cancel'.tr()),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: Text('Törlés', style: TextStyle(color: Colors.red)),
+            child: Text('delete'.tr(), style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -260,11 +261,11 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Komment sikeresen törölve!')),
+          SnackBar(content: Text('comment_deleted_success'.tr())),
         );
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Hiba a komment törlésekor: $e')),
+          SnackBar(content: Text('${'comment_deleted_error'.tr()} $e')),
         );
       }
     }
@@ -274,16 +275,16 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Poszt törlése'),
-        content: Text('Biztosan törölni szeretnéd ezt a posztot?'),
+        title: Text('delete_post'.tr()),
+        content: Text('confirm_delete_post'.tr()),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text('Mégse'),
+            child: Text('cancel'.tr()),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: Text('Törlés', style: TextStyle(color: Colors.red)),
+            child: Text('delete'.tr(), style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -294,13 +295,13 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
         await _forumService.deletePost(widget.postId);
         
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Poszt sikeresen törölve!')),
+          SnackBar(content: Text('post_deleted_success'.tr())),
         );
         
         Navigator.pop(context, true);
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Hiba a poszt törlésekor: $e')),
+          SnackBar(content: Text('${'post_deleted_error'.tr()}$e')),
         );
       }
     }
@@ -360,7 +361,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       _handleFollowUser(userId);
                     },
                     icon: Icon(Icons.person_add, color: Colors.white),
-                    label: Text('Követés', style: TextStyle(color: Colors.white)),
+                    label: Text('follow'.tr(), style: TextStyle(color: Colors.white)),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xFF00D4AA),
                       padding: EdgeInsets.symmetric(vertical: 12),
@@ -378,7 +379,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       _openPrivateMessage(userId, username);
                     },
                     icon: Icon(Icons.message, color: Colors.white),
-                    label: Text('Üzenet', style: TextStyle(color: Colors.white)),
+                    label: Text('message'.tr(), style: TextStyle(color: Colors.white)),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blueAccent,
                       padding: EdgeInsets.symmetric(vertical: 12),
@@ -395,7 +396,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('Bezárás'),
+              child: Text('close'.tr()),
             ),
           ],
         ),
@@ -407,11 +408,11 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     try {
       await _forumService.followUser(userId);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Felhasználó sikeresen követve!')),
+        SnackBar(content: Text('user_followed_successfully'.tr())),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Hiba a követés során: $e')),
+      SnackBar(content: Text('error_following_user'.tr(namedArgs: {'error': e.toString()}))),
     );
   }
   }
@@ -440,7 +441,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Poszt részletei',
+          'post_detail'.tr(),
           style: TextStyle(
             color: Colors.black87,
             fontWeight: FontWeight.bold,
@@ -461,7 +462,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                     children: [
                       Icon(Icons.delete, color: Colors.red, size: 20),
                       SizedBox(width: 8),
-                      Text('Törlés', style: TextStyle(color: Colors.red)),
+                      Text('delete'.tr(), style: TextStyle(color: Colors.red)),
                     ],
                   ),
                 ),
@@ -479,7 +480,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       Icon(Icons.error_outline, size: 64, color: Colors.grey),
                       SizedBox(height: 16),
                       Text(
-                        'Nem sikerült betölteni a posztot',
+                        'error_loading_post'.tr(),
                         style: TextStyle(fontSize: 18, color: Colors.grey[600]),
                       ),
                     ],
@@ -685,7 +686,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                               ),
                                               SizedBox(width: 4),
                                               Text(
-                                                _post!.privacyLevel == 'private' ? 'Privát' : 'Barátok',
+                                                _post!.privacyLevel == 'private' ? 'private'.tr() : 'friends'.tr(),
                                                 style: TextStyle(
                                                   color: Colors.orange,
                                                   fontSize: 12,
@@ -720,7 +721,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Kommentek (${_post!.commentCount})',
+                                    '${'comments_count'.tr()} (${_post!.commentCount})',
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
@@ -750,7 +751,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                             ),
                                             SizedBox(height: 8),
                                             Text(
-                                              'Még nincsenek kommentek',
+                                              'no_comments_yet'.tr(),
                                               style: TextStyle(
                                                 color: Colors.grey[600],
                                                 fontSize: 16,
@@ -804,7 +805,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                 child: TextField(
                                   controller: _commentController,
                                   decoration: InputDecoration(
-                                    hintText: 'Írj egy kommentet...',
+                                    hintText: 'write_comment'.tr(),
                                     hintStyle: TextStyle(color: Colors.grey[600]),
                                     contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                                     border: InputBorder.none,
@@ -910,7 +911,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                         children: [
                           Icon(Icons.delete, color: Colors.red, size: 16),
                           SizedBox(width: 8),
-                          Text('Törlés', style: TextStyle(color: Colors.red, fontSize: 14)),
+                          Text('delete'.tr(), style: TextStyle(color: Colors.red, fontSize: 14)),
                         ],
                       ),
                     ),
@@ -961,13 +962,13 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     final difference = now.difference(dateTime);
 
     if (difference.inMinutes < 1) {
-      return 'Most';
+      return 'now'.tr();
     } else if (difference.inHours < 1) {
-      return '${difference.inMinutes} perce';
+      return 'minutes_ago'.tr(namedArgs: {'minutes': '${difference.inMinutes}'});
     } else if (difference.inDays < 1) {
-      return '${difference.inHours} órája';
+      return 'hours_ago'.tr(namedArgs: {'hours': '${difference.inHours}'});
     } else if (difference.inDays < 7) {
-      return '${difference.inDays} napja';
+      return 'days_ago'.tr(namedArgs: {'days': '${difference.inDays}'});
     } else {
       return '${dateTime.year}. ${dateTime.month.toString().padLeft(2, '0')}. ${dateTime.day.toString().padLeft(2, '0')}.';
     }

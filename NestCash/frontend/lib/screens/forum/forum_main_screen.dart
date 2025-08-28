@@ -201,7 +201,7 @@ class _ForumMainScreenState extends State<ForumMainScreen> {
       builder: (context) => DefaultTabController(
         length: 3,
         child: AlertDialog(
-          title: Text('Szűrők és rendezés'),
+          title: Text('filters_and_sorting'.tr()),
           content: Container(
             width: double.maxFinite,
             height: 400, // Fix magasság
@@ -212,9 +212,9 @@ class _ForumMainScreenState extends State<ForumMainScreen> {
                   unselectedLabelColor: Colors.grey,
                   indicatorColor: Color(0xFF00D4AA),
                   tabs: [
-                    Tab(text: 'Feed'),
-                    Tab(text: 'Rendezés'),
-                    Tab(text: 'Kategória'),
+                    Tab(text: 'feed_tab'.tr()),
+                    Tab(text: 'sorting_tab'.tr()),
+                    Tab(text: 'category_tab'.tr()),
                   ],
                 ),
                 Expanded(
@@ -249,7 +249,7 @@ class _ForumMainScreenState extends State<ForumMainScreen> {
                         builder: (context, setDialogState) => ListView(
                           children: [
                             RadioListTile<PostCategory?>(
-                              title: Text('Összes'),
+                              title: Text('all'.tr()),
                               value: null,
                               groupValue: _selectedCategory,
                               onChanged: (value) => setDialogState(() => _selectedCategory = value),
@@ -272,14 +272,14 @@ class _ForumMainScreenState extends State<ForumMainScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('Mégse'),
+              child: Text('cancel'.tr()),
             ),
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(context);
                 _loadPosts();
               },
-              child: Text('Alkalmazás'),
+              child: Text('apply'.tr()),
             ),
           ],
         ),
@@ -309,7 +309,7 @@ class _ForumMainScreenState extends State<ForumMainScreen> {
                   ),
                   Expanded(
                     child: Text(
-                      'Fórum',
+                      'forum'.tr(),
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -411,7 +411,7 @@ class _ForumMainScreenState extends State<ForumMainScreen> {
                               onPressed: _showFilterDialog,
                               icon: Icon(Icons.filter_list, color: Colors.white, size: 18),
                               label: Text(
-                                'Szűrők',
+                                'filters'.tr(),
                                 style: TextStyle(color: Colors.white, fontSize: 14),
                               ),
                               style: ElevatedButton.styleFrom(
@@ -434,7 +434,7 @@ class _ForumMainScreenState extends State<ForumMainScreen> {
                               ),
                               icon: Icon(Icons.search, color: Colors.white, size: 18),
                               label: Text(
-                                'Keresés',
+                                'search'.tr(),
                                 style: TextStyle(color: Colors.white, fontSize: 14),
                               ),
                               style: ElevatedButton.styleFrom(
@@ -457,7 +457,7 @@ class _ForumMainScreenState extends State<ForumMainScreen> {
                               ),
                               icon: Icon(Icons.settings, color: Colors.white, size: 18),
                               label: Text(
-                                'Beállítások',
+                                'settings'.tr(),
                                 style: TextStyle(color: Colors.white, fontSize: 14),
                               ),
                               style: ElevatedButton.styleFrom(
@@ -489,7 +489,7 @@ class _ForumMainScreenState extends State<ForumMainScreen> {
                                     ),
                                     SizedBox(height: 16),
                                     Text(
-                                      'Még nincsenek posztok',
+                                      'no_posts_yet'.tr(),
                                       style: TextStyle(
                                         fontSize: 18,
                                         color: Colors.grey[600],
@@ -498,7 +498,7 @@ class _ForumMainScreenState extends State<ForumMainScreen> {
                                     ),
                                     SizedBox(height: 8),
                                     Text(
-                                      'Legyél te az első, aki megosztja gondolatait!',
+                                      'be_first_to_share'.tr(),
                                       style: TextStyle(
                                         fontSize: 14,
                                         color: Colors.grey[500],
@@ -741,7 +741,7 @@ class _ForumMainScreenState extends State<ForumMainScreen> {
                           ),
                           SizedBox(width: 4),
                           Text(
-                            post.privacyLevel == 'private' ? 'Privát' : 'Barátok',
+                            post.privacyLevel == 'private' ? 'private'.tr() : 'friends'.tr(),
                             style: TextStyle(
                               color: Colors.orange,
                               fontSize: 10,
@@ -786,13 +786,13 @@ class _ForumMainScreenState extends State<ForumMainScreen> {
     final difference = now.difference(dateTime);
 
     if (difference.inMinutes < 1) {
-      return 'Most';
+      return 'now'.tr();
     } else if (difference.inHours < 1) {
-      return '${difference.inMinutes} perce';
+      return 'minutes_ago'.tr(namedArgs: {'minutes': '${difference.inMinutes}'});
     } else if (difference.inDays < 1) {
-      return '${difference.inHours} órája';
+      return 'hours_ago'.tr(namedArgs: {'hours': '${difference.inHours}'});
     } else if (difference.inDays < 7) {
-      return '${difference.inDays} napja';
+      return 'days_ago'.tr(namedArgs: {'days': '${difference.inDays}'});
     } else {
       return '${dateTime.year}. ${dateTime.month.toString().padLeft(2, '0')}. ${dateTime.day.toString().padLeft(2, '0')}.';
     }

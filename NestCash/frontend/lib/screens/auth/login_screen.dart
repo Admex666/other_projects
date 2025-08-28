@@ -81,8 +81,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                         ],
-                        const Text(
-                          'Felhasználónév vagy Email',
+                        Text(
+                          'username_or_email'.tr(),
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -332,8 +332,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (ok) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('login_success'),
+        SnackBar(
+          content: Text('login_success'.tr()),
           backgroundColor: Color(0xFF00D4A3),
         ),
       );

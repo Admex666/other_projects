@@ -1,5 +1,6 @@
 // lib/screens/forum/search_users_screen.dart
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:frontend/services/forum_service.dart';
 import 'package:frontend/models/forum_models.dart';
 import 'package:frontend/screens/messages/chat_screen.dart';
@@ -60,7 +61,7 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
         _isLoadingFollowing = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hiba a követettek betöltésekor: $e')),
+        SnackBar(content: Text('error_loading_following'.tr(namedArgs: {'error': e.toString()}))),
       );
     }
   }
@@ -78,7 +79,7 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
         _isLoadingFollowers = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hiba a követők betöltésekor: $e')),
+        SnackBar(content: Text('error_loading_followers'..tr(namedArgs:{'error': e.toString()}))),
       );
     }
   }
@@ -116,9 +117,9 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
             _isSearching = false;
           });
           
-          String errorMessage = 'Hiba a keresés során';
+          String errorMessage = 'error_searching_users_general'.tr();
           if (e.toString().contains('min_length')) {
-            errorMessage = 'Legalább 3 karakter szükséges a kereséshez';
+            errorMessage = 'error_search_min_length'.tr();
           }
           
           ScaffoldMessenger.of(context).showSnackBar(
@@ -165,12 +166,12 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(user.isFollowing ? 'Követés megszüntetve' : 'Követés elkezdve'),
+          content: Text(user.isFollowing ? 'follow_stopped'.tr() : 'follow_started'.tr()),
         ),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hiba a követéskor: $e')),
+        SnackBar(content: Text('error_following_user'.tr(namedArgs:{'error': e.toString()}))),
       );
     }
   }
@@ -190,14 +191,14 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
       if (result != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Beszélgetés elindítva ${user.username} felhasználóval'),
+            content: Text('conversation_started_with'.tr(namedArgs:{'username': user.username})),
             backgroundColor: Color(0xFF00D4AA),
           ),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hiba a beszélgetés indításakor: $e')),
+        SnackBar(content: Text('error_starting_conversation'.tr(namedArgs:{'error': e.toString()}))),
       );
     }
   }
@@ -212,7 +213,7 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
     if (!provider.isInitialized) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Az accountability rendszer még nem töltődött be. Próbáld újra!'),
+          content: Text('accountability_system_not_loaded'.tr()),
           backgroundColor: Colors.orange,
         ),
       );
@@ -223,7 +224,7 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
     if (provider.isPartnerWith(user.id)) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Már partner vagy ${user.username} felhasználóval'),
+          content: Text('already_partner_with'.tr(namedArgs:{'username': user.username})),
           backgroundColor: Colors.orange,
         ),
       );
@@ -233,7 +234,7 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
     if (provider.hasPendingRequestWith(user.id)) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Már van függő kérelem ${user.username} felhasználóval'),
+          content: Text('pending_request_exists_with'.tr(namedArgs:{'username': user.username})),
           backgroundColor: Colors.orange,
         ),
       );
@@ -259,14 +260,14 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
       if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Partnership kérelem elküldve ${user.username} részére!'),
+            content: Text('partnership_request_sent_to'.tr(namedArgs:{'username': user.username})),
             backgroundColor: Color(0xFF00D4AA),
           ),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Hiba: ${provider.error}'),
+            content: Text('error_occurred'.tr(namedArgs:{'error': provider.error.toString()})),
             backgroundColor: Colors.red,
           ),
         );
@@ -281,12 +282,12 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
     List<String> selectedGoals = [];
     
     final availableGoals = [
-      'Pénzügyi célok',
-      'Fitness/Egészség',
-      'Karrier/Tanulás',
-      'Személyes fejlődés',
-      'Szokásépítés',
-      'Projektmenedzsment',
+      'goal_financial'.tr(),
+      'goal_fitness_health'.tr(),
+      'goal_career_learning'.tr(),
+      'goal_personal_development'.tr(),
+      'goal_habit_building'.tr(),
+      'goal_project_management'.tr(),
     ];
 
     return StatefulBuilder(
@@ -311,7 +312,7 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
               ),
               SizedBox(height: 12),
               Text(
-                'Partnership kérelem',
+                'partnership_request_title'.tr(),
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               Text(
@@ -326,7 +327,7 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Üzenet (opcionális)',
+                  'message_optional'.tr(),
                   style: TextStyle(fontWeight: FontWeight.w600),
                 ),
                 SizedBox(height: 8),
@@ -334,7 +335,7 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
                   controller: messageController,
                   maxLines: 3,
                   decoration: InputDecoration(
-                    hintText: 'Mutatkozz be és írd le, miért szeretnétek partnerek lenni...',
+                    hintText: 'partnership_intro_message_hint'.tr(),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -344,7 +345,7 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
                 SizedBox(height: 16),
                 
                 Text(
-                  'Check-in gyakoriság',
+                  'checkin_frequency_title'.tr(),
                   style: TextStyle(fontWeight: FontWeight.w600),
                 ),
                 SizedBox(height: 8),
@@ -373,7 +374,7 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
                 SizedBox(height: 16),
                 
                 Text(
-                  'Közös célok (választható)',
+                  'shared_goals_optional'.tr(),
                   style: TextStyle(fontWeight: FontWeight.w600),
                 ),
                 SizedBox(height: 8),
@@ -415,7 +416,7 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: Text(
-                'Mégse',
+                'cancel'.tr(),
                 style: TextStyle(color: Colors.grey[600]),
               ),
             ),
@@ -434,7 +435,7 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
                 ),
               ),
               child: Text(
-                'Küldés',
+                'send'.tr(),
                 style: TextStyle(color: Colors.white),
               ),
             ),
@@ -456,7 +457,7 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          widget.isPartnerSearch ? 'Partner keresése' : 'Felhasználók keresése',
+          widget.isPartnerSearch ? 'search_partners'.tr() : 'search_users'.tr(),
           style: TextStyle(
             color: Colors.black87,
             fontWeight: FontWeight.bold,
@@ -487,8 +488,8 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
                     onChanged: _searchUsers,
                     decoration: InputDecoration(
                       hintText: widget.isPartnerSearch 
-                          ? 'Keress accountability partnereket...'
-                          : 'Keress felhasználókat...',
+                          ? 'search_partners_hint'.tr()
+                          : 'search_users_hint'.tr(),
                       hintStyle: TextStyle(color: Colors.grey[600]),
                       prefixIcon: Icon(
                         widget.isPartnerSearch ? Icons.people : Icons.search, 
@@ -538,7 +539,7 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
                         SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            'Keress olyan felhasználókat, akikkel szeretnél accountability partnerek lenni',
+                            'search_partners_info'.tr(),
                             style: TextStyle(
                               color: Colors.black87,
                               fontSize: 12,
@@ -581,7 +582,7 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
-                          'Keresés',
+                          'search_tab'.tr(),
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: _selectedTab == 0 ? Colors.white : Colors.grey[600],
@@ -602,7 +603,7 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
-                          'Követettek (${_following.length})',
+                          'following_tab'.tr(namedArgs:{'count': _following.length.toString()}),
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: _selectedTab == 1 ? Colors.white : Colors.grey[600],
@@ -623,7 +624,7 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
-                          'Követők (${_followers.length})',
+                          'followers_tab'.tr(namedArgs:{'count': _followers.length.toString()}),
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: _selectedTab == 2 ? Colors.white : Colors.grey[600],
@@ -673,7 +674,7 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
             ),
             SizedBox(height: 16),
             Text(
-              'Kezdj el gépelni a kereséshez',
+              'start_typing_to_search'.tr(),
               style: TextStyle(
                 fontSize: 18,
                 color: Colors.grey[600],
@@ -683,8 +684,8 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
             SizedBox(height: 8),
             Text(
               widget.isPartnerSearch 
-                  ? 'Keress accountability partnereket név alapján'
-                  : 'Keress felhasználókat név alapján',
+                  ? 'search_partners_by_name'.tr()
+                  : 'search_users_by_name'.tr(),
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey[500],
@@ -707,7 +708,7 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
             ),
             SizedBox(height: 16),
             Text(
-              'Nincs találat',
+              'no_results'.tr(),
               style: TextStyle(
                 fontSize: 18,
                 color: Colors.grey[600],
@@ -716,7 +717,7 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
             ),
             SizedBox(height: 8),
             Text(
-              'Próbálj meg más keresési feltételt',
+              'try_different_search_terms'.tr(),
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey[500],
@@ -756,7 +757,7 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
             ),
             SizedBox(height: 16),
             Text(
-              'Még nem követsz senkit',
+              'not_following_anyone_yet'.tr(),
               style: TextStyle(
                 fontSize: 18,
                 color: Colors.grey[600],
@@ -765,7 +766,7 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
             ),
             SizedBox(height: 8),
             Text(
-              'Keress és kövesd más felhasználókat',
+              'search_and_follow_users'.tr(),
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey[500],
@@ -805,7 +806,7 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
             ),
             SizedBox(height: 16),
             Text(
-              'Még nincsenek követőid',
+              'no_followers_yet'.tr(),
               style: TextStyle(
                 fontSize: 18,
                 color: Colors.grey[600],
@@ -814,7 +815,7 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
             ),
             SizedBox(height: 8),
             Text(
-              'Ossz meg érdekes posztokat és találj követőket',
+              'share_interesting_posts_get_followers'.tr(),
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey[500],
@@ -893,7 +894,7 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  'Partner',
+                  'partner_label'.tr(),
                   style: TextStyle(
                     color: Color(0xFF00D4AA),
                     fontSize: 10,
@@ -910,7 +911,7 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  'Függő',
+                  'pending_label'.tr(),
                   style: TextStyle(
                     color: Colors.orange,
                     fontSize: 10,
@@ -951,10 +952,10 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
                     : () => _sendPartnershipRequest(user),
                 child: Text(
                   isPartner 
-                      ? 'Partner'
+                      ? 'partner_label'.tr()
                       : hasPendingRequest
-                          ? 'Kérve'
-                          : 'Partner+',
+                          ? 'requested_label'.tr()
+                          : 'add_partner'.tr(),
                   style: TextStyle(
                     color: isPartner || hasPendingRequest 
                         ? Colors.grey[700] 
@@ -980,7 +981,7 @@ class _SearchUsersScreenState extends State<SearchUsersScreen> {
               ElevatedButton(
                 onPressed: () => _toggleFollow(user),
                 child: Text(
-                  user.isFollowing ? 'Követve' : 'Követés',
+                  user.isFollowing ? 'following_label'.tr() : 'follow'.tr(),
                   style: TextStyle(
                     color: user.isFollowing ? Colors.grey[700] : Colors.white,
                     fontSize: 12,

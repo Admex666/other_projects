@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
+import 'package:easy_localization/easy_localization.dart';
 
 /// LoadingScreen - NestCash alkalmazás töltőképernyője
 /// A meglévő design nyelvezetet követi: teal/green színek, gradient háttér
@@ -199,15 +199,14 @@ class _LoadingScreenState extends State<LoadingScreen>
             
             const SizedBox(height: 20),
             
-            if (widget.message != null)
-              Text(
-                widget.message!,
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.white70,
-                  fontWeight: FontWeight.w300,
-                ),
+            Text(
+              'loading'.tr(),
+              style: const TextStyle(
+                fontSize: 16,
+                color: Colors.white70,
+                fontWeight: FontWeight.w300,
               ),
+            ),
           ],
         ),
       ),

@@ -1,5 +1,6 @@
 // lib/screens/forum/notifications_screen.dart
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:frontend/services/forum_service.dart';
 import 'package:frontend/models/forum_models.dart';
 import 'package:frontend/screens/forum/post_detail_screen.dart';
@@ -70,7 +71,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hiba az értesítések betöltésekor: $e')),
+        SnackBar(content: Text('${'error_loading_notifications'.tr()}: $e')),
       );
     } finally {
       setState(() {
@@ -104,7 +105,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hiba az értesítések betöltésekor: $e')),
+        SnackBar(content: Text('${'error_loading_notifications'.tr()}: $e')),
       );
     } finally {
       setState(() {
@@ -136,7 +137,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hiba az értesítés olvasottá jelölésekor: $e')),
+        SnackBar(content: Text('${'an_error_occurred'.tr()}: $e')),
       );
     }
   }
@@ -161,11 +162,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Minden értesítés olvasottá jelölve!')),
+        SnackBar(content: Text('mark_all_as_read'.tr())),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hiba az értesítések olvasottá jelölésekor: $e')),
+        SnackBar(content: Text('${'an_error_occurred'.tr()}: $e')),
       );
     }
   }
@@ -179,11 +180,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Értesítés törölve!')),
+        SnackBar(content: Text('notification_deleted_successfully'.tr())),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hiba az értesítés törlésekor: $e')),
+        SnackBar(content: Text('${'an_error_occurred'.tr()}: $e')),
       );
     }
   }
@@ -215,7 +216,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Értesítések',
+          'notifications'.tr(),
           style: TextStyle(
             color: Colors.black87,
             fontWeight: FontWeight.bold,
@@ -226,7 +227,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             TextButton(
               onPressed: _markAllAsRead,
               child: Text(
-                'Mind olvasott',
+                'all_read'.tr(),
                 style: TextStyle(
                   color: Colors.black87,
                   fontWeight: FontWeight.w500,
@@ -250,7 +251,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 ),
               ),
               child: Text(
-                '$unreadCount olvasatlan értesítés',
+                '$unreadCount ${'unread_count'.tr()}',
                 style: TextStyle(
                   color: Colors.black87,
                   fontSize: 16,
@@ -276,7 +277,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                           ),
                           SizedBox(height: 16),
                           Text(
-                            'Nincsenek értesítések',
+                            'no_new_notifications'.tr(),
                             style: TextStyle(
                               fontSize: 18,
                               color: Colors.grey[600],
@@ -285,7 +286,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                           ),
                           SizedBox(height: 8),
                           Text(
-                            'Itt fogod látni az értesítéseidet',
+                            'new_notifications_will_appear_here'.tr(),
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.grey[500],
@@ -444,7 +445,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         children: [
                           Icon(Icons.check, size: 16, color: Colors.green),
                           SizedBox(width: 8),
-                          Text('Olvasottá jelölés'),
+                          Text('mark_as_read'.tr()),
                         ],
                       ),
                     ),
@@ -454,7 +455,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       children: [
                         Icon(Icons.delete, size: 16, color: Colors.red),
                         SizedBox(width: 8),
-                        Text('Törlés'),
+                        Text('delete'.tr()),
                       ],
                     ),
                   ),
@@ -510,13 +511,13 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     final difference = now.difference(dateTime);
 
     if (difference.inMinutes < 1) {
-      return 'Most';
+      return 'now'.tr();
     } else if (difference.inHours < 1) {
-      return '${difference.inMinutes} perce';
+      return 'minutes_ago'.tr(namedArgs: {'minutes': '${difference.inMinutes}'});
     } else if (difference.inDays < 1) {
-      return '${difference.inHours} órája';
+      return 'hours_ago'.tr(namedArgs: {'hours': '${difference.inHours}'});
     } else if (difference.inDays < 7) {
-      return '${difference.inDays} napja';
+      return 'days_ago'.tr(namedArgs: {'days': '${difference.inDays}'});
     } else {
       return '${dateTime.year}. ${dateTime.month.toString().padLeft(2, '0')}. ${dateTime.day.toString().padLeft(2, '0')}.';
     }

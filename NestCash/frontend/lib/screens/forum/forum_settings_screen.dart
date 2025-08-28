@@ -51,7 +51,7 @@ class _ForumSettingsScreenState extends State<ForumSettingsScreen> {
         _isLoading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hiba a beállítások betöltésekor: $e')),
+        SnackBar(content: Text('error_loading_settings'.tr(namedArgs: {'error': e.toString()}))),
       );
     }
   }
@@ -81,13 +81,13 @@ class _ForumSettingsScreenState extends State<ForumSettingsScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Beállítások sikeresen mentve!'),
+          content: Text('settings_saved_successfully'.tr()),
           backgroundColor: Colors.green,
         ),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hiba a beállítások mentésekor: $e')),
+        SnackBar(content: Text('error_saving_settings'.tr(namedArgs: {'error': e.toString()}))),
       );
     } finally {
       setState(() {
@@ -108,7 +108,7 @@ class _ForumSettingsScreenState extends State<ForumSettingsScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Fórum beállítások',
+          'forum_settings'.tr(),
           style: TextStyle(
             color: Colors.black87,
             fontWeight: FontWeight.bold,
@@ -128,7 +128,7 @@ class _ForumSettingsScreenState extends State<ForumSettingsScreen> {
                       ),
                     )
                   : Text(
-                      'Mentés',
+                      'save'.tr(),
                       style: TextStyle(
                         color: Colors.black87,
                         fontWeight: FontWeight.bold,
@@ -198,7 +198,7 @@ class _ForumSettingsScreenState extends State<ForumSettingsScreen> {
               ),
               SizedBox(width: 12),
               Text(
-                'Statisztikák',
+                'statistics'.tr(),
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -214,7 +214,7 @@ class _ForumSettingsScreenState extends State<ForumSettingsScreen> {
             children: [
               Expanded(
                 child: _buildStatCard(
-                  'Posztjaim',
+                  'my_posts_count'.tr(),
                   _stats['posts_count']?.toString() ?? '0',
                   Icons.article,
                   Colors.blue,
@@ -223,7 +223,7 @@ class _ForumSettingsScreenState extends State<ForumSettingsScreen> {
               SizedBox(width: 12),
               Expanded(
                 child: _buildStatCard(
-                  'Kedvelések',
+                  'likes_count'.tr(),
                   _stats['likes_received']?.toString() ?? '0',
                   Icons.favorite,
                   Colors.red,
@@ -238,7 +238,7 @@ class _ForumSettingsScreenState extends State<ForumSettingsScreen> {
             children: [
               Expanded(
                 child: _buildStatCard(
-                  'Kommentek',
+                  'comments_count'.tr(),
                   _stats['comments_count']?.toString() ?? '0',
                   Icons.comment,
                   Colors.green,
@@ -247,7 +247,7 @@ class _ForumSettingsScreenState extends State<ForumSettingsScreen> {
               SizedBox(width: 12),
               Expanded(
                 child: _buildStatCard(
-                  'Követők',
+                  'followers_count'.tr(),
                   _stats['followers_count']?.toString() ?? '0',
                   Icons.people,
                   Colors.purple,
@@ -323,7 +323,7 @@ class _ForumSettingsScreenState extends State<ForumSettingsScreen> {
               ),
               SizedBox(width: 12),
               Text(
-                'Adatvédelem',
+                'privacy'.tr(),
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -336,7 +336,7 @@ class _ForumSettingsScreenState extends State<ForumSettingsScreen> {
           SizedBox(height: 16),
           
           Text(
-            'Alapértelmezett láthatóság új posztokhoz:',
+            'default_visibility_new_posts'.tr(),
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
@@ -356,9 +356,9 @@ class _ForumSettingsScreenState extends State<ForumSettingsScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Nyilvános'),
+                        Text('public'.tr()),
                         Text(
-                          'Mindenki láthatja',
+                          'everyone_can_see'.tr(),
                           style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                         ),
                       ],
@@ -379,9 +379,9 @@ class _ForumSettingsScreenState extends State<ForumSettingsScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Barátok'),
+                        Text('friends'.tr()),
                         Text(
-                          'Csak követőid láthatják',
+                          'only_your_followers_can_see'.tr(),
                           style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                         ),
                       ],
@@ -402,9 +402,9 @@ class _ForumSettingsScreenState extends State<ForumSettingsScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Privát'),
+                        Text('private'.tr()),
                         Text(
-                          'Csak te láthatod',
+                          'only_you_can_see'.tr(),
                           style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                         ),
                       ],
@@ -449,7 +449,7 @@ class _ForumSettingsScreenState extends State<ForumSettingsScreen> {
               ),
               SizedBox(width: 12),
               Text(
-                'Értesítések',
+                'notifications'.tr(),
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -462,7 +462,7 @@ class _ForumSettingsScreenState extends State<ForumSettingsScreen> {
           SizedBox(height: 16),
           
           Text(
-            'Értesítést szeretnél kapni ezekről:',
+            'receive_notifications'.tr(),
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
@@ -474,34 +474,26 @@ class _ForumSettingsScreenState extends State<ForumSettingsScreen> {
           
           _buildNotificationToggle(
             'likes',
-            'Kedvelések',
-            'Amikor valaki kedvel egy posztodat',
+            'likes'.tr(),
+            'when_someone_likes_your_post'.tr(),
             Icons.favorite,
             Colors.red,
           ),
           
           _buildNotificationToggle(
             'comments',
-            'Kommentek',
-            'Amikor valaki kommenteli egy posztodat',
+            'comments'.tr(),
+            'when_someone_comments_on_your_post'.tr(),
             Icons.comment,
             Colors.blue,
           ),
           
           _buildNotificationToggle(
             'follows',
-            'Követések',
-            'Amikor valaki követ téged',
+            'follows'.tr(),
+            'when_someone_starts_following_you'.tr(),
             Icons.person_add,
             Colors.green,
-          ),
-          
-          _buildNotificationToggle(
-            'mentions',
-            'Említések',
-            'Amikor valaki megemlít téged',
-            Icons.alternate_email,
-            Colors.orange,
           ),
         ],
       ),
@@ -602,7 +594,7 @@ class _ForumSettingsScreenState extends State<ForumSettingsScreen> {
               ),
               SizedBox(width: 12),
               Text(
-                'Fiók műveletek',
+                'account_actions'.tr(),
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -615,8 +607,8 @@ class _ForumSettingsScreenState extends State<ForumSettingsScreen> {
           SizedBox(height: 16),
           
           _buildActionButton(
-            'Adatok exportálása',
-            'Töltsd le a fórumon tárolt adataidat',
+            'export_data'.tr(),
+            'export_data_description'.tr(),
             Icons.download,
             Colors.blue,
             _exportData,
@@ -625,8 +617,8 @@ class _ForumSettingsScreenState extends State<ForumSettingsScreen> {
           SizedBox(height: 12),
           
           _buildActionButton(
-            'Fórum adatok törlése',
-            'Törli az összes fórumon tárolt adatodat',
+            'delete_forum_data'.tr(),
+            'delete_forum_data_description'.tr(),
             Icons.delete_forever,
             Colors.red,
             _showDeleteDataDialog,
@@ -707,7 +699,7 @@ class _ForumSettingsScreenState extends State<ForumSettingsScreen> {
     // TODO: Implement data export functionality
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Adatok exportálása hamarosan elérhető lesz!'),
+        content: Text('export_coming_soon'.tr()),
         backgroundColor: Colors.blue,
       ),
     );
@@ -721,7 +713,7 @@ class _ForumSettingsScreenState extends State<ForumSettingsScreen> {
           children: [
             Icon(Icons.warning, color: Colors.red),
             SizedBox(width: 12),
-            Text('Adatok törlése'),
+            Text('delete_data_dialog_title'.tr()),
           ],
         ),
         content: Column(
@@ -729,15 +721,15 @@ class _ForumSettingsScreenState extends State<ForumSettingsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Ez a művelet véglegesen törli az összes fórumon tárolt adatodat:',
+              'delete_data_warning'.tr(),
               style: TextStyle(fontWeight: FontWeight.w500),
             ),
             SizedBox(height: 12),
-            Text('• Összes posztod'),
-            Text('• Összes kommented'),
-            Text('• Kedveléseid'),
-            Text('• Követési kapcsolataid'),
-            Text('• Beállításaid'),
+            Text('all_posts'.tr()),
+            Text('all_comments'.tr()),
+            Text('all_likes'.tr()),
+            Text('follow_connections'.tr()),
+            Text('your_settings'.tr()),
             SizedBox(height: 12),
             Container(
               padding: EdgeInsets.all(12),
@@ -751,7 +743,7 @@ class _ForumSettingsScreenState extends State<ForumSettingsScreen> {
                   SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'Ez a művelet visszavonhatatlan!',
+                      'action_irreversible'.tr(),
                       style: TextStyle(
                         color: Colors.red,
                         fontWeight: FontWeight.bold,
@@ -766,7 +758,7 @@ class _ForumSettingsScreenState extends State<ForumSettingsScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Mégse'),
+            child: Text('cancel'.tr()),
           ),
           ElevatedButton(
             onPressed: () {
@@ -777,7 +769,7 @@ class _ForumSettingsScreenState extends State<ForumSettingsScreen> {
               backgroundColor: Colors.red,
             ),
             child: Text(
-              'Törlés',
+              'delete'.tr(),
               style: TextStyle(color: Colors.white),
             ),
           ),
@@ -790,7 +782,7 @@ class _ForumSettingsScreenState extends State<ForumSettingsScreen> {
     // TODO: Implement forum data deletion
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Adatok törlése hamarosan elérhető lesz!'),
+        content: Text('delete_data_coming_soon'.tr()),
         backgroundColor: Colors.red,
       ),
     );
