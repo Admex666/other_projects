@@ -13,6 +13,7 @@ import 'package:frontend/services/auth_service.dart';
 import 'package:frontend/screens/transactions_screen.dart';
 import 'package:frontend/screens/auth/auth_wrapper.dart';
 import 'package:intl/intl.dart';
+import 'package:easy_localization/easy_localization.dart'; // Import the localization package
 
 class DashboardScreen extends StatefulWidget {
   final String username;
@@ -53,8 +54,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('A munkamenet lejárt. Kérjük, jelentkezzen be újra.'),
+        SnackBar(
+          content: Text('auth_session_expired'.tr()), // Localized string
           backgroundColor: Colors.red,
         ),
       );
@@ -86,7 +87,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       // Csak akkor mutatunk hibaüzenetet, ha kritikus hiba van
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Egyes adatok betöltése nem sikerült, de az alkalmazás használható.'),
+          content: Text('some_data_load_failed'.tr()), // Localized string
           backgroundColor: Colors.orange,
           duration: Duration(seconds: 3),
         ),
@@ -261,8 +262,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
             // Több lehetséges mező nevvel számolunk (angol/magyar backend szerint)
             final type = transaction['type'] ?? transaction['tipus'];
             final amount = (transaction['amount'] ?? transaction['osszeg'] ?? 0 as num).toDouble();
-            final description = transaction['description'] ?? transaction['leiras'] ?? 'Ismeretlen tranzakció';
-            final category = transaction['kategoria'] ?? transaction['category'] ?? 'Egyéb';
+            final description = transaction['description'] ?? transaction['leiras'] ?? 'unknown_transaction'.tr(); // Localized string
+            final category = transaction['kategoria'] ?? transaction['category'] ?? 'other'.tr(); // Localized string
             final dateStr = transaction['date'] ?? transaction['datum'];
             
             // Dátum parse-olás több formátummal
@@ -298,9 +299,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
             // Fallback transaction
             return {
               'id': '',
-              'title': 'Hibás tranzakció',
+              'title': 'invalid_transaction'.tr(), // Localized string
               'amount': 0.0,
-              'category': 'Egyéb',
+              'category': 'other'.tr(), // Localized string
               'date': DateTime.now(),
               'isExpense': false,
               'icon': Icons.error,
@@ -317,9 +318,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
         _recentTransactions = [
           {
             'id': 'error',
-            'title': 'Tranzakciók betöltése sikertelen',
+            'title': 'transactions_load_failed'.tr(), // Localized string
             'amount': 0.0,
-            'category': 'Hiba',
+            'category': 'error'.tr(), // Localized string
             'date': DateTime.now(),
             'isExpense': false,
             'icon': Icons.error_outline,
@@ -511,7 +512,7 @@ IconData _getTransactionIcon(String category, bool isExpense) {
             child: Column(
               children: [
                 Text(
-                  'Nettó egyenleg',
+                  'net_balance'.tr(), // Localized string
                   style: TextStyle(
                     color: Colors.grey[600],
                     fontSize: 14,
@@ -537,7 +538,7 @@ IconData _getTransactionIcon(String category, bool isExpense) {
             children: [
               Expanded(
                 child: _buildBalanceCard(
-                  'Bevételek (havi)',
+                  'monthly_incomes'.tr(), // Localized string
                   _totalIncome,
                   Color(0xFF00D4A3),
                   Icons.trending_up,
@@ -546,7 +547,7 @@ IconData _getTransactionIcon(String category, bool isExpense) {
               SizedBox(width: 16),
               Expanded(
                 child: _buildBalanceCard(
-                  'Kiadások (havi)',
+                  'monthly_expenses'.tr(), // Localized string
                   _totalExpenses,
                   Colors.redAccent,
                   Icons.trending_down,
@@ -618,7 +619,7 @@ IconData _getTransactionIcon(String category, bool isExpense) {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Figyelmeztetések',
+            'warnings'.tr(), // Localized string
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -700,7 +701,7 @@ IconData _getTransactionIcon(String category, bool isExpense) {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Ajánlott kihívások',
+                'recommended_challenges'.tr(), // Localized string
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -720,7 +721,7 @@ IconData _getTransactionIcon(String category, bool isExpense) {
                    );
                 },
                 child: Text(
-                  'Összes',
+                  'all'.tr(), // Localized string
                   style: TextStyle(color: Color(0xFF00D4A3)),
                 ),
               ),
@@ -781,7 +782,7 @@ IconData _getTransactionIcon(String category, bool isExpense) {
               ),
               Spacer(),
               Text(
-                '${challenge.durationDays} nap',
+                '${challenge.durationDays} ' + 'days_abbr'.tr(), // Localized string
                 style: TextStyle(
                   color: Colors.grey[600],
                   fontSize: 12,
@@ -819,7 +820,7 @@ IconData _getTransactionIcon(String category, bool isExpense) {
               ),
               SizedBox(width: 4),
               Text(
-                '${challenge.participantCount} résztvevő',
+                '${challenge.participantCount} ' + 'participants_abbr'.tr(), // Localized string
                 style: TextStyle(
                   color: Colors.grey[600],
                   fontSize: 12,
@@ -833,7 +834,7 @@ IconData _getTransactionIcon(String category, bool isExpense) {
               ),
               SizedBox(width: 4),
               Text(
-                '${challenge.rewards.points} pont',
+                '${challenge.rewards.points} ' + 'points_abbr'.tr(), // Localized string
                 style: TextStyle(
                   color: Colors.grey[600],
                   fontSize: 12,
@@ -856,7 +857,7 @@ IconData _getTransactionIcon(String category, bool isExpense) {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Legutóbbi tranzakciók',
+                'recent_transactions'.tr(), // Localized string
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -876,7 +877,7 @@ IconData _getTransactionIcon(String category, bool isExpense) {
                   );
                 },
                 child: Text(
-                  'Összes',
+                  'all'.tr(), // Localized string
                   style: TextStyle(color: Color(0xFF00D4A3)),
                 ),
               ),
@@ -970,7 +971,7 @@ IconData _getTransactionIcon(String category, bool isExpense) {
         backgroundColor: Color(0xFF00D4A3),
         icon: Icon(Icons.add, color: Colors.white),
         label: Text(
-          'Gyors hozzáadás',
+          'quick_add'.tr(), // Localized string
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
@@ -995,7 +996,7 @@ IconData _getTransactionIcon(String category, bool isExpense) {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Gyors hozzáadás',
+                'quick_add'.tr(), // Localized string
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -1018,7 +1019,7 @@ IconData _getTransactionIcon(String category, bool isExpense) {
                         }
                       },
                       icon: Icon(Icons.add, color: Colors.white),
-                      label: Text('Bevétel', style: TextStyle(color: Colors.white)),
+                      label: Text('income'.tr(), style: TextStyle(color: Colors.white)), // Localized string
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xFF00D4A3),
                         padding: EdgeInsets.symmetric(vertical: 16),
@@ -1043,7 +1044,7 @@ IconData _getTransactionIcon(String category, bool isExpense) {
                         }
                       },
                       icon: Icon(Icons.remove, color: Colors.white),
-                      label: Text('Kiadás', style: TextStyle(color: Colors.white)),
+                      label: Text('expense'.tr(), style: TextStyle(color: Colors.white)), // Localized string
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.redAccent,
                         padding: EdgeInsets.symmetric(vertical: 16),
@@ -1073,7 +1074,7 @@ IconData _getTransactionIcon(String category, bool isExpense) {
     // Formázzuk az abszolút értéket
     final formattedAmount = formatter.format(absAmount);
 
-    return '$sign$formattedAmount Ft';
+    return '$sign$formattedAmount ' + 'currency'.tr(); // Localized string
   }
 
   String _formatDate(DateTime date) {
@@ -1081,11 +1082,11 @@ IconData _getTransactionIcon(String category, bool isExpense) {
     final difference = now.difference(date).inDays;
     
     if (difference == 0) {
-      return 'Ma';
+      return 'today'.tr(); // Localized string
     } else if (difference == 1) {
-      return 'Tegnap';
+      return 'yesterday'.tr(); // Localized string
     } else if (difference < 7) {
-      return '${difference} napja';
+      return 'days_ago'.tr(namedArgs: {'days': difference.toString()}); // Localized string with parameter
     } else {
       return '${date.month}/${date.day}';
     }

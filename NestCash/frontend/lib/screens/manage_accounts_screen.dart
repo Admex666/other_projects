@@ -6,6 +6,7 @@ import 'package:frontend/services/sunburst_chart.dart';
 import 'package:frontend/screens/add_expenses_screen.dart';
 import 'package:frontend/screens/add_incomes_screen.dart';
 import 'package:frontend/config/config.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ManageAccountsScreen extends StatefulWidget {
   final String userId;
@@ -49,7 +50,7 @@ class _ManageAccountsScreenState extends State<ManageAccountsScreen> {
       final token = await _authService.getToken();
       if (token == null) {
         setState(() {
-          _errorMessage = 'Autentikációs token hiányzik.';
+          _errorMessage = 'error.auth_token_missing'.tr();
           _isLoading = false;
         });
         return;
@@ -69,20 +70,20 @@ class _ManageAccountsScreenState extends State<ManageAccountsScreen> {
         });
       } else if (response.statusCode == 404) { // Specifikus 404 kezelés
         setState(() {
-          _errorMessage = 'Számla nem található.';
+          _errorMessage = 'error_.account_not_found'.tr();
         });
       } else {
         setState(() {
           // Próbáljuk meg kinyerni a 'detail' üzenetet a backendről
           _errorMessage = _extractErrorMessage(
             response,
-            'Hiba a számlák lekérdezésekor: ${response.statusCode}'
+            'error_.fetch_accounts_error'.tr(namedArgs: {'statusCode': response.statusCode.toString()})
           );
         });
       }
     } catch (e) {
       setState(() {
-        _errorMessage = 'Hálózati hiba: $e';
+        _errorMessage = 'error_.network_error'.tr(namedArgs: {'error': e.toString()});
       });
     } finally {
       setState(() {
@@ -102,7 +103,7 @@ class _ManageAccountsScreenState extends State<ManageAccountsScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Új alszámla hozzáadása'),
+        title: Text('accounts_.new_subaccount_title'.tr()),
         content: Form(
           key: _formKey,
           child: Column(
@@ -110,40 +111,40 @@ class _ManageAccountsScreenState extends State<ManageAccountsScreen> {
             children: [
               DropdownButtonFormField<String>(
                 value: _mainAccount,
-                hint: Text('Főszámla kiválasztása'),
+                hint: Text('accounts_.select_main_account'.tr()),
                 onChanged: (value) => _mainAccount = value,
                 items: ['likvid', 'befektetes', 'megtakaritas']
                     .map((label) => DropdownMenuItem(child: Text(label), value: label))
                     .toList(),
-                validator: (value) => value == null ? 'Kötelező mező' : null,
+                validator: (value) => value == null ? 'validation.required_field'.tr() : null,
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Alszámla neve'),
+                decoration: InputDecoration(labelText: 'accounts_.subaccount_name'.tr()),
                 onSaved: (value) => _subAccountName = value,
-                validator: (value) => value == null || value.isEmpty ? 'Kötelező mező' : null,
+                validator: (value) => value == null || value.isEmpty ? 'validation.required_field'.tr() : null,
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Egyenleg'),
+                decoration: InputDecoration(labelText: 'accounts_.balance'.tr()),
                 keyboardType: TextInputType.number,
                 onSaved: (value) => _balance = double.tryParse(value ?? ''),
                 validator: (value) {
                   if (value == null || double.tryParse(value) == null) {
-                    return 'Érvénytelen szám';
+                    return 'validation.invalid_number'.tr();
                   }
                   return null;
                 },
               ),
               TextFormField(
                 initialValue: _currency,
-                decoration: InputDecoration(labelText: 'Deviza (pl. HUF, EUR, USD)'),
+                decoration: InputDecoration(labelText: 'accounts_.currency'.tr()),
                 onSaved: (value) => _currency = value ?? 'HUF',
-                validator: (value) => value == null || value.isEmpty ? 'Kötelező mező' : null,
+                validator: (value) => value == null || value.isEmpty ? 'validation.required_field'.tr() : null,
               ),
             ],
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text('Mégse')),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text('button.cancel'.tr())),
           ElevatedButton(
             onPressed: () {
               if (_formKey.currentState!.validate()) {
@@ -152,7 +153,7 @@ class _ManageAccountsScreenState extends State<ManageAccountsScreen> {
                 Navigator.pop(context);
               }
             },
-            child: Text('Hozzáadás'),
+            child: Text('button.add'.tr()),
           ),
         ],
       ),
@@ -166,7 +167,7 @@ class _ManageAccountsScreenState extends State<ManageAccountsScreen> {
       final token = await _authService.getToken();
       if (token == null) {
         setState(() {
-          _errorMessage = 'Autentikációs token hiányzik.';
+          _errorMessage = 'error_.auth_token_missing'.tr();
           _isLoading = false;
         });
         return;
@@ -186,12 +187,12 @@ class _ManageAccountsScreenState extends State<ManageAccountsScreen> {
         setState(() {
           _errorMessage = _extractErrorMessage(
             response,
-            'Hiba a hozzáadáskor: ${response.statusCode}'
+            'error_.add_error'.tr(namedArgs: {'statusCode': response.statusCode.toString()})
           );
         });
       }
     } catch (e) {
-      setState(() => _errorMessage = 'Hálózati hiba: $e');
+      setState(() => _errorMessage = 'error_.network_error'.tr(namedArgs: {'error': e.toString()}));
     } finally {
       setState(() => _isLoading = false);
     }
@@ -206,7 +207,7 @@ class _ManageAccountsScreenState extends State<ManageAccountsScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Alszámla törlése'),
+        title: Text('accounts_.delete_subaccount_title'.tr()),
         content: Form(
           key: _formKey,
           child: Column(
@@ -214,23 +215,23 @@ class _ManageAccountsScreenState extends State<ManageAccountsScreen> {
             children: [
               DropdownButtonFormField<String>(
                 value: _mainAccount,
-                hint: Text('Főszámla kiválasztása'),
+                hint: Text('accounts_.select_main_account'.tr()),
                 onChanged: (value) => _mainAccount = value,
                 items: ['likvid', 'befektetes', 'megtakaritas']
                     .map((label) => DropdownMenuItem(child: Text(label), value: label))
                     .toList(),
-                validator: (value) => value == null ? 'Kötelező mező' : null,
+                validator: (value) => value == null ? 'validation.required_field'.tr() : null,
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Alszámla neve'),
+                decoration: InputDecoration(labelText: 'accounts_.subaccount_name'.tr()),
                 onSaved: (value) => _subAccountName = value,
-                validator: (value) => value == null || value.isEmpty ? 'Kötelező mező' : null,
+                validator: (value) => value == null || value.isEmpty ? 'validation.required_field'.tr() : null,
               ),
             ],
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text('Mégse')),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text('button.cancel'.tr())),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () {
@@ -240,7 +241,7 @@ class _ManageAccountsScreenState extends State<ManageAccountsScreen> {
                 Navigator.pop(context);
               }
             },
-            child: Text('Törlés'),
+            child: Text('button.delete'.tr()),
           ),
         ],
       ),
@@ -254,7 +255,7 @@ class _ManageAccountsScreenState extends State<ManageAccountsScreen> {
       final token = await _authService.getToken();
       if (token == null) {
         setState(() {
-          _errorMessage = 'Autentikációs token hiányzik.';
+          _errorMessage = 'error_.auth_token_missing'.tr();
           _isLoading = false;
         });
         return;
@@ -271,19 +272,19 @@ class _ManageAccountsScreenState extends State<ManageAccountsScreen> {
         _fetchAccounts();
       } else if (response.statusCode == 404) { // Specifikus 404 kezelés
         setState(() {
-          _errorMessage = 'Alszámla nem található.'; // Pontosabb üzenet törléskor
+          _errorMessage = 'error.subaccount_not_found'.tr(); // Pontosabb üzenet törléskor
         });
       }
       else {
         setState(() {
           _errorMessage = _extractErrorMessage(
             response,
-            'Hiba a törléskor: ${response.statusCode}'
+            'error_.delete_error'.tr(namedArgs: {'statusCode': response.statusCode.toString()})
           );
         });
       }
     } catch (e) {
-      setState(() => _errorMessage = 'Hálózati hiba: $e');
+      setState(() => _errorMessage = 'error_.network_error'.tr(namedArgs: {'error': e.toString()}));
     } finally {
       setState(() => _isLoading = false);
     }
@@ -322,7 +323,7 @@ class _ManageAccountsScreenState extends State<ManageAccountsScreen> {
                     ),
                     Expanded(
                       child: Text(
-                        'Számlák Kezelése',
+                        'accounts_.manage_accounts_title'.tr(),
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -385,7 +386,7 @@ class _ManageAccountsScreenState extends State<ManageAccountsScreen> {
                                           },
                                           icon: Icon(Icons.add, size: 18, color: Colors.white),
                                           label: Text(
-                                            'Bevétel',
+                                            'button.add_income'.tr(),
                                             style: TextStyle(
                                               fontSize: 13,
                                               fontWeight: FontWeight.w600,
@@ -418,7 +419,7 @@ class _ManageAccountsScreenState extends State<ManageAccountsScreen> {
                                           },
                                           icon: Icon(Icons.remove, size: 18, color: Colors.white),
                                           label: Text(
-                                            'Kiadás',
+                                            'button.add_expense'.tr(),
                                             style: TextStyle(
                                               fontSize: 13,
                                               fontWeight: FontWeight.w600,
@@ -452,7 +453,7 @@ class _ManageAccountsScreenState extends State<ManageAccountsScreen> {
                                           onPressed: _showAddSubAccountDialog,
                                           icon: Icon(Icons.account_balance_wallet, size: 18, color: Colors.white),
                                           label: Text(
-                                            'Új számla',
+                                            'button.new_account'.tr(),
                                             style: TextStyle(
                                               fontSize: 13,
                                               fontWeight: FontWeight.w600,

@@ -4,6 +4,7 @@ from passlib.context import CryptContext
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from datetime import datetime
 from bson import ObjectId
+from pydantic import BaseModel
 
 from app.services.auth_service import authenticate_user, create_access_token, create_refresh_token, verify_refresh_token
 from app.core.security import get_current_user
@@ -47,24 +48,38 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
         "username": user_model.username
     }
 
+# Refresh token request model
+class RefreshTokenRequest(BaseModel):
+    refresh_token: str
+
 @router.post("/refresh")
-async def refresh_token(refresh_token: str):
-    user_id = verify_refresh_token(refresh_token)
+async def refresh_token(request: RefreshTokenRequest):
+    """
+    Refresh token endpoint
+    """
+    user_id = verify_refresh_token(request.refresh_token)
     if not user_id:
-        raise HTTPException(status_code=401, detail="Invalid refresh token")
+        raise HTTPException(status_code=401, detail="Invalid or expired refresh token")
     
     # Ellenőrizzük, hogy a user még létezik
-    user = await UserDocument.get(user_id)
-    if not user:
-        raise HTTPException(status_code=401, detail="User not found")
+    try:
+        user = await UserDocument.get(user_id)
+        if not user:
+            raise HTTPException(status_code=401, detail="User not found")
+    except Exception as e:
+        print(f"Error fetching user during token refresh: {e}")
+        raise HTTPException(status_code=401, detail="User verification failed")
     
+    # Új tokenek generálása
     new_access_token = create_access_token({"sub": user_id})
     new_refresh_token = create_refresh_token({"sub": user_id})
     
     return {
         "access_token": new_access_token,
         "refresh_token": new_refresh_token,
-        "token_type": "bearer"
+        "token_type": "bearer",
+        "user_id": str(user.id),
+        "username": user.username
     }
 
 @router.get("/me", response_model=User)

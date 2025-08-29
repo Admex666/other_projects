@@ -23,6 +23,7 @@ from app.models.account import AllUserAccountsDocument
 from app.core.security import get_current_user
 from app.services.ml_service import MLAnalysisService, CollaborativeFilteringService
 from app.services.simulation_service import WhatIfSimulationService
+from app.utils.translation_helper import translate
 
 router = APIRouter(prefix="/analysis", tags=["analysis"])
 

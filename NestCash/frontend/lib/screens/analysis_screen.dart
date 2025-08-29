@@ -1,6 +1,7 @@
 // lib/screens/analysis_screen.dart
 
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:frontend/services/analysis_service.dart';
 import 'package:frontend/models/analysis.dart';
 import 'package:frontend/utils/number_formatter.dart';
@@ -17,7 +18,7 @@ class AnalysisScreen extends StatefulWidget {
   final bool fromTutorial;
 
   const AnalysisScreen({
-    Key? key, 
+    Key? key,
     required this.userId,
     this.fromTutorial = false,
     }) : super(key: key);
@@ -30,7 +31,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
   with SingleTickerProviderStateMixin {
   final AnalysisService _analysisService = AnalysisService();
   late TabController _tabController;
-  
+
   FinancialAnalysis? _comprehensiveAnalysis;
   BasicStats? _basicStats;
   RiskAnalysis? _riskAnalysis;
@@ -42,7 +43,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
   MLBudgetResponse? _mlBudgetData;
   WhatIfResponse? _whatIfData;
   Map<String, dynamic>? _advancedInsights;
-  
+
   bool _isLoading = false;
   String _selectedPeriod = '6'; // hónapok száma
 
@@ -59,22 +60,22 @@ class _AnalysisScreenState extends State<AnalysisScreen>
 
   Future<void> _checkAnalyticsAccess() async {
     setState(() => _isCheckingAccess = true);
-    
+
     try {
       final subscriptionProvider = Provider.of<SubscriptionProvider>(context, listen: false);
-      
+
       // Várjuk meg, hogy a provider inicializálódjon
       if (!subscriptionProvider.isInitialized) {
         await subscriptionProvider.loadSubscriptionInfo(forceRefresh: true);
       }
-      
+
       // Alapvető elemzésekhez mindig van hozzáférés
       _hasBasicAnalyticsAccess = true;
-      
+
       print('Current subscription tier: ${subscriptionProvider.currentTier}');
       print('Is active: ${subscriptionProvider.isActive}');
       print('Is Plus or higher: ${subscriptionProvider.isPlusOrHigher}');
-      
+
       // Egyszerű tier-alapú ellenőrzés először
       if (subscriptionProvider.isPlusOrHigher) {
         setState(() {
@@ -88,11 +89,11 @@ class _AnalysisScreenState extends State<AnalysisScreen>
             'analysis_insights',
             context: {'analysisType': 'advanced'},
           );
-          
+
           setState(() {
             _hasAdvancedAnalyticsAccess = advancedAccessCheck.hasAccess;
           });
-          
+
           print('Feature check result: ${advancedAccessCheck.hasAccess}');
         } catch (e) {
           print('Feature check failed, falling back to tier: $e');
@@ -101,7 +102,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
           });
         }
       }
-      
+
       _loadBasicStats();
     } catch (e) {
       print('Error checking analytics access: $e');
@@ -133,7 +134,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
         _basicStats = basicStats;
       });
     } catch (e) {
-      _showError('Hiba az alapstatisztikák betöltésekor: $e');
+      _showError('basic_stats_error'.tr(namedArgs: {'error': e.toString()}));
     } finally {
       setState(() {
         _isLoading = false;
@@ -143,10 +144,10 @@ class _AnalysisScreenState extends State<AnalysisScreen>
 
   Future<void> _loadComprehensiveAnalysis() async {
     if (!_hasAdvancedAnalyticsAccess) {
-      _showUpgradeForFeature('Átfogó elemzés', SubscriptionTier.plus);
+      _showUpgradeForFeature('comprehensive_analysis'.tr(), SubscriptionTier.plus);
       return;
     }
-    
+
     setState(() {
       _isLoading = true;
     });
@@ -158,7 +159,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
         _comprehensiveAnalysis = analysis;
       });
     } catch (e) {
-      _showError('Hiba az átfogó elemzés betöltésekor: $e');
+      _showError('comprehensive_analysis_error'.tr(namedArgs: {'error': e.toString()}));
     } finally {
       setState(() {
         _isLoading = false;
@@ -178,7 +179,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
         _riskAnalysis = riskAnalysis;
       });
     } catch (e) {
-      _showError('Hiba a kockázatelemzés betöltésekor: $e');
+      _showError('risk_analysis_error'.tr(namedArgs: {'error': e.toString()}));
     } finally {
       setState(() {
         _isLoading = false;
@@ -198,7 +199,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
         _categoryAnalysis = categoryAnalysis;
       });
     } catch (e) {
-      _showError('Hiba a kategóriaelemzés betöltésekor: $e');
+      _showError('category_analysis_error'.tr(namedArgs: {'error': e.toString()}));
     } finally {
       setState(() {
         _isLoading = false;
@@ -208,10 +209,10 @@ class _AnalysisScreenState extends State<AnalysisScreen>
 
   Future<void> _loadForecastData() async {
     if (!_hasAdvancedAnalyticsAccess) {
-      _showUpgradeForFeature('Előrejelzés', SubscriptionTier.pro);
+      _showUpgradeForFeature('ai_forecast'.tr(), SubscriptionTier.pro);
       return;
     }
-    
+
     setState(() {
       _isLoading = true;
     });
@@ -227,7 +228,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
         _forecastData = forecast;
       });
     } catch (e) {
-      _showError('Hiba az előrejelzés betöltésekor: $e');
+      _showError('forecast_error'.tr(namedArgs: {'error': e.toString()}));
     } finally {
       setState(() {
         _isLoading = false;
@@ -250,7 +251,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
         _anomalyData = anomaly;
       });
     } catch (e) {
-      _showError('Hiba az anomália detektálás betöltésekor: $e');
+      _showError('anomaly_detection_error'.tr(namedArgs: {'error': e.toString()}));
     } finally {
       setState(() {
         _isLoading = false;
@@ -272,7 +273,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
         _mlBudgetData = mlBudget;
       });
     } catch (e) {
-      _showError('Hiba az ML költségvetés betöltésekor: $e');
+      _showError('ml_budget_error'.tr(namedArgs: {'error': e.toString()}));
     } finally {
       setState(() {
         _isLoading = false;
@@ -282,31 +283,31 @@ class _AnalysisScreenState extends State<AnalysisScreen>
 
   Future<void> _loadAdvancedInsights() async {
     if (!_hasAdvancedAnalyticsAccess) {
-    _showUpgradeForFeature('Fejlett betekintések', SubscriptionTier.pro);
+    _showUpgradeForFeature('advanced_ai_insights'.tr(), SubscriptionTier.pro);
     return;
   }
-    
+
     setState(() {
       _isLoading = true;
     });
 
     try {
       final monthsBack = int.parse(_selectedPeriod);
-      
+
       // Próbáljuk meg az anomália detektálást külön betölteni
       try {
         await _loadAnomalyData();
       } catch (e) {
-        print('Anomália betöltési hiba: $e');
+        print('anomaly_load_error'.tr(namedArgs: {'error': e.toString()}));
       }
-      
+
       // Próbáljuk meg az ML költségvetést külön betölteni
       try {
         await _loadMLBudgetData();
       } catch (e) {
-        print('ML költségvetés betöltési hiba: $e');
+        print('ml_budget_load_error'.tr(namedArgs: {'error': e.toString()}));
       }
-      
+
       // Alap insights betöltése
       try {
         final insights = await _analysisService.getAdvancedInsights(
@@ -316,25 +317,25 @@ class _AnalysisScreenState extends State<AnalysisScreen>
           _advancedInsights = insights;
         });
       } catch (e) {
-        print('Alapvető insights hiba: $e');
+        print('basic_insights_error'.tr(namedArgs: {'error': e.toString()}));
         // Ha minden más nem működik, adj vissza egy üres Map-et
         setState(() {
           _advancedInsights = {
             'status': 'partial_load',
-            'message': 'Egyes elemzések nem elérhetők, de az anomália detektálás és ML költségvetés működhet.',
+            'message': 'partial_load_message'.tr(),
             'loaded_at': DateTime.now().toIso8601String(),
           };
         });
       }
-      
+
     } catch (e) {
-      print('Hiba részletesen: $e');
-      _showError('Hiba a fejlett betekintések betöltésekor: $e');
+      print('detailed_error'.tr(namedArgs: {'error': e.toString()}));
+      _showError('advanced_insights_error'.tr(namedArgs: {'error': e.toString()}));
       // Üres insights beállítása, hogy ne crasheljen
       setState(() {
         _advancedInsights = {
           'error': true,
-          'message': 'A fejlett betekintések jelenleg nem elérhetők.',
+          'message': 'advanced_insights_unavailable'.tr(),
           'error_details': e.toString(),
         };
       });
@@ -417,7 +418,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
         ),
         title: Center(
           child: Text(
-            'Elemzések',
+            'analysis'.tr(),
             style: TextStyle(
               fontWeight: FontWeight.bold,
             ),
@@ -440,7 +441,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
             icon: Icon(Icons.notifications_outlined),
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Értesítések - Hamarosan elérhető!')),
+                SnackBar(content: Text('notifications_soon'.tr())),
               );
             },
           ),
@@ -481,12 +482,12 @@ class _AnalysisScreenState extends State<AnalysisScreen>
                   labelPadding: EdgeInsets.symmetric(horizontal: 12), // padding hozzáadása
                   isScrollable: true,
                   tabs: [
-                    Tab(text: 'Alapok'),
-                    Tab(text: 'Kockázat'),
-                    Tab(text: 'Kategória'),
-                    Tab(text: 'Átfogó'),
-                    Tab(text: 'Előrejelzés'),
-                    Tab(text: 'Betekintés'),
+                    Tab(text: 'basics'.tr()),
+                    Tab(text: 'risk'.tr()),
+                    Tab(text: 'category'.tr()),
+                    Tab(text: 'comprehensive'.tr()),
+                    Tab(text: 'forecast'.tr()),
+                    Tab(text: 'insights'.tr()),
                   ],
                   onTap: (index) {
                     switch (index) {
@@ -523,7 +524,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
                   children: [
                     SizedBox(width: 36),
                     Text(
-                      'Elemzési időszak:',
+                      'analysis_period'.tr(),
                       style: TextStyle(
                         color: Colors.black87,
                         fontSize: 16,
@@ -540,10 +541,10 @@ class _AnalysisScreenState extends State<AnalysisScreen>
                         value: _selectedPeriod,
                         underline: SizedBox(),
                         items: [
-                          DropdownMenuItem(value: '3', child: Text('3 hónap')),
-                          DropdownMenuItem(value: '6', child: Text('6 hónap')),
-                          DropdownMenuItem(value: '12', child: Text('1 év')),
-                          DropdownMenuItem(value: '24', child: Text('2 év')),
+                          DropdownMenuItem(value: '3', child: Text('3 ' + 'months'.tr())),
+                          DropdownMenuItem(value: '6', child: Text('6 ' + 'months'.tr())),
+                          DropdownMenuItem(value: '12', child: Text('1 ' + 'year'.tr())),
+                          DropdownMenuItem(value: '24', child: Text('2 ' + 'years'.tr())),
                         ],
                         onChanged: _onPeriodChanged,
                         style: TextStyle(
@@ -576,27 +577,27 @@ class _AnalysisScreenState extends State<AnalysisScreen>
                       _buildRiskAnalysisTab(),
                       _buildCategoryAnalysisTab(),
                       // ÁTFOGÓ ELEMZÉS LOCKED WIDGET
-                      _hasAdvancedAnalyticsAccess 
-                          ? _buildComprehensiveAnalysisTab() 
+                      _hasAdvancedAnalyticsAccess
+                          ? _buildComprehensiveAnalysisTab()
                           : FeatureLockedWidget(
-                              featureName: 'Átfogó pénzügyi elemzés',
-                              description: 'Részletes cashflow elemzés és személyre szabott pénzügyi tanácsok',
+                              featureName: 'comprehensive_financial_analysis'.tr(),
+                              description: 'comprehensive_analysis_desc'.tr(),
                               requiredTier: SubscriptionTier.plus,
                             ),
                       // ELŐREJELZÉS LOCKED WIDGET
                       _hasAdvancedAnalyticsAccess
                           ? _buildForecastTab()
                           : FeatureLockedWidget(
-                              featureName: 'AI Előrejelzés',
-                              description: 'Gépi tanulás alapú költségvetési előrejelzés és trend elemzés',
+                              featureName: 'ai_forecast'.tr(),
+                              description: 'ai_forecast_desc'.tr(),
                               requiredTier: SubscriptionTier.pro,
                             ),
                       // FEJLETT BETEKINTÉSEK LOCKED WIDGET
                       _hasAdvancedAnalyticsAccess
                           ? _buildAdvancedInsightsTab()
                           : FeatureLockedWidget(
-                              featureName: 'Fejlett AI Betekintések',
-                              description: 'Anomália detektálás, ML költségvetési javaslatok és személyre szabott insights',
+                              featureName: 'advanced_ai_insights'.tr(),
+                              description: 'advanced_ai_insights_desc'.tr(),
                               requiredTier: SubscriptionTier.pro,
                             ),
                     ],
@@ -624,7 +625,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
           children: [
             Icon(Icons.analytics_outlined, size: 64, color: Colors.grey),
             SizedBox(height: 16),
-            Text('Nincs elérhető adat', style: TextStyle(color: Colors.grey)),
+            Text('no_data_available'.tr(), style: TextStyle(color: Colors.grey)),
           ],
         ),
       );
@@ -636,42 +637,42 @@ class _AnalysisScreenState extends State<AnalysisScreen>
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _buildStatCard(
-            'Összes bevétel',
+            'total_income'.tr(),
             NumberFormatter.formatCurrency(_basicStats!.totalIncome),
             Icons.trending_up,
             Colors.green,
           ),
           SizedBox(height: 12),
           _buildStatCard(
-            'Összes kiadás',
+            'total_expense'.tr(),
             NumberFormatter.formatCurrency(_basicStats!.totalExpense),
             Icons.trending_down,
             Colors.red,
           ),
           SizedBox(height: 12),
           _buildStatCard(
-            'Nettó egyenleg',
+            'net_balance'.tr(),
             NumberFormatter.formatCurrency(_basicStats!.netBalance),
             Icons.account_balance,
             _basicStats!.netBalance >= 0 ? Colors.green : Colors.red,
           ),
           SizedBox(height: 12),
           _buildStatCard(
-            'Havi átlag kiadás',
+            'monthly_avg_expense'.tr(),
             NumberFormatter.formatCurrency(_basicStats!.monthlyAvgExpense),
             Icons.calendar_month,
             Colors.blue,
           ),
           SizedBox(height: 12),
           _buildStatCard(
-            'Legaktívabb nap',
+            'most_active_day'.tr(),
             _basicStats!.mostActiveDay,
             Icons.event,
             Colors.purple,
           ),
           SizedBox(height: 12),
           _buildStatCard(
-            'Tranzakciók száma',
+            'transaction_count'.tr(),
             '${_basicStats!.transactionCount}',
             Icons.receipt,
             Colors.orange,
@@ -692,16 +693,16 @@ class _AnalysisScreenState extends State<AnalysisScreen>
       return Center(
         child: ElevatedButton(
           onPressed: _loadRiskAnalysis,
-          child: Text('Kockázatelemzés betöltése'),
+          child: Text('load_risk_analysis'.tr()),
           style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF00D4A3)),
         ),
       );
     }
 
-    Color riskColor = _riskAnalysis!.riskLevel == 'alacsony' 
-        ? Colors.green 
-        : _riskAnalysis!.riskLevel == 'közepes' 
-            ? Colors.orange 
+    Color riskColor = _riskAnalysis!.riskLevel == 'alacsony'
+        ? Colors.green
+        : _riskAnalysis!.riskLevel == 'közepes'
+            ? Colors.orange
             : Colors.red;
 
     return SingleChildScrollView(
@@ -710,34 +711,34 @@ class _AnalysisScreenState extends State<AnalysisScreen>
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _buildRiskCard(
-            'Kockázati szint',
-            _riskAnalysis!.riskLevel.toUpperCase(),
+            'risk_level'.tr(),
+            _riskAnalysis!.riskLevel.tr().toUpperCase(),
             riskColor,
           ),
           SizedBox(height: 12),
           _buildStatCard(
-            'Kiadás/Bevétel arány',
+            'expense_income_ratio'.tr(),
             '${(_riskAnalysis!.expenseIncomeRatio * 100).toStringAsFixed(1)}%',
             Icons.percent,
             _riskAnalysis!.expenseIncomeRatio > 0.8 ? Colors.red : Colors.green,
           ),
           SizedBox(height: 12),
           _buildStatCard(
-            'Megtakarítási ráta',
+            'savings_rate'.tr(),
             '${(_riskAnalysis!.savingsRate * 100).toStringAsFixed(1)}%',
             Icons.savings,
             _riskAnalysis!.savingsRate > 0.2 ? Colors.green : Colors.orange,
           ),
           SizedBox(height: 12),
           _buildStatCard(
-            'Vészhelyzeti alap',
-            '${_riskAnalysis!.emergencyFundMonths.toStringAsFixed(1)} hónap',
+            'emergency_fund'.tr(),
+            '${_riskAnalysis!.emergencyFundMonths.toStringAsFixed(1)} ' + 'months'.tr(),
             Icons.security,
             _riskAnalysis!.emergencyFundMonths >= 6 ? Colors.green : Colors.orange,
           ),
           SizedBox(height: 12),
           _buildStatCard(
-            'Adósság/Bevétel arány',
+            'debt_income_ratio'.tr(),
             '${(_riskAnalysis!.debtIncomeRatio * 100).toStringAsFixed(1)}%',
             Icons.warning,
             _riskAnalysis!.debtIncomeRatio > 0.3 ? Colors.red : Colors.green,
@@ -758,7 +759,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
       return Center(
         child: ElevatedButton(
           onPressed: _loadCategoryAnalysis,
-          child: Text('Kategóriaelemzés betöltése'),
+          child: Text('load_category_analysis'.tr()),
           style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF00D4A3)),
         ),
       );
@@ -770,7 +771,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'Top kiadási kategóriák',
+            'top_expense_categories'.tr(),
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -778,8 +779,8 @@ class _AnalysisScreenState extends State<AnalysisScreen>
             ),
           ),
           SizedBox(height: 16),
-          
-          ..._categoryAnalysis!.topExpenseCategories.map((category) => 
+
+          ..._categoryAnalysis!.topExpenseCategories.map((category) =>
             Container(
               margin: EdgeInsets.only(bottom: 12),
               padding: EdgeInsets.all(16),
@@ -826,7 +827,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
                           ),
                         ),
                         Text(
-                          '${category['transaction_count']} tranzakció',
+                          '${category['transaction_count']} ' + 'transaction_count_singular'.tr(),
                           style: TextStyle(
                             color: Colors.grey[600],
                             fontSize: 14,
@@ -851,7 +852,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
           if (_categoryAnalysis!.missingBasicCategories.isNotEmpty) ...[
             SizedBox(height: 24),
             Text(
-              'Hiányzó alapkategóriák',
+              'missing_basic_categories'.tr(),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -874,7 +875,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
                       Icon(Icons.warning, color: Colors.orange),
                       SizedBox(width: 8),
                       Text(
-                        'Javasolt kategóriák',
+                        'suggested_categories'.tr(),
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           color: Colors.orange[800],
@@ -907,7 +908,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
       return Center(
         child: ElevatedButton(
           onPressed: _loadComprehensiveAnalysis,
-          child: Text('Átfogó elemzés betöltése'),
+          child: Text('load_comprehensive_analysis'.tr()),
           style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF00D4A3)),
         ),
       );
@@ -920,7 +921,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
         children: [
           // Cashflow trend
           Text(
-            'Pénzforgalmi trend',
+            'cashflow_trend'.tr(),
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -959,7 +960,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
                     ),
                     SizedBox(width: 8),
                     Text(
-                      'Trend: ${_comprehensiveAnalysis!.cashflowAnalysis.overallTrend}',
+                      'trend'.tr(namedArgs: {'trend': _comprehensiveAnalysis!.cashflowAnalysis.overallTrend.tr()}),
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 16,
@@ -995,7 +996,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
 
           // Ajánlások
           Text(
-            'Személyre szabott ajánlások',
+            'personalized_recommendations'.tr(),
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -1006,7 +1007,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
 
           if (_comprehensiveAnalysis!.recommendations.savingsSuggestions.isNotEmpty)
             _buildRecommendationCard(
-              'Megtakarítási javaslatok',
+              'savings_suggestions'.tr(),
               _comprehensiveAnalysis!.recommendations.savingsSuggestions,
               Icons.savings,
               Colors.green,
@@ -1014,7 +1015,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
 
           if (_comprehensiveAnalysis!.recommendations.costOptimizationTips.isNotEmpty)
             _buildRecommendationCard(
-              'Költségoptimalizálás',
+              'cost_optimization'.tr(),
               _comprehensiveAnalysis!.recommendations.costOptimizationTips,
               Icons.done,
               Colors.blue,
@@ -1022,7 +1023,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
 
           if (_comprehensiveAnalysis!.recommendations.emergencyFundAdvice.isNotEmpty)
             _buildRecommendationCard(
-              'Vészhelyzeti alap',
+              'emergency_fund_title'.tr(),
               _comprehensiveAnalysis!.recommendations.emergencyFundAdvice,
               Icons.security,
               Colors.orange,
@@ -1030,7 +1031,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
 
           if (_comprehensiveAnalysis!.recommendations.debtManagementAdvice.isNotEmpty)
             _buildRecommendationCard(
-              'Adósságkezelés',
+              'debt_management'.tr(),
               _comprehensiveAnalysis!.recommendations.debtManagementAdvice,
               Icons.warning,
               Colors.red,
@@ -1209,7 +1210,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
       return Center(
         child: ElevatedButton(
           onPressed: _loadForecastData,
-          child: Text('Előrejelzés betöltése'),
+          child: Text('load_forecast'.tr()),
           style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF00D4A3)),
         ),
       );
@@ -1222,17 +1223,17 @@ class _AnalysisScreenState extends State<AnalysisScreen>
         children: [
           // Modell pontosság
           _buildStatCard(
-            'Modell pontosság', 
+            'model_accuracy'.tr(),
             '${_forecastData!.modelAccuracy > 1 ? (_forecastData!.modelAccuracy).toStringAsFixed(1) : (_forecastData!.modelAccuracy * 100).toStringAsFixed(1)}%',
             Icons.verified,
             (_forecastData!.modelAccuracy > 1 ? _forecastData!.modelAccuracy : _forecastData!.modelAccuracy * 100) > 80 ? Colors.green : Colors.orange,
           ),
           SizedBox(height: 12),
-          
+
           // Trend
           _buildStatCard(
-            'Előrejelzett trend',
-            _forecastData!.trend.toUpperCase(),
+            'predicted_trend'.tr(),
+            _forecastData!.trend.toUpperCase().tr(),
             _forecastData!.trend == 'növekvő' ? Icons.trending_up :
             _forecastData!.trend == 'csökkenő' ? Icons.trending_down : Icons.trending_flat,
             _forecastData!.trend == 'növekvő' ? Colors.green :
@@ -1255,7 +1256,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
                   Icon(Icons.autorenew, color: Colors.blue),
                   SizedBox(width: 12),
                   Text(
-                    'Szezonális minta felismert',
+                    'seasonal_pattern_detected'.tr(),
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       color: Colors.blue[800],
@@ -1267,7 +1268,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
 
           SizedBox(height: 16),
           Text(
-            'Következő ${_forecastData!.periodsAhead} hónap előrejelzése',
+            'next_months_forecast'.tr(namedArgs: {'periods': _forecastData!.periodsAhead.toString()}),
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -1277,7 +1278,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
           SizedBox(height: 16),
 
           // Előrejelzések listája
-          ...(_forecastData!.forecasts.take(6).map((forecast) => 
+          ...(_forecastData!.forecasts.take(6).map((forecast) =>
             Container(
               margin: EdgeInsets.only(bottom: 12),
               padding: EdgeInsets.all(16),
@@ -1309,7 +1310,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Bevétel', style: TextStyle(color: Colors.grey[600])),
+                          Text('income'.tr(), style: TextStyle(color: Colors.grey[600])),
                           Text(
                             NumberFormatter.formatCurrency(forecast.predictedIncome),
                             style: TextStyle(color: Colors.green, fontWeight: FontWeight.w600),
@@ -1319,7 +1320,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Kiadás', style: TextStyle(color: Colors.grey[600])),
+                          Text('expense'.tr(), style: TextStyle(color: Colors.grey[600])),
                           Text(
                             NumberFormatter.formatCurrency(forecast.predictedExpense),
                             style: TextStyle(color: Colors.red, fontWeight: FontWeight.w600),
@@ -1329,7 +1330,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Egyenleg', style: TextStyle(color: Colors.grey[600])),
+                          Text('balance'.tr(), style: TextStyle(color: Colors.grey[600])),
                           Text(
                             NumberFormatter.formatCurrency(forecast.predictedNet),
                             style: TextStyle(
@@ -1343,7 +1344,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
                   ),
                   SizedBox(height: 8),
                   Text(
-                    'Bizonytalansági sáv: ${NumberFormatter.formatCurrency(forecast.confidenceLower)} - ${NumberFormatter.formatCurrency(forecast.confidenceUpper)}',
+                    'confidence_interval'.tr(namedArgs: {'lower': NumberFormatter.formatCurrency(forecast.confidenceLower), 'upper': NumberFormatter.formatCurrency(forecast.confidenceUpper)}),
                     style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                   ),
                 ],
@@ -1369,19 +1370,19 @@ class _AnalysisScreenState extends State<AnalysisScreen>
           children: [
             ElevatedButton(
               onPressed: _loadAdvancedInsights,
-              child: Text('Betekintések betöltése'),
+              child: Text('load_insights'.tr()),
               style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF00D4A3)),
             ),
             SizedBox(height: 16),
             ElevatedButton(
               onPressed: _loadAnomalyData,
-              child: Text('Anomáliák betöltése'),
+              child: Text('load_anomalies'.tr()),
               style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
             ),
             SizedBox(height: 16),
             ElevatedButton(
               onPressed: _loadMLBudgetData,
-              child: Text('ML Költségvetés'),
+              child: Text('ml_budget'.tr()),
               style: ElevatedButton.styleFrom(backgroundColor: Colors.purple),
             ),
           ],
@@ -1397,7 +1398,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
           // Anomáliák szekció
           if (_anomalyData != null) ...[
             Text(
-              'Költési anomáliák',
+              'spending_anomalies'.tr(),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -1405,12 +1406,12 @@ class _AnalysisScreenState extends State<AnalysisScreen>
               ),
             ),
             SizedBox(height: 16),
-            
+
             Row(
               children: [
                 Expanded(
                   child: _buildStatCard(
-                    'Összesen',
+                    'total'.tr(),
                     '${_anomalyData!.totalAnomalies}',
                     Icons.warning_amber,
                     Colors.orange,
@@ -1419,7 +1420,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
                 SizedBox(width: 12),
                 Expanded(
                   child: _buildStatCard(
-                    'Magas rizikó',
+                    'high_risk'.tr(),
                     '${_anomalyData!.anomaliesBySeverity['high'] ?? 0}',
                     Icons.error,
                     Colors.red,
@@ -1432,7 +1433,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
             // Legutóbbi anomáliák
             if (_anomalyData!.recentAnomalies.isNotEmpty) ...[
               Text(
-                'Legutóbbi anomáliák',
+                'recent_anomalies'.tr(),
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -1473,7 +1474,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
                         ),
                       ),
                       Text(
-                        anomaly.severity.toUpperCase(),
+                        anomaly.severity.toUpperCase().tr(),
                         style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
@@ -1491,7 +1492,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
           // ML Költségvetés szekció
           if (_mlBudgetData != null) ...[
             Text(
-              'ML Költségvetési javaslatok',
+              'ml_budget_recommendations'.tr(),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -1501,7 +1502,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
             SizedBox(height: 16),
 
             _buildStatCard(
-              'Ajánlott havi költségvetés',
+              'recommended_monthly_budget'.tr(),
               NumberFormatter.formatCurrency(_mlBudgetData!.totalRecommendedBudget),
               Icons.account_balance_wallet,
               Colors.green,
@@ -1509,7 +1510,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
             SizedBox(height: 12),
 
             _buildStatCard(
-              'Költési minta pontszám',
+              'spending_pattern_score'.tr(),
               () {
                 double normalizedScore;
                 if (_mlBudgetData!.spendingPatternScore > 1) {
@@ -1523,7 +1524,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
               }(),
               Icons.score,
               () {
-                double normalizedScore = _mlBudgetData!.spendingPatternScore > 1 
+                double normalizedScore = _mlBudgetData!.spendingPatternScore > 1
                   ? _mlBudgetData!.spendingPatternScore.clamp(0.0, 100.0)
                   : (_mlBudgetData!.spendingPatternScore * 100).clamp(0.0, 100.0);
                 return normalizedScore > 70 ? Colors.green : normalizedScore > 40 ? Colors.orange : Colors.red;
@@ -1533,7 +1534,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
 
             // Top kategória ajánlások
             Text(
-              'Kategória ajánlások',
+              'category_recommendations'.tr(),
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -1575,7 +1576,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Text(
-                            rec.priority.toUpperCase(),
+                            rec.priority.toUpperCase().tr(),
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 10,
@@ -1590,11 +1591,11 @@ class _AnalysisScreenState extends State<AnalysisScreen>
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Ajánlott: ${NumberFormatter.formatCurrency(rec.recommendedLimit)}',
+                          'recommended'.tr(namedArgs: {'amount': NumberFormatter.formatCurrency(rec.recommendedLimit)}),
                           style: TextStyle(color: Colors.green, fontSize: 12),
                         ),
                         Text(
-                          'Jelenlegi: ${NumberFormatter.formatCurrency(rec.currentSpending)}',
+                          'current'.tr(namedArgs: {'amount': NumberFormatter.formatCurrency(rec.currentSpending)}),
                           style: TextStyle(color: Colors.grey[600], fontSize: 12),
                         ),
                       ],
@@ -1616,7 +1617,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
             // Személyre szabott tippek
             if (_mlBudgetData!.personalizedTips.isNotEmpty) ...[
               Text(
-                'Személyre szabott tippek',
+                'personalized_tips'.tr(),
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -1633,7 +1634,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: _mlBudgetData!.personalizedTips.map((tip) => 
+                  children: _mlBudgetData!.personalizedTips.map((tip) =>
                     Padding(
                       padding: EdgeInsets.only(bottom: 8),
                       child: Row(
@@ -1663,7 +1664,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
           if (_advancedInsights != null && _advancedInsights!.isNotEmpty) ...[
             SizedBox(height: 24),
             Text(
-              'Fejlett betekintések',
+              'advanced_insights'.tr(),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -1671,7 +1672,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
               ),
             ),
             SizedBox(height: 16),
-            
+
             // Itt feldolgozhatod az _advancedInsights Map tartalmát
             // A backend válaszának struktúrájától függ, hogyan jeleníted meg
             Container(
@@ -1688,7 +1689,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
                 ],
               ),
               child: Text(
-                'Fejlett elemzési adatok feldolgozás alatt...',
+                'advanced_analysis_processing'.tr(),
                 style: TextStyle(
                   fontSize: 14,
                   color: Colors.grey[600],
