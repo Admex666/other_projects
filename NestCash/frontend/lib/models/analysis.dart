@@ -70,15 +70,54 @@ class CashflowAnalysis {
   });
 
   factory CashflowAnalysis.fromJson(Map<String, dynamic> json) {
-    return CashflowAnalysis(
-      monthlyTrends: (json['monthly_trends'] as List<dynamic>?)
-          ?.map((item) => CashflowTrend.fromJson(item))
-          .toList() ?? [],
-      weeklyTrends: (json['weekly_trends'] as List<dynamic>?)
-          ?.map((item) => CashflowTrend.fromJson(item))
-          .toList() ?? [],
-      overallTrend: json['overall_trend'] ?? 'stabil',
-    );
+    try {
+      return CashflowAnalysis(
+        monthlyTrends: _parseListSafely<CashflowTrend>(
+          json['monthly_trends'],
+          (item) => CashflowTrend.fromJson(item as Map<String, dynamic>),
+        ),
+        weeklyTrends: _parseListSafely<CashflowTrend>(
+          json['weekly_trends'],
+          (item) => CashflowTrend.fromJson(item as Map<String, dynamic>),
+        ),
+        overallTrend: json['overall_trend']?.toString() ?? 'stabil',
+      );
+    } catch (e) {
+      print('🚨 CashflowAnalysis.fromJson error: $e');
+      return CashflowAnalysis(
+        monthlyTrends: [],
+        weeklyTrends: [],
+        overallTrend: 'stabil',
+      );
+    }
+  }
+
+  // Segéd metódus a biztonságos lista parsing-hoz
+  static List<T> _parseListSafely<T>(
+    dynamic jsonList,
+    T Function(dynamic) parser,
+  ) {
+    try {
+      if (jsonList == null) return [];
+      if (jsonList is! List) return [];
+      
+      return jsonList
+          .where((item) => item != null)
+          .map((item) {
+            try {
+              return parser(item);
+            } catch (e) {
+              print('⚠️ Error parsing list item: $e');
+              return null;
+            }
+          })
+          .where((item) => item != null)
+          .cast<T>()
+          .toList();
+    } catch (e) {
+      print('⚠️ Error parsing list: $e');
+      return [];
+    }
   }
 }
 
@@ -182,15 +221,37 @@ class FinancialAnalysis {
   });
 
   factory FinancialAnalysis.fromJson(Map<String, dynamic> json) {
-    return FinancialAnalysis(
-      userId: json['user_id'] ?? '',
-      analysisDate: DateTime.parse(json['analysis_date']),
-      basicStats: BasicStats.fromJson(json['basic_stats']),
-      cashflowAnalysis: CashflowAnalysis.fromJson(json['cashflow_analysis']),
-      categoryAnalysis: CategoryAnalysis.fromJson(json['category_analysis']),
-      riskAnalysis: RiskAnalysis.fromJson(json['risk_analysis']),
-      recommendations: Recommendations.fromJson(json['recommendations']),
-    );
+    try {
+      // Biztonságos DateTime parsing
+      DateTime parseDate;
+      final analysisDateStr = json['analysis_date'];
+      
+      if (analysisDateStr != null && analysisDateStr.toString().isNotEmpty) {
+        try {
+          parseDate = DateTime.parse(analysisDateStr.toString());
+        } catch (dateParseError) {
+          print('⚠️ Invalid date format: $analysisDateStr, using current time');
+          parseDate = DateTime.now();
+        }
+      } else {
+        print('⚠️ Missing analysis_date, using current time');
+        parseDate = DateTime.now();
+      }
+
+      return FinancialAnalysis(
+        userId: json['user_id']?.toString() ?? '',
+        analysisDate: parseDate,
+        basicStats: BasicStats.fromJson(json['basic_stats'] ?? {}),
+        cashflowAnalysis: CashflowAnalysis.fromJson(json['cashflow_analysis'] ?? {}),
+        categoryAnalysis: CategoryAnalysis.fromJson(json['category_analysis'] ?? {}),
+        riskAnalysis: RiskAnalysis.fromJson(json['risk_analysis'] ?? {}),
+        recommendations: Recommendations.fromJson(json['recommendations'] ?? {}),
+      );
+    } catch (e) {
+      print('🚨 FinancialAnalysis.fromJson error: $e');
+      print('🚨 JSON keys: ${json.keys.toList()}');
+      rethrow;
+    }
   }
 }
 

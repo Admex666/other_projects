@@ -33,7 +33,7 @@ class HttpService {
         }
       } catch (e) {
         print('⚠️ Language service error: $e');
-        // Folytatjuk alapértelmezett nyelvvel
+        defaultHeaders['Accept-Language'] = 'hu'; // Alapértelmezett nyelv
       }
       
       if (headers != null) {

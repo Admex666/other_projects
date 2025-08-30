@@ -28,15 +28,25 @@ class AnalysisService {
 
   // Átfogó elemzés lekérése
   Future<FinancialAnalysis> getComprehensiveAnalysis({int monthsBack = 12}) async {
-  try {
-    final currentLang = _languageService.currentLanguage;
-    
-    print('🔍 Getting comprehensive analysis for $monthsBack months, lang: $currentLang');
-    
-    final response = await HttpService.authenticatedRequest(
-      method: 'GET',
-      url: '${ApiConfig.baseUrl}/analysis/comprehensive?months_back=$monthsBack&lang=$currentLang',
-    );
+    try {
+      // Biztonságos nyelv lekérés
+      String currentLang;
+      try {
+        currentLang = _languageService.currentLanguage;
+        if (currentLang.isEmpty) {
+          currentLang = 'hu';
+        }
+      } catch (e) {
+        print('⚠️ Error getting language, using default: $e');
+        currentLang = 'hu';
+      }
+      
+      print('🔍 Getting comprehensive analysis for $monthsBack months, lang: $currentLang');
+      
+      final response = await HttpService.authenticatedRequest(
+        method: 'GET',
+        url: '${ApiConfig.baseUrl}/analysis/comprehensive?months_back=$monthsBack&lang=$currentLang',
+      );
 
     print('📊 Comprehensive analysis response: ${response.statusCode}');
 
