@@ -191,7 +191,8 @@ class WhatIfResponse(BaseModel):
 @router.get("/comprehensive", response_model=FinancialAnalysis)
 async def get_comprehensive_analysis(
     current_user: User = Depends(get_current_user),
-    months_back: int = Query(12, ge=1, le=24, description="Hány hónapra visszamenőleg elemezzen")
+    months_back: int = Query(12, ge=1, le=24, description="Hány hónapra visszamenőleg elemezzen"),
+    lang: str = Query('hu', description="The language for analysis text")
 ):
     """Átfogó pénzügyi elemzés készítése"""
     try:
@@ -225,7 +226,7 @@ async def get_comprehensive_analysis(
         
         # 6. Ajánlások generálása
         recommendations = await _generate_recommendations(
-            basic_stats, cashflow_analysis, category_analysis, risk_analysis
+            basic_stats, cashflow_analysis, category_analysis, risk_analysis, lang
         )
         
         return FinancialAnalysis(
@@ -502,7 +503,8 @@ async def _generate_recommendations(
     basic_stats: BasicStats,
     cashflow_analysis: CashflowAnalysis,
     category_analysis: CategoryAnalysis,
-    risk_analysis: RiskAnalysis
+    risk_analysis: RiskAnalysis,
+    lang: str = 'hu'
 ) -> Recommendations:
     """Személyre szabott ajánlások generálása"""
     
@@ -513,40 +515,34 @@ async def _generate_recommendations(
     
     # Megtakarítási javaslatok
     if risk_analysis.savings_rate < 0.1:
-        savings_suggestions.append("Próbálj meg legalább 10%-ot megtakarítani a bevételeidből")
-        savings_suggestions.append("Állíts be automatikus megtakarítást minden hónap elején")
+        savings_suggestions.append(translate('savings_low_rate', lang=lang))
+        savings_suggestions.append(translate('savings_auto_setup', lang=lang))
     elif risk_analysis.savings_rate < 0.2:
-        savings_suggestions.append("Remek! Próbáld növelni a megtakarítási rátád 20%-ra")
+        savings_suggestions.append(translate('savings_increase_to_20', lang=lang))
     else:
-        savings_suggestions.append("Kiváló megtakarítási szokásaid vannak!")
+        savings_suggestions.append(translate('savings_excellent', lang=lang))
     
     # Költségoptimalizálás
     if category_analysis.top_expense_categories:
         top_cat = category_analysis.top_expense_categories[0]
-        cost_optimization_tips.append(f"A legnagyobb kiadásod: {top_cat['category']}. Érdemes átnézni ezeket a költségeket")
-    
-    if basic_stats.daily_avg_expense > basic_stats.total_income / 365:
-        cost_optimization_tips.append("Napi kiadásaid magasak a bevételeidhez képest")
-        cost_optimization_tips.append("Készíts költségvetést és kövesd a napi kiadásaidat")
+        if lang == 'en':
+            cost_optimization_tips.append(f"Your biggest expense: {top_cat['category']}. Worth reviewing these costs")
+        else:
+            cost_optimization_tips.append(f"A legnagyobb kiadásod: {top_cat['category']}. Érdemes átnézni ezeket a költségeket")
     
     # Vészhelyzeti alap
     if risk_analysis.emergency_fund_months < 3:
-        emergency_fund_advice.append("Építs fel legalább 3 havi kiadásnak megfelelő vészhelyzeti alapot")
-        emergency_fund_advice.append("Havonta tegyél félre egy kisebb összeget erre a célra")
-    elif risk_analysis.emergency_fund_months < 6:
-        emergency_fund_advice.append("Jó úton vagy! Próbáld növelni 6 hónapra a vészhelyzeti alapot")
-    else:
-        emergency_fund_advice.append("Kiváló vészhelyzeti alapod van!")
+        emergency_fund_advice.append(translate('emergency_fund_low', lang=lang))
+        emergency_fund_advice.append(translate('emergency_fund_advice', lang=lang))
     
     # Adósságkezelés
     if risk_analysis.debt_income_ratio > 0.3:
-        debt_management_advice.append("Adósságaid magasak a bevételeidhez képest")
-        debt_management_advice.append("Prioritást adj az adósságok törlesztésének")
-        debt_management_advice.append("Fontolj meg adósság-konszolidációt")
+        debt_management_advice.append(translate('debt_high', lang=lang))
+        debt_management_advice.append(translate('debt_prioritize', lang=lang))
     elif risk_analysis.debt_income_ratio > 0.1:
-        debt_management_advice.append("Törekedj az adósságok fokozatos csökkentésére")
+        debt_management_advice.append(translate('debt_reduce', lang=lang))
     else:
-        debt_management_advice.append("Jól kezeled az adósságaidat!")
+        debt_management_advice.append(translate('debt_good', lang=lang))
     
     return Recommendations(
         savings_suggestions=savings_suggestions,
@@ -1953,7 +1949,7 @@ def _generate_peer_recommendations(user_spending: float, peer_avg: float) -> Lis
     
     return recommendations
 
-def _generate_simulation_summary(results: Dict) -> Dict:
+def _generate_simulation_summary(results: Dict, lang: str) -> Dict:
     """Szimuláció összesítő generálása"""
     summary = {
         "total_scenarios": len(results),
@@ -1965,7 +1961,7 @@ def _generate_simulation_summary(results: Dict) -> Dict:
     if "category_simulation" in results:
         category_result = results["category_simulation"]
         summary["key_insights"].append(
-            f"Kategória változtatásokkal {category_result.get('total_potential_savings', 0):.0f} Ft éves megtakarítás lehetséges"
+            translate('insight_1', lang=lang, savings=category_result.get('total_potential_savings', 0))
         )
     
     # Bevétel szimuláció összesítése

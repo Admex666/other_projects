@@ -25,79 +25,79 @@ import 'package:frontend/services/accountability_service.dart';
 import 'package:frontend/screens/accountability/accountability_setup_screen.dart';
 import 'package:frontend/screens/admin_dashboard_screen.dart';
 import 'package:frontend/services/analytics_service.dart';
+import 'package:frontend/services/language_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
 
-  runApp(NestCashApp());
+  runApp(
+    EasyLocalization(
+      supportedLocales: LanguageService.supportedLocales,
+      path: 'assets/translations',
+      fallbackLocale: const Locale('hu', 'HU'),
+      child: NestCashApp(),
+    ),
+  );
 }
 
 class NestCashApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return EasyLocalization(
-        supportedLocales: const [
-        Locale('hu', 'HU'),
-        Locale('en', 'US'),
-      ],
-      path: 'assets/translations',
-      fallbackLocale: const Locale('hu', 'HU'),
-      child: MultiProvider(
-        providers: [
-          // AuthService - singleton
-          Provider<AuthService>(
-            create: (_) => AuthService(),
+    return MultiProvider(
+      providers: [
+        // AuthService - singleton
+        Provider<AuthService>(
+          create: (_) => AuthService(),
+        ),
+        
+        // SubscriptionService - depends on AuthService
+        ProxyProvider<AuthService, SubscriptionService>(
+          create: (context) => SubscriptionService(
+            authService: context.read<AuthService>(),
           ),
-          
-          // SubscriptionService - depends on AuthService
-          ProxyProvider<AuthService, SubscriptionService>(
-            create: (context) => SubscriptionService(
-              authService: context.read<AuthService>(),
-            ),
-            update: (context, auth, previous) => SubscriptionService(
-              authService: auth,
-            ),
+          update: (context, auth, previous) => SubscriptionService(
+            authService: auth,
           ),
-          
-          // SubscriptionProvider - depends on SubscriptionService
-          ChangeNotifierProxyProvider<SubscriptionService, SubscriptionProvider>(
-            create: (context) => SubscriptionProvider(
-              subscriptionService: context.read<SubscriptionService>(),
-            ),
-            update: (context, subscriptionService, previous) => 
-              previous ?? SubscriptionProvider(
-                subscriptionService: subscriptionService,
-              ),
+        ),
+        
+        // SubscriptionProvider - depends on SubscriptionService
+        ChangeNotifierProxyProvider<SubscriptionService, SubscriptionProvider>(
+          create: (context) => SubscriptionProvider(
+            subscriptionService: context.read<SubscriptionService>(),
           ),
-      
-          // ÚJ: AccountabilityProvider hozzáadása
-          ChangeNotifierProxyProvider<AuthService, AccountabilityProvider>(
-            create: (context) => AccountabilityProvider(
+          update: (context, subscriptionService, previous) => 
+            previous ?? SubscriptionProvider(
+              subscriptionService: subscriptionService,
+            ),
+        ),
+    
+        // ÚJ: AccountabilityProvider hozzáadása
+        ChangeNotifierProxyProvider<AuthService, AccountabilityProvider>(
+          create: (context) => AccountabilityProvider(
+            service: AccountabilityService(),
+          ),
+          update: (context, authService, previous) => 
+            previous ?? AccountabilityProvider(
               service: AccountabilityService(),
             ),
-            update: (context, authService, previous) => 
-              previous ?? AccountabilityProvider(
-                service: AccountabilityService(),
-              ),
-          ),
-        ],
-        child: Builder(
-          builder: (context) => MaterialApp(
-            localizationsDelegates: context.localizationDelegates,
-            supportedLocales: context.supportedLocales,
-            locale: context.locale,
-            debugShowCheckedModeBanner: false,
-            title: 'NestCash',
-            theme: ThemeData(primarySwatch: Colors.teal),
-            home: AuthWrapper(),
-            routes: {
-              '/subscription': (context) => const SubscriptionScreen(),
-              '/plans': (context) => PlansScreen(
-                currentTier: context.read<SubscriptionProvider>().currentTier,
-              ),
-            },
-          ),
+        ),
+      ],
+      child: Builder(
+        builder: (context) => MaterialApp(
+          localizationsDelegates: context.localizationDelegates,
+          supportedLocales: context.supportedLocales,
+          locale: context.locale,
+          debugShowCheckedModeBanner: false,
+          title: 'NestCash',
+          theme: ThemeData(primarySwatch: Colors.teal),
+          home: AuthWrapper(),
+          routes: {
+            '/subscription': (context) => const SubscriptionScreen(),
+            '/plans': (context) => PlansScreen(
+              currentTier: context.read<SubscriptionProvider>().currentTier,
+            ),
+          },
         ),
       ),
     );

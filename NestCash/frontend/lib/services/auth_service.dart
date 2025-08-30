@@ -13,14 +13,37 @@ class AuthService {
   /// Token érvényességének ellenőrzése
   Future<bool> isTokenValid() async {
     try {
+      print('🔍 Checking token validity...');
+      
+      final token = await getToken();
+      if (token == null || token.isEmpty) {
+        print('❌ No token found');
+        return false;
+      }
+      
+      print('📡 Making token validation request...');
+      
       final response = await HttpService.authenticatedRequest(
         method: 'GET',
         url: '${ApiConfig.baseUrl}/auth/me',
       );
       
-      return response.statusCode == 200;
+      print('📨 Token validation response: ${response.statusCode}');
+      
+      if (response.statusCode == 200) {
+        print('✅ Token is valid');
+        return true;
+      } else {
+        print('❌ Token is invalid (${response.statusCode})');
+        return false;
+      }
+      
     } catch (e) {
-      print('Token validation error: $e');
+      print('🚨 Token validation error: $e');
+      print('🚨 Error type: ${e.runtimeType}');
+      print('🚨 Error details: ${e.toString()}');
+      
+      // Ha null check error vagy connection error, akkor false-t adunk vissza
       return false;
     }
   }
