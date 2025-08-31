@@ -85,6 +85,7 @@ class NestCashApp extends StatelessWidget {
       ],
       child: Builder(
         builder: (context) => MaterialApp(
+          navigatorKey: LanguageService.navigatorKey,
           localizationsDelegates: context.localizationDelegates,
           supportedLocales: context.supportedLocales,
           locale: context.locale,

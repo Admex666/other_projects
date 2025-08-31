@@ -1,5 +1,6 @@
 // lib/screens/manage_categories_screen.dart
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:frontend/services/category_service.dart';
 import 'package:frontend/models/category.dart';
 
@@ -38,7 +39,7 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hiba a kategóriák betöltésekor: $e')),
+        SnackBar(content: Text('errorLoadingCategories'.tr(namedArgs: {'error': e.toString()}))),
       );
     } finally {
       setState(() {
@@ -51,7 +52,7 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Új kategória hozzáadása'),
+        title: Text('newCategory'.tr()),
         content: Form(
           key: _formKey,
           child: Column(
@@ -59,10 +60,10 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
             children: [
               TextFormField(
                 controller: _categoryNameController,
-                decoration: InputDecoration(labelText: 'Kategória neve'),
+                decoration: InputDecoration(labelText: 'categoryName'.tr()),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Kérjük, adjon meg egy nevet';
+                    return 'pleaseEnterName'.tr();
                   }
                   return null;
                 },
@@ -73,11 +74,11 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
                 items: [
                   DropdownMenuItem(
                     value: 'expense',
-                    child: Text('Kiadás'),
+                    child: Text('expense'.tr()),
                   ),
                   DropdownMenuItem(
                     value: 'income',
-                    child: Text('Bevétel'),
+                    child: Text('income'.tr()),
                   ),
                 ],
                 onChanged: (value) {
@@ -85,13 +86,13 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
                     _selectedType = value!;
                   });
                 },
-                decoration: InputDecoration(labelText: 'Típus'),
+                decoration: InputDecoration(labelText: 'type'.tr()),
               ),
             ],
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text('Mégse')),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text('cancel'.tr())),
           ElevatedButton(
             onPressed: () {
               if (_formKey.currentState!.validate()) {
@@ -99,7 +100,7 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
                 Navigator.pop(context);
               }
             },
-            child: Text('Hozzáadás'),
+            child: Text('add'.tr()),
           ),
         ],
       ),
@@ -118,12 +119,12 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
       await _loadCategories();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Kategória sikeresen hozzáadva!'),
+          content: Text('categorySuccessfullyAdded'.tr()),
           backgroundColor: Colors.green,),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hiba a kategória hozzáadásakor: $e')),
+        SnackBar(content: Text('errorAddingCategory'.tr(namedArgs: {'error': e.toString()}))),
       );
     }
   }
@@ -134,15 +135,15 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Kategória törlése'),
-          content: Text('Biztosan törölni szeretnéd ezt a kategóriát?'),
+          title: Text('deleteCategory'.tr()),
+          content: Text('areYouSureDeleteCategory'.tr()),
           actions: <Widget>[
             TextButton(
-              child: Text('Mégse'),
+              child: Text('cancel'.tr()),
               onPressed: () => Navigator.of(context).pop(false),
             ),
             TextButton(
-              child: Text('Törlés', style: TextStyle(color: Colors.red)),
+              child: Text('delete'.tr(), style: TextStyle(color: Colors.red)),
               onPressed: () => Navigator.of(context).pop(true),
             ),
           ],
@@ -157,14 +158,14 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
       await _loadCategories();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Kategória sikeresen törölve!'),
+          content: Text('categorySuccessfullyDeleted'.tr()),
           backgroundColor: Colors.green,
         ),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Hiba a kategória törlésekor: ${e.toString()}'),
+          content: Text('errorDeletingCategory'.tr(namedArgs: {'error': e.toString()})),
           backgroundColor: Colors.red,
         ),
       );
@@ -204,7 +205,7 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
                     ),
                     Expanded(
                       child: Text(
-                        'Kategóriák Kezelése',
+                        'manageCategories'.tr(),
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -251,7 +252,7 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
                             onPressed: _loadCategories,
                             icon: Icon(Icons.refresh, color: Colors.white),
                             label: Text(
-                              'Kategóriák frissítése',
+                              'refreshCategories'.tr(),
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
@@ -277,7 +278,7 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
                             onPressed: _showAddCategoryDialog,
                             icon: Icon(Icons.add, color: Colors.white),
                             label: Text(
-                              'Új kategória',
+                              'newCategory'.tr(),
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
@@ -329,7 +330,7 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
                                       ),
                                     ),
                                     subtitle: Text(
-                                      category.type == 'income' ? 'Bevétel' : 'Kiadás',
+                                      category.type == 'income' ? 'income'.tr() : 'expense'.tr(),
                                       style: TextStyle(
                                         fontSize: 14,
                                         color: Colors.black54,

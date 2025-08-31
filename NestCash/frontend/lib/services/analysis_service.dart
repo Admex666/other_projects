@@ -114,19 +114,31 @@ class AnalysisService {
   // Kockázatelemzés lekérése
   Future<RiskAnalysis> getRiskAnalysis({int monthsBack = 12}) async {
     try {
+      // BiztonsÃ¡gos nyelv lekÃ©rÃ©s
+      String currentLang;
+      try {
+        currentLang = _languageService.currentLanguage;
+        if (currentLang.isEmpty) {
+          currentLang = 'hu';
+        }
+      } catch (e) {
+        print('âš ï¸ Error getting language, using default: $e');
+        currentLang = 'hu';
+      }
+
       final response = await HttpService.authenticatedRequest(
         method: 'GET',
-        url: '${ApiConfig.baseUrl}/analysis/risk-analysis?months_back=$monthsBack',
+        url: '${ApiConfig.baseUrl}/analysis/risk-analysis?months_back=$monthsBack&lang=$currentLang',
       );
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
         return RiskAnalysis.fromJson(data);
       } else {
-        throw Exception('Sikertelen kockázatelemzés lekérés: ${response.body}');
+        throw Exception('Sikertelen kockÃ¡zatelemzÃ©s lekÃ©rÃ©s: ${response.body}');
       }
     } catch (e) {
-      print('🚨 AnalysisService.getRiskAnalysis error: $e');
+      print('ðŸš¨ AnalysisService.getRiskAnalysis error: $e');
       rethrow;
     }
   }

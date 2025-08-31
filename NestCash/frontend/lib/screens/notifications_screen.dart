@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/services/notification_service.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:frontend/utils/notification_utils.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class NotificationsScreen extends StatefulWidget {
   final String userId;
@@ -67,7 +68,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
     final success = await _notificationService.markAllAsRead();
     if (success) {
       _fetchNotifications();
-      _showSnackBar('Összes értesítés olvasottnak jelölve');
+      _showSnackBar('notifications.snackbar.markAllReadSuccess'.tr());
     }
   }
 
@@ -75,7 +76,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
     final success = await _notificationService.deleteNotification(notificationId);
     if (success) {
       _fetchNotifications();
-      _showSnackBar('Értesítés törölve');
+      _showSnackBar('notifications.snackbar.deleteSuccess'.tr());
     }
   }
 
@@ -266,23 +267,23 @@ class _NotificationsScreenState extends State<NotificationsScreen>
             },
             itemBuilder: (context) => [
               if (!notification.isRead)
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: 'read',
                   child: Row(
                     children: [
-                      Icon(Icons.mark_email_read),
-                      SizedBox(width: 8),
-                      Text('Olvasottnak jelöl'),
+                      const Icon(Icons.mark_email_read),
+                      const SizedBox(width: 8),
+                      Text('notifications.markAsRead'.tr()),
                     ],
                   ),
                 ),
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: 'delete',
                 child: Row(
                   children: [
-                    Icon(Icons.delete, color: Colors.red),
-                    SizedBox(width: 8),
-                    Text('Törlés', style: TextStyle(color: Colors.red)),
+                    const Icon(Icons.delete, color: Colors.red),
+                    const SizedBox(width: 8),
+                    Text('notifications.delete'.tr(), style: const TextStyle(color: Colors.red)),
                   ],
                 ),
               ),
@@ -303,19 +304,19 @@ class _NotificationsScreenState extends State<NotificationsScreen>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Értesítés törlése'),
-        content: const Text('Biztosan törölni szeretnéd ezt az értesítést?'),
+        title: Text('notifications.deleteTitle'.tr()),
+        content: Text('notifications.deleteMessage'.tr()),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Mégse'),
+            child: Text('notifications.cancel'.tr()),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               _deleteNotification(notificationId);
             },
-            child: const Text('Törlés', style: TextStyle(color: Colors.red)),
+            child: Text('notifications.delete'.tr(), style: const TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -340,9 +341,9 @@ class _NotificationsScreenState extends State<NotificationsScreen>
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Szűrők',
-              style: TextStyle(
+            Text(
+              'notifications.filtersTitle'.tr(),
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
@@ -350,16 +351,16 @@ class _NotificationsScreenState extends State<NotificationsScreen>
             const SizedBox(height: 20),
             
             // Típus szűrő
-            const Text('Típus:', style: TextStyle(fontWeight: FontWeight.w600)),
+            Text('notifications.type'.tr(), style: const TextStyle(fontWeight: FontWeight.w600)),
             const SizedBox(height: 8),
             DropdownButtonFormField<String?>(
               value: _selectedType,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: 'Összes típus',
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                hintText: 'notifications.allTypes'.tr(),
               ),
               items: [
-                const DropdownMenuItem(value: null, child: Text('Összes típus')),
+                DropdownMenuItem(value: null, child: Text('notifications.allTypes'.tr())),
                 ...NotificationUtils.getNotificationTypes().map(
                   (type) => DropdownMenuItem(
                     value: type,
@@ -376,16 +377,16 @@ class _NotificationsScreenState extends State<NotificationsScreen>
             const SizedBox(height: 16),
             
             // Prioritás szűrő
-            const Text('Prioritás:', style: TextStyle(fontWeight: FontWeight.w600)),
+            Text('notifications.priority'.tr(), style: const TextStyle(fontWeight: FontWeight.w600)),
             const SizedBox(height: 8),
             DropdownButtonFormField<String?>(
               value: _selectedPriority,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: 'Összes prioritás',
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                hintText: 'notifications.allPriorities'.tr(),
               ),
               items: [
-                const DropdownMenuItem(value: null, child: Text('Összes prioritás')),
+                DropdownMenuItem(value: null, child: Text('notifications.allPriorities'.tr())),
                 ...NotificationUtils.getPriorityLevels().map(
                   (priority) => DropdownMenuItem(
                     value: priority,
@@ -414,7 +415,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                       Navigator.pop(context);
                       _fetchNotifications();
                     },
-                    child: const Text('Szűrők törlése'),
+                    child: Text('notifications.clearFilters'.tr()),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -427,7 +428,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF00D4AA),
                     ),
-                    child: const Text('Alkalmaz'),
+                    child: Text('notifications.apply'.tr()),
                   ),
                 ),
               ],
@@ -445,19 +446,19 @@ class _NotificationsScreenState extends State<NotificationsScreen>
         .toList() ?? [];
 
     if (unreadNotifications.isEmpty && !_isLoading) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
+            const Icon(
               Icons.notifications_off,
               size: 64,
               color: Colors.grey,
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Text(
-              'Nincsenek olvasatlan értesítések',
-              style: TextStyle(
+              'notifications.noUnread'.tr(),
+              style: const TextStyle(
                 fontSize: 18,
                 color: Colors.grey,
               ),
@@ -482,19 +483,19 @@ class _NotificationsScreenState extends State<NotificationsScreen>
     final notifications = _notificationResponse?.notifications ?? [];
 
     if (notifications.isEmpty && !_isLoading) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
+            const Icon(
               Icons.notifications_none,
               size: 64,
               color: Colors.grey,
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Text(
-              'Nincsenek értesítések',
-              style: TextStyle(
+              'notifications.noNotifications'.tr(),
+              style: const TextStyle(
                 fontSize: 18,
                 color: Colors.grey,
               ),
@@ -531,10 +532,10 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                     onPressed: () => Navigator.pop(context),
                     icon: const Icon(Icons.arrow_back, color: Colors.black87),
                   ),
-                  const Expanded(
+                  Expanded(
                     child: Text(
-                      'Értesítések',
-                      style: TextStyle(
+                      'notifications.title'.tr(),
+                      style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: Colors.black87,
@@ -555,23 +556,23 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                       }
                     },
                     itemBuilder: (context) => [
-                      const PopupMenuItem(
+                      PopupMenuItem(
                         value: 'mark_all_read',
                         child: Row(
                           children: [
-                            Icon(Icons.mark_email_read),
-                            SizedBox(width: 8),
-                            Text('Összes olvasottnak jelöl'),
+                            const Icon(Icons.mark_email_read),
+                            const SizedBox(width: 8),
+                            Text('notifications.markAllRead'.tr()),
                           ],
                         ),
                       ),
-                      const PopupMenuItem(
+                      PopupMenuItem(
                         value: 'filter',
                         child: Row(
                           children: [
-                            Icon(Icons.filter_list),
-                            SizedBox(width: 8),
-                            Text('Szűrők'),
+                            const Icon(Icons.filter_list),
+                            const SizedBox(width: 8),
+                            Text('notifications.filters'.tr()),
                           ],
                         ),
                       ),
@@ -603,9 +604,9 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                             color: Colors.black87,
                           ),
                         ),
-                        const Text(
-                          'Összes',
-                          style: TextStyle(color: Colors.black87),
+                        Text(
+                          'notifications.total'.tr(),
+                          style: const TextStyle(color: Colors.black87),
                         ),
                       ],
                     ),
@@ -619,9 +620,9 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                             color: Colors.black87,
                           ),
                         ),
-                        const Text(
-                          'Olvasatlan',
-                          style: TextStyle(color: Colors.black87),
+                        Text(
+                          'notifications.unread'.tr(),
+                          style: const TextStyle(color: Colors.black87),
                         ),
                       ],
                     ),
@@ -644,9 +645,9 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                 ),
                 labelColor: const Color(0xFF00D4AA),
                 unselectedLabelColor: Colors.black87,
-                tabs: const [
-                  Tab(text: 'Olvasatlan'),
-                  Tab(text: 'Összes'),
+                tabs: [
+                  Tab(text: 'notifications.unreadTab'.tr()),
+                  Tab(text: 'notifications.allTab'.tr()),
                 ],
               ),
             ),

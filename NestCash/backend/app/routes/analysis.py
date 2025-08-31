@@ -207,22 +207,22 @@ async def get_comprehensive_analysis(
         }).to_list()
         
         if not transactions:
-            raise HTTPException(status_code=404, detail="Nincs elegendő tranzakció az elemzéshez")
+            raise HTTPException(status_code=404, detail=translate('no_transactions_for_analysis', lang=lang))
 
         # 1. Alapvető statisztikák
-        basic_stats = await _calculate_basic_stats(transactions)
+        basic_stats = await _calculate_basic_stats(transactions, lang)
         
         # 2. Cashflow elemzés
-        cashflow_analysis = await _analyze_cashflow(transactions)
+        cashflow_analysis = await _analyze_cashflow(transactions, lang)
         
         # 3. Kategória elemzés
-        category_analysis = await _analyze_categories(transactions)
+        category_analysis = await _analyze_categories(transactions, lang)
         
         # 4. Időbeli elemzés
-        time_analysis = await _analyze_time_patterns(transactions)
+        time_analysis = await _analyze_time_patterns(transactions, lang)
         
         # 5. Kockázatelemzés
-        risk_analysis = await _analyze_risk(transactions, current_user.id)
+        risk_analysis = await _analyze_risk(transactions, current_user.id, lang)
         
         # 6. Ajánlások generálása
         recommendations = await _generate_recommendations(
@@ -241,15 +241,15 @@ async def get_comprehensive_analysis(
         )
         
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Elemzési hiba: {str(e)}")
+        raise HTTPException(status_code=500, detail=translate('analysis_error', lang=lang, error=str(e)))
 
-async def _calculate_basic_stats(transactions: List[Transaction]) -> BasicStats:
+async def _calculate_basic_stats(transactions: List[Transaction], lang: str = 'hu') -> BasicStats:
     """Alapvető statisztikák számítása"""
     if not transactions:
         return BasicStats(
             total_income=0, total_expense=0, net_balance=0,
             daily_avg_expense=0, monthly_avg_expense=0,
-            most_active_day="Hétfő", most_active_hour=12, transaction_count=0
+            most_active_day=translate('monday', lang=lang), most_active_hour=12, transaction_count=0
         )
     
     # Bevételek és kiadások szétválasztása
@@ -276,7 +276,7 @@ async def _calculate_basic_stats(transactions: List[Transaction]) -> BasicStats:
         # Ha van időbélyeg, használjuk, különben 12-t feltételezünk
         hours.append(getattr(t, 'hour', 12))
     
-    most_active_day = Counter(weekdays).most_common(1)[0][0] if weekdays else "Hétfő"
+    most_active_day = Counter(weekdays).most_common(1)[0][0] if weekdays else translate('monday', lang=lang)
     most_active_hour = Counter(hours).most_common(1)[0][0] if hours else 12
     
     return BasicStats(
@@ -290,7 +290,7 @@ async def _calculate_basic_stats(transactions: List[Transaction]) -> BasicStats:
         transaction_count=len(transactions)
     )
 
-async def _analyze_cashflow(transactions: List[Transaction]) -> CashflowAnalysis:
+async def _analyze_cashflow(transactions: List[Transaction], lang: str = 'hu') -> CashflowAnalysis:
     """Cashflow elemzés"""
     monthly_data = defaultdict(lambda: {"income": 0, "expense": 0})
     weekly_data = defaultdict(lambda: {"income": 0, "expense": 0})
@@ -331,13 +331,13 @@ async def _analyze_cashflow(transactions: List[Transaction]) -> CashflowAnalysis
     if len(monthly_trends) >= 3:
         recent_nets = [t.net for t in monthly_trends[-3:]]
         if all(recent_nets[i] <= recent_nets[i+1] for i in range(len(recent_nets)-1)):
-            trend = "növekvő"
+            trend = translate('increasing', lang=lang)
         elif all(recent_nets[i] >= recent_nets[i+1] for i in range(len(recent_nets)-1)):
-            trend = "csökkenő"
+            trend = translate('decreasing', lang=lang)
         else:
-            trend = "stabil"
+            trend = translate('stable', lang=lang)
     else:
-        trend = "stabil"
+        trend = translate('stable', lang=lang)
     
     return CashflowAnalysis(
         monthly_trends=monthly_trends,
@@ -345,12 +345,12 @@ async def _analyze_cashflow(transactions: List[Transaction]) -> CashflowAnalysis
         overall_trend=trend
     )
 
-async def _analyze_categories(transactions: List[Transaction]) -> CategoryAnalysis:
+async def _analyze_categories(transactions: List[Transaction], lang: str = 'hu') -> CategoryAnalysis:
     """Kategória elemzés"""
     category_data = defaultdict(lambda: {"income": 0, "expense": 0, "count": 0})
     
     for t in transactions:
-        cat = t.kategoria or "Egyéb"
+        cat = t.kategoria or translate('other', lang=lang)
         category_data[cat]["count"] += 1
         
         if t.amount > 0:
@@ -373,8 +373,10 @@ async def _analyze_categories(transactions: List[Transaction]) -> CategoryAnalys
     
     # Alapvető kategóriák ellenőrzése
     basic_categories = [
-        "Élelmiszer", "Lakhatás", "Közlekedés", "Egészségügy", 
-        "Szórakozás", "Ruházat", "Kommunikáció", "Oktatás"
+        translate('food', lang=lang), translate('housing', lang=lang), 
+        translate('transport', lang=lang), translate('healthcare', lang=lang), 
+        translate('entertainment', lang=lang), translate('clothing', lang=lang), 
+        translate('communication', lang=lang), translate('education', lang=lang)
     ]
     existing_categories = set(category_data.keys())
     missing_basic_categories = [cat for cat in basic_categories if cat not in existing_categories]
@@ -391,7 +393,7 @@ async def _analyze_categories(transactions: List[Transaction]) -> CategoryAnalys
         missing_basic_categories=missing_basic_categories
     )
 
-async def _analyze_time_patterns(transactions: List[Transaction]) -> TimeAnalysis:
+async def _analyze_time_patterns(transactions: List[Transaction], lang: str = 'hu') -> TimeAnalysis:
     """Időbeli minták elemzése"""
     weekday_expenses = defaultdict(float)
     hour_counts = defaultdict(int)
@@ -413,7 +415,7 @@ async def _analyze_time_patterns(transactions: List[Transaction]) -> TimeAnalysi
     by_hour = dict(hour_counts)
     
     # Csúcsok meghatározása
-    peak_spending_day = max(by_weekday.items(), key=lambda x: x[1])[0] if by_weekday else "Hétfő"
+    peak_spending_day = max(by_weekday.items(), key=lambda x: x[1])[0] if by_weekday else translate('monday', lang=lang)
     peak_spending_hour = max(by_hour.items(), key=lambda x: x[1])[0] if by_hour else 12
     
     return TimeAnalysis(
@@ -423,7 +425,7 @@ async def _analyze_time_patterns(transactions: List[Transaction]) -> TimeAnalysi
         peak_spending_hour=peak_spending_hour
     )
 
-async def _analyze_risk(transactions: List[Transaction], user_id: str) -> RiskAnalysis:
+async def _analyze_risk(transactions: List[Transaction], user_id: str, lang: str = 'hu') -> RiskAnalysis:
     """Kockázatelemzés"""
     # Alapadatok
     total_income = sum(t.amount for t in transactions if t.amount > 0)
@@ -485,11 +487,11 @@ async def _analyze_risk(transactions: List[Transaction], user_id: str) -> RiskAn
         risk_score += 1
     
     if risk_score >= 5:
-        risk_level = "magas"
+        risk_level = translate('high_risk', lang=lang)
     elif risk_score >= 3:
-        risk_level = "közepes"
+        risk_level = translate('medium_risk', lang=lang)
     else:
-        risk_level = "alacsony"
+        risk_level = translate('low_risk', lang=lang)
     
     return RiskAnalysis(
         expense_income_ratio=expense_income_ratio,
@@ -515,34 +517,34 @@ async def _generate_recommendations(
     
     # Megtakarítási javaslatok
     if risk_analysis.savings_rate < 0.1:
-        savings_suggestions.append(translate('savings_low_rate', lang=lang))
-        savings_suggestions.append(translate('savings_auto_setup', lang=lang))
+        savings_suggestions.append(translate('low_savings_rate', lang=lang))
+        savings_suggestions.append(translate('auto_savings_setup', lang=lang))
     elif risk_analysis.savings_rate < 0.2:
-        savings_suggestions.append(translate('savings_increase_to_20', lang=lang))
+        savings_suggestions.append(translate('increase_savings_to_20', lang=lang))
     else:
-        savings_suggestions.append(translate('savings_excellent', lang=lang))
+        savings_suggestions.append(translate('excellent_savings', lang=lang))
     
     # Költségoptimalizálás
     if category_analysis.top_expense_categories:
         top_cat = category_analysis.top_expense_categories[0]
-        if lang == 'en':
-            cost_optimization_tips.append(f"Your biggest expense: {top_cat['category']}. Worth reviewing these costs")
-        else:
-            cost_optimization_tips.append(f"A legnagyobb kiadásod: {top_cat['category']}. Érdemes átnézni ezeket a költségeket")
+        cost_optimization_tips.append(
+            translate('cost_optimization_top_category', lang=lang, 
+                    category=top_cat['category'])
+        )
     
     # Vészhelyzeti alap
     if risk_analysis.emergency_fund_months < 3:
-        emergency_fund_advice.append(translate('emergency_fund_low', lang=lang))
+        emergency_fund_advice.append(translate('low_emergency_fund', lang=lang))
         emergency_fund_advice.append(translate('emergency_fund_advice', lang=lang))
     
     # Adósságkezelés
     if risk_analysis.debt_income_ratio > 0.3:
-        debt_management_advice.append(translate('debt_high', lang=lang))
+        debt_management_advice.append(translate('high_debt', lang=lang))
         debt_management_advice.append(translate('debt_prioritize', lang=lang))
     elif risk_analysis.debt_income_ratio > 0.1:
-        debt_management_advice.append(translate('debt_reduce', lang=lang))
+        debt_management_advice.append(translate('reduce_debt', lang=lang))
     else:
-        debt_management_advice.append(translate('debt_good', lang=lang))
+        debt_management_advice.append(translate('good_debt', lang=lang))
     
     return Recommendations(
         savings_suggestions=savings_suggestions,
@@ -554,7 +556,8 @@ async def _generate_recommendations(
 @router.get("/basic-stats", response_model=BasicStats)
 async def get_basic_stats(
     current_user: User = Depends(get_current_user),
-    months_back: int = Query(6, ge=1, le=24)
+    months_back: int = Query(6, ge=1, le=24),
+    lang: str = Query('hu', description="Language for analysis text")
 ):
     """Alapvető statisztikák lekérése"""
     end_date = datetime.now()
@@ -565,12 +568,13 @@ async def get_basic_stats(
         "date": {"$gte": start_date.strftime("%Y-%m-%d"), "$lte": end_date.strftime("%Y-%m-%d")}
     }).to_list()
     
-    return await _calculate_basic_stats(transactions)
+    return await _calculate_basic_stats(transactions, lang)
 
 @router.get("/risk-analysis", response_model=RiskAnalysis)
 async def get_risk_analysis(
     current_user: User = Depends(get_current_user),
-    months_back: int = Query(12, ge=1, le=24)
+    months_back: int = Query(12, ge=1, le=24),
+    lang: str = Query('hu', description="Language for analysis text")
 ):
     """Kockázatelemzés lekérése"""
     end_date = datetime.now()
@@ -581,12 +585,13 @@ async def get_risk_analysis(
         "date": {"$gte": start_date.strftime("%Y-%m-%d"), "$lte": end_date.strftime("%Y-%m-%d")}
     }).to_list()
     
-    return await _analyze_risk(transactions, current_user.id)
+    return await _analyze_risk(transactions, current_user.id, lang)
 
 @router.get("/category-analysis", response_model=CategoryAnalysis)
 async def get_category_analysis(
     current_user: User = Depends(get_current_user),
-    months_back: int = Query(6, ge=1, le=24)
+    months_back: int = Query(6, ge=1, le=24),
+    lang: str = Query('hu', description="Language for analysis text")
 ):
     """Kategóriaelemzés lekérése"""
     end_date = datetime.now()
@@ -597,7 +602,7 @@ async def get_category_analysis(
         "date": {"$gte": start_date.strftime("%Y-%m-%d"), "$lte": end_date.strftime("%Y-%m-%d")}
     }).to_list()
     
-    return await _analyze_categories(transactions)
+    return await _analyze_categories(transactions, lang)
 
 # ÚJ ROUTE-OK - add hozzá a meglévő route-ok mellé
 
@@ -606,7 +611,8 @@ async def get_spending_forecast(
     current_user: User = Depends(get_current_user),
     forecast_type: str = Query("monthly", regex="^(monthly|weekly)$"),
     periods_ahead: int = Query(6, ge=1, le=12),
-    months_history: int = Query(12, ge=3, le=24)
+    months_history: int = Query(12, ge=3, le=24),
+    lang: str = Query('hu', description="Language for analysis text")
 ):
     """Havi/heti kiadások előrejelzése idősor elemzéssel"""
     try:
@@ -620,7 +626,7 @@ async def get_spending_forecast(
         }).to_list()
         
         if len(transactions) < 30:
-            raise HTTPException(status_code=400, detail="Nincs elegendő historikus adat az előrejelzéshez (min. 30 tranzakció)")
+            raise HTTPException(status_code=400, detail=translate('no_transactions_for_analysis', lang=lang))
         
         # DataFrame készítése
         df = pd.DataFrame([{
@@ -654,13 +660,13 @@ async def get_spending_forecast(
         period_data = period_data.fillna(0)
         
         if len(period_data) < 3:
-            raise HTTPException(status_code=400, detail="Nincs elegendő időszak az előrejelzéshez")
+            raise HTTPException(status_code=400, detail=translate('no_periods_for_forecast', lang=lang))
         
         # Előrejelzés készítése
         forecasts = []
         model_accuracy = 0.0
         seasonal_detected = False
-        trend = "stabil"
+        trend = translate("stable", lang=lang)
         
         # Expense előrejelzés (ezt általában jobban lehet előre jelezni)
         expense_series = period_data['expense'].values
@@ -707,9 +713,9 @@ async def get_spending_forecast(
         older_expenses = expense_series[-6:-3] if len(expense_series) >= 6 else expense_series[:-3]
         if len(older_expenses) > 0:
             if np.mean(recent_expenses) > np.mean(older_expenses) * 1.05:
-                trend = "növekvő"
+                trend = translate("increasing", lang=lang)
             elif np.mean(recent_expenses) < np.mean(older_expenses) * 0.95:
-                trend = "csökkenő"
+                trend = translate("decreasing", lang=lang)
         
         # Forecasts létrehozása
         for i in range(periods_ahead):
@@ -751,12 +757,13 @@ async def get_spending_forecast(
         )
         
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Előrejelzési hiba: {str(e)}")
+        raise HTTPException(status_code=500, detail=translate('forecast_error', lang=lang) + f" {str(e)}")
 
 @router.get("/seasonal-analysis", response_model=SeasonalAnalysis)
 async def get_seasonal_analysis(
     current_user: User = Depends(get_current_user),
-    months_back: int = Query(24, ge=12, le=36)
+    months_back: int = Query(24, ge=12, le=36),
+    lang: str = Query("hu", description="Language for analysis text")
 ):
     """Szezonalitás elemzése"""
     try:
@@ -775,7 +782,7 @@ async def get_seasonal_analysis(
                 has_seasonality=False,
                 seasonal_periods=[],
                 peak_seasons={},
-                seasonal_recommendations=["Nincs elegendő adat a szezonalitás elemzéséhez"]
+                seasonal_recommendations=[translate('no_data_for_seasonality', lang=lang)]
             )
         
         # DataFrame készítése
@@ -784,7 +791,7 @@ async def get_seasonal_analysis(
             'amount': abs(t.amount),
             'month': datetime.strptime(t.date, '%Y-%m-%d').month,
             'month_name': datetime.strptime(t.date, '%Y-%m-%d').strftime('%B'),
-            'category': t.kategoria or 'Egyéb'
+            'category': t.kategoria or translate('other', lang=lang)
         } for t in transactions])
         
         df['date'] = pd.to_datetime(df['date'])
@@ -837,14 +844,14 @@ async def get_seasonal_analysis(
         recommendations = []
         if has_seasonality:
             if 'December' in peak_seasons or 'November' in peak_seasons:
-                recommendations.append("Karácsonyi időszakban készülj fel magasabb kiadásokra - tervezz előre!")
+                recommendations.append(translate('christmas_higher_spending', lang=lang))
             if 'January' in peak_seasons:
-                recommendations.append("Januárban gyakran magasabbak a kiadások az új év fogadalmai miatt")
+                recommendations.append(translate('january_higher_spending', lang=lang))
             if len(peak_seasons) > 0:
                 highest_month = max(peak_seasons, key=peak_seasons.get)
-                recommendations.append(f"A legmagasabb kiadásaid {highest_month}-ban vannak - érdemes erre a hónapra külön költségvetést készíteni")
+                recommendations.append(translate('highest_spending_month', lang=lang, highest_month=highest_month))
         else:
-            recommendations.append("Költési szokásaid egyenletesek az év során - ez jó költségvetési fegyelem jele!")
+            recommendations.append(translate('stable_spending', lang=lang))
         
         return SeasonalAnalysis(
             has_seasonality=has_seasonality,
@@ -854,17 +861,18 @@ async def get_seasonal_analysis(
         )
         
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Szezonális elemzési hiba: {str(e)}")
+        raise HTTPException(status_code=500, detail=translate('seasonal_analysis_error', lang=lang, error=str(e)))
 
 @router.get("/anomaly-detection", response_model=AnomalyResponse)
 async def detect_anomalies(
     current_user: User = Depends(get_current_user),
     months_back: int = Query(6, ge=3, le=12),
-    sensitivity: float = Query(0.1, ge=0.05, le=0.3, description="Anomália érzékenység (alacsonyabb = szigorúbb)")
+    sensitivity: float = Query(0.1, ge=0.05, le=0.3, description="Anomália érzékenység (alacsonyabb = szigorúbb)"),
+    lang: str = Query("hu", description="Language for analysis text")
 ):
     """Rendkívüli kiadások azonosítása anomália detektálással"""
     try:
-        # JAVÍTÁS: Paraméter validálás és konverzió
+        # JAVÍTÁS: Paraméter validálás és konverziók
         sensitivity = float(sensitivity) if not isinstance(sensitivity, float) else sensitivity
         months_back = int(months_back) if not isinstance(months_back, int) else months_back
         
@@ -879,7 +887,7 @@ async def detect_anomalies(
         }).to_list()
         
         if len(transactions) < 50:
-            raise HTTPException(status_code=400, detail="Nincs elegendő tranzakció az anomália detektáláshoz")
+            raise HTTPException(status_code=400, detail=translate('no_data_for_anomaly', lang=lang))
         
         # Feature engineering
         features_list = []
@@ -895,7 +903,7 @@ async def detect_anomalies(
                 'is_weekend': date_obj.weekday() >= 5,
                 'month': date_obj.month,
                 'day_of_month': date_obj.day,
-                'category_encoded': hash(t.kategoria or 'Egyéb') % 100,  # Egyszerű encoding
+                'category_encoded': hash(t.kategoria or translate('other', lang=lang)) % 100,  # Egyszerű encoding
             }
             
             features_list.append(list(features.values()))
@@ -912,7 +920,7 @@ async def detect_anomalies(
         scaler = StandardScaler()
         features_scaled = scaler.fit_transform(features_array)
         
-        # Anomália detektálás - JAVÍTÁS: float() konverzió
+        # Anomália detektálás - JAVÍTÁS: float() konverziók
         iso_forest = IsolationForest(
             n_estimators=100,
             contamination=float(sensitivity),
@@ -960,7 +968,7 @@ async def detect_anomalies(
                     transaction_id=str(t.id),
                     date=t.date,
                     amount=amount,
-                    category=t.kategoria or "Egyéb",
+                    category=t.kategoria or translate('other', lang=lang),
                     anomaly_score=float(score),
                     anomaly_type=anomaly_type,
                     severity=severity
@@ -976,18 +984,18 @@ async def detect_anomalies(
         # Ajánlások
         recommendations = []
         if len(anomalies) > len(transactions) * 0.15:  # Ha túl sok anomália
-            recommendations.append("Sok szokatlan tranzakciót észleltünk - érdemes átnézni a költési szokásaidat")
+            recommendations.append(translate('many_anomalies_found', lang=lang))
         
         high_severity_count = severity_counts["high"]
         if high_severity_count > 0:
-            recommendations.append(f"{high_severity_count} magas kockázatú szokatlan kiadást találtunk")
-            recommendations.append("Ellenőrizd ezeket a tranzakciókat - lehetnek hibás vagy váratlan költések")
+            recommendations.append(translate('high_risk_anomalies', lang=lang, count=high_severity_count))
+            recommendations.append(translate('check_transactions', lang=lang))
         
         if any(a.anomaly_type == "time_anomaly" for a in anomalies):
-            recommendations.append("Szokatlan időpontokban történt vásárlásokat észleltünk")
+            recommendations.append(translate('unusual_time_spending', lang=lang))
         
         if not recommendations:
-            recommendations.append("Költési szokásaid stabilak és kiszámíthatóak!")
+            recommendations.append(translate('spending_stable_predictable', lang=lang))
         
         return AnomalyResponse(
             total_anomalies=len(anomalies),
@@ -998,12 +1006,13 @@ async def detect_anomalies(
         )
         
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Anomália detektálási hiba: {str(e)}")
+        raise HTTPException(status_code=500, detail=translate('anomaly_detection_error', lang=lang, error=str(e)))
 
 @router.get("/ml-budget-recommendations", response_model=MLBudgetResponse)
 async def get_ml_budget_recommendations(
     current_user: User = Depends(get_current_user),
-    months_back: int = Query(6, ge=3, le=12)
+    months_back: int = Query(6, ge=3, le=12),
+    lang: str = Query('hu', description="Language for analysis text")
 ):
     """ML alapú költségvetési korlátok javaslása kategóriánként"""
     try:
@@ -1018,12 +1027,12 @@ async def get_ml_budget_recommendations(
         }).to_list()
         
         if len(transactions) < 30:
-            raise HTTPException(status_code=400, detail="Nincs elegendő tranzakció a költségvetési javaslatokhoz")
+            raise HTTPException(status_code=400, detail=translate('no_data_for_budget', lang=lang))
         
         # Kategóriánkénti elemzés
         category_data = defaultdict(list)
         for t in transactions:
-            category = t.kategoria or "Egyéb"
+            category = t.kategoria or translate('other', lang=lang)
             amount = abs(t.amount)
             date_obj = datetime.strptime(t.date, '%Y-%m-%d')
             
@@ -1072,20 +1081,21 @@ async def get_ml_budget_recommendations(
             if cv < 0.3:  # Stabil költés
                 recommended_limit = monthly_mean * 1.1  # 10% buffer
                 confidence = 0.9
-                reasoning = "Stabil költési mintázat alapján"
+                reasoning = translate('stable_spending_pattern', lang=lang)
             elif cv < 0.6:  # Közepesen változó
                 recommended_limit = monthly_mean * 1.25  # 25% buffer
                 confidence = 0.75
-                reasoning = "Változó költési mintázat miatt nagyobb tartalékkal"
+                reasoning = translate('variable_spending_pattern', lang=lang)
             else:  # Nagyon változó
                 recommended_limit = max(monthly_mean * 1.5, percentile_90)  # 50% buffer vagy 90. percentilis
                 confidence = 0.6
-                reasoning = "Kiszámíthatatlan költési mintázat miatt biztonsági tartalékkal"
+                reasoning = translate('unpredictable_spending_pattern', lang=lang)
             
             # Prioritás meghatározása
-            if category.lower() in ['élelmiszer', 'lakhatás', 'közlekedés', 'egészségügy']:
+            category_lower = category.lower()
+            if any(basic_cat in category_lower for basic_cat in [translate('food', lang=lang).lower(), translate('housing', lang=lang).lower(), translate('transport', lang=lang).lower(), translate('healthcare', lang=lang).lower()]):
                 priority = "high"
-            elif category.lower() in ['ruházat', 'kommunikáció', 'oktatás']:
+            elif any(medium_cat in category_lower for medium_cat in [translate('clothing', lang=lang).lower(), translate('communication', lang=lang).lower(), translate('education', lang=lang).lower()]):
                 priority = "medium" 
             else:
                 priority = "low"
@@ -1106,27 +1116,28 @@ async def get_ml_budget_recommendations(
         
         # Kockázati szint
         if overall_predictability > 80:
-            risk_level = "low"
+            risk_level = translate('low_risk', lang=lang)
         elif overall_predictability > 60:
-            risk_level = "medium"
+            risk_level = translate('medium_risk', lang=lang)
         else:
-            risk_level = "high"
+            risk_level = translate('high_risk', lang=lang)
         
         # Személyre szabott tippek
         tips = []
         if overall_predictability < 60:
-            tips.append("Költési szokásaid kiszámíthatatlanok - próbálj rendszeresebb költségvetést vezetni")
+            tips.append(translate('spending_unpredictable', lang=lang))
         
         high_priority_categories = [r for r in recommendations if r.priority == "high"]
         if len(high_priority_categories) < 4:
-            tips.append("Add hozzá az alapvető kategóriákat (élelmiszer, lakhatás, közlekedés)")
+            tips.append(translate('spending_add_categories', lang=lang))
         
         variable_categories = [r for r in recommendations if r.confidence < 0.7]
         if variable_categories:
-            tips.append(f"Ezekben a kategóriákban változékony a költésed: {', '.join([r.category for r in variable_categories[:3]])}")
+            categories_str = ', '.join([r.category for r in variable_categories[:3]])
+            tips.append(translate('spending_variable_categories', lang=lang, categories=categories_str))
         
         if not tips:
-            tips.append("Jól strukturált költési szokásaid vannak!")
+            tips.append(translate('spending_structured', lang=lang))
         
         # Prioritás szerinti rendezés
         recommendations.sort(key=lambda x: (x.priority == "high", x.priority == "medium", x.confidence), reverse=True)
@@ -1140,69 +1151,13 @@ async def get_ml_budget_recommendations(
         )
         
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"ML költségvetési javaslat hiba: {str(e)}")
-    
-# app/routes/analysis.py - Kiegészítések a meglévő kódhoz
-
-# Importok kiegészítése a fájl tetején
-from app.services.ml_service import MLAnalysisService, CollaborativeFilteringService
-from app.services.simulation_service import WhatIfSimulationService
-
-# ÚJ PYDANTIC MODELLEK - add hozzá a meglévő modellek mellé
-
-class PaymentMethodAnalysis(BaseModel):
-    payment_method: str
-    transaction_count: int
-    total_amount: float
-    avg_transaction: float
-    usage_percentage: float
-    trend: str  # "növekvő", "csökkenő", "stabil"
-
-class IncomeSourceAnalysis(BaseModel):
-    source: str  # kategória vagy leírás alapján
-    total_amount: float
-    percentage_of_total: float
-    regularity_score: float  # 0-1, mennyire rendszeres
-    risk_level: str  # "alacsony", "közepes", "magas"
-
-class IncomeAnalysisResponse(BaseModel):
-    total_monthly_income: float
-    income_sources: List[IncomeSourceAnalysis]
-    diversification_score: float  # 0-100
-    stability_score: float  # 0-100
-    recommendations: List[str]
-
-class SimilarUserProfile(BaseModel):
-    similarity_score: float
-    spending_pattern: Dict[str, float]  # kategória -> percentage
-    avg_monthly_spending: float
-    savings_rate: float
-
-class CollaborativeAnalysisResponse(BaseModel):
-    user_position: str  # "alatta", "átlag", "felette"
-    similar_users_count: int
-    peer_comparison: Dict[str, float]  # metric -> user_value vs peer_average
-    recommendations_from_peers: List[str]
-    spending_efficiency_score: float  # 0-100
-
-class WhatIfScenario(BaseModel):
-    scenario_name: str
-    changes: Dict[str, float]  # kategória -> új havi összeg
-    monthly_impact: float
-    annual_savings: float
-    feasibility: str  # "könnyű", "közepes", "nehéz"
-
-class WhatIfResponse(BaseModel):
-    scenarios: List[WhatIfScenario]
-    recommended_scenario: str
-    total_potential_savings: float
-
-# ÚJ ROUTE-OK - add hozzá a meglévő route-ok mellé
+        raise HTTPException(status_code=500, detail=translate('analysis_error', lang=lang, error=str(e)))
 
 @router.get("/income-diversification", response_model=IncomeAnalysisResponse)
 async def analyze_income_diversification(
     current_user: User = Depends(get_current_user),
-    months_back: int = Query(12, ge=3, le=24)
+    months_back: int = Query(12, ge=3, le=24),
+    lang: str = Query('hu', description="Language for analysis text")
 ):
     """Bevételi források diverzifikációjának elemzése"""
     try:
@@ -1217,13 +1172,13 @@ async def analyze_income_diversification(
         }).to_list()
         
         if len(transactions) < 5:
-            raise HTTPException(status_code=400, detail="Nincs elegendő bevételi tranzakció az elemzéshez")
+            raise HTTPException(status_code=400, detail=translate('no_transactions_for_analysis', lang=lang))
         
         # Bevételi források azonosítása
         income_sources = defaultdict(list)
         for t in transactions:
             # Forrás meghatározása kategória és leírás alapján
-            source = t.kategoria or "Ismeretlen"
+            source = t.kategoria or translate('other', lang=lang)
             if t.description and any(keyword in t.description.lower() for keyword in ['fizetés', 'salary', 'bér']):
                 source = "Rendszeres fizetés"
             elif t.description and any(keyword in t.description.lower() for keyword in ['freelance', 'mellékállás', 'extra']):
@@ -1249,11 +1204,11 @@ async def analyze_income_diversification(
             
             # Kockázat értékelése
             if regularity_score > 0.8 and source_total > total_income * 0.3:
-                risk_level = "alacsony"
+                risk_level = translate('low_risk', lang=lang)
             elif regularity_score > 0.5:
-                risk_level = "közepes"
+                risk_level = translate('medium_risk', lang=lang)
             else:
-                risk_level = "magas"
+                risk_level = translate('high_risk', lang=lang)
             
             analyzed_sources.append(IncomeSourceAnalysis(
                 source=source,
@@ -1295,12 +1250,13 @@ async def analyze_income_diversification(
         )
         
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Bevételelemzési hiba: {str(e)}")
+        raise HTTPException(status_code=500, detail=translate('analysis_error', lang=lang, error=str(e)))
 
 @router.get("/payment-methods", response_model=List[PaymentMethodAnalysis])
 async def analyze_payment_methods(
     current_user: User = Depends(get_current_user),
-    months_back: int = Query(6, ge=3, le=12)
+    months_back: int = Query(6, ge=3, le=12),
+    lang: str = Query('hu', description="Language for analysis text")
 ):
     """Fizetési módok hatásának elemzése"""
     try:
@@ -1314,14 +1270,14 @@ async def analyze_payment_methods(
         }).to_list()
         
         if len(transactions) < 20:
-            raise HTTPException(status_code=400, detail="Nincs elegendő tranzakció a fizetési mód elemzéshez")
+            raise HTTPException(status_code=400, detail=translate('no_transactions_for_analysis', lang=lang))
         
         # Fizetési módok azonosítása (sub_account_name vagy platform alapján)
         payment_methods = defaultdict(list)
         
         for t in transactions:
             # Fizetési mód meghatározása
-            method = t.sub_account_name or "Ismeretlen"
+            method = t.sub_account_name or translate('other', lang=lang)
             
             # Platform alapú finomítás
             if t.platform:
@@ -1354,13 +1310,13 @@ async def analyze_payment_methods(
                 second_avg = sum(t['amount'] for t in second_half) / len(second_half)
                 
                 if second_avg > first_avg * 1.1:
-                    trend = "növekvő"
+                    trend = translate('increasing', lang=lang)
                 elif second_avg < first_avg * 0.9:
-                    trend = "csökkenő"
+                    trend = translate('decreasing', lang=lang)
                 else:
-                    trend = "stabil"
+                    trend = translate('stable', lang=lang)
             else:
-                trend = "stabil"
+                trend = translate('stable', lang=lang)
             
             results.append(PaymentMethodAnalysis(
                 payment_method=method,
@@ -1374,12 +1330,13 @@ async def analyze_payment_methods(
         return sorted(results, key=lambda x: x.total_amount, reverse=True)
         
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Fizetési mód elemzési hiba: {str(e)}")
+        raise HTTPException(status_code=500, detail=translate('analysis_error', lang=lang, error=str(e)))
 
 @router.get("/collaborative-analysis", response_model=CollaborativeAnalysisResponse)
 async def get_collaborative_analysis(
     current_user: User = Depends(get_current_user),
-    months_back: int = Query(6, ge=3, le=12)
+    months_back: int = Query(6, ge=3, le=12),
+    lang: str = Query('hu', description="Language for analysis text")
 ):
     """Collaborative filtering alapú összehasonlítás más felhasználókkal"""
     try:
@@ -1393,7 +1350,7 @@ async def get_collaborative_analysis(
         }).to_list()
         
         if len(user_transactions) < 30:
-            raise HTTPException(status_code=400, detail="Nincs elegendő tranzakció az összehasonlításhoz")
+            raise HTTPException(status_code=400, detail=translate('no_transactions_for_analysis', lang=lang))
         
         # Egyszerűsített implementáció - valódi környezetben több felhasználó adatait kellene lekérni
         # Itt szimulált adatokkal dolgozunk a privacy miatt
@@ -1410,7 +1367,7 @@ async def get_collaborative_analysis(
         # Kategóriák szerinti eloszlás
         category_spending = defaultdict(float)
         for t in user_expenses:
-            category_spending[t.kategoria or 'Egyéb'] += abs(t.amount)
+            category_spending[t.kategoria or translate('other', lang=lang)] += abs(t.amount)
         
         total_spending = sum(category_spending.values())
         category_percentages = {
@@ -1436,10 +1393,10 @@ async def get_collaborative_analysis(
         # Ajánlások
         recommendations = []
         if savings_rate < peer_savings_rate:
-            recommendations.append("Hasonló felhasználók többet takarítanak meg - érdemes a költéseket felülvizsgálni")
+            recommendations.append(translate('peer_spending_higher', lang=lang))
         
         if monthly_spending > peer_monthly_spending:
-            recommendations.append("A költéseid magasabbak a hasonló felhasználókénál")
+            recommendations.append(translate('review_top_categories', lang=lang))
         
         if efficiency_score < 60:
             recommendations.append("Pénzügyi hatékonyságod javítható - fókuszálj a megtakarításokra")
@@ -1460,13 +1417,14 @@ async def get_collaborative_analysis(
         )
         
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Collaborative elemzési hiba: {str(e)}")
+        raise HTTPException(status_code=500, detail=translate('analysis_error', lang=lang, error=str(e)))
 
 @router.post("/what-if-scenarios", response_model=WhatIfResponse)
 async def generate_what_if_scenarios(
     current_user: User = Depends(get_current_user),
     target_savings: float = Query(..., description="Cél havi megtakarítás összeg"),
-    months_back: int = Query(6, ge=3, le=12)
+    months_back: int = Query(6, ge=3, le=12),
+    lang: str = Query('hu', description="Language for analysis text")
 ):
     """What-If szimulációk generálása költségcsökkentési célokhoz"""
     try:
@@ -1480,12 +1438,12 @@ async def generate_what_if_scenarios(
         }).to_list()
         
         if len(transactions) < 20:
-            raise HTTPException(status_code=400, detail="Nincs elegendő kiadási tranzakció a szimulációhoz")
+            raise HTTPException(status_code=400, detail=translate('no_transactions_for_analysis', lang=lang))
         
         # Kategóriánkénti havi átlagok
         category_spending = defaultdict(list)
         for t in transactions:
-            category = t.kategoria or 'Egyéb'
+            category = t.kategoria or translate('other', lang=lang)
             month_key = datetime.strptime(t.date, '%Y-%m-%d').strftime('%Y-%m')
             category_spending[category].append(abs(t.amount))
         
@@ -1494,7 +1452,7 @@ async def generate_what_if_scenarios(
             # Havi összesítés
             monthly_totals = defaultdict(float)
             for t in transactions:
-                if (t.kategoria or 'Egyéb') == category:
+                if (t.kategoria or translate('other', lang=lang)) == category:
                     month_key = datetime.strptime(t.date, '%Y-%m-%d').strftime('%Y-%m')
                     monthly_totals[month_key] += abs(t.amount)
             
@@ -1524,7 +1482,11 @@ async def generate_what_if_scenarios(
         moderate_changes = {}
         moderate_savings = 0
         for category, avg_amount in sorted(category_monthly_avg.items(), key=lambda x: x[1], reverse=True)[:4]:
-            if category.lower() in ['szórakozás', 'egyéb', 'ruházat']:
+            entertainment_key = translate('entertainment', lang=lang).lower()
+            other_key = translate('other', lang=lang).lower()
+            clothing_key = translate('clothing', lang=lang).lower()
+            
+            if category.lower() in [entertainment_key, other_key, clothing_key]:
                 reduction = avg_amount * 0.2  # 20% nagyobb csökkentés
             else:
                 reduction = avg_amount * 0.15  # 15% csökkentés
@@ -1542,8 +1504,11 @@ async def generate_what_if_scenarios(
         # 3. Agresszív szcenárió (20-40% csökkentés)
         aggressive_changes = {}
         aggressive_savings = 0
+        food_key = translate('food', lang=lang).lower()
+        housing_key = translate('housing', lang=lang).lower()
+        
         for category, avg_amount in category_monthly_avg.items():
-            if category.lower() in ['élelmiszer', 'lakhatás']:
+            if category.lower() in [food_key, housing_key]:
                 reduction = avg_amount * 0.1  # Kisebb csökkentés alapvető kategóriákban
             else:
                 reduction = avg_amount * 0.3  # 30% csökkentés
@@ -1571,21 +1536,22 @@ async def generate_what_if_scenarios(
         )
         
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"What-If szimuláció hiba: {str(e)}")
+        raise HTTPException(status_code=500, detail=translate('analysis_error', lang=lang, error=str(e)))
 
 # Meglévő route-ok javítása - ezeket add hozzá/cseréld le a jelenlegi implementációdban
 
 @router.get("/spending-insights", response_model=Dict[str, Any])
 async def get_advanced_spending_insights(
     current_user: User = Depends(get_current_user),
-    months_back: int = Query(6, ge=3, le=12)
+    months_back: int = Query(6, ge=3, le=12),
+    lang: str = Query('hu', description="Language for analysis text")
 ):
     """Fejlett költési betekintések kombinálva"""
     try:
         # Párhuzamos lekérdezések különböző elemzésekhez
-        anomaly_result = await detect_anomalies(current_user, months_back, 0.1)
-        forecast_result = await get_spending_forecast(current_user, "monthly", 6, months_back)
-        seasonal_result = await get_seasonal_analysis(current_user, months_back * 2)
+        anomaly_result = await detect_anomalies(current_user, months_back, 0.1, lang)
+        forecast_result = await get_spending_forecast(current_user, "monthly", 6, months_back, lang)
+        seasonal_result = await get_seasonal_analysis(current_user, months_back * 2, lang)
         
         # Kombinált betekintések
         insights = {
@@ -1604,44 +1570,43 @@ async def get_advanced_spending_insights(
                 "peak_months": seasonal_result.peak_seasons
             },
             "combined_recommendations": _generate_combined_recommendations(
-                anomaly_result, forecast_result, seasonal_result
+                anomaly_result, forecast_result, seasonal_result, lang
             )
         }
         
         return insights
         
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Fejlett elemzési hiba: {str(e)}")
+        raise HTTPException(status_code=500, detail=translate('analysis_error', lang=lang, error=str(e)))
 
-def _generate_combined_recommendations(anomaly_result, forecast_result, seasonal_result) -> List[str]:
+def _generate_combined_recommendations(anomaly_result, forecast_result, seasonal_result, lang: str) -> List[str]:
     """Kombinált ajánlások generálása több elemzés alapján"""
     recommendations = []
     
     # Anomália alapú ajánlások
     if anomaly_result.anomalies_by_severity.get("high", 0) > 0:
-        recommendations.append("Magas kockázatú szokatlan kiadásokat találtunk - ellenőrizd őket!")
+        recommendations.append(translate('high_risk_anomalies', lang=lang, count=anomaly_result.anomalies_by_severity.get("high", 0)))
     
     # Forecast alapú ajánlások
-    if forecast_result.trend == "növekvő":
-        recommendations.append("Költéseid növekvő tendenciát mutatnak - érdemes figyelni!")
+    if forecast_result.trend == translate('increasing', lang=lang):
+        recommendations.append(translate('forecast_increasing', lang=lang))
     
     # Szezonális ajánlások
     if seasonal_result.has_seasonality and seasonal_result.peak_seasons:
         peak_month = max(seasonal_result.peak_seasons.items(), key=lambda x: x[1])[0]
-        recommendations.append(f"Készülj fel: {peak_month}-ban általában magasabbak a kiadásaid")
+        recommendations.append(translate('seasonal_peak_month', lang=lang, month=peak_month))
     
     if not recommendations:
         recommendations.append("Pénzügyi szokásaid stabilak és egészségesek!")
     
     return recommendations
 
-# Ezeket a route-okat add hozzá az analysis.py végéhez
-
 @router.get("/ml-anomaly-detection", response_model=Dict[str, Any])
 async def get_ml_anomaly_detection(
     current_user: User = Depends(get_current_user),
     months_back: int = Query(6, ge=3, le=12),
-    sensitivity: float = Query(0.1, ge=0.05, le=0.3)
+    sensitivity: float = Query(0.1, ge=0.05, le=0.3),
+    lang: str = Query('hu', description="Language for analysis text")
 ):
     """ML alapú anomália detektálás továbbfejlesztett algoritmusokkal"""
     try:
@@ -1654,7 +1619,7 @@ async def get_ml_anomaly_detection(
         }).to_list()
         
         if len(transactions) < 20:
-            raise HTTPException(status_code=400, detail="Nincs elegendő tranzakció az ML elemzéshez")
+            raise HTTPException(status_code=400, detail=translate('no_transactions_for_analysis', lang=lang))
         
         # ML szolgáltatás használata
         anomaly_result = MLAnalysisService.detect_spending_anomalies(
@@ -1676,14 +1641,15 @@ async def get_ml_anomaly_detection(
         }
         
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"ML anomália detektálási hiba: {str(e)}")
+        raise HTTPException(status_code=500, detail=translate('anomaly_detection_error', lang=lang, error=str(e)))
 
 @router.get("/ml-forecast", response_model=Dict[str, Any])
 async def get_ml_forecast(
     current_user: User = Depends(get_current_user),
     periods_ahead: int = Query(6, ge=1, le=12),
     forecast_type: str = Query("monthly", regex="^(monthly|weekly)$"),
-    months_history: int = Query(12, ge=6, le=24)
+    months_history: int = Query(12, ge=6, le=24),
+    lang: str = Query('hu', description="Language for analysis text")
 ):
     """ML alapú fejlett előrejelzés"""
     try:
@@ -1696,7 +1662,7 @@ async def get_ml_forecast(
         }).to_list()
         
         if len(transactions) < 30:
-            raise HTTPException(status_code=400, detail="Nincs elegendő tranzakció az ML előrejelzéshez")
+            raise HTTPException(status_code=400, detail=translate('no_transactions_for_analysis', lang=lang))
         
         # ML szolgáltatás használata
         forecast_result = MLAnalysisService.generate_spending_forecast(
@@ -1718,13 +1684,14 @@ async def get_ml_forecast(
         }
         
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"ML előrejelzési hiba: {str(e)}")
+        raise HTTPException(status_code=500, detail=translate('forecast_error', lang=lang) + f" {str(e)}")
 
 @router.get("/ml-budget-optimization", response_model=Dict[str, Any])
 async def get_ml_budget_optimization(
     current_user: User = Depends(get_current_user),
     months_back: int = Query(6, ge=3, le=12),
-    optimization_goal: str = Query("balanced", regex="^(conservative|balanced|aggressive)$")
+    optimization_goal: str = Query("balanced", regex="^(conservative|balanced|aggressive)$"),
+    lang: str = Query('hu', description="Language for analysis text")
 ):
     """ML alapú költségvetés optimalizálás"""
     try:
@@ -1737,7 +1704,7 @@ async def get_ml_budget_optimization(
         }).to_list()
         
         if len(transactions) < 30:
-            raise HTTPException(status_code=400, detail="Nincs elegendő tranzakció az ML optimalizáláshoz")
+            raise HTTPException(status_code=400, detail=translate('no_transactions_for_analysis', lang=lang))
         
         # ML alapú kategória költségvetések
         budget_result = MLAnalysisService.generate_category_budgets(transactions)
@@ -1757,12 +1724,13 @@ async def get_ml_budget_optimization(
         }
         
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"ML optimalizálási hiba: {str(e)}")
+        raise HTTPException(status_code=500, detail=translate('analysis_error', lang=lang, error=str(e)))
 
 @router.get("/collaborative-insights", response_model=Dict[str, Any])
 async def get_collaborative_insights(
     current_user: User = Depends(get_current_user),
-    months_back: int = Query(6, ge=3, le=12)
+    months_back: int = Query(6, ge=3, le=12),
+    lang: str = Query('hu', description="Language for analysis text")
 ):
     """Collaborative filtering alapú betekintések (egyszerűsített verzió privacy miatt)"""
     try:
@@ -1775,13 +1743,13 @@ async def get_collaborative_insights(
         }).to_list()
         
         if len(user_transactions) < 20:
-            raise HTTPException(status_code=400, detail="Nincs elegendő tranzakció az összehasonlításhoz")
+            raise HTTPException(status_code=400, detail=translate('no_transactions_for_analysis', lang=lang))
         
         # Felhasználói profil elemzése
         user_profile = CollaborativeFilteringService._create_user_profile(user_transactions)
         
         # Szimulált összehasonlítás (valós implementációban több felhasználóval)
-        comparison_result = _simulate_peer_comparison(user_profile, user_transactions)
+        comparison_result = _simulate_peer_comparison(user_profile, user_transactions, lang)
         
         return {
             "user_profile": {
@@ -1794,13 +1762,14 @@ async def get_collaborative_insights(
         }
         
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Collaborative elemzési hiba: {str(e)}")
+        raise HTTPException(status_code=500, detail=translate('analysis_error', lang=lang, error=str(e)))
 
 @router.post("/simulation/comprehensive")
 async def run_comprehensive_simulation(
     current_user: User = Depends(get_current_user),
     simulation_request: Dict[str, Any] = ...,
-    months_back: int = Query(6, ge=3, le=12)
+    months_back: int = Query(6, ge=3, le=12),
+    lang: str = Query('hu', description="Language for analysis text")
 ):
     """Átfogó What-If szimuláció multiple scenarios-val"""
     try:
@@ -1851,11 +1820,11 @@ async def run_comprehensive_simulation(
                 "start_date": start_date.strftime("%Y-%m-%d"),
                 "end_date": end_date.strftime("%Y-%m-%d")
             },
-            "summary": _generate_simulation_summary(results)
+            "summary": _generate_simulation_summary(results, lang)
         }
         
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Átfogó szimuláció hiba: {str(e)}")
+        raise HTTPException(status_code=500, detail=translate('analysis_error', lang=lang, error=str(e)))
 
 # Segédfüggvények
 
@@ -1899,7 +1868,7 @@ def _calculate_optimization_savings(original: Dict, optimized: Dict) -> float:
     
     return total_savings
 
-def _simulate_peer_comparison(user_profile: Dict, transactions: List) -> Dict:
+def _simulate_peer_comparison(user_profile: Dict, transactions: List, lang: str) -> Dict:
     """Peer összehasonlítás szimulálása (privacy-safe)"""
     # Szimulált peer adatok generálása
     total_spending = user_profile.get("total_spending", 0)
@@ -1914,12 +1883,12 @@ def _simulate_peer_comparison(user_profile: Dict, transactions: List) -> Dict:
             "user_position": "átlag alatt" if total_spending < peer_avg_spending else "átlag felett"
         },
         "category_comparison": _simulate_category_comparison(
-            user_profile.get("category_distribution", {})
+            user_profile.get("category_distribution", {}), lang
         ),
-        "recommendations": _generate_peer_recommendations(total_spending, peer_avg_spending)
+        "recommendations": _generate_peer_recommendations(total_spending, peer_avg_spending, lang)
     }
 
-def _simulate_category_comparison(user_categories: Dict) -> Dict:
+def _simulate_category_comparison(user_categories: Dict, lang: str) -> Dict:
     """Kategória összehasonlítás szimulálása"""
     comparison = {}
     
@@ -1934,18 +1903,18 @@ def _simulate_category_comparison(user_categories: Dict) -> Dict:
     
     return comparison
 
-def _generate_peer_recommendations(user_spending: float, peer_avg: float) -> List[str]:
+def _generate_peer_recommendations(user_spending: float, peer_avg: float, lang: str) -> List[str]:
     """Peer összehasonlítás alapú ajánlások"""
     recommendations = []
     
     if user_spending > peer_avg * 1.1:
-        recommendations.append("Költéseid magasabbak a hasonló felhasználókénál")
-        recommendations.append("Érdemes átnézni a legnagyobb kiadási kategóriákat")
+        recommendations.append(translate('peer_spending_higher', lang=lang))
+        recommendations.append(translate('review_top_categories', lang=lang))
     elif user_spending < peer_avg * 0.9:
-        recommendations.append("Költéseid alacsonyabbak az átlagnál - jó munka!")
-        recommendations.append("Fontos a megtakarítások növelése")
+        recommendations.append(translate('peer_spending_lower', lang=lang))
+        recommendations.append(translate('increase_savings', lang=lang))
     else:
-        recommendations.append("Költési szokásaid átlagosak")
+        recommendations.append(translate('peer_spending_average', lang=lang))
     
     return recommendations
 
