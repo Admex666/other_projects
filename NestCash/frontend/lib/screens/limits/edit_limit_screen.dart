@@ -2,8 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../models/limit.dart';
-import '../services/limit_service.dart';
+import 'package:frontend/models/limit.dart';
+import 'package:frontend/services/limit_service.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class EditLimitScreen extends StatefulWidget {
   final String userId;
@@ -38,8 +39,14 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
 
   // Options for dropdowns
   final List<String> _categories = [
-    'Élelmiszer', 'Lakás', 'Közlekedés', 'Szórakozás', 
-    'Egészség', 'Oktatás', 'Ruházat', 'Egyéb'
+    'categories_.food'.tr(),
+    'categories_.housing'.tr(),
+    'categories_.transportation'.tr(),
+    'categories_.entertainment'.tr(), 
+    'categories_.health'.tr(),
+    'categories_.education'.tr(),
+    'categories_.clothing'.tr(),
+    'categories_.other'.tr(),
   ];
   
   final List<String> _mainAccounts = ['likvid', 'befektetes', 'megtakaritas'];
@@ -110,9 +117,9 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Limit sikeresen frissítve'),
-            backgroundColor: Color(0xFF00D4AA),
+          SnackBar(
+            content: Text('update_success'.tr()),
+            backgroundColor: const Color(0xFF00D4AA),
           ),
         );
         Navigator.pop(context);
@@ -121,7 +128,7 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Hiba: ${e.toString()}'),
+            content: Text('error_message'.tr(namedArgs: {'error': e.toString()})),
             backgroundColor: Colors.red,
           ),
         );
@@ -147,12 +154,12 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
     String? helperText,
   }) {
     return Container(
-      margin: EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: 16),
       child: TextFormField(
         controller: controller,
         keyboardType: keyboardType,
         inputFormatters: inputFormatters,
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 16,
           color: Colors.black87,
         ),
@@ -176,7 +183,7 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Color(0xFF00D4AA), width: 2),
+            borderSide: const BorderSide(color: Color(0xFF00D4AA), width: 2),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
@@ -185,7 +192,7 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
           filled: true,
           fillColor: Colors.white,
           prefixIcon: Icon(icon, color: Colors.grey[600]),
-          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         ),
         validator: validator,
       ),
@@ -202,7 +209,7 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
     String? hintText,
   }) {
     return Container(
-      margin: EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: 16),
       child: DropdownButtonFormField<String>(
         decoration: InputDecoration(
           labelText: labelText,
@@ -218,7 +225,7 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Color(0xFF00D4AA), width: 2),
+            borderSide: const BorderSide(color: Color(0xFF00D4AA), width: 2),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
@@ -227,7 +234,7 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
           filled: true,
           fillColor: Colors.white,
           prefixIcon: Icon(icon, color: Colors.grey[600]),
-          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         ),
         items: items.map((String value) {
           return DropdownMenuItem<String>(
@@ -246,11 +253,11 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
     switch (widget.limit.type) {
       case LimitType.category:
         return _buildDropdownField(
-          labelText: 'Kategória',
+          labelText: 'category_label'.tr(),
           icon: Icons.category,
           value: _selectedCategory,
           items: _categories,
-          hintText: 'Válassz kategóriát',
+          hintText: 'select_category_hint'.tr(),
           onChanged: (value) {
             setState(() {
               _selectedCategory = value;
@@ -258,7 +265,7 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
           },
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Kategória kiválasztása kötelező';
+              return 'category_required_validation'.tr();
             }
             return null;
           },
@@ -268,11 +275,11 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
         return Column(
           children: [
             _buildDropdownField(
-              labelText: 'Főszámla',
+              labelText: 'main_account_label'.tr(),
               icon: Icons.account_balance,
               value: _selectedMainAccount?.toUpperCase(),
               items: _mainAccounts.map((account) => account.toUpperCase()).toList(),
-              hintText: 'Válassz főszámlát',
+              hintText: 'select_main_account_hint'.tr(),
               onChanged: (value) {
                 setState(() {
                   _selectedMainAccount = value?.toLowerCase();
@@ -280,15 +287,15 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
               },
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Főszámla kiválasztása kötelező';
+                  return 'main_account_required_validation'.tr();
                 }
                 return null;
               },
             ),
             _buildInputField(
               controller: TextEditingController(text: _selectedSubAccount ?? ''),
-              labelText: 'Alszámla (opcionális)',
-              hintText: 'Alszámla neve',
+              labelText: 'sub_account_label'.tr(),
+              hintText: 'sub_account_hint'.tr(),
               icon: Icons.account_balance_wallet,
               validator: null,
             ),
@@ -324,7 +331,7 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
-            offset: Offset(0, 2),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -334,7 +341,7 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
           Row(
             children: [
               Container(
-                padding: EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   color: progressColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -345,10 +352,10 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
                   size: 24,
                 ),
               ),
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
               Text(
-                'Aktuális felhasználás',
-                style: TextStyle(
+                'current_usage_title'.tr(),
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: Colors.black87,
@@ -361,7 +368,7 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Költés: ${widget.limit.currentSpending!.toStringAsFixed(0)} ${widget.limit.currency}',
+                'spending_label'.tr(namedArgs: {'spending': widget.limit.currentSpending!.toStringAsFixed(0), 'currency': widget.limit.currency}),
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
@@ -369,7 +376,7 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
                 ),
               ),
               Text(
-                'Limit: ${widget.limit.amount.toStringAsFixed(0)} ${widget.limit.currency}',
+                'limit_label'.tr(namedArgs: {'limit': widget.limit.amount.toStringAsFixed(0), 'currency': widget.limit.currency}),
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
@@ -390,7 +397,7 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '${usagePercentage.toStringAsFixed(1)}% felhasználva',
+                'usage_percentage_text'.tr(namedArgs: {'percentage': usagePercentage.toStringAsFixed(1)}),
                 style: TextStyle(
                   fontSize: 14,
                   color: Colors.grey[600],
@@ -416,7 +423,7 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
           if (widget.limit.remainingAmount != null && widget.limit.remainingAmount! > 0) ...[
             const SizedBox(height: 8),
             Text(
-              'Fennmaradó: ${widget.limit.remainingAmount!.toStringAsFixed(0)} ${widget.limit.currency}',
+              'remaining_amount_text'.tr(namedArgs: {'remaining': widget.limit.remainingAmount!.toStringAsFixed(0), 'currency': widget.limit.currency}),
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.green[700],
@@ -432,18 +439,18 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF00D4AA),
+      backgroundColor: const Color(0xFF00D4AA),
       body: SafeArea(
         child: Column(
           children: [
             // Header
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               child: Row(
                 children: [
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.arrow_back,
                       color: Colors.black87,
                       size: 24,
@@ -451,8 +458,8 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
                   ),
                   Expanded(
                     child: Text(
-                      'Limit szerkesztése',
-                      style: TextStyle(
+                      'edit_limit_title'.tr(),
+                      style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: Colors.black87,
@@ -460,7 +467,7 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  SizedBox(width: 48), // Balance the back button
+                  const SizedBox(width: 48), // Balance the back button
                 ],
               ),
             ),
@@ -469,7 +476,7 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
             Expanded(
               child: Container(
                 width: double.infinity,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Color(0xFFF5F5F5),
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(30),
@@ -478,13 +485,13 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
                 ),
                 child: SingleChildScrollView(
                   child: Padding(
-                    padding: EdgeInsets.all(24),
+                    padding: const EdgeInsets.all(24),
                     child: Form(
                       key: _formKey,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(height: 10),
+                          const SizedBox(height: 10),
                           
                           // Használat információ
                           _buildUsageInfo(),
@@ -493,7 +500,7 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
                           Container(
                             width: double.infinity,
                             padding: const EdgeInsets.all(16),
-                            margin: EdgeInsets.only(bottom: 16),
+                            margin: const EdgeInsets.only(bottom: 16),
                             decoration: BoxDecoration(
                               color: Colors.grey[100],
                               borderRadius: BorderRadius.circular(12),
@@ -502,12 +509,12 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
                             child: Row(
                               children: [
                                 Icon(Icons.category, color: Colors.grey[600]),
-                                SizedBox(width: 12),
+                                const SizedBox(width: 12),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Limit típusa',
+                                      'limit_type_label'.tr(),
                                       style: TextStyle(
                                         fontSize: 14,
                                         color: Colors.grey[600],
@@ -532,12 +539,12 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
                           // Limit neve
                           _buildInputField(
                             controller: _nameController,
-                            labelText: 'Limit neve',
-                            hintText: 'pl. Havi élelmiszer költségvetés',
+                            labelText: 'limit_name_label'.tr(),
+                            hintText: 'limit_name_hint'.tr(),
                             icon: Icons.label,
                             validator: (value) {
                               if (value == null || value.trim().isEmpty) {
-                                return 'Limit neve kötelező';
+                                return 'limit_name_required_validation'.tr();
                               }
                               return null;
                             },
@@ -549,8 +556,8 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
                           // Összeg
                           _buildInputField(
                             controller: _amountController,
-                            labelText: 'Limit összeg',
-                            hintText: '50000',
+                            labelText: 'limit_amount_label'.tr(),
+                            hintText: 'limit_amount_hint'.tr(),
                             icon: Icons.attach_money,
                             keyboardType: TextInputType.number,
                             inputFormatters: [
@@ -559,11 +566,11 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
                             suffixText: 'HUF',
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Összeg megadása kötelező';
+                                return 'amount_required_validation'.tr();
                               }
                               final amount = double.tryParse(value);
                               if (amount == null || amount <= 0) {
-                                return 'Érvényes összeget adj meg';
+                                return 'invalid_amount_validation'.tr();
                               }
                               return null;
                             },
@@ -571,10 +578,10 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
                           
                           // Időszak
                           Container(
-                            margin: EdgeInsets.only(bottom: 16),
+                            margin: const EdgeInsets.only(bottom: 16),
                             child: DropdownButtonFormField<LimitPeriod>(
                               decoration: InputDecoration(
-                                labelText: 'Időszak',
+                                labelText: 'period_label'.tr(),
                                 labelStyle: TextStyle(
                                   color: Colors.grey[600],
                                   fontSize: 16,
@@ -586,7 +593,7 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide(color: Color(0xFF00D4AA), width: 2),
+                                  borderSide: const BorderSide(color: Color(0xFF00D4AA), width: 2),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
@@ -595,7 +602,7 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
                                 filled: true,
                                 fillColor: Colors.white,
                                 prefixIcon: Icon(Icons.schedule, color: Colors.grey[600]),
-                                contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                               ),
                               value: _selectedPeriod,
                               items: LimitPeriod.values.map((period) {
@@ -615,20 +622,20 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
                           // Értesítési küszöb
                           _buildInputField(
                             controller: _notificationThresholdController,
-                            labelText: 'Értesítési küszöb (%)',
-                            hintText: '80',
+                            labelText: 'notification_threshold_label'.tr(),
+                            hintText: 'notification_threshold_hint'.tr(),
                             icon: Icons.notifications,
                             keyboardType: TextInputType.number,
                             inputFormatters: [
                               FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                             ],
                             suffixText: '%',
-                            helperText: 'Értesítés amikor eléri ezt a százalékot (opcionális)',
+                            helperText: 'notification_threshold_helper'.tr(),
                             validator: (value) {
                               if (value != null && value.isNotEmpty) {
                                 final threshold = double.tryParse(value);
                                 if (threshold == null || threshold <= 0 || threshold > 100) {
-                                  return '1 és 100 közötti számot adj meg';
+                                  return 'notification_threshold_validation'.tr();
                                 }
                               }
                               return null;
@@ -637,8 +644,8 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
                           
                           // Értesítés túllépéskor
                           Container(
-                            margin: EdgeInsets.only(bottom: 16),
-                            padding: EdgeInsets.all(16),
+                            margin: const EdgeInsets.only(bottom: 16),
+                            padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(12),
@@ -647,11 +654,11 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
                             child: Row(
                               children: [
                                 Icon(Icons.notification_important, color: Colors.grey[600]),
-                                SizedBox(width: 12),
+                                const SizedBox(width: 12),
                                 Expanded(
                                   child: Text(
-                                    'Értesítés küldése túllépéskor',
-                                    style: TextStyle(
+                                    'notify_on_exceed_label'.tr(),
+                                    style: const TextStyle(
                                       fontSize: 16,
                                       color: Colors.black87,
                                     ),
@@ -664,7 +671,7 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
                                       _notifyOnExceed = value;
                                     });
                                   },
-                                  activeColor: Color(0xFF00D4AA),
+                                  activeColor: const Color(0xFF00D4AA),
                                 ),
                               ],
                             ),
@@ -672,8 +679,8 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
 
                           // Limit aktív-e
                           Container(
-                            margin: EdgeInsets.only(bottom: 24),
-                            padding: EdgeInsets.all(16),
+                            margin: const EdgeInsets.only(bottom: 24),
+                            padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(12),
@@ -683,17 +690,17 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
                               children: [
                                 Icon(
                                   _isActive ? Icons.toggle_on : Icons.toggle_off, 
-                                  color: _isActive ? Color(0xFF00D4AA) : Colors.grey[600],
+                                  color: _isActive ? const Color(0xFF00D4AA) : Colors.grey[600],
                                   size: 28,
                                 ),
-                                SizedBox(width: 12),
+                                const SizedBox(width: 12),
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        'Limit aktív',
-                                        style: TextStyle(
+                                        'is_active_label'.tr(),
+                                        style: const TextStyle(
                                           fontSize: 16,
                                           color: Colors.black87,
                                           fontWeight: FontWeight.w500,
@@ -701,8 +708,8 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
                                       ),
                                       Text(
                                         _isActive 
-                                            ? 'A limit jelenleg aktív' 
-                                            : 'A limit jelenleg inaktív',
+                                            ? 'is_active_text'.tr() 
+                                            : 'is_inactive_text'.tr(),
                                         style: TextStyle(
                                           fontSize: 14,
                                           color: Colors.grey[600],
@@ -718,20 +725,20 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
                                       _isActive = value;
                                     });
                                   },
-                                  activeColor: Color(0xFF00D4AA),
+                                  activeColor: const Color(0xFF00D4AA),
                                 ),
                               ],
                             ),
                           ),
                           
                           // Mentés gomb
-                          Container(
+                          SizedBox(
                             width: double.infinity,
                             height: 56,
                             child: ElevatedButton(
                               onPressed: _isLoading ? null : _updateLimit,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Color(0xFF00D4AA),
+                                backgroundColor: const Color(0xFF00D4AA),
                                 foregroundColor: Colors.white,
                                 elevation: 0,
                                 shape: RoundedRectangleBorder(
@@ -739,10 +746,10 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
                                 ),
                               ),
                               child: _isLoading
-                                  ? CircularProgressIndicator(color: Colors.white)
+                                  ? const CircularProgressIndicator(color: Colors.white)
                                   : Text(
-                                      'Limit frissítése',
-                                      style: TextStyle(
+                                      'update_limit_button'.tr(),
+                                      style: const TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -750,7 +757,7 @@ class _EditLimitScreenState extends State<EditLimitScreen> {
                             ),
                           ),
                           
-                          SizedBox(height: 30),
+                          const SizedBox(height: 30),
                         ],
                       ),
                     ),

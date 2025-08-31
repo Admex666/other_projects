@@ -1,10 +1,11 @@
-// lib/screens/manage_limits_screen.dart
+// lib/screens/limits/manage_limits_screen.dart
 
 import 'package:flutter/material.dart';
-import '../models/limit.dart';
-import '../services/limit_service.dart';
+import 'package:frontend/models/limit.dart';
+import 'package:frontend/services/limit_service.dart';
 import 'add_limit_screen.dart';
 import 'edit_limit_screen.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ManageLimitsScreen extends StatefulWidget {
   final String userId;
@@ -37,7 +38,7 @@ class _ManageLimitsScreenState extends State<ManageLimitsScreen> {
     try {
       final limits = await _limitService.getLimits();
       final status = await _limitService.getLimitStatus();
-      
+
       setState(() {
         _limits = limits;
         _limitStatus = status;
@@ -56,17 +57,17 @@ class _ManageLimitsScreenState extends State<ManageLimitsScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Limit törlése'),
-          content: Text('Biztosan törölni szeretnéd a(z) "$limitName" limitet?'),
+          title: Text('manageLimits.deleteTitle'.tr()),
+          content: Text('manageLimits.deleteContent'.tr(namedArgs: {'limitName': limitName})),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Mégse'),
+              child: Text('manageLimits.cancelButton'.tr()),
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(true),
               style: TextButton.styleFrom(foregroundColor: Colors.red),
-              child: const Text('Törlés'),
+              child: Text('manageLimits.deleteButton'.tr()),
             ),
           ],
         );
@@ -78,7 +79,7 @@ class _ManageLimitsScreenState extends State<ManageLimitsScreen> {
         await _limitService.deleteLimit(limitId);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('$limitName limit törölve'),
+            content: Text('manageLimits.deleteSuccess'.tr(namedArgs: {'limitName': limitName})),
             backgroundColor: Colors.green,
           ),
         );
@@ -86,7 +87,7 @@ class _ManageLimitsScreenState extends State<ManageLimitsScreen> {
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Hiba a törlés során: ${e.toString()}'),
+            content: Text('manageLimits.deleteError'.tr(namedArgs: {'error': e.toString()})),
             backgroundColor: Colors.red,
           ),
         );
@@ -115,7 +116,7 @@ class _ManageLimitsScreenState extends State<ManageLimitsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Limitek áttekintése',
+            'manageLimits.overviewTitle'.tr(),
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -127,28 +128,28 @@ class _ManageLimitsScreenState extends State<ManageLimitsScreen> {
             children: [
               Expanded(
                 child: _buildStatusItem(
-                  'Összes',
+                  'manageLimits.totalLimits'.tr(),
                   _limitStatus!.totalLimits.toString(),
                   Colors.blue,
                 ),
               ),
               Expanded(
                 child: _buildStatusItem(
-                  'Aktív',
+                  'manageLimits.activeLimits'.tr(),
                   _limitStatus!.activeLimits.toString(),
                   Colors.green,
                 ),
               ),
               Expanded(
                 child: _buildStatusItem(
-                  'Túllépett',
+                  'manageLimits.exceededLimits'.tr(),
                   _limitStatus!.exceededLimits.toString(),
                   Colors.red,
                 ),
               ),
               Expanded(
                 child: _buildStatusItem(
-                  'Figyelem',
+                  'manageLimits.warningLimits'.tr(),
                   _limitStatus!.warningLimits.toString(),
                   Colors.orange,
                 ),
@@ -281,23 +282,23 @@ class _ManageLimitsScreenState extends State<ManageLimitsScreen> {
                     },
                     icon: Icon(Icons.more_vert, color: Colors.grey[600]),
                     itemBuilder: (BuildContext context) => [
-                      const PopupMenuItem(
+                      PopupMenuItem(
                         value: 'edit',
                         child: Row(
                           children: [
                             Icon(Icons.edit, size: 20),
                             SizedBox(width: 8),
-                            Text('Szerkesztés'),
+                            Text('Szerkesztés'.tr()),
                           ],
                         ),
                       ),
-                      const PopupMenuItem(
+                      PopupMenuItem(
                         value: 'delete',
                         child: Row(
                           children: [
                             Icon(Icons.delete, size: 20, color: Colors.red),
                             SizedBox(width: 8),
-                            Text('Törlés', style: TextStyle(color: Colors.red)),
+                            Text('Törlés'.tr(), style: TextStyle(color: Colors.red)),
                           ],
                         ),
                       ),
@@ -346,7 +347,7 @@ class _ManageLimitsScreenState extends State<ManageLimitsScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '${usagePercentage.toStringAsFixed(1)}% felhasználva',
+                    'manageLimits.used'.tr(namedArgs: {'usagePercentage': usagePercentage.toStringAsFixed(1)}),
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.grey[600],
@@ -372,7 +373,7 @@ class _ManageLimitsScreenState extends State<ManageLimitsScreen> {
               if (limit.remainingAmount != null && limit.remainingAmount! > 0) ...[
                 const SizedBox(height: 8),
                 Text(
-                  'Fennmaradó: ${limit.remainingAmount!.toStringAsFixed(0)} ${limit.currency}',
+                  'manageLimits.remaining'.tr(namedArgs: {'remainingAmount': limit.remainingAmount!.toStringAsFixed(0), 'currency': limit.currency}),
                   style: TextStyle(
                     fontSize: 14,
                     color: Colors.green[700],
@@ -409,7 +410,7 @@ class _ManageLimitsScreenState extends State<ManageLimitsScreen> {
                   ),
                   Expanded(
                     child: Text(
-                      'Limitek kezelése',
+                      'manageLimits.screenTitle'.tr(),
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -429,7 +430,7 @@ class _ManageLimitsScreenState extends State<ManageLimitsScreen> {
                 ],
               ),
             ),
-            
+
             // Content Container
             Expanded(
               child: Container(
@@ -461,7 +462,7 @@ class _ManageLimitsScreenState extends State<ManageLimitsScreen> {
                                   ),
                                   const SizedBox(height: 16),
                                   Text(
-                                    'Hiba történt',
+                                    'manageLimits.errorTitle'.tr(),
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.w600,
@@ -491,7 +492,7 @@ class _ManageLimitsScreenState extends State<ManageLimitsScreen> {
                                         ),
                                       ),
                                       child: Text(
-                                        'Újrapróbálás',
+                                        'manageLimits.tryAgainButton'.tr(),
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600,
@@ -509,7 +510,7 @@ class _ManageLimitsScreenState extends State<ManageLimitsScreen> {
                               child: Column(
                                 children: [
                                   SizedBox(height: 10),
-                                  
+
                                   // Gombok
                                   Container(
                                     width: double.infinity,
@@ -518,7 +519,7 @@ class _ManageLimitsScreenState extends State<ManageLimitsScreen> {
                                       onPressed: _loadData,
                                       icon: Icon(Icons.refresh, color: Colors.white),
                                       label: Text(
-                                        'Limitek frissítése',
+                                        'manageLimits.refreshButton'.tr(),
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600,
@@ -551,7 +552,7 @@ class _ManageLimitsScreenState extends State<ManageLimitsScreen> {
                                       },
                                       icon: Icon(Icons.add, color: Colors.white),
                                       label: Text(
-                                        'Új limit',
+                                        'manageLimits.addButton'.tr(),
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600,
@@ -584,7 +585,7 @@ class _ManageLimitsScreenState extends State<ManageLimitsScreen> {
                                           ),
                                           const SizedBox(height: 16),
                                           Text(
-                                            'Nincs limit beállítva',
+                                            'manageLimits.noLimitsTitle'.tr(),
                                             style: TextStyle(
                                               fontSize: 18,
                                               fontWeight: FontWeight.w600,
@@ -593,7 +594,7 @@ class _ManageLimitsScreenState extends State<ManageLimitsScreen> {
                                           ),
                                           const SizedBox(height: 8),
                                           Text(
-                                            'Hozz létre egy új limitet a gombbal',
+                                            'manageLimits.noLimitsContent'.tr(),
                                             style: TextStyle(
                                               color: Colors.grey[500],
                                             ),

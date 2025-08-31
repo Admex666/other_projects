@@ -9,7 +9,7 @@ import '/main.dart';
 
 import 'package:frontend/screens/add_incomes_screen.dart';
 import 'package:frontend/screens/analysis_screen.dart';
-import 'package:frontend/screens/manage_limits_screen.dart';
+import 'package:frontend/screens/limits/manage_limits_screen.dart';
 import 'package:frontend/screens/forum/forum_main_screen.dart'; 
 import 'package:frontend/screens/challenges/challenges_main_screen.dart';
 import 'package:frontend/screens/pti/pti_main_screen.dart';

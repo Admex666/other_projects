@@ -663,5 +663,128 @@
         "markAllReadSuccess": "All notifications marked as read",
         "deleteSuccess": "Notification deleted"
       }
-    }
+    },
+    "manageLimits": {
+      "screenTitle": "Manage Limits",
+      "deleteTitle": "Delete Limit",
+      "deleteContent": "Are you sure you want to delete the \"{limitName}\" limit?",
+      "cancelButton": "Cancel",
+      "deleteButton": "Delete",
+      "deleteSuccess": "{limitName} limit deleted",
+      "deleteError": "Error during deletion: {error}",
+      "overviewTitle": "Limits Overview",
+      "totalLimits": "Total",
+      "activeLimits": "Active",
+      "exceededLimits": "Exceeded",
+      "warningLimits": "Warning",
+      "used": "{usagePercentage}% used",
+      "remaining": "Remaining: {remainingAmount} {currency}",
+      "noLimitsTitle": "No limit set",
+      "noLimitsContent": "Create a new limit with the button",
+      "refreshButton": "Refresh Limits",
+      "addButton": "New limit",
+      "errorTitle": "An error occurred",
+      "tryAgainButton": "Try Again"
+    },
+    "addLimitScreen": {
+      "title": "Create a new limit",
+      "limitName": {
+        "label": "Limit name",
+        "hint": "e.g., Monthly grocery budget",
+        "validator": "Limit name is required"
+      },
+      "limitType": {
+        "label": "Limit type",
+        "types": {
+          "spending": "Spending",
+          "category": "Category",
+          "account": "Account"
+        }
+      },
+      "category": {
+        "label": "Category",
+        "hint": "Choose a category",
+        "validator": "Category selection is required"
+      },
+      "mainAccount": {
+        "label": "Main account",
+        "hint": "Choose a main account",
+        "validator": "Main account selection is required"
+      },
+      "subAccount": {
+        "label": "Sub-account (optional)",
+        "hint": "Sub-account name"
+      },
+      "amount": {
+        "label": "Limit amount",
+        "hint": "50000",
+        "validatorRequired": "Amount is required",
+        "validatorValid": "Enter a valid amount"
+      },
+      "period": {
+        "label": "Period",
+        "periods": {
+          "daily": "Daily",
+          "weekly": "Weekly",
+          "monthly": "Monthly",
+          "yearly": "Yearly"
+        }
+      },
+      "notificationThreshold": {
+        "label": "Notification threshold (%)",
+        "hint": "80",
+        "helper": "Notify when this percentage is reached (optional)",
+        "validator": "Enter a number between 1 and 100"
+      },
+      "notifyOnExceed": {
+        "label": "Send notification when exceeded"
+      },
+      "successMessage": "Limit created successfully",
+      "errorMessage": "Error: {error}",
+      "createButton": "Create Limit"
+    },
+    "edit_limit_title": "Edit Limit",
+    "update_success": "Limit successfully updated",
+    "error_message": "Error: {{error}}",
+    "categories_": {
+      "food": "Food",
+      "housing": "Housing",
+      "transportation": "Transportation",
+      "entertainment": "Entertainment",
+      "health": "Health",
+      "education": "Education",
+      "clothing": "Clothing",
+      "other": "Other"
+    },
+    "category_label": "Category",
+    "select_category_hint": "Select a category",
+    "category_required_validation": "Category selection is required",
+    "main_account_label": "Main Account",
+    "select_main_account_hint": "Select a main account",
+    "main_account_required_validation": "Main account selection is required",
+    "sub_account_label": "Sub-account (optional)",
+    "sub_account_hint": "Sub-account name",
+    "current_usage_title": "Current Usage",
+    "spending_label": "Spending: {{spending}} {{currency}}",
+    "limit_label": "Limit: {{limit}} {{currency}}",
+    "usage_percentage_text": "{{percentage}}% used",
+    "remaining_amount_text": "Remaining: {{remaining}} {{currency}}",
+    "limit_type_label": "Limit Type",
+    "limit_name_label": "Limit Name",
+    "limit_name_hint": "e.g., Monthly food budget",
+    "limit_name_required_validation": "Limit name is required",
+    "limit_amount_label": "Limit Amount",
+    "limit_amount_hint": "50000",
+    "amount_required_validation": "Amount is required",
+    "invalid_amount_validation": "Please enter a valid amount",
+    "period_label": "Period",
+    "notification_threshold_label": "Notification Threshold (%)",
+    "notification_threshold_hint": "80",
+    "notification_threshold_helper": "Notify when this percentage is reached (optional)",
+    "notification_threshold_validation": "Enter a number between 1 and 100",
+    "notify_on_exceed_label": "Notify on exceed",
+    "is_active_label": "Limit active",
+    "is_active_text": "The limit is currently active",
+    "is_inactive_text": "The limit is currently inactive",
+    "update_limit_button": "Update Limit"
   }

@@ -663,5 +663,128 @@
         "markAllReadSuccess": "Összes értesítés olvasottnak jelölve",
         "deleteSuccess": "Értesítés törölve"
       }
-    }
+    },
+    "manageLimits": {
+      "screenTitle": "Limitek kezelése",
+      "deleteTitle": "Limit törlése",
+      "deleteContent": "Biztosan törölni szeretnéd a(z) \"{limitName}\" limitet?",
+      "cancelButton": "Mégse",
+      "deleteButton": "Törlés",
+      "deleteSuccess": "{limitName} limit törölve",
+      "deleteError": "Hiba a törlés során: {error}",
+      "overviewTitle": "Limitek áttekintése",
+      "totalLimits": "Összes",
+      "activeLimits": "Aktív",
+      "exceededLimits": "Túllépett",
+      "warningLimits": "Figyelem",
+      "used": "{usagePercentage}% felhasználva",
+      "remaining": "Fennmaradó: {remainingAmount} {currency}",
+      "noLimitsTitle": "Nincs limit beállítva",
+      "noLimitsContent": "Hozz létre egy új limitet a gombbal",
+      "refreshButton": "Limitek frissítése",
+      "addButton": "Új limit",
+      "errorTitle": "Hiba történt",
+      "tryAgainButton": "Újrapróbálás"
+    },
+    "addLimitScreen": {
+      "title": "Új limit létrehozása",
+      "limitName": {
+        "label": "Limit neve",
+        "hint": "pl. Havi élelmiszer költségvetés",
+        "validator": "Limit neve kötelező"
+      },
+      "limitType": {
+        "label": "Limit típusa",
+        "types": {
+          "spending": "Köztettség",
+          "category": "Kategória",
+          "account": "Számla"
+        }
+      },
+      "category": {
+        "label": "Kategória",
+        "hint": "Válassz kategóriát",
+        "validator": "Kategória kiválasztása kötelező"
+      },
+      "mainAccount": {
+        "label": "Főszámla",
+        "hint": "Válassz főszámlát",
+        "validator": "Főszámla kiválasztása kötelező"
+      },
+      "subAccount": {
+        "label": "Alszámla (opcionális)",
+        "hint": "Alszámla neve"
+      },
+      "amount": {
+        "label": "Limit összeg",
+        "hint": "50000",
+        "validatorRequired": "Összeg megadása kötelező",
+        "validatorValid": "Érvényes összeget adj meg"
+      },
+      "period": {
+        "label": "Időszak",
+        "periods": {
+          "daily": "Napi",
+          "weekly": "Heti",
+          "monthly": "Havi",
+          "yearly": "Éves"
+        }
+      },
+      "notificationThreshold": {
+        "label": "Értesítési küszöb (%)",
+        "hint": "80",
+        "helper": "Értesítés amikor eléri ezt a százalékot (opcionális)",
+        "validator": "1 és 100 közötti számot adj meg"
+      },
+      "notifyOnExceed": {
+        "label": "Értesítés küldése túllépéskor"
+      },
+      "successMessage": "Limit sikeresen létrehozva",
+      "errorMessage": "Hiba: {error}",
+      "createButton": "Limit létrehozása"
+    },
+    "edit_limit_title": "Limit szerkesztése",
+    "update_success": "Limit sikeresen frissítve",
+    "error_message": "Hiba: {{error}}",
+    "categories_": {
+      "food": "Élelmiszer",
+      "housing": "Lakás",
+      "transportation": "Közlekedés",
+      "entertainment": "Szórakozás",
+      "health": "Egészség",
+      "education": "Oktatás",
+      "clothing": "Ruházat",
+      "other": "Egyéb"
+    },
+    "category_label": "Kategória",
+    "select_category_hint": "Válassz kategóriát",
+    "category_required_validation": "Kategória kiválasztása kötelező",
+    "main_account_label": "Főszámla",
+    "select_main_account_hint": "Válassz főszámlát",
+    "main_account_required_validation": "Főszámla kiválasztása kötelező",
+    "sub_account_label": "Alszámla (opcionális)",
+    "sub_account_hint": "Alszámla neve",
+    "current_usage_title": "Aktuális felhasználás",
+    "spending_label": "Költés: {{spending}} {{currency}}",
+    "limit_label": "Limit: {{limit}} {{currency}}",
+    "usage_percentage_text": "{{percentage}}% felhasználva",
+    "remaining_amount_text": "Fennmaradó: {{remaining}} {{currency}}",
+    "limit_type_label": "Limit típusa",
+    "limit_name_label": "Limit neve",
+    "limit_name_hint": "pl. Havi élelmiszer költségvetés",
+    "limit_name_required_validation": "Limit neve kötelező",
+    "limit_amount_label": "Limit összeg",
+    "limit_amount_hint": "50000",
+    "amount_required_validation": "Összeg megadása kötelező",
+    "invalid_amount_validation": "Érvényes összeget adj meg",
+    "period_label": "Időszak",
+    "notification_threshold_label": "Értesítési küszöb (%)",
+    "notification_threshold_hint": "80",
+    "notification_threshold_helper": "Értesítés amikor eléri ezt a százalékot (opcionális)",
+    "notification_threshold_validation": "1 és 100 közötti számot adj meg",
+    "notify_on_exceed_label": "Értesítés küldése túllépéskor",
+    "is_active_label": "Limit aktív",
+    "is_active_text": "A limit jelenleg aktív",
+    "is_inactive_text": "A limit jelenleg inaktív",
+    "update_limit_button": "Limit frissítése"
   }

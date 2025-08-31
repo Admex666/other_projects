@@ -2,8 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../models/limit.dart';
-import '../services/limit_service.dart';
+import 'package:frontend/models/limit.dart';
+import 'package:frontend/services/limit_service.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class AddLimitScreen extends StatefulWidget {
   final String userId;
@@ -33,10 +34,10 @@ class _AddLimitScreenState extends State<AddLimitScreen> {
 
   // Options for dropdowns
   final List<String> _categories = [
-    'Élelmiszer', 'Lakás', 'Közlekedés', 'Szórakozás', 
+    'Élelmiszer', 'Lakás', 'Közlekedés', 'Szórakozás',
     'Egészség', 'Oktatás', 'Ruházat', 'Egyéb'
   ];
-  
+
   final List<String> _mainAccounts = ['likvid', 'befektetes', 'megtakaritas'];
 
   bool _isLoading = false;
@@ -84,8 +85,8 @@ class _AddLimitScreenState extends State<AddLimitScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Limit sikeresen létrehozva'),
+          SnackBar(
+            content: Text('addLimitScreen.successMessage'.tr()),
             backgroundColor: Color(0xFF00D4AA),
           ),
         );
@@ -95,7 +96,7 @@ class _AddLimitScreenState extends State<AddLimitScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Hiba: ${e.toString()}'),
+            content: Text('addLimitScreen.errorMessage'.tr(namedArgs: {'error': e.toString()})),
             backgroundColor: Colors.red,
           ),
         );
@@ -222,11 +223,11 @@ class _AddLimitScreenState extends State<AddLimitScreen> {
     switch (_selectedType) {
       case LimitType.category:
         return _buildDropdownField(
-          labelText: 'Kategória',
+          labelText: 'addLimitScreen.category.label'.tr(),
           icon: Icons.category,
           value: _selectedCategory,
           items: _categories,
-          hintText: 'Válassz kategóriát',
+          hintText: 'addLimitScreen.category.hint'.tr(),
           onChanged: (value) {
             setState(() {
               _selectedCategory = value;
@@ -234,7 +235,7 @@ class _AddLimitScreenState extends State<AddLimitScreen> {
           },
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Kategória kiválasztása kötelező';
+              return 'addLimitScreen.category.validator'.tr();
             }
             return null;
           },
@@ -244,11 +245,11 @@ class _AddLimitScreenState extends State<AddLimitScreen> {
         return Column(
           children: [
             _buildDropdownField(
-              labelText: 'Főszámla',
+              labelText: 'addLimitScreen.mainAccount.label'.tr(),
               icon: Icons.account_balance,
               value: _selectedMainAccount?.toUpperCase(),
               items: _mainAccounts.map((account) => account.toUpperCase()).toList(),
-              hintText: 'Válassz főszámlát',
+              hintText: 'addLimitScreen.mainAccount.hint'.tr(),
               onChanged: (value) {
                 setState(() {
                   _selectedMainAccount = value?.toLowerCase();
@@ -257,15 +258,15 @@ class _AddLimitScreenState extends State<AddLimitScreen> {
               },
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Főszámla kiválasztása kötelező';
+                  return 'addLimitScreen.mainAccount.validator'.tr();
                 }
                 return null;
               },
             ),
             _buildInputField(
               controller: TextEditingController(text: _selectedSubAccount ?? ''),
-              labelText: 'Alszámla (opcionális)',
-              hintText: 'Alszámla neve',
+              labelText: 'addLimitScreen.subAccount.label'.tr(),
+              hintText: 'addLimitScreen.subAccount.hint'.tr(),
               icon: Icons.account_balance_wallet,
               onChanged: (value) {
                 _selectedSubAccount = value.isEmpty ? null : value;
@@ -301,7 +302,7 @@ class _AddLimitScreenState extends State<AddLimitScreen> {
                   ),
                   Expanded(
                     child: Text(
-                      'Új limit létrehozása',
+                      'addLimitScreen.title'.tr(),
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -314,7 +315,7 @@ class _AddLimitScreenState extends State<AddLimitScreen> {
                 ],
               ),
             ),
-            
+
             // Content Container
             Expanded(
               child: Container(
@@ -335,27 +336,27 @@ class _AddLimitScreenState extends State<AddLimitScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(height: 10),
-                          
+
                           // Limit neve
                           _buildInputField(
                             controller: _nameController,
-                            labelText: 'Limit neve',
-                            hintText: 'pl. Havi élelmiszer költségvetés',
+                            labelText: 'addLimitScreen.limitName.label'.tr(),
+                            hintText: 'addLimitScreen.limitName.hint'.tr(),
                             icon: Icons.label,
                             validator: (value) {
                               if (value == null || value.trim().isEmpty) {
-                                return 'Limit neve kötelező';
+                                return 'addLimitScreen.limitName.validator'.tr();
                               }
                               return null;
                             },
                           ),
-                          
+
                           // Limit típusa
                           Container(
                             margin: EdgeInsets.only(bottom: 16),
                             child: DropdownButtonFormField<LimitType>(
                               decoration: InputDecoration(
-                                labelText: 'Limit típusa',
+                                labelText: 'addLimitScreen.limitType.label'.tr(),
                                 labelStyle: TextStyle(
                                   color: Colors.grey[600],
                                   fontSize: 16,
@@ -382,7 +383,7 @@ class _AddLimitScreenState extends State<AddLimitScreen> {
                               items: LimitType.values.map((type) {
                                 return DropdownMenuItem(
                                   value: type,
-                                  child: Text(type.displayName),
+                                  child: Text('addLimitScreen.limitType.types.${type.name}'.tr()),
                                 );
                               }).toList(),
                               onChanged: (value) {
@@ -395,15 +396,15 @@ class _AddLimitScreenState extends State<AddLimitScreen> {
                               },
                             ),
                           ),
-                          
+
                           // Típus specifikus mezők
                           _buildTypeSpecificFields(),
-                          
+
                           // Összeg
                           _buildInputField(
                             controller: _amountController,
-                            labelText: 'Limit összeg',
-                            hintText: '50000',
+                            labelText: 'addLimitScreen.amount.label'.tr(),
+                            hintText: 'addLimitScreen.amount.hint'.tr(),
                             icon: Icons.attach_money,
                             keyboardType: TextInputType.number,
                             inputFormatters: [
@@ -412,22 +413,22 @@ class _AddLimitScreenState extends State<AddLimitScreen> {
                             suffixText: 'HUF',
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Összeg megadása kötelező';
+                                return 'addLimitScreen.amount.validatorRequired'.tr();
                               }
                               final amount = double.tryParse(value);
                               if (amount == null || amount <= 0) {
-                                return 'Érvényes összeget adj meg';
+                                return 'addLimitScreen.amount.validatorValid'.tr();
                               }
                               return null;
                             },
                           ),
-                          
+
                           // Időszak
                           Container(
                             margin: EdgeInsets.only(bottom: 16),
                             child: DropdownButtonFormField<LimitPeriod>(
                               decoration: InputDecoration(
-                                labelText: 'Időszak',
+                                labelText: 'addLimitScreen.period.label'.tr(),
                                 labelStyle: TextStyle(
                                   color: Colors.grey[600],
                                   fontSize: 16,
@@ -454,7 +455,7 @@ class _AddLimitScreenState extends State<AddLimitScreen> {
                               items: LimitPeriod.values.map((period) {
                                 return DropdownMenuItem(
                                   value: period,
-                                  child: Text(period.displayName),
+                                  child: Text('addLimitScreen.period.periods.${period.name}'.tr()),
                                 );
                               }).toList(),
                               onChanged: (value) {
@@ -464,30 +465,30 @@ class _AddLimitScreenState extends State<AddLimitScreen> {
                               },
                             ),
                           ),
-                          
+
                           // Értesítési küszöb
                           _buildInputField(
                             controller: _notificationThresholdController,
-                            labelText: 'Értesítési küszöb (%)',
-                            hintText: '80',
+                            labelText: 'addLimitScreen.notificationThreshold.label'.tr(),
+                            hintText: 'addLimitScreen.notificationThreshold.hint'.tr(),
                             icon: Icons.notifications,
                             keyboardType: TextInputType.number,
                             inputFormatters: [
                               FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                             ],
                             suffixText: '%',
-                            helperText: 'Értesítés amikor eléri ezt a százalékot (opcionális)',
+                            helperText: 'addLimitScreen.notificationThreshold.helper'.tr(),
                             validator: (value) {
                               if (value != null && value.isNotEmpty) {
                                 final threshold = double.tryParse(value);
                                 if (threshold == null || threshold <= 0 || threshold > 100) {
-                                  return '1 és 100 közötti számot adj meg';
+                                  return 'addLimitScreen.notificationThreshold.validator'.tr();
                                 }
                               }
                               return null;
                             },
                           ),
-                          
+
                           // Értesítés túllépéskor
                           Container(
                             margin: EdgeInsets.only(bottom: 24),
@@ -503,7 +504,7 @@ class _AddLimitScreenState extends State<AddLimitScreen> {
                                 SizedBox(width: 12),
                                 Expanded(
                                   child: Text(
-                                    'Értesítés küldése túllépéskor',
+                                    'addLimitScreen.notifyOnExceed.label'.tr(),
                                     style: TextStyle(
                                       fontSize: 16,
                                       color: Colors.black87,
@@ -522,7 +523,7 @@ class _AddLimitScreenState extends State<AddLimitScreen> {
                               ],
                             ),
                           ),
-                          
+
                           // Mentés gomb
                           Container(
                             width: double.infinity,
@@ -540,7 +541,7 @@ class _AddLimitScreenState extends State<AddLimitScreen> {
                               child: _isLoading
                                   ? CircularProgressIndicator(color: Colors.white)
                                   : Text(
-                                      'Limit létrehozása',
+                                      'addLimitScreen.createButton'.tr(),
                                       style: TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.w600,
@@ -548,7 +549,7 @@ class _AddLimitScreenState extends State<AddLimitScreen> {
                                     ),
                             ),
                           ),
-                          
+
                           SizedBox(height: 30),
                         ],
                       ),
