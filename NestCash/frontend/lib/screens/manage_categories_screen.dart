@@ -322,7 +322,7 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
                                   ),
                                   child: ListTile(
                                     title: Text(
-                                      category.displayName,
+                                      category.name.tr(),
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w500,

@@ -3,6 +3,7 @@ import 'package:frontend/services/message_service.dart';
 import 'package:frontend/models/message_models.dart';
 import 'package:frontend/screens/messages/chat_screen.dart';
 import 'package:frontend/screens/forum/search_users_screen.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ConversationsScreen extends StatefulWidget {
   @override
@@ -11,7 +12,7 @@ class ConversationsScreen extends StatefulWidget {
 
 class _ConversationsScreenState extends State<ConversationsScreen> {
   final MessageService _messageService = MessageService();
-  
+
   List<Conversation> _conversations = [];
   bool _isLoading = true;
 
@@ -33,7 +34,7 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
         _isLoading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hiba a beszélgetések betöltésekor: $e')),
+        SnackBar(content: Text('error_messages'.tr(namedArgs: {'error': e.toString()}))),
       );
     }
   }
@@ -45,7 +46,6 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
         builder: (context) => SearchUsersScreen(),
       ),
     ).then((_) {
-      // Frissítsük a beszélgetéseket, ha visszatérünk a keresésből
       _loadConversations();
     });
   }
@@ -72,7 +72,7 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
                   ),
                   Expanded(
                     child: Text(
-                      'Üzenetek',
+                      'messages'.tr(),
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -88,12 +88,12 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
                       color: Colors.black87,
                       size: 24,
                     ),
-                    tooltip: 'Új beszélgetés',
+                    tooltip: 'new_conversation'.tr(),
                   ),
                 ],
               ),
             ),
-            
+
             // Keresősáv
             Container(
               padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
@@ -122,7 +122,7 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
                       SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          'Keress felhasználókat...',
+                          'search_users_placeholder'.tr(),
                           style: TextStyle(
                             color: Colors.grey[600],
                             fontSize: 16,
@@ -139,7 +139,7 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
                 ),
               ),
             ),
-            
+
             // Content
             Expanded(
               child: Container(
@@ -165,7 +165,7 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
                                 ),
                                 SizedBox(height: 16),
                                 Text(
-                                  'Még nincsenek beszélgetések',
+                                  'no_conversations_title'.tr(),
                                   style: TextStyle(
                                     fontSize: 18,
                                     color: Colors.grey[600],
@@ -174,7 +174,7 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
                                 ),
                                 SizedBox(height: 8),
                                 Text(
-                                  'Használd a keresősávot új beszélgetés indításához!',
+                                  'no_conversations_subtitle'.tr(),
                                   style: TextStyle(
                                     fontSize: 14,
                                     color: Colors.grey[500],
@@ -185,7 +185,7 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
                                 ElevatedButton.icon(
                                   onPressed: _navigateToSearch,
                                   icon: Icon(Icons.search, size: 18),
-                                  label: Text('Felhasználók keresése'),
+                                  label: Text('search_users_button'.tr()),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Color(0xFF00D4AA),
                                     foregroundColor: Colors.white,
@@ -239,8 +239,8 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
               backgroundColor: Color(0xFF00D4AA),
               radius: 28,
               child: Text(
-                conversation.otherUsername.isNotEmpty 
-                    ? conversation.otherUsername[0].toUpperCase() 
+                conversation.otherUsername.isNotEmpty
+                    ? conversation.otherUsername[0].toUpperCase()
                     : '?',
                 style: TextStyle(
                   color: Colors.white,
@@ -294,7 +294,7 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
               ),
             )
           : Text(
-              'Új beszélgetés',
+              'new_conversation_text'.tr(),
               style: TextStyle(
                 color: Colors.grey[500],
                 fontSize: 14,
@@ -320,8 +320,7 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
               ),
             ),
           );
-          
-          // Frissítés a beszélgetésből való visszatérés után
+
           if (result != null) {
             _loadConversations();
           }
@@ -335,13 +334,13 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
     final difference = now.difference(dateTime);
 
     if (difference.inMinutes < 1) {
-      return 'Most';
+      return 'just_now'.tr();
     } else if (difference.inHours < 1) {
-      return '${difference.inMinutes}p';
+      return 'minutes_ago_short'.tr(namedArgs: {'minutes': difference.inMinutes.toString()});
     } else if (difference.inDays < 1) {
-      return '${difference.inHours}ó';
+      return 'hours_ago_short'.tr(namedArgs: {'hours': difference.inHours.toString()});
     } else if (difference.inDays < 7) {
-      return '${difference.inDays}n';
+      return 'days_ago_short'.tr(namedArgs: {'days': difference.inDays.toString()});
     } else {
       return '${dateTime.month.toString().padLeft(2, '0')}.${dateTime.day.toString().padLeft(2, '0')}.';
     }

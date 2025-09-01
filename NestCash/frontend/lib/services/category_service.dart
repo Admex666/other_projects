@@ -18,7 +18,6 @@ class CategoryService {
       throw Exception('Access token not found.');
     }
 
-    // URL összeállítás - hiányzott a /categories endpoint
     String url = '${ApiConfig.baseUrl}/categories';
     if (type != null) {
       url += '?category_type=$type';

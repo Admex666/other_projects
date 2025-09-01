@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/services/message_service.dart';
 import 'package:frontend/models/message_models.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ChatScreen extends StatefulWidget {
   final String otherUserId;
@@ -51,7 +52,7 @@ class _ChatScreenState extends State<ChatScreen> {
         _isLoading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hiba az üzenetek betöltésekor: $e')),
+        SnackBar(content: Text('error_loading_messages'.tr(namedArgs: {'error': e.toString()}))),
       );
     }
   }
@@ -74,7 +75,7 @@ class _ChatScreenState extends State<ChatScreen> {
       _scrollToBottom();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hiba az üzenet küldésekor: $e')),
+        SnackBar(content: Text('error_sending_message'.tr(namedArgs: {'error': e.toString()}))),
       );
     } finally {
       setState(() {
@@ -152,7 +153,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             ),
                             SizedBox(height: 16),
                             Text(
-                              'Még nincsenek üzenetek',
+                              'no_messages'.tr(),
                               style: TextStyle(
                                 fontSize: 18,
                                 color: Colors.grey[600],
@@ -161,7 +162,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             ),
                             SizedBox(height: 8),
                             Text(
-                              'Kezdj egy beszélgetést!',
+                              'start_a_conversation'.tr(),
                               style: TextStyle(
                                 fontSize: 14,
                                 color: Colors.grey[500],
@@ -202,7 +203,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       child: TextField(
                         controller: _messageController,
                         decoration: InputDecoration(
-                          hintText: 'Írj egy üzenetet...',
+                          hintText: 'write_a_message'.tr(),
                           hintStyle: TextStyle(color: Colors.grey[600]),
                           contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                           border: InputBorder.none,
@@ -343,13 +344,13 @@ class _ChatScreenState extends State<ChatScreen> {
     final difference = now.difference(dateTime);
 
     if (difference.inMinutes < 1) {
-      return 'Most';
+      return 'just_now'.tr();
     } else if (difference.inHours < 1) {
-      return '${difference.inMinutes} perce';
+      return 'minutes_ago'.tr(namedArgs: {'minutes': difference.inMinutes.toString()});
     } else if (difference.inDays < 1) {
       return '${difference.inHours}:${dateTime.minute.toString().padLeft(2, '0')}';
     } else if (difference.inDays < 7) {
-      return '${difference.inDays} napja';
+      return 'days_ago'.tr(namedArgs: {'days': difference.inDays.toString()});
     } else {
       return '${dateTime.month.toString().padLeft(2, '0')}.${dateTime.day.toString().padLeft(2, '0')}.';
     }

@@ -449,7 +449,7 @@ class _ForumSettingsScreenState extends State<ForumSettingsScreen> {
               ),
               SizedBox(width: 12),
               Text(
-                'notifications'.tr(),
+                'notifications_'.tr(),
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
