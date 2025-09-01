@@ -115,7 +115,25 @@ TRANSLATIONS = {
         "error_getting_user_component_rankings": "Error getting user component rankings: {e}",
         "error_calculating_and_saving_all": "Error calculating PTI for user {user_id}: {e}",
         "error_getting_component_ranking": "Error getting component ranking for {component}: {e}",
-        "unknown_component": "Unknown component: {component}"
+        "unknown_component": "Unknown component: {component}",
+        'category_food': 'Élelmiszer',
+        'category_housing': 'Lakhatás', 
+        'category_transport': 'Közlekedés',
+        'category_healthcare': 'Egészségügy',
+        'category_entertainment': 'Szórakozás',
+        'category_clothing': 'Ruházat',
+        'category_education': 'Oktatás',
+        'category_utilities': 'Közművek',
+        'category_shopping': 'Vásárlás',
+        'category_travel': 'Utazás',
+        'category_insurance': 'Biztosítás',
+        'category_savings': 'Megtakarítás',
+        'category_investment': 'Befektetés',
+        'category_salary': 'Fizetés',
+        'category_freelance': 'Szabadúszás',
+        'category_business': 'Vállalkozás',
+        'category_gifts': 'Ajándékok',
+        'category_other': 'Egyéb',
     },
     'en': {
         'savings_low_rate': 'Try to save at least 10% of your income',
@@ -231,7 +249,25 @@ TRANSLATIONS = {
         "error_getting_user_component_rankings": "Error getting user component rankings: {e}",
         "error_calculating_and_saving_all": "Error calculating PTI for user {user_id}: {e}",
         "error_getting_component_ranking": "Error getting component ranking for {component}: {e}",
-        "unknown_component": "Unknown component: {component}"
+        "unknown_component": "Unknown component: {component}",
+        'category_food': 'Food',
+        'category_housing': 'Housing',
+        'category_transport': 'Transport', 
+        'category_healthcare': 'Healthcare',
+        'category_entertainment': 'Entertainment',
+        'category_clothing': 'Clothing',
+        'category_education': 'Education',
+        'category_utilities': 'Utilities',
+        'category_shopping': 'Shopping',
+        'category_travel': 'Travel',
+        'category_insurance': 'Insurance',
+        'category_savings': 'Savings',
+        'category_investment': 'Investment',
+        'category_salary': 'Salary',
+        'category_freelance': 'Freelance',
+        'category_business': 'Business',
+        'category_gifts': 'Gifts',
+        'category_other': 'Other',
     }
 }
 
@@ -240,3 +276,13 @@ def translate(key: str, lang: str = 'hu', **kwargs) -> str:
     translation_dict = TRANSLATIONS.get(lang, TRANSLATIONS['hu'])
     text = translation_dict.get(key, key)
     return text.format(**kwargs)
+
+def is_translation_key(text: str) -> bool:
+    """Ellenőrzi, hogy egy szöveg fordítási kulcs-e."""
+    return text.startswith('category_') and text.replace('category_', '').replace('_', '').isalnum()
+
+def get_category_display_name(category_name: str, lang: str = 'hu') -> str:
+    """Kategória név megjelenítési formájának lekérése."""
+    if is_translation_key(category_name):
+        return translate(category_name, lang)
+    return category_name

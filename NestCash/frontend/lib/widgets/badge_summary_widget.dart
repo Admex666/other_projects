@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/services/badge_service.dart';
 import 'package:frontend/models/badge_models.dart';
 import 'package:frontend/screens/profile/badges_screen.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class BadgeSummaryWidget extends StatefulWidget {
   final String userId;
@@ -120,7 +121,7 @@ class _BadgeSummaryWidgetState extends State<BadgeSummaryWidget> {
                       ),
                       SizedBox(width: 8),
                       Text(
-                        'Kitűzők',
+                        'badges'.tr(),
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -143,7 +144,7 @@ class _BadgeSummaryWidgetState extends State<BadgeSummaryWidget> {
                 children: [
                   Expanded(
                     child: _buildStatItem(
-                      'Összes',
+                      'all'.tr(),
                       _badgeStats!.totalBadges.toString(),
                       Icons.emoji_events,
                       Colors.orange,
@@ -151,7 +152,7 @@ class _BadgeSummaryWidgetState extends State<BadgeSummaryWidget> {
                   ),
                   Expanded(
                     child: _buildStatItem(
-                      'Pontok',
+                      'points_'.tr(),
                       _badgeStats!.totalPoints.toString(),
                       Icons.stars,
                       Colors.blue,
@@ -159,7 +160,7 @@ class _BadgeSummaryWidgetState extends State<BadgeSummaryWidget> {
                   ),
                   Expanded(
                     child: _buildStatItem(
-                      'Haladás',
+                      'progress'.tr(),
                       _badgeStats!.inProgressCount.toString(),
                       Icons.trending_up,
                       Colors.green,
@@ -172,7 +173,7 @@ class _BadgeSummaryWidgetState extends State<BadgeSummaryWidget> {
               if (_recentBadges.isNotEmpty) ...[
                 SizedBox(height: 16),
                 Text(
-                  'Legutóbbi kitűzők',
+                  'recent_badges'.tr(),
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,

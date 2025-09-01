@@ -1,13 +1,15 @@
 // lib/models/category.dart
 class Category {
   final String id;
-  final String name;
-  final String type; // 'income' or 'expense'
-  final String userId; // A backend CategoryRead séma tartalmazza, bár a default kategóriáknál üres lehet
+  final String name;        // Tárolt érték (kulcs vagy szöveg)
+  final String displayName;
+  final String type;
+  final String userId;
 
   Category({
     required this.id,
     required this.name,
+    required this.displayName, 
     required this.type,
     required this.userId,
   });
@@ -16,8 +18,9 @@ class Category {
     return Category(
       id: json['id'],
       name: json['name'],
+      displayName: json['display_name'] ?? json['name'],
       type: json['type'],
-      userId: json['user_id'] ?? '', // Kezeli, ha a user_id hiányzik (pl. default kategóriák)
+      userId: json['user_id'] ?? '',
     );
   }
 
@@ -25,6 +28,7 @@ class Category {
     return {
       'id': id,
       'name': name,
+      'display_name': displayName,
       'type': type,
       'user_id': userId,
     };

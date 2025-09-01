@@ -10,10 +10,11 @@ class CategoryRead(BaseModel):
     id: str = Field(..., description="A kategória egyedi azonosítója")
     user_id: str = Field(..., description="A kategóriát létrehozó felhasználó azonosítója")
     name: str
+    display_name: str = Field(..., description="A kategória megjelenített neve")
     type: Literal["income", "expense"]
 
     class Config:
-        from_attributes = True # Pydantic v2-ben ez a helyes módja a `orm_mode` helyett
+        from_attributes = True
 
 class CategoryListResponse(BaseModel):
     total_count: int
