@@ -7,6 +7,7 @@ import 'package:frontend/services/category_service.dart';
 import 'package:frontend/models/category.dart';
 import 'package:intl/intl.dart'; 
 import 'package:frontend/config/config.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class AddIncomesScreen extends StatefulWidget {
   final String userId;
@@ -68,12 +69,12 @@ class _AddIncomesScreenState extends State<AddIncomesScreen> {
         });
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to load accounts: ${response.body}')),
+          SnackBar(content: Text('error_failed_to_load_accounts'.tr(namedArgs: {'error': response.body}))),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error fetching accounts: $e')),
+        SnackBar(content: Text('error_fetching_accounts'.tr(namedArgs: {'error': e.toString()}))),
       );
     }
   }
@@ -104,7 +105,7 @@ class _AddIncomesScreenState extends State<AddIncomesScreen> {
     } catch (e) {
       print('Error fetching income categories: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hiba a kategóriák betöltésekor: $e')),
+        SnackBar(content: Text('error_fetching_categories'.tr(namedArgs: {'error': e.toString()}))),
       );
     }
   }
@@ -129,7 +130,7 @@ class _AddIncomesScreenState extends State<AddIncomesScreen> {
     }
     if (_selectedMainAccount == null || _selectedSubAccount == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please select both main and sub-account.')),
+        SnackBar(content: Text('error_select_main_sub_account'.tr())),
       );
       return;
     }
@@ -139,7 +140,7 @@ class _AddIncomesScreenState extends State<AddIncomesScreen> {
 
     if (amount == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Kérjük, érvényes összeget adjon meg.')),
+        SnackBar(content: Text('error_invalid_amount'.tr())),
       );
       return;
     }
@@ -161,7 +162,7 @@ class _AddIncomesScreenState extends State<AddIncomesScreen> {
       final token = await _authService.getToken();
       if (token == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Autentikációs token hiányzik.')),
+          SnackBar(content: Text('error_missing_token'.tr())),
         );
         return;
       }
@@ -178,27 +179,26 @@ class _AddIncomesScreenState extends State<AddIncomesScreen> {
       if (response.statusCode == 200 || response.statusCode == 201) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Bevétel sikeresen mentve!'),
+            content: Text('success_income_saved'.tr()),
             backgroundColor: Color(0xFF00D4AA),
           ),
         );
         _amountController.clear();
         _titleController.clear();
         setState(() {
-          _selectedCategory = 'Válassz kategóriát';
-          _selectedDate = DateTime.now();
+          _selectedCategory = _incomeCategories.isNotEmpty ? _incomeCategories.first.name : null;
           _selectedMainAccount = _mainAccountKeys.isNotEmpty ? _mainAccountKeys.first : null;
           _updateSubAccounts();
         });
       } else {
-        final errorDetail = json.decode(response.body)['detail'] ?? 'Ismeretlen hiba történt.';
+        final errorDetail = json.decode(response.body)['detail'] ?? 'unknown_error'.tr();
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Hiba a mentés során: $errorDetail')),
+          SnackBar(content: Text('error_saving_failed'.tr(namedArgs: {'error': errorDetail}))),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hálózati hiba: $e')),
+        SnackBar(content: Text('error_network'.tr(namedArgs: {'error': e.toString()}))),
       );
     }
   }
@@ -296,7 +296,7 @@ class _AddIncomesScreenState extends State<AddIncomesScreen> {
           contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         ),
         hint: Text(
-          hintText ?? 'Válasszon',
+          hintText ?? 'select_category_hint'.tr(),
           style: TextStyle(
             color: Colors.grey[400],
             fontSize: 14,
@@ -305,7 +305,7 @@ class _AddIncomesScreenState extends State<AddIncomesScreen> {
         items: items.map((String item) {
           return DropdownMenuItem<String>(
             value: item,
-            child: Text(item),
+            child: Text(item.tr()),
           );
         }).toList(),
         onChanged: onChanged,
@@ -336,7 +336,7 @@ class _AddIncomesScreenState extends State<AddIncomesScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Dátum',
+                      'date_label'.tr(),
                       style: TextStyle(
                         color: Colors.grey[600],
                         fontSize: 12,
@@ -384,7 +384,7 @@ class _AddIncomesScreenState extends State<AddIncomesScreen> {
                   ),
                   Expanded(
                     child: Text(
-                      'Új Bevétel rögzítése',
+                      'new_income_title'.tr(),
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -421,19 +421,19 @@ class _AddIncomesScreenState extends State<AddIncomesScreen> {
                           
                           _buildInputField(
                             controller: _amountController,
-                            labelText: 'Összeg',
-                            hintText: 'Pl. 10000',
+                            labelText: 'amount_label'.tr(),
+                            hintText: 'amount_hint'.tr(),
                             icon: Icons.attach_money,
                             keyboardType: TextInputType.number,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Kérjük, adja meg az összeget';
+                                return 'error_missing_amount'.tr();
                               }
                               final cleaned = value
-                                  .replaceAll(' ', '')      // szóköz eltávolítása
-                                  .replaceAll(',', '.');    // vesszőből pont
+                                  .replaceAll(' ', '')
+                                  .replaceAll(',', '.');
                               if (double.tryParse(cleaned) == null) {
-                                return 'Kérjük, érvényes számot adjon meg';
+                                return 'error_invalid_amount'.tr();
                               }
                               return null;
                             },
@@ -442,30 +442,30 @@ class _AddIncomesScreenState extends State<AddIncomesScreen> {
                           _buildDateSelector(),
                           
                           _buildDropdownField(
-                            labelText: 'Kategória',
+                            labelText: 'category_label'.tr(),
                             icon: Icons.category,
                             value: _selectedCategory == 'Válassz kategóriát' ? null : _selectedCategory,
-                            items: _incomeCategories.map((category) => category.name).toList(), // Itt módosítva
-                            hintText: 'Válassz kategóriát',
+                            items: _incomeCategories.map((category) => category.name).toList(),
+                            hintText: 'select_category_hint'.tr(),
                             onChanged: (String? newValue) {
                               setState(() {
                                 _selectedCategory = newValue;
                               });
                             },
                             validator: (value) {
-                              if (value == null || value == 'Válassz kategóriát') {
-                                return 'Kérjük, válasszon kategóriát';
+                              if (value == null || value == 'select_category_hint'.tr()) {
+                                return 'error_select_category'.tr();
                               }
                               return null;
                             },
                           ),
                           
                           _buildDropdownField(
-                            labelText: 'Főszámla',
+                            labelText: 'main_account_label'.tr(),
                             icon: Icons.account_balance,
                             value: _selectedMainAccount,
                             items: _mainAccountKeys,
-                            hintText: 'Válassz főszámlát',
+                            hintText: 'select_main_account_hint'.tr(),
                             onChanged: (String? newValue) {
                               setState(() {
                                 _selectedMainAccount = newValue;
@@ -474,18 +474,18 @@ class _AddIncomesScreenState extends State<AddIncomesScreen> {
                             },
                             validator: (value) {
                               if (value == null) {
-                                return 'Kérjük, válasszon főszámlát';
+                                return 'error_select_main_account'.tr();
                               }
                               return null;
                             },
                           ),
                           
                           _buildDropdownField(
-                            labelText: 'Alszámla',
+                            labelText: 'sub_account_label'.tr(),
                             icon: Icons.account_balance_wallet,
                             value: _selectedSubAccount,
                             items: _subAccountKeys,
-                            hintText: 'Válassz alszámlát',
+                            hintText: 'select_sub_account_hint'.tr(),
                             onChanged: (String? newValue) {
                               setState(() {
                                 _selectedSubAccount = newValue;
@@ -493,7 +493,7 @@ class _AddIncomesScreenState extends State<AddIncomesScreen> {
                             },
                             validator: (value) {
                               if (value == null) {
-                                return 'Kérjük, válasszon alszámlát';
+                                return 'error_select_sub_account'.tr();
                               }
                               return null;
                             },
@@ -501,12 +501,12 @@ class _AddIncomesScreenState extends State<AddIncomesScreen> {
                           
                           _buildInputField(
                             controller: _titleController,
-                            labelText: 'Leírás / Megjegyzés',
-                            hintText: 'Pl. Fizetés',
+                            labelText: 'description_label'.tr(),
+                            hintText: 'description_hint_incomes'.tr(),
                             icon: Icons.description,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Kérjük, adjon meg egy leírást';
+                                return 'error_missing_description'.tr();
                               }
                               return null;
                             },
@@ -528,7 +528,7 @@ class _AddIncomesScreenState extends State<AddIncomesScreen> {
                                 ),
                               ),
                               child: Text(
-                                'Mentés',
+                                'save_button'.tr(),
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w600,

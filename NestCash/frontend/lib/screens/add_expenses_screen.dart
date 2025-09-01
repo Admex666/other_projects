@@ -5,10 +5,11 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:frontend/models/category.dart';
 import 'package:frontend/services/category_service.dart';
-import 'package:intl/intl.dart'; // Import for date formatting
+import 'package:intl/intl.dart';
 import '../services/limit_service.dart';
 import '../models/limit.dart';
 import 'package:frontend/config/config.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class AddExpensesScreen extends StatefulWidget {
   final String userId;
@@ -23,7 +24,7 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
   final AuthService _authService = AuthService();
   final _formKey = GlobalKey<FormState>();
   final _amountController = TextEditingController();
-  final _titleController = TextEditingController(); // Description is now title
+  final _titleController = TextEditingController();
   final LimitService _limitService = LimitService();
 
   DateTime _selectedDate = DateTime.now();
@@ -36,7 +37,7 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
 
   final CategoryService _categoryService = CategoryService();
   List<Category> _expenseCategories = [];
-  String? _selectedCategory; // Mostantól nullable, mivel dinamikusan töltődik be
+  String? _selectedCategory;
 
   @override
   void initState() {
@@ -51,13 +52,13 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
       setState(() {
         _expenseCategories = fetchedCategories;
         if (_expenseCategories.isNotEmpty) {
-          _selectedCategory = _expenseCategories.first.name; // Az első kategória beállítása alapértelmezettnek
+          _selectedCategory = _expenseCategories.first.name;
         }
       });
     } catch (e) {
       print('Error fetching expense categories: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hiba a kategóriák betöltésekor: $e')),
+        SnackBar(content: Text('add_expense_screen.error_fetching_categories'.tr(namedArgs: {'error': e.toString()}))),
       );
     }
   }
@@ -66,7 +67,6 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
     try {
       final token = await _authService.getToken();
       if (token == null) {
-        // Handle no token
         return;
       }
 
@@ -88,14 +88,13 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
           }
         });
       } else {
-        // Handle error
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to load accounts: ${response.body}')),
+          SnackBar(content: Text('add_expense_screen.error_loading_accounts'.tr(namedArgs: {'error': response.body}))),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error fetching accounts: $e')),
+        SnackBar(content: Text('add_expense_screen.error_fetching_accounts'.tr(namedArgs: {'error': e.toString()}))),
       );
     }
   }
@@ -134,7 +133,7 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
     }
     if (_selectedMainAccount == null || _selectedSubAccount == null) {
        ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please select both main and sub-account.')),
+        SnackBar(content: Text('add_expense_screen.error_missing_account'.tr())),
       );
       return;
     }
@@ -144,7 +143,7 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
 
     if (amount == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Kérjük, érvényes összeget adjon meg.')),
+        SnackBar(content: Text('add_expense_screen.amount_error_invalid'.tr())),
       );
       return;
     }
@@ -152,21 +151,21 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
     final String formattedDate = DateFormat('yyyy-MM-dd').format(_selectedDate);
 
     final payload = {
-      'date': formattedDate, // Módosítva: datum helyett date
-      'amount': -amount, // Módosítva: osszeg helyett amount
+      'date': formattedDate,
+      'amount': -amount,
       'kategoria': _selectedCategory == 'Válassz kategóriát' ? null : _selectedCategory,
-      'description': _titleController.text, // Módosítva: leiras helyett description
-      'type': 'expense', // Módosítva: tipus helyett type
-      'main_account': _selectedMainAccount, // Módosítva: foszamla helyett main_account
-      'sub_account_name': _selectedSubAccount, // Módosítva: alszamla helyett sub_account_name
-      'user_id': widget.userId, // Ez a mező valószínűleg nem kell a TransactionCreate sémába, a backend hozzáadja. Lásd lentebb.
+      'description': _titleController.text,
+      'type': 'expense',
+      'main_account': _selectedMainAccount,
+      'sub_account_name': _selectedSubAccount,
+      'user_id': widget.userId,
     };
 
     try {
       final token = await _authService.getToken();
       if (token == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Autentikációs token hiányzik.')),
+          SnackBar(content: Text('add_expense_screen.error_missing_token'.tr())),
         );
         return;
       }
@@ -183,27 +182,27 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
       if (response.statusCode == 200 || response.statusCode == 201) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Kiadás sikeresen mentve!'),
+            content: Text('add_expense_screen.success_message'.tr()),
             backgroundColor: Color(0xFF00D4AA),
           ),
         );
         _amountController.clear();
         _titleController.clear();
         setState(() {
-          _selectedCategory = 'Válassz kategóriát';
+          _selectedCategory = _expenseCategories.isNotEmpty ? _expenseCategories.first.name : null;
           _selectedDate = DateTime.now();
           _selectedMainAccount = _mainAccountKeys.isNotEmpty ? _mainAccountKeys.first : null;
           _updateSubAccounts();
         });
       } else {
-        final errorDetail = json.decode(response.body)['detail'] ?? 'Ismeretlen hiba történt.';
+        final errorDetail = json.decode(response.body)['detail'] ?? 'add_expense_screen.network_error'.tr();
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Hiba a mentés során: $errorDetail')),
+          SnackBar(content: Text('add_expense_screen.error_saving'.tr(namedArgs: {'error': errorDetail}))),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hálózati hiba: $e')),
+        SnackBar(content: Text('add_expense_screen.network_error'.tr(namedArgs: {'error': e.toString()}))),
       );
     }
   }
@@ -211,27 +210,26 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
   Future<bool> _checkLimits(double amount, String? category, String mainAccount, String subAccount) async {
     try {
       final result = await _limitService.checkLimits(
-        amount: -amount, // Negatív, mert kiadás
+        amount: -amount,
         category: category,
         mainAccount: mainAccount,
         subAccountName: subAccount,
       );
       
       if (!result.isAllowed) {
-        // Megerősítő dialógus megjelenítése
         final confirm = await showDialog<bool>(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: const Text('Limit figyelmeztetés'),
+              title: Text('add_expense_screen.limit_warning_title'.tr()),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(result.message ?? 'Egy vagy több limit túllépne.'),
+                  Text(result.message ?? 'add_expense_screen.limit_warning_message'.tr()),
                   if (result.exceededLimits.isNotEmpty) ...[
                     const SizedBox(height: 8),
-                    const Text('Túllépett limitek:', style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text('add_expense_screen.exceeded_limits'.tr(), style: TextStyle(fontWeight: FontWeight.bold)),
                     ...result.exceededLimits.map((limit) => Text('• $limit')),
                   ],
                 ],
@@ -239,12 +237,12 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(false),
-                  child: const Text('Mégse'),
+                  child: Text('add_expense_screen.cancel_button'.tr()),
                 ),
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(true),
                   style: TextButton.styleFrom(foregroundColor: Colors.red),
-                  child: const Text('Folytatás'),
+                  child: Text('add_expense_screen.continue_button'.tr()),
                 ),
               ],
             );
@@ -253,10 +251,9 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
         
         return confirm ?? false;
       } else if (result.warnings.isNotEmpty) {
-        // Figyelmeztetés megjelenítése, de engedélyezés
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(result.message ?? 'Figyelem: közel vagy a limithez'),
+            content: Text(result.message ?? 'add_expense_screen.warning_message'.tr()),
             backgroundColor: Colors.orange,
           ),
         );
@@ -264,7 +261,6 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
       
       return true;
     } catch (e) {
-      // Hiba esetén engedjük a tranzakciót
       return true;
     }
   }
@@ -351,7 +347,7 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
       items: items.map((String value) {
         return DropdownMenuItem<String>(
           value: value,
-          child: Text(value),
+          child: Text(value.tr()),
         );
       }).toList(),
       value: value,
@@ -383,7 +379,7 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Dátum',
+                      'add_expense_screen.date_label'.tr(),
                       style: TextStyle(
                         color: Colors.grey[600],
                         fontSize: 12,
@@ -431,7 +427,7 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
                   ),
                   Expanded(
                     child: Text(
-                      'Új Kiadás rögzítése',
+                      'add_expense_screen.title'.tr(),
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -440,7 +436,7 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  SizedBox(width: 48), // Balance the back button
+                  SizedBox(width: 48),
                 ],
               ),
             ),
@@ -468,19 +464,19 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
                           
                           _buildInputField(
                             controller: _amountController,
-                            labelText: 'Összeg',
-                            hintText: 'Pl. 10000',
+                            labelText: 'add_expense_screen.amount_label'.tr(),
+                            hintText: 'add_expense_screen.amount_hint'.tr(),
                             icon: Icons.attach_money,
                             keyboardType: TextInputType.number,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Kérjük, adja meg az összeget';
+                                return 'add_expense_screen.amount_error_empty'.tr();
                               }
                               final cleaned = value
-                                  .replaceAll(' ', '')      // szóköz eltávolítása
-                                  .replaceAll(',', '.');    // vesszőből pont
+                                  .replaceAll(' ', '')
+                                  .replaceAll(',', '.');
                               if (double.tryParse(cleaned) == null) {
-                                return 'Kérjük, érvényes számot adjon meg';
+                                return 'add_expense_screen.amount_error_invalid'.tr();
                               }
                               return null;
                             },
@@ -489,30 +485,30 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
                           _buildDateSelector(),
                           
                           _buildDropdownField(
-                            labelText: 'Kategória',
+                            labelText: 'add_expense_screen.category_label'.tr(),
                             icon: Icons.category,
-                            value: _selectedCategory == 'Válassz kategóriát' ? null : _selectedCategory,
+                            value: _selectedCategory,
                             items: _expenseCategories.map((category) => category.name).toList(),
-                            hintText: 'Válassz kategóriát',
+                            hintText: 'add_expense_screen.category_hint'.tr(),
                             onChanged: (String? newValue) {
                               setState(() {
                                 _selectedCategory = newValue!;
                               });
                             },
                             validator: (value) {
-                              if (value == null || value == 'Válassz kategóriát') {
-                                return 'Kérjük, válasszon kategóriát';
+                              if (value == null) {
+                                return 'add_expense_screen.category_error_empty'.tr();
                               }
                               return null;
                             },
                           ),
                           
                           _buildDropdownField(
-                            labelText: 'Főszámla',
+                            labelText: 'add_expense_screen.main_account_label'.tr(),
                             icon: Icons.account_balance,
                             value: _selectedMainAccount,
                             items: _mainAccountKeys,
-                            hintText: 'Válassz főszámlát',
+                            hintText: 'add_expense_screen.main_account_hint'.tr(),
                             onChanged: (String? newValue) {
                               setState(() {
                                 _selectedMainAccount = newValue;
@@ -521,18 +517,18 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
                             },
                             validator: (value) {
                               if (value == null) {
-                                return 'Kérjük, válasszon főszámlát';
+                                return 'add_expense_screen.main_account_error_empty'.tr();
                               }
                               return null;
                             },
                           ),
                           
                           _buildDropdownField(
-                            labelText: 'Alszámla',
+                            labelText: 'add_expense_screen.sub_account_label'.tr(),
                             icon: Icons.account_balance_wallet,
                             value: _selectedSubAccount,
                             items: _subAccountKeys,
-                            hintText: 'Válassz alszámlát',
+                            hintText: 'add_expense_screen.sub_account_hint'.tr(),
                             onChanged: (String? newValue) {
                               setState(() {
                                 _selectedSubAccount = newValue;
@@ -540,7 +536,7 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
                             },
                             validator: (value) {
                               if (value == null) {
-                                return 'Kérjük, válasszon alszámlát';
+                                return 'add_expense_screen.sub_account_error_empty'.tr();
                               }
                               return null;
                             },
@@ -548,12 +544,12 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
                           
                           _buildInputField(
                             controller: _titleController,
-                            labelText: 'Leírás / Megjegyzés',
-                            hintText: 'Pl. Heti bevásárlás',
+                            labelText: 'add_expense_screen.description_label'.tr(),
+                            hintText: 'add_expense_screen.description_hint'.tr(),
                             icon: Icons.description,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Kérjük, adjon meg egy leírást';
+                                return 'add_expense_screen.description_error_empty'.tr();
                               }
                               return null;
                             },
@@ -575,7 +571,7 @@ class _AddExpensesScreenState extends State<AddExpensesScreen> {
                                 ),
                               ),
                               child: Text(
-                                'Mentés',
+                                'add_expense_screen.save_button'.tr(),
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w600,

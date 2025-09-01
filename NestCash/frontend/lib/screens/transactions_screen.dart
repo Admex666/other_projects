@@ -5,6 +5,8 @@ import 'package:frontend/screens/add_expenses_screen.dart';
 import 'package:frontend/screens/add_incomes_screen.dart';
 import 'package:frontend/screens/edit_transaction_screen.dart';
 import 'package:intl/intl.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:frontend/utils/category_translate.dart';
 
 class TransactionsScreen extends StatefulWidget {
   final String userId;
@@ -84,12 +86,12 @@ void _deleteTransaction(Map<String, dynamic> transaction) {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Text('Tranzakció törlése'),
-        content: Text('Biztosan törölni szeretnéd ezt a tranzakciót?\n\n"${transaction['title']}"'),
+        title: Text('transactions_screen.dialogs.delete_transaction.title'.tr()),
+        content: Text('transactions_screen.dialogs.delete_transaction.content'.tr(args: [transaction['title']])),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Mégse'),
+            child: Text('transactions_screen.dialogs.delete_transaction.cancel_button'.tr()),
           ),
           TextButton(
             onPressed: () async {
@@ -97,7 +99,7 @@ void _deleteTransaction(Map<String, dynamic> transaction) {
               await _performDelete(transaction['id']);
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: Text('Törlés'),
+            child: Text('transactions_screen.dialogs.delete_transaction.delete_button'.tr()),
           ),
         ],
       );
@@ -112,7 +114,7 @@ Future<void> _performDelete(String transactionId) async {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Tranzakció sikeresen törölve!'),
+            content: Text('transactions_screen.snackbar.success_delete'.tr()),
             backgroundColor: Color(0xFF00D4A3),
           ),
         );
@@ -122,7 +124,7 @@ Future<void> _performDelete(String transactionId) async {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Hiba a törlés során: $e'),
+            content: Text('transactions_screen.snackbar.error_delete'.tr(args: [e.toString()])),
             backgroundColor: Colors.red,
           ),
         );
@@ -184,7 +186,7 @@ Future<void> _performDelete(String transactionId) async {
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Hiba a tranzakciók betöltésekor: $e'),
+            content: Text('transactions_screen.snackbar.error_load'.tr(args: [e.toString()])),
             backgroundColor: Colors.red,
           ),
         );
@@ -225,8 +227,8 @@ Future<void> _performDelete(String transactionId) async {
         // Több lehetséges mező nevvel számolunk
         final type = transaction['type'] ?? transaction['tipus'];
         final amount = (transaction['amount'] ?? transaction['osszeg'] ?? 0 as num).toDouble();
-        final description = transaction['description'] ?? transaction['leiras'] ?? 'Ismeretlen tranzakció';
-        final category = transaction['kategoria'] ?? transaction['category'] ?? 'Egyéb';
+        final description = transaction['description'] ?? transaction['leiras'] ?? 'transactions_screen.transaction_processing.default_description'.tr();
+        final category = transaction['kategoria'] ?? transaction['category'] ?? 'transactions_screen.transaction_processing.default_category'.tr();
         final dateStr = transaction['date'] ?? transaction['datum'];
         
         // Dátum parse-olás
@@ -255,21 +257,21 @@ Future<void> _performDelete(String transactionId) async {
           'date': date,
           'isExpense': isExpense,
           'icon': _getTransactionIcon(category, isExpense),
-          'main_account': transaction['main_account'] ?? 'Ismeretlen',
-          'sub_account_name': transaction['sub_account_name'] ?? 'Ismeretlen',
+          'main_account': transaction['main_account'] ?? 'transactions_screen.transaction_processing.default_account'.tr(),
+          'sub_account_name': transaction['sub_account_name'] ?? 'transactions_screen.transaction_processing.default_account'.tr(),
         };
       } catch (e) {
         print('Error processing transaction: $transaction, error: $e');
         return {
           'id': '',
-          'title': 'Hibás tranzakció',
+          'title': 'transactions_screen.transaction_processing.invalid_transaction'.tr(),
           'amount': 0.0,
-          'category': 'Egyéb',
+          'category': 'transactions_screen.transaction_processing.default_category'.tr(),
           'date': DateTime.now(),
           'isExpense': false,
           'icon': Icons.error,
-          'main_account': 'Ismeretlen',
-          'sub_account_name': 'Ismeretlen',
+          'main_account': 'transactions_screen.transaction_processing.default_account'.tr(),
+          'sub_account_name': 'transactions_screen.transaction_processing.default_account'.tr(),
         };
       }
     }).toList();
@@ -333,7 +335,7 @@ Future<void> _performDelete(String transactionId) async {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Szűrők',
+                  'transactions_screen.dialogs.filter.title'.tr(),
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -342,16 +344,16 @@ Future<void> _performDelete(String transactionId) async {
                 SizedBox(height: 20),
                 
                 // Típus szűrő
-                Text('Típus:', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text('transactions_screen.dialogs.filter.type_label'.tr(), style: TextStyle(fontWeight: FontWeight.bold)),
                 SizedBox(height: 8),
                 DropdownButton<String?>(
                   value: _selectedType,
                   isExpanded: true,
-                  hint: Text('Válassz típust'),
+                  hint: Text('transactions_screen.dialogs.filter.all'.tr()),
                   items: [
-                    DropdownMenuItem(value: null, child: Text('Összes')),
-                    DropdownMenuItem(value: 'income', child: Text('Bevételek')),
-                    DropdownMenuItem(value: 'expense', child: Text('Kiadások')),
+                    DropdownMenuItem(value: null, child: Text('transactions_screen.dialogs.filter.all'.tr())),
+                    DropdownMenuItem(value: 'income', child: Text('transactions_screen.income'.tr())),
+                    DropdownMenuItem(value: 'expense', child: Text('transactions_screen.expense'.tr())),
                   ],
                   onChanged: (value) {
                     setModalState(() => _selectedType = value);
@@ -360,11 +362,11 @@ Future<void> _performDelete(String transactionId) async {
                 SizedBox(height: 16),
                 
                 // Kategória szűrő
-                Text('Kategória:', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text('transactions_screen.dialogs.filter.category_label'.tr(), style: TextStyle(fontWeight: FontWeight.bold)),
                 SizedBox(height: 8),
                 TextField(
                   decoration: InputDecoration(
-                    hintText: 'Kategória neve',
+                    hintText: 'transactions_screen.dialogs.filter.category_hint'.tr(),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -377,7 +379,7 @@ Future<void> _performDelete(String transactionId) async {
                 SizedBox(height: 16),
                 
                 // Dátum szűrők
-                Text('Időszak:', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text('transactions_screen.dialogs.filter.date_label'.tr(), style: TextStyle(fontWeight: FontWeight.bold)),
                 SizedBox(height: 8),
                 Row(
                   children: [
@@ -403,7 +405,7 @@ Future<void> _performDelete(String transactionId) async {
                           child: Text(
                             _startDate != null 
                               ? _formatDate(_startDate!)
-                              : 'Kezdő dátum',
+                              : 'transactions_screen.dialogs.filter.start_date_hint'.tr(),
                             style: TextStyle(
                               color: _startDate != null ? Colors.black : Colors.grey,
                             ),
@@ -434,7 +436,7 @@ Future<void> _performDelete(String transactionId) async {
                           child: Text(
                             _endDate != null 
                               ? _formatDate(_endDate!)
-                              : 'Vég dátum',
+                              : 'transactions_screen.dialogs.filter.end_date_hint'.tr(),
                             style: TextStyle(
                               color: _endDate != null ? Colors.black : Colors.grey,
                             ),
@@ -459,7 +461,7 @@ Future<void> _performDelete(String transactionId) async {
                             _endDate = null;
                           });
                         },
-                        child: Text('Törlés'),
+                        child: Text('transactions_screen.dialogs.filter.clear_button'.tr()),
                       ),
                     ),
                     SizedBox(width: 16),
@@ -473,7 +475,7 @@ Future<void> _performDelete(String transactionId) async {
                           backgroundColor: Color(0xFF00D4A3),
                         ),
                         child: Text(
-                          'Alkalmazás',
+                          'transactions_screen.dialogs.filter.apply_button'.tr(),
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
@@ -509,7 +511,7 @@ Future<void> _performDelete(String transactionId) async {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Rendezés',
+                  'transactions_screen.dialogs.sort.title'.tr(),
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -517,30 +519,30 @@ Future<void> _performDelete(String transactionId) async {
                 ),
                 SizedBox(height: 20),
                 
-                Text('Rendezés alapja:', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text('transactions_screen.dialogs.sort.sort_by_label'.tr(), style: TextStyle(fontWeight: FontWeight.bold)),
                 SizedBox(height: 12),
                 
                 _buildSortOption(
                   'date', 
-                  'Dátum szerint', 
+                  'transactions_screen.dialogs.sort.sort_options.date'.tr(), 
                   Icons.calendar_today,
                   setModalState,
                 ),
                 _buildSortOption(
                   'amount', 
-                  'Összeg szerint', 
+                  'transactions_screen.dialogs.sort.sort_options.amount'.tr(), 
                   Icons.attach_money,
                   setModalState,
                 ),
                 _buildSortOption(
                   'category', 
-                  'Kategória szerint', 
+                  'transactions_screen.dialogs.sort.sort_options.category'.tr(), 
                   Icons.category,
                   setModalState,
                 ),
                 _buildSortOption(
                   'title', 
-                  'Név szerint', 
+                  'transactions_screen.dialogs.sort.sort_options.title'.tr(), 
                   Icons.title,
                   setModalState,
                 ),
@@ -557,7 +559,7 @@ Future<void> _performDelete(String transactionId) async {
                     ),
                     SizedBox(width: 8),
                     Text(
-                      'Sorrend:',
+                      'transactions_screen.dialogs.sort.order_label'.tr(),
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     SizedBox(width: 12),
@@ -578,7 +580,7 @@ Future<void> _performDelete(String transactionId) async {
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
-                                  'Csökkenő',
+                                  'transactions_screen.dialogs.sort.descending'.tr(),
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     color: _sortDescending ? Colors.white : Colors.black,
@@ -603,7 +605,7 @@ Future<void> _performDelete(String transactionId) async {
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
-                                  'Növekvő',
+                                  'transactions_screen.dialogs.sort.ascending'.tr(),
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     color: !_sortDescending ? Colors.white : Colors.black,
@@ -638,7 +640,7 @@ Future<void> _performDelete(String transactionId) async {
                       ),
                     ),
                     child: Text(
-                      'Alkalmazás',
+                      'transactions_screen.dialogs.sort.apply_button'.tr(),
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -701,18 +703,7 @@ Future<void> _performDelete(String transactionId) async {
   }
 
   String _getSortLabel() {
-    switch (_sortBy) {
-      case 'date':
-        return 'Dátum';
-      case 'amount':
-        return 'Összeg';
-      case 'category':
-        return 'Kategória';
-      case 'title':
-        return 'Név';
-      default:
-        return 'Dátum';
-    }
+    return 'transactions_screen.sort_labels.${_sortBy}'.tr();
   }
 
   @override
@@ -720,7 +711,7 @@ Future<void> _performDelete(String transactionId) async {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Tranzakciók',
+          'transactions_screen.title'.tr(),
           style: TextStyle(
             fontWeight: FontWeight.bold,
           ),
@@ -732,12 +723,12 @@ Future<void> _performDelete(String transactionId) async {
           IconButton(
             icon: Icon(Icons.sort),
             onPressed: _showSortDialog,
-            tooltip: 'Rendezés',
+            tooltip: 'transactions_screen.sort_tooltip'.tr(),
           ),
           IconButton(
             icon: Icon(Icons.filter_list),
             onPressed: _showFilterDialog,
-            tooltip: 'Szűrők',
+            tooltip: 'transactions_screen.filter_tooltip'.tr(),
           ),
         ],
       ),
@@ -771,7 +762,7 @@ Future<void> _performDelete(String transactionId) async {
                       children: [
                         Icon(Icons.filter_list, size: 16, color: Color(0xFF00D4A3)),
                         SizedBox(width: 4),
-                        Text('Aktív szűrők:', style: TextStyle(fontWeight: FontWeight.bold)),
+                        Text('transactions_screen.active_filters'.tr(), style: TextStyle(fontWeight: FontWeight.bold)),
                         Spacer(),
                         GestureDetector(
                           onTap: () {
@@ -784,7 +775,7 @@ Future<void> _performDelete(String transactionId) async {
                             _loadTransactions(refresh: true);
                           },
                           child: Text(
-                            'Törlés',
+                            'transactions_screen.clear_filters'.tr(),
                             style: TextStyle(
                               color: Color(0xFF00D4A3),
                               fontWeight: FontWeight.bold,
@@ -799,13 +790,13 @@ Future<void> _performDelete(String transactionId) async {
                       runSpacing: 4,
                       children: [
                         if (_selectedType != null)
-                          _buildFilterChip(_selectedType == 'income' ? 'Bevételek' : 'Kiadások'),
+                          _buildFilterChip(_selectedType == 'income' ? 'transactions_screen.income'.tr() : 'transactions_screen.expense'.tr()),
                         if (_selectedCategory != null)
-                          _buildFilterChip('Kategória: $_selectedCategory'),
+                          _buildFilterChip('${'transactions_screen.category'.tr()}: $_selectedCategory'),
                         if (_startDate != null)
-                          _buildFilterChip('Kezdő: ${_formatDate(_startDate!)}'),
+                          _buildFilterChip('${'transactions_screen.start_date'.tr()}: ${_formatDate(_startDate!)}'),
                         if (_endDate != null)
-                          _buildFilterChip('Vég: ${_formatDate(_endDate!)}'),
+                          _buildFilterChip('${'transactions_screen.end_date'.tr()}: ${_formatDate(_endDate!)}'),
                       ],
                     ),
                   ],
@@ -884,7 +875,7 @@ Future<void> _performDelete(String transactionId) async {
           ),
           SizedBox(height: 16),
           Text(
-            'Nincsenek tranzakciók',
+            'transactions_screen.empty_state.title'.tr(),
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -893,7 +884,7 @@ Future<void> _performDelete(String transactionId) async {
           ),
           SizedBox(height: 8),
           Text(
-            'Adj hozzá tranzakciókat a gyors hozzáadás gombbal',
+            'transactions_screen.empty_state.description'.tr(),
             style: TextStyle(
               color: Colors.grey[500],
             ),
@@ -968,7 +959,7 @@ Future<void> _performDelete(String transactionId) async {
                   ),
                   SizedBox(height: 4),
                   Text(
-                    '${_formatDate(date)} • ${transaction['category']}',
+                    '${_formatDate(date)} • ${CategoryTranslate.getLocalizedCategory(transaction['category']).tr()}',
                     style: TextStyle(
                       color: Colors.grey[600],
                       fontSize: 12,
@@ -1029,20 +1020,20 @@ Future<void> _performDelete(String transactionId) async {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Tranzakció részletei',
+                'transactions_screen.details.title'.tr(),
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               SizedBox(height: 20),
-              _buildDetailRow('Megnevezés:', transaction['title']),
-              _buildDetailRow('Összeg:', _formatCurrency(transaction['amount'])),
-              _buildDetailRow('Kategória:', transaction['category']),
-              _buildDetailRow('Dátum:', _formatDate(transaction['date'])),
-              _buildDetailRow('Főszámla:', transaction['main_account']),
-              _buildDetailRow('Alszámla:', transaction['sub_account_name']),
-              _buildDetailRow('Típus:', transaction['isExpense'] ? 'Kiadás' : 'Bevétel'),
+              _buildDetailRow('transactions_screen.details.label_title'.tr(), transaction['title']),
+              _buildDetailRow('transactions_screen.details.label_amount'.tr(), _formatCurrency(transaction['amount'])),
+              _buildDetailRow('transactions_screen.details.label_category'.tr(), transaction['category']),
+              _buildDetailRow('transactions_screen.details.label_date'.tr(), _formatDate(transaction['date'])),
+              _buildDetailRow('transactions_screen.details.label_main_account'.tr(), transaction['main_account']),
+              _buildDetailRow('transactions_screen.details.label_sub_account'.tr(), transaction['sub_account_name']),
+              _buildDetailRow('transactions_screen.details.label_type'.tr(), transaction['isExpense'] ? 'transactions_screen.details.type_expense'.tr() : 'transactions_screen.details.type_income'.tr()),
               SizedBox(height: 20),
               // Cseréld le a bezárás gombot ezekkel a gombokkal:
               Row(
@@ -1054,7 +1045,7 @@ Future<void> _performDelete(String transactionId) async {
                         _editTransaction(transaction);
                       },
                       icon: Icon(Icons.edit, color: Color(0xFF00D4A3)),
-                      label: Text('Módosítás', style: TextStyle(color: Color(0xFF00D4A3))),
+                      label: Text('transactions_screen.details.edit_button'.tr(), style: TextStyle(color: Color(0xFF00D4A3))),
                       style: OutlinedButton.styleFrom(
                         side: BorderSide(color: Color(0xFF00D4A3)),
                         padding: EdgeInsets.symmetric(vertical: 16),
@@ -1072,7 +1063,7 @@ Future<void> _performDelete(String transactionId) async {
                         _deleteTransaction(transaction);
                       },
                       icon: Icon(Icons.delete, color: Colors.red),
-                      label: Text('Törlés', style: TextStyle(color: Colors.red)),
+                      label: Text('transactions_screen.details.delete_button'.tr(), style: TextStyle(color: Colors.red)),
                       style: OutlinedButton.styleFrom(
                         side: BorderSide(color: Colors.red),
                         padding: EdgeInsets.symmetric(vertical: 16),
@@ -1097,7 +1088,7 @@ Future<void> _performDelete(String transactionId) async {
                     ),
                   ),
                   child: Text(
-                    'Bezárás',
+                    'transactions_screen.details.close_button'.tr(),
                     style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -1146,7 +1137,7 @@ Future<void> _performDelete(String transactionId) async {
         backgroundColor: Color(0xFF00D4A3),
         icon: Icon(Icons.add, color: Colors.white),
         label: Text(
-          'Gyors hozzáadás',
+          'transactions_screen.quick_add.title'.tr(),
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
@@ -1171,7 +1162,7 @@ Future<void> _performDelete(String transactionId) async {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Gyors hozzáadás',
+                'transactions_screen.quick_add.title'.tr(),
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -1192,7 +1183,7 @@ Future<void> _performDelete(String transactionId) async {
                         );
                       },
                       icon: Icon(Icons.add, color: Colors.white),
-                      label: Text('Bevétel', style: TextStyle(color: Colors.white)),
+                      label: Text('transactions_screen.quick_add.income_button'.tr(), style: TextStyle(color: Colors.white)),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xFF00D4A3),
                         padding: EdgeInsets.symmetric(vertical: 16),
@@ -1215,7 +1206,7 @@ Future<void> _performDelete(String transactionId) async {
                         );
                       },
                       icon: Icon(Icons.remove, color: Colors.white),
-                      label: Text('Kiadás', style: TextStyle(color: Colors.white)),
+                      label: Text('transactions_screen.quick_add.expense_button'.tr(), style: TextStyle(color: Colors.white)),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.redAccent,
                         padding: EdgeInsets.symmetric(vertical: 16),

@@ -8,6 +8,7 @@ import 'package:frontend/models/category.dart';
 import 'package:frontend/services/category_service.dart';
 import 'package:intl/intl.dart';
 import 'package:frontend/config/config.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class EditTransactionScreen extends StatefulWidget {
   final String userId;
@@ -91,7 +92,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
     } catch (e) {
       print('Error fetching categories: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Hiba a kategóriák betöltésekor: $e')),
+        SnackBar(content: Text('errorFetchingCategories'.tr(namedArgs: {'error': e.toString()}))),
       );
     }
   }
@@ -171,7 +172,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
     }
     if (_selectedMainAccount == null || _selectedSubAccount == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please select both main and sub-account.')),
+        SnackBar(content: Text('pleaseSelectMainAndSubAccount'.tr())),
       );
       return;
     }
@@ -181,7 +182,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
 
     if (amount == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Kérjük, érvényes összeget adjon meg.')),
+        SnackBar(content: Text('pleaseProvideValidAmount'.tr())),
       );
       return;
     }
@@ -204,7 +205,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Tranzakció sikeresen frissítve!'),
+            content: Text('transactionUpdatedSuccessfully'.tr()),
             backgroundColor: Color(0xFF00D4AA),
           ),
         );
@@ -213,7 +214,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Hiba a frissítés során: $e')),
+          SnackBar(content: Text('errorOnUpdate'.tr(namedArgs: {'error': e.toString()}))),
         );
       }
     }
@@ -312,7 +313,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
           contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         ),
         hint: Text(
-          hintText ?? 'Válasszon',
+          hintText ?? 'selectPlaceholder'.tr(),
           style: TextStyle(
             color: Colors.grey[400],
             fontSize: 14,
@@ -321,7 +322,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
         items: items.map((String item) {
           return DropdownMenuItem<String>(
             value: item,
-            child: Text(item),
+            child: Text(item.tr()),
           );
         }).toList(),
         onChanged: onChanged,
@@ -352,7 +353,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Dátum',
+                      'date'.tr(),
                       style: TextStyle(
                         color: Colors.grey[600],
                         fontSize: 12,
@@ -380,7 +381,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final screenTitle = widget.isExpense ? 'Kiadás módosítása' : 'Bevétel módosítása';
+    final screenTitle = widget.isExpense ? 'screenTitleExpense'.tr() : 'screenTitleIncome'.tr();
     final buttonColor = widget.isExpense ? Colors.redAccent : Color(0xFF00D4AA);
 
     return Scaffold(
@@ -440,19 +441,19 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                           
                           _buildInputField(
                             controller: _amountController,
-                            labelText: 'Összeg',
-                            hintText: 'Pl. 10000',
+                            labelText: 'amount'.tr(),
+                            hintText: 'amountHint'.tr(),
                             icon: Icons.attach_money,
                             keyboardType: TextInputType.number,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Kérjük, adja meg az összeget';
+                                return 'pleaseEnterAmount'.tr();
                               }
                               final cleaned = value
-                                  .replaceAll(' ', '')      // szóköz eltávolítása
-                                  .replaceAll(',', '.');    // vesszőből pont
+                                  .replaceAll(' ', '')
+                                  .replaceAll(',', '.');
                               if (double.tryParse(cleaned) == null) {
-                                return 'Kérjük, érvényes számot adjon meg';
+                                return 'pleaseEnterValidNumber'.tr();
                               }
                               return null;
                             },
@@ -462,11 +463,11 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                           
                           if (_categories.isNotEmpty)
                             _buildDropdownField(
-                              labelText: 'Kategória',
+                              labelText: 'category'.tr(),
                               icon: Icons.category,
                               value: _selectedCategory,
                               items: _categories.map((category) => category.name).toList(),
-                              hintText: 'Válassz kategóriát',
+                              hintText: 'selectCategory'.tr(),
                               onChanged: (String? newValue) {
                                 setState(() {
                                   _selectedCategory = newValue;
@@ -474,7 +475,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                               },
                               validator: (value) {
                                 if (value == null) {
-                                  return 'Kérjük, válasszon kategóriát';
+                                  return 'pleaseSelectCategory'.tr();
                                 }
                                 return null;
                               },
@@ -482,11 +483,11 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                           
                           if (_mainAccountKeys.isNotEmpty)
                             _buildDropdownField(
-                              labelText: 'Főszámla',
+                              labelText: 'mainAccount'.tr(),
                               icon: Icons.account_balance,
                               value: _selectedMainAccount,
                               items: _mainAccountKeys,
-                              hintText: 'Válassz főszámlát',
+                              hintText: 'selectMainAccount'.tr(),
                               onChanged: (String? newValue) {
                                 setState(() {
                                   _selectedMainAccount = newValue;
@@ -495,7 +496,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                               },
                               validator: (value) {
                                 if (value == null) {
-                                  return 'Kérjük, válasszon főszámlát';
+                                  return 'pleaseSelectMainAccount'.tr();
                                 }
                                 return null;
                               },
@@ -503,11 +504,11 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                           
                           if (_subAccountKeys.isNotEmpty)
                             _buildDropdownField(
-                              labelText: 'Alszámla',
+                              labelText: 'subAccount'.tr(),
                               icon: Icons.account_balance_wallet,
                               value: _selectedSubAccount,
                               items: _subAccountKeys,
-                              hintText: 'Válassz alszámlát',
+                              hintText: 'selectSubAccount'.tr(),
                               onChanged: (String? newValue) {
                                 setState(() {
                                   _selectedSubAccount = newValue;
@@ -515,7 +516,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                               },
                               validator: (value) {
                                 if (value == null) {
-                                  return 'Kérjük, válasszon alszámlát';
+                                  return 'pleaseSelectSubAccount'.tr();
                                 }
                                 return null;
                               },
@@ -523,12 +524,12 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                           
                           _buildInputField(
                             controller: _titleController,
-                            labelText: 'Leírás / Megjegyzés',
-                            hintText: widget.isExpense ? 'Pl. Heti bevásárlás' : 'Pl. Fizetés',
+                            labelText: 'description'.tr(),
+                            hintText: widget.isExpense ? 'descriptionHintExpense'.tr() : 'descriptionHintIncome'.tr(),
                             icon: Icons.description,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Kérjük, adjon meg egy leírást';
+                                return 'pleaseEnterDescription'.tr();
                               }
                               return null;
                             },
@@ -550,7 +551,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                                 ),
                               ),
                               child: Text(
-                                'Frissítés',
+                                'update'.tr(),
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w600,

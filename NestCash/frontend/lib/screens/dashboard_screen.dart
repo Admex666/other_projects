@@ -13,7 +13,8 @@ import 'package:frontend/services/auth_service.dart';
 import 'package:frontend/screens/transactions_screen.dart';
 import 'package:frontend/screens/auth/auth_wrapper.dart';
 import 'package:intl/intl.dart';
-import 'package:easy_localization/easy_localization.dart'; // Import the localization package
+import 'package:easy_localization/easy_localization.dart'; 
+import 'package:frontend/utils/category_translate.dart';
 
 class DashboardScreen extends StatefulWidget {
   final String username;
@@ -940,7 +941,7 @@ IconData _getTransactionIcon(String category, bool isExpense) {
                     ),
                   ),
                   Text(
-                    '${_formatDate(date)} • ${transaction['category']}',
+                    '${_formatDate(date)} • ${CategoryTranslate.getLocalizedCategory(transaction['category']).tr()}',
                     style: TextStyle(
                       color: Colors.grey[600],
                       fontSize: 12,
