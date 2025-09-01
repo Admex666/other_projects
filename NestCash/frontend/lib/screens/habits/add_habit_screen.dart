@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:frontend/models/habit.dart';
 import 'package:frontend/services/habit_service.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class AddHabitScreen extends StatefulWidget {
   final String userId;
@@ -93,9 +94,9 @@ class _AddHabitScreenState extends State<AddHabitScreen>
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Szokás sikeresen létrehozva!'),
-            backgroundColor: Color(0xFF00D4AA),
+          SnackBar(
+            content: Text('habit_creation_success'.tr()),
+            backgroundColor: const Color(0xFF00D4AA),
           ),
         );
         Navigator.pop(context, true);
@@ -104,7 +105,7 @@ class _AddHabitScreenState extends State<AddHabitScreen>
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Hiba: $e'),
+            content: Text('error_occurred'.tr(namedArgs: {'error': e.toString()})),
             backgroundColor: Colors.red,
           ),
         );
@@ -125,9 +126,9 @@ class _AddHabitScreenState extends State<AddHabitScreen>
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Szokás sikeresen hozzáadva!'),
-            backgroundColor: Color(0xFF00D4AA),
+          SnackBar(
+            content: Text('predefined_habit_add_success'.tr()),
+            backgroundColor: const Color(0xFF00D4AA),
           ),
         );
         Navigator.pop(context, true);
@@ -136,7 +137,7 @@ class _AddHabitScreenState extends State<AddHabitScreen>
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Hiba: $e'),
+            content: Text('error'.tr(namedArgs: {'error': e.toString()})),
             backgroundColor: Colors.red,
           ),
         );
@@ -160,14 +161,14 @@ class _AddHabitScreenState extends State<AddHabitScreen>
     int maxLines = 1,
   }) {
     return Container(
-      margin: EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: 16),
       child: TextFormField(
         controller: controller,
         keyboardType: keyboardType,
         inputFormatters: inputFormatters,
         onChanged: onChanged,
         maxLines: maxLines,
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 16,
           color: Colors.black87,
         ),
@@ -191,7 +192,7 @@ class _AddHabitScreenState extends State<AddHabitScreen>
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Color(0xFF00D4AA), width: 2),
+            borderSide: const BorderSide(color: Color(0xFF00D4AA), width: 2),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
@@ -200,7 +201,8 @@ class _AddHabitScreenState extends State<AddHabitScreen>
           filled: true,
           fillColor: Colors.white,
           prefixIcon: Icon(icon, color: Colors.grey[600]),
-          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         ),
         validator: validator,
       ),
@@ -218,7 +220,7 @@ class _AddHabitScreenState extends State<AddHabitScreen>
     required String Function(T) displayText,
   }) {
     return Container(
-      margin: EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: 16),
       child: DropdownButtonFormField<T>(
         decoration: InputDecoration(
           labelText: labelText,
@@ -234,7 +236,7 @@ class _AddHabitScreenState extends State<AddHabitScreen>
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Color(0xFF00D4AA), width: 2),
+            borderSide: const BorderSide(color: Color(0xFF00D4AA), width: 2),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
@@ -243,7 +245,8 @@ class _AddHabitScreenState extends State<AddHabitScreen>
           filled: true,
           fillColor: Colors.white,
           prefixIcon: Icon(icon, color: Colors.grey[600]),
-          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         ),
         items: items.map((T item) {
           return DropdownMenuItem<T>(
@@ -261,18 +264,18 @@ class _AddHabitScreenState extends State<AddHabitScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF00D4AA),
+      backgroundColor: const Color(0xFF00D4AA),
       body: SafeArea(
         child: Column(
           children: [
             // Header
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               child: Row(
                 children: [
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.arrow_back,
                       color: Colors.black87,
                       size: 24,
@@ -280,8 +283,8 @@ class _AddHabitScreenState extends State<AddHabitScreen>
                   ),
                   Expanded(
                     child: Text(
-                      'Új szokás létrehozása',
-                      style: TextStyle(
+                      'add_habit_title'.tr(),
+                      style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: Colors.black87,
@@ -289,14 +292,14 @@ class _AddHabitScreenState extends State<AddHabitScreen>
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  SizedBox(width: 48),
+                  const SizedBox(width: 48),
                 ],
               ),
             ),
             
             // Tab Bar
             Container(
-              margin: EdgeInsets.symmetric(horizontal: 20),
+              margin: const EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
                 color: Colors.black.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(25),
@@ -309,20 +312,20 @@ class _AddHabitScreenState extends State<AddHabitScreen>
                 ),
                 labelColor: Colors.black87,
                 unselectedLabelColor: Colors.black54,
-                tabs: const [
-                  Tab(text: 'Egyéni'),
-                  Tab(text: 'Sablonok'),
+                tabs: [
+                  Tab(text: 'custom_habit'.tr()),
+                  Tab(text: 'predefined_templates'.tr()),
                 ],
               ),
             ),
             
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             
             // Content Container
             Expanded(
               child: Container(
                 width: double.infinity,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Color(0xFFF5F5F5),
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(30),
@@ -330,7 +333,7 @@ class _AddHabitScreenState extends State<AddHabitScreen>
                   ),
                 ),
                 child: _isLoading
-                    ? Center(
+                    ? const Center(
                         child: CircularProgressIndicator(
                           color: Color(0xFF00D4AA),
                         ),
@@ -353,23 +356,23 @@ class _AddHabitScreenState extends State<AddHabitScreen>
   Widget _buildCustomHabitTab() {
     return SingleChildScrollView(
       child: Padding(
-        padding: EdgeInsets.all(24),
+        padding: const EdgeInsets.all(24),
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               
               // Szokás neve
               _buildInputField(
                 controller: _titleController,
-                labelText: 'Szokás neve',
-                hintText: 'pl. Napi séta',
+                labelText: 'habit_name'.tr(),
+                hintText: 'habit_name_hint'.tr(),
                 icon: Icons.psychology,
                 validator: (value) {
                   if (value?.trim().isEmpty ?? true) {
-                    return 'A szokás neve kötelező';
+                    return 'habit_name_required'.tr();
                   }
                   return null;
                 },
@@ -378,19 +381,19 @@ class _AddHabitScreenState extends State<AddHabitScreen>
               // Leírás
               _buildInputField(
                 controller: _descriptionController,
-                labelText: 'Leírás (opcionális)',
-                hintText: 'Rövid leírás a szokásról...',
+                labelText: 'description_optional'.tr(),
+                hintText: 'description_hint'.tr(),
                 icon: Icons.description,
                 maxLines: 3,
               ),
               
               // Kategória
               _buildDropdownField<HabitCategory>(
-                labelText: 'Kategória',
+                labelText: 'category'.tr(),
                 icon: Icons.category,
                 value: _selectedCategory,
                 items: HabitCategory.values,
-                hintText: 'Válassz kategóriát',
+                hintText: 'select_category'.tr(),
                 onChanged: (value) {
                   setState(() {
                     _selectedCategory = value!;
@@ -401,11 +404,11 @@ class _AddHabitScreenState extends State<AddHabitScreen>
               
               // Követés típusa
               _buildDropdownField<TrackingType>(
-                labelText: 'Követés típusa',
+                labelText: 'tracking_type'.tr(),
                 icon: Icons.track_changes,
                 value: _selectedTrackingType,
                 items: TrackingType.values,
-                hintText: 'Válassz követési típust',
+                hintText: 'select_tracking_type'.tr(),
                 onChanged: (value) {
                   setState(() {
                     _selectedTrackingType = value!;
@@ -416,11 +419,11 @@ class _AddHabitScreenState extends State<AddHabitScreen>
               
               // Gyakoriság
               _buildDropdownField<FrequencyType>(
-                labelText: 'Gyakoriság',
+                labelText: 'frequency'.tr(),
                 icon: Icons.schedule,
                 value: _selectedFrequency,
                 items: FrequencyType.values,
-                hintText: 'Válassz gyakoriságot',
+                hintText: 'select_frequency'.tr(),
                 onChanged: (value) {
                   setState(() {
                     _selectedFrequency = value!;
@@ -431,8 +434,8 @@ class _AddHabitScreenState extends State<AddHabitScreen>
               
               // Cél beállítása
               Container(
-                margin: EdgeInsets.only(bottom: 16),
-                padding: EdgeInsets.all(16),
+                margin: const EdgeInsets.only(bottom: 16),
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
@@ -443,11 +446,11 @@ class _AddHabitScreenState extends State<AddHabitScreen>
                     Row(
                       children: [
                         Icon(Icons.flag, color: Colors.grey[600]),
-                        SizedBox(width: 12),
+                        const SizedBox(width: 12),
                         Expanded(
                           child: Text(
-                            'Cél beállítása',
-                            style: TextStyle(
+                            'set_goal'.tr(),
+                            style: const TextStyle(
                               fontSize: 16,
                               color: Colors.black87,
                             ),
@@ -464,22 +467,22 @@ class _AddHabitScreenState extends State<AddHabitScreen>
                               }
                             });
                           },
-                          activeColor: Color(0xFF00D4AA),
+                          activeColor: const Color(0xFF00D4AA),
                         ),
                       ],
                     ),
                     
                     if (_hasGoal) ...[
-                      SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       
                       _buildInputField(
                         controller: _targetValueController,
                         labelText: _selectedTrackingType == TrackingType.boolean 
-                            ? 'Cél napok száma'
-                            : 'Cél érték',
+                            ? 'goal_days_count'.tr()
+                            : 'goal_value'.tr(),
                         hintText: _selectedTrackingType == TrackingType.boolean 
-                            ? 'pl. 20'
-                            : 'pl. 10000',
+                            ? 'goal_days_hint'.tr()
+                            : 'goal_value_hint'.tr(),
                         icon: Icons.adjust,
                         keyboardType: TextInputType.number,
                         inputFormatters: [
@@ -487,22 +490,22 @@ class _AddHabitScreenState extends State<AddHabitScreen>
                         ],
                         validator: _hasGoal ? (value) {
                           if (value?.trim().isEmpty ?? true) {
-                            return 'A cél érték kötelező';
+                            return 'goal_value_required'.tr();
                           }
                           final intValue = int.tryParse(value!);
                           if (intValue == null || intValue <= 0) {
-                            return 'Érvényes pozitív számot adj meg';
+                            return 'goal_value_invalid'.tr();
                           }
                           return null;
                         } : null,
                       ),
                       
                       _buildDropdownField<FrequencyType>(
-                        labelText: 'Cél időszaka',
+                        labelText: 'goal_period'.tr(),
                         icon: Icons.date_range,
                         value: _goalPeriod,
                         items: FrequencyType.values,
-                        hintText: 'Válassz időszakot',
+                        hintText: 'select_goal_period'.tr(),
                         onChanged: (value) {
                           setState(() {
                             _goalPeriod = value;
@@ -511,7 +514,7 @@ class _AddHabitScreenState extends State<AddHabitScreen>
                         displayText: (frequency) => frequency.displayName,
                         validator: _hasGoal ? (value) {
                           if (value == null) {
-                            return 'Cél időszak kiválasztása kötelező';
+                            return 'goal_period_required'.tr();
                           }
                           return null;
                         } : null,
@@ -522,13 +525,13 @@ class _AddHabitScreenState extends State<AddHabitScreen>
               ),
               
               // Létrehozás gomb
-              Container(
+              SizedBox(
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton(
                   onPressed: _isLoading ? null : _createCustomHabit,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF00D4AA),
+                    backgroundColor: const Color(0xFF00D4AA),
                     foregroundColor: Colors.white,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
@@ -536,10 +539,10 @@ class _AddHabitScreenState extends State<AddHabitScreen>
                     ),
                   ),
                   child: _isLoading
-                      ? CircularProgressIndicator(color: Colors.white)
+                      ? const CircularProgressIndicator(color: Colors.white)
                       : Text(
-                          'Szokás létrehozása',
-                          style: TextStyle(
+                          'create_habit_button'.tr(),
+                          style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
                           ),
@@ -547,7 +550,7 @@ class _AddHabitScreenState extends State<AddHabitScreen>
                 ),
               ),
               
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
             ],
           ),
         ),
@@ -557,27 +560,27 @@ class _AddHabitScreenState extends State<AddHabitScreen>
 
   Widget _buildPredefinedHabitsTab() {
     if (_predefinedHabits == null) {
-      return Center(child: CircularProgressIndicator(color: Color(0xFF00D4AA)));
+      return const Center(child: CircularProgressIndicator(color: Color(0xFF00D4AA)));
     }
 
     return SingleChildScrollView(
       child: Padding(
-        padding: EdgeInsets.all(24),
+        padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             
             Text(
-              'Válassz a készített sablonokból:',
-              style: TextStyle(
+              'predefined_selection_title'.tr(),
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
                 color: Colors.black87,
               ),
             ),
             
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             
             ..._predefinedHabits!.entries.map((entry) {
               final category = entry.key;
@@ -586,7 +589,7 @@ class _AddHabitScreenState extends State<AddHabitScreen>
               return _buildPredefinedCategorySection(category, habits);
             }).toList(),
             
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
           ],
         ),
       ),
@@ -598,7 +601,7 @@ class _AddHabitScreenState extends State<AddHabitScreen>
     List<PredefinedHabit> habits,
   ) {
     return Container(
-      margin: EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(15),
@@ -606,20 +609,20 @@ class _AddHabitScreenState extends State<AddHabitScreen>
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
-            offset: Offset(0, 2),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
       child: ExpansionTile(
         title: Text(
           category.value,
-          style: TextStyle(
+          style: const TextStyle(
             fontWeight: FontWeight.w600,
             fontSize: 16,
           ),
         ),
         leading: Container(
-          padding: EdgeInsets.all(8),
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: _getCategoryColor(category).withOpacity(0.1),
             borderRadius: BorderRadius.circular(8),
@@ -635,11 +638,11 @@ class _AddHabitScreenState extends State<AddHabitScreen>
           final habit = entry.value;
           
           return Container(
-            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
             child: ListTile(
               title: Text(
                 habit.title,
-                style: TextStyle(
+                style: const TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: 15,
                 ),
@@ -647,14 +650,14 @@ class _AddHabitScreenState extends State<AddHabitScreen>
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(
                     habit.description,
-                    style: TextStyle(fontSize: 13),
+                    style: const TextStyle(fontSize: 13),
                   ),
-                  SizedBox(height: 6),
+                  const SizedBox(height: 6),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                     decoration: BoxDecoration(
                       color: Colors.blue.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
@@ -672,13 +675,13 @@ class _AddHabitScreenState extends State<AddHabitScreen>
               ),
               trailing: Container(
                 decoration: BoxDecoration(
-                  color: Color(0xFF00D4AA),
+                  color: const Color(0xFF00D4AA),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: IconButton(
                   onPressed: () => _createPredefinedHabit(category, index),
-                  icon: Icon(Icons.add, color: Colors.white),
-                  tooltip: 'Szokás hozzáadása',
+                  icon: const Icon(Icons.add, color: Colors.white),
+                  tooltip: 'add_habit_tooltip'.tr(),
                 ),
               ),
             ),
@@ -691,9 +694,9 @@ class _AddHabitScreenState extends State<AddHabitScreen>
   String _getTrackingTypeLabel(TrackingType type) {
     switch (type) {
       case TrackingType.boolean:
-        return 'Igen/Nem';
+        return 'tracking_type_boolean'.tr();
       case TrackingType.numeric:
-        return 'Számszerű érték';
+        return 'tracking_type_numeric'.tr();
     }
   }
 

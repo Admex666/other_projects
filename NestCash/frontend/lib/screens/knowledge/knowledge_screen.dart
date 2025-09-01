@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:easy_localization/easy_localization.dart';
 import '../../services/auth_service.dart'; // AuthService import hozzáadása
 import 'lesson_detail_screen.dart';
 import 'package:provider/provider.dart';
@@ -212,8 +213,8 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
 
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Napi kihívás teljesítve! 🎉'),
+          SnackBar(
+            content: Text('knowledge.daily_challenge_complete_success'.tr()),
             backgroundColor: Colors.green,
           ),
         );
@@ -227,7 +228,7 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
       print('Error completing daily challenge: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Hiba történt: $e'),
+          content: Text('error_occured'.tr(namedArgs: {'error': e.toString()})),
           backgroundColor: Colors.red,
         ),
       );
@@ -240,8 +241,8 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
     
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('A munkamenet lejárt. Kérjük, jelentkezzen be újra.'),
+        SnackBar(
+          content: Text('knowledge.session_expired'.tr()),
           backgroundColor: Colors.red,
         ),
       );
@@ -258,10 +259,10 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Hiba az adatok betöltésekor: ${error.toString()}'),
+          content: Text('knowledge.loading_error'.tr(namedArgs: {'error': error.toString()})),
           backgroundColor: Colors.red,
           action: SnackBarAction(
-            label: 'Újrapróbálás',
+            label: 'knowledge.retry'.tr(),
             onPressed: _loadData,
           ),
         ),
@@ -291,7 +292,7 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
                   ),
                   Expanded(
                     child: Text(
-                      'Tudástár',
+                      'knowledge.title'.tr(),
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -335,8 +336,8 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
                     ? const Center(child: CircularProgressIndicator(color: Color(0xFF00D4A3)))
                     : !_hasKnowledgeAccess
                         ? FeatureLockedWidget(
-                            featureName: 'Tudástár',
-                            description: 'Hozzáférés korlátlan leckékhez és tanulási útvonalakhoz',
+                            featureName: 'knowledge.title'.tr(),
+                            description: 'knowledge.feature_locked_description'.tr(),
                             requiredTier: SubscriptionTier.plus,
                           )
                         : isLoading
@@ -357,8 +358,8 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
-                                          const Text(
-                                            'Kategóriák',
+                                          Text(
+                                            'knowledge.categories'.tr(),
                                             style: TextStyle(
                                               fontSize: 24,
                                               fontWeight: FontWeight.bold,
@@ -379,9 +380,9 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
                                                 _loadCategories();
                                               },
                                               itemBuilder: (context) => [
-                                                const PopupMenuItem(value: 'all', child: Text('Összes szint')),
-                                                const PopupMenuItem(value: 'beginner', child: Text('🟢 Kezdő')),
-                                                const PopupMenuItem(value: 'professional', child: Text('🔵 Profi')),
+                                                PopupMenuItem(value: 'all', child: Text('knowledge.all_levels'.tr())),
+                                                PopupMenuItem(value: 'beginner', child: Text('knowledge.beginner'.tr())),
+                                                PopupMenuItem(value: 'professional', child: Text('knowledge.pro'.tr())),
                                               ],
                                             ),
                                           ),
@@ -423,9 +424,9 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Statisztikáid',
-            style: TextStyle(
+          Text(
+            'knowledge.your_stats'.tr(),
+            style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
               color: Colors.white,
@@ -438,14 +439,14 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
                 child: _buildStatItem(
                   '🔥',
                   '${userStats!.currentStreak}',
-                  'Napi sorozat',
+                  'knowledge.daily_streak'.tr(),
                 ),
               ),
               Expanded(
                 child: _buildStatItem(
                   '📚',
                   '${userStats!.totalLessonsCompleted}',
-                  'Lecke teljesítve',
+                  'knowledge.lessons_completed'.tr(),
                 ),
               ),
             ],
@@ -457,14 +458,14 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
                 child: _buildStatItem(
                   '⏱️',
                   '${userStats!.totalStudyMinutes}',
-                  'Tanulási perc',
+                  'knowledge.study_minutes'.tr(),
                 ),
               ),
               Expanded(
                 child: _buildStatItem(
                   '📊',
                   '${userStats!.averageQuizScore.toInt()}%',
-                  'Átlagos eredmény',
+                  'knowledge.average_score'.tr(),
                 ),
               ),
             ],
@@ -536,7 +537,7 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  isCompleted ? 'Napi kihívás teljesítve!' : 'Napi kihívás',
+                  isCompleted ? 'knowledge.daily_challenge_completed'.tr() : 'knowledge.daily_challenge'.tr(),
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -545,8 +546,8 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
                 ),
                 Text(
                   isCompleted 
-                    ? 'Szuper vagy! Holnap folytathatod a sorozatot.'
-                    : 'Tanulj 5 percet a mai napon is!',
+                    ? 'knowledge.challenge_completed_message'.tr()
+                    : 'knowledge.challenge_todo_message'.tr(),
                   style: const TextStyle(
                     fontSize: 13,
                     color: Colors.grey,
@@ -564,9 +565,9 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
                   borderRadius: BorderRadius.circular(20),
                 ),
               ),
-              child: const Text(
-                'Start',
-                style: TextStyle(color: Colors.white),
+              child: Text(
+                'knowledge.start_button'.tr(),
+                style: const TextStyle(color: Colors.white),
               ),
             ),
         ],
@@ -655,7 +656,7 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '${category.completedLessons}/${category.totalLessons} lecke',
+                            'knowledge.lesson_progress'.tr(namedArgs: {'completed': category.completedLessons.toString(), 'total': category.totalLessons.toString()}),
                             style: const TextStyle(
                               fontSize: 14,
                               color: Colors.grey,
@@ -794,7 +795,7 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
                 // Itt jelenítjük meg az upgrade dialógust
                 SubscriptionUtils.showUpgradeDialog(
                   context,
-                  feature: 'További leckék ma',
+                  feature: 'knowledge.more_lessons_today'.tr(),
                   requiredTier: SubscriptionTier.plus,
                 );
                 return;
@@ -871,7 +872,7 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            '${lesson.estimatedMinutes} perc',
+                            'knowledge.estimated_minutes'.tr(namedArgs: {'minutes': lesson.estimatedMinutes.toString()}),
                             style: TextStyle(
                               fontSize: 12,
                               color: Colors.grey[600],
@@ -886,7 +887,7 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              'Kvíz',
+                              'knowledge.quiz'.tr(),
                               style: TextStyle(
                                 fontSize: 12,
                                 color: Colors.grey[600],

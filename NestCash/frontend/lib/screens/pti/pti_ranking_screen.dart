@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/pti_models.dart';
 import 'package:frontend/services/pti_service.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class PTIRankingScreen extends StatefulWidget {
   final String userId;
@@ -75,13 +76,13 @@ class _PTIRankingScreenState extends State<PTIRankingScreen>
         });
       } else {
         setState(() {
-          _error = 'Nem sikerült betölteni a ranglistát';
+          _error = 'failed_to_load_ranking'.tr();
           _isLoading = false;
         });
       }
     } catch (e) {
       setState(() {
-        _error = 'Hiba történt: $e';
+        _error = 'error_occurred'.tr(namedArgs: {'error': e.toString()});
         _isLoading = false;
       });
     }
@@ -93,7 +94,7 @@ class _PTIRankingScreenState extends State<PTIRankingScreen>
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
         title: Text(
-          'PTI Ranglista',
+          'pti_ranking_title'.tr(),
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.bold,
@@ -108,9 +109,9 @@ class _PTIRankingScreenState extends State<PTIRankingScreen>
           unselectedLabelColor: Colors.black54,
           indicatorColor: Colors.black,
           tabs: [
-            Tab(text: 'Heti'),
-            Tab(text: 'Havi'),
-            Tab(text: 'Éves'),
+            Tab(text: 'weekly'.tr()),
+            Tab(text: 'monthly'.tr()),
+            Tab(text: 'yearly'.tr()),
           ],
         ),
       ),
@@ -123,7 +124,7 @@ class _PTIRankingScreenState extends State<PTIRankingScreen>
             child: Row(
               children: [
                 Text(
-                  'Ranglista típusa:',
+                  'ranking_type'.tr(),
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
@@ -135,12 +136,12 @@ class _PTIRankingScreenState extends State<PTIRankingScreen>
                     segments: [
                       ButtonSegment<RankingScope>(
                         value: RankingScope.global,
-                        label: Text('Globális'),
+                        label: Text('global'.tr()),
                         icon: Icon(Icons.public, size: 16),
                       ),
                       ButtonSegment<RankingScope>(
                         value: RankingScope.friends,
-                        label: Text('Barátok'),
+                        label: Text('friends'.tr()),
                         icon: Icon(Icons.people, size: 16),
                       ),
                     ],
@@ -206,7 +207,7 @@ class _PTIRankingScreenState extends State<PTIRankingScreen>
             SizedBox(height: 16),
             ElevatedButton(
               onPressed: _loadRanking,
-              child: Text('Újrapróbálás'),
+              child: Text('retry'.tr()),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color(0xFF00D4A3),
               ),
@@ -228,7 +229,7 @@ class _PTIRankingScreenState extends State<PTIRankingScreen>
             ),
             SizedBox(height: 16),
             Text(
-              'Nincs ranglista adat',
+              'no_ranking_data'.tr(),
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.grey[600],
@@ -309,7 +310,7 @@ class _PTIRankingScreenState extends State<PTIRankingScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Az Ön pozíciója',
+                  'your_position'.tr(),
                   style: TextStyle(
                     color: Colors.white.withOpacity(0.9),
                     fontSize: 14,
@@ -338,7 +339,7 @@ class _PTIRankingScreenState extends State<PTIRankingScreen>
                 ),
               ),
               Text(
-                'PTI pont',
+                'pti_points'.tr(),
                 style: TextStyle(
                   color: Colors.white.withOpacity(0.9),
                   fontSize: 12,
@@ -429,7 +430,7 @@ class _PTIRankingScreenState extends State<PTIRankingScreen>
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
-                          'Anonim',
+                          'anonymous'.tr(),
                           style: TextStyle(
                             fontSize: 10,
                             color: Colors.grey[600],
@@ -444,7 +445,7 @@ class _PTIRankingScreenState extends State<PTIRankingScreen>
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
-                          'Ön',
+                          'you'.tr(),
                           style: TextStyle(
                             fontSize: 10,
                             color: Colors.white,
@@ -483,7 +484,7 @@ class _PTIRankingScreenState extends State<PTIRankingScreen>
                 ),
               ),
               Text(
-                'PTI',
+                'pti_short'.tr(),
                 style: TextStyle(
                   fontSize: 12,
                   color: Colors.grey[600],

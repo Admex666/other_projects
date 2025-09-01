@@ -9,6 +9,7 @@ import 'package:frontend/providers/subscription_provider.dart';
 import 'package:frontend/widgets/subscription/usage_indicator.dart';
 import 'package:frontend/utils/subscription_utils.dart';
 import 'package:frontend/models/subscription.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class HabitsMainScreen extends StatefulWidget {
   final String userId;
@@ -86,7 +87,7 @@ class _HabitsMainScreenState extends State<HabitsMainScreen> {
       subscriptionProvider.getCurrentHabitsCount().then((_) {
         // Opcionálisan értesíthetjük a provider-t ha szükséges
       }).catchError((e) {
-        debugPrint('Error updating habits count in provider: $e');
+        debugPrint('habits.error_updating_count'.tr(namedArgs: {'error': e.toString()}));
       });
       
     } catch (e) {
@@ -114,7 +115,7 @@ class _HabitsMainScreenState extends State<HabitsMainScreen> {
       
       return true;
     } catch (e) {
-      debugPrint('Error checking habit creation permission: $e');
+      debugPrint('habits.error_checking_permission'.tr(namedArgs: {'error': e.toString()}));
       
       // Fallback: cached érték alapján
       if (subscriptionProvider.currentTier == SubscriptionTier.free && 
@@ -131,8 +132,8 @@ class _HabitsMainScreenState extends State<HabitsMainScreen> {
   void _showHabitLimitReached() {
     SubscriptionUtils.showUpgradeDialog(
       context,
-      feature: 'További szokások hozzáadása',
-      description: 'Az ingyenes verzióban maximum 5 szokást követhetsz nyomon. Frissíts a korlátlan szokás követésért!',
+      feature: 'habits.habit_limit_reached_title'.tr(),
+      description: 'habits.habit_limit_reached_desc'.tr(),
       requiredTier: SubscriptionTier.plus,
     );
   }
@@ -183,8 +184,8 @@ class _HabitsMainScreenState extends State<HabitsMainScreen> {
         SnackBar(
           content: Text(
             !isCompleted 
-                ? '${habit.title} teljesítve!' 
-                : '${habit.title} teljesítése visszavonva',
+                ? 'habits.habit_completed'.tr(namedArgs: {'habitTitle': habit.title})
+                : 'habits.habit_uncompleted'.tr(namedArgs: {'habitTitle': habit.title}),
           ),
           backgroundColor: Color(0xFF00D4AA),
           duration: const Duration(seconds: 2),
@@ -193,7 +194,7 @@ class _HabitsMainScreenState extends State<HabitsMainScreen> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Hiba: $e'),
+          content: Text('habits.error_toggle_completion'.tr(namedArgs: {'error': e.toString()})),
           backgroundColor: Colors.red,
         ),
       );
@@ -225,7 +226,7 @@ class _HabitsMainScreenState extends State<HabitsMainScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Mai teljesítmény',
+            'habits.today_performance'.tr(),
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -238,7 +239,7 @@ class _HabitsMainScreenState extends State<HabitsMainScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Teljesített szokások',
+                'habits.completed_habits'.tr(),
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.grey[600],
@@ -276,7 +277,7 @@ class _HabitsMainScreenState extends State<HabitsMainScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '${completionRate.toStringAsFixed(1)}% teljesítve',
+                '${completionRate.toStringAsFixed(1)}% ' + 'completed'.tr(),
                 style: TextStyle(
                   fontSize: 12,
                   color: Colors.grey[600],
@@ -284,11 +285,11 @@ class _HabitsMainScreenState extends State<HabitsMainScreen> {
               ),
               Row(
                 children: [
-                  _buildStatItem('Átlag streak', 
+                  _buildStatItem('habits.average_streak'.tr(), 
                     _overview!.currentAverageStreak.toStringAsFixed(1),
                     Colors.blue),
                   SizedBox(width: 16),
-                  _buildStatItem('Legjobb streak', 
+                  _buildStatItem('habits.best_streak'.tr(), 
                     _overview!.bestOverallStreak.toString(),
                     Colors.orange),
                 ],
@@ -331,12 +332,12 @@ class _HabitsMainScreenState extends State<HabitsMainScreen> {
         scrollDirection: Axis.horizontal,
         padding: EdgeInsets.symmetric(horizontal: 24),
         children: [
-          _buildCategoryChip('Összes', null),
+          _buildCategoryChip('habits.all'.tr(), null),
           SizedBox(width: 8),
           ...HabitCategory.values.map(
             (category) => Padding(
               padding: EdgeInsets.only(right: 8),
-              child: _buildCategoryChip(category.value, category),
+              child: _buildCategoryChip(category.value.tr(), category),
             ),
           ),
         ],
@@ -476,7 +477,7 @@ class _HabitsMainScreenState extends State<HabitsMainScreen> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
-                            habit.category.value,
+                            habit.category.value.tr(),
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
@@ -527,7 +528,7 @@ class _HabitsMainScreenState extends State<HabitsMainScreen> {
                     ),
                   ),
                   Text(
-                    'nap',
+                    'habits.days'.tr(),
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.grey[500],
@@ -581,12 +582,12 @@ class _HabitsMainScreenState extends State<HabitsMainScreen> {
             final habitsCount = snapshot.data ?? subscriptionProvider.cachedHabitsCount;
             
             return UsageIndicator(
-              featureName: 'Szokások',
+              featureName: 'habits.title'.tr(),
               current: habitsCount,
               limit: habitsLimit,
               onUpgradePressed: () => SubscriptionUtils.showUpgradeDialog(
                 context,
-                feature: 'Korlátlan szokás követés',
+                feature: 'habits.unlimited_tracking'.tr(),
                 requiredTier: SubscriptionTier.plus,
               ),
             );
@@ -631,7 +632,7 @@ class _HabitsMainScreenState extends State<HabitsMainScreen> {
                   ),
                   Expanded(
                     child: Text(
-                      'Szokásaim',
+                      'habits.title'.tr(),
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -683,7 +684,7 @@ class _HabitsMainScreenState extends State<HabitsMainScreen> {
                                   ),
                                   const SizedBox(height: 16),
                                   Text(
-                                    'Hiba történt',
+                                    'habits.error_occurred'.tr(),
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.w600,
@@ -713,7 +714,7 @@ class _HabitsMainScreenState extends State<HabitsMainScreen> {
                                         ),
                                       ),
                                       child: Text(
-                                        'Újrapróbálás',
+                                        'habits.retry'.tr(),
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600,
@@ -760,7 +761,7 @@ class _HabitsMainScreenState extends State<HabitsMainScreen> {
                                                     color: Colors.white,
                                                   ),
                                             label: Text(
-                                              isAtLimit ? 'Frissítés szükséges' : 'Új szokás',
+                                              isAtLimit ? 'habits.upgrade_needed'.tr() : 'habits.new_habit'.tr(),
                                               style: TextStyle(
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.w600,
@@ -807,7 +808,7 @@ class _HabitsMainScreenState extends State<HabitsMainScreen> {
                                                 ),
                                                 const SizedBox(height: 16),
                                                 Text(
-                                                  'Még nincsenek szokások',
+                                                  'habits.no_habits_yet'.tr(),
                                                   style: TextStyle(
                                                     fontSize: 18,
                                                     fontWeight: FontWeight.w600,
@@ -817,8 +818,8 @@ class _HabitsMainScreenState extends State<HabitsMainScreen> {
                                                 const SizedBox(height: 8),
                                                 Text(
                                                   isAtLimit 
-                                                      ? 'Az ingyenes verzióban 5 szokást követhetsz nyomon.\nHozd létre az elsőt!'
-                                                      : 'Hozd létre az első szokásod!',
+                                                      ? 'habits.free_version_info'.tr()
+                                                      : 'habits.first_habit_info'.tr(),
                                                   style: TextStyle(
                                                     color: Colors.grey[500],
                                                   ),
@@ -829,11 +830,11 @@ class _HabitsMainScreenState extends State<HabitsMainScreen> {
                                                   TextButton.icon(
                                                     onPressed: () => SubscriptionUtils.showUpgradeDialog(
                                                       context,
-                                                      feature: 'Korlátlan szokás követés',
+                                                      feature: 'habits.unlimited_tracking'.tr(),
                                                       requiredTier: SubscriptionTier.plus,
                                                     ),
                                                     icon: Icon(Icons.upgrade),
-                                                    label: Text('Frissítés a korlátlan használatért'),
+                                                    label: Text('habits.unlimited_tracking'.tr()),
                                                   ),
                                                 ],
                                               ],

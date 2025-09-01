@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/services/auth_service.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final String username;
@@ -64,10 +65,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       Navigator.pop(context);
                     },
                   ),
-                  const Expanded(
+                  Expanded(
                     child: Text(
-                      "Profil szerkesztése",
-                      style: TextStyle(
+                      'editProfileTitle'.tr(),
+                      style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
@@ -100,7 +101,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       // Felhasználónév mező
                       _buildTextField(
                         controller: usernameController,
-                        label: "Felhasználónév",
+                        label: 'username'.tr(),
                         icon: Icons.person_outline,
                       ),
                       const SizedBox(height: 16),
@@ -108,7 +109,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       // Email mező
                       _buildTextField(
                         controller: emailController,
-                        label: "Email",
+                        label: 'email'.tr(),
                         icon: Icons.email_outlined,
                         keyboardType: TextInputType.emailAddress,
                       ),
@@ -117,7 +118,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       // Telefonszám mező
                       _buildTextField(
                         controller: phoneController,
-                        label: "Telefonszám",
+                        label: 'phoneNumber'.tr(),
                         icon: Icons.phone_outlined,
                         keyboardType: TextInputType.phone,
                       ),
@@ -126,7 +127,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       // ÚJ: Jelszó mező
                       _buildTextField(
                         controller: passwordController,
-                        label: "Új Jelszó",
+                        label: 'newPassword'.tr(),
                         icon: Icons.lock_outline,
                         obscureText: true, // Jelszó elrejtése
                       ),
@@ -159,8 +160,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               if (success) {
                                 // Sikeres mentés
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Profil sikeresen frissítve!'),
+                                  SnackBar(
+                                    content: Text('profileUpdatedSuccess'.tr()),
                                     backgroundColor: Colors.green,
                                   ),
                                 );
@@ -168,8 +169,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               } else {
                                 // Hiba esetén
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Hiba történt a profil frissítése során!'),
+                                  SnackBar(
+                                    content: Text('profileUpdateError'.tr()),
                                     backgroundColor: Colors.red,
                                   ),
                                 );
@@ -179,7 +180,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               Navigator.of(context).pop();
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text('Hiba: $e'),
+                                  content: Text('error_occured'.tr(namedArgs: {'error': e.toString()})),
                                   backgroundColor: Colors.red,
                                 ),
                               );
@@ -192,9 +193,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               borderRadius: BorderRadius.circular(30),
                             ),
                           ),
-                          child: const Text(
-                            "Változtatások Mentése",
-                            style: TextStyle(fontSize: 18, color: Colors.white),
+                          child: Text(
+                            "saveChangesButton".tr(),
+                            style: const TextStyle(fontSize: 18, color: Colors.white),
                           ),
                         ),
                       ),
@@ -202,7 +203,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
                       // Beállítások (pushNotifications, darkTheme)
                       _buildSettingsSwitch(
-                        title: "Push Értesítések",
+                        title: 'pushNotifications'.tr(),
                         value: pushNotifications,
                         onChanged: (bool value) {
                           setState(() {
@@ -211,7 +212,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         },
                       ),
                       _buildSettingsSwitch(
-                        title: "Sötét Mód",
+                        title: 'darkMode'.tr(),
                         value: darkTheme,
                         onChanged: (bool value) {
                           setState(() {

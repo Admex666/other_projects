@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/pti_models.dart';
 import 'package:frontend/services/pti_service.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class PTISettingsScreen extends StatefulWidget {
   final String userId;
@@ -76,13 +77,13 @@ class _PTISettingsScreenState extends State<PTISettingsScreen> {
         });
       } else {
         setState(() {
-          _error = 'Nem sikerült betölteni a beállításokat';
+          _error = 'pti.loading_error'.tr();
           _isLoading = false;
         });
       }
     } catch (e) {
       setState(() {
-        _error = 'Hiba történt: $e';
+        _error = 'pti.general_error'.tr(namedArgs: {'error': e.toString()});
         _isLoading = false;
       });
     }
@@ -127,7 +128,7 @@ class _PTISettingsScreenState extends State<PTISettingsScreen> {
         
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Beállítások sikeresen mentve!'),
+            content: Text('pti.save_success'.tr()),
             backgroundColor: Color(0xFF00D4A3),
           ),
         );
@@ -135,13 +136,13 @@ class _PTISettingsScreenState extends State<PTISettingsScreen> {
         Navigator.pop(context);
       } else {
         setState(() {
-          _error = 'Nem sikerült menteni a beállításokat';
+          _error = 'pti.saving_error'.tr();
           _isSaving = false;
         });
       }
     } catch (e) {
       setState(() {
-        _error = 'Hiba történt: $e';
+        _error = 'pti.general_error'.tr(namedArgs: {'error': e.toString()});
         _isSaving = false;
       });
     }
@@ -153,7 +154,7 @@ class _PTISettingsScreenState extends State<PTISettingsScreen> {
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
         title: Text(
-          'PTI Beállítások',
+          'pti.settings_title'.tr(),
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.bold,
@@ -176,7 +177,7 @@ class _PTISettingsScreenState extends State<PTISettingsScreen> {
                       ),
                     )
                   : Text(
-                      'Mentés',
+                      'pti.save_button'.tr(),
                       style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -220,7 +221,7 @@ class _PTISettingsScreenState extends State<PTISettingsScreen> {
             SizedBox(height: 16),
             ElevatedButton(
               onPressed: _loadSettings,
-              child: Text('Újrapróbálás'),
+              child: Text('pti.retry_button'.tr()),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color(0xFF00D4A3),
               ),
@@ -233,7 +234,7 @@ class _PTISettingsScreenState extends State<PTISettingsScreen> {
     if (_settings == null) {
       return Center(
         child: Text(
-          'Nincs beállítás adat',
+          'pti.no_settings_data'.tr(),
           style: TextStyle(
             fontSize: 16,
             color: Colors.grey[600],
@@ -251,24 +252,24 @@ class _PTISettingsScreenState extends State<PTISettingsScreen> {
           children: [
             // Ranglista beállítások
             _buildSection(
-              'Ranglista megjelenés',
+              'pti.ranking_section_title'.tr(),
               Icons.leaderboard,
               [
                 _buildSwitchTile(
-                  'Megjelenés globális ranglistán',
-                  'Látható leszel a nyilvános ranglistán',
+                  'pti.global_ranking_title'.tr(),
+                  'pti.global_ranking_subtitle'.tr(),
                   _showInGlobalRanking,
                   (value) => setState(() => _showInGlobalRanking = value),
                 ),
                 _buildSwitchTile(
-                  'Megjelenés barátok ranglistáján',
-                  'Látható leszel a barátaid számára',
+                  'pti.friends_ranking_title'.tr(),
+                  'pti.friends_ranking_subtitle'.tr(),
                   _showInFriendsRanking,
                   (value) => setState(() => _showInFriendsRanking = value),
                 ),
                 _buildSwitchTile(
-                  'Anonimizált megjelenés',
-                  'Álnévvel jelensz meg a ranglistákon',
+                  'pti.anonymous_title'.tr(),
+                  'pti.anonymous_subtitle'.tr(),
                   _isAnonymous,
                   (value) => setState(() => _isAnonymous = value),
                 ),
@@ -277,8 +278,8 @@ class _PTISettingsScreenState extends State<PTISettingsScreen> {
                   TextFormField(
                     controller: _anonymousNameController,
                     decoration: InputDecoration(
-                      labelText: 'Álnév',
-                      hintText: 'Adja meg az álnevét',
+                      labelText: 'pti.alias_label'.tr(),
+                      hintText: 'pti.alias_hint'.tr(),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -287,10 +288,10 @@ class _PTISettingsScreenState extends State<PTISettingsScreen> {
                     ),
                     validator: (value) {
                       if (_isAnonymous && (value == null || value.isEmpty)) {
-                        return 'Anonimizált megjelenés esetén meg kell adni az álnevet';
+                        return 'pti.alias_required'.tr();
                       }
                       if (value != null && value.length > 50) {
-                        return 'Az álnév maximum 50 karakter lehet';
+                        return 'pti.alias_length_error'.tr();
                       }
                       return null;
                     },
@@ -303,24 +304,24 @@ class _PTISettingsScreenState extends State<PTISettingsScreen> {
             
             // Értesítési beállítások
             _buildSection(
-              'Értesítések',
+              'pti.notifications_section_title'.tr(),
               Icons.notifications,
               [
                 _buildSwitchTile(
-                  'Rangsor változás',
-                  'Értesítés ha változik a helyezésed',
+                  'pti.rank_change_notification_title'.tr(),
+                  'pti.rank_change_notification_subtitle'.tr(),
                   _notifyRankChange,
                   (value) => setState(() => _notifyRankChange = value),
                 ),
                 _buildSwitchTile(
-                  'Heti összefoglaló',
-                  'Heti PTI összefoglaló küldése',
+                  'pti.weekly_summary_notification_title'.tr(),
+                  'pti.weekly_summary_notification_subtitle'.tr(),
                   _notifyWeeklySummary,
                   (value) => setState(() => _notifyWeeklySummary = value),
                 ),
                 _buildSwitchTile(
-                  'PTI eredmények',
-                  'Értesítés új PTI eredményekről',
+                  'pti.achievements_notification_title'.tr(),
+                  'pti.achievements_notification_subtitle'.tr(),
                   _notifyAchievements,
                   (value) => setState(() => _notifyAchievements = value),
                 ),
@@ -331,16 +332,16 @@ class _PTISettingsScreenState extends State<PTISettingsScreen> {
             
             // Célok beállítása
             _buildSection(
-              'PTI Célok',
+              'pti.goals_section_title'.tr(),
               Icons.flag,
               [
                 TextFormField(
                   controller: _weeklyGoalController,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
-                    labelText: 'Heti PTI cél',
-                    hintText: 'pl. 75.0',
-                    suffixText: 'PTI pont',
+                    labelText: 'pti.weekly_goal_label'.tr(),
+                    hintText: 'pti.weekly_goal_hint'.tr(),
+                    suffixText: 'pti.goal_unit'.tr(),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -351,10 +352,10 @@ class _PTISettingsScreenState extends State<PTISettingsScreen> {
                     if (value != null && value.isNotEmpty) {
                       final doubleValue = double.tryParse(value);
                       if (doubleValue == null) {
-                        return 'Érvényes számot adjon meg';
+                        return 'pti.number_format_error'.tr();
                       }
                       if (doubleValue < 0 || doubleValue > 100) {
-                        return 'A cél 0 és 100 között lehet';
+                        return 'pti.goal_range_error'.tr();
                       }
                     }
                     return null;
@@ -365,9 +366,9 @@ class _PTISettingsScreenState extends State<PTISettingsScreen> {
                   controller: _monthlyGoalController,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
-                    labelText: 'Havi PTI cél',
-                    hintText: 'pl. 80.0',
-                    suffixText: 'PTI pont',
+                    labelText: 'pti.monthly_goal_label'.tr(),
+                    hintText: 'pti.monthly_goal_hint'.tr(),
+                    suffixText: 'pti.goal_unit'.tr(),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -378,10 +379,10 @@ class _PTISettingsScreenState extends State<PTISettingsScreen> {
                     if (value != null && value.isNotEmpty) {
                       final doubleValue = double.tryParse(value);
                       if (doubleValue == null) {
-                        return 'Érvényes számot adjon meg';
+                        return 'pti.number_format_error'.tr();
                       }
                       if (doubleValue < 0 || doubleValue > 100) {
-                        return 'A cél 0 és 100 között lehet';
+                        return 'pti.goal_range_error'.tr();
                       }
                     }
                     return null;
@@ -415,7 +416,7 @@ class _PTISettingsScreenState extends State<PTISettingsScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'PTI Információ',
+                          'pti.info_title'.tr(),
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -424,7 +425,7 @@ class _PTISettingsScreenState extends State<PTISettingsScreen> {
                         ),
                         SizedBox(height: 4),
                         Text(
-                          'A PTI (Pénzügyi Tudatosság Index) 4 komponensből áll: Tanulás (30%), Szokások (30%), Kitűzők (20%), és Limitek (20%).',
+                          'pti.info_text'.tr(),
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.grey[700],

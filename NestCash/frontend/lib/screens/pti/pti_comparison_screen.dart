@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/pti_models.dart';
 import 'package:frontend/services/pti_service.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class PTIComparisonScreen extends StatefulWidget {
   final String userId;
@@ -67,13 +68,13 @@ class _PTIComparisonScreenState extends State<PTIComparisonScreen>
         });
       } else {
         setState(() {
-          _error = 'Nem sikerült betölteni az összehasonlítást';
+          _error = 'comparison_not_loaded'.tr();
           _isLoading = false;
         });
       }
     } catch (e) {
       setState(() {
-        _error = 'Hiba történt: $e';
+        _error = 'error_occurred'.tr(namedArgs: {'error': e.toString()});
         _isLoading = false;
       });
     }
@@ -85,7 +86,7 @@ class _PTIComparisonScreenState extends State<PTIComparisonScreen>
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
         title: Text(
-          'PTI Összehasonlítás',
+          'pti_comparison_title'.tr(),
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.bold,
@@ -100,9 +101,9 @@ class _PTIComparisonScreenState extends State<PTIComparisonScreen>
           unselectedLabelColor: Colors.black54,
           indicatorColor: Colors.black,
           tabs: [
-            Tab(text: 'Heti'),
-            Tab(text: 'Havi'),
-            Tab(text: 'Éves'),
+            Tab(text: 'weekly'.tr()),
+            Tab(text: 'monthly'.tr()),
+            Tab(text: 'yearly'.tr()),
           ],
         ),
       ),
@@ -148,7 +149,7 @@ class _PTIComparisonScreenState extends State<PTIComparisonScreen>
             SizedBox(height: 16),
             ElevatedButton(
               onPressed: _loadComparison,
-              child: Text('Újrapróbálás'),
+              child: Text('retry'.tr()),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color(0xFF00D4A3),
               ),
@@ -170,7 +171,7 @@ class _PTIComparisonScreenState extends State<PTIComparisonScreen>
             ),
             SizedBox(height: 16),
             Text(
-              'Nincs összehasonlítási adat',
+              'no_comparison_data'.tr(),
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.grey[600],
@@ -241,7 +242,7 @@ class _PTIComparisonScreenState extends State<PTIComparisonScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '${_selectedPeriod.displayName} PTI Változás',
+            'pti_change_summary_title'.tr(namedArgs: {'period': _selectedPeriod.displayName}),
             style: TextStyle(
               color: Colors.white.withOpacity(0.9),
               fontSize: 16,
@@ -303,7 +304,7 @@ class _PTIComparisonScreenState extends State<PTIComparisonScreen>
                 ),
                 SizedBox(width: 4),
                 Text(
-                  '${current.rank}. helyezés',
+                  'rank'.tr(namedArgs: {'rank': current.rank.toString()}),
                   style: TextStyle(
                     color: Colors.white.withOpacity(0.9),
                     fontSize: 14,
@@ -356,7 +357,7 @@ class _PTIComparisonScreenState extends State<PTIComparisonScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Időszakok összehasonlítása',
+            'period_comparison_title'.tr(),
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -367,7 +368,7 @@ class _PTIComparisonScreenState extends State<PTIComparisonScreen>
             children: [
               Expanded(
                 child: _buildPeriodColumn(
-                  'Aktuális időszak',
+                  'current_period'.tr(),
                   current.ptiScore,
                   current.rank,
                   current.totalUsers,
@@ -383,7 +384,7 @@ class _PTIComparisonScreenState extends State<PTIComparisonScreen>
               Expanded(
                 child: previous != null
                     ? _buildPeriodColumn(
-                        'Előző időszak',
+                        'previous_period'.tr(),
                         previous.ptiScore,
                         previous.rank,
                         previous.totalUsers,
@@ -398,7 +399,7 @@ class _PTIComparisonScreenState extends State<PTIComparisonScreen>
                           ),
                           SizedBox(height: 8),
                           Text(
-                            'Nincs adat',
+                            'no_data_available'.tr(),
                             style: TextStyle(
                               color: Colors.grey[500],
                               fontSize: 14,
@@ -443,7 +444,7 @@ class _PTIComparisonScreenState extends State<PTIComparisonScreen>
           ),
         ),
         Text(
-          'PTI pont',
+          'pti_point'.tr(),
           style: TextStyle(
             fontSize: 12,
             color: Colors.grey[600],
@@ -452,7 +453,7 @@ class _PTIComparisonScreenState extends State<PTIComparisonScreen>
         if (rank != null) ...[
           SizedBox(height: 4),
           Text(
-            '${rank}. / ${totalUsers ?? 0}',
+            'rank_of_total'.tr(namedArgs: {'rank': rank.toString(), 'total': (totalUsers ?? 0).toString()}),
             style: TextStyle(
               fontSize: 12,
               color: color,
@@ -485,7 +486,7 @@ class _PTIComparisonScreenState extends State<PTIComparisonScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Komponensek változása',
+            'component_change_title'.tr(),
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -493,28 +494,28 @@ class _PTIComparisonScreenState extends State<PTIComparisonScreen>
           ),
           SizedBox(height: 16),
           _buildComponentComparisonItem(
-            '📚 Tanulás',
+            'learning_emoji'.tr(),
             current.learningPoints,
             previous?.learningPoints,
             Colors.blue,
           ),
           SizedBox(height: 12),
           _buildComponentComparisonItem(
-            '💪 Szokások',
+            'habits_emoji'.tr(),
             current.habitScore,
             previous?.habitScore,
             Colors.green,
           ),
           SizedBox(height: 12),
           _buildComponentComparisonItem(
-            '🏆 Kitűzők',
+            'badges_emoji'.tr(),
             current.badgeScore,
             previous?.badgeScore,
             Colors.orange,
           ),
           SizedBox(height: 12),
           _buildComponentComparisonItem(
-            '📊 Limitek',
+            'limits_emoji'.tr(),
             current.limitScore,
             previous?.limitScore,
             Colors.purple,
@@ -627,7 +628,7 @@ class _PTIComparisonScreenState extends State<PTIComparisonScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Változások részletesen',
+            'detailed_changes_title'.tr(),
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -646,7 +647,7 @@ class _PTIComparisonScreenState extends State<PTIComparisonScreen>
                 ),
                 SizedBox(width: 8),
                 Text(
-                  'Javulások',
+                  'improvements'.tr(),
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -682,7 +683,7 @@ class _PTIComparisonScreenState extends State<PTIComparisonScreen>
                 ),
                 SizedBox(width: 8),
                 Text(
-                  'Csökkenések',
+                  'declines'.tr(),
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,

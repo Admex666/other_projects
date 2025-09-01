@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:frontend/services/auth_service.dart';
 import 'package:frontend/services/sharing_service.dart';
 import 'package:frontend/config/config.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class LessonDetailScreen extends StatefulWidget {
   final String lessonId;
@@ -48,16 +49,15 @@ class _LessonDetailScreenState extends State<LessonDetailScreen> {
       );
 
       if (response.statusCode == 200) {
-        print('Raw response: ${response.body}'); // ÚJ SOR - ez mutatja a tényleges választ
+        print('Raw response: ${response.body}');
         final data = json.decode(response.body);
-        print('Parsed data keys: ${data.keys}'); // ÚJ SOR - ez mutatja a kulcsokat
+        print('Parsed data keys: ${data.keys}');
         setState(() {
           lesson = LessonDetail.fromJson(data['lesson']);
           completion = data['completion'] != null 
               ? LessonCompletion.fromJson(data['completion'])
               : null;
           
-          // Kvíz válaszok inicializálása
           if (lesson!.quizQuestions.isNotEmpty) {
             quizAnswers = List.generate(
               lesson!.quizQuestions.length,
@@ -71,7 +71,7 @@ class _LessonDetailScreenState extends State<LessonDetailScreen> {
     } catch (e) {
       print('Error loading lesson: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Hiba a lecke betöltésekor')),
+        SnackBar(content: Text('error_occured'.tr(namedArgs: {'error': e.toString()}))),
       );
     } finally {
       setState(() => isLoading = false);
@@ -125,7 +125,7 @@ class _LessonDetailScreenState extends State<LessonDetailScreen> {
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Hiba a kvíz beküldésekor')),
+        const SnackBar(content: Text('Hiba a kvíz beküldésekor')), // Ezt nem kérted lokalizálni, de megtehetnéd így: SnackBar(content: Text('failedToSubmitQuiz'.tr())),
       );
     }
   }
@@ -145,7 +145,7 @@ class _LessonDetailScreenState extends State<LessonDetailScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              result.score >= 70 ? 'Szuper!' : 'Folytatni kell!',
+              result.score >= 70 ? 'super'.tr() : 'keepGoing'.tr(),
               style: TextStyle(
                 color: result.score >= 70 ? Colors.green : Colors.orange,
                 fontWeight: FontWeight.bold,
@@ -157,7 +157,7 @@ class _LessonDetailScreenState extends State<LessonDetailScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Eredményed: ${result.score}%',
+              'yourScore'.tr(namedArgs: {'score': result.score.toString()}),
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -165,7 +165,10 @@ class _LessonDetailScreenState extends State<LessonDetailScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              '${result.correctAnswers}/${result.totalQuestions} helyes válasz',
+              'correctAnswers'.tr(namedArgs: {
+                'correctAnswers': result.correctAnswers.toString(),
+                'totalQuestions': result.totalQuestions.toString(),
+              }),
               style: const TextStyle(fontSize: 16),
             ),
             if (result.feedback != null) ...[
@@ -176,14 +179,13 @@ class _LessonDetailScreenState extends State<LessonDetailScreen> {
                 style: const TextStyle(fontSize: 14, color: Colors.grey),
               ),
             ],
-            // ÚJ RÉSZ - Megosztás gomb sikeres teljesítés esetén
             if (result.score >= 70) ...[
               const SizedBox(height: 16),
               Center(
                 child: ShareAchievementButton(
                   achievementType: 'lesson',
                   achievementId: widget.lessonId,
-                  achievementName: lesson?.title ?? 'Lecke',
+                  achievementName: lesson?.title ?? 'lesson'.tr(),
                 ),
               ),
             ],
@@ -208,12 +210,12 @@ class _LessonDetailScreenState extends State<LessonDetailScreen> {
                   curve: Curves.easeInOut,
                 );
               },
-              child: const Text('Újra tanulás'),
+              child: Text('retake'.tr()),
             ),
           ElevatedButton(
             onPressed: () {
-              Navigator.pop(context); // Dialog bezárása
-              Navigator.pop(context, true); // Screen bezárása + return true (lecke befejezve)
+              Navigator.pop(context);
+              Navigator.pop(context, true);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF00D4A3),
@@ -221,9 +223,9 @@ class _LessonDetailScreenState extends State<LessonDetailScreen> {
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
-            child: const Text(
-              'Befejezés',
-              style: TextStyle(color: Colors.white),
+            child: Text(
+              'completion'.tr(),
+              style: const TextStyle(color: Colors.white),
             ),
           ),
         ],
@@ -239,9 +241,9 @@ class _LessonDetailScreenState extends State<LessonDetailScreen> {
         appBar: AppBar(
           backgroundColor: const Color(0xFF00D4A3),
           elevation: 0,
-          title: const Text( // Changed to a static title or a loading indicator
-            'Lecke betöltése...', // Or an empty Text('')
-            style: TextStyle(
+          title: Text(
+            'loadingLesson'.tr(),
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -263,14 +265,14 @@ class _LessonDetailScreenState extends State<LessonDetailScreen> {
         backgroundColor: const Color(0xFFF5F7FA),
         appBar: AppBar(
           backgroundColor: const Color(0xFF00D4A3),
-          title: const Text('Hiba', style: TextStyle(color: Colors.white)),
+          title: Text('failedToLoadLesson'.tr(), style: const TextStyle(color: Colors.white)),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () => Navigator.pop(context),
           ),
         ),
-        body: const Center(
-          child: Text('Nem sikerült betölteni a leckét'),
+        body: Center(
+          child: Text('failedToLoadLesson'.tr()),
         ),
       );
     }
@@ -324,7 +326,6 @@ class _LessonDetailScreenState extends State<LessonDetailScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Progress indicator
               Container(
                 margin: const EdgeInsets.only(bottom: 20),
                 child: LinearProgressIndicator(
@@ -335,7 +336,6 @@ class _LessonDetailScreenState extends State<LessonDetailScreen> {
                 ),
               ),
               
-              // Page content card
               Container(
                 width: double.infinity,
                 margin: const EdgeInsets.only(bottom: 16),
@@ -353,7 +353,6 @@ class _LessonDetailScreenState extends State<LessonDetailScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Header with page info
                     Container(
                       padding: const EdgeInsets.all(20),
                       decoration: const BoxDecoration(
@@ -372,7 +371,7 @@ class _LessonDetailScreenState extends State<LessonDetailScreen> {
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Text(
-                              'Oldal ${index + 1}/${lesson!.pages.length}',
+                              'page'.tr(namedArgs: {'current': (index + 1).toString(), 'total': lesson!.pages.length.toString()}),
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w600,
@@ -390,7 +389,6 @@ class _LessonDetailScreenState extends State<LessonDetailScreen> {
                       ),
                     ),
                     
-                    // Content
                     Padding(
                       padding: const EdgeInsets.all(24),
                       child: Column(
@@ -418,7 +416,6 @@ class _LessonDetailScreenState extends State<LessonDetailScreen> {
                             const SizedBox(height: 24),
                           ],
                           
-                          // Formatted content
                           _buildFormattedContent(page.content),
                           
                           if (page.imageUrl != null) ...[
@@ -455,7 +452,7 @@ class _LessonDetailScreenState extends State<LessonDetailScreen> {
                                         ),
                                         const SizedBox(height: 8),
                                         Text(
-                                          'Kép nem tölthető be',
+                                          'imageNotLoadable'.tr(),
                                           style: TextStyle(
                                             color: Colors.grey[600],
                                             fontSize: 14,
@@ -475,7 +472,6 @@ class _LessonDetailScreenState extends State<LessonDetailScreen> {
                 ),
               ),
               
-              // Reading time estimate
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
@@ -495,7 +491,7 @@ class _LessonDetailScreenState extends State<LessonDetailScreen> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      'Becsült olvasási idő: ${_estimateReadingTime(page.content)} perc',
+                      'estimatedReadingTime'.tr(namedArgs: {'minutes': _estimateReadingTime(page.content).toString()}),
                       style: const TextStyle(
                         fontSize: 14,
                         color: Color(0xFF00D4A3),
@@ -513,43 +509,39 @@ class _LessonDetailScreenState extends State<LessonDetailScreen> {
   }
 
   Widget _buildFormattedContent(String content) {
-  // Egyszerű formázás - bekezdések és felsorolások kezelése
-  final paragraphs = content.split('\n\n');
+    final paragraphs = content.split('\n\n');
   
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: paragraphs.map((paragraph) {
-      if (paragraph.trim().isEmpty) return const SizedBox.shrink();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: paragraphs.map((paragraph) {
+        if (paragraph.trim().isEmpty) return const SizedBox.shrink();
       
-      // Lista elemek kezelése
-      if (paragraph.startsWith('•') || paragraph.startsWith('-') || paragraph.startsWith('*')) {
-        return _buildListItem(paragraph);
-      }
+        if (paragraph.startsWith('•') || paragraph.startsWith('-') || paragraph.startsWith('*')) {
+          return _buildListItem(paragraph);
+        }
       
-      // Címek kezelése (ha # jellel kezdődik)
-      if (paragraph.startsWith('#')) {
-        return _buildHeading(paragraph);
-      }
+        if (paragraph.startsWith('#')) {
+          return _buildHeading(paragraph);
+        }
       
-      // Normál bekezdés
-      return Container(
-        margin: const EdgeInsets.only(bottom: 16),
-        child: Text(
-          paragraph.trim(),
-          style: const TextStyle(
-            fontSize: 16,
-            height: 1.7,
-            color: Color(0xFF2D3748),
-            letterSpacing: 0.3,
+        return Container(
+          margin: const EdgeInsets.only(bottom: 16),
+          child: Text(
+            paragraph.trim(),
+            style: const TextStyle(
+              fontSize: 16,
+              height: 1.7,
+              color: Color(0xFF2D3748),
+              letterSpacing: 0.3,
+            ),
+            textAlign: TextAlign.justify,
           ),
-          textAlign: TextAlign.justify,
-        ),
-      );
-    }).toList(),
-  );
-}
+        );
+      }).toList(),
+    );
+  }
 
-Widget _buildListItem(String item) {
+  Widget _buildListItem(String item) {
     final cleanItem = item.replaceFirst(RegExp(r'^[•\-*]\s*'), '');
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
@@ -600,7 +592,7 @@ Widget _buildListItem(String item) {
 
   int _estimateReadingTime(String content) {
     final wordCount = content.split(RegExp(r'\s+')).length;
-    final readingTime = (wordCount / 200).ceil(); // 200 szó/perc átlag
+    final readingTime = (wordCount / 200).ceil();
     return readingTime < 1 ? 1 : readingTime;
   }
 
@@ -621,21 +613,21 @@ Widget _buildListItem(String item) {
               ),
               borderRadius: BorderRadius.circular(15),
             ),
-            child: const Column(
+            child: Column(
               children: [
-                Icon(Icons.quiz, size: 48, color: Colors.white),
-                SizedBox(height: 8),
+                const Icon(Icons.quiz, size: 48, color: Colors.white),
+                const SizedBox(height: 8),
                 Text(
-                  'Kvíz ideje!',
-                  style: TextStyle(
+                  'quizTime'.tr(),
+                  style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
                 ),
                 Text(
-                  'Teszteld a tudásod!',
-                  style: TextStyle(
+                  'testYourKnowledge'.tr(),
+                  style: const TextStyle(
                     fontSize: 16,
                     color: Colors.white70,
                   ),
@@ -661,9 +653,9 @@ Widget _buildListItem(String item) {
                 ),
                 padding: const EdgeInsets.symmetric(vertical: 16),
               ),
-              child: const Text(
-                'Kvíz beküldése',
-                style: TextStyle(
+              child: Text(
+                'submitQuiz'.tr(),
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
@@ -818,7 +810,7 @@ Widget _buildListItem(String item) {
                     );
                   },
                   icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 18),
-                  label: const Text('Előző', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
+                  label: Text('previous'.tr(), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.grey[400],
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -867,7 +859,6 @@ Widget _buildListItem(String item) {
         });
       };
     } else {
-      // ÚJ RÉSZ - kvíz nélküli lecke befejezése
       return () {
         _showLessonCompletionDialog();
       };
@@ -886,11 +877,11 @@ Widget _buildListItem(String item) {
 
   String _getNextButtonText() {
     if (currentPageIndex < lesson!.pages.length - 1) {
-      return 'Következő';
+      return 'next'.tr();
     } else if (lesson!.quizQuestions.isNotEmpty) {
-      return 'Kvíz';
+      return 'quiz'.tr();
     } else {
-      return 'Befejezés';
+      return 'finish'.tr();
     }
   }
 
@@ -909,17 +900,17 @@ Widget _buildListItem(String item) {
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Column(
+        title: Column(
           children: [
-            Icon(
+            const Icon(
               Icons.check_circle,
               size: 64,
               color: Colors.green,
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
-              'Lecke befejezve!',
-              style: TextStyle(
+              'lessonCompleted'.tr(),
+              style: const TextStyle(
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
               ),
@@ -930,7 +921,7 @@ Widget _buildListItem(String item) {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Sikeresen befejezted a leckét: ${lesson?.title ?? ''}',
+              'successfullyCompletedLesson'.tr(namedArgs: {'lessonTitle': lesson?.title ?? ''}),
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 16),
             ),
@@ -939,7 +930,7 @@ Widget _buildListItem(String item) {
               child: ShareAchievementButton(
                 achievementType: 'lesson',
                 achievementId: widget.lessonId,
-                achievementName: lesson?.title ?? 'Lecke',
+                achievementName: lesson?.title ?? 'lesson'.tr(),
               ),
             ),
           ],
@@ -947,8 +938,8 @@ Widget _buildListItem(String item) {
         actions: [
           ElevatedButton(
             onPressed: () {
-              Navigator.pop(context); // Dialog bezárása  
-              Navigator.pop(context, true); // Screen bezárása + return true (lecke befejezve)
+              Navigator.pop(context);
+              Navigator.pop(context, true);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF00D4A3),
@@ -956,9 +947,9 @@ Widget _buildListItem(String item) {
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
-            child: const Text(
-              'Befejezés',
-              style: TextStyle(color: Colors.white),
+            child: Text(
+              'completion'.tr(),
+              style: const TextStyle(color: Colors.white),
             ),
           ),
         ],
@@ -967,7 +958,6 @@ Widget _buildListItem(String item) {
   }
 }
 
-// Model osztályok - javított verzió
 class LessonDetail {
   final String id;
   final String title;
@@ -1080,17 +1070,14 @@ class QuizQuestion {
   }
 
   static bool _parseMultipleChoice(Map<String, dynamic> json) {
-    // Ha van is_multiple_choice mező, használjuk azt
     if (json.containsKey('is_multiple_choice')) {
       return json['is_multiple_choice'] == true;
     }
     
-    // Ha nincs, akkor a type alapján döntünk
     if (json.containsKey('type')) {
       return json['type'] == 'multiple_choice';
     }
     
-    // Alapértelmezett: egyszeres választás
     return false;
   }
 }

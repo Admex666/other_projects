@@ -1,6 +1,7 @@
 // lib/screens/subscription/plans_screen.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../models/subscription.dart';
 import '../../providers/subscription_provider.dart';
 import '../../widgets/subscription/tier_badge.dart';
@@ -38,9 +39,9 @@ class _PlansScreenState extends State<PlansScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Előfizetési tervek',
-          style: TextStyle(
+        title: Text(
+          'plans_screen.app_bar_title'.tr(),
+          style: const TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.bold,
           ),
@@ -81,9 +82,9 @@ class _PlansScreenState extends State<PlansScreen> {
                   ),
                   child: Column(
                     children: [
-                      const Text(
-                        'Válaszd ki a neked megfelelő tervet',
-                        style: TextStyle(
+                      Text(
+                        'plans_screen.header_title'.tr(),
+                        style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
@@ -92,7 +93,7 @@ class _PlansScreenState extends State<PlansScreen> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Jelenlegi: ${widget.currentTier.displayName}',
+                        'plans_screen.current_tier'.tr(namedArgs: {'tier_name': widget.currentTier.displayName}),
                         style: const TextStyle(
                           fontSize: 14,
                           color: Colors.black87,
@@ -180,9 +181,9 @@ class _PlansScreenState extends State<PlansScreen> {
                           color: Colors.green,
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: const Text(
-                          'Jelenlegi',
-                          style: TextStyle(
+                        child: Text(
+                          'plans_screen.current_badge'.tr(),
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
@@ -196,9 +197,9 @@ class _PlansScreenState extends State<PlansScreen> {
                           color: tierColor,
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: const Text(
-                          'Ajánlott',
-                          style: TextStyle(
+                        child: Text(
+                          'plans_screen.recommended_badge'.tr(),
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
@@ -278,7 +279,7 @@ class _PlansScreenState extends State<PlansScreen> {
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              feature,
+              feature.tr(),
               style: const TextStyle(
                 fontSize: 14,
                 color: Colors.black87,
@@ -303,10 +304,10 @@ class _PlansScreenState extends State<PlansScreen> {
           color: Colors.grey[200],
           borderRadius: BorderRadius.circular(8),
         ),
-        child: const Text(
-          'Jelenlegi terved',
+        child: Text(
+          'plans_screen.current_plan_button'.tr(),
           textAlign: TextAlign.center,
-          style: TextStyle(
+          style: const TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.grey,
           ),
@@ -321,10 +322,10 @@ class _PlansScreenState extends State<PlansScreen> {
           color: Colors.grey[200],
           borderRadius: BorderRadius.circular(8),
         ),
-        child: const Text(
-          'Alacsonyabb szint',
+        child: Text(
+          'plans_screen.lower_tier_button'.tr(),
           textAlign: TextAlign.center,
-          style: TextStyle(
+          style: const TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.grey,
           ),
@@ -352,7 +353,7 @@ class _PlansScreenState extends State<PlansScreen> {
               ),
             )
           : Text(
-              plan.tier == SubscriptionTier.free ? 'Ingyenes marad' : 'Frissítés',
+              plan.tier == SubscriptionTier.free ? 'plans_screen.free_button'.tr() : 'plans_screen.upgrade_button'.tr(),
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
               ),
@@ -392,11 +393,11 @@ class _PlansScreenState extends State<PlansScreen> {
             );
           }
         } else {
-          _showErrorSnackbar('Előfizetés frissítés sikertelen');
+          _showErrorSnackbar('plans_screen.upgrade_failed_snackbar'.tr());
         }
       }
     } catch (e) {
-      _showErrorSnackbar('Hiba történt: $e');
+      _showErrorSnackbar('plans_screen.error_snackbar'.tr(namedArgs: {'error': e.toString()}));
     } finally {
       if (mounted) {
         setState(() => _isUpgrading = false);
@@ -408,21 +409,21 @@ class _PlansScreenState extends State<PlansScreen> {
     return showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Előfizetés megerősítése'),
+        title: Text('plans_screen.dialog_title'.tr()),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Frissítés ${plan.tier.displayName} csomagra'),
+            Text('plans_screen.dialog_upgrade_text'.tr(namedArgs: {'tier_name': plan.tier.displayName})),
             const SizedBox(height: 8),
             Text(
-              'Ár: ${plan.tier.displayPrice}',
+              'plans_screen.dialog_price_text'.tr(namedArgs: {'price': plan.tier.displayPrice}),
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Ez egy demo alkalmazás. A valódi fizetés nem történik meg.',
-              style: TextStyle(
+            Text(
+              'plans_screen.dialog_info_text'.tr(),
+              style: const TextStyle(
                 fontSize: 12,
                 color: Colors.grey,
                 fontStyle: FontStyle.italic,
@@ -433,11 +434,11 @@ class _PlansScreenState extends State<PlansScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Mégse'),
+            child: Text('plans_screen.dialog_cancel_button'.tr()),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Megerősítés'),
+            child: Text('plans_screen.dialog_confirm_button'.tr()),
           ),
         ],
       ),
@@ -457,39 +458,39 @@ class _PlansScreenState extends State<PlansScreen> {
     switch (tier) {
       case SubscriptionTier.free:
         return [
-          'Alap tranzakció kezelés',
-          'Számlák, deviza, transzferek',
-          'Szűrés & címkézés',
-          'Alap szokások',
-          'PTI (Tudatosság Index)',
-          'Export / megosztás',
-          '1 aktív kihívás',
-          'Maximum 5 szokás',
-          '1 accountability partner',
-          'Közösség & fórum',
-          'Ranglisták',
+          'plans_screen.free_feature_1',
+          'plans_screen.free_feature_2',
+          'plans_screen.free_feature_3',
+          'plans_screen.free_feature_4',
+          'plans_screen.free_feature_5',
+          'plans_screen.free_feature_6',
+          'plans_screen.free_feature_7',
+          'plans_screen.free_feature_8',
+          'plans_screen.free_feature_9',
+          'plans_screen.free_feature_10',
+          'plans_screen.free_feature_11',
         ];
       case SubscriptionTier.plus:
         return [
-          'Minden Free funkció',
-          'Import, tömeges szerkesztés',
-          'Célokhoz kötött szokások',
-          'Teljes elemzések',
-          'Teljes tudástár hozzáférés',
-          'Korlátlan kihívások',
-          'Korlátlan szokások',
-          'Korlátlan accountability partnerek',
-          'Tier jelvény',
+          'plans_screen.plus_feature_1',
+          'plans_screen.plus_feature_2',
+          'plans_screen.plus_feature_3',
+          'plans_screen.plus_feature_4',
+          'plans_screen.plus_feature_5',
+          'plans_screen.plus_feature_6',
+          'plans_screen.plus_feature_7',
+          'plans_screen.plus_feature_8',
+          'plans_screen.plus_feature_9',
         ];
       case SubscriptionTier.pro:
         return [
-          'Minden Plus funkció',
-          'Személyre szabott elemzések',
-          'Szokás javaslatok',
-          'Exkluzív leckék',
-          'Tanulási útvonalak',
-          'Exkluzív kihívások',
-          'Accountability csoportok',
+          'plans_screen.pro_feature_1',
+          'plans_screen.pro_feature_2',
+          'plans_screen.pro_feature_3',
+          'plans_screen.pro_feature_4',
+          'plans_screen.pro_feature_5',
+          'plans_screen.pro_feature_6',
+          'plans_screen.pro_feature_7',
         ];
     }
   }

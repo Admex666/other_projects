@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/models/habit.dart';
 import 'package:frontend/services/habit_service.dart';
 import 'package:intl/intl.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class HabitDetailScreen extends StatefulWidget {
   final String habitId;
@@ -110,7 +111,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen>
         builder: (context, setDialogState) => AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
           title: Text(
-            isEditing ? 'Szokás szerkesztése' : 'Szokás rögzítése',
+            isEditing ? 'habitDetail.dialog.editTitle'.tr() : 'habitDetail.dialog.logTitle'.tr(),
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           content: Column(
@@ -129,7 +130,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen>
                     SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        'Teljesítve',
+                        'habitDetail.dialog.completedLabel'.tr(),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
@@ -155,8 +156,8 @@ class _HabitDetailScreenState extends State<HabitDetailScreen>
                 TextFormField(
                   controller: _valueController,
                   decoration: InputDecoration(
-                    labelText: 'Érték',
-                    hintText: 'Adj meg egy értéket',
+                    labelText: 'habitDetail.dialog.valueLabel'.tr(),
+                    hintText: 'habitDetail.dialog.valueHint'.tr(),
                     prefixIcon: Icon(Icons.numbers),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -175,8 +176,8 @@ class _HabitDetailScreenState extends State<HabitDetailScreen>
               TextFormField(
                 controller: _notesController,
                 decoration: InputDecoration(
-                  labelText: 'Jegyzetek (opcionális)',
-                  hintText: 'Írj egy rövid megjegyzést...',
+                  labelText: 'habitDetail.dialog.notesLabel'.tr(),
+                  hintText: 'habitDetail.dialog.notesHint'.tr(),
                   prefixIcon: Icon(Icons.note),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -193,7 +194,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen>
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: Text('Mégse'),
+              child: Text('habitDetail.dialog.cancelButton'.tr()),
             ),
             ElevatedButton(
               onPressed: () => Navigator.pop(context, true),
@@ -204,7 +205,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen>
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              child: Text(isEditing ? 'Frissítés' : 'Rögzítés'),
+              child: Text(isEditing ? 'habitDetail.dialog.updateButton'.tr() : 'habitDetail.dialog.logButton'.tr()),
             ),
           ],
         ),
@@ -237,7 +238,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen>
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(isEditing ? 'Szokás frissítve!' : 'Szokás rögzítve!'),
+            content: Text(isEditing ? 'habitDetail.snackbars.updateSuccess'.tr() : 'habitDetail.snackbars.logSuccess'.tr()),
             backgroundColor: Color(0xFF00D4AA),
           ),
         );
@@ -246,7 +247,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen>
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Hiba: $e'),
+            content: Text('habitDetail.snackbars.error'.tr(namedArgs: {'error': e.toString()})),
             backgroundColor: Colors.red,
           ),
         );
@@ -277,7 +278,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen>
                     ),
                     Expanded(
                       child: Text(
-                        'Betöltés...',
+                        'habitDetail.loading'.tr(),
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -332,7 +333,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen>
                     ),
                     Expanded(
                       child: Text(
-                        'Hiba',
+                        'habitDetail.errorTitle'.tr(),
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -364,7 +365,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen>
                           Icon(Icons.error_outline, size: 64, color: Colors.grey[400]),
                           const SizedBox(height: 16),
                           Text(
-                            'Nem sikerült betölteni a szokást',
+                            'habitDetail.errorMessage'.tr(),
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
@@ -390,7 +391,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen>
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
-                            child: Text('Újrapróbálás'),
+                            child: Text('habitDetail.retryButton'.tr()),
                           ),
                         ],
                       ),
@@ -456,7 +457,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen>
                           children: [
                             Icon(Icons.edit, size: 20),
                             SizedBox(width: 8),
-                            Text('Szerkesztés'),
+                            Text('habitDetail.menu.edit'.tr()),
                           ],
                         ),
                       ),
@@ -466,7 +467,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen>
                           children: [
                             Icon(_habit!.isActive ? Icons.archive : Icons.unarchive, size: 20),
                             SizedBox(width: 8),
-                            Text(_habit!.isActive ? 'Archiválás' : 'Visszaállítás'),
+                            Text(_habit!.isActive ? 'habitDetail.menu.archive'.tr() : 'habitDetail.menu.unarchive'.tr()),
                           ],
                         ),
                       ),
@@ -476,7 +477,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen>
                           children: [
                             Icon(Icons.delete, size: 20, color: Colors.red),
                             SizedBox(width: 8),
-                            Text('Törlés', style: TextStyle(color: Colors.red)),
+                            Text('habitDetail.menu.delete'.tr(), style: TextStyle(color: Colors.red)),
                           ],
                         ),
                       ),
@@ -501,10 +502,10 @@ class _HabitDetailScreenState extends State<HabitDetailScreen>
                 ),
                 labelColor: Colors.black87,
                 unselectedLabelColor: Colors.black54,
-                tabs: const [
-                  Tab(text: 'Áttekintés'),
-                  Tab(text: 'Statisztikák'),
-                  Tab(text: 'Előzmények'),
+                tabs: [
+                  Tab(text: 'habitDetail.tabs.overview'.tr()),
+                  Tab(text: 'habitDetail.tabs.stats'.tr()),
+                  Tab(text: 'habitDetail.tabs.history'.tr()),
                 ],
               ),
             ),
@@ -591,7 +592,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        isCompletedToday ? 'Ma teljesítve!' : 'Még nem teljesítve ma',
+                        isCompletedToday ? 'habitDetail.overview.completedToday'.tr() : 'habitDetail.overview.notCompletedToday'.tr(),
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
@@ -602,7 +603,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen>
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Jelenlegi sorozat: ${_habit!.streakCount} nap',
+                        'habitDetail.overview.currentStreak'.tr(namedArgs: {'streak': '${_habit!.streakCount}'}),
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey[600],
@@ -618,35 +619,35 @@ class _HabitDetailScreenState extends State<HabitDetailScreen>
           const SizedBox(height: 16),
           
           // Habit info
-          _buildInfoSection('Részletek', [
-            _buildInfoRow('Kategória', _habit!.category.value),
-            _buildInfoRow('Típus', _getTrackingTypeLabel(_habit!.trackingType)),
-            _buildInfoRow('Gyakoriság', _habit!.frequency.displayName),
+          _buildInfoSection('habitDetail.overview.detailsTitle'.tr(), [
+            _buildInfoRow('habitDetail.overview.category'.tr(), _habit!.category.value),
+            _buildInfoRow('habitDetail.overview.type'.tr(), _getTrackingTypeLabel(_habit!.trackingType)),
+            _buildInfoRow('habitDetail.overview.frequency'.tr(), _habit!.frequency.displayName),
             if (_habit!.description != null)
-              _buildInfoRow('Leírás', _habit!.description!),
+              _buildInfoRow('habitDetail.overview.description'.tr(), _habit!.description!),
           ]),
           
           const SizedBox(height: 16),
           
           // Goal info
           if (_habit!.hasGoal) ...[
-            _buildInfoSection('Cél', [
-              _buildInfoRow('Cél érték', '${_habit!.targetValue}'),
-              _buildInfoRow('Cél időszaka', _habit!.goalPeriod!.displayName),
+            _buildInfoSection('habitDetail.overview.goalTitle'.tr(), [
+              _buildInfoRow('habitDetail.overview.targetValue'.tr(), '${_habit!.targetValue}'),
+              _buildInfoRow('habitDetail.overview.targetPeriod'.tr(), _habit!.goalPeriod!.displayName),
               if (_habit!.dailyTarget != null)
-                _buildInfoRow('Napi cél', _habit!.dailyTarget!.toStringAsFixed(1)),
+                _buildInfoRow('habitDetail.overview.dailyTarget'.tr(), _habit!.dailyTarget!.toStringAsFixed(1)),
               if (_habit!.usagePercentage != null)
-                _buildProgressRow('Haladás', _habit!.usagePercentage!),
+                _buildProgressRow('habitDetail.overview.progress'.tr(), _habit!.usagePercentage!),
             ]),
             const SizedBox(height: 16),
           ],
           
           // Streak info
-          _buildInfoSection('Teljesítmény', [
-            _buildInfoRow('Jelenlegi sorozat', '${_habit!.streakCount} nap'),
-            _buildInfoRow('Legjobb sorozat', '${_habit!.bestStreak} nap'),
+          _buildInfoSection('habitDetail.overview.performanceTitle'.tr(), [
+            _buildInfoRow('habitDetail.overview.currentStreak'.tr(namedArgs: {'streak': ''}), '${_habit!.streakCount} nap'),
+            _buildInfoRow('habitDetail.overview.bestStreak'.tr(), '${_habit!.bestStreak} nap'),
             if (_habit!.lastCompleted != null)
-              _buildInfoRow('Utoljára teljesítve', _formatDate(_habit!.lastCompleted!)),
+              _buildInfoRow('habitDetail.overview.lastCompleted'.tr(), _formatDate(_habit!.lastCompleted!)),
           ]),
           
           SizedBox(height: 100), // Extra space for FAB
@@ -672,19 +673,19 @@ class _HabitDetailScreenState extends State<HabitDetailScreen>
           SizedBox(height: 10),
           
           // Overall stats
-          _buildStatsCard('Összesített statisztika', [
-            _buildStatRow('Összes nap', overall.totalDays.toString()),
-            _buildStatRow('Teljesített napok', overall.completedDays.toString()),
-            _buildStatRow('Teljesítési arány', '${overall.completionRate.toStringAsFixed(1)}%'),
+          _buildStatsCard('habitDetail.stats.overallTitle'.tr(), [
+            _buildStatRow('habitDetail.stats.totalDays'.tr(), overall.totalDays.toString()),
+            _buildStatRow('habitDetail.stats.completedDays'.tr(), overall.completedDays.toString()),
+            _buildStatRow('habitDetail.stats.completionRate'.tr(), '${overall.completionRate.toStringAsFixed(1)}%'),
             if (overall.averageValue != null)
-              _buildStatRow('Átlagérték', overall.averageValue!.toStringAsFixed(2)),
+              _buildStatRow('habitDetail.stats.averageValue'.tr(), overall.averageValue!.toStringAsFixed(2)),
           ]),
           
           const SizedBox(height: 16),
           
           // Monthly progress
           if (_stats!.monthlyStats.isNotEmpty) ...[
-            _buildStatsCard('Havi bontás', 
+            _buildStatsCard('habitDetail.stats.monthlyBreakdown'.tr(), 
               _stats!.monthlyStats.map((monthly) => 
                 _buildStatRow(
                   _formatMonth(monthly.month),
@@ -711,7 +712,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen>
               Icon(Icons.history, size: 64, color: Colors.grey[400]),
               const SizedBox(height: 16),
               Text(
-                'Még nincsenek bejegyzések',
+                'habitDetail.history.noEntriesTitle'.tr(),
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -720,7 +721,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen>
               ),
               const SizedBox(height: 8),
               Text(
-                'Kezdj el rögzíteni a szokásaidat!',
+                'habitDetail.history.noEntriesHint'.tr(),
                 style: TextStyle(
                   color: Colors.grey[500],
                 ),
@@ -785,7 +786,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen>
           children: [
             SizedBox(height: 4),
             Text(
-              log.completed ? 'Teljesítve' : 'Nem teljesítve',
+              log.completed ? 'habitDetail.history.completed'.tr() : 'habitDetail.history.notCompleted'.tr(),
               style: TextStyle(
                 color: log.completed ? Colors.green : Colors.red,
                 fontWeight: FontWeight.w500,
@@ -793,12 +794,12 @@ class _HabitDetailScreenState extends State<HabitDetailScreen>
             ),
             if (log.value != null) ...[
               SizedBox(height: 2),
-              Text('Érték: ${log.value}'),
+              Text('habitDetail.history.value'.tr(namedArgs: {'value': '${log.value}'})),
             ],
             if (log.notes != null && log.notes!.isNotEmpty) ...[
               SizedBox(height: 2),
               Text(
-                'Megjegyzés: ${log.notes}',
+                'habitDetail.history.notes'.tr(namedArgs: {'notes': log.notes!}),
                 style: TextStyle(fontStyle: FontStyle.italic),
               ),
             ],
@@ -812,7 +813,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen>
           child: IconButton(
             onPressed: () => _showLogDialog(log),
             icon: Icon(Icons.edit, color: Colors.grey[600]),
-            tooltip: 'Szerkesztés',
+            tooltip: 'habitDetail.history.editTooltip'.tr(),
           ),
         ),
       ),
@@ -982,16 +983,16 @@ class _HabitDetailScreenState extends State<HabitDetailScreen>
   String _getTrackingTypeLabel(TrackingType type) {
     switch (type) {
       case TrackingType.boolean:
-        return 'Igen/Nem';
+        return 'habitDetail.trackingType.boolean'.tr();
       case TrackingType.numeric:
-        return 'Numerikus';
+        return 'habitDetail.trackingType.numeric'.tr();
     }
   }
 
   String _formatDate(String dateStr) {
     try {
       final date = DateTime.parse(dateStr);
-      return DateFormat('yyyy. MMM dd.').format(date);
+      return DateFormat.yMMMd(context.locale.languageCode).format(date);
     } catch (e) {
       return dateStr;
     }
@@ -1003,7 +1004,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen>
       final year = int.parse(parts[0]);
       final month = int.parse(parts[1]);
       final date = DateTime(year, month);
-      return DateFormat('yyyy. MMMM').format(date);
+      return DateFormat.yMMMM(context.locale.languageCode).format(date);
     } catch (e) {
       return monthStr;
     }
@@ -1011,8 +1012,8 @@ class _HabitDetailScreenState extends State<HabitDetailScreen>
 
   void _showEditDialog() {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Szerkesztés funkció hamarosan elérhető'),
+      SnackBar(
+        content: Text('habitDetail.snackbars.editSoon'.tr()),
         backgroundColor: Color(0xFF00D4AA),
       ),
     );
@@ -1026,7 +1027,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen>
       
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(_habit!.isActive ? 'Szokás archiválva' : 'Szokás visszaállítva'),
+          content: Text(_habit!.isActive ? 'habitDetail.snackbars.archived'.tr() : 'habitDetail.snackbars.unarchived'.tr()),
           backgroundColor: Color(0xFF00D4AA),
         ),
       );
@@ -1035,7 +1036,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen>
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Hiba: $e'),
+          content: Text('habitDetail.snackbars.error'.tr(namedArgs: {'error': e.toString()})),
           backgroundColor: Colors.red,
         ),
       );
@@ -1047,15 +1048,15 @@ class _HabitDetailScreenState extends State<HabitDetailScreen>
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        title: const Text(
-          'Szokás törlése',
+        title: Text(
+          'habitDetail.dialog.deleteTitle'.tr(),
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        content: const Text('Biztosan törölni szeretnéd ezt a szokást? Ez a művelet nem visszavonható.'),
+        content: Text('habitDetail.dialog.deleteMessage'.tr()),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Mégse'),
+            child: Text('habitDetail.dialog.cancelButton'.tr()),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -1065,8 +1066,8 @@ class _HabitDetailScreenState extends State<HabitDetailScreen>
                 await _habitService.deleteHabit(widget.habitId);
                 
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Szokás törölve'),
+                  SnackBar(
+                    content: Text('habitDetail.snackbars.deleteSuccess'.tr()),
                     backgroundColor: Color(0xFF00D4AA),
                   ),
                 );
@@ -1075,7 +1076,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen>
               } catch (e) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('Hiba: $e'),
+                    content: Text('habitDetail.snackbars.error'.tr(namedArgs: {'error': e.toString()})),
                     backgroundColor: Colors.red,
                   ),
                 );
@@ -1088,7 +1089,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen>
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            child: const Text('Törlés'),
+            child: Text('habitDetail.dialog.deleteButton'.tr()),
           ),
         ],
       ),

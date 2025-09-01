@@ -8,6 +8,7 @@ import 'package:frontend/screens/pti/pti_settings_screen.dart';
 import 'package:frontend/screens/pti/pti_comparison_screen.dart';
 import 'package:frontend/services/auth_service.dart';
 import 'package:frontend/screens/pti/pti_component_ranking_screen.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class PTIMainScreen extends StatefulWidget {
   final String userId;
@@ -56,14 +57,14 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
       } else {
         if (!mounted) return; // Ellenőrzés aszinkron művelet után
         setState(() {
-          _error = 'Nem sikerült betölteni a felhasználói adatokat';
+          _error = 'pti.load_error'.tr();
           _isLoading = false;
         });
       }
     } catch (e) {
       if (!mounted) return; // Ellenőrzés catch blokban
       setState(() {
-        _error = 'Hiba történt: $e';
+        _error = 'pti.error'.tr(namedArgs: {'error': e.toString()});
         _isLoading = false;
       });
     }
@@ -83,14 +84,14 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
       } else {
         if (!mounted) return; // Ellenőrzés aszinkron művelet után
         setState(() {
-          _error = 'Nem sikerült betölteni a PTI adatokat';
+          _error = 'pti.load_pti_error'.tr();
           _isLoading = false;
         });
       }
     } catch (e) {
       if (!mounted) return; // Ellenőrzés catch blokban
       setState(() {
-        _error = 'Hiba történt: $e';
+        _error = 'pti.error'.tr(namedArgs: {'error': e.toString()});
         _isLoading = false;
       });
     }
@@ -102,7 +103,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
         title: Text(
-          'PTI - Pénzügyi Tudatosság Index',
+          'pti.title'.tr(),
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.bold,
@@ -165,7 +166,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
             SizedBox(height: 16),
             ElevatedButton(
               onPressed: _loadDashboard,
-              child: Text('Újrapróbálás'),
+              child: Text('pti.retry'.tr()),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color(0xFF00D4A3),
               ),
@@ -178,7 +179,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
     if (_dashboardData == null) {
       return Center(
         child: Text(
-          'Nincs PTI adat',
+          'pti.no_data'.tr(),
           style: TextStyle(
             fontSize: 16,
             color: Colors.grey[600],
@@ -256,7 +257,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Jelenlegi PTI Pontszám',
+                'pti.current_score'.tr(),
                 style: TextStyle(
                   color: Colors.white.withOpacity(0.9),
                   fontSize: 16,
@@ -264,7 +265,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
                 ),
               ),
               Text(
-                'Frissítve: ${_formatDate(pti.calculatedAt)}',
+                'pti.updated'.tr(namedArgs: {'date': _formatDate(pti.calculatedAt)}),
                 style: TextStyle(
                   color: Colors.white.withOpacity(0.7),
                   fontSize: 12,
@@ -312,7 +313,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
                       ),
                       SizedBox(width: 6),
                       Text(
-                        '${pti.rank}. helyezés',
+                        'pti.rank'.tr(namedArgs: {'rank': pti.rank.toString()}),
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,
@@ -383,7 +384,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'PTI Komponensek',
+                'pti.components'.tr(),
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -407,7 +408,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
                   color: Color(0xFF00D4A3),
                 ),
                 label: Text(
-                  'Minden ranglista',
+                  'pti.all_rankings'.tr(),
                   style: TextStyle(
                     color: Color(0xFF00D4A3),
                     fontWeight: FontWeight.w600,
@@ -440,7 +441,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
                 SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'Koppints bármely komponensre a ranglistájának megtekintéséhez',
+                    'pti.tap_info'.tr(),
                     style: TextStyle(
                       fontSize: 12,
                       color: Color(0xFF00D4A3),
@@ -458,7 +459,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
             components.learningContribution,
             30,
             Colors.blue,
-            'Pénzügyi ismeretek és képzések',
+            'pti.component_descriptions.learning'.tr(),
             PTIComponent.learning,
           ),
           SizedBox(height: 16),
@@ -468,7 +469,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
             components.habitContribution,
             30,
             Colors.green,
-            'Napi pénzügyi szokások követése',
+            'pti.component_descriptions.habits'.tr(),
             PTIComponent.habits,
           ),
           SizedBox(height: 16),
@@ -478,7 +479,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
             components.badgeContribution,
             20,
             Colors.orange,
-            'Elért eredmények és mérföldkövek',
+            'pti.component_descriptions.badges'.tr(),
             PTIComponent.badges,
           ),
           SizedBox(height: 16),
@@ -488,7 +489,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
             components.limitContribution,
             20,
             Colors.purple,
-            'Költségvetési korlátok betartása',
+            'pti.component_descriptions.limits'.tr(),
             PTIComponent.limits,
           ),
         ],
@@ -608,7 +609,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
                   ),
                 ),
                 Text(
-                  'Ranglista megtekintése →',
+                  'pti.see_ranking'.tr(),
                   style: TextStyle(
                     fontSize: 11,
                     color: color.withOpacity(0.8),
@@ -644,7 +645,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Ranglisták',
+                'pti.rankings'.tr(),
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -663,7 +664,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
                   );
                 },
                 child: Text(
-                  'Összes megtekintése',
+                  'pti.view_all'.tr(),
                   style: TextStyle(
                     color: Color(0xFF00D4A3),
                     fontWeight: FontWeight.w600,
@@ -678,7 +679,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
             children: [
               Expanded(
                 child: _buildRankingPreview(
-                  'Heti',
+                  'pti.weekly'.tr(),
                   _dashboardData!.weeklyRanking?.rank,
                   _dashboardData!.currentPti.totalUsers,
                   Icons.calendar_view_week,
@@ -687,7 +688,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
               SizedBox(width: 12),
               Expanded(
                 child: _buildRankingPreview(
-                  'Havi',
+                  'pti.monthly'.tr(),
                   _dashboardData!.monthlyRanking?.rank,
                   _dashboardData!.currentPti.totalUsers,
                   Icons.calendar_month,
@@ -696,7 +697,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
               SizedBox(width: 12),
               Expanded(
                 child: _buildRankingPreview(
-                  'Éves',
+                  'pti.yearly'.tr(),
                   _dashboardData!.yearlyRanking?.rank,
                   _dashboardData!.currentPti.totalUsers,
                   Icons.calendar_today,
@@ -789,7 +790,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'PTI Célok',
+            'pti.goals'.tr(),
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -799,7 +800,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
           
           if (_dashboardData!.weeklyGoalProgress != null)
             _buildGoalProgress(
-              'Heti cél',
+              'pti.weekly'.tr(),
               _dashboardData!.weeklyGoalProgress!,
               Icons.calendar_view_week,
               Colors.blue,
@@ -811,7 +812,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
           
           if (_dashboardData!.monthlyGoalProgress != null)
             _buildGoalProgress(
-              'Havi cél',
+              'pti.monthly'.tr(),
               _dashboardData!.monthlyGoalProgress!,
               Icons.calendar_month,
               Colors.green,
@@ -863,7 +864,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
                       Icon(Icons.check, color: Colors.white, size: 12),
                       SizedBox(width: 4),
                       Text(
-                        'Elérve',
+                        'pti.goal_achieved'.tr(),
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 10,
@@ -881,7 +882,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '${progressPercentage.toStringAsFixed(1)}% teljesítve',
+                'pti.goal_progress'.tr(namedArgs: {'progress': progressPercentage.toStringAsFixed(1)}),
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
@@ -929,7 +930,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
               ),
               SizedBox(width: 8),
               Text(
-                'Fejlesztési javaslatok',
+                'pti.suggestions'.tr(),
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -995,7 +996,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Gyors műveletek',
+            'pti.quick_actions'.tr(),
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -1007,7 +1008,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
             children: [
               Expanded(
                 child: _buildQuickActionButton(
-                  'Ranglisták',
+                  'pti.quick_actions_titles.rankings'.tr(),
                   Icons.leaderboard,
                   Color(0xFF00D4A3),
                   () {
@@ -1026,7 +1027,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
               SizedBox(width: 12),
               Expanded(
                 child: _buildQuickActionButton(
-                  'Összehasonlítás',
+                  'pti.quick_actions_titles.comparison'.tr(),
                   Icons.compare_arrows,
                   Colors.blue,
                   () {
@@ -1049,7 +1050,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
             children: [
               Expanded(
                 child: _buildQuickActionButton(
-                  'PTI frissítése',
+                  'pti.quick_actions_titles.refresh'.tr(),
                   Icons.refresh,
                   Colors.orange,
                   () async {
@@ -1059,7 +1060,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
                     if (!mounted) return; // Ellenőrzés ScaffoldMessenger előtt
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('PTI újraszámítás elindítva'),
+                        content: Text('pti.refresh_success'.tr()),
                         backgroundColor: Color(0xFF00D4A3),
                       ),
                     );
@@ -1069,7 +1070,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
               SizedBox(width: 12),
               Expanded(
                 child: _buildQuickActionButton(
-                  'Beállítások',
+                  'pti.quick_actions_titles.settings'.tr(),
                   Icons.settings,
                   Colors.grey[600]!,
                   () {
@@ -1138,11 +1139,11 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
     final difference = now.difference(date);
     
     if (difference.inDays == 0) {
-      return 'Ma';
+      return 'today'.tr();
     } else if (difference.inDays == 1) {
-      return 'Tegnap';
+      return 'yesterday'.tr();
     } else if (difference.inDays < 7) {
-      return '${difference.inDays} napja';
+      return 'time_days_ago'.tr(namedArgs: {'days': difference.inDays.toString()});
     } else {
       return '${date.year}.${date.month.toString().padLeft(2, '0')}.${date.day.toString().padLeft(2, '0')}.';
     }
@@ -1150,15 +1151,15 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
 
   String _getScoreInterpretation(double score) {
     if (score >= 90) {
-      return 'Kiváló pénzügyi tudatosság! 🌟';
+      return 'pti.score_interpretation.excellent'.tr();
     } else if (score >= 80) {
-      return 'Jó pénzügyi tudatosság! 👍';
+      return 'pti.score_interpretation.good'.tr();
     } else if (score >= 70) {
-      return 'Átlagos pénzügyi tudatosság 📈';
+      return 'pti.score_interpretation.average'.tr();
     } else if (score >= 60) {
-      return 'Fejleszthető pénzügyi tudatosság 💪';
+      return 'pti.score_interpretation.developable'.tr();
     } else {
-      return 'Jelentős fejlesztési lehetőség 🎯';
+      return 'pti.score_interpretation.significant_opportunity'.tr();
     }
   }
 
@@ -1319,7 +1320,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
                 ),
                 SizedBox(width: 12),
                 Text(
-                  'PTI Történet',
+                  'pti.history.title'.tr(),
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -1367,7 +1368,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
                 ),
                 SizedBox(height: 16),
                 Text(
-                  'Nem sikerült betölteni a történetet',
+                  'pti.history.load_error'.tr(),
                   style: TextStyle(
                     color: Colors.grey[600],
                   ),
@@ -1400,7 +1401,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
                 ),
                 SizedBox(height: 16),
                 Text(
-                  'Még nincs PTI történet',
+                  'pti.history.no_history'.tr(),
                   style: TextStyle(
                     color: Colors.grey[600],
                   ),
@@ -1463,7 +1464,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
-                        'AKTUÁLIS',
+                        'pti.history.current'.tr(),
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 10,
@@ -1540,7 +1541,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
           if (entry.rank != null) ...[
             SizedBox(height: 4),
             Text(
-              '${entry.rank}. helyezés ${entry.totalUsers != null ? "/ ${entry.totalUsers}" : ""}',
+              '${'pti.history.place'.tr(namedArgs: {'rank': entry.rank.toString()})} ${entry.totalUsers != null ? "pti.history.out_of".tr(namedArgs: {'total_users': entry.totalUsers.toString()}) : ""}',
               style: TextStyle(
                 fontSize: 12,
                 color: Colors.grey[600],
@@ -1639,7 +1640,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
     
     if (periodKey.contains('-W')) {
       final parts = periodKey.split('-W');
-      return '${parts[0]}. ${parts[1]}. hét';
+      return 'pti.history.week'.tr(namedArgs: {'year': parts[0], 'week': int.parse(parts[1]).toString()});
     } else if (periodKey.contains('-')) {
       final parts = periodKey.split('-');
       final monthNames = [
@@ -1647,7 +1648,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
         'július', 'augusztus', 'szeptember', 'október', 'november', 'december'
       ];
       final monthIndex = int.parse(parts[1]) - 1;
-      return '${parts[0]}. ${monthNames[monthIndex]}';
+      return 'pti.history.month'.tr(namedArgs: {'year': parts[0], 'month': monthNames[monthIndex]});
     } else {
       return '$periodKey. év';
     }

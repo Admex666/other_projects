@@ -19,6 +19,7 @@ from app.models.transaction import Transaction
 from app.services.limit_service import LimitService
 from app.models.user import UserDocument
 from app.models.pti_schemas import PTIHistoryResponse, PTIPeriodInfo, PTIComponentRankingResponse, PTIComponentRankingEntry
+from app.utils.translation_helper import translate
 
 logger = logging.getLogger(__name__)
 
@@ -612,7 +613,7 @@ class PTIService:
                 if is_anonymous and user_settings and user_settings.anonymous_name:
                     anonymous_name = user_settings.anonymous_name
                 elif not is_anonymous:
-                    username = user.username if user else "Ismeretlen"
+                    username = user.username if user else translate('unknown')
                 
                 rankings.append(PTIRankingEntry(
                     rank=rank,
@@ -648,7 +649,7 @@ class PTIService:
             )
     
     @staticmethod
-    async def get_improvement_suggestions(user_id: str) -> List[str]:
+    async def get_improvement_suggestions(user_id: str, lang: str = 'hu') -> List[str]:
         """Fejlesztési javaslatok generálása a PTI komponensek alapján"""
         try:
             suggestions = []
@@ -658,33 +659,33 @@ class PTIService:
             
             # Tanulási javaslatok
             if components.learning_points < 20:
-                suggestions.append("📚 Teljesíts legalább 2-3 leckét hetente a tanulási pontok növeléséhez")
-                suggestions.append("🎯 Próbáld meg elsőre teljesíteni a kvízeket a extra pontokért")
+                suggestions.append(translate('learning_suggestion_1', lang=lang))
+                suggestions.append(translate('learning_suggestion_2', lang=lang))
             
             # Szokás javaslatok
             if components.habit_score < 30:
-                suggestions.append("💪 Hozz létre új pénzügyi szokásokat és kövesd őket naponta")
-                suggestions.append("🔥 Építs fel legalább 7 napos streak-et a bónusz pontokért")
+                suggestions.append(translate('habit_suggestion_1', lang=lang))
+                suggestions.append(translate('habit_suggestion_2', lang=lang))
             
             # Badge javaslatok
             if components.badge_score < 15:
-                suggestions.append("🏆 Szerezz új badge-eket különböző kategóriákban")
-                suggestions.append("⭐ Törekedj magasabb szintű badge-ekre a több pontért")
+                suggestions.append(translate('badge_suggestion_1', lang=lang))
+                suggestions.append(translate('badge_suggestion_2', lang=lang))
             
             # Limit javaslatok
             if components.limit_score < 40:
-                suggestions.append("📊 Állíts be és tartsd be a kiadási limiteket")
-                suggestions.append("💰 Próbáld meg a limiteid 80%-a alatt maradni")
+                suggestions.append(translate('limit_suggestion_1', lang=lang))
+                suggestions.append(translate('limit_suggestion_2', lang=lang))
             
             # Általános javaslatok
             if components.total_pti < 50:
-                suggestions.append("🚀 Fokozd az aktivitásod minden területen az összesített PTI javításához")
+                suggestions.append(translate('general_suggestion_1', lang=lang))
             
             return suggestions[:5]  # Maximum 5 javaslat
             
         except Exception as e:
             logger.error(f"Error generating improvement suggestions for user {user_id}: {e}")
-            return ["📈 Folytasd a pénzügyi tudatosság fejlesztését minden területen!"]
+            return [translate('fallback_suggestion', lang=lang)]
         
 
     # Új metódusok hozzáadása a PTIService osztályhoz
@@ -1042,7 +1043,7 @@ class PTIService:
             
             field_name = component_field_map.get(component)
             if not field_name:
-                raise ValueError(f"Unknown component: {component}")
+                raise ValueError(translate('unknown_component', component=component))
             
             # Alap query PTIScore collection-hez
             query = {

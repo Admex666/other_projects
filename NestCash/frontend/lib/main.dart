@@ -386,7 +386,7 @@ void _showForumChallengesOptions(BuildContext context) {
                 },
                 icon: const Icon(Icons.psychology, color: Colors.white),
                 label: Text(
-                  'habits'.tr(),
+                  'habits_'.tr(),
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
                 style: ElevatedButton.styleFrom(

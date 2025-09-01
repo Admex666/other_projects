@@ -5,6 +5,7 @@ import '../../providers/subscription_provider.dart';
 import '../../widgets/subscription/tier_badge.dart';
 import '../../widgets/subscription/usage_indicator.dart';
 import 'plans_screen.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class SubscriptionScreen extends StatefulWidget {
   const SubscriptionScreen({super.key});
@@ -39,10 +40,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Előfizetési adatok frissítve'),
-            backgroundColor: Color(0xFF00D4A3),
-            duration: Duration(seconds: 2),
+          SnackBar(
+            content: Text('subscription.refreshed_data'.tr()),
+            backgroundColor: const Color(0xFF00D4A3),
+            duration: const Duration(seconds: 2),
           ),
         );
       }
@@ -51,7 +52,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Frissítési hiba: $e'),
+            content: Text('subscription.refresh_error'.tr(namedArgs: {'error': e.toString()})),
             backgroundColor: Colors.red,
             duration: const Duration(seconds: 3),
           ),
@@ -64,9 +65,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Előfizetésem',
-          style: TextStyle(
+        title: Text(
+          'subscription.my_subscription'.tr(),
+          style: const TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.bold,
           ),
@@ -100,7 +101,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Hiba történt',
+                    'subscription.error_occurred'.tr(),
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -118,7 +119,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     onPressed: () {
                       provider.loadSubscriptionInfo(forceRefresh: true);
                     },
-                    child: const Text('Újrapróbálkozás'),
+                    child: Text('subscription.retry'.tr()),
                   ),
                 ],
               ),
@@ -222,7 +223,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                'Előfizetve: ${_formatDate(subscription.subscribedAt)}',
+                'subscription.subscribed_on'.tr(namedArgs: {'date': _formatDate(subscription.subscribedAt)}),
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 12,
@@ -241,9 +242,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Használati statisztikák',
-            style: TextStyle(
+          Text(
+            'subscription.usage_statistics'.tr(),
+            style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
               color: Colors.black87,
@@ -253,7 +254,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           
           // Challenges usage
           UsageIndicator(
-            featureName: 'Aktív kihívások',
+            featureName: 'subscription.active_challenges'.tr(),
             current: provider.getCurrentChallengesCount(),
             limit: provider.getChallengesLimit() == -1 ? null : provider.getChallengesLimit(),
             showUpgradeButton: !provider.canCreateUnlimitedChallenges,
@@ -268,7 +269,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               final habitsCount = snapshot.data ?? provider.cachedHabitsCount;
               
               return UsageIndicator(
-                featureName: 'Szokások',
+                featureName: 'subscription.habits'.tr(),
                 current: habitsCount,
                 limit: provider.getHabitsLimit() == -1 ? null : provider.getHabitsLimit(),
                 showUpgradeButton: !provider.canCreateUnlimitedHabits,
@@ -280,7 +281,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           
           // Partners usage
           UsageIndicator(
-            featureName: 'Partner kapcsolatok',
+            featureName: 'subscription.partner_connections'.tr(),
             current: provider.getCurrentPartnersCount(),
             limit: provider.getPartnersLimit() == -1 ? null : provider.getPartnersLimit(),
             showUpgradeButton: provider.currentTier == SubscriptionTier.free,
@@ -313,8 +314,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 icon: const Icon(Icons.upgrade),
                 label: Text(
                   subscription.tier == SubscriptionTier.free 
-                    ? 'Előfizetés indítása'
-                    : 'Frissítés Pro-ra',
+                    ? 'subscription.start_subscription'.tr()
+                    : 'subscription.upgrade_to_pro'.tr(),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF6C63FF),
@@ -334,7 +335,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             TextButton(
               onPressed: () => _showCancelDialog(context, provider),
               child: Text(
-                'Előfizetés lemondása',
+                'subscription.cancel_subscription'.tr(),
                 style: TextStyle(
                   color: Colors.grey[600],
                   decoration: TextDecoration.underline,
@@ -350,15 +351,14 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Előfizetés lemondása'),
-        content: const Text(
-          'Biztosan le szeretnéd mondani az előfizetésed? '
-          'A lemondás után a Free verzióra térünk vissza.',
+        title: Text('subscription.cancel_subscription_title'.tr()),
+        content: Text(
+          'subscription.cancel_dialog_content'.tr(),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Mégse'),
+            child: Text('subscription.cancel'.tr()),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -366,9 +366,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               final success = await provider.cancelSubscription();
               if (success) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Előfizetés sikeresen lemondva'),
-                    backgroundColor: Color(0xFF00D4A3),
+                  SnackBar(
+                    content: Text('subscription.cancel_success'.tr()),
+                    backgroundColor: const Color(0xFF00D4A3),
                   ),
                 );
               }
@@ -376,7 +376,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
             ),
-            child: const Text('Lemondás'),
+            child: Text('subscription.confirm_cancel'.tr()),
           ),
         ],
       ),

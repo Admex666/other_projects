@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/services/pti_service.dart';
 import 'package:frontend/models/pti_models.dart';
 import 'package:frontend/screens/pti/pti_main_screen.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class PTISummaryWidget extends StatefulWidget {
   final String userId;
@@ -130,7 +131,7 @@ class _PTISummaryWidgetState extends State<PTISummaryWidget> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'PTI',
+                            'pti_ranking.pti_short'.tr(),
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 18,
@@ -138,7 +139,7 @@ class _PTISummaryWidgetState extends State<PTISummaryWidget> {
                             ),
                           ),
                           Text(
-                            'Pénzügyi Tudatosság Index',
+                            'pti_full_name'.tr(),
                             style: TextStyle(
                               color: Colors.white.withOpacity(0.8),
                               fontSize: 12,
@@ -239,7 +240,7 @@ class _PTISummaryWidgetState extends State<PTISummaryWidget> {
                     child: _buildMiniComponent(
                       '📚',
                       _ptiScore!.components.learningPoints,
-                      'Tanulás',
+                      'component_learning'.tr(),
                     ),
                   ),
                   SizedBox(width: 8),
@@ -247,7 +248,7 @@ class _PTISummaryWidgetState extends State<PTISummaryWidget> {
                     child: _buildMiniComponent(
                       '💪',
                       _ptiScore!.components.habitScore,
-                      'Szokások',
+                      'component_habits'.tr(),
                     ),
                   ),
                   SizedBox(width: 8),
@@ -255,7 +256,7 @@ class _PTISummaryWidgetState extends State<PTISummaryWidget> {
                     child: _buildMiniComponent(
                       '🏆',
                       _ptiScore!.components.badgeScore,
-                      'Kitűzők',
+                      'component_badges'.tr(),
                     ),
                   ),
                   SizedBox(width: 8),
@@ -263,7 +264,7 @@ class _PTISummaryWidgetState extends State<PTISummaryWidget> {
                     child: _buildMiniComponent(
                       '📊',
                       _ptiScore!.components.limitScore,
-                      'Limitek',
+                      'component_limits'.tr(),
                     ),
                   ),
                 ],

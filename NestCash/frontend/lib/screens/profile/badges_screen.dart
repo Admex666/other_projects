@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/services/badge_service.dart';
 import 'package:frontend/models/badge_models.dart';
 import 'package:frontend/services/sharing_service.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class BadgesScreen extends StatefulWidget {
   final String userId;
@@ -78,7 +79,7 @@ class _BadgesScreenState extends State<BadgesScreen> with SingleTickerProviderSt
 
     } catch (e) {
       setState(() {
-        _error = e.toString();
+        _error = 'error_occured'.tr(namedArgs: {'error': e.toString()});
       });
     }
 
@@ -117,10 +118,10 @@ class _BadgesScreenState extends State<BadgesScreen> with SingleTickerProviderSt
                   children: [
                     const Icon(Icons.filter_list, color: Colors.white, size: 28),
                     const SizedBox(width: 16),
-                    const Expanded(
+                    Expanded(
                       child: Text(
-                        'Szűrők',
-                        style: TextStyle(
+                        'filters'.tr(),
+                        style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -142,9 +143,9 @@ class _BadgesScreenState extends State<BadgesScreen> with SingleTickerProviderSt
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Kategória szűrő
-                      const Text(
-                        'Kategória',
-                        style: TextStyle(
+                      Text(
+                        'category'.tr(),
+                        style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF2D3748),
@@ -156,7 +157,7 @@ class _BadgesScreenState extends State<BadgesScreen> with SingleTickerProviderSt
                         runSpacing: 8,
                         children: [
                           _buildFilterChip(
-                            'Összes',
+                            'all'.tr(),
                             _selectedCategory == null,
                             () {
                               setState(() => _selectedCategory = null);
@@ -165,7 +166,7 @@ class _BadgesScreenState extends State<BadgesScreen> with SingleTickerProviderSt
                             },
                           ),
                           ...BadgeCategory.values.map((category) => _buildFilterChip(
-                            category.displayName,
+                            category.displayName.tr(),
                             _selectedCategory == category,
                             () {
                               setState(() => _selectedCategory = _selectedCategory == category ? null : category);
@@ -220,7 +221,7 @@ class _BadgesScreenState extends State<BadgesScreen> with SingleTickerProviderSt
             Container(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
               decoration: BoxDecoration(
-                color: Color(0xFF00D4A3),
+                color: const Color(0xFF00D4A3),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey.withOpacity(0.1),
@@ -250,10 +251,10 @@ class _BadgesScreenState extends State<BadgesScreen> with SingleTickerProviderSt
                         ),
                       ),
                       const SizedBox(width: 16),
-                      const Expanded(
+                      Expanded(
                         child: Text(
-                          'Kitűzők',
-                          style: TextStyle(
+                          'badges'.tr(),
+                          style: const TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
                             color: Colors.black87,
@@ -275,12 +276,12 @@ class _BadgesScreenState extends State<BadgesScreen> with SingleTickerProviderSt
                           ),
                           child: TextField(
                             controller: _searchController,
-                            decoration: const InputDecoration(
-                              hintText: 'Kitűzők keresése...',
-                              prefixIcon: Icon(Icons.search, color: Color(0xFF00D4A3)),
+                            decoration: InputDecoration(
+                              hintText: 'search_badges_hint'.tr(),
+                              prefixIcon: const Icon(Icons.search, color: Color(0xFF00D4A3)),
                               border: InputBorder.none,
-                              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                              hintStyle: TextStyle(color: Colors.grey),
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                              hintStyle: const TextStyle(color: Colors.grey),
                             ),
                             onSubmitted: (_) => _loadBadgeData(),
                           ),
@@ -314,10 +315,10 @@ class _BadgesScreenState extends State<BadgesScreen> with SingleTickerProviderSt
               color: Colors.white,
               child: TabBar(
                 controller: _tabController,
-                tabs: const [
-                  Tab(text: 'Saját kitűzők'),
-                  Tab(text: 'Haladás'),
-                  Tab(text: 'Statisztikák'),
+                tabs: [
+                  Tab(text: 'my_badges_tab'.tr()),
+                  Tab(text: 'progress_tab'.tr()),
+                  Tab(text: 'stats_tab'.tr()),
                 ],
                 labelColor: const Color(0xFF00D4A3),
                 unselectedLabelColor: Colors.grey,
@@ -367,7 +368,7 @@ class _BadgesScreenState extends State<BadgesScreen> with SingleTickerProviderSt
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: const Text('Újrapróbálás'),
+              child: Text('retry'.tr()),
             ),
           ],
         ),
@@ -375,20 +376,20 @@ class _BadgesScreenState extends State<BadgesScreen> with SingleTickerProviderSt
     }
 
     if (_myBadges.isEmpty) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.emoji_events_outlined, size: 64, color: Colors.grey),
-            SizedBox(height: 16),
+            const Icon(Icons.emoji_events_outlined, size: 64, color: Colors.grey),
+            const SizedBox(height: 16),
             Text(
-              'Még nincsenek kitűzőid',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              'no_badges_title'.tr(),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
-              'Teljesíts feladatokat és szerezz kitűzőket!',
-              style: TextStyle(color: Colors.grey),
+              'no_badges_subtitle'.tr(),
+              style: const TextStyle(color: Colors.grey),
             ),
           ],
         ),
@@ -420,20 +421,20 @@ class _BadgesScreenState extends State<BadgesScreen> with SingleTickerProviderSt
     }
 
     if (_progressList.isEmpty) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.trending_up_outlined, size: 64, color: Colors.grey),
-            SizedBox(height: 16),
+            const Icon(Icons.trending_up_outlined, size: 64, color: Colors.grey),
+            const SizedBox(height: 16),
             Text(
-              'Nincs aktív haladás',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              'no_progress_title'.tr(),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
-              'Kezdj el új aktivitásokat a haladás követéséhez!',
-              style: TextStyle(color: Colors.grey),
+              'no_progress_subtitle'.tr(),
+              style: const TextStyle(color: Colors.grey),
             ),
           ],
         ),
@@ -459,15 +460,15 @@ class _BadgesScreenState extends State<BadgesScreen> with SingleTickerProviderSt
     }
 
     if (_badgeStats == null) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.bar_chart_outlined, size: 64, color: Colors.grey),
-            SizedBox(height: 16),
+            const Icon(Icons.bar_chart_outlined, size: 64, color: Colors.grey),
+            const SizedBox(height: 16),
             Text(
-              'Nincs elérhető statisztika',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              'no_stats_title'.tr(),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
           ],
         ),
@@ -487,7 +488,7 @@ class _BadgesScreenState extends State<BadgesScreen> with SingleTickerProviderSt
               children: [
                 Expanded(
                   child: _buildStatCard(
-                    'Összes Kitűző',
+                    'total_badges'.tr(),
                     _badgeStats!.totalBadges.toString(),
                     Icons.emoji_events,
                     Colors.orange,
@@ -496,7 +497,7 @@ class _BadgesScreenState extends State<BadgesScreen> with SingleTickerProviderSt
                 const SizedBox(width: 16),
                 Expanded(
                   child: _buildStatCard(
-                    'Összes Pont',
+                    'total_points'.tr(),
                     _badgeStats!.totalPoints.toString(),
                     Icons.stars,
                     Colors.blue,
@@ -508,9 +509,9 @@ class _BadgesScreenState extends State<BadgesScreen> with SingleTickerProviderSt
             const SizedBox(height: 24),
             
             // Kategória szerint
-            const Text(
-              'Kitűzők kategóriánként',
-              style: TextStyle(
+            Text(
+              'badges_by_category'.tr(),
+              style: const TextStyle(
                 fontSize: 18, 
                 fontWeight: FontWeight.bold,
                 color: Color(0xFF2D3748),
@@ -522,15 +523,15 @@ class _BadgesScreenState extends State<BadgesScreen> with SingleTickerProviderSt
                 (cat) => cat.value == entry.key,
                 orElse: () => BadgeCategory.transaction,
               );
-              return _buildCategoryStatItem(category.displayName, entry.value);
+              return _buildCategoryStatItem(category.displayName.tr(), entry.value);
             }),
             
             const SizedBox(height: 24),
             
             // Ritkaság szerint
-            const Text(
-              'Kitűzők ritkaság szerint',
-              style: TextStyle(
+            Text(
+              'badges_by_rarity'.tr(),
+              style: const TextStyle(
                 fontSize: 18, 
                 fontWeight: FontWeight.bold,
                 color: Color(0xFF2D3748),
@@ -605,7 +606,7 @@ class _BadgesScreenState extends State<BadgesScreen> with SingleTickerProviderSt
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
-                          badge.badgeRarity!.displayName,
+                          badge.badgeRarity!.displayName.tr(),
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 10,
@@ -628,7 +629,7 @@ class _BadgesScreenState extends State<BadgesScreen> with SingleTickerProviderSt
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
-                              'Lv.${badge.level}',
+                              'level_abbr'.tr(namedArgs: {'level': badge.level.toString()}),
                               style: const TextStyle(
                                 fontSize: 10, 
                                 fontWeight: FontWeight.bold,
@@ -871,7 +872,7 @@ class _BadgesScreenState extends State<BadgesScreen> with SingleTickerProviderSt
                 Text(rarity.colorEmoji),
                 const SizedBox(width: 12),
                 Text(
-                  rarity.displayName,
+                  rarity.displayName.tr(),
                   style: const TextStyle(
                     fontSize: 16,
                     color: Color(0xFF2D3748),
@@ -970,15 +971,15 @@ class _BadgesScreenState extends State<BadgesScreen> with SingleTickerProviderSt
               ),
             const SizedBox(height: 16),
             _buildDetailRow(
-              'Szerezve:', 
+              'earned_at_label'.tr(), 
               '${badge.earnedAt.year}/${badge.earnedAt.month.toString().padLeft(2, '0')}/${badge.earnedAt.day.toString().padLeft(2, '0')}'
             ),
             if (badge.level > 1)
-              _buildDetailRow('Szint:', badge.level.toString()),
+              _buildDetailRow('level_label'.tr(), badge.level.toString()),
             if (badge.badgePoints != null)
-              _buildDetailRow('Pontok:', badge.badgePoints.toString()),
+              _buildDetailRow('points_label'.tr(), badge.badgePoints.toString()),
             if (badge.badgeRarity != null)
-              _buildDetailRow('Ritkaság:', badge.badgeRarity!.displayName),
+              _buildDetailRow('rarity_label'.tr(), badge.badgeRarity!.displayName.tr()),
             
             // Megosztás gomb hozzáadása
             const SizedBox(height: 16),
@@ -1004,23 +1005,23 @@ class _BadgesScreenState extends State<BadgesScreen> with SingleTickerProviderSt
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(badge.isFavorite 
-                        ? 'Eltávolítva a kedvencekből' 
-                        : 'Hozzáadva a kedvencekhez'),
+                        ? 'removed_from_favorites'.tr()
+                        : 'added_to_favorites'.tr()),
                     backgroundColor: const Color(0xFF00D4A3),
                   ),
                 );
               }
             },
             child: Text(
-              badge.isFavorite ? 'Kedvenc eltávolítása' : 'Kedvencekhez',
+              badge.isFavorite ? 'remove_from_favorites'.tr() : 'add_to_favorites'.tr(),
               style: const TextStyle(color: Color(0xFF00D4A3)),
             ),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text(
-              'Bezárás',
-              style: TextStyle(color: Color(0xFF00D4A3)),
+            child: Text(
+              'close'.tr(),
+              style: const TextStyle(color: Color(0xFF00D4A3)),
             ),
           ),
         ],

@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/models/pti_models.dart';
 import 'package:frontend/services/pti_service.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class PTIComponentRankingScreen extends StatefulWidget {
   final String userId;
@@ -99,13 +100,13 @@ class _PTIComponentRankingScreenState extends State<PTIComponentRankingScreen>
         });
       } else {
         setState(() {
-          _error = 'Nem sikerült betölteni a komponens ranglistát';
+          _error = 'pti_component_ranking_screen.loading_error'.tr();
           _isLoading = false;
         });
       }
     } catch (e) {
       setState(() {
-        _error = 'Hiba történt: $e';
+        _error = 'pti_component_ranking_screen.generic_error'.tr(namedArgs: {'error': e.toString()});
         _isLoading = false;
       });
     }
@@ -117,7 +118,7 @@ class _PTIComponentRankingScreenState extends State<PTIComponentRankingScreen>
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
         title: Text(
-          'PTI Komponens Ranglisták',
+          'pti_component_ranking_screen.title'.tr(),
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.bold,
@@ -133,9 +134,9 @@ class _PTIComponentRankingScreenState extends State<PTIComponentRankingScreen>
           unselectedLabelColor: Colors.black54,
           indicatorColor: Colors.black,
           tabs: [
-            Tab(text: 'Heti'),
-            Tab(text: 'Havi'),
-            Tab(text: 'Éves'),
+            Tab(text: 'pti_component_ranking_screen.weekly'.tr()),
+            Tab(text: 'pti_component_ranking_screen.monthly'.tr()),
+            Tab(text: 'pti_component_ranking_screen.yearly'.tr()),
           ],
         ),
       ),
@@ -176,7 +177,7 @@ class _PTIComponentRankingScreenState extends State<PTIComponentRankingScreen>
               ),
               SizedBox(width: 8),
               Text(
-                'Komponens:',
+                'pti_component_ranking_screen.component'.tr(),
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
@@ -240,7 +241,7 @@ class _PTIComponentRankingScreenState extends State<PTIComponentRankingScreen>
           Row(
             children: [
               Text(
-                'Ranglista típusa:',
+                'pti_component_ranking_screen.type_of_ranking'.tr(),
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
@@ -252,12 +253,12 @@ class _PTIComponentRankingScreenState extends State<PTIComponentRankingScreen>
                   segments: [
                     ButtonSegment<RankingScope>(
                       value: RankingScope.global,
-                      label: Text('Globális'),
+                      label: Text('pti_component_ranking_screen.global'.tr()),
                       icon: Icon(Icons.public, size: 16),
                     ),
                     ButtonSegment<RankingScope>(
                       value: RankingScope.friends,
-                      label: Text('Barátok'),
+                      label: Text('pti_component_ranking_screen.friends'.tr()),
                       icon: Icon(Icons.people, size: 16),
                     ),
                   ],
@@ -312,7 +313,7 @@ class _PTIComponentRankingScreenState extends State<PTIComponentRankingScreen>
             SizedBox(height: 16),
             ElevatedButton(
               onPressed: _loadComponentRanking,
-              child: Text('Újrapróbálás'),
+              child: Text('pti_component_ranking_screen.retry'.tr()),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color(0xFF00D4A3),
               ),
@@ -333,7 +334,7 @@ class _PTIComponentRankingScreenState extends State<PTIComponentRankingScreen>
             ),
             SizedBox(height: 16),
             Text(
-              'Nincs ${_getComponentName(_selectedComponent).toLowerCase()} ranglista adat',
+              'pti_component_ranking_screen.no_ranking_data'.tr(namedArgs: {'component': _getComponentName(_selectedComponent).toLowerCase()}),
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.grey[600],
@@ -424,7 +425,7 @@ class _PTIComponentRankingScreenState extends State<PTIComponentRankingScreen>
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Text(
-                  '${_rankingData!.totalParticipants} résztvevő',
+                  'pti_component_ranking_screen.participants'.tr(namedArgs: {'totalParticipants': _rankingData!.totalParticipants.toString()}),
                   style: TextStyle(
                     color: Color(0xFF00D4A3),
                     fontWeight: FontWeight.w600,
@@ -484,7 +485,7 @@ class _PTIComponentRankingScreenState extends State<PTIComponentRankingScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Az Ön pozíciója',
+                  'pti_component_ranking_screen.your_position'.tr(),
                   style: TextStyle(
                     color: Colors.white.withOpacity(0.9),
                     fontSize: 14,
@@ -521,7 +522,7 @@ class _PTIComponentRankingScreenState extends State<PTIComponentRankingScreen>
                 ),
               ),
               Text(
-                'pont',
+                _getScoreUnit(_selectedComponent),
                 style: TextStyle(
                   color: Colors.white.withOpacity(0.9),
                   fontSize: 12,
@@ -612,7 +613,7 @@ class _PTIComponentRankingScreenState extends State<PTIComponentRankingScreen>
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
-                          'Anonim',
+                          'pti_component_ranking_screen.anonymous'.tr(),
                           style: TextStyle(
                             fontSize: 10,
                             color: Colors.grey[600],
@@ -627,7 +628,7 @@ class _PTIComponentRankingScreenState extends State<PTIComponentRankingScreen>
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
-                          'Ön',
+                          'pti_component_ranking_screen.you'.tr(),
                           style: TextStyle(
                             fontSize: 10,
                             color: Colors.white,
@@ -641,7 +642,7 @@ class _PTIComponentRankingScreenState extends State<PTIComponentRankingScreen>
                 Row(
                   children: [
                     Text(
-                      'Percentilis: ${entry.percentile.toStringAsFixed(1)}%',
+                      'pti_component_ranking_screen.percentile'.tr(namedArgs: {'percentile': entry.percentile.toStringAsFixed(1)}),
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey[600],
@@ -713,15 +714,15 @@ class _PTIComponentRankingScreenState extends State<PTIComponentRankingScreen>
   String _getComponentName(PTIComponent component) {
     switch (component) {
       case PTIComponent.learning:
-        return 'Tanulás';
+        return 'pti_component_ranking_screen.learning'.tr();
       case PTIComponent.habits:
-        return 'Szokások';
+        return 'pti_component_ranking_screen.habits'.tr();
       case PTIComponent.badges:
-        return 'Kitűzők';
+        return 'pti_component_ranking_screen.badges'.tr();
       case PTIComponent.limits:
-        return 'Limitek';
+        return 'pti_component_ranking_screen.limits'.tr();
       case PTIComponent.total:
-        return 'Összesített PTI';
+        return 'pti_component_ranking_screen.total_pti'.tr();
     }
   }
 
@@ -743,21 +744,21 @@ class _PTIComponentRankingScreenState extends State<PTIComponentRankingScreen>
   String _getScoreUnit(PTIComponent component) {
     switch (component) {
       case PTIComponent.total:
-        return 'PTI';
+        return 'pti_component_ranking_screen.score_unit_pti'.tr();
       default:
-        return 'pont';
+        return 'pti_component_ranking_screen.score_unit_points'.tr();
     }
   }
 
   String _getScoreDisplayText(double score) {
     if (_selectedComponent == PTIComponent.habits) {
-      return '${score.toInt()} szokás';
+      return 'pti_component_ranking_screen.score_habits_unit'.tr(namedArgs: {'score': score.toInt().toString()});
     } else if (_selectedComponent == PTIComponent.badges) {
-      return '${score.toInt()} badge';
+      return 'pti_component_ranking_screen.score_badges_unit'.tr(namedArgs: {'score': score.toInt().toString()});
     } else if (_selectedComponent == PTIComponent.limits) {
-      return '${score.toStringAsFixed(1)} betartás';
+      return 'pti_component_ranking_screen.score_limits_unit'.tr(namedArgs: {'score': score.toStringAsFixed(1)});
     }
-    return '${score.toStringAsFixed(1)} pont';
+    return 'pti_component_ranking_screen.score_unit_points'.tr(namedArgs: {'score': score.toStringAsFixed(1)});
   }
 
   Color _getRankColor(int rank) {

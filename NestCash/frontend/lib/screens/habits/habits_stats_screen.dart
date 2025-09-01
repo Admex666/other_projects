@@ -1,6 +1,6 @@
-// lib/screens/habits/habits_stats_screen.dart
 import 'package:flutter/material.dart';
 import 'package:frontend/models/habit.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class HabitsStatsScreen extends StatelessWidget {
   final String userId;
@@ -34,7 +34,7 @@ class HabitsStatsScreen extends StatelessWidget {
                   ),
                   Expanded(
                     child: Text(
-                      'Szokás statisztikák',
+                      'habits_stats.title'.tr(),
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -47,7 +47,7 @@ class HabitsStatsScreen extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             // Content Container
             Expanded(
               child: Container(
@@ -67,7 +67,7 @@ class HabitsStatsScreen extends StatelessWidget {
                             CircularProgressIndicator(color: Color(0xFF00D4AA)),
                             SizedBox(height: 16),
                             Text(
-                              'Statisztikák betöltése...',
+                              'habits_stats.loading'.tr(),
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Colors.grey[600],
@@ -125,7 +125,7 @@ class HabitsStatsScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Összesített statisztika',
+            'habits_stats.overall_stats.title'.tr(),
             style: TextStyle(
               color: Colors.white,
               fontSize: 20,
@@ -137,21 +137,21 @@ class HabitsStatsScreen extends StatelessWidget {
             children: [
               Expanded(
                 child: _buildStatItem(
-                  'Összes szokás',
+                  'habits_stats.overall_stats.total_habits'.tr(),
                   overview!.totalHabits.toString(),
                   Icons.psychology,
                 ),
               ),
               Expanded(
                 child: _buildStatItem(
-                  'Aktív szokások',
+                  'habits_stats.overall_stats.active_habits'.tr(),
                   overview!.activeHabits.toString(),
                   Icons.check_circle,
                 ),
               ),
               Expanded(
                 child: _buildStatItem(
-                  'Archivált',
+                  'habits_stats.overall_stats.archived_habits'.tr(),
                   overview!.archivedHabits.toString(),
                   Icons.archive,
                 ),
@@ -164,8 +164,8 @@ class HabitsStatsScreen extends StatelessWidget {
   }
 
   Widget _buildTodayProgressCard() {
-    final completionRate = overview!.activeHabits > 0 
-        ? (overview!.completedToday / overview!.activeHabits) * 100 
+    final completionRate = overview!.activeHabits > 0
+        ? (overview!.completedToday / overview!.activeHabits) * 100
         : 0.0;
 
     Color progressColor = Colors.red;
@@ -208,7 +208,7 @@ class HabitsStatsScreen extends StatelessWidget {
               ),
               SizedBox(width: 12),
               Text(
-                'Mai teljesítmény',
+                'habits_stats.today_progress.title'.tr(),
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -222,7 +222,7 @@ class HabitsStatsScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Teljesített szokások',
+                'habits_stats.today_progress.completed_habits'.tr(),
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.grey[600],
@@ -250,7 +250,7 @@ class HabitsStatsScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '${completionRate.toStringAsFixed(1)}% teljesítve',
+                'habits_stats.today_progress.completed_percentage'.tr(namedArgs: {'percentage': completionRate.toStringAsFixed(1)}),
                 style: TextStyle(
                   fontSize: 14,
                   color: Colors.grey[600],
@@ -312,7 +312,7 @@ class HabitsStatsScreen extends StatelessWidget {
               ),
               SizedBox(width: 12),
               Text(
-                'Streak statisztikák',
+                'habits_stats.streak_stats.title'.tr(),
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -326,9 +326,9 @@ class HabitsStatsScreen extends StatelessWidget {
             children: [
               Expanded(
                 child: _buildStreakStatItem(
-                  'Átlagos streak',
+                  'habits_stats.streak_stats.average_streak'.tr(),
                   overview!.currentAverageStreak.toStringAsFixed(1),
-                  'nap',
+                  'habits_stats.streak_stats.unit'.tr(),
                   Colors.blue,
                   Icons.trending_up,
                 ),
@@ -336,9 +336,9 @@ class HabitsStatsScreen extends StatelessWidget {
               const SizedBox(width: 16),
               Expanded(
                 child: _buildStreakStatItem(
-                  'Legjobb streak',
+                  'habits_stats.streak_stats.best_streak'.tr(),
                   overview!.bestOverallStreak.toString(),
-                  'nap',
+                  'habits_stats.streak_stats.unit'.tr(),
                   Colors.orange,
                   Icons.emoji_events,
                 ),
@@ -375,7 +375,7 @@ class HabitsStatsScreen extends StatelessWidget {
             ),
             SizedBox(height: 12),
             Text(
-              'Nincsenek kategóriák',
+              'habits_stats.category_breakdown.no_categories'.tr(),
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -420,7 +420,7 @@ class HabitsStatsScreen extends StatelessWidget {
               ),
               SizedBox(width: 12),
               Text(
-                'Kategóriák szerinti bontás',
+                'habits_stats.category_breakdown.title'.tr(),
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -509,8 +509,8 @@ class HabitsStatsScreen extends StatelessWidget {
 
   Widget _buildCategoryRow(String category, int count) {
     final color = _getCategoryColor(category);
-    final percentage = overview!.totalHabits > 0 
-        ? (count / overview!.totalHabits) * 100 
+    final percentage = overview!.totalHabits > 0
+        ? (count / overview!.totalHabits) * 100
         : 0.0;
 
     return Container(
@@ -546,7 +546,7 @@ class HabitsStatsScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 4),
                 Text(
-                  '$count szokás (${percentage.toStringAsFixed(0)}%)',
+                  'habits_stats.category_breakdown.count_label'.tr(namedArgs: {'count': count.toString(), 'percentage': percentage.toStringAsFixed(0)}),
                   style: TextStyle(
                     fontSize: 14,
                     color: Colors.grey[600],
@@ -577,15 +577,15 @@ class HabitsStatsScreen extends StatelessWidget {
 
   String _getCompletionStatus(double percentage) {
     if (percentage >= 100) {
-      return 'Kiváló!';
+      return 'habits_stats.today_progress.status.excellent'.tr();
     } else if (percentage >= 75) {
-      return 'Nagyon jó';
+      return 'habits_stats.today_progress.status.very_good'.tr();
     } else if (percentage >= 50) {
-      return 'Jó';
+      return 'habits_stats.today_progress.status.good'.tr();
     } else if (percentage >= 25) {
-      return 'Közepes';
+      return 'habits_stats.today_progress.status.medium'.tr();
     } else {
-      return 'Gyenge';
+      return 'habits_stats.today_progress.status.weak'.tr();
     }
   }
 

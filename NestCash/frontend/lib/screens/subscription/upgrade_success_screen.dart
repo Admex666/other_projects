@@ -1,6 +1,7 @@
 // lib/screens/subscription/upgrade_success_screen.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../models/subscription.dart';
 import '../../providers/subscription_provider.dart';
 import '../../widgets/subscription/tier_badge.dart';
@@ -160,7 +161,7 @@ class _UpgradeSuccessScreenState extends State<UpgradeSuccessScreen>
                           child: Column(
                             children: [
                               Text(
-                                'Sikeres frissítés!',
+                                'upgradeSuccess.title'.tr(),
                                 style: TextStyle(
                                   fontSize: 28,
                                   fontWeight: FontWeight.bold,
@@ -172,7 +173,7 @@ class _UpgradeSuccessScreenState extends State<UpgradeSuccessScreen>
                               const SizedBox(height: 16),
                               
                               Text(
-                                'Üdvözlünk a ${widget.newTier.displayName} csomagban!',
+                                'upgradeSuccess.welcomeMessage'.tr(namedArgs: {'tier': widget.newTier.displayName}),
                                 style: TextStyle(
                                   fontSize: 18,
                                   color: Colors.grey[600],
@@ -218,9 +219,9 @@ class _UpgradeSuccessScreenState extends State<UpgradeSuccessScreen>
                           child: ElevatedButton.icon(
                             onPressed: () => _navigateToHome(context),
                             icon: const Icon(Icons.explore),
-                            label: const Text(
-                              'Funkciók felfedezése',
-                              style: TextStyle(
+                            label: Text(
+                              'upgradeSuccess.exploreFeatures'.tr(),
+                              style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -244,7 +245,7 @@ class _UpgradeSuccessScreenState extends State<UpgradeSuccessScreen>
                           child: OutlinedButton.icon(
                             onPressed: () => _navigateToSubscriptionScreen(context),
                             icon: const Icon(Icons.settings),
-                            label: const Text('Előfizetés kezelése'),
+                            label: Text('upgradeSuccess.manageSubscription'.tr()),
                             style: OutlinedButton.styleFrom(
                               foregroundColor: tierColor,
                               side: BorderSide(color: tierColor),
@@ -289,7 +290,7 @@ class _UpgradeSuccessScreenState extends State<UpgradeSuccessScreen>
       child: Column(
         children: [
           Text(
-            'Feloldott funkciók:',
+            'upgradeSuccess.unlockedFeaturesTitle'.tr(),
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -328,21 +329,21 @@ class _UpgradeSuccessScreenState extends State<UpgradeSuccessScreen>
     switch (tier) {
       case SubscriptionTier.plus:
         return [
-          'Korlátlan kihívások',
-          'Korlátlan szokások',
-          'Teljes elemzések',
-          'Import funkciók',
-          'Tömeges szerkesztés',
-          'Teljes tudástár',
+          'plusFeatures.unlimitedChallenges'.tr(),
+          'plusFeatures.unlimitedHabits'.tr(),
+          'plusFeatures.fullAnalytics'.tr(),
+          'plusFeatures.importFunctionality'.tr(),
+          'plusFeatures.bulkEditing'.tr(),
+          'plusFeatures.fullKnowledgeBase'.tr(),
         ];
       case SubscriptionTier.pro:
         return [
-          'Személyre szabott elemzések',
-          'Exkluzív tartalmak',
-          'Tanulási útvonalak',
-          'Exkluzív kihívások',
-          'Accountability csoportok',
-          'Javaslatok',
+          'proFeatures.personalizedAnalytics'.tr(),
+          'proFeatures.exclusiveContent'.tr(),
+          'proFeatures.learningPaths'.tr(),
+          'proFeatures.exclusiveChallenges'.tr(),
+          'proFeatures.accountabilityGroups'.tr(),
+          'proFeatures.suggestions'.tr(),
         ];
       case SubscriptionTier.free:
         return [];
