@@ -94,7 +94,7 @@ class _PTIRankingScreenState extends State<PTIRankingScreen>
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
         title: Text(
-          'pti_ranking_title'.tr(),
+          'pti_ranking.title'.tr(),
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.bold,
@@ -124,7 +124,7 @@ class _PTIRankingScreenState extends State<PTIRankingScreen>
             child: Row(
               children: [
                 Text(
-                  'ranking_type'.tr(),
+                  'pti_ranking.ranking_type'.tr(),
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
@@ -136,12 +136,12 @@ class _PTIRankingScreenState extends State<PTIRankingScreen>
                     segments: [
                       ButtonSegment<RankingScope>(
                         value: RankingScope.global,
-                        label: Text('global'.tr()),
+                        label: Text('pti_ranking.global'.tr()),
                         icon: Icon(Icons.public, size: 16),
                       ),
                       ButtonSegment<RankingScope>(
                         value: RankingScope.friends,
-                        label: Text('friends'.tr()),
+                        label: Text('pti_ranking.friends'.tr()),
                         icon: Icon(Icons.people, size: 16),
                       ),
                     ],
@@ -484,7 +484,7 @@ class _PTIRankingScreenState extends State<PTIRankingScreen>
                 ),
               ),
               Text(
-                'pti_short'.tr(),
+                'pti_ranking.pti_short'.tr(),
                 style: TextStyle(
                   fontSize: 12,
                   color: Colors.grey[600],
