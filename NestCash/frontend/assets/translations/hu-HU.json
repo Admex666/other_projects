@@ -746,7 +746,7 @@
     },
     "edit_limit_title": "Limit szerkesztése",
     "update_success": "Limit sikeresen frissítve",
-    "error_message": "Hiba: {{error}}",
+    "error_message": "Hiba: {error}",
     "categories_": {
       "food": "Élelmiszer",
       "housing": "Lakás",
@@ -766,10 +766,10 @@
     "sub_account_label": "Alszámla (opcionális)",
     "sub_account_hint": "Alszámla neve",
     "current_usage_title": "Aktuális felhasználás",
-    "spending_label": "Költés: {{spending}} {{currency}}",
-    "limit_label": "Limit: {{limit}} {{currency}}",
-    "usage_percentage_text": "{{percentage}}% felhasználva",
-    "remaining_amount_text": "Fennmaradó: {{remaining}} {{currency}}",
+    "spending_label": "Költés: {spending} {currency}",
+    "limit_label": "Limit: {limit} {currency}",
+    "usage_percentage_text": "{percentage}% felhasználva",
+    "remaining_amount_text": "Fennmaradó: {remaining} {currency}",
     "limit_type_label": "Limit típusa",
     "limit_name_label": "Limit neve",
     "limit_name_hint": "pl. Havi élelmiszer költségvetés",
@@ -1025,7 +1025,7 @@
       "overview": {
         "completedToday": "Ma teljesítve!",
         "notCompletedToday": "Még nem teljesítve ma",
-        "currentStreak": "Jelenlegi sorozat: {{streak}} nap",
+        "currentStreak": "Jelenlegi sorozat: {streak} nap",
         "detailsTitle": "Részletek",
         "category": "Kategória",
         "type": "Típus",
@@ -1053,8 +1053,8 @@
         "noEntriesHint": "Kezdj el rögzíteni a szokásaidat!",
         "completed": "Teljesítve",
         "notCompleted": "Nem teljesítve",
-        "value": "Érték: {{value}}",
-        "notes": "Megjegyzés: {{notes}}",
+        "value": "Érték: {value}",
+        "notes": "Megjegyzés: {notes}",
         "editTooltip": "Szerkesztés"
       },
       "trackingType": {
@@ -1083,7 +1083,7 @@
         "unarchived": "Szokás visszaállítva",
         "deleteSuccess": "Szokás törölve",
         "editSoon": "Szerkesztés funkció hamarosan elérhető",
-        "error": "Hiba: {{error}}"
+        "error": "Hiba: {error}"
       }
     },
     "habits_stats": {
@@ -1575,12 +1575,12 @@
       "expiry_display_text": {
         "expired_now": "Lejárt",
         "expires_tomorrow": "Holnap lejár",
-        "expires_in_x_days": "{{days}} nap múlva lejár",
-        "x_days_left": "{{days}} nap hátra"
+        "expires_in_x_days": "{days} nap múlva lejár",
+        "x_days_left": "{days} nap hátra"
       },
       "feature_access": {
-        "upgrade_required": "Előfizetés frissítés szükséges{{tier}}",
-        "usage_count": "Használat: {{usage}}/{{limit}}",
+        "upgrade_required": "Előfizetés frissítés szükséges{tier}",
+        "usage_count": "Használat: {usage}/{limit}",
         "access_granted": "Hozzáférés engedélyezve",
         "access_denied": "Hozzáférés megtagadva"
       }
@@ -1697,5 +1697,104 @@
       "pro_c6_title": "Egy koktél egy jó bárban",
       "pro_c6_desc": "Annyiba kerül, mint egy koktél egy menő helyen. De ez egész hónapban tanít befektetni.",
       "daily_cost_description": "Mindössze {dailyCost} naponta"
+    },
+    "accpart_model": {
+      "partnership_status": {
+        "pending": "Függőben",
+        "active": "Aktív",
+        "declined": "Elutasítva",
+        "ended": "Lezárva",
+        "blocked": "Blokkolva"
+      },
+      "check_in_frequency": {
+        "daily": "Napi",
+        "every_other_day": "Minden második nap",
+        "weekly": "Heti",
+        "bi_weekly": "Kétheti"
+      },
+      "motivation_style": {
+        "positive_reinforcement": "Pozitív megerősítés",
+        "challenge_based": "Kihívás alapú",
+        "flexible": "Rugalmas",
+        "balanced": "Kiegyensúlyozott"
+      },
+      "personality_type": {
+        "competitive_direct": "Kompetitív és közvetlen",
+        "supportive_gentle": "Támogató és tapintatos",
+        "balanced": "Kiegyensúlyozott"
+      },
+      "goal_category": {
+        "financial": "Pénzügyek",
+        "savings": "Megtakarítás",
+        "investment": "Befektetés",
+        "spending_control": "Kiadások kontroll",
+        "habit_building": "Szokásépítés"
+      },
+      "suggestion": {
+        "excellent_match": "Kiváló egyezés",
+        "good_match": "Jó egyezés",
+        "medium_match": "Közepes egyezés",
+        "weak_match": "Gyenge egyezés"
+      }
+    },
+    "account_serv": {
+      "not_authenticated": "Nincs hitelesítve",
+      "failed_load_accounts_status": "Nem sikerült lekérni a számlákat: {{statusCode}}",
+      "error_getting_accounts": "Hiba a számlák lekérésekor: {{error}}",
+      "failed_load_accounts_error": "Nem sikerült lekérni a számlákat: {{error}}",
+      "error_getting_summary": "Hiba a számla összesítés lekérésekor: {{error}}",
+      "error_adding_sub_account": "Hiba az alszámla hozzáadásakor: {{error}}",
+      "error_deleting_sub_account": "Hiba az alszámla törlésekor: {{error}}",
+      "error_updating_balance": "Hiba az egyenleg frissítésekor: {{error}}",
+      "error_getting_sub_accounts": "Hiba az alszámlák lekérésekor: {{error}}",
+      "likvid_accounts": "Likvid számlák",
+      "investment_accounts": "Befektetési számlák",
+      "savings_accounts": "Megtakarítási számlák",
+      "currency_symbol": "Ft"
+    },
+    "sunburst": {
+      "no_data": "Nincsenek adatok a megjelenítéshez",
+      "accounts_distribution": "Számlák megoszlása",
+      "details": "Részletek",
+      "total_wealth": "Összes vagyon",
+      "liquid_assets": "Likvid eszközök",
+      "investments": "Befektetések",
+      "savings": "Megtakarítások"
+    },
+    "limit_m": {
+      "type": {
+        "spending_display_name": "Általános kiadási limit",
+        "category_display_name": "Kategória specifikus limit",
+        "account_display_name": "Számla specifikus limit",
+        "spending_short_display_name": "Általános",
+        "category_short_display_name": "Kategória: {category}",
+        "category_not_specified": "Nincs megadva",
+        "account_short_display_name": "Számla: {mainAccount}{subAccount}"
+      },
+      "period": {
+        "daily": "Napi",
+        "weekly": "Heti",
+        "monthly": "Havi",
+        "yearly": "Éves"
+      },
+      "status": {
+        "exceeded": "Túllépve",
+        "near_limit": "Közel a limithez",
+        "ok": "Rendben"
+      }
+    },
+    "pti_m": {
+      "learning_display": "📚 Tanulás",
+      "habits_display": "💪 Szokások",
+      "badges_display": "🏆 Kitűzők",
+      "limits_display": "📊 Limitek",
+      "total_display": "🏆 Összesített PTI",
+      "weekly_display": "Heti",
+      "monthly_display": "Havi",
+      "yearly_display": "Éves",
+      "private_display": "Privát",
+      "friends_display": "Barátok",
+      "global_display": "Globális",
+      "unknown_user": "Ismeretlen"
     }
   }

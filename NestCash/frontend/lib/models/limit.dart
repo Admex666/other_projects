@@ -1,9 +1,11 @@
 // lib/models/limit.dart
 
+import 'package:easy_localization/easy_localization.dart';
+
 enum LimitType {
-  spending('spending', 'Általános kiadási limit'),
-  category('category', 'Kategória specifikus limit'),
-  account('account', 'Számla specifikus limit');
+  spending('spending', 'limit_m.type.spending_display_name'),
+  category('category', 'limit_m.type.category_display_name'),
+  account('account', 'limit_m.type.account_display_name');
 
   const LimitType(this.value, this.displayName);
   final String value;
@@ -18,15 +20,26 @@ enum LimitType {
 }
 
 enum LimitPeriod {
-  daily('daily', 'Napi'),
-  weekly('weekly', 'Heti'),
-  monthly('monthly', 'Havi'),
-  yearly('yearly', 'Éves');
+  daily('daily'),
+  weekly('weekly'),
+  monthly('monthly'),
+  yearly('yearly');
 
-  const LimitPeriod(this.value, this.displayName);
+  const LimitPeriod(this.value);
   final String value;
-  final String displayName;
 
+  String get displayName {
+    switch (this) {
+      case LimitPeriod.daily:
+        return 'limit_m.period.daily'.tr();
+      case LimitPeriod.weekly:
+        return 'limit_m.period.weekly'.tr();
+      case LimitPeriod.monthly:
+        return 'limit_m.period.monthly'.tr();
+      case LimitPeriod.yearly:
+        return 'limit_m.period.yearly'.tr();
+    }
+  }
   static LimitPeriod fromString(String value) {
     return LimitPeriod.values.firstWhere(
       (period) => period.value == value,
@@ -180,19 +193,19 @@ class Limit {
   }
 
   String get statusText {
-    if (isExceeded) return 'Túllépve';
-    if (isNearLimit) return 'Közel a limithez';
-    return 'Rendben';
+    if (isExceeded) return 'limit_m.status.exceeded'.tr();
+    if (isNearLimit) return 'limit_m.status.near_limit'.tr();
+    return 'limit_m.status.ok'.tr();
   }
 
   String get typeDisplayName {
     switch (type) {
       case LimitType.spending:
-        return 'Általános';
+        return 'limit_m.type.spending_short_display_name'.tr();
       case LimitType.category:
-        return 'Kategória: ${category ?? "Nincs megadva"}';
+        return 'limit_m.type.category_short_display_name'.tr(namedArgs: {'category': category ?? 'limit_m.type.category_not_specified'.tr()});
       case LimitType.account:
-        return 'Számla: ${mainAccount ?? ""}${subAccountName != null ? " - $subAccountName" : ""}';
+        return 'limit_m.type.account_short_display_name'.tr(namedArgs: {'mainAccount': mainAccount ?? '', 'subAccount': subAccountName != null ? " - $subAccountName" : ""});
     }
   }
 }

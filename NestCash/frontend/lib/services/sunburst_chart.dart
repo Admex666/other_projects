@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+import 'package:easy_localization/easy_localization.dart';
 
 class AccountsSunburstChart extends StatefulWidget {
   final Map<String, dynamic>? accountsData;
@@ -20,7 +21,7 @@ class _AccountsSunburstChartState extends State<AccountsSunburstChart> {
         height: 300,
         child: Center(
           child: Text(
-            'Nincsenek adatok a megjelenítéshez',
+            'sunburst.no_data'.tr(),
             style: TextStyle(
               fontSize: 16,
               color: Colors.grey[600],
@@ -35,7 +36,7 @@ class _AccountsSunburstChartState extends State<AccountsSunburstChart> {
       child: Column(
         children: [
           Text(
-            'Számlák megoszlása',
+            'sunburst.accounts_distribution'.tr(),
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -226,7 +227,7 @@ class _AccountsSunburstChartState extends State<AccountsSunburstChart> {
           Padding(
             padding: EdgeInsets.only(left: 4, bottom: 16),
             child: Text(
-              'Részletek',
+              'sunburst.details'.tr(),
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -248,11 +249,11 @@ class _AccountsSunburstChartState extends State<AccountsSunburstChart> {
   String _getAccountDisplayName(String key) {
     switch (key.toLowerCase()) {
       case 'likvid':
-        return '💰 Likvid eszközök';
+        return 'sunburst.liquid_assets'.tr();
       case 'befektetes':
-        return '📈 Befektetések';
+        return 'sunburst.investments'.tr();
       case 'megtakaritas':
-        return '🏦 Megtakarítások';
+        return 'sunburst.savings'.tr();
       default:
         return key.toUpperCase();
     }
@@ -334,7 +335,7 @@ class SunburstPainter extends CustomPainter {
       text: TextSpan(
         children: [
           TextSpan(
-            text: 'Összes vagyon\n',
+            text: 'sunburst.total_wealth'.tr() + '\n',
             style: TextStyle(
               color: Colors.grey[600],
               fontSize: 14,
@@ -352,7 +353,7 @@ class SunburstPainter extends CustomPainter {
         ],
       ),
       textAlign: TextAlign.center,
-      textDirection: TextDirection.ltr,
+      //textDirection: TextDirection.ltr,
     );
     textPainter.layout();
     textPainter.paint(

@@ -1,5 +1,5 @@
 # app/routes/pti.py
-from fastapi import APIRouter, Depends, HTTPException, Query, BackgroundTasks
+from fastapi import APIRouter, Depends, HTTPException, Query, BackgroundTasks, Request
 from typing import Optional, List
 from datetime import datetime, timedelta
 import logging
@@ -21,9 +21,14 @@ router = APIRouter(prefix="/pti", tags=["PTI"])
 logger = logging.getLogger(__name__)
 
 @router.get("/dashboard", response_model=PTIDashboardResponse)
-async def get_pti_dashboard(current_user: User = Depends(get_current_user)):
+async def get_pti_dashboard(
+    request: Request,
+    current_user: User = Depends(get_current_user)
+    ):
     """PTI dashboard - összes releváns adat egy helyen"""
     try:
+        lang = request.headers.get('Accept-Language', 'hu')[:2]
+
         user_id = current_user.id
         
         # Aktuális PTI számítás minden időszakra
@@ -87,7 +92,7 @@ async def get_pti_dashboard(current_user: User = Depends(get_current_user)):
                 )
         
         # Fejlesztési javaslatok
-        next_actions = await PTIService.get_improvement_suggestions(user_id)
+        next_actions = await PTIService.get_improvement_suggestions(user_id, lang)
         
         # Dashboard összeállítása
         current_pti = PTIScoreResponse(
@@ -526,11 +531,14 @@ async def get_pti_comparison(
 
 @router.get("/suggestions")
 async def get_improvement_suggestions(
+    request: Request,
     current_user: User = Depends(get_current_user)
 ):
     """Fejlesztési javaslatok lekérése"""
     try:
-        suggestions = await PTIService.get_improvement_suggestions(current_user.id)
+        lang = request.headers.get('Accept-Language', 'hu')[:2]
+
+        suggestions = await PTIService.get_improvement_suggestions(current_user.id, lang)
         return {"suggestions": suggestions}
         
     except Exception as e:

@@ -28,7 +28,7 @@ class BasicStats {
       netBalance: (json['net_balance'] ?? 0).toDouble(),
       dailyAvgExpense: (json['daily_avg_expense'] ?? 0).toDouble(),
       monthlyAvgExpense: (json['monthly_avg_expense'] ?? 0).toDouble(),
-      mostActiveDay: json['most_active_day'] ?? 'Hétfő',
+      mostActiveDay: json['most_active_day'] ?? '-',
       mostActiveHour: json['most_active_hour'] ?? 12,
       transactionCount: json['transaction_count'] ?? 0,
     );

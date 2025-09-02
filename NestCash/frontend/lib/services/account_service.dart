@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/config/config.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class AccountService {
   static const _storage = FlutterSecureStorage();
@@ -15,7 +16,7 @@ class AccountService {
   Future<Map<String, dynamic>> getAccounts() async {
     try {
       final token = await _getToken();
-      if (token == null) throw Exception('Not authenticated');
+      if (token == null) throw Exception('account_serv.not_authenticated'.tr());
 
       final response = await http.get(
         Uri.parse('${ApiConfig.baseUrl}/accounts/me'),
@@ -35,11 +36,11 @@ class AccountService {
           'megtakaritas': {'alszamlak': {}, 'foosszeg': 0.0},
         };
       } else {
-        throw Exception('Failed to load accounts: ${response.statusCode}');
+        throw Exception('account_serv.failed_load_accounts_status'.tr(namedArgs: {'statusCode': response.statusCode.toString()}));
       }
     } catch (e) {
-      print('Error getting accounts: $e');
-      throw Exception('Failed to load accounts: $e');
+      print('account_serv.error_getting_accounts'.tr(namedArgs: {'error': e.toString()}));
+      throw Exception('account_serv.failed_load_accounts_error'.tr(namedArgs: {'error': e.toString()}));
     }
   }
 
@@ -77,7 +78,7 @@ class AccountService {
         'total': totalBalance,
       };
     } catch (e) {
-      print('Error getting account summary: $e');
+      print('account_serv.error_getting_summary'.tr(namedArgs: {'error': e.toString()}));
       return {
         'likvid': 0.0,
         'befektetes': 0.0,
@@ -96,7 +97,7 @@ class AccountService {
   }) async {
     try {
       final token = await _getToken();
-      if (token == null) throw Exception('Not authenticated');
+      if (token == null) throw Exception('account_serv.not_authenticated'.tr());
 
       final response = await http.put(
         Uri.parse('${ApiConfig.baseUrl}/accounts/me/$mainAccount/$subAccountName'),
@@ -112,7 +113,7 @@ class AccountService {
 
       return response.statusCode == 200;
     } catch (e) {
-      print('Error adding sub account: $e');
+      print('account_serv.error_adding_sub_account'.tr(namedArgs: {'error': e.toString()}));
       return false;
     }
   }
@@ -124,7 +125,7 @@ class AccountService {
   }) async {
     try {
       final token = await _getToken();
-      if (token == null) throw Exception('Not authenticated');
+      if (token == null) throw Exception('account_serv.not_authenticated'.tr());
 
       final response = await http.delete(
         Uri.parse('${ApiConfig.baseUrl}/accounts/me/$mainAccount/$subAccountName'),
@@ -136,7 +137,7 @@ class AccountService {
 
       return response.statusCode == 200 || response.statusCode == 204;
     } catch (e) {
-      print('Error deleting sub account: $e');
+      print('account_serv.error_deleting_sub_account'.tr(namedArgs: {'error': e.toString()}));
       return false;
     }
   }
@@ -149,7 +150,7 @@ class AccountService {
   }) async {
     try {
       final token = await _getToken();
-      if (token == null) throw Exception('Not authenticated');
+      if (token == null) throw Exception('account_serv.not_authenticated'.tr());
 
       final response = await http.patch(
         Uri.parse('${ApiConfig.baseUrl}/accounts/me/$mainAccount/$subAccountName/balance'),
@@ -164,7 +165,7 @@ class AccountService {
 
       return response.statusCode == 200;
     } catch (e) {
-      print('Error updating balance: $e');
+      print('account_serv.error_updating_balance'.tr(namedArgs: {'error': e.toString()}));
       return false;
     }
   }
@@ -184,7 +185,7 @@ class AccountService {
       }
       return [];
     } catch (e) {
-      print('Error getting sub accounts: $e');
+      print('account_serv.error_getting_sub_accounts'.tr(namedArgs: {'error': e.toString()}));
       return [];
     }
   }
@@ -225,11 +226,11 @@ class AccountService {
   String _formatAccountName(String key) {
     switch (key) {
       case 'likvid':
-        return 'Likvid számlák';
+        return 'account_serv.likvid_accounts'.tr();
       case 'befektetes':
-        return 'Befektetési számlák';
+        return 'account_serv.investment_accounts'.tr();
       case 'megtakaritas':
-        return 'Megtakarítási számlák';
+        return 'account_serv.savings_accounts'.tr();
       default:
         return key.toUpperCase();
     }
@@ -240,11 +241,11 @@ class AccountService {
     final sign = amount < 0 ? '-' : '';
     
     if (absAmount >= 1000000) {
-      return '${sign}${(absAmount / 1000000).toStringAsFixed(1)}M Ft';
+      return '${sign}${(absAmount / 1000000).toStringAsFixed(1)}M ' + 'account_serv.currency_symbol'.tr();
     } else if (absAmount >= 1000) {
-      return '${sign}${(absAmount / 1000).toStringAsFixed(0)}k Ft';
+      return '${sign}${(absAmount / 1000).toStringAsFixed(0)}k ' + 'account_serv.currency_symbol'.tr();
     } else {
-      return '${sign}${absAmount.toStringAsFixed(0)} Ft';
+      return '${sign}${absAmount.toStringAsFixed(0)} ' + 'account_serv.currency_symbol'.tr();
     }
   }
 }

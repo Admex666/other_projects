@@ -455,7 +455,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
           SizedBox(height: 20),
           
           _buildComponentItem(
-            '📚 Tanulás',
+            'pti_m.learning_display'.tr(),
             components.learningContribution,
             30,
             Colors.blue,
@@ -465,7 +465,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
           SizedBox(height: 16),
           
           _buildComponentItem(
-            '💪 Szokások',
+            'pti_m.habits_display'.tr(),
             components.habitContribution,
             30,
             Colors.green,
@@ -475,7 +475,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
           SizedBox(height: 16),
           
           _buildComponentItem(
-            '🏆 Kitűzők',
+            'pti_m.badges_display'.tr(),
             components.badgeContribution,
             20,
             Colors.orange,
@@ -485,7 +485,7 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
           SizedBox(height: 16),
           
           _buildComponentItem(
-            '📊 Limitek',
+            'pti_m.limits_display'.tr(),
             components.limitContribution,
             20,
             Colors.purple,

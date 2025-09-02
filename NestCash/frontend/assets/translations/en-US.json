@@ -36,7 +36,7 @@
     "categories": "Categories",
     "limits": "Limits",
     "admin_dashboard": "Admin Dashboard",
-    "pti_full": "FMI - Financial Mindfulness Index",
+    "pti_full": "FAI - Financial Awareness Index",
     "habits_": "Habits",
     "accountability_partner": "Accountability Partner",
     "challenges": "Challenges",
@@ -747,7 +747,7 @@
     },
     "edit_limit_title": "Edit Limit",
     "update_success": "Limit successfully updated",
-    "error_message": "Error: {{error}}",
+    "error_message": "Error: {error}",
     "categories_": {
       "food": "Food",
       "housing": "Housing",
@@ -767,10 +767,10 @@
     "sub_account_label": "Sub-account (optional)",
     "sub_account_hint": "Sub-account name",
     "current_usage_title": "Current Usage",
-    "spending_label": "Spending: {{spending}} {{currency}}",
-    "limit_label": "Limit: {{limit}} {{currency}}",
-    "usage_percentage_text": "{{percentage}}% used",
-    "remaining_amount_text": "Remaining: {{remaining}} {{currency}}",
+    "spending_label": "Spending: {spending} {currency}",
+    "limit_label": "Limit: {limit} {currency}",
+    "usage_percentage_text": "{percentage}% used",
+    "remaining_amount_text": "Remaining: {remaining} {currency}",
     "limit_type_label": "Limit Type",
     "limit_name_label": "Limit Name",
     "limit_name_hint": "e.g., Monthly food budget",
@@ -789,18 +789,18 @@
     "is_active_text": "The limit is currently active",
     "is_inactive_text": "The limit is currently inactive",
     "update_limit_button": "Update Limit",
-    "pti_comparison_title": "PTI Comparison",
+    "pti_comparison_title": "FAI Comparison",
     "weekly": "Weekly",
     "monthly": "Monthly",
     "yearly": "Yearly",
     "comparison_not_loaded": "Failed to load comparison",
     "no_comparison_data": "No comparison data available",
-    "pti_change_summary_title": "{period} PTI Change",
+    "pti_change_summary_title": "{period} FAI Change",
     "rank": "{rank}th place",
     "period_comparison_title": "Period Comparison",
     "current_period": "Current Period",
     "previous_period": "Previous Period",
-    "pti_point": "PTI score",
+    "pti_point": "FAI score",
     "rank_of_total": "{rank} / {total}",
     "component_change_title": "Component Changes",
     "learning_emoji": "📚 Learning",
@@ -811,7 +811,7 @@
     "improvements": "Improvements",
     "declines": "Declines",
     "pti_component_ranking_screen": {
-      "title": "PTI Component Rankings",
+      "title": "FAI Component Rankings",
       "weekly": "Weekly",
       "monthly": "Monthly",
       "yearly": "Yearly",
@@ -819,7 +819,7 @@
       "type_of_ranking": "Type of Ranking:",
       "global": "Global",
       "friends": "Friends",
-      "total_pti": "Total PTI",
+      "total_pti": "Total FAI",
       "learning": "Learning",
       "habits": "Habits",
       "badges": "Badges",
@@ -834,7 +834,7 @@
       "you": "You",
       "anonymous": "Anonymous",
       "percentile": "Percentile: {percentile}%",
-      "score_unit_pti": "PTI",
+      "score_unit_pti": "FAI",
       "score_unit_points": "points",
       "score_habits_unit": "{score} habits",
       "score_badges_unit": "{score} badges",
@@ -842,7 +842,7 @@
     },
     "pti": {
       "title": "Financial Awareness Index",
-      "current_score": "Current PTI Score",
+      "current_score": "Current FAI Score",
       "updated": "Updated: {date}",
       "rank": "{rank}. place",
       "score_interpretation": {
@@ -852,12 +852,12 @@
         "developable": "Developable financial awareness 💪",
         "significant_opportunity": "Significant opportunity for development 🎯"
       },
-      "no_data": "No PTI data",
+      "no_data": "No FAI data",
       "error": "An error occurred: {error}",
       "load_error": "Failed to load user data",
-      "load_pti_error": "Failed to load PTI data",
+      "load_pti_error": "Failed to load FAI data",
       "retry": "Retry",
-      "components": "PTI Components",
+      "components": "FAI Components",
       "all_rankings": "All Rankings",
       "tap_info": "Tap any component to see its ranking",
       "component_descriptions": {
@@ -872,7 +872,7 @@
       "weekly": "Weekly",
       "monthly": "Monthly",
       "yearly": "Yearly",
-      "goals": "PTI Goals",
+      "goals": "FAI Goals",
       "goal_progress": "{progress}% completed",
       "goal_achieved": "Achieved",
       "suggestions": "Development Suggestions",
@@ -880,21 +880,21 @@
       "quick_actions_titles": {
         "rankings": "Rankings",
         "comparison": "Comparison",
-        "refresh": "Refresh PTI",
+        "refresh": "Refresh FAI",
         "settings": "Settings"
       },
-      "refresh_success": "PTI recalculation initiated",
+      "refresh_success": "FAI recalculation initiated",
       "history": {
-        "title": "PTI History",
+        "title": "FAI History",
         "current": "CURRENT",
-        "no_history": "No PTI history yet",
+        "no_history": "No FAI history yet",
         "load_error": "Failed to load history",
         "place": "{rank}. place",
         "out_of": "/ {total_users}",
         "week": "{year}. {week}. week",
         "month": "{year}. {month}"
       },
-      "settings_title": "PTI Settings",
+      "settings_title": "FAI Settings",
       "save_button": "Save",
       "save_success": "Settings saved successfully!",
       "loading_error": "Failed to load settings",
@@ -917,22 +917,22 @@
       "rank_change_notification_title": "Rank change",
       "rank_change_notification_subtitle": "Notification if your rank changes",
       "weekly_summary_notification_title": "Weekly summary",
-      "weekly_summary_notification_subtitle": "Send weekly PTI summary",
-      "achievements_notification_title": "PTI achievements",
-      "achievements_notification_subtitle": "Notification about new PTI achievements",
-      "goals_section_title": "PTI Goals",
-      "weekly_goal_label": "Weekly PTI goal",
+      "weekly_summary_notification_subtitle": "Send weekly FAI summary",
+      "achievements_notification_title": "FAI achievements",
+      "achievements_notification_subtitle": "Notification about new FAI achievements",
+      "goals_section_title": "FAI Goals",
+      "weekly_goal_label": "Weekly FAI goal",
       "weekly_goal_hint": "e.g., 75.0",
-      "monthly_goal_label": "Monthly PTI goal",
+      "monthly_goal_label": "Monthly FAI goal",
       "monthly_goal_hint": "e.g., 80.0",
-      "goal_unit": "PTI points",
+      "goal_unit": "FAI points",
       "number_format_error": "Please enter a valid number",
       "goal_range_error": "The goal must be between 0 and 100",
-      "info_title": "PTI Information",
-      "info_text": "The PTI (Financial Awareness Index) consists of 4 components: Learning (30%), Habits (30%), Badges (20%), and Limits (20%)."
+      "info_title": "FAI Information",
+      "info_text": "The FAI (Financial Awareness Index) consists of 4 components: Learning (30%), Habits (30%), Badges (20%), and Limits (20%)."
     },
     "pti_ranking": {
-      "title": "PTI Ranking",
+      "title": "FAI Ranking",
       "weekly": "Weekly",
       "monthly": "Monthly",
       "yearly": "Yearly",
@@ -944,10 +944,10 @@
       "retry": "Retry",
       "no_ranking_data": "No ranking data",
       "your_position": "Your position",
-      "pti_points": "PTI points",
+      "pti_points": "FAI points",
       "anonymous": "Anonymous",
       "you": "You",
-      "pti_short": "PTI"
+      "pti_short": "FAI"
     },
     "pti_full_name": "Financial Awareness Index",
     "component_learning": "Learning",
@@ -1025,7 +1025,7 @@
       "overview": {
         "completedToday": "Completed today!",
         "notCompletedToday": "Not yet completed today",
-        "currentStreak": "Current streak: {{streak}} days",
+        "currentStreak": "Current streak: {streak} days",
         "detailsTitle": "Details",
         "category": "Category",
         "type": "Type",
@@ -1053,8 +1053,8 @@
         "noEntriesHint": "Start logging your habits!",
         "completed": "Completed",
         "notCompleted": "Not completed",
-        "value": "Value: {{value}}",
-        "notes": "Note: {{notes}}",
+        "value": "Value: {value}",
+        "notes": "Note: {notes}",
         "editTooltip": "Edit"
       },
       "trackingType": {
@@ -1083,7 +1083,7 @@
         "unarchived": "Habit restored",
         "deleteSuccess": "Habit deleted",
         "editSoon": "Edit function coming soon",
-        "error": "Error: {{error}}"
+        "error": "Error: {error}"
       }
     },
     "habits_stats": {
@@ -1161,7 +1161,7 @@
     "retake": "Retake",
     "completion": "Finish",
     "lessonCompleted": "Lesson completed!",
-    "successfullyCompletedLesson": "You have successfully completed the lesson: {{lessonTitle}}",
+    "successfullyCompletedLesson": "You have successfully completed the lesson: {lessonTitle}",
     "imageNotLoadable": "Image not loadable",
     "search_badges_hint": "Search badges...",
     "my_badges_tab": "My Badges",
@@ -1224,7 +1224,7 @@
       "free_feature_2": "Accounts, currency, transfers",
       "free_feature_3": "Filtering & tagging",
       "free_feature_4": "Basic habits",
-      "free_feature_5": "PTI (Consciousness Index)",
+      "free_feature_5": "FAI (Awareness Index)",
       "free_feature_6": "Export / sharing",
       "free_feature_7": "1 active challenge",
       "free_feature_8": "Maximum 5 habits",
@@ -1575,12 +1575,12 @@
       "expiry_display_text": {
         "expired_now": "Expired",
         "expires_tomorrow": "Expires tomorrow",
-        "expires_in_x_days": "Expires in {{days}} days",
-        "x_days_left": "{{days}} days left"
+        "expires_in_x_days": "Expires in {days} days",
+        "x_days_left": "{days} days left"
       },
       "feature_access": {
-        "upgrade_required": "Subscription upgrade required{{tier}}",
-        "usage_count": "Usage: {{usage}}/{{limit}}",
+        "upgrade_required": "Subscription upgrade required{tier}",
+        "usage_count": "Usage: {usage}/{limit}",
         "access_granted": "Access granted",
         "access_denied": "Access denied"
       }
@@ -1599,7 +1599,7 @@
       "challenge_started": "Challenge started",
       "challenge_completed": "Challenge completed",
       "limit_warning": "Limit warning",
-      "pti_ranking": "PTI ranking",
+      "pti_ranking": "FAI ranking",
       "daily_lesson_reminder": "Daily lesson reminder",
       "notification_default": "Notification",
       "urgent": "Urgent",
@@ -1697,5 +1697,104 @@
       "pro_c6_title": "A cocktail in a good bar",
       "pro_c6_desc": "It costs as much as a cocktail in a cool place. But this teaches you to invest throughout the month.",
       "daily_cost_description": "Only {dailyCost} per day"
+    },
+    "accpart_model": {
+      "partnership_status": {
+        "pending": "Pending",
+        "active": "Active",
+        "declined": "Declined",
+        "ended": "Ended",
+        "blocked": "Blocked"
+      },
+      "check_in_frequency": {
+        "daily": "Daily",
+        "every_other_day": "Every other day",
+        "weekly": "Weekly",
+        "bi_weekly": "Bi-weekly"
+      },
+      "motivation_style": {
+        "positive_reinforcement": "Positive reinforcement",
+        "challenge_based": "Challenge based",
+        "flexible": "Flexible",
+        "balanced": "Balanced"
+      },
+      "personality_type": {
+        "competitive_direct": "Competitive and direct",
+        "supportive_gentle": "Supportive and gentle",
+        "balanced": "Balanced"
+      },
+      "goal_category": {
+        "financial": "Financial",
+        "savings": "Savings",
+        "investment": "Investment",
+        "spending_control": "Spending control",
+        "habit_building": "Habit building"
+      },
+      "suggestion": {
+        "excellent_match": "Excellent match",
+        "good_match": "Good match",
+        "medium_match": "Medium match",
+        "weak_match": "Weak match"
+      }
+    },
+    "account_serv": {
+      "not_authenticated": "Not authenticated",
+      "failed_load_accounts_status": "Failed to load accounts: {{statusCode}}",
+      "error_getting_accounts": "Error getting accounts: {{error}}",
+      "failed_load_accounts_error": "Failed to load accounts: {{error}}",
+      "error_getting_summary": "Error getting account summary: {{error}}",
+      "error_adding_sub_account": "Error adding sub account: {{error}}",
+      "error_deleting_sub_account": "Error deleting sub account: {{error}}",
+      "error_updating_balance": "Error updating balance: {{error}}",
+      "error_getting_sub_accounts": "Error getting sub accounts: {{error}}",
+      "likvid_accounts": "Liquid accounts",
+      "investment_accounts": "Investment accounts",
+      "savings_accounts": "Savings accounts",
+      "currency_symbol": "HUF"
+    },
+    "sunburst": {
+      "no_data": "No data to display",
+      "accounts_distribution": "Accounts Distribution",
+      "details": "Details",
+      "total_wealth": "Total Wealth",
+      "liquid_assets": "Liquid Assets",
+      "investments": "Investments",
+      "savings": "Savings"
+    },
+    "limit_m": {
+      "type": {
+        "spending_display_name": "General spending limit",
+        "category_display_name": "Category specific limit",
+        "account_display_name": "Account specific limit",
+        "spending_short_display_name": "General",
+        "category_short_display_name": "Category: {category}",
+        "category_not_specified": "Not specified",
+        "account_short_display_name": "Account: {mainAccount}{subAccount}"
+      },
+      "period": {
+        "daily": "Daily",
+        "weekly": "Weekly",
+        "monthly": "Monthly",
+        "yearly": "Yearly"
+      },
+      "status": {
+        "exceeded": "Exceeded",
+        "near_limit": "Near limit",
+        "ok": "OK"
+      }
+    },
+    "pti_m": {
+      "learning_display": "📚 Learning",
+      "habits_display": "💪 Habits",
+      "badges_display": "🏆 Badges",
+      "limits_display": "📊 Limits",
+      "total_display": "🏆 Total FAI",
+      "weekly_display": "Weekly",
+      "monthly_display": "Monthly",
+      "yearly_display": "Yearly",
+      "private_display": "Private",
+      "friends_display": "Friends",
+      "global_display": "Global",
+      "unknown_user": "Unknown"
     }
   }

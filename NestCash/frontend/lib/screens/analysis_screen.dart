@@ -12,6 +12,7 @@ import '../widgets/subscription/feature_locked_widget.dart';
 import '../models/subscription.dart';
 import '../utils/subscription_utils.dart';
 import '../../widgets/subscription/subscription_widgets.dart';
+import '../utils/category_translate.dart';
 
 class AnalysisScreen extends StatefulWidget {
   final String userId;
@@ -820,7 +821,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          category['category'],
+                          CategoryTranslate.getLocalizedCategory(category['category']).tr(),
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 16,
@@ -885,7 +886,9 @@ class _AnalysisScreenState extends State<AnalysisScreen>
                   ),
                   SizedBox(height: 8),
                   Text(
-                    _categoryAnalysis!.missingBasicCategories.join(', '),
+                    _categoryAnalysis!.missingBasicCategories
+                        .map((category) => CategoryTranslate.getLocalizedCategory(category).tr())
+                        .join(', '),
                     style: TextStyle(color: Colors.orange[700]),
                   ),
                 ],
@@ -1463,7 +1466,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '${anomaly.category} - ${NumberFormatter.formatCurrency(anomaly.amount)}',
+                              '${CategoryTranslate.getLocalizedCategory(anomaly.category).tr()} - ${NumberFormatter.formatCurrency(anomaly.amount)}',
                               style: TextStyle(fontWeight: FontWeight.w600),
                             ),
                             Text(
@@ -1565,7 +1568,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          rec.category,
+                          CategoryTranslate.getLocalizedCategory(rec.category).tr(),
                           style: TextStyle(fontWeight: FontWeight.w600),
                         ),
                         Container(

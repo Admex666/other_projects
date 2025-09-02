@@ -1,15 +1,31 @@
 // lib/models/accountability_models.dart
 
-enum PartnershipStatus {
-  pending('pending', 'Függőben'),
-  active('active', 'Aktív'),
-  declined('declined', 'Elutasítva'),
-  ended('ended', 'Lezárva'),
-  blocked('blocked', 'Blokkolva');
+import 'package:easy_localization/easy_localization.dart';
 
-  const PartnershipStatus(this.value, this.displayName);
+enum PartnershipStatus {
+  pending('pending'),
+  active('active'),
+  declined('declined'),
+  ended('ended'),
+  blocked('blocked');
+
+  const PartnershipStatus(this.value);
   final String value;
-  final String displayName;
+
+  String get displayName {
+    switch (this) {
+      case PartnershipStatus.pending:
+        return 'accpart_model.partnership_status.pending'.tr();
+      case PartnershipStatus.active:
+        return 'accpart_model.partnership_status.active'.tr();
+      case PartnershipStatus.declined:
+        return 'accpart_model.partnership_status.declined'.tr();
+      case PartnershipStatus.ended:
+        return 'accpart_model.partnership_status.ended'.tr();
+      case PartnershipStatus.blocked:
+        return 'accpart_model.partnership_status.blocked'.tr();
+    }
+  }
 
   static PartnershipStatus fromString(String value) {
     return PartnershipStatus.values.firstWhere(
@@ -20,14 +36,26 @@ enum PartnershipStatus {
 }
 
 enum CheckInFrequency {
-  daily('daily', 'Napi'),
-  everyOtherDay('every_other_day', 'Minden második nap'),
-  weekly('weekly', 'Heti'),
-  biWeekly('bi_weekly', 'Kétheti');
+  daily('daily'),
+  everyOtherDay('every_other_day'),
+  weekly('weekly'),
+  biWeekly('bi_weekly');
 
-  const CheckInFrequency(this.value, this.displayName);
+  const CheckInFrequency(this.value);
   final String value;
-  final String displayName;
+
+  String get displayName {
+    switch (this) {
+      case CheckInFrequency.daily:
+        return 'accpart_model.check_in_frequency.daily'.tr();
+      case CheckInFrequency.everyOtherDay:
+        return 'accpart_model.check_in_frequency.every_other_day'.tr();
+      case CheckInFrequency.weekly:
+        return 'accpart_model.check_in_frequency.weekly'.tr();
+      case CheckInFrequency.biWeekly:
+        return 'accpart_model.check_in_frequency.bi_weekly'.tr();
+    }
+  }
 
   static CheckInFrequency fromString(String value) {
     return CheckInFrequency.values.firstWhere(
@@ -38,14 +66,26 @@ enum CheckInFrequency {
 }
 
 enum MotivationStyle {
-  positiveReinforcement('positive_reinforcement', 'Pozitív megerősítés'),
-  challengeBased('challenge_based', 'Kihívás alapú'),
-  flexible('flexible', 'Rugalmas'),
-  balanced('balanced', 'Kiegyensúlyozott');
+  positiveReinforcement('positive_reinforcement'),
+  challengeBased('challenge_based'),
+  flexible('flexible'),
+  balanced('balanced');
 
-  const MotivationStyle(this.value, this.displayName);
+  const MotivationStyle(this.value);
   final String value;
-  final String displayName;
+
+  String get displayName {
+    switch (this) {
+      case MotivationStyle.positiveReinforcement:
+        return 'accpart_model.motivation_style.positive_reinforcement'.tr();
+      case MotivationStyle.challengeBased:
+        return 'accpart_model.motivation_style.challenge_based'.tr();
+      case MotivationStyle.flexible:
+        return 'accpart_model.motivation_style.flexible'.tr();
+      case MotivationStyle.balanced:
+        return 'accpart_model.motivation_style.balanced'.tr();
+    }
+  }
 
   static MotivationStyle fromString(String value) {
     return MotivationStyle.values.firstWhere(
@@ -56,13 +96,23 @@ enum MotivationStyle {
 }
 
 enum PersonalityType {
-  competitiveDirect('competitive_direct', 'Kompetitív és közvetlen'),
-  supportiveGentle('supportive_gentle', 'Támogató és tapintatos'),
-  balanced('balanced', 'Kiegyensúlyozott');
+  competitiveDirect('competitive_direct'),
+  supportiveGentle('supportive_gentle'),
+  balanced('balanced');
 
-  const PersonalityType(this.value, this.displayName);
+  const PersonalityType(this.value);
   final String value;
-  final String displayName;
+
+  String get displayName {
+    switch (this) {
+      case PersonalityType.competitiveDirect:
+        return 'accpart_model.personality_type.competitive_direct'.tr();
+      case PersonalityType.supportiveGentle:
+        return 'accpart_model.personality_type.supportive_gentle'.tr();
+      case PersonalityType.balanced:
+        return 'accpart_model.personality_type.balanced'.tr();
+    }
+  }
 
   static PersonalityType fromString(String value) {
     return PersonalityType.values.firstWhere(
@@ -73,16 +123,30 @@ enum PersonalityType {
 }
 
 enum GoalCategory {
-  financial('financial', 'Pénzügyek', '💰'),
-  savings('savings', 'Megtakarítás', '🏦'),
-  investment('investment', 'Befektetés', '📈'),
-  spendingControl('spending_control', 'Kiadások kontroll', '🛡️'),
-  habitBuilding('habit_building', 'Szokásépítés', '🎯');
+  financial('financial', '💰'),
+  savings('savings', '🏦'),
+  investment('investment', '📈'),
+  spendingControl('spending_control', '🛡️'),
+  habitBuilding('habit_building', '🎯');
 
-  const GoalCategory(this.value, this.displayName, this.emoji);
+  const GoalCategory(this.value, this.emoji);
   final String value;
-  final String displayName;
   final String emoji;
+
+  String get displayName {
+    switch (this) {
+      case GoalCategory.financial:
+        return 'accpart_model.goal_category.financial'.tr();
+      case GoalCategory.savings:
+        return 'accpart_model.goal_category.savings'.tr();
+      case GoalCategory.investment:
+        return 'accpart_model.goal_category.investment'.tr();
+      case GoalCategory.spendingControl:
+        return 'accpart_model.goal_category.spending_control'.tr();
+      case GoalCategory.habitBuilding:
+        return 'accpart_model.goal_category.habit_building'.tr();
+    }
+  }
 
   static GoalCategory fromString(String value) {
     return GoalCategory.values.firstWhere(
@@ -144,28 +208,28 @@ class AccountabilityProfile {
         json['personality_type']?.toString() ?? 'balanced'
       ),
       timezone: json['timezone']?.toString() ?? 'Europe/Budapest',
-      availabilityHours: json['availability_hours'] != null 
+      availabilityHours: json['availability_hours'] != null
           ? Map<String, List<String>>.from(
               (json['availability_hours'] as Map).map(
                 (key, value) => MapEntry(
-                  key.toString(), 
+                  key.toString(),
                   List<String>.from(value ?? [])
                 )
               )
             )
           : {},
       bio: json['bio']?.toString(),
-      maxAgeDifference: json['max_age_difference'] is int 
-          ? json['max_age_difference'] 
+      maxAgeDifference: json['max_age_difference'] is int
+          ? json['max_age_difference']
           : null,
       preferredExperienceLevel: json['preferred_experience_level']?.toString(),
       isActive: json['is_active'] ?? true,
       isLookingForPartners: json['is_looking_for_partners'] ?? true,
-      createdAt: json['created_at'] != null 
-          ? DateTime.parse(json['created_at'].toString()) 
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'].toString())
           : DateTime.now(),
-      updatedAt: json['updated_at'] != null 
-          ? DateTime.parse(json['updated_at'].toString()) 
+      updatedAt: json['updated_at'] != null
+          ? DateTime.parse(json['updated_at'].toString())
           : DateTime.now(),
     );
   }
@@ -260,13 +324,13 @@ class Partnership {
       acceptedAt: json['accepted_at'] != null ? DateTime.parse(json['accepted_at']) : null,
       totalCheckins: json['total_checkins'] ?? 0,
       successfulCheckins: json['successful_checkins'] ?? 0,
-      isIncoming: json['is_incoming'] ?? false, // Ez a kulcs!
+      isIncoming: json['is_incoming'] ?? false,
     );
     print('Partnership parsed: id=${partnership.id}, '
             'partnerUserId=${partnership.partnerUserId}, '
             'status=${partnership.status}, '
             'isIncoming=${partnership.isIncoming}');
-      
+
     return partnership;
   }
 
@@ -276,13 +340,13 @@ class Partnership {
   }
 
   String get statusDisplayName => status.displayName;
-  
-  // Új getter: meghatározza, hogy ez bejövő kérelem-e az adott felhasználó számára
+
   bool isIncomingRequest(String currentUserId) {
     final result = isIncoming && status == PartnershipStatus.pending;
     print('isIncomingRequest: isIncoming=$isIncoming, status=$status, result=$result');
     return result;
   }
+  
   bool get isActive => status == PartnershipStatus.active;
   bool get isPending => status == PartnershipStatus.pending;
 }
@@ -364,12 +428,12 @@ class PartnerSuggestion {
   }
 
   int get compatibilityPercentage => (compatibilityScore * 100).round();
-  
+
   String get compatibilityText {
-    if (compatibilityScore >= 0.8) return 'Kiváló egyezés';
-    if (compatibilityScore >= 0.6) return 'Jó egyezés';
-    if (compatibilityScore >= 0.4) return 'Közepes egyezés';
-    return 'Gyenge egyezés';
+    if (compatibilityScore >= 0.8) return 'accpart_model.suggestion.excellent_match'.tr();
+    if (compatibilityScore >= 0.6) return 'accpart_model.suggestion.good_match'.tr();
+    if (compatibilityScore >= 0.4) return 'accpart_model.suggestion.medium_match'.tr();
+    return 'accpart_model.suggestion.weak_match'.tr();
   }
 }
 

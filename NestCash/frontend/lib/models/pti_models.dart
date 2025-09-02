@@ -1,16 +1,31 @@
 // lib/models/pti_models.dart
+import 'package:easy_localization/easy_localization.dart';
 
 // Komponens típusok
 enum PTIComponent {
-  learning('learning', '📚 Tanulás'),
-  habits('habits', '💪 Szokások'),
-  badges('badges', '🏆 Kitűzők'),
-  limits('limits', '📊 Limitek'),
-  total('total', '🏆 Összesített PTI');
+  learning('learning'),
+  habits('habits'),
+  badges('badges'),
+  limits('limits'),
+  total('total');
 
-  const PTIComponent(this.value, this.displayName);
+  const PTIComponent(this.value);
   final String value;
-  final String displayName;
+
+  String get displayName {
+    switch (this) {
+      case PTIComponent.learning:
+        return 'pti_m.learning_display'.tr();
+      case PTIComponent.habits:
+        return 'pti_m.habits_display'.tr();
+      case PTIComponent.badges:
+        return 'pti_m.badges_display'.tr();
+      case PTIComponent.limits:
+        return 'pti_m.limits_display'.tr();
+      case PTIComponent.total:
+        return 'pti_m.total_display'.tr();
+    }
+  }
 
   static PTIComponent fromString(String value) {
     return PTIComponent.values.firstWhere(
@@ -21,13 +36,15 @@ enum PTIComponent {
 }
 
 enum PTIPeriod {
-  weekly('weekly', 'Heti'),
-  monthly('monthly', 'Havi'),
-  yearly('yearly', 'Éves');
+  weekly('weekly', 'pti_m.weekly_display'),
+  monthly('monthly', 'pti_m.monthly_display'),
+  yearly('yearly', 'pti_m.yearly_display');
 
-  const PTIPeriod(this.value, this.displayName);
+  const PTIPeriod(this.value, this.displayNameKey);
   final String value;
-  final String displayName;
+  final String displayNameKey;
+
+  String get displayName => displayNameKey.tr();
 
   static PTIPeriod fromString(String value) {
     return PTIPeriod.values.firstWhere(
@@ -38,13 +55,15 @@ enum PTIPeriod {
 }
 
 enum RankingScope {
-  private('private', 'Privát'),
-  friends('friends', 'Barátok'),
-  global('global', 'Globális');
+  private('private', 'pti_m.private_display'),
+  friends('friends', 'pti_m.friends_display'),
+  global('global', 'pti_m.global_display');
 
-  const RankingScope(this.value, this.displayName);
+  const RankingScope(this.value, this.displayNameKey);
   final String value;
-  final String displayName;
+  final String displayNameKey;
+
+  String get displayName => displayNameKey.tr();
 
   static RankingScope fromString(String value) {
     return RankingScope.values.firstWhere(
@@ -142,7 +161,7 @@ class PTIRankingEntry {
     if (isAnonymous && anonymousName != null) {
       return anonymousName!;
     }
-    return username ?? 'Ismeretlen';
+    return username ?? 'pti_m.unknown_user'.tr();
   }
 }
 
@@ -554,7 +573,7 @@ class PTIComponentRankingEntry {
     if (isAnonymous && anonymousName != null) {
       return anonymousName!;
     }
-    return username ?? 'Ismeretlen';
+    return username ?? 'pti_m.unknown_user'.tr();
   }
 }
 
