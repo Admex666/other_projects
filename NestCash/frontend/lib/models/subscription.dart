@@ -1,4 +1,6 @@
 // lib/models/subscription.dart
+import 'package:easy_localization/easy_localization.dart';
+
 enum SubscriptionTier {
   free('free'),
   plus('plus'),
@@ -25,11 +27,11 @@ enum SubscriptionTier {
   String get displayName {
     switch (this) {
       case SubscriptionTier.free:
-        return 'Free';
+        return 'subscription_models.subscription_tier.free'.tr();
       case SubscriptionTier.plus:
-        return 'Plus';
+        return 'subscription_models.subscription_tier.plus'.tr();
       case SubscriptionTier.pro:
-        return 'Pro';
+        return 'subscription_models.subscription_tier.pro'.tr();
     }
   }
 
@@ -119,42 +121,42 @@ class SubscriptionPlan {
       case 'transaction_management':
         switch (features[featureKey]) {
           case 'basic_manual':
-            return 'Alap, manuális';
+            return 'subscription_models.features.transaction_management.basic_manual'.tr();
           case 'import_bulk_edit':
-            return 'Import, tömeges szerkesztés';
+            return 'subscription_models.features.transaction_management.import_bulk_edit'.tr();
           default:
-            return 'Ismeretlen';
+            return 'subscription_models.features.unknown'.tr();
         }
       case 'knowledge_base':
         switch (features[featureKey]) {
           case '1_lesson_per_day_with_ads':
-            return '1 lecke/nap ingyen, utána 30mp videóért';
+            return 'subscription_models.features.knowledge_base.one_lesson_with_ads'.tr();
           case 'full_unlimited':
-            return 'Teljes, korlátlan hozzáférés';
+            return 'subscription_models.features.knowledge_base.full_unlimited'.tr();
           case 'exclusive_content_learning_paths':
-            return 'Exkluzív leckék, tanulási útvonalak';
+            return 'subscription_models.features.knowledge_base.exclusive_content'.tr();
           default:
-            return 'Ismeretlen';
+            return 'subscription_models.features.unknown'.tr();
         }
       case 'challenges':
         switch (features[featureKey]) {
           case '1_active':
-            return '1 aktív';
+            return 'subscription_models.features.challenges.one_active'.tr();
           case 'unlimited':
-            return 'Korlátlan';
+            return 'subscription_models.features.challenges.unlimited'.tr();
           case 'unlimited_with_exclusive':
-            return 'Korlátlan + exkluzív kihívások';
+            return 'subscription_models.features.challenges.unlimited_exclusive'.tr();
           default:
-            return 'Ismeretlen';
+            return 'subscription_models.features.unknown'.tr();
         }
       case 'habit_streak':
         switch (features[featureKey]) {
           case 'max_5_habits':
-            return 'Maximum 5 szokás';
+            return 'subscription_models.features.habit_streak.max_five_habits'.tr();
           case 'unlimited':
-            return 'Korlátlan';
+            return 'subscription_models.features.habit_streak.unlimited'.tr();
           default:
-            return 'Ismeretlen';
+            return 'subscription_models.features.unknown'.tr();
         }
       default:
         return features[featureKey]?.toString() ?? 'N/A';
@@ -213,13 +215,15 @@ class UserSubscription {
   String get statusDisplayText {
     switch (status) {
       case SubscriptionStatus.active:
-        return isPaid ? 'Aktív előfizetés' : 'Ingyenes felhasználó';
+        return isPaid 
+            ? 'subscription_models.status_display_text.active_paid'.tr() 
+            : 'subscription_models.status_display_text.free_user'.tr();
       case SubscriptionStatus.expired:
-        return 'Lejárt előfizetés';
+        return 'subscription_models.status_display_text.expired'.tr();
       case SubscriptionStatus.cancelled:
-        return 'Lemondott előfizetés';
+        return 'subscription_models.status_display_text.cancelled'.tr();
       case SubscriptionStatus.pending:
-        return 'Függőben lévő előfizetés';
+        return 'subscription_models.status_display_text.pending'.tr();
     }
   }
 
@@ -227,13 +231,13 @@ class UserSubscription {
     if (daysUntilExpiry == null) return null;
     
     if (daysUntilExpiry! <= 0) {
-      return 'Lejárt';
+      return 'subscription_models.expiry_display_text.expired_now'.tr();
     } else if (daysUntilExpiry! == 1) {
-      return 'Holnap lejár';
+      return 'subscription_models.expiry_display_text.expires_tomorrow'.tr();
     } else if (daysUntilExpiry! <= 7) {
-      return '${daysUntilExpiry!} nap múlva lejár';
+      return 'subscription_models.expiry_display_text.expires_in_x_days'.tr(namedArgs: {'days': daysUntilExpiry!.toString()});
     } else {
-      return '${daysUntilExpiry!} nap hátra';
+      return 'subscription_models.expiry_display_text.x_days_left'.tr(namedArgs: {'days': daysUntilExpiry!.toString()});
     }
   }
 }
@@ -278,14 +282,21 @@ class FeatureAccess {
     if (message != null) return message!;
     
     if (!hasAccess && upgradeRequired) {
-      return 'Előfizetés frissítés szükséges${requiredTier != null ? ' (${requiredTier!.displayName})' : ''}';
+      return 'subscription_models.feature_access.upgrade_required'.tr(namedArgs: {
+        'tier': requiredTier != null ? ' (${requiredTier!.displayName})' : ''
+      });
     }
     
     if (hasAccess && currentLimit != null && usageCount != null) {
-      return 'Használat: $usageCount/$currentLimit';
+      return 'subscription_models.feature_access.usage_count'.tr(namedArgs: {
+        'usage': usageCount!.toString(),
+        'limit': currentLimit!.toString()
+      });
     }
     
-    return hasAccess ? 'Hozzáférés engedélyezve' : 'Hozzáférés megtagadva';
+    return hasAccess 
+        ? 'subscription_models.feature_access.access_granted'.tr() 
+        : 'subscription_models.feature_access.access_denied'.tr();
   }
 
   bool get isNearLimit {

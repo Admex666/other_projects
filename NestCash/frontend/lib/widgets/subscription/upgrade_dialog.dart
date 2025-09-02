@@ -1,5 +1,6 @@
 // lib/widgets/subscription/upgrade_dialog.dart
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
 import '../../models/subscription.dart';
 import '../../providers/subscription_provider.dart';
@@ -93,7 +94,7 @@ class _UpgradeDialogState extends State<UpgradeDialog> {
             
             // Title
             Text(
-              'Frissítés szükséges',
+              'habits.upgrade_needed'.tr(),
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -119,7 +120,7 @@ class _UpgradeDialogState extends State<UpgradeDialog> {
             // Description
             Text(
               widget.description ?? 
-              'A ${widget.featureName} funkció használatához $tierName előfizetés szükséges.',
+              'to_use_function_tier_needed'.tr(namedArgs: {'feature': widget.featureName.toString(), 'tier': tierName}),
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14,
@@ -191,7 +192,7 @@ class _UpgradeDialogState extends State<UpgradeDialog> {
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          'Mindössze $dailyCost naponta',
+                          'costs_only'.tr(namedArgs: {'cost': dailyCost.toString()}),
                           style: TextStyle(
                             fontSize: 13,
                             color: Colors.grey[700],
@@ -269,7 +270,7 @@ class _UpgradeDialogState extends State<UpgradeDialog> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: const Text('Később'),
+                    child: Text('later'.tr()),
                   ),
                 ),
                 
@@ -292,8 +293,8 @@ class _UpgradeDialogState extends State<UpgradeDialog> {
                       );
                     },
                     icon: Icon(tierIcon, size: 18),
-                    label: const Text(
-                      'Frissítés',
+                    label: Text(
+                      'plans_screen.upgrade_button'.tr(),
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                       ),

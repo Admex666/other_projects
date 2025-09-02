@@ -224,8 +224,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     // Alapértelmezett értékek, ha valamiért nem sikerült a profil lekérése
     final String currentUsername = _userProfile?['username'] ?? widget.username;
-    final String currentEmail = _userProfile?['email'] ?? 'Nincs email';
-    final String currentMobile = _userProfile?['mobile'] ?? 'Nincs telefonszám';
+    final String currentEmail = _userProfile?['email'] ?? '-';
+    final String currentMobile = _userProfile?['mobile'] ?? '-';
     final String currentUserId = _userProfile?['_id'] ?? widget.userId; // Feltételezve, hogy a backend _id-t ad vissza
     
     return Scaffold(

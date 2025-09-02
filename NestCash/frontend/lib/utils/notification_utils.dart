@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/services/notification_service.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class NotificationUtils {
   
@@ -45,37 +46,37 @@ static IconData getTypeIcon(String type) {
   static String getTypeDisplayName(String type) {
     switch (type) {
       case 'transaction_added':
-        return 'Tranzakció hozzáadva';
+        return 'notification_utils.transaction_added'.tr();
       case 'account_balance_low':
-        return 'Alacsony egyenleg';
+        return 'notification_utils.account_balance_low'.tr();
       case 'monthly_summary':
-        return 'Havi összesítő';
+        return 'notification_utils.monthly_summary'.tr();
       case 'budget_exceeded':
-        return 'Költségkeret túllépve';
+        return 'notification_utils.budget_exceeded'.tr();
       case 'forum_like':
-        return 'Fórum kedvelés';
+        return 'notification_utils.forum_like'.tr();
       case 'forum_comment':
-        return 'Fórum komment';
+        return 'notification_utils.forum_comment'.tr();
       case 'forum_follow':
-        return 'Fórum követés';
+        return 'notification_utils.forum_follow'.tr();
       case 'system_message':
-        return 'Rendszerüzenet';
+        return 'notification_utils.system_message'.tr();
       case 'knowledge_progress':
-        return 'Tanulási haladás';
+        return 'notification_utils.knowledge_progress'.tr();
       case 'badge_earned':
-        return 'Kitüntetés megszerzése';
+        return 'notification_utils.badge_earned'.tr();
       case 'challenge_started':
-        return 'Kihívás indult';
+        return 'notification_utils.challenge_started'.tr();
       case 'challenge_completed':
-        return 'Kihívás teljesítve';
+        return 'notification_utils.challenge_completed'.tr();
       case 'limit_warning':
-        return 'Limit figyelmeztetés';
+        return 'notification_utils.limit_warning'.tr();
       case 'pti_ranking':
-        return 'PTI ranglista';
+        return 'notification_utils.pti_ranking'.tr();
       case 'daily_lesson_reminder':
-        return 'Napi lecke emlékeztető';
+        return 'notification_utils.daily_lesson_reminder'.tr();
       default:
-        return 'Értesítés';
+        return 'notification_utils.notification_default'.tr();
     }
   }
 
@@ -120,15 +121,15 @@ static IconData getTypeIcon(String type) {
   static String getPriorityDisplayName(String priority) {
     switch (priority.toLowerCase()) {
       case 'urgent':
-        return 'Sürgős';
+        return 'notification_utils.urgent'.tr();
       case 'high':
-        return 'Magas';
+        return 'notification_utils.high'.tr();
       case 'medium':
-        return 'Közepes';
+        return 'notification_utils.medium'.tr();
       case 'low':
-        return 'Alacsony';
+        return 'notification_utils.low'.tr();
       default:
-        return 'Ismeretlen';
+        return 'notification_utils.unknown'.tr();
     }
   }
 
@@ -178,13 +179,13 @@ static IconData getTypeIcon(String type) {
     if (difference.inDays > 7) {
       return '${dateTime.year}.${dateTime.month.toString().padLeft(2, '0')}.${dateTime.day.toString().padLeft(2, '0')}';
     } else if (difference.inDays > 0) {
-      return '${difference.inDays} napja';
+      return 'notification_utils.days_ago'.tr(namedArgs: {'days': difference.inDays.toString()});
     } else if (difference.inHours > 0) {
-      return '${difference.inHours} órája';
+      return 'notification_utils.hours_ago'.tr(namedArgs: {'hours': difference.inHours.toString()});
     } else if (difference.inMinutes > 0) {
-      return '${difference.inMinutes} perce';
+      return 'notification_utils.minutes_ago'.tr(namedArgs: {'minutes': difference.inMinutes.toString()});
     } else {
-      return 'Most';
+      return 'notification_utils.now'.tr();
     }
   }
 
@@ -258,14 +259,14 @@ static IconData getTypeIcon(String type) {
   /// Értesítés exportálása szövegként
   static String exportNotificationAsText(NotificationItem notification) {
     return '''
-Értesítés részletei:
-- Cím: ${notification.title}
-- Üzenet: ${notification.message}
-- Típus: ${getTypeDisplayName(notification.type)}
-- Prioritás: ${getPriorityDisplayName(notification.priority)}
-- Létrehozva: ${formatRelativeTime(notification.createdAt)}
-- Állapot: ${notification.isRead ? 'Olvasott' : 'Olvasatlan'}
-${notification.actionText != null ? '- Művelet: ${notification.actionText}' : ''}
+${'notification_utils.export_details_title'.tr()}
+- ${'notification_utils.export_title'.tr()}: ${notification.title}
+- ${'notification_utils.export_message'.tr()}: ${notification.message}
+- ${'notification_utils.export_type'.tr()}: ${getTypeDisplayName(notification.type)}
+- ${'notification_utils.export_priority'.tr()}: ${getPriorityDisplayName(notification.priority)}
+- ${'notification_utils.export_created'.tr()}: ${formatRelativeTime(notification.createdAt)}
+- ${'notification_utils.export_status'.tr()}: ${notification.isRead ? 'notification_utils.export_read'.tr() : 'notification_utils.export_unread'.tr()}
+${notification.actionText != null ? '- ${'notification_utils.export_action'.tr()}: ${notification.actionText}' : ''}
     ''';
   }
   
@@ -293,11 +294,9 @@ ${notification.actionText != null ? '- Művelet: ${notification.actionText}' : '
     }
 
     if (errorCount == 0) {
-      onSuccess('$successCount értesítés sikeresen feldolgozva');
+      onSuccess('notification_utils.batch_success'.tr(namedArgs: {'count': successCount.toString()}));
     } else {
-      onError('$successCount sikeres, $errorCount sikertelen művelet');
+      onError('notification_utils.batch_partial_success'.tr(namedArgs: {'success_count': successCount.toString(), 'error_count': errorCount.toString()}));
     }
   }
-
-  
 }

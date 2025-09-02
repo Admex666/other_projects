@@ -124,7 +124,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ),
                       const SizedBox(height: 16),
 
-                      // ÚJ: Jelszó mező
+                      // Jelszó mező
                       _buildTextField(
                         controller: passwordController,
                         label: 'newPassword'.tr(),

@@ -33,7 +33,7 @@ class _PTISummaryWidgetState extends State<PTISummaryWidget> {
   Future<void> _loadPTIScore() async {
     try {
       final score = await _ptiService.getPTIScore(period: PTIPeriod.weekly);
-      if (score != null) {
+      if (score != null && mounted) {
         setState(() {
           _ptiScore = score;
           _isLoading = false;
@@ -41,7 +41,9 @@ class _PTISummaryWidgetState extends State<PTISummaryWidget> {
       }
     } catch (e) {
       print('Error loading PTI score: $e');
-      setState(() => _isLoading = false);
+      if (mounted) { 
+        setState(() => _isLoading = false);
+      }
     }
   }
 

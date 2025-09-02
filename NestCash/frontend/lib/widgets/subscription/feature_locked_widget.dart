@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../models/subscription.dart';
 import '../../utils/subscription_utils.dart';
 
@@ -106,7 +107,7 @@ class FeatureLockedWidget extends StatelessWidget {
                       Icon(tierIcon, size: 18, color: tierColor),
                       const SizedBox(width: 6),
                       Text(
-                        '$tierName szükséges',
+                        '$tierName ${'_needed'.tr()}',
                         style: TextStyle(
                           color: tierColor,
                           fontWeight: FontWeight.w600,
@@ -129,8 +130,8 @@ class FeatureLockedWidget extends StatelessWidget {
                       );
                     },
                     icon: Icon(tierIcon, size: 18),
-                    label: const Text(
-                      'Frissítés',
+                    label: Text(
+                      'plans_screen.upgrade_button'.tr(),
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                       ),

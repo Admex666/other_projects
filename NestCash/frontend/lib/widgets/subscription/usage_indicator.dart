@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../models/subscription.dart';
 
 class UsageIndicator extends StatelessWidget {
@@ -124,10 +125,10 @@ class UsageIndicator extends StatelessWidget {
               Expanded(
                 child: Text(
                   isUnlimited 
-                    ? 'Korlátlan használat'
+                    ? 'unlimited_usage'.tr()
                     : isAtLimit 
-                      ? 'Elérted a limitet'
-                      : '${limit! - current} maradt',
+                      ? 'reached_your_limit'.tr()
+                      : '_isleft'.tr(namedArgs: {'count': (limit! - current).toString()}),
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.grey[600],
@@ -145,8 +146,8 @@ class UsageIndicator extends StatelessWidget {
               child: OutlinedButton.icon(
                 onPressed: onUpgradePressed,
                 icon: const Icon(Icons.upgrade, size: 16),
-                label: const Text(
-                  'Frissítés a korlátlan használatért',
+                label: Text(
+                  'upgrade_for_unlimited'.tr(),
                   style: TextStyle(fontSize: 12),
                 ),
                 style: OutlinedButton.styleFrom(
@@ -210,7 +211,7 @@ class InlineUsageIndicator extends StatelessWidget {
           ),
           const SizedBox(width: 4),
           Text(
-            isUnlimited ? 'Korlátlan' : '$current/${limit!}',
+            isUnlimited ? 'unlimited'.tr() : '$current/${limit!}',
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,

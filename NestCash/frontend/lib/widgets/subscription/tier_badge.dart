@@ -1,5 +1,6 @@
 // lib/widgets/subscription/tier_badge.dart
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../models/subscription.dart';
 import '../../utils/subscription_utils.dart';
 
@@ -214,7 +215,7 @@ class ProfileTierBadge extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  isActive ? 'Aktív előfizetés' : 'Inaktív',
+                  isActive ? 'active_subscription'.tr() : 'inactive'.tr(),
                   style: TextStyle(
                     fontSize: 14,
                     color: Colors.white.withOpacity(0.9),
@@ -259,14 +260,14 @@ class ProfileTierBadge extends StatelessWidget {
     final difference = expiresAt!.difference(now);
     
     if (difference.isNegative) {
-      return 'Lejárt';
+      return 'expired'.tr();
     } else if (difference.inDays > 30) {
       final months = (difference.inDays / 30).floor();
-      return 'Lejár $months hónap múlva';
+      return 'expire_in_months'.tr(namedArgs: {'months': months.toString()});
     } else if (difference.inDays > 0) {
-      return 'Lejár ${difference.inDays} nap múlva';
+      return 'expire_in_days'.tr(namedArgs: {'days': difference.inDays.toString()});
     } else {
-      return 'Ma lejár';
+      return 'expire_today'.tr();
     }
   }
 }

@@ -1,5 +1,6 @@
 // lib/utils/subscription_utils.dart
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../models/subscription.dart';
 import '../widgets/subscription/upgrade_dialog.dart';
 
@@ -75,7 +76,7 @@ class SubscriptionUtils {
     SubscriptionTier requiredTier,
   ) {
     final tierName = formatTierName(requiredTier);
-    return '$featureName funkcióhoz $tierName előfizetés szükséges';
+    return 'feature_requires_subscription'.tr(namedArgs: {'featureName': featureName, 'tierName': tierName});
   }
 
   /// Show tier upgrade bottom sheet
@@ -154,7 +155,7 @@ class SubscriptionUtils {
             
             // Title
             Text(
-              'Frissítés szükséges',
+              'upgrade_required'.tr(),
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -178,7 +179,7 @@ class SubscriptionUtils {
             
             // Description
             Text(
-              'A $feature funkció használatához $tierName előfizetés szükséges.',
+              'feature_description'.tr(namedArgs: {'featureName': feature, 'tierName': tierName}),
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16,
@@ -205,7 +206,7 @@ class SubscriptionUtils {
                 },
                 icon: Icon(tierIcon),
                 label: Text(
-                  'Frissítés $tierName-ra',
+                  'upgrade_to_tier'.tr(namedArgs: {'tierName': tierName}),
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -228,7 +229,7 @@ class SubscriptionUtils {
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: Text(
-                'Később',
+                'later'.tr(),
                 style: TextStyle(
                   color: Colors.grey[600],
                 ),
@@ -247,7 +248,7 @@ class SubscriptionUtils {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '${formatTierName(tier)} előnyök:',
+          'tier_benefits_title'.tr(namedArgs: {'tierName': formatTierName(tier)}),
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -285,23 +286,23 @@ class SubscriptionUtils {
     switch (tier) {
       case SubscriptionTier.plus:
         return [
-          'Korlátlan kihívások',
-          'Korlátlan szokások',
-          'Teljes elemzések',
-          'Teljes tudástár',
-          'Import funkciók',
-          'Tömeges szerkesztés',
-          'Tier jelvény',
+          'unlimited_challenges'.tr(),
+          'unlimited_habits'.tr(),
+          'full_analytics'.tr(),
+          'full_knowledge_base'.tr(),
+          'import_features'.tr(),
+          'bulk_editing'.tr(),
+          'tier_badge'.tr(),
         ];
       case SubscriptionTier.pro:
         return [
-          'Minden Plus funkció',
-          'Személyre szabott elemzések',
-          'Exkluzív leckék',
-          'Exkluzív kihívások',
-          'Csoportok',
-          'Korlátlan partnerek',
-          'Javaslatok',
+          'all_plus_features'.tr(),
+          'personalized_analytics'.tr(),
+          'exclusive_lessons'.tr(),
+          'exclusive_challenges'.tr(),
+          'groups'.tr(),
+          'unlimited_partners'.tr(),
+          'suggestions'.tr(),
         ];
       case SubscriptionTier.free:
         return [];
@@ -310,10 +311,9 @@ class SubscriptionUtils {
 
   /// Format price display
   static String formatPrice(double price, {String currency = 'EUR'}) {
-    if (price == 0) return 'Ingyenes';
-    // Handle the 12.5 case specifically
-    if (price == 12.5) return '12,5 $currency/hó';
-    return '${price.toStringAsFixed(price.truncateToDouble() == price ? 0 : 1)} $currency/hó';
+    if (price == 0) return 'free'.tr();
+    if (price == 12.5) return 'price_per_month'.tr(namedArgs: {'price': '12,5', 'currency': currency});
+    return 'price_per_month'.tr(namedArgs: {'price': price.toStringAsFixed(price.truncateToDouble() == price ? 0 : 1), 'currency': currency});
   }
 
   /// Get usage color based on percentage
@@ -342,13 +342,13 @@ class SubscriptionUtils {
             ),
             const SizedBox(width: 8),
             Expanded(
-              child: Text('$feature - $tierName előfizetés szükséges'),
+              child: Text('feature_locked_'.tr(namedArgs: {'featureName': feature, 'tierName': tierName})),
             ),
           ],
         ),
         backgroundColor: getTierColor(requiredTier),
         action: SnackBarAction(
-          label: 'Frissítés',
+          label: 'upgrade'.tr(),
           textColor: Colors.white,
           onPressed: () {
             showUpgradeDialog(

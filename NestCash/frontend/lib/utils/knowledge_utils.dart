@@ -1,5 +1,6 @@
 // lib/utils/knowledge_utils.dart
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class KnowledgeUtils {
   // Színek a különböző nehézségi szintekhez
@@ -30,26 +31,26 @@ class KnowledgeUtils {
   static String getDifficultyText(String difficulty) {
     switch (difficulty.toLowerCase()) {
       case 'beginner':
-        return 'Kezdő';
+        return 'knowledge_u.difficulty_text_beginner'.tr();
       case 'professional':
-        return 'Profi';
+        return 'knowledge_u.difficulty_text_professional'.tr();
       default:
-        return 'Ismeretlen';
+        return 'knowledge_u.difficulty_text_unknown'.tr();
     }
   }
 
   // Motivációs üzenetek a kvíz eredményekhez
   static String getMotivationalMessage(int score) {
     if (score >= 90) {
-      return 'Fantasztikus! Tökéletesen ismered a témát! 🌟';
+      return 'knowledge_u.motivational_message_90'.tr();
     } else if (score >= 80) {
-      return 'Kiváló munka! Nagyon jól teljesítettél! 🎉';
+      return 'knowledge_u.motivational_message_80'.tr();
     } else if (score >= 70) {
-      return 'Jó munka! Sikeresen teljesítetted a kvízt! 👏';
+      return 'knowledge_u.motivational_message_70'.tr();
     } else if (score >= 60) {
-      return 'Nem rossz! Még egy kis gyakorlással tökéletes leszel! 💪';
+      return 'knowledge_u.motivational_message_60'.tr();
     } else {
-      return 'Ne add fel! Olvasd át újra a leckét és próbáld újra! 📚';
+      return 'knowledge_u.motivational_message_fail'.tr();
     }
   }
 
@@ -89,14 +90,14 @@ class KnowledgeUtils {
   // Tanulási idő formázása
   static String formatStudyTime(int minutes) {
     if (minutes < 60) {
-      return '$minutes perc';
+      return 'knowledge_u.study_time_minutes'.tr(namedArgs: {'minutes': minutes.toString()});
     } else {
       final hours = minutes ~/ 60;
       final remainingMinutes = minutes % 60;
       if (remainingMinutes == 0) {
-        return '$hours óra';
+        return 'knowledge_u.study_time_hours'.tr(namedArgs: {'hours': hours.toString()});
       } else {
-        return '$hours óra $remainingMinutes perc';
+        return 'knowledge_u.study_time_hours_minutes'.tr(namedArgs: {'hours': hours.toString(), 'minutes': remainingMinutes.toString()});
       }
     }
   }
@@ -107,34 +108,34 @@ class KnowledgeUtils {
     final difference = now.difference(date);
 
     if (difference.inDays == 0) {
-      return 'Ma';
+      return 'knowledge_u.date_today'.tr();
     } else if (difference.inDays == 1) {
-      return 'Tegnap';
+      return 'knowledge_u.date_yesterday'.tr();
     } else if (difference.inDays < 7) {
-      return '${difference.inDays} napja';
+      return 'knowledge_u.date_days_ago'.tr(namedArgs: {'days': difference.inDays.toString()});
     } else if (difference.inDays < 30) {
       final weeks = difference.inDays ~/ 7;
-      return '$weeks hete';
+      return 'knowledge_u.date_weeks_ago'.tr(namedArgs: {'weeks': weeks.toString()});
     } else {
       final months = difference.inDays ~/ 30;
-      return '$months hónapja';
+      return 'knowledge_u.date_months_ago'.tr(namedArgs: {'months': months.toString()});
     }
   }
 
   // Streak üzenet generálása
   static String getStreakMessage(int streak) {
     if (streak == 0) {
-      return 'Kezdj el egy új sorozatot ma! 🚀';
+      return 'knowledge_u.streak_message_0'.tr();
     } else if (streak == 1) {
-      return 'Első nap teljesítve! Folytasd holnap! 🔥';
+      return 'knowledge_u.streak_message_1'.tr();
     } else if (streak < 7) {
-      return '$streak napos sorozat! Folytatás! 💪';
+      return 'knowledge_u.streak_message_lt_7'.tr(namedArgs: {'streak': streak.toString()});
     } else if (streak < 30) {
-      return 'Fantasztikus! $streak napos sorozat! 🌟';
+      return 'knowledge_u.streak_message_lt_30'.tr(namedArgs: {'streak': streak.toString()});
     } else if (streak < 100) {
-      return 'Hihetetlen! $streak napos sorozat! 🏆';
+      return 'knowledge_u.streak_message_lt_100'.tr(namedArgs: {'streak': streak.toString()});
     } else {
-      return 'Legenda! $streak napos sorozat! 👑';
+      return 'knowledge_u.streak_message_gte_100'.tr(namedArgs: {'streak': streak.toString()});
     }
   }
 
@@ -193,13 +194,13 @@ class KnowledgeUtils {
   // Lecke befejezési üzenet
   static String getLessonCompletionMessage(bool hasQuiz, int? quizScore) {
     if (!hasQuiz) {
-      return 'Gratulálok! Sikeresen befejezted a leckét! 🎓';
+      return 'knowledge_u.lesson_completion_no_quiz'.tr();
     } else if (quizScore == null) {
-      return 'Lecke befejezve! Most jön a kvíz! 📝';
+      return 'knowledge_u.lesson_completion_quiz_pending'.tr();
     } else if (quizScore >= 70) {
-      return 'Fantasztikus! Lecke és kvíz is sikeresen teljesítve! 🏆';
+      return 'knowledge_u.lesson_completion_quiz_success'.tr();
     } else {
-      return 'Lecke befejezve, de a kvízt érdemes újra megcsinálni! 💪';
+      return 'knowledge_u.lesson_completion_quiz_redo'.tr();
     }
   }
 
@@ -207,12 +208,12 @@ class KnowledgeUtils {
   static String getDailyChallengeMessage(bool isCompleted, int streak) {
     if (isCompleted) {
       if (streak > 1) {
-        return 'Szuper! $streak napos sorozatod folytatódik! 🔥';
+        return 'knowledge_u.daily_challenge_completed_streak'.tr(namedArgs: {'streak': streak.toString()});
       } else {
-        return 'Napi kihívás teljesítve! Szuper munka! 🎉';
+        return 'knowledge_u.daily_challenge_completed_no_streak'.tr();
       }
     } else {
-      return 'Tanulj 5 percet és teljesítsd a mai kihívást! ⭐';
+      return 'knowledge_u.daily_challenge_uncompleted'.tr();
     }
   }
 
@@ -228,9 +229,9 @@ class KnowledgeUtils {
         : 0;
     
     return '''
-📚 Teljesített leckék: $completedLessons/$totalLessons ($completionRate%)
-⏱️ Tanulási idő: ${formatStudyTime(totalMinutes)}
-⭐ Átlagos kvíz eredmény: ${averageScore.toInt()}%
+${'knowledge_u.learning_stats_completed_lessons'.tr(namedArgs: {'completed': completedLessons.toString(), 'total': totalLessons.toString(), 'completionRate': completionRate.toString()})}
+${'knowledge_u.learning_stats_study_time'.tr(namedArgs: {'studyTime': formatStudyTime(totalMinutes)})}
+${'knowledge_u.learning_stats_average_score'.tr(namedArgs: {'averageScore': averageScore.toInt().toString()})}
     '''.trim();
   }
 
@@ -281,15 +282,15 @@ class KnowledgeUtils {
   static String getQuestionTypeText(String type) {
     switch (type.toLowerCase()) {
       case 'multiple_choice':
-        return 'Többválasztós';
+        return 'knowledge_u.question_type_multiple_choice'.tr();
       case 'single_choice':
-        return 'Egyszeres választás';
+        return 'knowledge_u.question_type_single_choice'.tr();
       case 'true_false':
-        return 'Igaz/Hamis';
+        return 'knowledge_u.question_type_true_false'.tr();
       case 'text_input':
-        return 'Szöveges válasz';
+        return 'knowledge_u.question_type_text_input'.tr();
       default:
-        return 'Ismeretlen típus';
+        return 'knowledge_u.question_type_unknown'.tr();
     }
   }
 
@@ -300,17 +301,17 @@ class KnowledgeUtils {
     String difficulty,
   ) {
     if (!currentLessonCompleted) {
-      return 'Fejezd be ezt a leckét először! 📖';
+      return 'knowledge_u.next_lesson_recommendation_not_completed'.tr();
     }
     
     if (quizScore != null && quizScore < 70) {
-      return 'Ismételd át ezt a témát, mielőtt továbblépsz! 🔄';
+      return 'knowledge_u.next_lesson_recommendation_redo_quiz'.tr();
     }
     
     if (difficulty == 'beginner') {
-      return 'Készen állsz a következő témára! 🚀';
+      return 'knowledge_u.next_lesson_recommendation_ready_next'.tr();
     } else {
-      return 'Kiváló munka! Folytasd a tanulást! 💪';
+      return 'knowledge_u.next_lesson_recommendation_continue_learning'.tr();
     }
   }
 
@@ -318,17 +319,17 @@ class KnowledgeUtils {
   static String getErrorMessage(String errorType) {
     switch (errorType.toLowerCase()) {
       case 'network':
-        return 'Hálózati hiba. Ellenőrizd az internetkapcsolatot! 🌐';
+        return 'knowledge_u.error_message_network'.tr();
       case 'server':
-        return 'Szerver hiba. Próbáld újra később! ⚠️';
+        return 'knowledge_u.error_message_server'.tr();
       case 'auth':
-        return 'Hitelesítési hiba. Jelentkezz be újra! 🔐';
+        return 'knowledge_u.error_message_auth'.tr();
       case 'quiz_not_found':
-        return 'A kvíz nem található! 🔍';
+        return 'knowledge_u.error_message_quiz_not_found'.tr();
       case 'lesson_not_found':
-        return 'A lecke nem található! 📚';
+        return 'knowledge_u.error_message_lesson_not_found'.tr();
       default:
-        return 'Ismeretlen hiba történt! ❌';
+        return 'knowledge_u.error_message_unknown'.tr();
     }
   }
 }

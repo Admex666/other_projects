@@ -1,65 +1,66 @@
 // lib/utils/anchoring_utils.dart
 import 'dart:math';
 import '../models/subscription.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class AnchoringUtils {
   static final List<AnchoringComparison> _plusComparisons = [
     AnchoringComparison(
-      title: 'Egy csomag cigaretta',
-      description: 'Ennyi pénzért átlagosan egy csomag cigarettát kapsz. Ez pedig egy havi előfizetés.',
+      title: 'anchoring_u.plus_c1_title'.tr(),
+      description: 'anchoring_u.plus_c1_desc'.tr(),
       icon: '🚬',
     ),
     AnchoringComparison(
-      title: 'Egy Starbucks kávé',
-      description: 'Kevesebb, mint egy prémium kávé ára naponta. Cserébe egy hónap teljes pénzügyi tudatosság.',
+      title: 'anchoring_u.plus_c2_title'.tr(),
+      description: 'anchoring_u.plus_c2_desc'.tr(),
       icon: '☕',
     ),
     AnchoringComparison(
-      title: 'Egy Big Mac menü',
-      description: 'Annyiba kerül, mint egy gyorséttermi menü. De ez egy hónap alatt megtanít pénzt spórolni.',
+      title: 'anchoring_u.plus_c3_title'.tr(),
+      description: 'anchoring_u.plus_c3_desc'.tr(),
       icon: '🍔',
     ),
     AnchoringComparison(
-      title: 'Egy üdítő a moziban',
-      description: 'Kevesebb, mint egy nagy üdítő a moziban. Viszont ez egész hónapban segít a pénzügyeidben.',
+      title: 'anchoring_u.plus_c4_title'.tr(),
+      description: 'anchoring_u.plus_c4_desc'.tr(),
       icon: '🥤',
     ),
     AnchoringComparison(
-      title: 'Egy újság és egy szendvics',
-      description: 'Annyiba kerül, mint egy újság és egy szendvics. Cserébe pénzügyi tudatosság egy hónapig.',
+      title: 'anchoring_u.plus_c5_title'.tr(),
+      description: 'anchoring_u.plus_c5_desc'.tr(),
       icon: '🥪',
     ),
   ];
 
   static final List<AnchoringComparison> _proComparisons = [
     AnchoringComparison(
-      title: 'Két doboz cigaretta',
-      description: 'Kevesebb, mint két csomag cigaretta. Cserébe egy hónap személyre szabott pénzügyi coaching.',
+      title: 'anchoring_u.pro_c1_title'.tr(),
+      description: 'anchoring_u.pro_c1_desc'.tr(),
       icon: '🚬',
     ),
     AnchoringComparison(
-      title: 'Egy éttermi pizza',
-      description: 'Annyiba kerül, mint egy pizza egy jó étteremben. De ez egész hónapban fejleszti a pénzügyi szokásaidat.',
+      title: 'anchoring_u.pro_c2_title'.tr(),
+      description: 'anchoring_u.pro_c2_desc'.tr(),
       icon: '🍕',
     ),
     AnchoringComparison(
-      title: 'Két Starbucks kávé',
-      description: 'Kevesebb, mint két prémium kávé árából egy havi személyre szabott pénzügyi elemzés.',
+      title: 'anchoring_u.pro_c3_title'.tr(),
+      description: 'anchoring_u.pro_c3_desc'.tr(),
       icon: '☕',
     ),
     AnchoringComparison(
-      title: 'Egy mozi jegy nassolnivalóval',
-      description: 'Annyiba kerül, mint egy mozijegy popcornnal. Viszont ez egy havi exkluzív pénzügyi tanácsadás.',
+      title: 'anchoring_u.pro_c4_title'.tr(),
+      description: 'anchoring_u.pro_c4_desc'.tr(),
       icon: '🍿',
     ),
     AnchoringComparison(
-      title: 'Egy taxi utazás a belvárosban',
-      description: 'Kevesebb, mint egy rövid taxi út. Cserébe egy hónap profi pénzügyi insights.',
+      title: 'anchoring_u.pro_c5_title'.tr(),
+      description: 'anchoring_u.pro_c5_desc'.tr(),
       icon: '🚕',
     ),
     AnchoringComparison(
-      title: 'Egy koktél egy jó bárban',
-      description: 'Annyiba kerül, mint egy koktél egy menő helyen. De ez egész hónapban tanít befektetni.',
+      title: 'anchoring_u.pro_c6_title'.tr(),
+      description: 'anchoring_u.pro_c6_desc'.tr(),
       icon: '🍸',
     ),
   ];
@@ -86,7 +87,7 @@ class AnchoringUtils {
   /// Formázott napi költség leírással
   static String getDailyCostDescription(SubscriptionTier tier) {
     final dailyCost = getDailyCost(tier);
-    return 'Mindössze $dailyCost naponta';
+    return 'anchoring_u.daily_cost_description'.tr(namedArgs: {'dailyCost': dailyCost});
   }
 }
 

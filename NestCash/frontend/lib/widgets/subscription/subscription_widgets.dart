@@ -1,5 +1,6 @@
 // lib/widgets/subscription/subscription_widgets.dart
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../models/subscription.dart';
 
 /// Inline használati indikátor widget - használat/limit megjelenítésére
@@ -285,7 +286,7 @@ class SubscriptionStatusBanner extends StatelessWidget {
             TextButton(
               onPressed: onUpgrade,
               child: Text(
-                'Frissítés',
+                'plans_screen.upgrade_button'.tr(),
                 style: TextStyle(color: bannerColor),
               ),
             ),
@@ -324,23 +325,23 @@ class SubscriptionStatusBanner extends StatelessWidget {
 
   String _getBannerTitle() {
     if (subscription.status == SubscriptionStatus.expired) {
-      return 'Előfizetés lejárt';
+      return 'subscription_expired'.tr();
     }
-    return 'Előfizetés hamarosan lejár';
+    return 'subscription_expire_soon'.tr();
   }
 
   String _getBannerMessage() {
     if (subscription.status == SubscriptionStatus.expired) {
-      return 'Az előfizetésed lejárt. Frissítsd a folyamatos hozzáféréshez.';
+      return 'subscription_expired_upgrade_for_access'.tr();
     }
     
     if (subscription.daysUntilExpiry != null) {
       if (subscription.daysUntilExpiry == 1) {
-        return 'Az előfizetésed holnap lejár.';
+        return 'subscription_expire_tomorrow'.tr();
       }
-      return 'Az előfizetésed ${subscription.daysUntilExpiry} nap múlva lejár.';
+      return 'subscription_expire_in_days'.tr(namedArgs: {'days': subscription.daysUntilExpiry.toString()});
     }
     
-    return 'Ellenőrizd az előfizetésed állapotát.';
+    return 'check_subscription_status'.tr();
   }
 }
