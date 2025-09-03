@@ -136,62 +136,145 @@ class HabitLog(Document):
 PREDEFINED_HABITS = {
     HabitCategory.FINANCIAL: [
         {
-            "title": "Nem rendeltem ételt",
-            "description": "Nem rendeltem ételt házhozszállítással",
+            "title_key": "predefined_habits.financial.no_food_delivery.title",
+            "description_key": "predefined_habits.financial.no_food_delivery.description",
             "tracking_type": TrackingType.BOOLEAN,
             "frequency": FrequencyType.DAILY
         },
         {
-            "title": "Bevásárló lista alapján vásároltam",
-            "description": "Csak a listán szereplő dolgokat vettem meg",
+            "title_key": "predefined_habits.financial.shopping_list.title",
+            "description_key": "predefined_habits.financial.shopping_list.description",
             "tracking_type": TrackingType.BOOLEAN,
             "frequency": FrequencyType.DAILY
         },
         {
-            "title": "Impulzusvásárlás kerülése",
-            "description": "Nem vásároltam spontán módon",
+            "title_key": "predefined_habits.financial.avoid_impulse_buying.title",
+            "description_key": "predefined_habits.financial.avoid_impulse_buying.description",
             "tracking_type": TrackingType.BOOLEAN,
             "frequency": FrequencyType.DAILY
         },
         {
-            "title": "Napi költés nyomon követése",
-            "description": "Minden kiadást rögzítettem",
+            "title_key": "predefined_habits.financial.daily_expense_tracking.title",
+            "description_key": "predefined_habits.financial.daily_expense_tracking.description",
             "tracking_type": TrackingType.BOOLEAN,
             "frequency": FrequencyType.DAILY
         }
     ],
     HabitCategory.SAVINGS: [
         {
-            "title": "Napi megtakarítás",
-            "description": "Minden nap tettem félre valamennyit",
+            "title_key": "predefined_habits.savings.daily_savings.title",
+            "description_key": "predefined_habits.savings.daily_savings.description",
             "tracking_type": TrackingType.NUMERIC,
             "frequency": FrequencyType.DAILY
         },
         {
-            "title": "Aprópénz gyűjtés",
-            "description": "Az aprópénzt külön gyűjtöttem",
+            "title_key": "predefined_habits.savings.coin_collection.title",
+            "description_key": "predefined_habits.savings.coin_collection.description",
             "tracking_type": TrackingType.BOOLEAN,
             "frequency": FrequencyType.DAILY
         },
         {
-            "title": "50/30/20 szabály",
-            "description": "Betartottam a 50/30/20 költségvetési szabályt",
+            "title_key": "predefined_habits.savings.budget_rule.title",
+            "description_key": "predefined_habits.savings.budget_rule.description",
             "tracking_type": TrackingType.BOOLEAN,
             "frequency": FrequencyType.DAILY
         }
     ],
     HabitCategory.INVESTMENT: [
         {
-            "title": "Befektetési hírek olvasása",
-            "description": "Minimum 10 percet töltöttem pénzügyi hírek olvasásával",
+            "title_key": "predefined_habits.investment.financial_news.title",
+            "description_key": "predefined_habits.investment.financial_news.description",
             "tracking_type": TrackingType.NUMERIC,
             "frequency": FrequencyType.DAILY
         },
         {
-            "title": "Portfólió áttekintése",
-            "description": "Ellenőriztem a befektetéseim teljesítményét",
+            "title_key": "predefined_habits.investment.portfolio_review.title",
+            "description_key": "predefined_habits.investment.portfolio_review.description",
             "tracking_type": TrackingType.BOOLEAN,
             "frequency": FrequencyType.DAILY
         }
     ]
 }
+
+# Fordítási szolgáltatás
+class I18nService:
+    def __init__(self):
+        self.translations = {}
+        self.default_language = "hu"
+        self.supported_languages = ["hu", "en"]
+        self._load_translations()
+    
+    def _load_translations(self):
+        """Fordítási fájlok betöltése"""
+        import json
+        from pathlib import Path
+        
+        translations_dir = Path(__file__).parent.parent / "translations"
+        
+        for lang in self.supported_languages:
+            translation_file = translations_dir / f"{lang}.json"
+            if translation_file.exists():
+                try:
+                    with open(translation_file, 'r', encoding='utf-8') as f:
+                        self.translations[lang] = json.load(f)
+                except Exception as e:
+                    print(f"Error loading translation file {lang}.json: {e}")
+                    self.translations[lang] = {}
+            else:
+                self.translations[lang] = {}
+    
+    def get_language_from_header(self, accept_language: str) -> str:
+        """Accept-Language header alapján nyelv meghatározása"""
+        if not accept_language:
+            return self.default_language
+            
+        for lang in accept_language.split(','):
+            lang_code = lang.strip().split('-')[0].split(';')[0].lower()
+            if lang_code in self.supported_languages:
+                return lang_code
+        
+        return self.default_language
+    
+    def translate(self, key: str, language: str) -> str:
+        """Kulcs alapú fordítás"""
+        if language not in self.translations:
+            language = self.default_language
+        
+        # Nested key navigáció (pl. "predefined_habits.financial.title")
+        keys = key.split('.')
+        value = self.translations.get(language, {})
+        
+        for k in keys:
+            if isinstance(value, dict) and k in value:
+                value = value[k]
+            else:
+                # Fallback to default language
+                value = self.translations.get(self.default_language, {})
+                for k in keys:
+                    if isinstance(value, dict) and k in value:
+                        value = value[k]
+                    else:
+                        return key  # Return key if translation not found
+                break
+        
+        return value if isinstance(value, str) else key
+
+# Globális i18n service instance
+i18n_service = I18nService()
+
+def get_localized_predefined_habits(language: str) -> dict:
+    """Lokalizált predefined habits visszaadása"""
+    localized_habits = {}
+    
+    for category, habits in PREDEFINED_HABITS.items():
+        localized_habits[category] = []
+        for habit in habits:
+            localized_habit = {
+                "title": i18n_service.translate(habit["title_key"], language),
+                "description": i18n_service.translate(habit["description_key"], language),
+                "tracking_type": habit["tracking_type"],
+                "frequency": habit["frequency"]
+            }
+            localized_habits[category].append(localized_habit)
+    
+    return localized_habits

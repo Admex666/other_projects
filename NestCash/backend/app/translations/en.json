@@ -1,0 +1,46 @@
+{
+    "predefined_habits": {
+      "financial": {
+        "no_food_delivery": {
+          "title": "Didn't order food",
+          "description": "Didn't order food for home delivery"
+        },
+        "shopping_list": {
+          "title": "Shopped with a list",
+          "description": "Only bought items from my shopping list"
+        },
+        "avoid_impulse_buying": {
+          "title": "Avoided impulse buying",
+          "description": "Didn't make spontaneous purchases"
+        },
+        "daily_expense_tracking": {
+          "title": "Daily expense tracking",
+          "description": "Recorded all my expenses"
+        }
+      },
+      "savings": {
+        "daily_savings": {
+          "title": "Daily savings",
+          "description": "Put aside some money every day"
+        },
+        "coin_collection": {
+          "title": "Coin collection",
+          "description": "Collected coins separately"
+        },
+        "budget_rule": {
+          "title": "50/30/20 rule",
+          "description": "Followed the 50/30/20 budget rule"
+        }
+      },
+      "investment": {
+        "financial_news": {
+          "title": "Reading investment news",
+          "description": "Spent at least 10 minutes reading financial news"
+        },
+        "portfolio_review": {
+          "title": "Portfolio review",
+          "description": "Checked my investment performance"
+        }
+      }
+    }
+  }

@@ -1,0 +1,46 @@
+{
+    "predefined_habits": {
+      "financial": {
+        "no_food_delivery": {
+          "title": "Nem rendeltem ételt",
+          "description": "Nem rendeltem ételt házhozszállítással"
+        },
+        "shopping_list": {
+          "title": "Bevásárlólista alapján vásároltam",
+          "description": "Csak a listán szereplő dolgokat vettem meg"
+        },
+        "avoid_impulse_buying": {
+          "title": "Impulzusvásárlás kerülése",
+          "description": "Nem vásároltam spontán módon"
+        },
+        "daily_expense_tracking": {
+          "title": "Napi költés nyomon követése",
+          "description": "Minden kiadást rögzítettem"
+        }
+      },
+      "savings": {
+        "daily_savings": {
+          "title": "Napi megtakarítás",
+          "description": "Minden nap tettem félre valamennyit"
+        },
+        "coin_collection": {
+          "title": "Aprópénz gyűjtés",
+          "description": "Az aprópénzt külön gyűjtöttem"
+        },
+        "budget_rule": {
+          "title": "50/30/20 szabály",
+          "description": "Betartottam a 50/30/20 költségvetési szabályt"
+        }
+      },
+      "investment": {
+        "financial_news": {
+          "title": "Befektetési hírek olvasása",
+          "description": "Minimum 10 percet töltöttem pénzügyi hírek olvasásával"
+        },
+        "portfolio_review": {
+          "title": "Portfólió áttekintése",
+          "description": "Ellenőriztem a befektetéseim teljesítményét"
+        }
+      }
+    }
+  }

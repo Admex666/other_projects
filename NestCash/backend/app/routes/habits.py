@@ -1,5 +1,5 @@
 # app/routes/habits.py
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from typing import List, Optional
 from beanie import PydanticObjectId
 from datetime import datetime
@@ -7,7 +7,9 @@ import logging
 
 from app.core.security import get_current_user
 from app.models.user import User
-from app.models.habit import Habit, HabitLog, PREDEFINED_HABITS, HabitCategory, TrackingType, FrequencyType
+from app.models.habit import (Habit, HabitLog, PREDEFINED_HABITS, 
+                              HabitCategory, TrackingType, FrequencyType, 
+                              i18n_service, get_localized_predefined_habits)
 from app.models.habit_schemas import (
     HabitCreate, HabitUpdate, HabitRead, HabitListResponse,
     HabitLogCreate, HabitLogUpdate, HabitLogRead, HabitLogListResponse,
@@ -465,11 +467,18 @@ async def get_habit_stats(
 # === PREDEFINED HABITS ===
 
 @router.get("/predefined/list", response_model=List[PredefinedHabitResponse])
-async def get_predefined_habits():
+async def get_predefined_habits(request: Request):
     """Előre definiált szokások lekérése"""
     try:
+        # Nyelv meghatározása a header alapján
+        accept_language = request.headers.get("accept-language", "")
+        language = i18n_service.get_language_from_header(accept_language)
+
+        # Lokalizált szokások lekérése
+        localized_habits = get_localized_predefined_habits(language)
+        
         response = []
-        for category, habits in PREDEFINED_HABITS.items():
+        for category, habits in localized_habits.items():
             response.append(PredefinedHabitResponse(
                 category=category,
                 habits=habits
@@ -484,6 +493,7 @@ async def get_predefined_habits():
 async def create_habit_from_predefined(
     category: HabitCategory,
     habit_index: int,
+    request: Request,
     current_user: User = Depends(get_current_user)
 ):
     """Előre definiált szokás létrehozása"""
@@ -495,7 +505,17 @@ async def create_habit_from_predefined(
         if habit_index < 0 or habit_index >= len(habits_in_category):
             raise HTTPException(status_code=404, detail="Szokás index nem érvényes")
         
-        habit_data = habits_in_category[habit_index]
+        # Nyelv meghatározása és fordítás
+        accept_language = request.headers.get("accept-language", "")
+        language = i18n_service.get_language_from_header(accept_language)
+        
+        habit_template = habits_in_category[habit_index]
+        habit_data = {
+            "title": i18n_service.translate(habit_template["title_key"], language),
+            "description": i18n_service.translate(habit_template["description_key"], language),
+            "tracking_type": habit_template["tracking_type"],
+            "frequency": habit_template["frequency"]
+        }
         
         # Ellenőrizzük, hogy már létezik-e
         existing = await Habit.find_one({

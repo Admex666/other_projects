@@ -45,34 +45,49 @@ class _PTIComparisonScreenState extends State<PTIComparisonScreen>
 
   void _onTabChanged() {
     if (_tabController.indexIsChanging) {
-      setState(() {
-        _selectedPeriod = PTIPeriod.values[_tabController.index];
-      });
-      _loadComparison();
+      final newPeriod = PTIPeriod.values[_tabController.index];
+      if (newPeriod != _selectedPeriod) { // Csak ha tényleg változott
+        setState(() {
+          _selectedPeriod = newPeriod;
+        });
+        _loadComparison();
+      }
     }
   }
 
   Future<void> _loadComparison() async {
+    print('DEBUG: _loadComparison started for period: ${_selectedPeriod.value}');
+    
     setState(() {
       _isLoading = true;
       _error = null;
     });
 
     try {
+      print('DEBUG: Calling API...');
       final comparison = await _ptiService.getComparison(period: _selectedPeriod);
+      print('DEBUG: API call completed, result: ${comparison != null}');
 
       if (comparison != null) {
+        print('DEBUG: Comparison data - PTI: ${comparison.currentPeriod.ptiScore}');
+        print('DEBUG: Has previous period: ${comparison.previousPeriod != null}');
+        print('DEBUG: PTI Change: ${comparison.ptiChange}');
+        
+        if (!mounted) return;
         setState(() {
           _comparisonData = comparison;
           _isLoading = false;
         });
       } else {
+        if (!mounted) return; // Hozzáadás
         setState(() {
           _error = 'comparison_not_loaded'.tr();
           _isLoading = false;
         });
       }
     } catch (e) {
+      print('DEBUG: Exception in _loadComparison: $e');
+      if (!mounted) return; // Hozzáadás
       setState(() {
         _error = 'error_occurred'.tr(namedArgs: {'error': e.toString()});
         _isLoading = false;
@@ -526,89 +541,129 @@ class _PTIComparisonScreenState extends State<PTIComparisonScreen>
   }
 
   Widget _buildComponentComparisonItem(
-    String title,
-    double currentValue,
-    double? previousValue,
-    Color color,
-  ) {
-    final change = previousValue != null ? currentValue - previousValue : null;
-    
-    return Container(
-      padding: EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
+  String title,
+  double currentValue,
+  double? previousValue,
+  Color color,
+) {
+  final change = previousValue != null ? currentValue - previousValue : null;
+  
+  return Container(
+    padding: EdgeInsets.all(12),
+    decoration: BoxDecoration(
+      color: color.withOpacity(0.1),
+      borderRadius: BorderRadius.circular(12),
+    ),
+    child: Row(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
                 ),
-                SizedBox(height: 4),
-                Row(
-                  children: [
-                    Text(
-                      '${currentValue.toStringAsFixed(1)}',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: color,
-                      ),
+              ),
+              SizedBox(height: 4),
+              Row(
+                children: [
+                  Text(
+                    '${currentValue.toStringAsFixed(1)}',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: color,
                     ),
-                    if (change != null) ...[
-                      SizedBox(width: 8),
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: change >= 0 
-                              ? Colors.green.withOpacity(0.2)
-                              : Colors.red.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              change >= 0 ? Icons.arrow_upward : Icons.arrow_downward,
-                              size: 12,
+                  ),
+                  if (change != null) ...[
+                    SizedBox(width: 8),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: change >= 0 
+                            ? Colors.green.withOpacity(0.2)
+                            : Colors.red.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            change >= 0 ? Icons.arrow_upward : Icons.arrow_downward,
+                            size: 12,
+                            color: change >= 0 ? Colors.green : Colors.red,
+                          ),
+                          SizedBox(width: 2),
+                          Text(
+                            '${change.abs().toStringAsFixed(1)}',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
                               color: change >= 0 ? Colors.green : Colors.red,
                             ),
-                            SizedBox(width: 2),
-                            Text(
-                              '${change.abs().toStringAsFixed(1)}',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: change >= 0 ? Colors.green : Colors.red,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ],
+                ],
+              ),
+            ],
+          ),
+        ),
+        SizedBox(width: 16),
+        // JAVÍTOTT LinearProgressIndicator
+        Expanded(
+          flex: 0,
+          child: Container(
+            width: 100, // Fix szélesség
+            child: Column(
+              children: [
+                LinearProgressIndicator(
+                  value: _calculateSafeProgressValue(currentValue),
+                  backgroundColor: color.withOpacity(0.2),
+                  valueColor: AlwaysStoppedAnimation<Color>(color),
+                  minHeight: 6,
+                ),
+                SizedBox(height: 4),
+                Text(
+                  '${_calculatePercentage(currentValue)}%',
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: Colors.grey[600],
+                  ),
                 ),
               ],
             ),
           ),
-          LinearProgressIndicator(
-            value: currentValue / 100,
-            backgroundColor: color.withOpacity(0.2),
-            valueColor: AlwaysStoppedAnimation<Color>(color),
-            minHeight: 6,
-          ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+}
+
+// Segédmetódusok hozzáadása a class-hoz:
+double _calculateSafeProgressValue(double value) {
+  // A komponensek maximális értékei (models alapján):
+  // learning: 30, habits: 30, badges: 20, limits: 20
+  
+  // Biztonságos érték számítás:
+  if (value.isNaN || value.isInfinite) return 0.0;
+  
+  // Feltételezzük, hogy a maximum érték 30 (vagy dinamikusan számítható)
+  double maxValue = 30.0; // Ez lehet hogy változó a komponens alapján
+  double progress = (value / maxValue).clamp(0.0, 1.0);
+  
+  return progress;
+}
+
+double _calculatePercentage(double value) {
+  double maxValue = 30.0; // Ugyanaz mint fent
+  return ((value / maxValue) * 100).clamp(0.0, 100.0);
+}
 
   Widget _buildChangesCard() {
     return Container(
