@@ -1,4 +1,6 @@
 // lib/models/habit.dart
+import 'package:easy_localization/easy_localization.dart';
+
 enum TrackingType {
   boolean('boolean'),
   numeric('numeric');
@@ -26,23 +28,36 @@ enum FrequencyType {
   String get displayName {
     switch (this) {
       case FrequencyType.daily:
-        return 'Napi';
+        return 'limit_m.period.daily'.tr();
       case FrequencyType.weekly:
-        return 'Heti';
+        return 'limit_m.period.weekly'.tr();
       case FrequencyType.monthly:
-        return 'Havi';
+        return 'limit_m.period.monthly'.tr();
     }
   }
 }
 
 enum HabitCategory {
-  financial('Pénzügyi'),
-  savings('Megtakarítás'),
-  investment('Befektetés'),
-  other('Egyéb');
+  financial('financial'),
+  savings('savings'),
+  investment('investment'),
+  other('other');
 
   const HabitCategory(this.value);
   final String value;
+
+  String get displayName {
+    switch (this) {
+      case HabitCategory.financial:
+        return 'habit_m.financial'.tr();
+      case HabitCategory.savings:
+        return 'habit_m.savings'.tr();
+      case HabitCategory.investment:
+        return 'habit_m.investment'.tr();
+      case HabitCategory.other:
+        return 'habit_m.other'.tr();
+    }
+  }
 
   static HabitCategory fromString(String value) {
     return HabitCategory.values.firstWhere((e) => e.value == value);

@@ -1796,5 +1796,11 @@
       "friends_display": "Friends",
       "global_display": "Global",
       "unknown_user": "Unknown"
+    },
+    "habit_m": {
+      "financial": "Financial",
+      "savings": "Savings",
+      "investment": "Investment",
+      "other": "Other"
     }
   }

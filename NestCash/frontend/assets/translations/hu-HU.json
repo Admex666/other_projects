@@ -1796,5 +1796,11 @@
       "friends_display": "Barátok",
       "global_display": "Globális",
       "unknown_user": "Ismeretlen"
+    },
+    "habit_m": {
+      "financial": "Pénzügyi",
+      "savings": "Megtakarítás",
+      "investment": "Befektetés",
+      "other": "Egyéb"
     }
   }
