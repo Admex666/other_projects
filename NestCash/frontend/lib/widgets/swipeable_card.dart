@@ -1,7 +1,9 @@
 // lib/widgets/swipeable_card.dart
 
 import 'package:flutter/material.dart';
+import 'package:frontend/utils/category_translate.dart';
 import '../models/accountability_models.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class SwipeableCard extends StatefulWidget {
   final PartnerSuggestion suggestion;
@@ -195,7 +197,7 @@ class _SwipeableCardState extends State<SwipeableCard>
 
   String _getSwipeIndicatorText() {
     if (_dragUpdate.dx.abs() < _swipeThreshold) return '';
-    return _dragUpdate.dx > 0 ? 'LIKE' : 'PASS';
+    return _dragUpdate.dx > 0 ? 'swipeable.like'.tr() : 'swipeable.pass'.tr();
   }
 
   @override
@@ -313,7 +315,7 @@ class _SwipeableCardState extends State<SwipeableCard>
                               ),
                               SizedBox(width: 4),
                               Text(
-                                '${widget.suggestion.compatibilityPercentage}% egyezés',
+                                'swipeable.compatibility'.tr(namedArgs: {'percentage':widget.suggestion.compatibilityPercentage.toString()}),
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 14,
@@ -367,7 +369,7 @@ class _SwipeableCardState extends State<SwipeableCard>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Célok',
+                      'swipeable.goals'.tr(),
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -418,7 +420,7 @@ class _SwipeableCardState extends State<SwipeableCard>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Közös célok',
+                        'swipeable.common_goals'.tr(),
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -439,7 +441,7 @@ class _SwipeableCardState extends State<SwipeableCard>
                               SizedBox(width: 8),
                               Expanded(
                                 child: Text(
-                                  goal,
+                                  CategoryTranslate.getLocalizedGoal(goal).tr(),
                                   style: TextStyle(
                                     color: Colors.grey[700],
                                     fontSize: 14,
@@ -465,7 +467,7 @@ class _SwipeableCardState extends State<SwipeableCard>
                     Icon(Icons.swipe, color: Colors.grey[400], size: 20),
                     SizedBox(width: 8),
                     Text(
-                      'Húzd jobbra a like-hoz, balra a pass-hoz',
+                      'swipeable.swipe_hint'.tr(),
                       style: TextStyle(
                         color: Colors.grey[500],
                         fontSize: 12,

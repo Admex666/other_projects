@@ -7,6 +7,7 @@ import 'package:frontend/models/accountability_models.dart';
 import 'package:frontend/providers/accountability_provider.dart';
 import 'package:frontend/providers/subscription_provider.dart';
 import 'package:frontend/widgets/swipeable_card.dart';
+import 'package:frontend/utils/category_translate.dart';
 
 class PartnerMatchingScreen extends StatefulWidget {
   const PartnerMatchingScreen({Key? key}) : super(key: key);
@@ -437,7 +438,7 @@ class _PartnershipRequestDialogState extends State<_PartnershipRequestDialog> {
             Text('common_goals_label'.tr(), style: TextStyle(fontWeight: FontWeight.bold)),
             ...widget.suggestion.commonGoals.map((goal) {
               return CheckboxListTile(
-                title: Text(goal),
+                title: Text(CategoryTranslate.getLocalizedGoal(goal).tr()),
                 value: _selectedGoals.contains(goal),
                 onChanged: (checked) {
                   setState(() {

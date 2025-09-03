@@ -38,10 +38,10 @@ enum FrequencyType {
 }
 
 enum HabitCategory {
-  financial('financial'),
-  savings('savings'),
-  investment('investment'),
-  other('other');
+  financial('Pénzügyi'),
+  savings('Megtakarítás'),
+  investment('Befektetés'),
+  other('Egyéb');
 
   const HabitCategory(this.value);
   final String value;

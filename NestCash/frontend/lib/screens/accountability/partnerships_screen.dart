@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:frontend/utils/category_translate.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/models/accountability_models.dart';
 import 'package:frontend/providers/accountability_provider.dart';
@@ -466,21 +467,21 @@ class _PartnershipsScreenState extends State<PartnershipsScreen>
                       children: [
                         Expanded(
                           child: _buildStatItem(
-                            'Check-in-ek',
+                            'check-ins'.tr(),
                             partnership.totalCheckins.toString(),
                             Icons.check_circle_outline,
                           ),
                         ),
                         Expanded(
                           child: _buildStatItem(
-                            'Sikeresség',
+                            'success_rate'.tr(),
                             '${partnership.successRate.toStringAsFixed(0)}%',
                             Icons.trending_up,
                           ),
                         ),
                         Expanded(
                           child: _buildStatItem(
-                            'Gyakoriság',
+                            'frequency'.tr(),
                             partnership.checkinFrequency.displayName,
                             Icons.schedule,
                           ),
@@ -594,7 +595,7 @@ class _PartnershipsScreenState extends State<PartnershipsScreen>
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
-                            goal,
+                            CategoryTranslate.getLocalizedGoal(goal).tr(),
                             style: TextStyle(
                               color: Color(0xFF00D4AA),
                               fontSize: 11,

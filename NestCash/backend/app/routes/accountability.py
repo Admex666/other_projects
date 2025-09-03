@@ -58,6 +58,35 @@ async def get_my_profile(current_user: User = Depends(get_current_user)):
         **profile.model_dump(exclude={"id", "user_id"})
     )
 
+@router.put("/profile", response_model=AccountabilityProfileRead)
+async def update_accountability_profile(
+    profile_updates: AccountabilityProfileUpdate,
+    current_user: User = Depends(get_current_user)
+):
+    """Accountability profil frissítése"""
+    # Meglévő profil keresése
+    profile = await AccountabilityProfile.find_one({"user_id": PydanticObjectId(current_user.id)})
+    if not profile:
+        raise HTTPException(status_code=404, detail="Accountability profil nem található")
+    
+    # Frissítendő mezők alkalmazása
+    update_data = profile_updates.model_dump(exclude_unset=True)
+    
+    for field, value in update_data.items():
+        if hasattr(profile, field):
+            setattr(profile, field, value)
+    
+    # updated_at frissítése
+    profile.updated_at = datetime.utcnow()
+    
+    await profile.save()
+    
+    return AccountabilityProfileRead(
+        id=str(profile.id),
+        user_id=str(profile.user_id),
+        **profile.model_dump(exclude={"id", "user_id"})
+    )
+
 # === MATCHING ===
 
 @router.get("/suggestions", response_model=List[PartnerSuggestionRead])

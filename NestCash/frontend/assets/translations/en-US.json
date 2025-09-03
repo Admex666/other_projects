@@ -162,6 +162,7 @@
     "requests_appear_here": "Partnership requests will appear here.",
     "reject": "Reject",
     "waiting_for_response": "Waiting for response...",
+    "check-ins": "Check-ins",
     "additional_goals": "+{count} more",
     "loading_error": "Error loading data: {error}",
     "no_logged_in_user": "No logged in user",
@@ -1802,5 +1803,13 @@
       "savings": "Savings",
       "investment": "Investment",
       "other": "Other"
+    },
+    "swipeable": {
+      "compatibility": "{percentage}% compatibility",
+      "goals": "Goals",
+      "common_goals": "Common Goals",
+      "swipe_hint": "Swipe right to like, swipe left to pass",
+      "like": "LIKE",
+      "pass": "PASS"
     }
   }

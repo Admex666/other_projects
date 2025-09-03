@@ -58,4 +58,27 @@ static String getLocalizedCategory(String category) {
         return category;
     }
   }
+
+  static String getLocalizedGoal(String goal) {
+    switch (goal.toLowerCase()) {
+      case 'pénzügyek':
+      case 'financial':
+        return 'accpart_model.goal_category.financial';
+      case 'megtakarítás':
+      case 'savings':
+        return 'accpart_model.goal_category.savings';
+      case 'befektetés':
+      case 'investment':
+        return 'accpart_model.goal_category.investment';
+      case 'kiadások kontroll':
+      case 'spending control':
+        return 'accpart_model.goal_category.spending_control';
+      case 'szokásépítés':
+      case 'habit building':
+        return 'accpart_model.goal_category.habit_building';
+      default:
+        return goal;
+    }
+  }
+
 }
