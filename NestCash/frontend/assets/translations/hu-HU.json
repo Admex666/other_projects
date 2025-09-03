@@ -1805,7 +1805,7 @@
       "other": "Egyéb"
     },
     "swipeable": {
-      "compatibility": "{percentage}% egyezés",
+      "compatibility": "{percentage}%",
       "goals": "Célok",
       "common_goals": "Közös célok",
       "swipe_hint": "Húzd jobbra a like-hoz, balra a passzhoz",

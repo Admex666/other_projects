@@ -1805,7 +1805,7 @@
       "other": "Other"
     },
     "swipeable": {
-      "compatibility": "{percentage}% compatibility",
+      "compatibility": "{percentage}%",
       "goals": "Goals",
       "common_goals": "Common Goals",
       "swipe_hint": "Swipe right to like, swipe left to pass",

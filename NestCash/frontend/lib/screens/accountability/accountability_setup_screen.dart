@@ -103,7 +103,9 @@ class _AccountabilitySetupScreenState extends State<AccountabilitySetupScreen> {
 
     bool success;
     if (widget.isEdit) {
-      success = await provider.updateProfile(profileData.toJson());
+      // Csak a szükséges mezőket küldd a frissítéshez
+      final updateData = profileData.toJson();
+      success = await provider.updateProfile(updateData);
     } else {
       success = await provider.createProfile(profileData);
     }
