@@ -134,6 +134,14 @@ TRANSLATIONS = {
         'category_business': 'Vállalkozás',
         'category_gifts': 'Ajándékok',
         'category_other': 'Egyéb',
+        "learning_pts_increase": "📚 Tanulási pontok növekedtek",
+        "learning_pts_decrease": "📚 Tanulási pontok csökkentek",
+        "habit_score_increase": "💪 Szokáskövetés javult",
+        "habit_score_decrease": "💪 Szokáskövetés romlott",
+        "badge_score_increase": "🏆 Badge pontszám nőtt",
+        "badge_score_decrease": "🏆 Badge pontszám csökkent",
+        "limit_score_increase": "📊 Limit betartás javult",
+        "limit_score_decrease": "📊 Limit betartás romlott",
     },
     'en': {
         'savings_low_rate': 'Try to save at least 10% of your income',
@@ -268,6 +276,14 @@ TRANSLATIONS = {
         'category_business': 'Business',
         'category_gifts': 'Gifts',
         'category_other': 'Other',
+        "learning_pts_increase": "📚 Learning points increased",
+        "learning_pts_decrease": "📚 Learning points decreased",
+        "habit_score_increase": "💪 Habit tracking improved",
+        "habit_score_decrease": "💪 Habit tracking declined",
+        "badge_score_increase": "🏆 Badge score increased",
+        "badge_score_decrease": "🏆 Badge score decreased",
+        "limit_score_increase": "📊 Limit compliance improved",
+        "limit_score_decrease": "📊 Limit compliance declined"
     }
 }
 

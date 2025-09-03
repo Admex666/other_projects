@@ -16,10 +16,10 @@ class FrequencyType(str, Enum):
     MONTHLY = "monthly"
 
 class HabitCategory(str, Enum):
-    FINANCIAL = "Pénzügyi"
-    SAVINGS = "Megtakarítás"
-    INVESTMENT = "Befektetés"
-    OTHER = "Egyéb"
+    FINANCIAL = "financial"
+    SAVINGS = "savings"
+    INVESTMENT = "investment"
+    OTHER = "other"
 
 class Habit(Document):
     user_id: PydanticObjectId = Field(..., description="A szokást létrehozó felhasználó azonosítója")

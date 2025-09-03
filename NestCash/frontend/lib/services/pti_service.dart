@@ -5,11 +5,13 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/models/pti_models.dart';
 import 'package:frontend/config/config.dart';
+import 'package:frontend/services/language_service.dart';
 
 class PTIService {
   static const _storage = FlutterSecureStorage();
+  final LanguageService _languageService = LanguageService();
 
-  const PTIService();
+  PTIService();
 
   Future<String?> _getToken() async {
     return await _storage.read(key: 'token');
@@ -20,6 +22,7 @@ class PTIService {
     return {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',
+      'Accept-Language': _languageService.currentLanguage,
     };
   }
 

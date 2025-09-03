@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, BackgroundTasks, R
 from typing import Optional, List
 from datetime import datetime, timedelta
 import logging
+from beanie import PydanticObjectId
 
 from app.core.security import get_current_user
 from app.models.user import User
@@ -15,7 +16,7 @@ from app.models.pti_schemas import (
 )
 from app.services.pti_service import PTIService
 from app.services.health_score_service import HealthScoreService
-from beanie import PydanticObjectId
+from app.utils.translation_helper import translate
 
 router = APIRouter(prefix="/pti", tags=["PTI"])
 logger = logging.getLogger(__name__)
@@ -416,11 +417,14 @@ async def update_pti_settings(
 
 @router.get("/comparison")
 async def get_pti_comparison(
+    request: Request,
     period: PTIPeriod = Query(PTIPeriod.WEEKLY),
     current_user: User = Depends(get_current_user)
 ):
     """PTI összehasonlítás előző időszakkal"""
     try:
+        lang = request.headers.get('Accept-Language', 'hu')[:2]
+
         # Aktuális PTI
         current_components = await PTIService.calculate_pti_score(current_user.id, period)
         current_response = PTIScoreResponse(
@@ -497,24 +501,24 @@ async def get_pti_comparison(
             
             # Komponensenkénti változások elemzése
             if current_components.learning_points > prev_components.learning_points:
-                improvements.append("📚 Tanulási pontok növekedtek")
+                improvements.append(translate('learning_pts_increase', lang=lang))
             elif current_components.learning_points < prev_components.learning_points:
-                declines.append("📚 Tanulási pontok csökkentek")
+                declines.append(translate('learning_pts_decrease', lang=lang))
                 
             if current_components.habit_score > prev_components.habit_score:
-                improvements.append("💪 Szokáskövetés javult")
+                improvements.append(translate('habit_score_increase', lang=lang))
             elif current_components.habit_score < prev_components.habit_score:
-                declines.append("💪 Szokáskövetés romlott")
+                declines.append(translate('habit_score_decrease', lang=lang))
                 
             if current_components.badge_score > prev_components.badge_score:
-                improvements.append("🏆 Badge pontszám nőtt")
+                improvements.append(translate('badge_score_increase', lang=lang))
             elif current_components.badge_score < prev_components.badge_score:
-                declines.append("🏆 Badge pontszám csökkent")
+                declines.append(translate('badge_score_decrease', lang=lang))
                 
             if current_components.limit_score > prev_components.limit_score:
-                improvements.append("📊 Limit betartás javult")
+                improvements.append(translate('limit_score_increase', lang=lang))
             elif current_components.limit_score < prev_components.limit_score:
-                declines.append("📊 Limit betartás romlott")
+                declines.append(translate('limit_score_decrease', lang=lang))
         
         return PTIComparisonResponse(
             current_period=current_response,

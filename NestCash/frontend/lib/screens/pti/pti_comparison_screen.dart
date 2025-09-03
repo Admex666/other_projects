@@ -691,7 +691,6 @@ double _calculatePercentage(double value) {
           ),
           SizedBox(height: 16),
           
-          // Javulások
           if (_comparisonData!.improvements.isNotEmpty) ...[
             Row(
               children: [
