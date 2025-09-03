@@ -708,7 +708,7 @@ class _AccountabilitySetupScreenState extends State<AccountabilitySetupScreen> {
   }
 
   Widget _buildBioPage() {
-    return Padding(
+    return SingleChildScrollView(
       padding: EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -784,6 +784,8 @@ class _AccountabilitySetupScreenState extends State<AccountabilitySetupScreen> {
               ],
             ),
           ),
+          // Extra padding a billentyűzet számára
+          SizedBox(height: MediaQuery.of(context).viewInsets.bottom + 20),
         ],
       ),
     );
