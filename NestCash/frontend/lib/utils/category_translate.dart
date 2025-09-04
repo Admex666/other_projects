@@ -63,6 +63,7 @@ static String getLocalizedCategory(String category) {
     switch (goal.toLowerCase()) {
       case 'pénzügyek':
       case 'financial':
+      case 'pénzügyi':
         return 'accpart_model.goal_category.financial';
       case 'megtakarítás':
       case 'savings':
@@ -78,6 +79,76 @@ static String getLocalizedCategory(String category) {
         return 'accpart_model.goal_category.habit_building';
       default:
         return goal;
+    }
+  }
+
+  static String getLocalizedComponent(String component) {
+    switch (component.toLowerCase()) {
+      case '💪 szokások':
+      case '💪 habits':
+        return 'pti_component_ranking_screen.habits';
+      case '📚 tanulás':
+      case '📚 learning':
+        return 'pti_component_ranking_screen.learning';
+      case '🏆 kitűzők':
+      case '🏆 badges':
+        return 'pti_component_ranking_screen.badges';
+      case '📊 limitek':
+      case '📊 limits':
+        return 'pti_component_ranking_screen.limits';
+      default:
+        return component;
+    }
+  }
+
+  static String getLocalizedBadgeCategory(String category) {
+    switch (category.toLowerCase()) {
+      case 'tranzakció':
+      case 'transaction':
+        return 'badge_category_transaction';
+      case 'megtakarítás':
+      case 'saving':
+        return 'badge_category_saving';
+      case 'knowledge':
+      case 'tudás':
+        return 'badge_category_knowledge';
+      case 'sorozat':
+      case 'streak':
+        return 'badge_category_streak';
+      case 'mérföldkő':
+      case 'milestone':
+        return 'badge_category_milestone';
+      case 'közösségi':
+      case 'community':
+        return 'badge_category_community';
+      case 'különleges':
+      case 'special':
+        return 'badge_category_special';
+      default:
+        return category;
+    }
+  }
+
+  static String getLocalizedBadgeRarity(String rarity) {
+    switch (rarity.toLowerCase()) {
+      case 'közönséges':
+      case 'gyakori':
+      case 'common':
+        return 'badge_rarity_common';
+      case 'ritka':
+      case 'uncommon':
+        return 'badge_rarity_uncommon';
+      case 'nagyon ritka':
+      case 'rare':
+        return 'badge_rarity_rare';
+      case 'epikus':
+      case 'epic':
+        return 'badge_rarity_epic';
+      case 'legendás':
+      case 'legendary':
+        return 'badge_rarity_legendary';
+      default:
+        return rarity;
     }
   }
 

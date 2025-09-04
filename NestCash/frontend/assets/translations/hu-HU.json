@@ -997,6 +997,7 @@
       "error_occurred": "Hiba történt",
       "retry": "Újrapróbálás",
       "no_habits_yet": "Még nincsenek szokások",
+      "first_habit_info": "Hozd létre az elsőt!",
       "free_version_info": "Az ingyenes verzióban 5 szokást követhetsz nyomon.\nHozd létre az elsőt!",
       "unlimited_tracking": "Frissítés a korlátlan használatért",
       "upgrade_needed": "Frissítés szükséges",
@@ -1190,6 +1191,11 @@
     "badge_category_saving": "Megtakarítás",
     "badge_category_challenge": "Kihívás",
     "badge_category_spending": "Követés",
+    "badge_category_knowledge": "Tudás",
+    "badge_category_streak": "Sorozat",
+    "badge_category_milestone": "Mérföldkő",
+    "badge_category_community": "Közösségi",
+    "badge_category_special": "Különleges",
     "badge_rarity_common": "Közönséges",
     "badge_rarity_uncommon": "Ritka",
     "badge_rarity_rare": "Nagyon Ritka",
@@ -1811,5 +1817,6 @@
       "swipe_hint": "Húzd jobbra a like-hoz, balra a passzhoz",
       "like": "LIKE",
       "pass": "PASS"
-    }
+    },
+    "_ranking": "{type} ranglista"
   }

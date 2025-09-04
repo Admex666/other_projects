@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/models/pti_models.dart';
 import 'package:frontend/services/pti_service.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:frontend/utils/category_translate.dart';
 
 class PTIComponentRankingScreen extends StatefulWidget {
   final String userId;
@@ -402,14 +403,14 @@ class _PTIComponentRankingScreenState extends State<PTIComponentRankingScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      _rankingData!.componentDisplayName,
+                      CategoryTranslate.getLocalizedComponent(_rankingData!.componentDisplayName).tr(),
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
-                      '${_selectedPeriod.displayName} ranglista',
+                      '_ranking'.tr(namedArgs: {'type': _selectedPeriod.displayName}),
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey[600],

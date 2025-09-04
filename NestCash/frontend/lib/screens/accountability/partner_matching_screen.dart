@@ -408,7 +408,7 @@ class _PartnershipRequestDialogState extends State<_PartnershipRequestDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Partnership kérelem'),
+      title: Text('partnership_request_title'.tr()),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -475,7 +475,7 @@ class _PartnershipRequestDialogState extends State<_PartnershipRequestDialog> {
             Navigator.pop(context, {
               'frequency': _frequency,
               'goals': _selectedGoals,
-              'message': _messageController.text.isNotEmpty ? _messageController.text : null,
+              'message': _messageController.text.isNotEmpty ? _messageController.text : ' ',
             });
           },
           child: Text('send'.tr()),

@@ -4,6 +4,7 @@ import 'package:frontend/services/badge_service.dart';
 import 'package:frontend/models/badge_models.dart';
 import 'package:frontend/services/sharing_service.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:frontend/utils/category_translate.dart';
 
 class BadgesScreen extends StatefulWidget {
   final String userId;
@@ -166,7 +167,7 @@ class _BadgesScreenState extends State<BadgesScreen> with SingleTickerProviderSt
                             },
                           ),
                           ...BadgeCategory.values.map((category) => _buildFilterChip(
-                            category.displayName.tr(),
+                            CategoryTranslate.getLocalizedBadgeCategory(category.displayName).tr(),
                             _selectedCategory == category,
                             () {
                               setState(() => _selectedCategory = _selectedCategory == category ? null : category);
@@ -523,7 +524,7 @@ class _BadgesScreenState extends State<BadgesScreen> with SingleTickerProviderSt
                 (cat) => cat.value == entry.key,
                 orElse: () => BadgeCategory.transaction,
               );
-              return _buildCategoryStatItem(category.displayName.tr(), entry.value);
+              return _buildCategoryStatItem(CategoryTranslate.getLocalizedBadgeCategory(category.displayName).tr(), entry.value);
             }),
             
             const SizedBox(height: 24),
@@ -872,7 +873,7 @@ class _BadgesScreenState extends State<BadgesScreen> with SingleTickerProviderSt
                 Text(rarity.colorEmoji),
                 const SizedBox(width: 12),
                 Text(
-                  rarity.displayName.tr(),
+                  CategoryTranslate.getLocalizedBadgeRarity(rarity.displayName).tr(),
                   style: const TextStyle(
                     fontSize: 16,
                     color: Color(0xFF2D3748),

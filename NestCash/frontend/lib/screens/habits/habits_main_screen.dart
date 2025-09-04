@@ -10,6 +10,7 @@ import 'package:frontend/widgets/subscription/usage_indicator.dart';
 import 'package:frontend/utils/subscription_utils.dart';
 import 'package:frontend/models/subscription.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:frontend/utils/category_translate.dart';
 
 class HabitsMainScreen extends StatefulWidget {
   final String userId;
@@ -337,7 +338,7 @@ class _HabitsMainScreenState extends State<HabitsMainScreen> {
           ...HabitCategory.values.map(
             (category) => Padding(
               padding: EdgeInsets.only(right: 8),
-              child: _buildCategoryChip(category.value.tr(), category),
+              child: _buildCategoryChip(CategoryTranslate.getLocalizedGoal(category.value).tr(), category),
             ),
           ),
         ],

@@ -997,6 +997,7 @@
       "error_occurred": "An error occurred",
       "retry": "Retry",
       "no_habits_yet": "No habits yet",
+      "first_habit_info": "Create your first!", 
       "free_version_info": "You can track up to 5 habits in the free version.\nCreate your first one!",
       "unlimited_tracking": "Upgrade for unlimited tracking",
       "upgrade_needed": "Upgrade needed",
@@ -1190,6 +1191,11 @@
     "badge_category_saving": "Saving",
     "badge_category_challenge": "Challenge",
     "badge_category_spending": "Spending",
+    "badge_category_knowledge": "Knowledge",
+    "badge_category_streak": "Streak",
+    "badge_category_milestone": "Milestone",
+    "badge_category_community": "Community",
+    "badge_category_special": "Special",
     "badge_rarity_common": "Common",
     "badge_rarity_uncommon": "Uncommon",
     "badge_rarity_rare": "Rare",
@@ -1811,5 +1817,6 @@
       "swipe_hint": "Swipe right to like, swipe left to pass",
       "like": "LIKE",
       "pass": "PASS"
-    }
+    },
+    "_ranking": "{type} ranking"
   }
