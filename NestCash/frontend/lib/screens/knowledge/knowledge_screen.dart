@@ -130,8 +130,18 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
     }
     
     String url = '${ApiConfig.baseUrl}/knowledge/categories';
+    List<String> params = [];
+    
     if (selectedDifficulty != null) {
-      url += '?difficulty=$selectedDifficulty';
+      params.add('difficulty=$selectedDifficulty');
+    }
+    
+    // Nyelv paraméter hozzáadása
+    String currentLanguage = context.locale.languageCode; // Easy localization alapján
+    params.add('lang=$currentLanguage');
+    
+    if (params.isNotEmpty) {
+      url += '?${params.join('&')}';
     }
 
     try {
@@ -145,10 +155,6 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
         setState(() {
           categories = data.map((json) => CategoryWithLessons.fromJson(json)).toList();
         });
-        print('Categories loaded: ${categories.length}'); // Debug
-        for (var cat in categories) {
-          print('Category: ${cat.name}, completed: ${cat.completedLessons}/${cat.totalLessons}'); // Debug
-        }
       } else if (response.statusCode == 401) {
         _handleAuthError();
       } else {

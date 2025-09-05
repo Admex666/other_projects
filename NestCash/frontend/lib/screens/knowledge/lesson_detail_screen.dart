@@ -42,9 +42,12 @@ class _LessonDetailScreenState extends State<LessonDetailScreen> {
     
     try {
       final token = await _authService.getToken();
-
+      
+      // Nyelv paraméter hozzáadása
+      String currentLanguage = context.locale.languageCode;
+      
       final response = await http.get(
-        Uri.parse('${ApiConfig.baseUrl}/knowledge/lessons/${widget.lessonId}'),
+        Uri.parse('${ApiConfig.baseUrl}/knowledge/lessons/${widget.lessonId}?lang=$currentLanguage'),
         headers: {'Authorization': 'Bearer $token'},
       );
 
@@ -992,7 +995,7 @@ class LessonDetail {
       quizQuestions: (json['quiz_questions'] as List? ?? [])
           .map((question) => QuizQuestion.fromJson(question))
           .toList(),
-      categoryName: json['category_name'] ?? '',
+      categoryName: json['category_name'] ?? json['category_id'] ?? '', // Fallback hozzáadása
     );
   }
 
@@ -1027,7 +1030,7 @@ class LessonPage {
 
   factory LessonPage.fromJson(Map<String, dynamic> json) {
     return LessonPage(
-      pageNumber: _parseInt(json['page_number'] ?? json['order']),
+      pageNumber: _parseInt(json['order'] ?? json['page_number'] ?? 1), // 'order' használata először
       title: json['title'],
       content: json['content'] ?? '',
       imageUrl: json['image_url'],
@@ -1061,24 +1064,26 @@ class QuizQuestion {
     );
   }
 
+  static bool _parseMultipleChoice(Map<String, dynamic> json) {
+    // Először a 'type' mezőt ellenőrizzük (seed formátum)
+    if (json.containsKey('type')) {
+      return json['type'] == 'multiple_choice';
+    }
+    
+    // Fallback a régi formátumra
+    if (json.containsKey('is_multiple_choice')) {
+      return json['is_multiple_choice'] == true;
+    }
+    
+    return false;
+  }
+
   static List<String> _parseStringList(dynamic value) {
     if (value == null) return [];
     if (value is List) {
       return value.map((item) => item?.toString() ?? '').toList();
     }
     return [];
-  }
-
-  static bool _parseMultipleChoice(Map<String, dynamic> json) {
-    if (json.containsKey('is_multiple_choice')) {
-      return json['is_multiple_choice'] == true;
-    }
-    
-    if (json.containsKey('type')) {
-      return json['type'] == 'multiple_choice';
-    }
-    
-    return false;
   }
 }
 
