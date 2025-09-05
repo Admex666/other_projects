@@ -186,7 +186,7 @@ async def update_lesson_progress(
     
     if not lesson_completion:
         lesson_completion = LessonCompletion(
-            lesson_id=lesson_id,  # Ez volt a ValidationError forrása!
+            lesson_id=lesson_id,
             total_pages=progress.total_pages
         )
         user_progress.completed_lessons.append(lesson_completion)
@@ -276,7 +276,7 @@ async def submit_quiz(
     if not lesson_completion:
         # FIX: lesson_id PydanticObjectId konvertálás + pages számának helyes lekérése
         lesson_completion = LessonCompletion(
-            lesson_id=PydanticObjectId(lesson_id),  # STRING -> PydanticObjectId
+            lesson_id=lesson_id,
             total_pages=len(lesson_pages)  # lesson['pages'] helyett lesson_pages
         )
         user_progress.completed_lessons.append(lesson_completion)
