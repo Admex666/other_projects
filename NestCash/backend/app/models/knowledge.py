@@ -63,7 +63,7 @@ class KnowledgeCategory(Document):
 
 # Felhasználói haladás követéshez
 class LessonCompletion(BaseModel):
-    lesson_id: PydanticObjectId
+    lesson_id: str
     completed_at: datetime = Field(default_factory=datetime.now)
     pages_completed: int = Field(default=0, description="Hány oldalt teljesített")
     total_pages: int = Field(default=0, description="Összesen hány oldal van")

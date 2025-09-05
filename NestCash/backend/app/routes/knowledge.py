@@ -185,9 +185,8 @@ async def update_lesson_progress(
             break
     
     if not lesson_completion:
-        # FIX: lesson_id string -> PydanticObjectId konvertálás
         lesson_completion = LessonCompletion(
-            lesson_id=PydanticObjectId(lesson_id),  # Ez volt a ValidationError forrása!
+            lesson_id=lesson_id,  # Ez volt a ValidationError forrása!
             total_pages=progress.total_pages
         )
         user_progress.completed_lessons.append(lesson_completion)
