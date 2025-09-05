@@ -17,6 +17,7 @@ from app.models.knowledge import (
 from app.services.badge_service import badge_service
 from app.models.notification import NotificationPriority
 from app.services.health_score_service import HealthScoreService
+from app.services.lesson_service import lesson_service
 
 router = APIRouter(prefix="/knowledge", tags=["knowledge"])
 logger = logging.getLogger(__name__)
@@ -34,136 +35,101 @@ class LessonProgressUpdate(BaseModel):
 @router.get("/categories", response_model=List[CategoryWithLessons])
 async def get_categories_with_lessons(
     current_user: User = Depends(get_current_user),
-    difficulty: Optional[DifficultyLevel] = Query(None, description="Szűrés nehézségi szint alapján")
+    difficulty: Optional[DifficultyLevel] = Query(None, description="Szűrés nehézségi szint alapján"),
+    lang: str = Query('hu', description="Nyelv kód (hu, en)")
 ):
     """Összes kategória lekérése a hozzájuk tartozó leckékkel és haladással"""
     
-    # ÚJ DEBUG SOROK:
-    print(f"DEBUG: get_categories_with_lessons called for user ID: {current_user.id} (type: {type(current_user.id)})")
-
-    # Feature usage tracking hozzáadása a függvény elején
+    # Feature usage tracking
     await HealthScoreService.track_feature_usage(current_user.id, "knowledge_browse_categories")
 
     try:
+        # Felhasználó haladásának lekérése
         query_user_id = PydanticObjectId(current_user.id)
-        print(f"DEBUG: Querying user_progress with converted ID: {query_user_id} (type: {type(query_user_id)})")
-    except Exception as e:
-        print(f"ERROR: Could not convert current_user.id to PydanticObjectId: {current_user.id} - {e}")
-        # Ha nem sikerül konvertálni az ID-t, akkor üres completed_lessons-szal folytatunk
-        completed_lessons = {}
-    else:
-        # 1. Felhasználó haladásának lekérése
         user_progress = await UserProgress.find_one({"user_id": query_user_id})
         
-        # 2. Egyszerű dictionary a teljesített leckékről
-        completed_lessons = {}
-        
-        # ÚJ DEBUG SOROK:
+        # Haladási adatok formázása
+        progress_data = None
         if user_progress:
-            print(f"DEBUG: UserProgress document FOUND for user {current_user.id}.")
-            # Csak akkor írd ki a completed_lessons tartalmát, ha a user_progress létezik
-            if user_progress.completed_lessons is not None:
-                print(f"DEBUG: Raw user_progress.completed_lessons (length {len(user_progress.completed_lessons)}): {user_progress.completed_lessons}")
+            completed_lessons = {}
+            for comp in user_progress.completed_lessons:
+                lesson_id = str(comp.lesson_id)
+                pages_ok = comp.pages_completed >= comp.total_pages
+                quiz_ok = comp.quiz_score is None or comp.quiz_score >= 70
                 
-                # CSAK AKKOR FOG LEFUTNI, HA user_progress LÉTEZIK ÉS completed_lessons NEM ÜRES/NONE
-                for comp in user_progress.completed_lessons:
-                    lesson_id = str(comp.lesson_id)
-                    
-                    pages_ok = comp.pages_completed >= comp.total_pages
-                    quiz_ok = comp.quiz_score is None or comp.quiz_score >= 70
-                    
-                    completed_lessons[lesson_id] = {
-                        'is_completed': pages_ok and quiz_ok,
-                        'quiz_score': comp.best_quiz_score or comp.quiz_score,
-                        'pages_completed': comp.pages_completed,
-                        'total_pages': comp.total_pages
-                    }
-                    
-                    print(f"DEBUG: Lesson {lesson_id} - pages: {comp.pages_completed}/{comp.total_pages}, quiz: {comp.quiz_score}, completed: {pages_ok and quiz_ok}")
-            else:
-                print(f"DEBUG: user_progress.completed_lessons is None.")
-        else:
-            print(f"DEBUG: UserProgress document NOT FOUND for user {current_user.id}.")
-            # JAVÍTÁS: Ne térjünk vissza üres listával, hanem folytassuk üres completed_lessons-szal
-            print(f"DEBUG: No user_progress found, continuing with empty completed_lessons.")
-    
-    print(f"DEBUG: Completed lessons dict: {completed_lessons}")
-    print(f"DEBUG: User {current_user.id} completed lessons (after processing): {completed_lessons}")
-    
-    # 3. Kategóriák lekérése - EZ MINDIG LEFUSSON
-    categories = await KnowledgeCategory.find({"is_active": True}).sort("order").to_list()
-    result = []
-    
-    for category in categories:
-        print(f"DEBUG: Processing category {category.name} (ID: {category.id})")
+                completed_lessons[lesson_id] = {
+                    'is_completed': pages_ok and quiz_ok,
+                    'quiz_score': comp.best_quiz_score or comp.quiz_score,
+                    'pages_completed': comp.pages_completed,
+                    'total_pages': comp.total_pages
+                }
+            
+            progress_data = {'completed_lessons': completed_lessons}
         
-        # 4. Leckék lekérése kategóriánként - ObjectId konverzió itt is fontos
-        lesson_filter = {"category_id": category.id, "is_published": True}
+        # Leckék lekérése a service-ből
+        categories_data = lesson_service.get_categories_with_lessons(
+            lang=lang, 
+            user_progress=progress_data
+        )
+        
+        # Nehézségi szint szerinti szűrés
         if difficulty:
-            lesson_filter["difficulty"] = difficulty
-            
-        lessons = await Lesson.find(lesson_filter).sort("order").to_list()
-        print(f"DEBUG: Found {len(lessons)} lessons for category {category.name}")
+            for category in categories_data:
+                category['lessons'] = [
+                    lesson for lesson in category['lessons'] 
+                    if lesson['difficulty'] == difficulty.value
+                ]
+                category['total_lessons'] = len(category['lessons'])
+                category['completed_lessons'] = sum(
+                    1 for lesson in category['lessons'] if lesson['is_completed']
+                )
         
-        lesson_summaries = []
-        completed_count = 0
-        
-        for lesson in lessons:
-            # JAVÍTÁS: Ez a kulcsfontosságú rész - ObjectId -> string
-            lesson_id = str(lesson.id)
+        # Response model konvertálása
+        result = []
+        for category_data in categories_data:
+            lesson_summaries = []
+            for lesson_data in category_data['lessons']:
+                lesson_summaries.append(LessonSummary(
+                    id=lesson_data['id'],
+                    title=lesson_data['title'],
+                    description=lesson_data['description'],
+                    difficulty=DifficultyLevel(lesson_data['difficulty']),
+                    estimated_minutes=lesson_data['estimated_minutes'],
+                    total_pages=lesson_data['total_pages'],
+                    has_quiz=lesson_data['has_quiz'],
+                    is_completed=lesson_data['is_completed'],
+                    quiz_score=lesson_data['quiz_score'],
+                    category_name=category_data['name']
+                ))
             
-            print(f"DEBUG: Checking lesson {lesson.title}")
-            print(f"DEBUG: - Lesson ObjectId: {lesson.id}")
-            print(f"DEBUG: - Lesson string ID: {lesson_id}")
-            print(f"DEBUG: - Is in completed_lessons? {lesson_id in completed_lessons}")
-            
-            # 5. Ellenőrizzük, hogy teljesítve van-e
-            completion_data = completed_lessons.get(lesson_id, {})
-            is_completed = completion_data.get('is_completed', False)
-            quiz_score = completion_data.get('quiz_score')
-            
-            if is_completed:
-                completed_count += 1
-            
-            print(f"DEBUG: Lesson {lesson.title} ({lesson_id}): completed={is_completed}, quiz_score={quiz_score}")
-            
-            lesson_summaries.append(LessonSummary(
-                id=lesson_id,
-                title=lesson.title,
-                description=lesson.description,
-                difficulty=lesson.difficulty,
-                estimated_minutes=lesson.estimated_minutes,
-                total_pages=len(lesson.pages),
-                has_quiz=len(lesson.quiz_questions) > 0,
-                is_completed=is_completed,
-                quiz_score=quiz_score,
-                category_name=category.name
+            result.append(CategoryWithLessons(
+                id=category_data['id'],
+                name=category_data['name'],
+                description=category_data['description'],
+                icon=category_data['icon'],
+                color=category_data['color'],
+                lessons=lesson_summaries,
+                total_lessons=category_data['total_lessons'],
+                completed_lessons=category_data['completed_lessons']
             ))
         
-        result.append(CategoryWithLessons(
-            id=str(category.id),  # JAVÍTÁS: ObjectId -> string itt is
-            name=category.name,
-            description=category.description,
-            icon=category.icon,
-            color=category.color,
-            lessons=lesson_summaries,
-            total_lessons=len(lesson_summaries),
-            completed_lessons=completed_count
-        ))
-        
-        print(f"DEBUG: Category {category.name}: {completed_count}/{len(lesson_summaries)} completed")
-    
-    return result
+        return result
+
+    except Exception as e:
+        logger.error(f"Error in get_categories_with_lessons: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/lessons/{lesson_id}")
 async def get_lesson_detail(
     lesson_id: str,
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
+    lang: str = Query('hu', description="Nyelv kód (hu, en)")
 ):
     """Egy lecke részletes adatainak lekérése"""
     
-    lesson = await Lesson.get(lesson_id)
-    if not lesson:
+    # Lecke lekérése a service-ből
+    lesson_data = lesson_service.get_lesson_by_id(lesson_id, lang)
+    if not lesson_data:
         raise HTTPException(status_code=404, detail="Lesson not found")
     
     # Felhasználó haladásának ellenőrzése
@@ -176,11 +142,11 @@ async def get_lesson_detail(
                 completion_data = comp
                 break
     
-    # Feature usage tracking hozzáadása
+    # Feature usage tracking
     await HealthScoreService.track_feature_usage(current_user.id, "knowledge_view_lesson")
     
     return {
-        "lesson": lesson.dict(),
+        "lesson": lesson_data,
         "completion": completion_data.dict() if completion_data else None
     }
 
@@ -194,9 +160,8 @@ async def update_lesson_progress(
 ):
     """Lecke haladásának frissítése (oldalak teljesítése)"""
 
-    print(f"DEBUG: update_lesson_progress called for user {current_user.id} (type: {type(current_user.id)})")
-    
-    lesson = await Lesson.get(lesson_id)
+    # Lecke létezésének ellenőrzése
+    lesson = lesson_service.get_lesson_by_id(lesson_id)
     if not lesson:
         raise HTTPException(status_code=404, detail="Lesson not found")
     
@@ -259,25 +224,25 @@ async def submit_quiz(
 ):
     """Kvíz beküldése és eredmény kiértékelése"""
 
-    print(f"DEBUG: submit_quiz called for user {current_user.id} (type: {type(current_user.id)})")
-
-    lesson = await Lesson.get(lesson_id)
+    # Lecke lekérése és validáció
+    lesson = lesson_service.get_lesson_by_id(lesson_id)
     if not lesson:
         raise HTTPException(status_code=404, detail="Lesson not found")
 
-    if not lesson.quiz_questions:
+    quiz_questions = lesson.get('quiz_questions', [])
+    if not quiz_questions:
         raise HTTPException(status_code=400, detail="This lesson has no quiz")
 
-    if len(submission.answers) != len(lesson.quiz_questions):
+    if len(submission.answers) != len(quiz_questions):
         raise HTTPException(status_code=400, detail="Number of answers doesn't match number of questions")
 
     # Válaszok kiértékelése
     correct_count = 0
-    total_questions = len(lesson.quiz_questions)
+    total_questions = len(quiz_questions)
 
-    for i, (user_answers, question) in enumerate(zip(submission.answers, lesson.quiz_questions)):
+    for i, (user_answers, question) in enumerate(zip(submission.answers, quiz_questions)):
         # Rendezni kell mindkét listát az összehasonlításhoz
-        if sorted(user_answers) == sorted(question.correct_answers):
+        if sorted(user_answers) == sorted(question['correct_answers']):
             correct_count += 1
 
     score = int((correct_count / total_questions) * 100)
@@ -669,4 +634,23 @@ async def get_daily_stats(current_user: User = Depends(get_current_user)):
         "can_take_more_lessons": daily_lessons_count < 1,
         "daily_challenge_completed": user_progress.daily_challenge_completed_today,
         "current_streak": user_progress.current_streak
+    }
+
+@router.get("/debug/lesson-stats")
+async def get_lesson_stats(current_user: User = Depends(get_current_user)):
+    """Debug endpoint - lecke statisztikák"""
+    if not current_user.is_admin:  # Ha van admin jogosultság ellenőrzés
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    return lesson_service.get_lesson_stats()
+
+@router.get("/debug/available-languages/{lesson_id}")
+async def get_lesson_languages(
+    lesson_id: str, 
+    current_user: User = Depends(get_current_user)
+):
+    """Debug endpoint - lecke elérhető nyelvei"""
+    return {
+        "lesson_id": lesson_id,
+        "available_languages": lesson_service.get_available_languages(lesson_id)
     }

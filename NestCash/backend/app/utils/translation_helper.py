@@ -142,6 +142,10 @@ TRANSLATIONS = {
         "badge_score_decrease": "🏆 Badge pontszám csökkent",
         "limit_score_increase": "📊 Limit betartás javult",
         "limit_score_decrease": "📊 Limit betartás romlott",
+        'lesson_not_found': 'A lecke nem található',
+        'lesson_not_available_in_language': 'A lecke nem elérhető ezen a nyelven',
+        'quiz_questions_mismatch': 'A válaszok száma nem egyezik a kérdések számával',
+        'lesson_has_no_quiz': 'Ennek a leckének nincs kvíze',
     },
     'en': {
         'savings_low_rate': 'Try to save at least 10% of your income',
@@ -283,7 +287,11 @@ TRANSLATIONS = {
         "badge_score_increase": "🏆 Badge score increased",
         "badge_score_decrease": "🏆 Badge score decreased",
         "limit_score_increase": "📊 Limit compliance improved",
-        "limit_score_decrease": "📊 Limit compliance declined"
+        "limit_score_decrease": "📊 Limit compliance declined",
+        'lesson_not_found': 'Lesson not found',
+        'lesson_not_available_in_language': 'Lesson not available in this language', 
+        'quiz_questions_mismatch': 'Number of answers doesn\'t match number of questions',
+        'lesson_has_no_quiz': 'This lesson has no quiz',
     }
 }
 

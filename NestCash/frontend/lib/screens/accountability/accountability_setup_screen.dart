@@ -245,7 +245,7 @@ class _AccountabilitySetupScreenState extends State<AccountabilitySetupScreen> {
                             ),
                           ),
                           child: Text(
-                            'Vissza',
+                            'previous'.tr(),
                             style: TextStyle(
                               color: Color(0xFF00D4AA),
                               fontWeight: FontWeight.w600,
@@ -281,7 +281,7 @@ class _AccountabilitySetupScreenState extends State<AccountabilitySetupScreen> {
                                     ),
                                   )
                                 : Text(
-                                    _currentPage == _totalPages - 1 ? 'Mentés' : 'Tovább',
+                                    _currentPage == _totalPages - 1 ? 'save'.tr() : 'next'.tr(),
                                     style: TextStyle(
                                       fontWeight: FontWeight.w600,
                                       fontSize: 16,
