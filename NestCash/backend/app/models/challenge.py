@@ -50,6 +50,7 @@ class ChallengeProgress(BaseModel):
 
 # === CHALLENGE DOCUMENT ===
 class ChallengeDocument(Document):
+    challenge_code: Optional[str] = Field(None, description="Kihívás egyedi kódja lokalizációhoz")
     title: str = Field(..., description="Kihívás címe")
     description: str = Field(..., description="Részletes leírás")
     short_description: Optional[str] = Field(None, description="Rövid leírás")

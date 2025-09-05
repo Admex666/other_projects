@@ -1,0 +1,103 @@
+{
+    "hu": {
+        "challenges": [
+          {
+            "code": "savings_30_day_50k",
+            "title": "30 napos megtakarítási kihívás",
+            "description": "Tegyél félre 50,000 HUF-ot 30 nap alatt! Ez egy nagyszerű módja annak, hogy elkezdj rendszeresen megtakarítani és kiépítsd a pénzügyi tartalékaidat.",
+            "short_description": "50,000 HUF megtakarítás 30 nap alatt",
+            "challenge_type": "savings",
+            "difficulty": "easy",
+            "duration_days": 30,
+            "target_amount": 50000.0,
+            "rules": [
+              {
+                "type": "min_amount",
+                "value": 1000.0,
+                "description": "Minimum napi 1,000 HUF megtakarítás"
+              }
+            ],
+            "rewards": {
+              "points": 100,
+              "badges": ["first_saver", "month_complete"],
+              "title": "Takarékos Kezdő"
+            },
+            "tags": ["megtakarítás", "kezdő", "30nap"]
+          },
+          {
+            "code": "expense_reduction_coffee",
+            "title": "Kávé kihívás - Havi kiadás csökkentés",
+            "description": "Csökkentsd a külső étkezési kiadásaidat (pl. kávé, ebéd) 50%-kal egy hónapon keresztül. Készíts otthon és vigyél magaddal!",
+            "short_description": "Külső étkezési kiadások 50%-os csökkentése",
+            "challenge_type": "expense_reduction",
+            "difficulty": "medium",
+            "duration_days": 30,
+            "target_amount": 20000.0,
+            "rules": [
+              {
+                "type": "max_amount",
+                "value": 500.0,
+                "description": "Maximum napi 500 HUF külső étkezés"
+              }
+            ],
+            "rewards": {
+              "points": 150,
+              "badges": ["expense_cutter", "home_chef"],
+              "title": "Költségcsökkentő"
+            },
+            "tags": ["kiadás", "étkezés", "takarékosság"]
+          }
+        ]
+      },
+
+    "en": {
+        "challenges": [
+          {
+            "code": "savings_30_day_50k",
+            "title": "30-Day Savings Challenge",
+            "description": "Save 50,000 HUF in 30 days! This is a great way to start saving regularly and build your financial reserves.",
+            "short_description": "Save 50,000 HUF in 30 days",
+            "challenge_type": "savings",
+            "difficulty": "easy",
+            "duration_days": 30,
+            "target_amount": 50000.0,
+            "rules": [
+              {
+                "type": "min_amount",
+                "value": 1000.0,
+                "description": "Minimum daily savings of 1,000 HUF"
+              }
+            ],
+            "rewards": {
+              "points": 100,
+              "badges": ["first_saver", "month_complete"],
+              "title": "Savings Starter"
+            },
+            "tags": ["savings", "beginner", "30days"]
+          },
+          {
+            "code": "expense_reduction_coffee",
+            "title": "Coffee Challenge - Monthly Expense Reduction",
+            "description": "Reduce your external food expenses (e.g. coffee, lunch) by 50% for one month. Cook at home and bring your own!",
+            "short_description": "50% reduction in external food expenses",
+            "challenge_type": "expense_reduction",
+            "difficulty": "medium",
+            "duration_days": 30,
+            "target_amount": 20000.0,
+            "rules": [
+              {
+                "type": "max_amount",
+                "value": 500.0,
+                "description": "Maximum 500 HUF daily external food"
+              }
+            ],
+            "rewards": {
+              "points": 150,
+              "badges": ["expense_cutter", "home_chef"],
+              "title": "Cost Cutter"
+            },
+            "tags": ["expenses", "food", "savings"]
+          }
+        ]
+      }
+}

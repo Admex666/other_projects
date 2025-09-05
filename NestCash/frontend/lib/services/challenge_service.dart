@@ -23,7 +23,8 @@ class ChallengeService {
     String? search,
     bool onlyAvailable = true,
     String sortBy = 'newest',
-  }) async {
+    String lang = 'hu',
+}) async {
     try {
       final token = await _getToken();
       if (token == null) throw Exception('Not authenticated');
@@ -33,6 +34,7 @@ class ChallengeService {
         'skip': skip.toString(),
         'only_available': onlyAvailable.toString(),
         'sort_by': sortBy,
+        'lang': lang,
       };
 
       if (challengeType != null) {

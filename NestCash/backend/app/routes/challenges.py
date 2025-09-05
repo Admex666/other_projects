@@ -17,6 +17,7 @@ from app.models.challenge import (
 from app.core.security import get_current_user
 from app.models.user import User
 from app.services.challenge_service import ChallengeService
+from app.services.challenge_localization_service import challenge_localization_service
 
 router = APIRouter(prefix="/challenges", tags=["challenges"])
 logger = logging.getLogger(__name__)
@@ -27,11 +28,12 @@ async def list_challenges(
     current_user: User = Depends(get_current_user),
     limit: int = Query(20, ge=1, le=100),
     skip: int = Query(0, ge=0),
-    challenge_type: Optional[ChallengeType] = Query(None, description="Kihívás típusa szerinti szűrés"),
-    difficulty: Optional[ChallengeDifficulty] = Query(None, description="Nehézség szerinti szűrés"),
-    search: Optional[str] = Query(None, description="Keresés címben és leírásban"),
-    only_available: bool = Query(True, description="Csak elérhető kihívások"),
-    sort_by: str = Query("newest", description="Rendezés: newest, popular, difficulty")
+    challenge_type: Optional[ChallengeType] = Query(None),
+    difficulty: Optional[ChallengeDifficulty] = Query(None),
+    search: Optional[str] = Query(None),
+    only_available: bool = Query(True),
+    sort_by: str = Query("newest"),
+    lang: str = Query('hu', description="Nyelv kód (hu, en)")  # ÚJ paraméter
 ):
     """Kihívások listázása szűrési és rendezési lehetőségekkel"""
     try:
@@ -95,12 +97,24 @@ async def list_challenges(
         for challenge in challenges:
             challenge_id_str = str(challenge.id)
             participation = participation_map.get(challenge_id_str)
+
+            # Lokalizált adatok lekérése
+            localized_data = None
+            if challenge.challenge_code:
+                localized_data = challenge_localization_service.get_challenge_data(
+                    challenge.challenge_code, lang
+                )
+            
+            # Lokalizált vagy eredeti adatok használata
+            title = localized_data.get('title') if localized_data else challenge.title
+            description = localized_data.get('description') if localized_data else challenge.description
+            short_description = localized_data.get('short_description') if localized_data else challenge.short_description
             
             challenge_read = ChallengeRead(
                 id=challenge_id_str,
-                title=challenge.title,
-                description=challenge.description,
-                short_description=challenge.short_description,
+                title=title,
+                description=description,
+                short_description=short_description,
                 challenge_type=challenge.challenge_type,
                 difficulty=challenge.difficulty,
                 duration_days=challenge.duration_days,
@@ -669,7 +683,8 @@ from app.models.challenge import (
 # === DEFAULT CHALLENGES DATA ===
 @router.post("/bulk/create-defaults")
 async def create_default_challenges(
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
+    lang: str = Query('hu', description="Nyelv a kihívások létrehozásához")
 ):
     """Alapértelmezett kihívások létrehozása"""
     
@@ -678,160 +693,19 @@ async def create_default_challenges(
     #     raise HTTPException(status_code=403, detail="Admin access required")
     
     try:
-        # Default challenges adatok
-        default_challenges = [
-            {
-                "title": "30 napos megtakarítási kihívás",
-                "description": "Tegyél félre 50,000 HUF-ot 30 nap alatt! Ez egy nagyszerű módja annak, hogy elkezdj rendszeresen megtakarítani és kiépítsd a pénzügyi tartalékaidat.",
-                "short_description": "50,000 HUF megtakarítás 30 nap alatt",
-                "challenge_type": ChallengeType.SAVINGS,
-                "difficulty": ChallengeDifficulty.EASY,
-                "duration_days": 30,
-                "target_amount": 50000.0,
-                "rules": [
-                    ChallengeRule(
-                        type="min_amount",
-                        value=1000.0,
-                        description="Minimum napi 1,000 HUF megtakarítás"
-                    )
-                ],
-                "rewards": ChallengeReward(
-                    points=100,
-                    badges=["first_saver", "month_complete"],
-                    title="Takarékos Kezdő"
-                ),
-                "tags": ["megtakarítás", "kezdő", "30nap"]
-            },
-            {
-                "title": "Kávé kihívás - Havi kiadás csökkentés",
-                "description": "Csökkentsd a külső étkezési kiadásaidat (pl. kávé, ebéd) 50%-kal egy hónapon keresztül. Készíts otthon és vigyél magaddal!",
-                "short_description": "Külső étkezési kiadások 50%-os csökkentése",
-                "challenge_type": ChallengeType.EXPENSE_REDUCTION,
-                "difficulty": ChallengeDifficulty.MEDIUM,
-                "duration_days": 30,
-                "target_amount": 20000.0,
-                "rules": [
-                    ChallengeRule(
-                        type="max_amount",
-                        value=500.0,
-                        description="Maximum napi 500 HUF külső étkezés"
-                    )
-                ],
-                "rewards": ChallengeReward(
-                    points=150,
-                    badges=["expense_cutter", "home_chef"],
-                    title="Költségcsökkentő"
-                ),
-                "tags": ["kiadás", "étkezés", "takarékosság"]
-            },
-            {
-                "title": "21 napos pénzügyi tudatosság",
-                "description": "Vezess napló minden tranzakcióról 21 napig. Legalább 3 tranzakciót rögzíts naponta és írj hozzá megjegyzést!",
-                "short_description": "Napi pénzügyi napló vezetése 21 napig",
-                "challenge_type": ChallengeType.HABIT_STREAK,
-                "difficulty": ChallengeDifficulty.EASY,
-                "duration_days": 21,
-                "rules": [
-                    ChallengeRule(
-                        type="min_transactions",
-                        value=3.0,
-                        description="Minimum 3 tranzakció rögzítése naponta"
-                    ),
-                    ChallengeRule(
-                        type="required_description",
-                        value=1.0,
-                        description="Minden tranzakciónak legyen leírása"
-                    )
-                ],
-                "rewards": ChallengeReward(
-                    points=80,
-                    badges=["consistent_tracker", "habit_builder"],
-                    title="Tudatos Pénzkezelő"
-                ),
-                "tags": ["szokás", "napló", "tudatosság"]
-            },
-            {
-                "title": "Nagy megtakarítási kihívás - 6 hónap",
-                "description": "Tegyél félre 500,000 HUF-ot 6 hónap alatt! Ez egy komolyabb kihívás, ami valódi pénzügyi fegyelmet igényel.",
-                "short_description": "500,000 HUF megtakarítás 6 hónapon át",
-                "challenge_type": ChallengeType.SAVINGS,
-                "difficulty": ChallengeDifficulty.HARD,
-                "duration_days": 180,
-                "target_amount": 500000.0,
-                "rules": [
-                    ChallengeRule(
-                        type="min_amount",
-                        value=2500.0,
-                        description="Minimum napi 2,500 HUF megtakarítás"
-                    ),
-                    ChallengeRule(
-                        type="consistency",
-                        value=5.0,
-                        description="Legalább 5 naponta kell megtakarítani"
-                    )
-                ],
-                "rewards": ChallengeReward(
-                    points=500,
-                    badges=["big_saver", "half_year_hero", "financial_discipline"],
-                    title="Megtakarítási Mester"
-                ),
-                "tags": ["megtakarítás", "haladó", "6hónap", "nagy kihívás"]
-            },
-            {
-                "title": "Befektetési alapok - Első lépések",
-                "description": "Kezdj el befektetni! Tegyél el legalább 100,000 HUF-ot befektetési számlára 60 nap alatt.",
-                "short_description": "100,000 HUF befektetés 60 nap alatt",
-                "challenge_type": ChallengeType.INVESTMENT,
-                "difficulty": ChallengeDifficulty.MEDIUM,
-                "duration_days": 60,
-                "target_amount": 100000.0,
-                "rules": [
-                    ChallengeRule(
-                        type="min_amount",
-                        value=1500.0,
-                        description="Minimum napi 1,500 HUF befektetés"
-                    )
-                ],
-                "rewards": ChallengeReward(
-                    points=200,
-                    badges=["investor_starter", "future_builder"],
-                    title="Kezdő Befektető"
-                ),
-                "tags": ["befektetés", "jövő", "tőke"]
-            },
-            {
-                "title": "Hetente egyszer streak",
-                "description": "Rögzíts legalább egy tranzakciót minden héten 12 héten keresztül. Tartsd karban a pénzügyi tudatosságodat!",
-                "short_description": "Heti rendszerességű rögzítés 12 hétig",
-                "challenge_type": ChallengeType.HABIT_STREAK,
-                "difficulty": ChallengeDifficulty.EASY,
-                "duration_days": 84,  # 12 hét
-                "rules": [
-                    ChallengeRule(
-                        type="weekly_minimum",
-                        value=1.0,
-                        description="Legalább 1 tranzakció hetente"
-                    )
-                ],
-                "rewards": ChallengeReward(
-                    points=60,
-                    badges=["weekly_warrior", "consistency_keeper"],
-                    title="Rendszeres Nyomkövető"
-                ),
-                "tags": ["heti", "szokás", "rendszeresség"]
-            }
-        ]
+        # Lokalizált kihívások betöltése
+        challenges_data = challenge_localization_service.get_all_challenges(lang)
         
         created_count = 0
         skipped_count = 0
         errors = []
         created_challenges = []
         
-        for challenge_data in default_challenges:
+        for challenge_data in challenges_data:
             try:
-                # Ellenőrizzük, hogy már létezik-e
+                # Ellenőrizzük, hogy már létezik-e ilyen kóddal
                 existing = await ChallengeDocument.find_one({
-                    "title": challenge_data["title"]
+                    "challenge_code": challenge_data.get("code")
                 })
                 
                 if existing:
@@ -840,22 +714,20 @@ async def create_default_challenges(
                 
                 # Kihívás létrehozása
                 challenge_doc = ChallengeDocument(
+                    challenge_code=challenge_data.get("code"),  # ÚJ mező
                     title=challenge_data["title"],
                     description=challenge_data["description"],
-                    short_description=challenge_data["short_description"],
-                    challenge_type=challenge_data["challenge_type"],
-                    difficulty=challenge_data["difficulty"],
+                    short_description=challenge_data.get("short_description"),
+                    challenge_type=ChallengeType(challenge_data["challenge_type"]),
+                    difficulty=ChallengeDifficulty(challenge_data["difficulty"]),
                     duration_days=challenge_data["duration_days"],
-                    target_amount=challenge_data["target_amount"],
-                    rules=challenge_data["rules"],
-                    rewards=challenge_data["rewards"],
+                    target_amount=challenge_data.get("target_amount"),
+                    rules=[ChallengeRule(**rule) for rule in challenge_data.get("rules", [])],
+                    rewards=ChallengeReward(**challenge_data.get("rewards", {})),
                     status=ChallengeStatus.ACTIVE,
-                    tags=challenge_data["tags"],
+                    tags=challenge_data.get("tags", []),
                     creator_username=current_user.username,
-                    participant_count=0,
-                    completion_rate=0.0,
-                    created_at=datetime.utcnow(),
-                    updated_at=datetime.utcnow()
+                    # ... többi mező
                 )
                 
                 await challenge_doc.insert()
@@ -863,8 +735,7 @@ async def create_default_challenges(
                 created_challenges.append(str(challenge_doc.id))
                 
             except Exception as e:
-                errors.append(f"Error creating '{challenge_data['title']}': {str(e)}")
-                logger.error(f"Error creating challenge '{challenge_data['title']}': {e}")
+                errors.append(f"Error creating '{challenge_data.get('title', 'unknown')}': {str(e)}")
         
         return BulkChallengeResponse(
             created_count=created_count,
