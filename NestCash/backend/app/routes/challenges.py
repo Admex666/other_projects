@@ -33,102 +33,86 @@ async def list_challenges(
     search: Optional[str] = Query(None),
     only_available: bool = Query(True),
     sort_by: str = Query("newest"),
-    lang: str = Query('hu', description="Nyelv kód (hu, en)")  # ÚJ paraméter
+    lang: str = Query('hu', description="Nyelv kód (hu, en)")
 ):
-    """Kihívások listázása szűrési és rendezési lehetőségekkel"""
+    """Kihívások listázása JSON fájlból"""
     try:
-        # Alapszűrő építése
-        query_filter = {}
+        # Kihívások betöltése JSON fájlból
+        all_challenges = challenge_localization_service.get_all_challenges(lang)
         
-        # Csak aktív kihívások
-        if only_available:
-            query_filter["status"] = ChallengeStatus.ACTIVE
+        # Szűrések alkalmazása
+        filtered_challenges = all_challenges.copy()
         
         # Típus szűrés
         if challenge_type:
-            query_filter["challenge_type"] = challenge_type
+            filtered_challenges = [c for c in filtered_challenges if c.get('challenge_type') == challenge_type.value]
         
         # Nehézség szűrés
         if difficulty:
-            query_filter["difficulty"] = difficulty
+            filtered_challenges = [c for c in filtered_challenges if c.get('difficulty') == difficulty.value]
         
         # Keresés
         if search:
-            query_filter["$or"] = [
-                {"title": {"$regex": search, "$options": "i"}},
-                {"description": {"$regex": search, "$options": "i"}},
-                {"short_description": {"$regex": search, "$options": "i"}}
+            search_lower = search.lower()
+            filtered_challenges = [
+                c for c in filtered_challenges 
+                if search_lower in c.get('title', '').lower() or 
+                   search_lower in c.get('description', '').lower() or
+                   search_lower in c.get('short_description', '').lower()
             ]
         
-        # Rendezés
-        if sort_by == "popular":
-            sort_criteria = [("participant_count", -1), ("created_at", -1)]
-        elif sort_by == "difficulty":
-            # Nehézség szerinti rendezés: easy, medium, hard, expert
+        # Rendezés (egyszerű implementáció)
+        if sort_by == "difficulty":
             difficulty_order = {"easy": 1, "medium": 2, "hard": 3, "expert": 4}
-            sort_criteria = [("difficulty", 1), ("created_at", -1)]
-        else:  # newest
-            sort_criteria = [("created_at", -1)]
+            filtered_challenges.sort(key=lambda x: difficulty_order.get(x.get('difficulty', 'easy'), 1))
+        # A "newest" és "popular" rendezés JSON fájlnál nem releváns
         
-        # Lekérdezés végrehajtása
-        total_count = await ChallengeDocument.find(query_filter).count()
-        
-        challenges_query = ChallengeDocument.find(query_filter)
-        for field, direction in sort_criteria:
-            challenges_query = challenges_query.sort([(field, direction)])
-        
-        challenges = await challenges_query.skip(skip).limit(limit).to_list()
+        # Lapozás
+        total_count = len(filtered_challenges)
+        paginated_challenges = filtered_challenges[skip:skip + limit]
         
         # Felhasználó részvételének ellenőrzése
-        challenge_ids = [challenge.id for challenge in challenges]
+        challenge_codes = [c.get('code') for c in paginated_challenges if c.get('code')]
         user_participations = []
-        if challenge_ids:
+        if challenge_codes:
             user_participations = await UserChallengeDocument.find({
                 "user_id": ObjectId(current_user.id),
-                "challenge_id": {"$in": challenge_ids}
+                "challenge_code": {"$in": challenge_codes}  # challenge_id helyett challenge_code
             }).to_list()
         
         participation_map = {
-            str(up.challenge_id): up for up in user_participations
+            up.challenge_code: up for up in user_participations  # challenge_id helyett challenge_code
         }
         
         # Válasz összeállítása
         challenge_reads = []
-        for challenge in challenges:
-            challenge_id_str = str(challenge.id)
-            participation = participation_map.get(challenge_id_str)
-
-            # Lokalizált adatok lekérése
-            localized_data = None
-            if challenge.challenge_code:
-                localized_data = challenge_localization_service.get_challenge_data(
-                    challenge.challenge_code, lang
-                )
+        for challenge_data in paginated_challenges:
+            challenge_code = challenge_data.get('code')
+            participation = participation_map.get(challenge_code)
             
-            # Lokalizált vagy eredeti adatok használata
-            title = localized_data.get('title') if localized_data else challenge.title
-            description = localized_data.get('description') if localized_data else challenge.description
-            short_description = localized_data.get('short_description') if localized_data else challenge.short_description
+            # Rules és Rewards objektumok létrehozása
+            rules = [ChallengeRule(**rule) for rule in challenge_data.get('rules', [])]
+            rewards = ChallengeReward(**challenge_data.get('rewards', {}))
             
             challenge_read = ChallengeRead(
-                id=challenge_id_str,
-                title=title,
-                description=description,
-                short_description=short_description,
-                challenge_type=challenge.challenge_type,
-                difficulty=challenge.difficulty,
-                duration_days=challenge.duration_days,
-                target_amount=challenge.target_amount,
-                rules=challenge.rules,
-                rewards=challenge.rewards,
-                status=challenge.status,
-                created_at=challenge.created_at,
-                updated_at=challenge.updated_at,
-                participant_count=challenge.participant_count,
-                completion_rate=challenge.completion_rate,
-                image_url=challenge.image_url,
-                tags=challenge.tags,
-                creator_username=challenge.creator_username,
+                id=challenge_code,  # A kód lesz az ID
+                title=challenge_data.get('title', ''),
+                description=challenge_data.get('description', ''),
+                short_description=challenge_data.get('short_description'),
+                challenge_type=ChallengeType(challenge_data.get('challenge_type', 'savings')),
+                difficulty=ChallengeDifficulty(challenge_data.get('difficulty', 'easy')),
+                duration_days=challenge_data.get('duration_days', 30),
+                target_amount=challenge_data.get('target_amount'),
+                rules=rules,
+                rewards=rewards,
+                status=ChallengeStatus.ACTIVE,  # JSON-ból mindig aktív
+                created_at=datetime.utcnow(),  # Dummy értékek
+                updated_at=datetime.utcnow(),
+                participant_count=0,  # Ezt számítani kellene a UserChallengeDocument-ekből
+                completion_rate=0.0,
+                image_url=challenge_data.get('image_url'),
+                tags=challenge_data.get('tags', []),
+                creator_username="system",
                 is_participating=participation is not None and participation.status == ParticipationStatus.ACTIVE,
                 my_progress=participation.progress if participation else None,
                 my_status=participation.status if participation else None
@@ -148,47 +132,48 @@ async def list_challenges(
         raise HTTPException(status_code=500, detail="Failed to list challenges")
 
 # === EGY KIHÍVÁS RÉSZLETES ADATAI ===
-@router.get("/{challenge_id}", response_model=ChallengeRead)
+@router.get("/{challenge_code}", response_model=ChallengeRead)
 async def get_challenge(
-    challenge_id: str,
-    current_user: User = Depends(get_current_user)
+    challenge_code: str,
+    current_user: User = Depends(get_current_user),
+    lang: str = Query('hu', description="Nyelv kód")
 ):
-    """Kihívás részletes adatainak lekérése"""
+    """Kihívás részletes adatainak lekérése kód alapján"""
     try:
-        oid = PydanticObjectId(challenge_id)
-    except Exception:
-        raise HTTPException(status_code=400, detail="Invalid challenge ID")
-    
-    try:
-        challenge = await ChallengeDocument.get(oid)
-        if not challenge:
+        # Kihívás keresése JSON fájlban
+        challenge_data = challenge_localization_service.get_challenge_by_code(challenge_code, lang)
+        if not challenge_data:
             raise HTTPException(status_code=404, detail="Challenge not found")
         
         # Felhasználó részvételének ellenőrzése
         participation = await UserChallengeDocument.find_one({
             "user_id": ObjectId(current_user.id),
-            "challenge_id": oid
+            "challenge_code": challenge_code  # challenge_id helyett challenge_code
         })
         
+        # Rules és Rewards objektumok létrehozása
+        rules = [ChallengeRule(**rule) for rule in challenge_data.get('rules', [])]
+        rewards = ChallengeReward(**challenge_data.get('rewards', {}))
+        
         return ChallengeRead(
-            id=str(challenge.id),
-            title=challenge.title,
-            description=challenge.description,
-            short_description=challenge.short_description,
-            challenge_type=challenge.challenge_type,
-            difficulty=challenge.difficulty,
-            duration_days=challenge.duration_days,
-            target_amount=challenge.target_amount,
-            rules=challenge.rules,
-            rewards=challenge.rewards,
-            status=challenge.status,
-            created_at=challenge.created_at,
-            updated_at=challenge.updated_at,
-            participant_count=challenge.participant_count,
-            completion_rate=challenge.completion_rate,
-            image_url=challenge.image_url,
-            tags=challenge.tags,
-            creator_username=challenge.creator_username,
+            id=challenge_code,
+            title=challenge_data.get('title', ''),
+            description=challenge_data.get('description', ''),
+            short_description=challenge_data.get('short_description'),
+            challenge_type=ChallengeType(challenge_data.get('challenge_type', 'savings')),
+            difficulty=ChallengeDifficulty(challenge_data.get('difficulty', 'easy')),
+            duration_days=challenge_data.get('duration_days', 30),
+            target_amount=challenge_data.get('target_amount'),
+            rules=rules,
+            rewards=rewards,
+            status=ChallengeStatus.ACTIVE,
+            created_at=datetime.utcnow(),
+            updated_at=datetime.utcnow(),
+            participant_count=0,  # Ezt kellene számítani
+            completion_rate=0.0,
+            image_url=challenge_data.get('image_url'),
+            tags=challenge_data.get('tags', []),
+            creator_username="system",
             is_participating=participation is not None and participation.status == ParticipationStatus.ACTIVE,
             my_progress=participation.progress if participation else None,
             my_status=participation.status if participation else None
@@ -197,35 +182,27 @@ async def get_challenge(
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error getting challenge {challenge_id}: {e}")
+        logger.error(f"Error getting challenge {challenge_code}: {e}")
         raise HTTPException(status_code=500, detail="Failed to get challenge")
 
 # === KIHÍVÁSHOZ CSATLAKOZÁS ===
-@router.post("/{challenge_id}/join", response_model=UserChallengeRead)
+@router.post("/{challenge_code}/join", response_model=UserChallengeRead)
 async def join_challenge(
-    challenge_id: str,
+    challenge_code: str,
     join_data: UserChallengeJoin,
     current_user: User = Depends(get_current_user)
 ):
     """Csatlakozás egy kihíváshoz"""
     try:
-        oid = PydanticObjectId(challenge_id)
-    except Exception:
-        raise HTTPException(status_code=400, detail="Invalid challenge ID")
-    
-    try:
-        # Kihívás lekérése
-        challenge = await ChallengeDocument.get(oid)
+        # Kihívás keresése JSON fájlban
+        challenge = challenge_localization_service.get_challenge_by_code(challenge_code)
         if not challenge:
             raise HTTPException(status_code=404, detail="Challenge not found")
         
-        if challenge.status != ChallengeStatus.ACTIVE:
-            raise HTTPException(status_code=400, detail="Challenge is not active")
-        
-        # Ellenőrizzük a meglévő részvételt
+        # Meglévő részvétel ellenőrzése
         existing_participation = await UserChallengeDocument.find_one({
             "user_id": ObjectId(current_user.id),
-            "challenge_id": oid
+            "challenge_code": challenge_code
         })
 
         if existing_participation:
@@ -248,7 +225,7 @@ async def join_challenge(
                 await existing_participation.save()
                 
                 # Kihívás statisztikáinak frissítése
-                await ChallengeService.update_challenge_statistics(challenge_id)
+                await ChallengeService.update_challenge_statistics(challenge_code)
                 
                 return UserChallengeRead(
                     id=str(existing_participation.id),
@@ -275,11 +252,11 @@ async def join_challenge(
                 raise HTTPException(status_code=400, detail="Cannot rejoin completed or failed challenge")
         
         # Kezdeti haladás létrehozása
-        target_value = join_data.personal_target or challenge.target_amount or 0.0
+        target_value = join_data.personal_target or challenge.get('target_amount', 0.0)
         initial_progress = ChallengeProgress(
             current_value=0.0,
             target_value=target_value,
-            unit="HUF" if challenge.challenge_type != ChallengeType.HABIT_STREAK else "nap",
+            unit="HUF" if challenge.get('challenge_type') != "habit_streak" else "nap",
             percentage=0.0
         )
 
@@ -287,11 +264,11 @@ async def join_challenge(
         user_challenge = UserChallengeDocument(
             user_id=PydanticObjectId(current_user.id),
             username=current_user.username,
-            challenge_id=oid,
+            challenge_code=challenge_code,  # challenge_id helyett
             personal_target=join_data.personal_target,
             notes=join_data.notes,
             progress=initial_progress,
-            started_at=datetime.utcnow()  # Azonnal beállítjuk a kezdés időpontját
+            started_at=datetime.utcnow()
         )
 
         await user_challenge.insert()
@@ -311,13 +288,13 @@ async def join_challenge(
         user_challenge.progress = updated_progress
         
         # Kihívás statisztikáinak frissítése
-        await ChallengeService.update_challenge_statistics(challenge_id)
+        await ChallengeService.update_challenge_statistics(challenge_code)
         
         return UserChallengeRead(
             id=str(user_challenge.id),
             user_id=str(user_challenge.user_id),
             username=user_challenge.username,
-            challenge_id=str(user_challenge.challenge_id),
+            challenge_id=challenge_code,  # A kód lesz az ID
             status=user_challenge.status,
             joined_at=user_challenge.joined_at,
             started_at=user_challenge.started_at,
@@ -330,15 +307,15 @@ async def join_challenge(
             earned_badges=user_challenge.earned_badges,
             best_streak=user_challenge.best_streak,
             current_streak=user_challenge.current_streak,
-            challenge_title=challenge.title,
-            challenge_type=challenge.challenge_type,
-            challenge_difficulty=challenge.difficulty
+            challenge_title=challenge.get('title', ''),
+            challenge_type=ChallengeType(challenge.get('challenge_type', 'savings')),
+            challenge_difficulty=ChallengeDifficulty(challenge.get('difficulty', 'easy'))
         )
         
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error joining challenge {challenge_id}: {e}")
+        logger.error(f"Error joining challenge {challenge_code}: {e}")
         raise HTTPException(status_code=500, detail="Failed to join challenge")
 
 # === KIHÍVÁS ELHAGYÁSA ===

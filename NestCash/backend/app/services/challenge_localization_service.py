@@ -12,24 +12,19 @@ class ChallengeLocalizationService:
     
     def _load_challenges(self):
         """Kihívások betöltése JSON fájlokból"""
-        base_path = Path(__file__).parent.parent / "seeds" / "challenges"
+        base_path = Path(__file__).parent.parent / "seeds"
         
-        # Alapértelmezett nyelv (magyar)
-        hu_file = base_path / "challenges.json"
-        if hu_file.exists():
-            with open(hu_file, 'r', encoding='utf-8') as f:
-                self._challenges_data['hu'] = json.load(f)['hu']
-        
-        # Angol
-        en_file = base_path / "challenges.json"
-        if en_file.exists():
-            with open(en_file, 'r', encoding='utf-8') as f:
-                self._challenges_data['en'] = json.load(f)['en']
+        # challenges.json fájl betöltése
+        challenges_file = base_path / "challenges.json"
+        if challenges_file.exists():
+            with open(challenges_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                self._challenges_data = data
     
-    def get_challenge_data(self, challenge_code: str, lang: str = 'hu') -> Optional[Dict[str, Any]]:
-        """Egy kihívás lokalizált adatainak lekérése"""
+    def get_challenge_by_code(self, challenge_code: str, lang: str = 'hu') -> Optional[Dict[str, Any]]:
+        """Egy kihívás adatainak lekérése kód alapján"""
         if lang not in self._challenges_data:
-            lang = 'hu'  # Fallback magyar nyelvre
+            lang = 'hu'
         
         challenges = self._challenges_data.get(lang, {}).get('challenges', [])
         for challenge in challenges:
@@ -44,8 +39,14 @@ class ChallengeLocalizationService:
         
         return self._challenges_data.get(lang, {}).get('challenges', [])
     
-    def get_available_languages(self) -> List[str]:
-        """Elérhető nyelvek listája"""
-        return list(self._challenges_data.keys())
+    def get_challenges_by_type(self, challenge_type: str, lang: str = 'hu') -> List[Dict[str, Any]]:
+        """Kihívások szűrése típus szerint"""
+        all_challenges = self.get_all_challenges(lang)
+        return [c for c in all_challenges if c.get('challenge_type') == challenge_type]
+    
+    def get_challenges_by_difficulty(self, difficulty: str, lang: str = 'hu') -> List[Dict[str, Any]]:
+        """Kihívások szűrése nehézség szerint"""
+        all_challenges = self.get_all_challenges(lang)
+        return [c for c in all_challenges if c.get('difficulty') == difficulty]
 
 challenge_localization_service = ChallengeLocalizationService()

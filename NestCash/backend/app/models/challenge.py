@@ -104,7 +104,7 @@ class ChallengeDocument(Document):
 class UserChallengeDocument(Document):
     user_id: PydanticObjectId = Field(..., description="Felhasználó ID")
     username: str = Field(..., description="Felhasználónév")
-    challenge_id: PydanticObjectId = Field(..., description="Kihívás ID")
+    challenge_code: str = Field(..., description="Kihívás kódja JSON fájlból")
     
     # Státuszok
     status: ParticipationStatus = Field(default=ParticipationStatus.ACTIVE)
@@ -135,12 +135,12 @@ class UserChallengeDocument(Document):
         name = "user_challenges"
         indexes = [
             "user_id",
-            "challenge_id",
+            "challenge_code",
             "status",
             "joined_at",
             [("user_id", 1), ("status", 1)],
-            [("challenge_id", 1), ("status", 1)],
-            [("user_id", 1), ("challenge_id", 1)]  # Unique constraint
+            [("challenge_code", 1), ("status", 1)], 
+            [("user_id", 1), ("challenge_code", 1)]  # Unique constraint
         ]
 
 # === PYDANTIC SCHEMAS ===

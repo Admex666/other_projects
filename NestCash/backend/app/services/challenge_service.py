@@ -1,5 +1,5 @@
 # app/services/challenge_service.py
-from typing import List, Dict, Optional, Tuple
+from typing import List, Dict, Optional, Tuple, Any
 from beanie import PydanticObjectId
 from bson import ObjectId
 from datetime import datetime, timedelta
@@ -19,7 +19,7 @@ class ChallengeService:
     @staticmethod
     async def calculate_challenge_progress(
         user_id: str, 
-        challenge: ChallengeDocument,
+        challenge: Dict[str, Any],
         user_challenge: UserChallengeDocument
     ) -> ChallengeProgress:
         """
@@ -36,9 +36,13 @@ class ChallengeService:
                     percentage=0.0
                 )
             
+            challenge_type = challenge.get('challenge_type')
+            duration_days = challenge.get('duration_days', 30)
+            target_amount = challenge.get('target_amount', 0.0)
+
             # Időszak meghatározása
             start_date = user_challenge.started_at or user_challenge.joined_at
-            end_date = start_date + timedelta(days=challenge.duration_days)
+            end_date = start_date + timedelta(days=duration_days)
             
             # Tranzakciók lekérése az időszakra
             query_filter = {
@@ -50,19 +54,19 @@ class ChallengeService:
             }
             
             # Típus alapú szűrés
-            if challenge.challenge_type == ChallengeType.SAVINGS:
+            if challenge_type == ChallengeType.SAVINGS:
                 # Megtakarítások számítása (pozitív összegek a megtakarítási számlán)
                 query_filter.update({
                     "main_account": "megtakaritas",
                     "amount": {"$gt": 0}
                 })
-            elif challenge.challenge_type == ChallengeType.EXPENSE_REDUCTION:
+            elif challenge_type == ChallengeType.EXPENSE_REDUCTION:
                 # Kiadások számítása
                 query_filter["amount"] = {"$lt": 0}
                 # Ha meg van adva kategória, azt is figyelembe vesszük
                 if challenge.track_categories:
                     query_filter["kategoria"] = {"$in": challenge.track_categories}
-            elif challenge.challenge_type == ChallengeType.INVESTMENT:
+            elif challenge_type == ChallengeType.INVESTMENT:
                 # Befektetések számítása
                 query_filter.update({
                     "main_account": "befektetes",
@@ -78,24 +82,24 @@ class ChallengeService:
             # Haladás számítása típus alapján
             current_value = 0.0
             
-            if challenge.challenge_type == ChallengeType.SAVINGS:
+            if challenge_type == ChallengeType.SAVINGS:
                 current_value = sum(abs(t.amount) for t in transactions)
-            elif challenge.challenge_type == ChallengeType.EXPENSE_REDUCTION:
+            elif challenge_type == ChallengeType.EXPENSE_REDUCTION:
                 # Kiadás csökkentésnél az előző időszakhoz viszonyítunk
                 current_value = await ChallengeService._calculate_expense_reduction(
                     user_id, challenge, start_date, transactions
                 )
-            elif challenge.challenge_type == ChallengeType.HABIT_STREAK:
+            elif challenge_type == ChallengeType.HABIT_STREAK:
                 current_value = await ChallengeService._calculate_streak(
                     user_id, challenge, start_date, transactions
                 )
-            elif challenge.challenge_type == ChallengeType.INVESTMENT:
+            elif challenge_type == ChallengeType.INVESTMENT:
                 current_value = sum(abs(t.amount) for t in transactions)
             else:
                 current_value = sum(abs(t.amount) for t in transactions)
             
             # Célérték meghatározása
-            target_value = user_challenge.personal_target or challenge.target_amount or 0.0
+            target_value = user_challenge.personal_target or target_amount or 0.0
             
             # Százalék számítása
             percentage = min((current_value / target_value * 100) if target_value > 0 else 0, 100.0)
@@ -103,7 +107,7 @@ class ChallengeService:
             return ChallengeProgress(
                 current_value=current_value,
                 target_value=target_value,
-                unit="HUF" if challenge.challenge_type != ChallengeType.HABIT_STREAK else "nap",
+                unit="HUF" if challenge_type != ChallengeType.HABIT_STREAK else "nap",
                 percentage=percentage
             )
             
@@ -111,7 +115,7 @@ class ChallengeService:
             logger.error(f"Error calculating challenge progress: {e}")
             return ChallengeProgress(
                 current_value=0.0,
-                target_value=user_challenge.personal_target or challenge.target_amount or 0.0,
+                target_value=user_challenge.personal_target or target_amount or 0.0,
                 unit="HUF",
                 percentage=0.0
             )
