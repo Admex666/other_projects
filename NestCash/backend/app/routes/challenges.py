@@ -77,11 +77,11 @@ async def list_challenges(
         if challenge_codes:
             user_participations = await UserChallengeDocument.find({
                 "user_id": ObjectId(current_user.id),
-                "challenge_code": {"$in": challenge_codes}  # challenge_id helyett challenge_code
+                "challenge_code": {"$in": challenge_codes}
             }).to_list()
         
         participation_map = {
-            up.challenge_code: up for up in user_participations  # challenge_id helyett challenge_code
+            up.challenge_code: up for up in user_participations
         }
         
         # Válasz összeállítása
@@ -148,7 +148,7 @@ async def get_challenge(
         # Felhasználó részvételének ellenőrzése
         participation = await UserChallengeDocument.find_one({
             "user_id": ObjectId(current_user.id),
-            "challenge_code": challenge_code  # challenge_id helyett challenge_code
+            "challenge_code": challenge_code
         })
         
         # Rules és Rewards objektumok létrehozása
@@ -231,7 +231,7 @@ async def join_challenge(
                     id=str(existing_participation.id),
                     user_id=str(existing_participation.user_id),
                     username=existing_participation.username,
-                    challenge_id=str(existing_participation.challenge_id),
+                    challenge_code=str(existing_participation.challenge_code),
                     status=existing_participation.status,
                     joined_at=existing_participation.joined_at,
                     started_at=existing_participation.started_at,
@@ -264,7 +264,7 @@ async def join_challenge(
         user_challenge = UserChallengeDocument(
             user_id=PydanticObjectId(current_user.id),
             username=current_user.username,
-            challenge_code=challenge_code,  # challenge_id helyett
+            challenge_code=challenge_code,
             personal_target=join_data.personal_target,
             notes=join_data.notes,
             progress=initial_progress,
@@ -294,7 +294,7 @@ async def join_challenge(
             id=str(user_challenge.id),
             user_id=str(user_challenge.user_id),
             username=user_challenge.username,
-            challenge_id=challenge_code,  # A kód lesz az ID
+            challenge_code=challenge_code,
             status=user_challenge.status,
             joined_at=user_challenge.joined_at,
             started_at=user_challenge.started_at,
@@ -319,14 +319,14 @@ async def join_challenge(
         raise HTTPException(status_code=500, detail="Failed to join challenge")
 
 # === KIHÍVÁS ELHAGYÁSA ===
-@router.delete("/{challenge_id}/leave", status_code=204)
+@router.delete("/{challenge_code}/leave", status_code=204)
 async def leave_challenge(
-    challenge_id: str,
+    challenge_code: str,
     current_user: User = Depends(get_current_user)
 ):
     """Kihívás elhagyása"""
     try:
-        oid = PydanticObjectId(challenge_id)
+        oid = PydanticObjectId(challenge_code)
     except Exception:
         raise HTTPException(status_code=400, detail="Invalid challenge ID")
     
@@ -334,7 +334,7 @@ async def leave_challenge(
         # Részvétel keresése
         participation = await UserChallengeDocument.find_one({
             "user_id": ObjectId(current_user.id),
-            "challenge_id": oid
+            "challenge_code": oid
         })
         
         if not participation:
@@ -346,14 +346,14 @@ async def leave_challenge(
         await participation.save()
         
         # Kihívás statisztikáinak frissítése
-        await ChallengeService.update_challenge_statistics(challenge_id)
+        await ChallengeService.update_challenge_statistics(challenge_code)
         
         return {"message": "Successfully left the challenge"}
         
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error leaving challenge {challenge_id}: {e}")
+        logger.error(f"Error leaving challenge {challenge_code}: {e}")
         raise HTTPException(status_code=500, detail="Failed to leave challenge")
 
 # === SAJÁT KIHÍVÁSOK LISTÁJA ===
@@ -383,7 +383,7 @@ async def list_my_challenges(
             .to_list()
         
         # Kihívás adatok lekérése
-        challenge_ids = [uc.challenge_id for uc in user_challenges]
+        challenge_ids = [uc.challenge_code for uc in user_challenges]
         challenges = []
         if challenge_ids:
             challenges = await ChallengeDocument.find({
@@ -396,13 +396,13 @@ async def list_my_challenges(
         if challenge_type:
             user_challenges = [
                 uc for uc in user_challenges 
-                if challenge_map.get(str(uc.challenge_id), {}).challenge_type == challenge_type
+                if challenge_map.get(str(uc.challenge_code), {}).challenge_type == challenge_type
             ]
         
         # Válasz összeállítása
         user_challenge_reads = []
         for uc in user_challenges:
-            challenge = challenge_map.get(str(uc.challenge_id))
+            challenge = challenge_map.get(str(uc.challenge_code))
             if not challenge:
                 continue
             
@@ -421,7 +421,7 @@ async def list_my_challenges(
                 id=str(uc.id),
                 user_id=str(uc.user_id),
                 username=uc.username,
-                challenge_id=str(uc.challenge_id),
+                challenge_code=str(uc.challenge_code),
                 status=uc.status,
                 joined_at=uc.joined_at,
                 started_at=uc.started_at,
@@ -468,11 +468,11 @@ async def get_recommended_challenges(
         if challenge_ids:
             user_participations = await UserChallengeDocument.find({
                 "user_id": ObjectId(current_user.id),
-                "challenge_id": {"$in": challenge_ids}
+                "challenge_code": {"$in": challenge_ids}
             }).to_list()
         
         participation_map = {
-            str(up.challenge_id): up for up in user_participations
+            str(up.challenge_code): up for up in user_participations
         }
         
         # Válasz összeállítása
@@ -517,14 +517,14 @@ async def get_recommended_challenges(
         raise HTTPException(status_code=500, detail="Failed to get recommended challenges")
 
 # === KIHÍVÁS HALADÁS FRISSÍTÉSE ===
-@router.post("/{challenge_id}/update-progress")
+@router.post("/{challenge_code}/update-progress")
 async def update_challenge_progress(
-    challenge_id: str,
+    challenge_code: str,
     current_user: User = Depends(get_current_user)
 ):
     """Kihívás haladásának manuális frissítése"""
     try:
-        oid = PydanticObjectId(challenge_id)
+        oid = challenge_code
     except Exception:
         raise HTTPException(status_code=400, detail="Invalid challenge ID")
     
@@ -532,7 +532,7 @@ async def update_challenge_progress(
         # Részvétel keresése
         participation = await UserChallengeDocument.find_one({
             "user_id": ObjectId(current_user.id),
-            "challenge_id": oid
+            "challenge_code": oid
         })
         
         if not participation:

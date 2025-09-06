@@ -51,7 +51,9 @@ class _ChallengesMainScreenState extends State<ChallengesMainScreen>
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
     _loadUsername();
-    _loadChallenges();
+    Future.microtask(() {
+      _loadChallenges();
+    });
   }
   
   @override
@@ -77,14 +79,17 @@ class _ChallengesMainScreenState extends State<ChallengesMainScreen>
     });
 
     try {
+      final currentLang = context.locale.languageCode;
+
       final futures = await Future.wait([
         _challengeService.getChallenges(
           challengeType: _selectedType,
           difficulty: _selectedDifficulty,
           search: _searchController.text.isEmpty ? null : _searchController.text,
           sortBy: _sortBy,
+          lang: currentLang,
         ),
-        _challengeService.getRecommendedChallenges(),
+        _challengeService.getRecommendedChallenges(lang: currentLang),
       ]);
 
       // Aktív kihívások számának meghatározása

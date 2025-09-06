@@ -4,11 +4,13 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/models/challenge.dart';
 import 'package:frontend/config/config.dart';
+import 'package:frontend/services/language_service.dart';
 
 class ChallengeService {
   static const _storage = FlutterSecureStorage();
+  final LanguageService _languageService = LanguageService();
 
-  const ChallengeService();
+  ChallengeService();
 
   Future<String?> _getToken() async {
     return await _storage.read(key: 'token');
@@ -23,18 +25,20 @@ class ChallengeService {
     String? search,
     bool onlyAvailable = true,
     String sortBy = 'newest',
-    String lang = 'hu',
+    String? lang,
 }) async {
     try {
       final token = await _getToken();
       if (token == null) throw Exception('Not authenticated');
+
+      final currentLang = lang ?? _languageService.currentLanguage;
 
       final queryParams = <String, String>{
         'limit': limit.toString(),
         'skip': skip.toString(),
         'only_available': onlyAvailable.toString(),
         'sort_by': sortBy,
-        'lang': lang,
+        'lang': currentLang,
       };
 
       if (challengeType != null) {
@@ -75,13 +79,15 @@ class ChallengeService {
   }
 
   /// Egy kihívás részletes adatai
-  Future<Challenge> getChallenge(String challengeId) async {
+  Future<Challenge> getChallenge(String challengeId, {String? lang}) async {
     try {
       final token = await _getToken();
       if (token == null) throw Exception('Not authenticated');
 
+      final currentLang = lang ?? _languageService.currentLanguage;
+
       final response = await http.get(
-        Uri.parse('${ApiConfig.baseUrl}/challenges/$challengeId'),
+        Uri.parse('${ApiConfig.baseUrl}/challenges/$challengeId').replace(queryParameters: {'lang': currentLang}),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -214,13 +220,21 @@ class ChallengeService {
   }
 
   /// Ajánlott kihívások
-  Future<List<Challenge>> getRecommendedChallenges({int limit = 5}) async {
+  Future<List<Challenge>> getRecommendedChallenges({
+    int limit = 5,
+    String? lang,
+  }) async {
     try {
       final token = await _getToken();
       if (token == null) throw Exception('Not authenticated');
 
+      final currentLang = lang ?? _languageService.currentLanguage;
+
       final uri = Uri.parse('${ApiConfig.baseUrl}/challenges/recommendations/for-me').replace(
-        queryParameters: {'limit': limit.toString()},
+        queryParameters: {
+          'limit': limit.toString(),
+          'lang': currentLang,
+          },
       );
 
       final response = await http.get(
