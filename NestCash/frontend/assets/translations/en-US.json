@@ -1818,5 +1818,250 @@
       "like": "LIKE",
       "pass": "PASS"
     },
-    "_ranking": "{type} ranking"
+    "_ranking": "{type} ranking",
+    "ob_welcome": {
+      "title": "Welcome to\nNestCash!",
+      "subtitle": "Your smart financial assistant\nthat helps you reach your goals",
+      "feature1": "Smart budget planning",
+      "feature2": "Community learning and growth",
+      "feature3": "Personalized analytics",
+      "getStartedButton": "Get Started!",
+      "skipButton": "Skip"
+    },
+    "ob_user_intent": {
+      "at_least_one_option": "Please select at least one option!",
+      "type_determined_message": "Awesome! We determined your type: {type}",
+      "unknown_type": "Unknown",
+      "error_occurred": "An error occurred: {error}",
+      "step_1": "Step 1",
+      "goal_assessment": "Goal Assessment",
+      "title": "What do you want to achieve with NestCash?",
+      "description": "Select all options that interest you. We'll personalize the features based on this.",
+      "continue_button": "Continue",
+      "selected_options_count": "{count} option(s) selected"
+    },
+    "ob_referral": {
+      "title": "How did you hear about us?",
+      "step_number": "Step {step}",
+      "step_count": "{current}/{total}",
+      "intro_title": "Help us understand!",
+      "intro_description": "Where did you hear about NestCash? This helps us better understand how people find us.",
+      "option_not_selected": "Please select an option!",
+      "error_occurred": "An error occurred: {error}",
+      "continue_button": "Continue",
+      "skip_button": "Skip",
+      "other_details_hint": "Please describe in more detail...",
+      "referral_friend_family_title": "Friend or family",
+      "referral_friend_family_description": "A NestCash user recommended the app to you.",
+      "referral_social_media_title": "Social Media",
+      "referral_social_media_description": "Facebook, Instagram, LinkedIn, YouTube, etc.",
+      "referral_search_engine_title": "Search Engine",
+      "referral_search_engine_description": "Google, Bing, etc.",
+      "referral_advertisement_title": "Online Advertisement",
+      "referral_advertisement_description": "Banner ads, pop-ups, etc.",
+      "referral_blog_article_title": "Blog Article",
+      "referral_blog_article_description": "In a blog article, news, etc.",
+      "referral_podcast_title": "Podcast",
+      "referral_podcast_description": "In a podcast, radio, etc.",
+      "referral_app_store_title": "App Store",
+      "referral_app_store_description": "In the app store",
+      "referral_other_title": "Other",
+      "referral_other_description": "Something else not on the list."
+    },
+    "ob_tutorial": {
+      "step_label": "Step {step_number}",
+      "screen_title": "Introduction",
+      "skip_button": "Skip",
+      "dialog_title": "Are you sure you want to skip?",
+      "dialog_content": "This introduction helps you get to know the app. It will also be available later in settings.",
+      "dialog_cancel_button": "Cancel",
+      "dialog_confirm_button": "Skip",
+      "loading_message": "Coming soon!",
+      "next_button": "Next",
+      "go_button": "Let's Go!",
+      "previous_button": "Back",
+      "message_complete": "Introduction complete! Welcome to NestCash!",
+      "message_error": "An error occurred: {error}",
+      "error_user_data": "Failed to load user data",
+      "actions": {
+        "add_transaction": "First transaction",
+        "view_analytics": "View analytics",
+        "set_limit": "Set first limit",
+        "browse_forum": "Browse forum",
+        "choose_challenge": "Choose a challenge",
+        "find_group": "Find first group",
+        "start_lesson": "Start first lesson",
+        "solve_quiz": "Solve first quiz",
+        "explore_forum": "Explore forum",
+        "import_data": "Import data",
+        "create_rule": "Create rule",
+        "advanced_analytics": "Advanced analytics",
+        "view_challenges": "View challenges",
+        "start_pti_calc": "Start PTI calculation",
+        "get_badge": "Get your first badge",
+        "continue_label": "Continue"
+      },
+      "titles": {
+        "end_of_chaos": "End of Financial Chaos",
+        "find_hidden_patterns": "Discover your hidden spending patterns",
+        "never_exceed_plan": "Never exceed your plans",
+        "not_alone": "You are not alone on your journey",
+        "reach_goals_playfully": "Reach your goals playfully",
+        "stronger_together": "You are stronger together",
+        "confident_decisions": "Become confident in your financial decisions",
+        "test_knowledge": "Test and deepen your knowledge",
+        "learn_from_community": "Learn from the community as well",
+        "automate_life": "Automate your financial life",
+        "precise_control": "Precise control in every detail",
+        "deep_insight": "Deep insight into the future",
+        "compete_and_grow": "Compete and grow together",
+        "measure_yourself": "Measure yourself against others",
+        "collect_badges": "Collect rare recognitions"
+      },
+      "descriptions": {
+        "end_of_chaos": "Get a clear view of where your money is going and take back control",
+        "find_hidden_patterns": "You'll discover spending habits you never knew you had",
+        "never_exceed_plan": "Automatic alerts help you stick to your budget",
+        "not_alone": "Join people who are on the same financial journey as you",
+        "reach_goals_playfully": "It's easier to change together - take part in challenges!",
+        "stronger_together": "The power of community helps you transform your financial habits",
+        "confident_decisions": "Learn the tricks of finance clearly and at your own pace",
+        "test_knowledge": "You can check how well you've learned the material with fun quizzes",
+        "learn_from_community": "You'll get the best advice from real people who have been through it",
+        "automate_life": "Save time with smart imports and automatic categorization",
+        "precise_control": "Create the exact system you want with fine-tuned settings",
+        "deep_insight": "You can see how your finances will evolve in the coming months",
+        "compete_and_grow": "Make saving exciting - challenges and competitions await!",
+        "measure_yourself": "See where you stand compared to your peers and get motivated to improve",
+        "collect_badges": "Earn special badges and show what you're capable of"
+      },
+      "features": {
+        "transaction_1": "📊 Always know how much money you have",
+        "transaction_2": "⏰ Log an expense in seconds",
+        "transaction_3": "🎯 See where your money is really going",
+        "analytics_1": "💡 Discover your hidden spending patterns",
+        "analytics_2": "📈 See in advance when you might run out of money",
+        "analytics_3": "🚨 Catch overspending in time",
+        "limit_1": "✅ Never exceed your planned budget",
+        "limit_2": "💪 Automatic alerts help you",
+        "limit_3": "🎉 Be proud of your savings",
+        "community_1": "🤝 You're not alone on your financial journey",
+        "community_2": "💎 Get valuable tips from real people",
+        "community_3": "🏆 Get motivated by others' successes",
+        "challenge_1": "🎯 Reach your savings goals playfully",
+        "challenge_2": "👥 Change is easier together",
+        "challenge_3": "🏅 Get recognition for your achievements",
+        "group_1": "🔥 Get motivated by your teammates' successes",
+        "group_2": "💪 Get support in difficult moments",
+        "group_3": "🎊 Celebrate successes together",
+        "knowledge_1": "🧠 Become more confident in financial decisions",
+        "knowledge_2": "💰 Learn how to increase your savings",
+        "knowledge_3": "📚 Develop at your own pace",
+        "quiz_1": "🎯 Instantly see what you've learned",
+        "quiz_2": "🎮 Playfully deepen your knowledge",
+        "quiz_3": "⭐ Earn points and level up",
+        "forum_1": "🤝 You're not alone on your financial journey",
+        "forum_2": "💎 Get valuable tips from real people",
+        "forum_3": "❓ Feel free to ask any question",
+        "import_1": "⚡ Automatically sync your bank account",
+        "import_2": "🎯 Get an accurate picture of your financial situation",
+        "import_3": "⏱️ Save hours on manual data entry",
+        "settings_1": "🎚️ Personalize every parameter",
+        "settings_2": "🔒 You'll never accidentally overspend",
+        "settings_3": "⚙️ Automate with advanced rules",
+        "insights_1": "🔮 See expected cash flow trends in advance",
+        "insights_2": "📊 Detailed trend analyses are generated",
+        "insights_3": "📋 You can generate professional-level reports",
+        "leaderboard_1": "🎯 Reach your savings goals playfully",
+        "leaderboard_2": "🏃‍♂️ Exciting monthly challenges motivate you",
+        "leaderboard_3": "🏆 You can earn special rewards",
+        "pti_1": "🏁 See where you stand compared to your peers",
+        "pti_2": "📈 Track your monthly progress",
+        "pti_3": "🔥 Get motivated for better results",
+        "badge_1": "🏅 You can earn rare badges",
+        "badge_2": "🎖️ Get recognition for your performance",
+        "badge_3": "⭐ Collect points and trophies"
+      }
+    },
+    "ob_basic_setup": {
+      "step_number": "Step 3",
+      "title": "Basic Settings",
+      "first_account_title": "Add your first account?",
+      "first_account_description": "Choose an account and add your first sub-account with a balance.",
+      "main_account_prompt": "Which main account?",
+      "main_accounts": {
+        "liquid": "Liquid Account",
+        "investment": "Investment Account",
+        "savings": "Savings Account"
+      },
+      "preferred_currency": "Preferred Currency",
+      "currency_hint": "Select currency",
+      "initial_balance_label": "Initial balance (optional)",
+      "initial_balance_info": "Enter your current balance if you want to track it",
+      "sub_account_name_label": "Sub-account name",
+      "sub_account_name_hint": "e.g., Cash, Bank account",
+      "sub_account_name_validation": "Please enter the sub-account name",
+      "info_box_text": "You can modify these settings later in the profile menu.",
+      "save_button": "Save Settings",
+      "skip_button": "Set up later",
+      "settings_saved_success_message": "Settings saved!",
+      "default_settings_saved_success_message": "Default settings saved!",
+      "error_occurred": "An error occurred: {{error}}",
+      "setup_complete_dialog_title": "Setup complete!",
+      "setup_complete_dialog_content": "Account setup successful! Shall we continue to the tutorial?",
+      "continue_button": "Continue",
+      "default_account_creation_failed": "Failed to create default sub-account",
+      "sub_account_creation_failed": "Failed to create sub-account",
+      "default_account_name": "Default Account"
+    },
+    "ob_model": {
+      "user_type": {
+        "aware_spender": {
+          "display_name": "Aware Spender",
+          "description": "You want to better track and control your spending"
+        },
+        "community_driven": {
+          "display_name": "Community-Driven",
+          "description": "The community and growing with others is important to you"
+        },
+        "learner": {
+          "display_name": "Eager Learner",
+          "description": "You're looking for inspiration and learning opportunities"
+        },
+        "advanced": {
+          "display_name": "Advanced",
+          "description": "You want everything and want to dive deep into the features"
+        },
+        "competitive": {
+          "display_name": "Competitive",
+          "description": "You want to see how you stack up against others"
+        }
+      },
+      "user_intent": {
+        "track_spending": {
+          "display_name": "Track Spending",
+          "description": "You want to track in detail what and how much you spend"
+        },
+        "compare_with_others": {
+          "display_name": "Compare with Others",
+          "description": "You're interested in how others manage their finances"
+        },
+        "learn_and_improve": {
+          "display_name": "Learn and Improve",
+          "description": "You want to acquire new financial knowledge"
+        },
+        "community_growth": {
+          "display_name": "Community Growth",
+          "description": "You want to grow and help others in a community"
+        },
+        "advanced_features": {
+          "display_name": "Advanced Features",
+          "description": "You would use complex analytics and features"
+        },
+        "not_sure": {
+          "display_name": "Not Sure",
+          "description": "I'm not exactly sure what I want yet"
+        }
+      }
+    }
   }

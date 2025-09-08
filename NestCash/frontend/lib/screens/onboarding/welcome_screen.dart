@@ -1,6 +1,7 @@
 // lib/screens/onboarding/welcome_screen.dart
 
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart'; // Add this import
 import 'user_intent_screen.dart';
 import '/main.dart';
 import '../../services/analytics_service.dart';
@@ -70,7 +71,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
       await _analyticsService.trackFeatureUsage('onboarding_welcome_screen');
       await _analyticsService.trackSession();
     } catch (e) {
-      print('Analytics tracking error: $e');
+      print('Analytics tracking error: ${e}'.tr());
     }
   }
 
@@ -140,7 +141,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
                           
                           // Welcome Title
                           Text(
-                            'Üdvözlünk a\nNestCash-ben!',
+                            'ob_welcome.title'.tr(),
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 32,
@@ -154,7 +155,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
                           
                           // Subtitle
                           Text(
-                            'Az intelligens pénzügyi asszisztensed,\nami segít elérni a céljaidat',
+                            'ob_welcome.subtitle'.tr(),
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 18,
@@ -178,17 +179,17 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
                         // Features List
                         _buildFeatureItem(
                           icon: Icons.trending_up,
-                          text: 'Intelligens költségvetés tervezés',
+                          text: 'ob_welcome.feature1'.tr(),
                         ),
                         SizedBox(height: 16),
                         _buildFeatureItem(
                           icon: Icons.people_outline,
-                          text: 'Közösségi tanulás és fejlődés',
+                          text: 'ob_welcome.feature2'.tr(),
                         ),
                         SizedBox(height: 16),
                         _buildFeatureItem(
                           icon: Icons.insights,
-                          text: 'Személyre szabott elemzések',
+                          text: 'ob_welcome.feature3'.tr(),
                         ),
                         
                         SizedBox(height: 40),
@@ -212,7 +213,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  'Kezdjük el!',
+                                  'ob_welcome.getStartedButton'.tr(),
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w600,
@@ -245,7 +246,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with TickerProviderStateM
                             );
                           },
                           child: Text(
-                            'Kihagyás',
+                            'ob_welcome.skipButton'.tr(),
                             style: TextStyle(
                               color: Colors.white.withOpacity(0.8),
                               fontSize: 16,

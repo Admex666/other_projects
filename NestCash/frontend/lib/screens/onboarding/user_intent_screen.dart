@@ -7,6 +7,7 @@ import 'basic_setup_screen.dart';
 import 'package:frontend/screens/onboarding/welcome_screen.dart';
 import '../../services/analytics_service.dart';
 import 'package:frontend/screens/onboarding/referral_screen.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class UserIntentScreen extends StatefulWidget {
   const UserIntentScreen({Key? key}) : super(key: key);
@@ -71,7 +72,7 @@ class _UserIntentScreenState extends State<UserIntentScreen> with TickerProvider
     if (_selectedIntents.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Kérjük, válassz legalább egy opciót!'),
+          content: Text('ob_user_intent.at_least_one_option'.tr()),
           backgroundColor: Colors.orange,
         ),
       );
@@ -118,7 +119,7 @@ class _UserIntentScreenState extends State<UserIntentScreen> with TickerProvider
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Szuper! Meghatároztuk a típusodat: ${result['determined_type']?.toString().split('.').last ?? 'Ismeretlen'}'),
+            content: Text('ob_user_intent.type_determined_message'.tr(namedArgs: {'type': result['determined_type']?.toString().split('.').last ?? 'ob_user_intent.unknown_type'.tr()})),
             backgroundColor: Color(0xFF00D4A3),
           ),
         );
@@ -127,7 +128,7 @@ class _UserIntentScreenState extends State<UserIntentScreen> with TickerProvider
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Hiba történt: ${e.toString()}'),
+            content: Text('ob_user_intent.error_occurred'.tr(namedArgs: {'error': e.toString()})),
             backgroundColor: Colors.red,
           ),
         );
@@ -187,14 +188,14 @@ class _UserIntentScreenState extends State<UserIntentScreen> with TickerProvider
                       child: Column(
                         children: [
                           Text(
-                            '1. lépés',
+                            'ob_user_intent.step_1'.tr(),
                             style: TextStyle(
                               color: Colors.black.withOpacity(0.8),
                               fontSize: 14,
                             ),
                           ),
                           Text(
-                            'Célfelmérés',
+                            'ob_user_intent.goal_assessment'.tr(),
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 20,
@@ -249,7 +250,7 @@ class _UserIntentScreenState extends State<UserIntentScreen> with TickerProvider
                           child: Column(
                             children: [
                               Text(
-                                'Mit szeretnél elérni a NestCash-sel?',
+                                'ob_user_intent.title'.tr(),
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 24,
@@ -259,7 +260,7 @@ class _UserIntentScreenState extends State<UserIntentScreen> with TickerProvider
                               ),
                               SizedBox(height: 12),
                               Text(
-                                'Válassz ki minden opciót, ami érdekel. Ez alapján személyre szabjuk a funkciókat.',
+                                'ob_user_intent.description'.tr(),
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 16,
@@ -312,7 +313,7 @@ class _UserIntentScreenState extends State<UserIntentScreen> with TickerProvider
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           children: [
                                             Text(
-                                              'Folytatás',
+                                              'ob_user_intent.continue_button'.tr(),
                                               style: TextStyle(
                                                 fontSize: 18,
                                                 fontWeight: FontWeight.w600,
@@ -328,7 +329,7 @@ class _UserIntentScreenState extends State<UserIntentScreen> with TickerProvider
                               SizedBox(height: 16),
                               
                               Text(
-                                '${_selectedIntents.length} opció kiválasztva',
+                                'ob_user_intent.selected_options_count'.tr(namedArgs: {'count': _selectedIntents.length.toString()}),
                                 style: TextStyle(
                                   color: Colors.grey[600],
                                   fontSize: 14,

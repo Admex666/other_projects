@@ -1,6 +1,7 @@
 // lib/screens/onboarding/tutorial_screen.dart
 
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../models/onboarding_model.dart';
 import '../../services/onboarding_service.dart';
 import '../../services/auth_service.dart';
@@ -31,7 +32,7 @@ class TutorialScreen extends StatefulWidget {
 class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStateMixin {
   final OnboardingService _onboardingService = OnboardingService();
   final AnalyticsService _analyticsService = AnalyticsService();
-  final AuthService _authService = AuthService(); // ÚJ: AuthService instance
+  final AuthService _authService = AuthService();
   final PageController _pageController = PageController();
   
   bool _isLoading = false;
@@ -39,7 +40,6 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
   int _currentPage = 0;
   List<TutorialPageData> _tutorialPages = [];
   
-  // ÚJ: User adatok tárolása
   String? _currentUserId;
   String? _currentUsername;
   
@@ -57,7 +57,7 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
       CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
     );
     
-    _initializeUserDataAndTutorial(); // ÚJ: User adatok + tutorial inicializálása
+    _initializeUserDataAndTutorial();
     _fadeController.forward();
   }
 
@@ -68,10 +68,8 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
     super.dispose();
   }
 
-  // ÚJ: User adatok lekérése és tutorial inicializálása
   Future<void> _initializeUserDataAndTutorial() async {
     try {
-      // Track tutorial screen view
       await _analyticsService.trackOnboardingProgress(
         stepNumber: 3,
         stepType: 'tutorial_started',
@@ -80,15 +78,12 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
         },
       );
 
-      // User adatok lekérése az AuthService-ból
       _currentUserId = await _authService.getUserId();
       _currentUsername = await _authService.getCurrentUsername();
       
-      // Tutorial tartalom inicializálása
       await _initializeTutorialPages();
     } catch (e) {
       print('Error initializing user data: $e');
-      // Ha nincs user adat, fallback-kel folytatjuk
       await _initializeTutorialPages();
     }
   }
@@ -106,7 +101,7 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
               iconData: _getIconForStep(step.title),
               color: _getColorForUserType(widget.userType),
               features: _getFeaturesForStep(step.title),
-              actionText: step.highlightElement ?? 'Tovább',
+              actionText: step.highlightElement ?? 'ob_tutorial.actions.continue_label'.tr(),
             )
           ).toList();
           _isInitialized = true;
@@ -149,17 +144,17 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
   }
 
   IconData _getIconForStep(String title) {
-    if (title.contains('Tranzakció') || title.contains('tranzakció')) return Icons.receipt_long;
-    if (title.contains('Elemzés') || title.contains('elemzés')) return Icons.analytics;
-    if (title.contains('Korlát') || title.contains('korlát')) return Icons.warning_amber;
-    if (title.contains('Közösség') || title.contains('közösség')) return Icons.people;
-    if (title.contains('Kitűzők') || title.contains('kitűző')) return Icons.emoji_events;
-    if (title.contains('Tudás') || title.contains('tudás')) return Icons.school;
-    if (title.contains('Kvíz') || title.contains('kvíz')) return Icons.quiz;
+    if (title.contains('Tranzakció') || title.contains('tranzakció') || title.contains('Transaction')) return Icons.receipt_long;
+    if (title.contains('Elemzés') || title.contains('elemzés') || title.contains('Analytics')) return Icons.analytics;
+    if (title.contains('Korlát') || title.contains('korlát') || title.contains('Limit')) return Icons.warning_amber;
+    if (title.contains('Közösség') || title.contains('közösség') || title.contains('Community')) return Icons.people;
+    if (title.contains('Kitűzők') || title.contains('kitűző') || title.contains('Badges')) return Icons.emoji_events;
+    if (title.contains('Tudás') || title.contains('tudás') || title.contains('Knowledge')) return Icons.school;
+    if (title.contains('Kvíz') || title.contains('kvíz') || title.contains('Quiz')) return Icons.quiz;
     if (title.contains('Import') || title.contains('import')) return Icons.upload_file;
-    if (title.contains('Szabály') || title.contains('szabály')) return Icons.settings;
-    if (title.contains('Ranglista') || title.contains('ranglista')) return Icons.leaderboard;
-    if (title.contains('Kihívások') || title.contains('kihívás')) return Icons.speed;
+    if (title.contains('Szabály') || title.contains('szabály') || title.contains('Rule')) return Icons.settings;
+    if (title.contains('Ranglista') || title.contains('ranglista') || title.contains('Leaderboard')) return Icons.leaderboard;
+    if (title.contains('Kihívások') || title.contains('kihívás') || title.contains('Challenges')) return Icons.speed;
     return Icons.lightbulb;
   }
 
@@ -175,87 +170,90 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
   }
 
   List<String> _getFeaturesForStep(String title) {
-    // Átalakítás funkciókról megoldásokra és előnyökre
-    if (title.contains('Tranzakció')) return [
-      '📊 Mindig tudod, mennyi pénzed van',
-      '⏰ Másodpercek alatt rögzítesz egy kiadást',
-      '🎯 Látod, hová megy a pénzed valójában'
+    if (title.contains('Tranzakció') || title.contains('Transaction')) return [
+      'ob_tutorial.features.transaction_1'.tr(),
+      'ob_tutorial.features.transaction_2'.tr(),
+      'ob_tutorial.features.transaction_3'.tr()
     ];
-    if (title.contains('Elemzés')) return [
-      '💡 Felfedezed a rejtett költési mintáidat',
-      '📈 Előre látod, mikor fogyhat el a pénzed',
-      '🚨 Időben észreveszed a túlköltekezést'
+    if (title.contains('Elemzés') || title.contains('Analytics')) return [
+      'ob_tutorial.features.analytics_1'.tr(),
+      'ob_tutorial.features.analytics_2'.tr(),
+      'ob_tutorial.features.analytics_3'.tr()
     ];
-    if (title.contains('Korlát')) return [
-      '✅ Sosem léped túl a tervezett költségvetést',
-      '💪 Automatikus figyelmeztetések segítenek',
-      '🎉 Büszke lehetsz a megtakarításaidra'
+    if (title.contains('Korlát') || title.contains('Limit')) return [
+      'ob_tutorial.features.limit_1'.tr(),
+      'ob_tutorial.features.limit_2'.tr(),
+      'ob_tutorial.features.limit_3'.tr()
     ];
-    if (title.contains('Közösség')) return [
-      '🤝 Nem vagy egyedül a pénzügyi utadon',
-      '💎 Értékes tippeket kapsz valódi emberektől',
-      '🏆 Motiválódsz mások sikereitől'
+    if (title.contains('Közösség') || title.contains('Community')) return [
+      'ob_tutorial.features.community_1'.tr(),
+      'ob_tutorial.features.community_2'.tr(),
+      'ob_tutorial.features.community_3'.tr()
     ];
-    if (title.contains('Kihívás')) return [
-      '🎯 Játékosan éred el a megtakarítási céljaidat',
-      '👥 Közösen könnyebb a változás',
-      '🏅 Elismerést kapsz az eredményeidért'
+    if (title.contains('Kihívás') || title.contains('Challenge')) return [
+      'ob_tutorial.features.challenge_1'.tr(),
+      'ob_tutorial.features.challenge_2'.tr(),
+      'ob_tutorial.features.challenge_3'.tr()
     ];
-    if (title.contains('Tudás')) return [
-      '🧠 Magabiztosabb leszel pénzügyi döntésekben',
-      '💰 Megtanulod, hogyan növeld a megtakarításaid',
-      '📚 Saját tempódban fejlődhetsz'
+    if (title.contains('Tudás') || title.contains('Knowledge')) return [
+      'ob_tutorial.features.knowledge_1'.tr(),
+      'ob_tutorial.features.knowledge_2'.tr(),
+      'ob_tutorial.features.knowledge_3'.tr()
     ];
-    if (title.contains('Import')) return [
-      '⚡ Automatikusan szinkronizálod a bankszámládat',
-      '🎯 Pontos képet kapsz a pénzügyi helyzetedről',
-      '⏱️ Órákat spórolsz meg a kézi adatbevitellel'
+    if (title.contains('Import') || title.contains('Import')) return [
+      'ob_tutorial.features.import_1'.tr(),
+      'ob_tutorial.features.import_2'.tr(),
+      'ob_tutorial.features.import_3'.tr()
     ];
-    if (title.contains('Ranglista')) return [
-      '🏁 Látod, hol állsz a társaidhoz képest',
-      '🔥 Motiválódsz a jobb eredményekért',
-      '🎖️ Elismerést kapsz a teljesítményedért'
+    if (title.contains('Ranglista') || title.contains('Leaderboard')) return [
+      'ob_tutorial.features.leaderboard_1'.tr(),
+      'ob_tutorial.features.leaderboard_2'.tr(),
+      'ob_tutorial.features.leaderboard_3'.tr()
     ];
-    return ['🚀 Személyre szabott pénzügyi élmény', '📱 Egyszerű és hatékony használat', '💡 Okos megoldások a céljaival'];
+    return [
+      'ob_tutorial.features.transaction_1'.tr(),
+      'ob_tutorial.features.transaction_2'.tr(),
+      'ob_tutorial.features.transaction_3'.tr()
+    ];
   }
 
   List<TutorialPageData> _getAwareSpenderTutorial() {
     return [
       TutorialPageData(
-        title: 'Véget a pénzügyi káosznak',
-        description: 'Lásd tisztán, hová megy a pénzed, és vedd vissza az irányítást',
+        title: 'ob_tutorial.titles.end_of_chaos'.tr(),
+        description: 'ob_tutorial.descriptions.end_of_chaos'.tr(),
         iconData: Icons.receipt_long,
         color: Color(0xFF4CAF50),
         features: [
-          '📊 Mindig tudod, mennyi pénzed van',
-          '⏰ 30 másodperc alatt rögzítesz egy kiadást',
-          '🎯 Látod, hová megy a pénzed valójában',
+          'ob_tutorial.features.transaction_1'.tr(),
+          'ob_tutorial.features.transaction_2'.tr(),
+          'ob_tutorial.features.transaction_3'.tr(),
         ],
-        actionText: 'Első tranzakció hozzáadása',
+        actionText: 'ob_tutorial.actions.add_transaction'.tr(),
       ),
       TutorialPageData(
-        title: 'Felfedezed a rejtett mintáidat',
-        description: 'Olyan kiadási szokásokra jössz rá, amikről eddig nem is tudtál',
+        title: 'ob_tutorial.titles.find_hidden_patterns'.tr(),
+        description: 'ob_tutorial.descriptions.find_hidden_patterns'.tr(),
         iconData: Icons.analytics,
         color: Color(0xFF2196F3),
         features: [
-          '💡 Felfedezed a rejtett költési mintáidat',
-          '📈 Előre látod, mikor fogyhat el a pénzed',
-          '🚨 Időben észreveszed a túlköltekezést',
+          'ob_tutorial.features.analytics_1'.tr(),
+          'ob_tutorial.features.analytics_2'.tr(),
+          'ob_tutorial.features.analytics_3'.tr(),
         ],
-        actionText: 'Elemzések megtekintése',
+        actionText: 'ob_tutorial.actions.view_analytics'.tr(),
       ),
       TutorialPageData(
-        title: 'Sosem léped túl a terveidet',
-        description: 'Automatikus figyelmeztetések segítenek betartani a költségvetésedet',
+        title: 'ob_tutorial.titles.never_exceed_plan'.tr(),
+        description: 'ob_tutorial.descriptions.never_exceed_plan'.tr(),
         iconData: Icons.warning_amber,
         color: Color(0xFFFF9800),
         features: [
-          '✅ Sosem léped túl a tervezett költségvetést',
-          '💪 Automatikus figyelmeztetések segítenek',
-          '🎉 Büszke lehetsz a megtakarításaidra',
+          'ob_tutorial.features.limit_1'.tr(),
+          'ob_tutorial.features.limit_2'.tr(),
+          'ob_tutorial.features.limit_3'.tr(),
         ],
-        actionText: 'Első korlát beállítása',
+        actionText: 'ob_tutorial.actions.set_limit'.tr(),
       ),
     ];
   }
@@ -263,40 +261,40 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
   List<TutorialPageData> _getCommunityDrivenTutorial() {
     return [
       TutorialPageData(
-        title: 'Nem vagy egyedül az utadon',
-        description: 'Csatlakozz olyan emberekhez, akik ugyanazokat a pénzügyi célokat járják',
+        title: 'ob_tutorial.titles.not_alone'.tr(),
+        description: 'ob_tutorial.descriptions.not_alone'.tr(),
         iconData: Icons.people,
         color: Color(0xFF9C27B0),
         features: [
-          '🤝 Nem vagy egyedül a pénzügyi utadon',
-          '💎 Értékes tippeket kapsz valódi emberektől',
-          '🏆 Motiválódsz mások sikereitől',
+          'ob_tutorial.features.community_1'.tr(),
+          'ob_tutorial.features.community_2'.tr(),
+          'ob_tutorial.features.community_3'.tr(),
         ],
-        actionText: 'Fórum böngészése',
+        actionText: 'ob_tutorial.actions.browse_forum'.tr(),
       ),
       TutorialPageData(
-        title: 'Játékosan éred el a céljaidat',
-        description: 'Közösen könnyebb változtatni - vegyél részt kihívásokban!',
+        title: 'ob_tutorial.titles.reach_goals_playfully'.tr(),
+        description: 'ob_tutorial.descriptions.reach_goals_playfully'.tr(),
         iconData: Icons.emoji_events,
         color: Color(0xFFE91E63),
         features: [
-          '🎯 Játékosan éred el a megtakarítási céljaidat',
-          '👥 Közösen könnyebb a változás',
-          '🏅 Elismerést kapsz az eredményeidért',
+          'ob_tutorial.features.challenge_1'.tr(),
+          'ob_tutorial.features.challenge_2'.tr(),
+          'ob_tutorial.features.challenge_3'.tr(),
         ],
-        actionText: 'Kihívás választása',
+        actionText: 'ob_tutorial.actions.choose_challenge'.tr(),
       ),
       TutorialPageData(
-        title: 'Együtt még erősebbek vagytok',
-        description: 'A közösség ereje segít átalakítani a pénzügyi szokásaidat',
+        title: 'ob_tutorial.titles.stronger_together'.tr(),
+        description: 'ob_tutorial.descriptions.stronger_together'.tr(),
         iconData: Icons.trending_up,
         color: Color(0xFF00BCD4),
         features: [
-          '🔥 Motiválódsz a csapattagjaid sikereitől',
-          '💪 Támogatást kapsz nehéz pillanatokban',
-          '🎊 Együtt ünneplitek a sikereket',
+          'ob_tutorial.features.group_1'.tr(),
+          'ob_tutorial.features.group_2'.tr(),
+          'ob_tutorial.features.group_3'.tr(),
         ],
-        actionText: 'Első csoport keresése',
+        actionText: 'ob_tutorial.actions.find_group'.tr(),
       ),
     ];
   }
@@ -304,40 +302,40 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
   List<TutorialPageData> _getLearnerTutorial() {
     return [
       TutorialPageData(
-        title: 'Magabiztos leszel pénzügyi döntésekben',
-        description: 'Érthetően, saját tempódban sajátítsd el a pénzügyek fortélyait',
+        title: 'ob_tutorial.titles.confident_decisions'.tr(),
+        description: 'ob_tutorial.descriptions.confident_decisions'.tr(),
         iconData: Icons.school,
         color: Color(0xFF3F51B5),
         features: [
-          '🧠 Magabiztosabb leszel pénzügyi döntésekben',
-          '💰 Megtanulod, hogyan növeld a megtakarításaid',
-          '📚 Saját tempódban fejlődhetsz',
+          'ob_tutorial.features.knowledge_1'.tr(),
+          'ob_tutorial.features.knowledge_2'.tr(),
+          'ob_tutorial.features.knowledge_3'.tr(),
         ],
-        actionText: 'Első lecke indítása',
+        actionText: 'ob_tutorial.actions.start_lesson'.tr(),
       ),
       TutorialPageData(
-        title: 'Teszteld és mélyítsd tudásod',
-        description: 'Játékos kvízekkel ellenőrizheted, mennyire sajátítottad el az anyagot',
+        title: 'ob_tutorial.titles.test_knowledge'.tr(),
+        description: 'ob_tutorial.descriptions.test_knowledge'.tr(),
         iconData: Icons.quiz,
         color: Color(0xFF673AB7),
         features: [
-          '🎯 Azonnal látod, mit tanultál meg',
-          '🎮 Játékosan mélyíted el a tudásod',
-          '⭐ Pontokat szerzesz és szinteket lépsz',
+          'ob_tutorial.features.quiz_1'.tr(),
+          'ob_tutorial.features.quiz_2'.tr(),
+          'ob_tutorial.features.quiz_3'.tr(),
         ],
-        actionText: 'Első kvíz megoldása',
+        actionText: 'ob_tutorial.actions.solve_quiz'.tr(),
       ),
       TutorialPageData(
-        title: 'Tanulj a közösségtől is',
-        description: 'A legjobb tanácsokat valódi emberektől kapod, akik már átélték',
+        title: 'ob_tutorial.titles.learn_from_community'.tr(),
+        description: 'ob_tutorial.descriptions.learn_from_community'.tr(),
         iconData: Icons.people,
         color: Color(0xFFFF5722),
         features: [
-          '🤝 Nem vagy egyedül a pénzügyi utadon',
-          '💎 Értékes tippeket kapsz valódi emberektől',
-          '❓ Bármilyen kérdést feltehetsz bizalommal',
+          'ob_tutorial.features.forum_1'.tr(),
+          'ob_tutorial.features.forum_2'.tr(),
+          'ob_tutorial.features.forum_3'.tr(),
         ],
-        actionText: 'Fórum felfedezése',
+        actionText: 'ob_tutorial.actions.explore_forum'.tr(),
       ),
     ];
   }
@@ -345,40 +343,40 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
   List<TutorialPageData> _getAdvancedTutorial() {
     return [
       TutorialPageData(
-        title: 'Automatizáld a pénzügyi életed',
-        description: 'Spórolj időt az okos importálással és automata kategorizálással',
+        title: 'ob_tutorial.titles.automate_life'.tr(),
+        description: 'ob_tutorial.descriptions.automate_life'.tr(),
         iconData: Icons.upload_file,
         color: Color(0xFF607D8B),
         features: [
-          '⚡ Automatikusan szinkronizálod a bankszámládat',
-          '🎯 Pontos képet kapsz a pénzügyi helyzetedről',
-          '⏱️ Órákat spórolsz meg a kézi adatbevitellel',
+          'ob_tutorial.features.import_1'.tr(),
+          'ob_tutorial.features.import_2'.tr(),
+          'ob_tutorial.features.import_3'.tr(),
         ],
-        actionText: 'Adatok importálása',
+        actionText: 'ob_tutorial.actions.import_data'.tr(),
       ),
       TutorialPageData(
-        title: 'Precíz kontroll minden részletben',
-        description: 'Finomhangoló beállításokkal pontosan olyan rendszert alakíts ki, amilyet szeretnél',
+        title: 'ob_tutorial.titles.precise_control'.tr(),
+        description: 'ob_tutorial.descriptions.precise_control'.tr(),
         iconData: Icons.settings,
         color: Color(0xFF795548),
         features: [
-          '🎚️ Minden paramétert személyre szabhatsz',
-          '🔒 Soha nem fogsz véletlenül túlköltekezni',
-          '⚙️ Haladó szabályokkal automatizálhatsz',
+          'ob_tutorial.features.settings_1'.tr(),
+          'ob_tutorial.features.settings_2'.tr(),
+          'ob_tutorial.features.settings_3'.tr(),
         ],
-        actionText: 'Első korlát létrehozása',
+        actionText: 'ob_tutorial.actions.create_rule'.tr(),
       ),
       TutorialPageData(
-        title: 'Mély betekintés a jövőbe',
-        description: 'Láthatod előre, hogyan alakulnak a pénzügyeid a következő hónapokban',
+        title: 'ob_tutorial.titles.deep_insight'.tr(),
+        description: 'ob_tutorial.descriptions.deep_insight'.tr(),
         iconData: Icons.insights,
         color: Color(0xFF009688),
         features: [
-          '🔮 Előre látod a várható cashflow alakulást',
-          '📊 Részletes trendanalízisek készülnek',
-          '📋 Profi szintű riportokat generálhatsz',
+          'ob_tutorial.features.insights_1'.tr(),
+          'ob_tutorial.features.insights_2'.tr(),
+          'ob_tutorial.features.insights_3'.tr(),
         ],
-        actionText: 'Haladó elemzések',
+        actionText: 'ob_tutorial.actions.advanced_analytics'.tr(),
       ),
     ];
   }
@@ -386,40 +384,40 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
   List<TutorialPageData> _getCompetitiveTutorial() {
     return [
       TutorialPageData(
-        title: 'Versenyezz és fejlődj közösen',
-        description: 'Tedd izgalmassá a megtakarítást - kihívások és versenyek várnak!',
+        title: 'ob_tutorial.titles.compete_and_grow'.tr(),
+        description: 'ob_tutorial.descriptions.compete_and_grow'.tr(),
         iconData: Icons.leaderboard,
         color: Color(0xFFFF6F00),
         features: [
-          '🎯 Játékosan éred el a megtakarítási céljaidat',
-          '🏃‍♂️ Izgalmas havi kihívások motiválnak',
-          '🏆 Különleges jutalmakat szerezhetsz',
+          'ob_tutorial.features.leaderboard_1'.tr(),
+          'ob_tutorial.features.leaderboard_2'.tr(),
+          'ob_tutorial.features.leaderboard_3'.tr(),
         ],
-        actionText: 'Kihívások megtekintése',
+        actionText: 'ob_tutorial.actions.view_challenges'.tr(),
       ),
       TutorialPageData(
-        title: 'Mérd magad másokhoz',
-        description: 'Látd, hol állsz a kortársaidhoz képest, és motiválódj a fejlődésre',
+        title: 'ob_tutorial.titles.measure_yourself'.tr(),
+        description: 'ob_tutorial.descriptions.measure_yourself'.tr(),
         iconData: Icons.speed,
         color: Color(0xFFE65100),
         features: [
-          '🏁 Látod, hol állsz a kortársaidhoz képest',
-          '📈 Követheted a havi fejlődésedet',
-          '🔥 Motiválódsz a jobb eredményekért',
+          'ob_tutorial.features.pti_1'.tr(),
+          'ob_tutorial.features.pti_2'.tr(),
+          'ob_tutorial.features.pti_3'.tr(),
         ],
-        actionText: 'PTI számítás indítása',
+        actionText: 'ob_tutorial.actions.start_pti_calc'.tr(),
       ),
       TutorialPageData(
-        title: 'Gyűjtsd a ritka elismeréseket',
-        description: 'Szerezz meg különleges kitűzőket és mutasd meg, mire vagy képes',
+        title: 'ob_tutorial.titles.collect_badges'.tr(),
+        description: 'ob_tutorial.descriptions.collect_badges'.tr(),
         iconData: Icons.military_tech,
         color: Color(0xFFBF360C),
         features: [
-          '🏅 Ritka kitűzőket szerezhetsz meg',
-          '🎖️ Elismerést kapsz a teljesítményedért',
-          '⭐ Gyűjthetsz pontokat és trófeákat',
+          'ob_tutorial.features.badge_1'.tr(),
+          'ob_tutorial.features.badge_2'.tr(),
+          'ob_tutorial.features.badge_3'.tr(),
         ],
-        actionText: 'Első kitűző megszerzése',
+        actionText: 'ob_tutorial.actions.get_badge'.tr(),
       ),
     ];
   }
@@ -445,50 +443,27 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
     }
   }
 
-  // MÓDOSÍTOTT: userId átadása az AddIncomesScreen-nek
   void _navigateToFeature(String actionText, String title) {
-    // Track feature exploration
     _analyticsService.trackFeatureUsage('tutorial_feature_explored_${actionText.toLowerCase().replaceAll(' ', '_')}');
 
-    // Képernyő mapping actionText alapján
-    if (actionText.contains('tranzakció hozzáadása') || 
-        actionText.contains('Első tranzakció')) {
+    if (actionText == 'ob_tutorial.actions.add_transaction'.tr()) {
       _navigateToScreenWithUserId(_createAddIncomesScreen, actionText);
-      
-    } else if (actionText.contains('Elemzések megtekintése') || 
-              actionText.contains('elemzések')) {
-      // _navigateToScreenWithUserId(_createAnalysisScreen, actionText);
+    } else if (actionText == 'ob_tutorial.actions.view_analytics'.tr()) {
       _navigateToScreenWithUserId(_createAnalysisScreen, actionText);
-      
-    } else if (actionText.contains('korlát beállítása') || 
-              actionText.contains('Első korlát')) {
-      // _navigateToScreenWithUserId(_createManageLimitsScreen, actionText);
+    } else if (actionText == 'ob_tutorial.actions.set_limit'.tr()) {
       _navigateToScreenWithUserId(_createManageLimitsScreen, actionText);
-      
-    } else if (actionText.contains('Fórum')) {
+    } else if (actionText == 'ob_tutorial.actions.browse_forum'.tr() || actionText == 'ob_tutorial.actions.explore_forum'.tr()) {
       _navigateToScreenWithUserId(_createForumMainScreen, actionText);
-      
-    } else if (actionText.contains('Kihívás')) {
+    } else if (actionText == 'ob_tutorial.actions.choose_challenge'.tr() || actionText == 'ob_tutorial.actions.view_challenges'.tr()) {
       _navigateToScreenWithUserId(_createChallengesMainScreen, actionText);
-      
-    } else if (actionText.contains('lecke indítása') || 
-              actionText.contains('kvíz megoldása') || 
-              actionText.contains('Tanulási preferenciák')) {
+    } else if (actionText == 'ob_tutorial.actions.start_lesson'.tr() || actionText == 'ob_tutorial.actions.solve_quiz'.tr()) {
       _navigateToScreenWithUserId(_createKnowledgeScreen, actionText);
-      
-    } else if (actionText.contains('Adatok importálása') || 
-              actionText.contains('szabály létrehozása') || 
-              actionText.contains('Haladó elemzések')) {
-      // _navigateToScreenWithUserId(_createLearningScreen, actionText);
+    } else if (actionText == 'ob_tutorial.actions.import_data'.tr() || actionText == 'ob_tutorial.actions.create_rule'.tr() || actionText == 'ob_tutorial.actions.advanced_analytics'.tr() || actionText == 'ob_tutorial.actions.find_group'.tr()) {
       _showComingSoonMessage(actionText);
-      
-    } else if (actionText.contains('Ranglisták') || 
-              actionText.contains('PTI számítás')) {
+    } else if (actionText == 'ob_tutorial.actions.start_pti_calc'.tr()) {
       _navigateToScreenWithUserId(_createPTIMainScreen, actionText);
-
-    } else if (actionText.contains('kitűző')) {
+    } else if (actionText == 'ob_tutorial.actions.get_badge'.tr()) {
       _navigateToScreenWithUserId(_createBadgesScreen, actionText);
-      
     } else {
       _showComingSoonMessage(actionText);
     }
@@ -497,13 +472,12 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
   void _showComingSoonMessage(String actionText) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('$actionText - Hamarosan elérhető!'),
+        content: Text('ob_tutorial.loading_message'.tr(namedArgs: {'actionText': actionText})),
         backgroundColor: Color(0xFF00D4A3),
       ),
     );
   }
 
-  // ÚJ: Hibaüzenet megjelenítése
   void _showErrorMessage(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -529,7 +503,6 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
 
       await _onboardingService.completeOnboarding();
 
-      // Track final completion
       await _analyticsService.trackMultipleFeatures([
         'onboarding_fully_completed',
         'time_to_value_achieved',
@@ -537,7 +510,6 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
       ]);
       
       if (mounted) {
-        // MÓDOSÍTOTT: Lekért felhasználói adatok használata
         final username = _currentUsername ?? 'User';
         final userId = _currentUserId ?? 'user_id';
         
@@ -553,7 +525,7 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Bevezetés befejezve! Üdvözlünk a NestCash-ben!'),
+            content: Text('ob_tutorial.message_complete'.tr()),
             backgroundColor: Color(0xFF00D4A3),
           ),
         );
@@ -562,7 +534,7 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Hiba történt: ${e.toString()}'),
+            content: Text('ob_tutorial.message_error'.tr(namedArgs: {'error': e.toString()})),
             backgroundColor: Colors.red,
           ),
         );
@@ -587,39 +559,35 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Biztos kihagyod?'),
-        content: Text('A bevezetés segít megismerni az alkalmazást. Később is elérhető lesz a beállításokban.'),
+        title: Text('ob_tutorial.dialog_title'.tr()),
+        content: Text('ob_tutorial.dialog_content'.tr()),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('Mégse'),
+            child: Text('ob_tutorial.dialog_cancel_button'.tr()),
           ),
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
               _completeTutorial();
             },
-            child: Text('Kihagyom'),
+            child: Text('ob_tutorial.dialog_confirm_button'.tr()),
           ),
         ],
       ),
     );
   }
 
-  // Általános navigációs függvény userId-val
   Future<void> _navigateToScreenWithUserId(Widget Function(String userId) screenBuilder, String actionText) async {
-    // Ha nincs userId, próbáljuk újra lekérni
     if (_currentUserId == null) {
       _currentUserId = await _authService.getUserId();
     }
     
-    // Ha még mindig nincs, hibaüzenet
     if (_currentUserId == null) {
-      _showErrorMessage('Nem sikerült betölteni a felhasználói adatokat');
+      _showErrorMessage('ob_tutorial.error_user_data'.tr());
       return;
     }
     
-    // Navigálás a képernyőre userId-val
     final targetScreen = screenBuilder(_currentUserId!);
     Navigator.push(
       context,
@@ -627,12 +595,11 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
     );
   }
 
-  // Screen factory függvények
   Widget _createAddIncomesScreen(String userId) => AddIncomesScreen(userId: userId);
   Widget _createForumMainScreen(String userId) => ForumMainScreen(userId: userId);
   Widget _createAnalysisScreen(String userId) => AnalysisScreen(
     userId: userId, 
-    fromTutorial: true, // ÚJ paraméter
+    fromTutorial: true,
   );
   Widget _createManageLimitsScreen(String userId) => ManageLimitsScreen(userId: userId);
   Widget _createChallengesMainScreen(String userId) => ChallengesMainScreen(userId: userId);
@@ -681,7 +648,6 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
         child: SafeArea(
           child: Column(
             children: [
-              // Header
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                 child: Row(
@@ -697,14 +663,14 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
                       child: Column(
                         children: [
                           Text(
-                            '4. lépés',
+                            'ob_tutorial.step_label'.tr(namedArgs: {'step_number': '4'}),
                             style: TextStyle(
                               color: Colors.black.withOpacity(0.8),
                               fontSize: 14,
                             ),
                           ),
                           Text(
-                            'Bemutató',
+                            'ob_tutorial.screen_title'.tr(),
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 18,
@@ -717,7 +683,7 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
                     TextButton(
                       onPressed: _skipTutorial,
                       child: Text(
-                        'Kihagyás',
+                        'ob_tutorial.skip_button'.tr(),
                         style: TextStyle(
                           color: Colors.black.withOpacity(0.8),
                           fontSize: 15,
@@ -727,8 +693,6 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
                   ],
                 ),
               ),
-
-              // Progress Indicator
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
@@ -760,8 +724,6 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
                   ],
                 ),
               ),
-
-              // Content
               Expanded(
                 child: Container(
                   margin: EdgeInsets.only(top: 24),
@@ -789,8 +751,6 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
                   ),
                 ),
               ),
-
-              // Bottom Navigation
               Container(
                 padding: EdgeInsets.all(24),
                 decoration: BoxDecoration(
@@ -810,7 +770,7 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
                             padding: EdgeInsets.symmetric(vertical: 16),
                           ),
                           child: Text(
-                            'Vissza',
+                            'ob_tutorial.previous_button'.tr(),
                             style: TextStyle(
                               fontSize: 16,
                               color: Color(0xFF00D4A3),
@@ -837,8 +797,8 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
                             ? CircularProgressIndicator(color: Colors.white)
                             : Text(
                                 _currentPage < _tutorialPages.length - 1 
-                                    ? 'Következő' 
-                                    : 'Indulás!',
+                                    ? 'ob_tutorial.next_button'.tr() 
+                                    : 'ob_tutorial.go_button'.tr(),
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -862,8 +822,6 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
       child: Column(
         children: [
           SizedBox(height: 20),
-          
-          // Icon
           Container(
             width: 100,
             height: 100,
@@ -877,10 +835,7 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
               color: pageData.color,
             ),
           ),
-          
           SizedBox(height: 32),
-          
-          // Title
           Text(
             pageData.title,
             textAlign: TextAlign.center,
@@ -890,10 +845,7 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
               color: Colors.black87,
             ),
           ),
-          
           SizedBox(height: 16),
-          
-          // Description
           Text(
             pageData.description,
             textAlign: TextAlign.center,
@@ -903,10 +855,7 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
               height: 1.4,
             ),
           ),
-          
           SizedBox(height: 40),
-          
-          // Features
           Container(
             padding: EdgeInsets.all(24),
             decoration: BoxDecoration(
@@ -950,10 +899,7 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
               }).toList(),
             ),
           ),
-          
           SizedBox(height: 32),
-          
-          // Action Button
           Container(
             width: double.infinity,
             child: OutlinedButton(
@@ -986,7 +932,6 @@ class _TutorialScreenState extends State<TutorialScreen> with TickerProviderStat
               ),
             ),
           ),
-          
           SizedBox(height: 40),
         ],
       ),

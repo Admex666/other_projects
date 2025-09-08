@@ -1818,5 +1818,250 @@
       "like": "LIKE",
       "pass": "PASS"
     },
-    "_ranking": "{type} ranglista"
+    "_ranking": "{type} ranglista",
+    "ob_welcome": {
+      "title": "Üdvözlünk a\nNestCash-ben!",
+      "subtitle": "Az intelligens pénzügyi asszisztensed,\nami segít elérni a céljaidat",
+      "feature1": "Intelligens költségvetés tervezés",
+      "feature2": "Közösségi tanulás és fejlődés",
+      "feature3": "Személyre szabott elemzések",
+      "getStartedButton": "Kezdjük el!",
+      "skipButton": "Kihagyás"
+    },
+    "ob_user_intent": {
+      "at_least_one_option": "Kérjük, válassz legalább egy opciót!",
+      "type_determined_message": "Szuper! Meghatároztuk a típusodat: {type}",
+      "unknown_type": "Ismeretlen",
+      "error_occurred": "Hiba történt: {error}",
+      "step_1": "1. lépés",
+      "goal_assessment": "Célfelmérés",
+      "title": "Mit szeretnél elérni a NestCash-sel?",
+      "description": "Válassz ki minden opciót, ami érdekel. Ez alapján személyre szabjuk a funkciókat.",
+      "continue_button": "Folytatás",
+      "selected_options_count": "{count} opció kiválasztva"
+    },
+    "ob_referral": {
+      "title": "Honnan hallottál rólunk?",
+      "step_number": "{step}. lépés",
+      "step_count": "{current}/{total}",
+      "intro_title": "Segíts megértenünk!",
+      "intro_description": "Honnan hallottál a NestCash-ről? Ez segít nekünk jobban megérteni, hogyan találnak meg minket az emberek.",
+      "option_not_selected": "Kérjük, válassz egy opciót!",
+      "error_occurred": "Hiba történt: {error}",
+      "continue_button": "Folytatás",
+      "skip_button": "Kihagyás",
+      "other_details_hint": "Írd le részletesebben...",
+      "referral_friend_family_title": "Ismerős vagy családtag",
+      "referral_friend_family_description": "Egy NestCash felhasználó javasolta neked az alkalmazást.",
+      "referral_social_media_title": "Közösségi média",
+      "referral_social_media_description": "Facebook, Instagram, LinkedIn, YouTube, stb.",
+      "referral_search_engine_title": "Keresőmotor",
+      "referral_search_engine_description": "Google, Bing, stb.",
+      "referral_advertisement_title": "Online hirdetés",
+      "referral_advertisement_description": "Banner hirdetések, pop-upok, stb.",
+      "referral_blog_article_title": "Blog bejegyzés",
+      "referral_blog_article_description": "Blog bejegyzés, hír, stb.",
+      "referral_podcast_title": "Podcast",
+      "referral_podcast_description": "Podcastben, rádió, stb.",
+      "referral_app_store_title": "App Store",
+      "referral_app_store_description": "Az app store-ban",
+      "referral_other_title": "Egyéb",
+      "referral_other_description": "Valami más, ami nem szerepel a listán."
+    },
+    "ob_tutorial": {
+      "step_label": "4. lépés",
+      "screen_title": "Bemutató",
+      "skip_button": "Kihagyás",
+      "dialog_title": "Biztos kihagyod?",
+      "dialog_content": "A bevezetés segít megismerni az alkalmazást. Később is elérhető lesz a beállításokban.",
+      "dialog_cancel_button": "Mégse",
+      "dialog_confirm_button": "Kihagyom",
+      "loading_message": "{actionText} - Hamarosan elérhető!",
+      "next_button": "Következő",
+      "go_button": "Indulás!",
+      "previous_button": "Vissza",
+      "message_complete": "Bevezetés befejezve! Üdvözlünk a NestCash-ben!",
+      "message_error": "Hiba történt: {error}",
+      "error_user_data": "Nem sikerült betölteni a felhasználói adatokat",
+      "actions": {
+        "add_transaction": "Első tranzakció hozzáadása",
+        "view_analytics": "Elemzések megtekintése",
+        "set_limit": "Első korlát beállítása",
+        "browse_forum": "Fórum böngészése",
+        "choose_challenge": "Kihívás választása",
+        "find_group": "Első csoport keresése",
+        "start_lesson": "Első lecke indítása",
+        "solve_quiz": "Első kvíz megoldása",
+        "explore_forum": "Fórum felfedezése",
+        "import_data": "Adatok importálása",
+        "create_rule": "Első szabály létrehozása",
+        "advanced_analytics": "Haladó elemzések",
+        "view_challenges": "Kihívások megtekintése",
+        "start_pti_calc": "PTI számítás indítása",
+        "get_badge": "Első kitűző megszerzése",
+        "continue_label": "Tovább"
+      },
+      "titles": {
+        "end_of_chaos": "Véget a pénzügyi káosznak",
+        "find_hidden_patterns": "Felfedezed a rejtett mintáidat",
+        "never_exceed_plan": "Sosem léped túl a terveidet",
+        "not_alone": "Nem vagy egyedül az utadon",
+        "reach_goals_playfully": "Játékosan éred el a céljaidat",
+        "stronger_together": "Együtt még erősebbek vagytok",
+        "confident_decisions": "Magabiztos leszel pénzügyi döntésekben",
+        "test_knowledge": "Teszteld és mélyítsd tudásod",
+        "learn_from_community": "Tanulj a közösségtől is",
+        "automate_life": "Automatizáld a pénzügyi életed",
+        "precise_control": "Precíz kontroll minden részletben",
+        "deep_insight": "Mély betekintés a jövőbe",
+        "compete_and_grow": "Versenyezz és fejlődj közösen",
+        "measure_yourself": "Mérd magad másokhoz",
+        "collect_badges": "Gyűjtsd a ritka elismeréseket"
+      },
+      "descriptions": {
+        "end_of_chaos": "Lásd tisztán, hová megy a pénzed, és vedd vissza az irányítást",
+        "find_hidden_patterns": "Olyan kiadási szokásokra jössz rá, amikről eddig nem is tudtál",
+        "never_exceed_plan": "Automatikus figyelmeztetések segítenek betartani a költségvetésedet",
+        "not_alone": "Csatlakozz olyan emberekhez, akik ugyanazokat a pénzügyi célokat járják",
+        "reach_goals_playfully": "Közösen könnyebb változtatni - vegyél részt kihívásokban!",
+        "stronger_together": "A közösség ereje segít átalakítani a pénzügyi szokásaidat",
+        "confident_decisions": "Érthetően, saját tempódban sajátítsd el a pénzügyek fortélyait",
+        "test_knowledge": "Játékos kvízekkel ellenőrizheted, mennyire sajátítottad el az anyagot",
+        "learn_from_community": "A legjobb tanácsokat valódi emberektől kapod, akik már átélték",
+        "automate_life": "Spórolj időt az okos importálással és automata kategorizálással",
+        "precise_control": "Finomhangoló beállításokkal pontosan olyan rendszert alakíts ki, amilyet szeretnél",
+        "deep_insight": "Láthatod előre, hogyan alakulnak a pénzügyeid a következő hónapokban",
+        "compete_and_grow": "Tedd izgalmassá a megtakarítást - kihívások és versenyek várnak!",
+        "measure_yourself": "Látd, hol állsz a kortársaidhoz képest, és motiválódj a fejlődésre",
+        "collect_badges": "Szerezz meg különleges kitűzőket és mutasd meg, mire vagy képes"
+      },
+      "features": {
+        "transaction_1": "📊 Mindig tudod, mennyi pénzed van",
+        "transaction_2": "⏰ Másodpercek alatt rögzítesz egy kiadást",
+        "transaction_3": "🎯 Látod, hová megy a pénzed valójában",
+        "analytics_1": "💡 Felfedezed a rejtett költési mintáidat",
+        "analytics_2": "📈 Előre látod, mikor fogyhat el a pénzed",
+        "analytics_3": "🚨 Időben észreveszed a túlköltekezést",
+        "limit_1": "✅ Sosem léped túl a tervezett költségvetést",
+        "limit_2": "💪 Automatikus figyelmeztetések segítenek",
+        "limit_3": "🎉 Büszke lehetsz a megtakarításaidra",
+        "community_1": "🤝 Nem vagy egyedül a pénzügyi utadon",
+        "community_2": "💎 Értékes tippeket kapsz valódi emberektől",
+        "community_3": "🏆 Motiválódsz mások sikereitől",
+        "challenge_1": "🎯 Játékosan éred el a megtakarítási céljaidat",
+        "challenge_2": "👥 Közösen könnyebb a változás",
+        "challenge_3": "🏅 Elismerést kapsz az eredményeidért",
+        "group_1": "🔥 Motiválódsz a csapattagjaid sikereitől",
+        "group_2": "💪 Támogatást kapsz nehéz pillanatokban",
+        "group_3": "🎊 Együtt ünneplitek a sikereket",
+        "knowledge_1": "🧠 Magabiztosabb leszel pénzügyi döntésekben",
+        "knowledge_2": "💰 Megtanulod, hogyan növeld a megtakarításaid",
+        "knowledge_3": "📚 Saját tempódban fejlődhetsz",
+        "quiz_1": "🎯 Azonnal látod, mit tanultál meg",
+        "quiz_2": "🎮 Játékosan mélyíted el a tudásod",
+        "quiz_3": "⭐ Pontokat szerzesz és szinteket lépsz",
+        "forum_1": "🤝 Nem vagy egyedül a pénzügyi utadon",
+        "forum_2": "💎 Értékes tippeket kapsz valódi emberektől",
+        "forum_3": "❓ Bármilyen kérdést feltehetsz bizalommal",
+        "import_1": "⚡ Automatikusan szinkronizálod a bankszámládat",
+        "import_2": "🎯 Pontos képet kapsz a pénzügyi helyzetedről",
+        "import_3": "⏱️ Órákat spórolsz meg a kézi adatbevitellel",
+        "settings_1": "🎚️ Minden paramétert személyre szabhatsz",
+        "settings_2": "🔒 Soha nem fogsz véletlenül túlköltekezni",
+        "settings_3": "⚙️ Haladó szabályokkal automatizálhatsz",
+        "insights_1": "🔮 Előre látod a várható cashflow alakulást",
+        "insights_2": "📊 Részletes trendanalízisek készülnek",
+        "insights_3": "📋 Profi szintű riportokat generálhatsz",
+        "leaderboard_1": "🎯 Játékosan éred el a megtakarítási céljaidat",
+        "leaderboard_2": "🏃‍♂️ Izgalmas havi kihívások motiválnak",
+        "leaderboard_3": "🏆 Különleges jutalmakat szerezhetsz",
+        "pti_1": "🏁 Látod, hol állsz a kortársaidhoz képest",
+        "pti_2": "📈 Követheted a havi fejlődésedet",
+        "pti_3": "🔥 Motiválódsz a jobb eredményekért",
+        "badge_1": "🏅 Ritka kitűzőket szerezhetsz meg",
+        "badge_2": "🎖️ Elismerést kapsz a teljesítményedért",
+        "badge_3": "⭐ Gyűjthetsz pontokat és trófeákat"
+      }
+    },
+    "ob_basic_setup": {
+      "step_number": "3. lépés",
+      "title": "Alapbeállítások",
+      "first_account_title": "Hozzáadod az első számládat?",
+      "first_account_description": "Válassz egy számlát és add hozzá az első alszámládat egyenleggel.",
+      "main_account_prompt": "Melyik főszámlához?",
+      "main_accounts": {
+        "liquid": "Likvid számla",
+        "investment": "Befektetési számla",
+        "savings": "Megtakarítási számla"
+      },
+      "preferred_currency": "Preferált deviza",
+      "currency_hint": "Válassz devizát",
+      "initial_balance_label": "Kezdő egyenleg (opcionális)",
+      "initial_balance_info": "Add meg a jelenlegi egyenleged, ha szeretnéd nyomon követni",
+      "sub_account_name_label": "Alszámla neve",
+      "sub_account_name_hint": "pl. Készpénz, Bankszámla",
+      "sub_account_name_validation": "Kérjük, add meg az alszámla nevét",
+      "info_box_text": "Ezeket a beállításokat később is módosíthatod a profil menüben.",
+      "save_button": "Beállítások mentése",
+      "skip_button": "Beállítom később",
+      "settings_saved_success_message": "Beállítások mentve!",
+      "default_settings_saved_success_message": "Alapértelmezett beállítások mentve!",
+      "error_occurred": "Hiba történt: {{error}}",
+      "setup_complete_dialog_title": "Beállítás kész!",
+      "setup_complete_dialog_content": "Sikeres számla beállítás! Folytassuk a bemutatóval?",
+      "continue_button": "Folytatás",
+      "default_account_creation_failed": "Alapértelmezett alszámla létrehozása sikertelen",
+      "sub_account_creation_failed": "Alszámla létrehozása sikertelen",
+      "default_account_name": "Alapértelmezett számla"
+    },
+    "ob_model": {
+      "user_type": {
+        "aware_spender": {
+          "display_name": "Tudatos költő",
+          "description": "Szeretnéd jobban követni és kontrollálni a kiadásaidat"
+        },
+        "community_driven": {
+          "display_name": "Közösségorientált",
+          "description": "Fontos számodra a közösség és a másokkal való fejlődés"
+        },
+        "learner": {
+          "display_name": "Tanulni vágyó",
+          "description": "Inspirációt és tanulási lehetőségeket keresel"
+        },
+        "advanced": {
+          "display_name": "Haladó",
+          "description": "Mindent akarsz, mélyre szeretnél ásni a funkciókban"
+        },
+        "competitive": {
+          "display_name": "Versengő",
+          "description": "Szeretnéd látni, hogyan állsz másokhoz képest"
+        }
+      },
+      "user_intent": {
+        "track_spending": {
+          "display_name": "Költések nyomon követése",
+          "description": "Szeretnéd részletesen követni, mire és mennyit költesz"
+        },
+        "compare_with_others": {
+          "display_name": "Összehasonlítás másokkal",
+          "description": "Érdekel, hogy mások hogyan gazdálkodnak"
+        },
+        "learn_and_improve": {
+          "display_name": "Tanulás és fejlődés",
+          "description": "Új pénzügyi tudást szeretnél szerezni"
+        },
+        "community_growth": {
+          "display_name": "Közösségben fejlődés",
+          "description": "Közösségben szeretnél fejlődni és segíteni másokat"
+        },
+        "advanced_features": {
+          "display_name": "Haladó funkciók",
+          "description": "Összetett elemzéseket és funkciókat használnál"
+        },
+        "not_sure": {
+          "display_name": "Nem vagyok biztos",
+          "description": "Még nem tudom pontosan, mit szeretnék"
+        }
+      }
+    }
   }

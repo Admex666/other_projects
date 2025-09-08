@@ -3,6 +3,7 @@ import '../../services/auth_service.dart';
 import 'login_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:frontend/screens/onboarding/welcome_screen.dart';
+import 'package:frontend/services/language_service.dart';
 
 /// RegisterScreen – NestCash fiók létrehozása modern (gradient) dizájnnal.
 ///
@@ -45,6 +46,71 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   // --- UI építő helper ---
+  Widget _buildLanguageSelector() {
+    // Biztonságos nyelv lekérés
+    String getCurrentLanguageCode() {
+      try {
+        return context.locale.languageCode;
+      } catch (e) {
+        return 'hu'; // fallback
+      }
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: getCurrentLanguageCode(),
+          icon: const Icon(Icons.expand_more, color: Colors.black87, size: 20),
+          dropdownColor: Colors.white,
+          style: const TextStyle(color: Colors.black87, fontSize: 14),
+          items: const [
+            DropdownMenuItem(value: 'hu', child: Text('🇭🇺 Magyar')),
+            DropdownMenuItem(value: 'en', child: Text('🇬🇧 English')),
+          ],
+          onChanged: (String? newLanguage) {
+            if (newLanguage != null && newLanguage != getCurrentLanguageCode()) {
+              _changeLanguage(newLanguage);
+            }
+          },
+        ),
+      ),
+    );
+  }
+
+  void _changeLanguage(String languageCode) {
+    try {
+      // LanguageService használata a biztonságos nyelvváltáshoz
+      LanguageService().changeLanguage(languageCode);
+      
+      // Force rebuild a current widget-ben
+      if (mounted) {
+        setState(() {});
+      }
+    } catch (e) {
+      debugPrint('Language change error: $e');
+      
+      // Fallback: közvetlen EasyLocalization használat
+      try {
+        final newLocale = languageCode == 'en' 
+          ? const Locale('en', 'US') 
+          : const Locale('hu', 'HU');
+        
+        Future.microtask(() {
+          if (mounted) {
+            context.setLocale(newLocale);
+          }
+        });
+      } catch (fallbackError) {
+        debugPrint('Fallback language change also failed: $fallbackError');
+      }
+    }
+  }
+  
   Widget _buildInputField({
     required String label,
     required TextEditingController controller,
@@ -139,6 +205,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
       body: SafeArea(
         child: Column(
           children: [
+            // Nyelv választó
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Vissza gomb
+                  GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(Icons.arrow_back, color: Colors.black87),
+                    ),
+                  ),
+                  // Nyelv választó
+                  _buildLanguageSelector(),
+                ],
+              ),
+            ),
             // Header
             Container(
               width: double.infinity,

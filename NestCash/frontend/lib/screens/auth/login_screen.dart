@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import '../../services/auth_service.dart';
 import 'register_screen.dart';
 import 'auth_wrapper.dart';
+import 'package:frontend/services/language_service.dart';
 
 /// LoginScreen – NestCash bejelentkezés modern (gradient) dizájnnal.
 ///
@@ -41,7 +42,16 @@ class _LoginScreenState extends State<LoginScreen> {
         child: SafeArea(
           child: Column(
             children: [
-              const SizedBox(height: 40),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    _buildLanguageSelector(),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
               Text(
                 'welcome'.tr(),
                 style: TextStyle(
@@ -192,6 +202,71 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   // ----------------- UI Helper Widgets -----------------
+  Widget _buildLanguageSelector() {
+    // Biztonságos nyelv lekérés
+    String getCurrentLanguageCode() {
+      try {
+        return context.locale.languageCode;
+      } catch (e) {
+        return 'hu'; // fallback
+      }
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: getCurrentLanguageCode(),
+          icon: const Icon(Icons.expand_more, color: Colors.black87, size: 20),
+          dropdownColor: Colors.white,
+          style: const TextStyle(color: Colors.black87, fontSize: 14),
+          items: const [
+            DropdownMenuItem(value: 'hu', child: Text('🇭🇺 Magyar')),
+            DropdownMenuItem(value: 'en', child: Text('🇬🇧 English')),
+          ],
+          onChanged: (String? newLanguage) {
+            if (newLanguage != null && newLanguage != getCurrentLanguageCode()) {
+              _changeLanguage(newLanguage);
+            }
+          },
+        ),
+      ),
+    );
+  }
+
+  void _changeLanguage(String languageCode) {
+    try {
+      // LanguageService használata a biztonságos nyelvváltáshoz
+      LanguageService().changeLanguage(languageCode);
+      
+      // Force rebuild a current widget-ben
+      if (mounted) {
+        setState(() {});
+      }
+    } catch (e) {
+      debugPrint('Language change error: $e');
+      
+      // Fallback: közvetlen EasyLocalization használat
+      try {
+        final newLocale = languageCode == 'en' 
+          ? const Locale('en', 'US') 
+          : const Locale('hu', 'HU');
+        
+        Future.microtask(() {
+          if (mounted) {
+            context.setLocale(newLocale);
+          }
+        });
+      } catch (fallbackError) {
+        debugPrint('Fallback language change also failed: $fallbackError');
+      }
+    }
+  }
+
   Widget _buildInputField({
     required TextEditingController controller,
     required String hintText,

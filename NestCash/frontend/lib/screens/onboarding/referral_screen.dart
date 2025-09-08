@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../models/referral_model.dart';
 import '../../services/analytics_service.dart';
 import 'basic_setup_screen.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ReferralScreen extends StatefulWidget {
   final String userType;
@@ -74,7 +75,7 @@ class _ReferralScreenState extends State<ReferralScreen> with TickerProviderStat
     if (_selectedSource == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Kérjük, válassz egy opciót!'),
+          content: Text('ob_referral.option_not_selected'.tr()),
           backgroundColor: Colors.orange,
         ),
       );
@@ -120,7 +121,7 @@ class _ReferralScreenState extends State<ReferralScreen> with TickerProviderStat
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Hiba történt: ${e.toString()}'),
+            content: Text('ob_referral.error_occurred'.tr(namedArgs: {'error': e.toString()})),
             backgroundColor: Colors.red,
           ),
         );
@@ -163,14 +164,14 @@ class _ReferralScreenState extends State<ReferralScreen> with TickerProviderStat
                       child: Column(
                         children: [
                           Text(
-                            '2. lépés',
+                            'ob_referral.step_number'.tr(namedArgs: {'step': '2'}),
                             style: TextStyle(
                               color: Colors.black.withOpacity(0.8),
                               fontSize: 14,
                             ),
                           ),
                           Text(
-                            'Honnan hallottál rólunk?',
+                            'ob_referral.title'.tr(),
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 20,
@@ -189,7 +190,7 @@ class _ReferralScreenState extends State<ReferralScreen> with TickerProviderStat
                       ),
                       child: Center(
                         child: Text(
-                          '2/4',
+                          'ob_referral.step_count'.tr(namedArgs: {'current': '2', 'total': '4'}),
                           style: TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.bold,
@@ -224,7 +225,7 @@ class _ReferralScreenState extends State<ReferralScreen> with TickerProviderStat
                           child: Column(
                             children: [
                               Text(
-                                'Segíts megértenünk!',
+                                'ob_referral.intro_title'.tr(),
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 24,
@@ -234,7 +235,7 @@ class _ReferralScreenState extends State<ReferralScreen> with TickerProviderStat
                               ),
                               SizedBox(height: 12),
                               Text(
-                                'Honnan hallottál a NestCash-ről? Ez segít nekünk jobban megérteni, hogyan találnak meg minket az emberek.',
+                                'ob_referral.intro_description'.tr(),
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 16,
@@ -271,7 +272,7 @@ class _ReferralScreenState extends State<ReferralScreen> with TickerProviderStat
                                     child: TextField(
                                       controller: _detailsController,
                                       decoration: InputDecoration(
-                                        hintText: 'Írd le részletesebben...',
+                                        hintText: 'ob_referral.other_details_hint'.tr(),
                                         border: InputBorder.none,
                                         contentPadding: EdgeInsets.all(20),
                                       ),
@@ -311,7 +312,7 @@ class _ReferralScreenState extends State<ReferralScreen> with TickerProviderStat
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           children: [
                                             Text(
-                                              'Folytatás',
+                                              'ob_referral.continue_button'.tr(),
                                               style: TextStyle(
                                                 fontSize: 18,
                                                 fontWeight: FontWeight.w600,
@@ -350,7 +351,7 @@ class _ReferralScreenState extends State<ReferralScreen> with TickerProviderStat
                                   );
                                 },
                                 child: Text(
-                                  'Kihagyás',
+                                  'ob_referral.skip_button'.tr(),
                                   style: TextStyle(
                                     color: Colors.grey[600],
                                     fontSize: 16,
@@ -422,7 +423,7 @@ class _ReferralScreenState extends State<ReferralScreen> with TickerProviderStat
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    source.displayName,
+                    'ob_referral.referral_${source.value}_title'.tr(),
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
@@ -431,7 +432,7 @@ class _ReferralScreenState extends State<ReferralScreen> with TickerProviderStat
                   ),
                   SizedBox(height: 4),
                   Text(
-                    source.description,
+                    'ob_referral.referral_${source.value}_description'.tr(),
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey[600],

@@ -1,5 +1,6 @@
 // lib/models/onboarding_model.dart
 import 'package:frontend/models/referral_model.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 enum UserType {
   awareSpender,
@@ -31,34 +32,34 @@ extension UserTypeExtension on UserType {
   String get displayName {
     switch (this) {
       case UserType.awareSpender:
-        return 'Tudatos költő';
+        return 'ob_model.user_type.aware_spender.display_name'.tr();
       case UserType.communityDriven:
-        return 'Közösségorientált';
+        return 'ob_model.user_type.community_driven.display_name'.tr();
       case UserType.learner:
-        return 'Tanulni vágyó';
+        return 'ob_model.user_type.learner.display_name'.tr();
       case UserType.advanced:
-        return 'Haladó';
+        return 'ob_model.user_type.advanced.display_name'.tr();
       case UserType.competitive:
-        return 'Versengő';
+        return 'ob_model.user_type.competitive.display_name'.tr();
       case UserType.defaultType:
-        return 'Tudatos költő';
+        return 'ob_model.user_type.aware_spender.display_name'.tr();
     }
   }
 
   String get description {
     switch (this) {
       case UserType.awareSpender:
-        return 'Szeretnéd jobban követni és kontrollálni a kiadásaidat';
+        return 'ob_model.user_type.aware_spender.description'.tr();
       case UserType.communityDriven:
-        return 'Fontos számodra a közösség és a másokkal való fejlődés';
+        return 'ob_model.user_type.community_driven.description'.tr();
       case UserType.learner:
-        return 'Inspirációt és tanulási lehetőségeket keresel';
+        return 'ob_model.user_type.learner.description'.tr();
       case UserType.advanced:
-        return 'Mindent akarsz, mélyre szeretnél ásni a funkciókban';
+        return 'ob_model.user_type.advanced.description'.tr();
       case UserType.competitive:
-        return 'Szeretnéd látni, hogyan állsz másokhoz képest';
+        return 'ob_model.user_type.competitive.description'.tr();
       case UserType.defaultType:
-        return 'Szeretnéd jobban követni és kontrollálni a kiadásaidat';
+        return 'ob_model.user_type.aware_spender.description'.tr();
     }
   }
 
@@ -110,34 +111,34 @@ extension UserIntentExtension on UserIntent {
   String get displayName {
     switch (this) {
       case UserIntent.trackSpending:
-        return 'Költések nyomon követése';
+        return 'ob_model.user_intent.track_spending.display_name'.tr();
       case UserIntent.compareWithOthers:
-        return 'Összehasonlítás másokkal';
+        return 'ob_model.user_intent.compare_with_others.display_name'.tr();
       case UserIntent.learnAndImprove:
-        return 'Tanulás és fejlődés';
+        return 'ob_model.user_intent.learn_and_improve.display_name'.tr();
       case UserIntent.communityGrowth:
-        return 'Közösségben fejlődés';
+        return 'ob_model.user_intent.community_growth.display_name'.tr();
       case UserIntent.advancedFeatures:
-        return 'Haladó funkciók';
+        return 'ob_model.user_intent.advanced_features.display_name'.tr();
       case UserIntent.notSure:
-        return 'Nem vagyok biztos';
+        return 'ob_model.user_intent.not_sure.display_name'.tr();
     }
   }
 
   String get description {
     switch (this) {
       case UserIntent.trackSpending:
-        return 'Szeretnéd részletesen követni, mire és mennyit költesz';
+        return 'ob_model.user_intent.track_spending.description'.tr();
       case UserIntent.compareWithOthers:
-        return 'Érdekel, hogy mások hogyan gazdálkodnak';
+        return 'ob_model.user_intent.compare_with_others.description'.tr();
       case UserIntent.learnAndImprove:
-        return 'Új pénzügyi tudást szeretnél szerezni';
+        return 'ob_model.user_intent.learn_and_improve.description'.tr();
       case UserIntent.communityGrowth:
-        return 'Közösségben szeretnél fejlődni és segíteni másokat';
+        return 'ob_model.user_intent.community_growth.description'.tr();
       case UserIntent.advancedFeatures:
-        return 'Összetett elemzéseket és funkciókat használnál';
+        return 'ob_model.user_intent.advanced_features.description'.tr();
       case UserIntent.notSure:
-        return 'Még nem tudom pontosan, mit szeretnék';
+        return 'ob_model.user_intent.not_sure.description'.tr();
     }
   }
 

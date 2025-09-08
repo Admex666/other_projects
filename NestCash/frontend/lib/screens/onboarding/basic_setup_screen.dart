@@ -12,6 +12,7 @@ import '../../services/auth_service.dart';
 import '../../services/analytics_service.dart';
 import '../../models/referral_model.dart';
 import '../../config/config.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 
 class BasicSetupScreen extends StatefulWidget {
@@ -19,7 +20,7 @@ class BasicSetupScreen extends StatefulWidget {
   final ReferralSource? referralSource;
   final String? referralDetails;
   const BasicSetupScreen({
-      Key? key, 
+      Key? key,
       required this.userType,
       this.referralSource,
       this.referralDetails,
@@ -54,9 +55,9 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
 
   // ÚJ: Főszámlák
   final Map<String, String> _mainAccounts = {
-    'likvid': 'Likvid számla',
-    'befektetes': 'Befektetési számla',
-    'megtakaritas': 'Megtakarítási számla',
+    'likvid': 'ob_basic_setup.main_accounts.liquid'.tr(),
+    'befektetes': 'ob_basic_setup.main_accounts.investment'.tr(),
+    'megtakaritas': 'ob_basic_setup.main_accounts.savings'.tr(),
   };
 
   final Map<String, String> _currencySymbols = {
@@ -102,20 +103,20 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
   /*
   String _formatCurrency(String value) {
     if (value.isEmpty) return '';
-    
+
     // Remove any non-digit characters except decimal point
     String cleanValue = value.replaceAll(RegExp(r'[^\d.]'), '');
-    
+
     if (cleanValue.isEmpty) return '';
-    
+
     double? amount = double.tryParse(cleanValue);
     if (amount == null) return value;
-    
+
     // Format with thousands separator
     String formatted = amount.toStringAsFixed(0);
     RegExp reg = RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
     formatted = formatted.replaceAllMapped(reg, (Match match) => '${match[1]} ');
-    
+
     return '$formatted ${_currencySymbols[_selectedCurrency]}';
   }
   */
@@ -143,7 +144,7 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
       // Parse balance
       String balanceText = _balanceController.text;
       double initialBalance = 0.0;
-      
+
       if (balanceText.isNotEmpty) {
         String cleanBalance = balanceText.replaceAll(RegExp(r'[^\d.]'), '');
         initialBalance = double.tryParse(cleanBalance) ?? 0.0;
@@ -165,14 +166,14 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
         await _createFirstSubAccount(initialBalance);
         await _analyticsService.trackFeatureUsage('first_sub_account_created');
       }
-      
+
       if (mounted) {
         await _analyticsService.trackFeatureUsage('basic_setup_navigation_to_tutorial');
         _navigateToTutorial();
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Beállítások mentve!'),
+            content: Text('ob_basic_setup.settings_saved_success_message'.tr()),
             backgroundColor: Color(0xFF00D4A3),
           ),
         );
@@ -181,7 +182,7 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Hiba történt: ${e.toString()}'),
+            content: Text('ob_basic_setup.error_occurred'.tr(namedArgs: {'error': e.toString()})),
             backgroundColor: Colors.red,
           ),
         );
@@ -197,7 +198,7 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
   Future<void> _createDefaultSubAccount() async {
     final AuthService authService = AuthService();
     final token = await authService.getToken();
-    
+
     if (token == null) return;
 
     final response = await http.put(
@@ -213,7 +214,7 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
     );
 
     if (response.statusCode != 200) {
-      throw Exception('Alapértelmezett alszámla létrehozása sikertelen');
+      throw Exception('ob_basic_setup.default_account_creation_failed'.tr());
     }
   }
 
@@ -233,20 +234,20 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
       final setupData = BasicSetupData(
         preferredCurrency: _selectedCurrency,
         initialBalance: 0.0, // Alapértelmezett: 0
-        mainAccountName: 'Alapértelmezett számla', // Alapértelmezett név
+        mainAccountName: 'ob_basic_setup.default_account_name'.tr(), // Alapértelmezett név
       );
 
       await _onboardingService.saveBasicSetup(setupData);
 
       // Alapértelmezett alszámla létrehozása ha szükséges
       await _createDefaultSubAccount();
-      
+
       if (mounted) {
         _navigateToTutorial();
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Alapértelmezett beállítások mentve!'),
+            content: Text('ob_basic_setup.default_settings_saved_success_message'.tr()),
             backgroundColor: Color(0xFF00D4A3),
           ),
         );
@@ -255,7 +256,7 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Hiba történt: ${e.toString()}'),
+            content: Text('ob_basic_setup.error_occurred'.tr(namedArgs: {'error': e.toString()})),
             backgroundColor: Colors.red,
           ),
         );
@@ -271,7 +272,7 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
   Future<void> _createFirstSubAccount(double balance) async {
     final AuthService authService = AuthService();
     final token = await authService.getToken();
-    
+
     if (token == null) return;
 
     final subAccountName = _subAccountNameController.text.trim();
@@ -288,7 +289,7 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
     );
 
     if (response.statusCode != 200) {
-      throw Exception('Alszámla létrehozása sikertelen');
+      throw Exception('ob_basic_setup.sub_account_creation_failed'.tr());
     }
   }
 
@@ -297,13 +298,13 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Beállítás kész!'),
-        content: Text('Sikeres számla beállítás! Folytassuk a bemutatóval?'),
+        title: Text('ob_basic_setup.setup_complete_dialog_title'.tr()),
+        content: Text('ob_basic_setup.setup_complete_dialog_content'.tr()),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
-              
+
               final userTypeEnum = UserTypeExtension.fromString(widget.userType); // Konvertálás a statikus metódussal
 
               Navigator.pushReplacement(
@@ -311,7 +312,7 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
                 MaterialPageRoute(builder: (context) => TutorialScreen(userType: userTypeEnum,)),
               );
             },
-            child: Text('Folytatás'),
+            child: Text('ob_basic_setup.continue_button'.tr()),
           ),
         ],
       ),
@@ -366,14 +367,14 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
                       child: Column(
                         children: [
                           Text(
-                            '3. lépés',
+                            'ob_basic_setup.step_number'.tr(),
                             style: TextStyle(
                               color: Colors.black.withOpacity(0.8),
                               fontSize: 14,
                             ),
                           ),
                           Text(
-                            'Alapbeállítások',
+                            'ob_basic_setup.title'.tr(),
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 20,
@@ -426,10 +427,10 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             SizedBox(height: 16),
-                            
+
                             // Title and Description módosítása:
                             Text(
-                              'Hozzáadod az első számládat?',
+                              'ob_basic_setup.first_account_title'.tr(),
                               style: TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
@@ -438,7 +439,7 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
                             ),
                             SizedBox(height: 12),
                             Text(
-                              'Válassz egy számlát és add hozzá az első alszámládat egyenleggel.',
+                              'ob_basic_setup.first_account_description'.tr(),
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Colors.grey[600],
@@ -450,7 +451,7 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
 
                             // ÚJ: Főszámla választás
                             Text(
-                              'Melyik főszámlához?',
+                              'ob_basic_setup.main_account_prompt'.tr(),
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
@@ -500,7 +501,7 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
 
                             // Currency Selection
                             Text(
-                              'Preferált deviza',
+                              'ob_basic_setup.preferred_currency'.tr(),
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
@@ -526,7 +527,7 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
                                 decoration: InputDecoration(
                                   border: InputBorder.none,
                                   contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                                  hintText: 'Válassz devizát',
+                                  hintText: 'ob_basic_setup.currency_hint'.tr(),
                                 ),
                                 items: _currencies.map((currency) {
                                   return DropdownMenuItem(
@@ -559,7 +560,7 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
 
                             // Initial Balance
                             Text(
-                              'Kezdő egyenleg (opcionális)',
+                              'ob_basic_setup.initial_balance_label'.tr(),
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
@@ -604,7 +605,7 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
                             Padding(
                               padding: EdgeInsets.only(left: 16, top: 8),
                               child: Text(
-                                'Add meg a jelenlegi egyenleged, ha szeretnéd nyomon követni',
+                                'ob_basic_setup.initial_balance_info'.tr(),
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: Colors.grey[500],
@@ -616,7 +617,7 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
 
                             // Account Name
                             Text(
-                              'Alszámla neve',
+                              'ob_basic_setup.sub_account_name_label'.tr(),
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
@@ -642,7 +643,7 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
                                 decoration: InputDecoration(
                                   border: InputBorder.none,
                                   contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                                  hintText: 'pl. Készpénz, Bankszámla',
+                                  hintText: 'ob_basic_setup.sub_account_name_hint'.tr(),
                                   hintStyle: TextStyle(color: Colors.grey[400]),
                                   prefixIcon: Icon(
                                     Icons.account_circle_outlined,
@@ -651,7 +652,7 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
                                 ),
                                 validator: (value) {
                                   if (value == null || value.trim().isEmpty) {
-                                    return 'Kérjük, add meg az alszámla nevét';
+                                    return 'ob_basic_setup.sub_account_name_validation'.tr();
                                   }
                                   return null;
                                 },
@@ -680,7 +681,7 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
                                   SizedBox(width: 16),
                                   Expanded(
                                     child: Text(
-                                      'Ezeket a beállításokat később is módosíthatod a profil menüben.',
+                                      'ob_basic_setup.info_box_text'.tr(),
                                       style: TextStyle(
                                         fontSize: 14,
                                         color: Color(0xFF00D4A3),
@@ -714,7 +715,7 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
                                           Text(
-                                            'Beállítások mentése',
+                                            'ob_basic_setup.save_button'.tr(),
                                             style: TextStyle(
                                               fontSize: 18,
                                               fontWeight: FontWeight.w600,
@@ -734,7 +735,7 @@ class _BasicSetupScreenState extends State<BasicSetupScreen> with TickerProvider
                               child: TextButton(
                                 onPressed: _isLoading ? null : _saveWithDefaultsAndContinue, // Módosítva
                                 child: Text(
-                                  'Beállítom később',
+                                  'ob_basic_setup.skip_button'.tr(),
                                   style: TextStyle(
                                     color: Colors.grey[600],
                                     fontSize: 16,
