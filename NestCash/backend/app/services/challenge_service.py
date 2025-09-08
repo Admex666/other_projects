@@ -273,15 +273,16 @@ class ChallengeService:
     @staticmethod
     async def award_completion_rewards(
         user_challenge: UserChallengeDocument, 
-        challenge: ChallengeDocument
+        challenge: Dict[str, Any]
     ):
         """Befejezési jutalmak odaítélése"""
         try:
             # Pontok odaítélése
-            user_challenge.earned_points += challenge.rewards.points
+            rewards = challenge.get('rewards', {})
+            user_challenge.earned_points += rewards.get('points', 0)
             
             # Kitűzők hozzáadása
-            for badge in challenge.rewards.badges:
+            for badge in rewards.get('badges', []):
                 if badge not in user_challenge.earned_badges:
                     user_challenge.earned_badges.append(badge)
             
@@ -291,10 +292,7 @@ class ChallengeService:
             user_challenge.updated_at = datetime.utcnow()
             
             await user_challenge.save()
-            
-            # Kihívás statisztikáinak frissítése
-            await ChallengeService.update_challenge_statistics(str(challenge.id))
-            
+
         except Exception as e:
             logger.error(f"Error awarding completion rewards: {e}")
     
