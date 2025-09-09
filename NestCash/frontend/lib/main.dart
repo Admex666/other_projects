@@ -26,6 +26,8 @@ import 'package:frontend/screens/accountability/accountability_setup_screen.dart
 import 'package:frontend/screens/admin_dashboard_screen.dart';
 import 'package:frontend/services/analytics_service.dart';
 import 'package:frontend/services/language_service.dart';
+import 'package:frontend/screens/add_expenses_screen.dart';
+import 'package:frontend/screens/add_incomes_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -118,8 +120,8 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
-  String _currentUsername = 'User'; // Alapértelmezett érték
-  final AuthService _authService = AuthService(); // AuthService hozzáadása
+  String _currentUsername = 'User';
+  final AuthService _authService = AuthService();
 
   late final List<Widget> _widgetOptions;
 
@@ -128,11 +130,9 @@ class _MainScreenState extends State<MainScreen> {
     super.initState();
     _loadUsername();
     
-    // JAVÍTÁS: Session tracking az app indításakor is
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<SubscriptionProvider>().loadSubscriptionInfo();
       
-      // Session tracking indítása
       try {
         final analyticsService = AnalyticsService();
         analyticsService.trackSession();
@@ -141,11 +141,10 @@ class _MainScreenState extends State<MainScreen> {
       }
     });
     
+    // ÚJ: Egyszerűsített widget opciók (csak 3 screen)
     _widgetOptions = <Widget>[
       DashboardScreen(username: _currentUsername, userId: widget.userId,),
-      AnalysisScreen(userId: widget.userId),
-      const SizedBox.shrink(),
-      const SizedBox.shrink(),
+      const SizedBox.shrink(), // Add transaction placeholder
       ProfileScreen(username: _currentUsername, userId: widget.userId),
     ];
   }
@@ -158,7 +157,7 @@ class _MainScreenState extends State<MainScreen> {
           _currentUsername = username;
           // Widget options újraépítése az új username-mel
           _widgetOptions[0] = DashboardScreen(username: _currentUsername, userId: widget.userId);
-          _widgetOptions[4] = ProfileScreen(username: _currentUsername, userId: widget.userId);
+          _widgetOptions[2] = ProfileScreen(username: _currentUsername, userId: widget.userId);
         });
       }
     } catch (e) {
@@ -167,10 +166,9 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _onItemTapped(int index) {
-    if (index == 2) {
+    if (index == 1) {
+      // Add transaction modal
       _showAddTransactionOptions(context);
-    } else if (index == 3) {
-      _showForumChallengesOptions(context);
     } else {
       setState(() {
         _selectedIndex = index;
@@ -178,370 +176,384 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
-  bool _shouldShowAppBar() {
-    // Ne jelenjen meg AppBar az AnalysisScreen (index 1) és a középső opció (index 2) esetében
-    return _selectedIndex != 1 && _selectedIndex != 2;
-  }
-
-  // Módosítsd a _showAddTransactionOptions metódust a main.dart fájlban
-void _showAddTransactionOptions(BuildContext context) {
-  showModalBottomSheet(
-    context: context,
-    backgroundColor: Colors.transparent,
-    builder: (BuildContext bc) {
-      return Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
+  // ÚJ: Drawer builder metódus
+  Widget _buildDrawer() {
+    return Drawer(
+      child: Column(
+        children: [
+          DrawerHeader(
+            decoration: const BoxDecoration(
+              color: Color(0xFF00D4A3),
+            ),
+            child: SizedBox(
+              width: double.infinity,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const CircleAvatar(
+                    radius: 30,
+                    backgroundColor: Colors.white,
+                    child: Icon(
+                      Icons.person,
+                      size: 30,
+                      color: Color(0xFF00D4A3),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    _currentUsername,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                ],
+              ),
+            ),
           ),
-        ),
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            // Számlák kezelése gomb
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ManageAccountsScreen(userId: widget.userId),
-                    ),
-                  );
-                },
-                icon: const Icon(Icons.account_balance_wallet, color: Colors.white),
-                label: Text(
-                  'accounts'.tr(),
-                  style: TextStyle(fontSize: 18, color: Colors.white),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueAccent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                ),
-              ),
-            ),
-            const SizedBox(height: 15),
-            // Kategóriák kezelése gomb
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ManageCategoriesScreen(userId: widget.userId),
-                    ),
-                  );
-                },
-                icon: const Icon(Icons.category, color: Colors.white),
-                label: Text(
-                  'categories'.tr(),
-                  style: TextStyle(fontSize: 18, color: Colors.white),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.purpleAccent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                ),
-              ),
-            ),
-            const SizedBox(height: 15),
-            // Limitek kezelése gomb
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ManageLimitsScreen(userId: widget.userId),
-                    ),
-                  );
-                },
-                icon: const Icon(Icons.speed, color: Colors.white),
-                label: Text(
-                  'limits'.tr(),
-                  style: TextStyle(fontSize: 18, color: Colors.white),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-    },
-  );
-}
-
-void _showForumChallengesOptions(BuildContext context) {
-  showModalBottomSheet(
-    context: context,
-    backgroundColor: Colors.transparent,
-    builder: (BuildContext bc) {
-      return Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
-        ),
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            // ADMIN DASHBOARD GOMB - ÚJ!
-            if (_currentUsername == 'admin') ...[
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: () {
+          
+          // Drawer menü items
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                // PÉNZÜGYEK SZEKCIÓ
+                _buildSectionHeader('finances'.tr()),
+                _buildDrawerItem(
+                  icon: Icons.bar_chart,
+                  title: 'analyses'.tr(),
+                  color: Colors.blue,
+                  onTap: () {
                     Navigator.pop(context);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => AdminDashboardScreen(),
+                        builder: (context) => AnalysisScreen(userId: widget.userId),
                       ),
                     );
                   },
-                  icon: const Icon(Icons.admin_panel_settings, color: Colors.white),
-                  label: Text(
-                    'admin_dashboard'.tr(),
-                    style: TextStyle(fontSize: 18, color: Colors.white),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red[600],
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 15),
-                  ),
                 ),
-              ),
-              const SizedBox(height: 15),
-            ],
-            // PTI gomb
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PTIMainScreen(
-                        userId: widget.userId,
-                      ),
-                    ),
-                  );
-                },
-                icon: const Icon(Icons.trending_up, color: Colors.white),
-                label: Text(
-                  'pti_full'.tr(),
-                  style: TextStyle(fontSize: 18, color: Colors.white),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF6C63FF),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                ),
-              ),
-            ),
-            const SizedBox(height: 15),
-            // Szokások gomb (ide helyezzük át)
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => HabitsMainScreen(
-                        userId: widget.userId,
-                        username: _currentUsername,
-                      ),
-                    ),
-                  );
-                },
-                icon: const Icon(Icons.psychology, color: Colors.white),
-                label: Text(
-                  'habits_'.tr(),
-                  style: TextStyle(fontSize: 18, color: Colors.white),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.teal,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                ),
-              ),
-            ),
-            const SizedBox(height: 15),
-            // Partner gomb
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () async {
-                  Navigator.pop(context);
-                  
-                  // Ellenőrizzük, hogy van-e már profil
-                  final provider = Provider.of<AccountabilityProvider>(context, listen: false);
-                  await provider.loadProfile();
-                  
-                  if (provider.hasProfile) {
-                    // Van profil -> PartnershipsScreen-re
+                _buildDrawerItem(
+                  icon: Icons.account_balance_wallet,
+                  title: 'accounts'.tr(),
+                  color: Colors.blueAccent,
+                  onTap: () {
+                    Navigator.pop(context);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => PartnershipsScreen(),
+                        builder: (context) => ManageAccountsScreen(userId: widget.userId),
                       ),
                     );
-                  } else {
-                    // Nincs profil -> AccountabilitySetupScreen-re
-                    final result = await Navigator.push(
+                  },
+                ),
+                _buildDrawerItem(
+                  icon: Icons.category,
+                  title: 'categories'.tr(),
+                  color: Colors.purpleAccent,
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => AccountabilitySetupScreen(),
+                        builder: (context) => ManageCategoriesScreen(userId: widget.userId),
                       ),
                     );
+                  },
+                ),
+                _buildDrawerItem(
+                  icon: Icons.speed,
+                  title: 'limits'.tr(),
+                  color: Colors.orange,
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ManageLimitsScreen(userId: widget.userId),
+                      ),
+                    );
+                  },
+                ),
+                
+                const SizedBox(height: 10),
+                
+                // FEJLŐDÉS SZEKCIÓ
+                _buildSectionHeader('development'.tr()),
+                _buildDrawerItem(
+                  icon: Icons.trending_up,
+                  title: 'pti_full'.tr(),
+                  color: const Color(0xFF6C63FF),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PTIMainScreen(userId: widget.userId),
+                      ),
+                    );
+                  },
+                ),
+                _buildDrawerItem(
+                  icon: Icons.psychology,
+                  title: 'habits_'.tr(),
+                  color: Colors.teal,
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => HabitsMainScreen(
+                          userId: widget.userId,
+                          username: _currentUsername,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                _buildDrawerItem(
+                  icon: Icons.school_outlined,
+                  title: 'knowledge_base'.tr(),
+                  color: Colors.deepOrange,
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => KnowledgeScreen(userId: widget.userId),
+                      ),
+                    );
+                  },
+                ),
+                
+                const SizedBox(height: 10),
+                
+                // KÖZÖSSÉG SZEKCIÓ
+                _buildSectionHeader('community'.tr()),
+                _buildDrawerItem(
+                  icon: Icons.people_alt_outlined,
+                  title: 'accountability_partner'.tr(),
+                  color: const Color.fromARGB(255, 212, 60, 0),
+                  onTap: () async {
+                    Navigator.pop(context);
                     
-                    // Ha sikeresen létrehozta a profilt, akkor navigáljunk a PartnershipsScreen-re
-                    if (result == true) {
+                    final provider = Provider.of<AccountabilityProvider>(context, listen: false);
+                    await provider.loadProfile();
+                    
+                    if (provider.hasProfile) {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => PartnershipsScreen(),
                         ),
                       );
+                    } else {
+                      final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AccountabilitySetupScreen(),
+                        ),
+                      );
+                      
+                      if (result == true) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PartnershipsScreen(),
+                          ),
+                        );
+                      }
                     }
-                  }
-                },
-                icon: const Icon(Icons.people_alt_outlined, color: Colors.white),
-                label: Text(
-                  'accountability_partner'.tr(),
-                  style: TextStyle(fontSize: 18, color: Colors.white),
+                  },
                 ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 212, 60, 0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
+                _buildDrawerItem(
+                  icon: Icons.forum,
+                  title: 'forum'.tr(),
+                  color: const Color(0xFF00D4A3),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ForumMainScreen(userId: widget.userId),
+                      ),
+                    );
+                  },
+                ),
+                _buildDrawerItem(
+                  icon: Icons.emoji_events,
+                  title: 'challenges'.tr(),
+                  color: Colors.deepPurple,
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ChallengesMainScreen(
+                          userId: widget.userId,
+                          username: _currentUsername,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                
+                // ADMIN SZEKCIÓ (ha szükséges)
+                if (_currentUsername == 'admin') ...[
+                  const SizedBox(height: 10),
+                  _buildSectionHeader('admin'.tr()),
+                  _buildDrawerItem(
+                    icon: Icons.admin_panel_settings,
+                    title: 'admin_dashboard'.tr(),
+                    color: Colors.red[600]!,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AdminDashboardScreen(),
+                        ),
+                      );
+                    },
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Helper metódusok a drawer-hez
+  Widget _buildSectionHeader(String title) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Text(
+        title.toUpperCase(),
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+          color: Colors.grey[600],
+          letterSpacing: 1.2,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDrawerItem({
+    required IconData icon,
+    required String title,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      child: ListTile(
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(icon, color: color, size: 20),
+        ),
+        title: Text(
+          title,
+          style: const TextStyle(
+            fontWeight: FontWeight.w500,
+            fontSize: 14,
+          ),
+        ),
+        onTap: onTap,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+    );
+  }
+
+  // MÓDOSÍTOTT: _shouldShowAppBar metódus
+  bool _shouldShowAppBar() {
+    return true; // Most minden screen-en megjelenjen az AppBar
+  }
+
+void _showAddTransactionOptions(BuildContext context) {
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: Colors.transparent,
+    builder: (BuildContext bc) {
+      return Container(
+        padding: const EdgeInsets.all(24),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'quick_add'.tr(),
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 15),
-            // Fórum gomb
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ForumMainScreen(
-                        userId: widget.userId,
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AddIncomesScreen(userId: widget.userId),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.add, color: Colors.white),
+                    label: Text('income'.tr(), style: const TextStyle(color: Colors.white)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF00D4A3),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                  );
-                },
-                icon: const Icon(Icons.forum, color: Colors.white),
-                label: Text(
-                  'forum'.tr(),
-                  style: TextStyle(fontSize: 18, color: Colors.white),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF00D4A3),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 15),
                 ),
-              ),
-            ),
-            const SizedBox(height: 15),
-            // Kihívások gomb
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ChallengesMainScreen(
-                        userId: widget.userId,
-                        username: _currentUsername,
+                const SizedBox(width: 16),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AddExpensesScreen(userId: widget.userId),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.remove, color: Colors.white),
+                    label: Text('expense'.tr(), style: const TextStyle(color: Colors.white)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.redAccent,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                  );
-                },
-                icon: const Icon(Icons.emoji_events, color: Colors.white),
-                label: Text(
-                  'challenges'.tr(),
-                  style: TextStyle(fontSize: 18, color: Colors.white),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurple,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 15),
                 ),
-              ),
-            ),
-            const SizedBox(height: 15),
-            // Tudástár gomb
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => KnowledgeScreen(
-                        userId: widget.userId,
-                      ),
-                    ),
-                  );
-                },
-                icon: const Icon(Icons.school_outlined, color: Colors.white),
-                label: Text(
-                  'knowledge_base'.tr(),
-                  style: TextStyle(fontSize: 18, color: Colors.white),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepOrange,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                ),
-              ),
+              ],
             ),
           ],
         ),
@@ -551,27 +563,28 @@ void _showForumChallengesOptions(BuildContext context) {
 }
 
 @override
-Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: _shouldShowAppBar() ? AppBar(
-      backgroundColor: const Color(0xFF00D4A3),
-      elevation: 0,
-      automaticallyImplyLeading: false,
-      title: Text(
-        _getScreenTitle(_selectedIndex),
-        style: const TextStyle(
-          color: Colors.black,
-          fontWeight: FontWeight.bold,
+  Widget build(BuildContext context) {
+    return Scaffold(
+      drawer: _buildDrawer(),
+      appBar: _shouldShowAppBar() ? AppBar(
+        backgroundColor: const Color(0xFF00D4A3),
+        elevation: 0,
+        title: Text(
+          _getScreenTitle(_selectedIndex),
+          style: const TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-      ),
-      actions: [
-        AppBarNotificationBadge(userId: widget.userId),
-      ],
-    ) : null,
-    body: _widgetOptions.elementAt(_selectedIndex),
+        actions: [
+          AppBarNotificationBadge(userId: widget.userId),
+        ],
+      ) : null,
+      body: _widgetOptions.elementAt(_selectedIndex),
+      // MÓDOSÍTOTT: BottomNavigationBar
       bottomNavigationBar: Container(
-        padding: EdgeInsets.symmetric(vertical: 8),
-        decoration: BoxDecoration(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        decoration: const BoxDecoration(
           color: Color(0xFFF0F8F0),
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(20),
@@ -582,10 +595,8 @@ Widget build(BuildContext context) {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             _buildNavItem(Icons.home_outlined, 0),
-            _buildNavItem(Icons.bar_chart_outlined, 1),
-            _buildNavItem(Icons.swap_horiz_outlined, 2),
-            _buildNavItem(Icons.mood_outlined, 3),
-            _buildNavItem(Icons.person_outline, 4),
+            _buildNavItem(Icons.add_circle_outline, 1),
+            _buildNavItem(Icons.person_outline, 2),
           ],
         ),
       ),
@@ -596,12 +607,8 @@ Widget build(BuildContext context) {
 String _getScreenTitle(int index) {
     switch (index) {
       case 0:
-        return 'welcome_back'.tr(namedArgs: {'username':_currentUsername});
-      case 1:
-        return 'analyses'.tr();
-      case 3:
-        return 'forum'.tr();
-      case 4:
+        return 'welcome_back'.tr(namedArgs: {'username': _currentUsername});
+      case 2:
         return 'profile'.tr();
       default:
         return 'NestCash';
@@ -615,12 +622,12 @@ String _getScreenTitle(int index) {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isSelected && index != 2 ? const Color(0xFF00D4A3) : Colors.transparent,
+          color: isSelected && index != 1 ? const Color(0xFF00D4A3) : Colors.transparent,
           shape: BoxShape.circle,
         ),
         child: Icon(
           icon,
-          color: isSelected && index != 2 ? Colors.white : Colors.grey[600],
+          color: isSelected && index != 1 ? Colors.white : Colors.grey[600],
           size: 26,
         ),
       ),
