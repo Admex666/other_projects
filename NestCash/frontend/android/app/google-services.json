@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "647548157271",
+    "project_id": "nestcash-ac916",
+    "storage_bucket": "nestcash-ac916.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:647548157271:android:54b592b08e4d04e59f1212",
+        "android_client_info": {
+          "package_name": "com.example.frontend"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVxdMH22oQyIWkgtBRGUfD4r1IBR4nN0s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
