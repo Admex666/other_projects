@@ -300,15 +300,19 @@ async def export_data(
         json_friendly_data = convert_data(exported_data)
 
         # Itt a FastAPI Response osztályát kell használni, hogy fájlt lehessen küldeni
-        from fastapi.responses import JSONResponse
+        from fastapi.responses import Response
+        import json
         
-        # Javasolt, hogy a dátum is a fájlnév része legyen
         filename = f"user_data_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+        json_content = json.dumps(json_friendly_data, indent=2, ensure_ascii=False)
 
-        return JSONResponse(
-            content=json_friendly_data,
+        return Response(
+            content=json_content,
             media_type="application/json",
-            headers={"Content-Disposition": f"attachment; filename={filename}"}
+            headers={
+                "Content-Disposition": f"attachment; filename={filename}",
+                "Content-Type": "application/json; charset=utf-8"
+            }
         )
         
     except Exception as e:
