@@ -251,6 +251,7 @@ async def delete_account(
         print(f"Error during account deletion: {e}")
         raise HTTPException(status_code=500, detail="Failed to delete account")
     
+# auth.py fájlban
 @router.get("/export-data")
 async def export_data(
     current_user: User = Depends(get_current_user),
@@ -284,21 +285,24 @@ async def export_data(
             "feature_usage_tracking": [doc async for doc in db.feature_usage_tracking.find({"user_id": user_obj_id})],
         }
         
-        # A MongoDB ObjectId objektumok stringgé alakítása
-        def convert_objectids(obj):
+        # A MongoDB ObjectId és a datetime objektumok stringgé alakítása
+        def convert_data(obj):
             if isinstance(obj, ObjectId):
                 return str(obj)
+            if isinstance(obj, datetime):
+                return obj.isoformat()
             if isinstance(obj, dict):
-                return {k: convert_objectids(v) for k, v in obj.items()}
+                return {k: convert_data(v) for k, v in obj.items()}
             if isinstance(obj, list):
-                return [convert_objectids(item) for item in obj]
+                return [convert_data(item) for item in obj]
             return obj
             
-        json_friendly_data = convert_objectids(exported_data)
+        json_friendly_data = convert_data(exported_data)
 
+        # Itt a FastAPI Response osztályát kell használni, hogy fájlt lehessen küldeni
         from fastapi.responses import JSONResponse
-        from datetime import datetime
         
+        # Javasolt, hogy a dátum is a fájlnév része legyen
         filename = f"user_data_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
 
         return JSONResponse(
