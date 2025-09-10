@@ -6,6 +6,8 @@ import 'package:frontend/services/auth_service.dart';
 import 'package:frontend/widgets/badge_summary_widget.dart';
 import 'package:frontend/screens/auth/auth_wrapper.dart';
 import 'package:frontend/screens/subscription/subscription_screen.dart';
+import 'package:file_saver/file_saver.dart';
+import 'package:http/http.dart' as http;
 
 class ProfileScreen extends StatefulWidget {
   final String username;
@@ -513,16 +515,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                       _buildProfileMenuItem(
                         icon: Icons.download,
-                        title: 'export_data'.tr(),
+                        title: 'export_raw_data'.tr(),
                         backgroundColor: Colors.teal[400]!,
                         onTap: () async {
                           try {
+                            // API hívás az adatok lekérdezésére
                             final response = await _authService.exportUserData();
-                            // Itt kell kezelni a letöltött fájlt.
-                            // Ezt bonyolultabb a Flutterben közvetlenül, általában a platformspecifikus
-                            // csomagok (pl. path_provider, file_saver) szükségesek ehhez.
-                            // Példa a snackbar-ra, ha a letöltés sikeres volt:
+                            
                             if (response.statusCode == 200) {
+                              // HTTP válasz tartalmának letöltése (stream)
+                              final content = response.bodyBytes;
+                              
+                              // A Content-Disposition fejlécből kinyerjük a fájlnevet
+                              String? filename = response.headers['content-disposition']
+                                  ?.split('filename=')[1]
+                                  .replaceAll('"', '');
+                                  
+                              // Ha nincs fájlnév, generálunk egy alapértelmezettet
+                              if (filename == null || filename.isEmpty) {
+                                filename = 'user_data_export.json';
+                              }
+
+                              // A fájl mentése a felhasználó eszközére
+                              await FileSaver.instance.saveFile(
+                                name: filename,
+                                bytes: content,
+                                ext: 'json',
+                                mimeType: MimeType.json,
+                              );
+
+                              if (!mounted) return;
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text('data_export_success'.tr()),
@@ -530,6 +552,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                               );
                             } else {
+                              if (!mounted) return;
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text('data_export_failed'.tr()),
@@ -538,6 +561,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               );
                             }
                           } catch (e) {
+                            if (!mounted) return;
+                            print('Error during file download: $e');
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text('data_export_failed'.tr()),

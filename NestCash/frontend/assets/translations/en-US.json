@@ -2071,6 +2071,7 @@
     "delete_account_success": "Your account was successfully deleted.",
     "delete_account_failed": "Error occured while deleting your account.",
     "username_mismatch": "The username does not match. Try again.",
+    "export_raw_data": "Export raw data",
     "data_export_success": "Data export was successful. The download will start soon.",
     "data_export_failed": "Error occured while exporting your data."
   }

@@ -2071,6 +2071,7 @@
     "delete_account_success": "A fiókodat sikeresen töröltük.",
     "delete_account_failed": "Hiba történt a fiók törlésekor.",
     "username_mismatch": "A beírt felhasználónév nem egyezik. Próbáld újra.",
+    "export_raw_data": "Nyers adatok exportálása",
     "data_export_success": "Adatexportálás sikeres. A letöltés hamarosan elindul.",
     "data_export_failed": "Hiba történt az adatexportálás során."
   }
