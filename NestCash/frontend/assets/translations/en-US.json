@@ -2063,5 +2063,14 @@
           "description": "I'm not exactly sure what I want yet"
         }
       }
-    }
+    },
+    "delete_account": "Delete account",
+    "delete_account_title": "Delete account permanently",
+    "delete_account_confirm": "Are you sure you want to delete your account? This action is irreversible, and all your data will be permanently deleted.",
+    "delete_account_username_prompt": "To confirm the deletion, please enter your username:",
+    "delete_account_success": "Your account was successfully deleted.",
+    "delete_account_failed": "Error occured while deleting your account.",
+    "username_mismatch": "The username does not match. Try again.",
+    "data_export_success": "Data export was successful. The download will start soon.",
+    "data_export_failed": "Error occured while exporting your data."
   }

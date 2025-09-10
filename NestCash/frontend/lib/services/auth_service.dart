@@ -257,4 +257,43 @@ class AuthService {
   Future<String?> getRefreshToken() async {
     return _storage.read(key: 'refresh_token');
   }
+
+  /// Felhasználói fiók törlése
+  Future<bool> deleteAccount() async {
+    try {
+      final response = await HttpService.authenticatedRequest(
+        method: 'DELETE',
+        url: '${ApiConfig.baseUrl}/auth/delete-account',
+      );
+
+      if (response.statusCode == 200) {
+        // Sikeres törlés esetén kijelentkezünk és töröljük a helyi adatokat
+        await logout();
+        return true;
+      } else if (response.statusCode == 401) {
+        // Azonnali kijelentkeztetés, ha a token érvénytelen
+        await logout();
+        throw Exception('Unauthorized: Session expired');
+      } else {
+        print('Account deletion failed: ${response.statusCode}');
+        throw Exception('Failed to delete account. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error deleting account: $e');
+      return false;
+    }
+  }
+
+  Future<http.Response> exportUserData() async {
+    try {
+      final response = await HttpService.authenticatedRequest(
+        method: 'GET',
+        url: '${ApiConfig.baseUrl}/auth/export-data',
+      );
+      return response;
+    } catch (e) {
+      print('Error exporting user data: $e');
+      rethrow;
+    }
+  }
 }

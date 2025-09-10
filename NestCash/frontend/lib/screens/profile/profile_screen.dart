@@ -99,6 +99,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  Future<void> _deleteAccount() async {
+    try {
+      await _authService.deleteAccount(); // Felhasználó törlése
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('delete_account_success'.tr()),
+          backgroundColor: Color(0xFF00D4AA),
+        ),
+      );
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+        (Route<dynamic> route) => false,
+      );
+    } catch (e) {
+      debugPrint('Error deleting account: $e');
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('delete_account_failed'.tr()),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
   Widget _buildProfileMenuItem({
     required IconData icon,
     required String title,
@@ -209,6 +236,61 @@ class _ProfileScreenState extends State<ProfileScreen> {
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: Text('close'.tr()),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showDeleteAccountDialog() {
+    final TextEditingController usernameController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('delete_account_title'.tr()),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('delete_account_confirm'.tr()),
+              SizedBox(height: 16),
+              Text('delete_account_username_prompt'.tr()),
+              SizedBox(height: 8),
+              TextField(
+                controller: usernameController,
+                decoration: InputDecoration(
+                  labelText: 'username'.tr(),
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('cancel'.tr()),
+            ),
+            TextButton(
+              onPressed: () async {
+                if (usernameController.text == widget.username) {
+                  Navigator.of(context).pop(); // Bezárja a dialógust
+                  await _deleteAccount();
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('username_mismatch'.tr()),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              },
+              child: Text(
+                'delete'.tr(),
+                style: TextStyle(color: Colors.red),
+              ),
             ),
           ],
         );
@@ -427,6 +509,50 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             },
                           );
                         },
+                      ),
+
+                      _buildProfileMenuItem(
+                        icon: Icons.download,
+                        title: 'export_data'.tr(),
+                        backgroundColor: Colors.teal[400]!,
+                        onTap: () async {
+                          try {
+                            final response = await _authService.exportUserData();
+                            // Itt kell kezelni a letöltött fájlt.
+                            // Ezt bonyolultabb a Flutterben közvetlenül, általában a platformspecifikus
+                            // csomagok (pl. path_provider, file_saver) szükségesek ehhez.
+                            // Példa a snackbar-ra, ha a letöltés sikeres volt:
+                            if (response.statusCode == 200) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('data_export_success'.tr()),
+                                  backgroundColor: Color(0xFF00D4AA),
+                                ),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('data_export_failed'.tr()),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('data_export_failed'.tr()),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        },
+                      ),
+
+                      _buildProfileMenuItem(
+                        icon: Icons.delete_forever,
+                        title: 'delete_account'.tr(),
+                        backgroundColor: Colors.red[700]!,
+                        onTap: _showDeleteAccountDialog, // Új metódus hívása
                       ),
                       SizedBox(height: 40),
                     ],

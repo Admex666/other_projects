@@ -250,3 +250,63 @@ async def delete_account(
     except Exception as e:
         print(f"Error during account deletion: {e}")
         raise HTTPException(status_code=500, detail="Failed to delete account")
+    
+@router.get("/export-data")
+async def export_data(
+    current_user: User = Depends(get_current_user),
+    db: AsyncIOMotorDatabase = Depends(get_db),
+):
+    """
+    Exportálja a felhasználó összes adatát egy JSON objektumba
+    """
+    user_obj_id = ObjectId(current_user.id)
+    
+    try:
+        exported_data = {
+            "user_profile": await db.users.find_one({"_id": user_obj_id}, {"password": 0}), # A jelszó kihagyása
+            "transactions": [doc async for doc in db.transactions.find({"user_id": user_obj_id})],
+            "categories": [doc async for doc in db.categories.find({"user_id": user_obj_id})],
+            "user_progress": [doc async for doc in db.user_progress.find({"user_id": user_obj_id})],
+            "limits": [doc async for doc in db.limits.find({"user_id": user_obj_id})],
+            "user_challenges": [doc async for doc in db.user_challenges.find({"user_id": user_obj_id})],
+            "user_badges": [doc async for doc in db.user_badges.find({"user_id": user_obj_id})],
+            "badge_progress": [doc async for doc in db.badge_progress.find({"user_id": user_obj_id})],
+            "habits": [doc async for doc in db.habits.find({"user_id": user_obj_id})],
+            "habit_logs": [doc async for doc in db.habit_logs.find({"user_id": user_obj_id})],
+            "pti_scores": [doc async for doc in db.pti_scores.find({"user_id": user_obj_id})],
+            "pti_history": [doc async for doc in db.pti_history.find({"user_id": user_obj_id})],
+            "user_pti_settings": [doc async for doc in db.user_pti_settings.find({"user_id": user_obj_id})],
+            "user_subscriptions": [doc async for doc in db.user_subscriptions.find({"user_id": user_obj_id})],
+            "accountability_profiles": [doc async for doc in db.accountability_profiles.find({"user_id": user_obj_id})],
+            "checkins": [doc async for doc in db.checkins.find({"user_id": user_obj_id})],
+            "user_health_scores": [doc async for doc in db.user_health_scores.find({"user_id": user_obj_id})],
+            "user_session_tracking": [doc async for doc in db.user_session_tracking.find({"user_id": user_obj_id})],
+            "feature_usage_tracking": [doc async for doc in db.feature_usage_tracking.find({"user_id": user_obj_id})],
+        }
+        
+        # A MongoDB ObjectId objektumok stringgé alakítása
+        def convert_objectids(obj):
+            if isinstance(obj, ObjectId):
+                return str(obj)
+            if isinstance(obj, dict):
+                return {k: convert_objectids(v) for k, v in obj.items()}
+            if isinstance(obj, list):
+                return [convert_objectids(item) for item in obj]
+            return obj
+            
+        json_friendly_data = convert_objectids(exported_data)
+
+        from fastapi.responses import JSONResponse
+        from datetime import datetime
+        
+        filename = f"user_data_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+
+        return JSONResponse(
+            content=json_friendly_data,
+            media_type="application/json",
+            headers={"Content-Disposition": f"attachment; filename={filename}"}
+        )
+        
+    except Exception as e:
+        print(f"Error during data export: {e}")
+        raise HTTPException(status_code=500, detail="Failed to export user data")
