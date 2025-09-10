@@ -179,3 +179,74 @@ async def update_profile(
         raise HTTPException(status_code=404, detail="User not found")
     
     return {"message": "Profile updated successfully", "updated_fields": list(update_data.keys())}
+
+@router.delete("/delete-account")
+async def delete_account(
+    current_user: User = Depends(get_current_user),
+    db: AsyncIOMotorDatabase = Depends(get_db),
+):
+    """
+    Teljes felhasználói fiók törlése az összes kapcsolódó adattal együtt
+    """
+    user_obj_id = ObjectId(current_user.id)
+    
+    try:
+        # 1. Felhasználó törlése
+        users_result = await db.users.delete_one({"_id": user_obj_id})
+        
+        # 2. Kapcsolódó adatok törlése
+        collections_to_clean = [
+            ("transactions", {"user_id": user_obj_id}),
+            ("categories", {"user_id": user_obj_id}),
+            ("user_progress", {"user_id": user_obj_id}),
+            ("forum_posts", {"user_id": user_obj_id}),
+            ("forum_comments", {"user_id": user_obj_id}),
+            ("forum_likes", {"user_id": user_obj_id}),
+            ("forum_follows", {"$or": [{"follower_id": user_obj_id}, {"following_id": user_obj_id}]}),
+            ("forum_notifications", {"$or": [{"user_id": user_obj_id}, {"from_user_id": user_obj_id}]}),
+            ("forum_user_settings", {"user_id": user_obj_id}),
+            ("limits", {"user_id": user_obj_id}),
+            ("user_challenges", {"user_id": user_obj_id}),
+            ("user_badges", {"user_id": user_obj_id}),
+            ("badge_progress", {"user_id": user_obj_id}),
+            ("habits", {"user_id": user_obj_id}),
+            ("habit_logs", {"user_id": user_obj_id}),
+            ("pti_scores", {"user_id": user_obj_id}),
+            ("pti_history", {"user_id": user_obj_id}),
+            ("user_pti_settings", {"user_id": user_obj_id}),
+            ("user_subscriptions", {"user_id": user_obj_id}),
+            ("messages", {"$or": [{"sender_id": user_obj_id}, {"receiver_id": user_obj_id}]}),
+            ("conversations", {"participants": user_obj_id}),
+            ("accountability_profiles", {"user_id": user_obj_id}),
+            ("partnerships", {"$or": [{"requester_id": user_obj_id}, {"requested_id": user_obj_id}]}),
+            ("checkins", {"user_id": user_obj_id}),
+            ("user_health_scores", {"user_id": user_obj_id}),
+            ("user_session_tracking", {"user_id": user_obj_id}),
+            ("feature_usage_tracking", {"user_id": user_obj_id})
+        ]
+        
+        deleted_counts = {}
+        for collection_name, query in collections_to_clean:
+            result = await db[collection_name].delete_many(query)
+            deleted_counts[collection_name] = result.deleted_count
+        
+        # 3. Accounts kollekció speciális kezelése (nested user_id alapú törlés)
+        accounts_result = await db.accounts.update_many(
+            {f"accounts.{current_user.id}": {"$exists": True}},
+            {"$unset": {f"accounts.{current_user.id}": ""}}
+        )
+        deleted_counts["accounts"] = accounts_result.modified_count
+        
+        if users_result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        return {
+            "message": "Account successfully deleted",
+            "deleted_user": True,
+            "cleaned_collections": deleted_counts,
+            "total_records_deleted": sum(deleted_counts.values()) + 1
+        }
+        
+    except Exception as e:
+        print(f"Error during account deletion: {e}")
+        raise HTTPException(status_code=500, detail="Failed to delete account")
