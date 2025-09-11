@@ -11,6 +11,7 @@ import 'package:frontend/utils/subscription_utils.dart';
 import 'package:frontend/models/subscription.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:frontend/utils/category_translate.dart';
+import 'package:frontend/services/nestcash_analytics_service.dart';
 
 class HabitsMainScreen extends StatefulWidget {
   final String userId;
@@ -40,6 +41,11 @@ class _HabitsMainScreenState extends State<HabitsMainScreen> {
   @override
   void initState() {
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await NestCashAnalyticsService.trackScreenView('habits_main_screen');
+    });
+
     _loadData();
   }
 

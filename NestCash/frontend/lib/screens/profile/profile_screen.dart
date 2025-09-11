@@ -9,6 +9,7 @@ import 'package:frontend/screens/subscription/subscription_screen.dart';
 import 'package:file_saver/file_saver.dart';
 import 'package:flutter/services.dart'; // Clipboard-hoz
 import 'package:intl/intl.dart'; // DateFormat-hoz
+import 'package:frontend/services/nestcash_analytics_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String username;
@@ -79,6 +80,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _isLoading = false;
         });
       }
+      await NestCashAnalyticsService.trackScreenView('profile_screen');
     } catch (e) {
       debugPrint('Error fetching user profile: $e');
       

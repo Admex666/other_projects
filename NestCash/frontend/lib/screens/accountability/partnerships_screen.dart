@@ -13,6 +13,7 @@ import 'package:frontend/screens/forum/search_users_screen.dart';
 import 'partnership_detail_screen.dart';
 import 'package:frontend/widgets/subscription/upgrade_dialog.dart';
 import 'package:frontend/models/subscription.dart';
+import 'package:frontend/services/nestcash_analytics_service.dart';
 
 class PartnershipsScreen extends StatefulWidget {
   const PartnershipsScreen({Key? key}) : super(key: key);
@@ -30,6 +31,11 @@ class _PartnershipsScreenState extends State<PartnershipsScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await NestCashAnalyticsService.trackScreenView('partnerships_screen');
+    });
+
     _loadData();
   }
 

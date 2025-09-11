@@ -12,6 +12,7 @@ import '../../models/subscription.dart';
 import '../../utils/subscription_utils.dart';
 import '../../widgets/subscription/subscription_widgets.dart';
 import 'package:frontend/config/config.dart'; 
+import 'package:frontend/services/nestcash_analytics_service.dart'; 
 
 class KnowledgeScreen extends StatefulWidget {
   final String userId;
@@ -36,6 +37,11 @@ class _KnowledgeScreenState extends State<KnowledgeScreen> {
   @override
   void initState() {
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await NestCashAnalyticsService.trackScreenView('knowledge_screen');
+    });
+
     _checkKnowledgeAccess(); // Ez rögtön ellenőrzi a jogosultságot
   }
 

@@ -9,6 +9,7 @@ import 'package:frontend/screens/pti/pti_comparison_screen.dart';
 import 'package:frontend/services/auth_service.dart';
 import 'package:frontend/screens/pti/pti_component_ranking_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:frontend/services/nestcash_analytics_service.dart';
 
 class PTIMainScreen extends StatefulWidget {
   final String userId;
@@ -34,6 +35,11 @@ class _PTIMainScreenState extends State<PTIMainScreen> {
   @override
   void initState() {
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await NestCashAnalyticsService.trackScreenView('pti_main_screen');
+    });
+
     _loadUserData();
   }
 

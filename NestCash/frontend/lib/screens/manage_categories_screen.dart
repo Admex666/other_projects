@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:frontend/services/category_service.dart';
 import 'package:frontend/models/category.dart';
+import 'package:frontend/services/nestcash_analytics_service.dart';
 
 class ManageCategoriesScreen extends StatefulWidget {
   final String userId;
@@ -37,6 +38,7 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
       setState(() {
         _categories = categories;
       });
+      await NestCashAnalyticsService.trackScreenView('categories_screen');
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('errorLoadingCategories'.tr(namedArgs: {'error': e.toString()}))),

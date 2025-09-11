@@ -7,6 +7,7 @@ import 'package:frontend/screens/add_expenses_screen.dart';
 import 'package:frontend/screens/add_incomes_screen.dart';
 import 'package:frontend/config/config.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:frontend/services/nestcash_analytics_service.dart';
 
 class ManageAccountsScreen extends StatefulWidget {
   final String userId;
@@ -68,6 +69,7 @@ class _ManageAccountsScreenState extends State<ManageAccountsScreen> {
         setState(() {
           _accountsData = json.decode(response.body);
         });
+        await NestCashAnalyticsService.trackScreenView('accounts_screen');
       } else if (response.statusCode == 404) { // Specifikus 404 kezelés
         setState(() {
           _errorMessage = 'error_.account_not_found'.tr();

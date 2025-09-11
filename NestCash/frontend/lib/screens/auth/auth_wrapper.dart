@@ -4,6 +4,7 @@ import '../../services/auth_service.dart';
 import 'login_screen.dart';
 import '/main.dart';
 import 'package:frontend/screens/loading_screen.dart';
+import 'package:frontend/services/nestcash_analytics_service.dart';
 
 class AuthWrapper extends StatefulWidget {
   const AuthWrapper({super.key});
@@ -32,38 +33,53 @@ class _AuthWrapperState extends State<AuthWrapper> {
     try {
       print('🔍 AuthWrapper: Starting auth check...');
       
-      // Ellenőrizzük, hogy van-e token
       final token = await _authService.getToken();
       debugPrint('AuthWrapper: token exists? ${token != null}');
 
       if (token != null && token.isNotEmpty) {
-        // Ellenőrizzük a token érvényességét
         debugPrint('AuthWrapper: Validating token...');
         
         bool isValid = false;
         try {
           isValid = await _authService.isTokenValid();
+          
+          // Token validation analytics
+          await NestCashAnalyticsService.trackAuthAction(
+            'token_validation',
+            success: isValid,
+          );
+          
         } catch (e) {
-          debugPrint('AuthWrapper: Token validation threw exception: $e');
+          await NestCashAnalyticsService.trackAuthError(
+            authOperation: 'token_validation',
+            error: e,
+            stackTrace: StackTrace.current,
+          );
           isValid = false;
         }
         
         if (isValid) {
-          // Token érvényes, töltjük be a felhasználói adatokat
           try {
             final username = await _authService.getCurrentUsername();
             final userId = await _authService.getUserId();
             
-            debugPrint('AuthWrapper: Token valid, username = $username, userId = $userId');
-
             if (username != null && username.isNotEmpty && 
                 userId != null && userId.isNotEmpty) {
-              // Indítsuk el a session tracking-et
+              
+              // User initialization analytics
+              await NestCashAnalyticsService.initializeUser(
+                userId: userId,
+                username: username,
+              );
+              
               try {
                 await _authService.initializeSessionTracking();
               } catch (e) {
-                debugPrint('AuthWrapper: Session tracking failed: $e');
-                // Folytatjuk session tracking nélkül
+                await NestCashAnalyticsService.trackError(
+                  error: e,
+                  context: 'session_tracking_initialization',
+                  screenName: 'auth_wrapper',
+                );
               }
               
               setState(() {
@@ -72,7 +88,11 @@ class _AuthWrapperState extends State<AuthWrapper> {
                 _userId = userId;
               });
             } else {
-              debugPrint('AuthWrapper: Missing or empty username/userId, logging out');
+              await NestCashAnalyticsService.trackAuthAction(
+                'missing_user_data',
+                success: false,
+                errorMessage: 'Missing username or userId',
+              );
               await _authService.logout();
               setState(() {
                 _isLoggedIn = false;
@@ -81,7 +101,11 @@ class _AuthWrapperState extends State<AuthWrapper> {
               });
             }
           } catch (e) {
-            debugPrint('AuthWrapper: Error getting user data: $e');
+            await NestCashAnalyticsService.trackAuthError(
+              authOperation: 'get_user_data',
+              error: e,
+              stackTrace: StackTrace.current,
+            );
             await _authService.logout();
             setState(() {
               _isLoggedIn = false;
@@ -108,8 +132,12 @@ class _AuthWrapperState extends State<AuthWrapper> {
         });
       }
     } catch (e) {
-      debugPrint('AuthWrapper error: $e');
-      debugPrint('AuthWrapper error type: ${e.runtimeType}');
+      await NestCashAnalyticsService.trackError(
+        error: e,
+        context: 'auth_check_critical_failure',
+        screenName: 'auth_wrapper',
+        fatal: true,
+      );
       // Hiba esetén biztonsági okokból kijelentkeztetjük
       try {
         await _authService.logout();

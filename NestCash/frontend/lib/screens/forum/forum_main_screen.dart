@@ -10,6 +10,7 @@ import 'package:frontend/screens/forum/notifications_screen.dart';
 import 'package:frontend/screens/forum/forum_settings_screen.dart';
 import 'package:frontend/services/auth_service.dart';  
 import 'package:frontend/screens/messages/conversations_screen.dart';
+import 'package:frontend/services/nestcash_analytics_service.dart';
 
 class ForumMainScreen extends StatefulWidget {
   final String userId;
@@ -44,6 +45,11 @@ class _ForumMainScreenState extends State<ForumMainScreen> {
   @override
   void initState() {
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await NestCashAnalyticsService.trackScreenView('forum_main_screen');
+    });
+
     _loadUserData();  // ÚJ: user adatok betöltése
     _loadPosts();
     _loadUnreadNotificationCount();

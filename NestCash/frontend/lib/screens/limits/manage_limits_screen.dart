@@ -6,6 +6,7 @@ import 'package:frontend/services/limit_service.dart';
 import 'add_limit_screen.dart';
 import 'edit_limit_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:frontend/services/nestcash_analytics_service.dart';
 
 class ManageLimitsScreen extends StatefulWidget {
   final String userId;
@@ -44,6 +45,7 @@ class _ManageLimitsScreenState extends State<ManageLimitsScreen> {
         _limitStatus = status;
         _isLoading = false;
       });
+      await NestCashAnalyticsService.trackScreenView('limits_screen');
     } catch (e) {
       setState(() {
         _errorMessage = e.toString();

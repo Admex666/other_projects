@@ -12,6 +12,7 @@ import 'package:frontend/widgets/subscription/usage_indicator.dart';
 import 'package:frontend/widgets/subscription/tier_badge.dart';
 import 'package:frontend/utils/subscription_utils.dart';
 import 'package:frontend/models/subscription.dart';
+import 'package:frontend/services/nestcash_analytics_service.dart';
 
 class ChallengesMainScreen extends StatefulWidget {
   final String userId;
@@ -49,6 +50,11 @@ class _ChallengesMainScreenState extends State<ChallengesMainScreen>
   @override
   void initState() {
     super.initState();
+    
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await NestCashAnalyticsService.trackScreenView('challenges_screen');
+    });
+
     _tabController = TabController(length: 3, vsync: this);
     _loadUsername();
     Future.microtask(() {

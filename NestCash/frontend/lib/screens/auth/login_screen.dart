@@ -4,6 +4,7 @@ import '../../services/auth_service.dart';
 import 'register_screen.dart';
 import 'auth_wrapper.dart';
 import 'package:frontend/services/language_service.dart';
+import 'package:frontend/services/nestcash_analytics_service.dart';
 
 /// LoginScreen – NestCash bejelentkezés modern (gradient) dizájnnal.
 ///
@@ -391,6 +392,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (login.isEmpty || pw.isEmpty) {
       setState(() => _errorMsg = 'fill_all_fields'.tr());
+      
+      await NestCashAnalyticsService.trackValidationError(
+        field: login.isEmpty ? 'username_email' : 'password',
+        validationType: 'required',
+        errorMessage: 'Field is empty',
+        screenName: 'login_screen',
+      );
       return;
     }
 
@@ -398,27 +406,58 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = true;
       _errorMsg = null;
     });
+    
+    final loginStartTime = DateTime.now();
 
-    final ok = await _auth.login(login, pw);
+    try {
+      final ok = await _auth.login(login, pw);
+      
+      final loginDuration = DateTime.now().difference(loginStartTime);
+      
+      if (ok) {
+        await NestCashAnalyticsService.trackAuthAction('login', success: true);
+        
+        // Performance tracking for login
+        await NestCashAnalyticsService.trackPerformanceMetric(
+          'login_duration',
+          loginDuration.inMilliseconds,
+          screenName: 'login_screen',
+          thresholdMs: 5000,
+        );
+        
+        if (!mounted) return;
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('login_success'.tr()),
+            backgroundColor: Color(0xFF00D4A3),
+          ),
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const AuthWrapper()),
+        );
+      } else {
+        await NestCashAnalyticsService.trackAuthAction(
+          'login',
+          success: false,
+          errorMessage: 'Invalid credentials',
+        );
+        
+        setState(() => _errorMsg = 'wrong_credentials'.tr());
+      }
+    } catch (e) {
+      await NestCashAnalyticsService.trackAuthError(
+        authOperation: 'login',
+        error: e,
+        stackTrace: StackTrace.current,
+        username: login,
+      );
+      
+      setState(() => _errorMsg = 'Login failed: ${e.toString()}');
+    }
 
     setState(() => _isLoading = false);
-
-    if (!mounted) return;
-
-    if (ok) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('login_success'.tr()),
-          backgroundColor: Color(0xFF00D4A3),
-        ),
-      );
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const AuthWrapper()),
-      );
-    } else {
-      setState(() => _errorMsg = 'wrong_credentials'.tr());
-    }
   }
 
   void _goToRegister() {

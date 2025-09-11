@@ -13,6 +13,7 @@ import '../models/subscription.dart';
 import '../utils/subscription_utils.dart';
 import '../../widgets/subscription/subscription_widgets.dart';
 import '../utils/category_translate.dart';
+import 'package:frontend/services/nestcash_analytics_service.dart';
 
 class AnalysisScreen extends StatefulWidget {
   final String userId;
@@ -96,6 +97,7 @@ class _AnalysisScreenState extends State<AnalysisScreen>
           });
 
           print('Feature check result: ${advancedAccessCheck.hasAccess}');
+          await NestCashAnalyticsService.trackScreenView('analysis_screen');
         } catch (e) {
           print('Feature check failed, falling back to tier: $e');
           setState(() {

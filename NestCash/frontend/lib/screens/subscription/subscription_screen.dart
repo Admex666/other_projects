@@ -6,6 +6,7 @@ import '../../widgets/subscription/tier_badge.dart';
 import '../../widgets/subscription/usage_indicator.dart';
 import 'plans_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:frontend/services/nestcash_analytics_service.dart';
 
 class SubscriptionScreen extends StatefulWidget {
   const SubscriptionScreen({super.key});
@@ -19,6 +20,11 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   @override
   void initState() {
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await NestCashAnalyticsService.trackScreenView('subscription_screen');
+    });
+
     print('SubscriptionScreen initState: Loading subscription info...');
     
     // Load subscription info when screen opens

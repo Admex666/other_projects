@@ -15,6 +15,7 @@ import 'package:frontend/screens/auth/auth_wrapper.dart';
 import 'package:intl/intl.dart';
 import 'package:easy_localization/easy_localization.dart'; 
 import 'package:frontend/utils/category_translate.dart';
+import 'package:frontend/services/nestcash_analytics_service.dart';
 
 class DashboardScreen extends StatefulWidget {
   final String username;
@@ -46,6 +47,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await NestCashAnalyticsService.trackScreenView('dashboard_screen');
+    });
+
     _loadDashboardData();
   }
 
@@ -71,6 +77,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Future<void> _loadDashboardData() async {
+    final startTime = DateTime.now();
+
+    await NestCashAnalyticsService.trackFeatureUsed('dashboard_refresh');
+
     print('Loading dashboard data...');
     setState(() => _isLoading = true);
     
@@ -100,6 +110,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
     
     print('Dashboard data loading completed');
+
+    final duration = DateTime.now().difference(startTime);
+      await NestCashAnalyticsService.trackPerformanceMetric(
+        'dashboard_load',
+        duration.inMilliseconds,
+        screenName: 'dashboard_screen',
+        thresholdMs: 3000, // Ha 3 másodpercnél tovább tart, performance issue
+      );
   }
 
   bool _isAuthError(dynamic error) {
@@ -911,7 +929,15 @@ IconData _getTransactionIcon(String category, bool isExpense) {
         ],
       ),
       child: InkWell(
-        onTap: () {
+        onTap: () async {
+          await NestCashAnalyticsService.trackFeatureUsed(
+            'transaction_item_tap',
+            parameters: {
+              'transaction_id': transaction['id'],
+              'transaction_type': transaction['isExpense'] ? 'expense' : 'income',
+              'category': transaction['category'],
+            },
+          );
           // Navigate to transaction details
         },
         child: Row(

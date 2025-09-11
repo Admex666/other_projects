@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:frontend/screens/auth/auth_wrapper.dart';
 import 'package:frontend/screens/dashboard_screen.dart';
@@ -28,9 +29,31 @@ import 'package:frontend/services/analytics_service.dart';
 import 'package:frontend/services/language_service.dart';
 import 'package:frontend/screens/add_expenses_screen.dart';
 import 'package:frontend/screens/add_incomes_screen.dart';
+// Firebase
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'firebase_options.dart'; // Ez a flutterfire configure után generálódik
+import 'package:frontend/services/nestcash_analytics_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  
+  // Flutter framework hibák küldése Crashlytics-be
+  FlutterError.onError = (errorDetails) {
+    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+  };
+  
+  // Platform hibák kezelése (iOS/Android natív hibák)
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    return true;
+  };
+
   await EasyLocalization.ensureInitialized();
 
   runApp(
@@ -44,6 +67,9 @@ void main() async {
 }
 
 class NestCashApp extends StatelessWidget {
+  static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  static FirebaseAnalyticsObserver observer = FirebaseAnalyticsObserver(analytics: analytics);
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -74,7 +100,7 @@ class NestCashApp extends StatelessWidget {
             ),
         ),
     
-        // ÚJ: AccountabilityProvider hozzáadása
+        // AccountabilityProvider
         ChangeNotifierProxyProvider<AuthService, AccountabilityProvider>(
           create: (context) => AccountabilityProvider(
             service: AccountabilityService(),
@@ -87,6 +113,7 @@ class NestCashApp extends StatelessWidget {
       ],
       child: Builder(
         builder: (context) => MaterialApp(
+          navigatorObservers: [observer],
           navigatorKey: LanguageService.navigatorKey,
           localizationsDelegates: context.localizationDelegates,
           supportedLocales: context.supportedLocales,
@@ -130,8 +157,19 @@ class _MainScreenState extends State<MainScreen> {
     super.initState();
     _loadUsername();
     
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await NestCashAnalyticsService.initializeUser(
+        userId: widget.userId,
+        username: widget.username,
+        subscriptionTier: 'free', // TODO: dynamic subscription tier
+      );
+      
+      await NestCashAnalyticsService.trackScreenView('main_screen');
+
       context.read<SubscriptionProvider>().loadSubscriptionInfo();
+
+      _logScreenView();
+      _setFirebaseUserProperties();
       
       try {
         final analyticsService = AnalyticsService();
@@ -139,14 +177,50 @@ class _MainScreenState extends State<MainScreen> {
       } catch (e) {
         print('Session tracking failed on screen init: $e');
       }
+
+      try {
+        final analyticsService = AnalyticsService();
+        analyticsService.trackSession();
+      } catch (e) {
+        await NestCashAnalyticsService.trackError(
+          error: e,
+          context: 'session_tracking_failed',
+          screenName: 'main_screen',
+        );
+      }
     });
     
-    // ÚJ: Egyszerűsített widget opciók (csak 3 screen)
+    // Egyszerűsített widget opciók (csak 3 screen)
     _widgetOptions = <Widget>[
       DashboardScreen(username: _currentUsername, userId: widget.userId,),
       const SizedBox.shrink(), // Add transaction placeholder
       ProfileScreen(username: _currentUsername, userId: widget.userId),
     ];
+  }
+
+  Future<void> _logScreenView() async {
+    await FirebaseAnalytics.instance.logScreenView(
+      screenName: 'main_screen',
+      screenClass: 'MainScreen',
+    );
+  }
+
+  Future<void> _setFirebaseUserProperties() async {
+    // Felhasználó azonosító beállítása Analytics-ben
+    await FirebaseAnalytics.instance.setUserId(id: widget.userId);
+    
+    // Crashlytics felhasználó azonosító
+    await FirebaseCrashlytics.instance.setUserIdentifier(widget.userId);
+    
+    // Custom user properties
+    await FirebaseAnalytics.instance.setUserProperty(
+      name: 'username',
+      value: _currentUsername,
+    );
+    
+    // Crashlytics custom keys
+    await FirebaseCrashlytics.instance.setCustomKey('username', _currentUsername);
+    await FirebaseCrashlytics.instance.setCustomKey('user_id', widget.userId);
   }
 
   Future<void> _loadUsername() async {
@@ -159,24 +233,46 @@ class _MainScreenState extends State<MainScreen> {
           _widgetOptions[0] = DashboardScreen(username: _currentUsername, userId: widget.userId);
           _widgetOptions[2] = ProfileScreen(username: _currentUsername, userId: widget.userId);
         });
+        await _setFirebaseUserProperties();
       }
     } catch (e) {
       print('Error loading username: $e');
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        StackTrace.current,
+        fatal: false,
+        reason: 'Error loading username in MainScreen',
+      );
     }
   }
 
-  void _onItemTapped(int index) {
+  void _onItemTapped(int index) async {
+    final fromScreen = _selectedIndex == 0 ? 'dashboard' : 'profile';
+
     if (index == 1) {
-      // Add transaction modal
+      await NestCashAnalyticsService.trackButtonPress(
+        'add_transaction_fab',
+        screenName: fromScreen,
+      );
       _showAddTransactionOptions(context);
     } else {
+      final toScreen = index == 0 ? 'dashboard' : 'profile';
+      
+      await NestCashAnalyticsService.trackNavigation(
+        fromScreen: fromScreen,
+        toScreen: toScreen,
+        method: 'bottom_navigation',
+      );
+      
       setState(() {
         _selectedIndex = index;
       });
+
+      await NestCashAnalyticsService.trackScreenView(toScreen);
     }
   }
 
-  // ÚJ: Drawer builder metódus
+  // Drawer builder metódus
   Widget _buildDrawer() {
     return Drawer(
       child: Column(

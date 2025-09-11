@@ -1,5 +1,9 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+import time
+from collections import defaultdict, deque
+from threading import Lock
 
 from app.core.db import init_db
 from app.routes import auth
@@ -28,12 +32,35 @@ from app.routes import subscriptions
 from app.routes import messages
 from app.routes import accountability
 from app.routes import analytics
+from app.routes import csv_import
 
 app = FastAPI(
     title="NestCash API",
     description="Personal Finance Management API with Knowledge Base",
     version="1.0.0"
 )
+
+# Rate limiting storage
+rate_limit_storage = defaultdict(deque)
+rate_limit_lock = Lock()
+
+def is_rate_limited(client_ip: str, limit: int = 100, window: int = 60):
+    """Ellenőrzi, hogy az IP túllépte-e a rate limitet"""
+    current_time = time.time()
+    
+    with rate_limit_lock:
+        # Régi bejegyzések törlése
+        while (rate_limit_storage[client_ip] and 
+               current_time - rate_limit_storage[client_ip][0] > window):
+            rate_limit_storage[client_ip].popleft()
+        
+        # Jelenlegi kérés számának ellenőrzése
+        if len(rate_limit_storage[client_ip]) >= limit:
+            return True
+        
+        # Új kérés hozzáadása
+        rate_limit_storage[client_ip].append(current_time)
+        return False
 
 # CORS middleware hozzáadása
 app.add_middleware(
@@ -69,6 +96,7 @@ app.include_router(subscriptions.router)
 app.include_router(messages.router)
 app.include_router(accountability.router)
 app.include_router(analytics.router)
+app.include_router(csv_import.router)
 
 @app.on_event("startup")
 async def startup_event():
@@ -99,9 +127,29 @@ async def root():
             "Badge System",
             "Habit Tracking",
             "PTI System",
-            "Onboarding"
+            "Onboarding",
+            "CSV Import",
         ]
     }
+
+@app.middleware("http")
+async def rate_limit_middleware(request: Request, call_next):
+    client_ip = request.client.host
+    
+    # Rate limit ellenőrzése (100 kérés/perc)
+    if is_rate_limited(client_ip, limit=100, window=60):
+        return JSONResponse(
+            status_code=429,
+            content={
+                "error": "Rate limit exceeded", 
+                "message": "Too many requests. Try again later.",
+                "retry_after": 60
+            },
+            headers={"Retry-After": "60"}
+        )
+    
+    response = await call_next(request)
+    return response
 
 @app.get("/health")
 async def health_check():
