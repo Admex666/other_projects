@@ -7,6 +7,7 @@ import 'package:frontend/screens/edit_transaction_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:frontend/utils/category_translate.dart';
+import 'package:frontend/screens/csv_import_screen.dart';
 
 class TransactionsScreen extends StatefulWidget {
   final String userId;
@@ -720,6 +721,12 @@ Future<void> _performDelete(String transactionId) async {
         foregroundColor: Colors.black87,
         elevation: 0,
         actions: [
+          // CSV Import gomb
+          IconButton(
+            icon: Icon(Icons.file_upload),
+            onPressed: _showCSVImportDialog,
+            tooltip: 'CSV Import',
+          ),
           IconButton(
             icon: Icon(Icons.sort),
             onPressed: _showSortDialog,
@@ -1217,6 +1224,91 @@ Future<void> _performDelete(String transactionId) async {
                     ),
                   ),
                 ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showCSVImportDialog() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return Container(
+          padding: EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.file_upload,
+                size: 48,
+                color: Color(0xFF00D4A3),
+              ),
+              SizedBox(height: 16),
+              Text(
+                'CSV Import',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 8),
+              Text(
+                'Importálj tranzakciókat CSV fájlból',
+                style: TextStyle(
+                  color: Colors.grey[600],
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CSVImportScreen(),
+                      ),
+                    ).then((result) {
+                      // Ha sikeres volt az import, frissítsük a tranzakciók listáját
+                      if (result == true) {
+                        _loadTransactions(refresh: true);
+                      }
+                    });
+                  },
+                  icon: Icon(Icons.upload_file, color: Colors.white),
+                  label: Text(
+                    'Import indítása',
+                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFF00D4A3),
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 12),
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(
+                  'Mégse',
+                  style: TextStyle(color: Colors.grey[600]),
+                ),
               ),
             ],
           ),
