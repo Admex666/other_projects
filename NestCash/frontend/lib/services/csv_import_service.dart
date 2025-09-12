@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import '../models/csv_import_models.dart';
 import '../config/config.dart';
 import '../services/http_service.dart';
+import 'package:flutter/foundation.dart';
 
 class CSVImportService {
   static const String baseUrl = '/import';
@@ -41,15 +42,16 @@ class CSVImportService {
       );
 
       if (file != null) {
-        // Fájlméret ellenőrzése
         final int fileSize = await file.length();
         if (fileSize > 5 * 1024 * 1024) {
           throw Exception('A fájl túl nagy (max 5MB engedélyezett)');
         }
 
-        // Fájl beolvasása és base64 kódolása
-        final List<int> fileBytes = await file.readAsBytes();
-        return base64Encode(fileBytes);
+        // Közvetlenül szövegként olvassuk be
+        final String content = await file.readAsString();
+        
+        // Base64 kódolás külön isolate-ban
+        return await compute(_encodeStringToBase64, content);
       }
       
       return null;
@@ -58,13 +60,27 @@ class CSVImportService {
     }
   }
 
+  static String _encodeStringToBase64(String content) {
+    return base64Encode(utf8.encode(content));
+  }
+
+  // Segédfüggvény nagy fájlok base64 kódolásához
+  static Future<String> _encodeInIsolate(List<int> bytes) async {
+    return await compute(_encodeBase64, bytes);
+  }
+
+  // Statikus függvény az isolate-hoz
+  static String _encodeBase64(List<int> bytes) {
+    return base64Encode(bytes);
+  }
+
   // CSV előnézet lekérése
   static Future<CSVPreviewResponse> getCSVPreview(String base64Data) async {
     try {
-      final response = await _post(
-        '$baseUrl/csv/preview',
-        body: json.encode(base64Data),
-        headers: {'Content-Type': 'application/json'},
+      final response = await HttpService.authenticatedRequest(
+        method: 'POST',
+        url: '${ApiConfig.baseUrl}$baseUrl/csv/preview',
+        body: {'file_data': base64Data},
       );
 
       if (response.statusCode == 200) {

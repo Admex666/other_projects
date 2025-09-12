@@ -70,25 +70,46 @@ class _CSVImportScreenState extends State<CSVImportScreen> {
     });
 
     try {
+      // Aszinkron fájl feldolgozás
       final base64Data = await CSVImportService.pickAndConvertCSVFile();
       
       if (base64Data != null) {
-        final preview = await CSVImportService.getCSVPreview(base64Data);
+        // Ellenőrizd, hogy a widget még létezik
+        if (!mounted) return;
         
-        setState(() {
-          _base64FileData = base64Data;
-          _csvPreview = preview;
-          _columnMappings = List.from(preview.detectedMappings);
-          _isLoading = false;
-        });
-        
-        _nextStep();
+        // Preview lekérése külön try-catch blokkban
+        try {
+          final preview = await CSVImportService.getCSVPreview(base64Data);
+          
+          if (!mounted) return;
+          
+          setState(() {
+            _base64FileData = base64Data;
+            _csvPreview = preview;
+            _columnMappings = List.from(preview.detectedMappings);
+            _isLoading = false;
+          });
+          
+          // Kis késleltetés után lépj tovább
+          Future.delayed(const Duration(milliseconds: 100), () {
+            if (mounted) _nextStep();
+          });
+          
+        } catch (e) {
+          if (!mounted) return;
+          setState(() {
+            _error = 'Hiba a CSV feldolgozásakor: $e';
+            _isLoading = false;
+          });
+        }
       } else {
+        if (!mounted) return;
         setState(() {
           _isLoading = false;
         });
       }
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _error = e.toString();
         _isLoading = false;
@@ -101,10 +122,16 @@ class _CSVImportScreenState extends State<CSVImportScreen> {
       setState(() {
         _currentStep++;
       });
-      _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
+      
+      // Ellenőrizd, hogy a PageController készen áll-e
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_pageController.hasClients) {
+          _pageController.nextPage(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
+        }
+      });
     }
   }
 
@@ -113,10 +140,15 @@ class _CSVImportScreenState extends State<CSVImportScreen> {
       setState(() {
         _currentStep--;
       });
-      _pageController.previousPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
+      
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_pageController.hasClients) {
+          _pageController.previousPage(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
+        }
+      });
     }
   }
 
@@ -175,11 +207,16 @@ class _CSVImportScreenState extends State<CSVImportScreen> {
       _importResult = null;
       _error = null;
     });
-    _pageController.animateToPage(
-      0,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
+    
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_pageController.hasClients) {
+        _pageController.animateToPage(
+          0,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
   }
 
   @override

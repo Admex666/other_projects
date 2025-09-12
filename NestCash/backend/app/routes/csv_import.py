@@ -49,11 +49,15 @@ async def upload_csv_for_preview(
 
 @router.post("/csv/preview", response_model=CSVPreviewResponse) 
 async def preview_csv_with_base64(
-    file_data: str,
+    request: dict,  # Request body-ból várjuk az adatot
     current_user: User = Depends(get_current_user)
 ):
     """Base64 encoded CSV előnézet (frontend használatra)"""
     try:
+        file_data = request.get('file_data')
+        if not file_data:
+            raise HTTPException(status_code=400, detail="file_data is required")
+            
         preview = await CSVImportService.preview_csv(file_data)
         return preview
     except Exception as e:
