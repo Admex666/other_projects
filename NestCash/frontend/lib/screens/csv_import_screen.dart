@@ -64,25 +64,26 @@ class _CSVImportScreenState extends State<CSVImportScreen> {
   }
 
   Future<void> _pickCSVFile() async {
+    print('DEBUG: File selection started');
+    
     setState(() {
       _isLoading = true;
       _error = null;
     });
 
     try {
-      // Aszinkron fájl feldolgozás
+      print('DEBUG: Calling pickAndConvertCSVFile');
       final base64Data = await CSVImportService.pickAndConvertCSVFile();
       
-      if (base64Data != null) {
-        // Ellenőrizd, hogy a widget még létezik
-        if (!mounted) return;
+      print('DEBUG: File converted, length: ${base64Data?.length ?? 0}');
+      
+      if (base64Data != null && mounted) {
+        print('DEBUG: Calling getCSVPreview');
+        final preview = await CSVImportService.getCSVPreview(base64Data);
         
-        // Preview lekérése külön try-catch blokkban
-        try {
-          final preview = await CSVImportService.getCSVPreview(base64Data);
-          
-          if (!mounted) return;
-          
+        print('DEBUG: Preview received, rows: ${preview.sampleRows.length}');
+        
+        if (mounted) {
           setState(() {
             _base64FileData = base64Data;
             _csvPreview = preview;
@@ -90,30 +91,22 @@ class _CSVImportScreenState extends State<CSVImportScreen> {
             _isLoading = false;
           });
           
-          // Kis késleltetés után lépj tovább
-          Future.delayed(const Duration(milliseconds: 100), () {
-            if (mounted) _nextStep();
-          });
-          
-        } catch (e) {
-          if (!mounted) return;
-          setState(() {
-            _error = 'Hiba a CSV feldolgozásakor: $e';
-            _isLoading = false;
-          });
+          print('DEBUG: State updated, calling _nextStep');
+          _nextStep();
         }
-      } else {
-        if (!mounted) return;
+      } else if (mounted) {
         setState(() {
           _isLoading = false;
         });
       }
     } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _error = e.toString();
-        _isLoading = false;
-      });
+      print('DEBUG: Error occurred: $e');
+      if (mounted) {
+        setState(() {
+          _error = e.toString();
+          _isLoading = false;
+        });
+      }
     }
   }
 

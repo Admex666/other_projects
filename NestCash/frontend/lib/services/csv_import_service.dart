@@ -43,15 +43,15 @@ class CSVImportService {
 
       if (file != null) {
         final int fileSize = await file.length();
-        if (fileSize > 5 * 1024 * 1024) {
-          throw Exception('A fájl túl nagy (max 5MB engedélyezett)');
+        if (fileSize > 1024 * 1024) { // 1MB limit a teszt kedvéért
+          throw Exception('A fájl túl nagy (max 1MB a teszteléshez)');
         }
 
-        // Közvetlenül szövegként olvassuk be
+        // Egyszerű string olvasás és base64 kódolás - egy lépésben
         final String content = await file.readAsString();
+        final String base64Data = base64Encode(utf8.encode(content));
         
-        // Base64 kódolás külön isolate-ban
-        return await compute(_encodeStringToBase64, content);
+        return base64Data;
       }
       
       return null;
