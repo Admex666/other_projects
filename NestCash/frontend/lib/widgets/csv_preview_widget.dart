@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import '../models/csv_import_models.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class CSVPreviewWidget extends StatelessWidget {
   final CSVPreviewResponse preview;
@@ -31,15 +32,17 @@ class CSVPreviewWidget extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      'CSV Előnézet',
+                      'csvi_widget_prev.title'.tr(),
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                   ],
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Összesen ${preview.totalRows} sor, '
-                  'ebből ${preview.sampleRows.length} minta',
+                  'csvi_widget_prev.summary'.tr(namedArgs: {
+                    'totalRows': preview.totalRows.toString(),
+                    'sampleRows': preview.sampleRows.length.toString(),
+                  }),
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Colors.grey[600],
                   ),
@@ -160,7 +163,10 @@ class CSVPreviewWidget extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Text(
-                'Figyelmeztetések ($errorsCount/${preview.sampleRows.length} sorban)',
+                'csvi_widget_prev.warnings_count'.tr(namedArgs: {
+                  'errorsCount': errorsCount.toString(),
+                  'sampleRows': preview.sampleRows.length.toString(),
+                }),
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Colors.orange.shade700,
@@ -172,7 +178,7 @@ class CSVPreviewWidget extends StatelessWidget {
           ...allErrors.take(5).map((error) => Padding(
             padding: const EdgeInsets.only(left: 28, bottom: 4),
             child: Text(
-              '• $error',
+              '• ${'csvi_widget_prev.error_item'.tr(namedArgs: {'error': error.toString()})}',
               style: TextStyle(
                 fontSize: 12,
                 color: Colors.grey.shade700,
@@ -183,7 +189,9 @@ class CSVPreviewWidget extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(left: 28),
               child: Text(
-                '... és további ${allErrors.length - 5} hiba',
+                'csvi_widget_prev.more_errors'.tr(namedArgs: {
+                  'count': (allErrors.length - 5).toString(),
+                }),
                 style: TextStyle(
                   fontSize: 12,
                   color: Colors.grey.shade600,

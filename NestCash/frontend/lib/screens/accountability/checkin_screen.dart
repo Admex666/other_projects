@@ -474,15 +474,6 @@ class _CheckInScreenState extends State<CheckInScreen> {
     }
   }
 
-  String _formatDate(DateTime date) {
-    const months = [
-      'január', 'február', 'március', 'április', 'május', 'június',
-      'július', 'augusztus', 'szeptember', 'október', 'november', 'december'
-    ];
-    
-    return '${date.year}. ${months[date.month - 1]} ${date.day}.';
-  }
-
   @override
   void dispose() {
     _notesController.dispose();

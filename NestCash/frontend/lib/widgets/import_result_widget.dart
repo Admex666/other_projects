@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import '../models/csv_import_models.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ImportResultWidget extends StatelessWidget {
   final ImportResult result;
@@ -108,7 +109,7 @@ class ImportResultWidget extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Import statisztika',
+                  'csvi_widget_result.import_statistics'.tr(),
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
               ],
@@ -121,7 +122,7 @@ class ImportResultWidget extends StatelessWidget {
                 Expanded(
                   child: _buildStatItem(
                     context,
-                    'Sikeres',
+                    'csvi_widget_result.success_label'.tr(),
                     result.successCount,
                     Colors.green,
                     Icons.check_circle,
@@ -130,7 +131,7 @@ class ImportResultWidget extends StatelessWidget {
                 Expanded(
                   child: _buildStatItem(
                     context,
-                    'Hiba',
+                    'csvi_widget_result.error_label'.tr(),
                     result.errorCount,
                     Colors.red,
                     Icons.error,
@@ -139,7 +140,7 @@ class ImportResultWidget extends StatelessWidget {
                 Expanded(
                   child: _buildStatItem(
                     context,
-                    'Duplikátum',
+                    'csvi_widget_result.duplicate_label'.tr(),
                     result.duplicateCount,
                     Colors.orange,
                     Icons.content_copy,
@@ -157,7 +158,7 @@ class ImportResultWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Összes feldolgozott:',
+                  'csvi_widget_result.total_processed_label'.tr(),
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 Text(
@@ -223,7 +224,7 @@ class ImportResultWidget extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Hibák részletei',
+                  'csvi_widget_result.error_details'.tr(),
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     color: Colors.red.shade700,
                   ),
@@ -234,7 +235,7 @@ class ImportResultWidget extends StatelessWidget {
             
             if (result.errors.isEmpty) 
               Text(
-                'Nincsenek részletes hibaüzenetek.',
+                'csvi_widget_result.no_detailed_errors'.tr(),
                 style: TextStyle(color: Colors.grey[600]),
               )
             else
@@ -243,7 +244,7 @@ class ImportResultWidget extends StatelessWidget {
             if (result.errors.length > 10) ...[
               const SizedBox(height: 8),
               Text(
-                '... és további ${result.errors.length - 10} hiba',
+                'csvi_widget_result.more_errors'.tr(namedArgs: {'count': '${result.errors.length - 10}'}),
                 style: TextStyle(
                   color: Colors.grey[600],
                   fontStyle: FontStyle.italic,
@@ -270,7 +271,7 @@ class ImportResultWidget extends StatelessWidget {
         children: [
           if (error.containsKey('row_index'))
             Text(
-              'Sor ${error['row_index'] + 1}:',
+              'csvi_widget_result.row'.tr(namedArgs: {'index': '${error['row_index'] + 1}'}),
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 12,
@@ -280,13 +281,13 @@ class ImportResultWidget extends StatelessWidget {
           Text(
             error['error']?.toString() ?? 
             error['general_error']?.toString() ?? 
-            'Ismeretlen hiba',
+            'csvi_widget_result.unknown_error'.tr(),
             style: const TextStyle(fontSize: 12),
           ),
           if (error.containsKey('row_data')) ...[
             const SizedBox(height: 4),
             Text(
-              'Adat: ${error['row_data'].toString()}',
+              'csvi_widget_result.data'.tr(namedArgs: {'data': error['row_data'].toString()}),
               style: TextStyle(
                 fontSize: 10,
                 color: Colors.grey[600],
@@ -309,7 +310,7 @@ class ImportResultWidget extends StatelessWidget {
           child: ElevatedButton.icon(
             onPressed: onNewImport,
             icon: const Icon(Icons.upload_file),
-            label: const Text('Új import indítása'),
+            label: Text('csvi_widget_result.start_new_import'.tr()),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
               backgroundColor: Theme.of(context).primaryColor,
@@ -323,7 +324,7 @@ class ImportResultWidget extends StatelessWidget {
           child: TextButton.icon(
             onPressed: () => Navigator.of(context).pop(),
             icon: const Icon(Icons.close),
-            label: const Text('Bezárás'),
+            label: Text('csvi_widget_result.close'.tr()),
           ),
         ),
       ],
@@ -332,25 +333,25 @@ class ImportResultWidget extends StatelessWidget {
 
   String _getMainResultTitle() {
     if (result.successCount > 0 && result.errorCount == 0) {
-      return 'Import sikeres!';
+      return 'csvi_widget_result.import_successful'.tr();
     } else if (result.errorCount > 0 && result.successCount == 0) {
-      return 'Import sikertelen';
+      return 'csvi_widget_result.import_failed'.tr();
     } else if (result.errorCount > 0) {
-      return 'Import részben sikeres';
+      return 'csvi_widget_result.import_partially_successful'.tr();
     } else {
-      return 'Import befejezve';
+      return 'csvi_widget_result.import_completed'.tr();
     }
   }
 
   String _getMainResultSubtitle() {
     if (result.successCount > 0 && result.errorCount == 0) {
-      return '${result.successCount} tranzakció sikeresen importálva';
+      return 'csvi_widget_result.success_subtitle'.tr(namedArgs: {'count': '${result.successCount}'});
     } else if (result.errorCount > 0 && result.successCount == 0) {
-      return 'Egyetlen tranzakció sem lett importálva';
+      return 'csvi_widget_result.failed_subtitle'.tr();
     } else if (result.errorCount > 0) {
-      return '${result.successCount} sikeres, ${result.errorCount} hibás';
+      return 'csvi_widget_result.partially_successful_subtitle'.tr(namedArgs: {'successCount': '${result.successCount}', 'errorCount': '${result.errorCount}'});
     } else {
-      return '${result.totalProcessed} tranzakció feldolgozva';
+      return 'csvi_widget_result.completed_subtitle'.tr(namedArgs: {'count': '${result.totalProcessed}'});
     }
   }
 }

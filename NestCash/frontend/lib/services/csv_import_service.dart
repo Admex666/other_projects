@@ -1,12 +1,13 @@
 // lib/services/csv_import_service.dart
 
+import 'dart:async';
 import 'dart:convert';
 import 'package:file_selector/file_selector.dart';
 import 'package:http/http.dart' as http;
 import '../models/csv_import_models.dart';
 import '../config/config.dart';
 import '../services/http_service.dart';
-import 'package:flutter/foundation.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class CSVImportService {
   static const String baseUrl = '/import';
@@ -31,115 +32,92 @@ class CSVImportService {
   }
 
   static Future<String?> pickAndConvertCSVFile() async {
+    print('DEBUG CSV: Starting file selection');
+
     try {
       const XTypeGroup typeGroup = XTypeGroup(
         label: 'CSV files',
         extensions: <String>['csv'],
       );
-      
+
+      print('DEBUG CSV: About to call openFile');
       final XFile? file = await openFile(
         acceptedTypeGroups: <XTypeGroup>[typeGroup],
       );
+      print('DEBUG CSV: openFile completed, file: ${file?.name}');
 
       if (file != null) {
+        print('DEBUG CSV: File selected, checking size...');
         final int fileSize = await file.length();
-        if (fileSize > 1024 * 1024) { // 1MB limit a teszt kedvéért
-          throw Exception('A fájl túl nagy (max 1MB a teszteléshez)');
+        print('DEBUG CSV: File size: $fileSize bytes');
+
+        if (fileSize > 1024 * 1024) { // 1MB
+          throw Exception('csvi_service.file_too_large'.tr(namedArgs: {'size': fileSize.toString()}));
         }
 
-        // Egyszerű string olvasás és base64 kódolás - egy lépésben
+        print('DEBUG CSV: Starting to read file content...');
+        // Próbáljunk csak string olvasást, base64 nélkül
         final String content = await file.readAsString();
+        print('DEBUG CSV: File read completed, content length: ${content.length} chars');
+
+        print('DEBUG CSV: Starting base64 encoding...');
         final String base64Data = base64Encode(utf8.encode(content));
-        
+        print('DEBUG CSV: Base64 encoding completed, length: ${base64Data.length}');
+
         return base64Data;
+      } else {
+        print('DEBUG CSV: No file selected');
+        return null;
       }
-      
-      return null;
-    } catch (e) {
-      throw Exception('Hiba a fájl kiválasztásakor: $e');
+
+    } catch (e, stackTrace) {
+      print('DEBUG CSV: ERROR occurred: $e');
+      print('DEBUG CSV: Stack trace: $stackTrace');
+      throw Exception('csvi_service.file_selection_error'.tr(namedArgs: {'error': e.toString()}));
     }
-  }
-
-  static String _encodeStringToBase64(String content) {
-    return base64Encode(utf8.encode(content));
-  }
-
-  // Segédfüggvény nagy fájlok base64 kódolásához
-  static Future<String> _encodeInIsolate(List<int> bytes) async {
-    return await compute(_encodeBase64, bytes);
-  }
-
-  // Statikus függvény az isolate-hoz
-  static String _encodeBase64(List<int> bytes) {
-    return base64Encode(bytes);
   }
 
   // CSV előnézet lekérése
   static Future<CSVPreviewResponse> getCSVPreview(String base64Data) async {
+    print('DEBUG API: getCSVPreview started, data length: ${base64Data.length}');
+
     try {
+      print('DEBUG API: About to make HTTP request');
+
       final response = await HttpService.authenticatedRequest(
         method: 'POST',
         url: '${ApiConfig.baseUrl}$baseUrl/csv/preview',
         body: {'file_data': base64Data},
+      ).timeout(
+        const Duration(seconds: 30),
+        onTimeout: () {
+          print('DEBUG API: Request timed out');
+          throw TimeoutException('csvi_service.request_timeout'.tr(namedArgs: {'duration': '30'}));
+        },
       );
 
+      print('DEBUG API: HTTP request completed, status: ${response.statusCode}');
+
       if (response.statusCode == 200) {
+        print('DEBUG API: Response successful, parsing JSON');
         final Map<String, dynamic> jsonData = json.decode(response.body);
+        print('DEBUG API: JSON parsed successfully');
         return CSVPreviewResponse.fromJson(jsonData);
       } else {
+        print('DEBUG API: HTTP error: ${response.statusCode}, body: ${response.body}');
         final errorData = json.decode(response.body);
-        throw Exception(errorData['detail'] ?? 'Hiba az előnézet lekérésekor');
+        throw Exception(errorData['detail'] ?? 'csvi_service.preview_error'.tr());
       }
+    } on TimeoutException catch (e) {
+      print('DEBUG API: Timeout exception: $e');
+      throw Exception('csvi_service.request_timeout_short'.tr());
     } catch (e) {
+      print('DEBUG API: General exception: $e');
       if (e is Exception) rethrow;
-      throw Exception('Hálózati hiba: $e');
+      throw Exception('csvi_service.network_error'.tr(namedArgs: {'error': e.toString()}));
     }
   }
 
-  // Felhasználó import adatok lekérése
-  static Future<UserImportData> getUserImportData() async {
-    try {
-      final response = await _get('$baseUrl/csv/user-data');
-
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> jsonData = json.decode(response.body);
-        return UserImportData.fromJson(jsonData);
-      } else {
-        final errorData = json.decode(response.body);
-        throw Exception(errorData['detail'] ?? 'Hiba a felhasználói adatok lekérésekor');
-      }
-    } catch (e) {
-      if (e is Exception) rethrow;
-      throw Exception('Hálózati hiba: $e');
-    }
-  }
-
-  // Oszlop mapping validálása
-  static Future<Map<String, dynamic>> validateColumnMapping(
-    List<ColumnMapping> mappings
-  ) async {
-    try {
-      final mappingsJson = mappings.map((m) => m.toJson()).toList();
-      
-      final response = await _post(
-        '$baseUrl/csv/validate-mapping',
-        body: json.encode(mappingsJson),
-        headers: {'Content-Type': 'application/json'},
-      );
-
-      if (response.statusCode == 200) {
-        return json.decode(response.body) as Map<String, dynamic>;
-      } else {
-        final errorData = json.decode(response.body);
-        throw Exception(errorData['detail'] ?? 'Hiba a validáláskor');
-      }
-    } catch (e) {
-      if (e is Exception) rethrow;
-      throw Exception('Hálózati hiba: $e');
-    }
-  }
-
-  // Import végrehajtása
   static Future<ImportResult> executeImport({
     required String base64Data,
     required ImportConfiguration configuration,
@@ -154,6 +132,11 @@ class CSVImportService {
         '$baseUrl/csv/execute',
         body: json.encode(requestBody),
         headers: {'Content-Type': 'application/json'},
+      ).timeout(
+        const Duration(seconds: 60), // 60 másodperc az importhoz
+        onTimeout: () {
+          throw TimeoutException('csvi_service.import_timeout'.tr(namedArgs: {'duration': '60'}));
+        },
       );
 
       if (response.statusCode == 200) {
@@ -161,11 +144,56 @@ class CSVImportService {
         return ImportResult.fromJson(jsonData);
       } else {
         final errorData = json.decode(response.body);
-        throw Exception(errorData['detail'] ?? 'Hiba az import végrehajtásakor');
+        throw Exception(errorData['detail'] ?? 'csvi_service.import_execute_error'.tr());
+      }
+    } on TimeoutException {
+      throw Exception('csvi_service.import_timeout_short'.tr());
+    } catch (e) {
+      if (e is Exception) rethrow;
+      throw Exception('csvi_service.network_error'.tr(namedArgs: {'error': e.toString()}));
+    }
+  }
+
+  // Felhasználó import adatok lekérése
+  static Future<UserImportData> getUserImportData() async {
+    try {
+      final response = await _get('$baseUrl/csv/user-data');
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonData = json.decode(response.body);
+        return UserImportData.fromJson(jsonData);
+      } else {
+        final errorData = json.decode(response.body);
+        throw Exception(errorData['detail'] ?? 'csvi_service.user_data_error'.tr());
       }
     } catch (e) {
       if (e is Exception) rethrow;
-      throw Exception('Hálózati hiba: $e');
+      throw Exception('csvi_service.network_error'.tr(namedArgs: {'error': e.toString()}));
+    }
+  }
+
+  // Oszlop mapping validálása
+  static Future<Map<String, dynamic>> validateColumnMapping(
+      List<ColumnMapping> mappings
+  ) async {
+    try {
+      final mappingsJson = mappings.map((m) => m.toJson()).toList();
+
+      final response = await _post(
+        '$baseUrl/csv/validate-mapping',
+        body: json.encode(mappingsJson),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body) as Map<String, dynamic>;
+      } else {
+        final errorData = json.decode(response.body);
+        throw Exception(errorData['detail'] ?? 'csvi_service.validation_error'.tr());
+      }
+    } catch (e) {
+      if (e is Exception) rethrow;
+      throw Exception('csvi_service.network_error'.tr(namedArgs: {'error': e.toString()}));
     }
   }
 
@@ -173,7 +201,7 @@ class CSVImportService {
   static List<String> validateRequiredMappings(List<ColumnMapping> mappings) {
     final errors = <String>[];
     final requiredFields = [CSVColumnType.date, CSVColumnType.amount, CSVColumnType.description];
-    
+
     final mappedFields = mappings
         .where((m) => m.appField != CSVColumnType.ignore)
         .map((m) => m.appField)
@@ -181,21 +209,8 @@ class CSVImportService {
 
     for (final requiredField in requiredFields) {
       if (!mappedFields.contains(requiredField)) {
-        String fieldName;
-        switch (requiredField) {
-          case CSVColumnType.date:
-            fieldName = 'Dátum';
-            break;
-          case CSVColumnType.amount:
-            fieldName = 'Összeg';
-            break;
-          case CSVColumnType.description:
-            fieldName = 'Leírás';
-            break;
-          default:
-            fieldName = requiredField.value;
-        }
-        errors.add('A(z) "$fieldName" mező nincs hozzárendelve');
+        String fieldName = _getFieldDisplayName(requiredField);
+        errors.add('csvi_service.missing_field'.tr(namedArgs: {'field': fieldName}));
       }
     }
 
@@ -208,7 +223,7 @@ class CSVImportService {
 
     fieldCounts.forEach((field, count) {
       if (count > 1) {
-        errors.add('A(z) "${_getFieldDisplayName(field)}" mező többször van hozzárendelve');
+        errors.add('csvi_service.duplicate_field'.tr(namedArgs: {'field': _getFieldDisplayName(field)}));
       }
     });
 
@@ -219,19 +234,19 @@ class CSVImportService {
   static String _getFieldDisplayName(CSVColumnType field) {
     switch (field) {
       case CSVColumnType.date:
-        return 'Dátum';
+        return 'csvi_service.date'.tr();
       case CSVColumnType.amount:
-        return 'Összeg';
+        return 'csvi_service.amount'.tr();
       case CSVColumnType.description:
-        return 'Leírás';
+        return 'csvi_service.description'.tr();
       case CSVColumnType.type:
-        return 'Típus';
+        return 'csvi_service.type'.tr();
       case CSVColumnType.currency:
-        return 'Deviza';
+        return 'csvi_service.currency'.tr();
       case CSVColumnType.category:
-        return 'Kategória';
+        return 'csvi_service.category'.tr();
       case CSVColumnType.ignore:
-        return 'Kihagyás';
+        return 'csvi_service.ignore'.tr();
     }
   }
 

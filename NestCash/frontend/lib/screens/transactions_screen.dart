@@ -703,10 +703,6 @@ Future<void> _performDelete(String transactionId) async {
     );
   }
 
-  String _getSortLabel() {
-    return 'transactions_screen.sort_labels.${_sortBy}'.tr();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

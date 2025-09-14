@@ -1,6 +1,7 @@
 // lib/widgets/csv_mapping_widget.dart
 
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../models/csv_import_models.dart';
 import '../services/csv_import_service.dart';
 
@@ -71,14 +72,14 @@ class _CSVMappingWidgetState extends State<CSVMappingWidget> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      'Oszlop hozzárendelés',
+                      'csvi_widget_map.title'.tr(),
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                   ],
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Állítsd be, hogy melyik CSV oszlop melyik adatmezőnek felel meg',
+                  'csvi_widget_map.description'.tr(),
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Colors.grey[600],
                   ),
@@ -104,7 +105,7 @@ class _CSVMappingWidgetState extends State<CSVMappingWidget> {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        'Hibák a hozzárendelésben:',
+                        'csvi_widget_map.errors_title'.tr(),
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.red.shade700,
@@ -142,7 +143,7 @@ class _CSVMappingWidgetState extends State<CSVMappingWidget> {
                       Expanded(
                         flex: 2,
                         child: Text(
-                          'CSV oszlop',
+                          'csvi_widget_map.csv_column_header'.tr(),
                           style: Theme.of(context).textTheme.labelLarge,
                         ),
                       ),
@@ -150,7 +151,7 @@ class _CSVMappingWidgetState extends State<CSVMappingWidget> {
                       Expanded(
                         flex: 2,
                         child: Text(
-                          'App mező',
+                          'csvi_widget_map.app_field_header'.tr(),
                           style: Theme.of(context).textTheme.labelLarge,
                         ),
                       ),
@@ -158,7 +159,7 @@ class _CSVMappingWidgetState extends State<CSVMappingWidget> {
                       SizedBox(
                         width: 80,
                         child: Text(
-                          'Kötelező',
+                          'csvi_widget_map.required_header'.tr(),
                           style: Theme.of(context).textTheme.labelLarge,
                         ),
                       ),
@@ -277,7 +278,7 @@ class _CSVMappingWidgetState extends State<CSVMappingWidget> {
                   const SizedBox(width: 4),
                 ],
                 Text(
-                  isRequired ? 'Igen' : 'Nem',
+                  isRequired ? 'csvi_widget_map.required_yes'.tr() : 'csvi_widget_map.required_no'.tr(),
                   style: TextStyle(
                     color: isRequired ? Colors.orange.shade700 : Colors.grey.shade600,
                     fontWeight: isRequired ? FontWeight.w500 : FontWeight.normal,
@@ -299,7 +300,7 @@ class _CSVMappingWidgetState extends State<CSVMappingWidget> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Gyors beállítások:',
+            'csvi_widget_map.quick_actions_title'.tr(),
             style: Theme.of(context).textTheme.labelLarge,
           ),
           const SizedBox(height: 8),
@@ -308,17 +309,17 @@ class _CSVMappingWidgetState extends State<CSVMappingWidget> {
             runSpacing: 8,
             children: [
               _buildQuickActionChip(
-                'Revolut formátum',
+                'csvi_widget_map.revolut_format'.tr(),
                 Icons.account_balance,
                 () => _applyRevolutMapping(),
               ),
               _buildQuickActionChip(
-                'Minden kihagyás',
+                'csvi_widget_map.skip_all'.tr(),
                 Icons.clear_all,
                 () => _setAllToIgnore(),
               ),
               _buildQuickActionChip(
-                'Automatikus',
+                'csvi_widget_map.auto_mapping'.tr(),
                 Icons.auto_fix_high,
                 () => _applyAutoMapping(),
               ),

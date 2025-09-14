@@ -10,6 +10,7 @@ import 'package:frontend/screens/manage_categories_screen.dart';
 import 'package:frontend/screens/knowledge/knowledge_screen.dart';
 import 'package:frontend/screens/analysis_screen.dart';
 import 'package:frontend/screens/forum/forum_main_screen.dart';
+import 'package:frontend/screens/transactions_screen.dart';
 import 'package:frontend/widgets/notification_badge.dart';
 import 'package:frontend/screens/limits/manage_limits_screen.dart';
 import 'package:frontend/screens/challenges/challenges_main_screen.dart';
@@ -342,6 +343,20 @@ class _MainScreenState extends State<MainScreen> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => ManageAccountsScreen(userId: widget.userId),
+                      ),
+                    );
+                  },
+                ),
+                _buildDrawerItem(
+                  icon: Icons.monetization_on,
+                  title: 'transactions'.tr(),
+                  color: Colors.greenAccent,
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TransactionsScreen(userId: widget.userId, username: _currentUsername,),
                       ),
                     );
                   },

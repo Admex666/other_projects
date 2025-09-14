@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import '../models/csv_import_models.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ImportConfigurationWidget extends StatefulWidget {
   final UserImportData userImportData;
@@ -73,12 +74,12 @@ class _ImportConfigurationWidgetState extends State<ImportConfigurationWidget> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Import beállítások',
+            'csvi_widget_config.import_settings'.tr(),
             style: Theme.of(context).textTheme.headlineSmall,
           ),
           const SizedBox(height: 8),
           Text(
-            'Állítsd be az import paramétereit',
+            'csvi_widget_config.set_import_parameters'.tr(),
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: Colors.grey[600],
             ),
@@ -122,7 +123,7 @@ class _ImportConfigurationWidgetState extends State<ImportConfigurationWidget> {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Számla beállítások',
+                  'csvi_widget_config.account_settings'.tr(),
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
               ],
@@ -132,10 +133,10 @@ class _ImportConfigurationWidgetState extends State<ImportConfigurationWidget> {
             // Főszámla
             DropdownButtonFormField<String>(
               value: _selectedMainAccount,
-              decoration: const InputDecoration(
-                labelText: 'Főszámla',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.account_balance_wallet),
+              decoration: InputDecoration(
+                labelText: 'csvi_widget_config.main_account'.tr(),
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.account_balance_wallet),
               ),
               items: widget.userImportData.mainAccounts.map((account) {
                 return DropdownMenuItem(
@@ -157,10 +158,10 @@ class _ImportConfigurationWidgetState extends State<ImportConfigurationWidget> {
             // Alszámla
             DropdownButtonFormField<String>(
               value: _selectedSubAccount,
-              decoration: const InputDecoration(
-                labelText: 'Alszámla',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.account_tree),
+              decoration: InputDecoration(
+                labelText: 'csvi_widget_config.sub_account'.tr(),
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.account_tree),
               ),
               items: _selectedMainAccount != null
                   ? (widget.userImportData.subAccounts[_selectedMainAccount!] ?? [])
@@ -198,14 +199,14 @@ class _ImportConfigurationWidgetState extends State<ImportConfigurationWidget> {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Kategória beállítások',
+                  'csvi_widget_config.category_settings'.tr(),
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
               ],
             ),
             const SizedBox(height: 8),
             Text(
-              'Ha a CSV-ben nincs kategória oszlop, ez lesz az alapértelmezett',
+              'csvi_widget_config.default_category_description'.tr(),
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: Colors.grey[600],
               ),
@@ -214,15 +215,15 @@ class _ImportConfigurationWidgetState extends State<ImportConfigurationWidget> {
 
             DropdownButtonFormField<String>(
               value: _selectedDefaultCategory,
-              decoration: const InputDecoration(
-                labelText: 'Alapértelmezett kategória',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.label),
+              decoration: InputDecoration(
+                labelText: 'csvi_widget_config.default_category'.tr(),
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.label),
               ),
               items: [
-                const DropdownMenuItem(
+                DropdownMenuItem(
                   value: null,
-                  child: Text('Nincs alapértelmezett'),
+                  child: Text('csvi_widget_config.no_default'.tr()),
                 ),
                 ...widget.userImportData.categories.map((category) {
                   return DropdownMenuItem(
@@ -259,7 +260,7 @@ class _ImportConfigurationWidgetState extends State<ImportConfigurationWidget> {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Import opciók',
+                  'csvi_widget_config.import_options'.tr(),
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
               ],
@@ -268,8 +269,8 @@ class _ImportConfigurationWidgetState extends State<ImportConfigurationWidget> {
 
             // Duplikátumok kihagyása
             SwitchListTile(
-              title: const Text('Duplikátumok kihagyása'),
-              subtitle: const Text('A már létező tranzakciók nem lesznek újra importálva'),
+              title: Text('csvi_widget_config.skip_duplicates_title'.tr()),
+              subtitle: Text('csvi_widget_config.skip_duplicates_subtitle'.tr()),
               value: _skipDuplicates,
               onChanged: (value) {
                 setState(() {
@@ -284,10 +285,10 @@ class _ImportConfigurationWidgetState extends State<ImportConfigurationWidget> {
             // Dátum formátum
             DropdownButtonFormField<String>(
               value: _dateFormat,
-              decoration: const InputDecoration(
-                labelText: 'Dátum formátum',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.date_range),
+              decoration: InputDecoration(
+                labelText: 'csvi_widget_config.date_format'.tr(),
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.date_range),
               ),
               items: const [
                 DropdownMenuItem(
@@ -348,7 +349,7 @@ class _ImportConfigurationWidgetState extends State<ImportConfigurationWidget> {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Összefoglaló',
+                  'csvi_widget_config.summary'.tr(),
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     color: Colors.blue.shade700,
                   ),
@@ -357,10 +358,22 @@ class _ImportConfigurationWidgetState extends State<ImportConfigurationWidget> {
             ),
             const SizedBox(height: 12),
             
-            _buildSummaryRow('Cél számla', '${_getMainAccountDisplayName(_selectedMainAccount!)} → $_selectedSubAccount'),
-            _buildSummaryRow('Alapértelmezett kategória', _selectedDefaultCategory ?? 'Nincs beállítva'),
-            _buildSummaryRow('Hozzárendelt mezők', '$mappedFields/${widget.columnMappings.length}'),
-            _buildSummaryRow('Duplikátumok kezelése', _skipDuplicates ? 'Kihagyás' : 'Importálás'),
+            _buildSummaryRow(
+              'csvi_widget_config.target_account'.tr(),
+              '${_getMainAccountDisplayName(_selectedMainAccount!)} → $_selectedSubAccount'
+            ),
+            _buildSummaryRow(
+              'csvi_widget_config.default_category_summary'.tr(),
+              _selectedDefaultCategory ?? 'csvi_widget_config.not_set'.tr()
+            ),
+            _buildSummaryRow(
+              'csvi_widget_config.assigned_fields'.tr(),
+              '$mappedFields/${widget.columnMappings.length}'
+            ),
+            _buildSummaryRow(
+              'csvi_widget_config.duplicate_handling'.tr(),
+              _skipDuplicates ? 'csvi_widget_config.skip'.tr() : 'csvi_widget_config.import'.tr()
+            ),
           ],
         ),
       ),
@@ -397,11 +410,11 @@ class _ImportConfigurationWidgetState extends State<ImportConfigurationWidget> {
   String _getMainAccountDisplayName(String account) {
     switch (account) {
       case 'likvid':
-        return 'Likvid eszközök';
+        return 'csvi_widget_config.liquid_assets'.tr();
       case 'befektetes':
-        return 'Befektetések';
+        return 'csvi_widget_config.investments'.tr();
       case 'megtakaritas':
-        return 'Megtakarítások';
+        return 'csvi_widget_config.savings'.tr();
       default:
         return account;
     }
