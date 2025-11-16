@@ -115,7 +115,6 @@ def calculate_revenue(inputs):
             inputs['szezonalitas'],
             (inputs['suly_marka']/100, inputs['suly_bs']/100, inputs['suly_szezon']/100)
         )
-        weboldal_mult = 1
         
         total_multiplier = macro_mult * weboldal_mult
         
