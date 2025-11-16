@@ -85,7 +85,7 @@ def calculate_impressions(real_users, pageviews, mobil_arany, desktop_arany, mob
 def calculate_revenue(inputs):
     results = {}
     
-    for year in [2026, 2027]:
+    for year in [2026]:
         # Impressions
         total_impressions = calculate_impressions(
             inputs['real_users'],
@@ -108,12 +108,14 @@ def calculate_revenue(inputs):
         
         # Multiplikátorok
         macro_mult = calculate_macro_multiplier(year)
+        macro_mult = 1
         weboldal_mult = calculate_weboldal_multiplier(
             inputs['markaertek'],
             brand_safety,
             inputs['szezonalitas'],
             (inputs['suly_marka']/100, inputs['suly_bs']/100, inputs['suly_szezon']/100)
         )
+        weboldal_mult = 1
         
         total_multiplier = macro_mult * weboldal_mult
         
@@ -209,7 +211,6 @@ def render_inputs(prefix="main"):
         markaertek = markaertek_options[markaertek_choice]
         
         st.subheader("🛡️ Brand Safety Index komponensek")
-        st.caption("2026")
         col1, col2, col3 = st.columns(3)
         with col1:
             bs_2026_szenzitiv = st.slider("Szenzitív", 0.0, 1.0, 0.9, 0.1, key=f"{prefix}_bs26_s")
@@ -218,19 +219,10 @@ def render_inputs(prefix="main"):
         with col3:
             bs_2026_user = st.slider("User elég.", 0.0, 1.0, 0.9, 0.1, key=f"{prefix}_bs26_u")
         
-        st.caption("2027")
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            bs_2027_szenzitiv = st.slider("Szenzitív", 0.0, 1.0, 0.9, 0.1, key=f"{prefix}_bs27_s")
-        with col2:
-            bs_2027_karos = st.slider("Káros", 0.0, 1.0, 0.8, 0.1, key=f"{prefix}_bs27_k")
-        with col3:
-            bs_2027_user = st.slider("User elég.", 0.0, 1.0, 0.7, 0.1, key=f"{prefix}_bs27_u")
-        
         st.subheader("⚖️ Weboldal jellemzők súlyai")
         st.caption("Összesen: 100%")
         suly_marka = st.slider("Márkaérték súlya (%)", 0, 100, 30, key=f"{prefix}_w1")
-        suly_bs = st.slider("Brand Safety súlya (%)", 0, 100, 20, key=f"{prefix}_w2")
+        suly_bs = st.slider("Brand Safety szorzó súlya (%)", 0, 100, 20, key=f"{prefix}_w2")
         suly_szezon = st.slider("Szezonalitás súlya (%)", 0, 100, 50, key=f"{prefix}_w3")
         
         total_suly = suly_marka + suly_bs + suly_szezon
@@ -261,9 +253,6 @@ def render_inputs(prefix="main"):
         'bs_2026_szenzitiv': bs_2026_szenzitiv,
         'bs_2026_karos': bs_2026_karos,
         'bs_2026_user': bs_2026_user,
-        'bs_2027_szenzitiv': bs_2027_szenzitiv,
-        'bs_2027_karos': bs_2027_karos,
-        'bs_2027_user': bs_2027_user,
         'suly_marka': suly_marka,
         'suly_bs': suly_bs,
         'suly_szezon': suly_szezon,
@@ -272,38 +261,21 @@ def render_inputs(prefix="main"):
 
 def render_results(results, inputs):
     # KPI Cards
-    col1, col2, col3, col4 = st.columns(4)
-    
-    with col1:
-        st.markdown(f"""
-        <div class="kpi-card">
-            <div class="kpi-label">2026 Adaptive bevétel</div>
-            <div class="kpi-value">{results[2026]['adaptive_share']/1_000_000:.2f}M Ft</div>
-        </div>
-        """, unsafe_allow_html=True)
+    col1, col2 = st.columns(2)
     
     with col2:
         st.markdown(f"""
         <div class="kpi-card">
-            <div class="kpi-label">2027 Adaptive bevétel</div>
-            <div class="kpi-value">{results[2027]['adaptive_share']/1_000_000:.2f}M Ft</div>
+            <div class="kpi-label">Adaptive éves részesedése</div>
+            <div class="kpi-value">{results[2026]['adaptive_share']/1_000_000:.2f}M Ft</div>
         </div>
         """, unsafe_allow_html=True)
     
-    with col3:
-        change = ((results[2027]['adaptive_share'] - results[2026]['adaptive_share']) / results[2026]['adaptive_share']) * 100
+    with col1:
+        avg_gross = results[2026]['total_yearly']
         st.markdown(f"""
         <div class="kpi-card">
-            <div class="kpi-label">Változás</div>
-            <div class="kpi-value">{change:+.1f}%</div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col4:
-        avg_gross = (results[2026]['total_yearly'] + results[2027]['total_yearly']) / 2
-        st.markdown(f"""
-        <div class="kpi-card">
-            <div class="kpi-label">Átlag bruttó (év)</div>
+            <div class="kpi-label">Bruttó éves bevétel</div>
             <div class="kpi-value">{avg_gross/1_000_000:.2f}M Ft</div>
         </div>
         """, unsafe_allow_html=True)
@@ -313,7 +285,7 @@ def render_results(results, inputs):
     # Charts - 2x2 grid
     
     # 1. Inventory vs Revenue Mix (side-by-side bar)
-    st.subheader("Inventory vs Bevétel Összetétel (2026)")
+    st.subheader("Inventory vs Bevétel Összetétel")
     cat_data = results[2026]['categories']
     categories = [k for k, v in cat_data.items() if k != 'Üres']
     
@@ -339,7 +311,7 @@ def render_results(results, inputs):
     st.plotly_chart(fig_mix, use_container_width=True)
 
     # 2. Marginális Hatás Elemzés - Horizontal Bar Chart
-    st.subheader("Marginális Hatás Elemzés (2026)")
+    st.subheader("Marginális Hatás Elemzés")
     st.caption("1%-os paraméter változás hatása az éves bevételre")
     
     # Baseline bevétel
@@ -365,34 +337,51 @@ def render_results(results, inputs):
     
     # Forgalmi paraméterek
     marginal_impacts.append({
-        'label': 'Real Users (+1%)',
+        'label': 'Real Users / Fill Rate / Pageviews (+1%)',
         'impact': test_marginal('real_users', inputs['real_users']),
         'current': f"{inputs['real_users']:,.0f}"
     })
-    
+
     marginal_impacts.append({
-        'label': 'Pageviews/user (+1%)',
-        'impact': test_marginal('pageviews', inputs['pageviews']),
-        'current': f"{inputs['pageviews']}"
+        'label': 'Időalapú arány (+1%)',
+        'impact': test_marginal('inv_idoalapu', inputs['inv_idoalapu']),
+        'current': f"{inputs['inv_idoalapu']:,.0f}"
     })
-    
+
     marginal_impacts.append({
-        'label': 'Fill Rate (+1%)',
-        'impact': test_marginal('fill_rate', inputs['fill_rate'], is_percentage=False),
-        'current': f"{inputs['fill_rate']}%"
+        'label': 'AV alapú arány (+1%)',
+        'impact': test_marginal('inv_av', inputs['inv_av']),
+        'current': f"{inputs['inv_av']:,.0f}"
     })
-    
-    # Weboldal jellemzők
+
     marginal_impacts.append({
-        'label': 'Márkaérték (+1%)',
-        'impact': test_marginal('markaertek', inputs['markaertek']),
-        'current': f"{inputs['markaertek']:.2f}"
+        'label': 'CT arány (+1%)',
+        'impact': test_marginal('inv_ct', inputs['inv_ct']),
+        'current': f"{inputs['inv_ct']:,.0f}"
     })
-    
+
     marginal_impacts.append({
-        'label': 'Szezonalitás (+1%)',
-        'impact': test_marginal('szezonalitas', inputs['szezonalitas']),
-        'current': f"{inputs['szezonalitas']:.2f}"
+        'label': 'PMP Display arány (+1%)',
+        'impact': test_marginal('inv_pmp_display', inputs['inv_pmp_display']),
+        'current': f"{inputs['inv_pmp_display']:,.0f}"
+    })
+
+    marginal_impacts.append({
+        'label': 'Open Display arány (+1%)',
+        'impact': test_marginal('inv_open_display', inputs['inv_open_display']),
+        'current': f"{inputs['inv_open_display']:,.0f}"
+    })
+
+    marginal_impacts.append({
+        'label': 'PMP Video arány (+1%)',
+        'impact': test_marginal('inv_pmp_video', inputs['inv_pmp_video']),
+        'current': f"{inputs['inv_pmp_video']:,.0f}"
+    })
+
+    marginal_impacts.append({
+        'label': 'Open Video arány (+1%)',
+        'impact': test_marginal('inv_open_video', inputs['inv_open_video']),
+        'current': f"{inputs['inv_open_video']:,.0f}"
     })
     
     # Rendezés impact szerint (abszolút értékben)
@@ -464,7 +453,7 @@ def render_results(results, inputs):
     
     # 4. Multiplikátor Breakdown
     with col4:
-        st.subheader("Weboldal Jellemzőinek Hatása (2026)")
+        st.subheader("Weboldal Jellemzőinek Hatása")
         
         # Számoljuk ki a komponenseket az inputokból
         macro_mult = results[2026]['macro_mult']
@@ -482,9 +471,9 @@ def render_results(results, inputs):
         bs_contribution = brand_safety_multiplier * w_bs
         szezon_contribution = inputs['szezonalitas'] * w_szezon
         
-        components = ['Márkaérték\n(súly: {}%)'.format(inputs['suly_marka']), 
-                      'Brand Safety\n(súly: {}%)'.format(inputs['suly_bs']), 
-                      'Szezonalitás\n(súly: {}%)'.format(inputs['suly_szezon']), 
+        components = ['Márkaérték', 
+                      'Brand Safety szorzó', 
+                      'Szezonalitás', 
                       'Összesen']
         values = [marka_contribution, bs_contribution, szezon_contribution, weboldal_mult]
         
@@ -554,7 +543,8 @@ with tab1:
             inv_open_display = st.slider("Open Display (%)", 0, 100, 25, key="main_inv5")
             inv_pmp_video = st.slider("PMP Video (%)", 0, 100, 3, key="main_inv6")
             inv_open_video = st.slider("Open Video (%)", 0, 100, 15, key="main_inv7")
-            inv_ures = st.slider("Üres (%)", 0, 100, 30, key="main_inv8")
+            inv_ures = (1 - fill_rate/100)*100
+            st.text(f"Üres: {inv_ures:.0f}%")
             
             total_inv = inv_idoalapu + inv_av + inv_ct + inv_pmp_display + inv_open_display + inv_pmp_video + inv_open_video + inv_ures
             if total_inv != 100:
@@ -574,7 +564,6 @@ with tab1:
         
         # Brand Safety Index
         with st.expander("🛡️ Brand Safety Index", expanded=False):
-            st.caption("2026")
             col1, col2, col3 = st.columns(3)
             with col1:
                 bs_2026_szenzitiv = st.slider("Szenzitív", 0.0, 1.0, 0.9, 0.1, key="main_bs26_s")
@@ -583,20 +572,11 @@ with tab1:
             with col3:
                 bs_2026_user = st.slider("User elég.", 0.0, 1.0, 0.9, 0.1, key="main_bs26_u")
             
-            st.caption("2027")
-            col1, col2, col3 = st.columns(3)
-            with col1:
-                bs_2027_szenzitiv = st.slider("Szenzitív", 0.0, 1.0, 0.9, 0.1, key="main_bs27_s")
-            with col2:
-                bs_2027_karos = st.slider("Káros", 0.0, 1.0, 0.8, 0.1, key="main_bs27_k")
-            with col3:
-                bs_2027_user = st.slider("User elég.", 0.0, 1.0, 0.7, 0.1, key="main_bs27_u")
-        
         # Weboldal jellemzők súlyai
         with st.expander("⚖️ Weboldal jellemzők súlyai", expanded=False):
             st.caption("Összesen: 100%")
             suly_marka = st.slider("Márkaérték súlya (%)", 0, 100, 30, key="main_w1")
-            suly_bs = st.slider("Brand Safety súlya (%)", 0, 100, 20, key="main_w2")
+            suly_bs = st.slider("Brand Safety szorzó súlya (%)", 0, 100, 20, key="main_w2")
             suly_szezon = st.slider("Szezonalitás súlya (%)", 0, 100, 50, key="main_w3")
             
             total_suly = suly_marka + suly_bs + suly_szezon
@@ -628,9 +608,6 @@ with tab1:
             'bs_2026_szenzitiv': bs_2026_szenzitiv,
             'bs_2026_karos': bs_2026_karos,
             'bs_2026_user': bs_2026_user,
-            'bs_2027_szenzitiv': bs_2027_szenzitiv,
-            'bs_2027_karos': bs_2027_karos,
-            'bs_2027_user': bs_2027_user,
             'suly_marka': suly_marka,
             'suly_bs': suly_bs,
             'suly_szezon': suly_szezon,
@@ -687,16 +664,10 @@ with tab2:
             
             # Brand Safety
             with st.expander("🛡️ Brand Safety", expanded=False):
-                st.caption("2026")
                 bs_2026_szenzitiv = st.slider("Szenzitív", 0.0, 1.0, 0.9, 0.1, key=f"scen{i}_bs26_s")
                 bs_2026_karos = st.slider("Káros", 0.0, 1.0, 0.9, 0.1, key=f"scen{i}_bs26_k")
                 bs_2026_user = st.slider("User elég.", 0.0, 1.0, 0.9, 0.1, key=f"scen{i}_bs26_u")
-                
-                st.caption("2027")
-                bs_2027_szenzitiv = st.slider("Szenzitív", 0.0, 1.0, 0.9, 0.1, key=f"scen{i}_bs27_s")
-                bs_2027_karos = st.slider("Káros", 0.0, 1.0, 0.8, 0.1, key=f"scen{i}_bs27_k")
-                bs_2027_user = st.slider("User elég.", 0.0, 1.0, 0.7, 0.1, key=f"scen{i}_bs27_u")
-            
+
             # Súlyok
             with st.expander("⚖️ Súlyok", expanded=False):
                 suly_marka = st.slider("Márkaérték (%)", 0, 100, 30, key=f"scen{i}_w1")
@@ -725,9 +696,6 @@ with tab2:
                 'bs_2026_szenzitiv': bs_2026_szenzitiv,
                 'bs_2026_karos': bs_2026_karos,
                 'bs_2026_user': bs_2026_user,
-                'bs_2027_szenzitiv': bs_2027_szenzitiv,
-                'bs_2027_karos': bs_2027_karos,
-                'bs_2027_user': bs_2027_user,
                 'suly_marka': suly_marka,
                 'suly_bs': suly_bs,
                 'suly_szezon': suly_szezon,
@@ -740,10 +708,7 @@ with tab2:
             st.markdown("---")
             scen_results = calculate_revenue(scen_inputs)
             
-            st.metric("💰 2026 Adaptive", f"{scen_results[2026]['adaptive_share']/1_000_000:.2f}M Ft")
-            st.metric("💰 2027 Adaptive", f"{scen_results[2027]['adaptive_share']/1_000_000:.2f}M Ft")
-            change = ((scen_results[2027]['adaptive_share'] - scen_results[2026]['adaptive_share']) / scen_results[2026]['adaptive_share']) * 100
-            st.metric("📈 Változás", f"{change:+.1f}%")
+            st.metric("💰 Adaptive", f"{scen_results[2026]['adaptive_share']/1_000_000:.2f}M Ft")
 
 st.markdown("---")
 st.caption("© 2025 Brindzik Dorina, Jakus Ádám, Koltai Dóra, Lefánti Vilmos, Nagy Boglárka, Szerényi Petra")
