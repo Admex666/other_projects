@@ -1,10 +1,10 @@
 FROM python:3.11-slim
 
-# Chrome telepítése
+# Chrome telepítése (modern módszer)
 RUN apt-get update && apt-get install -y wget gnupg unzip curl
-RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
-RUN echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list
-RUN apt-get update && apt-get install -y google-chrome-stable
+RUN wget -q -O /tmp/google-chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+RUN apt-get install -y /tmp/google-chrome.deb
+RUN rm /tmp/google-chrome.deb
 RUN rm -rf /var/lib/apt/lists/*
 
 # ChromeDriver telepítése
