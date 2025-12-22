@@ -23,10 +23,6 @@ def get_kiwi_tokens(headless: bool = False) -> dict:
     if headless:
         options.add_argument('--headless')
     
-    options.add_argument('--no-sandbox')
-    options.add_argument('--disable-dev-shm-usage')
-    options.add_argument('--disable-gpu')
-
     # FONTOS: Performance logging engedélyezése
     options.set_capability('goog:loggingPrefs', {'performance': 'ALL'})
     
@@ -71,7 +67,6 @@ def get_kiwi_tokens(headless: bool = False) -> dict:
         "rand_id": rand_id
     }
 
-
 def search_one_way_flights(
     origin: str,
     destination: str,
@@ -85,28 +80,11 @@ def search_one_way_flights(
     currency: str = "huf",
     locale: str = "hu",
     max_stopovers: Optional[int] = None,
-    direct_flights_only: bool = False
+    direct_flights_only: bool = False,
+    debug: bool = False
 ) -> pd.DataFrame:
     """
     Kiwi.com egyirányú járatok keresése.
-    
-    Args:
-        origin: Indulási város/reptér kódja (pl. "budapest_hu", "BUD")
-        destination: Célállomás kódja (pl. "barcelona_es", "BCN")
-        tokens: Token dict a get_kiwi_tokens()-ból
-        date_from: Indulás kezdő dátuma (YYYY-MM-DD), None = anytime
-        date_to: Indulás záró dátuma (YYYY-MM-DD), None = anytime
-        adults: Felnőttek száma
-        children: Gyerekek száma
-        infants: Csecsemők száma
-        limit: Max találatok száma
-        currency: Pénznem (huf, eur, usd)
-        locale: Nyelv (hu, en)
-        max_stopovers: Max átszállások száma (None = bármi)
-        direct_flights_only: Csak direkt járatok
-        
-    Returns:
-        Pandas DataFrame a találatokkal
     """
     print(f"🔍 Egyirányú járatok: {origin} → {destination}", end="")
     if date_from and date_to:
@@ -120,14 +98,28 @@ def search_one_way_flights(
     
     # City ID formázás
     if ":" not in origin:
-        origin_id = f"City:{origin.lower()}"
+        # ÚJ: Próbáljuk meg URL formátumból City ID-vé alakítani
+        if "-" in origin:  # URL formátum (pl. "budapest-magyarorszag")
+            origin_id = f"City:{origin.replace('-', '_')}"
+            if debug:
+                print(f"🔧 Origin URL->ID konverzió: {origin} -> {origin_id}")
+        else:
+            origin_id = f"City:{origin.lower()}"
     else:
         origin_id = origin
         
     if ":" not in destination:
-        dest_id = f"City:{destination.lower()}"
+        if "-" in destination:
+            dest_id = f"City:{destination.replace('-', '_')}"
+            if debug:
+                print(f"🔧 Destination URL->ID konverzió: {destination} -> {dest_id}")
+        else:
+            dest_id = f"City:{destination.lower()}"
     else:
         dest_id = destination
+    
+    if debug:
+        print(f"🔧 Végleges ID-k: {origin_id} -> {dest_id}")
     
     # GraphQL query - ONE WAY verzió
     graphql_payload = {
@@ -260,12 +252,18 @@ def search_one_way_flights(
         if date_to:
             departure_date["end"] = f"{date_to}T23:59:59"
         graphql_payload["variables"]["search"]["itinerary"]["outboundDepartureDate"] = departure_date
+        if debug:
+            print(f"🔧 Dátum intervallum: {departure_date}")
     
-    # Átszállások szűréser
+    # Átszállások szűrése
     if direct_flights_only:
         graphql_payload["variables"]["filter"]["maxStopovers"] = 0
     elif max_stopovers is not None:
         graphql_payload["variables"]["filter"]["maxStopovers"] = max_stopovers
+    
+    if debug:
+        print(f"🔧 Request payload:")
+        print(json.dumps(graphql_payload["variables"], indent=2, ensure_ascii=False))
     
     # API hívás
     headers = {
@@ -283,28 +281,48 @@ def search_one_way_flights(
         timeout=30
     )
     
+    if debug:
+        print(f"🔧 Response status: {response.status_code}")
+    
     data = response.json()
+    
+    if debug:
+        print(f"🔧 Response data keys: {data.keys()}")
+        if "data" in data:
+            print(f"🔧 Data.onewayItineraries type: {data['data'].get('onewayItineraries', {}).get('__typename')}")
     
     # Hibakezelés
     if "errors" in data:
         print("❌ GraphQL hibák:")
         for error in data["errors"]:
             print(f"  - {error['message']}")
+            if debug and "extensions" in error:
+                print(f"    Extensions: {error['extensions']}")
         return pd.DataFrame()
     
     if not data.get("data") or not data["data"].get("onewayItineraries"):
         print("❌ Nem érkezett adat")
+        if debug:
+            print(f"🔧 Teljes response: {json.dumps(data, indent=2, ensure_ascii=False)}")
         return pd.DataFrame()
     
     result = data["data"]["onewayItineraries"]
     
     if result["__typename"] != "Itineraries":
         print(f"❌ Hiba: {result.get('error', 'Ismeretlen hiba')}")
+        if debug:
+            print(f"🔧 Result: {json.dumps(result, indent=2, ensure_ascii=False)}")
         return pd.DataFrame()
     
     itineraries = result.get("itineraries", [])
-    print(f"✅ {len(itineraries)} járat\n")
+    metadata = result.get("metadata", {})
     
+    if debug:
+        print(f"🔧 Metadata itinerariesCount: {metadata.get('itinerariesCount', 'N/A')}")
+        print(f"🔧 Actual itineraries length: {len(itineraries)}")
+    
+    print(f"✅ {len(itineraries)} járat\n")
+
     # DataFrame építése
     flights_data = []
     
@@ -380,11 +398,10 @@ def search_one_way_flights(
     
     return df
 
-
 def create_return_combinations(
     outbound_df: pd.DataFrame,
     inbound_df: pd.DataFrame,
-    min_stay_days: int = 1,
+    min_stay_days: int = 2,
     max_stay_days: Optional[int] = None
 ) -> pd.DataFrame:
     """
@@ -460,3 +477,68 @@ def create_return_combinations(
         print("❌ Nincs érvényes kombináció\n")
     
     return df
+
+def get_city_id_api(city_name: str) -> Optional[str]:
+    """Kiwi API használata város ID lekéréséhez Selenium helyett."""
+    url = f"https://api.skypicker.com/locations?term={city_name}&location_types=city"
+    try:
+        response = requests.get(url, timeout=10)
+        data = response.json()
+        if data.get('locations'):
+            return data['locations'][0]['id']
+    except Exception as e:
+        print(f"❌ API hiba a városkeresésnél ({city_name}): {e}")
+    return None
+
+def search_flights_by_city_name_v2(
+    origin_name: str,
+    destination_name: str,
+    tokens: dict,
+    date_from: Optional[str] = None,
+    date_to: Optional[str] = None,
+    adults: int = 1,
+    children: int = 0,
+    infants: int = 0,
+    limit: int = 100,
+    currency: str = "huf",
+    locale: str = "hu",
+    max_stopovers: Optional[int] = None,
+    direct_flights_only: bool = False,
+    headless: bool = True,
+    debug: bool = False
+) -> pd.DataFrame:
+    """
+    Járatok keresése város nevek alapján - JAVÍTOTT VERZIÓ.
+    """
+    origin_city_id = get_city_id_api(origin_name)
+    if not origin_city_id:
+        print(f"❌ Nem sikerült megszerezni az origin ID-t: {origin_name}")
+        return pd.DataFrame()
+    
+    dest_city_id = get_city_id_api(destination_name)
+    if not dest_city_id:
+        print(f"❌ Nem sikerült megszerezni a destination ID-t: {destination_name}")
+        return pd.DataFrame()
+    
+    
+    if not origin_city_id or not dest_city_id:
+        print(f"❌ Nem sikerült megszerezni a City ID-kat")
+        return pd.DataFrame()
+    
+    # 3. Eredeti keresés a helyes City ID-kkel
+    return search_one_way_flights(
+        origin=origin_city_id,
+        destination=dest_city_id,
+        tokens=tokens,
+        date_from=date_from,
+        date_to=date_to,
+        adults=adults,
+        children=children,
+        infants=infants,
+        limit=limit,
+        currency=currency,
+        locale=locale,
+        max_stopovers=max_stopovers,
+        direct_flights_only=direct_flights_only,
+        debug=debug
+    )

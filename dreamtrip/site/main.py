@@ -4,9 +4,10 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 import pandas as pd
-from scraper import get_kiwi_tokens, search_one_way_flights, create_return_combinations
+from scraper import get_kiwi_tokens, search_flights_by_city_name_v2, create_return_combinations
 import os
 import secrets
+from pydantic import BaseModel
 
 app = FastAPI()
 
@@ -102,7 +103,7 @@ async def search_flights(background_tasks: BackgroundTasks, request: Request):
     user = get_current_user(request)
     if not user:
         raise HTTPException(status_code=401, detail="Unauthorized")
-    background_tasks.add_task(run_scraper)
+    background_tasks.add_task(run_intelligence_scraper)
     return JSONResponse({"message": "Scraping elindult..."})
 
 @app.get("/api/flight-status")
@@ -112,44 +113,68 @@ async def get_status(request: Request):
         raise HTTPException(status_code=401, detail="Unauthorized")
     return JSONResponse(results)
 
-def run_scraper():
+# Ezt add hozzá a main.py-hoz a többi végpont mellé
+@app.get("/search-status")
+async def get_search_status():
+    global results
+    return JSONResponse(content=results)
+
+class SearchParams(BaseModel):
+    origin: str
+    destination: str
+    out_from: str
+    out_to: str
+    in_from: str
+    in_to: str
+
+# Módosított háttérfolyamat
+def run_intelligence_scraper(p: SearchParams):
     global results
     results = {"status": "running", "data": None, "error": None}
-    
     try:
+        # 1. Tokenek
         tokens = get_kiwi_tokens(headless=True)
         
-        outbound = search_one_way_flights(
-            origin="budapest_hu",
-            destination="barcelona_es",
+        # 2. Odaút keresés - JAVÍTOTT PARAMÉTERNEVEK
+        outbound = search_flights_by_city_name_v2(
+            origin_name=p.origin,        # 'origin' helyett 'origin_name'
+            destination_name=p.destination, # 'destination' helyett 'destination_name'
             tokens=tokens,
-            date_from="2026-01-25",
-            date_to="2026-01-26",
-            limit=50
+            date_from=p.out_from,
+            date_to=p.out_to
         )
         
-        inbound = search_one_way_flights(
-            origin="barcelona_es",
-            destination="budapest_hu",
+        # 3. Visszaút keresés - JAVÍTOTT PARAMÉTERNEVEK
+        inbound = search_flights_by_city_name_v2(
+            origin_name=p.destination,   # Itt is!
+            destination_name=p.origin,      # Itt is!
             tokens=tokens,
-            date_from="2026-02-01",
-            date_to="2026-02-09",
-            limit=50
+            date_from=p.in_from,
+            date_to=p.in_to
         )
         
-        combinations = create_return_combinations(outbound, inbound, min_stay_days=5, max_stay_days=15)
-        
+        if outbound.empty or inbound.empty:
+            results = {"status": "done", "data": [], "error": "Nem található járat ezekre a dátumokra."}
+            return
+
+        # 4. Kombinálás
+        combinations = create_return_combinations(outbound, inbound)
         top10 = combinations.head(10).to_dict(orient="records")
         
+        # Dátum formázás JSON-hoz
         for row in top10:
-            for key in row:
-                if pd.notna(row[key]) and isinstance(row[key], pd.Timestamp):
-                    row[key] = row[key].strftime("%Y-%m-%d %H:%M")
-        
+            for key in ['out_dep_time', 'out_arr_time', 'in_dep_time', 'in_arr_time']:
+                if isinstance(row[key], pd.Timestamp):
+                    row[key] = row[key].strftime('%Y-%m-%d %H:%M')
+
         results = {"status": "done", "data": top10, "error": None}
-        
     except Exception as e:
         results = {"status": "error", "data": None, "error": str(e)}
+
+@app.post("/start-intelligence-search")
+async def start_search(params: SearchParams, background_tasks: BackgroundTasks):
+    background_tasks.add_task(run_intelligence_scraper, params)
+    return {"message": "Search started"}
 
 if __name__ == "__main__":
     import uvicorn

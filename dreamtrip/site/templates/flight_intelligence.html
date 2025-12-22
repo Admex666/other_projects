@@ -6,172 +6,148 @@
     <title>Flight Intelligence - Optivoya</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #235B2A 0%, #1a4520 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .navbar {
-            background: rgba(255,255,255,0.95);
-            padding: 20px 40px;
-            border-radius: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 40px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-        .logo-text {
-            font-size: 24px;
-            font-weight: 700;
-            color: #235B2A;
-        }
-        .back-btn {
-            background: #235B2A;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-        .back-btn:hover {
-            background: #90DC25;
-        }
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: rgba(255,255,255,0.95);
-            border-radius: 20px;
-            padding: 50px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-        h1 {
-            color: #235B2A;
-            margin-bottom: 10px;
-            font-size: 36px;
-        }
-        .subtitle {
-            color: #666;
-            margin-bottom: 40px;
-            font-size: 16px;
-        }
-        .question {
-            background: #f8f8f8;
-            border-left: 4px solid #90DC25;
-            padding: 30px;
-            margin-bottom: 30px;
-            border-radius: 10px;
-        }
-        .question-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #235B2A;
-            margin-bottom: 20px;
-        }
-        .slider-container {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-        .slider-label {
-            font-size: 14px;
-            color: #666;
-            min-width: 100px;
-            text-align: center;
-        }
-        input[type="range"] {
-            flex: 1;
-            height: 8px;
-            background: #d3d3d3;
-            border-radius: 5px;
-            outline: none;
-            -webkit-appearance: none;
-        }
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            background: #90DC25;
-            cursor: pointer;
-            border-radius: 50%;
-        }
-        .btn {
-            background: #235B2A;
-            color: white;
-            padding: 15px 40px;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-            transition: all 0.3s;
-        }
-        .btn:hover {
-            background: #90DC25;
-            transform: translateY(-2px);
-        }
-        .progress-bar {
-            background: #e0e0e0;
-            height: 8px;
-            border-radius: 10px;
-            margin-bottom: 40px;
-            overflow: hidden;
-        }
-        .progress-fill {
-            background: linear-gradient(90deg, #235B2A, #90DC25);
-            height: 100%;
-            width: 33%;
-            transition: width 0.3s;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: linear-gradient(135deg, #235B2A 0%, #1a4520 100%); min-height: 100vh; padding: 20px; color: #333; }
+        .container { max-width: 1000px; margin: 0 auto; background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        h1 { color: #235B2A; text-align: center; margin-bottom: 30px; }
+        
+        .search-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        .input-group { display: flex; flex-direction: column; }
+        label { font-weight: 600; margin-bottom: 5px; color: #555; }
+        input { padding: 12px; border: 2px solid #ddd; border-radius: 10px; font-size: 14px; }
+        
+        .btn-search { background: #235B2A; color: white; border: none; padding: 15px; border-radius: 10px; width: 100%; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        .btn-search:hover { background: #32853d; }
+        .btn-search:disabled { background: #ccc; cursor: not-allowed; }
+
+        #status { margin: 20px 0; padding: 15px; border-radius: 10px; text-align: center; display: none; }
+        .status-running { background: #e3f2fd; color: #1976d2; border: 1px solid #bbdefb; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 13px; }
+        th { background: #f8f9fa; padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6; }
+        td { padding: 12px; border-bottom: 1px solid #eee; }
+        .price { font-weight: 700; color: #235B2A; font-size: 16px; }
+        .carrier-tag { background: #eee; padding: 2px 6px; border-radius: 4px; font-size: 11px; }
     </style>
 </head>
 <body>
-    <div class="navbar">
-        <div class="logo-text">✈️ Flight Intelligence</div>
-        <a href="/home" class="back-btn">← Vissza</a>
-    </div>
-
     <div class="container">
-        <h1>Személyre szabott járatkeresés</h1>
-        <p class="subtitle">Válaszolj néhány kérdésre, hogy megtaláljuk a számodra optimális járatot</p>
-
-        <div class="progress-bar">
-            <div class="progress-fill"></div>
-        </div>
-
-        <div class="question">
-            <div class="question-title">1. Melyik fontosabb számodra?</div>
-            <div class="slider-container">
-                <span class="slider-label">Ár</span>
-                <input type="range" min="1" max="9" value="5" id="q1">
-                <span class="slider-label">Indulási időpont</span>
+        <h1>✈️ Flight Intelligence</h1>
+        
+        <div class="search-grid">
+            <div class="input-group">
+                <label>Honnan</label>
+                <input type="text" id="origin" placeholder="Pl: Budapest" value="Budapest">
+            </div>
+            <div class="input-group">
+                <label>Hova</label>
+                <input type="text" id="destination" placeholder="Pl: Barcelona">
+            </div>
+            <div class="input-group">
+                <label>Odaút (ettől - eddig)</label>
+                <div style="display: flex; gap: 5px;">
+                    <input type="date" id="out_from">
+                    <input type="date" id="out_to">
+                </div>
+            </div>
+            <div class="input-group">
+                <label>Visszaút (ettől - eddig)</label>
+                <div style="display: flex; gap: 5px;">
+                    <input type="date" id="in_from">
+                    <input type="date" id="in_to">
+                </div>
             </div>
         </div>
-
-        <div class="question">
-            <div class="question-title">2. Melyik fontosabb számodra?</div>
-            <div class="slider-container">
-                <span class="slider-label">Ár</span>
-                <input type="range" min="1" max="9" value="5" id="q2">
-                <span class="slider-label">Utazási idő</span>
-            </div>
-        </div>
-
-        <div class="question">
-            <div class="question-title">3. Melyik fontosabb számodra?</div>
-            <div class="slider-container">
-                <span class="slider-label">Indulási időpont</span>
-                <input type="range" min="1" max="9" value="5" id="q3">
-                <span class="slider-label">Átszállások száma</span>
-            </div>
-        </div>
-
-        <button class="btn" onclick="alert('AHP számítás hamarosan elérhető!')">Járatok keresése</button>
+        
+        <button id="searchBtn" class="btn-search" onclick="startSearch()">Járatok keresése</button>
+        
+        <div id="status"></div>
+        <div id="results"></div>
     </div>
+
+    <script>
+        let pollInterval;
+
+        async function startSearch() {
+            const btn = document.getElementById('searchBtn');
+            const statusDiv = document.getElementById('status');
+            const resultsDiv = document.getElementById('results');
+            
+            const payload = {
+                origin: document.getElementById('origin').value,
+                destination: document.getElementById('destination').value,
+                out_from: document.getElementById('out_from').value,
+                out_to: document.getElementById('out_to').value,
+                in_from: document.getElementById('in_from').value,
+                in_to: document.getElementById('in_to').value
+            };
+
+            if(!payload.destination || !payload.out_from) {
+                alert("Kérlek töltsd ki a célállomást és a dátumokat!");
+                return;
+            }
+
+            btn.disabled = true;
+            statusDiv.style.display = 'block';
+            statusDiv.className = 'status-running';
+            statusDiv.innerText = "🔍 Keresés indítása... (ez 1-2 percig is eltarthat)";
+            resultsDiv.innerHTML = "";
+
+            await fetch('/start-intelligence-search', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(payload)
+            });
+
+            pollInterval = setInterval(checkStatus, 3000);
+        }
+
+        async function checkStatus() {
+            const response = await fetch('/search-status');
+            const data = await response.json();
+            const statusDiv = document.getElementById('status');
+
+            if (data.status === 'running') {
+                statusDiv.innerText = "⏳ Adatok gyűjtése és elemzése folyamatban...";
+            } else if (data.status === 'done') {
+                clearInterval(pollInterval);
+                statusDiv.style.display = 'none';
+                document.getElementById('searchBtn').disabled = false;
+                displayResults(data.data);
+            } else if (data.status === 'error') {
+                clearInterval(pollInterval);
+                statusDiv.innerText = "❌ Hiba történt: " + data.error;
+                document.getElementById('searchBtn').disabled = false;
+            }
+        }
+
+        function displayResults(flights) {
+            if(!flights || flights.length === 0) {
+                document.getElementById('results').innerHTML = "<p>Nincs találat.</p>";
+                return;
+            }
+            let html = `<table>
+                <thead>
+                    <tr>
+                        <th>Ár</th>
+                        <th>Odaút</th>
+                        <th>Visszaút</th>
+                        <th>Ott töltött idő</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+            
+            flights.forEach(f => {
+                html += `<tr>
+                    <td class="price">${Math.round(f.total_price_huf).toLocaleString()} Ft</td>
+                    <td>${f.out_dep_time} → ${f.out_arr_time}<br><small>${f.out_carriers}</small></td>
+                    <td>${f.in_dep_time} → ${f.in_arr_time}<br><small>${f.in_carriers}</small></td>
+                    <td>${f.stay_days} éj</td>
+                </tr>`;
+            });
+            html += '</tbody></table>';
+            document.getElementById('results').innerHTML = html;
+        }
+    </script>
 </body>
 </html>
