@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight Intelligence - Optivoya</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #235B2A 0%, #1a4520 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .navbar {
+            background: rgba(255,255,255,0.95);
+            padding: 20px 40px;
+            border-radius: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: #235B2A;
+        }
+        .back-btn {
+            background: #235B2A;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .back-btn:hover {
+            background: #90DC25;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #235B2A;
+            margin-bottom: 10px;
+            font-size: 36px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 16px;
+        }
+        .question {
+            background: #f8f8f8;
+            border-left: 4px solid #90DC25;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 10px;
+        }
+        .question-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #235B2A;
+            margin-bottom: 20px;
+        }
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .slider-label {
+            font-size: 14px;
+            color: #666;
+            min-width: 100px;
+            text-align: center;
+        }
+        input[type="range"] {
+            flex: 1;
+            height: 8px;
+            background: #d3d3d3;
+            border-radius: 5px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #90DC25;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+        .btn {
+            background: #235B2A;
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+        }
+        .btn:hover {
+            background: #90DC25;
+            transform: translateY(-2px);
+        }
+        .progress-bar {
+            background: #e0e0e0;
+            height: 8px;
+            border-radius: 10px;
+            margin-bottom: 40px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: linear-gradient(90deg, #235B2A, #90DC25);
+            height: 100%;
+            width: 33%;
+            transition: width 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo-text">✈️ Flight Intelligence</div>
+        <a href="/home" class="back-btn">← Vissza</a>
+    </div>
+
+    <div class="container">
+        <h1>Személyre szabott járatkeresés</h1>
+        <p class="subtitle">Válaszolj néhány kérdésre, hogy megtaláljuk a számodra optimális járatot</p>
+
+        <div class="progress-bar">
+            <div class="progress-fill"></div>
+        </div>
+
+        <div class="question">
+            <div class="question-title">1. Melyik fontosabb számodra?</div>
+            <div class="slider-container">
+                <span class="slider-label">Ár</span>
+                <input type="range" min="1" max="9" value="5" id="q1">
+                <span class="slider-label">Indulási időpont</span>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-title">2. Melyik fontosabb számodra?</div>
+            <div class="slider-container">
+                <span class="slider-label">Ár</span>
+                <input type="range" min="1" max="9" value="5" id="q2">
+                <span class="slider-label">Utazási idő</span>
+            </div>
+        </div>
+
+        <div class="question">
+            <div class="question-title">3. Melyik fontosabb számodra?</div>
+            <div class="slider-container">
+                <span class="slider-label">Indulási időpont</span>
+                <input type="range" min="1" max="9" value="5" id="q3">
+                <span class="slider-label">Átszállások száma</span>
+            </div>
+        </div>
+
+        <button class="btn" onclick="alert('AHP számítás hamarosan elérhető!')">Járatok keresése</button>
+    </div>
+</body>
+</html>
