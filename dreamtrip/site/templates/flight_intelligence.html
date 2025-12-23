@@ -59,10 +59,14 @@
             </div>
         </div>
         
-        <button id="searchBtn" class="btn-search" onclick="startSearch()">Járatok keresése</button>
-        
-        <div id="status"></div>
-        <div id="results"></div>
+        <div class="search-grid">
+        </div>
+    
+    <button id="searchBtn" class="btn-search" onclick="startSearch()">Járatok keresése</button>
+    
+    <div id="status"></div>
+
+    <div id="results"></div>
     </div>
 
     <script>
@@ -113,40 +117,27 @@
                 clearInterval(pollInterval);
                 statusDiv.style.display = 'none';
                 document.getElementById('searchBtn').disabled = false;
-                displayResults(data.data);
+                
+                // Sikeres összesítő megjelenítése
+                const resultsDiv = document.getElementById('results');
+                resultsDiv.innerHTML = `
+                    <div style="background: #f0f7f0; border: 2px solid #235B2A; border-radius: 15px; padding: 30px; text-align: center; margin-top: 20px;">
+                        <h2 style="color: #235B2A; margin-bottom: 10px;">✅ Sikeres adatgyűjtés!</h2>
+                        <p style="font-size: 18px; margin-bottom: 20px;">Összesen <strong>${data.count}</strong> lehetséges járatkombinációt találtunk.</p>
+                        
+                        <div style="display: flex; gap: 10px; justify-content: center;">
+                            <button onclick="window.location.href='/flight-intelligence'" class="btn-search" style="background: #666; width: auto; padding: 12px 25px;">Új keresés</button>
+                            <button onclick="window.location.href='/flight-intelligence-filter'" class="btn-search" style="width: auto; padding: 12px 40px; font-size: 18px;">
+                                Tovább a preferenciák beállításához ➔
+                            </button>
+                        </div>
+                    </div>
+                `;
             } else if (data.status === 'error') {
                 clearInterval(pollInterval);
                 statusDiv.innerText = "❌ Hiba történt: " + data.error;
                 document.getElementById('searchBtn').disabled = false;
             }
-        }
-
-        function displayResults(flights) {
-            if(!flights || flights.length === 0) {
-                document.getElementById('results').innerHTML = "<p>Nincs találat.</p>";
-                return;
-            }
-            let html = `<table>
-                <thead>
-                    <tr>
-                        <th>Ár</th>
-                        <th>Odaút</th>
-                        <th>Visszaút</th>
-                        <th>Ott töltött idő</th>
-                    </tr>
-                </thead>
-                <tbody>`;
-            
-            flights.forEach(f => {
-                html += `<tr>
-                    <td class="price">${Math.round(f.total_price_huf).toLocaleString()} Ft</td>
-                    <td>${f.out_dep_time} → ${f.out_arr_time}<br><small>${f.out_carriers}</small></td>
-                    <td>${f.in_dep_time} → ${f.in_arr_time}<br><small>${f.in_carriers}</small></td>
-                    <td>${f.stay_days} éj</td>
-                </tr>`;
-            });
-            html += '</tbody></table>';
-            document.getElementById('results').innerHTML = html;
         }
     </script>
 </body>

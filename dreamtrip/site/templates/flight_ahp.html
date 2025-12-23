@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AHP Értékelés - Flight Intelligence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: linear-gradient(135deg, #235B2A 0%, #1a4520 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 20px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        h1 { color: #235B2A; margin-bottom: 10px; }
+        .subtitle { color: #666; margin-bottom: 30px; font-size: 14px; }
+        
+        .success-box {
+            background: #f0f7f0;
+            border: 2px solid #235B2A;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .success-box h2 {
+            color: #235B2A;
+            margin-bottom: 15px;
+        }
+        
+        .btn-primary { 
+            background: #235B2A; color: white; border: none; padding: 15px 40px; 
+            border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; 
+            transition: 0.3s; margin: 10px;
+        }
+        .btn-primary:hover { background: #32853d; }
+        
+        .btn-secondary {
+            background: #666;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            margin: 10px;
+        }
+        .btn-secondary:hover { background: #888; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 AHP & PROMETHEE Értékelés</h1>
+        <p class="subtitle">A legjobb járatok kiválasztása többszempontú döntési módszerekkel</p>
+        
+        <div class="success-box">
+            <h2>✅ Szűrés sikeres!</h2>
+            <p style="font-size: 18px; margin-bottom: 20px;">
+                <strong>{{ flight_count }}</strong> járatkombináció megfelelt a kritériumoknak.
+            </p>
+            <p style="color: #666; font-size: 14px;">
+                Most következik az AHP és PROMETHEE módszerekkel történő értékelés, 
+                ahol megadhatod a preferenciáid súlyát (ár, utazási idő, átszállások stb.)
+            </p>
+        </div>
+        
+        <div style="text-align: center;">
+            <p style="margin-bottom: 20px; color: #666;">
+                <strong>Ez a funkció hamarosan elérhető lesz!</strong><br>
+                Az AHP (Analytic Hierarchy Process) és PROMETHEE módszerek segítségével 
+                a rendszer kiválasztja a számodra optimális járatokat.
+            </p>
+            
+            <button onclick="window.location.href='/flight-intelligence-filter'" class="btn-secondary">
+                ← Vissza a szűréshez
+            </button>
+            <button onclick="window.location.href='/home'" class="btn-primary">
+                Vissza a főoldalra
+            </button>
+        </div>
+    </div>
+</body>
+</html>
