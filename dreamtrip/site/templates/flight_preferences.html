@@ -1,0 +1,94 @@
+<div class="container">
+    <h1>⚙️ Preferencia beállítások</h1>
+    
+    <div class="preference-section">
+        <h3>🌟 Ideális alapértékek</h3>
+        <div class="input-group">
+            <label>Mikor indulnál legszívesebben? (<span id="hour_val">10</span>:00)</label>
+            <input type="range" id="ideal_departure_hour" min="0" max="23" value="10" 
+                   oninput="document.getElementById('hour_val').innerText=this.value">
+        </div>
+        <div class="input-group">
+            <label>Hány napot töltenél ott ideálisan?</label>
+            <input type="number" id="ideal_stay_days" value="7" min="1">
+        </div>
+    </div>
+
+    <div class="preference-section">
+        <h3>💰 Ár preferencia függvény</h3>
+        <select id="price_type" class="pref-select">
+            <option value="usual">Usual (Bármilyen különbség számít)</option>
+            <option value="linear">Linear (Egy küszöbig lineárisan számít)</option>
+            <option value="v-shape">V-shape (Adott különbség felett már max preferencia)</option>
+        </select>
+        <div class="param-inputs">
+            <input type="number" id="price_q" placeholder="q (ameddig nem számít a különbség)" value="0">
+            <input type="number" id="price_p" placeholder="p (ami felett már maxon számít)" value="10000">
+        </div>
+    </div>
+
+    <button id="calcBtn" onclick="calculate()" class="btn-primary">
+        Számítás indítása és rangsorolás ➔
+    </button>
+
+    <div id="loader" style="display:none; margin-top: 20px;">
+        <div class="spinner"></div>
+        <p>⏳ PROMETHEE számítás folyamatban...</p>
+    </div>
+</div>
+
+<script>
+async function calculate() {
+    const btn = document.getElementById('calcBtn');
+    const loader = document.getElementById('loader');
+    
+    // Vizuális visszajelzés (5. Screen fázis)
+    btn.disabled = true;
+    loader.style.display = 'block';
+
+    // Segédfüggvény az adatok kinyeréséhez kritériumonként
+    const getCrit = (name) => ({
+        type: document.getElementById(`${name}_type`).value,
+        q: parseFloat(document.getElementById(`${name}_q`).value) || 0,
+        p: parseFloat(document.getElementById(`${name}_p`).value) || 0
+    });
+
+    // A Pydantic PreferenceConfig modellnek megfelelő JSON összeállítása
+    const payload = {
+        ideal_departure_hour: parseInt(document.getElementById('ideal_departure_hour').value),
+        ideal_stay_days: parseInt(document.getElementById('ideal_stay_days').value),
+        configs: {
+            price: getCrit('price'),
+            departure: getCrit('departure'),
+            travel_time: getCrit('travel_time'),
+            stops: getCrit('stops'),
+            stay: getCrit('stay')
+        }
+    };
+
+    try {
+        const response = await fetch('/api/calculate-results', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log("Sikeres számítás:", data.count, "járat");
+            // Átirányítás a 6. Screen-re
+            window.location.href = '/flight-intelligence-results';
+        } else {
+            const err = await response.json();
+            alert("Hiba a számítás során: " + err.detail);
+            btn.disabled = false;
+            loader.style.display = 'none';
+        }
+    } catch (error) {
+        console.error("Hálózati hiba:", error);
+        alert("Nem sikerült elérni a szervert.");
+        btn.disabled = false;
+        loader.style.display = 'none';
+    }
+}
+</script>

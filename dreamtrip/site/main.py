@@ -8,6 +8,7 @@ from scraper import get_kiwi_tokens, search_flights_by_city_name_v2, create_retu
 import os
 import secrets
 from pydantic import BaseModel
+from typing import Dict, Any, List
 
 app = FastAPI()
 
@@ -308,6 +309,207 @@ async def flight_intelligence_ahp(request: Request):
         "request": request,
         "user": user,
         "flight_count": flight_data["count"]
+    })
+
+# AHP súlyok tárolása
+ahp_weights = {}
+
+class AHPWeights(BaseModel):
+    weights: list
+    criteria: list
+
+@app.post("/api/save-ahp-weights")
+async def save_ahp_weights(data: AHPWeights, request: Request):
+    user = get_current_user(request)
+    if not user:
+        raise HTTPException(status_code=401)
+    
+    ahp_weights[user] = {
+        "weights": data.weights,
+        "criteria": data.criteria
+    }
+    return {"message": "Weights saved"}
+
+@app.get("/flight-intelligence-preferences", response_class=HTMLResponse)
+async def flight_intelligence_preferences(request: Request):
+    user = get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/", status_code=303)
+    
+    # Ellenőrzés: van-e AHP súly
+    if user not in ahp_weights:
+        return RedirectResponse(url="/flight-intelligence-ahp", status_code=303)
+    
+    return templates.TemplateResponse("flight_preferences.html", {
+        "request": request,
+        "user": user
+    })
+
+# Új Pydantic modellek a preferencia függvényekhez
+class PreferenceConfig(BaseModel):
+    ideal_departure_hour: int
+    ideal_stay_days: int
+    # Kritériumonkénti beállítások: { "price": {"type": "v-shape", "p": 10000, "q": 0}, ... }
+    criteria_configs: Dict[str, Dict[str, Any]]
+
+# Adattárolók (a sessions és ahp_weights mellé)
+user_preferences = {}
+ranked_results = {}
+
+# --- PROMETHEE Segédfüggvények ---
+def preference_function(d, config):
+    f_type = config['type']
+    p = config.get('p', 0)
+    q = config.get('q', 0)
+    
+    if d <= q: return 0
+    if f_type == "usual": return 1
+    if f_type == "v-shape": return min(1, d / p) if p > 0 else 1
+    if f_type == "u-shape": return 1 if d > q else 0
+    if f_type == "level": return 0.5 if d <= p else 1
+    if f_type == "linear-indifference": 
+        return min(1, (d - q) / (p - q)) if (p - q) > 0 else 1
+    return 0
+
+# --- ROUTES ---
+
+@app.get("/flight-intelligence-preferences", response_class=HTMLResponse)
+async def flight_preferences_page(request: Request):
+    user = get_current_user(request)
+    if not user: return RedirectResponse(url="/", status_code=303)
+    return templates.TemplateResponse("flight_preferences.html", {"request": request, "user": user})
+
+class CriterionParam(BaseModel):
+    type: str  # "usual", "v-shape", "u-shape", "level", "linear"
+    p: float = 0.0
+    q: float = 0.0
+
+class PreferenceConfig(BaseModel):
+    ideal_departure_hour: int
+    ideal_stay_days: int
+    # Kritériumonkénti beállítások: price, departure, travel_time, stops, stay
+    configs: Dict[str, CriterionParam]
+
+import numpy as np
+
+def get_preference(d: float, config: CriterionParam) -> float:
+    """PROMETHEE preferencia függvények megvalósítása."""
+    if d <= config.q:
+        return 0.0
+    
+    if config.type == "usual":
+        return 1.0 if d > 0 else 0.0
+    
+    elif config.type == "v-shape":
+        return min(1.0, d / config.p) if config.p > 0 else 1.0
+    
+    elif config.type == "u-shape":
+        return 1.0 if d > config.q else 0.0
+    
+    elif config.type == "level":
+        if d <= config.q: return 0.0
+        if d <= config.p: return 0.5
+        return 1.0
+    
+    elif config.type == "linear": # Linear with indifference
+        if d <= config.q: return 0.0
+        if d > config.p: return 1.0
+        return (d - config.q) / (config.p - config.q)
+    
+    return 0.0
+
+@app.post("/api/calculate-results")
+async def calculate_results(config: PreferenceConfig, request: Request):
+    user = get_current_user(request)
+    if not user or user not in filtered_flights or user not in ahp_weights:
+        raise HTTPException(status_code=400, detail="Hiányzó szűrt adatok vagy AHP súlyok")
+
+    # 1. Adatok előkészítése
+    df = filtered_flights[user]["data"].copy()
+    weights = ahp_weights[user]["weights"] # Sorrend: Ár, Időpont, Utazás, Átszállás, Tartózkodás
+    
+    # Kritérium értékek kiszámítása (MINDEN MINIMALIZÁLANDÓ, kivéve ha transzformáljuk)
+    # g1: Ár
+    df['g1'] = df['total_price']
+    
+    # g2: Indulási időpont eltérése (abszolút hiba az ideálistól)
+    def time_diff(row):
+        dep_time = pd.to_datetime(row['out_departure_time'])
+        diff = abs(dep_time.hour - config.ideal_departure_hour)
+        return min(diff, 24 - diff) # Ciklikus idő (pl. 23 és 01 között csak 2 óra van)
+    df['g2'] = df.apply(time_diff, axis=1)
+    
+    # g3: Összes utazási idő (óra)
+    df['g3'] = df['out_duration_h'] + df['in_duration_h']
+    
+    # g4: Átszállások száma
+    df['g4'] = df['out_stops'] + df['in_stops']
+    
+    # g5: Tartózkodási napok eltérése
+    df['g5'] = (df['stay_duration_days'] - config.ideal_stay_days).abs()
+
+    criteria_cols = ['g1', 'g2', 'g3', 'g4', 'g5']
+    criteria_keys = ['price', 'departure', 'travel_time', 'stops', 'stay']
+    n = len(df)
+    
+    # 2. PROMETHEE Páros összehasonlítás
+    # matrix[i][j] = mennyivel preferáljuk az 'i' járatot a 'j' járatnál
+    pi_matrix = np.zeros((n, n))
+    
+    # Adatok konvertálása numpy tömbbé a gyorsabb elérésért
+    data_matrix = df[criteria_cols].values
+    
+    for i in range(n):
+        for j in range(n):
+            if i == j: continue
+            
+            total_pref = 0.0
+            for k in range(len(criteria_cols)):
+                # d = g(j) - g(i) -> Mivel minden kritériumunk MINIMALIZÁLANDÓ (költség jellegű),
+                # akkor preferáljuk i-t j-vel szemben, ha g(j) > g(i).
+                d = data_matrix[j, k] - data_matrix[i, k]
+                
+                if d > 0:
+                    pref_val = get_preference(d, config.configs[criteria_keys[k]])
+                    total_pref += weights[k] * pref_val
+            
+            pi_matrix[i, j] = total_pref
+
+    # 3. Flow számítás
+    phi_plus = np.sum(pi_matrix, axis=1) / (n - 1)  # Kilépő áramlás
+    phi_minus = np.sum(pi_matrix, axis=0) / (n - 1) # Belépő áramlás
+    phi_net = phi_plus - phi_minus                  # Nettó áramlás
+
+    df['phi_net'] = phi_net
+    
+    # 4. Normalizált pontszámok a színkódoláshoz (0.0 - 1.0 skála)
+    # Minden kritériumnál megkeressük a legjobb és legrosszabb értéket a SZŰRT halmazban
+    for i, col in enumerate(criteria_cols):
+        c_min = df[col].min()
+        c_max = df[col].max()
+        if c_max == c_min:
+            df[f'score_{criteria_keys[i]}'] = 1.0
+        else:
+            # Mivel mindegyik minimalizálandó, a min a legjobb (1.0 pont)
+            df[f'score_{criteria_keys[i]}'] = (c_max - df[col]) / (c_max - c_min)
+
+    # Rangsorolás és mentés
+    final_list = df.sort_values('phi_net', ascending=False).to_dict('records')
+    ranked_results[user] = final_list
+    
+    return {"status": "success", "count": n}
+
+@app.get("/flight-intelligence-results", response_class=HTMLResponse)
+async def results_page(request: Request):
+    user = get_current_user(request)
+    if user not in ranked_results:
+        return RedirectResponse(url="/flight-intelligence", status_code=303)
+    
+    return templates.TemplateResponse("flight_results.html", {
+        "request": request, 
+        "user": user, 
+        "results": ranked_results[user],
+        "weights": ahp_weights[user]["weights"]
     })
 
 if __name__ == "__main__":

@@ -1,0 +1,55 @@
+<style>
+    .score-green { background: #d4edda; border-radius: 5px; padding: 2px 5px; }
+    .score-yellow { background: #fff3cd; border-radius: 5px; padding: 2px 5px; }
+    .score-red { background: #f8d7da; border-radius: 5px; padding: 2px 5px; }
+</style>
+
+<div class="container">
+    <h1>🎯 Személyre szabott rangsor</h1>
+    <div class="results-table-container">
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th>Rang</th>
+                    <th>Ár (Ft)</th>
+                    <th>Indulás (Ideálishoz képest)</th>
+                    <th>Utazás (h)</th>
+                    <th>Átszállás</th>
+                    <th>Tartózkodás</th>
+                    <th>Phi_net (Súlyozott összpont)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for flight in results %}
+                <tr>
+                    <td><strong>#{{ loop.index }}</strong></td>
+                    
+                    <td class="{{ 'green' if flight.score_price * weights[0] > 0.7 else ('yellow' if flight.score_price * weights[0] > 0.4 else 'red') }}">
+                        {{ "{:,}".format(flight.total_price) }} Ft
+                    </td>
+    
+                    <td class="{{ 'green' if flight.score_departure * weights[1] > 0.7 else ('yellow' if flight.score_departure * weights[1] > 0.4 else 'red') }}">
+                        {{ flight.out_departure_time.split('T')[1][:5] }}
+                    </td>
+    
+                    <td class="{{ 'green' if flight.score_travel_time * weights[2] > 0.7 else ('yellow' if flight.score_travel_time * weights[2] > 0.4 else 'red') }}">
+                        {{ (flight.out_duration_h + flight.in_duration_h) | round(1) }}h
+                    </td>
+    
+                    <td class="{{ 'green' if flight.score_stops * weights[3] > 0.7 else ('yellow' if flight.score_stops * weights[3] > 0.4 else 'red') }}">
+                        {{ flight.out_stops + flight.in_stops }}
+                    </td>
+    
+                    <td class="{{ 'green' if flight.score_stay * weights[4] > 0.7 else ('yellow' if flight.score_stay * weights[4] > 0.4 else 'red') }}">
+                        {{ flight.stay_duration_days }} nap
+                    </td>
+    
+                    <td class="phi-cell">
+                        <strong>{{ flight.phi_net | round(4) }}</strong>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>

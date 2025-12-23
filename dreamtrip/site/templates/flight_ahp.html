@@ -12,72 +12,474 @@
         h1 { color: #235B2A; margin-bottom: 10px; }
         .subtitle { color: #666; margin-bottom: 30px; font-size: 14px; }
         
-        .success-box {
+        .progress-container {
+            background: #e0e0e0;
+            height: 12px;
+            border-radius: 10px;
+            margin-bottom: 40px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            background: linear-gradient(90deg, #235B2A, #90DC25);
+            height: 100%;
+            width: 10%;
+            transition: width 0.3s;
+        }
+        .progress-text {
+            text-align: center;
+            color: #666;
+            font-size: 13px;
+            margin-top: 10px;
+        }
+        
+        .question-card {
+            background: #f8f9fa;
+            border-left: 4px solid #90DC25;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .question-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #235B2A;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        
+        .comparison-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+        
+        .criterion-btn {
+            flex: 1;
+            padding: 20px;
+            border: 3px solid #ddd;
+            background: white;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #333;
+        }
+        
+        .criterion-btn:hover {
+            border-color: #90DC25;
+            transform: translateY(-3px);
+        }
+        
+        .criterion-btn.selected {
+            background: #235B2A;
+            color: white;
+            border-color: #235B2A;
+        }
+        
+        .equal-btn {
+            flex: 0.6;
+            padding: 20px;
+            border: 3px solid #ddd;
+            background: #f0f0f0;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .equal-btn:hover {
+            border-color: #666;
+        }
+        
+        .equal-btn.selected {
+            background: #666;
+            color: white;
+            border-color: #666;
+        }
+        
+        .importance-scale {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+            margin-top: 20px;
+        }
+        
+        .importance-scale.visible {
+            opacity: 1;
+        }
+        
+        .importance-btn {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .importance-btn .value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #235B2A;
+            display: block;
+        }
+        
+        .importance-btn .label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .importance-btn:hover {
+            border-color: #90DC25;
+            transform: translateY(-3px);
+        }
+        
+        .importance-btn.selected {
+            background: #90DC25;
+            border-color: #90DC25;
+        }
+        
+        .importance-btn.selected .value,
+        .importance-btn.selected .label {
+            color: white;
+        }
+        
+        .btn-next {
+            background: #235B2A;
+            color: white;
+            border: none;
+            padding: 15px 50px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.3s;
+            margin-top: 20px;
+        }
+        
+        .btn-next:hover:not(:disabled) {
+            background: #32853d;
+        }
+        
+        .btn-next:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        #results {
+            display: none;
             background: #f0f7f0;
             border: 2px solid #235B2A;
             border-radius: 15px;
             padding: 30px;
             text-align: center;
-            margin-bottom: 30px;
         }
         
-        .success-box h2 {
-            color: #235B2A;
-            margin-bottom: 15px;
+        .weights-table {
+            margin: 20px 0;
+            width: 100%;
+            border-collapse: collapse;
         }
         
-        .btn-primary { 
-            background: #235B2A; color: white; border: none; padding: 15px 40px; 
-            border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; 
-            transition: 0.3s; margin: 10px;
+        .weights-table th,
+        .weights-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
         }
-        .btn-primary:hover { background: #32853d; }
         
-        .btn-secondary {
-            background: #666;
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            border-radius: 10px;
-            font-size: 16px;
+        .weights-table th {
+            background: #f8f9fa;
             font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s;
-            margin: 10px;
+            color: #235B2A;
         }
-        .btn-secondary:hover { background: #888; }
+        
+        .weight-bar {
+            background: #e0e0e0;
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+        
+        .weight-fill {
+            background: linear-gradient(90deg, #235B2A, #90DC25);
+            height: 100%;
+            transition: width 0.5s;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎯 AHP & PROMETHEE Értékelés</h1>
-        <p class="subtitle">A legjobb járatok kiválasztása többszempontú döntési módszerekkel</p>
+        <h1>🎯 AHP Súlyok meghatározása</h1>
+        <p class="subtitle">Páros összehasonlítások - válaszolj {{ flight_count }} járatra</p>
         
-        <div class="success-box">
-            <h2>✅ Szűrés sikeres!</h2>
-            <p style="font-size: 18px; margin-bottom: 20px;">
-                <strong>{{ flight_count }}</strong> járatkombináció megfelelt a kritériumoknak.
-            </p>
-            <p style="color: #666; font-size: 14px;">
-                Most következik az AHP és PROMETHEE módszerekkel történő értékelés, 
-                ahol megadhatod a preferenciáid súlyát (ár, utazási idő, átszállások stb.)
-            </p>
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="progress-text" id="progressText">Kérdés 1 / 10</div>
+        
+        <div id="questionContainer" class="question-card">
+            <!-- Dinamikusan töltődik JS-ből -->
         </div>
         
-        <div style="text-align: center;">
-            <p style="margin-bottom: 20px; color: #666;">
-                <strong>Ez a funkció hamarosan elérhető lesz!</strong><br>
-                Az AHP (Analytic Hierarchy Process) és PROMETHEE módszerek segítségével 
-                a rendszer kiválasztja a számodra optimális járatokat.
-            </p>
-            
-            <button onclick="window.location.href='/flight-intelligence-filter'" class="btn-secondary">
-                ← Vissza a szűréshez
-            </button>
-            <button onclick="window.location.href='/home'" class="btn-primary">
-                Vissza a főoldalra
+        <button class="btn-next" id="nextBtn" onclick="nextQuestion()" disabled>
+            Következő kérdés
+        </button>
+        
+        <div id="results">
+            <h2 style="color: #235B2A; margin-bottom: 20px;">✅ Súlyok kiszámítva!</h2>
+            <table class="weights-table">
+                <thead>
+                    <tr>
+                        <th>Szempont</th>
+                        <th>Súly</th>
+                        <th>Vizualizáció</th>
+                    </tr>
+                </thead>
+                <tbody id="weightsTable"></tbody>
+            </table>
+            <button class="btn-next" onclick="window.location.href='/flight-intelligence-preferences'">
+                Tovább a preferencia függvényekhez →
             </button>
         </div>
     </div>
+
+    <script>
+        const criteria = [
+            {name: "Ár", human: "A repjegy ára"},
+            {name: "Időpont", human: "Kényelmes indulási időpont"},
+            {name: "Utazás", human: "Rövid repülési idő"},
+            {name: "Átszállás", human: "Minél kevesebb átszállás"},
+            {name: "Tartózkodás", human: "Tartózkodási napok száma közel legyen az ideálishoz"}
+        ];
+        
+        const questions = [];
+        for (let i = 0; i < criteria.length; i++) {
+            for (let j = i + 1; j < criteria.length; j++) {
+                questions.push({
+                    c1: criteria[i],
+                    c2: criteria[j]
+                });
+            }
+        }
+        
+        let currentQuestion = 0;
+        let answers = {}; // {questionIndex: {selected: 'c1'|'c2'|'equal', importance: 3|5|7|9}}
+        
+        function renderQuestion() {
+            const q = questions[currentQuestion];
+            const container = document.getElementById('questionContainer');
+            
+            container.innerHTML = `
+                <div class="question-title">
+                    Melyik fontosabb számodra?
+                </div>
+                
+                <div class="comparison-buttons">
+                    <button class="criterion-btn" id="btn_c1" onclick="selectCriterion('c1')">
+                        ${q.c1.human}
+                    </button>
+                    
+                    <button class="equal-btn" id="btn_equal" onclick="selectCriterion('equal')">
+                        Egyforma
+                    </button>
+                    
+                    <button class="criterion-btn" id="btn_c2" onclick="selectCriterion('c2')">
+                        ${q.c2.human}
+                    </button>
+                </div>
+                
+                <div class="importance-scale" id="importanceScale">
+                    <div class="importance-btn" onclick="selectImportance(3)">
+                        <span class="value">3</span>
+                        <span class="label">Kicsit fontosabb</span>
+                    </div>
+                    <div class="importance-btn" onclick="selectImportance(5)">
+                        <span class="value">5</span>
+                        <span class="label">Jelentősen fontosabb</span>
+                    </div>
+                    <div class="importance-btn" onclick="selectImportance(7)">
+                        <span class="value">7</span>
+                        <span class="label">Sokkal fontosabb</span>
+                    </div>
+                    <div class="importance-btn" onclick="selectImportance(9)">
+                        <span class="value">9</span>
+                        <span class="label">Extrém fontosabb</span>
+                    </div>
+                </div>
+            `;
+            
+            // Ha már volt válasz, állítsuk vissza
+            if (answers[currentQuestion]) {
+                const ans = answers[currentQuestion];
+                document.getElementById('btn_' + ans.selected).classList.add('selected');
+                if (ans.selected !== 'equal') {
+                    document.getElementById('importanceScale').classList.add('visible');
+                    if (ans.importance) {
+                        document.querySelectorAll('.importance-btn').forEach((btn, i) => {
+                            if ([3,5,7,9][i] === ans.importance) {
+                                btn.classList.add('selected');
+                            }
+                        });
+                    }
+                }
+                updateNextButton();
+            }
+            
+            // Progress frissítés
+            const progress = ((currentQuestion + 1) / questions.length) * 90; // 90%-ig tart az AHP
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').innerText = `Kérdés ${currentQuestion + 1} / ${questions.length}`;
+        }
+        
+        function selectCriterion(choice) {
+            // Reset
+            document.querySelectorAll('.criterion-btn, .equal-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            // Select
+            document.getElementById('btn_' + choice).classList.add('selected');
+            
+            // Importance scale megjelenítése vagy elrejtése
+            const importanceScale = document.getElementById('importanceScale');
+            if (choice === 'equal') {
+                importanceScale.classList.remove('visible');
+                answers[currentQuestion] = {selected: choice, importance: null};
+                updateNextButton();
+            } else {
+                importanceScale.classList.add('visible');
+                answers[currentQuestion] = {selected: choice, importance: null};
+                updateNextButton();
+            }
+        }
+        
+        function selectImportance(value) {
+            document.querySelectorAll('.importance-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            event.target.closest('.importance-btn').classList.add('selected');
+            
+            answers[currentQuestion].importance = value;
+            updateNextButton();
+        }
+        
+        function updateNextButton() {
+            const ans = answers[currentQuestion];
+            const nextBtn = document.getElementById('nextBtn');
+            
+            if (ans && (ans.selected === 'equal' || ans.importance)) {
+                nextBtn.disabled = false;
+            } else {
+                nextBtn.disabled = true;
+            }
+        }
+        
+        function nextQuestion() {
+            currentQuestion++;
+            
+            if (currentQuestion < questions.length) {
+                renderQuestion();
+            } else {
+                calculateWeights();
+            }
+        }
+        
+        function calculateWeights() {
+            // AHP mátrix építése
+            const n = criteria.length;
+            const matrix = Array(n).fill(0).map(() => Array(n).fill(1));
+            
+            questions.forEach((q, idx) => {
+                const ans = answers[idx];
+                const i = criteria.findIndex(c => c.name === q.c1.name);
+                const j = criteria.findIndex(c => c.name === q.c2.name);
+                
+                if (ans.selected === 'equal') {
+                    matrix[i][j] = 1;
+                    matrix[j][i] = 1;
+                } else if (ans.selected === 'c1') {
+                    matrix[i][j] = ans.importance;
+                    matrix[j][i] = 1 / ans.importance;
+                } else { // c2
+                    matrix[j][i] = ans.importance;
+                    matrix[i][j] = 1 / ans.importance;
+                }
+            });
+            
+            // Egyszerűsített súly számítás (normalized column sum)
+            const weights = [];
+            const colSums = Array(n).fill(0);
+            
+            for (let j = 0; j < n; j++) {
+                for (let i = 0; i < n; i++) {
+                    colSums[j] += matrix[i][j];
+                }
+            }
+            
+            const normalizedMatrix = matrix.map((row, i) => 
+                row.map((val, j) => val / colSums[j])
+            );
+            
+            for (let i = 0; i < n; i++) {
+                const avg = normalizedMatrix[i].reduce((a, b) => a + b) / n;
+                weights.push(avg);
+            }
+            
+            // Eredmény megjelenítése
+            document.getElementById('questionContainer').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('progressBar').style.width = '90%';
+            document.getElementById('progressText').innerText = 'AHP számítás kész (90%)';
+            
+            const resultsDiv = document.getElementById('results');
+            const tbody = document.getElementById('weightsTable');
+            
+            tbody.innerHTML = '';
+            criteria.forEach((c, i) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${c.human}</strong></td>
+                    <td>${(weights[i] * 100).toFixed(1)}%</td>
+                    <td>
+                        <div class="weight-bar">
+                            <div class="weight-fill" style="width: ${weights[i] * 100}%"></div>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            resultsDiv.style.display = 'block';
+            
+            // Mentés a backend-re
+            saveWeights(weights);
+        }
+        
+        async function saveWeights(weights) {
+            await fetch('/api/save-ahp-weights', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    weights: weights,
+                    criteria: criteria.map(c => c.name)
+                })
+            });
+        }
+        
+        // Kezdés
+        renderQuestion();
+    </script>
 </body>
 </html>
