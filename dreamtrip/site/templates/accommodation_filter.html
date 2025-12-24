@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Szűrés - Accommodation Intelligence</title>
+    <link rel="icon" type="image/png" href="/static/logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -174,15 +175,58 @@
         </div>
 
         <div class="filter-section">
-            <h3>✨ Szolgáltatások</h3>
+            <h3>🏠 Szállás típusa</h3>
+            <div class="checkbox-group" style="flex-wrap: wrap;">
+                <label style="display: flex; align-items: center; gap: 5px; margin-right: 15px;">
+                    <input type="checkbox" name="acc_type" value="HOTEL"> Hotel
+                </label>
+                <label style="display: flex; align-items: center; gap: 5px; margin-right: 15px;">
+                    <input type="checkbox" name="acc_type" value="APARTMENT"> Apartman
+                </label>
+                <label style="display: flex; align-items: center; gap: 5px; margin-right: 15px;">
+                    <input type="checkbox" name="acc_type" value="GUEST"> Vendégház
+                </label>
+                <label style="display: flex; align-items: center; gap: 5px; margin-right: 15px;">
+                    <input type="checkbox" name="acc_type" value="VR"> Nyaraló
+                </label>
+            </div>
+        </div>
+
+        <div class="filter-section">
+            <h3>✨ Felszereltség</h3>
+            <div class="checkbox-group" style="flex-wrap: wrap;">
+                <label style="display: flex; align-items: center; gap: 5px; margin-right: 15px;">
+                    <input type="checkbox" name="amenity" value="WIFI"> Wifi
+                </label>
+                <label style="display: flex; align-items: center; gap: 5px; margin-right: 15px;">
+                    <input type="checkbox" name="amenity" value="POOL"> Medence
+                </label>
+                <label style="display: flex; align-items: center; gap: 5px; margin-right: 15px;">
+                    <input type="checkbox" name="amenity" value="PARKING"> Parkoló
+                </label>
+                <label style="display: flex; align-items: center; gap: 5px; margin-right: 15px;">
+                    <input type="checkbox" name="amenity" value="AC"> Klíma
+                </label>
+                <label style="display: flex; align-items: center; gap: 5px; margin-right: 15px;">
+                    <input type="checkbox" name="amenity" value="PETS"> Kisállatbarát
+                </label>
+            </div>
+        </div>
+
+        <div class="filter-section">
+            <h3>🍽️ Egyéb</h3>
             <div class="checkbox-group">
                 <input type="checkbox" id="breakfast">
                 <label for="breakfast" style="margin-bottom:0">Reggelivel együtt</label>
             </div>
         </div>
 
+        <div style="text-align: center; margin-bottom: 20px; font-weight: bold; color: #235B2A;" id="previewCount">
+            Találatok előnézete: ...
+        </div>
+
         <button class="btn-primary" id="filterBtn" onclick="applyFilters()">
-            Szűrés és tovább az AHP súlyozáshoz
+            Tovább a személyre szabáshoz
         </button>
 
         <div id="status"></div>
@@ -190,19 +234,77 @@
 
     <script>
         let pollInterval;
+        let previewTimeout;
+
+        function getCheckedValues(name) {
+            return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`))
+                .map(cb => cb.value);
+        }
+
+        function getFilterPayload() {
+            return {
+                price_min: parseFloat(document.getElementById('price_min').value) || 0,
+                price_max: parseFloat(document.getElementById('price_max').value) || 1000000,
+                min_rating: parseFloat(document.getElementById('min_rating').value) || 0,
+                breakfast: document.getElementById('breakfast').checked,
+                accommodation_types: getCheckedValues('acc_type'),
+                amenities: getCheckedValues('amenity')
+            };
+        }
+
+        async function updatePreview() {
+            const payload = getFilterPayload();
+
+            try {
+                const response = await fetch('/api/preview-stay-filter', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+                document.getElementById('previewCount').innerText = `Találatok előnézete: ${data.count} db szállás`;
+
+                const btn = document.getElementById('filterBtn');
+                if (data.count === 0) {
+                    btn.disabled = true;
+                    btn.style.opacity = "0.5";
+                    btn.innerText = "Nincs találat a szűrés alapján";
+                } else {
+                    btn.disabled = false;
+                    btn.style.opacity = "1";
+                    btn.innerText = "Tovább a személyre szabáshoz";
+                }
+            } catch (e) {
+                console.error("Preview error:", e);
+            }
+        }
+
+        function debouncePreview() {
+            clearTimeout(previewTimeout);
+            previewTimeout = setTimeout(updatePreview, 300);
+        }
+
+        // Attach listeners
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', debouncePreview);
+            input.addEventListener('change', debouncePreview);
+        });
+
+        // Update range values
+        document.getElementById('price_min').addEventListener('input', (e) => {
+            document.getElementById('price_min_val').innerText = parseInt(e.target.value).toLocaleString() + ' Ft';
+        });
+        document.getElementById('price_max').addEventListener('input', (e) => {
+            document.getElementById('price_max_val').innerText = parseInt(e.target.value).toLocaleString() + ' Ft';
+        });
+        document.getElementById('min_rating').addEventListener('input', (e) => {
+            document.getElementById('min_rating_val').innerText = e.target.value;
+        });
 
         async function applyFilters() {
             const btn = document.getElementById('filterBtn');
             const statusDiv = document.getElementById('status');
-
-            const payload = {
-                price_min: parseFloat(document.getElementById('price_min').value),
-                price_max: parseFloat(document.getElementById('price_max').value),
-                min_rating: parseFloat(document.getElementById('min_rating').value),
-                breakfast: document.getElementById('breakfast').checked,
-                accommodation_types: null,
-                amenities: null
-            };
+            const payload = getFilterPayload();
 
             btn.disabled = true;
             statusDiv.style.display = 'block';
@@ -231,7 +333,7 @@
                 statusDiv.innerText = `✅ ${data.count} szállás maradt a szűrés után! Átirányítás...`;
 
                 setTimeout(() => {
-                    window.location.href = '/accommodation-intelligence-ahp';
+                    window.location.href = '/accommodation-intelligence-preferences';
                 }, 2000);
             } else if (data.status === 'error') {
                 clearInterval(pollInterval);
@@ -240,6 +342,9 @@
                 document.getElementById('filterBtn').disabled = false;
             }
         }
+
+        // Initial preview
+        updatePreview();
     </script>
 </body>
 

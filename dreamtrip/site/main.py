@@ -414,6 +414,50 @@ async def apply_stay_filters(params: StayFilterParams, background_tasks: Backgro
 async def stay_filter_status(username: str):
     return JSONResponse(filtered_stays.get(username, {"status": "idle"}))
 
+def filter_stays_dataframe(df, p: StayFilterParams):
+    """Helper to apply filters to a DataFrame."""
+    # Filter - Price
+    eur_to_huf = 400
+    if 'price_huf' not in df.columns:
+        df['price_huf'] = df['price_per_night_eur'] * eur_to_huf
+    
+    df = df[(df['price_huf'] >= p.price_min) & (df['price_huf'] <= p.price_max)]
+    
+    # Filter - Rating
+    df = df[df['rating_score'] >= p.min_rating]
+    
+    # Filter - Accommodation Types
+    if p.accommodation_types:
+        def check_type(row_type):
+            if not row_type: return False
+            return any(t in row_type for t in p.accommodation_types)
+        df = df[df['accommodation_type'].apply(check_type)]
+
+    # Filter - Amenities
+    if p.amenities:
+        def check_amenities(row_amenities):
+            if not row_amenities: return False
+            current_set = set(row_amenities)
+            required_set = set(p.amenities)
+            return required_set.issubset(current_set)
+        df = df[df['amenities'].apply(check_amenities)]
+    
+    return df
+
+@app.post("/api/preview-stay-filter")
+async def preview_stay_filter(p: StayFilterParams, request: Request):
+    user = get_current_user(request)
+    if not user or raw_stay_data.get("data") is None:
+        return {"count": 0}
+        
+    try:
+        df = pd.DataFrame(raw_stay_data["data"])
+        filtered_df = filter_stays_dataframe(df, p)
+        return {"count": len(filtered_df)}
+    except Exception as e:
+        print(f"Preview error: {e}")
+        return {"count": 0}
+
 def run_stay_filter_task(username: str, p: StayFilterParams):
     global filtered_stays, raw_stay_data, user_stay_filter_params
     filtered_stays[username] = {"status": "running", "count": None, "error": None}
@@ -424,20 +468,8 @@ def run_stay_filter_task(username: str, p: StayFilterParams):
             filtered_stays[username] = {"status": "done", "count": 0, "error": "No data in memory"}
             return
         
-        # We work with a list of dicts, not DF (to keep it light, or convert to DF)
         df = pd.DataFrame(raw_stay_data["data"])
-        
-        # Filtrose - HUF comparison (we assume parsed price is in EUR from cozycozy, let's keep it EUR or convert everything to HUF)
-        # Let's say all prices in main.py are in HUF for consistency with flights.
-        eur_to_huf = 400
-        df['price_huf'] = df['price_per_night_eur'] * eur_to_huf
-        
-        df = df[(df['price_huf'] >= p.price_min) & (df['price_huf'] <= p.price_max)]
-        df = df[df['rating_score'] >= p.min_rating]
-        
-        if p.breakfast:
-             # This is tricky as scraper already filters, but if we have it in raw, we filter more
-             pass
+        df = filter_stays_dataframe(df, p)
         
         filtered_stays[username] = {
             "status": "done",
@@ -470,9 +502,10 @@ async def save_stay_ahp_weights(weights: Dict[str, float], request: Request):
     user = get_current_user(request)
     if not user: raise HTTPException(status_code=401)
     
-    # Expecting order: price, rating, reviews, distance, instant
-    ordered_keys = ["price", "rating", "reviews", "distance", "instant"]
-    stay_ahp_weights[user] = [weights.get(k, 0.2) for k in ordered_keys]
+    # Expecting order: price, rating, reviews, distance
+    # Removed "instant" as criteria
+    ordered_keys = ["price", "rating", "reviews", "distance"]
+    stay_ahp_weights[user] = [weights.get(k, 0.25) for k in ordered_keys]
     return {"message": "Súlyok mentve"}
 
 # AHP súlyok tárolása
@@ -684,8 +717,15 @@ async def calculate_stay_results(config: StayPreferenceConfig, request: Request)
         raise HTTPException(status_code=400, detail="Missing data")
 
     df = pd.DataFrame(filtered_stays[user]["data"])
-    weights = stay_ahp_weights[user] # price, rating, reviews, distance, instant
+    weights = stay_ahp_weights[user] # price, rating, reviews, distance
     
+    # Ensure price_huf exists (fallback for stale session data)
+    if 'price_huf' not in df.columns:
+        if 'price_per_night_eur' in df.columns:
+            df['price_huf'] = df['price_per_night_eur'] * 400
+        else:
+            df['price_huf'] = 0
+
     # g1: Price - MIN
     df['g1'] = df['price_huf']
     # g2: Rating - MAX
@@ -694,16 +734,11 @@ async def calculate_stay_results(config: StayPreferenceConfig, request: Request)
     df['g3'] = df['rating_count']
     # g4: Distance - MIN
     df['g4'] = df['distance_km']
-    # g5: Instant - MAX
-    df['g5'] = df['instant_booking'].astype(int)
 
     # Direction: 1 for MAX, -1 for MIN (for the d = i - j logic)
-    # But wait, our get_preference(d, config) expects d > 0 if i is better than j.
-    # If MAX: d = i - j
-    # If MIN: d = j - i
-    directions = [-1, 1, 1, -1, 1]
-    cols = ['g1', 'g2', 'g3', 'g4', 'g5']
-    keys = ['price', 'rating', 'reviews', 'distance', 'instant']
+    directions = [-1, 1, 1, -1]
+    cols = ['g1', 'g2', 'g3', 'g4']
+    keys = ['price', 'rating', 'reviews', 'distance']
     n = len(df)
     pi_matrix = np.zeros((n, n))
     data = df[cols].values
@@ -712,7 +747,7 @@ async def calculate_stay_results(config: StayPreferenceConfig, request: Request)
         for j in range(n):
             if i == j: continue
             total_pref = 0.0
-            for k in range(5):
+            for k in range(len(cols)):
                 # We want i > j
                 if directions[k] == 1:
                     d = data[i, k] - data[j, k]
@@ -720,7 +755,8 @@ async def calculate_stay_results(config: StayPreferenceConfig, request: Request)
                     d = data[j, k] - data[i, k]
                 
                 if d > 0:
-                    total_pref += weights[k] * get_preference(d, config.configs[keys[k]])
+                    pref_val = get_preference(d, config.configs[keys[k]])
+                    total_pref += weights[k] * pref_val
             pi_matrix[i, j] = total_pref
 
     phi_plus = np.sum(pi_matrix, axis=1) / (n - 1)
@@ -752,7 +788,7 @@ async def stay_results_page(request: Request):
         "user": user, 
         "results": stay_ranked_results[user],
         "weights": stay_ahp_weights[user],
-        "criteria_names": ["Ár", "Értékelés", "Népszerűség", "Távolság", "Azonnali foglalás"]
+        "criteria_names": ["Ár", "Értékelés", "Népszerűség", "Távolság"]
     })
 
 @app.get("/flight-intelligence-results", response_class=HTMLResponse)

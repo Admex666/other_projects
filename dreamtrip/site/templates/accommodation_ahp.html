@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Személyes preferenciák - Accommodation Intelligence</title>
+    <link rel="icon" type="image/png" href="/static/logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -166,6 +167,7 @@
             background: #ddd;
             outline: none;
             -webkit-appearance: none;
+            appearance: none;
         }
 
         input[type="range"]::-webkit-slider-thumb {
@@ -293,8 +295,7 @@
             { id: "price", human: "Olcsó ár" },
             { id: "rating", human: "Kiváló értékelés" },
             { id: "reviews", human: "Népszerűség (sok vélemény)" },
-            { id: "distance", human: "Városközponthoz való közelség" },
-            { id: "instant", human: "Azonnali foglalási lehetőség" }
+            { id: "distance", human: "Városközponthoz való közelség" }
         ];
 
         const pairs = [];

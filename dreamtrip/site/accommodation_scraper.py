@@ -57,10 +57,9 @@ def get_all_stays(city, country, start_date, end_date,
     driver = webdriver.Chrome(options=chrome_options)
     
     try:
+        # Base URL without filters first (we just need the searchId)
         base_url = f"https://www.cozycozy.com/en/search/{city}%2C%20{country}/{start_date}/{end_date}/{rooms}-{adults}-{children}/results"
-        url = f"{base_url}?filters={filter_string}" if filter_string else base_url
-        
-        driver.get(url)
+        driver.get(base_url)
         
         # Wait for the results to start loading
         WebDriverWait(driver, 15).until(
@@ -81,53 +80,82 @@ def get_all_stays(city, country, start_date, end_date,
         if not found:
             return {"entries": [], "error": "searchId not found"}
 
-        # API call via script execution
-        api_call_script = f"""
-        return fetch('https://www.cozycozy.com/api/getResultList', {{
-            method: 'POST',
-            headers: {{
-                'accept': 'application/json, text/plain, */*',
-                'content-type': 'application/json',
-                'x-search-id': '{search_id}',
-                'x-split-id': '0'
-            }},
-            body: JSON.stringify({{
-                searchId: '{search_id}',
-                sorting: 'ranking',
-                offset: 0,
-                count: 100,
-                filters: {{
-                    bounds: null,
-                    noBounds: true,
-                    price: [{price_min}, {price_max}],
-                    instantBooking: true,
-                    combinedTypeCodes: {json.dumps(combined_types)},
-                    starRatings: [],
-                    minRating: {min_rating},
-                    ratingRequired: {str(min_rating > 0).lower()},
-                    amenityCodes: {json.dumps(amenity_codes)},
-                    providerCodes: [],
-                    minBedRoomCount: 1,
-                    minBathRoomCount: 0,
-                    cityCodes: [],
-                    areaCodes: [],
-                    minResponseTime: null,
-                    updateBounds: true,
-                    breakfast: {str(breakfast).lower()},
-                    minCancellationCategory: 0
+        # Pagination logic
+        all_results = []
+        offset = 0
+        limit = 500 # Valid limit is around 500 usually
+        batch_size = 100
+        
+        while offset < limit:
+            # API call via script execution
+            # Enforcing instantBooking: true and removing Hostelworld later in parsing if needed
+            api_call_script = f"""
+            return fetch('https://www.cozycozy.com/api/getResultList', {{
+                method: 'POST',
+                headers: {{
+                    'accept': 'application/json, text/plain, */*',
+                    'content-type': 'application/json',
+                    'x-search-id': '{search_id}',
+                    'x-split-id': '0'
                 }},
-                estimateBounds: {{
-                    targetSize: {{ width: 1136, height: 925 }}
-                }},
-                prefixAccommodationIds: [],
-                processNewResults: true,
-                columnCount: 3,
-                excludeAds: false
-            }})
-        }}).then(response => response.json());
-        """
-        results = driver.execute_script(api_call_script)
-        return results
+                body: JSON.stringify({{
+                    searchId: '{search_id}',
+                    sorting: 'ranking',
+                    offset: {offset},
+                    count: {batch_size},
+                    filters: {{
+                        bounds: null,
+                        noBounds: true,
+                        price: [{price_min}, {price_max}],
+                        instantBooking: true,
+                        combinedTypeCodes: {json.dumps(combined_types)},
+                        starRatings: [],
+                        minRating: {min_rating},
+                        ratingRequired: {str(min_rating > 0).lower()},
+                        amenityCodes: {json.dumps(amenity_codes)},
+                        providerCodes: [],
+                        minBedRoomCount: 1,
+                        minBathRoomCount: 0,
+                        cityCodes: [],
+                        areaCodes: [],
+                        minResponseTime: null,
+                        updateBounds: true,
+                        breakfast: {str(breakfast).lower()},
+                        minCancellationCategory: 0
+                    }},
+                    estimateBounds: {{
+                        targetSize: {{ width: 1136, height: 925 }}
+                    }},
+                    prefixAccommodationIds: [],
+                    processNewResults: true,
+                    columnCount: 3,
+                    excludeAds: false
+                }})
+            }}).then(response => response.json());
+            """
+            
+            try:
+                # Add a small delay between batches
+                if offset > 0:
+                    time.sleep(1)
+                    
+                batch_results = driver.execute_script(api_call_script)
+                
+                if not batch_results or 'entries' not in batch_results or not batch_results['entries']:
+                    break
+                    
+                all_results.extend(batch_results['entries'])
+                
+                if len(batch_results['entries']) < batch_size:
+                    break
+                    
+                offset += batch_size
+                
+            except Exception as e:
+                print(f"Error fetching batch at offset {offset}: {e}")
+                break
+
+        return {"entries": all_results}
 
     finally:
         driver.quit()
@@ -147,7 +175,28 @@ def parse_accommodation_results(results):
         return []
     
     parsed_data = []
+    
+    # Mapping for accommodation types (simplified)
+    # Codes seen: Hotel, Apartment, Hostel, etc.
+    
     for entry in results['entries']:
+        # Filter out Hostelworld if provider name contains it
+        # Provider is usually deep inside highlightedResults
+        
+        highlighted = entry.get('highlightedResults', [])
+        if not highlighted:
+            continue
+            
+        cheapest = min(highlighted, key=lambda x: x.get('eurPricePerNight', float('inf')))
+        provider = cheapest.get('providerName', '')
+        
+        # [CONSTRAINT] Filter out Hostelworld
+        if 'hostelworld' in provider.lower():
+            continue
+
+        amenities = entry.get('amenityCodes', [])
+        acc_type = entry.get('typeCode', 'UNKNOWN') # e.g. HOTEL, APARTMENT
+
         base_info = {
             'id': entry.get('accommodationId'),
             'name': entry.get('name'),
@@ -160,24 +209,22 @@ def parse_accommodation_results(results):
             'latitude': entry.get('coordinates', {}).get('latitude'),
             'longitude': entry.get('coordinates', {}).get('longitude'),
             'instant_booking': entry.get('instantBooking', False),
+            'amenities': amenities,
+            'accommodation_type': acc_type
         }
         
-        highlighted = entry.get('highlightedResults', [])
-        if highlighted:
-            cheapest = min(highlighted, key=lambda x: x.get('eurPricePerNight', float('inf')))
-            
-            base_info.update({
-                'price_per_night_eur': cheapest.get('eurPricePerNight'),
-                'total_price': cheapest.get('totalPrice', {}).get('value'),
-                'currency': cheapest.get('totalPrice', {}).get('currencyCode'),
-                'provider': cheapest.get('providerName'),
-                'booking_url': cheapest.get('deeplinkUrl'),
-                'room_type': cheapest.get('text'),
-            })
-            
-            thumbnails = entry.get('lightThumbnails', {})
-            first_urls = thumbnails.get('firstUrls', [])
-            base_info['image_url'] = first_urls[0] if first_urls else None
+        base_info.update({
+            'price_per_night_eur': cheapest.get('eurPricePerNight'),
+            'total_price': cheapest.get('totalPrice', {}).get('value'),
+            'currency': cheapest.get('totalPrice', {}).get('currencyCode'),
+            'provider': provider,
+            'booking_url': cheapest.get('deeplinkUrl'),
+            'room_type': cheapest.get('text'),
+        })
+        
+        thumbnails = entry.get('lightThumbnails', {})
+        first_urls = thumbnails.get('firstUrls', [])
+        base_info['image_url'] = first_urls[0] if first_urls else None
         
         if 'price_per_night_eur' in base_info:
             parsed_data.append(base_info)

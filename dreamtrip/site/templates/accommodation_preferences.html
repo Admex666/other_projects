@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Preferencia Beállítások - Accommodation Intelligence</title>
+    <link rel="icon" type="image/png" href="/static/logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -160,7 +161,7 @@
         <div class="progress-container">
             <div class="progress-bar" id="progressBar" style="width: 80%"></div>
         </div>
-        <div class="progress-text">Folyamat: Preferencia függvények beállítása</div>
+        <div class="progress-text">Folyamat: Részletes igények beállítása</div>
 
         <div id="criteriaList">
             <!-- Price -->
@@ -232,19 +233,6 @@
                     <input type="number" id="distance_p" value="5" step="0.5">
                 </div>
             </div>
-
-            <!-- Instant -->
-            <div class="section">
-                <h3>⚡ Azonnali foglalás</h3>
-                <select id="instant_type">
-                    <option value="usual" selected>Az azonnali foglalás határozott előny</option>
-                </select>
-                <div class="input-group disabled">
-                    <label>Paraméter</label>
-                    <input type="number" id="instant_q" value="0" disabled>
-                    <input type="number" id="instant_p" value="0" disabled>
-                </div>
-            </div>
         </div>
 
         <div style="display: flex; gap: 15px; margin-top: 30px;">
@@ -256,7 +244,7 @@
     </div>
 
     <script>
-        const criteria = ['price', 'rating', 'reviews', 'distance', 'instant'];
+        const criteria = ['price', 'rating', 'reviews', 'distance'];
 
         function updateUI() {
             criteria.forEach(c => {
