@@ -129,6 +129,56 @@
             border-radius: 4px;
             font-size: 11px;
         }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 20px 15px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .search-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .input-group label {
+                font-size: 13px;
+            }
+
+            input {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .btn-search {
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+
+            .input-group div[style*="display: flex"] {
+                flex-direction: column;
+            }
+
+            #results div {
+                padding: 20px 15px !important;
+            }
+
+            #results div div {
+                flex-direction: column;
+            }
+
+            #results button {
+                width: 100% !important;
+            }
+        }
     </style>
 </head>
 

@@ -258,6 +258,57 @@
                 transform: rotate(360deg);
             }
         }
+
+        /* Mobile Optimization */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .navbar {
+                flex-direction: column;
+                padding: 15px;
+                gap: 15px;
+                text-align: center;
+                margin-bottom: 20px;
+            }
+
+            .container {
+                padding: 20px 15px;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+
+            .section {
+                padding: 15px;
+            }
+
+            .input-group label {
+                font-size: 13px;
+            }
+
+            .input-group input[type="number"],
+            select {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .btn-calculate {
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+
+            .progress-text {
+                font-size: 12px;
+            }
+
+            .time-display {
+                font-size: 12px;
+                padding: 3px 10px;
+            }
+        }
     </style>
 </head>
 

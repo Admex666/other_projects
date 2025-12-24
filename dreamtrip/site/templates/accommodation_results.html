@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Személyre szabott szállások - Accommodation Intelligence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #235B2A 0%, #1a4520 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px 40px;
+            border-radius: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: #235B2A;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .results-header {
+            margin-bottom: 30px;
+        }
+
+        .results-header h1 {
+            color: #235B2A;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        .stay-card {
+            border-radius: 15px;
+            overflow: hidden;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border: 1px solid #eee;
+            transition: transform 0.3s;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stay-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .stay-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+        }
+
+        .stay-content {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stay-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .stay-location {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .score-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #235B2A;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 14px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .metric {
+            font-size: 13px;
+            padding: 8px;
+            border-radius: 8px;
+            background: #f0f7f0;
+            position: relative;
+            cursor: help;
+        }
+
+        .metric strong {
+            display: block;
+            color: #235B2A;
+            font-size: 15px;
+        }
+
+        .price-tag {
+            font-size: 22px;
+            font-weight: 700;
+            color: #235B2A;
+            margin-bottom: 15px;
+        }
+
+        .btn-book {
+            background: #90DC25;
+            color: #235B2A;
+            padding: 12px;
+            border-radius: 10px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: 700;
+            transition: 0.3s;
+            margin-top: auto;
+        }
+
+        .btn-book:hover {
+            background: #235B2A;
+            color: white;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background: #235B2A;
+            color: white;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 10;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: 0.3s;
+            font-size: 11px;
+        }
+
+        .metric:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 20px 15px;
+            }
+
+            .navbar {
+                padding: 15px;
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="navbar">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <img src="/static/logo.png" alt="Optivoya" style="height: 40px;">
+            <span class="logo-text">Optivoya</span>
+        </div>
+        <div class="user-info">
+            <span style="color: #666;">👤 {{ user }}</span>
+            <a href="/logout" class="logout-btn"
+                style="background: #235B2A; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none;">Kilépés</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="results-header">
+            <div
+                style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; flex-wrap: wrap; gap: 15px;">
+                <h1>🎯 Személyre szabott szállások</h1>
+                <div style="display: flex; gap: 10px;">
+                    <button onclick="window.location.href='/accommodation-intelligence-preferences'"
+                        style="background:#666; color:white; border:none; padding:10px 20px; border-radius:8px; cursor:pointer">⬅️
+                        Vissza</button>
+                    <button onclick="window.location.href='/home'"
+                        style="background:#235B2A; color:white; border:none; padding:10px 20px; border-radius:8px; cursor:pointer">🏠
+                        Főoldal</button>
+                </div>
+            </div>
+            <p style="color:666">Az ön preferenciái alapján rangsorolva (PROMETHEE módszerrel)</p>
+        </div>
+
+        <div class="results-grid">
+            {% for stay in results %}
+            <div class="stay-card">
+                <div class="score-badge">#{{ loop.index }} • {{ "%.3f"|format(stay.phi_net) }}</div>
+                <img src="{{ stay.image_url or 'https://via.placeholder.com/400x250?text=No+Photo' }}"
+                    class="stay-image" alt="{{ stay.name }}">
+
+                <div class="stay-content">
+                    <div class="stay-title">{{ stay.name }}</div>
+                    <div class="stay-location">📍 {{ stay.location_text or stay.city }}</div>
+
+                    <div class="price-tag">{{ "{:,.0f}".format(stay.price_huf) }} Ft <span
+                            style="font-size:12px; color:666; font-weight:400">/ éj</span></div>
+
+                    <div class="metrics-grid">
+                        <div class="metric tooltip">
+                            Értékelés: <strong>{{ stay.rating_score }}/100</strong>
+                            <span class="tooltiptext">Súlyozott pontszám: {{ "%.2f"|format(stay.score_rating *
+                                weights[1]) }}</span>
+                        </div>
+                        <div class="metric tooltip">
+                            Népszerűség: <strong>{{ stay.rating_count }} vél.</strong>
+                            <span class="tooltiptext">Súlyozott pontszám: {{ "%.2f"|format(stay.score_reviews *
+                                weights[2]) }}</span>
+                        </div>
+                        <div class="metric tooltip">
+                            Távolság: <strong>{{ "%.1f"|format(stay.distance_km) }} km</strong>
+                            <span class="tooltiptext">Súlyozott pontszám: {{ "%.2f"|format(stay.score_distance *
+                                weights[3]) }}</span>
+                        </div>
+                        <div class="metric tooltip">
+                            Azonnali: <strong>{{ 'Igen' if stay.instant_booking else 'Nem' }}</strong>
+                            <span class="tooltiptext">Súlyozott pontszám: {{ "%.2f"|format(stay.score_instant *
+                                weights[4]) }}</span>
+                        </div>
+                    </div>
+
+                    <a href="{{ stay.booking_url }}" target="_blank" class="btn-book">Szállás megtekintése ➔</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+
+</html>

@@ -5,10 +5,12 @@ from fastapi.templating import Jinja2Templates
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 import pandas as pd
 from scraper import get_kiwi_tokens, search_flights_by_city_name_v2, create_return_combinations
+from accommodation_scraper import get_all_stays, parse_accommodation_results
 import os
 import secrets
 from pydantic import BaseModel
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
+import numpy as np
 
 app = FastAPI()
 
@@ -32,6 +34,7 @@ raw_flights_cache = {}
 
 # Globális változó a scraper eredményekhez
 results = {"status": "idle", "data": None, "error": None}
+accommodation_results = {"status": "idle", "data": None, "error": None}
 
 # ===== AUTH =====
 def verify_credentials(username: str, password: str):
@@ -133,6 +136,16 @@ class SearchParams(BaseModel):
 
 # Globális tároló a nyers adatoknak
 raw_flight_data = {"data": None, "count": 0}
+raw_stay_data = {"data": None, "count": 0}
+
+class StaySearchParams(BaseModel):
+    city: str
+    country: str
+    start_date: str
+    end_date: str
+    rooms: int = 1
+    adults: int = 2
+    children: int = 0
 
 # Módosított háttérfolyamat
 def run_intelligence_scraper(p: SearchParams):
@@ -182,6 +195,55 @@ async def start_search(params: SearchParams, background_tasks: BackgroundTasks):
     background_tasks.add_task(run_intelligence_scraper, params)
     return {"message": "Search started"}
 
+# ===== ACCOMMODATION SCRAPER API =====
+def run_accommodation_scraper(p: StaySearchParams):
+    global accommodation_results, raw_stay_data
+    accommodation_results = {"status": "running", "data": None, "error": None}
+    try:
+        # Árváltás (becsült 400 HUF/EUR) a scrapernek
+        p_min_eur = p.price_min / 400 if hasattr(p, 'price_min') else 0
+        p_max_eur = p.price_max / 400 if hasattr(p, 'price_max') else 9007199254740991
+        
+        # Alapértelmezett szűrők az első keresésnél (szinte semmi)
+        raw_results = get_all_stays(
+            city=p.city,
+            country=p.country,
+            start_date=p.start_date,
+            end_date=p.end_date,
+            rooms=p.rooms,
+            adults=p.adults,
+            children=p.children
+        )
+        
+        if not raw_results or 'entries' not in raw_results or not raw_results['entries']:
+            accommodation_results = {"status": "done", "data": [], "count": 0, "error": "Nincs szállás."}
+            return
+
+        parsed = parse_accommodation_results(raw_results)
+        
+        # Mentés a raw_stay_data-ba
+        raw_stay_data["data"] = parsed
+        raw_stay_data["count"] = len(parsed)
+
+        accommodation_results = {
+            "status": "done", 
+            "count": len(parsed),
+            "error": None
+        }
+    except Exception as e:
+        accommodation_results = {"status": "error", "error": str(e)}
+
+@app.post("/start-accommodation-search")
+async def start_accommodation_search(params: StaySearchParams, background_tasks: BackgroundTasks):
+    global accommodation_results
+    accommodation_results = {"status": "running", "data": None, "error": None}
+    background_tasks.add_task(run_accommodation_scraper, params)
+    return {"message": "Accommodation search started"}
+
+@app.get("/api/accommodation-status")
+async def get_accommodation_status():
+    return JSONResponse(accommodation_results)
+
 @app.get("/flight-intelligence-filter", response_class=HTMLResponse)
 async def flight_intelligence_filter(request: Request):
     user = get_current_user(request)
@@ -217,6 +279,17 @@ class FilterParams(BaseModel):
 # Szűrés + tárolás sessionbe
 filtered_flights = {}
 user_filter_params = {}
+
+filtered_stays = {}
+user_stay_filter_params = {}
+
+class StayFilterParams(BaseModel):
+    price_min: float = 0
+    price_max: float = 1000000 # HUF (majd euróra váltjuk a scrapernek)
+    min_rating: float = 0
+    accommodation_types: Optional[List[str]] = None
+    amenities: Optional[List[str]] = None
+    breakfast: bool = False
 
 @app.post("/api/apply-filters")
 async def apply_filters(params: FilterParams, background_tasks: BackgroundTasks, request: Request):
@@ -308,10 +381,99 @@ async def flight_intelligence_ahp(request: Request):
     flight_data = filtered_flights[user]
     
     return templates.TemplateResponse("flight_ahp.html", {
-        "request": request,
+        "request": request, 
         "user": user,
         "flight_count": flight_data["count"]
     })
+
+# --- ACCOMMODATION FILTER ---
+@app.get("/accommodation-intelligence-filter", response_class=HTMLResponse)
+async def accommodation_filter_page(request: Request):
+    user = get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/", status_code=303)
+    
+    if raw_stay_data.get("data") is None or raw_stay_data["count"] == 0:
+        return RedirectResponse(url="/accommodation-intelligence", status_code=303)
+    
+    return templates.TemplateResponse("accommodation_filter.html", {
+        "request": request,
+        "user": user,
+        "stay_count": raw_stay_data["count"]
+    })
+
+@app.post("/api/apply-stay-filters")
+async def apply_stay_filters(params: StayFilterParams, background_tasks: BackgroundTasks, request: Request):
+    user = get_current_user(request)
+    if not user: raise HTTPException(status_code=401)
+    
+    background_tasks.add_task(run_stay_filter_task, user, params)
+    return {"message": "Filtering started"}
+
+@app.get("/api/stay-filter-status/{username}")
+async def stay_filter_status(username: str):
+    return JSONResponse(filtered_stays.get(username, {"status": "idle"}))
+
+def run_stay_filter_task(username: str, p: StayFilterParams):
+    global filtered_stays, raw_stay_data, user_stay_filter_params
+    filtered_stays[username] = {"status": "running", "count": None, "error": None}
+    user_stay_filter_params[username] = p
+    
+    try:
+        if raw_stay_data.get("data") is None or raw_stay_data["count"] == 0:
+            filtered_stays[username] = {"status": "done", "count": 0, "error": "No data in memory"}
+            return
+        
+        # We work with a list of dicts, not DF (to keep it light, or convert to DF)
+        df = pd.DataFrame(raw_stay_data["data"])
+        
+        # Filtrose - HUF comparison (we assume parsed price is in EUR from cozycozy, let's keep it EUR or convert everything to HUF)
+        # Let's say all prices in main.py are in HUF for consistency with flights.
+        eur_to_huf = 400
+        df['price_huf'] = df['price_per_night_eur'] * eur_to_huf
+        
+        df = df[(df['price_huf'] >= p.price_min) & (df['price_huf'] <= p.price_max)]
+        df = df[df['rating_score'] >= p.min_rating]
+        
+        if p.breakfast:
+             # This is tricky as scraper already filters, but if we have it in raw, we filter more
+             pass
+        
+        filtered_stays[username] = {
+            "status": "done",
+            "count": len(df),
+            "data": df.to_dict(orient="records"),
+            "error": None
+        }
+    except Exception as e:
+        filtered_stays[username] = {"status": "error", "error": str(e)}
+
+# --- ACCOMMODATION AHP ---
+stay_ahp_weights = {}
+
+@app.get("/accommodation-intelligence-ahp", response_class=HTMLResponse)
+async def accommodation_ahp_page(request: Request):
+    user = get_current_user(request)
+    if not user: return RedirectResponse(url="/", status_code=303)
+    
+    if user not in filtered_stays or filtered_stays[user].get("status") != "done":
+        return RedirectResponse(url="/accommodation-intelligence-filter", status_code=303)
+    
+    return templates.TemplateResponse("accommodation_ahp.html", {
+        "request": request, 
+        "user": user,
+        "stay_count": filtered_stays[user]["count"]
+    })
+
+@app.post("/api/save-stay-ahp-weights")
+async def save_stay_ahp_weights(weights: Dict[str, float], request: Request):
+    user = get_current_user(request)
+    if not user: raise HTTPException(status_code=401)
+    
+    # Expecting order: price, rating, reviews, distance, instant
+    ordered_keys = ["price", "rating", "reviews", "distance", "instant"]
+    stay_ahp_weights[user] = [weights.get(k, 0.2) for k in ordered_keys]
+    return {"message": "Súlyok mentve"}
 
 # AHP súlyok tárolása
 ahp_weights = {}
@@ -494,6 +656,104 @@ async def calculate_results(config: PreferenceConfig, request: Request):
     ranked_results[user] = final_list
     
     return {"status": "success", "count": n}
+
+# --- ACCOMMODATION RESULTS ---
+class StayPreferenceConfig(BaseModel):
+    configs: Dict[str, CriterionParam]
+
+stay_ranked_results = {}
+
+@app.get("/accommodation-intelligence-preferences", response_class=HTMLResponse)
+async def stay_preferences_page(request: Request):
+    user = get_current_user(request)
+    if not user: return RedirectResponse(url="/", status_code=303)
+    if user not in stay_ahp_weights: return RedirectResponse(url="/accommodation-intelligence-ahp", status_code=303)
+    if user not in filtered_stays or filtered_stays[user].get("status") != "done":
+        return RedirectResponse(url="/accommodation-intelligence-filter", status_code=303)
+    
+    return templates.TemplateResponse("accommodation_preferences.html", {
+        "request": request,
+        "user": user,
+        "stay_count": filtered_stays[user]["count"]
+    })
+
+@app.post("/api/calculate-stay-results")
+async def calculate_stay_results(config: StayPreferenceConfig, request: Request):
+    user = get_current_user(request)
+    if not user or user not in filtered_stays or user not in stay_ahp_weights:
+        raise HTTPException(status_code=400, detail="Missing data")
+
+    df = pd.DataFrame(filtered_stays[user]["data"])
+    weights = stay_ahp_weights[user] # price, rating, reviews, distance, instant
+    
+    # g1: Price - MIN
+    df['g1'] = df['price_huf']
+    # g2: Rating - MAX
+    df['g2'] = df['rating_score']
+    # g3: Reviews - MAX
+    df['g3'] = df['rating_count']
+    # g4: Distance - MIN
+    df['g4'] = df['distance_km']
+    # g5: Instant - MAX
+    df['g5'] = df['instant_booking'].astype(int)
+
+    # Direction: 1 for MAX, -1 for MIN (for the d = i - j logic)
+    # But wait, our get_preference(d, config) expects d > 0 if i is better than j.
+    # If MAX: d = i - j
+    # If MIN: d = j - i
+    directions = [-1, 1, 1, -1, 1]
+    cols = ['g1', 'g2', 'g3', 'g4', 'g5']
+    keys = ['price', 'rating', 'reviews', 'distance', 'instant']
+    n = len(df)
+    pi_matrix = np.zeros((n, n))
+    data = df[cols].values
+
+    for i in range(n):
+        for j in range(n):
+            if i == j: continue
+            total_pref = 0.0
+            for k in range(5):
+                # We want i > j
+                if directions[k] == 1:
+                    d = data[i, k] - data[j, k]
+                else:
+                    d = data[j, k] - data[i, k]
+                
+                if d > 0:
+                    total_pref += weights[k] * get_preference(d, config.configs[keys[k]])
+            pi_matrix[i, j] = total_pref
+
+    phi_plus = np.sum(pi_matrix, axis=1) / (n - 1)
+    phi_minus = np.sum(pi_matrix, axis=0) / (n - 1)
+    df['phi_net'] = phi_plus - phi_minus
+
+    # Scores for UI
+    for i, col in enumerate(cols):
+        c_min, c_max = df[col].min(), df[col].max()
+        if c_max == c_min:
+            df[f'score_{keys[i]}'] = 1.0
+        else:
+            if directions[i] == 1: # MAX
+                df[f'score_{keys[i]}'] = (df[col] - c_min) / (c_max - c_min)
+            else: # MIN
+                df[f'score_{keys[i]}'] = (c_max - df[col]) / (c_max - c_min)
+
+    stay_ranked_results[user] = df.sort_values('phi_net', ascending=False).to_dict('records')
+    return {"status": "success", "count": n}
+
+@app.get("/accommodation-intelligence-results", response_class=HTMLResponse)
+async def stay_results_page(request: Request):
+    user = get_current_user(request)
+    if not user: return RedirectResponse(url="/", status_code=303)
+    if user not in stay_ranked_results: return RedirectResponse(url="/accommodation-intelligence", status_code=303)
+    
+    return templates.TemplateResponse("accommodation_results.html", {
+        "request": request, 
+        "user": user, 
+        "results": stay_ranked_results[user],
+        "weights": stay_ahp_weights[user],
+        "criteria_names": ["Ár", "Értékelés", "Népszerűség", "Távolság", "Azonnali foglalás"]
+    })
 
 @app.get("/flight-intelligence-results", response_class=HTMLResponse)
 async def results_page(request: Request):

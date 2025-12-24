@@ -1,59 +1,210 @@
 <!DOCTYPE html>
 <html lang="hu">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Szűrés - Flight Intelligence</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background: linear-gradient(135deg, #235B2A 0%, #1a4520 100%); min-height: 100vh; padding: 20px; }
-        .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 20px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        h1 { color: #235B2A; margin-bottom: 10px; }
-        .subtitle { color: #666; margin-bottom: 30px; font-size: 14px; }
-        
-        .filter-section { margin-bottom: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px; }
-        .filter-section h3 { color: #235B2A; margin-bottom: 15px; font-size: 18px; }
-        
-        .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .input-group { display: flex; flex-direction: column; }
-        label { font-weight: 600; margin-bottom: 5px; font-size: 13px; color: #555; }
-        input[type="text"], input[type="date"], input[type="number"] { 
-            padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
         }
-        
-        .time-range { display: flex; gap: 10px; align-items: center; }
-        .time-range input { flex: 1; }
-        
-        .day-selector { display: flex; gap: 10px; flex-wrap: wrap; }
-        .day-btn { 
-            padding: 8px 16px; border: 2px solid #ddd; background: white; 
-            border-radius: 8px; cursor: pointer; transition: 0.3s; font-size: 13px;
+
+        body {
+            background: linear-gradient(135deg, #235B2A 0%, #1a4520 100%);
+            min-height: 100vh;
+            padding: 20px;
         }
-        .day-btn.active { background: #235B2A; color: white; border-color: #235B2A; }
-        
-        .btn-primary { 
-            background: #235B2A; color: white; border: none; padding: 15px 40px; 
-            border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; 
-            width: 100%; transition: 0.3s; margin-top: 20px;
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
-        .btn-primary:hover { background: #32853d; }
-        .btn-primary:disabled { background: #ccc; cursor: not-allowed; }
-        
-        #status { 
-            margin-top: 20px; padding: 15px; border-radius: 10px; 
-            text-align: center; display: none; 
+
+        h1 {
+            color: #235B2A;
+            margin-bottom: 10px;
         }
-        .status-running { background: #e3f2fd; color: #1976d2; }
-        .status-done { background: #d4edda; color: #155724; }
-        .status-error { background: #f8d7da; color: #721c24; }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .filter-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .filter-section h3 {
+            color: #235B2A;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 13px;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="number"] {
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .time-range {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .time-range input {
+            flex: 1;
+        }
+
+        .day-selector {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .day-btn {
+            padding: 8px 16px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 13px;
+        }
+
+        .day-btn.active {
+            background: #235B2A;
+            color: white;
+            border-color: #235B2A;
+        }
+
+        .btn-primary {
+            background: #235B2A;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.3s;
+            margin-top: 20px;
+        }
+
+        .btn-primary:hover {
+            background: #32853d;
+        }
+
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        #status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+        }
+
+        .status-running {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .status-done {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 20px 15px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .input-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .filter-section {
+                padding: 15px;
+            }
+
+            .btn-primary {
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+
+            .time-range span {
+                margin: 0 5px;
+            }
+
+            .day-btn {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>🔍 Járatok szűrése</h1>
-        <p class="subtitle">Állítsd be a preferenciáidat - jelenleg <strong>{{ flight_count }}</strong> járatkombináció közül választhatsz</p>    
-        
+        <p class="subtitle">Állítsd be a preferenciáidat - jelenleg <strong>{{ flight_count }}</strong> járatkombináció
+            közül választhatsz</p>
+
         <!-- Időkorlátok -->
         <div class="filter-section">
             <h3>⏰ Indulási időpontok</h3>
@@ -76,7 +227,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Napok -->
         <div class="filter-section">
             <h3>📅 Indulási napok</h3>
@@ -105,7 +256,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- További szűrők -->
         <div class="filter-section">
             <h3>🎯 További kritériumok</h3>
@@ -136,18 +287,18 @@
                 </div>
             </div>
         </div>
-        
+
         <button class="btn-primary" id="filterBtn" onclick="applyFilters()">
             Szűrés és tovább az értékeléshez
         </button>
-        
+
         <div id="status"></div>
     </div>
 
     <script>
         // Napok toggle
         document.querySelectorAll('.day-btn').forEach(btn => {
-            btn.addEventListener('click', function(e) {
+            btn.addEventListener('click', function (e) {
                 e.preventDefault();
                 this.classList.toggle('active');
             });
@@ -158,13 +309,13 @@
         async function applyFilters() {
             const btn = document.getElementById('filterBtn');
             const statusDiv = document.getElementById('status');
-            
+
             // Napok összegyűjtése
             const outDays = Array.from(document.querySelectorAll('#out_days .day-btn.active'))
                 .map(btn => btn.dataset.day);
             const inDays = Array.from(document.querySelectorAll('#in_days .day-btn.active'))
                 .map(btn => btn.dataset.day);
-            
+
             const payload = {
                 // ❌ NE küldj origin/destination/dátum adatokat
                 out_time_min: parseInt(document.getElementById('out_time_min').value),
@@ -188,7 +339,7 @@
 
             await fetch('/api/apply-filters', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
 
@@ -206,7 +357,7 @@
                 clearInterval(pollInterval);
                 statusDiv.className = 'status-done';
                 statusDiv.innerText = `✅ ${data.count} járat megfelel a kritériumoknak! Átirányítás...`;
-                
+
                 setTimeout(() => {
                     window.location.href = '/flight-intelligence-ahp';
                 }, 2000);
@@ -219,4 +370,5 @@
         }
     </script>
 </body>
+
 </html>

@@ -227,6 +227,62 @@
             }
         }
 
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .navbar {
+                flex-direction: column;
+                padding: 15px;
+                gap: 15px;
+                text-align: center;
+                margin-bottom: 20px;
+            }
+
+            .container {
+                padding: 20px 15px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .section {
+                padding: 15px;
+            }
+
+            .param-inputs {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .input-group label {
+                font-size: 13px;
+            }
+
+            .btn-calculate {
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+
+            .progress-text {
+                font-size: 12px;
+            }
+        }
+
         .modal-content {
             background-color: white;
             margin: 2% auto;
@@ -345,25 +401,122 @@
 
         .tooltip .tooltiptext {
             visibility: hidden;
-            width: 200px;
-            background-color: #333;
+            width: 220px;
+            background-color: rgba(35, 91, 42, 0.95);
             color: #fff;
             text-align: center;
-            border-radius: 6px;
-            padding: 8px;
+            border-radius: 8px;
+            padding: 10px;
             position: absolute;
-            z-index: 1;
+            z-index: 9999;
             bottom: 125%;
             left: 50%;
-            margin-left: -100px;
+            margin-left: -110px;
             opacity: 0;
-            transition: opacity 0.3s;
+            transition: all 0.3s;
             font-size: 12px;
+            pointer-events: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(144, 220, 37, 0.3);
+        }
+
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: rgba(35, 91, 42, 0.95) transparent transparent transparent;
         }
 
         .tooltip:hover .tooltiptext {
             visibility: visible;
             opacity: 1;
+        }
+
+        .results-table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .modal-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            .modal-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            body {
+                padding: 10px;
+            }
+
+            .navbar {
+                padding: 15px;
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+                margin-bottom: 20px;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            .results-header h1 {
+                font-size: 20px;
+            }
+
+            .stats {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .controls {
+                flex-direction: column;
+                gap: 15px;
+                align-items: stretch;
+            }
+
+            .styled-table th,
+            .styled-table td {
+                padding: 10px 8px;
+                font-size: 13px;
+            }
+
+            .rank-cell {
+                font-size: 14px;
+            }
+
+            .modal-content {
+                padding: 15px;
+                margin: 5% auto;
+            }
+
+            .flight-detail {
+                grid-template-columns: 1fr;
+                gap: 5px;
+            }
+
+            .flight-detail strong {
+                font-size: 12px;
+            }
+
+            .btn-book {
+                width: 100%;
+                margin-bottom: 10px;
+            }
         }
     </style>
 </head>
@@ -416,7 +569,7 @@
             </div>
         </div>
 
-        <div class="results-table-container">
+        <div class="results-table-wrapper">
             <table class="styled-table">
                 <thead>
                     <tr>
@@ -452,10 +605,14 @@
                             {% set score = flight.score_departure %}
                             <div
                                 class="score-cell tooltip {% if score > 0.8 %}score-green{% elif score > 0.4 %}score-yellow{% else %}score-red{% endif %}">
+                                <div style="font-weight: 700; font-size: 12px; margin-bottom: 2px; color: #444;">
+                                    {{ flight.out_dep_airport }} ➔ {{ flight.out_arr_airport }}
+                                </div>
                                 {% if score > 0.8 %}🟢{% elif score > 0.4 %}🟡{% else %}🔴{% endif %}
-                                {{ (flight.out_dep_time.split('T')[0] + " " + flight.out_dep_time.split('T')[1][:5]) if
+                                {{ (flight.out_dep_time.split('T')[0][5:].replace('-', '.') + " " +
+                                flight.out_dep_time.split('T')[1][:5]) if
                                 'T' in flight.out_dep_time else
-                                flight.out_dep_time[:16].replace('-', '.') }}
+                                flight.out_dep_time[5:16].replace('-', '.') }}
                                 <span class="tooltiptext">Saját súlyozásával: {{ "%.2f"|format(flight.score_departure *
                                     weights[1]) }}</span>
                             </div>
@@ -566,60 +723,86 @@
                 });
             };
 
+            const getFullUrl = (url) => {
+                if (!url) return null;
+                if (url.startsWith('http')) return url;
+                if (url.startsWith('www')) return 'https://' + url;
+                return 'https://www.kiwi.com' + (url.startsWith('/') ? '' : '/') + url;
+            }
+
+            const outUrl = getFullUrl(flight.out_booking_url);
+            const inUrl = getFullUrl(flight.in_booking_url);
+
             modalBody.innerHTML = `
-                <div class="flight-section">
-                    <h3>🛫 Oda út</h3>
-                    <div class="flight-detail">
-                        <strong>Indulás:</strong>
-                        <span>${flight.out_dep_city || 'N/A'} (${flight.out_dep_airport || 'N/A'}) - ${formatDateTime(flight.out_dep_time)}</span>
+                <div class="modal-grid">
+                    <div class="flight-section" style="margin-bottom: 0; display: flex; flex-direction: column;">
+                        <h3>🛫 Oda út</h3>
+                        <div style="flex-grow: 1;">
+                            <div class="flight-detail">
+                                <strong>Indulás:</strong>
+                                <span>${flight.out_dep_city || 'N/A'} (${flight.out_dep_airport || 'N/A'}) - ${formatDateTime(flight.out_dep_time)}</span>
+                            </div>
+                            <div class="flight-detail">
+                                <strong>Érkezés:</strong>
+                                <span>${flight.out_arr_city || 'N/A'} (${flight.out_arr_airport || 'N/A'}) - ${formatDateTime(flight.out_arr_time)}</span>
+                            </div>
+                            <div class="flight-detail">
+                                <strong>Utazási idő:</strong>
+                                <span>${flight.out_duration_h || 'N/A'} óra</span>
+                            </div>
+                            <div class="flight-detail">
+                                <strong>Átszállások:</strong>
+                                <span>${flight.out_stops || 0} db</span>
+                            </div>
+                            <div class="flight-detail">
+                                <strong>Légitársaság:</strong>
+                                <span>${flight.out_carriers || 'N/A'}</span>
+                            </div>
+                            <div class="flight-detail">
+                                <strong>Ár:</strong>
+                                <span>${flight.out_price_huf ? flight.out_price_huf.toLocaleString('hu-HU') : 'N/A'} Ft</span>
+                            </div>
+                        </div>
+                        ${outUrl ? `
+                            <a href="${outUrl}" target="_blank" class="btn-book" style="width: 100%; margin-top: 20px;">
+                                🎫 Foglalás: Odaút
+                            </a>
+                        ` : ''}
                     </div>
-                    <div class="flight-detail">
-                        <strong>Érkezés:</strong>
-                        <span>${flight.out_arr_city || 'N/A'} (${flight.out_arr_airport || 'N/A'}) - ${formatDateTime(flight.out_arr_time)}</span>
-                    </div>
-                    <div class="flight-detail">
-                        <strong>Utazási idő:</strong>
-                        <span>${flight.out_duration_h || 'N/A'} óra</span>
-                    </div>
-                    <div class="flight-detail">
-                        <strong>Átszállások:</strong>
-                        <span>${flight.out_stops || 0} db</span>
-                    </div>
-                    <div class="flight-detail">
-                        <strong>Légitársaság:</strong>
-                        <span>${flight.out_carriers || 'N/A'}</span>
-                    </div>
-                    <div class="flight-detail">
-                        <strong>Ár:</strong>
-                        <span>${flight.out_price_huf ? flight.out_price_huf.toLocaleString('hu-HU') : 'N/A'} Ft</span>
-                    </div>
-                </div>
-                
-                <div class="flight-section">
-                    <h3>🛬 Vissza út</h3>
-                    <div class="flight-detail">
-                        <strong>Indulás:</strong>
-                        <span>${formatDateTime(flight.in_dep_time)}</span>
-                    </div>
-                    <div class="flight-detail">
-                        <strong>Érkezés:</strong>
-                        <span>${formatDateTime(flight.in_arr_time)}</span>
-                    </div>
-                    <div class="flight-detail">
-                        <strong>Utazási idő:</strong>
-                        <span>${flight.in_duration_h || 'N/A'} óra</span>
-                    </div>
-                    <div class="flight-detail">
-                        <strong>Átszállások:</strong>
-                        <span>${flight.in_stops || 0} db</span>
-                    </div>
-                    <div class="flight-detail">
-                        <strong>Légitársaság:</strong>
-                        <span>${flight.in_carriers || 'N/A'}</span>
-                    </div>
-                    <div class="flight-detail">
-                        <strong>Ár:</strong>
-                        <span>${flight.in_price_huf ? flight.in_price_huf.toLocaleString('hu-HU') : 'N/A'} Ft</span>
+                    
+                    <div class="flight-section" style="margin-bottom: 0; display: flex; flex-direction: column;">
+                        <h3>🛬 Vissza út</h3>
+                        <div style="flex-grow: 1;">
+                            <div class="flight-detail">
+                                <strong>Indulás:</strong>
+                                <span>${flight.in_dep_city || 'N/A'} (${flight.in_dep_airport || 'N/A'}) - ${formatDateTime(flight.in_dep_time)}</span>
+                            </div>
+                            <div class="flight-detail">
+                                <strong>Érkezés:</strong>
+                                <span>${flight.in_arr_city || 'N/A'} (${flight.in_arr_airport || 'N/A'}) - ${formatDateTime(flight.in_arr_time)}</span>
+                            </div>
+                            <div class="flight-detail">
+                                <strong>Utazási idő:</strong>
+                                <span>${flight.in_duration_h || 'N/A'} óra</span>
+                            </div>
+                            <div class="flight-detail">
+                                <strong>Átszállások:</strong>
+                                <span>${flight.in_stops || 0} db</span>
+                            </div>
+                            <div class="flight-detail">
+                                <strong>Légitársaság:</strong>
+                                <span>${flight.in_carriers || 'N/A'}</span>
+                            </div>
+                            <div class="flight-detail">
+                                <strong>Ár:</strong>
+                                <span>${flight.in_price_huf ? flight.in_price_huf.toLocaleString('hu-HU') : 'N/A'} Ft</span>
+                            </div>
+                        </div>
+                        ${inUrl ? `
+                            <a href="${inUrl}" target="_blank" class="btn-book" style="width: 100%; margin-top: 20px; background: #235B2A; color: white;">
+                                🎫 Foglalás: Visszaút
+                            </a>
+                        ` : ''}
                     </div>
                 </div>
                 
@@ -645,11 +828,7 @@
                     </div>
                 </div>
                 
-                ${flight.out_booking_url ? `
-                    <a href="${flight.out_booking_url}" target="_blank" class="btn-book">
-                        🎫 Foglalás a Kiwi.com-on
-                    </a>
-                ` : '<p style="color: #999; text-align: center;">Foglalási link nem elérhető</p>'}
+                ${(!outUrl && !inUrl) ? '<p style="color: #999; text-align: center;">Foglalási link nem elérhető</p>' : ''}
             `;
 
             modal.style.display = 'block';

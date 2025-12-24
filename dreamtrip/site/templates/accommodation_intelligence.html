@@ -1,60 +1,279 @@
 <!DOCTYPE html>
 <html lang="hu">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Accommodation Intelligence - Optivoya</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
             font-family: 'Poppins', sans-serif;
+        }
+
+        body {
             background: linear-gradient(135deg, #235B2A 0%, #1a4520 100%);
             min-height: 100vh;
             padding: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            color: #333;
         }
+
         .container {
-            max-width: 600px;
-            background: rgba(255,255,255,0.95);
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
             border-radius: 20px;
-            padding: 60px;
-            text-align: center;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
+
         h1 {
             color: #235B2A;
-            margin-bottom: 20px;
-            font-size: 36px;
-        }
-        p {
-            color: #666;
+            text-align: center;
             margin-bottom: 30px;
-            font-size: 16px;
         }
-        .back-btn {
+
+        .search-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        input,
+        select {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .btn-search {
             background: #235B2A;
             color: white;
-            padding: 15px 40px;
+            border: none;
+            padding: 15px;
             border-radius: 10px;
-            text-decoration: none;
+            width: 100%;
+            font-size: 16px;
             font-weight: 600;
-            display: inline-block;
-            transition: all 0.3s;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
         }
-        .back-btn:hover {
-            background: #90DC25;
-            transform: translateY(-2px);
+
+        .btn-search:hover {
+            background: #32853d;
+        }
+
+        .btn-search:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        #status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+        }
+
+        .status-running {
+            background: #e3f2fd;
+            color: #1976d2;
+            border: 1px solid #bbdefb;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 20px 15px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .search-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .input-group label {
+                font-size: 13px;
+            }
+
+            input,
+            select {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .btn-search {
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+
+            #results div {
+                padding: 20px 15px !important;
+            }
+
+            #results button {
+                width: 100% !important;
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>🏨 Accommodation Intelligence</h1>
-        <p>Ez a modul hamarosan elérhető lesz! Segíteni fogunk megtalálni a tökéletes szállást.</p>
-        <a href="/home" class="back-btn">← Vissza a főoldalra</a>
+
+        <div class="search-grid">
+            <div class="input-group">
+                <label>Város</label>
+                <input type="text" id="city" placeholder="Pl: Budapest" value="Budapest">
+            </div>
+            <div class="input-group">
+                <label>Ország</label>
+                <input type="text" id="country" placeholder="Pl: Hungary" value="Hungary">
+            </div>
+            <div class="input-group">
+                <label>Érkezés</label>
+                <input type="date" id="start_date">
+            </div>
+            <div class="input-group">
+                <label>Távozás</label>
+                <input type="date" id="end_date">
+            </div>
+            <div class="input-group">
+                <label>Vendégek száma</label>
+                <div style="display: flex; gap: 10px;">
+                    <div style="flex:1">
+                        <label style="font-size:11px">Felnőtt</label>
+                        <input type="number" id="adults" value="2" min="1" style="width:100%">
+                    </div>
+                    <div style="flex:1">
+                        <label style="font-size:11px">Gyermek</label>
+                        <input type="number" id="children" value="0" min="0" style="width:100%">
+                    </div>
+                </div>
+            </div>
+            <div class="input-group">
+                <label>Szobák száma</label>
+                <input type="number" id="rooms" value="1" min="1">
+            </div>
+        </div>
+
+        <button id="searchBtn" class="btn-search" onclick="startSearch()">Szállások keresése</button>
+
+        <div id="status"></div>
+        <div id="results"></div>
     </div>
+
+    <script>
+        // Default dates
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const nextWeek = new Date(today);
+        nextWeek.setDate(nextWeek.getDate() + 7);
+
+        document.getElementById('start_date').min = today.toISOString().split('T')[0];
+        document.getElementById('end_date').min = tomorrow.toISOString().split('T')[0];
+
+        document.getElementById('start_date').value = tomorrow.toISOString().split('T')[0];
+        document.getElementById('end_date').value = nextWeek.toISOString().split('T')[0];
+
+        let pollInterval;
+
+        async function startSearch() {
+            const btn = document.getElementById('searchBtn');
+            const statusDiv = document.getElementById('status');
+            const resultsDiv = document.getElementById('results');
+
+            const payload = {
+                city: document.getElementById('city').value,
+                country: document.getElementById('country').value,
+                start_date: document.getElementById('start_date').value,
+                end_date: document.getElementById('end_date').value,
+                rooms: parseInt(document.getElementById('rooms').value),
+                adults: parseInt(document.getElementById('adults').value),
+                children: parseInt(document.getElementById('children').value)
+            };
+
+            if (!payload.city || !payload.country || !payload.start_date || !payload.end_date) {
+                alert("Kérlek töltsd ki az összes szükséges mezőt!");
+                return;
+            }
+
+            btn.disabled = true;
+            statusDiv.style.display = 'block';
+            statusDiv.className = 'status-running';
+            statusDiv.innerText = "🔍 Keresés indítása... (ez 1-2 percig is eltarthat)";
+            resultsDiv.innerHTML = "";
+
+            await fetch('/start-accommodation-search', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            pollInterval = setInterval(checkStatus, 3000);
+        }
+
+        async function checkStatus() {
+            const response = await fetch('/api/accommodation-status');
+            const data = await response.json();
+            const statusDiv = document.getElementById('status');
+
+            if (data.status === 'running') {
+                statusDiv.innerText = "⏳ Szálláshelyek gyűjtése folyamatban a CozyCozy-ról...";
+            } else if (data.status === 'done') {
+                clearInterval(pollInterval);
+                statusDiv.style.display = 'none';
+                document.getElementById('searchBtn').disabled = false;
+
+                const resultsDiv = document.getElementById('results');
+                resultsDiv.innerHTML = `
+                    <div style="background: #f0f7f0; border: 2px solid #235B2A; border-radius: 15px; padding: 30px; text-align: center; margin-top: 20px;">
+                        <h2 style="color: #235B2A; margin-bottom: 10px;">✅ Sikeres adatgyűjtés!</h2>
+                        <p style="font-size: 18px; margin-bottom: 20px;">Összesen <strong>${data.count}</strong> szállásajánlatot találtunk.</p>
+                        
+                        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                            <button onclick="location.reload()" class="btn-search" style="background: #666; width: auto; padding: 12px 25px;">Új keresés</button>
+                            <button onclick="window.location.href='/accommodation-intelligence-filter'" class="btn-search" style="width: auto; padding: 12px 40px; font-size: 18px;">
+                                Tovább a szűréshez ➔
+                            </button>
+                        </div>
+                    </div>
+                `;
+            } else if (data.status === 'error') {
+                clearInterval(pollInterval);
+                statusDiv.innerText = "❌ Hiba történt: " + data.error;
+                document.getElementById('searchBtn').disabled = false;
+            }
+        }
+    </script>
 </body>
+
 </html>

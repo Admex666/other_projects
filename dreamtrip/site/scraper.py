@@ -458,7 +458,11 @@ def create_return_combinations(
                 
                 # Inbound
                 "in_id": in_flight["id"],
+                "in_dep_city": in_flight["dep_city"],
+                "in_dep_airport": in_flight["dep_airport"],
                 "in_dep_time": in_flight["dep_time"],
+                "in_arr_city": in_flight["arr_city"],
+                "in_arr_airport": in_flight["arr_airport"],
                 "in_arr_time": in_flight["arr_time"],
                 "in_duration_h": in_flight["duration_h"],
                 "in_stops": in_flight["stops"],
