@@ -1,55 +1,675 @@
-<style>
-    .score-green { background: #d4edda; border-radius: 5px; padding: 2px 5px; }
-    .score-yellow { background: #fff3cd; border-radius: 5px; padding: 2px 5px; }
-    .score-red { background: #f8d7da; border-radius: 5px; padding: 2px 5px; }
-</style>
+<!DOCTYPE html>
+<html lang="hu">
 
-<div class="container">
-    <h1>🎯 Személyre szabott rangsor</h1>
-    <div class="results-table-container">
-        <table class="styled-table">
-            <thead>
-                <tr>
-                    <th>Rang</th>
-                    <th>Ár (Ft)</th>
-                    <th>Indulás (Ideálishoz képest)</th>
-                    <th>Utazás (h)</th>
-                    <th>Átszállás</th>
-                    <th>Tartózkodás</th>
-                    <th>Phi_net (Súlyozott összpont)</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for flight in results %}
-                <tr>
-                    <td><strong>#{{ loop.index }}</strong></td>
-                    
-                    <td class="{{ 'green' if flight.score_price * weights[0] > 0.7 else ('yellow' if flight.score_price * weights[0] > 0.4 else 'red') }}">
-                        {{ "{:,}".format(flight.total_price) }} Ft
-                    </td>
-    
-                    <td class="{{ 'green' if flight.score_departure * weights[1] > 0.7 else ('yellow' if flight.score_departure * weights[1] > 0.4 else 'red') }}">
-                        {{ flight.out_departure_time.split('T')[1][:5] }}
-                    </td>
-    
-                    <td class="{{ 'green' if flight.score_travel_time * weights[2] > 0.7 else ('yellow' if flight.score_travel_time * weights[2] > 0.4 else 'red') }}">
-                        {{ (flight.out_duration_h + flight.in_duration_h) | round(1) }}h
-                    </td>
-    
-                    <td class="{{ 'green' if flight.score_stops * weights[3] > 0.7 else ('yellow' if flight.score_stops * weights[3] > 0.4 else 'red') }}">
-                        {{ flight.out_stops + flight.in_stops }}
-                    </td>
-    
-                    <td class="{{ 'green' if flight.score_stay * weights[4] > 0.7 else ('yellow' if flight.score_stay * weights[4] > 0.4 else 'red') }}">
-                        {{ flight.stay_duration_days }} nap
-                    </td>
-    
-                    <td class="phi-cell">
-                        <strong>{{ flight.phi_net | round(4) }}</strong>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Személyre szabott járatok - Flight Intelligence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #235B2A 0%, #1a4520 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px 40px;
+            border-radius: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: #235B2A;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logout-btn {
+            background: #235B2A;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #90DC25;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .results-header {
+            margin-bottom: 30px;
+        }
+
+        .results-header h1 {
+            color: #235B2A;
+            margin-bottom: 15px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 30px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .stats span {
+            background: #f0f7f0;
+            padding: 8px 15px;
+            border-radius: 8px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .controls label {
+            font-weight: 600;
+            color: #235B2A;
+            margin-right: 10px;
+        }
+
+        .controls select {
+            padding: 8px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+        }
+
+        .controls select:focus {
+            outline: none;
+            border-color: #90DC25;
+        }
+
+        .styled-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .styled-table thead tr {
+            background: #235B2A;
+            color: white;
+            text-align: left;
+        }
+
+        .styled-table th,
+        .styled-table td {
+            padding: 15px;
+            font-size: 14px;
+        }
+
+        .styled-table tbody tr {
+            border-bottom: 1px solid #ddd;
+            transition: background 0.2s;
+        }
+
+        .styled-table tbody tr:hover {
+            background: #f5f5f5;
+        }
+
+        .styled-table tbody tr:nth-of-type(even) {
+            background: #f9f9f9;
+        }
+
+        .styled-table tbody tr:nth-of-type(even):hover {
+            background: #f0f0f0;
+        }
+
+        .rank-cell {
+            font-weight: 700;
+            font-size: 18px;
+            color: #235B2A;
+        }
+
+        .score-cell {
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-weight: 600;
+            position: relative;
+            cursor: help;
+        }
+
+        .score-green {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .score-yellow {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .score-red {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .phi-cell {
+            font-weight: 700;
+            color: #235B2A;
+            font-size: 16px;
+        }
+
+        .btn-details {
+            background: #235B2A;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-details:hover {
+            background: #90DC25;
+            transform: translateY(-2px);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 2% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 95%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s;
+            scrollbar-width: thin;
+            scrollbar-color: #235B2A #f0f0f0;
+        }
+
+        .modal-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal-content::-webkit-scrollbar-track {
+            background: #f0f0f0;
+            border-radius: 10px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb {
+            background: #235B2A;
+            border-radius: 10px;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #235B2A;
+        }
+
+        .modal-header h2 {
+            color: #235B2A;
+            margin: 0;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 32px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close:hover {
+            color: #235B2A;
+        }
+
+        .flight-section {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .flight-section h3 {
+            color: #235B2A;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .flight-detail {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .flight-detail strong {
+            color: #666;
+        }
+
+        .btn-book {
+            display: inline-block;
+            background: #90DC25;
+            color: #235B2A;
+            padding: 12px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 700;
+            text-align: center;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .btn-book:hover {
+            background: #235B2A;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 12px;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="navbar">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <img src="/static/logo.png" alt="Optivoya" style="height: 40px;">
+            <span class="logo-text">Optivoya</span>
+        </div>
+        <div class="user-info">
+            <span style="color: #666;">👤 {{ user }}</span>
+            <a href="/logout" class="logout-btn">Kilépés</a>
+        </div>
     </div>
-</div>
+
+    <div class="container">
+        <div class="results-header">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                <h1>🎯 Személyre szabott járatok</h1>
+                <div style="display: flex; gap: 10px;">
+                    <a href="/flight-intelligence-preferences" class="btn-details"
+                        style="background: #666; text-decoration: none; display: flex; align-items: center; gap: 5px;">
+                        ⬅️ Vissza a finomhangoláshoz
+                    </a>
+                    <a href="/home" class="btn-details"
+                        style="background: #555; text-decoration: none; display: flex; align-items: center; gap: 5px;">
+                        🏠 Főoldal
+                    </a>
+                </div>
+            </div>
+            <div class="stats">
+                <span>📊 Összes találat: <strong>{{ results|length }}</strong></span>
+                <span>👁️ Megjelenítve: <strong id="shown_count">{{ [results|length, 5]|min }}</strong></span>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div>
+                <label>Találatok száma:</label>
+                <select id="limit_select" onchange="filterResults()">
+                    <option value="5">Top 5</option>
+                    <option value="10">Top 10</option>
+                    <option value="20">Top 20</option>
+                    <option value="all">Mind ({{ results|length }})</option>
+                </select>
+            </div>
+            <div style="font-size: 12px; color: #666;">
+                🟢 Kiváló | 🟡 Közepes | 🔴 Gyenge
+            </div>
+        </div>
+
+        <div class="results-table-container">
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Rang</th>
+                        <th>Ár (Ft)</th>
+                        <th>Indulás</th>
+                        <th>Utazás (h)</th>
+                        <th>Átszállás</th>
+                        <th>Tartózkodás</th>
+                        <th>Relevancia</th>
+                        <th>Műveletek</th>
+                    </tr>
+                </thead>
+                <tbody id="results_tbody">
+                    {% for flight in results %}
+                    <tr class="result-row" data-index="{{ loop.index0 }}">
+                        <td class="rank-cell">#{{ loop.index }}</td>
+
+                        <!-- ÁR -->
+                        <td>
+                            {% set score = flight.score_price %}
+                            <div
+                                class="score-cell tooltip {% if score > 0.8 %}score-green{% elif score > 0.4 %}score-yellow{% else %}score-red{% endif %}">
+                                {% if score > 0.8 %}🟢{% elif score > 0.4 %}🟡{% else %}🔴{% endif %}
+                                {{ "{:,.0f}".format(flight.total_price_huf) }} Ft
+                                <span class="tooltiptext">Saját súlyozásával: {{ "%.2f"|format(flight.score_price *
+                                    weights[0]) }}</span>
+                            </div>
+                        </td>
+
+                        <!-- IDŐPONT -->
+                        <td>
+                            {% set score = flight.score_departure %}
+                            <div
+                                class="score-cell tooltip {% if score > 0.8 %}score-green{% elif score > 0.4 %}score-yellow{% else %}score-red{% endif %}">
+                                {% if score > 0.8 %}🟢{% elif score > 0.4 %}🟡{% else %}🔴{% endif %}
+                                {{ (flight.out_dep_time.split('T')[0] + " " + flight.out_dep_time.split('T')[1][:5]) if
+                                'T' in flight.out_dep_time else
+                                flight.out_dep_time[:16].replace('-', '.') }}
+                                <span class="tooltiptext">Saját súlyozásával: {{ "%.2f"|format(flight.score_departure *
+                                    weights[1]) }}</span>
+                            </div>
+                        </td>
+
+                        <!-- UTAZÁSI IDŐ -->
+                        <td>
+                            {% set score = flight.score_travel_time %}
+                            <div
+                                class="score-cell tooltip {% if score > 0.8 %}score-green{% elif score > 0.4 %}score-yellow{% else %}score-red{% endif %}">
+                                {% if score > 0.8 %}🟢{% elif score > 0.4 %}🟡{% else %}🔴{% endif %}
+                                {{ "%.1f"|format(flight.out_duration_h + flight.in_duration_h) }}h
+                                <span class="tooltiptext">Saját súlyozásával: {{ "%.2f"|format(flight.score_travel_time
+                                    * weights[2]) }}</span>
+                            </div>
+                        </td>
+
+                        <!-- ÁTSZÁLLÁSOK -->
+                        <td>
+                            {% set score = flight.score_stops %}
+                            <div
+                                class="score-cell tooltip {% if score > 0.8 %}score-green{% elif score > 0.4 %}score-yellow{% else %}score-red{% endif %}">
+                                {% if score > 0.8 %}🟢{% elif score > 0.4 %}🟡{% else %}🔴{% endif %}
+                                {{ flight.out_stops + flight.in_stops }}
+                                <span class="tooltiptext">Saját súlyozásával: {{ "%.2f"|format(flight.score_stops *
+                                    weights[3]) }}</span>
+                            </div>
+                        </td>
+
+                        <!-- TARTÓZKODÁS -->
+                        <td>
+                            {% set score = flight.score_stay %}
+                            <div
+                                class="score-cell tooltip {% if score > 0.8 %}score-green{% elif score > 0.4 %}score-yellow{% else %}score-red{% endif %}">
+                                {% if score > 0.8 %}🟢{% elif score > 0.4 %}🟡{% else %}🔴{% endif %}
+                                {{ flight.stay_days }} nap
+                                <span class="tooltiptext">Saját súlyozásával: {{ "%.2f"|format(flight.score_stay *
+                                    weights[4]) }}</span>
+                            </div>
+                        </td>
+
+                        <!-- PHI_NET -->
+                        <td class="phi-cell">
+                            {{ "%.4f"|format(flight.phi_net) }}
+                        </td>
+
+                        <!-- MŰVELETEK -->
+                        <td>
+                            <button class="btn-details" onclick="showDetails({{ loop.index0 }})">
+                                📋 Részletek
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="detailsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>✈️ Járat részletei</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div id="modal_body">
+                <!-- Dinamikusan töltődik -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const allResults = {{ results| tojson }};
+
+        function filterResults() {
+            const limit = document.getElementById('limit_select').value;
+            const rows = document.querySelectorAll('.result-row');
+
+            let showCount = limit === 'all' ? rows.length : parseInt(limit);
+
+            rows.forEach((row, index) => {
+                if (index < showCount) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            document.getElementById('shown_count').innerText = showCount;
+        }
+
+        function showDetails(index) {
+            const flight = allResults[index];
+            const modal = document.getElementById('detailsModal');
+            const modalBody = document.getElementById('modal_body');
+
+            // Format datetime
+            const formatDateTime = (dt) => {
+                if (!dt) return 'N/A';
+                const d = new Date(dt);
+                return d.toLocaleString('hu-HU', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            };
+
+            modalBody.innerHTML = `
+                <div class="flight-section">
+                    <h3>🛫 Oda út</h3>
+                    <div class="flight-detail">
+                        <strong>Indulás:</strong>
+                        <span>${flight.out_dep_city || 'N/A'} (${flight.out_dep_airport || 'N/A'}) - ${formatDateTime(flight.out_dep_time)}</span>
+                    </div>
+                    <div class="flight-detail">
+                        <strong>Érkezés:</strong>
+                        <span>${flight.out_arr_city || 'N/A'} (${flight.out_arr_airport || 'N/A'}) - ${formatDateTime(flight.out_arr_time)}</span>
+                    </div>
+                    <div class="flight-detail">
+                        <strong>Utazási idő:</strong>
+                        <span>${flight.out_duration_h || 'N/A'} óra</span>
+                    </div>
+                    <div class="flight-detail">
+                        <strong>Átszállások:</strong>
+                        <span>${flight.out_stops || 0} db</span>
+                    </div>
+                    <div class="flight-detail">
+                        <strong>Légitársaság:</strong>
+                        <span>${flight.out_carriers || 'N/A'}</span>
+                    </div>
+                    <div class="flight-detail">
+                        <strong>Ár:</strong>
+                        <span>${flight.out_price_huf ? flight.out_price_huf.toLocaleString('hu-HU') : 'N/A'} Ft</span>
+                    </div>
+                </div>
+                
+                <div class="flight-section">
+                    <h3>🛬 Vissza út</h3>
+                    <div class="flight-detail">
+                        <strong>Indulás:</strong>
+                        <span>${formatDateTime(flight.in_dep_time)}</span>
+                    </div>
+                    <div class="flight-detail">
+                        <strong>Érkezés:</strong>
+                        <span>${formatDateTime(flight.in_arr_time)}</span>
+                    </div>
+                    <div class="flight-detail">
+                        <strong>Utazási idő:</strong>
+                        <span>${flight.in_duration_h || 'N/A'} óra</span>
+                    </div>
+                    <div class="flight-detail">
+                        <strong>Átszállások:</strong>
+                        <span>${flight.in_stops || 0} db</span>
+                    </div>
+                    <div class="flight-detail">
+                        <strong>Légitársaság:</strong>
+                        <span>${flight.in_carriers || 'N/A'}</span>
+                    </div>
+                    <div class="flight-detail">
+                        <strong>Ár:</strong>
+                        <span>${flight.in_price_huf ? flight.in_price_huf.toLocaleString('hu-HU') : 'N/A'} Ft</span>
+                    </div>
+                </div>
+                
+                <div class="flight-section">
+                    <h3>📊 Összesítés</h3>
+                    <div class="flight-detail">
+                        <strong>Összes ár:</strong>
+                        <span style="font-size: 18px; font-weight: 700; color: #235B2A;">
+                            ${flight.total_price_huf ? flight.total_price_huf.toLocaleString('hu-HU') : 'N/A'} Ft
+                        </span>
+                    </div>
+                    <div class="flight-detail">
+                        <strong>Tartózkodás:</strong>
+                        <span>${flight.stay_days || 'N/A'} nap</span>
+                    </div>
+                    <div class="flight-detail">
+                        <strong>Összes átszállás:</strong>
+                        <span>${(flight.out_stops || 0) + (flight.in_stops || 0)} db</span>
+                    </div>
+                    <div class="flight-detail">
+                        <strong>Relevancia pontszám:</strong>
+                        <span style="font-weight: 700; color: #235B2A;">${flight.phi_net ? (flight.phi_net * 100).toFixed(2) : 'N/A'}%</span>
+                    </div>
+                </div>
+                
+                ${flight.out_booking_url ? `
+                    <a href="${flight.out_booking_url}" target="_blank" class="btn-book">
+                        🎫 Foglalás a Kiwi.com-on
+                    </a>
+                ` : '<p style="color: #999; text-align: center;">Foglalási link nem elérhető</p>'}
+            `;
+
+            modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('detailsModal').style.display = 'none';
+        }
+
+        // Close modal on outside click
+        window.onclick = function (event) {
+            const modal = document.getElementById('detailsModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        // Initial filter
+        filterResults();
+    </script>
+</body>
+
+</html>

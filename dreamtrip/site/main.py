@@ -216,6 +216,7 @@ class FilterParams(BaseModel):
 
 # Szűrés + tárolás sessionbe
 filtered_flights = {}
+user_filter_params = {}
 
 @app.post("/api/apply-filters")
 async def apply_filters(params: FilterParams, background_tasks: BackgroundTasks, request: Request):
@@ -231,8 +232,9 @@ async def filter_status(username: str):
     return JSONResponse(filtered_flights.get(username, {"status": "idle"}))
 
 def run_filter_scraper(username: str, p: FilterParams):
-    global filtered_flights, raw_flight_data
+    global filtered_flights, raw_flight_data, user_filter_params
     filtered_flights[username] = {"status": "running", "count": None, "error": None}
+    user_filter_params[username] = p
     
     try:
         # ✅ JAVÍTÁS: is None ellenőrzés
@@ -330,28 +332,6 @@ async def save_ahp_weights(data: AHPWeights, request: Request):
     }
     return {"message": "Weights saved"}
 
-@app.get("/flight-intelligence-preferences", response_class=HTMLResponse)
-async def flight_intelligence_preferences(request: Request):
-    user = get_current_user(request)
-    if not user:
-        return RedirectResponse(url="/", status_code=303)
-    
-    # Ellenőrzés: van-e AHP súly
-    if user not in ahp_weights:
-        return RedirectResponse(url="/flight-intelligence-ahp", status_code=303)
-    
-    return templates.TemplateResponse("flight_preferences.html", {
-        "request": request,
-        "user": user
-    })
-
-# Új Pydantic modellek a preferencia függvényekhez
-class PreferenceConfig(BaseModel):
-    ideal_departure_hour: int
-    ideal_stay_days: int
-    # Kritériumonkénti beállítások: { "price": {"type": "v-shape", "p": 10000, "q": 0}, ... }
-    criteria_configs: Dict[str, Dict[str, Any]]
-
 # Adattárolók (a sessions és ahp_weights mellé)
 user_preferences = {}
 ranked_results = {}
@@ -376,8 +356,23 @@ def preference_function(d, config):
 @app.get("/flight-intelligence-preferences", response_class=HTMLResponse)
 async def flight_preferences_page(request: Request):
     user = get_current_user(request)
-    if not user: return RedirectResponse(url="/", status_code=303)
-    return templates.TemplateResponse("flight_preferences.html", {"request": request, "user": user})
+    if not user:
+        return RedirectResponse(url="/", status_code=303)
+    
+    # Ellenőrzés: van-e AHP súly
+    if user not in ahp_weights:
+        return RedirectResponse(url="/flight-intelligence-ahp", status_code=303)
+    
+    # Ellenőrzés: van-e szűrt adat
+    if user not in filtered_flights or filtered_flights[user].get("status") != "done":
+        return RedirectResponse(url="/flight-intelligence-filter", status_code=303)
+    
+    return templates.TemplateResponse("flight_preferences.html", {
+        "request": request,
+        "user": user,
+        "flight_count": filtered_flights[user]["count"],
+        "filter_params": user_filter_params.get(user, FilterParams())
+    })
 
 class CriterionParam(BaseModel):
     type: str  # "usual", "v-shape", "u-shape", "level", "linear"
@@ -424,17 +419,18 @@ async def calculate_results(config: PreferenceConfig, request: Request):
     if not user or user not in filtered_flights or user not in ahp_weights:
         raise HTTPException(status_code=400, detail="Hiányzó szűrt adatok vagy AHP súlyok")
 
-    # 1. Adatok előkészítése
-    df = filtered_flights[user]["data"].copy()
+    # 1. Adatok előkészítése - JAVÍTVA: dict -> DataFrame konverzió
+    flight_data = filtered_flights[user]["data"]
+    df = pd.DataFrame(flight_data)
     weights = ahp_weights[user]["weights"] # Sorrend: Ár, Időpont, Utazás, Átszállás, Tartózkodás
     
     # Kritérium értékek kiszámítása (MINDEN MINIMALIZÁLANDÓ, kivéve ha transzformáljuk)
-    # g1: Ár
-    df['g1'] = df['total_price']
+    # g1: Ár - JAVÍTVA: total_price_huf
+    df['g1'] = df['total_price_huf']
     
     # g2: Indulási időpont eltérése (abszolút hiba az ideálistól)
     def time_diff(row):
-        dep_time = pd.to_datetime(row['out_departure_time'])
+        dep_time = pd.to_datetime(row['out_dep_time'])  # JAVÍTVA: out_dep_time
         diff = abs(dep_time.hour - config.ideal_departure_hour)
         return min(diff, 24 - diff) # Ciklikus idő (pl. 23 és 01 között csak 2 óra van)
     df['g2'] = df.apply(time_diff, axis=1)
@@ -445,8 +441,8 @@ async def calculate_results(config: PreferenceConfig, request: Request):
     # g4: Átszállások száma
     df['g4'] = df['out_stops'] + df['in_stops']
     
-    # g5: Tartózkodási napok eltérése
-    df['g5'] = (df['stay_duration_days'] - config.ideal_stay_days).abs()
+    # g5: Tartózkodási napok eltérése - JAVÍTVA: stay_days
+    df['g5'] = (df['stay_days'] - config.ideal_stay_days).abs()
 
     criteria_cols = ['g1', 'g2', 'g3', 'g4', 'g5']
     criteria_keys = ['price', 'departure', 'travel_time', 'stops', 'stay']
@@ -502,6 +498,9 @@ async def calculate_results(config: PreferenceConfig, request: Request):
 @app.get("/flight-intelligence-results", response_class=HTMLResponse)
 async def results_page(request: Request):
     user = get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/", status_code=303)
+    
     if user not in ranked_results:
         return RedirectResponse(url="/flight-intelligence", status_code=303)
     
@@ -509,7 +508,8 @@ async def results_page(request: Request):
         "request": request, 
         "user": user, 
         "results": ranked_results[user],
-        "weights": ahp_weights[user]["weights"]
+        "weights": ahp_weights[user]["weights"],
+        "criteria_names": ["Ár", "Időpont", "Utazás", "Átszállás", "Tartózkodás"]
     })
 
 if __name__ == "__main__":

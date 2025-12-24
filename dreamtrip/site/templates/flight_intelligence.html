@@ -1,39 +1,141 @@
 <!DOCTYPE html>
 <html lang="hu">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flight Intelligence - Optivoya</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background: linear-gradient(135deg, #235B2A 0%, #1a4520 100%); min-height: 100vh; padding: 20px; color: #333; }
-        .container { max-width: 1000px; margin: 0 auto; background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        h1 { color: #235B2A; text-align: center; margin-bottom: 30px; }
-        
-        .search-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
-        .input-group { display: flex; flex-direction: column; }
-        label { font-weight: 600; margin-bottom: 5px; color: #555; }
-        input { padding: 12px; border: 2px solid #ddd; border-radius: 10px; font-size: 14px; }
-        
-        .btn-search { background: #235B2A; color: white; border: none; padding: 15px; border-radius: 10px; width: 100%; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.3s; margin-top: 10px; }
-        .btn-search:hover { background: #32853d; }
-        .btn-search:disabled { background: #ccc; cursor: not-allowed; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
 
-        #status { margin: 20px 0; padding: 15px; border-radius: 10px; text-align: center; display: none; }
-        .status-running { background: #e3f2fd; color: #1976d2; border: 1px solid #bbdefb; }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 13px; }
-        th { background: #f8f9fa; padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6; }
-        td { padding: 12px; border-bottom: 1px solid #eee; }
-        .price { font-weight: 700; color: #235B2A; font-size: 16px; }
-        .carrier-tag { background: #eee; padding: 2px 6px; border-radius: 4px; font-size: 11px; }
+        body {
+            background: linear-gradient(135deg, #235B2A 0%, #1a4520 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #235B2A;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .search-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        input {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .btn-search {
+            background: #235B2A;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-search:hover {
+            background: #32853d;
+        }
+
+        .btn-search:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        #status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+        }
+
+        .status-running {
+            background: #e3f2fd;
+            color: #1976d2;
+            border: 1px solid #bbdefb;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 13px;
+        }
+
+        th {
+            background: #f8f9fa;
+            padding: 12px;
+            text-align: left;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .price {
+            font-weight: 700;
+            color: #235B2A;
+            font-size: 16px;
+        }
+
+        .carrier-tag {
+            background: #eee;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>✈️ Flight Intelligence</h1>
-        
+
         <div class="search-grid">
             <div class="input-group">
                 <label>Honnan</label>
@@ -58,15 +160,33 @@
                 </div>
             </div>
         </div>
-        
+
+        <script>
+            // Alapértelmezett dátumok beállítása
+            const today = new Date().toISOString().split('T')[0];
+            const tomorrow = new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            const nextWeek = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            const nextWeekLater = new Date(new Date().getTime() + 10 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+            const dateInputs = ['out_from', 'out_to', 'in_from', 'in_to'];
+            dateInputs.forEach(id => {
+                document.getElementById(id).min = today;
+            });
+
+            document.getElementById('out_from').value = tomorrow;
+            document.getElementById('out_to').value = nextWeek;
+            document.getElementById('in_from').value = nextWeek;
+            document.getElementById('in_to').value = nextWeekLater;
+        </script>
+
         <div class="search-grid">
         </div>
-    
-    <button id="searchBtn" class="btn-search" onclick="startSearch()">Járatok keresése</button>
-    
-    <div id="status"></div>
 
-    <div id="results"></div>
+        <button id="searchBtn" class="btn-search" onclick="startSearch()">Járatok keresése</button>
+
+        <div id="status"></div>
+
+        <div id="results"></div>
     </div>
 
     <script>
@@ -76,7 +196,7 @@
             const btn = document.getElementById('searchBtn');
             const statusDiv = document.getElementById('status');
             const resultsDiv = document.getElementById('results');
-            
+
             const payload = {
                 origin: document.getElementById('origin').value,
                 destination: document.getElementById('destination').value,
@@ -86,7 +206,7 @@
                 in_to: document.getElementById('in_to').value
             };
 
-            if(!payload.destination || !payload.out_from) {
+            if (!payload.destination || !payload.out_from) {
                 alert("Kérlek töltsd ki a célállomást és a dátumokat!");
                 return;
             }
@@ -99,7 +219,7 @@
 
             await fetch('/start-intelligence-search', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
 
@@ -117,7 +237,7 @@
                 clearInterval(pollInterval);
                 statusDiv.style.display = 'none';
                 document.getElementById('searchBtn').disabled = false;
-                
+
                 // Sikeres összesítő megjelenítése
                 const resultsDiv = document.getElementById('results');
                 resultsDiv.innerHTML = `
@@ -141,4 +261,5 @@
         }
     </script>
 </body>
+
 </html>

@@ -1,94 +1,670 @@
-<div class="container">
-    <h1>⚙️ Preferencia beállítások</h1>
-    
-    <div class="preference-section">
-        <h3>🌟 Ideális alapértékek</h3>
-        <div class="input-group">
-            <label>Mikor indulnál legszívesebben? (<span id="hour_val">10</span>:00)</label>
-            <input type="range" id="ideal_departure_hour" min="0" max="23" value="10" 
-                   oninput="document.getElementById('hour_val').innerText=this.value">
-        </div>
-        <div class="input-group">
-            <label>Hány napot töltenél ott ideálisan?</label>
-            <input type="number" id="ideal_stay_days" value="7" min="1">
-        </div>
-    </div>
+<!DOCTYPE html>
+<html lang="hu">
 
-    <div class="preference-section">
-        <h3>💰 Ár preferencia függvény</h3>
-        <select id="price_type" class="pref-select">
-            <option value="usual">Usual (Bármilyen különbség számít)</option>
-            <option value="linear">Linear (Egy küszöbig lineárisan számít)</option>
-            <option value="v-shape">V-shape (Adott különbség felett már max preferencia)</option>
-        </select>
-        <div class="param-inputs">
-            <input type="number" id="price_q" placeholder="q (ameddig nem számít a különbség)" value="0">
-            <input type="number" id="price_p" placeholder="p (ami felett már maxon számít)" value="10000">
-        </div>
-    </div>
-
-    <button id="calcBtn" onclick="calculate()" class="btn-primary">
-        Számítás indítása és rangsorolás ➔
-    </button>
-
-    <div id="loader" style="display:none; margin-top: 20px;">
-        <div class="spinner"></div>
-        <p>⏳ PROMETHEE számítás folyamatban...</p>
-    </div>
-</div>
-
-<script>
-async function calculate() {
-    const btn = document.getElementById('calcBtn');
-    const loader = document.getElementById('loader');
-    
-    // Vizuális visszajelzés (5. Screen fázis)
-    btn.disabled = true;
-    loader.style.display = 'block';
-
-    // Segédfüggvény az adatok kinyeréséhez kritériumonként
-    const getCrit = (name) => ({
-        type: document.getElementById(`${name}_type`).value,
-        q: parseFloat(document.getElementById(`${name}_q`).value) || 0,
-        p: parseFloat(document.getElementById(`${name}_p`).value) || 0
-    });
-
-    // A Pydantic PreferenceConfig modellnek megfelelő JSON összeállítása
-    const payload = {
-        ideal_departure_hour: parseInt(document.getElementById('ideal_departure_hour').value),
-        ideal_stay_days: parseInt(document.getElementById('ideal_stay_days').value),
-        configs: {
-            price: getCrit('price'),
-            departure: getCrit('departure'),
-            travel_time: getCrit('travel_time'),
-            stops: getCrit('stops'),
-            stay: getCrit('stay')
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preferencia Beállítások - Flight Intelligence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-    };
 
-    try {
-        const response = await fetch('/api/calculate-results', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #235B2A 0%, #1a4520 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px 40px;
+            border-radius: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: #235B2A;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logout-btn {
+            background: #235B2A;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #90DC25;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #235B2A;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .progress-container {
+            background: #e0e0e0;
+            height: 12px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, #235B2A, #90DC25);
+            height: 100%;
+            width: 60%;
+            transition: width 0.3s;
+        }
+
+        .progress-text {
+            text-align: center;
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            background: #f8f9fa;
+            border-left: 4px solid #90DC25;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .section h3 {
+            color: #235B2A;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            color: #333;
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .input-group input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .input-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #235B2A;
+            cursor: pointer;
+        }
+
+        .input-group input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #90DC25;
+        }
+
+        .time-display {
+            display: inline-block;
+            background: #235B2A;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 5px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+            background: white;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #90DC25;
+        }
+
+        .input-group.disabled {
+            opacity: 0.3;
+            pointer-events: none;
+            filter: grayscale(1);
+            transition: all 0.3s;
+        }
+
+        .input-group {
+            transition: all 0.3s;
+        }
+
+        .explanation {
+            background: #e8f5e9;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #2e7d32;
+            line-height: 1.5;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+        }
+
+        .btn-calculate {
+            background: #235B2A;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .btn-calculate:hover:not(:disabled) {
+            background: #32853d;
+            transform: translateY(-2px);
+        }
+
+        .btn-calculate:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .loader {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #235B2A;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="navbar">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <img src="/static/logo.png" alt="Optivoya" style="height: 40px;">
+            <span class="logo-text">Optivoya</span>
+        </div>
+        <div class="user-info">
+            <span style="color: #666;">👤 {{ user }}</span>
+            <a href="/logout" class="logout-btn">Kilépés</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>⚙️ Kritériumok finomhangolása</h1>
+        <p class="subtitle">{{ flight_count }} szűrt járat kiértékelése - állítsd be a preferenciáidat</p>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="progress-text" id="progressText">Folyamat: 11 / 17</div>
+
+        <!-- IDEÁLIS ÉRTÉKEK -->
+        <div class="section">
+            <h3>🌟 Ideális értékek megadása</h3>
+            <div class="input-group">
+                <label>Mi a számodra ideális indulási időpont?
+                    <span class="time-display" id="hour_display">10:00</span>
+                </label>
+                <input type="range" id="ideal_departure_hour" min="{{ filter_params.out_time_min }}"
+                    max="{{ filter_params.out_time_max }}"
+                    value="{{ (filter_params.out_time_min + filter_params.out_time_max) // 2 }}">
+                <div
+                    style="display: flex; justify-content: space-between; font-size: 11px; color: #888; margin-top: 5px;">
+                    <span>Legkorábban: {{ filter_params.out_time_min }}:00</span>
+                    <span>Legkésőbb: {{ filter_params.out_time_max }}:00</span>
+                </div>
+            </div>
+            <div class="input-group">
+                <label>Hány napot szeretnél ott tölteni ideálisan?</label>
+                <input type="number" id="ideal_stay_days"
+                    value="{{ (filter_params.stay_min + filter_params.stay_max) // 2 }}"
+                    min="{{ filter_params.stay_min }}" max="{{ filter_params.stay_max }}">
+                <div style="font-size: 11px; color: #888; margin-top: 5px;">
+                    A korábbi szűrésed alapján: {{ filter_params.stay_min }} - {{ filter_params.stay_max }} nap között.
+                </div>
+            </div>
+        </div>
+
+        <!-- ÁR PREFERENCIA -->
+        <div class="section">
+            <h3>💰 Ár érzékenység</h3>
+            <select id="price_type">
+                <option value="">-- Válassz kiértékelési módot --</option>
+                <option value="usual">Szigorú - Bármilyen árkülönbség számít</option>
+                <option value="v-shape">Folyamatos - Minél nagyobb a különbség, annál fontosabb</option>
+                <option value="u-shape">Küszöb alapú - Csak egy bizonyos különbség felett számít</option>
+                <option value="level">Lépcsőzetes - Két szintű értékelés</option>
+                <option value="linear">Toleráns - Egy határon túl kezd el számítani</option>
+            </select>
+            <div class="param-inputs">
+                <div class="input-group" style="margin-bottom: 0;">
+                    <label id="price_q_label">Küszöb 1</label>
+                    <input type="number" id="price_q" placeholder="Pl. 5000" value="0" min="0">
+                </div>
+                <div class="input-group" style="margin-bottom: 0;">
+                    <label id="price_p_label">Küszöb 2</label>
+                    <input type="number" id="price_p" placeholder="Pl. 20000" value="10000" min="0">
+                </div>
+            </div>
+            <div class="explanation" id="price_explanation">
+                ℹ️ Válassz egy módot a magyarázathoz
+            </div>
+        </div>
+
+        <!-- IDŐPONT PREFERENCIA -->
+        <div class="section">
+            <h3>🕐 Indulási időpont érzékenység</h3>
+            <select id="departure_type">
+                <option value="">-- Válassz kiértékelési módot --</option>
+                <option value="usual">Szigorú - Bármilyen eltérés számít</option>
+                <option value="v-shape">Folyamatos - Minél távolabb az ideálistól, annál rosszabb</option>
+                <option value="u-shape">Küszöb alapú - Csak nagy eltérés számít</option>
+                <option value="level">Lépcsőzetes - Két szintű értékelés</option>
+                <option value="linear">Toleráns - Egy határon túl kezd el számítani</option>
+            </select>
+            <div class="param-inputs">
+                <div class="input-group" style="margin-bottom: 0;">
+                    <label id="departure_q_label">Küszöb 1</label>
+                    <input type="number" id="departure_q" placeholder="Pl. 1" value="0" min="0" max="12">
+                </div>
+                <div class="input-group" style="margin-bottom: 0;">
+                    <label id="departure_p_label">Küszöb 2</label>
+                    <input type="number" id="departure_p" placeholder="Pl. 4" value="4" min="0" max="12">
+                </div>
+            </div>
+            <div class="explanation" id="departure_explanation">
+                ℹ️ Válassz egy módot a magyarázathoz
+            </div>
+        </div>
+
+        <!-- UTAZÁSI IDŐ PREFERENCIA -->
+        <div class="section">
+            <h3>✈️ Utazási idő érzékenység</h3>
+            <select id="travel_time_type">
+                <option value="">-- Válassz kiértékelési módot --</option>
+                <option value="usual">Szigorú - Bármilyen különbség számít</option>
+                <option value="v-shape">Folyamatos - Minél hosszabb az utazás, annál rosszabb</option>
+                <option value="u-shape">Küszöb alapú - Csak nagy különbség számít</option>
+                <option value="level">Lépcsőzetes - Két szintű értékelés</option>
+                <option value="linear">Toleráns - Egy határon túl kezd el számítani</option>
+            </select>
+            <div class="param-inputs">
+                <div class="input-group" style="margin-bottom: 0;">
+                    <label id="travel_time_q_label">Küszöb 1</label>
+                    <input type="number" id="travel_time_q" placeholder="Pl. 0.5" value="0" min="0" step="0.5">
+                </div>
+                <div class="input-group" style="margin-bottom: 0;">
+                    <label id="travel_time_p_label">Küszöb 2</label>
+                    <input type="number" id="travel_time_p" placeholder="Pl. 3" value="3" min="0" step="0.5">
+                </div>
+            </div>
+            <div class="explanation" id="travel_time_explanation">
+                ℹ️ Válassz egy módot a magyarázathoz
+            </div>
+        </div>
+
+        <!-- ÁTSZÁLLÁSOK PREFERENCIA -->
+        <div class="section">
+            <h3>🔄 Átszállások száma</h3>
+            <select id="stops_type">
+                <option value="">-- Válassz kiértékelési módot --</option>
+                <option value="usual">Szigorú - Bármilyen különbség számít</option>
+                <option value="v-shape">Folyamatos - Minél több, annál rosszabb</option>
+                <option value="u-shape">Küszöb alapú - Csak nagy különbség számít</option>
+                <option value="level">Lépcsőzetes - Két szintű értékelés</option>
+                <option value="linear">Toleráns - Egy határon túl kezd el számítani</option>
+            </select>
+            <div class="param-inputs">
+                <div class="input-group" style="margin-bottom: 0;">
+                    <label id="stops_q_label">Küszöb 1</label>
+                    <input type="number" id="stops_q" placeholder="Pl. 0" value="0" min="0" max="3">
+                </div>
+                <div class="input-group" style="margin-bottom: 0;">
+                    <label id="stops_p_label">Küszöb 2</label>
+                    <input type="number" id="stops_p" placeholder="Pl. 1" value="1" min="0" max="3">
+                </div>
+            </div>
+            <div class="explanation" id="stops_explanation">
+                ℹ️ Válassz egy módot a magyarázathoz
+            </div>
+        </div>
+
+        <!-- TARTÓZKODÁS PREFERENCIA -->
+        <div class="section">
+            <h3>📅 Tartózkodási idő érzékenység</h3>
+            <select id="stay_type">
+                <option value="">-- Válassz kiértékelési módot --</option>
+                <option value="usual">Szigorú - Bármilyen eltérés számít</option>
+                <option value="v-shape">Folyamatos - Minél távolabb az ideálistól, annál rosszabb</option>
+                <option value="u-shape">Küszöb alapú - Csak nagy eltérések számítanak</option>
+                <option value="level">Lépcsőzetes - Két szintű értékelés</option>
+                <option value="linear">Toleráns - Egy határon túl kezd el számítani</option>
+            </select>
+            <div class="param-inputs">
+                <div class="input-group" style="margin-bottom: 0;">
+                    <label id="stay_q_label">Küszöb 1</label>
+                    <input type="number" id="stay_q" placeholder="Pl. 1" value="0" min="0" max="7">
+                </div>
+                <div class="input-group" style="margin-bottom: 0;">
+                    <label id="stay_p_label">Küszöb 2</label>
+                    <input type="number" id="stay_p" placeholder="Pl. 3" value="3" min="0" max="14">
+                </div>
+            </div>
+            <div class="explanation" id="stay_explanation">
+                ℹ️ Válassz egy módot a magyarázathoz
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 15px; margin-top: 30px;">
+            <button class="btn-calculate" onclick="window.location.href='/flight-intelligence-ahp'"
+                style="background: #666; flex: 1; margin-top: 0;">
+                ⬅️ Vissza a preferenciákhoz
+            </button>
+            <button id="calcBtn" onclick="calculate()" class="btn-calculate" style="flex: 2; margin-top: 0;" disabled>
+                Kiértékelés indítása és rangsorolás ➔
+            </button>
+        </div>
+        <a href="/home"
+            style="display: block; margin-top: 20px; text-align: center; color: #666; text-decoration: none; font-size: 14px;">🏠
+            Vissza a főoldalra</a>
+
+        <div id="loader" class="loader">
+            <div class="spinner"></div>
+            <p>⏳ Járatok kiértékelése és rangsorolása folyamatban...</p>
+        </div>
+    </div>
+
+    <script>
+        const units = { price: 'Ft', departure: 'óra', travel_time: 'óra', stops: 'db', stay: 'nap' };
+
+        const explanations = {
+            price: {
+                usual: "Szigorú: Bármilyen árkülönbség számít. Ha két járat ára különbözik, azonnal az olcsóbbat választjuk.",
+                "v-shape": "Folyamatos: Minél nagyobb az árkülönbség, annál fontosabb. {p} Ft-nál már maximális a különbség megítélése.",
+                "u-shape": "Küszöb: Csak a {q} Ft feletti árkülönbségeket vesszük figyelembe.",
+                level: "Lépcsőzetes: {q} Ft alatt nem számít, {q} és {p} Ft között közepesen, afelett maximálisan számít.",
+                linear: "Toleráns: {q} Ft-ig nem számít a különbség, {q} és {p} Ft között fokozatosan nő a preferencia."
+            },
+            departure: {
+                usual: "Szigorú: Bármilyen eltérés az ideális időponttól számít.",
+                "v-shape": "Folyamatos: Minél messzebb van az ideálistól, annál rosszabb. {p} óra eltérés már maximálisan rossz.",
+                "u-shape": "Küszöb: {q} órán belüli eltérés még egyáltalán nem számít.",
+                level: "Lépcsőzetes: {q} óráig teljesen jó, {q} és {p} óra között elviselhető, afelett rossz.",
+                linear: "Toleráns: {q} óráig nem zavar az eltérés, utána fokozatosan válik fontosabbá."
+            },
+            travel_time: {
+                usual: "Szigorú: Bármilyen időkülönbség számít.",
+                "v-shape": "Folyamatos: Minél hosszabb, annál rosszabb. {p} óra plusz már kritikus.",
+                "u-shape": "Küszöb: Csak a {q} óra feletti időkülönbségek számítanak.",
+                level: "Lépcsőzetes értékelés az utazási időre.",
+                linear: "Fokozatos romlás {q} és {p} óra különbség között."
+            },
+            stops: {
+                usual: "Szigorú: Bármilyen átszállás-számbeli különbség számít.",
+                "v-shape": "Folyamatos: Minden egyes átszállás fokozatosan rontja a megítélést.",
+                "u-shape": "Küszöb: Csak legalább {q} átszállásnyi különbség esetén döntünk.",
+                level: "Lépcsőzetes értékelés az átszállásokra.",
+                linear: "Fokozatosan válik fontosabbá {q} és {p} átszállás között."
+            },
+            stay: {
+                usual: "Szigorú: Bármilyen eltérés az ideális napoktól számít.",
+                "v-shape": "Folyamatos: Minél messzebb a tervtől, annál rosszabb. {p} nap már nagy eltérés.",
+                "u-shape": "Küszöb: {q} nap eltérés még belefér, nem számít.",
+                level: "Lépcsőzetes értékelés a tartózkodásra.",
+                linear: "Toleráns: {q} napig nem zavar az eltérés, utána fokozatosan fontos lesz."
+            }
+        };
+
+        const labelConfigs = {
+            usual: { q: "(Nincs küszöb)", p: "(Nincs küszöb)", showQ: false, showP: false },
+            "v-shape": { q: "(nem használt)", p: "Mekkora eltéréstől büntessünk már maximálisan?", showQ: false, showP: true },
+            "u-shape": { q: "Meddig nézzük el teljesen a különbséget?", p: "(nem használt)", showQ: true, showP: false },
+            level: { q: "Indifferencia küszöb (ameddig egyáltalán nem zavar)", p: "Preferencia küszöb (amitől már nagyon zavar)", showQ: true, showP: true },
+            linear: { q: "Mekkora eltérésig ne számítson egyáltalán?", p: "A különbség, ami felett már minden óriási", showQ: true, showP: true }
+        };
+
+        function updateProgress() {
+            const criteria = ['price', 'departure', 'travel_time', 'stops', 'stay'];
+            let completed = 2; // Ideals are already counted
+
+            criteria.forEach(c => {
+                const type = document.getElementById(c + '_type').value;
+                if (type) {
+                    const q = parseFloat(document.getElementById(c + '_q').value);
+                    const p = parseFloat(document.getElementById(c + '_p').value);
+
+                    const config = labelConfigs[type];
+                    let ok = true;
+                    if (config.showQ && isNaN(q)) ok = false;
+                    if (config.showP && isNaN(p)) ok = false;
+                    if (ok) completed++;
+                }
+            });
+
+            const currentStep = 10 + completed;
+            const progress = (currentStep / 17) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').innerText = `Folyamat: ${currentStep} / 17`;
+
+            const allSelected = criteria.every(c => document.getElementById(c + '_type').value !== '');
+            document.getElementById('calcBtn').disabled = !allSelected;
+        }
+
+        function updateCriterionUI(criterion) {
+            const type = document.getElementById(criterion + '_type').value;
+            const qWrapper = document.getElementById(criterion + '_q').closest('.input-group');
+            const pWrapper = document.getElementById(criterion + '_p').closest('.input-group');
+            const qLabel = document.getElementById(criterion + '_q_label');
+            const pLabel = document.getElementById(criterion + '_p_label');
+            const explanationDiv = document.getElementById(criterion + '_explanation');
+
+            if (!type) {
+                qWrapper.classList.add('disabled');
+                pWrapper.classList.add('disabled');
+                explanationDiv.innerHTML = "ℹ️ Válassz egy módot a magyarázathoz";
+                return;
+            }
+
+            const config = labelConfigs[type];
+            qLabel.innerText = config.q;
+            pLabel.innerText = config.p;
+
+            if (config.showQ) qWrapper.classList.remove('disabled');
+            else qWrapper.classList.add('disabled');
+
+            if (config.showP) pWrapper.classList.remove('disabled');
+            else pWrapper.classList.add('disabled');
+
+            // Update explanation text
+            let txt = explanations[criterion][type] || "";
+            const qVal = document.getElementById(criterion + '_q').value || 0;
+            const pVal = document.getElementById(criterion + '_p').value || 0;
+            const unit = units[criterion];
+
+            txt = txt.replace(/{q}/g, `<b style="color:#235B2A">${qVal} ${unit}</b>`)
+                .replace(/{p}/g, `<b style="color:#235B2A">${pVal} ${unit}</b>`);
+            explanationDiv.innerHTML = "ℹ️ " + txt;
+        }
+
+        function updateHourDisplay(val) {
+            document.getElementById('hour_display').innerText = val + ':00';
+        }
+
+        // Initialize and bind events
+        document.addEventListener('DOMContentLoaded', () => {
+            const criteria = ['price', 'departure', 'travel_time', 'stops', 'stay'];
+
+            // Ideal Departure Hour Slider logic
+            const idealSlider = document.getElementById('ideal_departure_hour');
+            const hourDisplay = document.getElementById('hour_display');
+
+            idealSlider.addEventListener('input', (e) => {
+                const val = e.target.value;
+                hourDisplay.innerText = val + ':00';
+                updateProgress();
+            });
+
+            document.getElementById('ideal_stay_days').addEventListener('input', updateProgress);
+
+            criteria.forEach(c => {
+                const typeSelect = document.getElementById(c + '_type');
+                const qInput = document.getElementById(c + '_q');
+                const pInput = document.getElementById(c + '_p');
+
+                typeSelect.addEventListener('change', () => {
+                    updateCriterionUI(c);
+                    updateProgress();
+                });
+
+                qInput.addEventListener('input', () => {
+                    updateCriterionUI(c);
+                    updateProgress();
+                });
+
+                pInput.addEventListener('input', () => {
+                    updateCriterionUI(c);
+                    updateProgress();
+                });
+
+                // Initial state update for each criterion
+                updateCriterionUI(c);
+            });
+
+            updateProgress();
+            updateHourDisplay(document.getElementById('ideal_departure_hour').value);
         });
 
-        if (response.ok) {
-            const data = await response.json();
-            console.log("Sikeres számítás:", data.count, "járat");
-            // Átirányítás a 6. Screen-re
-            window.location.href = '/flight-intelligence-results';
-        } else {
-            const err = await response.json();
-            alert("Hiba a számítás során: " + err.detail);
-            btn.disabled = false;
-            loader.style.display = 'none';
+        async function calculate() {
+            const btn = document.getElementById('calcBtn');
+            const loader = document.getElementById('loader');
+
+            btn.disabled = true;
+            loader.style.display = 'block';
+
+            const criteriaNames = ['price', 'departure', 'travel_time', 'stops', 'stay'];
+            const configs = {};
+
+            criteriaNames.forEach(name => {
+                configs[name] = {
+                    type: document.getElementById(`${name}_type`).value,
+                    q: parseFloat(document.getElementById(`${name}_q`).value) || 0,
+                    p: parseFloat(document.getElementById(`${name}_p`).value) || 0
+                };
+            });
+
+            try {
+                const payload = {
+                    ideal_departure_hour: parseInt(document.getElementById('ideal_departure_hour').value),
+                    ideal_stay_days: parseInt(document.getElementById('ideal_stay_days').value),
+                    configs: configs
+                };
+
+                const response = await fetch('/api/calculate-results', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    window.location.href = '/flight-intelligence-results';
+                } else {
+                    const err = await response.json();
+                    alert("Hiba: " + (err.detail || "Ismeretlen hiba"));
+                    btn.disabled = false;
+                    loader.style.display = 'none';
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Hálózati hiba.");
+                btn.disabled = false;
+                loader.style.display = 'none';
+            }
         }
-    } catch (error) {
-        console.error("Hálózati hiba:", error);
-        alert("Nem sikerült elérni a szervert.");
-        btn.disabled = false;
-        loader.style.display = 'none';
-    }
-}
-</script>
+    </script>
+</body>
+
+</html>

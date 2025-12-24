@@ -1,17 +1,45 @@
 <!DOCTYPE html>
 <html lang="hu">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AHP Értékelés - Flight Intelligence</title>
+    <title>Személyes preferenciák - Flight Intelligence</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background: linear-gradient(135deg, #235B2A 0%, #1a4520 100%); min-height: 100vh; padding: 20px; }
-        .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 20px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        h1 { color: #235B2A; margin-bottom: 10px; }
-        .subtitle { color: #666; margin-bottom: 30px; font-size: 14px; }
-        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #235B2A 0%, #1a4520 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #235B2A;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
         .progress-container {
             background: #e0e0e0;
             height: 12px;
@@ -19,19 +47,21 @@
             margin-bottom: 40px;
             overflow: hidden;
         }
+
         .progress-bar {
             background: linear-gradient(90deg, #235B2A, #90DC25);
             height: 100%;
             width: 10%;
             transition: width 0.3s;
         }
+
         .progress-text {
             text-align: center;
             color: #666;
             font-size: 13px;
             margin-top: 10px;
         }
-        
+
         .question-card {
             background: #f8f9fa;
             border-left: 4px solid #90DC25;
@@ -39,7 +69,7 @@
             border-radius: 10px;
             margin-bottom: 30px;
         }
-        
+
         .question-title {
             font-size: 20px;
             font-weight: 600;
@@ -47,14 +77,14 @@
             margin-bottom: 25px;
             text-align: center;
         }
-        
+
         .comparison-buttons {
             display: flex;
             gap: 15px;
             justify-content: center;
             margin-bottom: 25px;
         }
-        
+
         .criterion-btn {
             flex: 1;
             padding: 20px;
@@ -67,18 +97,18 @@
             transition: all 0.3s;
             color: #333;
         }
-        
+
         .criterion-btn:hover {
             border-color: #90DC25;
             transform: translateY(-3px);
         }
-        
+
         .criterion-btn.selected {
             background: #235B2A;
             color: white;
             border-color: #235B2A;
         }
-        
+
         .equal-btn {
             flex: 0.6;
             padding: 20px;
@@ -90,17 +120,17 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-        
+
         .equal-btn:hover {
             border-color: #666;
         }
-        
+
         .equal-btn.selected {
             background: #666;
             color: white;
             border-color: #666;
         }
-        
+
         .importance-scale {
             display: flex;
             gap: 10px;
@@ -109,11 +139,11 @@
             transition: opacity 0.3s;
             margin-top: 20px;
         }
-        
+
         .importance-scale.visible {
             opacity: 1;
         }
-        
+
         .importance-btn {
             flex: 1;
             padding: 15px;
@@ -124,35 +154,84 @@
             transition: all 0.3s;
             text-align: center;
         }
-        
+
         .importance-btn .value {
             font-size: 24px;
             font-weight: 700;
             color: #235B2A;
             display: block;
         }
-        
+
         .importance-btn .label {
             font-size: 12px;
             color: #666;
             margin-top: 5px;
         }
-        
+
         .importance-btn:hover {
             border-color: #90DC25;
             transform: translateY(-3px);
         }
-        
+
         .importance-btn.selected {
-            background: #90DC25;
-            border-color: #90DC25;
+            background: #235B2A;
+            border-color: #235B2A;
         }
-        
+
         .importance-btn.selected .value,
         .importance-btn.selected .label {
             color: white;
         }
-        
+
+        .slider-container {
+            margin-top: 30px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            display: none;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .slider-label {
+            font-size: 16px;
+            font-weight: 600;
+            color: #235B2A;
+        }
+
+        .slider-value-desc {
+            font-size: 14px;
+            color: #666;
+            font-style: italic;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #235B2A;
+            cursor: pointer;
+            border: 3px solid #90DC25;
+        }
+
         .btn-next {
             background: #235B2A;
             color: white;
@@ -166,16 +245,16 @@
             transition: 0.3s;
             margin-top: 20px;
         }
-        
+
         .btn-next:hover:not(:disabled) {
             background: #32853d;
         }
-        
+
         .btn-next:disabled {
             background: #ccc;
             cursor: not-allowed;
         }
-        
+
         #results {
             display: none;
             background: #f0f7f0;
@@ -184,26 +263,26 @@
             padding: 30px;
             text-align: center;
         }
-        
+
         .weights-table {
             margin: 20px 0;
             width: 100%;
             border-collapse: collapse;
         }
-        
+
         .weights-table th,
         .weights-table td {
             padding: 12px;
             text-align: left;
             border-bottom: 1px solid #ddd;
         }
-        
+
         .weights-table th {
             background: #f8f9fa;
             font-weight: 600;
             color: #235B2A;
         }
-        
+
         .weight-bar {
             background: #e0e0e0;
             height: 20px;
@@ -211,7 +290,7 @@
             overflow: hidden;
             margin-top: 5px;
         }
-        
+
         .weight-fill {
             background: linear-gradient(90deg, #235B2A, #90DC25);
             height: 100%;
@@ -219,51 +298,61 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
-        <h1>🎯 AHP Súlyok meghatározása</h1>
-        <p class="subtitle">Páros összehasonlítások - válaszolj {{ flight_count }} járatra</p>
-        
+        <h1>🎯 Személyes preferenciák beállítása</h1>
+        <p class="subtitle">Páros összehasonlítások - határozd meg mi fontosabb számodra</p>
+
         <div class="progress-container">
             <div class="progress-bar" id="progressBar"></div>
         </div>
-        <div class="progress-text" id="progressText">Kérdés 1 / 10</div>
-        
+        <div class="progress-text" id="progressText">Folyamat: 1 / 17</div>
+
         <div id="questionContainer" class="question-card">
             <!-- Dinamikusan töltődik JS-ből -->
         </div>
-        
+
         <button class="btn-next" id="nextBtn" onclick="nextQuestion()" disabled>
             Következő kérdés
         </button>
-        
+
         <div id="results">
-            <h2 style="color: #235B2A; margin-bottom: 20px;">✅ Súlyok kiszámítva!</h2>
+            <h2 style="color: #235B2A; margin-bottom: 20px;">✅ Preferenciák rögzítve!</h2>
             <table class="weights-table">
                 <thead>
                     <tr>
                         <th>Szempont</th>
-                        <th>Súly</th>
-                        <th>Vizualizáció</th>
+                        <th>Fontosság aránya</th>
                     </tr>
                 </thead>
                 <tbody id="weightsTable"></tbody>
             </table>
-            <button class="btn-next" onclick="window.location.href='/flight-intelligence-preferences'">
-                Tovább a preferencia függvényekhez →
-            </button>
+            <div style="display: flex; gap: 15px; margin-top: 30px;">
+                <button class="btn-next" onclick="window.location.href='/flight-intelligence-filter'"
+                    style="background: #666; flex: 1;">
+                    ⬅️ Vissza a szűréshez
+                </button>
+                <button class="btn-next" onclick="window.location.href='/flight-intelligence-preferences'"
+                    style="flex: 2;">
+                    Tovább a kritériumok finomhangolásához →
+                </button>
+            </div>
+            <a href="/home"
+                style="display: block; margin-top: 20px; color: #666; text-decoration: none; font-size: 14px;">🏠 Vissza
+                a főoldalra</a>
         </div>
     </div>
 
     <script>
         const criteria = [
-            {name: "Ár", human: "A repjegy ára"},
-            {name: "Időpont", human: "Kényelmes indulási időpont"},
-            {name: "Utazás", human: "Rövid repülési idő"},
-            {name: "Átszállás", human: "Minél kevesebb átszállás"},
-            {name: "Tartózkodás", human: "Tartózkodási napok száma közel legyen az ideálishoz"}
+            { name: "Ár", human: "A repjegy ára" },
+            { name: "Időpont", human: "Kényelmes indulási időpont" },
+            { name: "Utazás", human: "Rövid repülési idő" },
+            { name: "Átszállás", human: "Minél kevesebb átszállás" },
+            { name: "Tartózkodás", human: "Tartózkodási napok száma közel legyen az ideálishoz" }
         ];
-        
+
         const questions = [];
         for (let i = 0; i < criteria.length; i++) {
             for (let j = i + 1; j < criteria.length; j++) {
@@ -273,14 +362,14 @@
                 });
             }
         }
-        
+
         let currentQuestion = 0;
         let answers = {}; // {questionIndex: {selected: 'c1'|'c2'|'equal', importance: 3|5|7|9}}
-        
+
         function renderQuestion() {
             const q = questions[currentQuestion];
             const container = document.getElementById('questionContainer');
-            
+
             container.innerHTML = `
                 <div class="question-title">
                     Melyik fontosabb számodra?
@@ -300,112 +389,111 @@
                     </button>
                 </div>
                 
-                <div class="importance-scale" id="importanceScale">
-                    <div class="importance-btn" onclick="selectImportance(3)">
-                        <span class="value">3</span>
-                        <span class="label">Kicsit fontosabb</span>
+                <div class="slider-container" id="sliderContainer">
+                    <div class="slider-header">
+                        <span class="slider-label">Mennyivel fontosabb?</span>
+                        <span class="slider-value-desc" id="sliderDesc">Közepesen fontosabb</span>
                     </div>
-                    <div class="importance-btn" onclick="selectImportance(5)">
-                        <span class="value">5</span>
-                        <span class="label">Jelentősen fontosabb</span>
-                    </div>
-                    <div class="importance-btn" onclick="selectImportance(7)">
-                        <span class="value">7</span>
-                        <span class="label">Sokkal fontosabb</span>
-                    </div>
-                    <div class="importance-btn" onclick="selectImportance(9)">
-                        <span class="value">9</span>
-                        <span class="label">Extrém fontosabb</span>
-                    </div>
+                    <input type="range" id="importanceSlider" min="2" max="9" value="3" step="1" oninput="updateSliderDesc(this.value)">
                 </div>
             `;
-            
+
             // Ha már volt válasz, állítsuk vissza
             if (answers[currentQuestion]) {
                 const ans = answers[currentQuestion];
                 document.getElementById('btn_' + ans.selected).classList.add('selected');
                 if (ans.selected !== 'equal') {
-                    document.getElementById('importanceScale').classList.add('visible');
+                    const sliderContainer = document.getElementById('sliderContainer');
+                    sliderContainer.style.display = 'block';
                     if (ans.importance) {
-                        document.querySelectorAll('.importance-btn').forEach((btn, i) => {
-                            if ([3,5,7,9][i] === ans.importance) {
-                                btn.classList.add('selected');
-                            }
-                        });
+                        const slider = document.getElementById('importanceSlider');
+                        slider.value = ans.importance;
+                        updateSliderDesc(ans.importance);
                     }
                 }
                 updateNextButton();
             }
-            
+
             // Progress frissítés
-            const progress = ((currentQuestion + 1) / questions.length) * 90; // 90%-ig tart az AHP
+            const progress = ((currentQuestion + 1) / questions.length) * 90;
             document.getElementById('progressBar').style.width = progress + '%';
             document.getElementById('progressText').innerText = `Kérdés ${currentQuestion + 1} / ${questions.length}`;
         }
-        
+
+        const sliderLabels = {
+            2: "Alig fontosabb",
+            3: "Kicsit fontosabb",
+            4: "Mérsékelten fontosabb",
+            5: "Jelentősen fontosabb",
+            6: "Erősen fontosabb",
+            7: "Sokkal fontosabb",
+            8: "Nagyon sokkal fontosabb",
+            9: "Meghatározóan fontosabb"
+        };
+
+        function updateSliderDesc(value) {
+            document.getElementById('sliderDesc').innerText = sliderLabels[value];
+            answers[currentQuestion].importance = parseInt(value);
+            updateNextButton();
+        }
+
         function selectCriterion(choice) {
             // Reset
             document.querySelectorAll('.criterion-btn, .equal-btn').forEach(btn => {
                 btn.classList.remove('selected');
             });
-            
+
             // Select
             document.getElementById('btn_' + choice).classList.add('selected');
-            
-            // Importance scale megjelenítése vagy elrejtése
-            const importanceScale = document.getElementById('importanceScale');
+
+            // Slider megjelenítése vagy elrejtése
+            const sliderContainer = document.getElementById('sliderContainer');
             if (choice === 'equal') {
-                importanceScale.classList.remove('visible');
-                answers[currentQuestion] = {selected: choice, importance: null};
+                sliderContainer.style.display = 'none';
+                answers[currentQuestion] = { selected: choice, importance: 1 };
                 updateNextButton();
             } else {
-                importanceScale.classList.add('visible');
-                answers[currentQuestion] = {selected: choice, importance: null};
+                sliderContainer.style.display = 'block';
+                const sliderValue = document.getElementById('importanceSlider').value;
+                answers[currentQuestion] = { selected: choice, importance: parseInt(sliderValue) };
+                updateSliderDesc(sliderValue);
                 updateNextButton();
             }
         }
-        
-        function selectImportance(value) {
-            document.querySelectorAll('.importance-btn').forEach(btn => {
-                btn.classList.remove('selected');
-            });
-            event.target.closest('.importance-btn').classList.add('selected');
-            
-            answers[currentQuestion].importance = value;
-            updateNextButton();
-        }
-        
+
+
+
         function updateNextButton() {
             const ans = answers[currentQuestion];
             const nextBtn = document.getElementById('nextBtn');
-            
+
             if (ans && (ans.selected === 'equal' || ans.importance)) {
                 nextBtn.disabled = false;
             } else {
                 nextBtn.disabled = true;
             }
         }
-        
+
         function nextQuestion() {
             currentQuestion++;
-            
+
             if (currentQuestion < questions.length) {
                 renderQuestion();
             } else {
                 calculateWeights();
             }
         }
-        
+
         function calculateWeights() {
             // AHP mátrix építése
             const n = criteria.length;
             const matrix = Array(n).fill(0).map(() => Array(n).fill(1));
-            
+
             questions.forEach((q, idx) => {
                 const ans = answers[idx];
                 const i = criteria.findIndex(c => c.name === q.c1.name);
                 const j = criteria.findIndex(c => c.name === q.c2.name);
-                
+
                 if (ans.selected === 'equal') {
                     matrix[i][j] = 1;
                     matrix[j][i] = 1;
@@ -417,69 +505,72 @@
                     matrix[i][j] = 1 / ans.importance;
                 }
             });
-            
+
             // Egyszerűsített súly számítás (normalized column sum)
             const weights = [];
             const colSums = Array(n).fill(0);
-            
+
             for (let j = 0; j < n; j++) {
                 for (let i = 0; i < n; i++) {
                     colSums[j] += matrix[i][j];
                 }
             }
-            
-            const normalizedMatrix = matrix.map((row, i) => 
+
+            const normalizedMatrix = matrix.map((row, i) =>
                 row.map((val, j) => val / colSums[j])
             );
-            
+
             for (let i = 0; i < n; i++) {
                 const avg = normalizedMatrix[i].reduce((a, b) => a + b) / n;
                 weights.push(avg);
             }
-            
+
             // Eredmény megjelenítése
             document.getElementById('questionContainer').style.display = 'none';
             document.getElementById('nextBtn').style.display = 'none';
-            document.getElementById('progressBar').style.width = '90%';
-            document.getElementById('progressText').innerText = 'AHP számítás kész (90%)';
-            
+            document.getElementById('progressBar').style.width = (10 / 17 * 100) + '%';
+            document.getElementById('progressText').innerText = 'Preferenciák rögzítve (10 / 17)';
+
             const resultsDiv = document.getElementById('results');
             const tbody = document.getElementById('weightsTable');
-            
+
+            const maxWeight = Math.max(...weights);
+
             tbody.innerHTML = '';
             criteria.forEach((c, i) => {
+                const normalizedPercent = (weights[i] / maxWeight) * 100;
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td><strong>${c.human}</strong></td>
-                    <td>${(weights[i] * 100).toFixed(1)}%</td>
                     <td>
                         <div class="weight-bar">
-                            <div class="weight-fill" style="width: ${weights[i] * 100}%"></div>
+                            <div class="weight-fill" style="width: ${normalizedPercent}%"></div>
                         </div>
                     </td>
                 `;
                 tbody.appendChild(row);
             });
-            
+
             resultsDiv.style.display = 'block';
-            
+
             // Mentés a backend-re
             saveWeights(weights);
         }
-        
+
         async function saveWeights(weights) {
             await fetch('/api/save-ahp-weights', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     weights: weights,
                     criteria: criteria.map(c => c.name)
                 })
             });
         }
-        
+
         // Kezdés
         renderQuestion();
     </script>
 </body>
+
 </html>
