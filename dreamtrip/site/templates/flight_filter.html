@@ -75,7 +75,9 @@
 
         input[type="text"],
         input[type="date"],
-        input[type="number"] {
+        input[type="number"],
+        select {
+            width: 100%;
             padding: 10px;
             border: 2px solid #ddd;
             border-radius: 8px;
@@ -158,6 +160,41 @@
         .status-error {
             background: #f8d7da;
             color: #721c24;
+        }
+
+        .loading-bar-container {
+            width: 100%;
+            height: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .loading-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #235B2A, #90DC25);
+            border-radius: 5px;
+            animation: progressIndeterminate 2s infinite linear;
+        }
+
+        @keyframes progressIndeterminate {
+            0% {
+                width: 0%;
+                margin-left: 0;
+            }
+
+            50% {
+                width: 70%;
+                margin-left: 15%;
+            }
+
+            100% {
+                width: 100%;
+                margin-left: 100%;
+            }
         }
 
         /* Mobile Adjustments */
@@ -293,7 +330,12 @@
             Szűrés és tovább az értékeléshez
         </button>
 
-        <div id="status"></div>
+        <div id="status">
+            <div id="statusText"></div>
+            <div class="loading-bar-container" id="loadingBar">
+                <div class="loading-bar"></div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -310,6 +352,9 @@
         async function applyFilters() {
             const btn = document.getElementById('filterBtn');
             const statusDiv = document.getElementById('status');
+            const statusText = document.getElementById('statusText');
+            const loadingBar = document.getElementById('loadingBar');
+            const loadingBarInner = loadingBar.querySelector('.loading-bar');
 
             // Napok összegyűjtése
             const outDays = Array.from(document.querySelectorAll('#out_days .day-btn.active'))
@@ -336,7 +381,11 @@
             btn.disabled = true;
             statusDiv.style.display = 'block';
             statusDiv.className = 'status-running';
-            statusDiv.innerText = "🔍 Szűrés folyamatban...";
+            statusText.innerText = "🔍 Szűrés előkészítése...";
+
+            loadingBar.style.display = 'block';
+            loadingBarInner.style.width = '0%';
+            loadingBarInner.style.animation = 'none';
 
             await fetch('/api/apply-filters', {
                 method: 'POST',
@@ -344,28 +393,36 @@
                 body: JSON.stringify(payload)
             });
 
-            pollInterval = setInterval(checkFilterStatus, 3000);
+            pollInterval = setInterval(checkFilterStatus, 500);
         }
 
         async function checkFilterStatus() {
             const response = await fetch('/api/filter-status/{{ user }}');
             const data = await response.json();
             const statusDiv = document.getElementById('status');
+            const statusText = document.getElementById('statusText');
+            const loadingBar = document.getElementById('loadingBar');
+            const loadingBarInner = loadingBar.querySelector('.loading-bar');
 
             if (data.status === 'running') {
-                statusDiv.innerText = "⏳ Adatok feldolgozása...";
+                statusText.innerText = data.status_text || "⏳ Adatok feldolgozása...";
+                if (data.progress !== undefined) {
+                    loadingBarInner.style.width = data.progress + "%";
+                }
             } else if (data.status === 'done') {
                 clearInterval(pollInterval);
+                loadingBarInner.style.width = "100%";
                 statusDiv.className = 'status-done';
-                statusDiv.innerText = `✅ ${data.count} járat megfelel a kritériumoknak! Átirányítás...`;
+                statusText.innerText = `✅ ${data.count} járat megfelel a kritériumoknak! Átirányítás...`;
 
                 setTimeout(() => {
                     window.location.href = '/flight-intelligence-ahp';
-                }, 2000);
+                }, 1000);
             } else if (data.status === 'error') {
                 clearInterval(pollInterval);
+                loadingBar.style.display = 'none';
                 statusDiv.className = 'status-error';
-                statusDiv.innerText = "❌ Hiba: " + data.error;
+                statusText.innerText = "❌ Hiba: " + data.error;
                 document.getElementById('filterBtn').disabled = false;
             }
         }

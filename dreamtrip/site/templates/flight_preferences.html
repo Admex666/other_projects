@@ -260,6 +260,51 @@
             }
         }
 
+        .param-inputs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .param-inputs .input-group {
+            flex: 1;
+        }
+
+        .loading-bar-container {
+            width: 100%;
+            height: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 15px;
+            /* display: none; Managed by JS */
+        }
+
+        .loading-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #235B2A, #90DC25);
+            border-radius: 5px;
+            animation: progressIndeterminate 2s infinite linear;
+        }
+
+        @keyframes progressIndeterminate {
+            0% {
+                width: 0%;
+                margin-left: 0;
+            }
+
+            50% {
+                width: 70%;
+                margin-left: 15%;
+            }
+
+            100% {
+                width: 100%;
+                margin-left: 100%;
+            }
+        }
+
         /* Mobile Optimization */
         @media (max-width: 768px) {
             body {
@@ -365,12 +410,11 @@
         <div class="section">
             <h3>💰 Ár érzékenység</h3>
             <select id="price_type">
-                <option value="">-- Válassz kiértékelési módot --</option>
-                <option value="usual">Szigorú - Bármilyen árkülönbség számít</option>
-                <option value="v-shape">Folyamatos - Minél nagyobb a különbség, annál fontosabb</option>
-                <option value="u-shape">Küszöb alapú - Csak egy bizonyos különbség felett számít</option>
-                <option value="level">Lépcsőzetes - Két szintű értékelés</option>
-                <option value="linear">Toleráns - Egy határon túl kezd el számítani</option>
+                <option value="">-- Válassz hozzáállást --</option>
+                <option value="usual">Szigorú - A legolcsóbb kell!</option>
+                <option value="v-shape">Fokozatos - Minél drágább, annál rosszabb</option>
+                <option value="linear">Rugalmas - Pár forint különbség nem számít, de azon túl minél drágább annál
+                    rosszabb</option>
             </select>
             <div class="param-inputs">
                 <div class="input-group" style="margin-bottom: 0;">
@@ -391,12 +435,10 @@
         <div class="section">
             <h3>🕐 Indulási időpont érzékenység</h3>
             <select id="departure_type">
-                <option value="">-- Válassz kiértékelési módot --</option>
-                <option value="usual">Szigorú - Bármilyen eltérés számít</option>
-                <option value="v-shape">Folyamatos - Minél távolabb az ideálistól, annál rosszabb</option>
-                <option value="u-shape">Küszöb alapú - Csak nagy eltérés számít</option>
-                <option value="level">Lépcsőzetes - Két szintű értékelés</option>
-                <option value="linear">Toleráns - Egy határon túl kezd el számítani</option>
+                <option value="">-- Válassz hozzáállást --</option>
+                <option value="linear">Rugalmas - Pár óra eltérés még belefér</option>
+                <option value="v-shape">Fokozatos - Minél messzebb a tervtől, annál rosszabb</option>
+                <option value="usual">Szigorú - Pontosan ekkor akarok indulni</option>
             </select>
             <div class="param-inputs">
                 <div class="input-group" style="margin-bottom: 0;">
@@ -417,12 +459,10 @@
         <div class="section">
             <h3>✈️ Utazási idő érzékenység</h3>
             <select id="travel_time_type">
-                <option value="">-- Válassz kiértékelési módot --</option>
-                <option value="usual">Szigorú - Bármilyen különbség számít</option>
-                <option value="v-shape">Folyamatos - Minél hosszabb az utazás, annál rosszabb</option>
-                <option value="u-shape">Küszöb alapú - Csak nagy különbség számít</option>
-                <option value="level">Lépcsőzetes - Két szintű értékelés</option>
-                <option value="linear">Toleráns - Egy határon túl kezd el számítani</option>
+                <option value="">-- Válassz hozzáállást --</option>
+                <option value="v-shape">Fokozatos - Minél lassabb, annál rosszabb</option>
+                <option value="linear">Rugalmas - Kicsi lassulás még nem számít</option>
+                <option value="usual">Szigorú - A leggyorsabb kell, minden perc számít</option>
             </select>
             <div class="param-inputs">
                 <div class="input-group" style="margin-bottom: 0;">
@@ -443,12 +483,9 @@
         <div class="section">
             <h3>🔄 Átszállások száma</h3>
             <select id="stops_type">
-                <option value="">-- Válassz kiértékelési módot --</option>
-                <option value="usual">Szigorú - Bármilyen különbség számít</option>
-                <option value="v-shape">Folyamatos - Minél több, annál rosszabb</option>
-                <option value="u-shape">Küszöb alapú - Csak nagy különbség számít</option>
-                <option value="level">Lépcsőzetes - Két szintű értékelés</option>
-                <option value="linear">Toleráns - Egy határon túl kezd el számítani</option>
+                <option value="">-- Válassz hozzáállást --</option>
+                <option value="usual">Szigorú - A legkevesebb átszállás kell</option>
+                <option value="v-shape">Fokozatos - Minden plusz átszállás fáj</option>
             </select>
             <div class="param-inputs">
                 <div class="input-group" style="margin-bottom: 0;">
@@ -469,12 +506,10 @@
         <div class="section">
             <h3>📅 Tartózkodási idő érzékenység</h3>
             <select id="stay_type">
-                <option value="">-- Válassz kiértékelési módot --</option>
-                <option value="usual">Szigorú - Bármilyen eltérés számít</option>
-                <option value="v-shape">Folyamatos - Minél távolabb az ideálistól, annál rosszabb</option>
-                <option value="u-shape">Küszöb alapú - Csak nagy eltérések számítanak</option>
-                <option value="level">Lépcsőzetes - Két szintű értékelés</option>
-                <option value="linear">Toleráns - Egy határon túl kezd el számítani</option>
+                <option value="">-- Válassz hozzáállást --</option>
+                <option value="linear">Rugalmas - Pár nap eltérés belefér</option>
+                <option value="v-shape">Fokozatos - Minél nagyobb eltérés, annál rosszabb</option>
+                <option value="usual">Szigorú - Pontosan ennyi napot akarok maradni</option>
             </select>
             <div class="param-inputs">
                 <div class="input-group" style="margin-bottom: 0;">
@@ -505,8 +540,10 @@
             Vissza a főoldalra</a>
 
         <div id="loader" class="loader">
-            <div class="spinner"></div>
             <p>⏳ Járatok kiértékelése és rangsorolása folyamatban...</p>
+            <div class="loading-bar-container" style="display: block;">
+                <div class="loading-bar"></div>
+            </div>
         </div>
     </div>
 
@@ -515,48 +552,55 @@
 
         const explanations = {
             price: {
-                usual: "Szigorú: Bármilyen árkülönbség számít. Ha két járat ára különbözik, azonnal az olcsóbbat választjuk.",
-                "v-shape": "Folyamatos: Minél nagyobb az árkülönbség, annál fontosabb. {p} Ft-nál már maximális a különbség megítélése.",
-                "u-shape": "Küszöb: Csak a {q} Ft feletti árkülönbségeket vesszük figyelembe.",
-                level: "Lépcsőzetes: {q} Ft alatt nem számít, {q} és {p} Ft között közepesen, afelett maximálisan számít.",
-                linear: "Toleráns: {q} Ft-ig nem számít a különbség, {q} és {p} Ft között fokozatosan nő a preferencia."
+                usual: "Szigorú: Az olcsóbb egyértelműen jobb! Akár 100 Ft különbség miatt is az olcsóbbat választom.",
+                "v-shape": "Fokozatos: Minél drágább, annál rosszabb. ({p} különbség felett már sokkal drágábbnak érzem)",
+                "linear": "Rugalmas: {q} nem számít, de azon túl minél drágább, annál rosszabb.",
+                "u-shape": "Küszöb: Csak a {q} feletti árkülönbségeket vesszük figyelembe.",
+                level: "Lépcsőzetes: {q} alatt nem számít, {q} és {p} között közepesen, afelett maximálisan számít."
             },
             departure: {
-                usual: "Szigorú: Bármilyen eltérés az ideális időponttól számít.",
-                "v-shape": "Folyamatos: Minél messzebb van az ideálistól, annál rosszabb. {p} óra eltérés már maximálisan rossz.",
-                "u-shape": "Küszöb: {q} órán belüli eltérés még egyáltalán nem számít.",
-                level: "Lépcsőzetes: {q} óráig teljesen jó, {q} és {p} óra között elviselhető, afelett rossz.",
-                linear: "Toleráns: {q} óráig nem zavar az eltérés, utána fokozatosan válik fontosabbá."
+                usual: "Szigorú: Pontban akkor akarok indulni.",
+                "linear": "Rugalmas: {q} eltérés még belefér, de {p} eltérés már nagyon rossz. (Pl. 1 óra nem gond, 5 óra már sok)",
+                "v-shape": "Fokozatos: Minél távolabb van az időponttól, annál rosszabb. {p} eltérés már kritikus.",
+                "u-shape": "Küszöb: {q} belüli eltérés még egyáltalán nem számít.",
+                level: "Lépcsőzetes: {q}ig teljesen jó, {q} és {p} között elviselhető, afelett rossz."
             },
             travel_time: {
-                usual: "Szigorú: Bármilyen időkülönbség számít.",
-                "v-shape": "Folyamatos: Minél hosszabb, annál rosszabb. {p} óra plusz már kritikus.",
-                "u-shape": "Küszöb: Csak a {q} óra feletti időkülönbségek számítanak.",
-                level: "Lépcsőzetes értékelés az utazási időre.",
-                linear: "Fokozatos romlás {q} és {p} óra különbség között."
+                "v-shape": "Fokozatos: Minél hosszabb, annál rosszabb. {p} plusz utazás már nagyon fájdalmas.",
+                usual: "Szigorú: A leggyorsabb kell, minden perc számít.",
+                "linear": "Rugalmas: {q} óra plusz még belefér, de {p} óra már sok.",
+                "u-shape": "Küszöb: Csak a {q} feletti időkülönbségek számítanak.",
+                level: "Lépcsőzetes értékelés az utazási időre."
             },
             stops: {
-                usual: "Szigorú: Bármilyen átszállás-számbeli különbség számít.",
-                "v-shape": "Folyamatos: Minden egyes átszállás fokozatosan rontja a megítélést.",
+                usual: "Szigorú: A kevesebb átszállás mindig jobb.",
+                "v-shape": "Fokozatos: Minden plusz átszállás számít.",
+                "linear": "Rugalmas: {q} átszállás különbség még belefér, de {p} már sok.",
                 "u-shape": "Küszöb: Csak legalább {q} átszállásnyi különbség esetén döntünk.",
-                level: "Lépcsőzetes értékelés az átszállásokra.",
-                linear: "Fokozatosan válik fontosabbá {q} és {p} átszállás között."
+                level: "Lépcsőzetes értékelés az átszállásokra."
             },
             stay: {
-                usual: "Szigorú: Bármilyen eltérés az ideális napoktól számít.",
-                "v-shape": "Folyamatos: Minél messzebb a tervtől, annál rosszabb. {p} nap már nagy eltérés.",
-                "u-shape": "Küszöb: {q} nap eltérés még belefér, nem számít.",
-                level: "Lépcsőzetes értékelés a tartózkodásra.",
-                linear: "Toleráns: {q} napig nem zavar az eltérés, utána fokozatosan fontos lesz."
+                "linear": "Rugalmas: {q} nap eltérés még belefér, de {p} nap már sok.",
+                usual: "Szigorú: Pontosan ennyit akarok maradni.",
+                "v-shape": "Fokozatos: Minél nagyobb az eltérés, annál rosszabb.",
+                "u-shape": "Küszöb: {q} eltérés még belefér, nem számít.",
+                level: "Lépcsőzetes értékelés a tartózkodásra."
             }
         };
 
         const labelConfigs = {
-            usual: { q: "(Nincs küszöb)", p: "(Nincs küszöb)", showQ: false, showP: false },
-            "v-shape": { q: "(nem használt)", p: "Mekkora eltéréstől büntessünk már maximálisan?", showQ: false, showP: true },
-            "u-shape": { q: "Meddig nézzük el teljesen a különbséget?", p: "(nem használt)", showQ: true, showP: false },
-            level: { q: "Indifferencia küszöb (ameddig egyáltalán nem zavar)", p: "Preferencia küszöb (amitől már nagyon zavar)", showQ: true, showP: true },
-            linear: { q: "Mekkora eltérésig ne számítson egyáltalán?", p: "A különbség, ami felett már minden óriási", showQ: true, showP: true }
+            usual: { q: "(Nem kell beállítás)", p: "(Nem kell beállítás)", showQ: false, showP: false },
+            "v-shape": { q: "(Nem használt)", p: "Mekkora a kritikus különbség?", showQ: false, showP: true },
+            "u-shape": { q: "Mekkora különbség fér még bele?", p: "(Nem használt)", showQ: true, showP: false },
+            level: { q: "Indifferencia", p: "Preferencia", showQ: true, showP: true },
+            linear: { q: "Mekkora különbség nem számít még?", p: "Mekkora különbség ami már döntő?", showQ: true, showP: true }
+        };
+
+        const specificLabels = {
+            price: {
+                "v-shape": { p: "Mekkora az az árkülönbség, ami felett már szerinted sokkal drágább egy repjegy egy másiknál?" },
+                "linear": { q: "Mennyi az a 'pár forint' ami nem számít?", p: "Honnan számít már nagyon soknak?" }
+            }
         };
 
         function updateProgress() {
@@ -602,8 +646,16 @@
             }
 
             const config = labelConfigs[type];
-            qLabel.innerText = config.q;
-            pLabel.innerText = config.p;
+            let qText = config.q;
+            let pText = config.p;
+
+            if (specificLabels[criterion] && specificLabels[criterion][type]) {
+                if (specificLabels[criterion][type].q) qText = specificLabels[criterion][type].q;
+                if (specificLabels[criterion][type].p) pText = specificLabels[criterion][type].p;
+            }
+
+            qLabel.innerText = qText;
+            pLabel.innerText = pText;
 
             if (config.showQ) qWrapper.classList.remove('disabled');
             else qWrapper.classList.add('disabled');
@@ -670,12 +722,20 @@
             updateHourDisplay(document.getElementById('ideal_departure_hour').value);
         });
 
+        let calcPollInterval;
+
         async function calculate() {
             const btn = document.getElementById('calcBtn');
             const loader = document.getElementById('loader');
+            const loaderText = loader.querySelector('p');
+            const loadingBarInner = loader.querySelector('.loading-bar');
 
             btn.disabled = true;
             loader.style.display = 'block';
+            loaderText.innerText = "⏳ Rangsorolás indítása...";
+
+            loadingBarInner.style.width = '0%';
+            loadingBarInner.style.animation = 'none';
 
             const criteriaNames = ['price', 'departure', 'travel_time', 'stops', 'stay'];
             const configs = {};
@@ -702,7 +762,7 @@
                 });
 
                 if (response.ok) {
-                    window.location.href = '/flight-intelligence-results';
+                    calcPollInterval = setInterval(checkCalculationStatus, 500);
                 } else {
                     const err = await response.json();
                     alert("Hiba: " + (err.detail || "Ismeretlen hiba"));
@@ -714,6 +774,37 @@
                 alert("Hálózati hiba.");
                 btn.disabled = false;
                 loader.style.display = 'none';
+            }
+        }
+
+        async function checkCalculationStatus() {
+            try {
+                const response = await fetch('/api/calculation-status');
+                const data = await response.json();
+                const loader = document.getElementById('loader');
+                const loaderText = loader.querySelector('p');
+                const loadingBarInner = loader.querySelector('.loading-bar');
+
+                if (data.status === 'running') {
+                    loaderText.innerText = "⏳ " + (data.status_text || "Számítás folyamatban...");
+                    if (data.progress !== undefined) {
+                        loadingBarInner.style.width = data.progress + "%";
+                    }
+                } else if (data.status === 'done') {
+                    clearInterval(calcPollInterval);
+                    loadingBarInner.style.width = "100%";
+                    loaderText.innerText = "✅ Kész! Átirányítás...";
+                    setTimeout(() => {
+                        window.location.href = '/flight-intelligence-results';
+                    }, 500);
+                } else if (data.status === 'error') {
+                    clearInterval(calcPollInterval);
+                    alert("Hiba: " + data.error);
+                    document.getElementById('calcBtn').disabled = false;
+                    loader.style.display = 'none';
+                }
+            } catch (e) {
+                console.error(e);
             }
         }
     </script>

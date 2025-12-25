@@ -150,28 +150,43 @@ class StaySearchParams(BaseModel):
 # Módosított háttérfolyamat
 def run_intelligence_scraper(p: SearchParams):
     global results, raw_flight_data
-    results = {"status": "running", "data": None, "error": None}
+    results = {"status": "running", "progress": 0, "status_text": "Keresés indítása...", "data": None, "error": None}
+    
+    def update_progress(base, scale, p):
+        current = base + (p * scale / 100)
+        results["progress"] = int(current)
+    
     try:
+        results["status_text"] = "Adatkapcsolat megteremtése..."
         tokens = get_kiwi_tokens(headless=True)
         
+        results["status_text"] = f"Odaút keresése ({p.origin} -> {p.destination})..."
         outbound = search_flights_by_city_name_v2(
             origin_name=p.origin,
             destination_name=p.destination,
             tokens=tokens,
             date_from=p.out_from,
-            date_to=p.out_to
+            date_to=p.out_to,
+            progress_callback=lambda p: update_progress(5, 40, p)
         )
+        
+        results["progress"] = 45
+        results["status_text"] = f"Visszaút keresése ({p.destination} -> {p.origin})..."
         
         inbound = search_flights_by_city_name_v2(
             origin_name=p.destination,
             destination_name=p.origin,
             tokens=tokens,
             date_from=p.in_from,
-            date_to=p.in_to
+            date_to=p.in_to,
+            progress_callback=lambda p: update_progress(45, 40, p)
         )
         
+        results["progress"] = 90
+        results["status_text"] = "Útvonalak kombinálása és ellenőrzése..."
+        
         if outbound.empty or inbound.empty:
-            results = {"status": "done", "data": [], "count": 0, "error": "Nincs járat."}
+            results = {"status": "done", "progress": 100, "data": [], "count": 0, "error": "Nincs járat."}
             return
 
         combinations = create_return_combinations(outbound, inbound)
@@ -182,6 +197,7 @@ def run_intelligence_scraper(p: SearchParams):
 
         results = {
             "status": "done", 
+            "progress": 100,
             "count": len(combinations),
             "error": None
         }
@@ -306,24 +322,28 @@ async def filter_status(username: str):
 
 def run_filter_scraper(username: str, p: FilterParams):
     global filtered_flights, raw_flight_data, user_filter_params
-    filtered_flights[username] = {"status": "running", "count": None, "error": None}
+    filtered_flights[username] = {"status": "running", "progress": 0, "status_text": "Szűrés előkészítése...", "count": None, "error": None}
     user_filter_params[username] = p
     
     try:
         # ✅ JAVÍTÁS: is None ellenőrzés
         if raw_flight_data.get("data") is None or raw_flight_data["count"] == 0:
-            filtered_flights[username] = {"status": "done", "count": 0, "error": "Nincs adat a memóriában"}
+            filtered_flights[username] = {"status": "done", "progress": 100, "count": 0, "error": "Nincs adat a memóriában"}
             return
         
+        filtered_flights[username]["progress"] = 10
         df = raw_flight_data["data"].copy()
         
         # SZŰRÉSEK ALKALMAZÁSA
         # Indulási idő szűrés
+        filtered_flights[username]["status_text"] = "Időpontok szűrése..."
         df['out_hour'] = pd.to_datetime(df['out_dep_time']).dt.hour
         df = df[(df['out_hour'] >= p.out_time_min) & (df['out_hour'] <= p.out_time_max)]
         
         df['in_hour'] = pd.to_datetime(df['in_dep_time']).dt.hour
         df = df[(df['in_hour'] >= p.in_time_min) & (df['in_hour'] <= p.in_time_max)]
+        
+        filtered_flights[username]["progress"] = 30
         
         # Napok szűrése
         if p.out_days:
@@ -338,6 +358,9 @@ def run_filter_scraper(username: str, p: FilterParams):
             df['in_weekday'] = pd.to_datetime(df['in_dep_time']).dt.dayofweek
             df = df[df['in_weekday'].isin(allowed_days)]
         
+        filtered_flights[username]["progress"] = 50
+        filtered_flights[username]["status_text"] = "Technikai szűrők alkalmazása..."
+        
         # Átszállások
         df = df[df['total_stops'] <= p.max_stops]
         
@@ -351,6 +374,9 @@ def run_filter_scraper(username: str, p: FilterParams):
         df['total_duration'] = df['out_duration_h'] + df['in_duration_h']
         df = df[df['total_duration'] <= p.max_total_duration]
         
+        filtered_flights[username]["progress"] = 80
+        filtered_flights[username]["status_text"] = "Eredmények mentése..."
+        
         # ✅ JAVÍTÁS: Timestamp oszlopok konvertálása stringre JSON szerializáláshoz
         date_columns = ['out_dep_time', 'out_arr_time', 'in_dep_time', 'in_arr_time']
         for col in date_columns:
@@ -360,13 +386,14 @@ def run_filter_scraper(username: str, p: FilterParams):
         # Mentés sessionbe
         filtered_flights[username] = {
             "status": "done",
+            "progress": 100,
             "count": len(df),
             "data": df.to_dict(orient="records"),
             "error": None
         }
         
     except Exception as e:
-        filtered_flights[username] = {"status": "error", "count": None, "error": str(e)}
+        filtered_flights[username] = {"status": "error", "progress": 0, "count": None, "error": str(e)}
 
 @app.get("/flight-intelligence-ahp", response_class=HTMLResponse)
 async def flight_intelligence_ahp(request: Request):
@@ -608,87 +635,117 @@ def get_preference(d: float, config: CriterionParam) -> float:
     
     return 0.0
 
+calculation_status = {}
+
 @app.post("/api/calculate-results")
-async def calculate_results(config: PreferenceConfig, request: Request):
+async def start_calculate_results(config: PreferenceConfig, background_tasks: BackgroundTasks, request: Request):
     user = get_current_user(request)
     if not user or user not in filtered_flights or user not in ahp_weights:
         raise HTTPException(status_code=400, detail="Hiányzó szűrt adatok vagy AHP súlyok")
+    
+    background_tasks.add_task(run_calculation_task, user, config)
+    return {"message": "Calculation started"}
 
-    # 1. Adatok előkészítése - JAVÍTVA: dict -> DataFrame konverzió
-    flight_data = filtered_flights[user]["data"]
-    df = pd.DataFrame(flight_data)
-    weights = ahp_weights[user]["weights"] # Sorrend: Ár, Időpont, Utazás, Átszállás, Tartózkodás
-    
-    # Kritérium értékek kiszámítása (MINDEN MINIMALIZÁLANDÓ, kivéve ha transzformáljuk)
-    # g1: Ár - JAVÍTVA: total_price_huf
-    df['g1'] = df['total_price_huf']
-    
-    # g2: Indulási időpont eltérése (abszolút hiba az ideálistól)
-    def time_diff(row):
-        dep_time = pd.to_datetime(row['out_dep_time'])  # JAVÍTVA: out_dep_time
-        diff = abs(dep_time.hour - config.ideal_departure_hour)
-        return min(diff, 24 - diff) # Ciklikus idő (pl. 23 és 01 között csak 2 óra van)
-    df['g2'] = df.apply(time_diff, axis=1)
-    
-    # g3: Összes utazási idő (óra)
-    df['g3'] = df['out_duration_h'] + df['in_duration_h']
-    
-    # g4: Átszállások száma
-    df['g4'] = df['out_stops'] + df['in_stops']
-    
-    # g5: Tartózkodási napok eltérése - JAVÍTVA: stay_days
-    df['g5'] = (df['stay_days'] - config.ideal_stay_days).abs()
+@app.get("/api/calculation-status")
+async def get_calculation_status(request: Request):
+    user = get_current_user(request)
+    if not user:
+        raise HTTPException(status_code=401)
+    return JSONResponse(calculation_status.get(user, {"status": "idle"}))
 
-    criteria_cols = ['g1', 'g2', 'g3', 'g4', 'g5']
-    criteria_keys = ['price', 'departure', 'travel_time', 'stops', 'stay']
-    n = len(df)
+def run_calculation_task(user: str, config: PreferenceConfig):
+    global ranked_results, calculation_status
+    calculation_status[user] = {"status": "running", "progress": 0, "status_text": "Adatok előkészítése..."}
     
-    # 2. PROMETHEE Páros összehasonlítás
-    # matrix[i][j] = mennyivel preferáljuk az 'i' járatot a 'j' járatnál
-    pi_matrix = np.zeros((n, n))
+    try:
+        # 1. Adatok előkészítése
+        flight_data = filtered_flights[user]["data"]
+        df = pd.DataFrame(flight_data)
+        weights = ahp_weights[user]["weights"] # Sorrend: Ár, Időpont, Utazás, Átszállás, Tartózkodás
+        
+        calculation_status[user]["progress"] = 5
+        calculation_status[user]["status_text"] = "Kritérium értékek számítása..."
+        
+        # Kritérium értékek kiszámítása (MINDEN MINIMALIZÁLANDÓ)
+        df['g1'] = df['total_price_huf']
+        
+        def time_diff(row):
+            dep_time = pd.to_datetime(row['out_dep_time'])
+            diff = abs(dep_time.hour - config.ideal_departure_hour)
+            return min(diff, 24 - diff)
+        df['g2'] = df.apply(time_diff, axis=1)
+        
+        df['g3'] = df['out_duration_h'] + df['in_duration_h']
+        df['g4'] = df['out_stops'] + df['in_stops']
+        df['g5'] = (df['stay_days'] - config.ideal_stay_days).abs()
     
-    # Adatok konvertálása numpy tömbbé a gyorsabb elérésért
-    data_matrix = df[criteria_cols].values
-    
-    for i in range(n):
-        for j in range(n):
-            if i == j: continue
-            
-            total_pref = 0.0
-            for k in range(len(criteria_cols)):
-                # d = g(j) - g(i) -> Mivel minden kritériumunk MINIMALIZÁLANDÓ (költség jellegű),
-                # akkor preferáljuk i-t j-vel szemben, ha g(j) > g(i).
-                d = data_matrix[j, k] - data_matrix[i, k]
+        criteria_cols = ['g1', 'g2', 'g3', 'g4', 'g5']
+        criteria_keys = ['price', 'departure', 'travel_time', 'stops', 'stay']
+        n = len(df)
+        
+        calculation_status[user]["progress"] = 10
+        calculation_status[user]["status_text"] = f"Részletes összehasonlítás ({n} járat)..."
+        
+        # 2. PROMETHEE Páros összehasonlítás
+        pi_matrix = np.zeros((n, n))
+        data_matrix = df[criteria_cols].values
+        
+        step = max(1, n // 50)  # Update progress 50 times max
+        
+        for i in range(n):
+            if i % step == 0:
+                # 10% -> 90% range
+                prog = 10 + int((i / n) * 80)
+                calculation_status[user]["progress"] = prog
                 
-                if d > 0:
-                    pref_val = get_preference(d, config.configs[criteria_keys[k]])
-                    total_pref += weights[k] * pref_val
-            
-            pi_matrix[i, j] = total_pref
-
-    # 3. Flow számítás
-    phi_plus = np.sum(pi_matrix, axis=1) / (n - 1)  # Kilépő áramlás
-    phi_minus = np.sum(pi_matrix, axis=0) / (n - 1) # Belépő áramlás
-    phi_net = phi_plus - phi_minus                  # Nettó áramlás
-
-    df['phi_net'] = phi_net
+            for j in range(n):
+                if i == j: continue
+                
+                total_pref = 0.0
+                for k in range(len(criteria_cols)):
+                    d = data_matrix[j, k] - data_matrix[i, k]
+                    if d > 0:
+                        pref_val = get_preference(d, config.configs[criteria_keys[k]])
+                        total_pref += weights[k] * pref_val
+                
+                pi_matrix[i, j] = total_pref
     
-    # 4. Normalizált pontszámok a színkódoláshoz (0.0 - 1.0 skála)
-    # Minden kritériumnál megkeressük a legjobb és legrosszabb értéket a SZŰRT halmazban
-    for i, col in enumerate(criteria_cols):
-        c_min = df[col].min()
-        c_max = df[col].max()
-        if c_max == c_min:
-            df[f'score_{criteria_keys[i]}'] = 1.0
-        else:
-            # Mivel mindegyik minimalizálandó, a min a legjobb (1.0 pont)
-            df[f'score_{criteria_keys[i]}'] = (c_max - df[col]) / (c_max - c_min)
-
-    # Rangsorolás és mentés
-    final_list = df.sort_values('phi_net', ascending=False).to_dict('records')
-    ranked_results[user] = final_list
+        calculation_status[user]["progress"] = 90
+        calculation_status[user]["status_text"] = "Rangsorolás és mentés..."
     
-    return {"status": "success", "count": n}
+        # 3. Flow számítás
+        phi_plus = np.sum(pi_matrix, axis=1) / (n - 1)
+        phi_minus = np.sum(pi_matrix, axis=0) / (n - 1)
+        phi_net = phi_plus - phi_minus
+    
+        df['phi_net'] = phi_net
+        
+        # 4. Normalizált pontszámok
+        for i, col in enumerate(criteria_cols):
+            c_min = df[col].min()
+            c_max = df[col].max()
+            if c_max == c_min:
+                df[f'score_{criteria_keys[i]}'] = 1.0
+            else:
+                df[f'score_{criteria_keys[i]}'] = (c_max - df[col]) / (c_max - c_min)
+    
+        # Rangsorolás és mentés
+        final_list = df.sort_values('phi_net', ascending=False).to_dict('records')
+        ranked_results[user] = final_list
+        
+        calculation_status[user] = {
+            "status": "done",
+            "progress": 100,
+            "count": n
+        }
+        
+    except Exception as e:
+        print(f"HIBA: {e}")
+        calculation_status[user] = {
+            "status": "error", 
+            "progress": 0,
+            "error": str(e)
+        }
 
 # --- ACCOMMODATION RESULTS ---
 class StayPreferenceConfig(BaseModel):

@@ -575,9 +575,9 @@
                 <thead>
                     <tr>
                         <th>Rang</th>
-                        <th>Ár (Ft)</th>
+                        <th>Ár (oda-vissza)</th>
                         <th>Indulás</th>
-                        <th>Utazás (h)</th>
+                        <th>Utazás (átlag h)</th>
                         <th>Átszállás</th>
                         <th>Tartózkodás</th>
                         <th>Relevancia</th>
@@ -625,7 +625,7 @@
                             <div
                                 class="score-cell tooltip {% if score > 0.8 %}score-green{% elif score > 0.4 %}score-yellow{% else %}score-red{% endif %}">
                                 {% if score > 0.8 %}🟢{% elif score > 0.4 %}🟡{% else %}🔴{% endif %}
-                                {{ "%.1f"|format(flight.out_duration_h + flight.in_duration_h) }}h
+                                {{ "%.1f"|format((flight.out_duration_h + flight.in_duration_h) / 2) }}h
                                 <span class="tooltiptext">Saját súlyozásával: {{ "%.2f"|format(flight.score_travel_time
                                     * weights[2]) }}</span>
                             </div>
@@ -810,7 +810,7 @@
                 <div class="flight-section">
                     <h3>📊 Összesítés</h3>
                     <div class="flight-detail">
-                        <strong>Összes ár:</strong>
+                        <strong>Teljes ár:</strong>
                         <span style="font-size: 18px; font-weight: 700; color: #235B2A;">
                             ${flight.total_price_huf ? flight.total_price_huf.toLocaleString('hu-HU') : 'N/A'} Ft
                         </span>

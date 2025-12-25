@@ -168,70 +168,81 @@
             <div class="section">
                 <h3>💰 Ár érzékenység</h3>
                 <select id="price_type">
-                    <option value="usual" selected>Szigorú - Bármilyen árkülönbség számít</option>
-                    <option value="v-shape">Folyamatos - Minél nagyobb a különbség, annál fontosabb</option>
-                    <option value="linear">Toleráns - Egy határon túl kezd el számítani</option>
+                    <option value="">-- Válassz hozzáállást --</option>
+                    <option value="usual" selected>Szigorú - Az olcsóbb egyértelműen jobb!</option>
+                    <option value="v-shape">Fokozatos - Minél drágább, annál rosszabb</option>
+                    <option value="linear">Rugalmas - Pár forint különbség nem számít, de azon túl minél drágább annál
+                        rosszabb</option>
                 </select>
                 <div class="input-group">
-                    <label id="price_q_label">Ameddig nem számít (Ft)</label>
+                    <label id="price_q_label">Küszöb 1</label>
                     <input type="number" id="price_q" value="0">
                 </div>
                 <div class="input-group">
-                    <label id="price_p_label">Mekkora különbség már maximális (Ft)</label>
+                    <label id="price_p_label">Küszöb 2</label>
                     <input type="number" id="price_p" value="10000">
                 </div>
+                <div class="explanation" id="price_explanation">ℹ️ Válassz egy módot a magyarázathoz</div>
             </div>
 
             <!-- Rating -->
             <div class="section">
-                <h3>star Értékelés (0-100)</h3>
+                <h3>⭐ Értékelés (0-10)</h3>
                 <select id="rating_type">
-                    <option value="usual">Szigorú - Bármilyen pontkülönbség számít</option>
-                    <option value="v-shape" selected>Folyamatos - Minél magasabb, annál jobb</option>
-                    <option value="linear">Toleráns - Csak jelentős különbség számít</option>
+                    <option value="">-- Válassz hozzáállást --</option>
+                    <option value="usual">Szigorú - A legmagasabb pontszámú kell</option>
+                    <option value="v-shape" selected>Fokozatos - Minél alacsonyabb, annál rosszabb</option>
+                    <option value="linear">Rugalmas - Kicsi pontkülönbség nem számít</option>
                 </select>
                 <div class="input-group">
-                    <label id="rating_q_label">Ameddig nem számít (pont)</label>
-                    <input type="number" id="rating_q" value="5">
+                    <label id="rating_q_label">Küszöb 1</label>
+                    <input type="number" id="rating_q" value="0.5" step="0.1">
                 </div>
                 <div class="input-group">
-                    <label id="rating_p_label">Mekkora előny már maximális (pont)</label>
-                    <input type="number" id="rating_p" value="20">
+                    <label id="rating_p_label">Küszöb 2</label>
+                    <input type="number" id="rating_p" value="2" step="0.1">
                 </div>
+                <div class="explanation" id="rating_explanation">ℹ️ Válassz egy módot a magyarázathoz</div>
             </div>
 
             <!-- Reviews -->
             <div class="section">
                 <h3>💬 Népszerűség (Vélemények száma)</h3>
                 <select id="reviews_type">
-                    <option value="v-shape" selected>Fokozatosan fontosabb a több vélemény</option>
-                    <option value="u-shape">Csak egy bizonyos küszöb felett számít</option>
+                    <option value="">-- Válassz hozzáállást --</option>
+                    <option value="v-shape" selected>Fokozatos - Minél több vélemény, annál jobb</option>
+                    <option value="linear">Rugalmas - Pár vélemény eltérés nem számít</option>
+                    <option value="usual">Szigorú - A legtöbb véleményű kell</option>
                 </select>
                 <div class="input-group">
-                    <label>Küszöb (db)</label>
+                    <label id="reviews_q_label">Küszöb 1</label>
                     <input type="number" id="reviews_q" value="10">
                 </div>
                 <div class="input-group">
-                    <label>Maximum előny (db)</label>
+                    <label id="reviews_p_label">Küszöb 2</label>
                     <input type="number" id="reviews_p" value="100">
                 </div>
+                <div class="explanation" id="reviews_explanation">ℹ️ Válassz egy módot a magyarázathoz</div>
             </div>
 
             <!-- Distance -->
             <div class="section">
                 <h3>📍 Távolság a belvárostól</h3>
                 <select id="distance_type">
-                    <option value="v-shape" selected>Folyamatosan rosszabb, ha messzebb van</option>
-                    <option value="usual">Csak akkor jobb, ha közelebb van</option>
+                    <option value="">-- Válassz hozzáállást --</option>
+                    <option value="v-shape" selected>Fokozatos - Minél messzebb, annál rosszabb</option>
+                    <option value="linear">Rugalmas - Pár méter nem számít</option>
+                    <option value="usual">Szigorú - A legközelebbi kell</option>
                 </select>
                 <div class="input-group">
-                    <label>Ameddig nem távolság (km)</label>
+                    <label id="distance_q_label">Küszöb 1</label>
                     <input type="number" id="distance_q" value="0.5" step="0.1">
                 </div>
                 <div class="input-group">
-                    <label>Amitől már túl messze van (km)</label>
+                    <label id="distance_p_label">Küszöb 2</label>
                     <input type="number" id="distance_p" value="5" step="0.5">
                 </div>
+                <div class="explanation" id="distance_explanation">ℹ️ Válassz egy módot a magyarázathoz</div>
             </div>
         </div>
 
@@ -244,29 +255,108 @@
     </div>
 
     <script>
-        const criteria = ['price', 'rating', 'reviews', 'distance'];
+        const units = { price: 'Ft', rating: 'pont', reviews: 'db', distance: 'km' };
 
-        function updateUI() {
-            criteria.forEach(c => {
-                const type = document.getElementById(c + '_type').value;
-                const qInput = document.getElementById(c + '_q');
-                const pInput = document.getElementById(c + '_p');
+        const explanations = {
+            price: {
+                usual: "Szigorú: A legolcsóbb kell! Akár 100 Ft különbség miatt is az olcsóbbat választom.",
+                "v-shape": "Fokozatos: Minél drágább, annál rosszabb. ({p} különbség felett már sokkal drágábbnak érzem)",
+                "linear": "Rugalmas: {q} nem számít, de azon túl minél drágább, annál rosszabb.",
+            },
+            rating: {
+                usual: "Szigorú: A legmagasabb pontszámú kell.",
+                "v-shape": "Fokozatos: Minél alacsonyabb a pontszám, annál rosszabb.",
+                "linear": "Rugalmas: {q} pont különbséget még elnézek, de {p} ponttal rosszabb értékelés már kizáró ok."
+            },
+            reviews: {
+                "v-shape": "Fokozatos: Minél több vélemény, annál jobb.",
+                "linear": "Rugalmas: Ha nincs legalább {p}-vel több vélemény, akkor mindegy.",
+                usual: "Szigorú: A legtöbb véleményű kell."
+            },
+            distance: {
+                "v-shape": "Fokozatos: Minél messzebb, annál rosszabb.",
+                "linear": "Rugalmas: {q} km eltérés még nem gond, de {p} km plusz séta már sok.",
+                usual: "Szigorú: A legközelebbi kell."
+            }
+        };
 
-                if (type === 'usual') {
-                    if (qInput) qInput.closest('.input-group').classList.add('disabled');
-                    if (pInput) pInput.closest('.input-group').classList.add('disabled');
-                } else if (type === 'v-shape') {
-                    if (qInput) qInput.closest('.input-group').classList.add('disabled');
-                    if (pInput) pInput.closest('.input-group').classList.remove('disabled');
-                } else {
-                    if (qInput) qInput.closest('.input-group').classList.remove('disabled');
-                    if (pInput) pInput.closest('.input-group').classList.remove('disabled');
-                }
-            });
+        const labelConfigs = {
+            usual: { q: "(Nem kell beállítás)", p: "(Nem kell beállítás)", showQ: false, showP: false },
+            "v-shape": { q: "(Nem használt)", p: "Mekkora a kritikus különbség?", showQ: false, showP: true },
+            "u-shape": { q: "Mekkora különbség fér még bele?", p: "(Nem használt)", showQ: true, showP: false },
+            level: { q: "Indifferencia", p: "Preferencia", showQ: true, showP: true },
+            linear: { q: "Mekkora különbség nem számít még?", p: "Mekkora különbség ami már döntő?", showQ: true, showP: true }
+        };
+
+        const specificLabels = {
+            price: {
+                "v-shape": { p: "Mekkora az az árkülönbség, ami felett már szerinted sokkal drágább egy szállás egy másiknál?" },
+                "linear": { q: "Mennyi az a 'pár forint' ami nem számít?", p: "Honnan számít már nagyon soknak?" }
+            },
+            rating: {
+                "v-shape": { p: "Mennyivel rosszabb értékelés az, ami már nagyon számít?" },
+                "linear": { q: "Hány pont eltérés nem számít még?", p: "Hány pont eltérés már kritikus?" }
+            },
+            reviews: {
+                "linear": { p: "Mennyivel több vélemény kell hogy döntsön?" }
+            },
+            distance: {
+                "v-shape": { p: "Hány km plusz távolság az, ami már nagyon zavar?" },
+                "linear": { q: "Hány km séta nem számít még?", p: "Hány km felett érzed túl messzinek?" }
+            }
+        };
+
+        function updateCriterionUI(criterion) {
+            const type = document.getElementById(criterion + '_type').value;
+            const qWrapper = document.getElementById(criterion + '_q').closest('.input-group');
+            const pWrapper = document.getElementById(criterion + '_p').closest('.input-group');
+            const qLabel = document.getElementById(criterion + '_q_label');
+            const pLabel = document.getElementById(criterion + '_p_label');
+            const explanationDiv = document.getElementById(criterion + '_explanation');
+
+            if (!type) {
+                qWrapper.classList.add('disabled');
+                pWrapper.classList.add('disabled');
+                explanationDiv.innerHTML = "ℹ️ Válassz egy módot a magyarázathoz";
+                return;
+            }
+
+            const config = labelConfigs[type];
+            let qText = config.q;
+            let pText = config.p;
+
+            if (specificLabels[criterion] && specificLabels[criterion][type]) {
+                if (specificLabels[criterion][type].q) qText = specificLabels[criterion][type].q;
+                if (specificLabels[criterion][type].p) pText = specificLabels[criterion][type].p;
+            }
+
+            qLabel.innerText = qText;
+            pLabel.innerText = pText;
+
+            if (config.showQ) qWrapper.classList.remove('disabled');
+            else qWrapper.classList.add('disabled');
+
+            if (config.showP) pWrapper.classList.remove('disabled');
+            else pWrapper.classList.add('disabled');
+
+            // Update explanation text
+            let txt = explanations[criterion][type] || "";
+            const qVal = document.getElementById(criterion + '_q').value || 0;
+            const pVal = document.getElementById(criterion + '_p').value || 0;
+            const unit = units[criterion];
+
+            txt = txt.replace(/{q}/g, `<b style="color:#235B2A">${qVal} ${unit}</b>`)
+                .replace(/{p}/g, `<b style="color:#235B2A">${pVal} ${unit}</b>`);
+            explanationDiv.innerHTML = "ℹ️ " + txt;
         }
 
+        const criteria = ['price', 'rating', 'reviews', 'distance'];
+
         criteria.forEach(c => {
-            document.getElementById(c + '_type').addEventListener('change', updateUI);
+            document.getElementById(c + '_type').addEventListener('change', () => updateCriterionUI(c));
+            document.getElementById(c + '_q').addEventListener('input', () => updateCriterionUI(c));
+            document.getElementById(c + '_p').addEventListener('input', () => updateCriterionUI(c));
+            updateCriterionUI(c); // Init
         });
 
         async function calculate() {
@@ -275,6 +365,19 @@
             btn.innerText = "⏳ Számítás...";
 
             const configs = {};
+            // Validate all selected
+            let allSelected = true;
+            criteria.forEach(c => {
+                if (!document.getElementById(c + '_type').value) allSelected = false;
+            });
+
+            if (!allSelected) {
+                alert("Kérlek válassz hozzáállást minden kritériumhoz!");
+                btn.disabled = false;
+                btn.innerText = "Rangsorolás indítása ➔";
+                return;
+            }
+
             criteria.forEach(c => {
                 configs[c] = {
                     type: document.getElementById(c + '_type').value,
@@ -297,8 +400,6 @@
                 btn.innerText = "Rangsorolás indítása ➔";
             }
         }
-
-        updateUI();
     </script>
 </body>
 
