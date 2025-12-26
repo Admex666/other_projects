@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eredmények - Optivoya</title>
+    <link rel="icon" type="image/png" href="/static/logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #235B2A 0%, #1a4520 100%);
+            color: white;
+            padding: 30px 20px;
+            border-radius: 20px;
+            margin-bottom: 40px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(35, 91, 42, 0.2);
+        }
+
+        h1 {
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .results-list {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            display: flex;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+            position: relative;
+        }
+
+        .result-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .rank-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: #FFD700;
+            color: #333;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+        }
+
+        .card-img {
+            width: 300px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .card-content {
+            padding: 25px;
+            flex-grow: 1;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .destination-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .destination-country {
+            color: #777;
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        .match-score {
+            text-align: right;
+        }
+
+        .score-val {
+            font-size: 28px;
+            font-weight: 700;
+            color: #235B2A;
+            display: block;
+        }
+
+        .score-label {
+            font-size: 12px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .explanation-box {
+            background: #f1f8f3;
+            border-left: 4px solid #235B2A;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .explanation-text {
+            color: #2d5a32;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .metric-item {
+            text-align: center;
+        }
+
+        .metric-val {
+            display: block;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .metric-label {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .actions {
+            margin-top: 20px;
+            text-align: right;
+        }
+
+        .btn-view {
+            text-decoration: none;
+            color: white;
+            background: #235B2A;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            display: inline-block;
+        }
+
+        @media (max-width: 768px) {
+            .result-card {
+                flex-direction: column;
+            }
+
+            .card-img {
+                width: 100%;
+                height: 200px;
+            }
+
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <h1>🏆 Top Úticélok Neked</h1>
+            <p>A beállított szempontok alapján ezek a legalkalmasabb helyek.</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="results-list" id="resultsList">
+            <!-- Populated by JS -->
+        </div>
+
+        <div style="text-align: center; margin-top: 40px;">
+            <a href="/destination-matcher" style="color: #666; text-decoration: none;">🔄 Új keresés indítása</a>
+        </div>
+    </div>
+
+    <script>
+        // REAL DATA from Jinja2
+        // {% if results %}
+        const results = {{ results | tojson }};
+        // {% else %}
+        const results = [];
+        // {% endif %}
+
+        const list = document.getElementById('resultsList');
+
+        results.forEach((res, index) => {
+            const card = document.createElement('div');
+            card.className = 'result-card';
+            card.innerHTML = `
+                <div class="rank-badge">${res.rank}</div>
+                <img src="${res.image}" class="card-img" alt="${res.name}">
+                <div class="card-content">
+                    <div class="card-header">
+                        <div>
+                            <div class="destination-title">${res.name}</div>
+                            <div class="destination-country">${res.country}</div>
+                        </div>
+                        <div class="match-score">
+                            <span class="score-val">${res.score}%</span>
+                            <span class="score-label">Egyezés</span>
+                        </div>
+                    </div>
+                    
+                    <div class="explanation-box">
+                        <div class="explanation-text">💡 <b>Miért ez?</b> ${res.explanation}</div>
+                    </div>
+
+                    <div class="metrics-grid">
+                        <div class="metric-item">
+                            <span class="metric-val">${res.metrics.temp}</span>
+                            <span class="metric-label">Időjárás</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-val">${res.metrics.cost}</span>
+                            <span class="metric-label">Költség</span>
+                        </div>
+                         <div class="metric-item">
+                            <span class="metric-val">${res.metrics.safety}</span>
+                            <span class="metric-label">Biztonság</span>
+                        </div>
+                         <div class="metric-item">
+                            <span class="metric-val">${res.metrics.vibe}</span>
+                            <span class="metric-label">Hangulat</span>
+                        </div>
+                    </div>
+                    
+                    <div class="actions">
+                        <a href="/accommodation-intelligence?city=${res.name}" class="btn-view">Szállások keresése ➔</a>
+                    </div>
+                </div>
+            `;
+            list.appendChild(card);
+        });
+    </script>
+</body>
+
+</html>

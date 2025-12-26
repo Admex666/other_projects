@@ -100,6 +100,41 @@
             border: 1px solid #bbdefb;
         }
 
+        .loading-bar-container {
+            width: 100%;
+            height: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .loading-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #235B2A, #90DC25);
+            border-radius: 5px;
+            animation: progressIndeterminate 2s infinite linear;
+        }
+
+        @keyframes progressIndeterminate {
+            0% {
+                width: 0%;
+                margin-left: 0;
+            }
+
+            50% {
+                width: 70%;
+                margin-left: 15%;
+            }
+
+            100% {
+                width: 100%;
+                margin-left: 100%;
+            }
+        }
+
         /* Mobile Adjustments */
         @media (max-width: 768px) {
             body {
@@ -156,7 +191,7 @@
             </div>
             <div class="input-group">
                 <label>Ország</label>
-                <input type="text" id="country" placeholder="Pl: Hungary" value="Hungary">
+                <input type="text" id="country" placeholder="Pl: Magyarország" value="Magyarország">
             </div>
             <div class="input-group">
                 <label>Érkezés</label>
@@ -187,7 +222,12 @@
 
         <button id="searchBtn" class="btn-search" onclick="startSearch()">Szállások keresése</button>
 
-        <div id="status"></div>
+        <div id="status">
+            <div id="statusText"></div>
+            <div class="loading-bar-container" id="loadingBar">
+                <div class="loading-bar"></div>
+            </div>
+        </div>
         <div id="results"></div>
     </div>
 
@@ -210,6 +250,8 @@
         async function startSearch() {
             const btn = document.getElementById('searchBtn');
             const statusDiv = document.getElementById('status');
+            const statusText = document.getElementById('statusText');
+            const loadingBar = document.getElementById('loadingBar');
             const resultsDiv = document.getElementById('results');
 
             const payload = {
@@ -230,7 +272,8 @@
             btn.disabled = true;
             statusDiv.style.display = 'block';
             statusDiv.className = 'status-running';
-            statusDiv.innerText = "🔍 Keresés indítása... (ez 1-2 percig is eltarthat)";
+            statusText.innerText = "🔍 Keresés indítása... (ez 1-2 percig is eltarthat)";
+            loadingBar.style.display = 'block';
             resultsDiv.innerHTML = "";
 
             await fetch('/start-accommodation-search', {
@@ -246,11 +289,18 @@
             const response = await fetch('/api/accommodation-status');
             const data = await response.json();
             const statusDiv = document.getElementById('status');
+            const statusText = document.getElementById('statusText');
+            const loadingBar = document.getElementById('loadingBar');
 
             if (data.status === 'running') {
-                statusDiv.innerText = "⏳ Szálláshelyek gyűjtése folyamatban...";
+                statusText.innerText = data.status_text || "⏳ Szálláshelyek gyűjtése folyamatban...";
+                if (data.progress !== undefined) {
+                    loadingBar.querySelector('.loading-bar').style.width = data.progress + "%";
+                    loadingBar.querySelector('.loading-bar').style.animation = 'none';
+                }
             } else if (data.status === 'done') {
                 clearInterval(pollInterval);
+                loadingBar.style.display = 'none';
                 statusDiv.style.display = 'none';
                 document.getElementById('searchBtn').disabled = false;
 
@@ -270,7 +320,8 @@
                 `;
             } else if (data.status === 'error') {
                 clearInterval(pollInterval);
-                statusDiv.innerText = "❌ Hiba történt: " + data.error;
+                loadingBar.style.display = 'none';
+                statusText.innerText = "❌ Hiba történt: " + data.error;
                 document.getElementById('searchBtn').disabled = false;
             }
         }

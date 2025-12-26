@@ -141,6 +141,47 @@
             cursor: not-allowed;
         }
 
+        .loader {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .loading-bar-container {
+            width: 100%;
+            height: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .loading-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #235B2A, #90DC25);
+            border-radius: 5px;
+            animation: progressIndeterminate 2s infinite linear;
+        }
+
+        @keyframes progressIndeterminate {
+            0% {
+                width: 0%;
+                margin-left: 0;
+            }
+
+            50% {
+                width: 70%;
+                margin-left: 15%;
+            }
+
+            100% {
+                width: 100%;
+                margin-left: 100%;
+            }
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 20px 15px;
@@ -159,9 +200,9 @@
         <p class="subtitle">{{ stay_count }} szűrt szálláshely - állítsd be, hogyan értékeljük őket</p>
 
         <div class="progress-container">
-            <div class="progress-bar" id="progressBar" style="width: 80%"></div>
+            <div class="progress-bar" id="progressBar" style="width: 0%"></div>
         </div>
-        <div class="progress-text">Folyamat: Részletes igények beállítása</div>
+        <div class="progress-text" id="progressText">Folyamat: 0 / 4 beállítva</div>
 
         <div id="criteriaList">
             <!-- Price -->
@@ -248,9 +289,17 @@
 
         <div style="display: flex; gap: 15px; margin-top: 30px;">
             <button class="btn-calculate" onclick="window.location.href='/accommodation-intelligence-ahp'"
-                style="background: #666; flex: 1;">⬅️ Vissza</button>
-            <button id="calcBtn" onclick="calculate()" class="btn-calculate" style="flex: 2;">Rangsorolás indítása
+                style="background: #666; flex: 1; margin-top: 0">⬅️ Vissza</button>
+            <button id="calcBtn" onclick="calculate()" class="btn-calculate" style="flex: 2; margin-top: 0">Rangsorolás
+                indítása
                 ➔</button>
+        </div>
+
+        <div id="loader" class="loader">
+            <p>⏳ Szállások kiértékelése és rangsorolása folyamatban...</p>
+            <div class="loading-bar-container" style="display: block;">
+                <div class="loading-bar"></div>
+            </div>
         </div>
     </div>
 
@@ -306,6 +355,24 @@
             }
         };
 
+        function updateProgress() {
+            const criteria = ['price', 'rating', 'reviews', 'distance'];
+            let completed = 0;
+
+            criteria.forEach(c => {
+                const type = document.getElementById(c + '_type').value;
+                if (type) {
+                    completed++;
+                }
+            });
+
+            const progress = (completed / 4) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').innerText = `Folyamat: ${completed} / 4 beállítva`;
+
+            document.getElementById('calcBtn').disabled = (completed < 4);
+        }
+
         function updateCriterionUI(criterion) {
             const type = document.getElementById(criterion + '_type').value;
             const qWrapper = document.getElementById(criterion + '_q').closest('.input-group');
@@ -318,6 +385,8 @@
                 qWrapper.classList.add('disabled');
                 pWrapper.classList.add('disabled');
                 explanationDiv.innerHTML = "ℹ️ Válassz egy módot a magyarázathoz";
+                // Still update progress even if deselected
+                updateProgress();
                 return;
             }
 
@@ -348,6 +417,8 @@
             txt = txt.replace(/{q}/g, `<b style="color:#235B2A">${qVal} ${unit}</b>`)
                 .replace(/{p}/g, `<b style="color:#235B2A">${pVal} ${unit}</b>`);
             explanationDiv.innerHTML = "ℹ️ " + txt;
+
+            updateProgress();
         }
 
         const criteria = ['price', 'rating', 'reviews', 'distance'];
@@ -359,10 +430,19 @@
             updateCriterionUI(c); // Init
         });
 
+        let calcPollInterval;
+
         async function calculate() {
             const btn = document.getElementById('calcBtn');
+            const loader = document.getElementById('loader');
+            const loaderText = loader.querySelector('p');
+            const loadingBarInner = loader.querySelector('.loading-bar');
+
             btn.disabled = true;
-            btn.innerText = "⏳ Számítás...";
+            loader.style.display = 'block';
+            loaderText.innerText = "⏳ Rangsorolás indítása...";
+            loadingBarInner.style.width = '0%';
+            loadingBarInner.style.animation = 'none';
 
             const configs = {};
             // Validate all selected
@@ -374,7 +454,7 @@
             if (!allSelected) {
                 alert("Kérlek válassz hozzáállást minden kritériumhoz!");
                 btn.disabled = false;
-                btn.innerText = "Rangsorolás indítása ➔";
+                loader.style.display = 'none';
                 return;
             }
 
@@ -386,18 +466,58 @@
                 };
             });
 
-            const response = await fetch('/api/calculate-stay-results', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ configs })
-            });
+            try {
+                const response = await fetch('/api/calculate-stay-results', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ configs })
+                });
 
-            if (response.ok) {
-                window.location.href = '/accommodation-intelligence-results';
-            } else {
-                alert("Hiba történt a számítás során.");
+                if (response.ok) {
+                    calcPollInterval = setInterval(checkCalculationStatus, 500);
+                } else {
+                    const err = await response.json();
+                    alert("Hiba: " + (err.detail || "Ismeretlen hiba"));
+                    btn.disabled = false;
+                    loader.style.display = 'none';
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Hálózati hiba.");
                 btn.disabled = false;
-                btn.innerText = "Rangsorolás indítása ➔";
+                loader.style.display = 'none';
+            }
+        }
+
+        async function checkCalculationStatus() {
+            try {
+                const response = await fetch('/api/stay-calculation-status');
+                const data = await response.json();
+                const loader = document.getElementById('loader');
+                const loaderText = loader.querySelector('p');
+                const loadingBarInner = loader.querySelector('.loading-bar');
+
+                if (data.status === 'running') {
+                    loaderText.innerText = "⏳ " + (data.status_text || "Számítás folyamatban...");
+                    if (data.progress !== undefined) {
+                        loadingBarInner.style.width = data.progress + "%";
+                    }
+                } else if (data.status === 'done') {
+                    clearInterval(calcPollInterval);
+                    loadingBarInner.style.width = "100%";
+                    loaderText.innerText = "✅ Kész! Átirányítás...";
+                    setTimeout(() => {
+                        window.location.href = '/accommodation-intelligence-results';
+                    }, 500);
+                } else if (data.status === 'error') {
+                    clearInterval(calcPollInterval);
+                    alert("Hiba: " + data.error);
+                    const btn = document.getElementById('calcBtn');
+                    btn.disabled = false;
+                    loader.style.display = 'none';
+                }
+            } catch (e) {
+                console.error("Status check error", e);
             }
         }
     </script>

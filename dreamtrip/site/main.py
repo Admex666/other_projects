@@ -11,6 +11,7 @@ import secrets
 from pydantic import BaseModel
 from typing import Dict, Any, List, Optional
 import numpy as np
+import json
 
 app = FastAPI()
 
@@ -57,6 +58,66 @@ def get_current_user(request: Request):
 @app.get("/", response_class=HTMLResponse)
 async def login_page(request: Request):
     return templates.TemplateResponse("login.html", {"request": request})
+
+# ===== DESTINATION MATCHING MODELS =====
+class DestConstraints(BaseModel):
+    month: str # "any" or "1"-"12"
+    duration: int
+    origin: str
+    budget_daily: float
+    budget_strictness: str
+    exclusions: List[str]
+
+class DestCriteria(BaseModel):
+    criteria: List[str]
+
+class DestAHP(BaseModel):
+    comparisons: Dict[str, float]
+
+class DestPreferenceDetails(BaseModel):
+    weather_temp: float
+    weather_rain: str # strict, moderate, loose
+    cost_pref: str # min, value
+    vibe_urban_nature: int # 0-100
+    vibe_calm_party: int # 0-100
+    vibe_history: int # 0-10
+    safety_level: str # high, mid, low
+    crowds_pref: str # hidden, balanced, popular
+    travel_time_max: int
+
+# Global Data
+destination_db = []
+destination_sessions = {} # user_id -> { "filtered": [], "criteria": [], "weights": [], "constraints": {} }
+unique_user_id_counter = 0
+
+def load_destinations():
+    global destination_db
+    try:
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        json_path = os.path.join(base_dir, "data", "destinations.json")
+        with open(json_path, "r", encoding="utf-8") as f:
+            destination_db = json.load(f)
+        print(f"Loaded {len(destination_db)} destinations from {json_path}")
+    except Exception as e:
+        print(f"Error loading destinations: {e}")
+        destination_db = []
+
+load_destinations()
+
+@app.on_event("startup")
+async def startup_event():
+    print("SERVER RESTARTING - RELOADED LATEST CODE")
+    load_destinations()
+
+@app.post("/login")
+async def login(username: str = Form(...), password: str = Form(...)):
+    if verify_credentials(username, password):
+        token = create_session(username)
+        response = RedirectResponse(url="/home", status_code=303)
+        response.set_cookie(key="session_token", value=token, httponly=True)
+        return response
+    return RedirectResponse(url="/?error=invalid", status_code=303)
+
 
 @app.post("/login")
 async def login(username: str = Form(...), password: str = Form(...)):
@@ -214,7 +275,17 @@ async def start_search(params: SearchParams, background_tasks: BackgroundTasks):
 # ===== ACCOMMODATION SCRAPER API =====
 def run_accommodation_scraper(p: StaySearchParams):
     global accommodation_results, raw_stay_data
-    accommodation_results = {"status": "running", "data": None, "error": None}
+    accommodation_results = {"status": "running", "progress": 0, "data": None, "error": None}
+    
+    def update_progress(p_val):
+        accommodation_results["progress"] = p_val
+        if p_val < 10:
+             accommodation_results["status_text"] = "Böngésző indítása..."
+        elif p_val < 20:
+             accommodation_results["status_text"] = "Csatlakozás a szolgáltatóhoz..."
+        else:
+             accommodation_results["status_text"] = f"Szállásadatok betöltése... ({p_val}%)"
+
     try:
         # Árváltás (becsült 400 HUF/EUR) a scrapernek
         p_min_eur = p.price_min / 400 if hasattr(p, 'price_min') else 0
@@ -228,7 +299,8 @@ def run_accommodation_scraper(p: StaySearchParams):
             end_date=p.end_date,
             rooms=p.rooms,
             adults=p.adults,
-            children=p.children
+            children=p.children,
+            progress_callback=update_progress
         )
         
         if not raw_results or 'entries' not in raw_results or not raw_results['entries']:
@@ -752,6 +824,13 @@ class StayPreferenceConfig(BaseModel):
     configs: Dict[str, CriterionParam]
 
 stay_ranked_results = {}
+stay_calculation_status = {}
+
+@app.get("/api/stay-calculation-status")
+async def get_stay_calculation_status(request: Request):
+    user = get_current_user(request)
+    if not user: raise HTTPException(status_code=401)
+    return JSONResponse(stay_calculation_status.get(user, {"status": "idle"}))
 
 @app.get("/accommodation-intelligence-preferences", response_class=HTMLResponse)
 async def stay_preferences_page(request: Request):
@@ -768,71 +847,105 @@ async def stay_preferences_page(request: Request):
     })
 
 @app.post("/api/calculate-stay-results")
-async def calculate_stay_results(config: StayPreferenceConfig, request: Request):
+async def calculate_stay_results(config: StayPreferenceConfig, background_tasks: BackgroundTasks, request: Request):
     user = get_current_user(request)
     if not user or user not in filtered_stays or user not in stay_ahp_weights:
         raise HTTPException(status_code=400, detail="Missing data")
 
-    df = pd.DataFrame(filtered_stays[user]["data"])
-    weights = stay_ahp_weights[user] # price, rating, reviews, distance
-    
-    # Ensure price_huf exists (fallback for stale session data)
-    if 'price_huf' not in df.columns:
-        if 'price_per_night_eur' in df.columns:
-            df['price_huf'] = df['price_per_night_eur'] * 400
-        else:
-            df['price_huf'] = 0
+    background_tasks.add_task(run_stay_calculation_task, user, config)
+    return {"message": "Calculation started"}
 
-    # g1: Price - MIN
-    df['g1'] = df['price_huf']
-    # g2: Rating - MAX
-    df['g2'] = df['rating_score']
-    # g3: Reviews - MAX
-    df['g3'] = df['rating_count']
-    # g4: Distance - MIN
-    df['g4'] = df['distance_km']
+def run_stay_calculation_task(user: str, config: StayPreferenceConfig):
+    global stay_calculation_status, stay_ranked_results
+    stay_calculation_status[user] = {"status": "running", "progress": 0, "status_text": "Adatok előkészítése..."}
 
-    # Direction: 1 for MAX, -1 for MIN (for the d = i - j logic)
-    directions = [-1, 1, 1, -1]
-    cols = ['g1', 'g2', 'g3', 'g4']
-    keys = ['price', 'rating', 'reviews', 'distance']
-    n = len(df)
-    pi_matrix = np.zeros((n, n))
-    data = df[cols].values
+    try:
+        df = pd.DataFrame(filtered_stays[user]["data"])
+        weights = stay_ahp_weights[user] # price, rating, reviews, distance
+        
+        # Ensure price_huf exists (fallback for stale session data)
+        if 'price_huf' not in df.columns:
+            if 'price_per_night_eur' in df.columns:
+                df['price_huf'] = df['price_per_night_eur'] * 400
+            else:
+                df['price_huf'] = 0
 
-    for i in range(n):
-        for j in range(n):
-            if i == j: continue
-            total_pref = 0.0
-            for k in range(len(cols)):
-                # We want i > j
-                if directions[k] == 1:
-                    d = data[i, k] - data[j, k]
-                else:
-                    d = data[j, k] - data[i, k]
-                
-                if d > 0:
-                    pref_val = get_preference(d, config.configs[keys[k]])
-                    total_pref += weights[k] * pref_val
-            pi_matrix[i, j] = total_pref
+        stay_calculation_status[user]["progress"] = 5
+        stay_calculation_status[user]["status_text"] = "Kritériumok normalizálása..."
 
-    phi_plus = np.sum(pi_matrix, axis=1) / (n - 1)
-    phi_minus = np.sum(pi_matrix, axis=0) / (n - 1)
-    df['phi_net'] = phi_plus - phi_minus
+        # g1: Price - MIN
+        df['g1'] = df['price_huf']
+        # g2: Rating - MAX
+        df['g2'] = df['rating_score']
+        # g3: Reviews - MAX
+        df['g3'] = df['rating_count']
+        # g4: Distance - MIN
+        df['g4'] = df['distance_km']
 
-    # Scores for UI
-    for i, col in enumerate(cols):
-        c_min, c_max = df[col].min(), df[col].max()
-        if c_max == c_min:
-            df[f'score_{keys[i]}'] = 1.0
-        else:
-            if directions[i] == 1: # MAX
-                df[f'score_{keys[i]}'] = (df[col] - c_min) / (c_max - c_min)
-            else: # MIN
-                df[f'score_{keys[i]}'] = (c_max - df[col]) / (c_max - c_min)
+        # Direction: 1 for MAX, -1 for MIN (for the d = i - j logic)
+        directions = [-1, 1, 1, -1]
+        cols = ['g1', 'g2', 'g3', 'g4']
+        keys = ['price', 'rating', 'reviews', 'distance']
+        n = len(df)
+        pi_matrix = np.zeros((n, n))
+        data = df[cols].values
 
-    stay_ranked_results[user] = df.sort_values('phi_net', ascending=False).to_dict('records')
-    return {"status": "success", "count": n}
+        stay_calculation_status[user]["progress"] = 10
+        stay_calculation_status[user]["status_text"] = f"Részletes összehasonlítás ({n} szállás)..."
+
+        step = max(1, n // 50) 
+        
+        for i in range(n):
+            if i % step == 0:
+                prog = 10 + int((i / n) * 80)
+                stay_calculation_status[user]["progress"] = prog
+
+            for j in range(n):
+                if i == j: continue
+                total_pref = 0.0
+                for k in range(len(cols)):
+                    # We want i > j
+                    if directions[k] == 1:
+                        d = data[i, k] - data[j, k]
+                    else:
+                        d = data[j, k] - data[i, k]
+                    
+                    if d > 0:
+                        pref_val = get_preference(d, config.configs[keys[k]])
+                        total_pref += weights[k] * pref_val
+                pi_matrix[i, j] = total_pref
+
+        stay_calculation_status[user]["progress"] = 90
+        stay_calculation_status[user]["status_text"] = "Rangsorolás és mentés..."
+
+        phi_plus = np.sum(pi_matrix, axis=1) / (n - 1)
+        phi_minus = np.sum(pi_matrix, axis=0) / (n - 1)
+        df['phi_net'] = phi_plus - phi_minus
+
+        # Scores for UI
+        for i, col in enumerate(cols):
+            c_min, c_max = df[col].min(), df[col].max()
+            if c_max == c_min:
+                df[f'score_{keys[i]}'] = 1.0
+            else:
+                if directions[i] == 1: # MAX
+                    df[f'score_{keys[i]}'] = (df[col] - c_min) / (c_max - c_min)
+                else: # MIN
+                    df[f'score_{keys[i]}'] = (c_max - df[col]) / (c_max - c_min)
+
+        stay_ranked_results[user] = df.sort_values('phi_net', ascending=False).to_dict('records')
+        
+        stay_calculation_status[user] = {
+            "status": "done",
+            "progress": 100,
+            "count": n
+        }
+    except Exception as e:
+        stay_calculation_status[user] = {
+            "status": "error",
+            "progress": 0,
+            "error": str(e)
+        }
 
 @app.get("/accommodation-intelligence-results", response_class=HTMLResponse)
 async def stay_results_page(request: Request):
@@ -847,6 +960,370 @@ async def stay_results_page(request: Request):
         "weights": stay_ahp_weights[user],
         "criteria_names": ["Ár", "Értékelés", "Népszerűség", "Távolság"]
     })
+
+@app.get("/destination-matcher", response_class=HTMLResponse)
+async def destination_matcher_page(request: Request):
+    return templates.TemplateResponse("destination_matcher.html", {"request": request})
+
+@app.get("/destination-criteria", response_class=HTMLResponse)
+async def destination_criteria_page(request: Request):
+    return templates.TemplateResponse("destination_criteria.html", {"request": request})
+
+@app.get("/destination-ahp", response_class=HTMLResponse)
+async def destination_ahp_page(request: Request):
+    user = get_current_user(request)
+    if not user: return RedirectResponse(url="/", status_code=303)
+    session = get_dest_session(user)
+    
+    # Transform simple list ["weather", "cost"] into objects for UI [{'id':'weather', 'name':'...'}]
+    crit_map = {
+        "weather": "Időjárás", "cost": "Költségek", "safety": "Biztonság", 
+        "vibe": "Hangulat", "crowds": "Tömeg", "travel_time": "Utazás"
+    }
+    selected_criteria = [{"id": c, "name": crit_map.get(c, c)} for c in session.get("criteria", [])]
+
+    return templates.TemplateResponse("destination_ahp.html", {
+        "request": request, 
+        "selected_criteria": selected_criteria
+    })
+
+@app.get("/destination-preferences", response_class=HTMLResponse)
+async def destination_preferences_page(request: Request):
+    user = get_current_user(request)
+    if not user: return RedirectResponse(url="/", status_code=303)
+    session = get_dest_session(user)
+    
+    selected_criteria = [{"id": c} for c in session.get("criteria", [])]
+    return templates.TemplateResponse("destination_preferences.html", {
+        "request": request,
+        "selected_criteria": selected_criteria
+    })
+
+@app.get("/destination-results", response_class=HTMLResponse)
+async def destination_results_page(request: Request):
+    user = get_current_user(request)
+    if not user: return RedirectResponse(url="/", status_code=303)
+    session = get_dest_session(user)
+    
+    return templates.TemplateResponse("destination_results.html", {
+        "request": request,
+        "results": session.get("results", [])
+    })
+
+# Helper to init session
+def get_dest_session(user):
+    if user not in destination_sessions:
+        destination_sessions[user] = {"filtered": [], "criteria": [], "weights": [], "constraints": {}}
+    return destination_sessions[user]
+
+@app.post("/api/destination-constraints")
+async def save_constraints(data: DestConstraints, request: Request):
+    user = get_current_user(request)
+    if not user: return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    global destination_db
+    if not destination_db:
+        print("Destination DB empty, attempting reload...")
+        try:
+            # Use absolute path relative to this file
+            base_dir = os.path.dirname(os.path.abspath(__file__))
+            json_path = os.path.join(base_dir, "data", "destinations.json")
+            with open(json_path, "r", encoding="utf-8") as f:
+                destination_db = json.load(f)
+            print(f"Reloaded {len(destination_db)} destinations from {json_path}")
+        except Exception as e:
+            print(f"Error re-loading destinations: {e}")
+
+    session = get_dest_session(user)
+    session["constraints"] = data.dict()
+    
+    filtered = []
+    print(f"Filtering {len(destination_db)} destinations with exclusions: {data.exclusions}")
+    
+    for dest in destination_db:
+        keep = True
+        
+        # 1. Exclusions
+        for excl in data.exclusions:
+            # Region checks
+            if excl == "region_asia" and dest.get("region") == "Asia": keep = False
+            if excl == "region_america" and dest.get("region") == "America": keep = False
+            if excl == "region_europe" and dest.get("region") == "Europe": keep = False
+            
+            # Type checks (using vibe/tags logic)
+            # We map "type_city" to high urban_scale, "type_beach" to high beach_scale
+            vibe = dest.get("vibe_metrics", {})
+            if excl == "type_city" and vibe.get("urban_scale", 0) > 0.7: keep = False
+            if excl == "type_beach" and vibe.get("beach_scale", 0) > 0.7: keep = False
+            
+            # Simple metadata checks? (visa not yet in DB, ignoring)
+
+        # 2. Budget (Simple pre-filter)
+        # If strict, filter out if cost > budget + 10% buffer
+        if keep and data.budget_strictness == "hard" and data.budget_daily > 0:
+            cost = dest["metrics"].get("cost_index_daily_eur", 0)
+            if cost > (data.budget_daily * 1.1):
+                keep = False
+
+        if keep:
+            filtered.append(dest)
+    
+    session["filtered"] = filtered
+    print(f"User {user} filtered destinations: {len(filtered)} remaining.")
+    
+    return {"status": "ok", "count": len(filtered)}
+
+@app.post("/api/destination-criteria")
+async def save_criteria(data: DestCriteria, request: Request):
+    user = get_current_user(request)
+    if not user: return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    session = get_dest_session(user)
+    session["criteria"] = data.criteria
+    print(f"User {user} selected criteria: {data.criteria}")
+    
+    return {"status": "ok"}
+
+@app.post("/api/destination-ahp")
+async def save_ahp(data: DestAHP, request: Request):
+    user = get_current_user(request)
+    if not user: return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    session = get_dest_session(user)
+    criteria = session.get("criteria", [])
+    if not criteria:
+        # Fallback if empty (should not happen if flow followed)
+        return JSONResponse({"error": "No criteria selected"}, status_code=400)
+    
+    n = len(criteria)
+    matrix = np.ones((n, n))
+    
+    # Fill matrix from pairwise inputs
+    for key, val in data.comparisons.items():
+        parts = key.split("_vs_")
+        if len(parts) == 2:
+            c1, c2 = parts
+            if c1 in criteria and c2 in criteria:
+                idx1 = criteria.index(c1)
+                idx2 = criteria.index(c2)
+                matrix[idx1, idx2] = val
+                matrix[idx2, idx1] = 1.0 / val
+
+    # Calculate weights
+    row_products = np.prod(matrix, axis=1)
+    if n > 0:
+        weights = np.power(row_products, 1.0/n)
+        total_w = np.sum(weights)
+        if total_w > 0:
+            normalized_weights = weights / total_w
+        else:
+            normalized_weights = np.ones(n) / n
+    else:
+        normalized_weights = []
+    
+    session["weights"] = normalized_weights.tolist()
+    print(f"User {user} AHP weights computed.")
+    
+    return {"status": "ok", "weights": session["weights"]}
+
+@app.post("/api/calculate-destinations")
+async def calculate_destinations(prefs: DestPreferenceDetails, request: Request):
+    user = get_current_user(request)
+    if not user: return JSONResponse({"error": "Unauthorized"}, status_code=401)
+    
+    session = get_dest_session(user)
+    dests = session.get("filtered", [])
+    criteria = session.get("criteria", [])
+    weights = session.get("weights", [])
+    
+    if not dests or not criteria:
+        return JSONResponse({"error": "Missing data (Dests or Criteria)"}, status_code=400)
+
+    n = len(dests)
+    k = len(criteria)
+    
+    # Default weights if missing
+    if not weights or len(weights) != k:
+        print(f"Warning: Weights missing or mismatch ({len(weights)} vs {k}). Using equal weights.")
+        weights = [1.0/k] * k
+    
+    # 1. Prepare Data Matrix (Raw extraction & normalization logic)
+    # We need to map criteria ID -> Value for each dest
+    # Higher is BETTER for logic below unless specified otherwise
+    
+    matrix = np.zeros((n, k))
+    
+    # Pre-computation helper
+    def get_criterion_value(dest, crit_id):
+        # WEATHER: |Optimal - Actual| (Lower is better) -> We'll invert later or handle in P function
+        if crit_id == "weather":
+            # Find closest month avg temp to ideal
+            # Simple approach: average of weather_by_month["temp"] vs prefs.weather_temp
+            # Actually, let's pick the BEST month in the dataset for simplicity or avg of season
+            # User selected Month/Time in constraints. If "any", check all.
+            # Assuming "any" -> best possible match.
+            best_diff = 999
+            for m, data in dest["metrics"]["weather_by_month"].items():
+                diff = abs(data["temp"] - prefs.weather_temp)
+                if diff < best_diff: best_diff = diff
+            return best_diff # Lower is better (0 = perfect)
+
+        # COST: Daily Cost (Lower is better usually, unless value seeking?)
+        if crit_id == "cost":
+            return dest["metrics"]["cost_index_daily_eur"]
+            
+        # SAFETY: Index (Higher is better)
+        if crit_id == "safety":
+            return dest["metrics"]["safety_index"]
+            
+        # VIBE: Euclidean distance from ideal profile (Lower is better)
+        if crit_id == "vibe":
+            # User: urban (0-100) -> 0.0-1.0
+            u_ideal = prefs.vibe_urban_nature / 100.0
+            # dest has 'urban_scale' (0-1). 
+            # If user wants 50/50 (0.5), and dest is 0.9 (Urban), diff is 0.4.
+            # We combine multiple dimensions?
+            v_metrics = dest.get("vibe_metrics", {})
+            
+            diff_urban = abs((v_metrics.get("urban_scale", 0.5)) - u_ideal)
+            # Calm vs Party (Nightlife)
+            p_ideal = prefs.vibe_calm_party / 100.0
+            diff_party = abs((v_metrics.get("nightlife_scale", 0.5)) - p_ideal)
+            
+            # History
+            h_ideal = prefs.vibe_history / 10.0
+            diff_hist = abs((v_metrics.get("historical_scale", 0.5)) - h_ideal)
+            
+            return (diff_urban + diff_party + diff_hist) / 3.0 # Lower is better
+            
+        # CROWDS: Assuming we don't have real "crowd index" in dummy, use 'popularity'? 
+        # Using cost or known big cities as proxy?
+        # For MVP let's assume random or static logic: "Big cities = crowded"
+        if crit_id == "crowds":
+            # If user wants "Hidden" (val=hidden), we penalize result.
+            # Let's mock: 
+            return 0.5 # Default placeholder
+            
+        return 0.0
+
+    # Fill matrix
+    for i in range(n):
+        for j in range(k):
+            matrix[i, j] = get_criterion_value(dests[i], criteria[j])
+
+    # 2. PROMETHEE Calculation
+    # Preference functions:
+    # We define 'directions': 1 (Max), -1 (Min)
+    # Weather diff: Min (-1)
+    # Cost: Min (-1) (Usually)
+    # Safety: Max (1)
+    # Vibe diff: Min (-1)
+    # Crowds: Min (-1) ?
+    
+    directions = []
+    thresholds = [] # q, p (indifference, preference)
+    
+    for c in criteria:
+        if c == "weather": 
+            directions.append(-1)
+            thresholds.append((2, 10)) # Indiff if diff < 2C, Max pref if diff > 10C
+        elif c == "cost": 
+            directions.append(-1)
+            thresholds.append((10, 50)) # 10 EUR, 50 EUR
+        elif c == "safety": 
+            directions.append(1)
+            thresholds.append((5, 20))
+        elif c == "vibe": 
+            directions.append(-1)
+            thresholds.append((0.1, 0.4))
+        else: 
+            directions.append(1) # Default Max
+            thresholds.append((0, 1))
+
+    pi_matrix = np.zeros((n, n))
+    
+    for i in range(n):
+        for j in range(n):
+            if i == j: continue
+            
+            total_p = 0.0
+            for idx_c in range(k):
+                val_i = matrix[i, idx_c]
+                val_j = matrix[j, idx_c]
+                
+                # Difference d
+                diff = (val_i - val_j) if directions[idx_c] == 1 else (val_j - val_i)
+                
+                # Pref func (Linear V-shape)
+                q, p = thresholds[idx_c]
+                pref = 0.0
+                if diff <= q: pref = 0.0
+                elif diff >= p: pref = 1.0
+                else: pref = (diff - q) / (p - q)
+                
+                total_p += weights[idx_c] * pref
+            
+            pi_matrix[i, j] = total_p
+
+    # Flows
+    phi_plus = np.sum(pi_matrix, axis=1) / (n - 1)
+    phi_minus = np.sum(pi_matrix, axis=0) / (n - 1)
+    phi_net = phi_plus - phi_minus
+
+    # 3. Format Results & Explanations
+    formatted_results = []
+    
+    for i in range(n):
+        dest = dests[i]
+        
+        # Generation Explanation
+        # Why is this good? Look at criteria where this destination beat others (high partial net flow?)
+        # For simplicity MVP: Pick the best performing raw metric relative to request
+        reasons = []
+        if "weather" in criteria:
+            val = matrix[i, criteria.index("weather")]
+            if val < 3: reasons.append(f"Tökéletes időjárás ({int(val)}°C eltérés)")
+        if "cost" in criteria:
+            val = dest["metrics"]["cost_index_daily_eur"]
+            if val < prefs.budget_daily: reasons.append(f"Költségkereten belül ({val}€)")
+        if "safety" in criteria:
+            if dest["metrics"]["safety_index"] > 70: reasons.append("Nagyon biztonságos")
+        if "vibe" in criteria:
+            # If match was good (diff low)
+            val = matrix[i, criteria.index("vibe")]
+            if val < 0.2: reasons.append("A hangulat pont olyan, amilyet kerestél")
+
+        explanation_text = " • ".join(reasons) if reasons else "Kiegyensúlyozott választás a szempontjaid alapján."
+        
+        # Add basic display metrics
+        display_metrics = {
+            "temp": f"{dest['metrics'].get('weather_by_month', {}).get('6', {}).get('temp', '?')}°C", # Demo: Pick June
+            "cost": f"{dest['metrics']['cost_index_daily_eur']}€/nap",
+            "safety": f"{dest['metrics']['safety_index']}/100",
+            "vibe": "Egyező" # Placeholder
+        }
+
+        formatted_results.append({
+            "rank": 0, # To be filled
+            "id": dest["id"],
+            "name": dest["name"],
+            "country": dest["country"],
+            "score": round((phi_net[i] + 1) * 50), # Normalize -1..1 to 0..100
+            "phi_net": phi_net[i],
+            "image": dest.get("image", ""),
+            "explanation": explanation_text,
+            "metrics": display_metrics
+        })
+        
+    # Sort by Score
+    formatted_results.sort(key=lambda x: x["phi_net"], reverse=True)
+    
+    # Assign Ranks
+    for i, res in enumerate(formatted_results):
+        res["rank"] = i + 1
+        
+    session["results"] = formatted_results
+    return {"status": "ok", "count": len(formatted_results)}
 
 @app.get("/flight-intelligence-results", response_class=HTMLResponse)
 async def results_page(request: Request):

@@ -14,7 +14,8 @@ def get_all_stays(city, country, start_date, end_date,
                   min_rating=0,
                   accommodation_types=None,
                   amenities=None,
-                  breakfast=False):
+                  breakfast=False,
+                  progress_callback=None):
     """Scrapes accommodation data from cozycozy.com."""
     
     # Type kódok mapping
@@ -55,11 +56,13 @@ def get_all_stays(city, country, start_date, end_date,
     chrome_options.add_argument("--disable-dev-shm-usage")
 
     driver = webdriver.Chrome(options=chrome_options)
+    if progress_callback: progress_callback(5)
     
     try:
         # Base URL without filters first (we just need the searchId)
         base_url = f"https://www.cozycozy.com/en/search/{city}%2C%20{country}/{start_date}/{end_date}/{rooms}-{adults}-{children}/results"
         driver.get(base_url)
+        if progress_callback: progress_callback(10)
         
         # Wait for the results to start loading
         WebDriverWait(driver, 15).until(
@@ -79,6 +82,8 @@ def get_all_stays(city, country, start_date, end_date,
 
         if not found:
             return {"entries": [], "error": "searchId not found"}
+
+        if progress_callback: progress_callback(20)
 
         # Pagination logic
         all_results = []
@@ -150,6 +155,11 @@ def get_all_stays(city, country, start_date, end_date,
                     break
                     
                 offset += batch_size
+                
+                # Update progress: Map offset (0-500) to percentage (20-90)
+                if progress_callback:
+                    p = 20 + int((offset / limit) * 70)
+                    progress_callback(min(p, 90))
                 
             except Exception as e:
                 print(f"Error fetching batch at offset {offset}: {e}")
