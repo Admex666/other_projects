@@ -1,0 +1,11 @@
+instaloader
+sentence-transformers
+torch
+lightgbm
+shap
+pandas
+pillow
+numpy
+scikit-learn
+matplotlib
+pyarrow
