@@ -232,18 +232,33 @@
     </div>
 
     <script>
-        // Default dates
         const today = new Date();
         const tomorrow = new Date(today);
-        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setDate(today.getDate() + 1);
         const nextWeek = new Date(today);
-        nextWeek.setDate(nextWeek.getDate() + 7);
+        nextWeek.setDate(today.getDate() + 7);
 
-        document.getElementById('start_date').min = today.toISOString().split('T')[0];
-        document.getElementById('end_date').min = tomorrow.toISOString().split('T')[0];
+        const startInput = document.getElementById('start_date');
+        const endInput = document.getElementById('end_date');
 
-        document.getElementById('start_date').value = tomorrow.toISOString().split('T')[0];
-        document.getElementById('end_date').value = nextWeek.toISOString().split('T')[0];
+        startInput.min = today.toISOString().split('T')[0];
+        endInput.min = tomorrow.toISOString().split('T')[0];
+
+        startInput.value = tomorrow.toISOString().split('T')[0];
+        endInput.value = nextWeek.toISOString().split('T')[0];
+
+        startInput.addEventListener('change', () => {
+            if (startInput.value) {
+                const startDate = new Date(startInput.value);
+                const minEndDate = new Date(startDate);
+                minEndDate.setDate(startDate.getDate() + 1);
+                const minStr = minEndDate.toISOString().split('T')[0];
+                endInput.min = minStr;
+                if (endInput.value && endInput.value < minStr) {
+                    endInput.value = minStr;
+                }
+            }
+        });
 
         let pollInterval;
 

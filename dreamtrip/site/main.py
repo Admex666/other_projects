@@ -1252,7 +1252,10 @@ async def calculate_destinations(prefs: DestPreferenceDetails, request: Request)
             if val < 3: reasons.append(f"Tökéletes időjárás ({int(val)}°C eltérés)")
         if "cost" in criteria:
             val = dest["metrics"]["cost_index_daily_eur"]
-            if val < prefs.budget_daily: reasons.append(f"Költségkereten belül ({val}€)")
+            constraints = session.get("constraints", {})
+            budget_limit = constraints.get("budget_daily", 0)
+            if budget_limit > 0 and val < budget_limit: 
+                reasons.append(f"Költségkereten belül ({val}€)")
         if "safety" in criteria:
             if dest["metrics"]["safety_index"] > 70: reasons.append("Nagyon biztonságos")
         if "vibe" in criteria:

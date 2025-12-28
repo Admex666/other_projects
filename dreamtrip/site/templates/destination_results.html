@@ -181,6 +181,21 @@
             display: inline-block;
         }
 
+        .btn-back {
+            display: inline-block;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .btn-back:hover {
+            color: white;
+            transform: translateX(-5px);
+        }
+
         @media (max-width: 768px) {
             .result-card {
                 flex-direction: column;
@@ -201,6 +216,7 @@
 <body>
     <header>
         <div class="container">
+            <a href="/destination-preferences" class="btn-back">← Vissza a finomhangoláshoz</a>
             <h1>🏆 Top Úticélok Neked</h1>
             <p>A beállított szempontok alapján ezek a legalkalmasabb helyek.</p>
         </div>
@@ -218,10 +234,11 @@
 
     <script>
         // REAL DATA from Jinja2
+        var results;
         // {% if results %}
-        const results = {{ results | tojson }};
+        results = {{ results | tojson }};
         // {% else %}
-        const results = [];
+        results = [];
         // {% endif %}
 
         const list = document.getElementById('resultsList');

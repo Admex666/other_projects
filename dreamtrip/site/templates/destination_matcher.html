@@ -142,6 +142,21 @@
             box-shadow: 0 5px 15px rgba(35, 91, 42, 0.3);
         }
 
+        .btn-back {
+            display: inline-block;
+            text-decoration: none;
+            color: #666;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .btn-back:hover {
+            color: #235B2A;
+            transform: translateX(-5px);
+        }
+
         @media (max-width: 600px) {
             .form-grid {
                 grid-template-columns: 1fr;
@@ -156,6 +171,7 @@
 
 <body>
     <div class="container">
+        <a href="/home" class="btn-back">← Vissza a főoldalra</a>
         <h1>🗺️ Hova utazz legközelebb?</h1>
         <p class="subtitle">1. lépés: Alapvető keretek és kizárások</p>
 

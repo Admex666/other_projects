@@ -120,13 +120,29 @@
             position: absolute;
             top: 15px;
             right: 15px;
-            background: #235B2A;
+            background: rgba(35, 91, 42, 0.85);
             color: white;
             padding: 5px 12px;
             border-radius: 20px;
             font-weight: 700;
-            font-size: 14px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            font-size: 11px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 5;
+        }
+
+        .rank-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: #90DC25;
+            color: #235B2A;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            z-index: 6;
+            border: 2px solid #235B2A;
         }
 
         .metrics-grid {
@@ -262,7 +278,8 @@
         <div class="results-grid">
             {% for stay in results %}
             <div class="stay-card">
-                <div class="score-badge">#{{ loop.index }} • {{ "%.3f"|format(stay.phi_net) }}</div>
+                <div class="rank-badge">#{{ loop.index }}</div>
+                <div class="score-badge">Net: {{ "%.3f"|format(stay.phi_net) }}</div>
 
                 <a href="{{ stay.booking_url }}" target="_blank" style="display: block;">
                     <img src="{{ stay.image_url or 'https://via.placeholder.com/400x250?text=No+Photo' }}"
