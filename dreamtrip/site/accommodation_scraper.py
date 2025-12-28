@@ -7,6 +7,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import urllib.parse
 
 def get_all_stays(city, country, start_date, end_date, 
                   rooms=1, adults=2, children=0,
@@ -45,6 +46,9 @@ def get_all_stays(city, country, start_date, end_date,
             filters.append("b:1")
         return ';'.join(filters)
 
+    encoded_city = urllib.parse.quote(city)
+    encoded_country = urllib.parse.quote(country)
+
     filter_string = build_filter_string(price_min, price_max, min_rating, 
                                         accommodation_types, amenities, breakfast)
 
@@ -54,18 +58,26 @@ def get_all_stays(city, country, start_date, end_date,
     chrome_options.add_argument("--window-size=1920,1080")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--disable-blink-features=AutomationControlled")
+    chrome_options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+    chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    chrome_options.add_experimental_option('useAutomationExtension', False)
 
     driver = webdriver.Chrome(options=chrome_options)
+    # Bypass detection
+    driver.execute_cdp_cmd('Network.setUserAgentOverride', {"userAgent": 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'})
+    driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+
     if progress_callback: progress_callback(5)
     
     try:
         # Base URL without filters first (we just need the searchId)
-        base_url = f"https://www.cozycozy.com/en/search/{city}%2C%20{country}/{start_date}/{end_date}/{rooms}-{adults}-{children}/results"
+        base_url = f"https://www.cozycozy.com/en/search/{encoded_city}%2C%20{encoded_country}/{start_date}/{end_date}/{rooms}-{adults}-{children}/results"
         driver.get(base_url)
         if progress_callback: progress_callback(10)
         
-        # Wait for the results to start loading
-        WebDriverWait(driver, 15).until(
+        # Wait for the results to start loading - Increased timeout to 30s
+        WebDriverWait(driver, 30).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, "a.m-card-button"))
         )
 

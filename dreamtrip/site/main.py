@@ -207,6 +207,8 @@ class StaySearchParams(BaseModel):
     rooms: int = 1
     adults: int = 2
     children: int = 0
+    price_min: float = 0
+    price_max: float = 9007199254740991
 
 # Módosított háttérfolyamat
 def run_intelligence_scraper(p: SearchParams):
@@ -288,10 +290,10 @@ def run_accommodation_scraper(p: StaySearchParams):
 
     try:
         # Árváltás (becsült 400 HUF/EUR) a scrapernek
-        p_min_eur = p.price_min / 400 if hasattr(p, 'price_min') else 0
-        p_max_eur = p.price_max / 400 if hasattr(p, 'price_max') else 9007199254740991
+        p_min_eur = p.price_min / 400
+        p_max_eur = p.price_max / 400
         
-        # Alapértelmezett szűrők az első keresésnél (szinte semmi)
+        # Alapértelmezett szűrők az első keresésnél
         raw_results = get_all_stays(
             city=p.city,
             country=p.country,
@@ -300,6 +302,8 @@ def run_accommodation_scraper(p: StaySearchParams):
             rooms=p.rooms,
             adults=p.adults,
             children=p.children,
+            price_min=p_min_eur,
+            price_max=p_max_eur,
             progress_callback=update_progress
         )
         
