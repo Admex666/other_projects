@@ -1,5 +1,9 @@
 FROM python:3.11-slim
 
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PORT=8080
+
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     wget \
@@ -7,7 +11,6 @@ RUN apt-get update && apt-get install -y \
     unzip \
     curl \
     libnss3 \
-    libgconf-2-4 \
     libfontconfig1 \
     libxrender1 \
     libx11-6 \
@@ -51,8 +54,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-# Railway uses the PORT environment variable
-ENV PORT 8080
 EXPOSE 8080
 
 CMD ["python", "main.py"]
