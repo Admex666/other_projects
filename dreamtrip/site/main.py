@@ -77,6 +77,10 @@ templates = Jinja2Templates(directory="templates")
 
 security = HTTPBasic()
 
+@app.get("/", response_class=HTMLResponse)
+async def login_page(request: Request):
+    return templates.TemplateResponse("login.html", {"request": request})
+
 @app.post("/login")
 async def login(username: str = Form(...), password: str = Form(...)):
     if verify_credentials(username, password):
@@ -122,22 +126,6 @@ async def accommodation_intelligence(request: Request):
     if not user:
         return RedirectResponse(url="/", status_code=303)
     return templates.TemplateResponse("accommodation_intelligence.html", {"request": request})
-
-# ===== FLIGHT SCRAPER API =====
-@app.post("/api/search-flights")
-async def search_flights(background_tasks: BackgroundTasks, request: Request):
-    user = get_current_user(request)
-    if not user:
-        raise HTTPException(status_code=401, detail="Unauthorized")
-    background_tasks.add_task(run_intelligence_scraper)
-    return JSONResponse({"message": "Scraping elindult..."})
-
-@app.get("/api/flight-status")
-async def get_status(request: Request):
-    user = get_current_user(request)
-    if not user:
-        raise HTTPException(status_code=401, detail="Unauthorized")
-    return JSONResponse(results)
 
 # Ezt add hozzá a main.py-hoz a többi végpont mellé
 @app.get("/search-status")
