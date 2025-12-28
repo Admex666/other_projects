@@ -12,36 +12,19 @@ from pydantic import BaseModel
 from typing import Dict, Any, List, Optional
 import numpy as np
 import json
+import gc
+from contextlib import asynccontextmanager
 
-app = FastAPI()
 
-# Static és templates
-app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="templates")
-
-security = HTTPBasic()
-
-# Felhasználók (username: password)
-USERS = {
-    "admin": "optivoya2024",
-    "demo": "demo123",
-    "bean": "bean",
-}
-
-# Session tárolás (production-ben használj Redis-t vagy JWT-t)
+# Felhasználók
+USERS = {"admin": "optivoya2024", "demo": "demo123", "bean": "bean"}
 sessions = {}
-
 raw_flights_cache = {}
-
-# Globális változó a scraper eredményekhez
 results = {"status": "idle", "data": None, "error": None}
 accommodation_results = {"status": "idle", "data": None, "error": None}
 
-# ===== AUTH =====
 def verify_credentials(username: str, password: str):
-    if username in USERS and USERS[username] == password:
-        return True
-    return False
+    return username in USERS and USERS[username] == password
 
 def create_session(username: str):
     token = secrets.token_urlsafe(32)
@@ -50,23 +33,10 @@ def create_session(username: str):
 
 def get_current_user(request: Request):
     token = request.cookies.get("session_token")
-    if not token or token not in sessions:
-        return None
-    return sessions[token]
+    return sessions.get(token) if token else None
 
-# ===== ROUTES =====
-@app.get("/", response_class=HTMLResponse)
-async def login_page(request: Request):
-    return templates.TemplateResponse("login.html", {"request": request})
-
-# ===== DESTINATION MATCHING MODELS =====
 class DestConstraints(BaseModel):
-    month: str # "any" or "1"-"12"
-    duration: int
-    origin: str
-    budget_daily: float
-    budget_strictness: str
-    exclusions: List[str]
+    month: str; duration: int; origin: str; budget_daily: float; budget_strictness: str; exclusions: List[str]
 
 class DestCriteria(BaseModel):
     criteria: List[str]
@@ -75,19 +45,10 @@ class DestAHP(BaseModel):
     comparisons: Dict[str, float]
 
 class DestPreferenceDetails(BaseModel):
-    weather_temp: float
-    weather_rain: str # strict, moderate, loose
-    cost_pref: str # min, value
-    vibe_urban_nature: int # 0-100
-    vibe_calm_party: int # 0-100
-    vibe_history: int # 0-10
-    safety_level: str # high, mid, low
-    crowds_pref: str # hidden, balanced, popular
-    travel_time_max: int
+    weather_temp: float; weather_rain: str; cost_pref: str; vibe_urban_nature: int; vibe_calm_party: int; vibe_history: int; safety_level: str; crowds_pref: str; travel_time_max: int
 
-# Global Data
 destination_db = []
-destination_sessions = {} # user_id -> { "filtered": [], "criteria": [], "weights": [], "constraints": {} }
+destination_sessions = {}
 unique_user_id_counter = 0
 
 def load_destinations():
@@ -102,22 +63,19 @@ def load_destinations():
         print(f"Error loading destinations: {e}")
         destination_db = []
 
-load_destinations()
-
-@app.on_event("startup")
-async def startup_event():
-    print("SERVER RESTARTING - RELOADED LATEST CODE")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    print("SERVER STARTING - RELOADED LATEST CODE")
     load_destinations()
+    yield
 
-@app.post("/login")
-async def login(username: str = Form(...), password: str = Form(...)):
-    if verify_credentials(username, password):
-        token = create_session(username)
-        response = RedirectResponse(url="/home", status_code=303)
-        response.set_cookie(key="session_token", value=token, httponly=True)
-        return response
-    return RedirectResponse(url="/?error=invalid", status_code=303)
+app = FastAPI(lifespan=lifespan)
 
+# Static és templates
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
+
+security = HTTPBasic()
 
 @app.post("/login")
 async def login(username: str = Form(...), password: str = Form(...)):
@@ -453,7 +411,12 @@ def run_filter_scraper(username: str, p: FilterParams):
         filtered_flights[username]["progress"] = 80
         filtered_flights[username]["status_text"] = "Eredmények mentése..."
         
-        # ✅ JAVÍTÁS: Timestamp oszlopok konvertálása stringre JSON szerializáláshoz
+        # ✅ MEMÓRIA OPTIMALIZÁLÁS: Csak a szükséges oszlopokat hagyjuk meg
+        # És ha túl sok (pl. > 1000), akkor vágjuk le az elejét (legolcsóbbak)
+        if len(df) > 1000:
+            df = df.sort_values('total_price_huf').head(1000)
+
+        # Időpontok konvertálása stringre
         date_columns = ['out_dep_time', 'out_arr_time', 'in_dep_time', 'in_arr_time']
         for col in date_columns:
             if col in df.columns:
@@ -468,8 +431,13 @@ def run_filter_scraper(username: str, p: FilterParams):
             "error": None
         }
         
+        # Takarítás
+        del df
+        gc.collect()
+        
     except Exception as e:
         filtered_flights[username] = {"status": "error", "progress": 0, "count": None, "error": str(e)}
+        gc.collect()
 
 @app.get("/flight-intelligence-ahp", response_class=HTMLResponse)
 async def flight_intelligence_ahp(request: Request):
@@ -574,12 +542,18 @@ def run_stay_filter_task(username: str, p: StayFilterParams):
         df = pd.DataFrame(raw_stay_data["data"])
         df = filter_stays_dataframe(df, p)
         
+        # MEMÓRIA OPTIMALIZÁLÁS
+        if len(df) > 1000:
+            df = df.sort_values('price_huf').head(1000)
+
         filtered_stays[username] = {
             "status": "done",
             "count": len(df),
             "data": df.to_dict(orient="records"),
             "error": None
         }
+        del df
+        gc.collect()
     except Exception as e:
         filtered_stays[username] = {"status": "error", "error": str(e)}
 
@@ -762,15 +736,15 @@ def run_calculation_task(user: str, config: PreferenceConfig):
         calculation_status[user]["progress"] = 10
         calculation_status[user]["status_text"] = f"Részletes összehasonlítás ({n} járat)..."
         
-        # 2. PROMETHEE Páros összehasonlítás
-        pi_matrix = np.zeros((n, n))
+        # ✅ MEMÓRIA OPTIMALIZÁLÁS: Nincs pi_matrix szorzat, Flow-kat közvetlenül számoljuk (O(N^2) helyett O(1) memória)
+        phi_plus = np.zeros(n)
+        phi_minus = np.zeros(n)
         data_matrix = df[criteria_cols].values
         
-        step = max(1, n // 50)  # Update progress 50 times max
+        step = max(1, n // 50)
         
         for i in range(n):
             if i % step == 0:
-                # 10% -> 90% range
                 prog = 10 + int((i / n) * 80)
                 calculation_status[user]["progress"] = prog
                 
@@ -784,14 +758,15 @@ def run_calculation_task(user: str, config: PreferenceConfig):
                         pref_val = get_preference(d, config.configs[criteria_keys[k]])
                         total_pref += weights[k] * pref_val
                 
-                pi_matrix[i, j] = total_pref
+                phi_plus[i] += total_pref
+                phi_minus[j] += total_pref
     
         calculation_status[user]["progress"] = 90
         calculation_status[user]["status_text"] = "Rangsorolás és mentés..."
     
-        # 3. Flow számítás
-        phi_plus = np.sum(pi_matrix, axis=1) / (n - 1)
-        phi_minus = np.sum(pi_matrix, axis=0) / (n - 1)
+        # Flow számítás (átlagolás)
+        phi_plus /= (n - 1)
+        phi_minus /= (n - 1)
         phi_net = phi_plus - phi_minus
     
         df['phi_net'] = phi_net
