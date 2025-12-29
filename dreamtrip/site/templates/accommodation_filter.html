@@ -160,7 +160,8 @@
             <h3>💰 Ár és Értékelés</h3>
             <div class="input-grid">
                 <div class="input-group">
-                    <label>Ár intervallum / éjszaka (Ft)</label>
+                    <label>Ár intervallum / éjszaka: <span id="price_min_val">0</span> — <span
+                            id="price_max_val">200,000</span> Ft</label>
                     <div style="display: flex; gap: 10px; align-items: center;">
                         <input type="number" id="price_min" value="0" step="5000">
                         <span>—</span>
@@ -168,7 +169,7 @@
                     </div>
                 </div>
                 <div class="input-group">
-                    <label>Minimum értékelés (0-100)</label>
+                    <label>Minimum értékelés: <span id="min_rating_val">70</span>/100</label>
                     <input type="number" id="min_rating" min="0" max="100" value="70">
                 </div>
             </div>
@@ -290,12 +291,17 @@
             input.addEventListener('change', debouncePreview);
         });
 
+        // Initial label values
+        document.getElementById('price_min_val').innerText = parseInt(document.getElementById('price_min').value).toLocaleString();
+        document.getElementById('price_max_val').innerText = parseInt(document.getElementById('price_max').value).toLocaleString();
+        document.getElementById('min_rating_val').innerText = document.getElementById('min_rating').value;
+
         // Update range values
         document.getElementById('price_min').addEventListener('input', (e) => {
-            document.getElementById('price_min_val').innerText = parseInt(e.target.value).toLocaleString() + ' Ft';
+            document.getElementById('price_min_val').innerText = parseInt(e.target.value).toLocaleString();
         });
         document.getElementById('price_max').addEventListener('input', (e) => {
-            document.getElementById('price_max_val').innerText = parseInt(e.target.value).toLocaleString() + ' Ft';
+            document.getElementById('price_max_val').innerText = parseInt(e.target.value).toLocaleString();
         });
         document.getElementById('min_rating').addEventListener('input', (e) => {
             document.getElementById('min_rating_val').innerText = e.target.value;

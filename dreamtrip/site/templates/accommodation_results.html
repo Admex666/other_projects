@@ -7,6 +7,10 @@
     <title>Személyre szabott szállások - Accommodation Intelligence</title>
     <link rel="icon" type="image/png" href="/static/logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Leaflet Maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
         * {
             margin: 0;
@@ -191,25 +195,47 @@
             color: white;
         }
 
-        .tooltip .tooltiptext {
-            visibility: hidden;
-            width: 200px;
-            background: #235B2A;
-            color: white;
+        .score-cell {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 13px;
+            display: inline-block;
+            min-width: 80px;
             text-align: center;
-            border-radius: 6px;
-            padding: 8px;
-            position: absolute;
-            z-index: 10;
-            bottom: 125%;
-            left: 50%;
-            margin-left: -100px;
-            opacity: 0;
-            transition: 0.3s;
-            font-size: 11px;
         }
 
-        .metric:hover .tooltiptext {
+        .styled-table td {
+            vertical-align: middle;
+        }
+
+        /* Tooltip styles from flight_results */
+        .tooltip {
+            position: relative;
+            cursor: help;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 140px;
+            background: #235B2A;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 100;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -70px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 11px;
+            font-weight: 400;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .tooltip:hover .tooltiptext {
             visibility: visible;
             opacity: 1;
         }
@@ -226,6 +252,150 @@
             background: #f8d7da;
         }
 
+        /* View Toggle */
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .view-toggle {
+            display: flex;
+            background: #e2e8f0;
+            padding: 4px;
+            border-radius: 8px;
+            gap: 4px;
+        }
+
+        .view-btn {
+            border: none;
+            background: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 600;
+            color: #64748b;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .view-btn.active {
+            background: white;
+            color: #235B2A;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Map View */
+        #map_view {
+            display: none;
+            height: 600px;
+            width: 100%;
+            border-radius: 15px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 30px;
+            z-index: 1;
+        }
+
+        .map-popup {
+            font-family: 'Poppins', sans-serif;
+            width: 150px;
+        }
+
+        .map-popup h4 {
+            margin: 0 0 5px 0;
+            color: #235B2A;
+            font-size: 14px;
+        }
+
+        .map-popup p {
+            margin: 0 0 10px 0;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .btn-popup {
+            background: #235B2A;
+            color: white !important;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 11px;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+            text-decoration: none !important;
+            display: block;
+        }
+
+        /* Custom Rank Marker Icons */
+        .rank-marker {
+            width: 30px;
+            height: 30px;
+            border-radius: 50% 50% 50% 0;
+            background: #235B2A;
+            border: 2px solid white;
+            color: white;
+            font-weight: 700;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: rotate(-45deg);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .rank-marker span {
+            transform: rotate(45deg);
+        }
+
+        .rank-marker:hover {
+            transform: rotate(-45deg) scale(1.2);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+            z-index: 1000 !important;
+        }
+
+        /* Hidden initially */
+        #table_view {
+            display: none;
+        }
+
+        .styled-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 0.9em;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .styled-table thead tr {
+            background-color: #235B2A;
+            color: #ffffff;
+            text-align: left;
+        }
+
+        .styled-table th,
+        .styled-table td {
+            padding: 12px 15px;
+        }
+
+        .styled-table tbody tr {
+            border-bottom: 1px solid #dddddd;
+        }
+
+        .styled-table tbody tr:nth-of-type(even) {
+            background-color: #f3f3f3;
+        }
+
         @media (max-width: 768px) {
             .results-grid {
                 grid-template-columns: 1fr;
@@ -240,6 +410,11 @@
                 flex-direction: column;
                 gap: 15px;
                 text-align: center;
+            }
+
+            .controls {
+                flex-direction: column;
+                gap: 15px;
             }
         }
     </style>
@@ -275,11 +450,125 @@
             <p style="color:666">Az ön preferenciái alapján rangsorolva</p>
         </div>
 
-        <div class="results-grid">
+        <div class="controls">
+            <div style="display: flex; gap: 20px; align-items: center;">
+                <div style="font-size: 14px; color: #64748b;">
+                    Találatok: <strong id="shown_count">{{ results|length }}</strong> / {{ results|length }}
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <label for="limit_select"
+                        style="font-size: 13px; font-weight: 600; color: #64748b;">Megjelenítés:</label>
+                    <select id="limit_select" onchange="filterResults()"
+                        style="padding: 6px 12px; border-radius: 6px; border: 1px solid #cbd5e1; font-family: inherit; font-size: 13px; color: #334155; outline: none; cursor: pointer;">
+                        <option value="10">Top 10</option>
+                        <option value="25" selected>Top 25</option>
+                        <option value="50">Top 50</option>
+                        <option value="100">Top 100</option>
+                        <option value="all">Összes</option>
+                    </select>
+                </div>
+            </div>
+            <div class="view-toggle">
+                <button class="view-btn active" onclick="switchView('grid')" id="btn_grid">
+                    <i class="fas fa-th-large"></i> Kártyák
+                </button>
+                <button class="view-btn" onclick="switchView('table')" id="btn_table">
+                    <i class="fas fa-table"></i> Táblázat
+                </button>
+                <button class="view-btn" onclick="switchView('map')" id="btn_map">
+                    <i class="fas fa-map-marked-alt"></i> Térkép
+                </button>
+            </div>
+        </div>
+
+        <!-- Térkép nézet -->
+        <div id="map_view"></div>
+
+        <!-- Táblázat nézet -->
+        <div id="table_view">
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Szállás</th>
+                        <th>Város</th>
+                        <th>Ár/éj</th>
+                        <th>Értékelés</th>
+                        <th>Népszerűség</th>
+                        <th>Távolság</th>
+                        <th>Relevancia</th>
+                        <th>Művelet</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stay in results %}
+                    <tr class="result-row">
+                        <td>{{ loop.index }}</td>
+                        <td><strong>{{ stay.name }}</strong></td>
+                        <td>{{ stay.city }}</td>
+                        <!-- PRICE -->
+                        <td>
+                            {% set s = stay.score_price %}
+                            <div
+                                class="score-cell tooltip {% if s > 0.8 %}score-green{% elif s > 0.4 %}score-yellow{% else %}score-red{% endif %}">
+                                {% if s > 0.8 %}🟢{% elif s > 0.4 %}🟡{% else %}🔴{% endif %}
+                                {{ "{:,.0f}".format(stay.price_huf) }} Ft
+                                <span class="tooltiptext">Saját súlyozásával: {{ "%.2f"|format(stay.score_price *
+                                    weights[0]) }}</span>
+                            </div>
+                        </td>
+
+                        <!-- RATING -->
+                        <td>
+                            {% set s = stay.score_rating %}
+                            <div
+                                class="score-cell tooltip {% if s > 0.8 %}score-green{% elif s > 0.4 %}score-yellow{% else %}score-red{% endif %}">
+                                {% if s > 0.8 %}🟢{% elif s > 0.4 %}🟡{% else %}🔴{% endif %}
+                                {{ stay.rating_score }}/100
+                                <span class="tooltiptext">Saját súlyozásával: {{ "%.2f"|format(stay.score_rating *
+                                    weights[1]) }}</span>
+                            </div>
+                        </td>
+
+                        <!-- REVIEWS -->
+                        <td>
+                            {% set s = stay.score_reviews %}
+                            <div
+                                class="score-cell tooltip {% if s > 0.8 %}score-green{% elif s > 0.4 %}score-yellow{% else %}score-red{% endif %}">
+                                {% if s > 0.8 %}🟢{% elif s > 0.4 %}🟡{% else %}🔴{% endif %}
+                                {{ stay.rating_count }}
+                                <span class="tooltiptext">Saját súlyozásával: {{ "%.2f"|format(stay.score_reviews *
+                                    weights[2]) }}</span>
+                            </div>
+                        </td>
+
+                        <!-- DISTANCE -->
+                        <td>
+                            {% set s = stay.score_distance %}
+                            <div
+                                class="score-cell tooltip {% if s > 0.8 %}score-green{% elif s > 0.4 %}score-yellow{% else %}score-red{% endif %}">
+                                {% if s > 0.8 %}🟢{% elif s > 0.4 %}🟡{% else %}🔴{% endif %}
+                                {{ "%.1f"|format(stay.distance_km) }} km
+                                <span class="tooltiptext">Saját súlyozásával: {{ "%.2f"|format(stay.score_distance *
+                                    weights[3]) }}</span>
+                            </div>
+                        </td>
+
+                        <td><strong>{{ "%.4f"|format(stay.phi_net) }}</strong></td>
+                        <td><a href="{{ stay.booking_url }}" target="_blank"
+                                style="color: #235B2A; font-weight: 700;">Megnyitás</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Kártya nézet -->
+        <div class="results-grid" id="grid_view">
             {% for stay in results %}
-            <div class="stay-card">
+            <div class="stay-card result-card-item">
                 <div class="rank-badge">#{{ loop.index }}</div>
-                <div class="score-badge">Net: {{ "%.3f"|format(stay.phi_net) }}</div>
+                <div class="score-badge">Relevancia: {{ "%.3f"|format(stay.phi_net) }}</div>
 
                 <a href="{{ stay.booking_url }}" target="_blank" style="display: block;">
                     <img src="{{ stay.image_url or 'https://via.placeholder.com/400x250?text=No+Photo' }}"
@@ -331,6 +620,155 @@
             {% endfor %}
         </div>
     </div>
+
+    <script>
+        const allResults = {{ results | tojson | safe }};
+        let map = null;
+        let markers = [];
+
+        function switchView(view) {
+            const grid = document.getElementById('grid_view');
+            const table = document.getElementById('table_view');
+            const mapDiv = document.getElementById('map_view');
+            const btnGrid = document.getElementById('btn_grid');
+            const btnTable = document.getElementById('btn_table');
+            const btnMap = document.getElementById('btn_map');
+
+            // Hide/Deactivate all
+            grid.style.display = 'none';
+            table.style.display = 'none';
+            mapDiv.style.display = 'none';
+            btnGrid.classList.remove('active');
+            btnTable.classList.remove('active');
+            btnMap.classList.remove('active');
+
+            if (view === 'grid') {
+                grid.style.display = 'grid';
+                btnGrid.classList.add('active');
+            } else if (view === 'table') {
+                table.style.display = 'block';
+                btnTable.classList.add('active');
+            } else if (view === 'map') {
+                mapDiv.style.display = 'block';
+                btnMap.classList.add('active');
+                initMap();
+            }
+        }
+
+        function initMap() {
+            if (map) {
+                map.invalidateSize();
+                return;
+            }
+
+            const validResults = allResults.filter(r => r.latitude && r.longitude);
+            if (validResults.length === 0) {
+                document.getElementById('map_view').innerHTML = '<div style="padding: 40px; text-align: center; color: #666;">Nem állnak rendelkezésre koordináta adatok a térkép megjelenítéséhez.</div>';
+                return;
+            }
+
+            // Középpont meghatározása
+            const avgLat = validResults.reduce((sum, r) => sum + r.latitude, 0) / validResults.length;
+            const avgLng = validResults.reduce((sum, r) => sum + r.longitude, 0) / validResults.length;
+
+            map = L.map('map_view').setView([avgLat, avgLng], 13);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            const totalCount = allResults.length;
+            const getMarkerColor = (rank) => {
+                // Hue scale: 120 (green) to 0 (red)
+                const hue = Math.max(0, 120 * (1 - (rank - 1) / Math.max(1, totalCount - 1)));
+                return `hsl(${hue}, 75%, 40%)`;
+            };
+
+            allResults.forEach((res, index) => {
+                if (res.latitude && res.longitude) {
+                    const rank = index + 1;
+                    const color = getMarkerColor(rank);
+
+                    const customIcon = L.divIcon({
+                        className: 'custom-div-icon',
+                        html: `<div class="rank-marker" style="background-color: ${color};"><span>${rank}</span></div>`,
+                        iconSize: [30, 30],
+                        iconAnchor: [15, 30]
+                    });
+
+                    const marker = L.marker([res.latitude, res.longitude], { icon: customIcon });
+                    const price = res.price_huf ? Math.round(res.price_huf).toLocaleString('hu-HU') + ' Ft' : 'N/A';
+                    const rating = res.rating_score ? `⭐ ${res.rating_score}/100` : '';
+                    const imgHtml = res.image_url ? `<img src="${res.image_url}" style="width:100%; height:80px; object-fit:cover; border-radius:5px; margin-bottom:5px;">` : '';
+
+                    marker.bindPopup(`
+                        <div class="map-popup" style="width: 200px;">
+                            ${imgHtml}
+                            <h4 style="margin:0 0 5px 0; font-size:14px;">#${rank} ${res.name}</h4>
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                                <span style="font-weight:700; color:#235B2A;">${price}</span>
+                                <span style="font-size:11px; color:#666;">${rating}</span>
+                            </div>
+                            <a href="${res.booking_url}" target="_blank" class="btn-popup">Részletek</a>
+                        </div>
+                    `, { maxWidth: 220 });
+
+                    res._marker = marker;
+                    markers.push(marker);
+                }
+            });
+
+            if (markers.length > 0) {
+                const group = new L.featureGroup(markers);
+                map.fitBounds(group.getBounds().pad(0.1));
+            }
+
+            // Apply current filters to map
+            filterResults();
+        }
+
+        function filterResults() {
+            const limit = document.getElementById('limit_select').value;
+            const rows = document.querySelectorAll('.result-row');
+            const cards = document.querySelectorAll('.result-card-item');
+
+            let showCount = limit === 'all' ? rows.length : parseInt(limit);
+            const visibleMarkers = [];
+
+            allResults.forEach((res, index) => {
+                const isVisible = index < showCount;
+
+                // Update Table
+                if (rows[index]) rows[index].style.display = isVisible ? '' : 'none';
+
+                // Update Cards
+                if (cards[index]) cards[index].style.display = isVisible ? 'flex' : 'none';
+
+                // Update Map Markers
+                if (res._marker) {
+                    if (isVisible) {
+                        res._marker.addTo(map);
+                        visibleMarkers.push(res._marker);
+                    } else {
+                        res._marker.remove();
+                    }
+                }
+            });
+
+            // Re-fit bounds if we have visible markers and the map is initialized
+            if (map && visibleMarkers.length > 0) {
+                const group = new L.featureGroup(visibleMarkers);
+                map.fitBounds(group.getBounds().pad(0.1));
+            }
+
+            document.getElementById('shown_count').innerText = Math.min(showCount, rows.length);
+        }
+
+        // Initial filter on load
+        window.onload = function () {
+            filterResults();
+        };
+    </script>
 </body>
 
 </html>

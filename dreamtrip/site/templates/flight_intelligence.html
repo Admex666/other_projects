@@ -248,21 +248,57 @@
         </div>
 
         <script>
-            // Alapértelmezett dátumok beállítása
+            const outFromInput = document.getElementById('out_from');
+            const outToInput = document.getElementById('out_to');
+            const inFromInput = document.getElementById('in_from');
+            const inToInput = document.getElementById('in_to');
+
             const today = new Date().toISOString().split('T')[0];
             const tomorrow = new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0];
             const nextWeek = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
             const nextWeekLater = new Date(new Date().getTime() + 10 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
-            const dateInputs = ['out_from', 'out_to', 'in_from', 'in_to'];
-            dateInputs.forEach(id => {
-                document.getElementById(id).min = today;
+            [outFromInput, outToInput, inFromInput, inToInput].forEach(el => {
+                el.min = today;
             });
 
-            document.getElementById('out_from').value = tomorrow;
-            document.getElementById('out_to').value = nextWeek;
-            document.getElementById('in_from').value = nextWeek;
-            document.getElementById('in_to').value = nextWeekLater;
+            outFromInput.value = tomorrow;
+            outToInput.value = nextWeek;
+            inFromInput.value = nextWeek;
+            inToInput.value = nextWeekLater;
+
+            // Dátum függőség kezelése
+            outFromInput.addEventListener('change', () => {
+                if (outFromInput.value) {
+                    const d = outFromInput.value;
+                    // Az összes többi dátum legalább az odaút eleje kell legyen
+                    [outToInput, inFromInput, inToInput].forEach(el => {
+                        el.min = d;
+                        if (el.value && el.value < d) el.value = d;
+                    });
+                }
+            });
+
+            outToInput.addEventListener('change', () => {
+                if (outToInput.value) {
+                    // Csak a legkésőbbi visszaút (in_to) minimumát kell az odaút végéhez kötni
+                    // a legkorábbi visszaút (in_from) maradhat korábban, mint az odaút vége!
+                    inToInput.min = outToInput.value;
+                    if (inToInput.value && inToInput.value < outToInput.value) {
+                        inToInput.value = outToInput.value;
+                    }
+                }
+            });
+
+            inFromInput.addEventListener('change', () => {
+                if (inFromInput.value) {
+                    // A visszaút vége legalább a visszaút eleje legyen
+                    if (inToInput.value && inToInput.value < inFromInput.value) {
+                        inToInput.value = inFromInput.value;
+                    }
+                    inToInput.min = inFromInput.value;
+                }
+            });
         </script>
 
         <div class="search-grid">

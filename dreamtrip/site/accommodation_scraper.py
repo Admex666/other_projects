@@ -197,14 +197,9 @@ def parse_accommodation_results(results):
         return []
     
     parsed_data = []
-    
-    # Mapping for accommodation types (simplified)
-    # Codes seen: Hotel, Apartment, Hostel, etc.
+    seen_hotels = set() # Duplikátum szűréshez: (név, rating) páros alapú
     
     for entry in results['entries']:
-        # Filter out Hostelworld if provider name contains it
-        # Provider is usually deep inside highlightedResults
-        
         highlighted = entry.get('highlightedResults', [])
         if not highlighted:
             continue
@@ -216,15 +211,24 @@ def parse_accommodation_results(results):
         if 'hostelworld' in provider.lower():
             continue
 
+        name = entry.get('name', '').strip()
+        rating = entry.get('ratingScore') or 0
+        
+        # Duplikátum szűrés: Ha ugyanaz a név és rating, akkor valószínűleg ugyanaz a szállás
+        match_key = (name.lower(), rating)
+        if match_key in seen_hotels:
+            continue
+        seen_hotels.add(match_key)
+
         amenities = entry.get('amenityCodes', [])
-        acc_type = entry.get('typeCode', 'UNKNOWN') # e.g. HOTEL, APARTMENT
+        acc_type = entry.get('typeCode', 'UNKNOWN') 
 
         base_info = {
             'id': entry.get('accommodationId'),
-            'name': entry.get('name'),
+            'name': name,
             'title': entry.get('title'),
             'city': entry.get('cityName'),
-            'rating_score': entry.get('ratingScore') or 0,
+            'rating_score': rating,
             'rating_count': entry.get('ratingCount') or 0,
             'location_text': entry.get('locationText'),
             'distance_km': parse_distance(entry.get('locationText')),
