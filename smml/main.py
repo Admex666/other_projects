@@ -6,20 +6,27 @@ except ImportError:
 import argparse
 import pandas as pd
 import numpy as np
-from src.scraper.instagram_scraper import MockInstagramScraper
+from src.scraper.instagram_scraper import InstagramScraper
 from src.features.featurizer import Featurizer
 from src.models.baseline_model import BaselineModel
 from src.models.uplift_model import UpliftModel
-from src.models.explainability import ExplainabilityEngine
 
-def run_pipeline(username: str):
+def run_pipeline(username: str, limit: int):
     print(f"--- Starting pipeline for user: {username} ---")
     
     # 1. Scrape
-    scraper = MockInstagramScraper()
+    scraper = InstagramScraper()
     profile = scraper.get_profile_info(username)
-    posts = scraper.get_posts(username, count=20)
+    if not profile:
+        print("Failed to fetch profile. Exiting.")
+        return
+        
+    posts = scraper.get_posts(username, count=limit)
     print(f"Scraped {len(posts)} posts for {username}")
+
+    if not posts:
+        print("No posts found or access denied.")
+        return
 
     # 2. Featurize
     featurizer = Featurizer()
@@ -59,7 +66,8 @@ def run_pipeline(username: str):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Engagement Prediction Pipeline")
-    parser.add_argument("--username", type=str, default="tech_influencer", help="Username to analyze")
+    parser.add_argument("--username", type=str, required=True, help="Username to analyze")
+    parser.add_argument("--limit", type=int, default=10, help="Max posts to scrape")
     args = parser.parse_args()
     
-    run_pipeline(args.username)
+    run_pipeline(args.username, args.limit)

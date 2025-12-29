@@ -27,7 +27,7 @@ class Featurizer:
             feat.update(text_feat)
             
             # 3. Visual Features (Basic)
-            visual_feat = self.img_proc.extract_visual_features("") # Empty path for mock
+            visual_feat = self.img_proc.extract_visual_features(post.get('local_image_path', ""))
             feat.update(visual_feat)
             
             # 4. Embeddings (as list/flattened)
