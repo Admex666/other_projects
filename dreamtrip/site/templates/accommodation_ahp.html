@@ -15,6 +15,44 @@
             font-family: 'Poppins', sans-serif;
         }
 
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px 40px;
+            border-radius: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: #235B2A;
+            margin-left: 10px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logout-btn {
+            background: #235B2A;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #90DC25;
+        }
+
         body {
             background: linear-gradient(135deg, #235B2A 0%, #1a4520 100%);
             min-height: 100vh;
@@ -257,6 +295,16 @@
 </head>
 
 <body>
+    <div class="navbar">
+        <a href="/home" style="text-decoration: none; display: flex; align-items: center; gap: 10px;">
+            <img src="/static/logo.png" alt="Optivoya" style="height: 40px;">
+            <span class="logo-text">Optivoya</span>
+        </a>
+        <div class="user-info">
+            <span style="color: #666;">👤 {{ user }}</span>
+            <a href="/logout" class="logout-btn">Kilépés</a>
+        </div>
+    </div>
     <div class="container">
         <h1>🎯 Szállás preferenciák beállítása</h1>
         <p class="subtitle">Melyik szempont fontosabb számodra a választásnál?</p>
@@ -282,8 +330,8 @@
                 <tbody id="weightsTable"></tbody>
             </table>
             <div style="display: flex; gap: 15px; margin-top: 30px; flex-wrap: wrap;">
-                <button class="btn-next" onclick="window.location.href='/accommodation-intelligence-filter'"
-                    style="background: #666; flex: 1; min-width: 200px;">⬅️ Vissza a szűréshez</button>
+                <button class="btn-next" onclick="window.location.href='/accommodation-intelligence'"
+                    style="background: #666; flex: 1; min-width: 200px;">⬅️ Vissza a kereséshez</button>
                 <button class="btn-next" onclick="window.location.href='/accommodation-intelligence-preferences'"
                     style="flex: 2; min-width: 200px;">Tovább a kritériumok finomhangolásához →</button>
             </div>

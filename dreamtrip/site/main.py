@@ -11,6 +11,7 @@ import secrets
 from pydantic import BaseModel
 from typing import Dict, Any, List, Optional
 import numpy as np
+import math
 import json
 import gc
 from contextlib import asynccontextmanager
@@ -155,6 +156,10 @@ class StaySearchParams(BaseModel):
     children: int = 0
     price_min: float = 0
     price_max: float = 9007199254740991
+    min_rating: float = 0
+    accommodation_types: Optional[List[str]] = None
+    amenities: Optional[List[str]] = None
+    breakfast: bool = False
 
 # Módosított háttérfolyamat
 def run_intelligence_scraper(p: SearchParams):
@@ -250,6 +255,10 @@ def run_accommodation_scraper(p: StaySearchParams):
             children=p.children,
             price_min=p_min_eur,
             price_max=p_max_eur,
+            min_rating=p.min_rating,
+            accommodation_types=p.accommodation_types,
+            amenities=p.amenities,
+            breakfast=p.breakfast,
             progress_callback=update_progress
         )
         
@@ -446,20 +455,7 @@ async def flight_intelligence_ahp(request: Request):
     })
 
 # --- ACCOMMODATION FILTER ---
-@app.get("/accommodation-intelligence-filter", response_class=HTMLResponse)
-async def accommodation_filter_page(request: Request):
-    user = get_current_user(request)
-    if not user:
-        return RedirectResponse(url="/", status_code=303)
-    
-    if raw_stay_data.get("data") is None or raw_stay_data["count"] == 0:
-        return RedirectResponse(url="/accommodation-intelligence", status_code=303)
-    
-    return templates.TemplateResponse("accommodation_filter.html", {
-        "request": request,
-        "user": user,
-        "stay_count": raw_stay_data["count"]
-    })
+# Ez az endpoint megszűnik, helyette az AHP-re megyünk közvetlenül.
 
 @app.post("/api/apply-stay-filters")
 async def apply_stay_filters(params: StayFilterParams, background_tasks: BackgroundTasks, request: Request):
@@ -517,6 +513,49 @@ async def preview_stay_filter(p: StayFilterParams, request: Request):
         print(f"Preview error: {e}")
         return {"count": 0}
 
+@app.get("/api/stay-price-histogram")
+async def stay_price_histogram(request: Request):
+    user = get_current_user(request)
+    if not user or raw_stay_data.get("data") is None:
+        return {"buckets": []}
+    
+    try:
+        df = pd.DataFrame(raw_stay_data["data"])
+        if 'price_huf' not in df.columns:
+            df['price_huf'] = df['price_per_night_eur'] * 400
+        
+        # Calculate histogram
+        prices = df['price_huf'].dropna()
+        if len(prices) == 0:
+            return {"buckets": [], "max_bin": 500000}
+            
+        # Dynamic max: actual max rounded up to nearest 10,000 or 50,000
+        actual_max = float(prices.max())
+        dynamic_max = math.ceil(actual_max / 10000) * 10000
+        if dynamic_max < 10000: dynamic_max = 10000
+
+        # Create buckets - dynamic range
+        bins = np.linspace(0, dynamic_max, 41) # 40 buckets
+        counts, edges = np.histogram(prices, bins=bins)
+        
+        buckets = []
+        for i in range(len(counts)):
+            buckets.append({
+                "min": float(edges[i]),
+                "max": float(edges[i+1]),
+                "count": int(counts[i])
+            })
+            
+        return {
+            "buckets": buckets, 
+            "min": float(prices.min()), 
+            "max": actual_max, 
+            "max_bin": dynamic_max
+        }
+    except Exception as e:
+        print(f"Histogram error: {e}")
+        return {"buckets": []}
+
 def run_stay_filter_task(username: str, p: StayFilterParams):
     global filtered_stays, raw_stay_data, user_stay_filter_params
     filtered_stays[username] = {"status": "running", "count": None, "error": None}
@@ -553,11 +592,20 @@ async def accommodation_ahp_page(request: Request):
     user = get_current_user(request)
     if not user: return RedirectResponse(url="/", status_code=303)
     
+    # Ha nincs szűrt adat, használjuk az összeset
     if user not in filtered_stays or filtered_stays[user].get("status") != "done":
-        return RedirectResponse(url="/accommodation-intelligence-filter", status_code=303)
+        if raw_stay_data.get("data") is None or raw_stay_data["count"] == 0:
+            return RedirectResponse(url="/accommodation-intelligence", status_code=303)
+        
+        filtered_stays[user] = {
+            "status": "done",
+            "count": raw_stay_data["count"],
+            "data": raw_stay_data["data"],
+            "error": None
+        }
     
     return templates.TemplateResponse("accommodation_ahp.html", {
-        "request": request, 
+        "request": request,
         "user": user,
         "stay_count": filtered_stays[user]["count"]
     })
@@ -805,7 +853,9 @@ async def stay_preferences_page(request: Request):
     if not user: return RedirectResponse(url="/", status_code=303)
     if user not in stay_ahp_weights: return RedirectResponse(url="/accommodation-intelligence-ahp", status_code=303)
     if user not in filtered_stays or filtered_stays[user].get("status") != "done":
-        return RedirectResponse(url="/accommodation-intelligence-filter", status_code=303)
+        if raw_stay_data.get("data") is None:
+            return RedirectResponse(url="/accommodation-intelligence", status_code=303)
+        filtered_stays[user] = {"status":"done", "data": raw_stay_data["data"], "count": raw_stay_data["count"]}
     
     return templates.TemplateResponse("accommodation_preferences.html", {
         "request": request,
@@ -930,11 +980,13 @@ async def stay_results_page(request: Request):
 
 @app.get("/destination-matcher", response_class=HTMLResponse)
 async def destination_matcher_page(request: Request):
-    return templates.TemplateResponse("destination_matcher.html", {"request": request})
+    user = get_current_user(request)
+    return templates.TemplateResponse("destination_matcher.html", {"request": request, "user": user})
 
 @app.get("/destination-criteria", response_class=HTMLResponse)
 async def destination_criteria_page(request: Request):
-    return templates.TemplateResponse("destination_criteria.html", {"request": request})
+    user = get_current_user(request)
+    return templates.TemplateResponse("destination_criteria.html", {"request": request, "user": user})
 
 @app.get("/destination-ahp", response_class=HTMLResponse)
 async def destination_ahp_page(request: Request):

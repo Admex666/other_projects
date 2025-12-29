@@ -7,6 +7,7 @@
     <title>Accommodation Intelligence - Optivoya</title>
     <link rel="icon" type="image/png" href="/static/logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         * {
             margin: 0;
@@ -15,33 +16,101 @@
             font-family: 'Poppins', sans-serif;
         }
 
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px 40px;
+            border-radius: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: #235B2A;
+            margin-left: 10px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logout-btn {
+            background: #235B2A;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #90DC25;
+        }
+
+        :root {
+            --primary: #235B2A;
+            --primary-light: #32853d;
+            --secondary: #f8f9fa;
+            --accent: #FFD700;
+            --text-main: #333;
+            --text-muted: #666;
+            --radius: 12px;
+        }
+
         body {
             background: linear-gradient(135deg, #235B2A 0%, #1a4520 100%);
             min-height: 100vh;
-            padding: 20px;
-            color: #333;
+            padding: 40px 20px;
+            color: var(--text-main);
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 900px;
             margin: 0 auto;
             background: white;
             border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
         }
 
         h1 {
-            color: #235B2A;
+            color: var(--primary);
             text-align: center;
+            margin-bottom: 35px;
+            font-weight: 700;
+        }
+
+        .form-section {
             margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .form-section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .search-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(2, 1fr);
             gap: 20px;
-            margin-bottom: 20px;
         }
 
         .input-group {
@@ -51,60 +120,110 @@
 
         label {
             font-weight: 600;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             color: #555;
+            font-size: 14px;
         }
 
         input,
         select {
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 10px;
+            padding: 12px 15px;
+            border: 2px solid #eee;
+            border-radius: var(--radius);
             font-size: 14px;
+            transition: 0.3s;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary-light);
+        }
+
+        /* Filter Grids */
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 12px;
+        }
+
+        .filter-card {
+            padding: 15px;
+            border: 2px solid #eee;
+            border-radius: var(--radius);
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-card:hover {
+            border-color: var(--primary-light);
+            background: #f9fcf9;
+        }
+
+        .filter-card.active {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: white;
+        }
+
+        .filter-card i {
+            width: 24px;
+            height: 24px;
+        }
+
+        .filter-card span {
+            font-size: 12px;
+            font-weight: 500;
         }
 
         .btn-search {
-            background: #235B2A;
+            background: var(--primary);
             color: white;
             border: none;
-            padding: 15px;
-            border-radius: 10px;
+            padding: 18px;
+            border-radius: 40px;
             width: 100%;
-            font-size: 16px;
-            font-weight: 600;
+            font-size: 18px;
+            font-weight: 700;
             cursor: pointer;
             transition: 0.3s;
-            margin-top: 10px;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(35, 91, 42, 0.3);
         }
 
         .btn-search:hover {
-            background: #32853d;
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(35, 91, 42, 0.4);
         }
 
         .btn-search:disabled {
             background: #ccc;
             cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
 
         #status {
-            margin: 20px 0;
-            padding: 15px;
-            border-radius: 10px;
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: var(--radius);
             text-align: center;
             display: none;
-        }
-
-        .status-running {
-            background: #e3f2fd;
-            color: #1976d2;
-            border: 1px solid #bbdefb;
+            background: #f0f7f0;
+            border: 1px solid #d4ebd4;
         }
 
         .loading-bar-container {
             width: 100%;
-            height: 10px;
-            background-color: #e0e0e0;
-            border-radius: 5px;
+            height: 8px;
+            background-color: #eee;
+            border-radius: 4px;
             overflow: hidden;
             margin-top: 15px;
             display: none;
@@ -114,113 +233,140 @@
             width: 0%;
             height: 100%;
             background: linear-gradient(90deg, #235B2A, #90DC25);
-            border-radius: 5px;
-            animation: progressIndeterminate 2s infinite linear;
+            border-radius: 4px;
+            transition: width 0.3s;
         }
 
-        @keyframes progressIndeterminate {
-            0% {
-                width: 0%;
-                margin-left: 0;
-            }
-
-            50% {
-                width: 70%;
-                margin-left: 15%;
-            }
-
-            100% {
-                width: 100%;
-                margin-left: 100%;
-            }
-        }
-
-        /* Mobile Adjustments */
-        @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-
-            .container {
-                padding: 20px 15px;
-            }
-
-            h1 {
-                font-size: 24px;
-            }
-
+        @media (max-width: 600px) {
             .search-grid {
                 grid-template-columns: 1fr;
-                gap: 15px;
             }
 
-            .input-group label {
-                font-size: 13px;
-            }
-
-            input,
-            select {
-                padding: 10px;
-                font-size: 14px;
-            }
-
-            .btn-search {
-                padding: 12px 20px;
-                font-size: 14px;
-            }
-
-            #results div {
-                padding: 20px 15px !important;
-            }
-
-            #results button {
-                width: 100% !important;
+            .filter-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
         }
     </style>
 </head>
 
 <body>
+    <div class="navbar">
+        <a href="/home" style="text-decoration: none; display: flex; align-items: center; gap: 10px;">
+            <img src="/static/logo.png" alt="Optivoya" style="height: 40px;">
+            <span class="logo-text">Optivoya</span>
+        </a>
+        <div class="user-info">
+            <span style="color: #666;">👤 {{ user }}</span>
+            <a href="/logout" class="logout-btn">Kilépés</a>
+        </div>
+    </div>
     <div class="container">
         <h1>🏨 Accommodation Intelligence</h1>
 
-        <div class="search-grid">
-            <div class="input-group">
-                <label>Város</label>
-                <input type="text" id="city" placeholder="Pl: Budapest" value="Budapest">
-            </div>
-            <div class="input-group">
-                <label>Ország</label>
-                <input type="text" id="country" placeholder="Pl: Magyarország" value="Magyarország">
-            </div>
-            <div class="input-group">
-                <label>Érkezés</label>
-                <input type="date" id="start_date">
-            </div>
-            <div class="input-group">
-                <label>Távozás</label>
-                <input type="date" id="end_date">
-            </div>
-            <div class="input-group">
-                <label>Vendégek száma</label>
-                <div style="display: flex; gap: 10px;">
-                    <div style="flex:1">
-                        <label style="font-size:11px">Felnőtt</label>
-                        <input type="number" id="adults" value="2" min="1" style="width:100%">
-                    </div>
-                    <div style="flex:1">
-                        <label style="font-size:11px">Gyermek</label>
-                        <input type="number" id="children" value="0" min="0" style="width:100%">
+        <!-- Alapadatok -->
+        <div class="form-section">
+            <div class="section-title"><i data-lucide="map-pin"></i> Úticél és Időpont</div>
+            <div class="search-grid">
+                <div class="input-group">
+                    <label>Város</label>
+                    <input type="text" id="city" placeholder="Pl: Budapest" value="Budapest">
+                </div>
+                <div class="input-group">
+                    <label>Ország</label>
+                    <input type="text" id="country" placeholder="Pl: Magyarország" value="Magyarország">
+                </div>
+                <div class="input-group">
+                    <label>Érkezés</label>
+                    <input type="date" id="start_date">
+                </div>
+                <div class="input-group">
+                    <label>Távozás</label>
+                    <input type="date" id="end_date">
+                </div>
+                <div class="input-group">
+                    <label>Vendégek</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="number" id="adults" value="2" min="1" title="Felnőtt" style="flex:1">
+                        <input type="number" id="children" value="0" min="0" title="Gyermek" style="flex:1">
                     </div>
                 </div>
-            </div>
-            <div class="input-group">
-                <label>Szobák száma</label>
-                <input type="number" id="rooms" value="1" min="1">
+                <div class="input-group">
+                    <label>Szobák</label>
+                    <input type="number" id="rooms" value="1" min="1">
+                </div>
             </div>
         </div>
 
-        <button id="searchBtn" class="btn-search" onclick="startSearch()">Szállások keresése</button>
+        <!-- Elsődleges Szűrők -->
+        <div class="form-section">
+            <div class="section-title"><i data-lucide="filter"></i> Elsődleges Szűrők</div>
+
+            <label style="display: block; margin-bottom: 10px;">Szállás típusa</label>
+            <div class="filter-grid" id="type-grid">
+                <div class="filter-card active" data-value="HOTEL">
+                    <i data-lucide="hotel"></i>
+                    <span>Hotel</span>
+                </div>
+                <div class="filter-card" data-value="APARTMENT">
+                    <i data-lucide="home"></i>
+                    <span>Apartman</span>
+                </div>
+                <div class="filter-card" data-value="GUEST">
+                    <i data-lucide="door-open"></i>
+                    <span>Vendégház</span>
+                </div>
+                <div class="filter-card" data-value="VR">
+                    <i data-lucide="palmtree"></i>
+                    <span>Nyaraló</span>
+                </div>
+                <div class="filter-card" data-value="HOSTEL">
+                    <i data-lucide="bed"></i>
+                    <span>Hostel</span>
+                </div>
+            </div>
+
+            <label style="display: block; margin: 20px 0 10px;">Kiemelt kényelmi szolgáltatások</label>
+            <div class="filter-grid" id="amenity-grid">
+                <div class="filter-card" data-value="WIFI">
+                    <i data-lucide="wifi"></i>
+                    <span>Wifi</span>
+                </div>
+                <div class="filter-card" data-value="POOL">
+                    <i data-lucide="waves"></i>
+                    <span>Medence</span>
+                </div>
+                <div class="filter-card" data-value="PARKING">
+                    <i data-lucide="car"></i>
+                    <span>Parkoló</span>
+                </div>
+                <div class="filter-card" data-value="AC">
+                    <i data-lucide="wind"></i>
+                    <span>Klíma</span>
+                </div>
+                <div class="filter-card" data-value="KITCHEN">
+                    <i data-lucide="utensils"></i>
+                    <span>Konyha</span>
+                </div>
+            </div>
+
+            <div class="search-grid" style="margin-top: 20px;">
+                <div class="input-group">
+                    <label>Maximum ár / éjszaka (Ft)</label>
+                    <input type="number" id="price_max" value="500000" step="5000">
+                </div>
+                <div class="input-group">
+                    <label>Minimum értékelés</label>
+                    <select id="min_rating">
+                        <option value="0">Összes</option>
+                        <option value="90">9.0+ Szuper</option>
+                        <option value="80">8.0+ Nagyon jó</option>
+                        <option value="70">7.0+ Jó</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <button id="searchBtn" class="btn-search" onclick="startSearch()">🔍 Keresés indítása</button>
 
         <div id="status">
             <div id="statusText"></div>
@@ -232,6 +378,9 @@
     </div>
 
     <script>
+        lucide.createIcons();
+
+        // Date selection logic
         const today = new Date();
         const tomorrow = new Date(today);
         tomorrow.setDate(today.getDate() + 1);
@@ -243,22 +392,39 @@
 
         startInput.min = today.toISOString().split('T')[0];
         endInput.min = tomorrow.toISOString().split('T')[0];
-
         startInput.value = tomorrow.toISOString().split('T')[0];
         endInput.value = nextWeek.toISOString().split('T')[0];
 
         startInput.addEventListener('change', () => {
-            if (startInput.value) {
-                const startDate = new Date(startInput.value);
-                const minEndDate = new Date(startDate);
-                minEndDate.setDate(startDate.getDate() + 1);
-                const minStr = minEndDate.toISOString().split('T')[0];
-                endInput.min = minStr;
-                if (endInput.value && endInput.value < minStr) {
-                    endInput.value = minStr;
-                }
-            }
+            const startDate = new Date(startInput.value);
+            const minEndDate = new Date(startDate);
+            minEndDate.setDate(startDate.getDate() + 1);
+            endInput.min = minEndDate.toISOString().split('T')[0];
+            if (endInput.value < endInput.min) endInput.value = endInput.min;
         });
+
+        // Filter selection logic
+        const selectedTypes = ['HOTEL'];
+        const selectedAmenities = [];
+
+        function setupGrid(id, list) {
+            document.querySelectorAll(`#${id} .filter-card`).forEach(card => {
+                card.addEventListener('click', () => {
+                    const val = card.dataset.value;
+                    const idx = list.indexOf(val);
+                    if (idx > -1) {
+                        list.splice(idx, 1);
+                        card.classList.remove('active');
+                    } else {
+                        list.push(val);
+                        card.classList.add('active');
+                    }
+                });
+            });
+        }
+
+        setupGrid('type-grid', selectedTypes);
+        setupGrid('amenity-grid', selectedAmenities);
 
         let pollInterval;
 
@@ -276,67 +442,75 @@
                 end_date: document.getElementById('end_date').value,
                 rooms: parseInt(document.getElementById('rooms').value),
                 adults: parseInt(document.getElementById('adults').value),
-                children: parseInt(document.getElementById('children').value)
+                children: parseInt(document.getElementById('children').value),
+                price_min: 0,
+                price_max: parseFloat(document.getElementById('price_max').value),
+                min_rating: parseFloat(document.getElementById('min_rating').value),
+                accommodation_types: selectedTypes,
+                amenities: selectedAmenities,
+                breakfast: false
             };
 
-            if (!payload.city || !payload.country || !payload.start_date || !payload.end_date) {
-                alert("Kérlek töltsd ki az összes szükséges mezőt!");
+            if (!payload.city || !payload.country) {
+                alert("Kérlek add meg a várost és az országot!");
                 return;
             }
 
             btn.disabled = true;
             statusDiv.style.display = 'block';
-            statusDiv.className = 'status-running';
-            statusText.innerText = "🔍 Keresés indítása... (ez 1-2 percig is eltarthat)";
+            statusText.innerText = "🔍 Keresés indítása...";
             loadingBar.style.display = 'block';
+            loadingBar.querySelector('.loading-bar').style.width = "5%";
             resultsDiv.innerHTML = "";
 
-            await fetch('/start-accommodation-search', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            pollInterval = setInterval(checkStatus, 3000);
+            try {
+                await fetch('/start-accommodation-search', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                pollInterval = setInterval(checkStatus, 3000);
+            } catch (e) {
+                statusText.innerText = "❌ Hiba a szerverkapcsolatban.";
+                btn.disabled = false;
+            }
         }
 
         async function checkStatus() {
             const response = await fetch('/api/accommodation-status');
             const data = await response.json();
-            const statusDiv = document.getElementById('status');
             const statusText = document.getElementById('statusText');
             const loadingBar = document.getElementById('loadingBar');
 
             if (data.status === 'running') {
-                statusText.innerText = data.status_text || "⏳ Szálláshelyek gyűjtése folyamatban...";
-                if (data.progress !== undefined) {
+                statusText.innerText = data.status_text || "⏳ Szállások gyűjtése...";
+                if (data.progress) {
                     loadingBar.querySelector('.loading-bar').style.width = data.progress + "%";
-                    loadingBar.querySelector('.loading-bar').style.animation = 'none';
                 }
             } else if (data.status === 'done') {
                 clearInterval(pollInterval);
                 loadingBar.style.display = 'none';
-                statusDiv.style.display = 'none';
+                document.getElementById('status').style.background = '#e8f5e9';
                 document.getElementById('searchBtn').disabled = false;
 
                 const resultsDiv = document.getElementById('results');
                 resultsDiv.innerHTML = `
-                    <div style="background: #f0f7f0; border: 2px solid #235B2A; border-radius: 15px; padding: 30px; text-align: center; margin-top: 20px;">
-                        <h2 style="color: #235B2A; margin-bottom: 10px;">✅ Sikeres adatgyűjtés!</h2>
-                        <p style="font-size: 18px; margin-bottom: 20px;">Összesen <strong>${data.count}</strong> szállásajánlatot találtunk.</p>
+                    <div style="background: white; border: 2px solid var(--primary); border-radius: 15px; padding: 30px; text-align: center; margin-top: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
+                        <h2 style="color: var(--primary); margin-bottom: 15px;">🎉 Találtunk ${data.count} szállást!</h2>
+                        <p style="margin-bottom: 25px; color: #666;">A megadott szűrők alapján a legrelevánsabb ajánlatokat gyűjtöttük össze.</p>
                         
-                        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                            <button onclick="location.reload()" class="btn-search" style="background: #666; width: auto; padding: 12px 25px;">Új keresés</button>
-                            <button onclick="window.location.href='/accommodation-intelligence-filter'" class="btn-search" style="width: auto; padding: 12px 40px; font-size: 18px;">
-                                Tovább a szűréshez ➔
+                        <div style="display: flex; gap: 15px; justify-content: center;">
+                            <button onclick="location.reload()" style="background: #f5f5f5; color: #333; border: none; padding: 12px 25px; border-radius: 30px; cursor: pointer; font-weight: 500;">Új keresés</button>
+                            <button onclick="window.location.href='/accommodation-intelligence-ahp'" style="background: var(--primary); color: white; border: none; padding: 12px 40px; border-radius: 30px; cursor: pointer; font-weight: 700; font-size: 16px;">
+                                Tovább az elemzéshez ➔
                             </button>
                         </div>
                     </div>
                 `;
+                statusText.innerText = "✅ Keresés befejezve.";
             } else if (data.status === 'error') {
                 clearInterval(pollInterval);
-                loadingBar.style.display = 'none';
-                statusText.innerText = "❌ Hiba történt: " + data.error;
+                statusText.innerText = "❌ Hiba: " + data.error;
                 document.getElementById('searchBtn').disabled = false;
             }
         }

@@ -8,18 +8,30 @@
     <link rel="icon" type="image/png" href="/static/logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Leaflet Maps -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
+        :root {
+            --primary: #235B2A;
+            --primary-light: #32853d;
+            --secondary: #f8f9fa;
+            --accent: #FFD700;
+            --text-main: #333;
+            --text-muted: #666;
+            --radius: 15px;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
             background: linear-gradient(135deg, #235B2A 0%, #1a4520 100%);
             min-height: 100vh;
             padding: 20px;
@@ -27,59 +39,194 @@
 
         .navbar {
             background: rgba(255, 255, 255, 0.95);
-            padding: 20px 40px;
+            padding: 15px 30px;
             border-radius: 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 40px;
+            margin-bottom: 25px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
 
         .logo-text {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 700;
-            color: #235B2A;
+            color: var(--primary);
         }
 
-        .container {
-            max-width: 1400px;
+        .main-layout {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 25px;
+            max-width: 1600px;
             margin: 0 auto;
+        }
+
+        /* Sidebar Filters */
+        .sidebar {
             background: white;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border-radius: var(--radius);
+            padding: 25px;
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+            box-shadow: var(--shadow);
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+        }
+
+        .sidebar h2 {
+            font-size: 18px;
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filter-group {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .filter-group:last-child {
+            border-bottom: none;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        /* Price Histogram */
+        .histogram-container {
+            position: relative;
+            height: 80px;
+            margin-bottom: 30px;
+            padding: 0 10px;
+        }
+
+        .histogram-svg {
+            width: 100%;
+            height: 60px;
+            display: block;
+        }
+
+        .bar {
+            fill: #e0e0e0;
+            transition: 0.3s;
+        }
+
+        .bar.active {
+            fill: var(--primary-light);
+        }
+
+        .range-slider {
+            position: relative;
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+        }
+
+        .range-track {
+            position: absolute;
+            height: 100%;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        .range-handle {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 2;
+        }
+
+        .price-inputs {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* Rating Pills */
+        .rating-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .rating-pill {
+            padding: 10px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 13px;
+        }
+
+        .rating-pill:hover {
+            border-color: var(--primary-light);
+        }
+
+        .rating-pill.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        /* Main Content */
+        .results-container {
+            background: white;
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
         }
 
         .results-header {
-            margin-bottom: 30px;
-        }
-
-        .results-header h1 {
-            color: #235B2A;
-        }
-
-        .controls {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
+        .controls-bar {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        /* Cards & Table styles from original */
         .results-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
         }
 
         .stay-card {
-            border-radius: 15px;
+            border-radius: var(--radius);
             overflow: hidden;
             background: white;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
             border: 1px solid #eee;
             transition: transform 0.3s;
             position: relative;
@@ -88,12 +235,13 @@
         }
 
         .stay-card:hover {
-            transform: translateY(-10px);
+            transform: translateY(-8px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
         }
 
         .stay-image {
             width: 100%;
-            height: 220px;
+            height: 200px;
             object-fit: cover;
         }
 
@@ -105,32 +253,23 @@
         }
 
         .stay-title {
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 700;
             color: #333;
             margin-bottom: 5px;
-        }
-
-        .stay-location {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+            line-height: 1.3;
         }
 
         .score-badge {
             position: absolute;
             top: 15px;
             right: 15px;
-            background: rgba(35, 91, 42, 0.85);
+            background: rgba(35, 91, 42, 0.9);
             color: white;
-            padding: 5px 12px;
+            padding: 4px 10px;
             border-radius: 20px;
-            font-weight: 700;
-            font-size: 11px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            font-weight: 600;
+            font-size: 10px;
             z-index: 5;
         }
 
@@ -140,48 +279,25 @@
             left: 15px;
             background: #90DC25;
             color: #235B2A;
-            padding: 5px 15px;
+            padding: 4px 12px;
             border-radius: 20px;
             font-weight: 800;
-            font-size: 16px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-            z-index: 6;
+            font-size: 14px;
             border: 2px solid #235B2A;
-        }
-
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .metric {
-            font-size: 13px;
-            padding: 8px;
-            border-radius: 8px;
-            background: #f0f7f0;
-            position: relative;
-            cursor: help;
-        }
-
-        .metric strong {
-            display: block;
-            color: #235B2A;
-            font-size: 15px;
+            z-index: 6;
         }
 
         .price-tag {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 700;
-            color: #235B2A;
-            margin-bottom: 15px;
+            color: var(--primary);
+            margin: 10px 0;
         }
 
         .btn-book {
             background: #90DC25;
             color: #235B2A;
-            padding: 12px;
+            padding: 10px;
             border-radius: 10px;
             text-decoration: none;
             text-align: center;
@@ -191,25 +307,78 @@
         }
 
         .btn-book:hover {
-            background: #235B2A;
+            background: var(--primary);
             color: white;
         }
 
-        .score-cell {
-            padding: 5px 10px;
-            border-radius: 4px;
+        /* View Toggle */
+        .view-toggle {
+            display: flex;
+            background: #e2e8f0;
+            padding: 4px;
+            border-radius: 8px;
+            gap: 4px;
+        }
+
+        .view-btn {
+            border: none;
+            background: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
             font-weight: 600;
+            color: #64748b;
+            transition: 0.2s;
             font-size: 13px;
-            display: inline-block;
-            min-width: 80px;
-            text-align: center;
         }
 
+        .view-btn.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        #map_view {
+            display: none;
+            height: 600px;
+            width: 100%;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        #table_view {
+            display: none;
+        }
+
+        .styled-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .styled-table thead tr {
+            background: var(--primary);
+            color: white;
+            text-align: left;
+        }
+
+        .styled-table th,
         .styled-table td {
-            vertical-align: middle;
+            padding: 12px;
         }
 
-        /* Tooltip styles from flight_results */
+        .styled-table tbody tr {
+            border-bottom: 1px solid #eee;
+        }
+
+        .metric {
+            font-size: 12px;
+            padding: 6px;
+            border-radius: 6px;
+            background: #f0f7f0;
+            margin-bottom: 5px;
+        }
+
         .tooltip {
             position: relative;
             cursor: help;
@@ -230,9 +399,7 @@
             margin-left: -70px;
             opacity: 0;
             transition: opacity 0.3s;
-            font-size: 11px;
-            font-weight: 400;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            font-size: 10px;
         }
 
         .tooltip:hover .tooltiptext {
@@ -252,89 +419,6 @@
             background: #f8d7da;
         }
 
-        /* View Toggle */
-        .controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 10px;
-        }
-
-        .view-toggle {
-            display: flex;
-            background: #e2e8f0;
-            padding: 4px;
-            border-radius: 8px;
-            gap: 4px;
-        }
-
-        .view-btn {
-            border: none;
-            background: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-family: inherit;
-            font-weight: 600;
-            color: #64748b;
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .view-btn.active {
-            background: white;
-            color: #235B2A;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Map View */
-        #map_view {
-            display: none;
-            height: 600px;
-            width: 100%;
-            border-radius: 15px;
-            border: 1px solid #e2e8f0;
-            margin-bottom: 30px;
-            z-index: 1;
-        }
-
-        .map-popup {
-            font-family: 'Poppins', sans-serif;
-            width: 150px;
-        }
-
-        .map-popup h4 {
-            margin: 0 0 5px 0;
-            color: #235B2A;
-            font-size: 14px;
-        }
-
-        .map-popup p {
-            margin: 0 0 10px 0;
-            font-weight: 700;
-            font-size: 13px;
-        }
-
-        .btn-popup {
-            background: #235B2A;
-            color: white !important;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 11px;
-            cursor: pointer;
-            width: 100%;
-            text-align: center;
-            text-decoration: none !important;
-            display: block;
-        }
-
-        /* Custom Rank Marker Icons */
         .rank-marker {
             width: 30px;
             height: 30px;
@@ -343,78 +427,25 @@
             border: 2px solid white;
             color: white;
             font-weight: 700;
-            font-size: 12px;
+            font-size: 11px;
             display: flex;
             align-items: center;
             justify-content: center;
             transform: rotate(-45deg);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            transition: transform 0.2s, box-shadow 0.2s;
         }
 
         .rank-marker span {
             transform: rotate(45deg);
         }
 
-        .rank-marker:hover {
-            transform: rotate(-45deg) scale(1.2);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
-            z-index: 1000 !important;
-        }
-
-        /* Hidden initially */
-        #table_view {
-            display: none;
-        }
-
-        .styled-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 25px 0;
-            font-size: 0.9em;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .styled-table thead tr {
-            background-color: #235B2A;
-            color: #ffffff;
-            text-align: left;
-        }
-
-        .styled-table th,
-        .styled-table td {
-            padding: 12px 15px;
-        }
-
-        .styled-table tbody tr {
-            border-bottom: 1px solid #dddddd;
-        }
-
-        .styled-table tbody tr:nth-of-type(even) {
-            background-color: #f3f3f3;
-        }
-
-        @media (max-width: 768px) {
-            .results-grid {
+        @media (max-width: 1000px) {
+            .main-layout {
                 grid-template-columns: 1fr;
             }
 
-            .container {
-                padding: 20px 15px;
-            }
-
-            .navbar {
-                padding: 15px;
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-            }
-
-            .controls {
-                flex-direction: column;
-                gap: 15px;
+            .sidebar {
+                position: static;
+                max-height: none;
             }
         }
     </style>
@@ -422,351 +453,342 @@
 
 <body>
     <div class="navbar">
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <img src="/static/logo.png" alt="Optivoya" style="height: 40px;">
+        <a href="/home" style="text-decoration: none; display: flex; align-items: center; gap: 10px;">
+            <img src="/static/logo.png" alt="Optivoya" style="height: 35px;">
             <span class="logo-text">Optivoya</span>
-        </div>
+        </a>
         <div class="user-info">
-            <span style="color: #666;">👤 {{ user }}</span>
-            <a href="/logout" class="logout-btn"
-                style="background: #235B2A; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none;">Kilépés</a>
+            <span style="color: #666; font-size: 14px; margin-right: 15px;">👤 {{ user }}</span>
+            <a href="/logout"
+                style="background: var(--primary); color: white; padding: 8px 18px; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 600;">Kilépés</a>
         </div>
     </div>
 
-    <div class="container">
-        <div class="results-header">
-            <div
-                style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; flex-wrap: wrap; gap: 15px;">
-                <h1>🎯 Személyre szabott szállások</h1>
-                <div style="display: flex; gap: 10px;">
-                    <button onclick="window.location.href='/accommodation-intelligence-preferences'"
-                        style="background:#666; color:white; border:none; padding:10px 20px; border-radius:8px; cursor:pointer">⬅️
-                        Vissza</button>
-                    <button onclick="window.location.href='/home'"
-                        style="background:#235B2A; color:white; border:none; padding:10px 20px; border-radius:8px; cursor:pointer">🏠
-                        Főoldal</button>
+    <div class="main-layout">
+        <!-- Sidebar Filters -->
+        <aside class="sidebar">
+            <h2><i class="fas fa-sliders-h"></i> Finomhangolás</h2>
+
+            <div class="filter-group">
+                <span class="filter-label">Ár / éjszaka</span>
+                <div class="histogram-container">
+                    <svg id="histogram-svg" class="histogram-svg" preserveAspectRatio="none"></svg>
+                    <div class="range-slider" id="slider">
+                        <div class="range-track" id="track"></div>
+                        <div class="range-handle" id="handle-min" style="left: 0%"></div>
+                        <div class="range-handle" id="handle-max" style="left: 100%"></div>
+                    </div>
+                </div>
+                <div class="price-inputs">
+                    <span id="price-min-label">0 Ft</span>
+                    <span id="price-max-label">500,000+ Ft</span>
                 </div>
             </div>
-            <p style="color:666">Az ön preferenciái alapján rangsorolva</p>
-        </div>
 
-        <div class="controls">
-            <div style="display: flex; gap: 20px; align-items: center;">
-                <div style="font-size: 14px; color: #64748b;">
-                    Találatok: <strong id="shown_count">{{ results|length }}</strong> / {{ results|length }}
+            <div class="filter-group">
+                <span class="filter-label">Vendégértékelés</span>
+                <div class="rating-options">
+                    <div class="rating-pill active" data-rating="0">Bármely</div>
+                    <div class="rating-pill" data-rating="70">7.0+</div>
+                    <div class="rating-pill" data-rating="80">8.0+</div>
+                    <div class="rating-pill" data-rating="90">9.0+</div>
                 </div>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <button onclick="window.location.href='/accommodation-intelligence-preferences'"
+                    style="width: 100%; padding: 12px; background: #666; color: white; border: none; border-radius: 10px; cursor: pointer; font-size: 13px; font-weight: 500;">
+                    ⬅️ Vissza a beállításokhoz
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Results -->
+        <main class="results-container">
+            <div class="results-header">
+                <h1>🎯 Személyre szabott ajánlatok</h1>
+                <div style="font-size: 14px; color: var(--text-muted);">
+                    Mutatva: <strong id="shown_count">{{ results|length }}</strong> / {{ results|length }}
+                </div>
+            </div>
+
+            <div class="controls-bar">
                 <div style="display: flex; align-items: center; gap: 10px;">
-                    <label for="limit_select"
-                        style="font-size: 13px; font-weight: 600; color: #64748b;">Megjelenítés:</label>
-                    <select id="limit_select" onchange="filterResults()"
-                        style="padding: 6px 12px; border-radius: 6px; border: 1px solid #cbd5e1; font-family: inherit; font-size: 13px; color: #334155; outline: none; cursor: pointer;">
+                    <label style="font-size: 13px; font-weight: 600; color: #64748b;">Megjelenítés:</label>
+                    <select id="limit_select" onchange="runLocalFilter()"
+                        style="padding: 6px 10px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 13px; outline: none; cursor: pointer;">
                         <option value="10">Top 10</option>
                         <option value="25" selected>Top 25</option>
                         <option value="50">Top 50</option>
-                        <option value="100">Top 100</option>
                         <option value="all">Összes</option>
                     </select>
                 </div>
-            </div>
-            <div class="view-toggle">
-                <button class="view-btn active" onclick="switchView('grid')" id="btn_grid">
-                    <i class="fas fa-th-large"></i> Kártyák
-                </button>
-                <button class="view-btn" onclick="switchView('table')" id="btn_table">
-                    <i class="fas fa-table"></i> Táblázat
-                </button>
-                <button class="view-btn" onclick="switchView('map')" id="btn_map">
-                    <i class="fas fa-map-marked-alt"></i> Térkép
-                </button>
-            </div>
-        </div>
 
-        <!-- Térkép nézet -->
-        <div id="map_view"></div>
-
-        <!-- Táblázat nézet -->
-        <div id="table_view">
-            <table class="styled-table">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Szállás</th>
-                        <th>Város</th>
-                        <th>Ár/éj</th>
-                        <th>Értékelés</th>
-                        <th>Népszerűség</th>
-                        <th>Távolság</th>
-                        <th>Relevancia</th>
-                        <th>Művelet</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for stay in results %}
-                    <tr class="result-row">
-                        <td>{{ loop.index }}</td>
-                        <td><strong>{{ stay.name }}</strong></td>
-                        <td>{{ stay.city }}</td>
-                        <!-- PRICE -->
-                        <td>
-                            {% set s = stay.score_price %}
-                            <div
-                                class="score-cell tooltip {% if s > 0.8 %}score-green{% elif s > 0.4 %}score-yellow{% else %}score-red{% endif %}">
-                                {% if s > 0.8 %}🟢{% elif s > 0.4 %}🟡{% else %}🔴{% endif %}
-                                {{ "{:,.0f}".format(stay.price_huf) }} Ft
-                                <span class="tooltiptext">Saját súlyozásával: {{ "%.2f"|format(stay.score_price *
-                                    weights[0]) }}</span>
-                            </div>
-                        </td>
-
-                        <!-- RATING -->
-                        <td>
-                            {% set s = stay.score_rating %}
-                            <div
-                                class="score-cell tooltip {% if s > 0.8 %}score-green{% elif s > 0.4 %}score-yellow{% else %}score-red{% endif %}">
-                                {% if s > 0.8 %}🟢{% elif s > 0.4 %}🟡{% else %}🔴{% endif %}
-                                {{ stay.rating_score }}/100
-                                <span class="tooltiptext">Saját súlyozásával: {{ "%.2f"|format(stay.score_rating *
-                                    weights[1]) }}</span>
-                            </div>
-                        </td>
-
-                        <!-- REVIEWS -->
-                        <td>
-                            {% set s = stay.score_reviews %}
-                            <div
-                                class="score-cell tooltip {% if s > 0.8 %}score-green{% elif s > 0.4 %}score-yellow{% else %}score-red{% endif %}">
-                                {% if s > 0.8 %}🟢{% elif s > 0.4 %}🟡{% else %}🔴{% endif %}
-                                {{ stay.rating_count }}
-                                <span class="tooltiptext">Saját súlyozásával: {{ "%.2f"|format(stay.score_reviews *
-                                    weights[2]) }}</span>
-                            </div>
-                        </td>
-
-                        <!-- DISTANCE -->
-                        <td>
-                            {% set s = stay.score_distance %}
-                            <div
-                                class="score-cell tooltip {% if s > 0.8 %}score-green{% elif s > 0.4 %}score-yellow{% else %}score-red{% endif %}">
-                                {% if s > 0.8 %}🟢{% elif s > 0.4 %}🟡{% else %}🔴{% endif %}
-                                {{ "%.1f"|format(stay.distance_km) }} km
-                                <span class="tooltiptext">Saját súlyozásával: {{ "%.2f"|format(stay.score_distance *
-                                    weights[3]) }}</span>
-                            </div>
-                        </td>
-
-                        <td><strong>{{ "%.4f"|format(stay.phi_net) }}</strong></td>
-                        <td><a href="{{ stay.booking_url }}" target="_blank"
-                                style="color: #235B2A; font-weight: 700;">Megnyitás</a></td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Kártya nézet -->
-        <div class="results-grid" id="grid_view">
-            {% for stay in results %}
-            <div class="stay-card result-card-item">
-                <div class="rank-badge">#{{ loop.index }}</div>
-                <div class="score-badge">Relevancia: {{ "%.3f"|format(stay.phi_net) }}</div>
-
-                <a href="{{ stay.booking_url }}" target="_blank" style="display: block;">
-                    <img src="{{ stay.image_url or 'https://via.placeholder.com/400x250?text=No+Photo' }}"
-                        class="stay-image" alt="{{ stay.name }}">
-                </a>
-
-                <div class="stay-content">
-                    <div class="stay-title">
-                        <a href="{{ stay.booking_url }}" target="_blank" style="text-decoration: none; color: inherit;">
-                            {{ stay.name }}
-                        </a>
-                    </div>
-                    <div class="stay-location">
-                        <span>📍 {{ stay.city }}</span>
-                    </div>
-
-                    <div class="price-tag">{{ "{:,.0f}".format(stay.price_huf) }} Ft <span
-                            style="font-size:12px; color:666; font-weight:400">/ éj</span></div>
-
-                    <div class="metrics-grid">
-                        {% set s_rating = stay.score_rating %}
-                        <div
-                            class="metric tooltip {% if s_rating > 0.8 %}score-green{% elif s_rating > 0.4 %}score-yellow{% else %}score-red{% endif %}">
-                            Értékelés: <strong>{{ stay.rating_score }}/100</strong>
-                            <span class="tooltiptext">Pontszám: {{ "%.2f"|format(stay.score_rating *
-                                weights[1]) }}</span>
-                        </div>
-
-                        {% set s_reviews = stay.score_reviews %}
-                        <div
-                            class="metric tooltip {% if s_reviews > 0.8 %}score-green{% elif s_reviews > 0.4 %}score-yellow{% else %}score-red{% endif %}">
-                            Népszerűség: <strong>{{ stay.rating_count }} vél.</strong>
-                            <span class="tooltiptext">Pontszám: {{ "%.2f"|format(stay.score_reviews *
-                                weights[2]) }}</span>
-                        </div>
-
-                        {% set s_dist = stay.score_distance %}
-                        <div
-                            class="metric tooltip {% if s_dist > 0.8 %}score-green{% elif s_dist > 0.4 %}score-yellow{% else %}score-red{% endif %}">
-                            Távolság: <strong>{{ "%.1f"|format(stay.distance_km) }} km</strong>
-                            <span class="tooltiptext">Pontszám: {{ "%.2f"|format(stay.score_distance *
-                                weights[3]) }}</span>
-                        </div>
-                    </div>
-
-                    <a href="{{ stay.booking_url }}" target="_blank" class="btn-book">Szállás megtekintése ➔</a>
+                <div class="view-toggle">
+                    <button class="view-btn active" onclick="switchView('grid')" id="btn_grid">Kártyák</button>
+                    <button class="view-btn" onclick="switchView('table')" id="btn_table">Táblázat</button>
+                    <button class="view-btn" onclick="switchView('map')" id="btn_map">Térkép</button>
                 </div>
             </div>
-            {% endfor %}
-        </div>
+
+            <!-- Térkép nézet -->
+            <div id="map_view"></div>
+
+            <!-- Táblázat nézet -->
+            <div id="table_view">
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Szállás</th>
+                            <th>Ár/éj</th>
+                            <th>Értékelés</th>
+                            <th>Távolság</th>
+                            <th>Relevancia</th>
+                            <th>Művelet</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table_body">
+                        {% for stay in results %}
+                        <tr class="result-row" data-index="{{ loop.index0 }}">
+                            <td>{{ loop.index }}</td>
+                            <td><strong>{{ stay.name }}</strong><br><small>📍 {{ stay.city }}</small></td>
+                            <td>
+                                <div
+                                    class="score-cell tooltip {% if stay.score_price > 0.8 %}score-green{% elif stay.score_price > 0.4 %}score-yellow{% else %}score-red{% endif %}">
+                                    {{ "{:,.0f}".format(stay.price_huf) }} Ft
+                                </div>
+                            </td>
+                            <td>
+                                <div
+                                    class="score-cell tooltip {% if stay.score_rating > 0.8 %}score-green{% elif stay.score_rating > 0.4 %}score-yellow{% else %}score-red{% endif %}">
+                                    {{ stay.rating_score }}/100
+                                </div>
+                            </td>
+                            <td>{{ "%.1f"|format(stay.distance_km) }} km</td>
+                            <td><strong>{{ "%.3f"|format(stay.phi_net) }}</strong></td>
+                            <td><a href="{{ stay.booking_url }}" target="_blank"
+                                    style="color: var(--primary); font-weight: 700;">Megnyitás</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Kártya nézet -->
+            <div class="results-grid" id="grid_view">
+                {% for stay in results %}
+                <div class="stay-card result-card-item" data-index="{{ loop.index0 }}">
+                    <div class="rank-badge">#{{ loop.index }}</div>
+                    <div class="score-badge">Match: {{ "%.1f"|format(stay.phi_net * 100) }}%</div>
+
+                    <a href="{{ stay.booking_url }}" target="_blank">
+                        <img src="{{ stay.image_url or 'https://via.placeholder.com/400x250?text=No+Photo' }}"
+                            class="stay-image" alt="{{ stay.name }}">
+                    </a>
+
+                    <div class="stay-content">
+                        <div class="stay-title">{{ stay.name }}</div>
+                        <div style="font-size: 13px; color: #666; margin-bottom: 10px;">📍 {{ stay.city }}</div>
+
+                        <div class="price-tag">{{ "{:,.0f}".format(stay.price_huf) }} Ft <small
+                                style="font-size: 11px; font-weight: 400;">/ éj</small></div>
+
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 15px;">
+                            <div class="metric">⭐ {{ stay.rating_score }}/100</div>
+                            <div class="metric">📍 {{ "%.1f"|format(stay.distance_km) }} km</div>
+                        </div>
+
+                        <a href="{{ stay.booking_url }}" target="_blank" class="btn-book">Megtekintés ➔</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </main>
     </div>
 
     <script>
+        lucide.createIcons();
+
         const allResults = {{ results | tojson | safe }};
+        let MAX_PRICE_REF = 500000;
         let map = null;
         let markers = [];
 
-        function switchView(view) {
-            const grid = document.getElementById('grid_view');
-            const table = document.getElementById('table_view');
-            const mapDiv = document.getElementById('map_view');
-            const btnGrid = document.getElementById('btn_grid');
-            const btnTable = document.getElementById('btn_table');
-            const btnMap = document.getElementById('btn_map');
+        // Filter state
+        let localFilters = {
+            price_min: 0,
+            price_max: 500000,
+            min_rating: 0,
+            limit: 25
+        };
 
-            // Hide/Deactivate all
-            grid.style.display = 'none';
-            table.style.display = 'none';
-            mapDiv.style.display = 'none';
-            btnGrid.classList.remove('active');
-            btnTable.classList.remove('active');
-            btnMap.classList.remove('active');
-
-            if (view === 'grid') {
-                grid.style.display = 'grid';
-                btnGrid.classList.add('active');
-            } else if (view === 'table') {
-                table.style.display = 'block';
-                btnTable.classList.add('active');
-            } else if (view === 'map') {
-                mapDiv.style.display = 'block';
-                btnMap.classList.add('active');
-                initMap();
-            }
-        }
-
-        function initMap() {
-            if (map) {
-                map.invalidateSize();
-                return;
-            }
-
-            const validResults = allResults.filter(r => r.latitude && r.longitude);
-            if (validResults.length === 0) {
-                document.getElementById('map_view').innerHTML = '<div style="padding: 40px; text-align: center; color: #666;">Nem állnak rendelkezésre koordináta adatok a térkép megjelenítéséhez.</div>';
-                return;
-            }
-
-            // Középpont meghatározása
-            const avgLat = validResults.reduce((sum, r) => sum + r.latitude, 0) / validResults.length;
-            const avgLng = validResults.reduce((sum, r) => sum + r.longitude, 0) / validResults.length;
-
-            map = L.map('map_view').setView([avgLat, avgLng], 13);
-
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(map);
-
-            const totalCount = allResults.length;
-            const getMarkerColor = (rank) => {
-                // Hue scale: 120 (green) to 0 (red)
-                const hue = Math.max(0, 120 * (1 - (rank - 1) / Math.max(1, totalCount - 1)));
-                return `hsl(${hue}, 75%, 40%)`;
-            };
-
-            allResults.forEach((res, index) => {
-                if (res.latitude && res.longitude) {
-                    const rank = index + 1;
-                    const color = getMarkerColor(rank);
-
-                    const customIcon = L.divIcon({
-                        className: 'custom-div-icon',
-                        html: `<div class="rank-marker" style="background-color: ${color};"><span>${rank}</span></div>`,
-                        iconSize: [30, 30],
-                        iconAnchor: [15, 30]
-                    });
-
-                    const marker = L.marker([res.latitude, res.longitude], { icon: customIcon });
-                    const price = res.price_huf ? Math.round(res.price_huf).toLocaleString('hu-HU') + ' Ft' : 'N/A';
-                    const rating = res.rating_score ? `⭐ ${res.rating_score}/100` : '';
-                    const imgHtml = res.image_url ? `<img src="${res.image_url}" style="width:100%; height:80px; object-fit:cover; border-radius:5px; margin-bottom:5px;">` : '';
-
-                    marker.bindPopup(`
-                        <div class="map-popup" style="width: 200px;">
-                            ${imgHtml}
-                            <h4 style="margin:0 0 5px 0; font-size:14px;">#${rank} ${res.name}</h4>
-                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                                <span style="font-weight:700; color:#235B2A;">${price}</span>
-                                <span style="font-size:11px; color:#666;">${rating}</span>
-                            </div>
-                            <a href="${res.booking_url}" target="_blank" class="btn-popup">Részletek</a>
-                        </div>
-                    `, { maxWidth: 220 });
-
-                    res._marker = marker;
-                    markers.push(marker);
+        // Histogram Data
+        let histogramData = [];
+        async function fetchHistogram() {
+            try {
+                const res = await fetch('/api/stay-price-histogram');
+                const data = await res.json();
+                histogramData = data.buckets || [];
+                if (data.max_bin) {
+                    MAX_PRICE_REF = data.max_bin;
+                    localFilters.price_max = MAX_PRICE_REF;
                 }
-            });
-
-            if (markers.length > 0) {
-                const group = new L.featureGroup(markers);
-                map.fitBounds(group.getBounds().pad(0.1));
-            }
-
-            // Apply current filters to map
-            filterResults();
+                renderHistogram();
+                updateSliderUI();
+            } catch (e) { }
         }
 
-        function filterResults() {
-            const limit = document.getElementById('limit_select').value;
+        function renderHistogram() {
+            if (!histogramData.length) return;
+            const svg = document.getElementById('histogram-svg');
+            svg.innerHTML = '';
+            const width = 100 / histogramData.length;
+            const maxVal = Math.max(...histogramData.map(b => b.count), 1);
+
+            histogramData.forEach((bucket, i) => {
+                const height = (bucket.count / maxVal) * 100;
+                const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                rect.setAttribute('x', `${i * width}%`);
+                rect.setAttribute('y', `${100 - height}%`);
+                rect.setAttribute('width', `${width - 0.5}%`);
+                rect.setAttribute('height', `${height}%`);
+                rect.setAttribute('class', 'bar');
+                rect.setAttribute('id', `bar-${i}`);
+                svg.appendChild(rect);
+            });
+            updateHistogramHighlights();
+        }
+
+        function updateHistogramHighlights() {
+            const minIdx = Math.floor((localFilters.price_min / MAX_PRICE_REF) * (histogramData.length || 1));
+            const maxIdx = Math.ceil((localFilters.price_max / MAX_PRICE_REF) * (histogramData.length || 1));
+            document.querySelectorAll('.bar').forEach((bar, i) => {
+                if (i >= minIdx && i < maxIdx) bar.classList.add('active');
+                else bar.classList.remove('active');
+            });
+        }
+
+        // Slider Logic
+        const sliderMin = document.getElementById('handle-min');
+        const sliderMax = document.getElementById('handle-max');
+        const track = document.getElementById('track');
+        let dragging = null;
+
+        function updateSliderUI() {
+            const left = (localFilters.price_min / MAX_PRICE_REF) * 100;
+            const right = (localFilters.price_max / MAX_PRICE_REF) * 100;
+            sliderMin.style.left = `${left}%`;
+            sliderMax.style.left = `${right}%`;
+            track.style.left = `${left}%`;
+            track.style.width = `${right - left}%`;
+            document.getElementById('price-min-label').innerText = `${localFilters.price_min.toLocaleString()} Ft`;
+            document.getElementById('price-max-label').innerText = localFilters.price_max >= MAX_PRICE_REF ? `${MAX_PRICE_REF.toLocaleString()}+ Ft` : `${localFilters.price_max.toLocaleString()} Ft`;
+            updateHistogramHighlights();
+            runLocalFilter();
+        }
+
+        window.addEventListener('mousedown', e => {
+            if (e.target === sliderMin) dragging = 'min';
+            if (e.target === sliderMax) dragging = 'max';
+        });
+
+        window.addEventListener('mousemove', e => {
+            if (!dragging) return;
+            const rect = document.getElementById('slider').getBoundingClientRect();
+            let pos = (e.clientX - rect.left) / rect.width;
+            pos = Math.max(0, Math.min(1, pos));
+            const val = Math.round((pos * MAX_PRICE_REF) / 5000) * 5000;
+            if (dragging === 'min') localFilters.price_min = Math.min(val, localFilters.price_max - 5000);
+            else localFilters.price_max = Math.max(val, localFilters.price_min + 5000);
+            updateSliderUI();
+        });
+
+        window.addEventListener('mouseup', () => dragging = null);
+
+        // Rating Pills logic
+        document.querySelectorAll('.rating-pill').forEach(pill => {
+            pill.addEventListener('click', () => {
+                document.querySelectorAll('.rating-pill').forEach(p => p.classList.remove('active'));
+                pill.classList.add('active');
+                localFilters.min_rating = parseInt(pill.dataset.rating);
+                runLocalFilter();
+            });
+        });
+
+        // Filter Function
+        function runLocalFilter() {
+            localFilters.limit = document.getElementById('limit_select').value;
+            const limitVal = localFilters.limit === 'all' ? 99999 : parseInt(localFilters.limit);
+
             const rows = document.querySelectorAll('.result-row');
             const cards = document.querySelectorAll('.result-card-item');
 
-            let showCount = limit === 'all' ? rows.length : parseInt(limit);
+            let visibleCount = 0;
             const visibleMarkers = [];
 
             allResults.forEach((res, index) => {
-                const isVisible = index < showCount;
+                const priceMatch = (res.price_huf >= localFilters.price_min) && (res.price_huf <= (localFilters.price_max >= MAX_PRICE_REF ? 999999999 : localFilters.price_max));
+                const ratingMatch = res.rating_score >= localFilters.min_rating;
 
-                // Update Table
+                const isVisible = priceMatch && ratingMatch && visibleCount < limitVal;
+                if (isVisible) visibleCount++;
+
                 if (rows[index]) rows[index].style.display = isVisible ? '' : 'none';
-
-                // Update Cards
                 if (cards[index]) cards[index].style.display = isVisible ? 'flex' : 'none';
 
-                // Update Map Markers
                 if (res._marker) {
                     if (isVisible) {
-                        res._marker.addTo(map);
+                        if (map) res._marker.addTo(map);
                         visibleMarkers.push(res._marker);
                     } else {
-                        res._marker.remove();
+                        if (map) res._marker.remove();
                     }
                 }
             });
 
-            // Re-fit bounds if we have visible markers and the map is initialized
+            document.getElementById('shown_count').innerText = visibleCount;
             if (map && visibleMarkers.length > 0) {
                 const group = new L.featureGroup(visibleMarkers);
                 map.fitBounds(group.getBounds().pad(0.1));
             }
-
-            document.getElementById('shown_count').innerText = Math.min(showCount, rows.length);
         }
 
-        // Initial filter on load
-        window.onload = function () {
-            filterResults();
+        // Map & Views
+        function switchView(view) {
+            ['grid_view', 'table_view', 'map_view'].forEach(id => document.getElementById(id).style.display = 'none');
+            ['btn_grid', 'btn_table', 'btn_map'].forEach(id => document.getElementById(id).classList.remove('active'));
+
+            document.getElementById(view + '_view').style.display = (view === 'grid' ? 'grid' : 'block');
+            document.getElementById('btn_' + view).classList.add('active');
+            if (view === 'map') initMap();
+        }
+
+        function initMap() {
+            if (map) { map.invalidateSize(); return; }
+            const valid = allResults.filter(r => r.latitude && r.longitude);
+            if (!valid.length) return;
+            map = L.map('map_view').setView([valid[0].latitude, valid[0].longitude], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+            allResults.forEach((res, index) => {
+                if (res.latitude && res.longitude) {
+                    const color = `hsl(${Math.max(0, 120 * (1 - index / allResults.length))}, 75%, 40%)`;
+                    res._marker = L.marker([res.latitude, res.longitude], {
+                        icon: L.divIcon({
+                            className: '',
+                            html: `<div class="rank-marker" style="background:${color}"><span>${index + 1}</span></div>`,
+                            iconSize: [30, 30], iconAnchor: [15, 30]
+                        })
+                    }).bindPopup(`<strong>#${index + 1} ${res.name}</strong><br>${Math.round(res.price_huf).toLocaleString()} Ft`);
+                }
+            });
+            runLocalFilter();
+        }
+
+        window.onload = () => {
+            fetchHistogram();
+            runLocalFilter();
         };
     </script>
 </body>
