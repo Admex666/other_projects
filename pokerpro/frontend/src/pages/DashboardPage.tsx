@@ -83,6 +83,16 @@ export default function DashboardPage() {
                             Import and analyze your hands for leaks
                         </p>
                     </Link>
+
+                    <Link to="/gto-solver" className="card hover:border-poker-gold transition-all group">
+                        <div className="text-4xl mb-4">🧠</div>
+                        <h3 className="text-xl font-bold text-white mb-2 group-hover:text-poker-gold transition-colors">
+                            Quick Solver
+                        </h3>
+                        <p className="text-gray-400">
+                            Instant GTO analysis for any spot
+                        </p>
+                    </Link>
                 </div>
 
                 {/* Recent Activity */}

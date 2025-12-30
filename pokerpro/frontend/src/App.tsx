@@ -7,6 +7,7 @@ import OnboardingPage from './pages/OnboardingPage';
 import AcademyPage from './pages/AcademyPage';
 import LessonPage from './pages/LessonPage';
 import GTOPracticePage from './pages/GTOPracticePage';
+import GTOSolverPage from './pages/GTOSolverPage';
 import HandAnalyzerPage from './pages/HandAnalyzerPage';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -62,6 +63,15 @@ function App() {
                     element={
                         <ProtectedRoute>
                             <GTOPracticePage />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/gto-solver"
+                    element={
+                        <ProtectedRoute>
+                            <GTOSolverPage />
                         </ProtectedRoute>
                     }
                 />

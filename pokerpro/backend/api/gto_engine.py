@@ -1,4 +1,6 @@
+from typing import Optional
 from fastapi import APIRouter, Depends
+
 from sqlalchemy.orm import Session
 
 from database import get_db
@@ -7,8 +9,20 @@ from schemas.gto import GTOQuery, GTOResponse, RangeData
 from api.auth import get_current_user
 from gto.preflop_ranges import get_rfi_range, get_3bet_range, calculate_vpip, visualize_range
 from gto.equity_calculator import calculate_equity, calculate_outs
+from gto.solver_wrapper import get_solver
+from gto.drill_manager import DrillManager, DrillScenario
 
 router = APIRouter()
+
+@router.get("/drill", response_model=DrillScenario)
+async def get_drill_scenario(type: str = "btn_vs_bb_srp"):
+    """Generate a specific drill scenario"""
+    try:
+        scenario = DrillManager.generate_drill(type)
+        return scenario
+    except Exception as e:
+        # Fallback to random if error
+        return DrillManager.generate_drill("random")
 
 
 @router.post("/preflop", response_model=GTOResponse)
@@ -116,3 +130,39 @@ async def get_practice_scenario(
     }
     
     return scenarios.get(difficulty, scenarios["beginner"])
+
+
+from pydantic import BaseModel
+
+class SolveRequest(BaseModel):
+    hero_hand: str
+    board: str = ""
+    villains: int = 2
+    pot: Optional[float] = None
+    stack: Optional[float] = None
+    facing_bet: Optional[float] = None
+
+@router.post("/solve")
+async def solve_spot(
+    request: SolveRequest,
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Run QuickGTO solver for a specific spot.
+    """
+    try:
+        solver = get_solver("quickgto")
+        # Run with fewer iterations for the API response speed
+        # Solve
+        result = solver.solve(
+            hero_hand=request.hero_hand,
+            board=request.board,
+            villains=request.villains,
+            pot=request.pot,
+            stack=request.stack,
+            facing_bet=request.facing_bet,
+            iterations=2000
+        )
+        return result
+    except Exception as e:
+        return {"error": str(e)}

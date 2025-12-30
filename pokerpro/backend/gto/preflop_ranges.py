@@ -143,6 +143,38 @@ def get_3bet_range(position: str, vs_position: str) -> Dict[str, float]:
     }
 
 
+def get_defend_range(position: str, vs_position: str) -> Dict[str, float]:
+    """
+    Get Defend (Call/3bet) ranges
+    
+    Args:
+        position: Our position (e.g. BB)
+        vs_position: Opener's position (e.g. BTN)
+    """
+    if position == "BB" and vs_position == "BTN":
+        # Wide defense range
+        return {
+            # Pairs
+            "AA": 1.0, "KK": 1.0, "QQ": 1.0, "JJ": 1.0, "TT": 1.0, "99": 1.0, "88": 1.0,
+            "77": 1.0, "66": 1.0, "55": 1.0, "44": 1.0, "33": 0.8, "22": 0.5,
+            # Suited
+            "AKs": 1.0, "AQs": 1.0, "AJs": 1.0, "ATs": 1.0, "A9s": 1.0, "A8s": 1.0,
+            "A7s": 0.8, "A6s": 0.6, "A5s": 0.8, "A4s": 0.7, "A3s": 0.6, "A2s": 0.5,
+            "KQs": 1.0, "KJs": 1.0, "KTs": 1.0, "K9s": 0.8, "K8s": 0.6,
+            "QJs": 1.0, "QTs": 1.0, "Q9s": 0.8, "Q8s": 0.5,
+            "JTs": 1.0, "J9s": 0.8, "J8s": 0.6,
+            "T9s": 1.0, "T8s": 0.8, "98s": 1.0, "87s": 1.0, "76s": 1.0, "65s": 1.0,
+            # Offsuit
+            "AKo": 1.0, "AQo": 1.0, "AJo": 1.0, "ATo": 1.0, "A9o": 0.8, "A8o": 0.5,
+            "KQo": 1.0, "KJo": 1.0, "KTo": 0.8, "K9o": 0.5,
+            "QJo": 1.0, "QTo": 0.8, "Q9o": 0.5,
+            "JTo": 0.9, "J9o": 0.6, 
+            "T9o": 0.8, "98o": 0.6
+        }
+    
+    return get_rfi_range("BTN") # Fallback to a wide range
+
+
 def calculate_vpip(range_dict: Dict[str, float]) -> float:
     """Calculate VPIP percentage from range"""
     
