@@ -1,0 +1,107 @@
+[
+    {
+        "id": "st_zurich_hb",
+        "name": "Zürich HB",
+        "lat": 47.378177,
+        "lng": 8.540192,
+        "type": "hub"
+    },
+    {
+        "id": "st_bern",
+        "name": "Bern",
+        "lat": 46.948877,
+        "lng": 7.439949,
+        "type": "hub"
+    },
+    {
+        "id": "st_basel_sbb",
+        "name": "Basel SBB",
+        "lat": 47.547412,
+        "lng": 7.589554,
+        "type": "hub"
+    },
+    {
+        "id": "st_luzern",
+        "name": "Luzern",
+        "lat": 47.05048,
+        "lng": 8.31028,
+        "type": "major"
+    },
+    {
+        "id": "st_winterthur",
+        "name": "Winterthur",
+        "lat": 47.49906,
+        "lng": 8.72476,
+        "type": "major"
+    },
+    {
+        "id": "st_lausanne",
+        "name": "Lausanne",
+        "lat": 46.51678,
+        "lng": 6.62908,
+        "type": "hub"
+    },
+    {
+        "id": "st_geneve",
+        "name": "Genève",
+        "lat": 46.21001,
+        "lng": 6.14241,
+        "type": "hub"
+    },
+    {
+        "id": "st_st_gallen",
+        "name": "St. Gallen",
+        "lat": 47.42296,
+        "lng": 9.37340,
+        "type": "major"
+    },
+    {
+        "id": "st_lugano",
+        "name": "Lugano",
+        "lat": 46.00501,
+        "lng": 8.94696,
+        "type": "major"
+    },
+    {
+        "id": "st_interlaken_ost",
+        "name": "Interlaken Ost",
+        "lat": 46.69032,
+        "lng": 7.86940,
+        "type": "tourist"
+    },
+    {
+        "id": "st_zermatt",
+        "name": "Zermatt",
+        "lat": 46.02425,
+        "lng": 7.74836,
+        "type": "tourist"
+    },
+    {
+        "id": "st_chur",
+        "name": "Chur",
+        "lat": 46.85324,
+        "lng": 9.52988,
+        "type": "major"
+    },
+    {
+        "id": "st_olten",
+        "name": "Olten",
+        "lat": 47.35198,
+        "lng": 7.90772,
+        "type": "hub"
+    },
+    {
+        "id": "st_zug",
+        "name": "Zug",
+        "lat": 47.17387,
+        "lng": 8.51532,
+        "type": "major"
+    },
+    {
+        "id": "st_kandersteg",
+        "name": "Kandersteg",
+        "lat": 46.4950,
+        "lng": 7.6740,
+        "type": "small"
+    }
+]

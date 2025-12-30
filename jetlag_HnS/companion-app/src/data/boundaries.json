@@ -1,0 +1,38 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {
+                "name": "Switzerland Rough Outline"
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            5.9559,
+                            45.8179
+                        ],
+                        [
+                            10.4921,
+                            45.8179
+                        ],
+                        [
+                            10.4921,
+                            47.8084
+                        ],
+                        [
+                            5.9559,
+                            47.8084
+                        ],
+                        [
+                            5.9559,
+                            45.8179
+                        ]
+                    ]
+                ]
+            }
+        }
+    ]
+}

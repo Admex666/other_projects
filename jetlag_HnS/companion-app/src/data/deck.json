@@ -1,0 +1,139 @@
+[
+  {
+    "id": "time_red",
+    "name": "Red Time Bonus",
+    "type": "time_bonus",
+    "possible_values": [
+      2,
+      3,
+      5
+    ],
+    "count": 25,
+    "description": "Add time to your clock: [2, 3, 5]"
+  },
+  {
+    "id": "time_orange",
+    "name": "Orange Time Bonus",
+    "type": "time_bonus",
+    "possible_values": [
+      4,
+      6,
+      10
+    ],
+    "count": 15,
+    "description": "Add time to your clock: [4, 6, 10]"
+  },
+  {
+    "id": "time_yellow",
+    "name": "Yellow Time Bonus",
+    "type": "time_bonus",
+    "possible_values": [
+      6,
+      9,
+      15
+    ],
+    "count": 10,
+    "description": "Add time to your clock: [6, 9, 15]"
+  },
+  {
+    "id": "time_green",
+    "name": "Green Time Bonus",
+    "type": "time_bonus",
+    "possible_values": [
+      8,
+      12,
+      20
+    ],
+    "count": 3,
+    "description": "Add time to your clock: [8, 12, 20]"
+  },
+  {
+    "id": "time_blue",
+    "name": "Blue Time Bonus",
+    "type": "time_bonus",
+    "possible_values": [
+      12,
+      18,
+      30
+    ],
+    "count": 2,
+    "description": "Add time to your clock: [12, 18, 30]"
+  },
+  {
+    "id": "pup_randomize",
+    "name": "Randomize",
+    "type": "power_up",
+    "count": 4,
+    "description": "Randomize the question."
+  },
+  {
+    "id": "pup_veto",
+    "name": "Veto",
+    "type": "power_up",
+    "count": 4,
+    "description": "Veto the question."
+  },
+  {
+    "id": "pup_duplicate",
+    "name": "Duplicate",
+    "type": "power_up",
+    "count": 2,
+    "description": "Double the effect of next card."
+  },
+  {
+    "id": "pup_move",
+    "name": "Move",
+    "type": "power_up",
+    "count": 1,
+    "description": "Move significantly."
+  },
+  {
+    "id": "pup_discard_1_draw_2",
+    "name": "Discard 1 Draw 2",
+    "type": "power_up",
+    "count": 4,
+    "description": "Cycle cards."
+  },
+  {
+    "id": "pup_discard_2_draw_3",
+    "name": "Discard 2 Draw 3",
+    "type": "power_up",
+    "count": 4,
+    "description": "Cycle cards."
+  },
+  {
+    "id": "pup_draw_1_expand_1",
+    "name": "Draw 1 Expand 1",
+    "type": "power_up",
+    "count": 2,
+    "description": "Expand options."
+  },
+  {
+    "id": "curse_silence",
+    "name": "Silence",
+    "type": "curse",
+    "count": 1,
+    "description": "A terrible curse."
+  },
+  {
+    "id": "curse_dice_of_doom",
+    "name": "Dice of Doom",
+    "type": "curse",
+    "count": 1,
+    "description": "A terrible curse."
+  },
+  {
+    "id": "curse_curse_of_the_hidden_hangman",
+    "name": "Curse Of The Hidden Hangman",
+    "type": "curse",
+    "count": 1,
+    "description": "A terrible curse."
+  },
+  {
+    "id": "curse_curse_of_the_overflowing_chalice",
+    "name": "Curse Of The Overflowing Chalice",
+    "type": "curse",
+    "count": 1,
+    "description": "A terrible curse."
+  }
+]

@@ -1,0 +1,143 @@
+[
+  {
+    "type": "Matching",
+    "cost": "Draw 3, Pick 1",
+    "time": "5 Minutes",
+    "template": "Is your nearest _____ the same as my nearest _____?",
+    "options": [
+      "Commercial Airport",
+      "Transit Line",
+      "Station's Name Length",
+      "Street or Path",
+      "1st Admin (State)",
+      "2nd Admin (County)",
+      "3rd Admin\n(Municipality | City | Town)",
+      "4th Admin (Borough)",
+      "Mountain",
+      "Landmass",
+      "Park",
+      "Amusment Park",
+      "Zoo",
+      "Aquarium",
+      "Golf Course",
+      "Museam",
+      "Movie Theatre",
+      "Hospital",
+      "Library",
+      "Forign Conssulate"
+    ]
+  },
+  {
+    "type": "Measuring",
+    "cost": "Draw 3, Pick 1",
+    "time": "5 Minutes",
+    "template": "Compared to me, are you closer to or further from _____?",
+    "options": [
+      "A Commercial Airport",
+      "A High Speed Train Line",
+      "A Rail Station",
+      "An International Border",
+      "A 1st Admin Border (State)",
+      "A 2nd Admin Border (County)",
+      "4th Admin (Borough)",
+      "Sea Level",
+      "A Body of Water",
+      "A Coastline",
+      "A Mountain",
+      "A Park",
+      "Amusment Park",
+      "Zoo",
+      "Aquarium",
+      "Golf Course",
+      "Museam",
+      "Movie Theatre",
+      "Hospital",
+      "Library",
+      "Forign Conssulate"
+    ]
+  },
+  {
+    "type": "Thermometer",
+    "cost": "Draw 2, Pick 1",
+    "time": "5 Minutes",
+    "template": "I just travled (at least) [Distance]. Am I hotter or colder?",
+    "options": [
+      "[Distance]",
+      "All Games",
+      "0.5mi\n805m",
+      "3mi\n4.8km",
+      "Medium & Large",
+      "10mi\n16km",
+      "Large Only",
+      "50mi\n80km"
+    ]
+  },
+  {
+    "type": "Radar",
+    "cost": "Draw 2, Pick 1",
+    "time": "5 Minutes",
+    "template": "Are you within [Distance] of me?",
+    "options": [
+      "[Distance]",
+      "0.25mi\n402m",
+      "0.50mi\n805m",
+      "1mi\n1.6km",
+      "3mi\n4.8km",
+      "5mi\n8.0km",
+      "10mi\n16.0km",
+      "25mi\n40.0km",
+      "50mi\n80.5km",
+      "100mi\n160.9km",
+      "Choose"
+    ]
+  },
+  {
+    "type": "Tentacles",
+    "cost": "",
+    "time": "",
+    "template": "",
+    "options": [
+      "[Places]",
+      "Medium & Up",
+      "Museams",
+      "Libraries",
+      "Movie Theateres",
+      "Hopsitals",
+      "Large Games Only",
+      "Metro Lines",
+      "Zoos",
+      "Aquariums",
+      "Amusment Parks"
+    ]
+  },
+  {
+    "type": "Photos",
+    "cost": "Draw 1",
+    "time": "S/M: 10 Minutes L: 20 Minutes",
+    "template": "Send a photo of [subject].",
+    "options": [
+      "[Subject]",
+      "All Games",
+      "A Tree",
+      "The Sky",
+      "You",
+      "Widest Street",
+      "Tallest structure\nin your sightline",
+      "Any building \nvisible from station",
+      "Medium & Up",
+      "Tallest building \nvisible from station",
+      "Trace Nearest\nStreet / Path",
+      "Two Buildings",
+      "Restaurant Interior",
+      "Train Platform",
+      "Park",
+      "Grocery Store Aisle",
+      "Place of Worship",
+      "Large Only",
+      "1/2 Mile of\nstreets traced",
+      "Tallest mountain\nvisible from station",
+      "Biggest body of\nwater in your zone",
+      "Five buildings"
+    ]
+  }
+]
