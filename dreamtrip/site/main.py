@@ -4,9 +4,8 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 import pandas as pd
-from scraper import search_flights_by_city_name_v2, create_return_combinations
+from scraper import get_kiwi_tokens, search_flights_by_city_name_v2, create_return_combinations
 from accommodation_scraper import get_all_stays, parse_accommodation_results
-from token_cache import get_tokens_with_fallback  # ✅ Környezeti változó + fallback
 import os
 import secrets
 from pydantic import BaseModel
@@ -173,7 +172,7 @@ def run_intelligence_scraper(p: SearchParams):
     
     try:
         results["status_text"] = "Adatkapcsolat megteremtése..."
-        tokens = get_tokens_with_fallback()  # ✅ Környezeti változó vagy Selenium
+        tokens = get_kiwi_tokens(headless=True)
         
         results["status_text"] = f"Odaút keresése ({p.origin} -> {p.destination})..."
         outbound = search_flights_by_city_name_v2(
