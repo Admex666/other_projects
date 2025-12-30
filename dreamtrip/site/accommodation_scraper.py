@@ -86,10 +86,8 @@ def get_all_stays(city, country, start_date, end_date,
 
         if progress_callback: progress_callback(5)
     except Exception as e:
-        print(f"❌ CRITICAL: Chrome indítás sikertelen (OOM valószínű): {e}")
-        if progress_callback: progress_callback(10)
-        print("⚠️ FALLBACK: Mock adatok generálása, hogy a rendszer ne álljon le.")
-        return generate_mock_stays(city, country, 50)
+        print(f"❌ CRITICAL: Chrome indítás sikertelen: {e}")
+        return {"entries": [], "error": f"Böngésző indítási hiba (RAM?): {str(e)}"}
     
     try:
         # Base URL without filters first (we just need the searchId)
@@ -114,7 +112,8 @@ def get_all_stays(city, country, start_date, end_date,
                     break
 
         if not found:
-            return {"entries": [], "error": "searchId not found"}
+            print("⚠️ searchId not found within timeout.")
+            return {"entries": [], "error": "Időtúllépés: A szálláskereső oldal nem töltött be időben (searchId hiányzik)."}
 
         if progress_callback: progress_callback(20)
 
@@ -198,10 +197,22 @@ def get_all_stays(city, country, start_date, end_date,
                 print(f"Error fetching batch at offset {offset}: {e}")
                 break
 
+        if not all_results:
+             print("⚠️ No results scraped.")
+             # Nem hiba, csak 0 találat
+             return {"entries": []}
+
         return {"entries": all_results}
 
+    except Exception as e:
+        print(f"❌ Error during scraping logic: {e}")
+        return {"entries": [], "error": f"Hiba az adatgyűjtés közben: {str(e)}"}
     finally:
-        driver.quit()
+        if driver:
+            try:
+                driver.quit()
+            except:
+                pass
 
 def parse_distance(location_text):
     """Helper to parse distance from center (e.g., '2 km from the city center')."""

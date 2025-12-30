@@ -262,8 +262,12 @@ def run_accommodation_scraper(p: StaySearchParams):
             progress_callback=update_progress
         )
         
+        if raw_results.get("error"):
+            accommodation_results = {"status": "error", "error": raw_results["error"]}
+            return
+
         if not raw_results or 'entries' not in raw_results or not raw_results['entries']:
-            accommodation_results = {"status": "done", "data": [], "count": 0, "error": "Nincs szállás."}
+            accommodation_results = {"status": "done", "data": [], "count": 0, "error": "Nincs szállás a megadott feltételekkel."}
             return
 
         parsed = parse_accommodation_results(raw_results)
