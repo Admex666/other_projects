@@ -5,6 +5,7 @@ import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import OnboardingPage from './pages/OnboardingPage';
 import AcademyPage from './pages/AcademyPage';
+import LessonPage from './pages/LessonPage';
 import GTOPracticePage from './pages/GTOPracticePage';
 import HandAnalyzerPage from './pages/HandAnalyzerPage';
 
@@ -43,6 +44,15 @@ function App() {
                     element={
                         <ProtectedRoute>
                             <AcademyPage />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/academy/lesson/:id"
+                    element={
+                        <ProtectedRoute>
+                            <LessonPage />
                         </ProtectedRoute>
                     }
                 />

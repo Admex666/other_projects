@@ -591,8 +591,15 @@
                         <div class="stay-title">{{ stay.name }}</div>
                         <div style="font-size: 13px; color: #666; margin-bottom: 10px;">📍 {{ stay.city }}</div>
 
-                        <div class="price-tag">{{ "{:,.0f}".format(stay.price_huf) }} Ft <small
-                                style="font-size: 11px; font-weight: 400;">/ éj</small></div>
+                        <div class="price-tag">
+                            {{ "{:,.0f}".format(stay.price_huf) }} Ft <small
+                                style="font-size: 11px; font-weight: 400;">/ éj</small>
+                            {% if stay.total_price %}
+                            <div style="font-size: 11px; color: #999; font-weight: 400; margin-top: -2px;">
+                                Összesen: {{ "{:,.0f}".format(stay.total_price * 400) }} Ft
+                            </div>
+                            {% endif %}
+                        </div>
 
                         <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 15px;">
                             <div class="metric">⭐ {{ stay.rating_score }}/100</div>

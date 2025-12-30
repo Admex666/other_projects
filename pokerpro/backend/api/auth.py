@@ -24,12 +24,19 @@ async def get_current_user(
         headers={"WWW-Authenticate": "Bearer"},
     )
     
+    
+    # Validálás logolás nélkül
     payload = decode_access_token(token)
     if payload is None:
         raise credentials_exception
     
-    user_id: int = payload.get("sub")
-    if user_id is None:
+    user_id_str = payload.get("sub")
+    if user_id_str is None:
+        raise credentials_exception
+    
+    try:
+        user_id = int(user_id_str)
+    except ValueError:
         raise credentials_exception
     
     user = db.query(User).filter(User.id == user_id).first()
@@ -73,7 +80,7 @@ async def register(user_data: UserCreate, db: Session = Depends(get_db)):
     
     # Create access token
     access_token = create_access_token(
-        data={"sub": new_user.id},
+        data={"sub": str(new_user.id)},
         expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     )
     
@@ -99,7 +106,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
     
     # Create access token
     access_token = create_access_token(
-        data={"sub": user.id},
+        data={"sub": str(user.id)},
         expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     )
     

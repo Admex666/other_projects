@@ -25,10 +25,20 @@ def get_all_stays(city, country, start_date, end_date,
     else:
         combined_types = [f"${t.upper()}" for t in accommodation_types]
 
+    # Kényelmi szolgáltatások mapping (Frontend CODE -> CozyCozy API CODE)
+    amenity_mapping = {
+        "WIFI": "INTERNET",
+        "POOL": "SWIMPOOL",
+        "PARKING": "FREEPARK",
+        "AC": "AIRCOND",
+        "KITCHEN": "KITCHEN"
+    }
+
     if amenities is None:
         amenity_codes = []
     else:
-        amenity_codes = [a.upper() for a in amenities]
+        # Mapping alkalmazása: csak azokat vesszük át, amikhez van kódunk
+        amenity_codes = [amenity_mapping[a.upper()] for a in amenities if a.upper() in amenity_mapping]
 
     def build_filter_string(price_min, price_max, min_rating, accommodation_types, amenities, breakfast):
         filters = []
@@ -271,12 +281,54 @@ def parse_accommodation_results(results):
             'accommodation_type': acc_type
         }
         
+        booking_url = cheapest.get('deeplinkUrl')
+        
+        if booking_url:
+            print(f"DEBUG_URL_RAW: {booking_url}")
+
+            # 0. Handle potential localhost prefix (User Request)
+            if "localhost:8000/" in booking_url:
+                 # Logic change: just take the end part
+                 booking_url = booking_url.split("localhost:8000/")[-1]
+                 print(f"DEBUG_URL_NO_LOCALHOST: {booking_url}")
+
+            # 1. Handle prf.hn / destination: params
+            if "destination:" in booking_url:
+                parts = booking_url.split("destination:")
+                if len(parts) > 1:
+                    booking_url = parts[1]
+                    print(f"DEBUG_URL_DEST_SPLIT: {booking_url}")
+            
+            # 2. Recursive unquote (handle double/triple encoding)
+            for i in range(3): 
+                try:
+                    decoded = urllib.parse.unquote(booking_url)
+                    if decoded == booking_url:
+                        break
+                    booking_url = decoded
+                    print(f"DEBUG_URL_DECODED_{i+1}: {booking_url}")
+                except:
+                    break
+            
+            # 3. Cleanup and Protocol check
+            booking_url = booking_url.strip()
+            
+            # 4. Final Protocol Safety Check
+            if booking_url and not booking_url.startswith("http"):
+                if booking_url.startswith("www."):
+                     booking_url = "https://" + booking_url
+                elif "." in booking_url and "/" in booking_url: 
+                     booking_url = "https://" + booking_url
+                print(f"DEBUG_URL_FINAL_FIX: {booking_url}")
+
+            print(f"DEBUG_URL_FINAL: {booking_url}")
+
         base_info.update({
             'price_per_night_eur': cheapest.get('eurPricePerNight'),
             'total_price': cheapest.get('totalPrice', {}).get('value'),
             'currency': cheapest.get('totalPrice', {}).get('currencyCode'),
             'provider': provider,
-            'booking_url': cheapest.get('deeplinkUrl'),
+            'booking_url': booking_url,
             'room_type': cheapest.get('text'),
         })
         

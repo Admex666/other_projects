@@ -805,10 +805,14 @@ def run_calculation_task(user: str, config: PreferenceConfig):
         calculation_status[user]["status_text"] = "Rangsorolás és mentés..."
     
         # Flow számítás (átlagolás)
-        phi_plus /= (n - 1)
-        phi_minus /= (n - 1)
-        phi_net = phi_plus - phi_minus
-    
+        if n > 1:
+            phi_plus /= (n - 1)
+            phi_minus /= (n - 1)
+            # Normalizálás 0 és 1 közé: (phi + 1) / 2
+            phi_net = (phi_plus - phi_minus + 1) / 2
+        else:
+            phi_net = np.zeros(n) + 1.0 # Egy elem esetén max pont
+
         df['phi_net'] = phi_net
         
         # 4. Normalizált pontszámok
@@ -939,9 +943,13 @@ def run_stay_calculation_task(user: str, config: StayPreferenceConfig):
         stay_calculation_status[user]["progress"] = 90
         stay_calculation_status[user]["status_text"] = "Rangsorolás és mentés..."
 
-        phi_plus = np.sum(pi_matrix, axis=1) / (n - 1)
-        phi_minus = np.sum(pi_matrix, axis=0) / (n - 1)
-        df['phi_net'] = phi_plus - phi_minus
+        if n > 1:
+            phi_plus = np.sum(pi_matrix, axis=1) / (n - 1)
+            phi_minus = np.sum(pi_matrix, axis=0) / (n - 1)
+            # Normalizálás 0 és 1 közé: (phi + 1) / 2
+            df['phi_net'] = (phi_plus - phi_minus + 1) / 2
+        else:
+            df['phi_net'] = np.ones(n)
 
         # Scores for UI
         for i, col in enumerate(cols):
