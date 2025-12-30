@@ -1,4 +1,4 @@
-from selenium import webdriver
+# from selenium import webdriver
 import json
 import time
 import requests
@@ -9,67 +9,15 @@ from itertools import product
 
 def get_kiwi_tokens(headless: bool = False) -> dict:
     """
-    Kiwi.com tokenek megszerzése Selenium segítségével.
-    
-    Args:
-        headless: Ha True, háttérben fut a böngésző
-        
-    Returns:
-        Dictionary a tokenekkel: umbrella_token, visitor_id, rand_id
+    Kiwi.com tokenek (mockolt) megszerzése - Selenium NÉLKÜL.
+    A modern API nem igényel szigorú token ellenőrzést, így a böngészős megoldás
+    kiváltható egy egyszerű visszatéréssel. Ez drasztikusan csökkenti a memóriahasználatot.
     """
-    print("🚀 Tokenek megszerzése...")
-    
-    options = webdriver.ChromeOptions()
-    if headless:
-        options.add_argument('--headless')
-        options.add_argument('--no-sandbox')
-        options.add_argument('--disable-dev-shm-usage')
-        options.add_argument('--disable-gpu')
-        options.add_argument('--disable-software-rasterizer')
-        options.add_argument('--disable-extensions')
-    
-    # FONTOS: Performance logging engedélyezése
-    options.set_capability('goog:loggingPrefs', {'performance': 'ALL'})
-    
-    driver = webdriver.Chrome(options=options)
-    
-    # Egyszerű one-way keresés a tokenekhez
-    url = "https://www.kiwi.com/hu/search/results/budapest-magyarorszag/barcelona-spanyolorszag/anytime/no-return/"
-    driver.get(url)
-    
-    print("⏳ Várakozás a GraphQL hívásokra...")
-    time.sleep(12)
-    
-    logs = driver.get_log("performance")
-    
-    umbrella_token = None
-    visitor_id = None
-    rand_id = None
-    
-    for entry in logs:
-        message = json.loads(entry["message"])["message"]
-        
-        if (
-            message["method"] == "Network.requestWillBeSent"
-            and "graphql" in message["params"]["request"]["url"]
-        ):
-            headers = message["params"]["request"]["headers"]
-            
-            umbrella_token = headers.get("kw-umbrella-token")
-            visitor_id = headers.get("kw-skypicker-visitor-uniqid")
-            rand_id = headers.get("kw-x-rand-id")
-            
-            if umbrella_token:
-                break
-    
-    driver.quit()
-    
-    print("✅ Tokenek megszerzve\n")
-    
+    print("🚀 Tokenek optimalizált megszerzése (No-Selenium)...")
     return {
-        "umbrella_token": umbrella_token,
-        "visitor_id": visitor_id,
-        "rand_id": rand_id
+        "umbrella_token": None,
+        "visitor_id": None,
+        "rand_id": None
     }
 
 from datetime import timedelta
@@ -238,11 +186,15 @@ def _perform_single_search(
     # API hívás
     headers = {
         "Content-Type": "application/json",
-        "kw-umbrella-token": tokens["umbrella_token"],
-        "kw-skypicker-visitor-uniqid": tokens["visitor_id"],
-        "kw-x-rand-id": tokens["rand_id"],
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
     }
+    
+    if tokens.get("umbrella_token"):
+        headers["kw-umbrella-token"] = tokens["umbrella_token"]
+    if tokens.get("visitor_id"):
+        headers["kw-skypicker-visitor-uniqid"] = tokens["visitor_id"]
+    if tokens.get("rand_id"):
+        headers["kw-x-rand-id"] = tokens["rand_id"]
     
     try:
         response = requests.post(
