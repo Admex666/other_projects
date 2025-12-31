@@ -1,0 +1,2382 @@
+{
+  "Zurich, Switzerland": {
+    "norm_name": "Zurich, Switzerland",
+    "cost_index": 112.5,
+    "safety_index": 76.8
+  },
+  "Geneva, Switzerland": {
+    "norm_name": "Geneva, Switzerland",
+    "cost_index": 111.4,
+    "safety_index": 69.6
+  },
+  "Basel, Switzerland": {
+    "norm_name": "Basel, Switzerland",
+    "cost_index": 110.7,
+    "safety_index": 70.7
+  },
+  "Lausanne, Switzerland": {
+    "norm_name": "Lausanne, Switzerland",
+    "cost_index": 110.5,
+    "safety_index": 72.6
+  },
+  "Lugano, Switzerland": {
+    "norm_name": "Lugano, Switzerland",
+    "cost_index": 108.4,
+    "safety_index": 78.6
+  },
+  "Bern, Switzerland": {
+    "norm_name": "Bern, Switzerland",
+    "cost_index": 103.4,
+    "safety_index": 77.6
+  },
+  "New York, NY, United States": {
+    "norm_name": "New York, NY, United States",
+    "cost_index": 100.0,
+    "safety_index": 49.0
+  },
+  "Reykjavik, Iceland": {
+    "norm_name": "Reykjavik, Iceland",
+    "cost_index": 96.2,
+    "safety_index": 75.6
+  },
+  "Honolulu, HI, United States": {
+    "norm_name": "Honolulu, HI, United States",
+    "cost_index": 94.4,
+    "safety_index": 52.3
+  },
+  "San Francisco, CA, United States": {
+    "norm_name": "San Francisco, CA, United States",
+    "cost_index": 90.7,
+    "safety_index": 39.1
+  },
+  "Seattle, WA, United States": {
+    "norm_name": "Seattle, WA, United States",
+    "cost_index": 86.0,
+    "safety_index": 45.8
+  },
+  "Singapore, Singapore": {
+    "norm_name": "Singapore, Singapore",
+    "cost_index": 85.3,
+    "safety_index": 77.4
+  },
+  "Oslo, Norway": {
+    "norm_name": "Oslo, Norway",
+    "cost_index": 84.3,
+    "safety_index": 65.8
+  },
+  "San Jose, CA, United States": {
+    "norm_name": "San Jose, CA, United States",
+    "cost_index": 83.7,
+    "safety_index": 52.5
+  },
+  "London, United Kingdom": {
+    "norm_name": "London, United Kingdom",
+    "cost_index": 83.2,
+    "safety_index": 44.7
+  },
+  "Trondheim, Norway": {
+    "norm_name": "Trondheim, Norway",
+    "cost_index": 83.0,
+    "safety_index": 79.3
+  },
+  "Boston, MA, United States": {
+    "norm_name": "Boston, MA, United States",
+    "cost_index": 82.7,
+    "safety_index": 60.0
+  },
+  "Washington, DC, United States": {
+    "norm_name": "Washington, DC, United States",
+    "cost_index": 82.5,
+    "safety_index": 39.8
+  },
+  "Bergen, Norway": {
+    "norm_name": "Bergen, Norway",
+    "cost_index": 81.4,
+    "safety_index": 76.0
+  },
+  "Copenhagen, Denmark": {
+    "norm_name": "Copenhagen, Denmark",
+    "cost_index": 81.3,
+    "safety_index": 74.2
+  },
+  "Tel Aviv-Yafo, Israel": {
+    "norm_name": "Tel Aviv-Yafo, Israel",
+    "cost_index": 81.2,
+    "safety_index": 74.0
+  },
+  "Stavanger, Norway": {
+    "norm_name": "Stavanger, Norway",
+    "cost_index": 79.0,
+    "safety_index": null
+  },
+  "San Diego, CA, United States": {
+    "norm_name": "San Diego, CA, United States",
+    "cost_index": 76.3,
+    "safety_index": 59.9
+  },
+  "Los Angeles, CA, United States": {
+    "norm_name": "Los Angeles, CA, United States",
+    "cost_index": 76.3,
+    "safety_index": 46.1
+  },
+  "Amsterdam, Netherlands": {
+    "norm_name": "Amsterdam, Netherlands",
+    "cost_index": 75.9,
+    "safety_index": 73.8
+  },
+  "Miami, FL, United States": {
+    "norm_name": "Miami, FL, United States",
+    "cost_index": 74.9,
+    "safety_index": 47.3
+  },
+  "Paris, France": {
+    "norm_name": "Paris, France",
+    "cost_index": 74.6,
+    "safety_index": 41.9
+  },
+  "Luxembourg, Luxembourg": {
+    "norm_name": "Luxembourg, Luxembourg",
+    "cost_index": 74.2,
+    "safety_index": 71.3
+  },
+  "Sacramento, CA, United States": {
+    "norm_name": "Sacramento, CA, United States",
+    "cost_index": 73.7,
+    "safety_index": 50.6
+  },
+  "Philadelphia, PA, United States": {
+    "norm_name": "Philadelphia, PA, United States",
+    "cost_index": 73.3,
+    "safety_index": 34.2
+  },
+  "Aarhus, Denmark": {
+    "norm_name": "Aarhus, Denmark",
+    "cost_index": 73.2,
+    "safety_index": null
+  },
+  "Cambridge, United Kingdom": {
+    "norm_name": "Cambridge, United Kingdom",
+    "cost_index": 73.1,
+    "safety_index": null
+  },
+  "Haarlem, Netherlands": {
+    "norm_name": "Haarlem, Netherlands",
+    "cost_index": 72.6,
+    "safety_index": null
+  },
+  "Odense, Denmark": {
+    "norm_name": "Odense, Denmark",
+    "cost_index": 72.6,
+    "safety_index": null
+  },
+  "Munich, Germany": {
+    "norm_name": "Munich, Germany",
+    "cost_index": 72.3,
+    "safety_index": 78.8
+  },
+  "Dublin, Ireland": {
+    "norm_name": "Dublin, Ireland",
+    "cost_index": 72.2,
+    "safety_index": 46.0
+  },
+  "Hong Kong, Hong Kong (China)": {
+    "norm_name": "Hong Kong, Hong Kong",
+    "cost_index": 72.2,
+    "safety_index": 78.5
+  },
+  "Stockholm, Sweden": {
+    "norm_name": "Stockholm, Sweden",
+    "cost_index": 72.1,
+    "safety_index": 53.5
+  },
+  "Chicago, IL, United States": {
+    "norm_name": "Chicago, IL, United States",
+    "cost_index": 71.7,
+    "safety_index": 33.9
+  },
+  "Jerusalem, Israel": {
+    "norm_name": "Jerusalem, Israel",
+    "cost_index": 71.4,
+    "safety_index": 63.8
+  },
+  "New Orleans, LA, United States": {
+    "norm_name": "New Orleans, LA, United States",
+    "cost_index": 71.3,
+    "safety_index": 33.1
+  },
+  "Nijmegen, Netherlands": {
+    "norm_name": "Nijmegen, Netherlands",
+    "cost_index": 71.3,
+    "safety_index": null
+  },
+  "Denver, CO, United States": {
+    "norm_name": "Denver, CO, United States",
+    "cost_index": 71.3,
+    "safety_index": 52.1
+  },
+  "Cork, Ireland": {
+    "norm_name": "Cork, Ireland",
+    "cost_index": 71.0,
+    "safety_index": 63.1
+  },
+  "Netanya, Israel": {
+    "norm_name": "Netanya, Israel",
+    "cost_index": 70.9,
+    "safety_index": null
+  },
+  "Edinburgh, United Kingdom": {
+    "norm_name": "Edinburgh, United Kingdom",
+    "cost_index": 70.6,
+    "safety_index": 69.0
+  },
+  "Frankfurt, Germany": {
+    "norm_name": "Frankfurt, Germany",
+    "cost_index": 70.3,
+    "safety_index": 54.5
+  },
+  "Lyon, France": {
+    "norm_name": "Lyon, France",
+    "cost_index": 70.2,
+    "safety_index": 42.5
+  },
+  "Brussels, Belgium": {
+    "norm_name": "Brussels, Belgium",
+    "cost_index": 70.1,
+    "safety_index": 45.1
+  },
+  "Portland, OR, United States": {
+    "norm_name": "Portland, OR, United States",
+    "cost_index": 70.0,
+    "safety_index": 42.9
+  },
+  "Brighton, United Kingdom": {
+    "norm_name": "Brighton, United Kingdom",
+    "cost_index": 70.0,
+    "safety_index": 60.9
+  },
+  "Rotterdam, Netherlands": {
+    "norm_name": "Rotterdam, Netherlands",
+    "cost_index": 69.9,
+    "safety_index": 73.7
+  },
+  "Hamburg, Germany": {
+    "norm_name": "Hamburg, Germany",
+    "cost_index": 69.9,
+    "safety_index": 58.0
+  },
+  "Pittsburgh, PA, United States": {
+    "norm_name": "Pittsburgh, PA, United States",
+    "cost_index": 69.4,
+    "safety_index": 61.8
+  },
+  "Sydney, Australia": {
+    "norm_name": "Sydney, Australia",
+    "cost_index": 69.3,
+    "safety_index": 65.8
+  },
+  "Utrecht, Netherlands": {
+    "norm_name": "Utrecht, Netherlands",
+    "cost_index": 69.0,
+    "safety_index": 78.0
+  },
+  "Seoul, South Korea": {
+    "norm_name": "Seoul, South Korea",
+    "cost_index": 69.0,
+    "safety_index": 75.4
+  },
+  "Minneapolis, MN, United States": {
+    "norm_name": "Minneapolis, MN, United States",
+    "cost_index": 68.9,
+    "safety_index": 44.4
+  },
+  "Atlanta, GA, United States": {
+    "norm_name": "Atlanta, GA, United States",
+    "cost_index": 68.8,
+    "safety_index": 35.4
+  },
+  "Helsinki, Finland": {
+    "norm_name": "Helsinki, Finland",
+    "cost_index": 68.8,
+    "safety_index": 74.6
+  },
+  "Colorado Springs, CO, United States": {
+    "norm_name": "Colorado Springs, CO, United States",
+    "cost_index": 68.7,
+    "safety_index": null
+  },
+  "Darmstadt, Germany": {
+    "norm_name": "Darmstadt, Germany",
+    "cost_index": 68.6,
+    "safety_index": null
+  },
+  "Haifa, Israel": {
+    "norm_name": "Haifa, Israel",
+    "cost_index": 68.5,
+    "safety_index": null
+  },
+  "Heidelberg, Germany": {
+    "norm_name": "Heidelberg, Germany",
+    "cost_index": 68.5,
+    "safety_index": null
+  },
+  "Bristol, United Kingdom": {
+    "norm_name": "Bristol, United Kingdom",
+    "cost_index": 68.2,
+    "safety_index": 57.4
+  },
+  "Milan, Italy": {
+    "norm_name": "Milan, Italy",
+    "cost_index": 68.2,
+    "safety_index": 47.0
+  },
+  "Antwerp, Belgium": {
+    "norm_name": "Antwerp, Belgium",
+    "cost_index": 68.2,
+    "safety_index": 60.1
+  },
+  "Vienna, Austria": {
+    "norm_name": "Vienna, Austria",
+    "cost_index": 68.1,
+    "safety_index": 71.9
+  },
+  "Strasbourg, France": {
+    "norm_name": "Strasbourg, France",
+    "cost_index": 67.8,
+    "safety_index": 59.1
+  },
+  "Wiesbaden, Germany": {
+    "norm_name": "Wiesbaden, Germany",
+    "cost_index": 67.7,
+    "safety_index": null
+  },
+  "The Hague (Den Haag), Netherlands": {
+    "norm_name": "The Hague, Netherlands",
+    "cost_index": 67.7,
+    "safety_index": 80.0
+  },
+  "Dusseldorf, Germany": {
+    "norm_name": "Dusseldorf, Germany",
+    "cost_index": 67.7,
+    "safety_index": 64.5
+  },
+  "Spokane, WA, United States": {
+    "norm_name": "Spokane, WA, United States",
+    "cost_index": 67.7,
+    "safety_index": null
+  },
+  "Manchester, United Kingdom": {
+    "norm_name": "Manchester, United Kingdom",
+    "cost_index": 67.4,
+    "safety_index": 43.8
+  },
+  "Tampa, FL, United States": {
+    "norm_name": "Tampa, FL, United States",
+    "cost_index": 67.2,
+    "safety_index": 55.1
+  },
+  "Cologne, Germany": {
+    "norm_name": "Cologne, Germany",
+    "cost_index": 67.1,
+    "safety_index": 55.6
+  },
+  "Nashville, TN, United States": {
+    "norm_name": "Nashville, TN, United States",
+    "cost_index": 67.0,
+    "safety_index": null
+  },
+  "Dallas, TX, United States": {
+    "norm_name": "Dallas, TX, United States",
+    "cost_index": 67.0,
+    "safety_index": 48.8
+  },
+  "Surrey, Canada": {
+    "norm_name": "Surrey, Canada",
+    "cost_index": 67.0,
+    "safety_index": 35.5
+  },
+  "Stuttgart, Germany": {
+    "norm_name": "Stuttgart, Germany",
+    "cost_index": 67.0,
+    "safety_index": 65.2
+  },
+  "Augsburg, Germany": {
+    "norm_name": "Augsburg, Germany",
+    "cost_index": 66.9,
+    "safety_index": null
+  },
+  "Baltimore, MD, United States": {
+    "norm_name": "Baltimore, MD, United States",
+    "cost_index": 66.7,
+    "safety_index": 27.3
+  },
+  "Glasgow, United Kingdom": {
+    "norm_name": "Glasgow, United Kingdom",
+    "cost_index": 66.7,
+    "safety_index": 54.5
+  },
+  "Maastricht, Netherlands": {
+    "norm_name": "Maastricht, Netherlands",
+    "cost_index": 66.6,
+    "safety_index": null
+  },
+  "Canberra, Australia": {
+    "norm_name": "Canberra, Australia",
+    "cost_index": 66.5,
+    "safety_index": 73.5
+  },
+  "Columbus, OH, United States": {
+    "norm_name": "Columbus, OH, United States",
+    "cost_index": 66.5,
+    "safety_index": 50.4
+  },
+  "Bonn, Germany": {
+    "norm_name": "Bonn, Germany",
+    "cost_index": 66.4,
+    "safety_index": 60.3
+  },
+  "Eindhoven, Netherlands": {
+    "norm_name": "Eindhoven, Netherlands",
+    "cost_index": 66.3,
+    "safety_index": 79.1
+  },
+  "Charlotte, NC, United States": {
+    "norm_name": "Charlotte, NC, United States",
+    "cost_index": 66.3,
+    "safety_index": null
+  },
+  "Berlin, Germany": {
+    "norm_name": "Berlin, Germany",
+    "cost_index": 66.0,
+    "safety_index": 55.4
+  },
+  "Essen, Germany": {
+    "norm_name": "Essen, Germany",
+    "cost_index": 66.0,
+    "safety_index": null
+  },
+  "Leiden, Netherlands": {
+    "norm_name": "Leiden, Netherlands",
+    "cost_index": 66.0,
+    "safety_index": null
+  },
+  "Victoria, Canada": {
+    "norm_name": "Victoria, Canada",
+    "cost_index": 65.9,
+    "safety_index": 58.3
+  },
+  "Phoenix, AZ, United States": {
+    "norm_name": "Phoenix, AZ, United States",
+    "cost_index": 65.9,
+    "safety_index": 47.0
+  },
+  "Freiburg im Breisgau, Germany": {
+    "norm_name": "Freiburg im Breisgau, Germany",
+    "cost_index": 65.8,
+    "safety_index": 67.0
+  },
+  "Bologna, Italy": {
+    "norm_name": "Bologna, Italy",
+    "cost_index": 65.6,
+    "safety_index": 51.8
+  },
+  "Raleigh, NC, United States": {
+    "norm_name": "Raleigh, NC, United States",
+    "cost_index": 65.6,
+    "safety_index": 60.4
+  },
+  "Mainz, Germany": {
+    "norm_name": "Mainz, Germany",
+    "cost_index": 65.5,
+    "safety_index": null
+  },
+  "Hobart, Australia": {
+    "norm_name": "Hobart, Australia",
+    "cost_index": 65.5,
+    "safety_index": 66.1
+  },
+  "Melbourne, Australia": {
+    "norm_name": "Melbourne, Australia",
+    "cost_index": 65.4,
+    "safety_index": 56.2
+  },
+  "Graz, Austria": {
+    "norm_name": "Graz, Austria",
+    "cost_index": 65.4,
+    "safety_index": 72.3
+  },
+  "Saint Louis, MO, United States": {
+    "norm_name": "Saint Louis, MO, United States",
+    "cost_index": 65.3,
+    "safety_index": 30.3
+  },
+  "Newcastle upon Tyne, United Kingdom": {
+    "norm_name": "Newcastle upon Tyne, United Kingdom",
+    "cost_index": 65.3,
+    "safety_index": 61.1
+  },
+  "Karlsruhe, Germany": {
+    "norm_name": "Karlsruhe, Germany",
+    "cost_index": 65.1,
+    "safety_index": 63.0
+  },
+  "Dortmund, Germany": {
+    "norm_name": "Dortmund, Germany",
+    "cost_index": 65.1,
+    "safety_index": null
+  },
+  "Omaha, NE, United States": {
+    "norm_name": "Omaha, NE, United States",
+    "cost_index": 65.0,
+    "safety_index": null
+  },
+  "Toulouse, France": {
+    "norm_name": "Toulouse, France",
+    "cost_index": 65.0,
+    "safety_index": 50.6
+  },
+  "Nuremberg, Germany": {
+    "norm_name": "Nuremberg, Germany",
+    "cost_index": 64.8,
+    "safety_index": 64.7
+  },
+  "Aberdeen, United Kingdom": {
+    "norm_name": "Aberdeen, United Kingdom",
+    "cost_index": 64.8,
+    "safety_index": 63.2
+  },
+  "Malmo, Sweden": {
+    "norm_name": "Malmo, Sweden",
+    "cost_index": 64.7,
+    "safety_index": 44.5
+  },
+  "Indianapolis, IN, United States": {
+    "norm_name": "Indianapolis, IN, United States",
+    "cost_index": 64.7,
+    "safety_index": 39.8
+  },
+  "Hanover, Germany": {
+    "norm_name": "Hanover, Germany",
+    "cost_index": 64.7,
+    "safety_index": 54.1
+  },
+  "Tampere, Finland": {
+    "norm_name": "Tampere, Finland",
+    "cost_index": 64.5,
+    "safety_index": 79.6
+  },
+  "Orlando, FL, United States": {
+    "norm_name": "Orlando, FL, United States",
+    "cost_index": 64.4,
+    "safety_index": 50.5
+  },
+  "Bremen, Germany": {
+    "norm_name": "Bremen, Germany",
+    "cost_index": 64.4,
+    "safety_index": 51.4
+  },
+  "Leeds, United Kingdom": {
+    "norm_name": "Leeds, United Kingdom",
+    "cost_index": 64.4,
+    "safety_index": 54.9
+  },
+  "Gold Coast, Australia": {
+    "norm_name": "Gold Coast, Australia",
+    "cost_index": 64.4,
+    "safety_index": 52.7
+  },
+  "Vancouver, Canada": {
+    "norm_name": "Vancouver, Canada",
+    "cost_index": 64.3,
+    "safety_index": 56.7
+  },
+  "Hamilton, Canada": {
+    "norm_name": "Hamilton, Canada",
+    "cost_index": 64.3,
+    "safety_index": 44.0
+  },
+  "Mannheim, Germany": {
+    "norm_name": "Mannheim, Germany",
+    "cost_index": 64.2,
+    "safety_index": null
+  },
+  "Madison, WI, United States": {
+    "norm_name": "Madison, WI, United States",
+    "cost_index": 64.1,
+    "safety_index": null
+  },
+  "Delft, Netherlands": {
+    "norm_name": "Delft, Netherlands",
+    "cost_index": 64.1,
+    "safety_index": null
+  },
+  "Fort Worth, TX, United States": {
+    "norm_name": "Fort Worth, TX, United States",
+    "cost_index": 64.1,
+    "safety_index": null
+  },
+  "Las Vegas, NV, United States": {
+    "norm_name": "Las Vegas, NV, United States",
+    "cost_index": 64.0,
+    "safety_index": 44.1
+  },
+  "Toronto, Canada": {
+    "norm_name": "Toronto, Canada",
+    "cost_index": 63.8,
+    "safety_index": 56.3
+  },
+  "Galway, Ireland": {
+    "norm_name": "Galway, Ireland",
+    "cost_index": 63.7,
+    "safety_index": 69.3
+  },
+  "Wellington, New Zealand": {
+    "norm_name": "Wellington, New Zealand",
+    "cost_index": 63.6,
+    "safety_index": 66.8
+  },
+  "Aachen, Germany": {
+    "norm_name": "Aachen, Germany",
+    "cost_index": 63.5,
+    "safety_index": null
+  },
+  "Dresden, Germany": {
+    "norm_name": "Dresden, Germany",
+    "cost_index": 63.3,
+    "safety_index": 68.5
+  },
+  "Gothenburg, Sweden": {
+    "norm_name": "Gothenburg, Sweden",
+    "cost_index": 63.2,
+    "safety_index": 54.1
+  },
+  "Kansas City, MO, United States": {
+    "norm_name": "Kansas City, MO, United States",
+    "cost_index": 63.2,
+    "safety_index": 41.9
+  },
+  "Modena, Italy": {
+    "norm_name": "Modena, Italy",
+    "cost_index": 62.9,
+    "safety_index": null
+  },
+  "Leipzig, Germany": {
+    "norm_name": "Leipzig, Germany",
+    "cost_index": 62.9,
+    "safety_index": 56.8
+  },
+  "Saskatoon, Canada": {
+    "norm_name": "Saskatoon, Canada",
+    "cost_index": 62.8,
+    "safety_index": 49.2
+  },
+  "Calgary, Canada": {
+    "norm_name": "Calgary, Canada",
+    "cost_index": 62.8,
+    "safety_index": 61.4
+  },
+  "Detroit, MI, United States": {
+    "norm_name": "Detroit, MI, United States",
+    "cost_index": 62.7,
+    "safety_index": 26.9
+  },
+  "Perth, Australia": {
+    "norm_name": "Perth, Australia",
+    "cost_index": 62.7,
+    "safety_index": 58.2
+  },
+  "Belfast, United Kingdom": {
+    "norm_name": "Belfast, United Kingdom",
+    "cost_index": 62.7,
+    "safety_index": 52.5
+  },
+  "Salt Lake City, UT, United States": {
+    "norm_name": "Salt Lake City, UT, United States",
+    "cost_index": 62.6,
+    "safety_index": 65.6
+  },
+  "Adelaide, Australia": {
+    "norm_name": "Adelaide, Australia",
+    "cost_index": 62.6,
+    "safety_index": 67.2
+  },
+  "Florence, Italy": {
+    "norm_name": "Florence, Italy",
+    "cost_index": 62.6,
+    "safety_index": 58.5
+  },
+  "Auckland, New Zealand": {
+    "norm_name": "Auckland, New Zealand",
+    "cost_index": 62.4,
+    "safety_index": 49.7
+  },
+  "Liverpool, United Kingdom": {
+    "norm_name": "Liverpool, United Kingdom",
+    "cost_index": 62.2,
+    "safety_index": 50.6
+  },
+  "Nottingham, United Kingdom": {
+    "norm_name": "Nottingham, United Kingdom",
+    "cost_index": 62.2,
+    "safety_index": 48.8
+  },
+  "Erlangen, Germany": {
+    "norm_name": "Erlangen, Germany",
+    "cost_index": 62.1,
+    "safety_index": null
+  },
+  "Treviso, Italy": {
+    "norm_name": "Treviso, Italy",
+    "cost_index": 61.9,
+    "safety_index": null
+  },
+  "Tucson, AZ, United States": {
+    "norm_name": "Tucson, AZ, United States",
+    "cost_index": 61.8,
+    "safety_index": 45.2
+  },
+  "Birmingham, United Kingdom": {
+    "norm_name": "Birmingham, United Kingdom",
+    "cost_index": 61.7,
+    "safety_index": 35.6
+  },
+  "Austin, TX, United States": {
+    "norm_name": "Austin, TX, United States",
+    "cost_index": 61.5,
+    "safety_index": 57.7
+  },
+  "Vancouver, WA, United States": {
+    "norm_name": "Vancouver, WA, United States",
+    "cost_index": 61.5,
+    "safety_index": null
+  },
+  "Kelowna, Canada": {
+    "norm_name": "Kelowna, Canada",
+    "cost_index": 61.4,
+    "safety_index": 37.7
+  },
+  "Halifax, Canada": {
+    "norm_name": "Halifax, Canada",
+    "cost_index": 61.2,
+    "safety_index": 60.1
+  },
+  "Louisville, KY, United States": {
+    "norm_name": "Louisville, KY, United States",
+    "cost_index": 61.1,
+    "safety_index": null
+  },
+  "Houston, TX, United States": {
+    "norm_name": "Houston, TX, United States",
+    "cost_index": 61.1,
+    "safety_index": 36.8
+  },
+  "Groningen, Netherlands": {
+    "norm_name": "Groningen, Netherlands",
+    "cost_index": 61.0,
+    "safety_index": 77.9
+  },
+  "Cleveland, OH, United States": {
+    "norm_name": "Cleveland, OH, United States",
+    "cost_index": 60.9,
+    "safety_index": null
+  },
+  "Wichita, KS, United States": {
+    "norm_name": "Wichita, KS, United States",
+    "cost_index": 60.8,
+    "safety_index": null
+  },
+  "Padova, Italy": {
+    "norm_name": "Padova, Italy",
+    "cost_index": 60.8,
+    "safety_index": null
+  },
+  "Genoa, Italy": {
+    "norm_name": "Genoa, Italy",
+    "cost_index": 60.5,
+    "safety_index": 55.0
+  },
+  "Tallinn, Estonia": {
+    "norm_name": "Tallinn, Estonia",
+    "cost_index": 60.5,
+    "safety_index": 78.2
+  },
+  "Limassol, Cyprus": {
+    "norm_name": "Limassol, Cyprus",
+    "cost_index": 60.5,
+    "safety_index": 60.9
+  },
+  "Mississauga, Canada": {
+    "norm_name": "Mississauga, Canada",
+    "cost_index": 60.5,
+    "safety_index": 55.8
+  },
+  "Sliema, Malta": {
+    "norm_name": "Sliema, Malta",
+    "cost_index": 60.2,
+    "safety_index": null
+  },
+  "Brisbane, Australia": {
+    "norm_name": "Brisbane, Australia",
+    "cost_index": 60.1,
+    "safety_index": 62.4
+  },
+  "Lund, Sweden": {
+    "norm_name": "Lund, Sweden",
+    "cost_index": 60.1,
+    "safety_index": 67.3
+  },
+  "Ottawa, Canada": {
+    "norm_name": "Ottawa, Canada",
+    "cost_index": 59.7,
+    "safety_index": 68.8
+  },
+  "Bergamo, Italy": {
+    "norm_name": "Bergamo, Italy",
+    "cost_index": 59.7,
+    "safety_index": null
+  },
+  "Jacksonville, FL, United States": {
+    "norm_name": "Jacksonville, FL, United States",
+    "cost_index": 59.6,
+    "safety_index": 43.4
+  },
+  "Montreal, Canada": {
+    "norm_name": "Montreal, Canada",
+    "cost_index": 59.4,
+    "safety_index": 67.1
+  },
+  "Edmonton, Canada": {
+    "norm_name": "Edmonton, Canada",
+    "cost_index": 59.4,
+    "safety_index": 53.4
+  },
+  "Sheffield, United Kingdom": {
+    "norm_name": "Sheffield, United Kingdom",
+    "cost_index": 59.3,
+    "safety_index": 56.7
+  },
+  "Brescia, Italy": {
+    "norm_name": "Brescia, Italy",
+    "cost_index": 59.1,
+    "safety_index": null
+  },
+  "Albuquerque, NM, United States": {
+    "norm_name": "Albuquerque, NM, United States",
+    "cost_index": 58.7,
+    "safety_index": 28.3
+  },
+  "San Antonio, TX, United States": {
+    "norm_name": "San Antonio, TX, United States",
+    "cost_index": 58.6,
+    "safety_index": 51.8
+  },
+  "Regina, Canada": {
+    "norm_name": "Regina, Canada",
+    "cost_index": 58.4,
+    "safety_index": 47.3
+  },
+  "Dubai, United Arab Emirates": {
+    "norm_name": "Dubai, United Arab Emirates",
+    "cost_index": 58.4,
+    "safety_index": 83.9
+  },
+  "Winnipeg, Canada": {
+    "norm_name": "Winnipeg, Canada",
+    "cost_index": 58.3,
+    "safety_index": 39.6
+  },
+  "Turin, Italy": {
+    "norm_name": "Turin, Italy",
+    "cost_index": 58.1,
+    "safety_index": 48.0
+  },
+  "Quebec City, Canada": {
+    "norm_name": "Quebec City, Canada",
+    "cost_index": 58.1,
+    "safety_index": 77.5
+  },
+  "Trieste, Italy": {
+    "norm_name": "Trieste, Italy",
+    "cost_index": 58.1,
+    "safety_index": 72.4
+  },
+  "Christchurch, New Zealand": {
+    "norm_name": "Christchurch, New Zealand",
+    "cost_index": 57.8,
+    "safety_index": 55.3
+  },
+  "Cagliari, Italy": {
+    "norm_name": "Cagliari, Italy",
+    "cost_index": 57.8,
+    "safety_index": 62.2
+  },
+  "Barcelona, Spain": {
+    "norm_name": "Barcelona, Spain",
+    "cost_index": 57.0,
+    "safety_index": 48.3
+  },
+  "Rome, Italy": {
+    "norm_name": "Rome, Italy",
+    "cost_index": 56.7,
+    "safety_index": 52.0
+  },
+  "Tokyo, Japan": {
+    "norm_name": "Tokyo, Japan",
+    "cost_index": 56.4,
+    "safety_index": 75.2
+  },
+  "Naples, Italy": {
+    "norm_name": "Naples, Italy",
+    "cost_index": 56.3,
+    "safety_index": 37.2
+  },
+  "Madrid, Spain": {
+    "norm_name": "Madrid, Spain",
+    "cost_index": 55.8,
+    "safety_index": 71.5
+  },
+  "Macao, Macao (China)": {
+    "norm_name": "Macao, Macao",
+    "cost_index": 55.5,
+    "safety_index": null
+  },
+  "Cincinnati, OH, United States": {
+    "norm_name": "Cincinnati, OH, United States",
+    "cost_index": 55.3,
+    "safety_index": null
+  },
+  "Port of Spain, Trinidad And Tobago": {
+    "norm_name": "Port of Spain, Trinidad And Tobago",
+    "cost_index": 55.2,
+    "safety_index": 23.7
+  },
+  "Palma de Mallorca, Spain": {
+    "norm_name": "Palma de Mallorca, Spain",
+    "cost_index": 55.1,
+    "safety_index": 64.9
+  },
+  "Abu Dhabi, United Arab Emirates": {
+    "norm_name": "Abu Dhabi, United Arab Emirates",
+    "cost_index": 54.7,
+    "safety_index": 88.8
+  },
+  "London, Canada": {
+    "norm_name": "London, Canada",
+    "cost_index": 54.7,
+    "safety_index": 46.0
+  },
+  "Nicosia, Cyprus": {
+    "norm_name": "Nicosia, Cyprus",
+    "cost_index": 54.5,
+    "safety_index": 68.6
+  },
+  "Split, Croatia": {
+    "norm_name": "Split, Croatia",
+    "cost_index": 53.8,
+    "safety_index": 69.5
+  },
+  "Athens, Greece": {
+    "norm_name": "Athens, Greece",
+    "cost_index": 53.7,
+    "safety_index": 44.7
+  },
+  "Taipei, Taiwan": {
+    "norm_name": "Taipei, Taiwan",
+    "cost_index": 53.5,
+    "safety_index": 83.6
+  },
+  "Montevideo, Uruguay": {
+    "norm_name": "Montevideo, Uruguay",
+    "cost_index": 53.3,
+    "safety_index": 43.6
+  },
+  "Ljubljana, Slovenia": {
+    "norm_name": "Ljubljana, Slovenia",
+    "cost_index": 53.0,
+    "safety_index": 78.6
+  },
+  "Larnaca, Cyprus": {
+    "norm_name": "Larnaca, Cyprus",
+    "cost_index": 52.8,
+    "safety_index": null
+  },
+  "San Jose, Costa Rica": {
+    "norm_name": "San Jose, Costa Rica",
+    "cost_index": 52.0,
+    "safety_index": 44.5
+  },
+  "Ras al-Khaimah, United Arab Emirates": {
+    "norm_name": "Ras al-Khaimah, United Arab Emirates",
+    "cost_index": 51.9,
+    "safety_index": 83.8
+  },
+  "Prague, Czech Republic": {
+    "norm_name": "Prague, Czech Republic",
+    "cost_index": 51.9,
+    "safety_index": 75.4
+  },
+  "Kingston, Jamaica": {
+    "norm_name": "Kingston, Jamaica",
+    "cost_index": 51.7,
+    "safety_index": 30.9
+  },
+  "Lisbon, Portugal": {
+    "norm_name": "Lisbon, Portugal",
+    "cost_index": 51.5,
+    "safety_index": 68.0
+  },
+  "Riga, Latvia": {
+    "norm_name": "Riga, Latvia",
+    "cost_index": 51.4,
+    "safety_index": 62.2
+  },
+  "Tartu, Estonia": {
+    "norm_name": "Tartu, Estonia",
+    "cost_index": 51.4,
+    "safety_index": 78.3
+  },
+  "Bratislava, Slovakia": {
+    "norm_name": "Bratislava, Slovakia",
+    "cost_index": 51.1,
+    "safety_index": 69.5
+  },
+  "Thessaloniki, Greece": {
+    "norm_name": "Thessaloniki, Greece",
+    "cost_index": 50.7,
+    "safety_index": 47.5
+  },
+  "Vilnius, Lithuania": {
+    "norm_name": "Vilnius, Lithuania",
+    "cost_index": 49.8,
+    "safety_index": 71.0
+  },
+  "Warsaw, Poland": {
+    "norm_name": "Warsaw, Poland",
+    "cost_index": 49.5,
+    "safety_index": 74.7
+  },
+  "Sharjah, United Arab Emirates": {
+    "norm_name": "Sharjah, United Arab Emirates",
+    "cost_index": 48.5,
+    "safety_index": 83.7
+  },
+  "Zagreb, Croatia": {
+    "norm_name": "Zagreb, Croatia",
+    "cost_index": 48.5,
+    "safety_index": 78.5
+  },
+  "Kosice, Slovakia": {
+    "norm_name": "Kosice, Slovakia",
+    "cost_index": 48.1,
+    "safety_index": null
+  },
+  "Malaga, Spain": {
+    "norm_name": "Malaga, Spain",
+    "cost_index": 48.0,
+    "safety_index": 69.1
+  },
+  "Brno, Czech Republic": {
+    "norm_name": "Brno, Czech Republic",
+    "cost_index": 48.0,
+    "safety_index": 75.1
+  },
+  "Catania, Italy": {
+    "norm_name": "Catania, Italy",
+    "cost_index": 47.9,
+    "safety_index": 52.2
+  },
+  "Kaohsiung, Taiwan": {
+    "norm_name": "Kaohsiung, Taiwan",
+    "cost_index": 47.4,
+    "safety_index": null
+  },
+  "Riyadh, Saudi Arabia": {
+    "norm_name": "Riyadh, Saudi Arabia",
+    "cost_index": 47.1,
+    "safety_index": 75.1
+  },
+  "Aveiro, Portugal": {
+    "norm_name": "Aveiro, Portugal",
+    "cost_index": 47.0,
+    "safety_index": null
+  },
+  "Seville (Sevilla), Spain": {
+    "norm_name": "Seville, Spain",
+    "cost_index": 47.0,
+    "safety_index": 66.4
+  },
+  "Doha, Qatar": {
+    "norm_name": "Doha, Qatar",
+    "cost_index": 46.9,
+    "safety_index": 84.3
+  },
+  "Valencia, Spain": {
+    "norm_name": "Valencia, Spain",
+    "cost_index": 46.8,
+    "safety_index": 65.0
+  },
+  "Plzen, Czech Republic": {
+    "norm_name": "Plzen, Czech Republic",
+    "cost_index": 46.8,
+    "safety_index": null
+  },
+  "Tirana, Albania": {
+    "norm_name": "Tirana, Albania",
+    "cost_index": 46.4,
+    "safety_index": 59.7
+  },
+  "Porto, Portugal": {
+    "norm_name": "Porto, Portugal",
+    "cost_index": 46.4,
+    "safety_index": 66.9
+  },
+  "Alicante, Spain": {
+    "norm_name": "Alicante, Spain",
+    "cost_index": 46.0,
+    "safety_index": 68.4
+  },
+  "Beirut, Lebanon": {
+    "norm_name": "Beirut, Lebanon",
+    "cost_index": 45.5,
+    "safety_index": 53.2
+  },
+  "Gdansk, Poland": {
+    "norm_name": "Gdansk, Poland",
+    "cost_index": 45.3,
+    "safety_index": 68.2
+  },
+  "Moscow, Russia": {
+    "norm_name": "Moscow, Russia",
+    "cost_index": 45.2,
+    "safety_index": 64.7
+  },
+  "Krakow (Cracow), Poland": {
+    "norm_name": "Krakow, Poland",
+    "cost_index": 45.1,
+    "safety_index": 75.2
+  },
+  "Budapest, Hungary": {
+    "norm_name": "Budapest, Hungary",
+    "cost_index": 45.1,
+    "safety_index": 66.1
+  },
+  "Manama, Bahrain": {
+    "norm_name": "Manama, Bahrain",
+    "cost_index": 45.0,
+    "safety_index": null
+  },
+  "Wroclaw, Poland": {
+    "norm_name": "Wroclaw, Poland",
+    "cost_index": 45.0,
+    "safety_index": 74.5
+  },
+  "Al Khobar, Saudi Arabia": {
+    "norm_name": "Al Khobar, Saudi Arabia",
+    "cost_index": 44.9,
+    "safety_index": null
+  },
+  "Monterrey, Mexico": {
+    "norm_name": "Monterrey, Mexico",
+    "cost_index": 44.8,
+    "safety_index": 51.9
+  },
+  "Ostrava, Czech Republic": {
+    "norm_name": "Ostrava, Czech Republic",
+    "cost_index": 44.5,
+    "safety_index": null
+  },
+  "Olomouc, Czech Republic": {
+    "norm_name": "Olomouc, Czech Republic",
+    "cost_index": 44.3,
+    "safety_index": null
+  },
+  "Panama City, Panama": {
+    "norm_name": "Panama City, Panama",
+    "cost_index": 44.3,
+    "safety_index": 52.7
+  },
+  "Abidjan, Ivory Coast": {
+    "norm_name": "Abidjan, Ivory Coast",
+    "cost_index": 44.0,
+    "safety_index": null
+  },
+  "Cancun, Mexico": {
+    "norm_name": "Cancun, Mexico",
+    "cost_index": 44.0,
+    "safety_index": 44.6
+  },
+  "Belgrade, Serbia": {
+    "norm_name": "Belgrade, Serbia",
+    "cost_index": 43.8,
+    "safety_index": 62.1
+  },
+  "Braga, Portugal": {
+    "norm_name": "Braga, Portugal",
+    "cost_index": 43.8,
+    "safety_index": null
+  },
+  "Buenos Aires, Argentina": {
+    "norm_name": "Buenos Aires, Argentina",
+    "cost_index": 43.7,
+    "safety_index": 36.9
+  },
+  "Bucharest, Romania": {
+    "norm_name": "Bucharest, Romania",
+    "cost_index": 43.7,
+    "safety_index": 71.6
+  },
+  "Poznan, Poland": {
+    "norm_name": "Poznan, Poland",
+    "cost_index": 43.0,
+    "safety_index": 72.2
+  },
+  "Kuwait City, Kuwait": {
+    "norm_name": "Kuwait City, Kuwait",
+    "cost_index": 42.9,
+    "safety_index": 71.1
+  },
+  "Sofia, Bulgaria": {
+    "norm_name": "Sofia, Bulgaria",
+    "cost_index": 42.8,
+    "safety_index": 60.8
+  },
+  "Lodz, Poland": {
+    "norm_name": "Lodz, Poland",
+    "cost_index": 42.8,
+    "safety_index": 61.2
+  },
+  "Addis Ababa, Ethiopia": {
+    "norm_name": "Addis Ababa, Ethiopia",
+    "cost_index": 42.7,
+    "safety_index": 50.3
+  },
+  "Constanta, Romania": {
+    "norm_name": "Constanta, Romania",
+    "cost_index": 42.4,
+    "safety_index": 50.9
+  },
+  "Gaborone, Botswana": {
+    "norm_name": "Gaborone, Botswana",
+    "cost_index": 42.2,
+    "safety_index": null
+  },
+  "Pecs, Hungary": {
+    "norm_name": "Pecs, Hungary",
+    "cost_index": 42.0,
+    "safety_index": null
+  },
+  "Novi Sad, Serbia": {
+    "norm_name": "Novi Sad, Serbia",
+    "cost_index": 41.9,
+    "safety_index": 61.2
+  },
+  "Mexico City, Mexico": {
+    "norm_name": "Mexico City, Mexico",
+    "cost_index": 41.8,
+    "safety_index": 33.0
+  },
+  "Phuket, Thailand": {
+    "norm_name": "Phuket, Thailand",
+    "cost_index": 41.7,
+    "safety_index": null
+  },
+  "Yerevan, Armenia": {
+    "norm_name": "Yerevan, Armenia",
+    "cost_index": 41.5,
+    "safety_index": 77.4
+  },
+  "Istanbul, Turkey": {
+    "norm_name": "Istanbul, Turkey",
+    "cost_index": 41.4,
+    "safety_index": 52.0
+  },
+  "Caracas, Venezuela": {
+    "norm_name": "Caracas, Venezuela",
+    "cost_index": 41.2,
+    "safety_index": 18.7
+  },
+  "Katowice, Poland": {
+    "norm_name": "Katowice, Poland",
+    "cost_index": 41.1,
+    "safety_index": null
+  },
+  "Jeddah (Jiddah), Saudi Arabia": {
+    "norm_name": "Jeddah, Saudi Arabia",
+    "cost_index": 41.0,
+    "safety_index": 74.7
+  },
+  "Cluj-Napoca, Romania": {
+    "norm_name": "Cluj-Napoca, Romania",
+    "cost_index": 40.9,
+    "safety_index": 77.6
+  },
+  "Izmir, Turkey": {
+    "norm_name": "Izmir, Turkey",
+    "cost_index": 40.7,
+    "safety_index": 67.4
+  },
+  "Ad Dammam, Saudi Arabia": {
+    "norm_name": "Ad Dammam, Saudi Arabia",
+    "cost_index": 40.3,
+    "safety_index": null
+  },
+  "Varna, Bulgaria": {
+    "norm_name": "Varna, Bulgaria",
+    "cost_index": 40.2,
+    "safety_index": 65.3
+  },
+  "Queretaro (Santiago de Querétaro), Mexico": {
+    "norm_name": "Queretaro, Mexico",
+    "cost_index": 40.1,
+    "safety_index": 62.4
+  },
+  "Brasov, Romania": {
+    "norm_name": "Brasov, Romania",
+    "cost_index": 40.1,
+    "safety_index": 74.8
+  },
+  "Szczecin, Poland": {
+    "norm_name": "Szczecin, Poland",
+    "cost_index": 39.7,
+    "safety_index": null
+  },
+  "Santo Domingo, Dominican Republic": {
+    "norm_name": "Santo Domingo, Dominican Republic",
+    "cost_index": 39.5,
+    "safety_index": 32.6
+  },
+  "Cordoba, Argentina": {
+    "norm_name": "Cordoba, Argentina",
+    "cost_index": 39.5,
+    "safety_index": 38.4
+  },
+  "Guatemala City, Guatemala": {
+    "norm_name": "Guatemala City, Guatemala",
+    "cost_index": 39.5,
+    "safety_index": null
+  },
+  "Santiago, Chile": {
+    "norm_name": "Santiago, Chile",
+    "cost_index": 39.4,
+    "safety_index": 36.0
+  },
+  "Muscat, Oman": {
+    "norm_name": "Muscat, Oman",
+    "cost_index": 39.3,
+    "safety_index": 81.1
+  },
+  "Amman, Jordan": {
+    "norm_name": "Amman, Jordan",
+    "cost_index": 39.3,
+    "safety_index": 62.6
+  },
+  "Sarajevo, Bosnia And Herzegovina": {
+    "norm_name": "Sarajevo, Bosnia And Herzegovina",
+    "cost_index": 39.2,
+    "safety_index": 55.7
+  },
+  "Podgorica, Montenegro": {
+    "norm_name": "Podgorica, Montenegro",
+    "cost_index": 39.2,
+    "safety_index": null
+  },
+  "Yekaterinburg, Russia": {
+    "norm_name": "Yekaterinburg, Russia",
+    "cost_index": 38.8,
+    "safety_index": 56.6
+  },
+  "Tijuana, Mexico": {
+    "norm_name": "Tijuana, Mexico",
+    "cost_index": 38.6,
+    "safety_index": 28.0
+  },
+  "Saint Petersburg, Russia": {
+    "norm_name": "Saint Petersburg, Russia",
+    "cost_index": 38.5,
+    "safety_index": 62.1
+  },
+  "San Salvador, El Salvador": {
+    "norm_name": "San Salvador, El Salvador",
+    "cost_index": 38.1,
+    "safety_index": 43.9
+  },
+  "Suzhou, China": {
+    "norm_name": "Suzhou, China",
+    "cost_index": 38.0,
+    "safety_index": null
+  },
+  "Merida, Mexico": {
+    "norm_name": "Merida, Mexico",
+    "cost_index": 38.0,
+    "safety_index": 75.8
+  },
+  "Shanghai, China": {
+    "norm_name": "Shanghai, China",
+    "cost_index": 37.9,
+    "safety_index": 73.1
+  },
+  "Timisoara, Romania": {
+    "norm_name": "Timisoara, Romania",
+    "cost_index": 37.8,
+    "safety_index": 73.9
+  },
+  "Plovdiv, Bulgaria": {
+    "norm_name": "Plovdiv, Bulgaria",
+    "cost_index": 37.8,
+    "safety_index": null
+  },
+  "Ankara, Turkey": {
+    "norm_name": "Ankara, Turkey",
+    "cost_index": 37.7,
+    "safety_index": 60.7
+  },
+  "Burgas, Bulgaria": {
+    "norm_name": "Burgas, Bulgaria",
+    "cost_index": 37.7,
+    "safety_index": null
+  },
+  "Bangkok, Thailand": {
+    "norm_name": "Bangkok, Thailand",
+    "cost_index": 37.7,
+    "safety_index": 61.4
+  },
+  "Antalya, Turkey": {
+    "norm_name": "Antalya, Turkey",
+    "cost_index": 37.7,
+    "safety_index": 70.9
+  },
+  "Iasi, Romania": {
+    "norm_name": "Iasi, Romania",
+    "cost_index": 37.4,
+    "safety_index": 67.8
+  },
+  "Guadalajara, Mexico": {
+    "norm_name": "Guadalajara, Mexico",
+    "cost_index": 37.2,
+    "safety_index": 37.8
+  },
+  "Craiova, Romania": {
+    "norm_name": "Craiova, Romania",
+    "cost_index": 37.0,
+    "safety_index": 61.8
+  },
+  "Oradea, Romania": {
+    "norm_name": "Oradea, Romania",
+    "cost_index": 36.5,
+    "safety_index": null
+  },
+  "Pretoria, South Africa": {
+    "norm_name": "Pretoria, South Africa",
+    "cost_index": 36.3,
+    "safety_index": 18.2
+  },
+  "Phnom Penh, Cambodia": {
+    "norm_name": "Phnom Penh, Cambodia",
+    "cost_index": 36.0,
+    "safety_index": 48.2
+  },
+  "Skopje, North Macedonia": {
+    "norm_name": "Skopje, North Macedonia",
+    "cost_index": 35.9,
+    "safety_index": 53.7
+  },
+  "Beijing, China": {
+    "norm_name": "Beijing, China",
+    "cost_index": 35.7,
+    "safety_index": 74.6
+  },
+  "Harare, Zimbabwe": {
+    "norm_name": "Harare, Zimbabwe",
+    "cost_index": 35.7,
+    "safety_index": 38.2
+  },
+  "Sibiu, Romania": {
+    "norm_name": "Sibiu, Romania",
+    "cost_index": 35.6,
+    "safety_index": null
+  },
+  "Pattaya, Thailand": {
+    "norm_name": "Pattaya, Thailand",
+    "cost_index": 35.5,
+    "safety_index": 53.8
+  },
+  "Kazan, Russia": {
+    "norm_name": "Kazan, Russia",
+    "cost_index": 35.4,
+    "safety_index": null
+  },
+  "Shenzhen, China": {
+    "norm_name": "Shenzhen, China",
+    "cost_index": 35.4,
+    "safety_index": 74.9
+  },
+  "Johannesburg, South Africa": {
+    "norm_name": "Johannesburg, South Africa",
+    "cost_index": 35.1,
+    "safety_index": 19.2
+  },
+  "Novosibirsk, Russia": {
+    "norm_name": "Novosibirsk, Russia",
+    "cost_index": 34.8,
+    "safety_index": 53.8
+  },
+  "Casablanca, Morocco": {
+    "norm_name": "Casablanca, Morocco",
+    "cost_index": 34.7,
+    "safety_index": 44.8
+  },
+  "Nis, Serbia": {
+    "norm_name": "Nis, Serbia",
+    "cost_index": 34.7,
+    "safety_index": null
+  },
+  "Kuala Lumpur, Malaysia": {
+    "norm_name": "Kuala Lumpur, Malaysia",
+    "cost_index": 34.6,
+    "safety_index": 39.8
+  },
+  "Guayaquil, Ecuador": {
+    "norm_name": "Guayaquil, Ecuador",
+    "cost_index": 34.3,
+    "safety_index": 25.7
+  },
+  "Manila, Philippines": {
+    "norm_name": "Manila, Philippines",
+    "cost_index": 34.3,
+    "safety_index": 35.3
+  },
+  "Cape Town, South Africa": {
+    "norm_name": "Cape Town, South Africa",
+    "cost_index": 34.2,
+    "safety_index": 26.4
+  },
+  "Guangzhou, China": {
+    "norm_name": "Guangzhou, China",
+    "cost_index": 34.1,
+    "safety_index": 71.0
+  },
+  "Colombo, Sri Lanka": {
+    "norm_name": "Colombo, Sri Lanka",
+    "cost_index": 34.1,
+    "safety_index": 57.7
+  },
+  "Chisinau, Moldova": {
+    "norm_name": "Chisinau, Moldova",
+    "cost_index": 34.1,
+    "safety_index": 57.8
+  },
+  "Sao Paulo, Brazil": {
+    "norm_name": "Sao Paulo, Brazil",
+    "cost_index": 34.1,
+    "safety_index": 29.9
+  },
+  "Rabat, Morocco": {
+    "norm_name": "Rabat, Morocco",
+    "cost_index": 33.9,
+    "safety_index": 64.6
+  },
+  "Tbilisi, Georgia": {
+    "norm_name": "Tbilisi, Georgia",
+    "cost_index": 33.8,
+    "safety_index": 74.5
+  },
+  "Nizhny Novgorod, Russia": {
+    "norm_name": "Nizhny Novgorod, Russia",
+    "cost_index": 33.7,
+    "safety_index": 72.0
+  },
+  "Cebu, Philippines": {
+    "norm_name": "Cebu, Philippines",
+    "cost_index": 33.5,
+    "safety_index": 48.7
+  },
+  "Bali, Indonesia": {
+    "norm_name": "Bali, Indonesia",
+    "cost_index": 33.5,
+    "safety_index": 50.3
+  },
+  "Ulaanbaatar, Mongolia": {
+    "norm_name": "Ulaanbaatar, Mongolia",
+    "cost_index": 33.4,
+    "safety_index": null
+  },
+  "Lusaka, Zambia": {
+    "norm_name": "Lusaka, Zambia",
+    "cost_index": 33.3,
+    "safety_index": null
+  },
+  "Accra, Ghana": {
+    "norm_name": "Accra, Ghana",
+    "cost_index": 33.1,
+    "safety_index": null
+  },
+  "Hangzhou, China": {
+    "norm_name": "Hangzhou, China",
+    "cost_index": 32.9,
+    "safety_index": null
+  },
+  "Lima, Peru": {
+    "norm_name": "Lima, Peru",
+    "cost_index": 32.7,
+    "safety_index": 29.9
+  },
+  "Baghdad, Iraq": {
+    "norm_name": "Baghdad, Iraq",
+    "cost_index": 32.7,
+    "safety_index": 44.4
+  },
+  "Kaliningrad, Russia": {
+    "norm_name": "Kaliningrad, Russia",
+    "cost_index": 32.6,
+    "safety_index": null
+  },
+  "Windhoek, Namibia": {
+    "norm_name": "Windhoek, Namibia",
+    "cost_index": 32.4,
+    "safety_index": 33.0
+  },
+  "Erbil (Irbil), Iraq": {
+    "norm_name": "Erbil, Iraq",
+    "cost_index": 32.2,
+    "safety_index": null
+  },
+  "Florianopolis, Brazil": {
+    "norm_name": "Florianopolis, Brazil",
+    "cost_index": 31.8,
+    "safety_index": 53.2
+  },
+  "Marrakech, Morocco": {
+    "norm_name": "Marrakech, Morocco",
+    "cost_index": 31.6,
+    "safety_index": null
+  },
+  "Kigali, Rwanda": {
+    "norm_name": "Kigali, Rwanda",
+    "cost_index": 31.4,
+    "safety_index": null
+  },
+  "Campinas, Brazil": {
+    "norm_name": "Campinas, Brazil",
+    "cost_index": 31.4,
+    "safety_index": 34.0
+  },
+  "Quito, Ecuador": {
+    "norm_name": "Quito, Ecuador",
+    "cost_index": 31.3,
+    "safety_index": 36.8
+  },
+  "Nairobi, Kenya": {
+    "norm_name": "Nairobi, Kenya",
+    "cost_index": 31.3,
+    "safety_index": 40.4
+  },
+  "Chiang Mai, Thailand": {
+    "norm_name": "Chiang Mai, Thailand",
+    "cost_index": 31.1,
+    "safety_index": 77.8
+  },
+  "Rio de Janeiro, Brazil": {
+    "norm_name": "Rio de Janeiro, Brazil",
+    "cost_index": 31.0,
+    "safety_index": 24.8
+  },
+  "Brasilia, Brazil": {
+    "norm_name": "Brasilia, Brazil",
+    "cost_index": 30.9,
+    "safety_index": 41.4
+  },
+  "Porto Alegre, Brazil": {
+    "norm_name": "Porto Alegre, Brazil",
+    "cost_index": 30.6,
+    "safety_index": 29.3
+  },
+  "Durban, South Africa": {
+    "norm_name": "Durban, South Africa",
+    "cost_index": 30.6,
+    "safety_index": 19.6
+  },
+  "Baku, Azerbaijan": {
+    "norm_name": "Baku, Azerbaijan",
+    "cost_index": 30.5,
+    "safety_index": 69.7
+  },
+  "Fortaleza, Brazil": {
+    "norm_name": "Fortaleza, Brazil",
+    "cost_index": 30.3,
+    "safety_index": 24.3
+  },
+  "Medellin, Colombia": {
+    "norm_name": "Medellin, Colombia",
+    "cost_index": 30.3,
+    "safety_index": 46.8
+  },
+  "Sao Jose dos Campos, Brazil": {
+    "norm_name": "Sao Jose dos Campos, Brazil",
+    "cost_index": 30.2,
+    "safety_index": null
+  },
+  "Belo Horizonte, Brazil": {
+    "norm_name": "Belo Horizonte, Brazil",
+    "cost_index": 29.8,
+    "safety_index": 40.4
+  },
+  "Tunis, Tunisia": {
+    "norm_name": "Tunis, Tunisia",
+    "cost_index": 29.6,
+    "safety_index": 51.3
+  },
+  "Almaty, Kazakhstan": {
+    "norm_name": "Almaty, Kazakhstan",
+    "cost_index": 29.4,
+    "safety_index": 46.5
+  },
+  "Sousse, Tunisia": {
+    "norm_name": "Sousse, Tunisia",
+    "cost_index": 29.4,
+    "safety_index": null
+  },
+  "Kiev (Kyiv), Ukraine": {
+    "norm_name": "Kiev, Ukraine",
+    "cost_index": 29.3,
+    "safety_index": 54.7
+  },
+  "Nanjing, China": {
+    "norm_name": "Nanjing, China",
+    "cost_index": 29.2,
+    "safety_index": null
+  },
+  "Bogota, Colombia": {
+    "norm_name": "Bogota, Colombia",
+    "cost_index": 29.1,
+    "safety_index": 33.4
+  },
+  "Lagos, Nigeria": {
+    "norm_name": "Lagos, Nigeria",
+    "cost_index": 28.9,
+    "safety_index": 31.6
+  },
+  "Curitiba, Brazil": {
+    "norm_name": "Curitiba, Brazil",
+    "cost_index": 28.7,
+    "safety_index": 39.1
+  },
+  "Batumi, Ajara, Georgia": {
+    "norm_name": "Batumi, Ajara, Georgia",
+    "cost_index": 28.6,
+    "safety_index": null
+  },
+  "Algiers, Algeria": {
+    "norm_name": "Algiers, Algeria",
+    "cost_index": 28.5,
+    "safety_index": 49.0
+  },
+  "Dnipro, Ukraine": {
+    "norm_name": "Dnipro, Ukraine",
+    "cost_index": 28.3,
+    "safety_index": 46.1
+  },
+  "Cali, Colombia": {
+    "norm_name": "Cali, Colombia",
+    "cost_index": 28.3,
+    "safety_index": 28.2
+  },
+  "Jakarta, Indonesia": {
+    "norm_name": "Jakarta, Indonesia",
+    "cost_index": 28.0,
+    "safety_index": 47.1
+  },
+  "Wuhan, China": {
+    "norm_name": "Wuhan, China",
+    "cost_index": 27.9,
+    "safety_index": null
+  },
+  "Recife, Brazil": {
+    "norm_name": "Recife, Brazil",
+    "cost_index": 27.7,
+    "safety_index": 24.4
+  },
+  "Ho Chi Minh City, Vietnam": {
+    "norm_name": "Ho Chi Minh City, Vietnam",
+    "cost_index": 27.4,
+    "safety_index": 49.3
+  },
+  "Chengdu, China": {
+    "norm_name": "Chengdu, China",
+    "cost_index": 27.3,
+    "safety_index": null
+  },
+  "Pristina, Kosovo (Disputed Territory)": {
+    "norm_name": "Pristina, Kosovo",
+    "cost_index": 27.0,
+    "safety_index": null
+  },
+  "Hanoi, Vietnam": {
+    "norm_name": "Hanoi, Vietnam",
+    "cost_index": 26.9,
+    "safety_index": 65.7
+  },
+  "Bishkek, Kyrgyzstan": {
+    "norm_name": "Bishkek, Kyrgyzstan",
+    "cost_index": 26.8,
+    "safety_index": null
+  },
+  "Odessa (Odesa), Ukraine": {
+    "norm_name": "Odessa, Ukraine",
+    "cost_index": 26.7,
+    "safety_index": 44.8
+  },
+  "Astana (Nur-Sultan), Kazakhstan": {
+    "norm_name": "Astana, Kazakhstan",
+    "cost_index": 26.5,
+    "safety_index": 66.6
+  },
+  "Minsk, Belarus": {
+    "norm_name": "Minsk, Belarus",
+    "cost_index": 26.4,
+    "safety_index": 49.5
+  },
+  "Lviv, Ukraine": {
+    "norm_name": "Lviv, Ukraine",
+    "cost_index": 26.3,
+    "safety_index": 62.4
+  },
+  "Dar es Salaam, Tanzania": {
+    "norm_name": "Dar es Salaam, Tanzania",
+    "cost_index": 26.2,
+    "safety_index": null
+  },
+  "Tashkent, Uzbekistan": {
+    "norm_name": "Tashkent, Uzbekistan",
+    "cost_index": 26.2,
+    "safety_index": 73.5
+  },
+  "Kampala, Uganda": {
+    "norm_name": "Kampala, Uganda",
+    "cost_index": 26.0,
+    "safety_index": null
+  },
+  "Mumbai, India": {
+    "norm_name": "Mumbai, India",
+    "cost_index": 25.4,
+    "safety_index": 55.9
+  },
+  "Kharkiv, Ukraine": {
+    "norm_name": "Kharkiv, Ukraine",
+    "cost_index": 25.4,
+    "safety_index": 52.8
+  },
+  "Tehran, Iran": {
+    "norm_name": "Tehran, Iran",
+    "cost_index": 24.4,
+    "safety_index": 42.9
+  },
+  "Gurgaon, India": {
+    "norm_name": "Gurgaon, India",
+    "cost_index": 24.3,
+    "safety_index": 46.0
+  },
+  "Da Nang, Vietnam": {
+    "norm_name": "Da Nang, Vietnam",
+    "cost_index": 24.2,
+    "safety_index": null
+  },
+  "Bandung, Indonesia": {
+    "norm_name": "Bandung, Indonesia",
+    "cost_index": 23.5,
+    "safety_index": null
+  },
+  "Kathmandu, Nepal": {
+    "norm_name": "Kathmandu, Nepal",
+    "cost_index": 23.5,
+    "safety_index": 63.3
+  },
+  "Dhaka, Bangladesh": {
+    "norm_name": "Dhaka, Bangladesh",
+    "cost_index": 23.5,
+    "safety_index": 38.3
+  },
+  "Asuncion, Paraguay": {
+    "norm_name": "Asuncion, Paraguay",
+    "cost_index": 23.2,
+    "safety_index": 42.9
+  },
+  "Pune, India": {
+    "norm_name": "Pune, India",
+    "cost_index": 22.5,
+    "safety_index": 58.7
+  },
+  "Bangalore, India": {
+    "norm_name": "Bangalore, India",
+    "cost_index": 22.1,
+    "safety_index": 45.7
+  },
+  "Noida, India": {
+    "norm_name": "Noida, India",
+    "cost_index": 21.7,
+    "safety_index": 44.9
+  },
+  "Ahmedabad, India": {
+    "norm_name": "Ahmedabad, India",
+    "cost_index": 21.6,
+    "safety_index": 68.5
+  },
+  "Hyderabad, India": {
+    "norm_name": "Hyderabad, India",
+    "cost_index": 21.6,
+    "safety_index": 57.3
+  },
+  "Delhi, India": {
+    "norm_name": "Delhi, India",
+    "cost_index": 21.5,
+    "safety_index": 41.0
+  },
+  "Chennai, India": {
+    "norm_name": "Chennai, India",
+    "cost_index": 20.6,
+    "safety_index": 60.3
+  },
+  "Cairo, Egypt": {
+    "norm_name": "Cairo, Egypt",
+    "cost_index": 20.2,
+    "safety_index": 49.5
+  },
+  "Islamabad, Pakistan": {
+    "norm_name": "Islamabad, Pakistan",
+    "cost_index": 19.9,
+    "safety_index": 68.4
+  },
+  "Chandigarh, India": {
+    "norm_name": "Chandigarh, India",
+    "cost_index": 19.8,
+    "safety_index": 57.4
+  },
+  "Alexandria, Egypt": {
+    "norm_name": "Alexandria, Egypt",
+    "cost_index": 19.8,
+    "safety_index": 55.3
+  },
+  "Kolkata, India": {
+    "norm_name": "Kolkata, India",
+    "cost_index": 19.5,
+    "safety_index": 53.3
+  },
+  "Kochi, India": {
+    "norm_name": "Kochi, India",
+    "cost_index": 19.5,
+    "safety_index": null
+  },
+  "Vadodara, India": {
+    "norm_name": "Vadodara, India",
+    "cost_index": 19.2,
+    "safety_index": 69.0
+  },
+  "Karachi, Pakistan": {
+    "norm_name": "Karachi, Pakistan",
+    "cost_index": 19.2,
+    "safety_index": 42.7
+  },
+  "Bhubaneswar, India": {
+    "norm_name": "Bhubaneswar, India",
+    "cost_index": 19.0,
+    "safety_index": null
+  },
+  "Tripoli, Libya": {
+    "norm_name": "Tripoli, Libya",
+    "cost_index": 18.8,
+    "safety_index": null
+  },
+  "Jaipur, India": {
+    "norm_name": "Jaipur, India",
+    "cost_index": 18.8,
+    "safety_index": 65.2
+  },
+  "Rawalpindi, Pakistan": {
+    "norm_name": "Rawalpindi, Pakistan",
+    "cost_index": 18.8,
+    "safety_index": 48.6
+  },
+  "Surat, India": {
+    "norm_name": "Surat, India",
+    "cost_index": 18.7,
+    "safety_index": 66.6
+  },
+  "Lahore, Pakistan": {
+    "norm_name": "Lahore, Pakistan",
+    "cost_index": 18.5,
+    "safety_index": 63.2
+  },
+  "Lucknow (Lakhnau), India": {
+    "norm_name": "Lucknow, India",
+    "cost_index": 17.9,
+    "safety_index": null
+  },
+  "Indore, India": {
+    "norm_name": "Indore, India",
+    "cost_index": 17.7,
+    "safety_index": 51.8
+  },
+  "Coimbatore, India": {
+    "norm_name": "Coimbatore, India",
+    "cost_index": 17.1,
+    "safety_index": null
+  },
+  "Pietermaritzburg, South Africa": {
+    "norm_name": "Pietermaritzburg, South Africa",
+    "cost_index": null,
+    "safety_index": 17.3
+  },
+  "Port Moresby, Papua New Guinea": {
+    "norm_name": "Port Moresby, Papua New Guinea",
+    "cost_index": null,
+    "safety_index": 18.6
+  },
+  "San Pedro Sula, Honduras": {
+    "norm_name": "San Pedro Sula, Honduras",
+    "cost_index": null,
+    "safety_index": 20.6
+  },
+  "Port Elizabeth, South Africa": {
+    "norm_name": "Port Elizabeth, South Africa",
+    "cost_index": null,
+    "safety_index": 21.7
+  },
+  "Memphis, TN, United States": {
+    "norm_name": "Memphis, TN, United States",
+    "cost_index": null,
+    "safety_index": 22.0
+  },
+  "Salvador, Brazil": {
+    "norm_name": "Salvador, Brazil",
+    "cost_index": null,
+    "safety_index": 23.3
+  },
+  "Damascus, Syria": {
+    "norm_name": "Damascus, Syria",
+    "cost_index": null,
+    "safety_index": 30.9
+  },
+  "Oakland, CA, United States": {
+    "norm_name": "Oakland, CA, United States",
+    "cost_index": null,
+    "safety_index": 31.3
+  },
+  "Rockhampton, Australia": {
+    "norm_name": "Rockhampton, Australia",
+    "cost_index": null,
+    "safety_index": 32.8
+  },
+  "San Juan, Puerto Rico": {
+    "norm_name": "San Juan, Puerto Rico",
+    "cost_index": null,
+    "safety_index": 32.8
+  },
+  "Bradford, United Kingdom": {
+    "norm_name": "Bradford, United Kingdom",
+    "cost_index": null,
+    "safety_index": 32.9
+  },
+  "Milwaukee, WI, United States": {
+    "norm_name": "Milwaukee, WI, United States",
+    "cost_index": null,
+    "safety_index": 33.3
+  },
+  "Alice Springs, Australia": {
+    "norm_name": "Alice Springs, Australia",
+    "cost_index": null,
+    "safety_index": 33.3
+  },
+  "Marseille, France": {
+    "norm_name": "Marseille, France",
+    "cost_index": null,
+    "safety_index": 34.7
+  },
+  "Coventry, United Kingdom": {
+    "norm_name": "Coventry, United Kingdom",
+    "cost_index": null,
+    "safety_index": 35.0
+  },
+  "Quezon City, Philippines": {
+    "norm_name": "Quezon City, Philippines",
+    "cost_index": null,
+    "safety_index": 35.8
+  },
+  "Sudbury, Canada": {
+    "norm_name": "Sudbury, Canada",
+    "cost_index": null,
+    "safety_index": 37.7
+  },
+  "Townsville, Australia": {
+    "norm_name": "Townsville, Australia",
+    "cost_index": null,
+    "safety_index": 38.4
+  },
+  "Grenoble, France": {
+    "norm_name": "Grenoble, France",
+    "cost_index": null,
+    "safety_index": 38.8
+  },
+  "Montpellier, France": {
+    "norm_name": "Montpellier, France",
+    "cost_index": null,
+    "safety_index": 38.9
+  },
+  "Liege, Belgium": {
+    "norm_name": "Liege, Belgium",
+    "cost_index": null,
+    "safety_index": 39.3
+  },
+  "Oshawa, Canada": {
+    "norm_name": "Oshawa, Canada",
+    "cost_index": null,
+    "safety_index": 39.5
+  },
+  "Sault Ste. Marie, Canada": {
+    "norm_name": "Sault Ste. Marie, Canada",
+    "cost_index": null,
+    "safety_index": 39.7
+  },
+  "Nantes, France": {
+    "norm_name": "Nantes, France",
+    "cost_index": null,
+    "safety_index": 41.5
+  },
+  "Ghaziabad, India": {
+    "norm_name": "Ghaziabad, India",
+    "cost_index": null,
+    "safety_index": 41.6
+  },
+  "Puebla, Mexico": {
+    "norm_name": "Puebla, Mexico",
+    "cost_index": null,
+    "safety_index": 41.9
+  },
+  "Nice, France": {
+    "norm_name": "Nice, France",
+    "cost_index": null,
+    "safety_index": 44.2
+  },
+  "Hamilton, New Zealand": {
+    "norm_name": "Hamilton, New Zealand",
+    "cost_index": null,
+    "safety_index": 44.4
+  },
+  "Brampton, Canada": {
+    "norm_name": "Brampton, Canada",
+    "cost_index": null,
+    "safety_index": 44.5
+  },
+  "Klang, Malaysia": {
+    "norm_name": "Klang, Malaysia",
+    "cost_index": null,
+    "safety_index": 44.7
+  },
+  "Amadora, Portugal": {
+    "norm_name": "Amadora, Portugal",
+    "cost_index": null,
+    "safety_index": 44.8
+  },
+  "Kamloops, Canada": {
+    "norm_name": "Kamloops, Canada",
+    "cost_index": null,
+    "safety_index": 45.2
+  },
+  "Nanaimo, BC, Canada": {
+    "norm_name": "Nanaimo, BC, Canada",
+    "cost_index": null,
+    "safety_index": 46.5
+  },
+  "Bilbao, Spain": {
+    "norm_name": "Bilbao, Spain",
+    "cost_index": null,
+    "safety_index": 49.4
+  },
+  "San Miguel de Allende, Mexico": {
+    "norm_name": "San Miguel de Allende, Mexico",
+    "cost_index": null,
+    "safety_index": 49.4
+  },
+  "Drogheda, Ireland": {
+    "norm_name": "Drogheda, Ireland",
+    "cost_index": null,
+    "safety_index": 49.5
+  },
+  "Bari, Italy": {
+    "norm_name": "Bari, Italy",
+    "cost_index": null,
+    "safety_index": 49.8
+  },
+  "Lille, France": {
+    "norm_name": "Lille, France",
+    "cost_index": null,
+    "safety_index": 50.0
+  },
+  "Bordeaux, France": {
+    "norm_name": "Bordeaux, France",
+    "cost_index": null,
+    "safety_index": 50.1
+  },
+  "Johor Bahru, Malaysia": {
+    "norm_name": "Johor Bahru, Malaysia",
+    "cost_index": null,
+    "safety_index": 51.0
+  },
+  "Moncton, Canada": {
+    "norm_name": "Moncton, Canada",
+    "cost_index": null,
+    "safety_index": 51.2
+  },
+  "Newcastle, Australia": {
+    "norm_name": "Newcastle, Australia",
+    "cost_index": null,
+    "safety_index": 51.9
+  },
+  "St.Catharines, Canada": {
+    "norm_name": "St.Catharines, Canada",
+    "cost_index": null,
+    "safety_index": 52.7
+  },
+  "Windsor, Canada": {
+    "norm_name": "Windsor, Canada",
+    "cost_index": null,
+    "safety_index": 53.6
+  },
+  "Cuenca, Ecuador": {
+    "norm_name": "Cuenca, Ecuador",
+    "cost_index": null,
+    "safety_index": 54.0
+  },
+  "Palermo, Italy": {
+    "norm_name": "Palermo, Italy",
+    "cost_index": null,
+    "safety_index": 54.5
+  },
+  "Brooklyn, NY, United States": {
+    "norm_name": "Brooklyn, NY, United States",
+    "cost_index": null,
+    "safety_index": 55.4
+  },
+  "Vaughan, Canada": {
+    "norm_name": "Vaughan, Canada",
+    "cost_index": null,
+    "safety_index": 56.7
+  },
+  "Kitchener, Canada": {
+    "norm_name": "Kitchener, Canada",
+    "cost_index": null,
+    "safety_index": 56.8
+  },
+  "Limerick, Ireland": {
+    "norm_name": "Limerick, Ireland",
+    "cost_index": null,
+    "safety_index": 57.1
+  },
+  "Iloilo, Philippines": {
+    "norm_name": "Iloilo, Philippines",
+    "cost_index": null,
+    "safety_index": 59.8
+  },
+  "Cardiff, United Kingdom": {
+    "norm_name": "Cardiff, United Kingdom",
+    "cost_index": null,
+    "safety_index": 60.3
+  },
+  "Thiruvananthapuram, India": {
+    "norm_name": "Thiruvananthapuram, India",
+    "cost_index": null,
+    "safety_index": 61.1
+  },
+  "Makati, Philippines": {
+    "norm_name": "Makati, Philippines",
+    "cost_index": null,
+    "safety_index": 61.9
+  },
+  "Kaunas, Lithuania": {
+    "norm_name": "Kaunas, Lithuania",
+    "cost_index": null,
+    "safety_index": 63.3
+  },
+  "Navi Mumbai, India": {
+    "norm_name": "Navi Mumbai, India",
+    "cost_index": null,
+    "safety_index": 63.5
+  },
+  "Puerto Vallarta, Mexico": {
+    "norm_name": "Puerto Vallarta, Mexico",
+    "cost_index": null,
+    "safety_index": 65.0
+  },
+  "Boise, ID, United States": {
+    "norm_name": "Boise, ID, United States",
+    "cost_index": null,
+    "safety_index": 65.4
+  },
+  "Guelph, Canada": {
+    "norm_name": "Guelph, Canada",
+    "cost_index": null,
+    "safety_index": 65.8
+  },
+  "Osaka, Japan": {
+    "norm_name": "Osaka, Japan",
+    "cost_index": null,
+    "safety_index": 67.2
+  },
+  "Irvine, CA, United States": {
+    "norm_name": "Irvine, CA, United States",
+    "cost_index": null,
+    "safety_index": 69.8
+  },
+  "Penang, Malaysia": {
+    "norm_name": "Penang, Malaysia",
+    "cost_index": null,
+    "safety_index": 70.0
+  },
+  "San Sebastian, Spain": {
+    "norm_name": "San Sebastian, Spain",
+    "cost_index": null,
+    "safety_index": 70.5
+  },
+  "Burlington, Canada": {
+    "norm_name": "Burlington, Canada",
+    "cost_index": null,
+    "safety_index": 70.6
+  },
+  "Bursa, Turkey": {
+    "norm_name": "Bursa, Turkey",
+    "cost_index": null,
+    "safety_index": 71.0
+  },
+  "Davao, Philippines": {
+    "norm_name": "Davao, Philippines",
+    "cost_index": null,
+    "safety_index": 71.5
+  },
+  "Oakville, Canada": {
+    "norm_name": "Oakville, Canada",
+    "cost_index": null,
+    "safety_index": 73.9
+  },
+  "Mangalore, India": {
+    "norm_name": "Mangalore, India",
+    "cost_index": null,
+    "safety_index": 74.1
+  },
+  "Gent, Belgium": {
+    "norm_name": "Gent, Belgium",
+    "cost_index": null,
+    "safety_index": 74.6
+  },
+  "Eskisehir, Turkey": {
+    "norm_name": "Eskisehir, Turkey",
+    "cost_index": null,
+    "safety_index": 75.1
+  },
+  "Rijeka, Croatia": {
+    "norm_name": "Rijeka, Croatia",
+    "cost_index": null,
+    "safety_index": 75.7
+  },
+  "Ajman, United Arab Emirates": {
+    "norm_name": "Ajman, United Arab Emirates",
+    "cost_index": null,
+    "safety_index": 85.4
+  }
+}

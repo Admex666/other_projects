@@ -4,249 +4,328 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eredmények - Optivoya</title>
+    <title>Személyre szabott úticélok - Destination Matcher</title>
     <link rel="icon" type="image/png" href="/static/logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary: #235B2A;
+            --primary-light: #90DC25;
+            --accent: #FFD700;
+            --text-main: #1a202c;
+            --text-muted: #718096;
+            --bg-gradient: linear-gradient(135deg, #235B2A 0%, #1a4520 100%);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-        }
-
-        .navbar {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 20px 40px;
-            border-radius: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 40px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
-
-        .logo-text {
-            font-size: 24px;
-            font-weight: 700;
-            color: #235B2A;
-            margin-left: 10px;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .logout-btn {
-            background: #235B2A;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-
-        .logout-btn:hover {
-            background: #90DC25;
+            font-family: 'Poppins', sans-serif;
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
-            background: #f0f2f5;
+            background: var(--bg-gradient);
             min-height: 100vh;
             padding: 20px;
         }
 
-        header {
-            background: linear-gradient(135deg, #235B2A 0%, #1a4520 100%);
-            color: white;
-            padding: 30px 20px;
-            border-radius: 20px;
-            margin-bottom: 40px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(35, 91, 42, 0.2);
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 30px;
+            border-radius: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
 
-        h1 {
-            margin-bottom: 10px;
-            font-size: 32px;
+        .logo-text {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary);
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
-        }
-
-        .results-list {
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
-        }
-
-        .result-card {
             background: white;
-            border-radius: 15px;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-content {
+            margin-bottom: 35px;
+            text-align: center;
+        }
+
+        .header-content h1 {
+            color: var(--primary);
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .header-content p {
+            color: var(--text-muted);
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 20px;
+            transition: color 0.3s;
+        }
+
+        .btn-back:hover {
+            color: var(--primary);
+        }
+
+        /* Loader Style */
+        #loader {
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 25px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .progress-container {
+            width: 100%;
+            max-width: 500px;
+            height: 12px;
+            background: #edf2f7;
+            border-radius: 10px;
+            margin: 25px auto 0;
             overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        /* Result Cards */
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .dest-card {
             display: flex;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
         }
 
-        .result-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        .dest-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary);
         }
 
-        .rank-badge {
+        .card-rank {
             position: absolute;
             top: 15px;
             left: 15px;
-            background: #FFD700;
-            color: #333;
+            background: var(--primary-light);
+            color: var(--primary);
             width: 40px;
             height: 40px;
-            border-radius: 50%;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 20px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-            z-index: 10;
+            font-size: 18px;
+            z-index: 5;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
 
         .card-img {
-            width: 300px;
+            width: 320px;
+            min-width: 320px;
+            height: auto;
             object-fit: cover;
-            flex-shrink: 0;
         }
 
-        .card-content {
-            padding: 25px;
+        .card-body {
             flex-grow: 1;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
         }
 
-        .card-header {
+        .card-top {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
-        .destination-title {
+        .dest-info h2 {
             font-size: 24px;
-            font-weight: 700;
-            color: #333;
+            color: var(--text-main);
+            margin-bottom: 4px;
         }
 
-        .destination-country {
-            color: #777;
+        .dest-info span {
+            color: var(--text-muted);
             font-size: 14px;
-            font-weight: 400;
         }
 
-        .match-score {
+        .match-badge {
             text-align: right;
         }
 
-        .score-val {
+        .match-percent {
             font-size: 28px;
             font-weight: 700;
-            color: #235B2A;
+            color: var(--primary);
             display: block;
         }
 
-        .score-label {
-            font-size: 12px;
-            color: #888;
+        .match-label {
+            font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 1px;
+            color: var(--text-muted);
         }
 
-        .explanation-box {
-            background: #f1f8f3;
-            border-left: 4px solid #235B2A;
-            padding: 12px 15px;
-            margin-bottom: 15px;
-            border-radius: 0 8px 8px 0;
+        .why-box {
+            background: #f7fafc;
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            border-left: 4px solid var(--primary);
         }
 
-        .explanation-text {
-            color: #2d5a32;
+        .why-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .why-text {
             font-size: 14px;
+            color: #4a5568;
             line-height: 1.5;
         }
 
-        .metrics-grid {
+        .metrics-row {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 15px;
-            margin-top: 20px;
-            padding-top: 15px;
-            border-top: 1px solid #eee;
+            margin-top: auto;
         }
 
-        .metric-item {
+        .metric {
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 10px;
             text-align: center;
         }
 
         .metric-val {
             display: block;
-            font-weight: 600;
-            color: #333;
+            font-weight: 700;
+            color: var(--text-main);
+            font-size: 15px;
         }
 
         .metric-label {
-            font-size: 12px;
-            color: #999;
+            font-size: 11px;
+            color: var(--text-muted);
         }
 
-        .actions {
-            margin-top: 20px;
-            text-align: right;
-        }
-
-        .btn-view {
-            text-decoration: none;
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 25px;
+            background: var(--primary);
             color: white;
-            background: #235B2A;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-size: 14px;
-            display: inline-block;
-        }
-
-        .btn-back {
-            display: inline-block;
             text-decoration: none;
-            color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            font-weight: 600;
             font-size: 14px;
-            font-weight: 500;
-            margin-bottom: 20px;
             transition: all 0.3s;
+            margin-top: 25px;
+            align-self: flex-end;
         }
 
-        .btn-back:hover {
-            color: white;
-            transform: translateX(-5px);
+        .btn-action:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            transform: translateY(-2px);
         }
 
-        @media (max-width: 768px) {
-            .result-card {
+        @media (max-width: 900px) {
+            .dest-card {
                 flex-direction: column;
             }
 
             .card-img {
                 width: 100%;
-                height: 200px;
+                height: 220px;
             }
 
-            .metrics-grid {
+            .metrics-row {
                 grid-template-columns: repeat(2, 1fr);
             }
+
+            .btn-action {
+                align-self: stretch;
+            }
+        }
+
+        .footer-links {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
         }
     </style>
 </head>
@@ -257,88 +336,141 @@
             <img src="/static/logo.png" alt="Optivoya" style="height: 40px;">
             <span class="logo-text">Optivoya</span>
         </a>
-        <div class="user-info">
+        <div class="user-info" style="display: flex; align-items: center; gap: 20px;">
             <span style="color: #666;">👤 {{ user }}</span>
-            <a href="/logout" class="logout-btn">Kilépés</a>
+            <a href="/logout"
+                style="background: var(--primary); color: white; padding: 8px 18px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px;">Kilépés</a>
         </div>
     </div>
-    <header>
-        <div class="container">
-            <a href="/destination-preferences" class="btn-back">← Vissza a finomhangoláshoz</a>
-            <h1>🏆 Top Úticélok Neked</h1>
-            <p>A beállított szempontok alapján ezek a legalkalmasabb helyek.</p>
-        </div>
-    </header>
 
     <div class="container">
-        <div class="results-list" id="resultsList">
-            <!-- Populated by JS -->
+        <a href="/destination-preferences" class="btn-back">← Vissza a preferenciákhoz</a>
+
+        <div class="header-content">
+            <h1>🎯 Legjobb úticélok számodra</h1>
+            <p>Elemzésünk alapján a következő helyszínek illenek leginkább az igényeidhez.</p>
         </div>
 
-        <div style="text-align: center; margin-top: 40px;">
-            <a href="/destination-matcher" style="color: #666; text-decoration: none;">🔄 Új keresés indítása</a>
+        <div id="loader">
+            <div class="spinner"></div>
+            <h3 id="statusTitle">Élő adatok betöltése...</h3>
+            <p id="statusText" style="color: #718096; margin-top: 10px;">Lekérjük a friss időjárás és repülőjegy
+                adatokat.</p>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
         </div>
+
+        <div class="results-grid" id="resultsGrid" style="display: none;">
+            <!-- Rendered by JavaScript -->
+        </div>
+    </div>
+
+    <div class="footer-links">
+        <a href="/destination-matcher">🔄 Új keresés indítása</a>
     </div>
 
     <script>
-        // REAL DATA from Jinja2
-        var results;
-        // {% if results %}
-        results = {{ results | tojson }};
-        // {% else %}
-        results = [];
-        // {% endif %}
-
-        const list = document.getElementById('resultsList');
-
-        results.forEach((res, index) => {
-            const card = document.createElement('div');
-            card.className = 'result-card';
-            card.innerHTML = `
-                <div class="rank-badge">${res.rank}</div>
-                <img src="${res.image}" class="card-img" alt="${res.name}">
-                <div class="card-content">
-                    <div class="card-header">
-                        <div>
-                            <div class="destination-title">${res.name}</div>
-                            <div class="destination-country">${res.country}</div>
-                        </div>
-                        <div class="match-score">
-                            <span class="score-val">${res.score}%</span>
-                            <span class="score-label">Egyezés</span>
-                        </div>
-                    </div>
-                    
-                    <div class="explanation-box">
-                        <div class="explanation-text">💡 <b>Miért ez?</b> ${res.explanation}</div>
-                    </div>
-
-                    <div class="metrics-grid">
-                        <div class="metric-item">
-                            <span class="metric-val">${res.metrics.temp}</span>
-                            <span class="metric-label">Időjárás</span>
-                        </div>
-                        <div class="metric-item">
-                            <span class="metric-val">${res.metrics.cost}</span>
-                            <span class="metric-label">Költség</span>
-                        </div>
-                         <div class="metric-item">
-                            <span class="metric-val">${res.metrics.safety}</span>
-                            <span class="metric-label">Biztonság</span>
-                        </div>
-                         <div class="metric-item">
-                            <span class="metric-val">${res.metrics.vibe}</span>
-                            <span class="metric-label">Hangulat</span>
-                        </div>
-                    </div>
-                    
-                    <div class="actions">
-                        <a href="/accommodation-intelligence?city=${res.name}" class="btn-view">Szállások keresése ➔</a>
-                    </div>
-                </div>
-            `;
-            list.appendChild(card);
+        window.addEventListener('pageshow', function (event) {
+            if (event.persisted) {
+                window.location.reload();
+            }
         });
+
+        let results = {{ results | tojson }};
+        if (!results) results = [];
+
+        const grid = document.getElementById('resultsGrid');
+        const loader = document.getElementById('loader');
+        const statusTitle = document.getElementById('statusTitle');
+        const statusText = document.getElementById('statusText');
+        const progressBar = document.getElementById('progressBar');
+
+        async function pollStatus() {
+            try {
+                const response = await fetch('/api/destination-calculation-status');
+                const data = await response.json();
+
+                if (data.status === 'running') {
+                    if (data.status_text) statusText.innerText = data.status_text;
+                    if (data.progress !== undefined) progressBar.style.width = data.progress + '%';
+                    setTimeout(pollStatus, 2000);
+                } else if (data.status === 'done') {
+                    location.reload();
+                } else if (data.status === 'error') {
+                    loader.innerHTML = `<h3 style="color:#e53e3e">Hiba történt</h3><p>${data.error}</p>`;
+                } else if (data.status === 'idle') {
+                    if (results.length > 0) {
+                        loader.style.display = 'none';
+                        grid.style.display = 'grid';
+                        renderResults();
+                    } else {
+                        statusTitle.innerText = "Nincs adat";
+                        statusText.innerText = "Kérlek, indíts egy új keresést.";
+                        progressBar.parentElement.style.display = 'none';
+                    }
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        function renderResults() {
+            grid.innerHTML = '';
+            results.forEach(res => {
+                const card = document.createElement('div');
+                card.className = 'dest-card';
+                card.innerHTML = `
+                    <div class="card-rank">${res.rank}</div>
+                    <img src="${res.image}" class="card-img" alt="${res.name}">
+                    <div class="card-body">
+                        <div class="card-top">
+                            <div class="dest-info">
+                                <h2>${res.name}</h2>
+                                <span>📍 ${res.country}</span>
+                            </div>
+                            <div class="match-badge">
+                                <span class="match-percent">${res.score}%</span>
+                                <span class="match-label">Egyezés</span>
+                            </div>
+                        </div>
+
+                        <div class="why-box">
+                            <span class="why-label">💡 Miért ez?</span>
+                            <p class="why-text">${res.explanation}</p>
+                        </div>
+
+                        <div class="metrics-row">
+                            <div class="metric">
+                                <span class="metric-val">${res.metrics.temp}</span>
+                                <span class="metric-label">Időjárás</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-val">${res.metrics.cost}</span>
+                                <span class="metric-label">Költség/nap</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-val">${res.metrics.flight}</span>
+                                <span class="metric-label">Repülőjegy</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-val">${res.metrics.travel}</span>
+                                <span class="metric-label">Utazás</span>
+                            </div>
+                        </div>
+
+                        <a href="/accommodation-intelligence?city=${res.name}" class="btn-action">Szállások felfedezése ➔</a>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        if (results.length === 0) {
+            pollStatus();
+        } else {
+            loader.style.display = 'none';
+            grid.style.display = 'grid';
+            renderResults();
+        }
     </script>
 </body>
 

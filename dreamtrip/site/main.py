@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Request, Form, BackgroundTasks, Depends, HTTPException, status
+from concurrent.futures import ThreadPoolExecutor
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
@@ -8,12 +9,16 @@ from scraper import get_kiwi_tokens, search_flights_by_city_name_v2, create_retu
 from accommodation_scraper import get_all_stays, parse_accommodation_results
 import os
 import secrets
-from pydantic import BaseModel
-from typing import Dict, Any, List, Optional
-import numpy as np
-import math
 import json
+import math
 import gc
+import pandas as pd
+import numpy as np
+import requests
+from typing import List, Dict, Optional
+from pydantic import BaseModel
+import scraper # Kiwi scraper
+import accommodation_scraper
 from contextlib import asynccontextmanager
 
 
@@ -647,6 +652,7 @@ async def save_ahp_weights(data: AHPWeights, request: Request):
 # Adattárolók (a sessions és ahp_weights mellé)
 user_preferences = {}
 ranked_results = {}
+dest_calculation_status = {}
 
 # --- PROMETHEE Segédfüggvények ---
 def preference_function(d, config):
@@ -993,6 +999,11 @@ async def stay_results_page(request: Request):
 @app.get("/destination-matcher", response_class=HTMLResponse)
 async def destination_matcher_page(request: Request):
     user = get_current_user(request)
+    if user:
+        session = get_dest_session(user)
+        session["results"] = []
+        if user in dest_calculation_status:
+            dest_calculation_status[user] = {"status": "idle", "progress": 0}
     return templates.TemplateResponse("destination_matcher.html", {"request": request, "user": user})
 
 @app.get("/destination-criteria", response_class=HTMLResponse)
@@ -1024,6 +1035,11 @@ async def destination_preferences_page(request: Request):
     if not user: return RedirectResponse(url="/", status_code=303)
     session = get_dest_session(user)
     
+    # Töröljük a korábbi eredményeket, ha visszalépünk ide
+    session["results"] = []
+    if user in dest_calculation_status:
+        dest_calculation_status[user] = {"status": "idle", "progress": 0}
+    
     selected_criteria = [{"id": c} for c in session.get("criteria", [])]
     return templates.TemplateResponse("destination_preferences.html", {
         "request": request,
@@ -1036,10 +1052,14 @@ async def destination_results_page(request: Request):
     if not user: return RedirectResponse(url="/", status_code=303)
     session = get_dest_session(user)
     
-    return templates.TemplateResponse("destination_results.html", {
+    response = templates.TemplateResponse("destination_results.html", {
         "request": request,
+        "user": user,
         "results": session.get("results", [])
     })
+    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    response.headers["Pragma"] = "no-cache"
+    return response
 
 # Helper to init session
 def get_dest_session(user):
@@ -1080,14 +1100,7 @@ async def save_constraints(data: DestConstraints, request: Request):
             if excl == "region_asia" and dest.get("region") == "Asia": keep = False
             if excl == "region_america" and dest.get("region") == "America": keep = False
             if excl == "region_europe" and dest.get("region") == "Europe": keep = False
-            
-            # Type checks (using vibe/tags logic)
-            # We map "type_city" to high urban_scale, "type_beach" to high beach_scale
-            vibe = dest.get("vibe_metrics", {})
-            if excl == "type_city" and vibe.get("urban_scale", 0) > 0.7: keep = False
-            if excl == "type_beach" and vibe.get("beach_scale", 0) > 0.7: keep = False
-            
-            # Simple metadata checks? (visa not yet in DB, ignoring)
+            if excl == "region_australia" and dest.get("region") == "Australia": keep = False
 
         # 2. Budget (Simple pre-filter)
         # If strict, filter out if cost > budget + 10% buffer
@@ -1157,207 +1170,239 @@ async def save_ahp(data: DestAHP, request: Request):
     
     return {"status": "ok", "weights": session["weights"]}
 
+@app.get("/api/destination-calculation-status")
+async def get_destination_status(request: Request):
+    user = get_current_user(request)
+    if not user: raise HTTPException(status_code=401)
+    status = dest_calculation_status.get(user, {"status": "idle"})
+    return JSONResponse(status)
+
 @app.post("/api/calculate-destinations")
-async def calculate_destinations(prefs: DestPreferenceDetails, request: Request):
+async def calculate_destinations(prefs: DestPreferenceDetails, background_tasks: BackgroundTasks, request: Request):
     user = get_current_user(request)
     if not user: return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
     session = get_dest_session(user)
     dests = session.get("filtered", [])
     criteria = session.get("criteria", [])
-    weights = session.get("weights", [])
     
     if not dests or not criteria:
         return JSONResponse({"error": "Missing data (Dests or Criteria)"}, status_code=400)
 
-    n = len(dests)
-    k = len(criteria)
+    dest_calculation_status[user] = {"status": "running", "progress": 0, "status_text": "Kalkuláció indítása..."}
+    background_tasks.add_task(run_destination_calculation_task, user, prefs)
     
-    # Default weights if missing
-    if not weights or len(weights) != k:
-        print(f"Warning: Weights missing or mismatch ({len(weights)} vs {k}). Using equal weights.")
-        weights = [1.0/k] * k
-    
-    # 1. Prepare Data Matrix (Raw extraction & normalization logic)
-    # We need to map criteria ID -> Value for each dest
-    # Higher is BETTER for logic below unless specified otherwise
-    
-    matrix = np.zeros((n, k))
-    
-    # Pre-computation helper
-    def get_criterion_value(dest, crit_id):
-        # WEATHER: |Optimal - Actual| (Lower is better) -> We'll invert later or handle in P function
-        if crit_id == "weather":
-            # Find closest month avg temp to ideal
-            # Simple approach: average of weather_by_month["temp"] vs prefs.weather_temp
-            # Actually, let's pick the BEST month in the dataset for simplicity or avg of season
-            # User selected Month/Time in constraints. If "any", check all.
-            # Assuming "any" -> best possible match.
-            best_diff = 999
-            for m, data in dest["metrics"]["weather_by_month"].items():
-                diff = abs(data["temp"] - prefs.weather_temp)
-                if diff < best_diff: best_diff = diff
-            return best_diff # Lower is better (0 = perfect)
+    return {"status": "ok", "message": "Calculation started"}
 
-        # COST: Daily Cost (Lower is better usually, unless value seeking?)
-        if crit_id == "cost":
-            return dest["metrics"]["cost_index_daily_eur"]
-            
-        # SAFETY: Index (Higher is better)
-        if crit_id == "safety":
-            return dest["metrics"]["safety_index"]
-            
-        # VIBE: Euclidean distance from ideal profile (Lower is better)
-        if crit_id == "vibe":
-            # User: urban (0-100) -> 0.0-1.0
-            u_ideal = prefs.vibe_urban_nature / 100.0
-            # dest has 'urban_scale' (0-1). 
-            # If user wants 50/50 (0.5), and dest is 0.9 (Urban), diff is 0.4.
-            # We combine multiple dimensions?
-            v_metrics = dest.get("vibe_metrics", {})
-            
-            diff_urban = abs((v_metrics.get("urban_scale", 0.5)) - u_ideal)
-            # Calm vs Party (Nightlife)
-            p_ideal = prefs.vibe_calm_party / 100.0
-            diff_party = abs((v_metrics.get("nightlife_scale", 0.5)) - p_ideal)
-            
-            # History
-            h_ideal = prefs.vibe_history / 10.0
-            diff_hist = abs((v_metrics.get("historical_scale", 0.5)) - h_ideal)
-            
-            return (diff_urban + diff_party + diff_hist) / 3.0 # Lower is better
-            
-        # CROWDS: Assuming we don't have real "crowd index" in dummy, use 'popularity'? 
-        # Using cost or known big cities as proxy?
-        # For MVP let's assume random or static logic: "Big cities = crowded"
-        if crit_id == "crowds":
-            # If user wants "Hidden" (val=hidden), we penalize result.
-            # Let's mock: 
-            return 0.5 # Default placeholder
-            
-        return 0.0
-
-    # Fill matrix
-    for i in range(n):
-        for j in range(k):
-            matrix[i, j] = get_criterion_value(dests[i], criteria[j])
-
-    # 2. PROMETHEE Calculation
-    # Preference functions:
-    # We define 'directions': 1 (Max), -1 (Min)
-    # Weather diff: Min (-1)
-    # Cost: Min (-1) (Usually)
-    # Safety: Max (1)
-    # Vibe diff: Min (-1)
-    # Crowds: Min (-1) ?
-    
-    directions = []
-    thresholds = [] # q, p (indifference, preference)
-    
-    for c in criteria:
-        if c == "weather": 
-            directions.append(-1)
-            thresholds.append((2, 10)) # Indiff if diff < 2C, Max pref if diff > 10C
-        elif c == "cost": 
-            directions.append(-1)
-            thresholds.append((10, 50)) # 10 EUR, 50 EUR
-        elif c == "safety": 
-            directions.append(1)
-            thresholds.append((5, 20))
-        elif c == "vibe": 
-            directions.append(-1)
-            thresholds.append((0.1, 0.4))
-        else: 
-            directions.append(1) # Default Max
-            thresholds.append((0, 1))
-
-    pi_matrix = np.zeros((n, n))
-    
-    for i in range(n):
-        for j in range(n):
-            if i == j: continue
-            
-            total_p = 0.0
-            for idx_c in range(k):
-                val_i = matrix[i, idx_c]
-                val_j = matrix[j, idx_c]
-                
-                # Difference d
-                diff = (val_i - val_j) if directions[idx_c] == 1 else (val_j - val_i)
-                
-                # Pref func (Linear V-shape)
-                q, p = thresholds[idx_c]
-                pref = 0.0
-                if diff <= q: pref = 0.0
-                elif diff >= p: pref = 1.0
-                else: pref = (diff - q) / (p - q)
-                
-                total_p += weights[idx_c] * pref
-            
-            pi_matrix[i, j] = total_p
-
-    # Flows
-    phi_plus = np.sum(pi_matrix, axis=1) / (n - 1)
-    phi_minus = np.sum(pi_matrix, axis=0) / (n - 1)
-    phi_net = phi_plus - phi_minus
-
-    # 3. Format Results & Explanations
-    formatted_results = []
-    
-    for i in range(n):
-        dest = dests[i]
+def run_destination_calculation_task(user: str, prefs: DestPreferenceDetails):
+    global dest_calculation_status, destination_sessions
+    try:
+        session = get_dest_session(user)
+        dests = session.get("filtered", [])
+        criteria = session.get("criteria", [])
+        weights = session.get("weights", [])
+        constraints = session.get("constraints", {})
         
-        # Generation Explanation
-        # Why is this good? Look at criteria where this destination beat others (high partial net flow?)
-        # For simplicity MVP: Pick the best performing raw metric relative to request
-        reasons = []
-        if "weather" in criteria:
-            val = matrix[i, criteria.index("weather")]
-            if val < 3: reasons.append(f"Tökéletes időjárás ({int(val)}°C eltérés)")
-        if "cost" in criteria:
-            val = dest["metrics"]["cost_index_daily_eur"]
-            constraints = session.get("constraints", {})
-            budget_limit = constraints.get("budget_daily", 0)
-            if budget_limit > 0 and val < budget_limit: 
-                reasons.append(f"Költségkereten belül ({val}€)")
-        if "safety" in criteria:
-            if dest["metrics"]["safety_index"] > 70: reasons.append("Nagyon biztonságos")
-        if "vibe" in criteria:
-            # If match was good (diff low)
-            val = matrix[i, criteria.index("vibe")]
-            if val < 0.2: reasons.append("A hangulat pont olyan, amilyet kerestél")
+        n = len(dests)
+        k = len(criteria)
+        if not weights or len(weights) != k:
+            weights = [1.0/k] * k
+            
+        # 1. LIVE DATA COLLECTION
+        live_data_matrix = np.zeros((n, k))
+        # Additional data for explanation/display
+        dest_live_details = [{} for _ in range(n)]
+        
+        origin_city = constraints.get("origin", "Budapest")
+        month = constraints.get("month", "any")
+        if month == "any": month = 6 # Default to June for weather check if ANY
+        else: month = int(month)
+        
+        # Determine representative dates for 2024
+        weather_start = f"2024-{month:02d}-10"
+        weather_end = f"2024-{month:02d}-16"
+        
+        tokens = scraper.get_kiwi_tokens()
+        
+        # Load live Numbeo data
+        numbeo_data = {}
+        try:
+            base_dir = os.path.dirname(os.path.abspath(__file__))
+            numbeo_path = os.path.join(base_dir, "data", "live_numbeo_indices.json")
+            if os.path.exists(numbeo_path):
+                with open(numbeo_path, "r", encoding="utf-8") as f:
+                    numbeo_data = json.load(f)
+        except Exception as e:
+            print(f"Numbeo load error: {e}")
 
-        explanation_text = " • ".join(reasons) if reasons else "Kiegyensúlyozott választás a szempontjaid alapján."
-        
-        # Add basic display metrics
-        display_metrics = {
-            "temp": f"{dest['metrics'].get('weather_by_month', {}).get('6', {}).get('temp', '?')}°C", # Demo: Pick June
-            "cost": f"{dest['metrics']['cost_index_daily_eur']}€/nap",
-            "safety": f"{dest['metrics']['safety_index']}/100",
-            "vibe": "Egyező" # Placeholder
-        }
+        def fetch_destination_data(i):
+            dest = dests[i]
+            dest_name = dest["name"]
+            
+            # --- WEATHER FETCHING (Open-Meteo) ---
+            avg_temp_max = 25.0 # Default fallback
+            avg_temp_min = 15.0 # Default fallback
+            if "weather" in criteria:
+                try:
+                    lat, lon = dest.get("lat"), dest.get("lon")
+                    if lat and lon:
+                        w_url = f"https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={weather_start}&end_date={weather_end}&daily=temperature_2m_max,temperature_2m_min&timezone=GMT"
+                        wr = requests.get(w_url, timeout=5)
+                        if wr.status_code == 200:
+                            w_data = wr.json()
+                            max_temps = w_data.get("daily", {}).get("temperature_2m_max", [])
+                            min_temps = w_data.get("daily", {}).get("temperature_2m_min", [])
+                            if max_temps and min_temps:
+                                avg_temp_max = sum([t for t in max_temps if t is not None]) / len(max_temps)
+                                avg_temp_min = sum([t for t in min_temps if t is not None]) / len(min_temps)
+                except Exception as e:
+                    print(f"Weather error for {dest_name}: {e}")
+            
+            # --- FLIGHT FETCHING (Kiwi) ---
+            cheapest_price = 50000.0 # Default fallback
+            travel_time = 4.0 # Default fallback
+            if "cost" in criteria or "travel_time" in criteria:
+                try:
+                    # Flight search (One way for proxy)
+                    flight_df = scraper.search_flights_by_city_name_v2(
+                        origin_name=origin_city,
+                        destination_name=dest_name,
+                        tokens=tokens,
+                        date_from=f"2026-{month:02d}-10", 
+                        date_to=f"2026-{month:02d}-20",
+                        limit=5
+                    )
+                    if not flight_df.empty:
+                        cheapest_price = float(flight_df["price_huf"].min())
+                        travel_time = float(flight_df["duration_h"].min())
+                except Exception as e:
+                    print(f"Flight error for {dest_name}: {e}")
+            
+            return i, avg_temp_min, avg_temp_max, cheapest_price, travel_time
 
-        formatted_results.append({
-            "rank": 0, # To be filled
-            "id": dest["id"],
-            "name": dest["name"],
-            "country": dest["country"],
-            "score": round((phi_net[i] + 1) * 50), # Normalize -1..1 to 0..100
-            "phi_net": phi_net[i],
-            "image": dest.get("image", ""),
-            "explanation": explanation_text,
-            "metrics": display_metrics
-        })
+        dest_calculation_status[user]["status_text"] = "Adatok lekérése párhuzamosan..."
+        with ThreadPoolExecutor(max_workers=5) as executor:
+            task_results = list(executor.map(fetch_destination_data, range(n)))
+
+        for i, avg_temp_min, avg_temp_max, cheapest_price, travel_time in task_results:
+            dest = dests[i]
+
+            # Fill live data matrix
+            for j, crit_id in enumerate(criteria):
+                if crit_id == "weather":
+                    live_data_matrix[i, j] = abs(((avg_temp_max + avg_temp_min) / 2) - prefs.weather_temp)
+                elif crit_id == "cost":
+                    # Combined index: Daily cost (static or live lookup) + Flight cost (scaled to daily)
+                    # Stay duration approx from constraints
+                    duration = constraints.get("duration", 7)
+                    daily_flight = cheapest_price / (duration * 400) # Convert HUF to EUR and div by days
+                    
+                    # Try to get live daily cost from Numbeo
+                    city_cost = dest["metrics"]["cost_index_daily_eur"]
+                    for nk, nv in numbeo_data.items():
+                        if dest["name"].lower() in nk.lower() and nv.get("cost_index"):
+                            # Adjusted linear model for EUR: max(65, round(Index * 4.7 - 115))
+                            city_cost = max(65, round(nv["cost_index"] * 4.7 - 115))
+                            break
+                            
+                    live_data_matrix[i, j] = city_cost + daily_flight
+                elif crit_id == "safety":
+                    # Try to get live safety index from Numbeo
+                    city_safety = dest["metrics"]["safety_index"]
+                    for nk, nv in numbeo_data.items():
+                        if dest["name"].lower() in nk.lower() and nv.get("safety_index"):
+                            city_safety = round(nv["safety_index"])
+                            break
+                    live_data_matrix[i, j] = city_safety
+                elif crit_id == "vibe":
+                    u_ideal = prefs.vibe_urban_nature / 100.0
+                    p_ideal = prefs.vibe_calm_party / 100.0
+                    h_ideal = prefs.vibe_history / 10.0
+                    
+                    v_metrics = dest.get("vibe_metrics", {})
+                    live_data_matrix[i, j] = (abs(v_metrics.get("urban_scale", 0.5) - u_ideal) + 
+                                            abs(v_metrics.get("nightlife_scale", 0.5) - p_ideal) + 
+                                            abs(v_metrics.get("historical_scale", 0.5) - h_ideal)) / 3.0
+                elif crit_id == "travel_time":
+                    live_data_matrix[i, j] = travel_time
+                elif crit_id == "crowds":
+                    # Placeholder or use city population density if we had it
+                    live_data_matrix[i, j] = 0.5
+            
+            dest_live_details[i] = {
+                "temp_min": round(avg_temp_min, 1),
+                "temp_max": round(avg_temp_max, 1),
+                "flight_price": cheapest_price,
+                "travel_time": travel_time
+            }
+
+        # 2. PROMETHEE CALCULATION
+        dest_calculation_status[user]["status_text"] = "Rangsorolás..."
+        dest_calculation_status[user]["progress"] = 90
         
-    # Sort by Score
-    formatted_results.sort(key=lambda x: x["phi_net"], reverse=True)
-    
-    # Assign Ranks
-    for i, res in enumerate(formatted_results):
-        res["rank"] = i + 1
+        directions = []
+        thresholds = []
+        for c in criteria:
+            if c == "weather": directions.append(-1); thresholds.append((2, 10))
+            elif c == "cost": directions.append(-1); thresholds.append((5, 30))
+            elif c == "safety": directions.append(1); thresholds.append((5, 20))
+            elif c == "vibe": directions.append(-1); thresholds.append((0.1, 0.4))
+            elif c == "travel_time": directions.append(-1); thresholds.append((1, 5))
+            else: directions.append(1); thresholds.append((0, 1))
+
+        pi_matrix = np.zeros((n, n))
+        for i in range(n):
+            for j in range(n):
+                if i == j: continue
+                total_p = 0.0
+                for idx_c in range(k):
+                    vi, vj = live_data_matrix[i, idx_c], live_data_matrix[j, idx_c]
+                    diff = (vi - vj) if directions[idx_c] == 1 else (vj - vi)
+                    q, p = thresholds[idx_c]
+                    pref = 1.0 if diff >= p else (0.0 if diff <= q else (diff - q)/(p - q))
+                    total_p += weights[idx_c] * pref
+                pi_matrix[i, j] = total_p
+
+        phi_plus = np.sum(pi_matrix, axis=1) / (n - 1) if n > 1 else np.ones(n)
+        phi_minus = np.sum(pi_matrix, axis=0) / (n - 1) if n > 1 else np.zeros(n)
+        phi_net = phi_plus - phi_minus
         
-    session["results"] = formatted_results
-    return {"status": "ok", "count": len(formatted_results)}
+        # 3. FORMAT RESULTS
+        results = []
+        for i in range(n):
+            live = dest_live_details[i]
+            d = dests[i]
+            
+            reasons = []
+            if "weather" in criteria and abs(((live["temp_max"] + live["temp_min"]) / 2) - prefs.weather_temp) < 3: reasons.append("Ideális időjárás")
+            if "cost" in criteria and live["flight_price"] < 40000: reasons.append("Olcsó repülőjegy")
+            if "safety" in criteria and d["metrics"]["safety_index"] > 80: reasons.append("Kiemelkedő biztonság")
+            
+            results.append({
+                "id": d["id"],
+                "name": d["name"],
+                "country": d["country"],
+                "score": round((phi_net[i] + 1) * 50),
+                "phi_net": phi_net[i],
+                "image": d.get("image", ""),
+                "explanation": " • ".join(reasons) if reasons else "Optimális választás a szempontjaid alapján.",
+                "metrics": {
+                    "temp": f"{int(live['temp_min'])} - {int(live['temp_max'])}°C",
+                    "cost": f"{d['metrics']['cost_index_daily_eur']}€/nap",
+                    "flight": f"{int(live['flight_price']):,} Ft",
+                    "travel": f"{live['travel_time']} óra"
+                }
+            })
+        
+        results.sort(key=lambda x: x["phi_net"], reverse=True)
+        for idx, r in enumerate(results): r["rank"] = idx + 1
+        
+        session["results"] = results
+        dest_calculation_status[user] = {"status": "done", "progress": 100}
+        
+    except Exception as e:
+        print(f"DEST ERROR: {e}")
+        dest_calculation_status[user] = {"status": "error", "error": str(e)}
 
 @app.get("/flight-intelligence-results", response_class=HTMLResponse)
 async def results_page(request: Request):
