@@ -271,18 +271,47 @@
             border: 3px solid #90DC25;
         }
 
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
         .btn-next {
             background: #235B2A;
             color: white;
             border: none;
-            padding: 15px 50px;
+            padding: 15px 30px;
             border-radius: 10px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            width: 100%;
+            flex: 2;
             transition: 0.3s;
-            margin-top: 20px;
+        }
+
+        .btn-prev {
+            background: #f8f9fa;
+            color: #235B2A;
+            border: 2px solid #235B2A;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            flex: 1;
+            transition: 0.3s;
+        }
+
+        .btn-prev:hover {
+            background: #e9ecef;
+        }
+
+        .btn-prev:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            border-color: #ccc;
+            color: #ccc;
         }
 
         .btn-next:hover:not(:disabled) {
@@ -395,9 +424,15 @@
                 font-size: 12px;
             }
 
-            .btn-next {
+            .button-group {
+                flex-direction: column-reverse;
+            }
+
+            .btn-next,
+            .btn-prev {
                 padding: 12px 20px;
                 font-size: 14px;
+                width: 100%;
             }
 
             .weights-table th,
@@ -433,9 +468,14 @@
             <!-- Dinamikusan töltődik JS-ből -->
         </div>
 
-        <button class="btn-next" id="nextBtn" onclick="nextQuestion()" disabled>
-            Következő kérdés
-        </button>
+        <div class="button-group" id="navigationButtons">
+            <button class="btn-prev" id="prevBtn" onclick="prevQuestion()" style="display: none;">
+                ⬅️ Előző
+            </button>
+            <button class="btn-next" id="nextBtn" onclick="nextQuestion()" disabled>
+                Következő kérdés
+            </button>
+        </div>
 
         <div id="results">
             <h2 style="color: #235B2A; margin-bottom: 20px;">✅ Preferenciák rögzítve!</h2>
@@ -539,6 +579,14 @@
             const progress = ((currentQuestion + 1) / questions.length) * 90;
             document.getElementById('progressBar').style.width = progress + '%';
             document.getElementById('progressText').innerText = `Kérdés ${currentQuestion + 1} / ${questions.length}`;
+
+            // Vissza gomb megjelenítése
+            const prevBtn = document.getElementById('prevBtn');
+            if (currentQuestion > 0) {
+                prevBtn.style.display = 'block';
+            } else {
+                prevBtn.style.display = 'none';
+            }
         }
 
         const sliderLabels = {
@@ -605,6 +653,13 @@
             }
         }
 
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                renderQuestion();
+            }
+        }
+
         function calculateWeights() {
             // AHP mátrix építése
             const n = criteria.length;
@@ -665,7 +720,7 @@
 
             // Eredmény megjelenítése
             document.getElementById('questionContainer').style.display = 'none';
-            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('navigationButtons').style.display = 'none';
             document.getElementById('progressBar').style.width = '100%';
             document.getElementById('progressText').innerText = 'Preferenciák rögzítve';
 

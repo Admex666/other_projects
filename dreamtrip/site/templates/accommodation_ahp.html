@@ -218,18 +218,47 @@
             border: 3px solid #90DC25;
         }
 
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
         .btn-next {
             background: #235B2A;
             color: white;
             border: none;
-            padding: 15px 50px;
+            padding: 15px 30px;
             border-radius: 10px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            width: 100%;
+            flex: 2;
             transition: 0.3s;
-            margin-top: 20px;
+        }
+
+        .btn-prev {
+            background: #f8f9fa;
+            color: #235B2A;
+            border: 2px solid #235B2A;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            flex: 1;
+            transition: 0.3s;
+        }
+
+        .btn-prev:hover {
+            background: #e9ecef;
+        }
+
+        .btn-prev:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            border-color: #ccc;
+            color: #ccc;
         }
 
         .btn-next:hover:not(:disabled) {
@@ -290,6 +319,15 @@
             .equal-btn {
                 width: 100%;
             }
+
+            .button-group {
+                flex-direction: column-reverse;
+            }
+
+            .btn-next,
+            .btn-prev {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -316,7 +354,10 @@
 
         <div id="questionContainer" class="question-card"></div>
 
-        <button class="btn-next" id="nextBtn" onclick="nextQuestion()" disabled>Következő kérdés</button>
+        <div class="button-group" id="navigationButtons">
+            <button class="btn-prev" id="prevBtn" onclick="prevQuestion()" style="display: none;">⬅️ Előző</button>
+            <button class="btn-next" id="nextBtn" onclick="nextQuestion()" disabled>Következő kérdés</button>
+        </div>
 
         <div id="results">
             <h2 style="color: #235B2A; margin-bottom: 20px;">✅ Fontossági súlyok számítva!</h2>
@@ -354,7 +395,7 @@
         }
 
         let currentIdx = 0;
-        let answers = [];
+        let answers = {}; // {idx: {winner, importance}}
 
         function renderQuestion() {
             const [c1, c2] = pairs[currentIdx];
@@ -375,10 +416,31 @@
                 </div>
             `;
 
+            // Restore previous answer
+            if (answers[currentIdx]) {
+                const ans = answers[currentIdx];
+                select(ans.winner);
+                if (ans.winner !== 0) {
+                    const slider = document.getElementById('importanceSlider');
+                    slider.value = ans.importance;
+                    updateDesc(ans.importance);
+                }
+            } else {
+                document.getElementById('nextBtn').disabled = true;
+            }
+
+            // Progress bar
             const progress = (currentIdx / pairs.length) * 100;
             document.getElementById('progressBar').style.width = progress + '%';
             document.getElementById('progressText').innerText = `Kérdés ${currentIdx + 1} / ${pairs.length}`;
-            document.getElementById('nextBtn').disabled = true;
+
+            // Handle prev button
+            const prevBtn = document.getElementById('prevBtn');
+            if (currentIdx > 0) {
+                prevBtn.style.display = 'block';
+            } else {
+                prevBtn.style.display = 'none';
+            }
         }
 
         const labels = { 2: "Alig", 3: "Kicsit", 4: "Mérsékelten", 5: "Jelentősen", 6: "Erősen", 7: "Sokkal", 8: "Nagyon sokkal", 9: "Meghatározóan" };
@@ -400,13 +462,20 @@
             const importance = btnEqual ? 1 : parseInt(document.getElementById('importanceSlider').value);
             const winner = btnEqual ? 0 : (btnC1 ? 1 : 2);
 
-            answers.push({ winner, importance });
+            answers[currentIdx] = { winner, importance };
             currentIdx++;
 
             if (currentIdx < pairs.length) {
                 renderQuestion();
             } else {
                 calculate();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentIdx > 0) {
+                currentIdx--;
+                renderQuestion();
             }
         }
 
@@ -450,7 +519,7 @@
             });
 
             document.getElementById('questionContainer').style.display = 'none';
-            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('navigationButtons').style.display = 'none';
             document.getElementById('progressBar').style.width = '100%';
             document.getElementById('progressText').innerText = 'Kész!';
 

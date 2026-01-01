@@ -1194,6 +1194,9 @@ async def calculate_destinations(prefs: DestPreferenceDetails, background_tasks:
     
     return {"status": "ok", "message": "Calculation started"}
 
+import threading
+dest_calc_lock = threading.Lock()
+
 def run_destination_calculation_task(user: str, prefs: DestPreferenceDetails):
     global dest_calculation_status, destination_sessions
     try:
@@ -1281,8 +1284,21 @@ def run_destination_calculation_task(user: str, prefs: DestPreferenceDetails):
             return i, avg_temp_min, avg_temp_max, cheapest_price, travel_time
 
         dest_calculation_status[user]["status_text"] = "Adatok lekérése párhuzamosan..."
+        
+        completed_count = 0
+        def fetch_with_progress(i):
+            nonlocal completed_count
+            res = fetch_destination_data(i)
+            with dest_calc_lock:
+                completed_count += 1
+                # Progress from 0 to 85 during fetching
+                prog = int((completed_count / n) * 85)
+                dest_calculation_status[user]["progress"] = prog
+                dest_calculation_status[user]["status_text"] = f"Adatok betöltése ({completed_count}/{n})..."
+            return res
+
         with ThreadPoolExecutor(max_workers=5) as executor:
-            task_results = list(executor.map(fetch_destination_data, range(n)))
+            task_results = list(executor.map(fetch_with_progress, range(n)))
 
         for i, avg_temp_min, avg_temp_max, cheapest_price, travel_time in task_results:
             dest = dests[i]
