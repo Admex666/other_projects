@@ -1,0 +1,29 @@
+:root {
+    /* Colors - Noir / Dark Theme */
+    --color-bg: #121212;
+    --color-surface: #1E1E1E;
+    --color-surface-2: #2C2C2C;
+    --color-text-primary: #E0E0E0;
+    --color-text-secondary: #A0A0A0;
+    --color-accent: #D4AF37; /* Gold/Amber for Noir feel */
+    --color-accent-dim: #8C7324;
+    --color-danger: #CF6679;
+    --color-success: #03DAC6;
+    
+    /* Typography */
+    --font-heading: 'Playfair Display', serif; /* Classic Noir vibe */
+    --font-body: 'Inter', sans-serif;
+    
+    /* Spacing */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    
+    /* UI Elements */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 16px;
+    --shadow-card: 0 4px 6px rgba(0,0,0,0.3);
+}
