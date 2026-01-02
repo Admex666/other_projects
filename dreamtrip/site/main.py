@@ -120,18 +120,38 @@ async def destination_matcher(request: Request):
     return templates.TemplateResponse("destination_matcher.html", {"request": request})
 
 @app.get("/flight-intelligence", response_class=HTMLResponse)
-async def flight_intelligence(request: Request):
+async def flight_intelligence(request: Request, destination: Optional[str] = None, origin: Optional[str] = None, out_from: Optional[str] = None, out_to: Optional[str] = None, in_from: Optional[str] = None, in_to: Optional[str] = None):
     user = get_current_user(request)
     if not user:
         return RedirectResponse(url="/", status_code=303)
-    return templates.TemplateResponse("flight_intelligence.html", {"request": request})
+    return templates.TemplateResponse("flight_intelligence.html", {
+        "request": request, 
+        "user": user,
+        "prefill": {
+            "destination": destination,
+            "origin": origin,
+            "out_from": out_from,
+            "out_to": out_to,
+            "in_from": in_from,
+            "in_to": in_to
+        }
+    })
 
 @app.get("/accommodation-intelligence", response_class=HTMLResponse)
-async def accommodation_intelligence(request: Request):
+async def accommodation_intelligence(request: Request, city: Optional[str] = None, country: Optional[str] = None, start_date: Optional[str] = None, end_date: Optional[str] = None):
     user = get_current_user(request)
     if not user:
         return RedirectResponse(url="/", status_code=303)
-    return templates.TemplateResponse("accommodation_intelligence.html", {"request": request})
+    return templates.TemplateResponse("accommodation_intelligence.html", {
+        "request": request, 
+        "user": user,
+        "prefill": {
+            "city": city,
+            "country": country,
+            "start_date": start_date,
+            "end_date": end_date
+        }
+    })
 
 # Ezt add hozzá a main.py-hoz a többi végpont mellé
 @app.get("/search-status")
@@ -1052,10 +1072,25 @@ async def destination_results_page(request: Request):
     if not user: return RedirectResponse(url="/", status_code=303)
     session = get_dest_session(user)
     
+    # Calculate pre-fill dates for next steps
+    constraints = session.get("constraints", {})
+    month = constraints.get("month", "6")
+    if month == "any": month = "6"
+    duration = constraints.get("duration", 7)
+    
+    # Simple logic: 10th of the selected month
+    start_date = f"2026-{int(month):02d}-10"
+    end_date = f"2026-{int(month):02d}-{10 + int(duration)}"
+    
     response = templates.TemplateResponse("destination_results.html", {
         "request": request,
         "user": user,
-        "results": session.get("results", [])
+        "results": session.get("results", []),
+        "constraints": constraints,
+        "dates": {
+            "start": start_date,
+            "end": end_date
+        }
     })
     response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
     response.headers["Pragma"] = "no-cache"

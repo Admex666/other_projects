@@ -335,6 +335,9 @@
         <a href="/home" style="text-decoration: none; display: flex; align-items: center; gap: 10px;">
             <img src="/static/logo.png" alt="Optivoya" style="height: 40px;">
             <span class="logo-text">Optivoya</span>
+            <span
+                style="background: #90DC25; color: #235B2A; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; margin-left: 8px; border: 1px solid rgba(35, 91, 42, 0.2); letter-spacing: 0.5px; white-space: nowrap;">Early
+                Access</span>
         </a>
         <div class="user-info" style="display: flex; align-items: center; gap: 20px;">
             <span style="color: #666;">👤 {{ user }}</span>
@@ -342,6 +345,11 @@
                 style="background: var(--primary); color: white; padding: 8px 18px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px;">Kilépés</a>
         </div>
     </div>
+
+    <!-- Hidden data for results -->
+    <script id="results-data" type="application/json">
+        {{ results | tojson | safe }}
+    </script>
 
     <div class="container">
         <a href="/destination-preferences" class="btn-back">← Vissza a preferenciákhoz</a>
@@ -382,7 +390,13 @@
             }
         });
 
-        let results = {{ results | tojson }};
+        const resultsDataNode = document.getElementById('results-data');
+        let results = [];
+        try {
+            results = JSON.parse(resultsDataNode.textContent);
+        } catch (e) {
+            console.error("Error parsing results:", e);
+        }
         if (!results) results = [];
 
         const grid = document.getElementById('resultsGrid');
@@ -418,11 +432,19 @@
             } catch (e) { console.error(e); }
         }
 
+        const origin = "{{ constraints.get('origin', 'Budapest') }}";
+        const startDate = "{{ dates.start }}";
+        const endDate = "{{ dates.end }}";
+
         function renderResults() {
             grid.innerHTML = '';
             results.forEach(res => {
                 const card = document.createElement('div');
                 card.className = 'dest-card';
+
+                const flightUrl = `/flight-intelligence?destination=${res.name}&origin=${origin}&out_from=${startDate}&out_to=${startDate}&in_from=${endDate}&in_to=${endDate}`;
+                const accommodationUrl = `/accommodation-intelligence?city=${res.name}&country=${res.country}&start_date=${startDate}&end_date=${endDate}`;
+
                 card.innerHTML = `
                     <div class="card-rank">${res.rank}</div>
                     <img src="${res.image}" class="card-img" alt="${res.name}">
@@ -462,7 +484,10 @@
                             </div>
                         </div>
 
-                        <a href="/accommodation-intelligence?city=${res.name}" class="btn-action">Szállások felfedezése ➔</a>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
+                            <a href="${flightUrl}" class="btn-action" style="font-size: 12px; padding: 10px 5px;">✈️ Repülőjegyek</a>
+                            <a href="${accommodationUrl}" class="btn-action" style="font-size: 12px; padding: 10px 5px;">🏨 Szállások</a>
+                        </div>
                     </div>
                 `;
                 grid.appendChild(card);

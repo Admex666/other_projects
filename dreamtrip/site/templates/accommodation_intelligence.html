@@ -254,6 +254,9 @@
         <a href="/home" style="text-decoration: none; display: flex; align-items: center; gap: 10px;">
             <img src="/static/logo.png" alt="Optivoya" style="height: 40px;">
             <span class="logo-text">Optivoya</span>
+            <span
+                style="background: #90DC25; color: #235B2A; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; margin-left: 8px; border: 1px solid rgba(144, 220, 37, 0.2); letter-spacing: 0.5px; white-space: nowrap;">Early
+                Access</span>
         </a>
         <div class="user-info">
             <span style="color: #666;">👤 {{ user }}</span>
@@ -269,11 +272,12 @@
             <div class="search-grid">
                 <div class="input-group">
                     <label>Város</label>
-                    <input type="text" id="city" placeholder="Pl: Budapest" value="Budapest">
+                    <input type="text" id="city" placeholder="Pl: Budapest" value="{{ prefill.city or 'Budapest' }}">
                 </div>
                 <div class="input-group">
                     <label>Ország</label>
-                    <input type="text" id="country" placeholder="Pl: Magyarország" value="Magyarország">
+                    <input type="text" id="country" placeholder="Pl: Magyarország"
+                        value="{{ prefill.country or 'Magyarország' }}">
                 </div>
                 <div class="input-group">
                     <label>Érkezés</label>
@@ -392,8 +396,8 @@
 
         startInput.min = today.toISOString().split('T')[0];
         endInput.min = tomorrow.toISOString().split('T')[0];
-        startInput.value = tomorrow.toISOString().split('T')[0];
-        endInput.value = nextWeek.toISOString().split('T')[0];
+        startInput.value = "{{ prefill.start_date or '' }}" || tomorrow.toISOString().split('T')[0];
+        endInput.value = "{{ prefill.end_date or '' }}" || nextWeek.toISOString().split('T')[0];
 
         startInput.addEventListener('change', () => {
             const startDate = new Date(startInput.value);

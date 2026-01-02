@@ -280,6 +280,9 @@
         <a href="/home" style="text-decoration: none; display: flex; align-items: center; gap: 10px;">
             <img src="/static/logo.png" alt="Optivoya" style="height: 40px;">
             <span class="logo-text">Optivoya</span>
+            <span
+                style="background: #90DC25; color: #235B2A; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; margin-left: 8px; border: 1px solid rgba(35, 91, 42, 0.2); letter-spacing: 0.5px; white-space: nowrap;">Early
+                Access</span>
         </a>
         <div class="user-info">
             <span style="color: #666;">👤 {{ user }}</span>
@@ -287,24 +290,34 @@
         </div>
     </div>
     <div class="container">
-        <h1>🔍 Járatok szűrése</h1>
-        <p class="subtitle">Állítsd be a preferenciáidat - jelenleg <strong>{{ flight_count }}</strong> járatkombináció
-            közül választhatsz</p>
+        <h1>🔍 Járatok technikai szűrése</h1>
+        <p class="subtitle">Jelenleg <strong>{{ flight_count }}</strong> járatkombináció érhető el. Kérjük, csak a
+            valódi <strong>kizáró okokat</strong> állítsd be!</p>
+
+        <!-- Warning Box -->
+        <div
+            style="background: #fff8e1; border-left: 5px solid #ffc107; padding: 15px; margin-bottom: 25px; border-radius: 8px; font-size: 13.5px; line-height: 1.5; color: #856404;">
+            <strong>💡 Tipp az algoritmushoz:</strong> Minél több járat marad a rendszerben, annál kifinomultabb lesz az
+            összehasonlítás. Csak azokat a korlátokat állítsd be (pl. éjszakai repülés vagy túl sok átszállás), amiket
+            <strong>biztosan nem</strong> vállalnál be. Amit "szívesebben" vagy "kevésbé szívesen" tennél, azt a
+            következő lépésben, a súlyozásnál tudod majd finomhangolni!
+        </div>
 
         <!-- Időkorlátok -->
         <div class="filter-section">
-            <h3>⏰ Indulási időpontok</h3>
+            <h3>⏰ Időbeli kizárások</h3>
             <div class="input-grid">
                 <div class="input-group">
-                    <label>Odaút indulási idő (0-23 óra között)</label>
+                    <label>Odaút: Melyik intervallumon kívül NEM tudnál biztosan indulni?</label>
                     <div class="time-range">
                         <input type="number" id="out_time_min" min="0" max="23" value="0" placeholder="Pl. 8">
                         <span>—</span>
                         <input type="number" id="out_time_max" min="0" max="23" value="23" placeholder="Pl. 20">
                     </div>
+                    <small style="color: #666; font-size: 11px; margin-top: 4px;">Példa: 08:00 és 20:00 között</small>
                 </div>
                 <div class="input-group">
-                    <label>Visszaút indulási idő</label>
+                    <label>Visszaút: Melyik intervallumon kívül NEM tudnál biztosan indulni?</label>
                     <div class="time-range">
                         <input type="number" id="in_time_min" min="0" max="23" value="0">
                         <span>—</span>
@@ -316,9 +329,9 @@
 
         <!-- Napok -->
         <div class="filter-section">
-            <h3>📅 Indulási napok</h3>
+            <h3>📅 Napok szerinti kizárás</h3>
             <div class="input-group" style="margin-bottom: 15px;">
-                <label>Odaút mely napokon? (kattints a kiválasztáshoz)</label>
+                <label>KIZÁRÓLAG melyik napokon tudnál elindulni? (Ha bármelyik jó, ne kattints semelyikre!)</label>
                 <div class="day-selector" id="out_days">
                     <button class="day-btn" data-day="monday">H</button>
                     <button class="day-btn" data-day="tuesday">K</button>
@@ -330,7 +343,7 @@
                 </div>
             </div>
             <div class="input-group">
-                <label>Visszaút mely napokon?</label>
+                <label>KIZÁRÓLAG melyik napokon tudnál hazajönni? (Ha bármelyik jó, ne kattints semelyikre!)</label>
                 <div class="day-selector" id="in_days">
                     <button class="day-btn" data-day="monday">H</button>
                     <button class="day-btn" data-day="tuesday">K</button>
@@ -345,31 +358,35 @@
 
         <!-- További szűrők -->
         <div class="filter-section">
-            <h3>🎯 További kritériumok</h3>
+            <h3>🎯 Fix feltételek</h3>
             <div class="input-grid">
                 <div class="input-group">
-                    <label>Max átszállások száma</label>
+                    <label>Maximális átszállásszám (ami még elfogadható)</label>
                     <input type="number" id="max_stops" min="0" max="5" value="2">
                 </div>
                 <div class="input-group">
-                    <label>Tartózkodási napok (min-max)</label>
+                    <label>Tartózkodási idő: Melyik az a legszélesebb idősáv, amiben tudsz mozogni?</label>
                     <div class="time-range">
                         <input type="number" id="stay_min" min="1" value="2">
                         <span>—</span>
                         <input type="number" id="stay_max" min="1" value="14">
                     </div>
+                    <small style="color: #666; font-size: 11px; margin-top: 4px;">Napok száma</small>
                 </div>
                 <div class="input-group">
-                    <label>Ár intervallum (Ft)</label>
+                    <label>Maximális ár oda-vissza, összesen (Ft)</label>
                     <div class="time-range">
-                        <input type="number" id="price_min" value="0" step="1000">
-                        <span>—</span>
+                        <input type="number" id="price_min" value="0" step="1000" style="display:none;">
                         <input type="number" id="price_max" value="500000" step="1000">
                     </div>
+                    <small style="color: #666; font-size: 11px; margin-top: 4px;">Ennél drágábbakat mutatni sem
+                        fogunk.</small>
                 </div>
                 <div class="input-group">
-                    <label>Max össz-utazási idő (óra, oda+vissza)</label>
+                    <label>Maximum összesített utazási idő (óra)</label>
                     <input type="number" id="max_total_duration" min="1" max="48" value="24" step="0.5">
+                    <small style="color: #666; font-size: 11px; margin-top: 4px;">Oda- és visszautazás ideje
+                        együtt.</small>
                 </div>
             </div>
         </div>

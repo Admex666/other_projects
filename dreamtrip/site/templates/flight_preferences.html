@@ -363,6 +363,9 @@
         <a href="/home" style="text-decoration: none; display: flex; align-items: center; gap: 10px;">
             <img src="/static/logo.png" alt="Optivoya" style="height: 40px;">
             <span class="logo-text">Optivoya</span>
+            <span
+                style="background: #90DC25; color: #235B2A; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; margin-left: 8px; border: 1px solid rgba(144, 220, 37, 0.2); letter-spacing: 0.5px; white-space: nowrap;">Early
+                Access</span>
         </a>
         <div class="user-info">
             <span style="color: #666;">👤 {{ user }}</span>
@@ -410,11 +413,11 @@
         <div class="section">
             <h3>💰 Ár érzékenység</h3>
             <select id="price_type">
-                <option value="">-- Válassz hozzáállást --</option>
-                <option value="usual">Szigorú - A legolcsóbb kell!</option>
-                <option value="v-shape">Fokozatos - Minél drágább, annál rosszabb</option>
-                <option value="linear">Rugalmas - Pár forint különbség nem számít, de azon túl minél drágább annál
-                    rosszabb</option>
+                <option value="">-- Hogyan hasonlítsunk össze két árat? --</option>
+                <option value="usual">Szigorú - Amelyik jegy olcsóbb, az a jobb (mindegy hogy mennyivel)</option>
+                <option value="v-shape">Fokozatos - Amennyivel olcsóbb egy jegy a másiknál, annyival jobb</option>
+                <option value="linear">Rugalmas - Pár forint különbség még nem számít, de azon túl egyre jobb az olcsóbb
+                </option>
             </select>
             <div class="param-inputs">
                 <div class="input-group" style="margin-bottom: 0;">
@@ -435,10 +438,10 @@
         <div class="section">
             <h3>🕐 Indulási időpont érzékenység</h3>
             <select id="departure_type">
-                <option value="">-- Válassz hozzáállást --</option>
-                <option value="linear">Rugalmas - Pár óra eltérés még belefér</option>
-                <option value="v-shape">Fokozatos - Minél messzebb a tervtől, annál rosszabb</option>
-                <option value="usual">Szigorú - Pontosan ekkor akarok indulni</option>
+                <option value="">-- Két indulási időpont közül... --</option>
+                <option value="linear">Rugalmas - Pár óra eltérés az ideálistól még nem döntő</option>
+                <option value="v-shape">Fokozatos - Amelyik közelebb van az ideálishoz, az annyival jobb</option>
+                <option value="usual">Szigorú - Csak az számít, melyik van közelebb (bármilyen kicsit is)</option>
             </select>
             <div class="param-inputs">
                 <div class="input-group" style="margin-bottom: 0;">
@@ -459,10 +462,10 @@
         <div class="section">
             <h3>✈️ Utazási idő érzékenység</h3>
             <select id="travel_time_type">
-                <option value="">-- Válassz hozzáállást --</option>
-                <option value="v-shape">Fokozatos - Minél lassabb, annál rosszabb</option>
-                <option value="linear">Rugalmas - Kicsi lassulás még nem számít</option>
-                <option value="usual">Szigorú - A leggyorsabb kell, minden perc számít</option>
+                <option value="">-- Két repülőút közül... --</option>
+                <option value="v-shape">Fokozatos - Amennyivel gyorsabb az egyik, annyival jobb</option>
+                <option value="linear">Rugalmas - Kicsi időnyereség még nem számít, de a sok igen</option>
+                <option value="usual">Szigorú - Amelyik akár 1 perccel is gyorsabb, az a jobb</option>
             </select>
             <div class="param-inputs">
                 <div class="input-group" style="margin-bottom: 0;">
@@ -483,9 +486,9 @@
         <div class="section">
             <h3>🔄 Átszállások száma</h3>
             <select id="stops_type">
-                <option value="">-- Válassz hozzáállást --</option>
-                <option value="usual">Szigorú - A legkevesebb átszállás kell</option>
-                <option value="v-shape">Fokozatos - Minden plusz átszállás fáj</option>
+                <option value="">-- Ha az egyik járaton több az átszállás... --</option>
+                <option value="usual">Szigorú - Amelyiken kevesebb van, az az egyértelmű győztes</option>
+                <option value="v-shape">Fokozatos - Minden plusz átszállás rontja az esélyeit</option>
             </select>
             <div class="param-inputs">
                 <div class="input-group" style="margin-bottom: 0;">
@@ -506,10 +509,10 @@
         <div class="section">
             <h3>📅 Tartózkodási idő érzékenység</h3>
             <select id="stay_type">
-                <option value="">-- Válassz hozzáállást --</option>
-                <option value="linear">Rugalmas - Pár nap eltérés belefér</option>
-                <option value="v-shape">Fokozatos - Minél nagyobb eltérés, annál rosszabb</option>
-                <option value="usual">Szigorú - Pontosan ennyi napot akarok maradni</option>
+                <option value="">-- A kint töltött napok száma alapján... --</option>
+                <option value="linear">Rugalmas - Pár nap eltérés az ideálistól még belefér</option>
+                <option value="v-shape">Fokozatos - Amelyik közelebb van az álom-időtartamhoz, az annyival jobb</option>
+                <option value="usual">Szigorú - Csak az számít, melyik áll közelebb a tervemhez</option>
             </select>
             <div class="param-inputs">
                 <div class="input-group" style="margin-bottom: 0;">
@@ -552,38 +555,38 @@
 
         const explanations = {
             price: {
-                usual: "Szigorú: Az olcsóbb egyértelműen jobb! Akár 100 Ft különbség miatt is az olcsóbbat választom.",
-                "v-shape": "Fokozatos: Minél drágább, annál rosszabb. ({p} különbség felett már sokkal drágábbnak érzem)",
-                "linear": "Rugalmas: {q} nem számít, de azon túl minél drágább, annál rosszabb.",
-                "u-shape": "Küszöb: Csak a {q} feletti árkülönbségeket vesszük figyelembe.",
-                level: "Lépcsőzetes: {q} alatt nem számít, {q} és {p} között közepesen, afelett maximálisan számít."
+                usual: "Szigorú összehasonlítás: Ha két jegy ára eltér, az olcsóbbat részesítem teljes előnyben, a különbség nagyságától függetlenül.",
+                "v-shape": "Fokozatos összehasonlítás: Minél nagyobb az árkülönbség a két jegy között, annál biztosabb, hogy az olcsóbbat választom. ({p} különbségnél már teljes az előnye)",
+                "linear": "Rugalmas összehasonlítás: Ha két jegy ára között kevesebb mint {q} a különbség, egyformának tekintem őket. Ha több, akkor az olcsóbb egyre jobbá válik.",
+                "u-shape": "Küszöb alapú: Csak akkor preferálom az olcsóbbat, ha legalább {q} összeggel kevesebbe kerül.",
+                level: "Lépcsőzetes: Kisebb különbségnél egyformák, közepesnél 'valószínűleg jobb', nagynál 'biztosan jobb' az olcsóbb."
             },
             departure: {
-                usual: "Szigorú: Pontban akkor akarok indulni.",
-                "linear": "Rugalmas: {q} eltérés még belefér, de {p} eltérés már nagyon rossz. (Pl. 1 óra nem gond, 5 óra már sok)",
-                "v-shape": "Fokozatos: Minél távolabb van az időponttól, annál rosszabb. {p} eltérés már kritikus.",
-                "u-shape": "Küszöb: {q} belüli eltérés még egyáltalán nem számít.",
-                level: "Lépcsőzetes: {q}ig teljesen jó, {q} és {p} között elviselhető, afelett rossz."
+                usual: "Szigorú: Amelyik járat akár egy perccel is közelebb esik az ideális időponthoz, az a jobb.",
+                "linear": "Rugalmas: Ha mindkét járat {q} belül van az ideálishoz képest, egyformának tekintem őket. {p} eltérés felett már sokkal rosszabbnak számít az egyik.",
+                "v-shape": "Fokozatos: Két járat közül az a jobb, amelyik közelebb van az ideális időhöz; minél nagyobb ez a közeledés, annál biztosabb a választás.",
+                "u-shape": "Küszöb: Csak akkor teszek különbséget, ha az egyik járat legalább {q}-val közelebb van a tervemhez, mint a másik.",
+                level: "Lépcsőzetes: Az idősávok alapján dől el, mennyivel jobb az egyik a másiknál."
             },
             travel_time: {
-                "v-shape": "Fokozatos: Minél hosszabb, annál rosszabb. {p} plusz utazás már nagyon fájdalmas.",
-                usual: "Szigorú: A leggyorsabb kell, minden perc számít.",
-                "linear": "Rugalmas: {q} óra plusz még belefér, de {p} óra már sok.",
-                "u-shape": "Küszöb: Csak a {q} feletti időkülönbségek számítanak.",
-                level: "Lépcsőzetes értékelés az utazási időre."
+                "v-shape": "Fokozatos: Két járat közül a gyorsabb a jobb; amennyivel rövidebb az út, annyival preferáltabb.",
+                usual: "Szigorú: Amelyik járat bármivel is gyorsabb, az nyeri az összehasonlítást.",
+                "linear": "Rugalmas: Ha a menetidő különbség {q} alatt van, egyformának veszem őket. De {p} különbség felett már egyértelműen a gyorsabb a jobb.",
+                "u-shape": "Küszöb: Csak legalább {q} időnyereség esetén mondom azt, hogy az egyik jobb a másiknál.",
+                level: "Lépcsőzetes értékelés a menetidők különbségére."
             },
             stops: {
-                usual: "Szigorú: A kevesebb átszállás mindig jobb.",
-                "v-shape": "Fokozatos: Minden plusz átszállás számít.",
-                "linear": "Rugalmas: {q} átszállás különbség még belefér, de {p} már sok.",
-                "u-shape": "Küszöb: Csak legalább {q} átszállásnyi különbség esetén döntünk.",
+                usual: "Szigorú: A kevesebb átszállásos járat egyértelműen jobb. (1 átszállás vs 2 átszállás -> az 1-es nyer)",
+                "v-shape": "Fokozatos: Az átszállások számának különbsége alapján döntünk; minél több a plusz átszállás az egyiknél, annál inkább a másikat választom.",
+                "linear": "Rugalmas: Kis eltérés esetén még nem ítélem jobbnak az egyiket, de {p} különbségnél már igen.",
+                "u-shape": "Küszöb: Csak akkor részesítem előnyben a kevesebb átszállást, ha legalább {q} a különbség.",
                 level: "Lépcsőzetes értékelés az átszállásokra."
             },
             stay: {
-                "linear": "Rugalmas: {q} nap eltérés még belefér, de {p} nap már sok.",
-                usual: "Szigorú: Pontosan ennyit akarok maradni.",
-                "v-shape": "Fokozatos: Minél nagyobb az eltérés, annál rosszabb.",
-                "u-shape": "Küszöb: {q} eltérés még belefér, nem számít.",
+                "linear": "Rugalmas: {q} nap eltérés a két járat között még belefér az 'egyformán jó' kategóriába. {p} nap különbségnél már döntő, melyik van közelebb az ideálishoz.",
+                usual: "Szigorú: Amelyik járat kint tartózkodási ideje akár csak egy nappal is közelebb van a tervemhez, azt választom.",
+                "v-shape": "Fokozatos: Amelyik verzió közelebb hoz az ideális napok számához, az annyival jobb.",
+                "u-shape": "Küszöb: Csak akkor részesítem előnyben az egyiket, ha legalább {q} nappal közelebb áll a tervemhez.",
                 level: "Lépcsőzetes értékelés a tartózkodásra."
             }
         };

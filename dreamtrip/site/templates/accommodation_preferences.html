@@ -191,10 +191,64 @@
                 font-size: 20px;
             }
         }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px 40px;
+            border-radius: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: #235B2A;
+            margin-left: 10px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logout-btn {
+            background: #235B2A;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #90DC25;
+        }
     </style>
 </head>
 
 <body>
+    <div class="navbar">
+        <a href="/home" style="text-decoration: none; display: flex; align-items: center; gap: 10px;">
+            <img src="/static/logo.png" alt="Optivoya" style="height: 40px;">
+            <span class="logo-text">Optivoya</span>
+            <span
+                style="background: #90DC25; color: #235B2A; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; margin-left: 8px; border: 1px solid rgba(144, 220, 37, 0.2); letter-spacing: 0.5px; white-space: nowrap;">Early
+                Access</span>
+        </a>
+        <div class="user-info">
+            <span style="color: #666;">👤 {{ user }}</span>
+            <a href="/logout" class="logout-btn">Kilépés</a>
+        </div>
+    </div>
     <div class="container">
         <h1>⚙️ Kritériumok finomhangolása</h1>
         <p class="subtitle">{{ stay_count }} szűrt szálláshely - állítsd be, hogyan értékeljük őket</p>
@@ -209,11 +263,12 @@
             <div class="section">
                 <h3>💰 Ár érzékenység (Ft/éj)</h3>
                 <select id="price_type">
-                    <option value="">-- Válassz hozzáállást --</option>
-                    <option value="usual" selected>Szigorú - Az olcsóbb egyértelműen jobb!</option>
-                    <option value="v-shape">Fokozatos - Minél drágább, annál rosszabb</option>
-                    <option value="linear">Rugalmas - Pár forint különbség nem számít, de azon túl minél drágább annál
-                        rosszabb</option>
+                    <option value="">-- Hogyan hasonlítsunk össze két árat? --</option>
+                    <option value="usual" selected>Szigorú - Amelyik szállás olcsóbb, az a jobb (mindegy, mennyivel)
+                    </option>
+                    <option value="v-shape">Fokozatos - Amennyivel olcsóbb az egyik a másiknál, annyival jobb</option>
+                    <option value="linear">Rugalmas - Pár forint különbség nem számít, de azon túl egyre jobb az olcsóbb
+                    </option>
                 </select>
                 <div class="input-group">
                     <label id="price_q_label">Küszöb 1</label>
@@ -230,10 +285,13 @@
             <div class="section">
                 <h3>⭐ Értékelés (0-10)</h3>
                 <select id="rating_type">
-                    <option value="">-- Válassz hozzáállást --</option>
-                    <option value="usual">Szigorú - A legmagasabb pontszámú kell</option>
-                    <option value="v-shape" selected>Fokozatos - Minél alacsonyabb, annál rosszabb</option>
-                    <option value="linear">Rugalmas - Kicsi pontkülönbség nem számít</option>
+                    <option value="">-- Két értékelés közül... --</option>
+                    <option value="usual">Szigorú - Amelyiknek akár egy tizeddel is jobb a pontszáma, az a nyerő
+                    </option>
+                    <option value="v-shape" selected>Fokozatos - Amennyivel magasabb a pontszám, annyival jobb a szállás
+                    </option>
+                    <option value="linear">Rugalmas - Kicsi pontkülönbség még nem számít, de a fél-egy pont már igen
+                    </option>
                 </select>
                 <div class="input-group">
                     <label id="rating_q_label">Küszöb 1</label>
@@ -250,10 +308,13 @@
             <div class="section">
                 <h3>💬 Népszerűség (Vélemények száma)</h3>
                 <select id="reviews_type">
-                    <option value="">-- Válassz hozzáállást --</option>
-                    <option value="v-shape" selected>Fokozatos - Minél több vélemény, annál jobb</option>
-                    <option value="linear">Rugalmas - Pár vélemény eltérés nem számít</option>
-                    <option value="usual">Szigorú - A legtöbb véleményű kell</option>
+                    <option value="">-- A vélemények száma alapján... --</option>
+                    <option value="v-shape" selected>Fokozatos - Minél több vélemény van egy szállásról, annál
+                        hitelesebb/jobb</option>
+                    <option value="linear">Rugalmas - Csak akkor jobb a népszerűbb, ha lényegesen több véleménye van
+                    </option>
+                    <option value="usual">Szigorú - Amelyikről több véleményt írtak (bármennyivel is), az a jobb
+                    </option>
                 </select>
                 <div class="input-group">
                     <label id="reviews_q_label">Küszöb 1</label>
@@ -270,10 +331,11 @@
             <div class="section">
                 <h3>📍 Távolság a belvárostól</h3>
                 <select id="distance_type">
-                    <option value="">-- Válassz hozzáállást --</option>
-                    <option value="v-shape" selected>Fokozatos - Minél messzebb, annál rosszabb</option>
-                    <option value="linear">Rugalmas - Pár méter nem számít</option>
-                    <option value="usual">Szigorú - A legközelebbi kell</option>
+                    <option value="">-- Ha az egyik szállás messzebb van a központtól... --</option>
+                    <option value="v-shape" selected>Fokozatos - Amennyivel messzebb van, annyival rosszabb</option>
+                    <option value="linear">Rugalmas - Pár száz méter különbség nem számít, de a több kilométer igen
+                    </option>
+                    <option value="usual">Szigorú - Amelyik akár pár méterrel is közelebb van, az a jobb</option>
                 </select>
                 <div class="input-group">
                     <label id="distance_q_label">Küszöb 1</label>
@@ -308,24 +370,24 @@
 
         const explanations = {
             price: {
-                usual: "Szigorú: A legolcsóbb kell! Akár 100 Ft különbség miatt is az olcsóbbat választom.",
-                "v-shape": "Fokozatos: Minél drágább, annál rosszabb. ({p} különbség felett már sokkal drágábbnak érzem)",
-                "linear": "Rugalmas: {q} nem számít, de azon túl minél drágább, annál rosszabb.",
+                usual: "Szigorú összehasonlítás: Ha két szállás ára eltér, az olcsóbbat részesítem teljes előnyben, a különbség nagyságától függetlenül.",
+                "v-shape": "Fokozatos összehasonlítás: Minél nagyobb az árkülönbség két szállás között, annál biztosabb, hogy az olcsóbbat választom. ({p} Ft különbségnél már teljes az előnye)",
+                "linear": "Rugalmas összehasonlítás: Ha két szállás ára között kevesebb mint {q} Ft a különbség, egyformának tekintem őket. Ha több, akkor az olcsóbb egyre jobbá válik.",
             },
             rating: {
-                usual: "Szigorú: A legmagasabb pontszámú kell.",
-                "v-shape": "Fokozatos: Minél alacsonyabb a pontszám, annál rosszabb.",
-                "linear": "Rugalmas: {q} pont különbséget még elnézek, de {p} ponttal rosszabb értékelés már kizáró ok."
+                usual: "Szigorú: Amelyik szállás értékelése akár egy tizeddel is magasabb, azt választom.",
+                "v-shape": "Fokozatos: Két szállás közül a magasabb pontszámú a jobb; amennyivel több az értékelése, annyival preferáltabb.",
+                "linear": "Rugalmas: Ha a pontszám különbség {q} pont alatt van, egyformának veszem őket. De {p} pont különbségnél már egyértelműen a jobb értékelésű a nyerő."
             },
             reviews: {
-                "v-shape": "Fokozatos: Minél több vélemény, annál jobb.",
-                "linear": "Rugalmas: Ha nincs legalább {p}-vel több vélemény, akkor mindegy.",
-                usual: "Szigorú: A legtöbb véleményű kell."
+                "v-shape": "Fokozatos: Minél több vélemény van egy szállásról a másikhoz képest, annál inkább azt választom. ({p} db különbségnél már maximális a bizalom)",
+                "linear": "Rugalmas: Csak akkor részesítem előnyben a népszerűbbet, ha legalább {p}-vel több véleménye van, mint a másiknak.",
+                usual: "Szigorú: Amelyik szállásról akár egyetlen véleménnyel is több van, azt tekintem jobbnak/hitelesebbnek."
             },
             distance: {
-                "v-shape": "Fokozatos: Minél messzebb, annál rosszabb.",
-                "linear": "Rugalmas: {q} km eltérés még nem gond, de {p} km plusz séta már sok.",
-                usual: "Szigorú: A legközelebbi kell."
+                "v-shape": "Fokozatos: Két szállás közül a közelebbi a jobb; amennyivel kevesebbet kell sétálni/utazni a központig, annyival preferáltabb.",
+                "linear": "Rugalmas: {q} km különbség még nem számít (egyformán jónak tűnnek), de {p} km plusz távolság már egyértelműen a közelebbi felé billenti a mérleget.",
+                usual: "Szigorú: Amelyik szállás bármivel is közelebb van a központhoz, azt választom."
             }
         };
 

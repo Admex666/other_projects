@@ -261,6 +261,9 @@
         <a href="/home" style="text-decoration: none; display: flex; align-items: center; gap: 10px;">
             <img src="/static/logo.png" alt="Optivoya" style="height: 40px;">
             <span class="logo-text">Optivoya</span>
+            <span
+                style="background: #90DC25; color: #235B2A; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; margin-left: 8px; border: 1px solid rgba(35, 91, 42, 0.2); letter-spacing: 0.5px; white-space: nowrap;">Early
+                Access</span>
         </a>
         <div class="user-info">
             <span style="color: #666;">👤 {{ user }}</span>
@@ -273,11 +276,11 @@
         <div class="search-grid">
             <div class="input-group">
                 <label>Honnan</label>
-                <input type="text" id="origin" placeholder="Pl: Budapest" value="Budapest">
+                <input type="text" id="origin" placeholder="Pl: Budapest" value="{{ prefill.origin or 'Budapest' }}">
             </div>
             <div class="input-group">
                 <label>Hova</label>
-                <input type="text" id="destination" placeholder="Pl: Barcelona">
+                <input type="text" id="destination" placeholder="Pl: Barcelona" value="{{ prefill.destination or '' }}">
             </div>
             <div class="input-group">
                 <label>Odaút (ettől - eddig)</label>
@@ -310,10 +313,10 @@
                 el.min = today;
             });
 
-            outFromInput.value = tomorrow;
-            outToInput.value = nextWeek;
-            inFromInput.value = nextWeek;
-            inToInput.value = nextWeekLater;
+            outFromInput.value = "{{ prefill.out_from or '' }}" || tomorrow;
+            outToInput.value = "{{ prefill.out_to or '' }}" || nextWeek;
+            inFromInput.value = "{{ prefill.in_from or '' }}" || nextWeek;
+            inToInput.value = "{{ prefill.in_to or '' }}" || nextWeekLater;
 
             // Dátum függőség kezelése
             outFromInput.addEventListener('change', () => {
