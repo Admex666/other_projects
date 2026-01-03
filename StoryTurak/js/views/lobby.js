@@ -1,56 +1,80 @@
 import { router } from '../router.js';
 import { sessionManager } from '../session-manager.js';
+import { userManager } from '../user-manager.js';
 
 export default class LobbyView {
     constructor(params) {
         this.campaignId = params.campaignId;
+        this.mode = params.mode || 'choice'; // solo, team, choice
         this.isHost = false;
-        this.updateInterval = null;
     }
 
     async render(container) {
         this.container = container;
-        this.renderInitialChoice();
+
+        if (this.mode === 'solo') {
+            await this.startSoloSession();
+        } else if (this.mode === 'team') {
+            this.renderTeamChoice();
+        } else {
+            // Fallback if no params provided (e.g. direct nav)
+            this.renderInitialChoice();
+        }
     }
 
-    renderInitialChoice() {
+    async startSoloSession() {
+        this.container.innerHTML = `<div class="loading-screen"><p>Kaland előkészítése...</p></div>`;
+        try {
+            await sessionManager.createSession(this.campaignId, 'solo');
+            sessionManager.startSession();
+            // Short delay for effect
+            setTimeout(() => {
+                router.navigate(`game/${this.campaignId}/solo`);
+            }, 1000);
+        } catch (e) {
+            console.error(e);
+            this.container.innerHTML = `<div class="error-screen"><p>Hiba: ${e.message}</p><button id="btn-retry">Újra</button></div>`;
+            this.container.querySelector('#btn-retry').onclick = () => location.reload();
+        }
+    }
+
+    renderTeamChoice() {
         this.container.innerHTML = `
             <div class="view-lobby text-center fade-in">
-                <h2 class="noir-title">Hogyan vágsz bele?</h2>
+                <h2 class="noir-title">Csapat Összeállítás</h2>
                 <div class="lobby-choices mt-lg">
-                    <button class="btn btn-block mb-md" id="btn-solo">
-                        🕵️‍♂️ Egyedül (Szóló)
-                    </button>
-                    <button class="btn btn-secondary btn-block mb-md" id="btn-create">
-                        👥 Csapat Indítása
+                    <button class="btn btn-block mb-md" id="btn-create">
+                        👥 Csapat Indítása (Host)
                     </button>
                     <button class="btn btn-secondary btn-block" id="btn-join">
-                        🔗 Csatlakozás Csapathoz
+                        🔗 Csatlakozás Kóddal
                     </button>
                 </div>
                 <button class="btn-secondary btn-sm mt-lg" id="btn-back">Vissza</button>
             </div>
         `;
 
-        this.container.querySelector('#btn-solo').onclick = () => {
-            router.navigate('game', { storyId: this.campaignId, mode: 'solo' });
-        };
-
         this.container.querySelector('#btn-create').onclick = () => this.createLobby();
         this.container.querySelector('#btn-join').onclick = () => this.showJoinInput();
-        this.container.querySelector('#btn-back').onclick = () => router.navigate('browser');
+        this.container.querySelector('#btn-back').onclick = () => router.navigate('campaigns');
+    }
+
+    // Legacy/Fallback choice (if someone navigates to /lobby directly)
+    renderInitialChoice() {
+        // ... (Simplified for this file, redirect to campaigns usually)
+        router.navigate('campaigns');
     }
 
     async createLobby() {
-        this.container.innerHTML = `<div class="loading-screen"><p>Csapat létrehozása...</p></div>`;
+        this.container.innerHTML = `<div class="loading-screen"><p>Szoba létrehozása...</p></div>`;
         try {
-            const session = await sessionManager.createSession(this.campaignId);
+            const session = await sessionManager.createSession(this.campaignId, 'team-sync');
             this.isHost = true;
-            this.renderLobby(session);
+            this.renderLobbyUI(session);
         } catch (e) {
             console.error(e);
-            alert('Hiba történt.');
-            this.renderInitialChoice();
+            alert('Hiba történt: ' + e.message);
+            this.renderTeamChoice();
         }
     }
 
@@ -72,88 +96,93 @@ export default class LobbyView {
             try {
                 const session = await sessionManager.joinSession(code);
                 this.isHost = false;
-                this.renderLobby(session);
+                this.renderLobbyUI(session);
             } catch (e) {
                 alert(e.message);
                 this.showJoinInput();
             }
         };
 
-        this.container.querySelector('#btn-cancel').onclick = () => this.renderInitialChoice();
+        this.container.querySelector('#btn-cancel').onclick = () => this.renderTeamChoice();
     }
 
-    renderLobby(session) {
-        const currentUser = session.players.find(p => p.id === sessionManager.currentUser.id);
-        const myReadyState = currentUser ? currentUser.isReady : false;
+    renderLobbyUI(session) {
+        const updateUI = () => {
+            // Re-fetch clean state
+            const currentSession = sessionManager.currentSession;
+            if (!currentSession) return;
 
-        const allReady = session.players.every(p => p.isReady);
+            // FIX: Access user via userManager
+            const me = userManager.getCurrentUser();
+            const currentUser = currentSession.players.find(p => p.id === me?.id);
+            const myReadyState = currentUser ? currentUser.isReady : false;
+            const allReady = currentSession.players.every(p => p.isReady);
 
-        const playersList = session.players.map(p => `
-            <div class="player-item ${p.isReady ? 'ready' : ''}">
-                <div class="avatar">${p.name[0]}</div>
-                <span style="flex:1">${p.name} ${p.id === session.hostId ? '👑' : ''}</span>
-                <span class="status-icon">${p.isReady ? '✅' : '⏳'}</span>
-            </div>
-        `).join('');
-
-        this.container.innerHTML = `
-            <div class="view-lobby fade-in">
-                <div class="lobby-header">
-                    <h3>CSAPAT KÓD</h3>
-                    <div class="lobby-code">${session.id}</div>
-                    <p class="mt-sm">Oszt meg ezt a kódot a társaiddal!</p>
+            const playersList = currentSession.players.map(p => `
+                <div class="player-item ${p.isReady ? 'ready' : ''}">
+                    <div class="avatar">${p.name[0]}</div>
+                    <span style="flex:1">${p.name} ${p.id === currentSession.hostId ? '👑' : ''}</span>
+                    <span class="status-icon">${p.isReady ? '✅' : '⏳'}</span>
                 </div>
+            `).join('');
 
-                <div class="player-list mt-lg">
-                    <h4>Jelenlévők (${session.players.length})</h4>
-                    ${playersList}
+            this.container.innerHTML = `
+                <div class="view-lobby fade-in">
+                    <div class="lobby-header">
+                        <h3>csapat kód: <span class="lobby-code">${currentSession.id}</span></h3>
+                        <p class="mt-sm">Várd meg a többieket!</p>
+                    </div>
+
+                    <div class="player-list mt-lg">
+                        <h4>Jelenlévők (${currentSession.players.length})</h4>
+                        ${playersList}
+                    </div>
+
+                    <div class="lobby-footer mt-xl" style="display:flex; flex-direction:column; gap:10px;">
+                        <button class="btn ${myReadyState ? 'btn-secondary' : 'btn'}" id="btn-toggle-ready">
+                            ${myReadyState ? 'Mégsem' : 'KÉSZ VAGYOK!'}
+                        </button>
+                        
+                        ${this.isHost ?
+                    `<button class="btn pulse" id="btn-start-game" ${!allReady ? 'disabled style="opacity:0.5; cursor:not-allowed;"' : ''}>
+                                KÜLDETÉS INDÍTÁSA
+                            </button>` :
+                    `<p class="blink text-center">Várakozás az indításra...</p>`
+                }
+                    </div>
                 </div>
+            `;
 
-                <div class="lobby-footer mt-xl" style="display:flex; flex-direction:column; gap:10px;">
-                    <button class="btn ${myReadyState ? 'btn-secondary' : 'btn'}" id="btn-toggle-ready">
-                        ${myReadyState ? 'Mégsem' : 'KÉSZ VAGYOK!'}
-                    </button>
-                    
-                    ${this.isHost ?
-                `<button class="btn pulse" id="btn-start-game" ${!allReady ? 'disabled style="opacity:0.5; cursor:not-allowed;"' : ''}>
-                            KÜLDETÉS INDÍTÁSA
-                        </button>` :
-                `<p class="blink text-center">Várakozás az indításra...</p>`
+            // Re-attach listeners is inefficient here but robust
+            this.container.querySelector('#btn-toggle-ready').onclick = () => {
+                sessionManager.toggleReady();
+            };
+
+            if (this.isHost) {
+                const startBtn = this.container.querySelector('#btn-start-game');
+                if (startBtn) {
+                    startBtn.onclick = () => {
+                        sessionManager.startSession();
+                        router.navigate(`game/${this.campaignId}/team`);
+                    };
+                }
             }
-                </div>
-            </div>
-        `;
-
-        this.container.querySelector('#btn-toggle-ready').onclick = () => {
-            sessionManager.toggleReady();
         };
 
-        if (this.isHost) {
-            const startBtn = this.container.querySelector('#btn-start-game');
-            if (startBtn) {
-                startBtn.onclick = () => {
-                    try {
-                        sessionManager.startSession();
-                        router.navigate('game', { storyId: session.campaignId, mode: 'multi', sessionId: session.id });
-                    } catch (e) {
-                        alert(e.message);
-                    }
-                };
-            }
-        }
+        // Initial render
+        updateUI();
 
-        // Auto-navigate if game started
+        // Listen for updates
         sessionManager.onSessionUpdate = (updatedSession) => {
             if (updatedSession.status === 'active') {
-                router.navigate('game', { storyId: updatedSession.campaignId, mode: 'multi', sessionId: updatedSession.id });
+                router.navigate(`game/${updatedSession.campaignId}/team`);
             } else {
-                this.renderLobby(updatedSession);
+                updateUI();
             }
         };
     }
 
     destroy() {
-        // Cleanup if needed
         sessionManager.onSessionUpdate = null;
     }
 }

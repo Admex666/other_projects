@@ -1,62 +1,59 @@
+import { userManager } from '../user-manager.js';
 import { router } from '../router.js';
 
 export default class OnboardingView {
     constructor() {
-        this.step = 0;
-        this.content = [
-            {
-                text: "Ez nem csupán séta...",
-                sub: "Hanem egy történet, aminek te vagy a főszereplője."
-            },
-            {
-                text: "Ez nem egy edzés app...",
-                sub: "Bár meg fogsz izzadni a feszültségtől."
-            },
-            {
-                text: "Ez nem szabadulószoba...",
-                sub: "Mert az egész város a rendelkezésedre áll."
-            },
-            {
-                text: "Készen állsz a nyomozásra?",
-                sub: "Válassz egy ügyet, és indulj el.",
-                action: "Kezdés"
-            }
-        ];
+        this.container = document.createElement('div');
+        this.container.className = 'view onboarding-view fade-in';
     }
 
     async render(container) {
-        this.container = container;
-        this.renderStep();
-    }
-
-    renderStep() {
-        const data = this.content[this.step];
-        const isLast = this.step === this.content.length - 1;
+        container.innerHTML = '';
+        container.appendChild(this.container);
 
         this.container.innerHTML = `
-            <div class="view-onboarding fade-in">
-                <div class="onboarding-content">
-                    <h1 class="noir-title">${data.text}</h1>
-                    <p class="noir-subtitle">${data.sub}</p>
+            <div class="onboarding-content">
+                <div class="logo">🕵️‍♂️</div>
+                <h1>Üdvözöllek, Nyomozó.</h1>
+                <p>Mielőtt nekilátunk a munkának, szükségünk van a fedőnevedre.</p>
+                
+                <div class="input-group">
+                    <input type="text" id="username-input" placeholder="Írd be a neved..." autofocus />
                 </div>
-                <div class="onboarding-controls">
-                    <button id="next-btn" class="btn">${data.action || 'Tovább'}</button>
-                </div>
+
+                <button id="btn-start" class="primary-btn">Beszállok</button>
+                <button id="btn-guest" class="text-btn">Csak nézelődöm (Vendég)</button>
             </div>
         `;
 
-        this.container.querySelector('#next-btn').onclick = () => {
-            if (isLast) {
-                this.finish();
-            } else {
-                this.step++;
-                this.renderStep();
-            }
-        };
+        this.container.querySelector('#btn-start').addEventListener('click', () => this.finishOnboarding(false));
+        this.container.querySelector('#btn-guest').addEventListener('click', () => this.finishOnboarding(true));
+
+        // Enter key support
+        this.container.querySelector('#username-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') this.finishOnboarding(false);
+        });
     }
 
-    finish() {
+    finishOnboarding(isGuest) {
+        const input = this.container.querySelector('#username-input');
+        const name = input.value.trim();
+
+        if (!isGuest && !name) {
+            input.classList.add('shake');
+            setTimeout(() => input.classList.remove('shake'), 500);
+            return;
+        }
+
+        if (isGuest) {
+            userManager.loginAsGuest();
+        } else {
+            userManager.login(name);
+        }
+
+        // Save flag that we've seen onboarding
         localStorage.setItem('storyturak_intro_seen', 'true');
-        router.navigate('browser');
+
+        router.navigate('campaigns');
     }
 }

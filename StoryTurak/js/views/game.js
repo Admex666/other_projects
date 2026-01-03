@@ -5,7 +5,8 @@ import { sessionManager } from '../session-manager.js';
 
 export default class GameView {
     constructor(params) {
-        this.storyId = params.storyId;
+        console.log("GameView params:", params);
+        this.storyId = params.campaignId || params.storyId; // Support both for safety
         this.mode = params.mode || 'solo'; // solo, multi
         this.sessionId = params.sessionId;
 
@@ -26,7 +27,22 @@ export default class GameView {
             </div>
         `;
 
+
         try {
+            // Safety check for ID
+            if (!this.storyId || this.storyId === 'undefined') {
+                if (this.mode === 'multi' || this.mode === 'team') {
+                    const session = sessionManager.currentSession;
+                    if (session && session.campaignId) {
+                        this.storyId = session.campaignId;
+                    } else {
+                        throw new Error("Hiányzó Story ID!");
+                    }
+                } else {
+                    throw new Error("Hiányzó Story ID!");
+                }
+            }
+
             // Fetch story data
             const response = await fetch(`data/${this.storyId}.json`);
             if (!response.ok) throw new Error('Story not found');
@@ -63,22 +79,25 @@ export default class GameView {
                 // Handle Input Status
                 sessionManager.onInputStatus = (user, isTyping) => {
                     // Ignore self
-                    if (user.id === sessionManager.currentUser.id) return;
+                    import('../user-manager.js').then(({ userManager }) => {
+                        const me = userManager.getCurrentUser();
+                        if (user.id === me.id) return;
 
-                    const inputEl = this.container.querySelector('#story-input');
-                    const feedbackEl = this.container.querySelector('#input-feedback');
+                        const inputEl = this.container.querySelector('#story-input');
+                        const feedbackEl = this.container.querySelector('#input-feedback');
 
-                    if (inputEl) {
-                        if (isTyping) {
-                            inputEl.disabled = true;
-                            inputEl.placeholder = `${user.name} épp ír...`;
-                            if (feedbackEl) feedbackEl.textContent = "🔒 Egyszerre csak egy ügynök írhat.";
-                        } else {
-                            inputEl.disabled = false;
-                            inputEl.placeholder = "Válasz...";
-                            if (feedbackEl) feedbackEl.textContent = "";
+                        if (inputEl) {
+                            if (isTyping) {
+                                inputEl.disabled = true;
+                                inputEl.placeholder = `${user.name} épp ír...`;
+                                if (feedbackEl) feedbackEl.textContent = "🔒 Egyszerre csak egy ügynök írhat.";
+                            } else {
+                                inputEl.disabled = false;
+                                inputEl.placeholder = "Válasz...";
+                                if (feedbackEl) feedbackEl.textContent = "";
+                            }
                         }
-                    }
+                    });
                 };
             }
 
@@ -140,6 +159,7 @@ export default class GameView {
                 <div class="input-group mt-lg">
                     <input type="text" id="story-input" placeholder="Válasz..." />
                     <button class="btn actions-btn" data-action="submit">Ellenőrzés</button>
+                    ${node.hint ? `<button class="btn-secondary btn-sm ml-sm actions-btn" data-action="hint">💡 Súgó</button>` : ''}
                     <p id="input-feedback" class="error-text"></p>
                 </div>
             `;
@@ -147,7 +167,11 @@ export default class GameView {
         else if (node.type === 'choice') {
             content += `<div class="choices-container mt-lg" style="display:flex; flex-direction:column; gap:10px;">`;
             node.choices.forEach(choice => {
-                content += `<button class="btn btn-block actions-btn" data-action="choose" data-target="${choice.next}">${choice.text}</button>`;
+                // Check if choice has condition
+                const isVisible = choice.condition ? storyEngine.checkCondition(choice.condition) : true;
+                if (isVisible) {
+                    content += `<button class="btn btn-block actions-btn" data-action="choose" data-target="${choice.next}">${choice.text}</button>`;
+                }
             });
             content += `</div>`;
         }
@@ -185,6 +209,13 @@ export default class GameView {
                         fb.classList.add('shake');
                         setTimeout(() => fb.classList.remove('shake'), 500);
                     }
+                } else if (action === 'hint') {
+                    const hint = storyEngine.getHint();
+                    if (hint) {
+                        const fb = this.container.querySelector('#input-feedback');
+                        fb.textContent = "Súgó: " + hint;
+                        fb.style.color = 'var(--color-accent)';
+                    }
                 } else if (action === 'choose') {
                     const targetNode = btn.dataset.target;
                     storyEngine.advance(targetNode);
@@ -212,25 +243,40 @@ export default class GameView {
             ? [gpsManager.currentPosition.lat, gpsManager.currentPosition.lng]
             : [47.4979, 19.0402];
 
-        this.map = L.map('map').setView(startPos, 15);
+        if (!this.map) {
+            this.map = L.map('map', {
+                zoomControl: false,
+                attributionControl: false
+            }).setView([center.lat, center.lng], 15);
 
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-            subdomains: 'abcd',
-            maxZoom: 19
-        }).addTo(this.map);
+            // Dark Themed Map via CartoDB
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                maxZoom: 19
+            }).addTo(this.map);
 
-        // User Marker
-        this.userMarker = L.circleMarker(startPos, {
-            color: '#D4AF37', // Accent Gold
-            fillColor: '#D4AF37',
-            fillOpacity: 0.8,
-            radius: 8
-        }).addTo(this.map);
+            // Custom User Marker
+            const userIcon = L.divIcon({
+                className: 'map-user-marker',
+                html: '<div class="pulse-ring"></div><div class="user-dot"></div>',
+                iconSize: [20, 20],
+                iconAnchor: [10, 10]
+            });
 
-        // Target Marker (if waiting for location)
+            this.userMarker = L.marker([center.lat, center.lng], { icon: userIcon }).addTo(this.map);
+        } else {
+            this.map.setView([center.lat, center.lng], 15);
+        }
+
+        // Target Marker if location_wait
         if (node.type === 'location_wait' && node.targetLocation) {
-            this.targetMarker = L.marker([node.targetLocation.lat, node.targetLocation.lng])
+            const targetIcon = L.divIcon({
+                className: 'map-target-marker',
+                html: '🎯',
+                iconSize: [30, 30],
+                iconAnchor: [15, 15]
+            });
+
+            L.marker([node.targetLocation.lat, node.targetLocation.lng], { icon: targetIcon })
                 .addTo(this.map)
                 .bindPopup("Célterület")
                 .openPopup();

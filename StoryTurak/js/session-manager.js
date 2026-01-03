@@ -1,52 +1,80 @@
+import { userManager } from './user-manager.js';
+
 export class SessionManager {
     constructor() {
         this.channel = new BroadcastChannel('storyturak_game_sync');
-        this.currentSession = null;
-        this.currentUser = {
-            id: 'user-' + Math.floor(Math.random() * 10000),
-            name: 'Játékos ' + Math.floor(Math.random() * 100)
-        };
+        this.currentSession = this.loadSession() || null;
         this.onSessionUpdate = null;
+        this.onInputStatus = null;
 
         this.channel.onmessage = (event) => this.handleMessage(event.data);
     }
 
-    async createSession(campaignId) {
+    loadSession() {
+        const stored = localStorage.getItem('storyturak_session');
+        return stored ? JSON.parse(stored) : null;
+    }
+
+    saveSession() {
+        if (this.currentSession) {
+            localStorage.setItem('storyturak_session', JSON.stringify(this.currentSession));
+        } else {
+            localStorage.removeItem('storyturak_session');
+        }
+    }
+
+    async createSession(campaignId, mode = 'solo') {
+        const user = userManager.getCurrentUser();
+        if (!user) throw new Error("Jelentkezz be a játék indításához!");
+
         // Simulate network
         await this._delay(300);
 
         const sessionId = Math.random().toString(36).substring(2, 6).toUpperCase();
 
-        // Add ready state to user
-        this.currentUser.isReady = false;
+        const hostPlayer = {
+            ...user, // Copy user data
+            isReady: mode === 'solo' // Auto-ready if solo
+        };
 
         this.currentSession = {
             id: sessionId,
-            hostId: this.currentUser.id,
+            hostId: hostPlayer.id,
             campaignId: campaignId,
-            players: [this.currentUser],
+            mode: mode, // 'solo', 'team-sync', 'team-async'
+            players: [hostPlayer],
             state: {
-                currentNode: 'node-1', // Default start
-                inventory: []
+                currentNode: null, // Will be set by StoryEngine
+                inventory: [],
+                startedAt: new Date().toISOString()
             },
-            status: 'waiting'
+            status: 'waiting' // waiting, active, completed
         };
 
+        // If solo, we can even auto-start here or let the view do it. 
+        // LobbyView calls startSession() which checks readiness. So isReady=true is key.
+
+        this.saveSession();
         this.broadcastState();
         return this.currentSession;
     }
 
     async joinSession(sessionId) {
+        const user = userManager.getCurrentUser();
+        if (!user) throw new Error("Jelentkezz be a játékhoz!");
+
         await this._delay(500);
-        this.currentUser.isReady = false; // Reset ready state
+
+        // Prepare player object
+        const playerObj = { ...user, isReady: false };
 
         // Request session info from network (Broadcast)
-        this.sendMessage({ type: 'JOIN_REQUEST', sessionId, user: this.currentUser });
+        this.sendMessage({ type: 'JOIN_REQUEST', sessionId, user: playerObj });
 
         // Wait for response (timeout 2s)
         return new Promise((resolve, reject) => {
             const timeout = setTimeout(() => {
-                // Determine if we found it (handled by onmessage)
+                // Check if we managed to join via handleMessage
                 if (this.currentSession && this.currentSession.id === sessionId) {
                     resolve(this.currentSession);
                 } else {
@@ -57,19 +85,47 @@ export class SessionManager {
             // Temporary listener for immediate response
             const responseHandler = (event) => {
                 if (event.data.type === 'SESSION_STATE' && event.data.session.id === sessionId) {
-                    // We got in! (Logic handled in handleMessage, just resolve here)
-                    clearTimeout(timeout);
-                    resolve(event.data.session);
-                    this.channel.removeEventListener('message', responseHandler);
+                    // Check if we are in the player list
+                    const isInList = event.data.session.players.find(p => p.id === playerObj.id);
+                    if (isInList) {
+                        clearTimeout(timeout);
+                        // State will be updated by handleMessage
+                        resolve(event.data.session);
+                        this.channel.removeEventListener('message', responseHandler);
+                    }
                 }
             };
             this.channel.addEventListener('message', responseHandler);
         });
     }
 
+    leaveSession() {
+        this.currentSession = null;
+        this.saveSession();
+        this._notify();
+    }
+
     toggleReady() {
         if (!this.currentSession) return;
-        this.sendMessage({ type: 'TOGGLE_READY', sessionId: this.currentSession.id, userId: this.currentUser.id });
+        const user = userManager.getCurrentUser();
+        if (!user) return;
+
+        // If I am the host, I update state directly
+        if (this.currentSession.hostId === user.id) {
+            this._handleReadyLogic(user.id);
+        } else {
+            // If I am client, I request it
+            this.sendMessage({ type: 'TOGGLE_READY', sessionId: this.currentSession.id, userId: user.id });
+        }
+    }
+
+    _handleReadyLogic(userId) {
+        const p = this.currentSession.players.find(pl => pl.id === userId);
+        if (p) {
+            p.isReady = !p.isReady;
+            this.saveSession();
+            this.broadcastState();
+        }
     }
 
     startSession() {
@@ -82,21 +138,38 @@ export class SessionManager {
         }
 
         this.currentSession.status = 'active';
+        this.saveSession();
         this.broadcastState();
     }
 
     updateStoryState(nodeId) {
         if (!this.currentSession) return;
         this.currentSession.state.currentNode = nodeId;
+        this.saveSession();
+        this.broadcastState();
+    }
+
+    completeSession() {
+        if (!this.currentSession) return;
+        this.currentSession.status = 'completed';
+        this.currentSession.completedAt = new Date().toISOString();
+
+        // Update user stats
+        userManager.updateStats(0, this.currentSession.campaignId); // Distance would be calculated dynamically
+
+        this.saveSession();
         this.broadcastState();
     }
 
     sendInputStatus(isTyping) {
         if (!this.currentSession) return;
+        const user = userManager.getCurrentUser();
+        if (!user) return;
+
         this.sendMessage({
             type: 'INPUT_STATUS',
             sessionId: this.currentSession.id,
-            user: this.currentUser,
+            user: user,
             isTyping: isTyping
         });
     }
@@ -106,13 +179,15 @@ export class SessionManager {
 
         if (msg.type === 'JOIN_REQUEST') {
             // IF I am the host of this session
+            const user = userManager.getCurrentUser();
             if (this.currentSession &&
-                this.currentSession.hostId === this.currentUser.id &&
+                this.currentSession.hostId === user?.id &&
                 this.currentSession.id === msg.sessionId) {
 
                 // Add player if not exists
                 if (!this.currentSession.players.find(p => p.id === msg.user.id)) {
                     this.currentSession.players.push(msg.user);
+                    this.saveSession();
                     this.broadcastState();
                 } else {
                     // Just rebroadcast state so they get it
@@ -121,16 +196,10 @@ export class SessionManager {
             }
         }
         else if (msg.type === 'TOGGLE_READY') {
-            // The logic: if I am the Host, I update the authoritative state and broadcast it back.
-            // If I am NOT the host, I do nothing here (unless I trust the peer fully, but better to wait for Host's auth update).
-            // Actually for true P2P, users update themselves. But lets stick to Host-Authority to avoid race conditions easily.
-
-            if (this.currentSession && this.currentSession.hostId === this.currentUser.id && this.currentSession.id === msg.sessionId) {
-                const p = this.currentSession.players.find(pl => pl.id === msg.userId);
-                if (p) {
-                    p.isReady = !p.isReady;
-                    this.broadcastState();
-                }
+            const user = userManager.getCurrentUser();
+            // Host Authority Logic
+            if (this.currentSession && this.currentSession.hostId === user?.id && this.currentSession.id === msg.sessionId) {
+                this._handleReadyLogic(msg.userId);
             }
         }
         else if (msg.type === 'INPUT_STATUS') {
@@ -142,17 +211,21 @@ export class SessionManager {
             }
         }
         else if (msg.type === 'SESSION_STATE') {
+            const user = userManager.getCurrentUser();
             // Update local state if it matches our session content
             if (this.currentSession && this.currentSession.id === msg.session.id) {
                 this.currentSession = msg.session;
+                this.saveSession();
                 this._notify();
             }
-            // Or if we are trying to join
-            else if (!this.currentSession && msg.session.players.find(p => p.id === this.currentUser.id)) {
+            // Or if we are trying to join and we are in the list
+            else if (!this.currentSession && msg.session.players.find(p => p.id === user?.id)) {
                 this.currentSession = msg.session;
+                this.saveSession();
                 this._notify();
             }
         }
+        // Force refresh on reconnect logic could go here
     }
 
     broadcastState() {

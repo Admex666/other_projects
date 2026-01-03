@@ -6,12 +6,15 @@ export class StoryEngine {
         this.currentNodeId = null;
         this.state = {}; // Game state variables (inventory, flags)
         this.onStoryUpdate = null; // Callback for UI
+        this.onStateChange = null; // Callback for sync
+        this.history = []; // Track visited nodes
     }
 
     loadStory(storyJson) {
         this.storyData = storyJson;
         this.currentNodeId = this.storyData.startNode;
         this.state = { ...this.storyData.initialState };
+        this.history = [];
         console.log('Story loaded:', this.storyData.title);
     }
 
@@ -30,37 +33,72 @@ export class StoryEngine {
         const currentNode = this.getCurrentNode();
         if (!currentNode || !currentNode.triggers) return;
 
-        // Check if we are close enough to any target location
-        // This is a simplified logic. In a real app, active triggers might depend on the current objective.
-
-        // Example: if the node waits for location
+        // Location Wait Logic
         if (currentNode.type === 'location_wait' && currentNode.targetLocation) {
             const dist = gpsManager.getDistance(
                 pos.lat, pos.lng,
                 currentNode.targetLocation.lat, currentNode.targetLocation.lng
             );
 
-            // If closer than 20 meters
-            if (dist < 20) {
+            // If closer than 20 meters (configurable)
+            const threshold = currentNode.targetLocation.radius || 20;
+            if (dist < threshold) {
                 this.advance(currentNode.next);
             }
         }
     }
 
     getCurrentNode() {
+        if (!this.storyData) return null;
         return this.storyData.nodes[this.currentNodeId];
+    }
+
+    // Logic: Variable getters/setters
+    getVar(key) {
+        return this.state[key];
+    }
+
+    setVar(key, value) {
+        this.state[key] = value;
+    }
+
+    // Check conditions for a choice or node entry
+    checkCondition(condition) {
+        if (!condition) return true; // No condition = always true
+        // format: "hasKey", "!hasKey", "score > 10" (simple parser)
+
+        let shouldBeTrue = true;
+        let varName = condition;
+
+        if (condition.startsWith('!')) {
+            shouldBeTrue = false;
+            varName = condition.substring(1);
+        }
+
+        // Support simple boolean flags for now
+        const val = !!this.state[varName];
+        return val === shouldBeTrue;
     }
 
     advance(nextNodeId, remote = false) {
         if (this.storyData.nodes[nextNodeId]) {
+            this.history.push(this.currentNodeId);
             this.currentNodeId = nextNodeId;
+
+            // Execute any actions on entry (e.g., set flags)
+            const node = this.getCurrentNode();
+            if (node.onEnter) {
+                // e.g., "set:hasKey"
+                const parts = node.onEnter.split(':');
+                if (parts[0] === 'set') {
+                    this.setVar(parts[1], true);
+                }
+            }
+
             this.triggerUpdate();
 
             // If local action, sync to session
             if (!remote) {
-                // Import sessionManager dynamically or check global to avoid circular dep if needed
-                // But better to have an observer pattern.
-                // For now, let's assume GameView handles the sync or we attach a listener.
                 if (this.onStateChange) this.onStateChange(nextNodeId);
             }
         } else {
@@ -70,16 +108,34 @@ export class StoryEngine {
 
     processInput(input) {
         const node = this.getCurrentNode();
-        if (node.type === 'input') {
-            // Simple validation
-            if (node.validAnswers.includes(input.toLowerCase().trim())) {
-                this.advance(node.successNext);
-                return { success: true };
-            } else {
-                return { success: false, message: node.failureMessage || "Ez nem tűnik jónak." };
+        if (node.type !== 'input') return { success: false, message: "Nem várok választ." };
+
+        const cleanInput = input.trim().toLowerCase();
+
+        // Flexible matching
+        const isValid = node.validAnswers.some(ans => cleanInput.includes(ans.toLowerCase()));
+
+        if (isValid) {
+            this.advance(node.successNext);
+            return { success: true };
+        } else {
+            // Adaptive Logic: If failureNext is defined, go there instead of just message
+            if (node.failureNext) {
+                this.advance(node.failureNext);
+                return { success: false, message: "Helytelen... De a történet folytatódik." };
             }
+
+            return { success: false, message: node.failureMessage || "Ez nem tűnik jónak." };
         }
-        return { success: false };
+    }
+
+    // New Hint System
+    getHint() {
+        const node = this.getCurrentNode();
+        if (!node || !node.hint) return null;
+
+        // Could track hint usage here in stats
+        return node.hint;
     }
 
     triggerUpdate() {

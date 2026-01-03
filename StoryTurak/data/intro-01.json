@@ -1,5 +1,5 @@
 {
-    "id": "intro-01",
+    "id": "vigado-01",
     "title": "A Vigadó Árnyéka",
     "startNode": "node-1",
     "initialState": {
@@ -10,7 +10,7 @@
             "id": "node-1",
             "type": "narrative",
             "text": "A Duna partján állsz. A szél felkavarja a port a cipőd körül. Egy üzenetet kaptál: 'Találkozzunk ott, ahol a zene elhallgatott.'",
-            "image": "assets/vigado_noir.jpg",
+            "image": "assets/vigado_noir.png",
             "next": "node-2",
             "buttonText": "Indulás"
         },

@@ -1,0 +1,159 @@
+{
+    "id": "mist-01",
+    "title": "A Ködön Járó (Immerzív)",
+    "startNode": "node-1",
+    "initialState": {
+        "inventory": [],
+        "sanity": 100,
+        "clues": []
+    },
+    "nodes": {
+        "node-1": {
+            "id": "node-1",
+            "type": "narrative",
+            "text": "A telefon megrezzen. Varga hangja: 'A Köd leszállt. Az Anker köz. Hány fej őrzi a csendet?'",
+            "image": "assets/mist_walker_cover.png",
+            "next": "node-2",
+            "buttonText": "Indulás"
+        },
+        "node-2": {
+            "id": "node-2",
+            "type": "location_wait",
+            "text": "Menj az Anker közbe.",
+            "targetLocation": {
+                "lat": 47.4983,
+                "lng": 19.0542
+            },
+            "next": "node-3",
+            "fallbackButton": "Ott vagyok"
+        },
+        "node-3": {
+            "id": "node-3",
+            "type": "input",
+            "text": "Hány szobor/fej van a kapu felett? (Nézz fel!)",
+            "validAnswers": [
+                "2",
+                "kettő"
+            ],
+            "successNext": "node-gozsdu-intro",
+            "failureMessage": "Nem. 2 nagy Atlasz tartja a kaput."
+        },
+        "node-gozsdu-intro": {
+            "id": "node-gozsdu-intro",
+            "type": "narrative",
+            "text": "SMS: 'A Gozsdu Udvar Király utcai bejáratánál egy neonreklám alatt várnak. Kutasd fel a TITKOT.'",
+            "image": "assets/mist_gozsdu_crowd.png",
+            "next": "node-gozsdu-wait",
+            "buttonText": "Gozsdu felé"
+        },
+        "node-gozsdu-wait": {
+            "id": "node-gozsdu-wait",
+            "type": "location_wait",
+            "text": "Menj a Gozsdu Udvar Király utcai kapujához.",
+            "targetLocation": {
+                "lat": 47.4975,
+                "lng": 19.0583
+            },
+            "next": "node-gozsdu-discovery",
+            "fallbackButton": "Ott vagyok"
+        },
+        "node-gozsdu-discovery": {
+            "id": "node-gozsdu-discovery",
+            "type": "input",
+            "text": "A kapu közelében keress egy falfirkát vagy táblát. Melyik SZÍN dominál a bejárat feletti neonon? (Kék / Piros / Sárga)",
+            "validAnswers": [
+                "kék",
+                "blue",
+                "kek"
+            ],
+            "successNext": "node-gozsdu-choice"
+        },
+        "node-gozsdu-choice": {
+            "id": "node-gozsdu-choice",
+            "type": "choice",
+            "text": "A kék fényben árnyakat látsz. Hogyan haladsz át a tömegen?",
+            "choices": [
+                {
+                    "text": "Elvegyülök (Fülelés)",
+                    "next": "node-gozsdu-stealth"
+                },
+                {
+                    "text": "Áttörök (Roham)",
+                    "next": "node-gozsdu-rush"
+                }
+            ]
+        },
+        "node-gozsdu-stealth": {
+            "id": "node-gozsdu-stealth",
+            "type": "narrative",
+            "text": "A tömegben suttogást hallasz: 'A Fantom a Szfinx mellett áll.' Megjegyezted: SZFINX.",
+            "next": "node-opera-wait",
+            "buttonText": "Az Operához"
+        },
+        "node-gozsdu-rush": {
+            "id": "node-gozsdu-rush",
+            "type": "narrative",
+            "text": "Gyors vagy, de mindenki téged néz. A Fantom tudja, hogy jössz.",
+            "next": "node-opera-wait",
+            "buttonText": "Az Operához"
+        },
+        "node-opera-wait": {
+            "id": "node-opera-wait",
+            "type": "location_wait",
+            "text": "Hajvágta az Operához.",
+            "targetLocation": {
+                "lat": 47.5027,
+                "lng": 19.0583
+            },
+            "next": "node-opera-discovery",
+            "fallbackButton": "Ott vagyok"
+        },
+        "node-opera-discovery": {
+            "id": "node-opera-discovery",
+            "type": "input",
+            "text": "Állj meg az épület előtt. Hány oroszlán őrzi az Operaház főbejáratát? (Nézz körül!)",
+            "validAnswers": [
+                "2",
+                "kettő"
+            ],
+            "successNext": "node-opera-phantom"
+        },
+        "node-opera-phantom": {
+            "id": "node-opera-phantom",
+            "type": "narrative",
+            "text": "A Fantom ott van a tetőn. Suttogása a szélben...",
+            "image": "assets/mist_opera_phantom.png",
+            "next": "node-opera-riddle",
+            "buttonText": "Hallgatom"
+        },
+        "node-opera-riddle": {
+            "id": "node-opera-riddle",
+            "type": "input",
+            "text": "Melyik lény szobra mellett állok? (Ha figyeltél a Gozsduban, tudod a választ.)",
+            "validAnswers": [
+                "szfinx",
+                "sphinx"
+            ],
+            "successNext": "node-basilica-prepared",
+            "failureMessage": "Rossz válasz. Fuss a Bazilikához!"
+        },
+        "node-basilica-prepared": {
+            "id": "node-basilica-prepared",
+            "type": "location_wait",
+            "text": "A titok megvan: A FÉNY. Menj a Bazilikához a végjátékra.",
+            "targetLocation": {
+                "lat": 47.5009,
+                "lng": 19.0532
+            },
+            "next": "node-end-good",
+            "fallbackButton": "Ott vagyok"
+        },
+        "node-end-good": {
+            "id": "node-end-good",
+            "type": "narrative",
+            "text": "A Bazilika harangjai megkondulnak. A telefonod villanófénye elűzi az utolsó Árnyat is. Győztél. (VÉGE)",
+            "next": null,
+            "buttonText": "Befejezés"
+        }
+    }
+}

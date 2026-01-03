@@ -1,21 +1,28 @@
 import { router } from './router.js';
+import { userManager } from './user-manager.js';
 import OnboardingView from './views/onboarding.js';
-import BrowserView from './views/browser.js';
-import GameView from './views/game.js';
+import { CampaignBrowser } from './views/campaign-browser.js';
+import { ProfileView } from './views/profile-view.js';
 import LobbyView from './views/lobby.js';
+import GameView from './views/game.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     // Register Routes
     router.register('onboarding', OnboardingView);
-    router.register('browser', BrowserView);
-    router.register('lobby', LobbyView);
-    router.register('game', GameView);
+    router.register('campaigns', CampaignBrowser);
+    router.register('profile', ProfileView);
 
-    // Check if user has seen onboarding (mocked for now, default to false)
-    const hasSeenOnboarding = localStorage.getItem('storyturak_intro_seen');
+    // Support parameterized routes
+    router.register('lobby/:campaignId/:mode', LobbyView);
+    router.register('lobby', LobbyView); // Fallback
+    router.register('game/:campaignId/:mode', GameView);
+    router.register('game', GameView); // Fallback
 
-    if (hasSeenOnboarding) {
-        router.navigate('browser');
+    // Check user state
+    const user = userManager.getCurrentUser();
+
+    if (user) {
+        router.navigate('campaigns');
     } else {
         router.navigate('onboarding');
     }
