@@ -6,7 +6,7 @@ import '../models/session.dart';
 
 class ApiService {
   // Check emulator vs real device IP. For Windows executable use localhost.
-  static const String baseUrl = 'http://192.168.31.86:8001';
+  static const String baseUrl = 'https://storyturak-backend.onrender.com';
 
   Future<Story> fetchStory(String storyId) async {
     final response = await http.get(Uri.parse('$baseUrl/stories/$storyId'));

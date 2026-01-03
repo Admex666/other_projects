@@ -5,7 +5,7 @@ import 'package:latlong2/latlong.dart';
 
 class SocketService {
   WebSocketChannel? _channel;
-  final String baseUrl = "ws://192.168.31.86:8001/ws"; // Match your backend address
+  final String baseUrl = "wss://storyturak-backend.onrender.com/ws"; // Match your backend address
 
   Stream<dynamic> get stream => _channel?.stream ?? const Stream.empty();
 
