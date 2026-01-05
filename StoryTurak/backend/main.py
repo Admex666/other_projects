@@ -55,31 +55,27 @@ logger = logging.getLogger(__name__)
 def load_stories():
     STORY_DATA.clear()
     
-    # Get absolute path to the directory where main.py is located
+    # Get absolute path to the data directory
     base_dir = os.path.dirname(os.path.abspath(__file__))
+    data_dir = os.path.join(base_dir, "data")
     
-    # Potential paths to check
-    possible_paths = [
-        os.path.join(base_dir, "data", "mist_walker.json"),
-        os.path.join(base_dir, "..", "backend", "data", "mist_walker.json"),
-        os.path.join(os.getcwd(), "backend", "data", "mist_walker.json"),
-        os.path.join(os.getcwd(), "data", "mist_walker.json"),
-    ]
-    
-    loaded = False
-    for p in possible_paths:
-        if os.path.exists(p):
+    if not os.path.exists(data_dir):
+        logger.warning(f"Data directory not found at {data_dir}")
+        return
+
+    for filename in os.listdir(data_dir):
+        if filename.endswith(".json"):
+            p = os.path.join(data_dir, filename)
             try:
                 with open(p, "r", encoding="utf-8") as f:
                     story = json.load(f)
                     STORY_DATA[story["id"]] = story
-                    logger.info(f"Successfully loaded story: {story['id']} from {p}")
-                    loaded = True
+                    logger.info(f"Successfully loaded story: {story['id']} from {filename}")
             except Exception as e:
-                logger.error(f"Error loading story from {p}: {e}")
+                logger.error(f"Error loading {filename}: {e}")
     
-    if not loaded:
-        logger.warning("No stories were loaded! Checked paths: " + ", ".join(possible_paths))
+    if not STORY_DATA:
+        logger.warning("No stories were loaded!")
 
 load_stories()
 

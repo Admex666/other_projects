@@ -1,0 +1,55 @@
+{
+    "id": "vigado-01",
+    "title": "A Vigadó Árnyéka",
+    "startNode": "node-1",
+    "initialState": {},
+    "nodes": {
+        "node-1": {
+            "id": "node-1",
+            "type": "narrative",
+            "text": "A Duna partján állsz. A szél felkavarja a port a cipőd körül. Egy üzenetet kaptál: 'Találkozzunk ott, ahol a zene elhallgatott.'",
+            "image": "assets/vigado_noir.png",
+            "next": "node-2",
+            "buttonText": "Indulás"
+        },
+        "node-2": {
+            "id": "node-2",
+            "type": "location_wait",
+            "text": "Menj a Vigadó tér felé. Keresd a régi szobrot a tér közepén.",
+            "targetLocation": {"lat": 47.4959, "lng": 19.0494},
+            "next": "node-3",
+            "fallbackButton": "Ott vagyok"
+        },
+        "node-3": {
+            "id": "node-3",
+            "type": "input",
+            "text": "A szobor talapzatán egy évszámot látsz római számmal. Mi az?",
+            "validAnswers": ["mdCCCLXV", "1865"],
+            "successNext": "node-4",
+            "failureMessage": "Nem, ez nem tűnik helyesnek."
+        },
+        "node-4": {
+            "id": "node-4",
+            "type": "choice",
+            "text": "Helyes. A kő lazának tűnik. Mögötte egy sötét üreg tátong. Mit teszel?",
+            "choices": [
+                {"text": "Benyúlok a résbe", "next": "node-5a"},
+                {"text": "Körülnézek, ki figyel", "next": "node-5b"}
+            ]
+        },
+        "node-5a": {
+            "id": "node-5a",
+            "type": "narrative",
+            "text": "Bátorságod jutalma egy régi, rozsdás kulcs.",
+            "next": null,
+            "buttonText": "Vége (Bátor)"
+        },
+         "node-5b": {
+            "id": "node-5b",
+            "type": "narrative",
+            "text": "Jól tetted. Egy gyanús alak épp téged figyelt.",
+            "next": null,
+            "buttonText": "Vége (Óvatos)"
+        }
+    }
+}
