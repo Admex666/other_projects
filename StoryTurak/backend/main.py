@@ -84,8 +84,14 @@ load_stories()
 @app.get("/")
 def health(): return {"status": "ok"}
 
+@app.get("/stories")
+def get_stories():
+    load_stories() # Hot-reload stories for development
+    return list(STORY_DATA.values())
+
 @app.get("/stories/{story_id}")
 def get_story(story_id: str):
+    load_stories() # Hot-reload stories for development
     if story_id not in STORY_DATA:
         raise HTTPException(status_code=404)
     return STORY_DATA[story_id]

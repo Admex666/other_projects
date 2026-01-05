@@ -1,0 +1,166 @@
+{
+    "id": "normafa-01",
+    "title": "Normafa Árnyai",
+    "startNode": "intro",
+    "initialState": {
+        "balance_restored": false
+    },
+    "nodes": {
+        "intro": {
+            "id": "intro",
+            "type": "narrative",
+            "text": "A hegy nem hallgat. Csak lassan, türelmesen mesél – azoknak, akik elég ideig maradnak csendben. A Normafa fölött a szél ma másként mozgatja az ágakat. Nem erősebben. Nem gyengébben. Csak… céltudatosabban. \n\nAz egyensúly nem tört meg. Csak elmozdult.",
+            "image": "assets/normafa_cover.png",
+            "next": "goto-sihaz",
+            "buttonText": "Belépés a rétegekbe"
+        },
+        "goto-sihaz": {
+            "id": "goto-sihaz",
+            "type": "location_wait",
+            "text": "Keresd meg a Síházat. A falai nem különlegesek – épp ezért gyanúsak. Valaki egyszer azt mondta: ahol minden mozgásban van, ott az állandóság a legjobb rejtekhely.",
+            "targetLocation": {
+                "lat": 47.505494,
+                "lng": 18.964468
+            },
+            "next": "sihaz-task"
+        },
+        "sihaz-task": {
+            "id": "sihaz-task",
+            "type": "input",
+            "text": "Az épület homlokzatán vagy környezetében keress egy évszámot, amely az épület múltjához kötődik, és jóval korábbról való, mint a mai kirándulók emlékei.",
+            "image": "assets/normafa_sihaz.png",
+            "validAnswers": [
+                "1924"
+            ],
+            "successNext": "goto-annaret",
+            "failureMessage": "A szám közel jár. De az idő itt pontosabban emlékszik, mint az emberek."
+        },
+        "goto-annaret": {
+            "id": "goto-annaret",
+            "type": "location_wait",
+            "text": "Sétálj tovább az Anna-rét felé (~1.8 km). A láthatatlan világ nem szeret falakat. A határokon érzi jól magát.",
+            "targetLocation": {
+                "lat": 47.514605,
+                "lng": 18.956698
+            },
+            "next": "annaret-task"
+        },
+        "annaret-task": {
+            "id": "annaret-task",
+            "type": "choice",
+            "text": "A tisztás mindig is találkozóhely volt. A rét neve nem véletlen. Egyetlen emberhez kötődik. Ki ő?",
+            "image": "assets/normafa_annaret.png",
+            "choices": [
+                {
+                    "text": "Anna",
+                    "next": "annaret-success"
+                },
+                {
+                    "text": "Erzsébet",
+                    "next": "annaret-fail"
+                },
+                {
+                    "text": "Mária",
+                    "next": "annaret-fail"
+                }
+            ]
+        },
+        "annaret-success": {
+            "id": "annaret-success",
+            "type": "narrative",
+            "text": "„A nevek horgonyok. Amit elneveznek, azt könnyebb itt tartani.” Az egyensúly elmozdulása itt érezhetőbb.",
+            "next": "goto-kilato",
+            "buttonText": "Tovább a csúcsra"
+        },
+        "annaret-fail": {
+            "id": "annaret-fail",
+            "type": "narrative",
+            "text": "„Ez a név is járt már erre. De nem maradt.” Próbáld újra felidézni a hely szellemét.",
+            "next": "annaret-task",
+            "buttonText": "Újra"
+        },
+        "goto-kilato": {
+            "id": "goto-kilato",
+            "type": "location_wait",
+            "text": "Irány az Erzsébet-kilátó (~2.5 km). Mintha a magasság tisztább válaszokat adna. De aki sokáig marad itt, rájön: nem a távolság számít, hanem az irány.",
+            "targetLocation": {
+                "lat": 47.517336,
+                "lng": 18.959124
+            },
+            "next": "kilato-task"
+        },
+        "kilato-task": {
+            "id": "kilato-task",
+            "type": "choice",
+            "text": "A kilátó neve egy valós történelmi személyhez kötődik?",
+            "image": "assets/normafa_kilato.png",
+            "choices": [
+                {
+                    "text": "Igen",
+                    "next": "kilato-success"
+                },
+                {
+                    "text": "Nem",
+                    "next": "kilato-fail"
+                }
+            ]
+        },
+        "kilato-success": {
+            "id": "kilato-success",
+            "type": "narrative",
+            "text": "„A láthatatlan világ mindig ráépül arra, amit az emberek már elhisznek.” Már csak egy állomás van hátra.",
+            "next": "goto-libego",
+            "buttonText": "Tovább a Libegőhöz"
+        },
+        "kilato-fail": {
+            "id": "kilato-fail",
+            "type": "narrative",
+            "text": "„A név több, mint hangalak. Csak ritkán véletlen.” Gondolkozz újra!",
+            "next": "kilato-task",
+            "buttonText": "Újra"
+        },
+        "goto-libego": {
+            "id": "goto-libego",
+            "type": "location_wait",
+            "text": "Keresd meg a Libegő felső állomását (~1.5 km). Itt, ahol az emberek érkeznek és távoznak, valami mindig itt marad.",
+            "targetLocation": {
+                "lat": 47.516482,
+                "lng": 18.966045
+            },
+            "next": "libego-task"
+        },
+        "libego-task": {
+            "id": "libego-task",
+            "type": "choice",
+            "text": "A libegő mozgása egyenletes. Mi a helyes sorrend a láthatatlan világ mintájában?",
+            "image": "assets/normafa_libego.png",
+            "choices": [
+                {
+                    "text": "egyensúly → elmozdulás → alkalmazkodás",
+                    "next": "epilogue"
+                },
+                {
+                    "text": "elmozdulás → egyensúly → alkalmazkodás",
+                    "next": "libego-fail"
+                },
+                {
+                    "text": "alkalmazkodás → elmozdulás → egyensúly",
+                    "next": "libego-fail"
+                }
+            ]
+        },
+        "libego-fail": {
+            "id": "libego-fail",
+            "type": "narrative",
+            "text": "„A sorrend számít. Mindig számított.” Próbáld újra!",
+            "next": "libego-task",
+            "buttonText": "Újra"
+        },
+        "epilogue": {
+            "id": "epilogue",
+            "type": "narrative",
+            "text": "Ahogy a libegő lassan eltűnik a fák között, egy dolog világossá válik: a láthatatlan világ nem kér segítséget. Nem fenyeget. Nem könyörög. Csak figyel. Az egyensúly visszaállítható lenne. De az átalakulás már elkezdődött.",
+            "buttonText": "Vége"
+        }
+    }
+}

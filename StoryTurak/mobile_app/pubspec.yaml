@@ -17,6 +17,8 @@ dependencies:
   google_fonts: ^6.1.0
   shared_preferences: ^2.2.2
   web_socket_channel: ^2.4.3
+  flutter_compass: ^0.8.0
+  animations: ^2.0.11
 
 dev_dependencies:
   flutter_test:
@@ -35,3 +37,8 @@ flutter:
     - assets/mist_city_intro.png
     - assets/mist_gozsdu_crowd.png
     - assets/mist_opera_phantom.png
+    - assets/normafa_cover.png
+    - assets/normafa_sihaz.png
+    - assets/normafa_annaret.png
+    - assets/normafa_kilato.png
+    - assets/normafa_libego.png
