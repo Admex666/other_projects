@@ -23,7 +23,8 @@ from contextlib import asynccontextmanager
 
 
 # Felhasználók
-USERS = {"admin": "optivoya2024", "demo": "demo123", "bean": "bean", "wayzio": "demo"}
+USERS = {"admin": "optivoya2024", "demo": "demo123", "bean": "bean", 
+         "wayzio": "demo", "utazasmagus": "demo"}
 sessions = {}
 raw_flights_cache = {}
 results = {"status": "idle", "data": None, "error": None}
