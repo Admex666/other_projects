@@ -47,17 +47,39 @@ class JoinRequest(BaseModel):
 # --- Data Loading ---
 STORY_DATA = {}
 import os
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 def load_stories():
     STORY_DATA.clear()
-    # Hardcoded or from folder
-    paths = ["backend/data/mist_walker.json"]
-    for p in paths:
-        try:
-            with open(p, "r", encoding="utf-8") as f:
-                story = json.load(f)
-                STORY_DATA[story["id"]] = story
-        except:
-            pass
+    
+    # Get absolute path to the directory where main.py is located
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    # Potential paths to check
+    possible_paths = [
+        os.path.join(base_dir, "data", "mist_walker.json"),
+        os.path.join(base_dir, "..", "backend", "data", "mist_walker.json"),
+        os.path.join(os.getcwd(), "backend", "data", "mist_walker.json"),
+        os.path.join(os.getcwd(), "data", "mist_walker.json"),
+    ]
+    
+    loaded = False
+    for p in possible_paths:
+        if os.path.exists(p):
+            try:
+                with open(p, "r", encoding="utf-8") as f:
+                    story = json.load(f)
+                    STORY_DATA[story["id"]] = story
+                    logger.info(f"Successfully loaded story: {story['id']} from {p}")
+                    loaded = True
+            except Exception as e:
+                logger.error(f"Error loading story from {p}: {e}")
+    
+    if not loaded:
+        logger.warning("No stories were loaded! Checked paths: " + ", ".join(possible_paths))
 
 load_stories()
 

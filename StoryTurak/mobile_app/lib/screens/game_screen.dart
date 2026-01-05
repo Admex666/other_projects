@@ -43,6 +43,7 @@ class _GameScreenState extends State<GameScreen> {
   bool _isLoading = true;
   double _distanceToTarget = 0.0;
   bool _hasHapticTriggered = false;
+  String? _errorMessage;
 
   @override
   void initState() {
@@ -91,7 +92,12 @@ class _GameScreenState extends State<GameScreen> {
       
       setState(() => _isLoading = false);
     } catch (e) {
-      if (mounted) setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _errorMessage = e.toString();
+        });
+      }
     }
   }
 
@@ -125,8 +131,32 @@ class _GameScreenState extends State<GameScreen> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    
+    if (_errorMessage != null) {
+      return Scaffold(
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.error_outline, color: Colors.red, size: 60),
+                const SizedBox(height: 16),
+                Text("Hiba történt a történet betöltésekor:\n\n$_errorMessage", textAlign: TextAlign.center),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () => Navigator.pop(context), 
+                  child: const Text("Vissza a menübe")
+                )
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
     final node = _engine.currentNode;
-    if (node == null) return const Scaffold(body: Center(child: Text("Hiba")));
+    if (node == null) return const Scaffold(body: Center(child: Text("Hiba: Üres történet")));
     
     return Scaffold(
       body: Stack(
