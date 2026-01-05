@@ -1,14 +1,24 @@
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animations/animations.dart';
+import 'package:provider/provider.dart';
+import 'services/story_engine.dart';
+import 'screens/auth_screen.dart';
 import 'screens/dashboard_screen.dart';
 import 'screens/explore_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/settings_screen.dart';
 
-void main() {
-  runApp(const StoryTurakApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final engine = StoryEngine();
+  await engine.loadUserFromPrefs();
+  runApp(
+    ChangeNotifierProvider.value(
+      value: engine,
+      child: const StoryTurakApp(),
+    ),
+  );
 }
 
 class StoryTurakApp extends StatelessWidget {
@@ -26,7 +36,14 @@ class StoryTurakApp extends StatelessWidget {
         textTheme: GoogleFonts.outfitTextTheme(ThemeData.dark().textTheme),
         useMaterial3: true,
       ),
-      home: const MainScaffold(),
+      home: Consumer<StoryEngine>(
+        builder: (context, engine, _) {
+          if (engine.user == null) {
+            return const AuthScreen();
+          }
+          return const MainScaffold();
+        },
+      ),
     );
   }
 }

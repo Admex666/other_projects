@@ -15,12 +15,15 @@ import 'package:flutter_compass/flutter_compass.dart';
 import 'dart:convert';
 import 'dart:math' as math;
 
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../services/routing_service.dart';
 import '../services/map_config.dart';
 
 class GameScreen extends StatefulWidget {
   final String storyId;
   final String? initialNodeId;
+  final Map<String, dynamic>? initialVars;
   final String? sessionId;
   final String? userId;
 
@@ -28,6 +31,7 @@ class GameScreen extends StatefulWidget {
     super.key, 
     required this.storyId, 
     this.initialNodeId,
+    this.initialVars,
     this.sessionId,
     this.userId,
   });
@@ -37,20 +41,26 @@ class GameScreen extends StatefulWidget {
 }
 
 class _GameScreenState extends State<GameScreen> {
-  final StoryEngine _engine = StoryEngine();
+  late StoryEngine _engine;
   final LocationService _locationService = LocationService();
   final ApiService _api = ApiService();
   final SocketService _socket = SocketService();
+  final RoutingService _routingService = RoutingService();
   final MapController _mapController = MapController();
   final DraggableScrollableController _sheetController = DraggableScrollableController();
   
   LatLng _currentPos = const LatLng(47.4979, 19.0402);
+  List<LatLng> _routePoints = [];
+  List<String> _currentOrder = [];
   Map<String, LatLng> _otherPlayers = {};
   bool _isLoading = true;
   double _distanceToTarget = 0.0;
+  double _minDistanceWitnessed = double.infinity; // For rerouting
   bool _hasHapticTriggered = false;
   String? _errorMessage;
   double? _heading;
+  DateTime? _lastPosTime; // For velocity check
+  LatLng? _lastPos; // For velocity check
   StreamSubscription? _compassSubscription;
   StreamSubscription? _positionSubscription;
   bool _followUser = true;
@@ -59,6 +69,7 @@ class _GameScreenState extends State<GameScreen> {
   @override
   void initState() {
     super.initState();
+    _engine = Provider.of<StoryEngine>(context, listen: false);
     _initGame();
     _initCompass();
     _loadMapStyle();
@@ -88,16 +99,24 @@ class _GameScreenState extends State<GameScreen> {
     try {
       final story = await _api.fetchStory(widget.storyId);
       if (mounted) await AssetService.preloadStoryAssets(context, story);
-      _engine.loadStory(story, startAtNodeId: widget.initialNodeId);
+      _engine.loadStory(story, 
+          startAtNodeId: widget.initialNodeId, 
+          initialVars: widget.initialVars);
       
-      _engine.addListener(() {
-        if (mounted) {
-          setState(() { _hasHapticTriggered = false; });
-          if (widget.sessionId != null) {
-            _socket.sendAdvance(_engine.currentNode!.id);
+      _engine.addListener(_onEngineChange);
+      
+      if (mounted) {
+        setState(() { 
+          _hasHapticTriggered = false;
+          if (_engine.currentNode?.orderAnswer != null) {
+            _currentOrder = List<String>.from(_engine.currentNode!.orderAnswer!)..shuffle();
           }
+        });
+        _updateRoute();
+        if (widget.sessionId != null) {
+          _socket.sendAdvance(_engine.storyId!, _engine.currentNode!.id, _engine.variables);
         }
-      });
+      }
 
       if (widget.sessionId != null && widget.userId != null) {
         await _socket.connect(widget.sessionId!, widget.userId!);
@@ -106,6 +125,23 @@ class _GameScreenState extends State<GameScreen> {
 
       _positionSubscription = _locationService.positionStream.listen((pos) {
         if (!mounted) return;
+        
+        final now = DateTime.now();
+        if (_lastPos != null && _lastPosTime != null) {
+          final dist = const Distance().as(LengthUnit.Meter, _lastPos!, pos);
+          final timeDiff = now.difference(_lastPosTime!).inSeconds;
+          if (timeDiff > 0) {
+            final speed = dist / timeDiff;
+            if (speed > 15) { // 54 km/h - suspicious for walking
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("⚠️ Túl gyorsan haladsz!"), duration: Duration(seconds: 2))
+              );
+            }
+          }
+        }
+        _lastPos = pos;
+        _lastPosTime = now;
+
         setState(() {
           _currentPos = pos;
           if (widget.sessionId != null) _socket.sendPosition(pos);
@@ -117,6 +153,19 @@ class _GameScreenState extends State<GameScreen> {
           final node = _engine.currentNode;
           if (node?.targetLocation != null) {
             _distanceToTarget = const Distance().as(LengthUnit.Meter, _currentPos, node!.targetLocation!);
+            
+            // Intelligent Rerouting Logic
+            if (_distanceToTarget < _minDistanceWitnessed) {
+              _minDistanceWitnessed = _distanceToTarget;
+            } else if (_distanceToTarget > _minDistanceWitnessed + 50) {
+              // User has deviated 50m from their closest approach
+              _minDistanceWitnessed = _distanceToTarget; // Reset to avoid constant spam
+              _updateRoute();
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("🔄 Útvonal újratervezése..."), duration: Duration(seconds: 1))
+              );
+            }
+
             if (_distanceToTarget < 20 && !_hasHapticTriggered) {
               HapticFeedback.heavyImpact();
               _hasHapticTriggered = true;
@@ -125,6 +174,7 @@ class _GameScreenState extends State<GameScreen> {
         });
       });
       
+      await _updateRoute();
       setState(() => _isLoading = false);
     } catch (e) {
       if (mounted) {
@@ -136,6 +186,21 @@ class _GameScreenState extends State<GameScreen> {
     }
   }
 
+  Future<void> _updateRoute() async {
+    final node = _engine.currentNode;
+    if (node?.targetLocation == null) {
+      if (mounted) setState(() => _routePoints = []);
+      return;
+    }
+
+    final points = await _routingService.getRoute(_currentPos, node!.targetLocation!);
+    if (mounted) {
+      setState(() {
+        _routePoints = points;
+      });
+    }
+  }
+
   void _handleSocketMessage(dynamic data) {
     if (data is String) {
       final msg = jsonDecode(data);
@@ -144,6 +209,14 @@ class _GameScreenState extends State<GameScreen> {
       setState(() {
         if (msg['type'] == 'POSITION') {
           _otherPlayers[msg['userId']] = LatLng(msg['lat'], msg['lng']);
+        } else if (msg['type'] == 'STORY_ADVANCE') {
+          // Sync engine state if another player advanced
+          final newNodeId = msg['nodeId'];
+          if (_engine.currentNode?.id != newNodeId && _engine.story != null) {
+            _engine.loadStory(_engine.story!, 
+                startAtNodeId: newNodeId, 
+                initialVars: msg['variables']);
+          }
         } else if (msg['type'] == 'USER_LEFT') {
           _otherPlayers.remove(msg['userId']);
         }
@@ -151,12 +224,28 @@ class _GameScreenState extends State<GameScreen> {
     }
   }
 
+  void _onEngineChange() {
+    if (mounted) {
+      setState(() { 
+        _hasHapticTriggered = false;
+        _minDistanceWitnessed = double.infinity; // Reset for new node
+        if (_engine.currentNode?.orderAnswer != null) {
+          _currentOrder = List<String>.from(_engine.currentNode!.orderAnswer!)..shuffle();
+        }
+      });
+      _updateRoute();
+      if (widget.sessionId != null) {
+        _socket.sendAdvance(_engine.storyId!, _engine.currentNode!.id, _engine.variables);
+      }
+    }
+  }
+
   @override
   void dispose() {
+    _engine.removeListener(_onEngineChange);
     _compassSubscription?.cancel();
     _positionSubscription?.cancel();
     _socket.disconnect();
-    _engine.dispose();
     super.dispose();
   }
 
@@ -195,13 +284,27 @@ class _GameScreenState extends State<GameScreen> {
             options: MapOptions(
               initialCenter: node.targetLocation ?? _currentPos,
               initialZoom: 16.0,
+              interactionOptions: const InteractionOptions(
+                flags: InteractiveFlag.all,
+                enableMultiFingerGestureRace: true,
+              ),
             ),
             children: [
               TileLayer(
                 urlTemplate: _currentStyle.url,
                 subdomains: _currentStyle.subdomains,
               ),
-              if (node.targetLocation != null)
+              if (_routePoints.isNotEmpty)
+                PolylineLayer(
+                  polylines: [
+                    Polyline(
+                      points: _routePoints,
+                      color: Colors.blueAccent.withAlpha(180),
+                      strokeWidth: 5,
+                    ),
+                  ],
+                ),
+                if (_routePoints.isEmpty && node.targetLocation != null)
                 PolylineLayer(
                   polylines: [
                     Polyline(
@@ -297,6 +400,15 @@ class _GameScreenState extends State<GameScreen> {
                     });
                   },
                 ),
+                const SizedBox(height: 12),
+                FloatingActionButton.small(
+                  heroTag: "northBtn",
+                  backgroundColor: Colors.black54,
+                  child: const Icon(Icons.explore, color: Colors.white),
+                  onPressed: () {
+                    _mapController.rotate(0);
+                  },
+                ),
               ],
             ),
           ),
@@ -363,15 +475,43 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
+  double _calculateTotalRouteDistance() {
+    if (_routePoints.isEmpty) return _distanceToTarget;
+    double dist = 0.0;
+    for (int i = 0; i < _routePoints.length - 1; i++) {
+      dist += const Distance().as(LengthUnit.Meter, _routePoints[i], _routePoints[i+1]);
+    }
+    return dist;
+  }
+
   Widget _buildTravelView(StoryNode node) {
+    final totalDist = _calculateTotalRouteDistance();
+    final minutes = (totalDist / 80).ceil(); // ~4.8 km/h walking speed
+
     return Column(
       children: [
-        Text("CÉLPONT", style: TextStyle(fontSize: 10, color: Colors.amber.withOpacity(0.8), letterSpacing: 2)),
-        Text(node.text.split('.').first, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
-        const SizedBox(height: 12),
-        Text("${_distanceToTarget.toInt()} m", style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w900)),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _buildQuickStat(Icons.directions_walk, "${totalDist.toInt()} m"),
+            const SizedBox(width: 24),
+            _buildQuickStat(Icons.timer_outlined, "$minutes perc"),
+          ],
+        ),
+        const SizedBox(height: 24),
+        Text((node.text ?? "Utazás").split('.').first, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
         const SizedBox(height: 20),
         ElevatedButton(onPressed: () => _engine.next(), child: const Text("MEGÉRKEZTEM (SZIMULÁCIÓ)")),
+      ],
+    );
+  }
+
+  Widget _buildQuickStat(IconData icon, String text) {
+    return Column(
+      children: [
+        Icon(icon, color: Colors.amber, size: 20),
+        const SizedBox(height: 4),
+        Text(text, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: Colors.white)),
       ],
     );
   }
@@ -382,14 +522,56 @@ class _GameScreenState extends State<GameScreen> {
       children: [
         if (node.image != null) ClipRRect(borderRadius: BorderRadius.circular(16), child: Image.asset(node.image!, height: 200, fit: BoxFit.cover)),
         const SizedBox(height: 24),
-        Text(node.text, style: const TextStyle(fontSize: 16, height: 1.6)),
+        Text(node.text ?? "", style: const TextStyle(fontSize: 16, height: 1.6)),
         const SizedBox(height: 32),
         if (node.type == NodeType.narrative)
           ElevatedButton(onPressed: () => node.next == null ? Navigator.pop(context) : _engine.next(), child: Text(node.buttonText ?? 'TOVÁBB')),
-        if (node.type == NodeType.input)
+        
+        if (node.type == NodeType.input && node.orderAnswer != null)
+          _buildOrderInput(node)
+        else if (node.type == NodeType.input)
           TextField(decoration: InputDecoration(hintText: 'Válasz...', filled: true, fillColor: Colors.white10, border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))), onSubmitted: (v) => _engine.handleInput(v)),
+        
         if (node.type == NodeType.choice)
           ...node.choices!.asMap().entries.map((e) => Padding(padding: const EdgeInsets.only(bottom: 12), child: OutlinedButton(onPressed: () => _engine.makeChoice(e.key), child: Text(e.value.text)))),
+      ],
+    );
+  }
+
+  Widget _buildOrderInput(StoryNode node) {
+    return Column(
+      children: [
+        const Text("Húzd a megfelelő sorrendbe:", style: TextStyle(color: Colors.white70, fontSize: 13)),
+        const SizedBox(height: 16),
+        ReorderableListView(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          onReorder: (oldIndex, newIndex) {
+            setState(() {
+              if (newIndex > oldIndex) newIndex -= 1;
+              final item = _currentOrder.removeAt(oldIndex);
+              _currentOrder.insert(newIndex, item);
+            });
+          },
+          children: _currentOrder.asMap().entries.map((e) {
+            return Card(
+              key: ValueKey(e.value),
+              color: Colors.white.withOpacity(0.05),
+              margin: const EdgeInsets.only(bottom: 8),
+              child: ListTile(
+                leading: const Icon(Icons.drag_handle, color: Colors.white38),
+                title: Text(e.value, style: const TextStyle(color: Colors.white)),
+                trailing: Text("${e.key + 1}.", style: const TextStyle(color: Colors.blueAccent)),
+              ),
+            );
+          }).toList(),
+        ),
+        const SizedBox(height: 24),
+        ElevatedButton(
+          onPressed: () => _engine.checkOrder(_currentOrder),
+          style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
+          child: const Text("BEKÜLDÉS"),
+        ),
       ],
     );
   }

@@ -15,6 +15,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _darkMode = true;
   bool _useLocalBackend = false;
   String _mapStyle = 'dark';
+  String _localIp = '10.0.2.2';
+  final _ipController = TextEditingController();
 
   @override
   void initState() {
@@ -27,6 +29,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() {
       _useLocalBackend = prefs.getBool('use_local_backend') ?? false;
       _mapStyle = prefs.getString('map_style') ?? 'dark';
+      _localIp = prefs.getString('local_ip') ?? '10.0.2.2';
+      _ipController.text = _localIp;
     });
   }
 
@@ -53,6 +57,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       );
     }
+  }
+
+  Future<void> _saveIp(String value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('local_ip', value);
+    setState(() => _localIp = value);
   }
 
   @override
@@ -84,9 +94,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Text(
-              "Bekapcsolva az app a 127.0.0.1:8001 címet keresi. Kikapcsolva az online Render szervert.",
-              style: GoogleFonts.outfit(fontSize: 11, color: Colors.white38),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Bekapcsolva az app az alábbi címet keresi:",
+                  style: GoogleFonts.outfit(fontSize: 11, color: Colors.white38),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: _ipController,
+                  style: const TextStyle(color: Colors.white, fontSize: 13),
+                  decoration: InputDecoration(
+                    hintText: "pl. 192.168.1.10",
+                    hintStyle: const TextStyle(color: Colors.white24),
+                    isDense: true,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
+                  onChanged: _saveIp,
+                ),
+                const SizedBox(height: 4),
+                const Text(
+                  "Emulator: 10.0.2.2 | Fizikai eszköz: Géped belső IP címe",
+                  style: TextStyle(color: Colors.white24, fontSize: 9),
+                ),
+              ],
             ),
           ),
 

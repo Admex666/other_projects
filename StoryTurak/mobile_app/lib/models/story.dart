@@ -33,12 +33,12 @@ class Story {
   }
 }
 
-enum NodeType { narrative, location_wait, input, choice }
+enum NodeType { narrative, location_wait, input, choice, condition }
 
 class StoryNode {
   final String id;
   final NodeType type;
-  final String text;
+  final String? text;
   final String? image;
   final String? next;
   final String? buttonText;
@@ -51,14 +51,21 @@ class StoryNode {
   final List<String>? validAnswers;
   final String? successNext;
   final String? failureMessage;
+  final int? numericAnswer;
+  final List<String>? orderAnswer;
 
   // Choice
   final List<StoryChoice>? choices;
 
+  // Logic
+  final String? condition;
+  final String? failureNext;
+  final dynamic onEnter;
+
   StoryNode({
     required this.id,
     required this.type,
-    required this.text,
+    this.text,
     this.image,
     this.next,
     this.buttonText,
@@ -67,7 +74,12 @@ class StoryNode {
     this.validAnswers,
     this.successNext,
     this.failureMessage,
+    this.numericAnswer,
+    this.orderAnswer,
     this.choices,
+    this.condition,
+    this.failureNext,
+    this.onEnter,
   });
 
   factory StoryNode.fromJson(Map<String, dynamic> json) {
@@ -91,7 +103,7 @@ class StoryNode {
     }
 
     return StoryNode(
-      id: json['id'],
+      id: json['id'] ?? '',
       type: type,
       text: json['text'],
       image: json['image'],
@@ -102,21 +114,27 @@ class StoryNode {
       validAnswers: (json['validAnswers'] as List?)?.map((e) => e.toString()).toList(),
       successNext: json['successNext'],
       failureMessage: json['failureMessage'],
+      numericAnswer: json['numericAnswer'],
+      orderAnswer: (json['orderAnswer'] as List?)?.map((e) => e.toString()).toList(),
       choices: choices,
+      condition: json['condition'],
+      failureNext: json['failureNext'],
+      onEnter: json['onEnter'],
     );
   }
 }
-
 class StoryChoice {
   final String text;
   final String next;
+  final dynamic onSelect;
 
-  StoryChoice({required this.text, required this.next});
+  StoryChoice({required this.text, required this.next, this.onSelect});
 
   factory StoryChoice.fromJson(Map<String, dynamic> json) {
     return StoryChoice(
-      text: json['text'],
-      next: json['next'],
+      text: json['text'] ?? '',
+      next: json['next'] ?? '',
+      onSelect: json['onSelect'],
     );
   }
 }

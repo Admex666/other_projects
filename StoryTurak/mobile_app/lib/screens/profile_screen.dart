@@ -1,6 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import '../services/story_engine.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -36,33 +37,41 @@ class ProfileScreen extends StatelessWidget {
                   Positioned(
                     bottom: 0,
                     right: 0,
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: const BoxDecoration(color: Colors.blueAccent, shape: BoxShape.circle),
-                      child: const Text("Lvl 4", style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                    child: Consumer<StoryEngine>(
+                      builder: (context, engine, _) {
+                        int xp = engine.user?.xp ?? 0;
+                        int level = (xp / 100).floor() + 1;
+                        return Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: const BoxDecoration(color: Colors.blueAccent, shape: BoxShape.circle),
+                          child: Text("Lvl $level", style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                        );
+                      }
                     ),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 16),
-            Text(
-              "Városi Felfedező",
-              style: GoogleFonts.outfit(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+            Consumer<StoryEngine>(
+              builder: (context, engine, _) => Text(
+                engine.user?.username ?? "Városi Felfedező",
+                style: GoogleFonts.outfit(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+              ),
             ),
             const SizedBox(height: 40),
             
             // Stats Row
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                children: [
-                  _buildStatItem("Túrák", "12"),
-                  const SizedBox(width: 12),
-                  _buildStatItem("Km", "8.5"),
-                  const SizedBox(width: 12),
-                  _buildStatItem("Pontok", "1,240"),
-                ],
+              child: Consumer<StoryEngine>(
+                builder: (context, engine, _) => Row(
+                  children: [
+                    _buildStatItem("Km", "${(engine.user?.xp ?? 0) / 200}"), // Placeholder km logic
+                    const SizedBox(width: 12),
+                    _buildStatItem("XP", "${engine.user?.xp ?? 0}"),
+                  ],
+                ),
               ),
             ),
             
@@ -71,6 +80,8 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: 20),
             
             _buildAchievementList(),
+            _buildLogoutButton(context),
+            const SizedBox(height: 40),
           ],
         ),
       ),
@@ -142,6 +153,22 @@ class ProfileScreen extends StatelessWidget {
             ],
           ),
         )).toList(),
+      ),
+    );
+  }
+
+  Widget _buildLogoutButton(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+      child: OutlinedButton.icon(
+        onPressed: () => Provider.of<StoryEngine>(context, listen: false).logout(),
+        icon: const Icon(Icons.logout, color: Colors.redAccent),
+        label: const Text("KIJELENTKEZÉS", style: TextStyle(color: Colors.redAccent)),
+        style: OutlinedButton.styleFrom(
+          side: const BorderSide(color: Colors.redAccent),
+          minimumSize: const Size(double.infinity, 50),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
       ),
     );
   }

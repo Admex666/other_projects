@@ -31,10 +31,10 @@ export class StoryEngine {
 
     checkLocationTriggers(pos) {
         const currentNode = this.getCurrentNode();
-        if (!currentNode || !currentNode.triggers) return;
+        if (!currentNode || !currentNode.targetLocation) return;
 
         // Location Wait Logic
-        if (currentNode.type === 'location_wait' && currentNode.targetLocation) {
+        if (currentNode.type === 'location_wait') {
             const dist = gpsManager.getDistance(
                 pos.lat, pos.lng,
                 currentNode.targetLocation.lat, currentNode.targetLocation.lng
@@ -50,7 +50,19 @@ export class StoryEngine {
 
     getCurrentNode() {
         if (!this.storyData) return null;
-        return this.storyData.nodes[this.currentNodeId];
+        const node = { ...this.storyData.nodes[this.currentNodeId] };
+
+        // Handle conditional text (Alternative narratives)
+        if (node.alternatives) {
+            for (const alt of node.alternatives) {
+                if (this.checkCondition(alt.condition)) {
+                    node.text = alt.text;
+                    break;
+                }
+            }
+        }
+
+        return node;
     }
 
     // Logic: Variable getters/setters
@@ -64,8 +76,17 @@ export class StoryEngine {
 
     // Check conditions for a choice or node entry
     checkCondition(condition) {
-        if (!condition) return true; // No condition = always true
-        // format: "hasKey", "!hasKey", "score > 10" (simple parser)
+        if (!condition) return true;
+
+        // Support: "key", "!key", "key == value", "key != value"
+        if (condition.includes(' == ')) {
+            const [key, val] = condition.split(' == ');
+            return this.state[key] == val.replace(/['"]/g, '');
+        }
+        if (condition.includes(' != ')) {
+            const [key, val] = condition.split(' != ');
+            return this.state[key] != val.replace(/['"]/g, '');
+        }
 
         let shouldBeTrue = true;
         let varName = condition;
@@ -75,35 +96,65 @@ export class StoryEngine {
             varName = condition.substring(1);
         }
 
-        // Support simple boolean flags for now
         const val = !!this.state[varName];
         return val === shouldBeTrue;
     }
 
     advance(nextNodeId, remote = false) {
-        if (this.storyData.nodes[nextNodeId]) {
+        let node = this.storyData.nodes[nextNodeId];
+        if (node) {
+            // Handle Auto-redirection (Condition nodes)
+            if (node.type === 'condition') {
+                const result = this.checkCondition(node.condition);
+                const nextId = result ? node.successNext : node.failureNext;
+                return this.advance(nextId, remote);
+            }
+
             this.history.push(this.currentNodeId);
             this.currentNodeId = nextNodeId;
 
-            // Execute any actions on entry (e.g., set flags)
-            const node = this.getCurrentNode();
+            // Execute actions on entry
             if (node.onEnter) {
-                // e.g., "set:hasKey"
-                const parts = node.onEnter.split(':');
-                if (parts[0] === 'set') {
-                    this.setVar(parts[1], true);
-                }
+                this.executeActions(node.onEnter);
             }
 
             this.triggerUpdate();
 
-            // If local action, sync to session
-            if (!remote) {
-                if (this.onStateChange) this.onStateChange(nextNodeId);
+            // Sync to session if local
+            if (!remote && this.onStateChange) {
+                this.onStateChange(nextNodeId, this.state);
             }
         } else {
             console.error('Node not found:', nextNodeId);
         }
+    }
+
+    choose(choice) {
+        if (choice.onSelect) {
+            this.executeActions(choice.onSelect);
+        }
+        this.advance(choice.next);
+    }
+
+    executeActions(actions) {
+        // Support array of actions or single string
+        const actionList = Array.isArray(actions) ? actions : [actions];
+
+        actionList.forEach(action => {
+            const parts = action.split(':');
+            if (parts[0] === 'set') {
+                // Support "key=value" or just "key" (sets true)
+                const kv = parts[1].split('=');
+                if (kv.length === 2) {
+                    let val = kv[1];
+                    if (val === 'true') val = true;
+                    else if (val === 'false') val = false;
+                    this.setVar(kv[0], val);
+                } else {
+                    this.setVar(parts[1], true);
+                }
+            }
+        });
     }
 
     processInput(input) {
@@ -112,19 +163,33 @@ export class StoryEngine {
 
         const cleanInput = input.trim().toLowerCase();
 
-        // Flexible matching
-        const isValid = node.validAnswers.some(ans => cleanInput.includes(ans.toLowerCase()));
+        // 1. Exact or include matching (default)
+        let isValid = false;
+        if (node.validAnswers) {
+            isValid = node.validAnswers.some(ans => cleanInput.includes(ans.toLowerCase()));
+        }
+
+        // 2. Numeric matching
+        if (node.numericAnswer !== undefined) {
+            isValid = parseInt(cleanInput) === node.numericAnswer;
+        }
+
+        // 3. Optional Ordering matching (simplified: comma separated)
+        if (node.orderAnswer) {
+            const userOrder = cleanInput.split(',').map(s => s.trim());
+            isValid = JSON.stringify(userOrder) === JSON.stringify(node.orderAnswer.map(s => s.toLowerCase()));
+        }
 
         if (isValid) {
+            if (node.onSuccess) this.executeActions(node.onSuccess);
             this.advance(node.successNext);
             return { success: true };
         } else {
-            // Adaptive Logic: If failureNext is defined, go there instead of just message
+            if (node.onFailure) this.executeActions(node.onFailure);
             if (node.failureNext) {
                 this.advance(node.failureNext);
                 return { success: false, message: "Helytelen... De a történet folytatódik." };
             }
-
             return { success: false, message: node.failureMessage || "Ez nem tűnik jónak." };
         }
     }

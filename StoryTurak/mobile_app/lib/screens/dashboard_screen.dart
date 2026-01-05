@@ -1,10 +1,13 @@
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import '../widgets/campaign_card.dart';
 import '../services/story_engine.dart';
 import '../screens/game_screen.dart';
 import '../screens/intro_screen.dart';
+import '../screens/lobby_screen.dart';
+import '../services/api_service.dart';
+import '../models/session.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -14,8 +17,7 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  final StoryEngine _engine = StoryEngine();
-  Map<String, String>? _lastState;
+  Map<String, dynamic>? _lastState;
 
   @override
   void initState() {
@@ -38,6 +40,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         builder: (context) => GameScreen(
           storyId: _lastState!['storyId']!,
           initialNodeId: _lastState!['nodeId'],
+          initialVars: _lastState!['variables'],
         ),
       ),
     ).then((_) => _checkLastState());
@@ -123,6 +126,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     duration: "90 perc",
                     onTap: () => _startSolo('normafa-01'),
                   ),
+
+                  const SizedBox(height: 32),
+                  Text(
+                    "TÖBBSZEREPLŐS JÁTÉK",
+                    style: GoogleFonts.outfit(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 2,
+                      color: Colors.amber,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  _buildMultiplayerCard(),
                   
                   const SizedBox(height: 100), // Spacing for bottom bar
                 ],
@@ -130,6 +146,137 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildMultiplayerCard() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.amber.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.amber.withOpacity(0.2)),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () => _showMultiplayerDialog(isHost: true),
+                  icon: const Icon(Icons.add),
+                  label: const Text("SZERVER INDÍTÁSA"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.amber,
+                    foregroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: () => _showMultiplayerDialog(isHost: false),
+                  icon: const Icon(Icons.group_add),
+                  label: const Text("CSATLAKOZÁS"),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.amber,
+                    side: const BorderSide(color: Colors.amber),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showMultiplayerDialog({required bool isHost}) {
+    String? selectedStoryId = 'normafa-01';
+    final codeController = TextEditingController();
+    final api = ApiService();
+    final engine = Provider.of<StoryEngine>(context, listen: false);
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: const Color(0xFF1E293B),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom, left: 24, right: 24, top: 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              isHost ? "Új játék indítása" : "Csatlakozás kód alapján",
+              style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 24),
+            if (isHost) ...[
+              const Text("Válassz történetet:"),
+              const SizedBox(height: 12),
+              DropdownButtonFormField<String>(
+                value: selectedStoryId,
+                dropdownColor: const Color(0xFF1E293B),
+                items: [
+                  DropdownMenuItem(value: 'normafa-01', child: Text("Normafa Árnyai", style: GoogleFonts.outfit())),
+                  DropdownMenuItem(value: 'mist-01', child: Text("A Ködön Járó", style: GoogleFonts.outfit())),
+                ],
+                onChanged: (v) => selectedStoryId = v,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white.withOpacity(0.05),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+              ),
+            ] else ...[
+              TextField(
+                controller: codeController,
+                autofocus: true,
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, letterSpacing: 8),
+                textAlign: TextAlign.center,
+                decoration: InputDecoration(
+                  hintText: "ABCD",
+                  counterText: "",
+                  filled: true,
+                  fillColor: Colors.white.withOpacity(0.05),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                maxLength: 4,
+              ),
+            ],
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: () async {
+                try {
+                  Session session;
+                  if (isHost) {
+                    session = await api.createSession(selectedStoryId!, engine.user!);
+                  } else {
+                    session = await api.joinSession(codeController.text.toUpperCase(), engine.user!);
+                  }
+                  if (mounted) {
+                    Navigator.pop(context);
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => LobbyScreen(session: session)));
+                  }
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Hiba: $e")));
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blueAccent,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              child: Text(isHost ? "SZERVER LÉTREHOZÁSA" : "SZOBA KERESÉSE"),
+            ),
+            const SizedBox(height: 32),
+          ],
+        ),
       ),
     );
   }

@@ -14,7 +14,8 @@ class SocketService {
   Future<void> connect(String sessionId, String userId) async {
     final prefs = await SharedPreferences.getInstance();
     final isLocal = prefs.getBool('use_local_backend') ?? false;
-    final baseUrl = isLocal ? localWs : prodWs;
+    final localIp = prefs.getString('local_ip') ?? '10.0.2.2';
+    final baseUrl = isLocal ? "ws://$localIp:8001/ws" : prodWs;
 
     _channel = WebSocketChannel.connect(
       Uri.parse("$baseUrl/$sessionId/$userId"),
@@ -29,10 +30,25 @@ class SocketService {
     }));
   }
 
-  void sendAdvance(String nodeId) {
+  void sendAdvance(String storyId, String nodeId, Map<String, dynamic> variables) {
     _channel?.sink.add(jsonEncode({
       "type": "STORY_ADVANCE",
-      "nodeId": nodeId
+      "storyId": storyId,
+      "nodeId": nodeId,
+      "variables": variables
+    }));
+  }
+
+  void sendReady(bool ready) {
+    _channel?.sink.add(jsonEncode({
+      "type": "USER_READY",
+      "ready": ready
+    }));
+  }
+
+  void sendStart() {
+    _channel?.sink.add(jsonEncode({
+      "type": "GAME_START"
     }));
   }
 

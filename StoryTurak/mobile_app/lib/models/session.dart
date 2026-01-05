@@ -29,26 +29,30 @@ class Session {
 
 class Player {
   final String id;
-  final String name;
+  final String username;
   final bool isReady;
+  int xp;
 
   Player({
     required this.id,
-    required this.name,
+    required this.username,
     this.isReady = false,
+    this.xp = 0,
   });
 
   factory Player.fromJson(Map<String, dynamic> json) {
     return Player(
       id: json['id'],
-      name: json['name'],
+      username: json['username'] ?? json['name'] ?? '',
       isReady: json['isReady'] ?? false,
+      xp: json['xp'] ?? 0,
     );
   }
 
   Map<String, dynamic> toJson() => {
     'id': id,
-    'name': name,
+    'username': username,
     'isReady': isReady,
+    'xp': xp,
   };
 }

@@ -217,8 +217,9 @@ export default class GameView {
                         fb.style.color = 'var(--color-accent)';
                     }
                 } else if (action === 'choose') {
-                    const targetNode = btn.dataset.target;
-                    storyEngine.advance(targetNode);
+                    const targetNodeId = btn.dataset.target;
+                    const choice = node.choices.find(c => c.next === targetNodeId);
+                    storyEngine.choose(choice);
                 }
             };
         });
