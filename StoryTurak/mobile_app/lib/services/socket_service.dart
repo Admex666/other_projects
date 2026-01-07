@@ -1,4 +1,5 @@
 
+import 'dart:async';
 import 'dart:convert';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:latlong2/latlong.dart';
@@ -6,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class SocketService {
   WebSocketChannel? _channel;
+  Timer? _heartbeatTimer;
   static const String prodWs = "wss://storyturak-backend.onrender.com/ws";
   static const String localWs = "ws://192.168.31.86:8001/ws";
 
@@ -20,6 +22,15 @@ class SocketService {
     _channel = WebSocketChannel.connect(
       Uri.parse("$baseUrl/$sessionId/$userId"),
     );
+
+    _startHeartbeat();
+  }
+
+  void _startHeartbeat() {
+    _heartbeatTimer?.cancel();
+    _heartbeatTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
+      _channel?.sink.add(jsonEncode({"type": "HEARTBEAT"}));
+    });
   }
 
   void sendPosition(LatLng pos) {
@@ -53,6 +64,7 @@ class SocketService {
   }
 
   void disconnect() {
+    _heartbeatTimer?.cancel();
     _channel?.sink.close();
   }
 }

@@ -6,7 +6,7 @@ import json
 import asyncio
 import hashlib
 import uuid
-from db import init_db, get_user_by_username, create_user, save_progress, get_progress
+from db import init_db, get_user_by_username, create_user, save_progress, get_progress, db_create_session, db_join_session, get_user_sessions, db_update_session_status
 
 app = FastAPI(title="StoryTurak Backend", version="1.1.0")
 
@@ -17,24 +17,54 @@ sessions: Dict[str, dict] = {}
 class ConnectionManager:
     def __init__(self):
         self.active_connections: Dict[str, List[WebSocket]] = {}
+        self.last_seen: Dict[WebSocket, float] = {}
+        self.user_map: Dict[WebSocket, str] = {} # WebSocket -> userId
 
-    async def connect(self, session_id: str, websocket: WebSocket):
+    async def connect(self, session_id: str, websocket: WebSocket, user_id: str):
         await websocket.accept()
         if session_id not in self.active_connections:
             self.active_connections[session_id] = []
         self.active_connections[session_id].append(websocket)
+        self.last_seen[websocket] = asyncio.get_event_loop().time()
+        self.user_map[websocket] = user_id
 
     def disconnect(self, session_id: str, websocket: WebSocket):
         if session_id in self.active_connections:
             self.active_connections[session_id].remove(websocket)
+        if websocket in self.last_seen:
+            del self.last_seen[websocket]
+        if websocket in self.user_map:
+            del self.user_map[websocket]
+
+    def update_heartbeat(self, websocket: WebSocket):
+        self.last_seen[websocket] = asyncio.get_event_loop().time()
 
     async def broadcast(self, session_id: str, message: dict):
-        if session_id in self.active_connections:
-            for connection in self.active_connections[session_id]:
-                try:
-                    await connection.send_json(message)
-                except:
-                    pass
+        if session_id not in self.active_connections:
+            return
+        
+        # Use a copy of the list to avoid "size changed during iteration" errors
+        for connection in list(self.active_connections[session_id]):
+            try:
+                await connection.send_json(message)
+            except:
+                self.disconnect(session_id, connection)
+
+    async def monitor_connections(self):
+        while True:
+            now = asyncio.get_event_loop().time()
+            for session_id, connections in list(self.active_connections.items()):
+                for ws in list(connections):
+                    if now - self.last_seen.get(ws, 0) > 30: # 30s timeout
+                        user_id = self.user_map.get(ws)
+                        logger.info(f"User {user_id} timed out in session {session_id}")
+                        await self.broadcast(session_id, {
+                            "type": "USER_STATUS",
+                            "userId": user_id,
+                            "status": "AWAY"
+                        })
+                        # Optional: self.disconnect(session_id, ws) or just mark AWAY
+            await asyncio.sleep(10)
 
 manager = ConnectionManager()
 
@@ -97,6 +127,11 @@ def load_stories():
 
 load_stories()
 
+@app.on_event("startup")
+async def startup_event():
+    init_db()
+    asyncio.create_task(manager.monitor_connections())
+
 # --- API Endpoints ---
 
 @app.get("/")
@@ -158,31 +193,39 @@ def log_event(data: dict):
                   (data.get("userId"), data.get("type"), json.dumps(data.get("payload", {}))))
     return {"status": "logged"}
 
+@app.get("/users/{user_id}/sessions")
+def list_user_sessions(user_id: str):
+    return get_user_sessions(user_id)
+
 @app.post("/session/create")
 def create_session(campaign_id: str, host: User):
     import random, string
     session_id = ''.join(random.choices(string.ascii_uppercase, k=4))
     sessions[session_id] = {
         "id": session_id,
-        "campaignId": campaign_id,
         "hostId": host.id,
+        "campaignId": campaign_id,
         "players": [host.dict()],
         "status": "waiting"
     }
+    db_create_session(session_id, host.id, campaign_id)
     return sessions[session_id]
 
 @app.post("/session/join")
 def join_session(req: JoinRequest):
     if req.code not in sessions:
+        # Try to load from DB? (Skipping for now to keep it simple, sessions usually short-lived)
         raise HTTPException(status_code=404)
     session = sessions[req.code]
     if not any(p['id'] == req.user.id for p in session['players']):
         session['players'].append(req.user.dict())
+        db_join_session(req.code, req.user.id)
     return session
 
 @app.get("/session/{code}")
 def get_session(code: str):
     if code not in sessions:
+        # Try to load from DB? (Skipping for now to keep it simple, sessions usually short-lived)
         raise HTTPException(status_code=404)
     return sessions[code]
 
@@ -190,7 +233,7 @@ def get_session(code: str):
 
 @app.websocket("/ws/{session_id}/{user_id}")
 async def websocket_handler(websocket: WebSocket, session_id: str, user_id: str):
-    await manager.connect(session_id, websocket)
+    await manager.connect(session_id, websocket, user_id)
     try:
         # Broadcast full player list on join
         if session_id in sessions:
@@ -204,6 +247,14 @@ async def websocket_handler(websocket: WebSocket, session_id: str, user_id: str)
             # Expecting: { "type": "POSITION", "lat": X, "lng": Y } or { "type": "STORY_ADVANCE", "nodeId": X, "variables": {...}, "storyId": "..." }
             data["userId"] = user_id # Add sender info
             
+            if data.get("type") == "GAME_START" and session_id in sessions:
+                sessions[session_id]["status"] = "active"
+                db_update_session_status(session_id, "active")
+
+            if data.get("type") == "HEARTBEAT":
+                manager.update_heartbeat(websocket)
+                continue
+
             if data.get("type") == "STORY_ADVANCE" and "storyId" in data:
                 save_progress(user_id, data["storyId"], data["nodeId"], data.get("variables", {}))
                 # Fall through to broadcast

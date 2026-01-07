@@ -54,6 +54,27 @@ def init_db():
         )
     ''')
     
+    # Session Table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS sessions (
+            id TEXT PRIMARY KEY,
+            host_id TEXT,
+            story_id TEXT,
+            status TEXT DEFAULT 'waiting',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+
+    # Session Players Table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS session_players (
+            session_id TEXT,
+            user_id TEXT,
+            joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (session_id, user_id)
+        )
+    ''')
+    
     conn.commit()
     conn.close()
 
@@ -121,6 +142,46 @@ def get_progress(user_id, story_id):
     if res:
         return {"nodeId": res[0][0], "variables": json.loads(res[0][1])}
     return None
+
+def db_create_session(session_id, host_id, story_id):
+    execute_query("INSERT INTO sessions (id, host_id, story_id, status) VALUES (?, ?, ?, 'waiting')", 
+                  (session_id, host_id, story_id))
+    db_join_session(session_id, host_id)
+
+def db_join_session(session_id, user_id):
+    if DATABASE_URL:
+        execute_query("INSERT INTO session_players (session_id, user_id) VALUES (?, ?) ON CONFLICT DO NOTHING", 
+                      (session_id, user_id))
+    else:
+        execute_query("INSERT OR IGNORE INTO session_players (session_id, user_id) VALUES (?, ?)", 
+                      (session_id, user_id))
+
+def db_update_session_status(session_id, status):
+    execute_query("UPDATE sessions SET status = ? WHERE id = ?", (status, session_id))
+
+def get_user_sessions(user_id):
+    query = '''
+        SELECT s.id, s.host_id, s.story_id, s.status, s.created_at
+        FROM sessions s
+        JOIN session_players sp ON s.id = sp.session_id
+        WHERE sp.user_id = ?
+        ORDER BY s.created_at DESC
+    '''
+    res = execute_query(query, (user_id,))
+    output = []
+    for r in res:
+        # Get players for each session
+        players_res = execute_query("SELECT u.id, u.username, u.xp FROM users u JOIN session_players sp ON u.id = sp.user_id WHERE sp.session_id = ?", (r[0],))
+        players = [{"id": p[0], "username": p[1], "xp": p[2]} for p in players_res]
+        output.append({
+            "id": r[0],
+            "hostId": r[1],
+            "campaignId": r[2],
+            "status": r[3],
+            "createdAt": r[4],
+            "players": players
+        })
+    return output
 
 if __name__ == "__main__":
     # Ensure data directory exists

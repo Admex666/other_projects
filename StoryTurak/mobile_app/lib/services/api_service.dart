@@ -79,6 +79,17 @@ class ApiService {
     }
   }
 
+  Future<List<Session>> getUserSessions(String userId) async {
+    final baseUrl = await getBaseUrl();
+    final response = await http.get(Uri.parse('$baseUrl/users/$userId/sessions'));
+    if (response.statusCode == 200) {
+      Iterable l = json.decode(response.body);
+      return List<Session>.from(l.map((model) => Session.fromJson(model)));
+    } else {
+      throw Exception('Failed to fetch user sessions');
+    }
+  }
+
   // --- Auth & Progress ---
 
   Future<Player> register(String username, String password) async {

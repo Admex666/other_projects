@@ -19,6 +19,8 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/routing_service.dart';
 import '../services/map_config.dart';
+import '../models/session.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class GameScreen extends StatefulWidget {
   final String storyId;
@@ -53,6 +55,8 @@ class _GameScreenState extends State<GameScreen> {
   List<LatLng> _routePoints = [];
   List<String> _currentOrder = [];
   Map<String, LatLng> _otherPlayers = {};
+  Map<String, String> _playerStatuses = {};
+  Map<String, String> _playerNames = {};
   bool _isLoading = true;
   double _distanceToTarget = 0.0;
   double _minDistanceWitnessed = double.infinity; // For rerouting
@@ -64,6 +68,7 @@ class _GameScreenState extends State<GameScreen> {
   StreamSubscription? _compassSubscription;
   StreamSubscription? _positionSubscription;
   bool _followUser = true;
+  bool _showTeam = true;
   MapStyle _currentStyle = MapConfig.getStyle('dark');
 
   @override
@@ -119,6 +124,11 @@ class _GameScreenState extends State<GameScreen> {
       }
 
       if (widget.sessionId != null && widget.userId != null) {
+        final session = await _api.getSession(widget.sessionId!);
+        for (var p in session.players) {
+            _playerNames[p.id] = p.username;
+            _playerStatuses[p.id] = p.isReady ? "ONLINE" : "AWAY"; // Initial guess
+        }
         await _socket.connect(widget.sessionId!, widget.userId!);
         _socket.stream.listen(_handleSocketMessage);
       }
@@ -209,6 +219,14 @@ class _GameScreenState extends State<GameScreen> {
       setState(() {
         if (msg['type'] == 'POSITION') {
           _otherPlayers[msg['userId']] = LatLng(msg['lat'], msg['lng']);
+          _playerStatuses[msg['userId']] = "ONLINE";
+        } else if (msg['type'] == 'USER_STATUS') {
+          _playerStatuses[msg['userId']] = msg['status'];
+        } else if (msg['type'] == 'SESSION_UPDATE') {
+          final session = Session.fromJson(msg['session']);
+          for (var p in session.players) {
+            _playerNames[p.id] = p.username;
+          }
         } else if (msg['type'] == 'STORY_ADVANCE') {
           // Sync engine state if another player advanced
           final newNodeId = msg['nodeId'];
@@ -219,6 +237,7 @@ class _GameScreenState extends State<GameScreen> {
           }
         } else if (msg['type'] == 'USER_LEFT') {
           _otherPlayers.remove(msg['userId']);
+          _playerStatuses[msg['userId']] = "LEFT";
         }
       });
     }
@@ -352,9 +371,9 @@ class _GameScreenState extends State<GameScreen> {
 
           DraggableScrollableSheet(
             controller: _sheetController,
-            initialChildSize: 0.15,
-            minChildSize: 0.1,
-            maxChildSize: 0.85,
+            initialChildSize: 0.25, // Increased default
+            minChildSize: 0.15,
+            maxChildSize: 0.9,
             builder: (context, scrollController) {
               return ClipRRect(
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
@@ -362,16 +381,30 @@ class _GameScreenState extends State<GameScreen> {
                   filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                   child: Container(
                     decoration: BoxDecoration(color: const Color(0xFF0F172A).withOpacity(0.85), borderRadius: const BorderRadius.vertical(top: Radius.circular(24))),
-                    child: SingleChildScrollView(
-                      controller: scrollController,
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                      child: AnimatedSwitcher(duration: const Duration(milliseconds: 500), child: _buildStoryContent(node)),
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 12),
+                        Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(2))),
+                        const SizedBox(height: 20),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            controller: scrollController,
+                            child: node.type == NodeType.location_wait ? _buildTravelView(node) : _buildNarrativeView(node),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        _buildStickyActions(node),
+                        SizedBox(height: MediaQuery.of(context).padding.bottom + 16),
+                      ],
                     ),
                   ),
                 ),
               );
             },
           ),
+
+          _buildTeamOverlay(),
 
           Positioned(
             top: 40, right: 20,
@@ -461,18 +494,155 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
+  Widget _buildTeamOverlay() {
+    if (widget.sessionId == null || !_showTeam) {
+       if (widget.sessionId != null) {
+          return Positioned(
+            top: 60, left: 20,
+            child: IconButton(
+              icon: const Icon(Icons.group, color: Colors.white70),
+              onPressed: () => setState(() => _showTeam = true),
+              style: IconButton.styleFrom(backgroundColor: Colors.black45),
+            ),
+          );
+       }
+       return const SizedBox.shrink();
+    }
+    
+    final members = _playerNames.entries.where((e) => e.key != widget.userId).toList();
+    if (members.isEmpty) return const SizedBox.shrink();
+
+    return Positioned(
+      top: 60,
+      left: 20,
+      child: GestureDetector(
+        onTap: () => setState(() => _showTeam = false),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: BackdropFilter(
+            filter: ui.ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.4),
+                border: Border.all(color: Colors.white10),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.group, size: 14, color: Colors.blueAccent),
+                      const SizedBox(width: 8),
+                      Text("CSAPAT", style: GoogleFonts.outfit(fontSize: 10, letterSpacing: 1, color: Colors.white38, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  ...members.map((m) {
+                    final status = _playerStatuses[m.key] ?? "AWAY";
+                    final pos = _otherPlayers[m.key];
+                    String distStr = "";
+                    if (pos != null && status == "ONLINE") {
+                        final d = const Distance().as(LengthUnit.Meter, _currentPos, pos);
+                        distStr = d > 1000 ? "${(d/1000).toStringAsFixed(1)}km" : "${d.toInt()}m";
+                    }
+
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 8, height: 8,
+                            decoration: BoxDecoration(
+                              color: status == "ONLINE" ? Colors.greenAccent : (status == "LEFT" ? Colors.redAccent : Colors.white24),
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            m.value,
+                            style: GoogleFonts.outfit(fontSize: 12, color: status == "LEFT" ? Colors.white38 : Colors.white, fontWeight: FontWeight.bold),
+                          ),
+                          if (distStr.isNotEmpty) ...[
+                            const SizedBox(width: 8),
+                            Text(distStr, style: const TextStyle(fontSize: 10, color: Colors.white60)),
+                          ],
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildStoryContent(StoryNode node) {
     return Column(
-      key: ValueKey(node.id),
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Center(child: Container(width: 40, height: 4, margin: const EdgeInsets.only(bottom: 20), decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(2)))),
-        if (node.type == NodeType.location_wait)
-          _buildTravelView(node)
-        else
-          _buildNarrativeView(node),
-      ],
-    );
+        key: ValueKey(node.id),
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Flexible(
+            child: SingleChildScrollView(
+               physics: const NeverScrollableScrollPhysics(), // Handled by sheet
+               child: node.type == NodeType.location_wait ? _buildTravelView(node) : _buildNarrativeView(node),
+            ),
+          ),
+          const SizedBox(height: 16),
+          _buildStickyActions(node),
+        ],
+      );
+  }
+
+  Widget _buildStickyActions(StoryNode node) {
+     if (node.type == NodeType.location_wait) return const SizedBox.shrink();
+
+     return Column(
+       mainAxisSize: MainAxisSize.min,
+       crossAxisAlignment: CrossAxisAlignment.stretch,
+       children: [
+         if (node.type == NodeType.narrative)
+          ElevatedButton(
+            onPressed: () => node.next == null ? Navigator.pop(context) : _engine.next(), 
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size(double.infinity, 54),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            ),
+            child: Text(node.buttonText ?? 'TOVÁBB')
+          ),
+        
+        if (node.type == NodeType.input && node.orderAnswer != null)
+           ElevatedButton(
+            onPressed: () => _engine.checkOrder(_currentOrder),
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size(double.infinity, 54),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            ),
+            child: const Text("BEKÜLDÉS"),
+          ),
+        
+        if (node.type == NodeType.choice)
+          ...node.choices!.asMap().entries.map((e) => Padding(
+            padding: const EdgeInsets.only(bottom: 12), 
+            child: OutlinedButton(
+               onPressed: () => _engine.makeChoice(e.key), 
+               style: OutlinedButton.styleFrom(
+                 minimumSize: const Size(double.infinity, 50),
+                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+               ),
+               child: Text(e.value.text)
+            )
+          )),
+       ],
+     );
   }
 
   double _calculateTotalRouteDistance() {
@@ -523,17 +693,11 @@ class _GameScreenState extends State<GameScreen> {
         if (node.image != null) ClipRRect(borderRadius: BorderRadius.circular(16), child: Image.asset(node.image!, height: 200, fit: BoxFit.cover)),
         const SizedBox(height: 24),
         Text(node.text ?? "", style: const TextStyle(fontSize: 16, height: 1.6)),
-        const SizedBox(height: 32),
-        if (node.type == NodeType.narrative)
-          ElevatedButton(onPressed: () => node.next == null ? Navigator.pop(context) : _engine.next(), child: Text(node.buttonText ?? 'TOVÁBB')),
-        
+        const SizedBox(height: 16),
         if (node.type == NodeType.input && node.orderAnswer != null)
           _buildOrderInput(node)
         else if (node.type == NodeType.input)
           TextField(decoration: InputDecoration(hintText: 'Válasz...', filled: true, fillColor: Colors.white10, border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))), onSubmitted: (v) => _engine.handleInput(v)),
-        
-        if (node.type == NodeType.choice)
-          ...node.choices!.asMap().entries.map((e) => Padding(padding: const EdgeInsets.only(bottom: 12), child: OutlinedButton(onPressed: () => _engine.makeChoice(e.key), child: Text(e.value.text)))),
       ],
     );
   }
@@ -565,12 +729,6 @@ class _GameScreenState extends State<GameScreen> {
               ),
             );
           }).toList(),
-        ),
-        const SizedBox(height: 24),
-        ElevatedButton(
-          onPressed: () => _engine.checkOrder(_currentOrder),
-          style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
-          child: const Text("BEKÜLDÉS"),
         ),
       ],
     );

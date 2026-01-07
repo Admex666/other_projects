@@ -8,6 +8,7 @@ import 'screens/dashboard_screen.dart';
 import 'screens/explore_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/settings_screen.dart';
+import 'screens/session_history_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -60,6 +61,7 @@ class _MainScaffoldState extends State<MainScaffold> {
 
   final List<Widget> _screens = [
     const DashboardScreen(),
+    const SessionHistoryScreen(),
     const ExploreScreen(),
     const ProfileScreen(),
     const SettingsScreen(),
@@ -96,9 +98,10 @@ class _MainScaffoldState extends State<MainScaffold> {
           unselectedLabelStyle: GoogleFonts.outfit(fontSize: 10),
           items: const [
             BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: "KEZDŐLAP"),
+            BottomNavigationBarItem(icon: Icon(Icons.history), label: "SESSIONS"),
             BottomNavigationBarItem(icon: Icon(Icons.explore_outlined), label: "TÉRKÉP"),
             BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: "PROFIL"),
-            BottomNavigationBarItem(icon: Icon(Icons.settings_outlined), label: "BEÁLLÍTÁSOK"),
+            BottomNavigationBarItem(icon: Icon(Icons.settings_outlined), label: "EXTRÁK"),
           ],
         ),
       ),
