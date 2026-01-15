@@ -6,6 +6,10 @@ import json
 import asyncio
 import hashlib
 import uuid
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
 from db import init_db, get_user_by_username, create_user, save_progress, get_progress, db_create_session, db_join_session, get_user_sessions, db_update_session_status
 
 app = FastAPI(title="StoryTurak Backend", version="1.1.0")
@@ -277,6 +281,99 @@ async def websocket_handler(websocket: WebSocket, session_id: str, user_id: str)
             "type": "USER_LEFT",
             "userId": user_id
         })
+
+# --- Geolixo Endpoints ---
+from models_geolixo import Zone, Encounter, CharacterClass, PlayerState, EncounterType
+
+# Mock Active Zones (Budapest)
+active_zones: Dict[str, Zone] = {
+    # 1. District V (Inner City)
+    "zone_belvaros": Zone(
+        id="zone_belvaros",
+        name="Belváros - A Ködös Utcák",
+        description="A régi Pest szíve. Itt a legerősebb a Rend őreinek jelenléte, de a földalatti járatokban más világ uralkodik.",
+        boundary_points=[
+            (47.498, 19.040), (47.502, 19.050),
+            (47.495, 19.060), (47.490, 19.045)
+        ],
+        difficulty_level=1,
+        active_encounters=[]
+    ),
+    # 2. District VIII (Józsefváros)
+    "zone_nyolcker": Zone(
+        id="zone_nyolcker",
+        name="VIII. Kerület - A Sötét Parkok",
+        description="A senki földje. Kereskedők, csempészek és bukott költők tanyája. Veszélyes, de nagy kincseket rejt.",
+        boundary_points=[
+            (47.495, 19.065), (47.498, 19.080),
+            (47.485, 19.085), (47.485, 19.070)
+        ],
+        difficulty_level=3,
+        active_encounters=[]
+    )
+}
+
+# Define Encounters separately
+encounters_db: List[Encounter] = [
+    Encounter(
+        id="enc_poet_ghost",
+        title="Az Elfeledett Költő Szelleme",
+        description="Egy halvány alak szaval a lámpaoszlop alatt. Szavai mintha fizikai súllyal nehezednének a válladra.",
+        type=EncounterType.NARRATIVE,
+        options=[], # Narrative only
+        zone_id="zone_belvaros",
+        active_hours_start=20, active_hours_end=4
+    ),
+    Encounter(
+        id="enc_tax_collector_ambush",
+        title="Vámszedő Rajtaütés",
+        description="Két marcona alak állja utadat. 'Itt minden lépés adóköteles', mordulnak rád.",
+        type=EncounterType.FIGHT,
+        options=[], # Logic handled in resolving
+        zone_id="zone_nyolcker",
+        active_hours_start=0, active_hours_end=24
+    ),
+    Encounter(
+        id="enc_mystic_merchant",
+        title="A Ködárus",
+        description="Egy köpenyes alak kínál üvegcséket. A tartalmuk folyamatosan kavarog.",
+        type=EncounterType.SHOP,
+        options=[],
+        zone_id="zone_belvaros",
+        active_hours_start=18, active_hours_end=6
+    ),
+]
+
+# Mock Player States
+player_states: Dict[str, PlayerState] = {}
+
+@app.post("/geolixo/init_player")
+def init_player(user_id: str, character_class: CharacterClass):
+    state = PlayerState(user_id=user_id, character_class=character_class)
+    player_states[user_id] = state
+    return state
+
+@app.get("/geolixo/world/nearby")
+def get_nearby_world(lat: float, lon: float, radius: int = 1000):
+    """
+    Returns zones and encounters within 'radius' meters of (lat, lon).
+    For MVP, we just return the fixed Belvaros zone if close enough.
+    """
+    # Simple distance check logic would go here.
+    # returning all for MVP testing
+    # Filter zones for MVP (just returning all)
+    nearby_zones = list(active_zones.values())
+    
+    # Filter encounters for these zones
+    nearby_encounters = [
+        e for e in encounters_db 
+        if e.zone_id in active_zones
+    ]
+
+    return {
+        "zones": nearby_zones,
+        "encounters": nearby_encounters
+    }
 
 if __name__ == "__main__":
     import uvicorn

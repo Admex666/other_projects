@@ -1,144 +1,219 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:google_fonts/google_fonts.dart';
-import '../services/api_service.dart';
-import '../models/story.dart';
-import 'game_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
+import 'package:geolocator/geolocator.dart'; // Add Geolocation
 import '../services/map_config.dart';
+import 'package:provider/provider.dart';
+import 'package:geolocator/geolocator.dart'; // Add Geolocation
+import '../services/map_config.dart';
+import '../services/geolixo_service.dart';
+import '../services/notification_service.dart'; // System Notifications
+import '../models/geolixo_models.dart';
+import '../theme.dart';
+import 'encounter_screen.dart'; // Import EncounterScreen
+import 'package:flutter/services.dart'; // For HapticFeedback
 
 class ExploreScreen extends StatefulWidget {
-  const ExploreScreen({super.key});
+  const ExploreScreen({Key? key}) : super(key: key);
 
   @override
   State<ExploreScreen> createState() => _ExploreScreenState();
 }
 
 class _ExploreScreenState extends State<ExploreScreen> {
-  final ApiService _api = ApiService();
-  List<Story> _stories = [];
-  bool _isLoading = true;
-  String? _errorMessage;
   final MapController _mapController = MapController();
-  MapStyle _currentStyle = MapConfig.getStyle('dark');
+  LatLng _userLocation = const LatLng(47.498, 19.050); // Default to Budapest
+  Zone? _currentZone;
+  Timer? _pollTimer;
 
   @override
   void initState() {
     super.initState();
-    _loadStories();
-    _loadMapStyle();
+    // 1. Initial Fetch
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+       context.read<GeolixoService>().fetchNearbyWorld(_userLocation);
+    });
+
+    // 2. Start location stream and polling
+    _startLocationUpdates();
   }
 
-  Future<void> _loadMapStyle() async {
-    final prefs = await SharedPreferences.getInstance();
-    final styleId = prefs.getString('map_style') ?? 'dark';
-    if (mounted) {
-      setState(() {
-        _currentStyle = MapConfig.getStyle(styleId);
-      });
-    }
+  void _startLocationUpdates() {
+    // Basic polling mock for loop (replace with real Geolocator.getPositionStream in prod)
+    _pollTimer = Timer.periodic(const Duration(seconds: 5), (timer) async {
+       // Simulate movement or get real location
+       // For MVP dev, we assume _userLocation is updated by map interaction or mocking
+       
+       context.read<GeolixoService>().fetchNearbyWorld(_userLocation);
+       _checkGeofences();
+    });
   }
 
-  Future<void> _loadStories() async {
-    try {
-      final stories = await _api.fetchStories();
-      if (mounted) {
-        setState(() {
-          _stories = stories;
-          _isLoading = false;
-        });
-        _fitBounds();
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _errorMessage = e.toString();
-          _isLoading = false;
-        });
-      }
-    }
-  }
-
-  void _fitBounds() {
-    if (_stories.isEmpty) return;
+  void _checkGeofences() {
+    final service = context.read<GeolixoService>();
+    Zone? newZone;
     
-    final points = <LatLng>[];
-    for (var story in _stories) {
-      final startPos = _findFirstLocation(story);
-      if (startPos != null) points.add(startPos);
+    for (var zone in service.activeZones) {
+      if (service.isPointInZone(_userLocation, zone)) {
+        newZone = zone;
+        break;
+      }
     }
 
-    if (points.isNotEmpty) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        final bounds = LatLngBounds.fromPoints(points);
-        _mapController.fitCamera(
-          CameraFit.bounds(
-            bounds: bounds,
-            padding: const EdgeInsets.all(50),
+    // Check if ID changed (to avoid repeated triggers on polling updates)
+    if (newZone?.id != _currentZone?.id) {
+      setState(() {
+        _currentZone = newZone;
+      });
+
+      if (newZone != null) {
+        HapticFeedback.heavyImpact(); // Vibrate on entry
+        NotificationService().showZoneNotification(newZone.name); // System Notification
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Beléptél: ${newZone.name}"),
+            backgroundColor: GeolixoTheme.accent,
+            duration: const Duration(seconds: 3),
           ),
         );
-      });
+      }
     }
   }
 
-  LatLng? _findFirstLocation(Story story) {
-    // Basic search: return first node that has targetLocation
-    for (var node in story.nodes.values) {
-      if (node.targetLocation != null) return node.targetLocation;
-    }
-    return null;
+  @override
+  void dispose() {
+    _pollTimer?.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    if (_errorMessage != null) return Scaffold(body: Center(child: Text("Hiba: $_errorMessage")));
-
-    final markers = _stories.map((story) {
-      final pos = _findFirstLocation(story);
-      if (pos == null) return null;
-      return Marker(
-        point: pos,
-        width: 45,
-        height: 45,
-        child: GestureDetector(
-          onTap: () => _showStoryPreview(story),
-          child: _buildPin(),
-        ),
-      );
-    }).whereType<Marker>().toList();
+    final service = context.watch<GeolixoService>();
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0F172A),
+      extendBodyBehindAppBar: true,
       body: Stack(
         children: [
           FlutterMap(
             mapController: _mapController,
-            options: const MapOptions(
-              initialCenter: LatLng(47.4979, 19.0402),
-              initialZoom: 13,
+            options: MapOptions(
+              initialCenter: _userLocation,
+              initialZoom: 14.5,
+              minZoom: 12,
+              maxZoom: 18,
+              onTap: (tapPosition, point) {
+                // DEBUG: Teleport user on tap to test geofencing
+                setState(() {
+                  _userLocation = point;
+                });
+                _checkGeofences();
+              },
             ),
             children: [
               TileLayer(
-                urlTemplate: _currentStyle.url,
-                subdomains: _currentStyle.subdomains,
+                urlTemplate: MapConfig.darkUrl,
+                subdomains: const ['a', 'b', 'c', 'd'],
+                userAgentPackageName: 'com.storyturak.geolixo',
               ),
-              MarkerLayer(markers: markers),
+              PolygonLayer(
+                polygons: service.activeZones.map((zone) {
+                  bool isInside = _currentZone?.id == zone.id;
+                  return Polygon(
+                    points: zone.boundaryPoints,
+                    color: isInside 
+                        ? Colors.redAccent.withOpacity(0.4) // High vis inside
+                        : Colors.blueAccent.withOpacity(0.4), // High vis outside
+                    borderColor: isInside 
+                        ? Colors.red 
+                        : Colors.blue,
+                    borderStrokeWidth: 4,
+                    isFilled: true,
+                    label: zone.name,
+                    labelStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  );
+                }).toList(),
+              ),
+              MarkerLayer(
+                markers: [
+                  Marker(
+                    point: _userLocation,
+                    width: 40,
+                    height: 40,
+                    child: _buildPlayerIcon(),
+                  ),
+                ],
+              ),
             ],
           ),
           
+          
+            if (_currentZone != null)
+              Positioned(
+                bottom: 40,
+              right: 20,
+              child: FloatingActionButton.extended(
+                onPressed: () {
+                   final service = context.read<GeolixoService>();
+                   // Find an encounter for this zone
+                   Encounter? targetEncounter;
+                   
+                   try {
+                     targetEncounter = service.nearbyEncounters.firstWhere(
+                       (e) => e.zoneId == _currentZone!.id
+                     );
+                   } catch (e) {
+                     // No specific encounter found
+                   }
+                   
+                   // Fallback generic encounter if list is empty or no match
+                   targetEncounter ??= Encounter(
+                        id: "generic_explore",
+                        title: "Üres Utca",
+                        description: "Nincs itt semmi érdekes jelenleg. A szelek halkan fújnak.",
+                        type: EncounterType.narrative,
+                        zoneId: _currentZone!.id,
+                   );
+
+                   Navigator.push(
+                     context,
+                     MaterialPageRoute(
+                       builder: (context) => EncounterScreen(
+                         encounter: targetEncounter!,
+                       ),
+                     ),
+                   );
+                },
+                backgroundColor: GeolixoTheme.accent,
+                foregroundColor: GeolixoTheme.background,
+                icon: const Icon(Icons.visibility),
+                label: Text("VIZSGÁLD MEG (${_currentZone!.difficultyLevel})"),
+              ),
+            ),
+
+          // Minimalist Header
           Positioned(
             top: 60,
             left: 20,
-            child: Text(
-              "KALANDOK A KÖZELBEN",
-              style: GoogleFonts.outfit(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                shadows: [const Shadow(color: Colors.black, blurRadius: 10)],
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "HELYZET (N:${service.activeZones.length})", // Debug count
+                  style: GeolixoTheme.darkTheme.textTheme.labelLarge?.copyWith(
+                    color: Colors.white54,
+                    letterSpacing: 2,
+                  ),
+                ),
+                Text(
+                  _currentZone?.name ?? "Ismeretlen Terület",
+                  style: GeolixoTheme.darkTheme.textTheme.displayMedium?.copyWith(
+                    fontSize: 20,
+                    color: _currentZone != null ? GeolixoTheme.accent : Colors.white,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -146,73 +221,23 @@ class _ExploreScreenState extends State<ExploreScreen> {
     );
   }
 
-  Widget _buildPin() {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Container(
-          width: 35,
-          height: 35,
-          decoration: BoxDecoration(
-            color: Colors.blueAccent.withOpacity(0.3),
-            shape: BoxShape.circle,
-          ),
-        ),
-        const Icon(Icons.location_on, color: Colors.blueAccent, size: 35),
-        const Positioned(
-          top: 8,
-          child: Icon(Icons.circle, color: Colors.white, size: 8),
-        ),
-      ],
-    );
-  }
-
-  void _showStoryPreview(Story story) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        padding: const EdgeInsets.all(24),
-        decoration: const BoxDecoration(
-          color: Color(0xFF1E293B),
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              story.title,
-              style: GoogleFonts.outfit(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(height: 12),
-            const Text(
-              "Kezdd el ezt a kalandot a helyszínen!",
-              style: TextStyle(color: Colors.white70),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => GameScreen(storyId: story.id)),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blueAccent,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-              child: const Text("MEGTEKINTÉS", style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
-            const SizedBox(height: 12),
-          ],
-        ),
+  Widget _buildPlayerIcon() {
+    return Container(
+      decoration: BoxDecoration(
+        color: GeolixoTheme.primary,
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: GeolixoTheme.primary.withOpacity(0.5),
+            blurRadius: 10,
+            spreadRadius: 2,
+          )
+        ],
+      ),
+      child: const Icon(
+        Icons.navigation,
+        color: Colors.black,
+        size: 20,
       ),
     );
   }

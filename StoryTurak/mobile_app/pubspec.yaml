@@ -19,6 +19,7 @@ dependencies:
   web_socket_channel: ^2.4.3
   flutter_compass: ^0.8.0
   animations: ^2.0.11
+  flutter_local_notifications: ^19.5.0
 
 dev_dependencies:
   flutter_test:
