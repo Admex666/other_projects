@@ -1,7 +1,9 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import '../models/geolixo_models.dart';
+import '../services/geolixo_service.dart';
+import '../services/auth_service.dart';
 import '../theme.dart';
 
 class EncounterScreen extends StatefulWidget {
@@ -22,12 +24,6 @@ class _EncounterScreenState extends State<EncounterScreen> {
     super.initState();
   }
 
-  void _resolveEncounter(bool success, String text) {
-    setState(() {
-      _resolved = true;
-      _outcomeText = text;
-    });
-  }
 
   @override
   void dispose() {
@@ -117,6 +113,43 @@ class _EncounterScreenState extends State<EncounterScreen> {
     );
   }
 
+  Future<void> _resolveEncounter(bool success, String text) async {
+    setState(() => _resolved = true);
+    
+    if (success) {
+        // Call backend to get loot
+        final service = context.read<GeolixoService>();
+        final auth = context.read<AuthService>();
+        
+        if (auth.token != null) {
+            final rewards = await service.resolveEncounter(auth.token!, widget.encounter.id, "success");
+            
+            if (rewards != null) {
+                final xp = rewards['xp'];
+                final items = (rewards['items'] as List).map((i) => Item.fromJson(i)).toList();
+                
+                String rewardText = "Sikerült! Jutalmad:\n+$xp XP";
+                if (items.isNotEmpty) {
+                    rewardText += "\n\nTárgyak:";
+                    for (var item in items) {
+                        rewardText += "\n- ${item.name}";
+                    }
+                }
+                
+                setState(() {
+                    _outcomeText = rewardText;
+                });
+                return;
+            }
+        }
+    }
+    
+    // Fallback or failure
+    setState(() {
+      _outcomeText = text;
+    });
+  }
+
   Widget _buildOptionButton(String text, Color color, bool isSuccess) {
     return SizedBox(
       width: double.infinity,
@@ -124,7 +157,7 @@ class _EncounterScreenState extends State<EncounterScreen> {
         onPressed: () {
           _resolveEncounter(
             isSuccess, 
-            isSuccess ? "Sikerült! Megszerezted a zsákmányt." : "Megmenekültél, de üres kézzel."
+            isSuccess ? "Sikerült! (Loot töltése...)" : "Megmenekültél, de üres kézzel."
           );
         },
         style: ElevatedButton.styleFrom(

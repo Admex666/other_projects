@@ -15,6 +15,9 @@ import '../theme.dart';
 import 'encounter_screen.dart'; // Import EncounterScreen
 import 'package:flutter/services.dart'; // For HapticFeedback
 
+import '../services/auth_service.dart'; // Add AuthService import
+import 'character_screen.dart'; // Import CharacterScreen
+
 class ExploreScreen extends StatefulWidget {
   const ExploreScreen({Key? key}) : super(key: key);
 
@@ -34,6 +37,13 @@ class _ExploreScreenState extends State<ExploreScreen> {
     // 1. Initial Fetch
     WidgetsBinding.instance.addPostFrameCallback((_) {
        context.read<GeolixoService>().fetchNearbyWorld(_userLocation);
+       
+       // Fetch Character Data
+       final token = context.read<AuthService>().token;
+       if (token != null) {
+          context.read<GeolixoService>().fetchUserCharacter(token);
+          context.read<GeolixoService>().fetchQuests(token); // Fetch Quests
+       }
     });
 
     // 2. Start location stream and polling
@@ -47,6 +57,12 @@ class _ExploreScreenState extends State<ExploreScreen> {
        // For MVP dev, we assume _userLocation is updated by map interaction or mocking
        
        context.read<GeolixoService>().fetchNearbyWorld(_userLocation);
+       
+       final token = context.read<AuthService>().token;
+       if (token != null) {
+           context.read<GeolixoService>().fetchUserCharacter(token); // Update character state
+       }
+       
        _checkGeofences();
     });
   }
@@ -60,6 +76,19 @@ class _ExploreScreenState extends State<ExploreScreen> {
         newZone = zone;
         break;
       }
+    }
+    
+    // Check Active Quests Progress (Visit Zone)
+    for (var uq in service.activeQuests) {
+        if (uq.status != QuestStatus.active) continue;
+        
+        // Find basic data locally - simplified for MVP
+        // In prod, logic would be more robust server-side on update
+        // Here we trigger an update if we entered the target zone
+        
+        // Mock check: if current zone ID matches objective target
+        // We'd need to know the quest definition. For MVP we trust server updates on location poll 
+        // (but we haven't implemented server-side location pushing yet, so we could mock it)
     }
 
     // Check if ID changed (to avoid repeated triggers on polling updates)
@@ -78,6 +107,13 @@ class _ExploreScreenState extends State<ExploreScreen> {
             duration: const Duration(seconds: 3),
           ),
         );
+        
+        // Persist visit
+        final token = context.read<AuthService>().token;
+        final char = context.read<GeolixoService>().activeCharacter;
+        if (token != null && char != null) {
+            context.read<GeolixoService>().markZoneVisited(token, char.id, newZone.id);
+        }
       }
     }
   }
@@ -135,6 +171,10 @@ class _ExploreScreenState extends State<ExploreScreen> {
                   );
                 }).toList(),
               ),
+              // Navigation Line Layer
+              PolylineLayer(
+                  polylines: _buildNavigationLines(service),
+              ),
               MarkerLayer(
                 markers: [
                   Marker(
@@ -143,6 +183,29 @@ class _ExploreScreenState extends State<ExploreScreen> {
                     height: 40,
                     child: _buildPlayerIcon(),
                   ),
+                  // Available Quests
+                  ...service.availableQuests.map((q) {
+                      // Find location (center of starter zone or user loc fallback)
+                      LatLng qLoc = _userLocation;
+                      try {
+                          final zone = service.activeZones.firstWhere((z) => z.id == q.starterZoneId);
+                          // Approximate center - simplified
+                          qLoc = zone.boundaryPoints[0]; 
+                      } catch (e) {
+                          // Global quest, maybe put near user?
+                          qLoc = const LatLng(47.498, 19.040); // Default Belvaros
+                      }
+                      
+                      return Marker(
+                          point: qLoc,
+                          width: 40,
+                          height: 40,
+                          child: GestureDetector(
+                            onTap: () => _showQuestDialog(q),
+                            child: const Icon(Icons.priority_high, color: Colors.yellow, size: 36),
+                          ),
+                      );
+                  }),
                 ],
               ),
             ],
@@ -216,6 +279,48 @@ class _ExploreScreenState extends State<ExploreScreen> {
               ],
             ),
           ),
+          
+          // Character HUD (Top Right)
+          if (service.activeCharacter != null)
+            Positioned(
+              top: 60,
+              right: 20,
+              child: GestureDetector(
+                onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const CharacterScreen()),
+                    );
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.black54,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: Colors.white24),
+                  ),
+                  child: Row(
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            service.activeCharacter!.name,
+                            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            "LVL ${service.activeCharacter!.level} ${service.activeCharacter!.characterClass.toString().split('.').last.toUpperCase()}",
+                            style: const TextStyle(color: Colors.grey, fontSize: 10),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(width: 8),
+                      const Icon(Icons.person, color: GeolixoTheme.accent),
+                    ],
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -240,5 +345,96 @@ class _ExploreScreenState extends State<ExploreScreen> {
         size: 20,
       ),
     );
+  }
+
+  List<Polyline> _buildNavigationLines(GeolixoService service) {
+      List<Polyline> lines = [];
+      
+      for (var uq in service.activeQuests) {
+          if (uq.status != QuestStatus.active) continue;
+          
+          // Simplified: Assume we want to go to the first objective's target
+          // In a real app we'd fetch the specific quest definition to know the target ID
+          // For MVP, we'll try to match specific known IDs or loop active zones
+          
+          Zone? targetZone;
+          
+          // Hardcheck for our known seed quest
+          if (uq.questId == "quest_starter_01") {
+               try {
+                   targetZone = service.activeZones.firstWhere((z) => z.id == "zone_belvaros");
+               } catch (e) {}
+          }
+          
+          if (targetZone != null) {
+              // Calculate center
+              double latSum = 0;
+              double lngSum = 0;
+              for (var p in targetZone.boundaryPoints) {
+                  latSum += p.latitude;
+                  lngSum += p.longitude;
+              }
+              LatLng center = LatLng(latSum / targetZone.boundaryPoints.length, lngSum / targetZone.boundaryPoints.length);
+              
+              lines.add(Polyline(
+                  points: [_userLocation, center],
+                  strokeWidth: 4.0,
+                  color: GeolixoTheme.accent.withOpacity(0.7),
+                  isDotted: true,
+              ));
+          }
+      }
+      return lines;
+  }
+
+  void _showQuestDialog(Quest quest) {
+      showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+              backgroundColor: GeolixoTheme.surface,
+              title: Text(quest.title, style: GeolixoTheme.darkTheme.textTheme.displayMedium),
+              content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                      Text(quest.description, style: const TextStyle(color: Colors.white70)),
+                      const SizedBox(height: 16),
+                      Text("Jutalom: ${quest.rewardsXp} XP", style: const TextStyle(color: GeolixoTheme.accent)),
+                      const SizedBox(height: 8),
+                      // List objectives
+                      ...quest.objectives.map((o) => Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4),
+                          child: Row(children: [
+                              const Icon(Icons.check_circle_outline, color: Colors.grey, size: 16),
+                              const SizedBox(width: 8),
+                              Expanded(child: Text(o.description, style: const TextStyle(color: Colors.white60))),
+                          ]),
+                      )),
+                  ],
+              ),
+              actions: [
+                  TextButton(
+                      onPressed: () => Navigator.pop(ctx),
+                      child: const Text("Mégse"),
+                  ),
+                  ElevatedButton(
+                      style: ElevatedButton.styleFrom(backgroundColor: GeolixoTheme.accent),
+                      onPressed: () async {
+                          final token = context.read<AuthService>().token;
+                          if (token != null) {
+                              final success = await context.read<GeolixoService>().acceptQuest(token, quest.id);
+                              if (success && mounted) {
+                                  Navigator.pop(ctx);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(content: Text("Küldetés felvéve!"), backgroundColor: Colors.green),
+                                  );
+                              }
+                          }
+                      },
+                      child: const Text("Elfogadom"),
+                  ),
+              ],
+          ),
+      );
   }
 }

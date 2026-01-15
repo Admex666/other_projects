@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "C:\Users\Adam\Data\other_projects\StoryTurak\backend\main.py", line 65, in register
+    hashed_pw = get_password_hash(user.password)
+                ^^^^^^^^^^^^^^^^^
+NameError: name 'get_password_hash' is not defined
+name 'get_password_hash' is not defined

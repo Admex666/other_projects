@@ -121,6 +121,142 @@ class GeolixoService extends ChangeNotifier {
     }
   }
 
+  // --- Character Management ---
+  Character? activeCharacter;
+  List<Character> userCharacters = [];
+
+  void setActiveCharacter(Character char) {
+      activeCharacter = char;
+      notifyListeners();
+  }
+
+  void clearActiveCharacter() {
+      activeCharacter = null;
+      notifyListeners();
+  }
+  
+  Future<void> fetchUserCharacters(String token) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/characters'),
+        headers: {'Authorization': 'Bearer $token'},
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        userCharacters = data.map((d) => Character.fromJson(d)).toList();
+        
+        // If we have an active character, update its data from the list
+        if (activeCharacter != null) {
+            try {
+                activeCharacter = userCharacters.firstWhere((c) => c.id == activeCharacter!.id);
+            } catch (e) {
+                activeCharacter = null;
+            }
+        }
+        notifyListeners();
+      } else {
+        print("Failed to fetch characters: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error fetching character: $e");
+    }
+  }
+
+  // Backward compatibility alias
+  Future<void> fetchUserCharacter(String token) => fetchUserCharacters(token);
+
+  Future<void> markZoneVisited(String token, String charId, String zoneId) async {
+    try {
+        await http.post(
+            Uri.parse('$baseUrl/characters/$charId/visit-zone?zone_id=$zoneId'),
+            headers: {'Authorization': 'Bearer $token'},
+        );
+    } catch (e) {
+        print("Error marking zone visited: $e");
+    }
+  }
+
+
+  // --- Quest Management ---
+  List<Quest> availableQuests = [];
+  List<UserQuest> activeQuests = [];
+
+  Future<void> fetchQuests(String token) async {
+    try {
+        // 1. Fetch Active Quests
+        final activeResp = await http.get(
+            Uri.parse('$baseUrl/quests'),
+            headers: {'Authorization': 'Bearer $token'},
+        );
+        if (activeResp.statusCode == 200) {
+            final List<dynamic> data = json.decode(activeResp.body);
+            activeQuests = data.map((q) => UserQuest.fromJson(q)).toList();
+        }
+
+        // 2. Fetch Available Quests
+        final availResp = await http.get(
+            Uri.parse('$baseUrl/quests/available'),
+            headers: {'Authorization': 'Bearer $token'},
+        );
+        if (availResp.statusCode == 200) {
+            final List<dynamic> data = json.decode(availResp.body);
+            availableQuests = data.map((q) => Quest.fromJson(q)).toList();
+        }
+        
+        notifyListeners();
+        
+    } catch (e) {
+        print("Error fetching quests: $e");
+    }
+  }
+
+  Future<bool> acceptQuest(String token, String questId) async {
+      try {
+          final response = await http.post(
+              Uri.parse('$baseUrl/quests/$questId/accept'),
+              headers: {'Authorization': 'Bearer $token'},
+          );
+          
+          if (response.statusCode == 200) {
+              await fetchQuests(token); // Refresh state
+              return true;
+          }
+          return false;
+      } catch (e) {
+          print("Error accepting quest: $e");
+          return false;
+      }
+  }
+
+  Future<Map<String, dynamic>?> resolveEncounter(String token, String encounterId, String outcome) async {
+      try {
+          final response = await http.post(
+              Uri.parse('$baseUrl/encounters/resolve'),
+              headers: {
+                  'Authorization': 'Bearer $token',
+                  'Content-Type': 'application/json',
+              },
+              body: json.encode({
+                  "encounter_id": encounterId,
+                  "outcome": outcome
+              }),
+          );
+          
+          if (response.statusCode == 200) {
+              final data = json.decode(response.body);
+              // Refresh character to show new items immediately
+              await fetchUserCharacter(token);
+              return data;
+          }
+          print("Resolve failed: ${response.body}");
+          return null;
+      } catch (e) {
+          print("Error resolving encounter: $e");
+          return null;
+      }
+  }
+
   // Ray-casting algorithm to check if point is inside polygon
   bool isPointInZone(LatLng point, Zone zone) {
     int intersectCount = 0;

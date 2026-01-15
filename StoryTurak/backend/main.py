@@ -12,7 +12,305 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from db import init_db, get_user_by_username, create_user, save_progress, get_progress, db_create_session, db_join_session, get_user_sessions, db_update_session_status
 
-app = FastAPI(title="StoryTurak Backend", version="1.1.0")
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect, Depends, status
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from typing import List, Dict, Optional
+from datetime import timedelta
+
+# ... imports ...
+from auth import create_access_token, get_password_hash, verify_password, ACCESS_TOKEN_EXPIRE_MINUTES, decode_access_token
+from models_geolixo import UserCreate, Token, Character, CharacterClass, PlayerState, Zone, Encounter, EncounterType, Item, ItemType, Quest, QuestObjective, QuestObjectiveType, QuestStatus, UserQuest, LootTable, LootEntry
+from db import (
+    init_db, get_user_by_username, create_user, save_progress, get_progress, 
+    db_create_session, db_join_session, get_user_sessions, db_update_session_status,
+    create_character, get_characters_by_user, update_character_inventory,
+    create_quest, get_quest_by_id, get_user_quests, add_quest_to_user, update_user_quest_progress,
+    create_item, get_item, create_loot_table, get_loot_table, update_character_visited_zones
+)
+
+app = FastAPI(title="Geolixo Backend", version="2.0.0")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
+
+# --- Dependencies ---
+async def get_current_user(token: str = Depends(oauth2_scheme)):
+    payload = decode_access_token(token)
+    if payload is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    username: str = payload.get("sub")
+    if username is None:
+         raise HTTPException(status_code=401, detail="Invalid token")
+    user = get_user_by_username(username)
+    if user is None:
+        raise HTTPException(status_code=401, detail="User not found")
+    return user
+
+# --- Auth Endpoints ---
+
+@app.post("/auth/register", response_model=Token)
+def register(user: UserCreate):
+    db_user = get_user_by_username(user.username)
+    if db_user:
+        raise HTTPException(status_code=400, detail="Username already registered")
+    
+    user_id = str(uuid.uuid4())
+    hashed_pw = get_password_hash(user.password)
+    create_user(user_id, user.username, hashed_pw)
+    
+    # Auto-login
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.username}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
+
+@app.post("/auth/token", response_model=Token)
+def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
+    user = get_user_by_username(form_data.username)
+    if not user or not verify_password(form_data.password, user["password_hash"]):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user["username"]}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
+
+# --- Character Endpoints ---
+
+@app.get("/characters", response_model=List[Character])
+def get_my_characters(current_user: dict = Depends(get_current_user)):
+    return get_characters_by_user(current_user["id"])
+
+@app.post("/characters/create", response_model=Character)
+def create_new_character(character_class: CharacterClass, name: str, current_user: dict = Depends(get_current_user)):
+    char_id = str(uuid.uuid4())
+    new_char = {
+        "id": char_id,
+        "user_id": current_user["id"],
+        "name": name,
+        "character_class": character_class,
+        "level": 1,
+        "xp": 0,
+        "max_hp": 10,
+        "stats": {"strength": 5, "agility": 5} if character_class == CharacterClass.SOLDIER else {"strength": 2, "agility": 3},
+        "inventory": [],
+        "visited_zones": [],
+        "completed_quests": []
+    }
+    create_character(new_char)
+    # Return as object matching model
+    return Character(**new_char)
+
+@app.post("/characters/{character_id}/visit-zone")
+def visit_zone_endpoint(character_id: str, zone_id: str, current_user: dict = Depends(get_current_user)):
+    # Verify character belongs to user
+    chars = get_characters_by_user(current_user["id"])
+    if not any(c["id"] == character_id for c in chars):
+        raise HTTPException(status_code=403, detail="Not your character")
+    
+    update_character_visited_zones(character_id, zone_id)
+    return {"status": "ok"}
+
+# --- Quest Endpoints ---
+
+@app.get("/quests", response_model=List[UserQuest])
+def get_my_quests(current_user: dict = Depends(get_current_user)):
+    return get_user_quests(current_user["id"])
+
+@app.get("/quests/available", response_model=List[Quest])
+def get_available_quests_endpoint(current_user: dict = Depends(get_current_user)):
+    # In a real app, filter by level, prerequisites, etc.
+    # For MVP, we return our hardcoded quest #1 if not already taken
+    
+    # Check if already taken
+    my_quests = get_user_quests(current_user["id"])
+    taken_ids = [q["quest_id"] for q in my_quests]
+    
+    available = []
+    # Hardcoded check for our seed quest
+    if "quest_starter_01" not in taken_ids:
+        q = get_quest_by_id("quest_starter_01")
+        if q:
+            available.append(Quest(**q))
+            
+    return available
+
+@app.post("/quests/{quest_id}/accept", response_model=UserQuest)
+def accept_quest_endpoint(quest_id: str, current_user: dict = Depends(get_current_user)):
+    # Validation
+    quest = get_quest_by_id(quest_id)
+    if not quest:
+        raise HTTPException(status_code=404, detail="Quest not found")
+        
+    my_quests = get_user_quests(current_user["id"])
+    if any(q["quest_id"] == quest_id for q in my_quests):
+        raise HTTPException(status_code=400, detail="Quest already accepted")
+
+    user_quest_id = str(uuid.uuid4())
+    new_uq = {
+        "id": user_quest_id,
+        "user_id": current_user["id"],
+        "quest_id": quest_id,
+        "status": QuestStatus.ACTIVE,
+        "current_objective_index": 0,
+        "current_count": 0
+    }
+    add_quest_to_user(new_uq)
+    return UserQuest(**new_uq)
+
+
+class EncounterResolution(BaseModel):
+    encounter_id: str
+    outcome: str # success, failure, escape
+    
+@app.post("/encounters/resolve")
+def resolve_encounter(resolution: EncounterResolution, current_user: dict = Depends(get_current_user)):
+    # 1. Validation (Verify encounter exists, etc. - skipping for MVP)
+    
+    rewards = {"xp": 0, "items": []}
+    
+    if resolution.outcome == "success":
+        # Base XP
+        rewards["xp"] = 50
+        
+        # simple Loot Logic (Mocked table ID for now)
+        # In prod, get table_id from Encounter definition
+        table_id = "loot_table_common" 
+        dropped_items = roll_loot(table_id)
+        
+        # Update Character Inventory
+        # For simplicity, we update the first character of the user
+        chars = get_characters_by_user(current_user["id"])
+        if chars:
+            char = chars[0] # Active character
+            current_inv = char["inventory"] # List of dicts
+            
+            # Add items
+            for item in dropped_items:
+                # Check stackability
+                found = False
+                for slot in current_inv:
+                    if slot["item_id"] == item["id"]:
+                        slot["quantity"] += 1
+                        found = True
+                        break
+                if not found:
+                    current_inv.append({"item_id": item["id"], "quantity": 1, "equipped": False})
+            
+            # Save
+            update_character_inventory(char["id"], current_inv)
+            
+            # Populate response
+            rewards["items"] = dropped_items
+            
+            # Give XP to Character
+            from db import update_user_xp, update_character_xp_and_level
+            
+            # 1. Update Global User XP (Legacy/Profile)
+            update_user_xp(current_user["id"], rewards["xp"])
+
+            # 2. Update Active Character XP & Level
+            current_xp = char["xp"] + rewards["xp"]
+            current_level = char["level"]
+            # Simple level curve: Level * 100 XP to advance
+            xp_to_next = current_level * 100
+            
+            if current_xp >= xp_to_next:
+                current_level += 1
+                current_xp -= xp_to_next # Rollover or Keep total? usually total in many games, but here let's stick to total accumulation model
+                # Wait, if we use total accumulation, the check is different.
+                # Let's use simple accumulation: Level = floor(sqrt(XP/100)) or just increment
+                # For MVP: Accumulate XP. If XP > threshold, Level Up.
+                # Let's say: 0-99 = Lvl 1, 100-299 = Lvl 2, etc.
+                # Actually, simplest is just increment level if threshold passed.
+                pass 
+            
+            # Let's just blindly add XP and recalc level
+            # Level formula: Level = 1 + int((TotalXP / 100) ** 0.5) ? No, too slow.
+            # Linear: Level = 1 + TotalXP // 100
+            new_level = 1 + (current_xp // 100)
+            
+            update_character_xp_and_level(char["id"], current_xp, new_level)
+
+    return rewards
+
+def roll_loot(table_id: str):
+    import random
+    table = get_loot_table(table_id)
+    drops = []
+    if table:
+        for entry in table["entries"]: # list of dicts from JSON
+            if random.random() <= entry["chance"]:
+                # Drop!
+                item = get_item(entry["item_id"])
+                if item:
+                    drops.append(item)
+    return drops
+
+# Seed Data (Quick & Dirty)
+def seed_quests():
+    q1 = {
+        "id": "quest_starter_01",
+        "title": "A Kezdetek",
+        "description": "Menj el a Belvárosba, és keress nyomokat.",
+        "min_level": 1,
+        "objectives": [
+            {
+                "id": "obj_01",
+                "type": "visit_zone",
+                "target_id": "zone_belvaros",
+                "count": 1,
+                "description": "Látogasd meg a Belvárost"
+            }
+        ],
+        "rewards_xp": 150,
+        "starter_zone_id": None # Available globally
+    }
+    create_quest(q1)
+
+def seed_loot():
+    # Items
+    potion = {
+        "id": "item_healing_potion_minor",
+        "name": "Kicsi Gyógyital",
+        "description": "Enyhíti a fájdalmat. +5 HP.",
+        "type": "consumable",
+        "value": 10,
+        "icon_code": "local_pharmacy", # Flutter Icon name
+        "stats": {"hp_restore": 5}
+    }
+    coin = {
+        "id": "item_ancient_coin",
+        "name": "Ősi Érme",
+        "description": "Régi fizetőeszköz, a Gyűjtők szeretik.",
+        "type": "misc",
+        "value": 50,
+        "icon_code": "monetization_on",
+        "stats": {}
+    }
+    create_item(potion)
+    create_item(coin)
+    
+    # Loot Table
+    table = {
+        "id": "loot_table_common",
+        "entries": [
+            {"item_id": "item_healing_potion_minor", "chance": 0.5, "min_qty": 1, "max_qty": 1},
+            {"item_id": "item_ancient_coin", "chance": 0.3, "min_qty": 1, "max_qty": 2} # Qty logic not impl yet, assume 1
+        ]
+    }
+    create_loot_table(table)
+
+# Run seed on startup (safe to run multiple times due to INSERT OR IGNORE)
+seed_quests()
+seed_loot()
 
 # --- In-Memory Database (Mock) ---
 sessions: Dict[str, dict] = {}
@@ -153,22 +451,6 @@ def get_story(story_id: str):
         raise HTTPException(status_code=404)
     return STORY_DATA[story_id]
 
-@app.post("/auth/register")
-def register(req: AuthRequest):
-    print(f"📝 Registration request for: {req.username}")
-    if get_user_by_username(req.username):
-        raise HTTPException(status_code=400, detail="User already exists")
-    user_id = str(uuid.uuid4())
-    hashed = hash_password(req.password)
-    create_user(user_id, req.username, hashed)
-    return {"id": user_id, "username": req.username, "xp": 0}
-
-@app.post("/auth/login")
-def login(req: AuthRequest):
-    user = get_user_by_username(req.username)
-    if not user or not verify_password(req.password, user["password_hash"]):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-    return {"id": user["id"], "username": user["username"], "xp": user["xp"]}
 
 @app.get("/progress/{user_id}/{story_id}")
 def get_user_story_progress(user_id: str, story_id: str):
