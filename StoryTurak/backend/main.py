@@ -163,83 +163,9 @@ def accept_quest_endpoint(quest_id: str, current_user: dict = Depends(get_curren
     return UserQuest(**new_uq)
 
 
-class EncounterResolution(BaseModel):
-    encounter_id: str
-    outcome: str # success, failure, escape
-    
-@app.post("/encounters/resolve")
-def resolve_encounter(resolution: EncounterResolution, current_user: dict = Depends(get_current_user)):
-    # 1. Validation (Verify encounter exists, etc. - skipping for MVP)
-    
-    rewards = {"xp": 0, "items": []}
-    
-    if resolution.outcome == "success":
-        # Base XP
-        rewards["xp"] = 50
-        
-        # simple Loot Logic (Mocked table ID for now)
-        # In prod, get table_id from Encounter definition
-        table_id = "loot_table_common" 
-        dropped_items = roll_loot(table_id)
-        
-        # Update Character Inventory
-        # For simplicity, we update the first character of the user
-        chars = get_characters_by_user(current_user["id"])
-        if chars:
-            char = chars[0] # Active character
-            current_inv = char["inventory"] # List of dicts
-            
-            # Add items
-            for item in dropped_items:
-                # Check stackability
-                found = False
-                for slot in current_inv:
-                    if slot["item_id"] == item["id"]:
-                        slot["quantity"] += 1
-                        found = True
-                        break
-                if not found:
-                    current_inv.append({"item_id": item["id"], "quantity": 1, "equipped": False})
-            
-            # Save
-            update_character_inventory(char["id"], current_inv)
-            
-            # Populate response
-            rewards["items"] = dropped_items
-            
-            # Give XP to Character
-            from db import update_user_xp, update_character_xp_and_level
-            
-            # 1. Update Global User XP (Legacy/Profile)
-            update_user_xp(current_user["id"], rewards["xp"])
-
-            # 2. Update Active Character XP & Level
-            current_xp = char["xp"] + rewards["xp"]
-            current_level = char["level"]
-            # Simple level curve: Level * 100 XP to advance
-            xp_to_next = current_level * 100
-            
-            if current_xp >= xp_to_next:
-                current_level += 1
-                current_xp -= xp_to_next # Rollover or Keep total? usually total in many games, but here let's stick to total accumulation model
-                # Wait, if we use total accumulation, the check is different.
-                # Let's use simple accumulation: Level = floor(sqrt(XP/100)) or just increment
-                # For MVP: Accumulate XP. If XP > threshold, Level Up.
-                # Let's say: 0-99 = Lvl 1, 100-299 = Lvl 2, etc.
-                # Actually, simplest is just increment level if threshold passed.
-                pass 
-            
-            # Let's just blindly add XP and recalc level
-            # Level formula: Level = 1 + int((TotalXP / 100) ** 0.5) ? No, too slow.
-            # Linear: Level = 1 + TotalXP // 100
-            new_level = 1 + (current_xp // 100)
-            
-            update_character_xp_and_level(char["id"], current_xp, new_level)
-
-    return rewards
-
 def roll_loot(table_id: str):
     import random
+    from db import get_loot_table, get_item # Import here or top level
     table = get_loot_table(table_id)
     drops = []
     if table:
@@ -745,217 +671,8 @@ active_zones: Dict[str, Zone] = {
 dynamic_encounters: List[Encounter] = []
 
 # Define Encounters separately
-encounters_db: List[Encounter] = [
-    Encounter(
-        id="enc_poet_ghost",
-        title="Az Elfeledett Költő Szelleme",
-        description="Egy halvány alak szaval a lámpaoszlop alatt.",
-        type=EncounterType.STORY,
-        start_node_id="start",
-        location=(47.498, 19.040),
-        nodes={
-            "start": EncounterNode(
-                id="start",
-                type=EncounterNodeType.NARRATIVE,
-                text="A szellem feléd fordul. Szemeiben a múlt fájdalma tükröződik. 'Emlékszel még a szavakra?' - suttogja.",
-                image="assets/mist_walker_cover.png",
-                next_node_id="choice_path"
-            ),
-            "choice_path": EncounterNode(
-                id="choice_path",
-                type=EncounterNodeType.CHOICE,
-                text="Hogyan válaszolsz neki?",
-                choices=[
-                    EncounterChoice(text="Verssel felelek (Költő)", next_node_id="success_poet"),
-                    EncounterChoice(text="Csendben hallgatom", next_node_id="success_listen"),
-                    EncounterChoice(text="Fegyvert rántok", next_node_id="fail_fight")
-                ]
-            ),
-            "success_poet": EncounterNode(
-                id="success_poet",
-                type=EncounterNodeType.NARRATIVE,
-                text="A szellem elmosolyodik. 'A dal folytatódik.' Átnyújt neked egy poros tekercset.",
-                next_node_id="end"
-            ),
-            "success_listen": EncounterNode(
-                id="success_listen",
-                type=EncounterNodeType.NARRATIVE,
-                text="A csend néha többet mond. A szellem bólint és lassan elenyészik a ködben.",
-                next_node_id="end"
-            ),
-            "fail_fight": EncounterNode(
-                id="fail_fight",
-                type=EncounterNodeType.FIGHT,
-                text="A szellem haraggá válik! Meg kell küzdened az árnyékkal!",
-                enemy_id="ghost_shadow",
-                enemy_hp=20,
-                next_node_id="end"
-            ),
-            "end": EncounterNode(
-                id="end",
-                type=EncounterNodeType.NARRATIVE,
-                text="Az encounter véget ért. A köd egy pillanatra felszáll."
-            )
-        },
-        zone_id="zone_belvaros",
-        active_hours_start=20, active_hours_end=4
-    ),
-    Encounter(
-        id="enc_mystic_merchant",
-        title="A Józsefvárosi Titkos Árus",
-        description="Egy gyanús alak babrál a kabátja belső zsebében egy sötét sikátorban.",
-        type=EncounterType.STORY,
-        start_node_id="start",
-        location=(47.495, 19.065),
-        nodes={
-            "start": EncounterNode(
-                id="start",
-                type=EncounterNodeType.NARRATIVE,
-                text="'Hé, te! Érdekel valami ritka? Valami, amit a Rend nem lát szívesen?'",
-                next_node_id="choice"
-            ),
-            "choice": EncounterNode(
-                id="choice",
-                type=EncounterNodeType.CHOICE,
-                text="Mit teszel?",
-                choices=[
-                    EncounterChoice(text="Megnézem az áruját", next_node_id="merchant_view"),
-                    EncounterChoice(text="Továbbállok", next_node_id="merchant_leave")
-                ]
-            ),
-             "merchant_view": EncounterNode(
-                id="merchant_view",
-                type=EncounterNodeType.NARRATIVE,
-                text="Különös tárgyak csillannak meg a félhomályban. 'Csak tiszta aranyat fogadok el... vagy különös szívességeket.'",
-                next_node_id="end"
-            ),
-            "merchant_leave": EncounterNode(
-                id="merchant_leave",
-                type=EncounterNodeType.NARRATIVE,
-                text="Vállat ránt és elhúzódik az árnyékok közé.",
-                next_node_id="end"
-            ),
-            "end": EncounterNode(
-                id="end",
-                type=EncounterNodeType.NARRATIVE,
-                text="A találkozás befejeződött."
-            )
-        },
-        zone_id="zone_nyolcker"
-    ),
-    Encounter(
-        id="enc_nervous_gardener",
-        title="Az Idegenszerű Kertész",
-        description="Egy férfi izgatottan mutogat egy régi térképre a piac sarkában.",
-        type=EncounterType.STORY,
-        start_node_id="start",
-        location=(47.486598, 19.106905),
-        nodes={
-            "start": EncounterNode(
-                id="start",
-                type=EncounterNodeType.NARRATIVE,
-                text="'Kérlek, segíts! Elhagytam a Füvészkert titkos kulcsát. Ha a Rend megtalálja, mindennek vége!'",
-                next_node_id="choice"
-            ),
-            "choice": EncounterNode(
-                id="choice",
-                type=EncounterNodeType.CHOICE,
-                text="Mit válaszolsz?",
-                choices=[
-                    EncounterChoice(text="Segítek megkeresni", next_node_id="accept"),
-                    EncounterChoice(text="Nincs időm ilyesmire", next_node_id="reject")
-                ]
-            ),
-            "accept": EncounterNode(
-                id="accept",
-                type=EncounterNodeType.NARRATIVE,
-                text="'Hála az égnek! Indulj el a Szigony utca felé, ott látták utoljára a tolvajt.'",
-                next_node_id="end"
-            ),
-            "reject": EncounterNode(
-                id="reject",
-                type=EncounterNodeType.NARRATIVE,
-                text="A férfi csalódottan eloldalog.",
-                next_node_id="end"
-            ),
-            "end": EncounterNode(id="end", type=EncounterNodeType.NARRATIVE, text="A találkozás véget ért.")
-        },
-        zone_id="zone_nyolcker"
-    ),
-    Encounter(
-        id="enc_rival_botanist",
-        title="A Rivális Botanikus",
-        description="Egy elegáns alak áll az utadba. Könyvet tart a kezében, de a szemeiben acélos hidegség.",
-        type=EncounterType.STORY,
-        start_node_id="start",
-        location=(47.485, 19.095),
-        nodes={
-            "start": EncounterNode(
-                id="start",
-                type=EncounterNodeType.NARRATIVE,
-                text="'Te is a kulcsot keresed? Kár érte... az már az enyém. Add át, amit tudsz, vagy készülj a következményekre!'",
-                next_node_id="choice"
-            ),
-            "choice": EncounterNode(
-                id="choice",
-                type=EncounterNodeType.CHOICE,
-                text="Hogyan döntesz?",
-                choices=[
-                    EncounterChoice(text="Megpróbálom lebeszélni (Meggyőzés)", next_node_id="persuade"),
-                    EncounterChoice(text="Harcolok a kulcsért", next_node_id="fight")
-                ]
-            ),
-            "persuade": EncounterNode(
-                id="persuade",
-                type=EncounterNodeType.NARRATIVE,
-                text="A szavaid hatnak rá. 'Talán... talán igazad van. Vigyed, de vigyázz vele.'",
-                next_node_id="end"
-            ),
-            "fight": EncounterNode(
-                id="fight",
-                type=EncounterNodeType.FIGHT,
-                text="Pálcát ránt és különös növénymájgiával támad!",
-                enemy_id="rival_botanist",
-                enemy_hp=30,
-                next_node_id="end"
-            ),
-            "end": EncounterNode(id="end", type=EncounterNodeType.NARRATIVE, text="Az út szabad.")
-        },
-        zone_id="zone_nyolcker"
-    ),
-    Encounter(
-        id="enc_garden_gate",
-        title="A Füvészkert Rejtett Kapuja",
-        description="Egy borostyánnal benőtt vaskapu áll előtted. Nincs rajta kilincs, csak egy különös felirat.",
-        type=EncounterType.STORY,
-        start_node_id="start",
-        location=(47.483809, 19.085603),
-        nodes={
-            "start": EncounterNode(
-                id="start",
-                type=EncounterNodeType.NARRATIVE,
-                text="'Ami éjszaka nyílik, de nappal bezárul, a fény elől menekülve árnyékba burkol.' - Mi a jelszó?",
-                next_node_id="input"
-            ),
-            "input": EncounterNode(
-                id="input",
-                type=EncounterNodeType.INPUT,
-                text="Írd be a jelszót:",
-                correct_answer="éjjeli hölgy",
-                next_node_id="success_gate"
-            ),
-            "success_gate": EncounterNode(
-                id="success_gate",
-                type=EncounterNodeType.NARRATIVE,
-                text="A kapu halkan nyikorogva kitárul. Belépsz a kertbe.",
-                next_node_id="end"
-            ),
-            "end": EncounterNode(id="end", type=EncounterNodeType.NARRATIVE, text="Sikeresen bejutottál.")
-        },
-        zone_id="zone_nyolcker"
-    ),
-]
-
+# Legacy Encounters (Cleared)
+encounters_db: List[Encounter] = []
 # Mock Player States
 player_states: Dict[str, PlayerState] = {}
 
@@ -1021,9 +738,14 @@ def get_char_quests(char_id: str, current_user: dict = Depends(get_current_user)
 
 @app.post("/quests/{quest_id}/accept")
 def accept_quest(quest_id: str, current_user: dict = Depends(get_current_user)):
-    from db import add_quest_to_user, get_quest_by_id
+    from db import add_quest_to_user, get_quest_by_id, get_user_quests
     import uuid
     
+    # Check if already active
+    user_quests = get_user_quests(current_user["id"])
+    if any(uq["quest_id"] == quest_id and uq["status"] == "active" for uq in user_quests):
+        raise HTTPException(status_code=400, detail="Quest already active")
+
     quest = get_quest_by_id(quest_id)
     if not quest:
         raise HTTPException(status_code=404, detail="Quest not found")
@@ -1063,6 +785,7 @@ def resolve_encounter(data: dict, current_user: dict = Depends(get_current_user)
     enc_id = data.get("encounter_id")
     outcome = data.get("outcome") # Not used yet but good for logic
     
+    print(f"🔍 RESOLVE ENCOUNTER: enc_id={enc_id}, outcome={outcome}, user={current_user['id']}")
     logger.info(f"🔍 RESOLVE ENCOUNTER: enc_id={enc_id}, outcome={outcome}, user={current_user['id']}")
     
     # Check if this encounter is part of any active quest stage
@@ -1074,15 +797,31 @@ def resolve_encounter(data: dict, current_user: dict = Depends(get_current_user)
     if active_uq:
         quest = get_quest_by_id(active_uq["quest_id"])
         if quest and quest["stages"]:
-            current_stage_idx = active_uq["current_stage_index"]
-            if current_stage_idx < len(quest["stages"]):
+            current_stage_idx = active_uq.get("current_stage_index", 0)
+            total_stages = len(quest["stages"])
+            logger.info(f"🔍 Quest Progression Check: current_idx={current_stage_idx}, total_stages={total_stages}")
+            
+            # Self-healing: If somehow we are already at or past the end, complete it now
+            if current_stage_idx >= total_stages:
+                logger.warning(f"⚠️ Quest {active_uq['id']} was stuck at {current_stage_idx}/{total_stages}. Completing now.")
+                update_user_quest_progress(active_uq["id"], active_uq["current_count"], new_status="completed")
+                return {"status": "success", "message": "Quest completed (self-healed)", "new_status": "completed"}
+
+            if current_stage_idx < total_stages:
                 stage = quest["stages"][current_stage_idx]
+                
+                logger.info(f"🔍 Checking stage {current_stage_idx}: expected_enc={stage['encounter_id']}, actual_enc={enc_id}")
+                
                 if stage["encounter_id"] == enc_id:
                     # Move to next stage!
                     new_stage_idx = current_stage_idx + 1
                     new_status = "active"
-                    if new_stage_idx >= len(quest["stages"]):
+                    
+                    if new_stage_idx >= total_stages:
                         new_status = "completed"
+                        logger.info("✅ Quest Completed!")
+                    
+                    logger.info(f"🔍 ProgressingQuest: {current_stage_idx} -> {new_stage_idx} (Total: {total_stages}), NewStatus: {new_status}")
                     
                     update_user_quest_progress(
                         active_uq["id"], 
@@ -1090,7 +829,61 @@ def resolve_encounter(data: dict, current_user: dict = Depends(get_current_user)
                         new_stage_index=new_stage_idx,
                         new_status=new_status
                     )
-                    return {"status": "success", "message": "Quest stage progressed", "new_status": new_status}
+                    
+                    # --- XP & LOOT LOGIC (Consolidated) ---
+                    # Only give rewards if outcome is SUCCESS
+                    rewards = {"xp": 0, "items": []}
+                    if outcome == "success":
+                         # 1. Calculate XP
+                         # For now flat 50 XP per encounter, PLUS quest completion bonus if applicable
+                         xp_amount = 50 
+                         if new_status == "completed":
+                             xp_amount += quest.get("rewards_xp", 0)
+                             
+                         rewards["xp"] = xp_amount
+                         
+                         # 2. Loot (Simple Mock Logic)
+                         # In prod, get table_id from Encounter definition (stage["encounter_id"] -> encounter -> loot_table)
+                         table_id = "loot_table_common" 
+                         dropped_items = roll_loot(table_id)
+                         rewards["items"] = dropped_items
+                         
+                         # 3. Update Inventory & XP
+                         from db import get_characters_by_user, update_character_inventory, update_user_xp, update_character_xp_and_level
+                         chars = get_characters_by_user(current_user["id"])
+                         if chars:
+                             char = chars[0] # Active character
+                             current_inv = char["inventory"] # List of dicts
+                             
+                             # Add items to inventory
+                             for item in dropped_items:
+                                 # Check stackability
+                                 found = False
+                                 for slot in current_inv:
+                                     if slot["item_id"] == item["id"]:
+                                         slot["quantity"] += 1
+                                         found = True
+                                         break
+                                 if not found:
+                                     current_inv.append({"item_id": item["id"], "quantity": 1, "equipped": False})
+                             
+                             # Save Inventory
+                             update_character_inventory(char["id"], current_inv)
+                             
+                             # Update XP
+                             update_user_xp(current_user["id"], xp_amount) # Legacy User XP
+                             
+                             current_xp = char["xp"] + xp_amount
+                             # Simple Leveing: 1 + TotalXP // 100
+                             new_level = 1 + (current_xp // 100)
+                             update_character_xp_and_level(char["id"], current_xp, new_level)
+                    
+                    return {
+                        "status": "success", 
+                        "message": "Quest stage progressed", 
+                        "new_status": new_status,
+                        "rewards": rewards
+                    }
 
     # If no active quest matches, check if this encounter starts any available quest
     from db import get_all_quests, add_quest_to_user
@@ -1104,19 +897,24 @@ def resolve_encounter(data: dict, current_user: dict = Depends(get_current_user)
         if q.get("stages") and q["stages"][0]["encounter_id"] == enc_id:
             # Automagically accept the quest!
             uq_id = str(uuid.uuid4())
+            new_status = "active"
+            if 1 >= len(q["stages"]):
+                new_status = "completed"
+                logger.info(f"✅ Quest {q['id']} automagically completed immediately!")
+
             uq_data = {
                 "id": uq_id,
                 "user_id": current_user["id"],
                 "quest_id": q["id"],
-                "status": "active",
-                "current_stage_index": 1, # Set to next stage (1) since we just did stage 0
+                "status": new_status,
+                "current_stage_index": 1, 
                 "current_objective_index": 0,
                 "current_count": 0
             }
             add_quest_to_user(uq_data)
-            return {"status": "success", "message": "Quest accepted and progressed", "new_status": "active"}
+            return {"status": "success", "message": f"Quest accepted and progressed to {new_status}", "new_status": new_status}
 
-    return {"status": "success", "message": "Encounter resolved"}
+    return {"status": "success", "message": "Encounter resolved", "rewards": {"xp": 0, "items": []}}
 
 def sync_stories_to_quests_v2():
     """
@@ -1158,17 +956,30 @@ def sync_stories_to_quests_v2():
                     
                     # Create Logic Encounter Object for Map
                     enc_nodes = {}
+                    
+                    # Identify all wait nodes to break links
+                    wait_node_ids = {nid for nid, n in story["nodes"].items() if n.get("type") == "location_wait"}
+                    
                     for nid, nops in story["nodes"].items():
                         choices = []
                         if nops.get("choices"):
-                            choices = [EncounterChoice(text=c["text"], next_node_id=c.get("next")) for c in nops["choices"]]
+                            choices = []
+                            for c in nops["choices"]:
+                                next_id = c.get("next")
+                                if next_id in wait_node_ids:
+                                    next_id = None # End encounter here
+                                choices.append(EncounterChoice(text=c["text"], next_node_id=next_id))
+                            
+                        node_next_id = nops.get("next")
+                        if node_next_id in wait_node_ids:
+                            node_next_id = None # End encounter here
                             
                         enc_nodes[nid] = EncounterNode(
                             id=nid,
                             type=EncounterNodeType[nops.get("type", "narrative").upper()] if nops.get("type") != "location_wait" else EncounterNodeType.NARRATIVE,
                             text=nops.get("text", ""),
                             choices=choices if choices else None,
-                            next_node_id=nops.get("next"),
+                            next_node_id=node_next_id,
                             image=nops.get("image")
                         )
                     

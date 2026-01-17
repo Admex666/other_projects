@@ -215,8 +215,11 @@ class KeldorService extends ChangeNotifier {
             final List<dynamic> questList = data['quests'];
             allQuests = questList.map((q) => Quest.fromJson(q)).toList();
             
-            // Filter out quests already active
-            final activeIds = activeQuests.map((aq) => aq.questId).toSet();
+            // Filter out quests already active (ignore completed/failed for availability)
+            final activeIds = activeQuests
+                .where((aq) => aq.status == QuestStatus.active)
+                .map((aq) => aq.questId)
+                .toSet();
             availableQuests = allQuests
                 .where((q) => !activeIds.contains(q.id))
                 .toList();

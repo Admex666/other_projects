@@ -25,6 +25,7 @@ class ExploreScreen extends StatefulWidget {
 class _ExploreScreenState extends State<ExploreScreen> {
   final MapController _mapController = MapController();
   LatLng _userLocation = const LatLng(47.4979, 19.0402); // Budapest center
+  final Set<String> _triggeredEncounters = {};
   Timer? _pollTimer;
   Zone? _currentZone;
 
@@ -118,6 +119,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
   @override
   Widget build(BuildContext context) {
     final service = context.watch<KeldorService>();
+    final activeUserQuests = service.activeQuests.where((q) => q.status == QuestStatus.active).toList();
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -175,7 +177,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                     child: _buildPlayerIcon(),
                   ),
                   // Available Quests (Only show start location if not already on an active quest)
-                  if (service.activeQuests.isEmpty)
+                  if (activeUserQuests.isEmpty)
                     ...service.availableQuests.map((q) {
                         return Marker(
                             point: q.startLocation,
@@ -186,13 +188,15 @@ class _ExploreScreenState extends State<ExploreScreen> {
                     }),
 
                   // Active Quest Stage Marker
-                  ...service.activeQuests.map((uq) {
+                  ...activeUserQuests.map((uq) {
                       if (service.allQuests.isEmpty) return const Marker(point: LatLng(0,0), child: SizedBox.shrink());
                       
-                      final qDef = service.allQuests.firstWhere(
-                        (q) => q.id == uq.questId, 
-                        orElse: () => service.allQuests.first
-                      );
+                      Quest? qDef;
+                      try {
+                          qDef = service.allQuests.firstWhere((q) => q.id == uq.questId);
+                      } catch (e) {
+                          return const Marker(point: LatLng(0,0), child: SizedBox.shrink());
+                      }
                       
                       LatLng target;
                       if (qDef.stages.isNotEmpty && uq.currentStageIndex < qDef.stages.length) {
@@ -208,69 +212,65 @@ class _ExploreScreenState extends State<ExploreScreen> {
                           child: _buildQuestMarker(qDef, isActive: true),
                       );
                   }),
-                  // Encounter markers (only show if no active quest)
-                  if (service.activeQuests.isEmpty)
-                    ...service.nearbyEncounters.map((e) {
-                        return Marker(
-                            point: e.location,
-                            width: 50,
-                            height: 50,
-                            child: _buildEncounterMarker(e),
-                        );
-                    }),
                 ],
               ),
             ],
           ),
           
-            Builder(
-              builder: (context) {
-                final service = context.watch<KeldorService>();
-                Encounter? closestEncounter;
-                double? minDistance;
-                
-                const distanceCalc = Distance();
-                
-                for (var e in service.nearbyEncounters) {
-                    final d = distanceCalc.as(LengthUnit.Meter, _userLocation, e.location);
-                    if (minDistance == null || d < minDistance) {
-                        minDistance = d;
-                        closestEncounter = e;
-                    }
-                }
+          Builder(
+            builder: (context) {
+              final service = context.watch<KeldorService>();
+              Encounter? closestEncounter;
+              double? minDistance;
+              
+              const distanceCalc = Distance();
+              
+              // Determine target encounter for active quest
+              String? activeBountyEncounterId;
+              if (activeUserQuests.isNotEmpty) {
+                  final uq = activeUserQuests.first;
+                  final qDef = service.allQuests.firstWhere((q) => q.id == uq.questId, orElse: () => service.allQuests.first);
+                  if (qDef.stages.isNotEmpty && uq.currentStageIndex < qDef.stages.length) {
+                      activeBountyEncounterId = qDef.stages[uq.currentStageIndex].encounterId;
+                  }
+              }
 
-                bool isNear = minDistance != null && minDistance <= 30;
+              for (var e in service.nearbyEncounters) {
+                  final d = distanceCalc.as(LengthUnit.Meter, _userLocation, e.location);
+                  if (minDistance == null || d < minDistance) {
+                      minDistance = d;
+                      closestEncounter = e;
+                  }
+              }
 
-                if (isNear && closestEncounter != null) {
-                  return Positioned(
-                    bottom: service.activeQuests.isNotEmpty ? 220 : 40, // Move up if HUD is present
-                    right: 20,
-                    child: FloatingActionButton.extended(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => EncounterScreen(
-                              encounter: closestEncounter!,
-                            ),
-                          ),
-                        );
-                      },
-                      backgroundColor: KeldorTheme.primary,
-                      foregroundColor: KeldorTheme.background,
-                      icon: const Icon(Icons.visibility),
-                      label: Text("VIZSGÁLD MEG (${closestEncounter.title})"),
-                    ),
-                  );
-                }
-                return const SizedBox.shrink();
-              },
-            ),
+              bool isNear = minDistance != null && minDistance <= 30;
 
+              // Auto-trigger if it's the active quest target
+              if (isNear && closestEncounter != null && activeBountyEncounterId != null && closestEncounter.id == activeBountyEncounterId) {
+                   if (!_triggeredEncounters.contains(closestEncounter.id)) {
+                       _triggeredEncounters.add(closestEncounter.id);
+                       WidgetsBinding.instance.addPostFrameCallback((_) {
+                           Navigator.push(
+                             context,
+                             MaterialPageRoute(
+                               builder: (context) => EncounterScreen(
+                                 encounter: closestEncounter!,
+                               ),
+                             ),
+                           );
+                       });
+                   }
+                   return const SizedBox.shrink();
+              }
+              
+              return const SizedBox.shrink();
+            },
+          ),
 
-           // Active Quest HUD
-           if (service.activeQuests.isNotEmpty)
-             _buildActiveQuestHud(service.activeQuests.first, service),
+          // Active Quest HUD
+          if (activeUserQuests.isNotEmpty)
+            _buildActiveQuestHud(activeUserQuests.first, service),
+          
           // Minimalist Header
           Positioned(
             top: 60,

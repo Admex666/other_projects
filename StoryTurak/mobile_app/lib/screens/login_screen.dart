@@ -134,10 +134,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                           elevation: 8,
                           shadowColor: KeldorTheme.primary.withOpacity(0.3),
+                          textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                         ),
                         child: Text(
                           _isLogin ? "BEJELENTKEZÉS" : "REGISZTRÁCIÓ",
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                         ),
                       ),
                     ),
