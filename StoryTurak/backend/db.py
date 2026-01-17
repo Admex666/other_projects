@@ -98,6 +98,11 @@ def init_db():
             id TEXT PRIMARY KEY,
             title TEXT,
             description TEXT,
+            flavor_text TEXT,
+            image_url TEXT,
+            start_location TEXT, -- JSON [lat, lon]
+            stages TEXT, -- JSON array of stages
+            estimated_distance_km REAL,
             min_level INTEGER,
             objectives TEXT, -- JSON
             rewards_xp INTEGER,
@@ -142,6 +147,32 @@ def init_db():
         )
     ''')
     
+    # --- Migrations ---
+    # Check if quests table has the new columns
+    cursor.execute("PRAGMA table_info(quests)")
+    columns = [row[1] for row in cursor.fetchall()]
+    
+    if 'flavor_text' not in columns:
+        cursor.execute("ALTER TABLE quests ADD COLUMN flavor_text TEXT")
+    if 'image_url' not in columns:
+        cursor.execute("ALTER TABLE quests ADD COLUMN image_url TEXT")
+    if 'location' not in columns:
+        cursor.execute("ALTER TABLE quests ADD COLUMN location TEXT")
+    if 'start_location' not in columns:
+        cursor.execute("ALTER TABLE quests ADD COLUMN start_location TEXT")
+    if 'stages' not in columns:
+        cursor.execute("ALTER TABLE quests ADD COLUMN stages TEXT")
+    if 'end_location_hint' not in columns:
+        cursor.execute("ALTER TABLE quests ADD COLUMN end_location_hint TEXT")
+    if 'estimated_distance_km' not in columns:
+        cursor.execute("ALTER TABLE quests ADD COLUMN estimated_distance_km REAL DEFAULT 0.0")
+
+    # Check user_quests for current_stage_index
+    cursor.execute("PRAGMA table_info(user_quests)")
+    uq_columns = [row[1] for row in cursor.fetchall()]
+    if 'current_stage_index' not in uq_columns:
+        cursor.execute("ALTER TABLE user_quests ADD COLUMN current_stage_index INTEGER DEFAULT 0")
+
     conn.commit()
     conn.close()
 
@@ -269,6 +300,75 @@ def get_progress(user_id, story_id):
         return {"nodeId": res[0][0], "variables": json.loads(res[0][1])}
     return None
 
+# --- Quest Functions ---
+def create_quest(q: dict):
+    obj_json = json.dumps(q["objectives"])
+    items_json = json.dumps(q.get("rewards_items", []))
+    loc_json = json.dumps(q.get("location"))
+    start_loc_json = json.dumps(q.get("start_location"))
+    stages_json = json.dumps(q.get("stages", []))
+    end_loc_json = json.dumps(q.get("end_location_hint"))
+    
+    execute_query('''
+        INSERT OR IGNORE INTO quests (id, title, description, flavor_text, image_url, location, start_location, stages, end_location_hint, estimated_distance_km, min_level, objectives, rewards_xp, rewards_items, starter_zone_id)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (
+        q["id"], q["title"], q["description"], q.get("flavor_text"), q.get("image_url"),
+        loc_json, start_loc_json, stages_json, end_loc_json, q.get("estimated_distance_km", 0.0), q["min_level"], obj_json, q["rewards_xp"], items_json, q.get("starter_zone_id")
+    ))
+
+def get_all_quests():
+    query = """
+        SELECT id, title, description, flavor_text, image_url, location, 
+               start_location, stages, end_location_hint, estimated_distance_km, 
+               min_level, objectives, rewards_xp, rewards_items, starter_zone_id 
+        FROM quests
+    """
+    res = execute_query(query)
+    quests = []
+    for r in res:
+        quests.append({
+            "id": r[0], "title": r[1], "description": r[2], 
+            "flavor_text": r[3], "image_url": r[4], 
+            "location": json.loads(r[5]) if r[5] else None,
+            "start_location": json.loads(r[6]) if r[6] else None,
+            "stages": json.loads(r[7]) if r[7] else [],
+            "end_location_hint": json.loads(r[8]) if r[8] else None,
+            "estimated_distance_km": r[9],
+            "min_level": r[10], 
+            "objectives": json.loads(r[11]) if r[11] else [],
+            "rewards_xp": r[12],
+            "rewards_items": json.loads(r[13]) if r[13] else [],
+            "starter_zone_id": r[14]
+        })
+    return quests
+
+def get_quest_by_id(quest_id):
+    query = """
+        SELECT id, title, description, flavor_text, image_url, location, 
+               start_location, stages, end_location_hint, estimated_distance_km, 
+               min_level, objectives, rewards_xp, rewards_items, starter_zone_id 
+        FROM quests WHERE id = ?
+    """
+    res = execute_query(query, (quest_id,))
+    if res:
+        r = res[0]
+        return {
+            "id": r[0], "title": r[1], "description": r[2], 
+            "flavor_text": r[3], "image_url": r[4], 
+            "location": json.loads(r[5]) if r[5] else None,
+            "start_location": json.loads(r[6]) if r[6] else None,
+            "stages": json.loads(r[7]) if r[7] else [],
+            "end_location_hint": json.loads(r[8]) if r[8] else None,
+            "estimated_distance_km": r[9],
+            "min_level": r[10], 
+            "objectives": json.loads(r[11]) if r[11] else [],
+            "rewards_xp": r[12],
+            "rewards_items": json.loads(r[13]) if r[13] else [],
+            "starter_zone_id": r[14]
+        }
+    return None
+
 # --- Session Functions ---
 def db_create_session(session_id, host_id, story_id):
     execute_query("INSERT INTO sessions (id, host_id, story_id, status) VALUES (?, ?, ?, 'waiting')", 
@@ -310,37 +410,11 @@ def get_user_sessions(user_id):
         })
     return output
 
-# --- Quest Functions ---
-def create_quest(quest_data: dict):
-    objectives_json = json.dumps(quest_data.get("objectives", []))
-    items_json = json.dumps(quest_data.get("rewards_items", []))
-    
-    execute_query('''
-        INSERT OR IGNORE INTO quests (id, title, description, min_level, objectives, rewards_xp, rewards_items, starter_zone_id)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    ''', (
-        quest_data["id"], quest_data["title"], quest_data["description"],
-        quest_data.get("min_level", 1), objectives_json,
-        quest_data.get("rewards_xp", 100), items_json,
-        quest_data.get("starter_zone_id")
-    ))
-
-def get_quest_by_id(quest_id):
-    res = execute_query("SELECT * FROM quests WHERE id = ?", (quest_id,))
-    if res:
-        r = res[0]
-        return {
-            "id": r[0], "title": r[1], "description": r[2], "min_level": r[3],
-            "objectives": json.loads(r[4]) if r[4] else [],
-            "rewards_xp": r[5], "rewards_items": json.loads(r[6]) if r[6] else [],
-            "starter_zone_id": r[7]
-        }
-    return None
 
 def get_user_quests(user_id):
     query = '''
         SELECT uq.id, uq.user_id, uq.quest_id, uq.status, uq.current_objective_index, uq.current_count, uq.started_at,
-               q.title, q.description
+               q.title, q.description, uq.current_stage_index
         FROM user_quests uq
         JOIN quests q ON uq.quest_id = q.id
         WHERE uq.user_id = ?
@@ -351,26 +425,30 @@ def get_user_quests(user_id):
         output.append({
             "id": r[0], "user_id": r[1], "quest_id": r[2], "status": r[3],
             "current_objective_index": r[4], "current_count": r[5], "started_at": r[6],
-            "quest_title": r[7], "quest_description": r[8]
+            "quest_title": r[7], "quest_description": r[8],
+            "current_stage_index": r[9]
         })
     return output
 
 def add_quest_to_user(user_quest_data: dict):
     execute_query('''
-        INSERT INTO user_quests (id, user_id, quest_id, status, current_objective_index, current_count, started_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO user_quests (id, user_id, quest_id, status, current_objective_index, current_count, started_at, current_stage_index)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     ''', (
         user_quest_data["id"], user_quest_data["user_id"], user_quest_data["quest_id"],
-        user_quest_data["status"], user_quest_data["current_objective_index"],
-        user_quest_data["current_count"], datetime.now()
+        user_quest_data["status"], user_quest_data.get("current_objective_index", 0),
+        user_quest_data["current_count"], datetime.now(), user_quest_data.get("current_stage_index", 0)
     ))
 
-def update_user_quest_progress(uq_id, new_count, new_index=None, new_status=None):
+def update_user_quest_progress(uq_id, new_count, new_index=None, new_status=None, new_stage_index=None):
     query = "UPDATE user_quests SET current_count = ?"
     params = [new_count]
     if new_index is not None:
         query += ", current_objective_index = ?"
         params.append(new_index)
+    if new_stage_index is not None:
+        query += ", current_stage_index = ?"
+        params.append(new_stage_index)
     if new_status:
         query += ", status = ?"
         params.append(new_status)
@@ -378,6 +456,69 @@ def update_user_quest_progress(uq_id, new_count, new_index=None, new_status=None
     query += " WHERE id = ?"
     params.append(uq_id)
     execute_query(query, tuple(params))
+
+
+# --- Quest Functions ---
+def create_quest(quest_data: dict):
+    """Create or update a quest in the database"""
+    stages_json = json.dumps(quest_data.get("stages", []))
+    objectives_json = json.dumps(quest_data.get("objectives", []))
+    rewards_items_json = json.dumps(quest_data.get("rewards_items", []))
+    start_loc_json = json.dumps(quest_data.get("start_location"))
+    
+    execute_query('''
+        INSERT OR REPLACE INTO quests 
+        (id, title, description, flavor_text, image_url, start_location, stages, 
+         estimated_distance_km, min_level, objectives, rewards_xp, rewards_items, starter_zone_id)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (
+        quest_data["id"], quest_data["title"], quest_data["description"],
+        quest_data.get("flavor_text", ""), quest_data.get("image_url", ""),
+        start_loc_json, stages_json,
+        quest_data.get("estimated_distance_km", 0), quest_data.get("min_level", 1),
+        objectives_json, quest_data.get("rewards_xp", 0),
+        rewards_items_json, quest_data.get("starter_zone_id", "")
+    ))
+
+def get_quest_by_id(quest_id: str):
+    """Get a single quest by ID"""
+    res = execute_query("SELECT * FROM quests WHERE id = ?", (quest_id,))
+    if res:
+        r = res[0]
+        return {
+            "id": r[0], "title": r[1], "description": r[2],
+            "flavor_text": r[3], "image_url": r[4],
+            "start_location": json.loads(r[5]) if r[5] else (0, 0),
+            "stages": json.loads(r[6]) if r[6] else [],
+            "estimated_distance_km": r[7], "min_level": r[8],
+            "objectives": json.loads(r[9]) if r[9] else [],
+            "rewards_xp": r[10],
+            "rewards_items": json.loads(r[11]) if r[11] else [],
+            "starter_zone_id": r[12]
+        }
+    return None
+
+def get_all_quests():
+    """Get all quests"""
+    res = execute_query("SELECT * FROM quests")
+    print(f"🔍 DB returned {len(res)} rows from quests table")
+    
+    quests = []
+    for r in res:
+        print(f"   Processing quest: {r[0]} - {r[1]}")
+        quests.append({
+            "id": r[0], "title": r[1], "description": r[2],
+            "flavor_text": r[3], "image_url": r[4],
+            "start_location": json.loads(r[5]) if r[5] else (0, 0),
+            "stages": json.loads(r[6]) if r[6] else [],
+            "estimated_distance_km": r[7], "min_level": r[8],
+            "objectives": json.loads(r[9]) if r[9] else [],
+            "rewards_xp": r[10],
+            "rewards_items": json.loads(r[11]) if r[11] else [],
+            "starter_zone_id": r[12]
+        })
+    print(f"📋 Returning {len(quests)} quests from get_all_quests()")
+    return quests
 
 
 # --- Item & Loot Functions ---

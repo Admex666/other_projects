@@ -51,24 +51,31 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: GeolixoTheme.background,
+      backgroundColor: KeldorTheme.background,
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Logo placeholder
-              const Icon(Icons.map_outlined, size: 80, color: GeolixoTheme.accent),
-              const SizedBox(height: 16),
+              // Keldor Logo
+              Image.asset(
+                'assets/keldor_logo_notext.png', 
+                height: 150,
+                fit: BoxFit.contain,
+              ),
+              const SizedBox(height: 24),
               Text(
-                "GEOLIXO",
-                style: GeolixoTheme.darkTheme.textTheme.displayMedium,
+                "KELDOR",
+                style: KeldorTheme.darkTheme.textTheme.displayLarge?.copyWith(
+                  color: KeldorTheme.primary,
+                  letterSpacing: 4,
+                ),
               ),
               const SizedBox(height: 8),
               Text(
                 _isLogin ? "Jelentkezz be a kalandhoz" : "Készítsd el fiókodat",
-                style: GeolixoTheme.darkTheme.textTheme.bodyMedium,
+                style: KeldorTheme.darkTheme.textTheme.bodyMedium,
               ),
               const SizedBox(height: 48),
 
@@ -76,10 +83,18 @@ class _LoginScreenState extends State<LoginScreen> {
                 controller: _usernameController,
                 decoration: InputDecoration(
                   labelText: "Felhasználónév",
-                  prefixIcon: const Icon(Icons.person),
+                  labelStyle: const TextStyle(color: Colors.white70),
+                  prefixIcon: const Icon(Icons.person, color: KeldorTheme.primary),
                   filled: true,
-                  fillColor: Colors.white10,
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  fillColor: Colors.white.withOpacity(0.05),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: Colors.white10),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: KeldorTheme.primary),
+                  ),
                 ),
                 style: const TextStyle(color: Colors.white),
               ),
@@ -89,28 +104,41 @@ class _LoginScreenState extends State<LoginScreen> {
                 obscureText: true,
                 decoration: InputDecoration(
                   labelText: "Jelszó",
-                  prefixIcon: const Icon(Icons.lock),
+                  labelStyle: const TextStyle(color: Colors.white70),
+                  prefixIcon: const Icon(Icons.lock, color: KeldorTheme.primary),
                   filled: true,
-                  fillColor: Colors.white10,
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  fillColor: Colors.white.withOpacity(0.05),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: Colors.white10),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: KeldorTheme.primary),
+                  ),
                 ),
                 style: const TextStyle(color: Colors.white),
               ),
               const SizedBox(height: 32),
 
               _isLoading
-                  ? const CircularProgressIndicator(color: GeolixoTheme.accent)
+                  ? const CircularProgressIndicator(color: KeldorTheme.primary)
                   : SizedBox(
                       width: double.infinity,
-                      height: 50,
+                      height: 56,
                       child: ElevatedButton(
                         onPressed: _submit,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: GeolixoTheme.accent,
-                          foregroundColor: GeolixoTheme.background,
+                          backgroundColor: KeldorTheme.primary,
+                          foregroundColor: KeldorTheme.background,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          elevation: 8,
+                          shadowColor: KeldorTheme.primary.withOpacity(0.3),
                         ),
-                        child: Text(_isLogin ? "BEJELENTKEZÉS" : "REGISZTRÁCIÓ"),
+                        child: Text(
+                          _isLogin ? "BEJELENTKEZÉS" : "REGISZTRÁCIÓ",
+                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
                       ),
                     ),
               
@@ -119,7 +147,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 onPressed: () => setState(() => _isLogin = !_isLogin),
                 child: Text(
                   _isLogin ? "Nincs még fiókod? Regisztrálj!" : "Van már fiókod? Jelentkezz be!",
-                  style: const TextStyle(color: Colors.white70),
+                  style: const TextStyle(color: Colors.white60),
                 ),
               ),
             ],

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../services/geolixo_service.dart';
+import '../services/keldor_service.dart';
 import '../services/auth_service.dart';
 import '../theme.dart';
-import '../models/geolixo_models.dart';
+import '../models/keldor_models.dart';
 
 class CharacterScreen extends StatefulWidget {
   const CharacterScreen({Key? key}) : super(key: key);
@@ -21,36 +21,36 @@ class _CharacterScreenState extends State<CharacterScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
         final token = context.read<AuthService>().token;
         if (token != null) {
-            context.read<GeolixoService>().fetchUserCharacter(token);
+            context.read<KeldorService>().fetchUserCharacter(token);
         }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final service = context.watch<GeolixoService>();
+    final service = context.watch<KeldorService>();
     final char = service.activeCharacter;
     final activeQuests = service.activeQuests;
 
     if (char == null) {
       return const Scaffold(
-        backgroundColor: GeolixoTheme.background,
-        body: Center(child: CircularProgressIndicator(color: GeolixoTheme.accent)),
+        backgroundColor: KeldorTheme.background,
+        body: Center(child: CircularProgressIndicator(color: KeldorTheme.primary)),
       );
     }
 
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        backgroundColor: GeolixoTheme.background,
+        backgroundColor: KeldorTheme.background,
         appBar: AppBar(
           title: Text(char.name),
-          backgroundColor: GeolixoTheme.background,
+          backgroundColor: KeldorTheme.background,
           elevation: 0,
           centerTitle: true,
           bottom: const TabBar(
-            indicatorColor: GeolixoTheme.accent,
-            labelColor: GeolixoTheme.accent,
+            indicatorColor: KeldorTheme.primary,
+            labelColor: KeldorTheme.primary,
             unselectedLabelColor: Colors.white54,
             tabs: [
               Tab(text: "Profil", icon: Icon(Icons.person)),
@@ -74,13 +74,13 @@ class _CharacterScreenState extends State<CharacterScreen> {
                         const SizedBox(height: 24),
                         OutlinedButton.icon(
                             onPressed: () {
-                                context.read<GeolixoService>().clearActiveCharacter();
+                                context.read<KeldorService>().clearActiveCharacter();
                                 // MainApp will switch to Selection Screen
                             },
-                            icon: const Icon(Icons.people, color: GeolixoTheme.accent),
-                            label: const Text("Karakterváltás / Új Karakter", style: TextStyle(color: GeolixoTheme.accent)),
+                            icon: const Icon(Icons.people, color: KeldorTheme.primary),
+                            label: const Text("Karakterváltás / Új Karakter", style: TextStyle(color: KeldorTheme.primary)),
                             style: OutlinedButton.styleFrom(
-                                side: const BorderSide(color: GeolixoTheme.accent),
+                                side: const BorderSide(color: KeldorTheme.primary),
                                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12)
                             ),
                         ),
@@ -106,7 +106,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
                                     showDialog(
                                         context: context, 
                                         builder: (ctx) => AlertDialog(
-                                            backgroundColor: GeolixoTheme.surface,
+                                            backgroundColor: KeldorTheme.surface,
                                             title: Text(slot.name ?? "Ismeretlen Tárgy", style: const TextStyle(color: Colors.white)),
                                             content: Column(
                                                 mainAxisSize: MainAxisSize.min,
@@ -117,13 +117,13 @@ class _CharacterScreenState extends State<CharacterScreen> {
                                                             slot.iconCode == 'local_pharmacy' ? Icons.local_pharmacy : 
                                                             slot.iconCode == 'monetization_on' ? Icons.monetization_on : Icons.help_outline, 
                                                             size: 48, 
-                                                            color: GeolixoTheme.accent
+                                                            color: KeldorTheme.primary
                                                         )),
                                                     const SizedBox(height: 16),
                                                     Text(slot.description ?? "Nincs leírás.", style: const TextStyle(color: Colors.white70)),
                                                     const SizedBox(height: 16),
                                                     if (slot.stats != null && slot.stats!.isNotEmpty) ...[
-                                                        const Text("Tulajdonságok:", style: TextStyle(color: GeolixoTheme.accent, fontWeight: FontWeight.bold)),
+                                                        const Text("Tulajdonságok:", style: TextStyle(color: KeldorTheme.primary, fontWeight: FontWeight.bold)),
                                                         const SizedBox(height: 8),
                                                         ...slot.stats!.entries.map((e) => Text("- ${e.key}: ${e.value}", style: const TextStyle(color: Colors.white60))),
                                                     ]
@@ -140,7 +140,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
                                 },
                                 child: Container(
                                     decoration: BoxDecoration(
-                                        color: GeolixoTheme.surface,
+                                        color: KeldorTheme.surface,
                                         borderRadius: BorderRadius.circular(8),
                                         border: Border.all(color: Colors.white10),
                                     ),
@@ -171,12 +171,12 @@ class _CharacterScreenState extends State<CharacterScreen> {
                     final isCompleted = uq.status == QuestStatus.completed;
                     
                     return Card(
-                        color: GeolixoTheme.surface,
+                        color: KeldorTheme.surface,
                         margin: const EdgeInsets.only(bottom: 12),
                         child: ListTile(
                             leading: Icon(
                                 isCompleted ? Icons.check_circle : Icons.swap_vertical_circle,
-                                color: isCompleted ? Colors.green : GeolixoTheme.accent,
+                                color: isCompleted ? Colors.green : KeldorTheme.primary,
                             ),
                             title: Text(
                                 uq.questTitle ?? "Ismeretlen Küldetés",
@@ -190,7 +190,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
                                     const SizedBox(height: 4),
                                     Text(
                                         "Státusz: ${uq.status.toString().split('.').last.toUpperCase()}",
-                                        style: TextStyle(color: isCompleted ? Colors.green : GeolixoTheme.accent, fontSize: 10)
+                                        style: TextStyle(color: isCompleted ? Colors.green : KeldorTheme.primary, fontSize: 10)
                                     ),
                                 ],
                             ),
@@ -219,16 +219,16 @@ class _CharacterScreenState extends State<CharacterScreen> {
             Container(
                 width: 100, height: 100,
                 decoration: BoxDecoration(
-                  color: GeolixoTheme.accent.withOpacity(0.1),
+                  color: KeldorTheme.primary.withOpacity(0.1),
                   shape: BoxShape.circle,
-                  border: Border.all(color: GeolixoTheme.accent, width: 2),
+                  border: Border.all(color: KeldorTheme.primary, width: 2),
                 ),
-                child: Icon(_getClassIcon(char.characterClass), size: 50, color: GeolixoTheme.accent),
+                child: Icon(_getClassIcon(char.characterClass), size: 50, color: KeldorTheme.primary),
             ),
             const SizedBox(height: 16),
             Text(
               "Szint: ${char.level} | ${char.characterClass.toString().split('.').last.toUpperCase()}",
-              style: GeolixoTheme.darkTheme.textTheme.bodyLarge?.copyWith(
+              style: KeldorTheme.darkTheme.textTheme.displayLarge?.copyWith(
                   color: Colors.white70, fontWeight: FontWeight.bold
               ),
             ),
@@ -239,7 +239,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
     return Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-            color: GeolixoTheme.surface,
+            color: KeldorTheme.surface,
             borderRadius: BorderRadius.circular(12),
         ),
         child: Row(

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'theme.dart';
 import 'services/story_engine.dart'; // Kept if needed by other parts, though likely unused in main now
-import 'services/geolixo_service.dart';
+import 'services/keldor_service.dart';
 import 'services/notification_service.dart';
 import 'services/auth_service.dart';
 import 'screens/class_selection_screen.dart'; 
@@ -21,7 +21,7 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => GeolixoService()),
+        ChangeNotifierProvider(create: (_) => KeldorService()),
         ChangeNotifierProvider(create: (_) => AuthService()),
       ],
       child: const MainApp(),
@@ -63,20 +63,20 @@ class _MainAppState extends State<MainApp> {
     // Watch AuthService for changes to update UI automatically
     final isLoggedIn = context.select<AuthService, bool>((a) => a.isAuthenticated);
     // Watch Active Character
-    final hasActiveChar = context.select<GeolixoService, bool>((s) => s.activeCharacter != null);
+    final hasActiveChar = context.select<KeldorService, bool>((s) => s.activeCharacter != null);
 
     if (_isLoading) {
       return const MaterialApp(
         home: Scaffold(
-          backgroundColor: GeolixoTheme.background,
-          body: Center(child: CircularProgressIndicator(color: GeolixoTheme.accent)),
+          backgroundColor: KeldorTheme.background,
+          body: Center(child: CircularProgressIndicator(color: KeldorTheme.primary)),
         ),
       );
     }
 
     return MaterialApp(
-      title: 'Geolixo',
-      theme: GeolixoTheme.darkTheme,
+      title: 'Keldor',
+      theme: KeldorTheme.darkTheme,
       home: !isLoggedIn 
           ? const LoginScreen()
           : (hasActiveChar ? const MainScaffold() : const CharacterSelectionScreen()),
@@ -112,7 +112,7 @@ class _MainScaffoldState extends State<MainScaffold> {
     return Scaffold(
       extendBodyBehindAppBar: true, 
       appBar: AppBar(
-        title: const Text("Geolixo"),
+        title: const Text("Keldor"),
         backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
@@ -121,7 +121,7 @@ class _MainScaffoldState extends State<MainScaffold> {
                 onPressed: () {
                     // This will trigger notifyListeners -> MainApp rebuilds -> LoginScreen
                      // Also clear active character to prevent state leak
-                    context.read<GeolixoService>().clearActiveCharacter();
+                    context.read<KeldorService>().clearActiveCharacter();
                     context.read<AuthService>().logout(); 
                 },
             )
@@ -132,21 +132,21 @@ class _MainScaffoldState extends State<MainScaffold> {
         selectedIndex: _selectedIndex,
         onDestinationSelected: _onItemTapped,
         backgroundColor: Colors.grey[900],
-        indicatorColor: GeolixoTheme.accent.withOpacity(0.2),
+        indicatorColor: KeldorTheme.primary.withOpacity(0.2),
         destinations: const [
           NavigationDestination(
             icon: Icon(Icons.map_outlined, color: Colors.white54),
-            selectedIcon: Icon(Icons.map, color: GeolixoTheme.accent),
+            selectedIcon: Icon(Icons.map, color: KeldorTheme.primary),
             label: 'Felfedezés',
           ),
           NavigationDestination(
             icon: Icon(Icons.person_outline, color: Colors.white54),
-            selectedIcon: Icon(Icons.person, color: GeolixoTheme.accent),
+            selectedIcon: Icon(Icons.person, color: KeldorTheme.primary),
             label: 'Karakter',
           ),
            NavigationDestination(
             icon: Icon(Icons.group_outlined, color: Colors.white54),
-            selectedIcon: Icon(Icons.group, color: GeolixoTheme.accent),
+            selectedIcon: Icon(Icons.group, color: KeldorTheme.primary),
             label: 'Közösség',
           ),
         ],

@@ -29,8 +29,8 @@ class NotificationService {
     // Int64List cannot be const, so we use final
     final AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
-      'geolixo_zone_channel',
-      'Geolixo Zones',
+      'keldor_zone_channel',
+      'Keldor Zones',
       channelDescription: 'Notifications when entering game zones',
       importance: Importance.max,
       priority: Priority.high,

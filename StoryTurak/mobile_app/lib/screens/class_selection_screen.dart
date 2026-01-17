@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import '../services/auth_service.dart';
-import '../services/geolixo_service.dart';
+import '../services/keldor_service.dart';
 import 'explore_screen.dart';
 import 'dart:convert';
-import '../models/geolixo_models.dart';
-import 'package:storyturak_mobile/theme.dart';
+import '../models/keldor_models.dart';
+import '../theme.dart';
 
 class ClassSelectionScreen extends StatelessWidget {
   const ClassSelectionScreen({Key? key}) : super(key: key);
@@ -14,6 +14,7 @@ class ClassSelectionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: KeldorTheme.background,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -22,12 +23,14 @@ class ClassSelectionScreen extends StatelessWidget {
             children: [
               Text(
                 "Ki vagy te?",
-                style: GeolixoTheme.darkTheme.textTheme.displayLarge,
+                style: KeldorTheme.darkTheme.textTheme.displayLarge?.copyWith(
+                  color: KeldorTheme.primary,
+                ),
               ),
               const SizedBox(height: 8),
               Text(
-                "Válassz utat a város sötétjében.",
-                style: GeolixoTheme.darkTheme.textTheme.bodyMedium,
+                "Válassz utat Keldor sötétjében.",
+                style: KeldorTheme.darkTheme.textTheme.bodyMedium,
               ),
               const SizedBox(height: 32),
               Expanded(
@@ -88,7 +91,7 @@ class ClassCard extends StatelessWidget {
 
     try {
       final response = await http.post(
-        Uri.parse('${GeolixoService.baseUrl}/characters/create?character_class=$classId&name=$name'),
+        Uri.parse('${KeldorService.baseUrl}/characters/create?character_class=$classId&name=$name'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
@@ -104,7 +107,7 @@ class ClassCard extends StatelessWidget {
             // Pop first to exit the screen safely
             Navigator.pop(context);
             // Then update state to trigger MainApp routing
-            context.read<GeolixoService>().setActiveCharacter(newChar);
+            context.read<KeldorService>().setActiveCharacter(newChar);
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -121,29 +124,33 @@ class ClassCard extends StatelessWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: GeolixoTheme.surface,
+        backgroundColor: KeldorTheme.surface,
         title: const Text("Nevezd el hősödet!", style: TextStyle(color: Colors.white)),
         content: TextField(
             controller: nameController,
+            autofocus: true,
             style: const TextStyle(color: Colors.white),
             decoration: const InputDecoration(
                 hintText: "Karakternév",
-                hintStyle: TextStyle(color: Colors.white54)
+                hintStyle: TextStyle(color: Colors.white54),
+                enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white24)),
+                focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: KeldorTheme.primary)),
             ),
         ),
         actions: [
             TextButton(
                 onPressed: () => Navigator.pop(ctx),
-                child: const Text("Mégse")
+                child: const Text("Mégse", style: TextStyle(color: Colors.white54))
             ),
-            TextButton(
+            ElevatedButton(
                 onPressed: () {
                     if (nameController.text.isNotEmpty) {
                         Navigator.pop(ctx);
                         _createCharacter(context, nameController.text);
                     }
                 },
-                child: const Text("Tovább", style: TextStyle(color: GeolixoTheme.accent))
+                style: ElevatedButton.styleFrom(backgroundColor: KeldorTheme.primary, foregroundColor: KeldorTheme.background),
+                child: const Text("Kezdés")
             ),
         ],
       ),
@@ -155,7 +162,7 @@ class ClassCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: GeolixoTheme.surface,
+        color: KeldorTheme.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.white10),
       ),
@@ -165,30 +172,30 @@ class ClassCard extends StatelessWidget {
           onTap: () => _showNameDialog(context),
           borderRadius: BorderRadius.circular(12),
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(20.0),
             child: Row(
               children: [
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.05),
+                    color: KeldorTheme.primary.withOpacity(0.05),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(icon, color: GeolixoTheme.accent, size: 32),
+                  child: Icon(icon, color: KeldorTheme.primary, size: 32),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 20),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         title,
-                        style: GeolixoTheme.darkTheme.textTheme.displayMedium?.copyWith(fontSize: 18),
+                        style: KeldorTheme.darkTheme.textTheme.displayMedium?.copyWith(fontSize: 18, color: Colors.white),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         description,
-                        style: GeolixoTheme.darkTheme.textTheme.bodyMedium,
+                        style: KeldorTheme.darkTheme.textTheme.bodyMedium,
                       ),
                     ],
                   ),

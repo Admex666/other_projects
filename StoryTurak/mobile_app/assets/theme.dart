@@ -5,12 +5,12 @@ class KeldorTheme {
   // Midnight & Vibrant Green Palette
   static const Color background = Color(0xFF000000); // Midnight Black
   static const Color surface = Color(0xFF0A0A0A);   // Surface
-  static const Color primary = Color(0xFF51E985);   // New Vibrant Green
-  static const Color secondary = Color(0xFF40BB6C); // Darker shade of new green
+  static const Color primary = Color(0xFF39FF14);   // Vibrant Green
+  static const Color secondary = Color(0xFF00CC00); // Darker Green
   static const Color error = Color(0xFFCF6679);
   static const Color onBackground = Color(0xFFE0E0E0);
   static const Color onSurface = Color(0xFFE0E0E0);
-  static const Color accent = Color(0xFF51E985);    // New Vibrant Green
+  static const Color accent = Color(0xFF39FF14);    // Vibrant Green for special items
 
   static ThemeData get darkTheme {
     return ThemeData(

@@ -8,10 +8,123 @@ enum CharacterClass {
 }
 
 enum EncounterType {
-  fight,
-  puzzle,
+  quest,
+  random,
+  story,
+}
+
+enum EncounterNodeType {
   narrative,
-  shop,
+  choice,
+  fight,
+  input,
+}
+
+class EncounterChoice {
+  final String text;
+  final String nextNodeId;
+  final String? condition;
+
+  EncounterChoice({
+    required this.text,
+    required this.nextNodeId,
+    this.condition,
+  });
+
+  factory EncounterChoice.fromJson(Map<String, dynamic> json) {
+    return EncounterChoice(
+      text: json['text'],
+      nextNodeId: json['next_node_id'],
+      condition: json['condition'],
+    );
+  }
+}
+
+class EncounterNode {
+  final String id;
+  final EncounterNodeType type;
+  final String text;
+  final String? image;
+  final List<EncounterChoice>? choices;
+  final String? nextNodeId;
+  // Combat
+  final String? enemyId;
+  final int? enemyHp;
+  // Input
+  final String? correctAnswer;
+
+  EncounterNode({
+    required this.id,
+    required this.type,
+    required this.text,
+    this.image,
+    this.choices,
+    this.nextNodeId,
+    this.enemyId,
+    this.enemyHp,
+    this.correctAnswer,
+  });
+
+  factory EncounterNode.fromJson(Map<String, dynamic> json) {
+    return EncounterNode(
+      id: json['id'],
+      type: EncounterNodeType.values.firstWhere(
+        (e) => e.toString().split('.').last == json['type'],
+        orElse: () => EncounterNodeType.narrative,
+      ),
+      text: json['text'],
+      image: json['image'],
+      choices: (json['choices'] as List?)
+          ?.map((c) => EncounterChoice.fromJson(c))
+          .toList(),
+      nextNodeId: json['next_node_id'],
+      enemyId: json['enemy_id'],
+      enemyHp: json['enemy_hp'],
+      correctAnswer: json['correct_answer'],
+    );
+  }
+}
+
+class Encounter {
+  final String id;
+  final String title;
+  final String description;
+  final EncounterType type;
+  final Map<String, EncounterNode> nodes;
+  final String startNodeId;
+  final LatLng location;
+  final String zoneId;
+
+  Encounter({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.type,
+    required this.nodes,
+    required this.startNodeId,
+    required this.location,
+    required this.zoneId,
+  });
+
+  factory Encounter.fromJson(Map<String, dynamic> json) {
+    final nodesMap = (json['nodes'] as Map<String, dynamic>).map(
+      (key, value) => MapEntry(key, EncounterNode.fromJson(value)),
+    );
+
+    final locData = json['location'];
+    final loc = LatLng(locData[0].toDouble(), locData[1].toDouble());
+
+    return Encounter(
+      id: json['id'],
+      title: json['title'],
+      description: json['description'],
+      type: EncounterType.values.firstWhere((e) => e.name == json['type'].toString().toLowerCase(), orElse: () => EncounterType.story),
+      nodes: nodesMap,
+      startNodeId: json['start_node_id'],
+      location: loc,
+      zoneId: json['zone_id'],
+    );
+  }
 }
 
 class Zone {
@@ -42,36 +155,8 @@ class Zone {
   }
 }
 
-class Encounter {
-  final String id;
-  final String title;
-  final String description;
-  final EncounterType type;
-  final String zoneId;
-
-  Encounter({
-    required this.id,
-    required this.title,
-    required this.description,
-    required this.type,
-    required this.zoneId,
-  });
-
-  factory Encounter.fromJson(Map<String, dynamic> json) {
-    return Encounter(
-      id: json['id'],
-      title: json['title'],
-      description: json['description'],
-      type: EncounterType.values.firstWhere(
-        (e) => e.toString().split('.').last == json['type'],
-        orElse: () => EncounterType.narrative,
-      ),
-      zoneId: json['zone_id'],
-    );
-  }
-}
-
 class Item {
+  // ... (remains same)
   final String id;
   final String name;
   final String description;
@@ -190,6 +275,7 @@ enum QuestObjectiveType {
   visit_zone,
   defeat_enemy,
   collect_item,
+  complete_encounter,
 }
 
 class QuestObjective {
@@ -221,10 +307,38 @@ class QuestObjective {
   }
 }
 
+class QuestStage {
+  final String id;
+  final String description;
+  final LatLng location;
+  final String? encounterId;
+
+  QuestStage({
+    required this.id,
+    required this.description,
+    required this.location,
+    this.encounterId,
+  });
+
+  factory QuestStage.fromJson(Map<String, dynamic> json) {
+    return QuestStage(
+      id: json['id'],
+      description: json['description'],
+      location: LatLng(json['location'][0].toDouble(), json['location'][1].toDouble()),
+      encounterId: json['encounter_id'],
+    );
+  }
+}
+
 class Quest {
   final String id;
   final String title;
   final String description;
+  final String? flavorText;
+  final String? imageUrl;
+  final LatLng startLocation;
+  final List<QuestStage> stages;
+  final double estimatedDistanceKm;
   final int minLevel;
   final List<QuestObjective> objectives;
   final int rewardsXp;
@@ -234,6 +348,11 @@ class Quest {
     required this.id,
     required this.title,
     required this.description,
+    this.flavorText,
+    this.imageUrl,
+    required this.startLocation,
+    required this.stages,
+    this.estimatedDistanceKm = 0.0,
     required this.minLevel,
     required this.objectives,
     required this.rewardsXp,
@@ -245,10 +364,21 @@ class Quest {
       id: json['id'],
       title: json['title'],
       description: json['description'],
+      flavorText: json['flavor_text'],
+      imageUrl: json['image_url'],
+      startLocation: json['start_location'] != null
+          ? LatLng(json['start_location'][0].toDouble(), json['start_location'][1].toDouble())
+          : (json['location'] != null 
+              ? LatLng(json['location'][0].toDouble(), json['location'][1].toDouble())
+              : const LatLng(0, 0)),
+      stages: (json['stages'] as List?)
+          ?.map((s) => QuestStage.fromJson(s))
+          .toList() ?? [],
+      estimatedDistanceKm: (json['estimated_distance_km'] ?? 0.0).toDouble(),
       minLevel: json['min_level'],
-      objectives: (json['objectives'] as List)
-          .map((o) => QuestObjective.fromJson(o))
-          .toList(),
+      objectives: (json['objectives'] as List?)
+          ?.map((o) => QuestObjective.fromJson(o))
+          .toList() ?? [],
       rewardsXp: json['rewards_xp'],
       starterZoneId: json['starter_zone_id'],
     );
@@ -259,6 +389,7 @@ class UserQuest {
   final String id;
   final String questId;
   final QuestStatus status;
+  final int currentStageIndex;
   final int currentObjectiveIndex;
   final int currentCount;
 
@@ -266,6 +397,7 @@ class UserQuest {
     required this.id,
     required this.questId,
     required this.status,
+    required this.currentStageIndex,
     required this.currentObjectiveIndex,
     required this.currentCount,
     this.questTitle,
@@ -283,7 +415,8 @@ class UserQuest {
          (e) => e.toString().split('.').last == json['status'],
          orElse: () => QuestStatus.available
       ),
-      currentObjectiveIndex: json['current_objective_index'],
+      currentStageIndex: json['current_stage_index'] ?? 0,
+      currentObjectiveIndex: json['current_objective_index'] ?? 0,
       currentCount: json['current_count'],
       questTitle: json['quest_title'],
       questDescription: json['quest_description'],

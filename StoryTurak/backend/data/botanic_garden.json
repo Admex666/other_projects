@@ -1,0 +1,155 @@
+{
+    "id": "quest_botanic_garden",
+    "title": "A Füvészkert Titka",
+    "startNode": "intro",
+    "description": "Segíts a kertésznek visszaszerezni a kulcsot, és juss be a rejtett kertbe.",
+    "flavor_text": "A Józsefvárosi piac és a Füvészkert között valahol egy elfeledett ösvény kanyarog. Csak az találja meg, aki ismeri a titkos jelszót.",
+    "image_url": "assets/mist_garden_gate.png",
+    "estimated_distance_km": 1.6,
+    "rewards_xp": 750,
+    "rewards_items": ["item_herb_bag"],
+    "initialState": {
+        "FLAG_KEY_OBTAINED": false
+    },
+    "nodes": {
+        "intro": {
+            "id": "intro",
+            "type": "narrative",
+            "text": "A Józsefvárosi piac zaja mögött valami más is hallatszik. Egy suttogás, ami a növények nyelvén szól. Egy régi kertész segítségre vár.",
+            "next": "goto_market",
+            "buttonText": "Keresem a kertészt"
+        },
+        "goto_market": {
+            "id": "goto_market",
+            "type": "location_wait",
+            "text": "Keressd meg az Idegenszerű Kertészt a piac sarkán.",
+            "description": "Beszélj a kertésszel a piacon",
+            "targetLocation": {
+                "lat": 47.486598,
+                "lng": 19.106905,
+                "radius": 30
+            },
+            "next": "enc_nervous_gardener",
+            "fallbackButton": "Ott vagyok"
+        },
+        "enc_nervous_gardener": {
+            "id": "enc_nervous_gardener",
+            "type": "choice",
+            "title": "Az Idegenszerű Kertész",
+            "text": "'Kérlek, segíts! Elhagytam a Füvészkert titkos kulcsát. Ha a Rend megtalálja, mindennek vége!'",
+            "choices": [
+                {
+                    "text": "Segítek megkeresni",
+                    "next": "gardener_accept"
+                },
+                {
+                    "text": "Nincs időm ilyesmire",
+                    "next": "gardener_reject"
+                }
+            ]
+        },
+        "gardener_reject": {
+            "id": "gardener_reject",
+            "type": "narrative",
+            "text": "A férfi csalódottan eloldalog.",
+            "next": "intro",
+            "buttonText": "Vissza"
+        },
+        "gardener_accept": {
+            "id": "gardener_accept",
+            "type": "narrative",
+            "text": "'Hála az égnek! Indulj el a Szigony utca felé, ott látták utoljára a tolvajt.'",
+            "next": "goto_rival",
+            "buttonText": "Indulás"
+        },
+        "goto_rival": {
+            "id": "goto_rival",
+            "type": "location_wait",
+            "text": "Menj a Szigony utca felé, ahol a tolvajt látták.",
+            "description": "Szerezd vissza a kulcsot a rivális botanikustól",
+            "targetLocation": {
+                "lat": 47.485,
+                "lng": 19.095,
+                "radius": 30
+            },
+            "next": "enc_rival_botanist",
+            "fallbackButton": "Megérkeztem"
+        },
+        "enc_rival_botanist": {
+            "id": "enc_rival_botanist",
+            "type": "choice",
+            "title": "A Rivális Botanikus",
+            "text": "Egy elegáns alak áll az utadba. 'Te is a kulcsot keresed? Kár érte... az már az enyém. Add át, amit tudsz, vagy készülj a következményekre!'",
+            "choices": [
+                {
+                    "text": "Megpróbálom lebeszélni (Meggyőzés)",
+                    "next": "rival_persuade"
+                },
+                {
+                    "text": "Harcolok a kulcsért",
+                    "next": "rival_fight"
+                }
+            ]
+        },
+        "rival_persuade": {
+            "id": "rival_persuade",
+            "type": "narrative",
+            "text": "A szavaid hatnak rá. 'Talán... talán igazad van. Vigyed, de vigyázz vele.' (Megkaptad a Kulcsot)",
+            "onEnter": "set:FLAG_KEY_OBTAINED=true",
+            "next": "goto_gate",
+            "buttonText": "Tovább"
+        },
+        "rival_fight": {
+            "id": "rival_fight",
+            "type": "fight",
+            "text": "Pálcát ránt és különös növénymágiával támad!",
+            "enemyId": "rival_botanist",
+            "enemyHp": 30,
+            "next": "goto_gate",
+            "winText": "A botanikus menekülőre fogja. A kulcs ott csillog a földön."
+        },
+        "goto_gate": {
+            "id": "goto_gate",
+            "type": "location_wait",
+            "text": "Most már megvan a nyom. Irány a Füvészkert rejtett kapuja!",
+            "description": "Juss be a Füvészkert rejtett kapuján",
+            "targetLocation": {
+                "lat": 47.483809,
+                "lng": 19.085603,
+                "radius": 30
+            },
+            "next": "enc_garden_gate",
+            "fallbackButton": "Ott vagyok"
+        },
+        "enc_garden_gate": {
+            "id": "enc_garden_gate",
+            "type": "input",
+            "title": "A Füvészkert Rejtett Kapuja",
+            "text": "Egy borostyánnal benőtt vaskapu áll előtted. 'Ami éjszaka nyílik, de nappal bezárul, a fény elől menekülve árnyékba burkol.' - Mi a jelszó?",
+            "correctAnswer": "éjjeli hölgy",
+            "successNext": "gate_success",
+            "failureNext": "gate_fail",
+            "buttonText": "Beírom"
+        },
+        "gate_fail": {
+            "id": "gate_fail",
+            "type": "narrative",
+            "text": "A kapu zárva marad. A borostyán mintha szorosabbra fogná.",
+            "next": "enc_garden_gate",
+            "buttonText": "Próba újra"
+        },
+        "gate_success": {
+            "id": "gate_success",
+            "type": "narrative",
+            "text": "A kapu halkan nyikorogva kitárul. Belépsz a kertbe, ahol a város zaja megszűnik.",
+            "next": "quest_completed",
+            "buttonText": "Belépés"
+        },
+        "quest_completed": {
+            "id": "quest_completed",
+            "type": "narrative",
+            "text": "Küldetés Teljesítve! A Füvészkert titkai most már előtted is nyitva állnak.",
+            "next": null
+        }
+    }
+}

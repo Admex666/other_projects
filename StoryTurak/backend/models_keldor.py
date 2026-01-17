@@ -52,36 +52,51 @@ class Character(BaseModel):
     created_at: datetime = Field(default_factory=datetime.now)
 
 class EncounterType(str, Enum):
-    FIGHT = "fight"       # Quick reflex/choice sequence
-    PUZZLE = "puzzle"     # Observation based
-    NARRATIVE = "narrative" # Pure story/lore
-    SHOP = "shop" # Trade
+    QUEST = "quest"
+    RANDOM = "random"
+    STORY = "story"
 
-class EncounterOption(BaseModel):
+class EncounterNodeType(str, Enum):
+    NARRATIVE = "narrative"
+    CHOICE = "choice"
+    FIGHT = "fight"
+    INPUT = "input"
+
+class EncounterChoice(BaseModel):
     text: str
-    required_class: Optional[CharacterClass] = None
-    required_item_id: Optional[str] = None
-    success_chance: float = 1.0  # 0.0 to 1.0
-    outcome_success_text: str
-    outcome_fail_text: Optional[str] = None
-    loot_reward_id: Optional[str] = None
+    next_node_id: str
+    condition: Optional[str] = None # e.g. "level >= 2"
+
+class EncounterNode(BaseModel):
+    id: str
+    type: EncounterNodeType
+    text: str
+    image: Optional[str] = None
+    choices: Optional[List[EncounterChoice]] = None
+    next_node_id: Optional[str] = None
+    # Combat specific
+    enemy_id: Optional[str] = None
+    enemy_hp: Optional[int] = None
+    # Puzzle/Input specific
+    correct_answer: Optional[str] = None
     
 class Encounter(BaseModel):
     id: str
     title: str
     description: str
     type: EncounterType
-    options: List[EncounterOption]
+    nodes: Dict[str, EncounterNode]
+    start_node_id: str
+    location: Tuple[float, float] # (lat, lon)
     zone_id: str
-    # Logic for appearing (e.g., only at night)
     active_hours_start: Optional[int] = None 
     active_hours_end: Optional[int] = None
 
 class Zone(BaseModel):
+    # ... (remains same)
     id: str
     name: str
     description: str
-    # Polygon points: List of [lat, lon]
     boundary_points: List[Tuple[float, float]]
     difficulty_level: int = 1
     recommended_class: Optional[CharacterClass] = None
@@ -98,22 +113,34 @@ class QuestObjectiveType(str, Enum):
     VISIT_ZONE = "visit_zone"
     DEFEAT_ENEMY = "defeat_enemy"
     COLLECT_ITEM = "collect_item"
+    COMPLETE_ENCOUNTER = "complete_encounter"
 
 class QuestObjective(BaseModel):
     id: str
     type: QuestObjectiveType
-    target_id: str # zone_id, enemy_id, or item_id
+    target_id: str # zone_id, enemy_id, item_id, or encounter_id
     count: int = 1
     description: str
+
+class QuestStage(BaseModel):
+    id: str
+    description: str
+    location: Tuple[float, float]
+    encounter_id: Optional[str] = None # The encounter that resolves this stage
 
 class Quest(BaseModel):
     id: str
     title: str
     description: str
+    flavor_text: Optional[str] = None
+    image_url: Optional[str] = None
+    start_location: Tuple[float, float]
+    stages: List[QuestStage]
+    estimated_distance_km: float = 0.0
     min_level: int = 1
-    objectives: List[QuestObjective]
+    objectives: List[QuestObjective] # Legacy, might keep for compatibility or summary
     rewards_xp: int = 100
-    rewards_items: List[str] = [] # list of item_ids
+    rewards_items: Optional[List[str]] = None # list of item_ids
     starter_zone_id: Optional[str] = None # Where to pick up
     
 class UserQuest(BaseModel):
@@ -121,7 +148,8 @@ class UserQuest(BaseModel):
     user_id: str
     quest_id: str
     status: QuestStatus
-    current_objective_index: int = 0
+    current_stage_index: int = 0
+    current_objective_index: int = 0 # Legacy
     current_count: int = 0
     started_at: datetime = Field(default_factory=datetime.now)
     # Enriched fields (joined from quests table)

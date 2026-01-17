@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
-import '../models/geolixo_models.dart';
+import '../models/keldor_models.dart';
 
-class GeolixoService extends ChangeNotifier {
+class KeldorService extends ChangeNotifier {
   static const String baseUrl = 'http://192.168.31.86:8001'; // LAN IP for physical device
   // static const String baseUrl = 'http://10.0.2.2:8001'; // Android Emulator
 
@@ -46,7 +46,7 @@ class GeolixoService extends ChangeNotifier {
 
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/geolixo/world/nearby?lat=${location.latitude}&lon=${location.longitude}'),
+        Uri.parse('$baseUrl/world/nearby?lat=${location.latitude}&lon=${location.longitude}'),
       );
 
       if (response.statusCode == 200) {
@@ -103,16 +103,24 @@ class GeolixoService extends ChangeNotifier {
         Encounter(
           id: "enc_poet_ghost",
           title: "Az Elfeledett Költő Szelleme",
-          description: "Egy halvány alak szaval a lámpaoszlop alatt. Szavai mintha fizikai súllyal nehezednének a válladra.",
-          type: EncounterType.narrative,
+          description: "Egy halvány alak szaval a lámpaoszlop alatt.",
+          type: EncounterType.story,
+          startNodeId: "start",
+          nodes: {
+            "start": EncounterNode(
+                id: "start",
+                type: EncounterNodeType.narrative,
+                text: "A szellem feléd fordul. 'Emlékszel még?'",
+                nextNodeId: "end"
+            ),
+            "end": EncounterNode(
+                id: "end",
+                type: EncounterNodeType.narrative,
+                text: "A köd eloszlik."
+            )
+          },
+          location: const LatLng(47.498, 19.040),
           zoneId: "zone_belvaros",
-        ),
-        Encounter(
-          id: "enc_tax_collector",
-          title: "Vámszedő Rajtaütés",
-          description: "Két marcona alak állja utadat. 'Itt minden lépés adóköteles', mordulnak rád.",
-          type: EncounterType.fight,
-          zoneId: "zone_nyolcker",
         ),
       ];
     } finally {
@@ -151,7 +159,7 @@ class GeolixoService extends ChangeNotifier {
             try {
                 activeCharacter = userCharacters.firstWhere((c) => c.id == activeCharacter!.id);
             } catch (e) {
-                activeCharacter = null;
+                // Keep old one or clear? Let's keep for now or clear if not found at all
             }
         }
         notifyListeners();
@@ -159,7 +167,7 @@ class GeolixoService extends ChangeNotifier {
         print("Failed to fetch characters: ${response.statusCode}");
       }
     } catch (e) {
-      print("Error fetching character: $e");
+      print("Error fetching characters: $e");
     }
   }
 
@@ -177,31 +185,48 @@ class GeolixoService extends ChangeNotifier {
     }
   }
 
-
   // --- Quest Management ---
+  List<Quest> allQuests = [];
   List<Quest> availableQuests = [];
   List<UserQuest> activeQuests = [];
 
   Future<void> fetchQuests(String token) async {
     try {
-        // 1. Fetch Active Quests
-        final activeResp = await http.get(
-            Uri.parse('$baseUrl/quests'),
-            headers: {'Authorization': 'Bearer $token'},
-        );
-        if (activeResp.statusCode == 200) {
-            final List<dynamic> data = json.decode(activeResp.body);
-            activeQuests = data.map((q) => UserQuest.fromJson(q)).toList();
+        // 1. Fetch Active Quests for Character
+        if (activeCharacter != null) {
+            final activeResp = await http.get(
+                Uri.parse('$baseUrl/characters/${activeCharacter!.id}/quests'),
+                headers: {'Authorization': 'Bearer $token'},
+            );
+            if (activeResp.statusCode == 200) {
+                final List<dynamic> data = json.decode(activeResp.body);
+                activeQuests = data.map((q) => UserQuest.fromJson(q)).toList();
+            }
         }
 
-        // 2. Fetch Available Quests
+        // 2. Fetch All Quests
         final availResp = await http.get(
-            Uri.parse('$baseUrl/quests/available'),
+            Uri.parse('$baseUrl/test/quests'),  // TEMP: Using test endpoint
             headers: {'Authorization': 'Bearer $token'},
         );
+        print('🔍 Quest fetch status: ${availResp.statusCode}');
         if (availResp.statusCode == 200) {
-            final List<dynamic> data = json.decode(availResp.body);
-            availableQuests = data.map((q) => Quest.fromJson(q)).toList();
+            final Map<String, dynamic> data = json.decode(availResp.body);
+            final List<dynamic> questList = data['quests'];
+            allQuests = questList.map((q) => Quest.fromJson(q)).toList();
+            
+            // Filter out quests already active
+            final activeIds = activeQuests.map((aq) => aq.questId).toSet();
+            availableQuests = allQuests
+                .where((q) => !activeIds.contains(q.id))
+                .toList();
+            
+            print('📋 Total quests: ${allQuests.length}, Active: ${activeQuests.length}, Available: ${availableQuests.length}');
+            for (var q in availableQuests) {
+                print('   📍 ${q.title} at ${q.startLocation}');
+            }
+        } else {
+            print('❌ Quest fetch failed: ${availResp.statusCode} - ${availResp.body}');
         }
         
         notifyListeners();
@@ -229,6 +254,24 @@ class GeolixoService extends ChangeNotifier {
       }
   }
 
+  Future<bool> abandonQuest(String token, String userQuestId) async {
+      try {
+          final response = await http.delete(
+              Uri.parse('$baseUrl/user-quests/$userQuestId'),
+              headers: {'Authorization': 'Bearer $token'},
+          );
+          
+          if (response.statusCode == 200) {
+              await fetchQuests(token); // Refresh state
+              return true;
+          }
+          return false;
+      } catch (e) {
+          print("Error abandoning quest: $e");
+          return false;
+      }
+  }
+
   Future<Map<String, dynamic>?> resolveEncounter(String token, String encounterId, String outcome) async {
       try {
           final response = await http.post(
@@ -245,8 +288,9 @@ class GeolixoService extends ChangeNotifier {
           
           if (response.statusCode == 200) {
               final data = json.decode(response.body);
-              // Refresh character to show new items immediately
+              // Refresh character and quests to show new state immediately
               await fetchUserCharacter(token);
+              await fetchQuests(token);
               return data;
           }
           print("Resolve failed: ${response.body}");

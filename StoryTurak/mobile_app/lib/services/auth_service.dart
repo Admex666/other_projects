@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'geolixo_service.dart'; // For baseUrl connection
+import 'keldor_service.dart'; // For baseUrl connection
 
 class AuthService extends ChangeNotifier {
   final _storage = const FlutterSecureStorage();
@@ -24,7 +24,7 @@ class AuthService extends ChangeNotifier {
   }
 
   Future<String?> login(String username, String password) async {
-    final url = Uri.parse('${GeolixoService.baseUrl}/auth/token');
+    final url = Uri.parse('${KeldorService.baseUrl}/auth/token');
     
     try {
       final response = await http.post(
@@ -54,7 +54,7 @@ class AuthService extends ChangeNotifier {
   }
 
   Future<String?> register(String username, String password) async {
-    final url = Uri.parse('${GeolixoService.baseUrl}/auth/register');
+    final url = Uri.parse('${KeldorService.baseUrl}/auth/register');
     
     try {
       final response = await http.post(
