@@ -1,0 +1,6 @@
+treatment_key,category,name,price,material_cost
+t1,Fogászat,Fogkő-eltávolítás,15000,2000
+t2,Fogászat,Tömés,25000,5000
+t3,Esztétika,Botox kezelés,85000,35000
+t4,Radiológia,MRI vizsgálat,55000,15000
+t5,Ortopédia,Szakorvosi konzultáció,22000,500

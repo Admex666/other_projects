@@ -1,0 +1,2 @@
+import type { Patient, Doctor, Treatment, Appointment, FinancialTransaction, Lead, Resource } from '../types/models';
+import { DOCTORS, TREATMENTS, CHANNELS } from './DataEngine'; // This is a bit circular, let's fix the imports
