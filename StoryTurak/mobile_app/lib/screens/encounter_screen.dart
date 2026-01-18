@@ -18,12 +18,26 @@ class EncounterScreen extends StatefulWidget {
 class _EncounterScreenState extends State<EncounterScreen> {
   String? _currentNodeId;
   bool _isTransitioning = false;
+  final TextEditingController _inputController = TextEditingController();
+  String? _errorMessage;
+  List<String>? _currentOrder;
+  bool _isFinishing = false;
 
   @override
   void initState() {
     super.initState();
     _currentNodeId = widget.encounter.startNodeId ?? 
         (widget.encounter.nodes?.isNotEmpty == true ? widget.encounter.nodes!.keys.first : null);
+    _initializeNodeState();
+  }
+
+  void _initializeNodeState() {
+    final node = _currentNode;
+    if (node?.type == EncounterNodeType.order && node?.options != null) {
+      _currentOrder = List<String>.from(node!.options!);
+    } else {
+      _currentOrder = null;
+    }
   }
 
   EncounterNode? get _currentNode {
@@ -62,24 +76,27 @@ class _EncounterScreenState extends State<EncounterScreen> {
           
           const SizedBox(height: 40),
           
-          // Text Content
+          // Content and Action Area in a single scrollable view
           Expanded(
             child: SingleChildScrollView(
-              child: Text(
-                node.text,
-                style: KeldorTheme.darkTheme.textTheme.bodyMedium?.copyWith(
-                  height: 1.6,
-                  fontSize: 18,
-                ),
-                textAlign: TextAlign.center,
+              child: Column(
+                children: [
+                  Text(
+                    node.text,
+                    style: KeldorTheme.darkTheme.textTheme.bodyMedium?.copyWith(
+                      height: 1.6,
+                      fontSize: 18,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 32),
+                  
+                  // Action Area (Choices, Input, Order, etc.) now follows text naturally
+                  _buildActionArea(node),
+                ],
               ),
             ),
           ),
-          
-          const SizedBox(height: 24),
-          
-          // Action Area
-          _buildActionArea(node),
           
           const SizedBox(height: 20),
         ],
@@ -117,6 +134,134 @@ class _EncounterScreenState extends State<EncounterScreen> {
         ),
         textAlign: TextAlign.center,
       );
+  }
+
+  Widget _buildInputArea(EncounterNode node) {
+    return Column(
+      children: [
+        TextField(
+          controller: _inputController,
+          style: const TextStyle(color: Colors.white),
+          decoration: InputDecoration(
+            hintText: "Írd be a választ...",
+            hintStyle: const TextStyle(color: Colors.white38),
+            errorText: _errorMessage,
+            enabledBorder: const UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white24),
+            ),
+            focusedBorder: const UnderlineInputBorder(
+              borderSide: BorderSide(color: KeldorTheme.primary),
+            ),
+          ),
+          onChanged: (_) {
+            if (_errorMessage != null) {
+              setState(() => _errorMessage = null);
+            }
+          },
+        ),
+        const SizedBox(height: 24),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () => _validateInput(node),
+              child: Text(node.buttonText ?? "ELLENŐRZÉS"),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildOrderArea(EncounterNode node) {
+    if (_currentOrder == null) return const SizedBox.shrink();
+
+    return Column(
+      children: [
+        Container(
+          height: 250,
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.05),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: ReorderableListView(
+            shrinkWrap: true,
+            buildDefaultDragHandles: true,
+            onReorder: (oldIndex, newIndex) {
+              setState(() {
+                if (newIndex > oldIndex) newIndex -= 1;
+                final item = _currentOrder!.removeAt(oldIndex);
+                _currentOrder!.insert(newIndex, item);
+              });
+            },
+            children: _currentOrder!.asMap().entries.map((entry) {
+              return ListTile(
+                key: ValueKey("order_${entry.key}"),
+                leading: const Icon(Icons.drag_handle, color: Colors.white38),
+                title: Text(entry.value, style: const TextStyle(color: Colors.white)),
+                tileColor: Colors.transparent,
+              );
+            }).toList(),
+          ),
+        ),
+        const SizedBox(height: 24),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: () => _validateOrder(node),
+            child: Text(node.buttonText ?? "ELLENŐRZÉS"),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _validateOrder(EncounterNode node) {
+    if (_currentOrder == null) return;
+    
+    final current = _currentOrder!.join(", ").trim().toLowerCase();
+    final correct = node.correctAnswer?.trim().toLowerCase();
+
+    if (current == correct) {
+      _goToNode(node.successNodeId ?? node.nextNodeId);
+    } else {
+      if (node.failureNodeId != null) {
+        _goToNode(node.failureNodeId);
+      } else {
+        setState(() {
+          _errorMessage = "Helytelen sorrend. Próbáld újra!";
+        });
+      }
+    }
+  }
+
+  void _validateInput(EncounterNode node) {
+    final input = _inputController.text.trim().toLowerCase();
+    
+    if (input.isEmpty) {
+      setState(() {
+        _errorMessage = "Kérlek, írj be egy választ!";
+      });
+      return;
+    }
+
+    bool isCorrect = false;
+    if (node.validAnswers != null && node.validAnswers!.isNotEmpty) {
+      isCorrect = node.validAnswers!.any((ans) => ans.trim().toLowerCase() == input);
+    } else {
+      final correct = node.correctAnswer?.trim().toLowerCase();
+      isCorrect = (input == correct);
+    }
+
+    if (isCorrect) {
+      _goToNode(node.successNodeId ?? node.nextNodeId);
+    } else {
+      if (node.failureNodeId != null) {
+        _goToNode(node.failureNodeId);
+      } else {
+        setState(() {
+          _errorMessage = "Helytelen válasz. Próbáld újra!";
+        });
+      }
+    }
   }
 
   Widget _buildNodeMedia(EncounterNode node) {
@@ -168,6 +313,14 @@ class _EncounterScreenState extends State<EncounterScreen> {
           );
       }
 
+      if (node.type == EncounterNodeType.input) {
+          return _buildInputArea(node);
+      }
+
+      if (node.type == EncounterNodeType.order) {
+          return _buildOrderArea(node);
+      }
+
       if (node.type == EncounterNodeType.fight) {
           return ElevatedButton(
               onPressed: () => _resolveFight(node),
@@ -177,6 +330,10 @@ class _EncounterScreenState extends State<EncounterScreen> {
               ),
               child: const Text("TÁMADÁS!", style: TextStyle(fontWeight: FontWeight.bold)),
           );
+      }
+
+      if (node.type == EncounterNodeType.input || node.type == EncounterNodeType.order) {
+          return const SizedBox.shrink();
       }
 
       // Generic Narrative Next or End
@@ -190,7 +347,7 @@ class _EncounterScreenState extends State<EncounterScreen> {
                       _finishEncounter();
                   }
               },
-              child: Text(node.nextNodeId != null ? "TOVÁBB" : "BEFEJEZÉS"),
+              child: Text(node.buttonText ?? (node.nextNodeId != null ? "TOVÁBB" : "BEFEJEZÉS")),
           ),
       );
   }
@@ -208,6 +365,9 @@ class _EncounterScreenState extends State<EncounterScreen> {
               setState(() {
                   _currentNodeId = nodeId;
                   _isTransitioning = false;
+                  _inputController.clear();
+                  _errorMessage = null;
+                  _initializeNodeState();
               });
           }
       });
@@ -223,11 +383,27 @@ class _EncounterScreenState extends State<EncounterScreen> {
   }
 
   void _finishEncounter() async {
+      if (_isFinishing) return;
+      
+      setState(() {
+          _isFinishing = true;
+          _isTransitioning = true;
+      });
+
       final token = context.read<AuthService>().token;
       if (token != null) {
-          await context.read<KeldorService>().resolveEncounter(token, widget.encounter.id, "success");
+          try {
+              await context.read<KeldorService>().resolveEncounter(token, widget.encounter.id, "success");
+          } catch (e) {
+              print("Error resolving encounter: $e");
+          }
       }
-      if (mounted) Navigator.pop(context);
+      
+      if (mounted) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) Navigator.pop(context);
+          });
+      }
   }
 
   Widget _buildNoNodeError() {
@@ -243,5 +419,11 @@ class _EncounterScreenState extends State<EncounterScreen> {
               ],
           ),
       );
+  }
+
+  @override
+  void dispose() {
+    _inputController.dispose();
+    super.dispose();
   }
 }

@@ -11,6 +11,7 @@ class StoryEngine extends ChangeNotifier {
   Map<String, dynamic> _variables = {};
   final Set<String> _visitedNodes = {};
   Player? _user;
+  String? _token;
   final ApiService _api = ApiService();
 
   StoryNode? get currentNode => _currentNode;
@@ -23,6 +24,10 @@ class StoryEngine extends ChangeNotifier {
     _user = user;
     _saveUserToPrefs(user);
     notifyListeners();
+  }
+
+  void setToken(String? token) {
+      _token = token;
   }
 
   Future<void> _saveUserToPrefs(Player user) async {
@@ -81,19 +86,21 @@ class StoryEngine extends ChangeNotifier {
       }
 
       // XP Rewards
-      if (save && _user != null) {
+      if (save && _user != null && _token != null) {
         int xpGain = 10;
         if (node.next == null && node.type == NodeType.narrative) xpGain = 100; // Finish
         _user!.xp += xpGain;
-        _api.addXp(_user!.id, xpGain).catchError((e) => debugPrint("XP sync failed: $e"));
+        _api.addXp(_token!, _user!.id, xpGain).catchError((e) => debugPrint("XP sync failed: $e"));
       }
 
       // Analytics
-      _api.logEvent(_user?.id, "node_entered", {
-        "storyId": _currentStory!.id,
-        "nodeId": nodeId,
-        "timestamp": DateTime.now().toIso8601String(),
-      }).catchError((e) => debugPrint("Analytics failed: $e"));
+      if (_token != null) {
+        _api.logEvent(_token!, _user?.id, "node_entered", {
+          "storyId": _currentStory!.id,
+          "nodeId": nodeId,
+          "timestamp": DateTime.now().toIso8601String(),
+        }).catchError((e) => debugPrint("Analytics failed: $e"));
+      }
 
       notifyListeners();
       if (save) await _saveState();
@@ -148,9 +155,9 @@ class StoryEngine extends ChangeNotifier {
     await prefs.setString('last_variables', json.encode(_variables));
     
     // Sync with backend if logged in
-    if (_user != null) {
+    if (_user != null && _token != null) {
       try {
-        await _api.saveProgress(_user!.id, _currentStory!.id, _currentNode!.id, _variables);
+        await _api.saveProgress(_token!, _user!.id, _currentStory!.id, _currentNode!.id, _variables);
       } catch (e) {
         debugPrint("Progess sync failed: $e");
       }

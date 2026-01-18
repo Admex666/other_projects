@@ -3,30 +3,32 @@ import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 
 class RoutingService {
-  // Using BRouter public instance which is excellent for hiking/trekking
-  static const String _baseUrl = 'https://brouter.de/brouter';
+  // Using OSRM public instance which is reliable for walking routes
+  static const String _baseUrl = 'https://router.project-osrm.org/route/v1/foot';
 
   Future<List<LatLng>> getRoute(LatLng start, LatLng destination) async {
-    // BRouter expects longitude,latitude|longitude,latitude
-    final lonLats = '${start.longitude},${start.latitude}|${destination.longitude},${destination.latitude}';
-    final url = '$_baseUrl?lonlats=$lonLats&profile=hiking-mountain&alternativeidx=0&format=geojson';
+    final url = '$_baseUrl/${start.longitude},${start.latitude};${destination.longitude},${destination.latitude}?overview=full&geometries=geojson';
+    print('🚗 Fetching route: $url');
     
     try {
       final response = await http.get(Uri.parse(url));
       
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        // BRouter GeoJSON structure: features -> geometry -> coordinates
-        final List coordinates = data['features'][0]['geometry']['coordinates'];
-        
-        return coordinates.map((coord) => LatLng(coord[1].toDouble(), coord[0].toDouble())).toList();
+        if (data['routes'] != null && data['routes'].isNotEmpty) {
+          final List coordinates = data['routes'][0]['geometry']['coordinates'];
+          print('✅ Route found with ${coordinates.length} points');
+          return coordinates.map((coord) => LatLng(coord[1].toDouble(), coord[0].toDouble())).toList();
+        }
+        print('⚠️ OSRM: No routes found in response');
+        return []; // Important to return empty list instead of fallback markers here
       } else {
-        print('BRouter API Error: ${response.statusCode}');
-        return [start, destination]; // Fallback to straight line
+        print('OSRM API Error: ${response.statusCode}');
+        return [];
       }
     } catch (e) {
-      print('BRouter Exception: $e');
-      return [start, destination]; // Fallback
+      print('OSRM Exception: $e');
+      return [];
     }
   }
 }

@@ -1,6 +1,18 @@
 {
     "id": "mist-01",
     "title": "A Ködön Járó (Immerzív)",
+    "description": "Találd meg a válaszokat a belvárosi ködben.",
+    "image_url": "assets/mist_walker_cover.png",
+    "estimated_distance_km": 3.2,
+    "estimated_duration_min": 45,
+    "difficulty": "Közepes",
+    "rewards_xp": 800,
+    "intro_steps": [
+        "Budapest, 2026.",
+        "A Várost ellepte a Bíbor Köd.",
+        "Az emberek vakok rá. Csak mi, a Vándorok látjuk az Igazságot.",
+        "A Mentorod eltűnt. Te maradtál az utolsó remény."
+    ],
     "startNode": "node-1",
     "initialState": {
         "inventory": [],

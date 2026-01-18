@@ -21,9 +21,10 @@ class _SessionHistoryScreenState extends State<SessionHistoryScreen> {
   @override
   void initState() {
     super.initState();
+    final auth = Provider.of<AuthService>(context, listen: false);
     final user = Provider.of<StoryEngine>(context, listen: false).user;
-    if (user != null) {
-      _sessionsFuture = _api.getUserSessions(user.id);
+    if (user != null && auth.token != null) {
+      _sessionsFuture = _api.getUserSessions(auth.token!, user.id);
     } else {
       _sessionsFuture = Future.error("Bejelentkezés szükséges");
     }

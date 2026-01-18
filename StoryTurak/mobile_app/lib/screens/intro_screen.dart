@@ -12,12 +12,27 @@ class IntroScreen extends StatefulWidget {
 }
 
 class _IntroScreenState extends State<IntroScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _initializeSteps();
+  }
+
+  void _initializeSteps() {
+    final keldor = Provider.of<KeldorService>(context, listen: false);
+    try {
+      final quest = keldor.allQuests.firstWhere((q) => q.id == widget.storyId);
+      if (quest.introSteps.isNotEmpty) {
+        _texts = quest.introSteps;
+      }
+    } catch (_) {
+      // Keep defaults
+    }
+  }
+
   int _step = 0;
   List<String> _texts = [
-    "Budapest, 2026.",
-    "A Várost ellepte a Bíbor Köd.",
-    "Az emberek vakok rá. Csak mi, a Vándorok látjuk az Igazságot.",
-    "A Mentorod eltűnt. Te maradtál az utolsó remény."
+    "Az utazás megkezdődik...",
   ];
 
   void _next() {
@@ -33,11 +48,20 @@ class _IntroScreenState extends State<IntroScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final keldor = Provider.of<KeldorService>(context, listen: false);
+    Quest? quest;
+    try {
+      quest = keldor.allQuests.firstWhere((q) => q.id == widget.storyId);
+    } catch (_) {}
+
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Image.asset("assets/mist_city_intro.png", fit: BoxFit.cover),
+          if (quest?.imageUrl != null)
+            Image.asset(quest!.imageUrl!, fit: BoxFit.cover)
+          else
+            Image.asset("assets/mist_city_intro.png", fit: BoxFit.cover),
           Container(color: Colors.black.withOpacity(0.6)), // Dim overlay
           
           SafeArea(

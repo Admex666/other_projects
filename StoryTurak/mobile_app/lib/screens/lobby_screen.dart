@@ -90,8 +90,11 @@ class _LobbyScreenState extends State<LobbyScreen> {
             icon: const Icon(Icons.refresh),
             onPressed: () async {
               final api = ApiService();
-              final updated = await api.getSession(_session.id);
-              setState(() => _session = updated);
+              final auth = Provider.of<AuthService>(context, listen: false);
+              if (auth.token != null) {
+                final updated = await api.getSession(auth.token!, _session.id);
+                setState(() => _session = updated);
+              }
             },
           ),
         ],

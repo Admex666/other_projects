@@ -9,6 +9,14 @@ class ApiService {
   static const String prodUrl = 'https://storyturak-backend.onrender.com';
   static const String localUrl = 'http://10.0.2.2:8001';
 
+  static void Function()? onUnauthorized;
+
+  void _checkResponse(http.Response response) {
+    if (response.statusCode == 401) {
+      onUnauthorized?.call();
+    }
+  }
+
   Future<String> getBaseUrl() async {
     final prefs = await SharedPreferences.getInstance();
     final isLocal = prefs.getBool('use_local_backend') ?? false;
@@ -16,10 +24,14 @@ class ApiService {
     return isLocal ? 'http://$localIp:8001' : prodUrl;
   }
 
-  Future<Story> fetchStory(String storyId) async {
+  Future<Story> fetchStory(String token, String storyId) async {
     final baseUrl = await getBaseUrl();
-    final response = await http.get(Uri.parse('$baseUrl/stories/$storyId'));
+    final response = await http.get(
+      Uri.parse('$baseUrl/stories/$storyId'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
 
+    _checkResponse(response);
     if (response.statusCode == 200) {
       return Story.fromJson(json.decode(utf8.decode(response.bodyBytes)));
     } else {
@@ -27,10 +39,14 @@ class ApiService {
     }
   }
 
-  Future<List<Story>> fetchStories() async {
+  Future<List<Story>> fetchStories(String token) async {
     final baseUrl = await getBaseUrl();
-    final response = await http.get(Uri.parse('$baseUrl/stories'));
+    final response = await http.get(
+      Uri.parse('$baseUrl/stories'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
 
+    _checkResponse(response);
     if (response.statusCode == 200) {
       Iterable l = json.decode(utf8.decode(response.bodyBytes));
       return List<Story>.from(l.map((model) => Story.fromJson(model)));
@@ -39,14 +55,18 @@ class ApiService {
     }
   }
 
-  Future<Session> createSession(String campaignId, Player host) async {
+  Future<Session> createSession(String token, String campaignId, Player host) async {
     final baseUrl = await getBaseUrl();
     final response = await http.post(
       Uri.parse('$baseUrl/session/create?campaign_id=$campaignId'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
       body: json.encode(host.toJson()),
     );
 
+    _checkResponse(response);
     if (response.statusCode == 200) {
       return Session.fromJson(json.decode(response.body));
     } else {
@@ -54,14 +74,18 @@ class ApiService {
     }
   }
 
-  Future<Session> joinSession(String code, Player user) async {
+  Future<Session> joinSession(String token, String code, Player user) async {
     final baseUrl = await getBaseUrl();
     final response = await http.post(
       Uri.parse('$baseUrl/session/join'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
       body: json.encode({'code': code, 'user': user.toJson()}),
     );
 
+    _checkResponse(response);
     if (response.statusCode == 200) {
       return Session.fromJson(json.decode(response.body));
     } else {
@@ -69,9 +93,13 @@ class ApiService {
     }
   }
 
-  Future<Session> getSession(String code) async {
+  Future<Session> getSession(String token, String code) async {
     final baseUrl = await getBaseUrl();
-    final response = await http.get(Uri.parse('$baseUrl/session/$code'));
+    final response = await http.get(
+      Uri.parse('$baseUrl/session/$code'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+    _checkResponse(response);
     if (response.statusCode == 200) {
       return Session.fromJson(json.decode(response.body));
     } else {
@@ -79,9 +107,13 @@ class ApiService {
     }
   }
 
-  Future<List<Session>> getUserSessions(String userId) async {
+  Future<List<Session>> getUserSessions(String token, String userId) async {
     final baseUrl = await getBaseUrl();
-    final response = await http.get(Uri.parse('$baseUrl/users/$userId/sessions'));
+    final response = await http.get(
+      Uri.parse('$baseUrl/users/$userId/sessions'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+    _checkResponse(response);
     if (response.statusCode == 200) {
       Iterable l = json.decode(response.body);
       return List<Session>.from(l.map((model) => Session.fromJson(model)));
@@ -135,19 +167,27 @@ class ApiService {
     }
   }
 
-  Future<void> saveProgress(String userId, String storyId, String nodeId, Map<String, dynamic> variables) async {
+  Future<void> saveProgress(String token, String userId, String storyId, String nodeId, Map<String, dynamic> variables) async {
     final baseUrl = await getBaseUrl();
     final response = await http.post(
       Uri.parse('$baseUrl/progress/$userId/$storyId'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
       body: json.encode({'nodeId': nodeId, 'variables': variables}),
     );
+    _checkResponse(response);
     if (response.statusCode != 200) throw Exception('Failed to save progress');
   }
 
-  Future<Map<String, dynamic>?> getProgress(String userId, String storyId) async {
+  Future<Map<String, dynamic>?> getProgress(String token, String userId, String storyId) async {
     final baseUrl = await getBaseUrl();
-    final response = await http.get(Uri.parse('$baseUrl/progress/$userId/$storyId'));
+    final response = await http.get(
+      Uri.parse('$baseUrl/progress/$userId/$storyId'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+    _checkResponse(response);
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       if (data['nodeId'] == null) return null;
@@ -156,25 +196,33 @@ class ApiService {
     return null;
   }
 
-  Future<void> addXp(String userId, int amount) async {
+  Future<void> addXp(String token, String userId, int amount) async {
     final baseUrl = await getBaseUrl();
     final response = await http.post(
       Uri.parse('$baseUrl/progress/$userId/any/xp?amount=$amount'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
     );
+    _checkResponse(response);
     if (response.statusCode != 200) throw Exception('Failed to add XP');
   }
 
-  Future<void> logEvent(String? userId, String type, Map<String, dynamic> payload) async {
+  Future<void> logEvent(String token, String? userId, String type, Map<String, dynamic> payload) async {
     final baseUrl = await getBaseUrl();
-    await http.post(
+    final response = await http.post(
       Uri.parse('$baseUrl/analytics/log'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
       body: json.encode({
         'userId': userId,
         'type': type,
         'payload': payload,
       }),
     );
+    _checkResponse(response);
   }
 }

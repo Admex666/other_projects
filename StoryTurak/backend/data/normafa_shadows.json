@@ -1,6 +1,16 @@
 {
-    "id": "normafa-01",
-    "title": "A Normafa alatti elmozdulás",
+    "id": "quest_normafa_shadows",
+    "title": "A Normafa Árnyai",
+    "description": "Fedezd fel a hegyek titkait és az eltolódott valóság nyomait.",
+    "flavor_text": "A Normafa környékén a fák között valami ősi és megfoghatatlan rejtőzik. Csak az veheti észre, aki hajlandó a sorok mögé látni.",
+    "image_url": "assets/normafa_cover.png",
+    "estimated_distance_km": 4.5,
+    "estimated_duration_min": 90,
+    "difficulty": "Közepes",
+    "rewards_xp": 1200,
+    "rewards_items": [
+        "item_mountain_stone"
+    ],
     "startNode": "intro",
     "initialState": {
         "FLAG_BALANCE_AWARE": false,
@@ -31,7 +41,7 @@
             "id": "normafa_task",
             "type": "input",
             "text": "A tábla nem mesél. Csak felsorol. Évszámok, nevek, funkciók. Valami hiányzik közülük – vagy valami túl pontos. \n\nA hely funkcióváltásának ideje nem esik egybe sem háborúval, sem katasztrófával. Mikor történt ez? (Adja meg az évszámot!)",
-            "numericAnswer": 1927,
+            "correctAnswer": "1927",
             "successNext": "normafa_success",
             "failureNext": "goto_annaret"
         },
@@ -63,13 +73,14 @@
         },
         "annaret_task": {
             "id": "annaret_task",
-            "type": "input",
-            "text": "A fa felülete sima ott, ahol gyakran érintik. Nem minden érintés hagy nyomot. De amelyik igen, az sokáig marad. \n\nA hely használata mindig ugyanabban a ritmusban történt. Mi a helyes sorrend? (Vesszővel elválasztva: pihenés, találkozás, továbbindulás)",
-            "orderAnswer": [
+            "type": "order",
+            "text": "A fa felülete sima ott, ahol gyakran érintik. Nem minden érintés hagy nyomot. De amelyik igen, az sokáig marad. \n\nA hely használata mindig ugyanabban a ritmusban történt. Állítsd helyes sorrendbe a tevékenységeket!",
+            "options": [
+                "továbbindulás",
                 "találkozás",
-                "pihenés",
-                "továbbindulás"
+                "pihenés"
             ],
+            "correctAnswer": "találkozás, pihenés, továbbindulás",
             "successNext": "annaret_success",
             "failureNext": "annaret_fail"
         },

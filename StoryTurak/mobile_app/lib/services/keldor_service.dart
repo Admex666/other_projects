@@ -8,6 +8,14 @@ class KeldorService extends ChangeNotifier {
   static const String baseUrl = 'http://192.168.31.86:8001'; // LAN IP for physical device
   // static const String baseUrl = 'http://10.0.2.2:8001'; // Android Emulator
 
+  static void Function()? onUnauthorized;
+
+  void _checkResponse(http.Response response) {
+    if (response.statusCode == 401) {
+      onUnauthorized?.call();
+    }
+  }
+
   // Fallback / Initial State (Budapest Pilot)
   List<Zone> activeZones = [
       // 1. Belváros
@@ -40,14 +48,16 @@ class KeldorService extends ChangeNotifier {
   List<Encounter> nearbyEncounters = []; // Populated by fetch or fallback
   bool isLoading = false;
 
-  Future<void> fetchNearbyWorld(LatLng location) async {
+  Future<void> fetchNearbyWorld(String? token, LatLng location) async {
     isLoading = true;
     notifyListeners();
 
     try {
       final response = await http.get(
         Uri.parse('$baseUrl/world/nearby?lat=${location.latitude}&lon=${location.longitude}'),
+        headers: token != null ? {'Authorization': 'Bearer $token'} : {},
       );
+      _checkResponse(response);
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -149,6 +159,7 @@ class KeldorService extends ChangeNotifier {
         Uri.parse('$baseUrl/characters'),
         headers: {'Authorization': 'Bearer $token'},
       );
+      _checkResponse(response);
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
@@ -198,6 +209,7 @@ class KeldorService extends ChangeNotifier {
                 Uri.parse('$baseUrl/characters/${activeCharacter!.id}/quests'),
                 headers: {'Authorization': 'Bearer $token'},
             );
+            _checkResponse(activeResp);
             if (activeResp.statusCode == 200) {
                 final List<dynamic> data = json.decode(activeResp.body);
                 activeQuests = data.map((q) => UserQuest.fromJson(q)).toList();
@@ -209,6 +221,7 @@ class KeldorService extends ChangeNotifier {
             Uri.parse('$baseUrl/test/quests'),  // TEMP: Using test endpoint
             headers: {'Authorization': 'Bearer $token'},
         );
+        _checkResponse(availResp);
         print('🔍 Quest fetch status: ${availResp.statusCode}');
         if (availResp.statusCode == 200) {
             final Map<String, dynamic> data = json.decode(availResp.body);
@@ -246,6 +259,7 @@ class KeldorService extends ChangeNotifier {
               headers: {'Authorization': 'Bearer $token'},
           );
           
+          _checkResponse(response);
           if (response.statusCode == 200) {
               await fetchQuests(token); // Refresh state
               return true;
@@ -264,6 +278,7 @@ class KeldorService extends ChangeNotifier {
               headers: {'Authorization': 'Bearer $token'},
           );
           
+          _checkResponse(response);
           if (response.statusCode == 200) {
               await fetchQuests(token); // Refresh state
               return true;
@@ -289,6 +304,7 @@ class KeldorService extends ChangeNotifier {
               }),
           );
           
+          _checkResponse(response);
           if (response.statusCode == 200) {
               final data = json.decode(response.body);
               // Refresh character and quests to show new state immediately

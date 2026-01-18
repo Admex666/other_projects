@@ -10,6 +10,9 @@ import 'screens/explore_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/character_screen.dart';
 import 'screens/character_selection_screen.dart'; // New Import
+import 'services/api_service.dart';
+import 'services/settings_service.dart';
+import 'screens/settings_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,6 +26,8 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => KeldorService()),
         ChangeNotifierProvider(create: (_) => AuthService()),
+        ChangeNotifierProvider(create: (_) => StoryEngine()),
+        ChangeNotifierProvider(create: (_) => SettingsService()),
       ],
       child: const MainApp(),
     ),
@@ -42,17 +47,41 @@ class _MainAppState extends State<MainApp> {
   @override
   void initState() {
     super.initState();
+    _setupUnauthorizedHandler();
     _checkAuth();
+  }
+
+  void _setupUnauthorizedHandler() {
+    ApiService.onUnauthorized = _handleUnauthorized;
+    KeldorService.onUnauthorized = _handleUnauthorized;
+  }
+
+  void _handleUnauthorized() {
+    if (mounted) {
+       final auth = context.read<AuthService>();
+       if (auth.isAuthenticated) {
+         print("🚨 401 Unauthorized detected! Logging out...");
+         context.read<KeldorService>().clearActiveCharacter();
+         auth.logout();
+       }
+    }
   }
 
   Future<void> _checkAuth() async {
     final auth = context.read<AuthService>();
+    final keldor = context.read<KeldorService>();
+    final engine = context.read<StoryEngine>();
+    
     await auth.tryAutoLogin();
-    // Also try to restore character if possible?
+    
     if (auth.isAuthenticated && auth.token != null) {
-       // We could try to auto-fetch characters here, but SelectionScreen handles it.
-       // However, if we want to "resume" last active character, we'd need that stored in SharedPreferences.
-       // For now, defaulting to Selection Screen is safer.
+       engine.setToken(auth.token);
+       await engine.loadUserFromPrefs();
+       
+       if (engine.user != null) {
+          // Sync character if logged in
+          await keldor.fetchUserCharacter(auth.token!);
+       }
     }
     
     if (mounted) setState(() => _isLoading = false);
@@ -98,7 +127,7 @@ class _MainScaffoldState extends State<MainScaffold> {
   static final List<Widget> _screens = <Widget>[
     const ExploreScreen(), // Map with Fog of War
     const CharacterScreen(),
-    const Center(child: Text('Social / Chat Placeholder', style: TextStyle(color: Colors.white))),
+    const SettingsScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -111,21 +140,10 @@ class _MainScaffoldState extends State<MainScaffold> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true, 
-      appBar: AppBar(
+      appBar: _selectedIndex == 2 ? null : AppBar(
         title: const Text("Keldor"),
         backgroundColor: Colors.transparent,
         elevation: 0,
-        actions: [
-            IconButton(
-                icon: const Icon(Icons.logout, color: Colors.white54),
-                onPressed: () {
-                    // This will trigger notifyListeners -> MainApp rebuilds -> LoginScreen
-                     // Also clear active character to prevent state leak
-                    context.read<KeldorService>().clearActiveCharacter();
-                    context.read<AuthService>().logout(); 
-                },
-            )
-        ],
       ),
       body: _screens[_selectedIndex],
       bottomNavigationBar: NavigationBar(
@@ -145,9 +163,9 @@ class _MainScaffoldState extends State<MainScaffold> {
             label: 'Karakter',
           ),
            NavigationDestination(
-            icon: Icon(Icons.group_outlined, color: Colors.white54),
-            selectedIcon: Icon(Icons.group, color: KeldorTheme.primary),
-            label: 'Közösség',
+            icon: Icon(Icons.settings_outlined, color: Colors.white54),
+            selectedIcon: Icon(Icons.settings, color: KeldorTheme.primary),
+            label: 'Beállítások',
           ),
         ],
       ),

@@ -23,6 +23,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void initState() {
     super.initState();
     _checkLastState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final auth = Provider.of<AuthService>(context, listen: false);
+      if (auth.token != null) {
+        Provider.of<KeldorService>(context, listen: false).fetchQuests(auth.token!);
+      }
+    });
   }
 
   Future<void> _checkLastState() async {
@@ -47,8 +53,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   void _startSolo(String storyId) {
-    if (storyId == 'mist-01') {
-       Navigator.push(
+    bool hasIntro = false;
+    try {
+      final keldor = Provider.of<KeldorService>(context, listen: false);
+      final quest = keldor.allQuests.firstWhere((q) => q.id == storyId);
+      hasIntro = quest.introSteps.isNotEmpty;
+    } catch (_) {}
+
+    if (hasIntro) {
+      Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => IntroScreen(storyId: storyId)),
       ).then((_) => _checkLastState());
@@ -103,28 +116,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                   const SizedBox(height: 20),
                   
-                  CampaignCard(
-                    title: "A Ködön Járó",
-                    image: "assets/mist_walker_cover.png",
-                    difficulty: "Közepes",
-                    duration: "45 perc",
-                    onTap: () => _startSolo('mist-01'),
-                  ),
-                  
-                  CampaignCard(
-                    title: "A Vigadó Árnyéka",
-                    image: "assets/vigado_noir.png",
-                    difficulty: "Könnyű",
-                    duration: "30 perc",
-                    onTap: () => _startSolo('vigado-01'),
-                  ),
-                  
-                  CampaignCard(
-                    title: "Normafa Árnyai",
-                    image: "assets/normafa_cover.png",
-                    difficulty: "Közepes",
-                    duration: "90 perc",
-                    onTap: () => _startSolo('normafa-01'),
+                  Consumer<KeldorService>(
+                    builder: (context, keldor, child) {
+                      if (keldor.allQuests.isEmpty) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      return Column(
+                        children: keldor.allQuests.map((quest) => Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: CampaignCard(
+                            title: quest.title,
+                            image: quest.imageUrl ?? "assets/placeholder.png",
+                            difficulty: quest.difficulty,
+                            duration: "${quest.estimatedDurationMin} perc",
+                            onTap: () => _startSolo(quest.id),
+                          ),
+                        )).toList(),
+                      );
+                    },
                   ),
 
                   const SizedBox(height: 32),
@@ -195,7 +204,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   void _showMultiplayerDialog({required bool isHost}) {
-    String? selectedStoryId = 'normafa-01';
+    final keldor = Provider.of<KeldorService>(context, listen: false);
+    String? selectedStoryId = keldor.allQuests.isNotEmpty ? keldor.allQuests.first.id : null;
     final codeController = TextEditingController();
     final api = ApiService();
     final engine = Provider.of<StoryEngine>(context, listen: false);
@@ -222,10 +232,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
               DropdownButtonFormField<String>(
                 value: selectedStoryId,
                 dropdownColor: const Color(0xFF1E293B),
-                items: [
-                  DropdownMenuItem(value: 'normafa-01', child: Text("Normafa Árnyai", style: GoogleFonts.outfit())),
-                  DropdownMenuItem(value: 'mist-01', child: Text("A Ködön Járó", style: GoogleFonts.outfit())),
-                ],
+                items: keldor.allQuests.map((q) => DropdownMenuItem(
+                  value: q.id,
+                  child: Text(q.title, style: GoogleFonts.outfit()),
+                )).toList(),
                 onChanged: (v) => selectedStoryId = v,
                 decoration: InputDecoration(
                   filled: true,
@@ -254,10 +264,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
               onPressed: () async {
                 try {
                   Session session;
+                  final auth = Provider.of<AuthService>(context, listen: false);
+                  final token = auth.token;
+                  if (token == null) throw Exception("Bejelentkezés szükséges");
+
                   if (isHost) {
-                    session = await api.createSession(selectedStoryId!, engine.user!);
+                    session = await api.createSession(token, selectedStoryId!, engine.user!);
                   } else {
-                    session = await api.joinSession(codeController.text.toUpperCase(), engine.user!);
+                    session = await api.joinSession(token, codeController.text.toUpperCase(), engine.user!);
                   }
                   if (mounted) {
                     Navigator.pop(context);
@@ -334,11 +348,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   String _getStoryTitle(String id) {
-    switch (id) {
-      case 'mist-01': return "A Ködön Járó";
-      case 'vigado-01': return "A Vigadó Árnyéka";
-      case 'normafa-01': return "Normafa Árnyai";
-      default: return "Ismeretlen kaland";
+    try {
+      final keldor = Provider.of<KeldorService>(context, listen: false);
+      return keldor.allQuests.firstWhere((q) => q.id == id).title;
+    } catch (_) {
+      return "Ismeretlen kaland";
     }
   }
 }

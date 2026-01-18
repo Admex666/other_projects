@@ -1,6 +1,12 @@
 {
     "id": "vigado-01",
     "title": "A Vigadó Árnyéka",
+    "description": "Noir hangulatú nyomozás a Duna-parton.",
+    "image_url": "assets/vigado_noir.png",
+    "estimated_distance_km": 1.2,
+    "estimated_duration_min": 30,
+    "difficulty": "Könnyű",
+    "rewards_xp": 500,
     "startNode": "node-1",
     "initialState": {},
     "nodes": {
@@ -16,7 +22,10 @@
             "id": "node-2",
             "type": "location_wait",
             "text": "Menj a Vigadó tér felé. Keresd a régi szobrot a tér közepén.",
-            "targetLocation": {"lat": 47.4959, "lng": 19.0494},
+            "targetLocation": {
+                "lat": 47.4959,
+                "lng": 19.0494
+            },
             "next": "node-3",
             "fallbackButton": "Ott vagyok"
         },
@@ -24,7 +33,10 @@
             "id": "node-3",
             "type": "input",
             "text": "A szobor talapzatán egy évszámot látsz római számmal. Mi az?",
-            "validAnswers": ["mdCCCLXV", "1865"],
+            "validAnswers": [
+                "mdCCCLXV",
+                "1865"
+            ],
             "successNext": "node-4",
             "failureMessage": "Nem, ez nem tűnik helyesnek."
         },
@@ -33,8 +45,14 @@
             "type": "choice",
             "text": "Helyes. A kő lazának tűnik. Mögötte egy sötét üreg tátong. Mit teszel?",
             "choices": [
-                {"text": "Benyúlok a résbe", "next": "node-5a"},
-                {"text": "Körülnézek, ki figyel", "next": "node-5b"}
+                {
+                    "text": "Benyúlok a résbe",
+                    "next": "node-5a"
+                },
+                {
+                    "text": "Körülnézek, ki figyel",
+                    "next": "node-5b"
+                }
             ]
         },
         "node-5a": {
@@ -44,7 +62,7 @@
             "next": null,
             "buttonText": "Vége (Bátor)"
         },
-         "node-5b": {
+        "node-5b": {
             "id": "node-5b",
             "type": "narrative",
             "text": "Jól tetted. Egy gyanús alak épp téged figyelt.",

@@ -16,9 +16,9 @@ import 'dart:convert';
 import 'dart:math' as math;
 
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../services/routing_service.dart';
 import '../services/map_config.dart';
+import '../services/settings_service.dart';
 import '../models/session.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -69,7 +69,7 @@ class _GameScreenState extends State<GameScreen> {
   StreamSubscription? _positionSubscription;
   bool _followUser = true;
   bool _showTeam = true;
-  MapStyle _currentStyle = MapConfig.getStyle('dark');
+  bool _hasFirstPos = false;
 
   @override
   void initState() {
@@ -77,18 +77,8 @@ class _GameScreenState extends State<GameScreen> {
     _engine = Provider.of<StoryEngine>(context, listen: false);
     _initGame();
     _initCompass();
-    _loadMapStyle();
   }
 
-  Future<void> _loadMapStyle() async {
-    final prefs = await SharedPreferences.getInstance();
-    final styleId = prefs.getString('map_style') ?? 'dark';
-    if (mounted) {
-      setState(() {
-        _currentStyle = MapConfig.getStyle(styleId);
-      });
-    }
-  }
 
   void _initCompass() {
     _compassSubscription = FlutterCompass.events?.listen((event) {
@@ -102,7 +92,12 @@ class _GameScreenState extends State<GameScreen> {
 
   Future<void> _initGame() async {
     try {
-      final story = await _api.fetchStory(widget.storyId);
+      final auth = Provider.of<AuthService>(context, listen: false);
+      final token = auth.token;
+      if (token == null) throw Exception("Bejelentkezés szükséges");
+
+      _engine.setToken(token);
+      final story = await _api.fetchStory(token, widget.storyId);
       if (mounted) await AssetService.preloadStoryAssets(context, story);
       _engine.loadStory(story, 
           startAtNodeId: widget.initialNodeId, 
@@ -124,7 +119,7 @@ class _GameScreenState extends State<GameScreen> {
       }
 
       if (widget.sessionId != null && widget.userId != null) {
-        final session = await _api.getSession(widget.sessionId!);
+        final session = await _api.getSession(token, widget.sessionId!);
         for (var p in session.players) {
             _playerNames[p.id] = p.username;
             _playerStatuses[p.id] = p.isReady ? "ONLINE" : "AWAY"; // Initial guess
@@ -165,10 +160,15 @@ class _GameScreenState extends State<GameScreen> {
             _distanceToTarget = const Distance().as(LengthUnit.Meter, _currentPos, node!.targetLocation!);
             
             // Intelligent Rerouting Logic
+            if (!_hasFirstPos) {
+              _hasFirstPos = true;
+              _updateRoute();
+            }
+
             if (_distanceToTarget < _minDistanceWitnessed) {
               _minDistanceWitnessed = _distanceToTarget;
-            } else if (_distanceToTarget > _minDistanceWitnessed + 50) {
-              // User has deviated 50m from their closest approach
+            } else if (_distanceToTarget > _minDistanceWitnessed + 30) { // Reduced to 30m for tighter rerouting
+              // User has deviated 30m from their closest approach
               _minDistanceWitnessed = _distanceToTarget; // Reset to avoid constant spam
               _updateRoute();
               ScaffoldMessenger.of(context).showSnackBar(
@@ -203,7 +203,10 @@ class _GameScreenState extends State<GameScreen> {
       return;
     }
 
-    final points = await _routingService.getRoute(_currentPos, node!.targetLocation!);
+    print('📡 _updateRoute: from $_currentPos to ${node!.targetLocation}');
+    final points = await _routingService.getRoute(_currentPos, node.targetLocation!);
+    print('📍 Got ${points.length} route points');
+    
     if (mounted) {
       setState(() {
         _routePoints = points;
@@ -301,25 +304,25 @@ class _GameScreenState extends State<GameScreen> {
           FlutterMap(
             mapController: _mapController,
             options: MapOptions(
-              initialCenter: node.targetLocation ?? _currentPos,
-              initialZoom: 16.0,
-              interactionOptions: const InteractionOptions(
-                flags: InteractiveFlag.all,
-                enableMultiFingerGestureRace: true,
-              ),
+              initialCenter: _currentPos,
+              initialZoom: 17,
+              minZoom: 10,
+              maxZoom: 20,
+              initialRotation: _heading ?? 0.0,
             ),
             children: [
               TileLayer(
-                urlTemplate: _currentStyle.url,
-                subdomains: _currentStyle.subdomains,
+                urlTemplate: MapConfig.getStyle(context.watch<SettingsService>().mapStyle).url,
+                subdomains: MapConfig.getStyle(context.watch<SettingsService>().mapStyle).subdomains,
+                userAgentPackageName: 'com.storyturak.keldor',
               ),
               if (_routePoints.isNotEmpty)
                 PolylineLayer(
                   polylines: [
                     Polyline(
                       points: _routePoints,
-                      color: Colors.blueAccent.withAlpha(180),
-                      strokeWidth: 5,
+                      strokeWidth: 4.0,
+                      color: Colors.blueAccent.withOpacity(0.8),
                     ),
                   ],
                 ),

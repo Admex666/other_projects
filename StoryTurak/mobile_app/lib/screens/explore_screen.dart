@@ -14,6 +14,9 @@ import 'encounter_screen.dart';
 import 'package:flutter/services.dart'; 
 import '../services/auth_service.dart';
 import 'character_screen.dart'; 
+import '../services/location_service.dart';
+import '../services/routing_service.dart';
+import '../services/settings_service.dart';
 
 class ExploreScreen extends StatefulWidget {
   const ExploreScreen({Key? key}) : super(key: key);
@@ -28,16 +31,21 @@ class _ExploreScreenState extends State<ExploreScreen> {
   final Set<String> _triggeredEncounters = {};
   Timer? _pollTimer;
   Zone? _currentZone;
+  final LocationService _locationService = LocationService();
+  final RoutingService _routingService = RoutingService();
+  StreamSubscription? _positionSubscription;
+  List<LatLng> _routePoints = [];
+  LatLng? _lastRouteUpdatePos;
 
   @override
   void initState() {
     super.initState();
     // 1. Initial Fetch
     WidgetsBinding.instance.addPostFrameCallback((_) {
-       context.read<KeldorService>().fetchNearbyWorld(_userLocation);
+       final token = context.read<AuthService>().token;
+       context.read<KeldorService>().fetchNearbyWorld(token, _userLocation);
        
        // Fetch Data sequentially to avoid race conditions
-       final token = context.read<AuthService>().token;
        if (token != null) {
           context.read<KeldorService>().fetchUserCharacter(token).then((_) {
               if (mounted) {
@@ -51,6 +59,20 @@ class _ExploreScreenState extends State<ExploreScreen> {
     _pollTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
        _updateWorld();
     });
+
+    // 2.5 Listen to KeldorService for quest changes
+    context.read<KeldorService>().addListener(_updateRoute);
+
+    // 3. Listen to real-time location
+    _positionSubscription = _locationService.positionStream.listen((pos) {
+      if (mounted) {
+        setState(() {
+          _userLocation = pos;
+        });
+        _checkGeofences();
+        _maybeUpdateRoute();
+      }
+    });
   }
 
   Future<void> _updateWorld() async {
@@ -58,9 +80,9 @@ class _ExploreScreenState extends State<ExploreScreen> {
        // Simulate movement or get real location
        // For MVP dev, we assume _userLocation is updated by map interaction or mocking
        
-       context.read<KeldorService>().fetchNearbyWorld(_userLocation);
-       
        final token = context.read<AuthService>().token;
+       context.read<KeldorService>().fetchNearbyWorld(token, _userLocation);
+       
        if (token != null) {
            context.read<KeldorService>().fetchUserCharacter(token); // Update character state
        }
@@ -91,28 +113,79 @@ class _ExploreScreenState extends State<ExploreScreen> {
     });
 
     if (newZone != null) {
-        HapticFeedback.heavyImpact(); // Vibrate on entry
-        NotificationService().showZoneNotification(newZone.name); // System Notification
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Beléptél: ${newZone.name}"),
-            backgroundColor: KeldorTheme.primary,
-            duration: const Duration(seconds: 3),
-          ),
-        );
-        
-        // Persist visit
-        final token = context.read<AuthService>().token;
-        final char = context.read<KeldorService>().activeCharacter;
-        if (token != null && char != null) {
-            context.read<KeldorService>().markZoneVisited(token, char.id, newZone.id);
-        }
+      HapticFeedback.heavyImpact(); // Vibrate on entry
+      NotificationService().showZoneNotification(newZone.name); // System Notification
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Beléptél: ${newZone.name}"),
+          backgroundColor: KeldorTheme.primary,
+          duration: const Duration(seconds: 3),
+        ),
+      );
+      
+      // Persist visit
+      final token = context.read<AuthService>().token;
+      final char = context.read<KeldorService>().activeCharacter;
+      if (token != null && char != null) {
+        context.read<KeldorService>().markZoneVisited(token, char.id, newZone.id);
       }
     }
+  }
+  
+  void _maybeUpdateRoute() {
+    if (_lastRouteUpdatePos == null || _routePoints.isEmpty) {
+      _updateRoute();
+      return;
+    }
+    
+    final dist = const Distance().as(LengthUnit.Meter, _userLocation, _lastRouteUpdatePos!);
+    if (dist > 50) {
+      _updateRoute();
+    }
+  }
+
+  Future<void> _updateRoute() async {
+    final service = context.read<KeldorService>();
+    final activeQuests = service.activeQuests.where((q) => q.status == QuestStatus.active).toList();
+    
+    if (activeQuests.isEmpty) {
+      if (mounted) setState(() => _routePoints = []);
+      return;
+    }
+
+    final uq = activeQuests.first;
+    LatLng? target;
+    try {
+      final qDef = service.allQuests.firstWhere((q) => q.id == uq.questId);
+      if (qDef.stages.isNotEmpty && uq.currentStageIndex < qDef.stages.length) {
+        target = qDef.stages[uq.currentStageIndex].location;
+      } else {
+        target = qDef.startLocation;
+      }
+    } catch (e) {
+      return;
+    }
+
+    if (target != null) {
+      debugPrint('🚀 [Explore] Fetching walking route from $_userLocation to $target');
+      final points = await _routingService.getRoute(_userLocation, target);
+      if (mounted) {
+        setState(() {
+          _routePoints = points;
+          _lastRouteUpdatePos = _userLocation;
+        });
+        debugPrint('✅ [Explore] Got ${points.length} route points');
+      }
+    }
+  }
 
   @override
   void dispose() {
     _pollTimer?.cancel();
+    _positionSubscription?.cancel();
+    try {
+      context.read<KeldorService>().removeListener(_updateRoute);
+    } catch (_) {}
     super.dispose();
   }
 
@@ -142,8 +215,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
             ),
             children: [
               TileLayer(
-                urlTemplate: MapConfig.darkUrl,
-                subdomains: const ['a', 'b', 'c', 'd'],
+                urlTemplate: MapConfig.getStyle(context.watch<SettingsService>().mapStyle).url,
+                subdomains: MapConfig.getStyle(context.watch<SettingsService>().mapStyle).subdomains,
                 userAgentPackageName: 'com.storyturak.keldor',
               ),
               PolygonLayer(
@@ -248,16 +321,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
               // Auto-trigger if it's the active quest target
               if (isNear && closestEncounter != null && activeBountyEncounterId != null && closestEncounter.id == activeBountyEncounterId) {
                    if (!_triggeredEncounters.contains(closestEncounter.id)) {
-                       _triggeredEncounters.add(closestEncounter.id);
                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                           Navigator.push(
-                             context,
-                             MaterialPageRoute(
-                               builder: (context) => EncounterScreen(
-                                 encounter: closestEncounter!,
-                               ),
-                             ),
-                           );
+                           _navigateToEncounter(closestEncounter!);
                        });
                    }
                    return const SizedBox.shrink();
@@ -342,111 +407,6 @@ class _ExploreScreenState extends State<ExploreScreen> {
     );
   }
 
-  void _showQuestCard(Quest quest) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      barrierColor: Colors.black54,
-      isScrollControlled: true,
-      builder: (context) => Container(
-        padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          color: KeldorTheme.surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-          border: Border.all(color: KeldorTheme.primary.withOpacity(0.2)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(quest.title, style: KeldorTheme.darkTheme.textTheme.displayMedium),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.close, color: Colors.white54),
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            if (quest.imageUrl != null) ...[
-               ClipRRect(
-                 borderRadius: BorderRadius.circular(12),
-                 child: Stack(
-                   children: [
-                      Image.asset(
-                        quest.imageUrl!,
-                        height: 150,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Container(height: 150, color: Colors.white10),
-                      ),
-                      Positioned.fill(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [Colors.transparent, Colors.black.withOpacity(0.8)],
-                            ),
-                          ),
-                        ),
-                      ),
-                   ],
-                 ),
-               ),
-               const SizedBox(height: 16),
-            ],
-            Text(
-              quest.flavorText ?? quest.description,
-              style: KeldorTheme.darkTheme.textTheme.bodyLarge?.copyWith(fontStyle: FontStyle.italic),
-            ),
-            const SizedBox(height: 24),
-            Row(
-              children: [
-                const Icon(Icons.stars, color: KeldorTheme.primary, size: 20),
-                const SizedBox(width: 8),
-                Text("${quest.rewardsXp} XP Reward", style: const TextStyle(color: KeldorTheme.primary, fontWeight: FontWeight.bold)),
-              ],
-            ),
-            const SizedBox(height: 16),
-            ...quest.objectives.map((o) => Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Row(
-                    children: [
-                        const Icon(Icons.radio_button_unchecked, color: KeldorTheme.primary, size: 16),
-                        const SizedBox(width: 12),
-                        Text(o.description, style: const TextStyle(color: Colors.white70)),
-                    ]
-                ),
-            )),
-             const SizedBox(height: 32),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () async {
-                    final token = context.read<AuthService>().token;
-                    if (token != null) {
-                        final success = await context.read<KeldorService>().acceptQuest(token, quest.id);
-                        if (success && mounted) {
-                            Navigator.pop(context);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text("Küldetés elfogadva!"))
-                            );
-                        }
-                    }
-                },
-                child: const Text("ELFOGADOM"),
-              ),
-            ),
-            const SizedBox(height: 20),
-          ],
-        ),
-      ),
-    );
-  }
 
   Widget _buildActiveQuestHud(UserQuest uq, KeldorService service) {
     Quest? qDef;
@@ -519,13 +479,19 @@ class _ExploreScreenState extends State<ExploreScreen> {
                       ),
                     );
                     
-                    if (confirmed == true) {
-                      final token = context.read<AuthService>().token;
-                      if (token != null) {
-                        // Call abandon quest endpoint
-                        await service.abandonQuest(token, uq.id);
+                      if (confirmed == true) {
+                        final token = context.read<AuthService>().token;
+                        if (token != null) {
+                          // Call abandon quest endpoint
+                          await service.abandonQuest(token, uq.id);
+                          
+                          // Clear triggers and refresh map so first stage can re-trigger later
+                          setState(() {
+                            _triggeredEncounters.clear();
+                          });
+                          _updateWorld();
+                        }
                       }
-                    }
                   },
                 ),
               ],
@@ -645,6 +611,17 @@ class _ExploreScreenState extends State<ExploreScreen> {
   }
 
   List<Polyline> _buildNavigationLines(KeldorService service) {
+      if (_routePoints.isNotEmpty) {
+          return [
+              Polyline(
+                  points: _routePoints,
+                  strokeWidth: 5,
+                  color: KeldorTheme.primary.withOpacity(0.8),
+              )
+          ];
+      }
+
+      // Fallback to straight lines if route not yet fetched
       List<Polyline> lines = [];
       
       for (var uq in service.activeQuests) {
@@ -659,16 +636,14 @@ class _ExploreScreenState extends State<ExploreScreen> {
               } else {
                   targetLoc = qDef.startLocation;
               }
-          } catch (e) {
-              // Not found
-          }
+          } catch (e) {}
           
           if (targetLoc != null) {
               lines.add(Polyline(
                   points: [_userLocation, targetLoc],
-                  strokeWidth: 4.5,
-                  color: KeldorTheme.primary.withOpacity(0.8),
-                  isDotted: false,
+                  strokeWidth: 4,
+                  color: KeldorTheme.primary.withOpacity(0.4),
+                  isDotted: true,
               ));
           }
       }
@@ -787,54 +762,28 @@ class _ExploreScreenState extends State<ExploreScreen> {
               child: ElevatedButton(
                 onPressed: isNearby && !isActive
                     ? () async {
-                        Navigator.pop(context);
                         final token = context.read<AuthService>().token;
-                        if (token != null) {
-                          // Accept the quest
-                          await service.acceptQuest(token, quest.id);
-                          
-                          // Get the first stage's encounter
-                          if (quest.stages.isNotEmpty) {
-                            final firstStage = quest.stages[0];
-                            final encounterId = firstStage.encounterId;
-                            
-                            if (encounterId == null) {
-                              print('❌ No encounter ID for first stage');
-                              return;
-                            }
-                            
-                            print('🎯 Looking for encounter: $encounterId');
-                            print('🎯 Nearby encounters: ${service.nearbyEncounters.map((e) => e.id).toList()}');
-                            
-                            // Find the encounter in nearby encounters or dynamic encounters
-                            final encounter = service.nearbyEncounters.firstWhere(
-                              (e) => e.id == encounterId,
-                              orElse: () {
-                                print('⚠️ Encounter not found in nearby, creating placeholder');
-                                return Encounter(
-                                  id: encounterId,
-                                  title: firstStage.description,
-                                  description: quest.description,
-                                  type: EncounterType.story,
-                                  location: firstStage.location,
-                                  startNodeId: 'start',
-                                  nodes: {}, // Will be loaded from backend
-                                  zoneId: quest.starterZoneId ?? 'zone_nyolcker',
-                                );
-                              },
+                        if (token == null) return;
+                        
+                        Navigator.pop(context);
+                        // Accept the quest
+                        final success = await service.acceptQuest(token, quest.id);
+                        
+                        if (success) {
+                          // IMPORTANT: Clear triggers so if they abandoned/restarted, the first one fires
+                          // And refresh world so the encounter is available in nearbyEncounters
+                          setState(() {
+                            _triggeredEncounters.clear();
+                          });
+                          _updateWorld();
+                        } else {
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Hiba a küldetés indításakor. Kérlek próbáld újra!"),
+                                backgroundColor: Colors.redAccent,
+                              ),
                             );
-                            
-                            print('✅ Opening encounter: ${encounter.id}');
-                            
-                            // Open the encounter screen
-                            if (mounted) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => EncounterScreen(encounter: encounter),
-                                ),
-                              );
-                            }
                           }
                         }
                       }
@@ -865,5 +814,22 @@ class _ExploreScreenState extends State<ExploreScreen> {
         ),
       ),
     );
+  }
+  Future<void> _navigateToEncounter(Encounter encounter) async {
+    if (!_triggeredEncounters.contains(encounter.id)) {
+      setState(() {
+        _triggeredEncounters.add(encounter.id);
+      });
+      
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => EncounterScreen(encounter: encounter),
+        ),
+      );
+      
+      // Refresh world data when returning from encounter to show next checkpoint
+      _updateWorld();
+    }
   }
 }

@@ -18,6 +18,7 @@ enum EncounterNodeType {
   choice,
   fight,
   input,
+  order,
 }
 
 class EncounterChoice {
@@ -52,6 +53,11 @@ class EncounterNode {
   final int? enemyHp;
   // Input
   final String? correctAnswer;
+  final List<String>? validAnswers;
+  final String? successNodeId;
+  final String? failureNodeId;
+  final String? buttonText;
+  final List<String>? options;
 
   EncounterNode({
     required this.id,
@@ -63,6 +69,11 @@ class EncounterNode {
     this.enemyId,
     this.enemyHp,
     this.correctAnswer,
+    this.validAnswers,
+    this.successNodeId,
+    this.failureNodeId,
+    this.buttonText,
+    this.options,
   });
 
   factory EncounterNode.fromJson(Map<String, dynamic> json) {
@@ -81,6 +92,11 @@ class EncounterNode {
       enemyId: json['enemy_id'],
       enemyHp: json['enemy_hp'],
       correctAnswer: json['correct_answer'],
+      validAnswers: (json['valid_answers'] as List?)?.map((v) => v as String).toList(),
+      successNodeId: json['success_node_id'],
+      failureNodeId: json['failure_node_id'],
+      buttonText: json['button_text'],
+      options: (json['options'] as List?)?.map((o) => o as String).toList(),
     );
   }
 }
@@ -339,7 +355,10 @@ class Quest {
   final LatLng startLocation;
   final List<QuestStage> stages;
   final double estimatedDistanceKm;
+  final int estimatedDurationMin;
+  final String difficulty;
   final int minLevel;
+  final List<String> introSteps;
   final List<QuestObjective> objectives;
   final int rewardsXp;
   final String? starterZoneId;
@@ -353,7 +372,10 @@ class Quest {
     required this.startLocation,
     required this.stages,
     this.estimatedDistanceKm = 0.0,
+    this.estimatedDurationMin = 30,
+    this.difficulty = "Közepes",
     required this.minLevel,
+    this.introSteps = const [],
     required this.objectives,
     required this.rewardsXp,
     required this.starterZoneId,
@@ -375,7 +397,10 @@ class Quest {
           ?.map((s) => QuestStage.fromJson(s))
           .toList() ?? [],
       estimatedDistanceKm: (json['estimated_distance_km'] ?? 0.0).toDouble(),
+      estimatedDurationMin: json['estimated_duration_min'] ?? 30,
+      difficulty: json['difficulty'] ?? "Közepes",
       minLevel: json['min_level'],
+      introSteps: (json['intro_steps'] as List?)?.map((s) => s as String).toList() ?? [],
       objectives: (json['objectives'] as List?)
           ?.map((o) => QuestObjective.fromJson(o))
           .toList() ?? [],

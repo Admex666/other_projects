@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 import '../services/map_config.dart';
+import '../services/settings_service.dart';
+import '../services/auth_service.dart';
+import '../services/keldor_service.dart';
+import '../services/story_engine.dart';
+import '../theme.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -28,10 +34,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       _useLocalBackend = prefs.getBool('use_local_backend') ?? false;
-      _mapStyle = prefs.getString('map_style') ?? 'dark';
       _localIp = prefs.getString('local_ip') ?? '10.0.2.2';
       _ipController.text = _localIp;
     });
+  }
+
+  void _logout() {
+    context.read<KeldorService>().clearActiveCharacter();
+    context.read<AuthService>().logout();
   }
 
   Future<void> _updateMapStyle(String? style) async {
@@ -67,6 +77,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final settings = context.watch<SettingsService>();
+
     return Scaffold(
       backgroundColor: const Color(0xFF0F172A),
       appBar: AppBar(
@@ -77,14 +89,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
+          _buildUserInfo(),
+          const SizedBox(height: 32),
           _buildSectionHeader("ÁLTALÁNOS"),
-          _buildToggleTile(Icons.vibration, "Haptikus visszajelzés", _hapticsEnabled, (v) => setState(() => _hapticsEnabled = v)),
+          _buildToggleTile(Icons.vibration, "Haptikus visszajelzés", settings.hapticsEnabled, (v) => settings.setHapticsEnabled(v)),
           _buildToggleTile(Icons.dark_mode_outlined, "Sötét mód", _darkMode, (v) => setState(() => _darkMode = v)),
           
           const SizedBox(height: 24),
-          _buildMapStyleSelector(),
+          _buildMapStyleSelector(settings),
           
           const SizedBox(height: 32),
+          _buildSectionHeader("FIÓK"),
+          _buildActionTile(Icons.logout, "Kijelentkezés", "Biztosan ki akarsz jelentkezni?", Colors.redAccent, _logout),
           _buildSectionHeader("FEJLESZTŐI BEÁLLÍTÁSOK"),
           _buildToggleTile(
             Icons.developer_mode, 
@@ -136,7 +152,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildMapStyleSelector() {
+  Widget _buildMapStyleSelector(SettingsService settings) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -149,7 +165,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
-              value: _mapStyle,
+              value: settings.mapStyle,
               dropdownColor: const Color(0xFF1E293B),
               icon: const Icon(Icons.arrow_drop_down, color: Colors.blueAccent),
               isExpanded: true,
@@ -162,11 +178,50 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                 );
               }).toList(),
-              onChanged: _updateMapStyle,
+              onChanged: (v) => v != null ? settings.setMapStyle(v) : null,
             ),
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildUserInfo() {
+    final user = context.watch<StoryEngine>().user;
+    final character = context.watch<KeldorService>().activeCharacter;
+
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [KeldorTheme.primary.withOpacity(0.2), Colors.blueAccent.withOpacity(0.05)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(30),
+        border: Border.all(color: KeldorTheme.primary.withOpacity(0.1)),
+      ),
+      child: Column(
+        children: [
+          CircleAvatar(
+            radius: 35,
+            backgroundColor: KeldorTheme.primary.withOpacity(0.2),
+            child: const Icon(Icons.person, size: 40, color: KeldorTheme.primary),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            user?.username ?? "Felfedező",
+            style: GoogleFonts.outfit(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+          if (character != null) ...[
+            const SizedBox(height: 4),
+            Text(
+              "Karakter: ${character.name}",
+              style: GoogleFonts.outfit(fontSize: 14, color: KeldorTheme.primary, fontWeight: FontWeight.w500),
+            ),
+          ],
+        ],
+      ),
     );
   }
 

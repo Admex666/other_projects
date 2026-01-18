@@ -1,13 +1,16 @@
 {
     "id": "quest_botanic_garden",
     "title": "A Füvészkert Titka",
-    "startNode": "intro",
     "description": "Segíts a kertésznek visszaszerezni a kulcsot, és juss be a rejtett kertbe.",
     "flavor_text": "A Józsefvárosi piac és a Füvészkert között valahol egy elfeledett ösvény kanyarog. Csak az találja meg, aki ismeri a titkos jelszót.",
-    "image_url": "assets/mist_garden_gate.png",
-    "estimated_distance_km": 1.6,
-    "rewards_xp": 750,
-    "rewards_items": ["item_herb_bag"],
+    "image_url": "assets/botanic_garden.png",
+    "estimated_distance_km": 1.5,
+    "estimated_duration_min": 60,
+    "difficulty": "Könnyű",
+    "rewards_xp": 600,
+    "rewards_items": [
+        "item_herb_bag"
+    ],
     "initialState": {
         "FLAG_KEY_OBTAINED": false
     },
