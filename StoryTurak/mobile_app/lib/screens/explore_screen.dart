@@ -169,7 +169,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
     if (target != null) {
       debugPrint('🚀 [Explore] Fetching walking route from $_userLocation to $target');
       final points = await _routingService.getRoute(_userLocation, target);
-      if (mounted) {
+      if (mounted && points != null && points.isNotEmpty) {
         setState(() {
           _routePoints = points;
           _lastRouteUpdatePos = _userLocation;

@@ -205,9 +205,9 @@ class _GameScreenState extends State<GameScreen> {
 
     print('📡 _updateRoute: from $_currentPos to ${node!.targetLocation}');
     final points = await _routingService.getRoute(_currentPos, node.targetLocation!);
-    print('📍 Got ${points.length} route points');
     
-    if (mounted) {
+    if (mounted && points != null && points.isNotEmpty) {
+      print('📍 Got ${points.length} route points');
       setState(() {
         _routePoints = points;
       });
