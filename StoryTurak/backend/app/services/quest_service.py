@@ -15,7 +15,7 @@ def sync_stories_to_quests_v2():
     dynamic_encounters.clear() # Clear in-place
     
     for story_id, story in STORY_DATA.items():
-        if "rewards_xp" not in story and "estimated_distance_km" not in story:
+        if "rewards_steps" not in story and "estimated_distance_km" not in story:
             continue
             
         stages = []
@@ -127,7 +127,7 @@ def sync_stories_to_quests_v2():
             "intro_steps": story.get("intro_steps", []),
             "min_level": story.get("min_level", 1),
             "objectives": [],
-            "rewards_xp": story.get("rewards_xp", 100),
+            "rewards_steps": story.get("rewards_steps", 100),
             "rewards_items": story.get("rewards_items", []),
             "starter_zone_id": "zone_nyolcker"
         }
@@ -145,7 +145,7 @@ def seed_quests():
         "start_location": (47.502, 19.058),
         "min_level": 1,
         "objectives": [],
-        "rewards_xp": 250,
+        "rewards_steps": 250,
         "starter_zone_id": "zone_belvaros",
         "stages": []
     }
@@ -158,7 +158,7 @@ def seed_quests():
         "start_location": (47.495, 19.075),
         "min_level": 2,
         "objectives": [],
-        "rewards_xp": 500,
+        "rewards_steps": 500,
         "starter_zone_id": "zone_nyolcker",
         "stages": []
     }

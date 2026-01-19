@@ -85,12 +85,12 @@ class StoryEngine extends ChangeNotifier {
         _executeActions(node.onEnter!);
       }
 
-      // XP Rewards
+      // Steps Rewards (renamed from XP)
       if (save && _user != null && _token != null) {
-        int xpGain = 10;
-        if (node.next == null && node.type == NodeType.narrative) xpGain = 100; // Finish
-        _user!.xp += xpGain;
-        _api.addXp(_token!, _user!.id, xpGain).catchError((e) => debugPrint("XP sync failed: $e"));
+        int stepsGain = 10;
+        if (node.next == null && node.type == NodeType.narrative) stepsGain = 100; // Finish
+        _user!.steps += stepsGain;
+        _api.addSteps(_token!, _user!.id, stepsGain).catchError((e) => debugPrint("Steps sync failed: $e"));
       }
 
       // Analytics

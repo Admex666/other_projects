@@ -4,13 +4,19 @@ from enum import Enum
 from datetime import datetime
 
 class CharacterClass(str, Enum):
-    SOLDIER = "soldier"
+    ARCHIVIST = "archivist" # Krónikás
+    VIGILANTE = "vigilante" # Őrszem
+    COLLECTOR = "collector" # Gyűjtő
+    # Legacy / Backward Compatibility
     POET = "poet"
+    SOLDIER = "soldier"
     TAX_COLLECTOR = "tax_collector"
     PILGRIM = "pilgrim"
 
 class ItemType(str, Enum):
     WEAPON = "weapon"
+    TOOL = "tool"
+    RELIC = "relic"
     CONSUMABLE = "consumable"
     QUEST_ITEM = "quest_item"
     MISC = "misc"
@@ -34,7 +40,7 @@ class User(BaseModel):
     username: str
     email: Optional[str] = None
     role: str = "player"
-    xp: int = 0
+    steps: int = 0
     isReady: bool = False
     created_at: datetime = Field(default_factory=datetime.now)
 
@@ -44,7 +50,8 @@ class Character(BaseModel):
     name: str
     character_class: CharacterClass
     level: int = 1
-    xp: int = 0
+    steps: int = 0
+    weekly_steps: int = 0
     max_hp: int = 10
     current_hp: int = 10
     stats: Dict[str, int] = {"strength": 1, "agility": 1, "intellect": 1}
@@ -79,6 +86,8 @@ class EncounterNode(BaseModel):
     next_node_id: Optional[str] = None
     enemy_id: Optional[str] = None
     enemy_hp: Optional[int] = None
+    enemy_class: Optional[CharacterClass] = None # For Rock-Paper-Scissors
+    weakness_item_id: Optional[str] = None # For Instant Win
     correct_answer: Optional[str] = None
     valid_answers: Optional[List[str]] = None
     success_node_id: Optional[str] = None
@@ -146,7 +155,7 @@ class Quest(BaseModel):
     min_level: int = 1
     intro_steps: List[str] = []
     objectives: List[QuestObjective]
-    rewards_xp: int = 100
+    rewards_steps: int = 100
     rewards_items: Optional[List[str]] = None
     starter_zone_id: Optional[str] = None
     

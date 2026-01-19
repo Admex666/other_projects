@@ -7,6 +7,7 @@ import '../services/settings_service.dart';
 import '../services/auth_service.dart';
 import '../services/keldor_service.dart';
 import '../services/story_engine.dart';
+import '../services/location_service.dart';
 import '../theme.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -107,6 +108,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
             "Localhost Backend használata", 
             _useLocalBackend, 
             _toggleBackend
+          ),
+          _buildToggleTile(
+            Icons.location_on, 
+            "Debug Mód (Kattintás = Teleport)", 
+            context.watch<LocationService>().isDebugMode, 
+            (v) => context.read<LocationService>().setDebugMode(v)
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

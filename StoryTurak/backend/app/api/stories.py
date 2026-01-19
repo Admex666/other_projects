@@ -4,7 +4,7 @@ import logging
 
 from app.dependencies import get_current_user
 from app.services.story_service import get_all_stories, get_story_by_id, load_stories
-from app.db.crud import get_progress, save_progress, update_user_xp, execute_query, get_user_quests, get_all_quests
+from app.db.crud import get_progress, save_progress, update_user_steps, execute_query, get_user_quests, get_all_quests
 import json
 
 from app.models.schemas import Zone
@@ -94,10 +94,10 @@ def update_user_story_progress(user_id: str, story_id: str, data: dict):
     save_progress(user_id, story_id, data["nodeId"], data["variables"])
     return {"status": "saved"}
 
-@router.post("/progress/{user_id}/{story_id}/xp")
-def add_xp(user_id: str, amount: int):
-    update_user_xp(user_id, amount)
-    return {"status": "xp_added"}
+@router.post("/progress/{user_id}/{story_id}/steps")
+def add_steps(user_id: str, amount: int):
+    update_user_steps(user_id, amount)
+    return {"status": "steps_added"}
 
 @router.post("/analytics/log")
 def log_event(data: dict):

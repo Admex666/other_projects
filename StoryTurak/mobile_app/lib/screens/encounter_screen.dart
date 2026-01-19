@@ -112,6 +112,9 @@ class _EncounterScreenState extends State<EncounterScreen> {
           case EncounterNodeType.fight:
               label = "HARC!";
               color = KeldorTheme.error;
+              if (node.enemyClass != null) {
+                  label += " (${node.enemyClass!.toUpperCase()})";
+              }
               break;
           case EncounterNodeType.choice:
               label = "DÖNTÉS";
@@ -322,13 +325,28 @@ class _EncounterScreenState extends State<EncounterScreen> {
       }
 
       if (node.type == EncounterNodeType.fight) {
-          return ElevatedButton(
-              onPressed: () => _resolveFight(node),
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: KeldorTheme.error,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-              ),
-              child: const Text("TÁMADÁS!", style: TextStyle(fontWeight: FontWeight.bold)),
+          return Column(
+              children: [
+                   if (node.enemyHp != null)
+                      Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: Text("Ellenség Életereje: ${node.enemyHp}", style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
+                      ),
+                   Row(
+                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                       children: [
+                           _buildCombatButton("TÁMADÁS", Icons.gavel, Colors.red, () => _resolveFightAction(node, "attack")),
+                           _buildCombatButton("CSEL", Icons.visibility_off, Colors.blue, () => _resolveFightAction(node, "trick")),
+                           _buildCombatButton("ELEMZÉS", Icons.search, Colors.amber, () => _resolveFightAction(node, "analyze")),
+                       ],
+                   ),
+                   const SizedBox(height: 16),
+                   OutlinedButton.icon(
+                       onPressed: () => _openCombatInventory(node),
+                       icon: const Icon(Icons.backpack, color: Colors.white70),
+                       label: const Text("Tárgy Használata", style: TextStyle(color: Colors.white)),
+                   )
+              ],
           );
       }
 
@@ -373,13 +391,91 @@ class _EncounterScreenState extends State<EncounterScreen> {
       });
   }
 
-  Future<void> _resolveFight(EncounterNode node) async {
+  Widget _buildCombatButton(String label, IconData icon, Color color, VoidCallback onPressed) {
+      return Column(
+          children: [
+              InkWell(
+                  onTap: onPressed,
+                  child: Container(
+                      width: 60, height: 60,
+                      decoration: BoxDecoration(color: color.withOpacity(0.2), shape: BoxShape.circle, border: Border.all(color: color)),
+                      child: Icon(icon, color: color, size: 30),
+                  ),
+              ),
+              const SizedBox(height: 8),
+              Text(label, style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.bold))
+          ],
+      );
+  }
+
+  Future<void> _resolveFightAction(EncounterNode node, String action) async {
+      // Logic:
+      // Attack (Str) > Trick (Agi)
+      // Trick (Agi) > Analyze (Int)
+      // Analyze (Int) > Attack (Str)
+      // 
+      // If Enemy has NO class -> Attack always wins (Basic mob).
+      // If Enemy HAS class -> Check RPS.
+
       setState(() => _isTransitioning = true);
-      // Simulate fight resolution or call backend
-      await Future.delayed(const Duration(seconds: 1));
-      if (mounted) {
-          _goToNode(node.nextNodeId);
+      
+      String result = "lose";
+      String feedback = "Az ellenség kivédte!";
+      
+      // Basic Logic (Client-side for MVP)
+      if (node.enemyClass == null) {
+           result = "win";
+           feedback = "Sikeres támadás!";
+      } else {
+           final eClass = node.enemyClass!; // archivist, vigilante, collector
+           
+           // Map Action to Class/Stat
+           // attack -> vigilante (str)
+           // trick -> collector (agi)
+           // analyze -> archivist (int)
+           
+           if (action == "attack") {
+               if (eClass == "collector") { result = "win"; feedback = "Erővel legyőzted a gyorsaságot!"; } // Str > Agi
+               else if (eClass == "vigilante") { result = "draw"; feedback = "Két harcos csap össze... döntetlen."; }
+               else { result = "lose"; feedback = "A mágia erősebb az izomnál!"; } // Int > Str
+           } else if (action == "trick") {
+               if (eClass == "archivist") { result = "win"; feedback = "Kicselezted a tudóst!"; } // Agi > Int
+               else if (eClass == "collector") { result = "draw"; feedback = "Két árny suhan... döntetlen."; }
+               else { result = "lose"; feedback = "A harcos átlát a csellel!"; } // Str > Agi
+           } else if (action == "analyze") {
+               if (eClass == "vigilante") { result = "win"; feedback = "Elemezted a harcstílusát és győztél!"; } // Int > Str
+               else if (eClass == "archivist") { result = "draw"; feedback = "Két elme csatája... döntetlen."; }
+               else { result = "lose"; feedback = "Túl gyors volt neked!"; } // Agi > Int
+           }
       }
+
+      await Future.delayed(const Duration(milliseconds: 800)); // Suspense
+
+      if (!mounted) return;
+
+      if (result == "win") {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(feedback), backgroundColor: Colors.green));
+          _finishEncounter(); // Success
+      } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(feedback), backgroundColor: Colors.red));
+           if (node.failureNodeId != null) {
+              _goToNode(node.failureNodeId);
+           } else {
+              // Just stay here? Or lose health? For now stay.
+              setState(() => _isTransitioning = false);
+           }
+      }
+  }
+  
+  void _openCombatInventory(EncounterNode node) {
+       // Show dialog with consumable items
+       // If item used matches weakness -> Win
+       showDialog(context: context, builder: (ctx) => AlertDialog(
+           backgroundColor: KeldorTheme.surface,
+           title: const Text("Tárgy Használata", style: TextStyle(color: Colors.white)),
+           content: const Text("Jelenleg nincs használható harci tárgyad.", style: TextStyle(color: Colors.white54)),
+           actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: const Text("Bezárás"))],
+       ));
   }
 
   void _finishEncounter() async {
@@ -393,16 +489,76 @@ class _EncounterScreenState extends State<EncounterScreen> {
       final token = context.read<AuthService>().token;
       if (token != null) {
           try {
-              await context.read<KeldorService>().resolveEncounter(token, widget.encounter.id, "success");
+              final result = await context.read<KeldorService>().resolveEncounter(token, widget.encounter.id, "success");
+              
+              if (mounted && result != null && result['new_status'] == 'completed') {
+                  await showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (ctx) => AlertDialog(
+                          backgroundColor: KeldorTheme.surface,
+                          shape: RoundedRectangleBorder(
+                              side: const BorderSide(color: Colors.amber, width: 2),
+                              borderRadius: BorderRadius.circular(20),
+                          ),
+                          title: Column(
+                              children: [
+                                  const Icon(Icons.emoji_events, color: Colors.amber, size: 48),
+                                  const SizedBox(height: 16),
+                                  Text("KÜLDETÉS TELJESÍTVE!", style: GoogleFonts.cinzel(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 22)),
+                              ],
+                          ),
+                          content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                   Text("Sikeresen teljesítetted a feladatot!", style: GoogleFonts.outfit(color: Colors.white70)),
+                                   const SizedBox(height: 20),
+                                   if (result['rewards'] != null) ...[
+                                       Row(
+                                           mainAxisAlignment: MainAxisAlignment.center,
+                                           children: [
+                                               const Icon(Icons.directions_walk, color: KeldorTheme.primary, size: 20),
+                                               const SizedBox(width: 8),
+                                               Text("+${result['rewards']['steps']} Lépés", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                                           ],
+                                       ),
+                                       // Show items if any
+                                       if (result['rewards']['items'] != null && (result['rewards']['items'] as List).isNotEmpty)
+                                           ...((result['rewards']['items'] as List).map((item) => Padding(
+                                               padding: const EdgeInsets.only(top: 8),
+                                               child: Row(
+                                                   mainAxisAlignment: MainAxisAlignment.center,
+                                                   children: [
+                                                       const Icon(Icons.inventory_2, color: Colors.amber, size: 20),
+                                                       const SizedBox(width: 8),
+                                                       Text("+1 ${item['name']}", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                                                   ],
+                                               ),
+                                           ))),
+                                   ]
+                              ],
+                          ),
+                          actions: [
+                              SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(backgroundColor: Colors.amber),
+                                      onPressed: () => Navigator.pop(ctx),
+                                      child: const Text("JUTALOM ÁTVÉTELE", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                                  ),
+                              )
+                          ],
+                      ),
+                  );
+              }
+
           } catch (e) {
               print("Error resolving encounter: $e");
           }
       }
       
       if (mounted) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (mounted) Navigator.pop(context);
-          });
+          Navigator.pop(context);
       }
   }
 

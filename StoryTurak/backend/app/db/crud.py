@@ -10,8 +10,8 @@ def get_user_by_username(username):
     conn.close()
     return dict(row) if row else None
 
-def update_user_xp(user_id, xp_gain):
-    execute_query("UPDATE users SET xp = xp + ? WHERE id = ?", (xp_gain, user_id))
+def update_user_steps(user_id, steps_gain):
+    execute_query("UPDATE users SET steps = steps + ? WHERE id = ?", (steps_gain, user_id))
 
 def create_user(user_id, username, password_hash):
     execute_query("INSERT INTO users (id, username, password_hash) VALUES (?, ?, ?)", (user_id, username, password_hash))
@@ -19,28 +19,60 @@ def create_user(user_id, username, password_hash):
 # --- Character Functions ---
 def create_character(char_data: dict):
     execute_query(
-        "INSERT INTO characters (id, user_id, name, character_class, level, xp, max_hp, stats, inventory, visited_zones, completed_quests) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        (char_data["id"], char_data["user_id"], char_data["name"], char_data["character_class"], char_data["level"], char_data["xp"], char_data["max_hp"], 
+        "INSERT INTO characters (id, user_id, name, character_class, level, steps, weekly_steps, max_hp, stats, inventory, visited_zones, completed_quests) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        (char_data["id"], char_data["user_id"], char_data["name"], char_data["character_class"], char_data["level"], char_data["steps"], char_data.get("weekly_steps", 0), char_data["max_hp"], 
          json.dumps(char_data.get("stats", {})), json.dumps(char_data.get("inventory", [])), json.dumps(char_data.get("visited_zones", [])), json.dumps(char_data.get("completed_quests", [])))
     )
 
 def get_characters_by_user(user_id: str):
     rows = execute_query("SELECT * FROM characters WHERE user_id = ?", (user_id,))
     chars = []
+    chars = []
+    
+    # Pre-fetch all needed items to enrich inventory
+    all_item_ids = set()
+    temp_chars = []
     for r in rows:
         d = dict(r)
         d["stats"] = json.loads(d["stats"]) if d["stats"] else {}
         d["inventory"] = json.loads(d["inventory"]) if d["inventory"] else []
         d["visited_zones"] = json.loads(d["visited_zones"]) if d["visited_zones"] else []
         d["completed_quests"] = json.loads(d["completed_quests"]) if d["completed_quests"] else []
-        chars.append(d)
+        
+        for slot in d["inventory"]:
+            all_item_ids.add(slot["item_id"])
+        temp_chars.append(d)
+        
+    # Batch fetch items
+    items_map = {}
+    if all_item_ids:
+        placeholders = ','.join(['?'] * len(all_item_ids))
+        i_rows = execute_query(f"SELECT * FROM items WHERE id IN ({placeholders})", tuple(all_item_ids))
+        for ir in i_rows:
+            i_dict = dict(ir)
+            # Parse stats for item
+            i_dict["stats"] = json.loads(str(i_dict["stats"])) if i_dict["stats"] else {}
+            items_map[i_dict["id"]] = i_dict
+
+    # Enrich inventory
+    for c in temp_chars:
+        for slot in c["inventory"]:
+            i_id = slot["item_id"]
+            if i_id in items_map:
+                item = items_map[i_id]
+                slot["name"] = item["name"]
+                slot["description"] = item["description"]
+                slot["icon_code"] = item["icon_code"]
+                slot["stats"] = item["stats"]
+        chars.append(c)
+        
     return chars
 
 def update_character_inventory(char_id: str, new_inventory: list):
     execute_query("UPDATE characters SET inventory = ? WHERE id = ?", (json.dumps(new_inventory), char_id))
 
-def update_character_xp_and_level(char_id: str, new_xp: int, new_level: int):
-    execute_query("UPDATE characters SET xp = ?, level = ? WHERE id = ?", (new_xp, new_level, char_id))
+def update_character_steps_and_level(char_id: str, new_steps: int, new_level: int):
+    execute_query("UPDATE characters SET steps = ?, level = ? WHERE id = ?", (new_steps, new_level, char_id))
 
 def update_character_visited_zones(char_id: str, zone_id: str):
     chars = execute_query("SELECT visited_zones FROM characters WHERE id = ?", (char_id,))
@@ -80,10 +112,10 @@ def get_user_sessions(user_id):
 # --- Quest Functions ---
 def create_quest(q: dict):
     execute_query(
-        "INSERT INTO quests (id, title, description, flavor_text, image_url, start_location, stages, estimated_distance_km, min_level, objectives, rewards_xp, rewards_items, starter_zone_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET title=excluded.title, description=excluded.description, stages=excluded.stages, start_location=excluded.start_location",
+        "INSERT INTO quests (id, title, description, flavor_text, image_url, start_location, stages, estimated_distance_km, min_level, objectives, rewards_steps, rewards_items, starter_zone_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET title=excluded.title, description=excluded.description, stages=excluded.stages, start_location=excluded.start_location",
         (q["id"], q["title"], q["description"], q.get("flavor_text"), q.get("image_url"), json.dumps(q.get("start_location")), 
          json.dumps(q.get("stages", [])), q.get("estimated_distance_km", 0.0), q.get("min_level", 1), 
-         json.dumps(q.get("objectives", [])), q.get("rewards_xp", 100), json.dumps(q.get("rewards_items", [])), q.get("starter_zone_id"))
+         json.dumps(q.get("objectives", [])), q.get("rewards_steps", 100), json.dumps(q.get("rewards_items", [])), q.get("starter_zone_id"))
     )
 
 def get_all_quests():

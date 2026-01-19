@@ -144,10 +144,10 @@ class _CharacterSelectionScreenState extends State<CharacterSelectionScreen> {
 
   IconData _getClassIcon(CharacterClass cType) {
     switch (cType) {
-      case CharacterClass.soldier: return Icons.shield;
-      case CharacterClass.poet: return Icons.edit_note;
-      case CharacterClass.tax_collector: return Icons.attach_money;
-      case CharacterClass.pilgrim: return Icons.hiking;
+      case CharacterClass.archivist: return Icons.auto_stories;
+      case CharacterClass.vigilante: return Icons.security;
+      case CharacterClass.collector: return Icons.backpack;
+      default: return Icons.person;
     }
   }
 }

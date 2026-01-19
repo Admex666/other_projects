@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'keldor_service.dart'; // For baseUrl connection
+import 'api_service.dart';
 
 class AuthService extends ChangeNotifier {
   final _storage = const FlutterSecureStorage();
@@ -24,7 +24,8 @@ class AuthService extends ChangeNotifier {
   }
 
   Future<String?> login(String username, String password) async {
-    final url = Uri.parse('${KeldorService.baseUrl}/auth/token');
+    final baseUrl = await ApiService().getBaseUrl();
+    final url = Uri.parse('$baseUrl/auth/token');
     
     try {
       final response = await http.post(
@@ -54,7 +55,8 @@ class AuthService extends ChangeNotifier {
   }
 
   Future<String?> register(String username, String password) async {
-    final url = Uri.parse('${KeldorService.baseUrl}/auth/register');
+    final baseUrl = await ApiService().getBaseUrl();
+    final url = Uri.parse('$baseUrl/auth/register');
     
     try {
       final response = await http.post(

@@ -39,8 +39,8 @@ class ProfileScreen extends StatelessWidget {
                     right: 0,
                     child: Consumer<StoryEngine>(
                       builder: (context, engine, _) {
-                        int xp = engine.user?.xp ?? 0;
-                        int level = (xp / 100).floor() + 1;
+                        int steps = engine.user?.steps ?? 0;
+                        int level = (steps / 1000).floor() + 1;
                         return Container(
                           padding: const EdgeInsets.all(8),
                           decoration: const BoxDecoration(color: Colors.blueAccent, shape: BoxShape.circle),
@@ -67,9 +67,9 @@ class ProfileScreen extends StatelessWidget {
               child: Consumer<StoryEngine>(
                 builder: (context, engine, _) => Row(
                   children: [
-                    _buildStatItem("Km", "${(engine.user?.xp ?? 0) / 200}"), // Placeholder km logic
+                    _buildStatItem("Km", "${((engine.user?.steps ?? 0) * 0.00075).toStringAsFixed(1)}"), // 0.75m per step
                     const SizedBox(width: 12),
-                    _buildStatItem("XP", "${engine.user?.xp ?? 0}"),
+                    _buildStatItem("Lépés", "${engine.user?.steps ?? 0}"),
                   ],
                 ),
               ),

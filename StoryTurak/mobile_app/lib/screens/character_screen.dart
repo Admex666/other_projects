@@ -70,7 +70,9 @@ class _CharacterScreenState extends State<CharacterScreen> {
                         const SizedBox(height: 32),
                         _buildStatCard("Életerő", "${char.currentHp} / ${char.maxHp}", Icons.favorite),
                         const SizedBox(height: 8),
-                        _buildStatCard("Tapasztalat", "${char.xp} XP", Icons.star),
+                        _buildStatCard("Lépés", "${char.steps} / ${char.level * 1000}", Icons.directions_walk),
+                        const SizedBox(height: 8),
+                        _buildStatCard("Heti Lépés", "${char.weeklySteps}", Icons.calendar_today),
                         const SizedBox(height: 24),
                         OutlinedButton.icon(
                             onPressed: () {
@@ -130,9 +132,43 @@ class _CharacterScreenState extends State<CharacterScreen> {
                                                 ],
                                             ),
                                             actions: [
+                                                if (slot.equipped)
+                                                  TextButton(
+                                                      onPressed: () async {
+                                                          Navigator.pop(ctx);
+                                                          final token = context.read<AuthService>().token;
+                                                          if (token != null) {
+                                                              await context.read<KeldorService>().unequipItem(token, slot.itemId);
+                                                          }
+                                                      },
+                                                      child: const Text("Levétel", style: TextStyle(color: Colors.orangeAccent)),
+                                                  )
+                                                else
+                                                  TextButton(
+                                                      onPressed: () async {
+                                                          Navigator.pop(ctx);
+                                                          final token = context.read<AuthService>().token;
+                                                          if (token != null) {
+                                                              await context.read<KeldorService>().equipItem(token, slot.itemId);
+                                                          }
+                                                      },
+                                                      child: const Text("Felvétel", style: TextStyle(color: Colors.greenAccent)),
+                                                  ),
+                                                TextButton(
+                                                    onPressed: () async {
+                                                        // Confirm delete
+                                                        // For now just delete 1
+                                                        Navigator.pop(ctx);
+                                                        final token = context.read<AuthService>().token;
+                                                        if (token != null) {
+                                                            await context.read<KeldorService>().removeItem(token, slot.itemId, 1);
+                                                        }
+                                                    },
+                                                    child: const Text("Eldobás (1)", style: TextStyle(color: Colors.redAccent)),
+                                                ),
                                                 TextButton(
                                                     onPressed: () => Navigator.pop(ctx),
-                                                    child: const Text("Bezárás", style: TextStyle(color: Colors.blueAccent)),
+                                                    child: const Text("Bezárás", style: TextStyle(color: Colors.white54)),
                                                 )
                                             ],
                                         )
@@ -142,15 +178,20 @@ class _CharacterScreenState extends State<CharacterScreen> {
                                     decoration: BoxDecoration(
                                         color: KeldorTheme.surface,
                                         borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(color: Colors.white10),
+                                        border: Border.all(
+                                            color: slot.equipped ? Colors.green : Colors.white10, 
+                                            width: slot.equipped ? 2 : 1
+                                        ),
                                     ),
                                     child: Column(
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
                                             Icon(
                                               slot.iconCode == 'local_pharmacy' ? Icons.local_pharmacy : 
-                                              slot.iconCode == 'monetization_on' ? Icons.monetization_on : Icons.circle, 
-                                              color: Colors.white70
+                                              slot.iconCode == 'monetization_on' ? Icons.monetization_on : 
+                                              slot.iconCode == 'security' ? Icons.security :
+                                              slot.iconCode == 'build' ? Icons.build : Icons.circle, 
+                                              color: slot.equipped ? Colors.green : Colors.white70
                                             ),
                                             const SizedBox(height: 4),
                                             Text("${slot.quantity}x", style: const TextStyle(color: Colors.white)),
@@ -256,10 +297,10 @@ class _CharacterScreenState extends State<CharacterScreen> {
 
   IconData _getClassIcon(CharacterClass cType) {
     switch (cType) {
-      case CharacterClass.soldier: return Icons.shield;
-      case CharacterClass.poet: return Icons.edit_note;
-      case CharacterClass.tax_collector: return Icons.attach_money;
-      case CharacterClass.pilgrim: return Icons.hiking;
+      case CharacterClass.vigilante: return Icons.shield;
+      case CharacterClass.collector: return Icons.backpack;
+      case CharacterClass.archivist: return Icons.menu_book;
+      default: return Icons.person;
     }
   }
 }

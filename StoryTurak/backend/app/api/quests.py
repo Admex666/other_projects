@@ -7,7 +7,7 @@ from app.dependencies import get_current_user
 from app.db.crud import (
     get_user_quests, get_quest_by_id, add_quest_to_user, 
     update_user_quest_progress, execute_query, get_all_quests,
-    get_characters_by_user, update_character_inventory, update_user_xp, update_character_xp_and_level
+    get_characters_by_user, update_character_inventory, update_user_steps, update_character_steps_and_level
 )
 from app.models.schemas import UserQuest, Quest, QuestStatus
 from app.services.loot_service import roll_loot
@@ -127,12 +127,12 @@ def resolve_encounter(data: dict, current_user: dict = Depends(get_current_user)
             new_status=new_status
         )
         
-        rewards = {"xp": 0, "items": []}
+        rewards = {"steps": 0, "items": []}
         if outcome == "success":
-             xp_amount = 50 
+             steps_amount = 50 
              if new_status == "completed":
-                 xp_amount += quest_def.get("rewards_xp", 0)
-             rewards["xp"] = xp_amount
+                 steps_amount += quest_def.get("rewards_steps", 0)
+             rewards["steps"] = steps_amount
              
              table_id = "loot_table_common" 
              dropped_items = roll_loot(table_id)
@@ -153,10 +153,10 @@ def resolve_encounter(data: dict, current_user: dict = Depends(get_current_user)
                          current_inv.append({"item_id": item["id"], "quantity": 1, "equipped": False})
                  
                  update_character_inventory(char["id"], current_inv)
-                 update_user_xp(current_user["id"], xp_amount)
-                 current_xp = char["xp"] + xp_amount
-                 new_level = 1 + (current_xp // 100)
-                 update_character_xp_and_level(char["id"], current_xp, new_level)
+                 update_user_steps(current_user["id"], steps_amount)
+                 current_steps = char["steps"] + steps_amount
+                 new_level = 1 + (current_steps // 1000) # 1km (1000 steps/points) = 1 Level
+                 update_character_steps_and_level(char["id"], current_steps, new_level)
         
         return {
             "status": "success", 
@@ -189,4 +189,4 @@ def resolve_encounter(data: dict, current_user: dict = Depends(get_current_user)
             add_quest_to_user(uq_data)
             return {"status": "success", "message": f"Quest accepted and progressed to {new_status}", "new_status": new_status}
 
-    return {"status": "success", "message": "Encounter resolved", "rewards": {"xp": 0, "items": []}}
+    return {"status": "success", "message": "Encounter resolved", "rewards": {"steps": 0, "items": []}}

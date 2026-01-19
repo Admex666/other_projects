@@ -31,13 +31,13 @@ class Player {
   final String id;
   final String username;
   final bool isReady;
-  int xp;
+  int steps;
 
   Player({
     required this.id,
     required this.username,
     this.isReady = false,
-    this.xp = 0,
+    this.steps = 0,
   });
 
   factory Player.fromJson(Map<String, dynamic> json) {
@@ -45,7 +45,7 @@ class Player {
       id: json['id'],
       username: json['username'] ?? json['name'] ?? '',
       isReady: json['isReady'] ?? false,
-      xp: json['xp'] ?? 0,
+      steps: json['steps'] ?? 0,
     );
   }
 
@@ -53,6 +53,6 @@ class Player {
     'id': id,
     'username': username,
     'isReady': isReady,
-    'xp': xp,
+    'steps': steps,
   };
 }

@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import '../services/auth_service.dart';
 import '../services/keldor_service.dart';
+import '../services/api_service.dart';
 import 'explore_screen.dart';
 import 'dart:convert';
 import '../models/keldor_models.dart';
@@ -37,28 +38,22 @@ class ClassSelectionScreen extends StatelessWidget {
                 child: ListView(
                   children: const [
                     ClassCard(
-                      title: "Őr / Katona",
-                      description: "Frontális, stabil döntések. Nem hátrálsz meg.",
+                      title: "Vigyázó", // Vigilante
+                      description: "Fegyveres harcos, aki nem hátrál meg az árnyaktól.",
                       icon: Icons.shield,
-                      classId: "soldier",
+                      classId: "vigilante",
                     ),
                     ClassCard(
-                      title: "Poéta",
-                      description: "Megfigyelő. A szavak és jelek mestere.",
-                      icon: Icons.edit_note,
-                      classId: "poet",
+                      title: "Gyűjtő", // Collector
+                      description: "Fürge kincsvadász, aki minden zugot ismer.",
+                      icon: Icons.backpack,
+                      classId: "collector",
                     ),
                     ClassCard(
-                      title: "Vámszedő",
-                      description: "Kockázat és haszon. Ismered a dörzsölt utakat.",
-                      icon: Icons.attach_money,
-                      classId: "tax_collector",
-                    ),
-                    ClassCard(
-                      title: "Zarándok",
-                      description: "Kitartás. A hosszú út a te igazi otthonod.",
-                      icon: Icons.hiking,
-                      classId: "pilgrim",
+                      title: "Krónikás", // Archivist
+                      description: "Bölcs tudós, aki a történelem titkait kutatja.",
+                      icon: Icons.menu_book,
+                      classId: "archivist",
                     ),
                   ],
                 ),
@@ -90,8 +85,9 @@ class ClassCard extends StatelessWidget {
     if (token == null) return;
 
     try {
+      final baseUrl = await ApiService().getBaseUrl();
       final response = await http.post(
-        Uri.parse('${KeldorService.baseUrl}/characters/create?character_class=$classId&name=$name'),
+        Uri.parse('$baseUrl/characters/create?character_class=$classId&name=$name'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',

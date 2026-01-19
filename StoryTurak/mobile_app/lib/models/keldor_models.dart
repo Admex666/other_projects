@@ -1,10 +1,9 @@
 import 'package:latlong2/latlong.dart';
 
 enum CharacterClass {
-  soldier,
-  poet,
-  tax_collector,
-  pilgrim,
+  archivist,
+  vigilante,
+  collector,
 }
 
 enum EncounterType {
@@ -51,6 +50,8 @@ class EncounterNode {
   // Combat
   final String? enemyId;
   final int? enemyHp;
+  final String? enemyClass; // 'archivist', 'vigilante', 'collector' (or monster types mapping to these)
+  final String? weaknessItemId;
   // Input
   final String? correctAnswer;
   final List<String>? validAnswers;
@@ -68,6 +69,8 @@ class EncounterNode {
     this.nextNodeId,
     this.enemyId,
     this.enemyHp,
+    this.enemyClass,
+    this.weaknessItemId,
     this.correctAnswer,
     this.validAnswers,
     this.successNodeId,
@@ -91,6 +94,8 @@ class EncounterNode {
       nextNodeId: json['next_node_id'],
       enemyId: json['enemy_id'],
       enemyHp: json['enemy_hp'],
+      enemyClass: json['enemy_class'],
+      weaknessItemId: json['weakness_item_id'],
       correctAnswer: json['correct_answer'],
       validAnswers: (json['valid_answers'] as List?)?.map((v) => v as String).toList(),
       successNodeId: json['success_node_id'],
@@ -241,7 +246,8 @@ class Character {
   final String name;
   final CharacterClass characterClass;
   final int level;
-  final int xp;
+  final int steps;
+  final int weeklySteps;
   final int maxHp;
   final int currentHp;
   final List<InventorySlot> inventory;
@@ -252,7 +258,8 @@ class Character {
     required this.name,
     required this.characterClass,
     required this.level,
-    required this.xp,
+    required this.steps,
+    required this.weeklySteps,
     required this.maxHp,
     required this.currentHp,
     required this.inventory,
@@ -265,15 +272,42 @@ class Character {
       name: json['name'],
       characterClass: CharacterClass.values.firstWhere(
         (e) => e.toString().split('.').last == json['character_class'],
-        orElse: () => CharacterClass.pilgrim,
+        orElse: () => CharacterClass.vigilante,
       ),
       level: json['level'],
-      xp: json['xp'],
+      steps: json['steps'],
+      weeklySteps: json['weekly_steps'] ?? 0,
       maxHp: json['max_hp'],
       currentHp: json['current_hp'] ?? json['max_hp'],
       inventory: (json['inventory'] as List?)
           ?.map((i) => InventorySlot.fromJson(i))
           .toList() ?? [],
+    );
+  }
+
+  Character copyWith({
+    String? id,
+    String? userId,
+    String? name,
+    CharacterClass? characterClass,
+    int? level,
+    int? steps,
+    int? weeklySteps,
+    int? maxHp,
+    int? currentHp,
+    List<InventorySlot>? inventory,
+  }) {
+    return Character(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      name: name ?? this.name,
+      characterClass: characterClass ?? this.characterClass,
+      level: level ?? this.level,
+      steps: steps ?? this.steps,
+      weeklySteps: weeklySteps ?? this.weeklySteps,
+      maxHp: maxHp ?? this.maxHp,
+      currentHp: currentHp ?? this.currentHp,
+      inventory: inventory ?? this.inventory,
     );
   }
 }
@@ -360,7 +394,7 @@ class Quest {
   final int minLevel;
   final List<String> introSteps;
   final List<QuestObjective> objectives;
-  final int rewardsXp;
+  final int rewardsSteps;
   final String? starterZoneId;
 
   Quest({
@@ -377,7 +411,7 @@ class Quest {
     required this.minLevel,
     this.introSteps = const [],
     required this.objectives,
-    required this.rewardsXp,
+    required this.rewardsSteps,
     required this.starterZoneId,
   });
 
@@ -404,7 +438,7 @@ class Quest {
       objectives: (json['objectives'] as List?)
           ?.map((o) => QuestObjective.fromJson(o))
           .toList() ?? [],
-      rewardsXp: json['rewards_xp'],
+      rewardsSteps: json['rewards_steps'] ?? 0,
       starterZoneId: json['starter_zone_id'],
     );
   }

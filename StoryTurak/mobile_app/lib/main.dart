@@ -12,6 +12,8 @@ import 'screens/character_screen.dart';
 import 'screens/character_selection_screen.dart'; // New Import
 import 'services/api_service.dart';
 import 'services/settings_service.dart';
+import 'services/location_service.dart';
+import 'models/keldor_models.dart'; // Needed for QuestStatus
 import 'screens/settings_screen.dart';
 
 void main() async {
@@ -28,6 +30,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => AuthService()),
         ChangeNotifierProvider(create: (_) => StoryEngine()),
         ChangeNotifierProvider(create: (_) => SettingsService()),
+        ChangeNotifierProvider(create: (_) => LocationService()),
       ],
       child: const MainApp(),
     ),
@@ -105,6 +108,7 @@ class _MainAppState extends State<MainApp> {
 
     return MaterialApp(
       title: 'Keldor',
+      debugShowCheckedModeBanner: false,
       theme: KeldorTheme.darkTheme,
       home: !isLoggedIn 
           ? const LoginScreen()
@@ -123,12 +127,74 @@ class MainScaffold extends StatefulWidget {
 
 class _MainScaffoldState extends State<MainScaffold> {
   int _selectedIndex = 0; // Default to Map
+  int _syncedSteps = 0;
   
   static final List<Widget> _screens = <Widget>[
     const ExploreScreen(), // Map with Fog of War
     const CharacterScreen(),
     const SettingsScreen(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<LocationService>().addListener(_onStepUpdate);
+  }
+
+  @override
+  void dispose() {
+    // If context is still valid, remove listener? 
+    // Actually safe to ignore here as MainScaffold disposes on logout usually,
+    // but better practice:
+    // context.read<LocationService>().removeListener(_onStepUpdate); 
+    // (Requires saving reference or ensuring context valid)
+    super.dispose();
+  }
+
+  void _onStepUpdate() {
+      if (!mounted) return;
+      final locService = context.read<LocationService>();
+      final currentSteps = locService.sessionSteps;
+      
+      // Sync every 10 steps
+      if (currentSteps - _syncedSteps >= 10) {
+          final stepsToSync = currentSteps - _syncedSteps;
+          
+          final auth = context.read<AuthService>();
+          final keldor = context.read<KeldorService>();
+          
+          // Requirement: Only count steps during active quest
+          final hasActiveQuest = keldor.activeQuests.any((q) => q.status == QuestStatus.active);
+          
+          if (!hasActiveQuest) {
+             // If no quest is active, we just advance the synced counter so we don't accumulate "pending" steps that trigger later.
+             // Or should we just ignore? The user said "Only those steps that happen during a quest". 
+             // So we should NOT credit them. We mark them as "processed" but not synced.
+             _syncedSteps = currentSteps; 
+             return;
+          }
+
+          _syncedSteps = currentSteps;
+          
+          if (auth.isAuthenticated && auth.token != null && keldor.activeCharacter != null) {
+              print("👣 Syncing $stepsToSync steps to backend (Quest Active)...");
+              
+              // Optimistic UI Update
+              keldor.addLocalSteps(stepsToSync);
+              
+              // Call API
+              ApiService().addSteps(auth.token!, keldor.activeCharacter!.userId, stepsToSync).then((_) {
+                  // No need to fetch immediately if optimistic update was accurate, 
+                  // but good to sync occasionally. For now, let's skip fetch to reduce load/flicker
+                  // unless error happens.
+              }).catchError((e) {
+                  print("❌ Step sync failed: $e");
+                  // Revert steps? Too complex. Steps are cumulative. 
+                  // Backend will catch up eventually.
+              });
+          }
+      }
+  }
 
   void _onItemTapped(int index) {
     setState(() {

@@ -3,11 +3,9 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import '../models/keldor_models.dart';
+import 'api_service.dart';
 
 class KeldorService extends ChangeNotifier {
-  static const String baseUrl = 'http://192.168.31.86:8001'; // LAN IP for physical device
-  // static const String baseUrl = 'http://10.0.2.2:8001'; // Android Emulator
-
   static void Function()? onUnauthorized;
 
   void _checkResponse(http.Response response) {
@@ -53,6 +51,7 @@ class KeldorService extends ChangeNotifier {
     notifyListeners();
 
     try {
+      final baseUrl = await ApiService().getBaseUrl();
       final response = await http.get(
         Uri.parse('$baseUrl/world/nearby?lat=${location.latitude}&lon=${location.longitude}'),
         headers: token != null ? {'Authorization': 'Bearer $token'} : {},
@@ -101,9 +100,21 @@ class KeldorService extends ChangeNotifier {
                 const LatLng(47.495, 19.065), 
                 const LatLng(47.498, 19.080),
                 const LatLng(47.485, 19.085), 
-                const LatLng(47.485, 19.070)
               ],
               difficultyLevel: 3,
+            ),
+             Zone(
+              id: "zone_gellert",
+              name: "Gellért-hegy - A Boszorkányok Sziklája",
+              description: "A város fölé magasodó szikla, ahol az ősi energiák összegyűlnek.",
+              boundaryPoints: [
+                const LatLng(47.490, 19.030), 
+                const LatLng(47.485, 19.035), 
+                const LatLng(47.482, 19.045), 
+                const LatLng(47.488, 19.055),
+                const LatLng(47.492, 19.048)
+              ],
+              difficultyLevel: 5,
             ),
          ];
       }
@@ -152,9 +163,20 @@ class KeldorService extends ChangeNotifier {
       activeCharacter = null;
       notifyListeners();
   }
+
+  void addLocalSteps(int amount) {
+    if (activeCharacter != null) {
+      activeCharacter = activeCharacter!.copyWith(
+          steps: activeCharacter!.steps + amount,
+          weeklySteps: activeCharacter!.weeklySteps + amount // Also update period counter assuming sync with backend logic
+      );
+      notifyListeners();
+    }
+  }
   
   Future<void> fetchUserCharacters(String token) async {
     try {
+      final baseUrl = await ApiService().getBaseUrl();
       final response = await http.get(
         Uri.parse('$baseUrl/characters'),
         headers: {'Authorization': 'Bearer $token'},
@@ -187,6 +209,7 @@ class KeldorService extends ChangeNotifier {
 
   Future<void> markZoneVisited(String token, String charId, String zoneId) async {
     try {
+        final baseUrl = await ApiService().getBaseUrl();
         await http.post(
             Uri.parse('$baseUrl/characters/$charId/visit-zone?zone_id=$zoneId'),
             headers: {'Authorization': 'Bearer $token'},
@@ -194,6 +217,36 @@ class KeldorService extends ChangeNotifier {
     } catch (e) {
         print("Error marking zone visited: $e");
     }
+  }
+
+  Future<void> equipItem(String token, String itemId) async {
+      if (activeCharacter == null) return;
+      try {
+          await ApiService().equipItem(token, activeCharacter!.id, itemId);
+          await fetchUserCharacter(token); // Refresh inventory state
+      } catch (e) {
+          print("Error equipping item: $e");
+      }
+  }
+
+  Future<void> unequipItem(String token, String itemId) async {
+      if (activeCharacter == null) return;
+      try {
+          await ApiService().unequipItem(token, activeCharacter!.id, itemId);
+          await fetchUserCharacter(token);
+      } catch (e) {
+          print("Error unequipping item: $e");
+      }
+  }
+
+  Future<void> removeItem(String token, String itemId, int quantity) async {
+      if (activeCharacter == null) return;
+      try {
+          await ApiService().removeItem(token, activeCharacter!.id, itemId, quantity);
+          await fetchUserCharacter(token);
+      } catch (e) {
+          print("Error removing item: $e");
+      }
   }
 
   // --- Quest Management ---
@@ -204,6 +257,7 @@ class KeldorService extends ChangeNotifier {
   Future<void> fetchQuests(String token) async {
     try {
         // 1. Fetch Active Quests for Character
+        final baseUrl = await ApiService().getBaseUrl();
         if (activeCharacter != null) {
             final activeResp = await http.get(
                 Uri.parse('$baseUrl/characters/${activeCharacter!.id}/quests'),
@@ -254,6 +308,7 @@ class KeldorService extends ChangeNotifier {
 
   Future<bool> acceptQuest(String token, String questId) async {
       try {
+          final baseUrl = await ApiService().getBaseUrl();
           final response = await http.post(
               Uri.parse('$baseUrl/quests/$questId/accept'),
               headers: {'Authorization': 'Bearer $token'},
@@ -273,6 +328,7 @@ class KeldorService extends ChangeNotifier {
 
   Future<bool> abandonQuest(String token, String userQuestId) async {
       try {
+          final baseUrl = await ApiService().getBaseUrl();
           final response = await http.delete(
               Uri.parse('$baseUrl/user-quests/$userQuestId'),
               headers: {'Authorization': 'Bearer $token'},
@@ -292,6 +348,7 @@ class KeldorService extends ChangeNotifier {
 
   Future<Map<String, dynamic>?> resolveEncounter(String token, String encounterId, String outcome) async {
       try {
+          final baseUrl = await ApiService().getBaseUrl();
           final response = await http.post(
               Uri.parse('$baseUrl/encounters/resolve'),
               headers: {

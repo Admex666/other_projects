@@ -19,7 +19,7 @@ def init_db():
     
     # Users table
     c.execute('''CREATE TABLE IF NOT EXISTS users
-                 (id TEXT PRIMARY KEY, username TEXT UNIQUE, password_hash TEXT, xp INTEGER DEFAULT 0, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
+                 (id TEXT PRIMARY KEY, username TEXT UNIQUE, password_hash TEXT, steps INTEGER DEFAULT 0, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
     
     # Progress table
     c.execute('''CREATE TABLE IF NOT EXISTS progress
@@ -36,14 +36,14 @@ def init_db():
 
     # Characters table
     c.execute('''CREATE TABLE IF NOT EXISTS characters
-                 (id TEXT PRIMARY KEY, user_id TEXT, name TEXT, character_class TEXT, level INTEGER DEFAULT 1, xp INTEGER DEFAULT 0,
+                 (id TEXT PRIMARY KEY, user_id TEXT, name TEXT, character_class TEXT, level INTEGER DEFAULT 1, steps INTEGER DEFAULT 0, weekly_steps INTEGER DEFAULT 0,
                   max_hp INTEGER DEFAULT 10, current_hp INTEGER DEFAULT 10, stats TEXT, inventory TEXT, visited_zones TEXT, completed_quests TEXT,
                   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
 
     # Quests table
     c.execute('''CREATE TABLE IF NOT EXISTS quests
                  (id TEXT PRIMARY KEY, title TEXT, description TEXT, flavor_text TEXT, image_url TEXT, start_location TEXT, stages TEXT,
-                  estimated_distance_km REAL, min_level INTEGER, objectives TEXT, rewards_xp INTEGER, rewards_items TEXT, starter_zone_id TEXT)''')
+                  estimated_distance_km REAL, min_level INTEGER, objectives TEXT, rewards_steps INTEGER, rewards_items TEXT, starter_zone_id TEXT)''')
 
     # User Quests table
     c.execute('''CREATE TABLE IF NOT EXISTS user_quests
@@ -62,8 +62,37 @@ def init_db():
     c.execute('''CREATE TABLE IF NOT EXISTS analytics
                  (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id TEXT, event_type TEXT, data TEXT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
 
+    try:
+        _migrate_xp_to_steps(c)
+    except Exception as e:
+        print(f"Migration warning: {e}")
+
     conn.commit()
     conn.close()
+
+def _migrate_xp_to_steps(cursor):
+    # Try to rename columns if they exist in old format
+    # SQLite 3.25+ supports RENAME COLUMN
+    try:
+        cursor.execute("ALTER TABLE users RENAME COLUMN xp TO steps")
+    except Exception:
+        pass # Already done or table doesn't exist
+
+    try:
+        cursor.execute("ALTER TABLE characters RENAME COLUMN xp TO steps")
+    except Exception:
+        pass
+
+    try:
+        # Add weekly_steps if missing
+        cursor.execute("ALTER TABLE characters ADD COLUMN weekly_steps INTEGER DEFAULT 0")
+    except Exception:
+        pass
+
+    try:
+        cursor.execute("ALTER TABLE quests RENAME COLUMN rewards_xp TO rewards_steps")
+    except Exception:
+        pass
 
 def execute_query(query, params=()):
     conn = get_connection()

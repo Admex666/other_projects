@@ -196,17 +196,17 @@ class ApiService {
     return null;
   }
 
-  Future<void> addXp(String token, String userId, int amount) async {
+  Future<void> addSteps(String token, String userId, int amount) async {
     final baseUrl = await getBaseUrl();
     final response = await http.post(
-      Uri.parse('$baseUrl/progress/$userId/any/xp?amount=$amount'),
+      Uri.parse('$baseUrl/progress/$userId/any/steps?amount=$amount'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       },
     );
     _checkResponse(response);
-    if (response.statusCode != 200) throw Exception('Failed to add XP');
+    if (response.statusCode != 200) throw Exception('Failed to add Steps');
   }
 
   Future<void> logEvent(String token, String? userId, String type, Map<String, dynamic> payload) async {
@@ -224,5 +224,29 @@ class ApiService {
       }),
     );
     _checkResponse(response);
+  }
+
+  Future<void> equipItem(String token, String characterId, String itemId) async {
+    final baseUrl = await getBaseUrl();
+    await http.post(
+      Uri.parse('$baseUrl/characters/$characterId/inventory/equip?item_id=$itemId'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+  }
+
+  Future<void> unequipItem(String token, String characterId, String itemId) async {
+    final baseUrl = await getBaseUrl();
+    await http.post(
+      Uri.parse('$baseUrl/characters/$characterId/inventory/unequip?item_id=$itemId'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+  }
+
+  Future<void> removeItem(String token, String characterId, String itemId, int quantity) async {
+    final baseUrl = await getBaseUrl();
+    await http.post(
+      Uri.parse('$baseUrl/characters/$characterId/inventory/remove?item_id=$itemId&quantity=$quantity'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
   }
 }

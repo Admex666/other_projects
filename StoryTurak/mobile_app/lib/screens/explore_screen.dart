@@ -31,11 +31,12 @@ class _ExploreScreenState extends State<ExploreScreen> {
   final Set<String> _triggeredEncounters = {};
   Timer? _pollTimer;
   Zone? _currentZone;
-  final LocationService _locationService = LocationService();
   final RoutingService _routingService = RoutingService();
   StreamSubscription? _positionSubscription;
   List<LatLng> _routePoints = [];
   LatLng? _lastRouteUpdatePos;
+  late KeldorService _keldorService;
+  late LocationService _locationService;
 
   @override
   void initState() {
@@ -61,18 +62,30 @@ class _ExploreScreenState extends State<ExploreScreen> {
     });
 
     // 2.5 Listen to KeldorService for quest changes
-    context.read<KeldorService>().addListener(_updateRoute);
+    _keldorService = context.read<KeldorService>();
+    _keldorService.addListener(_updateRoute);
 
-    // 3. Listen to real-time location
-    _positionSubscription = _locationService.positionStream.listen((pos) {
-      if (mounted) {
-        setState(() {
-          _userLocation = pos;
-        });
-        _checkGeofences();
-        _maybeUpdateRoute();
+    // 3. Listen to LocationService
+    _locationService = context.read<LocationService>();
+    _locationService.addListener(_onLocationChanged);
+    _locationService.startTracking();
+
+    // Initial check
+    if (_locationService.lastPosition != null) {
+        _userLocation = _locationService.lastPosition!;
+    }
+  }
+
+  void _onLocationChanged() {
+      if (!mounted) return;
+      final newPos = _locationService.lastPosition;
+      if (newPos != null && newPos != _userLocation) {
+          setState(() {
+              _userLocation = newPos;
+          });
+          _checkGeofences();
+          _maybeUpdateRoute();
       }
-    });
   }
 
   Future<void> _updateWorld() async {
@@ -145,6 +158,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
   }
 
   Future<void> _updateRoute() async {
+    if (!mounted) return;
     final service = context.read<KeldorService>();
     final activeQuests = service.activeQuests.where((q) => q.status == QuestStatus.active).toList();
     
@@ -183,9 +197,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
   void dispose() {
     _pollTimer?.cancel();
     _positionSubscription?.cancel();
-    try {
-      context.read<KeldorService>().removeListener(_updateRoute);
-    } catch (_) {}
+    _keldorService.removeListener(_updateRoute);
+    _locationService.removeListener(_onLocationChanged);
     super.dispose();
   }
 
@@ -206,11 +219,14 @@ class _ExploreScreenState extends State<ExploreScreen> {
               minZoom: 12,
               maxZoom: 18,
               onTap: (tapPosition, point) {
-                // DEBUG: Teleport user on tap to test geofencing
-                setState(() {
-                  _userLocation = point;
-                });
-                _checkGeofences();
+                // If Debug Mode is enabled, teleport
+                final locService = context.read<LocationService>();
+                if (locService.isDebugMode) {
+                     locService.setMockLocation(point);
+                     ScaffoldMessenger.of(context).showSnackBar(
+                         SnackBar(content: Text("Teleportálás: ${point.latitude}, ${point.longitude}"), duration: const Duration(seconds: 1))
+                     );
+                }
               },
             ),
             children: [
@@ -750,7 +766,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                 Icon(Icons.star, color: Colors.amber, size: 16),
                 const SizedBox(width: 8),
                 Text(
-                  '${quest.rewardsXp} XP',
+                  '${quest.rewardsSteps} Lépés',
                   style: GoogleFonts.merriweather(color: Colors.white),
                 ),
               ],
