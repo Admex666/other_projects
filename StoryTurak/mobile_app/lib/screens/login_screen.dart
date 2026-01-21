@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../services/auth_service.dart';
 import '../theme.dart';
 import 'class_selection_screen.dart';
@@ -17,6 +18,20 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
   bool _isLogin = true; // Toggle between Login and Register
   bool _isLoading = false;
+
+  Future<bool> _loadBackendPreference() async {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getBool('use_local_backend') ?? false;
+  }
+
+  Future<void> _setBackendPreference(bool value) async {
+       final prefs = await SharedPreferences.getInstance();
+       await prefs.setBool('use_local_backend', value);
+       // Also default IP if not set
+       if (prefs.getString('local_ip') == null) {
+           await prefs.setString('local_ip', '192.168.31.86');
+       }
+  }
 
   Future<void> _submit() async {
     setState(() => _isLoading = true);
@@ -149,6 +164,30 @@ class _LoginScreenState extends State<LoginScreen> {
                   _isLogin ? "Nincs még fiókod? Regisztrálj!" : "Van már fiókod? Jelentkezz be!",
                   style: const TextStyle(color: Colors.white60),
                 ),
+              ),
+
+              const Divider(color: Colors.white10, height: 48),
+
+              // Backend Switch
+              FutureBuilder<bool>(
+                future: _loadBackendPreference(),
+                builder: (context, snapshot) {
+                  final isLocal = snapshot.data ?? false;
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                       Text(isLocal ? "Helyi Backend" : "Felhő (Render)", style: const TextStyle(color: Colors.white38, fontSize: 12)),
+                       Switch(
+                         value: isLocal, 
+                         activeColor: KeldorTheme.primary,
+                         onChanged: (val) async {
+                             await _setBackendPreference(val);
+                             setState(() {}); // Rebuild to update UI
+                         }
+                      ),
+                    ],
+                  );
+                }
               ),
             ],
           ),

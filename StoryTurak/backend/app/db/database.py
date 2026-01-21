@@ -1,9 +1,8 @@
 import sqlite3
 import os
 
-DB_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))), "data", "users.db")
-# Adjusting path to be relative to the root if needed, but let's try to find it correctly.
-# The previous DB_PATH was os.path.join(os.path.dirname(__file__), "data", "users.db") where __file__ was backend/db.py.
+DB_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "data", "users.db")
+# Path: backend/app/db/database.py -> backend/app/db -> backend/app -> backend -> backend/data/users.db
 # Now it's backend/app/db/database.py. 
 
 def get_connection():
@@ -62,13 +61,103 @@ def init_db():
     c.execute('''CREATE TABLE IF NOT EXISTS analytics
                  (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id TEXT, event_type TEXT, data TEXT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
 
+    # --- NORMALIZED TABLES (v2) ---
+    
+    # Character Items (Inventory joined)
+    c.execute('''CREATE TABLE IF NOT EXISTS character_items
+                 (character_id TEXT, item_id TEXT, quantity INTEGER DEFAULT 1, is_equipped BOOLEAN DEFAULT 0,
+                  PRIMARY KEY (character_id, item_id),
+                  FOREIGN KEY(character_id) REFERENCES characters(id))''')
+
+    # Character Zones (Visited Zones joined)
+    c.execute('''CREATE TABLE IF NOT EXISTS character_zones
+                 (character_id TEXT, zone_id TEXT, visited_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                  PRIMARY KEY (character_id, zone_id),
+                  FOREIGN KEY(character_id) REFERENCES characters(id))''')
+
+    # --- STAR SCHEMA / CONTENT TABLES ---
+
+    # Zones (Dimension)
+    c.execute('''CREATE TABLE IF NOT EXISTS zones
+                 (id TEXT PRIMARY KEY, name TEXT, description TEXT, boundary_points TEXT, difficulty_level INTEGER, min_level INTEGER DEFAULT 1)''')
+
+    # Encounters (Dimension)
+    c.execute('''CREATE TABLE IF NOT EXISTS encounters
+                 (id TEXT PRIMARY KEY, zone_id TEXT, title TEXT, description TEXT, type TEXT, location_lat REAL, location_lon REAL, 
+                  trigger_radius REAL DEFAULT 20.0, definition TEXT,
+                  FOREIGN KEY(zone_id) REFERENCES zones(id))''')
+
+    # Quest Stages (Normalized Stages)
+    c.execute('''CREATE TABLE IF NOT EXISTS quest_stages
+                 (quest_id TEXT, stage_index INTEGER, description TEXT, target_encounter_id TEXT, target_zone_id TEXT,
+                  PRIMARY KEY (quest_id, stage_index),
+                  FOREIGN KEY(quest_id) REFERENCES quests(id),
+                  FOREIGN KEY(target_encounter_id) REFERENCES encounters(id))''')
+
+    # Loot Entries (Normalized Loot)
+    c.execute('''CREATE TABLE IF NOT EXISTS loot_table_entries
+                 (loot_table_id TEXT, item_id TEXT, chance REAL, min_qty INTEGER, max_qty INTEGER,
+                  PRIMARY KEY (loot_table_id, item_id),
+                  FOREIGN KEY(item_id) REFERENCES items(id))''')
+
     try:
         _migrate_xp_to_steps(c)
+        _migrate_json_to_relational(c)
+        # Seed Content from Code to DB (One-Way Sync for now)
+        from app.services.content_service import seed_world_content
+        # We need to commit first because seed_world_content uses execute_query which opens its own connection
+        conn.commit() 
+        seed_world_content()
     except Exception as e:
         print(f"Migration warning: {e}")
 
     conn.commit()
     conn.close()
+
+def _migrate_json_to_relational(cursor):
+    import json
+    # Check if we have data in the old JSON columns and if new tables are empty
+    cursor.execute("SELECT count(*) FROM character_items")
+    if cursor.fetchone()[0] > 0:
+        return # Already migrated
+
+    print("🔄 Migrating JSON Blobs to Relational Tables...")
+    
+    cursor.execute("SELECT id, inventory, visited_zones FROM characters")
+    chars = cursor.fetchall()
+    
+    for char in chars:
+        char_id = char['id']
+        inv_json = char['inventory']
+        zones_json = char['visited_zones']
+        
+        # Migrate Inventory
+        if inv_json:
+            try:
+                inventory = json.loads(inv_json)
+                for slot in inventory:
+                    # slot is likely a dict from the Pydantic model dump
+                    # {'item_id': '...', 'quantity': 1, 'equipped': False}
+                    if isinstance(slot, dict):
+                         item_id = slot.get('item_id')
+                         qty = slot.get('quantity', 1)
+                         equipped = 1 if slot.get('equipped', False) else 0
+                         
+                         if item_id:
+                             cursor.execute("INSERT OR REPLACE INTO character_items (character_id, item_id, quantity, is_equipped) VALUES (?, ?, ?, ?)",
+                                            (char_id, item_id, qty, equipped))
+            except Exception as e:
+                print(f"Failed to migrate inventory for {char_id}: {e}")
+
+        # Migrate Zones
+        if zones_json:
+            try:
+                zones = json.loads(zones_json)
+                for z_id in zones:
+                    if isinstance(z_id, str):
+                        cursor.execute("INSERT OR IGNORE INTO character_zones (character_id, zone_id) VALUES (?, ?)", (char_id, z_id))
+            except Exception as e:
+                print(f"Failed to migrate zones for {char_id}: {e}")
 
 def _migrate_xp_to_steps(cursor):
     # Try to rename columns if they exist in old format

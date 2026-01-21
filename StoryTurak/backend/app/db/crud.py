@@ -16,71 +16,111 @@ def update_user_steps(user_id, steps_gain):
 def create_user(user_id, username, password_hash):
     execute_query("INSERT INTO users (id, username, password_hash) VALUES (?, ?, ?)", (user_id, username, password_hash))
 
-# --- Character Functions ---
+# --- Character Functions (Refactored for Normalization) ---
 def create_character(char_data: dict):
+    # Insert basic data (Inventory/Zones/Quests columns ignored/deprecated)
     execute_query(
-        "INSERT INTO characters (id, user_id, name, character_class, level, steps, weekly_steps, max_hp, stats, inventory, visited_zones, completed_quests) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        "INSERT INTO characters (id, user_id, name, character_class, level, steps, weekly_steps, max_hp, stats) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
         (char_data["id"], char_data["user_id"], char_data["name"], char_data["character_class"], char_data["level"], char_data["steps"], char_data.get("weekly_steps", 0), char_data["max_hp"], 
-         json.dumps(char_data.get("stats", {})), json.dumps(char_data.get("inventory", [])), json.dumps(char_data.get("visited_zones", [])), json.dumps(char_data.get("completed_quests", [])))
+         json.dumps(char_data.get("stats", {})))
     )
 
 def get_characters_by_user(user_id: str):
     rows = execute_query("SELECT * FROM characters WHERE user_id = ?", (user_id,))
     chars = []
-    chars = []
     
-    # Pre-fetch all needed items to enrich inventory
-    all_item_ids = set()
-    temp_chars = []
     for r in rows:
         d = dict(r)
+        
+        # Legacy schema mapping: DB has 'class', Model expects 'character_class'
+        if "class" in d and "character_class" not in d:
+             d["character_class"] = d["class"]
+             
+        char_id = d["id"]
         d["stats"] = json.loads(d["stats"]) if d["stats"] else {}
-        d["inventory"] = json.loads(d["inventory"]) if d["inventory"] else []
-        d["visited_zones"] = json.loads(d["visited_zones"]) if d["visited_zones"] else []
-        d["completed_quests"] = json.loads(d["completed_quests"]) if d["completed_quests"] else []
         
-        for slot in d["inventory"]:
-            all_item_ids.add(slot["item_id"])
-        temp_chars.append(d)
+        # 1. Fetch Inventory from character_items
+        inv_rows = execute_query("""
+            SELECT ci.item_id, ci.quantity, ci.is_equipped, i.name, i.description, i.icon_code, i.stats, i.type, i.value 
+            FROM character_items ci
+            LEFT JOIN items i ON ci.item_id = i.id
+            WHERE ci.character_id = ?
+        """, (char_id,))
         
-    # Batch fetch items
-    items_map = {}
-    if all_item_ids:
-        placeholders = ','.join(['?'] * len(all_item_ids))
-        i_rows = execute_query(f"SELECT * FROM items WHERE id IN ({placeholders})", tuple(all_item_ids))
-        for ir in i_rows:
-            i_dict = dict(ir)
-            # Parse stats for item
-            i_dict["stats"] = json.loads(str(i_dict["stats"])) if i_dict["stats"] else {}
-            items_map[i_dict["id"]] = i_dict
-
-    # Enrich inventory
-    for c in temp_chars:
-        for slot in c["inventory"]:
-            i_id = slot["item_id"]
-            if i_id in items_map:
-                item = items_map[i_id]
-                slot["name"] = item["name"]
-                slot["description"] = item["description"]
-                slot["icon_code"] = item["icon_code"]
-                slot["stats"] = item["stats"]
-        chars.append(c)
+        d["inventory"] = []
+        for ir in inv_rows:
+            inv_item = dict(ir)
+            # Normalize keys to match schema
+            inv_item["equipped"] = bool(inv_item["is_equipped"])
+            # Parse item stats if present
+            if inv_item.get("stats"):
+                 try:
+                     inv_item["stats"] = json.loads(inv_item["stats"])
+                 except:
+                     inv_item["stats"] = {}
+            else:
+                 inv_item["stats"] = {}
+            d["inventory"].append(inv_item)
+            
+        # 2. Fetch Visited Zones
+        z_rows = execute_query("SELECT zone_id FROM character_zones WHERE character_id = ?", (char_id,))
+        d["visited_zones"] = [z[0] for z in z_rows]
+        
+        # 3. Fetch Completed Quests
+        q_rows = execute_query("SELECT quest_id FROM user_quests WHERE user_id = ? AND status = 'completed'", (user_id,))
+        d["completed_quests"] = [q[0] for q in q_rows]
+        
+        chars.append(d)
         
     return chars
 
-def update_character_inventory(char_id: str, new_inventory: list):
-    execute_query("UPDATE characters SET inventory = ? WHERE id = ?", (json.dumps(new_inventory), char_id))
+# Granular Inventory Management
+def add_character_item(char_id: str, item_id: str, quantity: int = 1):
+    # Check if exists
+    row = execute_query("SELECT quantity FROM character_items WHERE character_id = ? AND item_id = ?", (char_id, item_id))
+    if row:
+        new_qty = row[0][0] + quantity
+        execute_query("UPDATE character_items SET quantity = ? WHERE character_id = ? AND item_id = ?", (new_qty, char_id, item_id))
+    else:
+        execute_query("INSERT INTO character_items (character_id, item_id, quantity, is_equipped) VALUES (?, ?, ?, 0)", (char_id, item_id, quantity))
+
+def remove_character_item(char_id: str, item_id: str, quantity: int = 1):
+    row = execute_query("SELECT quantity FROM character_items WHERE character_id = ? AND item_id = ?", (char_id, item_id))
+    if not row:
+        return # Item not found
+        
+    current_qty = row[0][0]
+    if current_qty > quantity:
+        execute_query("UPDATE character_items SET quantity = ? WHERE character_id = ? AND item_id = ?", (current_qty - quantity, char_id, item_id))
+    else:
+        execute_query("DELETE FROM character_items WHERE character_id = ? AND item_id = ?", (char_id, item_id))
+
+def get_character_inventory(char_id: str):
+    # Helper to return formatted inventory list
+    inv_rows = execute_query("""
+            SELECT ci.item_id, ci.quantity, ci.is_equipped as equipped, i.name, i.description, i.icon_code, i.stats, i.type, i.value 
+            FROM character_items ci
+            LEFT JOIN items i ON ci.item_id = i.id
+            WHERE ci.character_id = ?
+        """, (char_id,))
+    res = []
+    for r in inv_rows:
+        d = dict(r)
+        d["equipped"] = bool(d["equipped"])
+        if d.get("stats") and isinstance(d["stats"], str):
+             try: d["stats"] = json.loads(d["stats"]) 
+             except: d["stats"] = {}
+        res.append(d)
+    return res
+
+def set_item_equipped(char_id: str, item_id: str, is_equipped: bool):
+    execute_query("UPDATE character_items SET is_equipped = ? WHERE character_id = ? AND item_id = ?", (1 if is_equipped else 0, char_id, item_id))
 
 def update_character_steps_and_level(char_id: str, new_steps: int, new_level: int):
     execute_query("UPDATE characters SET steps = ?, level = ? WHERE id = ?", (new_steps, new_level, char_id))
 
 def update_character_visited_zones(char_id: str, zone_id: str):
-    chars = execute_query("SELECT visited_zones FROM characters WHERE id = ?", (char_id,))
-    if chars:
-        vz = json.loads(chars[0][0]) if chars[0][0] else []
-        if zone_id not in vz:
-            vz.append(zone_id)
-            execute_query("UPDATE characters SET visited_zones = ? WHERE id = ?", (json.dumps(vz), char_id))
+    execute_query("INSERT OR IGNORE INTO character_zones (character_id, zone_id) VALUES (?, ?)", (char_id, zone_id))
 
 # --- Progress Functions ---
 def save_progress(user_id, story_id, node_id, variables_dict):

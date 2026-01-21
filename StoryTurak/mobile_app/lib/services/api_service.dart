@@ -7,7 +7,7 @@ import '../models/session.dart';
 
 class ApiService {
   static const String prodUrl = 'https://storyturak-backend.onrender.com';
-  static const String localUrl = 'http://10.0.2.2:8001';
+  static const String localUrl = 'http://192.168.31.86:8001';
 
   static void Function()? onUnauthorized;
 
@@ -20,7 +20,7 @@ class ApiService {
   Future<String> getBaseUrl() async {
     final prefs = await SharedPreferences.getInstance();
     final isLocal = prefs.getBool('use_local_backend') ?? false;
-    final localIp = prefs.getString('local_ip') ?? '10.0.2.2';
+    final localIp = prefs.getString('local_ip') ?? '192.168.31.86';
     return isLocal ? 'http://$localIp:8001' : prodUrl;
   }
 

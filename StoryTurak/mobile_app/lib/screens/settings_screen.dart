@@ -81,10 +81,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final settings = context.watch<SettingsService>();
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: KeldorTheme.background,
       appBar: AppBar(
         title: Text("Beállítások", style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
-        backgroundColor: const Color(0xFF0F172A),
+        backgroundColor: KeldorTheme.background,
         elevation: 0,
       ),
       body: ListView(
@@ -167,13 +167,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           decoration: BoxDecoration(
-            color: const Color(0xFF1E293B),
+            color: Colors.white.withOpacity(0.05),
             borderRadius: BorderRadius.circular(20),
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
               value: settings.mapStyle,
-              dropdownColor: const Color(0xFF1E293B),
+              dropdownColor: KeldorTheme.surface,
               icon: const Icon(Icons.arrow_drop_down, color: KeldorTheme.primary),
               isExpanded: true,
               items: MapConfig.styles.map((style) {
@@ -246,7 +246,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E293B),
+        color: Colors.white.withOpacity(0.05),
         borderRadius: BorderRadius.circular(20),
       ),
       child: SwitchListTile(
@@ -263,7 +263,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E293B),
+        color: Colors.white.withOpacity(0.05),
         borderRadius: BorderRadius.circular(20),
       ),
       child: ListTile(

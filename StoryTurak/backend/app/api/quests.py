@@ -7,7 +7,7 @@ from app.dependencies import get_current_user
 from app.db.crud import (
     get_user_quests, get_quest_by_id, add_quest_to_user, 
     update_user_quest_progress, execute_query, get_all_quests,
-    get_characters_by_user, update_character_inventory, update_user_steps, update_character_steps_and_level
+    get_characters_by_user, add_character_item, update_user_steps, update_character_steps_and_level
 )
 from app.models.schemas import UserQuest, Quest, QuestStatus
 from app.services.loot_service import roll_loot
@@ -141,18 +141,9 @@ def resolve_encounter(data: dict, current_user: dict = Depends(get_current_user)
              chars = get_characters_by_user(current_user["id"])
              if chars:
                  char = chars[0]
-                 current_inv = char["inventory"]
                  for item in dropped_items:
-                     found = False
-                     for slot in current_inv:
-                         if slot["item_id"] == item["id"]:
-                             slot["quantity"] += 1
-                             found = True
-                             break
-                     if not found:
-                         current_inv.append({"item_id": item["id"], "quantity": 1, "equipped": False})
-                 
-                 update_character_inventory(char["id"], current_inv)
+                     # New granular approach
+                     add_character_item(char["id"], item["id"], 1)
                  update_user_steps(current_user["id"], steps_amount)
                  current_steps = char["steps"] + steps_amount
                  new_level = 1 + (current_steps // 1000) # 1km (1000 steps/points) = 1 Level

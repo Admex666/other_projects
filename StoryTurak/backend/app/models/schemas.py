@@ -34,6 +34,13 @@ class InventorySlot(BaseModel):
     item_id: str
     quantity: int = 1
     equipped: bool = False
+    # Enriched fields (from joins)
+    name: Optional[str] = None
+    description: Optional[str] = None
+    icon_code: Optional[str] = None
+    type: Optional[ItemType] = None
+    value: int = 0
+    stats: Dict[str, Any] = {}
 
 class User(BaseModel):
     id: str

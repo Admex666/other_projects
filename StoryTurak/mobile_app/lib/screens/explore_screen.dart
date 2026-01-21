@@ -223,6 +223,11 @@ class _ExploreScreenState extends State<ExploreScreen> {
               initialZoom: 14.5,
               minZoom: 12,
               maxZoom: 18,
+              interactionOptions: InteractionOptions(
+                  flags: _isCameraLocked 
+                      ? InteractiveFlag.pinchZoom | InteractiveFlag.doubleTapZoom | InteractiveFlag.rotate 
+                      : InteractiveFlag.all,
+              ),
               onTap: (tapPosition, point) {
                 // If Debug Mode is enabled, teleport
                 final locService = context.read<LocationService>();
