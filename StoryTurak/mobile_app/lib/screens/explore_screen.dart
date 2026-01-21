@@ -37,6 +37,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
   LatLng? _lastRouteUpdatePos;
   late KeldorService _keldorService;
   late LocationService _locationService;
+  bool _isCameraLocked = false;
 
   @override
   void initState() {
@@ -85,6 +86,10 @@ class _ExploreScreenState extends State<ExploreScreen> {
           });
           _checkGeofences();
           _maybeUpdateRoute();
+          
+          if (_isCameraLocked) {
+              _mapController.move(_userLocation, _mapController.camera.zoom);
+          }
       }
   }
 
@@ -418,6 +423,45 @@ class _ExploreScreenState extends State<ExploreScreen> {
                 ),
               ),
             ),
+          // Camera Controls
+          Positioned(
+            bottom: activeUserQuests.isNotEmpty ? 170 : 20,
+            right: 16,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                FloatingActionButton(
+                  heroTag: "cam_lock",
+                  mini: true,
+                  backgroundColor: _isCameraLocked ? KeldorTheme.primary : Colors.black.withOpacity(0.6),
+                  onPressed: () {
+                    setState(() {
+                      _isCameraLocked = !_isCameraLocked;
+                    });
+                    if (_isCameraLocked) {
+                       _mapController.move(_userLocation, _mapController.camera.zoom);
+                    }
+                  },
+                  child: Icon(
+                    _isCameraLocked ? Icons.lock : Icons.lock_open, 
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                FloatingActionButton(
+                  heroTag: "cam_center",
+                  backgroundColor: KeldorTheme.primary,
+                  onPressed: () {
+                    _mapController.move(_userLocation, 15.0);
+                    // Optionally enable lock when manually centering? 
+                    // Let's just move for now as requested.
+                  },
+                  child: const Icon(Icons.my_location, color: Colors.white),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );

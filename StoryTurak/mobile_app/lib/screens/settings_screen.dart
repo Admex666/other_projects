@@ -174,7 +174,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: DropdownButton<String>(
               value: settings.mapStyle,
               dropdownColor: const Color(0xFF1E293B),
-              icon: const Icon(Icons.arrow_drop_down, color: Colors.blueAccent),
+              icon: const Icon(Icons.arrow_drop_down, color: KeldorTheme.primary),
               isExpanded: true,
               items: MapConfig.styles.map((style) {
                 return DropdownMenuItem<String>(
@@ -201,7 +201,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [KeldorTheme.primary.withOpacity(0.2), Colors.blueAccent.withOpacity(0.05)],
+          colors: [KeldorTheme.primary.withOpacity(0.2), KeldorTheme.secondary.withOpacity(0.05)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -237,7 +237,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       padding: const EdgeInsets.only(bottom: 16),
       child: Text(
         title,
-        style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 2, color: Colors.blueAccent),
+        style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 2, color: KeldorTheme.primary),
       ),
     );
   }
@@ -250,11 +250,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
         borderRadius: BorderRadius.circular(20),
       ),
       child: SwitchListTile(
-        secondary: Icon(icon, color: Colors.blueAccent),
+        secondary: Icon(icon, color: KeldorTheme.primary),
         title: Text(title, style: GoogleFonts.outfit(color: Colors.white)),
         value: value,
         onChanged: onChanged,
-        activeColor: Colors.blueAccent,
+        activeColor: KeldorTheme.primary,
       ),
     );
   }
@@ -267,7 +267,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         borderRadius: BorderRadius.circular(20),
       ),
       child: ListTile(
-        leading: Icon(icon, color: textColor == Colors.redAccent ? Colors.redAccent : Colors.blueAccent),
+        leading: Icon(icon, color: textColor == Colors.redAccent ? Colors.redAccent : KeldorTheme.primary),
         title: Text(title, style: GoogleFonts.outfit(color: textColor)),
         subtitle: Text(subtitle, style: GoogleFonts.outfit(fontSize: 12, color: Colors.white54)),
         onTap: onTap,

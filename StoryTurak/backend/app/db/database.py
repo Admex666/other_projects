@@ -1,7 +1,7 @@
 import sqlite3
 import os
 
-DB_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "backend", "data", "users.db")
+DB_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))), "data", "users.db")
 # Adjusting path to be relative to the root if needed, but let's try to find it correctly.
 # The previous DB_PATH was os.path.join(os.path.dirname(__file__), "data", "users.db") where __file__ was backend/db.py.
 # Now it's backend/app/db/database.py. 
