@@ -27,6 +27,16 @@ function App() {
         doctor: ''
     });
 
+    // Dynamic Options
+    const [options, setOptions] = useState({ clinics: [], doctors: [] });
+
+    useEffect(() => {
+        fetch('/api/options')
+            .then(res => res.json())
+            .then(data => setOptions(data))
+            .catch(err => console.error("Failed to load options", err));
+    }, []);
+
     const handleFilterChange = (key, value) => {
         setFilters(prev => ({ ...prev, [key]: value }));
     };
@@ -76,8 +86,9 @@ function App() {
                             value={filters.clinic}
                         >
                             <option value="">Clinic: All</option>
-                            <option value="1">Buda & Pest</option>
-                            <option value="2">WestEnd Center</option>
+                            {options.clinics.map(c => (
+                                <option key={c.id} value={c.value}>{c.name}</option>
+                            ))}
                         </select>
                         <select
                             className="bg-white border border-slate-300 text-slate-600 text-sm rounded-lg px-3 py-2 outline-none focus:border-indigo-500"
@@ -94,9 +105,9 @@ function App() {
                             value={filters.doctor}
                         >
                             <option value="">Doctor: All</option>
-                            <option value="1">Dr. Kovács Béla</option>
-                            <option value="2">Dr. Szabó Anna</option>
-                            <option value="3">Dr. Nagy Péter</option>
+                            {options.doctors.map(d => (
+                                <option key={d.id} value={d.value}>{d.name}</option>
+                            ))}
                         </select>
                     </div>
                 </header>
@@ -127,10 +138,14 @@ const NavButton = ({ id, icon: Icon, label, active, set }) => (
 const RetentionDashboard = ({ CustomTooltip, filters }) => {
     const [data, setData] = useState(null);
     useEffect(() => {
+        // Explicitly map filters to backend params
         const p = new URLSearchParams();
+        if (filters.clinic) p.append('clinic_id', filters.clinic);
         if (filters.doctor) p.append('doctor_id', filters.doctor);
+        if (filters.period) p.append('period', filters.period);
+
         fetch(`/api/kpi/retention?${p.toString()}`).then(r => r.json()).then(setData);
-    }, [filters.doctor]);
+    }, [filters]);
 
     if (!data) return <div className="p-10">Loading...</div>;
     if (data.detail) return <div className="p-10 text-red-500">Error loading data: {JSON.stringify(data.detail)}</div>;

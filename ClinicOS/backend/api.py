@@ -150,20 +150,36 @@ def get_executive_summary(
 
 @router.get("/kpi/retention")
 def get_retention_kpis(
+    clinic_id: Optional[int] = None,
     doctor_id: Optional[int] = None,
     db: Session = Depends(get_db)
 ):
     # 1. Marketing Paradox: Retention by Source
+    # We must count DISTINCT patients to match "New Patients" definition (Humans, not visits)
+    # Filter: Patients who have had AT LEAST ONE appointment matching criteria
+    
+    # Base query on Patients
     query = db.query(
         DimMarketingSource.channel_name,
-        func.count(DimPatient.patient_id).label("total_acquired"),
-        func.sum(case((DimPatient.segment == "Churn Risk", 1), else_=0)).label("risk_count")
+        func.count(func.distinct(DimPatient.patient_id)).label("total_acquired"),
+        func.count(func.distinct(case((DimPatient.segment == "Churn Risk", DimPatient.patient_id), else_=None))).label("risk_count")
     ).join(DimMarketingSource)
     
-    # Filter by doctor requires joining appointments
-    if doctor_id:
-        query = query.join(FactAppointment, FactAppointment.patient_id == DimPatient.patient_id)\
-                     .filter(FactAppointment.doctor_id == doctor_id)
+    # Always join FactAppointment to ensure we are looking at actual visitors, not just leads
+    # If filtering, apply filters to this join
+    
+    if doctor_id or clinic_id:
+        match_stmt = []
+        if doctor_id: match_stmt.append(FactAppointment.doctor_id == doctor_id)
+        if clinic_id: match_stmt.append(FactAppointment.location_id == clinic_id)
+        
+        query = query.join(FactAppointment, FactAppointment.patient_id == DimPatient.patient_id).filter(and_(*match_stmt))
+    else:
+        # For "All", we still want only patients with appointments? 
+        # Or do we include all registered?
+        # User complaint: "All" rate is higher than average -> likely ghosts with 0 appointments.
+        # Let's enforce JOIN FactAppointment even for ALL to ignore 0-visit ghosts if that's the issue.
+        query = query.join(FactAppointment, FactAppointment.patient_id == DimPatient.patient_id)
 
     source_stats = query.group_by(DimMarketingSource.channel_name).all()
     
@@ -177,20 +193,31 @@ def get_retention_kpis(
     ]
 
     # 2. Invisible Churn (Ghost Rate)
-    # Patients with only 1 visit > 90 days ago
-    ninety_days_ago = date(2025, 12, 31) - timedelta(days=90)
+    # Patients with only 1 visit > 90 days ago (or just general churn logic as defined before)
     
-    q_ghosts = db.query(func.count(DimPatient.patient_id)).filter(
+    # DISTINCT Counts for consistency
+    q_ghosts = db.query(func.count(func.distinct(DimPatient.patient_id))).filter(
         DimPatient.segment.in_(["Lost", "Churn Risk"])
     )
-    q_total = db.query(func.count(DimPatient.patient_id))
+    q_total = db.query(func.count(func.distinct(DimPatient.patient_id)))
     
-    if doctor_id:
-        q_ghosts = q_ghosts.join(FactAppointment).filter(FactAppointment.doctor_id == doctor_id)
-        q_total = q_total.join(FactAppointment).filter(FactAppointment.doctor_id == doctor_id)
+    if doctor_id or clinic_id:
+        q_ghosts = q_ghosts.join(FactAppointment)
+        q_total = q_total.join(FactAppointment)
+        
+        if doctor_id:
+            q_ghosts = q_ghosts.filter(FactAppointment.doctor_id == doctor_id)
+            q_total = q_total.filter(FactAppointment.doctor_id == doctor_id)
+        if clinic_id:
+            q_ghosts = q_ghosts.filter(FactAppointment.location_id == clinic_id)
+            q_total = q_total.filter(FactAppointment.location_id == clinic_id)
+    else:
+        # Enforce consistency for "All" - only count patients who have actually visited
+        q_ghosts = q_ghosts.join(FactAppointment)
+        q_total = q_total.join(FactAppointment)
 
-    ghosts = q_ghosts.scalar()
-    total_patients = q_total.scalar()
+    ghosts = q_ghosts.scalar() or 0
+    total_patients = q_total.scalar() or 0
     ghost_rate = round(ghosts / total_patients, 2) if total_patients else 0
     
     return {
@@ -322,3 +349,13 @@ def get_forecast_kpis(db: Session = Depends(get_db)):
     ]
     
     return scenarios
+
+@router.get("/options")
+def get_filter_options(db: Session = Depends(get_db)):
+    clinics = db.query(DimClinicLocation.location_id, DimClinicLocation.name, DimClinicLocation.city).all()
+    doctors = db.query(DimDoctor.doctor_id, DimDoctor.name).all()
+    
+    return {
+        "clinics": [{"id": c.location_id, "name": f"{c.name} ({c.city})", "value": c.location_id} for c in clinics],
+        "doctors": [{"id": d.doctor_id, "name": d.name, "value": d.doctor_id} for d in doctors]
+    }
