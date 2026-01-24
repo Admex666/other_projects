@@ -8,7 +8,7 @@ from app.services.quest_service import sync_stories_to_quests_v2, seed_quests
 from app.services.connection_manager import manager
 from app.db.crud import create_item, create_loot_table
 
-from app.api import auth, characters, quests, stories, ws, sessions, world
+from app.api import auth, characters, quests, stories, ws, sessions, world, combat, economy, collections
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -23,6 +23,9 @@ app.include_router(stories.router)
 app.include_router(ws.router)
 app.include_router(sessions.router)
 app.include_router(world.router)
+app.include_router(combat.router, prefix="/combat", tags=["combat"])
+app.include_router(economy.router, tags=["economy"])
+app.include_router(collections.router, tags=["collections"])
 
 def seed_loot():
     potion = {

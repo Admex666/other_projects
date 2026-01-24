@@ -13,9 +13,29 @@ class NotificationService {
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
 
-    const InitializationSettings initializationSettings =
-        InitializationSettings(android: initializationSettingsAndroid);
+    final DarwinInitializationSettings initializationSettingsDarwin =
+        DarwinInitializationSettings();
 
+    final LinuxInitializationSettings initializationSettingsLinux =
+        LinuxInitializationSettings(defaultActionName: 'Open notification');
+
+    // Windows settings
+    // 'appUserModelId' is required from error logs.
+    const WindowsInitializationSettings initializationSettingsWindows =
+        WindowsInitializationSettings(
+            appName: 'storyturak_mobile',
+            appUserModelId: 'com.adam.storyturak_mobile',
+            guid: '0D18D077-2222-4444-8888-A8A8A8A8A8A8'
+        );
+
+    final InitializationSettings initializationSettings =
+        InitializationSettings(
+            android: initializationSettingsAndroid,
+            iOS: initializationSettingsDarwin,
+            macOS: initializationSettingsDarwin,
+            linux: initializationSettingsLinux,
+            windows: initializationSettingsWindows);
+    
     await flutterLocalNotificationsPlugin.initialize(initializationSettings);
     
     // Request permissions for Android 13+

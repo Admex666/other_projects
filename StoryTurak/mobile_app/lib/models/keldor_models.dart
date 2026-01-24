@@ -177,13 +177,18 @@ class Zone {
 }
 
 class Item {
-  // ... (remains same)
   final String id;
   final String name;
   final String description;
   final String type;
   final int value;
   final String iconCode;
+  
+  // Gamification fields
+  final String rarity; // common, uncommon, rare, epic, legendary
+  final List<dynamic> effects;
+  final Map<String, dynamic> stats;
+  final String? setId;
 
   Item({
     required this.id,
@@ -192,6 +197,10 @@ class Item {
     required this.type,
     required this.value,
     required this.iconCode,
+    this.rarity = 'common',
+    this.effects = const [],
+    this.stats = const {},
+    this.setId,
   });
 
   factory Item.fromJson(Map<String, dynamic> json) {
@@ -202,6 +211,10 @@ class Item {
       type: json['type'],
       value: json['value'],
       iconCode: json['icon_code'],
+      rarity: json['rarity'] ?? 'common',
+      effects: json['effects'] != null ? (json['effects'] as List) : [],
+      stats: json['stats'] != null ? Map<String, dynamic>.from(json['stats']) : {},
+      setId: json['set_id'],
     );
   }
 }
@@ -216,6 +229,9 @@ class InventorySlot {
   final String? description;
   final String? iconCode;
   final Map<String, dynamic>? stats;
+  final String rarity;
+  final List<dynamic> effects;
+  final int value; // Added for Shop
 
   InventorySlot({
     required this.itemId,
@@ -225,6 +241,9 @@ class InventorySlot {
     this.description,
     this.iconCode,
     this.stats,
+    this.rarity = 'common',
+    this.effects = const [],
+    this.value = 0,
   });
 
   factory InventorySlot.fromJson(Map<String, dynamic> json) {
@@ -236,6 +255,9 @@ class InventorySlot {
       description: json['description'],
       iconCode: json['icon_code'],
       stats: json['stats'] != null ? Map<String, dynamic>.from(json['stats']) : null,
+      rarity: json['rarity'] ?? 'common',
+      effects: json['effects'] != null ? (json['effects'] as List) : [],
+      value: json['value'] ?? 0,
     );
   }
 }
@@ -246,11 +268,17 @@ class Character {
   final String name;
   final CharacterClass characterClass;
   final int level;
+  final int xp;
   final int steps;
   final int weeklySteps;
   final int maxHp;
   final int currentHp;
   final List<InventorySlot> inventory;
+  
+  // Gamification Stats
+  final Map<String, int> stats; // strength, agility, tactics
+  final String? faction;
+  final int currency; // Pengő
 
   Character({
     required this.id,
@@ -258,11 +286,15 @@ class Character {
     required this.name,
     required this.characterClass,
     required this.level,
+    required this.xp,
     required this.steps,
     required this.weeklySteps,
     required this.maxHp,
     required this.currentHp,
     required this.inventory,
+    required this.stats,
+    this.faction,
+    required this.currency,
   });
 
   factory Character.fromJson(Map<String, dynamic> json) {
@@ -275,6 +307,7 @@ class Character {
         orElse: () => CharacterClass.vigilante,
       ),
       level: json['level'],
+      xp: json['xp'] ?? 0,
       steps: json['steps'],
       weeklySteps: json['weekly_steps'] ?? 0,
       maxHp: json['max_hp'],
@@ -282,6 +315,9 @@ class Character {
       inventory: (json['inventory'] as List?)
           ?.map((i) => InventorySlot.fromJson(i))
           .toList() ?? [],
+      stats: json['stats'] != null ? Map<String, int>.from(json['stats']) : {'strength': 1, 'agility': 1, 'tactics': 1},
+      faction: json['faction'],
+      currency: json['currency'] ?? 0,
     );
   }
 
@@ -291,11 +327,15 @@ class Character {
     String? name,
     CharacterClass? characterClass,
     int? level,
+    int? xp,
     int? steps,
     int? weeklySteps,
     int? maxHp,
     int? currentHp,
     List<InventorySlot>? inventory,
+    Map<String, int>? stats,
+    String? faction,
+    int? currency,
   }) {
     return Character(
       id: id ?? this.id,
@@ -303,11 +343,73 @@ class Character {
       name: name ?? this.name,
       characterClass: characterClass ?? this.characterClass,
       level: level ?? this.level,
+      xp: xp ?? this.xp,
       steps: steps ?? this.steps,
       weeklySteps: weeklySteps ?? this.weeklySteps,
       maxHp: maxHp ?? this.maxHp,
       currentHp: currentHp ?? this.currentHp,
       inventory: inventory ?? this.inventory,
+      stats: stats ?? this.stats,
+      faction: faction ?? this.faction,
+      currency: currency ?? this.currency,
+    );
+  }
+}
+
+class CollectionItem {
+  final String itemId;
+  final bool found;
+  final String? foundAt;
+  final String name;
+  final String iconCode;
+  final String description;
+
+  CollectionItem({
+    required this.itemId,
+    required this.found,
+    this.foundAt,
+    required this.name,
+    required this.iconCode,
+    required this.description,
+  });
+
+  factory CollectionItem.fromJson(Map<String, dynamic> json) {
+    return CollectionItem(
+      itemId: json['item_id'],
+      found: json['found'] ?? false,
+      foundAt: json['found_at'],
+      name: json['name'],
+      iconCode: json['icon_code'],
+      description: json['description'],
+    );
+  }
+}
+
+class Collection {
+  final String id;
+  final String name;
+  final String description;
+  final int totalItems;
+  final int foundItems;
+  final List<CollectionItem> items;
+
+  Collection({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.totalItems,
+    required this.foundItems,
+    required this.items,
+  });
+
+  factory Collection.fromJson(Map<String, dynamic> json) {
+    return Collection(
+      id: json['id'],
+      name: json['name'],
+      description: json['description'],
+      totalItems: json['total_items'],
+      foundItems: json['found_items'],
+      items: (json['items'] as List).map((i) => CollectionItem.fromJson(i)).toList(),
     );
   }
 }

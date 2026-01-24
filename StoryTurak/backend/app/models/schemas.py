@@ -13,6 +13,26 @@ class CharacterClass(str, Enum):
     TAX_COLLECTOR = "tax_collector"
     PILGRIM = "pilgrim"
 
+class Faction(str, Enum):
+    TRANSFORMERS = "transformers" # Átformálók (Pest)
+    CHRONICLERS = "chroniclers" # Krónikások (Buda)
+    FORGOTTEN = "forgotten" # Elfeledettek (Alvilág)
+    NONE = "none"
+
+class ItemRarity(str, Enum):
+    COMMON = "common" # Szürke
+    UNCOMMON = "uncommon" # Zöld
+    RARE = "rare" # Kék
+    EPIC = "epic" # Lila
+    LEGENDARY = "legendary" # Narancs
+
+class ItemEffectType(str, Enum):
+    STAT_BONUS = "stat_bonus"
+    COMBAT_REVEAL = "combat_reveal" # Pl. Távcső
+    COMBAT_CRIT = "combat_crit" # Pl. Handzsár (Csel krit)
+    HEAL = "heal"
+    BUFF = "buff"
+
 class ItemType(str, Enum):
     WEAPON = "weapon"
     TOOL = "tool"
@@ -28,11 +48,29 @@ class Item(BaseModel):
     type: ItemType
     value: int = 0
     icon_code: str
-    stats: Dict[str, int] = {}
+class ItemEffect(BaseModel):
+    type: ItemEffectType
+    value: float = 0.0
+    target_stat: Optional[str] = None # pl. "strength", "agility"
+    duration_turns: Optional[int] = None
+    description: str
+
+class Item(BaseModel):
+    id: str
+    name: str
+    description: str
+    type: ItemType
+    rarity: ItemRarity = ItemRarity.COMMON
+    value: int = 0 # Pengő value
+    icon_code: str
+    stats: Dict[str, int] = {} # Legacy combat stats
+    effects: List[ItemEffect] = []
+    set_id: Optional[str] = None # Collection Book ID
 
 class InventorySlot(BaseModel):
     item_id: str
     quantity: int = 1
+    rarity: Optional[ItemRarity] = None
     equipped: bool = False
     # Enriched fields (from joins)
     name: Optional[str] = None
@@ -41,6 +79,7 @@ class InventorySlot(BaseModel):
     type: Optional[ItemType] = None
     value: int = 0
     stats: Dict[str, Any] = {}
+    effects: List[Any] = [] # List[ItemEffect] but avoid circular dep issues in simple json
 
 class User(BaseModel):
     id: str
@@ -56,12 +95,17 @@ class Character(BaseModel):
     user_id: str
     name: str
     character_class: CharacterClass
+    faction: Faction = Faction.NONE
+    currency: int = 0 # Pengő
+    weekly_streak_count: int = 0
     level: int = 1
+    xp: int = 0
     steps: int = 0
     weekly_steps: int = 0
     max_hp: int = 10
     current_hp: int = 10
-    stats: Dict[str, int] = {"strength": 1, "agility": 1, "intellect": 1}
+    # Stats: strength (Rock), agility (Paper), tactics (Scissors)
+    stats: Dict[str, int] = {"strength": 1, "agility": 1, "tactics": 1}
     inventory: List[InventorySlot] = []
     visited_zones: List[str] = []
     completed_quests: List[str] = []

@@ -409,44 +409,47 @@ class _EncounterScreenState extends State<EncounterScreen> {
   }
 
   Future<void> _resolveFightAction(EncounterNode node, String action) async {
-      // Logic:
-      // Attack (Str) > Trick (Agi)
-      // Trick (Agi) > Analyze (Int)
-      // Analyze (Int) > Attack (Str)
-      // 
-      // If Enemy has NO class -> Attack always wins (Basic mob).
-      // If Enemy HAS class -> Check RPS.
-
       setState(() => _isTransitioning = true);
       
-      String result = "lose";
-      String feedback = "Az ellenség kivédte!";
+      // Determine Player Stance
+      String playerStance = "strength";
+      if (action == "trick") playerStance = "agility";
+      if (action == "analyze") playerStance = "tactics";
+
+      // Determine Enemy Stance (Simplistic Logic for now)
+      // Ideally this should be random or predefined in node metadata
+      String enemyStance = "strength";
+      if (node.enemyClass == "collector") enemyStance = "agility";
+      if (node.enemyClass == "archivist") enemyStance = "tactics";
       
-      // Basic Logic (Client-side for MVP)
-      if (node.enemyClass == null) {
-           result = "win";
-           feedback = "Sikeres támadás!";
+      // Power default
+      int enemyPower = node.enemyHp ?? 10;
+
+      final token = context.read<AuthService>().token;
+      if (token == null) {
+          setState(() => _isTransitioning = false);
+          return;
+      }
+
+      final resultData = await context.read<KeldorService>().predictCombat(token, playerStance, enemyStance, enemyPower);
+
+      if (resultData == null) {
+         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Hiba a harc során!"), backgroundColor: Colors.red));
+         setState(() => _isTransitioning = false);
+         return;
+      }
+
+      final result = resultData['result']; // win, loss, draw
+      final log = resultData['log'] as List<dynamic>? ?? [];
+      String feedback = log.isNotEmpty ? log.last : "Harc vége.";
+
+      // Parse log better if possible, for now just show result
+      if (result == "win") {
+          feedback = "GYŐZELEM! ${feedback}";
+      } else if (result == "draw") {
+          feedback = "DÖNTETLEN. ${feedback}";
       } else {
-           final eClass = node.enemyClass!; // archivist, vigilante, collector
-           
-           // Map Action to Class/Stat
-           // attack -> vigilante (str)
-           // trick -> collector (agi)
-           // analyze -> archivist (int)
-           
-           if (action == "attack") {
-               if (eClass == "collector") { result = "win"; feedback = "Erővel legyőzted a gyorsaságot!"; } // Str > Agi
-               else if (eClass == "vigilante") { result = "draw"; feedback = "Két harcos csap össze... döntetlen."; }
-               else { result = "lose"; feedback = "A mágia erősebb az izomnál!"; } // Int > Str
-           } else if (action == "trick") {
-               if (eClass == "archivist") { result = "win"; feedback = "Kicselezted a tudóst!"; } // Agi > Int
-               else if (eClass == "collector") { result = "draw"; feedback = "Két árny suhan... döntetlen."; }
-               else { result = "lose"; feedback = "A harcos átlát a csellel!"; } // Str > Agi
-           } else if (action == "analyze") {
-               if (eClass == "vigilante") { result = "win"; feedback = "Elemezted a harcstílusát és győztél!"; } // Int > Str
-               else if (eClass == "archivist") { result = "draw"; feedback = "Két elme csatája... döntetlen."; }
-               else { result = "lose"; feedback = "Túl gyors volt neked!"; } // Agi > Int
-           }
+          feedback = "VERESÉG. ${feedback}";
       }
 
       await Future.delayed(const Duration(milliseconds: 800)); // Suspense
@@ -456,12 +459,16 @@ class _EncounterScreenState extends State<EncounterScreen> {
       if (result == "win") {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(feedback), backgroundColor: Colors.green));
           _finishEncounter(); // Success
+      } else if (result == "draw") {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(feedback), backgroundColor: Colors.orange));
+          // Draw -> Stay in combat? Or counts as win for now?
+          // Let's say allow retry?
+          setState(() => _isTransitioning = false);
       } else {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(feedback), backgroundColor: Colors.red));
            if (node.failureNodeId != null) {
               _goToNode(node.failureNodeId);
            } else {
-              // Just stay here? Or lose health? For now stay.
               setState(() => _isTransitioning = false);
            }
       }

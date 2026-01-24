@@ -364,7 +364,7 @@ class KeldorService extends ChangeNotifier {
           _checkResponse(response);
           if (response.statusCode == 200) {
               final data = json.decode(response.body);
-              // Refresh character and quests to show new state immediately
+              // Refresh character and quests to show newstate immediately
               await fetchUserCharacter(token);
               await fetchQuests(token);
               return data;
@@ -374,6 +374,165 @@ class KeldorService extends ChangeNotifier {
       } catch (e) {
           print("Error resolving encounter: $e");
           return null;
+      }
+  }
+
+  Future<Map<String, dynamic>?> predictCombat(String token, String stance, String enemyStance, int enemyPower) async {
+      if (activeCharacter == null) return null;
+      try {
+          final baseUrl = await ApiService().getBaseUrl();
+          final response = await http.post(
+              Uri.parse('$baseUrl/combat/predict'),
+              headers: {
+                  'Authorization': 'Bearer $token',
+                  'Content-Type': 'application/json',
+              },
+              body: json.encode({
+                  "character_id": activeCharacter!.id,
+                  "player_stance": stance, // backend expects player_stance
+                  "enemy_stance": enemyStance,
+                  "enemy_power": enemyPower
+              }),
+          );
+          
+          _checkResponse(response);
+          if (response.statusCode == 200) {
+              return json.decode(response.body);
+          } else {
+              print("Combat prediction failed: ${response.body}");
+              return null;
+          }
+      } catch (e) {
+          print("Error predicting combat: $e");
+          return null;
+      }
+  }
+
+  // --- Economy ---
+
+  Future<List<Item>> fetchMerchantItems(String token) async {
+      try {
+          final baseUrl = await ApiService().getBaseUrl();
+          final response = await http.get(
+              Uri.parse('$baseUrl/merchant/items'),
+              headers: {'Authorization': 'Bearer $token'},
+          );
+          _checkResponse(response);
+          if (response.statusCode == 200) {
+              final List<dynamic> data = json.decode(response.body);
+              return data.map((json) => Item.fromJson(json)).toList();
+          }
+          return [];
+      } catch (e) {
+          print("Error fetching merchant items: $e");
+          return [];
+      }
+  }
+
+  Future<bool> buyItem(String token, String itemId, int quantity) async {
+      if (activeCharacter == null) return false;
+      try {
+          final baseUrl = await ApiService().getBaseUrl();
+          final response = await http.post(
+              Uri.parse('$baseUrl/merchant/buy'),
+              headers: {
+                  'Authorization': 'Bearer $token',
+                  'Content-Type': 'application/json'
+              },
+              body: json.encode({
+                  "character_id": activeCharacter!.id,
+                  "item_id": itemId,
+                  "quantity": quantity
+              }),
+          );
+          _checkResponse(response);
+          if (response.statusCode == 200) {
+              // Refresh character to update inventory and currency
+              await fetchUserCharacter(token);
+              return true;
+          }
+          print("Buy failed: ${response.body}");
+          return false;
+      } catch (e) {
+          print("Error buying item: $e");
+          return false;
+      }
+  }
+
+  Future<bool> sellItem(String token, String itemId, int quantity) async {
+      if (activeCharacter == null) return false;
+      try {
+          final baseUrl = await ApiService().getBaseUrl();
+          final response = await http.post(
+              Uri.parse('$baseUrl/merchant/sell'),
+              headers: {
+                  'Authorization': 'Bearer $token',
+                  'Content-Type': 'application/json'
+              },
+              body: json.encode({
+                  "character_id": activeCharacter!.id,
+                  "item_id": itemId,
+                  "quantity": quantity
+              }),
+          );
+          _checkResponse(response);
+          if (response.statusCode == 200) {
+              await fetchUserCharacter(token);
+              return true;
+          }
+          print("Sell failed: ${response.body}");
+          return false;
+      } catch (e) {
+          print("Error selling item: $e");
+          return false;
+      }
+  }
+
+  Future<Map<String, dynamic>?> useItem(String token, String itemId) async {
+      if (activeCharacter == null) return null;
+      try {
+          final baseUrl = await ApiService().getBaseUrl();
+          final response = await http.post(
+              Uri.parse('$baseUrl/character/use_item'),
+              headers: {
+                  'Authorization': 'Bearer $token',
+                  'Content-Type': 'application/json'
+              },
+              body: json.encode({
+                  "character_id": activeCharacter!.id,
+                  "item_id": itemId,
+                  "quantity": 1
+              }),
+          );
+          _checkResponse(response);
+          if (response.statusCode == 200) {
+              await fetchUserCharacter(token);
+              return json.decode(response.body);
+          }
+          print("Use item failed: ${response.body}");
+          return null;
+      } catch (e) {
+          print("Error using item: $e");
+          return null;
+      }
+  }
+
+  Future<List<Collection>> fetchCollections(String token) async {
+      try {
+          final baseUrl = await ApiService().getBaseUrl();
+          final response = await http.get(
+              Uri.parse('$baseUrl/collections'),
+              headers: {'Authorization': 'Bearer $token'},
+          );
+          _checkResponse(response);
+          if (response.statusCode == 200) {
+              final List<dynamic> data = json.decode(response.body);
+              return data.map((json) => Collection.fromJson(json)).toList();
+          }
+          return [];
+      } catch (e) {
+          print("Error fetching collections: $e");
+          return [];
       }
   }
 

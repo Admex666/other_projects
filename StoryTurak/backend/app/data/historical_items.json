@@ -1,0 +1,152 @@
+[
+    {
+        "id": "item_fokos",
+        "name": "Fokos",
+        "description": "Hagyományos pásztorszerszám és fegyver. A nyers erő jelképe.",
+        "type": "weapon",
+        "rarity": "common",
+        "value": 50,
+        "icon_code": "axe",
+        "stats": {
+            "strength": 2
+        },
+        "effects": [],
+        "set_id": "set_betyar"
+    },
+    {
+        "id": "item_karikas_ostor",
+        "name": "Karikás Ostor",
+        "description": "Hangos cserrenéssel riasztja el az ellenfelet vagy gáncsolja el.",
+        "type": "weapon",
+        "rarity": "uncommon",
+        "value": 120,
+        "icon_code": "whip",
+        "stats": {
+            "agility": 3
+        },
+        "effects": [
+            {
+                "type": "combat_crit",
+                "description": "10% esély, hogy Csel esetén a sebzés duplázódik.",
+                "value": 0.1
+            }
+        ],
+        "set_id": "set_betyar"
+    },
+    {
+        "id": "item_handzsar",
+        "name": "Török Handzsár",
+        "description": "Görbe pengéjű tőr, a közelharc mestereinek.",
+        "type": "weapon",
+        "rarity": "rare",
+        "value": 300,
+        "icon_code": "dagger_curved",
+        "stats": {
+            "agility": 5
+        },
+        "effects": [
+            {
+                "type": "combat_crit",
+                "description": "25% esély kritikus vágásra.",
+                "value": 0.25
+            }
+        ],
+        "set_id": "set_ottoman"
+    },
+    {
+        "id": "item_kaftan",
+        "name": "Díszes Kaftán",
+        "description": "Könnyű viselet, amely nem gátolja a mozgást.",
+        "type": "misc",
+        "rarity": "uncommon",
+        "value": 200,
+        "icon_code": "robe",
+        "stats": {
+            "agility": 2
+        },
+        "effects": [
+            {
+                "type": "buff",
+                "description": "+10% kitérési esély.",
+                "target_stat": "agility",
+                "value": 0.1
+            }
+        ],
+        "set_id": "set_ottoman"
+    },
+    {
+        "id": "item_revolver",
+        "name": "Rozsdás Revolver",
+        "description": "Régi, de megbízható hatlövetű. A távolságtartás eszköze.",
+        "type": "weapon",
+        "rarity": "rare",
+        "value": 450,
+        "icon_code": "gun",
+        "stats": {
+            "tactics": 4
+        },
+        "effects": [],
+        "set_id": "set_modern"
+    },
+    {
+        "id": "item_rakoczi_szablya",
+        "name": "Rákóczi Szablyája",
+        "description": "A Fejedelem legendás kardjának másolata. Tekintélyt parancsol.",
+        "type": "weapon",
+        "rarity": "epic",
+        "value": 1000,
+        "icon_code": "sword_fancy",
+        "stats": {
+            "strength": 5,
+            "tactics": 2
+        },
+        "effects": [
+            {
+                "type": "stat_bonus",
+                "description": "Minden győzelem +5 Pengőt ad.",
+                "value": 5
+            }
+        ],
+        "set_id": "set_kuruc"
+    },
+    {
+        "id": "item_tavcso",
+        "name": "Réz Távcső",
+        "description": "Segít felmérni a terepet és az ellenfél szándékait.",
+        "type": "tool",
+        "rarity": "common",
+        "value": 80,
+        "icon_code": "spyglass",
+        "stats": {
+            "tactics": 1
+        },
+        "effects": [
+            {
+                "type": "combat_reveal",
+                "description": "Látod az ellenfél első lépését.",
+                "value": 1
+            }
+        ]
+    },
+    {
+        "id": "item_szivveres_gyuru",
+        "name": "Szívverés Gyűrű",
+        "description": "Egy gyűrű, ami együtt dobban a várossal.",
+        "type": "relic",
+        "rarity": "legendary",
+        "value": 5000,
+        "icon_code": "ring_red",
+        "stats": {
+            "strength": 3,
+            "agility": 3,
+            "tactics": 3
+        },
+        "effects": [
+            {
+                "type": "heal",
+                "description": "Minden séta 1 HP-t gyógyít.",
+                "value": 1
+            }
+        ]
+    }
+]

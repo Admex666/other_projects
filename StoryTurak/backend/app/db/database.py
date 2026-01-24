@@ -35,7 +35,8 @@ def init_db():
 
     # Characters table
     c.execute('''CREATE TABLE IF NOT EXISTS characters
-                 (id TEXT PRIMARY KEY, user_id TEXT, name TEXT, character_class TEXT, level INTEGER DEFAULT 1, steps INTEGER DEFAULT 0, weekly_steps INTEGER DEFAULT 0,
+                 (id TEXT PRIMARY KEY, user_id TEXT, name TEXT, character_class TEXT, faction TEXT DEFAULT 'none', currency INTEGER DEFAULT 0,
+                  weekly_streak_count INTEGER DEFAULT 0, level INTEGER DEFAULT 1, xp INTEGER DEFAULT 0, steps INTEGER DEFAULT 0, weekly_steps INTEGER DEFAULT 0,
                   max_hp INTEGER DEFAULT 10, current_hp INTEGER DEFAULT 10, stats TEXT, inventory TEXT, visited_zones TEXT, completed_quests TEXT,
                   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
 
@@ -50,8 +51,10 @@ def init_db():
                   current_objective_index INTEGER DEFAULT 0, current_count INTEGER DEFAULT 0, started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
 
     # Items table
+
     c.execute('''CREATE TABLE IF NOT EXISTS items
-                 (id TEXT PRIMARY KEY, name TEXT, description TEXT, type TEXT, value INTEGER, icon_code TEXT, stats TEXT)''')
+                 (id TEXT PRIMARY KEY, name TEXT, description TEXT, type TEXT, rarity TEXT DEFAULT 'common', value INTEGER, icon_code TEXT, stats TEXT,
+                  effects TEXT, set_id TEXT)''')
                  
     # Loot Tables table
     c.execute('''CREATE TABLE IF NOT EXISTS loot_tables
@@ -100,8 +103,16 @@ def init_db():
                   PRIMARY KEY (loot_table_id, item_id),
                   FOREIGN KEY(item_id) REFERENCES items(id))''')
 
+    # Character Collections (Zeigarnik Effect)
+    c.execute('''CREATE TABLE IF NOT EXISTS character_collections
+                 (character_id TEXT, collection_id TEXT, item_id TEXT, found_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                  PRIMARY KEY (character_id, collection_id, item_id),
+                  FOREIGN KEY(character_id) REFERENCES characters(id),
+                  FOREIGN KEY(item_id) REFERENCES items(id))''')
+
     try:
         _migrate_xp_to_steps(c)
+        _migrate_gamification_columns(c)
         _migrate_json_to_relational(c)
         # Seed Content from Code to DB (One-Way Sync for now)
         from app.services.content_service import seed_world_content
@@ -182,6 +193,30 @@ def _migrate_xp_to_steps(cursor):
         cursor.execute("ALTER TABLE quests RENAME COLUMN rewards_xp TO rewards_steps")
     except Exception:
         pass
+
+
+
+def _migrate_gamification_columns(cursor):
+    # Characters: Faction, Currency, Streak, XP
+    try: cursor.execute("ALTER TABLE characters ADD COLUMN faction TEXT DEFAULT 'none'")
+    except: pass
+    try: cursor.execute("ALTER TABLE characters ADD COLUMN currency INTEGER DEFAULT 0")
+    except: pass
+    try: cursor.execute("ALTER TABLE characters ADD COLUMN weekly_streak_count INTEGER DEFAULT 0")
+    except: pass
+    try: cursor.execute("ALTER TABLE characters ADD COLUMN xp INTEGER DEFAULT 0")
+    except: pass
+    
+    # Items: Rarity, SetID, Effects
+    try: cursor.execute("ALTER TABLE items ADD COLUMN rarity TEXT DEFAULT 'common'")
+    except: pass
+    try: cursor.execute("ALTER TABLE items ADD COLUMN set_id TEXT")
+    except: pass
+    try: cursor.execute("ALTER TABLE items ADD COLUMN effects TEXT")
+    except: pass
+    
+    # Character Items: Rarity? No, comes from join. Effects? No.
+    # But maybe distinct items (instances)? For now kept simple.
 
 def execute_query(query, params=()):
     conn = get_connection()

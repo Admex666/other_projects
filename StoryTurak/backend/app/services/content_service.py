@@ -1,7 +1,12 @@
 import json
 from app.db.database import execute_query
+from app.db.crud import create_item
+import os
 
 def seed_world_content():
+    # 0. Seed Items
+    seed_items()
+
     # 1. Seed Zones
     # From world.py hardcoded list
     zones = [
@@ -123,3 +128,28 @@ def get_zone_encounters(zone_id):
         d["location"] = [d["location_lat"], d["location_lon"]]
         res.append(d)
     return res
+
+def seed_items():
+    try:
+        file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "app", "data", "historical_items.json")
+        with open(file_path, "r", encoding="utf-8") as f:
+            items = json.load(f)
+            
+        for item in items:
+            create_item(item)
+            
+        # Hardcoded Collection Items (Ensuring they exist for Collection V1)
+        collection_items = [
+            {"id": "item_fokos", "name": "Betyár Fokos", "type": "weapon", "rarity": "rare", "value": 250, "icon_code": "architecture", "description": "Díszes nyelű fokos, a puszta emléke."},
+            {"id": "item_handzsar", "name": "Török Handzsár", "type": "weapon", "rarity": "common", "value": 120, "icon_code": "explore", "description": "Rozsdás, de éles penge az 1500-as évekből."},
+            {"id": "item_revolver_kossuth", "name": "1848-as Pisztoly", "type": "weapon", "rarity": "legendary", "value": 1000, "icon_code": "offline_bolt", "description": "Egy tiszt oldalfegyvere a szabadságharcból."},
+            {"id": "item_metro_ticket_1980", "name": "Régi Metró Jegy", "type": "relic", "rarity": "common", "value": 10, "icon_code": "confirmation_number", "description": "Egy lyukasztott jegy a 3-as metróról."},
+            # item_ancient_coin is likely already in historical_items or loot table
+            {"id": "item_ancient_coin", "name": "Római Érme", "type": "relic", "rarity": "uncommon", "value": 50, "icon_code": "monetization_on", "description": "Aquincumi ásatásokból származó érme."}
+        ]
+        for it in collection_items:
+            create_item(it)
+
+        print(f"✅ Seeded {len(items)} historical items + Collections.")
+    except Exception as e:
+        print(f"❌ Failed to seed items: {e}")

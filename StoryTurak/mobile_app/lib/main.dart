@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'theme.dart';
-import 'services/story_engine.dart'; // Kept if needed by other parts, though likely unused in main now
+import 'services/story_engine.dart';
 import 'services/keldor_service.dart';
 import 'services/notification_service.dart';
 import 'services/auth_service.dart';
@@ -9,11 +9,13 @@ import 'screens/class_selection_screen.dart';
 import 'screens/explore_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/character_screen.dart';
-import 'screens/character_selection_screen.dart'; // New Import
+import 'screens/character_selection_screen.dart';
 import 'services/api_service.dart';
 import 'services/settings_service.dart';
 import 'services/location_service.dart';
-import 'models/keldor_models.dart'; // Needed for QuestStatus
+import 'models/keldor_models.dart';
+import 'screens/shop_screen.dart';
+import 'screens/collection_screen.dart';
 import 'screens/settings_screen.dart';
 
 void main() async {
@@ -132,6 +134,8 @@ class _MainScaffoldState extends State<MainScaffold> {
   static final List<Widget> _screens = <Widget>[
     const ExploreScreen(), // Map with Fog of War
     const CharacterScreen(),
+    const ShopScreen(),
+    const CollectionScreen(),
     const SettingsScreen(),
   ];
 
@@ -143,11 +147,6 @@ class _MainScaffoldState extends State<MainScaffold> {
 
   @override
   void dispose() {
-    // If context is still valid, remove listener? 
-    // Actually safe to ignore here as MainScaffold disposes on logout usually,
-    // but better practice:
-    // context.read<LocationService>().removeListener(_onStepUpdate); 
-    // (Requires saving reference or ensuring context valid)
     super.dispose();
   }
 
@@ -167,9 +166,6 @@ class _MainScaffoldState extends State<MainScaffold> {
           final hasActiveQuest = keldor.activeQuests.any((q) => q.status == QuestStatus.active);
           
           if (!hasActiveQuest) {
-             // If no quest is active, we just advance the synced counter so we don't accumulate "pending" steps that trigger later.
-             // Or should we just ignore? The user said "Only those steps that happen during a quest". 
-             // So we should NOT credit them. We mark them as "processed" but not synced.
              _syncedSteps = currentSteps; 
              return;
           }
@@ -184,13 +180,8 @@ class _MainScaffoldState extends State<MainScaffold> {
               
               // Call API
               ApiService().addSteps(auth.token!, keldor.activeCharacter!.userId, stepsToSync).then((_) {
-                  // No need to fetch immediately if optimistic update was accurate, 
-                  // but good to sync occasionally. For now, let's skip fetch to reduce load/flicker
-                  // unless error happens.
               }).catchError((e) {
                   print("❌ Step sync failed: $e");
-                  // Revert steps? Too complex. Steps are cumulative. 
-                  // Backend will catch up eventually.
               });
           }
       }
@@ -206,7 +197,7 @@ class _MainScaffoldState extends State<MainScaffold> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true, 
-      appBar: _selectedIndex == 2 ? null : AppBar(
+      appBar: _selectedIndex == 4 ? null : AppBar( // Hide AppBar on Settings (index 4)
         title: const Text("Keldor"),
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -227,6 +218,16 @@ class _MainScaffoldState extends State<MainScaffold> {
             icon: Icon(Icons.person_outline, color: Colors.white54),
             selectedIcon: Icon(Icons.person, color: KeldorTheme.primary),
             label: 'Karakter',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.storefront_outlined, color: Colors.white54),
+            selectedIcon: Icon(Icons.storefront, color: KeldorTheme.primary),
+            label: 'Bolt',
+          ),
+           NavigationDestination(
+            icon: Icon(Icons.auto_stories_outlined, color: Colors.white54),
+            selectedIcon: Icon(Icons.auto_stories, color: KeldorTheme.primary),
+            label: 'Gyűjtemény',
           ),
            NavigationDestination(
             icon: Icon(Icons.settings_outlined, color: Colors.white54),

@@ -8,6 +8,8 @@ import '../screens/intro_screen.dart';
 import '../screens/lobby_screen.dart';
 import '../services/api_service.dart';
 import '../models/session.dart';
+import '../screens/shop_screen.dart';
+import '../screens/collection_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -135,6 +137,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       );
                     },
                   ),
+
+                  const SizedBox(height: 32),
+                  Text(
+                    "GAZDASÁG",
+                    style: GoogleFonts.outfit(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 2,
+                      color: Colors.greenAccent,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  _buildShopCard(),
+                  const SizedBox(height: 16),
+                  _buildCollectionCard(),
 
                   const SizedBox(height: 32),
                   Text(
@@ -341,6 +358,116 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ),
             const Icon(Icons.chevron_right, color: Colors.blueAccent),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildShopCard() {
+    return InkWell(
+      onTap: () {
+          // Lazy load import usually, but we need import at top.
+          // Assuming ShopScreen is imported or will be.
+          Navigator.push(context, MaterialPageRoute(builder: (_) => const ShopScreen())); 
+      },
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.green.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: Colors.green.withOpacity(0.2)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.green,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: const Icon(Icons.storefront, color: Colors.white, size: 32),
+            ),
+            const SizedBox(width: 20),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "KERESKEDŐ",
+                    style: GoogleFonts.outfit(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.5,
+                      color: Colors.green,
+                    ),
+                  ),
+                  Text(
+                    "Felszerelés és Kincsek",
+                    style: GoogleFonts.outfit(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right, color: Colors.green),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCollectionCard() {
+    return InkWell(
+      onTap: () {
+          Navigator.push(context, MaterialPageRoute(builder: (_) => const CollectionScreen())); 
+      },
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.purple.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: Colors.purple.withOpacity(0.2)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.purple,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: const Icon(Icons.auto_stories, color: Colors.white, size: 32),
+            ),
+            const SizedBox(width: 20),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "GYŰJTEMÉNY",
+                    style: GoogleFonts.outfit(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.5,
+                      color: Colors.purple,
+                    ),
+                  ),
+                  Text(
+                    "Ereklyék és Készletek",
+                    style: GoogleFonts.outfit(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right, color: Colors.purple),
           ],
         ),
       ),

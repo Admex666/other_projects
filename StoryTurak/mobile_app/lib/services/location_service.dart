@@ -8,12 +8,13 @@ import 'package:flutter/foundation.dart';
 class LocationService extends ChangeNotifier {
   StreamSubscription<Position>? _positionSubscription;
   LatLng? _lastPosition;
+  LatLng? _lastTrackedPosition; // Anchor to filter drift
   double _accumulatedDistance = 0.0;
   int _sessionSteps = 0;
   
   // 1 Step ~= 0.72m (User Request)
   static const double stepLengthMeters = 0.72;
-  static const double trackingThresholdMeters = 2.0; // Minimum movement to count
+  static const double trackingThresholdMeters = 25.0; // Filter out drift < 25m
 
   int get sessionSteps => _sessionSteps;
   LatLng? get lastPosition => _lastPosition;
@@ -48,6 +49,9 @@ class LocationService extends ChangeNotifier {
 
   void startTracking() async {
     if (_positionSubscription != null) return;
+    
+    // Reset anchor on start
+    _lastTrackedPosition = null;
 
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) return;
@@ -61,7 +65,7 @@ class LocationService extends ChangeNotifier {
     _positionSubscription = Geolocator.getPositionStream(
       locationSettings: const LocationSettings(
         accuracy: LocationAccuracy.high,
-        distanceFilter: 2, // Check every 2 meters
+        distanceFilter: 2, // Keep low for UI smoothness, we filter logic manually
       ),
     ).listen(_onLocationUpdate);
     
@@ -71,14 +75,21 @@ class LocationService extends ChangeNotifier {
   void stopTracking() {
     _positionSubscription?.cancel();
     _positionSubscription = null;
+    _lastTrackedPosition = null;
     print("🛑 Location Tracking Stopped. Total Steps: $_sessionSteps");
   }
 
   void _onLocationUpdate(Position pos) {
     final newPos = LatLng(pos.latitude, pos.longitude);
     
-    if (_lastPosition != null) {
-      final distance = getDistance(_lastPosition!, newPos);
+    // Initialize start point
+    if (_lastTrackedPosition == null) {
+      _lastTrackedPosition = newPos;
+    } else {
+      // Check distance from last *tracked* position (anchor)
+      final distance = getDistance(_lastTrackedPosition!, newPos);
+      
+      // Only count if user moved significantly (Anti-Drift)
       if (distance >= trackingThresholdMeters) {
          _accumulatedDistance += distance;
          
@@ -87,14 +98,16 @@ class LocationService extends ChangeNotifier {
          if (newSteps > 0) {
              _sessionSteps += newSteps;
              _accumulatedDistance -= (newSteps * stepLengthMeters); // Keep remainder
-             notifyListeners();
              print("🚶 Steps: +$newSteps (Total: $_sessionSteps)");
+             
+             // Update the anchor only when we confirmed real movement
+             _lastTrackedPosition = newPos;
          }
       }
     }
     
+    // Always update UI position for map rendering
     _lastPosition = newPos;
-    // We can also notify for position updates if needed, but step updates are the main change.
     notifyListeners(); 
   }
   Stream<LatLng> get positionStream {

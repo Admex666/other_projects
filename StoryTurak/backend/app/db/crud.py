@@ -20,8 +20,9 @@ def create_user(user_id, username, password_hash):
 def create_character(char_data: dict):
     # Insert basic data (Inventory/Zones/Quests columns ignored/deprecated)
     execute_query(
-        "INSERT INTO characters (id, user_id, name, character_class, level, steps, weekly_steps, max_hp, stats) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        (char_data["id"], char_data["user_id"], char_data["name"], char_data["character_class"], char_data["level"], char_data["steps"], char_data.get("weekly_steps", 0), char_data["max_hp"], 
+        "INSERT INTO characters (id, user_id, name, character_class, faction, currency, level, steps, weekly_steps, max_hp, stats) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        (char_data["id"], char_data["user_id"], char_data["name"], char_data["character_class"], char_data.get("faction", "none"), char_data.get("currency", 0),
+         char_data["level"], char_data["steps"], char_data.get("weekly_steps", 0), char_data["max_hp"], 
          json.dumps(char_data.get("stats", {})))
     )
 
@@ -41,7 +42,7 @@ def get_characters_by_user(user_id: str):
         
         # 1. Fetch Inventory from character_items
         inv_rows = execute_query("""
-            SELECT ci.item_id, ci.quantity, ci.is_equipped, i.name, i.description, i.icon_code, i.stats, i.type, i.value 
+            SELECT ci.item_id, ci.quantity, ci.is_equipped, i.name, i.description, i.icon_code, i.stats, i.type, i.value, i.rarity, i.effects 
             FROM character_items ci
             LEFT JOIN items i ON ci.item_id = i.id
             WHERE ci.character_id = ?
@@ -60,6 +61,15 @@ def get_characters_by_user(user_id: str):
                      inv_item["stats"] = {}
             else:
                  inv_item["stats"] = {}
+            
+            if inv_item.get("effects"):
+                 try:
+                     inv_item["effects"] = json.loads(inv_item["effects"])
+                 except:
+                     inv_item["effects"] = []
+            else:
+                 inv_item["effects"] = []
+                 
             d["inventory"].append(inv_item)
             
         # 2. Fetch Visited Zones
@@ -74,6 +84,60 @@ def get_characters_by_user(user_id: str):
         
     return chars
 
+def get_character_with_details(char_id: str):
+    rows = execute_query("SELECT * FROM characters WHERE id = ?", (char_id,))
+    if not rows:
+        return None
+        
+    d = dict(rows[0])
+    
+    # Legacy schema mapping
+    if "class" in d and "character_class" not in d:
+         d["character_class"] = d["class"]
+         
+    d["stats"] = json.loads(d["stats"]) if d["stats"] else {}
+    
+    # 1. Fetch Inventory from character_items
+    inv_rows = execute_query("""
+        SELECT ci.item_id, ci.quantity, ci.is_equipped, i.name, i.description, i.icon_code, i.stats, i.type, i.value, i.rarity, i.effects 
+        FROM character_items ci
+        LEFT JOIN items i ON ci.item_id = i.id
+        WHERE ci.character_id = ?
+    """, (char_id,))
+    
+    d["inventory"] = []
+    for ir in inv_rows:
+        inv_item = dict(ir)
+        inv_item["equipped"] = bool(inv_item["is_equipped"])
+        if inv_item.get("stats"):
+             try:
+                 inv_item["stats"] = json.loads(inv_item["stats"])
+             except:
+                 inv_item["stats"] = {}
+        else:
+             inv_item["stats"] = {}
+        
+        if inv_item.get("effects"):
+             try:
+                 inv_item["effects"] = json.loads(inv_item["effects"])
+             except:
+                 inv_item["effects"] = []
+        else:
+             inv_item["effects"] = []
+             
+        d["inventory"].append(inv_item)
+        
+    # 2. Fetch Visited Zones
+    z_rows = execute_query("SELECT zone_id FROM character_zones WHERE character_id = ?", (char_id,))
+    d["visited_zones"] = [z[0] for z in z_rows]
+    
+    # 3. Fetch Completed Quests
+    # We need user_id for this, which is in d
+    q_rows = execute_query("SELECT quest_id FROM user_quests WHERE user_id = ? AND status = 'completed'", (d["user_id"],))
+    d["completed_quests"] = [q[0] for q in q_rows]
+    
+    return d
+
 # Granular Inventory Management
 def add_character_item(char_id: str, item_id: str, quantity: int = 1):
     # Check if exists
@@ -84,16 +148,29 @@ def add_character_item(char_id: str, item_id: str, quantity: int = 1):
     else:
         execute_query("INSERT INTO character_items (character_id, item_id, quantity, is_equipped) VALUES (?, ?, ?, 0)", (char_id, item_id, quantity))
 
+    # Trigger Collection Check
+    try:
+        from app.services.collection_service import check_and_update_collection
+        check_and_update_collection(char_id, item_id)
+    except ImportError:
+        pass # Handle circular import if service not ready
+    except Exception as e:
+        print(f"Collection update failed: {e}")
+
 def remove_character_item(char_id: str, item_id: str, quantity: int = 1):
     row = execute_query("SELECT quantity FROM character_items WHERE character_id = ? AND item_id = ?", (char_id, item_id))
     if not row:
         return # Item not found
-        
+    
     current_qty = row[0][0]
     if current_qty > quantity:
-        execute_query("UPDATE character_items SET quantity = ? WHERE character_id = ? AND item_id = ?", (current_qty - quantity, char_id, item_id))
+         execute_query("UPDATE character_items SET quantity = ? WHERE character_id = ? AND item_id = ?", (current_qty - quantity, char_id, item_id))
     else:
-        execute_query("DELETE FROM character_items WHERE character_id = ? AND item_id = ?", (char_id, item_id))
+         execute_query("DELETE FROM character_items WHERE character_id = ? AND item_id = ?", (char_id, item_id))
+
+def update_character_currency(char_id: str, amount: int):
+    # Amount can be positive (add) or negative (subtract)
+    execute_query("UPDATE characters SET currency = currency + ? WHERE id = ?", (amount, char_id))
 
 def get_character_inventory(char_id: str):
     # Helper to return formatted inventory list
@@ -215,8 +292,9 @@ def update_user_quest_progress(uq_id, new_count, new_index=None, new_status=None
 # --- Item & Loot Functions ---
 def create_item(item_data: dict):
     execute_query(
-        "INSERT INTO items (id, name, description, type, value, icon_code, stats) VALUES (?, ?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO NOTHING",
-        (item_data["id"], item_data["name"], item_data["description"], item_data["type"], item_data["value"], item_data["icon_code"], json.dumps(item_data.get("stats", {})))
+        "INSERT INTO items (id, name, description, type, rarity, value, icon_code, stats, effects, set_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO NOTHING",
+        (item_data["id"], item_data["name"], item_data["description"], item_data["type"], item_data.get("rarity", "common"), 
+         item_data["value"], item_data["icon_code"], json.dumps(item_data.get("stats", {})), json.dumps(item_data.get("effects", [])), item_data.get("set_id"))
     )
 
 def get_item(item_id):
