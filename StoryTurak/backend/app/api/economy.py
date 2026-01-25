@@ -10,12 +10,6 @@ class TradeRequest(BaseModel):
     item_id: str
     quantity: int = 1
 
-@router.post("/merchant/sell")
-def sell_item(request: TradeRequest):
-    """
-    Sells an item from the character's inventory to the merchant.
-    """
-    char = get_character_with_details(request.character_id)
 # ...
 
 @router.get("/merchant/items")
@@ -41,12 +35,18 @@ def get_merchant_items():
              item["stats"] = json.loads(item["stats"]) if item["stats"] else {}
         except:
              item["stats"] = {}
+        
+        try:
+             item["effects"] = json.loads(item["effects"]) if item["effects"] else []
+        except:
+             item["effects"] = []
         items.append(item)
         
     return items
 
 @router.post("/merchant/sell")
 def sell_item(request: TradeRequest):
+    char = get_character_with_details(request.character_id)
     if not char:
         raise HTTPException(status_code=404, detail="Character not found")
         
@@ -57,24 +57,39 @@ def sell_item(request: TradeRequest):
         
     item_def = get_item(request.item_id)
     if not item_def:
+        print(f"DEBUG SELL: Item definition not found for {request.item_id}")
         raise HTTPException(status_code=404, detail="Item definition not found")
         
     # Calculate Value (e.g. 50% of base value)
     base_value = item_def.get("value", 0)
     sell_price = int(base_value * 0.5) * request.quantity
     
+    print(f"DEBUG SELL: Selling {request.quantity}x {item_def['name']} ({request.item_id}) for {sell_price}")
+
     # 1. Remove Item
+    print("DEBUG SELL: Calling remove_character_item...")
     remove_character_item(request.character_id, request.item_id, request.quantity)
     
     # 2. Add Currency
+    print("DEBUG SELL: Calling update_character_currency...")
     update_character_currency(request.character_id, sell_price)
+    
+    # 3. Log Transaction
+    from app.db.crud import log_transaction
+    new_currency = char.get("currency", 0) + sell_price
+    print(f"DEBUG SELL: Logging transaction. New Currency: {new_currency}")
+    try:
+        log_transaction(request.character_id, "sell", request.item_id, request.quantity, sell_price, new_currency)
+        print("DEBUG SELL: Transaction logged successfully.")
+    except Exception as e:
+        print(f"DEBUG SELL: Error logging transaction: {e}")
     
     return {
         "success": True,
         "sold_item": item_def["name"],
         "quantity": request.quantity,
         "earned": sell_price,
-        "new_currency": char.get("currency", 0) + sell_price # Approximate, normally should refetch
+        "new_currency": new_currency
     }
 
 @router.post("/merchant/buy")
@@ -101,13 +116,18 @@ def buy_item(request: TradeRequest):
     
     # 2. Add Item
     add_character_item(request.character_id, request.item_id, request.quantity)
+
+    # 3. Log Transaction
+    from app.db.crud import log_transaction
+    new_currency = current_currency - cost
+    log_transaction(request.character_id, "buy", request.item_id, request.quantity, -cost, new_currency)
     
     return {
         "success": True,
         "bought_item": item_def["name"],
         "quantity": request.quantity,
         "spent": cost,
-        "new_currency": current_currency - cost
+        "new_currency": new_currency
     }
 
 from app.services.loot_service import roll_weighted_loot

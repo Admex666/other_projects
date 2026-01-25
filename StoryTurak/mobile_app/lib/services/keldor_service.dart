@@ -572,4 +572,24 @@ class KeldorService extends ChangeNotifier {
 
     return x > pX;
   }
+
+  Future<bool> setFaction(String token, String faction) async {
+      if (activeCharacter == null) return false;
+      try {
+          final baseUrl = await ApiService().getBaseUrl();
+          final response = await http.post(
+              Uri.parse('$baseUrl/characters/${activeCharacter!.id}/faction?faction=$faction'),
+              headers: {'Authorization': 'Bearer $token'},
+          );
+          _checkResponse(response);
+          if (response.statusCode == 200) {
+              await fetchUserCharacter(token);
+              return true;
+          }
+          return false;
+      } catch (e) {
+          print("Error setting faction: $e");
+          return false;
+      }
+  }
 }

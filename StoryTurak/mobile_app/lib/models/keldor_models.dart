@@ -154,6 +154,7 @@ class Zone {
   final String description;
   final List<LatLng> boundaryPoints;
   final int difficultyLevel;
+  final String? controllingFaction; // 'transformer', 'chronicler', 'forgotten', 'none'
 
   Zone({
     required this.id,
@@ -161,6 +162,7 @@ class Zone {
     required this.description,
     required this.boundaryPoints,
     required this.difficultyLevel,
+    this.controllingFaction,
   });
 
   factory Zone.fromJson(Map<String, dynamic> json) {
@@ -172,6 +174,7 @@ class Zone {
           .map((p) => LatLng(p[0] as double, p[1] as double))
           .toList(),
       difficultyLevel: json['difficulty_level'] ?? 1,
+      controllingFaction: json['controlling_faction'],
     );
   }
 }

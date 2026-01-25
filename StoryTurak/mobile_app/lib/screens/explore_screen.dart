@@ -248,15 +248,42 @@ class _ExploreScreenState extends State<ExploreScreen> {
               PolygonLayer(
                 polygons: service.activeZones.map((zone) {
                   bool isInside = _currentZone?.id == zone.id;
+                  
+                  Color baseColor = Colors.white10;
+                  Color borderColor = Colors.white24;
+                  
+                  if (zone.controllingFaction != null && zone.controllingFaction != 'none') {
+                       switch (zone.controllingFaction) {
+                           case 'transformer':
+                               baseColor = Colors.cyan.withOpacity(0.2);
+                               borderColor = Colors.cyan;
+                               break;
+                           case 'chronicler':
+                               baseColor = Colors.amber.withOpacity(0.2);
+                               borderColor = Colors.amber;
+                               break;
+                           case 'forgotten':
+                               baseColor = Colors.purple.withOpacity(0.2);
+                               borderColor = Colors.purple;
+                               break;
+                       }
+                  }
+
+                  if (isInside) {
+                      baseColor = baseColor == Colors.white10 
+                          ? KeldorTheme.primary.withOpacity(0.3) 
+                          : baseColor.withOpacity(0.5); // Boost opacity if inside
+                          
+                      borderColor = borderColor == Colors.white24 
+                          ? KeldorTheme.primary 
+                          : borderColor;
+                  }
+
                   return Polygon(
                     points: zone.boundaryPoints,
-                    color: isInside 
-                        ? KeldorTheme.primary.withOpacity(0.3) // Green inside
-                        : Colors.white10, // Dim outside
-                    borderColor: isInside 
-                        ? KeldorTheme.primary 
-                        : Colors.white24,
-                    borderStrokeWidth: 3,
+                    color: baseColor, 
+                    borderColor: borderColor,
+                    borderStrokeWidth: isInside ? 3 : 2,
                     isFilled: true,
                     label: zone.name,
                     labelStyle: GoogleFonts.cinzel(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 10),

@@ -4,6 +4,8 @@ import '../services/keldor_service.dart';
 import '../services/auth_service.dart';
 import '../theme.dart';
 import '../models/keldor_models.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'faction_selection_screen.dart';
 
 class CharacterScreen extends StatefulWidget {
   const CharacterScreen({Key? key}) : super(key: key);
@@ -298,24 +300,89 @@ class _CharacterScreenState extends State<CharacterScreen> {
       );
   }
 
+// ... (in _buildProfileHeader)
+
   Widget _buildProfileHeader(char) {
+      Color factionColor = Colors.grey;
+      IconData factionIcon = Icons.help_outline;
+      String factionName = "Független";
+      
+      if (char.faction != null && char.faction != 'none') {
+          switch (char.faction!) {
+              case 'transformer':
+                  factionColor = Colors.cyan;
+                  factionIcon = Icons.build_circle_outlined;
+                  factionName = "Átalakító";
+                  break;
+              case 'chronicler':
+                  factionColor = Colors.amber;
+                  factionIcon = Icons.history_edu;
+                  factionName = "Krónikás";
+                  break;
+              case 'forgotten':
+                  factionColor = Colors.purple;
+                  factionIcon = Icons.visibility_off;
+                  factionName = "Elfeledett";
+                  break;
+          }
+      }
+
       return Column(children: [
-            Container(
-                width: 100, height: 100,
-                decoration: BoxDecoration(
-                  color: KeldorTheme.primary.withOpacity(0.1),
-                  shape: BoxShape.circle,
-                  border: Border.all(color: KeldorTheme.primary, width: 2),
-                ),
-                child: Icon(_getClassIcon(char.characterClass), size: 50, color: KeldorTheme.primary),
+            Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                    Container(
+                        width: 80, height: 80,
+                        decoration: BoxDecoration(
+                          color: KeldorTheme.primary.withOpacity(0.1),
+                          shape: BoxShape.circle,
+                          border: Border.all(color: KeldorTheme.primary, width: 2),
+                        ),
+                        child: Icon(_getClassIcon(char.characterClass), size: 40, color: KeldorTheme.primary),
+                    ),
+                    const SizedBox(width: 16),
+                    // Faction Badge
+                    GestureDetector(
+                        onTap: (char.faction == null || char.faction == 'none') 
+                            ? () {
+                                Navigator.push(context, MaterialPageRoute(builder: (_) => const FactionSelectionScreen()));
+                            }
+                            : null,
+                        child: Container(
+                            width: 80, height: 80,
+                            decoration: BoxDecoration(
+                              color: factionColor.withOpacity(0.1),
+                              shape: BoxShape.circle,
+                              border: Border.all(color: factionColor, width: 2),
+                              boxShadow: [
+                                  if (char.faction == null || char.faction == 'none')
+                                    BoxShadow(color: KeldorTheme.primary.withOpacity(0.5), blurRadius: 10) // Pulse hint
+                              ]
+                            ),
+                            child: Icon(factionIcon, size: 40, color: factionColor),
+                        ),
+                    ),
+                ],
             ),
             const SizedBox(height: 16),
             Text(
               "Szint: ${char.level} | ${char.characterClass.toString().split('.').last.toUpperCase()}",
               style: KeldorTheme.darkTheme.textTheme.displayLarge?.copyWith(
-                  color: Colors.white70, fontWeight: FontWeight.bold
+                  color: Colors.white70, fontWeight: FontWeight.bold, fontSize: 16
               ),
             ),
+            const SizedBox(height: 4),
+            Text(
+              factionName.toUpperCase(),
+              style: GoogleFonts.cinzel(
+                  color: factionColor, fontWeight: FontWeight.bold, fontSize: 18, letterSpacing: 2
+              ),
+            ),
+            if (char.faction == null || char.faction == 'none')
+                 Padding(
+                   padding: const EdgeInsets.only(top: 8.0),
+                   child: Text("(Kattints a jelvényre a választáshoz)", style: TextStyle(color: KeldorTheme.primary.withOpacity(0.7), fontSize: 10)),
+                 )
       ]);
   }
 

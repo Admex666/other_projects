@@ -64,6 +64,11 @@ def init_db():
     c.execute('''CREATE TABLE IF NOT EXISTS analytics
                  (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id TEXT, event_type TEXT, data TEXT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
 
+    # Transactions table
+    c.execute('''CREATE TABLE IF NOT EXISTS transactions
+                 (id INTEGER PRIMARY KEY AUTOINCREMENT, character_id TEXT, transaction_type TEXT, item_id TEXT, quantity INTEGER, 
+                  currency_change INTEGER, balance_after INTEGER, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
+
     # --- NORMALIZED TABLES (v2) ---
     
     # Character Items (Inventory joined)
@@ -109,6 +114,14 @@ def init_db():
                   PRIMARY KEY (character_id, collection_id, item_id),
                   FOREIGN KEY(character_id) REFERENCES characters(id),
                   FOREIGN KEY(item_id) REFERENCES items(id))''')
+
+    # Zone Control table (Faction System)
+    c.execute('''CREATE TABLE IF NOT EXISTS zone_control
+                 (zone_id TEXT PRIMARY KEY, controlling_faction TEXT DEFAULT 'none',
+                  faction_points_transformer INTEGER DEFAULT 0,
+                  faction_points_chronicler INTEGER DEFAULT 0,
+                  faction_points_forgotten INTEGER DEFAULT 0,
+                  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
 
     try:
         _migrate_xp_to_steps(c)

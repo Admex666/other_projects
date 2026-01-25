@@ -130,6 +130,7 @@ class _ShopScreenState extends State<ShopScreen> with SingleTickerProviderStateM
                           // WORKAROUND: For now, if value is missing, assume 10. Ideally update model.
                           
                           // Actually let's assume `slot.quantity` > 0.
+                          int sellPrice = (slot.value * 0.5).toInt();
                           return ListTile(
                               leading: Icon(Icons.backpack, color: Colors.white70),
                               title: Text(slot.name ?? "Ismeretlen", style: const TextStyle(color: Colors.white)),
@@ -137,7 +138,7 @@ class _ShopScreenState extends State<ShopScreen> with SingleTickerProviderStateM
                               trailing: ElevatedButton(
                                   onPressed: () => _sellItem(slot),
                                   style: ElevatedButton.styleFrom(backgroundColor: Colors.orangeAccent),
-                                  child: const Text("Eladás", style: TextStyle(color: Colors.black)),
+                                  child: Text("Eladás ($sellPrice P)", style: const TextStyle(color: Colors.black)),
                               ),
                           );
                       },

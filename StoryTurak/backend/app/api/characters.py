@@ -3,7 +3,7 @@ from typing import List
 import uuid
 
 from app.dependencies import get_current_user
-from app.db.crud import get_characters_by_user, create_character, update_character_visited_zones, get_item, add_character_item, remove_character_item, set_item_equipped, get_character_inventory
+from app.db.crud import get_characters_by_user, create_character, update_character_visited_zones, get_item, add_character_item, remove_character_item, set_item_equipped, get_character_inventory, set_character_faction
 from app.models.schemas import Character, CharacterClass, InventorySlot
 
 router = APIRouter(prefix="/characters", tags=["characters"])
@@ -94,3 +94,12 @@ def unequip_item(character_id: str, item_id: str, current_user: dict = Depends(g
 
     new_inv = get_character_inventory(character_id)
     return {"status": "unequipped", "inventory": new_inv}
+
+@router.post("/{character_id}/faction")
+def update_faction_endpoint(character_id: str, faction: str, current_user: dict = Depends(get_current_user)):
+    chars = get_characters_by_user(current_user["id"])
+    if not any(c["id"] == character_id for c in chars):
+        raise HTTPException(status_code=403, detail="Not your character")
+        
+    set_character_faction(character_id, faction)
+    return {"status": "ok", "faction": faction}

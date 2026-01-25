@@ -27,12 +27,24 @@ def get_nearby_world(lat: float, lon: float):
     # Fetch from Database via Content Service logic
     # Note: In a real app, we would pass lat/lon to filter the SQL query.
     
-    zones = get_all_zones()
+    # Collect encounters and zone details
+    from app.db.crud import get_zone_control
+    
+    enriched_zones = []
+    
+    for z in zones:
+        # Fetch Control Data
+        zc = get_zone_control(z["id"])
+        if zc:
+            z["controlling_faction"] = zc["controlling_faction"]
+        else:
+            z["controlling_faction"] = "none" # Default
+            
+        enriched_zones.append(z)
     
     encounters = []
-    # Collect encounters for all zones (again, simplified vs real spatial query)
     for z in zones:
         zone_encs = get_zone_encounters(z["id"])
         encounters.extend(zone_encs)
     
-    return {"zones": zones, "encounters": encounters}
+    return {"zones": enriched_zones, "encounters": encounters}

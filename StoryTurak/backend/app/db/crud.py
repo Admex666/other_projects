@@ -158,18 +158,23 @@ def add_character_item(char_id: str, item_id: str, quantity: int = 1):
         print(f"Collection update failed: {e}")
 
 def remove_character_item(char_id: str, item_id: str, quantity: int = 1):
+    print(f"DEBUG DB: remove_character_item {char_id} {item_id} {quantity}")
     row = execute_query("SELECT quantity FROM character_items WHERE character_id = ? AND item_id = ?", (char_id, item_id))
     if not row:
+        print("DEBUG DB: Item not found, cannot remove")
         return # Item not found
     
     current_qty = row[0][0]
     if current_qty > quantity:
+         print(f"DEBUG DB: Decreasing qty from {current_qty} to {current_qty - quantity}")
          execute_query("UPDATE character_items SET quantity = ? WHERE character_id = ? AND item_id = ?", (current_qty - quantity, char_id, item_id))
     else:
+         print("DEBUG DB: Removing item row completely")
          execute_query("DELETE FROM character_items WHERE character_id = ? AND item_id = ?", (char_id, item_id))
 
 def update_character_currency(char_id: str, amount: int):
     # Amount can be positive (add) or negative (subtract)
+    print(f"DEBUG DB: update_character_currency {char_id} add {amount}")
     execute_query("UPDATE characters SET currency = currency + ? WHERE id = ?", (amount, char_id))
 
 def get_character_inventory(char_id: str):
@@ -198,6 +203,16 @@ def update_character_steps_and_level(char_id: str, new_steps: int, new_level: in
 
 def update_character_visited_zones(char_id: str, zone_id: str):
     execute_query("INSERT OR IGNORE INTO character_zones (character_id, zone_id) VALUES (?, ?)", (char_id, zone_id))
+
+def log_transaction(character_id: str, transaction_type: str, item_id: str, quantity: int, currency_change: int, balance_after: int):
+    print(f"DEBUG DB: log_transaction {transaction_type} for {character_id} / item {item_id} / change {currency_change}")
+    execute_query(
+        "INSERT INTO transactions (character_id, transaction_type, item_id, quantity, currency_change, balance_after) VALUES (?, ?, ?, ?, ?, ?)",
+        (character_id, transaction_type, item_id, quantity, currency_change, balance_after)
+    )
+
+def set_character_faction(character_id: str, faction: str):
+    execute_query("UPDATE characters SET faction = ? WHERE id = ?", (faction, character_id))
 
 # --- Progress Functions ---
 def save_progress(user_id, story_id, node_id, variables_dict):
@@ -316,3 +331,69 @@ def get_loot_table(lt_id):
         d["entries"] = json.loads(d["entries"]) if d["entries"] else []
         return d
     return None
+
+# --- Zone Control Functions ---
+
+def get_zone_control(zone_id):
+    rows = execute_query("SELECT * FROM zone_control WHERE zone_id = ?", (zone_id,))
+    if rows:
+        return dict(rows[0])
+    return None
+
+def init_zone_control(zone_id):
+    execute_query("INSERT OR IGNORE INTO zone_control (zone_id, controlling_faction) VALUES (?, 'none')", (zone_id,))
+
+def update_zone_points(zone_id: str, faction: str, points: int):
+    # Retrieve current state
+    zc = get_zone_control(zone_id)
+    if not zc:
+        init_zone_control(zone_id)
+        zc = get_zone_control(zone_id) # reload
+    
+    if not zc: 
+        return # Should not happen
+
+    # Map faction name to column
+    # transformers -> faction_points_transformer
+    # chroniclers -> faction_points_chronicler
+    # forgotten -> faction_points_forgotten
+    
+    col_name = f"faction_points_{faction.lower()}"
+    # Verify column exists (simple check)
+    if col_name not in ["faction_points_transformer", "faction_points_chronicler", "faction_points_forgotten"]:
+        print(f"Invalid faction for points update: {faction}")
+        return
+
+    execute_query(f"UPDATE zone_control SET {col_name} = {col_name} + ?, updated_at = CURRENT_TIMESTAMP WHERE zone_id = ?", (points, zone_id))
+    
+    # Check for Control Flip Logic
+    # If a faction exceeds e.g. 1000 points and has > 10% more than others, they take control.
+    # For MVP: whoever has max points > 500 takes control
+    
+    rows = execute_query("SELECT * FROM zone_control WHERE zone_id = ?", (zone_id,))
+    if rows:
+        new_zc = dict(rows[0])
+        p_trans = new_zc["faction_points_transformer"]
+        p_chron = new_zc["faction_points_chronicler"]
+        p_forg = new_zc["faction_points_forgotten"]
+        
+        candidates = {
+            "transformer": p_trans,
+            "chronicler": p_chron,
+            "forgotten": p_forg
+        }
+        
+        # Find max
+        best_faction = max(candidates, key=candidates.get)
+        max_points = candidates[best_faction]
+        
+        # Threshold Logic
+        THRESHOLD = 100 # Low for testing
+        
+        if max_points >= THRESHOLD:
+            # Check if it's already the controller
+            if new_zc["controlling_faction"] != best_faction:
+                execute_query("UPDATE zone_control SET controlling_faction = ? WHERE zone_id = ?", (best_faction, zone_id))
+                return {"flipped": True, "new_owner": best_faction}
+    
+    return {"flipped": False}
