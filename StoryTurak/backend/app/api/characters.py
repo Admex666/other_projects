@@ -1,9 +1,9 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Body
 from typing import List
 import uuid
 
 from app.dependencies import get_current_user
-from app.db.crud import get_characters_by_user, create_character, update_character_visited_zones, get_item, add_character_item, remove_character_item, set_item_equipped, get_character_inventory, set_character_faction
+from app.db.crud import get_characters_by_user, create_character, update_character_visited_zones, get_item, add_character_item, remove_character_item, set_item_equipped, get_character_inventory, set_character_faction, update_character_loadout, get_quest_history
 from app.models.schemas import Character, CharacterClass, InventorySlot
 
 router = APIRouter(prefix="/characters", tags=["characters"])
@@ -103,3 +103,29 @@ def update_faction_endpoint(character_id: str, faction: str, current_user: dict 
         
     set_character_faction(character_id, faction)
     return {"status": "ok", "faction": faction}
+
+@router.post("/{character_id}/loadout")
+def update_loadout_endpoint(character_id: str, item_ids: List[str] = Body(...), current_user: dict = Depends(get_current_user)):
+    chars = get_characters_by_user(current_user["id"])
+    if not any(c["id"] == character_id for c in chars):
+        raise HTTPException(status_code=403, detail="Not your character")
+    
+    try:
+        update_character_loadout(character_id, item_ids)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    
+    new_inv = get_character_inventory(character_id)
+    return {"status": "loadout_updated", "inventory": new_inv}
+
+@router.get("/{character_id}/quest_history")
+def get_quest_history_endpoint(character_id: str, current_user: dict = Depends(get_current_user)):
+    # Verify character ownership (optional, but good practice if we scope quests to chars later)
+    # Since quests are user-wide currently, we just return user quests.
+    chars = get_characters_by_user(current_user["id"])
+    if not any(c["id"] == character_id for c in chars):
+        raise HTTPException(status_code=403, detail="Not your character")
+    
+    debug_history = get_quest_history(current_user["id"])
+    print(f"DEBUG API: Quest History for {current_user['id']}: {debug_history}")
+    return debug_history

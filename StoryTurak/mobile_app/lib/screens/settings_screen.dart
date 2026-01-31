@@ -217,7 +217,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           const SizedBox(height: 16),
           Text(
-            user?.username ?? "Felfedező",
+            context.watch<AuthService>().username ?? "Felfedező",
             style: GoogleFonts.outfit(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
           ),
           if (character != null) ...[

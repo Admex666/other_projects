@@ -369,7 +369,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                   }
               }
 
-              bool isNear = minDistance != null && minDistance <= 30;
+              bool isNear = minDistance != null && minDistance <= 200;
 
               // Auto-trigger if it's the active quest target
               if (isNear && closestEncounter != null && activeBountyEncounterId != null && closestEncounter.id == activeBountyEncounterId) {
@@ -787,6 +787,16 @@ class _ExploreScreenState extends State<ExploreScreen> {
   }
 
   void _showQuestDetail(Quest quest, bool isActive) {
+      if (isActive) {
+          // If active, just show overview/status
+           _showQuestOverview(quest, isActive);
+      } else {
+          // If not active, show overview which leads to prep
+           _showQuestOverview(quest, isActive);
+      }
+  }
+
+  void _showQuestOverview(Quest quest, bool isActive) {
     final service = context.read<KeldorService>();
     final distanceCalc = Distance();
     final distanceToQuest = distanceCalc.as(
@@ -794,12 +804,16 @@ class _ExploreScreenState extends State<ExploreScreen> {
       _userLocation,
       quest.startLocation,
     );
-    final isNearby = distanceToQuest <= 30;
+    final isNearby = distanceToQuest <= 200; // Updated to 200m as per user preference
 
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
+      isScrollControlled: true,
       builder: (context) => Container(
+        constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.85
+        ),
         decoration: BoxDecoration(
           color: Colors.black.withOpacity(0.95),
           borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
@@ -820,15 +834,52 @@ class _ExploreScreenState extends State<ExploreScreen> {
               ),
             ),
             const SizedBox(height: 12),
-            // Description
-            Text(
-              quest.description,
-              style: GoogleFonts.merriweather(
-                fontSize: 14,
-                color: Colors.white70,
-              ),
+            
+            // Description & Image
+            Flexible(
+                fit: FlexFit.loose,
+                child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                          Text(
+                            quest.description,
+                            style: GoogleFonts.merriweather(
+                              fontSize: 14,
+                              color: Colors.white70,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          if (quest.imageUrl != null) ...[
+                              Center(
+                                  child: Container(
+                                      height: 200,
+                                      width: 200,
+                                      decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          border: Border.all(color: KeldorTheme.primary, width: 2),
+                                          image: DecorationImage(
+                                              image: NetworkImage(
+                                                  quest.imageUrl!.startsWith('http') 
+                                                  ? quest.imageUrl! 
+                                                  : "http://10.0.2.2:8001/${quest.imageUrl!}" // Emulator Localhost fallback
+                                              ), 
+                                              fit: BoxFit.cover
+                                          ),
+                                          boxShadow: [
+                                              BoxShadow(color: KeldorTheme.primary.withOpacity(0.5), blurRadius: 20, spreadRadius: 2)
+                                          ]
+                                      ),
+                                  ),
+                              ),
+                              const SizedBox(height: 16),
+                          ],
+                          if (quest.imageUrl == null) const SizedBox(height: 48), // Spacer if no image
+                      ],
+                    ),
+                ),
             ),
-            const SizedBox(height: 16),
+            
             // Stats
             Row(
               children: [
@@ -853,31 +904,9 @@ class _ExploreScreenState extends State<ExploreScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: isNearby && !isActive
-                    ? () async {
-                        final token = context.read<AuthService>().token;
-                        if (token == null) return;
-                        
+                    ? () {
                         Navigator.pop(context);
-                        // Accept the quest
-                        final success = await service.acceptQuest(token, quest.id);
-                        
-                        if (success) {
-                          // IMPORTANT: Clear triggers so if they abandoned/restarted, the first one fires
-                          // And refresh world so the encounter is available in nearbyEncounters
-                          setState(() {
-                            _triggeredEncounters.clear();
-                          });
-                          _updateWorld();
-                        } else {
-                          if (mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("Hiba a küldetés indításakor. Kérlek próbáld újra!"),
-                                backgroundColor: Colors.redAccent,
-                              ),
-                            );
-                          }
-                        }
+                        _showPreparationDialog(quest);
                       }
                     : null,
                 style: ElevatedButton.styleFrom(
@@ -892,8 +921,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
                   isActive
                       ? 'Quest Active'
                       : isNearby
-                          ? 'Start Quest'
-                          : 'Get Closer (${distanceToQuest.toStringAsFixed(0)}m away)',
+                          ? 'Felkészülés & Indulás'
+                          : 'Menj közelebb (${distanceToQuest.toStringAsFixed(0)}m)',
                   style: GoogleFonts.cinzel(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -906,6 +935,192 @@ class _ExploreScreenState extends State<ExploreScreen> {
         ),
       ),
     );
+  }
+
+  void _showPreparationDialog(Quest quest) {
+      showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          backgroundColor: Colors.transparent,
+          builder: (ctx) => StatefulBuilder(
+              builder: (context, setModalState) {
+                  final char = context.watch<KeldorService>().activeCharacter;
+                  if (char == null) return const SizedBox.shrink();
+
+                  final equipped = char.inventory.where((i) => i.equipped).toList();
+
+                  return Container(
+                      height: MediaQuery.of(context).size.height * 0.7,
+                      decoration: BoxDecoration(
+                          color: const Color(0xFF1E293B),
+                          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                          border: Border.all(color: KeldorTheme.primary, width: 2),
+                      ),
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                              Text("Felkészülés", style: GoogleFonts.cinzel(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
+                              const SizedBox(height: 8),
+                              Text("Ellenőrizd a felszerelésed indulás előtt!", style: TextStyle(color: Colors.white70)),
+                              const SizedBox(height: 24),
+                              
+                              Text("Jelenlegi Loadout (${equipped.length}/3)", style: GoogleFonts.outfit(color: KeldorTheme.primary, fontWeight: FontWeight.bold)),
+                              const SizedBox(height: 16),
+                              Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: List.generate(3, (index) {
+                                      if (index < equipped.length) {
+                                          return _buildPrepItem(equipped[index], true, setModalState);
+                                      } else {
+                                          return _buildPrepEmptySlot(setModalState);
+                                      }
+                                  }),
+                              ),
+                              const SizedBox(height: 32),
+                              const Spacer(),
+                              SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(backgroundColor: Colors.green, padding: const EdgeInsets.symmetric(vertical: 16)),
+                                      onPressed: () async {
+                                          Navigator.pop(context);
+                                          final service = context.read<KeldorService>();
+                                          final token = context.read<AuthService>().token;
+                                          if (token != null) {
+                                               final success = await service.acceptQuest(token, quest.id);
+                                               if (success) {
+                                                   setState(() {
+                                                      _triggeredEncounters.clear();
+                                                   });
+                                                   _updateWorld();
+                                               } else {
+                                                   if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Hiba indításkor!")));
+                                               }
+                                          }
+                                      }, 
+                                      child: Text("KÉSZ - INDULÁS", style: GoogleFonts.cinzel(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white))
+                                  )
+                              )
+                          ],
+                      ),
+                  );
+              }
+          )
+      );
+  }
+
+  Widget _buildPrepItem(InventorySlot slot, bool isEquipped, StateSetter setModalState) {
+       return InkWell(
+           onTap: () {
+               // Unequip logic inside modal
+               _handlePrepUnequip(slot, setModalState);
+           },
+           child: Column(
+               children: [
+                   Container(
+                       width: 70, height: 70,
+                       decoration: BoxDecoration(
+                           color: KeldorTheme.surface,
+                           borderRadius: BorderRadius.circular(12),
+                           border: Border.all(color: Colors.green, width: 2)
+                       ),
+                       child: Icon(
+                           // Simple icon logic
+                           slot.iconCode == 'local_pharmacy' ? Icons.local_pharmacy : 
+                           slot.iconCode == 'monetization_on' ? Icons.monetization_on :
+                           slot.iconCode == 'security' ? Icons.security :
+                           slot.iconCode == 'build' ? Icons.build : Icons.shield,
+                           color: Colors.white, size: 32
+                       ), 
+                   ),
+                   const SizedBox(height: 6),
+                   SizedBox(
+                       width: 70,
+                       child: Text(slot.name ?? "Tárgy", 
+                           style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold), 
+                           textAlign: TextAlign.center, overflow: TextOverflow.ellipsis
+                       )
+                   ),
+                   const SizedBox(height: 2),
+                   Text("Levétel", style: TextStyle(color: Colors.orangeAccent, fontSize: 10))
+               ],
+           ),
+       );
+  }
+
+  Widget _buildPrepEmptySlot(StateSetter setModalState) {
+      return InkWell(
+           onTap: () {
+               _showItemPicker(setModalState);
+           },
+           child: Container(
+               width: 70, height: 70,
+               decoration: BoxDecoration(
+                   color: Colors.white10,
+                   borderRadius: BorderRadius.circular(12),
+                   border: Border.all(color: Colors.white24, style: BorderStyle.solid)
+               ),
+               child: const Icon(Icons.add, color: Colors.white54),
+           ),
+       );
+  }
+
+  void _handlePrepUnequip(InventorySlot slot, StateSetter setModalState) async {
+       final token = context.read<AuthService>().token;
+       if (token != null) {
+           await context.read<KeldorService>().unequipItem(token, slot.itemId);
+           setModalState(() {}); // Refresh modal
+       }
+  }
+
+  void _showItemPicker(StateSetter parentSetState) {
+      showModalBottomSheet(
+          context: context,
+          builder: (ctx) {
+              final char = context.read<KeldorService>().activeCharacter;
+              final backpack = char?.inventory.where((i) => !i.equipped).toList() ?? [];
+              
+              return Container(
+                  height: 400,
+                  color: const Color(0xFF1E293B),
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                          Text("Válassz egy tárgyat", style: GoogleFonts.cinzel(color: Colors.white, fontSize: 18)),
+                          const SizedBox(height: 16),
+                          Expanded(
+                              child: backpack.isEmpty 
+                              ? const Center(child: Text("Nincs felszerelhető tárgyad.", style: TextStyle(color: Colors.white54)))
+                              : ListView.builder(
+                                  itemCount: backpack.length,
+                                  itemBuilder: (c, i) {
+                                      final item = backpack[i];
+                                      return ListTile(
+                                          leading: Icon(Icons.backpack, color: Colors.white),
+                                          title: Text(item.name ?? "Tárgy", style: TextStyle(color: Colors.white)),
+                                          subtitle: Text(item.rarity, style: TextStyle(color: Colors.grey)),
+                                          trailing: TextButton(
+                                              child: Text("Felszerelés"),
+                                              onPressed: () async {
+                                                  Navigator.pop(ctx);
+                                                  final token = context.read<AuthService>().token;
+                                                  if (token != null) {
+                                                      await context.read<KeldorService>().equipItem(token, item.itemId);
+                                                      parentSetState((){});
+                                                  }
+                                              },
+                                          ),
+                                      );
+                                  }
+                              )
+                          )
+                      ],
+                  ),
+              );
+          }
+      );
   }
   Future<void> _navigateToEncounter(Encounter encounter) async {
     if (!_triggeredEncounters.contains(encounter.id)) {

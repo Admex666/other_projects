@@ -198,6 +198,21 @@ def get_character_inventory(char_id: str):
 def set_item_equipped(char_id: str, item_id: str, is_equipped: bool):
     execute_query("UPDATE character_items SET is_equipped = ? WHERE character_id = ? AND item_id = ?", (1 if is_equipped else 0, char_id, item_id))
 
+def update_character_loadout(char_id: str, item_ids: list[str]):
+    # 1. Validation: Max 3 items
+    if len(item_ids) > 3:
+        raise ValueError("Maximum 3 items can be equipped.")
+
+    # 2. Reset all equipped items for this character
+    execute_query("UPDATE character_items SET is_equipped = 0 WHERE character_id = ?", (char_id,))
+
+    # 3. Equip selected items
+    # Verify ownership is implicit if we only update where char_id matches
+    for i_id in item_ids:
+        # We use AND character_id to ensure we only equip if they own it
+        execute_query("UPDATE character_items SET is_equipped = 1 WHERE character_id = ? AND item_id = ?", (char_id, i_id))
+
+
 def update_character_steps_and_level(char_id: str, new_steps: int, new_level: int):
     execute_query("UPDATE characters SET steps = ?, level = ? WHERE id = ?", (new_steps, new_level, char_id))
 
@@ -244,7 +259,7 @@ def get_user_sessions(user_id):
 # --- Quest Functions ---
 def create_quest(q: dict):
     execute_query(
-        "INSERT INTO quests (id, title, description, flavor_text, image_url, start_location, stages, estimated_distance_km, min_level, objectives, rewards_steps, rewards_items, starter_zone_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET title=excluded.title, description=excluded.description, stages=excluded.stages, start_location=excluded.start_location",
+        "INSERT INTO quests (id, title, description, flavor_text, image_url, start_location, stages, estimated_distance_km, min_level, objectives, rewards_steps, rewards_items, starter_zone_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET title=excluded.title, description=excluded.description, flavor_text=excluded.flavor_text, image_url=excluded.image_url, start_location=excluded.start_location, stages=excluded.stages, estimated_distance_km=excluded.estimated_distance_km, min_level=excluded.min_level, objectives=excluded.objectives, rewards_steps=excluded.rewards_steps, rewards_items=excluded.rewards_items, starter_zone_id=excluded.starter_zone_id",
         (q["id"], q["title"], q["description"], q.get("flavor_text"), q.get("image_url"), json.dumps(q.get("start_location")), 
          json.dumps(q.get("stages", [])), q.get("estimated_distance_km", 0.0), q.get("min_level", 1), 
          json.dumps(q.get("objectives", [])), q.get("rewards_steps", 100), json.dumps(q.get("rewards_items", [])), q.get("starter_zone_id"))
@@ -282,6 +297,16 @@ def get_user_quests(user_id):
     """, (user_id,))
     return [dict(r) for r in rows]
 
+def get_quest_history(user_id):
+    rows = execute_query("""
+        SELECT uq.completed_at, q.title, q.rewards_steps 
+        FROM user_quests uq 
+        JOIN quests q ON uq.quest_id = q.id 
+        WHERE uq.user_id = ? AND uq.status = 'completed'
+        ORDER BY uq.completed_at DESC
+    """, (user_id,))
+    return [dict(r) for r in rows]
+
 def add_quest_to_user(uq: dict):
     execute_query(
         "INSERT INTO user_quests (id, user_id, quest_id, status, current_stage_index, current_objective_index, current_count) VALUES (?, ?, ?, ?, ?, ?, ?)",
@@ -300,6 +325,8 @@ def update_user_quest_progress(uq_id, new_count, new_index=None, new_status=None
     if new_status:
         query += ", status = ?"
         params.append(new_status)
+        if new_status == 'completed':
+            query += ", completed_at = CURRENT_TIMESTAMP"
     query += " WHERE id = ?"
     params.append(uq_id)
     execute_query(query, tuple(params))

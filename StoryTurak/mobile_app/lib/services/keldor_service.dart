@@ -221,8 +221,25 @@ class KeldorService extends ChangeNotifier {
 
   Future<void> equipItem(String token, String itemId) async {
       if (activeCharacter == null) return;
+      
+      // Get currently equipped IDs
+      final equippedIds = activeCharacter!.inventory
+          .where((slot) => slot.equipped)
+          .map((slot) => slot.itemId)
+          .toList();
+
+      if (equippedIds.length >= 3) {
+           print("Cannot equip more than 3 items");
+           return;
+           // TODO: Add UI callback for error
+      }
+      
+      if (!equippedIds.contains(itemId)) {
+          equippedIds.add(itemId);
+      }
+
       try {
-          await ApiService().equipItem(token, activeCharacter!.id, itemId);
+          await ApiService().updateLoadout(token, activeCharacter!.id, equippedIds);
           await fetchUserCharacter(token); // Refresh inventory state
       } catch (e) {
           print("Error equipping item: $e");
@@ -231,8 +248,16 @@ class KeldorService extends ChangeNotifier {
 
   Future<void> unequipItem(String token, String itemId) async {
       if (activeCharacter == null) return;
+      
+      final equippedIds = activeCharacter!.inventory
+          .where((slot) => slot.equipped)
+          .map((slot) => slot.itemId)
+          .toList();
+      
+      equippedIds.remove(itemId);
+
       try {
-          await ApiService().unequipItem(token, activeCharacter!.id, itemId);
+          await ApiService().updateLoadout(token, activeCharacter!.id, equippedIds);
           await fetchUserCharacter(token);
       } catch (e) {
           print("Error unequipping item: $e");
@@ -343,6 +368,22 @@ class KeldorService extends ChangeNotifier {
       } catch (e) {
           print("Error abandoning quest: $e");
           return false;
+      }
+  }
+
+  List<Map<String, dynamic>> questHistory = [];
+
+  Future<void> fetchQuestHistory(String token) async {
+      if (activeCharacter == null) return;
+      try {
+          final history = await ApiService().getQuestHistory(token, activeCharacter!.id);
+          questHistory = history;
+          // Calculate total steps from history for display if needed
+          // int totalSteps = history.fold(0, (sum, item) => sum + (item['rewards_steps'] as int? ?? 0));
+          // activeCharacter = activeCharacter!.copyWith(weeklySteps: totalSteps); 
+          notifyListeners();
+      } catch (e) {
+          print("Error fetching quest history: $e");
       }
   }
 

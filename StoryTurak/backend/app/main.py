@@ -27,6 +27,13 @@ app.include_router(combat.router, prefix="/combat", tags=["combat"])
 app.include_router(economy.router, tags=["economy"])
 app.include_router(collections.router, tags=["collections"])
 
+from fastapi.staticfiles import StaticFiles
+import os
+static_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
+if not os.path.exists(static_path):
+    os.makedirs(static_path)
+app.mount("/static", StaticFiles(directory=static_path), name="static")
+
 def seed_loot():
     potion = {
         "id": "item_healing_potion_minor",
@@ -73,3 +80,5 @@ async def startup_event():
 
 @app.get("/")
 def health(): return {"status": "ok"}
+# Trigger CRUD Reload
+# Trigger API Reload

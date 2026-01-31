@@ -20,20 +20,28 @@ class CombatService:
         # Apply Item Effects
         # Note: In a real scenario, we'd ensure 'inventory' items are full Item objects or joined
         for slot in character.inventory:
+            # CHECK EQUIPPED STATUS
+            is_equipped = False
+            if hasattr(slot, "equipped"): is_equipped = slot.equipped
+            elif isinstance(slot, dict): is_equipped = slot.get("equipped", False)
+
+            if not is_equipped:
+                continue
+
             # We skip parsing complex logic for now and assume slot might have 'effects' if enriched
             # For this MVP, we rely on the fact that get_characters enrichment includes 'effects'
             # If slot is InventorySlot, it has 'effects' field (list of Any/Dict)
-             if hasattr(slot, "effects") and slot.effects:
-                 for eff in slot.effects:
-                     # eff can be dict or ItemEffect object
-                     eff_type = eff.get("type") if isinstance(eff, dict) else eff.type
-                     eff_val = eff.get("value") if isinstance(eff, dict) else eff.value
-                     eff_target = eff.get("target_stat") if isinstance(eff, dict) else eff.target_stat
-                     
-                     if eff_type == "stat_bonus" and eff_target in effective_stats:
-                         effective_stats[eff_target] += int(eff_val)
-                     elif eff_type == "combat_crit" and player_stance == "agility": # Special rule: Crits mostly trigger on Agility/Csel
-                         crit_chance += eff_val
+            if hasattr(slot, "effects") and slot.effects:
+                for eff in slot.effects:
+                    # eff can be dict or ItemEffect object
+                    eff_type = eff.get("type") if isinstance(eff, dict) else eff.type
+                    eff_val = eff.get("value") if isinstance(eff, dict) else eff.value
+                    eff_target = eff.get("target_stat") if isinstance(eff, dict) else eff.target_stat
+                    
+                    if eff_type == "stat_bonus" and eff_target in effective_stats:
+                        effective_stats[eff_target] += int(eff_val)
+                    elif eff_type == "combat_crit" and player_stance == "agility": # Special rule: Crits mostly trigger on Agility/Csel
+                        crit_chance += eff_val
 
         # 2. Base Resolution (RPS)
         result = "draw"

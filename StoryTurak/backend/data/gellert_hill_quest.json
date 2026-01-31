@@ -3,13 +3,15 @@
   "title": "A Gellért-hegyi Pecsét",
   "description": "Erősítsd meg az ősi zárat a hegy tetején.",
   "flavor_text": "A viharfelhők gyülekeznek a Szabadság-szobor felett. A Pecsét megrepedt.",
-  "image_url": "assets/quest_gellert.png",
+  "image_url": "static/images/gellert_seal.png",
   "min_level": 1,
   "difficulty": "Nehéz",
   "estimated_distance_km": 1.5,
   "estimated_duration_min": 45,
   "rewards_steps": 1000,
-  "rewards_items": ["item_ancient_coin"],
+  "rewards_items": [
+    "item_ancient_coin"
+  ],
   "startNode": "intro",
   "nodes": {
     "intro": {
@@ -22,7 +24,10 @@
       "type": "location_wait",
       "text": "Menj fel a hegyi ösvényen a Kereszthez (Sziklatemplom felett).",
       "description": "Érj el a Kereszthez.",
-      "targetLocation": {"lat": 47.486, "lng": 19.049},
+      "targetLocation": {
+        "lat": 47.486,
+        "lng": 19.049
+      },
       "radius": 50,
       "next": "enc_ghost_monk"
     },
@@ -31,9 +36,18 @@
       "text": "Egy csuhás alak állja utadat. Áttetsző keze a mellkasára mutat. 'Ki volt e hegy névadója, mielőtt a Püspök vére megfestette volna?'",
       "image": "assets/ghost_monk.png",
       "choices": [
-        {"text": "Kelen-hegy", "next": "monk_correct"},
-        {"text": "Pest-hegy", "next": "monk_wrong"},
-        {"text": "Boszorkány-hegy", "next": "monk_wrong"}
+        {
+          "text": "Kelen-hegy",
+          "next": "monk_correct"
+        },
+        {
+          "text": "Pest-hegy",
+          "next": "monk_wrong"
+        },
+        {
+          "text": "Boszorkány-hegy",
+          "next": "monk_wrong"
+        }
       ]
     },
     "monk_correct": {
@@ -59,7 +73,10 @@
       "type": "location_wait",
       "text": "A hegy tetején, a Citadella falainál vár a végső próba.",
       "description": "Érj fel a Citadellához.",
-      "targetLocation": {"lat": 47.487, "lng": 19.044},
+      "targetLocation": {
+        "lat": 47.487,
+        "lng": 19.044
+      },
       "radius": 80,
       "next": "enc_stormbringer"
     },
@@ -80,9 +97,9 @@
       "next": "end"
     },
     "storm_fail": {
-       "type": "narrative",
-       "text": "A villámok földhöz vágnak. Túl erős... (Tipp: A Viharhozó erős [Vigilante], de lassú. Használd az eszed [Archivist] vagy a gyorsaságod [Collector]!)",
-       "next": "loc_wait_top"
+      "type": "narrative",
+      "text": "A villámok földhöz vágnak. Túl erős... (Tipp: A Viharhozó erős [Vigilante], de lassú. Használd az eszed [Archivist] vagy a gyorsaságod [Collector]!)",
+      "next": "loc_wait_top"
     }
   }
 }

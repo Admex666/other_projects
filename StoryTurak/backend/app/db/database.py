@@ -48,7 +48,8 @@ def init_db():
     # User Quests table
     c.execute('''CREATE TABLE IF NOT EXISTS user_quests
                  (id TEXT PRIMARY KEY, user_id TEXT, quest_id TEXT, status TEXT, current_stage_index INTEGER DEFAULT 0,
-                  current_objective_index INTEGER DEFAULT 0, current_count INTEGER DEFAULT 0, started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
+                  current_objective_index INTEGER DEFAULT 0, current_count INTEGER DEFAULT 0, started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                  completed_at TIMESTAMP)''')
 
     # Items table
 
@@ -127,6 +128,7 @@ def init_db():
         _migrate_xp_to_steps(c)
         _migrate_gamification_columns(c)
         _migrate_json_to_relational(c)
+        _migrate_quest_history(c)
         # Seed Content from Code to DB (One-Way Sync for now)
         from app.services.content_service import seed_world_content
         # We need to commit first because seed_world_content uses execute_query which opens its own connection
@@ -226,6 +228,10 @@ def _migrate_gamification_columns(cursor):
     try: cursor.execute("ALTER TABLE items ADD COLUMN set_id TEXT")
     except: pass
     try: cursor.execute("ALTER TABLE items ADD COLUMN effects TEXT")
+    except: pass
+
+def _migrate_quest_history(cursor):
+    try: cursor.execute("ALTER TABLE user_quests ADD COLUMN completed_at TIMESTAMP")
     except: pass
     
     # Character Items: Rarity? No, comes from join. Effects? No.

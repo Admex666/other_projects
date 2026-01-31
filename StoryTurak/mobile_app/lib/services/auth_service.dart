@@ -6,10 +6,11 @@ import 'api_service.dart';
 
 class AuthService extends ChangeNotifier {
   final _storage = const FlutterSecureStorage();
+  String? _username;
   String? _accessToken;
-  
   bool get isAuthenticated => _accessToken != null;
   String? get token => _accessToken;
+  String? get username => _username;
 
   // Key for storage
   static const _tokenKey = 'jwt_token';
@@ -17,8 +18,10 @@ class AuthService extends ChangeNotifier {
 
   Future<void> tryAutoLogin() async {
     final token = await _storage.read(key: _tokenKey);
+    final user = await _storage.read(key: _usernameKey);
     if (token != null) {
       _accessToken = token;
+      _username = user;
       notifyListeners();
     }
   }
@@ -39,6 +42,7 @@ class AuthService extends ChangeNotifier {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         _accessToken = data['access_token'];
+        _username = username;
         
         await _storage.write(key: _tokenKey, value: _accessToken);
         await _storage.write(key: _usernameKey, value: username);
@@ -71,6 +75,7 @@ class AuthService extends ChangeNotifier {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         _accessToken = data['access_token'];
+        _username = username;
         
         await _storage.write(key: _tokenKey, value: _accessToken);
         await _storage.write(key: _usernameKey, value: username);
@@ -88,6 +93,7 @@ class AuthService extends ChangeNotifier {
 
   Future<void> logout() async {
     _accessToken = null;
+    _username = null;
     await _storage.delete(key: _tokenKey);
     await _storage.delete(key: _usernameKey);
     notifyListeners();

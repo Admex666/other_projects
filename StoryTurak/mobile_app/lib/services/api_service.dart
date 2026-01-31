@@ -249,4 +249,33 @@ class ApiService {
       headers: {'Authorization': 'Bearer $token'},
     );
   }
+  Future<void> updateLoadout(String token, String characterId, List<String> itemIds) async {
+    final baseUrl = await getBaseUrl();
+    final response = await http.post(
+      Uri.parse('$baseUrl/characters/$characterId/loadout'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: json.encode(itemIds),
+    );
+     _checkResponse(response);
+    if (response.statusCode != 200) {
+       throw Exception('Failed to update loadout: ${response.body}');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getQuestHistory(String token, String characterId) async {
+    final baseUrl = await getBaseUrl();
+    final response = await http.get(
+      Uri.parse('$baseUrl/characters/$characterId/quest_history'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+    _checkResponse(response);
+    if (response.statusCode == 200) {
+      return List<Map<String, dynamic>>.from(json.decode(response.body));
+    } else {
+      throw Exception('Failed to fetch quest history');
+    }
+  }
 }

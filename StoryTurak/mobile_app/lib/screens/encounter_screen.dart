@@ -340,12 +340,14 @@ class _EncounterScreenState extends State<EncounterScreen> {
                            _buildCombatButton("ELEMZÉS", Icons.search, Colors.amber, () => _resolveFightAction(node, "analyze")),
                        ],
                    ),
+                   /*
                    const SizedBox(height: 16),
                    OutlinedButton.icon(
                        onPressed: () => _openCombatInventory(node),
                        icon: const Icon(Icons.backpack, color: Colors.white70),
                        label: const Text("Tárgy Használata", style: TextStyle(color: Colors.white)),
                    )
+                   */
               ],
           );
       }
