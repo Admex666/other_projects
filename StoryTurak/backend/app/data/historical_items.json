@@ -11,7 +11,7 @@
             "strength": 2
         },
         "effects": [],
-        "set_id": "set_betyar"
+        "set_id": "betyar"
     },
     {
         "id": "item_karikas_ostor",
@@ -31,7 +31,7 @@
                 "value": 0.1
             }
         ],
-        "set_id": "set_betyar"
+        "set_id": "betyar"
     },
     {
         "id": "item_handzsar",
@@ -51,7 +51,7 @@
                 "value": 0.25
             }
         ],
-        "set_id": "set_ottoman"
+        "set_id": "ottoman"
     },
     {
         "id": "item_kaftan",
@@ -72,7 +72,7 @@
                 "value": 0.1
             }
         ],
-        "set_id": "set_ottoman"
+        "set_id": "ottoman"
     },
     {
         "id": "item_revolver",
@@ -86,7 +86,7 @@
             "tactics": 4
         },
         "effects": [],
-        "set_id": "set_modern"
+        "set_id": "modern"
     },
     {
         "id": "item_rakoczi_szablya",
@@ -107,7 +107,7 @@
                 "value": 5
             }
         ],
-        "set_id": "set_kuruc"
+        "set_id": "kuruc"
     },
     {
         "id": "item_tavcso",

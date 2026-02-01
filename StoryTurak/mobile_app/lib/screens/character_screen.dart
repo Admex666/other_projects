@@ -443,38 +443,55 @@ class _CharacterScreenState extends State<CharacterScreen> {
 
   Widget _buildInventoryItem(BuildContext context, InventorySlot slot, bool isLoadout) {
       final rarityColor = _getRarityColor(slot.rarity);
+      final isCommon = rarityColor == Colors.white10;
+
       return InkWell(
           onTap: () => _showItemDialog(context, slot),
           child: Container(
                 width: isLoadout ? 70 : null,
                 height: isLoadout ? 70 : null,
                 decoration: BoxDecoration(
-                    color: KeldorTheme.surface,
-                    borderRadius: BorderRadius.circular(8),
+                    color: isCommon ? KeldorTheme.surface : rarityColor.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                        color: slot.equipped ? Colors.green : (rarityColor == Colors.white10 ? Colors.white10 : rarityColor.withOpacity(0.5)), 
+                        color: slot.equipped ? Colors.green : (isCommon ? Colors.white12 : rarityColor.withOpacity(0.5)), 
                         width: slot.equipped ? 2 : 1
                     ),
+                    boxShadow: [
+                        if (!isCommon && slot.equipped)
+                            BoxShadow(color: rarityColor.withOpacity(0.2), blurRadius: 8, spreadRadius: 1)
+                    ]
                 ),
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                        Icon(
-                          slot.iconCode == 'local_pharmacy' ? Icons.local_pharmacy : 
-                          slot.iconCode == 'monetization_on' ? Icons.monetization_on : 
-                          slot.iconCode == 'security' ? Icons.security :
-                          slot.iconCode == 'build' ? Icons.build : Icons.circle, 
-                          color: slot.equipped ? Colors.green : (rarityColor == Colors.white10 ? Colors.white70 : rarityColor),
-                          size: isLoadout ? 32 : 24,
-                        ),
+                        _buildItemIcon(slot, isCommon ? Colors.white70 : rarityColor, isLoadout ? 32 : 24),
                         if (!isLoadout) ...[
                             const SizedBox(height: 4),
-                            Text("${slot.quantity}x", style: const TextStyle(color: Colors.white, fontSize: 10)),
+                            Text("${slot.quantity}x", style: TextStyle(color: isCommon ? Colors.white54 : rarityColor, fontSize: 10, fontWeight: FontWeight.bold)),
                         ]
                     ],
                 ),
             ),
       );
+  }
+
+  Widget _buildItemIcon(InventorySlot slot, Color color, double size) {
+      // Mapping manually for now or use font_awesome / custom
+      IconData icon = Icons.circle;
+      switch (slot.iconCode) {
+          case 'local_pharmacy': icon = Icons.local_pharmacy; break;
+          case 'monetization_on': icon = Icons.monetization_on; break;
+          case 'security': icon = Icons.security; break;
+          case 'build': icon = Icons.build; break;
+          case 'architecture': icon = Icons.architecture; break;
+          case 'explore': icon = Icons.explore; break;
+          case 'offline_bolt': icon = Icons.offline_bolt; break;
+          case 'confirmation_number': icon = Icons.confirmation_number; break;
+          case 'cookie': icon = Icons.cookie; break;
+          case 'help_outline': icon = Icons.help_outline; break;
+      }
+      return Icon(icon, color: color, size: size);
   }
 
   void _showItemDialog(BuildContext context, InventorySlot slot) {
@@ -559,17 +576,7 @@ class _CharacterScreenState extends State<CharacterScreen> {
                           },
                           child: const Text("Felvétel (Equip)", style: TextStyle(color: Colors.greenAccent)),
                       ),
-                    TextButton(
-                        onPressed: () async {
-                            Navigator.pop(ctx);
-                            final token = context.read<AuthService>().token;
-                            if (token != null) {
-                                await context.read<KeldorService>().removeItem(token, slot.itemId, 1);
-                            }
-                        },
-                        child: const Text("Eldobás (1)", style: TextStyle(color: Colors.redAccent)),
-                    ),
-                    TextButton(onPressed: () => Navigator.pop(ctx), child: const Text("Bezárás"))
+                  TextButton(onPressed: () => Navigator.pop(ctx), child: const Text("Bezárás"))
                 ]
             )
         );

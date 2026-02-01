@@ -140,13 +140,14 @@ def seed_items():
             
         # Hardcoded Collection Items (Ensuring they exist for Collection V1)
         collection_items = [
-            {"id": "item_fokos", "name": "Betyár Fokos", "type": "weapon", "rarity": "rare", "value": 250, "icon_code": "architecture", "description": "Díszes nyelű fokos, a puszta emléke."},
-            {"id": "item_handzsar", "name": "Török Handzsár", "type": "weapon", "rarity": "common", "value": 120, "icon_code": "explore", "description": "Rozsdás, de éles penge az 1500-as évekből."},
-            {"id": "item_revolver_kossuth", "name": "1848-as Pisztoly", "type": "weapon", "rarity": "legendary", "value": 1000, "icon_code": "offline_bolt", "description": "Egy tiszt oldalfegyvere a szabadságharcból."},
-            {"id": "item_metro_ticket_1980", "name": "Régi Metró Jegy", "type": "relic", "rarity": "common", "value": 10, "icon_code": "confirmation_number", "description": "Egy lyukasztott jegy a 3-as metróról."},
+            {"id": "item_fokos", "name": "Betyár Fokos", "type": "weapon", "rarity": "rare", "value": 250, "icon_code": "architecture", "description": "Díszes nyelű fokos, a puszta emléke.", "set_id": "betyar"},
+            {"id": "item_handzsar", "name": "Török Handzsár", "type": "weapon", "rarity": "common", "value": 120, "icon_code": "explore", "description": "Rozsdás, de éles penge az 1500-as évekből.", "set_id": "ottoman"},
+            {"id": "item_revolver_kossuth", "name": "1848-as Pisztoly", "type": "weapon", "rarity": "legendary", "value": 1000, "icon_code": "offline_bolt", "description": "Egy tiszt oldalfegyvere a szabadságharcból."}, 
+            {"id": "item_metro_ticket_1980", "name": "Régi Metró Jegy", "type": "relic", "rarity": "common", "value": 10, "icon_code": "confirmation_number", "description": "Egy lyukasztott jegy a 3-as metróról.", "set_id": "modern"},
             # item_ancient_coin is likely already in historical_items or loot table
             {"id": "item_ancient_coin", "name": "Római Érme", "type": "relic", "rarity": "uncommon", "value": 50, "icon_code": "monetization_on", "description": "Aquincumi ásatásokból származó érme."},
-            {"id": "item_test_cookie", "name": "Teszt Süti", "type": "consumable", "rarity": "common", "value": 10, "icon_code": "cookie", "stats": {"hp_restore": 5}, "description": "Finom és olcsó. Tökéletes teszteléshez."}
+            {"id": "item_test_cookie", "name": "Teszt Süti", "type": "consumable", "rarity": "common", "value": 10, "icon_code": "cookie", "stats": {"hp_restore": 5}, "description": "Finom és olcsó. Tökéletes teszteléshez."},
+            {"id": "item_kuruc_zaszlo", "name": "Kuruc Zászló", "type": "relic", "rarity": "rare", "value": 300, "icon_code": "outlined_flag", "description": "Szakadt zászlófoszlány Rákóczi seregéből.", "set_id": "kuruc"}
         ]
         for it in collection_items:
             create_item(it)

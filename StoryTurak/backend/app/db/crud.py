@@ -334,7 +334,7 @@ def update_user_quest_progress(uq_id, new_count, new_index=None, new_status=None
 # --- Item & Loot Functions ---
 def create_item(item_data: dict):
     execute_query(
-        "INSERT INTO items (id, name, description, type, rarity, value, icon_code, stats, effects, set_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO NOTHING",
+        "INSERT INTO items (id, name, description, type, rarity, value, icon_code, stats, effects, set_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET set_id=excluded.set_id, rarity=excluded.rarity, effects=excluded.effects, stats=excluded.stats, value=excluded.value, icon_code=excluded.icon_code, description=excluded.description, name=excluded.name, type=excluded.type",
         (item_data["id"], item_data["name"], item_data["description"], item_data["type"], item_data.get("rarity", "common"), 
          item_data["value"], item_data["icon_code"], json.dumps(item_data.get("stats", {})), json.dumps(item_data.get("effects", [])), item_data.get("set_id"))
     )

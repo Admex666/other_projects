@@ -6,13 +6,13 @@ from app.db.crud import get_characters_by_user
 router = APIRouter()
 
 @router.get("/collections")
-def get_collections(token: str = Depends(get_current_user)):
+def get_collections(current_user: dict = Depends(get_current_user)):
     """
     Get collections for the active character (or first character for MVP).
     Ideally should accept character_id query param or header.
     For now, we fetch the user's first character.
     """
-    user_id = token # In this mock auth, token is user_id
+    user_id = current_user['id']
     chars = get_characters_by_user(user_id)
     if not chars:
         return []

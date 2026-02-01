@@ -124,34 +124,61 @@ class _CollectionScreenState extends State<CollectionScreen> {
   }
 
   Widget _buildCollectionItem(CollectionItem item) {
+      final rarityColor = _getRarityColor(item.rarity);
+      final isCommon = rarityColor == Colors.white10;
+      
       return Column(
           children: [
               Container(
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                      color: item.found ? Colors.amber.withOpacity(0.2) : Colors.black26,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: item.found ? Colors.amber : Colors.white10),
+                      color: item.found ? (isCommon ? Colors.white10 : rarityColor.withOpacity(0.2)) : Colors.black26,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                          color: item.found ? (isCommon ? Colors.white24 : rarityColor) : Colors.white10,
+                          width: item.found ? 1.5 : 1
+                      ),
+                      boxShadow: [
+                          if (item.found && !isCommon)
+                              BoxShadow(color: rarityColor.withOpacity(0.2), blurRadius: 4, spreadRadius: 0)
+                      ]
                   ),
                   child: Icon(
-                      _getIcon(item.iconCode),
-                      color: item.found ? Colors.amber : Colors.white12,
+                      item.found ? _getIcon(item.iconCode) : Icons.lock_outline,
+                      color: item.found ? (isCommon ? Colors.white70 : rarityColor) : Colors.white12,
+                      size: 24,
                   ),
               ),
               const SizedBox(height: 4),
               Text(
-                  item.found ? item.name : "???",
+                  item.name,
                   style: TextStyle(
-                      color: item.found ? Colors.white : Colors.white24,
+                      color: item.found ? Colors.white70 : Colors.white24,
                       fontSize: 10,
+                      fontWeight: item.found ? FontWeight.bold : FontWeight.normal
                   ),
                   textAlign: TextAlign.center,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-              )
+              ),
+              if (item.found) 
+                  Padding(
+                    padding: const EdgeInsets.only(top: 2),
+                    child: Text(item.rarity.toUpperCase(), style: TextStyle(color: isCommon ? Colors.white12 : rarityColor, fontSize: 8)),
+                  )
           ],
       );
+  }
+
+  Color _getRarityColor(String rarity) {
+    switch (rarity.toLowerCase()) {
+      case 'uncommon': return Colors.greenAccent;
+      case 'rare': return Colors.blueAccent;
+      case 'epic': return Colors.purpleAccent;
+      case 'legendary': return Colors.orangeAccent;
+      default: return Colors.white10;
+    }
   }
 
   IconData _getIcon(String code) {
@@ -163,6 +190,9 @@ class _CollectionScreenState extends State<CollectionScreen> {
           case 'monetization_on': return Icons.monetization_on;
           case 'local_pharmacy': return Icons.local_pharmacy;
           case 'help_outline': return Icons.help_outline;
+          case 'security': return Icons.security;
+          case 'build': return Icons.build;
+          case 'cookie': return Icons.cookie;
           default: return Icons.circle;
       }
   }

@@ -1010,10 +1010,46 @@ class _ExploreScreenState extends State<ExploreScreen> {
       );
   }
 
+  Color _getRarityColor(String rarity) {
+      switch (rarity.toLowerCase()) {
+          case 'common': return Colors.white10;
+          case 'uncommon': return Colors.greenAccent;
+          case 'rare': return Colors.blueAccent;
+          case 'epic': return Colors.purpleAccent;
+          case 'legendary': return Colors.orangeAccent;
+          default: return Colors.white10;
+      }
+  }
+
+  Widget _buildItemIcon(InventorySlot slot, Color color, double size) {
+      IconData icon = Icons.help_outline;
+      switch (slot.iconCode) {
+          case 'local_pharmacy': icon = Icons.local_pharmacy; break;
+          case 'monetization_on': icon = Icons.monetization_on; break;
+          case 'security': icon = Icons.security; break;
+          case 'build': icon = Icons.build; break;
+          case 'architecture': icon = Icons.architecture; break;
+          case 'explore': icon = Icons.explore; break;
+          case 'offline_bolt': icon = Icons.offline_bolt; break;
+          case 'confirmation_number': icon = Icons.confirmation_number; break;
+          case 'cookie': icon = Icons.cookie; break;
+          case 'help_outline': icon = Icons.help_outline; break;
+          case 'shield': icon = Icons.shield; break;
+          case 'dagger_curved': icon = Icons.explore; break; // Fallback
+          case 'gun': icon = Icons.offline_bolt; break; // Fallback
+          case 'whip': icon = Icons.gesture; break; // Fallback
+          case 'axe': icon = Icons.architecture; break; // Fallback
+          // Add more mappings as needed
+      }
+      return Icon(icon, color: color, size: size);
+  }
+
   Widget _buildPrepItem(InventorySlot slot, bool isEquipped, StateSetter setModalState) {
+       final rarityColor = _getRarityColor(slot.rarity);
+       final isCommon = rarityColor == Colors.white10;
+
        return InkWell(
            onTap: () {
-               // Unequip logic inside modal
                _handlePrepUnequip(slot, setModalState);
            },
            child: Column(
@@ -1021,24 +1057,30 @@ class _ExploreScreenState extends State<ExploreScreen> {
                    Container(
                        width: 70, height: 70,
                        decoration: BoxDecoration(
-                           color: KeldorTheme.surface,
+                           color: isCommon ? KeldorTheme.surface : rarityColor.withOpacity(0.15),
                            borderRadius: BorderRadius.circular(12),
-                           border: Border.all(color: Colors.green, width: 2)
+                           border: Border.all(
+                               color: isCommon ? Colors.white12 : rarityColor.withOpacity(0.8), 
+                               width: 2
+                           ),
+                           boxShadow: [
+                               if (!isCommon)
+                                   BoxShadow(color: rarityColor.withOpacity(0.2), blurRadius: 8, spreadRadius: 1)
+                           ]
                        ),
-                       child: Icon(
-                           // Simple icon logic
-                           slot.iconCode == 'local_pharmacy' ? Icons.local_pharmacy : 
-                           slot.iconCode == 'monetization_on' ? Icons.monetization_on :
-                           slot.iconCode == 'security' ? Icons.security :
-                           slot.iconCode == 'build' ? Icons.build : Icons.shield,
-                           color: Colors.white, size: 32
+                       child: Center(
+                           child: _buildItemIcon(slot, isCommon ? Colors.white : rarityColor, 32)
                        ), 
                    ),
                    const SizedBox(height: 6),
                    SizedBox(
                        width: 70,
                        child: Text(slot.name ?? "Tárgy", 
-                           style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold), 
+                           style: TextStyle(
+                               color: isCommon ? Colors.white70 : rarityColor, 
+                               fontSize: 10, 
+                               fontWeight: FontWeight.bold
+                           ), 
                            textAlign: TextAlign.center, overflow: TextOverflow.ellipsis
                        )
                    ),
@@ -1097,12 +1139,26 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                   itemCount: backpack.length,
                                   itemBuilder: (c, i) {
                                       final item = backpack[i];
+                                      final rarityColor = _getRarityColor(item.rarity);
+                                      final isCommon = rarityColor == Colors.white10;
+
                                       return ListTile(
-                                          leading: Icon(Icons.backpack, color: Colors.white),
-                                          title: Text(item.name ?? "Tárgy", style: TextStyle(color: Colors.white)),
-                                          subtitle: Text(item.rarity, style: TextStyle(color: Colors.grey)),
+                                          leading: _buildItemIcon(item, isCommon ? Colors.white70 : rarityColor, 32),
+                                          title: Text(item.name ?? "Tárgy", 
+                                              style: TextStyle(
+                                                  color: isCommon ? Colors.white : rarityColor,
+                                                  fontWeight: isCommon ? FontWeight.normal : FontWeight.bold
+                                              )
+                                          ),
+                                          subtitle: Text(item.rarity.toUpperCase(), 
+                                              style: TextStyle(
+                                                  color: isCommon ? Colors.white38 : rarityColor.withOpacity(0.7),
+                                                  fontSize: 10,
+                                                  letterSpacing: 1
+                                              )
+                                          ),
                                           trailing: TextButton(
-                                              child: Text("Felszerelés"),
+                                              child: const Text("Felszerelés", style: TextStyle(color: Colors.greenAccent)),
                                               onPressed: () async {
                                                   Navigator.pop(ctx);
                                                   final token = context.read<AuthService>().token;

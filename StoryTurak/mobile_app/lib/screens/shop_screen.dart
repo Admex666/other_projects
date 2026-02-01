@@ -82,21 +82,36 @@ class _ShopScreenState extends State<ShopScreen> with SingleTickerProviderStateM
               _buildCurrencyHeader(char),
               Expanded(
                   child: ListView.builder(
+                      padding: const EdgeInsets.all(16),
                       itemCount: _merchantItems.length,
                       itemBuilder: (ctx, index) {
                           final item = _merchantItems[index];
-                          return ListTile(
-                              leading: Icon(
-                                  item.iconCode == 'local_pharmacy' ? Icons.local_pharmacy : 
-                                  item.iconCode == 'monetization_on' ? Icons.monetization_on : Icons.circle, 
-                                  color: KeldorTheme.primary, size: 32
+                          final rarityColor = _getRarityColor(item.rarity);
+                          final isCommon = rarityColor == Colors.white10;
+
+                          return Container(
+                              margin: const EdgeInsets.only(bottom: 12),
+                              decoration: BoxDecoration(
+                                  color: isCommon ? KeldorTheme.surface : rarityColor.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: isCommon ? Colors.white12 : rarityColor.withOpacity(0.5)),
                               ),
-                              title: Text(item.name, style: const TextStyle(color: Colors.white)),
-                              subtitle: Text(item.description, style: const TextStyle(color: Colors.white54, fontSize: 12)),
-                              trailing: ElevatedButton(
-                                  onPressed: () => _buyItem(item),
-                                  style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                                  child: Text("${item.value} P", style: const TextStyle(color: Colors.white)),
+                              child: ListTile(
+                                  leading: _buildItemIcon(item.iconCode, isCommon ? Colors.white70 : rarityColor, 32),
+                                  title: Text(item.name, style: TextStyle(color: isCommon ? Colors.white : rarityColor, fontWeight: FontWeight.bold)),
+                                  subtitle: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                          Text(item.description, style: const TextStyle(color: Colors.white54, fontSize: 12)),
+                                          const SizedBox(height: 4),
+                                          Text(item.rarity.toUpperCase(), style: TextStyle(color: isCommon ? Colors.white24 : rarityColor, fontSize: 10, letterSpacing: 1.5, fontWeight: FontWeight.bold)),
+                                      ],
+                                  ),
+                                  trailing: ElevatedButton(
+                                      onPressed: () => _buyItem(item),
+                                      style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                                      child: Text("${item.value} P", style: const TextStyle(color: Colors.white)),
+                                  ),
                               ),
                           );
                       },
@@ -107,8 +122,6 @@ class _ShopScreenState extends State<ShopScreen> with SingleTickerProviderStateM
   }
 
   Widget _buildSellTab(Character char) {
-      // Filter out equipped items or specific non-sellables if we want?
-      // For now, let user sell anything that has value > 0
       final sellable = char.inventory.where((i) => !i.equipped).toList();
 
       return Column(
@@ -118,27 +131,37 @@ class _ShopScreenState extends State<ShopScreen> with SingleTickerProviderStateM
                   child: sellable.isEmpty 
                     ? const Center(child: Text("Nincs eladható tárgyad.", style: TextStyle(color: Colors.white54)))
                     : ListView.builder(
+                      padding: const EdgeInsets.all(16),
                       itemCount: sellable.length,
                       itemBuilder: (ctx, index) {
                           final slot = sellable[index];
-                          // If we don't know the base value from InventorySlot, we might need a lookup or store value in slot.
-                          // Wait, InventorySlot currently has 'value'? No, backend usually sends item definition or we rely on assumption.
-                          // Let's assume we can fetch value, or the backend handled it in the 'inventory' join in CRUD.
-                          // In crud.py we added `i.value` to the query! So we need to ensure InventorySlot model has it.
-                          // Let's check model... model DOES NOT have 'value' yet in current version.
-                          // We might need to add it or just assume a default.
-                          // WORKAROUND: For now, if value is missing, assume 10. Ideally update model.
+                          final rarityColor = _getRarityColor(slot.rarity);
+                          final isCommon = rarityColor == Colors.white10;
                           
-                          // Actually let's assume `slot.quantity` > 0.
-                          int sellPrice = (slot.value * 0.5).toInt();
-                          return ListTile(
-                              leading: Icon(Icons.backpack, color: Colors.white70),
-                              title: Text(slot.name ?? "Ismeretlen", style: const TextStyle(color: Colors.white)),
-                              subtitle: Text("${slot.quantity} db", style: const TextStyle(color: Colors.white54)),
-                              trailing: ElevatedButton(
-                                  onPressed: () => _sellItem(slot),
-                                  style: ElevatedButton.styleFrom(backgroundColor: Colors.orangeAccent),
-                                  child: Text("Eladás ($sellPrice P)", style: const TextStyle(color: Colors.black)),
+                          int sellPrice = (slot.value > 0 ? slot.value * 0.5 : 10).toInt(); // Fallback if 0
+
+                          return Container(
+                              margin: const EdgeInsets.only(bottom: 12),
+                              decoration: BoxDecoration(
+                                  color: isCommon ? KeldorTheme.surface : rarityColor.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: isCommon ? Colors.white12 : rarityColor.withOpacity(0.5)),
+                              ),
+                              child: ListTile(
+                                  leading: _buildItemIcon(slot.iconCode ?? 'circle', isCommon ? Colors.white70 : rarityColor, 32),
+                                  title: Text(slot.name ?? "Ismeretlen", style: TextStyle(color: isCommon ? Colors.white : rarityColor, fontWeight: FontWeight.bold)),
+                                  subtitle: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                          Text("${slot.quantity} db", style: const TextStyle(color: Colors.white54)),
+                                          Text(slot.rarity.toUpperCase(), style: TextStyle(color: isCommon ? Colors.white24 : rarityColor, fontSize: 10, letterSpacing: 1.5, fontWeight: FontWeight.bold)),
+                                      ],
+                                  ),
+                                  trailing: ElevatedButton(
+                                      onPressed: () => _sellItem(slot),
+                                      style: ElevatedButton.styleFrom(backgroundColor: Colors.orangeAccent),
+                                      child: Text("Eladás ($sellPrice P)", style: const TextStyle(color: Colors.black)),
+                                  ),
                               ),
                           );
                       },
@@ -146,6 +169,33 @@ class _ShopScreenState extends State<ShopScreen> with SingleTickerProviderStateM
               )
           ],
       );
+  }
+
+  Color _getRarityColor(String rarity) {
+    switch (rarity.toLowerCase()) {
+      case 'uncommon': return Colors.greenAccent;
+      case 'rare': return Colors.blueAccent;
+      case 'epic': return Colors.purpleAccent;
+      case 'legendary': return Colors.orangeAccent;
+      default: return Colors.white10;
+    }
+  }
+
+  Widget _buildItemIcon(String code, Color color, double size) {
+      IconData icon = Icons.circle;
+       switch (code) {
+          case 'local_pharmacy': icon = Icons.local_pharmacy; break;
+          case 'monetization_on': icon = Icons.monetization_on; break;
+          case 'security': icon = Icons.security; break;
+          case 'build': icon = Icons.build; break;
+          case 'architecture': icon = Icons.architecture; break;
+          case 'explore': icon = Icons.explore; break;
+          case 'offline_bolt': icon = Icons.offline_bolt; break;
+          case 'confirmation_number': icon = Icons.confirmation_number; break;
+          case 'cookie': icon = Icons.cookie; break;
+          case 'help_outline': icon = Icons.help_outline; break;
+      }
+      return Icon(icon, color: color, size: size);
   }
 
   Widget _buildCurrencyHeader(Character char) {

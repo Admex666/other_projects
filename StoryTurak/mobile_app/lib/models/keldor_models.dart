@@ -366,6 +366,7 @@ class CollectionItem {
   final String name;
   final String iconCode;
   final String description;
+  final String rarity;
 
   CollectionItem({
     required this.itemId,
@@ -374,6 +375,7 @@ class CollectionItem {
     required this.name,
     required this.iconCode,
     required this.description,
+    this.rarity = 'common',
   });
 
   factory CollectionItem.fromJson(Map<String, dynamic> json) {
@@ -384,6 +386,7 @@ class CollectionItem {
       name: json['name'],
       iconCode: json['icon_code'],
       description: json['description'],
+      rarity: json['rarity'] ?? 'common',
     );
   }
 }
