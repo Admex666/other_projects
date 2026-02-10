@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import Script from "next/script";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const inter = Inter({
@@ -26,16 +26,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} antialiased`}>
-      <head>
-        <Script
-          defer
-          data-domain="odorfinium.com"
-          src="https://plausible.io/js/script.js"
-          strategy="afterInteractive"
-        />
-      </head>
       <body className="bg-background text-foreground font-sans selection:bg-neutral-200 selection:text-black">
         {children}
+        <Analytics />
       </body>
     </html>
   );
