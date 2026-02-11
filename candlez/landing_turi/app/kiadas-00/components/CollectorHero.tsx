@@ -16,7 +16,7 @@ export default function CollectorHero({ onUnlockClick }: CollectorHeroProps) {
                             <span className="text-neutral-400 font-sans text-2xl md:text-3xl tracking-normal block mt-2">Edition 00</span>
                         </h1>
                         <p className="text-lg md:text-xl text-neutral-600 font-light max-w-md">
-                            Gyűjtői illatszobor.
+                            Kézműves illatszobor kollekció.
                         </p>
                     </div>
 
