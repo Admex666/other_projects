@@ -278,4 +278,20 @@ class ApiService {
       throw Exception('Failed to fetch quest history');
     }
   }
+
+  Future<void> initTutorial(String token, double lat, double lng) async {
+    final baseUrl = await getBaseUrl();
+    final response = await http.post(
+      Uri.parse('$baseUrl/quests/tutorial/init'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: json.encode({'lat': lat, 'lng': lng}),
+    );
+    _checkResponse(response);
+    if (response.statusCode != 200) {
+      throw Exception('Failed to initialize tutorial: ${response.body}');
+    }
+  }
 }

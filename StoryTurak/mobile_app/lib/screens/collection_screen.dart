@@ -4,6 +4,7 @@ import '../services/keldor_service.dart';
 import '../services/auth_service.dart';
 import '../models/keldor_models.dart';
 import '../theme.dart';
+import '../widgets/keldor_item_tile.dart';
 
 class CollectionScreen extends StatefulWidget {
   const CollectionScreen({Key? key}) : super(key: key);
@@ -123,8 +124,10 @@ class _CollectionScreenState extends State<CollectionScreen> {
       );
   }
 
+  // ... (keep class definition)
+
   Widget _buildCollectionItem(CollectionItem item) {
-      final rarityColor = _getRarityColor(item.rarity);
+      final rarityColor = KeldorItemHelper.getRarityColor(item.rarity);
       final isCommon = rarityColor == Colors.white10;
       
       return Column(
@@ -144,11 +147,9 @@ class _CollectionScreenState extends State<CollectionScreen> {
                               BoxShadow(color: rarityColor.withOpacity(0.2), blurRadius: 4, spreadRadius: 0)
                       ]
                   ),
-                  child: Icon(
-                      item.found ? _getIcon(item.iconCode) : Icons.lock_outline,
-                      color: item.found ? (isCommon ? Colors.white70 : rarityColor) : Colors.white12,
-                      size: 24,
-                  ),
+                  child: item.found 
+                    ? KeldorItemHelper.buildItemIcon(item.iconCode, isCommon ? Colors.white70 : rarityColor, 24)
+                    : const Icon(Icons.lock_outline, color: Colors.white12, size: 24),
               ),
               const SizedBox(height: 4),
               Text(
@@ -171,29 +172,6 @@ class _CollectionScreenState extends State<CollectionScreen> {
       );
   }
 
-  Color _getRarityColor(String rarity) {
-    switch (rarity.toLowerCase()) {
-      case 'uncommon': return Colors.greenAccent;
-      case 'rare': return Colors.blueAccent;
-      case 'epic': return Colors.purpleAccent;
-      case 'legendary': return Colors.orangeAccent;
-      default: return Colors.white10;
-    }
-  }
+  // Remove `_getRarityColor` and `_getIcon`
 
-  IconData _getIcon(String code) {
-      switch (code) {
-          case 'architecture': return Icons.architecture;
-          case 'explore': return Icons.explore;
-          case 'offline_bolt': return Icons.offline_bolt;
-          case 'confirmation_number': return Icons.confirmation_number;
-          case 'monetization_on': return Icons.monetization_on;
-          case 'local_pharmacy': return Icons.local_pharmacy;
-          case 'help_outline': return Icons.help_outline;
-          case 'security': return Icons.security;
-          case 'build': return Icons.build;
-          case 'cookie': return Icons.cookie;
-          default: return Icons.circle;
-      }
-  }
 }

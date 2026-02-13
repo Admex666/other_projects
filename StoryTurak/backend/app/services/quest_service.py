@@ -7,6 +7,51 @@ logger = logging.getLogger(__name__)
 
 dynamic_encounters = []
 
+
+def create_dynamic_tutorial_quest(lat: float, lng: float) -> dict:
+    """
+    Creates a dynamic tutorial quest starting near the user's current location.
+    Stage 1 is a simple 'Location Wait' around 30-50m away.
+    Encounter is a 'Training Dummy' fight.
+    """
+    # Simple offset for stage 1 (approx 40-50m North-East)
+    stage_lat = lat + 0.0004 
+    stage_lng = lng + 0.0004
+    
+    enc_id = "enc_tutorial_dummy"
+    # Create the encounter definition dynamically if needed 
+    # (In a real app we'd save this to DB, here we rely on the quest structure to implicitly define it 
+    # or ensure it's handled in resolve_encounter logic for special IDs)
+    
+    quest_id = "quest_tutorial_01"
+    
+    return {
+        "id": quest_id,
+        "title": "Az Első Bevetés",
+        "description": "A parancsnokság egy anomáliát észlelt a közeledben. Vizsgáld meg!",
+        "flavor_text": "A szkennered jelez. Valami van a közelben...",
+        "image_url": "assets/mist_city_intro.png",
+        "start_location": (lat, lng),
+        "min_level": 1,
+        "objectives": ["Menj a jelölt ponthoz", "Győzd le a gyakorló bábut"],
+        "rewards_steps": 100,
+        "starter_zone_id": "zone_tutorial", 
+        "stages": [
+            {
+                "id": f"{quest_id}_stage_1",
+                "description": "Menj a jelölt ponthoz és vizsgáld meg az anomáliát.",
+                "location": (stage_lat, stage_lng),
+                "encounter_id": enc_id
+            }
+        ],
+        "intro_steps": [
+            "Üdvözöllek, Ügynök.",
+            "A rendszereid aktívak.",
+            "Indulj el a jelölt pontra.",
+            "Ez a vizsgamunkád."
+        ]
+    }
+
 def sync_stories_to_quests_v2():
     """
     Simulates the 'Quest' structures from the loaded JSON stories.

@@ -7,7 +7,7 @@ A stratégia két fő pilléren nyugszik:
 
 ---
 
-## 📅 I. Fázis: Technikai Alapozás & Refaktor (1-2 Nap)
+## 📅 I. Fázis: Technikai Alapozás & Refaktor
 *Cél: A technikai adósság kifizetése, hogy a tartalomgyártás akadálytalan legyen.*
 
 ### 🛠️ 1. UI Refaktor (ItemTile Widget)
@@ -21,12 +21,12 @@ A stratégia két fő pilléren nyugszik:
 *   **Feladat**:
     *   Definiálni egy alapvető árképzést:
         *   T1 Tárgy (Common): 50-100 Pengő. (Kb. 1-2 séta).
-        *   T2 Tárgy (Rare): 300-500 Pengő.
+        *   T2 Tárgy (Rare): 200-350 Pengő.
     *   Jutalmak normalizálása: Egy sikeres encounter = 20-50 Pengő.
 
 ---
 
-## ⚔️ II. Fázis: Játékélmény Javítása (2-3 Nap)
+## ⚔️ II. Fázis: Játékélmény Javítása
 *Cél: A játékos értse, mit csinál, és élvezze a harcot.*
 
 ### 🎓 1. Onboarding (Tutorial Quest)
@@ -88,7 +88,7 @@ def generate_story(poi_type, tone):
 
 ---
 
-## 🌍 IV. Fázis: Frakciók & Szociális Réteg (Későbbi patch)
+## 🌍 IV. Fázis: Frakciók & Szociális Réteg 
 *Cél: A világ élővé tétele.*
 
 1.  **Zone Control UI**: A térképen a zónák színe változzon dinamikusan a frakciók ereje alapján.

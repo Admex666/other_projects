@@ -6,6 +6,7 @@ import '../theme.dart';
 import '../models/keldor_models.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'faction_selection_screen.dart';
+import '../widgets/keldor_item_tile.dart';
 
 class CharacterScreen extends StatefulWidget {
   const CharacterScreen({Key? key}) : super(key: key);
@@ -339,163 +340,99 @@ class _CharacterScreenState extends State<CharacterScreen> {
     }
   }
 
-  Color _getRarityColor(String rarity) {
-    switch (rarity.toLowerCase()) {
-      case 'uncommon': return Colors.greenAccent;
-      case 'rare': return Colors.blueAccent;
-      case 'epic': return Colors.purpleAccent;
-      case 'legendary': return Colors.orangeAccent;
-      default: return Colors.white10;
-    }
+  Widget _buildEmptySlot() {
+      return Container(
+          width: 70, height: 70,
+          decoration: BoxDecoration(
+              color: Colors.white10,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.white24, style: BorderStyle.solid)
+          ),
+          child: const Icon(Icons.add, color: Colors.white54),
+      );
   }
 
   Map<String, int> _calculateBonuses(Character char) {
-      // ... (keep existing)
-      int str = 0;
-      int agi = 0;
-      int tac = 0;
-      
-      for (var slot in char.inventory) {
-          if (slot.equipped) {
-              for (var effect in slot.effects) {
-                  if (effect is Map) {
-                      if (effect['type'] == 'stat_bonus') {
-                          int val = (effect['value'] as num).toInt();
-                          String? target = effect['target_stat'];
-                          if (target == 'strength') str += val;
-                          if (target == 'agility') agi += val;
-                          if (target == 'tactics') tac += val;
-                      }
-                  }
-              }
+      int str = 0, agi = 0, tac = 0;
+      for (var item in char.inventory) {
+          if (item.equipped && item.stats != null) {
+              str += (item.stats!['strength'] as num? ?? 0).toInt();
+              agi += (item.stats!['agility'] as num? ?? 0).toInt();
+              tac += (item.stats!['tactics'] as num? ?? 0).toInt();
           }
       }
       return {'strength': str, 'agility': agi, 'tactics': tac};
   }
 
   Widget _buildLoadoutSection(BuildContext context, Character char) {
-      final equippedItems = char.inventory.where((i) => i.equipped).toList();
-      
-      return Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-              color: const Color(0xFF1E293B), // Slate 800
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.blueAccent.withOpacity(0.3)),
-          ),
-          child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                          Text("Felszerelés (Loadout)", style: GoogleFonts.outfit(color: Colors.blueAccent, fontWeight: FontWeight.bold)),
-                          Text("${equippedItems.length} / 3", style: TextStyle(color: equippedItems.length == 3 ? Colors.redAccent : Colors.white54)),
-                      ],
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: List.generate(3, (index) {
-                          if (index < equippedItems.length) {
-                              return _buildInventoryItem(context, equippedItems[index], true);
-                          } else {
-                              return _buildEmptySlot();
-                          }
-                      }),
-                  )
-              ],
-          )
-      );
+        final equippedItems = char.inventory.where((i) => i.equipped).toList();
+        
+        return Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+                color: const Color(0xFF1E293B), // Slate 800
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.blueAccent.withOpacity(0.3)),
+            ),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                            Text("Felszerelés (Loadout)", style: GoogleFonts.outfit(color: Colors.blueAccent, fontWeight: FontWeight.bold)),
+                            Text("${equippedItems.length} / 3", style: TextStyle(color: equippedItems.length == 3 ? Colors.redAccent : Colors.white54)),
+                        ],
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: List.generate(3, (index) {
+                            if (index < equippedItems.length) {
+                                return KeldorItemCard.fromSlot(
+                                    equippedItems[index],
+                                    onTap: () => _showItemDialog(context, equippedItems[index]),
+                                    size: 70,
+                                );
+                            } else {
+                                return _buildEmptySlot();
+                            }
+                        }),
+                    )
+                ],
+            )
+        );
   }
 
   Widget _buildBackpackSection(BuildContext context, Character char) {
-      final backpackItems = char.inventory.where((i) => !i.equipped).toList();
-      
-      if (backpackItems.isEmpty) {
-          return const Center(child: Text("Üres a zsákod.", style: TextStyle(color: Colors.white24)));
-      }
-      
-      return GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4, crossAxisSpacing: 8, mainAxisSpacing: 8),
-            itemCount: backpackItems.length,
-            itemBuilder: (ctx, index) {
-                return _buildInventoryItem(context, backpackItems[index], false);
-            }
-      );
+        final backpackItems = char.inventory.where((i) => !i.equipped).toList();
+        
+        if (backpackItems.isEmpty) {
+            return const Center(child: Text("Üres a zsákod.", style: TextStyle(color: Colors.white24)));
+        }
+        
+        return GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 4, crossAxisSpacing: 8, mainAxisSpacing: 8),
+              itemCount: backpackItems.length,
+              itemBuilder: (ctx, index) {
+                  return KeldorItemCard.fromSlot(
+                      backpackItems[index],
+                      onTap: () => _showItemDialog(context, backpackItems[index]),
+                      size: 70, // Default size fits grid well
+                      showQuantity: true,
+                  );
+              }
+        );
   }
 
-  Widget _buildEmptySlot() {
-      return Container(
-          width: 60, height: 60,
-          decoration: BoxDecoration(
-              color: Colors.black26,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.white10),
-          ),
-          child: const Icon(Icons.add, color: Colors.white10),
-      );
-  }
-
-  Widget _buildInventoryItem(BuildContext context, InventorySlot slot, bool isLoadout) {
-      final rarityColor = _getRarityColor(slot.rarity);
-      final isCommon = rarityColor == Colors.white10;
-
-      return InkWell(
-          onTap: () => _showItemDialog(context, slot),
-          child: Container(
-                width: isLoadout ? 70 : null,
-                height: isLoadout ? 70 : null,
-                decoration: BoxDecoration(
-                    color: isCommon ? KeldorTheme.surface : rarityColor.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                        color: slot.equipped ? Colors.green : (isCommon ? Colors.white12 : rarityColor.withOpacity(0.5)), 
-                        width: slot.equipped ? 2 : 1
-                    ),
-                    boxShadow: [
-                        if (!isCommon && slot.equipped)
-                            BoxShadow(color: rarityColor.withOpacity(0.2), blurRadius: 8, spreadRadius: 1)
-                    ]
-                ),
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                        _buildItemIcon(slot, isCommon ? Colors.white70 : rarityColor, isLoadout ? 32 : 24),
-                        if (!isLoadout) ...[
-                            const SizedBox(height: 4),
-                            Text("${slot.quantity}x", style: TextStyle(color: isCommon ? Colors.white54 : rarityColor, fontSize: 10, fontWeight: FontWeight.bold)),
-                        ]
-                    ],
-                ),
-            ),
-      );
-  }
-
-  Widget _buildItemIcon(InventorySlot slot, Color color, double size) {
-      // Mapping manually for now or use font_awesome / custom
-      IconData icon = Icons.circle;
-      switch (slot.iconCode) {
-          case 'local_pharmacy': icon = Icons.local_pharmacy; break;
-          case 'monetization_on': icon = Icons.monetization_on; break;
-          case 'security': icon = Icons.security; break;
-          case 'build': icon = Icons.build; break;
-          case 'architecture': icon = Icons.architecture; break;
-          case 'explore': icon = Icons.explore; break;
-          case 'offline_bolt': icon = Icons.offline_bolt; break;
-          case 'confirmation_number': icon = Icons.confirmation_number; break;
-          case 'cookie': icon = Icons.cookie; break;
-          case 'help_outline': icon = Icons.help_outline; break;
-      }
-      return Icon(icon, color: color, size: size);
-  }
+  // Remove `_buildInventoryItem`
 
   void _showItemDialog(BuildContext context, InventorySlot slot) {
-       final rarityColor = _getRarityColor(slot.rarity);
+        final rarityColor = KeldorItemHelper.getRarityColor(slot.rarity);
         showDialog(
             context: context, 
             builder: (ctx) => AlertDialog(
@@ -506,14 +443,10 @@ class _CharacterScreenState extends State<CharacterScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                         if (slot.iconCode != null) 
-                            Center(child: Icon(
-                                slot.iconCode == 'local_pharmacy' ? Icons.local_pharmacy : 
-                                slot.iconCode == 'monetization_on' ? Icons.monetization_on :
-                                slot.iconCode == 'security' ? Icons.security :
-                                slot.iconCode == 'build' ? Icons.build : Icons.help_outline, 
-                                size: 48, 
-                                color: rarityColor == Colors.white10 ? KeldorTheme.primary : rarityColor
-                            )),
+                            Center(child: KeldorItemHelper.buildItemIcon(slot.iconCode, rarityColor == Colors.white10 ? KeldorTheme.primary : rarityColor, 48)),
+                        const SizedBox(height: 8),
+                        // ... rest of dialog logic
+
                         const SizedBox(height: 8),
                         Center(child: Text(slot.rarity.toUpperCase(), style: TextStyle(color: rarityColor, fontSize: 10, letterSpacing: 1.5, fontWeight: FontWeight.bold))),
                         const SizedBox(height: 16),

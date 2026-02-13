@@ -7,13 +7,14 @@ import 'package:geolocator/geolocator.dart';
 import '../services/map_config.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../services/keldor_service.dart';
+import '../widgets/keldor_item_tile.dart';
 import '../services/notification_service.dart';
 import '../models/keldor_models.dart';
 import '../theme.dart';
-import 'encounter_screen.dart'; 
-import 'package:flutter/services.dart'; 
+import 'encounter_screen.dart';
+import 'package:flutter/services.dart';
 import '../services/auth_service.dart';
-import 'character_screen.dart'; 
+import 'character_screen.dart';
 import '../services/location_service.dart';
 import '../services/routing_service.dart';
 import '../services/settings_service.dart';
@@ -1010,42 +1011,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
       );
   }
 
-  Color _getRarityColor(String rarity) {
-      switch (rarity.toLowerCase()) {
-          case 'common': return Colors.white10;
-          case 'uncommon': return Colors.greenAccent;
-          case 'rare': return Colors.blueAccent;
-          case 'epic': return Colors.purpleAccent;
-          case 'legendary': return Colors.orangeAccent;
-          default: return Colors.white10;
-      }
-  }
-
-  Widget _buildItemIcon(InventorySlot slot, Color color, double size) {
-      IconData icon = Icons.help_outline;
-      switch (slot.iconCode) {
-          case 'local_pharmacy': icon = Icons.local_pharmacy; break;
-          case 'monetization_on': icon = Icons.monetization_on; break;
-          case 'security': icon = Icons.security; break;
-          case 'build': icon = Icons.build; break;
-          case 'architecture': icon = Icons.architecture; break;
-          case 'explore': icon = Icons.explore; break;
-          case 'offline_bolt': icon = Icons.offline_bolt; break;
-          case 'confirmation_number': icon = Icons.confirmation_number; break;
-          case 'cookie': icon = Icons.cookie; break;
-          case 'help_outline': icon = Icons.help_outline; break;
-          case 'shield': icon = Icons.shield; break;
-          case 'dagger_curved': icon = Icons.explore; break; // Fallback
-          case 'gun': icon = Icons.offline_bolt; break; // Fallback
-          case 'whip': icon = Icons.gesture; break; // Fallback
-          case 'axe': icon = Icons.architecture; break; // Fallback
-          // Add more mappings as needed
-      }
-      return Icon(icon, color: color, size: size);
-  }
-
   Widget _buildPrepItem(InventorySlot slot, bool isEquipped, StateSetter setModalState) {
-       final rarityColor = _getRarityColor(slot.rarity);
+       final rarityColor = KeldorItemHelper.getRarityColor(slot.rarity);
        final isCommon = rarityColor == Colors.white10;
 
        return InkWell(
@@ -1054,23 +1021,11 @@ class _ExploreScreenState extends State<ExploreScreen> {
            },
            child: Column(
                children: [
-                   Container(
-                       width: 70, height: 70,
-                       decoration: BoxDecoration(
-                           color: isCommon ? KeldorTheme.surface : rarityColor.withOpacity(0.15),
-                           borderRadius: BorderRadius.circular(12),
-                           border: Border.all(
-                               color: isCommon ? Colors.white12 : rarityColor.withOpacity(0.8), 
-                               width: 2
-                           ),
-                           boxShadow: [
-                               if (!isCommon)
-                                   BoxShadow(color: rarityColor.withOpacity(0.2), blurRadius: 8, spreadRadius: 1)
-                           ]
-                       ),
-                       child: Center(
-                           child: _buildItemIcon(slot, isCommon ? Colors.white : rarityColor, 32)
-                       ), 
+                   KeldorItemCard.fromSlot(
+                       slot,
+                       size: 70,
+                       showQuantity: false,
+                       onTap: null,
                    ),
                    const SizedBox(height: 6),
                    SizedBox(
@@ -1085,7 +1040,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                        )
                    ),
                    const SizedBox(height: 2),
-                   Text("Levétel", style: TextStyle(color: Colors.orangeAccent, fontSize: 10))
+                   const Text("Levétel", style: TextStyle(color: Colors.orangeAccent, fontSize: 10))
                ],
            ),
        );
@@ -1139,24 +1094,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                   itemCount: backpack.length,
                                   itemBuilder: (c, i) {
                                       final item = backpack[i];
-                                      final rarityColor = _getRarityColor(item.rarity);
-                                      final isCommon = rarityColor == Colors.white10;
-
-                                      return ListTile(
-                                          leading: _buildItemIcon(item, isCommon ? Colors.white70 : rarityColor, 32),
-                                          title: Text(item.name ?? "Tárgy", 
-                                              style: TextStyle(
-                                                  color: isCommon ? Colors.white : rarityColor,
-                                                  fontWeight: isCommon ? FontWeight.normal : FontWeight.bold
-                                              )
-                                          ),
-                                          subtitle: Text(item.rarity.toUpperCase(), 
-                                              style: TextStyle(
-                                                  color: isCommon ? Colors.white38 : rarityColor.withOpacity(0.7),
-                                                  fontSize: 10,
-                                                  letterSpacing: 1
-                                              )
-                                          ),
+                                      return KeldorItemTile.fromSlot(
+                                          item,
                                           trailing: TextButton(
                                               child: const Text("Felszerelés", style: TextStyle(color: Colors.greenAccent)),
                                               onPressed: () async {
@@ -1164,7 +1103,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                                   final token = context.read<AuthService>().token;
                                                   if (token != null) {
                                                       await context.read<KeldorService>().equipItem(token, item.itemId);
-                                                      parentSetState((){});
+                                                      parentSetState(() {});
                                                   }
                                               },
                                           ),

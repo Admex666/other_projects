@@ -387,6 +387,28 @@ class KeldorService extends ChangeNotifier {
       }
   }
 
+  Future<bool> checkAndStartTutorial(String token, LatLng currentLocation) async {
+      // If we already have active quests, tutorial is either done or in progress
+      if (activeQuests.isNotEmpty) {
+          // Check if one of them is the tutorial quest?
+          // For now, if any quest is active, we assume we don't need to force-start tutorial
+          return false;
+      }
+
+      // If we have quest history, we also assume tutorial is done (unless we want to force it)
+      if (questHistory.isNotEmpty) return false;
+
+      // No quests, no history -> New User!
+      try {
+          await ApiService().initTutorial(token, currentLocation.latitude, currentLocation.longitude);
+          await fetchQuests(token);
+          return true;
+      } catch (e) {
+          print("Error starting tutorial: $e");
+          return false;
+      }
+  }
+
   Future<Map<String, dynamic>?> resolveEncounter(String token, String encounterId, String outcome) async {
       try {
           final baseUrl = await ApiService().getBaseUrl();

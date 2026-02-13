@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import 'theme.dart';
 import 'services/story_engine.dart';
@@ -143,6 +144,73 @@ class _MainScaffoldState extends State<MainScaffold> {
   void initState() {
     super.initState();
     context.read<LocationService>().addListener(_onStepUpdate);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _checkTutorial());
+  }
+
+  Future<void> _checkTutorial() async {
+      // Small delay to ensure location is ready or at least attempted
+      await Future.delayed(const Duration(seconds: 2));
+      if (!mounted) return;
+
+
+      final locService = context.read<LocationService>();
+      LatLng? location;
+      
+      try {
+        location = await locService.getCurrentLocation();
+      } catch (e) {
+        print("Tutorial check failed - Location error: $e");
+        // Fallback to last known position if available
+        location = locService.lastPosition;
+      }
+      
+      if (location != null) {
+          final auth = context.read<AuthService>();
+          final keldor = context.read<KeldorService>();
+          
+          if (auth.token != null) {
+              bool started = await keldor.checkAndStartTutorial(auth.token!, location);
+              if (started && mounted) {
+                  _showTutorialDialog();
+              }
+          }
+      }
+  }
+
+  void _showTutorialDialog() {
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (ctx) => AlertDialog(
+              backgroundColor: Colors.black87,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  side: const BorderSide(color: KeldorTheme.primary, width: 2)
+              ),
+              title: Row(children: const [
+                  Icon(Icons.warning_amber_rounded, color: KeldorTheme.primary),
+                  SizedBox(width: 8),
+                  Text("BEJÖVŐ ADÁS", style: TextStyle(color: KeldorTheme.primary, fontWeight: FontWeight.bold))
+              ]),
+              content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                      Text("Ügynök! A rendszerünk sikeresen aktivált téged.", style: TextStyle(color: Colors.white)),
+                      SizedBox(height: 12),
+                      Text("A szkennered egy alacsony szintű anomáliát észlelt a közvetlen közeledben.", style: TextStyle(color: Colors.white70)),
+                      SizedBox(height: 12),
+                      Text("Ez a vizsgamunkád. Menj oda, és semlegesítsd!", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  ],
+              ),
+              actions: [
+                  TextButton(
+                      onPressed: () => Navigator.of(ctx).pop(),
+                      child: const Text("VETTEM", style: TextStyle(color: KeldorTheme.primary, fontWeight: FontWeight.bold, fontSize: 16))
+                  )
+              ],
+          )
+      );
   }
 
   @override
