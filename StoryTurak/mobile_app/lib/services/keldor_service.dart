@@ -281,53 +281,80 @@ class KeldorService extends ChangeNotifier {
 
   Future<void> fetchQuests(String token) async {
     try {
-        // 1. Fetch Active Quests for Character
         final baseUrl = await ApiService().getBaseUrl();
-        if (activeCharacter != null) {
-            final activeResp = await http.get(
-                Uri.parse('$baseUrl/characters/${activeCharacter!.id}/quests'),
-                headers: {'Authorization': 'Bearer $token'},
-            );
-            _checkResponse(activeResp);
-            if (activeResp.statusCode == 200) {
-                final List<dynamic> data = json.decode(activeResp.body);
-                activeQuests = data.map((q) => UserQuest.fromJson(q)).toList();
+        // 1. Fetch Active Quests for Character
+        try {
+            if (activeCharacter != null) {
+                final activeResp = await http.get(
+                    Uri.parse('$baseUrl/characters/${activeCharacter!.id}/quests'),
+                    headers: {'Authorization': 'Bearer $token'},
+                );
+                _checkResponse(activeResp);
+                if (activeResp.statusCode == 200) {
+                    final dynamic decoded = json.decode(activeResp.body);
+                    if (decoded is List) {
+                        activeQuests = decoded.map((q) => UserQuest.fromJson(q)).toList();
+                    }
+                }
             }
+        } catch (e) {
+            print("❌ Error fetching active quests: $e");
         }
 
         // 2. Fetch All Quests
-        final availResp = await http.get(
-            Uri.parse('$baseUrl/test/quests'),  // TEMP: Using test endpoint
-            headers: {'Authorization': 'Bearer $token'},
-        );
-        _checkResponse(availResp);
-        print('🔍 Quest fetch status: ${availResp.statusCode}');
-        if (availResp.statusCode == 200) {
-            final Map<String, dynamic> data = json.decode(availResp.body);
-            final List<dynamic> questList = data['quests'];
-            allQuests = questList.map((q) => Quest.fromJson(q)).toList();
+        try {
+            final availResp = await http.get(
+                Uri.parse('$baseUrl/test/quests'),
+                headers: {'Authorization': 'Bearer $token'},
+            );
+            _checkResponse(availResp);
             
-            // Filter out quests already active (ignore completed/failed for availability)
-            final activeIds = activeQuests
-                .where((aq) => aq.status == QuestStatus.active)
-                .map((aq) => aq.questId)
-                .toSet();
-            availableQuests = allQuests
-                .where((q) => !activeIds.contains(q.id))
-                .toList();
-            
-            print('📋 Total quests: ${allQuests.length}, Active: ${activeQuests.length}, Available: ${availableQuests.length}');
-            for (var q in availableQuests) {
-                print('   📍 ${q.title} at ${q.startLocation}');
+            if (availResp.statusCode == 200) {
+                final dynamic decoded = json.decode(availResp.body);
+                List<dynamic> questList = [];
+                
+                if (decoded is Map<String, dynamic>) {
+                    questList = decoded['quests'];
+                } else if (decoded is String) {
+                     try {
+                         final doubleDecoded = json.decode(decoded);
+                         if (doubleDecoded is Map<String, dynamic>) {
+                             questList = doubleDecoded['quests'];
+                         }
+                     } catch (e) { print("Double decode failed"); }
+                }
+
+                try {
+                    allQuests = questList.map((q) {
+                        if (q is String) {
+                             // print("⚠️ Found String in quest list, skipping/parsing issue: $q"); 
+                             try { return Quest.fromJson(json.decode(q)); } catch(e) {}
+                             throw FormatException("Quest item is String");
+                        }
+                        return Quest.fromJson(q);
+                    }).toList();
+                } catch (e) {
+                    print("❌ Error parsing quest list elements: $e");
+                }
+
+                // Filter out quests already active
+                final activeIds = activeQuests
+                    .where((aq) => aq.status == QuestStatus.active)
+                    .map((aq) => aq.questId)
+                    .toSet();
+                availableQuests = allQuests
+                    .where((q) => !activeIds.contains(q.id))
+                    .toList();
+                
+                print('📋 Total quests: ${allQuests.length}, Active: ${activeQuests.length}');
             }
-        } else {
-            print('❌ Quest fetch failed: ${availResp.statusCode} - ${availResp.body}');
+        } catch (e) {
+            print("❌ Error fetching available quests: $e");
         }
-        
-        notifyListeners();
-        
     } catch (e) {
-        print("Error fetching quests: $e");
+        print("Error in fetchQuests wrapper: $e");
+    } finally {
+        notifyListeners();
     }
   }
 
@@ -400,11 +427,25 @@ class KeldorService extends ChangeNotifier {
 
       // No quests, no history -> New User!
       try {
+          print("🚀 Initiating Tutorial Sequence...");
           await ApiService().initTutorial(token, currentLocation.latitude, currentLocation.longitude);
+          
+          // CRITICAL: We must ensure we have the active character loaded to fetch its quests!
+          // The initTutorial might have created/updated the character state.
+          await fetchUserCharacter(token);
+          
+          if (activeCharacter == null) {
+              print("❌ Error: Active Character still null after tutorial init!");
+              return false;
+          }
+          
+          print("✅ Tutorial initialized for ${activeCharacter!.name}. Fetching quests...");
           await fetchQuests(token);
+          
+          print("🔍 Tutorial check complete. Active Quests: ${activeQuests.length}");
           return true;
       } catch (e) {
-          print("Error starting tutorial: $e");
+          print("❌ Error starting tutorial: $e");
           return false;
       }
   }
@@ -654,5 +695,38 @@ class KeldorService extends ChangeNotifier {
           print("Error setting faction: $e");
           return false;
       }
+  }
+
+  /// Clear all cached data (call on logout to prevent cross-account contamination)
+  void clearCache() {
+    nearbyEncounters.clear();
+    activeZones = [
+      // Reset to default zones
+      Zone(
+        id: "zone_belvaros",
+        name: "Belváros - A Ködös Utcák",
+        description: "A régi Pest szíve.",
+        boundaryPoints: [
+          const LatLng(47.498, 19.040),
+          const LatLng(47.502, 19.050),
+          const LatLng(47.495, 19.060),
+          const LatLng(47.490, 19.045)
+        ],
+        difficultyLevel: 1,
+      ),
+      Zone(
+        id: "zone_nyolcker",
+        name: "VIII. Kerület - A Sötét Parkok",
+        description: "A senki földje.",
+        boundaryPoints: [
+          const LatLng(47.495, 19.065),
+          const LatLng(47.498, 19.080),
+          const LatLng(47.485, 19.085),
+          const LatLng(47.485, 19.070)
+        ],
+        difficultyLevel: 3,
+      ),
+    ];
+    notifyListeners();
   }
 }

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:latlong2/latlong.dart';
 
 enum CharacterClass {
@@ -531,24 +532,68 @@ class Quest {
       flavorText: json['flavor_text'],
       imageUrl: json['image_url'],
       startLocation: json['start_location'] != null
-          ? LatLng(json['start_location'][0].toDouble(), json['start_location'][1].toDouble())
+          ? (json['start_location'] is String 
+              ? (() { 
+                  final loc = jsonDecode(json['start_location']); 
+                  return LatLng(loc[0].toDouble(), loc[1].toDouble());
+                })()
+              : LatLng(json['start_location'][0].toDouble(), json['start_location'][1].toDouble()))
           : (json['location'] != null 
               ? LatLng(json['location'][0].toDouble(), json['location'][1].toDouble())
               : const LatLng(0, 0)),
-      stages: (json['stages'] as List?)
-          ?.map((s) => QuestStage.fromJson(s))
-          .toList() ?? [],
+      stages: _parseList(json['stages'], (x) => QuestStage.fromJson(x)),
       estimatedDistanceKm: (json['estimated_distance_km'] ?? 0.0).toDouble(),
       estimatedDurationMin: json['estimated_duration_min'] ?? 30,
       difficulty: json['difficulty'] ?? "Közepes",
       minLevel: json['min_level'],
       introSteps: (json['intro_steps'] as List?)?.map((s) => s as String).toList() ?? [],
-      objectives: (json['objectives'] as List?)
-          ?.map((o) => QuestObjective.fromJson(o))
-          .toList() ?? [],
+      objectives: _parseList(
+          json['objectives'], 
+          (x) => QuestObjective.fromJson(x),
+          fallback: (str) => QuestObjective(
+              id: "obj_${str.hashCode}", 
+              type: QuestObjectiveType.visit_zone, 
+              targetId: "auto", 
+              count: 1, 
+              description: str
+          )
+      ),
       rewardsSteps: json['rewards_steps'] ?? 0,
       starterZoneId: json['starter_zone_id'],
     );
+  }
+
+  static List<T> _parseList<T>(
+      dynamic field, 
+      T Function(Map<String, dynamic>) fromJson, 
+      {T Function(String)? fallback}
+  ) {
+      if (field == null) return [];
+      if (field is List) {
+        return field.map((item) {
+          if (item is String) {
+             try {
+               final decoded = jsonDecode(item);
+               if (decoded is Map<String, dynamic>) {
+                   return fromJson(decoded);
+               }
+               // If decoded is not map (e.g. primitive), check fallback
+             } catch (e) {
+               // Not JSON
+               if (fallback != null) return fallback(item);
+               print("Error decoding item string: $item");
+             }
+             if (fallback != null) return fallback(item);
+          }
+          if (item is Map<String, dynamic>) {
+              return fromJson(item);
+          }
+          // Best effort return (will likely fail cast if T is specific)
+          // actually map expects to return T.
+          throw FormatException("Invalid item type in list: ${item.runtimeType}");
+        }).toList();
+      }
+      return [];
   }
 }
 

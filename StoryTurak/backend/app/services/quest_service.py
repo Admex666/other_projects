@@ -1,5 +1,5 @@
 import logging
-from app.db.crud import create_quest
+from app.db.crud import create_quest, get_quest_by_id, create_encounter
 from app.models.schemas import Encounter, EncounterNode, EncounterChoice, EncounterType, EncounterNodeType
 from .story_service import STORY_DATA
 
@@ -8,24 +8,56 @@ logger = logging.getLogger(__name__)
 dynamic_encounters = []
 
 
-def create_dynamic_tutorial_quest(lat: float, lng: float) -> dict:
+def create_dynamic_tutorial_quest(lat: float, lng: float) -> tuple:
     """
     Creates a dynamic tutorial quest starting near the user's current location.
-    Stage 1 is a simple 'Location Wait' around 30-50m away.
-    Encounter is a 'Training Dummy' fight.
+    Stage 1 is a simple 'Location Wait' around 500m away in a random direction.
+    Returns: (quest_dict, encounter_dict)
     """
-    # Simple offset for stage 1 (approx 40-50m North-East)
-    stage_lat = lat + 0.0004 
-    stage_lng = lng + 0.0004
+    import random
+    import math
+    
+    # Generate random direction (0-360 degrees)
+    angle = random.uniform(0, 2 * math.pi)
+    
+    # 500 meters in degrees (approximate)
+    # 1 degree latitude ≈ 111km
+    distance_degrees = 500 / 111000.0  # ~0.0045
+    
+    # Calculate offset in latitude and longitude
+    # Longitude adjustment depends on latitude (cosine correction)
+    delta_lat = distance_degrees * math.cos(angle)
+    delta_lng = distance_degrees * math.sin(angle) / math.cos(math.radians(lat))
+    
+    stage_lat = lat + delta_lat
+    stage_lng = lng + delta_lng
     
     enc_id = "enc_tutorial_dummy"
-    # Create the encounter definition dynamically if needed 
-    # (In a real app we'd save this to DB, here we rely on the quest structure to implicitly define it 
-    # or ensure it's handled in resolve_encounter logic for special IDs)
-    
     quest_id = "quest_tutorial_01"
     
-    return {
+    # Define the Encounter
+    encounter_def = {
+        "id": enc_id,
+        "zone_id": "zone_tutorial", 
+        "title": "Célállomás",
+        "description": "Elérted a kijelölt pontot.",
+        "type": "story",
+        "location_lat": stage_lat,
+        "location_lon": stage_lng,
+        "definition": {
+            "start_node_id": "start",
+            "nodes": {
+                "start": { 
+                    "id": "start", 
+                    "type": "narrative", 
+                    "text": "Sikeresen megérkeztél a jelölt pontra. A szkennered rögzítette az adatokat.", 
+                    "buttonText": "Befejezés"
+                }
+            }
+        }
+    }
+    
+    quest_def = {
         "id": quest_id,
         "title": "Az Első Bevetés",
         "description": "A parancsnokság egy anomáliát észlelt a közeledben. Vizsgáld meg!",
@@ -33,7 +65,7 @@ def create_dynamic_tutorial_quest(lat: float, lng: float) -> dict:
         "image_url": "assets/mist_city_intro.png",
         "start_location": (lat, lng),
         "min_level": 1,
-        "objectives": ["Menj a jelölt ponthoz", "Győzd le a gyakorló bábut"],
+        "objectives": ["Menj a jelölt ponthoz", "Vizsgáld meg az anomáliát"],
         "rewards_steps": 100,
         "starter_zone_id": "zone_tutorial", 
         "stages": [
@@ -51,6 +83,8 @@ def create_dynamic_tutorial_quest(lat: float, lng: float) -> dict:
             "Ez a vizsgamunkád."
         ]
     }
+    
+    return (quest_def, encounter_def)
 
 def sync_stories_to_quests_v2():
     """
@@ -209,4 +243,7 @@ def seed_quests():
     }
     create_quest(q1)
     create_quest(q2)
+    
+    # NOTE: Tutorial quest is now created per-user during character creation
+    # No longer need universal repair logic that would overwrite custom coordinates
 # Trigger Reload

@@ -347,39 +347,51 @@ class _ExploreScreenState extends State<ExploreScreen> {
           Builder(
             builder: (context) {
               final service = context.watch<KeldorService>();
-              Encounter? closestEncounter;
-              double? minDistance;
-              
               const distanceCalc = Distance();
               
               // Determine target encounter for active quest
               String? activeBountyEncounterId;
               if (activeUserQuests.isNotEmpty) {
                   final uq = activeUserQuests.first;
-                  final qDef = service.allQuests.firstWhere((q) => q.id == uq.questId, orElse: () => service.allQuests.first);
-                  if (qDef.stages.isNotEmpty && uq.currentStageIndex < qDef.stages.length) {
-                      activeBountyEncounterId = qDef.stages[uq.currentStageIndex].encounterId;
+                  if (service.allQuests.isNotEmpty) {
+                      try {
+                          final qDef = service.allQuests.firstWhere((q) => q.id == uq.questId);
+                          if (qDef.stages.isNotEmpty && uq.currentStageIndex < qDef.stages.length) {
+                              activeBountyEncounterId = qDef.stages[uq.currentStageIndex].encounterId;
+                              debugPrint("🎯 Active Quest: ${qDef.title}, Looking for Encounter: $activeBountyEncounterId");
+                          }
+                      } catch (e) {
+                          // Quest definition not found
+                      }
                   }
               }
 
-              for (var e in service.nearbyEncounters) {
-                  final d = distanceCalc.as(LengthUnit.Meter, _userLocation, e.location);
-                  if (minDistance == null || d < minDistance) {
-                      minDistance = d;
-                      closestEncounter = e;
+              // Debug: Show all nearby encounters
+              debugPrint("📍 Nearby Encounters (${service.nearbyEncounters.length}): ${service.nearbyEncounters.map((e) => '${e.id} @ ${e.location}').join(', ')}");
+
+              // Check ALL nearby encounters for the active quest target
+              if (activeBountyEncounterId != null) {
+                  for (var e in service.nearbyEncounters) {
+                      if (e.id == activeBountyEncounterId) {
+                           final dist = distanceCalc.as(LengthUnit.Meter, _userLocation, e.location);
+                           debugPrint("✅ MATCHED Quest Encounter! ID: ${e.id}, Distance: ${dist.toStringAsFixed(1)}m");
+                           if (dist <= 200) {
+                               // Trigger found!
+                               if (!_triggeredEncounters.contains(e.id)) {
+                                   WidgetsBinding.instance.addPostFrameCallback((_) {
+                                       debugPrint("🚀 Auto-triggering Quest Encounter: ${e.id}");
+                                       _navigateToEncounter(e);
+                                   });
+                               }
+                               return const SizedBox.shrink();
+                           } else {
+                               debugPrint("⚠️ Too far! Need ${(dist - 200).toStringAsFixed(1)}m closer");
+                           }
+                      }
                   }
-              }
-
-              bool isNear = minDistance != null && minDistance <= 200;
-
-              // Auto-trigger if it's the active quest target
-              if (isNear && closestEncounter != null && activeBountyEncounterId != null && closestEncounter.id == activeBountyEncounterId) {
-                   if (!_triggeredEncounters.contains(closestEncounter.id)) {
-                       WidgetsBinding.instance.addPostFrameCallback((_) {
-                           _navigateToEncounter(closestEncounter!);
-                       });
-                   }
-                   return const SizedBox.shrink();
+                  if (service.nearbyEncounters.isNotEmpty) {
+                      debugPrint("❌ Quest Encounter NOT in nearby list!");
+                  }
               }
               
               return const SizedBox.shrink();

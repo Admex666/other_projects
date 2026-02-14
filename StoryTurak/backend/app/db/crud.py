@@ -265,6 +265,12 @@ def create_quest(q: dict):
          json.dumps(q.get("objectives", [])), q.get("rewards_steps", 100), json.dumps(q.get("rewards_items", [])), q.get("starter_zone_id"))
     )
 
+def create_encounter(e: dict):
+    execute_query(
+        "INSERT INTO encounters (id, zone_id, title, description, type, location_lat, location_lon, definition) VALUES (?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO UPDATE SET zone_id=excluded.zone_id, title=excluded.title, description=excluded.description, type=excluded.type, location_lat=excluded.location_lat, location_lon=excluded.location_lon, definition=excluded.definition",
+        (e["id"], e["zone_id"], e["title"], e["description"], e["type"], e["location_lat"], e["location_lon"], json.dumps(e["definition"]))
+    )
+
 def get_all_quests():
     rows = execute_query("SELECT * FROM quests")
     quests = []

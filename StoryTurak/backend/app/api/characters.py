@@ -13,7 +13,13 @@ def get_my_characters(current_user: dict = Depends(get_current_user)):
     return get_characters_by_user(current_user["id"])
 
 @router.post("/create", response_model=Character)
-def create_new_character(character_class: CharacterClass, name: str, current_user: dict = Depends(get_current_user)):
+def create_new_character(
+    character_class: CharacterClass, 
+    name: str, 
+    lat: float = 47.4979,  # Default to Budapest center if not provided
+    lon: float = 19.0402,
+    current_user: dict = Depends(get_current_user)
+):
     char_id = str(uuid.uuid4())
     new_char = {
         "id": char_id,
@@ -35,6 +41,54 @@ def create_new_character(character_class: CharacterClass, name: str, current_use
         "completed_quests": []
     }
     create_character(new_char)
+    
+    # Create and auto-accept tutorial quest with random location near character spawn
+    try:
+        from app.services.quest_service import create_dynamic_tutorial_quest, dynamic_encounters
+        from app.db.crud import accept_quest, create_encounter
+        from app.db.crud import execute_query
+        from app.models.schemas import Encounter, EncounterNode, EncounterType, EncounterNodeType
+        
+        # Create tutorial quest with character's spawn location
+        quest_data, enc_def = create_dynamic_tutorial_quest(lat, lon)
+        
+        # Save quest to database
+        execute_query(
+            "INSERT OR REPLACE INTO quests (id, title, description, definition) VALUES (?, ?, ?, ?)",
+            (quest_data["id"], quest_data["title"], quest_data["description"], str(quest_data))
+        )
+        
+        # Save encounter to database
+        create_encounter(enc_def)
+        
+        # CRITICAL: Add to dynamic_encounters so /world/nearby returns it
+        enc_obj = Encounter(
+            id=enc_def["id"],
+            title=enc_def["title"],
+            description=enc_def["description"],
+            type=EncounterType.STORY,
+            start_node_id=enc_def["definition"]["start_node_id"],
+            location=[enc_def["location_lat"], enc_def["location_lon"]],
+            nodes={
+                nid: EncounterNode(
+                    id=nid,
+                    type=EncounterNodeType.NARRATIVE,
+                    text=node["text"],
+                    button_text=node.get("buttonText")
+                ) for nid, node in enc_def["definition"]["nodes"].items()
+            },
+            zone_id=enc_def["zone_id"]
+        )
+        dynamic_encounters.append(enc_obj)
+        
+        # Auto-accept the quest
+        accept_quest(current_user["id"], "quest_tutorial_01")
+        
+    except Exception as e:
+        # Log but don't fail character creation if tutorial quest creation fails
+        import logging
+        logging.getLogger(__name__).warning(f"Failed to create/accept tutorial quest: {e}")
+    
     return Character(**new_char)
 
 @router.post("/{character_id}/visit-zone")

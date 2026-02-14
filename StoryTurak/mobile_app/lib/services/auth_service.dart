@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'api_service.dart';
+import 'keldor_service.dart';
 
 class AuthService extends ChangeNotifier {
   final _storage = const FlutterSecureStorage();
@@ -96,6 +97,16 @@ class AuthService extends ChangeNotifier {
     _username = null;
     await _storage.delete(key: _tokenKey);
     await _storage.delete(key: _usernameKey);
+    
+    // Clear KeldorService cache to prevent cross-account data leakage
+    try {
+      final keldorService = KeldorService();
+      keldorService.clearCache();
+    } catch (e) {
+      // Log but don't fail logout if cache clearing fails
+      print("Warning: Failed to clear K eldorService cache on logout: $e");
+    }
+    
     notifyListeners();
   }
 }

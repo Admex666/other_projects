@@ -221,6 +221,14 @@ def _migrate_gamification_columns(cursor):
     except: pass
     try: cursor.execute("ALTER TABLE characters ADD COLUMN xp INTEGER DEFAULT 0")
     except: pass
+    try: cursor.execute("ALTER TABLE characters ADD COLUMN character_class TEXT DEFAULT 'vigilante'")
+    except: pass
+    try: cursor.execute("ALTER TABLE characters ADD COLUMN max_hp INTEGER DEFAULT 10")
+    except: pass
+    try: cursor.execute("ALTER TABLE characters ADD COLUMN current_hp INTEGER DEFAULT 10")
+    except: pass
+    try: cursor.execute("ALTER TABLE characters ADD COLUMN stats TEXT DEFAULT '{}'")
+    except: pass
     
     # Items: Rarity, SetID, Effects
     try: cursor.execute("ALTER TABLE items ADD COLUMN rarity TEXT DEFAULT 'common'")

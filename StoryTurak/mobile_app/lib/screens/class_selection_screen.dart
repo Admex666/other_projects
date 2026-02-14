@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:geolocator/geolocator.dart';
 import '../services/auth_service.dart';
 import '../services/keldor_service.dart';
 import '../services/api_service.dart';
@@ -85,9 +86,27 @@ class ClassCard extends StatelessWidget {
     if (token == null) return;
 
     try {
+      // Get current location for tutorial quest spawn
+      double? userLat;
+      double? userLon;
+      try {
+        final position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.medium,
+          timeLimit: const Duration(seconds: 5),
+        );
+        userLat = position.latitude;
+        userLon = position.longitude;
+        debugPrint("📍 Got location for character creation: $userLat, $userLon");
+      } catch (e) {
+        debugPrint("⚠️ Failed to get location for character creation, using defaults: $e");
+        // Use Budapest center as fallback
+        userLat = 47.4979;
+        userLon = 19.0402;
+      }
+
       final baseUrl = await ApiService().getBaseUrl();
       final response = await http.post(
-        Uri.parse('$baseUrl/characters/create?character_class=$classId&name=$name'),
+        Uri.parse('$baseUrl/characters/create?character_class=$classId&name=$name&lat=$userLat&lon=$userLon'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',

@@ -113,6 +113,7 @@ def get_all_zones():
 
 def get_zone_encounters(zone_id):
     rows = execute_query("SELECT * FROM encounters WHERE zone_id = ?", (zone_id,))
+    print(f"🔍 get_zone_encounters({zone_id}): Found {len(rows)} rows", flush=True)
     res = []
     for r in rows:
         d = dict(r)
@@ -126,6 +127,7 @@ def get_zone_encounters(zone_id):
         d["start_node_id"] = definition.get("start_node_id", "")
         # Construct location list
         d["location"] = [d["location_lat"], d["location_lon"]]
+        print(f"   -> {d['id']} @ ({d['location_lat']}, {d['location_lon']})", flush=True)
         res.append(d)
     return res
 

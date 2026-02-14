@@ -190,15 +190,15 @@ class _MainScaffoldState extends State<MainScaffold> {
               title: Row(children: const [
                   Icon(Icons.warning_amber_rounded, color: KeldorTheme.primary),
                   SizedBox(width: 8),
-                  Text("BEJÖVŐ ADÁS", style: TextStyle(color: KeldorTheme.primary, fontWeight: FontWeight.bold))
+                  Text("ÜZENETED ÉRKEZETT", style: TextStyle(color: KeldorTheme.primary, fontWeight: FontWeight.bold))
               ]),
               content: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: const [
-                      Text("Ügynök! A rendszerünk sikeresen aktivált téged.", style: TextStyle(color: Colors.white)),
+                      Text("Ügynök! Sikeresen bekerültél a rendszerünkbe.", style: TextStyle(color: Colors.white)),
                       SizedBox(height: 12),
-                      Text("A szkennered egy alacsony szintű anomáliát észlelt a közvetlen közeledben.", style: TextStyle(color: Colors.white70)),
+                      Text("A készüléked egy alacsony szintű anomáliát észlelt a közvetlen közeledben.", style: TextStyle(color: Colors.white70)),
                       SizedBox(height: 12),
                       Text("Ez a vizsgamunkád. Menj oda, és semlegesítsd!", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                   ],

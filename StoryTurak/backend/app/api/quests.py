@@ -12,7 +12,7 @@ from app.db.crud import (
 from app.models.schemas import UserQuest, Quest, QuestStatus
 from app.services.loot_service import roll_loot
 from app.services.quest_service import create_dynamic_tutorial_quest
-from app.db.crud import create_quest # Need create_quest imported here too
+from app.db.crud import create_quest, create_encounter # Need create_quest and create_encounter imported here too
 
 logger = logging.getLogger(__name__)
 router = APIRouter(tags=["quests"])
@@ -54,6 +54,16 @@ def get_available_quests_endpoint(current_user: dict = Depends(get_current_user)
 @router.post("/quests/tutorial/init", response_model=UserQuest)
 def init_tutorial_quest(coords: dict, current_user: dict = Depends(get_current_user)):
     user_id = current_user["id"]
+    
+    lat = coords.get("lat", 47.4979)
+    lng = coords.get("lng", 19.0402)
+    
+    # Generate dynamic quest AND encounter
+    # CRITICAL FIX: Always ensure the encounter exists in the DB, even if the user already has the quest.
+    quest_data, encounter_data = create_dynamic_tutorial_quest(lat, lng)
+    create_quest(quest_data)
+    create_encounter(encounter_data)
+
     my_quests = get_user_quests(user_id)
     
     # If user has ANY quests, we assume tutorial is done or skipped
@@ -61,18 +71,6 @@ def init_tutorial_quest(coords: dict, current_user: dict = Depends(get_current_u
         # Return the first active one, or just the first one if none active
         return UserQuest(**my_quests[0])
         
-    lat = coords.get("lat", 47.4979)
-    lng = coords.get("lng", 19.0402)
-    
-    # Generate dynamic quest
-    quest_data = create_dynamic_tutorial_quest(lat, lng)
-    
-    # Save Quest definition to DB (idempotent usually, but here ID is static)
-    # We use a try-except or just create_quest handles existence? 
-    # crud.create_quest usually does INSERT OR REPLACE or similar. 
-    # Let's assume create_quest is safe to call.
-    create_quest(quest_data)
-    
     # Assign to user
     uq_id = str(uuid.uuid4())
     new_uq = {
