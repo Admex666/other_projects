@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
+import { Analytics } from "@vercel/analytics/next";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -27,6 +28,7 @@ export default function RootLayout({
     <html lang="hu" className={`${inter.variable} ${outfit.variable}`}>
       <body className="antialiased bg-background-dark text-foreground">
         {children}
+        <Analytics />
         <Script
           src="https://tally.so/widgets/embed.js"
           strategy="lazyOnload"
