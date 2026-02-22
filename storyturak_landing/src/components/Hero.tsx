@@ -22,7 +22,7 @@ const Hero = () => {
                     Napi 30 perc sétával akár havi <span className="text-secondary font-bold">4 000 kalóriát</span> is elégethetsz – és közben a karaktered fejlődik a játékban.
                 </p>
                 <TallyButton>
-                    Csatlakozz az Alapító Tagokhoz most
+                    Szeretnék játszva formálódni
                 </TallyButton>
                 <div className="mt-4 flex items-center justify-center gap-2 text-slate-400 text-sm md:text-base font-medium">
                     <span className="flex h-2 w-2">
