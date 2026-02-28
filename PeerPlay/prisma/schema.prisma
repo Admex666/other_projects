@@ -1,0 +1,114 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Organization {
+  id           String    @id @default(uuid())
+  name         String
+  industry     String?
+  orgStructure Json?
+  
+  users        User[]
+  sessions     Session[]
+}
+
+model User {
+  id             String       @id @default(uuid())
+  name           String
+  role           String?
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  teamMembership String?
+  
+  sessions             SessionParticipant[]
+  sentInteractions     Interaction[]        @relation("SentInteractions")
+  receivedInteractions Interaction[]        @relation("ReceivedInteractions")
+  surveyResponses      SurveyResponse[]     @relation("SurveyResponder")
+  surveyTargets        SurveyResponse[]     @relation("SurveyTarget")
+}
+
+model Scenario {
+  id              String    @id @default(uuid())
+  name            String
+  behavioralFocus String?
+  config          Json
+  version         String
+  
+  sessions        Session[]
+}
+
+model Session {
+  id             String       @id @default(uuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  scenarioId     String
+  scenario       Scenario     @relation(fields: [scenarioId], references: [id])
+  status         String       @default("draft") // draft, active, closed
+  createdAt      DateTime     @default(now())
+  
+  participants    SessionParticipant[]
+  rounds          Round[]
+  interactions    Interaction[]
+  surveyResponses SurveyResponse[]
+}
+
+model SessionParticipant {
+  id        String   @id @default(uuid())
+  sessionId String
+  session   Session  @relation(fields: [sessionId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  joinedAt  DateTime @default(now())
+  
+  @@unique([sessionId, userId])
+}
+
+model Round {
+  id        String   @id @default(uuid())
+  sessionId String
+  session   Session  @relation(fields: [sessionId], references: [id])
+  number    Int
+  state     String   @default("open") // open, closed
+  
+  interactions Interaction[]
+}
+
+model Interaction {
+  id           String   @id @default(uuid())
+  sessionId    String
+  session      Session  @relation(fields: [sessionId], references: [id])
+  roundId      String
+  round        Round    @relation(fields: [roundId], references: [id])
+  
+  fromUserId   String
+  fromUser     User     @relation("SentInteractions", fields: [fromUserId], references: [id])
+  toUserId     String?
+  toUser       User?    @relation("ReceivedInteractions", fields: [toUserId], references: [id])
+  toTeam       String?  // nullable if target is a specific user instead of a team
+  
+  type         String   // e.g., trade, info-share
+  resourceType String?
+  quantity     Int?
+  timestamp    DateTime @default(now())
+}
+
+model SurveyResponse {
+  id           String   @id @default(uuid())
+  sessionId    String
+  session      Session  @relation(fields: [sessionId], references: [id])
+  
+  userId       String
+  user         User     @relation("SurveyResponder", fields: [userId], references: [id])
+  
+  questionId   String
+  
+  targetUserId String?
+  targetUser   User?    @relation("SurveyTarget", fields: [targetUserId], references: [id])
+  
+  answer       Int      // e.g., Likert scale value
+}
