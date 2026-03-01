@@ -23,7 +23,7 @@ model User {
   role           String?
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
-  teamMembership String?
+  teamMembership String? // Deprecated, use SessionParticipant.teamId instead
   
   sessions             SessionParticipant[]
   sentInteractions     Interaction[]        @relation("SentInteractions")
@@ -44,6 +44,7 @@ model Scenario {
 
 model Session {
   id             String       @id @default(uuid())
+  joinCode       String       @unique
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
   scenarioId     String
@@ -55,6 +56,9 @@ model Session {
   rounds          Round[]
   interactions    Interaction[]
   surveyResponses SurveyResponse[]
+  teams           Team[]
+  contracts       Contract[]
+  alliances       Alliance[]
 }
 
 model SessionParticipant {
@@ -63,6 +67,10 @@ model SessionParticipant {
   session   Session  @relation(fields: [sessionId], references: [id])
   userId    String
   user      User     @relation(fields: [userId], references: [id])
+  
+  teamId    String?
+  team      Team?    @relation(fields: [teamId], references: [id])
+  
   joinedAt  DateTime @default(now())
   
   @@unique([sessionId, userId])
@@ -111,4 +119,63 @@ model SurveyResponse {
   targetUser   User?    @relation("SurveyTarget", fields: [targetUserId], references: [id])
   
   answer       Int      // e.g., Likert scale value
+}
+
+// --- GLOBAL EXCHANGE SPECIFIC MODELS ---
+
+model Team {
+  id             String   @id @default(uuid())
+  sessionId      String
+  session        Session  @relation(fields: [sessionId], references: [id])
+  
+  name           String   // e.g., "Team Alpha"
+  teamType       String   // e.g., "Alpha", "Beta", "Gamma"
+  
+  // Dynamic Game State
+  capital        Float    @default(0)
+  rawMaterial    Int      @default(0)
+  techLevel      Int      @default(1)
+  productionEff  Float    @default(1.0) // 1.0 = normal, 1.4 = +40%
+  
+  participants   SessionParticipant[]
+  
+  // Relations for contracts/alliances
+  contractsAsProvider Contract[] @relation("ProviderTeam")
+  contractsAsReceiver Contract[] @relation("ReceiverTeam")
+  
+  allianceId     String?
+  alliance       Alliance? @relation(fields: [allianceId], references: [id])
+}
+
+model Contract {
+  id             String   @id @default(uuid())
+  sessionId      String
+  session        Session  @relation(fields: [sessionId], references: [id])
+  
+  providerTeamId String
+  providerTeam   Team     @relation("ProviderTeam", fields: [providerTeamId], references: [id])
+  receiverTeamId String
+  receiverTeam   Team     @relation("ReceiverTeam", fields: [receiverTeamId], references: [id])
+  
+  type           String   // e.g., "TechLease", "RevenueShare", "Protection"
+  status         String   @default("active") // active, expired, broken
+  
+  // Terms
+  techLevelGiven Int?
+  revenuePercent Float?   // e.g., 0.40 for 40%
+  durationMintues Int?
+  
+  createdAt      DateTime @default(now())
+  expiresAt      DateTime?
+}
+
+model Alliance {
+  id             String   @id @default(uuid())
+  sessionId      String
+  session        Session  @relation(fields: [sessionId], references: [id])
+  
+  name           String
+  createdAt      DateTime @default(now())
+  
+  teams          Team[]
 }

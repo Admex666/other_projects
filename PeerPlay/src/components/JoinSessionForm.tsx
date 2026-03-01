@@ -4,21 +4,22 @@ import { useState } from 'react'
 import { joinSession } from '@/modules/session/actions'
 
 export default function JoinSessionForm() {
-    const [sessionId, setSessionId] = useState('')
-    const [userId, setUserId] = useState('')
+    const [joinCode, setJoinCode] = useState('')
+    const [username, setUsername] = useState('')
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
-    const [success, setSuccess] = useState(false)
+    const [successData, setSuccessData] = useState<{ joinCode: string, userId: string } | null>(null)
 
     const handleJoin = async (e: React.FormEvent) => {
         e.preventDefault()
         setLoading(true)
         setError(null)
-        setSuccess(false)
+        setSuccessData(null)
 
         try {
-            await joinSession(sessionId, userId)
-            setSuccess(true)
+            const { session, user } = await joinSession(joinCode, username)
+            setSuccessData({ joinCode: session.joinCode, userId: user.id })
+            window.location.href = `/play/${session.joinCode}?userId=${user.id}`
         } catch (e: any) {
             setError(e.message || 'Failed to join session')
         } finally {
@@ -26,13 +27,13 @@ export default function JoinSessionForm() {
         }
     }
 
-    if (success) {
+    if (successData) {
         return (
             <div className="text-center space-y-4">
                 <h2 className="text-xl font-semibold text-green-600">Successfully Joined!</h2>
-                <p className="text-gray-600">Waiting for HR to start the session in the lobby...</p>
+                <p className="text-gray-600">Redirecting to lobby...</p>
                 <button
-                    onClick={() => window.location.reload()}
+                    onClick={() => window.location.href = `/play/${successData.joinCode}?userId=${successData.userId}`}
                     className="text-indigo-600 underline text-sm mt-4 hover:text-indigo-800"
                 >
                     Check status
@@ -45,27 +46,27 @@ export default function JoinSessionForm() {
         <form onSubmit={handleJoin} className="space-y-4 w-full max-w-sm">
             {error && <div className="text-red-500 text-sm p-2 bg-red-50 rounded">{error}</div>}
             <div>
-                <label className="block text-sm font-medium text-gray-700">Session ID</label>
+                <label className="block text-sm font-medium text-gray-700">Room Code</label>
                 <input
                     type="text"
-                    value={sessionId}
-                    onChange={(e) => setSessionId(e.target.value)}
+                    value={joinCode}
+                    onChange={(e) => setJoinCode(e.target.value)}
                     required
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                    placeholder="e.g. 550e8400-e29b-41d4-a716-446655440000"
+                    maxLength={4}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 uppercase"
+                    placeholder="e.g. A1B2"
                 />
             </div>
             <div>
-                <label className="block text-sm font-medium text-gray-700">Your User ID</label>
+                <label className="block text-sm font-medium text-gray-700">Your Username</label>
                 <input
                     type="text"
-                    value={userId}
-                    onChange={(e) => setUserId(e.target.value)}
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
                     required
                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                    placeholder="e.g. 12345..."
+                    placeholder="e.g. Alice"
                 />
-                <p className="text-xs text-gray-500 mt-1">For MVP, copy a User UUID from the DB</p>
             </div>
 
             <button

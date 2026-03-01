@@ -9,13 +9,15 @@ export default async function SurveyPage({
     params,
     searchParams
 }: {
-    params: { sessionId: string }
-    searchParams: { userId: string }
+    params: Promise<{ sessionId: string }>
+    searchParams: Promise<{ userId: string }>
 }) {
-    const session = await getSessionDetails(params.sessionId)
+    const { sessionId } = await params;
+    const { userId } = await searchParams;
+    const session = await getSessionDetails(sessionId)
     if (!session) notFound()
 
-    const currentUserId = searchParams.userId
+    const currentUserId = userId
 
     if (!currentUserId) {
         return (

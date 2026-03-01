@@ -7,8 +7,9 @@ import StartSessionButton from '@/components/StartSessionButton'
 import NetworkGraph from '@/components/NetworkGraph'
 import { closeSession } from '@/modules/session/actions'
 
-export default async function SessionDetailPage({ params }: { params: { id: string } }) {
-    const session = await getSessionDetails(params.id)
+export default async function SessionDetailPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const session = await getSessionDetails(id)
 
     if (!session) {
         notFound()
@@ -17,7 +18,6 @@ export default async function SessionDetailPage({ params }: { params: { id: stri
     return (
         <div className="min-h-screen bg-gray-50 p-8">
             <div className="max-w-5xl mx-auto space-y-6">
-
                 <div className="flex items-center space-x-4 mb-8">
                     <Link href="/dashboard" className="text-gray-500 hover:text-gray-900">
                         &larr; Back to Dashboard
@@ -26,8 +26,10 @@ export default async function SessionDetailPage({ params }: { params: { id: stri
 
                 <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 flex justify-between items-start">
                     <div>
-                        <h1 className="text-3xl font-bold text-gray-900 mb-2">Session Details</h1>
-                        <p className="text-gray-600">ID: <span className="font-mono text-sm bg-gray-100 px-2 py-1 rounded">{session.id}</span></p>
+                        <h1 className="text-3xl font-bold text-gray-900 mb-2">Session: {session.scenario.name}</h1>
+                        <p className="text-gray-600">
+                            Room Code: <span className="font-mono text-2xl bg-indigo-100 text-indigo-900 border border-indigo-200 px-3 py-1 rounded tracking-widest font-black uppercase">{session.joinCode}</span>
+                        </p>
 
                         <div className="mt-6 space-y-2 text-sm text-gray-700">
                             <p><span className="font-semibold text-gray-900">Organization:</span> {session.organization.name}</p>

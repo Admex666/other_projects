@@ -423,3 +423,64 @@ Hanem:
 
 Ha ezt most jól rakod le,
 a rendszer 1 scenario-ról 10-re tud nőni újraírás nélkül.
+
+---
+
+# 8️⃣ FLAGSHIP SCENARIO: GLOBAL EXCHANGE
+
+## ⏱ Játékmenet & Beállítás
+- **Teljes idő:** 60–75 perc (10p onboarding, 35p játék, 15-20p debrief)
+- **Résztvevők:** 12–24 fő (1 HR admin + 1 facilitator)
+- **HR Beállítás (Pre-session):** Company name, Session name, Játék hossza, Random team allocation vagy manual.
+  - Opcionális: department tag (nem látszik játékban, reporthoz kell).
+
+## 1️⃣ LOBBY FÁZIS
+- Kód alapján (Room Code) csatlakozás.
+- Team Assignment: 5-6 csapat, 2-4 fő/csapat.
+- **Team Types (Titkos):**
+  - Alpha: High Tech, Low Raw
+  - Beta: High Raw, Low Tech
+  - Gamma: Balanced
+  - Delta: Financial Power
+  - Epsilon: Hidden Innovation
+
+## 2️⃣ INTRO & REGLES
+- Szabályok: No external communication, contracts binding, market values change. Game begins in 30 sec.
+
+## 3️⃣ STARTING STATE (Minute 0)
+- **Példa (Alpha):** Raw: 3, Tech: 5, Capital: 800, Efficiency: +40%
+- **Példa (Beta):** Raw: 15, Tech: 1, Capital: 200, Efficiency: -20%
+
+## 4️⃣ MAIN GAME LOOP (35 perc) & UI
+- **Dashboard:** Csapat info, Capital, Raw, Tech, Active Contracts, Alliance.
+- **Production Panel:** 
+  - Circle (1 Raw, 1 Tech, 100 Base Value)
+  - Triangle (2 Raw, 2 Tech, 250 Base Value)
+  - Square (1 Raw, 3 Tech, 180 Base Value)
+  - Hexagon (3 Raw, 4 Tech, 400 Base Value)
+  - Termelés cooldownnal, Value -> Capital.
+
+## 5️⃣ TRADE SYSTEM
+- **Instant Trade:** Raw <-> Capital, Tech lease <-> Revenue %
+- **Contract Trade:** Digitális szerződések pl. Tech Access <-> Future Revenue (Duration alapú). Nem visszavonható.
+
+## 6️⃣ ALLIANCE SYSTEM
+- 2-3 csapat. Internal free trade, +10% production bonus.
+- Külső tariff 10%. (Geopolitikai blokkok).
+
+## 7️⃣ EVENT ENGINE
+- Market Shock (Triangle value esik).
+- Resource Discovery (Váratlan nyersanyag egy csapatnak).
+- Secret Innovation (Titkos szorzó Token a hexához).
+- UN Aid (Pénz a legszegényebbnek repayment feltétellel).
+- Emergent mechanics: Cartel, Trade embargo, Protection deal, Annexation (Megnőtt wealth, de trust esik).
+
+## 🔟 GAME END & AUTOMATIKUS REPORT
+- Product termelés vége.
+- Network Graph: bridge-ek, izoláltak.
+- Wealth Ranking.
+- Behavioral Profile (aggression, trust, short-term vs long-term).
+
+## 1️⃣2️⃣ FACILITATED DEBRIEF
+- Mérés és facilitátori bepillantás rejtett adatokba.
+- "Ez nem csapatépítő játék. Ez egy szervezeti viselkedési labor."
