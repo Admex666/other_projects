@@ -1,9 +1,9 @@
-// Define shape production requirements and outputs based on Global Exchange rules
+// Define product production requirements and outputs based on Agriculture theme
 export const PRODUCTION_RECIPES = {
-    circle: { name: 'Circle', rawCost: 1, techReq: 1, baseValue: 100 },
-    triangle: { name: 'Triangle', rawCost: 2, techReq: 2, baseValue: 250 },
-    square: { name: 'Square', rawCost: 1, techReq: 3, baseValue: 180 },
-    hexagon: { name: 'Hexagon', rawCost: 3, techReq: 4, baseValue: 400 },
+    wheat: { name: 'Búza', rawCost: 1, techReq: 1, baseValue: 100 },
+    corn: { name: 'Kukorica', rawCost: 2, techReq: 2, baseValue: 250 },
+    sunflower: { name: 'Napraforgó', rawCost: 1, techReq: 3, baseValue: 180 },
+    wine: { name: 'Bor', rawCost: 3, techReq: 4, baseValue: 400 },
 }
 
-export type ShapeType = keyof typeof PRODUCTION_RECIPES
+export type ProductType = keyof typeof PRODUCTION_RECIPES

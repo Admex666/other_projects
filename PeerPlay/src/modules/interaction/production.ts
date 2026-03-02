@@ -3,69 +3,62 @@
 import prisma from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
 
-import { PRODUCTION_RECIPES, ShapeType } from './constants'
+import { PRODUCTION_RECIPES, ProductType } from './constants'
 
-export async function produceShape(sessionId: string, teamId: string, shapeType: ShapeType) {
-    const recipe = PRODUCTION_RECIPES[shapeType]
-    if (!recipe) throw new Error("Invalid shape type")
+export async function produceItem(sessionId: string, userId: string, productType: ProductType) {
+    const recipe = PRODUCTION_RECIPES[productType]
+    if (!recipe) throw new Error("Invalid product type")
 
     // Use transaction to ensure atomic deduct and credit
     const result = await prisma.$transaction(async (tx) => {
-        // Fetch team state
-        const team = await tx.team.findUnique({
-            where: { id: teamId }
+        // Fetch participant state
+        const participant = await tx.sessionParticipant.findUnique({
+            where: { sessionId_userId: { sessionId, userId } }
         })
 
-        if (!team) throw new Error("Team not found")
+        if (!participant) throw new Error("Participant not found in session")
 
         // Validate Requirements
-        if (team.rawMaterial < recipe.rawCost) {
-            throw new Error(`Not enough Raw Materials (Need ${recipe.rawCost}, Have ${team.rawMaterial})`)
+        if (participant.rawMaterial < recipe.rawCost) {
+            throw new Error(`Not enough Raw Materials (Need ${recipe.rawCost}, Have ${participant.rawMaterial})`)
         }
-        if (team.techLevel < recipe.techReq) {
-            throw new Error(`Tech Level too low (Need Level ${recipe.techReq}, Have Level ${team.techLevel})`)
+        if (participant.techLevel < recipe.techReq) {
+            throw new Error(`Tech Level too low (Need Level ${recipe.techReq}, Have Level ${participant.techLevel})`)
         }
 
-        // Calculate Revenue with Production Efficiency
-        const revenue = recipe.baseValue * team.productionEff
+        // Update Inventory Instead of Capital
+        const inventory = JSON.parse(participant.inventory || "{}")
+        inventory[productType] = (inventory[productType] || 0) + 1
 
-        // Update Team State
-        const updatedTeam = await tx.team.update({
-            where: { id: teamId },
+        // Update Participant State
+        const updatedParticipant = await tx.sessionParticipant.update({
+            where: { id: participant.id },
             data: {
-                rawMaterial: team.rawMaterial - recipe.rawCost,
-                capital: team.capital + revenue
+                rawMaterial: participant.rawMaterial - recipe.rawCost,
+                inventory: JSON.stringify(inventory)
             }
         })
 
-        // Log the production action (Interactions table used generically)
-        // Note: For MVP we log production as an 'internal' interaction
+        // Log the production action
         const session = await tx.session.findUnique({
             where: { id: sessionId },
             include: { rounds: { orderBy: { number: 'desc' }, take: 1 } }
         })
 
         if (session && session.rounds[0]) {
-            // Find a participant user id from the team to attribute the action to
-            const participant = await tx.sessionParticipant.findFirst({
-                where: { teamId: teamId }
+            await tx.interaction.create({
+                data: {
+                    sessionId: sessionId,
+                    roundId: session.rounds[0].id,
+                    fromUserId: userId,
+                    type: 'production',
+                    resourceType: productType,
+                    quantity: 1
+                }
             })
-
-            if (participant) {
-                await tx.interaction.create({
-                    data: {
-                        sessionId: sessionId,
-                        roundId: session.rounds[0].id,
-                        fromUserId: participant.userId,
-                        type: 'production',
-                        resourceType: shapeType,
-                        quantity: 1
-                    }
-                })
-            }
         }
 
-        return updatedTeam
+        return updatedParticipant
     })
 
     // Revalidate the play page so UI updates instantly

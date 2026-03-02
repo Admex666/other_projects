@@ -4,6 +4,8 @@ import useSWR from 'swr'
 import Link from 'next/link'
 import StartSessionButton from '@/components/StartSessionButton'
 import NetworkGraph from '@/components/NetworkGraph'
+import HRTeamAllocationPanel from '@/components/HRTeamAllocationPanel'
+import HRReportPanel from '@/components/HRReportPanel'
 import { getSessionDetails, closeSession } from '@/modules/session/actions'
 
 const fetcher = async (id: string) => {
@@ -71,6 +73,16 @@ export default function SessionDetailClient({ initialSessionData }: { initialSes
                     </div>
                 </div>
 
+                {/* HR Manual Team Allocation - only during draft */}
+                {session.status === 'draft' && (
+                    <HRTeamAllocationPanel
+                        sessionId={session.id}
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        participants={session.participants as any}
+                        teams={session.teams}
+                    />
+                )}
+
                 {/* Network Graph */}
                 {(session.status === 'active' || session.status === 'closed') && (
                     <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
@@ -86,6 +98,15 @@ export default function SessionDetailClient({ initialSessionData }: { initialSes
                             surveyResponses={session.surveyResponses}
                         />
                     </div>
+                )}
+                {/* Live Team Report - active or closed */}
+                {(session.status === 'active' || session.status === 'closed') && (
+                    <HRReportPanel
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        teams={session.teams as any}
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        participants={session.participants as any}
+                    />
                 )}
                 {/* Participants List */}
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">

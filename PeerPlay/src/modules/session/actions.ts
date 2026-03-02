@@ -2,8 +2,8 @@
 
 import prisma from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
-
 import { randomBytes } from 'crypto'
+import { TEAM_PROFILES } from './teamProfiles'
 
 export async function createSession(organizationId: string, scenarioId: string) {
     const joinCode = randomBytes(2).toString('hex').toUpperCase();
@@ -49,50 +49,61 @@ export async function startSession(sessionId: string) {
         })
 
         // --- GLOBAL EXCHANGE TEAM ALLOCATION ---
-        // Fetch all participants to allocate them
-        const participants = await tx.sessionParticipant.findMany({
-            where: { sessionId }
-        })
+        // Check if teams have already been manually created
+        const existingTeams = await tx.team.findMany({ where: { sessionId } })
 
-        // Define the 5 team profiles
+        // Define the 5 farm profiles
         const teamProfiles = [
-            { type: 'Alpha', name: 'Team Alpha', raw: 3, tech: 5, cap: 800, eff: 1.4 },
-            { type: 'Beta', name: 'Team Beta', raw: 15, tech: 1, cap: 200, eff: 0.8 },
-            { type: 'Gamma', name: 'Team Gamma', raw: 8, tech: 3, cap: 500, eff: 1.0 },
-            { type: 'Delta', name: 'Team Delta', raw: 5, tech: 2, cap: 1200, eff: 1.0 },
-            { type: 'Epsilon', name: 'Team Epsilon', raw: 10, tech: 4, cap: 400, eff: 1.2 },
+            { type: 'Alpha', name: 'Farm Alpha', raw: 3, tech: 5, cap: 800, eff: 1.4 },
+            { type: 'Beta', name: 'Farm Beta', raw: 15, tech: 1, cap: 200, eff: 0.8 },
+            { type: 'Gamma', name: 'Farm Gamma', raw: 8, tech: 3, cap: 500, eff: 1.0 },
+            { type: 'Delta', name: 'Farm Delta', raw: 5, tech: 2, cap: 1200, eff: 1.0 },
+            { type: 'Epsilon', name: 'Farm Epsilon', raw: 10, tech: 4, cap: 400, eff: 1.2 },
         ]
 
-        // Only create as many teams as needed based on participants (min 1 per team if we have few players, up to 5)
-        const numTeamsToCreate = Math.min(participants.length, 5)
-        const createdTeams = []
+        // Map team type -> profile for quick lookup
+        const profileByType: Record<string, typeof teamProfiles[0]> = {}
+        teamProfiles.forEach(p => { profileByType[p.type] = p })
 
-        for (let i = 0; i < numTeamsToCreate; i++) {
-            const profile = teamProfiles[i]
-            const team = await tx.team.create({
-                data: {
-                    sessionId,
-                    name: profile.name,
-                    teamType: profile.type,
-                    rawMaterial: profile.raw,
-                    techLevel: profile.tech,
-                    capital: profile.cap,
-                    productionEff: profile.eff
+        let teamMap: Record<string, { team: { id: string; teamType: string }, profile: typeof teamProfiles[0] }> = {}
+
+        if (existingTeams.length === 0) {
+            // No manual assignment yet: create teams and round-robin
+            const participants = await tx.sessionParticipant.findMany({ where: { sessionId } })
+            const createdTeams: typeof teamMap[string][] = []
+
+            for (let i = 0; i < Math.min(participants.length, 5); i++) {
+                const profile = teamProfiles[i]
+                const team = await tx.team.create({ data: { sessionId, name: profile.name, teamType: profile.type } })
+                createdTeams.push({ team, profile })
+                teamMap[team.id] = { team, profile }
+            }
+
+            const shuffled = [...participants].sort(() => 0.5 - Math.random())
+            for (let i = 0; i < shuffled.length; i++) {
+                const assignment = createdTeams[i % createdTeams.length]
+                await tx.sessionParticipant.update({
+                    where: { id: shuffled[i].id },
+                    data: { teamId: assignment.team.id, capital: assignment.profile.cap, rawMaterial: assignment.profile.raw, techLevel: assignment.profile.tech, productionEff: assignment.profile.eff, inventory: "{}" }
+                })
+            }
+        } else {
+            // Manual assignment: just initialize resources for each participant based on their team
+            existingTeams.forEach(t => {
+                const profile = profileByType[t.teamType]
+                if (profile) teamMap[t.id] = { team: t, profile }
+            })
+
+            const participants = await tx.sessionParticipant.findMany({ where: { sessionId } })
+            for (const p of participants) {
+                const assignment = p.teamId ? teamMap[p.teamId] : null
+                if (assignment) {
+                    await tx.sessionParticipant.update({
+                        where: { id: p.id },
+                        data: { capital: assignment.profile.cap, rawMaterial: assignment.profile.raw, techLevel: assignment.profile.tech, productionEff: assignment.profile.eff, inventory: "{}" }
+                    })
                 }
-            })
-            createdTeams.push(team)
-        }
-
-        // Shuffle participants for random allocation
-        const shuffled = [...participants].sort(() => 0.5 - Math.random());
-
-        // Assign participants to teams sequentially (Round-robin)
-        for (let i = 0; i < shuffled.length; i++) {
-            const team = createdTeams[i % createdTeams.length]
-            await tx.sessionParticipant.update({
-                where: { id: shuffled[i].id },
-                data: { teamId: team.id }
-            })
+            }
         }
 
         return activeSession
@@ -184,4 +195,27 @@ export async function getSessions() {
             }
         }
     })
+}
+
+
+/** Creates the 5 fixed farm team slots for a session (HR step before start) */
+export async function createTeamsForSession(sessionId: string) {
+    const existing = await prisma.team.count({ where: { sessionId } })
+    if (existing > 0) return
+
+    for (const p of TEAM_PROFILES) {
+        await prisma.team.create({
+            data: { sessionId, name: p.name, teamType: p.type }
+        })
+    }
+    revalidatePath(`/sessions/${sessionId}`)
+}
+
+/** HR manually assigns a participant to a specific team */
+export async function assignParticipantToTeam(participantId: string, teamId: string | null, sessionId: string) {
+    await prisma.sessionParticipant.update({
+        where: { id: participantId },
+        data: { teamId }
+    })
+    revalidatePath(`/sessions/${sessionId}`)
 }

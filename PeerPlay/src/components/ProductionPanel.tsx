@@ -1,34 +1,33 @@
 'use client'
 
 import { useState } from 'react'
-import { produceShape } from '@/modules/interaction/production'
-import { PRODUCTION_RECIPES, ShapeType } from '@/modules/interaction/constants'
+import { produceItem } from '@/modules/interaction/production'
+import { PRODUCTION_RECIPES, ProductType } from '@/modules/interaction/constants'
 
-export type Team = {
+export type Participant = {
     id: string;
+    userId: string;
     sessionId: string;
-    name: string;
-    teamType: string;
     capital: number;
     rawMaterial: number;
     techLevel: number;
     productionEff: number;
 }
 
-export default function ProductionPanel({ sessionId, myTeam }: { sessionId: string, myTeam: Team }) {
-    const [loading, setLoading] = useState<ShapeType | null>(null)
+export default function ProductionPanel({ sessionId, myParticipant }: { sessionId: string, myParticipant: Participant }) {
+    const [loading, setLoading] = useState<ProductType | null>(null)
     const [error, setError] = useState<string | null>(null)
     const [successMsg, setSuccessMsg] = useState<string | null>(null)
 
     const handleProduce = async (shape: string) => {
-        const shapeType = shape as ShapeType
-        setLoading(shapeType)
+        const productType = shape as ProductType
+        setLoading(productType)
         setError(null)
         setSuccessMsg(null)
 
         try {
-            await produceShape(sessionId, myTeam.id, shapeType)
-            setSuccessMsg(`Produced 1 ${PRODUCTION_RECIPES[shapeType].name} successfully!`)
+            await produceItem(sessionId, myParticipant.userId, productType)
+            setSuccessMsg(`Produced 1 ${PRODUCTION_RECIPES[productType].name} successfully!`)
             setTimeout(() => setSuccessMsg(null), 3000)
         } catch (err: any) {
             setError(err.message || 'Production failed')
@@ -46,9 +45,9 @@ export default function ProductionPanel({ sessionId, myTeam }: { sessionId: stri
             {successMsg && <div className="mb-4 text-green-700 bg-green-50 p-3 rounded-md text-sm font-medium border border-green-100">{successMsg}</div>}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {(Object.entries(PRODUCTION_RECIPES) as [ShapeType, typeof PRODUCTION_RECIPES[ShapeType]][]).map(([key, recipe]) => {
-                    const canAffordRaw = myTeam.rawMaterial >= recipe.rawCost;
-                    const canAffordTech = myTeam.techLevel >= recipe.techReq;
+                {(Object.entries(PRODUCTION_RECIPES) as [ProductType, typeof PRODUCTION_RECIPES[ProductType]][]).map(([key, recipe]) => {
+                    const canAffordRaw = myParticipant.rawMaterial >= recipe.rawCost;
+                    const canAffordTech = myParticipant.techLevel >= recipe.techReq;
                     const canProduce = canAffordRaw && canAffordTech;
 
                     return (
@@ -87,7 +86,7 @@ export default function ProductionPanel({ sessionId, myTeam }: { sessionId: stri
                 })}
             </div>
             <div className="mt-4 text-xs text-gray-400 text-right italic">
-                Production Efficiency: x{myTeam.productionEff}
+                Production Efficiency: x{myParticipant.productionEff}
             </div>
         </div>
     )

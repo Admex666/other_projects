@@ -30,6 +30,8 @@ model User {
   receivedInteractions Interaction[]        @relation("ReceivedInteractions")
   surveyResponses      SurveyResponse[]     @relation("SurveyResponder")
   surveyTargets        SurveyResponse[]     @relation("SurveyTarget")
+  sentTrades           TradeRequest[]       @relation("SentTrades")
+  receivedTrades       TradeRequest[]       @relation("ReceivedTrades")
 }
 
 model Scenario {
@@ -70,23 +72,14 @@ model SessionParticipant {
   teamId    String?
   team      Team?    @relation(fields: [teamId], references: [id])
   
-  // Individual Resources
+  // Dynamic Game State per Participant
   capital        Float    @default(0)
   rawMaterial    Int      @default(0)
   techLevel      Int      @default(1)
-  productionEff  Float    @default(1.0)
-  
-  // Individual Shape Inventory
-  circleCount    Int      @default(0)
-  triangleCount  Int      @default(0)
-  squareCount    Int      @default(0)
-  hexagonCount   Int      @default(0)
+  productionEff  Float    @default(1.0) // 1.0 = normal
+  inventory      String   @default("{}") // JSON string mapped to objects
   
   joinedAt  DateTime @default(now())
-  
-  // Relations for individual trades
-  sentTradeRequests   TradeRequest[] @relation("SentTradeRequests")
-  receivedTradeRequests TradeRequest[] @relation("ReceivedTradeRequests")
   
   @@unique([sessionId, userId])
 }
@@ -149,30 +142,22 @@ model Team {
   participants   SessionParticipant[]
 }
 
-// Bipolar Trade Request
 model TradeRequest {
-  id             String   @id @default(uuid())
-  sessionId      String
-  session        Session  @relation(fields: [sessionId], references: [id])
+  id                 String   @id @default(uuid())
+  sessionId          String
+  session            Session  @relation(fields: [sessionId], references: [id])
   
-  // The person offering the trade
-  senderId       String
-  sender         SessionParticipant @relation("SentTradeRequests", fields: [senderId], references: [id])
+  fromUserId         String
+  fromUser           User     @relation("SentTrades", fields: [fromUserId], references: [id])
+  toUserId           String
+  toUser             User     @relation("ReceivedTrades", fields: [toUserId], references: [id])
   
-  // The person receiving the request
-  receiverId     String
-  receiver       SessionParticipant @relation("ReceivedTradeRequests", fields: [receiverId], references: [id])
+  // JSON strings: { capital: 0, rawMaterial: 0, wheat: 0, ... }
+  offeredResources   String   @default("{}")
+  requestedResources String   @default("{}")
   
-  status         String   @default("pending") // pending, accepted, rejected, cancelled
-  
-  // What the sender is OFFERING
-  offerType      String   // 'capital', 'rawMaterial', 'techLevel', 'circle', 'triangle', 'square', 'hexagon'
-  offerQuantity  Int      @default(1)
-  
-  // What the sender is REQUESTING IN RETURN
-  requestType    String   // 'capital', 'rawMaterial', 'techLevel', 'circle', 'triangle', 'square', 'hexagon'
-  requestQuantity Int     @default(1)
-  
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  message            String?  // Optional note from the sender
+  status             String   @default("pending") // pending, accepted, rejected, cancelled
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 }
