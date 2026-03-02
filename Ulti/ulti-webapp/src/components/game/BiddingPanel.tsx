@@ -5,13 +5,19 @@ interface BiddingPanelProps {
     currentHighestBid: Bid | null
     onBid: (bidId: string) => void
     disabled?: boolean
+    isTenCards?: boolean
 }
 
-export function BiddingPanel({ currentHighestBid, onBid, disabled }: BiddingPanelProps) {
+export function BiddingPanel({ currentHighestBid, onBid, disabled, isTenCards }: BiddingPanelProps) {
     // Only show bids that are higher than the current highest, plus "Passz"
-    const availableOptions = AVAILABLE_BIDS.filter(
-        b => b.id === 'pass' || !currentHighestBid || b.baseValue > currentHighestBid.baseValue
-    )
+    const availableOptions = isTenCards
+        ? [
+            { id: 'take_talon', name: 'Felveszem', baseValue: 0, player_id: '', includesTrump: false },
+            { id: 'pass', name: 'Passz', baseValue: 0, player_id: '', includesTrump: false }
+        ]
+        : AVAILABLE_BIDS.filter(
+            b => b.id === 'pass' || !currentHighestBid || b.baseValue > currentHighestBid.baseValue
+        )
 
     return (
         <div className="bg-white/90 backdrop-blur-sm p-4 rounded-2xl shadow-2xl border-2 border-slate-200">

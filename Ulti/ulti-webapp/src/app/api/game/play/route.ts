@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
 import { Card } from '@/lib/game/deck'
 import { validatePlay } from '@/lib/game/rules'
+import { calculateGameScore } from '@/lib/game/scoring'
 
 export async function POST(request: Request) {
     try {
@@ -61,7 +62,7 @@ export async function POST(request: Request) {
         // Check if the trick is complete (3 cards played)
         if (nextState.currentTrick.length === 3) {
             // Determine the winner of the trick
-            const playedCards = nextState.currentTrick.map(t => t.card)
+            const playedCards = nextState.currentTrick.map((t: any) => t.card)
             const theLeadCard = playedCards[0]
 
             let winningCard = theLeadCard
@@ -102,8 +103,13 @@ export async function POST(request: Request) {
             // Check if game ended (everyone has 0 cards)
             if (nextState.hands[p1].length === 0 && nextState.hands[p2].length === 0 && nextState.hands[p3].length === 0) {
                 nextStatus = 'finished'
-                nextActivePlayerId = null // Game over
                 // Here we would call the scoring service logic: calculateGameScore
+                nextState.finalResult = calculateGameScore(
+                    nextState,
+                    game.current_bid,
+                    game.trump_suit,
+                    p1, p2, p3
+                )
             }
         }
 

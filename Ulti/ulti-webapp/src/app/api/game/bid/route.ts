@@ -18,13 +18,16 @@ export async function POST(request: Request) {
         if (game.status !== 'bidding') return NextResponse.json({ error: 'Nem licitálási fázis van!' }, { status: 400 })
         if (game.active_player_id !== user.id) return NextResponse.json({ error: 'Nem te jössz!' }, { status: 403 })
 
-        const newBidObj = AVAILABLE_BIDS.find(b => b.id === bidId)
-        if (!newBidObj) return NextResponse.json({ error: 'Érvénytelen licitálási kód' }, { status: 400 })
+        let newBidObj: Bid | undefined;
+        let currentHighestBid: Bid | null = game.current_bid as Bid | null;
 
-        const currentHighestBid = game.current_bid as Bid | null
+        if (bidId !== 'take_talon') {
+            newBidObj = AVAILABLE_BIDS.find(b => b.id === bidId)
+            if (!newBidObj) return NextResponse.json({ error: 'Érvénytelen licitálási kód' }, { status: 400 })
 
-        if (!isValidNextBid(currentHighestBid, newBidObj)) {
-            return NextResponse.json({ error: 'A licitnek nagyobbnak kell lennie az eddiginél!' }, { status: 400 })
+            if (!isValidNextBid(currentHighestBid, newBidObj)) {
+                return NextResponse.json({ error: 'A licitnek nagyobbnak kell lennie az eddiginél!' }, { status: 400 })
+            }
         }
 
         let nextState = { ...game.state }
@@ -57,7 +60,29 @@ export async function POST(request: Request) {
             nextState.talon = droppedCards // Set the talon on the table
         }
 
-        if (newBidObj.id === 'pass') {
+        // Special action: Take Talon
+        if (bidId === 'take_talon') {
+            if (playerHand.length !== 10) {
+                return NextResponse.json({ error: 'Csak 10 lappal lehet felvenni a talont!' }, { status: 400 })
+            }
+            if (!nextState.talon || nextState.talon.length !== 2) {
+                return NextResponse.json({ error: 'Nincs elérhető talon az asztalon!' }, { status: 400 })
+            }
+            // Add talon cards to player's hand and clear the current talon
+            nextState.hands[user.id] = [...playerHand, ...nextState.talon]
+            nextState.talon = []
+
+            // The active player stays the SAME because they now have 12 cards and must drop 2 to bid.
+            const { error: updateError } = await supabase
+                .from('games')
+                .update({ state: nextState }) // only state changes
+                .eq('id', gameId)
+
+            if (updateError) throw updateError
+            return NextResponse.json({ success: true, status: nextStatus, active_player_id: nextActivePlayerId, tookTalon: true }, { status: 200 })
+        }
+
+        if (newBidObj && newBidObj.id === 'pass') {
             // Player passes
             nextState.biddingHistory.push({ player_id: user.id, bid: 'pass' })
 
@@ -65,9 +90,16 @@ export async function POST(request: Request) {
             // For simplicity: if 2 people passed in a row and there is an active bid, bidding ends.
             const passes = nextState.biddingHistory.slice(-2).filter((h: any) => h.bid === 'pass').length
             if (passes >= 2 && currentHighestBid) {
-                nextStatus = 'playing'
-                // The person who won the bid starts the first trick
+                // The person who won the bid is now acting
                 nextActivePlayerId = currentHighestBid.player_id
+
+                if (currentHighestBid.includesTrump) {
+                    // Need to select a trump suit
+                    nextStatus = 'trump_selection'
+                } else {
+                    // Betli or Durchmars: trump_suit is implicitly null. Skip selection.
+                    nextStatus = 'announce'
+                }
             } else {
                 nextActivePlayerId = getNextPlayer(user.id)
                 // If the next player has 10 cards, and talon is on the table, they can pick it up.
@@ -75,7 +107,7 @@ export async function POST(request: Request) {
             }
         } else {
             // Register the new bid
-            const finalBid: Bid = { ...newBidObj, player_id: user.id }
+            const finalBid: Bid = { ...newBidObj as Bid, player_id: user.id }
             nextState.biddingHistory.push({ player_id: user.id, bid: finalBid })
 
             // Move to next player (they can pass or grab the talon and bid higher)
@@ -89,7 +121,7 @@ export async function POST(request: Request) {
             .from('games')
             .update({
                 state: nextState,
-                current_bid: newBidObj.id !== 'pass' ? { ...newBidObj, player_id: user.id } : game.current_bid,
+                current_bid: newBidObj?.id !== 'pass' && newBidObj ? { ...newBidObj, player_id: user.id } : game.current_bid,
                 status: nextStatus,
                 active_player_id: nextActivePlayerId
             })
@@ -100,7 +132,7 @@ export async function POST(request: Request) {
             throw updateError
         }
 
-        return NextResponse.json({ success: true, status: nextStatus }, { status: 200 })
+        return NextResponse.json({ success: true, status: nextStatus, active_player_id: nextActivePlayerId }, { status: 200 })
 
     } catch (err: any) {
         return NextResponse.json({ error: err.message }, { status: 500 })

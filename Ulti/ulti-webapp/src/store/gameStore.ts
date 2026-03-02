@@ -1,8 +1,9 @@
 import { create } from 'zustand'
 import { Card } from '@/lib/game/deck'
 import { Bid } from '@/lib/game/rules'
+import { GameResult } from '@/lib/game/scoring'
 
-export type GameStatus = 'dealing' | 'bidding' | 'playing' | 'finished'
+export type GameStatus = 'dealing' | 'bidding' | 'trump_selection' | 'announce' | 'playing' | 'finished'
 
 export interface TrickCard {
     player_id: string
@@ -13,8 +14,11 @@ export interface GameStateData {
     hands?: Record<string, Card[]>  // Usually only contains OUR hand securely
     talon?: Card[]
     biddingHistory?: { player_id: string, bid: Bid | 'pass' }[]
+    announcements?: { player_id: string, type: '20' | '40', suit: string }[]
+    doubles?: { player_id: string, type: 'kontra' | 'rekontra' | 'szubkontra' | 'hirskontra' | 'mordkontra' | 'fedak_sari' }[]
     currentTrick?: TrickCard[]
     tricksWon?: { winner: string, cards: TrickCard[] }[]
+    finalResult?: GameResult
 }
 
 export interface Game {
