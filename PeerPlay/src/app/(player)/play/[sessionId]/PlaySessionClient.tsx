@@ -1,6 +1,7 @@
 'use client'
 
-import { redirect } from 'next/navigation'
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import TradeActionForm from '@/components/TradeActionForm'
 import ProductionPanel from '@/components/ProductionPanel'
 import { getSessionDetails } from '@/modules/session/actions'
@@ -21,6 +22,8 @@ export default function PlaySessionClient({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     initialSessionData: any
 }) {
+    const router = useRouter()
+
     // SWR hook for real-time polling every 3 seconds inside active views 
     const { data: sessionData } = useSWR(sessionId, fetcher, {
         fallbackData: initialSessionData,
@@ -29,6 +32,12 @@ export default function PlaySessionClient({
     })
 
     const session = sessionData
+
+    useEffect(() => {
+        if (session && session.status === 'closed' && initialUserId) {
+            router.push(`/survey/${session.id}?userId=${initialUserId}`)
+        }
+    }, [session, initialUserId, router])
 
     if (!session) return <div>Loading session...</div>
 
@@ -41,10 +50,6 @@ export default function PlaySessionClient({
                 <p>Please join the session through the Join page to get a valid link.</p>
             </div>
         )
-    }
-
-    if (session.status === 'closed') {
-        redirect(`/survey/${session.id}?userId=${currentUserId}`)
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

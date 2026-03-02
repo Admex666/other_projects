@@ -57,8 +57,7 @@ model Session {
   interactions    Interaction[]
   surveyResponses SurveyResponse[]
   teams           Team[]
-  contracts       Contract[]
-  alliances       Alliance[]
+  tradeRequests   TradeRequest[]
 }
 
 model SessionParticipant {
@@ -71,7 +70,23 @@ model SessionParticipant {
   teamId    String?
   team      Team?    @relation(fields: [teamId], references: [id])
   
+  // Individual Resources
+  capital        Float    @default(0)
+  rawMaterial    Int      @default(0)
+  techLevel      Int      @default(1)
+  productionEff  Float    @default(1.0)
+  
+  // Individual Shape Inventory
+  circleCount    Int      @default(0)
+  triangleCount  Int      @default(0)
+  squareCount    Int      @default(0)
+  hexagonCount   Int      @default(0)
+  
   joinedAt  DateTime @default(now())
+  
+  // Relations for individual trades
+  sentTradeRequests   TradeRequest[] @relation("SentTradeRequests")
+  receivedTradeRequests TradeRequest[] @relation("ReceivedTradeRequests")
   
   @@unique([sessionId, userId])
 }
@@ -131,51 +146,33 @@ model Team {
   name           String   // e.g., "Team Alpha"
   teamType       String   // e.g., "Alpha", "Beta", "Gamma"
   
-  // Dynamic Game State
-  capital        Float    @default(0)
-  rawMaterial    Int      @default(0)
-  techLevel      Int      @default(1)
-  productionEff  Float    @default(1.0) // 1.0 = normal, 1.4 = +40%
-  
   participants   SessionParticipant[]
-  
-  // Relations for contracts/alliances
-  contractsAsProvider Contract[] @relation("ProviderTeam")
-  contractsAsReceiver Contract[] @relation("ReceiverTeam")
-  
-  allianceId     String?
-  alliance       Alliance? @relation(fields: [allianceId], references: [id])
 }
 
-model Contract {
+// Bipolar Trade Request
+model TradeRequest {
   id             String   @id @default(uuid())
   sessionId      String
   session        Session  @relation(fields: [sessionId], references: [id])
   
-  providerTeamId String
-  providerTeam   Team     @relation("ProviderTeam", fields: [providerTeamId], references: [id])
-  receiverTeamId String
-  receiverTeam   Team     @relation("ReceiverTeam", fields: [receiverTeamId], references: [id])
+  // The person offering the trade
+  senderId       String
+  sender         SessionParticipant @relation("SentTradeRequests", fields: [senderId], references: [id])
   
-  type           String   // e.g., "TechLease", "RevenueShare", "Protection"
-  status         String   @default("active") // active, expired, broken
+  // The person receiving the request
+  receiverId     String
+  receiver       SessionParticipant @relation("ReceivedTradeRequests", fields: [receiverId], references: [id])
   
-  // Terms
-  techLevelGiven Int?
-  revenuePercent Float?   // e.g., 0.40 for 40%
-  durationMintues Int?
+  status         String   @default("pending") // pending, accepted, rejected, cancelled
+  
+  // What the sender is OFFERING
+  offerType      String   // 'capital', 'rawMaterial', 'techLevel', 'circle', 'triangle', 'square', 'hexagon'
+  offerQuantity  Int      @default(1)
+  
+  // What the sender is REQUESTING IN RETURN
+  requestType    String   // 'capital', 'rawMaterial', 'techLevel', 'circle', 'triangle', 'square', 'hexagon'
+  requestQuantity Int     @default(1)
   
   createdAt      DateTime @default(now())
-  expiresAt      DateTime?
-}
-
-model Alliance {
-  id             String   @id @default(uuid())
-  sessionId      String
-  session        Session  @relation(fields: [sessionId], references: [id])
-  
-  name           String
-  createdAt      DateTime @default(now())
-  
-  teams          Team[]
+  updatedAt      DateTime @updatedAt
 }

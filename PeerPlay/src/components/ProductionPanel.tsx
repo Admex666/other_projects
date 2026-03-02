@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { produceShape, PRODUCTION_RECIPES, ShapeType } from '@/modules/interaction/production'
+import { produceShape } from '@/modules/interaction/production'
+import { PRODUCTION_RECIPES, ShapeType } from '@/modules/interaction/constants'
 
 export type Team = {
     id: string;
