@@ -46,7 +46,7 @@ export default function PlaySessionClient({
         { refreshInterval: 3000 }
     )
 
-    const session = sessionData
+    const session = sessionData as any
 
     useEffect(() => {
         if (session && session.status === 'closed' && initialUserId) {
@@ -119,102 +119,114 @@ export default function PlaySessionClient({
                         </div>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-                        {/* Left Column: Resources & Production */}
-                        <div className="md:col-span-1 flex flex-col space-y-6">
-                            {/* Resources / Me view */}
-                            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center text-center">
-                                {myParticipant ? (
-                                    <div className="w-full">
-                                        <div className="w-full bg-slate-900 text-white rounded-t-lg p-3 font-black tracking-widest uppercase border-b-4 border-slate-700">
-                                            {myTeam ? myTeam.name : 'Unknown Team'}
-                                        </div>
-                                        <div className="bg-slate-50 border-x border-b border-slate-200 rounded-b-lg p-4 space-y-3 shadow-inner">
-                                            <div className="flex justify-between items-center p-2 bg-white rounded border shadow-sm">
-                                                <span className="font-medium text-green-800">💰 Tőke</span>
-                                                <span className="font-bold text-green-600">${myParticipant.capital.toLocaleString()}</span>
-                                            </div>
-                                            <div className="flex justify-between items-center p-2 bg-white rounded border shadow-sm">
-                                                <span className="font-medium text-amber-800">🌱 Vetőmag</span>
-                                                <span className="font-bold text-amber-600">{myParticipant.rawMaterial}</span>
-                                            </div>
-                                            <div className="flex justify-between items-center p-2 bg-white rounded border shadow-sm">
-                                                <span className="font-medium text-blue-800">⚙️ Gép (Tech)</span>
-                                                <span className="font-bold text-blue-600">{myParticipant.techLevel}</span>
-                                            </div>
-                                        </div>
+                    <>
+                        {!session.isRoundActive && (
+                            <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded mb-6 shadow-sm">
+                                <div className="flex">
+                                    <div className="ml-3">
+                                        <p className="text-sm text-yellow-700 font-bold">⏳ Várakozás a következő körre...</p>
+                                        <p className="text-xs text-yellow-600 mt-1">A játék jelenleg szünetel. Kereskedni és termelni csak akkor lehet, ha a HR elindítja a kört.</p>
                                     </div>
-                                ) : (
-                                    <p className="text-red-500">Error: Missing participant data.</p>
-                                )}
+                                </div>
+                            </div>
+                        )}
+                        <div className={`grid grid-cols-1 md:grid-cols-3 gap-6 ${!session.isRoundActive ? 'opacity-60 pointer-events-none select-none filter grayscale-[30%] transition-all duration-500' : ''}`}>
+
+                            {/* Left Column: Resources & Production */}
+                            <div className="md:col-span-1 flex flex-col space-y-6">
+                                {/* Resources / Me view */}
+                                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center text-center">
+                                    {myParticipant ? (
+                                        <div className="w-full">
+                                            <div className="w-full bg-slate-900 text-white rounded-t-lg p-3 font-black tracking-widest uppercase border-b-4 border-slate-700">
+                                                {myTeam ? myTeam.name : 'Unknown Team'}
+                                            </div>
+                                            <div className="bg-slate-50 border-x border-b border-slate-200 rounded-b-lg p-4 space-y-3 shadow-inner">
+                                                <div className="flex justify-between items-center p-2 bg-white rounded border shadow-sm">
+                                                    <span className="font-medium text-green-800">💰 Tőke</span>
+                                                    <span className="font-bold text-green-600">${myParticipant.capital.toLocaleString()}</span>
+                                                </div>
+                                                <div className="flex justify-between items-center p-2 bg-white rounded border shadow-sm">
+                                                    <span className="font-medium text-amber-800">🌱 Vetőmag</span>
+                                                    <span className="font-bold text-amber-600">{myParticipant.rawMaterial}</span>
+                                                </div>
+                                                <div className="flex justify-between items-center p-2 bg-white rounded border shadow-sm">
+                                                    <span className="font-medium text-blue-800">⚙️ Gép (Tech)</span>
+                                                    <span className="font-bold text-blue-600">{myParticipant.techLevel}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <p className="text-red-500">Error: Missing participant data.</p>
+                                    )}
+                                </div>
+
+                                {/* Production Panel */}
+                                {myParticipant && <ProductionPanel sessionId={session.id} myParticipant={myParticipant} />}
+                                {myParticipant && <InventoryPanel sessionId={session.id} userId={currentUserId} inventoryJson={myParticipant.inventory} />}
                             </div>
 
-                            {/* Production Panel */}
-                            {myParticipant && <ProductionPanel sessionId={session.id} myParticipant={myParticipant} />}
-                            {myParticipant && <InventoryPanel sessionId={session.id} userId={currentUserId} inventoryJson={myParticipant.inventory} />}
+                            {/* Right Column: Tabbed Trade + Bank UI */}
+                            <div className="md:col-span-2 space-y-0">
+                                {/* Tab headers */}
+                                <div className="flex border-b border-gray-200 mb-0">
+                                    {(['trade', 'inbox', 'bank'] as const).map(tab => {
+                                        const pendingCount = tab === 'inbox'
+                                            ? (trades ?? []).filter((t: any) => t.toUserId === currentUserId && t.status === 'pending').length
+                                            : 0
+                                        const labels: Record<string, string> = { trade: '🤝 Trade', inbox: '📬 Ajánlatok', bank: '🏦 Bank' }
+                                        return (
+                                            <button
+                                                key={tab}
+                                                onClick={() => setActiveTab(tab)}
+                                                className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-colors ${activeTab === tab
+                                                    ? 'border-indigo-600 text-indigo-600'
+                                                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                                                    }`}
+                                            >
+                                                {labels[tab]}
+                                                {pendingCount > 0 && (
+                                                    <span className="ml-1.5 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">{pendingCount}</span>
+                                                )}
+                                            </button>
+                                        )
+                                    })}
+                                </div>
+
+                                {/* Tab content */}
+                                <div className="mt-4 space-y-4">
+                                    {activeTab === 'trade' && myParticipant && (
+                                        <TradeOfferForm
+                                            sessionId={session.id}
+                                            currentUserId={currentUserId}
+                                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                            myParticipant={myParticipant as any}
+                                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                            otherParticipants={otherParticipants as any}
+                                            onSent={() => setActiveTab('inbox')}
+                                        />
+                                    )}
+                                    {activeTab === 'inbox' && (
+                                        <PendingTradesPanel
+                                            sessionId={session.id}
+                                            currentUserId={currentUserId}
+                                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                            trades={(trades ?? []) as any}
+                                        />
+                                    )}
+                                    {activeTab === 'bank' && myParticipant && (
+                                        <BankPanel
+                                            sessionId={session.id}
+                                            userId={currentUserId}
+                                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                            participant={myParticipant as any}
+                                        />
+                                    )}
+                                </div>
+                            </div>
+
                         </div>
-
-                        {/* Right Column: Tabbed Trade + Bank UI */}
-                        <div className="md:col-span-2 space-y-0">
-                            {/* Tab headers */}
-                            <div className="flex border-b border-gray-200 mb-0">
-                                {(['trade', 'inbox', 'bank'] as const).map(tab => {
-                                    const pendingCount = tab === 'inbox'
-                                        ? (trades ?? []).filter((t: any) => t.toUserId === currentUserId && t.status === 'pending').length
-                                        : 0
-                                    const labels: Record<string, string> = { trade: '🤝 Trade', inbox: '📬 Ajánlatok', bank: '🏦 Bank' }
-                                    return (
-                                        <button
-                                            key={tab}
-                                            onClick={() => setActiveTab(tab)}
-                                            className={`px-4 py-2.5 text-sm font-bold border-b-2 transition-colors ${activeTab === tab
-                                                ? 'border-indigo-600 text-indigo-600'
-                                                : 'border-transparent text-gray-500 hover:text-gray-700'
-                                                }`}
-                                        >
-                                            {labels[tab]}
-                                            {pendingCount > 0 && (
-                                                <span className="ml-1.5 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">{pendingCount}</span>
-                                            )}
-                                        </button>
-                                    )
-                                })}
-                            </div>
-
-                            {/* Tab content */}
-                            <div className="mt-4 space-y-4">
-                                {activeTab === 'trade' && myParticipant && (
-                                    <TradeOfferForm
-                                        sessionId={session.id}
-                                        currentUserId={currentUserId}
-                                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                                        myParticipant={myParticipant as any}
-                                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                                        otherParticipants={otherParticipants as any}
-                                        onSent={() => setActiveTab('inbox')}
-                                    />
-                                )}
-                                {activeTab === 'inbox' && (
-                                    <PendingTradesPanel
-                                        sessionId={session.id}
-                                        currentUserId={currentUserId}
-                                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                                        trades={(trades ?? []) as any}
-                                    />
-                                )}
-                                {activeTab === 'bank' && myParticipant && (
-                                    <BankPanel
-                                        sessionId={session.id}
-                                        userId={currentUserId}
-                                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                                        participant={myParticipant as any}
-                                    />
-                                )}
-                            </div>
-                        </div>
-
-                    </div>
+                    </>
                 )}
             </div>
         </div>

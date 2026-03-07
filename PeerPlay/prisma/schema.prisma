@@ -54,6 +54,9 @@ model Session {
   status         String       @default("draft") // draft, active, closed
   createdAt      DateTime     @default(now())
   
+  currentRound   Int          @default(1)
+  isRoundActive  Boolean      @default(false)
+  
   participants    SessionParticipant[]
   rounds          Round[]
   interactions    Interaction[]

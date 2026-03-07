@@ -37,7 +37,7 @@ export async function startSession(sessionId: string) {
     const updatedSession = await prisma.$transaction(async (tx) => {
         const activeSession = await tx.session.update({
             where: { id: sessionId },
-            data: { status: 'active' },
+            data: { status: 'active', currentRound: 1, isRoundActive: true },
         })
 
         await tx.round.create({
@@ -218,4 +218,41 @@ export async function assignParticipantToTeam(participantId: string, teamId: str
         data: { teamId }
     })
     revalidatePath(`/sessions/${sessionId}`)
+}
+
+export async function startRound(sessionId: string, roundNumber: number) {
+    const session = await prisma.$transaction(async (tx) => {
+        await tx.round.create({
+            data: { sessionId, number: roundNumber, state: 'open' }
+        })
+        return tx.session.update({
+            where: { id: sessionId },
+            data: { currentRound: roundNumber, isRoundActive: true }
+        })
+    })
+    revalidatePath(`/sessions/${sessionId}`)
+    return session
+}
+
+export async function closeRound(sessionId: string) {
+    const session = await prisma.$transaction(async (tx) => {
+        // Close any open rounds
+        await tx.round.updateMany({
+            where: { sessionId, state: 'open' },
+            data: { state: 'closed' }
+        })
+        
+        // Invalidate pending trades when a round closes
+        await tx.tradeRequest.updateMany({
+            where: { sessionId, status: 'pending' },
+            data: { status: 'cancelled' }
+        })
+        
+        return tx.session.update({
+            where: { id: sessionId },
+            data: { isRoundActive: false }
+        })
+    })
+    revalidatePath(`/sessions/${sessionId}`)
+    return session
 }

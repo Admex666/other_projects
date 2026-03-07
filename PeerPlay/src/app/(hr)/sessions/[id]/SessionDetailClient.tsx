@@ -6,7 +6,7 @@ import StartSessionButton from '@/components/StartSessionButton'
 import NetworkGraph from '@/components/NetworkGraph'
 import HRTeamAllocationPanel from '@/components/HRTeamAllocationPanel'
 import HRReportPanel from '@/components/HRReportPanel'
-import { getSessionDetails, closeSession } from '@/modules/session/actions'
+import { getSessionDetails, closeSession, startRound, closeRound } from '@/modules/session/actions'
 
 const fetcher = async (id: string) => {
     return await getSessionDetails(id)
@@ -19,7 +19,7 @@ export default function SessionDetailClient({ initialSessionData }: { initialSes
         revalidateOnFocus: true
     })
 
-    const session = sessionData
+    const session = sessionData as any
 
     if (!session) return <div>Loading...</div>
 
@@ -59,14 +59,31 @@ export default function SessionDetailClient({ initialSessionData }: { initialSes
                         )}
                         {session.status === 'active' && (
                             <div className="flex flex-col items-end space-y-2">
-                                <span className="px-4 py-2 bg-green-500 text-white font-bold rounded-lg shadow">
-                                    Round {session.rounds[0]?.number} Active
+                                <span className={`px-4 py-2 font-bold rounded-lg shadow ${session.isRoundActive ? 'bg-green-500 text-white' : 'bg-yellow-500 text-white'}`}>
+                                    Round {session.currentRound} {session.isRoundActive ? 'Active' : 'Paused'}
                                 </span>
+                                <div className="flex gap-2">
+                                    {!session.isRoundActive ? (
+                                        <button
+                                            onClick={async () => { await startRound(session.id, session.currentRound); }}
+                                            className="px-3 py-1 bg-indigo-600 text-white text-sm rounded shadow hover:bg-indigo-700"
+                                        >
+                                            Kör Indítása
+                                        </button>
+                                    ) : (
+                                        <button
+                                            onClick={async () => { await closeRound(session.id); }}
+                                            className="px-3 py-1 bg-amber-600 text-white text-sm rounded shadow hover:bg-amber-700"
+                                        >
+                                            Kör Lezárása
+                                        </button>
+                                    )}
+                                </div>
                                 <button
                                     onClick={async () => { await closeSession(session.id); }}
-                                    className="text-sm underline text-red-600 hover:text-red-800"
+                                    className="text-sm underline text-red-600 hover:text-red-800 mt-2"
                                 >
-                                    Close Session (Enable Surveys)
+                                    End Session (Enable Surveys)
                                 </button>
                             </div>
                         )}

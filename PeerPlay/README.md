@@ -139,5 +139,4 @@ npx prisma studio
 - [ ] Event engine (Market Shock, Resource Discovery)
 - [ ] Időbeli összehasonlítás (két session networkje)
 - [ ] WebSocket alapú valós idejű frissítés (SWR polling kiváltása)
-- [ ] Alliance rendszer
 - [ ] Automatikus debrief report export (PDF)

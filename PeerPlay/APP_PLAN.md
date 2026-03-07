@@ -464,11 +464,7 @@ a rendszer 1 scenario-ról 10-re tud nőni újraírás nélkül.
 - **Instant Trade:** Raw <-> Capital, Tech lease <-> Revenue %
 - **Contract Trade:** Digitális szerződések pl. Tech Access <-> Future Revenue (Duration alapú). Nem visszavonható.
 
-## 6️⃣ ALLIANCE SYSTEM
-- 2-3 csapat. Internal free trade, +10% production bonus.
-- Külső tariff 10%. (Geopolitikai blokkok).
-
-## 7️⃣ EVENT ENGINE
+## 6️⃣ EVENT ENGINE
 - Market Shock (Triangle value esik).
 - Resource Discovery (Váratlan nyersanyag egy csapatnak).
 - Secret Innovation (Titkos szorzó Token a hexához).
