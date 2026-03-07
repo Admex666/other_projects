@@ -7,6 +7,7 @@ import InventoryPanel from '@/components/InventoryPanel'
 import TradeOfferForm from '@/components/TradeOfferForm'
 import PendingTradesPanel from '@/components/PendingTradesPanel'
 import BankPanel from '@/components/BankPanel'
+import GlobalEventHandler from '@/components/GlobalEventHandler'
 import { getSessionDetails, } from '@/modules/session/actions'
 import { getTradesForUser } from '@/modules/interaction/trade'
 import useSWR from 'swr'
@@ -83,6 +84,7 @@ export default function PlaySessionClient({
 
     return (
         <div className="min-h-screen bg-gray-50 p-6">
+            <GlobalEventHandler session={session} />
             <div className="max-w-4xl mx-auto space-y-6">
 
                 <header className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex justify-between items-center">

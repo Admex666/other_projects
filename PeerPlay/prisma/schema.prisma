@@ -56,6 +56,7 @@ model Session {
   
   currentRound   Int          @default(1)
   isRoundActive  Boolean      @default(false)
+  globalState    String       @default("{}") // JSON string for dynamic pricing modifiers, events, etc.
   
   participants    SessionParticipant[]
   rounds          Round[]
@@ -63,6 +64,17 @@ model Session {
   surveyResponses SurveyResponse[]
   teams           Team[]
   tradeRequests   TradeRequest[]
+  bankInventories BankInventory[]
+}
+
+model BankInventory {
+  id           String   @id @default(uuid())
+  sessionId    String
+  session      Session  @relation(fields: [sessionId], references: [id])
+  productKey   String   // e.g., 'wheat', 'wine'
+  quantity     Int      @default(0) // Tracks how many the bank has bought from players
+  
+  @@unique([sessionId, productKey])
 }
 
 model SessionParticipant {

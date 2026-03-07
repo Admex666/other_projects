@@ -16,6 +16,7 @@ export type Participant = {
 
 export default function ProductionPanel({ sessionId, myParticipant }: { sessionId: string, myParticipant: Participant }) {
     const [loading, setLoading] = useState<ProductType | null>(null)
+    const [progress, setProgress] = useState<number>(0)
     const [error, setError] = useState<string | null>(null)
     const [successMsg, setSuccessMsg] = useState<string | null>(null)
 
@@ -24,16 +25,40 @@ export default function ProductionPanel({ sessionId, myParticipant }: { sessionI
         setLoading(productType)
         setError(null)
         setSuccessMsg(null)
+        setProgress(0)
+
+        const recipe = PRODUCTION_RECIPES[productType]
+        const duration = (recipe.baseTime * 1000) / myParticipant.productionEff
+        const intervalTime = 100
+        const steps = duration / intervalTime
+
+        let currentStep = 0
+        const intervalId = setInterval(() => {
+            currentStep++
+            setProgress(Math.floor((currentStep / steps) * 100))
+        }, intervalTime)
 
         try {
-            await produceItem(sessionId, myParticipant.userId, productType)
-            setSuccessMsg(`Produced 1 ${PRODUCTION_RECIPES[productType].name} successfully!`)
-            setTimeout(() => setSuccessMsg(null), 3000)
+            await new Promise(resolve => setTimeout(resolve, duration))
+            clearInterval(intervalId)
+            setProgress(100)
+
+            const { bonusSeeds } = await produceItem(sessionId, myParticipant.userId, productType)
+
+            let msg = `Sikeresen megtermeltél 1 db ${PRODUCTION_RECIPES[productType].name}-t!`
+            if (bonusSeeds > 0) {
+                msg += ` Bónusz: visszanyertél ${bonusSeeds} db Vetőmagot!`
+            }
+
+            setSuccessMsg(msg)
+            setTimeout(() => setSuccessMsg(null), 4000)
         } catch (err: any) {
-            setError(err.message || 'Production failed')
+            clearInterval(intervalId)
+            setError(err.message || 'Hiba a termelés során')
             setTimeout(() => setError(null), 4000)
         } finally {
             setLoading(null)
+            setProgress(0)
         }
     }
 
@@ -70,6 +95,12 @@ export default function ProductionPanel({ sessionId, myParticipant }: { sessionI
                                     <span className="font-bold text-green-600">${recipe.baseValue}</span>
                                 </div>
 
+                                {loading === key && (
+                                    <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+                                        <div className="bg-indigo-600 h-2 rounded-full transition-all duration-100 ease-linear" style={{ width: `${progress}%` }}></div>
+                                    </div>
+                                )}
+
                                 <button
                                     onClick={() => handleProduce(key)}
                                     disabled={loading !== null || !canProduce}
@@ -78,7 +109,7 @@ export default function ProductionPanel({ sessionId, myParticipant }: { sessionI
                                             : canProduce ? 'bg-indigo-600 text-white hover:bg-indigo-700'
                                                 : 'bg-gray-200 text-gray-400 cursor-not-allowed'}`}
                                 >
-                                    {loading === key ? 'Producing...' : 'Produce'}
+                                    {loading === key ? `Termelés folyamatban... ${progress}%` : `Termelés (${Math.ceil(recipe.baseTime / myParticipant.productionEff)} mp indítása)`}
                                 </button>
                             </div>
                         </div>

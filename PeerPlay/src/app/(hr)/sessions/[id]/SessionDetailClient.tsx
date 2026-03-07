@@ -6,6 +6,7 @@ import StartSessionButton from '@/components/StartSessionButton'
 import NetworkGraph from '@/components/NetworkGraph'
 import HRTeamAllocationPanel from '@/components/HRTeamAllocationPanel'
 import HRReportPanel from '@/components/HRReportPanel'
+import HREventPanel from '@/components/HREventPanel'
 import { getSessionDetails, closeSession, startRound, closeRound } from '@/modules/session/actions'
 
 const fetcher = async (id: string) => {
@@ -65,7 +66,7 @@ export default function SessionDetailClient({ initialSessionData }: { initialSes
                                 <div className="flex gap-2">
                                     {!session.isRoundActive ? (
                                         <button
-                                            onClick={async () => { await startRound(session.id, session.currentRound); }}
+                                            onClick={async () => { await startRound(session.id, session.currentRound + 1); }}
                                             className="px-3 py-1 bg-indigo-600 text-white text-sm rounded shadow hover:bg-indigo-700"
                                         >
                                             Kör Indítása
@@ -116,6 +117,13 @@ export default function SessionDetailClient({ initialSessionData }: { initialSes
                         />
                     </div>
                 )}
+
+                {/* Event Control Panel - active and round >= 3 */}
+                <HREventPanel
+                    sessionId={session.id}
+                    isVisible={session.status === 'active' && session.currentRound >= 3}
+                />
+
                 {/* Live Team Report - active or closed */}
                 {(session.status === 'active' || session.status === 'closed') && (
                     <HRReportPanel

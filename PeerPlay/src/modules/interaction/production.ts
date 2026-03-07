@@ -30,11 +30,19 @@ export async function produceItem(sessionId: string, userId: string, productType
         const inventory = JSON.parse(participant.inventory || "{}")
         inventory[productType] = (inventory[productType] || 0) + 1
 
+        // Véletlenszerű bónusz vetőmag visszanyerés (40% 0, 30% 1, 20% 2, 10% 3)
+        const rand = Math.random()
+        let bonusSeeds = 0
+        if (rand < 0.1) bonusSeeds = 3 // 10%
+        else if (rand < 0.3) bonusSeeds = 2 // 20%
+        else if (rand < 0.6) bonusSeeds = 1 // 30%
+        // maradék 40% (rand 0.6 felett) -> 0
+
         // Update Participant State
         const updatedParticipant = await tx.sessionParticipant.update({
             where: { id: participant.id },
             data: {
-                rawMaterial: participant.rawMaterial - recipe.rawCost,
+                rawMaterial: participant.rawMaterial - recipe.rawCost + bonusSeeds,
                 inventory: JSON.stringify(inventory)
             }
         })
@@ -58,7 +66,7 @@ export async function produceItem(sessionId: string, userId: string, productType
             })
         }
 
-        return updatedParticipant
+        return { participant: updatedParticipant, bonusSeeds }
     })
 
     // Revalidate the play page so UI updates instantly

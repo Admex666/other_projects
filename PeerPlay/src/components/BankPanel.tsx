@@ -1,8 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { sellToBank, buyFromBank, buyRawMaterial } from '@/modules/interaction/bank'
-import { BANK_BUY_MARKUP, RAW_MATERIAL_BUY_PRICE } from '@/modules/interaction/bankConstants'
+import useSWR from 'swr'
+import { sellToBank, buyFromBank, buyRawMaterial, sellRawMaterial } from '@/modules/interaction/bank'
+import { getDynamicPricing } from '@/modules/interaction/pricing'
+import { RAW_MATERIAL_BUY_PRICE } from '@/modules/interaction/bankConstants'
 import { PRODUCTION_RECIPES, ProductType } from '@/modules/interaction/constants'
 
 const PRODUCT_KEYS: ProductType[] = ['wheat', 'corn', 'sunflower', 'wine']
@@ -33,6 +35,13 @@ export default function BankPanel({ sessionId, userId, participant }: Props) {
     const [loadingKey, setLoadingKey] = useState<string | null>(null)
     const [messages, setMessages] = useState<Record<string, { type: 'ok' | 'err'; text: string }>>({})
     const [confirm, setConfirm] = useState<ConfirmState>(null)
+
+    // Poll dynamic prices
+    const { data: prices } = useSWR(
+        sessionId ? `pricing-${sessionId}` : null,
+        () => getDynamicPricing(sessionId),
+        { refreshInterval: 3000 }
+    )
 
     const inventory = parseInventory(participant.inventory)
 
@@ -108,10 +117,36 @@ export default function BankPanel({ sessionId, userId, participant }: Props) {
                     <p className="font-semibold text-sm">🌱 Vetőmag</p>
                     <p className="text-xs text-gray-400">Alapanyag a termeléshez</p>
                 </div>
-                <span className="text-sm text-gray-300 text-right">—</span>
-                <span className="text-sm font-bold text-red-600 text-right">${RAW_MATERIAL_BUY_PRICE}</span>
+                <span className="text-sm font-bold text-green-600 text-right">${prices?.rawMaterial?.sellToBank ?? Math.round(RAW_MATERIAL_BUY_PRICE / 1.3)}</span>
+                <span className="text-sm font-bold text-red-600 text-right">${prices?.rawMaterial?.buyFromBank ?? RAW_MATERIAL_BUY_PRICE}</span>
                 <span className="text-sm font-bold text-right tabular-nums">{participant.rawMaterial}</span>
-                <span className="text-gray-300 text-sm text-right">—</span>
+
+                {/* Sell button */}
+                <div className="flex flex-col items-end gap-1">
+                    {messages['sell-raw'] && (
+                        <span className={`text-xs ${messages['sell-raw'].type === 'ok' ? 'text-green-600' : 'text-red-500'}`}>
+                            {messages['sell-raw'].text}
+                        </span>
+                    )}
+                    <button
+                        onClick={() => showConfirm({
+                            key: 'sell-raw',
+                            label: '🌱 Vetőmag eladása',
+                            detail: `1 db Vetőmag → +$${prices?.rawMaterial?.sellToBank ?? Math.round(RAW_MATERIAL_BUY_PRICE / 1.3)} tőke. Raktáron: ${participant.rawMaterial} db`,
+                            action: () => sellRawMaterial(sessionId, userId)
+                        })}
+                        disabled={loadingKey === 'sell-raw' || participant.rawMaterial < 1}
+                        style={{
+                            backgroundColor: (loadingKey === 'sell-raw' || participant.rawMaterial < 1) ? '#86efac' : '#16a34a',
+                            color: '#ffffff'
+                        }}
+                        className="px-3 py-1 text-xs font-bold rounded cursor-pointer"
+                    >
+                        {loadingKey === 'sell-raw' ? '...' : `Elad $${prices?.rawMaterial?.sellToBank ?? Math.round(RAW_MATERIAL_BUY_PRICE / 1.3)}`}
+                    </button>
+                </div>
+
+                {/* Buy button */}
                 <div className="flex flex-col items-end gap-1">
                     {messages['raw'] && (
                         <span className={`text-xs ${messages['raw'].type === 'ok' ? 'text-green-600' : 'text-red-500'}`}>
@@ -122,17 +157,17 @@ export default function BankPanel({ sessionId, userId, participant }: Props) {
                         onClick={() => showConfirm({
                             key: 'raw',
                             label: '🌱 Vetőmag vásárlás',
-                            detail: `1 db Vetőmag → $${RAW_MATERIAL_BUY_PRICE} tőke levonás. Jelenlegi tőkéd: $${participant.capital}`,
+                            detail: `1 db Vetőmag → -$${prices?.rawMaterial?.buyFromBank ?? RAW_MATERIAL_BUY_PRICE} tőke. Jelenlegi tőkéd: $${participant.capital}`,
                             action: () => buyRawMaterial(sessionId, userId)
                         })}
-                        disabled={loadingKey === 'raw' || participant.capital < RAW_MATERIAL_BUY_PRICE}
+                        disabled={loadingKey === 'raw' || participant.capital < (prices?.rawMaterial?.buyFromBank ?? RAW_MATERIAL_BUY_PRICE)}
                         style={{
-                            backgroundColor: (loadingKey === 'raw' || participant.capital < RAW_MATERIAL_BUY_PRICE) ? '#93c5fd' : '#2563eb',
+                            backgroundColor: (loadingKey === 'raw' || participant.capital < (prices?.rawMaterial?.buyFromBank ?? RAW_MATERIAL_BUY_PRICE)) ? '#93c5fd' : '#2563eb',
                             color: '#ffffff'
                         }}
                         className="px-3 py-1 text-xs font-bold rounded cursor-pointer"
                     >
-                        {loadingKey === 'raw' ? '...' : `Vesz $${RAW_MATERIAL_BUY_PRICE}`}
+                        {loadingKey === 'raw' ? '...' : `Vesz $${prices?.rawMaterial?.buyFromBank ?? RAW_MATERIAL_BUY_PRICE}`}
                     </button>
                 </div>
             </div>
@@ -140,8 +175,15 @@ export default function BankPanel({ sessionId, userId, participant }: Props) {
             {/* ── Product rows ── */}
             {PRODUCT_KEYS.map(k => {
                 const recipe = PRODUCTION_RECIPES[k]
-                const sellPrice = Math.round(recipe.baseValue * participant.productionEff)
-                const buyPrice = Math.round(recipe.baseValue * BANK_BUY_MARKUP)
+
+                // Fallback to static pricing if polling hasn't loaded yet
+                // Note: The static fallback might be slightly off if a global multiplier is active, but it's only for a split second 
+                const dynamicSellPrice = prices?.[k]?.sellToBank ?? recipe.baseValue
+                const dynamicBuyPrice = prices?.[k]?.buyFromBank ?? Math.round(recipe.baseValue * 1.3) // BANK_BUY_MARKUP
+
+                const sellPrice = Math.round(dynamicSellPrice)
+                const buyPrice = dynamicBuyPrice
+
                 const qty = inventory[k] || 0
                 const techMet = participant.techLevel >= recipe.techReq
 
@@ -182,7 +224,7 @@ export default function BankPanel({ sessionId, userId, participant }: Props) {
                                 }}
                                 className="px-3 py-1 text-xs font-bold rounded cursor-pointer"
                             >
-                                {loadingKey === `sell-${k}` ? '...' : 'Elad'}
+                                {loadingKey === `sell-${k}` ? '...' : `Elad $${sellPrice}`}
                             </button>
                         </div>
 
@@ -197,7 +239,7 @@ export default function BankPanel({ sessionId, userId, participant }: Props) {
                                 onClick={() => showConfirm({
                                     key: `buy-${k}`,
                                     label: `${PRODUCT_EMOJI[k]} ${recipe.name} vásárlása`,
-                                    detail: `1 db ${recipe.name} → −$${buyPrice} tőke (${BANK_BUY_MARKUP}x markup). Jelenlegi tőkéd: $${participant.capital}`,
+                                    detail: `1 db ${recipe.name} → −$${buyPrice} tőke. Jelenlegi tőkéd: $${participant.capital}`,
                                     action: () => buyFromBank(sessionId, userId, k)
                                 })}
                                 disabled={loadingKey === `buy-${k}` || participant.capital < buyPrice}
@@ -215,7 +257,7 @@ export default function BankPanel({ sessionId, userId, participant }: Props) {
             })}
 
             <p className="text-xs text-gray-400 italic mt-4">
-                * Eladási ár = alap × hatékonyság ({participant.productionEff}x). Vételi ár = alap × {BANK_BUY_MARKUP}x markup.
+                * Eladási ár és Vételi ár az aktuális banki árfolyam. 2. körtől az árak a kereslet-kínálat szerint változnak! A tech. (készségszint) a termelési időket gyorsítja.
             </p>
         </div>
     )
