@@ -1,0 +1,1149 @@
+Source,Target,Weight
+Area Majority / Influence,Auction/Bidding,143
+Area Majority / Influence,Dice Rolling,477
+Area Majority / Influence,Hand Management,509
+Area Majority / Influence,Simultaneous Action Selection,117
+Area Majority / Influence,Negotiation,86
+Area Majority / Influence,Economic,216
+Area Majority / Influence,Political,166
+Auction/Bidding,Dice Rolling,135
+Auction/Bidding,Hand Management,234
+Auction/Bidding,Simultaneous Action Selection,86
+Auction/Bidding,Negotiation,237
+Auction/Bidding,Economic,471
+Auction/Bidding,Political,63
+Dice Rolling,Hand Management,742
+Dice Rolling,Simultaneous Action Selection,231
+Dice Rolling,Negotiation,167
+Dice Rolling,Economic,280
+Dice Rolling,Political,157
+Hand Management,Simultaneous Action Selection,395
+Hand Management,Negotiation,178
+Economic,Hand Management,275
+Hand Management,Political,153
+Negotiation,Simultaneous Action Selection,79
+Economic,Simultaneous Action Selection,87
+Economic,Negotiation,256
+Negotiation,Political,136
+Economic,Political,98
+Area Majority / Influence,Hexagon Grid,55
+Area Majority / Influence,Set Collection,230
+Area Majority / Influence,Tile Placement,260
+Area Majority / Influence,Medieval,227
+Hand Management,Hexagon Grid,75
+Hand Management,Set Collection,922
+Hand Management,Tile Placement,305
+Hand Management,Medieval,287
+Hexagon Grid,Tile Placement,75
+Hexagon Grid,Medieval,112
+Set Collection,Tile Placement,244
+Medieval,Set Collection,164
+Medieval,Tile Placement,113
+Action Points,Area Majority / Influence,165
+Ancient,Area Majority / Influence,155
+Auction/Bidding,Set Collection,386
+Ancient,Auction/Bidding,65
+Action Points,Set Collection,124
+Ancient,Set Collection,134
+Action Points,Ancient,61
+Stock Holding,Tile Placement,108
+Economic,Tile Placement,228
+Economic,Market,50
+Economic,Stock Holding,252
+Civilization,Dice Rolling,120
+Dice Rolling,Nautical,267
+Enclosure,Tile Placement,99
+Pattern Building,Tile Placement,260
+Pattern Recognition,Tile Placement,61
+Pattern Building,Pattern Recognition,105
+Fantasy,Modular Board,459
+Civilization,Modular Board,73
+Hand Management,Network and Route Building,119
+Hand Management,Point to Point Movement,218
+Drafting,Hand Management,809
+Fantasy,Hand Management,916
+Hand Management,Travel,61
+Network and Route Building,Point to Point Movement,51
+Drafting,Network and Route Building,73
+Drafting,Point to Point Movement,76
+Fantasy,Point to Point Movement,119
+Point to Point Movement,Travel,75
+Drafting,Fantasy,401
+Hand Management,Trading,168
+Farming,Hand Management,56
+Negotiation,Set Collection,228
+Set Collection,Trading,290
+Farming,Set Collection,74
+Negotiation,Trading,300
+Push Your Luck,Set Collection,233
+Mythology,Set Collection,78
+Ancient,Mythology,93
+Dice Rolling,Hexagon Grid,1597
+Dice Rolling,Modular Board,731
+Dice Rolling,Network and Route Building,101
+Dice Rolling,Trading,165
+Dice Rolling,Race,98
+Dice Rolling,Variable Set-up,222
+Hexagon Grid,Modular Board,186
+Hexagon Grid,Variable Set-up,127
+Economic,Hexagon Grid,57
+Modular Board,Network and Route Building,94
+Modular Board,Negotiation,51
+Modular Board,Trading,66
+Modular Board,Race,59
+Modular Board,Variable Set-up,64
+Economic,Modular Board,106
+Economic,Network and Route Building,212
+Economic,Trading,288
+Economic,Income,56
+Economic,Variable Set-up,58
+Set Collection,Simultaneous Action Selection,147
+Roll / Spin and Move,Set Collection,280
+Negotiation,Roll / Spin and Move,150
+Hand Management,Variable Player Powers,908
+Betting and Bluffing,Hand Management,468
+Hand Management,Science Fiction,404
+Negotiation,Variable Player Powers,148
+Betting and Bluffing,Negotiation,161
+Negotiation,Science Fiction,57
+Betting and Bluffing,Variable Player Powers,284
+Science Fiction,Variable Player Powers,560
+Betting and Bluffing,Science Fiction,94
+Dice Rolling,Push Your Luck,450
+Dice Rolling,Fighting,813
+Fighting,Push Your Luck,73
+Modular Board,Simultaneous Action Selection,86
+Action Queue,Simultaneous Action Selection,150
+Grid Movement,Simultaneous Action Selection,84
+Science Fiction,Simultaneous Action Selection,146
+Action Queue,Modular Board,81
+Grid Movement,Modular Board,382
+Modular Board,Scenario / Mission / Campaign Game,85
+Modular Board,Science Fiction,311
+Modular Board,Racing,100
+Maze,Modular Board,86
+Grid Movement,Race,51
+Race,Racing,62
+Action Queue,Grid Movement,80
+Action Queue,Science Fiction,93
+Grid Movement,Scenario / Mission / Campaign Game,271
+Grid Movement,Science Fiction,236
+Grid Movement,Racing,56
+Scenario / Mission / Campaign Game,Science Fiction,84
+City Building,Tile Placement,226
+Betting and Bluffing,Voting,174
+Action Points,Dice Rolling,581
+Dice Rolling,Science Fiction,733
+Action Points,Hexagon Grid,112
+Hexagon Grid,Science Fiction,215
+Action Points,Science Fiction,221
+Civilization,Science Fiction,56
+Dice Rolling,Point to Point Movement,365
+Dice Rolling,Variable Player Powers,1253
+Action Queue,Dice Rolling,125
+Dice Rolling,Events,255
+Dice Rolling,Paper-and-Pencil,332
+Dice Rolling,Player Elimination,195
+Dice Rolling,Role Playing,280
+Adventure,Dice Rolling,621
+Dice Rolling,Fantasy,1003
+Simultaneous Action Selection,Variable Player Powers,211
+Paper-and-Pencil,Simultaneous Action Selection,54
+Player Elimination,Simultaneous Action Selection,65
+Adventure,Simultaneous Action Selection,52
+Fantasy,Simultaneous Action Selection,135
+Fighting,Simultaneous Action Selection,121
+Modular Board,Point to Point Movement,96
+Modular Board,Variable Player Powers,540
+Modular Board,Player Elimination,65
+Modular Board,Role Playing,154
+Adventure,Modular Board,372
+Fighting,Modular Board,323
+Point to Point Movement,Variable Player Powers,197
+Events,Point to Point Movement,58
+Adventure,Point to Point Movement,83
+Fighting,Point to Point Movement,108
+Variable Player Powers,Variable Set-up,100
+Events,Variable Set-up,69
+Fantasy,Variable Set-up,66
+Action Queue,Variable Player Powers,109
+Events,Variable Player Powers,66
+Player Elimination,Variable Player Powers,183
+Role Playing,Variable Player Powers,265
+Adventure,Variable Player Powers,456
+Fantasy,Variable Player Powers,940
+Fighting,Variable Player Powers,836
+Action Queue,Fantasy,78
+Action Queue,Fighting,64
+Events,Fantasy,50
+Adventure,Player Elimination,59
+Fantasy,Player Elimination,124
+Fighting,Player Elimination,139
+Adventure,Role Playing,239
+Fantasy,Role Playing,254
+Fighting,Role Playing,170
+Adventure,Fantasy,586
+Adventure,Fighting,337
+Fantasy,Fighting,722
+Dice Rolling,Grid Movement,1017
+Dice Rolling,Movement Points,478
+Dice Rolling,Simulation,1616
+Dice Rolling,Variable Phase Order,129
+Dice Rolling,Drafting,392
+Hexagon Grid,Variable Player Powers,142
+Grid Movement,Hexagon Grid,657
+Events,Hexagon Grid,104
+Hexagon Grid,Movement Points,358
+Hexagon Grid,Simulation,1182
+Fantasy,Hexagon Grid,128
+Grid Movement,Variable Player Powers,401
+Simulation,Variable Player Powers,164
+Variable Phase Order,Variable Player Powers,115
+Drafting,Variable Player Powers,340
+Political,Variable Player Powers,109
+Events,Grid Movement,105
+Grid Movement,Player Elimination,71
+Grid Movement,Movement Points,332
+Grid Movement,Simulation,604
+Drafting,Grid Movement,61
+Fantasy,Grid Movement,291
+Events,Movement Points,94
+Events,Simulation,171
+Movement Points,Simulation,425
+Drafting,Simulation,71
+Fantasy,Simulation,68
+Political,Simulation,121
+Drafting,Variable Phase Order,51
+Fantasy,Variable Phase Order,72
+Drafting,Political,55
+Dice Rolling,Tile Placement,232
+Dice Rolling,Voting,53
+Dice Rolling,Space Exploration,110
+Modular Board,Tile Placement,330
+Tile Placement,Variable Player Powers,178
+Science Fiction,Tile Placement,120
+Civilization,Tile Placement,54
+Modular Board,Space Exploration,78
+Negotiation,Voting,120
+Variable Player Powers,Voting,96
+Space Exploration,Variable Player Powers,88
+Civilization,Variable Player Powers,91
+Political,Voting,74
+Science Fiction,Space Exploration,226
+Area Movement,Auction/Bidding,50
+Auction/Bidding,Medieval,80
+Area Movement,Simulation,252
+Economic,Simulation,110
+Medieval,Simulation,97
+Area Movement,Economic,99
+Area Movement,Civilization,68
+Area Movement,Medieval,129
+Civilization,Economic,79
+Economic,Renaissance,54
+Economic,Medieval,98
+Dice Rolling,Modern Warfare,258
+Commodity Speculation,Economic,180
+Modern Warfare,Political,51
+Dice Rolling,Humor,236
+Network and Route Building,Tile Placement,210
+Drafting,Tile Placement,209
+Drafting,Negotiation,56
+Humor,Negotiation,51
+Humor,Variable Player Powers,190
+Drafting,Science Fiction,180
+Drafting,Humor,147
+Humor,Science Fiction,71
+Action Points,Modular Board,273
+Action Points,Fighting,245
+Humor,Modular Board,61
+Fighting,Humor,151
+Adventure,Push Your Luck,85
+Fantasy,Push Your Luck,144
+Adventure,Area Movement,155
+Area Movement,Fantasy,209
+Area Movement,Fighting,163
+Adventure,Grid Movement,198
+Fighting,Grid Movement,272
+Cooperative Game,Variable Player Powers,499
+Novel-based,Variable Player Powers,119
+Horror,Variable Player Powers,259
+Cooperative Game,Role Playing,193
+Horror,Role Playing,74
+Adventure,Cooperative Game,364
+Cooperative Game,Novel-based,84
+Cooperative Game,Horror,182
+Adventure,Novel-based,105
+Adventure,Horror,119
+Horror,Novel-based,62
+Horror,Theme_Cthulhu Mythos,112
+Movement Points,Science Fiction,62
+Science Fiction,Simulation,176
+Area Majority / Influence,Variable Player Powers,337
+Area Majority / Influence,Area Movement,330
+Area Majority / Influence,Betting and Bluffing,109
+Area Majority / Influence,Drafting,223
+Area Majority / Influence,Fantasy,263
+Area Movement,Variable Set-up,53
+Area Movement,Variable Player Powers,284
+Physical,Variable Player Powers,56
+Area Movement,Events,66
+Area Movement,Betting and Bluffing,70
+Area Movement,Drafting,86
+Area Movement,Novel-based,52
+Betting and Bluffing,Drafting,155
+Betting and Bluffing,Physical,73
+Betting and Bluffing,Fantasy,173
+Betting and Bluffing,Novel-based,55
+Drafting,Novel-based,59
+Fantasy,Physical,53
+Fantasy,Novel-based,203
+Area Movement,Negotiation,61
+Fantasy,Negotiation,60
+Betting and Bluffing,Trading,66
+Fantasy,Trading,51
+Civilization,Trading,61
+Area Movement,Political,99
+Betting and Bluffing,Political,74
+Area Majority / Influence,Civilization,111
+Civilization,Hand Management,111
+Ancient,Hand Management,177
+Civilization,Set Collection,78
+Ancient,Tile Placement,72
+Ancient,Civilization,110
+Network and Route Building,Stock Holding,143
+Betting and Bluffing,Dice Rolling,225
+Dice Rolling,Movies / TV / Radio theme,286
+Betting and Bluffing,Player Elimination,156
+Movies / TV / Radio theme,Player Elimination,89
+Betting and Bluffing,Movies / TV / Radio theme,61
+Renaissance,Set Collection,72
+Economic,Set Collection,430
+City Building,Set Collection,112
+City Building,Economic,149
+Medieval,Political,67
+Hand Management,Memory,235
+Hand Management,Theme_Food / Cooking,60
+Hand Management,Push Your Luck,186
+Area Majority / Influence,Modular Board,243
+Area Majority / Influence,Grid Movement,125
+Auction/Bidding,Tile Placement,131
+Modular Board,Set Collection,176
+Grid Movement,Set Collection,77
+Action Points,Tile Placement,119
+Grid Movement,Tile Placement,148
+Action Points,Grid Movement,226
+Dice Rolling,Novel-based,159
+Dice Rolling,Trivia,67
+Auction/Bidding,Commodity Speculation,70
+Area Majority / Influence,Secret Unit Deployment,66
+Area Movement,Dice Rolling,640
+Dice Rolling,Secret Unit Deployment,262
+Hexagon Grid,Secret Unit Deployment,125
+Area Movement,Modular Board,139
+Betting and Bluffing,Modular Board,62
+Modular Board,Secret Unit Deployment,58
+Area Movement,Secret Unit Deployment,106
+Betting and Bluffing,Secret Unit Deployment,122
+Betting and Bluffing,Humor,154
+Fantasy,Secret Unit Deployment,64
+Fantasy,Humor,182
+Auction/Bidding,Industry / Manufacturing,61
+Economic,Industry / Manufacturing,180
+Ancient,Variable Player Powers,111
+Ancient,Area Movement,119
+Dice Rolling,Ratio / Combat Results Table,293
+Dice Rolling,Medieval,350
+Area Movement,Movement Points,76
+Movement Points,Ratio / Combat Results Table,174
+Ratio / Combat Results Table,Simulation,251
+Area Majority / Influence,Take That,127
+Area Majority / Influence,Team-Based Game,92
+Dice Rolling,Take That,266
+Dice Rolling,Team-Based Game,242
+Area Movement,Hand Management,212
+Hand Management,Take That,631
+Hand Management,Team-Based Game,262
+Area Movement,Take That,56
+Area Movement,Team-Based Game,86
+Take That,Team-Based Game,74
+Medieval,Take That,65
+Medieval,Team-Based Game,51
+Medieval,Modular Board,127
+Action Points,Point to Point Movement,152
+Ancient,Point to Point Movement,64
+Campaign / Battle Card Driven,Dice Rolling,313
+Ancient,Dice Rolling,293
+Campaign / Battle Card Driven,Point to Point Movement,109
+Hand Management,Modular Board,365
+City Building,Hand Management,141
+City Building,Modular Board,68
+Area Movement,Set Collection,100
+Ancient,Economic,62
+Modular Board,Team-Based Game,116
+Drafting,Modular Board,131
+Team-Based Game,Variable Player Powers,302
+Drafting,Team-Based Game,87
+Auction/Bidding,Drafting,148
+Drafting,Set Collection,614
+Hand Management,Humor,454
+Humor,Simultaneous Action Selection,127
+Hand Management,Real-Time,72
+Chit-Pull System,Dice Rolling,181
+Aviation / Flight,Dice Rolling,147
+Dice Rolling,World War II,847
+Hexagon Grid,World War II,843
+Secret Unit Deployment,Simulation,164
+Simulation,World War II,654
+Secret Unit Deployment,World War II,110
+Grid Movement,Secret Unit Deployment,103
+Grid Movement,World War II,223
+American Civil War,Dice Rolling,170
+Age of Reason,Dice Rolling,103
+Point to Point Movement,Simulation,158
+Point to Point Movement,Secret Unit Deployment,60
+Age of Reason,Simulation,73
+Area Majority / Influence,Enclosure,57
+Action Points,Hand Management,298
+Grid Movement,Hand Management,231
+Action Points,Medieval,74
+Grid Movement,Square Grid,146
+Grid Movement,Medieval,83
+Hand Management,Movies / TV / Radio theme,194
+Movies / TV / Radio theme,Science Fiction,239
+Dice Rolling,World War I,140
+Area Majority / Influence,Renaissance,66
+Hand Management,Renaissance,68
+Area Movement,Simultaneous Action Selection,82
+Memory,Simultaneous Action Selection,50
+Drafting,Simultaneous Action Selection,132
+Medieval,Simultaneous Action Selection,76
+Drafting,Memory,60
+Drafting,Renaissance,54
+Drafting,Medieval,148
+Stock Holding,Trains,152
+Network and Route Building,Trains,225
+Drafting,Economic,206
+Economic,Trains,171
+Dice Rolling,Roll / Spin and Move,463
+Animals,Dice Rolling,295
+Grid Movement,Roll / Spin and Move,61
+Animals,Roll / Spin and Move,116
+Animals,Grid Movement,94
+Dice Rolling,Square Grid,103
+Dice Rolling,Pirates,115
+Action Queue,Hand Management,95
+Hand Management,Nautical,111
+Hand Management,Pirates,98
+Nautical,Point to Point Movement,54
+Grid Movement,Nautical,95
+Nautical,Pirates,125
+Area Movement,World War II,117
+Dice Rolling,Theme_Alternate History,69
+Simulation,Theme_Alternate History,52
+Area Movement,Science Fiction,135
+Dice Rolling,Set Collection,482
+Player Elimination,Set Collection,159
+Fantasy,Set Collection,374
+Player Elimination,Roll / Spin and Move,143
+Fantasy,Roll / Spin and Move,138
+Area Majority / Influence,Simulation,124
+Hand Management,Mythology,138
+Fantasy,Mythology,148
+Hand Management,Voting,74
+Hand Management,Murder/Mystery,67
+Auction/Bidding,City Building,65
+Auction/Bidding,Roll / Spin and Move,161
+Auction/Bidding,Transportation,79
+Auction/Bidding,Movies / TV / Radio theme,71
+Pick-up and Deliver,Roll / Spin and Move,77
+Economic,Roll / Spin and Move,256
+Movies / TV / Radio theme,Roll / Spin and Move,266
+Economic,Pick-up and Deliver,143
+Pick-up and Deliver,Transportation,166
+Economic,Transportation,171
+Economic,Movies / TV / Radio theme,78
+Auction/Bidding,Betting and Bluffing,169
+Medieval,Negotiation,62
+Betting and Bluffing,Medieval,89
+Auction/Bidding,Trading,200
+Betting and Bluffing,Memory,176
+Hand Management,Roll / Spin and Move,61
+Set Collection,Take That,233
+Negotiation,Take That,61
+Humor,Set Collection,144
+Drafting,Take That,185
+Humor,Take That,215
+Team-Based Game,Tile Placement,52
+Commodity Speculation,Hand Management,50
+Fantasy,Tile Placement,213
+Fantasy,Medieval,270
+Betting and Bluffing,Simultaneous Action Selection,207
+Physical,Simultaneous Action Selection,71
+Betting and Bluffing,Set Collection,196
+Area Majority / Influence,Fighting,149
+Area Majority / Influence,Science Fiction,184
+Auction/Bidding,Variable Player Powers,124
+Auction/Bidding,Science Fiction,58
+Fighting,Hand Management,573
+Hand Management,Novel-based,140
+Negotiation,Team-Based Game,101
+Betting and Bluffing,Team-Based Game,214
+Betting and Bluffing,Fighting,127
+Fighting,Team-Based Game,147
+Science Fiction,Team-Based Game,93
+Fighting,Science Fiction,304
+Fighting,Novel-based,57
+Novel-based,Science Fiction,50
+Betting and Bluffing,Roll / Spin and Move,72
+Racing,Roll / Spin and Move,154
+Roll / Spin and Move,Sports,59
+Animals,Betting and Bluffing,147
+Betting and Bluffing,Racing,82
+Animals,Racing,97
+Racing,Sports,111
+Cooperative Game,Simultaneous Action Selection,59
+Deduction,Simultaneous Action Selection,74
+Deduction,Variable Player Powers,194
+Cooperative Game,Deduction,245
+Cooperative Game,Science Fiction,225
+Deduction,Science Fiction,69
+Fantasy,Pick-up and Deliver,90
+Pick-up and Deliver,Trains,68
+Trains,Transportation,145
+Horror,Modular Board,115
+Area Majority / Influence,Nautical,57
+Area Majority / Influence,City Building,130
+Dice Rolling,Real-Time,129
+Dice Rolling,Physical,58
+Deduction,Voting,122
+Betting and Bluffing,Deduction,416
+Deduction,Hidden Roles,66
+Deduction,Fantasy,91
+Betting and Bluffing,Hidden Roles,64
+Real-Time,Set Collection,98
+Area Majority / Influence,Space Exploration,60
+Science Fiction,Set Collection,149
+Science Fiction,Trading,59
+Dexterity,Sports,60
+Team-Based Game,Trick-taking,53
+Hand Management,Pick-up and Deliver,98
+Hand Management,Transportation,67
+American West,Hand Management,59
+Hand Management,Trains,50
+Deduction,Drafting,62
+Network and Route Building,Transportation,157
+Point to Point Movement,Transportation,55
+Network and Route Building,Pick-up and Deliver,80
+Deduction,Secret Unit Deployment,117
+Action Points,Variable Player Powers,443
+Action Points,Simulation,158
+Economic,Farming,74
+Hand Management,Sports,107
+Hand Management,Player Elimination,217
+Player Elimination,Take That,131
+Player Elimination,Push Your Luck,68
+Grid Movement,Team-Based Game,97
+Player Elimination,Team-Based Game,86
+Simulation,Sports,137
+Hand Management,Trick-taking,125
+Animals,Auction/Bidding,52
+Animals,Simultaneous Action Selection,85
+Hand Management,Zombies,73
+Area Movement,Player Elimination,64
+Set Collection,Team-Based Game,56
+Grid Movement,Take That,73
+Point to Point Movement,Team-Based Game,64
+Dice Rolling,Memory,122
+Comic Book / Strip,Dice Rolling,127
+City Building,Dice Rolling,107
+Fantasy,Take That,287
+City Building,Fantasy,61
+Dice Rolling,Racing,190
+Dice Rolling,Sports,192
+Pirates,Set Collection,56
+Area Majority / Influence,Network and Route Building,67
+Network and Route Building,Set Collection,62
+Set Collection,Transportation,58
+Tile Placement,Transportation,100
+Tile Placement,Trains,131
+Stock Holding,Transportation,83
+Hand Management,Pattern Building,143
+Dexterity,Dice Rolling,198
+Dexterity,Set Collection,88
+Set Collection,Theme_Food / Cooking,92
+Civil War,Dice Rolling,117
+Dice Rolling,Renaissance,88
+Ancient,Medieval,54
+Fighting,Take That,194
+Dice Rolling,Pick-up and Deliver,164
+Dice Rolling,Transportation,53
+Point to Point Movement,Roll / Spin and Move,74
+Pick-up and Deliver,Point to Point Movement,95
+Economic,Point to Point Movement,74
+Point to Point Movement,Science Fiction,104
+Roll / Spin and Move,Trading,185
+Movement Points,Variable Set-up,116
+Roll / Spin and Move,Science Fiction,71
+Pick-up and Deliver,Science Fiction,78
+Economic,Science Fiction,109
+Nautical,Pick-up and Deliver,82
+Economic,Nautical,82
+Area Majority / Influence,Point to Point Movement,99
+Area Majority / Influence,Campaign / Battle Card Driven,109
+Campaign / Battle Card Driven,Simulation,159
+Ancient,Simulation,130
+Campaign / Battle Card Driven,Political,56
+Dice Rolling,Solo / Solitaire Game,478
+Hexagon Grid,Solo / Solitaire Game,97
+Adventure,Hexagon Grid,70
+Age of Reason,Hexagon Grid,74
+Hexagon Grid,Nautical,134
+Solo / Solitaire Game,Variable Player Powers,243
+Nautical,Variable Player Powers,61
+Pirates,Variable Player Powers,53
+Grid Movement,Solo / Solitaire Game,106
+Movement Points,Solo / Solitaire Game,66
+Simulation,Solo / Solitaire Game,168
+Nautical,Simulation,137
+Adventure,Solo / Solitaire Game,158
+Nautical,Solo / Solitaire Game,52
+Adventure,Pirates,56
+Dice Rolling,Line of Sight,241
+Dice Rolling,Post-Napoleonic,152
+Dice Rolling,Napoleonic,176
+American Revolutionary War,Dice Rolling,53
+Hexagon Grid,Line of Sight,165
+Hexagon Grid,Post-Napoleonic,117
+Hexagon Grid,Napoleonic,204
+Action Queue,Simulation,57
+Line of Sight,Simulation,186
+Post-Napoleonic,Simulation,118
+Napoleonic,Simulation,133
+Age of Reason,American Revolutionary War,56
+Simultaneous Action Selection,Voting,72
+Trading,Variable Player Powers,94
+Humor,Voting,112
+Dice Rolling,Scenario / Mission / Campaign Game,406
+Hexagon Grid,Scenario / Mission / Campaign Game,267
+Hexagon Grid,Ratio / Combat Results Table,278
+Modular Board,Simulation,109
+Line of Sight,Modular Board,58
+Modular Board,World War II,63
+Grid Movement,Variable Set-up,132
+Scenario / Mission / Campaign Game,Variable Set-up,103
+Simulation,Variable Set-up,139
+Ratio / Combat Results Table,Variable Set-up,52
+Scenario / Mission / Campaign Game,Variable Player Powers,109
+Secret Unit Deployment,Variable Player Powers,106
+Line of Sight,Variable Player Powers,67
+Grid Movement,Ratio / Combat Results Table,190
+Grid Movement,Line of Sight,150
+Movement Points,Scenario / Mission / Campaign Game,211
+Scenario / Mission / Campaign Game,Simulation,319
+Ratio / Combat Results Table,Scenario / Mission / Campaign Game,118
+Line of Sight,Scenario / Mission / Campaign Game,110
+Scenario / Mission / Campaign Game,World War II,104
+Line of Sight,Movement Points,94
+Movement Points,World War II,161
+Ratio / Combat Results Table,World War II,137
+Line of Sight,World War II,61
+Hexagon Grid,Paper-and-Pencil,77
+Fighting,Hexagon Grid,106
+Ancient,Hexagon Grid,106
+Action Points,Push Your Luck,59
+Push Your Luck,Variable Player Powers,133
+Betting and Bluffing,Push Your Luck,112
+Racing,Variable Player Powers,70
+Grid Movement,Paper-and-Pencil,70
+Betting and Bluffing,Grid Movement,55
+Ancient,Grid Movement,64
+Paper-and-Pencil,Scenario / Mission / Campaign Game,58
+Fighting,Scenario / Mission / Campaign Game,60
+Ancient,Fighting,69
+Pick-up and Deliver,Set Collection,99
+Paper-and-Pencil,Simulation,99
+Area Movement,Pick-up and Deliver,65
+Negotiation,Player Elimination,155
+Dice Rolling,Zone of Control,258
+Hexagon Grid,Zone of Control,264
+Economic,Variable Player Powers,162
+Area Movement,Scenario / Mission / Campaign Game,51
+Modular Board,Pick-up and Deliver,131
+Modular Board,Nautical,62
+Grid Movement,Pick-up and Deliver,69
+Nautical,World War II,115
+Modular Board,Movies / TV / Radio theme,65
+Simultaneous Action Selection,Sports,55
+Hand Management,Physical,85
+End Game Bonuses,Set Collection,74
+Economic,Take That,54
+Drafting,End Game Bonuses,66
+Civilization,Drafting,64
+Memory,Set Collection,173
+Memory,Real-Time,59
+Hand Management,Simulation,142
+Civil War,Simulation,100
+Modern Warfare,Simulation,196
+Drafting,Trading,66
+City Building,Drafting,135
+Medieval,Theme_Vikings,53
+Simulation,Simultaneous Action Selection,120
+Civil War,Hexagon Grid,80
+Hand Management,Role Playing,83
+Auction/Bidding,Worker Placement,96
+Auction/Bidding,Fantasy,94
+Set Collection,Worker Placement,226
+Fantasy,Worker Placement,153
+Medieval,Worker Placement,114
+Dice Rolling,Measurement Movement,86
+Ancient,Modular Board,56
+Ancient,Drafting,118
+Medieval,Point to Point Movement,52
+Nautical,Set Collection,94
+Animals,Player Elimination,50
+Dexterity,Real-Time,185
+Animals,Real-Time,64
+Animals,Dexterity,151
+Take That,Tile Placement,50
+Drafting,Push Your Luck,106
+Animals,Hand Management,334
+Deduction,Hand Management,273
+Pick-up and Deliver,Variable Player Powers,111
+Medieval,Variable Player Powers,172
+Deduction,Murder/Mystery,262
+Hand Management,Racing,133
+Betting and Bluffing,Spies/Secret Agents,68
+Real-Time,Variable Player Powers,55
+Adventure,Science Fiction,140
+Action Points,Fantasy,273
+Commodity Speculation,Stock Holding,57
+Animals,Modular Board,109
+Fighting,Secret Unit Deployment,86
+Point to Point Movement,Racing,53
+Real-Time,Simultaneous Action Selection,71
+Auction/Bidding,Stock Holding,114
+Auction/Bidding,Network and Route Building,98
+Auction/Bidding,Trains,95
+Grid Movement,Zone of Control,158
+Movement Points,Zone of Control,138
+Simulation,Zone of Control,232
+World War II,Zone of Control,129
+City Building,Medieval,88
+Hand Management,Number,68
+Fantasy,Maze,63
+Deduction,Team-Based Game,219
+Secret Unit Deployment,Team-Based Game,67
+Deduction,Paper-and-Pencil,51
+Betting and Bluffing,Take That,147
+Drafting,Fighting,198
+Animals,Theme_Anthropomorphic Animals,86
+Deduction,Roll / Spin and Move,69
+Deduction,Spies/Secret Agents,94
+Spies/Secret Agents,Team-Based Game,53
+Adventure,Tile Placement,117
+Set Collection,Variable Player Powers,258
+Deduction,Set Collection,82
+Set Collection,TableauBuilding,61
+City Building,Variable Player Powers,72
+Drafting,TableauBuilding,96
+City Building,TableauBuilding,54
+Memory,Modular Board,54
+Memory,Variable Player Powers,74
+Deduction,Memory,253
+Memory,Secret Unit Deployment,57
+Memory,Physical,55
+Fantasy,Memory,104
+Pattern Recognition,Real-Time,161
+Animals,Pattern Recognition,71
+Secret Unit Deployment,Simultaneous Action Selection,68
+Area Movement,Modern Warfare,62
+Dice Rolling,Mythology,97
+Hand Management,Race,68
+Hexagon Grid,Simultaneous Action Selection,69
+Aviation / Flight,Simultaneous Action Selection,56
+Aviation / Flight,Hexagon Grid,85
+Hexagon Grid,World War I,138
+Grid Movement,Role Playing,86
+Aviation / Flight,Grid Movement,58
+Events,Scenario / Mission / Campaign Game,104
+Aviation / Flight,Simulation,130
+Simulation,World War I,113
+Dice Rolling,Worker Placement,247
+American West,Dice Rolling,80
+Economic,Worker Placement,238
+Deduction,Humor,85
+Dexterity,Team-Based Game,64
+Real-Time,Tile Placement,63
+Maze,Tile Placement,64
+Fantasy,Pattern Building,65
+Hand Management,Secret Unit Deployment,108
+Dexterity,Pattern Building,63
+Area Movement,Point to Point Movement,56
+Area Movement,Movies / TV / Radio theme,63
+Comic Book / Strip,Movies / TV / Radio theme,54
+Humor,Roll / Spin and Move,85
+American Civil War,Hexagon Grid,167
+Action Points,Pick-up and Deliver,99
+Action Points,Worker Placement,58
+Take That,Variable Player Powers,307
+City Building,Civilization,60
+Animals,Set Collection,336
+Campaign / Battle Card Driven,Variable Player Powers,102
+Animals,Variable Player Powers,106
+Campaign / Battle Card Driven,Grid Movement,50
+Player Elimination,Science Fiction,72
+Humor,Player Elimination,77
+Science Fiction,Take That,106
+Animals,Take That,117
+Campaign / Battle Card Driven,Fighting,83
+Campaign / Battle Card Driven,Science Fiction,55
+Animals,Humor,130
+Horror,Roll / Spin and Move,50
+Campaign / Battle Card Driven,Hand Management,185
+Hand Management,World War II,75
+Campaign / Battle Card Driven,World War II,91
+Action Points,Take That,71
+Pattern Building,Real-Time,84
+Card Play Conflict Resolution,Hand Management,57
+Dexterity,Fantasy,57
+Dexterity,Humor,70
+Action Points,Secret Unit Deployment,60
+Animals,Environmental,69
+Animals,Prehistoric,52
+Fighting,Tile Placement,82
+Scenario / Mission / Campaign Game,Solo / Solitaire Game,90
+Science Fiction,Secret Unit Deployment,87
+Science Fiction,Solo / Solitaire Game,126
+American Civil War,Simulation,135
+American Civil War,Civil War,57
+American Civil War,Post-Napoleonic,84
+Action Points,Cooperative Game,203
+Action Points,Horror,98
+Horror,Science Fiction,78
+Novel-based,Roll / Spin and Move,63
+Movies / TV / Radio theme,Take That,52
+Movies / TV / Radio theme,Novel-based,111
+Modular Board,Roll / Spin and Move,81
+Roll / Spin and Move,Variable Player Powers,84
+Adventure,Roll / Spin and Move,139
+Fighting,Roll / Spin and Move,84
+Adventure,Scenario / Mission / Campaign Game,75
+Fantasy,Scenario / Mission / Campaign Game,64
+Role Playing,Team-Based Game,89
+Adventure,Team-Based Game,89
+Fantasy,Team-Based Game,154
+Chit-Pull System,Hexagon Grid,183
+Chit-Pull System,Grid Movement,53
+Comic Book / Strip,Hand Management,93
+Comic Book / Strip,Variable Player Powers,135
+Scenario / Mission / Campaign Game,Zone of Control,79
+Ratio / Combat Results Table,Zone of Control,133
+Hexagon Grid,Modern Warfare,217
+Sports,Variable Player Powers,51
+Adventure,Set Collection,123
+Adventure,Drafting,130
+Action Points,Role Playing,66
+Action Points,Adventure,164
+Comic Book / Strip,Fighting,93
+Fighting,Theme_Superheroes,50
+Comic Book / Strip,Theme_Superheroes,113
+Dice Rolling,Horror,247
+Grid Movement,Horror,58
+Horror,Team-Based Game,89
+Area-Impulse,Dice Rolling,76
+Area Movement,Area-Impulse,51
+Fighting,Set Collection,84
+Movies / TV / Radio theme,Set Collection,158
+Adventure,Pick-up and Deliver,96
+Fighting,Pick-up and Deliver,57
+Drafting,Movies / TV / Radio theme,69
+Adventure,Movies / TV / Radio theme,92
+Fighting,Movies / TV / Radio theme,114
+Area Movement,Nautical,73
+Ancient,City Building,58
+Dice Rolling,Zombies,109
+Fighting,Horror,153
+Fighting,Zombies,56
+Horror,Zombies,118
+Campaign / Battle Card Driven,Fantasy,100
+Fantasy,Horror,146
+Movies / TV / Radio theme,Variable Player Powers,203
+Deduction,Dice Rolling,106
+Environmental,Set Collection,55
+Industry / Manufacturing,Set Collection,62
+Industry / Manufacturing,Worker Placement,92
+Storytelling,Variable Player Powers,87
+Adventure,Storytelling,114
+Fantasy,Storytelling,93
+Action Points,Drafting,103
+Hexagon Grid,Theme_Alternate History,78
+Modular Board,Take That,76
+Movies / TV / Radio theme,Team-Based Game,73
+Horror,Movies / TV / Radio theme,59
+Hand Management,Solo / Solitaire Game,243
+Modular Board,Push Your Luck,70
+Modular Board,Solo / Solitaire Game,126
+Deduction,Push Your Luck,52
+Push Your Luck,Solo / Solitaire Game,91
+Push Your Luck,Science Fiction,66
+Solo / Solitaire Game,World War II,90
+Cooperative Game,Dice Rolling,584
+Cooperative Game,Hand Management,338
+Adventure,Hand Management,272
+Cooperative Game,Set Collection,89
+Novel-based,Set Collection,75
+Cooperative Game,Fantasy,403
+Simultaneous Action Selection,Team-Based Game,66
+Cooperative Game,Modular Board,301
+Cooperative Game,Pick-up and Deliver,56
+Dice Rolling,Farming,51
+Animals,Memory,123
+Humor,Memory,84
+Animals,Farming,61
+Hand Management,TableauBuilding,88
+Action Points,Area Movement,166
+Dexterity,Roll / Spin and Move,53
+Dice Rolling,Pattern Recognition,93
+Economic,Grid Movement,54
+Auction/Bidding,Take That,54
+Fighting,Medieval,146
+Tile Placement,Worker Placement,115
+Roll / Spin and Move,Trivia,174
+Line Drawing,Paper-and-Pencil,67
+Physical,Team-Based Game,88
+Team-Based Game,Trivia,50
+Memory,Movies / TV / Radio theme,53
+Movies / TV / Radio theme,Trivia,142
+Nautical,Secret Unit Deployment,64
+Action Points,Solo / Solitaire Game,121
+Memory,Roll / Spin and Move,61
+Deduction,Negotiation,61
+Murder/Mystery,Variable Player Powers,57
+Role Playing,Voting,54
+Team-Based Game,Voting,95
+Deduction,Player Elimination,112
+Horror,Player Elimination,64
+Deduction,Role Playing,88
+Betting and Bluffing,Role Playing,84
+Deduction,Traitor Game,55
+Deduction,Horror,114
+Betting and Bluffing,Traitor Game,56
+Betting and Bluffing,Horror,70
+Betting and Bluffing,Murder/Mystery,60
+Horror,Murder/Mystery,65
+Real-Time,Science Fiction,53
+Adventure,Deduction,59
+Deduction,Fighting,52
+Deduction,Novel-based,61
+Deduction,Movies / TV / Radio theme,75
+Fantasy,Movies / TV / Radio theme,135
+Adventure,Take That,70
+Adventure,Humor,53
+Hand Management,Variable Set-up,71
+Race,Variable Player Powers,53
+Aviation / Flight,World War II,92
+Fighting,Physical,52
+Events,Solo / Solitaire Game,63
+Area Movement,Horror,63
+Farming,Tile Placement,62
+Events,World War II,57
+Paper-and-Pencil,Solo / Solitaire Game,76
+Area Movement,Solo / Solitaire Game,96
+Hand Management,Horror,196
+Fighting,Simulation,76
+Cooperative Game,Roll / Spin and Move,63
+Cooperative Game,Team-Based Game,104
+Hand Management,Spies/Secret Agents,51
+Memory,Murder/Mystery,68
+Dice Rolling,Theme_Superheroes,59
+Theme_Superheroes,Variable Player Powers,72
+Real-Time,Team-Based Game,55
+Adventure,Medieval,83
+Cooperative Game,Fighting,236
+Cooperative Game,Medieval,75
+Role Playing,Storytelling,108
+Deduction,Storytelling,98
+Murder/Mystery,Storytelling,92
+Area Movement,Campaign / Battle Card Driven,96
+Fantasy,Science Fiction,108
+Cooperative Game,Movies / TV / Radio theme,124
+Animals,Area Majority / Influence,86
+Civilization,Worker Placement,56
+Dexterity,Pattern Recognition,119
+Pattern Recognition,Set Collection,60
+Modular Board,Pattern Building,54
+Point to Point Movement,Tile Placement,52
+Cooperative Game,Tile Placement,95
+Hand Management,Storytelling,65
+Storytelling,Voting,61
+Humor,Real-Time,53
+Humor,Storytelling,117
+Role Playing,Science Fiction,73
+Animals,Cooperative Game,66
+Animals,Tile Placement,153
+Auction/Bidding,Player Elimination,136
+Movies / TV / Radio theme,Negotiation,68
+Player Elimination,Trading,125
+Movies / TV / Radio theme,Trading,66
+Economic,Player Elimination,133
+Dice Rolling,Re-rolling and Locking,66
+Economic,Fantasy,70
+Pick-up and Deliver,Tile Placement,61
+Area Movement,Grid Movement,50
+Point to Point Movement,Set Collection,104
+Memory,Team-Based Game,70
+Humor,Team-Based Game,71
+Humor,Physical,119
+Action Points,Campaign / Battle Card Driven,80
+Mythology,Variable Player Powers,116
+Fantasy,Video Game Theme,105
+Memory,Player Elimination,56
+Memory,Take That,65
+Dexterity,Simultaneous Action Selection,51
+Simulation,Square Grid,53
+Betting and Bluffing,Trivia,92
+Point to Point Movement,Solo / Solitaire Game,108
+Point to Point Movement,World War II,56
+Solo / Solitaire Game,Variable Set-up,67
+Animals,Pattern Building,82
+Humor,Movies / TV / Radio theme,75
+Campaign / Battle Card Driven,Medieval,51
+"Deck, Bag, and Pool Building",Dice Rolling,180
+"Deck, Bag, and Pool Building",Hand Management,400
+"Deck, Bag, and Pool Building",Variable Player Powers,219
+"Deck, Bag, and Pool Building",Science Fiction,126
+Push Your Luck,Take That,114
+Science Fiction,Theme_Post-Apocalyptic,51
+Grid Movement,Modern Warfare,98
+Modern Warfare,Movement Points,54
+Campaign / Battle Card Driven,Modular Board,68
+Drafting,Role Playing,58
+Action Points,World War II,84
+Fighting,Solo / Solitaire Game,106
+Chit-Pull System,Simulation,131
+Modern Warfare,Scenario / Mission / Campaign Game,66
+Fantasy,Solo / Solitaire Game,203
+Medieval,Solo / Solitaire Game,74
+Action Points,Economic,100
+Campaign / Battle Card Driven,Solo / Solitaire Game,80
+Ancient,Solo / Solitaire Game,51
+Comic Book / Strip,Cooperative Game,54
+Memory,Push Your Luck,67
+Cooperative Game,Memory,118
+Dexterity,Hand Management,61
+Cooperative Game,Scenario / Mission / Campaign Game,97
+Horror,Solo / Solitaire Game,52
+Horror,Storytelling,70
+Horror,Set Collection,58
+Humor,Trivia,52
+Memory,Pattern Recognition,81
+Hand Management,Space Exploration,80
+Horror,Take That,51
+Drafting,Horror,65
+Horror,Humor,81
+Dice Rolling,Video Game Theme,98
+Fighting,Video Game Theme,97
+Chit-Pull System,World War II,103
+Modern Warfare,Theme_Alternate History,58
+Environmental,Tile Placement,52
+Action Queue,Area Majority / Influence,69
+Animals,Push Your Luck,111
+Action Points,Movies / TV / Radio theme,51
+Measurement Movement,Simulation,58
+Hand Management,Video Game Theme,132
+Variable Player Powers,Video Game Theme,126
+Adventure,Area Majority / Influence,68
+Cooperative Game,Dexterity,60
+Dice Rolling,Travel,53
+Set Collection,Travel,65
+Deduction,Take That,58
+Fighting,Mythology,68
+Dexterity,Variable Player Powers,52
+Humor,Push Your Luck,65
+Environmental,Hand Management,53
+Hand Management,Industry / Manufacturing,66
+Drafting,Industry / Manufacturing,57
+Cooperative Game,Solo / Solitaire Game,292
+Cooperative Game,Storytelling,213
+Cooperative Game,Murder/Mystery,116
+Solo / Solitaire Game,Storytelling,59
+Dice Rolling,Pattern Building,103
+Area Movement,Cooperative Game,107
+Economic,TableauBuilding,67
+Animals,Fantasy,79
+Animals,Drafting,147
+Economic,Variable Phase Order,63
+Hand Management,Worker Placement,178
+Variable Player Powers,Worker Placement,160
+"Deck, Bag, and Pool Building",Worker Placement,51
+"Deck, Bag, and Pool Building",Fighting,168
+"Deck, Bag, and Pool Building",Medieval,63
+Dice Rolling,Line Drawing,52
+Area Majority / Influence,Variable Phase Order,65
+Action Points,Variable Phase Order,50
+Dice Rolling,Storytelling,135
+Cooperative Game,Drafting,97
+Cooperative Game,Grid Movement,162
+Campaign / Battle Card Driven,Hexagon Grid,71
+Dexterity,Memory,62
+Area Majority / Influence,Pick-up and Deliver,50
+Spies/Secret Agents,Variable Player Powers,57
+Simultaneous Action Selection,Solo / Solitaire Game,52
+Set Collection,Solo / Solitaire Game,120
+Drafting,Pattern Building,99
+Modular Board,Worker Placement,112
+City Building,Worker Placement,102
+Economic,Solo / Solitaire Game,79
+Cooperative Game,Real-Time,152
+Area Majority / Influence,"Deck, Bag, and Pool Building",90
+"Deck, Bag, and Pool Building",Fantasy,287
+Area Majority / Influence,Mythology,69
+Modular Board,Mythology,55
+Comic Book / Strip,"Deck, Bag, and Pool Building",50
+Area Majority / Influence,Solo / Solitaire Game,106
+Role Playing,Solo / Solitaire Game,75
+Action Points,Team-Based Game,58
+Cooperative Game,Humor,67
+Pattern Building,Set Collection,130
+Horror,Push Your Luck,50
+Science Fiction,Variable Phase Order,60
+Humor,Role Playing,59
+Modular Board,Variable Phase Order,58
+Humor,Mature / Adult,80
+Deduction,Real-Time,52
+Hand Management,Variable Phase Order,91
+Drafting,Mythology,78
+Contracts,Set Collection,70
+"Deck, Bag, and Pool Building",Set Collection,80
+Solo / Solitaire Game,Tile Placement,92
+Cooperative Game,Point to Point Movement,82
+"Deck, Bag, and Pool Building",Drafting,260
+Area Majority / Influence,Worker Placement,192
+Take That,Worker Placement,58
+Hand Management,Mature / Adult,71
+Communication Limits,Hand Management,52
+Communication Limits,Cooperative Game,86
+Communication Limits,Deduction,62
+Simultaneous Action Selection,Take That,82
+"Deck, Bag, and Pool Building",Modular Board,77
+Farming,Worker Placement,59
+Drafting,Worker Placement,161
+Ancient,Worker Placement,74
+Cooperative Game,Zombies,71
+Variable Player Powers,Zombies,64
+Solo / Solitaire Game,Worker Placement,113
+Drafting,Solo / Solitaire Game,154
+Animals,Worker Placement,50
+End Game Bonuses,Worker Placement,56
+End Game Bonuses,Solo / Solitaire Game,55
+City Building,Solo / Solitaire Game,50
+"Deck, Bag, and Pool Building",Take That,78
+Science Fiction,Worker Placement,97
+"Deck, Bag, and Pool Building",Horror,51
+Campaign / Battle Card Driven,Cooperative Game,51
+"Deck, Bag, and Pool Building",Solo / Solitaire Game,98
+Adventure,"Deck, Bag, and Pool Building",83
+Cooperative Game,Push Your Luck,88
+"Deck, Bag, and Pool Building",Grid Movement,57
+"Deck, Bag, and Pool Building",Economic,52
+Cooperative Game,"Deck, Bag, and Pool Building",136
