@@ -1,255 +1,253 @@
-import 'dart:async';
-import 'dart:convert';
-import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:html_unescape/html_unescape.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/game_data.dart';
-import 'round_controller.dart';
 import 'audio_manager.dart';
+import 'socket_service.dart';
 
 class GameManager extends ChangeNotifier {
-  final RoundController roundController = RoundController();
-
   GameState currentState = GameState.waiting;
   List<Player> players = [];
+  List<Player> finalPlayers = []; // Set on match_ended for the leaderboard
   late Player localPlayer;
-  
-  // Match Rules
+  String _roomId = '';
+  UserStats? userStats;
+
+  bool isInitialized = false;
+
+  // Used to trigger "You've been eliminated" popup
+  bool justEliminated = false;
+  bool _wasEliminatedLastFrame = false;
+
+  // Match Rules & State from server
   int currentRound = 1;
   final int maxRounds = 7;
-  final int shieldRounds = 2; // No elimination in round 1 and 2
-  int get currentMinBet => currentRound <= shieldRounds ? 10 : (currentRound - shieldRounds) * 10 + 10;
-  Function(int placement, int pointsGained)? onMatchEnded;
-
-  // Timer settings
+  final int shieldRounds = 2;
   final int questionDurationSec = 15;
   final int revealDurationSec = 5;
+  int currentMinBet = 10;
+
   int currentTimer = 0;
-  Timer? _ticker;
-  
   RoundResult? lastRoundResult;
+  Question? currentQuestion;
 
-  // Questions
-  List<Question> _fetchedQuestions = [];
-  int _currentQuestionIndex = 0;
-
-  // UI State
+  // UI Local State
   int selectedAnswerIndex = -1;
   int currentBetAmount = 10;
 
+  Function(int placement, int pointsGained)? onMatchEnded;
+
+  void clearJustEliminated() {
+    justEliminated = false;
+    _wasEliminatedLastFrame = true;
+    notifyListeners();
+  }
+
   GameManager() {
-    _initializeMockData();
-    _initGame();
+    _initAsync();
   }
 
-  Future<void> _initGame() async {
-    await _fetchTriviaQuestions();
-    _changeState(GameState.questionActive);
-  }
-
-  Future<void> _fetchTriviaQuestions() async {
-    try {
-      final response = await http.get(Uri.parse('https://opentdb.com/api.php?amount=10'));
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        final results = data['results'] as List;
-        final unescape = HtmlUnescape();
-
-        List<Question> newQuestions = [];
-        for (var item in results) {
-          String qText = unescape.convert(item['question']);
-          String correct = unescape.convert(item['correct_answer']);
-          List<String> incorrects = (item['incorrect_answers'] as List).map((e) => unescape.convert(e.toString())).toList();
-
-          List<String> allAnswers = List.from(incorrects)..add(correct);
-          allAnswers.shuffle(Random());
-          
-          int correctIndex = allAnswers.indexOf(correct);
-
-          newQuestions.add(Question(
-            questionText: qText,
-            answers: allAnswers,
-            correctAnswerIndex: correctIndex,
-          ));
-        }
-        
-        if (newQuestions.isNotEmpty) {
-          _fetchedQuestions = newQuestions;
-          return;
-        }
-      }
-    } catch (e) {
-      debugPrint("Error fetching trivia: $e");
-    }
-
-    // Fallback if network fails
-    _fetchedQuestions = [
-      Question(questionText: "Which planet is known as the Red Planet?", answers: ["Earth", "Mars", "Jupiter", "Venus"], correctAnswerIndex: 1),
-      Question(questionText: "What is the capital of France?", answers: ["Berlin", "Madrid", "Paris", "Rome"], correctAnswerIndex: 2),
-      Question(questionText: "What is 5 + 7?", answers: ["10", "11", "12", "13"], correctAnswerIndex: 2)
-    ];
-  }
-
-  void _initializeMockData() {
-    players.clear();
-    localPlayer = Player(id: "p_local", username: "You", stack: 100);
-    players.add(localPlayer);
-    players.add(Player(id: "p_bot1", username: "Bot Anna", stack: 100));
-    players.add(Player(id: "p_bot2", username: "Bot Ben", stack: 100));
-    players.add(Player(id: "p_bot3", username: "Bot Kai", stack: 100));
-  }
-
-  void startNewMatch(Function(int placement, int pointsGained) onEnd) async {
-    onMatchEnded = onEnd;
-    _initializeMockData();
-    currentRound = 1;
-    _currentQuestionIndex = 0;
-    currentState = GameState.waiting;
-    roundController.clearQuestion();
-    notifyListeners();
-
-    await _fetchTriviaQuestions();
-    _changeState(GameState.questionActive);
-  }
-
-  void _changeState(GameState newState) {
-    currentState = newState;
-    _ticker?.cancel();
-
-    if (currentState == GameState.questionActive) {
-      if (_currentQuestionIndex >= _fetchedQuestions.length) {
-        _currentQuestionIndex = 0;
-      }
-      final q = _fetchedQuestions[_currentQuestionIndex++];
-      roundController.startRound(q);
-      _simulateBotBets(q);
-      
-      selectedAnswerIndex = -1;
-      currentBetAmount = currentMinBet;
-      if (localPlayer.stack <= currentMinBet) {
-        currentBetAmount = localPlayer.stack;
-      }
-      currentTimer = questionDurationSec;
-      
-      _ticker = Timer.periodic(const Duration(seconds: 1), _tick);
-    } 
-    else if (currentState == GameState.reveal) {
-      // Register local player bet automatically when time runs out
-      roundController.registerBet(Bet(
-        playerId: localPlayer.id,
-        amount: currentBetAmount,
-        answerIndex: selectedAnswerIndex,
-      ));
-
-      lastRoundResult = roundController.processRoundResults(players);
-      currentTimer = revealDurationSec;
-      _ticker = Timer.periodic(const Duration(seconds: 1), _tick);
-      
-      AudioManager().playCash();
-    }
-
+  Future<void> _initAsync() async {
+    await _initLocalPlayer();
+    _setupSockets();
+    isInitialized = true;
     notifyListeners();
   }
 
-  void _tick(Timer timer) {
-    if (currentTimer > 0) {
-      currentTimer--;
+  Future<void> _initLocalPlayer() async {
+    final prefs = await SharedPreferences.getInstance();
+    
+    String? storedId = prefs.getString('user_id');
+    if (storedId == null) {
+      storedId = "u_${DateTime.now().millisecondsSinceEpoch}";
+      await prefs.setString('user_id', storedId);
+    }
+
+    String username = "Player_${storedId.substring(storedId.length - 5)}";
+    
+    localPlayer = Player(
+      id: "temp", 
+      userId: storedId, 
+      username: username, 
+      stack: 100
+    );
+    players = [localPlayer];
+  }
+
+  void _setupSockets() {
+    final socketSvc = SocketService();
+    // Assuming backend is playing on localhost:3000
+    socketSvc.init('http://localhost:3000');
+
+    socketSvc.onMatchFound = (data) {
+      _roomId = data['roomId'];
+      debugPrint("Matched into room $_roomId");
+    };
+
+    socketSvc.onStateUpdate = (data) {
+      final parsedState = _parseGameState(data['currentState']);
+      
+      final prevState = currentState;
+      currentState = parsedState;
+      currentRound = data['currentRound'] ?? 1;
+      currentTimer = data['currentTimer'] ?? 0;
+      currentMinBet = data['currentMinBet'] ?? 10;
+      
+      debugPrint("State update: $currentState, Round: $currentRound, Timer: $currentTimer");
+      
+      // Players
+      if (data['players'] != null) {
+        try {
+          players = (data['players'] as List).map((p) => Player(
+            id: p['id'],
+            userId: p['userId'] ?? "",
+            username: p['username'],
+            stack: p['stack'],
+            isEliminated: p['isEliminated'] ?? false,
+          )).toList();
+        } catch (e) {
+          debugPrint("Error parsing players in state update: $e");
+        }
+
+        // Update localPlayer reference
+        final found = players.where((p) => p.username == localPlayer.username);
+        if (found.isNotEmpty) {
+          final prev = localPlayer;
+          localPlayer = found.first;
+          if (!_wasEliminatedLastFrame && !prev.isEliminated && localPlayer.isEliminated) {
+            justEliminated = true;
+          }
+        }
+      }
+
+      // Question – update on questionActive AND reveal (reveal sends the real correctAnswerIndex)
+      if (data['currentQuestion'] != null && currentState != GameState.waiting) {
+        final q = data['currentQuestion'];
+        currentQuestion = Question(
+          questionText: q['questionText'],
+          answers: List<String>.from(q['answers']),
+          correctAnswerIndex: q['correctAnswerIndex'] ?? -1,
+        );
+      } else if (currentState == GameState.waiting) {
+        currentQuestion = null;
+      }
+
+      // Result
+      if (data['lastRoundResult'] != null) {
+        lastRoundResult = RoundResult(
+          totalPot: data['lastRoundResult']['totalPot'] ?? 0,
+          netChanges: Map<String, int>.from(data['lastRoundResult']['netChanges'] ?? {})
+        );
+      }
+
+      // Sync local UI bet slider if minimum bet increased
+      if (currentState == GameState.questionActive && prevState != GameState.questionActive) {
+        selectedAnswerIndex = -1;
+        currentBetAmount = currentMinBet;
+        if (localPlayer.stack <= currentMinBet) {
+          currentBetAmount = localPlayer.stack;
+        }
+      }
+
+      // Play sounds on transition
+      if (prevState != GameState.reveal && currentState == GameState.reveal) {
+        AudioManager().playCash();
+      }
+
+      notifyListeners();
+    };
+
+    socketSvc.onTick = (time) {
+      currentTimer = time;
       if (currentState == GameState.questionActive && currentTimer <= 3 && currentTimer > 0) {
         AudioManager().playTick();
       }
       notifyListeners();
-    } else {
-      timer.cancel();
-      if (currentState == GameState.questionActive) {
-        _changeState(GameState.reveal);
-      } else if (currentState == GameState.reveal) {
-        _handleRoundEnd();
-      }
-    }
-  }
+    };
 
-  void _handleRoundEnd() {
-    _processEliminations();
+    socketSvc.onMatchEnded = (data) {
+      debugPrint("Match ended event received");
+      currentState = GameState.result;
 
-    // Check if match is over (Local player eliminated OR reached max rounds)
-    if (localPlayer.isEliminated) {
-      _endMatch();
-      return;
-    }
-
-    // Check if player is the last one standing
-    int activePlayers = players.where((p) => !p.isEliminated).length;
-    if (activePlayers <= 1) {
-      _endMatch();
-      return;
-    }
-
-    if (currentRound >= maxRounds) {
-      _endMatch();
-      return;
-    }
-
-    // Next round
-    currentRound++;
-    _changeState(GameState.questionActive);
-  }
-
-  void _processEliminations() {
-    if (currentRound <= shieldRounds) return; // No eliminations
-
-    // Anyone with <= 0 stack is eliminated
-    for (var player in players) {
-      if (player.stack <= 0) {
-        player.isEliminated = true;
-      }
-    }
-
-    // Eliminate bottom 20% (for 4 players, that's 1 player)
-    int activePlayers = players.where((p) => !p.isEliminated).length;
-    if (activePlayers > 1) {
-      int toEliminate = (activePlayers * 0.2).ceil();
-      if (toEliminate > 0) {
-        var activeList = players.where((p) => !p.isEliminated).toList();
-        activeList.sort((a, b) => a.stack.compareTo(b.stack));
-        
-        for (int i = 0; i < toEliminate; i++) {
-          activeList[i].isEliminated = true;
+      try {
+        List<dynamic> resList = [];
+        if (data is List) {
+          resList = data;
+        } else if (data is Map && data['players'] != null) {
+          resList = data['players'] as List<dynamic>;
         }
+
+        final parsed = resList.map((p) {
+          final map = p as Map<String, dynamic>;
+          return Player(
+            id: map['id'],
+            userId: map['userId'] ?? "",
+            username: map['username'],
+            stack: map['stack'],
+            isEliminated: map['isEliminated'] ?? false,
+          );
+        }).toList();
+
+        finalPlayers = parsed;
+        players = parsed;
+      } catch (e) {
+        debugPrint("Error parsing match ended results: $e");
+        // Use current players if parsing fails
+        finalPlayers = players;
       }
+
+      // Determine my placement (server sends list sorted by rank)
+      int rank = finalPlayers.indexWhere((p) => p.username == localPlayer.username) + 1;
+      if (rank == 0) rank = finalPlayers.length > 0 ? finalPlayers.length : 4; 
+
+      final localInList = finalPlayers.firstWhere(
+        (p) => p.username == localPlayer.username,
+        orElse: () => localPlayer,
+      );
+      int coinsChange = localInList.stack - 100;
+
+      _wasEliminatedLastFrame = false;
+      justEliminated = false;
+
+      if (onMatchEnded != null) {
+        onMatchEnded!(rank, coinsChange);
+      }
+      notifyListeners();
+    };
+
+    socketSvc.onUserStats = (data) {
+      userStats = UserStats.fromJson(data);
+      notifyListeners();
+    };
+  }
+
+  GameState _parseGameState(String stateStr) {
+    switch (stateStr) {
+      case 'questionActive': return GameState.questionActive;
+      case 'reveal': return GameState.reveal;
+      case 'result': return GameState.result;
+      default: return GameState.waiting;
     }
   }
 
-  void _endMatch() {
-    currentState = GameState.result;
-    
-    // Sort final players by stack (including eliminated ones but preferring alive)
-    players.sort((a, b) {
-      if (a.isEliminated && !b.isEliminated) return 1;
-      if (!a.isEliminated && b.isEliminated) return -1;
-      return b.stack.compareTo(a.stack);
-    });
-
-    int placement = players.indexWhere((p) => p.id == localPlayer.id) + 1;
-    int pointsGained = (players.length - placement + 1) * 100 - 150; // simple mock calc
-
-    if (placement == 1) {
-      AudioManager().playWin();
-    } else {
-      AudioManager().playLose();
-    }
-
-    if (onMatchEnded != null) {
-      onMatchEnded!(placement, pointsGained);
-    }
+  void startNewMatch(Function(int placement, int pointsGained)? onEnd) {
+    onMatchEnded = onEnd;
+    currentState = GameState.waiting;
+    currentQuestion = null;
     notifyListeners();
+
+    SocketService().joinQueue(localPlayer.username, localPlayer.userId);
   }
 
   void selectAnswer(int index) {
     if (currentState != GameState.questionActive) return;
     selectedAnswerIndex = index;
     notifyListeners();
+    
+    // Send to server
+    if (_roomId.isNotEmpty) {
+      SocketService().selectAnswer(_roomId, index);
+    }
   }
 
   void updateBet(double value) {
@@ -260,41 +258,16 @@ class GameManager extends ChangeNotifier {
     }
     currentBetAmount = amount;
     notifyListeners();
-  }
-
-  void _simulateBotBets(Question q) {
-    final rand = Random();
-    for (var player in players) {
-      if (player.id == localPlayer.id || player.isEliminated) continue;
-
-      double limitMultiplier = currentRound <= shieldRounds ? 0.4 : 1.0;
-      int maxBet = min((player.stack * limitMultiplier).floor(), player.stack);
-      
-      int botBet;
-      if (player.stack <= currentMinBet) {
-        botBet = player.stack; // Forced all-in due to min bet
-      } else {
-        if (maxBet < currentMinBet) {
-          maxBet = currentMinBet;
-        }
-        botBet = maxBet > currentMinBet ? rand.nextInt(maxBet - currentMinBet) + currentMinBet : maxBet;
-      }
-      
-      // 60% chance to be right
-      bool isCorrect = rand.nextDouble() > 0.4;
-      int answerIndex = isCorrect ? q.correctAnswerIndex : ((q.correctAnswerIndex + 1) % 4);
-
-      roundController.registerBet(Bet(
-        playerId: player.id,
-        amount: botBet,
-        answerIndex: answerIndex,
-      ));
+    
+    // Send to server
+    if (_roomId.isNotEmpty) {
+      SocketService().placeBet(_roomId, currentBetAmount);
     }
   }
 
   @override
   void dispose() {
-    _ticker?.cancel();
+    SocketService().dispose();
     super.dispose();
   }
 }

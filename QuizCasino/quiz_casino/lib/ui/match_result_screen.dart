@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import '../core/game_manager.dart';
+import '../models/game_data.dart';
 import '../theme.dart';
-import 'widgets/chunky_card.dart';
 import 'widgets/chunky_button.dart';
 
 class MatchResultScreen extends StatelessWidget {
@@ -12,69 +14,202 @@ class MatchResultScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isVictory = placement == 1;
+    final game = context.read<GameManager>();
+    final finalPlayers = game.finalPlayers;
+    final isEliminated = game.localPlayer.isEliminated;
+    // Victory only if placement == 1 AND not eliminated
+    final isVictory = placement == 1 && !isEliminated;
 
     return Scaffold(
       body: SafeArea(
-        child: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              // Header
+              Image.asset('assets/knowcoin.png', height: 60)
+                  .animate().fadeIn(duration: 600.ms),
+              const SizedBox(height: 12),
               Text(
-                isVictory ? "VICTORY" : "ELIMINATED",
+                isVictory ? '🏆 VICTORY!' : '💀 GAME OVER',
                 style: TextStyle(
-                  fontSize: 40,
+                  fontSize: 36,
                   fontWeight: FontWeight.w900,
                   color: isVictory ? AppTheme.goldCoin : AppTheme.dangerRed,
-                  letterSpacing: 4,
+                  letterSpacing: 3,
                 ),
-              ).animate().scale(curve: Curves.elasticOut, duration: 1000.ms).shimmer(duration: 1500.ms),
+              ).animate().scale(curve: Curves.elasticOut, duration: 1000.ms)
+               .shimmer(duration: 1500.ms, color: Colors.white),
+
+              const SizedBox(height: 24),
+
+              // Leaderboard title
+              const Text(
+                'FINAL STANDINGS',
+                style: TextStyle(color: Colors.white54, letterSpacing: 2, fontSize: 13, fontWeight: FontWeight.bold),
+              ).animate().fadeIn(delay: 200.ms),
+
+              const SizedBox(height: 12),
+
+              // Leaderboard
+              Expanded(
+                child: ListView.builder(
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: finalPlayers.isNotEmpty ? finalPlayers.length : 0,
+                  itemBuilder: (context, i) {
+                    final player = finalPlayers[i];
+                    final rank = i + 1;
+                    final isMe = player.username == game.localPlayer.username;
+                    return _buildLeaderboardRow(rank, player, isMe, i);
+                  },
+                ),
+              ),
+
               const SizedBox(height: 20),
-              ChunkyCard(
-                baseColor: const Color(0xFF151525).withOpacity(0.9),
-                shadowColor: Colors.black,
-                borderColor: AppTheme.purpleGlow,
-                elevation: 6.0,
-                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 24),
-                child: Column(
+
+              // Stats row
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF151525),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: AppTheme.purpleGlow.withOpacity(0.5)),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text("FINAL PLACEMENT", style: TextStyle(color: Colors.white54)),
-                    const SizedBox(height: 8),
-                    Text("#$placement", style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold, color: Colors.white)),
-                    const Divider(color: Colors.white10, height: 40),
-                    const Text("RATING POINTS", style: TextStyle(color: Colors.white54)),
-                    const SizedBox(height: 8),
-                    Text(
-                      pointsGained > 0 ? "+$pointsGained" : "$pointsGained",
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: pointsGained > 0 ? AppTheme.successGreen : AppTheme.dangerRed,
-                      ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('YOUR PLACEMENT', style: TextStyle(color: Colors.white54, fontSize: 11)),
+                        const SizedBox(height: 4),
+                        Text('#$placement', style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w900)),
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        const Text('COINS CHANGE', style: TextStyle(color: Colors.white54, fontSize: 11)),
+                        const SizedBox(height: 4),
+                        Text(
+                          pointsGained > 0 ? '+$pointsGained' : '$pointsGained',
+                          style: TextStyle(
+                            color: pointsGained > 0 ? AppTheme.successGreen : AppTheme.dangerRed,
+                            fontSize: 28,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ).animate().slideY(begin: 0.3, end: 0, delay: 200.ms, duration: 500.ms, curve: Curves.easeOutBack).fadeIn(delay: 200.ms),
-              const SizedBox(height: 60),
+              ).animate().slideY(begin: 0.3, end: 0, delay: 300.ms, duration: 500.ms, curve: Curves.easeOutBack)
+               .fadeIn(delay: 300.ms),
+
+              const SizedBox(height: 20),
+
+              // Return button
               ChunkyButton(
-                onTap: () {
-                  // Pop back until the MainShell (Home)
-                  Navigator.of(context).popUntil((route) => route.isFirst);
-                },
+                onTap: () => Navigator.of(context).popUntil((route) => route.isFirst),
                 baseColor: AppTheme.neonCyan,
                 shadowColor: const Color(0xFF009989),
                 elevation: 6.0,
                 borderRadius: 30.0,
                 padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
                 child: const Text(
-                  "RETURN HOME", 
+                  'RETURN HOME',
                   style: TextStyle(color: Colors.black, fontWeight: FontWeight.w900, fontSize: 18, letterSpacing: 1),
                 ),
-              ).animate().slideY(begin: 0.5, end: 0, delay: 400.ms, duration: 500.ms, curve: Curves.easeOutBack).fadeIn(delay: 400.ms),
+              ).animate().slideY(begin: 0.5, end: 0, delay: 500.ms, duration: 500.ms, curve: Curves.easeOutBack)
+               .fadeIn(delay: 500.ms),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildLeaderboardRow(int rank, Player player, bool isMe, int animIndex) {
+    Color rankColor;
+    IconData? medal;
+    switch (rank) {
+      case 1:
+        rankColor = AppTheme.goldCoin;
+        medal = Icons.emoji_events_rounded;
+        break;
+      case 2:
+        rankColor = Colors.grey.shade300;
+        medal = Icons.emoji_events_rounded;
+        break;
+      case 3:
+        rankColor = const Color(0xFFCD7F32);
+        medal = Icons.emoji_events_rounded;
+        break;
+      default:
+        rankColor = Colors.white38;
+        medal = null;
+    }
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: isMe
+            ? AppTheme.purpleGlow.withOpacity(0.2)
+            : const Color(0xFF1A1A2E),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isMe ? AppTheme.purpleGlow : Colors.white10,
+          width: isMe ? 2 : 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          // Rank
+          SizedBox(
+            width: 40,
+            child: medal != null
+                ? Icon(medal, color: rankColor, size: 22)
+                : Text('#$rank', style: TextStyle(color: rankColor, fontWeight: FontWeight.w900, fontSize: 16)),
+          ),
+          const SizedBox(width: 12),
+          // Eliminated badge or empty
+          if (player.isEliminated)
+            Container(
+              margin: const EdgeInsets.only(right: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: AppTheme.dangerRed.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: AppTheme.dangerRed, width: 1),
+              ),
+              child: const Text('OUT', style: TextStyle(color: AppTheme.dangerRed, fontSize: 10, fontWeight: FontWeight.bold)),
+            ),
+          // Name
+          Expanded(
+            child: Text(
+              player.username + (isMe ? ' (You)' : ''),
+              style: TextStyle(
+                color: isMe ? Colors.white : Colors.white70,
+                fontWeight: isMe ? FontWeight.w900 : FontWeight.normal,
+                fontSize: 16,
+              ),
+            ),
+          ),
+          // Stack
+          Text(
+            '${player.stack}',
+            style: TextStyle(
+              color: rankColor,
+              fontWeight: FontWeight.w900,
+              fontSize: 20,
+            ),
+          ),
+          const SizedBox(width: 4),
+          const Text('KC', style: TextStyle(color: Colors.white38, fontSize: 11)),
+        ],
+      ),
+    ).animate().slideX(begin: 0.3, end: 0, delay: (100 + animIndex * 80).ms, duration: 400.ms, curve: Curves.easeOutQuad)
+     .fadeIn(delay: (100 + animIndex * 80).ms);
   }
 }

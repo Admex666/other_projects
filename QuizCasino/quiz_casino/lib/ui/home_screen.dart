@@ -17,24 +17,42 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Logo
+            Padding(
+              padding: const EdgeInsets.only(bottom: 24.0),
+              child: Image.asset(
+                'assets/knowcoin.png',
+                height: 120, // adjust size as needed
+              ).animate().fadeIn(duration: 800.ms).scaleXY(begin: 0.8, end: 1.0, curve: Curves.easeOutBack),
+            ),
             // User Rank & Stats
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-              decoration: BoxDecoration(
-                color: AppTheme.panelGlassColor,
-                borderRadius: BorderRadius.circular(30),
-                border: Border.all(color: AppTheme.goldCoin.withOpacity(0.5)),
-                boxShadow: [
-                  BoxShadow(color: AppTheme.goldCoin.withOpacity(0.1), blurRadius: 20, spreadRadius: 2)
-                ],
-              ),
-              child: const Column(
-                children: [
-                  Text("DIAMOND BRAIN", style: TextStyle(color: AppTheme.goldCoin, fontWeight: FontWeight.bold, letterSpacing: 2)),
-                  SizedBox(height: 8),
-                  Text("Rank: 420", style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w900)),
-                ],
-              ),
+            Consumer<GameManager>(
+              builder: (context, game, child) {
+                if (!game.isInitialized) {
+                  return const CircularProgressIndicator(color: AppTheme.neonCyan);
+                }
+                final stats = game.userStats;
+                return Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                  decoration: BoxDecoration(
+                    color: AppTheme.panelGlassColor,
+                    borderRadius: BorderRadius.circular(30),
+                    border: Border.all(color: AppTheme.goldCoin.withOpacity(0.5)),
+                    boxShadow: [
+                      BoxShadow(color: AppTheme.goldCoin.withOpacity(0.1), blurRadius: 20, spreadRadius: 2)
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      Text(stats != null ? "KNOWLEDGE: ${stats.totalCoins}" : "LOADING...", 
+                          style: const TextStyle(color: AppTheme.goldCoin, fontWeight: FontWeight.bold, letterSpacing: 2)),
+                      const SizedBox(height: 8),
+                      Text(stats != null ? "Wins: ${stats.victories}" : "Rank: ---", 
+                          style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w900)),
+                    ],
+                  ),
+                );
+              }
             ).animate().slideY(begin: -0.2, end: 0, curve: Curves.easeOutCubic, duration: 600.ms).fadeIn(),
             const SizedBox(height: 60),
             
@@ -45,16 +63,7 @@ class HomeScreen extends StatelessWidget {
               child: ChunkyButton(
                 onTap: () {
                   final game = context.read<GameManager>();
-                  game.startNewMatch((placement, pointsGained) {
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(
-                        builder: (_) => MatchResultScreen(
-                          placement: placement,
-                          pointsGained: pointsGained,
-                        ),
-                      ),
-                    );
-                  });
+                  game.startNewMatch(null); // Result screen is handled inside MatchScreen
                   Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MatchScreen()));
                 },
                 baseColor: AppTheme.neonCyan,

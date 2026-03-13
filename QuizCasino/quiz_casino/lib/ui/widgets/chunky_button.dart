@@ -3,7 +3,7 @@ import '../../core/audio_manager.dart';
 
 class ChunkyButton extends StatefulWidget {
   final Widget child;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   final Color baseColor;
   final Color shadowColor;
   final double elevation;
@@ -15,7 +15,7 @@ class ChunkyButton extends StatefulWidget {
   const ChunkyButton({
     super.key,
     required this.child,
-    required this.onTap,
+    this.onTap,
     required this.baseColor,
     required this.shadowColor,
     this.elevation = 6.0,
@@ -36,12 +36,14 @@ class _ChunkyButtonState extends State<ChunkyButton> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTapDown: (_) {
+        if (widget.onTap == null) return;
         setState(() => _isPressed = true);
         AudioManager().playClick();
       },
       onTapUp: (_) {
+        if (widget.onTap == null) return;
         setState(() => _isPressed = false);
-        widget.onTap();
+        widget.onTap!();
       },
       onTapCancel: () => setState(() => _isPressed = false),
       child: AnimatedContainer(

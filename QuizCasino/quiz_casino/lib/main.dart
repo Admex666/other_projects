@@ -21,7 +21,7 @@ class QuizCasinoApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => GameManager()),
       ],
       child: MaterialApp(
-        title: 'QuizCasino',
+        title: 'KnowCoin',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.themeData,
         home: const MainShell(),
