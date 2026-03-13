@@ -64,14 +64,14 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('join_queue')
-  handleJoinQueue(
+  async handleJoinQueue(
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { username: string, userId: string },
   ) {
     console.log(`[GameGateway] ${client.id} joined queue as ${data.username} (UID: ${data.userId})`);
     
     // Google Play / User Management base
-    const user = this.userManager.getOrCreateUser(data.userId || client.id, data.username);
+    const user = await this.userManager.getOrCreateUser(data.userId || client.id, data.username);
     
     const player: Player = {
       id: client.id,
@@ -87,11 +87,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('get_stats')
-  handleGetStats(
+  async handleGetStats(
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { userId: string },
   ) {
-    const user = this.userManager.getUser(data.userId);
+    const user = await this.userManager.getUser(data.userId);
     if (user) {
       client.emit('user_stats', user);
     }

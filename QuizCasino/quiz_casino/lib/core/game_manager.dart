@@ -76,8 +76,8 @@ class GameManager extends ChangeNotifier {
 
   void _setupSockets() {
     final socketSvc = SocketService();
-    // Assuming backend is playing on localhost:3000
-    socketSvc.init('http://localhost:3000');
+    // Live Render server
+    socketSvc.init('https://other-projects-79dx.onrender.com');
 
     socketSvc.onMatchFound = (data) {
       _roomId = data['roomId'];
@@ -125,18 +125,25 @@ class GameManager extends ChangeNotifier {
         final q = data['currentQuestion'];
         currentQuestion = Question(
           questionText: q['questionText'],
-          answers: List<String>.from(q['answers']),
+          answers: (q['answers'] as List).map((e) => e.toString()).toList(),
           correctAnswerIndex: q['correctAnswerIndex'] ?? -1,
         );
       } else if (currentState == GameState.waiting) {
         currentQuestion = null;
       }
 
-      // Result
       if (data['lastRoundResult'] != null) {
+        final rawNetChanges = data['lastRoundResult']['netChanges'];
+        Map<String, int> netChanges = {};
+        if (rawNetChanges is Map) {
+          rawNetChanges.forEach((k, v) {
+            netChanges[k.toString()] = (v as num).toInt();
+          });
+        }
+        
         lastRoundResult = RoundResult(
-          totalPot: data['lastRoundResult']['totalPot'] ?? 0,
-          netChanges: Map<String, int>.from(data['lastRoundResult']['netChanges'] ?? {})
+          totalPot: (data['lastRoundResult']['totalPot'] as num?)?.toInt() ?? 0,
+          netChanges: netChanges
         );
       }
 
@@ -178,14 +185,16 @@ class GameManager extends ChangeNotifier {
         }
 
         final parsed = resList.map((p) {
-          final map = p as Map<String, dynamic>;
-          return Player(
-            id: map['id'],
-            userId: map['userId'] ?? "",
-            username: map['username'],
-            stack: map['stack'],
-            isEliminated: map['isEliminated'] ?? false,
-          );
+          if (p is Map) {
+            return Player(
+              id: p['id']?.toString() ?? "",
+              userId: p['userId']?.toString() ?? "",
+              username: p['username']?.toString() ?? "Unknown",
+              stack: (p['stack'] as num?)?.toInt() ?? 0,
+              isEliminated: p['isEliminated'] ?? false,
+            );
+          }
+          return Player(id: "err", userId: "", username: "Error", stack: 0);
         }).toList();
 
         finalPlayers = parsed;

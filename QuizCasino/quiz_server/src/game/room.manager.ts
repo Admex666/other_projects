@@ -119,7 +119,7 @@ export class RoomManager {
     }
   }
 
-  private onRoomMatchEnded(roomId: string, results: Player[]) {
+  private async onRoomMatchEnded(roomId: string, results: Player[]) {
     console.log(`[RoomManager] onRoomMatchEnded for ${roomId}. Results received for ${results.length} players.`);
     if (this.gatewayEmitToRoom) {
       this.gatewayEmitToRoom(roomId, 'match_ended', results);
@@ -131,10 +131,10 @@ export class RoomManager {
         const won = results[0].id === p.id;
         const coinsChange = p.stack - 100; // Net profit/loss
         console.log(`[RoomManager] Updating stats for UID ${p.userId}: Won=${won}, CoinsChange=${coinsChange}`);
-        this.userManager.updateStats(p.userId, won, coinsChange);
+        await this.userManager.updateStats(p.userId, won, coinsChange);
         
         // Notify the specific player of their new totals
-        const stats = this.userManager.getUser(p.userId);
+        const stats = await this.userManager.getUser(p.userId);
         if (stats && this.gatewayEmitToUser) {
           this.gatewayEmitToUser(p.id, 'user_stats', stats);
         }
