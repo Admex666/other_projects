@@ -12,7 +12,13 @@ import { RoomManager } from './room.manager';
 import { UserManager } from './user.manager';
 import { Player } from './game.types';
 
-@WebSocketGateway({ cors: true })
+@WebSocketGateway({
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST'],
+    credentials: true,
+  },
+})
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;

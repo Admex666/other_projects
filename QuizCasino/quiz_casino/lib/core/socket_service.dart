@@ -26,17 +26,30 @@ class SocketService {
     if (_socket != null) return;
     
     _socket = IO.io(url, <String, dynamic>{
-      'transports': ['websocket'],
+      'transports': ['websocket', 'polling'],
       'autoConnect': false,
+      'forceNew': true,
     });
 
     socket.onConnect((_) {
-      debugPrint('Connected to server!');
+      debugPrint('DEBUG: Socket Connected! ID: ${socket.id}');
       isConnected = true;
     });
 
+    socket.onConnectError((data) {
+      debugPrint('DEBUG: Socket Connect Error: $data');
+    });
+
+    socket.on('connect_timeout', (data) {
+      debugPrint('DEBUG: Socket Connect Timeout: $data');
+    });
+
+    socket.onError((data) {
+      debugPrint('DEBUG: Socket General Error: $data');
+    });
+
     socket.onDisconnect((_) {
-      debugPrint('Disconnected from server!');
+      debugPrint('DEBUG: Socket Disconnected!');
       isConnected = false;
     });
 
@@ -84,10 +97,12 @@ class SocketService {
   }
 
   void login(String username, String password) {
+    debugPrint('DEBUG: Emitting auth_login for $username');
     socket.emit('auth_login', {'username': username, 'password': password});
   }
 
   void register(String username, String password) {
+    debugPrint('DEBUG: Emitting auth_register for $username');
     socket.emit('auth_register', {'username': username, 'password': password});
   }
 

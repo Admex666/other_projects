@@ -79,6 +79,7 @@ class GameManager with ChangeNotifier {
     final socket = SocketService();
     
     socket.onAuthSuccess((stats) async {
+      debugPrint('DEBUG: Received auth_success for ${stats.username}');
       _userStats = stats;
       _isLoggedIn = true;
       _isInitialized = true;
@@ -88,6 +89,7 @@ class GameManager with ChangeNotifier {
     });
 
     socket.onAuthError((error) {
+      debugPrint('DEBUG: Received auth_error: $error');
       _authError = error;
       _isInitialized = true;
       _isAuthLoading = false;
