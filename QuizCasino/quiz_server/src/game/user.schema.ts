@@ -6,6 +6,9 @@ export class User extends Document {
   @Prop({ required: true, unique: true })
   username: string;
 
+  @Prop({ unique: true, sparse: true })
+  userId: string;
+
   @Prop({ required: true })
   password: string;
 

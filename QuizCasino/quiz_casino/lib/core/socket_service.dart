@@ -1,6 +1,7 @@
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:flutter/foundation.dart';
 import '../models/game_data.dart';
+import 'constants.dart';
 
 class SocketService {
   static final SocketService _instance = SocketService._internal();
@@ -10,7 +11,7 @@ class SocketService {
   IO.Socket? _socket;
   IO.Socket get socket {
     if (_socket == null) {
-      init("https://quiz-casino.onrender.com");
+      init(AppConstants.serverUrl);
     }
     return _socket!;
   }
@@ -26,7 +27,7 @@ class SocketService {
     if (_socket != null) return;
     
     _socket = IO.io(url, <String, dynamic>{
-      'transports': ['polling'], // Force polling only for diagnostic
+      'transports': ['websocket', 'polling'],
       'autoConnect': false,
       'forceNew': true,
     });

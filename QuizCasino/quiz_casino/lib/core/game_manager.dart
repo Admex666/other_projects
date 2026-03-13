@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'socket_service.dart';
+import 'constants.dart';
 import '../models/game_data.dart';
 
 class GameManager with ChangeNotifier {
@@ -63,7 +64,7 @@ class GameManager with ChangeNotifier {
     final savedUsername = prefs.getString('saved_username');
     final savedPassword = prefs.getString('saved_password');
 
-    SocketService().init("https://quiz-casino.onrender.com");
+    SocketService().init(AppConstants.serverUrl);
     _setupSockets();
 
     if (savedUsername != null && savedPassword != null) {

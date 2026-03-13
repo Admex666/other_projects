@@ -35,6 +35,7 @@ export class UserManager {
     const hashedPassword = await bcrypt.hash(password, this.saltRounds);
     const user = await this.userModel.create({
       username,
+      userId: username, // Mirror username to satisfy existing index
       password: hashedPassword,
       coins: 1000,
       matchesPlayed: 0,
@@ -71,6 +72,7 @@ export class UserManager {
       const hashedPassword = await bcrypt.hash('bot_password', this.saltRounds);
       user = await this.userModel.create({
         username,
+        userId: username,
         password: hashedPassword,
         coins: 1000,
         matchesPlayed: 0,
