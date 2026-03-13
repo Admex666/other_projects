@@ -26,7 +26,7 @@ class SocketService {
     if (_socket != null) return;
     
     _socket = IO.io(url, <String, dynamic>{
-      'transports': ['websocket', 'polling'],
+      'transports': ['polling'], // Force polling only for diagnostic
       'autoConnect': false,
       'forceNew': true,
     });
@@ -85,24 +85,27 @@ class SocketService {
   void onAuthError(Function(String) callback) => _onAuthError = callback;
 
   void joinQueue(String username, String userId) {
+    debugPrint('DEBUG: Calling joinQueue, status: ${socket.connected}');
     socket.emit('join_queue', {'username': username, 'userId': userId});
   }
 
   void leaveQueue() {
+    debugPrint('DEBUG: Calling leaveQueue, status: ${socket.connected}');
     socket.emit('leave_queue');
   }
 
   void getStats(String userId, {String? username}) {
+    debugPrint('DEBUG: Calling getStats for ${username ?? userId}, status: ${socket.connected}');
     socket.emit('get_stats', {'username': username ?? userId});
   }
 
   void login(String username, String password) {
-    debugPrint('DEBUG: Emitting auth_login for $username');
+    debugPrint('DEBUG: Emitting auth_login for $username, socket.connected: ${socket.connected}');
     socket.emit('auth_login', {'username': username, 'password': password});
   }
 
   void register(String username, String password) {
-    debugPrint('DEBUG: Emitting auth_register for $username');
+    debugPrint('DEBUG: Emitting auth_register for $username, socket.connected: ${socket.connected}');
     socket.emit('auth_register', {'username': username, 'password': password});
   }
 

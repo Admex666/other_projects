@@ -7,6 +7,7 @@ import {
   MessageBody,
   ConnectedSocket,
 } from '@nestjs/websockets';
+import { OnModuleInit } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 import { RoomManager } from './room.manager';
 import { UserManager } from './user.manager';
@@ -14,14 +15,18 @@ import { Player } from './game.types';
 
 @WebSocketGateway({
   cors: {
-    origin: '*',
+    origin: true,
     methods: ['GET', 'POST'],
     credentials: true,
   },
 })
-export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, OnModuleInit {
   @WebSocketServer()
   server: Server;
+
+  onModuleInit() {
+    console.log('GameGateway initialized and listening for connections');
+  }
 
   // Map socketId -> roomId
   private clientRooms: Map<string, string> = new Map();
