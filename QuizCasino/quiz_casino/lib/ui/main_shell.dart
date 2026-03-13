@@ -1,10 +1,13 @@
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import '../core/audio_manager.dart';
+import '../core/game_manager.dart';
 import '../theme.dart';
 import 'home_screen.dart';
 import 'leaderboard_screen.dart';
 import 'guild_screen.dart';
+import 'profile_screen.dart';
+import 'auth_screen.dart';
 
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
@@ -20,41 +23,56 @@ class _MainShellState extends State<MainShell> {
     const HomeScreen(),
     const LeaderboardScreen(),
     const GuildScreen(),
-    const Center(child: Text("PROFILE (WIP)", style: TextStyle(color: Colors.white))),
+    const ProfileScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBody: true,
-      body: _screens[_currentIndex],
-      bottomNavigationBar: SafeArea(
-        child: Container(
-          margin: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          decoration: BoxDecoration(
-            color: const Color(0xFF151525).withOpacity(0.95),
-            borderRadius: BorderRadius.circular(30),
-            border: Border.all(color: AppTheme.neonCyan.withOpacity(0.3), width: 2),
-            boxShadow: [
-              BoxShadow(
-                color: AppTheme.neonCyan.withOpacity(0.2),
-                blurRadius: 20,
-                spreadRadius: 2,
-              )
-            ],
+    return Consumer<GameManager>(
+      builder: (context, game, child) {
+        if (!game.isInitialized) {
+          return const Scaffold(
+            backgroundColor: AppTheme.backgroundDarkNavy,
+            body: Center(child: CircularProgressIndicator(color: AppTheme.neonCyan)),
+          );
+        }
+
+        if (!game.isLoggedIn) {
+          return const AuthScreen();
+        }
+
+        return Scaffold(
+          extendBody: true,
+          body: _screens[_currentIndex],
+          bottomNavigationBar: SafeArea(
+            child: Container(
+              margin: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: const Color(0xFF151525).withOpacity(0.95),
+                borderRadius: BorderRadius.circular(30),
+                border: Border.all(color: AppTheme.neonCyan.withOpacity(0.3), width: 2),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.neonCyan.withOpacity(0.2),
+                    blurRadius: 20,
+                    spreadRadius: 2,
+                  )
+                ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildNavItem(Icons.home_rounded, "HOME", 0),
+                  _buildNavItem(Icons.emoji_events_rounded, "RANK", 1),
+                  _buildNavItem(Icons.shield_rounded, "GUILD", 2),
+                  _buildNavItem(Icons.person_rounded, "PROFILE", 3),
+                ],
+              ),
+            ),
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildNavItem(Icons.home_rounded, "HOME", 0),
-              _buildNavItem(Icons.emoji_events_rounded, "RANK", 1),
-              _buildNavItem(Icons.shield_rounded, "GUILD", 2),
-              _buildNavItem(Icons.person_rounded, "PROFILE", 3),
-            ],
-          ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -81,7 +99,7 @@ class _MainShellState extends State<MainShell> {
               icon,
               color: isSelected ? AppTheme.neonCyan : Colors.white54,
               size: isSelected ? 26 : 24,
-            ).animate(target: isSelected ? 1 : 0).scaleXY(end: 1.1, duration: 200.ms),
+            ),
             if (isSelected)
               Padding(
                 padding: const EdgeInsets.only(left: 8.0),
@@ -89,7 +107,7 @@ class _MainShellState extends State<MainShell> {
                   label,
                   style: const TextStyle(color: AppTheme.neonCyan, fontWeight: FontWeight.bold, letterSpacing: 1),
                 ),
-              ).animate().fadeIn(duration: 200.ms).slideX(begin: -0.2, end: 0, duration: 200.ms),
+              ),
           ],
         ),
       ),

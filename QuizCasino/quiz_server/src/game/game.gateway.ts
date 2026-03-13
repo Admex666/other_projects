@@ -54,7 +54,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.roomManager.leaveQueue(client.id);
 
     if (roomId) {
-      // Could notify room logic to handle disconnect (e.g. mark eliminated)
       const room = this.roomManager.getRoom(roomId);
       if (room) {
         room.removePlayer(client.id);
@@ -63,35 +62,67 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
   }
 
+  @SubscribeMessage('auth_register')
+  async handleRegister(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { username: string, password: string },
+  ) {
+    try {
+      const user = await this.userManager.register(data.username, data.password);
+      client.emit('auth_success', user);
+    } catch (e) {
+      client.emit('auth_error', { message: e.message || 'Registration failed' });
+    }
+  }
+
+  @SubscribeMessage('auth_login')
+  async handleLogin(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { username: string, password: string },
+  ) {
+    try {
+      const user = await this.userManager.login(data.username, data.password);
+      client.emit('auth_success', user);
+    } catch (e) {
+      client.emit('auth_error', { message: e.message || 'Login failed' });
+    }
+  }
+
   @SubscribeMessage('join_queue')
   async handleJoinQueue(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: { username: string, userId: string },
+    @MessageBody() data: { username: string },
   ) {
-    console.log(`[GameGateway] ${client.id} joined queue as ${data.username} (UID: ${data.userId})`);
+    console.log(`[GameGateway] ${client.id} joining queue as ${data.username}`);
     
-    // Google Play / User Management base
-    const user = await this.userManager.getOrCreateUser(data.userId || client.id, data.username);
-    
+    const user = await this.userManager.getUser(data.username);
+    if (!user) {
+      client.emit('error', { message: 'User not found. Please login.' });
+      return;
+    }
+
     const player: Player = {
       id: client.id,
-      userId: user.userId,
+      userId: user.username, // Using username as the persistent ID in game logic
       username: user.username,
-      stack: 100, // Starting stack for the match
+      stack: 100,
       isEliminated: false,
     };
     this.roomManager.joinQueue(player, client.id);
-
-    // Send user stats back immediately
     client.emit('user_stats', user);
+  }
+
+  @SubscribeMessage('leave_queue')
+  handleLeaveQueue(@ConnectedSocket() client: Socket) {
+    this.roomManager.leaveQueue(client.id);
   }
 
   @SubscribeMessage('get_stats')
   async handleGetStats(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: { userId: string },
+    @MessageBody() data: { username: string },
   ) {
-    const user = await this.userManager.getUser(data.userId);
+    const user = await this.userManager.getUser(data.username);
     if (user) {
       client.emit('user_stats', user);
     }

@@ -63,7 +63,7 @@ class HomeScreen extends StatelessWidget {
               child: ChunkyButton(
                 onTap: () {
                   final game = context.read<GameManager>();
-                  game.startNewMatch(null); // Result screen is handled inside MatchScreen
+                  game.startNewMatch(); // Result screen is handled inside MatchScreen
                   Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MatchScreen()));
                 },
                 baseColor: AppTheme.neonCyan,

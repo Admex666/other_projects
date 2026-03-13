@@ -1,282 +1,280 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../models/game_data.dart';
-import 'audio_manager.dart';
 import 'socket_service.dart';
+import '../models/game_data.dart';
 
-class GameManager extends ChangeNotifier {
+class GameManager with ChangeNotifier {
+  // Game State
   GameState currentState = GameState.waiting;
-  List<Player> players = [];
-  List<Player> finalPlayers = []; // Set on match_ended for the leaderboard
-  late Player localPlayer;
-  String _roomId = '';
-  UserStats? userStats;
-
-  bool isInitialized = false;
-
-  // Used to trigger "You've been eliminated" popup
-  bool justEliminated = false;
-  bool _wasEliminatedLastFrame = false;
-
-  // Match Rules & State from server
-  int currentRound = 1;
-  final int maxRounds = 7;
-  final int shieldRounds = 2;
-  final int questionDurationSec = 15;
-  final int revealDurationSec = 5;
-  int currentMinBet = 10;
-
-  int currentTimer = 0;
-  RoundResult? lastRoundResult;
   Question? currentQuestion;
+  int tickCount = 0;
+  List<Player> players = [];
+  Player? _winner;
+  RoundResult? lastRoundResult;
+  bool justEliminated = false;
+  List<Player> finalPlayers = [];
 
-  // UI Local State
-  int selectedAnswerIndex = -1;
+  // Game specific state
+  int currentRound = 1;
+  int maxRounds = 10;
+  int shieldRounds = 3;
+  int? selectedAnswerIndex;
+  int currentMinBet = 10;
   int currentBetAmount = 10;
+  int currentTimer = 0;
+  int questionDurationSec = 15;
+  int revealDurationSec = 5;
 
-  Function(int placement, int pointsGained)? onMatchEnded;
-
-  void clearJustEliminated() {
-    justEliminated = false;
-    _wasEliminatedLastFrame = true;
-    notifyListeners();
-  }
+  // User State
+  UserStats? _userStats;
+  bool _isInitialized = false;
+  bool _isLoggedIn = false;
+  bool _isAuthLoading = false;
+  String? _authError;
 
   GameManager() {
-    _initAsync();
+    _init();
   }
 
-  Future<void> _initAsync() async {
-    await _initLocalPlayer();
-    _setupSockets();
-    isInitialized = true;
-    notifyListeners();
-  }
+  bool get isInitialized => _isInitialized;
+  bool get isLoggedIn => _isLoggedIn;
+  UserStats? get userStats => _userStats;
+  String? get authError => _authError;
+  bool get isAuthLoading => _isAuthLoading;
 
-  Future<void> _initLocalPlayer() async {
-    final prefs = await SharedPreferences.getInstance();
-    
-    String? storedId = prefs.getString('user_id');
-    if (storedId == null) {
-      storedId = "u_${DateTime.now().millisecondsSinceEpoch}";
-      await prefs.setString('user_id', storedId);
-    }
-
-    String username = "Player_${storedId.substring(storedId.length - 5)}";
-    
-    localPlayer = Player(
-      id: "temp", 
-      userId: storedId, 
-      username: username, 
-      stack: 100
+  // Local device player representation
+  Player get localPlayer {
+    final p = players.firstWhere(
+      (p) => p.username == _userStats?.username,
+      orElse: () => Player(
+        id: "local",
+        userId: _userStats?.username ?? "Guest",
+        username: _userStats?.username ?? "Guest",
+        stack: 100,
+      ),
     );
-    players = [localPlayer];
+    return p;
+  }
+
+  bool get isMatchmaking => currentState == GameState.waiting && currentQuestion == null;
+
+  Future<void> _init() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedUsername = prefs.getString('saved_username');
+    final savedPassword = prefs.getString('saved_password');
+
+    SocketService().init("https://quiz-casino.onrender.com");
+    _setupSockets();
+
+    if (savedUsername != null && savedPassword != null) {
+      // Try auto-login
+      SocketService().login(savedUsername, savedPassword);
+    } else {
+      _isInitialized = true;
+      notifyListeners();
+    }
   }
 
   void _setupSockets() {
-    final socketSvc = SocketService();
-    // Live Render server
-    socketSvc.init('https://other-projects-79dx.onrender.com');
+    final socket = SocketService();
+    
+    socket.onAuthSuccess((stats) async {
+      _userStats = stats;
+      _isLoggedIn = true;
+      _isInitialized = true;
+      _isAuthLoading = false;
+      _authError = null;
+      notifyListeners();
+    });
 
-    socketSvc.onMatchFound = (data) {
-      _roomId = data['roomId'];
-      debugPrint("Matched into room $_roomId");
-    };
+    socket.onAuthError((error) {
+      _authError = error;
+      _isInitialized = true;
+      _isAuthLoading = false;
+      notifyListeners();
+    });
 
-    socketSvc.onStateUpdate = (data) {
-      final parsedState = _parseGameState(data['currentState']);
-      
-      final prevState = currentState;
-      currentState = parsedState;
-      currentRound = data['currentRound'] ?? 1;
-      currentTimer = data['currentTimer'] ?? 0;
-      currentMinBet = data['currentMinBet'] ?? 10;
-      
-      debugPrint("State update: $currentState, Round: $currentRound, Timer: $currentTimer");
-      
-      // Players
-      if (data['players'] != null) {
-        try {
-          players = (data['players'] as List).map((p) => Player(
-            id: p['id'],
-            userId: p['userId'] ?? "",
-            username: p['username'],
-            stack: p['stack'],
-            isEliminated: p['isEliminated'] ?? false,
-          )).toList();
-        } catch (e) {
-          debugPrint("Error parsing players in state update: $e");
-        }
+    socket.onUserStats((stats) {
+      _userStats = stats;
+      notifyListeners();
+    });
 
-        // Update localPlayer reference
-        final found = players.where((p) => p.username == localPlayer.username);
-        if (found.isNotEmpty) {
-          final prev = localPlayer;
-          localPlayer = found.first;
-          if (!_wasEliminatedLastFrame && !prev.isEliminated && localPlayer.isEliminated) {
-            justEliminated = true;
-          }
-        }
-      }
-
-      // Question – update on questionActive AND reveal (reveal sends the real correctAnswerIndex)
-      if (data['currentQuestion'] != null && currentState != GameState.waiting) {
-        final q = data['currentQuestion'];
-        currentQuestion = Question(
-          questionText: q['questionText'],
-          answers: (q['answers'] as List).map((e) => e.toString()).toList(),
-          correctAnswerIndex: q['correctAnswerIndex'] ?? -1,
-        );
-      } else if (currentState == GameState.waiting) {
-        currentQuestion = null;
-      }
-
-      if (data['lastRoundResult'] != null) {
-        final rawNetChanges = data['lastRoundResult']['netChanges'];
-        Map<String, int> netChanges = {};
-        if (rawNetChanges is Map) {
-          rawNetChanges.forEach((k, v) {
-            netChanges[k.toString()] = (v as num).toInt();
-          });
-        }
-        
-        lastRoundResult = RoundResult(
-          totalPot: (data['lastRoundResult']['totalPot'] as num?)?.toInt() ?? 0,
-          netChanges: netChanges
-        );
-      }
-
-      // Sync local UI bet slider if minimum bet increased
-      if (currentState == GameState.questionActive && prevState != GameState.questionActive) {
-        selectedAnswerIndex = -1;
-        currentBetAmount = currentMinBet;
-        if (localPlayer.stack <= currentMinBet) {
-          currentBetAmount = localPlayer.stack;
-        }
-      }
-
-      // Play sounds on transition
-      if (prevState != GameState.reveal && currentState == GameState.reveal) {
-        AudioManager().playCash();
-      }
-
+    socket.onMatchFound = (data) {
+      currentState = GameState.waiting;
+      currentQuestion = null;
       notifyListeners();
     };
 
-    socketSvc.onTick = (time) {
-      currentTimer = time;
-      if (currentState == GameState.questionActive && currentTimer <= 3 && currentTimer > 0) {
-        AudioManager().playTick();
-      }
+    socket.onStateUpdate = (data) {
+      _parseState(data);
       notifyListeners();
     };
 
-    socketSvc.onMatchEnded = (data) {
-      debugPrint("Match ended event received");
-      currentState = GameState.result;
-
-      try {
-        List<dynamic> resList = [];
-        if (data is List) {
-          resList = data;
-        } else if (data is Map && data['players'] != null) {
-          resList = data['players'] as List<dynamic>;
-        }
-
-        final parsed = resList.map((p) {
-          if (p is Map) {
-            return Player(
-              id: p['id']?.toString() ?? "",
-              userId: p['userId']?.toString() ?? "",
-              username: p['username']?.toString() ?? "Unknown",
-              stack: (p['stack'] as num?)?.toInt() ?? 0,
-              isEliminated: p['isEliminated'] ?? false,
-            );
-          }
-          return Player(id: "err", userId: "", username: "Error", stack: 0);
-        }).toList();
-
-        finalPlayers = parsed;
-        players = parsed;
-      } catch (e) {
-        debugPrint("Error parsing match ended results: $e");
-        // Use current players if parsing fails
-        finalPlayers = players;
-      }
-
-      // Determine my placement (server sends list sorted by rank)
-      int rank = finalPlayers.indexWhere((p) => p.username == localPlayer.username) + 1;
-      if (rank == 0) rank = finalPlayers.length > 0 ? finalPlayers.length : 4; 
-
-      final localInList = finalPlayers.firstWhere(
-        (p) => p.username == localPlayer.username,
-        orElse: () => localPlayer,
-      );
-      int coinsChange = localInList.stack - 100;
-
-      _wasEliminatedLastFrame = false;
-      justEliminated = false;
-
-      if (onMatchEnded != null) {
-        onMatchEnded!(rank, coinsChange);
-      }
+    socket.onTick = (count) {
+      tickCount = count;
+      currentTimer = count; // Ensure currentTimer is updated
       notifyListeners();
     };
 
-    socketSvc.onUserStats = (data) {
-      userStats = UserStats.fromJson(data);
+    socket.onMatchEnded = (data) {
+      _parseMatchEnd(data);
       notifyListeners();
     };
   }
 
-  GameState _parseGameState(String stateStr) {
-    switch (stateStr) {
-      case 'questionActive': return GameState.questionActive;
-      case 'reveal': return GameState.reveal;
-      case 'result': return GameState.result;
-      default: return GameState.waiting;
-    }
+  void login(String username, String password) async {
+    _authError = null;
+    _isAuthLoading = true;
+    notifyListeners();
+    SocketService().login(username, password);
+    
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('saved_username', username);
+    await prefs.setString('saved_password', password);
   }
 
-  void startNewMatch(Function(int placement, int pointsGained)? onEnd) {
-    onMatchEnded = onEnd;
+  void register(String username, String password) async {
+    _authError = null;
+    _isAuthLoading = true;
+    notifyListeners();
+    SocketService().register(username, password);
+    
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('saved_username', username);
+    await prefs.setString('saved_password', password);
+  }
+
+  void logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('saved_username');
+    await prefs.remove('saved_password');
+    _isLoggedIn = false;
+    _userStats = null;
+    notifyListeners();
+  }
+
+  void startNewMatch([int? betAmount]) {
+    if (_userStats == null) return;
     currentState = GameState.waiting;
     currentQuestion = null;
-    notifyListeners();
+    players = [];
+    _winner = null;
+    lastRoundResult = null;
+    justEliminated = false;
+    finalPlayers = [];
+    currentRound = 1;
+    selectedAnswerIndex = null;
+    
+    SocketService().joinQueue(_userStats!.username, _userStats!.username);
+  }
 
-    SocketService().joinQueue(localPlayer.username, localPlayer.userId);
+  void cancelMatchmaking() {
+    SocketService().leaveQueue();
+  }
+
+  void placeBet(int amount) {
+    final roomId = _getRoomIdFromState();
+    if (roomId != null) {
+      SocketService().placeBet(roomId, amount);
+    }
   }
 
   void selectAnswer(int index) {
-    if (currentState != GameState.questionActive) return;
-    selectedAnswerIndex = index;
-    notifyListeners();
+    if (selectedAnswerIndex != null) return; // Only allow one selection per round
     
-    // Send to server
-    if (_roomId.isNotEmpty) {
-      SocketService().selectAnswer(_roomId, index);
+    final roomId = _getRoomIdFromState();
+    if (roomId != null) {
+      selectedAnswerIndex = index;
+      SocketService().selectAnswer(roomId, index);
+      // Automatically place the current bet amount when answer is selected
+      SocketService().placeBet(roomId, currentBetAmount);
+      notifyListeners();
     }
+  }
+
+  void clearJustEliminated() {
+    justEliminated = false;
+    notifyListeners();
   }
 
   void updateBet(double value) {
-    if (currentState != GameState.questionActive) return;
-    int amount = value.toInt();
-    if (amount < currentMinBet && localPlayer.stack > currentMinBet) {
-      amount = currentMinBet;
-    }
-    currentBetAmount = amount;
+    currentBetAmount = value.toInt();
     notifyListeners();
-    
-    // Send to server
-    if (_roomId.isNotEmpty) {
-      SocketService().placeBet(_roomId, currentBetAmount);
+  }
+
+  String? _getRoomIdFromState() {
+    // This is a bit of a hack since we don't store roomId directly in state yet
+    // but the server knows which room the client is in.
+    return "current"; // The server logic handles "current" for the socket's active room
+  }
+
+  void _parseState(Map<String, dynamic> data) {
+    final stateStr = data['state'];
+    switch (stateStr) {
+      case 'waiting': currentState = GameState.waiting; break;
+      case 'questionActive': currentState = GameState.questionActive; break;
+      case 'reveal': currentState = GameState.reveal; break;
+      case 'result': currentState = GameState.result; break;
+    }
+
+    currentRound = data['currentRound'] ?? 1;
+    maxRounds = data['maxRounds'] ?? 10;
+    shieldRounds = data['shieldRounds'] ?? 3;
+    currentMinBet = data['minBet'] ?? 10;
+    questionDurationSec = data['questionDuration'] ?? 15;
+    revealDurationSec = data['revealDuration'] ?? 5;
+
+    if (currentState == GameState.questionActive && selectedAnswerIndex == null) {
+      currentBetAmount = currentMinBet;
+    }
+
+    if (currentState == GameState.waiting) {
+       selectedAnswerIndex = null;
+    }
+
+    if (data['question'] != null) {
+      final qData = data['question'];
+      currentQuestion = Question(
+        questionText: qData['text'],
+        answers: List<String>.from(qData['answers']),
+        correctAnswerIndex: qData['correctIndex'],
+      );
+    }
+
+    if (data['players'] != null) {
+      final wasEliminated = localPlayer.isEliminated;
+      players = (data['players'] as List).map((p) => Player(
+        id: p['id'],
+        userId: p['userId'],
+        username: p['username'],
+        stack: p['stack'],
+        isEliminated: p['isEliminated'],
+      )).toList();
+      
+      if (!wasEliminated && localPlayer.isEliminated) {
+        justEliminated = true;
+      }
+    }
+
+    if (data['lastRoundResult'] != null) {
+      final res = data['lastRoundResult'];
+      lastRoundResult = RoundResult(
+        totalPot: res['totalPot'],
+        netChanges: Map<String, int>.from(res['netChanges']),
+      );
     }
   }
 
-  @override
-  void dispose() {
-    SocketService().dispose();
-    super.dispose();
+  void _parseMatchEnd(Map<String, dynamic> data) {
+    currentState = GameState.result;
+    if (data['players'] != null) {
+      finalPlayers = (data['players'] as List).map((p) => Player(
+        id: p['id'],
+        userId: p['userId'],
+        username: p['username'],
+        stack: p['stack'],
+        isEliminated: p['isEliminated'],
+      )).toList();
+    }
   }
 }

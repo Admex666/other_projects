@@ -4,12 +4,12 @@ import { Document } from 'mongoose';
 @Schema({ timestamps: true })
 export class User extends Document {
   @Prop({ required: true, unique: true })
-  userId: string;
-
-  @Prop({ required: true })
   username: string;
 
-  @Prop({ default: 100 })
+  @Prop({ required: true })
+  password: string;
+
+  @Prop({ default: 1000 })
   coins: number;
 
   @Prop({ default: 0 })

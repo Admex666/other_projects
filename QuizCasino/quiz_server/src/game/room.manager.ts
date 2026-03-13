@@ -130,11 +130,11 @@ export class RoomManager {
         if (p.id.startsWith('bot_')) continue;
         const won = results[0].id === p.id;
         const coinsChange = p.stack - 100; // Net profit/loss
-        console.log(`[RoomManager] Updating stats for UID ${p.userId}: Won=${won}, CoinsChange=${coinsChange}`);
-        await this.userManager.updateStats(p.userId, won, coinsChange);
+        console.log(`[RoomManager] Updating stats for user ${p.username}: Won=${won}, CoinsChange=${coinsChange}`);
+        await this.userManager.updateStats(p.username, won, coinsChange);
         
         // Notify the specific player of their new totals
-        const stats = await this.userManager.getUser(p.userId);
+        const stats = await this.userManager.getUser(p.username);
         if (stats && this.gatewayEmitToUser) {
           this.gatewayEmitToUser(p.id, 'user_stats', stats);
         }

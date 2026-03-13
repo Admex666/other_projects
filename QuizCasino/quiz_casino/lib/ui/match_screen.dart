@@ -4,11 +4,19 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../core/game_manager.dart';
 import '../models/game_data.dart';
 import '../theme.dart';
-import 'widgets/chunky_button.dart';
 import 'match_result_screen.dart';
+import 'widgets/chunky_button.dart';
+import 'widgets/matchmaking_overlay.dart';
 
-class MatchScreen extends StatelessWidget {
+class MatchScreen extends StatefulWidget {
   const MatchScreen({super.key});
+
+  @override
+  State<MatchScreen> createState() => _MatchScreenState();
+}
+
+class _MatchScreenState extends State<MatchScreen> {
+  bool _didNavigateResult = false;
 
   @override
   Widget build(BuildContext context) {
@@ -22,16 +30,16 @@ class MatchScreen extends StatelessWidget {
               final isRevealState = game.currentState == GameState.reveal;
 
               // Navigate to result screen when match ends
-              if (game.currentState == GameState.result) {
+              if (game.currentState == GameState.result && !_didNavigateResult) {
+                _didNavigateResult = true;
                 WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (!Navigator.of(context).canPop()) return;
+                  if (!mounted) return;
                   final fp = game.finalPlayers;
                   
                   int rank;
                   int coinsChange;
 
                   if (fp.isEmpty) {
-                    // Fallback: finalPlayers not set yet (shouldn't happen after fix)
                     rank = game.localPlayer.isEliminated ? 4 : 1;
                     coinsChange = game.localPlayer.stack - 100;
                   } else {
@@ -40,7 +48,6 @@ class MatchScreen extends StatelessWidget {
                     final localResult = idx >= 0 ? fp[idx] : game.localPlayer;
                     coinsChange = localResult.stack - 100;
 
-                    // Sanity check: eliminated/spectating players can never be #1
                     if (game.localPlayer.isEliminated && rank == 1) {
                       rank = fp.length;
                     }
@@ -58,7 +65,11 @@ class MatchScreen extends StatelessWidget {
                 return const Center(child: CircularProgressIndicator());
               }
 
-              // Show "Eliminated" popup the moment it happens (post-frame to avoid build errors)
+              if (game.currentState == GameState.result) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              // Show "Eliminated" popup the moment it happens
               if (game.justEliminated) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   game.clearJustEliminated();
@@ -69,7 +80,7 @@ class MatchScreen extends StatelessWidget {
               final question = game.currentQuestion;
 
               if (question == null) {
-                return const Center(child: CircularProgressIndicator());
+                return const MatchmakingOverlay();
               }
 
               return Column(
