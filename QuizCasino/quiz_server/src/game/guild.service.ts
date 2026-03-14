@@ -24,6 +24,8 @@ export class GuildService {
       leaderUsername,
       shares: { [leaderUsername]: 1000 },
       totalShares: 1000,
+      isPublic: true,
+      pendingRequests: [],
     });
 
     await guild.save();
@@ -92,5 +94,167 @@ export class GuildService {
 
     // Reset vault
     await this.guildModel.findOneAndUpdate({ tag: guildTag }, { $set: { vaultGold: 0 } }).exec();
+  }
+
+  /**
+   * Returns a list of public guilds.
+   */
+  async searchGuilds(query?: string) {
+    const filter: any = { isPublic: true };
+    if (query) {
+      filter.$or = [
+        { name: { $regex: query, $options: 'i' } },
+        { tag: { $regex: query, $options: 'i' } },
+      ];
+    }
+    return this.guildModel.find(filter).limit(20).exec();
+  }
+
+  /**
+   * User requests to join a guild.
+   */
+  async requestToJoin(username: string, guildTag: string) {
+    const guild = await this.getGuildByTag(guildTag);
+    if (!guild) throw new Error('Guild not found');
+
+    const user = await this.userModel.findOne({ username });
+    if (!user) throw new Error('User not found');
+    if (user.guildTag && user.guildTag !== 'none') throw new Error('User already in a guild');
+
+    if (guild.pendingRequests.includes(username)) throw new Error('Request already pending');
+
+    // If public, join immediately
+    if (guild.isPublic) {
+      await this.userModel.findOneAndUpdate({ username }, { guildTag });
+      // Add as shareholder with 0 initial shares (can buy later)
+      const shares = (guild as any).shares;
+      shares.set(username, 0);
+      await guild.save();
+      return { status: 'joined', guild };
+    } else {
+      // Add to pending
+      await this.guildModel.findOneAndUpdate(
+        { tag: guildTag },
+        { $addToSet: { pendingRequests: username } }
+      ).exec();
+      return { status: 'pending' };
+    }
+  }
+
+  /**
+   * Leader handles a join request.
+   */
+  async handleJoinRequest(leaderUsername: string, guildTag: string, applicantUsername: string, accept: boolean) {
+    const guild = await this.getGuildByTag(guildTag);
+    if (!guild) throw new Error('Guild not found');
+    if (guild.leaderUsername !== leaderUsername) throw new Error('Only leader can handle requests');
+
+    if (!guild.pendingRequests.includes(applicantUsername)) throw new Error('Request not found');
+
+    // Remove from pending
+    await this.guildModel.findOneAndUpdate(
+      { tag: guildTag },
+      { $pull: { pendingRequests: applicantUsername } }
+    ).exec();
+
+    if (accept) {
+      const applicant = await this.userModel.findOne({ username: applicantUsername });
+      if (!applicant || (applicant.guildTag && applicant.guildTag !== 'none')) {
+        throw new Error('Applicant already in a guild or not found');
+      }
+
+      await this.userModel.findOneAndUpdate({ username: applicantUsername }, { guildTag });
+      const shares = (guild as any).shares;
+      shares.set(applicantUsername, 0);
+      await guild.save();
+      return { status: 'accepted', guild };
+    }
+
+    return { status: 'declined' };
+  }
+
+  /**
+   * Updates guild settings (e.g., privacy).
+   */
+  async updateSettings(leaderUsername: string, guildTag: string, settings: { isPublic?: boolean }) {
+    const guild = await this.getGuildByTag(guildTag);
+    if (!guild) throw new Error('Guild not found');
+    if (guild.leaderUsername !== leaderUsername) throw new Error('Only leader can update settings');
+
+    if (settings.isPublic !== undefined) {
+      guild.isPublic = settings.isPublic;
+    }
+
+    await guild.save();
+    return guild;
+  }
+
+  /**
+   * User leaves the guild voluntarily.
+   */
+  async leaveGuild(username: string, guildTag: string) {
+    const guild = await this.getGuildByTag(guildTag);
+    if (!guild) throw new Error('Guild not found');
+
+    if (guild.leaderUsername === username) {
+      throw new Error('Leader cannot leave. You must promote someone else or delete the guild.');
+    }
+
+    // Remove user's association
+    const user = await this.userModel.findOne({ username });
+    if (user && user.guildTag === guildTag) {
+      user.guildTag = null;
+      await user.save();
+    }
+
+    // Remove from shares
+    const shares: Map<string, number> = (guild as any).shares;
+    if (shares.has(username)) {
+      shares.delete(username);
+      await guild.save();
+    }
+
+    return { status: 'left' };
+  }
+
+  /**
+   * Leader kicks a member from the guild.
+   */
+  async kickMember(leaderUsername: string, guildTag: string, targetUsername: string) {
+    const guild = await this.getGuildByTag(guildTag);
+    if (!guild) throw new Error('Guild not found');
+    if (guild.leaderUsername !== leaderUsername) throw new Error('Only leader can kick members');
+    if (leaderUsername === targetUsername) throw new Error('Cannot kick yourself');
+
+    const targetUser = await this.userModel.findOne({ username: targetUsername });
+    if (targetUser && targetUser.guildTag === guildTag) {
+      targetUser.guildTag = null;
+      await targetUser.save();
+    }
+
+    const shares: Map<string, number> = (guild as any).shares;
+    if (shares.has(targetUsername)) {
+      shares.delete(targetUsername);
+      await guild.save();
+    }
+
+    return { status: 'kicked', guild };
+  }
+
+  /**
+   * Leader deletes the guild.
+   */
+  async deleteGuild(leaderUsername: string, guildTag: string) {
+    const guild = await this.getGuildByTag(guildTag);
+    if (!guild) throw new Error('Guild not found');
+    if (guild.leaderUsername !== leaderUsername) throw new Error('Only leader can delete the guild');
+
+    // Reset all members
+    await this.userModel.updateMany({ guildTag }, { $set: { guildTag: null } });
+
+    // Delete guild
+    await this.guildModel.deleteOne({ tag: guildTag });
+
+    return { status: 'deleted' };
   }
 }

@@ -24,6 +24,11 @@ class GameManager with ChangeNotifier {
   // Guild State
   Guild? currentGuild;
   bool isGuildLoading = false;
+  List<Guild> searchedGuilds = [];
+  
+  // Shop State
+  List<ShopItem> shopCatalog = [];
+  bool isShopLoading = false;
 
   // Game specific state
   int currentRound = 1;
@@ -38,6 +43,7 @@ class GameManager with ChangeNotifier {
 
   // User State
   UserStats? _userStats;
+  UserStats? selectedPlayerProfile;
   bool _isInitialized = false;
   bool _isLoggedIn = false;
   bool _isAuthLoading = false;
@@ -146,6 +152,28 @@ class GameManager with ChangeNotifier {
       isGuildLoading = false;
       notifyListeners();
     });
+
+    socket.socket.on('guild_search_results', (data) {
+      searchedGuilds = (data as List).map((g) => Guild.fromJson(g)).toList();
+      isGuildLoading = false;
+      notifyListeners();
+    });
+
+    socket.socket.on('join_request_sent', (data) {
+      isGuildLoading = false;
+      // We could show a toast here via a specialized event or state
+      notifyListeners();
+    });
+
+    socket.onPlayerInfo = (stats) {
+      selectedPlayerProfile = stats;
+      notifyListeners();
+    };
+
+    socket.onShopCatalog = (data) {
+      shopCatalog = data.map((i) => ShopItem.fromJson(i)).toList();
+      isShopLoading = false;
+    };
   }
 
   void login(String username, String password) async {
@@ -258,6 +286,75 @@ class GameManager with ChangeNotifier {
     SocketService().createGuild(_userStats!.username, name, tag);
   }
 
+  void searchGuilds(String? query) {
+    isGuildLoading = true;
+    notifyListeners();
+    SocketService().searchGuilds(query);
+  }
+
+  void requestToJoin(String guildTag) {
+    if (_userStats == null) return;
+    isGuildLoading = true;
+    notifyListeners();
+    SocketService().requestToJoin(_userStats!.username, guildTag);
+  }
+
+  void handleJoinRequest(String applicantUsername, bool accept) {
+    if (_userStats == null || currentGuild == null) return;
+    SocketService().handleJoinRequest(
+      _userStats!.username,
+      currentGuild!.tag,
+      applicantUsername,
+      accept,
+    );
+  }
+
+  void updateGuildSettings(bool isPublic) {
+    if (_userStats == null || currentGuild == null) return;
+    SocketService().updateGuildSettings(
+      _userStats!.username,
+      currentGuild!.tag,
+      isPublic,
+    );
+  }
+
+  void fetchPlayerInfo(String username) {
+    selectedPlayerProfile = null; // Clear old one
+    notifyListeners();
+    SocketService().getPlayerInfo(username);
+  }
+
+  void leaveGuild() {
+    if (_userStats == null || currentGuild == null) return;
+    SocketService().leaveGuild(_userStats!.username, currentGuild!.tag);
+  }
+
+  void kickMember(String targetUsername) {
+    if (_userStats == null || currentGuild == null) return;
+    SocketService().kickMember(_userStats!.username, currentGuild!.tag, targetUsername);
+  }
+
+  void deleteGuild() {
+    if (_userStats == null || currentGuild == null) return;
+    SocketService().deleteGuild(_userStats!.username, currentGuild!.tag);
+  }
+
+  void fetchShopCatalog() {
+    isShopLoading = true;
+    notifyListeners();
+    SocketService().getShopCatalog();
+  }
+
+  void purchaseItem(String itemId) {
+    if (_userStats == null) return;
+    SocketService().purchaseItem(_userStats!.username, itemId);
+  }
+
+  void equipItem(String itemId) {
+    if (_userStats == null) return;
+    SocketService().equipItem(_userStats!.username, itemId);
+  }
+
   String? _getRoomIdFromState() {
     return currentRoomId ?? "current";
   }
@@ -325,6 +422,9 @@ class GameManager with ChangeNotifier {
         username: p['username'] ?? "Player",
         stack: p['stack'],
         isEliminated: p['isEliminated'],
+        equippedSkin: p['equippedSkin'] ?? "default",
+        equippedTrail: p['equippedTrail'] ?? "none",
+        equippedAnimation: p['equippedAnimation'] ?? "none",
       )).toList();
       
       if (!wasEliminated && localPlayer.isEliminated) {

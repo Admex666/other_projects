@@ -8,6 +8,7 @@ import { Match, MatchSchema } from './match.schema';
 import { LeagueService } from './league.service';
 import { Guild, GuildSchema } from './guild.schema';
 import { GuildService } from './guild.service';
+import { ShopService } from './shop.service';
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import { GuildService } from './guild.service';
       { name: Guild.name, schema: GuildSchema },
     ]),
   ],
-  providers: [GameGateway, RoomManager, UserManager, LeagueService, GuildService],
-  exports: [UserManager, LeagueService, GuildService],
+  providers: [GameGateway, RoomManager, UserManager, LeagueService, GuildService, ShopService],
+  exports: [UserManager, LeagueService, GuildService, ShopService],
 })
 export class GameModule {}

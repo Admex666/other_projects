@@ -23,6 +23,8 @@ class SocketService {
   Function(dynamic)? onTick;
   Function(dynamic)? onMatchEnded;
   Function(String, List<UserStats>)? onLeaderboardUpdate;
+  Function(UserStats)? onPlayerInfo;
+  Function(List<dynamic>)? onShopCatalog;
 
   void init(String url) {
     if (_socket != null) return;
@@ -79,6 +81,8 @@ class SocketService {
 
     socket.on('user_stats', (data) => _onUserStats?.call(UserStats.fromJson(data)));
     socket.on('auth_success', (data) => _onAuthSuccess?.call(UserStats.fromJson(data)));
+    socket.on('player_info', (data) => onPlayerInfo?.call(UserStats.fromJson(data)));
+    socket.on('shop_catalog', (data) => onShopCatalog?.call(data as List<dynamic>));
     _socket!.on('auth_error', (data) => _onAuthError?.call(data['message'] ?? "Unknown error"));
     
     _socket!.connect();
@@ -139,6 +143,63 @@ class SocketService {
 
   void getGuild(String tag) {
     socket.emit('get_guild', {'tag': tag});
+  }
+
+  void searchGuilds(String? query) {
+    socket.emit('search_guilds', {'query': query});
+  }
+
+  void requestToJoin(String username, String guildTag) {
+    socket.emit('request_to_join', {'username': username, 'guildTag': guildTag});
+  }
+
+  void handleJoinRequest(String leaderUsername, String guildTag, String applicantUsername, bool accept) {
+    socket.emit('handle_join_request', {
+      'leaderUsername': leaderUsername,
+      'guildTag': guildTag,
+      'applicantUsername': applicantUsername,
+      'accept': accept,
+    });
+  }
+
+  void updateGuildSettings(String leaderUsername, String guildTag, bool isPublic) {
+    socket.emit('update_guild_settings', {
+      'leaderUsername': leaderUsername,
+      'guildTag': guildTag,
+      'settings': { 'isPublic': isPublic }
+    });
+  }
+
+  void getPlayerInfo(String username) {
+    socket.emit('get_player_info', {'username': username});
+  }
+
+  void leaveGuild(String username, String guildTag) {
+    socket.emit('leave_guild', {'username': username, 'guildTag': guildTag});
+  }
+
+  void kickMember(String leaderUsername, String guildTag, String targetUsername) {
+    socket.emit('kick_member', {
+      'leaderUsername': leaderUsername,
+      'guildTag': guildTag,
+      'targetUsername': targetUsername
+    });
+  }
+
+  void deleteGuild(String leaderUsername, String guildTag) {
+    socket.emit('delete_guild', {'leaderUsername': leaderUsername, 'guildTag': guildTag});
+  }
+
+  void getShopCatalog() {
+    socket.emit('get_shop_catalog');
+  }
+
+  void purchaseItem(String username, String itemId) {
+    socket.emit('purchase_item', {'username': username, 'itemId': itemId});
+  }
+
+  void equipItem(String username, String itemId) {
+    socket.emit('equip_item', {'username': username, 'itemId': itemId});
   }
 
   void dispose() {

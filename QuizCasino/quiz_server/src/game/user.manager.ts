@@ -21,6 +21,7 @@ export interface UserStats {
   inventory: string[];
   equippedSkin: string;
   equippedTrail: string;
+  equippedAnimation: string;
 }
 
 @Injectable()
@@ -49,6 +50,7 @@ export class UserManager {
       inventory: user.inventory || [],
       equippedSkin: user.equippedSkin || 'default',
       equippedTrail: user.equippedTrail || 'none',
+      equippedAnimation: user.equippedAnimation || 'none',
     };
   }
 

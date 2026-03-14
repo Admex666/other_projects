@@ -11,6 +11,9 @@ export interface Player {
   username: string;
   stack: number;
   isEliminated: boolean;
+  equippedSkin?: string;
+  equippedTrail?: string;
+  equippedAnimation?: string;
 }
 
 export interface Question {

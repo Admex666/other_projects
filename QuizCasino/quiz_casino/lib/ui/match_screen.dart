@@ -422,26 +422,7 @@ class _MatchScreenState extends State<MatchScreen> {
                             Stack(
                               alignment: Alignment.center,
                               children: [
-                                if (isKieso) 
-                                  Container(
-                                    width: 22, height: 22,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: AppTheme.dangerRed.withOpacity(0.3),
-                                    ),
-                                  ).animate(onPlay: (c) => c.repeat(reverse: true)).scale(begin: const Offset(1,1), end: const Offset(1.5, 1.5), duration: 800.ms),
-                                
-                                Container(
-                                  width: 14, height: 14,
-                                  decoration: BoxDecoration(
-                                    color: dotColor,
-                                    shape: BoxShape.circle,
-                                    border: Border.all(color: Colors.black, width: 1.5),
-                                    boxShadow: [
-                                      if (isLocal) BoxShadow(color: AppTheme.goldCoin.withOpacity(0.6), blurRadius: 8, spreadRadius: 1),
-                                      if (isKieso) BoxShadow(color: AppTheme.dangerRed.withOpacity(0.6), blurRadius: 8, spreadRadius: 1),
-                                    ]
-                                  ),
+                                  _buildDotSkin(p.equippedSkin, dotColor, isLocal, isKieso),
                                 ),
                               ],
                             ),
@@ -449,6 +430,18 @@ class _MatchScreenState extends State<MatchScreen> {
                             if (!labelAbove) _buildPlayerLabel(p, isLocal, false),
                           ],
                         ),
+
+                        // --- PARTICLE / TRAIL EFFECT ---
+                        if (p.equippedTrail != "none" && !isEliminated)
+                          Positioned(
+                             child: TrailEffect(type: p.equippedTrail, color: dotColor),
+                          ),
+
+                        // --- LANDING ANIMATION ---
+                        if (isRevealState && !isEliminated && netChange > 0)
+                          Positioned(
+                            child: LandingAnimation(type: p.equippedAnimation),
+                          ),
 
                         // --- FLOAT WIN/LOSS TEXT ---
                         if (netChange != 0 && isRevealState)
@@ -654,5 +647,114 @@ class _MatchScreenState extends State<MatchScreen> {
         ),
       ),
     );
+  Widget _buildDotSkin(String skinId, Color color, bool isLocal, bool isKieso) {
+    double size = 16.0;
+    if (isLocal) size = 20.0;
+
+    switch (skinId) {
+      case 'skin_neon_ring':
+        return Container(
+          width: size, height: size,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(color: color, width: 3),
+            boxShadow: [
+              BoxShadow(color: color.withOpacity(0.5), blurRadius: 4, spreadRadius: 1),
+            ],
+          ),
+        );
+      case 'skin_star':
+        return Icon(Icons.star_rounded, color: color, size: size + 4);
+      case 'skin_diamond_3d':
+        return Icon(Icons.diamond_rounded, color: color, size: size + 4);
+      default:
+        return Container(
+          width: size - 2, height: size - 2,
+          decoration: BoxDecoration(
+            color: color,
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.black, width: 1.5),
+            boxShadow: [
+              if (isLocal) BoxShadow(color: AppTheme.goldCoin.withOpacity(0.6), blurRadius: 8, spreadRadius: 1),
+              if (isKieso) BoxShadow(color: AppTheme.dangerRed.withOpacity(0.6), blurRadius: 8, spreadRadius: 1),
+            ],
+          ),
+        );
+    }
+  }
+}
+
+class LandingAnimation extends StatelessWidget {
+  final String type;
+
+  const LandingAnimation({super.key, required this.type});
+
+  @override
+  Widget build(BuildContext context) {
+    if (type == 'anim_confetti') {
+      return Stack(
+        alignment: Alignment.center,
+        children: List.generate(12, (i) {
+          final random = (i * 30).toDouble();
+          return Container(
+            width: 4, height: 4,
+            color: Colors.primaries[i % Colors.primaries.length],
+          ).animate(onPlay: (c) => c.repeat())
+           .move(begin: Offset.zero, end: Offset(
+             (i % 2 == 0 ? 1 : -1) * (15 + i % 5 * 10).toDouble(),
+             - (20 + i % 3 * 10).toDouble()
+           ), duration: 1.seconds)
+           .fadeOut();
+        }),
+      );
+    }
+    if (type == 'anim_lightning') {
+      return Container(
+        width: 60, height: 60,
+        decoration: BoxDecoration(
+          color: Colors.blueAccent.withOpacity(0.2),
+          shape: BoxShape.circle,
+        ),
+      ).animate(onPlay: (c) => c.repeat())
+       .scale(begin: const Offset(0.5, 0.5), end: const Offset(1.5, 1.5), duration: 400.ms)
+       .shimmer(color: Colors.white, duration: 400.ms)
+       .fadeOut(delay: 200.ms);
+    }
+    return const SizedBox.shrink();
+  }
+}
+
+class TrailEffect extends StatelessWidget {
+  final String type;
+  final Color color;
+
+  const TrailEffect({super.key, required this.type, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    if (type == 'trail_fire') {
+      return Container()
+        .animate(onPlay: (c) => c.repeat())
+        .custom(
+          duration: 500.ms,
+          builder: (context, value, child) => Container(
+            width: 30, height: 30,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: RadialGradient(
+                colors: [color.withOpacity(0.5), Colors.transparent],
+              ),
+            ),
+          ),
+        )
+        .fadeOut(delay: 200.ms);
+    } 
+    if (type == 'trail_ghost') {
+      return Container()
+        .animate(onPlay: (c) => c.repeat())
+        .scale(begin: const Offset(1,1), end: const Offset(2,2), duration: 1.seconds)
+        .fadeOut(duration: 1.seconds);
+    }
+    return const SizedBox.shrink();
   }
 }

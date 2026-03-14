@@ -11,6 +11,8 @@ class ChunkyButton extends StatefulWidget {
   final EdgeInsets padding;
   final bool isSelected;
   final Color? borderColor;
+  final double? width;
+  final double? height;
 
   const ChunkyButton({
     super.key,
@@ -23,6 +25,8 @@ class ChunkyButton extends StatefulWidget {
     this.padding = const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
     this.isSelected = false,
     this.borderColor,
+    this.width,
+    this.height,
   });
 
   @override
@@ -49,6 +53,8 @@ class _ChunkyButtonState extends State<ChunkyButton> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 80),
         curve: Curves.easeInOut,
+        width: widget.width,
+        height: widget.height,
         margin: EdgeInsets.only(
           top: _isPressed ? widget.elevation : 0,
           bottom: _isPressed ? 0 : widget.elevation,

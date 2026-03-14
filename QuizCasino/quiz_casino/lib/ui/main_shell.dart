@@ -7,6 +7,7 @@ import 'home_screen.dart';
 import 'leaderboard_screen.dart';
 import 'guild_screen.dart';
 import 'profile_screen.dart';
+import 'shop_screen.dart';
 import 'auth_screen.dart';
 
 class MainShell extends StatefulWidget {
@@ -20,6 +21,7 @@ class _MainShellState extends State<MainShell> {
   int _currentIndex = 0;
 
   final List<Widget> _screens = [
+    const ShopScreen(),
     const HomeScreen(),
     const LeaderboardScreen(),
     const GuildScreen(),
@@ -46,7 +48,7 @@ class _MainShellState extends State<MainShell> {
           body: _screens[_currentIndex],
           bottomNavigationBar: SafeArea(
             child: Container(
-              margin: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+              margin: const EdgeInsets.fromLTRB(16, 0, 16, 24),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
                 color: const Color(0xFF151525).withOpacity(0.95),
@@ -63,10 +65,11 @@ class _MainShellState extends State<MainShell> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  _buildNavItem(Icons.home_rounded, "HOME", 0),
-                  _buildNavItem(Icons.emoji_events_rounded, "RANK", 1),
-                  _buildNavItem(Icons.shield_rounded, "GUILD", 2),
-                  _buildNavItem(Icons.person_rounded, "PROFILE", 3),
+                  _buildNavItem(Icons.shopping_bag_rounded, "SHOP", 0),
+                  _buildNavItem(Icons.home_rounded, "HOME", 1),
+                  _buildNavItem(Icons.emoji_events_rounded, "RANK", 2),
+                  _buildNavItem(Icons.shield_rounded, "GUILD", 3),
+                  _buildNavItem(Icons.person_rounded, "PROFILE", 4),
                 ],
               ),
             ),

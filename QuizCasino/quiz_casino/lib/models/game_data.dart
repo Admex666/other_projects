@@ -18,7 +18,14 @@ class Player {
     required this.username,
     required this.stack,
     this.isEliminated = false,
+    this.equippedSkin = "default",
+    this.equippedTrail = "none",
+    this.equippedAnimation = "none",
   });
+
+  final String equippedSkin;
+  final String equippedTrail;
+  final String equippedAnimation;
 }
 
 class Question {
@@ -120,6 +127,8 @@ class Guild {
   final int totalShares;
   final int vaultGold;
   final int taxRate;
+  final bool isPublic;
+  final List<String> pendingRequests;
 
   Guild({
     required this.name,
@@ -130,6 +139,8 @@ class Guild {
     required this.totalShares,
     required this.vaultGold,
     required this.taxRate,
+    required this.isPublic,
+    required this.pendingRequests,
   });
 
   factory Guild.fromJson(Map<String, dynamic> json) {
@@ -142,6 +153,37 @@ class Guild {
       totalShares: json['totalShares'] ?? 1000,
       vaultGold: json['vaultGold'] ?? 0,
       taxRate: json['taxRate'] ?? 5,
+      isPublic: json['isPublic'] ?? true,
+      pendingRequests: List<String>.from(json['pendingRequests'] ?? []),
+    );
+  }
+}
+
+class ShopItem {
+  final String id;
+  final String name;
+  final String type;
+  final int price;
+  final String currency;
+  final String rarity;
+
+  ShopItem({
+    required this.id,
+    required this.name,
+    required this.type,
+    required this.price,
+    required this.currency,
+    required this.rarity,
+  });
+
+  factory ShopItem.fromJson(Map<String, dynamic> json) {
+    return ShopItem(
+      id: json['id'] ?? "",
+      name: json['name'] ?? "",
+      type: json['type'] ?? "skin",
+      price: json['price'] ?? 0,
+      currency: json['currency'] ?? "gold",
+      rarity: json['rarity'] ?? "common",
     );
   }
 }

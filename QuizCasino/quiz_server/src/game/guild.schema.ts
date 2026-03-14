@@ -29,6 +29,12 @@ export class Guild extends Document {
 
   @Prop({ type: [String], default: [] })
   perks: string[];
+
+  @Prop({ default: true })
+  isPublic: boolean;
+
+  @Prop({ type: [String], default: [] })
+  pendingRequests: string[];
 }
 
 export const GuildSchema = SchemaFactory.createForClass(Guild);
