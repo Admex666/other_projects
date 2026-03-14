@@ -36,28 +36,33 @@ class _MatchScreenState extends State<MatchScreen> {
                   if (!mounted) return;
                   final fp = game.finalPlayers;
                   
-                  int rank;
-                  int coinsChange;
+                  int rank = 4;
+                  int chipsRemaining = game.localPlayer.stack;
+                  final myName = game.userStats?.username ?? game.localPlayer.username;
 
-                  if (fp.isEmpty) {
-                    rank = game.localPlayer.isEliminated ? 4 : 1;
-                    coinsChange = game.localPlayer.stack - 100;
-                  } else {
-                    final idx = fp.indexWhere((p) => p.username == game.localPlayer.username);
-                    rank = idx >= 0 ? idx + 1 : fp.length;
-                    final localResult = idx >= 0 ? fp[idx] : game.localPlayer;
-                    coinsChange = localResult.stack - 100;
-
-                    if (game.localPlayer.isEliminated && rank == 1) {
-                      rank = fp.length;
+                  if (fp.isNotEmpty) {
+                    final idx = fp.indexWhere((p) => p.username == myName);
+                    if (idx >= 0) {
+                      rank = idx + 1;
+                      chipsRemaining = fp[idx].stack;
+                    } else {
+                      // Fallback if not found in list (shouldn't happen)
+                      rank = game.localPlayer.isEliminated ? fp.length : 1;
+                      chipsRemaining = game.localPlayer.stack;
                     }
+                  } else {
+                    // fp is empty
+                    rank = game.localPlayer.isEliminated ? 4 : 1;
+                    chipsRemaining = game.localPlayer.stack;
                   }
+
+                  debugPrint('DEBUG: Match Ended. MyName: $myName, Calculated Rank: $rank, ChipsRemaining: $chipsRemaining');
 
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(
                       builder: (_) => MatchResultScreen(
                         placement: rank,
-                        pointsGained: coinsChange,
+                        chipsRemaining: chipsRemaining,
                       ),
                     ),
                   );
@@ -311,91 +316,193 @@ class _MatchScreenState extends State<MatchScreen> {
     ).animate().scale(curve: Curves.easeOutBack, duration: 500.ms).fadeIn();
   }
 
-  // ─── Player Tracker ───────────────────────────────────────────────────────
+  // ─── Player Tracker (Number Line) ──────────────────────────────────────────
   Widget _buildPlayerTracker(GameManager game, bool isRevealState) {
-    final List<Player> activePlayers = game.players.where((p) => !p.isEliminated).toList()
+    final activePlayers = game.players.where((p) => !p.isEliminated).toList()
       ..sort((a, b) => b.stack.compareTo(a.stack));
 
+    if (game.players.isEmpty) return const SizedBox.shrink();
+
+    // Bounds for the number line
+    double maxStack = game.players.fold(100.0, (m, p) => m > p.stack ? m : p.stack.toDouble());
+    maxStack = (maxStack * 1.2).clamp(100.0, 2000.0);
+
+    // Elimination logic
     final int toEliminate = game.currentRound <= game.shieldRounds
         ? 0
         : (activePlayers.length * 0.2).ceil();
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: game.players.map((p) {
-        final bool isLocal = p.id == game.localPlayer.id;
+    double thresholdStack = 0;
+    if (toEliminate > 0 && activePlayers.length > toEliminate) {
+      // The lowest "safe" player defines the boundary
+      thresholdStack = activePlayers[activePlayers.length - toEliminate - 1].stack.toDouble();
+    } else if (toEliminate > 0 && activePlayers.length == toEliminate) {
+        // Everyone is in danger? Unlikely but fallback
+        thresholdStack = activePlayers.first.stack.toDouble();
+    }
 
-        int rank = 0;
-        bool isKieso = false;
-        bool isVeszelyben = false;
-        if (!p.isEliminated) {
-          rank = activePlayers.indexWhere((ap) => ap.id == p.id) + 1;
-          isKieso = game.currentRound > game.shieldRounds && rank > activePlayers.length - toEliminate;
-          isVeszelyben = game.currentRound > game.shieldRounds && rank == activePlayers.length - toEliminate;
-        }
-
-        Color stackColor = Colors.white;
-        if (isKieso) stackColor = AppTheme.dangerRed;
-        else if (isVeszelyben) stackColor = AppTheme.goldCoin;
-
-        int netChange = 0;
-        if (isRevealState && game.lastRoundResult != null) {
-          netChange = game.lastRoundResult!.netChanges[p.id] ?? 0;
-        }
-
-        return Opacity(
-          opacity: p.isEliminated ? 0.3 : 1.0,
-          child: Column(
+    return Container(
+      height: 100,
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      decoration: BoxDecoration(
+        color: AppTheme.panelGlassColor,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
+      ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final width = constraints.maxWidth;
+          
+          return Stack(
+            clipBehavior: Clip.none,
             children: [
-              if (rank > 0)
-                Text('#$rank', style: TextStyle(color: stackColor, fontSize: 13, fontWeight: FontWeight.w900)),
-              const SizedBox(height: 4),
-              Stack(
-                clipBehavior: Clip.none,
-                alignment: Alignment.center,
-                children: [
-                  CircleAvatar(
-                    radius: 20,
-                    backgroundColor: isKieso
-                        ? AppTheme.dangerRed
-                        : (isLocal ? AppTheme.goldCoin : AppTheme.panelGlassColor),
-                    child: Icon(
-                      p.isEliminated ? Icons.close : Icons.person,
-                      size: 20,
-                      color: isKieso ? Colors.white : (isLocal ? Colors.black : Colors.white),
-                    ),
+              // --- Background Axis ---
+              Center(
+                child: Container(
+                  height: 4,
+                  width: width,
+                  decoration: BoxDecoration(
+                    color: Colors.white10,
+                    borderRadius: BorderRadius.circular(2),
                   ),
-                  if (netChange != 0 && isRevealState)
-                    Positioned(
-                      top: netChange > 0 ? -25 : null,
-                      bottom: netChange < 0 ? -25 : null,
-                      child: Text(
-                        netChange > 0 ? '+$netChange' : '$netChange',
-                        style: TextStyle(
-                          color: netChange > 0 ? AppTheme.successGreen : AppTheme.dangerRed,
-                          fontWeight: FontWeight.w900,
-                          fontSize: 16,
-                          shadows: const [Shadow(color: Colors.black, blurRadius: 4)],
-                        ),
-                      ).animate()
-                       .slideY(begin: netChange > 0 ? 1.0 : -1.0, end: netChange > 0 ? -0.5 : 0.5, duration: 2.seconds)
-                       .fadeOut(delay: 1500.ms),
-                    ),
-                ],
-              ),
-              const SizedBox(height: 4),
-              Text(
-                p.isEliminated ? 'OUT' : '${p.stack}',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: p.isEliminated ? AppTheme.dangerRed : stackColor,
-                  fontWeight: FontWeight.bold,
                 ),
               ),
+
+              // --- Players (Dots) ---
+              ...game.players.asMap().entries.map((entry) {
+                final idx = entry.key;
+                final p = entry.value;
+                final bool isLocal = p.id == game.localPlayer.id;
+                final bool isEliminated = p.isEliminated;
+
+                int rank = 0;
+                bool isKieso = false;
+                if (!isEliminated) {
+                  rank = activePlayers.indexWhere((ap) => ap.id == p.id) + 1;
+                  isKieso = game.currentRound > game.shieldRounds && rank > activePlayers.length - toEliminate;
+                }
+
+                // Position on line
+                final double targetX = (p.stack / maxStack) * width;
+                
+                // Visual properties
+                Color dotColor = Colors.white;
+                if (isKieso) dotColor = AppTheme.dangerRed;
+                else if (isLocal) dotColor = AppTheme.goldCoin;
+
+                // Alternate labels above/below using index
+                final bool labelAbove = idx % 2 == 0;
+
+                // Net change for this player
+                int netChange = 0;
+                if (isRevealState && game.lastRoundResult != null) {
+                  netChange = game.lastRoundResult!.netChanges[p.id] ?? 0;
+                }
+
+                return AnimatedPositioned(
+                  key: ValueKey(p.id),
+                  duration: const Duration(milliseconds: 1000),
+                  curve: Curves.easeOutBack,
+                  left: targetX.clamp(0.0, width) - 15,
+                  top: 30, // Adjusted for smaller dots
+                  child: Opacity(
+                    opacity: isEliminated ? 0.3 : 1.0,
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      alignment: Alignment.center,
+                      children: [
+                        // Label container
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (labelAbove) _buildPlayerLabel(p, isLocal, true),
+                            
+                            // Dot
+                            Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                if (isKieso) 
+                                  Container(
+                                    width: 22, height: 22,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: AppTheme.dangerRed.withOpacity(0.3),
+                                    ),
+                                  ).animate(onPlay: (c) => c.repeat(reverse: true)).scale(begin: const Offset(1,1), end: const Offset(1.5, 1.5), duration: 800.ms),
+                                
+                                Container(
+                                  width: 14, height: 14,
+                                  decoration: BoxDecoration(
+                                    color: dotColor,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(color: Colors.black, width: 1.5),
+                                    boxShadow: [
+                                      if (isLocal) BoxShadow(color: AppTheme.goldCoin.withOpacity(0.6), blurRadius: 8, spreadRadius: 1),
+                                      if (isKieso) BoxShadow(color: AppTheme.dangerRed.withOpacity(0.6), blurRadius: 8, spreadRadius: 1),
+                                    ]
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                            if (!labelAbove) _buildPlayerLabel(p, isLocal, false),
+                          ],
+                        ),
+
+                        // --- FLOAT WIN/LOSS TEXT ---
+                        if (netChange != 0 && isRevealState)
+                          Positioned(
+                            top: -40,
+                            child: Text(
+                              netChange > 0 ? '+$netChange' : '$netChange',
+                              style: TextStyle(
+                                color: netChange > 0 ? AppTheme.successGreen : AppTheme.dangerRed,
+                                fontWeight: FontWeight.w900,
+                                fontSize: 16,
+                                shadows: [
+                                  Shadow(color: Colors.black.withOpacity(0.8), blurRadius: 4, offset: const Offset(0, 2)),
+                                ],
+                              ),
+                            ).animate()
+                             .slideY(begin: 0.2, end: -0.2, duration: 1.seconds, curve: Curves.easeOutQuint)
+                             .fadeIn(duration: 400.ms),
+                          ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
             ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildPlayerLabel(Player p, bool isLocal, bool isAbove) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: isAbove ? 2 : 0, top: isAbove ? 0 : 2),
+      child: Column(
+        children: [
+          Text(
+            isLocal ? 'YOU' : p.username,
+            style: TextStyle(
+              color: isLocal ? AppTheme.goldCoin : Colors.white60,
+              fontSize: 8,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        );
-      }).toList(),
+          Text(
+            p.isEliminated ? 'OUT' : '${p.stack}',
+            style: TextStyle(
+              color: p.isEliminated ? AppTheme.dangerRed : Colors.white,
+              fontSize: 10,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+        ],
+      ),
     );
   }
 

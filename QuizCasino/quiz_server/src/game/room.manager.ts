@@ -2,6 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { GameLogic } from './game.logic';
 import { Player } from './game.types';
 import { UserManager } from './user.manager';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Match } from './match.schema';
 
 @Injectable()
 export class RoomManager {
@@ -12,7 +15,10 @@ export class RoomManager {
   private nextRoomId = 1;
   private queueStartTime: number | null = null;
 
-  constructor(private readonly userManager: UserManager) {
+  constructor(
+    private readonly userManager: UserManager,
+    @InjectModel(Match.name) private matchModel: Model<Match>
+  ) {
     // Check queue every second
     setInterval(() => this.processQueue(), 1000);
   }
@@ -65,7 +71,7 @@ export class RoomManager {
       
       const logic = new GameLogic(roomId, {
         onStateUpdate: (state) => this.onRoomStateUpdate(roomId, state),
-        onMatchEnded: (results) => this.onRoomMatchEnded(roomId, results),
+        onMatchEnded: (results, history) => this.onRoomMatchEnded(roomId, results, history),
         onTick: (time) => this.onRoomTick(roomId, time),
       });
 
@@ -119,19 +125,33 @@ export class RoomManager {
     }
   }
 
-  private async onRoomMatchEnded(roomId: string, results: Player[]) {
+  private async onRoomMatchEnded(roomId: string, results: Player[], history?: any) {
     console.log(`[RoomManager] onRoomMatchEnded for ${roomId}. Results received for ${results.length} players.`);
     if (this.gatewayEmitToRoom) {
       this.gatewayEmitToRoom(roomId, 'match_ended', results);
       console.log(`[RoomManager] match_ended event emitted to room ${roomId}.`);
       
+      // Save Match History
+      if (history) {
+        try {
+          await this.matchModel.create({
+            roomId,
+            ...history
+          });
+          console.log(`[RoomManager] Match history saved for ${roomId}`);
+        } catch (e) {
+          console.error(`[RoomManager] Failed to save match history: ${e.message}`);
+        }
+      }
+      
       // Update persistent stats for real players
       for (const p of results) {
         if (p.id.startsWith('bot_')) continue;
         const won = results[0].id === p.id;
-        const coinsChange = p.stack - 100; // Net profit/loss
-        console.log(`[RoomManager] Updating stats for user ${p.username}: Won=${won}, CoinsChange=${coinsChange}`);
-        await this.userManager.updateStats(p.username, won, coinsChange);
+        const rank = results.indexOf(p) + 1;
+        const chipsRemaining = p.stack;
+        console.log(`[RoomManager] Updating stats for user ${p.username}: Won=${won}, Rank=${rank}, Chips=${chipsRemaining}`);
+        await this.userManager.updateStats(p.username, won, chipsRemaining, rank);
         
         // Notify the specific player of their new totals
         const stats = await this.userManager.getUser(p.username);

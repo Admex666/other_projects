@@ -20,8 +20,9 @@ class SocketService {
   // Callbacks
   Function(dynamic)? onMatchFound;
   Function(dynamic)? onStateUpdate;
-  Function(int)? onTick;
+  Function(dynamic)? onTick;
   Function(dynamic)? onMatchEnded;
+  Function(String, List<UserStats>)? onLeaderboardUpdate;
 
   void init(String url) {
     if (_socket != null) return;
@@ -70,6 +71,12 @@ class SocketService {
       if (onMatchEnded != null) onMatchEnded!(data);
     });
 
+    socket.on('leaderboard_update', (data) {
+      final league = data['league'] as String;
+      final players = (data['players'] as List).map((p) => UserStats.fromJson(p)).toList();
+      if (onLeaderboardUpdate != null) onLeaderboardUpdate!(league, players);
+    });
+
     socket.on('user_stats', (data) => _onUserStats?.call(UserStats.fromJson(data)));
     socket.on('auth_success', (data) => _onAuthSuccess?.call(UserStats.fromJson(data)));
     _socket!.on('auth_error', (data) => _onAuthError?.call(data['message'] ?? "Unknown error"));
@@ -116,6 +123,22 @@ class SocketService {
 
   void selectAnswer(String roomId, int index) {
     socket.emit('select_answer', {'roomId': roomId, 'index': index});
+  }
+
+  void getLeaderboard(String league) {
+    socket.emit('get_leaderboard', {'league': league});
+  }
+
+  void createGuild(String username, String name, String tag) {
+    socket.emit('create_guild', {
+      'username': username,
+      'name': name,
+      'tag': tag,
+    });
+  }
+
+  void getGuild(String tag) {
+    socket.emit('get_guild', {'tag': tag});
   }
 
   void dispose() {

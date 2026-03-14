@@ -14,6 +14,16 @@ class GameManager with ChangeNotifier {
   RoundResult? lastRoundResult;
   bool justEliminated = false;
   List<Player> finalPlayers = [];
+  String? currentRoomId;
+
+  // Leaderboard State
+  List<UserStats> leaderboardPlayers = [];
+  bool isLeaderboardLoading = false;
+  String currentLeaderboardLeague = "bronze";
+
+  // Guild State
+  Guild? currentGuild;
+  bool isGuildLoading = false;
 
   // Game specific state
   int currentRound = 1;
@@ -123,6 +133,19 @@ class GameManager with ChangeNotifier {
       _parseMatchEnd(data);
       notifyListeners();
     };
+
+    socket.onLeaderboardUpdate = (league, players) {
+      currentLeaderboardLeague = league;
+      leaderboardPlayers = players;
+      isLeaderboardLoading = false;
+      notifyListeners();
+    };
+
+    socket.socket.on('guild_update', (data) {
+      currentGuild = Guild.fromJson(data);
+      isGuildLoading = false;
+      notifyListeners();
+    });
   }
 
   void login(String username, String password) async {
@@ -183,8 +206,7 @@ class GameManager with ChangeNotifier {
   }
 
   void selectAnswer(int index) {
-    if (selectedAnswerIndex != null) return; // Only allow one selection per round
-    
+    // Removed the (selectedAnswerIndex != null) check to allow switching answers
     final roomId = _getRoomIdFromState();
     if (roomId != null) {
       selectedAnswerIndex = index;
@@ -202,45 +224,96 @@ class GameManager with ChangeNotifier {
 
   void updateBet(double value) {
     currentBetAmount = value.toInt();
+    
+    // If we've already selected an answer, update the bet on server too
+    if (selectedAnswerIndex != null && currentState == GameState.questionActive) {
+      final roomId = _getRoomIdFromState();
+      if (roomId != null) {
+        SocketService().placeBet(roomId, currentBetAmount);
+      }
+    }
+    
     notifyListeners();
   }
 
+  void fetchLeaderboard(String league) {
+    isLeaderboardLoading = true;
+    currentLeaderboardLeague = league;
+    notifyListeners();
+    SocketService().getLeaderboard(league);
+  }
+
+  void fetchMyGuild() {
+    if (_userStats?.guildTag != null) {
+      isGuildLoading = true;
+      notifyListeners();
+      SocketService().getGuild(_userStats!.guildTag!);
+    }
+  }
+
+  void createGuild(String name, String tag) {
+    if (_userStats == null) return;
+    isGuildLoading = true;
+    notifyListeners();
+    SocketService().createGuild(_userStats!.username, name, tag);
+  }
+
   String? _getRoomIdFromState() {
-    // This is a bit of a hack since we don't store roomId directly in state yet
-    // but the server knows which room the client is in.
-    return "current"; // The server logic handles "current" for the socket's active room
+    return currentRoomId ?? "current";
   }
 
   void _parseState(Map<String, dynamic> data) {
-    final stateStr = data['state'];
-    switch (stateStr) {
-      case 'waiting': currentState = GameState.waiting; break;
-      case 'questionActive': currentState = GameState.questionActive; break;
-      case 'reveal': currentState = GameState.reveal; break;
-      case 'result': currentState = GameState.result; break;
+    // Backend sends 'currentState' as a number (enum index) or string
+    // Let's handle both or check how it's serialized. 
+    // Usually NestJS/Socket.io sends numbers for enums unless decorated.
+    final dynamic rawState = data['currentState'] ?? data['state'];
+    
+    // Convert to GameState enum
+    if (rawState is int) {
+      if (rawState >= 0 && rawState < GameState.values.length) {
+        currentState = GameState.values[rawState];
+      }
+    } else if (rawState is String) {
+      switch (rawState) {
+        case 'waiting': currentState = GameState.waiting; break;
+        case 'questionActive': currentState = GameState.questionActive; break;
+        case 'reveal': currentState = GameState.reveal; break;
+        case 'result': currentState = GameState.result; break;
+      }
     }
 
     currentRound = data['currentRound'] ?? 1;
-    maxRounds = data['maxRounds'] ?? 10;
-    shieldRounds = data['shieldRounds'] ?? 3;
-    currentMinBet = data['minBet'] ?? 10;
+    maxRounds = data['maxRounds'] ?? 7;
+    shieldRounds = data['shieldRounds'] ?? 2;
+    currentMinBet = data['currentMinBet'] ?? data['minBet'] ?? 10;
     questionDurationSec = data['questionDuration'] ?? 15;
     revealDurationSec = data['revealDuration'] ?? 5;
+    currentTimer = data['currentTimer'] ?? 0;
 
     if (currentState == GameState.questionActive && selectedAnswerIndex == null) {
-      currentBetAmount = currentMinBet;
+      // Don't overwrite if we already have a bet amount (slider input)
     }
 
     if (currentState == GameState.waiting) {
        selectedAnswerIndex = null;
     }
 
-    if (data['question'] != null) {
-      final qData = data['question'];
+    currentRoomId = data['roomId'];
+
+    if (data['currentQuestion'] != null || data['question'] != null) {
+      final qData = data['currentQuestion'] ?? data['question'];
+      final newQuestionText = qData['questionText'] ?? qData['text'];
+      
+      // If question changed, reset selection
+      if (currentQuestion?.questionText != newQuestionText) {
+        selectedAnswerIndex = null;
+        currentBetAmount = currentMinBet;
+      }
+
       currentQuestion = Question(
-        questionText: qData['text'],
+        questionText: newQuestionText,
         answers: List<String>.from(qData['answers']),
-        correctAnswerIndex: qData['correctIndex'],
+        correctAnswerIndex: qData['correctAnswerIndex'] ?? qData['correctIndex'],
       );
     }
 
@@ -248,8 +321,8 @@ class GameManager with ChangeNotifier {
       final wasEliminated = localPlayer.isEliminated;
       players = (data['players'] as List).map((p) => Player(
         id: p['id'],
-        userId: p['userId'],
-        username: p['username'],
+        userId: p['userId'] ?? p['id'], // Fallback to p.id if userId missing
+        username: p['username'] ?? "Player",
         stack: p['stack'],
         isEliminated: p['isEliminated'],
       )).toList();
@@ -268,16 +341,21 @@ class GameManager with ChangeNotifier {
     }
   }
 
-  void _parseMatchEnd(Map<String, dynamic> data) {
+  void _parseMatchEnd(dynamic data) {
     currentState = GameState.result;
-    if (data['players'] != null) {
-      finalPlayers = (data['players'] as List).map((p) => Player(
-        id: p['id'],
-        userId: p['userId'],
-        username: p['username'],
-        stack: p['stack'],
-        isEliminated: p['isEliminated'],
-      )).toList();
+    List<dynamic> playerList = [];
+    if (data is List) {
+      playerList = data;
+    } else if (data is Map && data['players'] != null) {
+      playerList = data['players'];
     }
+
+    finalPlayers = playerList.map((p) => Player(
+      id: p['id'],
+      userId: p['userId'] ?? p['id'],
+      username: p['username'] ?? "Player",
+      stack: p['stack'],
+      isEliminated: p['isEliminated'],
+    )).toList();
   }
 }

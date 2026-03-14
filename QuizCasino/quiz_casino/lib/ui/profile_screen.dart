@@ -71,9 +71,9 @@ class ProfileScreen extends StatelessWidget {
                 ).animate().fadeIn(delay: 200.ms),
 
                 const SizedBox(height: 4),
-                const Text(
-                  "ELITE CONTENDER",
-                  style: TextStyle(
+                Text(
+                  "${stats.league.toUpperCase()} LEAGUE",
+                  style: const TextStyle(
                     color: AppTheme.neonCyan,
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
@@ -91,10 +91,10 @@ class ProfileScreen extends StatelessWidget {
                     crossAxisSpacing: 16,
                     childAspectRatio: 1.2,
                     children: [
-                      _buildStatCard("KNOWLEDGE", stats.totalCoins.toString(), AppTheme.goldCoin, Icons.auto_awesome_rounded),
-                      _buildStatCard("WIN RATE", "$winRate%", AppTheme.neonCyan, Icons.insights_rounded),
-                      _buildStatCard("MATCHES", stats.gamesPlayed.toString(), Colors.white70, Icons.sports_esports_rounded),
-                      _buildStatCard("VICTORIES", stats.victories.toString(), Colors.greenAccent, Icons.emoji_events_rounded),
+                      _buildStatCard("GOLD", stats.gold.toString(), AppTheme.goldCoin, Icons.monetization_on_rounded),
+                      _buildStatCard("DIAMONDS", stats.diamonds.toString(), const Color(0xFFC429FF), Icons.diamond_rounded),
+                      _buildStatCard("ELO", stats.elo.toString(), AppTheme.neonCyan, Icons.military_tech_rounded),
+                      _buildStatCard("WIN RATE", "$winRate%", Colors.greenAccent, Icons.insights_rounded),
                     ],
                   ),
                 ),

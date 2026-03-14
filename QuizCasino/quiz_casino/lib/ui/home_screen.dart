@@ -32,25 +32,55 @@ class HomeScreen extends StatelessWidget {
                   return const CircularProgressIndicator(color: AppTheme.neonCyan);
                 }
                 final stats = game.userStats;
-                return Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                  decoration: BoxDecoration(
-                    color: AppTheme.panelGlassColor,
-                    borderRadius: BorderRadius.circular(30),
-                    border: Border.all(color: AppTheme.goldCoin.withOpacity(0.5)),
-                    boxShadow: [
-                      BoxShadow(color: AppTheme.goldCoin.withOpacity(0.1), blurRadius: 20, spreadRadius: 2)
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      Text(stats != null ? "KNOWLEDGE: ${stats.totalCoins}" : "LOADING...", 
-                          style: const TextStyle(color: AppTheme.goldCoin, fontWeight: FontWeight.bold, letterSpacing: 2)),
-                      const SizedBox(height: 8),
-                      Text(stats != null ? "Wins: ${stats.victories}" : "Rank: ---", 
-                          style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w900)),
-                    ],
-                  ),
+                return Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: AppTheme.panelGlassColor,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: Colors.white10),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _buildStatItem(
+                            icon: Icons.monetization_on,
+                            color: AppTheme.goldCoin,
+                            value: stats?.gold.toString() ?? "---",
+                          ),
+                          const SizedBox(width: 24),
+                          _buildStatItem(
+                            icon: Icons.diamond_rounded,
+                            color: const Color(0xFFC429FF), // Purple Diamond
+                            value: stats?.diamonds.toString() ?? "---",
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    // League / ELO
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                      decoration: BoxDecoration(
+                        color: AppTheme.panelGlassColor,
+                        borderRadius: BorderRadius.circular(30),
+                        border: Border.all(color: AppTheme.neonCyan.withOpacity(0.5)),
+                        boxShadow: [
+                          BoxShadow(color: AppTheme.neonCyan.withOpacity(0.1), blurRadius: 20, spreadRadius: 2)
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          Text(stats != null ? stats.league.toUpperCase() : "LOADING...", 
+                              style: const TextStyle(color: AppTheme.neonCyan, fontWeight: FontWeight.bold, letterSpacing: 3, fontSize: 12)),
+                          const SizedBox(height: 4),
+                          Text(stats != null ? "ELO: ${stats.elo}" : "---", 
+                              style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w900)),
+                        ],
+                      ),
+                    ),
+                  ],
                 );
               }
             ).animate().slideY(begin: -0.2, end: 0, curve: Curves.easeOutCubic, duration: 600.ms).fadeIn(),
@@ -109,6 +139,19 @@ class HomeScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildStatItem({required IconData icon, required Color color, required String value}) {
+    return Row(
+      children: [
+        Icon(icon, color: color, size: 20),
+        const SizedBox(width: 8),
+        Text(
+          value,
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+        ),
+      ],
     );
   }
 }

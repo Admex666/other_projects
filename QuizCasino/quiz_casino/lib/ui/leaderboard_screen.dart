@@ -1,92 +1,194 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:provider/provider.dart';
+import '../core/game_manager.dart';
 import '../theme.dart';
 import 'widgets/chunky_card.dart';
 
-class LeaderboardScreen extends StatelessWidget {
+class LeaderboardScreen extends StatefulWidget {
   const LeaderboardScreen({super.key});
 
   @override
+  State<LeaderboardScreen> createState() => _LeaderboardScreenState();
+}
+
+class _LeaderboardScreenState extends State<LeaderboardScreen> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  final List<String> leagues = ['bronze', 'silver', 'gold', 'platinum', 'diamond'];
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: leagues.length, vsync: this);
+    
+    // Initial fetch for the user's current league or bronze
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final game = context.read<GameManager>();
+      final initialLeague = game.userStats?.league ?? 'bronze';
+      final index = leagues.indexOf(initialLeague.toLowerCase());
+      if (index >= 0) {
+        _tabController.index = index;
+        game.fetchLeaderboard(leagues[index]);
+      } else {
+        game.fetchLeaderboard('bronze');
+      }
+    });
+
+    _tabController.addListener(() {
+      if (!_tabController.indexIsChanging) {
+        context.read<GameManager>().fetchLeaderboard(leagues[_tabController.index]);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 3,
-      child: SafeArea(
-        child: Column(
-          children: [
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text("LEADERBOARDS", style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900, letterSpacing: 2)),
-            ),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-              decoration: BoxDecoration(
-                color: const Color(0xFF151525).withOpacity(0.8),
-                borderRadius: BorderRadius.circular(30),
-                boxShadow: const [BoxShadow(color: Colors.black26, offset: Offset(0, 4), blurRadius: 4)],
-              ),
-              child: TabBar(
-                indicator: BoxDecoration(
-                  color: AppTheme.neonCyan,
-                  borderRadius: BorderRadius.circular(30),
-                  boxShadow: [
-                    BoxShadow(color: AppTheme.neonCyan.withOpacity(0.4), blurRadius: 10, offset: const Offset(0, 2))
-                  ]
+    return Consumer<GameManager>(
+      builder: (context, game, child) {
+        return SafeArea(
+          child: Column(
+            children: [
+              const Padding(
+                padding: EdgeInsets.fromLTRB(16, 24, 16, 8),
+                child: Text(
+                  "LEAGUE RANKINGS",
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 2,
+                    color: Colors.white,
+                  ),
                 ),
-                indicatorSize: TabBarIndicatorSize.tab,
-                dividerColor: Colors.transparent,
-                labelColor: Colors.black,
-                labelStyle: const TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1),
-                unselectedLabelColor: Colors.white54,
-                tabs: const [
-                  Tab(text: "DAILY"),
-                  Tab(text: "WEEKLY"),
-                  Tab(text: "SEASON"),
-                ],
               ),
-            ),
-            Expanded(
-              child: TabBarView(
-                children: [
-                  _buildList("DAILY"),
-                  _buildList("WEEKLY"),
-                  _buildList("SEASON"),
-                ],
+              
+              // League Selector
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                height: 50,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF151525).withOpacity(0.8),
+                  borderRadius: BorderRadius.circular(25),
+                ),
+                child: TabBar(
+                  controller: _tabController,
+                  isScrollable: true,
+                  indicator: BoxDecoration(
+                    color: AppTheme.neonCyan,
+                    borderRadius: BorderRadius.circular(25),
+                    boxShadow: [
+                      BoxShadow(color: AppTheme.neonCyan.withOpacity(0.4), blurRadius: 10)
+                    ]
+                  ),
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  dividerColor: Colors.transparent,
+                  labelColor: Colors.black,
+                  labelStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 13),
+                  unselectedLabelColor: Colors.white38,
+                  tabs: leagues.map((l) => Tab(text: l.toUpperCase() + "  ")).toList(),
+                ),
               ),
-            ),
-          ],
-        ),
-      ),
+
+              Expanded(
+                child: game.isLeaderboardLoading
+                    ? const Center(child: CircularProgressIndicator(color: AppTheme.neonCyan))
+                    : _buildLeaderboardList(game),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
-  Widget _buildList(String type) {
-    // Mock data
+  Widget _buildLeaderboardList(GameManager game) {
+    if (game.leaderboardPlayers.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.emoji_events_outlined, size: 64, color: Colors.white.withOpacity(0.1)),
+            const SizedBox(height: 16),
+            const Text("NO PLAYERS IN THIS LEAGUE YET", style: TextStyle(color: Colors.white24, fontWeight: FontWeight.bold)),
+          ],
+        ),
+      );
+    }
+
     return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: 20,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      itemCount: game.leaderboardPlayers.length,
       itemBuilder: (context, index) {
+        final player = game.leaderboardPlayers[index];
         final rank = index + 1;
+        final isMe = player.username == game.userStats?.username;
+        
         Color rankColor = Colors.white;
         if (rank == 1) rankColor = AppTheme.goldCoin;
-        if (rank == 2) rankColor = Colors.grey[400]!;
-        if (rank == 3) rankColor = const Color(0xFFCD7F32); // Bronze
+        if (rank == 2) rankColor = Colors.grey[300]!;
+        if (rank == 3) rankColor = const Color(0xFFCD7F32);
 
         return ChunkyCard(
-          baseColor: const Color(0xFF2A2A4A),
-          shadowColor: const Color(0xFF151525),
-          borderColor: rank <= 3 ? rankColor : Colors.transparent,
-          elevation: 4.0,
+          baseColor: isMe ? AppTheme.neonCyan.withOpacity(0.1) : const Color(0xFF1A1A2E),
+          shadowColor: Colors.black,
+          borderColor: isMe ? AppTheme.neonCyan : (rank <= 3 ? rankColor.withOpacity(0.5) : Colors.white10),
+          elevation: isMe ? 8.0 : 2.0,
+          margin: const EdgeInsets.only(bottom: 12),
           child: Row(
             children: [
               SizedBox(
-                width: 40,
-                child: Text("#$rank", style: TextStyle(color: rankColor, fontWeight: FontWeight.bold, fontSize: 18)),
+                width: 45,
+                child: Text(
+                  "#$rank",
+                  style: TextStyle(
+                    color: rankColor,
+                    fontWeight: FontWeight.w900,
+                    fontSize: rank <= 3 ? 20 : 16,
+                  ),
+                ),
               ),
-              const Expanded(child: Text("Player_Name", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold))),
-              Text("${(20 - index) * 1500} pts", style: const TextStyle(color: AppTheme.neonCyan, fontWeight: FontWeight.w900)),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      player.username,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: isMe ? FontWeight.w900 : FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    Text(
+                      "ELO: ${player.elo}",
+                      style: TextStyle(color: Colors.white54, fontSize: 11, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    "${player.weeklyTotal}",
+                    style: const TextStyle(
+                      color: AppTheme.neonCyan,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 22,
+                    ),
+                  ),
+                  const Text("WEEKLY PTS", style: TextStyle(color: Colors.white38, fontSize: 8, fontWeight: FontWeight.bold)),
+                ],
+              ),
             ],
           ),
-        ).animate().slideY(begin: 0.2, end: 0, delay: (20 * index).ms, duration: 400.ms, curve: Curves.easeOut).fadeIn();
+        ).animate().slideY(begin: 0.2, end: 0, delay: (50 * index).ms, duration: 400.ms, curve: Curves.easeOutQuad).fadeIn();
       },
     );
   }

@@ -4,7 +4,7 @@ import * as he from 'he'; // HTML entities decode
 
 interface GameEventCallbacks {
   onStateUpdate: (state: any) => void;
-  onMatchEnded: (results: any) => void;
+  onMatchEnded: (results: any, history: any) => void;
   onTick: (time: number) => void;
 }
 
@@ -28,6 +28,12 @@ export class GameLogic {
   private currentQuestion: Question | null = null;
   private currentBets: Map<string, Bet> = new Map();
   private lastRoundResult: RoundResult | null = null;
+  private carriedOverPot = 0;
+
+  // Analytics history
+  private startTime: Date;
+  private roundHistory: any[] = [];
+  private playerInitialStacks: Map<string, number> = new Map();
 
   private callbacks: GameEventCallbacks;
 
@@ -61,6 +67,16 @@ export class GameLogic {
     this.currentRound = 1;
     this.currentQuestionIndex = 0;
     this.currentState = GameState.Waiting;
+    this.startTime = new Date();
+    this.roundHistory = [];
+    this.carriedOverPot = 0;
+    
+    // Snapshot initial stacks
+    this.playerInitialStacks.clear();
+    for (const p of this.players) {
+      this.playerInitialStacks.set(p.username, p.stack);
+    }
+
     this.broadcastState();
 
     await this.fetchTriviaQuestions();
@@ -80,6 +96,10 @@ export class GameLogic {
           const incorrects = item.incorrect_answers.map((x: string) => he.decode(x));
           
           const allAnswers = [...incorrects, correct];
+          // Snap initial chips (100 in V4)
+          for (const p of this.players) {
+            if (p.stack !== 100) p.stack = 100;
+          }
           // Shuffle answers
           for (let i = allAnswers.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -139,9 +159,31 @@ export class GameLogic {
       if (this.currentState === GameState.QuestionActive) {
         this.changeState(GameState.Reveal);
       } else if (this.currentState === GameState.Reveal) {
+        this.recordRoundHistory();
         this.handleRoundEnd();
       }
     }
+  }
+
+  private recordRoundHistory() {
+    if (!this.currentQuestion) return;
+
+    const roundData = {
+      questionText: this.currentQuestion.questionText,
+      correctAnswerIndex: this.currentQuestion.correctAnswerIndex,
+      bets: Array.from(this.currentBets.values()).map(b => {
+        const p = this.players.find(x => x.id === b.playerId);
+        return {
+          username: p?.username || 'Unknown',
+          amount: b.amount,
+          answerIndex: b.answerIndex,
+          isCorrect: b.answerIndex === this.currentQuestion?.correctAnswerIndex,
+          isBot: b.playerId.startsWith('bot_'),
+          timestamp: new Date()
+        };
+      })
+    };
+    this.roundHistory.push(roundData);
   }
 
   public placeBet(playerId: string, amount: number) {
@@ -218,22 +260,27 @@ export class GameLogic {
       }
     }
 
+    const availablePot = totalPot + this.carriedOverPot;
+
     if (winningBets.length > 0) {
       const winningPool = winningBets.reduce((sum, b) => sum + b.amount, 0);
       for (const winBet of winningBets) {
         const proportion = winBet.amount / winningPool;
-        const reward = Math.floor(totalPot * proportion);
+        const reward = Math.floor(availablePot * proportion);
         const p = this.players.find(x => x.id === winBet.playerId);
         if (p) {
           p.stack += reward;
           netChanges[p.id] = (netChanges[p.id] || 0) + reward;
         }
       }
+      this.carriedOverPot = 0;
     } else {
-      // If nobody won, pot is lost (or could be carried over)
+      // If nobody won, pot is carried over
+      this.carriedOverPot = availablePot;
+      console.log(`[Room ${this.roomId}] NO WINNERS. Pot ${this.carriedOverPot} carried over to next round.`);
     }
 
-    this.lastRoundResult = { totalPot, netChanges };
+    this.lastRoundResult = { totalPot: availablePot, netChanges };
   }
 
   private handleRoundEnd() {
@@ -288,7 +335,24 @@ export class GameLogic {
 
     console.log(`[Room ${this.roomId}] Final players sorted. Emitting state and match_ended.`);
     this.broadcastState();
-    this.callbacks.onMatchEnded(this.players);
+
+    const history = {
+      startTime: this.startTime,
+      endTime: new Date(),
+      players: this.players.map(p => {
+        const rank = this.players.indexOf(p) + 1;
+        return {
+          username: p.username,
+          isBot: p.id.startsWith('bot_'),
+          startStack: this.playerInitialStacks.get(p.username) || 100,
+          endStack: p.stack,
+          rank
+        }
+      }),
+      rounds: this.roundHistory
+    };
+
+    this.callbacks.onMatchEnded(this.players, history);
   }
 
   private simulateBotsQuestions() {

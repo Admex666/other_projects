@@ -7,6 +7,7 @@ class ChunkyCard extends StatelessWidget {
   final double elevation;
   final double borderRadius;
   final EdgeInsets padding;
+  final EdgeInsets? margin;
   final Color? borderColor;
 
   const ChunkyCard({
@@ -17,13 +18,14 @@ class ChunkyCard extends StatelessWidget {
     this.elevation = 6.0,
     this.borderRadius = 16.0,
     this.padding = const EdgeInsets.all(16.0),
+    this.margin,
     this.borderColor,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: elevation + 8),
+      margin: margin ?? EdgeInsets.only(bottom: elevation + 8),
       decoration: BoxDecoration(
         color: baseColor,
         borderRadius: BorderRadius.circular(borderRadius),

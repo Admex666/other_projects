@@ -8,9 +8,9 @@ import 'widgets/chunky_button.dart';
 
 class MatchResultScreen extends StatelessWidget {
   final int placement;
-  final int pointsGained;
+  final int chipsRemaining;
 
-  const MatchResultScreen({super.key, required this.placement, required this.pointsGained});
+  const MatchResultScreen({super.key, required this.placement, required this.chipsRemaining});
 
   @override
   Widget build(BuildContext context) {
@@ -81,21 +81,30 @@ class MatchResultScreen extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('YOUR PLACEMENT', style: TextStyle(color: Colors.white54, fontSize: 11)),
+                        const Text('GOLD EARNED', style: TextStyle(color: Colors.white54, fontSize: 11)),
                         const SizedBox(height: 4),
-                        Text('#$placement', style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w900)),
+                        Row(
+                          children: [
+                            const Icon(Icons.monetization_on, color: AppTheme.goldCoin, size: 20),
+                            const SizedBox(width: 8),
+                            Text(
+                              '+${(chipsRemaining * (placement == 1 ? 3 : placement == 2 ? 2 : placement == 3 ? 1 : 0.5)).floor()}',
+                              style: const TextStyle(color: AppTheme.goldCoin, fontSize: 24, fontWeight: FontWeight.w900),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        const Text('COINS CHANGE', style: TextStyle(color: Colors.white54, fontSize: 11)),
+                        const Text('ELO CHANGE', style: TextStyle(color: Colors.white54, fontSize: 11)),
                         const SizedBox(height: 4),
                         Text(
-                          pointsGained > 0 ? '+$pointsGained' : '$pointsGained',
+                          placement == 1 ? '+25' : (placement <= 2 ? '+10' : '-15'),
                           style: TextStyle(
-                            color: pointsGained > 0 ? AppTheme.successGreen : AppTheme.dangerRed,
-                            fontSize: 28,
+                            color: placement <= 2 ? AppTheme.successGreen : AppTheme.dangerRed,
+                            fontSize: 24,
                             fontWeight: FontWeight.w900,
                           ),
                         ),
