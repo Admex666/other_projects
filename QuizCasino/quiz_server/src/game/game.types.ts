@@ -11,6 +11,8 @@ export interface Player {
   username: string;
   stack: number;
   isEliminated: boolean;
+  elo: number;
+  hiddenElo: number;
   equippedSkin?: string;
   equippedTrail?: string;
   equippedAnimation?: string;

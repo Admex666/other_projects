@@ -37,7 +37,13 @@ export class ShopService {
 
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
-  ) {}
+  ) {
+    // ADMIN: Give test1 some starting funds as requested
+    this.userModel.findOneAndUpdate(
+      { username: 'test1' },
+      { $set: { gold: 10000, diamonds: 5000 } }
+    ).exec().then(() => this.logger.log('Granted 10k gold and 5k gems to test1'));
+  }
 
   getCatalog(): ShopItem[] {
     return this.catalog;
@@ -64,17 +70,40 @@ export class ShopService {
       user.diamonds -= item.price;
     }
 
+    let rewards = null;
+
     // Add to inventory (if not chest)
     if (item.type !== 'chest') {
       user.inventory.push(itemId);
     } else {
-      // If it's a chest, logic for random rewards would go here
-      // For now, let's just log it and maybe give a random skin as a mock
-      this.logger.log(`${username} opened ${item.name}`);
+      rewards = this.openChest(item.id);
+      user.gold += rewards.gold;
+      user.diamonds += rewards.diamonds;
+      if (rewards.item && !user.inventory.includes(rewards.item.id)) {
+        user.inventory.push(rewards.item.id);
+      }
+      this.logger.log(`${username} opened ${item.name} and got ${JSON.stringify(rewards)}`);
     }
 
     await user.save();
-    return user;
+    return { user, rewards };
+  }
+
+  private openChest(chestId: string) {
+    const isGold = chestId === 'chest_gold';
+    const gold = isGold ? Math.floor(Math.random() * 500) + 100 : Math.floor(Math.random() * 1000) + 200;
+    const diamonds = isGold ? Math.floor(Math.random() * 100) + 50 : Math.floor(Math.random() * 20) + 5;
+    
+    // 20% chance for an item in Silver, 50% in Gold
+    const itemChance = isGold ? 0.5 : 0.2;
+    let rewardItem = null;
+    
+    if (Math.random() < itemChance) {
+      const cosmetics = this.catalog.filter(i => i.type !== 'chest');
+      rewardItem = cosmetics[Math.floor(Math.random() * cosmetics.length)];
+    }
+
+    return { gold, diamonds, item: rewardItem };
   }
 
   async equipItem(username: string, itemId: string) {

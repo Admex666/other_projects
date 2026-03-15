@@ -6,6 +6,10 @@ import '../models/game_data.dart';
 import '../theme.dart';
 import 'match_result_screen.dart';
 import 'widgets/chunky_button.dart';
+import 'widgets/chunky_card.dart';
+import 'widgets/coin_vfx.dart';
+import 'widgets/cyber_loader.dart';
+import 'widgets/cyber_slider.dart';
 import 'widgets/matchmaking_overlay.dart';
 
 class MatchScreen extends StatefulWidget {
@@ -36,7 +40,7 @@ class _MatchScreenState extends State<MatchScreen> {
                   if (!mounted) return;
                   final fp = game.finalPlayers;
                   
-                  int rank = 4;
+                  int rank = 20;
                   int chipsRemaining = game.localPlayer.stack;
                   final myName = game.userStats?.username ?? game.localPlayer.username;
 
@@ -52,7 +56,7 @@ class _MatchScreenState extends State<MatchScreen> {
                     }
                   } else {
                     // fp is empty
-                    rank = game.localPlayer.isEliminated ? 4 : 1;
+                    rank = game.localPlayer.isEliminated ? 20 : 1;
                     chipsRemaining = game.localPlayer.stack;
                   }
 
@@ -67,7 +71,15 @@ class _MatchScreenState extends State<MatchScreen> {
                     ),
                   );
                 });
-                return const Center(child: CircularProgressIndicator());
+                if (game.isLeaderboardLoading) {
+                  return const Expanded(child: Center(child: CyberLoader(label: "FETCHING RANKS")));
+                } else {
+                  // This part of the original code was `return const Center(child: CircularProgressIndicator());`
+                  // The provided snippet seems to replace it with leaderboard logic, but it's syntactically incorrect.
+                  // I'll assume the intent was to show a loader while navigating, and then the result screen.
+                  // The original `return const Center(child: CircularProgressIndicator());` is correct for the navigation phase.
+                  return const Center(child: CircularProgressIndicator());
+                }
               }
 
               if (game.currentState == GameState.result) {
@@ -317,6 +329,7 @@ class _MatchScreenState extends State<MatchScreen> {
   }
 
   // ─── Player Tracker (Number Line) ──────────────────────────────────────────
+  // ─── Player Tracker (Number Line) ──────────────────────────────────────────
   Widget _buildPlayerTracker(GameManager game, bool isRevealState) {
     final activePlayers = game.players.where((p) => !p.isEliminated).toList()
       ..sort((a, b) => b.stack.compareTo(a.stack));
@@ -327,19 +340,8 @@ class _MatchScreenState extends State<MatchScreen> {
     double maxStack = game.players.fold(100.0, (m, p) => m > p.stack ? m : p.stack.toDouble());
     maxStack = (maxStack * 1.2).clamp(100.0, 2000.0);
 
-    // Elimination logic
-    final int toEliminate = game.currentRound <= game.shieldRounds
-        ? 0
-        : (activePlayers.length * 0.2).ceil();
-
-    double thresholdStack = 0;
-    if (toEliminate > 0 && activePlayers.length > toEliminate) {
-      // The lowest "safe" player defines the boundary
-      thresholdStack = activePlayers[activePlayers.length - toEliminate - 1].stack.toDouble();
-    } else if (toEliminate > 0 && activePlayers.length == toEliminate) {
-        // Everyone is in danger? Unlikely but fallback
-        thresholdStack = activePlayers.first.stack.toDouble();
-    }
+    // Elimination logic (Compatible with BR)
+    bool isKiesoRound = game.currentRound >= 3 && game.currentRound <= 6;
 
     return Container(
       height: 100,
@@ -376,11 +378,10 @@ class _MatchScreenState extends State<MatchScreen> {
                 final bool isLocal = p.id == game.localPlayer.id;
                 final bool isEliminated = p.isEliminated;
 
-                int rank = 0;
                 bool isKieso = false;
-                if (!isEliminated) {
-                  rank = activePlayers.indexWhere((ap) => ap.id == p.id) + 1;
-                  isKieso = game.currentRound > game.shieldRounds && rank > activePlayers.length - toEliminate;
+                if (!isEliminated && isKiesoRound) {
+                  final rankInActive = activePlayers.indexOf(p) + 1;
+                  isKieso = rankInActive > (activePlayers.length - 3);
                 }
 
                 // Position on line
@@ -405,7 +406,7 @@ class _MatchScreenState extends State<MatchScreen> {
                   duration: const Duration(milliseconds: 1000),
                   curve: Curves.easeOutBack,
                   left: targetX.clamp(0.0, width) - 15,
-                  top: 30, // Adjusted for smaller dots
+                  top: 30, 
                   child: Opacity(
                     opacity: isEliminated ? 0.3 : 1.0,
                     child: Stack(
@@ -422,8 +423,7 @@ class _MatchScreenState extends State<MatchScreen> {
                             Stack(
                               alignment: Alignment.center,
                               children: [
-                                  _buildDotSkin(p.equippedSkin, dotColor, isLocal, isKieso),
-                                ),
+                                _buildDotSkin(p.equippedSkin, dotColor, isLocal, isKieso),
                               ],
                             ),
 
@@ -613,14 +613,17 @@ class _MatchScreenState extends State<MatchScreen> {
                 ignoring: !isQuestionState || isForcedAllIn || minBet >= maxBet,
                 child: Opacity(
                   opacity: isForcedAllIn ? 0.5 : 1.0,
-                  child: Slider(
-                    value: sliderVal,
-                    min: minBet.toDouble(),
-                    max: maxBet > minBet ? maxBet.toDouble() : minBet.toDouble() + 1,
-                    divisions: maxBet > minBet ? (maxBet - minBet) : 1,
-                    onChanged: (isForcedAllIn || minBet >= maxBet || game.localPlayer.isEliminated)
-                        ? null
-                        : (val) => game.updateBet(val),
+                  child: Column(
+                    children: [
+                      CyberSlider(
+                        value: sliderVal,
+                        min: minBet.toDouble(),
+                        max: maxBet.toDouble(),
+                        divisions: (maxBet - minBet) > 0 ? (maxBet - minBet) : 1,
+                        onChanged: (val) => game.updateBet(val),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
                   ),
                 ),
               ),
@@ -647,6 +650,8 @@ class _MatchScreenState extends State<MatchScreen> {
         ),
       ),
     );
+  }
+
   Widget _buildDotSkin(String skinId, Color color, bool isLocal, bool isKieso) {
     double size = 16.0;
     if (isLocal) size = 20.0;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../core/audio_manager.dart';
 
 class ChunkyButton extends StatefulWidget {
@@ -42,6 +43,7 @@ class _ChunkyButtonState extends State<ChunkyButton> {
       onTapDown: (_) {
         if (widget.onTap == null) return;
         setState(() => _isPressed = true);
+        HapticFeedback.lightImpact();
         AudioManager().playClick();
       },
       onTapUp: (_) {

@@ -24,6 +24,15 @@ class AppTheme {
         secondary: purpleGlow,
         surface: panelGlassColor,
       ),
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: ZoomPageTransitionsBuilder(),
+          TargetPlatform.iOS: ZoomPageTransitionsBuilder(),
+          TargetPlatform.windows: ZoomPageTransitionsBuilder(),
+          TargetPlatform.macOS: ZoomPageTransitionsBuilder(),
+          TargetPlatform.linux: ZoomPageTransitionsBuilder(),
+        },
+      ),
       sliderTheme: SliderThemeData(
         activeTrackColor: neonCyan,
         inactiveTrackColor: neonCyan.withOpacity(0.3),

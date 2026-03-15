@@ -25,6 +25,7 @@ class SocketService {
   Function(String, List<UserStats>)? onLeaderboardUpdate;
   Function(UserStats)? onPlayerInfo;
   Function(List<dynamic>)? onShopCatalog;
+  Function(Map<String, dynamic>)? onPurchaseResult;
 
   void init(String url) {
     if (_socket != null) return;
@@ -83,6 +84,7 @@ class SocketService {
     socket.on('auth_success', (data) => _onAuthSuccess?.call(UserStats.fromJson(data)));
     socket.on('player_info', (data) => onPlayerInfo?.call(UserStats.fromJson(data)));
     socket.on('shop_catalog', (data) => onShopCatalog?.call(data as List<dynamic>));
+    socket.on('purchase_result', (data) => onPurchaseResult?.call(Map<String, dynamic>.from(data)));
     _socket!.on('auth_error', (data) => _onAuthError?.call(data['message'] ?? "Unknown error"));
     
     _socket!.connect();

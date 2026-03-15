@@ -72,12 +72,14 @@ class UserStats {
   final int victories;
   final int elo;
   final String league;
+  final String division;
   final int placementMatches;
   final int weeklyTotal;
   final String? guildTag;
   final List<String> inventory;
   final String equippedSkin;
   final String equippedTrail;
+  final String equippedAnimation;
 
   UserStats({
     required this.userId,
@@ -89,12 +91,14 @@ class UserStats {
     required this.victories,
     required this.elo,
     required this.league,
+    required this.division,
     required this.placementMatches,
     required this.weeklyTotal,
     this.guildTag,
     required this.inventory,
     required this.equippedSkin,
     required this.equippedTrail,
+    required this.equippedAnimation,
   });
 
   factory UserStats.fromJson(Map<String, dynamic> json) {
@@ -108,12 +112,14 @@ class UserStats {
       victories: json['victories'] ?? 0,
       elo: json['elo'] ?? 1500,
       league: json['league'] ?? "unranked",
+      division: json['division'] ?? "III",
       placementMatches: json['placementMatches'] ?? 0,
       weeklyTotal: json['weeklyTotal'] ?? 0,
       guildTag: json['guildTag'] == "none" ? null : json['guildTag'],
-      inventory: List<String>.from(json['inventory'] ?? []),
+      inventory: (json['inventory'] as List?)?.map((e) => e.toString()).toList() ?? [],
       equippedSkin: json['equippedSkin'] ?? "default",
       equippedTrail: json['equippedTrail'] ?? "none",
+      equippedAnimation: json['equippedAnimation'] ?? "none",
     );
   }
 }

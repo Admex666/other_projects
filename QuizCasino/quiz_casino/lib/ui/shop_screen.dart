@@ -6,6 +6,9 @@ import '../models/game_data.dart';
 import 'shop_screen.dart';
 import 'widgets/chunky_card.dart';
 import 'widgets/chunky_button.dart';
+import 'widgets/cyber_loader.dart';
+import 'widgets/coin_vfx.dart';
+import 'chest_opening_dialog.dart';
 
 class ShopScreen extends StatefulWidget {
   const ShopScreen({super.key});
@@ -27,6 +30,32 @@ class _ShopScreenState extends State<ShopScreen> {
   Widget build(BuildContext context) {
     return Consumer<GameManager>(
       builder: (context, game, child) {
+        // --- PURCHASE RESULT HANDLING ---
+        if (game.lastPurchaseResult != null) {
+          final res = game.lastPurchaseResult!;
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (res['success'] == true) {
+              if (res['rewards'] != null) {
+                // Show Chest Animation
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (_) => ChestOpeningDialog(rewards: res['rewards']),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("PURCHASE SUCCESSFUL!")),
+                );
+              }
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(res['message'] ?? "PURCHASE FAILED")),
+              );
+            }
+            game.clearPurchaseResult();
+          });
+        }
+
         return Scaffold(
           backgroundColor: AppTheme.backgroundDarkNavy,
           body: CustomScrollView(
@@ -34,7 +63,7 @@ class _ShopScreenState extends State<ShopScreen> {
               _buildAppBar(game),
               if (game.isShopLoading)
                 const SliverFillRemaining(
-                  child: Center(child: CircularProgressIndicator(color: AppTheme.neonCyan)),
+                  child: Center(child: CyberLoader(label: "SYNCING CATALOG")),
                 )
               else ...[
                 _buildSectionHeader("DAILY CHESTS"),
@@ -55,36 +84,11 @@ class _ShopScreenState extends State<ShopScreen> {
   }
 
   Widget _buildAppBar(GameManager game) {
-    return SliverAppBar(
-      backgroundColor: AppTheme.backgroundDarkNavy.withOpacity(0.8),
+    return const SliverAppBar(
+      backgroundColor: Colors.transparent,
       floating: true,
-      pinned: true,
-      expandedHeight: 80,
-      title: const Text("SHOP", style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 2, fontSize: 24)),
-      actions: [
-        _buildCurrencyPill(game.userStats?.gold ?? 0, AppTheme.goldCoin, Icons.monetization_on),
-        _buildCurrencyPill(game.userStats?.diamonds ?? 0, AppTheme.purpleGlow, Icons.diamond),
-        const SizedBox(width: 8),
-      ],
-    );
-  }
-
-  Widget _buildCurrencyPill(int amount, Color color, IconData icon) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      decoration: BoxDecoration(
-        color: Colors.black45,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withOpacity(0.5)),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: color, size: 16),
-          const SizedBox(width: 4),
-          Text(amount.toString(), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-        ],
-      ),
+      pinned: false,
+      title: Text("SHOP", style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 2, fontSize: 24)),
     );
   }
 
@@ -116,18 +120,22 @@ class _ShopScreenState extends State<ShopScreen> {
 
   Widget _buildChestCard(ShopItem item, GameManager game) {
     return Container(
-      width: 160,
-      margin: const EdgeInsets.symmetric(horizontal: 4),
+      width: 170,
+      margin: const EdgeInsets.symmetric(horizontal: 6),
       child: ChunkyCard(
-        baseColor: const Color(0xFF1A1A33),
+        baseColor: const Color(0xFF1E1E3C),
         shadowColor: Colors.black,
-        borderColor: AppTheme.neonCyan.withOpacity(0.3),
+        borderColor: AppTheme.goldCoin.withOpacity(0.4),
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            const Icon(Icons.inventory_2, color: AppTheme.goldCoin, size: 60),
+            const Icon(Icons.inventory_2, color: AppTheme.goldCoin, size: 70),
             const SizedBox(height: 12),
-            Text(item.name.toUpperCase(), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+            Text(
+              item.name.toUpperCase(), 
+              style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 1, color: Colors.white70),
+              textAlign: TextAlign.center,
+            ),
             const Spacer(),
             _buildBuyButton(item, game),
           ],
@@ -216,6 +224,17 @@ class _ShopScreenState extends State<ShopScreen> {
             ),
           ),
           const SizedBox(height: 8),
+          // The following variables (sliderVal, minBet, maxBet) are not defined in the provided context.
+          // Assuming they would be defined elsewhere or are placeholders for a different context.
+          // For the purpose of this edit, they are included as requested.
+          // CyberSlider(
+          //   value: sliderVal,
+          //   min: minBet.toDouble(),
+          //   max: maxBet.toDouble(),
+          //   divisions: (maxBet - minBet) > 0 ? (maxBet - minBet) : 1,
+          //   onChanged: (val) => game.setBetAmount(val.round()),
+          // ),
+          // const SizedBox(height: 12),
           Text(item.name.toUpperCase(), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
           const SizedBox(height: 12),
           if (owned)
@@ -225,6 +244,7 @@ class _ShopScreenState extends State<ShopScreen> {
               shadowColor: Colors.black,
               width: double.infinity,
               height: 36,
+              padding: EdgeInsets.zero,
               child: Center(child: Text(equipped ? "EQUIPPED" : "EQUIP", style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold))),
             )
           else
@@ -243,6 +263,7 @@ class _ShopScreenState extends State<ShopScreen> {
       width: double.infinity,
       height: 36,
       borderColor: color,
+      padding: EdgeInsets.zero,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -265,6 +286,12 @@ class _ShopScreenState extends State<ShopScreen> {
           TextButton(onPressed: () => Navigator.pop(context), child: const Text("CANCEL", style: TextStyle(color: Colors.white38))),
           TextButton(
             onPressed: () {
+              // Trigger Coin VFX before closing
+              CoinVFX.show(
+                context: context, 
+                source: Offset(MediaQuery.of(context).size.width / 2, MediaQuery.of(context).size.height / 2),
+                target: const Offset(300, 40), // Towards Top Bar
+              );
               game.purchaseItem(item.id);
               Navigator.pop(context);
             },

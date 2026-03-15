@@ -125,6 +125,8 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       equippedSkin: user.equippedSkin || 'default',
       equippedTrail: user.equippedTrail || 'none',
       equippedAnimation: user.equippedAnimation || 'none',
+      elo: user.elo ?? 1500,
+      hiddenElo: user.hiddenElo ?? 1500,
     };
     this.roomManager.joinQueue(player, client.id);
     client.emit('user_stats', user);
@@ -324,10 +326,11 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     @MessageBody() data: { username: string, itemId: string },
   ) {
     try {
-      const user = await this.shopService.purchaseItem(data.username, data.itemId);
-      client.emit('user_stats', user);
+      const { user, rewards } = await this.shopService.purchaseItem(data.username, data.itemId);
+      client.emit('purchase_result', { success: true, rewards, itemId: data.itemId });
+      client.emit('user_stats', await this.userManager.getUser(data.username));
     } catch (e) {
-      client.emit('error', { message: e.message });
+      client.emit('purchase_result', { success: false, message: e.message });
     }
   }
 

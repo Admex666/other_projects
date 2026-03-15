@@ -47,7 +47,7 @@ export class GameLogic {
   }
 
   public get isFull(): boolean {
-    return this.players.length >= 4;
+    return this.players.length >= 20;
   }
 
   public addPlayer(player: Player) {
@@ -304,22 +304,30 @@ export class GameLogic {
   }
 
   private processEliminations() {
-    if (this.currentRound <= this.shieldRounds) return;
-
+    // 1. Bankruptcies: Always eliminate if stack is 0 or less
     for (const p of this.players) {
-      if (p.stack <= 0) p.isEliminated = true;
+      if (!p.isEliminated && p.stack <= 0) {
+        p.isEliminated = true;
+        console.log(`[Room ${this.roomId}] Player ${p.username} eliminated (Bankrupt)`);
+      }
     }
 
-    const activeList = this.players.filter(p => !p.isEliminated);
-    if (activeList.length > 1) {
-      const toEliminate = Math.ceil(activeList.length * 0.2);
-      if (toEliminate > 0) {
+    // 2. Phase-based eliminations (The Cut)
+    // Survival (Rds 1-2): No direct rank-based elims
+    // The Cut (Rds 3-6): Bottom 3 eliminated per round
+    if (this.currentRound >= 3 && this.currentRound <= 6) {
+      const activeList = this.players.filter(p => !p.isEliminated);
+      if (activeList.length > 1) {
         activeList.sort((a, b) => a.stack - b.stack);
-        for (let i = 0; i < toEliminate; i++) {
+        const toEliminateCount = Math.min(3, activeList.length - 1); // Keep at least 1 player
+        
+        for (let i = 0; i < toEliminateCount; i++) {
           activeList[i].isEliminated = true;
+          console.log(`[Room ${this.roomId}] Player ${activeList[i].username} eliminated (The Cut - Round ${this.currentRound})`);
         }
       }
     }
+    // Sudden Death (Round 7): Final decision happens in endMatch after the result calculation
   }
 
   private endMatch() {
@@ -359,6 +367,17 @@ export class GameLogic {
     for (const p of this.players) {
       if (p.isEliminated || !p.id.startsWith('bot_')) continue;
 
+      // Smart Bot Accuracy based on ELO
+      // Bronze: 25-35, Silver: 35-45, Gold: 45-60, Platinum: 60-75, Diamond: 75-90
+      let accuracy = 0.5;
+      const elo = p.hiddenElo || 1500;
+      
+      if (elo < 1500) accuracy = 0.25 + (Math.random() * 0.1);
+      else if (elo <= 1600) accuracy = 0.35 + (Math.random() * 0.1);
+      else if (elo <= 1800) accuracy = 0.45 + (Math.random() * 0.15);
+      else if (elo <= 2000) accuracy = 0.60 + (Math.random() * 0.15);
+      else accuracy = 0.75 + (Math.random() * 0.15);
+
       const limitMultiplier = this.currentRound <= this.shieldRounds ? 0.4 : 1.0;
       let maxBet = Math.floor(p.stack * limitMultiplier);
       
@@ -373,7 +392,7 @@ export class GameLogic {
       // Bots answer slightly later to make it look real
       setTimeout(() => {
         if (this.currentState !== GameState.QuestionActive) return;
-        const isCorrect = Math.random() > 0.4; // 60% accurate
+        const isCorrect = Math.random() < accuracy;
         const answerIndex = isCorrect ? (this.currentQuestion?.correctAnswerIndex ?? 0) : ((this.currentQuestion?.correctAnswerIndex ?? 0) + 1) % 4;
         
         this.currentBets.set(p.id, {

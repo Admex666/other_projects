@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'audio_manager.dart';
 import 'socket_service.dart';
 import 'constants.dart';
 import '../models/game_data.dart';
@@ -15,6 +17,7 @@ class GameManager with ChangeNotifier {
   bool justEliminated = false;
   List<Player> finalPlayers = [];
   String? currentRoomId;
+  bool isConnected = true;
 
   // Leaderboard State
   List<UserStats> leaderboardPlayers = [];
@@ -29,11 +32,12 @@ class GameManager with ChangeNotifier {
   // Shop State
   List<ShopItem> shopCatalog = [];
   bool isShopLoading = false;
+  Map<String, dynamic>? lastPurchaseResult;
 
   // Game specific state
   int currentRound = 1;
-  int maxRounds = 10;
-  int shieldRounds = 3;
+  int maxRounds = 7;
+  int shieldRounds = 2;
   int? selectedAnswerIndex;
   int currentMinBet = 10;
   int currentBetAmount = 10;
@@ -131,7 +135,14 @@ class GameManager with ChangeNotifier {
 
     socket.onTick = (count) {
       tickCount = count;
-      currentTimer = count; // Ensure currentTimer is updated
+      currentTimer = count;
+      
+      // Play tick sound and haptics in the last 3 seconds of question state
+      if (currentState == GameState.questionActive && count <= 3 && count > 0) {
+        AudioManager().playTick();
+        HapticFeedback.selectionClick();
+      }
+      
       notifyListeners();
     };
 
@@ -139,6 +150,16 @@ class GameManager with ChangeNotifier {
       _parseMatchEnd(data);
       notifyListeners();
     };
+
+    socket.socket.on('connect', (_) {
+      isConnected = true;
+      notifyListeners();
+    });
+
+    socket.socket.on('disconnect', (_) {
+      isConnected = false;
+      notifyListeners();
+    });
 
     socket.onLeaderboardUpdate = (league, players) {
       currentLeaderboardLeague = league;
@@ -173,6 +194,12 @@ class GameManager with ChangeNotifier {
     socket.onShopCatalog = (data) {
       shopCatalog = data.map((i) => ShopItem.fromJson(i)).toList();
       isShopLoading = false;
+      notifyListeners();
+    };
+
+    socket.onPurchaseResult = (data) {
+      lastPurchaseResult = data;
+      notifyListeners();
     };
   }
 
@@ -353,6 +380,11 @@ class GameManager with ChangeNotifier {
   void equipItem(String itemId) {
     if (_userStats == null) return;
     SocketService().equipItem(_userStats!.username, itemId);
+  }
+
+  void clearPurchaseResult() {
+    lastPurchaseResult = null;
+    notifyListeners();
   }
 
   String? _getRoomIdFromState() {

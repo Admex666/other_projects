@@ -36,6 +36,9 @@ export class User extends Document {
   @Prop({ default: 'unranked' })
   league: string;
 
+  @Prop({ default: 'III' })
+  division: string;
+
   @Prop({ default: 0 })
   placementMatches: number;
 

@@ -14,7 +14,9 @@ export interface UserStats {
   gamesPlayed: number;
   victories: number;
   elo: number;
+  hiddenElo: number;
   league: string;
+  division: string;
   placementMatches: number;
   weeklyTotal: number;
   guildTag: string;
@@ -43,7 +45,9 @@ export class UserManager {
       gamesPlayed: user.matchesPlayed,
       victories: user.matchesWon,
       elo: user.elo,
+      hiddenElo: user.hiddenElo,
       league: user.league,
+      division: user.division || 'III',
       placementMatches: user.placementMatches,
       weeklyTotal: this.leagueService.calculateWeeklyTotal(user.weeklyScores),
       guildTag: user.guildTag,
@@ -114,42 +118,137 @@ export class UserManager {
     return this.mapToStats(user);
   }
 
-  async updateStats(username: string, won: boolean, chipsRemaining: number, rank: number) {
-    // Gold rewards: Rank multiplier * Remaining Chips
-    // Ranks: 1st=x3, 2nd=x2, 3rd=x1, 4th=x0.5
+  async updateStats(username: string, won: boolean, chipsRemaining: number, rank: number, matchResults: any[]) {
+    // 1. Gold rewards: Rank multiplier * Remaining Chips
     const multipliers = [0, 3, 2, 1, 0.5];
-    const rankMultiplier = multipliers[rank] || 0;
+    const rankMultiplier = multipliers[Math.min(rank, 4)] || 0; // Caps at 4th for multiplier purposes
+    if (rank > 4) multipliers[4]; // Fallback if we want some tiny reward for 5th+
+    
     const baseGoldReward = Math.floor(chipsRemaining * rankMultiplier);
-
-    // Process Guild Tax
     const goldReward = await this.guildService.processTax(username, baseGoldReward);
 
-    // ELO (Baseline 1500, Floor 0)
-    let eloChange = won ? 25 : (rank <= 2 ? 10 : -15);
-
+    // 2. Advanced Match-Wide ELO Calculation (You vs every other player)
     const user = await this.userModel.findOne({ username });
-    if (user) {
-      const newElo = Math.max(0, user.elo + eloChange);
-      const newHiddenElo = user.hiddenElo + eloChange; // Hidden ELO can be negative for dev tracking if you want, but public remains 0+
+    if (!user) return;
 
-      await this.userModel.findOneAndUpdate(
-        { username },
-        {
-          $set: {
-            elo: newElo,
-            hiddenElo: newHiddenElo,
-          },
-          $inc: {
-            gold: goldReward,
-            matchesPlayed: 1,
-            matchesWon: won ? 1 : 0,
-          },
-        },
-      ).exec();
+    const K = 32;
+    const N = matchResults.length;
+    let totalEloChange = 0;
+    let totalHiddenEloChange = 0;
 
-      // Update League/Placement stats
-      await this.leagueService.processMatchResult(username, chipsRemaining, rank);
+    for (let i = 0; i < matchResults.length; i++) {
+      const opponent = matchResults[i];
+      if (opponent.username === username) continue;
+
+      const opponentRank = i + 1; // Index in the sorted results array defines their rank
+
+      // Public ELO calc
+      const Ea = 1 / (1 + Math.pow(10, (opponent.elo - user.elo) / 400));
+      const Sa = rank < opponentRank ? 1 : 0; // Better rank = win
+      totalEloChange += (K / (N - 1)) * (Sa - Ea);
+
+      // Hidden ELO calc
+      const EaH = 1 / (1 + Math.pow(10, (opponent.hiddenElo - user.hiddenElo) / 400));
+      totalHiddenEloChange += (K / (N - 1)) * (Sa - EaH);
     }
+
+    const newElo = Math.max(0, user.elo + Math.round(totalEloChange));
+    const newHiddenElo = user.hiddenElo + Math.round(totalHiddenEloChange);
+
+    // Instant Promotion / League Shield Logic
+    const currentLeague = user.league;
+    const { league: nextLeague, division: nextDivision } = this.getLeagueAndDivision(newElo);
+    
+    const leagueOrder = ['unranked', 'bronze', 'silver', 'gold', 'platinum', 'diamond'];
+    const currentIdx = leagueOrder.indexOf(currentLeague);
+    const nextIdx = leagueOrder.indexOf(nextLeague);
+
+    let finalElo = newElo;
+    let finalLeague = currentLeague;
+    let finalDivision = user.division || 'III';
+
+    // 1. Placement Phase
+    if (currentLeague === 'unranked') {
+      finalLeague = nextLeague;
+      finalDivision = nextDivision;
+    } 
+    // 2. Promotion (Instant)
+    else if (nextIdx > currentIdx || (nextIdx === currentIdx && this.isDivisionBetter(nextDivision, finalDivision))) {
+      finalLeague = nextLeague;
+      finalDivision = nextDivision;
+    }
+    // 3. League Shield (Don't drop below current league floor during season)
+    else if (nextIdx < currentIdx) {
+       const floorElo = this.getLeagueFloor(currentLeague);
+       finalElo = Math.max(finalElo, floorElo);
+       finalLeague = currentLeague; 
+       // Division might drop to III within the league, but not league itself
+       finalDivision = this.getLeagueAndDivision(finalElo).division;
+    } else {
+       // Regular division movement (down within the same league is allowed)
+       finalLeague = nextLeague;
+       finalDivision = nextDivision;
+    }
+
+    await this.userModel.findOneAndUpdate(
+      { username },
+      {
+        $set: {
+          elo: finalElo,
+          hiddenElo: newHiddenElo,
+          league: finalLeague,
+          division: finalDivision,
+        },
+        $inc: {
+          gold: goldReward,
+          matchesPlayed: 1,
+          matchesWon: won ? 1 : 0,
+        },
+      },
+    ).exec();
+
+    // Update League/Placement stats
+    await this.leagueService.processMatchResult(username, chipsRemaining, rank);
+  }
+
+  private getLeagueAndDivision(elo: number): { league: string, division: string } {
+    if (elo >= 3000) return { league: 'diamond', division: 'I' };
+    
+    if (elo >= 2500) {
+      if (elo >= 2833) return { league: 'platinum', division: 'I' };
+      if (elo >= 2666) return { league: 'platinum', division: 'II' };
+      return { league: 'platinum', division: 'III' };
+    }
+    if (elo >= 2000) {
+      if (elo >= 2333) return { league: 'gold', division: 'I' };
+      if (elo >= 2166) return { league: 'gold', division: 'II' };
+      return { league: 'gold', division: 'III' };
+    }
+    if (elo >= 1500) {
+      if (elo >= 1833) return { league: 'silver', division: 'I' };
+      if (elo >= 1666) return { league: 'silver', division: 'II' };
+      return { league: 'silver', division: 'III' };
+    }
+    
+    if (elo >= 1000) return { league: 'bronze', division: 'I' };
+    if (elo >= 500) return { league: 'bronze', division: 'II' };
+    return { league: 'bronze', division: 'III' };
+  }
+
+  private getLeagueFloor(league: string): number {
+    const floors: Record<string, number> = {
+      'bronze': 0,
+      'silver': 1500,
+      'gold': 2000,
+      'platinum': 2500,
+      'diamond': 3000
+    };
+    return floors[league] || 0;
+  }
+
+  private isDivisionBetter(next: string, current: string): boolean {
+    const order = ['III', 'II', 'I'];
+    return order.indexOf(next) > order.indexOf(current);
   }
 
   async getLeaderboard(league: string): Promise<UserStats[]> {

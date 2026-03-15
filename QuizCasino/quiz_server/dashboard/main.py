@@ -37,7 +37,8 @@ st.title("KnowCoin Analytics Dashboard 📊")
 st.markdown("---")
 
 # Sidebar
-st.sidebar.header("Filters")
+st.sidebar.header("Navigation & Filters")
+page = st.sidebar.radio("Go to", ["Global Overview", "Player Intelligence", "League Insights"])
 days_to_check = st.sidebar.slider("Show data for last X days", 1, 30, 7)
 
 # Load Data
@@ -54,107 +55,119 @@ def load_users():
 matches_raw = load_matches(days_to_check)
 users_raw = load_users()
 
-if not matches_raw:
-    st.warning(f"No match data found in database '{db.name}' for the selected period ({days_to_check} days).")
-    st.info("💡 **Tipper:** Restart your server and play a full match to record data!")
+if not matches_raw or not users_raw:
+    st.warning(f"Insufficient data found in database '{db.name}'.")
+    st.info("💡 **Tipper:** Play some matches to see deep analytics!")
 else:
-    # 1. Key Metrics (Top Row)
-    col1, col2, col3, col4 = st.columns(4)
+    # Prepare DataFrames
+    df_users = pd.DataFrame(users_raw)
+    # Ensure hiddenElo exists, default to 1500 if missing
+    if 'hiddenElo' not in df_users.columns:
+        df_users['hiddenElo'] = 1500
+    df_users['win_rate'] = (df_users['matchesWon'] / df_users['matchesPlayed'].replace(0, 1) * 100).round(1)
     
-    total_matches = len(matches_raw)
-    real_players = [u for u in users_raw if not u['username'].startswith('bot_')]
-    total_users = len(real_players)
-    
-    # Calculate DAU
-    df_matches = pd.DataFrame(matches_raw)
-    df_matches['date'] = pd.to_datetime(df_matches['createdAt']).dt.date
-    dau = df_matches.explode('players')
-    # Extract username from nested player object
-    dau['username'] = dau['players'].apply(lambda x: x['username'])
-    # Filter out bots from DAU
-    dau = dau[dau['players'].apply(lambda x: not x.get('isBot', False))]
-    daily_active = dau.groupby('date')['username'].nunique()
+    real_players_df = df_users[~df_users['username'].str.startswith('bot_', na=False)]
 
-    col1.metric("Total Matches", total_matches)
-    col2.metric("Total Users", total_users)
-    col3.metric("Avg. Matches/Day", round(total_matches / days_to_check, 1))
-    col4.metric("Avg. DAU", round(daily_active.mean(), 1) if not daily_active.empty else 0)
+    if page == "Global Overview":
+        # 1. Key Metrics (Top Row)
+        col1, col2, col3, col4 = st.columns(4)
+        
+        total_matches = len(matches_raw)
+        total_users = len(real_players_df)
+        
+        df_matches = pd.DataFrame(matches_raw)
+        df_matches['date'] = pd.to_datetime(df_matches['createdAt']).dt.date
+        dau_data = df_matches.explode('players')
+        dau_data = dau_data[dau_data['players'].apply(lambda x: not x.get('isBot', False))]
+        dau_data['username'] = dau_data['players'].apply(lambda x: x['username'])
+        daily_active = dau_data.groupby('date')['username'].nunique()
 
-    st.markdown("---")
+        col1.metric("Total Matches", total_matches)
+        col2.metric("Total Users", total_users)
+        col3.metric("Avg. Matches/Day", round(total_matches / days_to_check, 1))
+        col4.metric("Avg. DAU", round(daily_active.mean(), 1) if not daily_active.empty else 0)
 
-    # 2. Daily Activity Chart
-    st.subheader("Daily Active Users (DAU)")
-    if not daily_active.empty:
-        fig_dau = px.bar(daily_active, labels={'value': 'Unique Users', 'date': 'Date'}, 
-                       color_discrete_sequence=[ '#00f2ff'])
-        fig_dau.update_layout(template="plotly_dark", plot_bgcolor='rgba(0,0,0,0)')
-        st.plotly_chart(fig_dau, use_container_width=True)
+        st.markdown("---")
+        st.subheader("Daily Active Users (DAU)")
+        if not daily_active.empty:
+            fig_dau = px.bar(daily_active, labels={'value': 'Unique Users', 'date': 'Date'}, 
+                           color_discrete_sequence=[ '#00f2ff'])
+            fig_dau.update_layout(template="plotly_dark", plot_bgcolor='rgba(0,0,0,0)')
+            st.plotly_chart(fig_dau, use_container_width=True)
 
-    # 3. Question Difficulty Analysis
-    st.markdown("---")
-    st.subheader("Question Difficulty Analysis 🧠")
-    
-    rounds_data = []
-    for m in matches_raw:
-        for r in m.get('rounds', []):
-            # Filter out bots (using isBot flag OR Bot name prefix for older records)
-            real_bets = [b for b in r.get('bets', []) 
-                         if not b.get('isBot', False) and not b.get('username', '').startswith('Bot')]
-            
-            if not real_bets:
-                continue
-                
-            correct_bets = sum(1 for b in real_bets if b.get('isCorrect'))
-            total_bets = len(real_bets)
-            rounds_data.append({
-                'question': r['questionText'],
-                'correct_ratio': correct_bets / total_bets,
-                'total_attempts': total_bets
-            })
-    
-    if rounds_data:
-        df_rounds = pd.DataFrame(rounds_data)
-        q_stats = df_rounds.groupby('question').agg({
-            'correct_ratio': 'mean',
-            'total_attempts': 'sum'
+        st.markdown("---")
+        st.subheader("Question Difficulty 🧠")
+        rounds_data = []
+        for m in matches_raw:
+            for r in m.get('rounds', []):
+                real_bets = [b for b in r.get('bets', []) if not b.get('isBot', False)]
+                if real_bets:
+                    correct = sum(1 for b in real_bets if b.get('isCorrect'))
+                    rounds_data.append({'question': r['questionText'], 'success': correct / len(real_bets)})
+        
+        if rounds_data:
+            df_q = pd.DataFrame(rounds_data).groupby('question')['success'].mean().reset_index().sort_values('success')
+            col_l, col_r = st.columns(2)
+            col_l.write("**Hardest Questions**")
+            col_l.dataframe(df_q.head(5), hide_index=True)
+            col_r.write("**Easiest Questions**")
+            col_r.dataframe(df_q.tail(5), hide_index=True)
+
+    elif page == "Player Intelligence":
+        st.subheader("Player Identity Verification & Hidden Stats 🕵️")
+        
+        search_query = st.text_input("Search Operator ID (Username)", "").lower()
+        
+        display_df = real_players_df.copy()
+        if search_query:
+            display_df = display_df[display_df['username'].str.lower().contains(search_query)]
+
+        # Highlight Hidden ELO for balance detection
+        cols_to_show = ['username', 'league', 'elo', 'hiddenElo', 'win_rate', 'gold', 'diamonds', 'matchesPlayed']
+        st.dataframe(
+            display_df[cols_to_show].sort_values('hiddenElo', ascending=False),
+            column_config={
+                "hiddenElo": st.column_config.NumberColumn("Hidden ELO 🛠️", help="Internal skill rating for matchmaking"),
+                "win_rate": st.column_config.ProgressColumn("Win Rate", format="%.1f%%", min_value=0, max_value=100),
+            },
+            hide_index=True,
+            use_container_width=True
+        )
+
+        if search_query and not display_df.empty:
+            user_data = display_df.iloc[0]
+            st.markdown(f"### Detailed Intel: {user_data['username']}")
+            c1, c2, c3 = st.columns(3)
+            c1.metric("Current League", user_data['league'].upper())
+            c2.metric("Skill Delta (H-P)", int(user_data['hiddenElo'] - user_data['elo']))
+            c3.metric("Placement Progress", f"{user_data.get('placementMatches', 0)}/5")
+
+    elif page == "League Insights":
+        st.subheader("League Ecosystem & Balance 🏆")
+        
+        l_col1, l_col2 = st.columns(2)
+        
+        # 1. Distribution
+        league_counts = real_players_df['league'].value_counts()
+        fig_dist = px.pie(values=league_counts.values, names=league_counts.index, 
+                         title="Player Distribution by League", Hole=0.5,
+                         color_discrete_sequence=px.colors.qualitative.Pastel)
+        fig_dist.update_layout(template="plotly_dark")
+        l_col1.plotly_chart(fig_dist, use_container_width=True)
+        
+        # 2. Performance by League
+        league_stats = real_players_df.groupby('league').agg({
+            'elo': 'mean',
+            'hiddenElo': 'mean',
+            'win_rate': 'mean'
         }).reset_index()
         
-        q_stats = q_stats.sort_values('correct_ratio')
-        
-        col_left, col_right = st.columns(2)
-        
-        with col_left:
-            st.write("**Hardest Questions (Lowest Success rate)**")
-            st.dataframe(q_stats.head(10)[['question', 'correct_ratio']].style.format({'correct_ratio': '{:.1%}'}), 
-                        hide_index=True, use_container_width=True)
-            
-        with col_right:
-            st.write("**Easiest Questions (Highest Success rate)**")
-            st.dataframe(q_stats.tail(10).sort_values('correct_ratio', ascending=False)[['question', 'correct_ratio']].style.format({'correct_ratio': '{:.1%}'}), 
-                        hide_index=True, use_container_width=True)
-
-    # 4. Economy Tracker
-    st.markdown("---")
-    st.subheader("Economy & Coin Flow 💰")
-    
-    economy_data = []
-    for m in matches_raw:
-        for p in m.get('players', []):
-            if not p['isBot']:
-                economy_data.append({
-                    'date': pd.to_datetime(m['createdAt']).date(),
-                    'change': p['endStack'] - p['startStack']
-                })
-    
-    if economy_data:
-        df_eco = pd.DataFrame(economy_data)
-        daily_eco = df_eco.groupby('date')['change'].sum().reset_index()
-        
-        fig_eco = px.line(daily_eco, x='date', y='change', title="Net Coin Change (Daily)",
-                         color_discrete_sequence=['#ffd700'])
-        fig_eco.add_hline(y=0, line_dash="dash", line_color="white")
-        fig_eco.update_layout(template="plotly_dark", plot_bgcolor='rgba(0,0,0,0)')
-        st.plotly_chart(fig_eco, use_container_width=True)
+        fig_perf = go.Figure()
+        fig_perf.add_trace(go.Bar(name='Public ELO', x=league_stats['league'], y=league_stats['elo'], marker_color='#00FFE5'))
+        fig_perf.add_trace(go.Bar(name='Hidden ELO', x=league_stats['league'], y=league_stats['hiddenElo'], marker_color='#991AFF'))
+        fig_perf.update_layout(barmode='group', title="Avg ELO Levels per League", template="plotly_dark")
+        l_col2.plotly_chart(fig_perf, use_container_width=True)
 
 st.sidebar.markdown("---")
-st.sidebar.info("Data updates every 60 seconds.")
+st.sidebar.info("System healthy. Data refreshed every 60s.")
+

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../core/game_manager.dart';
 import '../theme.dart';
 import 'widgets/chunky_button.dart';
+import 'widgets/cyber_loader.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -27,75 +28,76 @@ class _AuthScreenState extends State<AuthScreen> {
           child: Column(
             children: [
               const SizedBox(height: 20),
-              // Animated Logo
-              Image.asset('assets/knowcoin.png', height: 120)
+              // Branded Logo
+              Image.asset('assets/knowcoin.png', height: 140)
                   .animate(onPlay: (c) => c.repeat(reverse: true))
-                  .scaleXY(begin: 0.9, end: 1.1, duration: 2.seconds, curve: Curves.easeInOut),
+                  .scale(begin: const Offset(0.9, 0.9), end: const Offset(1.1, 1.1), duration: 2.seconds, curve: Curves.easeInOut),
               
               const SizedBox(height: 12),
               Text(
                 "KNOWCOIN",
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 32,
+                  fontSize: 36,
                   fontWeight: FontWeight.w900,
-                  letterSpacing: 4,
+                  letterSpacing: 6,
                   shadows: [
-                    Shadow(color: AppTheme.neonCyan.withOpacity(0.5), blurRadius: 10)
+                    Shadow(color: AppTheme.neonCyan.withOpacity(0.5), blurRadius: 15)
                   ],
                 ),
               ).animate().shimmer(duration: 3.seconds, color: AppTheme.neonCyan),
               
               const SizedBox(height: 60),
               
-              // Auth Card
+              // Auth Console
               Container(
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.all(28),
                 decoration: BoxDecoration(
-                  color: AppTheme.panelGlassColor,
+                  color: const Color(0xFF151525).withOpacity(0.9),
                   borderRadius: BorderRadius.circular(30),
-                  border: Border.all(color: AppTheme.neonCyan.withOpacity(0.2)),
+                  border: Border.all(color: AppTheme.neonCyan.withOpacity(0.3), width: 2),
                   boxShadow: [
-                    BoxShadow(color: Colors.black.withOpacity(0.3), blurRadius: 40, spreadRadius: 10)
+                    BoxShadow(color: Colors.black.withOpacity(0.5), blurRadius: 50, spreadRadius: 5)
                   ],
                 ),
                 child: Column(
                   children: [
                     Text(
-                      _isLogin ? "WELCOME BACK" : "JOIN THE CASINO",
-                      style: const TextStyle(color: AppTheme.neonCyan, fontWeight: FontWeight.bold, letterSpacing: 1),
+                      _isLogin ? "IDENTITY VERIFICATION" : "NEW ACCOUNT ENROLLMENT",
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: AppTheme.neonCyan, fontWeight: FontWeight.w900, letterSpacing: 1.5, fontSize: 13),
                     ),
                     const SizedBox(height: 32),
                     
-                    // Fields
+                    // Themed Fields
                     _buildField(
                       controller: _usernameController,
-                      label: "USERNAME",
+                      label: "OPERATOR ID",
                       icon: Icons.person_rounded,
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 24),
                     _buildField(
                       controller: _passwordController,
-                      label: "PASSWORD",
-                      icon: Icons.lock_rounded,
+                      label: "ACCESS KEY",
+                      icon: Icons.vpn_key_rounded,
                       isPassword: true,
                     ),
                     
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 48),
                     
-                    // Action Button
+                    // LOGIN BUTTON
                     Consumer<GameManager>(
                       builder: (context, game, child) {
                         return Column(
                           children: [
                             if (game.authError != null)
                               Padding(
-                                padding: const EdgeInsets.only(bottom: 16),
+                                padding: const EdgeInsets.only(bottom: 20),
                                 child: Text(
-                                  game.authError!,
-                                  style: const TextStyle(color: Colors.redAccent, fontSize: 12, fontWeight: FontWeight.bold),
+                                  game.authError!.toUpperCase(),
+                                  style: const TextStyle(color: AppTheme.dangerRed, fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 1),
                                   textAlign: TextAlign.center,
-                                ).animate().shake(),
+                                ).animate().shake(hz: 8),
                               ),
                             
                             SizedBox(
@@ -111,15 +113,13 @@ class _AuthScreenState extends State<AuthScreen> {
                                 },
                                 baseColor: AppTheme.neonCyan,
                                 shadowColor: const Color(0xFF009989),
+                                borderRadius: 30,
                                 child: Center(
                                   child: game.isAuthLoading 
-                                    ? const SizedBox(
-                                        height: 24, width: 24,
-                                        child: CircularProgressIndicator(color: Colors.black, strokeWidth: 3),
-                                      )
+                                    ? const CyberLoader(size: 30) // Use new loader
                                     : Text(
-                                        _isLogin ? "LOGIN" : "REGISTER",
-                                        style: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2),
+                                        _isLogin ? "AUTHORIZE" : "INITIALIZE",
+                                        style: const TextStyle(fontWeight: FontWeight.w900, letterSpacing: 3, color: Colors.black),
                                       ),
                                 ),
                               ),
@@ -129,14 +129,13 @@ class _AuthScreenState extends State<AuthScreen> {
                       }
                     ),
                     
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 24),
                     
-                    // Switch
                     TextButton(
                       onPressed: () => setState(() => _isLogin = !_isLogin),
                       child: Text(
-                        _isLogin ? "NEED AN ACCOUNT? SIGN UP" : "ALREADY HAVE AN ACCOUNT? LOGIN",
-                        style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 12),
+                        _isLogin ? "UNREGISTERED? CLICK TO ENROLL" : "MEMBER DETECTED? CLICK TO LOG",
+                        style: TextStyle(color: Colors.white.withOpacity(0.3), fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1),
                       ),
                     ),
                   ],

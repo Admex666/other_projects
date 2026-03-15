@@ -43,13 +43,13 @@ export class RoomManager {
   private processQueue() {
     if (this.matchmakingQueue.length === 0) return;
 
-    // Check if we should start a match: either we have 4+ players, or 5 seconds have passed
+    // Check if we should start a match: either we have 20+ players, or 5 seconds have passed
     const now = Date.now();
-    const shouldStart = this.matchmakingQueue.length >= 4 || (this.queueStartTime && (now - this.queueStartTime) >= 5000);
+    const shouldStart = this.matchmakingQueue.length >= 20 || (this.queueStartTime && (now - this.queueStartTime) >= 5000);
 
     if (!shouldStart) {
       if (this.matchmakingQueue.length > 0) {
-        console.log(`[RoomManager] Waiting for more players or timeout... (${this.matchmakingQueue.length}/4)`);
+        console.log(`[RoomManager] Waiting for more players or timeout... (${this.matchmakingQueue.length}/20)`);
       }
       return;
     }
@@ -58,8 +58,12 @@ export class RoomManager {
 
     while (this.matchmakingQueue.length > 0 && shouldStart) {
       // If we don't have enough players and we decided to start (timeout), we still just take whoever is there
-      const roomPlayers = this.matchmakingQueue.splice(0, 4);
+      const roomPlayers = this.matchmakingQueue.splice(0, 20);
       
+      // Calculate avg Elos for bot matching
+      const avgElo = roomPlayers.reduce((sum, p) => sum + p.player.elo, 0) / roomPlayers.length;
+      const avgHiddenElo = roomPlayers.reduce((sum, p) => sum + p.player.hiddenElo, 0) / roomPlayers.length;
+
       // Reset timer if there is someone left, or clear it
       if (this.matchmakingQueue.length > 0) {
         this.queueStartTime = Date.now();
@@ -83,15 +87,17 @@ export class RoomManager {
         }
       }
 
-      // Backfill with bots
+      // Backfill with bots (up to 20 total)
       let botIndex = 1;
       while (!logic.isFull) {
         logic.addPlayer({
           id: `bot_${roomId}_${botIndex}`,
           userId: `bot_persistent_${botIndex}`,
-          username: `Bot ${['Anna', 'Ben', 'Kai', 'Zoe'][botIndex - 1]}`,
+          username: `Bot ${['Anna', 'Ben', 'Kai', 'Zoe', 'Leo', 'Mia', 'Max', 'Luna', 'Eva', 'Sam', 'Ari', 'Rex', 'Noa', 'Ivy', 'Zac', 'Gia', 'Kit', 'Ray', 'Eve', 'Dan'][botIndex - 1] || 'Guest'}`,
           stack: 100,
           isEliminated: false,
+          elo: Math.floor(avgElo + (Math.random() * 100 - 50)), // Match lobby avg
+          hiddenElo: Math.floor(avgHiddenElo + (Math.random() * 100 - 50)),
         });
         botIndex++;
       }
@@ -151,7 +157,7 @@ export class RoomManager {
         const rank = results.indexOf(p) + 1;
         const chipsRemaining = p.stack;
         console.log(`[RoomManager] Updating stats for user ${p.username}: Won=${won}, Rank=${rank}, Chips=${chipsRemaining}`);
-        await this.userManager.updateStats(p.username, won, chipsRemaining, rank);
+        await this.userManager.updateStats(p.username, won, chipsRemaining, rank, results);
         
         // Notify the specific player of their new totals
         const stats = await this.userManager.getUser(p.username);
