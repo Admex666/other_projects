@@ -36,12 +36,12 @@ class SocketService {
       'forceNew': true,
     });
 
-    socket.onConnect((_) {
+    socket.on('connect', (_) {
       debugPrint('DEBUG: Socket Connected! ID: ${socket.id}');
       isConnected = true;
     });
 
-    socket.onConnectError((data) {
+    socket.on('connect_error', (data) {
       debugPrint('DEBUG: Socket Connect Error: $data');
     });
 
@@ -53,7 +53,7 @@ class SocketService {
       debugPrint('DEBUG: Socket General Error: $data');
     });
 
-    socket.onDisconnect((_) {
+    socket.on('disconnect', (_) {
       debugPrint('DEBUG: Socket Disconnected!');
       isConnected = false;
     });

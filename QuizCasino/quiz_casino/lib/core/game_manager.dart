@@ -17,7 +17,7 @@ class GameManager with ChangeNotifier {
   bool justEliminated = false;
   List<Player> finalPlayers = [];
   String? currentRoomId;
-  bool isConnected = true;
+  bool isConnected = false;
 
   // Leaderboard State
   List<UserStats> leaderboardPlayers = [];
@@ -88,8 +88,19 @@ class GameManager with ChangeNotifier {
     _setupSockets();
 
     if (savedUsername != null && savedPassword != null) {
+      debugPrint('DEBUG: Attempting auto-login for $savedUsername');
       // Try auto-login
       SocketService().login(savedUsername, savedPassword);
+      
+      // Safety timeout: if no response in 10 seconds, proceed to login screen
+      Future.delayed(const Duration(seconds: 10), () {
+        if (!_isInitialized) {
+          debugPrint('DEBUG: Auto-login timeout');
+          _isInitialized = true;
+          _isAuthLoading = false;
+          notifyListeners();
+        }
+      });
     } else {
       _isInitialized = true;
       notifyListeners();
@@ -157,7 +168,22 @@ class GameManager with ChangeNotifier {
     });
 
     socket.socket.on('disconnect', (_) {
+      debugPrint('DEBUG: Socket Disconnected event in GameManager');
       isConnected = false;
+      // If we are still "initializing" (e.g. waiting for auto-login) and the socket disconnects, 
+      // we should eventually show the UI so the user knows there's a problem.
+      notifyListeners();
+    });
+
+    socket.socket.on('connect_error', (err) {
+      debugPrint('DEBUG: Socket Connect Error event in GameManager: $err');
+      isConnected = false;
+      // Fail gracefully to the login/auth screen if we can't connect at all
+      if (!_isInitialized) {
+        _isInitialized = true;
+        _isAuthLoading = false;
+        notifyListeners();
+      }
       notifyListeners();
     });
 
