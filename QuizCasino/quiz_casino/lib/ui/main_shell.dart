@@ -192,8 +192,16 @@ class _MainShellState extends State<MainShell> {
                                 Expanded(
                                   flex: 2,
                                   child: ElevatedButton(
-                                    onPressed: () => _startUpdate(game.updateInfo!.downloadUrl),
-                                    style: ElevatedButton.styleFrom(
+                                  onPressed: () {
+                                    final url = game.updateInfo!.downloadUrl;
+                                    if (url.toLowerCase().endsWith(".apk")) {
+                                      _startUpdate(url);
+                                    } else {
+                                      // Fallback for general web pages (GitHub, Drive etc)
+                                      launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+                                    }
+                                  },
+                                  style: ElevatedButton.styleFrom(
                                       backgroundColor: AppTheme.neonCyan,
                                       foregroundColor: Colors.black,
                                       padding: const EdgeInsets.symmetric(vertical: 16),
