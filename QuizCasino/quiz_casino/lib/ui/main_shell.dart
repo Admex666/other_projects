@@ -1,5 +1,6 @@
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../core/audio_manager.dart';
 import '../core/game_manager.dart';
@@ -110,6 +111,74 @@ class _MainShellState extends State<MainShell> {
                     ),
                   ),
                 ).animate().fadeIn(),
+              ),
+
+            // --- UPDATE AVAILABLE OVERLAY ---
+            if (game.updateInfo != null)
+              Positioned.fill(
+                child: Container(
+                  color: Colors.black.withOpacity(0.85),
+                  padding: const EdgeInsets.all(32),
+                  child: Center(
+                    child: Container(
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF1E1E2E),
+                        borderRadius: BorderRadius.circular(30),
+                        border: Border.all(color: AppTheme.neonCyan.withOpacity(0.5), width: 2),
+                        boxShadow: [
+                          BoxShadow(color: AppTheme.neonCyan.withOpacity(0.2), blurRadius: 40)
+                        ],
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(color: AppTheme.neonCyan.withOpacity(0.1), shape: BoxShape.circle),
+                            child: const Icon(Icons.system_update_rounded, color: AppTheme.neonCyan, size: 48),
+                          ),
+                          const SizedBox(height: 24),
+                          const Text(
+                            "SYSTEM UPDATE",
+                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 24, letterSpacing: 2),
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            "A new version (${game.updateInfo!.latestVersion}) is available and ready for download.",
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(color: Colors.white70, fontSize: 14),
+                          ),
+                          const SizedBox(height: 32),
+                          Row(
+                            children: [
+                              if (!game.updateInfo!.isMandatory)
+                                Expanded(
+                                  child: TextButton(
+                                    onPressed: () => setState(() => game.updateInfo = null),
+                                    child: const Text("LATER", style: TextStyle(color: Colors.white38, fontWeight: FontWeight.bold)),
+                                  ),
+                                ),
+                              Expanded(
+                                flex: 2,
+                                child: ElevatedButton(
+                                  onPressed: () => launchUrl(Uri.parse(game.updateInfo!.downloadUrl)),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppTheme.neonCyan,
+                                    foregroundColor: Colors.black,
+                                    padding: const EdgeInsets.symmetric(vertical: 16),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                                  ),
+                                  child: const Text("DOWNLOAD NOW", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ).animate().fadeIn().scale(curve: Curves.easeOutBack, duration: 600.ms),
               ),
           ],
         );

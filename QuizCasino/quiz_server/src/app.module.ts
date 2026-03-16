@@ -9,6 +9,15 @@ export class HealthController {
   health() {
     return { status: 'ok', timestamp: new Date().toISOString() };
   }
+
+  @Get('version')
+  getVersion() {
+    return {
+      version: '1.0.1',
+      url: 'https://github.com/Admex666/other_projects/releases/latest', // Példa link, ide jöhet az APK direkt linkje is
+      mandatory: false,
+    };
+  }
 }
 
 @Module({

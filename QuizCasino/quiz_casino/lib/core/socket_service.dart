@@ -1,5 +1,7 @@
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import '../models/game_data.dart';
 import 'constants.dart';
 
@@ -202,6 +204,18 @@ class SocketService {
 
   void equipItem(String username, String itemId) {
     socket.emit('equip_item', {'username': username, 'itemId': itemId});
+  }
+
+  Future<Map<String, dynamic>?> fetchVersion() async {
+    try {
+      final response = await http.get(Uri.parse('${AppConstants.serverUrl}/version'));
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      }
+    } catch (e) {
+      debugPrint('DEBUG: Error fetching version: $e');
+    }
+    return null;
   }
 
   void dispose() {

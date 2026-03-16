@@ -33,6 +33,10 @@ class GameManager with ChangeNotifier {
   List<ShopItem> shopCatalog = [];
   bool isShopLoading = false;
   Map<String, dynamic>? lastPurchaseResult;
+  
+  // Update State
+  AppUpdateInfo? updateInfo;
+  static const String currentAppVersion = "0.1.0"; // Manual versioning for indie update check
 
   // Game specific state
   int currentRound = 1;
@@ -105,6 +109,43 @@ class GameManager with ChangeNotifier {
       _isInitialized = true;
       notifyListeners();
     }
+
+    // Check for updates in background
+    checkUpdate();
+  }
+
+  Future<void> checkUpdate() async {
+    try {
+      final response = await SocketService().fetchVersion();
+      if (response != null) {
+        final serverVersion = response['version'] as String;
+        final downloadUrl = response['url'] as String;
+        final isMandatory = response['mandatory'] as bool? ?? false;
+
+        if (_isVersionNewer(currentAppVersion, serverVersion)) {
+          updateInfo = AppUpdateInfo(
+            latestVersion: serverVersion,
+            downloadUrl: downloadUrl,
+            isMandatory: isMandatory,
+          );
+          notifyListeners();
+        }
+      }
+    } catch (e) {
+      debugPrint('DEBUG: Update check failed: $e');
+    }
+  }
+
+  bool _isVersionNewer(String current, String latest) {
+    List<int> currentParts = current.split('.').map(int.parse).toList();
+    List<int> latestParts = latest.split('.').map(int.parse).toList();
+
+    for (int i = 0; i < latestParts.length; i++) {
+      int currentPart = i < currentParts.length ? currentParts[i] : 0;
+      if (latestParts[i] > currentPart) return true;
+      if (latestParts[i] < currentPart) return false;
+    }
+    return false;
   }
 
   void _setupSockets() {
@@ -516,4 +557,16 @@ class GameManager with ChangeNotifier {
       isEliminated: p['isEliminated'],
     )).toList();
   }
+}
+
+class AppUpdateInfo {
+  final String latestVersion;
+  final String downloadUrl;
+  final bool isMandatory;
+
+  AppUpdateInfo({
+    required this.latestVersion,
+    required this.downloadUrl,
+    required this.isMandatory,
+  });
 }
