@@ -23,10 +23,13 @@ class _AuthScreenState extends State<AuthScreen> {
     return Scaffold(
       backgroundColor: AppTheme.backgroundDarkNavy,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
-          child: Column(
-            children: [
+        child: Center(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
               const SizedBox(height: 20),
               // Branded Logo
               Image.asset('assets/knowcoin.png', height: 140)
@@ -63,7 +66,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 child: Column(
                   children: [
                     Text(
-                      _isLogin ? "IDENTITY VERIFICATION" : "NEW ACCOUNT ENROLLMENT",
+                      _isLogin ? "LOGIN" : "REGISTER",
                       textAlign: TextAlign.center,
                       style: const TextStyle(color: AppTheme.neonCyan, fontWeight: FontWeight.w900, letterSpacing: 1.5, fontSize: 13),
                     ),
@@ -72,13 +75,13 @@ class _AuthScreenState extends State<AuthScreen> {
                     // Themed Fields
                     _buildField(
                       controller: _usernameController,
-                      label: "OPERATOR ID",
+                      label: "USERNAME",
                       icon: Icons.person_rounded,
                     ),
                     const SizedBox(height: 24),
                     _buildField(
                       controller: _passwordController,
-                      label: "ACCESS KEY",
+                      label: "PASSWORD",
                       icon: Icons.vpn_key_rounded,
                       isPassword: true,
                     ),
@@ -102,7 +105,6 @@ class _AuthScreenState extends State<AuthScreen> {
                             
                             SizedBox(
                               width: double.infinity,
-                              height: 60,
                               child: ChunkyButton(
                                 onTap: game.isAuthLoading ? null : () {
                                   if (_isLogin) {
@@ -111,6 +113,7 @@ class _AuthScreenState extends State<AuthScreen> {
                                     game.register(_usernameController.text, _passwordController.text);
                                   }
                                 },
+                                padding: const EdgeInsets.symmetric(vertical: 16),
                                 baseColor: AppTheme.neonCyan,
                                 shadowColor: const Color(0xFF009989),
                                 borderRadius: 30,
@@ -118,8 +121,8 @@ class _AuthScreenState extends State<AuthScreen> {
                                   child: game.isAuthLoading 
                                     ? const CyberLoader(size: 30) // Use new loader
                                     : Text(
-                                        _isLogin ? "AUTHORIZE" : "INITIALIZE",
-                                        style: const TextStyle(fontWeight: FontWeight.w900, letterSpacing: 3, color: Colors.black),
+                                        _isLogin ? "SIGN IN" : "CREATE ACCOUNT",
+                                        style: const TextStyle(fontWeight: FontWeight.w900, letterSpacing: 2, color: Colors.black, fontSize: 16),
                                       ),
                                 ),
                               ),
@@ -134,14 +137,16 @@ class _AuthScreenState extends State<AuthScreen> {
                     TextButton(
                       onPressed: () => setState(() => _isLogin = !_isLogin),
                       child: Text(
-                        _isLogin ? "UNREGISTERED? CLICK TO ENROLL" : "MEMBER DETECTED? CLICK TO LOG",
+                        _isLogin ? "NEW PLAYER? REGISTER HERE" : "ALREADY A PLAYER? LOGIN HERE",
                         style: TextStyle(color: Colors.white.withOpacity(0.3), fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1),
                       ),
                     ),
                   ],
                 ),
               ).animate().fadeIn(duration: 800.ms).slideY(begin: 0.1, end: 0),
-            ],
+                ],
+              ),
+            ),
           ),
         ),
       ),

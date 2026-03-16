@@ -66,6 +66,27 @@ else:
         df_users['hiddenElo'] = 1500
     df_users['win_rate'] = (df_users['matchesWon'] / df_users['matchesPlayed'].replace(0, 1) * 100).round(1)
     
+    # Create granular rank-division label
+    df_users['full_league'] = df_users['league'].str.upper() + " " + df_users['division'].fillna('')
+    
+    # Enrich matches with finishing positions
+    match_performances = []
+    for m in matches_raw:
+        m_players = sorted(m.get('players', []), key=lambda x: x.get('stack', 0), reverse=True)
+        for i, p in enumerate(m_players):
+            if not p.get('isBot', False):
+                match_performances.append({
+                    'username': p['username'],
+                    'position': i + 1,
+                    'total_players': len(m_players),
+                    'normalized_pos': (i + 1) / len(m_players)
+                })
+    
+    df_perf = pd.DataFrame(match_performances)
+    if not df_perf.empty:
+        avg_pos = df_perf.groupby('username')['position'].mean().reset_index()
+        df_users = df_users.merge(avg_pos, on='username', how='left')
+    
     real_players_df = df_users[~df_users['username'].str.startswith('bot_', na=False)]
 
     if page == "Global Overview":
@@ -123,12 +144,14 @@ else:
             display_df = display_df[display_df['username'].str.contains(search_query, case=False, na=False)]
 
         # Highlight Hidden ELO for balance detection
-        cols_to_show = ['username', 'league', 'elo', 'hiddenElo', 'win_rate', 'gold', 'diamonds', 'matchesPlayed']
+        cols_to_show = ['username', 'full_league', 'elo', 'hiddenElo', 'win_rate', 'position', 'gold', 'diamonds', 'matchesPlayed']
         st.dataframe(
             display_df[cols_to_show].sort_values('hiddenElo', ascending=False),
             column_config={
                 "hiddenElo": st.column_config.NumberColumn("Hidden ELO 🛠️", help="Internal skill rating for matchmaking"),
                 "win_rate": st.column_config.ProgressColumn("Win Rate", format="%.1f%%", min_value=0, max_value=100),
+                "position": st.column_config.NumberColumn("Avg. Pos", format="%.1f"),
+                "full_league": "League/Division"
             },
             hide_index=True,
             use_container_width=True
@@ -137,10 +160,11 @@ else:
         if search_query and not display_df.empty:
             user_data = display_df.iloc[0]
             st.markdown(f"### Detailed Intel: {user_data['username']}")
-            c1, c2, c3 = st.columns(3)
-            c1.metric("Current League", user_data['league'].upper())
+            c1, c2, c3, c4 = st.columns(4)
+            c1.metric("League/Division", user_data['full_league'])
             c2.metric("Skill Delta (H-P)", int(user_data['hiddenElo'] - user_data['elo']))
-            c3.metric("Placement Progress", f"{user_data.get('placementMatches', 0)}/5")
+            c3.metric("Avg. Finish Pos", f"#{user_data.get('position', 0):.1f}")
+            c4.metric("Win Rate", f"{user_data['win_rate']}%")
 
     elif page == "League Insights":
         st.subheader("League Ecosystem & Balance 🏆")
@@ -148,26 +172,50 @@ else:
         l_col1, l_col2 = st.columns(2)
         
         # 1. Distribution
-        league_counts = real_players_df['league'].value_counts()
+        league_counts = real_players_df['full_league'].value_counts()
         fig_dist = px.pie(values=league_counts.values, names=league_counts.index, 
-                         title="Player Distribution by League", hole=0.5,
-                         color_discrete_sequence=px.colors.qualitative.Pastel)
+                         title="Player Distribution by League & Division", hole=0.5,
+                         color_discrete_sequence=px.colors.qualitative.Bold)
         fig_dist.update_layout(template="plotly_dark")
         l_col1.plotly_chart(fig_dist, use_container_width=True)
         
-        # 2. Performance by League
-        league_stats = real_players_df.groupby('league').agg({
-            'elo': 'mean',
-            'hiddenElo': 'mean',
-            'win_rate': 'mean'
-        }).reset_index()
+        # 2. Answer Success & Position by League
+        # Collect round success by league
+        league_success = []
+        for m in matches_raw:
+            # Find a real player to determine the room's average league
+            real_p = next((p for p in m.get('players', []) if not p.get('isBot', False)), None)
+            if real_p:
+                # Map name to league via df_users
+                p_info = df_users[df_users['username'] == real_p['username']]
+                if not p_info.empty:
+                    lg = p_info.iloc[0]['league']
+                    for r in m.get('rounds', []):
+                        correct = sum(1 for b in r.get('bets', []) if b.get('isCorrect') and not b.get('isBot', False))
+                        total = sum(1 for b in r.get('bets', []) if not b.get('isBot', False))
+                        if total > 0:
+                            league_success.append({'league': lg, 'success': correct / total})
+        
+        df_lg_success = pd.DataFrame(league_success).groupby('league')['success'].median().reset_index()
         
         fig_perf = go.Figure()
-        fig_perf.add_trace(go.Bar(name='Public ELO', x=league_stats['league'], y=league_stats['elo'], marker_color='#00FFE5'))
-        fig_perf.add_trace(go.Bar(name='Hidden ELO', x=league_stats['league'], y=league_stats['hiddenElo'], marker_color='#991AFF'))
-        fig_perf.update_layout(barmode='group', title="Avg ELO Levels per League", template="plotly_dark")
+        fig_perf.add_trace(go.Bar(name='Median Success Rate', x=df_lg_success['league'], y=df_lg_success['success'] * 100, marker_color='#00FFE5'))
+        fig_perf.update_layout(title="Typical Answer Success % per Rank", template="plotly_dark", yaxis_title="Success %")
         l_col2.plotly_chart(fig_perf, use_container_width=True)
+
+        st.markdown("---")
+        # 3. Hidden vs Public ELO per League-Division
+        st.subheader("Granular Skill Balance (League + Division)")
+        granular_stats = real_players_df.groupby('full_league').agg({
+            'elo': 'mean',
+            'hiddenElo': 'mean'
+        }).reset_index().sort_values('hiddenElo')
+        
+        fig_gran = px.line(granular_stats, x='full_league', y=['elo', 'hiddenElo'], 
+                          title="ELO Calibration Curve", markers=True,
+                          color_discrete_map={"elo": "#00f2ff", "hiddenElo": "#9d00ff"})
+        fig_gran.update_layout(template="plotly_dark", hovermode="x unified")
+        st.plotly_chart(fig_gran, use_container_width=True)
 
 st.sidebar.markdown("---")
 st.sidebar.info("System healthy. Data refreshed every 60s.")
-

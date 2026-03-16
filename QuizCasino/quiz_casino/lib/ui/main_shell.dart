@@ -1,6 +1,10 @@
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:dio/dio.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
+import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../core/audio_manager.dart';
 import '../core/game_manager.dart';
@@ -22,6 +26,9 @@ class MainShell extends StatefulWidget {
 
 class _MainShellState extends State<MainShell> {
   int _currentIndex = 2; // Home is index 2 in [Shop, Guild, Home, Rank]
+  double _downloadProgress = 0;
+  bool _isDownloading = false;
+  String? _downloadError;
 
   final List<Widget> _screens = [
     const ShopScreen(),
@@ -150,30 +157,53 @@ class _MainShellState extends State<MainShell> {
                             style: const TextStyle(color: Colors.white70, fontSize: 14),
                           ),
                           const SizedBox(height: 32),
-                          Row(
-                            children: [
-                              if (!game.updateInfo!.isMandatory)
-                                Expanded(
-                                  child: TextButton(
-                                    onPressed: () => setState(() => game.updateInfo = null),
-                                    child: const Text("LATER", style: TextStyle(color: Colors.white38, fontWeight: FontWeight.bold)),
-                                  ),
-                                ),
-                              Expanded(
-                                flex: 2,
-                                child: ElevatedButton(
-                                  onPressed: () => launchUrl(Uri.parse(game.updateInfo!.downloadUrl)),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppTheme.neonCyan,
-                                    foregroundColor: Colors.black,
-                                    padding: const EdgeInsets.symmetric(vertical: 16),
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                                  ),
-                                  child: const Text("DOWNLOAD NOW", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
-                                ),
+                          if (_isDownloading) ...[
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: LinearProgressIndicator(
+                                value: _downloadProgress,
+                                backgroundColor: Colors.white12,
+                                valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.neonCyan),
+                                minHeight: 8,
                               ),
-                            ],
-                          ),
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              "${(_downloadProgress * 100).toInt()}% DOWNLOADED",
+                              style: const TextStyle(color: AppTheme.neonCyan, fontWeight: FontWeight.bold, fontSize: 10, letterSpacing: 1),
+                            ),
+                          ] else if (_downloadError != null) ...[
+                            Text(_downloadError!, style: const TextStyle(color: AppTheme.dangerRed, fontSize: 12)),
+                            const SizedBox(height: 16),
+                            ElevatedButton(
+                              onPressed: () => _startUpdate(game.updateInfo!.downloadUrl),
+                              child: const Text("RETRY"),
+                            ),
+                          ] else
+                            Row(
+                              children: [
+                                if (!game.updateInfo!.isMandatory)
+                                  Expanded(
+                                    child: TextButton(
+                                      onPressed: () => setState(() => game.updateInfo = null),
+                                      child: const Text("LATER", style: TextStyle(color: Colors.white38, fontWeight: FontWeight.bold)),
+                                    ),
+                                  ),
+                                Expanded(
+                                  flex: 2,
+                                  child: ElevatedButton(
+                                    onPressed: () => _startUpdate(game.updateInfo!.downloadUrl),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppTheme.neonCyan,
+                                      foregroundColor: Colors.black,
+                                      padding: const EdgeInsets.symmetric(vertical: 16),
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                                    ),
+                                    child: const Text("DOWNLOAD NOW", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
+                                  ),
+                                ),
+                              ],
+                            ),
                         ],
                       ),
                     ),
@@ -184,6 +214,52 @@ class _MainShellState extends State<MainShell> {
         );
       },
     );
+  }
+
+  Future<void> _startUpdate(String url) async {
+    setState(() {
+      _isDownloading = true;
+      _downloadProgress = 0;
+      _downloadError = null;
+    });
+
+    try {
+      final tempDir = await getTemporaryDirectory();
+      final String filePath = "${tempDir.path}/update.apk";
+      
+      final dio = Dio();
+      await dio.download(
+        url,
+        filePath,
+        onReceiveProgress: (received, total) {
+          if (total != -1) {
+            setState(() {
+              _downloadProgress = received / total;
+            });
+          }
+        },
+      );
+
+      // Trigger Install
+      const platform = MethodChannel('xyz.knowcoin.app/updater');
+      try {
+        await platform.invokeMethod('installApk', {'path': filePath});
+      } on PlatformException catch (e) {
+        // Fallback to url_launcher if custom install fails
+        debugPrint("Custom install failed, falling back: ${e.message}");
+        final file = File(filePath);
+        if (await file.exists()) {
+          // Note: On many modern Androids, opening the file via url_launcher/intent works if FileProvider is setup
+          // but MethodChannel is more reliable for direct APK installation trigger.
+          launchUrl(Uri.parse(url)); 
+        }
+      }
+    } catch (e) {
+      setState(() {
+        _isDownloading = false;
+        _downloadError = "Download failed: $e";
+      });
+    }
   }
 
   Widget _buildGlobalTopBar(GameManager game) {
