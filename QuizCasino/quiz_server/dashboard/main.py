@@ -120,7 +120,7 @@ else:
         
         display_df = real_players_df.copy()
         if search_query:
-            display_df = display_df[display_df['username'].str.lower().contains(search_query)]
+            display_df = display_df[display_df['username'].str.contains(search_query, case=False, na=False)]
 
         # Highlight Hidden ELO for balance detection
         cols_to_show = ['username', 'league', 'elo', 'hiddenElo', 'win_rate', 'gold', 'diamonds', 'matchesPlayed']
@@ -150,7 +150,7 @@ else:
         # 1. Distribution
         league_counts = real_players_df['league'].value_counts()
         fig_dist = px.pie(values=league_counts.values, names=league_counts.index, 
-                         title="Player Distribution by League", Hole=0.5,
+                         title="Player Distribution by League", hole=0.5,
                          color_discrete_sequence=px.colors.qualitative.Pastel)
         fig_dist.update_layout(template="plotly_dark")
         l_col1.plotly_chart(fig_dist, use_container_width=True)
