@@ -1,0 +1,43 @@
+name: life_compass_v2
+description: "A new Flutter project."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  flutter_riverpod: ^3.3.1
+  go_router: ^17.1.0
+  google_fonts: ^8.0.2
+  drift: ^2.31.0
+  sqlite3_flutter_libs: ^0.6.0+eol
+  flutter_secure_storage: ^10.0.0
+  intl: ^0.20.2
+  path_provider: ^2.1.5
+  local_auth: ^3.0.1
+  flutter_local_notifications: ^21.0.0
+  crypto: ^3.0.7
+  freezed_annotation: ^3.1.0
+  http: ^1.6.0
+  package_info_plus: ^9.0.0
+  animations: ^2.1.1
+  flutter_animate: ^4.5.2
+  flutter_localizations:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  build_runner: ^2.13.0
+  drift_dev: ^2.31.0
+  freezed: ^3.2.3
+  json_serializable: ^6.11.2
+
+flutter:
+  generate: true
+  uses-material-design: true

@@ -1,0 +1,14 @@
+{
+  "@@locale": "hu",
+  "appTitle": "LifeCompass v2",
+  "todayTab": "Ma",
+  "goalsTab": "Célok",
+  "projectsTab": "Projektek",
+  "habitsTab": "Szokások",
+  "profileTab": "Profil",
+  "dailyIntention": "Napi Szándék",
+  "whatIsYourFocus": "Mi a mai fókuszod?",
+  "save": "Mentés",
+  "loading": "Betöltés...",
+  "error": "Valami hiba történt"
+}

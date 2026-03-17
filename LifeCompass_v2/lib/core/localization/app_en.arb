@@ -1,0 +1,14 @@
+{
+  "@@locale": "en",
+  "appTitle": "LifeCompass v2",
+  "todayTab": "Today",
+  "goalsTab": "Goals",
+  "projectsTab": "Projects",
+  "habitsTab": "Habits",
+  "profileTab": "Profile",
+  "dailyIntention": "Daily Intention",
+  "whatIsYourFocus": "What is your focus today?",
+  "save": "Save",
+  "loading": "Loading...",
+  "error": "Something went wrong"
+}
