@@ -26,7 +26,7 @@ class GoalHierarchyView extends ConsumerWidget {
           physics: const NeverScrollableScrollPhysics(),
           padding: const EdgeInsets.symmetric(horizontal: 16),
           itemCount: goals.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 16),
+          separatorBuilder: (context, index) => const SizedBox(height: 16),
           itemBuilder: (context, index) {
             final goal = goals[index];
             return Column(

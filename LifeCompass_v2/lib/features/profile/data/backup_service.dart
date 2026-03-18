@@ -24,7 +24,7 @@ class BackupService {
   }
 
   Future<void> importFromJson(String json) async {
-    final data = jsonDecode(json) as Map<String, dynamic>;
+    jsonDecode(json);
     // Import logic would involve transactionally inserting into Drift tables
     // and handling potential conflicts.
   }

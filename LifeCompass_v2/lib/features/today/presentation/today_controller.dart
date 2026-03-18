@@ -26,7 +26,8 @@ class TodayController extends Notifier<TodayState> {
       _entriesSub?.cancel();
     });
 
-    _init();
+    // Schedule init so it runs after build completes and does not mutate state synchronously
+    Future.microtask(() => _init());
     return const TodayState(isLoading: true);
   }
 

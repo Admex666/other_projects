@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'security_service.dart';
-import '../../features/today/presentation/today_screen.dart';
 import '../navigation/main_navigation_screen.dart';
 
 class AuthScreen extends ConsumerStatefulWidget {
@@ -76,14 +75,14 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                 final pin = _pinController.text;
                 final security = ref.read(securityServiceProvider);
                 if (_hasPin) {
-                  if (await security.verifyPin(pin)) {
+                  final isValid = await security.verifyPin(pin);
+                  if (!context.mounted) return;
+                  if (isValid) {
                     _onAuthenticated();
                   } else {
-                    if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Invalid PIN')),
-                      );
-                    }
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Invalid PIN')),
+                    );
                   }
                 } else {
                   await security.setPin(pin);

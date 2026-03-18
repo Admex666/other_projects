@@ -10,11 +10,10 @@ class AppTheme {
     scaffoldBackgroundColor: AppColors.background,
     colorScheme: const ColorScheme.dark(
       surface: AppColors.surface,
-      surfaceVariant: AppColors.surfaceVariant,
+      surfaceContainerHighest: AppColors.surfaceVariant,
       primary: AppColors.primary,
       secondary: AppColors.accent,
       onSurface: AppColors.textPrimary,
-      onBackground: AppColors.textPrimary,
     ),
     textTheme: GoogleFonts.interTextTheme(
       const TextTheme(
