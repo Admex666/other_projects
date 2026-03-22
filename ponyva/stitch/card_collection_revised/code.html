@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The Chronicler's Hoard - Collection</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Newsreader:ital,wght@0,400;0,600;1,400;1,600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-tertiary-container": "#fec154",
+                        "on-secondary": "#18371e",
+                        "tertiary-fixed-dim": "#f9bc50",
+                        "on-primary": "#680007",
+                        "surface-container-highest": "#3d332d",
+                        "on-primary-fixed": "#410003",
+                        "on-secondary-container": "#9ec19f",
+                        "secondary": "#acd0ac",
+                        "outline-variant": "#59413e",
+                        "on-error": "#690005",
+                        "on-primary-fixed-variant": "#900d14",
+                        "secondary-fixed": "#c7ecc7",
+                        "on-surface-variant": "#e1bebb",
+                        "on-secondary-fixed": "#02210a",
+                        "background": "#1a120d",
+                        "outline": "#a98986",
+                        "tertiary-fixed": "#ffdeac",
+                        "on-primary-container": "#ffbbb4",
+                        "primary-fixed": "#ffdad6",
+                        "inverse-surface": "#f1dfd7",
+                        "inverse-primary": "#b22a28",
+                        "surface-variant": "#3d332d",
+                        "surface-bright": "#423731",
+                        "error-container": "#93000a",
+                        "on-tertiary-fixed-variant": "#5f4100",
+                        "on-surface": "#f1dfd7",
+                        "on-background": "#f1dfd7",
+                        "on-secondary-fixed-variant": "#2f4e33",
+                        "surface-container-low": "#221a15",
+                        "primary": "#ffb3ac",
+                        "surface-tint": "#ffb3ac",
+                        "secondary-fixed-dim": "#acd0ac",
+                        "surface-container-high": "#322823",
+                        "surface-dim": "#1a120d",
+                        "primary-container": "#a62121",
+                        "tertiary-container": "#734f00",
+                        "error": "#ffb4ab",
+                        "secondary-container": "#315035",
+                        "tertiary": "#f9bc50",
+                        "primary-fixed-dim": "#ffb3ac",
+                        "on-tertiary-fixed": "#281900",
+                        "surface": "#1a120d",
+                        "on-error-container": "#ffdad6",
+                        "inverse-on-surface": "#382e29",
+                        "surface-container-lowest": "#140c08",
+                        "surface-container": "#271e19",
+                        "on-tertiary": "#432c00"
+                    },
+                    fontFamily: {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Newsreader"],
+                        "label": ["Space Grotesk"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .grainy-bg {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.05;
+        }
+        .deckled-edge {
+            clip-path: polygon(0% 0%, 100% 1%, 99% 99%, 1% 100%, 0% 50%);
+        }
+        .folk-border {
+            border: 8px solid transparent;
+            border-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 5C20 5 22 10 25 10C28 10 30 8 30 5C30 2 28 0 25 0C22 0 20 5 20 5Z' fill='%23a62121'/%3E%3C/svg%3E") 10 stretch;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body min-h-screen relative overflow-x-hidden">
+<div class="fixed inset-0 grainy-bg pointer-events-none z-0"></div>
+<!-- Top Navigation Shell (Shared Component) -->
+<header class="fixed top-0 w-full z-50 flex items-center justify-between px-6 py-4 bg-[#1a120d] shadow-[0_12px_32px_rgba(0,0,0,0.6)]">
+<div class="flex items-center gap-4">
+<div class="relative">
+<div class="w-12 h-12 rounded-full overflow-hidden border-2 border-primary-container shadow-inner bg-surface-container-high">
+<img alt="Elder Scribe" class="w-full h-full object-cover grayscale sepia" data-alt="Weathered leather-bound profile icon of the player" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBob04AHZC41wuk1A7rcKGMuxcFE-akoyhKEvXX3KPwLVRwZ3yHeOJAONPuNkLtMRpnvwaPHkKAK0l3FyEK5hMbzjyHCi0SoVXYUhQp6pZ0ojjQ5P5gT00iGIAAhETB09U9tLzqGCFv6GDQH1OiaB9mt-5qbryJAXg6a8NbbGiGmpAVTQJ9h77dMZKxFDs7VMFqcmnZnT_wO0c-aAbWjbGidRH_TCbx6JQNunL8ofiyt8sIEkf9nkueVVvrhj1xnLthA-pxjS0TBQ"/>
+</div>
+<div class="absolute -bottom-1 -right-1 bg-tertiary-container text-on-tertiary-container text-[10px] font-headline font-bold px-1.5 rounded-full border border-background">42</div>
+</div>
+<div>
+<h1 class="font-headline font-bold text-primary-container tracking-widest text-lg uppercase">The Chronicler's Hoard</h1>
+<p class="font-headline text-primary text-xs tracking-tighter uppercase opacity-80">Elder Scribe</p>
+</div>
+</div>
+<nav class="hidden md:flex gap-8">
+<a class="text-on-tertiary-container border-b-2 border-primary-container font-headline text-sm uppercase tracking-widest py-1" href="#">Grimoire</a>
+<a class="text-tertiary-container hover:bg-[#322823] transition-all duration-300 font-headline text-sm uppercase tracking-widest py-1" href="#">Market</a>
+<a class="text-tertiary-container hover:bg-[#322823] transition-all duration-300 font-headline text-sm uppercase tracking-widest py-1" href="#">Rituals</a>
+<a class="text-tertiary-container hover:bg-[#322823] transition-all duration-300 font-headline text-sm uppercase tracking-widest py-1" href="#">Chronicle</a>
+</nav>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary-container text-3xl">menu_book</span>
+</div>
+</header>
+<main class="pt-24 pb-32 px-6 max-w-7xl mx-auto relative z-10">
+<!-- Stats Dashboard -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-12">
+<div class="lg:col-span-8 bg-surface-container-low p-6 rounded-xl border-l-4 border-primary-container shadow-xl">
+<div class="flex flex-wrap justify-between items-end gap-4">
+<div>
+<h2 class="font-headline text-3xl font-bold text-on-surface mb-2 uppercase tracking-tighter">Collection Progress</h2>
+<div class="flex items-baseline gap-2">
+<span class="text-4xl font-headline font-black text-primary">142</span>
+<span class="text-outline text-xl font-headline">/ 200</span>
+</div>
+</div>
+<div class="grid grid-cols-4 gap-4 bg-surface-container-lowest p-4 rounded-lg">
+<div class="text-center">
+<p class="text-[10px] font-headline text-tertiary uppercase tracking-widest">Legendary</p>
+<p class="text-xl font-headline font-bold">05</p>
+</div>
+<div class="text-center border-l border-outline-variant/30">
+<p class="text-[10px] font-headline text-primary uppercase tracking-widest">Epic</p>
+<p class="text-xl font-headline font-bold">12</p>
+</div>
+<div class="text-center border-l border-outline-variant/30">
+<p class="text-[10px] font-headline text-secondary uppercase tracking-widest">Rare</p>
+<p class="text-xl font-headline font-bold">45</p>
+</div>
+<div class="text-center border-l border-outline-variant/30">
+<p class="text-[10px] font-headline text-on-surface-variant uppercase tracking-widest">Common</p>
+<p class="text-xl font-headline font-bold">80</p>
+</div>
+</div>
+</div>
+<div class="mt-6 w-full h-2 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary-container w-[71%] relative">
+<div class="absolute inset-0 bg-gradient-to-r from-transparent to-white/20 animate-pulse"></div>
+</div>
+</div>
+<div class="mt-2 flex justify-between font-headline text-[10px] uppercase tracking-widest text-outline">
+<span>Missing: 58 Artifacts</span>
+<span>71% Attunement</span>
+</div>
+</div>
+<!-- Search -->
+<div class="lg:col-span-4 bg-surface-container-high p-6 rounded-xl shadow-xl flex flex-col justify-center relative overflow-hidden">
+<div class="absolute inset-0 opacity-10 pointer-events-none">
+<svg class="w-full h-full" viewbox="0 0 100 100">
+<path class="text-primary" d="M0 50 Q 25 25 50 50 T 100 50" fill="none" stroke="currentColor" stroke-width="0.5"></path>
+</svg>
+</div>
+<label class="font-headline text-xs text-tertiary uppercase tracking-widest mb-2 block">Scribe's Search</label>
+<div class="relative">
+<input class="w-full bg-surface-container-lowest border-none rounded-lg py-3 px-10 font-body italic text-on-surface focus:ring-2 focus:ring-primary-container placeholder:opacity-40" placeholder="Search the archives..." type="text"/>
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+</div>
+</div>
+</section>
+<!-- Filters -->
+<section class="mb-10 space-y-4">
+<div class="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
+<span class="font-headline text-xs text-outline uppercase tracking-widest mr-4 shrink-0">Faction:</span>
+<button class="px-5 py-1.5 rounded-full bg-primary-container text-on-primary font-headline text-sm font-bold shadow-lg transition-transform active:scale-95">All</button>
+<button class="px-5 py-1.5 rounded-full bg-surface-container-high text-on-surface-variant border border-outline-variant/20 font-headline text-sm hover:border-primary/50 transition-colors">Légiós</button>
+<button class="px-5 py-1.5 rounded-full bg-surface-container-high text-on-surface-variant border border-outline-variant/20 font-headline text-sm hover:border-primary/50 transition-colors">Detektív</button>
+<button class="px-5 py-1.5 rounded-full bg-surface-container-high text-on-surface-variant border border-outline-variant/20 font-headline text-sm hover:border-primary/50 transition-colors">Western</button>
+<button class="px-5 py-1.5 rounded-full bg-surface-container-high text-on-surface-variant border border-outline-variant/20 font-headline text-sm hover:border-primary/50 transition-colors">Sci-fi</button>
+</div>
+<div class="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
+<span class="font-headline text-xs text-outline uppercase tracking-widest mr-4 shrink-0">Rarity:</span>
+<button class="px-5 py-1.5 rounded-full bg-surface-container-high text-tertiary border border-tertiary/20 font-headline text-sm hover:bg-tertiary/10 transition-colors">Legendary</button>
+<button class="px-5 py-1.5 rounded-full bg-surface-container-high text-primary border border-primary/20 font-headline text-sm">Epic</button>
+<button class="px-5 py-1.5 rounded-full bg-surface-container-high text-secondary border border-secondary/20 font-headline text-sm">Rare</button>
+<button class="px-5 py-1.5 rounded-full bg-surface-container-high text-on-surface-variant border border-outline-variant/20 font-headline text-sm">Common</button>
+</div>
+</section>
+<!-- Collection Grid -->
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
+<!-- Active Card (Selected) -->
+<div class="relative group cursor-pointer transition-transform duration-300 hover:-translate-y-2">
+<div class="aspect-[3/4] bg-tertiary/10 p-1.5 rounded-xl border-2 border-tertiary shadow-[0_0_30px_rgba(249,188,80,0.2)] overflow-hidden relative">
+<div class="absolute top-2 right-2 z-20">
+<span class="material-symbols-outlined text-tertiary" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<div class="h-full bg-surface-container-lowest rounded-lg overflow-hidden relative flex flex-col">
+<div class="h-1/2 bg-surface-container-high relative overflow-hidden">
+<img alt="Card Art" class="w-full h-full object-cover" data-alt="Traditional Hungarian folk character with punk accessories" src="https://lh3.googleusercontent.com/aida-public/AB6AXuANhM1H8Dye009tsxjjOnJBqGmaDjxKF460s2nYaxfdzxqHHPePw12aEflC9Hhyxnx-IjIGBoW0oinPC_5J_Ca1_fA9zR1K2mAWpjcKTW8gnSpvFq0gVen0x7pKFDcHaq7oRLO1qBzQimOXlPILfC-LYPg-VQGegtW21oqDCklLw3AwR0DZEEv7gwskPpHmrp0StaFKbPEn0iMFqKznb9cXqGfhltWHuNdAEIDNINL70fFAlCsTxG5DtB6cN2GLdIGUXUdsMXmYBw"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest to-transparent"></div>
+</div>
+<div class="p-3 flex-1 flex flex-col justify-between">
+<h3 class="font-headline font-bold text-tertiary text-xs uppercase tracking-tighter leading-none mb-1">Cifra Juhász</h3>
+<div class="flex justify-between items-center text-[10px] font-headline text-outline mb-2">
+<span>Legendary</span>
+<span>Cost: 5</span>
+</div>
+<div class="grid grid-cols-2 gap-1">
+<div class="bg-surface-container-high px-1.5 py-0.5 rounded flex items-center justify-between">
+<span class="text-[8px] font-headline uppercase">Atk</span>
+<span class="text-[10px] font-headline font-bold text-primary">12</span>
+</div>
+<div class="bg-surface-container-high px-1.5 py-0.5 rounded flex items-center justify-between">
+<span class="text-[8px] font-headline uppercase">Def</span>
+<span class="text-[10px] font-headline font-bold text-secondary">08</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Standard Epic Card -->
+<div class="relative group cursor-pointer transition-transform duration-300 hover:-translate-y-2">
+<div class="aspect-[3/4] bg-primary/10 p-1.5 rounded-xl border border-primary/30 shadow-xl overflow-hidden relative">
+<div class="h-full bg-surface-container-lowest rounded-lg overflow-hidden flex flex-col opacity-90">
+<div class="h-1/2 bg-surface-container-high relative">
+<img alt="Card Art" class="w-full h-full object-cover grayscale brightness-75" data-alt="Abstract ink swirl with floral elements" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDG6ZJc1zwWIiY4HzQR8NNBCvD4E_8AKGN7eCL4cDP0OZ6pJlfMcrrdxlNwO-UAFX4vAUsSaJX35d56KjUPALOfx-CXiC7YayC3BQGJgk6pr59R1tawDkJomZZmC7V3aZ3CwdfbhMX_5V7eCVjx88R-pfAW9q92LLOyXf0azhUkEY-2Z3xXIXQkHJglGnhWvzaU7jTS1PsOMRIh4KjpP93hAinkeVXRaQ28xefTszE8qBMPxCTWq48185hwyysD3_aYfK2p3f0RAQ"/>
+</div>
+<div class="p-3 flex-1 flex flex-col justify-between">
+<h3 class="font-headline font-bold text-primary text-xs uppercase tracking-tighter mb-1">Iron-Hoof Mare</h3>
+<div class="flex justify-between items-center text-[10px] font-headline text-outline mb-2">
+<span>Epic</span>
+<span>Cost: 3</span>
+</div>
+<div class="grid grid-cols-2 gap-1">
+<div class="bg-surface-container-high px-1.5 py-0.5 rounded flex items-center justify-between opacity-50">
+<span class="text-[8px] font-headline uppercase">Atk</span>
+<span class="text-[10px] font-headline font-bold">04</span>
+</div>
+<div class="bg-surface-container-high px-1.5 py-0.5 rounded flex items-center justify-between opacity-50">
+<span class="text-[8px] font-headline uppercase">Def</span>
+<span class="text-[10px] font-headline font-bold">15</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Grayed Out (Missing) Card -->
+<div class="relative cursor-not-allowed group">
+<div class="aspect-[3/4] bg-surface-container-lowest p-1.5 rounded-xl border border-outline-variant/10 overflow-hidden relative">
+<div class="absolute inset-0 z-20 flex items-center justify-center">
+<span class="material-symbols-outlined text-outline-variant text-4xl opacity-40">lock</span>
+</div>
+<div class="h-full bg-surface-container-lowest rounded-lg overflow-hidden flex flex-col opacity-20 grayscale">
+<div class="h-1/2 bg-surface-container-highest"></div>
+<div class="p-3 flex-1">
+<div class="h-2 w-2/3 bg-outline-variant rounded mb-2"></div>
+<div class="h-1 w-1/2 bg-outline-variant rounded mb-4"></div>
+<div class="grid grid-cols-2 gap-1">
+<div class="h-4 bg-outline-variant rounded"></div>
+<div class="h-4 bg-outline-variant rounded"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- More Cards for Grid Fill -->
+<div class="hidden md:block relative group cursor-pointer transition-transform duration-300 hover:-translate-y-2">
+<div class="aspect-[3/4] bg-secondary/10 p-1.5 rounded-xl border border-secondary/30 shadow-xl overflow-hidden relative">
+<div class="h-full bg-surface-container-lowest rounded-lg overflow-hidden flex flex-col">
+<div class="h-1/2 bg-surface-container-high relative">
+<img alt="Card Art" class="w-full h-full object-cover" data-alt="Traditional floral motif in green and black ink" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuI7-C3HiVnbiOMOibGkRGeXWWdy-2wCkmNab-7wKUhWKFhYSpbQlPGClhXtUukKPpeNhVCpEN1gsbFlX-0CIprlgapH1XDmoib_quuuv5TaEcG5cnsgZyyfBhv57XmG8mg98xxxcqBaqPbsfghuRSqZKDk_YLgXCe123_Fhu2OBbqqECt2IQaqMk_H5LIg2MoDKlpdmbnrcSi2uZ0SrS3k-_5FYc3cAfpmfvNbDIxX9nEVjPWcWmFch-LeCFSsfiMU9E9XgAtEg"/>
+</div>
+<div class="p-3 flex-1 flex flex-col justify-between">
+<h3 class="font-headline font-bold text-secondary text-xs uppercase tracking-tighter mb-1">Meadow Watch</h3>
+<div class="flex justify-between items-center text-[10px] font-headline text-outline mb-2">
+<span>Rare</span>
+<span>Cost: 2</span>
+</div>
+<div class="grid grid-cols-2 gap-1">
+<div class="bg-surface-container-high px-1.5 py-0.5 rounded flex items-center justify-between">
+<span class="text-[8px] font-headline uppercase">Atk</span>
+<span class="text-[10px] font-headline font-bold">02</span>
+</div>
+<div class="bg-surface-container-high px-1.5 py-0.5 rounded flex items-center justify-between">
+<span class="text-[8px] font-headline uppercase">Def</span>
+<span class="text-[10px] font-headline font-bold">06</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="hidden lg:block relative group cursor-pointer transition-transform duration-300 hover:-translate-y-2">
+<div class="aspect-[3/4] bg-on-surface-variant/5 p-1.5 rounded-xl border border-on-surface-variant/20 shadow-xl overflow-hidden relative">
+<div class="h-full bg-surface-container-lowest rounded-lg overflow-hidden flex flex-col">
+<div class="h-1/2 bg-surface-container-high relative">
+<img alt="Card Art" class="w-full h-full object-cover grayscale" data-alt="Doodle of a bird in folk style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuByfQIxRaZXV97642_3gUbIQWeWHvFa7Fg0KJ4B-V3gRyGOt2MkHPMzvGG6GFjABvC2gdAGlER9cyA3_l41NCUkQsNUshtCBurbs2Uv3VEwxlSS2Ikwsb8VzNFuTYwVN58GJqImWAXrR0vjueeDnMRHTTOaufW_a4gNAOtnxgYdg9O7fw0K0G8pmdlxBIAYbS4dYruuvOPfk_F9w9X6Qvf2SgDIIKeg2Mbh-e52AIO3yfXIa6cmXLhRg2qWw8RTAXyNJf1ZsdZivg"/>
+</div>
+<div class="p-3 flex-1 flex flex-col justify-between">
+<h3 class="font-headline font-bold text-on-surface-variant text-xs uppercase tracking-tighter mb-1">Stray Crow</h3>
+<div class="flex justify-between items-center text-[10px] font-headline text-outline mb-2">
+<span>Common</span>
+<span>Cost: 1</span>
+</div>
+<div class="grid grid-cols-2 gap-1">
+<div class="bg-surface-container-high px-1.5 py-0.5 rounded flex items-center justify-between">
+<span class="text-[8px] font-headline uppercase">Atk</span>
+<span class="text-[10px] font-headline font-bold">01</span>
+</div>
+<div class="bg-surface-container-high px-1.5 py-0.5 rounded flex items-center justify-between">
+<span class="text-[8px] font-headline uppercase">Def</span>
+<span class="text-[10px] font-headline font-bold">01</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Card Preview Overlay (Visible State) -->
+<div class="fixed inset-0 z-[100] bg-background/80 backdrop-blur-md flex items-center justify-center p-4">
+<div class="max-w-5xl w-full grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+<!-- Large Card Artifact -->
+<div class="relative mx-auto lg:mr-0 max-w-sm w-full group">
+<div class="aspect-[2/3] bg-tertiary-container/30 p-2 rounded-2xl border-4 border-tertiary shadow-[0_0_80px_rgba(249,188,80,0.3)] relative">
+<div class="absolute -top-6 -left-6 z-20">
+<svg class="text-tertiary drop-shadow-lg" height="80" viewbox="0 0 100 100" width="80">
+<path d="M50 0 L60 40 L100 50 L60 60 L50 100 L40 60 L0 50 L40 40 Z" fill="currentColor"></path>
+</svg>
+</div>
+<div class="h-full bg-surface-container-lowest rounded-xl overflow-hidden flex flex-col relative folk-border">
+<img alt="The Chaos Cook" class="h-full w-full object-cover brightness-110 contrast-125" data-alt="Traditional Hungarian cook in a punk apron holding a glowing paprika" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCyH4_z_bcx_CL3RRGJCiEM5EYAocU2Lo4WuKn4tb347PwSevUnuH_1Ftv0WAQfyPHdiIf2C3s4sE4jKi0kbChOtcvKH6eWPLjNMzmUYB3FCkD3M5BtEUj-XiGgknXSpQCgiCO-sQ88dH-KMxwXHfBffgSZdhAjwwyNUqG6_7aOJK3pEGmRexZEeyqlqyZqTdzgmb2tuLiPWzWihmSgGxanju5kK4zN0EJyh4s0yCqeh_tXK7Mhrf3zBVE22Vdjf-5nRJJe0a4fwg"/>
+<div class="absolute bottom-0 inset-x-0 p-6 bg-gradient-to-t from-background via-background/80 to-transparent">
+<div class="font-headline text-3xl font-black text-tertiary uppercase tracking-tighter mb-2">Paprika Chaos</div>
+<div class="flex gap-4">
+<div class="flex flex-col">
+<span class="font-headline text-[10px] uppercase text-outline">Stability</span>
+<span class="font-headline text-2xl font-bold text-secondary">A+</span>
+</div>
+<div class="flex flex-col border-l border-outline-variant/30 pl-4">
+<span class="font-headline text-[10px] uppercase text-outline">Skill</span>
+<span class="font-headline text-2xl font-bold text-primary">88</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Details Content -->
+<div class="space-y-8 lg:pr-12">
+<div class="space-y-4">
+<div class="inline-block px-3 py-1 bg-tertiary/20 text-tertiary border border-tertiary/40 rounded-full font-headline text-xs font-bold uppercase tracking-widest">Legendary Artifact</div>
+<h2 class="text-5xl font-headline font-black text-on-surface uppercase tracking-tight">The Chaos Cook</h2>
+<p class="font-body text-xl italic text-on-surface-variant leading-relaxed">"One pinch of crimson dust and the world forgets its weight. Another pinch, and the stone starts to weep."</p>
+</div>
+<div class="bg-surface-container-high p-6 rounded-2xl border-l-8 border-tertiary">
+<h4 class="font-headline text-sm font-bold text-tertiary uppercase tracking-widest mb-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">flare</span> Primary Ability
+                    </h4>
+<p class="font-headline text-2xl text-on-surface mb-2">Paprika Chaos</p>
+<p class="font-body text-lg text-outline leading-snug italic">Randomly shifts stability of all enemy units every turn. Confused units have a 40% chance to attack their own faction.</p>
+</div>
+<div class="flex flex-wrap gap-4 pt-4">
+<button class="flex-1 min-w-[200px] bg-primary-container text-on-primary-container font-headline font-bold text-lg uppercase tracking-widest py-4 px-8 rounded-xl shadow-[0_8px_0_#680007] active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-3">
+<span class="material-symbols-outlined">add_circle</span> Add to Deck
+                    </button>
+<button class="bg-surface-container-highest text-tertiary font-headline font-bold text-lg uppercase tracking-widest py-4 px-6 rounded-xl border border-tertiary/20 hover:bg-tertiary/10 transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">favorite</span>
+</button>
+</div>
+<button class="text-outline hover:text-on-surface transition-colors flex items-center gap-2 font-headline text-xs uppercase tracking-widest pt-4">
+<span class="material-symbols-outlined">close</span> Close Grimoire Entry
+                </button>
+</div>
+</div>
+</div>
+<!-- Bottom Navigation Shell -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center pb-6 pt-3 px-4 bg-[#221a15]/90 backdrop-blur-md shadow-[0_-8px_24px_rgba(0,0,0,0.5)] rounded-t-3xl">
+<a class="flex flex-col items-center justify-center bg-[#a62121] text-[#1a120d] rounded-xl px-4 py-1 animate-pulse" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_stories</span>
+<span class="font-['Newsreader'] italic text-sm">Grimoire</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#acd0ac] opacity-70 hover:opacity-100 hover:scale-110 transition-transform" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-['Newsreader'] italic text-sm">Market</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#acd0ac] opacity-70 hover:opacity-100 hover:scale-110 transition-transform" href="#">
+<span class="material-symbols-outlined">flare</span>
+<span class="font-['Newsreader'] italic text-sm">Rituals</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#acd0ac] opacity-70 hover:opacity-100 hover:scale-110 transition-transform" href="#">
+<span class="material-symbols-outlined">history_edu</span>
+<span class="font-['Newsreader'] italic text-sm">Chronicle</span>
+</a>
+</nav>
+<!-- Footer Reward Teaser -->
+<div class="fixed bottom-24 right-6 z-40 md:block hidden">
+<div class="bg-surface-container-high p-4 rounded-2xl shadow-2xl border-t border-outline-variant/30 max-w-[200px] deckled-edge">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-tertiary">card_giftcard</span>
+<span class="font-headline text-[10px] text-tertiary uppercase font-bold tracking-widest">Daily Bounty</span>
+</div>
+<p class="font-body text-xs text-on-surface-variant italic mb-3">One new ritual scroll awaits your ink...</p>
+<div class="bg-primary-container/20 py-1 text-center rounded border border-primary/20">
+<span class="font-headline text-xs text-primary font-bold">REDEEM NOW</span>
+</div>
+</div>
+</div>
+</body></html>

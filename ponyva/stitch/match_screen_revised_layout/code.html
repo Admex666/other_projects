@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800;900&amp;family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-tint": "#ffb3ac",
+              "background": "#1a120d",
+              "outline": "#a98986",
+              "error": "#ffb4ab",
+              "primary-container": "#a62121",
+              "inverse-primary": "#b22a28",
+              "on-background": "#f1dfd7",
+              "on-error": "#690005",
+              "on-primary": "#680007",
+              "on-tertiary-fixed-variant": "#5f4100",
+              "secondary-fixed-dim": "#acd0ac",
+              "on-primary-container": "#ffbbb4",
+              "primary": "#ffb3ac",
+              "primary-fixed": "#ffdad6",
+              "surface-variant": "#3d332d",
+              "surface-container-highest": "#3d332d",
+              "on-secondary-fixed-variant": "#2f4e33",
+              "tertiary": "#f9bc50",
+              "inverse-on-surface": "#382e29",
+              "tertiary-fixed": "#ffdeac",
+              "on-primary-fixed": "#410003",
+              "secondary-fixed": "#c7ecc7",
+              "surface-bright": "#423731",
+              "on-secondary-container": "#9ec19f",
+              "on-tertiary": "#432c00",
+              "on-primary-fixed-variant": "#900d14",
+              "outline-variant": "#59413e",
+              "secondary": "#acd0ac",
+              "surface-container-low": "#221a15",
+              "secondary-container": "#315035",
+              "surface-container": "#271e19",
+              "on-tertiary-fixed": "#281900",
+              "tertiary-container": "#734f00",
+              "surface-container-high": "#322823",
+              "on-secondary": "#18371e",
+              "error-container": "#93000a",
+              "on-error-container": "#ffdad6",
+              "on-surface-variant": "#e1bebb",
+              "surface-dim": "#1a120d",
+              "surface-container-lowest": "#140c08",
+              "on-surface": "#f1dfd7",
+              "on-secondary-fixed": "#02210a",
+              "on-tertiary-container": "#fec154",
+              "primary-fixed-dim": "#ffb3ac",
+              "surface": "#1a120d",
+              "tertiary-fixed-dim": "#f9bc50",
+              "inverse-surface": "#f1dfd7"
+            },
+            fontFamily: {
+              "headline": ["Space Grotesk"],
+              "body": ["Newsreader"],
+              "label": ["Space Grotesk"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        .paper-texture {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.05;
+            pointer-events: none;
+        }
+        .deckled-edge {
+            clip-path: polygon(0% 0%, 5% 2%, 10% 0%, 15% 3%, 20% 0%, 25% 2%, 30% 0%, 35% 3%, 40% 0%, 45% 2%, 50% 0%, 55% 3%, 60% 0%, 65% 2%, 70% 0%, 75% 3%, 80% 0%, 85% 2%, 90% 0%, 95% 3%, 100% 0%, 100% 100%, 95% 97%, 90% 100%, 85% 98%, 80% 100%, 75% 97%, 70% 100%, 65% 98%, 60% 100%, 55% 97%, 50% 100%, 45% 98%, 40% 100%, 35% 97%, 30% 100%, 25% 98%, 20% 100%, 15% 97%, 10% 100%, 5% 98%, 0% 100%);
+        }
+        .scroll-hide::-webkit-scrollbar { display: none; }
+        .scroll-hide { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body selection:bg-primary selection:text-on-primary min-h-screen overflow-hidden flex flex-col relative">
+<div class="fixed inset-0 paper-texture z-0"></div>
+<!-- Turn Indicator/Timer (Top Left) -->
+<div class="fixed top-4 left-4 z-50 flex items-center gap-3 bg-surface-container/80 backdrop-blur px-4 py-2 rounded-full border border-outline-variant/30">
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center animate-pulse">
+<span class="font-headline font-black text-xs text-on-primary-container">15s</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline text-[10px] uppercase tracking-widest text-primary font-bold">Your Turn</span>
+<div class="flex gap-1">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<div class="w-2 h-2 rounded-full bg-outline-variant"></div>
+</div>
+</div>
+</div>
+<!-- Main Battle Arena -->
+<main class="flex-1 flex flex-col relative z-10 pt-4 pb-24 overflow-hidden">
+<!-- Opponent Zone (Top) -->
+<div class="flex flex-col items-center gap-2 px-4">
+<div class="flex items-center gap-6 w-full max-w-2xl">
+<!-- Opponent Profile -->
+<div class="relative">
+<div class="w-16 h-16 rounded-xl bg-surface-container-high border-2 border-primary/20 p-1 rotate-2 overflow-hidden shadow-lg">
+<img alt="" class="w-full h-full object-cover rounded-lg filter grayscale" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDssqoXx1-bflhnHNSydBin8f353lwE8njswKMcWP6FYNRonZ6D6SLyFTmt0UwPA7nrSsFq-jfDpWCZV5iLjEaScAs4RUZXAD87DOhiWO4xWWisxE2o8QzG_n1oLJL6_9e83Fw9E-OkqNIsqF0X6YW1M0RcgQhdexTa2IW_Ui0b2YrrKcrwbOFVrmXTNoqpIEqjDV_tRTKaXsUWuqQ0nUzPRuHXbdQ2Or-J38Y2sZLSNlHet97UqtNqLVxoKA0GH9f72bBBYs8_cQ"/>
+</div>
+</div>
+<!-- Opponent Stats -->
+<div class="flex-1 space-y-1">
+<div class="flex justify-between items-center px-1">
+<span class="font-headline text-[10px] font-bold text-outline uppercase tracking-widest">Nagyúr of Chaos</span>
+<div class="flex gap-3">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm text-tertiary" style="font-variation-settings: 'FILL' 1;">shield</span>
+<span class="font-headline font-bold text-xs">12</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm text-secondary" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<span class="font-headline font-bold text-xs">4</span>
+</div>
+</div>
+</div>
+<div class="h-3 w-full bg-surface-container-low rounded-full overflow-hidden border border-outline-variant/10">
+<div class="h-full w-[84%] bg-primary-container rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Board/Field (Middle Zone) -->
+<div class="flex-1 flex flex-col items-center justify-center relative my-4 px-2">
+<!-- Board Slots (Central Area for 5-6 cards) -->
+<div class="grid grid-cols-3 md:grid-cols-5 gap-3 max-w-4xl w-full px-4">
+<!-- Slot 1 (Opponent Card) -->
+<div class="aspect-[2/3] bg-surface-container-low/30 rounded-xl border-2 border-dashed border-outline-variant/20 flex items-center justify-center">
+<div class="w-full h-full p-1">
+<div class="w-full h-full bg-surface-container-high deckled-edge shadow-lg p-1 flex flex-col border border-primary/10">
+<div class="flex-1 bg-surface-container-lowest rounded overflow-hidden">
+<img alt="" class="w-full h-full object-cover filter grayscale contrast-125" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDssqoXx1-bflhnHNSydBin8f353lwE8njswKMcWP6FYNRonZ6D6SLyFTmt0UwPA7nrSsFq-jfDpWCZV5iLjEaScAs4RUZXAD87DOhiWO4xWWisxE2o8QzG_n1oLJL6_9e83Fw9E-OkqNIsqF0X6YW1M0RcgQhdexTa2IW_Ui0b2YrrKcrwbOFVrmXTNoqpIEqjDV_tRTKaXsUWuqQ0nUzPRuHXbdQ2Or-J38Y2sZLSNlHet97UqtNqLVxoKA0GH9f72bBBYs8_cQ"/>
+</div>
+<div class="h-4 flex justify-between px-1 mt-1">
+<span class="text-[8px] font-bold text-primary">5 ATK</span>
+<span class="text-[8px] font-bold text-primary">8 HP</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Empty Slots with Drag Indicators -->
+<div class="aspect-[2/3] bg-surface-container-low/30 rounded-xl border-2 border-dashed border-outline-variant/20 flex flex-col items-center justify-center group transition-colors hover:border-primary/40">
+<span class="material-symbols-outlined text-2xl opacity-10 group-hover:opacity-40" data-icon="add">add</span>
+<span class="text-[8px] font-headline uppercase tracking-widest opacity-0 group-hover:opacity-40">Place Card</span>
+</div>
+<div class="aspect-[2/3] bg-surface-container-low/30 rounded-xl border-2 border-dashed border-outline-variant/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-2xl opacity-10" data-icon="layers">layers</span>
+</div>
+<!-- Slot 4 (Active Player Card) -->
+<div class="aspect-[2/3] bg-surface-container-high deckled-edge shadow-xl border border-primary/40 rotate-1 p-1 flex flex-col">
+<div class="flex-1 bg-surface-container-lowest rounded overflow-hidden border border-outline-variant/10">
+<img alt="" class="w-full h-full object-cover filter sepia hue-rotate-[320deg]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBenZdFeS_-_3Od-OZP58tUGGWNneVMTDvkoWoHrm65Lr9uN5ciqvOsn3wJpyAPccA-g7-Rfsyh-w_hpmE8Q90MCx9EQBk1qJnvq7-OWk7fI8P03ijQu0GkQqGmGrCVPZY9dH1y1ataqwC203q07G2MX9-yHycMw1XP9cRLPGTLUpjrLD9SrIu9liBinK1ldkzCMGj77PerpYDN14po8u4RSlBQvlpAeHK1Kb5urlDePjiFbGmxP3mZoELkR3lKCdE4_8SD1T9Hlw"/>
+</div>
+<div class="pt-1 text-center">
+<div class="font-headline font-bold text-[8px] uppercase text-primary leading-none">Bátor Vitéz</div>
+<div class="flex justify-between mt-0.5 px-1">
+<span class="font-headline font-bold text-[10px] text-secondary">4</span>
+<span class="font-headline font-bold text-[10px] text-primary">6</span>
+</div>
+</div>
+</div>
+<div class="aspect-[2/3] bg-surface-container-low/30 rounded-xl border-2 border-dashed border-outline-variant/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-2xl opacity-10" data-icon="layers">layers</span>
+</div>
+</div>
+<!-- Event/Log Panel (Right Side) -->
+<div class="absolute right-4 top-1/2 -translate-y-1/2 w-40 md:w-56 h-32 md:h-48 bg-surface-container-low/80 backdrop-blur border border-outline-variant/20 rounded-2xl p-3 flex flex-col shadow-2xl z-20">
+<div class="flex items-center gap-2 mb-2 border-b border-outline-variant/10 pb-1">
+<span class="material-symbols-outlined text-xs text-tertiary">history</span>
+<span class="font-headline font-bold text-[10px] uppercase tracking-widest text-outline">Action Log</span>
+</div>
+<div class="flex-1 overflow-y-auto scroll-hide space-y-2">
+<div class="text-[9px] font-body leading-tight border-l-2 border-primary/40 pl-2">
+<span class="text-primary font-bold">Nagyúr</span> uses <span class="italic">Shadow Bolt</span>.
+                    </div>
+<div class="text-[9px] font-body leading-tight border-l-2 border-secondary/40 pl-2">
+<span class="text-secondary font-bold">Bátor</span> blocks 2 damage.
+                    </div>
+<div class="text-[9px] font-body leading-tight border-l-2 border-tertiary/40 pl-2">
+<span class="italic text-on-surface-variant">Fred goes wrong</span> - Double luck!
+                    </div>
+<div class="text-[9px] font-body leading-tight border-l-2 border-primary/40 pl-2">
+<span class="text-primary font-bold">Jimmy</span> double attack! (-4 HP)
+                    </div>
+<div class="text-[9px] font-body leading-tight border-l-2 border-secondary/40 pl-2">
+<span class="text-secondary font-bold">You</span> draw 'Spicy Karma'.
+                    </div>
+</div>
+</div>
+</div>
+<!-- Player Zone (Bottom) -->
+<div class="flex flex-col items-center gap-4 px-4 pb-4">
+<!-- Player Stats -->
+<div class="flex items-center gap-6 w-full max-w-2xl">
+<div class="flex-1 space-y-1">
+<div class="flex justify-between items-center px-1">
+<div class="flex gap-3">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm text-tertiary" style="font-variation-settings: 'FILL' 1;">shield_with_heart</span>
+<span class="font-headline font-bold text-xs">25</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm text-secondary" style="font-variation-settings: 'FILL' 1;">psychology_alt</span>
+<span class="font-headline font-bold text-xs">8</span>
+</div>
+</div>
+<span class="font-headline text-[10px] font-bold text-secondary uppercase tracking-widest">You</span>
+</div>
+<div class="h-3 w-full bg-surface-container-low rounded-full overflow-hidden border border-outline-variant/10">
+<div class="h-full w-[100%] bg-secondary-container rounded-full"></div>
+</div>
+</div>
+<div class="w-16 h-16 rounded-xl bg-surface-container-high border-2 border-secondary/20 p-1 -rotate-2 overflow-hidden shadow-lg">
+<div class="w-full h-full bg-surface-container flex items-center justify-center rounded-lg">
+<span class="material-symbols-outlined text-secondary" data-icon="face">face</span>
+</div>
+</div>
+</div>
+<!-- Player Hand (Scrollable Bottom Area) -->
+<div class="w-full relative px-2">
+<div class="flex overflow-x-auto gap-4 py-4 scroll-hide px-8 snap-x">
+<!-- Hand Card 1 -->
+<div class="flex-shrink-0 w-28 h-40 bg-surface-container-high deckled-edge shadow-xl border border-outline-variant/20 transition-all hover:-translate-y-4 hover:z-30 cursor-pointer p-1.5 flex flex-col group snap-center relative">
+<div class="absolute -top-1 -right-1 z-40">
+<span class="material-symbols-outlined text-tertiary text-lg" style="font-variation-settings: 'FILL' 1;">stars</span>
+</div>
+<div class="flex-1 bg-surface-container-lowest rounded border border-outline-variant/5 overflow-hidden">
+<img alt="" class="w-full h-full object-cover filter grayscale contrast-75" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjkBr4T543SoWv7BX2zEEqGQacdnNtzQwH5trtQsTG8OpifRDe3uekdiO4E8OSeRNqvdMgkf2N-QmanTP8jiBf4TAYOThepji_3y2_q3dokTKaUyXIRUDdPJ775gq-Xs8SPOsBsZQ23TrZNnvJwuJyVq9W2KqrP5OQExhP4s4kfoG5y4K5UWpaz0l7qCvfS3xYrpuqTG6n9DcxmVLQ_CtvnlmkTf48M12troOweVYAE_N4pC7EVqtuKBqnZikCA7B1FCeCqzXJ5A"/>
+</div>
+<div class="font-headline font-bold text-[9px] uppercase text-primary text-center pt-1.5">The Cunning Fox</div>
+</div>
+<!-- Hand Card 2 (Spicy Karma) -->
+<div class="flex-shrink-0 w-28 h-40 bg-surface-container-high deckled-edge shadow-2xl border border-primary/30 transition-all hover:-translate-y-6 hover:z-30 cursor-pointer p-1.5 flex flex-col snap-center relative scale-105 -translate-y-2">
+<div class="absolute -top-1 -right-1 z-40">
+<span class="material-symbols-outlined text-primary text-lg" style="font-variation-settings: 'FILL' 1;">token</span>
+</div>
+<div class="flex-1 bg-surface-container-lowest rounded border border-outline-variant/5 overflow-hidden">
+<img alt="" class="w-full h-full object-cover filter sepia saturate-200" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDE4J22HAsQtLKko1ndCc7lB-TfoVC_kuSgeO4JkNoVAM2Q6avh31PJ6NX3W--v83Dk9rPaAfFsAC8PsCvYF9DhUG2MKQXvk9aiCWs8AuMXYweLuGi48RIaLRKchGh_jWNfWhycis6jvdlRRJY7kgNIfLI4XITlhp1oQtqCCyhJH37jsNUOI8XIHh6bbTZ_t8k_DRjYOEFCipBmuvAFdNOx6URkitLulavh3rDJZ3UHVFy-dlL4Fwjvj_AnY1_0c_ti6spunu-0zA"/>
+</div>
+<div class="font-headline font-bold text-[9px] uppercase text-primary text-center pt-1.5">Spicy Karma</div>
+</div>
+<!-- Hand Card 3 -->
+<div class="flex-shrink-0 w-28 h-40 bg-surface-container-high deckled-edge shadow-xl border border-outline-variant/20 transition-all hover:-translate-y-4 hover:z-30 cursor-pointer p-1.5 flex flex-col snap-center relative">
+<div class="absolute -top-1 -right-1 z-40">
+<span class="material-symbols-outlined text-outline text-lg" style="font-variation-settings: 'FILL' 1;">stat_1</span>
+</div>
+<div class="flex-1 bg-surface-container-lowest rounded border border-outline-variant/5 overflow-hidden">
+<img alt="" class="w-full h-full object-cover filter grayscale" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCo6UdCVRPa88ZdCl_e9RQBNNbsl36qmqUs_-kMgiAjx4FeUDZj9Qv4buuPD2nWfmgiv1DV2EcjlCNeKqvmakZ2XfjIEPStcHUIa7LQbdvGENN50SGKBbrBD3aKlPdQ4gzzbsggpgUczps0lwsYbGiury-OpEheMW8vAZnZZQ6logKbBcdPYvYUa5_TNpB_JzmNjl-XN2GSz44R5CyPLV_zqfh3bNYaokTj8IP1X8lhbjRMAtmOhMC_McF432sVR0vb67ulHbfVOQ"/>
+</div>
+<div class="font-headline font-bold text-[9px] uppercase text-primary text-center pt-1.5">Iron Crow</div>
+</div>
+<!-- Extra Cards for scroll testing -->
+<div class="flex-shrink-0 w-28 h-40 bg-surface-container-high deckled-edge shadow-xl border border-outline-variant/20 p-1.5 flex flex-col snap-center">
+<div class="flex-1 bg-surface-container-lowest rounded"></div>
+<div class="h-4 mt-1 bg-surface-container-low rounded w-3/4 mx-auto"></div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom HUD -->
+<div class="fixed bottom-0 left-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-[#221a15]/95 backdrop-blur shadow-[0_-8px_32px_rgba(0,0,0,0.5)] border-t border-outline-variant/10">
+<!-- Resource Counter -->
+<div class="flex items-center gap-4">
+<div class="flex flex-col">
+<span class="font-headline font-bold text-[10px] uppercase tracking-widest text-outline">Action Points</span>
+<div class="flex gap-1.5 mt-1">
+<div class="w-3 h-3 rounded-full bg-tertiary shadow-[0_0_8px_rgba(249,188,80,0.5)]"></div>
+<div class="w-3 h-3 rounded-full bg-tertiary shadow-[0_0_8px_rgba(249,188,80,0.5)]"></div>
+<div class="w-3 h-3 rounded-full bg-tertiary shadow-[0_0_8px_rgba(249,188,80,0.5)]"></div>
+<div class="w-3 h-3 rounded-full bg-outline-variant"></div>
+<div class="w-3 h-3 rounded-full bg-outline-variant"></div>
+</div>
+</div>
+<div class="h-10 w-[1px] bg-outline-variant/20"></div>
+<div class="flex flex-col">
+<span class="font-headline font-bold text-[10px] uppercase tracking-widest text-outline">Mana</span>
+<span class="font-headline font-black text-secondary leading-none mt-1">7 / 10</span>
+</div>
+</div>
+<!-- End Turn Button -->
+<button class="relative flex items-center gap-3 px-8 py-3 bg-primary-container text-on-primary-container rounded-full shadow-lg transition-all hover:scale-105 active:scale-95 group overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">swords</span>
+<span class="font-headline font-bold text-sm uppercase tracking-[0.2em]">End Turn</span>
+</button>
+</div>
+</body></html>
