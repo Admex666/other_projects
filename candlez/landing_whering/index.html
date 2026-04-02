@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClosetMind - Your Private AI Stylist</title>
+    <meta name="description"
+        content="Never think about what to wear to work again. ClosetMind decides your outfit for you in 10 seconds based on your schedule, style and weather.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <script async src="https://tally.so/widgets/embed.js"></script>
+</head>
+
+<body>
+    <nav>
+        <div class="container nav-content">
+            <div class="logo">ClosetMind</div>
+            <button onclick="openTally()" class="cta-button" style="padding: 0.6rem 1.5rem; font-size: 0.9rem;">Join
+                Waitlist</button>
+        </div>
+    </nav>
+
+    <main class="container">
+        <!-- Hero Section -->
+        <section class="hero animate-fade-in">
+            <div class="hero-text">
+                <h1>Stop wasting <span style="color: var(--primary)">30 minutes</span> every morning deciding what to
+                    wear.</h1>
+                <p>Get one perfect outfit for your workday — based on your schedule, the weather, and your style.
+                    Instantly.</p>
+                <button class="cta-button" onclick="openTally()">Yes, I want my outfit decided for me</button>
+                <div style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-muted);">
+                    ⚡️ 582 people joined the waitlist this week
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="assets/hero.png" alt="Happy woman with a coffee in front of her wardrobe">
+            </div>
+        </section>
+
+        <!-- Problem Section -->
+        <section class="section">
+            <div class="problem animate-fade-in" style="animation-delay: 0.2s;">
+                <div class="problem-text">
+                    <h2>Getting dressed shouldn’t feel like a daily decision.</h2>
+                    <ul class="problem-list">
+                        <li>You try 3 different outfits before leaving the house</li>
+                        <li>You waste precious morning time that could be spent on coffee or family</li>
+                        <li>You still leave feeling like "this isn't quite right"</li>
+                    </ul>
+                </div>
+                <div class="problem-image">
+                    <img src="assets/stress.png" alt="Stressed woman in front of a messy closet">
+                </div>
+            </div>
+        </section>
+
+        <!-- Solution Section -->
+        <section class="solution animate-fade-in" style="animation-delay: 0.4s;">
+            <h2>Your Personal Decision Engine</h2>
+            <p style="color: var(--text-muted); font-size: 1.2rem; max-width: 700px; margin: 0 auto;">We don't just
+                organize your clothes. We tell you exactly what to wear so you don't have to think.</p>
+
+            <div class="cards">
+                <div class="card glass">
+                    <h3>📅 Calendar Aware</h3>
+                    <p>Meeting with clients? A casual Friday? We know what's on your plate and pick the right vibe.</p>
+                </div>
+                <div class="card glass">
+                    <h3>☀️ Weather Ready</h3>
+                    <p>No more being caught in the rain or sweating in silk. We check the local forecast for you.</p>
+                </div>
+                <div class="card glass">
+                    <h3>✨ 10 Second Decision</h3>
+                    <p>Open the app, see your outfit, put it on. Done. Start your day with confidence.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Showcase (Inside the App) -->
+        <section class="feature-showcase animate-fade-in" style="animation-delay: 0.6s;">
+            <div class="container">
+                <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 1rem;">Inside the Magic</h2>
+                <p style="text-align: center; color: var(--text-muted); margin-bottom: 4rem;">A clean, automated flow
+                    designed for busy mornings.</p>
+
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <img src="assets/app_context.png" alt="App Screen - Context Input">
+                        <h3>1. Your Day</h3>
+                        <p>We analyze your schedule and the local weather before you even wake up.</p>
+                    </div>
+                    <div class="feature-item">
+                        <img src="assets/app_decision.png" alt="App Screen - Outfit Decision">
+                        <h3>2. The Decision</h3>
+                        <p>One perfect outfit recommendation. Not 10 choices, just the right one.</p>
+                    </div>
+                    <div class="feature-item">
+                        <img src="assets/app_wardrobe.png" alt="App Screen - Digital Wardrobe">
+                        <h3>3. Your Closet</h3>
+                        <p>A minimalist digital view of your clothes, organized by our smart engine.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final CTA -->
+        <section class="section" style="text-align: center;">
+            <div class="glass"
+                style="padding: 4rem; background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(236, 72, 153, 0.1)); border: none;">
+                <h2 style="font-size: 2.5rem; margin-bottom: 2rem;">Ready to save your mornings?</h2>
+                <button class="cta-button" onclick="openTally()">Get early access</button>
+            </div>
+        </section>
+    </main>
+
+    <footer class="container"
+        style="padding: 4rem 0; text-align: center; color: var(--text-muted); border-top: 1px solid rgba(0,0,0,0.05); margin-top: 4rem;">
+        <p>&copy; 2026 ClosetMind AI. All rights reserved.</p>
+    </footer>
+
+    <!-- Tally Modal -->
+    <div id="tallyModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeTally()">&times;</span>
+            <!-- The Tally embed will go here -->
+            <iframe
+                data-tally-src="https://tally.so/embed/vGL45g?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
+                loading="lazy" width="100%" height="100%" frameborder="0" marginheight="0" marginwidth="0"
+                title="ClosetMind Waitlist"></iframe>
+        </div>
+    </div>
+
+    <script>
+        function openTally() {
+            document.getElementById('tallyModal').style.display = 'block';
+            document.body.style.overflow = 'hidden'; // Stop scrolling
+        }
+
+        function closeTally() {
+            document.getElementById('tallyModal').style.display = 'none';
+            document.body.style.overflow = 'auto'; // Enable scrolling
+        }
+
+        // Close modal when clicking outside of it
+        window.onclick = function (event) {
+            let modal = document.getElementById('tallyModal');
+            if (event.target == modal) {
+                closeTally();
+            }
+        }
+    </script>
+</body>
+
+</html>
