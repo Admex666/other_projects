@@ -135,25 +135,7 @@
         </div>
     </div>
 
-    <script>
-        function openTally() {
-            document.getElementById('tallyModal').style.display = 'block';
-            document.body.style.overflow = 'hidden'; // Stop scrolling
-        }
-
-        function closeTally() {
-            document.getElementById('tallyModal').style.display = 'none';
-            document.body.style.overflow = 'auto'; // Enable scrolling
-        }
-
-        // Close modal when clicking outside of it
-        window.onclick = function (event) {
-            let modal = document.getElementById('tallyModal');
-            if (event.target == modal) {
-                closeTally();
-            }
-        }
-    </script>
+    <script type="module" src="main.js"></script>
 </body>
 
 </html>
