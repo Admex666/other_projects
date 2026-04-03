@@ -4,7 +4,7 @@ This form is designed to validate both user intent and monetization potential.
 
 ## 1. Intro (Page 1)
 **Title:** Unlock your first city quest!
-**Sub:** We are almost ready. Join the private beta and get your first mission in Budapest, Vienna, or Berlin.
+**Sub:** We are almost ready. Join the private beta and get your first mission in any city.
 
 ## 2. Basic Info (Page 2)
 *   **Question 1:** What is your email address? (Required)
@@ -26,15 +26,16 @@ This form is designed to validate both user intent and monetization potential.
 
 # Ad Copy (English) - CityPulse
 
-## Hook A: The Adrenaline/Action
-*   **Headline:** The city is your playground. Are you fast enough?
-*   **Body:** Turn your boring city walk into an interactive strategy game. Use Transit Dash, find clues, and complete quests before the timer hits zero.
-*   **CTA:** Start your first quest.
+## Hook A: The Adrenaline/Action (Ad A)
+*   **Primary Text:** Boring city walks are over. 🏙️ Turn your street exploration into a game. Join Transit Dash, solve clues, and complete missions before the timer hits zero. Race against others and see your city like never before! ⚡ Are you fast enough?
+*   **Headline:** The City is Your Playground 🎮
+*   **Description:** Experience spontaneous missions and real-world GPS gaming in any city worldwide.
+*   **CTA Button:** Let me take a look
 
 ## Hook B: The Competition/Social
-*   **Headline:** Beat your friends on the streets of Budapest.
+*   **Headline:** Beat others on the streets of your city.
 *   **Body:** Hide, seek, and race through the city. Real GPS-based city gaming is here. Think you know your city? Prove it.
-*   **CTA:** Challenge your friends.
+*   **CTA:** Challenge yourself.
 
 ## Hook C: The Spontaneity (Comparison)
 *   **Headline:** No more boring maps. Only missions.

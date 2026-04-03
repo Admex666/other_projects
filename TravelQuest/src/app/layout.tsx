@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/react";
+import Script from "next/script";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -15,7 +16,7 @@ const outfit = Outfit({
 
 export const metadata: Metadata = {
   title: "CityPulse | The City is Your Playground",
-  description: "Turn your city into a massive strategy game. Join quests, beat challenges, and discover the hidden secrets of Budapest, Vienna, and Berlin.",
+  description: "Turn your street exploration into a game. Join missions, beat the timer, and compete with others in any city.",
 };
 
 export default function RootLayout({
@@ -28,6 +29,7 @@ export default function RootLayout({
       <body className={`${inter.variable} ${outfit.variable}`}>
         {children}
         <Analytics />
+        <Script src="https://tally.so/widgets/embed.js" strategy="lazyOnload" />
       </body>
     </html>
   );
