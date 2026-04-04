@@ -1,0 +1,97 @@
+:root {
+  /* Surface Palette */
+  --color-surface: #fbf9f5;
+  --color-surface-container-low: #f5f4ee;
+  --color-surface-container: #eff0e9;
+  --color-surface-container-high: #e8e9e1;
+  --color-surface-container-highest: #e2e3db;
+  --color-surface-variant: #e2e3db;
+
+  /* Brand Palette */
+  --color-primary: #546255;
+  --color-primary-dim: #3a453b;
+  --color-primary-container: #d7e7d6;
+  --color-secondary: #4d607f;
+  --color-tertiary-container: #dafce6;
+
+  /* Content Palette */
+  --color-on-surface: #31332e;
+  --color-on-surface-variant: #5d6059;
+  --color-on-secondary: #ffffff;
+  --color-error: #9f403d;
+  --color-outline-variant: rgba(177, 179, 171, 0.15); /* Ghost Border */
+
+  /* Spacing & Borders */
+  --border-radius-lg: 1rem;
+  --border-radius-xl: 1.5rem;
+  --border-radius-full: 9999px;
+
+  /* Typography */
+  --font-family-display: 'Manrope', system-ui, sans-serif;
+  --font-family-body: 'Inter', system-ui, sans-serif;
+
+  /* Transitions */
+  --transition-soothing: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Next.js Defaults mapped to our system */
+  --background: var(--color-surface);
+  --foreground: var(--color-on-surface);
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  height: 100%;
+}
+
+body {
+  background: var(--color-surface);
+  color: var(--color-on-surface);
+  font-family: var(--font-family-body);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-family-display);
+  font-weight: 600;
+  color: var(--color-on-surface);
+}
+
+/* Neurodivergent Visual Accessibility: No Harsh Lines Rule */
+.no-border {
+  border: none !important;
+}
+
+/* Elevation via Background Shift instead of Stroke */
+.surface-low { background-color: var(--color-surface-container-low); }
+.surface-highest { background-color: var(--color-surface-container-highest); }
+
+/* Ambient Shadows (Gentle depth) */
+.shadow-ambient {
+  box-shadow: 0 12px 32px rgba(49, 51, 46, 0.06);
+}
+
+/* Glassmorphism for Navigation */
+.glass-nav {
+  background: rgba(251, 249, 245, 0.7);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+/* High-Contrast Confidence Zone */
+.confidence-zone {
+  background-color: var(--color-tertiary-container);
+  color: var(--color-on-surface);
+  padding: 1rem;
+  border-radius: var(--border-radius-lg);
+  font-family: var(--font-family-display);
+}

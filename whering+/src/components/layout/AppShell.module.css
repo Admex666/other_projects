@@ -1,0 +1,111 @@
+.shell {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh; /* Dynamic viewport height - critical for mobile */
+  background-color: var(--color-surface);
+  position: relative;
+  max-width: 480px; /* Mobile max width */
+  margin: 0 auto;
+}
+
+.main {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  /* Padding bottom to avoid content hiding behind tab bar */
+  padding-bottom: 80px;
+}
+
+/* Bottom Tab Navigation */
+.tabBar {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 8px;
+  padding-bottom: env(safe-area-inset-bottom); /* iPhone notch handling */
+  background: rgba(251, 249, 245, 0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  z-index: 100;
+}
+
+.tabItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 16px;
+  border-radius: var(--border-radius-xl);
+  cursor: pointer;
+  transition: all var(--transition-soothing);
+  text-decoration: none;
+  border: none;
+  background: transparent;
+  min-width: 56px;
+}
+
+.tabItem:active {
+  transform: scale(0.94);
+  background-color: var(--color-surface-container-low);
+}
+
+.tabLabel {
+  font-family: var(--font-family-body);
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: var(--color-on-surface-variant);
+  transition: color var(--transition-soothing);
+}
+
+.tabIcon {
+  color: var(--color-on-surface-variant);
+  transition: color var(--transition-soothing);
+}
+
+.tabItemActive .tabLabel {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.tabItemActive .tabIcon {
+  color: var(--color-primary);
+}
+
+/* Center FAB (floating action button) for "Add" */
+.fabWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  top: -12px;
+}
+
+.fab {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--border-radius-full);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dim));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(84, 98, 85, 0.35);
+  transition: all var(--transition-soothing);
+  color: white;
+}
+
+.fab:active {
+  transform: scale(0.92);
+  box-shadow: 0 4px 12px rgba(84, 98, 85, 0.25);
+}

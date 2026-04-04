@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Style Journey &amp; Insights</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<!-- Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary": "#ecfceb",
+                    "primary-container": "#d7e7d6",
+                    "tertiary": "#486555",
+                    "background": "#fbf9f5",
+                    "tertiary-fixed": "#dafce6",
+                    "surface-container-low": "#f5f4ee",
+                    "surface-variant": "#e2e3db",
+                    "surface-container": "#efeee8",
+                    "outline": "#797b75",
+                    "on-tertiary": "#e6ffee",
+                    "on-tertiary-container": "#456252",
+                    "on-surface": "#31332e",
+                    "primary-fixed": "#d7e7d6",
+                    "secondary": "#4d607f",
+                    "on-error-container": "#752121",
+                    "surface-tint": "#546255",
+                    "error-container": "#fe8983",
+                    "on-surface-variant": "#5d6059",
+                    "secondary-fixed": "#d6e3ff",
+                    "on-secondary": "#f8f8ff",
+                    "primary": "#546255",
+                    "tertiary-dim": "#3c5949",
+                    "secondary-dim": "#415473",
+                    "on-primary-fixed-variant": "#515f52",
+                    "on-tertiary-fixed": "#335040",
+                    "secondary-fixed-dim": "#c2d5fa",
+                    "inverse-surface": "#0e0e0c",
+                    "on-secondary-fixed": "#2d405e",
+                    "on-error": "#fff7f6",
+                    "error-dim": "#4e0309",
+                    "tertiary-fixed-dim": "#ccedd8",
+                    "secondary-container": "#d6e3ff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary-container": "#405271",
+                    "error": "#9f403d",
+                    "on-background": "#31332e",
+                    "outline-variant": "#b1b3ab",
+                    "surface-container-highest": "#e2e3db",
+                    "surface-bright": "#fbf9f5",
+                    "inverse-on-surface": "#9e9d99",
+                    "on-secondary-fixed-variant": "#4a5c7c",
+                    "tertiary-container": "#dafce6",
+                    "on-primary-fixed": "#354337",
+                    "surface": "#fbf9f5",
+                    "on-primary-container": "#475549",
+                    "surface-dim": "#d9dbd2",
+                    "primary-fixed-dim": "#c9d9c8",
+                    "primary-dim": "#485649",
+                    "surface-container-high": "#e8e9e1",
+                    "inverse-primary": "#eefeec",
+                    "on-tertiary-fixed-variant": "#4f6d5c"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .chart-gradient-line {
+            background: linear-gradient(90deg, #546255 0%, #d7e7d6 100%);
+        }
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body min-h-screen pb-32">
+<!-- Top App Bar -->
+<header class="bg-[#fbf9f5]/70 backdrop-blur-xl fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4 w-full">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#526053]" data-icon="calendar_today">calendar_today</span>
+<h1 class="font-headline font-bold text-[#31332e] tracking-tight text-lg">The Digital Atelier</h1>
+</div>
+<span class="material-symbols-outlined text-[#526053]" data-icon="wb_sunny">wb_sunny</span>
+</header>
+<main class="pt-24 px-6 max-w-5xl mx-auto">
+<!-- Page Title Section -->
+<section class="mb-10">
+<h2 class="font-headline text-4xl font-extrabold tracking-tight text-on-surface mb-2">Style Journey &amp; Insights</h2>
+<p class="text-on-surface-variant font-body text-lg">Your sartorial evolution, quantified.</p>
+</section>
+<!-- Bento Grid Analytics -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+<!-- Confidence Trend (Large) -->
+<div class="md:col-span-2 bg-surface-container-low rounded-xl p-8 flex flex-col justify-between">
+<div>
+<h3 class="font-headline text-xl font-bold mb-1">Confidence Trend</h3>
+<p class="text-on-surface-variant text-sm mb-8">Improvement over the last 30 days</p>
+</div>
+<!-- Visualizing a line chart using SVG for fidelity -->
+<div class="relative h-48 w-full mt-auto">
+<svg class="w-full h-full overflow-visible" preserveaspectratio="none" viewbox="0 0 400 100">
+<path d="M0,80 Q50,75 100,60 T200,45 T300,20 T400,10" fill="none" stroke="#546255" stroke-linecap="round" stroke-width="3"></path>
+<circle cx="0" cy="80" fill="#546255" r="4"></circle>
+<circle cx="100" cy="60" fill="#546255" r="4"></circle>
+<circle cx="200" cy="45" fill="#546255" r="4"></circle>
+<circle cx="300" cy="20" fill="#546255" r="4"></circle>
+<circle cx="400" cy="10" fill="#546255" r="4"></circle>
+<!-- Area gradient -->
+<path d="M0,80 Q50,75 100,60 T200,45 T300,20 T400,10 V100 H0 Z" fill="url(#chart-fill)" opacity="0.1"></path>
+<defs>
+<lineargradient id="chart-fill" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#546255"></stop>
+<stop offset="100%" stop-color="#546255" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+</svg>
+<div class="flex justify-between mt-4 text-[10px] font-label font-medium uppercase tracking-widest text-outline">
+<span>Day 1</span>
+<span>Day 15</span>
+<span>Today</span>
+</div>
+</div>
+</div>
+<!-- Average Confidence Score (Focus Card) -->
+<div class="bg-tertiary-container rounded-xl p-8 flex flex-col items-center justify-center text-center">
+<span class="text-on-tertiary-container font-label text-sm font-semibold uppercase tracking-widest mb-4">Avg Confidence</span>
+<div class="font-headline text-7xl font-extrabold text-on-tertiary-container mb-2">88</div>
+<div class="flex items-center gap-1 text-on-tertiary-container">
+<span class="material-symbols-outlined text-sm" data-icon="trending_up">trending_up</span>
+<span class="text-sm font-medium">+12% from last month</span>
+</div>
+</div>
+<!-- Wardrobe Usage (Donut Chart Style) -->
+<div class="bg-surface-container-low rounded-xl p-8">
+<h3 class="font-headline text-xl font-bold mb-6">Wardrobe Usage</h3>
+<div class="relative flex justify-center items-center h-40 mb-6">
+<svg class="w-32 h-32 transform -rotate-90">
+<circle class="text-surface-variant" cx="64" cy="64" fill="transparent" r="54" stroke="currentColor" stroke-width="12"></circle>
+<circle class="text-secondary" cx="64" cy="64" fill="transparent" r="54" stroke="currentColor" stroke-dasharray="339.29" stroke-dashoffset="118.75" stroke-width="12"></circle>
+</svg>
+<div class="absolute flex flex-col items-center">
+<span class="font-headline text-2xl font-bold">65%</span>
+<span class="text-[10px] text-on-surface-variant font-label uppercase tracking-tighter">Utilized</span>
+</div>
+</div>
+<p class="text-sm text-center text-on-surface-variant">Try wearing the <span class="font-bold text-on-surface">Grey Overcoat</span> to increase your utilization.</p>
+</div>
+<!-- Stats Stack -->
+<div class="space-y-6">
+<!-- Total Outfits -->
+<div class="bg-surface-container-high rounded-xl p-6 flex items-center justify-between">
+<div>
+<p class="text-on-surface-variant text-xs font-label uppercase tracking-widest mb-1">Validated</p>
+<p class="font-headline text-3xl font-bold text-on-surface">142</p>
+</div>
+<div class="p-3 bg-surface-container-lowest rounded-full text-primary">
+<span class="material-symbols-outlined" data-icon="check_circle">check_circle</span>
+</div>
+</div>
+<!-- Most Worn Item -->
+<div class="bg-surface-container-high rounded-xl p-6 flex items-center gap-4">
+<div class="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+<img alt="Linen Blazer" class="w-full h-full object-cover" data-alt="Close-up of a high-quality olive green linen blazer hanging on a minimalist wooden hanger against a neutral background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPY0ZPuTAj1eG9Edpq8FxNaJlwGw-j_J2EnWx-irVj5qjchDLo5DNivWycMzRVEc8erwHg_cjknPheTIWnFjTyArivq8yvaoRmOZyiVmPcv-eatFedkigI5FFy-lUjNfxXhGyl79txeLqkCLljSTZLIo8da57TaO0zO6YZoZi1JNxfcrW4aqcxWPeClxEqhC9b-VMRfU77X2Na5lTWnCO2-rlSp5a186FC1qZBhy7BhfyKN7IQpqTxIrCvzTjsZTHJIyEZrcz3E2E"/>
+</div>
+<div>
+<p class="text-on-surface-variant text-xs font-label uppercase tracking-widest mb-1">Most Worn</p>
+<p class="font-body text-sm font-bold text-on-surface">Sage Linen Blazer</p>
+<p class="text-xs text-outline">Worn 18 times</p>
+</div>
+</div>
+</div>
+<!-- Insight Quote / AI Tip -->
+<div class="bg-primary-container/40 rounded-xl p-8 flex flex-col justify-center">
+<span class="material-symbols-outlined text-primary mb-4" data-icon="auto_awesome">auto_awesome</span>
+<blockquote class="font-headline text-lg italic text-on-primary-container leading-relaxed">
+                    "Your style is shifting towards 'Botanical Modernism'. You tend to score 15% higher when incorporating Earth-toned textures."
+                </blockquote>
+</div>
+</div>
+<!-- History Feed Section -->
+<section class="mb-20">
+<div class="flex justify-between items-end mb-8">
+<h3 class="font-headline text-2xl font-bold">Recent History</h3>
+<button class="text-primary font-label text-sm font-semibold tracking-wide flex items-center gap-1">
+                    VIEW ALL <span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+<div class="space-y-4">
+<!-- History Item 1 -->
+<div class="bg-surface-container-lowest group hover:bg-surface-container transition-colors duration-300 rounded-xl p-5 flex items-center gap-6">
+<div class="flex-shrink-0 text-center w-12">
+<p class="text-xs font-label text-outline-variant uppercase">Oct</p>
+<p class="text-xl font-headline font-bold text-on-surface">28</p>
+</div>
+<div class="w-16 h-20 bg-surface-container rounded overflow-hidden">
+<img alt="Outfit Oct 28" class="w-full h-full object-cover" data-alt="Editorial fashion shot of a minimalist outfit with beige trousers and a dark silk shirt in soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCmzztZQrigiO2jaS2j3SkvWFKyQmpqy8hN8g1xkVghnmGZ7xQFThO0SnFBaiFEGrEDEm1yZk_EcQhp0YiALCJ_fwQe2I60kz96hhbaYLMBHV2C-qYatBhgCHvv0EtxjsAjLj8e1wn3B95adDjnai59lCjD81tN205zLA9BkYNRsoDoXcYsdSrORpmuI-qdG80v9EKHjCiugZ5lQIe4XqIO2_NRKF7ll18EPxjIQuBO83ofWZXTw8hbNj4Utv3kPOmdlE_622VdyT0"/>
+</div>
+<div class="flex-grow">
+<h4 class="font-body font-bold text-on-surface mb-1">Urban Minimalist Ensemble</h4>
+<div class="flex gap-2">
+<span class="px-2 py-0.5 bg-surface-container-low rounded text-[10px] text-on-surface-variant uppercase font-medium">Work</span>
+<span class="px-2 py-0.5 bg-surface-container-low rounded text-[10px] text-on-surface-variant uppercase font-medium">Autumn</span>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="px-3 py-1 bg-tertiary-fixed text-on-tertiary-fixed rounded-full text-xs font-bold">92% Confidence</span>
+<span class="text-[10px] text-outline mt-1 uppercase tracking-tighter">Perfectly Synced</span>
+</div>
+</div>
+<!-- History Item 2 -->
+<div class="bg-surface-container-lowest group hover:bg-surface-container transition-colors duration-300 rounded-xl p-5 flex items-center gap-6">
+<div class="flex-shrink-0 text-center w-12">
+<p class="text-xs font-label text-outline-variant uppercase">Oct</p>
+<p class="text-xl font-headline font-bold text-on-surface">26</p>
+</div>
+<div class="w-16 h-20 bg-surface-container rounded overflow-hidden">
+<img alt="Outfit Oct 26" class="w-full h-full object-cover" data-alt="A coordinated outfit featuring a textured knit sweater and structured navy pants, studio lighting, clean aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuxkpWxFbT9QvDUa3aIMG4SC5h9Yn91tlTaUZXGzxJ_FVTIefgsLS1k98GvOwLWqWY9THC2XQaVmLjHLS-LAKTSGnPAwx9Oy9Id1DxditcvlCjcs4uQVBzcGQjOqjsx4fXmhTeWcUNReS0JsxxMSCUJvxR1WLkG7s7WeD2oN8F1uu2wVkK6ZxnXMhiUNeXaN5su_dx8wxVCtx5NfiQA54qguoH5PlsI_p9OeePXqZ8Y1FZ3oKi-yJQyxCAv9VbdonnzxrAZzSGMd4"/>
+</div>
+<div class="flex-grow">
+<h4 class="font-body font-bold text-on-surface mb-1">Weekend Brunch Texture Play</h4>
+<div class="flex gap-2">
+<span class="px-2 py-0.5 bg-surface-container-low rounded text-[10px] text-on-surface-variant uppercase font-medium">Casual</span>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="px-3 py-1 bg-surface-container-highest text-on-surface rounded-full text-xs font-bold">78% Confidence</span>
+<span class="text-[10px] text-outline mt-1 uppercase tracking-tighter">Slightly Understated</span>
+</div>
+</div>
+<!-- History Item 3 -->
+<div class="bg-surface-container-lowest group hover:bg-surface-container transition-colors duration-300 rounded-xl p-5 flex items-center gap-6">
+<div class="flex-shrink-0 text-center w-12">
+<p class="text-xs font-label text-outline-variant uppercase">Oct</p>
+<p class="text-xl font-headline font-bold text-on-surface">25</p>
+</div>
+<div class="w-16 h-20 bg-surface-container rounded overflow-hidden">
+<img alt="Outfit Oct 25" class="w-full h-full object-cover" data-alt="Elegant evening look with dark tailored coat and leather accessories, dramatic shadows, moody lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8sDYYqUEjRBBiLscHG2NZb5nLrwBuhK2HRj0F9IHRiV6NL37hXlK0tmWdK7cPwQKCMXwj-4CEISXHXAYRtpiZUinWHwoWUiKNmBGRy4onbs0uSIUVjP8UGK3KUBBlNAq8k4XmyVhnQMqk6tzyi3myoxy96kTuM4DV084PktXjycAJ2LHMmAc3xnbXnCOoXv0urmhyD1oeRHovBAp6GTsTrxtnF8T8jwIGL1H97LlwF5m374eF9VVyQUbIySHEc7UIF_ejfwBM0qc"/>
+</div>
+<div class="flex-grow">
+<h4 class="font-body font-bold text-on-surface mb-1">Midnight Gallery Opening</h4>
+<div class="flex gap-2">
+<span class="px-2 py-0.5 bg-surface-container-low rounded text-[10px] text-on-surface-variant uppercase font-medium">Evening</span>
+<span class="px-2 py-0.5 bg-surface-container-low rounded text-[10px] text-on-surface-variant uppercase font-medium">Formal</span>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="px-3 py-1 bg-tertiary-fixed text-on-tertiary-fixed rounded-full text-xs font-bold">95% Confidence</span>
+<span class="text-[10px] text-outline mt-1 uppercase tracking-tighter">Expertly Curated</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2 bg-[#fbf9f5]/70 backdrop-blur-xl rounded-t-3xl shadow-[0_-12px_32px_rgba(49,51,46,0.06)]">
+<a class="flex flex-col items-center justify-center text-[#5d6059] p-2 hover:text-[#526053]" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-inter text-[10px] font-medium tracking-wide uppercase mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5d6059] p-2 hover:text-[#526053]" href="#">
+<span class="material-symbols-outlined" data-icon="checkroom">checkroom</span>
+<span class="font-inter text-[10px] font-medium tracking-wide uppercase mt-1">Wardrobe</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5d6059] p-2 hover:text-[#526053]" href="#">
+<span class="material-symbols-outlined" data-icon="auto_awesome">auto_awesome</span>
+<span class="font-inter text-[10px] font-medium tracking-wide uppercase mt-1">Suggestions</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-[#e2e3db] text-[#31332e] rounded-2xl p-2 px-4 scale-95 duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="font-inter text-[10px] font-medium tracking-wide uppercase mt-1">History</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5d6059] p-2 hover:text-[#526053]" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-inter text-[10px] font-medium tracking-wide uppercase mt-1">Profile</span>
+</a>
+</nav>
+</body></html>

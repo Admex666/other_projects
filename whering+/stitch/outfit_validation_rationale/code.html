@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Outfit Validation - The Digital Atelier</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary": "#ecfceb",
+                    "primary-container": "#d7e7d6",
+                    "tertiary": "#486555",
+                    "background": "#fbf9f5",
+                    "tertiary-fixed": "#dafce6",
+                    "surface-container-low": "#f5f4ee",
+                    "surface-variant": "#e2e3db",
+                    "surface-container": "#efeee8",
+                    "outline": "#797b75",
+                    "on-tertiary": "#e6ffee",
+                    "on-tertiary-container": "#456252",
+                    "on-surface": "#31332e",
+                    "primary-fixed": "#d7e7d6",
+                    "secondary": "#4d607f",
+                    "on-error-container": "#752121",
+                    "surface-tint": "#546255",
+                    "error-container": "#fe8983",
+                    "on-surface-variant": "#5d6059",
+                    "secondary-fixed": "#d6e3ff",
+                    "on-secondary": "#f8f8ff",
+                    "primary": "#546255",
+                    "tertiary-dim": "#3c5949",
+                    "secondary-dim": "#415473",
+                    "on-primary-fixed-variant": "#515f52",
+                    "on-tertiary-fixed": "#335040",
+                    "secondary-fixed-dim": "#c2d5fa",
+                    "inverse-surface": "#0e0e0c",
+                    "on-secondary-fixed": "#2d405e",
+                    "on-error": "#fff7f6",
+                    "error-dim": "#4e0309",
+                    "tertiary-fixed-dim": "#ccedd8",
+                    "secondary-container": "#d6e3ff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary-container": "#405271",
+                    "error": "#9f403d",
+                    "on-background": "#31332e",
+                    "outline-variant": "#b1b3ab",
+                    "surface-container-highest": "#e2e3db",
+                    "surface-bright": "#fbf9f5",
+                    "inverse-on-surface": "#9e9d99",
+                    "on-secondary-fixed-variant": "#4a5c7c",
+                    "tertiary-container": "#dafce6",
+                    "on-primary-fixed": "#354337",
+                    "surface": "#fbf9f5",
+                    "on-primary-container": "#475549",
+                    "surface-dim": "#d9dbd2",
+                    "primary-fixed-dim": "#c9d9c8",
+                    "primary-dim": "#485649",
+                    "surface-container-high": "#e8e9e1",
+                    "inverse-primary": "#eefeec",
+                    "on-tertiary-fixed-variant": "#4f6d5c"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface antialiased pb-32">
+<!-- Top App Bar -->
+<header class="fixed top-0 w-full z-50 bg-[#fbf9f5]/70 backdrop-blur-xl flex justify-between items-center px-6 py-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#526053]">calendar_today</span>
+<h1 class="font-manrope font-bold text-[#31332e] text-lg tracking-tight">Outfit Validation</h1>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#526053] hover:opacity-80 transition-opacity cursor-pointer">wb_sunny</span>
+</div>
+</header>
+<main class="mt-20 px-6 max-w-5xl mx-auto">
+<!-- Hero Section: Asymmetric Editorial Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+<!-- Left: Large Visual Representation -->
+<div class="md:col-span-7 relative group">
+<div class="aspect-[4/5] bg-surface-container-low rounded-xl overflow-hidden">
+<img class="w-full h-full object-cover grayscale-[20%] hover:grayscale-0 transition-all duration-700" data-alt="Modern professional outfit layout with soft sage green blazer, white silk shirt, and charcoal trousers against a neutral background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBz1y5mkChsywTOIZkdraqvQQmfYqOR7TKYIhCRR498nt7lr_K1eJTEMotlA7WCQfkj34dpj3Zcj1Eo_BQBxBIle9rtTslnr0GFW48DP4VY6UDuGwob0u48gAODThO3-gHwhebphw3L6D7-xjFkcLm5SZYvvSslt0ent3hCv72jUi6uikOjhzK4wr4_mvlH6U5V0PC76eEfBhZsj2TmnrD2rpoIG2GOAFJmwnR3Vi53M4kmsuAgdB4Sxt1p91Rb20rVJJ7xnbOz4q4"/>
+</div>
+<!-- Confidence Meter Floating Over Image -->
+<div class="absolute top-6 right-6 bg-tertiary-container/90 backdrop-blur-md p-6 rounded-xl shadow-lg border border-on-tertiary-container/10 flex flex-col items-center">
+<span class="font-headline font-extrabold text-4xl text-on-tertiary-container tracking-tighter">95%</span>
+<span class="font-label text-[10px] uppercase tracking-widest text-on-tertiary-container/70 font-semibold mt-1">Confidence</span>
+</div>
+</div>
+<!-- Right: Rationale & Upgrade -->
+<div class="md:col-span-5 space-y-8">
+<div>
+<h2 class="text-3xl font-headline font-bold text-on-surface mb-2">Why it works</h2>
+<p class="text-on-surface-variant leading-relaxed">Our curation engine analyzed your schedule and current atmosphere to ensure peak comfort and style presence.</p>
+</div>
+<!-- Rationale Bento -->
+<div class="space-y-4">
+<!-- Context Match -->
+<div class="p-6 bg-surface-container-low rounded-xl">
+<div class="flex items-start gap-4">
+<span class="material-symbols-outlined text-primary mt-1">cloud_queue</span>
+<div>
+<h3 class="font-headline font-bold text-on-surface-variant text-sm uppercase tracking-wider mb-1">Context Match</h3>
+<p class="text-on-surface leading-snug">Perfect for the 24°C forecast and your office dress code.</p>
+</div>
+</div>
+</div>
+<!-- Style Harmony -->
+<div class="p-6 bg-surface-container-low rounded-xl">
+<div class="flex items-start gap-4">
+<span class="material-symbols-outlined text-primary mt-1">palette</span>
+<div>
+<h3 class="font-headline font-bold text-on-surface-variant text-sm uppercase tracking-wider mb-1">Style Harmony</h3>
+<p class="text-on-surface leading-snug">The colors are complementary and project a professional yet approachable image.</p>
+</div>
+</div>
+</div>
+<!-- Sensory Check -->
+<div class="p-6 bg-surface-container-low rounded-xl">
+<div class="flex items-start gap-4">
+<span class="material-symbols-outlined text-primary mt-1">vibration</span>
+<div>
+<h3 class="font-headline font-bold text-on-surface-variant text-sm uppercase tracking-wider mb-1">Sensory Check</h3>
+<p class="text-on-surface leading-snug">All chosen fabrics are soft and breathable (Cotton &amp; Silk mix).</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Small Upgrade Suggestion -->
+<div class="p-6 bg-primary-container/30 border border-primary/10 rounded-xl relative overflow-hidden">
+<div class="relative z-10 flex gap-4">
+<div class="w-16 h-16 bg-surface-container-lowest rounded-lg overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="Close up of elegant minimalist silver cufflinks with a matte finish on a white linen surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3sqUEo_C1o5J4KYri-IU0uHdmZf8ozblVGBkHs3pyxW7X04jBYdY2JmZVRlnBrOww5H599cTdY00Zj53EzsyKeLBM4ye-yUCDwQllCfEty76mP4wGsCICUkgUF8GitN_bvyVSYien1W3nej6AZksfWmqdmeqnhru7liDV1gQ3ibUrT0TYPctQ9mSNQuvvMmUdKkz0g5O1JjIVTWmzHceSRWUU5EUJBDM2xzoBxl3yANUbOsPhHzw7lvVMswCTvFLlxFe3cUMBrbQ"/>
+</div>
+<div>
+<h3 class="font-headline font-bold text-primary text-sm mb-1">Small Upgrade</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed">Try adding these silver cufflinks to elevate the look further.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Section -->
+<div class="mt-12 mb-24 grid grid-cols-1 md:grid-cols-2 gap-4">
+<button class="w-full py-5 bg-gradient-to-r from-primary to-primary-dim text-on-primary rounded-full font-headline font-bold text-lg shadow-xl shadow-primary/10 hover:opacity-90 transition-opacity">
+                Keep it
+            </button>
+<button class="w-full py-5 bg-surface-container-highest text-on-surface rounded-full font-headline font-bold text-lg hover:bg-surface-variant transition-colors">
+                Try Another
+            </button>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 bg-[#fbf9f5]/70 backdrop-blur-xl flex justify-around items-center px-4 pb-6 pt-2 shadow-[0_-12px_32px_rgba(49,51,46,0.06)] rounded-t-3xl">
+<a class="flex flex-col items-center justify-center text-[#5d6059] p-2 hover:text-[#526053] transition-colors" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-inter text-[10px] font-medium tracking-wide uppercase mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5d6059] p-2 hover:text-[#526053] transition-colors" href="#">
+<span class="material-symbols-outlined">checkroom</span>
+<span class="font-inter text-[10px] font-medium tracking-wide uppercase mt-1">Wardrobe</span>
+</a>
+<!-- Active Tab: Suggestions -->
+<a class="flex flex-col items-center justify-center bg-[#e2e3db] text-[#31332e] rounded-2xl p-2 px-4 scale-105 duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<span class="font-inter text-[10px] font-medium tracking-wide uppercase mt-1">Suggestions</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5d6059] p-2 hover:text-[#526053] transition-colors" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-inter text-[10px] font-medium tracking-wide uppercase mt-1">History</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5d6059] p-2 hover:text-[#526053] transition-colors" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-inter text-[10px] font-medium tracking-wide uppercase mt-1">Profile</span>
+</a>
+</nav>
+</body></html>

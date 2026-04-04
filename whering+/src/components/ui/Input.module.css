@@ -1,0 +1,61 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-on-surface-variant);
+  font-family: var(--font-family-body);
+}
+
+.inputContainer {
+  position: relative;
+  width: 100%;
+}
+
+.input {
+  width: 100%;
+  padding: 1rem;
+  border-radius: var(--border-radius-lg);
+  color: var(--color-on-surface);
+  background-color: var(--color-surface-variant);
+  border: none;
+  outline: none;
+  font-family: var(--font-family-body);
+  transition: all var(--transition-soothing);
+  /* The "No Line" rule, we use border-bottom only on focus for guidance according to DESIGN.md */
+  border-bottom: 2px solid transparent; 
+}
+
+.input::placeholder {
+  color: var(--color-on-surface-variant);
+  opacity: 0.7;
+}
+
+.input:focus {
+  background-color: var(--color-surface-container-low);
+  border-bottom: 2px solid var(--color-primary);
+  /* Slight lift effect on focus */
+  box-shadow: 0 4px 12px rgba(49, 51, 46, 0.04);
+}
+
+.errorText {
+  font-size: 0.875rem;
+  color: var(--color-error);
+  animation: slideFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The Digital Atelier | Home</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary": "#ecfceb",
+                    "primary-container": "#d7e7d6",
+                    "tertiary": "#486555",
+                    "background": "#fbf9f5",
+                    "tertiary-fixed": "#dafce6",
+                    "surface-container-low": "#f5f4ee",
+                    "surface-variant": "#e2e3db",
+                    "surface-container": "#efeee8",
+                    "outline": "#797b75",
+                    "on-tertiary": "#e6ffee",
+                    "on-tertiary-container": "#456252",
+                    "on-surface": "#31332e",
+                    "primary-fixed": "#d7e7d6",
+                    "secondary": "#4d607f",
+                    "on-error-container": "#752121",
+                    "surface-tint": "#546255",
+                    "error-container": "#fe8983",
+                    "on-surface-variant": "#5d6059",
+                    "secondary-fixed": "#d6e3ff",
+                    "on-secondary": "#f8f8ff",
+                    "primary": "#546255",
+                    "tertiary-dim": "#3c5949",
+                    "secondary-dim": "#415473",
+                    "on-primary-fixed-variant": "#515f52",
+                    "on-tertiary-fixed": "#335040",
+                    "secondary-fixed-dim": "#c2d5fa",
+                    "inverse-surface": "#0e0e0c",
+                    "on-secondary-fixed": "#2d405e",
+                    "on-error": "#fff7f6",
+                    "error-dim": "#4e0309",
+                    "tertiary-fixed-dim": "#ccedd8",
+                    "secondary-container": "#d6e3ff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary-container": "#405271",
+                    "error": "#9f403d",
+                    "on-background": "#31332e",
+                    "outline-variant": "#b1b3ab",
+                    "surface-container-highest": "#e2e3db",
+                    "surface-bright": "#fbf9f5",
+                    "inverse-on-surface": "#9e9d99",
+                    "on-secondary-fixed-variant": "#4a5c7c",
+                    "tertiary-container": "#dafce6",
+                    "on-primary-fixed": "#354337",
+                    "surface": "#fbf9f5",
+                    "on-primary-container": "#475549",
+                    "surface-dim": "#d9dbd2",
+                    "primary-fixed-dim": "#c9d9c8",
+                    "primary-dim": "#485649",
+                    "surface-container-high": "#e8e9e1",
+                    "inverse-primary": "#eefeec",
+                    "on-tertiary-fixed-variant": "#4f6d5c"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fbf9f5;
+        }
+        .headline-font {
+            font-family: 'Manrope', sans-serif;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface pb-32">
+<!-- TopAppBar Shell -->
+<header class="fixed top-0 w-full z-50 bg-[#fbf9f5]/70 dark:bg-[#31332e]/70 backdrop-blur-xl flex justify-between items-center px-6 py-4 w-full">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#526053] dark:text-[#d7e7d6]" data-icon="calendar_today">calendar_today</span>
+<h1 class="font-manrope font-bold text-[#31332e] dark:text-[#fbf9f5] text-lg tracking-tight">The Digital Atelier</h1>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#526053] dark:text-[#d7e7d6]" data-icon="wb_sunny">wb_sunny</span>
+</div>
+</header>
+<main class="mt-20 px-6 max-w-2xl mx-auto space-y-10">
+<!-- Header & Context Section -->
+<section class="space-y-2 pt-4">
+<div class="flex justify-between items-end">
+<div>
+<p class="text-on-surface-variant font-medium tracking-wide uppercase text-xs font-label">Monday, Oct 24</p>
+<h2 class="headline-font text-3xl font-extrabold text-on-surface mt-1">Daily Curator</h2>
+</div>
+<div class="text-right">
+<p class="text-2xl font-bold headline-font text-on-surface">22°C</p>
+<p class="text-on-surface-variant text-sm">Sunny</p>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-xl px-4 py-3 flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-icon="event_note">event_note</span>
+<span class="text-on-surface font-medium">Important Meeting</span>
+</div>
+</section>
+<!-- Main Outfit Section: Asymmetric Editorial Layout -->
+<section class="grid grid-cols-12 gap-4 items-start">
+<!-- Large Image Card -->
+<div class="col-span-12 md:col-span-7 bg-surface-container rounded-xl overflow-hidden shadow-sm">
+<div class="aspect-[3/4] relative">
+<img alt="Editorial Flatlay" class="w-full h-full object-cover" data-alt="Editorial flatlay of a white linen shirt, navy pleated trousers, and a charcoal grey structured blazer on a soft beige background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzgIrp1rs3mgR1u2bUfGBHexoXz5Cp9VPqUuPeElWQsUEZOFiHTrXlVOw05afPWrZfQDq0Kip3upko7olbzwD5155x2eWOoLDjoYWfdyofEu8sOE-UWIPBjpQSaJDAZ87E9qZ20PyeH7yWlTz1fODVWQ1iafgmJ1MtFXpxHcqKzjV1epNGyvMN-GHU_Bf_saRGS-s4kbMNqECCMc4GaymDtZbhrcG_swKxn-FWOAUmCrJSpWvApdwA6USto4FJVQmlS0BK3oh7Oo0"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+</div>
+</div>
+<!-- Outfit Component Details -->
+<div class="col-span-12 md:col-span-5 space-y-4">
+<div class="p-6 bg-surface-container-lowest rounded-xl space-y-6">
+<h3 class="font-headline font-bold text-xl">Curated Elements</h3>
+<ul class="space-y-4">
+<li class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg flex items-center justify-center overflow-hidden">
+<img alt="Oxford Linen Shirt" class="w-full h-full object-cover rounded-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzgIrp1rs3mgR1u2bUfGBHexoXz5Cp9VPqUuPeElWQsUEZOFiHTrXlVOw05afPWrZfQDq0Kip3upko7olbzwD5155x2eWOoLDjoYWfdyofEu8sOE-UWIPBjpQSaJDAZ87E9qZ20PyeH7yWlTz1fODVWQ1iafgmJ1MtFXpxHcqKzjV1epNGyvMN-GHU_Bf_saRGS-s4kbMNqECCMc4GaymDtZbhrcG_swKxn-FWOAUmCrJSpWvApdwA6USto4FJVQmlS0BK3oh7Oo0"/>
+</div>
+<div>
+<p class="text-xs text-on-surface-variant uppercase tracking-wider font-label">Layer 01</p>
+<p class="font-semibold text-on-surface">Oxford Linen Shirt</p>
+</div>
+</li>
+<li class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg flex items-center justify-center overflow-hidden">
+<img alt="Pleated Trousers" class="w-full h-full object-cover rounded-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzgIrp1rs3mgR1u2bUfGBHexoXz5Cp9VPqUuPeElWQsUEZOFiHTrXlVOw05afPWrZfQDq0Kip3upko7olbzwD5155x2eWOoLDjoYWfdyofEu8sOE-UWIPBjpQSaJDAZ87E9qZ20PyeH7yWlTz1fODVWQ1iafgmJ1MtFXpxHcqKzjV1epNGyvMN-GHU_Bf_saRGS-s4kbMNqECCMc4GaymDtZbhrcG_swKxn-FWOAUmCrJSpWvApdwA6USto4FJVQmlS0BK3oh7Oo0"/>
+</div>
+<div>
+<p class="text-xs text-on-surface-variant uppercase tracking-wider font-label">Layer 02</p>
+<p class="font-semibold text-on-surface">Pleated Trousers</p>
+</div>
+</li>
+<li class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg flex items-center justify-center overflow-hidden">
+<img alt="Deconstructed Blazer" class="w-full h-full object-cover rounded-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzgIrp1rs3mgR1u2bUfGBHexoXz5Cp9VPqUuPeElWQsUEZOFiHTrXlVOw05afPWrZfQDq0Kip3upko7olbzwD5155x2eWOoLDjoYWfdyofEu8sOE-UWIPBjpQSaJDAZ87E9qZ20PyeH7yWlTz1fODVWQ1iafgmJ1MtFXpxHcqKzjV1epNGyvMN-GHU_Bf_saRGS-s4kbMNqECCMc4GaymDtZbhrcG_swKxn-FWOAUmCrJSpWvApdwA6USto4FJVQmlS0BK3oh7Oo0"/>
+</div>
+<div>
+<p class="text-xs text-on-surface-variant uppercase tracking-wider font-label">Outerwear</p>
+<p class="font-semibold text-on-surface">Deconstructed Blazer</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</section>
+<!-- Rationale & Confidence Score -->
+<section class="bg-surface-container-highest rounded-xl p-8 space-y-6">
+<div class="flex items-center justify-between">
+<div>
+<h4 class="font-headline font-bold text-lg">Curator's Rationale</h4>
+<p class="text-on-surface-variant mt-2 leading-relaxed max-w-md">
+                        Professional yet comfortable for a long day of meetings. The fabric is breathable and the silhouette provides an authoritative yet relaxed aesthetic.
+                    </p>
+</div>
+<div class="text-center p-4 bg-tertiary-container rounded-full w-24 h-24 flex flex-col justify-center items-center">
+<span class="text-3xl font-extrabold headline-font text-on-tertiary-container">92%</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter text-on-tertiary-container">Confidence</span>
+</div>
+</div>
+</section>
+<!-- Actions -->
+<section class="flex flex-col sm:flex-row gap-4 pt-4">
+<button class="flex-1 py-5 px-8 rounded-full bg-gradient-to-r from-primary to-primary-dim text-on-primary font-semibold text-lg flex items-center justify-center gap-3 transition-opacity hover:opacity-90 shadow-md">
+<span class="material-symbols-outlined" data-icon="done_all">done_all</span>
+                Accept &amp; Wear
+            </button>
+<button class="flex-1 py-5 px-8 rounded-full bg-surface-container-highest text-on-surface font-semibold text-lg flex items-center justify-center gap-3 transition-opacity hover:opacity-80">
+<span class="material-symbols-outlined" data-icon="tune">tune</span>
+                Modify
+            </button>
+</section>
+<!-- Weather Tip -->
+<section class="bg-surface-container-low rounded-xl p-5 flex items-center gap-4">
+<div class="p-3 bg-white/50 rounded-lg">
+<span class="material-symbols-outlined text-secondary" data-icon="lightbulb">lightbulb</span>
+</div>
+<div>
+<p class="text-xs font-bold text-secondary uppercase tracking-wider font-label">Weather Tip</p>
+<p class="text-on-surface-variant text-sm">Bring a light jacket for the evening. Temperatures will drop significantly after 6 PM.</p>
+</div>
+</section>
+</main>
+<!-- BottomNavBar Shell -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2 bg-[#fbf9f5]/70 dark:bg-[#31332e]/70 backdrop-blur-xl rounded-t-3xl shadow-[0_-12px_32px_rgba(49,51,46,0.06)]">
+<!-- Home Active -->
+<a class="flex flex-col items-center justify-center bg-[#e2e3db] dark:bg-[#4a4c44] text-[#31332e] dark:text-[#fbf9f5] rounded-2xl p-2 px-4 duration-300 cubic-bezier(0.4,0,0.2,1)" href="#">
+<span class="material-symbols-outlined" data-icon="home" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-inter text-[10px] font-medium tracking-wide uppercase mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5d6059] dark:text-[#b1b3ab] p-2 hover:text-[#526053] transition-opacity" href="#">
+<span class="material-symbols-outlined" data-icon="checkroom">checkroom</span>
+<span class="font-inter text-[10px] font-medium tracking-wide uppercase mt-1">Wardrobe</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5d6059] dark:text-[#b1b3ab] p-2 hover:text-[#526053] transition-opacity" href="#">
+<span class="material-symbols-outlined" data-icon="auto_awesome">auto_awesome</span>
+<span class="font-inter text-[10px] font-medium tracking-wide uppercase mt-1">Suggestions</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5d6059] dark:text-[#b1b3ab] p-2 hover:text-[#526053] transition-opacity" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="font-inter text-[10px] font-medium tracking-wide uppercase mt-1">History</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5d6059] dark:text-[#b1b3ab] p-2 hover:text-[#526053] transition-opacity" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-inter text-[10px] font-medium tracking-wide uppercase mt-1">Profile</span>
+</a>
+</nav>
+</body></html>
