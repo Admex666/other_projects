@@ -3,10 +3,17 @@ import { Shirt, Plus } from 'lucide-react';
 import styles from './page.module.css';
 import { createClient } from '@/lib/supabase/server';
 import { WeatherDashboardSection } from './WeatherDashboardSection';
+import { detectRepetitions } from '@/lib/ai/repetition-engine';
+import { Sparkles } from 'lucide-react';
+import { generateRefreshSuggestion } from '@/lib/ai/refresh-suggestions';
 
 export default async function DashboardPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return null; // Should be handled by middleware
+  }
 
   // Greet the user
   const hour = new Date().getHours();
@@ -35,14 +42,24 @@ export default async function DashboardPage() {
     .limit(1)
     .single();
 
-  // If we have an outfit, fetch the items in it
   let outfitItems: any[] = [];
   if (latestOutfit && latestOutfit.item_ids?.length > 0) {
     const { data: items } = await supabase
       .from('wardrobe_items')
-      .select('id, category, image_urls')
+      .select('id, category, color, image_urls')
       .in('id', latestOutfit.item_ids);
     outfitItems = items ?? [];
+  }
+
+  // Detect repetition (loop)
+  const repetition = await detectRepetitions(supabase, user.id);
+  let refreshTip = '';
+  if (repetition) {
+    const { data: repeatItems } = await supabase
+      .from('wardrobe_items')
+      .select('category, color, fabric')
+      .in('id', repetition.itemIds);
+    refreshTip = await generateRefreshSuggestion(repeatItems || [], 'casual wear');
   }
 
   return (
@@ -55,6 +72,21 @@ export default async function DashboardPage() {
 
       {/* Context Bar — client component for geolocation and event selection */}
       <WeatherDashboardSection />
+
+      {/* Break the Loop Alert */}
+      {refreshTip && (
+        <section className={styles.section}>
+          <div className={styles.tipCard}>
+            <div className={styles.tipIcon}>
+              <Sparkles size={20} />
+            </div>
+            <div className={styles.tipContent}>
+              <p className={styles.tipLabel}>Break the loop</p>
+              <p className={styles.tipText}>&ldquo;{refreshTip}&rdquo;</p>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Today's Outfit */}
       <section className={styles.section}>

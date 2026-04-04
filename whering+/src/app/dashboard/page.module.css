@@ -265,3 +265,58 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+/* Break the Loop Tip Card */
+.tipCard {
+  background: linear-gradient(135deg, var(--color-primary-container) 0%, #eef2f1 100%);
+  border-radius: var(--border-radius-xl);
+  padding: 20px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  animation: slideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.tipIcon {
+  width: 44px;
+  height: 44px;
+  border-radius: 16px;
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(var(--color-primary-rgb), 0.2);
+}
+
+.tipContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tipLabel {
+  font-family: var(--font-family-display);
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-primary);
+}
+
+.tipText {
+  font-family: var(--font-family-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--color-on-surface);
+  margin: 0;
+}

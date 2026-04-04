@@ -31,17 +31,19 @@ export async function POST(req: NextRequest) {
 
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel(
-      { model: 'gemini-1.5-flash-latest' },
+      { model: 'gemini-flash-latest' },
       { apiVersion: 'v1beta' } as any
     );
 
-    // Debugging: If this fails again, let's see what models are actually available
+    // Debugging: Direct fetch to see what's available
     if (process.env.NODE_ENV === 'development') {
       try {
-        const models = await genAI.listModels();
-        console.log('[DEBUG] Available Gemini Models:', models.models.map(m => m.name));
+        const listUrl = `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`;
+        const listRes = await fetch(listUrl);
+        const listData = await listRes.json();
+        console.log('[DEBUG] Available Gemini Models:', listData.models?.map((m: any) => m.name));
       } catch (e) {
-        console.error('[DEBUG] Failed to list models', e);
+        console.error('[DEBUG] Failed to list models via fetch', e);
       }
     }
 
@@ -63,6 +65,24 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Failed to fetch wardrobe items' }, { status: 500 });
     }
 
+    // AI PERSONALIZATION: Fetch recent feedback history to learn user preferences
+    const { data: historyOutfits } = await supabase
+      .from('outfits')
+      .select('headline, feedback_score, item_ids')
+      .eq('user_id', user.id)
+      .not('feedback_score', 'is', null)
+      .order('created_at', { ascending: false })
+      .limit(10);
+
+    const likedPatterns = historyOutfits?.filter(o => (o.feedback_score || 0) >= 4).map(o => o.headline) || [];
+    const dislikedPatterns = historyOutfits?.filter(o => (o.feedback_score || 0) <= 2).map(o => o.headline) || [];
+    
+    const personalizationContext = historyOutfits && historyOutfits.length > 0 
+      ? `USER STYLE PROFILE:
+         - Likes: ${likedPatterns.join(', ') || 'No clear favorites yet'}
+         - Dislikes: ${dislikedPatterns.join(', ') || 'No specific dislikes yet'}`
+      : 'USER STYLE PROFILE: This is a new user. Be cautious with your advice, but feel free to suggest one bold experiment to help build their profile.';
+
     // Build the outfit description for the AI
     const outfitDescription = items.map(item =>
       `- ${item.category} (${item.color ?? 'unknown colour'}, ${item.fabric ?? 'unknown fabric'}, tags: ${item.tags?.join(', ') || 'none'})`
@@ -73,6 +93,13 @@ export async function POST(req: NextRequest) {
       : 'Weather: unknown.';
 
     const prompt = `You are a professional stylist and fashion advisor. Analyse the following outfit and provide structured feedback.
+
+${personalizationContext}
+
+INSTRUCTIONS:
+1. Respect the User Style Profile above.
+2. BE CAUTIOUS BUT CREATIVE: If the outfit is solid, occasionally suggest ONE "Bold Pivot" item (a piece they might not have considered) specifically to profile their tastes and help them break their routine.
+3. Consider colour harmony, occasion appropriateness, and weather suitability.
 
 OUTFIT ITEMS:
 ${outfitDescription}
@@ -94,7 +121,7 @@ Your response must be a JSON object with EXACTLY this structure:
   ]
 }
 
-Be specific, warm, and supportive in tone. Consider colour harmony, occasion appropriateness, weather suitability, and fabric choices. Respond ONLY with the raw JSON object, no markdown fences.`;
+Respond ONLY with the raw JSON object, no markdown fences.`;
 
     // Build the parts array for Gemini
     // We include image URLs if available for Vision analysis

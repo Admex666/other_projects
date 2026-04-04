@@ -1,0 +1,40 @@
+.container {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.shareButton, .copyButton {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  border-radius: var(--border-radius-full);
+  border: none;
+  font-family: var(--font-family-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.shareButton {
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+  box-shadow: 0 4px 12px rgba(var(--color-primary-rgb), 0.2);
+}
+
+.copyButton {
+  background-color: var(--color-surface-container-high);
+  color: var(--color-on-surface);
+}
+
+.shareButton:active, .copyButton:active {
+  transform: scale(0.96);
+}
+
+.shareButton:hover {
+  opacity: 0.9;
+}
