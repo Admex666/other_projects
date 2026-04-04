@@ -9,6 +9,9 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@capacitor/android": "^8.3.0",
+    "@capacitor/cli": "^8.3.0",
+    "@capacitor/core": "^8.3.0",
     "@google/generative-ai": "^0.24.1",
     "@imgly/background-removal": "^1.7.0",
     "@supabase/ssr": "^0.10.0",
