@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Manrope } from "next/font/google";
 import "./globals.css";
+import { PWARegister } from "@/components/PWARegister";
 
 const inter = Inter({
   variable: "--font-family-body",
@@ -28,7 +29,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
-  userScalable: false, /* Fixes zoom on input focus for iOS */
+  userScalable: false,
 };
 
 export default function RootLayout({
@@ -38,7 +39,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} ${manrope.variable}`} suppressHydrationWarning>
-      <body suppressHydrationWarning>{children}</body>
+      <body suppressHydrationWarning>
+        <PWARegister />
+        {children}
+      </body>
     </html>
   );
 }
