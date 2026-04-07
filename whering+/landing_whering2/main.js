@@ -1,8 +1,13 @@
+import { inject } from '@vercel/analytics';
+
 /**
  * ClosetMind Landing Page Logic
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Initialize Vercel Analytics
+    inject();
+    
     initWaitlistCounter();
     initSmoothScrolling();
 });
