@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ClosetMind - Your Private AI Stylist</title>
+    <meta name="description"
+        content="Never think about what to wear again. ClosetMind decides your outfit for you in 10 seconds based on your schedule, style and weather.">
+    
+    <!-- SEO & Favicon -->
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="index.css">
+    
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '919286984003177');
+    fbq('track', 'PageView');
+    </script>
+    <!-- End Meta Pixel Code -->
+
+    <!-- Tally Embed Support -->
+    <script async src="https://tally.so/widgets/embed.js"></script>
+</head>
+
+<body>
+    <!-- Meta Pixel noscript -->
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=919286984003177&ev=PageView&noscript=1"
+    /></noscript>
+    <nav class="glass">
+        <div class="container nav-content">
+            <div class="logo">ClosetMind</div>
+            <a href="#join" class="nav-cta">Join Waitlist</a>
+        </div>
+    </nav>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero container">
+            <div class="hero-content">
+                <div class="badge animate-fade-in">✨ AI-Powered Styling</div>
+                <h1 class="animate-fade-in">Stop wasting <span class="gradient-text">30 minutes</span> every morning.</h1>
+                <p class="hero-sub animate-fade-in" style="animation-delay: 0.1s;">
+                    The only app that picks <strong>one perfect outfit</strong> based on your calendar and the weather. No more decision fatigue.
+                </p>
+                
+                <div class="waitlist-card animate-fade-in" style="animation-delay: 0.2s;">
+                    <div class="social-proof">
+                        <div class="avatar-group">
+                            <span class="avatar"></span>
+                            <span class="avatar"></span>
+                            <span class="avatar"></span>
+                        </div>
+                        <span id="waitlist-counter">⚡️ 141 people joined the waitlist</span>
+                    </div>
+                    <a href="#join" class="cta-button">Reclaim My Mornings</a>
+                </div>
+            </div>
+            
+            <div class="hero-visual animate-fade-in" style="animation-delay: 0.3s;">
+                <div class="image-wrapper glass">
+                    <img src="assets/hero.png" alt="Happy woman choosing outfit">
+                </div>
+            </div>
+        </section>
+
+        <!-- Problem Section (Focus on Stress) -->
+        <section class="problem-section container">
+            <div class="section-badge">The Struggle</div>
+            <h2>Getting dressed shouldn't feel like a chore.</h2>
+            
+            <div class="problem-grid">
+                <div class="problem-visual glass">
+                    <img src="assets/stress.png" alt="Stressed woman at closet">
+                </div>
+                <div class="problem-list">
+                    <div class="problem-item">
+                        <div class="icon">✕</div>
+                        <div>
+                            <h4>Morning Fatigue</h4>
+                            <p>You start your day with stress before you even leave the house.</p>
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="icon">✕</div>
+                        <div>
+                            <h4>The "Messy Chair"</h4>
+                            <p>Outfits piled up because you tried 5 things and liked none.</p>
+                        </div>
+                    </div>
+                    <div class="problem-item">
+                        <div class="icon">✕</div>
+                        <div>
+                            <h4>Inappropriate for the Day</h4>
+                            <p>Dressing too warm, too cold, or just slightly off-vibe for that meeting.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How it Works / Feature Showcase -->
+        <section class="features-section container">
+            <div class="section-header">
+                <div class="section-badge">How it Works</div>
+                <h2>Your Morning, Reimagined.</h2>
+            </div>
+
+            <div class="steps-grid">
+                <div class="step-card glass">
+                    <div class="step-number">01</div>
+                    <div class="step-img">
+                        <img src="assets/app_context.png" alt="Context check">
+                    </div>
+                    <h3>We check your world</h3>
+                    <p>We analyze your calendar (meetings, events) and local weather forecast automatically.</p>
+                </div>
+                <div class="step-card glass">
+                    <div class="step-number">02</div>
+                    <div class="step-img">
+                        <img src="assets/app_decision.png" alt="AI Decision">
+                    </div>
+                    <h3>AI picks the look</h3>
+                    <p>Our engine scans your digital wardrobe and picks the most confident outfit for YOUR day.</p>
+                </div>
+                <div class="step-card glass">
+                    <div class="step-number">03</div>
+                    <div class="step-img">
+                        <img src="assets/app_wardrobe.png" alt="Ready to wear">
+                    </div>
+                    <h3>Ready in 10s</h3>
+                    <p>You open the app, see the recommendation, and put it on. That's it.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Waitlist / Tally Section -->
+        <section id="join" class="form-section">
+            <div class="container">
+                <div class="form-container glass">
+                    <div class="form-header">
+                        <h2>Get Early Access</h2>
+                        <p>We're launching soon. Join the priority waitlist to secure your spot.</p>
+                    </div>
+                    
+                    <!-- Embedded Tally Form -->
+                    <div class="tally-wrapper">
+                        <iframe 
+                            data-tally-src="https://tally.so/embed/vGL45g?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" 
+                            loading="lazy" 
+                            width="100%" 
+                            height="450" 
+                            frameborder="0" 
+                            marginheight="0" 
+                            marginwidth="0" 
+                            title="ClosetMind Waitlist">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="container">
+        <p>&copy; 2026 ClosetMind AI. Made for busy people.</p>
+    </footer>
+
+    <script type="module" src="main.js"></script>
+</body>
+
+</html>
