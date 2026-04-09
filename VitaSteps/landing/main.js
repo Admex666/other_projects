@@ -22,8 +22,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Meta Pixel Lead tracking for Tally links
     document.querySelectorAll('a[href*="tally.so"]').forEach(link => {
         link.addEventListener('click', () => {
+            console.log('VitaSteps: Tally link clicked, firing Lead event...');
             if (typeof fbq === 'function') {
                 fbq('track', 'Lead');
+                console.log('VitaSteps: Lead event sent to Meta.');
+            } else {
+                console.error('VitaSteps: Meta Pixel (fbq) not loaded yet!');
             }
         });
     });
