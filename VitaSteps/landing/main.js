@@ -19,6 +19,15 @@ document.addEventListener('DOMContentLoaded', () => {
         threshold: 0.1
     };
 
+    // Meta Pixel Lead tracking for Tally links
+    document.querySelectorAll('a[href*="tally.so"]').forEach(link => {
+        link.addEventListener('click', () => {
+            if (typeof fbq === 'function') {
+                fbq('track', 'Lead');
+            }
+        });
+    });
+
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
