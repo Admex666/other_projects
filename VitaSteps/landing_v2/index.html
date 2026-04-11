@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VitaSteps | Verified Achievement Collectibles</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="./assets/logo.png">
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '808533555643359');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=808533555643359&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
+    <script defer src="/_vercel/insights/script.js"></script>
+</head>
+
+<body>
+
+    <nav class="container">
+        <div class="logo">VITASTEPS</div>
+        <div>
+            <a href="#buy" class="btn btn-primary">Első széria</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section class="hero">
+            <div class="hero-text">
+                <h1>Viseld a <span style="color: var(--accent);">teljesítményedet</span>.</h1>
+                <p>Nincs több jelentéktelen digitális plecsni. A VitaSteps segítségével a legkeményebb túráidat és
+                    futásaidat egyedi, minőségi érmekké alakíthatod.</p>
+                <div class="hero-btns">
+                    <a href="#buy" class="btn btn-primary">Kihívások megtekintése</a>
+                    <a href="#app" class="btn btn-outline" style="margin-left: 1rem;">Hogyan működik?</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="assets/vitasteps_v2_medal_predikaloszek_1775926135052.png" alt="Prédikálószék Érem">
+            </div>
+        </section>
+
+        <section id="app" class="app-grid">
+            <div class="app-card">
+                <h2>A Digitális Vitrin</h2>
+                <p>Minden fizikai trófeádnak helye van a 3D-s virtuális vitrinben. Mutasd meg a gyűjteményedet a
+                    világnak, hitelesített adatokkal alátámasztva.</p>
+                <img src="assets/vitasteps_v2_app_vault_hu_1775928150652.png" alt="Saját Gyűjtemény">
+            </div>
+            <div class="app-card">
+                <h2>Hitelesített Teljesítmény</h2>
+                <p>A VitaSteps közvetlenül szinkronizál a Stravával és a Garminnal. Csak akkor szerezheted meg a
+                    trófeát, ha a lábadban van a teljesítmény.</p>
+                <img src="assets/vitasteps_v2_app_verification_hu_styled_1775928422440.png" alt="Sikeres Hitelesítés">
+            </div>
+        </section>
+
+        <section class="collection-showcase">
+            <h2>Hungarian Heritage Series</h2>
+            <div class="medal-card">
+                <img src="assets/vitasteps_v2_medal_predikaloszek_1775926135052.png" alt="Prédikálószék Medal">
+                <h3 style="margin-bottom: 1rem;">Prédikálószék Vertical</h3>
+                <p style="color: var(--text-mid); margin-bottom: 2rem;">Sorszámozott kiadás | Limitált 100 darab</p>
+                <div id="buy" class="intent-box">
+                    <div style="margin-bottom: 0.5rem; opacity: 0.5; text-decoration: line-through; font-size: 1.2rem;">12.990 Ft</div>
+                    <div style="font-size: 3rem; margin-bottom: 1rem; color: var(--accent); font-weight: 800;">7.990 Ft</div>
+                    <p style="margin-bottom: 2rem; opacity: 0.8;">Ingyenes szállítás az első 50 előrendelőnek.</p>
+                    <button class="btn btn-primary buy-trigger" style="width: 100%;">NEM SZERETNÉK LEMARADNI</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="modal-overlay">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 1.5rem;">Az utolsó lépés!</h2>
+            <p style="margin-bottom: 2rem; color: var(--text-mid);">A Prédikálószék széria gyártása jelenleg folyamatban
+                van. A hatalmas érdeklődés miatt várólistát nyitottunk.</p>
+            
+            <iframe data-tally-src="https://tally.so/embed/A7q4yD?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" 
+                    loading="lazy" width="100%" height="350" frameborder="0" marginheight="0" marginwidth="0" 
+                    title="VitaSteps V2 Várólista"></iframe>
+            <script>
+                var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s)}
+            </script>
+        </div>
+    </div>
+
+    <footer class="container"
+        style="text-align: center; padding: 4rem 0; opacity: 0.5; border-top: 1px solid var(--border);">
+        <p>© 2026 VITASTEPS | Real World Accomplishments. Verified.</p>
+    </footer>
+
+    <script src="main.js"></script>
+</body>
+
+</html>

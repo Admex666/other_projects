@@ -1,0 +1,191 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@300;400;600&display=swap');
+
+:root {
+    --bg-dark: #05070a;
+    --surface: #0f1217;
+    --accent: #bfff00;
+    --accent-glow: rgba(191, 255, 0, 0.4);
+    --gold: #d4af37;
+    --text-high: #ffffff;
+    --text-mid: #94a3b8;
+    --border: rgba(255, 255, 255, 0.08);
+    --gradient: linear-gradient(135deg, #11141a 0%, #05070a 100%);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-high);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+h1, h2, h3, .logo { font-family: 'Outfit', sans-serif; font-weight: 800; }
+
+.container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+
+/* Navigation */
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: rgba(5, 7, 10, 0.8);
+    backdrop-filter: blur(10px);
+}
+
+.logo { font-size: 1.5rem; color: var(--accent); }
+
+/* Buttons */
+.btn {
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    border: none;
+    display: inline-block;
+}
+
+.btn-primary {
+    background: var(--accent);
+    color: #000;
+    box-shadow: 0 0 20px var(--accent-glow);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 35px var(--accent-glow);
+}
+
+.btn-outline {
+    border: 1px solid var(--border);
+    color: white;
+    background: transparent;
+}
+
+/* Sections */
+section { padding: 6rem 0; }
+
+.hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+    min-height: 80vh;
+}
+
+.hero-text h1 {
+    font-size: 4.5rem;
+    line-height: 1.1;
+    margin-bottom: 2rem;
+    background: linear-gradient(to right, #fff, #94a3b8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-text p {
+    font-size: 1.25rem;
+    color: var(--text-mid);
+    margin-bottom: 3rem;
+    max-width: 500px;
+}
+
+.hero-image {
+    position: relative;
+}
+
+.hero-image img {
+    width: 100%;
+    border-radius: 32px;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+    border: 1px solid var(--border);
+}
+
+/* Features (App) */
+.app-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 3rem;
+    align-items: center;
+}
+
+.app-card {
+    background: var(--surface);
+    border-radius: 32px;
+    padding: 3rem;
+    border: 1px solid var(--border);
+}
+
+.app-card img {
+    width: 100%;
+    border-radius: 16px;
+    margin-top: 2rem;
+}
+
+/* Showcase - Limited Collection */
+.collection-showcase {
+    text-align: center;
+}
+
+.collection-showcase h2 {
+    font-size: 3rem;
+    margin-bottom: 4rem;
+}
+
+.medal-card {
+    background: var(--gradient);
+    border: 1px solid var(--border);
+    padding: 3rem;
+    border-radius: 40px;
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.medal-card img { width: 100%; border-radius: 20px; margin-bottom: 2rem; }
+
+/* Pricing / Intent Section */
+.intent-box {
+    background: var(--surface);
+    border: 2px solid var(--accent);
+    padding: 4rem;
+    border-radius: 32px;
+    text-align: center;
+}
+
+/* Modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.95);
+    display: none;
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: var(--surface);
+    padding: 4rem;
+    border-radius: 32px;
+    max-width: 500px;
+    text-align: center;
+    border: 1px solid var(--border);
+}
+
+/* Mobile */
+@media (max-width: 968px) {
+    .hero, .app-grid { grid-template-columns: 1fr; text-align: center; }
+    .hero-text h1 { font-size: 3rem; }
+    .hero-text p { margin: 0 auto 2.5rem; }
+}
