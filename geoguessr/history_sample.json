@@ -1,0 +1,37 @@
+{
+    "entries": [
+        {
+            "type": 2,
+            "time": "2026-04-12T08:54:02.1140000Z",
+            "user": {
+                "id": "58a82f022f6fc615a8362af9",
+                "nick": "Admex",
+                "isVerified": false,
+                "flair": 0,
+                "avatar": {
+                    "url": "pin/2e07cb8a3fd9e2e6d9b862a16c175e12.png",
+                    "anchor": "center-center",
+                    "isDefault": false
+                }
+            },
+            "payload": "{\"mapSlug\":\"world\",\"mapName\":\"World\",\"points\":16727,\"challengeToken\":\"XGFV7PHHeRzuZfVE\",\"gameMode\":\"Standard\",\"isDailyChallenge\":true}"
+        },
+        {
+            "type": 7,
+            "time": "2026-04-12T08:54:02.1120000Z",
+            "user": {
+                "id": "58a82f022f6fc615a8362af9",
+                "nick": "Admex",
+                "isVerified": false,
+                "flair": 0,
+                "avatar": {
+                    "url": "pin/2e07cb8a3fd9e2e6d9b862a16c175e12.png",
+                    "anchor": "center-center",
+                    "isDefault": false
+                }
+            },
+            "payload": "[{\"type\":4,\"time\":\"2026-04-12T08:54:02.112Z\",\"payload\":{\"badgeId\":\"uYkdf5oBkEHRKp463cz9KmPN7lh4SePu\",\"badgeName\":\"Explorer Mode\",\"badgeLevel\":1,\"imagePath\":\"badge/607db7d9e9aec2ba5ee2074a9ed53c4d.png\"}},{\"type\":4,\"time\":\"2026-04-12T08:54:02.104Z\",\"payload\":{\"badgeId\":\"gdJ0hoNtoq0JkYUFFyUJcYPt4aBIOd4E\",\"badgeName\":\"Explorer\",\"badgeLevel\":2,\"imagePath\":\"badge/66fc99f40be1e9e0d70e9beb99bb258f.png\"}}]"
+        }
+    ],
+    "paginationToken": null
+}
