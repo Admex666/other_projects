@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixel Territory War - GB Edition</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <h1 class="title">Pixel Territory War</h1>
+        
+        <div class="game-container">
+            <canvas id="gameCanvas" width="500" height="500"></canvas>
+        </div>
+
+        <div class="controls">
+            <button id="startBtn">START</button>
+            <button id="pauseBtn">PAUSE</button>
+            <button id="resetBtn">RESET</button>
+        </div>
+
+        <div class="stats" id="statsPanel">
+            <!-- Stats will be populated by JS -->
+        </div>
+
+        <div style="margin-top: 10px; font-size: 10px; color: #888;">
+            GRID: 100x100 | MODE: NO STEALING
+        </div>
+    </div>
+    <script type="module" src="game.js"></script>
+</body>
+</html>
