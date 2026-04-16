@@ -109,7 +109,11 @@
       },
       {
         "sender": "Claire Lee",
-        "message": "Great! We will get back to you as soon as possible"
+        "message": "Great! We will get back to you as soon as possible.  [sent price list: E:/Data/other_projects/VitaSteps/medal/price_clairelee_2026-04-16-17-14.png]  pls kindly check the price list for 100pcs"
+      },
+      {
+        "sender": "me",
+        "message": "Hi Claire, thank you for the Invoice and the calculation!  We are currently in the middle of our internal review and finalizing the timeline for our first medal batch.  I will get back to you with our final decision by the end of this month. Thanks again for the professional assistance!"
       }
     ]
   },
@@ -207,7 +211,11 @@
       },
       {
         "sender": "Kimmi Lin",
-        "message": "You're welcome. Yes, then we will give you the price according to the 3D medal. :)"
+        "message": "You're welcome. Yes, then we will give you the price according to the 3D medal. :)  [sent prices]  Here is the quotation for reference. Looking forward to your reply. Thank you."
+      },
+      {
+        "sender": "me",
+        "message": "Hi Kimmi, thank you for the detailed quote! The 3D samples look amazing.  We are currently finalizing our pilot participant list and reviewing all production options internally. I expect to have a final decision by the end of this month.  Could you please provide a formal quote for exactly 100 units as well?"
       }
     ]
   },
