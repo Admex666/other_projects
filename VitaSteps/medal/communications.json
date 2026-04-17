@@ -50,7 +50,11 @@
       },
       {
         "sender": "Shirley K",
-        "message": "Thank you. Will give you a quotation soon"
+        "message": "Thank you. Will give you a quotation soon  [sent image of prices: price_shirlyk_2026-04-17-10-35.png]  Hi Adam, here is our quotation, please check it:)"
+      },
+      {
+        "sender": "me",
+        "message": "Hi Shirley, thank you for the detailed quotation!  We are currently reviewing these along with our distribution plan. I'll get back to you by the end of this month. Best regards!"
       }
     ]
   },
@@ -114,6 +118,14 @@
       {
         "sender": "me",
         "message": "Hi Claire, thank you for the Invoice and the calculation!  We are currently in the middle of our internal review and finalizing the timeline for our first medal batch.  I will get back to you with our final decision by the end of this month. Thanks again for the professional assistance!"
+      },
+      {
+        "sender": "Claire Lee",
+        "message": "Thank you for your help.  May I know when you will need them? We can schedule the time for you."
+      },
+      {
+        "sender": "me",
+        "message": "Hi Claire, thank you for checking in!  We are aiming to launch our first batch early next month.  I will have a more precise timeline and a final decision for you by the end of this month once our internal review is complete.  I appreciate your offer to help with the scheduling!"
       }
     ]
   },
@@ -216,6 +228,14 @@
       {
         "sender": "me",
         "message": "Hi Kimmi, thank you for the detailed quote! The 3D samples look amazing.  We are currently finalizing our pilot participant list and reviewing all production options internally. I expect to have a final decision by the end of this month.  Could you please provide a formal quote for exactly 100 units as well?"
+      },
+      {
+        "sender": "Kimmi Lin",
+        "message": "Hi Adam, here's the quotation based on 100 pcs. [sent prices: C:/Users/Adam/Data/other_projects/VitaSteps/medal/price_kimmilin_2026-04-17-10-38.png]  Looking forward to your further feedback about the quantity you want. :)"
+      },
+      {
+        "sender": "me",
+        "message": "Hi Kimmi, thank you for the quotation for 100 pieces!  The pricing is very competitive. We are currently finalizing our internal review and comparing all technical options. I will get back to you by the end of this month with our final decision.  Thank you for your patience!"
       }
     ]
   },

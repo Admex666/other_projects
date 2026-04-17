@@ -1,0 +1,96 @@
+[
+  {
+    "company": "Zhongshan One Way Craft Gift Co., Ltd.",
+    "contact": "Kimmi Lin",
+    "quotes": [
+      {
+        "quantity": 100,
+        "unit_price": 0.96,
+        "mold_fee": 140.00,
+        "shipping_fee": 245.00,
+        "total": 481.00,
+        "average_unit_cost_landed": 4.81,
+        "technique": "3D front + 2D back, Soft Enamel",
+        "finish": "Anti Silver (Asked for Antique Nickel)",
+        "date": "2026-04-17",
+        "notes": "Lowest unit price and mold fee for 100pcs."
+      }
+    ]
+  },
+  {
+    "company": "Zhongshan Qiyi Gift Metal & Plastic Factory",
+    "contact": "Shirley K",
+    "quotes": [
+      {
+        "quantity": 50,
+        "unit_price": 1.50,
+        "mold_fee": 180.00,
+        "shipping_fee": 100.00,
+        "total": 355.00,
+        "average_unit_cost_landed": 7.10,
+        "technique": "3D + Soft Enamel",
+        "finish": "Antique Nickel",
+        "date": "2026-04-17",
+        "notes": "Competitive shipping for low volume."
+      },
+      {
+        "quantity": 100,
+        "unit_price": 1.45,
+        "mold_fee": 180.00,
+        "shipping_fee": 175.00,
+        "total": 500.00,
+        "average_unit_cost_landed": 5.00,
+        "technique": "3D + Soft Enamel",
+        "finish": "Antique Nickel",
+        "date": "2026-04-17"
+      },
+      {
+        "quantity": 300,
+        "unit_price": 1.40,
+        "mold_fee": 180.00,
+        "shipping_fee": 365.00,
+        "total": 965.00,
+        "average_unit_cost_landed": 3.21,
+        "technique": "3D + Soft Enamel",
+        "finish": "Antique Nickel",
+        "date": "2026-04-17"
+      }
+    ]
+  },
+  {
+    "company": "Zhongshan Renhui Metal Products Co., Ltd.",
+    "contact": "Hedy Chen",
+    "quotes": [
+      {
+        "quantity": 100,
+        "unit_price": 1.10,
+        "mold_fee": 230.00,
+        "shipping_fee": 170.00,
+        "total": 510.00,
+        "average_unit_cost_landed": 5.10,
+        "technique": "3D + Soft Enamel",
+        "finish": "Antique Silver / Antique Black Nickel",
+        "date": "2026-04-16",
+        "notes": "Best specialized in 3D textures."
+      }
+    ]
+  },
+  {
+    "company": "Zhongshan Cugle Metal Products Co., Ltd.",
+    "contact": "Claire Lee",
+    "quotes": [
+      {
+        "quantity": 100,
+        "unit_price": 1.95,
+        "mold_fee": 220.00,
+        "shipping_fee": 253.00,
+        "total": 668.00,
+        "average_unit_cost_landed": 6.68,
+        "technique": "3D + Soft Enamel",
+        "finish": "Antique Nickel",
+        "date": "2026-04-16",
+        "notes": "Most expensive, but high service/VIP focus."
+      }
+    ]
+  }
+]
