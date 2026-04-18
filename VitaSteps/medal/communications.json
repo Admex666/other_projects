@@ -55,6 +55,14 @@
       {
         "sender": "me",
         "message": "Hi Shirley, thank you for the detailed quotation!  We are currently reviewing these along with our distribution plan. I'll get back to you by the end of this month. Best regards!"
+      },
+      {
+        "sender": "Shirley K",
+        "message": "You are welcome! Please feel free to reach out if you have any questions during your review. Looking forward to hearing from you by the end of the month!  [sent product pictures]  Here are some medals we produced with Antique finish + Soft Enamel, you can take a look~"
+      },
+      {
+        "sender": "me",
+        "message": "Hi Shirley, thank you for the sample photos! They look very professional.  I'm keeping your quote as a top priority during our evaluation. Talk soon!"
       }
     ]
   },
@@ -126,6 +134,14 @@
       {
         "sender": "me",
         "message": "Hi Claire, thank you for checking in!  We are aiming to launch our first batch early next month.  I will have a more precise timeline and a final decision for you by the end of this month once our internal review is complete.  I appreciate your offer to help with the scheduling!"
+      },
+      {
+        "sender": "Claire Lee",
+        "message": "well noted. Can I have your mail and number? so I can create a VIP customer profile for you  [sent business card]  At the same time, this is my information; you can contact me at any time"
+      },
+      {
+        "sender": "me",
+        "message": "Hi Claire, thank you for your information!  You can reach me at vitasteps.team@gmail.com. Regarding the phone number, I prefer to keep the communication here on Alibaba and on email for now.  I'll notify you once our internal board makes the decision."
       }
     ]
   },
@@ -236,6 +252,10 @@
       {
         "sender": "me",
         "message": "Hi Kimmi, thank you for the quotation for 100 pieces!  The pricing is very competitive. We are currently finalizing our internal review and comparing all technical options. I will get back to you by the end of this month with our final decision.  Thank you for your patience!"
+      },
+      {
+        "sender": "Kimmi Lin",
+        "message": "OK, thank you for your feedback. Looking forward to your reply. Thank you. :)"
       }
     ]
   },
