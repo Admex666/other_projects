@@ -1,65 +1,113 @@
+import sqlite3
 import pandas as pd
-import networkx as nx
-from typing import Dict, List
+import matplotlib.pyplot as plt
+import seaborn as sns
+from datetime import datetime
+import os
 
-class DataAnalyzer:
-    def __init__(self, df_history: pd.DataFrame):
-        self.df = df_history
-        self.graph = nx.Graph()
-        
-    def analyze(self):
-        # 1. Build Network from Sessions
-        sessions = self.df[self.df['session_id'].notnull()]
-        for sid, group in sessions.groupby('session_id'):
-            users_in_session = group['user_id'].dropna().unique().tolist()
-            for i in range(len(users_in_session)):
-                for j in range(i + 1, len(users_in_session)):
-                    u1, u2 = users_in_session[i], users_in_session[j]
-                    if self.graph.has_edge(u1, u2):
-                        self.graph[u1][u2]['weight'] += 1
-                    else:
-                        self.graph.add_edge(u1, u2, weight=1)
-        
-        # 2. Key Metrics per Identified User
-        user_stats = self.df[self.df['user_id'].notnull()].groupby('user_id').agg({
-            'amount': ['sum', 'count', 'mean'],
-            'timestamp': 'max'
-        }).reset_index()
-        
-        user_stats.columns = ['user_id', 'total_spend', 'visit_count', 'avg_ticket', 'last_visit']
-        
-        # 3. Add Network Metrics
-        centrality = nx.degree_centrality(self.graph)
-        degrees = dict(self.graph.degree())
-        
-        user_stats['influence_score'] = user_stats['user_id'].map(centrality).fillna(0)
-        user_stats['connections'] = user_stats['user_id'].map(degrees).fillna(0)
-        
-        # 4. Churn Risk (Simplified)
-        # Risk = Days since last visit / Avg interval
-        today = self.df['timestamp'].max()
-        user_stats['days_since_last'] = (today - user_stats['last_visit']).dt.days
-        user_stats['churn_risk'] = (user_stats['days_since_last'] > 30).astype(int) # Simple threshold
-        
-        # 5. Viral Attribution (Who brings new people?)
-        # Find first visit for every ID
-        first_visits = self.df.groupby('user_id')['timestamp'].min().reset_index()
-        # Non-essential simplification: we track hosts of sessions containing these first visits
-        user_stats['viral_acquisitions'] = 0 # Placeholder for complex logic in next iteration
-        
-        # 6. Lookalike Influencer Detection (Anonymous with large sessions)
-        self.lookalikes = self.df[self.df['user_id'].isnull()].groupby('session_id').filter(lambda x: len(x) > 2)
-        
-        return user_stats, self.graph
+def load_data():
+    conn = sqlite3.connect('simulator/chainnetwork.db')
+    
+    # Load transactions
+    df = pd.read_sql_query("""
+        SELECT t.*, u.test_group, u.name as user_name, u.joined_at
+        FROM transactions t
+        JOIN users u ON t.user_id = u.id
+    """, conn)
+    
+    # Convert timestamp to datetime
+    df['timestamp'] = pd.to_datetime(df['timestamp'])
+    
+    conn.close()
+    return df
 
-    def get_summary_stats(self):
-        total_rev = self.df['amount'].sum()
-        total_trans = len(self.df)
-        identified_pct = self.df['user_id'].notnull().mean() * 100
-        
-        return {
-            'total_revenue': total_rev,
-            'total_transactions': total_trans,
-            'identified_percentage': identified_pct,
-            'avg_group_size': self.df.groupby('session_id').size().mean() if not self.df['session_id'].isnull().all() else 1
-        }
+def run_rfm_analysis(df):
+    now = df['timestamp'].max()
+    
+    rfm = df.groupby('user_id').agg({
+        'timestamp': lambda x: (now - x.max()).days, # Recency
+        'id': 'count', # Frequency
+        'total_amount': 'sum' # Monetary
+    })
+    
+    rfm.columns = ['recency', 'frequency', 'monetary']
+    
+    # Simple scoring (1-5)
+    rfm['R_score'] = pd.qcut(rfm['recency'].rank(method='first'), 5, labels=[5, 4, 3, 2, 1])
+    rfm['F_score'] = pd.qcut(rfm['frequency'].rank(method='first'), 5, labels=[1, 2, 3, 4, 5])
+    rfm['M_score'] = pd.qcut(rfm['monetary'].rank(method='first'), 5, labels=[1, 2, 3, 4, 5])
+    
+    rfm['RFM_Score'] = rfm['R_score'].astype(str) + rfm['F_score'].astype(str) + rfm['M_score'].astype(str)
+    
+    # Segment naming
+    def segment_rfm(row):
+        score = int(row['R_score']) + int(row['F_score']) + int(row['M_score'])
+        if score >= 12: return 'Champion'
+        if score >= 9: return 'Loyal'
+        if score >= 6: return 'At Risk'
+        return 'Lost'
+    
+    rfm['segment'] = rfm.apply(segment_rfm, axis=1)
+    return rfm
+
+def plot_seasonality(df):
+    # Daily revenue
+    daily_rev = df.set_index('timestamp').resample('D')['total_amount'].sum()
+    
+    plt.figure(figsize=(12, 6))
+    plt.plot(daily_rev.index, daily_rev.values, label='Daily Revenue', color='#2ecc71')
+    plt.title('Daily Revenue Trend (6 Months)')
+    plt.xlabel('Date')
+    plt.ylabel('Revenue (HUF)')
+    plt.grid(True, alpha=0.3)
+    plt.savefig('simulator/seasonality.png')
+    plt.close()
+    
+    # Weekly patterns
+    df['weekday'] = df['timestamp'].dt.day_name()
+    order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    weekly_rev = df.groupby('weekday')['total_amount'].mean().reindex(order)
+    
+    plt.figure(figsize=(10, 5))
+    sns.barplot(x=weekly_rev.index, y=weekly_rev.values, palette='viridis')
+    plt.title('Average Revenue by Weekday')
+    plt.ylabel('Avg Revenue')
+    plt.savefig('simulator/weekday_pattern.png')
+    plt.close()
+
+def plot_segments(rfm):
+    seg_counts = rfm['segment'].value_counts()
+    
+    plt.figure(figsize=(8, 8))
+    plt.pie(seg_counts, labels=seg_counts.index, autopct='%1.1f%%', startangle=140, colors=['#3498db', '#f1c40f', '#e67e22', '#e74c3c'])
+    plt.title('Customer Segments (RFM)')
+    plt.savefig('simulator/segments.png')
+    plt.close()
+
+def analyze_churn(df, rfm):
+    # Calculate average time between visits for each user
+    df = df.sort_values(['user_id', 'timestamp'])
+    df['prev_visit'] = df.groupby('user_id')['timestamp'].shift(1)
+    df['days_between'] = (df['timestamp'] - df['prev_visit']).dt.days
+    
+    avg_gap = df.groupby('user_id')['days_between'].mean()
+    
+    # A user is at churn risk if their recency > 2 * avg_gap
+    churn_analysis = rfm.copy()
+    churn_analysis['avg_gap'] = avg_gap
+    churn_analysis['churn_risk'] = churn_analysis['recency'] > (2 * churn_analysis['avg_gap'])
+    
+    return churn_analysis
+
+if __name__ == "__main__":
+    print("Running Analytics...")
+    df = load_data()
+    rfm = run_rfm_analysis(df)
+    
+    plot_seasonality(df)
+    plot_segments(rfm)
+    
+    churn_data = analyze_churn(df, rfm)
+    
+    print("Analytics completed. Visualizations saved to simulator/ directory.")
+    print(f"Top 5 churn-risk users:\n{churn_data[churn_data['churn_risk']].head()}")
