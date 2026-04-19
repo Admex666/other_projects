@@ -63,6 +63,10 @@
       {
         "sender": "me",
         "message": "Hi Shirley, thank you for the sample photos! They look very professional.  I'm keeping your quote as a top priority during our evaluation. Talk soon!"
+      },
+      {
+        "sender": "Shirley K",
+        "message": "Hi Adam, thank you for your positive feedback! Keep in touch!"
       }
     ]
   },
@@ -142,6 +146,10 @@
       {
         "sender": "me",
         "message": "Hi Claire, thank you for your information!  You can reach me at vitasteps.team@gmail.com. Regarding the phone number, I prefer to keep the communication here on Alibaba and on email for now.  I'll notify you once our internal board makes the decision."
+      },
+      {
+        "sender": "Claure Lee",
+        "message": "Of course, thank you for sharing"
       }
     ]
   },
