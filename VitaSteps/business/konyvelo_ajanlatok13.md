@@ -403,6 +403,31 @@ http://www.mataxkft.hu
 
 MANTBH Kft. profilja  
 
+## 14. ajánlat | Beérkezett: 2026.04.20.
+Kövi Zsuzsanna 12 000 Ft
+Ajánlat tartalma
+Tisztelt Ajánlatkérő!
+
+Szeretnék ajánlatot tenni az Ön által megjelölt könyvelési és bérszámfejtési feladat elvégzésére.
+
+
+Visszajelzését kérve, üdvözlettel:
+Kövi Zsuzsanna
+fagotrendbt@gmail.com
+
+Kövi Zsuzsanna profilja  
+
+## 15. ajánlat | Beérkezett: 2026.04.20.
+Spányik Könyvelőiroda 20 000 Ft
+Ajánlat tartalma
+Tisztelt Ajánlatkérő!
+
+Szeretnék ajánlatot tenni az Ön által megjelölt könyvelési feladat elvégzésére. Könyvelő vállalkozásom adatait, szolgáltatásait és referenciáit megtekintheti az ajánlatom alatt a vállalkozásom nevére kattintva, a Könyvelők.hu oldalon lévő adatlapomon. Ugyanitt megtalálja telefonszámom és e-mail címem is, amelyeken készséggel állok rendelkezésére bármilyen kérdése esetén.
+
+Visszajelzését kérve, üdvözlettel:
+
+Spányik Könyvelőiroda profilja  
+
 ## +1. (platformon kívül, email fiókból)
 
 Kedves Jakus Ádám,
