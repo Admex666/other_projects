@@ -8,7 +8,7 @@ import numpy as np
 import random
 
 # Page config
-st.set_page_config(page_title="ChainNetwork | Advanced Analytics", layout="wide", page_icon="⚖️")
+st.set_page_config(page_title="ChainNetwork | Scenario Planner", layout="wide", page_icon="⚖️")
 
 # Custom Styling
 st.markdown("""
@@ -38,45 +38,22 @@ def load_full_data():
 
 def run_advanced_rfm(df):
     now = df['timestamp'].max()
-    
-    # Group by user
     rfm = df.groupby(['user_id', 'user_name', 'test_group']).agg({
         'timestamp': ['max', 'min', 'count', lambda x: x.sort_values().diff().dt.days.mean()],
         'total_amount': 'sum'
     }).reset_index()
-    
     rfm.columns = ['user_id', 'user_name', 'test_group', 'last_visit', 'first_visit', 'freq_count', 'avg_gap', 'monetary']
-    
-    # 1. Recency: Days since last visit
     rfm['recency_days'] = (now - rfm['last_visit']).dt.days
-    
-    # 2. Tenure: Days since first visit (min 1 day)
     rfm['tenure'] = (now - rfm['first_visit']).dt.days + 1
-    
-    # 3. Adjusted Frequency: Visits per Day (Your formula!)
     rfm['freq_density'] = rfm['freq_count'] / rfm['tenure']
-    
-    # 4. Relative Recency: How late is the user compared to their own average?
-    # Handle users with 1 visit (avg_gap is NaN)
-    rfm['avg_gap'] = rfm['avg_gap'].fillna(30) # default assumption: monthly buyer
+    rfm['avg_gap'] = rfm['avg_gap'].fillna(30)
     rfm['recency_ratio'] = rfm['recency_days'] / rfm['avg_gap']
     
-    # --- Scoring (1-5 quintiles) ---
-    # Frequency: higher density is better (5)
     rfm['F_Score'] = pd.qcut(rfm['freq_density'].rank(method='first'), 5, labels=[1, 2, 3, 4, 5], duplicates='drop')
-    
-    # Recency: lower ratio is better (customer is 'on time' or early)
     rfm['R_Score'] = pd.qcut(rfm['recency_ratio'].rank(method='first'), 5, labels=[5, 4, 3, 2, 1], duplicates='drop')
-    
-    # Monetary: higher total spend is better
     rfm['M_Score'] = pd.qcut(rfm['monetary'].rank(method='first'), 5, labels=[1, 2, 3, 4, 5], duplicates='drop')
     
-    # Weighted Final Score (R: 40%, F: 40%, M: 20%)
-    rfm['Final_Score'] = (
-        rfm['R_Score'].astype(int) * 0.4 + 
-        rfm['F_Score'].astype(int) * 0.4 + 
-        rfm['M_Score'].astype(int) * 0.2
-    )
+    rfm['Final_Score'] = (rfm['R_Score'].astype(int) * 0.4 + rfm['F_Score'].astype(int) * 0.4 + rfm['M_Score'].astype(int) * 0.2)
     
     def segment_advanced(score):
         if score >= 4.5: return 'Champion'
@@ -91,90 +68,99 @@ def run_advanced_rfm(df):
 # --- DATA LOADING ---
 df_raw = load_full_data()
 
-# --- SIDEBAR / FILTERS ---
-st.sidebar.title("🍔 ChainNetwork Advanced")
+# --- SIDEBAR / SCENARIO PLANNER ---
+st.sidebar.title("🍔 ChainNetwork Bio")
 st.sidebar.markdown("---")
+st.sidebar.subheader("📐 Scenario Parameters")
 
+# Sliders for sensitivity analysis
+retain_conv = st.sidebar.slider("Retention Conv. Rate (%)", 0, 100, 30) / 100
+upsell_hit = st.sidebar.slider("Upsell Hit Rate (%)", 0, 100, 20) / 100
+discount_amt = st.sidebar.slider("Average Discount (HUF)", 0, 2000, 500)
+freq_lift = st.sidebar.slider("Frequency Lift Factor (%)", 0, 50, 15) / 100
+basket_lift = st.sidebar.slider("Basket Lift Factor (%)", 0, 30, 8) / 100
+
+st.sidebar.markdown("---")
 min_date = df_raw['timestamp'].min().date()
 max_date = df_raw['timestamp'].max().date()
 date_range = st.sidebar.date_input("Analysis Period", [min_date, max_date], min_value=min_date, max_value=max_date)
 
-selected_stores = st.sidebar.multiselect("Stores", options=df_raw['store_name'].unique(), default=df_raw['store_name'].unique())
-selected_groups = st.sidebar.multiselect("Test Group", options=['A', 'B'], default=['A', 'B'])
-
 # --- DATA FILTERING ---
 mask = (
     (df_raw['timestamp'].dt.date >= date_range[0]) & 
-    (df_raw['timestamp'].dt.date <= (date_range[1] if len(date_range) > 1 else date_range[0])) &
-    (df_raw['store_name'].isin(selected_stores)) &
-    (df_raw['test_group'].isin(selected_groups))
+    (df_raw['timestamp'].dt.date <= (date_range[1] if len(date_range) > 1 else date_range[0]))
 )
 df = df_raw[mask]
 
 # --- MAIN DASHBOARD ---
-st.title("Advanced Customer Engine | RFM 2.0")
+st.title("Decision Engine | Interactive Business Planner")
 
-# KPI Cards
+# Calculate Dynamic Stats for A and B
+stats = df_raw.groupby('test_group').agg({
+    'id': 'count',
+    'total_amount': 'sum',
+    'user_id': 'nunique'
+})
+stats.columns = ['Orders', 'Revenue', 'Users']
+stats['Avg Basket'] = stats['Revenue'] / stats['Orders']
+
+# APPLY SCENARIO LOGIC TO B
+# 1. Calculate Uplift based on sliders
+orders_b = stats.loc['B', 'Orders'] * (1 + freq_lift * (retain_conv / 0.3)) # scaled by 30% baseline
+avg_basket_b = stats.loc['B', 'Avg Basket'] * (1 + basket_lift * (upsell_hit / 0.2))
+
+# 2. Add marketing cost (discount)
+total_discount_cost = (orders_b * (retain_conv)) * discount_amt
+final_rev_b = (orders_b * avg_basket_b) - total_discount_cost
+
+stats.loc['B', 'Orders'] = orders_b
+stats.loc['B', 'Avg Basket'] = avg_basket_b
+stats.loc['B', 'Revenue'] = final_rev_b
+stats.loc['B', 'ARPU'] = stats.loc['B', 'Revenue'] / stats.loc['B', 'Users']
+stats.loc['A', 'ARPU'] = stats.loc['A', 'Revenue'] / stats.loc['A', 'Users']
+
+uplift_pct = ((stats.loc['B', 'ARPU'] / stats.loc['A', 'ARPU']) - 1) * 100
+
+# Top KPI Row
 k1, k2, k3, k4 = st.columns(4)
-k1.metric("Corrected Revenue", f"{df['total_amount'].sum():,.0f} HUF")
-k2.metric("Avg Basket", f"{df['total_amount'].mean():,.0f} HUF")
-k3.metric("Trans. Density", f"{len(df)/df['user_id'].nunique():.2f} visits/user")
-k4.metric("Retention Risk %", f"{random.randint(12,24)}%") # Dummy mockup for aesthetics
+k1.metric("Current Scenario Revenue", f"{stats.loc['B', 'Revenue']:,.0f} HUF")
+k2.metric("Projected Uplift", f"{uplift_pct:.1f}%", delta=f"{uplift_pct:.1f}%")
+k3.metric("Discount Cost", f"-{total_discount_cost:,.0f} HUF", delta_color="inverse")
+k4.metric("Net ROI", f"{(stats.loc['B', 'Revenue'] - stats.loc['A', 'Revenue']) / (total_discount_cost + 1):.1f}x")
 
 # Tabs
-tab_over, tab_seg, tab_matrix = st.tabs(["🌎 Performance Layer", "🎯 Advanced Segmentation", "📊 RFM Matrices"])
+tab_sim, tab_geo, tab_rfm = st.tabs(["📉 Sensitivity Analysis", "🌍 Geographical Performance", "🎯 Segmentation"])
 
-with tab_over:
-    col_l, col_r = st.columns([2, 1])
-    with col_l:
-        st.subheader("Time-Series Flow")
-        ts_data = df.set_index('timestamp').resample('W')['total_amount'].sum().reset_index()
-        fig_ts = px.line(ts_data, x='timestamp', y='total_amount', template="plotly_dark", markers=True)
-        st.plotly_chart(fig_ts, use_container_width=True)
-        
-        st.subheader("Hourly Peak Distribution")
-        df['hour'] = df['timestamp'].dt.hour
-        hour_agg = df.groupby('hour')['total_amount'].sum().reset_index()
-        fig_h = px.bar(hour_agg, x='hour', y='total_amount', template="plotly_dark", color='total_amount')
-        st.plotly_chart(fig_h, use_container_width=True)
-
-    with col_r:
-        st.subheader("Category Contribution")
-        cat_pie = px.pie(df, names='item_category', values='total_amount', hole=0.6, template="plotly_dark")
-        st.plotly_chart(cat_pie, use_container_width=True)
-        
-        st.subheader("Store Loyalty Affinity")
-        store_b = px.bar(df.groupby('store_name')['total_amount'].sum().reset_index(), x='total_amount', y='store_name', orientation='h', template="plotly_dark")
-        st.plotly_chart(store_b, use_container_width=True)
-
-with tab_seg:
-    rfm_adv = run_advanced_rfm(df)
-    
-    c1, c2 = st.columns([1, 1])
+with tab_sim:
+    c1, c2 = st.columns([2, 1])
     with c1:
-        st.subheader("Final Segment Mix (Weighted R-F-M)")
-        fig_pie = px.pie(rfm_adv, names='segment', template="plotly_dark", color_discrete_sequence=px.colors.qualitative.Prism)
-        st.plotly_chart(fig_pie, use_container_width=True)
-        
+        st.subheader("A/B Performance Comparison")
+        comp_df = stats['ARPU'].reset_index()
+        fig_comp = px.bar(comp_df, x='test_group', y='ARPU', color='test_group', 
+                         template="plotly_dark", color_discrete_map={'A': '#555', 'B': '#00d2ff'})
+        st.plotly_chart(fig_comp, use_container_width=True)
+    
     with c2:
-        st.subheader("Density vs. Relative Recency")
+        st.subheader("Financial Breakdown")
+        st.table(stats.style.format("{:,.0f}"))
+        st.write("---")
+        st.write(f"**Strategy Breakdown:**")
+        st.write(f"🟢 Retention Impact: +{freq_lift * 100:.1f}% visits")
+        st.write(f"🔵 Upsell Impact: +{basket_lift * 100:.1f}% size")
+
+with tab_rfm:
+    rfm_adv = run_advanced_rfm(df)
+    col1, col2 = st.columns([1, 2])
+    with col1:
+        fig_pie = px.pie(rfm_adv, names='segment', template="plotly_dark")
+        st.plotly_chart(fig_pie, use_container_width=True)
+    with col2:
         fig_scat = px.scatter(rfm_adv, x='freq_density', y='recency_ratio', color='segment', 
-                             size='monetary', hover_name='user_name', template="plotly_dark",
-                             labels={"freq_density": "Visits per Day", "recency_ratio": "Recency vs. Avg Gap"})
+                              hover_name='user_name', template="plotly_dark")
         st.plotly_chart(fig_scat, use_container_width=True)
-        st.info("💡 **Note:** X-tengely = 'Mennyire sűrűn jár?' | Y-tengely = 'Mennyit késik az átlagához képest?'")
 
-with tab_matrix:
-    st.subheader("Customer Intelligence Audit")
-    
-    # Drill down logic
-    drill_seg = st.multiselect("Filter segments", options=list(rfm_adv['segment'].unique()), default=list(rfm_adv['segment'].unique()))
-    display_df = rfm_adv[rfm_adv['segment'].isin(drill_seg)]
-    
-    st.dataframe(display_df[['user_name', 'segment', 'freq_count', 'freq_density', 'recency_days', 'recency_ratio', 'monetary', 'test_group']], use_container_width=True)
-
-# Intervention Forecast
-with st.expander("🚀 Decision Engine Strategy"):
-    st.info("Based on the **Relative Recency** and **Frequency Density**, we identify users who deviate from their normal pattern.")
-    # Show comparison stats here (similar logic as before)
-    # ...
+with tab_geo:
+    st.subheader("Revenue by Store")
+    store_agg = df.groupby('store_name')['total_amount'].sum().reset_index()
+    fig_st = px.bar(store_agg, x='total_amount', y='store_name', orientation='h', template="plotly_dark")
+    st.plotly_chart(fig_st, use_container_width=True)
