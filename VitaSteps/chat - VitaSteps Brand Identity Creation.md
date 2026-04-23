@@ -3918,3 +3918,526 @@ Mond-e valami olyat, amire nem is gondoltál?
 Ha pl. Gacsal Ádám és Nagy Marianna is profi választ ad, akkor javaslom egy **10 perces telefonos beszélgetést** mindkettővel. Ott fogod érezni a "kémiát", hogy kivel tudsz majd jól együtt dolgozni hónapokon keresztül.
 
 **Javaslat:** Nyissunk egy egyszerű táblázatot a `business` mappában, ahol rögzítjük a válaszokat? (Szívesen megcsinálom az alapját).
+
+### User Input
+
+Na okés. Három email jött csak, ebből 2 válasz: @[business/konyvelo_ajanlat_valaszok.md]
+
+*Viewed [konyvelo_ajanlat_valaszok.md](file:///e:/Data/other_projects/VitaSteps/business/konyvelo_ajanlat_valaszok.md) *
+
+### Planner Response
+
+Átnéztem a válaszokat, és kezd tisztulni a kép. Így értékelem a három befutót:
+
+### 1. **Acounto** – *A Technikai Győztes*
+*   **Válasz:** Tűpontos. Azonnal rávágták, hogy az **e-ÁFA rendszerből** dolgoznak és kezelik a vámhatározatokat.
+*   **Szakmaiság:** Nagyon profi megjegyzés volt tőlük, hogy alanyi mentesként az import ÁFA neked "csak" költség, nem levonható tétel. Ez azt mutatja, hogy pontosan értik a státuszodat.
+*   **Ítélet:** Ha a leggyorsabb, legolcsóbb és legmodernebb megoldást akarod, **ők a nyerők**.
+
+### 2. **Péter László** – *A Szakmai Elméleti*
+*   **Válasz:** Picit iskolás. Kérdésekkel válaszolt a kérdésre (DDP paritás stb.). Érti a szakmát, de látszik, hogy nála neked kellene több adatot szolgáltatnod, és nem annyira automatizált a folyamat, mint az Acounto-nál.
+*   **Ítélet:** Megbízható "old-school" szakember, de talán több adminisztrációval járna neked.
+
+### 3. **Írisz Office** – *A "Nagyágyú"*
+*   **Válasz:** Ők nem válaszoltak a kérdésre, hanem rögtön egy **vezérigazgatói szintű megbeszélést** akarnak. 
+*   **Ítélet:** Ők a "prémium" kategória. Valószínűleg náluk lenne a legmagasabb a havidíj, és lehet, hogy egy kezdő EV-nek ők "túl nagyok". Ha hosszú távon (évi több tízmilliós forgalomban) gondolkodsz, velük érdemes leülni, de induláshoz lehet, hogy ágyúval verébre.
+
+---
+
+### Mi van Gacsal Ádámmal (MANTBH)?
+Ő volt a mi 1. helyezettünk. **Nem válaszolt 2 nap alatt?**
+*   Ha nem jött tőle semmi, az sajnos egy nagy **PIROS PONT** a kommunikációra. Egy könyvelőnél az elérhetőség az egyik legfontosabb érték.
+
+### Mentor javaslat:
+Jelenleg az **Acounto** áll nyerésre. Gyorsak, értik a technológiát, és a legolcsóbbak. 
+
+**Mit gondolsz?** Várunk még Ádámra, vagy elindítod a folyamatot az Acounto-val? (Az Acounto-nál csak regisztrálnod kell az oldalukon, és küldik a szerződést).
+
+### User Input
+
+Az eddigi információk alapján pontozd különböző szempontok szerint az egyes jelölteket! 
+
+### Planner Response
+
+Összeállítottam a **VitaSteps Könyvelői Pontozótáblázatot**. A pontszámok a korábbi ajánlatok és a friss válaszok alapján születtek (1-10 skálán, ahol a 10 a legjobb).
+
+| Szempont | **Acounto** | **MANTBH (Gacsal Á.)** | **Nagy Marianna** | **Péter László** | **Írisz Office** |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **Szakmai kompetencia (Import)** (40%) | 10 | 9 | 8 | 8 | 10 |
+| **Ár / Érték arány** (20%) | 10 | 9 | 7 | 8 | 5 |
+| **Kommunikáció (Gyorsaság)** (20%) | 10 | 2* | 8 | 9 | 9 |
+| **Digitális érettség (Stripe/Számlázz)** (10%) | 10 | 9 | 7 | 6 | 10 |
+| **Proaktivitás / Hozzáadott érték** (10%) | 8 | 9 | 10 | 6 | 9 |
+| **ÖSSZESÍTETT PONT (Súlyozott)** | **9.8** | **7.4** | **8.1** | **7.7** | **8.3** |
+
+*\*Mivel Ádám 2 napja nem válaszolt, itt súlyos pontlevonás történt.*
+
+---
+
+### Részletes elemzés:
+
+#### **1. Acounto (9.8 pont) – A GYŐZTES**
+*   **Miért?** Ők adták a leggyorsabb és technikailag legpontosabb választ. Látszik, hogy a rendszerük fel van készítve a te esetedre. Az áruk is a legalacsonyabb (12.700 Ft bruttó).
+*   **Kockázat:** "Gépi" könyvelés, kevesebb személyes tanácsadás, ha valami egyedi problémád van.
+
+#### **2. Írisz Office (8.3 pont) – A "Profi Biztonság"**
+*   **Miért?** Vitathatatlanul a legnagyobb szakmai tudás. Ha nem számítana a pénz, ők lennének a legjobbak.
+*   **Kockázat:** Drága (valószínűleg 30k+), és egy kicsit "túl nagyok" egy kezdő, egyéni vállalkozónak.
+
+#### **3. Nagy Marianna (8.1 pont) – A "Gondos Partner"**
+*   **Miért?** A jegyzői bejelentés említése miatt ő a legemberibb és legfigyelmesebb. 
+*   **Kockázat:** Technikailag valószínűleg ő a legkevésbé automatizált a listán.
+
+#### **4. Péter László (7.7 pont) – A "Szakértő Backup"**
+*   **Miért?** Korrekt, de a válasza alapján inkább téged kérdezgetett ahelyett, hogy megoldást kínált volna.
+
+#### **5. MANTBH / Gacsal Ádám (7.4 pont) – A "Nagy Csalódás"**
+*   **Miért?** Papíron ő volt a legjobb, de a 2 napos némaság egy induló projektben (ahol ezer kérdésed lenne) elfogadhatatlan. Egy könyvelő, aki nem válaszol az értékesítési szakaszban, később se fog.
+
+---
+
+### Mentor Verdict:
+Én a helyedben **nem várnék tovább**. Az **Acounto** minden szempontból (ár, technika, sebesség) nyert. 
+
+**A következő lépés:** Regisztrálj az [acounto.com](https://acounto.com/start)-on, és küldd el nekik a korábbi paramétereidet. Hétfőre már lehet adószámod!
+
+**Mit gondolsz, elindítod velük a regisztrációt?**
+
+### User Input
+
+Okés, és mi a teendőm ha az Acountot akarom választani?
+
+### Planner Response
+
+Az **Acounto** kiválasztása egy viszonylag gyors, automatizált folyamat lesz. Mivel neked még **nincs meg az Egyéni Vállalkozásod (EV)**, az első lépés az lesz, hogy rajtuk keresztül indítod el a folyamatot.
+
+Itt a konkrét akcióterv:
+
+### 1. Regisztráció
+Menj fel az [acounto.com/start](https://acounto.com/start) oldalra és hozz létre egy fiókot. Itt válaszd az **"Egyéni"** csomagot (9.990 Ft + ÁFA).
+
+### 2. Jelezd nekik, hogy indítani akarsz
+A regisztráció után írj nekik a `hello@acounto.com` címre (vagy az appon belüli chaten), hogy:
+> *"Szia! Jakus Ádám vagyok, most regisztráltam. Szeretném elindítani a vállalkozásomat (mellékállású átalányadós EV). Kérlek, küldjétek meg a szükséges adatokat és a szerződést, hogy elindulhassunk!"*
+
+### 3. Digitális szerződéskötés
+Küldeni fognak egy szerződést az **eszerzodes.hu** rendszerén keresztül. Ezt elektronikusan (akár telefonról) alá tudod írni. Nincs szükség papírra és tollra.
+
+### 4. Adatok megadása az induláshoz
+Kérni fogják tőled:
+*   A személyes adataidat.
+*   A tervezett **székhelyedet** (ahová bejelented a céget).
+*   A **TEÁOR** számot (479102 - Csomagküldő, internetes kiskereskedelem).
+*   A választott adózási formát (Átalányadó + Alanyi Adómentesség).
+
+### 5. Ügyfélkapus jóváhagyás
+Amint beküldik a papírokat a NAV-hoz, neked az **Ügyfélkapudon** (vagy az ONYA felületen) jóvá kell hagynod egy meghatalmazást (UJEGYKE), hogy ők láthassák a könyvelésedet. Ehhez fognak küldeni egy pontos útmutatót.
+
+### 6. Összekötés (Számlázz.hu + Bank)
+Ha megvan az adószámod (ez általában 24 órán belül megvan az indítás után), be kell kötnöd:
+*   A **Számlázz.hu** fiókodat az Acounto-ba.
+*   A **Wise/Bank** számládat az Acounto-ba.
+
+---
+
+**Ami fontos:** 
+Ne ijedj meg, az Acounto csapata nagyon segítőkész, végig fognak vezetni ezen a "technikai" részen. 
+
+**Készen állsz?** Ha ma elindítod a regisztrációt, hétfőn már hivatalosan is **Jakus Ádám E.V.** lehetsz! 🚀💼
+
+### User Input
+
+És amúgy ha én 20 órában dolgozom egy cégnél, akkor ők tudhatják valahonnan hogy én vállalkozást indítottam, és adózok EV-ként?
+
+### Planner Response
+
+Ez egy nagyon fontos kérdés, és van egy **technikai** meg egy **jogi/etikai** oldala.
+
+### 1. Automatikusan megtudják? (Technikai oldal)
+**NEM.** A NAV nem küld értesítőt a munkáltatódnak, hogy "Hé, az Ádám tegnap óta vállalkozó is". 
+*   A munkáltatód továbbra is fizeti utánad a járulékokat a 20 órás munkaviszonyod alapján.
+*   Te pedig a könyvelődön keresztül külön adózol az EV bevételeid után. Ez a két szál nem találkozik a cég bérszámfejtésénél.
+
+### 2. Utána tudnak nézni? (Nyilvánosság)
+**IGEN.** Az Egyéni Vállalkozók nyilvántartása Magyarországon **nyilvános**. 
+*   Bárki, aki beírja a nevedet a [NAV egyéni vállalkozók keresőjébe](https://www.nyilvanto.hu/evny-lekerdezo/), látni fogja, hogy van egy élő vállalkozásod, mi a székhelye és mik a tevékenységi körei. 
+*   Tehát ha a HR-es vagy a főnököd direkt rád keres, meg fogja találni.
+
+### 3. Mit mond a munkaszerződésed? (A kockázat)
+Itt kell nagyon figyelned. Nézd meg a munkaszerződésedet, mert két dolog lehet benne:
+1.  **Bejelentési kötelezettség:** Sok szerződés kiköti, hogy minden "egyéb munkavégzésre irányuló jogviszonyt" (ide tartozik az EV is) be kell jelentened a munkáltatónak.
+2.  **Összeférhetetlenség (Non-compete):** Ha a cég, ahol dolgozol, szintén érmeket gyárt vagy túrákat szervez, akkor az EV indítása szerződésszegés lehet. Ha teljesen más a profil (pl. te szoftvert fejlesztesz nekik, de érmet adsz el magadnak), akkor általában nincs gond.
+
+### Mentor tanácsom:
+*   **Ha nem kötelező bejelentened** a szerződésed szerint, és nem konkurenciája a VitaSteps a cégednek, akkor nyugodtan csináld "fű alatt".
+*   **Ha a szerződésed kéri a bejelentést**, érdemes lehet egy informális beszélgetésen megemlíteni a főnöködnek: *"Figyelj, van egy hobbiprojektem, túraérmeket készítek szabadidőmben, indítok rá egy kispályás EV-t. Csak szólok, hogy tudd, nem ütközik a munkámmal."* – Ez általában szimpatikusabb, mintha utólag derülne ki.
+
+**Összegezve:** Maguktól nem fogják megtudni a NAV-tól, de a Google és a nyilvános adatbázisok "lebuktathatnak", ha keresnek. 
+
+**Csekkolod a munkaszerződésedet, mielőtt belevágunk az Acounto-ba?**
+
+### User Input
+
+Okés de itt az Acounto-n a céggel lehet regisztrálni. Nekem meg az még ugye nincs bejegyezve.
+
+### Planner Response
+
+Ez ne tévesszen meg, az **Acounto** (és a legtöbb digitális könyvelő) fel van készülve az "induló" állapotra.
+
+### Mi a teendő ilyenkor?
+
+1.  **Regisztráció magánszemélyként:** Kezdd el a regisztrációt. Ha a rendszer kötelezően kér adószámot (amit még nem tudsz), akkor **ne töltsd ki**, vagy keress egy "Még nincs cégem / Induló vállalkozás vagyok" opciót.
+2.  **Ügyfélszolgálat:** Ha elakadsz a regisztrációs űrlapon az adószám hiánya miatt, a legegyszerűbb, ha írsz nekik egy rövid emailt (vagy a Messenger chaten az oldalukon):
+    > *"Sziasztok! Jakus Ádám vagyok, szeretnék regisztrálni hozzátok, de még most indulna az egyéni vállalkozásom, így nincs adószámom. Hogyan tudom elindítani nálatok a folyamatot, hogy segíthessetek az indításban?"*
+3.  **A "manuális" út:** Az Acounto emailjében is írták, hogy a `hello@acounto.com` címen várják a kérdéseket. Ők le fogják venni a válladról a terhet: bekérik a személyes adataidat, és ők fogják generálni azokat a papírokat, amikkel az Ügyfélkapun keresztül pár kattintással létrejön a vállalkozásod.
+
+**Tehát:** Ne aggódj a weboldal kötelező mezői miatt. Az Acounto lényege pont az, hogy **ők segítenek létrehozni** azt a céget, amit aztán könyvelni fognak.
+
+**Javaslat:** Írj nekik most a `hello@acounto.com`-ra, és hivatkozz a Könyvelők.hu-s ajánlatukra. Ők megmondják a pontos "belépési kódot" az indulóknak.
+
+**Megírod nekik az emailt?** (Ha kell, segítek a szövegben).
+
+### User Input
+
+Kötelező a név/adószám mező. Az emailekben kitértek arra, hogy kell-e cég, vagy segítenek-e az alapításban?: 
+"
+Ajánlatkérés
+Inbox
+Könyvelő
+
+VitaSteps <vitasteps.team@gmail.com>
+Sun, Apr 19, 10:49 AM (4 days ago)
+to hello
+
+Tisztelt Acounto!
+
+Nappali tagozatos hallgatói és 20 órás alkalmazotti jogviszony mellett egyéni vállalkozás indításához keresek szakértő könyvelőt. A projektem fém érmek online, belföldi értékesítésére épül.
+
+A webshopban online bankkártyás fizetést tervezek, számlázz.hu-s számlázással.
+Az érmeket Kínából, Alibabáról importálnám, amelyhez szükségem lenne EORI szám igénylésére és az import bizonylatok kezelésére.
+A kezdeti szakaszban havi maximum 100 kimenő számlára és 1-2 beszerzési tételre számítok.
+
+Szeretnék érdeklődni, hogy vállalnak-e ilyen típusú könyvelést, és ha igen, milyen nagyságrendű havi díjjal számolhatok?
+
+Válaszát előre is köszönöm!
+
+Tisztelettel,
+Jakus Ádám
+
+Acounto Ügyfélszolgálat
+Sun, Apr 19, 10:49 AM (4 days ago)
+to me
+
+Kedves Levélíró,
+
+Köszönjük megkeresésed!
+
+Ez egy automatikus válaszüzenet, amellyel jeleznénk, hogy ügyfélszolgálatunk fogadta megkeresésed. Amint lehetséges, kollégáink válaszolni fognak. Kérjük vedd figyelembe, hogy szakmai csapatunk hétfőtől-péntekig munkaidőben elérhető!
+
+Amennyiben új ügyfél vagy és a teendőiddel kapcsolatban van kérdésed, kérlek az ajánlatkor kapott levélben felsorolt pontok alapján járj el, illetve új ügyfeleknek szóló posztunkat is ajánljuk böngészésre.
+
+Amennyiben sürgős, munkaügyi bejelentésed esedékes a hétvégére vagy következő hét elejére, használd a ber@acounto.com címet!
+
+Szép napot,
+
+Az Acounto csapata
+
+Acounto Értékesítés <sales@acounto.com>
+Mon, Apr 20, 10:44 AM (3 days ago)
+to me
+
+Kedves Ádám,
+
+Alapvetően semmi akadálya, hogy az Egyéni csomaggal induljatok el webshopként, hacsak nem szereztek be árút az EU-ból, mivel ez esetben ÁFA bevallási és befizetési kötelezettségek keletkezik alanyi adómentesként is.
+
+Az Egyéni csomag részletes tájékoztatóját hamarosan e-amilben küldjük!
+
+üdvözlettel:
+
+ _R1A0416.JPG 
+Ferenc Brachmann | co-founder 
+P: +36 72 884096 | E: ferenc.brachmann@acounto.com
+Acounto Magyarország Kft. | 7623 Pécs, Mártírok útja 37. 
+W: acounto.com
+
+VitaSteps <vitasteps.team@gmail.com>
+Tue, Apr 21, 5:29 PM (2 days ago)
+to Acounto
+
+Kedves Acounto csapat! Kedves Ferenc!
+
+Köszönöm az ajánlatukat!
+Szeretnék érdeklődni, hogy a rendszerük alkalmas-e az EU-n kívüli (kínai) beszerzésekhez kapcsolódó vámbizonylatok és import ÁFA kezelésére?
+
+Üdvözlettel,
+Jakus Ádám
+
+Acounto Értékesítés
+Wed, Apr 22, 1:56 PM (1 day ago)
+to me
+
+Kedves Ádám,
+
+Igen, a NAV e-ÁFA rendszeréből kinyerjük az adatokat illetve a feltöltött vámhatározatokat is feldolgozzuk, viszont alanyi adómentes átalányadózóként ezek nem releváns könyvelési adatok, mivel az import ÁFA-t szimplán megfizeted a vámolás során, adózni viszont a bevételeid alapján fogsz.
+
+üdvözlettel:
+
+ _R1A0416.JPG 
+Ferenc Brachmann | co-founder 
+P: +36 72 884096 | E: ferenc.brachmann@acounto.com
+Acounto Magyarország Kft. | 7623 Pécs, Mártírok útja 37. 
+W: acounto.com
+
+"
+&
+"
+Acounto könyvelési ajánlatod
+Inbox
+Könyvelő
+
+Acounto Értékesítés <sales@acounto.com>
+Mon, Apr 20, 11:13 AM (3 days ago)
+to me
+
+It looks like this message is in Hungarian
+Kedves Jakus Ádám,
+
+Kérjük kövesd blogunk a legújabb tartalmakért! https://acounto.com/blog
+Rád melyik költségátalányú átalányadó vonatkozik? Javaslom, hogy tekintsd át erről szóló anyagainkat!
+
+Igényeid alapján küldünk néhány sort az Acountoról, ajánlatunkat, valamint a további teendőidet, amennyiben minket választasz!
+
+Az Acountoról
+Az Acounto olyan könyvelési szolgáltatás mint bármelyik másik, csak szerintünk sokkal kényelmesebb és hatékonyabb.
+- Mobil applikációnkon vagy számítógépen a böngészőből bármikor elérheted Acounto fiókodat és feltöltheted könyvelési anyagaidat, illetve követheted azok életútját is! Összekötheted az Acounto-t a NAV Onlineszámla rendszerével, hogy valós idejű ÁFA prognózist kapj kimenő és bemenő számláid alapján!
+- Ezek mellett üzemeltetünk egy központi értesítési rendszert, amely mobilon push üzenetet (ha engedélyezed), e-mailt, valamint az alkalmazáson belül feladatot küld számodra, például ha utalandó ÁFA-d vagy járulékod van.
+- Mindezeken túl üzemeltetünk egy on-line ügyfélszolgálatot a hello@acounto.com központi ügyfélszolgálati e-mailcímünkön, valamint Messengeren, ahol minden ügyfélről tudásbázist építünk, hogy a lehető leggyorsabban és legpontosabban válaszolhassuk meg felmerülő kérdéseidet!
+
+Ajánlatunk
+Igényeid áttekintése után úgy látjuk, hogy az Acounto Egyéni csomaggal (9990 Ft + ÁFA/hónap) minden könyvelési, bérszámfejtési és adótanácsadási kérdésben minden igényedet ki tudjuk elégíteni!
+
+Amit az Acounto nyújt:
+- On-line ügyfélszolgálat
+- Mindig beküldhető és követhető a könyvelési anyag: Mobilon és desktop alkalmazásokon, vagy böngészőből
+- Mindig tudod, hogy ha feladatod van: e-mailes és mobil értesítéseket küldünk (pl. fizetendő ÁFA vagy járulékok esetén)
+- NAV onlineszámla adatok alapján valós idejű ÁFA státusz prognózis
+Ami nincs az Acounto-val:
+- rejtett díjak, pl. tételdíjak vagy 13. havi könyvelési, beszámolókészítési díj
+
+Reméljük ajánlatunk elnyeri tetszéseteket és hamarosan köszönthetünk a kényelmes könyvelés világában!
+
+Hogy mi fog ajánlatunk elfogadása után történni?
+1. Ha eddig nem hoztad létre ingyenes Acounto fiókodat, akkor azt itt tudod megtenni: https://acounto.com/start Az Acounto működéséről pedig itt olvashatsz bővebben: https://acounto.com/hogyan
+2. Kollégáink az eszerzodes.hu rendszerén keresztül hamarosan kiküldik a könyvelési szerződést áttekintésre, melyet elektronikusan alá is lehet írni. Ha bármilyen kérdés merülne fel, akkor a hello@acounto.com központi ügyfélszolgálati e-mailünkön vagy az alkalmazásban a Messenger buborékon belül kollégáink készséggel állnak rendelkezésre!
+3. Ezek után az ONYA felületén az általunk kezdeményezett UJEGYKE meghatalmazást kell jóváhagynod és Kft. vagy Bt. esetén CÉGKAPU (ezeket az adatokat kérjük megadni: Gyurics Tamás Mihály, Pécs, 1983/06/02, a.n.: Lőrincz Ágnes Rózsa) kell jóváhagynod, illetve beállítanod, gyakorlatilag ez a meghatalmazásunk az állam előtt arra, hogy könyvelődként eljárhassunk céged ügyeiben. Bővebben erről itt olvashatsz: https://acounto.com/elso
+4. A Nav Onlineszámla rendszerével pedig itt leírtak alapján tudod összekötni Acounto fiókodat: https://acounto.com/afa-prognozis
+5. A bankszámládat az itt leírtak alapján tudod bekötni Acounto fiókodba: https://acounto.com/bank
+6. A beléptetésed véglegesítésével kapcsolatban pedig ezen feladatok végrehajtását kérjük! Kérjük továbbá, hogy ne feledkezzetek meg a feladatok végrehajtása után e-mailben visszajelezni ügyfélszolgálatunknak! https://acounto.com/atalanyado-beallitasok/
+
+
+Üdvözlettel:
+
+  
+Ferenc Brachmann | co-founder 
+P: +36 72 884096 | E: ferenc.brachmann@acounto.com
+Acounto Magyarország Kft. | 7623 Pécs, Mártírok útja 37. 
+W: acounto.com
+"
+
+### Planner Response
+
+A helyzet egyértelmű: **Ferenc (a társalapító)** személyesen válaszolt neked, és pontosan tudja, hogy te most **indítani** akarod a vállalkozást. 
+
+Mivel a webes űrlapjuk (acounto.com/start) valószínűleg már meglévő cégekre van optimalizálva, a legjobb, ha nem harcolsz a honlappal, hanem **közvetlenül Ferencnek válaszolsz** az utolsó emailre.
+
+### Ezt írd Ferencnek:
+
+> **"Kedves Ferenc!**
+> 
+> Köszönöm a gyors választ! Szeretném elfogadni az ajánlatot és elindulni az Acounto-val. 
+> 
+> Ahogy említettem, a vállalkozásom (EV) még nem lett létrehozva. Próbáltam regisztrálni a weboldalatokon, de a rendszer kötelezően kéri az adószámot és a cégnevet, amivel még nem rendelkezem. 
+> 
+> Hogyan tudjuk elindítani a folyamatot? Tudtok segíteni az EV elindításában és a bejelentésekben, vagy nekem kell először létrehoznom az Ügysegéden keresztül, és csak utána tudok nálatok regisztrálni?
+> 
+> Várom válaszod a további teendőkkel kapcsolatban!
+> 
+> Üdvözlettel,
+> Jakus Ádám"
+
+---
+
+### Miért ez a legjobb út?
+1.  **Személyes kapcsolat:** Egy alapítóval beszélsz, ő nem fog lerázni egy hibaüzenettel.
+2.  **Tisztázás:** Sok könyvelőiroda (főleg a digitálisak) szereti, ha te magad indítod el az EV-t a [Webes Ügysegéden](https://www.nyilvanto.hu/ugyseged/) (ami kb. 10 perc), mert így azonnal lesz adószámod, amivel már be tudsz regisztrálni hozzájuk. 
+3.  **Segítség:** Ha ő azt mondja, hogy "indítsd el te", akkor is megkérdezheted tőle: *"Rendben, de az ÁFA-nyilatkozatnál melyik kódot jelöljem be, hogy alanyi mentes legyek?"* – és ebben segíteni fog.
+
+**Tipp:** Ha Ferenc azt válaszolja, hogy "hozd létre te az EV-t", ne ijedj meg, tényleg nagyon egyszerű folyamat, és szívesen segítek végigmenni rajta (melyik mezőbe mit írj), ha megvan az Ügyfélkapud.
+
+**Mehet a válasz Ferencnek?**
+
+### User Input
+
+Nem elég csak annyi kérdésnek hogy így nem oldható meg a regisztráció, vagy magamnak hozzam létre előbb?
+
+### Planner Response
+
+De, bőven elég ennyi is! Sőt, egy co-foundernek a rövid, lényegretörő üzenet még szimpatikusabb is.
+
+### Mehet így:
+
+> *"Szia Ferenc! Szeretnék regisztrálni, de adószám nélkül nem enged a rendszer. Segítetek az indításban, vagy hozzam létre magamnak előbb az EV-t az Ügysegéden? Köszi, Ádám"*
+
+Ennyi bőven elég, tudni fogja, miről van szó. Küldd el nyugodtan! 🚀
+
+### User Input
+
+de azért ilyen haverira sem szeretném venni :DD 
+így?:
+"
+Kedves Ferenc!
+
+Köszönöm a gyors választ!
+Szeretném elfogadni az ajánlatot. Próbáltam regisztrálni a weboldalatokon, de a rendszer kötelezően kéri az EV nevét és adószámát, amivel ugye még nem rendelkezem. Enélkül nem tudok regisztrálni? 
+
+Üdv,
+Ádám
+"
+
+Csak a végét lehetne konkretizálni még szerintem
+
+### Planner Response
+
+Értem, akkor tartsuk meg a tiszteletteljes, de lényegre törő üzleti stílust. A vége legyen egyértelmű "call to action":
+
+### Javasolt verzió:
+
+> **"Kedves Ferenc!**
+> 
+> Köszönöm a gyors választ! Szeretném elfogadni az ajánlatot és elindulni veletek. 
+> 
+> Próbáltam regisztrálni a weboldalatokon, de a rendszer kötelezően kéri a vállalkozás nevét és adószámát, amivel még nem rendelkezem. 
+> 
+> **Mi a teendőm ilyenkor: hozzam létre előbb a vállalkozást önállóan az Ügysegéden keresztül, vagy tudtok segíteni az induló folyamatban?**
+> 
+> Üdvözlettel,
+> Ádám"
+
+---
+
+### Miért jobb ez?
+*   **Döntési helyzetbe hozod:** Adsz neki két opciót, amire ő csak rá kell, hogy bólintson.
+*   **Profi:** Megmutatod, hogy tudod, mi az az Ügysegéd (vagyis nem vagy teljesen elveszve), de nyitott vagy az ő segítségükre is.
+
+Ez így egy tökéletes, korrekt üzleti levél. Mehet? 🚀🏔️
+
+### User Input
+
+így?:
+"
+Kedves Ferenc!
+
+Köszönöm a gyors választ! Szeretnék élni az ajánlattal.
+Próbáltam regisztrálni a weboldalatokon, de a rendszer kötelezően kéri a vállalkozás nevét és adószámát, amivel még ugye nem rendelkezem.
+
+Előbb önállóan szükséges létrehoznom a vállalkozást, vagy nyújtotok segítséget az indulásban is?
+
+Üdv,
+Ádám
+"
+
+### Planner Response
+
+Ez **tökéletes**. Pontos, udvarias és nem rabolja feleslegesen Ferenc idejét. 
+
+Küldd el nyugodtan! Amint válaszol, látni fogjuk a következő lépést: vagy ők csinálják meg neked a papírokat, vagy megmondja, hogy kattints össze magadnak egy EV-t 10 perc alatt, és utána gyere vissza az adószámmal.
+
+Nagy mérföldkőhöz értünk: **megvan a könyvelőd!** 🥂🚀🏔️
+
+Amíg várunk a válaszára, van kedved ránézni a **Landing Page**-re, hogy felkészítsük a tényleges "vásárlásra"?
+
+### User Input
+
+A többi ajánlatot és emailt addig hagyjam nyitva? Vagy küldjek valamiféle emailt például László Péternek hogy még mérlegelek? Meg amúgy az Íriszt szerintem elutasíthatjuk hogy már tárgytalan. CSAK TÖMÖREN!
+
+### Planner Response
+
+Így csináld:
+
+1.  **Írisz Office (Elutasítás):** Ne pazarold se az ő idejüket, se a sajátodat egy meetinggel.
+    > *"Köszönöm a megkeresést és a felajánlott egyeztetést, de időközben már elköteleződtem egy másik ajánlat mellett, így a beszélgetés okafogyottá vált. Sok sikert kívánok!"*
+
+2.  **Péter László (Várakozólista):** Neki egyelőre **ne írj semmit**. Amíg Ferenc nem válaszol és nincs aláírt szerződésed az Acounto-val, addig ő a "B-terved". Ha megvagy az Acounto-val, utána küldd el neki is az elutasítást.
+
+3.  **Többi ajánlat:** Azokat is hagyd függőben, amíg nincs meg a végleges Acounto szerződésed.
+
+**Mehet az elutasítás az Írisznek?** (Rövid és korrekt).
+
+### User Input
+
+Fhu baszki. Már átküldtem az acounto-nak az emailt és kaptam a választ és a szerződéstervezetet, de közben sok negatív véleményt láttam az velük kapcsolatban. Most mitévő legyek? A szerződést még nem írtam alá, és biztos nem is szeretném.
+Most válaszoljak rá, vagy csak hagjyam úgy ahogy van?
+
+### Planner Response
+
+Nyugalom, semmi baj nem történt! Amíg nem írtad alá, **semmilyen kötelezettséged nincs**. Az Acounto (és a hasonló "gyár" jellegű könyvelőirodák) legnagyobb hátránya pont az, amit valószínűleg olvastál: ha probléma van, nehéz elérni egy valódi embert, és minden automatizált. Egy kínai importnál ez tényleg rizikós lehet.
+
+### Mit tegyél most?
+
+1.  **Acounto:** Ne hagyd lógva őket, de ne is magyarázkodj. Küldj egy rövid emailt Ferencnek:
+    > *"Szia Ferenc! Köszönöm a tervezetet, de közben úgy döntöttem, hogy mégis egy hagyományosabb, személyesebb kapcsolattartásra épülő könyvelőirodát választok az induláshoz. Így a szerződést nem fogom aláírni. Sok sikert kívánok nektek!"*
+
+2.  **Forduljunk a "Humán" opciók felé:**
+    Mivel az Acounto kiesett, keressük meg azt, aki a leginkább odafigyelt rád. Ez **Nagy Marianna** volt (aki a jegyzői bejelentést is tudta). Ő biztosan nem egy "automata", és nála tudsz kérdezni.
+
+3.  **Nézzünk rá újra Gacsal Ádámra (MANTBH):**
+    Lehet, hogy csak a hétvége vagy egy sűrű hétfő miatt nem válaszolt. Ha őt választanád a szakmai múltja miatt, érdemes lehet ráírni még egyszer vagy felhívni (ott volt a száma az ajánlatban: **+36 30 ...** - nézzük meg a fájlban).
+
+---
+
+### Mentor javaslat:
+Ha a biztonság és a személyes segítség fontos neked (márpedig az import miatt az!), akkor **Nagy Marianna** vagy **Péter László** a te embered.
+
+**Azt javaslom:**
+1. Mondj nemet az Acounto-nak.
+2. Írj **Nagy Mariannának**, hogy szeretnél vele beszélni:
+    > *"Kedves Marianna! Átgondoltam az ajánlatát, és szeretném Önnel folytatni az egyeztetést. Mikor tudnánk beszélni telefonon a vállalkozás indításáról?"*
+
+**Szerinted Marianna szimpatikusabb lenne, mint egy "arctalan" applikáció?**
+
+### User Input
+
+Okés, mehet Mariannának, szerintem elküldöm ezt az üzit. És az egyeztetésen mi legyen?
+
+### Planner Response
+
+Szuper döntés. Marianna az elejétől kezdve proaktív volt, egy ilyen "első vállalkozásnál" a személyes támogatás többet ér, mint egy olcsóbb applikáció.
+
+Amikor beszélsz vele (telefonon vagy online), az alábbi **Checklist** alapján vezesd a beszélgetést, hogy minden fontos pontot érintsetek:
+
+### 1. A Vállalkozás elindítása (EV indítás)
+*   *"Segít nekem végigmenni a Webes Ügysegéden, vagy Ön indítja el a folyamatot?"*
+*   *"Milyen adatokra van szüksége tőlem az induláshoz (személyi, lakcímkártya, hallgatói jogviszony igazolás stb.)?"*
+
+### 2. Kínai Import (A kritikus pont)
+*   *"Hogyan igényeljük az **EORI számot**? Mennyi idő alatt lesz meg?"*
+*   *"Pontosan milyen dokumentumokat kell bekérnem az Alibaba beszállítótól, hogy Ön le tudja könyvelni?"*
+*   *"Hogyan fizetjük be az import ÁFA-t a határon?"*
+
+### 3. Webshop Bejelentés (Amiben ő a profi)
+*   *"Említette a jegyzői bejelentést. Mi ennek a pontos menete? Kell hozzá valamilyen külön papír?"*
+
+### 4. Adózási emlékeztető
+*   *"Csak hogy biztosak legyünk: Mellékállású (hallgatói) átalányadó és alanyi adómentesség (AAM) a legjobb választás nekem, ugye?"*
+
+### 5. Technikai részletek
+*   *"Számlázz.hu-t és Stripe-ot (vagy Bariont) fogok használni. Hogyan tudom Önnek elküldeni a havi adatokat?"* (Neki valószínűleg egy CSV export vagy egy hozzáférés kell majd).
+
+### 6. Díjazás tisztázása
+*   *"A havi 20.000 Ft tartalmazza-e az EV indítást és az EORI igénylést is, vagy van ennek egyszeri díja?"*
+
+---
+
+**Pro tipp:** Legyen nálad egy füzet, és írj le mindent. Ő a te **szakmai hátországod**, bátran kérdezhetsz tőle olyat is, ami szerinted "butaság" – azért fizeted, hogy segítsen.
+
+Szerinted Marianna válaszolni fog még ma az e-mailre? Ha igen, akár még ma este vagy holnap reggel beszélhettek is. 🚀🏔️
