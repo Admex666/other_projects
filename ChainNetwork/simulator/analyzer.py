@@ -99,6 +99,42 @@ def analyze_churn(df, rfm):
     
     return churn_analysis
 
+def get_market_basket(df):
+    conn = sqlite3.connect('simulator/chainnetwork.db')
+    # Get pairs of items bought together in the same transaction
+    query = """
+    SELECT ti1.menu_item_id as item_a, mi1.name as name_a, 
+           ti2.menu_item_id as item_b, mi2.name as name_b, 
+           COUNT(*) as frequency
+    FROM transaction_items ti1
+    JOIN transaction_items ti2 ON ti1.transaction_id = ti2.transaction_id AND ti1.menu_item_id < ti2.menu_item_id
+    JOIN menu_items mi1 ON ti1.menu_item_id = mi1.id
+    JOIN menu_items mi2 ON ti2.menu_item_id = mi2.id
+    GROUP BY item_a, item_b
+    ORDER BY frequency DESC
+    LIMIT 15
+    """
+    basket = pd.read_sql_query(query, conn)
+    conn.close()
+    return basket
+
+def get_user_journey(user_id):
+    conn = sqlite3.connect('simulator/chainnetwork.db')
+    # Combine transactions and interventions for a timeline
+    query = f"""
+    SELECT timestamp, 'Purchase' as type, total_amount as detail
+    FROM transactions WHERE user_id = {user_id}
+    UNION ALL
+    SELECT i.timestamp, 'Intervention' as type, c.name as detail
+    FROM interventions i 
+    JOIN campaigns c ON i.campaign_id = c.id
+    WHERE i.user_id = {user_id}
+    ORDER BY timestamp ASC
+    """
+    journey = pd.read_sql_query(query, conn)
+    conn.close()
+    return journey
+
 if __name__ == "__main__":
     print("Running Analytics...")
     df = load_data()
@@ -108,6 +144,7 @@ if __name__ == "__main__":
     plot_segments(rfm)
     
     churn_data = analyze_churn(df, rfm)
+    basket = get_market_basket(df)
     
-    print("Analytics completed. Visualizations saved to simulator/ directory.")
-    print(f"Top 5 churn-risk users:\n{churn_data[churn_data['churn_risk']].head()}")
+    print("Analytics completed. Market Basket top pairs:")
+    print(basket.head())

@@ -6,7 +6,11 @@ CREATE TABLE IF NOT EXISTS users (
     name TEXT NOT NULL,
     email TEXT UNIQUE,
     joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    test_group TEXT DEFAULT 'A' -- 'A' for Control, 'B' for Treatment
+    test_group TEXT DEFAULT 'A', -- 'A' for Control, 'B' for Treatment
+    age_group TEXT, -- '18-24', '25-34', '35-44', '45+'
+    gender TEXT, -- 'Male', 'Female', 'Non-binary'
+    lifestyle_tag TEXT, -- 'Student', 'Office', 'Family', 'Tourist'
+    consent_given BOOLEAN DEFAULT 0
 );
 
 -- Stores table

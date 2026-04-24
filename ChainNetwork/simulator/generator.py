@@ -6,23 +6,19 @@ from datetime import datetime, timedelta
 def get_db_connection():
     return sqlite3.connect('simulator/chainnetwork.db')
 
-def seed_data():
+def seed_initial_data():
     conn = get_db_connection()
     cursor = conn.cursor()
     
-    # Fully reset the DB
-    cursor.execute("DROP TABLE IF EXISTS transaction_items")
-    cursor.execute("DROP TABLE IF EXISTS transactions")
-    cursor.execute("DROP TABLE IF EXISTS interventions")
-    cursor.execute("DROP TABLE IF EXISTS users")
-    cursor.execute("DROP TABLE IF EXISTS stores")
-    cursor.execute("DROP TABLE IF EXISTS menu_items")
+    # Reset DB
+    tables = ["transaction_items", "transactions", "interventions", "users", "stores", "menu_items", "campaigns"]
+    for table in tables:
+        cursor.execute(f"DROP TABLE IF EXISTS {table}")
     
-    # Re-run schema (or just manually recreate, but let's re-read schema.sql)
     with open('simulator/schema.sql', 'r') as f:
         cursor.executescript(f.read())
 
-    # Seed Stores (Uneven popularity - Deák is busiest)
+    # Stores
     stores = [
         ('Bamba Marha Deák', 'City'),
         ('Bamba Marha Westend', 'Mall'),
@@ -31,113 +27,133 @@ def seed_data():
     ]
     cursor.executemany("INSERT INTO stores (name, location_type) VALUES (?, ?)", stores)
 
-    # Seed Menu Items (SKU, Name, Category, Price, Cost)
+    # Menu Items
     menu_items = [
         ('b_classic', 'Classic Burger', 'Burger', 3200, 1200),
         ('b_cheese', 'Cheese Burger', 'Burger', 3500, 1300),
         ('b_bacon', 'Bacon Burger', 'Burger', 3800, 1500),
+        ('b_vegan', 'Beyond Vegan', 'Burger', 4200, 1800),
         ('s_fries', 'French Fries', 'Side', 900, 200),
         ('s_rings', 'Onion Rings', 'Side', 1100, 300),
+        ('s_sweet', 'Sweet Potato', 'Side', 1400, 400),
         ('d_cola', 'Coca Cola', 'Drink', 800, 150),
-        ('d_lemonade', 'Homemade Lemonade', 'Drink', 1200, 300)
+        ('d_lemonade', 'Homemade Lemonade', 'Drink', 1200, 300),
+        ('d_beer', 'Craft Beer', 'Drink', 1500, 600)
     ]
     cursor.executemany("INSERT INTO menu_items (sku, name, category, price, cost) VALUES (?, ?, ?, ?, ?)", menu_items)
 
+    # Campaigns
+    campaigns = [
+        ('Churn Save', 'ChurnSave', 'Win back at-risk users with a 20% coupon.'),
+        ('Upsell Hero', 'Upsell', 'Suggest a side/drink for high-margin burgers.'),
+        ('Dead Zone Deal', 'DeadZone', 'Happy hour discounts for 15:00-17:00.')
+    ]
+    cursor.executemany("INSERT INTO campaigns (name, type, description) VALUES (?, ?, ?)", campaigns)
+
     conn.commit()
     conn.close()
-    print("Database reset and seeded.")
 
-def get_weighted_hour():
-    hours = list(range(11, 23))
-    weights = [5, 20, 15, 5, 2, 3, 8, 15, 20, 12, 5, 2]
-    return random.choices(hours, weights=weights)[0]
-
-def generate_history(days=180):
+def generate_reactive_history(days=180):
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    # Get dynamic IDs
+    # Setup
     cursor.execute("SELECT id FROM stores")
     store_ids = [row[0] for row in cursor.fetchall()]
+    cursor.execute("SELECT id, sku, category, price FROM menu_items")
+    menu_data = cursor.fetchall()
+    items_by_cat = {'Burger': [], 'Side': [], 'Drink': []}
+    prices = {}
+    for iid, sku, cat, price in menu_data:
+        items_by_cat[cat].append(iid)
+        prices[iid] = price
 
-    cursor.execute("SELECT id, category, price FROM menu_items")
-    items = cursor.fetchall()
-    burgers = [row[0] for row in items if row[1] == 'Burger']
-    sides = [row[0] for row in items if row[1] == 'Side']
-    drinks = [row[0] for row in items if row[1] == 'Drink']
-    items_prices = {row[0]: row[2] for row in items}
-
-    # Create 1000 users with Store Affinity and specialized profiles
+    # Users
     users = []
-    user_metadata = {} 
+    user_states = {} 
     for i in range(1000):
-        name = f"User_{i}"
         test_group = 'A' if i < 500 else 'B'
-        joined_days_ago = random.randint(30, 270)
-        joined_at = (datetime.now() - timedelta(days=joined_days_ago)).strftime('%Y-%m-%d %H:%M:%S')
+        lifestyle = random.choices(['Student', 'Office', 'Family', 'Tourist'], weights=[25, 40, 25, 10])[0]
+        age = random.choices(['18-24', '25-34', '35-44', '45+'], weights=[30, 40, 20, 10])[0]
+        gender = random.choice(['Male', 'Female', 'Non-binary'])
         
-        home_store = random.choices(store_ids, weights=[40, 25, 20, 15])[0]
-        profile = random.choices(
-            ['Loyalist', 'Casual', 'OfficeWorker', 'DealSeeker'],
-            weights=[20, 45, 25, 10]
-        )[0]
-        
-        users.append((name, f"user_{i}@example.com", joined_at, test_group))
-        user_metadata[i+1] = {'home_store': home_store, 'profile': profile}
-    
-    cursor.executemany("INSERT INTO users (name, email, joined_at, test_group) VALUES (?, ?, ?, ?)", users)
+        users.append((f"User_{i}", f"user_{i}@chain.com", test_group, age, gender, lifestyle, 1))
+        user_states[i+1] = {
+            'group': test_group, 
+            'lifestyle': lifestyle,
+            'age': age,
+            'last_visit': None,
+            'active_coupon': None,
+            'home_store': random.choice(store_ids)
+        }
+    cursor.executemany("INSERT INTO users (name, email, test_group, age_group, gender, lifestyle_tag, consent_given) VALUES (?, ?, ?, ?, ?, ?, ?)", users)
     conn.commit()
 
-    profiles = {
-        'Loyalist': {'prob': 0.12, 'side_prob': 0.85, 'drink_prob': 0.9},
-        'Casual': {'prob': 0.03, 'side_prob': 0.4, 'drink_prob': 0.5},
-        'OfficeWorker': {'prob': 0.10, 'side_prob': 0.6, 'drink_prob': 0.7},
-        'DealSeeker': {'prob': 0.04, 'side_prob': 0.2, 'drink_prob': 0.4}
-    }
-
+    # Simulation loop
     start_date = datetime.now() - timedelta(days=days)
-    transactions = []
-
+    
     for d in range(days):
         current_date = start_date + timedelta(days=d)
         is_weekend = current_date.weekday() >= 5
-        daily_noise = np.random.normal(1.0, 0.15)
+        
+        for uid, state in user_states.items():
+            # 1. Decision Engine Logic (B Group)
+            if state['group'] == 'B':
+                # Churn Save
+                if state['last_visit'] and (current_date - state['last_visit']).days > 20 and not state['active_coupon']:
+                    state['active_coupon'] = 1 
+                    cursor.execute("INSERT INTO interventions (user_id, campaign_id, timestamp, discount_percent) VALUES (?, ?, ?, ?)",
+                                 (uid, 1, current_date.strftime('%Y-%m-%d 09:00:00'), 20))
 
-        for uid, meta in user_metadata.items():
-            prof = profiles[meta['profile']]
-            v_prob = prof['prob'] * daily_noise
-            if is_weekend: v_prob *= 1.4
+            # 2. Visit Probability
+            base_prob = 0.02
+            if state['lifestyle'] == 'Office' and not is_weekend: base_prob = 0.08
+            if state['lifestyle'] == 'Student' and is_weekend: base_prob = 0.05
             
-            if random.random() < v_prob:
-                store_id = meta['home_store'] if random.random() < 0.8 else random.choice(store_ids)
-                hour = get_weighted_hour()
-                if meta['profile'] == 'OfficeWorker':
-                    hour = random.choices([12, 13, 17, 18], weights=[40, 30, 15, 15])[0]
+            if state['active_coupon']: base_prob *= 2.5
+            
+            if random.random() < base_prob:
+                store_id = state['home_store']
+                hour = random.randint(12, 21)
                 
-                timestamp = current_date.replace(hour=hour, minute=random.randint(0, 59)).strftime('%Y-%m-%d %H:%M:%S')
+                # Lifestyle Hour Bias
+                if state['lifestyle'] == 'Office': hour = random.choices([12, 13, 18], weights=[50, 30, 20])[0]
+                if state['lifestyle'] == 'Student': hour = random.randint(14, 22)
                 
-                # Dynamic order logic
-                order_items_ids = [random.choice(burgers)]
-                if random.random() < prof['side_prob']: order_items_ids.append(random.choice(sides))
-                if random.random() < prof['drink_prob']: order_items_ids.append(random.choice(drinks))
+                ts = current_date.replace(hour=hour, minute=random.randint(0,59)).strftime('%Y-%m-%d %H:%M:%S')
+                
+                # Order Logic
+                order = [random.choice(items_by_cat['Burger'])]
+                
+                # Family ordering
+                multiplier = 3 if state['lifestyle'] == 'Family' else 1
+                
+                if random.random() < 0.6: order.append(random.choice(items_by_cat['Side']))
+                if random.random() < 0.8: order.append(random.choice(items_by_cat['Drink']))
 
-                base_total = sum(items_prices[iid] for iid in order_items_ids)
-                total_amount = round(base_total * np.random.normal(1.0, 0.05), 0)
-                
-                transactions.append((uid, store_id, timestamp, total_amount, 'Card', 0, order_items_ids))
+                discount = 0
+                if state['active_coupon']:
+                    discount = sum(prices[i] for i in order) * multiplier * 0.2
+                    cursor.execute("UPDATE interventions SET is_converted = 1 WHERE user_id = ? AND campaign_id = ? AND is_converted = 0", (uid, state['active_coupon']))
+                    state['active_coupon'] = None
 
-    # Insert transactions and transaction_items
-    for t_data in transactions:
-        uid, sid, ts, amt, pay, disc, items_ids = t_data
-        cursor.execute("INSERT INTO transactions (user_id, store_id, timestamp, total_amount, payment_method, discount_amount) VALUES (?, ?, ?, ?, ?, ?)", (uid, sid, ts, amt, pay, disc))
-        tid = cursor.lastrowid
-        for iid in items_ids:
-            cursor.execute("INSERT INTO transaction_items (transaction_id, menu_item_id, quantity, unit_price) VALUES (?, ?, ?, ?)", (tid, iid, 1, items_prices[iid]))
+                total = (sum(prices[i] for i in order) * multiplier) - discount
+                cursor.execute("INSERT INTO transactions (user_id, store_id, timestamp, total_amount, discount_amount) VALUES (?, ?, ?, ?, ?)",
+                             (uid, store_id, ts, total, discount))
+                tid = cursor.lastrowid
+                for iid in order:
+                    cursor.execute("INSERT INTO transaction_items (transaction_id, menu_item_id, quantity, unit_price) VALUES (?, ?, ?, ?)", 
+                                 (tid, iid, multiplier, prices[iid]))
+                
+                state['last_visit'] = current_date
+
+        if d % 30 == 0: conn.commit() # Periodic commit
 
     conn.commit()
-    print(f"Realistic noisy history generated. Total transactions: {len(transactions)}")
     conn.close()
+    print("Reactive simulation completed.")
 
 if __name__ == "__main__":
-    seed_data()
-    generate_history()
+    seed_initial_data()
+    generate_reactive_history()
+
