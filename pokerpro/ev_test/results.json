@@ -1,0 +1,82 @@
+[
+    {
+        "spot_id": 1,
+        "choice": "bet 1/2 pot",
+        "choice_ev": 16.1,
+        "max_ev": 23.0,
+        "ev_loss": 6.899999999999999,
+        "correct": false
+    },
+    {
+        "spot_id": 2,
+        "choice": "check",
+        "choice_ev": 11.0,
+        "max_ev": 11.0,
+        "ev_loss": 0.0,
+        "correct": true
+    },
+    {
+        "spot_id": 3,
+        "choice": "raise 41",
+        "choice_ev": 15.0,
+        "max_ev": 15.0,
+        "ev_loss": 0.0,
+        "correct": true
+    },
+    {
+        "spot_id": 4,
+        "choice": "fold",
+        "choice_ev": 60.5,
+        "max_ev": 60.5,
+        "ev_loss": 0.0,
+        "correct": true
+    },
+    {
+        "spot_id": 5,
+        "choice": "check",
+        "choice_ev": 19.5,
+        "max_ev": 19.5,
+        "ev_loss": 0.0,
+        "correct": true
+    },
+    {
+        "spot_id": 6,
+        "choice": "check",
+        "choice_ev": 3.1500000000000004,
+        "max_ev": 4.5,
+        "ev_loss": 1.3499999999999996,
+        "correct": false
+    },
+    {
+        "spot_id": 7,
+        "choice": "check",
+        "choice_ev": 6.5,
+        "max_ev": 6.5,
+        "ev_loss": 0.0,
+        "correct": true
+    },
+    {
+        "spot_id": 8,
+        "choice": "call",
+        "choice_ev": 14.0,
+        "max_ev": 14.0,
+        "ev_loss": 0.0,
+        "correct": true
+    },
+    {
+        "spot_id": 9,
+        "choice": "call",
+        "choice_ev": 27.0,
+        "max_ev": 27.0,
+        "ev_loss": 0.0,
+        "correct": true
+    },
+    {
+        "spot_id": 10,
+        "choice": "fold",
+        "choice_ev": 70.0,
+        "max_ev": 70.0,
+        "ev_loss": 0.0,
+        "correct": true
+    }
+]

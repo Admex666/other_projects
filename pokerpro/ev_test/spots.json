@@ -1,0 +1,252 @@
+[
+    {
+        "id": 1,
+        "situation": "HJ, and your holding is [Ace of Heart and Ace of Club]. Before the flop, UTG raise 2.0 chips, HJ raise 6.5 chips, and UTG call. Assume that all other players that is not mentioned folded. The flop comes Nine Of Spade, Seven Of Spade, and Four Of Club, then UTG bet 7 chips, HJ raise 16 chips, and UTG call. The turn comes Six Of Spade, then UTG check.  Now it is your turn to make a move. To remind you, the current pot size is 46.0 chips, and your holding is [Ace of Heart and Ace of Club].",
+        "hand": "Ace of Heart and Ace of Club",
+        "options": [
+            {
+                "action": "fold",
+                "ev": 16.1,
+                "description": "Suboptimal move."
+            },
+            {
+                "action": "check",
+                "ev": 23.0,
+                "description": "Optimal GTO decision according to PokerBench."
+            },
+            {
+                "action": "bet 1/2 pot",
+                "ev": 16.1,
+                "description": "Suboptimal move."
+            }
+        ],
+        "optimal_action": "check",
+        "source": "PokerBench (Objective GTO Dataset)",
+        "pot_size": 46.0
+    },
+    {
+        "id": 2,
+        "situation": "BB, and your holding is [Four of Heart and Four of Club]. Before the flop, SB raise 3.0 chips, and BB call. Assume that all other players that is not mentioned folded. The flop comes Eight Of Heart, Eight Of Club, and Ten Of Club, then SB check, and BB check. The turn comes King Of Club, then SB check, BB bet 8 chips, and SB call. The river comes Two Of Heart, then SB check.  Now it is your turn to make a move. To remind you, the current pot size is 22.0 chips, and your holding is [Four of Heart and Four of Club].",
+        "hand": "Four of Heart and Four of Club",
+        "options": [
+            {
+                "action": "fold",
+                "ev": 7.7,
+                "description": "Suboptimal move."
+            },
+            {
+                "action": "bet 1/2 pot",
+                "ev": 7.7,
+                "description": "Suboptimal move."
+            },
+            {
+                "action": "check",
+                "ev": 11.0,
+                "description": "Optimal GTO decision according to PokerBench."
+            }
+        ],
+        "optimal_action": "check",
+        "source": "PokerBench (Objective GTO Dataset)",
+        "pot_size": 22.0
+    },
+    {
+        "id": 3,
+        "situation": "UTG, and your holding is [King of Heart and King of Club]. Before the flop, UTG raise 2.0 chips, and BTN call. Assume that all other players that is not mentioned folded. The flop comes King Of Spade, Seven Of Heart, and Two Of Diamond, then UTG check, and BTN check. The turn comes Six Of Heart, then UTG bet 6 chips, and BTN call. The river comes Ten Of Heart, then UTG check, and BTN bet 13 chips.  Now it is your turn to make a move. To remind you, the current pot size is 30.0 chips, and your holding is [King of Heart and King of Club].",
+        "hand": "King of Heart and King of Club",
+        "options": [
+            {
+                "action": "fold",
+                "ev": 10.5,
+                "description": "Suboptimal move."
+            },
+            {
+                "action": "check",
+                "ev": 10.5,
+                "description": "Suboptimal move."
+            },
+            {
+                "action": "raise 41",
+                "ev": 15.0,
+                "description": "Optimal GTO decision according to PokerBench."
+            }
+        ],
+        "optimal_action": "raise 41",
+        "source": "PokerBench (Objective GTO Dataset)",
+        "pot_size": 30.0
+    },
+    {
+        "id": 4,
+        "situation": "BB, and your holding is [Ace of Heart and Two of Spade]. Before the flop, SB raise 3.0 chips, BB raise 10.0 chips, and SB call. Assume that all other players that is not mentioned folded. The flop comes Six Of Spade, Eight Of Diamond, and Seven Of Club, then SB check, BB bet 4 chips, and SB call. The turn comes Nine Of Spade, then SB check, BB bet 31 chips, and SB raise 62 chips.  Now it is your turn to make a move. To remind you, the current pot size is 121.0 chips, and your holding is [Ace of Heart and Two of Spade].",
+        "hand": "Ace of Heart and Two of Spade",
+        "options": [
+            {
+                "action": "raise 3x",
+                "ev": 42.35,
+                "description": "Suboptimal move."
+            },
+            {
+                "action": "fold",
+                "ev": 60.5,
+                "description": "Optimal GTO decision according to PokerBench."
+            },
+            {
+                "action": "call",
+                "ev": 42.35,
+                "description": "Suboptimal move."
+            }
+        ],
+        "optimal_action": "fold",
+        "source": "PokerBench (Objective GTO Dataset)",
+        "pot_size": 121.0
+    },
+    {
+        "id": 5,
+        "situation": "BTN, and your holding is [King of Diamond and Ten of Club]. Before the flop, BTN raise 2.5 chips, and BB call. Assume that all other players that is not mentioned folded. The flop comes Jack Of Club, Jack Of Heart, and Four Of Spade, then BB check, and BTN check. The turn comes Four Of Diamond, then BB bet 6 chips, BTN raise 17 chips, and BB call. The river comes Ace Of Spade, then BB check.  Now it is your turn to make a move. To remind you, the current pot size is 39.0 chips, and your holding is [King of Diamond and Ten of Club].",
+        "hand": "King of Diamond and Ten of Club",
+        "options": [
+            {
+                "action": "fold",
+                "ev": 13.65,
+                "description": "Suboptimal move."
+            },
+            {
+                "action": "bet 1/2 pot",
+                "ev": 13.65,
+                "description": "Suboptimal move."
+            },
+            {
+                "action": "check",
+                "ev": 19.5,
+                "description": "Optimal GTO decision according to PokerBench."
+            }
+        ],
+        "optimal_action": "check",
+        "source": "PokerBench (Objective GTO Dataset)",
+        "pot_size": 39.0
+    },
+    {
+        "id": 6,
+        "situation": "CO, and your holding is [King of Club and Nine of Club]. Before the flop, CO raise 2.3 chips, and BB call. Assume that all other players that is not mentioned folded. The flop comes Four Of Spade, Four Of Heart, and Three Of Heart, then BB check, CO bet 2 chips, and BB call. The turn comes Jack Of Heart, then BB check, and CO check. The river comes Jack Of Spade, then BB check.  Now it is your turn to make a move. To remind you, the current pot size is 9.0 chips, and your holding is [King of Club and Nine of Club].",
+        "hand": "King of Club and Nine of Club",
+        "options": [
+            {
+                "action": "fold",
+                "ev": 3.1500000000000004,
+                "description": "Suboptimal move."
+            },
+            {
+                "action": "bet 7",
+                "ev": 4.5,
+                "description": "Optimal GTO decision according to PokerBench."
+            },
+            {
+                "action": "check",
+                "ev": 3.1500000000000004,
+                "description": "Suboptimal move."
+            }
+        ],
+        "optimal_action": "bet 7",
+        "source": "PokerBench (Objective GTO Dataset)",
+        "pot_size": 9.0
+    },
+    {
+        "id": 7,
+        "situation": "BTN, and your holding is [Queen of Club and Jack of Club]. Before the flop, BTN raise 2.5 chips, and BB call. Assume that all other players that is not mentioned folded. The flop comes Nine Of Spade, Seven Of Spade, and Four Of Club, then BB check, BTN bet 4 chips, and BB call. The turn comes Ace Of Heart, then BB check.  Now it is your turn to make a move. To remind you, the current pot size is 13.0 chips, and your holding is [Queen of Club and Jack of Club].",
+        "hand": "Queen of Club and Jack of Club",
+        "options": [
+            {
+                "action": "check",
+                "ev": 6.5,
+                "description": "Optimal GTO decision according to PokerBench."
+            },
+            {
+                "action": "bet 1/2 pot",
+                "ev": 4.55,
+                "description": "Suboptimal move."
+            },
+            {
+                "action": "fold",
+                "ev": 4.55,
+                "description": "Suboptimal move."
+            }
+        ],
+        "optimal_action": "check",
+        "source": "PokerBench (Objective GTO Dataset)",
+        "pot_size": 13.0
+    },
+    {
+        "id": 8,
+        "situation": "SB, and your holding is [Ace of Diamond and Nine of Heart]. Before the flop, SB raise 3.0 chips, and BB call. Assume that all other players that is not mentioned folded. The flop comes Jack Of Spade, Eight Of Diamond, and Three Of Club, then SB check, and BB check. The turn comes Nine Of Diamond, then SB bet 5 chips, and BB call. The river comes Two Of Heart, then SB check, and BB bet 12 chips.  Now it is your turn to make a move. To remind you, the current pot size is 28.0 chips, and your holding is [Ace of Diamond and Nine of Heart].",
+        "hand": "Ace of Diamond and Nine of Heart",
+        "options": [
+            {
+                "action": "fold",
+                "ev": 9.8,
+                "description": "Suboptimal move."
+            },
+            {
+                "action": "raise 3x",
+                "ev": 9.8,
+                "description": "Suboptimal move."
+            },
+            {
+                "action": "call",
+                "ev": 14.0,
+                "description": "Optimal GTO decision according to PokerBench."
+            }
+        ],
+        "optimal_action": "call",
+        "source": "PokerBench (Objective GTO Dataset)",
+        "pot_size": 28.0
+    },
+    {
+        "id": 9,
+        "situation": "UTG, and your holding is [King of Spade and Queen of Diamond]. Before the flop, UTG raise 2.0 chips, and BTN call. Assume that all other players that is not mentioned folded. The flop comes Five Of Club, Two Of Diamond, and Three Of Heart, then UTG check, and BTN check. The turn comes Ten Of Diamond, then UTG bet 4 chips, BTN raise 13 chips, and UTG call. The river comes Queen Of Club, then UTG check, and BTN bet 23 chips.  Now it is your turn to make a move. To remind you, the current pot size is 54.0 chips, and your holding is [King of Spade and Queen of Diamond].",
+        "hand": "King of Spade and Queen of Diamond",
+        "options": [
+            {
+                "action": "fold",
+                "ev": 18.9,
+                "description": "Suboptimal move."
+            },
+            {
+                "action": "call",
+                "ev": 27.0,
+                "description": "Optimal GTO decision according to PokerBench."
+            },
+            {
+                "action": "raise 3x",
+                "ev": 18.9,
+                "description": "Suboptimal move."
+            }
+        ],
+        "optimal_action": "call",
+        "source": "PokerBench (Objective GTO Dataset)",
+        "pot_size": 54.0
+    },
+    {
+        "id": 10,
+        "situation": "UTG, and your holding is [Ace of Club and Four of Club]. Before the flop, UTG raise 2.0 chips, and BTN call. Assume that all other players that is not mentioned folded. The flop comes Seven Of Diamond, Six Of Club, and Four Of Heart, then UTG check, and BTN check. The turn comes Five Of Heart, then UTG bet 6 chips, BTN raise 17 chips, and UTG call. The river comes King Of Heart, then UTG bet 20 chips, and BTN raise 81 chips.  Now it is your turn to make a move. To remind you, the current pot size is 140.0 chips, and your holding is [Ace of Club and Four of Club].",
+        "hand": "Ace of Club and Four of Club",
+        "options": [
+            {
+                "action": "call",
+                "ev": 49.0,
+                "description": "Suboptimal move."
+            },
+            {
+                "action": "fold",
+                "ev": 70.0,
+                "description": "Optimal GTO decision according to PokerBench."
+            },
+            {
+                "action": "raise 3x",
+                "ev": 49.0,
+                "description": "Suboptimal move."
+            }
+        ],
+        "optimal_action": "fold",
+        "source": "PokerBench (Objective GTO Dataset)",
+        "pot_size": 140.0
+    }
+]
