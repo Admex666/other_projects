@@ -104,6 +104,60 @@ def synthesize_engine_effect(df_a, retain_conv, upsell_hit, social_boost, panic_
 
 # --- SIDEBAR ---
 st.sidebar.title("🕸️ Social Decision Engine")
+
+public_calc_mode = st.sidebar.toggle("🌐 Public Loss Calculator", value=False)
+
+if public_calc_mode:
+    st.title("💸 Rejtett Veszteség Kalkulátor Éttermeknek")
+    st.markdown("Számold ki 30 másodperc alatt, mennyi profitot hagysz az asztalon minden hónapban a lemorzsolódás és az elmaradt upsell miatt.")
+    
+    st.markdown("---")
+    col1, col2 = st.columns(2)
+    with col1:
+        st.subheader("📊 Étterem Adatai")
+        orders = st.number_input("Havi rendelésszám (db)", min_value=100, value=8000, step=100)
+        avg_ticket = st.number_input("Átlagos kosárérték (Ft)", min_value=1000, value=4500, step=100)
+        margin = st.slider("Becsült Haszonkulcs (%)", 0, 100, 35) / 100
+        churn_rate = st.slider("Lemorzsolódás (30 nap után elvesztett vendégek) (%)", 0, 100, 15) / 100
+        
+        st.subheader("❓ Jelenlegi folyamatok")
+        track_churn = st.checkbox("Követitek a vendégeitek fogyasztását a lemorzsolódás megelőzésére?")
+        has_upsell = st.checkbox("Van aktív és mért upsell stratégiátok?")
+        track_referrals = st.checkbox("Ösztönzitek a csoportos fogyasztást és az ajánlásokat?")
+        
+    with col2:
+        # Kalkulációk (csak ha NINCS megoldva)
+        monthly_rev = orders * avg_ticket
+        
+        # Y = Churn Gap
+        churn_gap = (orders * churn_rate) * avg_ticket * margin if not track_churn else 0
+        
+        # Z = Upsell Gap
+        upsell_gap = (orders * 0.40) * 800 * margin if not has_upsell else 0
+        
+        # W = Network Gap
+        network_gap = (orders / 2) * 0.10 * avg_ticket * margin if not track_referrals else 0
+        
+        total_loss = churn_gap + upsell_gap + network_gap
+        
+        st.subheader("🚨 Elszalasztott Nettó Profit")
+        st.metric(label="Havi Veszteség", value=f"{total_loss:,.0f} Ft")
+        st.metric(label="Éves Veszteség", value=f"{(total_loss * 12):,.0f} Ft")
+        
+        st.markdown("---")
+        st.markdown("**Miből tevődik ez össze?**")
+        st.markdown(f"📉 **{churn_gap:,.0f} Ft**: Elvesztett törzsvendégek, akiket egy automatikus üzenettel visszahozhattunk volna.")
+        st.markdown(f"🍔 **{upsell_gap:,.0f} Ft**: Elmaradt extra köretek/italok, mert a személyzet nem ajánlotta fel következetesen.")
+        st.markdown(f"🕸️ **{network_gap:,.0f} Ft**: Elmaradt baráti meghívások, mert nem ösztönöztük a csoportos étkezést.")
+        
+    st.markdown("---")
+    st.success("Tudjuk, hogyan állítsd meg ezt a veszteséget emberi beavatkozás nélkül. Érdekel a megoldás?")
+    if st.button("Kérem a személyre szabott stratégiát (Demo) 🚀", use_container_width=True):
+        st.balloons()
+        st.info("Ezen a ponton kérnénk be az e-mail címet vagy egy Calendly időpontfoglalást a landing page-en!")
+        
+    st.stop() # Megállítja a dashboard többi részének betöltését
+
 pitch_mode = st.sidebar.toggle("🚀 Enterprise Mode", value=True)
 
 if pitch_mode:
