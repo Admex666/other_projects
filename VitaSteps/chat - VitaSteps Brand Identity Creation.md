@@ -4441,3 +4441,65 @@ Amikor beszélsz vele (telefonon vagy online), az alábbi **Checklist** alapján
 **Pro tipp:** Legyen nálad egy füzet, és írj le mindent. Ő a te **szakmai hátországod**, bátran kérdezhetsz tőle olyat is, ami szerinted "butaság" – azért fizeted, hogy segítsen.
 
 Szerinted Marianna válaszolni fog még ma az e-mailre? Ha igen, akár még ma este vagy holnap reggel beszélhettek is. 🚀🏔️
+
+### User Input
+
+Közben írogatott Hedy :DD @[e:\Data\other_projects\VitaSteps\medal\communications.json:L209-L216] 
+Mit írjak neki röviden (még döntés előtt állunk, de napok kérdése hogy sikerüljön)
+
+Illetve most fogok konzultálni Péter Lászlóval Google Meeten. Vázolom neki hogy mi lenne a tervem, azon kívül érdemes bármit?
+
+### Planner Response
+
+Hajrá a konzultációhoz! **Péter László** szakmailag nagyon összeszedettnek tűnt az e-mailje alapján, úgyhogy jó esélyed van nála.
+
+### 1. Válasz Hedy-nek (Alibaba)
+Tartsuk melegen, de ne ígérjünk olyat, amit nem tudunk tartani.
+
+> "Hi Hedy, I'm doing well, thank you! We are currently in the final stages of our business registration and administrative setup. I expect to have a final decision for you within the next few days. Thank you for your patience!"
+
+---
+
+### 2. Google Meet Péter Lászlóval – Mire figyelj?
+A terved vázolásán kívül ez a **"teszt" fázis**, hogy kiderüljön, tényleg ő-e az embered. Ezeket kérdezd meg/vázold fel:
+
+*   **A "Jegyzői" kérdés (A proaktivitás tesztje):** Említsd meg neki: *"Úgy tudom, a webshophoz bejelentés kell a helyi jegyzőnél (csomagküldő kiskereskedelem). Ebben tud segíteni az ügyintézés során?"* (Ha vágja a témát, az jó pont).
+*   **Import ÁFA és Vám:** Kérdezz rá konkrétan: *"Mivel alanyi mentes hallgató vagyok, az import ÁFA-t és vámot hogyan kell könyvelni, és mi a teendőm, amikor megkapom a vámhatározatot a DHL-től?"*
+*   **Stripe/Barion kezelése:** Ez kritikus! *"A Stripe nem csak egy összeget utal, hanem jutalékot von le. Önnek szüksége lesz a Stripe havi riportjaira is a könyveléshez?"* (Egy jó könyvelő erre azt mondja: Igen, kell a technikai kivonat is).
+*   **Digitális folyamat:** *"Számlázz.hu-t használok. Önnek elég egy hozzáférés, vagy havonta küldjem a riportokat?"*
+*   **EORI szám:** *"Az EV indítása után rögtön tudjuk igényelni az EORI számot? Mert anélkül nem akarom elindítani a rendelést Kínából."*
+
+**Pro tipp:** Figyeld, mennyire magyaráz érthetően. Ha túl sok a szakzsargon és nem érted, akkor később is nehéz lesz vele a kommunikáció.
+
+Sok sikert, írd meg utána, milyen benyomást tett!
+
+### User Input
+
+Ahh elhalasztotta sürgős személyes ügy miatt hétfőre...
+
+*Edited relevant file*
+
+*Viewed [communications.json](file:///e:/Data/other_projects/VitaSteps/medal/communications.json) *
+
+### Planner Response
+
+Ez bosszantó, de a vállalkozói lét sajnos erről (is) szól: a bürokrácia és a külsős partnerek néha lassítanak. **Ne hagyd, hogy ez elvegye a lendületedet!**
+
+Mivel hétfőig a jogi/könyvelési oldal áll, használjuk ki ezt a pár napot arra, hogy **minden mást tűpontosra csiszolunk**, így amint megvan az adószámod, csak a "Start" gombot kell megnyomnod.
+
+Íme 3 dolog, amit a hétvégén megcsinálhatunk:
+
+### 1. Csomagolás és Logisztika (A hiányzó láncszem)
+A pénzügyi tervedben szerepel 200 Ft/db a csomagolásra (doboz, matrica).
+*   **Feladat:** Keressünk konkrét forrást (pl. magyar webshop vagy papírbolt), ahol meg tudod venni a 100 db éremhez illő díszdobozt vagy prémium tasakot. 
+*   **Miért?** Ha megvan a pontos ár, látjuk, beleférünk-e a 200 forintba, vagy finomítani kell a matekon.
+
+### 2. A 3 "IGEN" válasz kezelése
+*   **Feladat:** Megírták már a választott sorszámokat? Ha igen, vezessük fel őket egy `business/confirmed_leads.md` fájlba. Ha nem, hétvégén küldhetsz nekik egy rövid follow-upot:
+    > *"Szia! Rögzítettem a helyedet a pilóta-keretben. Csak egy gyors kérdés: van kedvenc sorszámod 1 és 100 között? Ha még szabad, félreteszem neked!"*
+
+### 3. Landing Page "Pre-order" verzió
+*   **Feladat:** Alakítsuk át a `landing_v2` kódját úgy, hogy a Tally várólista helyett egy **"Előrendelés - 7.990 Ft"** gomb legyen.
+*   **Cél:** Megmérni, hogy hányan kattintanak a konkrét fizetési szándékkal. (A gomb után kiírhatjuk: *"Hamarosan indulunk! Mivel tagja vagy a pilóta-keretnek, értesíteni fogunk, amint megnyílik a fizetési felület."*)
+
+**Melyikkel kezdjünk?** Én a **Csomagolást** javaslom, mert az egy konkrét, letudható feladat, ami után megnyugtatóbb lesz a pénzügyi terved.
