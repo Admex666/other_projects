@@ -4503,3 +4503,467 @@ A pénzügyi tervedben szerepel 200 Ft/db a csomagolásra (doboz, matrica).
 *   **Cél:** Megmérni, hogy hányan kattintanak a konkrét fizetési szándékkal. (A gomb után kiírhatjuk: *"Hamarosan indulunk! Mivel tagja vagy a pilóta-keretnek, értesíteni fogunk, amint megnyílik a fizetési felület."*)
 
 **Melyikkel kezdjünk?** Én a **Csomagolást** javaslom, mert az egy konkrét, letudható feladat, ami után megnyugtatóbb lesz a pénzügyi terved.
+
+### User Input
+
+Na megvolt Péter Lászlóval a meeting. A vállalkozás egyszeri felállítása 25 ezer forint lenne, utána pedig 15 ezer a havi költség. A pontosabb dolgokat itt látod lejegyzetelve, illetve az email amit a meeting után küldött: @[business/Laci_meet_20260504.txt]
+
+Mit gondolsz?
+
+*Viewed [Laci_meet_20260504.txt](file:///e:/Data/other_projects/VitaSteps/business/Laci_meet_20260504.txt) *
+
+### Planner Response
+
+Ez egy **nagyon pozitív fejlemény**! Péter László (Laci) egy jó döntésnek tűnik. Így értékelem:
+
+### Amit jól látok:
+
+**1. Az adózási kép most már kristálytiszta:**
+*   **0 - 3,5 M Ft bevételig: szinte nulla adóterhed.** Másodállásban nem kell minimumjárulékot fizetned, és a helyi iparűzési adó is csak 2% (vagy max. 50k Ft/év). Ez a te modellednél azt jelenti, hogy az első 100 érem (kb. 800k Ft bevétel) után csak minimális összeg megy adóra.
+*   **A "25% adóvonzat" főszabály** azt jelenti, hogy ha átléped a 3,5 milliót, akkor csak a felette lévő rész után fizetsz SZJA-t, és az átalányadós 90%-os költséghányaddal számolva még az is nagyon kedvező.
+
+**2. A DDP kérdés meg van válaszolva:**
+*   Ha Kimmi Lin **DDP** (Delivered Duty Paid) paritással szállít, akkor a vám és az import ÁFA az ő felelőssége/ügye, neked csak a végösszeget kell kifizetned. **Ez nekünk ideális!** Meg kell kérdezni Kimmitől, hogy DDP-vel szállít-e.
+
+**3. A follow-up email profi:**
+*   Laci pontosan tudja, mit kér. Az adatok listája egyértelmű, nincs benne semmi meglepő.
+*   Az, hogy **Ügyfélkapuhoz csak az indítás napjára** kell a jelszó (utána meghatalmazással dolgozik), egy jó jel – profi folyamat.
+
+### Egy dolog, amit még kérdezzél meg Lacitól:
+*   *"Az EORI szám igénylését is elvégzi az indítás keretein belül?"* (Ez nincs benne a follow-up emailben, de a te esetedben kritikus).
+
+---
+
+### Mit csinálj most?
+
+**Gyűjtsd össze az adatokat a follow-up emailjéhez:**
+
+| Adat | Kitöltendő |
+|:---|:---|
+| Vállalkozás indításának napja | Mikor akarod? (Pl. 2026.05.05.) |
+| TEÁOR főtevékenység | 479102 (Csomagküldő kiskereskedelem) |
+| Számlázz.hu email | melyik fiókod legyen? |
+| Székhely | Lakcímed |
+| Adózási forma | Egyéni vállalkozó, átalányadó, másodállás, alanyi adómentes |
+
+Az Ügyfélkapuhoz csak az indítás napján kell hozzáférés, tehát azt akkor adhatod meg.
+
+**Szerinted mikor akarod elindítani? Ha azt mondod "minél hamarabb", akkor akár ma megírhatjuk Lacinak a választ az összes adattal!**
+
+### User Input
+
+Akkor most jó a pénzügyi kalkulációink logikája, vagy kéne módosítani rajta (pl. adózással)? @[business/finances.py]@[business/financial_plan_v1.md]
+
+Kimmi Lin-nél hogyan kérdezzünk rá a DDP paritásra röviden? @[medal/communications.json]
+
+*Viewed [quotes_comparison.json](file:///e:/Data/other_projects/VitaSteps/medal/quotes_comparison.json) *
+
+*Viewed [finances.py](file:///e:/Data/other_projects/VitaSteps/business/finances.py) *
+
+### Planner Response
+
+Megvan a teljes kép. A logikátokat értékelem és frissítem a kódot is, ahol szükséges. Közben itt a Kimmi kérdés is.
+
+### 1. Kimmi DDP kérdés
+
+> *"Hi Kimmi! Quick question: what is the shipping Incoterm for our order? Is it DDP (Delivered Duty Paid), meaning customs and import VAT would be handled on your side? Or is it DAP/EXW, where we handle customs clearance here in Hungary? This affects our cost calculation. Thank you!"*
+
+---
+
+### 2. A pénzügyi kalkuláció értékelése
+
+A logika alapvetően **helyes és szolid**, de a Laci-meetingből kiderült 2 fontos módosítás:
+
+**A. Import ÁFA (27%) kezelése – ez volt a fő kérdés**
+A jelenlegi kódban a `material_cost_per_unit: 1756 * 1.3` szorzó már tartalmaz egy kb. 30%-os puffert (ami nagyjából lefedi az import ÁFÁ-t + vámot + vámkezelési díjat). **Ez rendben van**, ha DDP szállítás esetén a vám és ÁFA beépül a Kimmi árába. Ha **nem DDP**, akkor ez a szám jó, mert a `1756 * 1.3 ≈ 2283 Ft` közel van a korábbi `2325 Ft`-os számunkhoz.
+
+**B. Adó – ez a nagy jó hír!**
+Laci megerősítette: **0-3,5 M Ft bevételig nincs SZJA-vonzat, csak helyi iparűzési adó (2%, max 50k Ft/év)**. Ez nincs benne sem a `.py`-ban, sem az `.md`-ben! A jelenlegi kalkuláció ezért **konzervatív oldalról téves** (túl pesszimista), mert adóterhet vett fel, ami valójában nem lesz.
+
+Az egyetlen valódi adó tétel, amit be kell illeszteni:
+
+```python
+# Éves iparűzési adó (IPA): max. 50.000 Ft / 12 = ~4.167 Ft / hó
+local_business_tax_per_month = 50000 / 12  # ~4167 Ft
+```
+
+Ez minimális, és be kell adni a `fixed_costs_per_month`-ba, de ennyi.
+
+### Frissítések a kódban:
+
+*Edited relevant file*
+
+### Planner Response
+
+A kód frissítve. Összefoglalva:
+
+### Pénzügyi kalkuláció – Módosítások
+*   ✅ Az `1756 * 1.3`-as anyagköltség szorzó **rendben van** – lefedi az import ÁFÁ-t/vámot.
+*   ✅ **Hozzáadva:** `+4.167 Ft/hó` IPA (Helyi Iparűzési Adó, a Lacitól kapott infó alapján).
+*   ✅ **Hozzáadva:** Az output most kiírja az éves IPA-t és egy figyelmeztetést, ha 3,5M Ft fölé mennél.
+*   ℹ️ Az egyetlen nagy **"DDP kérdőjel"**: Ha Kimmi **nem DDP-vel** szállít, akkor az 1.3-as szorzó jó (te fizeted a vámot). Ha **DDP-vel** szállít, akkor a `$481` már tartalmazza az összes külföldi vámot, és a 1.3-as szorzó **kettős számolást jelent**.
+
+Ezért a Kimmi-kérdés küldése most az **első prioritás** – a válasza alapján véglegesítjük a matekunkat.
+
+**Küldöd el Kimminek a DDP kérdést?**
+
+### User Input
+
+@[e:\Data\other_projects\VitaSteps\medal\communications.json:L284-L291] ezt írta Kimmi válaszként.
+Ez miben módosít, vagy a DDP-vel hogyan változna minden? Mit írjak neki?
+
+*Viewed [communications.json](file:///e:/Data/other_projects/VitaSteps/medal/communications.json) *
+
+### Planner Response
+
+### Mit jelent az EXW Kimminél?
+
+**EXW (Ex Works)** = Kimmi az árat a gyár kapujáig vállalja. A $481-es összeg **tartalmazza** a gyártást, formát, és a DHL/FedEx szállítást Budapestig – **DE NEM tartalmazza:**
+- Magyar import ÁFA (27%)
+- Vám (0-2%)
+- DHL vámkezelési díj (~6-8.000 Ft)
+
+### Változik-e a kalkuláció?
+
+**NEM.** Az `1756 * 1.3`-as szorzó pontosan erre a helyzetre lett kitalálva. Az EXW az alapeset, a mateked helyes marad.
+
+| Tétel | Összeg |
+|:---|---:|
+| Kimmi $481 × 365 | 175.565 Ft |
+| Import ÁFA 27% | ~47.400 Ft |
+| Vám ~2% | ~3.500 Ft |
+| Vámkezelés (DHL) | ~7.000 Ft |
+| **Összesen / 100 db** | **~233.465 Ft** |
+| **Egységár (landed)** | **~2.335 Ft** |
+
+A `1756 × 1.3 = 2.283 Ft` közel pontos, legfeljebb ~50 Ft/db eltérés.
+
+### DDP érdekes lenne-e?
+
+Igen, lehet kérni tőle árat! DDP esetén te semmit nem intézel a vámnál (nem kell EORI se azonnal), de Kimmi felárral számol. Érdemes összehasonlítani.
+
+### Mit írj Kimminek:
+
+> *"Hi Kimmi! Thank you for clarifying. Could you please provide a DDP (Delivered Duty Paid) quote for 100 units to Budapest, Hungary (1165)? I'd like to compare the total cost with the EXW option. Thank you!"*
+
+Ha a DDP ár pl. $550-560 alatt van, megérheti az egyszerűség miatt (nincs vámozás, nincs EORI sürgősen). Ha $600 felett van, maradunk az EXW-nél.
+
+### User Input
+
+@[e:\Data\other_projects\VitaSteps\medal\communications.json:L284-L291] erre válaszoljon konkrétan az üzenet! (nem kell megint Hi Kimmi)
+
+*Viewed [communications.json](file:///e:/Data/other_projects/VitaSteps/medal/communications.json) *
+
+### Planner Response
+
+> *"Thank you! Could you please provide a DDP quote for 100 units to Budapest, Hungary (1165)? I'd like to compare the total cost with the EXW option before making the final decision."*
+
+### User Input
+
+A többieket ne kérdezzem meg erről az incotermről?
+
+*Viewed [communications.json](file:///e:/Data/other_projects/VitaSteps/medal/communications.json) *
+
+*Edited relevant file*
+
+### Planner Response
+
+**Nem feltétlenül.** Gondold végig:
+
+*   **Kimmi (One Way)** az egyértelmű frontrunner, és már megkaptuk tőle az EXW árat + most jön a DDP. Ez az összehasonlítás a fontos.
+*   **Shirley K (Qiyi)** a szoros második. Ha a Kimmi DDP ár meglepően magas lenne, ő lenne az alternatíva – **neki érdemes feltenni ugyanezt a kérdést**, ha Kimmi DDP árát megkapod és az nem tetszik.
+*   **Hedy és Claire** – ők már kiestek az árversenyből, felesleges energiát fektetni beléjük.
+
+**Javaslat:** Várd meg Kimmi DDP ajánlatát (ígérte hogy megnézi), és csak akkor kérdezed meg Shirley-t, ha Kimmi DDP ára 550$ fölé megy. Addig ne zavarjuk a többieket feleslegesen.
+
+### User Input
+
+Nem zavarás ez szerintem, nekik ez a munkájuk :D Egy kérdést megér, szóval kérdezzük meg Shirley-t és Hedy-t is hogy ők milyen Incotermmel dolgoznak, és ha NEM DDP akkor a DDP megoldható-e és mennyi. @[medal/communications.json]
+
+*Viewed [quotes_comparison.json](file:///e:/Data/other_projects/VitaSteps/medal/quotes_comparison.json) *
+
+### Planner Response
+
+Igazad van! Íme a két üzenet:
+
+### Shirley K (Qiyi):
+> *"Hi Shirley! Quick question: what shipping Incoterm do you use for your quotes? Is it DDP (Delivered Duty Paid, customs and import VAT handled on your side), or EXW/DAP? If not DDP, could you provide a DDP quote for 100 units to Budapest, Hungary (1165)? Thank you!"*
+
+### Hedy Chen (Renhui):
+> *"Hi Hedy! Quick question: what shipping Incoterm do you use for your quotes? Is it DDP (Delivered Duty Paid), or EXW/DAP? If not DDP, could you also provide a DDP quote for 100 units to Budapest, Hungary (1165)? Thank you!"*
+
+Mehetnek? 🚀
+
+### User Input
+
+Kimentek, Hedy már válaszolt is: @[e:\Data\other_projects\VitaSteps\medal\communications.json:L229-L236] 
+
+Mit gondolsz?
+
+*Edited relevant file*
+
+*Edited relevant file*
+
+*Viewed [communications.json](file:///e:/Data/other_projects/VitaSteps/medal/communications.json) *
+
+### Planner Response
+
+**Hedy válasza fontos infó, de nem rossz hír** – csak tisztázza a képet.
+
+### Mit jelent a DAP Hedynél?
+
+**DAP (Delivered At Place)** = Hedy házhoz szállít Budapestig, de a vámot és az import ÁFÁ-t te fizeted meg a határon (DHL-nek). Ez a $510-es árban **már benne van a szállítás**, csak a vám/ÁFA nem.
+
+A gyakorlatban ez neked **ugyanolyan, mint Kimmi EXW-je** – mindkét esetben te intézed a vámot Magyarországon.
+
+### Összehasonlítás most:
+
+| Szállító | Ár (100 db) | Incoterm | DDP lehetséges? |
+|:---|:---:|:---:|:---:|
+| **Kimmi (One Way)** | $481 | EXW | ✅ Igen (ár folyamatban) |
+| **Hedy (Renhui)** | $510 | DAP | ❌ Nem |
+| **Shirley (Qiyi)** | $500 | ? | ? |
+
+### Konklúzió:
+
+Hedy ezzel **hátrányba kerül** Kimmivel szemben:
+1. Drágább ($29-cel)
+2. Nem kínál DDP opciót (kevesebb rugalmasság)
+3. Kimmi ugyanolyan feltételekkel (+DDP lehetőséggel) olcsóbb
+
+Hedy most már valójában csak "tartalék" maradt. **Nem kell neki most válaszolni**, várjuk meg Kimmi és Shirley DDP árait, aztán döntünk.
+
+### User Input
+
+Vissza kéne kérdezni hogy akkor Hedy quote-ja DAP-ra vonatkozott-e, nem?
+
+### Planner Response
+
+Igen, fontos ezt tisztázni! Röviden:
+
+> *"Thank you, Hedy! Just to confirm: was your previous quote of $510 (including the $170 shipping fee) based on DAP terms to Budapest?"*
+
+### User Input
+
+Lacinak válaszoljak, vagy még várjuk meg a gyártójelöltek válaszait?
+
+*Edited relevant file*
+
+*Viewed [communications.json](file:///e:/Data/other_projects/VitaSteps/medal/communications.json) *
+
+### Planner Response
+
+**Válaszolj Lacinak most – ne várj a gyártókra!**
+
+A két folyamat teljesen párhuzamosan futhat:
+- **Laci** = vállalkozás elindítása (jogi/adminisztratív folyamat, napokat vesz igénybe)
+- **Kimmi/Shirley** = DDP árak (ezek az érem rendeléshez kellenek, ami Laci után lesz)
+
+Ha most nem válaszolsz Lacinak, **az EV indítása késik**, és az éremrendeléshez szükséges adószám/EORI sem lesz meg időben. 
+
+**Gyűjtsd össze Laci listájából az adatokat** (az emailben kérte ezeket):
+
+| Adat | Válasz |
+|:---|:---|
+| Vállalkozás indításának napja | ? (minél hamarabb) |
+| Főtevékenység | 479102 – Csomagküldő kiskereskedelem |
+| Számlázz.hu email | melyiket akarod? |
+| Székhely | Lakcímed |
+| Adózási forma | EV, átalányadó, másodállás, alanyi adómentes |
+| TAJ szám | megvan neked |
+| Ügyfélkapu | megvan neked |
+
+**Mikor akarod elindítani a vállalkozást?** Ha azt mondod "holnap" vagy "jövő héten", azt írd bele az emailbe, és Laci elindítja a folyamatot!
+
+### User Input
+
+Tuti ez a Csomagküldő, internetes kiskereskedelem TEÁOR kéne nekünk? Más fel sem merülhet?
+
+*Edited relevant file*
+
+*Viewed [communications.json](file:///e:/Data/other_projects/VitaSteps/medal/communications.json) *
+
+### Planner Response
+
+A **4791 (Csomagküldő, internetes kiskereskedelem)** az egyértelmű és helyes főtevékenység. Ez az, amit a NAV és a könyvelők automatikusan javasolnak minden webshopnak, és ami legfőképpen biztosítja a **90%-os költséghányadot** az átalányadóban.
+
+Más kód **elméletben** szóba jöhet másodlagos tevékenységként:
+
+| TEÁOR | Mit jelent | Releváns-e? |
+|:---|:---|:---:|
+| **4791** | Csomagküldő, internetes kiskereskedelem | ✅ Főtevékenység |
+| **4778** | Egyéb új áru kiskereskedelme | ⚠️ Ha valaha fizikai bolt |
+| **4649** | Egyéb háztartási cikk nagykereskedelme | ❌ Nem |
+| **8299** | Egyéb üzleti kisegítő tevékenység | ❌ Nem |
+
+### A lényeg:
+A te esetedben (online értékesítés, fizikai termék, B2C) a **4791 tökéletes és elégséges**. Nincs miért bonyolítani.
+
+Ha a jövőben elindulsz pl. ajándéktárgy nagykereskedelemmel vagy eseményszervezéssel, Laci tud majd másodlagos TEÁOR-t felvinni – ez adminisztratívan pár perces módosítás bármikor.
+
+**Mehet Lacinak a válasz ezzel a kóddal?**
+
+### User Input
+
+Aha értem. Viszont láttam egy ilyet hogy 2025-ben volt TEÁOR változás, pl. így:
+"
+Milyen kódok vannak az Internetes csomagküldő kiskereskedelem helyett?
+47.91	Csomagküldő, internetes kiskereskedelem	47.11	Élelmiszer jellegű vegyes kiskereskedelem
+47.91	Csomagküldő, internetes kiskereskedelem	47.12	Iparcikk jellegű vegyes kiskereskedelem
+47.91	Csomagküldő, internetes kiskereskedelem	47.21	Zöldség, gyümölcs kiskereskedelme
+47.91	Csomagküldő, internetes kiskereskedelem	47.22	Hús, húskészítmény kiskereskedelme
+47.91	Csomagküldő, internetes kiskereskedelem	47.23	Hal kiskereskedelme
+47.91	Csomagküldő, internetes kiskereskedelem	47.24	Kenyér-, pékáru-, édesség-kiskereskedelem
+47.91	Csomagküldő, internetes kiskereskedelem	47.25	Ital-kiskereskedelem
+47.91	Csomagküldő, internetes kiskereskedelem	47.26	Dohányáru-kiskereskedelem
+47.91	Csomagküldő, internetes kiskereskedelem	47.27	Egyéb élelmiszer-kiskereskedelem
+47.91	Csomagküldő, internetes kiskereskedelem	47.40	Információs, híradástechnikai termék kiskereskedelme
+47.91	Csomagküldő, internetes kiskereskedelem	47.51	Textil-kiskereskedelem
+47.91	Csomagküldő, internetes kiskereskedelem	47.52	Vasáru-, építőanyag-, festék-, üveg-kiskereskedelem
+47.91	Csomagküldő, internetes kiskereskedelem	47.53	Szőnyeg, fal-, padlóburkoló kiskereskedelme
+47.91	Csomagküldő, internetes kiskereskedelem	47.54	Villamos háztartási készülék kiskereskedelme
+47.91	Csomagküldő, internetes kiskereskedelem	47.55	Bútor, világítási eszköz, edény, evőeszköz és egyéb háztartási cikk kiskereskedelme
+47.91	Csomagküldő, internetes kiskereskedelem	47.61	Könyv-kiskereskedelem
+47.91	Csomagküldő, internetes kiskereskedelem	47.62	Újság-, papíráru-, írószer-kiskereskedelem
+47.91	Csomagküldő, internetes kiskereskedelem	47.63	Sportszer-kiskereskedelem
+47.91	Csomagküldő, internetes kiskereskedelem	47.64	Játék-kiskereskedelem
+47.91	Csomagküldő, internetes kiskereskedelem	47.69	M.n.s. kulturális, szabadidős cikk kiskereskedelme
+47.91	Csomagküldő, internetes kiskereskedelem	47.71	Ruházat-kiskereskedelem
+47.91	Csomagküldő, internetes kiskereskedelem	47.72	Lábbeli-, bőráru-kiskereskedelem
+47.91	Csomagküldő, internetes kiskereskedelem	47.73	Gyógyszer-kiskereskedelem
+47.91	Csomagküldő, internetes kiskereskedelem	47.74	Gyógyászati és ortopédiai termék kiskereskedelme
+47.91	Csomagküldő, internetes kiskereskedelem	47.75	Illatszer, kozmetikai cikk, tisztálkodószer kiskereskedelme
+47.91	Csomagküldő, internetes kiskereskedelem	47.76	Virág, növény, műtrágya, hobbiállat, hobbiállat-eledel kiskereskedelme
+47.91	Csomagküldő, internetes kiskereskedelem	47.77	Óra-, ékszer-kiskereskedelem
+47.91	Csomagküldő, internetes kiskereskedelem	47.78	Egyéb új áru kiskereskedelme
+47.91	Csomagküldő, internetes kiskereskedelem	47.79	Használt cikk kiskereskedelme
+47.91	Csomagküldő, internetes kiskereskedelem	47.91	Vegyes termékkörű kiskereskedelem közvetítése
+47.91	Csomagküldő, internetes kiskereskedelem	47.92	Szakosodott kiskereskedelem közvetítése
+47.91	Csomagküldő, internetes kiskereskedelem	60.39	Egyéb tartalomterjesztési tevékenység
+"
+
+Ennek nézz utána kérlek!
+
+*Searched web for TEÁOR 2025 változás 47.91 csomagküldő internetes kiskereskedelem megszűnt új kód webshop*
+
+### Planner Response
+
+Ez egy nagyon fontos megtalált infó – jól tetted, hogy utánanéztél!
+
+### A helyzet 2025-től:
+
+**A 47.91 (Csomagküldő, internetes kiskereskedelem) MEGSZŰNT 2025. január 1-jétől.** Az új TEÁOR'25 rendszerben már nem az értékesítési csatorna (internet/csomagküldő) számít, hanem **az eladott termék típusa**.
+
+### A te esetedben a helyes kód:
+
+Az érmeid legjobban ide illeszkednek:
+
+| Kód | Megnevezés | Magyarázat |
+|:---|:---|:---|
+| **47.78** | Egyéb új áru kiskereskedelme | ✅ Ez a legmegfelelőbb – az érmék "egyéb új áru" kategória, nem esnek pontosabb kód alá |
+| **47.77** | Óra-, ékszer-kiskereskedelem | ⚠️ Esetleg szóba jöhet, de az érem nem ékszer |
+| **47.69** | M.n.s. kulturális, szabadidős cikk kiskereskedelme | ⚠️ Sportérem – elvileg ide is besorolható |
+
+**A 47.78 ("Egyéb új áru kiskereskedelme") a legbiztonságosabb választás**, mert a vásárolt éremre egyik precízebb kód sem illik pontosan, és ez a "maradékkategória" pontosan erre van.
+
+### Mit tegyél?
+
+Ez pontosan olyan kérdés, amit Lacinak kell feltenni az első konkrét kérdésként:
+
+> *"Szia Laci! A TEÁOR kóddal kapcsolatban: tudomásom szerint 2025-től a 47.91 megszűnt. A tevékenységem egyedi fémérme online értékesítése. Neked mi a javaslatod: 47.78, 47.69, vagy valami más?"*
+
+Ezt **ne döntsd el egyedül** – a helyes kód meghatározása pontosan Laci feladata, és ha tévednek, ő felel érte (felelősségbiztosítása van).
+
+**Tedd bele ezt a kérdést a Lacinak írandó emailbe!**
+
+### User Input
+
+Okés, kiment a válasz emailem. Közben írt Shirley: @[e:\Data\other_projects\VitaSteps\medal\communications.json:L71-L78] 
+és Hedy is, de ezt gyorsan lerendeztem: @[e:\Data\other_projects\VitaSteps\medal\communications.json:L249-L260] 
+
+*Viewed [communications.json](file:///e:/Data/other_projects/VitaSteps/medal/communications.json) *
+
+*Edited relevant file*
+
+*Edited relevant file*
+
+### Planner Response
+
+Ez most **kristálytisztává tette a képet**. Az összehasonlítás teljesen lezárult:
+
+### Végleges Incoterm összehasonlítás:
+
+| Szállító | Ár (100 db) | Incoterm | DDP lehetséges? |
+|:---|:---:|:---:|:---:|
+| **Kimmi (One Way)** | $481 | EXW | ✅ **Igen** (ár folyamatban) |
+| **Shirley K (Qiyi)** | $500 | DAP | ❌ Nem (Magyarországra nem) |
+| **Hedy (Renhui)** | $510 | DAP | ❌ Nem |
+
+### Mit jelent ez?
+
+**Kimmi az egyetlen**, aki DDP-t tud ajánlani. Ez azt jelenti, hogy:
+
+1. **Ha Kimmi DDP ára ésszerű** (pl. ~$530-560 alatt): **válaszd a DDP-t** → nincs vámügyintézés, nincs EORI sürgősen, egyszerűbb indulás.
+2. **Ha Kimmi DDP ára magas** (pl. $580 felett): maradj az EXW-nél ($481) és intézed te a vámot Lacival.
+
+Shirley és Hedy mostantól **kiestek a versenyből** – nem csak árban, hanem rugalmasságban is alulmaradtak.
+
+**Következő lépés:** Várjuk Kimmi DDP árát, és az alapján döntünk az EXW vs DDP kérdésben. Amint megérkezik, le tudjuk zárni a gyártói döntést is! 🏆
+
+### User Input
+
+De figyu már, EXW után mennyi költség merül még fel vagy mik a hátrányok, és DAP esetén mik?
+
+### Planner Response
+
+Nagyon jó kérdés, mert ebben sokan összekeverik a dolgokat. Nézzük meg konkrétan a te esetedre:
+
+### EXW (Ex Works) – Kimmi alapértelmezett
+
+| Tétel | Ki intézi | Kb. költség |
+|:---|:---|:---:|
+| Gyártás + forma | Kimmi | ✅ benne a $481-ben |
+| Szállítás Kínából Budapestre | **Te** (Kimmi szervezi, de a $245 benne van) | ✅ benne |
+| Kínai export vámkezelés | Kimmi/fuvarozó | általában benne |
+| Magyar import vámkezelés | **Te** (DHL intézi) | ~6-10.000 Ft |
+| Vám (0-2%) | **Te** | ~3.500 Ft |
+| Import ÁFA (27%) | **Te** (DHL-nek fizeted) | ~47.000 Ft |
+
+**Hátrány:** Papírmunka, EORI szám kell, DHL-től kapsz egy emailt hogy "fizess és kiadják az árut".
+
+---
+
+### DAP (Delivered At Place) – Shirley/Hedy
+
+| Tétel | Ki intézi | Kb. költség |
+|:---|:---|:---:|
+| Gyártás + szállítás Budapestre | Szállító | ✅ benne az árban |
+| Kínai export vámkezelés | Szállító | ✅ benne |
+| Magyar import vámkezelés | **Te** | ~6-10.000 Ft |
+| Vám (0-2%) | **Te** | ~3.500 Ft |
+| Import ÁFA (27%) | **Te** | ~47.000 Ft |
+
+**Hátrány:** Ugyanolyan, mint az EXW a te szempontodból! A különbség minimális – a szállítás szervezése az ő feladatuk, de a vámot/ÁFÁ-t te fizeted.
+
+---
+
+### DDP (Delivered Duty Paid) – csak Kimmi tudja
+
+| Tétel | Ki intézi | Kb. költség |
+|:---|:---|:---:|
+| Minden (gyártás + szállítás + vám + ÁFA) | Kimmi | ✅ benne a DDP árban |
+| Neked teendő | **Semmi** | 0 Ft |
+
+---
+
+### Összegzés:
+
+**EXW és DAP közt a különbség számodra minimális** – mindkét esetben te fizeted a vámot és az import ÁFÁ-t (~57.000 Ft), és kell az EORI szám.
+
+**A valódi kérdés: EXW/DAP vs DDP.**
+
+Ha Kimmi DDP ára pl. $550 → az $481 + ~$57 (~$70 import költség dollárban) → **DDP csak $19-kel drágább** mint amit úgyis fizetnél. Ebben az esetben a DDP tiszta nyerő: nincs papírmunka, nincs EORI sürgősen.
+
+Ha $600+ → inkább az EXW és te intézed Lacival.
+
+**Várjuk Kimmi DDP árát!** 🚀

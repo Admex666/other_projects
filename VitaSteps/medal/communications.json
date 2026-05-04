@@ -67,6 +67,14 @@
       {
         "sender": "Shirley K",
         "message": "Hi Adam, thank you for your positive feedback! Keep in touch!"
+      },
+      {
+        "sender": "me",
+        "message": "Hi Shirley! Quick question: what shipping Incoterm do you use for your quotes?  Is it DDP (Delivered Duty Paid, customs and import VAT handled on your side), or something other?   If not DDP, could you provide a DDP quote for 100 units to Budapest, Hungary? Thank you!"
+      },
+      {
+        "sender": "Shirley K",
+        "message": "Hi Adam, our quotation is based on DAP trade terms（Delivered at Place, the goods are delivered to the destination—including door-to-door transport—but excludes import duties and VAT).  Sorry, we do not have DDP shipping to Hungary"
       }
     ]
   },
@@ -221,6 +229,38 @@
       {
         "sender": "Hedy Chen",
         "message": "Okay, I'll wait for your feedback"
+      },
+      {
+        "sender": "me",
+        "message": "Hi Hedy!  Quick question: what shipping Incoterm do you use for your quotes? Is it DDP (Delivered Duty Paid, customs and import VAT handled on your side), or something other?  If not DDP, could you provide a DDP quote for 100 units to Budapest, Hungary? Thank you!"
+      },
+      {
+        "sender": "Hedy Chen",
+        "message": "We can only provide DAP  Our prices do not include customs duties; you will need to pay for customs duties and clearance  Because we are not sure what the local tariffs are in your area"
+      },
+      {
+        "sender": "me",
+        "message": "Thank you! Just to confirm: was your previous quote for 100 units of $510 (including the $170 shipping fee) based on DAP terms to Budapest?"
+      },
+      {
+        "sender": "Hedy Chen",
+        "message": "yes, correct"
+      },
+      {
+        "sender": "me",
+        "message": "Okay, thank you"
+      },
+      {
+        "sender": "Hedy Chen",
+        "message": "Are you ready to place an order?"
+      },
+      {
+        "sender": "me",
+        "message": "Not yet, I will let you know about our decision soon."
+      },
+      {
+        "sender": "Hedy Chen",
+        "message": "Okay, I'll wait for you"
       }
     ]
   },
@@ -280,6 +320,22 @@
       {
         "sender": "Kimmi Lin",
         "message": "OK, thank you for your feedback. Looking forward to your reply. Thank you. :)"
+      },
+      {
+        "sender": "me",
+        "message": "Hi Kimmi! Quick question: what is the shipping Incoterm for our order? Is it DDP (Delivered Duty Paid), meaning customs and import VAT would be handled on your side? Or is it something else like DAP/EXW?"
+      },
+      {
+        "sender": "Kimmi Lin",
+        "message": "Hi Adam, the shipping Incoterm is EXW term.  If you want DDP, we also can make it for you."
+      },
+      {
+        "sender": "me",
+        "message": "Thank you! Could you please provide a DDP quote for 100 units to Budapest, Hungary?"
+      },
+      {
+        "sender": "Kimmi Lin",
+        "message": "Yes.  Let me check it."
       }
     ]
   },

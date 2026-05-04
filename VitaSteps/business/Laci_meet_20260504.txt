@@ -1,0 +1,56 @@
+# Első (kick-off) meeting jegyzetek
+
+általány: másodállás
+gyakorlat: 3,5M nincsj járulék, csak helyi iparűzési (2%, vagy 50k)
+főszabály: 25% adóvonzat
+
+HA lejár: főállású a vállalkozásban. Minimum járulék: 110k (0-3,5MFt), felette +SZJA
+
+Kínából: DDP. Ha ez NEM: vámtarifa szám (ekkor szállító a vámkezelő, vám és ÁFA nekik befizetni).
+
+0-3,5MFt: nincs vonzat
+
+
+
+Follow-up email:
+"
+Szia,
+
+A megbeszéltek alapján vállalkozás indításához az alábbi információkra lesz szükségünk:
+
+INFOBEKÉRŐ:
+
+ 
+
+Ezen a linken elérhető a teáor-kód kereső, majd kérlek írd meg mi legyen a főtevékenység, valamint ha már most szeretnél tudunk felvinni további tevékenységi köröket. 
+
+Tevékenységlekérdező és SZAKMAKÓD/ TEÁOR-kalkulátor - Nemzeti Adó- és Vámhivatal (gov.hu)
+
+
+
+Az is elég ha leírod mi lenne a tevékenység, és keresek hozzá kódot.
+
+ 
+
+A vállalkozás elindításához szükségem lesz az alábbiakra:
+
+-Vállalkozás indításának a napja
+
+-Számlázz.hu/ Billingó felhasználónév/ jelszó ( ha van), így meg tudom csinálni a NAV összekapcsolást, ha nincs kérlek írd meg melyikre, és milyen e-mail címmel regisztrálhatlak.
+
+-Székhely/Lakcím/Levelezési cím
+
+-Kérlek erősítsd meg a választott formát: egyéni vállalkozó átalányadózással másodállásban alanyi adómentesként (ez lenne a legoptimálisabb adónem részedre)
+
+-E-mail cím, telefonszám
+
+-TAJ szám
+
+-Ügyfélkapu felhasználónév, jelszó (csak az indítás napjára van erre szükségünk, ezt követően meghatalmazással dolgozunk.)
+
+
+
+Ha bármi kérdés felmerül keress bizalommal.
+
+Laci
+"

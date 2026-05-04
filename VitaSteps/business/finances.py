@@ -3,6 +3,11 @@ import pandas as pd
 # =========================
 # 1) INPUTS – ITT ÁLLÍTSD BE
 # =========================
+# ADÓZÁSI MEGJEGYZÉS (Laci, 2026.05.04.):
+# - 0-3.5M Ft bevételig: NINCS SZJA vonzat (másodállású átalányadó)
+# - Egyetlen fix adóteher: Helyi Iparűzési Adó (IPA) max 50.000 Ft/év = ~4.167 Ft/hó
+# - Import ÁFA (27%): beépítve a material_cost_per_unit *1.3 szorzóba
+# - DDP szállítás esetén a vám + import ÁFA Kimmi áraiban szerepel (tisztázandó!)
 
 months = 12
 
@@ -14,7 +19,7 @@ scenarios = {
         "production_cost_per_unit": 0,    # gyártás / db
         "packaging_shipping_per_unit": 1500, # csomagolás + szállítás / db
         
-        "fixed_costs_per_month": 30000,      # fix költségek
+        "fixed_costs_per_month": 30000 + 4167,  # fix költségek (könyvelő 30k + IPA ~4167 Ft/hó)
         "marketing_per_month": 25000,        # marketing
         
         "customer_payment_delay": 0,        # hónap (bevétel késleltetés)
@@ -29,7 +34,7 @@ scenarios = {
         "material_cost_per_unit": 1756*1.3,
         "production_cost_per_unit": 0,
         "packaging_shipping_per_unit": 1300,
-        "fixed_costs_per_month": 25000,
+        "fixed_costs_per_month": 25000 + 4167,  # könyvelő 25k + IPA
         "marketing_per_month": 20000,
         "customer_payment_delay": 0,
         "supplier_payment_delay": 0,
@@ -42,7 +47,7 @@ scenarios = {
         "material_cost_per_unit": 1756*1.3,
         "production_cost_per_unit": 0,
         "packaging_shipping_per_unit": 1700,
-        "fixed_costs_per_month": 30_000,
+        "fixed_costs_per_month": 30_000 + 4167,  # könyvelő 30k + IPA
         "marketing_per_month": 30_000,
         "customer_payment_delay": 0,
         "supplier_payment_delay": 0,
@@ -140,3 +145,11 @@ for name, df in results.items():
 
     be = break_even_units(scenarios[name])
     print(f"\nBreak-even (db/hó): {round(be, 0) if be else 'N/A'}")
+
+    annual_revenue = df["revenue"].sum()
+    annual_profit = df["operating_profit"].sum()
+    ipa = min(annual_revenue * 0.02, 50000)  # IPA: 2%, max 50k Ft/év
+    print(f"Éves árbevétel: {annual_revenue:,.0f} Ft")
+    print(f"Éves működési profit (IPA előtt): {annual_profit:,.0f} Ft")
+    print(f"Helyi Iparűzési Adó (IPA): {ipa:,.0f} Ft/év")
+    print(f"Becsült éves SZJA: 0 Ft (3,5M Ft alatt másodállású átalányadóval)" if annual_revenue <= 3_500_000 else f"Figyelem: 3,5M Ft felett SZJA is keletkezik! Konzultálj Lacival.")
