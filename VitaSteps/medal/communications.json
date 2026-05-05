@@ -335,7 +335,19 @@
       },
       {
         "sender": "Kimmi Lin",
-        "message": "Yes.  Let me check it."
+        "message": "Yes.  Let me check it.  The DDP shipping fee is the same, which is $245."
+      },
+      {
+        "sender": "me",
+        "message": "Just to be 100% sure: If the total for 100 units is $481 under DDP terms, does this include ALL costs, including the Hungarian 27% import VAT and customs duties? Or will there be an additional charge for the taxes and duties on top of the $481? Please confirm the final total amount we need to pay for DDP."
+      },
+      {
+        "sender": "Kimmi Lin",
+        "message": "DDP is the way you don’t need to pay any fee  What do you think of our quotation?"
+      },
+      {
+        "sender": "me",
+        "message": "Hi Kimmi! That is perfect!  I accept your quotation of $481 (DDP terms) for 100 units. I would like to order as a sole trader, so I need the invoice to be issued to my business.  Please prepare the Trade Assurance order link on Alibaba. I will provide my business name, address, and EU Tax Number (HU) as soon as you draft the order.  Could you also confirm the current estimated production and shipping time?"
       }
     ]
   },
