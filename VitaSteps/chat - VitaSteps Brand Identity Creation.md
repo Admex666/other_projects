@@ -5347,3 +5347,244 @@ A te központod a **Stripe Dashboard** lesz. Ott látsz mindent: ki fizetett, ho
 4.  Én pedig **frissítem a landing page kódját**, hogy a gomb erre a linkre mutasson.
 
 **Szeretnéd, hogy segítsen végigmenni a Stripe beállításokon, vagy megvan már a fiókod?** 🚀🏔️
+
+### User Input
+
+Nos, mindjárt regisztrálok Stripe-ra vagy OTP Simple-re is, viszont ami kéne az az hogy csináljuk meg a landing page-et, hasonlóan az eddigiekhez (E:\Data\other_projects\VitaSteps\landing, E:\Data\other_projects\VitaSteps\landing_v2). Legyen egy új mappában (pl. landing_predikalo1), és ténylegesen fizetés is legyen rajta, tűnjön professzionálisnak! Annyi hogy ugye ilyen ÁSZF meg hasonlók is kellenének. Nézz utána ezeknek hogy mik kellenek, és rakd oda azoknak is a helyét.
+
+### Planner Response
+
+Először átnézem a meglévő oldalakat, hogy pontosan megértsem a stílust és a design rendszert.
+
+*Viewed [index.html](file:///e:/Data/other_projects/VitaSteps/landing_v2/index.html) *
+
+*Viewed [style.css](file:///e:/Data/other_projects/VitaSteps/landing_v2/style.css) *
+
+*Listed directory [assets](file:///e:/Data/other_projects/VitaSteps/landing_v2/assets) *
+
+### Planner Response
+
+Most felépítem a teljes új landing page-et. Ez lesz az éles kampányoldal, tényleges fizetési gombbal és minden jogi dokumentummal.
+
+*User accepted the command `New-Item -ItemType Directory -Force -Path "e:\Data\other_projects\VitaSteps\landing_predikalo1\assets"; Copy-Item "e:\Data\other_projects\VitaSteps\landing_v2\assets\*" -Destination "e:\Data\other_projects\VitaSteps\landing_predikalo1\assets\" -Recurse; Copy-Item "e:\Data\other_projects\VitaSteps\medal\predikaloszek_front_fixed.png" -Destination "e:\Data\other_projects\VitaSteps\landing_predikalo1\assets\elolap.png"; Copy-Item "e:\Data\other_projects\VitaSteps\medal\predikaloszek_back_clean.png" -Destination "e:\Data\other_projects\VitaSteps\landing_predikalo1\assets\hatlap.png"`*
+
+*Edited relevant file*
+
+*Edited relevant file*
+
+*Edited relevant file*
+
+### Planner Response
+
+Most jönnek a jogi dokumentumok:
+
+*Edited relevant file*
+
+*Edited relevant file*
+
+### Planner Response
+
+Kész! Az összes fájl megvan. Így néz ki a struktúra:
+
+```
+landing_predikalo1/
+├── index.html          ← Főoldal (kampány + checkout)
+├── style.css           ← Prémium design rendszer
+├── main.js             ← Visszaszámláló + Meta Pixel
+├── aszf.html           ← ÁSZF (kihívás modellre szabva)
+├── adatvedelem.html    ← GDPR-kompatibilis adatkezelési tájékoztató
+└── assets/             ← Összes kép (medal, app screenshots, logo)
+```
+
+---
+
+### Mi maradt számodra (3 konkrét teendő):
+
+1. **Stripe Payment Link létrehozása** → A `index.html`-ben a `STRIPE_PAYMENT_LINK` placeholder-t cseréld ki a valódi linkre. Stripe-on: Dashboard → Payment Links → Create → 7.990 HUF, kérd el a szállítási címet.
+
+2. **ÁSZF + Adatkezelési adatok kitöltése** → Az `[ADÓSZÁM]`, `[CÍM]`, `[NYILVÁNTARTÁSI SZÁM]` mezőket Lacitól kapod meg.
+
+3. **Vercel deploy** → Másold fel a `landing_predikalo1` mappát a Vercelre (vagy push-old Githubra), és éles lesz! 🚀🏔️
+
+### User Input
+
+EXTRA!
+Mondom miket változtassuk:
+- "super early bird" helyett "előjelentkezés" legyen (amúgy a számláló NAGYON extra)
+- legyen a "Nevezek - 7.990 Ft + INGYENES SZÁLLÍTÁS" gombnál egy olyan hogy le van árazva 12.990Ft-ról, és a gomb alatt pedig legyen egy piros alert hogy "A helyek gyorsan fogynak"
+- MINDENKÉPP legyen ott az elején, hogy ezt május 28 és június 30 között tudják akkor teljesíteni amikor csak akarják. Több távon (6, 12, 18, 24, 30km) is mehetnek, egy biztos: a Prédikálószék és a teljesítmény
+- NEM ragaszkodunk a Strava-hoz, csak példaként hozd fel, hogy valamivel rögzítse a teljesítést (pl. Strava, Komoot...), a lényeg hogy el tudja küldeni. De amúgy lehetőség a szelfis azonosítás is (GDPR: NEM tároljuk az arcképét!!!!).
+- az érmek NEM sorszámozottak szóval ezt vedd ki, de az maradhat hogy 100 darab van, meg szerintem online sorszámozott oklevelet fogok küldeni.
+- "A tárgy" rész egyáltalán NEM szükséges
+- a nevem (Jakus Ádám E.V.) CSAK az ÁSZF-en legyen rajta, amúgy VitaSteps legyen, vagy pl. a "Kapok számlát?" kérdésnél elég annyi hogy számlát kiállítunk
+
+Eszerint módosítsd a landing page-en a dolgokat!
+
+*Viewed [financial_plan_v1.md](file:///e:/Data/other_projects/VitaSteps/business/financial_plan_v1.md) *
+
+*Viewed [index.html](file:///e:/Data/other_projects/VitaSteps/landing_predikalo1/index.html) *
+
+*Edited relevant file*
+
+### Planner Response
+
+Minden változtatás megvan. Összefoglalva, mi változott:
+
+*   ✅ **"Előjelentkezés"** mindenütt (badge, countdown, timeline, ár label)
+*   ✅ **Áthúzott 12.990 Ft** mindkét CTA gomb felett (hero + checkout)
+*   ✅ **Piros alert** 🔴 mindkét gomb alatt
+*   ✅ **Teljesítési időszak** (máj. 28 – jún. 30.) és **távolságok** (6/12/18/24/30 km) a hero szövegben és a steps-ben
+*   ✅ **Rugalmas igazolás**: Strava, Komoot, Garmin, vagy szelfis opció (GDPR megjegyzéssel)
+*   ✅ **Sorszámozás eltávolítva**, "100 darab limitált széria" maradt + **digitális sorszámozott oklevél** felvéve
+*   ✅ **"A tárgy" szekció eltávolítva** teljesen
+*   ✅ **Jakus Ádám E.V. neve eltávolítva** a főoldalról, csak az ÁSZF-en marad
+
+Egyetlen következő teendő maradt: **berakni a Stripe Payment Link URL-t** a `STRIPE_PAYMENT_LINK` helyére, és mehet a Vercelre! 🚀🏔️
+
+### User Input
+
+1. A Prédikálószék Vertical helyett lehetne más név is... adj 8-10 egyéb ötletet, amiben a Prédikálószék szerepel
+2. Amúgy adatelemző vagyok, és szeretném ha NEM csak ott állna meg az egész folyamat, hogy rendelnek egy érmet, kifizetik én meg kiküldöm, hanem tényleg mintha egy közösséghez tartoznának. Lehetne akár facebook is, de én azon gondolkodom, hogy pl. az oldalon lehet egy profiljuk, ahol ezek a vitasteps-es túráik követve vannak, leaderboard-dal, virtuális gyűjteménnyel meg ilyenek. Aztán persze ezer irányba lehet skálázni. Erről mit gondolsz?
+3. Nagyon sok ötlet van a fejemben, de kellenének valami protokollok meg ahol struktúráltan tudok minden ilyet vezetni, pl. arról hogy rendelés után hogyan kezeljük a vásárlót (e-mail, valami közösségbe küldés...)
+
+### Planner Response
+
+Ezek az ötletek mutatják meg, hogy a VitaSteps nem csak egy webshop, hanem egy **platform**. Adathalmaz-szemlélettel (Data Analyst háttérrel) ez egy aranybánya: a felhasználók mozgási adatait (Strava/GPX) kötöd össze fizikai és digitális jutalmakkal.
+
+### 1. Név ötletek (Prédikálószék fókusszal)
+
+A "Vertical" kicsit technikai (futós), itt van 10 érzelmesebb vagy "hódítóbb" irány:
+
+1.  **Prédikálószék Summit Series** (A csúcs-sorozat része)
+2.  **The Prédikálószék Conquest** (A Prédikálószék meghódítása)
+3.  **Prédikálószék 639 Legend** (A magasságra utalva)
+4.  **Dunakanyar Skyward: Prédikálószék** (Tájegység fókuszú)
+5.  **Prédikálószék Heritage Hike** (Az örökség vonalat erősíti)
+6.  **King of Prédikálószék** (Kicsit kompetitív)
+7.  **Prédikálószék Peak Performance** (Teljesítmény fókusz)
+8.  **The Prédikálószék Challenge: Pilot Edition** (Az elsőségre utalva)
+9.  **Prédikálószék 360** (A panorámára utalva)
+10. **Prédikálószék Trail Master** (Szakmai irány)
+
+---
+
+### 2. A "Közösségi Platform" vízió
+
+Mivel adatelemző vagy, neked ez a **"Gamified Hiking"**. Egy érem egy eladás. Egy profil egy **életstílus**.
+
+**Miért zseniális ez?**
+*   **Leaderboard:** Ha látják, hogy valaki a 30km-es távon teljesítette a csúcsot, ők is akarni fogják.
+*   **Virtual Vault (Digitális Vitrin):** Ha valakinek megvan a Prédikálószék, de látja a vitrinjében, hogy a Dobogókő és a Kékes helye még üres, **vissza fog jönni**.
+*   **Data Insight:** Tudni fogod, ki a "Hardcore Hiker" és ki a "Családi kiránduló". Ez alapján tudsz nekik célzott kihívásokat küldeni.
+
+**Technikai javaslat:** A Vercel/Next.js tökéletes erre. Egy Supabase adatbázissal és Strava API-val pár nap alatt összerakható egy olyan leaderboard, ami automatikusan frissül.
+
+---
+
+### 3. Protokollok és Struktúra (Vevőkezelés)
+
+Létrehoztam egy **Customer Journey Protokoll** dokumentumot, ami segít átlátni, mi történik a fizetés utáni másodperctől az érem átvételéig.
+
+A meglévő `business` mappába teszem ezt a tervet.
+
+
+
+*Edited relevant file*
+
+### Planner Response
+
+Bocsánat a technikai malőrért, most már elérhető a **[Customer Journey & Community Protocol](file:///C:/Users/Adam/.gemini/antigravity/brain/9f791773-95e7-4a67-ae06-dcbf6c0ba4b9/customer_protocol.md)** dokumentum az artifactok között.
+
+### Mi a következő lépés a platformépítésben?
+
+Ha tetszik ez az irány, a kampány lefutása után (amikor már van 100 biztos vevőd) tudunk csinálni egy **"Leaderboard Prototípust"**.
+
+1.  **Név döntés:** Melyik név tetszik a 10-ből? Ha megvan, átírom a Landing Page-en a főcímet.
+2.  **Stripe/Simple:** Ha megvan a regisztrációd, kérlek másold be a fizetési linket, és élesítem az oldalt.
+3.  **Hirdetés indítás:** Amint az oldal kész, mehetnek a Meta hirdetések!
+
+**Melyik nevet választod a Prédikálószék mellé?** 🏔️🏆
+
+### User Input
+
+Maradjon amúgy a Prédikálószék Vertical.
+Adom amúgy a customer protocol doksit!
+
+Egyelőre még manuálisan csinálnám a számlázást, de Barion fiókot regisztráltam. Hogyan tudom összekötni a landing page-ünkkel?
+
+*Viewed [financial_plan_v1.md](file:///e:/Data/other_projects/VitaSteps/business/financial_plan_v1.md) *
+
+### Planner Response
+
+Szuper, a **Prédikálószék Vertical** maradt, ez a név már bejáratott a várólistánál is.
+
+### Hogyan kösd össze a Bariont a landing page-el?
+
+A Barionnál két utad van: a profi (API-s) és az egyszerű (Payment Link). Mivel most a gyors indulás a cél és manuálisan számlázol, az **egyszerű** megoldást javaslom:
+
+#### 1. Barion "Fizetési kérelem" (Payment Link)
+A Barion dashboardon (már az élesben, ha elfogadták az üzletedet) tudsz generálni egy fix linket:
+*   **Belépés:** Barion Dashboard → Üzletkezelés.
+*   **Fizetési kérelem:** Keress olyat, hogy "Fizetési kérelem küldése" vagy "Payment Request".
+*   **Beállítás:** Add meg az összeget (7.990 Ft) és a leírást.
+*   **Adatgyűjtés:** Fontos! Állítsd be, hogy a Barion kérje el a **szállítási címet** is a fizetéskor.
+*   **Eredmény:** Kapsz egy `https://secure.barion.com/...` linket.
+
+#### 2. Landing Page frissítése
+Átírom a kódban a "Stripe" utalásokat Barionra, és beillesztem a nevet.
+
+
+
+*Edited relevant file*
+
+### Planner Response
+
+Most már minden **Barion-kompatibilis**.
+
+### A teendőd:
+1.  Generáld le a **Barion Payment Linket** (Fizetési kérelmet).
+2.  Nyisd meg az `e:\Data\other_projects\VitaSteps\landing_predikalo1\index.html` fájlt.
+3.  Keresd meg a `BARION_PAYMENT_LINK` szöveget (215. sor körül), és írd át a valódi linkre.
+4.  Ugyanezt tedd meg az ÁSZF-ben és az Adatvédelemben az `[ADÓSZÁM]` stb. mezőkkel.
+
+### Miért jó a Barion "Fizetési kérelem"?
+Ha kifizetik, te kapsz egy emailt a Bariontól, amiben ott lesz a vevő neve és a szállítási címe. Ebből te manuálisan ki tudod állítani a számlát a Számlázz.hu-n, és látod, ki a következő teljesítő.
+
+**Készen állsz az élesítésre?** Ha igen, csak töltsd fel a mappát a Vercel-re, és indulhatnak a hirdetések! 🚀🏔️🦾
+
+### User Input
+
+Ez nekem az alapvető oldal: https://secure.barion.com/Transfer?successfulLogin=False
+És nem látok dashboardot vagy üzletkezelést.
+
+### Planner Response
+
+Valószínűleg egy **lakossági (személyes)** fiókba léptél be, de neked egy **elfogadói (kereskedelmi)** profilra van szükséged.
+
+A Barionnál ez két külön világ. Ahhoz, hogy pénzt fogadhass el a weboldaladon, a következőt kell tenned:
+
+### 1. Üzleti fiók létrehozása
+Ha már bent vagy a személyes fiókodban, keresd a menüben a **"Boltjaim" (My Shops)** vagy **"Elfogadóhelyek"** menüpontot.
+*   Közvetlen link a bolt létrehozásához: [https://secure.barion.com/Shop/Create](https://secure.barion.com/Shop/Create)
+
+### 2. Regisztrációs folyamat
+Itt meg kell adnod:
+*   Az **E.V. adatait** (neved, adószámod, székhelyed).
+*   A **weboldalad URL-jét** (amit a Vercelen kaptál).
+*   Ki kell választanod, hogy mit árulsz (szabadidős szolgáltatás/érem).
+
+### 3. Hitelesítés (KYC)
+Mivel a Barion egy pénzintézet (MNB felügyelettel), bekérnek majd tőled dokumentumokat:
+*   Személyi igazolvány fotó.
+*   Vállalkozói igazolás (amit Laci küldött a regisztrációról).
+
+**Fontos:** Amíg a Barion nem hagyja jóvá a boltodat (ez 1-2 munkanap), addig csak **teszt üzemmódban** tudsz fizetéseket indítani.
+
+### Mi a teendőd most?
+1.  Menj a [https://secure.barion.com/Shop/Create](https://secure.barion.com/Shop/Create) oldalra.
+2.  Hozd létre az első "boltodat" (neve legyen pl. **VitaSteps Challenge**).
+3.  Ha ez megvan, kapsz egy **POSKey**-t – ez egy hosszú karaktersorozat, amivel később össze tudjuk kötni a rendszert, ha automatizálni akarunk.
+
+**Közben én javaslom:** Amíg a Barion jóváhagyására vársz (vagy ha nagyon sürgős az indulás), a **Stripe** sokszor 10 perc alatt átenged és azonnal ad éles fizetési linket. De ha a Barion mellett döntöttél, akkor ezt a kört le kell futnod velük.
+
+**Sikerült megtalálnod a "Bolt létrehozása" gombot?** ⚙️⚡

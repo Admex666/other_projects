@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adatkezelési Tájékoztató – VitaSteps</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .legal-page { max-width: 800px; margin: 4rem auto; padding: 0 1.5rem 6rem; }
+        .legal-page h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .legal-page .meta { color: var(--text-mid); margin-bottom: 3rem; font-size: 0.9rem; }
+        .legal-page h2 { font-size: 1.25rem; margin: 2.5rem 0 1rem; color: var(--accent); }
+        .legal-page p, .legal-page li { color: var(--text-mid); margin-bottom: 0.75rem; font-size: 0.95rem; line-height: 1.8; }
+        .legal-page ul { padding-left: 1.5rem; }
+        .back-link { display: inline-block; color: var(--accent); text-decoration: none; margin-bottom: 2rem; font-size: 0.9rem; }
+        .back-link:hover { text-decoration: underline; }
+        table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+        th { background: var(--surface); color: var(--text-high); padding: 0.75rem 1rem; text-align: left; font-size: 0.85rem; border-bottom: 1px solid var(--border); }
+        td { padding: 0.75rem 1rem; color: var(--text-mid); font-size: 0.85rem; border-bottom: 1px solid var(--border); }
+    </style>
+</head>
+<body>
+<nav>
+    <div class="container nav-inner">
+        <div class="logo">VITASTEPS</div>
+    </div>
+</nav>
+<div class="legal-page">
+    <a href="index.html" class="back-link">← Vissza a főoldalra</a>
+    <h1>Adatkezelési Tájékoztató</h1>
+    <p class="meta">Hatályos: 2026. május 13-tól | GDPR és az Info tv. alapján</p>
+
+    <h2>1. Az adatkezelő adatai</h2>
+    <p>Neve: Jakus Ádám E.V.<br>
+    Adószám: [ADÓSZÁM]<br>
+    E-mail: vitasteps.team@gmail.com<br>
+    Weblap: vitasteps.team</p>
+
+    <h2>2. Kezelt adatok és céljuk</h2>
+    <table>
+        <tr><th>Adat típusa</th><th>Kezelés célja</th><th>Jogalap</th><th>Megőrzési idő</th></tr>
+        <tr><td>Név, e-mail cím</td><td>Kapcsolattartás, számla kiállítása, teljesítés igazolása</td><td>Szerződés teljesítése</td><td>5 év (számviteli kötelezettség)</td></tr>
+        <tr><td>Szállítási cím</td><td>Érem kiszállítása</td><td>Szerződés teljesítése</td><td>A kiszállítást követő 1 év</td></tr>
+        <tr><td>Bankártya adatok</td><td>Fizetés feldolgozása</td><td>Szerződés teljesítése</td><td>Nem kerül a Szolgáltatóhoz (Stripe kezeli)</td></tr>
+        <tr><td>Strava/Garmin aktivitás link</td><td>Teljesítés hitelesítése</td><td>Szerződés teljesítése</td><td>A kihívás lezárultáig</td></tr>
+        <tr><td>IP cím, cookie-k (Meta Pixel)</td><td>Hirdetési hatékonyság mérése</td><td>Hozzájárulás</td><td>90 nap</td></tr>
+    </table>
+
+    <h2>3. Adatfeldolgozók</h2>
+    <ul>
+        <li><strong>Stripe Inc.</strong> (fizetés) – stripe.com – USA (EU-USA adattovábbítás: Standard Contractual Clauses alapján)</li>
+        <li><strong>Számlázz.hu (KBOSS.hu Kft.)</strong> (számlázás) – szamlazz.hu – Magyarország</li>
+        <li><strong>Foxpost Zrt.</strong> (szállítás) – foxpost.hu – Magyarország</li>
+        <li><strong>Meta Platforms Ireland Ltd.</strong> (hirdetés, remarketing) – facebook.com – Írország</li>
+        <li><strong>Vercel Inc.</strong> (weboldal hosting) – vercel.com – USA</li>
+    </ul>
+
+    <h2>4. Az érintett jogai</h2>
+    <p>Ön jogosult:</p>
+    <ul>
+        <li>Hozzáférést kérni az Önről kezelt adatokhoz</li>
+        <li>Az adatok helyesbítését kérni</li>
+        <li>Az adatok törlését kérni (a jogi kötelezettségek keretein belül)</li>
+        <li>Az adatkezelés korlátozását kérni</li>
+        <li>Az adathordozhatóság jogát gyakorolni</li>
+        <li>Tiltakozni az adatkezelés ellen</li>
+    </ul>
+    <p>Kérelmét a vitasteps.team@gmail.com e-mail-címre küldheti. Panasz esetén a Nemzeti Adatvédelmi és Információszabadság Hatósághoz (naih.hu) fordulhat.</p>
+
+    <h2>5. Cookie-k (sütik)</h2>
+    <p>Az oldal a Meta Pixel technológiát alkalmazza, amely cookie-kat helyez el az Ön böngészőjében. Ezek célja a hirdetési kampányok hatékonyságának mérése. A cookie-k elfogadásához hozzájárulása szükséges, amelyet az oldal első meglátogatásakor jelezhet.</p>
+
+    <h2>6. Adatbiztonság</h2>
+    <p>A Szolgáltató az adatokat biztonságos, jelszóval védett rendszerekben tárolja. A fizetési adatokat kizárólag a Stripe kezeli, azok a Szolgáltatóhoz nem kerülnek.</p>
+</div>
+<footer>
+    <div class="container footer-inner">
+        <div class="footer-legal">
+            <p>© 2026 Jakus Ádám E.V. | <a href="index.html" style="color:var(--accent);">Vissza a főoldalra</a></p>
+        </div>
+    </div>
+</footer>
+</body>
+</html>

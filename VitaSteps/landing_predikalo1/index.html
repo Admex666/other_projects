@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prédikálószék Kihívás – VitaSteps | Limitált 100 darabos érem</title>
+    <meta name="description" content="Teljesítsd a Prédikálószék túrát május 28. és június 30. között, igazold a teljesítményed, és szerezd meg a kézzel festett Antique Nickel érmedet. Limitált, 100 darabos első széria.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="./assets/logo.png">
+
+    <!-- Meta Pixel Code -->
+    <script>
+        !function (f, b, e, v, n, t, s) {
+            if (f.fbq) return; n = f.fbq = function () {
+                n.callMethod ?
+                    n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+            };
+            if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+            n.queue = []; t = b.createElement(e); t.async = !0;
+            t.src = v; s = b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t, s)
+        }(window, document, 'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '1660902624915008');
+        fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+            src="https://www.facebook.com/tr?id=1660902624915008&ev=PageView&noscript=1" /></noscript>
+    <!-- End Meta Pixel Code -->
+
+    <script defer src="/_vercel/insights/script.js"></script>
+</head>
+
+<body>
+
+    <!-- STICKY NAV -->
+    <nav>
+        <div class="container nav-inner">
+            <div class="logo">VITASTEPS</div>
+            <a href="#fizetes" class="btn btn-primary btn-sm" id="nav-cta">Nevezek &rarr;</a>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="container hero-inner">
+            <div class="hero-text">
+                <div class="badge" id="badge-earlybird">⚡ Előjelentkezés &mdash; Május 13–20.</div>
+                <h1>Mászd meg a <span class="accent">Prédikálószéket</span>.<br>Viseld a bizonyítékát.</h1>
+                <p>Az egyetlen érem, amit <strong>nem lehet megvenni</strong> &mdash; csak teljesíteni. Nevezz be, teljesítsd a túrát <strong>május 28. és június 30. között</strong>, és postázzuk a kézzel festett Antique Nickel érmedet.</p>
+                <p style="margin-top:-1rem; color: var(--text-mid); font-size:0.95rem;">Választhatsz több távolság közül (6, 12, 18, 24, 30 km), egy biztos: a <strong style="color:var(--text-high)">Prédikálószék és a teljesítmény</strong>.</p>
+                <div class="hero-actions">
+                    <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                        <div style="font-size:0.9rem; opacity:0.55; text-decoration:line-through; text-align:center;">12.990 Ft</div>
+                        <a href="#fizetes" class="btn btn-primary btn-lg" id="hero-cta">
+                            Nevezek – 7.990 Ft + INGYENES SZÁLLÍTÁS 🏔️
+                        </a>
+                        <div style="color:#ff4d4d; font-size:0.85rem; font-weight:600; text-align:center;">🔴 A helyek gyorsan fogynak</div>
+                    </div>
+                    <a href="#hogyan" class="btn btn-ghost">Hogyan működik?</a>
+                </div>
+                <div class="trust-row">
+                    <span class="trust-item">🔒 Biztonságos fizetés</span>
+                    <span class="trust-item">📦 Ingyenes szállítás</span>
+                    <span class="trust-item">🏅 Limitált 100 db</span>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="medal-float">
+                    <img src="assets/vitasteps_v2_medal_predikaloszek_1775926135052.png" alt="Prédikálószék Érem" id="medal-hero-img">
+                    <div class="glow-ring"></div>
+                </div>
+                <div class="serial-badge">
+                    <span class="serial-label">Limitált széria</span>
+                    <span class="serial-num">100 darab</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- COUNTDOWN -->
+    <div class="countdown-bar">
+        <div class="container countdown-inner">
+            <span class="countdown-label">⏳ Előjelentkezési ár véget ér:</span>
+            <div class="countdown" id="countdown">
+                <div class="cd-unit"><span id="cd-days">--</span><small>nap</small></div>
+                <div class="cd-sep">:</div>
+                <div class="cd-unit"><span id="cd-hours">--</span><small>óra</small></div>
+                <div class="cd-sep">:</div>
+                <div class="cd-unit"><span id="cd-mins">--</span><small>perc</small></div>
+                <div class="cd-sep">:</div>
+                <div class="cd-unit"><span id="cd-secs">--</span><small>mp</small></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HOW IT WORKS -->
+    <section id="hogyan" class="how-section">
+        <div class="container">
+            <div class="section-label">A folyamat</div>
+            <h2 class="section-title">Három lépés. Egy valódi érem.</h2>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-num">01</div>
+                    <h3>Nevezz be</h3>
+                    <p>Fizess a kihívásért (7.990 Ft). Azonnal visszaigazolást és digitális oklevelet kapsz, az érmedet eltesszük számodra.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-num">02</div>
+                    <h3>Teljesítsd a túrát</h3>
+                    <p>Menj fel a Prédikálószékre <strong>2026. május 28. és június 30. között</strong>, bármikor. Választhatsz 6, 12, 18, 24 vagy 30 km-es útvonalat – a lényeg a csúcs és a teljesítmény.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-num">03</div>
+                    <h3>Küldd az igazolást</h3>
+                    <p>Rögzítsd a túrát bármilyen GPS applikációval (pl. Strava, Komoot, Garmin) vagy küldj egy csúcson készült szelfit – és postázzuk az érmet.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- TIMELINE -->
+    <section class="timeline-section">
+        <div class="container">
+            <div class="section-label">Menetrend</div>
+            <h2 class="section-title">Mi mikor történik?</h2>
+            <div class="timeline">
+                <div class="tl-item active">
+                    <div class="tl-dot"></div>
+                    <div class="tl-content">
+                        <div class="tl-date">Máj. 13–20.</div>
+                        <div class="tl-title">⚡ Előjelentkezés</div>
+                        <div class="tl-desc">7.990 Ft – ingyenes szállítással</div>
+                    </div>
+                </div>
+                <div class="tl-item">
+                    <div class="tl-dot"></div>
+                    <div class="tl-content">
+                        <div class="tl-date">Máj. 20–27.</div>
+                        <div class="tl-title">Normál nevezés</div>
+                        <div class="tl-desc">8.990 Ft (szállítással)</div>
+                    </div>
+                </div>
+                <div class="tl-item">
+                    <div class="tl-dot"></div>
+                    <div class="tl-content">
+                        <div class="tl-date">Máj. 28. – Jún. 30.</div>
+                        <div class="tl-title">Teljesítési időszak</div>
+                        <div class="tl-desc">Teljesítsd a túrát, küldd az igazolást</div>
+                    </div>
+                </div>
+                <div class="tl-item">
+                    <div class="tl-dot"></div>
+                    <div class="tl-content">
+                        <div class="tl-date">Jún. 20-tól</div>
+                        <div class="tl-title">📦 Kiszállítás</div>
+                        <div class="tl-desc">Postázás a teljesítés igazolása után</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRICING / CHECKOUT -->
+    <section id="fizetes" class="checkout-section">
+        <div class="container checkout-inner">
+            <div class="checkout-left">
+                <div class="section-label">Nevezés</div>
+                <h2>Prédikálószék Vertical Kihívás</h2>
+                <p class="checkout-sub">Limitált 100 darabos érem · Ingyenes szállítás · Teljesítés: máj. 28. – jún. 30.</p>
+
+                <div class="price-block">
+                    <div class="price-old">12.990 Ft</div>
+                    <div class="price-current">7.990 Ft</div>
+                    <div class="price-tag">⚡ Előjelentkezési ár</div>
+                </div>
+
+                <ul class="checkout-includes">
+                    <li>✅ Kézzel festett Antique Nickel érem (limitált, 100 db)</li>
+                    <li>✅ Digitális sorszámozott oklevél (PDF, email)</li>
+                    <li>✅ Ingyenes prémium csomagolás</li>
+                    <li>✅ Ingyenes Foxpost szállítás</li>
+                    <li>✅ Teljesítés: bármikor máj. 28. – jún. 30. között</li>
+                </ul>
+
+                <div class="checkout-legal">
+                    <p>A fizetés gombra kattintva elfogadod az <a href="aszf.html" target="_blank">Általános Szerződési Feltételeket</a> és az <a href="adatvedelem.html" target="_blank">Adatkezelési Tájékoztatót</a>.</p>
+                    <p style="margin-top:0.5rem;">A fizetést a <strong>Barion</strong> biztonságos rendszere kezeli. Az érem kiszállítása a teljesítés igazolása után indul el (várható: 2026. június 20-tól).</p>
+                </div>
+
+                <!-- PAYMENT BUTTON - Replace BARION_PAYMENT_LINK with your actual Barion link -->
+                <div style="font-size:0.9rem; opacity:0.55; text-decoration:line-through; text-align:center; margin-bottom:0.25rem;">12.990 Ft</div>
+                <a href="BARION_PAYMENT_LINK" class="btn btn-primary btn-xl" id="payment-btn"
+                    onclick="fbq('track', 'InitiateCheckout');">
+                    Nevezek – 7.990 Ft + INGYENES SZÁLLÍTÁS 🏔️
+                </a>
+                <div style="color:#ff4d4d; font-size:0.9rem; font-weight:700; text-align:center; margin-top:0.75rem;">🔴 A helyek gyorsan fogynak – csak 100 db érhető el</div>
+
+                <div class="payment-badges">
+                    <span>🔒 Biztonságos Barion fizetés</span>
+                    <span>💳 Bankkártya / Apple Pay / Google Pay / Barion tárca</span>
+                </div>
+            </div>
+
+            <div class="checkout-right">
+                <div class="faq-card">
+                    <h3>Gyakori kérdések</h3>
+                    <div class="faq-item">
+                        <div class="faq-q">Mi van, ha nem tudom teljesíteni a túrát?</div>
+                        <div class="faq-a">A nevezési díj a kihívásban való részvételt fedezi. Ha júniusban nem sikerül, az érmet egy következő kihíváson felhasználhatod (feltételek az ÁSZF-ben).</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-q">Mikor kapom meg az érmet?</div>
+                        <div class="faq-a">Az érmék 2026. június 20-a körül érkeznek Magyarországra. Amint igazolod a teljesítést, azonnal postázzuk – várt kézhezvétel: június végén.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-q">Hogyan igazolom a teljesítést?</div>
+                        <div class="faq-a">Rögzítsd a túrát bármilyen GPS alkalmazással (pl. Strava, Komoot, Garmin Connect) és küldd el az aktivitás linkjét emailben. Alternatívaként fogadunk egy csúcson készült szelfit is – arcképet nem tárolunk (GDPR).</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-q">Mi az a digitális oklevél?</div>
+                        <div class="faq-a">Minden teljesítő kap egy egyedi, sorszámozott digitális oklevelet (PDF formátumban, emailen), amely igazolja a kihívás teljesítését. Ez a fizikai érem digitális párja.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-q">Kapok számlát?</div>
+                        <div class="faq-a">Igen, a fizetés után e-mailben küldjük a hivatalos elektronikus számlát (Jakus Ádám E.V.).</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container footer-inner">
+            <div class="footer-brand">
+                <div class="logo">VITASTEPS</div>
+                <p>Real World Accomplishments. Verified.</p>
+            </div>
+            <div class="footer-links">
+                <a href="aszf.html">Általános Szerződési Feltételek</a>
+                <a href="adatvedelem.html">Adatkezelési Tájékoztató</a>
+                <a href="mailto:vitasteps.team@gmail.com">vitasteps.team@gmail.com</a>
+            </div>
+            <div class="footer-legal">
+                <p>© 2026 VitaSteps | Nyilvántartási szám: [ADÓSZÁM] | Székhely: [CÍM]</p>
+                <p>A fizetést a <strong>Barion Payment Zrt.</strong> kezeli (MNB engedély: H-EN-I-1064/2013). Arcképet és személyes igazolványt nem tárolunk.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+</body>
+
+</html>
