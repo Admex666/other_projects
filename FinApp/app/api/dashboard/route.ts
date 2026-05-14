@@ -85,11 +85,6 @@ export async function GET() {
   const totalPocketBase = await Promise.all(pocketMap.map((p: any) => convertCurrency(p.currentAmount, p.currency, 'HUF', rates)));
   const totalPocketBaseSum = totalPocketBase.reduce((sum, val) => sum + val, 0);
   
-  console.log('--- DEBUG BALANCES ---');
-  console.log('Total Account (Base):', totalAccountBase);
-  console.log('Total Pocket (Base):', totalPocketBaseSum);
-  console.log('Free Balance:', totalAccountBase - totalPocketBaseSum);
-
   const freeBalance = totalAccountBase - totalPocketBaseSum;
 
   const recentTransactions = await Transaction.find({ userId })
