@@ -506,3 +506,259 @@ Adam – VitaSteps
 3.  **Válaszreakció:** Az, hogy valaki veszi a fáradtságot és visszaír egy szót, sokkal erősebb validáció, mint egy kattintás.
 
 **Hogy tetszik ez a szöveg?** Ha okés, elmenthetjük a `campaigns` mappába, mint hivatalos „Lead Nurturing” sablont.
+
+### User Input
+
+Nézd át a @[chat - VitaSteps Brand Identity Creation.md] végét. Most fogok Nagy Mariannával beszélni. Mit érdemes tőle mindenképp megkérdeznem?
+
+### Planner Response
+
+Your current version of Antigravity is out of date. Please visit https://antigravity.google/download to download and install the latest version.
+
+### User Input
+
+Nézd át a @[chat - VitaSteps Brand Identity Creation.md] végét. Most fogok Nagy Mariannával beszélni. Mit érdemes tőle mindenképp megkérdeznem?
+
+*Grep searched codebase*
+
+*Grep searched codebase*
+
+*User accepted the command `cat "c:\Users\Adam\Data\other_projects\VitaSteps\chat - VitaSteps Brand Identity Creation.md" | wc -l`*
+
+*Checked command status*
+
+### Planner Response
+
+Ha Nagy Marianna a könyvelő, akivel beszélni fogsz, akkor most kell megalapoznod, hogy zökkenőmentes legyen a VitaSteps indulása! A projektünk egy speciális esetet képvisel (harmadik országbeli import + webshop), amihez pontos válaszok kellenek. 
+
+A korábbi beszélgetésünk végén már érintettük a könyvelői checklistet, de most kibontom neked a legfontosabb kérdéseket, amiket **mindenképp** tegyél fel neki a mai találkozón:
+
+### 1. Az Alapok (EV, Adózás, TEÁOR)
+*   **„Ugye alkalmazható a 90%-os költséghányad?”** Kérdezd meg, hogy megerősíti-e, hogy az általad végzett internetes kiskereskedelem (TEÁOR 479102) esetén jogosult vagy az átalányadóban a 90%-os költségátalányra (ez a legfontosabb a profitod szempontjából).
+*   **„Mellékállás / Diákstátusz esetén mik a minimum járulékok?”** Tisztázd vele a jelenlegi státuszodat (ha tanulsz vagy van 40 órás állásod, akkor nincs fix havi minimum adó, csak a profit után fizetsz).
+
+### 2. A legnehezebb rész: A Kínai Import
+*   **„Segít az EORI (VPID) szám igénylésében?”** Amint él a vállalkozásod, azonnal kelleni fog az EORI szám, különben a DHL meg fogja akasztani a kínai szállítmányt a határon.
+*   **„Hogyan könyveljük az import ÁFÁ-t és a vámot?”** Te alanyi adómentes (AAM) leszel, tehát a vevőid felé nem számolsz fel ÁFÁ-t. Viszont a kínai csomagra a DHL-nek ki kell fizetned a 27% import ÁFÁ-t. Kérdezd meg, ezt milyen bizonylat alapján tudja ő lekönyvelni (vámhatározat).
+
+### 3. Pénzügyek és Számlázás
+*   **„Elfogadja a Wise / Revolut Business számlát?”** Mondd el neki, hogy az Alibabás fizetések (USD) miatt Wise Business vagy Revolut Business számlát nyitnál, mert sokkal jobb az árfolyam. Kérdezd meg, tud-e ezekkel a kivonatokkal dolgozni, és kell-e mellette egy sima magyar forintszámla is.
+*   **„Hogyan kéri a webshopos eladásokat?”** Te automatizált számlázást fogsz használni (pl. Billingo, Számlázz.hu), ami egyből megy a vevőknek és a NAV-nak is. Kérdezd meg, hogy hónap végén milyen formátumban (pl. adatexport) kéri tőled a számlákat, vagy ő maga belép a rendszerbe letölteni.
+
+### 4. Helyi Iparűzési Adó (HIPA)
+*   **„A sávos (tételes) iparűzési adót fogjuk választani?”** Évi 12 millió forintos bevételig a legalacsonyabb sávba esel (ami évi fix 50.000 Ft HIPA-t jelent). Kérj megerősítést, hogy bejelenti-e ezt az önkormányzatnál.
+
+**Pro Tipp a találkozóhoz:**
+Mondd el neki röviden, hogy a VitaSteps egy prémium érem-webshop, első körben egy 100 darabos „teszt szériát” fogtok behozni Kínából (értéke kb. 180.000 Ft), és ezt fogod 7.990 Ft-ért értékesíteni itthon, magánszemélyeknek. Ez a két mondat rögtön kontextusba helyezi neki a volument és a teendőket!
+
+Sok sikert a megbeszéléshez, várom a fejleményeket!
+
+### User Input
+
+Ez a Nagy Marianna teljesen érthetetlen telefonon. Hogy vakarhatom le?
+
+### Planner Response
+
+Ha egy könyvelő már a telefonban is érthetetlen, az egy hatalmas „red flag” (vörös zászló). A könyvelődnek a legnagyobb szövetségesednek kell lennie, aki lefordítja neked a NAV-nyelvet magyarra. Ha ez nincs meg, azonnal engedd el!
+
+Szerencsére egy induló ügyfél-könyvelő kapcsolatot nagyon elegánsan és gyorsan le lehet zárni anélkül, hogy kellemetlen helyzetbe kerülnél. A legjobb kifogás az, ha a **„speciális üzleti modelledre”** vagy a **„már meglévő rendszerre”** hivatkozol.
+
+Íme néhány rövid, udvarias, de határozott lerázó szöveg (e-mailben vagy SMS-ben a legjobb elküldeni, hogy ne kelljen újra telefonálnod):
+
+### 1. Opció: A „Speciális e-commerce” kifogás (Ezt javaslom)
+Ez a legprofibb, és nem is tud vele vitatkozni:
+> „Kedves Marianna! Köszönöm szépen az idejét és a telefonos tájékoztatást. Közben átgondoltam a projektet, és úgy döntöttem, hogy egy kifejezetten nemzetközi e-kereskedelemre és harmadik országbeli (kínai) importra szakosodott könyvelőirodát fogok megbízni a feladattal, akiknél már kész integrációk vannak az én webshop motoromhoz. További sok sikert kívánok a munkájához! Üdvözlettel: [Neved]”
+
+### 2. Opció: Az „Ismerős ajánlott valakit” (A klasszikus)
+Gyors és egyszerű:
+> „Kedves Marianna! Nagyon köszönöm a mai egyeztetést. A beszélgetésünk óta egy családtagom/üzlettársam beajánlott egy könyvelőt, akivel már régóta együtt dolgoznak, így végül emellett az opció mellett döntöttem, hogy egy kézben maradjanak a dolgok. Köszönöm a segítségét és minden jót kívánok!”
+
+### 3. Opció: A „Mégsem most indulunk” (A legkisebb ellenállás)
+Ha semmi esélyt nem akarsz hagyni a visszakérdezésre:
+> „Kedves Marianna! Köszönöm az információkat. A pénzügyi tervünk felülvizsgálata során úgy döntöttünk, hogy a cégalapítást és az importot elcsúsztatjuk a jövő évre/későbbre. Emiatt egyelőre nem lesz szükségem könyvelői szolgáltatásra. Ha aktuális lesz a projekt, jelentkezem. Üdvözlettel: [Neved]”
+
+**Vállalkozói jótanács:** Küldd el valamelyiket írásban, és utána nyugodtan keress egy másik könyvelőt. A Facebookon vannak remek csoportok (pl. "E-kereskedelem, Webshop, Könyvelés"), ahol kifejezetten Shopify/Unas + Kínai import kombóhoz szokott, modern könyvelőket (akik értenek a Wise/Revolut számlákhoz is) találsz percek alatt!
+
+### User Input
+
+És László Péternek mit írhatok? Neki még volt egy email amire nem válaszoltam, arra kéne, plusz el kéne fogadni a telefonos egyeztetést: "Könyvelési ajánlat LIBRA
+Inbox
+Könyvelő
+
+László Péter <libratax22@gmail.com>
+Apr 20, 2026, 1:07 PM (4 days ago)
+to me
+
+It looks like this message is in Hungarian
+Kedves Ádám,
+
+ 
+
+A könyvelők.hu weboldalon láttam, hogy egyéni vállalkozás könyveléséhez keres szakembert.
+
+ 
+
+Amennyiben a vállalkozás még nem lett létrehozva, örömmel segítek az adózási forma meghatározásában, a vállalkozás létrehozásában, és természetesen a könyvelésében.
+
+Természetesen meglévő vállalkozás átvétele sem akadály.
+
+ 
+
+Első körben egy online vagy telefonos konzultációt javasolnék, amely során átbeszélhetjük terveit, és megtalálhatjuk a megfelelő adózási formát.
+
+ 
+
+A konzultáció díjmentes, nagyságrendileg 15-20 percet vesz igénybe.
+
+ 
+
+Mikor lenne Önnek alkalmas a megbeszélés?
+
+ 
+
+Természetesen ha az e-mail alapú kommunikációt részesíti előnyben, várom kérdéseit válaszban.
+
+ 
+
+Bővebb információ rólunk: Könyvelés és adótanácsadás vállalkozásoknak - Libra Services
+
+ 
+
+Köszönettel
+
+Péter László
+
+
+
+
+VitaSteps <vitasteps.team@gmail.com>
+Tue, Apr 21, 5:32 PM (3 days ago)
+to László
+
+Kedves László!
+
+Köszönöm az ajánlatát!
+
+Mielőtt élnék a konzultáció lehetőségével, szeretnék érdeklődni, hogy milyen tapasztalata van az EU-n kívüli (kínai) beszerzések és a kapcsolódó vámkezelési dokumentumok kezelésében?
+
+Üdvözlettel,
+Jakus Ádám
+
+László Péter
+Apr 21, 2026, 6:20 PM (3 days ago)
+to me
+
+Kedves Ádám, 
+
+A vámkezelési dokumentumok könyvelése több dologtól függ. Alanyi adómentes, ÁFÁ-s az adott vállalkozás? Átalányadós vagy VSZJA hatálya alá tartozik? Milyen paritással kerül beszerzésre a termék kínából? stb...
+
+Az esetek legnagyobb részében a DDP paritást alkalmazzák, ezesetben a vevő egy szabad forgalomba helyezett terméket kapkézhez a szállító intézi, vagy a megbízottja, az áru szabad forgalomba bocsájtását.
+Vagy ÁFÁ-s vállalkozások esetén gyakoribb eljárás, vevő, gyakoribb esetben megbízottja intézi az áruk szabad forgalomba bocsájtását, a hatóság vámhatározatban közli a vám és ÁFA összegét, amelyet megfizetést követően ha ÁFA levonásra jogosult a vállalkozás a következő bevallásban levonásba helyezhet az adózó.
+
+Köszönettel,"
+
+### Planner Response
+
+László Péter válasza alapján ő sokkal szakmaibb és összeszedettebb, mint Marianna volt. Pontosan tudja, mi az a DDP paritás, a vámhatározat és az ÁFA-levonási jog – ez jó jel, mert érti az import folyamatát.
+
+Érdemes élni a 15-20 perces ingyenes konzultációval. Itt egy javasolt válasz, amiben tisztázod a kereteket és időpontot foglalsz:
+
+---
+
+**Tárgy:** Re: Könyvelési ajánlat LIBRA
+
+**Kedves László!**
+
+Köszönöm a részletes és szakmai választ, sokat segített a tisztánlátásban!
+
+A projektem (VitaSteps) jelenleg ott tart, hogy egy induló **egyéni vállalkozás** keretein belül, **átalányadózóként** és **alanyi adómentesként (AAM)** szeretném elindítani az első, 100 darabos terméksorozatunk importját és hazai értékesítését.
+
+Szeretnék élni a felajánlott díjmentes konzultáció lehetőségével, hogy átbeszéljük a pontos részleteket és a későbbi együttműködést.
+
+Nekem az alábbi időpontok lennének alkalmasak egy rövid telefonos vagy online egyeztetésre:
+*   **Hétfő (április 27.) 14:00 - 16:00 között**
+*   **Kedd (április 28.) 10:00 - 12:00 között**
+
+Önnek megfelelne valamelyik ezek közül? Ha nem, kérem írja meg, Önnek mikor lenne jó, és megpróbálok alkalmazkodni.
+
+Köszönettel,
+Jakus Ádám
+
+---
+
+### Miért jó ez a válasz?
+1.  **Szakmai:** Rögtön megadtad neki a varázsszavakat (Átalányadó, AAM), így nem az alapoktól kell magyaráznia, hanem rátérhettek a konkrét import-ügyintézésre.
+2.  **Határozott:** Két konkrét idősávot adtál meg, ami megkönnyíti a szervezést.
+3.  **Udvarias:** Elismered a korábbi válasza minőségét.
+
+**Tipp:** A beszélgetésen mindenképp kérdezz rá nála is az **EORI szám** igénylésére, mert az lesz a „belépőd” a vámkezeléshez!
+
+### User Input
+
+"Kedves László!
+
+Köszönöm a részletes válaszát!
+
+Az egyéni vállalkozásom még nincs bejegyezve, viszont először egy 100 darabos terméksorozat (kb. 500 USD) importja és hazai értékesítése lenne a cél. Szeretnék élni a felajánlott díjmentes konzultáció lehetőségével.
+
+Önnek a közeljövőben milyen időpont felelne meg?
+
+Üdvözlettel,
+Jakus Ádám"
+
+Így?
+
+### Planner Response
+
+Ez így teljesen korrekt, lényegre törő és profi. Megadtad a volument is (100 db / 500 USD), ami fontos infó a könyvelőnek, mert látja, hogy egy induló MVP-ről van szó.
+
+**Egy apró tipp:** Ahhoz, hogy elkerüld az oda-vissza emailezést az időpontról, érdemes lehet a végére odabiggyeszteni 2-3 konkrét időpontot, amikor te elérhető vagy. Például:
+
+> *„Önnek a közeljövőben milyen időpont felelne meg? Nekem a hétfő délután vagy a kedd délelőtt lenne a legideálisabb.”*
+
+Így jó eséllyel már a következő válaszában fixálni tudjátok az időpontot. De ha így küldöd el, ahogy írtad, az is teljesen rendben van! Mehet ki!
+
+### User Input
+
+Nézd át a @[chat - VitaSteps Brand Identity Creation.md]beszélgetést. Mostmár fut a kampány. Írj egy visszaigazoló email template-et, amit a vásárlóknak küldünk ki, benne azzal hogy május 28.-tól június 30-ig tud teljesíteni, és majd küldjük hamarosan a pontos információkat
+
+### Planner Response
+
+Ez egy kritikus mérföldkő: az első vásárlók (vagy előrendelők) bizalmát most kell megerősítened. Mivel a **VitaSteps** nem csak egy webshop, hanem egy teljesítményalapú közösség, az emailnek is ezt az exkluzív, motiváló hangvételt kell tükröznie.
+
+Íme egy javasolt sablon, amit a május 28-i kezdéshez igazítottam:
+
+---
+
+**Tárgy:** Sikeres regisztráció! Készülj a VitaSteps: Prédikálószék kihívásra! 🏔️🏅
+
+**Szia [Vásárló Neve]!**
+
+Gratulálunk! Te is bent vagy a **VitaSteps: Prédikálószék Vertical** első hivatalos szériájában. Ez nem csak egy vásárlás, hanem az első lépés afelé, hogy a digitális adataidat egy sorszámozott, kézzelfogható trófeává alakítsd.
+
+**A legfontosabb tudnivalók a teljesítéshez:**
+
+*   **Időszak:** A kihívás **május 28-án** indul és **június 30-ig** tart. Ebben az időintervallumban rögzített teljesítéseket tudjuk elfogadni.
+*   **Helyszín:** Prédikálószék (a pontos útvonalat és a technikai instrukciókat a start előtt küldjük).
+*   **Hitelesítés:** Készítsd elő a Strava vagy Garmin profilodat, mert a teljesítésedet ezeken keresztül fogjuk validálni.
+
+**Mi történik most?**
+Jelenleg a háttérben már zajlik az érmek egyedi gyártása. Pár napon belül érkezünk egy részletes **„Mission Guide”**-dal, amiben minden technikai információt leírunk: hogyan kell elindítanod a mérést, hol találod az ellenőrzőpontokat, és hogyan kapod meg a sorszámozott érmedet a sikeres teljesítés után.
+
+Addig is, tarts egy kis szintfelmérőt, mert a Prédikálószék nem adja könnyen magát! 😉
+
+Üdvözlettel,
+**Adam & a VitaSteps csapata**
+*Real-world achievements. Verified.*
+
+---
+
+### Miért működik ez a sablon?
+1.  **Visszaigazolás:** Azonnali megnyugvást ad, hogy a regisztráció/vásárlás sikeres volt.
+2.  **Időkeret:** Tisztázza a május 28. – június 30. közötti időszakot, így a vásárló tud tervezni.
+3.  **Hype építés:** A „Mission Guide” említése professzionális hatást kelt, és fenntartja az érdeklődést.
+4.  **Exkluzivitás:** Erősíti a közösségi élményt („Te is bent vagy az első szériában”).
+
+**Tipp:** Ha van rá lehetőséged, a vásárlás utáni köszönőoldalon (vagy az email alján) kérd meg őket, hogy jelöljenek be minket Instagramon/Straván, hogy még jobban pörögjön a közösség a startig!
+
+Mehet ez a verzió, vagy finomítsunk rajta?
