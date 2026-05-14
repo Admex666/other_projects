@@ -50,7 +50,7 @@ export async function GET(req: Request) {
 
   // Transform to chart format: [{ name: 'Food', income: 100, expense: 50 }, ...]
   const plMap: Record<string, any> = {};
-  categoryPL.forEach(item => {
+  categoryPL.forEach((item: any) => {
     if (!plMap[item.name]) plMap[item.name] = { name: item.name, income: 0, expense: 0 };
     plMap[item.name][item.type] = item.total;
   });

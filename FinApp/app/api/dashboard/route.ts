@@ -82,7 +82,7 @@ export async function GET() {
 
   // 3. Calculate "Free Balance" (Total Base Balance - Total Pockets in Base)
   const totalAccountBase = accountMap.reduce((sum, acc) => sum + acc.balanceInBase, 0);
-  const totalPocketBase = await Promise.all(pocketMap.map(p => convertCurrency(p.currentAmount, p.currency, 'HUF', rates)));
+  const totalPocketBase = await Promise.all(pocketMap.map((p: any) => convertCurrency(p.currentAmount, p.currency, 'HUF', rates)));
   const totalPocketBaseSum = totalPocketBase.reduce((sum, val) => sum + val, 0);
   
   console.log('--- DEBUG BALANCES ---');

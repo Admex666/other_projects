@@ -24,7 +24,7 @@ export async function GET() {
   // 2. Aggregate net debt per person
   const summary: Record<string, { userId: string, name: string, netAmount: number, currency: string }> = {};
 
-  debts.forEach(debt => {
+  debts.forEach((debt: any) => {
     const isImTheDebtor = debt.fromUserId._id.toString() === userId.toString();
     const otherUser = isImTheDebtor ? debt.toUserId : debt.fromUserId;
     const otherUserId = otherUser._id.toString();

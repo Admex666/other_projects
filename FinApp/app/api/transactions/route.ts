@@ -30,7 +30,7 @@ export async function POST(req: Request) {
     
     if (pocket && pocket.owners.length > 1) {
       // Find the other owner (assuming 2 owners for now)
-      const otherOwnerId = pocket.owners.find(id => id.toString() !== userId.toString());
+      const otherOwnerId = pocket.owners.find((id: any) => id.toString() !== userId.toString());
       
       if (otherOwnerId) {
         // Create debt: use custom amount if provided, otherwise default to 50%
