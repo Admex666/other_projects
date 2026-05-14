@@ -52,7 +52,8 @@ h1, h2, h3, h4, .logo { font-family: 'Outfit', sans-serif; font-weight: 800; }
     transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
     cursor: pointer;
     border: none;
-    white-space: nowrap;
+    white-space: normal;
+    text-align: center;
 }
 .btn-primary {
     background: var(--accent);
@@ -64,7 +65,7 @@ h1, h2, h3, h4, .logo { font-family: 'Outfit', sans-serif; font-weight: 800; }
 .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
 .btn-sm { padding: 0.6rem 1.25rem; font-size: 0.9rem; }
 .btn-lg { padding: 1.1rem 2.5rem; font-size: 1.1rem; }
-.btn-xl { padding: 1.3rem 3rem; font-size: 1.2rem; width: 100%; border-radius: var(--radius-md); margin-top: 1.5rem; letter-spacing: 0.02em; }
+.btn-xl { padding: 1.1rem 1.5rem; font-size: 1.1rem; width: 100%; border-radius: var(--radius-md); margin-top: 1.5rem; letter-spacing: 0.02em; }
 
 /* ===== NAV ===== */
 nav {
@@ -310,11 +311,34 @@ footer { padding: 4rem 0 2rem; border-top: 1px solid var(--border); }
 }
 
 @media (max-width: 768px) {
+    .hero { padding: 3rem 0; }
     .hero-inner { grid-template-columns: 1fr; gap: 3rem; text-align: center; }
+    .hero-text h1 { font-size: clamp(2rem, 8vw, 2.8rem); }
     .hero-actions { justify-content: center; }
     .trust-row { justify-content: center; }
     .steps-grid { grid-template-columns: 1fr; }
     .medal-showcase { grid-template-columns: 1fr; }
     .medal-visuals { grid-template-columns: 1fr 1fr; }
     .countdown-inner { flex-direction: column; gap: 1rem; }
+    .btn-xl { font-size: 1rem; }
+}
+
+/* STICKY CTA MOBILE */
+.sticky-cta-mobile {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(12, 15, 21, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border-accent);
+    z-index: 1000;
+    display: none;
+    box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+}
+
+@media (max-width: 768px) {
+    .sticky-cta-mobile { display: block; }
+    body { padding-bottom: 80px; } /* Hely a gombnak */
 }
