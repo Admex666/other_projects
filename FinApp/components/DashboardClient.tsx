@@ -111,6 +111,12 @@ export default function DashboardClient() {
           <h1 className="text-xl font-bold text-primary">FinApp</h1>
         </div>
         <div className="flex items-center gap-2">
+          <Link 
+            href="/settings"
+            className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-variant transition-colors text-primary"
+          >
+            <Settings size={20} />
+          </Link>
           <button className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-variant transition-colors text-primary">
             <Bell size={20} />
           </button>

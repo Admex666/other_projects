@@ -3,14 +3,14 @@
 import { signIn } from 'next-auth/react';
 import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Lock, Mail, Loader2, ShieldCheck } from 'lucide-react';
+import { Lock, User as UserIcon, Loader2, ShieldCheck } from 'lucide-react';
 
 function SignInForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') || '/';
   
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -22,13 +22,13 @@ function SignInForm() {
 
     try {
       const res = await signIn('credentials', {
-        email,
+        username,
         password,
         redirect: false,
       });
 
       if (res?.error) {
-        setError('Hibás email vagy jelszó!');
+        setError('Hibás felhasználónév vagy jelszó!');
       } else {
         router.push(callbackUrl);
       }
@@ -58,12 +58,12 @@ function SignInForm() {
 
         <div className="space-y-4">
           <div className="relative group">
-            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary transition-colors" size={18} />
+            <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary transition-colors" size={18} />
             <input
-              type="email"
-              placeholder="Email cím"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type="text"
+              placeholder="Felhasználónév"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
               className="w-full bg-surface-container border border-white/5 rounded-2xl py-4 pl-12 pr-4 text-sm text-white focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none transition-all placeholder:text-on-surface-variant/50"
             />

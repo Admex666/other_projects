@@ -11,6 +11,9 @@ export const metadata: Metadata = {
     statusBarStyle: "default",
     title: "FinSpace",
   },
+  icons: {
+    apple: "/icons/icon-192x192.png",
+  },
 };
 
 export const viewport: Viewport = {

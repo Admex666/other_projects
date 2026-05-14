@@ -9,19 +9,19 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
-        email: { label: "Email", type: "text" },
+        username: { label: "Username", type: "text" },
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          throw new Error('Please enter an email and password');
+        if (!credentials?.username || !credentials?.password) {
+          throw new Error('Please enter a username and password');
         }
 
         await dbConnect();
-        const user = await User.findOne({ email: credentials.email });
+        const user = await User.findOne({ username: credentials.username });
 
         if (!user || !(await bcrypt.compare(credentials.password, user.password))) {
-          throw new Error('Invalid email or password');
+          throw new Error('Invalid username or password');
         }
 
         return {
