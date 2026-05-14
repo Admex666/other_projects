@@ -19,9 +19,10 @@ interface TransactionModalProps {
   onClose: () => void;
   onSuccess: () => void;
   accounts: any[];
+  pockets?: any[];
 }
 
-export default function TransactionModal({ isOpen, onClose, onSuccess, accounts }: TransactionModalProps) {
+export default function TransactionModal({ isOpen, onClose, onSuccess, accounts, pockets = [] }: TransactionModalProps) {
   const [type, setType] = useState<'expense' | 'income'>('expense');
   const [amount, setAmount] = useState('');
   const [currency, setCurrency] = useState('HUF');
@@ -32,6 +33,9 @@ export default function TransactionModal({ isOpen, onClose, onSuccess, accounts 
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [isBusiness, setIsBusiness] = useState(false);
   const [usePocket, setUsePocket] = useState(false);
+  const [virtualPocketId, setVirtualPocketId] = useState('');
+  const [splitType, setSplitType] = useState<'equal' | 'custom'>('equal');
+  const [customSplitAmount, setCustomSplitAmount] = useState('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -65,6 +69,8 @@ export default function TransactionModal({ isOpen, onClose, onSuccess, accounts 
           note,
           date,
           isBusinessTransaction: isBusiness,
+          virtualPocketId: usePocket ? virtualPocketId : undefined,
+          debtAmount: usePocket && splitType === 'custom' ? parseFloat(customSplitAmount) : undefined,
         }),
       });
 
@@ -252,6 +258,75 @@ export default function TransactionModal({ isOpen, onClose, onSuccess, accounts 
                   {usePocket && <Check size={14} strokeWidth={4} />}
                 </div>
               </div>
+
+              {usePocket && (
+                <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                  <div>
+                    <label className="block text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-3">Válassz zsebet</label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {pockets.map((p) => (
+                        <button
+                          key={p._id}
+                          type="button"
+                          onClick={() => setVirtualPocketId(p._id)}
+                          className={`p-3 rounded-xl border text-xs font-bold transition-all ${virtualPocketId === p._id ? 'bg-primary/10 border-primary text-primary' : 'bg-background border-white/5 text-on-surface-variant hover:border-white/10'}`}
+                        >
+                          {p.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Split Options for Shared Pockets */}
+                  {pockets.find(p => p._id === virtualPocketId)?.owners?.length > 1 && (
+                    <div className="p-4 bg-primary/5 rounded-2xl border border-primary/10 space-y-4">
+                      <div className="flex justify-between items-center">
+                        <p className="text-xs font-bold text-primary flex items-center gap-2">
+                          <Users size={14} /> Közös elszámolás
+                        </p>
+                        <div className="flex bg-background rounded-lg p-1 border border-white/5">
+                          <button 
+                            type="button"
+                            onClick={() => setSplitType('equal')}
+                            className={`px-3 py-1 text-[10px] font-bold rounded-md transition-all ${splitType === 'equal' ? 'bg-primary text-background' : 'text-on-surface-variant'}`}
+                          >
+                            50-50%
+                          </button>
+                          <button 
+                            type="button"
+                            onClick={() => setSplitType('custom')}
+                            className={`px-3 py-1 text-[10px] font-bold rounded-md transition-all ${splitType === 'custom' ? 'bg-primary text-background' : 'text-on-surface-variant'}`}
+                          >
+                            Egyedi
+                          </button>
+                        </div>
+                      </div>
+
+                      {splitType === 'custom' && (
+                        <div className="space-y-2">
+                          <p className="text-[10px] text-on-surface-variant uppercase font-bold tracking-wider">Mennyivel tartozik a másik?</p>
+                          <div className="relative">
+                            <input 
+                              type="number"
+                              value={customSplitAmount}
+                              onChange={(e) => setCustomSplitAmount(e.target.value)}
+                              placeholder="0"
+                              className="w-full bg-background border border-white/10 rounded-xl px-4 py-2 text-sm font-bold text-white outline-none focus:border-primary/50"
+                            />
+                            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-on-surface-variant">{currency}</span>
+                          </div>
+                        </div>
+                      )}
+                      
+                      <p className="text-[10px] text-on-surface-variant italic">
+                        {splitType === 'equal' 
+                          ? `A másik félnek ${(parseFloat(amount || '0') / 2).toLocaleString()} ${currency} lesz felírva.`
+                          : `A másik félnek ${customSplitAmount || 0} ${currency} lesz felírva.`}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </form>

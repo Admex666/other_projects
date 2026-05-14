@@ -12,11 +12,23 @@ import {
   Briefcase,
   Wallet,
   CreditCard,
-  Bell
+  Bell,
+  TrendingUp,
+  Target,
+  ArrowRight,
+  Users,
+  Check,
+  ChevronDown
 } from 'lucide-react';
 import TrendChart from './TrendChart';
 import VirtualPockets from './VirtualPockets';
 import TransactionModal from './TransactionModal';
+import PocketModal from './PocketModal';
+import PocketTransferModal from './PocketTransferModal';
+import PWAInstallPrompt from './PWAInstallPrompt';
+import Link from 'next/link';
+import { useSync } from '@/lib/hooks/useSync';
+import { useCallback } from 'react';
 
 export default function DashboardClient() {
   const { data: session, status } = useSession();
@@ -25,16 +37,11 @@ export default function DashboardClient() {
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState<'personal' | 'business'>('personal');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPocketModalOpen, setIsPocketModalOpen] = useState(false);
+  const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
+  const [debts, setDebts] = useState<any[]>([]);
 
-  useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/auth/signin');
-    } else if (status === 'authenticated') {
-      fetchDashboard();
-    }
-  }, [status]);
-
-  const fetchDashboard = async () => {
+  const fetchDashboard = useCallback(async () => {
     try {
       const res = await fetch('/api/dashboard');
       const json = await res.json();
@@ -44,7 +51,32 @@ export default function DashboardClient() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  const fetchDebts = useCallback(async () => {
+    try {
+      const res = await fetch('/api/debts/summary');
+      const json = await res.json();
+      setDebts(json);
+    } catch (err) {
+      console.error(err);
+    }
+  }, []);
+
+  useSync(useCallback((event) => {
+    console.log('Real-time update received:', event);
+    fetchDashboard();
+    fetchDebts();
+  }, [fetchDashboard, fetchDebts]));
+
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/auth/signin');
+    } else if (status === 'authenticated') {
+      fetchDashboard();
+      fetchDebts();
+    }
+  }, [status, fetchDashboard, fetchDebts]);
 
   if (status === 'loading' || loading) {
     return (
@@ -63,10 +95,10 @@ export default function DashboardClient() {
     );
   }
 
-  const totalBalance = data?.accounts?.reduce((sum: number, acc: any) => sum + (acc.balanceInBase || acc.balance), 0) || 0;
+  const totalBalance = data?.accounts?.reduce((sum: number, acc: any) => sum + (Number(acc.balanceInBase) || Number(acc.balance) || 0), 0) || 0;
   const businessBalance = data?.accounts
     ?.filter((acc: any) => acc.isBusinessAccount)
-    ?.reduce((sum: number, acc: any) => sum + (acc.balanceInBase || acc.balance), 0) || 0;
+    ?.reduce((sum: number, acc: any) => sum + (Number(acc.balanceInBase) || Number(acc.balance) || 0), 0) || 0;
 
   return (
     <div className="min-h-screen bg-background pb-24 text-on-surface">
@@ -93,28 +125,50 @@ export default function DashboardClient() {
 
       <main className="mt-20 px-container-margin max-w-[1200px] mx-auto w-full space-y-gutter-md">
         {/* Total Balance Section */}
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-gutter-md">
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-gutter-md animate-in fade-in slide-in-from-bottom-4 duration-700">
           {/* Main Portfolio Card */}
-          <div className="md:col-span-2 custom-glass p-stack-lg rounded-2xl flex flex-col justify-between overflow-hidden relative min-h-[180px]">
-            <div className="absolute top-0 right-0 p-stack-lg opacity-10">
+          <div className="md:col-span-1 custom-glass p-stack-lg rounded-2xl flex flex-col justify-between overflow-hidden relative min-h-[180px] group hover:border-primary/30 transition-all duration-300">
+            <div className="absolute top-0 right-0 p-stack-lg opacity-10 group-hover:scale-110 transition-transform duration-500">
                <Wallet size={80} className="text-primary" />
             </div>
             <div>
-              <p className="text-xs text-on-surface-variant uppercase tracking-widest mb-stack-sm font-semibold">Total Portfolio Value</p>
-              <h2 className="text-5xl font-bold text-primary leading-none">
-                {totalBalance.toLocaleString()} <span className="text-2xl font-normal opacity-70">Ft</span>
+              <p className="text-xs text-on-surface-variant uppercase tracking-widest mb-stack-sm font-semibold">Total Portfolio</p>
+              <h2 className="text-4xl font-bold text-primary leading-none">
+                {totalBalance.toLocaleString()} <span className="text-xl font-normal opacity-70">Ft</span>
               </h2>
             </div>
             <div className="mt-stack-lg flex gap-stack-md">
               <div className="flex items-center gap-stack-sm text-secondary text-sm font-semibold">
                 <TrendingUp size={16} />
-                <span>+4.2% ebben a hónapban</span>
+                <span>+4.2%</span>
               </div>
             </div>
           </div>
 
+          {/* Free Balance Card */}
+          <div className="md:col-span-1 custom-glass p-stack-lg rounded-2xl flex flex-col justify-between overflow-hidden relative min-h-[180px] bg-secondary/5 border border-secondary/10 group hover:bg-secondary/10 transition-all duration-300 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
+            <div className="absolute top-0 right-0 p-stack-lg opacity-10 group-hover:rotate-12 transition-transform duration-500">
+               <Target size={80} className="text-secondary" />
+            </div>
+            <div>
+              <p className="text-xs text-secondary uppercase tracking-widest mb-stack-sm font-bold">Szabad egyenleg</p>
+              <h2 className="text-4xl font-bold text-white leading-none">
+                {(data?.freeBalance || 0).toLocaleString()} <span className="text-xl font-normal opacity-70 text-on-surface-variant">Ft</span>
+              </h2>
+              <p className="text-[10px] text-on-surface-variant mt-2 font-medium">Nincs zsebhez rendelve</p>
+            </div>
+            <div className="mt-stack-lg">
+               <button 
+                onClick={() => setIsTransferModalOpen(true)}
+                className="text-xs font-bold text-secondary flex items-center gap-2 hover:translate-x-1 transition-transform"
+               >
+                 Beosztás zsebekbe <ArrowRight size={14} />
+               </button>
+            </div>
+          </div>
+
           {/* Monthly Flow Card */}
-          <div className="custom-glass p-stack-lg rounded-2xl flex flex-col justify-center gap-stack-md">
+          <div className="custom-glass p-stack-lg rounded-2xl flex flex-col justify-center gap-stack-md animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
             <div className="flex justify-between items-center mb-1">
               <span className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Havi Forgalom</span>
               <span className="text-xs text-on-surface font-medium">Május 2026</span>
@@ -169,8 +223,15 @@ export default function DashboardClient() {
               <Briefcase size={24} />
             </div>
             <div className="flex-1">
-              <p className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">VitaSteps Business</p>
-              <p className="text-2xl font-bold">{businessBalance.toLocaleString()} Ft</p>
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">VitaSteps Business</p>
+                  <p className="text-2xl font-bold">{businessBalance.toLocaleString()} Ft</p>
+                </div>
+                <Link href="/vitasteps" className="text-[10px] font-bold text-secondary bg-secondary/10 px-2 py-1 rounded-md hover:bg-secondary/20 transition-colors">
+                  RÉSZLETEK
+                </Link>
+              </div>
             </div>
           </div>
         </section>
@@ -186,8 +247,44 @@ export default function DashboardClient() {
               <TrendChart data={data?.trend || []} />
            </div>
 
+           {/* Debt Summary */}
+           {view === 'personal' && debts.length > 0 && (
+             <div className="space-y-3">
+               <div className="flex justify-between items-center px-1">
+                 <h3 className="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Tartozások</h3>
+                 <Link href="/debts" className="text-[10px] font-bold text-primary hover:underline uppercase tracking-widest">
+                   Részletek
+                 </Link>
+               </div>
+               {debts.map((debt, idx) => (
+                 <div key={idx} className={`p-4 rounded-2xl flex items-center justify-between border-l-4 ${debt.netAmount < 0 ? 'bg-error/5 border-error' : 'bg-secondary/5 border-secondary'}`}>
+                   <div className="flex items-center gap-3">
+                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${debt.netAmount < 0 ? 'bg-error/10 text-error' : 'bg-secondary/10 text-secondary'}`}>
+                       <Users size={20} />
+                     </div>
+                     <div>
+                       <p className="text-sm font-bold">
+                         {debt.netAmount < 0 ? `Te tartozol neki: ${debt.name}` : `${debt.name} tartozik neked`}
+                       </p>
+                       <p className="text-[10px] text-on-surface-variant font-medium">Splitwise-szerű elszámolás</p>
+                     </div>
+                   </div>
+                   <div className={`text-lg font-bold ${debt.netAmount < 0 ? 'text-on-surface' : 'text-secondary'}`}>
+                     {Math.abs(debt.netAmount).toLocaleString()} <span className="text-xs font-normal opacity-60">Ft</span>
+                   </div>
+                 </div>
+               ))}
+             </div>
+           )}
+
            {/* Virtual Pockets */}
-           {view === 'personal' && <VirtualPockets pockets={data?.pockets || []} />}
+           {view === 'personal' && (
+             <VirtualPockets 
+               pockets={data?.pockets || []} 
+               onCreate={() => setIsPocketModalOpen(true)}
+               onTransfer={() => setIsTransferModalOpen(true)}
+             />
+           )}
 
            {/* Accounts Carousel */}
            <div className="space-y-3">
@@ -204,7 +301,7 @@ export default function DashboardClient() {
                       <CreditCard size={20} />
                     </div>
                     <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider truncate mb-1">{acc.name}</p>
-                    <p className="text-lg font-bold">{acc.balance.toLocaleString()} <span className="text-xs font-normal opacity-60">{acc.currency}</span></p>
+                    <p className="text-lg font-bold">{(acc.balance || 0).toLocaleString()} <span className="text-xs font-normal opacity-60">{acc.currency}</span></p>
                   </div>
                 ))}
              </div>
@@ -256,18 +353,57 @@ export default function DashboardClient() {
         onClose={() => setIsModalOpen(false)}
         onSuccess={fetchDashboard}
         accounts={data?.accounts || []}
+        pockets={data?.pockets || []}
+      />
+
+      {/* Pocket Modal */}
+      <PocketModal 
+        isOpen={isPocketModalOpen}
+        onClose={() => setIsPocketModalOpen(false)}
+        onSuccess={fetchDashboard}
+        accounts={data?.accounts || []}
+      />
+
+      <PWAInstallPrompt />
+
+      {/* Pocket Transfer Modal */}
+      <PocketTransferModal
+        isOpen={isTransferModalOpen}
+        onClose={() => setIsTransferModalOpen(false)}
+        onSuccess={fetchDashboard}
+        pockets={data?.pockets || []}
+        freeBalance={data?.freeBalance || 0}
       />
 
       {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 w-full z-50 bg-background/90 backdrop-blur-lg border-t border-white/10 flex justify-around items-center h-20 px-4">
-        <button className="flex flex-col items-center justify-center text-primary">
+      <nav className="fixed bottom-0 w-full z-[100] bg-background/90 backdrop-blur-lg border-t border-white/10 flex justify-between items-center h-20 px-8 pb-2">
+        <button 
+          onClick={() => setView('personal')}
+          className={`flex flex-col items-center justify-center transition-colors ${view === 'personal' ? 'text-primary' : 'text-on-surface-variant'}`}
+        >
           <LayoutDashboard size={24} />
           <span className="text-[10px] font-bold mt-1">Home</span>
         </button>
-        <button className="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+        
+        <Link href="/debts" className="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+          <Users size={24} />
+          <span className="text-[10px] font-bold mt-1">Közös</span>
+        </Link>
+
+        <div className="relative -mt-10">
+          <button 
+            onClick={() => setIsModalOpen(true)}
+            className="w-14 h-14 bg-primary text-background rounded-2xl flex items-center justify-center shadow-[0_0_20px_rgba(var(--primary-rgb),0.4)] hover:scale-110 active:scale-95 transition-all"
+          >
+            <Plus size={32} />
+          </button>
+        </div>
+
+        <Link href="/reports" className="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
           <PieChart size={24} />
           <span className="text-[10px] font-bold mt-1">Reports</span>
-        </button>
+        </Link>
+
         <button 
           onClick={() => setView('business')}
           className={`flex flex-col items-center justify-center transition-colors ${view === 'business' ? 'text-secondary' : 'text-on-surface-variant hover:text-secondary'}`}
@@ -275,35 +411,7 @@ export default function DashboardClient() {
           <Briefcase size={24} />
           <span className="text-[10px] font-bold mt-1">VitaSteps</span>
         </button>
-        <button className="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
-          <CreditCard size={24} />
-          <span className="text-[10px] font-bold mt-1">Accounts</span>
-        </button>
-        <button className="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
-          <Settings size={24} />
-          <span className="text-[10px] font-bold mt-1">Settings</span>
-        </button>
       </nav>
     </div>
-  );
-}
-
-function TrendingUp({ size, className }: { size: number, className?: string }) {
-  return (
-    <svg 
-      xmlns="http://www.w3.org/2000/svg" 
-      width={size} 
-      height={size} 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      stroke="currentColor" 
-      strokeWidth="2" 
-      strokeLinecap="round" 
-      strokeLinejoin="round" 
-      className={className}
-    >
-      <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
-      <polyline points="17 6 23 6 23 12"></polyline>
-    </svg>
   );
 }

@@ -221,31 +221,31 @@ Csak közös zsebek és tartozások szinkronizálnak valós időben.
 
 ## 🚀 Megvalósítási Fázisok
 
-### Fázis 1 – Alap MVP [~2-3 nap kódolás]
-- [ ] Next.js projekt setup, MongoDB kapcsolat, NextAuth auth
-- [ ] Számlák, kategóriák CRUD
-- [ ] Tranzakció rögzítés (kiadás, bevétel, átutalás)
-- [ ] Dashboard: egyenlegek, legutóbbi tranzakciók
-- [ ] Dark mode CSS design system
-- [ ] PWA konfiguráció (manifest, service worker)
+### Fázis 1 – Alap MVP [~2-3 nap kódolás] ✅
+- [x] Next.js projekt setup, MongoDB kapcsolat, NextAuth auth
+- [x] Számlák, kategóriák CRUD
+- [x] Tranzakció rögzítés (kiadás, bevétel, átutalás)
+- [x] Dashboard: egyenlegek, legutóbbi tranzakciók
+- [x] Dark mode CSS design system (Tailwind v4)
+- [x] PWA konfiguráció (manifest, service worker)
 
-### Fázis 2 – Kimutatások & Deviza [~2 nap]
-- [ ] Recharts grafikonok (P/L, breakdown, trend)
-- [ ] Frankfurter API integráció + cache
-- [ ] Alap pénznem konverzió
-- [ ] VitaSteps szűrt nézet + kimutatások
+### Fázis 2 – Kimutatások & Deviza [~2 nap] ✅
+- [x] Recharts grafikonok (Trend diagram kész)
+- [x] Frankfurter API integráció + cache
+- [x] Alap pénznem konverzió (HUF)
+- [x] VitaSteps szűrt nézet + alap kimutatások
 
-### Fázis 3 – Virtuális Zsebek & Multi-user [~2 nap]
-- [ ] Virtuális zseb CRUD
-- [ ] User megosztás, közös zseb
-- [ ] Tartozás kalkuláció (debts)
-- [ ] SSE real-time sync implementáció
+### Fázis 3 – Virtuális Zsebek & Multi-user [~2 nap] ✅
+- [x] Virtuális zseb CRUD
+- [x] User megosztás, közös zseb
+- [x] Tartozás kalkuláció (debts)
+- [x] SSE real-time sync implementáció
 
-### Fázis 4 – Migráció & Polírozás [~1 nap]
-- [ ] Excel import script (Node.js, egyszeri)
-- [ ] UI animációk, micro-interactions
-- [ ] PWA install prompt
-- [ ] Vercel deploy + env változók
+### Fázis 4 – Migráció & Polírozás [~1 nap] ✅
+- [x] Excel import script (Node.js, egyszeri)
+- [x] UI animációk, micro-interactions
+- [x] PWA install prompt
+- [x] Vercel deploy + env változók
 
 ---
 

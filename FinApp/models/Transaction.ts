@@ -15,6 +15,7 @@ const TransactionSchema = new Schema({
   tags: [String],
   note: { type: String },
   isBusinessTransaction: { type: Boolean, default: false },
+  isInternalAllocation: { type: Boolean, default: false },
   importedFrom: { type: String }, // e.g. 'xlsx'
 }, { timestamps: true });
 

@@ -18,95 +18,107 @@ export async function GET() {
 
   await dbConnect();
   
-  // Ensure models are registered (especially for population)
   if (!mongoose.models.Category) mongoose.model('Category', Category.schema);
   if (!mongoose.models.Account) mongoose.model('Account', Account.schema);
 
   const userId = new mongoose.Types.ObjectId((session.user as any).id);
 
-  // 1. Get all accounts
   const accounts = await Account.find({ userId });
-  
-  // 2. Get pockets
   const pockets = await VirtualPocket.find({ owners: userId }).populate('linkedAccountId', 'name');
   
-  // 3. Get balances
-  const balances = await Transaction.aggregate([
-    { $match: { userId } },
-    { $group: { _id: '$accountId', balance: { $sum: { $cond: [{ $eq: ['$type', 'income'] }, '$amount', { $subtract: [0, '$amount'] }] } } } }
-  ]);
-
-  const outgoingTransfers = await Transaction.aggregate([
-    { $match: { userId, type: 'transfer' } },
-    { $group: { _id: '$fromAccountId', total: { $sum: '$amount' } } }
-  ]);
-
-  const incomingTransfers = await Transaction.aggregate([
-    { $match: { userId, type: 'transfer' } },
-    { $group: { _id: '$toAccountId', total: { $sum: '$amount' } } }
-  ]);
-
   const rates = await getLatestRates();
 
+  // 1. Calculate Account Balances (Only real transactions)
   const accountMap = await Promise.all(accounts.map(async (acc) => {
-    const baseBalance = balances.find(b => b._id && b._id.toString() === acc._id.toString())?.balance || 0;
-    const out = outgoingTransfers.find(t => t._id && t._id.toString() === acc._id.toString())?.total || 0;
-    const inc = incomingTransfers.find(t => t._id && t._id.toString() === acc._id.toString())?.total || 0;
-    
-    const balance = baseBalance - out + inc;
+    const txs = await Transaction.find({
+      userId,
+      isInternalAllocation: { $ne: true }, // Skip internal pocket-only moves
+      $or: [
+        { accountId: acc._id },
+        { toAccountId: acc._id }
+      ]
+    });
+
+    let balance = acc.initialBalance || 0;
+    for (const tx of txs) {
+      if (tx.accountId?.toString() === acc._id.toString()) {
+        const amountInAccCurrency = await convertCurrency(tx.amount, tx.currency, acc.currency, rates);
+        if (tx.type === 'income') balance += amountInAccCurrency;
+        else balance -= amountInAccCurrency;
+      } else if (tx.toAccountId?.toString() === acc._id.toString() && tx.type === 'transfer') {
+        const amountInAccCurrency = await convertCurrency(tx.amount, tx.currency, acc.currency, rates);
+        balance += amountInAccCurrency;
+      }
+    }
+
     const balanceInBase = await convertCurrency(balance, acc.currency, 'HUF', rates);
-    
     return {
       ...acc.toObject(),
-      balance,
-      balanceInBase
+      balance: Number(balance.toFixed(2)),
+      balanceInBase: Number(balanceInBase.toFixed(0))
     };
   }));
 
-  // 4. Recent transactions
+  // 2. Calculate Virtual Pocket Balances (Ensuring min 0)
+  const pocketMap = await Promise.all(pockets.map(async (p) => {
+    const txs = await Transaction.find({ virtualPocketId: p._id });
+    
+    let balance = 0;
+    for (const tx of txs) {
+      const amountInPocketCurrency = await convertCurrency(tx.amount, tx.currency, p.currency, rates);
+      if (tx.type === 'income') balance += amountInPocketCurrency;
+      else balance -= amountInPocketCurrency;
+    }
+
+    // Rule: Pocket cannot be negative
+    const finalBalance = Math.max(0, balance);
+
+    return {
+      ...p.toObject(),
+      currentAmount: Number(finalBalance.toFixed(2)),
+      progress: p.targetAmount ? Math.min(Math.round((finalBalance / p.targetAmount) * 100), 100) : 0
+    };
+  }));
+
+  // 3. Calculate "Free Balance" (Total Base Balance - Total Pockets in Base)
+  const totalAccountBase = accountMap.reduce((sum, acc) => sum + acc.balanceInBase, 0);
+  const totalPocketBase = await Promise.all(pocketMap.map(p => convertCurrency(p.currentAmount, p.currency, 'HUF', rates)));
+  const totalPocketBaseSum = totalPocketBase.reduce((sum, val) => sum + val, 0);
+  
+  console.log('--- DEBUG BALANCES ---');
+  console.log('Total Account (Base):', totalAccountBase);
+  console.log('Total Pocket (Base):', totalPocketBaseSum);
+  console.log('Free Balance:', totalAccountBase - totalPocketBaseSum);
+
+  const freeBalance = totalAccountBase - totalPocketBaseSum;
+
   const recentTransactions = await Transaction.find({ userId })
     .sort({ date: -1 })
     .limit(10)
     .populate('accountId', 'name color icon')
     .populate('categoryId', 'name icon');
 
-  // 5. Monthly data
   const now = new Date();
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-  const monthlyData = await Transaction.aggregate([
-    { $match: { userId, date: { $gte: startOfMonth }, type: { $ne: 'transfer' } } },
-    { $group: { _id: '$type', total: { $sum: '$amount' } } }
-  ]);
 
-  const income = monthlyData.find(d => d._id === 'income')?.total || 0;
-  const expense = monthlyData.find(d => d._id === 'expense')?.total || 0;
-
-  // 6. Trend data
-  const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 5, 1);
-  const trendData = await Transaction.aggregate([
-    { $match: { userId, date: { $gte: sixMonthsAgo } } },
-    {
-      $group: {
-        _id: {
-          year: { $year: '$date' },
-          month: { $month: '$date' },
-          type: '$type'
-        },
-        total: { $sum: '$amount' }
-      }
-    },
-    { $sort: { '_id.year': 1, '_id.month': 1 } }
-  ]);
+  let income = 0;
+  let expense = 0;
+  const monthlyTxs = await Transaction.find({ userId, date: { $gte: startOfMonth }, type: { $ne: 'transfer' }, isInternalAllocation: { $ne: true } });
+  for (const tx of monthlyTxs) {
+    const val = await convertCurrency(tx.amount, tx.currency, 'HUF', rates);
+    if (tx.type === 'income') income += val;
+    else expense += val;
+  }
 
   return NextResponse.json({
     accounts: accountMap,
     recentTransactions,
     monthly: {
-      income,
-      expense,
-      profit: income - expense
+      income: Math.round(income),
+      expense: Math.round(expense),
+      profit: Math.round(income - expense)
     },
-    trend: trendData,
-    pockets
+    pockets: pocketMap,
+    freeBalance: Math.max(0, Math.round(freeBalance))
   });
 }
