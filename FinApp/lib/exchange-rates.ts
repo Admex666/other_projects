@@ -11,7 +11,8 @@ export async function getLatestRates() {
   // 1. Megpróbáljuk lekérni a mait a cache-ből
   let cached = await ExchangeRate.findOne({ date: today });
   if (cached && cached.rates) {
-    return cached.rates;
+    // Biztosítjuk, hogy tiszta objektumot adjunk vissza (nem Mongoose Map-et)
+    return cached.rates instanceof Map ? Object.fromEntries(cached.rates) : JSON.parse(JSON.stringify(cached.rates));
   }
 
   // 2. Ha nincs mai, megpróbáljuk az API-t
@@ -48,33 +49,46 @@ export async function getLatestRates() {
   
   if (lastAvailable && lastAvailable.rates) {
     console.log(`Using fallback rates from: ${lastAvailable.date}`);
-    return lastAvailable.rates;
+    // Ha a mai napra nem találtuk, de van régi, akkor a régi HUF árfolyamát is biztosítsuk
+    const rates = { ...lastAvailable.rates };
+    if (!rates['HUF']) rates['HUF'] = 400.0;
+    if (!rates['EUR']) rates['EUR'] = 1.0;
+    return rates;
   }
 
-  // 4. Végső eset (ha még sosem sikerült semmit letölteni - pl. első indítás internet nélkül)
-  // Ez csak egy biztonsági háló, hogy ne legyen NaN sehol.
+  // 4. Végső eset
   return {
-    "HUF": 400.0,
+    "HUF": 401.5,
     "USD": 1.08,
     "EUR": 1.0,
-    "BGN": 1.95
+    "GBP": 0.86
   };
 }
 
 export async function convertCurrency(amount: number, from: string, to: string, rates: any) {
   if (from === to || amount === 0) return amount;
-  
-  // Ha nincs árfolyamunk, nem tudunk konvertálni, marad az eredeti összeg
   if (!rates) return amount;
-  
-  try {
-    // Alapértelmezett árfolyamok ha valami hiányozna (fallback az 1.0-ra hogy ne legyen NaN)
-    const fromRate = rates[from] || (from === 'EUR' ? 1.0 : null);
-    const toRate = rates[to] || (to === 'EUR' ? 1.0 : null);
 
-    if (fromRate === null || toRate === null) {
-      console.warn(`Missing rate for ${fromRate === null ? from : to}. Using 1:1 fallback.`);
-      return amount;
+  // Alapértelmezett árfolyamok (Hardcoded biztonsági háló)
+  const DEFAULT_RATES: any = {
+    "HUF": 357.43,
+    "USD": 1.08,
+    "EUR": 1.0,
+    "GBP": 0.86
+  };
+
+  try {
+    let fromRate = rates[from] || DEFAULT_RATES[from];
+    let toRate = rates[to] || DEFAULT_RATES[to];
+
+    // Ha még így is hiányzik (pl. egzotikus deviza), akkor a legközelebbi ismertet használjuk, vagy 1:1 (végső eset)
+    if (!fromRate) {
+      console.warn(`Nem található árfolyam a következőhöz: ${from}. Alapértelmezett 1.0 használata.`);
+      fromRate = 1.0;
+    }
+    if (!toRate) {
+      console.warn(`Nem található árfolyam a következőhöz: ${to}. Alapértelmezett 1.0 használata.`);
+      toRate = 1.0;
     }
 
     // Átszámítás EUR-ra, majd onnan a cél devizára

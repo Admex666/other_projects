@@ -31,13 +31,26 @@ export async function GET() {
   // 1. Calculate Account Balances (Only real transactions)
   const accountMap = await Promise.all(accounts.map(async (acc) => {
     const txs = await Transaction.find({
-      userId,
-      isInternalAllocation: { $ne: true }, // Skip internal pocket-only moves
+      userId: userId.toString(),
+      isInternalAllocation: { $ne: true },
       $or: [
         { accountId: acc._id },
         { toAccountId: acc._id }
       ]
     });
+
+    // Fallback: if no txs found with string ID, try with ObjectId
+    if (txs.length === 0) {
+      const txsObjId = await Transaction.find({
+        userId: userId,
+        isInternalAllocation: { $ne: true },
+        $or: [
+          { accountId: acc._id },
+          { toAccountId: acc._id }
+        ]
+      });
+      if (txsObjId.length > 0) txs.push(...txsObjId);
+    }
 
     let balance = acc.initialBalance || 0;
     for (const tx of txs) {
