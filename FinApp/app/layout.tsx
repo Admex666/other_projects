@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Providers } from "./providers";
+import Navigation from "@/components/Navigation";
 
 export const metadata: Metadata = {
   title: "FinSpace | Pénzügyeid egy helyen",
@@ -34,6 +35,7 @@ export default function RootLayout({
       <body suppressHydrationWarning>
         <Providers>
           {children}
+          <Navigation />
         </Providers>
       </body>
     </html>
