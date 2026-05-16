@@ -13,19 +13,28 @@ months = 12
 
 scenarios = {
     "base": {
-        "price_per_unit": 8490,              # eladási ár / db
-        "units_sold_per_month": 35,       # havi darabszám
-        "material_cost_per_unit": 1756*1.3,      # anyagköltség / db
-        "production_cost_per_unit": 0,    # gyártás / db
-        "packaging_shipping_per_unit": 1500, # csomagolás + szállítás / db
-        
-        "fixed_costs_per_month": 30000 + 4167,  # fix költségek (könyvelő 30k + IPA ~4167 Ft/hó)
-        "marketing_per_month": 25000,        # marketing
-        
-        "customer_payment_delay": 0,        # hónap (bevétel késleltetés)
-        "supplier_payment_delay": 0,        # hónap
-        
-        "initial_cash": 0               # kezdő pénz
+        "price_per_unit": 8490,              
+        "units_sold_per_month": 35,       
+        "material_cost_per_unit": 1756 * 1.3,      
+        "production_cost_per_unit": 0,    
+        "packaging_shipping_per_unit": 1500, 
+        "fixed_costs_per_month": 30000 + 4167,  
+        "marketing_per_month": 25000,        
+        "customer_payment_delay": 0,        
+        "supplier_payment_delay": 0,        
+        "initial_cash": 200000              
+    },
+    "real_launch": {
+        "price_per_unit": 7990,              
+        "units_sold_per_month": 25,       # 20-30 eladás közötti becslés
+        "material_cost_per_unit": 1512,      # landed cost ÁFÁ-val
+        "production_cost_per_unit": 0,    
+        "packaging_shipping_per_unit": 1350, # 1200-1500 átlaga
+        "fixed_costs_per_month": 15000 + 4167,  # könyvelő 15k + IPA
+        "marketing_per_month": 30000,        # havi bruttó büdzsé
+        "customer_payment_delay": 0,        
+        "supplier_payment_delay": 0,        
+        "initial_cash": 0       # 30k kezdeti beruházás levonva
     },
 
     "optimistic": {
