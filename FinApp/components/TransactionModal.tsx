@@ -19,7 +19,7 @@ interface TransactionModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  accounts: any[];
+  accounts?: any[];
   pockets?: any[];
 }
 
@@ -39,10 +39,18 @@ export default function TransactionModal({ isOpen, onClose, onSuccess, accounts,
   const [customSplitAmount, setCustomSplitAmount] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const [accountsList, setAccountsList] = useState<any[]>(accounts || []);
+  const [pocketsList, setPocketsList] = useState<any[]>(pockets || []);
+
   useEffect(() => {
     if (isOpen) {
       fetchCategories();
-      if (accounts.length > 0) setAccountId(accounts[0]._id);
+      if (!accounts || accounts.length === 0) {
+        fetchAccounts();
+      }
+      if (!pockets || pockets.length === 0) {
+        fetchPockets();
+      }
     }
   }, [isOpen]);
 
@@ -51,6 +59,21 @@ export default function TransactionModal({ isOpen, onClose, onSuccess, accounts,
     const data = await res.json();
     setCategories(data);
     if (data.length > 0) setCategoryId(data[0]._id);
+  };
+
+  const fetchAccounts = async () => {
+    const res = await fetch('/api/dashboard');
+    const data = await res.json();
+    if (data.accounts) {
+      setAccountsList(data.accounts);
+      if (data.accounts.length > 0) setAccountId(data.accounts[0]._id);
+    }
+  };
+
+  const fetchPockets = async () => {
+    const res = await fetch('/api/pockets');
+    const data = await res.json();
+    if (Array.isArray(data)) setPocketsList(data);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -94,7 +117,7 @@ export default function TransactionModal({ isOpen, onClose, onSuccess, accounts,
   return (
     <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-background/60 backdrop-blur-sm animate-in fade-in duration-200">
       <div 
-        className="w-full max-w-lg bg-surface-container sm:rounded-3xl rounded-t-3xl border border-white/10 shadow-2xl flex flex-col max-h-[90vh] animate-in slide-in-from-bottom duration-300"
+        className="w-full max-w-lg bg-surface-container sm:rounded-3xl rounded-t-3xl border border-white/10 shadow-2xl flex flex-col max-h-[95vh] animate-in slide-in-from-bottom duration-300"
       >
         {/* Header */}
         <div className="p-6 flex justify-between items-center border-b border-white/5">
@@ -105,7 +128,7 @@ export default function TransactionModal({ isOpen, onClose, onSuccess, accounts,
           <div className="w-10"></div>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-8 scrollbar-hide">
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-8 scrollbar-hide pb-12">
           {/* Type Selector */}
           <div className="flex bg-background p-1 rounded-2xl border border-white/5">
             <button 
@@ -126,7 +149,7 @@ export default function TransactionModal({ isOpen, onClose, onSuccess, accounts,
 
           {/* Amount Input Section */}
           <div className="text-center space-y-2">
-            <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.2em]">Tranzakció összege</p>
+            <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.2em]">Összeg</p>
             <div className="flex items-center justify-center gap-3">
               <input 
                 type="number"
@@ -149,7 +172,7 @@ export default function TransactionModal({ isOpen, onClose, onSuccess, accounts,
                    <option value="USD">USD</option>
                  </select>
                  {currency !== 'HUF' && (
-                   <span className="text-[10px] text-secondary mt-1 font-medium">≈ {(parseFloat(amount || '0') * 400).toLocaleString()} Ft</span>
+                   <span className="text-[10px] text-secondary mt-1 font-medium">≈ {(parseFloat(amount || '0') * 357.43).toLocaleString()} Ft</span>
                  )}
               </div>
             </div>
@@ -169,7 +192,7 @@ export default function TransactionModal({ isOpen, onClose, onSuccess, accounts,
                     onChange={(e) => setAccountId(e.target.value)}
                     className="w-full bg-background border border-white/5 rounded-2xl py-4 pl-4 pr-10 text-sm font-medium appearance-none outline-none focus:border-primary transition-all"
                   >
-                    {accounts.map(acc => (
+                    {accountsList?.map(acc => (
                       <option key={acc._id} value={acc._id}>{acc.name}</option>
                     ))}
                   </select>
@@ -187,7 +210,7 @@ export default function TransactionModal({ isOpen, onClose, onSuccess, accounts,
                     onChange={(e) => setCategoryId(e.target.value)}
                     className="w-full bg-background border border-white/5 rounded-2xl py-4 pl-4 pr-10 text-sm font-medium appearance-none outline-none focus:border-primary transition-all"
                   >
-                    {categories.map(cat => (
+                    {categories?.map(cat => (
                       <option key={cat._id} value={cat._id}>{cat.name}</option>
                     ))}
                   </select>
@@ -205,7 +228,7 @@ export default function TransactionModal({ isOpen, onClose, onSuccess, accounts,
                 placeholder="Mire költöttél?"
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
-                className="w-full bg-background border border-white/5 rounded-2xl p-4 text-sm font-medium outline-none focus:border-primary transition-all min-h-[100px] resize-none"
+                className="w-full bg-background border border-white/5 rounded-2xl p-4 text-sm font-medium outline-none focus:border-primary transition-all min-h-[80px] resize-none"
               />
             </div>
 
@@ -265,7 +288,7 @@ export default function TransactionModal({ isOpen, onClose, onSuccess, accounts,
                   <div>
                     <label className="block text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-3">Válassz zsebet</label>
                     <div className="grid grid-cols-2 gap-2">
-                      {pockets.map((p) => (
+                      {pocketsList?.map((p) => (
                         <button
                           key={p._id}
                           type="button"
@@ -279,7 +302,7 @@ export default function TransactionModal({ isOpen, onClose, onSuccess, accounts,
                   </div>
 
                   {/* Split Options for Shared Pockets */}
-                  {pockets.find(p => p._id === virtualPocketId)?.owners?.length > 1 && (
+                  {pocketsList.find(p => p._id === virtualPocketId)?.owners?.length > 1 && (
                     <div className="p-4 bg-primary/5 rounded-2xl border border-primary/10 space-y-4">
                       <div className="flex justify-between items-center">
                         <p className="text-xs font-bold text-primary flex items-center gap-2">

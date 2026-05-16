@@ -67,6 +67,8 @@ export default function ReportsClient() {
 
   const totalExpense = data?.breakdown?.reduce((sum: number, item: any) => sum + item.value, 0) || 0;
 
+  const isAdam = (session?.user as any)?.username === 'adam';
+
   return (
     <div className="min-h-screen bg-background pb-32 text-on-surface">
       {/* Top App Bar */}
@@ -75,11 +77,8 @@ export default function ReportsClient() {
           <div className="w-8 h-8 rounded-full overflow-hidden border border-white/10 flex items-center justify-center bg-surface-variant">
              <img src={`https://ui-avatars.com/api/?name=${session?.user?.name}&background=c5c0ff&color=150067`} alt="User" />
           </div>
-          <h1 className="text-xl font-bold text-primary">FinApp</h1>
+          <h1 className="text-xl font-bold text-primary">FinSpace</h1>
         </div>
-        <button className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-variant transition-colors text-primary">
-          <Bell size={20} />
-        </button>
       </header>
 
       <main className="pt-24 px-container-margin max-w-[1200px] mx-auto space-y-gutter-md">
@@ -93,7 +92,7 @@ export default function ReportsClient() {
             <button className="p-2 hover:bg-surface-variant rounded-lg text-primary transition-colors">
               <ChevronLeft size={20} />
             </button>
-            <span className="px-4 text-sm font-bold text-on-surface">2026 Május</span>
+            <span className="px-4 text-sm font-bold text-on-surface">Aktuális időszak</span>
             <button className="p-2 hover:bg-surface-variant rounded-lg text-primary transition-colors">
               <ChevronRight size={20} />
             </button>
@@ -107,8 +106,8 @@ export default function ReportsClient() {
           <div className="md:col-span-8 custom-glass p-6 rounded-2xl flex flex-col gap-6">
             <div className="flex justify-between items-start">
               <div>
-                <h3 className="text-xl font-bold text-on-surface">Havi P/L</h3>
-                <p className="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Bevételek és kiadások kategóriánként</p>
+                <h3 className="text-xl font-bold text-on-surface">Bevételek és Kiadások</h3>
+                <p className="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Kategóriánkénti bontás</p>
               </div>
               <div className="flex gap-4">
                 <div className="flex items-center gap-2">
@@ -152,7 +151,7 @@ export default function ReportsClient() {
           <div className="md:col-span-4 custom-glass p-6 rounded-2xl flex flex-col items-center gap-6">
             <div className="w-full text-left">
               <h3 className="text-xl font-bold text-on-surface">Megoszlás</h3>
-              <p className="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Költések százalékosan</p>
+              <p className="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Költések aránya</p>
             </div>
             
             <div className="relative w-48 h-48">
@@ -199,8 +198,8 @@ export default function ReportsClient() {
           <div className="md:col-span-12 custom-glass p-6 rounded-2xl flex flex-col gap-6">
             <div className="flex justify-between items-start">
               <div>
-                <h3 className="text-xl font-bold text-on-surface">12 Havi Trend</h3>
-                <p className="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Nettó vagyoni növekedés</p>
+                <h3 className="text-xl font-bold text-on-surface">Nettó Trend</h3>
+                <p className="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Vagyoni növekedés</p>
               </div>
               <div className="text-right">
                 <span className="text-2xl font-bold text-secondary">
@@ -233,53 +232,31 @@ export default function ReportsClient() {
             </div>
           </div>
 
-          {/* VitaSteps Highlight Card */}
-          <div className="md:col-span-12 custom-glass p-6 rounded-2xl relative overflow-hidden group hover:bg-white/5 transition-all">
-            <div className="absolute left-0 top-0 bottom-0 w-1 bg-secondary"></div>
-            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-              <div className="flex items-center gap-6">
-                <div className="w-16 h-16 rounded-2xl bg-secondary/10 flex items-center justify-center text-secondary shadow-inner">
-                  <Briefcase size={32} />
+          {/* VitaSteps Highlight Card - Csak Adámnak */}
+          {isAdam && (
+            <div className="md:col-span-12 custom-glass p-6 rounded-2xl relative overflow-hidden group hover:bg-white/5 transition-all">
+              <div className="absolute left-0 top-0 bottom-0 w-1 bg-secondary"></div>
+              <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                <div className="flex items-center gap-6">
+                  <div className="w-16 h-16 rounded-2xl bg-secondary/10 flex items-center justify-center text-secondary shadow-inner">
+                    <Briefcase size={32} />
+                  </div>
+                  <div>
+                    <h4 className="text-xl font-bold text-on-surface">VitaSteps Áttekintés</h4>
+                    <p className="text-sm text-on-surface-variant">Az üzleti kiadásaid 12%-kal csökkentek ebben a negyedévben.</p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="text-xl font-bold text-on-surface">VitaSteps Áttekintés</h4>
-                  <p className="text-sm text-on-surface-variant">Az üzleti kiadásaid 12%-kal csökkentek ebben a negyedévben.</p>
-                </div>
+                <Link 
+                  href="/vitasteps"
+                  className="px-8 py-3 bg-secondary text-background rounded-xl font-bold hover:opacity-90 transition-opacity active:scale-95"
+                >
+                  Üzleti Stratégia Megnyitása
+                </Link>
               </div>
-              <Link 
-                href="/vitasteps"
-                className="px-8 py-3 bg-secondary text-background rounded-xl font-bold hover:opacity-90 transition-opacity active:scale-95"
-              >
-                Üzleti Stratégia Áttekintése
-              </Link>
             </div>
-          </div>
+          )}
         </div>
       </main>
-
-      {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 w-full z-50 bg-background/90 backdrop-blur-lg border-t border-white/10 flex justify-around items-center h-20 px-4">
-        <Link href="/" className="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
-          <LayoutDashboard size={24} />
-          <span className="text-[10px] font-bold mt-1">Home</span>
-        </Link>
-        <button className="flex flex-col items-center justify-center text-primary">
-          <PieChartIcon size={24} />
-          <span className="text-[10px] font-bold mt-1">Reports</span>
-        </button>
-        <Link href="/vitasteps" className="flex flex-col items-center justify-center text-on-surface-variant hover:text-secondary transition-colors">
-          <Briefcase size={24} />
-          <span className="text-[10px] font-bold mt-1">VitaSteps</span>
-        </Link>
-        <button className="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
-          <CreditCard size={24} />
-          <span className="text-[10px] font-bold mt-1">Accounts</span>
-        </button>
-        <button className="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
-          <Settings size={24} />
-          <span className="text-[10px] font-bold mt-1">Settings</span>
-        </button>
-      </nav>
     </div>
   );
 }
