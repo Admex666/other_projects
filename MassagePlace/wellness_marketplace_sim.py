@@ -569,18 +569,60 @@ scenarios: List[Scenario] = [
         ctr=0.025,         # erős kreatív
         cvr=0.06,          # jól konvertáló landing
         aov=15_000,
-        take_rate=0.12,
+        take_rate=0.15,
         variable_cost_rate=0.04,
         bookings_per_user_per_month=1.5,
         monthly_churn=0.22,
-        partners=50,
-        idle_slots_per_partner_per_day=2.0,
+        partners=30,
+        idle_slots_per_partner_per_day=2.5,
         discount_depth=0.30,
-        fill_rate=0.28,
+        fill_rate=0.35,
         payroll=400_000,
         marketing_fixed=0,
         infra=200_000,
         support_fixed=200_000,
+    ),
+
+    Scenario(
+        name="🔬 Kutatás-alapú (2025 Benchmark)",
+        impressions=1_000_000,
+        cpm=2_000,         # Meta HU realitás
+        ctr=0.022,         # 30% off FOMO hatása
+        cvr=0.015,         # App-letöltős funnel (sajnos ennyi)
+        aov=15_000,
+        take_rate=0.12,
+        variable_cost_rate=0.02, # Barion/SimplePay optimalizáció
+        bookings_per_user_per_month=1.3, # Reális masszázs frekvencia
+        monthly_churn=0.30, # App retention realitás
+        partners=50,
+        idle_slots_per_partner_per_day=6.0, # Kutatás szerinti 60% occupancy
+        discount_depth=0.30,
+        fill_rate=0.15,    # Alacsonyabb fill rate a nagy inventory miatt
+        payroll=0,
+        marketing_fixed=0,
+        infra=50_000,
+        support_fixed=50_000,
+    ),
+
+    Scenario(
+        name="🔬 Kutatás + Stratégiai Pivot",
+        impressions=400_000/2.5, # Kevesebb, de minőségibb elérés
+        cpm=2_200,          # Kicsit drágább, fókuszáltabb célzás
+        ctr=0.025,          # Optimalizált kreatívok
+        cvr=0.045,          # WEB-FIRST (nincs app letöltési súrlódás!)
+        aov=15_000,         # Kicsit több prémium partner
+        take_rate=0.20,     # Inkrementális bevételért cserébe reális a 20%
+        variable_cost_rate=0.02,
+        bookings_per_user_per_month=1.4,
+        monthly_churn=0.21, # CRM és lojalitás program hatása
+        partners=20,        # Sűrűbb hálózat a kerületekben
+        idle_slots_per_partner_per_day=3.5,
+        discount_depth=0.30,
+        fill_rate=0.20,     # Jobb likviditás a webes felület miatt
+        payroll=0,          # Marad a te beállításod
+        marketing_fixed=0,
+        infra=50_000,
+        support_fixed=50_000,
     ),
 
     Scenario(
@@ -705,15 +747,11 @@ if __name__ == "__main__":
     print("  Növekedési fázis — részletes elemzés")
     print("═" * 60)
 
-    # Csak a növekedési fázis szcenárió
-    novekedes = next(s for s in scenarios if "Növekedési" in s.name)
-    r = simulate(novekedes)
-
-    # 1. Standard output
-    print_scenario(novekedes, r)
-
-    # 2. Mélyelemzés
-    analyze_scenario(novekedes, r)
+    # Futtassuk le a stratégiai pivot szcenáriót
+    pivot = [s for s in scenarios if "Pivot" in s.name][0]
+    r = simulate(pivot)
+    print_scenario(pivot, r)
+    #analyze_scenario(pivot, r)
 
     print("💡 Tipp: Módosítsd a Scenario() paramétereket a saját becsléseidhez!")
     print("   A változók magyarázata a kód tetején (ADATSTRUKTÚRA szekcióban) megtalálható.\n")
