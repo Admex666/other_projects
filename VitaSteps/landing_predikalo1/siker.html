@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sikeres nevezés – VitaSteps</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="./assets/logo.png">
+
+    <!-- Meta Pixel Code -->
+    <script>
+        !function (f, b, e, v, n, t, s) {
+            if (f.fbq) return; n = f.fbq = function () {
+                n.callMethod ?
+                    n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+            };
+            if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+            n.queue = []; t = b.createElement(e); t.async = !0;
+            t.src = v; s = b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t, s)
+        }(window, document, 'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '808533555643359');
+        fbq('track', 'PageView');
+        
+        // PURCHASE EVENT TRACKING (Azonnali mérés a sikeres fizetés után)
+        fbq('track', 'Purchase', {
+            value: 7990.00,
+            currency: 'HUF'
+        });
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+            src="https://www.facebook.com/tr?id=808533555643359&ev=PageView&noscript=1" /></noscript>
+    <!-- End Meta Pixel Code -->
+
+    <style>
+        .success-container {
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+        }
+        .success-icon {
+            font-size: 5rem;
+            margin-bottom: 1.5rem;
+            animation: pulse 2s infinite;
+        }
+        .success-title {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #fff 40%, #7a8aa0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .success-subtitle {
+            color: var(--text-mid);
+            font-size: 1.2rem;
+            max-width: 500px;
+            margin-bottom: 2.5rem;
+        }
+        .info-card {
+            background: var(--surface);
+            border: 1px solid var(--border-accent);
+            border-radius: var(--radius-md);
+            padding: 2rem;
+            max-width: 500px;
+            margin-bottom: 3rem;
+            text-align: left;
+        }
+        .info-card h3 {
+            color: var(--accent);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        .info-card ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .info-card li {
+            margin-bottom: 0.75rem;
+            color: var(--text-high);
+            font-size: 0.95rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <div class="container nav-inner">
+            <div class="logo">VITASTEPS</div>
+            <a href="index.html" class="btn btn-ghost btn-sm">&larr; Főoldal</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="success-container">
+            <div class="success-icon">🏔️🏅</div>
+            <h1 class="success-title">Sikeres nevezés!</h1>
+            <p class="success-subtitle">Hivatalosan is bent vagy a Prédikálószék Vertical kihívás első hivatalos szériájában.</p>
+
+            <div class="info-card">
+                <h3>Mi a teendőd most?</h3>
+                <ul>
+                    <li>✅ <strong>E-mail visszaigazolás:</strong> Pár percen belül megérkezik a megadott e-mail címedre.</li>
+                    <li>✅ <strong>A felkészülés:</strong> A rajtig (május 28.) küldjük a részletes "Mission Guide"-ot az útvonalakkal.</li>
+                    <li>✅ <strong>A teljesítés:</strong> Május 28. és június 30. között bármikor teljesítheted a túrát.</li>
+                </ul>
+            </div>
+
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+                <a href="index.html" class="btn btn-primary">Vissza a főoldalra</a>
+                <a href="mailto:vitasteps.team@gmail.com" class="btn btn-ghost">Segítségre van szükségem</a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container footer-inner">
+            <div class="footer-brand">
+                <div class="logo">VITASTEPS</div>
+                <p>Real World Accomplishments. Verified.</p>
+            </div>
+            <div class="footer-legal">
+                <p>© 2026 VitaSteps</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>
