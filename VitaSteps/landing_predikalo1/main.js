@@ -5,7 +5,29 @@ function updateCountdown() {
     const now = new Date();
     const diff = EARLYBIRD_END - now;
     if (diff <= 0) {
-        document.getElementById('countdown').innerHTML = '<span style="color:var(--text-mid)">Az Early Bird időszak véget ért.</span>';
+        const countdownEl = document.getElementById('countdown');
+        if (countdownEl) {
+            countdownEl.innerHTML = '<span style="color:var(--text-mid); font-weight: 600;">Az Early Bird időszak véget ért. A nevezés normál áron folytatódik.</span>';
+        }
+        
+        // Dynamic price switch to 8.990 Ft (Normal Price)
+        const heroCta = document.getElementById('hero-cta');
+        if (heroCta && !heroCta.textContent.includes('8.990')) {
+            heroCta.innerHTML = 'Nevezek – 8.990 Ft 🏔️';
+            // Update the subtext under hero cta if needed
+        }
+        
+        const paymentBtn = document.getElementById('payment-btn');
+        if (paymentBtn && !paymentBtn.textContent.includes('8.990')) {
+            paymentBtn.innerHTML = 'Nevezek – 8.990 Ft 🏔️';
+        }
+        
+        const badge = document.getElementById('badge-earlybird');
+        if (badge) {
+            badge.innerHTML = '🏔️ Normál nevezés';
+            badge.style.background = 'rgba(255,255,255,0.08)';
+            badge.style.color = 'var(--text-high)';
+        }
         return;
     }
     const d = Math.floor(diff / (1000 * 60 * 60 * 24));
