@@ -1,5 +1,5 @@
 // ===== COUNTDOWN =====
-const EARLYBIRD_END = new Date('2026-05-19T12:00:00');
+const EARLYBIRD_END = new Date('2026-05-19T12:15:00');
 
 function updateCountdown() {
     const now = new Date();
