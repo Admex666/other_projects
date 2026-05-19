@@ -23,10 +23,11 @@
             'https://connect.facebook.net/en_US/fbevents.js');
         fbq('init', '808533555643359');
         fbq('track', 'PageView');
-        
-        // PURCHASE EVENT TRACKING (Azonnali mérés a sikeres fizetés után)
+
+        // PURCHASE EVENT TRACKING (Automatikus értékválasztás dátum alapján)
+        const isNormalPrice = new Date() >= new Date('2026-05-19T15:00:00');
         fbq('track', 'Purchase', {
-            value: 7990.00,
+            value: isNormalPrice ? 8990.00 : 7990.00,
             currency: 'HUF'
         });
     </script>
@@ -44,11 +45,13 @@
             text-align: center;
             padding: 2rem;
         }
+
         .success-icon {
             font-size: 5rem;
             margin-bottom: 1.5rem;
             animation: pulse 2s infinite;
         }
+
         .success-title {
             font-size: clamp(2rem, 5vw, 3.5rem);
             margin-bottom: 1rem;
@@ -56,12 +59,14 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+
         .success-subtitle {
             color: var(--text-mid);
             font-size: 1.2rem;
             max-width: 500px;
             margin-bottom: 2.5rem;
         }
+
         .info-card {
             background: var(--surface);
             border: 1px solid var(--border-accent);
@@ -71,16 +76,19 @@
             margin-bottom: 3rem;
             text-align: left;
         }
+
         .info-card h3 {
             color: var(--accent);
             margin-bottom: 1rem;
             font-size: 1.2rem;
         }
+
         .info-card ul {
             list-style: none;
             padding: 0;
             margin: 0;
         }
+
         .info-card li {
             margin-bottom: 0.75rem;
             color: var(--text-high);
@@ -88,9 +96,17 @@
             display: flex;
             gap: 0.5rem;
         }
+
         @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.08); }
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.08);
+            }
         }
     </style>
 </head>
@@ -108,14 +124,18 @@
         <div class="success-container">
             <div class="success-icon">🏔️🏅</div>
             <h1 class="success-title">Sikeres nevezés!</h1>
-            <p class="success-subtitle">Hivatalosan is bent vagy a Prédikálószék Vertical kihívás első hivatalos szériájában.</p>
+            <p class="success-subtitle">Hivatalosan is bent vagy a Prédikálószék Vertical kihívás első hivatalos
+                szériájában.</p>
 
             <div class="info-card">
                 <h3>Mi a teendőd most?</h3>
                 <ul>
-                    <li>✅ <strong>E-mail visszaigazolás:</strong> Pár percen belül megérkezik a megadott e-mail címedre.</li>
-                    <li>✅ <strong>A felkészülés:</strong> A rajtig (május 28.) küldjük a részletes "Mission Guide"-ot az útvonalakkal.</li>
-                    <li>✅ <strong>A teljesítés:</strong> Május 28. és június 30. között bármikor teljesítheted a túrát.</li>
+                    <li>✅ <strong>E-mail visszaigazolás:</strong> 24 órán belül megérkezik a megadott e-mail címedre.
+                    </li>
+                    <li>✅ <strong>A felkészülés:</strong> A rajtig (május 28.) küldjük a részletes
+                        útvonalakat.</li>
+                    <li>✅ <strong>A teljesítés:</strong> Május 28. és június 30. között bármikor teljesítheted a túrát.
+                    </li>
                 </ul>
             </div>
 

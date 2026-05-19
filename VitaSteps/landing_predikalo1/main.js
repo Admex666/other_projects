@@ -1,5 +1,5 @@
 // ===== COUNTDOWN =====
-const EARLYBIRD_END = new Date('2026-05-20T23:59:59');
+const EARLYBIRD_END = new Date('2026-05-19T12:00:00');
 
 function updateCountdown() {
     const now = new Date();
@@ -9,19 +9,19 @@ function updateCountdown() {
         if (countdownEl) {
             countdownEl.innerHTML = '<span style="color:var(--text-mid); font-weight: 600;">Az Early Bird időszak véget ért. A nevezés normál áron folytatódik.</span>';
         }
-        
+
         // Dynamic price switch to 8.990 Ft (Normal Price)
         const heroCta = document.getElementById('hero-cta');
         if (heroCta && !heroCta.textContent.includes('8.990')) {
             heroCta.innerHTML = 'Nevezek – 8.990 Ft 🏔️';
             // Update the subtext under hero cta if needed
         }
-        
+
         const paymentBtn = document.getElementById('payment-btn');
         if (paymentBtn && !paymentBtn.textContent.includes('8.990')) {
             paymentBtn.innerHTML = 'Nevezek – 8.990 Ft 🏔️';
         }
-        
+
         const badge = document.getElementById('badge-earlybird');
         if (badge) {
             badge.innerHTML = '🏔️ Normál nevezés';
