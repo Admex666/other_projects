@@ -28,6 +28,30 @@ function updateCountdown() {
             badge.style.background = 'rgba(255,255,255,0.08)';
             badge.style.color = 'var(--text-high)';
         }
+
+        // Additional price adjustments
+        const priceStep1 = document.getElementById('price-step1-display');
+        if (priceStep1) {
+            priceStep1.textContent = '8.990 Ft';
+        }
+
+        const priceCurrent = document.getElementById('price-current-display');
+        if (priceCurrent) {
+            priceCurrent.textContent = '8.990 Ft';
+        }
+
+        const priceTag = document.getElementById('price-tag-display');
+        if (priceTag) {
+            priceTag.textContent = 'Normál ár';
+        }
+
+        // Update active timeline state
+        const tlEarly = document.getElementById('tl-item-early');
+        const tlNormal = document.getElementById('tl-item-normal');
+        if (tlEarly && tlNormal) {
+            tlEarly.classList.remove('active');
+            tlNormal.classList.add('active');
+        }
         return;
     }
     const d = Math.floor(diff / (1000 * 60 * 60 * 24));
@@ -45,7 +69,8 @@ setInterval(updateCountdown, 1000);
 // ===== META PIXEL EVENTS =====
 document.getElementById('payment-btn')?.addEventListener('click', () => {
     if (typeof fbq !== 'undefined') {
-        fbq('track', 'InitiateCheckout', { value: 7990, currency: 'HUF' });
+        const isNormalPrice = new Date() > EARLYBIRD_END;
+        fbq('track', 'InitiateCheckout', { value: isNormalPrice ? 8990 : 7990, currency: 'HUF' });
     }
 });
 
