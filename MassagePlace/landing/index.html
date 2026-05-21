@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Last-Minute Wellness - Prémium Masszázs</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="background-overlay"></div>
+    
+    <main class="container">
+        <!-- Hero Copy -->
+        <header class="hero">
+            <h1>Üresen maradt prémium<br>masszázs időpontok ma estére</h1>
+            <p class="subtitle">-30% kedvezménnyel Budapest belvárosában. Csak last-minute.</p>
+        </header>
+
+        <!-- Booking Flow Container -->
+        <div class="glass-card" id="booking-card">
+            
+            <!-- Step 1: Treatment / WTP -->
+            <div class="step active" id="step-1">
+                <h2>1. Melyik kezelést kéred?</h2>
+                <p>Válaszd ki a számodra tökéletes kikapcsolódást ma estére.</p>
+                <div class="options">
+                    <button class="option-btn" onclick="selectOption('treatment', 'sved_60', 10500)">
+                        <div class="opt-content">
+                            <span class="opt-title">60 perces svédmasszázs</span>
+                            <span class="opt-price">10 500 Ft <span class="strike">15 000 Ft</span></span>
+                        </div>
+                    </button>
+                    <button class="option-btn" onclick="selectOption('treatment', 'thai_90', 14000)">
+                        <div class="opt-content">
+                            <span class="opt-title">90 perces thai masszázs</span>
+                            <span class="opt-price">14 000 Ft <span class="strike">20 000 Ft</span></span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 2: Upsell -->
+            <div class="step" id="step-2">
+                <h2>2. Prémium aromaterápia?</h2>
+                <p>Fokozd az élményt meleg, 100% tisztaságú esszenciális olajokkal.</p>
+                <div class="options">
+                    <button class="option-btn" onclick="selectOption('upsell', 'yes', 1500)">
+                        <div class="opt-content">
+                            <span class="opt-title">Igen, kérem az aromaterápiát</span>
+                            <span class="opt-price">+1 500 Ft</span>
+                        </div>
+                    </button>
+                    <button class="option-btn secondary" onclick="selectOption('upsell', 'no', 0)">
+                        <div class="opt-content">
+                            <span class="opt-title">Nem, köszönöm</span>
+                            <span class="opt-price">0 Ft</span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 3: Frequency -->
+            <div class="step" id="step-3">
+                <h2>3. Milyen gyakran jársz masszázsra?</h2>
+                <p>Segíts, hogy a megfelelő időpontokat ajánlhassuk a jövőben.</p>
+                <div class="options">
+                    <button class="option-btn" onclick="selectOption('frequency', 'weekly', 0)">
+                        <span class="opt-title center">Hetente többször</span>
+                    </button>
+                    <button class="option-btn" onclick="selectOption('frequency', 'monthly', 0)">
+                        <span class="opt-title center">Havonta 1-2 alkalommal</span>
+                    </button>
+                    <button class="option-btn" onclick="selectOption('frequency', 'rarely', 0)">
+                        <span class="opt-title center">Csak évente párszor</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 4: Fake Door -->
+            <div class="step fake-door" id="step-4">
+                <div class="icon-warning">⏳</div>
+                <h2>Hoppá, a ma esti helyek beteltek!</h2>
+                <p>Amíg válogattál, az utolsó kedvezményes helyek is elkeltek a közeledben. Jelenleg zárt béta fázisban vagyunk.</p>
+                <p class="highlight">Add meg az elérhetőséged, és <strong>elsőként értesítünk (SMS/Email)</strong>, amint megüresedik egy hely ezen a héten!</p>
+                
+                <form id="waitlist-form" onsubmit="submitWaitlist(event)">
+                    <div class="input-group">
+                        <input type="text" id="name" placeholder="Keresztnév" required>
+                    </div>
+                    <div class="input-group">
+                        <input type="email" id="email" placeholder="Email cím" required>
+                    </div>
+                    <button type="submit" class="submit-btn">Kérem az értesítést</button>
+                </form>
+            </div>
+
+            <!-- Step 5: Success -->
+            <div class="step success" id="step-5">
+                <div class="icon-success">✨</div>
+                <h2>Sikeresen feliratkoztál!</h2>
+                <p>Figyeld a telefonod, hamarosan jelentkezünk a legjobb last-minute ajánlatokkal.</p>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

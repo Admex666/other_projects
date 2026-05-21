@@ -18,6 +18,7 @@ import re
 import sys
 import time
 import argparse
+import json
 import pandas as pd
 from groq import Groq
 from pathlib import Path
@@ -26,15 +27,19 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # ── CONFIG ─────────────────────────────────────────────────────────────────
+GROQ_CLIENTS       = []
+CURRENT_CLIENT_IDX = 0
+
 VAULT_PATH       = r"E:\obsidian_safe\obsidian_safe"
 CLUSTERS_CSV     = "vault_clusters.csv"
 BIZ_CLUSTERS     = [0, 3, 5, 12]
-CHUNK_SIZE       = 12
+CHUNK_SIZE       = 4
 OUTPUT_DIR       = Path("output")
 CHUNKS_DIR       = OUTPUT_DIR / "chunks"
+CHAPTERS_DIR     = OUTPUT_DIR / "chapters"
 MODEL            = "llama-3.3-70b-versatile"
-MAX_NOTE_CHARS   = 8000
-SLEEP_BETWEEN    = 3.5
+MAX_NOTE_CHARS   = 3000
+SLEEP_BETWEEN    = 20.0
 MAX_RETRIES      = 5
 TEMP_MAP         = 0.6
 TEMP_SYNTHESIS   = 0.6
@@ -73,10 +78,27 @@ def chunk_list(lst: list, size: int) -> list[list]:
     return [lst[i:i+size] for i in range(0, len(lst), size)]
 
 
+def build_dossier_block(dossiers: list[str], max_total_chars: int = 12000) -> str:
+    if not dossiers:
+        return ""
+    # Elosztjuk a rendelkezésre álló karakterkeretet a dossziék között
+    chars_per_dossier = max(400, max_total_chars // len(dossiers))
+    block = ""
+    for i, d in enumerate(dossiers, 1):
+        short = d[:chars_per_dossier] + "\n...[rövidítve]" if len(d) > chars_per_dossier else d
+        block += f"\n{'─'*60}\n#### DOSSIER {i}\n{'─'*60}\n{short}\n"
+    return block
+
+
 # ── API CALL WITH RETRY ─────────────────────────────────────────────────────
-def call_groq(client: Groq, system: str, user: str, temperature: float = 0.6,
+def call_groq(system: str, user: str, temperature: float = 0.6,
               max_tokens: int = 8192) -> str:
-    for attempt in range(1, MAX_RETRIES + 1):
+    global CURRENT_CLIENT_IDX
+    consecutive_429s = 0
+    total_keys = len(GROQ_CLIENTS)
+
+    for attempt in range(1, MAX_RETRIES * total_keys + 1):
+        client = GROQ_CLIENTS[CURRENT_CLIENT_IDX]
         try:
             response = client.chat.completions.create(
                 model=MODEL,
@@ -87,22 +109,28 @@ def call_groq(client: Groq, system: str, user: str, temperature: float = 0.6,
                 temperature=temperature,
                 max_tokens=max_tokens,
             )
+            consecutive_429s = 0
             return response.choices[0].message.content
         except Exception as e:
             err = str(e)
             if '429' in err or 'rate_limit' in err.lower():
-                m = re.search(r'please try again in ([0-9.]+)s', err, re.IGNORECASE)
-                wait = float(m.group(1)) + 2 if m else 30 * attempt
-                if attempt < MAX_RETRIES:
-                    print(f"\n  [429] Rate limit — várakozás {wait:.0f}s... ({attempt}/{MAX_RETRIES})",
-                          flush=True)
+                consecutive_429s += 1
+                next_idx = (CURRENT_CLIENT_IDX + 1) % total_keys
+                
+                if consecutive_429s >= total_keys:
+                    m = re.search(r'please try again in ([0-9.]+)s', err, re.IGNORECASE)
+                    wait = float(m.group(1)) + 2 if m else 30 * (attempt // total_keys + 1)
+                    print(f"\n  [429] Rate limit a(z) {CURRENT_CLIENT_IDX + 1}. kulcson. (Minden kulcs betelt!) Várakozás {wait:.0f}s... ({attempt}/{MAX_RETRIES * total_keys})", flush=True)
                     time.sleep(wait)
+                    consecutive_429s = 0
                 else:
-                    print(f"\n❌ {MAX_RETRIES} próbálkozás után sem sikerült.")
-                    raise
+                    print(f"\n  [429] Rate limit a(z) {CURRENT_CLIENT_IDX + 1}. kulcson. Váltás a(z) {next_idx + 1}. kulcsra...", flush=True)
+                
+                CURRENT_CLIENT_IDX = next_idx
             else:
                 raise
-    return ""
+                
+    raise Exception("❌ Minden API újrapróbálkozás kimerült.")
 
 
 # ── PHASE 1: MAP ───────────────────────────────────────────────────────────
@@ -169,7 +197,7 @@ Most készítsd el a Knowledge Extraction Dossier-t (1500–3000 szó):\
 """
 
 
-def map_chunk(client: Groq, chunk_idx: int, notes: list[dict]) -> str:
+def map_chunk(chunk_idx: int, notes: list[dict]) -> str:
     CHUNKS_DIR.mkdir(parents=True, exist_ok=True)
     out_file = CHUNKS_DIR / f"chunk_{chunk_idx:03d}.md"
 
@@ -186,7 +214,7 @@ def map_chunk(client: Groq, chunk_idx: int, notes: list[dict]) -> str:
     user = MAP_USER_TEMPLATE.format(n=len(notes), notes_block=notes_block)
 
     print(f"  → Chunk {chunk_idx:03d} ({len(notes)} fájl)...", end=" ", flush=True)
-    dossier = call_groq(client, MAP_SYSTEM, user, temperature=TEMP_MAP, max_tokens=8192)
+    dossier = call_groq(MAP_SYSTEM, user, temperature=TEMP_MAP, max_tokens=3000)
     out_file.write_text(dossier, encoding='utf-8')
     words = len(dossier.split())
     print(f"✓ ({words} szó → {out_file.name})")
@@ -247,7 +275,7 @@ Készítsd el a Stratégiai Szintézis-Elemzést:\
 """
 
 
-def run_synthesis(client: Groq, dossiers: list[str]) -> str:
+def run_synthesis(dossiers: list[str]) -> str:
     print("\n[PHASE 2 — SYNTHESIS] Mélystruktúra-elemzés...", flush=True)
     syn_path = OUTPUT_DIR / "synthesis_layer.md"
 
@@ -255,114 +283,108 @@ def run_synthesis(client: Groq, dossiers: list[str]) -> str:
         print("  [SKIP] synthesis_layer.md már létezik, kihagyva.")
         return syn_path.read_text(encoding='utf-8')
 
-    block = ""
-    for i, d in enumerate(dossiers, 1):
-        block += f"\n{'═'*60}\n### DOSSIER {i}\n{'═'*60}\n{d}\n"
-
-    # Ha a teljes blokk túl hosszú, rövidítsük a dossier-ket
-    if len(block) > 90000:
-        block = ""
-        for i, d in enumerate(dossiers, 1):
-            short = d[:3000] + "\n...[rövidítve]" if len(d) > 3000 else d
-            block += f"\n{'═'*60}\n### DOSSIER {i}\n{'═'*60}\n{short}\n"
+    # Építjük fel a dosszié blokkot, maximum 12,000 karakterben
+    block = build_dossier_block(dossiers, max_total_chars=12000)
 
     user = SYNTHESIS_USER_TEMPLATE.format(n=len(dossiers), dossiers_block=block)
-    result = call_groq(client, SYNTHESIS_SYSTEM, user, temperature=TEMP_SYNTHESIS, max_tokens=6000)
+    result = call_groq(SYNTHESIS_SYSTEM, user, temperature=TEMP_SYNTHESIS, max_tokens=3500)
     syn_path.write_text(result, encoding='utf-8')
     print(f"  ✓ Synthesis layer kész ({len(result.split())} szó → {syn_path.name})")
     return result
 
 
-# ── PHASE 3: REDUCE ────────────────────────────────────────────────────────
-REDUCE_SYSTEM = """\
+# ── PHASE 3: OUTLINE ───────────────────────────────────────────────────────
+OUTLINE_SYSTEM = """\
+Te egy stratégiai rendszerező vagy. A feladatod, hogy egy mély, átfogó üzleti és marketing playbook "Tartalomjegyzékét" (Outline) hozd létre a bemenetként kapott Szintézis és Dossier-k alapján.
+
+A kimenetednek KIZÁRÓLAG egy érvényes JSON tömbnek kell lennie, amely tartalmazza a fejezetek címeit és egy rövid leírást.
+Formátum:
+[
+  {
+    "chapter_number": 1,
+    "title": "A fejezet címe",
+    "description": "Miről fog szólni a fejezet (1-2 mondat)"
+  }
+]
+
+Tervezz 5-8 tartalmas, egymásra épülő fejezetet. Ne írj markdown kódblokkot, csak magát a nyers JSON tömböt add vissza!
+"""
+
+def generate_outline(dossiers: list[str], synthesis: str) -> list[dict]:
+    print("\n[PHASE 3 — OUTLINE] Playbook Vázlat (Tartalomjegyzék) generálása...", flush=True)
+    out_path = OUTPUT_DIR / "outline.json"
+    
+    if out_path.exists():
+        print("  [SKIP] outline.json már létezik, betöltés...")
+        try:
+            return json.loads(out_path.read_text(encoding='utf-8'))
+        except Exception as e:
+            print("  [ERROR] outline.json betöltése sikertelen, újra generáljuk...", e)
+
+    user = f"A SZINTÉZIS:\n{synthesis}\n\nKészítsd el a JSON tartalomjegyzéket a playbookhoz:"
+    outline_json = call_groq(OUTLINE_SYSTEM, user, temperature=0.5, max_tokens=2048)
+    
+    try:
+        clean_json = outline_json.strip()
+        if clean_json.startswith('```json'):
+            clean_json = clean_json[7:]
+        if clean_json.endswith('```'):
+            clean_json = clean_json[:-3]
+        clean_json = clean_json.strip()
+        
+        outline = json.loads(clean_json)
+        out_path.write_text(json.dumps(outline, indent=2, ensure_ascii=False), encoding='utf-8')
+        print(f"  ✓ Outline generálva: {len(outline)} fejezet.")
+        return outline
+    except Exception as e:
+        print(f"❌ Hiba a JSON parse-olásakor:\n{outline_json}")
+        raise e
+
+# ── PHASE 4: CHAPTER EXPANSION ─────────────────────────────────────────────
+CHAPTER_SYSTEM = """\
 Te egy üzleti operációs rendszer tervezője vagy — NEM könyv-összefoglaló generátor.
-
-A feladatod: egy koherens, végrehajtható üzleti Operational Doctrine-t alkotni
-a rendelkezésre álló tudás-dossier-ekből és a szintézis-elemzésből.
-
-EZ NEM ÖSSZEFOGLALÁS. EZ RENDSZERÉPÍTÉS.
+A feladatod a Playbook EGYETLEN FEJEZETÉNEK extrém részletes, mély kifejtése a rendelkezésre álló dokumentumok alapján.
 
 A DOCTRINE MEGALKOTÁSÁNAK ELVEI:
+1. OPERÁCIÓS LOGIKA: Döntési szabályok, trigger-condition logika, workflow-k.
+2. KAUZÁLIS MAGYARÁZATOK: Miből következik, mit befolyásol, mik a trade-offok.
+3. EMERGENS MODELLEK: Magasabb szintű mintázatok.
 
-1. OPERÁCIÓS LOGIKA — nem motiváció
-   Minden fejezet tartalmazzon:
-   - Döntési szabályokat (Ha X, akkor Y — ha Z, akkor W)
-   - Trigger-condition logikát (Mikor lép életbe? Mi az aktiváló feltétel?)
-   - Prioritási elveket (Mi az előfeltétele minek?)
-   - Végrehajtható workflow-kat (Lépések sorrendben)
-   - Anti-patterneket (Mit NE csinálj és miért csábító mégis)
-
-2. KAUZÁLIS MAGYARÁZATOK — nem listák
-   Minden fő koncepciónál:
-   - Miből következik ez az elv?
-   - Mit befolyásol, ha alkalmazzuk?
-   - Milyen életciklusban kritikus (korai fázis vs. skálázás)?
-   - Milyen trade-offokat hoz létre?
-   - Mi az input és mi az output?
-
-3. EMERGENS MODELLEK — nem kategóriák
-   Az ismétlődő elveket vond össze magasabb szintű mintázatokba,
-   de ŐRIZD MEG az egyedi implementációs különbségeket.
-   Minden emergens modellnél magyarázd, miért erősebb a részeinél.
-
-4. RELATIONSHIP GRAPH VERBÁLISAN
-   Minden fejezet végén: "Kapcsolatok más fejezetekkel" szekció.
-   Mi erősíti? Mi az előfeltétele? Mi következik belőle?
-
-STRUKTÚRA:
-- Vezetői összefoglaló: az operációs rendszer lényege 3 mondatban
-- 5-8 fejezet (nem tematikus listák — operációs modulok)
-- Minden fejezet: Elv → Mechanizmus → Trigger → Workflow → Anti-pattern → Kapcsolatok
-- Záró: "Operational Playbook" — 4 hetes végrehajtási terv, heti szintű lépésekkel
-- "10 Invariáns Törvény" — az a 10 elv, ami minden körülmény között igaz
-
-CÉLZOTT TERJEDELEM: 3500–5000 szó.
-NE generálj motivációs szöveget. Generálj operational logic-ot.\
+MOST KIZÁRÓLAG EGY FEJEZETET KELL MEGÍRNOD! Ne írj bevezetőt a könyvhöz, ne írj összefoglalót a könyvről. Koncentrálj arra az egy fejezetre, amit a felhasználó kér.
+Terjedelem: Legalább 1000-1500 szó az adott fejezetről. Fejtsd ki a lehető legmélyebben!
 """
 
-REDUCE_USER_TEMPLATE = """\
-BEMENET:
-- {n_dossiers} Knowledge Extraction Dossier chunk-ból
-- 1 Stratégiai Szintézis-Elemzésből (thinking layer)
+def expand_chapter(chapter: dict, dossiers: list[str], synthesis: str, outline: list[dict]) -> str:
+    CHAPTERS_DIR.mkdir(parents=True, exist_ok=True)
+    ch_num = chapter.get('chapter_number', 0)
+    out_file = CHAPTERS_DIR / f"chapter_{ch_num:02d}.md"
+    
+    if out_file.exists():
+        print(f"  [SKIP] chapter_{ch_num:02d}.md már létezik, betöltés...")
+        return out_file.read_text(encoding='utf-8')
 
-A SZINTÉZIS-ELEMZÉS (thinking layer):
-{'═'*60}
-{synthesis}
-{'═'*60}
+    print(f"  → Fejezet {ch_num} generálása: {chapter.get('title', 'N/A')}...", end=" ", flush=True)
 
-A KNOWLEDGE DOSSIER-EK:
-{dossiers_block}
+    # Építjük fel a dosszié blokkot dinamikus csonkítással, hogy beleférjünk a limitbe
+    dossiers_block = build_dossier_block(dossiers, max_total_chars=10000)
 
-Most alkotd meg a Business & Marketing Operational Doctrine-t (3500–5000 szó):\
-"""
-
-
-def reduce_to_doctrine(client: Groq, dossiers: list[str], synthesis: str) -> str:
-    print("\n[PHASE 3 — REDUCE] Operational Doctrine generálása...", flush=True)
-
-    dossiers_block = ""
-    for i, d in enumerate(dossiers, 1):
-        dossiers_block += f"\n{'─'*60}\n#### DOSSIER {i}\n{'─'*60}\n{d}\n"
-
-    total_len = len(synthesis) + len(dossiers_block)
-
-    # Ha túl hosszú, rövidítsük a dossier-ket (a synthesis-t MINDIG megőrizzük)
-    if total_len > 90000:
-        print(f"  ⚠️  Bemeneti tartalom hosszú ({total_len} kar.) — dossier-ek rövidítése...")
-        dossiers_block = ""
-        for i, d in enumerate(dossiers, 1):
-            short = d[:3500] + "\n...[rövidítve]" if len(d) > 3500 else d
-            dossiers_block += f"\n{'─'*60}\n#### DOSSIER {i}\n{'─'*60}\n{short}\n"
+    outline_str = "\n".join([f"{c.get('chapter_number', '?')}. {c.get('title', '?')}: {c.get('description', '?')}" for c in outline])
 
     user = (
-        f"BEMENET:\n- {len(dossiers)} Knowledge Extraction Dossier chunk-ból\n"
-        f"- 1 Stratégiai Szintézis-Elemzésből (thinking layer)\n\n"
-        f"A SZINTÉZIS-ELEMZÉS (thinking layer):\n{'═'*60}\n{synthesis}\n{'═'*60}\n\n"
-        f"A KNOWLEDGE DOSSIER-EK:\n{dossiers_block}\n\n"
-        f"Most alkotd meg a Business & Marketing Operational Doctrine-t (3500–5000 szó):"
+        f"A KÖNYV TELJES VÁZLATA:\n{outline_str}\n\n"
+        f"SZINTÉZIS:\n{synthesis}\n\n"
+        f"DOSSIER TÖREDÉKEK:\n{dossiers_block}\n\n"
+        f"A TE FELADATOD MOST KIZÁRÓLAG ENNEK A FEJEZETNEK A MEGÍRÁSA:\n"
+        f"Fejezet: {ch_num}. {chapter.get('title', 'N/A')}\n"
+        f"Leírás: {chapter.get('description', 'N/A')}\n\n"
+        f"Kérlek, fejtsd ki ezt a fejezetet a lehető legrészletesebben (1000+ szó), alcímekkel, bullet pointokkal és konkrétumokkal!"
     )
 
-    return call_groq(client, REDUCE_SYSTEM, user, temperature=TEMP_REDUCE, max_tokens=8192)
+    result = call_groq(CHAPTER_SYSTEM, user, temperature=TEMP_REDUCE, max_tokens=3500)
+    out_file.write_text(result, encoding='utf-8')
+    words = len(result.split())
+    print(f"✓ ({words} szó)")
+    return result
 
 
 # ── MAIN ───────────────────────────────────────────────────────────────────
@@ -381,15 +403,18 @@ def main():
 
     OUTPUT_DIR.mkdir(exist_ok=True)
     CHUNKS_DIR.mkdir(exist_ok=True)
+    CHAPTERS_DIR.mkdir(exist_ok=True)
 
-    api_key = os.getenv("GROQ_API_KEY")
-    if not api_key:
-        print("❌ HIBA: Nem található GROQ_API_KEY a .env fájlban!")
+    api_keys_str = os.getenv("GROQ_API_KEYS") or os.getenv("GROQ_API_KEY")
+    if not api_keys_str:
+        print("❌ HIBA: Nem található GROQ_API_KEYS vagy GROQ_API_KEY a .env fájlban!")
         print("   Regisztrálj: https://console.groq.com → API Keys → Create API Key")
         sys.exit(1)
 
-    client = Groq(api_key=api_key)
-    print(f"✅ Groq — {MODEL}\n")
+    keys = [k.strip() for k in api_keys_str.split(',') if k.strip()]
+    global GROQ_CLIENTS
+    GROQ_CLIENTS = [Groq(api_key=k) for k in keys]
+    print(f"✅ Groq — {MODEL} ({len(GROQ_CLIENTS)} db API kulccsal inicializálva)\n")
 
     dossiers = []
 
@@ -409,7 +434,7 @@ def main():
         print(f"[PHASE 1 — MAP] {len(files)} fájl ({label}) → {len(chunks)} chunk (á {args.chunk_size})\n")
 
         for idx, chunk in enumerate(chunks):
-            dossier = map_chunk(client, idx, chunk)
+            dossier = map_chunk(idx, chunk)
             dossiers.append(dossier)
             if idx < len(chunks) - 1:
                 time.sleep(SLEEP_BETWEEN)
@@ -422,17 +447,31 @@ def main():
         synthesis = "(Synthesis fázis kihagyva)"
         print("\n[PHASE 2 — SYNTHESIS] Kihagyva (--skip-synthesis)")
     else:
-        synthesis = run_synthesis(client, dossiers)
+        synthesis = run_synthesis(dossiers)
         time.sleep(SLEEP_BETWEEN)
 
-    # ── PHASE 3: REDUCE ───────────────────────────────────────────────────
-    doctrine = reduce_to_doctrine(client, dossiers, synthesis)
+    # ── PHASE 3: OUTLINE ──────────────────────────────────────────────────
+    outline = generate_outline(dossiers, synthesis)
+    time.sleep(SLEEP_BETWEEN)
 
+    # ── PHASE 4: CHAPTER EXPANSION ────────────────────────────────────────
+    print("\n[PHASE 4 — CHAPTER EXPANSION] Részletes fejezetek generálása...", flush=True)
+    chapters_content = []
+    for chapter in outline:
+        content = expand_chapter(chapter, dossiers, synthesis, outline)
+        chapters_content.append(content)
+        time.sleep(SLEEP_BETWEEN)
+
+    # ── ÖSSZESZERELÉS ─────────────────────────────────────────────────────
     suffix = f"_first{args.limit}" if (args.limit > 0 and not args.reduce_only) else "_full"
     out_path = OUTPUT_DIR / f"Business_Operational_Doctrine{suffix}.md"
-    out_path.write_text(doctrine, encoding='utf-8')
+    
+    final_doctrine = "# Business & Marketing Operational Doctrine\n\n"
+    final_doctrine += "\n\n".join(chapters_content)
+    
+    out_path.write_text(final_doctrine, encoding='utf-8')
 
-    word_count = len(doctrine.split())
+    word_count = len(final_doctrine.split())
     print(f"\n{'═'*60}")
     print(f"✅ KÉSZ → {out_path}")
     print(f"   Szómennyiség: ~{word_count:,} szó")
