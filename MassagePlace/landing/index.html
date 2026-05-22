@@ -1,18 +1,27 @@
 <!DOCTYPE html>
 <html lang="hu">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Last-Minute Wellness - Prémium Masszázs</title>
+    <title>ZenSlot - Last-Minute Wellness & Prémium Masszázs</title>
+    <link rel="icon" href="assets/zenslot_logo_nobg.png" type="image/png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <div class="background-overlay"></div>
-    
+
     <main class="container">
+        <!-- Logo -->
+        <div class="logo-container" style="text-align: center; margin-bottom: 1.5rem;">
+            <img src="assets/zenslot_logo_nobg.png" alt="ZenSlot Logo"
+                style="height: 70px; width: auto; max-width: 100%; object-fit: contain; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.2));">
+        </div>
+
         <!-- Hero Copy -->
         <header class="hero">
             <h1>Üresen maradt prémium<br>masszázs időpontok ma estére</h1>
@@ -21,7 +30,7 @@
 
         <!-- Booking Flow Container -->
         <div class="glass-card" id="booking-card">
-            
+
             <!-- Step 1: Treatment / WTP -->
             <div class="step active" id="step-1">
                 <h2>1. Melyik kezelést kéred?</h2>
@@ -83,9 +92,11 @@
             <div class="step fake-door" id="step-4">
                 <div class="icon-warning">⏳</div>
                 <h2>Hoppá, a ma esti helyek beteltek!</h2>
-                <p>Amíg válogattál, az utolsó kedvezményes helyek is elkeltek a közeledben. Jelenleg zárt béta fázisban vagyunk.</p>
-                <p class="highlight">Add meg az elérhetőséged, és <strong>elsőként értesítünk (SMS/Email)</strong>, amint megüresedik egy hely ezen a héten!</p>
-                
+                <p>Amíg válogattál, az utolsó kedvezményes helyek is elkeltek a közeledben. Jelenleg zárt béta fázisban
+                    vagyunk.</p>
+                <p class="highlight">Add meg az elérhetőséged, és <strong>elsőként értesítünk (SMS/Email)</strong>,
+                    amint megüresedik egy hely ezen a héten!</p>
+
                 <form id="waitlist-form" onsubmit="submitWaitlist(event)">
                     <div class="input-group">
                         <input type="text" id="name" placeholder="Keresztnév" required>
@@ -109,4 +120,5 @@
 
     <script src="script.js"></script>
 </body>
+
 </html>
