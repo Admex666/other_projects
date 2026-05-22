@@ -506,3 +506,96 @@ Bekerültek! 🚀
 Ha rákattintasz bármelyik opcióra a Live Serveren, eltűnik a "Hamarosan érkezik" képernyő, és azonnal betölti a kért nyomvonalat a térképen, alatta pedig másodpercre pontosan ki is számolja és meg is jeleníti az adott fájlhoz tartozó távolságot és a szintemelkedést. A letöltés gomb is frissül, így mindig az éppen kiválasztott fájlt adja oda a túrázónak.
 
 Csekkold le bátran a böngésződben! Még valami, amiben segíthetek?
+
+### User Input
+
+Nem volt semmi mozgolódás a weboldalon az utóbbi 24 órában, és most vettem észre hogy az 1. kampány újraindítása valszeg nem volt sikeres, mert "Befejeződött" a státusza, hiába kapcsoltam be.
+
+### Planner Response
+
+Na, ez megmagyarázza a csendet! Ez egy klasszikus Facebook Ads Manager trükk, amibe sokan belefutnak.
+
+Amikor egy kampány (vagy hirdetéssorozat) eléri az előre beállított befejezési dátumot, a Facebook átrakja **"Befejeződött" (Completed)** státuszba. Ilyenkor hiába húzod el a kapcsolót kékre (Aktívra), a rendszer nem fogja elindítani, amíg a dátum a múltban van.
+
+**Így tudod azonnal újraindítani (kb. 30 másodperc):**
+
+1.  **Lépj be a Facebook Ads Managerbe**, és válaszd ki ezt a régi, jól működő kampányt.
+2.  Kattints a **Szerkesztés (Edit)** gombra.
+3.  Nézd meg a kampány szintjét, de még valószínűbb, hogy a **Hirdetéssorozat (Ad Set)** szintjén van beállítva a dátum. (Kattints a bal oldali menüben a hirdetéssorozatodra).
+4.  Görgess le az **"Ütemezés" (Schedule)** vagy "Kezdési és befejezési dátum" részhez.
+5.  Itt látni fogod, hogy a befejezés dátuma már elmúlt. **Módosítsd ezt a dátumot május 27. éjfélre** (vagy vedd ki a pipát a "Befejezési dátum beállítása" elől, ha manuálisan akarod majd leállítani).
+6.  Nyomj a zöld **Közzététel (Publish)** gombra a jobb alsó sarokban.
+
+Amint ezt megteszed és a módosítás élesedik (pár perc), a státusz át fog ugrani "Folyamatban" (Active) vagy "Tanulási fázis" státuszba, és újra elkezdi hozni a látogatókat a 7.990 Ft-os utolsó esélyes oldaladra!
+
+*Tipp: Mivel egy-két napig állt a hirdetés, lehet, hogy a Facebooknak kell pár óra, mire újra "bemelegszik", de a régi adatokból sokkal jobban fog dolgozni, mint a tegnap leállított drága kampány.* 
+
+Sikerült átírni a dátumot?
+
+### User Input
+
+Igen, ezek megvoltak. Viszont a kampánynál és a hirdetésnél azt írja hogy "Befejeződött", csak a hirdetéssorozat résznél írja ki hogy "Feldolgozás alatt"
+
+### Planner Response
+
+Ez egy nagyon tipikus (és frusztráló) Facebook Ads Manager "beragadás". Két dolog történhetett:
+
+**1. Frissítési késés (UI glitch)**
+Mivel a hirdetéssorozatod már "Feldolgozás alatt" van (ami szuper hír!), sokszor csak arról van szó, hogy a Facebook felülete lassan frissíti a Kampány és a Hirdetés szintjét.
+*Próbáld meg ezt:* Nyomj egy kemény frissítést (F5 vagy Ctrl+R) az oldalon 1-2 perc múlva. Amint a hirdetéssorozat átvált "Aktív"-ra, a többinek is követnie kell.
+
+**2. Kampányszintű dátum**
+Ritkább, de előfordul, hogy ha CBO-t (Kampányszintű költségkeret-optimalizálást) használsz, akkor maga a **Kampány** szint is kapott egy befejezési dátumot. 
+*Kattints rá bal oldalt a legfelső (Kampány) szintre*, nyomj a Szerkesztésre, és nézd meg, nincs-e ott elrejtve egy lejárt "Kampány költségkerete és ütemezése" dátum. Ha van, írd át ott is május 27-re.
+
+### A "Mentőöv" megoldás (Ha 10 perc múlva is beragadva marad):
+Ha a Facebook rendszere makacsul "Befejeződött" státuszban tartja a kampányt (mert néha véglegesen lezárja a régi kampányokat), akkor a legbiztosabb megoldás:
+
+1. Jelöld ki a régi, sikeres kampányt.
+2. Kattints a **Duplikálás (Duplicate)** gombra.
+3. Az új másolatban állítsd be a május 27-i határidőt és a megemelt napi költségkeretet.
+4. Indítsd el ezt az újat.
+
+*Miért jó ez?* A másolás továbbviszi a régi hirdetésed beállításait, és mivel az algoritmus már ismeri a közönségedet a pixelből, nagyon gyorsan fel fogja venni a fonalat az új kampánnyal is!
+
+Várjunk vele 5-10 percet, és ha nem vált zöldre, akkor jöhet a Duplikálás! Szólj, hogy alakul!
+
+### User Input
+
+Na okés, most elvileg "Aktív".
+Az adatok, hogy tudd honnan indultunk:
+
+Facebook ads manager:
+- nettó 8697 Ft elköltve
+- elérés: 5570
+- megjelenések: 8694
+- Webhelyen kezdeményezett fizetések: 28
+
+Vercel:
+- Visitors: 628
+- Page views: 767
+(- bounce rate: 86%)
+
+Tally:
+- visits: 142
+- submissions: 16
+- fizetések: 14
+
+
+*Viewed [index.html](file:///e:/Data/other_projects/VitaSteps/landing_predikalo1/index.html) *
+
+### Planner Response
+
+Szuper, hogy sikerült életre kelteni a kampányt! Bekerültek az adatok a "naplómba". 
+
+Ebből a **kiindulási alapból (baseline)** fogjuk mérni a következő napok teljesítményét az „Utolsó Esély” (7.990 Ft) kampányban. 
+
+Csak hogy tisztán lássuk az eddigi matekot:
+*   **Hirdetés hatékonysága:** 8.694 megjelenésből 628 ember ment át az oldalra (kb. 7,2% kattintási arány, ami *zseniálisan magas* a magyar piacon).
+*   **Landing oldal hatékonysága:** 628 látogatóból 142 ment át a Tally űrlapra (22,6%, ami szintén nagyon erős egy 8-10 ezer forintos terméknél).
+*   **Kosárelhagyás (Friction):** 142 Tally látogatóból 14 vásárolt. Emlékszel, a tegnapi 8.990 Ft-os teszt során 29-en kattintottak át a Tallyra, de 0 vásárlás lett belőle. Most, hogy visszaállt a 7.990 Ft és pörög a "május 27-ig" visszaszámláló, ennek az aránynak drasztikusan javulnia kell!
+
+**A következő lépés:**
+Hagyjuk a Facebookot békén dolgozni! Mivel újraindult a kampány, kell neki 12-24 óra, mire újra "bemelegszik" és megtalálja a megfelelő vásárlókat. 
+
+Szeretnéd, hogy addig ránézzek valami másra az oldalon (pl. SEO optimalizálás, vagy valami apró UI finomítás), vagy most csak dőlünk hátra, és várjuk a holnap reggeli számokat?
