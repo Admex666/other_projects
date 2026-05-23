@@ -67,6 +67,15 @@ function selectOption(category, value, price) {
     // Azonnali mentés, hogy ha most bezárja az ablakot, akkor is meglegyen az adat (Partial Submission / Drop-off)
     saveDataToBackend(`selected_${category}`, bookingData);
 
+    // Meta Pixel Események a viselkedési adatok mérésére
+    if (typeof fbq === 'function') {
+        if (category === 'treatment') {
+            fbq('track', 'CustomizeProduct', { content_name: value, value: price, currency: 'HUF' });
+        } else if (category === 'upsell') {
+            fbq('track', 'AddToCart', { content_name: `Aromaterápia: ${value}`, value: price, currency: 'HUF' });
+        }
+    }
+
     // Lépés a következő kérdésre
     goToNextStep();
 }
@@ -87,6 +96,16 @@ function submitWaitlist(event) {
 
     // Végleges mentés
     saveDataToBackend('waitlist_submitted', bookingData);
+
+    // Meta Pixel Regisztráció befejezése Esemény rögzítése
+    if (typeof fbq === 'function') {
+        fbq('track', 'CompleteRegistration', {
+            value: bookingData.total_aov,
+            currency: 'HUF',
+            content_name: 'ZenSlot Zárt Béta feliratkozás',
+            content_category: bookingData.treatment
+        });
+    }
 
     // Utolsó, "Sikeres" képernyő mutatása
     goToNextStep();

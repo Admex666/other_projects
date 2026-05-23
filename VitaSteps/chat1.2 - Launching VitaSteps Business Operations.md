@@ -599,3 +599,53 @@ Csak hogy tisztán lássuk az eddigi matekot:
 Hagyjuk a Facebookot békén dolgozni! Mivel újraindult a kampány, kell neki 12-24 óra, mire újra "bemelegszik" és megtalálja a megfelelő vásárlókat. 
 
 Szeretnéd, hogy addig ránézzek valami másra az oldalon (pl. SEO optimalizálás, vagy valami apró UI finomítás), vagy most csak dőlünk hátra, és várjuk a holnap reggeli számokat?
+
+### User Input
+
+Na hát több mint 26 óra eltelt, így vagyunk:
+
+Facebook ads manager:
+- nettó 10881 Ft elköltve
+- elérés: 6858
+- megjelenések: 11062
+- Webhelyen történt vásárlások	1	[2]
+- Webes kosárba helyezések	54	[2]
+- Webhelyen kezdeményezett fizetési műveletek	28	[2]
+- Webhelyen szerzett érdeklődők	30	[2]
+- Webes tartalommegtekintések	607	[2]
+
+Vercel:
+- Visitors: 781
+- Page views: 940
+(- bounce rate: 87%)
+
+Tally:
+- visits: 152
+- submissions: 17
+- fizetések: 15
+
+*Viewed [main.js](file:///e:/Data/other_projects/VitaSteps/landing_predikalo1/main.js) *
+
+### Planner Response
+
+Megjöttek a számok, és fellélegezhetünk: **Sikerült megállítani a vérzést, és újra nyereséges a kampány!** 🎉
+
+Nézzük meg a matekot az elmúlt 26 órára (a tegnapi újraindítás óta):
+*   **Elköltöttél:** kb. 2.184 Ft-ot (10.881 - 8.697)
+*   **Bejött:** 1 darab vásárlás 7.990 Ft-ért.
+*   **Profitod:** 7.990 Ft (Bevétel) - 3.381 Ft (Termékköltség) - 2.184 Ft (Hirdetés) = **+ 2.425 Ft tiszta haszon!**
+
+Emlékezz, a 8.990 Ft-os tesztnél 5.000 Ft-ot égettünk el **nulla** vásárlással. Az, hogy az első 24 órában egyből pozitív ROI-t hozott az újraindítás, azt jelenti, hogy a 7.990 Ft-os ár és az "Utolsó esély" üzenet működik.
+
+### Miért "csak" 1 vásárlás jött?
+Tudom, hogy az induláskori napi 5-6 vásárláshoz képest ez most kevésnek tűnik, de ez teljesen normális egy kampány életgörbéjében, három okból is:
+
+1.  **A "Halálvölgy" effektus:** Minden határidős kampány (mint a tied, ami május 27-én zárul) egy U-alakot ír le. Az elején (amikor elindul) sokan vesznek a kíváncsiság miatt. A közepén beáll a csend, a látogatók megnézik, de azt mondják: *"Áh, van még 4 napom, majd később"*. A végén, az utolsó 24-48 órában (máj. 26-27) pedig a visszaszámláló miatti pánik (FOMO) megint brutálisan felnyomja az eladásokat.
+2.  **Hétvége van:** (Feltételezve, hogy ma szombat/vasárnap van). Az emberek ilyenkor a szabadban vannak (talán pont túráznak!), és kevesebb impulzusvásárlást csinálnak mobilon, mint hétköznap a munkahelyen unalmukban.
+3.  **Kicsi a büdzsé:** A napi ~2.000 Ft-os költésből a Facebook egyre kevesebb embert tud elérni, mert ahogy telik az idő, elfogynak a legkönnyebben konvertáló ("low-hanging fruit") felhasználók.
+
+### Mi a teendő a hátralévő 4 napra?
+**Ne nyúlj semmihez!** Hagyd pörögni a Facebook hirdetést ezen a napi kereten. 
+A weboldalon már ott vannak a profi interaktív térképek (Dömös, Dobogókő), a szintrajzok, és ketyeg a visszaszámláló. Május 26-án és 27-én az algoritmus be fogja húzni azokat, akik eddig csak nézegették, de halogatták a döntést.
+
+Ha van energiád, **most érdemes megcsinálni egy TikTok/Reels videót**, amit pár nappal ezelőtt javasoltam (akár az új, interaktív weboldalas térképet videózva a telefonoddal: *"Nézd meg, milyen brutális szintet kell megmászni ezért az éremért"* szöveggel), hogy behúzz egy kis ingyen organikus forgalmat is a fináléra!
