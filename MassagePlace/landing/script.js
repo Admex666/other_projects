@@ -12,7 +12,8 @@ const bookingData = {
     total_aov: 0,
     email: null,
     name: null,
-    timestamp: null
+    timestamp: null,
+    ip_address: null // Új mező az IP-cím tárolásához
 };
 
 // Az aktuális lépés indexe
@@ -39,7 +40,8 @@ function saveDataToBackend(eventName, data) {
         frequency: data.frequency,
         total_aov: data.total_aov || 0,
         name: data.name,
-        email: data.email
+        email: data.email,
+        ip_address: data.ip_address || null // IP-cím mentése a Supabase táblába
     };
 
     fetch(`${SUPABASE_URL}/rest/v1/fake_door_leads`, {
@@ -130,3 +132,22 @@ function goToNextStep() {
         nextEl.classList.add('active');
     }
 }
+
+/**
+ * Oldalbetöltés (Page View) esemény rögzítése és a látogató IP-címének lekérése
+ */
+window.addEventListener('DOMContentLoaded', () => {
+    // Külső ingyenes API-val lekérjük az IP-címet
+    fetch('https://api.ipify.org?format=json')
+        .then(res => res.json())
+        .then(data => {
+            bookingData.ip_address = data.ip;
+            // Mentés a Supabase-be az IP-címmel együtt
+            saveDataToBackend('page_view', bookingData);
+        })
+        .catch(err => {
+            console.warn("Nem sikerült lekérni az IP-címet, mentés anélkül:", err);
+            // Ha az adblocker letiltaná az IP lekérőt, a megtekintést akkor is elmentjük
+            saveDataToBackend('page_view', bookingData);
+        });
+});
