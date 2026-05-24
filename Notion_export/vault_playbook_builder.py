@@ -197,13 +197,13 @@ Most készítsd el a Knowledge Extraction Dossier-t (1500–3000 szó):\
 """
 
 
-def map_chunk(chunk_idx: int, notes: list[dict]) -> str:
+def map_chunk(chunk_idx: int, notes: list[dict]) -> tuple[str, bool]:
     CHUNKS_DIR.mkdir(parents=True, exist_ok=True)
     out_file = CHUNKS_DIR / f"chunk_{chunk_idx:03d}.md"
 
     if out_file.exists():
         print(f"  [SKIP] chunk_{chunk_idx:03d}.md már létezik, kihagyva.")
-        return out_file.read_text(encoding='utf-8')
+        return out_file.read_text(encoding='utf-8'), False
 
     notes_block = ""
     for i, note in enumerate(notes, 1):
@@ -218,7 +218,7 @@ def map_chunk(chunk_idx: int, notes: list[dict]) -> str:
     out_file.write_text(dossier, encoding='utf-8')
     words = len(dossier.split())
     print(f"✓ ({words} szó → {out_file.name})")
-    return dossier
+    return dossier, True
 
 
 # ── PHASE 2: SYNTHESIS (intermediate thinking layer) ──────────────────────
@@ -275,13 +275,13 @@ Készítsd el a Stratégiai Szintézis-Elemzést:\
 """
 
 
-def run_synthesis(dossiers: list[str]) -> str:
+def run_synthesis(dossiers: list[str]) -> tuple[str, bool]:
     print("\n[PHASE 2 — SYNTHESIS] Mélystruktúra-elemzés...", flush=True)
     syn_path = OUTPUT_DIR / "synthesis_layer.md"
 
     if syn_path.exists():
         print("  [SKIP] synthesis_layer.md már létezik, kihagyva.")
-        return syn_path.read_text(encoding='utf-8')
+        return syn_path.read_text(encoding='utf-8'), False
 
     # Építjük fel a dosszié blokkot, maximum 12,000 karakterben
     block = build_dossier_block(dossiers, max_total_chars=12000)
@@ -290,7 +290,7 @@ def run_synthesis(dossiers: list[str]) -> str:
     result = call_groq(SYNTHESIS_SYSTEM, user, temperature=TEMP_SYNTHESIS, max_tokens=3500)
     syn_path.write_text(result, encoding='utf-8')
     print(f"  ✓ Synthesis layer kész ({len(result.split())} szó → {syn_path.name})")
-    return result
+    return result, True
 
 
 # ── PHASE 3: OUTLINE ───────────────────────────────────────────────────────
@@ -310,14 +310,14 @@ Formátum:
 Tervezz 5-8 tartalmas, egymásra épülő fejezetet. Ne írj markdown kódblokkot, csak magát a nyers JSON tömböt add vissza!
 """
 
-def generate_outline(dossiers: list[str], synthesis: str) -> list[dict]:
+def generate_outline(dossiers: list[str], synthesis: str) -> tuple[list[dict], bool]:
     print("\n[PHASE 3 — OUTLINE] Playbook Vázlat (Tartalomjegyzék) generálása...", flush=True)
     out_path = OUTPUT_DIR / "outline.json"
     
     if out_path.exists():
         print("  [SKIP] outline.json már létezik, betöltés...")
         try:
-            return json.loads(out_path.read_text(encoding='utf-8'))
+            return json.loads(out_path.read_text(encoding='utf-8')), False
         except Exception as e:
             print("  [ERROR] outline.json betöltése sikertelen, újra generáljuk...", e)
 
@@ -335,7 +335,7 @@ def generate_outline(dossiers: list[str], synthesis: str) -> list[dict]:
         outline = json.loads(clean_json)
         out_path.write_text(json.dumps(outline, indent=2, ensure_ascii=False), encoding='utf-8')
         print(f"  ✓ Outline generálva: {len(outline)} fejezet.")
-        return outline
+        return outline, True
     except Exception as e:
         print(f"❌ Hiba a JSON parse-olásakor:\n{outline_json}")
         raise e
@@ -354,14 +354,14 @@ MOST KIZÁRÓLAG EGY FEJEZETET KELL MEGÍRNOD! Ne írj bevezetőt a könyvhöz, 
 Terjedelem: Legalább 1000-1500 szó az adott fejezetről. Fejtsd ki a lehető legmélyebben!
 """
 
-def expand_chapter(chapter: dict, dossiers: list[str], synthesis: str, outline: list[dict]) -> str:
+def expand_chapter(chapter: dict, dossiers: list[str], synthesis: str, outline: list[dict]) -> tuple[str, bool]:
     CHAPTERS_DIR.mkdir(parents=True, exist_ok=True)
     ch_num = chapter.get('chapter_number', 0)
     out_file = CHAPTERS_DIR / f"chapter_{ch_num:02d}.md"
     
     if out_file.exists():
         print(f"  [SKIP] chapter_{ch_num:02d}.md már létezik, betöltés...")
-        return out_file.read_text(encoding='utf-8')
+        return out_file.read_text(encoding='utf-8'), False
 
     print(f"  → Fejezet {ch_num} generálása: {chapter.get('title', 'N/A')}...", end=" ", flush=True)
 
@@ -384,7 +384,7 @@ def expand_chapter(chapter: dict, dossiers: list[str], synthesis: str, outline: 
     out_file.write_text(result, encoding='utf-8')
     words = len(result.split())
     print(f"✓ ({words} szó)")
-    return result
+    return result, True
 
 
 # ── MAIN ───────────────────────────────────────────────────────────────────
@@ -434,9 +434,9 @@ def main():
         print(f"[PHASE 1 — MAP] {len(files)} fájl ({label}) → {len(chunks)} chunk (á {args.chunk_size})\n")
 
         for idx, chunk in enumerate(chunks):
-            dossier = map_chunk(idx, chunk)
+            dossier, hit_api = map_chunk(idx, chunk)
             dossiers.append(dossier)
-            if idx < len(chunks) - 1:
+            if hit_api and idx < len(chunks) - 1:
                 time.sleep(SLEEP_BETWEEN)
 
     total_map_words = sum(len(d.split()) for d in dossiers)
@@ -447,20 +447,23 @@ def main():
         synthesis = "(Synthesis fázis kihagyva)"
         print("\n[PHASE 2 — SYNTHESIS] Kihagyva (--skip-synthesis)")
     else:
-        synthesis = run_synthesis(dossiers)
-        time.sleep(SLEEP_BETWEEN)
+        synthesis, hit_api = run_synthesis(dossiers)
+        if hit_api:
+            time.sleep(SLEEP_BETWEEN)
 
     # ── PHASE 3: OUTLINE ──────────────────────────────────────────────────
-    outline = generate_outline(dossiers, synthesis)
-    time.sleep(SLEEP_BETWEEN)
+    outline, hit_api = generate_outline(dossiers, synthesis)
+    if hit_api:
+        time.sleep(SLEEP_BETWEEN)
 
     # ── PHASE 4: CHAPTER EXPANSION ────────────────────────────────────────
     print("\n[PHASE 4 — CHAPTER EXPANSION] Részletes fejezetek generálása...", flush=True)
     chapters_content = []
     for chapter in outline:
-        content = expand_chapter(chapter, dossiers, synthesis, outline)
+        content, hit_api = expand_chapter(chapter, dossiers, synthesis, outline)
         chapters_content.append(content)
-        time.sleep(SLEEP_BETWEEN)
+        if hit_api:
+            time.sleep(SLEEP_BETWEEN)
 
     # ── ÖSSZESZERELÉS ─────────────────────────────────────────────────────
     suffix = f"_first{args.limit}" if (args.limit > 0 and not args.reduce_only) else "_full"
