@@ -5,6 +5,10 @@ import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Page configuration with premium brand styling
 st.set_page_config(
@@ -67,12 +71,20 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Supabase Credentials
-SUPABASE_URL = "https://vggmrmgctzanoutabvvl.supabase.co"
-SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZnZ21ybWdjdHphbm91dGFidnZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzODIzMzgsImV4cCI6MjA5NDk1ODMzOH0.xg7g-o0l9V5kskL_ebVRJtYiFfGrDFeHMa9ng-WYWnU"
+# Supabase Credentials loaded from .env
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY")
+
+# Meta Marketing API Credentials loaded from .env
+META_AD_ACCOUNT_ID = os.getenv("META_AD_ACCOUNT_ID")
+META_ACCESS_TOKEN = os.getenv("META_ACCESS_TOKEN")
 
 @st.cache_data(ttl=10) # Cache data for 10 seconds to avoid API spamming
 def load_data():
+    if not SUPABASE_URL or not SUPABASE_ANON_KEY:
+        st.error("Hiányzó Supabase kapcsolat! Ellenőrizd a .env fájlt.")
+        return pd.DataFrame()
+        
     url = f"{SUPABASE_URL}/rest/v1/fake_door_leads?select=*"
     headers = {
         "apikey": SUPABASE_ANON_KEY,
@@ -86,8 +98,52 @@ def load_data():
             st.error(f"Hiba a Supabase elérésekor: {res.status_code}")
             return pd.DataFrame()
     except Exception as e:
-        st.error(f"Csatlakozási hiba: {e}")
+        st.error(f"Csatlakozási hiba (Supabase): {e}")
         return pd.DataFrame()
+
+def clean_ad_account_id(acc_id):
+    if not acc_id:
+        return ""
+    acc_id = acc_id.strip()
+    if not acc_id.startswith("act_"):
+        acc_id = f"act_{acc_id}"
+    return acc_id
+
+@st.cache_data(ttl=30) # Cache Meta insights for 30 seconds
+def load_meta_data():
+    if not META_AD_ACCOUNT_ID or not META_ACCESS_TOKEN:
+        return None
+    
+    clean_id = clean_ad_account_id(META_AD_ACCOUNT_ID)
+    url = f"https://graph.facebook.com/v19.0/{clean_id}/insights"
+    
+    params = {
+        "fields": "spend,impressions,clicks,cpc,ctr",
+        "date_preset": "lifetime",
+        "access_token": META_ACCESS_TOKEN
+    }
+    try:
+        res = requests.get(url, params=params)
+        if res.status_code == 200:
+            data = res.json().get('data', [])
+            if data:
+                return data[0]
+            else:
+                # Fallback if no spending yet
+                return {
+                    "spend": "0",
+                    "impressions": "0",
+                    "clicks": "0",
+                    "cpc": "0",
+                    "ctr": "0"
+                }
+        else:
+            err_msg = res.json().get('error', {}).get('message', 'Ismeretlen Meta hiba')
+            st.sidebar.error(f"Meta API Hiba: {err_msg}")
+            return None
+    except Exception as e:
+        st.sidebar.error(f"Meta csatlakozási hiba: {e}")
+        return None
 
 # Main Title & Header Layout
 st.markdown("""
@@ -101,7 +157,7 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# Loading data
+# Loading Supabase data
 df = load_data()
 
 if df.empty:
@@ -125,7 +181,7 @@ else:
             df_filtered['total_aov'] = 0
         df_filtered['total_aov'] = pd.to_numeric(df_filtered['total_aov']).fillna(0)
 
-        # 3. Calculate Core KPIs
+        # 3. Calculate Core KPIs (Supabase)
         # Total Unique Sessions
         total_sessions = df_filtered['session_id'].nunique()
         
@@ -146,7 +202,61 @@ else:
         # Estimated commission (20% take rate of submitted leads)
         est_commission = (leads_df['total_aov'].sum() * 0.20) if not leads_df.empty else 0.0
         
-        # 4. KPI Layout in Columns
+        # 4. Display Meta Ads Insights if credentials exist
+        meta_data = load_meta_data()
+        
+        if meta_data:
+            st.subheader("📢 Meta Ads Hirdetési Teljesítmény (Élő adatok)")
+            m_col1, m_col2, m_col3, m_col4, m_col5 = st.columns(5)
+            
+            spend = float(meta_data.get('spend', 0))
+            impressions = int(meta_data.get('impressions', 0))
+            clicks = int(meta_data.get('clicks', 0))
+            cpc = float(meta_data.get('cpc', 0))
+            ctr = float(meta_data.get('ctr', 0))
+            
+            # Calculate Real CAC (Spend / Leads) live!
+            real_cac = (spend / total_leads) if total_leads > 0 else 0.0
+            
+            with m_col1:
+                st.markdown("<div class='metric-card'>", unsafe_allow_html=True)
+                st.metric("Elköltött összeg", f"{int(spend):,} Ft".replace(",", " "))
+                st.markdown("</div>", unsafe_allow_html=True)
+                
+            with m_col2:
+                st.markdown("<div class='metric-card'>", unsafe_allow_html=True)
+                st.metric("Megjelenések (Impressions)", f"{impressions:,} db".replace(",", " "))
+                st.markdown("</div>", unsafe_allow_html=True)
+                
+            with m_col3:
+                st.markdown("<div class='metric-card'>", unsafe_allow_html=True)
+                st.metric("Hirdetés kattintások", f"{clicks:,} fő")
+                st.markdown("</div>", unsafe_allow_html=True)
+                
+            with m_col4:
+                st.markdown("<div class='metric-card'>", unsafe_allow_html=True)
+                st.metric("Átlagos CPC / CTR", f"{cpc:.1f} Ft / {ctr:.2f}%")
+                st.markdown("</div>", unsafe_allow_html=True)
+                
+            with m_col5:
+                st.markdown("<div class='metric-card'>", unsafe_allow_html=True)
+                # Compare live CAC to the 2500 HUF target warning
+                cac_label = "Valós Ügyfélszerzés (CAC)"
+                if real_cac > 4000:
+                    cac_status = f"{int(real_cac):,} Ft 🔴 (Túl magas)"
+                elif 0 < real_cac <= 2500:
+                    cac_status = f"{int(real_cac):,} Ft 🟢 (Nyereséges)"
+                elif real_cac > 2500:
+                    cac_status = f"{int(real_cac):,} Ft 🟡 (Magas)"
+                else:
+                    cac_status = "0 Ft"
+                st.metric(cac_label, cac_status.replace(",", " "))
+                st.markdown("</div>", unsafe_allow_html=True)
+                
+            st.markdown("---")
+
+        # 5. Display Supabase Conversion KPIs
+        st.subheader("🛒 Weboldal Konverziós Mutatók (Tölcsér adatok)")
         col1, col2, col3, col4, col5 = st.columns(5)
         
         with col1:
@@ -176,7 +286,7 @@ else:
 
         st.markdown("---")
 
-        # 5. Conversion Funnel & Time Series Plots
+        # 6. Conversion Funnel & Time Series Plots
         col_left, col_right = st.columns([1, 1])
 
         with col_left:
@@ -222,7 +332,7 @@ else:
             st.plotly_chart(fig_funnel, use_container_width=True)
 
         with col_right:
-            st.subheader("📈 Látogatók (Session) Időbeli Megoszlása")
+            st.subheader("📊 Látogatók (Session) Időbeli Megoszlása")
             
             # Map UTC timestamps to local Europe/Budapest timezone for precise reporting
             df_filtered['local_time'] = df_filtered['created_at_dt'].dt.tz_convert('Europe/Budapest')
@@ -232,12 +342,12 @@ else:
             time_dist = df_filtered.groupby('hour')['session_id'].nunique().reset_index()
             time_dist.columns = ['Időszak (Óra)', 'Egyedi Látogatók (Session)']
             
-            # Smooth area line chart with brand colors
-            fig_time = px.area(
+            # Requested change: Interactive Bar Chart grouped hourly
+            fig_time = px.bar(
                 time_dist,
                 x='Időszak (Óra)',
                 y='Egyedi Látogatók (Session)',
-                color_discrete_sequence=['#C3A479'] # Elegant Gold Line
+                color_discrete_sequence=['#C3A479'] # Elegant Gold Bars
             )
             
             fig_time.update_layout(
@@ -252,14 +362,15 @@ else:
                 ),
                 yaxis=dict(
                     gridcolor='rgba(255, 255, 255, 0.05)',
-                    title="Egyedi Látogatók száma"
+                    title="Egyedi Látogatók száma",
+                    dtick=1 # Integer steps only
                 )
             )
             st.plotly_chart(fig_time, use_container_width=True)
 
         st.markdown("---")
 
-        # 6. Detailed Leads table (B2C signup database)
+        # 7. Detailed Leads table (B2C signup database)
         st.subheader("📋 Zárt Béta Feliratkozók (Valós Leadek)")
         
         # Extract unique leads with their choices, ordered by newest first
