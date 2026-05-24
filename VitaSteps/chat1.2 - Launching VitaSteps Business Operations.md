@@ -649,3 +649,115 @@ Tudom, hogy az induláskori napi 5-6 vásárláshoz képest ez most kevésnek t�
 A weboldalon már ott vannak a profi interaktív térképek (Dömös, Dobogókő), a szintrajzok, és ketyeg a visszaszámláló. Május 26-án és 27-én az algoritmus be fogja húzni azokat, akik eddig csak nézegették, de halogatták a döntést.
 
 Ha van energiád, **most érdemes megcsinálni egy TikTok/Reels videót**, amit pár nappal ezelőtt javasoltam (akár az új, interaktív weboldalas térképet videózva a telefonoddal: *"Nézd meg, milyen brutális szintet kell megmászni ezért az éremért"* szöveggel), hogy behúzz egy kis ingyen organikus forgalmat is a fináléra!
+
+### User Input
+
+Eltelt 22 óra:
+
+Facebook ads manager:
+- nettó 15950 Ft elköltve
+- elérés: 11053
+- megjelenések: 17863
+- Webhelyen történt vásárlások	3	[2]
+- Webes kosárba helyezések	60	[2]
+- Webhelyen kezdeményezett fizetési műveletek	30	[2]
+- Webhelyen szerzett érdeklődők	34	[2]
+- Webes tartalommegtekintések	793	[2]
+
+Vercel:
+- Visitors: 860
+- Page views: 1023
+(- bounce rate: 87%)
+
+Tally:
+- visits: 168
+- submissions: 20
+- fizetések: 18
+
+
+### Planner Response
+
+Bumm! 🚀 Megérkezett az U-görbe felfelé ívelő ága, ahogy közeledünk a határidőhöz!
+
+Nézzük meg, mi történt az elmúlt 22 órában, mert az eredmények fantasztikusak:
+
+### A matek az elmúlt napra (Delta):
+*   **Hirdetésre költöttél:** ~5.069 Ft-ot (15.950 - 10.881)
+*   **Bejött:** Újabb **3 darab** fizetett vásárlás a Tally-ban!
+*   **Új Bevétel:** 23.970 Ft (3 x 7.990 Ft)
+*   **Ügyfélszerzési költség (CAC):** 1.689 Ft / vásárló. *(Ez nevetségesen jó egy ilyen terméknél!)*
+
+**A Tiszta Profitod erre a napra:** 
+23.970 Ft (Bevétel) – 10.143 Ft (3 érem gyártása/postája) – 5.069 Ft (Facebook) = **+ 8.758 Ft tiszta haszon!**
+
+### Mi olvasható ki ebből?
+1.  **A "Halálvölgyből" kifelé tartunk:** Egyre közelebb vagyunk a május 27-i záráshoz, a FOMO (félelem a lemaradástól) elkezdte felpörgetni az embereket. 16-an mentek át a Tally űrlapra ebből a friss hullámból, és 3-an azonnal fizettek is.
+2.  **Az új térképes felület is dolgozik:** Az, hogy beraktuk az interaktív térképeket, megmutatta nekik, hogy ez nem csak egy "kérlek utalj", hanem egy nagyon komolyan megtervezett és összerakott kihívás. Ez hihetetlen bizalmat épített!
+3.  **Tökéletesen működik a követés:** A Facebook pontosan lekövette, hogy 3 vásárlás történt (Webhelyen történt vásárlások: 3), a Tally-ban pedig tényleg 3 új fizetés lett (15-ről 18-ra nőtt). Az algoritmus most már kristálytisztán látja, kiket kell keresnie!
+
+Már csak 3 nap van hátra! Hogy állsz az 100 darabos limitált széria eladásával összesen? Működik ez a 2-3 ezer forintos napi költés, vagy érdemes lenne még ráönteni egy kis szenet az utolsó napokra, hogy mind a 100 gazdára találjon?
+
+### User Input
+
+Mint látod 100 darabból 18 van eladva. Viszont az érmek csak június 20-án érkeznek meg, tehát úgymond nem sürgős eladni, csak a teljesítési időszak júniusra van ugye kitűzve.
+
+### Planner Response
+
+Értem a helyzetet! Ez egy nagyon kényelmes és szerencsés üzleti pozíció. Mivel a gyártás már elindult, a profitod pedig már most stabilan jön a napi futásból, egyáltalán nem kell kapkodni vagy eszeveszetten égetni a hirdetési pénzt. A mostani (napi kb. 2.000 Ft-os) stabil, nyereséges tempó tökéletes!
+
+Viszont van egy nagyon fontos technikai és stratégiai döntés, amit meg kell hoznunk a következő napokban.
+
+Ahogy most a kód kinéz, a visszaszámláló **május 27-én éjfélkor lejár**, és a weboldalon a gombok automatikusan inaktívvá válnak azzal a felirattal, hogy *"A nevezés lezárult"*. Mivel még van 82 érmed, el kell döntenünk, mi legyen május 28-tól (amikor elindul maga a túrázási/teljesítési időszak).
+
+Két szuper stratégiád van erre:
+
+### 1. A "Zárt kapuk" stratégia (Scarcity)
+Hagyjuk lezárni a nevezést május 27-én. Akinek sikerült, az bekerült. A kampányt is leállítod. Az emberek elkezdenek túrázni júniusban, te posztolod az organikus TikTok / Reels videókat, építed a Hype-ot.
+Amikor június 20-án fizikailag is megérkeznek az érmek, csinálsz egy **"Megérkeztek az érmek – Kinyitjuk a maradék 82 helyet"** flash kampányt pár napra. Azok, akik korábban lemaradtak, de látták a TikTok videókat, most azonnal le fognak csapni a fizikai fotók láttán.
+
+### 2. A "Folyamatos nevezés" (Evergreen) stratégia
+Nem zárjuk le a kapukat május 27-én. Ehelyett átírjuk az oldalt úgy, hogy:
+*   Május 28-tól a plecsnin az lesz, hogy **"A kihívás elindult! (Még X hely kiadó)"**.
+*   A gomb továbbra is aktív marad, a Facebook kampány pedig csendben, napi 2.000 Ft-tal ketyeg a háttérben egészen június végéig. Aki kedvet kap túrázni egyet a jó időben, az bármikor benevezhet.
+
+Mindkettő működőképes. Mivel nem sürgős eladni őket, és az érmek csak június 20-án jönnek, melyik megközelítés a szimpatikusabb neked a márkaépítés szempontjából? Zárjuk le május 27-én (exkluzivitás), vagy fusson végig júniusban (folyamatos bevétel)?
+
+### User Input
+
+Eddig a két kampányon összesen elment 15950+6055=22005 Ft. 18 vásárlásra az 1222 forintos CAC, csak a jobb kampányon nézve 886Ft. Szerintem érdemes lehetne még jobban megnyomni a kampányt, hátha bepörög az eladások száma is. Mit gondolsz?
+
+### Planner Response
+
+Teljesen egyetértek veled! Az e-kereskedelemben van egy aranyszabály: **"Ha találsz egy automatát, amibe bedobsz 1.222 Forintot, és kidob 7.990 Forintot, akkor addig dobáld bele a pénzt, amíg ki nem ürül."**
+
+Az 1.222 Ft-os (de főleg a 886 Ft-os) CAC egy 7.990 Ft-os terméknél **álomszerű**. Ez brutális, 6,5-szörös megtérülés (ROAS)! Ilyen számok mellett szinte kötelező skálázni (növelni a keretet), mert szó szerint pénzt hagysz az asztalon minden nap, amikor nem teszed.
+
+Viszont a Facebook algoritmusa nagyon kényes, ha "megnyomod a gázt". Ha egy napi 3.000 Ft-os kampányt hirtelen átírsz 15.000 Ft-ra, az algoritmus megijed, visszadobja a kampányt "Tanulási fázisba", és a 886 Ft-os CAC felugorhat 3-4 ezer forintra.
+
+### Hogyan "nyomd meg" okosan (Skálázási stratégiák):
+
+Mivel közeledünk a május 27-i határidőhöz, nincs idő heteket várni, viszonylag agresszívan kell lépnünk. Íme a két legjobb módszer, válaszd azt, amelyik szimpatikusabb:
+
+**1. "Óvatos, de biztos" (Vertikális skálázás)**
+Lépj be a jól működő kampányba, és a napi keretét **emeld meg napi 20-30%-kal**. 
+*Miért jó?* Ez az a határ, amit a Facebook még tolerál anélkül, hogy újraindítaná a tanulási fázist. Csináld meg ezt ma, és ha holnap is tartja a jó CAC-t, emeld meg megint 30%-kal.
+
+**2. "Az agresszív klónozás" (Horizontális skálázás)**
+Hagyd békén a mostani nyertes kampányt (fusson tovább a saját keretével). Ehelyett **duplikáld (másold le)** a teljes kampányt, és a másolatot indítsd el egyből a **2x-es vagy 3x-os napi büdzsével** (pl. 8.000 Ft/nap).
+*Miért jó?* A régi, biztos kampányod érintetlen marad, így az a profit garantált. Az új, agresszívabb kampány megpróbálja nagyobb hálóval befogni az embereket. Mivel már van sok pixel adatod, az új kampány is jó eséllyel hamar megtalálja a vásárlókat.
+
+Én a helyedben a **2. opciót (Duplikálás magasabb kerettel)** választanám. Nagyon ritka az ilyen jó CAC, most kell learatni a gyümölcsöt, amíg benne vagyunk a határidős FOMO (félelem a lemaradástól) időszakban! Hajrá!
+
+### User Input
+
+Növeltem 3000 forintról 3900-ra a napi keretet.
+
+### Planner Response
+
+Tökéletes! Ez **hajszálpontosan egy 30%-os emelés**. 
+
+Ez a tankönyvi példája a biztonságos, algoritmus-barát (vertikális) skálázásnak. A Facebook így nem fog pánikolni, nem dobja vissza a kampányt "Tanuló fázisba", egyszerűen csak holnaptól kb. 30%-kal több embernek mutatja meg a hirdetést, ami jó eséllyel 30%-kal több Tally kitöltést (és vásárlást) fog hozni, anélkül, hogy a CAC jelentősen megugrana.
+
+Most ismét az a dolgunk, hogy várunk kb. 24 órát, és megnézzük, hogyan reagál rá a piac. Ha holnap ilyenkor is tartja az 1.000 Ft körüli CAC-t, akkor simán ráhúzhatsz még egy 30%-os emelést (kb. 5.000 Ft-ra)!
+
+Nagyon jó úton járunk. Addig is van esetleg bármi más a weboldallal, vagy a Tally formmal kapcsolatban, amivel segíthetek?
