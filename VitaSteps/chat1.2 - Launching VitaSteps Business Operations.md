@@ -761,3 +761,54 @@ Ez a tankönyvi példája a biztonságos, algoritmus-barát (vertikális) skál�
 Most ismét az a dolgunk, hogy várunk kb. 24 órát, és megnézzük, hogyan reagál rá a piac. Ha holnap ilyenkor is tartja az 1.000 Ft körüli CAC-t, akkor simán ráhúzhatsz még egy 30%-os emelést (kb. 5.000 Ft-ra)!
 
 Nagyon jó úton járunk. Addig is van esetleg bármi más a weboldallal, vagy a Tally formmal kapcsolatban, amivel segíthetek?
+
+### User Input
+
+23,5 óra eltelt a legutóbbi értékelés és a 3000->3900 emelés óta:
+
+Facebook ads manager:
+- nettó 19888 Ft elköltve
+- elérés: 14183
+- megjelenések: 24029
+- Webhelyen történt vásárlások	4	[2]
+- Webes kosárba helyezések	70	[2]
+- Webhelyen kezdeményezett fizetési műveletek	33	[2]
+- Webhelyen szerzett érdeklődők	42	[2]
+- Webes tartalommegtekintések	978	[2]
+
+Vercel:
+- Visitors: 955
+- Page views: 1141
+(- bounce rate: 87%)
+
+Tally:
+- visits: 184
+- submissions: 20
+- fizetések: 18
+
+### Planner Response
+
+Uh, ez egy tipikus e-kereskedelmi hullámvasút nap. Nézzük a tényeket:
+
+**A tegnapi nap (Delta):**
+*   Elköltöttél: 3.938 Ft-ot (tehát a Facebook gyönyörűen letolta a megemelt ~3.900 Ft-os napi keretet).
+*   Látogatók a weboldalon: +95 (Vercel)
+*   Átkattintás a Tally-ra: +16 ember (Ez a konverzió stabil: a látogatók kb. 16-17%-a továbbra is átkattint a fizetési oldalra!)
+*   **Vásárlások (Tally): 0**
+
+*Miért mutat a Facebook 1 új vásárlást (3-ról 4-re)?* 
+Ez szinte biztosan "késleltetett attribúció" (delayed attribution). Valaki, aki még tegnapelőtt kattintott a hirdetésre és tegnap fizetett (amit mi már a tegnapi 3 vásárlásnál elkönyveltünk), azt a Facebook pixel csak most könyvelte le magának. A mérvadó mindig a Tally (a bankkártya).
+
+### Miért nem volt egyetlen vásárlás sem a 16 Tally látogatóból?
+Ez fájó, de napi pár ezer forintos költésnél statisztikailag teljesen normális. A vasárnapi napok (főleg ha jó idő van) sokszor ilyenek a túrás/outdoor piacon: az emberek kint vannak, kattintgatnak mobilon, meg is nézik a Tally-t, de bankkártyát elővenni és pötyögni a hegyoldalban senki nem fog. Majd elmentik későbbre.
+
+**A jó hír:**
+Az "Utolsó Esély" határidő (május 27.) a nyakunkon van! Ma (hétfő) és holnap (kedd) érünk be abba a 48 órás ablakba, amikor a "majd befizetem később" típusú halogatók szembesülnek azzal, hogy tényleg le fognak maradni. A 16 tegnapi Tally látogatóból jópárat be fog húzni a visszaszámláló.
+
+### Mit csináljunk most?
+1.  **Ne nyúlj a büdzséhez!** Hagyd 3.900 Ft-on. Ha most visszaveszed, az algoritmus megint megzavarodik.
+2.  **Készüljünk a Fináléra:** Holnap (május 26-án) lépünk be az utolsó 24 órába. A weboldaladon a visszaszámláló már pirosan fog villogni a fejekben. 
+
+Ha a Facebook kampányodban egy *Story* vagy *Reels* hirdetés fut, akár csinálhatsz mellé egy egyszerű képes, telefonos posztot is az Instádra / Facebookodra: *"Már csak 48 óra van hátra a nevezésből, a limitált érmek fogynak, gyertek!"*
+
+Hogyan állsz a vizuális tartalmakkal (posztok, sztorik)? Van esetleg olyan tartalom, amit ki tudsz tolni ma a követőidnek organikus (ingyenes) formában, hogy rásegíts a FOMO-ra?
