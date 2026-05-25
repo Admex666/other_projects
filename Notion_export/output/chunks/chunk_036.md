@@ -1,51 +1,44 @@
-## MENTÁLIS MODELLEK ÉS STRATÉGIAI MINTÁK
+**Knowledge Extraction Dossier**
 
-A vizsgált anyagokban számos mentális modell és stratégiai minta található, amelyek az üzleti és marketing döntések meghozatalát segítik. Az egyik legfontosabb modell a **4P** (Product, Placement, Pricing, Promotion), amely a marketing alapelveit képviseli. Azonban a **Positioning** fogalma is kiemelt szerepet kap, amely a termék vagy szolgáltatás pozicionálását jelenti a piacban.
+**1. KONKRÉT KERETRENDSZEREK ÉS KÉPLETEK**
 
-A **Positioning** stratégia fontos eleme a **white space** megtalálása, azaz a piacban lévő üres tér, amelybe a termék vagy szolgáltatás beilleszthető. Ez a stratégia segít abban, hogy a vállalatok kiemeljék magukat a versenytársak közül és megkülönböztessék termékeiket.
+A jegyzetekben szereplő legfontosabb keretrendszerek és képletek a következők:
 
-Egy másik fontos modell a **Silent Pruning**, amely a felesleges funkciók és szolgáltatások eltávolítását jelenti. Ez a stratégia segít abban, hogy a vállalatok egyszerűsítsék termékeiket és szolgáltatásaikat, és csökkentsék a költségeket.
+* **Positioning**: Al Ries és Jack Trout meghatározása szerint a positioning az, hogy "hogyan látszunk és hallatszunk a túlzsúfolt piacon". A positioning stratégia fontos eleme a termékek és szolgáltatások különbözőségének hangsúlyozása a versenytársakhoz képest.
+* **4Ps**: A marketing mix négy eleme: termék (Product), hely (Placement), ár (Pricing) és promóció (Promotion).
+* **Dream Outcome x Likelihood / Time Delay x Effort**: Ez a képlet a célkitűzések elérésének valószínűségét és a ráfordított erőfeszítést veszi figyelembe. A cél az, hogy a legnagyobb valószínűséggel elérjük a kívánt kimenetelt a legkisebb erőfeszítéssel.
+* **CAC (Customer Acquisition Cost) és LTV (Lifetime Value)**: A CAC a vevők megszerzésének költsége, míg az LTV a vevők életciklusának hossza alatt generált bevétel.
 
-A **Soccer Card Investing** és a **Warren Buffett** stratégia is fontos modell, amely a befektetésekben való szelektivitást és a fókuszálást hangsúlyozza. Ez a stratégia segít abban, hogy a befektetők kiemeljék a legjobb befektetési lehetőségeket és elkerüljék a felesleges kockázatokat.
+**2. DÖNTÉSI LOGIKÁK (If-Then)**
 
-## OK-OKOZATI KAPCSOLATOK
+A jegyzetekben szereplő döntési logikák a következők:
 
-A vizsgált anyagokban számos ok-okozati kapcsolat található, amelyek a döntések meghozatalát segítik. Az egyik legfontosabb kapcsolat a **Positioning** és a **Termék siker** között. Ha a termék vagy szolgáltatás jól pozicionált, akkor nagyobb esélye van a sikerre.
+* **Ha** a termék vagy szolgáltatás nem különbözik a versenytársaktól, **akkor** nem érdemes befektetni a marketingbe.
+* **Ha** a vevők nem értékelik a terméket vagy szolgáltatást, **akkor** nem érdemes tovább fejleszteni.
+* **Ha** a cégnek nincs egyértelmű positioning stratégiája, **akkor** nem érdemes piacra lépni.
 
-Egy másik fontos kapcsolat a **Silent Pruning** és a **Költségcsökkentés** között. Ha a vállalatok eltávolítják a felesleges funkciókat és szolgáltatásokat, akkor csökkenthetik a költségeket és növelhetik a profitot.
+**3. RENDSZERSZINTŰ MECHANIZMUSOK**
 
-A **Soccer Card Investing** és a **Befektetési siker** között is szoros kapcsolat található. Ha a befektetők szelektívek és fókuszáltak, akkor nagyobb esélyük van a sikerre a befektetésekben.
+A jegyzetekben szereplő rendszerszintű mechanizmusok a következők:
 
-## RENDSZERSZINTŰ ÖSSZEFÜGGÉSEK
+* **Silent Pruning**: A felesleges funkciók és szolgáltatások eltávolítása a termékből vagy szolgáltatásból anélkül, hogy a vevőket értesítenénk.
+* **Cognitive Load Tax**: A vevők által tapasztalt mentális terhelés, amikor túl sok információval vagy döntéssel kell szembenézniük.
+* **Flywheel**: A vevők és a cég közötti pozitív visszacsatolás, amely a vevők lojalitását és a cég növekedését segíti elő.
 
-A vizsgált anyagokban számos rendszerszintű összefüggés található, amelyek a döntések meghozatalát segítik. Az egyik legfontosabb összefüggés a **Termék**, **Piac** és **Versenytársak** között. Ha a vállalatok ismerik a piacot és a versenytársakat, akkor jobban pozicionálhatják termékeiket és szolgáltatásaikat.
+**4. ANTI-PATTERNEK**
 
-Egy másik fontos összefüggés a **Befektetés**, **Kockázat** és **Profit** között. Ha a befektetők ismerik a kockázatokat és a profitot, akkor jobban döntéseket hozhatnak a befektetésekben.
+A jegyzetekben szereplő anti-patternek a következők:
 
-A **SporTársas** projektben található összefüggés a **Játék**, **Játékos** és **Piac** között. Ha a játékfejlesztők ismerik a játékosokat és a piacot, akkor jobban tervezhetik a játékot és növelhetik a sikerét.
+* **Positioning without competitive advantage**: A cég nem különbözik a versenytársaktól, ezért nem érdemes befektetni a marketingbe.
+* **Positioning against the trend**: A cég ellenkező irányba halad, mint a piac, ezért nem érdemes befektetni a marketingbe.
+* **Positioning through words, not action**: A cég csak szavakkal, de nem tettekkel kommunikálja a positioning stratégiáját, ezért nem érdemes befektetni a marketingbe.
 
-## DÖNTÉSI SZABÁLYOK ÉS TRIGGER-FELTÉTELEK
+**HOGYAN**
 
-A vizsgált anyagokban számos döntési szabály és trigger-feltétel található, amelyek a döntések meghozatalát segítik. Az egyik legfontosabb szabály a **Positioning** stratégia, amely a termék vagy szolgáltatás pozicionálását jelenti a piacban.
+A jegyzetekben szereplő stratégiák és mechanizmusok implementálásának lépései a következők:
 
-Egy másik fontos szabály a **Silent Pruning**, amely a felesleges funkciók és szolgáltatások eltávolítását jelenti. Ha a vállalatok eltávolítják a felesleges funkciókat és szolgáltatásokat, akkor csökkenthetik a költségeket és növelhetik a profitot.
-
-A **Soccer Card Investing** és a **Warren Buffett** stratégia is fontos döntési szabály, amely a befektetésekben való szelektivitást és fókuszálást hangsúlyozza. Ha a befektetők szelektívek és fókuszáltak, akkor nagyobb esélyük van a sikerre a befektetésekben.
-
-## ANTI-PATTERNEK ÉS HIBÁK
-
-A vizsgált anyagokban számos anti-patter és hiba található, amelyek a döntések meghozatalát segítik. Az egyik legfontosabb anti-patter a **Positioning** stratégia hiánya, amely a termék vagy szolgáltatás pozicionálásának hiányát jelenti a piacban.
-
-Egy másik fontos anti-patter a **Silent Pruning** hiánya, amely a felesleges funkciók és szolgáltatások eltávolításának hiányát jelenti. Ha a vállalatok nem távolítják el a felesleges funkciókat és szolgáltatásokat, akkor növelhetik a költségeket és csökkenthetik a profitot.
-
-A **Soccer Card Investing** és a **Warren Buffett** stratégia is fontos anti-patter, amely a befektetésekben való szelektivitás és fókuszálás hiányát jelenti. Ha a befektetők nem szelektívek és fókuszáltak, akkor kisebb esélyük van a sikerre a befektetésekben.
-
-## KONKRÉT IMPLEMENTÁCIÓS LOGIKA
-
-A vizsgált anyagokban számos konkrét implementációs logika található, amelyek a döntések meghozatalát segítik. Az egyik legfontosabb logika a **Positioning** stratégia, amely a termék vagy szolgáltatás pozicionálását jelenti a piacban.
-
-Egy másik fontos logika a **Silent Pruning**, amely a felesleges funkciók és szolgáltatások eltávolítását jelenti. Ha a vállalatok eltávolítják a felesleges funkciókat és szolgáltatásokat, akkor csökkenthetik a költségeket és növelhetik a profitot.
-
-A **Soccer Card Investing** és a **Warren Buffett** stratégia is fontos implementációs logika, amely a befektetésekben való szelektivitást és fókuszálást hangsúlyozza. Ha a befektetők szelektívek és fókuszáltak, akkor nagyobb esélyük van a sikerre a befektetésekben.
-
-A **SporTársas** projektben található logika a **Játék**, **Játékos** és **Piac** közötti összefüggés, amely a játék fejlesztését és a piacot segíti. Ha a játékfejlesztők ismerik a játékosokat és a piacot, akkor jobban tervezhetik a játékot és növelhetik a sikerét.
+1. **Identify**: Azonosítsa a termékek és szolgáltatások különbözőségét a versenytársakhoz képest.
+2. **Define**: Határozza meg a positioning stratégiát és a célkitűzéseket.
+3. **Design**: Tervezze meg a terméket vagy szolgáltatást a positioning stratégiának megfelelően.
+4. **Implement**: Valósítsa meg a positioning stratégiát és a terméket vagy szolgáltatást.
+5. **Monitor**: Figyelje a vevők visszajelzéseit és a piaci trendeket, és alkalmazkodjon a szükséges változásokhoz.

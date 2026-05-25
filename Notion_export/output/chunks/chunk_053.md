@@ -1,55 +1,57 @@
-## MENTÁLIS MODELLEK ÉS STRATÉGIAI MINTÁK
+**Knowledge Extraction Dossier**
 
-A vizsgált notes-okban számos implicit döntési logika és gondolkodási keretrendszer található. Az első note, "What makes people buy?" például a human pszichológiájának szerepét hangsúlyozza a vásárlási döntésekben. A "LIFE FORCE 8" modell, amely nyolc alapvető emberi vágyat azonosít, mint például a túlélés, az élet élvezete, a szabadság és a társaság, fontos keretrendszer a marketing és értékesítési stratégiák kialakításához.
+**Bevezetés**
 
-A "What Who When - meeting framework" note egy egyszerű, de hatékony döntési keretrendszert mutat be, amely a probléma azonosítására, a felelős személy kijelölésére és a végrehajtás időzítésére összpontosít. Ez a keretrendszer segít a csapatoknak és az egyéneknek, hogy hatékonyan foglalkozzanak a problémákkal és a lehetőségekkel.
+Ez a dokumentum célja, hogy kinyerje a legfontosabb információkat és tudást a kapott üzleti jegyzetekből. A jegyzetek különböző témákkal foglalkoznak, mint például a marketing, a pszichológia, a döntéshozatal és a vállalkozás. A célunk, hogy mélyen kifejtsük ezeket a témákat és kinyerjük a konkrét, alkalmazható tudást.
 
-A "Why new opportunities keep you poor…" note egy másik fontos gondolkodási keretrendszert mutat be, amely a problémamegoldásra és a korlátozott erőforrások prioritizálására összpontosít. Ez a note hangsúlyozza, hogy a lehetőségek üldözése helyett a problémák megoldására kell koncentrálni, és hogy a korlátozott erőforrásokat a legfontosabb feladatokra kell összpontosítani.
+**1. KONKRÉT KERETRENDSZEREK ÉS KÉPLETEK**
 
-A "Why You’re Busy But Still Broke" note egy további fontos gondolkodási keretrendszert mutat be, amely a fókusz és a prioritizálás szerepét hangsúlyozza a siker elérésében. Ez a note hangsúlyozza, hogy a sok feladat és projekt közötti széttagoltság nem vezet sikerhez, hanem a fókusz és a prioritizálás segítségével kell elérni a célokat.
+Az első jegyzetben található a "LIFE FORCE 8" keretrendszer, amely 8 fő kívánságot határoz meg, amelyek az emberekben megvannak. Ezek a kívánságok a következők:
 
-## OK-OKOZATI KAPCSOLATOK
+1. Túlélés, élet élvezete, élet meghosszabbítása
+2. Ételek és italok élvezete
+3. Félelem, fájdalom és veszély elkerülése
+4. Szexuális társaság
+5. Kényelmes életkörülmények
+6. Felsőbbrendűség, nyerés, verseny
+7. Szeretteink gondozása és védelme
+8. Társadalmi elismerés
 
-A notes-okban számos ok-okozati kapcsolat található, amelyek segítenek megérteni, hogy a különböző tényezők hogyan hatnak egymásra. Például, a "What makes people buy?" note hangsúlyozza, hogy a human pszichológiája és a "LIFE FORCE 8" modell szerepet játszik a vásárlási döntésekben. Ez azt jelenti, hogy ha egy termék vagy szolgáltatás megfelel az emberi vágyaknak, akkor az emberek valószínűleg megvásárolják.
+Ezek a kívánságok az emberek viselkedését és döntéseit befolyásolják. A marketingben és az értékesítésben fontos, hogy ezeket a kívánságokat figyelembe vegyük és arra összpontosítsunk, hogy az embereknek olyan termékeket és szolgáltatásokat kínáljunk, amelyek ezeket a kívánságokat kielégítik.
 
-A "What Who When - meeting framework" note egy másik ok-okozati kapcsolatot mutat be, amely a probléma azonosítása, a felelős személy kijelölése és a végrehajtás időzítése közötti kapcsolatot hangsúlyozza. Ez azt jelenti, hogy ha egy probléma azonosítva van, akkor a felelős személyt ki kell jelölni, és a végrehajtás időzítését meg kell határozni, hogy a probléma megoldásra kerüljön.
+**2. DÖNTÉSI LOGIKÁK (If-Then)**
 
-A "Why new opportunities keep you poor…" note egy további ok-okozati kapcsolatot mutat be, amely a probléma megoldása és a korlátozott erőforrások prioritizálása közötti kapcsolatot hangsúlyozza. Ez azt jelenti, hogy ha a problémák megoldására koncentrálunk, akkor a korlátozott erőforrásokat a legfontosabb feladatokra kell összpontosítani, hogy a problémák megoldásra kerüljenek.
+A második jegyzetben található a "What Who When" keretrendszer, amely a döntéshozatali folyamatot segíti. A keretrendszer a következő lépésekből áll:
 
-A "Why You’re Busy But Still Broke" note egy további ok-okozati kapcsolatot mutat be, amely a fókusz és a prioritizálás szerepét hangsúlyozza a siker elérésében. Ez azt jelenti, hogy ha a fókusz és a prioritizálás segítségével koncentrálunk a legfontosabb feladatokra, akkor a siker elérhető.
+1. Az idea megjelenése (What)
+2. A felelős személy kijelölése (Who)
+3. A határidő megállapítása (When)
 
-## RENDSZERSZINTŰ ÖSSZEFÜGGÉSEK
+Ez a keretrendszer segít abban, hogy a döntéshozatali folyamatot strukturáljuk és hogy a felelősséget és a határidőt egyértelműen meghatározzuk.
 
-A notes-okban számos rendszerszintű összefüggés található, amelyek segítenek megérteni, hogy a különböző tényezők hogyan kapcsolódnak egymáshoz. Például, a "What makes people buy?" note hangsúlyozza, hogy a human pszichológiája és a "LIFE FORCE 8" modell szerepet játszik a vásárlási döntésekben, ami azt jelenti, hogy a termékek és szolgáltatások tervezésénél figyelembe kell venni az emberi vágyakat.
+**3. RENDSZERSZINTŰ MECHANIZMUSOK**
 
-A "What Who When - meeting framework" note egy másik rendszerszintű összefüggést mutat be, amely a probléma azonosítása, a felelős személy kijelölése és a végrehajtás időzítése közötti kapcsolatot hangsúlyozza. Ez azt jelenti, hogy a csapatok és az egyéneknek hatékonyan kell foglalkozniuk a problémákkal és a lehetőségekkel, hogy a célokat elérjék.
+A harmadik jegyzetben található a "Why new opportunities keep you poor" című rész, amely a vállalkozásokra és a döntéshozatalra vonatkozó mechanizmusokat tárgyalja. A fő üzenet az, hogy a vállalkozásoknak nem szabad minden új lehetőséget üldözniük, hanem inkább a problémák megoldására kellene összpontosítaniuk.
 
-A "Why new opportunities keep you poor…" note egy további rendszerszintű összefüggést mutat be, amely a probléma megoldása és a korlátozott erőforrások prioritizálása közötti kapcsolatot hangsúlyozza. Ez azt jelenti, hogy a problémák megoldására koncentrálva a korlátozott erőforrásokat a legfontosabb feladatokra kell összpontosítani, hogy a problémák megoldásra kerüljenek.
+A negyedik jegyzetben található a "Why You’re Busy But Still Broke" című rész, amely a vállalkozásokra és a termelékenységre vonatkozó mechanizmusokat tárgyalja. A fő üzenet az, hogy a vállalkozásoknak nem szabad túl sok mindent csinálniuk, hanem inkább a legfontosabb dolgokra kellene összpontosítaniuk és azokat jól csinálniuk.
 
-A "Why You’re Busy But Still Broke" note egy további rendszerszintű összefüggést mutat be, amely a fókusz és a prioritizálás szerepét hangsúlyozza a siker elérésében. Ez azt jelenti, hogy a fókusz és a prioritizálás segítségével koncentrálva a legfontosabb feladatokra, a siker elérhető.
+**4. ANTI-PATTERNEK**
 
-## DÖNTÉSI SZABÁLYOK ÉS TRIGGER-FELTÉTELEK
+A jegyzetekben találhatók anti-patternek is, amelyek a tipikus hibákat és a kerülendő dolgokat mutatják be. Például:
 
-A notes-okban számos döntési szabály és trigger-feltétel található, amelyek segítenek megérteni, hogy a különböző tényezők hogyan hatnak a döntéshozatalra. Például, a "What makes people buy?" note hangsúlyozza, hogy a human pszichológiája és a "LIFE FORCE 8" modell szerepet játszik a vásárlási döntésekben, ami azt jelenti, hogy a termékek és szolgáltatások tervezésénél figyelembe kell venni az emberi vágyakat.
+* A túl sok mindent csinálás és a nem elég jó csinálás
+* A nem elég fontos dolgokra való összpontosítás
+* A túl sok lehetőség üldözése és a nem elég probléma megoldása
 
-A "What Who When - meeting framework" note egy másik döntési szabályt mutat be, amely a probléma azonosítása, a felelős személy kijelölése és a végrehajtás időzítése közötti kapcsolatot hangsúlyozza. Ez azt jelenti, hogy a csapatok és az egyéneknek hatékonyan kell foglalkozniuk a problémákkal és a lehetőségekkel, hogy a célokat elérjék.
+Ezek az anti-patternek segítenek abban, hogy a vállalkozások és a döntéshozók elkerüljék a tipikus hibákat és a kerülendő dolgokat, és inkább a sikerre és a hatékonyságra összpontosítsanak.
 
-A "Why new opportunities keep you poor…" note egy további döntési szabályt mutat be, amely a probléma megoldása és a korlátozott erőforrások prioritizálása közötti kapcsolatot hangsúlyozza. Ez azt jelenti, hogy a problémák megoldására koncentrálva a korlátozott erőforrásokat a legfontosabb feladatokra kell összpontosítani, hogy a problémák megoldásra kerüljenek.
+**KÖVETKEZTETÉSEK**
 
-A "Why You’re Busy But Still Broke" note egy további döntési szabályt mutat be, amely a fókusz és a prioritizálás szerepét hangsúlyozza a siker elérésében. Ez azt jelenti, hogy a fókusz és a prioritizálás segítségével koncentrálva a legfontosabb feladatokra, a siker elérhető.
+A Knowledge Extraction Dossier alapján a következő következtetéseket lehet levonni:
 
-## ANTI-PATTERNEK ÉS HIBÁK
+* A vállalkozásoknak és a döntéshozóknak fontos, hogy a legfontosabb dolgokra összpontosítsanak és azokat jól csinálják.
+* A marketingben és az értékesítésben fontos, hogy az emberek kívánságait figyelembe vegyük és arra összpontosítsunk, hogy az embereknek olyan termékeket és szolgáltatásokat kínáljunk, amelyek ezeket a kívánságokat kielégítik.
+* A döntéshozatali folyamatot strukturálni kell, és a felelősséget és a határidőt egyértelműen meg kell határozni.
+* A vállalkozásoknak nem szabad túl sok mindent csinálniuk, hanem inkább a legfontosabb dolgokra kellene összpontosítaniuk és azokat jól csinálniuk.
 
-A notes-okban számos anti-patternt és hibát található, amelyek segítenek megérteni, hogy a különböző tényezők hogyan hatnak a döntéshozatalra. Például, a "What makes people buy?" note hangsúlyozza, hogy a human pszichológiája és a "LIFE FORCE 8" modell szerepet játszik a vásárlási döntésekben, ami azt jelenti, hogy a termékek és szolgáltatások tervezésénél figyelembe kell venni az emberi vágyakat.
-
-A "What Who When - meeting framework" note egy másik anti-patternt mutat be, amely a probléma azonosítása, a felelős személy kijelölése és a végrehajtás időzítése közötti kapcsolatot hangsúlyozza. Ez azt jelenti, hogy a csapatok és az egyéneknek hatékonyan kell foglalkozniuk a problémákkal és a lehetőségekkel, hogy a célokat elérjék.
-
-A "Why new opportunities keep you poor…" note egy további anti-patternt mutat be, amely a probléma megoldása és a korlátozott erőforrások prioritizálása közötti kapcsolatot hangsúlyozza. Ez azt jelenti, hogy a problémák megoldására koncentrálva a korlátozott erőforrásokat a legfontosabb feladatokra kell összpontosítani, hogy a problémák megoldásra kerüljenek.
-
-A "Why You’re Busy But Still Broke" note egy további anti-patternt mutat be, amely a fókusz és a prioritizálás szerepét hangsúlyozza a siker elérésében. Ez azt jelenti, hogy a fókusz és a prioritizálás segítségével koncentrálva a legfontosabb feladatokra, a siker elérhető.
-
-## KONKRÉT IMPLEMENTÁCIÓS LOGIKA
-
-A notes-okban számos konkrét implementációs logika található, amelyek segítenek megérteni, hogy a különböző tényezők hogyan hatnak a döntéshozatalra. Például, a "What makes people buy?" note hangsúlyozza, hogy a human pszichológiája és a "LIFE FORCE 8" modell szerepet játszik a vásárlási döntésekben, ami azt jelenti, hogy a termékek és szolgáltatások tervezésénél figyelembe kell venni az emberi vágyakat.
-
-A "What Who When - meeting framework" note egy másik konkrét implementációs logikát mutat be, amely a probléma azonosítása, a felelős személy kijelölése és a végrehaj
+A Knowledge Extraction Dossier célja, hogy a vállalkozások és a döntéshozók számára hasznos információkat és tudást nyújtson, amelyek segítenek a sikerre és a hatékonyságra összpontosítani.

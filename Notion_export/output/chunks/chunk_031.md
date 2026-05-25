@@ -1,136 +1,50 @@
-## MENTÁLIS MODELLEK ÉS STRATÉGIAI MINTÁK
+**Knowledge Extraction Dossier**
 
-A szövegek mögött meghúzódó implicit döntési logikák és gondolkodási keretrendszerek a következők:
-* A marketing és befektetési döntésekben a tesztelés és az adatok alapján történő döntésfontosságú. (Oren John’s Quick Short Form Guide)
-* A befektetési döntésekben a kockázatkezelés és a hozam maximalizálása fontos szempontok. (Osztalékfizető részvény: hogyan?)
-* A vállalkozásoknak és befektetőknek fontos, hogy saját márkanevüket és online jelenlétüket optimalizálják. (Own Your Name Strategy)
-* A passzív befektetési stratégiák, mint az osztalékfizető részvények, biztos alapokat és kis esélyt csődre kínálnak. (Osztalékfizető részvények a többi értékpapírhoz képest)
+**Tartalomjegyzék**
 
-A gondolkodási keretrendszerek között szerepel:
-* A tesztelés és az adatok alapján történő döntés
-* A kockázatkezelés és a hozam maximalizálása
-* A passzív befektetési stratégiák
-* Az online jelenlét optimalizálása
+1. [Keretrendszerek és képletek](#keretrendszerek-és-képletek)
+2. [Döntési logikák](#döntési-logikák)
+3. [Rendszerszintű mechanizmusok](#rendszerszintű-mechanizmusok)
+4. [Anti-patternek](#anti-patternek)
 
-Ismétlődő elvek:
-* A tesztelés és az adatok alapján történő döntés
-* A kockázatkezelés és a hozam maximalizálása
-* A passzív befektetési stratégiák
+## Keretrendszerek és képletek
 
-## OK-OKOZATI KAPCSOLATOK
+A jegyzetekben szereplő keretrendszerek és képletek a következők:
 
-A szövegekben megfogalmazott ok-okozati kapcsolatok a következők:
-* Ha egy befektetési stratégia nem működik, akkor érdemes más stratégiát keresni. (Oren John’s Quick Short Form Guide)
-* Ha egy osztalékfizető részvény nem fizet osztalékot, akkor érdemes eladni. (Osztalékfizető részvény: hogyan?)
-* Ha egy vállalkozás nem optimalizálja online jelenlétét, akkor érdemes befektetni a Google Ads-be. (Own Your Name Strategy)
-* Ha egy befektetési stratégia kockázatos, akkor érdemes diverzifikálni a portfóliót. (Osztalékfizető részvények a többi értékpapírhoz képest)
+* **Oren John’s Quick Short Form Guide**: A jegyzetben szereplő keretrendszer a következő:
+ + Mindig tesztelj 4-szer, mielőtt döntést hoznál.
+ + Állíts be egy kulcsfontosságú metrikát (5:1 like save ratio).
+ + Ne gondolkodj scriptekben, hanem inkább a tartalmon.
+* **Osztalékfizető részvény**: A jegyzetben szereplő keretrendszer a következő:
+ + Válassz olyan részvényeket, amelyeknek stabil osztalékfizetése van.
+ + Figyeld a cég pénzügyi állapotát, és az osztalékfizetési képességét.
+ + Ne fektess be olyan pénzt, amire szükséged lehet.
+* **Own Your Name Strategy**: A jegyzetben szereplő keretrendszer a következő:
+ + Vásárolj Google Ads-eket a saját vállalkozásod neve alatt + variációk (pl. "[Brand] reviews", "[Brand] pricing").
+ + Ne küldd az adatrafikot a honlapodra, hanem inkább egy célzott landing oldalra.
 
-Mechanizmusok:
-* A tesztelés és az adatok alapján történő döntés
-* A kockázatkezelés és a hozam maximalizálása
-* A passzív befektetési stratégiák
-* Az online jelenlét optimalizálása
+## Döntési logikák
 
-Lépcsők, feltételek, trigger-pontok:
-* A tesztelés és az adatok alapján történő döntés
-* A kockázatkezelés és a hozam maximalizálása
-* A passzív befektetési stratégiák
-* Az online jelenlét optimalizálása
+A jegyzetekben szereplő döntési logikák a következők:
 
-## RENDSZERSZINTŰ ÖSSZEFÜGGÉSEK
+* **Ha** egy részvény osztalékfizetése nem garantált, **akkor** ne fektess be.
+* **Ha** egy cég pénzügyi állapota rossz, **akkor** ne fektess be.
+* **Ha** egy részvény árfolyama túl magas, **akkor** ne fektess be.
+* **Ha** egy vállalkozásnak nincs célzott landing oldala, **akkor** ne küldd az adatrafikot a honlapra.
 
-A szövegekben megfogalmazott rendszerszintű összefüggések a következők:
-* A marketing és befektetési döntésekben a tesztelés és az adatok alapján történő döntés fontos szempont. (Oren John’s Quick Short Form Guide)
-* A befektetési döntésekben a kockázatkezelés és a hozam maximalizálása fontos szempontok. (Osztalékfizető részvény: hogyan?)
-* A vállalkozásoknak és befektetőknek fontos, hogy saját márkanevüket és online jelenlétüket optimalizálják. (Own Your Name Strategy)
-* A passzív befektetési stratégiák, mint az osztalékfizető részvények, biztos alapokat és kis esélyt csődre kínálnak. (Osztalékfizető részvények a többi értékpapírhoz képest)
+## Rendszerszintű mechanizmusok
 
-Hierarchiák:
-* A marketing és befektetési döntések
-* A kockázatkezelés és a hozam maximalizálása
-* A passzív befektetési stratégiák
-* Az online jelenlét optimalizálása
+A jegyzetekben szereplő rendszerszintű mechanizmusok a következők:
 
-Függőségek:
-* A marketing és befektetési döntések függenek a tesztelés és az adatok alapján történő döntéstől
-* A kockázatkezelés és a hozam maximalizálása függenek a befektetési stratégiától
-* A passzív befektetési stratégiák függenek a befektetők céljaitól és kockázat toleranciájától
+* **Osztalékfizető részvények**: A részvények osztalékfizetése a cég pénzügyi állapotától függ.
+* **Google Ads**: A Google Ads-ek hatékonysága a vállalkozás neve és a célzott landing oldal minőségétől függ.
+* **Pénzügyi tervezés**: A pénzügyi tervezés fontos a vállalkozások számára, hogy elkerüljék a pénzügyi nehézségeket.
 
-Kölcsönhatások:
-* A marketing és befektetési döntések kölcsönhatásban vannak a kockázatkezelés és a hozam maximalizálásával
-* A passzív befektetési stratégiák kölcsönhatásban vannak a befektetők céljaival és kockázat toleranciájával
+## Anti-patternek
 
-Erősítő (flywheel) hatások:
-* A marketing és befektetési döntések erősítik a kockázatkezelés és a hozam maximalizálását
-* A passzív befektetési stratégiák erősítik a befektetők céljait és kockázat toleranciáját
+A jegyzetekben szereplő anti-patternek a következők:
 
-Gyengítő hatások:
-* A marketing és befektetési döntések gyengíthetik a kockázatkezelés és a hozam maximalizálását
-* A passzív befektetési stratégiák gyengíthetik a befektetők céljait és kockázat toleranciáját
-
-## DÖNTÉSI SZABÁLYOK ÉS TRIGGER-FELTÉTELEK
-
-A szövegekben megfogalmazott döntési szabályok és trigger-feltételek a következők:
-* Ha egy befektetési stratégia nem működik, akkor érdemes más stratégiát keresni. (Oren John’s Quick Short Form Guide)
-* Ha egy osztalékfizető részvény nem fizet osztalékot, akkor érdemes eladni. (Osztalékfizető részvény: hogyan?)
-* Ha egy vállalkozás nem optimalizálja online jelenlétét, akkor érdemes befektetni a Google Ads-be. (Own Your Name Strategy)
-* Ha egy befektetési stratégia kockázatos, akkor érdemes diverzifikálni a portfóliót. (Osztalékfizető részvények a többi értékpapírhoz képest)
-
-Trigger-feltételek:
-* A tesztelés és az adatok alapján történő döntés
-* A kockázatkezelés és a hozam maximalizálása
-* A passzív befektetési stratégiák
-* Az online jelenlét optimalizálása
-
-Körülmények:
-* A marketing és befektetési döntések
-* A kockázatkezelés és a hozam maximalizálása
-* A passzív befektetési stratégiák
-* Az online jelenlét optimalizálása
-
-Trade-offok:
-* A marketing és befektetési döntések közötti trade-off
-* A kockázatkezelés és a hozam maximalizálása közötti trade-off
-* A passzív befektetési stratégiák és a befektetők céljai közötti trade-off
-
-## ANTI-PATTERNEK ÉS HIBÁK
-
-A szövegekben megfogalmazott anti-patternek és hibák a következők:
-* A hozamhajszolás és az árfolyammánia. (Osztalékfizető részvény: hogyan?)
-* A másoktól való függés és a pénz befektetése, amire szükség lehet. (Osztalékfizető részvény: hogyan?)
-* A nem megfelelő online jelenlét és a Google Ads-be való befektetés hiánya. (Own Your Name Strategy)
-
-Tipikus hibák:
-* A hozamhajszolás és az árfolyammánia
-* A másoktól való függés és a pénz befektetése, amire szükség lehet
-* A nem megfelelő online jelenlét és a Google Ads-be való befektetés hiánya
-
-Figyelmeztetések:
-* A hozamhajszolás és az árfolyammánia veszélye
-* A másoktól való függés és a pénz befektetése, amire szükség lehet, veszélye
-* A nem megfelelő online jelenlét és a Google Ads-be való befektetés hiánya veszélye
-
-## KONKRÉT IMPLEMENTÁCIÓS LOGIKA
-
-A szövegekben megfogalmazott konkréct implementációs logika a következők:
-* A marketing és befektetési döntésekben a tesztelés és az adatok alapján történő döntés fontos szempont. (Oren John’s Quick Short Form Guide)
-* A befektetési döntésekben a kockázatkezelés és a hozam maximalizálása fontos szempontok. (Osztalékfizető részvény: hogyan?)
-* A vállalkozásoknak és befektetőknek fontos, hogy saját márkanevüket és online jelenlétüket optimalizálják. (Own Your Name Strategy)
-* A passzív befektetési stratégiák, mint az osztalékfizető részvények, biztos alapokat és kis esélyt csődre kínálnak. (Osztalékfizető részvények a többi értékpapírhoz képest)
-
-Pontos számok, mérőszámok, küszöbértékek:
-* A 5:1 like save ratio
-* A 8-9%-os osztalék
-* A 2 milliárd USD éves bevétel
-
-Konkrét eszközök, lépések, workflow-k:
-* A Google Ads
-* A tesztelés és az adatok alapján történő döntés
-* A kockázatkezelés és a hozam maximalizálása
-* A passzív befektetési stratégiák
-
-Reprodukálható folyamatok:
-* A marketing és befektetési döntések
-* A kockázatkezelés és a hozam maximalizálása
-* A passzív befektetési stratégiák
-* Az online jelenlét optimalizálása
+* **Hozamhajszolás**: Ne fektess be olyan részvényekbe, amelyeknek magas hozama van, de nem garantált.
+* **Árfolyammánia**: Ne fektess be olyan részvényekbe, amelyeknek árfolyama túl magas.
+* **Másoktól való függés**: Ne függj másoktól a pénzügyi döntéseidben.
+* **Olyan pénz befektetése, amire szükség lehet**: Ne fektess be olyan pénzt, amire szükséged lehet a jövőben.

@@ -1,66 +1,47 @@
-## MENTÁLIS MODELLEK ÉS STRATÉGIAI MINTÁK
+**Knowledge Extraction Dossier**
 
-A vizsgált szövegekben többféle mentális modell és stratégiai minta jelenik meg, amelyek az üzleti és marketing döntések meghozatalában játszanak szerepet. Az első szövegben az "Acknowledge, Compliment, Ask" (ACA) modell szerepel, amely egy kommunikációs stratégia, amelynek célja a kapcsolatfelépítés és a bizalom kiépítése. A második szövegben a "Outcome bias" fogalma jelenik meg, amely arra utal, hogy az emberek hajlamosak a sikert vagy a kudarcot az ok-okozati viszonyok alapján értelmezni, ahelyett, hogy a döntéshozatali folyamatot elemeznék.
+**Bevezetés**
 
-A harmadik szövegben a "Pre-Suasion" modell szerepel, amely arra utal, hogy a legfontosabb pillanat a döntéshozatali folyamatban az, amikor a személyt felkészítjük a döntésre. A "Cialdini's Principle of Pre-Suasion" alapján, a személyt fel kell készíteni arra, hogy fogadja el a döntést, mielőtt az megtörténne. A negyedik szövegben a "Luxury Branding" modell szerepel, amely arra utal, hogy a terméket úgy kell pozicionálni, mint egy luxuscikk, amely különleges és kívánatos.
+Ez a dokumentum négy üzleti/marketing jegyzetből kinyert tudást foglalja össze. A jegyzetek a következő témákkal foglalkoznak: hogyan lehet meggyőzni a potenciális ügyfeleket, hogyan lehet túljárni az ellenfelek eszén, hogyan lehet felkészíteni az ügyfeleket az upsellre, és hogyan lehet luxustermékként értékesíteni egy egyszerű terméket.
 
-* A kommunikációs stratégiák, mint az ACA modell, segíthetnek a kapcsolatfelépítésben és a bizalom kiépítésében.
-* A döntéshozatali folyamatban fontos figyelembe venni az ok-okozati viszonyokat, ahelyett, hogy csak a sikert vagy a kudarcot értelmeznénk.
-* A Pre-Suasion modell segíthet a döntéshozatali folyamatban, ha a személyt felkészítjük a döntésre.
-* A Luxury Branding modell segíthet a termék pozicionálásában, mint egy luxuscikk.
+**1. Hogyan lehet meggyőzni a potenciális ügyfeleket?**
 
-## OK-OKOZATI KAPCSOLATOK
+A jegyzet "How to make prospects buy" című részében az a tanács szerepel, hogy a terméket ingyenessé kell tenni, és őszintén kell eljárni. A jegyzet három kritériumot sorol fel, amelyeknek teljesülniük kell ahhoz, hogy a potenciális ügyfél megvásárolja a terméket:
 
-A szövegekben többféle ok-okozati kapcsolat jelenik meg, amelyek az üzleti és marketing döntések meghozatalában játszanak szerepet. Az első szövegben az "Acknowledge, Compliment, Ask" (ACA) modell szerepel, amely arra utal, hogy ha a személyt elismerjük, dicsérjük és megkérjük, akkor az valószínűbb, hogy a személy pozitív választ ad.
+1. A potenciális ügyfélnek ténylegesen használnia kell a terméket.
+2. A potenciális ügyfélnek visszajelzést kell adnia a termékről.
+3. A potenciális ügyfélnek egy kiemelkedő véleményt kell hagynia a termékről.
 
-A második szövegben a "Outcome bias" fogalma jelenik meg, amely arra utal, hogy ha a személy sikeres, akkor az valószínűbb, hogy a személy továbbra is sikeres lesz, ha a döntéshozatali folyamatát nem változtatja meg. A harmadik szövegben a "Pre-Suasion" modell szerepel, amely arra utal, hogy ha a személyt felkészítjük a döntésre, akkor az valószínűbb, hogy a személy elfogadja a döntést.
+Ha a potenciális ügyfél nem akar ingyenesen dolgozni, akkor az eladónak meg kell kérdeznie, hogy miért nem. Ez azért fontos, mert a rejtett költségeket el kell tüntetni.
 
-A negyedik szövegben a "Luxury Branding" modell szerepel, amely arra utal, hogy ha a terméket úgy pozicionáljuk, mint egy luxuscikk, akkor az valószínűbb, hogy a személy készen áll arra, hogy megvásárolja a terméket. 
+**2. Hogyan lehet túljárni az ellenfelek eszén?**
 
-* Ha a személyt elismerjük, dicsérjük és megkérjük, akkor az valószínűbb, hogy a személy pozitív választ ad.
-* Ha a személy sikeres, akkor az valószínűbb, hogy a személy továbbra is sikeres lesz, ha a döntéshozatali folyamatát nem változtatja meg.
-* Ha a személyt felkészítjük a döntésre, akkor az valószínűbb, hogy a személy elfogadja a döntést.
-* Ha a terméket úgy pozicionáljuk, mint egy luxuscikk, akkor az valószínűbb, hogy a személy készen áll arra, hogy megvásárolja a terméket.
+A jegyzet "How to outthink the opposition - Rasmus Ankersen" című részében az a tanács szerepel, hogy a sikerhez nem elég a jó döntések meghozatala, hanem a helyes döntések meghozatalához szükséges információk megszerzése is. A jegyzet kitér a Nokia 3310 sikerére és a cég későbbi bukására, valamint a Newcastle United FC csapatának sikerére és kudarcára.
 
-## RENDSZERSZINTŰ ÖSSZEFÜGGÉSEK
+A jegyzet hangsúlyozza, hogy a sikerhez szükséges a szkeptikus gondolkodás, és hogy a sikertelenséget is szkeptikusan kell kezelni. A jegyzet említi a "outcome bias" fogalmát, amely azt jelenti, hogy a jó kimenetelből nem feltétlenül következik, hogy a döntések jók voltak.
 
-A szövegekben többféle rendszerszintű összefüggés jelenik meg, amelyek az üzleti és marketing döntések meghozatalában játszanak szerepet. Az első szövegben az "Acknowledge, Compliment, Ask" (ACA) modell szerepel, amely arra utal, hogy a kommunikációs stratégiák segíthetnek a kapcsolatfelépítésben és a bizalom kiépítésében.
+**3. Hogyan lehet felkészíteni az ügyfeleket az upsellre?**
 
-A második szövegben a "Outcome bias" fogalma jelenik meg, amely arra utal, hogy a döntéshozatali folyamatban fontos figyelembe venni az ok-okozati viszonyokat, ahelyett, hogy csak a sikert vagy a kudarcot értelmeznénk. A harmadik szövegben a "Pre-Suasion" modell szerepel, amely arra utal, hogy a személyt fel kell készíteni arra, hogy fogadja el a döntést, mielőtt az megtörténne.
+A jegyzet "How to Prime Customers for Your Upsell" című részében az a tanács szerepel, hogy a vevőket fel kell készíteni az upsellre, mielőtt a terméket megvásárolnák. A jegyzet említi a "pre-suasion" fogalmát, amely azt jelenti, hogy a vevőket meg kell győzni arról, hogy ők azok, akik igazán érdeklődnek a termékből.
 
-A negyedik szövegben a "Luxury Branding" modell szerepel, amely arra utal, hogy a terméket úgy kell pozicionálni, mint egy luxuscikk, amely különleges és kívánatos. 
+A jegyzet négy lépést sorol fel, amelyek segítenek felkészíteni a vevőket az upsellre:
 
-* A kommunikációs stratégiák segíthetnek a kapcsolatfelépítésben és a bizalom kiépítésében.
-* A döntéshozatali folyamatban fontos figyelembe venni az ok-okozati viszonyokat, ahelyett, hogy csak a sikert vagy a kudarcot értelmeznénk.
-* A személyt fel kell készíteni arra, hogy fogadja el a döntést, mielőtt az megtörténne.
-* A terméket úgy kell pozicionálni, mint egy luxuscikk, amely különleges és kívánatos.
+1. Készítsen egy kérdést, amely felkészíti a vevőt az upsellre.
+2. Tegye a kérdést nem funkcionálissá, hogy a vevő ne érezze, hogy kötelező válaszolnia.
+3. Kövesse az upsell ajánlatot a vevő számára.
+4. Mérje meg a hatást, és hasonlítsa össze a korábbi eredményekkel.
 
-## DÖNTÉSI SZABÁLYOK ÉS TRIGGER-FELTÉTELEK
+**4. Hogyan lehet luxustermékként értékesíteni egy egyszerű terméket?**
 
-A szövegekben többféle döntési szabály és trigger-feltétel jelenik meg, amelyek az üzleti és marketing döntések meghozatalában játszanak szerepet. Az első szövegben az "Acknowledge, Compliment, Ask" (ACA) modell szerepel, amely arra utal, hogy ha a személyt elismerjük, dicsérjük és megkérjük, akkor az valószínűbb, hogy a személy pozitív választ ad.
+A jegyzet "How To Sell $140 Cookies" című részében az a tanács szerepel, hogy a terméket luxustermékként kell értékesíteni, ha magas áron akarjuk eladni. A jegyzet említi a Last Crumb márkát, amely egy luxus cookie márkaként működik.
 
-A második szövegben a "Outcome bias" fogalma jelenik meg, amely arra utal, hogy ha a személy sikeres, akkor az valószínűbb, hogy a személy továbbra is sikeres lesz, ha a döntéshozatali folyamatát nem változtatja meg. A harmadik szövegben a "Pre-Suasion" modell szerepel, amely arra utal, hogy ha a személyt felkészítjük a döntésre, akkor az valószínűbb, hogy a személy elfogadja a döntést.
+A jegyzet négy tanulságot sorol fel, amelyek segítenek luxustermékként értékesíteni egy egyszerű terméket:
 
-A negyedik szövegben a "Luxury Branding" modell szerepel, amely arra utal, hogy ha a terméket úgy pozicionáljuk, mint egy luxuscikk, akkor az valószínűbb, hogy a személy készen áll arra, hogy megvásárolja a terméket. 
+1. Luxus élményt kell teremteni a vevők számára.
+2. Minden részletre oda kell figyelni, hogy a vevőknek egy koherens és immerszív élményt nyújtsunk.
+3. A ritkaság és az exkluzivitás segít megteremteni a hype-ot és a várakozást.
+4. A szájpropaganda marketing segít terjeszteni a márkát és a terméket.
 
-* Ha a személyt elismerjük, dicsérjük és megkérjük, akkor az valószínűbb, hogy a személy pozitív választ ad.
-* Ha a személy sikeres, akkor az valószínűbb, hogy a személy továbbra is sikeres lesz, ha a döntéshozatali folyamatát nem változtatja meg.
-* Ha a személyt felkészítjük a döntésre, akkor az valószínűbb, hogy a személy elfogadja a döntést.
-* Ha a terméket úgy pozicionáljuk, mint egy luxuscikk, akkor az valószínűbb, hogy a személy készen áll arra, hogy megvásárolja a terméket.
+**Következtetés**
 
-## ANTI-PATTERNEK ÉS HIBÁK
-
-A szövegekben többféle anti-patternek és hiba jelenik meg, amelyek az üzleti és marketing döntések meghozatalában játszanak szerepet. Az első szövegben az "Acknowledge, Compliment, Ask" (ACA) modell szerepel, amely arra utal, hogy ha a személyt elismerjük, dicsérjük és megkérjük, akkor az valószínűbb, hogy a személy pozitív választ ad.
-
-A második szövegben a "Outcome bias" fogalma jelenik meg, amely arra utal, hogy ha a személy sikeres, akkor az valószínűbb, hogy a személy továbbra is sikeres lesz, ha a döntéshozatali folyamatát nem változtatja meg. A harmadik szövegben a "Pre-Suasion" modell szerepel, amely arra utal, hogy ha a személyt felkészítjük a döntésre, akkor az valószínűbb, hogy a személy elfogadja a döntést.
-
-A negyedik szövegben a "Luxury Branding" modell szerepel, amely arra utal, hogy ha a terméket úgy pozicionáljuk, mint egy luxuscikk, akkor az valószínűbb, hogy a személy készen áll arra, hogy megvásárolja a terméket. 
-
-* Ne használjunk túlzottan agresszív kommunikációs stratégiákat, mert azok elutasítást válthatnak ki a személyből.
-* Ne feltételezzük, hogy a személy sikeres lesz, ha a döntéshozatali folyamatát nem változtatja meg.
-* Ne felejtsük el, hogy a személyt fel kell készíteni a döntésre, mielőtt az megtörténne.
-* Ne pozicionáljuk a terméket úgy, mint egy olcsó cikk, mert az valószínűbb, hogy a személy nem lesz készen arra, hogy megvásárolja a terméket.
-
-## KONKRÉT IMPLEMENTÁCIÓS LOGIKA
-
-A szövegekben többféle konkrét implementációs logika jelenik meg, amelyek az üzleti és marketing döntések meghozatalában játszanak szerepet. Az első szövegben az "Acknowledge, Compliment, Ask" (ACA) modell szerepel, amely
+Ez a dokumentum négy üzleti/marketing jegyzetből kinyert tudást foglal össze. A jegyzetek a következő témákkal foglalkoznak: hogyan lehet meggyőzni a potenciális ügyfeleket, hogyan lehet túljárni az ellenfelek eszén, hogyan lehet felkészíteni az ügyfeleket az upsellre, és hogyan lehet luxustermékként értékesíteni egy egyszerű terméket. A dokumentum remélhetőleg hasznos információkat nyújt az olvasóknak, akik a marketing és az értékesítés területén tevékenykednek.

@@ -1,68 +1,44 @@
-## MENTÁLIS MODELLEK ÉS STRATÉGIAI MINTÁK
+**Tartalomjegyzék**
 
-A vizsgált jegyzetekben szereplő mentális modellek és stratégiai minták a következők:
+1. [Bevezetés](#bevezetés)
+2. [Keretrendszerek és képletek](#keretrendszerek-és-képletek)
+3. [Döntési logikák](#döntési-logikák)
+4. [Rendszerszintű mechanizmusok](#rendszerszintű-mechanizmusok)
+5. [Anti-patternek](#anti-patternek)
 
-* A **célok elérésének** mentális modellje, amely szerint a célok eléréséhez szükség van a célkitűzésre, a célkitűzés megírására, a célkitűzés rendszeres felülvizsgálatára, a haladás nyomon követésére, az akadályok vizualizálására és a célok azonosítására.
-* A **termelékenység** mentális modellje, amely szerint a termelékenység növeléséhez szükség van a napi rutinok felülvizsgálatára, az új szokások kialakítására és a meglévő szokásokhoz való illeszkedésre.
-* A **affiliate marketing** mentális modellje, amely szerint az affiliate marketing sikeréhez szükség van a win-win-win ajánlatokra, a tiered rewards rendszerre, a frictionless promócióra és a golden rule-ra, amely szerint "Make it beneficial, make it easy, make it trackable."
-* A **gazdagodás** mentális modellje, amely szerint a gazdagodás érdekében szükség van a "hard mode" helyett az "easy mode"-ra való áttérésre, ami azt jelenti, hogy inkább segíteni kell a vállalkozásoknak a pénzkeresésben, mintsem a fogyasztóknak.
+## Bevezetés
 
-A stratégiai minták a következők:
+A kapott jegyzetek alapján készült Knowledge Extraction Dossier célja, hogy kinyerje a konkrét, alkalmazható tudást az üzleti és marketing területéről. A dokumentum négy különböző jegyzetet tartalmaz, amelyek különböző témákkal foglalkoznak, például a termelékenység növelésével, a célok elérésével, az affiliate marketinggel és a gazdagodással.
 
-* A **célok elérésének** stratégiai mintája, amely szerint a célok eléréséhez szükség van a célkitűzésre, a célkitűzés megírására, a célkitűzés rendszeres felülvizsgálatára, a haladás nyomon követésére, az akadályok vizualizálására és a célok azonosítására.
-* A **termelékenység** stratégiai mintája, amely szerint a termelékenység növeléséhez szükség van a napi rutinok felülvizsgálatára, az új szokások kialakítására és a meglévő szokásokhoz való illeszkedésre.
-* A **affiliate marketing** stratégiai mintája, amely szerint az affiliate marketing sikeréhez szükség van a win-win-win ajánlatokra, a tiered rewards rendszerre, a frictionless promócióra és a golden rule-ra, amely szerint "Make it beneficial, make it easy, make it trackable."
-* A **gazdagodás** stratégiai mintája, amely szerint a gazdagodás érdekében szükség van a "hard mode" helyett az "easy mode"-ra való áttérésre, ami azt jelenti, hogy inkább segíteni kell a vállalkozásoknak a pénzkeresésben, mintsem a fogyasztóknak.
+## Keretrendszerek és képletek
 
-## OK-OKOZATI KAPCSOLATOK
+A jegyzetekben szereplő keretrendszerek és képletek a következők:
 
-A vizsgált jegyzetekben szereplő ok-okozati kapcsolatok a következők:
+* **Dream Outcome x Likelihood / Time Delay x Effort**: Ez a képlet a célok elérésének valószínűségét és a szükséges erőfeszítést méri.
+* **Win-Win-Win Offers**: Ez a keretrendszer az affiliate marketingben használatos, amelyben a három fél (az affiliate, a vevő és a szolgáltató) mindnyájan profitálnak a tranzakcióból.
+* **Tiered Rewards**: Ez a keretrendszer az affiliate marketingben használatos, amelyben a különböző szintű affiliate-ök különböző jutalmakat kapnak.
+* **Value-Based Pricing Formula**: Ez a képlet a szolgáltatások árazására használatos, amelyben a szolgáltató a szolgáltatás árát a vevő által elért érték alapján határozza meg.
 
-* Ha **megírjuk a célokat**, akkor 42%-kal nagyobb az esély, hogy elérjük őket.
-* Ha **rendszeresen felülvizsgáljuk a célokat**, akkor jobban összpontosíthatunk a célkitűzésekre és a haladásra.
-* Ha **akadályokat vizualizálunk**, akkor jobban felkészülhetünk a problémákra és a kihívásokra.
-* Ha **win-win-win ajánlatokat** kínálunk, akkor nagyobb az esély, hogy az affiliate marketing sikerül.
-* Ha **tiered rewards** rendszert alkalmazunk, akkor jobban motiválhatjuk az affiliate-eket.
-* Ha **frictionless promóciót** alkalmazunk, akkor könnyebb lesz az affiliate-eknek a promóció.
-* Ha **az "easy mode"-ra** térünk át, akkor nagyobb az esély, hogy gazdagodunk.
+## Döntési logikák
 
-## RENDSZERSZINTŰ ÖSSZEFÜGGÉSEK
+A jegyzetekben szereplő döntési logikák a következők:
 
-A vizsgált jegyzetekben szereplő rendszerszintű összefüggések a következők:
+* **Ha a célod elérésének valószínűsége alacsony, akkor növeld a szükséges erőfeszítést**: Ez a logika a célok elérésével kapcsolatos, amelyben a valószínűség és a szükséges erőfeszítés közötti kapcsolatot hangsúlyozza.
+* **Ha az affiliate marketingben részt veszel, akkor használd a Win-Win-Win Offers keretrendszert**: Ez a logika az affiliate marketinggel kapcsolatos, amelyben a három fél profitálását hangsúlyozza.
+* **Ha szolgáltatásod árazását szeretnéd meghatározni, akkor használd a Value-Based Pricing Formula képletet**: Ez a logika a szolgáltatások árazásával kapcsolatos, amelyben a vevő által elért érték alapján határozza meg a szolgáltatás árát.
 
-* A **célok elérésének** rendszere, amelyben a célkitűzés, a célkitűzés megírása, a célkitűzés rendszeres felülvizsgálata, a haladás nyomon követése, az akadályok vizualizálása és a célok azonosítása együttműködnek.
-* A **termelékenység** rendszere, amelyben a napi rutinok felülvizsgálata, az új szokások kialakítása és a meglévő szokásokhoz való illeszkedés együttműködnek.
-* A **affiliate marketing** rendszere, amelyben a win-win-win ajánlatok, a tiered rewards rendszer, a frictionless promóció és a golden rule együttműködnek.
-* A **gazdagodás** rendszere, amelyben az "easy mode" és a "hard mode" együttműködnek, és a vállalkozásoknak a pénzkeresésben való segítése fontosabb, mint a fogyasztóknak.
+## Rendszerszintű mechanizmusok
 
-## DÖNTÉSI SZABÁLYOK ÉS TRIGGER-FELTÉTELEK
+A jegyzetekben szereplő rendszerszintű mechanizmusok a következők:
 
-A vizsgált jegyzetekben szereplő döntési szabályok és trigger-feltételek a következők:
+* **Az affiliate marketing rendszerében a három fél (az affiliate, a vevő és a szolgáltató) közötti kapcsolat**: Ez a mechanizmus az affiliate marketingben használatos, amelyben a három fél közötti kapcsolatot hangsúlyozza.
+* **A szolgáltatások árazásának rendszere**: Ez a mechanizmus a szolgáltatások árazásával kapcsolatos, amelyben a vevő által elért érték alapján határozza meg a szolgáltatás árát.
+* **A célok elérésének rendszere**: Ez a mechanizmus a célok elérésével kapcsolatos, amelyben a valószínűség és a szükséges erőfeszítés közötti kapcsolatot hangsúlyozza.
 
-* Ha **megírjuk a célokat**, akkor az első lépés a célkitűzés felülvizsgálata.
-* Ha **rendszeresen felülvizsgáljuk a célokat**, akkor az első lépés a haladás nyomon követése.
-* Ha **akadályokat vizualizálunk**, akkor az első lépés a probléma megoldására való felkészülés.
-* Ha **win-win-win ajánlatokat** kínálunk, akkor az első lépés a tiered rewards rendszer alkalmazása.
-* Ha **tiered rewards** rendszert alkalmazunk, akkor az első lépés a frictionless promóció alkalmazása.
-* Ha **az "easy mode"-ra** térünk át, akkor az első lépés a vállalkozásoknak a pénzkeresésben való segítése.
+## Anti-patternek
 
-## ANTI-PATTERNEK ÉS HIBÁK
+A jegyzetekben szereplő anti-patternek a következők:
 
-A vizsgált jegyzetekben szereplő anti-patternek és hibák a következők:
-
-* **Nem megírni a célokat**, ami csökkenti az esélyt, hogy elérjük őket.
-* **Nem rendszeresen felülvizsgálni a célokat**, ami csökkenti az összpontosítást a célkitűzésekre és a haladásra.
-* **Nem vizualizálni az akadályokat**, ami csökkenti a felkészülést a problémákra és a kihívásokra.
-* **Nem kínálni win-win-win ajánlatokat**, ami csökkenti az esélyt, hogy az affiliate marketing sikerül.
-* **Nem alkalmazni tiered rewards** rendszert, ami csökkenti a motivációt az affiliate-eknél.
-* **Nem alkalmazni frictionless promóciót**, ami nehezíti az affiliate-eknek a promóciót.
-* **Nem térni át az "easy mode"-ra**, ami csökkenti az esélyt, hogy gazdagodunk.
-
-## KONKRÉT IMPLEMENTÁCIÓS LOGIKA
-
-A vizsgált jegyzetekben szereplő konkrét implementációs logika a következők:
-
-* **Célkitűzés**: Írjuk meg a célokat és vizsgáljuk felül rendszeresen.
-* **Termelékenység**: Alakítsunk ki új szokásokat és illesszük be őket a meglévő szokásokba.
-* **Affiliate marketing**: Kínáljunk win-win-win ajánlatokat, alkalmazzunk tiered rewards rendszert és frictionless promóciót.
-* **Gazdagodás**: Térjünk át az "easy mode"-ra és segítsünk a vállalkozásoknak a pénzkeresésben.
+* **Ne használd az óradíjas árazást**: Ez az anti-patter a szolgáltatások árazásával kapcsolatos, amelyben az óradíjas árazás helyett a vevő által elért érték alapján határozza meg a szolgáltatás árát.
+* **Ne felejtsd el a három fél profitálását az affiliate marketingben**: Ez az anti-patter az affiliate marketinggel kapcsolatos, amelyben a három fél (az affiliate, a vevő és a szolgáltató) profitálását hangsúlyozza.
+* **Ne növeld a szükséges erőfeszítést a célok eléréséhez**: Ez az anti-patter a célok elérésével kapcsolatos, amelyben a valószínűség és a szükséges erőfeszítés közötti kapcsolatot hangsúlyozza.

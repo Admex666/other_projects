@@ -1,47 +1,116 @@
-## 1. MENTÁLIS MODELLEK ÉS STRATÉGIAI MINTÁK
+**Knowledge Extraction Dossier**
 
-A vizsgált jegyzetekben több mentális modell és stratégiai minta is megjelenik. Az első jegyzetben, a "Profit Tactic: Annual Renewal Fees" címűben, egy stratégiai minta látható, amely arra ösztönzi a vállalkozásokat, hogy éves megújítási díjat vezessenek be a havi előfizetési modellek mellett. Ez a megközelítés a bevétel növelésére és a profitabilitás fokozására irányul.
+**Tartalomjegyzék**
 
-A "Prompt Engineering Tips" című jegyzetben egy másik mentális modell jelenik meg, amely az AI-alapú promptok optimalizálására összpontosít. A 5C keretrendszer (Context, Clarity, Constraints, Character, Criteria) segít a felhasználóknak abban, hogy hatékony és pontos promptokat hozzanak létre, amelyek az AI-modellnek megfelelő információkat nyújtanak.
+1. [Éves megújítási díjak](#éves-megújítási-díjak)
+2. [Prompt Engineering Tippek](#prompt-engineering-tippek)
+3. [Értéknyújtás az embereknek](#értéknyújtás-az-embereknek)
+4. [Modern társasjátékok](#modern-társasjátékok)
 
-A "Provide value to the people REGULARLY!" című jegyzetben egy egyszerű, de fontos stratégiai minta jelenik meg, amely arra ösztönzi a vállalkozásokat és az egyéneket, hogy rendszeresen értéket nyújtsanak a klienseiknek, barátaiknak és üzleti partnereiknek. Ez a megközelítés segít az kapcsolatok építésében és azok fenntartásában.
+## Éves megújítási díjak
 
-A "Reasons why modern board games are better" című jegyzetben egy másik mentális modell jelenik meg, amely a modern társasjátékok tervezésének és fejlesztésének mintáit elemzi. A jegyzet kiemeli a játéktervezés evolúcióját, a játékosok bevonásának fontosságát, a játék egyensúlyának és változatosságának szerepét, valamint a barátságos verseny és a kulturális hatások fontosságát.
+A **Profit Tactic: Annual Renewal Fees** jegyzetben az éves megújítási díjak alkalmazásának stratégiáját ismertetjük. Ennek lényege, hogy a havi előfizetési díjon felül évente egy alkalommal számoljanak fel egy további díjat, amely 1-3 havi előfizetési díjnak felel meg.
 
-## 2. OK-OKOZATI KAPCSOLATOK
+**Keretrendszer:**
 
-A jegyzetekben számos ok-okozati kapcsolat jelenik meg. Az első jegyzetben az éves megújítási díj bevezetése és a bevétel növelése közötti kapcsolat látható. A második jegyzetben a promptok optimalizálása és az AI-modell teljesítménye közötti kapcsolat jelenik meg. A harmadik jegyzetben a rendszeres értéknövelés és a kapcsolatok építése közötti kapcsolat látható. A negyedik jegyzetben a modern társasjátékok tervezésének és fejlesztésének mintái és a játékosok elégedettsége közötti kapcsolat jelenik meg.
+*   Éves megújítási díj = 1-3 havi előfizetési díj
+*   Az éves megújítási díjat a havi előfizetési díj mellé számolják fel
 
-Például, ha egy vállalkozás éves megújítási díjat vezet be, akkor az valószínűleg növeli a bevételt és a profitabilitást. Ha egy felhasználó optimalizálja a promptjait, akkor az valószínűleg javítja az AI-modell teljesítményét. Ha egy vállalkozás rendszeresen értéket nyújt a klienseinek, akkor az valószínűleg erősíti a kapcsolatokat és növeli a lojalitást.
+**Előnyök:**
 
-## 3. RENDSZERSZINTŰ ÖSSZEFÜGGÉSEK
+*   Nem befolyásolja az első éves eladásokat (az éves megújítási díjat csak az első év után szedik be)
+*   Azok a vevők, akik egy éven keresztül maradnak, valószínűleg továbbra is maradnak
+*   8-24%-kal növeli a bevételt anélkül, hogy további költségek merülnének fel
+*   Egy 20%-os marginális üzletben akár 50%-kal is növelheti a profitot
 
-A jegyzetekben számos rendszerszintű összefüggés jelenik meg. Az első jegyzetben a vállalkozások és a kliensek közötti kapcsolat látható, amely az éves megújítási díj bevezetésével és a bevétel növelésével kapcsolatos. A második jegyzetben az AI-modell és a felhasználók közötti kapcsolat jelenik meg, amely a promptok optimalizálásával és az AI-modell teljesítményével kapcsolatos.
+**Példa:**
 
-A harmadik jegyzetben a vállalkozások és a kapcsolatok közötti összefüggés látható, amely a rendszeres értéknöveléssel és a kapcsolatok építésével kapcsolatos. A negyedik jegyzetben a modern társasjátékok tervezésének és fejlesztésének mintái és a játékosok elégedettsége közötti összefüggés jelenik meg.
+*   Havi díj: 39 dollár → Éves díj: 468 dollár
+*   Éves megújítási díj: 99 dollár → Összesített éves díj: 567 dollár
+*   Új, hatékony havi díj: 47 dollár/hó
+*   Az alacsony fluktuáció miatt a 39 dolláros díjat tartják meg, miközben 47 dollárt keresnek havonta
 
-Például, ha egy vállalkozás éves megújítási díjat vezet be, akkor az valószínűleg hatással lesz a kliensek elégedettségére és a kapcsolatokra. Ha egy felhasználó optimalizálja a promptjait, akkor az valószínűleg hatással lesz az AI-modell teljesítményére és a felhasználók elégedettségére.
+**Stratégiai összefoglaló:**
 
-## 4. DÖNTÉSI SZABÁLYOK ÉS TRIGGER-FELTÉTELEK
+Ezt a stratégiát az **LTV (Lifetime Value)** növelésére használják, miközben vonzó marad az elsődleges árazás.
 
-A jegyzetekben számos döntési szabály és trigger-feltétel jelenik meg. Az első jegyzetben a következő szabály látható: "Ha egy vállalkozás éves megújítási díjat vezet be, akkor az valószínűleg növeli a bevételt és a profitabilitást." A második jegyzetben a következő szabály jelenik meg: "Ha egy felhasználó optimalizálja a promptjait, akkor az valószínűleg javítja az AI-modell teljesítményét."
+## Prompt Engineering Tippek
 
-A harmadik jegyzetben a következő szabály látható: "Ha egy vállalkozás rendszeresen értéket nyújt a klienseinek, akkor az valószínűleg erősíti a kapcsolatokat és növeli a lojalitást." A negyedik jegyzetben a következő szabály jelenik meg: "Ha egy modern társasjáték tervezésének és fejlesztésének mintái és a játékosok elégedettsége közötti összefüggés jelenik meg, akkor az valószínűleg növeli a játékosok elégedettségét és a játék sikerét."
+A **Prompt Engineering Tips** jegyzetben a Prompt Engineering alapelveit és módszereit tárgyaljuk. A Prompt Engineering magas minőségű outputot produkáló gépi tanulási modellek kifejlesztésére irányul.
 
-Például, ha egy vállalkozás éves megújítási díjat vezet be, akkor az valószínűleg trigger lesz a bevétel növelésére és a profitabilitás fokozására. Ha egy felhasználó optimalizálja a promptjait, akkor az valószínűleg trigger lesz az AI-modell teljesítményének javítására.
+**5C Keretrendszer:**
 
-## 5. ANTI-PATTERNEK ÉS HIBÁK
+1.  **Kontextus:** Háttér információk (Ki vagy? Mi a cél?)
+2.  **Tisztaság:** Egyértelmű, specifikus kérés (Mit szeretnél pontosan?)
+3.  **Korlátok:** Határok és követelmények (Mit kell elkerülni? Milyen formátum?)
+4.  **Karakter:** Hang, stílus és perspektíva (Hogyan szólaljon meg?)
+5.  **Kritériumok:** Minőségi szabványok (Mi tesz egy "jó" kimenetet?)
 
-A jegyzetekben számos anti-patternt és hibát jelenik meg. Az első jegyzetben a következő anti-patternt láthatjuk: "Ne vezessen be éves megújítási díjat, mert az valószínűleg csökkenti a bevételt és a profitabilitást." A második jegyzetben a következő anti-patternt jelenik meg: "Ne optimalizálja a promptjait, mert az valószínűleg rontja az AI-modell teljesítményét."
+**Statistical Average Problema:**
 
-A harmadik jegyzetben a következő anti-patternt láthatjuk: "Ne nyújtson rendszeresen értéket a klienseinek, mert az valószínűleg gyengíti a kapcsolatokat és a lojalitást." A negyedik jegyzetben a következő anti-patternt jelenik meg: "Ne tervezze és ne fejlessze a modern társasjátékokat, mert az valószínűleg csökkenti a játékosok elégedettségét és a játék sikerét."
+*   **Megvilágosodás:** A gépi tanulási modellek a statisztikai mintákat követik az adatbázisukban. Egy homályos prompt arra készteti a modellt, hogy a leggyakoribb, általános kimenetet válassza – az "átlagot" az összes kapcsolódó tartalomból.
+*   **Megoldás:** A specifikusság segít a modellnek, hogy elkerülje az átlagot és a kívánt egyedi kimenet felé haladjon.
 
-Például, ha egy vállalkozás nem vezet be éves megújítási díjat, akkor az valószínűleg hiba lesz, mert az valószínűleg csökkenti a bevételt és a profitabilitást. Ha egy felhasználó nem optimalizálja a promptjait, akkor az valószínűleg hiba lesz, mert az valószínűleg rontja az AI-modell teljesítményét.
+**Együttműködés, Nem Kinyerés:**
 
-## 6. KONKRÉT IMPLEMENTÁCIÓS LOGIKA
+*   **Mentalitás Váltás:** A cél nem az, hogy "értéket nyerjünk ki" a gépi tanulásból, hanem hogy **együttműködjünk** vele. Ez iteratív, beszélgetés-szerű megközelítést igényel.
 
-A jegyzetekben számos konkrét implementációs logika jelenik meg. Az első jegyzetben a következő logika látható: "Éves megújítási díj bevezetése: 1-3 hónapnyi előfizetési díj az éves díjban." A második jegyzetben a következő logika jelenik meg: "Promptok optimalizálása: 5C keretrendszer (Context, Clarity, Constraints, Character, Criteria) alkalmazása."
+**Hogyan Cselekedjünk: Keretrendszerek és Technikák**
 
-A harmadik jegyzetben a következő logika látható: "Rendszeres értéknövelés: értékes tartalmak és szolgáltatások nyújtása a klienseknek." A negyedik jegyzetben a következő logika jelenik meg: "Modern társasjátékok tervezése és fejlesztése: játékosok bevonása, játék egyensúlyának és változatosságának biztosítása, barátságos verseny és kulturális hatások figyelembevétele."
+1.  **Alkalmazza az 5C Keretrendszert:**
+    *   Kontextus: "Én vagyok egy \[Szerep] a \[Cél] elérésére a \[Célcsoport] számára."
+    *   Tisztaság: "Hozz létre egy \[Kívánt Kimenet] -et, amely eléri a \[Specifikus Feladat] -ot."
+    *   Korlátok: "Ez \[Hossz] legyen, \[Formátum] -ban és kerülje a \[Kizárni Kívánt Elemeket]."
+    *   Karakter: "Írjon \[Hang/Tónus] stílusban, hasonlóan a \[Példa] -hoz."
+    *   Kritériumok: "Egy sikeres kimenet \[Minőségi Szabvány 1] és \[Minőségi Szabvány 2] lesz."
+2.  **Haladó Együttműködési Technikák:**
+    *   **Few-Shot Prompting:** "Mutass, ne csak mondd."
+        *   **Akció:** Adj 2-3 példát a pontos stílusnak és struktúrának, amit a modellnek utánozni kell.
+        *   **Sablon:** "Íme példák a magas színvonalú \[Kimenet Típus] -ra: \[Példa 1], \[Példa 2]. Most hozz létre egy újat a \[Téma] -hoz, követve ezeket a mintákat."
+    *   **Chain-of-Thought Prompting:** "Gondolkodjunk lépésről lépésre együtt."
+        *   **Akció:** Vezesse a modellt egy logikai gondolkodási folyamaton keresztül.
+        *   **Sablon:** "Gondolkodjunk végig ezen a problémán lépésről lépésre. Először \[Lépés 1]. Aztán \[Lépés 2]. Majd \[Lépés 3]. Végül, ennek alapján \[Következtetés]."
 
-Például, ha egy vállalkozás éves megújítási díjat vezet be, akkor az valószínűleg a következő logikát követi: "Éves díj = 1-3 hónapnyi előfizetési díj." Ha egy felhasználó optimalizálja a promptjait, akkor az valószínűleg a következő logikát követi: "Prompt = 5C keretrendszer (Context, Clarity, Constraints, Character, Criteria) alkalmazása."
+## Értéknyújtás az embereknek
+
+A **Provide value to the people REGULARLY!** jegyzetben az értéknyújtás fontosságát hangsúlyozzuk az emberek számára. Ez nem csak az ügyfelekre, hanem a barátságokra és üzleti kapcsolatokra is vonatkozik.
+
+**Keretrendszer:**
+
+*   Értéknyújtás az embereknek rendszeresen
+*   Kapcsolatfelvétel velük
+
+**Előnyök:**
+
+*   Segít a kapcsolatok kezelésében
+*   Fontos az ügyfelek, barátságok és üzleti kapcsolatok szempontjából
+
+## Modern társasjátékok
+
+A **Reasons why modern board games are better** jegyzetben a modern társasjátékok fejlődését és jellemzőit tárgyaljuk.
+
+**Keretrendszer:**
+
+*   **Játéktervezési Evolúció:**
+    *   Modern társasjátékok követik a játékélvezettséghez optimalizált formulát, megoldva a régebbi játékok, mint a Monopoly és az Életjáték gyakori frusztrációit.
+    *   A játékidő rövidsége lehetővé teszi a gyors felállást és játékkezdést, ezzel elérhetőbbé téve a játékokat.
+*   **Játékosok Bevonása:**
+    *   Modern játékok biztosítják, hogy minden forduló érdekes legyen, lehetőséget adva minden játékosnak az aktív részvételre, szemben a régebbi játékokkal, ahol egyes játékosoknak ki kellett hagyniuk a fordulóikat.
+    *   Mechanizmusok, mint a fix pontok növekedése és a játékosok kizárásának hiánya, fokozzák a folyamatos részvételt minden játékos számára.
+*   **Játék Egyensúly:**
+    *   Új játékok integrálnak felzárkózási mechanizmusokat, amelyek lehetővé teszik a lemaradó játékosok számára, hogy versenyben maradjanak anélkül, hogy reménytelenül lemaradottaknak éreznék magukat.
+    *   A pontozási rendszerek úgy lettek kialakítva, hogy minimalizálják a játékosok közötti túlzott szakadékokat, mint például az Isle of Skye játékban.
+*   **Változatos Játéktapasztalat:**
+    *   Sok modern játék változó felállást tartalmaz, eredményezve egyedi élményt minden játék során, ellentétben a hagyományos, statikus felállású játékokkal.
+    *   Az emberek széles skálájú témákból és stílusokból választhatnak, garantálva, hogy mindenki találjon valamihez illőt.
+*   **Barátságos Versengés:**
+    *   Új társasjátékok gyakran indirekt versenyt ösztönöznek az agresszív játék helyett, hangsúlyt fektetve a csoportélmény fokozására.
+    *   Kooperatív játékok, ahol a játékosok közös kihívások ellen működnek együtt, növekvő népszerűségnek örvendenek, ösztönözve a csapatszellemet.
+*   **Sokszínű Választék:**
+    *   A társasjáték-piac jelentősen kibővült, vonzóbbá téve a szélesebb közönséget, hasonlóan a filmekhez és könyvekhez.
+    *   Függetlenül attól, hogy kis csoportokról vagy nagyobb társaságokról van szó, a modern játékok különböző szociális beállításokhoz és játékos Preferenciákhoz igazodnak.
+*   **Kulturális Hatás:**
+    *   A második világháború utáni német fejlemények hozzájárultak a modern társasjátékok reneszánszához, változtatva a felnőttek szemléletét a társasjátékokról mint értékes időtöltésről.
+    *   Olyan játékok, mint a Settlers of Catan, szimbolizálják a gondolkodóbb, kevésbé agresszív játék felé való elmozdulást.
+
+A modern társasjátékok számos területen fejlődtek, lehetővé téve az emberek számára, hogy élvezzék a játék élményét, miközben fejlesztik a társas

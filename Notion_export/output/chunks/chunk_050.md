@@ -1,82 +1,32 @@
-## MENTÁLIS MODELLEK ÉS STRATÉGIAI MINTÁK
+**Knowledge Extraction Dossier**
 
-A vizsgált üzleti és marketing jegyzetekben több implicit döntési logika és gondolkodási keretrendszer is megjelenik. Az egyik legfontosabb az, hogy a vállalkozásoknak ki kell használniuk a meglévő erőforrásaikat és lehetőségeiket a profit növelése érdekében. Ennek egyik módja az, hogy a költségeket profitközpontúvá alakítsák, ahogy a "Turning Costs to Cash Cows" jegyzetben is látható.
+**I. Bevezetés**
 
-Egy másik fontos gondolkodási keretrendszer az, hogy a vállalkozásoknak ki kell használniuk a sürgős ügyfélkéréseket a bevétel növelése érdekében. A "Turning rush requests into revenue" jegyzetben látható, hogy a sürgős kéréseknek különböző árazási szintjei lehetnek, attól függően, hogy milyen gyorsan kell a szolgáltatást nyújtani.
+A vállalkozások és a marketing szakemberek számára fontos, hogy hatékony stratégiákat alkalmazzanak a siker eléréséhez. A következő oldalakon bemutatott jegyzetek célja, hogy olyan konkrétpontos és alkalmazható tudást nyújtsanak, amely segít a vállalkozásoknak a növekedésben és a sikerben.
 
-A "Two 2-minute rules to beat procrastination" jegyzetben egy másik gondolkodási keretrendszer jelenik meg, amely a produktivitás és a hatékonyság növelésére irányul. Az egyik szabály az, hogy ha valami két percen belül elvégezhető, akkor azonnal el kell végezni. A másik szabály az, hogy ha valamihez nem akarunk hozzáfogni, akkor az feladatot le kell bontani két perces részfeladatokra.
+**II. Átalakítás a rendszeres ügyfelekké**
 
-Az ismétlődő elvek között szerepel a következő:
+Az első jegyzet hangsúlyozza, hogy a vállalkozásoknak fontos, hogy a új ügyfeleket rendszeres ügyfelekké alakítsák. Ennek érdekében fontos, hogy a vállalkozások olyan stratégiákat alkalmazzanak, amelyek segítik az ügyfelek visszatérését. A jegyzet említi, hogy a rendszeres ügyfelek körülbelül 20%-a a vállalkozások bevételeinek 80%-át biztosítja.
 
-* A profitközpontú gondolkodás
-* A sürgős ügyfélkérések kihasználása
-* A produktivitás és hatékonyság növelése
-* A feladatok lebontása kisebb részfeladatokra
+**III. Átalakítás költségekből profitcentrumokká**
 
-## OK-OKOZATI KAPCSOLATOK
+A második jegyzet bemutatja, hogyan lehet a költségeket profitcentrumokká alakítani. A jegyzet hangsúlyozza, hogy minden vállalkozásban vannak rejtett profitforrások, amelyeket ki lehet használni. A profitformula segít abban, hogy a vállalkozások meghatározzák, mely költségeket lehet profitcentrumokká alakítani. A jegyzet említi, hogy a vállalkozásoknak két kérdést kell feltenniük minden költségről:
 
-A vizsgált jegyzetekben több ok-okozati kapcsolat is megjelenik. Az egyik legfontosabb az, hogy ha a vállalkozások kihasználják a meglévő erőforrásaikat és lehetőségeiket, akkor növelhetik a profitjukat. Ennek egyik módja az, hogy a költségeket profitközpontúvá alakítsák, ahogy a "Turning Costs to Cash Cows" jegyzetben is látható.
+1. "Lehetséges-e, hogy az ügyfelek fizessenek érte?"
+2. "Van-e egy prémium verziója ennek a 'ingyenes' dolognak, amit az ügyfelek megvennének?"
 
-Egy másik ok-okozati kapcsolat az, hogy ha a vállalkozások kihasználják a sürgős ügyfélkéréseket, akkor növelhetik a bevételüket. A "Turning rush requests into revenue" jegyzetben látható, hogy a sürgős kéréseknek különböző árazási szintjei lehetnek, attól függően, hogy milyen gyorsan kell a szolgáltatást nyújtani.
+**IV. Átalakítás sürgős kérésekből bevétellé**
 
-A "Two 2-minute rules to beat procrastination" jegyzetben egy másik ok-okozati kapcsolat jelenik meg, amely a produktivitás és a hatékonyság növelésére irányul. Az egyik szabály az, hogy ha valami két percen belül elvégezhető, akkor azonnal el kell végezni. A másik szabály az, hogy ha valamihez nem akarunk hozzáfogni, akkor az feladatot le kell bontani két perces részfeladatokra.
+A harmadik jegyzet bemutatja, hogyan lehet a sürgős kéréseket bevétellé alakítani. A jegyzet hangsúlyozza, hogy a sürgős kéréseket nem szabad terheknek tekinteni, hanem prémium szolgáltatásoknak. A sebesség-alapú árazási létra segít abban, hogy a vállalkozások meghatározzák, milyen árat kell fizetniük az ügyfeleknek a sürgős kérésekért. A jegyzet említi, hogy a vállalkozásoknak három szintű árazást kell alkalmazniuk:
 
-A mechanizmusok, amelyek az ok-okozati kapcsolatokat lehetővé teszik, a következők:
+1. Szabványos sebesség = szabványos ár
+2. Dupla sebesség = dupla ár
+3. Tripla sebesség = tripla ár
 
-* A profitközpontú gondolkodás
-* A sürgős ügyfélkérések kihasználása
-* A produktivitás és hatékonyság növelése
-* A feladatok lebontása kisebb részfeladatokra
+**V. Két 2-perces szabály a prokrasztinációt legyőzésére**
 
-## RENDSZERSZINTŰ ÖSSZEFÜGGÉSEK
+A negyedik jegyzet bemutatja két 2-perces szabályt, amelyek segítenek a prokrasztinációt legyőzni. A jegyzet hangsúlyozza, hogy ha egy feladatot 2 perc alatt el lehet végezni, akkor azonnal el kell végezni. A második szabály azt mondja, hogy ha egy feladatot nem akarunk elvégezni, akkor egyszerűsítsük le 2 percre. A jegyzet említi, hogy a 2-perces szabályok segítenek abban, hogy a feladatokat kisebb, kezelhetőbb részekre bontsuk, és így könnyebb legyen elkezdeni őket.
 
-A vizsgált jegyzetekben több rendszerszintű összefüggés is megjelenik. Az egyik legfontosabb az, hogy a vállalkozásoknak ki kell használniuk a meglévő erőforrásaikat és lehetőségeiket a profit növelése érdekében. Ennek egyik módja az, hogy a költségeket profitközpontúvá alakítsák, ahogy a "Turning Costs to Cash Cows" jegyzetben is látható.
+**VI. Összefoglalás**
 
-Egy másik rendszerszintű összefüggés az, hogy a vállalkozásoknak ki kell használniuk a sürgős ügyfélkéréseket a bevétel növelése érdekében. A "Turning rush requests into revenue" jegyzetben látható, hogy a sürgős kéréseknek különböző árazási szintjei lehetnek, attól függően, hogy milyen gyorsan kell a szolgáltatást nyújtani.
-
-A "Two 2-minute rules to beat procrastination" jegyzetben egy másik rendszerszintű összefüggés jelenik meg, amely a produktivitás és a hatékonyság növelésére irányul. Az egyik szabály az, hogy ha valami két percen belül elvégezhető, akkor azonnal el kell végezni. A másik szabály az, hogy ha valamihez nem akarunk hozzáfogni, akkor az feladatot le kell bontani két perces részfeladatokra.
-
-A hierarchiák, függőségek és kölcsönhatások, amelyek a rendszerszintű összefüggéseket lehetővé teszik, a következők:
-
-* A profitközpontú gondolkodás
-* A sürgős ügyfélkérések kihasználása
-* A produktivitás és hatékonyság növelése
-* A feladatok lebontása kisebb részfeladatokra
-
-## DÖNTÉSI SZABÁLYOK ÉS TRIGGER-FELTÉTELEK
-
-A vizsgált jegyzetekben több döntési szabály és trigger-feltétel is megjelenik. Az egyik legfontosabb az, hogy ha a vállalkozások kihasználják a meglévő erőforrásaikat és lehetőségeiket, akkor növelhetik a profitjukat. Ennek egyik módja az, hogy a költségeket profitközpontúvá alakítsák, ahogy a "Turning Costs to Cash Cows" jegyzetben is látható.
-
-Egy másik döntési szabály az, hogy ha a vállalkozások kihasználják a sürgős ügyfélkéréseket, akkor növelhetik a bevételüket. A "Turning rush requests into revenue" jegyzetben látható, hogy a sürgős kéréseknek különböző árazási szintjei lehetnek, attól függően, hogy milyen gyorsan kell a szolgáltatást nyújtani.
-
-A "Two 2-minute rules to beat procrastination" jegyzetben egy másik döntési szabály jelenik meg, amely a produktivitás és a hatékonyság növelésére irányul. Az egyik szabály az, hogy ha valami két percen belül elvégezhető, akkor azonnal el kell végezni. A másik szabály az, hogy ha valamihez nem akarunk hozzáfogni, akkor az feladatot le kell bontani két perces részfeladatokra.
-
-A trigger-feltételek, amelyek a döntési szabályokat aktiválják, a következők:
-
-* A profitközpontú gondolkodás
-* A sürgős ügyfélkérések kihasználása
-* A produktivitás és hatékonyság növelése
-* A feladatok lebontása kisebb részfeladatokra
-
-## ANTI-PATTERNEK ÉS HIBÁK
-
-A vizsgált jegyzetekben több anti-patternt és hibát is megjelenik. Az egyik legfontosabb az, hogy a vállalkozások ne hagyják figyelmen kívül a meglévő erőforrásaikat és lehetőségeiket. Ennek egyik módja az, hogy a költségeket profitközpontúvá alakítsák, ahogy a "Turning Costs to Cash Cows" jegyzetben is látható.
-
-Egy másik anti-patternt az, hogy a vállalkozások ne hagyják figyelmen kívül a sürgős ügyfélkéréseket. A "Turning rush requests into revenue" jegyzetben látható, hogy a sürgős kéréseknek különböző árazási szintjei lehetnek, attól függően, hogy milyen gyorsan kell a szolgáltatást nyújtani.
-
-A "Two 2-minute rules to beat procrastination" jegyzetben egy másik anti-patternt jelenik meg, amely a produktivitás és a hatékonyság növelésére irányul. Az egyik szabály az, hogy ha valami két percen belül elvégezhető, akkor azonnal el kell végezni. A másik szabály az, hogy ha valamihez nem akarunk hozzáfogni, akkor az feladatot le kell bontani két perces részfeladatokra.
-
-A hibák, amelyeket a vállalkozások elkövethetnek, a következők:
-
-* A profitközpontú gondolkodás hiánya
-* A sürgős ügyfélkérések figyelmen kívül hagyása
-* A produktivitás és hatékonyság növelésének elhanyagolása
-* A feladatok lebontása kisebb részfeladatokra
-
-## KONKRÉT IMPLEMENTÁCIÓS LOGIKA
-
-A vizsgált jegyzetekben több konkrét implementációs logika is megjelenik. Az egyik legfontosabb az, hogy a vállalkozások kihasználják a meglévő erőforrásaikat és lehetőségeiket a profit növelése érdekében. Ennek egyik módja az, hogy a költségeket profitközpontúvá alakítsák, ahogy a "Turning Costs to Cash Cows" jegyzetben is látható.
-
-Egy másik konkrét implementációs logika az, hogy a vállalkozások kihasználják a sürgős ügyfélkéréseket a bevétel növelése érdekében. A "Turning rush requests into revenue" jegyzetben látható, hogy a sürgős kéréseknek különböző árazási szintjei lehetnek, attól függően, hogy milyen gyorsan kell a szolgáltatást nyújtani.
-
-A "Two 2-minute rules to beat procrastination" jegyzetben egy másik konkrét implementációs logika jelenik meg, amely a produktivitás és a hatékonyság növelésére irányul. Az egyik szabály az, hogy ha valami két percen belül elvégezhető, akkor azonnal el kell végezni. A másik szabály az, hogy ha valamihez nem akarunk hozzáf
+A vállalkozások és a marketing szakemberek számára fontos, hogy hatékony stratégiákat alkalmazzanak a siker eléréséhez. A fent bemutatott jegyzetek célja, hogy olyan konkrétpontos és alkalmazható tudást nyújtsanak, amely segít a vállalkozásoknak a növekedésben és a sikerben. A rendszeres ügyfelek kialakítása, a költségek profitcentrumokká alakítása, a sürgős kérések bevétellé alakítása és a 2-perces szabályok alkalmazása mind olyan stratégiák, amelyek segítenek a vállalkozásoknak a siker elérésében.

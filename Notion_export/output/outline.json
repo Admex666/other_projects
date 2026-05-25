@@ -1,0 +1,42 @@
+[
+  {
+    "chapter_number": 1,
+    "title": "Bevezetés az Üzleti Operációs Rendszerbe",
+    "description": "Az Üzleti Operációs Rendszer (BOR) alapelvei és komponensei, beleértve az ügyfélkapcsolatokat, marketingstratégiát, értékesítést és operatív hatékonyságot."
+  },
+  {
+    "chapter_number": 2,
+    "title": "Kauzális Hierarchia és Stratégia",
+    "description": "A kauzális hierarchia szintjei, az alapelv, stratégia és taktika, valamint azok összefüggései a vállalkozás sikeréhez."
+  },
+  {
+    "chapter_number": 3,
+    "title": "Kritikus Összefüggések és Leverage",
+    "description": "A kritikus összefüggések, mint a Grand Slam Offer és a CAC/LTV arány, valamint azok hatása a vállalkozás bevételeire és nyereségére."
+  },
+  {
+    "chapter_number": 4,
+    "title": "Stratégiai Rendszertan és Piacra Lépés",
+    "description": "A stratégiai rendszertan logikus folyamata, beleértve a piacra lépést, akvizíciót és monopolizálást, valamint azok fontossága a vállalkozás sikeréhez."
+  },
+  {
+    "chapter_number": 5,
+    "title": "Ügyfélkapcsolatok és Marketingstratégia",
+    "description": "Az ügyfélkapcsolatok és marketingstratégia összehangolása, valamint azok fontossága a vállalkozás céljainak eléréséhez."
+  },
+  {
+    "chapter_number": 6,
+    "title": "Operatív Hatékonyság és Vállalkozás Siker",
+    "description": "A BOR operatív hatékonyságának kulcsfontosságú szerepe a vállalkozás sikeréhez, valamint a hatékony stratégiák és taktikák kialakítása."
+  },
+  {
+    "chapter_number": 7,
+    "title": "Gyakorlati Példák és Esettanulmányok",
+    "description": "Gyakorlati példák és esettanulmányok a Stratégiai Szintézis-Elemzés alkalmazásáról a vállalkozásokban, valamint a tanulságok és a legjobb gyakorlatok bemutatása."
+  },
+  {
+    "chapter_number": 8,
+    "title": "Összegzés és Jövőbeli Kilátások",
+    "description": "Az Üzleti Operációs Rendszer és a Stratégiai Szintézis-Elemzés összegzése, valamint a jövőbeli kilátások és a további fejlesztési lehetőségek bemutatása."
+  }
+]

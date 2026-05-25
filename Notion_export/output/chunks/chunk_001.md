@@ -1,69 +1,84 @@
-## MENTÁLIS MODELLEK ÉS STRATÉGIAI MINTÁK
+**Knowledge Extraction Dossier**
 
-A vizsgált üzleti és marketing anyagok mögött meghúzódó implicit döntési logikák és gondolkodási keretrendszerek a következők:
+**Tartalomjegyzék**
 
-* A versenyelőnyök kiválasztásának fontossága: Az anyagok hangsúlyozzák, hogy a vállalkozásoknak nem kell mindent jobban csinálniuk, hanem egyetlen értéket kell kiválasztaniuk és azt dominálniuk.
-* A sebesség, a kockázatcsökkentés, az ár és a könnyű használat fontossága: A NOTE 1-ben említett négy versenyelőny hangsúlyozza, hogy a sebesség, a kockázatcsökkentés, az ár és a könnyű használat fontos tényezők a vállalkozások számára.
-* A mentalitás változásának fontossága: A NOTE 3-ban említett "Mental Shifts" szakasz hangsúlyozza, hogy a vállalkozásoknak meg kell változtatniuk a mentalitásukat, és a termékek helyett a transzformációt kell eladniuk.
-* A strukturált és stratégiai gondolkodás fontossága: A NOTE 4-ben említett "Strong negotiators win before the conversation starts" idézet hangsúlyozza, hogy a vállalkozásoknak strukturált és stratégiai gondolkodással kell megközelíteniük a tárgyalásokat.
+1. [Bevezetés](#bevezetés)
+2. [4 Versenyelőny](#4-versenyelőny)
+3. [4 részes meggyőzés](#4-részes-meggyőzés)
+4. [4 lépés az első 10 000 app felhasználóhoz](#4-lépés-az-első-10-000-app-felhasználóhoz)
+5. [5 tárgyalási taktika](#5-tárgyalási-taktika)
+6. [Keretrendszerek és képletek](#keretrendszerek-és-képletek)
+7. [Döntési logikák](#döntési-logikák)
+8. [Rendszerszintű mechanizmusok](#rendszerszintű-mechanizmusok)
+9. [Anti-patternek](#anti-patternek)
 
-A gondolkodási keretrendszerek között szerepelnek:
+**Bevezetés**
 
-* A versenyelőnyök kiválasztásának keretrendszere: A NOTE 1-ben említett négy versenyelőny (sebesség, kockázatcsökkentés, ár és könnyű használat) egy keretrendszert biztosít a vállalkozások számára, hogy kiválasszák a legfontosabb értékeket.
-* A mentalitás változásának keretrendszere: A NOTE 3-ban említett "Mental Shifts" szakasz egy keretrendszert biztosít a vállalkozások számára, hogy megváltoztassák a mentalitásukat és a termékek helyett a transzformációt adják el.
-* A tárgyalások keretrendszere: A NOTE 4-ben említett öt tárgyalási taktika (BATNA, Anchor First, Move Small, Multiple Equivalent Offers és Strategic Reciprocity) egy keretrendszert biztosít a vállalkozások számára, hogy strukturált és stratégiai gondolkodással megközelítsék a tárgyalásokat.
+A Knowledge Extraction Dossier célja, hogy kinyerje a legfontosabb információkat a kapott üzleti jegyzetekből, és részletesen kifejtse a konkkrét, alkalmazható tudást. A jegyzetek négy különböző témát érintenek: versenyelőny, meggyőzés, app felhasználók számának növelése és tárgyalási taktikák.
 
-## OK-OKOZATI KAPCSOLATOK
+**4 Versenyelőny**
 
-A vizsgált anyagokban említett ok-okozati kapcsolatok a következők:
+A versenyelőnyök azok a tényezők, amelyek megkülönböztetik a vállalkozást a versenytársaktól. A jegyzet négy versenyelőnyt említ:
 
-* A sebesség és a kockázatcsökkentés közötti kapcsolat: A NOTE 1-ben említett sebesség és kockázatcsökkentés versenyelőnyök közötti kapcsolat hangsúlyozza, hogy a sebesség és a kockázatcsökkentés fontos tényezők a vállalkozások számára.
-* A transzformáció és a termék közötti kapcsolat: A NOTE 3-ban említett "Mental Shifts" szakasz hangsúlyozza, hogy a vállalkozásoknak a termékek helyett a transzformációt kell eladniuk.
-* A tárgyalások és a strukturált gondolkodás közötti kapcsolat: A NOTE 4-ben említett öt tárgyalási taktika hangsúlyozza, hogy a vállalkozásoknak strukturált és stratégiai gondolkodással kell megközelíteniük a tárgyalásokat.
+1. **Sebesség**: A sebesség az egyik legfontosabb versenyelőny, mivel az ügyfelek gyors eredményeket várnak el. A sebességhez szükséges taktikák közé tartoznak a sablonok, az előre elkészített ajánlatok és a valós idejű elérhetőség.
+2. **Kockázatcsökkentés**: A kockázatcsökkentés az ügyfelek számára fontos, mivel ők biztonságos és megbízható megoldásokat keresnek. A kockázatcsökkentéshez szükséges taktikák közé tartoznak a garantálás, a megbízhatóság és a konzisztencia hangsúlyozása.
+3. **Ár**: Az ár a versenyelőnyök egyike, de csak akkor, ha a vállalkozás képes alacsonyabb áron nyújtani ugyanolyan minőségű szolgáltatást. A vállalkozásoknak szükséges az ár csökkentésére összpontosítaniuk, anélkül, hogy a minőséget csökkentenék.
+4. **Könnyűség**: A könnyűség az ügyfelek számára fontos, mivel ők nem akarnak bonyolult folyamatokkal foglalkozni. A könnyűséghez szükséges taktikák közé tartoznak a fájdalomponok azonosítása és azok eltávolítása.
 
-A mechanizmusok, amelyeken keresztül a fogalmak hatnak egymásra, a következők:
+**4 részes meggyőzés**
 
-* A sebesség és a kockázatcsökkentés mechanizmusa: A sebesség és a kockázatcsökkentés versenyelőnyök közötti kapcsolat hangsúlyozza, hogy a sebesség és a kockázatcsökkentés fontos tényezők a vállalkozások számára.
-* A transzformáció és a termék mechanizmusa: A NOTE 3-ban említett "Mental Shifts" szakasz hangsúlyozza, hogy a vállalkozásoknak a termékek helyett a transzformációt kell eladniuk.
-* A tárgyalások és a strukturált gondolkodás mechanizmusa: A NOTE 4-ben említett öt tárgyalási taktika hangsúlyozza, hogy a vállalkozásoknak strukturált és stratégiai gondolkodással kell megközelíteniük a tárgyalásokat.
+A meggyőzés a vállalkozások számára fontos, mivel ők az ügyfeleket akarják meggyőzni arról, hogy a terméket vagy szolgáltatást válasszák. A jegyzet négy részes meggyőzési folyamatot ír le:
 
-## RENDSZERSZINTŰ ÖSSZEFÜGGÉSEK
+1. **Add vagy Remove**: A vállalkozásoknak szükséges azonosítaniuk, hogy mit kell hozzáadniuk vagy elvenniük a termékből vagy szolgáltatásból, hogy az ügyfelek számára vonzóbb legyen.
+2. **Jó dolgok**: A vállalkozásoknak szükséges hangsúlyozniuk a termék vagy szolgáltatás jó tulajdonságait, hogy az ügyfelek számára vonzóbb legyen.
+3. **Rossz dolgok**: A vállalkozásoknak szükséges azonosítaniuk a termék vagy szolgáltatás rossz tulajdonságait, és azokat elvenniük, hogy az ügyfelek számára vonzóbb legyen.
+4. **Üzenet**: A vállalkozásoknak szükséges egy üzenetet létrehozniuk, amely az ügyfelek számára vonzó, és a terméket vagy szolgáltatást bemutatja.
 
-A vizsgált anyagokban említett rendszerszintű összefüggések a következők:
+**4 lépés az első 10 000 app felhasználóhoz**
 
-* A sebesség, a kockázatcsökkentés, az ár és a könnyű használat összefüggése: A NOTE 1-ben említett négy versenyelőny hangsúlyozza, hogy a sebesség, a kockázatcsökkentés, az ár és a könnyű használat fontos tényezők a vállalkozások számára.
-* A transzformáció és a termék összefüggése: A NOTE 3-ban említett "Mental Shifts" szakasz hangsúlyozza, hogy a vállalkozásoknak a termékek helyett a transzformációt kell eladniuk.
-* A tárgyalások és a strukturált gondolkodás összefüggése: A NOTE 4-ben említett öt tárgyalási taktika hangsúlyozza, hogy a vállalkozásoknak strukturált és stratégiai gondolkodással kell megközelíteniük a tárgyalásokat.
+A jegyzet négy lépést ír le, amelyek segítenek a vállalkozásoknak elérni az első 10 000 app felhasználót:
 
-A hierarchiák, függőségek és kölcsönhatások a következők:
+1. **Identify Your Viral Marketing Message**: A vállalkozásoknak szükséges azonosítaniuk a virális marketing üzenetüket, amely az ügyfelek számára vonzó.
+2. **Do Market Research → Steal What Works**: A vállalkozásoknak szükséges piackutatást végezniük, és azonosítaniuk, hogy mi működik a versenytársaknál.
+3. **Hire Creators (Risk-Free)**: A vállalkozásoknak szükséges kreatívokat felvenniük, akik segítenek a tartalom létrehozásában.
+4. **Scale Winners with Paid Ads**: A vállalkozásoknak szükséges a nyertes tartalmat skálázniuk fizetett hirdetésekkel.
 
-* A sebesség, a kockázatcsökkentés, az ár és a könnyű használat hierarchiája: A NOTE 1-ben említett négy versenyelőny hangsúlyozza, hogy a sebesség, a kockázatcsökkentés, az ár és a könnyű használat fontos tényezők a vállalkozások számára.
-* A transzformáció és a termék hierarchiája: A NOTE 3-ban említett "Mental Shifts" szakasz hangsúlyozza, hogy a vállalkozásoknak a termékek helyett a transzformációt kell eladniuk.
-* A tárgyalások és a strukturált gondolkodás hierarchiája: A NOTE 4-ben említett öt tárgyalási taktika hangsúlyozza, hogy a vállalkozásoknak strukturált és stratégiai gondolkodással kell megközelíteniük a tárgyalásokat.
+**5 tárgyalási taktika**
 
-## DÖNTÉSI SZABÁLYOK ÉS TRIGGER-FELTÉTELEK
+A jegyzet öt tárgyalási taktikát ír le, amelyek segítenek a vállalkozásoknak a tárgyalások során:
 
-A vizsgált anyagokban említett döntési szabályok és trigger-feltételek a következők:
+1. **BATNA — Best Alternative to a Negotiated Agreement**: A vállalkozásoknak szükséges azonosítaniuk a legjobb alternatívát a tárgyalt megállapodáshoz.
+2. **Anchor First, Move Small**: A vállalkozásoknak szükséges az első számot meghatározniuk, és kis lépésekkel mozogniuk.
+3. **Multiple Equivalent Offers**: A vállalkozásoknak szükséges több egyenértékű ajánlatot tenniük.
+4. **Strategic Reciprocity**: A vállalkozásoknak szükséges stratégiai viszonzást alkalmazniuk.
+5. **Framing = Perception Shift**: A vállalkozásoknak szükséges a keretet átalakítaniuk, hogy a másik fél percepciója megváltozzon.
 
-* A sebesség és a kockázatcsökkentés döntési szabályai: A NOTE 1-ben említett sebesség és kockázatcsökkentés versenyelőnyök hangsúlyozzák, hogy a sebesség és a kockázatcsökkentés fontos tényezők a vállalkozások számára.
-* A transzformáció és a termék döntési szabályai: A NOTE 3-ban említett "Mental Shifts" szakasz hangsúlyozza, hogy a vállalkozásoknak a termékek helyett a transzformációt kell eladniuk.
-* A tárgyalások és a strukturált gondolkodás döntési szabályai: A NOTE 4-ben említett öt tárgyalási taktika hangsúlyozza, hogy a vállalkozásoknak strukturált és stratégiai gondolkodással kell megközelíteniük a tárgyalásokat.
+**Keretrendszerek és képletek**
 
-A trigger-feltételek a következők:
+A jegyzetek számos keretrendszert és képletet említenek, amelyek segítenek a vállalkozásoknak a döntéshozatalban és a stratégia kialakításában. Például:
 
-* A sebesség és a kockázatcsökkentés trigger-feltételei: A NOTE 1-ben említett sebesség és kockázatcsökkentés versenyelőnyök hangsúlyozzák, hogy a sebesség és a kockázatcsökkentés fontos tényezők a vállalkozások számára.
-* A transzformáció és a termék trigger-feltételei: A NOTE 3-ban említett "Mental Shifts" szakasz hangsúlyozza, hogy a vállalkozásoknak a termékek helyett a transzformációt kell eladniuk.
-* A tárgyalások és a strukturált gondolkodás trigger-feltételei: A NOTE 4-ben említett öt tárgyalási taktika hangsúlyozza, hogy a vállalkozásoknak strukturált és stratégiai gondolkodással kell megközelíteniük a tárgyalásokat.
+* **LTV per download**: A vállalkozásoknak szükséges kiszámolniuk az életciklus értékét (LTV) a letöltésenként.
+* **CAC**: A vállalkozásoknak szükséges kiszámolniuk a szerzési költséget (CAC).
 
-## ANTI-PATTERNEK ÉS HIBÁK
+**Döntési logikák**
 
-A vizsgált anyagokban említett anti-patternek és hibák a következők:
+A jegyzetek számos döntési logikát említenek, amelyek segítenek a vállalkozásoknak a döntéshozatalban. Például:
 
-* A sebesség és a kockázatcsökkentés anti-patternei: A NOTE 1-ben említett sebesség és kockázatcsökkentés versenyelőnyök hangsúlyozzák, hogy a sebesség és a kockázatcsökkentés fontos tényezők a vállalkozások számára, de a túlzott sebesség és kockázatcsökkentés káros lehet.
-* A transzformáció és a termék anti-patternei: A NOTE 3-ban említett "Mental Shifts" szakasz hangsúlyozza, hogy a vállalkozásoknak a termékek helyett a transzformációt kell eladniuk, de a túlzott transzformáció káros lehet.
-* A tárgyalások és a strukturált gondolkodás anti-patternei: A NOTE 4-ben említett öt tárgyalási taktika hangsúlyozza, hogy a vállalkozásoknak strukturált és stratégiai gondolkodással kell megközelíteniük a tárgyalásokat, de a túlzott strukturáltság káros lehet.
+* **Ha a LTV nagyobb, mint a CAC, akkor skálázható a vállalkozás**.
+* **Ha a vállalkozásnak nincs elegendő forrása, akkor nem szabad skálázni**.
 
-A hibák a következők:
+**Rendszerszintű mechanizmusok**
 
-* A sebesség és a kockázatcsökkentés hibái: A NOTE 1-ben említett sebesség és kockázatcsökkentés versenyelőnyök hangsúlyozzák, hogy a sebesség és a kockázatcsökkentés fontos tényezők a vállalkozások számára, de a túlzott sebesség és kockázatcsökkentés káros lehet.
-* A transzformáció és a termék hibái: A NOTE 3-b
+A jegyzetek számos rendszerszintű mechanizmust említenek, amelyek segítenek a vállalkozásoknak a működésében és a növekedésében. Például:
+
+* **A vállalkozásoknak szükséges a folyamataikat optimalizálniuk, hogy a hatékonyságot növeljék**.
+* **A vállalkozásoknak szükséges a csapatukat fejleszteniük, hogy a teljesítményt növeljék**.
+
+**Anti-patternek**
+
+A jegyzetek számos anti-patternt említenek, amelyek segítenek a vállalkozásoknak elkerülni a hibákat. Például:
+
+* **Ne próbálj meg mindent egyidejűleg csinálni, hanem koncentrálj az egyik dologra**.
+* **Ne felejtsd el a folyamataidat optimalizálni, hogy a hatékonyságot növelj**.
+
+A Knowledge Extraction Dossier célja, hogy a vállalkozásoknak segítsen a döntéshozatalban és a stratégia kialakításában. A jegyzetek számos hasznos információt tartalmaznak, amelyek segítenek a vállalkozásoknak a növekedésben és a sikerben.

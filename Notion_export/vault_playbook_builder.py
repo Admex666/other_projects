@@ -81,12 +81,21 @@ def chunk_list(lst: list, size: int) -> list[list]:
 def build_dossier_block(dossiers: list[str], max_total_chars: int = 12000) -> str:
     if not dossiers:
         return ""
-    # Elosztjuk a rendelkezésre álló karakterkeretet a dossziék között
-    chars_per_dossier = max(400, max_total_chars // len(dossiers))
+    # Elosztjuk a rendelkezésre álló karakterkeretet a dossziék között,
+    # figyelembe véve az elválasztó vonalak (~150 karakter) extra méretét.
+    chars_per_dossier = max(150, (max_total_chars // len(dossiers)) - 150)
+    
     block = ""
     for i, d in enumerate(dossiers, 1):
         short = d[:chars_per_dossier] + "\n...[rövidítve]" if len(d) > chars_per_dossier else d
-        block += f"\n{'─'*60}\n#### DOSSIER {i}\n{'─'*60}\n{short}\n"
+        chunk_str = f"\n{'─'*60}\n#### DOSSIER {i}\n{'─'*60}\n{short}\n"
+        
+        # Szigorú limit ellenőrzés: garantáljuk, hogy nem haladjuk meg a keretet
+        if len(block) + len(chunk_str) > max_total_chars:
+            block += "\n[FIGYELMEZTETÉS: A további dossziék a token limit miatt csonkolva lettek.]\n"
+            break
+            
+        block += chunk_str
     return block
 
 
@@ -136,55 +145,24 @@ def call_groq(system: str, user: str, temperature: float = 0.6,
 # ── PHASE 1: MAP ───────────────────────────────────────────────────────────
 # Not a summarizer. A knowledge extraction engine.
 MAP_SYSTEM = """\
-Te egy tudás-szintetizáló elemző rendszer vagy — NEM executive summary generátor.
+Te egy top-tier üzleti tanácsadó és tudás-szintetizáló rendszer vagy (McKinsey/Bain szint).
+NEM vagy executive summary generátor. NEM vagy újságíró. 
 
-A feladatod: üzleti és marketing tartalmakból mély tudáskinyerést végezni.
-A kimenet NEM rövid összefoglaló. A kimenet egy részletes "Knowledge Extraction Dossier".
+A feladatod: a kapott üzleti jegyzetekből kíméletlenül kinyerni a konkrét, alkalmazható tudást.
+TILOS sablonos "AI-szöveget" írni (pl. "segít a hatékonyság növelésében", "fontos a versenyképességhez").
 
-AMIT KI KELL NYERNI:
-
-1. MENTÁLIS MODELLEK ÉS STRATÉGIAI MINTÁK
-   - Milyen implicit döntési logikák húzódnak meg a szöveg mögött?
-   - Milyen gondolkodási keretrendszert használ az anyag?
-   - Melyek az ismétlődő elvek, amelyek visszaköszönnek?
-
-2. OK-OKOZATI KAPCSOLATOK
-   - Mi vezet mihez? (Ha X, akkor Y logika)
-   - Milyen mechanizmusokon keresztül hatnak egymásra a fogalmak?
-   - Milyen lépcsők, feltételek, trigger-pontok vannak?
-
-3. RENDSZERSZINTŰ ÖSSZEFÜGGÉSEK
-   - Hogyan kapcsolódnak egymáshoz az ötletek?
-   - Milyen hierarchiák, függőségek, kölcsönhatások vannak?
-   - Melyek az erősítő (flywheel) és gyengítő hatások?
-
-4. DÖNTÉSI SZABÁLYOK ÉS TRIGGER-FELTÉTELEK
-   - Mikor alkalmaz valamit az anyag? (trigger condition)
-   - Milyen körülmények között működik egy stratégia és mikor nem?
-   - Milyen trade-offokat azonosít?
-
-5. ANTI-PATTERNEK ÉS HIBÁK
-   - Mit NEM szabad csinálni és miért?
-   - Milyen tipikus hibákat emel ki az anyag?
-   - Milyen figyelmeztetések vannak?
-
-6. KONKRÉT IMPLEMENTÁCIÓS LOGIKA
-   - Pontos számok, mérőszámok, küszöbértékek
-   - Konkrét eszközök, lépések, workflow-k
-   - Reprodukálható folyamatok
+AMIT KI KELL NYERNI (Részletesen, szakértői mélységben):
+1. KONKRÉT KERETRENDSZEREK ÉS KÉPLETEK: Keresd a pontos mechanizmusokat (pl. Dream Outcome x Likelihood / Time Delay x Effort), ne csak a fogalom nevét említsd! Fejtsd ki a működésüket!
+2. DÖNTÉSI LOGIKÁK (If-Then): Milyen konkrét helyzetben, milyen konkrét lépést kell tenni?
+3. RENDSZERSZINTŰ MECHANIZMUSOK: Mik a szűk keresztmetszetek? Mik a tőkeáttétel (leverage) pontjai?
+4. ANTI-PATTERNEK: Pontosan mik a tipikus hibák és hogyan kerüljük el őket?
 
 KIMENET FORMÁTUMA:
-- ## szekciók a fenti 6 kategóriához
-- Részletes bullet listák, al-bullet-ekkel ahol szükséges
-- Őrizd meg az összes specifikus nevet, számot, formulát
-- Magyar nyelven, de az angol terminus technicusokat hagyd meg
-
-CÉLZOTT TERJEDELEM: 1500–3000 szó per chunk.
-
-KRITIKUS SZABÁLY:
-A cél NEM rövid összefoglaló készítése.
-NE tömörítsd az információt — bontsd ki, rendszerezd, kapcsold össze.
-Viselkedj tudás-szintetizáló elemzőként, nem újságíróként.\
+- Tisztán szakmai, sűrű "Knowledge Extraction Dossier".
+- Tartsd meg az eredeti angol kifejezéseket (pl. Grand Slam Offer, Flywheel, CAC, LTV) és azonnal fejtsd ki a pontos jelentésüket a jegyzet alapján.
+- Minden fogalomhoz írd le a HOGYAN-t (implementáció), ne csak a MI-t (definíció).
+- TILOS a rizsa és a töltelékszöveg. Ne használj "Növeli az értékesítést" jellegű felsorolásokat.
+- Célzott terjedelem: 1500-3000 szó per chunk, mélyen kifejtve.
 """
 
 MAP_USER_TEMPLATE = """\
@@ -223,45 +201,21 @@ def map_chunk(chunk_idx: int, notes: list[dict]) -> tuple[str, bool]:
 
 # ── PHASE 2: SYNTHESIS (intermediate thinking layer) ──────────────────────
 SYNTHESIS_SYSTEM = """\
-Te egy stratégiai tudás-architekt vagy.
+Te egy vezető stratégiai architekt vagy, aki üzleti operációs rendszereket tervez.
+Több tucat nyers tudás-dossziét kaptál. A feladatod NEM az, hogy felsorold, miről szólnak.
+A feladatod, hogy szintetizáld őket egy egységes, alkalmazható "Master Framework"-ké.
 
-Több chunk-nyi nyers üzleti tudás-kinyerési dossier-t kaptál.
-A feladatod: felismerni a mélyebb mintázatokat és struktúrát — mielőtt a végső rendszer megépül.
+AMIT LÉTRE KELL HOZNOD:
+1. OPERÁCIÓS LOGIKA: Mi az a "gép", ami a dossziékban leírt elvek alapján működik? Hogyan kapcsolódnak a fogalmak egyetlen nagy rendszerré?
+2. KAUZÁLIS HIERARCHIA: Mi az alapelv (core driver), mi a stratégia (strategy), és mi a taktika (tactic)? Rendszerezd őket szigorú ok-okozati láncba!
+3. KRITIKUS ÖSSZEFÜGGÉSEK: Ne csak felsorolj fogalmakat. Fejtsd ki, hogyan hat a "Grand Slam Offer" a "CAC/LTV" arányra, és ez hogyan vezet "Leverage"-hez.
+4. STRATÉGIAI RENDSZERTAN: Csoportosítsd a kivonatolt elveket egy logikus folyamatba (pl. Piacra lépés -> Akvizíció -> Monopolizálás).
 
-AMIT KI KELL DERÍTENI:
-
-1. VISSZATÉRŐ ELVEK (Recurring Principles)
-   - Melyek azok az elvek, amelyek több különböző forrásban is megjelennek?
-   - Milyen "törvények" rajzolódnak ki ismétlődően?
-
-2. KAUZÁLIS HIERARCHIA (Causal Hierarchy)
-   - Melyek az alap-okok és melyek a következmények?
-   - Mi van felső szinten (stratégia) és mi az alsó szinten (taktika/eszköz)?
-   - Milyen sorrend, prioritás adódik ki az anyagból?
-
-3. ELLENTMONDÁSOK ÉS FESZÜLTSÉGEK
-   - Hol mond ellen egymásnak két forrás?
-   - Milyen trade-offok vannak a különböző elvek között?
-   - Melyik ellentmondás valójában kontextus-függő (mindkettő igaz, de más helyzetben)?
-
-4. EMERGENS MODELLEK (Emergent Models)
-   - Milyen magasabb szintű üzleti modell rajzolódik ki az egész anyagból?
-   - Milyen "operációs logika" köti össze a részeket?
-   - Mi az, ami az egyes chunkokban nem volt kimondva, de az összességből következik?
-
-5. STRATÉGIAI TAXONÓMIA
-   - Hogyan csoportosíthatók a fogalmak egy egységes rendszerbe?
-   - Melyek a fő "tengelyek" (pl. Akvizíció → Konverzió → Megtartás)?
-   - Milyen életciklus-logika adódik ki?
-
-6. KRITIKUS KAPCSOLATOK
-   - Mely fogalmak erősítik egymást (flywheel)?
-   - Mely fogalmak helyettesítik egymást (alternatives)?
-   - Milyen függőségek (prerequisite chains) vannak?
-
-KIMENET: Strukturált elemzés, nem összefoglaló.
-Célzott terjedelem: 1000–2000 szó.
-Ez lesz a "thinking layer" a végső playbook előtt.\
+SZABÁLYOK:
+- TILOS az "Ebben a dokumentumban..." jellegű meta-beszéd.
+- TILOS a sablonos előny-felsorolás ("növeli a hatékonyságot").
+- Légy rendkívül konkrét, sűrű és mérnöki pontosságú. Ez a végső Playbook "tervrajza" (blueprint).
+- Célzott terjedelem: 1000-2000 szó.
 """
 
 SYNTHESIS_USER_TEMPLATE = """\
@@ -342,16 +296,21 @@ def generate_outline(dossiers: list[str], synthesis: str) -> tuple[list[dict], b
 
 # ── PHASE 4: CHAPTER EXPANSION ─────────────────────────────────────────────
 CHAPTER_SYSTEM = """\
-Te egy üzleti operációs rendszer tervezője vagy — NEM könyv-összefoglaló generátor.
-A feladatod a Playbook EGYETLEN FEJEZETÉNEK extrém részletes, mély kifejtése a rendelkezésre álló dokumentumok alapján.
+Te egy elit üzleti stratéga vagy, aki egy szakmai "Business & Marketing Operational Playbook"-ot ír.
+Ez egy kőkemény, alkalmazható kézikönyv szakembereknek — NEM egy egyetemi esszé, és NEM egy marketing brosúra.
 
-A DOCTRINE MEGALKOTÁSÁNAK ELVEI:
-1. OPERÁCIÓS LOGIKA: Döntési szabályok, trigger-condition logika, workflow-k.
-2. KAUZÁLIS MAGYARÁZATOK: Miből következik, mit befolyásol, mik a trade-offok.
-3. EMERGENS MODELLEK: Magasabb szintű mintázatok.
+A feladatod a Playbook EGYETLEN FEJEZETÉNEK megírása a mellékelt Szintézis és Dossziék alapján.
 
-MOST KIZÁRÓLAG EGY FEJEZETET KELL MEGÍRNOD! Ne írj bevezetőt a könyvhöz, ne írj összefoglalót a könyvről. Koncentrálj arra az egy fejezetre, amit a felhasználó kér.
-Terjedelem: Legalább 1000-1500 szó az adott fejezetről. Fejtsd ki a lehető legmélyebben!
+SZIGORÚ TILTÁSOK (Ha ezeket megszeged, a rendszer elutasítja a munkád):
+1. TILOS a meta-beszéd! Ne írj olyat, hogy "Ebben a fejezetben bemutatjuk...", "Az előző fejezetben láttuk...". Kezdj egyből a lényeggel!
+2. TILOS a sablonos AI filler és rizsa! Tilos olyanokat írni, hogy "A X segít a versenyképesség és hatékonyság növelésében". Minden szónak információt kell hordoznia.
+3. TILOS a sekélyes felsorolás. Ha egy fogalmat (pl. Grand Slam Offer, Leverage, Flywheel) említesz, KÖTELEZŐ leírni a pontos képletét, működési mechanizmusát és a "Hogyan alkalmazzuk" lépéseket a dossziék alapján!
+
+ELVÁRT STÍLUS ÉS TARTALOM:
+- Sűrű, McKinsey/Bain konzultánsi stílus. Maximális szakmai mélység.
+- Hozz létre logikus alcímeket (###).
+- Használj konkrét példákat, képleteket, szabályokat, if-then logikákat, amiket a dossziékban találsz.
+- Legalább 1000-1500 szó. Ne spórolj a karakterekkel, fejtsd ki a mély mechanizmusokat, add át az igazi tudást!
 """
 
 def expand_chapter(chapter: dict, dossiers: list[str], synthesis: str, outline: list[dict]) -> tuple[str, bool]:

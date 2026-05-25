@@ -1,45 +1,37 @@
-## MENTÁLIS MODELLEK ÉS STRATÉGIAI MINTÁK
+**Knowledge Extraction Dossier**
 
-* A "Less is more" elv alkalmazása a munkában és az életben, hogy a legfontosabb feladatokra koncentráljunk és elkerüljük a szétszórtságot.
-* Az Essentialism gondolkodási keretrendszer használata, amely arra ösztönöz, hogy a legfontosabb dolgokra koncentráljunk és elutasítsuk a kevésbé fontosakat.
-* A LTGPE (Lifetime Gross Profit Per Employee) és a CAT (Cost to Acquire Talent) mutatók használata a munkaerő-felvétel és a befektetés meghatározásában.
-* A "Hire Like You Run Ads" mentalitás, amely arra ösztönöz, hogy a munkaerő-felvételt úgy kezeljük, mint egy befektetést, és hogy a legjobb embereket vonzzuk és megtartsuk.
-* A "Making your first million" blueprint, amely egy lépésről lépésre haladó terv a sikerhez, és amely a megfelelő készségek, motiváció és környezet fontosságát hangsúlyozza.
+**Bevezetés**
 
-## OK-OKOZATI KAPCSOLATOK
+Ez a dokumentum négy üzleti/marketing jegyzet alapján készült, amelyek célja az üzleti sikerhez szükséges kulcsfontosságú stratégiák és módszerek feltárása. A jegyzetek különböző területeket ölelnek fel, például a termelékenységet, a toborzást, az értékesítést és a vállalkozások növekedését.
 
-* Ha a munkaerő-felvételre több pénzt költünk, akkor jobb minőségű alkalmazottakat vonzhatunk és tarthatunk meg.
-* Ha a munkaerő-felvételre több pénzt költünk, akkor nagyobb lesz a befektetés megtérülése.
-* Ha a legfontosabb feladatokra koncentrálunk, akkor hatékonyabban dolgozhatunk és elérhetjük a céljainkat.
-* Ha a megfelelő készségekkel, motivációval és környezettel rendelkezünk, akkor elérhetjük a sikerünket és megvalósíthatjuk a céljainkat.
-* Ha a munkaerő-felvételre és a befektetésre úgy tekintünk, mint egy befektetésre, akkor jobban megértjük a munkaerő-felvétel és a befektetés közötti kapcsolatot.
+**1. Keretrendszerek és képletek**
 
-## RENDSZERSZINTŰ ÖSSZEFÜGGÉSEK
+A jegyzetekben szereplő egyik legfontosabb keretrendszer a **LTGPE:CAT** (Lifetime Gross Profit Per Employee : Cost to Acquire Talent) arány. Ez a keretrendszer segít megállapítani, hogy mennyit kellene költeni egy új alkalmazott toborzására, figyelembe véve a személyzet életciklusának teljes nyereségét.
 
-* A munkaerő-felvétel és a befektetés közötti kapcsolat: a munkaerő-felvételre költött pénz befektetésnek tekinthető, amely megtérülhet a jövőben.
-* A készségek, motiváció és környezet közötti kapcsolat: a megfelelő készségek, motiváció és környezet együttműködése elengedhetetlen a sikerhez.
-* A munkaerő-felvétel és a befektetés közötti kapcsolat: a munkaerő-felvételre költött pénz befektetésnek tekinthető, amely megtérülhet a jövőben.
-* A célkitűzés és a tervezés közötti kapcsolat: a célkitűzés és a tervezés elengedhetetlen a sikerhez, mivel segít a legfontosabb feladatokra koncentrálni és a befektetést meghatározni.
+A **LTGPE** kiszámításához az alábbi képletet kell alkalmazni:
 
-## DÖNTÉSI SZABÁLYOK ÉS TRIGGER-FELTÉTELEK
+(Gross profit they generate − Salary you pay them) = Gross profit per employee per year
 
-* Ha a munkaerő-felvételre több pénzt költünk, akkor jobb minőségű alkalmazottakat vonzhatunk és tarthatunk meg.
-* Ha a munkaerő-felvételre több pénzt költünk, akkor nagyobb lesz a befektetés megtérülése.
-* Ha a legfontosabb feladatokra koncentrálunk, akkor hatékonyabban dolgozhatunk és elérhetjük a céljainkat.
-* Ha a megfelelő készségekkel, motivációval és környezettel rendelkezünk, akkor elérhetjük a sikerünket és megvalósíthatjuk a céljainkat.
-* Ha a munkaerő-felvételre és a befektetésre úgy tekintünk, mint egy befektetésre, akkor jobban megértjük a munkaerő-felvétel és a befektetés közötti kapcsolatot.
+Ez a képlet segít megállapítani, hogy mennyi nyereséget generál egy alkalmazott évente, és ennek alapján megállapítható, hogy mennyit éri meg költeni a toborzásra.
 
-## ANTI-PATTERNEK ÉS HIBÁK
+**2. Döntési logikák (If-Then)**
 
-* A munkaerő-felvételre kevés pénzt költeni, amely alacsony minőségű alkalmazottakat vonzhat és tarthat meg.
-* A munkaerő-felvételre és a befektetésre nem úgy tekinteni, mint egy befektetésre, amely rossz döntéseket eredményezhet.
-* A legfontosabb feladatokra nem koncentrálni, amely szétszórtságot és hatékonysági problémákat okozhat.
-* A megfelelő készségekkel, motivációval és környezettel nem rendelkezni, amely a siker elérését akadályozhatja.
+A jegyzetekben szereplő egyik legfontosabb döntési logika a **"Ha-Ha"** (If-Then) logika. Például, ha valaki 50 000 dollárt hajlandó fizetni 400 000 dollár nyereségért, akkor miért ne fizetne megfelelő összeget egy olyan alkalmazottnak, aki ezt a nyereséget generálja?
 
-## KONKRÉT IMPLEMENTÁCIÓS LOGIKA
+Ez a logika arra ösztönöz, hogy a vállalkozások újraértékeljék a toborzásra fordított összeget, és hogy a nyereséghez való hozzájárulás alapján döntsenek a költségkeretekről.
 
-* A LTGPE (Lifetime Gross Profit Per Employee) és a CAT (Cost to Acquire Talent) mutatók használata a munkaerő-felvétel és a befektetés meghatározásában.
-* A "Hire Like You Run Ads" mentalitás, amely arra ösztönöz, hogy a munkaerő-felvételt úgy kezeljük, mint egy befektetést, és hogy a legjobb embereket vonzzuk és megtartsunk.
-* A "Making your first million" blueprint, amely egy lépésről lépésre haladó terv a sikerhez, és amely a megfelelő készségek, motiváció és környezet fontosságát hangsúlyozza.
-* A munkaerő-felvételre és a befektetésre úgy tekinteni, mint egy befektetésre, amely jobb döntéseket eredményezhet.
-* A legfontosabb feladatokra koncentrálni, amely hatékonyabban dolgozhatunk és elérhetjük a céljainkat.
+**3. Rendszerszintű mechanizmusok**
+
+A jegyzetekben szereplő egyik legfontosabb rendszerszintű mechanizmus a **"Less is more"** (Kevesebb az több) elve. Ez az elv arra ösztönöz, hogy a vállalkozások koncentráljanak a legfontosabb feladatokra és projektekre, és hogy ne terheljék túl magukat felesleges feladatokkal.
+
+Ez a mechanizmus segít a vállalkozásoknak, hogy hatékonyabban irányítsák az erőforrásaikat, és hogy a legnagyobb értéket teremtsék a legkevesebb erőfeszítéssel.
+
+**4. Anti-patternek**
+
+A jegyzetekben szereplő egyik legfontosabb anti-patternek a **"Toborzás alulfinanszírozása"** (Underinvestment in hiring). Ez azt jelenti, hogy a vállalkozások nem költenek elegendő összeget a toborzásra, ami ahhoz vezet, hogy nem tudnak vonzani és megtartani a legjobb alkalmazottakat.
+
+Ez az anti-patternek arra ösztönöz, hogy a vállalkozások újraértékeljék a toborzásra fordított összeget, és hogy a nyereséghez való hozzájárulás alapján döntsenek a költségkeretekről.
+
+**Összegzés**
+
+Ez a Knowledge Extraction Dossier a négy üzleti/marketing jegyzet alapján készült, és célja az üzleti sikerhez szükséges kulcsfontosságú stratégiák és módszerek feltárása. A dokumentum bemutatja a **LTGPE:CAT** keretrendszert, a **"Ha-Ha"** döntési logikát, a **"Less is more"** elvet és az **"alulfinanszírozás"** anti-patternt. Ezek a stratégiák és módszerek segítenek a vállalkozásoknak, hogy hatékonyabban irányítsák az erőforrásaikat, és hogy a legnagyobb értéket teremtsék a legkevesebb erőfeszítéssel.

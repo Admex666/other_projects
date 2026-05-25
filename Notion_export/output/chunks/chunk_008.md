@@ -1,83 +1,47 @@
-## MENTÁLIS MODELLEK ÉS STRATÉGIAI MINTÁK
+**Knowledge Extraction Dossier**
 
-A szöveg mögött meghúzódó implicit döntési logikák a következők:
+**Bevezetés**
 
-* Az app tervezési framework-ben a probléma definíciója és a scope lock meghatározása az első lépések, amelyek segítik a projekt szét nem esését.
-* A domain modell és a use case → flow design szorosan kapcsolódnak, hiszen a domain modell meghatározza a fő entitásokat és attribútumaikat, míg a use case → flow design meghatározza, hogyan kapcsolódnak ezek az entitások.
-* Az automatikus e-mail kampányok és a customer win-back kampányok esetében a cél az, hogy a vendégeket visszahozzuk és megtartsuk őket.
-* Az értékesítés belső játéka esetében a cél az, hogy az eladó énképe összhangban legyen a teljesítménnyel, és a kulcsfontosságú eredményterületek (KRA) meghatározása segíti az eladót abban, hogy sikeres legyen.
+Az alábbi dokumentum célja a négy üzleti/marketing jegyzetből kinyert tudás szintetizálása. A jegyzetek az app tervezési framework, az automatikus e-mail kampányok, a vevői visszahódító kampányok és az értékesítés belső játéka témakörével foglalkoznak.
 
-A gondolkodási keretrendszert használja az anyag:
+**1. KONKRÉT KERETRENDSZEREK ÉS KÉPLETEK**
 
-* Az app tervezési framework-ben a 7 lépés (probléma definíció, scope lock, domain modell, use case → flow design, architektúra döntések, UI struktúra, iterációs stratégia) segít a projekt szervezésében és a döntések meghozatalában.
-* Az automatikus e-mail kampányok és a customer win-back kampányok esetében a cél az, hogy a vendégeket visszahozzuk és megtartsuk őket, és ehhez szükség van a megfelelő kommunikációra és a személyre szabott ajánlatokra.
-* Az értékesítés belső játéka esetében a cél az, hogy az eladó énképe összhangban legyen a teljesítménnyel, és a kulcsfontosságú eredményterületek (KRA) meghatározása segíti az eladót abban, hogy sikeres legyen.
+* **App Tervezési Framework**: A framework 7 lépésből áll:
+ 1. Probléma definíció: Az app céljának és felhasználóinak meghatározása.
+ 2. Scope Lock: A nem célba vett funkciók meghatározása.
+ 3. Domain Modell: Az adatok strukturálása és a kapcsolatok meghatározása.
+ 4. Use Case → Flow Design: A főbb felhasználási esetek meghatározása és a folyamatok tervezése.
+ 5. Architektúra Döntések: A technológiai döntések meghozatala (pl. state management, dependency injection).
+ 6. UI Struktúra: A képernyők listájának és a navigációs struktúrájának meghatározása.
+ 7. Iterációs Stratégia: A fejlesztési ciklus meghatározása (pl. domain, feature vertical slice, refactor).
+* **Automatikus e-mail kampányok**: A kampányok célja a vevők megtartása és a visszavonásuk. A kampányokban szereplő elemek:
+ + Landing page: A vevők ösztönzése az e-mail listára való feliratkozásra.
+ + Születésnapi e-mailek: A vevők születésnapján való megemlékezés.
+ + Képek: A termékek és szolgáltatások bemutatása.
+ + E-mail sablonok: A kampányok hatékonyságának növelése.
+* **Vevői visszahódító kampányok**: A kampányok célja a vevők visszahódítása, akik 3 hónapja nem vásároltak. A kampányokban szereplő elemek:
+ + Különleges ajánlatok: A vevők ösztönzése a vásárlásra.
+ + Képek: A termékek és szolgáltatások bemutatása.
+ + Nagy rendelési gombok: A vevők ösztönzése a vásárlásra.
 
-Az ismétlődő elvek, amelyek visszaköszönnek:
+**2. DÖNTÉSI LOGIKÁK (If-Then)**
 
-* A probléma definíciója és a scope lock meghatározása az első lépések, amelyek segítik a projekt szét nem esését.
-* A domain modell és a use case → flow design szorosan kapcsolódnak.
-* A cél az, hogy a vendégeket visszahozzuk és megtartsuk őket.
-* Az eladó énképe összhangban legyen a teljesítménnyel.
+* **App Tervezési Framework**: Ha a probléma definíció nem egyértelmű, akkor a projekt szét fog esni. Ha a scope lock nem határozott meg, akkor az időpocsékolás lehet.
+* **Automatikus e-mail kampányok**: Ha a vevők nem kapnak rendszeres e-maileket, akkor a vevői lojalitás csökkenhet.
+* **Vevői visszahódító kampányok**: Ha a vevők 3 hónapja nem vásároltak, akkor a vevői visszahódító kampányokat kell indítani.
 
-## OK-OKOZATI KAPCSOLATOK
+**3. RENDSZERSZINTŰ MECHANIZMUSOK**
 
-Mi vezet mihez?
+* **App Tervezési Framework**: A framework célja a fejlesztési folyamat hatékonyságának növelése és a hibák csökkentése.
+* **Automatikus e-mail kampányok**: A kampányok célja a vevők megtartása és a visszavonásuk.
+* **Vevői visszahódító kampányok**: A kampányok célja a vevők visszahódítása, akik 3 hónapja nem vásároltak.
 
-* Ha a probléma definíciója és a scope lock meghatározása nem történik meg, akkor a projekt szét fog esni.
-* Ha a domain modell és a use case → flow design szorosan kapcsolódnak, akkor a projekt szervezése és a döntések meghozatala könnyebb lesz.
-* Ha a vendégek visszahozása és megtartása nem történik meg, akkor az értékesítés csökken.
-* Ha az eladó énképe összhangban van a teljesítménnyel, akkor az eladó sikeres lesz.
+**4. ANTI-PATTERNEK**
 
-Milyen mechanizmusokon keresztül hatnak egymásra a fogalmak?
+* **App Tervezési Framework**: A probléma definíció és a scope lock nem határozott meg.
+* **Automatikus e-mail kampányok**: A vevők nem kapnak rendszeres e-maileket.
+* **Vevői visszahódító kampányok**: A vevők 3 hónapja nem vásároltak, és nem indítottak vevői visszahódító kampányokat.
 
-* A probléma definíciója és a scope lock meghatározása segít a projekt szervezésében és a döntések meghozatalában.
-* A domain modell és a use case → flow design szorosan kapcsolódnak, és segítik a projekt szervezésében és a döntések meghozatalában.
-* A vendégek visszahozása és megtartása segít az értékesítés növelésében.
-* Az eladó énképe összhangban van a teljesítménnyel, és segít az eladóban, hogy sikeres legyen.
+**Összegzés**
 
-Milyen lépcsők, feltételek, trigger-pontok vannak?
-
-* A probléma definíciója és a scope lock meghatározása az első lépések, amelyek segítik a projekt szét nem esését.
-* A domain modell és a use case → flow design szorosan kapcsolódnak, és segítik a projekt szervezésében és a döntések meghozatalában.
-* A vendégek visszahozása és megtartása segít az értékesítés növelésében, ha a megfelelő kommunikáció és a személyre szabott ajánlatok vannak.
-* Az eladó énképe összhangban van a teljesítménnyel, ha az eladó önkorlátozását megkérdőjelezi, önbecsülését növeli, és sikeres gondolatokat használ.
-
-## RENDSZERSZINTŰ ÖSSZEFÜGGÉSEK
-
-Hogyan kapcsolódnak egymáshoz az ötletek?
-
-* A probléma definíciója és a scope lock meghatározása az első lépések, amelyek segítik a projekt szét nem esését, és szorosan kapcsolódnak a domain modellhez és a use case → flow designhoz.
-* A domain modell és a use case → flow design szorosan kapcsolódnak, és segítik a projekt szervezésében és a döntések meghozatalában.
-* A vendégek visszahozása és megtartása segít az értékesítés növelésében, ha a megfelelő kommunikáció és a személyre szabott ajánlatok vannak, és szorosan kapcsolódnak az eladó énképéhez és a teljesítményhez.
-* Az eladó énképe összhangban van a teljesítménnyel, ha az eladó önkorlátozását megkérdőjelezi, önbecsülését növeli, és sikeres gondolatokat használ, és szorosan kapcsolódnak a vendégek visszahozásához és megtartásához.
-
-Milyen hierarchiák, függőségek, kölcsönhatások vannak?
-
-* A probléma definíciója és a scope lock meghatározása az első lépések, amelyek segítik a projekt szét nem esését, és függnek a domain modelltől és a use case → flow design-tól.
-* A domain modell és a use case → flow design szorosan kapcsolódnak, és függnek a probléma definíciójától és a scope lock meghatározásától.
-* A vendégek visszahozása és megtartása függnek az eladó énképétől és a teljesítménytől, és szorosan kapcsolódnak a megfelelő kommunikációhoz és a személyre szabott ajánlatokhoz.
-* Az eladó énképe összhangban van a teljesítménnyel, ha az eladó önkorlátozását megkérdőjelezi, önbecsülését növeli, és sikeres gondolatokat használ, és függ a vendégek visszahozásától és megtartásától.
-
-Milyen erősítő (flywheel) és gyengítő hatások vannak?
-
-* A probléma definíciója és a scope lock meghatározása az első lépések, amelyek segítik a projekt szét nem esését, és erősítik a domain modellt és a use case → flow design-t.
-* A domain modell és a use case → flow design szorosan kapcsolódnak, és erősítik a projekt szervezését és a döntések meghozatalát.
-* A vendégek visszahozása és megtartása segít az értékesítés növelésében, ha a megfelelő kommunikáció és a személyre szabott ajánlatok vannak, és erősítik az eladó énképét és a teljesítményt.
-* Az eladó énképe összhangban van a teljesítménnyel, ha az eladó önkorlátozását megkérdőjelezi, önbecsülését növeli, és sikeres gondolatokat használ, és erősíti a vendégek visszahozását és megtartását.
-
-## DÖNTÉSI SZABÁLYOK ÉS TRIGGER-FELTÉTELEK
-
-Mikor alkalmaz valamit az anyag?
-
-* A probléma definíciója és a scope lock meghatározása az első lépések, amelyek segítik a projekt szét nem esését, és alkalmazandók, ha a projekt kezdődik.
-* A domain modell és a use case → flow design szorosan kapcsolódnak, és alkalmazandók, ha a projekt szervezése és a döntések meghozatala szükséges.
-* A vendégek visszahozása és megtartása segít az értékesítés növelésében, ha a megfelelő kommunikáció és a személyre szabott ajánlatok vannak, és alkalmazandók, ha a vendégek visszahozása és megtartása szükséges.
-* Az eladó énképe összhangban van a teljesítménnyel, ha az eladó önkorlátozását megkérdőjelezi, önbecsülését növeli, és sikeres gondolatokat használ, és alkalmazandók, ha az eladó énképe és a teljesítmény szükséges.
-
-Milyen körülmények között működik egy stratégia és mikor nem?
-
-* A probléma definíciója és a scope lock meghatározása az első lépések, amelyek segítik a projekt szét nem esését, és működik, ha a projekt kezdődik, de nem működik, ha a projekt már elindult.
-* A domain modell és a use case → flow design szorosan kapcsolódnak, és működik, ha a projekt szervezése és a döntések meghozatala szükséges, de nem működik, ha a projekt már szervezett és a döntések meghozatala már történt.
-* A vendégek visszahozása és megtartása segít az értékesítés növelésében, ha a megfelelő kommunikáció és a személyre szabott ajánlatok vannak, és működik, ha a vendégek visszahozása és megtartása szükséges, de nem működik, ha a vendégek már visszahozva és megtartva lettek.
-* Az eladó énképe összhangban van a teljesítménnyel, ha az eladó önkorlátozását megkérdőjelezi, önbec
+A dokumentum célja a négy üzleti/marketing jegyzetből kinyert tudás szintetizálása. A jegyzetek az app tervezési framework, az automatikus e-mail kampányok, a vevői visszahódító kampányok és az értékesítés belső játéka témakörével foglalkoznak. A dokumentum bemutatja a konkrétabb keretrendszereket és képleteket, a döntési logikákat, a rendszerszintű mechanizmusokat és az anti-patterneket. A dokumentum célja a fejlesztési folyamat hatékonyságának növelése és a hibák csökkentése.

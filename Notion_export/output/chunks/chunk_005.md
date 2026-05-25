@@ -1,83 +1,97 @@
-## MENTÁLIS MODELLEK ÉS STRATÉGIAI MINTÁK
+**Knowledge Extraction Dossier**
 
-A vizsgált üzleti és marketing tartalmak mögött meghúzódó implicit döntési logikák és gondolkodási keretrendszerek a következők:
+**Tartalomjegyzék**
 
-* Az Ad Spend Wall jegyzetben a döntési logika az, hogy a hirdetési kampányok hatékonyságának növelése érdekében fontos a kreatív tartalom, a ingyenes ajánlat és a hátsó szintű értékesítési potenciál optimalizálása.
-* Az AI 3D Documentary Video Creator jegyzetben a gondolkodási keretrendszer a következő: a professzionális 3D animált dokumentumfilmek létrehozása érdekében fontos a script, a jelenetek és a hangalámondás optimalizálása, valamint a vágás és a szinkronizálás.
-* Az AI Aranyláz jegyzetben a döntési logika az, hogy a vállalkozásépítésben fontos a meglévő rendszerekre építkezni, a nagy csapatok helyett az AI-t használni, és a sebességet és a gyorsaságot előnyben részesíteni.
-* Az AI Landing page prompts jegyzetben a gondolkodási keretrendszer a következő: a konverzióközpontú landing page létrehozása érdekében fontos a mélyreható kutatás, a stratégiai tervezés, a copywriting és a design optimalizálása.
+1. [Bevezetés](#bevezetés)
+2. [Ad Spend Wall](#ad-spend-wall)
+3. [AI 3D Documentary Video Creator](#ai-3d-documentary-video-creator)
+4. [AI Aranyláz](#ai-aranyláz)
+5. [AI Landing page prompts](#ai-landing-page-prompts)
+6. [Keretrendszerek és képletek](#keretrendszerek-és-képletek)
+7. [Döntési logikák](#döntési-logikák)
+8. [Rendszerszintű mechanizmusok](#rendszerszintű-mechanizmusok)
+9. [Anti-patternek](#anti-patternek)
 
-A vizsgált tartalmakban ismétlődő elvek a következők:
+## Bevezetés
 
-* A kreatív tartalom és a ingyenes ajánlat fontossága a hirdetési kampányok hatékonyságának növelésében.
-* A script, a jelenetek és a hangalámondás optimalizálása a professzionális 3D animált dokumentumfilmek létrehozásában.
-* A meglévő rendszerekre építkezés, az AI használata és a sebesség előnyben részesítése a vállalkozásépítésben.
-* A mélyreható kutatás, a stratégiai tervezés, a copywriting és a design optimalizálása a konverzióközpontú landing page létrehozásában.
+A dokumentum célja a kapott üzleti jegyzetekből kinyerni a konkrét, alkalmazható tudást. A jegyzetek különböző területeket érintenek, mint például a marketing, az AI és a vállalkozásépítés.
 
-## OK-OKOZATI KAPCSOLATOK
+## Ad Spend Wall
 
-A vizsgált tartalmakban az ok-okozati kapcsolatok a következők:
+Az Ad Spend Wall egy olyan probléma, amikor a hirdetési kampányok elérnek egy plafont, és nem lehet őket tovább skálázni. Ennek az oka lehet:
 
-* Ha a hirdetési kampányok hatékonyságát növelni akarjuk, akkor fontos a kreatív tartalom, a ingyenes ajánlat és a hátsó szintű értékesítési potenciál optimalizálása.
-* Ha a professzionális 3D animált dokumentumfilmek létrehozását akarjuk, akkor fontos a script, a jelenetek és a hangalámondás optimalizálása, valamint a vágás és a szinkronizálás.
-* Ha a vállalkozásépítésben sikeresek akarunk lenni, akkor fontos a meglévő rendszerekre építkezni, a nagy csapatok helyett az AI-t használni, és a sebességet és a gyorsaságot előnyben részesíteni.
-* Ha a konverzióközpontú landing page létrehozását akarjuk, akkor fontos a mélyreható kutatás, a stratégiai tervezés, a copywriting és a design optimalizálása.
+* Mediocre creative: a hirdetések nem elég vonzóak, nem állnak meg a felhasználók figyelmét.
+* Weak Free Offer: a hirdetések nem kínálnak elég értékes ajánlatot, hogy a felhasználók érdeklődjenek.
+* Insufficient Backend LTV: a hirdetések nem generálnak elég értékesítést, hogy a kampányokat skálázni lehessen.
 
-A vizsgált tartalmakban a mechanizmusok, amelyeknek révén a fogalmak egymásra hatnak, a következők:
+A megoldás az lehet, hogy:
 
-* A kreatív tartalom és a ingyenes ajánlat hatására a hirdetési kampányok hatékonysága nő.
-* A script, a jelenetek és a hangalámondás optimalizálása hatására a professzionális 3D animált dokumentumfilmek létrejönnek.
-* A meglévő rendszerekre építkezés, az AI használata és a sebesség előnyben részesítése hatására a vállalkozásépítésben sikeresek leszünk.
-* A mélyreható kutatás, a stratégiai tervezés, a copywriting és a design optimalizálása hatására a konverzióközpontú landing page létrejön.
+* Több variációt készítsünk a hirdetéseknek, hogy megtaláljuk a legjobbat.
+* Jobb ajánlatot kínáljunk a felhasználóknak.
+* Növeljük a backend LTV-t, hogy a kampányokat skálázni lehessen.
 
-## RENDSZERSZINTŰ ÖSSZEFÜGGÉSEK
+## AI 3D Documentary Video Creator
 
-A vizsgált tartalmakban a rendszerszintű összefüggések a következők:
+Az AI 3D Documentary Video Creator egy olyan eszköz, amely lehetővé teszi professzionális 3D animált dokumentumfilmek készítését AI segítségével. A folyamat a következő lépésekből áll:
 
-* A hirdetési kampányok hatékonysága függ a kreatív tartalom, a ingyenes ajánlat és a hátsó szintű értékesítési potenciál optimalizálásától.
-* A professzionális 3D animált dokumentumfilmek létrehozása függ a script, a jelenetek és a hangalámondás optimalizálásától, valamint a vágás és a szinkronizálástól.
-* A vállalkozásépítésben való siker függ a meglévő rendszerekre építkezéstől, az AI használatától és a sebesség előnyben részesítésétől.
-* A konverzióközpontú landing page létrehozása függ a mélyreható kutatástól, a stratégiai tervezéstől, a copywritingtól és a design optimalizálásától.
+1. Script készítése: a dokumentumfilm sztorijának megírása.
+2. Scene-by-scene promptok készítése: a scriptből készített promptok, amelyek meghatározzák a jelenetek stílusát és tartalmát.
+3. 3D video generálása: az AI segítségével készített 3D animált jelenetek.
+4. Voiceover készítése: a dokumentumfilm narrációjának készítése.
+5. Edit és sync: a jelenetek és a narráció összeállítása.
 
-A vizsgált tartalmakban a hierarchiák, függőségek és kölcsönhatások a következők:
+A kulcsfontosságú elvek:
 
-* A hirdetési kampányok hatékonysága hierarchikusan függ a kreatív tartalom, a ingyenes ajánlat és a hátsó szintű értékesítési potenciál optimalizálásától.
-* A professzionális 3D animált dokumentumfilmek létrehozása függ a script, a jelenetek és a hangalámondás optimalizálásától, valamint a vágás és a szinkronizálástól, amelyek kölcsönösen függenek egymástól.
-* A vállalkozásépítésben való siker függ a meglévő rendszerekre építkezéstől, az AI használatától és a sebesség előnyben részesítésétől, amelyek hierarchikusan és kölcsönösen függenek egymástól.
-* A konverzióközpontú landing page létrehozása függ a mélyreható kutatástól, a stratégiai tervezéstől, a copywritingtól és a design optimalizálásától, amelyek kölcsönösen függenek egymástól.
+* Free és mobile-first: az egész folyamatot lehet végezni ingyenesen, mobil eszközökön.
+* Prompt specificity is key: a promptok minősége meghatározza a végeredményt.
+* Humanize the AI voice: az AI hangot emberibbé kell tenni, hogy hitelesebb legyen.
 
-## DÖNTÉSI SZABÁLYOK ÉS TRIGGER-FELTÉTELEK
+## AI Aranyláz
 
-A vizsgált tartalmakban a döntési szabályok és trigger-feltételek a következők:
+Az AI Aranyláz egy olyan jelenség, amikor az AI segítségével lehetővé válik a vállalkozások gyors növekedése. A siker kulcsa:
 
-* Ha a hirdetési kampányok hatékonyságát növelni akarjuk, akkor a kreatív tartalom, a ingyenes ajánlat és a hátsó szintű értékesítési potenciál optimalizálására kell koncentrálnunk.
-* Ha a professzionális 3D animált dokumentumfilmek létrehozását akarjuk, akkor a script, a jelenetek és a hangalámondás optimalizálására, valamint a vágás és a szinkronizálásra kell koncentrálnunk.
-* Ha a vállalkozásépítésben sikeresek akarunk lenni, akkor a meglévő rendszerekre építkezésre, az AI használatára és a sebesség előnyben részesítésére kell koncentrálnunk.
-* Ha a konverzióközpontú landing page létrehozását akarjuk, akkor a mélyreható kutatásra, a stratégiai tervezésre, a copywritingra és a design optimalizálására kell koncentrálnunk.
+* Ne építsünk infrastruktúrát, hanem használjuk a meglévőt.
+* Ne építsünk nagy csapatot, hanem használjunk AI-t.
+* Ne növekedjünk lassan, hanem iteráljunk gyorsan.
 
-A vizsgált tartalmakban a trigger-feltételek a következők:
+A legfontosabb felismerések:
 
-* A hirdetési kampányok hatékonyságának növelésekor a trigger-feltétel az, hogy a kreatív tartalom, a ingyenes ajánlat és a hátsó szintű értékesítési potenciál optimalizálása szükséges.
-* A professzionális 3D animált dokumentumfilmek létrehozásakor a trigger-feltétel az, hogy a script, a jelenetek és a hangalámondás optimalizálása, valamint a vágás és a szinkronizálás szükséges.
-* A vállalkozásépítésben való sikerkor a trigger-feltétel az, hogy a meglévő rendszerekre építkezés, az AI használata és a sebesség előnyben részesítése szükséges.
-* A konverzióközpontú landing page létrehozásakor a trigger-feltétel az, hogy a mélyreható kutatás, a stratégiai tervezés, a copywriting és a design optimalizálása szükséges.
+* Infrastructure Play: a meglévő rendszerekre építés.
+* AI = Virtuális csapat: az AI segítségével lehetőség van a csapat méretének csökkentésére.
+* Sebesség > Méret: a gyorsaság fontosabb, mint a méret.
 
-## ANTI-PATTERNEK ÉS HIBÁK
+## AI Landing page prompts
 
-A vizsgált tartalmakban az anti-patternek és hibák a következők:
+Az AI Landing page prompts egy olyan eszköz, amely lehetővé teszi a landing page-ek optimalizálását AI segítségével. A folyamat a következő lépésekből áll:
 
-* A hirdetési kampányok hatékonyságának növelésekor az anti-patternek az, hogy a kreatív tartalom, a ingyenes ajánlat és a hátsó szintű értékesítési potenciál optimalizálása elmarad.
-* A professzionális 3D animált dokumentumfilmek létrehozásakor az anti-patternek az, hogy a script, a jelenetek és a hangalámondás optimalizálása, valamint a vágás és a szinkronizálás elmarad.
-* A vállalkozásépítésben való sikerkor az anti-patternek az, hogy a meglévő rendszerekre építkezés, az AI használata és a sebesség előnyben részesítése elmarad.
-* A konverzióközpontú landing page létrehozásakor az anti-patternek az, hogy a mélyreható kutatás, a stratégiai tervezés, a copywriting és a design optimalizálása elmarad.
+1. Deep research és strategy: a landing page céljának és célközönségének meghatározása.
+2. Copywriting frameworks és formulas: a landing page tartalmának készítése.
+3. Visual hierarchy és design: a landing page dizájnjának készítése.
+4. Mobile-first és responsive design: a landing page mobil eszközökön való megjelenítése.
 
-A vizsgált tartalmakban a tipikus hibák a következők:
+A kulcsfontosságú elvek:
 
-* A hirdetési kampányok hatékonyságának növelésekor a tipikus hiba az, hogy a kreatív tartalom, a ingyenes ajánlat és a hátsó szintű értékesítési potenciál optimalizálása elmarad.
-* A professzionális 3D animált dokumentumfilmek létrehozásakor a tipikus hiba az, hogy a script, a jelenetek és a hangalámondás optimalizálása, valamint a vágás és a szinkronizálás elmarad.
-* A vállalkozásépítésben való sikerkor a tipikus hiba az, hogy a meglévő rendszerekre építkezés, az AI használata és a sebesség előnyben részesítése elmarad.
-* A konverzióközpontú landing page létrehozásakor a tipikus hiba az, hogy a mélyreható kutatás, a stratégiai tervezés, a copywriting és a design optimalizálása elmarad.
+* Fókusz a konverzióra: a landing page célja a konverzió.
+* Használjunk specifikus példákat és sablonokat: a landing page tartalmának készítésekor használjunk specifikus példákat és sablonokat.
 
-## KONKRÉT IMPLEMENTÁCIÓS LOGIKA
+## Keretrendszerek és képletek
 
-A
+* Dream Outcome x Likelihood / Time Delay x Effort: a cél elérésének valószínűségét és a szükséges erőfeszítést figyelembe vevő képlet.
+* CAC (Customer Acquisition Cost) / LTV (Lifetime Value): a ügyfél megszerzésének költségét és az ügyfél életidejének értékét figyelembe vevő képlet.
+
+## Döntési logikák
+
+* Ha a cél elérésének valószínűsége magas, akkor érdemes befektetni.
+* Ha a CAC alacsony, akkor érdemes több ügyfelet megszerezni.
+
+## Rendszerszintű mechanizmusok
+
+* A szűk keresztmetszetek azonosítása: a rendszerben lévő korlátok azonosítása.
+* A tőkeáttétel (leverage) pontjai: a rendszerben lévő pontok, ahol a befektetés megtérül.
+
+## Anti-patternek
+
+* Ne építsünk túl bonyolult rendszereket: a rendszernek egyszerűnek és átláthatónak kell lennie.
+* Ne használjunk túl sok eszközt: a rendszernek csak a szükséges eszközöket kell tartalmaznia.
+
+A dokumentum célja az volt, hogy a kapott üzleti jegyzetekből kinyerje a konkrét, alkalmazható tudást. A jegyzetek különböző területeket érintenek, mint például a marketing, az AI és a vállalkozásépítés. A dokumentum bemutatja a keretrendszereket és képleteket, a döntési logikákat, a rendszerszintű mechanizmusokat és az anti-patterneket.

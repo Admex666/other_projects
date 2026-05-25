@@ -1,64 +1,35 @@
-## MENTÁLIS MODELLEK ÉS STRATÉGIAI MINTÁK
+**KONKRÉT KERETRENDSZEREK ÉS KÉPLETEK**
 
-A négy note-ban bemutatott üzleti és marketing stratégiák mögött meghúzódó mentális modellek és stratégiai minták a következők:
+A jegyzetekben szereplő keretrendszerek és képletek a következők:
 
-* A "Ham & Garlic" elv, amely azt hangsúlyozza, hogy a marketingben és az értékesítésben az embereknek azokat az eredményeket kell felajánlani, amelyeket ők akarnak, nem pedig azokat, amelyekre szükségük van.
-* Az "Infinite Game" modell, amely a vállalkozást és a marketinget egy végtelen játéknak tekinti, ahol nincsenek végleges győztesek, csak játékosok és kilépők.
-* Az "Integrated Media Team" koncepció, amely a tartalom és a reklámok integrálását hangsúlyozza, mint a modern marketing egyik legfontosabb eleme.
-* A "Lean App Tech Stack" modell, amely a mobilalkalmazások fejlesztésére és optimalizálására koncentrál, anélkül, hogy nagy csapatokat vagy befektetéseket igényelne.
+1. **The Ham & Garlic Principle of Marketing**: Egy olyan keretrendszer, amely segít a marketing és értékesítési stratégiák kialakításában. A "ham" az a kívánt eredmény, amelyet a vevők szeretnének elérni, míg a "garlic" az a valódi, hosszú távú megoldás, amelyre szükségük van. A keretrendszer szerint a "ham"-mal kell kezdeni, és csak azután bevezetni a "garlic"-ot, amikor a vevő already megbízik a termékben vagy szolgáltatásban.
+2. **The Infinite Game of Business**: Egy olyan keretrendszer, amely segít a vállalkozásoknak a hosszú távú növekedés és a siker elérésében. A keretrendszer szerint a vállalkozásoknak nem szabad a rövid távú nyereségre koncentrálniuk, hanem a hosszú távú növekedésre és a folyamatos fejlődésre.
+3. **The Integrated Media Team**: Egy olyan keretrendszer, amely segít a vállalkozásoknak a marketing és értékesítési stratégiák kialakításában. A keretrendszer szerint a marketing és értékesítési csapatoknak együtt kell működniük, és a tartalmat és a hirdetéseket egységesen kell kezelniük.
+4. **The Lean App Tech Stack**: Egy olyan keretrendszer, amely segít a vállalkozásoknak a mobil alkalmazások fejlesztésében és optimalizálásában. A keretrendszer szerint a vállalkozásoknak a megfelelő eszközöket és technológiákat kell használniuk a fejlesztéshez és optimalizáláshoz.
 
-Ezek a modellek és minták arra ösztönöznek bennünket, hogy a marketing és a vállalkozás területén gondolkodjunk újragondoljuk a hagyományos stratégiákat és megközelítéseket.
+**DÖNTÉSI LOGIKÁK (If-Then)**
 
-## OK-OKOZATI KAPCSOLATOK
+A jegyzetekben szereplő döntési logikák a következők:
 
-A note-okban bemutatott ok-okozati kapcsolatok a következők:
+1. **Ha** a vevők nem bíznak a termékben vagy szolgáltatásban, **akkor** a "ham"-mal kell kezdeni, és csak azután bevezetni a "garlic"-ot.
+2. **Ha** a vállalkozás nem koncentrál a hosszú távú növekedésre, **akkor** a rövid távú nyereség lesz a fő cél.
+3. **Ha** a marketing és értékesítési csapatok nem működnek együtt, **akkor** a tartalom és a hirdetések nem lesznek egységesen kezelve.
+4. **Ha** a vállalkozás nem használja a megfelelő eszközöket és technológiákat a mobil alkalmazások fejlesztéséhez és optimalizálásához, **akkor** a fejlesztés és optimalizálás nem lesz hatékony.
 
-* Ha a marketingben és az értékesítésben az embereknek azokat az eredményeket ajánljuk fel, amelyeket ők akarnak, akkor az emberek hajlamosak lesznek bízni bennünk és vásárolni tőlünk.
-* Ha a vállalkozás és a marketing egy végtelen játéknak tekintjük, akkor a sikerhez nem a győzelemhez, hanem a kitartáshoz és a folyamatos fejlődéshez van szükség.
-* Ha a tartalom és a reklámok integrálódnak, akkor a marketing eredményesebb és hatékonyabb lesz.
-* Ha a mobilalkalmazások fejlesztése és optimalizálása a "Lean" elveken alapul, akkor a fejlesztés és a marketing költségei csökkenthetők, és a hatékonyság növelhető.
+**RENDSZERSZINTŰ MECHANIZMUSOK**
 
-Ezek az ok-okozati kapcsolatok arra ösztönöznek bennünket, hogy a marketing és a vállalkozás területén a hatékony és eredményes stratégiákat válasszuk.
+A jegyzetekben szereplő rendszerszintű mechanizmusok a következők:
 
-## RENDSZERSZINTŰ ÖSSZEFÜGGÉSEK
+1. **A "ham" és a "garlic" közötti kapcsolat**: A "ham" és a "garlic" közötti kapcsolat fontos a marketing és értékesítési stratégiák kialakításában.
+2. **A hosszú távú növekedés és a rövid távú nyereség közötti kapcsolat**: A hosszú távú növekedés és a rövid távú nyereség közötti kapcsolat fontos a vállalkozások számára.
+3. **A marketing és értékesítési csapatok együttműködése**: A marketing és értékesítési csapatok együttműködése fontos a tartalom és a hirdetések egységes kezeléséhez.
+4. **A mobil alkalmazások fejlesztéséhez és optimalizálásához használt eszközök és technológiák**: A mobil alkalmazások fejlesztéséhez és optimalizálásához használt eszközök és technológiák fontosak a fejlesztés és optimalizálás hatékonyságához.
 
-A note-okban bemutatott rendszerszintű összefüggések a következők:
+**ANTI-PATTERNEK**
 
-* A marketing és a vállalkozás egy összefüggő rendszer, amelyben a különböző elemek (tartalom, reklám, értékesítés, stb.) kölcsönösen hatnak egymásra.
-* A "Ham & Garlic" elv és az "Infinite Game" modell összefügg, mivel a marketingben és az értékesítésben az embereknek azokat az eredményeket kell felajánlani, amelyeket ők akarnak, és a vállalkozás és a marketing egy végtelen játéknak tekintendő.
-* A "Integrated Media Team" koncepció és a "Lean App Tech Stack" modell összefügg, mivel a tartalom és a reklámok integrálása, valamint a mobilalkalmazások fejlesztése és optimalizálása a "Lean" elveken alapul.
+A jegyzetekben szereplő anti-patternek a következők:
 
-Ezek a rendszerszintű összefüggések arra ösztönöznek bennünket, hogy a marketing és a vállalkozás területén a különböző elemeket és stratégiákat összefüggő rendszerként kezeljük.
-
-## DÖNTÉSI SZABÁLYOK ÉS TRIGGER-FELTÉTELEK
-
-A note-okban bemutatott döntési szabályok és trigger-feltételek a következők:
-
-* Ha a marketingben és az értékesítésben az embereknek azokat az eredményeket ajánljuk fel, amelyeket ők akarnak, akkor a döntési szabály az, hogy a "Ham & Garlic" elvet alkalmazzuk.
-* Ha a vállalkozás és a marketing egy végtelen játéknak tekintjük, akkor a döntési szabály az, hogy a kitartás és a folyamatos fejlődés prioritást élvezzen.
-* Ha a tartalom és a reklámok integrálódnak, akkor a döntési szabály az, hogy a "Integrated Media Team" koncepciót alkalmazzuk.
-* Ha a mobilalkalmazások fejlesztése és optimalizálása a "Lean" elveken alapul, akkor a döntési szabály az, hogy a "Lean App Tech Stack" modellt alkalmazzuk.
-
-Ezek a döntési szabályok és trigger-feltételek arra ösztönöznek bennünket, hogy a marketing és a vállalkozás területén a hatékony és eredményes stratégiákat válasszuk.
-
-## ANTI-PATTERNEK ÉS HIBÁK
-
-A note-okban bemutatott anti-patternek és hibák a következők:
-
-* A marketingben és az értékesítésben az embereknek azokat az eredményeket ajánlani, amelyeket ők nem akarnak, hanem amelyekre szükségük van.
-* A vállalkozás és a marketing egy véges játéknak tekintése, ahol a sikerhez a győzelemhez van szükség.
-* A tartalom és a reklámok szétválasztása, ami a marketing eredménytelenségéhez vezethet.
-* A mobilalkalmazások fejlesztése és optimalizálása a "Lean" elveken alapuló modell nélkül, ami a fejlesztés és a marketing költségeinek növeléséhez vezethet.
-
-Ezek az anti-patternek és hibák arra ösztönöznek bennünket, hogy a marketing és a vállalkozás területén a hatékony és eredményes stratégiákat válasszuk, és elkerüljük a hibákat.
-
-## KONKRÉT IMPLEMENTÁCIÓS LOGIKA
-
-A note-okban bemutatott konkrétn implementációs logika a következők:
-
-* A "Ham & Garlic" elv alkalmazása a marketingben és az értékesítésben, amely magában foglalja az embereknek azokat az eredményeket ajánlását, amelyeket ők akarnak.
-* A "Infinite Game" modell alkalmazása a vállalkozás és a marketing területén, amely magában foglalja a kitartás és a folyamatos fejlődés prioritást élvezését.
-* A "Integrated Media Team" koncepció alkalmazása a tartalom és a reklámok integrálására, amely magában foglalja a tartalom és a reklámok együttműködését.
-* A "Lean App Tech Stack" modell alkalmazása a mobilalkalmazások fejlesztésére és optimalizálására, amely magában foglalja a "Lean" elveken alapuló fejlesztést és marketinget.
-
-Ezek a konkrétn implementációs logikák arra ösztönöznek bennünket, hogy a marketing és a vállalkozás területén a hatékony és eredményes stratégiákat válasszuk, és azokat a gyakorlatba ültessük.
+1. **A "garlic"-ot a "ham" előtt bevezetni**: A "garlic"-ot a "ham" előtt bevezetni nem hatékony a marketing és értékesítési stratégiákban.
+2. **A rövid távú nyereségre koncentrálni**: A rövid távú nyereségre koncentrálni nem hatékony a hosszú távú növekedéshez.
+3. **A marketing és értékesítési csapatokat külön kezelni**: A marketing és értékesítési csapatokat külön kezelni nem hatékony a tartalom és a hirdetések egységes kezeléséhez.
+4. **A mobil alkalmazások fejlesztéséhez és optimalizálásához nem használni a megfelelő eszközöket és technológiákat**: A mobil alkalmazások fejlesztéséhez és optimalizálásához nem használni a megfelelő eszközöket és technológiákat nem hatékony a fejlesztés és optimalizálás hatékonyságához.

@@ -1,75 +1,41 @@
-## MENTÁLIS MODELLEK ÉS STRATÉGIAI MINTÁK
+**Knowledge Extraction Dossier**
 
-* A szövegek mögött meghúzódó implicit döntési logika az, hogy a vállalkozások és a marketingstratégiák sikeréhez szükség van a megfelelő partnerkapcsolatokra, a személyes megközelítésre és a pszichológiai tényezők figyelembevételére.
-* A gondolkodási keretrendszer, amelyet az anyag használ, a következő:
- + Az első note-ban a partnerkapcsolatok kiválasztásának kritériumai kerülnek megvitatásra, mint például a pénz, a tapasztalat és az idő/energia.
- + A második note-ban a személyes megközelítés fontosságát hangsúlyozzák, és azt, hogy hogyan lehet egyedi és személyre szabott üzeneteket küldeni a potenciális ügyfeleknek.
- + A harmadik note-ban a "Pick one, get both" stratégia kerül bemutatásra, amely a pszichológiai tényezők kihasználását célozza, hogy a vevőknek értékes és emlékezetes élményt nyújtsanak.
- + A negyedik note-ban az utazás tervezésének folyamatát mutatják be, amelyben az AI segítségével lehet személyre szabott és hatékony terveket készíteni.
-* Az ismétlődő elvek, amelyek visszaköszönnek, a következők:
- + A személyes megközelítés és a kapcsolatépítés fontossága.
- + A pszichológiai tényezők figyelembevétele a stratégiai döntések során.
- + Az innovatív és kreatív megoldások keresése a vállalkozások és a marketingstratégiák sikeréhez.
+**Bevezetés**
 
-## OK-OKOZATI KAPCSOLATOK
+A dokumentum célja, hogy kinyerje a konkrét, alkalmazható tudást az üzleti és marketing jegyzetekből. A jegyzetek Alex Hormozi és más forrásokból származnak, és az entrepreneurship, sales, pszichológia és mesterséges intelligencia témaköreit érintik.
 
-* A partnerkapcsolatok kiválasztásának kritériumai (pénz, tapasztalat, idő/energia) hatással vannak a vállalkozások sikerére.
-* A személyes megközelítés és a kapcsolatépítés hatással van a potenciális ügyfelek elkötelezettségére és a vevői élmény minőségére.
-* A "Pick one, get both" stratégia hatással van a vevők értékelésére és a vállalkozások hírnevére.
-* Az utazás tervezésének folyamata, amelyben az AI segítségével lehet személyre szabott és hatékony terveket készíteni, hatással van a vevők elégedettségére és a vállalkozások versenyképességére.
-* A mechanizmusok, amelyek az ok-okozati kapcsolatokban szerepet játszanak, a következők:
- + A pszichológiai tényezők, mint például a peak-end bias és a mental commitment.
- + A technológiai fejlődés, mint például az AI és a digitális eszközök.
- + A vállalkozások és a marketingstratégiák sikeréhez szükséges tényezők, mint például a pénz, a tapasztalat és az idő/energia.
+**1. Partnering Up**
 
-## RENDSZERSZINTŰ ÖSSZEFÜGGÉSEK
+A partnering up stratégia egy olyan megközelítés, amelyben az együttműködéshez három feltételnek kell teljesülnie:
 
-* A partnerkapcsolatok kiválasztásának kritériumai (pénz, tapasztalat, idő/energia) összefüggenek a vállalkozások és a marketingstratégiák sikerével.
-* A személyes megközelítés és a kapcsolatépítés összefüggenek a potenciális ügyfelek elkötelezettségével és a vevői élmény minőségével.
-* A "Pick one, get both" stratégia összefüggenek a vevők értékelésével és a vállalkozások hírnevével.
-* Az utazás tervezésének folyamata, amelyben az AI segítségével lehet személyre szabott és hatékony terveket készíteni, összefüggenek a vevők elégedettségével és a vállalkozások versenyképességével.
-* A hierarchiák, függőségek és kölcsönhatások, amelyek a rendszerszintű összefüggésekben szerepet játszanak, a következők:
- + A vállalkozások és a marketingstratégiák sikeréhez szükséges tényezők, mint például a pénz, a tapasztalat és az idő/energia.
- + A technológiai fejlődés, mint például az AI és a digitális eszközök.
- + A pszichológiai tényezők, mint például a peak-end bias és a mental commitment.
+1. **Pénz**: A partnernek rendelkeznie kell olyan pénzeszközökkel, amelyekkel az együttműködéshez szükséges beruházásokat meg lehet valósítani.
+2. **Tapasztalat**: A partnernek rendelkeznie kell olyan tapasztalattal, amely az együttműködéshez szükséges.
+3. **Idő és energia**: A partnernek rendelkeznie kell elegendő idővel és energiával, hogy az együttműködéshez szükséges feladatokat el tudja végezni.
 
-## DÖNTÉSI SZABÁLYOK ÉS TRIGGER-FELTÉTELEK
+A partnering up stratégia alapelve, hogy csak olyanba fektess be, ami kell, ne a félelem miatt legyen partnered. Ez azt jelenti, hogy az együttműködést csak akkor kell megkötni, ha az valóban szükséges és hasznos az üzleti célkitűzések eléréséhez.
 
-* A partnerkapcsolatok kiválasztásának kritériumai (pénz, tapasztalat, idő/energia) alapján dönteni kell a vállalkozások és a marketingstratégiák sikeréről.
-* A személyes megközelítés és a kapcsolatépítés alapján dönteni kell a potenciális ügyfelek elkötelezettségéről és a vevői élmény minőségéről.
-* A "Pick one, get both" stratégia alapján dönteni kell a vevők értékeléséről és a vállalkozások hírnevéről.
-* Az utazás tervezésének folyamata, amelyben az AI segítségével lehet személyre szabott és hatékony terveket készíteni, alapján dönteni kell a vevők elégedettségéről és a vállalkozások versenyképességéről.
-* A trigger-feltételek, amelyek a döntési szabályokban szerepet játszanak, a következők:
- + A vevők értékelése és a vállalkozások hírneve.
- + A potenciális ügyfelek elkötelezettsége és a vevői élmény minősége.
- + A technológiai fejlődés és a digitális eszközök.
+**2. Personal approach**
 
-## ANTI-PATTERNEK ÉS HIBÁK
+A personal approach egy olyan megközelítés, amelyben a személyes kapcsolatfelvétel és a személyre szabott kommunikáció áll a középpontban. Ennek a megközelítésnek a lényege, hogy a potenciális ügyfelet személyre szabottan közelítsük meg, és a kommunikációnkban figyelembe vegyük az ő személyes érdeklődését és preferenciáit.
 
-* A partnerkapcsolatok kiválasztásának kritériumai (pénz, tapasztalat, idő/energia) figyelmen kívül hagyása a vállalkozások és a marketingstratégiák kudarcához vezethet.
-* A személyes megközelítés és a kapcsolatépítés hiánya a potenciális ügyfelek elkötelezettségének és a vevői élmény minőségének romlásához vezethet.
-* A "Pick one, get both" stratégia helytelen alkalmazása a vevők értékelésének és a vállalkozások hírnevének romlásához vezethet.
-* Az utazás tervezésének folyamata, amelyben az AI segítségével lehet személyre szabott és hatékony terveket készíteni, figyelmen kívül hagyása a vevők elégedettségének és a vállalkozások versenyképességének romlásához vezethet.
-* A tipikus hibák, amelyek az anti-patternekben szerepet játszanak, a következők:
- + A technológiai fejlődés és a digitális eszközök figyelmen kívül hagyása.
- + A pszichológiai tényezők figyelmen kívül hagyása.
- + A vállalkozások és a marketingstratégiák sikeréhez szükséges tényezők figyelmen kívül hagyása.
+Például, ha egy potenciális ügyfélnek van egy új babája, akkor a következő szöveget használhatjuk: "Szia! Láttam, hogy van egy új babád. Szeretnél beszélni arról, hogyan tudunk segíteni neked az új szülői szerepedben?"
 
-## KONKRÉT IMPLEMENTÁCIÓS LOGIKA
+**3. Pick one, get both**
 
-* A partnerkapcsolatok kiválasztásának kritériumai (pénz, tapasztalat, idő/energia) alapján a vállalkozások és a marketingstratégiák sikeréhez szükséges lépések a következők:
- + A pénzügyi források megszerzése.
- + A tapasztalat és a szakértelem megszerzése.
- + Az idő/energia hatékony felhasználása.
-* A személyes megközelítés és a kapcsolatépítés alapján a potenciális ügyfelek elkötelezettségének és a vevői élmény minőségének javításához szükséges lépések a következők:
- + A személyes üzenetek küldése.
- + A kapcsolatépítés és a hálózatépítés.
- + A vevői élmény minőségének javítása.
-* A "Pick one, get both" stratégia alapján a vevők értékelésének és a vállalkozások hírnevének javításához szükséges lépések a következők:
- + A vevők értékelésének és a vállalkozások hírnevének figyelembevétele.
- + A "Pick one, get both" stratégia alkalmazása.
- + A vevők elégedettségének javítása.
-* Az utazás tervezésének folyamata, amelyben az AI segítségével lehet személyre szabott és hatékony terveket készíteni, alapján a vevők elégedettségének és a vállalkozások versenyképességének javításához szükséges lépések a következők:
- + Az utazás tervezésének folyamatának figyelembevétele.
- + Az AI segítségével történő tervezés.
- + A vevők elégedettségének javítása.
+A "Pick one, get both" stratégia egy olyan megközelítés, amelyben a vevőnek lehetőséget adunk arra, hogy kiválassza az egyik ajánlatot, majd meglepetésként mindkettőt megkapja. Ennek a stratégiának a lényege, hogy a vevőt megkérdezzük, melyik ajánlatot szeretné, majd meglepetésként mindkettőt megadjuk neki.
+
+Például: "Szeretnéd a receptkönyvet vagy a fitneszruhát? Válaszd ki az egyiket, és meglepetésként mindkettőt megkapod!"
+
+Ez a stratégia a Peak-End Bias pszichológiai jelenségen alapul, amely szerint az emberek az érzelmi csúcsokat és a végkifejletet emlékeznek meg legjobban. A "Pick one, get both" stratégia célja, hogy a vevőt megkösse az ajánlattal, és a vevőtörzskövetővé tegye.
+
+**4. Planning travels with AI**
+
+A "Planning travels with AI" stratégia egy olyan megközelítés, amelyben a mesterséges intelligenciát használjuk fel az utazások tervezésére. Ennek a stratégiának a lényege, hogy a Google My Maps segítségével egy személyre szabott térképet hozzunk létre, amelyen az utazásunk során megteendő helyeket és tevékenységeket rögzítjük.
+
+A Claude/ChatGPT segítségével egy CSV fájlt hozhatunk létre, amely tartalmazza az éttermeket, a túrákat, az érdekes tényeket és a linkeket. Ezt a fájlt aztán a Google My Maps-be importálhatjuk, és a térképet testreszabhatjuk.
+
+A "Planning travels with AI" stratégia célja, hogy az utazások tervezését hatékonyabbá és személyre szabottabbá tegye, és hogy a mesterséges intelligenciát felhasználjuk az utazások során megteendő tevékenységek és helyek kiválasztásában.
+
+**Következtetés**
+
+A dokumentum célja, hogy kinyerje a konkrét, alkalmazható tudást az üzleti és marketing jegyzetekből. A jegyzetek alapján a partnering up, a personal approach, a "Pick one, get both" és a "Planning travels with AI" stratégiákat mutattuk be, amelyek célja, hogy az üzleti célkitűzések elérését segítsék. Ezek a stratégiák a pszichológiai jelenségeken és a mesterséges intelligencián alapulnak, és céljuk, hogy a vevőket megkösse az ajánlattal, és a vevőtörzskövetővé tegye.

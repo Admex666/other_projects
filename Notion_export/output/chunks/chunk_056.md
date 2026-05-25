@@ -1,41 +1,85 @@
-## MENTÁLIS MODELLEK ÉS STRATÉGIAI MINTÁK
+**Knowledge Extraction Dossier**
 
-* A három note-ban bemutatott marketing stratégiák mögött meghúzódó döntési logika az, hogy a vállalatoknak gyorsan kell reagálniuk a trendekre és a kulturális pillanatokra, hogy be tudjanak kapcsolódni a konverzációba és növelni a brandjük ismertségét.
-* A 7-Eleven esetében a stratégiai minta az, hogy megtalálják a kulturális pillanatot, azonosítsák a konverzáció helyszínét, és gyorsan végrehajtsák a tervüket, hogy be tudjanak kapcsolódni a konverzációba.
-* A True Classic esetében a stratégiai minta az, hogy hagyják, hogy a kreativitás irányítsa a célzást, és hogy a széles közönség helyett a hiperspecifikus kreatív tartalmakat használják a célzott közönség elérésére.
-* A Lessons From Luxury note-ban bemutatott stratégiai minta az, hogy az exclusivitás növeli az üzletet, és hogy a vállalatoknak nem kell minden fogyasztót kiszolgálniuk, hanem csak a legkisebb, de legértékesebb csoportot.
+**Tartalomjegyzék**
 
-## OK-OKOZATI KAPCSOLATOK
+1. [Bevezetés](#bevezetés)
+2. [7-Eleven's PR Masterclass](#7-eleven-pr-masterclass)
+3. [How True Classic Grew To $250M](#how-true-classic-grew-to-250m)
+4. [Lessons From Luxury](#lessons-from-luxury)
+5. [Keretrendszerek és képletek](#keretrendszerek-és-képletek)
+6. [Döntési logikák](#döntési-logikák)
+7. [Rendszerszintű mechanizmusok](#rendszerszintű-mechanizmusok)
+8. [Anti-patternek](#anti-patternek)
 
-* Ha egy vállalat gyorsan reagál a trendekre és a kulturális pillanatokra, akkor növelheti a brandjének ismertségét és eladásait.
-* Ha egy vállalat hagyja, hogy a kreativitás irányítsa a célzást, akkor képes lesz elérni a célzott közönséget és növelni az eladásait.
-* Ha egy vállalat exclusivitást kínál, akkor növelheti az eladásait és a brandjének értékét.
-* A 7-Eleven esetében, ha a vállalat gyorsan reagál a kulturális pillanatokra, akkor képes lesz bekapcsolódni a konverzációba és növelni a brandjének ismertségét.
-* A True Classic esetében, ha a vállalat hagyja, hogy a kreativitás irányítsa a célzást, akkor képes lesz elérni a célzott közönséget és növelni az eladásait.
+### Bevezetés
 
-## RENDSZERSZINTŰ ÖSSZEFÜGGÉSEK
+A Knowledge Extraction Dossier célja, hogy kinyerje a konkrét, alkalmazható tudást a kapott üzleti jegyzetekből. A dokumentum három jegyzetet tartalmaz: 7-Eleven's PR Masterclass, How True Classic Grew To $250M és Lessons From Luxury. Ezek a jegyzetek a marketing és a PR területén alkalmazható stratégiákat és technikákat mutatnak be.
 
-* A három note-ban bemutatott marketing stratégiák összefüggnek egymással, mivel mindhárom esetben a vállalatoknak gyorsan kell reagálniuk a trendekre és a kulturális pillanatokra, hogy be tudjanak kapcsolódni a konverzációba és növelni a brandjük ismertségét.
-* A 7-Eleven és a True Classic esetében a stratégiák összefüggnek, mivel mindkét vállalat hagyja, hogy a kreativitás irányítsa a célzást, és gyorsan reagál a trendekre és a kulturális pillanatokra.
-* A Lessons From Luxury note-ban bemutatott stratégia összefügg a másik két note-ban bemutatott stratégiákkal, mivel az exclusivitás növeli az eladásokat és a brand értékét, és a vállalatoknak nem kell minden fogyasztót kiszolgálniuk, hanem csak a legkisebb, de legértékesebb csoportot.
+### 7-Eleven PR Masterclass
 
-## DÖNTÉSI SZABÁLYOK ÉS TRIGGER-FELTÉTELEK
+A 7-Eleven's PR Masterclass egy esettanulmány, amely bemutatja, hogyan használta a 7-Eleven a PR-t a márka és termék népszerűsítésére. A folyamat a következő lépésekből áll:
 
-* A vállalatoknak gyorsan kell reagálniuk a trendekre és a kulturális pillanatokra, hogy be tudjanak kapcsolódni a konverzációba és növelni a brandjük ismertségét.
-* A vállalatoknak hagyniuk kell, hogy a kreativitás irányítsa a célzást, és gyorsan reagáljanak a trendekre és a kulturális pillanatokra.
-* A vállalatoknak exclusivitást kell kínálniuk, és nem kell minden fogyasztót kiszolgálniuk, hanem csak a legkisebb, de legértékesebb csoportot.
-* A trigger feltételek azok, amikor a vállalatok gyorsan reagálnak a trendekre és a kulturális pillanatokra, és amikor hagyják, hogy a kreativitás irányítsa a célzást.
+1. **Kulturális/trendi momentum megtalálása**: A 7-Eleven megtalálta a kulturális/trendi momentumot, amely az NFL-szezon kezdete volt.
+2. **A beszélgetés helyének azonosítása**: A 7-Eleven azonosította a beszélgetés helyét, amely a közösségi médiában és a sporteseményekben volt.
+3. **Gyors végrehajtás**: A 7-Eleven gyorsan végrehajtotta a tervét, és beinjekciózta a márkát és terméket a beszélgetésbe.
 
-## ANTI-PATTERNEK ÉS HIBÁK
+A 7-Eleven esettanulmányának kulcselemei:
 
-* A vállalatok nem reagálnak gyorsan a trendekre és a kulturális pillanatokra, és nem kapcsolódnak be a konverzációba.
-* A vállalatok nem hagyják, hogy a kreativitás irányítsa a célzást, és nem reagálnak gyorsan a trendekre és a kulturális pillanatokra.
-* A vállalatok nem kínálnak exclusivitást, és minden fogyasztót kiszolgálnak, ahelyett, hogy csak a legkisebb, de legértékesebb csoportot.
-* A vállalatok nem reagálnak gyorsan a trendekre és a kulturális pillanatokra, és nem kapcsolódnak be a konverzációba, ami csökkenti a brandjük ismertségét és eladásait.
+* **Látva a lehetőséget**: A 7-Eleven látta a lehetőséget, hogy beinjekciózza a márkát és terméket a beszélgetésbe.
+* **Gyors végrehajtás**: A 7-Eleven gyorsan végrehajtotta a tervét, ami lehetővé tette, hogy a márka és termék népszerűsítése hatékony legyen.
 
-## KONKRÉT IMPLEMENTÁCIÓS LOGIKA
+### How True Classic Grew To $250M
 
-* A 7-Eleven esetében a vállalat gyorsan reagált a kulturális pillanatokra, és bekapcsolódott a konverzációba, amivel növelte a brandjének ismertségét és eladásait.
-* A True Classic esetében a vállalat hagyta, hogy a kreativitás irányítsa a célzást, és gyorsan reagált a trendekre és a kulturális pillanatokra, amivel növelte az eladásait.
-* A Lessons From Luxury note-ban bemutatott stratégia szerint a vállalatoknak exclusivitást kell kínálniuk, és nem kell minden fogyasztót kiszolgálniuk, hanem csak a legkisebb, de legértékesebb csoportot.
-* A konkréten implementált logika az, hogy a vállalatoknak gyorsan kell reagálniuk a trendekre és a kulturális pillanatokra, és hagyniuk kell, hogy a kreativitás irányítsa a célzást, hogy növeljék a brandjük ismertségét és eladásait.
+A How True Classic Grew To $250M egy esettanulmány, amely bemutatja, hogyan nőtt a True Classic $250 millióra 4 év alatt. A folyamat a következő lépésekből áll:
+
+1. **Meta-reklámok**: A True Classic $100 000-et költött Meta-reklámokra, amelyek 2-2,5 dollárt generáltak 1 dollár kiadásra.
+2. **Kreatív célcsoportosítás**: A True Classic kreatív célcsoportosítást alkalmazott, amelyben a kreatívokat a célközönség igényeihez és fájdalompontjaihoz igazították.
+3. **Kategórioldalak használata**: A True Classic kategórioldalakat használt a leszállási oldalak helyett, amelyek megkönnyítették a termékek és szolgáltatások bemutatását.
+4. **Terméklapok használata**: A True Classic terméklapokat használt a termékek részletes bemutatására, amelyek megkönnyítették a vásárlásokat.
+
+A True Classic esettanulmányának kulcselemei:
+
+* **Kreatív célcsoportosítás**: A True Classic kreatív célcsoportosítást alkalmazott, amely lehetővé tette, hogy a kreatívokat a célközönség igényeihez és fájdalompontjaihoz igazítsák.
+* **Kategórioldalak használata**: A True Classic kategórioldalakat használt a leszállási oldalak helyett, amelyek megkönnyítették a termékek és szolgáltatások bemutatását.
+
+### Lessons From Luxury
+
+A Lessons From Luxury egy esettanulmány, amely bemutatja, hogyan lehet a luxusiparban sikeressé válni. A folyamat a következő lépésekből áll:
+
+1. **Exkluzivitás**: A luxusiparban az exkluzivitás a legfontosabb tényező, amely lehetővé teszi, hogy a márkák és termékek különlegesek legyenek.
+2. **Kiválasztott ügyfelek**: A luxusiparban a kiválasztott ügyfelek a legfontosabbak, akiknek a termékek és szolgáltatások igazodnak.
+
+A Lessons From Luxury esettanulmányának kulcselemei:
+
+* **Exkluzivitás**: A luxusiparban az exkluzivitás a legfontosabb tényező, amely lehetővé teszi, hogy a márkák és termékek különlegesek legyenek.
+* **Kiválasztott ügyfelek**: A luxusiparban a kiválasztott ügyfelek a legfontosabbak, akiknek a termékek és szolgáltatások igazodnak.
+
+### Keretrendszerek és képletek
+
+A jegyzetekben szereplő keretrendszerek és képletek a következők:
+
+* **Dream Outcome x Likelihood / Time Delay x Effort**: Ez a képlet a 7-Eleven esettanulmányában szerepel, amely bemutatja, hogyan lehet a PR-t használni a márka és termék népszerűsítésére.
+* **CAC (Customer Acquisition Cost)**: Ez a képlet a True Classic esettanulmányában szerepel, amely bemutatja, hogyan lehet a CAC-t használni a marketingkampányok értékelésére.
+
+### Döntési logikák
+
+A jegyzetekben szereplő döntési logikák a következők:
+
+* **Ha a kulturális/trendi momentum megtalálható, akkor a PR-t használjuk a márka és termék népszerűsítésére**: Ez a döntési logika a 7-Eleven esettanulmányában szerepel.
+* **Ha a kreatív célcsoportosítás lehetővé teszi, hogy a kreatívokat a célközönség igényeihez és fájdalompontjaihoz igazítsuk, akkor a kategórioldalakat használjuk a leszállási oldalak helyett**: Ez a döntési logika a True Classic esettanulmányában szerepel.
+
+### Rendszerszintű mechanizmusok
+
+A jegyzetekben szereplő rendszerszintű mechanizmusok a következők:
+
+* **A PR-t használjuk a márka és termék népszerűsítésére**: Ez a mechanizmus a 7-Eleven esettanulmányában szerepel.
+* **A kreatív célcsoportosítást használjuk a kreatívokat a célközönség igényeihez és fájdalompontjaihoz igazítani**: Ez a mechanizmus a True Classic esettanulmányában szerepel.
+
+### Anti-patternek
+
+A jegyzetekben szereplő anti-patternek a következők:
+
+* **Nem használjuk a PR-t a márka és termék népszerűsítésére**: Ez az anti-patter a 7-Eleven esettanulmányában szerepel.
+* **Nem használjuk a kreatív célcsoportosítást a kreatívokat a célközönség igényeihez és fájdalompontjaihoz igazítani**: Ez az anti-patter a True Classic esettanulmányában szerepel.
+
+A Knowledge Extraction Dossier összefoglalja a jegyzetekben szereplő kulcselemeket, keretrendszereket, képleteket, döntési logikákat, rendszerszintű mechanizmusokat és anti-patterneket. Ezek az információk segítenek a marketing és PR szakembereknek, hogy hatékonyabb stratégiákat és technikákat alkalmazzanak a márka és termék népszerűsítésére.

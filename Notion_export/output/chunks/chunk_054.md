@@ -1,61 +1,59 @@
-## MENTÁLIS MODELLEK ÉS STRATÉGIAI MINTÁK
+**Knowledge Extraction Dossier**
 
-A vizsgált notes-ok alapján az alábbi mentális modellek és stratégiai minták azonosíthatók:
+**Bevezetés**
 
-* **A 4 pillér mintája**: A "Work Less And Earn More" note-ban bemutatott 4 pillér (Deep Work, Founder Flywheel, AED: Automate, Eliminate, Delegate, Chief of Staff) egy olyan mentális modell, amely az üzleti sikerhez szükséges kulcselemeket határozza meg.
-* **A piacorientált gondolkodás**: A "Your market" note-ban bemutatott piacorientált gondolkodás egy olyan mentális modell, amely a piac igényeinek és szükségleteinek figyelembevételét hangsúlyozza.
-* **Az ajánlatok értékesítése**: A "Your offer" note-ban bemutatott ajánlatok értékesítése egy olyan mentális modell, amely az ügyfelek igényeinek kielégítését és az ajánlatok értékesítését hangsúlyozza.
-* **Az árazás stratégiája**: A "Your prices" note-ban bemutatott árazás stratégiája egy olyan mentális modell, amely az árazás fontosságát és a értékesítési folyamatban betöltött szerepét hangsúlyozza.
+Ez a dokumentum az alábbi négy üzleti és marketing jegyzetből kinyert tudást foglalja össze: "Work Less And Earn More", "Your market", "Your offer" és "Your prices". A cél az, hogy a lehető legtöbb hasznos információt kivonjuk ezekből a jegyzetekből, és egy részletes, szakmai dokumentumot hozzunk létre.
 
-Ezek a mentális modellek és stratégiai minták együttesen egy olyan keretet biztosítanak, amely segít az üzleti döntések meghozatalában és a stratégiai tervezésben.
+**1. KONKRÉT KERETRENDSZEREK ÉS KÉPLETEK**
 
-## OK-OKOZATI KAPCSOLATOK
+A "Work Less And Earn More" jegyzetben található a 4 pillérű keretrendszer, amely a következő:
 
-A vizsgált notes-ok alapján az alábbi ok-okozati kapcsolatok azonosíthatók:
+1. **Mély munka (Deep Work)**: 1 óra mély, fókuszált munka jobb, mint 8 óra sekélyes munka.
+2. **Alapítói Flywheel (Founder Flywheel)**: Egy önmagát fenntartó rendszer, ahol minden cselekvés megszorozza a következőt, és komponálódó növekedést eredményez.
+3. **AED: Automatizálás, Eliminálás, Delegálás (AED)**: Soha ne automatizáljunk valamit, amit el lehet törölni. Soha ne delegáljunk valamit, amit automatizálni lehet.
+4. **Főnök (Chief of Staff)**: Az első alkalmazottunknak védenie kell a legértékesebb erőforrásunkat: az időnket és a mentális fókuszunkat.
 
-* **A mély munka és a termelékenység**: A "Work Less And Earn More" note-ban bemutatott mély munka és a termelékenység közötti kapcsolat azt mutatja, hogy a mély munka növeli a termelékenységet és a hatékonyságot.
-* **A piacorientált gondolkodás és a siker**: A "Your market" note-ban bemutatott piacorientált gondolkodás és a siker közötti kapcsolat azt mutatja, hogy a piacorientált gondolkodás növeli a siker esélyét.
-* **Az ajánlatok értékesítése és a bevétel**: A "Your offer" note-ban bemutatott ajánlatok értékesítése és a bevétel közötti kapcsolat azt mutatja, hogy az ajánlatok értékesítése növeli a bevételt.
-* **Az árazás stratégiája és a profit**: A "Your prices" note-ban bemutatott árazás stratégiája és a profit közötti kapcsolat azt mutatja, hogy az árazás stratégiája befolyásolja a profitot.
+A "Your prices" jegyzetben található a következő formula:
 
-Ezek az ok-okozati kapcsolatok segítik a döntéshozókat abban, hogy megértsék a különböző tényezők közötti kapcsolatokat és a stratégiai tervezésben.
+**Ár = Érték / (Valószínűség x Időkésleltetés x Erőfeszítés)**
 
-## RENDSZERSZINTŰ ÖSSZEFÜGGÉSEK
+Ez a formula azt mutatja, hogy az árunkat a termékünk értéke, a vevőnk által érzékelt valószínűség, az időkésleltetés és az erőfeszítés alapján kell meghatároznunk.
 
-A vizsgált notes-ok alapján az alábbi rendszerszintű összefüggések azonosíthatók:
+**2. DÖNTÉSI LOGIKÁK (If-Then)**
 
-* **A piac, az ajánlat és az árazás**: A "Your market", "Your offer" és "Your prices" notes-ok bemutatják, hogy a piac, az ajánlat és az árazás hogyan függnek össze és befolyásolják egymást.
-* **A mély munka, a termelékenység és a siker**: A "Work Less And Earn More" note-ban bemutatott mély munka, a termelékenység és a siker közötti kapcsolat azt mutatja, hogy a mély munka és a termelékenység növeli a siker esélyét.
-* **Az ajánlatok értékesítése, a bevétel és a profit**: A "Your offer" és "Your prices" notes-ok bemutatják, hogy az ajánlatok értékesítése, a bevétel és a profit hogyan függnek össze és befolyásolják egymást.
+A "Your market" jegyzetben található a következő döntési logika:
 
-Ezek a rendszerszintű összefüggések segítik a döntéshozókat abban, hogy megértsék a különböző tényezők közötti kapcsolatokat és a stratégiai tervezésben.
+* Ha a piacunkban van elég kereslet, akkor érdemes befektetni.
+* Ha a piacunkban nincs elég kereslet, akkor nem érdemes befektetni.
 
-## DÖNTÉSI SZABÁLYOK ÉS TRIGGER-FELTÉTELEK
+A "Your offer" jegyzetben található a következő döntési logika:
 
-A vizsgált notes-ok alapján az alábbi döntési szabályok és trigger-feltételek azonosíthatók:
+* Ha a termékünk értékes, akkor érdemes magas árat kérni érte.
+* Ha a termékünk nem értékes, akkor nem érdemes magas árat kérni érte.
 
-* **A piacorientált gondolkodás**: A "Your market" note-ban bemutatott piacorientált gondolkodás azt mutatja, hogy a piac igényeinek és szükségleteinek figyelembevételét hangsúlyozza.
-* **Az ajánlatok értékesítése**: A "Your offer" note-ban bemutatott ajánlatok értékesítése azt mutatja, hogy az ügyfelek igényeinek kielégítését és az ajánlatok értékesítését hangsúlyozza.
-* **Az árazás stratégiája**: A "Your prices" note-ban bemutatott árazás stratégiája azt mutatja, hogy az árazás fontosságát és a értékesítési folyamatban betöltött szerepét hangsúlyozza.
+**3. RENDSZERSZINTŰ MECHANIZMUSOK**
 
-Ezek a döntési szabályok és trigger-feltételek segítik a döntéshozókat abban, hogy megértsék a különböző tényezők közötti kapcsolatokat és a stratégiai tervezésben.
+A "Work Less And Earn More" jegyzetben található a következő rendszerszintű mechanizmus:
 
-## ANTI-PATTERNEK ÉS HIBÁK
+* A mély munka és a Flywheel együttműködése lehetővé teszi, hogy a vállalkozásunk növekedjen és fejlődjön.
+* Az AED és a Főnök együttműködése lehetővé teszi, hogy a vállalkozásunk hatékonyan működjön és növekedjen.
 
-A vizsgált notes-ok alapján az alábbi anti-patternek és hibák azonosíthatók:
+A "Your market" jegyzetben található a következő rendszerszintű mechanizmus:
 
-* **A piacorientált gondolkodás hiánya**: A "Your market" note-ban bemutatott piacorientált gondolkodás hiánya azt mutatja, hogy a piac igényeinek és szükségleteinek figyelembevételét nem hangsúlyozza.
-* **Az ajánlatok értékesítésének hiánya**: A "Your offer" note-ban bemutatott ajánlatok értékesítésének hiánya azt mutatja, hogy az ügyfelek igényeinek kielégítését és az ajánlatok értékesítését nem hangsúlyozza.
-* **Az árazás stratégiájának hiánya**: A "Your prices" note-ban bemutatott árazás stratégiájának hiánya azt mutatja, hogy az árazás fontosságát és a értékesítési folyamatban betöltött szerepét nem hangsúlyozza.
+* A piacunkban való részvétel és a termékünk értékesítése együttműködve lehetővé teszi, hogy a vállalkozásunk növekedjen és fejlődjön.
 
-Ezek az anti-patternek és hibák segítik a döntéshozókat abban, hogy megértsék a különböző tényezők közötti kapcsolatokat és a stratégiai tervezésben.
+**4. ANTI-PATTERNEK**
 
-## KONKRÉT IMPLEMENTÁCIÓS LOGIKA
+A "Work Less And Earn More" jegyzetben található a következő anti-patternek:
 
-A vizsgált notes-ok alapján az alábbi konkrét implementációs logika azonosítható:
+* Ne dolgozzunk túl sokat, mert az nem hatékony.
+* Ne fektessünk be olyan dolgokba, amelyek nem értékesek.
 
-* **A piacorientált gondolkodás implementálása**: A "Your market" note-ban bemutatott piacorientált gondolkodás implementálása azt mutatja, hogy a piac igényeinek és szükségleteinek figyelembevételét hangsúlyozza.
-* **Az ajánlatok értékesítésének implementálása**: A "Your offer" note-ban bemutatott ajánlatok értékesítésének implementálása azt mutatja, hogy az ügyfelek igényeinek kielégítését és az ajánlatok értékesítését hangsúlyozza.
-* **Az árazás stratégiájának implementálása**: A "Your prices" note-ban bemutatott árazás stratégiájának implementálása azt mutatja, hogy az árazás fontosságát és a értékesítési folyamatban betöltött szerepét hangsúlyozza.
+A "Your prices" jegyzetben található a következő anti-patternek:
 
-Ezek a konkrét implementációs logikák segítik a döntéshozókat abban, hogy megértsék a különböző tényezők közötti kapcsolatokat és a stratégiai tervezésben.
+* Ne állapítsunk meg túl alacsony árat, mert az nem éri meg.
+* Ne állapítsunk meg túl magas árat, mert az elriaszthatja a vevőket.
+
+**Összefoglalás**
+
+Ez a dokumentum a lehető legtöbb hasznos információt vonja ki a négy üzleti és marketing jegyzetből. A cél az, hogy a vállalkozások és a marketingesek számára hasznos információkat és eszközöket nyújtsunk, amelyek segítenek a növekedésben és a fejlődésben. A dokumentum bemutatja a 4 pillérű keretrendszert, a döntési logikákat, a rendszerszintű mechanizmusokat és az anti-patterneket, amelyek segítenek a vállalkozásoknak és a marketingeseknek, hogy hatékonyan működjenek és növekedjenek.

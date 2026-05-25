@@ -1,44 +1,71 @@
-## MENTÁLIS MODELLEK ÉS STRATÉGIAI MINTÁK
+**Knowledge Extraction Dossier**
 
-A négy note-ban szereplő információk alapján különböző mentális modellek és stratégiai minták azonosíthatók. Ezek a modellek és minták segítenek a döntéshozatalban, a problémafelismerésben és a megoldásokban.
+**Bevezetés**
 
-* A **Supply vs Demand Constraints** note-ban szereplő modell segít a vállalkozásoknak megérteni, hogy milyen típusú korlátozásokkal küzdenek: keresleti vagy kínálati. Ez a modell fontos a stratégiai tervezésben és a döntéshozatalban.
-* A **TEAM Business Partner Method** note-ban szereplő modell egy keretrendszer a partnerség kiválasztásához. Ez a modell segít a vállalkozásoknak azonosítani a potenciális partnereket és értékelni a velük való együttműködést.
-* A **Teljes nyereség** note-ban szereplő információk alapján azonosítható egy modell, amely a részvények és az osztalékfizetés közötti kapcsolatot mutatja be. Ez a modell segít a befektetőknek megérteni, hogyan lehet a részvények és az osztalékfizetés kombinációjával elérni a maximális nyereséget.
-* A **The 100 photo trick** note-ban szereplő információk alapján azonosítható egy modell, amely a kreativitás és a produktivitás közötti kapcsolatot mutatja be. Ez a modell segít a vállalkozásoknak és az egyéneknek megérteni, hogyan lehet a kreativitást és a produktivitást növelni a gyakorlat és a kísérletezés révén.
+Ez a dokumentum négy különböző üzleti és marketing jegyzetből kinyert tudást foglalja össze. A jegyzetek a következő témákkal foglalkoznak: Supply vs Demand Constraints, TEAM Business Partner Method, Teljes nyereség és The 100 photo trick. A cél az, hogy a lehető legtöbb hasznos információt kinyerjük ezekből a jegyzetekből és egy részletes, szakmai dokumentumba foglaljuk össze.
 
-A stratégiai minták között szerepel a **diverzifikáció**, amely a **Teljes nyereség** note-ban szereplő információk alapján azonosítható. Ez a minta segít a befektetőknek csökkenteni a kockázatot és növelni a nyereséget a befektetések diverzifikálásával.
+**1. Supply vs Demand Constraints**
 
-## OK-OKOZATI KAPCSOLATOK
+A Supply vs Demand Constraints jegyzet arról szól, hogy a vállalkozások gyakran tévesen azonosítják a problémát, amellyel szembenéznek, és emiatt pazarolják el az erőforrásaikat. A jegyzet két fő fogalmat definiál: a demand-constrained és a supply-constrained vállalkozásokat.
 
-A note-okban szereplő információk alapján különböző ok-okozati kapcsolatok azonosíthatók. Ezek a kapcsolatok segítenek a vállalkozásoknak és az egyéneknek megérteni, hogy milyen tényezők hatnak a különböző eredményekre.
+* **Demand-constrained:** Olyan vállalkozás, amelynek van kapacitása, de nincs elég ügyfele.
+* **Supply-constrained:** Olyan vállalkozás, amelynek van ügyfele, de nincs elég kapacitása, hogy kiszolgálja őket.
 
-* A **Supply vs Demand Constraints** note-ban szereplő információk alapján azonosítható egy ok-okozati kapcsolat, amely a keresleti és kínálati korlátozások közötti kapcsolatot mutatja be. Ha a vállalkozás keresleti korlátozásokkal küzd, akkor a marketing tevékenységek növelése segíthet a kereslet növelésében. Ha a vállalkozás kínálati korlátozásokkal küzd, akkor a kapacitás növelése vagy a hatékonyság javítása segíthet a kínálat növelésében.
-* A **TEAM Business Partner Method** note-ban szereplő információk alapján azonosítható egy ok-okozati kapcsolat, amely a partnerség kiválasztása és a vállalkozás sikeressége közötti kapcsolatot mutatja be. Ha a vállalkozás egy olyan partnert választ, aki a TEAM modell alapján értékes, akkor az segíthet a vállalkozás sikerességének növelésében.
-* A **Teljes nyereség** note-ban szereplő információk alapján azonosítható egy ok-okozati kapcsolat, amely a részvények és az osztalékfizetés közötti kapcsolatot mutatja be. Ha a befektető egy olyan részvényt választ, amely osztalékot fizet, akkor az segíthet a nyereség növelésében.
-* A **The 100 photo trick** note-ban szereplő információk alapján azonosítható egy ok-okozati kapcsolat, amely a kreativitás és a produktivitás közötti kapcsolatot mutatja be. Ha a vállalkozás vagy az egyén gyakorol és kísérletezik, akkor az segíthet a kreativitás és a produktivitás növelésében.
+A jegyzet egy diagnosztikai tesztet is javasol, amely segít megállapítani, hogy a vállalkozás melyik kategóriába tartozik. Ha a vállalkozás megduplázza a marketing költségvetését és ennek következtében a forgalma is megduplázódik, akkor demand-constrained. Ha viszont a forgalom növekedése miatt a vállalkozás túlterhelt lesz, akkor supply-constrained.
 
-## RENDSZERSZINTŰ ÖSSZEFÜGGÉSEK
+A jegyzet további példákat is tartalmaz, amelyek segítenek megérteni a két fogalom közti különbséget. Például, egy üres étterem demand-constrained, míg egy étterem, amelynek 2 órás várakozási ideje van, supply-constrained.
 
-A note-okban szereplő információk alapján különböző rendszerszintű összefüggések azonosíthatók. Ezek az összefüggések segítenek a vállalkozásoknak és az egyéneknek megérteni, hogy milyen tényezők hatnak a különböző eredményekre a rendszer szintjén.
+A vállalkozások gyakran tévesen azt hiszik, hogy supply-constrainedak, amikor valójában demand-constrainedak. A jegyzet hangsúlyozza, hogy a vállalkozásoknak meg kell határozniuk a saját korlátaikat és ennek megfelelően kell cselekedniük.
 
-* A **Supply vs Demand Constraints** note-ban szereplő információk alapján azonosítható egy rendszerszintű összefüggés, amely a keresleti és kínálati korlátozások közötti kapcsolatot mutatja be. A vállalkozásoknak meg kell érteniük, hogy milyen típusú korlátozásokkal küzdenek, és ennek alapján kell dönteniük a stratégiájukról.
-* A **TEAM Business Partner Method** note-ban szereplő információk alapján azonosítható egy rendszerszintű összefüggés, amely a partnerség kiválasztása és a vállalkozás sikeressége közötti kapcsolatot mutatja be. A vállalkozásoknak meg kell érteniük, hogy milyen típusú partnereket kell kiválasztaniuk, és ennek alapján kell dönteniük a stratégiájukról.
-* A **Teljes nyereség** note-ban szereplő információk alapján azonosítható egy rendszerszintű összefüggés, amely a részvények és az osztalékfizetés közötti kapcsolatot mutatja be. A befektetőknek meg kell érteniük, hogy milyen típusú részvényeket kell kiválasztaniuk, és ennek alapján kell dönteniük a befektetési stratégiájukról.
-* A **The 100 photo trick** note-ban szereplő információk alapján azonosítható egy rendszerszintű összefüggés, amely a kreativitás és a produktivitás közötti kapcsolatot mutatja be. A vállalkozásoknak és az egyéneknek meg kell érteniük, hogy milyen típusú tevékenységek segítenek a kreativitás és a produktivitás növelésében, és ennek alapján kell dönteniük a stratégiájukról.
+**2. TEAM Business Partner Method**
 
-## DÖNTÉSI SZABÁLYOK ÉS TRIGGER-FELTÉTELEK
+A TEAM Business Partner Method jegyzet arról szól, hogy hogyan válasszunk partnert a vállalkozásunkba. A jegyzet a TEAM mozaikszót használja, amely a következő fogalmakat jelenti:
 
-A note-okban szereplő információk alapján különböző döntési szabályok és trigger-feltételek azonosíthatók. Ezek a szabályok és feltételek segítenek a vállalkozásoknak és az egyéneknek megérteni, hogy milyen tényezők hatnak a különböző eredményekre.
+* **T = Time:** A partnernek rendelkeznie kell elegendő idővel, hogy a vállalkozásban dolgozhasson.
+* **E = Expertise:** A partnernek rendelkeznie kell olyan szakértelemmel, amely a vállalkozásban hasznosítható.
+* **A = Assets:** A partnernek rendelkeznie kell olyan erőforrásokkal, amelyek a vállalkozásban hasznosíthatók.
+* **M = Money:** A partnernek rendelkeznie kell elegendő pénzzel, hogy a vállalkozásban befektethessen.
 
-* A **Supply vs Demand Constraints** note-ban szereplő információk alapján azonosítható egy döntési szabály, amely a keresleti és kínálati korlátozások közötti kapcsolatot mutatja be. Ha a vállalkozás keresleti korlátozásokkal küzd, akkor a marketing tevékenységek növelése segíthet a kereslet növelésében. Ha a vállalkozás kínálati korlátozásokkal küzd, akkor a kapacitás növelése vagy a hatékonyság javítása segíthet a kínálat növelésében.
-* A **TEAM Business Partner Method** note-ban szereplő információk alapján azonosítható egy döntési szabály, amely a partnerség kiválasztása és a vállalkozás sikeressége közötti kapcsolatot mutatja be. Ha a vállalkozás egy olyan partnert választ, aki a TEAM modell alapján értékes, akkor az segíthet a vállalkozás sikerességének növelésében.
-* A **Teljes nyereség** note-ban szereplő információk alapján azonosítható egy döntési szabály, amely a részvények és az osztalékfizetés közötti kapcsolatot mutatja be. Ha a befektető egy olyan részvényt választ, amely osztalékot fizet, akkor az segíthet a nyereség növelésében.
-* A **The 100 photo trick** note-ban szereplő információk alapján azonosítható egy döntési szabály, amely a kreativitás és a produktivitás közötti kapcsolatot mutatja be. Ha a vállalkozás vagy az egyén gyakorol és kísérletezik, akkor az segíthet a kreativitás és a produktivitás növelésében.
+A jegyzet hangsúlyozza, hogy a partner kiválasztásánál fontos, hogy ne csak a személyes kapcsolatokra figyeljünk, hanem arra is, hogy a partner milyen értéket tud hozzáadni a vállalkozásunkhoz.
 
-## ANTI-PATTERNEK ÉS HIBÁK
+**3. Teljes nyereség**
 
-A note-okban szereplő információk alapján különböző anti-patternek és hibák azonosíthatók. Ezek a patternek és hibák segítenek a vállalkozásoknak és az egyéneknek megérteni, hogy milyen tényezők hatnak a különböző eredményekre.
+A Teljes nyereség jegyzet arról szól, hogy a jó választásnál akár dupla nyereség is elérhető. A jegyzet hangsúlyozza, hogy a cég növekedése és az érték növekedése mellett az osztalékfizetés is fontos tényező. A folyamatos visszafektetésnél a nyereség hatványozódhat, de fontos, hogy ne csak 2-3 értékpapírral rendelkezzünk, hanem 30-40-nel.
 
-* A **Supply vs Demand Constraints** note-ban szereplő információk alapján azonosítható egy anti-patternek, amely a keresleti és kínálati korlátozások közötti kapcsolatot mutatja be. Ha a vállalkozás keresleti korlátozásokkal küzd, akkor a marketing tevékenységek növelése segíthet a kereslet növelésében. Ha a vállalkozás kínálati korlátozásokkal küzd, akkor a kapacitás növelése vagy a hatékonyság javítása segíthet a kínálat növelésében.
-* A **TEAM Business Partner Method** note-ban szereplő információk alapján azonosítható egy anti-patternek, amely a partnerség kiválasztása és a vállalkozás sikeressége közötti kapcsolatot mutatja be. Ha a vállalkozás egy olyan partnert választ, a
+**4. The 100 photo trick**
+
+A The 100 photo trick jegyzet arról szól, hogy a mennyiség és a minőség közti kapcsolatot hogyan lehet kihasználni a vállalkozásban. A jegyzet egy példát mesél el, amelyben egy professzor két csoportra osztotta a fotózással foglalkozó diákokat. Az egyik csoportnak a mennyiséget, a másik csoportnak a minőséget kellett hangsúlyoznia. A végén kiderült, hogy a mennyiséget hangsúlyozó csoport jobb fotókat készített.
+
+A jegyzet hangsúlyozza, hogy a vállalkozásban is fontos a kísérletezés, a hibázás és a tanulás. A mennyiség és a minőség közti kapcsolatot kihasználva lehet elérni a sikerhez vezető utat.
+
+**Összefoglalás**
+
+Ez a dokumentum négy különböző üzleti és marketing jegyzetből kinyert tudást foglalja össze. A Supply vs Demand Constraints jegyzet arról szól, hogy a vállalkozásoknak meg kell határozniuk a saját korlátaikat és ennek megfelelően kell cselekedniük. A TEAM Business Partner Method jegyzet arról szól, hogy hogyan válasszunk partnert a vállalkozásunkba. A Teljes nyereség jegyzet arról szól, hogy a jó választásnál akár dupla nyereség is elérhető. A The 100 photo trick jegyzet arról szól, hogy a mennyiség és a minőség közti kapcsolatot hogyan lehet kihasználni a vállalkozásban.
+
+**Keretrendszerek és képletek**
+
+* Supply vs Demand Constraints: Demand-constrained = Kapacitás - Ügyfelek, Supply-constrained = Ügyfelek - Kapacitás
+* TEAM Business Partner Method: T = Time, E = Expertise, A = Assets, M = Money
+* Teljes nyereség: Nyereség = Cég növekedése + Érték növekedése + Osztalékfizetés
+* The 100 photo trick: Mennyiség + Minőség = Siker
+
+**Döntési logikák**
+
+* Ha a vállalkozás megduplázza a marketing költségvetését és ennek következtében a forgalma is megduplázódik, akkor demand-constrained.
+* Ha a vállalkozásnak van ügyfele, de nincs elég kapacitása, hogy kiszolgálja őket, akkor supply-constrained.
+* Ha a partner rendelkezik elegendő idővel, szakértelemmel, erőforrásokkal és pénzzel, akkor jó partner.
+* Ha a cég növekedése és az érték növekedése mellett az osztalékfizetés is fontos tényező, akkor a jó választásnál akár dupla nyereség is elérhető.
+
+**Rendszerszintű mechanizmusok**
+
+* A vállalkozásoknak meg kell határozniuk a saját korlátaikat és ennek megfelelően kell cselekedniük.
+* A partner kiválasztásánál fontos, hogy ne csak a személyes kapcsolatokra figyeljünk, hanem arra is, hogy a partner milyen értéket tud hozzáadni a vállalkozásunkhoz.
+* A cég növekedése és az érték növekedése mellett az osztalékfizetés is fontos tényező.
+* A mennyiség és a minőség közti kapcsolatot kihasználva lehet elérni a sikerhez vezető utat.
+
+**Anti-patternek**
+
+* A vállalkozások gyakran tévesen azt hiszik, hogy supply-constrainedak, amikor valójában demand-constrainedak.
+* A partner kiválasztásánál fontos, hogy ne csak a személyes kapcsolatokra figyeljünk, hanem arra is, hogy a partner milyen értéket tud hozzáadni a vállalkozásunkhoz.
+* A cég növekedése és az érték növekedése mellett az osztalékfizetés is fontos tényező, de nem az egyetlen.
+* A mennyiség és a minőség közti kapcsolatot kihasználva lehet elérni a sikerhez vezető utat, de nem garantált a siker.

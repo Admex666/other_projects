@@ -1,113 +1,107 @@
-## MENTÁLIS MODELLEK ÉS STRATÉGIAI MINTÁK
+**Knowledge Extraction Dossier**
 
-A szövegek mögött meghúzódó implicit döntési logikák és gondolkodási keretrendszerek az alábbiak:
+**Tartalomjegyzék**
 
-* Az értékesítési folyamatban a több találkozó szervezése és a hatékony kommunikáció kulcsfontosságú. A döntési logika itt az, hogy a több találkozóval és a megfelelő kommunikációval növelhető az értékesítési sikeresség.
-* A UI/UX tervezésben a felhasználói élmény és a felhasználóbarát tervezés a fő szempont. A döntési logika itt az, hogy a felhasználók igényeinek és elvárásainak megfelelő tervezéssel lehet elérni a legjobb eredményeket.
-* Az Unscripted című könyvben az élet és a vállalkozás szabadságának elérésére összpontosítanak. A döntési logika itt az, hogy a hagyományos életút és a vállalkozói tevékenység közötti választás alapján lehet elérni a szabadságot és a sikerességet.
+1. [Bevezetés](#bevezetés)
+2. [Több találkozó szervezése](#több-találkozó-szervezése)
+3. [UI Design Mistakes & Fixes](#ui-design-mistakes--fixes)
+4. [UI/UX Design Fundamentals](#uiux-design-fundamentals)
+5. [Unscripted: Life, Liberty & Entrepreneurship](#unscripted-life-liberty--entrepreneurship)
+6. [Keretrendszerek és képletek](#keretrendszerek-és-képletek)
+7. [Döntési logikák](#döntési-logikák)
+8. [Rendszerszintű mechanizmusok](#rendszerszintű-mechanizmusok)
+9. [Anti-patternek](#anti-patternek)
 
-A gondolkodási keretrendszerek az alábbiak:
+## Bevezetés
 
-* Az értékesítési folyamatban a célzott kommunikáció és a megfelelő üzenetek átadása a kulcsfontosságú.
-* A UI/UX tervezésben a felhasználói élmény és a felhasználóbarát tervezés a fő szempont.
-* Az Unscripted című könyvben a vállalkozói tevékenység és a szabadság elérésére összpontosítanak.
+A Knowledge Extraction Dossier célja, hogy kinyerje a legfontosabb információkat a kapott üzleti és marketing jegyzetekből. A dokumentum négy fő részből áll: Több találkozó szervezése, UI Design Mistakes & Fixes, UI/UX Design Fundamentals és Unscripted: Life, Liberty & Entrepreneurship. Ez a dokumentum elemezni fogja a legfontosabb keretrendszereket, döntési logikákat, rendszerszintű mechanizmusokat és anti-patterneket.
 
-Az ismétlődő elvek az alábbiak:
+## Több találkozó szervezése
 
-* A kommunikáció és a megfelelő üzenetek átadása kulcsfontosságú az értékesítési sikerességhez.
-* A felhasználói élmény és a felhasználóbarát tervezés a UI/UX tervezésben a legfontosabb szempont.
-* A vállalkozói tevékenység és a szabadság elérésére összpontosítanak az Unscripted című könyvben.
+A Több találkozó szervezése jegyzet kiemeli a fontosságát annak, hogy több időt szánjunk az érdeklődőkkel való találkozók szervezésére. A jegyzet négy fő pontot emel ki:
 
-## OK-OKOZATI KAPCSOLATOK
+1. Több idő jobb érdeklődőkkel
+2. Törd meg az elfoglaltságot: “Két percet kérek az idejéből. Megfelelne most?”
+3. Ütős nyitómondat (NTS: ATTENTION, AIDA) - 30 másodperc van megragadni a figyelmét
+4. Elutasításnál: ”Semmi baj. A legtöbb ember az Ön iparágában ugyanígy érzett, amikor először hívtam. Mostanra ők lettek a legjobb ügyfeleink, és ajánlanak minket barátaiknak.”
 
-A szövegekben megjelenő ok-okozati kapcsolatok az alábbiak:
+Ezek a pontok arra utalnak, hogy a találkozók szervezése során fontos, hogy megfelelő időt szánjunk az érdeklődőkkel való találkozókra, és hogy ütős nyitómondatot használjunk a figyelem megragadására.
 
-* Ha több találkozót szervezünk, akkor növelhető az értékesítési sikeresség.
-* Ha a felhasználói élményre és a felhasználóbarát tervezésre összpontosítunk, akkor elérhető a legjobb eredmény a UI/UX tervezésben.
-* Ha a hagyományos életút és a vállalkozói tevékenység közötti választást tesszük, akkor elérhető a szabadság és a sikeresség az Unscripted című könyv szerint.
+## UI Design Mistakes & Fixes
 
-A mechanizmusok, amelyek az ok-okozati kapcsolatokat megvalósítják, az alábbiak:
+A UI Design Mistakes & Fixes jegyzet kiemeli a leggyakoribb UI design hibákat és a lehetséges megoldásokat. A jegyzet nyolc fő pontot emel ki:
 
-* A kommunikáció és a megfelelő üzenetek átadása az értékesítési folyamatban.
-* A felhasználói élmény és a felhasználóbarát tervezés a UI/UX tervezésben.
-* A vállalkozói tevékenység és a szabadság elérésére összpontosítanak az Unscripted című könyvben.
+1. User Flow Gaps
+2. Visual Overload
+3. Spacing Chaos
+4. Inconsistent Components
+5. Icon Hygiene
+6. Redundant Clutter
+7. Missing Feedback
+8. Chart Crimes
 
-A lépcsők, feltételek és trigger-pontok az alábbiak:
+Ezek a pontok arra utalnak, hogy a UI design során fontos, hogy figyelembe vegyük a felhasználói folyamatokat, a vizuális terhelést, a szóközök és komponensek konzisztenciáját, valamint a visszajelzést és a diagramokat.
 
-* Az értékesítési folyamatban a kommunikáció és a megfelelő üzenetek átadása a kulcsfontosságú.
-* A UI/UX tervezésben a felhasználói élmény és a felhasználóbarát tervezés a fő szempont.
-* Az Unscripted című könyvben a vállalkozói tevékenység és a szabadság elérésére összpontosítanak.
+## UI/UX Design Fundamentals
 
-## RENDSZERSZINTŰ ÖSSZEFÜGGÉSEK
+A UI/UX Design Fundamentals jegyzet kiemeli a UI/UX design alapelveit. A jegyzet három fő pontot emel ki:
 
-A szövegekben megjelenő rendszerszintű összefüggések az alábbiak:
+1. Start with Purpose
+2. User-Centric Process
+3. Design Principles
 
-* Az értékesítési folyamatban a kommunikáció és a megfelelő üzenetek átadása kulcsfontosságú.
-* A UI/UX tervezésben a felhasználói élmény és a felhasználóbarát tervezés a fő szempont.
-* Az Unscripted című könyvben a vállalkozói tevékenység és a szabadság elérésére összpontosítanak.
+Ezek a pontok arra utalnak, hogy a UI/UX design során fontos, hogy megértsük a felhasználók céljait és szükségleteit, és hogy figyelembe vegyük a felhasználói folyamatokat és a design alapelveit.
 
-A hierarchiák az alábbiak:
+## Unscripted: Life, Liberty & Entrepreneurship
 
-* Az értékesítési folyamatban a kommunikáció és a megfelelő üzenetek átadása a legfontosabb szint.
-* A UI/UX tervezésben a felhasználói élmény és a felhasználóbarát tervezés a fő szempont.
-* Az Unscripted című könyvben a vállalkozói tevékenység és a szabadság elérésére összpontosítanak.
+Az Unscripted: Life, Liberty & Entrepreneurship jegyzet kiemeli a fontosságát annak, hogy az egyének szabadságot és függetlenséget teremtsenek maguknak az életben. A jegyzet négy fő pontot emel ki:
 
-A függőségek az alábbiak:
+1. Reject the "Scripted OS"
+2. Embrace the "[__] This Event"
+3. Adopt the TUNEF Framework
+4. 5 Commandments of Fastlane Entrepreneurship
 
-* Az értékesítési folyamatban a kommunikáció és a megfelelő üzenetek átadása függ a megfelelő üzenetek átadásától.
-* A UI/UX tervezésben a felhasználói élmény és a felhasználóbarát tervezés függ a felhasználói élménytől.
-* Az Unscripted című könyvben a vállalkozói tevékenység és a szabadság elérésére összpontosítanak, és függ a vállalkozói tevékenységtől.
+Ezek a pontok arra utalnak, hogy az egyéneknek fontos, hogy elutasítsák a megszokott életmintákat, és hogy elfogadják a változást és a fejlődést. A jegyzet kiemeli a fontosságát annak is, hogy az egyének teremtsenek maguknak egy saját életet és vállalkozást.
 
-A kölcsönhatások az alábbiak:
+## Keretrendszerek és képletek
 
-* Az értékesítési folyamatban a kommunikáció és a megfelelő üzenetek átadása kölcsönhatásban van a megfelelő üzenetek átadásával.
-* A UI/UX tervezésben a felhasználói élmény és a felhasználóbarát tervezés kölcsönhatásban van a felhasználói élménnyel.
-* Az Unscripted című könyvben a vállalkozói tevékenység és a szabadság elérésére összpontosítanak, és kölcsönhatásban van a vállalkozói tevékenységgel.
+A keretrendszerek és képletek a következők:
 
-## DÖNTÉSI SZABÁLYOK ÉS TRIGGER-FELTÉTELEK
+* Dream Outcome x Likelihood / Time Delay x Effort
+* TUNEF Framework
+* 5 Commandments of Fastlane Entrepreneurship
 
-A szövegekben megjelenő döntési szabályok és trigger-feltételek az alábbiak:
+Ezek a keretrendszerek és képletek arra utalnak, hogy az egyéneknek fontos, hogy megértsék a céljaikat és a szükségleteiket, és hogy figyelembe vegyék a felhasználói folyamatokat és a design alapelveit.
 
-* Az értékesítési folyamatban a kommunikáció és a megfelelő üzenetek átadása a kulcsfontosságú.
-* A UI/UX tervezésben a felhasználói élmény és a felhasználóbarát tervezés a fő szempont.
-* Az Unscripted című könyvben a vállalkozói tevékenység és a szabadság elérésére összpontosítanak.
+## Döntési logikák
 
-A trigger-feltételek az alábbiak:
+A döntési logikák a következők:
 
-* Az értékesítési folyamatban a kommunikáció és a megfelelő üzenetek átadása a trigger-feltétel.
-* A UI/UX tervezésben a felhasználói élmény és a felhasználóbarát tervezés a trigger-feltétel.
-* Az Unscripted című könyvben a vállalkozói tevékenység és a szabadság elérésére összpontosítanak, és a trigger-feltétel a vállalkozói tevékenység.
+* Ha a felhasználó érdeklődik, akkor szervezzünk találkozót
+* Ha a felhasználó elutasítja a találkozót, akkor próbáljuk meg újra
 
-## ANTI-PATTERNEK ÉS HIBÁK
+Ezek a döntési logikák arra utalnak, hogy az egyéneknek fontos, hogy megértsék a felhasználók szükségleteit és céljait, és hogy figyelembe vegyék a felhasználói folyamatokat.
 
-A szövegekben megjelenő anti-patternek és hibák az alábbiak:
+## Rendszerszintű mechanizmusok
 
-* Az értékesítési folyamatban a kommunikáció és a megfelelő üzenetek átadása nem megfelelően történik.
-* A UI/UX tervezésben a felhasználói élmény és a felhasználóbarát tervezés nem megfelelően történik.
-* Az Unscripted című könyvben a vállalkozói tevékenység és a szabadság elérésére összpontosítanak, de a hagyományos életút és a vállalkozói tevékenység közötti választás nem megfelelően történik.
+A rendszerszintű mechanizmusok a következők:
 
-A tipikus hibák az alábbiak:
+* Felhasználói folyamatok
+* Vizuális terhelés
+* Szóközök és komponensek konzisztenciája
+* Visszajelzés és diagramok
 
-* Az értékesítési folyamatban a kommunikáció és a megfelelő üzenetek átadása nem megfelelően történik.
-* A UI/UX tervezésben a felhasználói élmény és a felhasználóbarát tervezés nem megfelelően történik.
-* Az Unscripted című könyvben a vállalkozói tevékenység és a szabadság elérésére összpontosítanak, de a hagyományos életút és a vállalkozói tevékenység közötti választás nem megfelelően történik.
+Ezek a rendszerszintű mechanizmusok arra utalnak, hogy az egyéneknek fontos, hogy megértsék a felhasználók szükségleteit és céljait, és hogy figyelembe vegyék a felhasználói folyamatokat.
 
-## KONKRÉT IMPLEMENTÁCIÓS LOGIKA
+## Anti-patternek
 
-A szövegekben megjelenő konkrét implementációs logika az alábbiak:
+Az anti-patternek a következők:
 
-* Az értékesítési folyamatban a kommunikáció és a megfelelő üzenetek átadása a kulcsfontosságú.
-* A UI/UX tervezésben a felhasználói élmény és a felhasználóbarát tervezés a fő szempont.
-* Az Unscripted című könyvben a vállalkozói tevékenység és a szabadság elérésére összpontosítanak, és a konkrét implementációs logika a vállalkozói tevékenység.
+* Elutasítás
+* Vizuális terhelés
+* Szóközök és komponensek inkonzisztenciája
+* Hiányzó visszajelzés és diagramok
 
-A pontos számok, mérőszámok, küszöbértékek az alábbiak:
+Ezek az anti-patternek arra utalnak, hogy az egyéneknek fontos, hogy elkerüljék a hibákat és a problémákat, és hogy figyelembe vegyék a felhasználói folyamatokat és a design alapelveit.
 
-* Az értékesítési folyamatban a kommunikáció és a megfelelő üzenetek átadása 80%-ban hatékony.
-* A UI/UX tervezésben a felhasználói élmény és a felhasználóbarát tervezés 90%-ban hatékony.
-* Az Unscripted című könyvben a vállalkozói tevékenység és a szabadság elérésére összpontosítanak, és a konkrét implementációs logika 95%-ban hatékony.
-
-A konkrét eszközök, lépések, workflow-k az alábbiak:
-
-* Az értékesítési folyamatban a kommunikáció és a megfelelő üzenetek átadása a kulcsfontosságú.
-* A UI/UX tervezésben a felhasználói élmény és a felhasználóbarát tervezés a fő szempont.
-* Az Unscripted című könyvben a vállalkozói tevékenység és a szabadság elérésére összpontosítanak, és a konkrét implementációs logika a vállalkozói tevéken
+Összefoglalásul, a Knowledge Extraction Dossier kiemeli a legfontosabb információkat a kapott üzleti és marketing jegyzetekből. A dokumentum elemezte a legfontosabb keretrendszereket, döntési logikákat, rendszerszintű mechanizmusokat és anti-patterneket. Az egyéneknek fontos, hogy megértsék a felhasználók szükségleteit és céljait, és hogy figyelembe vegyék a felhasználói folyamatokat és a design alapelveit.

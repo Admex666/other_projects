@@ -1,52 +1,50 @@
-## MENTÁLIS MODELLEK ÉS STRATÉGIAI MINTÁK
+**Knowledge Extraction Dossier**
 
-A vizsgált jegyzetekben több implicit döntési logika és gondolkodási keretrendszer is megjelenik. Az első jegyzetben az **ellenségként megjelenő "commodity products"** szemben a **"differentiation"** keretrendszere dominál. Ez arra utal, hogy a vállalkozásoknak érdemes különbözniük a versenytársaktól ahelyett, hogy alacsonyabb áron próbálnának versenyezni.
+**Célok és Értékesítési Stratégia**
 
-A második jegyzetben a **célorientáltság** és a **sikeresség** közötti kapcsolat kerül fókuszba. Itt a gondolkodási keretrendszer a **SMART** (Specifikus, Mérhető, Elérhető, Releváns, Időhöz kötött) célok kitűzésére és a **személyes és családi célok** fontosságára épül.
+A jegyzetek alapján két fontos területet azonosíthatunk: a célok meghatározása és az értékesítési stratégia kialakítása. Az első jegyzetben szereplő "Your product" részben a vállalkozói problémák között szerepel a nem elegendő ügyfél és a nem elegendő profit. A megoldás az, hogy a terméket vagy szolgáltatást differenciáljuk, azaz ne legyünk "csak egy a sok közül". Ehhez példákat is mutatunk, mint a súlyveszteség termékhez kapcsolódó extra coaching vagy a differenciált szolgáltatás, ahol az ügyfél csak akkor fizet, ha elégedett az eredménnyel.
 
-A harmadik jegyzetben a **"Live Demo" Sales Pitch** keretrendszere dominál, amely a **valós, kicsi, de értékes** demonstráció fontosságát hangsúlyozza a nagy ígéretek helyett. Ez a gondolkodási keretrendszer a **bizalom** és **izgalom** kialakítására fókuszál a potenciális ügyfelek körében.
+A második jegyzetben, "Érj el minden értékesítési célt!" részben a célorientáltság minősége és a sikeresség szintje közötti összefüggést hangsúlyozzuk. A jegyzetben szereplő célok között van az éves jövedelmi cél, az éves értékesítési cél, a havi és heti célok, a napi értékesítési célok és a tevékenységcélok. Fontos, hogy a célokat lebontsuk kisebb, elérhető részekre, és hogy a tevékenységcélokat a fő célokhoz igazítsuk.
 
-A negyedik jegyzetben a **"Loyalty"** fogalma kerül kritika alá, és a **"Banana Principle"** keretrendszere jelenik meg, amely a **költségcsökkenés** és a **hatékonyság** fontosságát hangsúlyozza a marketingben.
+**Értékesítési Stratégia**
 
-## OK-OKOZATI KAPCSOLATOK
+A harmadik jegyzetben, "Live Demo" Sales Pitch részben egy értékesítési stratégiát mutatunk be, amely a "Live Demo" elven alapul. Az ötlet az, hogy az értékesítési folyamat során ne nagy ígéretekkel kecsegtessük az ügyfelet, hanem valós, kis méretű mintát adjunk a termékről vagy szolgáltatásról. Ez a stratégia azért működik, mert a valós, kézzelfogható demonstráció bizalmat és lelkesedést kelt az ügyfélben. A jegyzetben szereplő példák között van a marketing ügynökség, amely egy valós, élő hívást mutat be az ügyfélnek, vagy a fitneszstúdió, amely egy valós, élő forma-korrekciót mutat be.
 
-A vizsgált jegyzetekben számos ok-okozati kapcsolat jelenik meg. Például:
+**Loyalty és Értékesítés**
 
-* Ha egy vállalkozás **alacsonyabb áron** próbál versenyezni, akkor **elveszíti a versenyt**.
-* Ha egy vállalkozás **különbözik** a versenytársaktól, akkor **növeli az értékesítést**.
-* Ha egy értékesítő **célorientált**, akkor **sikeresebb** lesz.
-* Ha egy értékesítő **valós, kicsi, de értékes** demonstrációt mutat be, akkor **növeli a bizalmat** és **izgalmat** a potenciális ügyfelek körében.
-* Ha egy marketingstratégia **a "Banana Principle"-re** épül, akkor **hatékonyabb** lesz.
+A negyedik jegyzetben, "Loyalty" is the biggest SCAM in marketing részben a hűségprogramok hatékonyságát kérdőjelezzük meg. A jegyzetben szereplő "Loyalty Fact" és "Loyalty Truth Bomb" részekben megmutatjuk, hogy a hűségprogramok nem olyan hatékonyak, mint ahogy azt gyakran állítják. A valóság az, hogy a legtöbb bevétel a legaktívabb ügyfelektől származik, és hogy a hűségprogramoknak nincs jelentős hatása az értékesítésre. A jegyzetben szereplő "Banana Principle" részben megmutatjuk, hogy a vevői görbe mindig hasonlít egy banánra, azaz a legtöbb vevő keveset vásárol, míg csak kevés vevő vásárol sokat.
 
-## RENDSZERSZINTŰ ÖSSZEFÜGGÉSEK
+**Keretrendszerek és Képletek**
 
-A vizsgált jegyzetekben számos rendszerszintű összefüggés jelenik meg. Például:
+A jegyzetek alapján nem találunk kifejezett keretrendszereket vagy képleteket, de a fent említett stratégiák és elvek alapján ki lehet dolgozni egy értékesítési keretrendszert, amely a következő elemeket tartalmazza:
 
-* A **célorientáltság** és a **sikeresség** közötti kapcsolat a **személyes és családi célok** fontosságát hangsúlyozza.
-* A **"Live Demo" Sales Pitch** keretrendszere a **valós, kicsi, de értékes** demonstráció fontosságát hangsúlyozza a nagy ígéretek helyett, ami a **bizalom** és **izgalom** kialakításához vezet.
-* A **"Banana Principle"** keretrendszere a **költségcsökkenés** és a **hatékonyság** fontosságát hangsúlyozza a marketingben, ami a **hatékonyabb marketingstratégiák** kialakításához vezet.
+* Célok meghatározása: éves jövedelmi cél, éves értékesítési cél, havi és heti célok, napi értékesítési célok
+* Értékesítési stratégia: "Live Demo" elv, valós, kis méretű minta az ügyfélnek
+* Hűségprogramok hatékonyságának kérdőjelezése: a hűségprogramok nem olyan hatékonyak, mint ahogy azt gyakran állítják
+* Vevői görbe elemzése: a legtöbb bevétel a legaktívabb ügyfelektől származik
 
-## DÖNTÉSI SZABÁLYOK ÉS TRIGGER-FELTÉTELEK
+**Döntési Logikák**
 
-A vizsgált jegyzetekben számos döntési szabály és trigger-feltétel jelenik meg. Például:
+A jegyzetek alapján a következő döntési logikákat lehet kialakítani:
 
-* Ha egy vállalkozás **alacsonyabb áron** próbál versenyezni, akkor **trigger-feltétel**: a versenytársak árai alacsonyabbak, mint a saját ár.
-* Ha egy értékesítő **célorientált**, akkor **döntési szabály**: a célok kitűzése és a személyes és családi célok fontosságának hangsúlyozása.
-* Ha egy értékesítő **valós, kicsi, de értékes** demonstrációt mutat be, akkor **trigger-feltétel**: a potenciális ügyfél érdeklődése a termék vagy szolgáltatás iránt.
-* Ha egy marketingstratégia **a "Banana Principle"-re** épül, akkor **döntési szabály**: a költségcsökkenés és a hatékonyság fontosságának hangsúlyozása.
+* Ha a cél az értékesítési célok elérése, akkor a "Live Demo" elvet kell alkalmazni, és valós, kis méretű mintát kell adni az ügyfélnek.
+* Ha a cél a hűségprogramok hatékonyságának növelése, akkor a programokat újra kell értékelni, és a valós adatok alapján kell dönteni.
+* Ha a cél a vevői görbe elemzése, akkor a legaktívabb ügyfelektől származó bevételt kell figyelembe venni, és a marketing stratégiát ennek alapján kell kialakítani.
 
-## ANTI-PATTERNEK ÉS HIBÁK
+**Rendszerszintű Mechanizmusok**
 
-A vizsgált jegyzetekben számos anti-patternt és hibát azonosíthatunk. Például:
+A jegyzetek alapján a következő rendszerszintű mechanizmusokat lehet azonosítani:
 
-* **Alacsonyabb áron** versenyezni próbálni, ahelyett, hogy **különböznénk** a versenytársaktól.
-* **Nagy ígéretek** tenni, ahelyett, hogy **valós, kicsi, de értékes** demonstrációt mutatnánk be.
-* **Loyalty** programokat alkalmazni, ahelyett, hogy **a "Banana Principle"-re** építenénk a marketingstratégiát.
+* A vevői görbe elemzése: a legtöbb bevétel a legaktívabb ügyfelektől származik
+* A hűségprogramok hatékonysága: a hűségprogramok nem olyan hatékonyak, mint ahogy azt gyakran állítják
+* Az értékesítési stratégia: a "Live Demo" elv, valós, kis méretű minta az ügyfélnek
 
-## KONKRÉT IMPLEMENTÁCIÓS LOGIKA
+**Anti-Patterns**
 
-A vizsgált jegyzetekben számos konkrétnak implementációs logika jelenik meg. Például:
+A jegyzetek alapján a következő anti-patternokat lehet azonosítani:
 
-* A **"Live Demo" Sales Pitch** keretrendszere a **valós, kicsi, de értékes** demonstráció fontosságát hangsúlyozza a nagy ígéretek helyett.
-* A **"Banana Principle"** keretrendszere a **költségcsökkenés** és a **hatékonyság** fontosságát hangsúlyozza a marketingben.
-* A **célorientáltság** és a **sikeresség** közötti kapcsolat a **személyes és családi célok** fontosságát hangsúlyozza.
+* A hűségprogramok hatékonyságának túlbecsülése: a hűségprogramok nem olyan hatékonyak, mint ahogy azt gyakran állítják
+* A vevői görbe elemzésének elhanyagolása: a legtöbb bevétel a legaktívabb ügyfelektől származik
+* Az értékesítési stratégia hiánya: a "Live Demo" elv, valós, kis méretű minta az ügyfélnek
+
+A fent említett anti-patternokat elkerülve, és a jegyzetekben szereplő stratégiákat és elveket alkalmazva, lehet elérni a kívánt értékesítési célokat, és növelni a bevételt.

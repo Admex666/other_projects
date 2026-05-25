@@ -1,80 +1,55 @@
-## MENTÁLIS MODELLEK ÉS STRATÉGIAI MINTÁK
+**KONKRÉT KERETRENDSZEREK ÉS KÉPLETEK**
 
-* Az AI marketingügynökség modellje alapulhat a következő implicit döntési logikán: ha egy cégnek szüksége van hatékony online marketingre, akkor az AI-alapú megoldások használata a legjobb választás.
-* A gondolkodási keretrendszer, amelyet az anyag használ, a következő:
- + Azonosítsd a célpiacodat és a szolgáltatásodat.
- + Értsd meg a célpiacod fájdalompontjait és igényeit.
- + Alakítsd ki az "ellenállhatatlan ajánlatodat", amely megoldja a célpiacod fájdalompontjait.
- + Hozz létre egy gyors alapot, amely bemutatja a szolgáltatásodat és az ajánlatodat.
-* Az ismétlődő elvek, amelyek visszaköszönnek az anyagban:
- + A szakosodás fontossága: ne próbálj meg mindennek lenni, hanem specializálódj egy adott területen.
- + A valódi probléma megoldása: ne csak a tüneteket kezelj, hanem a valódi problémát oldd meg.
- + A rendszer a király: a skálázhatóság és a hosszú távú siker a munkafolyamatok automatizálásán múlik.
+Az AI marketingügynökség blueprint egyik legfontosabb eleme a szakosodás. Ez azt jelenti, hogy az ügynökségnek egy specifikus iparágat és szolgáltatást kell választania, és arra kell specializálódnia. A szakosodás erőssége abban rejlik, hogy lehetővé teszi az ügynökségnek, hogy nagyon jó legyen valamiben, és így értéket teremtsen az ügyfeleinek.
 
-## OK-OKOZATI KAPCSOLATOK
+Egy másik fontos keretrendszer az "Ellenállhatatlan Ajánlat" (Irresistible Offer). Ez egy olyan ajánlat, amely annyira vonzó, hogy az ügyfélnek "hülyén érzi magát", ha nemet mond rá. Az ajánlatnak tartalmaznia kell garanciát és konkrétumot, hogy az ügyfél biztos legyen abban, hogy az ajánlat valódi értéket fog nyújtani számára.
 
-* Ha egy cégnek szüksége van hatékony online marketingre, akkor az AI-alapú megoldások használata a legjobb választás.
-* Ha egy cég specializálódik egy adott területen, akkor jobb lesz abban, mint az általános ügynökségek.
-* Ha egy cég megoldja a valódi problémát, akkor az ügyfelek hajlandóak lesznek fizetni érte.
-* A mechanizmusok, amelyek az anyagban vannak:
- + Az AI-alapú megoldások használata a marketingben.
- + A szakosodás és a specializálódás.
- + A valódi probléma megoldása.
-* A lépcsők, feltételek, trigger-pontok, amelyek az anyagban vannak:
- + Az első lépés az, hogy azonosítsd a célpiacodat és a szolgáltatásodat.
- + A második lépés az, hogy értsd meg a célpiacod fájdalompontjait és igényeit.
- + A harmadik lépés az, hogy alakítsd ki az "ellenállhatatlan ajánlatodat", amely megoldja a célpiacod fájdalompontjait.
+**DÖNTÉSI LOGIKÁK (If-Then)**
 
-## RENDSZERSZINTŰ ÖSSZEFÜGGÉSEK
+Ha az ügynökségnek nincs elég ügyfele, akkor az ajánlatának át kell alakulnia, hogy vonzóbb legyen az ügyfelek számára. Ha az ügynökségnek van elég ügyfele, de azok nem térnek vissza, akkor az ajánlatának jobbá kell válnia, hogy az ügyfelek elégedettek legyenek.
 
-* Az anyagban az alábbi hierarchia van:
- + A célpiac azonosítása.
- + A szolgáltatás azonosítása.
- + A valódi probléma megoldása.
- + Az "ellenállhatatlan ajánlat" kialakítása.
- + A gyors alap létrehozása.
-* A függőségek, amelyek az anyagban vannak:
- + A szakosodás a siker kulcsa.
- + A valódi probléma megoldása a siker kulcsa.
- + A rendszer a király: a skálázhatóság és a hosszú távú siker a munkafolyamatok automatizálásán múlik.
-* Az erősítő (flywheel) és gyengítő hatások, amelyek az anyagban vannak:
- + Az erősítő hatás: a szakosodás és a specializálódás.
- + A gyengítő hatás: az általános ügynökségek, amelyek mindent elvállalnak.
+Ha az ügynökségnek nincs elég pénze, akkor az ajánlatának olcsóbbá kell válnia, hogy vonzóbb legyen az ügyfelek számára. Ha az ügynökségnek van elég pénze, akkor az ajánlatának jobbá kell válnia, hogy az ügyfelek elégedettek legyenek.
 
-## DÖNTÉSI SZABÁLYOK ÉS TRIGGER-FELTÉTELEK
+**RENDSZERSZINTŰ MECHANIZMUSOK**
 
-* A döntési szabályok, amelyek az anyagban vannak:
- + Ha egy cégnek szüksége van hatékony online marketingre, akkor az AI-alapú megoldások használata a legjobb választás.
- + Ha egy cég specializálódik egy adott területen, akkor jobb lesz abban, mint az általános ügynökségek.
-* A trigger-feltételek, amelyek az anyagban vannak:
- + Az első trigger-feltétel az, hogy azonosítsd a célpiacodat és a szolgáltatásodat.
- + A második trigger-feltétel az, hogy értsd meg a célpiacod fájdalompontjait és igényeit.
-* A körülmények, amelyek között egy stratégia működik és mikor nem:
- + A szakosodás és a specializálódás működik, ha egy cégnek szüksége van hatékony online marketingre.
- + A valódi probléma megoldása működik, ha egy cégnek szüksége van valódi megoldásra.
+A szakosodás és az "Ellenállhatatlan Ajánlat" kombinációja lehetővé teszi az ügynökségnek, hogy értéket teremtsen az ügyfeleinek, és így pénzt keressen. A rendszer szintjén ez azt jelenti, hogy az ügynökségnek egy olyan modellt kell kialakítania, amelyben a szakosodás és az ajánlat kombinációja értéket teremt az ügyfelek számára.
 
-## ANTI-PATTERNEK ÉS HIBÁK
+A tőkeáttétel (leverage) pontjai a szakosodás és az ajánlat kombinációja, amelyek lehetővé teszik az ügynökségnek, hogy értéket teremtsen az ügyfeleinek. A szűk keresztmetszetek a pénzhiány és az ügyfélhiány, amelyek akadályozzák az ügynökséget abban, hogy értéket teremtsen az ügyfeleinek.
 
-* Az anti-patternek, amelyek az anyagban vannak:
- + Ne próbálj meg mindennek lenni, hanem specializálódj egy adott területen.
- + Ne csak a tüneteket kezelj, hanem a valódi problémát oldd meg.
-* A hibák, amelyek az anyagban vannak:
- + Az általános ügynökségek, amelyek mindent elvállalnak.
- + A valódi probléma nem megoldása.
-* A figyelmeztetések, amelyek az anyagban vannak:
- + A szakosodás és a specializálódás fontossága.
- + A valódi probléma megoldása fontossága.
+**ANTI-PATTERNEK**
 
-## KONKRÉT IMPLEMENTÁCIÓS LOGIKA
+Egy tipikus hiba az, hogy az ügynökség nem specializálódik egy specifikus iparágba és szolgáltatásba, hanem mindent elvállal. Ez azt eredményezi, hogy az ügynökség nem lesz jó semmiben, és így nem tud értéket teremteni az ügyfeleinek.
 
-* A pontos számok, mérőszámok, küszöbértékek, amelyek az anyagban vannak:
- + 6 hónap alatt havi 1 millió Ft-ot érjen el valaki Magyarországon.
- + 20 céget is lehet kezelni.
-* A konkrét eszközök, lépések, workflow-k, amelyek az anyagban vannak:
- + Az AI-alapú megoldások használata a marketingben.
- + A szakosodás és a specializálódás.
- + A valódi probléma megoldása.
-* A reprodukálható folyamatok, amelyek az anyagban vannak:
- + Az első lépés az, hogy azonosítsd a célpiacodat és a szolgáltatásodat.
- + A második lépés az, hogy értsd meg a célpiacod fájdalompontjait és igényeit.
- + A harmadik lépés az, hogy alakítsd ki az "ellenállhatatlan ajánlatodat", amely megoldja a célpiacod fájdalompontjait.
+Egy másik tipikus hiba az, hogy az ügynökség nem alakítja át az ajánlatát, hogy vonzóbb legyen az ügyfelek számára. Ez azt eredményezi, hogy az ügynökségnek nincs elég ügyfele, és így nem tud értéket teremteni az ügyfeleinek.
+
+**HOGYAN-T**
+
+Az AI marketingügynökség blueprint egyik legfontosabb eleme a szakosodás. Ez azt jelenti, hogy az ügynökségnek egy specifikus iparágat és szolgáltatást kell választania, és arra kell specializálódnia. A szakosodás erőssége abban rejlik, hogy lehetővé teszi az ügynökségnek, hogy nagyon jó legyen valamiben, és így értéket teremtsen az ügyfeleinek.
+
+Az "Ellenállhatatlan Ajánlat" egy olyan ajánlat, amely annyira vonzó, hogy az ügyfélnek "hülyén érzi magát", ha nemet mond rá. Az ajánlatnak tartalmaznia kell garanciát és konkrétumot, hogy az ügyfél biztos legyen abban, hogy az ajánlat valódi értéket fog nyújtani számára.
+
+A rendszer szintjén a szakosodás és az ajánlat kombinációja lehetővé teszi az ügynökségnek, hogy értéket teremtsen az ügyfeleinek, és így pénzt keressen. A tőkeáttétel (leverage) pontjai a szakosodás és az ajánlat kombinációja, amelyek lehetővé teszik az ügynökségnek, hogy értéket teremtsen az ügyfeleinek. A szűk keresztmetszetek a pénzhiány és az ügyfélhiány, amelyek akadályozzák az ügynökséget abban, hogy értéket teremtsen az ügyfeleinek.
+
+Az AI Prompting Playbook egyik legfontosabb eleme a promptok megértése. A promptok két fő típusa az instrukció és a konverzáció. Az instrukció egy direkt parancs, míg a konverzáció egy nyitottabb, szimulált beszélgetés.
+
+A promptok megírásának legfontosabb szabályai a következők:
+
+*   Clarity: Az instrukcióknak egyértelműnek kell lenniük.
+*   Context: A promptoknak tartalmazniuk kell a kontextust, hogy az AI jobban megértse a feladatot.
+*   Constraints: A promptoknak meghatározniuk kell a korlátokat, hogy az AI ne térjen el a feladattól.
+*   Break Down Tasks: A komplex feladatokat fel kell bontani kisebb, kezelhetőbb részekre.
+*   Iterate: A promptokat folyamatosan kell finomítani, hogy az AI jobb eredményeket érjen el.
+
+Az AI Prompting Playbook egyik legfontosabb eleme a promptok tesztelése és nyomon követése. A promptokat folyamatosan kell tesztelni és finomítani, hogy az AI jobb eredményeket érjen el. A promptokat nyomon kell követni, hogy az AI milyen eredményeket ér el, és milyen területeken kell javítani.
+
+Az AI Tools for different areas egyik legfontosabb eleme a Large Language Models (LLMs). Az LLM-ek olyan AI modellek, amelyek nagy mennyiségű adatot képesek feldolgozni és értelmezni. Az LLM-eknek két fő típusa van: a free és a paid. A free LLM-ek közé tartozik a Claude 3.7 Sonnet és a Gemini 2.5 Pro Experimental, míg a paid LLM-ek közé tartozik a ChatGPT Plus.
+
+Az AI Image Models egyik legfontosabb eleme az Imagen 3. Az Imagen 3 egy olyan AI modell, amely képeket képes generálni. Az Imagen 3-nak két fő típusa van: a free és a paid. A free Imagen 3 közé tartozik az Imagen 3 (via Google Labs), míg a paid Imagen 3 közé tartozik a GPT-4o native image generation.
+
+Az AI Video Models egyik legfontosabb eleme a Kling 1.6. A Kling 1.6 egy olyan AI modell, amely videókat képes generálni. A Kling 1.6-nak két fő típusa van: a free és a paid. A free Kling 1.6 közé tartozik a Kling 1.6, míg a paid Kling 1.6 közé tartozik a Krea.
+
+Az AI Music egyik legfontosabb eleme a Suno. A Suno egy olyan AI modell, amely zenét képes generálni. A Suno-nak két fő típusa van: a free és a paid. A free Suno közé tartozik a Suno, míg a paid Suno közé tartozik az upgrade lehetőség.
+
+A Research Tools egyik legfontosabb eleme a NotebookLM. A NotebookLM egy olyan AI modell, amely kutatási feladatokat képes ellátni. A NotebookLM-nak két fő típusa van: a free és a paid. A free NotebookLM közé tartozik a NotebookLM, míg a paid NotebookLM közé tartozik a Google Deep Research.
+
+A Productivity Tools egyik legfontosabb eleme a Napkin. A Napkin egy olyan AI modell, amely termelékenységi feladatokat képes ellátni. A Napkin-nak két fő típusa van: a free és a paid. A free Napkin közé tartozik a Napkin, míg a paid Napkin közé tartozik az upgrade lehetőség.

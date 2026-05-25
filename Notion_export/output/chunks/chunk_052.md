@@ -1,53 +1,75 @@
-## MENTÁLIS MODELLEK ÉS STRATÉGIAI MINTÁK
+**Knowledge Extraction Dossier**
 
-A megadott jegyzetek alapján az alábbi mentális modellek és stratégiai minták azonosíthatóak:
+**Tartalomjegyzék**
 
-* **Vibe Marketing**: A Vibe Marketing egy olyan megközelítés, amely az AI és a no-code eszközök kombinációját használja a marketing kampányok automatizálására. Ez a megközelítés lehetővé teszi a "smart marketer" számára, hogy egyedül kezelje a marketing tevékenységeket, anélkül, hogy nagy csapatokat kellene felállítania.
-* **Leverage Asynchronous Selling**: A VSL (Video Sales Letter) használata lehetővé teszi a sales folyamatok aszinkronizálását, amelyben a sales rep csak a legfontosabb lépéseknél vesz részt, míg a VSL a többi részét automatizálja.
-* **SWOT analízis**: A SWOT analízis egy stratégiai eszköz, amely segít azonosítani az erősségeket, gyengeségeket, lehetőségeket és veszélyeket. Ez a megközelítés segít a vállalkozóknak, hogy jobban megértsék saját magukat és a piacot.
-* **Kreatív problémamegoldás**: A brainstorming, a SCAMPER módszer és más kreatív technikák használata segít az új ötletek generálásában és a problémák megoldásában.
+1. [Vibe Marketing](#vibe-marketing)
+2. [Video Sales Letters (VSLs)](#video-sales-letters-vsls)
+3. [Vállalkozás indítás: Nullától sikerig](#vállalkozás-indítás-nullától-sikerig)
+4. [Játékok tervezése: Mi tesz egy társasjátékot jóvá?](#játékok-tervezése-mi-tesz-egy-társasjátékot-jóvá)
 
-## OK-OKOZATI KAPCSOLATOK
+## Vibe Marketing
+### Bevezetés
+A Vibe Marketing egy olyan marketing megközelítés, amely az AI-alapú eszközök és a munkafolyamatok kombinálásával automatizálja a marketing kampányokat. Ennek a megközelítésnek a célja, hogy a marketing csapatokat képessé tegye arra, hogy gyorsabban és hatékonyabban hajtsanak végre marketing kampányokat.
 
-Az alábbi ok-okozati kapcsolatok azonosíthatóak:
+### Kereskedelmi modell
+A Vibe Marketing modell a következő komponensekből áll:
 
-* **AI és no-code eszközök**: Az AI és a no-code eszközök kombinációja lehetővé teszi a marketing kampányok automatizálását és a "smart marketer" számára, hogy egyedül kezelje a marketing tevékenységeket.
-* **VSL és sales folyamatok**: A VSL használata lehetővé teszi a sales folyamatok aszinkronizálását, amelyben a sales rep csak a legfontosabb lépéseknél vesz részt, míg a VSL a többi részét automatizálja.
-* **SWOT analízis és vállalkozói döntések**: A SWOT analízis segít a vállalkozóknak, hogy jobban megértsék saját magukat és a piacot, és ennek alapján döntéseket hozzanak.
-* **Kreatív problémamegoldás és innováció**: A kreatív problémamegoldás segít az új ötletek generálásában és a problémák megoldásában, amelyek hozzájárulhatnak az innovációhoz.
+* **Vibe Coding Tools**: Ezek az eszközök lehetővé teszik a felhasználók számára, hogy weboldalakat és alkalmazásokat hozzanak létre promptok segítségével.
+* **AI Agents**: Ezek az ügynökök automatizálják a marketing kampányok végrehajtását, például tartalom létrehozását, lead outreach-et és analitikát.
+* **Workflows**: Ezek a folyamatok meghatározzák, hogyan működnek együtt az AI-ügynökök és a Vibe Coding Tools, hogy elérjék a marketing célokat.
 
-## RENDSZERSZINTŰ ÖSSZEFÜGGÉSEK
+### Alkalmazható tudás
+A Vibe Marketinghez kapcsolódó alkalmazható tudás a következő:
 
-Az alábbi rendszerszintű összefüggések azonosíthatóak:
+* **Automatizálás**: Az AI-alapú eszközök és a munkafolyamatok kombinálásával a marketing csapatok képessé válnak a marketing kampányok automatizálására.
+* **Gyorsaság**: A Vibe Marketing modell lehetővé teszi a marketing csapatok számára, hogy gyorsabban hajtsanak végre marketing kampányokat, mint a hagyományos módszerek.
+* **Hatékonyság**: A Vibe Marketing modell növeli a marketing csapatok hatékonyságát, mivel az AI-ügynökök és a Vibe Coding Tools együttműködnek, hogy elérjék a marketing célokat.
 
-* **Marketing kampányok és AI**: A marketing kampányok és az AI kombinációja lehetővé teszi a marketing tevékenységek automatizálását és a "smart marketer" számára, hogy egyedül kezelje a marketing tevékenységeket.
-* **Sales folyamatok és VSL**: A sales folyamatok és a VSL kombinációja lehetővé teszi a sales folyamatok aszinkronizálását, amelyben a sales rep csak a legfontosabb lépéseknél vesz részt, míg a VSL a többi részét automatizálja.
-* **Vállalkozói döntések és SWOT analízis**: A vállalkozói döntések és a SWOT analízis kombinációja segít a vállalkozóknak, hogy jobban megértsék saját magukat és a piacot, és ennek alapján döntéseket hozzanak.
-* **Innováció és kreatív problémamegoldás**: Az innováció és a kreatív problémamegoldás kombinációja segít az új ötletek generálásában és a problémák megoldásában, amelyek hozzájárulhatnak az innovációhoz.
+## Video Sales Letters (VSLs)
+### Bevezetés
+A Video Sales Letters (VSLs) egy olyan értékesítési megközelítés, amely a videókat használja az értékesítési folyamatban. Ennek a megközelítésnek a célja, hogy a értékesítési csapatokat képessé tegye arra, hogy hatékonyabban és személyre szabottabban értékesítsenek.
 
-## DÖNTÉSI SZABÁLYOK ÉS TRIGGER-FELTÉTELEK
+### Értékesítési modell
+A VSLs modell a következő komponensekből áll:
 
-Az alábbi döntési szabályok és trigger-feltételek azonosíthatóak:
+* **Intro Call**: Az értékesítési folyamat kezdete, amikor az értékesítő kapcsolatba lép az ügyféllel.
+* **Tailored VSL**: A videó, amely az ügyfél igényeinek és érdeklődésének megfelelően készül.
+* **Decision Call**: Az értékesítési folyamat vége, amikor az értékesítő az ügyféllel együtt dönt arról, hogy megvásárolja-e a terméket vagy szolgáltatást.
 
-* **Marketing kampányok indítása**: A marketing kampányok indítása akkor indokolt, ha a vállalkozó rendelkezik a szükséges erőforrásokkal és a piac készen áll a termék vagy szolgáltatás fogadására.
-* **VSL használata**: A VSL használata akkor indokolt, ha a sales repnek szüksége van a sales folyamatok aszinkronizálására és a VSL segítségével tudja növelni a sales hatékonyságát.
-* **SWOT analízis elvégzése**: A SWOT analízis elvégzése akkor indokolt, ha a vállalkozó szüksége van a saját maga és a piac megértésére, és ennek alapján döntéseket akar hozni.
-* **Kreatív problémamegoldás alkalmazása**: A kreatív problémamegoldás alkalmazása akkor indokolt, ha a vállalkozónak szüksége van az új ötletek generálására és a problémák megoldására.
+### Alkalmazható tudás
+A VSLs-hez kapcsolódó alkalmazható tudás a következő:
 
-## ANTI-PATTERNEK ÉS HIBÁK
+* **Személyre szabott értékesítés**: A VSLs modell lehetővé teszi az értékesítési csapatok számára, hogy személyre szabottan értékesítsenek, figyelembe véve az ügyfél igényeit és érdeklődését.
+* **Hatékony értékesítés**: A VSLs modell növeli az értékesítési csapatok hatékonyságát, mivel a videók és az értékesítők együttműködnek, hogy elérjék az értékesítési célokat.
 
-Az alábbi anti-patternek és hibák azonosíthatóak:
+## Vállalkozás indítás: Nullától sikerig
+### Bevezetés
+A vállalkozás indítása egy összetett folyamat, amelyhez számos tényezőt kell figyelembe venni. Ennek a megközelítésnek a célja, hogy a vállalkozókat képessé tegye arra, hogy sikeresen indítsanak és működtessenek egy vállalkozást.
 
-* **Túlzott AI-re támaszkodás**: A túlzott AI-re támaszkodás vezethet a marketing kampányok és a sales folyamatok automatizálásához, de nem garantálja a sikerességet, ha a vállalkozó nem rendelkezik a szükséges erőforrásokkal és a piac nem készen áll a termék vagy szolgáltatás fogadására.
-* **VSL túlzott használata**: A VSL túlzott használata vezethet a sales folyamatok aszinkronizálásához, de nem garantálja a sales hatékonyságának növelését, ha a sales rep nem rendelkezik a szükséges készségekkel és a VSL nem megfelelően van kiválasztva.
-* **SWOT analízis elhanyagolása**: A SWOT analízis elhanyagolása vezethet a vállalkozói döntések megalapozatlanságához és a piac nem megfelelő megértéséhez.
-* **Kreatív problémamegoldás elhanyagolása**: A kreatív problémamegoldás elhanyagolása vezethet a vállalkozói innováció hiányához és a problémakezelési képesség csökkenéséhez.
+### Vállalkozási modell
+A vállalkozási modell a következő komponensekből áll:
 
-## KONKRÉT IMPLEMENTÁCIÓS LOGIKA
+* **Önképzés és önreflexió**: A vállalkozóknak fontos, hogy megismerjék saját erősségeiket, gyengeségeiket, érdeklődési körüket és céljaikat.
+* **Inspiráció és ötletgyűjtés**: A vállalkozóknak fontos, hogy inspirálódjanak és gyűjtsenek ötleteket, hogy megtalálják a legjobb üzleti ötletet.
 
-Az alábbi konkrét implementációs logika azonosítható:
+### Alkalmazható tudás
+A vállalkozás indításához kapcsolódó alkalmazható tudás a következő:
 
-* **Marketing kampányok indítása**: A marketing kampányok indítása során a vállalkozónak szüksége van a szükséges erőforrásokra, a piac megértésére és a marketing stratégia kidolgozására.
-* **VSL használata**: A VSL használata során a sales repnek szüksége van a VSL kiválasztására, a sales folyamatok aszinkronizálására és a VSL segítségével tudja növelni a sales hatékonyságát.
-* **SWOT analízis elvégzése**: A SWOT analízis elvégzése során a vállalkozónak szüksége van a saját maga és a piac megértésére, és ennek alapján döntéseket akar hozni.
-* **Kreatív problémamegoldás alkalmazása**: A kreatív problémamegoldás alkalmazása során a vállalkozónak szüksége van az új ötletek generálására és a problémák megoldására.
+* **Önreflexió**: A vállalkozóknak fontos, hogy megismerjék saját erősségeiket, gyengeségeiket, érdeklődési körüket és céljaikat, hogy sikeresen indítsanak és működtessenek egy vállalkozást.
+* **Inspiráció**: A vállalkozóknak fontos, hogy inspirálódjanak és gyűjtsenek ötleteket, hogy megtalálják a legjobb üzleti ötletet.
+
+## Játékok tervezése: Mi tesz egy társasjátékot jóvá?
+### Bevezetés
+A társasjátékok tervezése egy összetett folyamat, amelyhez számos tényezőt kell figyelembe venni. Ennek a megközelítésnek a célja, hogy a játéktervezőket képessé tegye arra, hogy jó társasjátékokat tervezzenek.
+
+### Játéktervezési modell
+A játéktervezési modell a következő komponensekből áll:
+
+* **Meaningful Decisions**: A játékosoknak fontos, hogy értelmes döntéseket hozzanak, amelyek befolyásolják a játék kimenetelét.
+* **Multiple Paths to Victory**: A játékosoknak fontos, hogy több lehetőségük legyen a győzelemre, hogy a játék izgalmasabb legyen.
+
+### Alkalmazható tudás
+A játékok tervezéséhez kapcsolódó alkalmazható tudás a következő:
+
+* **Játékdinamika**: A játéktervezőknek fontos, hogy megtervezzék a játék dinamikáját, hogy a játékosok értelmes döntéseket hozhassanak és több lehetőségük legyen a győzelemre.
+* **Játékélmény**: A játéktervezőknek fontos, hogy megtervezzék a játékélményt, hogy a játékosok élvezzék a játékot és visszatérjenek hozzá.

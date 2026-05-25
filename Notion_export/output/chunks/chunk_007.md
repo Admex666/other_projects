@@ -1,68 +1,38 @@
-## MENTÁLIS MODELLEK ÉS STRATÉGIAI MINTÁK
+**Knowledge Extraction Dossier**
 
-A két note-ban bemutatott gondolkodási keretrendszerek és stratégiai minták a következők:
+**Bevezetés**
 
-* Az AI-Powered Company Analysis Funnel note-ban bemutatott 5-prompt research framework egy strukturált megközelítést biztosít a vállalati elemzéshez, amelyben a pontos, strukturált promptok és az AI "mode" (Normal, Think, DeepSearch) megválasztása kulcsfontosságú.
-* A Alex’s Short Form Quick Guide note-ban bemutatott marketing stratégiai minták a következőkre fókuszálnak:
- + Repeatable, scalable, speed: a konceptek ismételhetősége, skálázhatósága és sebessége.
- + Collabs: együttműködések.
- + Content funnel: a tartalomcsatorna három szintje: top of funnel (széles körű elérés), middle of funnel (értékes tartalom termékelhelyezésekkel), bottom of funnel (cselekvésre ösztönző tartalom).
+Ez a dokumentum célja, hogy kinyerje a konkrét, alkalmazható tudást a kapott üzleti jegyzetekből. A jegyzetek tartalmazzák az AI-Powered Company Analysis Funnel, Alex's Short Form Quick Guide, Alkotóelem módosítása és Android App Launch Checklist témákat. A dokumentum részletesen kifejti a konkrétpontokat, döntési logikákat, rendszerszintű mechanizmusokat és anti-patterneket.
 
-Ezek a gondolkodási keretrendszerek és stratégiai minták arra utalnak, hogy a döntéshozatali folyamatokban a strukturált megközelítés, a pontos információgyűjtés és a hatékony kommunikáció kulcsfontosságúak.
+**1. KONKRÉT KERETRENDSZEREK ÉS KÉPLETEK**
 
-## OK-OKOZATI KAPCSOLATOK
+* **AI-Powered Company Analysis Funnel**: A Large Language Model (LLM) segítségével gyorsan megérthetjük egy vállalat működését és azonosíthatjuk a potenciális kockázatokat. A siker kulcsa a pontos, strukturált promptok használata és a megfelelő AI-mód (Normal, Think, DeepSearch) kiválasztása.
+* **5-Prompt Research Framework**: Egy sorozat prompt segítségével gyorsan elemezhetjük egy vállalatot.
+ + **Prompt 1: Prime the AI**: Beállítjuk a kontextust és a szerepet az AI-nak.
+ + **Prompt 2: Understand the Business Model**: Megértjük a vállalat üzleti modelljét és hogyan keres pénzt.
+ + **Prompt 3: Assess Uniqueness & Competitive Edge (Moat)**: Azonosítjuk a vállalat stratégiai pozícióját és versenyelőnyeit.
+* **Alex's Short Form Quick Guide**: A tartalomgyártás során fontos, hogy repeatable, scalable és gyors legyen. A tartalomfunnel három részből áll: Top of Funnel (TOF), Middle of Funnel (MOF) és Bottom of Funnel (BOF).
+* **Alkotóelem módosítása**: Mindennek vannak alkotóelemei, amelyeket listázni kell. Egy-két elem módosításával egyedibb terméket hozhatunk létre.
+* **Android App Launch Checklist**: A sikerhez szükséges egy strukturált pre-launch checklist. A checklist tartalmazza a kódobfuszkációt, analitikát, multi-eszköz tesztelést, Google Play policy ellenőrzést és a store listing optimalizálást.
 
-A két note-ban bemutatott ok-okozati kapcsolatok a következők:
+**2. DÖNTÉSI LOGIKÁK (If-Then)**
 
-* Az AI-Powered Company Analysis Funnel note-ban bemutatott 5-prompt research frameworkben a pontos, strukturált promptok és az AI "mode" megválasztása befolyásolja a vállalati elemzés eredményeit.
-* A Alex’s Short Form Quick Guide note-ban bemutatott marketing stratégiai mintákban a repeatable, scalable, speed és a collabs együttműködések befolyásolják a tartalomcsatorna hatékonyságát.
-* A content funnel szintjei (top of funnel, middle of funnel, bottom of funnel) befolyásolják a cselekvésre ösztönző tartalom hatékonyságát.
+* **Ha** egy vállalatot elemezünk, **akkor** használjunk pontos, strukturált promptokat az AI-nak.
+* **Ha** tartalmat gyártunk, **akkor** fontos, hogy repeatable, scalable és gyors legyen.
+* **Ha** egy Android app-ot indítunk, **akkor** használjunk egy strukturált pre-launch checklistet.
 
-Ezek az ok-okozati kapcsolatok arra utalnak, hogy a döntéshozatali folyamatokban a pontos információgyűjtés, a hatékony kommunikáció és a strukturált megközelítés kulcsfontosságúak.
+**3. RENDSZERSZINTŰ MECHANIZMUSOK**
 
-## RENDSZERSZINTŰ ÖSSZEFÜGGÉSEK
+* **AI-Powered Company Analysis Funnel**: A LLM segítségével gyorsan megérthetjük egy vállalat működését és azonosíthatjuk a potenciális kockázatokat.
+* **Tartalomfunnel**: A tartalomgyártás során fontos, hogy repeatable, scalable és gyors legyen.
+* **Android App Launch**: A sikerhez szükséges egy strukturált pre-launch checklist.
 
-A két note-ban bemutatott rendszerszintű összefüggések a következők:
+**4. ANTI-PATTERNEK**
 
-* Az AI-Powered Company Analysis Funnel note-ban bemutatott 5-prompt research frameworkben a vállalati elemzés folyamata összefügg azzal, hogy a pontos, strukturált promptok és az AI "mode" megválasztása befolyásolja a vállalati elemzés eredményeit.
-* A Alex’s Short Form Quick Guide note-ban bemutatott marketing stratégiai mintákban a tartalomcsatorna szintjei (top of funnel, middle of funnel, bottom of funnel) összefüggnek a cselekvésre ösztönző tartalom hatékonyságával.
-* A két note-ban bemutatott rendszerszintű összefüggések arra utalnak, hogy a döntéshozatali folyamatokban a strukturált megközelítés, a pontos információgyűjtés és a hatékony kommunikáció kulcsfontosságúak.
+* **Nem pontos promptok**: A nem pontos promptok nem segítik a vállalat elemzését.
+* **Nem repeatable, nem scalable tartalom**: A nem repeatable és nem scalable tartalom nem segít a célközönség elérésében.
+* **Nem megfelelő pre-launch checklist**: A nem megfelelő pre-launch checklist nem segít az Android app sikerében.
 
-## DÖNTÉSI SZABÁLYOK ÉS TRIGGER-FELTÉTELEK
+**KÖVETKEZTETÉS**
 
-A két note-ban bemutatott döntési szabályok és trigger-feltételek a következők:
-
-* Az AI-Powered Company Analysis Funnel note-ban bemutatott 5-prompt research frameworkben a döntési szabályok a következők:
- + Ha a vállalati elemzéshez szükséges információ nem elérhető, akkor a Normal mode-t használjuk.
- + Ha a vállalati elemzéshez szükséges információ elérhető, de részletes elemzésre van szükség, akkor a DeepSearch mode-t használjuk.
-* A Alex’s Short Form Quick Guide note-ban bemutatott marketing stratégiai mintákban a döntési szabályok a következők:
- + Ha a koncept ismételhető, skálázható és gyors, akkor teszteljük.
- + Ha a koncept nem ismételhető, skálázható vagy gyors, akkor nem teszteljük.
-
-## ANTI-PATTERNEK ÉS HIBÁK
-
-A két note-ban bemutatott anti-patternek és hibák a következők:
-
-* Az AI-Powered Company Analysis Funnel note-ban bemutatott 5-prompt research frameworkben az anti-patternek és hibák a következők:
- + Ha a promptok nem pontosak vagy strukturálatlanok, akkor a vállalati elemzés eredményeit befolyásolhatják.
- + Ha az AI "mode" nem megfelelően van kiválasztva, akkor a vállalati elemzés eredményeit befolyásolhatják.
-* A Alex’s Short Form Quick Guide note-ban bemutatott marketing stratégiai mintákban az anti-patternek és hibák a következők:
- + Ha a koncept nem ismételhető, skálázható vagy gyors, akkor a tesztelés nem lesz hatékony.
- + Ha a tartalomcsatorna szintjei (top of funnel, middle of funnel, bottom of funnel) nem megfelelően vannak kiválasztva, akkor a cselekvésre ösztönző tartalom hatékonyságát befolyásolhatják.
-
-## KONKRÉT IMPLEMENTÁCIÓS LOGIKA
-
-A két note-ban bemutatott konkrét implementációs logika a következők:
-
-* Az AI-Powered Company Analysis Funnel note-ban bemutatott 5-prompt research frameworkben a konkrét implementációs logika a következő:
- + Prompt 1: Prime the AI
- + Prompt 2: Understand the Business Model
- + Prompt 3: Assess Uniqueness & Competitive Edge (Moat)
- + Prompt 4: Evaluate Financial Performance
- + Prompt 5: Synthesize and Draw Conclusions
-* A Alex’s Short Form Quick Guide note-ban bemutatott marketing stratégiai mintákban a konkrét implementációs logika a következő:
- + Repeatable, scalable, speed
- + Collabs
- + Content funnel: top of funnel, middle of funnel, bottom of funnel
-
-Ezek a konkrét implementációs logikák arra utalnak, hogy a döntéshozatali folyamatokban a strukturált megközelítés, a pontos információgyűjtés és a hatékony kommunikáció kulcsfontosságúak.
+A dokumentum célja, hogy kinyerje a konkrét, alkalmazható tudást a kapott üzleti jegyzetekből. A jegyzetek tartalmazzák az AI-Powered Company Analysis Funnel, Alex's Short Form Quick Guide, Alkotóelem módosítása és Android App Launch Checklist témákat. A dokumentum részletesen kifejti a konkrétpontokat, döntési logikákat, rendszerszintű mechanizmusokat és anti-patterneket. A dokumentum segít a vállalatoknak és a marketingeseknek, hogy jobban megértsék a piacot és a célközönséget, és hogy sikeresebbek legyenek az Android app indításban és a tartalomgyártásban.

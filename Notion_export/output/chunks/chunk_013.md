@@ -1,61 +1,33 @@
-## 1. MENTÁLIS MODELLEK ÉS STRATÉGIAI MINTÁK
+**Knowledge Extraction Dossier**
 
-A négy note-ban szereplő tartalmak alapján az alábbi mentális modellek és stratégiai minták azonosíthatók:
+**Bevezetés**
 
-*   A **CEO Singularity Principle**: Egy vállalkozásban csak egy dolgot lehet jól csinálni, és a figyelem megosztása káros lehet a növekedésre.
-*   Az **Owner vs. Operator Framework**: A tulajdonos és a vezető két különböző szerep, és a vezetőnek teljes figyelmét és energiáját a vállalkozásra kell koncentrálnia.
-*   A **Opportunity Patience Lens**: Minden vállalkozásban van potenciál, ha teljesen végigviszik, és nem kell mindig az új lehetőségek után rohanni.
-*   Az **AI mint Operációs Rendszer**: Az AI-t nem eszközként, hanem rendszerként kell használni, amely segít a döntésekben és a folyamatokban.
-*   A **Leverage Loop**: Az AI-t használva lehetőség van a folyamatos fejlődésre és a jobb döntések meghozatalára.
-*   Az **External Brain Model**: Az AI-t lehet használni mint egy "második agyat", amely segít az elemzésben és a döntéshozatalban.
-*   Az **Essentialism (The "Chicken Sandwich" Rule)**: Minden felesleges tevékenységet és funkciókat el kell távolítani, hogy a fő termékre vagy szolgáltatásra koncentrálhassunk.
-*   A **80/20 Principle (Pareto)**: 20% az erőfeszítés 80% eredményt hoz.
-*   A **Compounding Focus**: A kis, de folyamatos fejlődés hosszú távon nagy eredményt hozhat.
-*   Az **Opportunity Cost Awareness**: Minden új lehetőség elvonja a figyelmet a fő célról, és gyengíti a vállalkozást.
-*   A **Consistency > Novelty**: A vevők inkább a megbízható minőséget és a folyamatos szolgáltatást szeretik, mint az új és különleges dolgokat.
+A célunk az, hogy kinyerjük a konkrét, alkalmazható tudást a kapott üzleti jegyzetekből. A jegyzetekben található információkat elemezzük, és kifejtjük a működésüket, valamint a praktikus alkalmazásukat.
 
-## 2. OK-OKOZATI KAPCSOLATOK
+**Keretrendszerek és képletek**
 
-A note-ok alapján az alábbi ok-okozati kapcsolatok azonosíthatók:
+1. **CEO Litmus Test**: Amikor egy projektet értékelünk, fontos, hogy megkérdezzük magunktól: "Vagyok-e tulajdonos vagy CEO?" Ha a projekt aktív vezetést igényel, akkor kizárólag arra kell összpontosítani.
+2. **Dream Outcome x Likelihood / Time Delay x Effort**: Ez a képlet segít abban, hogy értékeljük a projektjeinket és prioritizáljuk őket. A képlet a következő: (Álom kimenetel x Valószínűség) / (Időkésleltetés x Erőfeszítés).
+3. **Essentialism (A "Chicken Sandwich" Szabály)**: Ez a keretrendszer segít abban, hogy meghatározzuk, mi a legfontosabb tevékenység, amelyre összpontosítanunk kell. A szabály úgy hangzik, hogy "Vágd ki mindent, ami nem mozdítja elő a magot".
+4. **80/20 Szabály (Pareto)**: Ez a szabály kimondja, hogy 20% az erőfeszítéseink 80% az eredményeinket adja. A szabály segít abban, hogy meghatározzuk, mely tevékenységekre kell összpontosítanunk.
 
-*   Ha egy vállalkozás **több dolgot** csinál, akkor **kevesebb figyelmet** fordít a fő termékre vagy szolgáltatásra, ami **gyengíti a vállalkozást**.
-*   Ha egy vállalkozás **egyetlen dolgot** csinál, akkor **több figyelmet** fordíthat a fő termékre vagy szolgáltatásra, ami **erősíti a vállalkozást**.
-*   Ha egy vállalkozás **jól használja az AI-t**, akkor **jobb döntések** hozhat, és **növelheti a hatékonyságot**.
-*   Ha egy vállalkozás **nem koncentrál a fő termékre vagy szolgáltatásra**, akkor **elveszti a fókuszt**, és **gyengül a vállalkozás**.
-*   Ha egy vállalkozás **folyamatosan fejleszti a terméket vagy szolgáltatást**, akkor **növeli a minőséget**, és **erősíti a vállalkozást**.
+**Döntési logikák (If-Then)**
 
-## 3. RENDSZERSZINTŰ ÖSSZEFÜGGÉSEK
+1. **Ha egy projektet értékelünk, akkor kérdezzük meg magunktól: "Vagyok-e tulajdonos vagy CEO?"**: Ha a projekt aktív vezetést igényel, akkor kizárólag arra kell összpontosítani.
+2. **Ha egy új ötletünk van, akkor kérdezzük meg magunktól: "Hogyan fognak nekem ezért fizetni?"**: Ez a kérdés segít abban, hogy meghatározzuk, milyen potenciális bevételi forrásai vannak az új ötletnek.
+3. **Ha egy terméket vagy szolgáltatást fejlesztünk, akkor kérdezzük meg magunktól: "Milyen fájdalmat vagy vágyat enyhít ez a termék vagy szolgáltatás?"**: Ez a kérdés segít abban, hogy meghatározzuk, milyen értéket ad a termék vagy szolgáltatás az ügyfeleknek.
 
-A note-ok alapján az alábbi rendszerszintű összefüggések azonosíthatók:
+**Rendszerszintű mechanizmusok**
 
-*   A **vásárlók** és a **vállalkozás** közötti kapcsolat: A vevők **megbízható minőséget** és **folyamatos szolgáltatást** szeretnek, a vállalkozásnak pedig **figyelnie kell** a vevők **igényeire**.
-*   A **vállalkozás** és az **AI** közötti kapcsolat: Az AI **segít** a vállalkozásnak **jobb döntések** hozatalában, és **növeli a hatékonyságot**.
-*   A **vállalkozás** és a **vezető** közötti kapcsolat: A vezetőnek **teljes figyelmét** és **energiáját** a vállalkozásra kell **koncentrálnia**, hogy **erősítse a vállalkozást**.
-*   A **vállalkozás** és a **környezet** közötti kapcsolat: A vállalkozásnak **figyelnie kell** a **környezeti változásokra**, és **alkalmazkodnia kell** azokhoz, hogy **erős maradjon**.
+1. **A szűk keresztmetszetek azonosítása**: Fontos, hogy meghatározzuk, mely területeken van szükség fejlesztésre, és hogy milyen erőforrásokat kell arra fordítani.
+2. **A tőkeáttétel (leverage) pontjai**: A tőkeáttétel pontjai azok a területek, ahol a legnagyobb hatást lehet elérni a legkisebb erőfeszítéssel. Fontos, hogy meghatározzuk, mely területeken van szükség tőkeáttételre.
 
-## 4. DÖNTÉSI SZABÁLYOK ÉS TRIGGER-FELTÉTELEK
+**Anti-patternek**
 
-A note-ok alapján az alábbi döntési szabályok és trigger-feltételek azonosíthatók:
+1. **A túl korai diverzifikáció**: A túl korai diverzifikáció az erőforrások szétforgácsolásához vezethet, és csökkentheti a fókuszt.
+2. **A túl sok projekt egyidejű kezelése**: A túl sok projekt egyidejű kezelése a produktivitás csökkenéséhez vezethet, és csökkentheti a minőséget.
+3. **A nem megfelelő célkitűzés**: A nem megfelelő célkitűzés a motiváció csökkenéséhez vezethet, és csökkentheti a teljesítményt.
 
-*   **Ha** egy vállalkozás **több dolgot** csinál, **akkor** **koncentráljon** a **fő termékre** vagy **szolgáltatásra**.
-*   **Ha** egy vállalkozás **jól használja az AI-t**, **akkor** **növelje** a **hatékonyságot**.
-*   **Ha** egy vállalkozás **nem koncentrál a fő termékre** vagy **szolgáltatásra**, **akkor** **veszítse el a fókuszt**, és **gyengül a vállalkozás**.
-*   **Ha** egy vállalkozás **folyamatosan fejleszti a terméket** vagy **szolgáltatást**, **akkor** **növeli a minőséget**, és **erősíti a vállalkozást**.
+**Következtetés**
 
-## 5. ANTI-PATTERNEK ÉS HIBÁK
-
-A note-ok alapján az alábbi anti-patternek és hibák azonosíthatók:
-
-*   **Több dolgot csinálni**: Ha egy vállalkozás több dolgot csinál, akkor elveszti a fókuszt, és gyengül a vállalkozás.
-*   **Nem koncentrálni a fő termékre vagy szolgáltatásra**: Ha egy vállalkozás nem koncentrál a fő termékre vagy szolgáltatásra, akkor elveszti a fókuszt, és gyengül a vállalkozás.
-*   **Nem használni az AI-t**: Ha egy vállalkozás nem használja az AI-t, akkor elveszti a hatékonyságot, és gyengül a vállalkozás.
-*   **Nem fejleszteni a terméket vagy szolgáltatást**: Ha egy vállalkozás nem fejleszti a terméket vagy szolgáltatást, akkor elveszti a minőséget, és gyengül a vállalkozás.
-
-## 6. KONKRÉT IMPLEMENTÁCIÓS LOGIKA
-
-A note-ok alapján az alábbi konkrét implementációs logika azonosítható:
-
-*   **Koncentrálni a fő termékre vagy szolgáltatásra**: A vállalkozásnak koncentrálnia kell a fő termékre vagy szolgáltatásra, hogy erősítse a vállalkozást.
-*   **Használni az AI-t**: A vállalkozásnak használnia kell az AI-t, hogy növelje a hatékonyságot, és erősítse a vállalkozást.
-*   **Folyamatosan fejleszteni a terméket vagy szolgáltatást**: A vállalkozásnak folyamatosan fejlesztenie kell a terméket vagy szolgáltatást, hogy növelje a minőséget, és erősítse a vállalkozást.
-*   **Figyelni a vevők igényeire**: A vállalkozásnak figyelnie kell a vevők igényeire, és alkalmazkodnia kell azokhoz, hogy erős maradjon.
+A Knowledge Extraction Dossier célja az, hogy kinyerje a konkrét, alkalmazható tudást a kapott üzleti jegyzetekből. A jegyzetekben található információkat elemeztük, és kifejtettük a működésüket, valamint a praktikus alkalmazásukat. A Dossier segít abban, hogy meghatározzuk a legfontosabb tevékenységeket, amelyekre összpontosítanunk kell, és hogy hogyan lehet a legnagyobb hatást elérni a legkisebb erőfeszítéssel.

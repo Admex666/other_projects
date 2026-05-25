@@ -1,97 +1,72 @@
-## MENTÁLIS MODELLEK ÉS STRATÉGIAI MINTÁK
+**Knowledge Extraction Dossier**
 
-A vizsgált note-okban szereplő mentális modellek és stratégiai minták a következők:
+**Tartalomjegyzék**
 
-* A Discord "barátkereső" brainstorm note-ban szereplő célkitűzések és stratégiák, mint például a magány csökkentése, hasonló emberek megtalálása, pénzszerzés, közösségépítés és tagok fejlesztése.
-* A Docs for game designers note-ban szereplő tervezési folyamat, mint például az új ötletek brainstormingja, a szabályok kidolgozása és a playtesting.
-* A Drew Eric Whitman: Ca$hvertising note-ban szereplő marketing alapelvek, mint például a AIDA modell, a Mind Movies és a LIFE FORCE 8.
-* A Drippi Twitter Marketing Strategy note-ban szereplő Twitter marketing stratégia, mint például a brand építése, a követő/követett arány javítása és a cold DM-ek használata.
+1. [Bevezetés](#bevezetes)
+2. [Discord "barátkereső" brainstorm](#discord-baratkero-brainstorm)
+3. [Dokumentumok játéktervezőknek](#dokumentumok-jatektervezoknek)
+4. [Drew Eric Whitman Ca$hvertising](#drew-eric-whitman-cashvertising)
+5. [Drippi Twitter Marketing Strategy](#drippi-twitter-marketing-strategy)
+6. [Keretrendszerek és képletek](#keretrendszerek-es-kepletek)
+7. [Döntési logikák](#donesi-logikak)
+8. [Rendszerszintű mechanizmusok](#rendszerszintu-mechanizmusok)
+9. [Anti-patternek](#anti-patternek)
 
-Ezek a mentális modellek és stratégiai minták a következő gondolkodási keretrendszert használják:
+## Bevezetés
 
-* A Discord "barátkereső" brainstorm note-ban szereplő gondolkodási keretrendszer a közösségépítésre és a tagok fejlesztésére összpontosít.
-* A Docs for game designers note-ban szereplő gondolkodási keretrendszer a tervezési folyamatra és a playtestingre összpontosít.
-* A Drew Eric Whitman: Ca$hvertising note-ban szereplő gondolkodási keretrendszer a marketing alapelvekre és a pszichológiára összpontosít.
-* A Drippi Twitter Marketing Strategy note-ban szereplő gondolkodási keretrendszer a Twitter marketing stratégiára és a követő/követett arány javítására összpontosít.
+Ez a Knowledge Extraction Dossier az alábbi négy üzleti/marketing jegyzetből készült: Discord "barátkereső" brainstorm, Dokumentumok játéktervezőknek, Drew Eric Whitman Ca$hvertising és Drippi Twitter Marketing Strategy. A cél a konkrét, alkalmazható tudás kinyerése és a szakmai mélységű elemzés.
 
-## OK-OKOZATI KAPCSOLATOK
+## Discord "barátkereső" brainstorm
 
-A vizsgált note-okban szereplő ok-okozati kapcsolatok a következők:
+A Discord "barátkereső" brainstorm jegyzet a magányon segítő, hasonló emberek megtalálását célzó, pénzszerzésre és közösségépítésre irányuló projektet mutat be. A célközönség érdeklődési körök szerint van meghatározva, mint például sport, közélet, szocializálódás, filmművészet, zene és gaming.
 
-* A Discord "barátkereső" brainstorm note-ban szereplő ok-okozati kapcsolatok:
- + Ha a felhasználók hasonló érdeklődési körökkel rendelkeznek, akkor nagyobb az esélye annak, hogy barátkozni fognak.
- + Ha a felhasználók részt vesznek a közösségi csatornákban, akkor nagyobb az esélye annak, hogy kapcsolatot teremtenek egymással.
-* A Docs for game designers note-ban szereplő ok-okozati kapcsolatok:
- + Ha a tervezők kidolgozzák a szabályokat és playtestinget végeznek, akkor nagyobb az esélye annak, hogy a játék sikeres lesz.
- + Ha a tervezők használják a screenshotokat a szabályokban, akkor nagyobb az esélye annak, hogy a játékosok megértsék a szabályokat.
-* A Drew Eric Whitman: Ca$hvertising note-ban szereplő ok-okozati kapcsolatok:
- + Ha a marketingesek használják a AIDA modellt és a Mind Movies-t, akkor nagyobb az esélye annak, hogy a fogyasztók megvásárolják a terméket.
- + Ha a marketingesek használják a LIFE FORCE 8-at, akkor nagyobb az esélye annak, hogy a fogyasztók megvásárolják a terméket.
-* A Drippi Twitter Marketing Strategy note-ban szereplő ok-okozati kapcsolatok:
- + Ha a marketingesek használják a Twittert a brand építésére, akkor nagyobb az esélye annak, hogy a követő/követett arány javul.
- + Ha a marketingesek használják a cold DM-eket, akkor nagyobb az esélye annak, hogy a potenciális kliensek érdeklődnek a termékek iránt.
+A projektben szobák vannak, amelyek 1-on-1 szobák vagy privát szobák lehetnek. A közösségi csatornák érdeklődések szerint vannak felosztva, és kvízestek, rapidrandik is szerepelnek. A közösség növekedését reklámok, más Discord szerverek tagjainak hirdetése, Discord cross-promotion és értékajánlat tartalomgyártóknak segíti.
 
-## RENDSZERSZINTŰ ÖSSZEFÜGGÉSEK
+A monetizáció ingyenes kurzusok, videók, könyvek ajánlásával, megvitatásával, IRL programok és események szervezésével, önfejlesztő kurzusok, e-bookok értékesítésével, affiliate marketinggel, releváns termékek szponzorálásával, Patreon támogatással és NFT-vel történhet.
 
-A vizsgált note-okban szereplő rendszerszintű összefüggések a következők:
+A barátkereső algoritmus minél több ismérv bekérésével, személyiségtesztek integrálásával, értékek és célok figyelembevételével működik. A matchek számának korlátozása monetizációs lehetőséget jelent.
 
-* A Discord "barátkereső" brainstorm note-ban szereplő rendszerszintű összefüggések:
- + A közösségépítés és a tagok fejlesztése összefügg a felhasználók érdeklődési körökkel és a közösségi csatornákban való részvételével.
- + A barátkereső algoritmus összefügg a felhasználók érdeklődési körökkel és a közösségi csatornákban való részvételével.
-* A Docs for game designers note-ban szereplő rendszerszintű összefüggések:
- + A tervezési folyamat összefügg a playtestinggel és a szabályok kidolgozásával.
- + A screenshotok használata összefügg a szabályokban és a játékosok megértésével.
-* A Drew Eric Whitman: Ca$hvertising note-ban szereplő rendszerszintű összefüggések:
- + A marketing alapelvek összefüggnek a pszichológiával és a fogyasztók viselkedésével.
- + A LIFE FORCE 8 összefügg a fogyasztók érdeklődési körökkel és a termékekkel.
-* A Drippi Twitter Marketing Strategy note-ban szereplő rendszerszintű összefüggések:
- + A Twitter marketing stratégia összefügg a brand építésével és a követő/követett arány javításával.
- + A cold DM-ek használata összefügg a potenciális kliensek érdeklődésével és a termékekkel.
+## Dokumentumok játéktervezőknek
 
-## DÖNTÉSI SZABÁLYOK ÉS TRIGGER-FELTÉTELEK
+A Dokumentumok játéktervezőknek jegyzet a játéktervezés folyamatát mutatja be. A brainstorming dokumentum, a szabályok sablonja, a playtesting jegyzetek és a sell sheet sablonja segítik a játéktervezőket.
 
-A vizsgált note-okban szereplő döntési szabályok és trigger-feltételek a következők:
+A cél a játék érdekes és élvezhető volta, a játékosok figyelmének megtartása. A szabályok sablonja és a sell sheet sablonja segítik a játéktervezőket a játék promóciójában.
 
-* A Discord "barátkereső" brainstorm note-ban szereplő döntési szabályok és trigger-feltételek:
- + Ha a felhasználók hasonló érdeklődési körökkel rendelkeznek, akkor a rendszer ajánlja a barátkozást.
- + Ha a felhasználók részt vesznek a közösségi csatornákban, akkor a rendszer ajánlja a barátkozást.
-* A Docs for game designers note-ban szereplő döntési szabályok és trigger-feltételek:
- + Ha a tervezők kidolgozzák a szabályokat és playtestinget végeznek, akkor a rendszer ajánlja a játék tesztelését.
- + Ha a tervezők használják a screenshotokat a szabályokban, akkor a rendszer ajánlja a játékosok megértését.
-* A Drew Eric Whitman: Ca$hvertising note-ban szereplő döntési szabályok és trigger-feltételek:
- + Ha a marketingesek használják a AIDA modellt és a Mind Movies-t, akkor a rendszer ajánlja a termék megvásárlását.
- + Ha a marketingesek használják a LIFE FORCE 8-at, akkor a rendszer ajánlja a termék megvásárlását.
-* A Drippi Twitter Marketing Strategy note-ban szereplő döntési szabályok és trigger-feltételek:
- + Ha a marketingesek használják a Twittert a brand építésére, akkor a rendszer ajánlja a követő/követett arány javítását.
- + Ha a marketingesek használják a cold DM-eket, akkor a rendszer ajánlja a potenciális kliensek érdeklődését.
+## Drew Eric Whitman Ca$hvertising
 
-## ANTI-PATTERNEK ÉS HIBÁK
+A Drew Eric Whitman Ca$hvertising jegyzet a marketing és a pszichológia kapcsolatát mutatja be. A cél a vevők meggyőzése, az eladások növelése.
 
-A vizsgált note-okban szereplő anti-patternek és hibák a következők:
+A LIFE FORCE 8 az emberi pszichológia alapja, amely 8 fő kívánságot tartalmaz: túlélés, élet élvezete, szabadság, szexuális kapcsolat, kényelmes életkörülmények, felsőbbrendűség, szeretteink gondozása és társadalmi elfogadás.
 
-* A Discord "barátkereső" brainstorm note-ban szereplő anti-patternek és hibák:
- + Ha a felhasználók nem hasonló érdeklődési körökkel rendelkeznek, akkor a rendszer nem ajánlja a barátkozást.
- + Ha a felhasználók nem vesznek részt a közösségi csatornákban, akkor a rendszer nem ajánlja a barátkozást.
-* A Docs for game designers note-ban szereplő anti-patternek és hibák:
- + Ha a tervezők nem dolgozzák ki a szabályokat és nem végeznek playtestinget, akkor a rendszer nem ajánlja a játék tesztelését.
- + Ha a tervezők nem használják a screenshotokat a szabályokban, akkor a rendszer nem ajánlja a játékosok megértését.
-* A Drew Eric Whitman: Ca$hvertising note-ban szereplő anti-patternek és hibák:
- + Ha a marketingesek nem használják a AIDA modellt és a Mind Movies-t, akkor a rendszer nem ajánlja a termék megvásárlását.
- + Ha a marketingesek nem használják a LIFE FORCE 8-at, akkor a rendszer nem ajánlja a termék megvásárlását.
-* A Drippi Twitter Marketing Strategy note-ban szereplő anti-patternek és hibák:
- + Ha a marketingesek nem használják a Twittert a brand építésére, akkor a rendszer nem ajánlja a követő/követett arány javítását.
- + Ha a marketingesek nem használják a cold DM-eket, akkor a rendszer nem ajánlja a potenciális kliensek érdeklődését.
+A marketing alapja az AIDA modell: figyelem, érdeklődés, kívánság, akció. A Mind Movies az érzelmek és a vizualizáció segítségével növeli a kívánságot.
 
-## KONKRÉT IMPLEMENTÁCIÓS LOGIKA
+## Drippi Twitter Marketing Strategy
 
-A vizsgált note-okban szereplő konkrét implementációs logika a következők:
+A Drippi Twitter Marketing Strategy jegyzet a Twitter marketing stratégiáját mutatja be. A cél a brand építése, a követők növelése és a tartalom promóciója.
 
-* A Discord "barátkereső" brainstorm note-ban szereplő konkrét implementációs logika:
- + A rendszer használja a felhasználók érdeklődési körökkel és a közösségi csatornákban való részvételével a barátkozás ajánlásához.
- + A rendszer használja a screenshotokat a szabályokban a játékosok megértéséhez.
-* A Docs for game designers note-ban szereplő konkrét implementációs logika:
- + A rendszer használja a tervezési folyamatot és a playtestinget a játék teszteléséhez.
- + A rendszer használja a screenshotokat a szabályokban a játékosok megértéséhez.
-* A Drew Eric Whitman: Ca$hvertising note-ban szereplő konkrét implementációs logika:
- + A rendszer használja a AIDA modellt és a Mind Movies-t a termék megvásárlásának ajánlásához.
- + A rendszer használja a LIFE FORCE 8-at a termék megvásárlásának ajánlásához.
+A belső stratégia a profilkép, a banner, a bio és a követő/követett arány optimalizálását jelenti. A külső stratégia a cold DM-ek használatát és a potenciális kliensek szűrését jelenti.
+
+## Keretrendszerek és képletek
+
+* AIDA modell: figyelem, érdeklődés, kívánság, akció
+* Mind Movies: érzelmek és vizualizáció segítségével növeli a kívánságot
+* LIFE FORCE 8: 8 fő kívánság, amely az emberi pszichológia alapja
+
+## Döntési logikák
+
+* Ha a cél a vevők meggyőzése, akkor az AIDA modellt és a Mind Movies-t kell használni.
+* Ha a cél a követők növelése, akkor a Twitter marketing stratégiát kell használni.
+* Ha a cél a játék érdekes és élvezhető volta, akkor a játéktervezés folyamatát kell követni.
+
+## Rendszerszintű mechanizmusok
+
+* A Discord "barátkereső" brainstorm projektben a szobák, a közösségi csatornák és a kvízestek, rapidrandik szerepelnek.
+* A Drippi Twitter Marketing Strategy-ben a belső és a külső stratégia szerepel.
+
+## Anti-patternek
+
+* A sablonos és unalmas tartalom használata.
+* A célközönség figyelmen kívül hagyása.
+* A marketing stratégia hiánya.
+
+A Knowledge Extraction Dossier célja a konkrét, alkalmazható tudás kinyerése és a szakmai mélységű elemzés. A jegyzetek alapján készült keretrendszerek, döntési logikák, rendszerszintű mechanizmusok és anti-patternek segítik a marketing és a játéktervezés területén tevékenykedőket.

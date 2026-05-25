@@ -1,41 +1,54 @@
-## 1. MENTÁLIS MODELLEK ÉS STRATÉGIAI MINTÁK
+**Knowledge Extraction Dossier**
 
-A megadott üzleti és marketing jegyzetekben több mentális modell és stratégiai minta is megjelenik. Az első jegyzet, a "Beating the dead horse" például a döntési logika és a stratégiai gondolkodás fontosságát hangsúlyozza. A szerző hangsúlyozza, hogy az érzelmek gyakran torzítják a döntéshozatalt, és hogy az adatok alapján történő döntéshozatal a kulcs a sikerhez.
+**I. Beating the Dead Horse**
 
-A "Belief breaking formula" jegyzet egy másik mentális modellt mutat be, amely a hiedelmek megváltoztatására és a szemléletváltásra irányul. A formula három lépésből áll: az első lépésben megfogalmazzuk a helytelen hiedelmet, a második lépésben megmagyarázzuk, miért helytelen, és a harmadik lépésben megfogalmazzuk, mi a helyes.
+A "beating the dead horse" fogalom olyan projektekre utal, amelyek eleve kudarcra vannak ítélve. Sok vállalkozó beleesik ebbe a csapdába, mert nem tudják, mikor kell feladni egy kezdeményezést. A siker nem jön azonnal, de a kitartás és az időzítés kérdéses.
 
-A "Brand & Content Mastery" jegyzet egy átfogó keretrendszert mutat be a márkanevek és a tartalomtervezéshez. A szerző hangsúlyozza, hogy a márkanevek nem varázslat, hanem szándékos és következetes párosítása a neveddel és a releváns fogalmakkal.
+* **Két véglet**: A startup mentalitás gyors kísérletezést és kudarcok elfogadását jelenti, míg a kitartó stratégia egyetlen projektbe fektet éveken át, amíg siker nem lesz.
+* **Objektív döntéshozatal kulcsa: adatok**: Az érzelmek torzítása miatt fontos, hogy adatok alapján döntsünk. Célszerű előre meghatározni egy projekt mérhető céljait és időkeretét.
+* **Példa: Podcast indítása**: Előzetes célkitűzés, döntési forgatókönyvek és rugalmasság az adatokkal.
 
-## 2. OK-OKOZATI KAPCSOLATOK
+**II. Belief Breaking Formula**
 
-A jegyzetekben számos ok-okozati kapcsolat is megjelenik. Például a "Beating the dead horse" jegyzetben a szerző hangsúlyozza, hogy ha egy projekt nem hozza az elvárt eredményeket, akkor érdemes továbblépni. Ez egy ok-okozati kapcsolat, amely a projekt sikerének hiányához kapcsolódik.
+A Belief Breaking Formula egy pszichológiai technika, amely segít megváltoztatni az emberek hiedelmeit.
 
-A "Better Voicemail Boosts Callbacks" jegyzetben egy másik ok-okozati kapcsolat jelenik meg. A szerző hangsúlyozza, hogy ha a voicemail üzenet személyre szabott és értékes ajánlatot tartalmaz, akkor a visszahívások száma nő. Ez egy ok-okozati kapcsolat, amely a voicemail üzenet minőségéhez kapcsolódik.
+* **Forma**: "I used to think that...", "Then I realized...", "Now I know that...".
+* **Példa**: "I used to think that lawncare was expensive...", "Then I realized paying a lawncare worker to do my job pays off", "Now I know that it's worth it".
 
-## 3. RENDSZERSZINTŰ ÖSSZEFÜGGÉSEK
+**III. Better Voicemail Boosts Callbacks**
 
-A jegyzetekben számos rendszerszintű összefüggés is megjelenik. Például a "Brand & Content Mastery" jegyzetben a szerző hangsúlyozza, hogy a márkanevek és a tartalomtervezés szorosan kapcsolódik egymáshoz. A márkanevek a tartalomtervezés alapját képezik, és a tartalomtervezés a márkanevekhez kapcsolódik.
+A Better Voicemail Boosts Callbacks egy módszer, amely segít javítani a visszahívások számát.
 
-A "Belief breaking formula" jegyzetben egy másik rendszerszintű összefüggés jelenik meg. A szerző hangsúlyozza, hogy a hiedelmek megváltoztatása és a szemléletváltás szorosan kapcsolódik egymáshoz. A hiedelmek megváltoztatása a szemléletváltás alapját képezi, és a szemléletváltás a hiedelmek megváltoztatásához kapcsolódik.
+* **Probléma**: 62% of inbound calls to businesses are lost to voicemail.
+* **Megoldás**: Egy egyszerű voicemail script változtatás, amely személyre szabott, egyértelmű és értékes ajánlatot tartalmaz.
+* **Példa**: "Hi! You've reached [business]. We're with a customer but if you leave your name and number, [specific person's name] will personally call you back within 15 minutes during business hours. And because we made you wait, we'll give you [specific valuable offer] just for connecting with us."
 
-## 4. DÖNTÉSI SZABÁLYOK ÉS TRIGGER-FELTÉTELEK
+**IV. Brand & Content Mastery**
 
-A jegyzetekben számos döntési szabály és trigger-feltétel is megjelenik. Például a "Beating the dead horse" jegyzetben a szerző hangsúlyozza, hogy ha egy projekt nem hozza az elvárt eredményeket, akkor érdemes továbblépni. Ez egy döntési szabály, amely a projekt sikerének hiányához kapcsolódik.
+A Brand & Content Mastery egy keretrendszer, amely segít az embereknek létrehozni egy erős márkát és tartalmat.
 
-A "Better Voicemail Boosts Callbacks" jegyzetben egy másik döntési szabály jelenik meg. A szerző hangsúlyozza, hogy ha a voicemail üzenet személyre szabott és értékes ajánlatot tartalmaz, akkor a visszahívások száma nő. Ez egy döntési szabály, amely a voicemail üzenet minőségéhez kapcsolódik.
+* **Brand Journey Framework**: Kezdje a kívánt eredménnyel és dolgozzon visszafelé, hogy meghatározza a napi tevékenységeket.
+* **3-Part Brand Story Framework**: Egy rugalmas módszer a narratíva strukturálására.
+* **Content Philosophy**: Nagy mennyiségű tartalommal kezdje, majd finomítsa a tartalmat az adatok alapján.
+* **80/20 Rule of Topics**: 80% a tartalom a fő témáról, 20% az érdeklődési körökről.
+* **Platform Mindset**: Legyen önmaga minden platformon, de hangsúlyozza különböző aspektusait a személyiségének.
 
-## 5. ANTI-PATTERNEK ÉS HIBÁK
+**Keretrendszerek és képletek**
 
-A jegyzetekben számos anti-patternek és hiba is megjelenik. Például a "Beating the dead horse" jegyzetben a szerző hangsúlyozza, hogy az érzelmek gyakran torzítják a döntéshozatalt, és hogy az adatok alapján történő döntéshozatal a kulcs a sikerhez. Ez egy anti-patternek, amely a döntéshozatali folyamatban való érzelmi befolyásoltság elleni védekezést jelenti.
+* **Dream Outcome x Likelihood / Time Delay x Effort**: Egy képlet, amely segít meghatározni a projekt sikerességét.
+* **Belief Breaking Formula**: Egy pszichológiai technika, amely segít megváltoztatni az emberek hiedelmeit.
 
-A "Belief breaking formula" jegyzetben egy másik anti-patternek jelenik meg. A szerző hangsúlyozza, hogy a hiedelmek megváltoztatása és a szemléletváltás szorosan kapcsolódik egymáshoz. Ez egy anti-patternek, amely a hiedelmek megváltoztatásának és a szemléletváltásnak a nehézségei elleni védekezést jelenti.
+**Döntési logikák**
 
-## 6. KONKRÉT IMPLEMENTÁCIÓS LOGIKA
+* **If-Then**: Ha a projekt nem hozza az elvárt eredményeket, akkor merj továbblépni.
+* **If-Then-Else**: Ha a projekt hozza az elvárt eredményeket, akkor folytassa a projektet, ha nem, akkor változtassa meg a stratégiát.
 
-A jegyzetekben számos konkrét implementációs logika is megjelenik. Például a "Brand & Content Mastery" jegyzetben a szerző hangsúlyozza, hogy a márkanevek és a tartalomtervezés szorosan kapcsolódik egymáshoz. A szerző egy átfogó keretrendszert mutat be a márkanevek és a tartalomtervezéshez, amely a következő lépésekből áll:
+**Rendszerszintű mechanizmusok**
 
-1. A márkanevek meghatározása
-2. A tartalomtervezés meghatározása
-3. A márkanevek és a tartalomtervezés összehangolása
+* **Tőkeáttétel pontjai**: Azok a pontok, ahol a projektnek a legnagyobb hatása van.
+* **Szűk keresztmetszetek**: Azok a pontok, ahol a projektnek a legnagyobb akadálya van.
 
-Ez egy konkrét implementációs logika, amely a márkanevek és a tartalomtervezés szoros kapcsolatán alapul.
+**Anti-patternek**
+
+* **Túl korai feladás**: Ha túl korán feladja a projektet, akkor elveszíti a lehetőséget a sikerre.
+* **Túl sok energiát, pénzt, időt fektetni**: Ha túl sok energiát, pénzt, időt fektet a projektbe, akkor elveszíti a perspektívát és a projektnek a valóságos értékét.
