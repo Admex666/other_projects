@@ -30,6 +30,13 @@ module.exports = async (req, res) => {
             mode: 'payment',
             success_url: `${origin}/sikeres-nevezes.html`,
             cancel_url: `${origin}/`,
+            payment_intent_data: {
+                metadata: {
+                    Név: name,
+                    Cím: address,
+                    Táv: distance
+                }
+            },
             metadata: {
                 Név: name,
                 Cím: address,
