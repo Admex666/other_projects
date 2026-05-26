@@ -171,3 +171,58 @@ document.querySelectorAll('#btn-group-dist .filter-btn').forEach(btn => {
 if (document.getElementById('map')) {
     loadMap();
 }
+
+// ===== CHECKOUT FORM HANDLING =====
+const checkoutForm = document.getElementById('vitasteps-checkout-form');
+if (checkoutForm) {
+    checkoutForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const name = document.getElementById('cust-name').value;
+        const address = document.getElementById('cust-address').value;
+        const distance = document.getElementById('cust-distance').value;
+        const terms = document.getElementById('cust-terms').checked;
+
+        if (!name || !address || !distance || !terms) {
+            alert('Kérjük tölts ki minden mezőt és fogadd el az ÁSZF-et!');
+            return;
+        }
+
+        const submitBtn = document.getElementById('checkout-submit-btn');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = 'Átirányítás a fizetéshez... ⏳';
+        submitBtn.style.opacity = '0.7';
+        submitBtn.style.pointerEvents = 'none';
+
+        if (typeof fbq === 'function') {
+            fbq('track', 'InitiateCheckout');
+        }
+
+        try {
+            const response = await fetch('/api/checkout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name, address, distance })
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.url) {
+                window.location.href = data.url;
+            } else {
+                alert('Hiba történt a fizetés indításakor: ' + (data.error || 'Ismeretlen hiba. Kérjük próbáld újra később!'));
+                submitBtn.innerHTML = originalText;
+                submitBtn.style.opacity = '1';
+                submitBtn.style.pointerEvents = 'auto';
+            }
+        } catch (error) {
+            console.error('Checkout error:', error);
+            alert('Hálózati hiba. Kérjük ellenőrizd az internetkapcsolatot és próbáld újra!');
+            submitBtn.innerHTML = originalText;
+            submitBtn.style.opacity = '1';
+            submitBtn.style.pointerEvents = 'auto';
+        }
+    });
+}
