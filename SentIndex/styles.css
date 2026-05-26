@@ -1,0 +1,105 @@
+/* Minimal, clean, elegant styling that integrates perfectly with Streamlit's native UI */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+html, body, [data-testid="stAppViewContainer"] {
+    font-family: 'Outfit', sans-serif !important;
+}
+
+/* Elegant glowing gradient title */
+.main-title {
+    font-weight: 800;
+    background: linear-gradient(135deg, #00f2fe 0%, #8a4fff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 2.8rem !important;
+    margin-bottom: 2px;
+    letter-spacing: -1px;
+}
+
+.main-subtitle {
+    color: #8888aa !important;
+    font-size: 1rem !important;
+    font-weight: 300;
+    margin-bottom: 25px;
+}
+
+/* Minimal Card Container (Theme-adaptive) */
+.market-card {
+    background: rgba(128, 128, 128, 0.06);
+    border: 1px solid rgba(128, 128, 128, 0.15);
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.market-card:hover {
+    border-color: rgba(138, 79, 255, 0.4);
+    transform: translateY(-1px);
+}
+
+.market-category {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #00f2fe;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.market-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: inherit; /* Dynamically inherits text color depending on Light/Dark mode */
+    margin-bottom: 12px;
+    line-height: 1.4;
+    min-height: 40px;
+}
+
+.market-odds-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.odds-badge {
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-align: center;
+    width: 48%;
+}
+
+.odds-yes {
+    background: rgba(0, 242, 254, 0.1);
+    color: #00f2fe;
+    border: 1px solid rgba(0, 242, 254, 0.2);
+}
+
+.odds-no {
+    background: rgba(255, 75, 75, 0.1);
+    color: #ff4b4b;
+    border: 1px solid rgba(255, 75, 75, 0.2);
+}
+
+/* Highlight correlation value */
+.correlation-value {
+    font-size: 3.5rem;
+    font-weight: 800;
+    text-align: center;
+    margin: 15px 0;
+}
+
+.corr-positive {
+    color: #00f2fe;
+}
+
+.corr-negative {
+    color: #ff4b4b;
+}
+
+.corr-neutral {
+    color: #8888aa;
+}
