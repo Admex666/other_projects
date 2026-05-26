@@ -22,7 +22,7 @@ module.exports = async (req, res) => {
                             name: 'Prédikálószék Kihívás Érem',
                             description: `Választott táv: ${distance}`,
                         },
-                        unit_amount: 7990, // HUF is zero-decimal currency in Stripe
+                        unit_amount: 799000, // Stripe treats HUF as a 2-decimal currency (fillér), so we need to add 00
                     },
                     quantity: 1,
                 },
