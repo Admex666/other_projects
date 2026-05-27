@@ -1940,3 +1940,35 @@ Ha megvan az új, jogosultsággal rendelkező kulcsod:
 3.  Futtasd le a fenti tesztet újra, és látni fogod, amint a Meta sikeresen átadja az adatokat!
 
 A teszt forgatókönyvünk tökéletesen készen áll, amint a Meta oldalon megadod a hozzáférést a kulcsnak, minden azonnal zöldre fog váltani a dashboardodon is!
+
+### User Input
+
+Kérlek módosítsd úgy a dasboardot hogy a táblázatban NE csak azok látszódjanak akik végigmentek a funnel-en, hanem mindenki aki MEGKEZDTE azt!
+
+*Viewed [dashboard.py](file:///e:/Data/other_projects/MassagePlace/dashboard.py) *
+
+*Viewed [dashboard.py](file:///e:/Data/other_projects/MassagePlace/dashboard.py) *
+
+*Edited relevant file*
+
+### Planner Response
+
+Készen is van, ez egy rendkívül hasznos és fontos logikai fejlesztés a dashboardon! 
+
+Átírtam a [dashboard.py](file:///e:/Data/other_projects/MassagePlace/dashboard.py) fájl táblázat-generáló logikáját. 
+
+### 🌟 Mi változott a táblázatban?
+
+*   **Teljes Tölcsér-átláthatóság:** Mostantól nemcsak a sikeres feliratkozók látszanak a táblázatban, hanem **minden egyes egyedi látogató (Session)**, aki megnyitotta a weboldalt!
+*   **Legutolsó Lépés (Státusz) Követése:** Beépítettem egy új, egyedi tölcsérstátusz-leképezést, amely érthető magyar feliratokkal és hangulatos ikonokkal jelzi, hogy az adott látogató meddig jutott el a folyamatban, mielőtt bezárta az oldalt:
+    *   `1. Csak megnyitotta 👁️`
+    *   `2. Kezelést választott 💆‍♂️`
+    *   `3. Aromaterápiát választott 🌸`
+    *   `4. Gyakoriságot megadott 📊`
+    *   `5. Sikeresen feliratkozott ✅`
+*   **Intelligens Adatmegjelenítés:** A még le nem morzsolódott vagy meg nem adott mezőket (pl. Név, Email, Aromaterápia, ha a user korábban lépett ki) elegáns kötőjellel (`-`) helyettesíti a rendszer, így a táblázat átlátható és letisztult marad.
+*   **Valós Idejű Frissítés & Export:** Az export gombbal mostantól a **teljes látogatói munkamenet-történetet** le tudod tölteni egyetlen kattintással CSV formátumban a kampányod elemzéséhez!
+
+A Streamlit automatikusan újra beolvasta a változtatásokat, így ha visszatérsz a böngésződhöz és megnyomod az **"Adatok frissítése 🔄"** gombot, már az új, bővített táblázatot fogod látni az összes eddigi és jövőbeli látogatóddal!
+
+Ha van még bármilyen ötleted a tölcsérrel vagy a mérésekkel kapcsolatban, írd meg nyugodtan!

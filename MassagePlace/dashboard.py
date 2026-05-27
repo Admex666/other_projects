@@ -371,39 +371,63 @@ else:
         st.markdown("---")
 
         # 7. Detailed Leads table (B2C signup database)
-        st.subheader("📋 Zárt Béta Feliratkozók (Valós Leadek)")
+        st.subheader("📋 Összes Látogató és Feliratkozó (Munkamenet szintek)")
         
-        # Extract unique leads with their choices, ordered by newest first
-        leads_list_df = leads_df.drop_duplicates(subset=['session_id']).sort_values(by='created_at_dt', ascending=False)
+        # Sort by date ascending to ensure latest entries for each session are last
+        df_sorted = df_filtered.sort_values(by='created_at_dt', ascending=True)
+        # Drop duplicates keeping the last (most complete/latest) row for each session
+        sessions_list_df = df_sorted.drop_duplicates(subset=['session_id'], keep='last').copy()
+        # Sort back to descending order (newest sessions first)
+        sessions_list_df = sessions_list_df.sort_values(by='created_at_dt', ascending=False)
         
         # Localize time for display
-        leads_list_df['local_time_str'] = leads_list_df['created_at_dt'].dt.tz_convert('Europe/Budapest').dt.strftime('%Y.%m.%d. %H:%M')
+        sessions_list_df['local_time_str'] = sessions_list_df['created_at_dt'].dt.tz_convert('Europe/Budapest').dt.strftime('%Y.%m.%d. %H:%M')
         
-        # Map treatments and upselly to elegant Hungarian texts
+        # Map event names to human-readable funnel steps / statuses
+        status_map = {
+            'page_view': '1. Csak megnyitotta 👁️',
+            'selected_treatment': '2. Kezelést választott 💆‍♂️',
+            'selected_upsell': '3. Aromaterápiát választott 🌸',
+            'selected_frequency': '4. Gyakoriságot megadott 📊',
+            'waitlist_submitted': '5. Sikeresen feliratkozott ✅'
+        }
+        sessions_list_df['Státusz'] = sessions_list_df['event_name'].map(status_map).fillna(sessions_list_df['event_name'])
+        
+        # Map treatments to elegant Hungarian texts, handling NaN gracefully
         treatment_map = {
             'sved_60': '60 perces svédmasszázs',
             'thai_90': '90 perces thai masszázs'
         }
-        leads_list_df['Választott Kezelés'] = leads_list_df['treatment'].map(treatment_map).fillna(leads_list_df['treatment'])
-        leads_list_df['Aromaterápia'] = leads_list_df['upsell'].apply(lambda x: 'Kérte 🌸' if x == 'yes' else 'Nem kérte ❌')
+        sessions_list_df['Választott Kezelés'] = sessions_list_df['treatment'].map(treatment_map).fillna('-')
+        
+        # Map upsell choice
+        sessions_list_df['Aromaterápia'] = sessions_list_df['upsell'].apply(
+            lambda x: 'Kérte 🌸' if x == 'yes' else ('Nem kérte ❌' if x == 'no' else '-')
+        )
+        
+        # Handle NaN values for Name and Email gracefully so they display as empty/dash instead of None/NaN
+        sessions_list_df['name'] = sessions_list_df['name'].fillna('-')
+        sessions_list_df['email'] = sessions_list_df['email'].fillna('-')
+        sessions_list_df['ip_address'] = sessions_list_df['ip_address'].fillna('-')
+        sessions_list_df['total_aov'] = sessions_list_df['total_aov'].apply(lambda x: f"{int(x):,} Ft".replace(",", " ") if x > 0 else "-")
         
         # Present clean display table
-        display_leads = leads_list_df[[
-            'local_time_str', 'name', 'email', 'Választott Kezelés', 'Aromaterápia', 'total_aov', 'ip_address'
+        display_sessions = sessions_list_df[[
+            'local_time_str', 'Státusz', 'name', 'email', 'Választott Kezelés', 'Aromaterápia', 'total_aov', 'ip_address'
         ]].copy()
         
-        display_leads.columns = [
-            'Dátum (Helyi)', 'Név', 'Email cím', 'Kezelés', 'Aromaterápia', 'Kosárérték (Ft)', 'IP cím'
+        display_sessions.columns = [
+            'Dátum (Helyi)', 'Legutolsó Lépés (Státusz)', 'Név', 'Email cím', 'Kezelés', 'Aromaterápia', 'Kosárérték', 'IP cím'
         ]
         
-        st.dataframe(display_leads, use_container_width=True, hide_index=True)
+        st.dataframe(display_sessions, use_container_width=True, hide_index=True)
         
         # Quick Excel/CSV download button
-        csv = display_leads.to_csv(index=False).encode('utf-8')
+        csv = display_sessions.to_csv(index=False).encode('utf-8')
         st.download_button(
-            label="Leadek letöltése CSV formátumban 📥",
+            label="Munkamenetek letöltése CSV formátumban 📥",
             data=csv,
-            file_name=f"zenslot_leads_{datetime.now().strftime('%Y%m%d')}.csv",
+            file_name=f"zenslot_sessions_{datetime.now().strftime('%Y%m%d')}.csv",
             mime="text/csv"
         )
         
