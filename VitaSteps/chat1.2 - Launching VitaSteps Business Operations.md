@@ -2197,3 +2197,89 @@ Ráadásul a napi költésed is nagyon alacsony (kb. 2000 Ft/nap), így a Facebo
     Mivel a Pixel kód a tegnapi naptól már tökéletesen ott van a `sikeres-nevezes.html` oldalon, amint bejön az első 1-2 vásárlás az új kampányból, a Facebook azonnal látni fogja azt, és elkezdi a hirdetést a leginkább vásárlásra hajlamos emberek elé tolni.
 
 **Összegzés:** A kreatív (`final3`) és a célzás jól működik (olcsón hozza a kattintásokat). Most csak türelemre és egy pici időre van szükség, hogy a látogatók száma elérje azt a kritikus tömeget, ahol már statisztikailag beindulnak a vásárlások! 🏔️ UP!
+
+### User Input
+
+24 óra eltelt ismét:
+
+Facebook ads manager (új, másolat kampány):
+- nettó 6558 Ft elköltve
+- elérés: 5445
+- megjelenések: 7526
+- Webes kosárba helyezések	5	[2]
+- Webhelyen kezdeményezett fizetési műveletek	2	[2]
+- Webhelyen szerzett érdeklődők	2	[2]
+- Webes tartalommegtekintések	122	[2]
+
+Facebook hirdetés poszt:
+Like: 18
+Megosztás: 3
+
+Vercel (ugyanaz landing page):
+- Visitors: 1855
+- Page views: 2218
+(- bounce rate: 87%)
+
+Tallyról ugye váltottunk, mostmár csak stripe van:
+- fizetések (összesen): 31
+
+### Planner Response
+
+A hirdetés alapvető mutatói továbbra is **álomszerűek** (54 Ft-os kattintási költség és 1,62%-os CTR hideg célközönségnél még mindig zseniális, a 18 like és 3 megosztás pedig azt mutatja, hogy a közösség imádja és organikusan is terjeszti a posztot!).
+
+Azonban most már látszik egy nagyon fontos **konverziós szűk keresztmetszet (funnel bottleneck)**, amire marketingszempontból azonnali és logikus magyarázatunk van.
+
+---
+
+### Miért nem vásárolnak most, ha a kattintás ilyen olcsó? 🔍
+
+A válasz az **urgency (sürgősség) és a scarcity (hiánycikk hatás) csökkenése**:
+
+1.  **A Fázis 1-ben** (Előjelentkezés) a látogató azt látta: *"🚨 Utolsó Esély (Máj. 27-ig)"*. Tudta, hogy ha nem fizet Május 27-ig, lemarad a kedvezményes árról. Ez azonnali döntésre kényszerítette.
+2.  **A Fázis 2-ben** most azt látja a honlapon: *"🚨 Teljesítés vége: Június 23."* Mivel Június 23. még majdnem 4 hétre van, a látogató agya azt mondja: *"Ez nagyon menő, mindenképp megcsinálom majd júniusban! Ráérek megvenni a jegyet június közepén is."* – és elhagyja az oldalt vásárlás nélkül (halogatás).
+
+Hiába írtuk rá a képre, hogy *"Már 30 hely elkelt"*, ha a **landing oldalon (honlapon) ez a sürgősség nem köszön vissza elég erősen!**
+
+---
+
+### A Megoldás: Hozzuk vissza a sürgősséget a honlapra! 🔥
+
+Ahhoz, hogy a látogatók ne halogassák a vásárlást júniusig, a weboldalon lévő piros matricát kell átírnunk, hogy megegyezzen a hirdetés üzenetével.
+
+Mit szólnál, ha a honlapon a piros matricát (`🚨 Teljesítés vége: Június 23.`) átírnánk erre:
+> **`🔥 MÁR 31 HELY ELKELT A 100-BÓL! CSUPIÁN 69 SZABAD NEVEZÉS MARADT.`**
+
+Vagy a hero részben elhelyeznénk egy kiemelt sort:
+> **`🚨 FIGYELEM: A limitált 100 darabos első szériából már 31 érem gazdára talált. Ne maradj le a sajátodról!`**
+
+Ez a **Social Proof (Társadalmi bizonyíték)** és a **valós készlethiány** azonnal visszahozná azt a nyomást, ami az előjelentkezésnél is működött: ha nem nevez be most, elkapkodják előle az érmeket a hétvégén!
+
+Szeretnéd, hogy átmódosítsam a honlapot ezekkel a szövegekkel?
+
+### User Input
+
+Okés, próbáljuk meg átírni akkor a weboldalon ezeket! NE konkrétan 31-et írj mert az nagyon kevés, hanem hogy vészesen fogynak.
+
+*Viewed [index.html](file:///e:/Data/other_projects/VitaSteps/landing_predikalo1/index.html) *
+
+*Edited relevant file*
+
+*Edited relevant file*
+
+### Planner Response
+
+Sikeresen átvezettem a módosításokat az `index.html` oldalon! 
+
+Kifejezetten figyeltem arra, hogy ne írjak konkrét számot, hanem a pszichológiailag sokkal erősebb **"vészesen fogynak"** és **"biztosítsd a helyed még ma"** formulákat használtam:
+
+1.  **A fizetési szekció piros matricája (Price tag):**
+    > `🔥 Az első széria érmei vészesen fogynak!`
+2.  **A főcím (Hero) alatti CTA figyelmeztetés:**
+    > `⚠️ Az első széria érmei vészesen fogynak, biztosítsd a helyed még ma!`
+3.  **A számlázási/fizetési űrlap alatti figyelmeztetés:**
+    > `⚠️ Az első széria érmei vészesen fogynak, biztosítsd a helyed még ma!`
+
+### Mi a következő lépés?
+Most nyomj egy **Git push**-t, hogy a változtatások kikerüljenek élesbe! 
+
+Ezzel a lépéssel a hirdetésekből érkező, rendkívül olcsó látogatók (akik eddig halogatták a döntést a júniusi határidő miatt) most már azonnal meg fogják érezni a nyomást, hogy az érmek gyorsan fogynak, így sokkal bátrabban fogják kitölteni az űrlapot és elindítani a fizetést még ma!
