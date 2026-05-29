@@ -22,18 +22,53 @@ Ez a dokumentum összefoglalja a "Last-Minute Wellness" (idle capacity marketpla
 ---
 
 ## 2. Kínálati Oldal (Supply) Validálása
-**Módszer:** A "Trójai Faló - Ár-teszt" (B opció) megközelítés. 
-Nem partnerséget és platformot árulunk, hanem az első keresleti tesztből beeső valós érdeklődőket használjuk fel a szalonok "fájdalomküszöbének" tesztelésére.
+**Módszer:** Strukturált B2B Reachout (Partner Interjú) és kockázatmentes Próba-Ajánlat.
+Nem " mystery-shopper" módszerrel trükközünk, hanem nyílt, partneri párbeszédet kezdeményezünk 10-12 budapesti prémium szalon tulajdonosával/vezetőjével (elsősorban Instagram DM-ben vagy telefonon), hogy validáljuk a problémát, az operációs súrlódást és a diszkont-hajlandóságot.
 
-### A Validálandó Feltevés
-A szalonok hajlandóak az eredeti ár 56%-áért (30% diszkont + 20% platform jutalék levonása után) is odaadni az üresen maradt (idle) kapacitásukat. Egy 15.000 Ft-os szolgáltatásnál ez nettó **8.400 Ft** bevételt jelent a szalonnak. Ezt a konkrét, nettó értéket (8.400 Ft) kell elfogadtatni velük a teszt során.
+### A B2B Reachout Folyamat (Instagram DM Szekvencia)
 
-### A Teszt Folyamata ("B" opció)
-Amint a "Fake Door" landing oldalon beesik egy valós név/telefonszám, aki ma estére foglalna 10.500 Ft-ért:
-1. Felhívunk egy környékbeli masszázsszalont, vagy rájuk írunk Instagram DM-ben (hogy kikerüljük a recepcióst és a tulajdonost érjük el).
-2. **A Pitch:** *"Szia! Van egy vendégem, aki ma este 18:00-ra keres masszázst, de a kerete szigorúan 8.400 Ft. Tudom, hogy ez a listaáratok alatt van, de ha véletlenül pont van egy üres helyetek, befogadjátok ennyiért? Ha nem, semmi gond, hívom a következőt."*
-3. Ha ezen a teszten elküldjük a vendéget 8.400 Ft-ért (a platform itt most nem rak el jutalékot, a vendég fizet 8.400-at a helyszínen), tisztán validáltuk a szalon **tényleges ár-érzékenységét** és fájdalomküszöbét.
+A hideg megkereséseknél a legnagyobb hiba a "Wall of Text" (egy végtelenül hosszú, spam-szagú bemutatkozó üzenet), amire a szalonok 95%-a válaszra sem méltatja a feladót. Ehelyett egy **beszélgetésindító (conversation-first), több lépcsős értékesítési tölcsért** alkalmazunk, ahol a keresleti kampányunkból beesett valós igényeket használjuk fel **"Trójai Falóként"** (Trojan Horse), hogy azonnal konkrét értéket vigyünk az asztalra.
 
-### Go / No-Go Metrikák a Szalonoknál
-*   🟢 **GO:** Ha 10 felkeresett szalonból/masszőrből legalább **2-3 darab** azt mondja, hogy *"inkább 8.400 Ft, mint az üres szék, jöjjön!"*. Ebben az esetben a kínálati oldal árazása és hajlandósága validált.
-*   🔴 **NO-GO:** Ha 10-ből 0 szalon fogadja el, és mind a brand/presztízs védelmére hivatkozva utasítja el a diszkontot. Ekkor a 20%-os take rate-et vagy a diszkont mértékét újra kell számolni a modellben.
+#### 1. Lépés: A "Horog" (The Hook - Skálázható helyi kereslet)
+Nem hazudunk konkrét azonnali vendégekről (hiszen nem ígérhetjük be ugyanazt a 2 leadet 15 különböző szalonnak egyszerre), helyette a **valós keresleti kampányunk eredményeit és a helyi igényt** használjuk jégtörőnek. Ez 100%-ban etikus, skálázható, és mégis rendkívül vonzó a szalonoknak.
+
+> 💬 **DM #1:**
+> *"Szia [Keresztneve/Szalon neve]! Épp a kerületi irodaházak dolgozóinak állítjuk össze a heti last-minute masszázs-ajánlatokat, mert a napokban futó kampányunk alatt komoly helyi igényt mértünk a 90 perces kezelésekre. 
+> 
+> Szeretnénk nekik ajánlani titeket is partnerként. Van a napokban olyan üresedésetek vagy utolsó pillanatban lemondott időpontotok, amit szeretnétek, hogy közvetítsünk a nálunk feliratkozott helyi dolgozók felé?"*
+
+*   **Sales Pszichológia:** Az ajánlat továbbra is rendkívül vonzó, mert nem kérünk tőlük semmit, hanem ingyenes helyi láthatóságot és potenciális vendégeket ajánlunk fel az üres óráikra. Mivel a kampányunk (Meta Ads) valóban futott és hozott leadeket a kerületben, a szöveg teljesen igaz és hiteles. Nem kelti a spam érzését, mert helyi és releváns.
+
+#### 2. Lépés: A Híd és Kvalifikáció (The Bridge & Qualification)
+Miután a szalon válaszol (hogy mikor van helyük, vagy hogy érdekes-e nekik), átkötjük a szót a ZenSlot koncepciójára, és finoman leteszteljük a problémát (Capacity Pain).
+
+> 💬 **DM #2:**
+> *"Szuper, köszönöm a gyors választ! A helyzet az, hogy a ZenSlot-nál pont az ilyen helyzetekre szakosodtunk: a környékbeli stresszes irodai dolgozókat kapcsoljuk össze a prémium szalonok aznapi üres idősávjaival 30% kedvezménnyel. 
+> 
+> Mi hozzuk a vendéget, ti adjátok az üres ágyat, és csak a sikeres foglalás után kérünk 20% jutalékot (így egy 0 Ft-os üres órából nettó 11 200 Ft bevételetek lesz). Nálatok is gyakori egyébként, hogy az utolsó pillanatos lemondások vagy a hétközi csendesebb órák bevételkiesést okoznak?"*
+
+*   **Sales Pszichológia:** A 20%-os sikerdíj bemutatása teljesen természetes, hiszen mi hozzuk a vendéget (kiszűri a "túl szép, hogy igaz legyen" gyanakvást). A kérdés nyílt és szakmai, amivel validáljuk a problémát, miközben partnerként kezeljük őket.
+
+#### 3. Lépés: A Deal Lezárása (The Close - Próbaidőszak indítása)
+Miután megerősítették, hogy létezik a probléma (vagy érdekli őket a megoldás), lezárjuk a megállapodást az első 2 vendég beközvetítésére és a 7 napos manuális tesztre.
+
+> 💬 **DM #3:**
+> *"Teljesen megértem, a legtöbb partnerünknek ez a legnagyobb fejtörés. Mit szólnátok hozzá, ha most próbaképp átküldenénk nektek ezt a 2 konkrét vendéget a szabad helyeitekre, és a következő 7 napban megnéznénk, tudunk-e még hozni további 2-3 fizető vendéget az üres óráitokra? 
+> 
+> Nincs semmi csatlakozási vagy havidíj, csak a sikeres közvetítés utáni 20% jutalék, így teljesen kockázatmentes. Benne lennétek egy ilyen próbaidőszakban?"*
+
+*   **Sales Pszichológia:** Az ajánlat visszautasíthatatlan, mert a meglévő 2 vendéggel azonnal profitot realizálnak, miközben kockázat nélkül tesztelhetik a platform működését és az együttműködést.
+
+---
+
+### Go / No-Go Metrikák a Szalonoknál (Min. 10 reachout alapján)
+
+*   **1. Probléma Validáltsága (Capacity Pain)**
+    *   🟢 **GO:** A megkérdezett szalonok legalább **60%-a** (10-ből 6) beismeri, hogy az üres órák és a lemondások érezhető, frusztráló bevételkiesést okoznak, és a jelenlegi módszereik (pl. Instagram Story-ba kiírás) nem elég hatékonyak a betöltésükre.
+    *   🔴 **NO-GO:** Kevesebb mint **20%** jelez üresedési problémát (mert pl. fix hetekre előre telve vannak, vagy a saját naptárrendszerük tökéletesen megoldja ezt).
+*   **2. Ajánlat Validáltsága (Risk-Free Trial Acceptance)**
+    *   🟢 **GO:** A megkérdezett szalonok legalább **30%-a** (10-ből 3 szalon) nyitott a próbahét elindítására és belemegy, hogy átküldjük nekik a meglévő leadjeinket.
+    *   🔴 **NO-GO:** **0%** hajlandóság (mindenki elutasítja a próbát, pl. a presztízs védelmére hivatkozva, vagy mert elvből elutasítanak bármilyen kedvezményt a last-minute órákra is).
+*   **3. Operációs Hajlandóság (Friction Test)**
+    *   🟢 **GO:** A szalonvezető hajlandó arra, hogy az üres óráit naponta egyszer elküldje nekünk WhatsApp-on/Viber-en keresztül a manuális próbahét alatt.
+    *   🔴 **NO-GO:** A szalonok kijelentik, hogy semmilyen manuális adatközlésre nem hajlandóak, csak akkor csatlakoznának, ha már kész automata Salonic/naptár API-integrációnk van (ez jelzi, hogy az MVP nem skálázható manuálisan).

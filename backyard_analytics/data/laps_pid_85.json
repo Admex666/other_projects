@@ -1,0 +1,528 @@
+{
+    "list": {
+        "ListName": "Result Lists|Lap Details Backyard",
+        "BottomPicture": "",
+        "BottomPictureShow": 0,
+        "ColumnHeadsFontName": "",
+        "ColumnHeadsFontSize": 12,
+        "ColumnHeadsFontBold": true,
+        "ColumnHeadsFontItalic": false,
+        "ColumnHeadsFontUnderlined": false,
+        "ColumnHeadsColor": "",
+        "ColumnHeadsShow": 2,
+        "Columns": 1,
+        "ColumnSpacing": 5,
+        "CoverSheet": "",
+        "BackSheet": "",
+        "Design": "",
+        "DesignShow": 2,
+        "EveryOtherLineGray": false,
+        "FontName": "Arial",
+        "FontSize": 10,
+        "FooterFontName": "",
+        "FooterFontSize": 10,
+        "FooterFontBold": false,
+        "FooterFontItalic": false,
+        "FooterFontUnderlined": false,
+        "FooterColor": "",
+        "GrayLine": true,
+        "HeadLine1": "Backyard Ultra Esztergom 2026",
+        "HeadLine1FontName": "",
+        "HeadLine1FontSize": 16,
+        "HeadLine1FontBold": false,
+        "HeadLine1FontItalic": false,
+        "HeadLine1FontUnderlined": true,
+        "HeadLine2": "Részidős eredmények ",
+        "HeadLine1Color": "",
+        "HeadLine1Show": 2,
+        "HeadLine2FontName": "",
+        "HeadLine2FontSize": 16,
+        "HeadLine2FontBold": true,
+        "HeadLine2FontItalic": false,
+        "HeadLine2FontUnderlined": false,
+        "HeadLine2Color": "",
+        "HeadLine2Show": 2,
+        "HeightBottomPicture": 40,
+        "LineColor": "",
+        "LineBackColor": "",
+        "LineDynamicFormat": "",
+        "LineSpacing": 1,
+        "MaxRecords": 0,
+        "MultiplierField": "[BackyardNumberOfLaps]",
+        "PageFormat": 0,
+        "PageMarginBottom": 10,
+        "PageMarginLeft": 10,
+        "PageMarginRight": 10,
+        "PageMarginTop": 10,
+        "PageSize": 3,
+        "PageHeight": 297,
+        "PageWidth": 210,
+        "SepLine": true,
+        "TopRightPicture": "",
+        "TopRightPictureShow": 0,
+        "ListHeaderText": "Készült: 2026-05-11 16:20:07",
+        "ListFooterText": "",
+        "ListHeaderFooterFontName": "",
+        "ListHeaderFooterFontSize": 10,
+        "ListHeaderFooterFontBold": false,
+        "ListHeaderFooterFontItalic": false,
+        "ListHeaderFooterFontUnderlined": false,
+        "ListHeaderFooterAlignment": 1,
+        "Remarks": "",
+        "LastChange": "2025-04-28 01:14:33",
+        "FooterText1": "",
+        "FooterText2": "",
+        "FooterText3": "[page]",
+        "Orders": [
+            {
+                "Expression": "CONTEST",
+                "Descending": false,
+                "Grouping": 0,
+                "GroupFilterDefault": 1,
+                "GroupFilterLabel": "",
+                "PageBreak": 0,
+                "FontName": "",
+                "FontSize": 12,
+                "FontBold": false,
+                "FontItalic": false,
+                "FontUnderlined": false,
+                "Color": "",
+                "BackgroundColor": "",
+                "Spacing": 0
+            },
+            {
+                "Expression": "[CONTEST.NAME]&\" \"&[AGEGROUP1.NAME]",
+                "Descending": false,
+                "Grouping": 1,
+                "GroupFilterDefault": 1,
+                "GroupFilterLabel": "",
+                "PageBreak": 0,
+                "FontName": "",
+                "FontSize": 12,
+                "FontBold": false,
+                "FontItalic": false,
+                "FontUnderlined": false,
+                "Color": "",
+                "BackgroundColor": "#c0c0c0",
+                "Spacing": 2
+            },
+            {
+                "Expression": "STATUS",
+                "Descending": false,
+                "Grouping": 0,
+                "GroupFilterDefault": 1,
+                "GroupFilterLabel": "",
+                "PageBreak": 0,
+                "FontName": "",
+                "FontSize": 12,
+                "FontBold": false,
+                "FontItalic": false,
+                "FontUnderlined": false,
+                "Color": "",
+                "BackgroundColor": "",
+                "Spacing": 0
+            },
+            {
+                "Expression": "AgeGroupRank",
+                "Descending": false,
+                "Grouping": 0,
+                "GroupFilterDefault": 1,
+                "GroupFilterLabel": "",
+                "PageBreak": 0,
+                "FontName": "",
+                "FontSize": 12,
+                "FontBold": false,
+                "FontItalic": false,
+                "FontUnderlined": false,
+                "Color": "",
+                "BackgroundColor": "",
+                "Spacing": 2
+            },
+            {
+                "Expression": "WithStatus([AgeGroupRank.P]) & \"///\" & [DisplayName] & \" (#\" & [BIB] & \") | R: \" & format([TIME0.DECIMAL];\"hh:mm:ss\") & \" | C: \" & format([TIME1.DECIMAL]+[TIME0.DECIMAL];\"hh:mm:ss\") & \" | \" & [BackyardNumberOfLaps.TEXT] & \" kör\"",
+                "Descending": false,
+                "Grouping": 1,
+                "GroupFilterDefault": 1,
+                "GroupFilterLabel": "",
+                "PageBreak": 0,
+                "FontName": "",
+                "FontSize": 12,
+                "FontBold": true,
+                "FontItalic": false,
+                "FontUnderlined": false,
+                "Color": "",
+                "BackgroundColor": "",
+                "Spacing": 0
+            }
+        ],
+        "Filters": [],
+        "Fields": [
+            {
+                "Expression": "[{n}]&\". kör\"",
+                "Label": "#",
+                "Label2": "",
+                "Alignment": 3,
+                "FontBold": false,
+                "FontItalic": false,
+                "FontUnderlined": false,
+                "Line": 1,
+                "Color": "",
+                "Link": "",
+                "ColSpan": 0,
+                "ColOffset": 0,
+                "Position": 0,
+                "DynamicFormat": "",
+                "PreviewOnly": false,
+                "ResponsiveHide": 0
+            },
+            {
+                "Expression": "[Round{n}]",
+                "Label": "Köridő",
+                "Label2": "",
+                "Alignment": 3,
+                "FontBold": false,
+                "FontItalic": false,
+                "FontUnderlined": false,
+                "Line": 1,
+                "Color": "",
+                "Link": "",
+                "ColSpan": 0,
+                "ColOffset": 0,
+                "Position": 0,
+                "DynamicFormat": "",
+                "PreviewOnly": false,
+                "ResponsiveHide": 0
+            },
+            {
+                "Expression": "format(pace([Round{n}.ROUNDED];6704);\"m:ss\")",
+                "Label": "Tempó (perc/km)",
+                "Label2": "",
+                "Alignment": 3,
+                "FontBold": false,
+                "FontItalic": false,
+                "FontUnderlined": false,
+                "Line": 1,
+                "Color": "",
+                "Link": "",
+                "ColSpan": 0,
+                "ColOffset": 0,
+                "Position": 0,
+                "DynamicFormat": "",
+                "PreviewOnly": false,
+                "ResponsiveHide": 0
+            }
+        ],
+        "SelectorResults": []
+    },
+    "data": [
+        [
+            "102",
+            "85",
+            "1. kör",
+            "00:49:31",
+            "7:23"
+        ],
+        [
+            "102",
+            "85",
+            "2. kör",
+            "00:51:37",
+            "7:41"
+        ],
+        [
+            "102",
+            "85",
+            "3. kör",
+            "00:44:37",
+            "6:39"
+        ],
+        [
+            "102",
+            "85",
+            "4. kör",
+            "00:49:20",
+            "7:21"
+        ],
+        [
+            "102",
+            "85",
+            "5. kör",
+            "00:50:12",
+            "7:29"
+        ],
+        [
+            "102",
+            "85",
+            "6. kör",
+            "00:50:57",
+            "7:35"
+        ],
+        [
+            "102",
+            "85",
+            "7. kör",
+            "00:48:09",
+            "7:10"
+        ],
+        [
+            "102",
+            "85",
+            "8. kör",
+            "00:47:58",
+            "7:09"
+        ],
+        [
+            "102",
+            "85",
+            "9. kör",
+            "00:50:16",
+            "7:29"
+        ],
+        [
+            "102",
+            "85",
+            "10. kör",
+            "00:46:49",
+            "6:59"
+        ],
+        [
+            "102",
+            "85",
+            "11. kör",
+            "00:46:34",
+            "6:56"
+        ],
+        [
+            "102",
+            "85",
+            "12. kör",
+            "00:47:08",
+            "7:01"
+        ],
+        [
+            "102",
+            "85",
+            "13. kör",
+            "00:46:07",
+            "6:52"
+        ],
+        [
+            "102",
+            "85",
+            "14. kör",
+            "00:48:17",
+            "7:12"
+        ],
+        [
+            "102",
+            "85",
+            "15. kör",
+            "00:48:35",
+            "7:14"
+        ],
+        [
+            "102",
+            "85",
+            "16. kör",
+            "00:52:16",
+            "7:47"
+        ],
+        [
+            "102",
+            "85",
+            "17. kör",
+            "00:49:10",
+            "7:20"
+        ],
+        [
+            "102",
+            "85",
+            "18. kör",
+            "00:52:46",
+            "7:52"
+        ],
+        [
+            "102",
+            "85",
+            "19. kör",
+            "00:47:28",
+            "7:04"
+        ],
+        [
+            "102",
+            "85",
+            "20. kör",
+            "00:49:17",
+            "7:21"
+        ],
+        [
+            "102",
+            "85",
+            "21. kör",
+            "00:47:41",
+            "7:06"
+        ],
+        [
+            "102",
+            "85",
+            "22. kör",
+            "00:47:55",
+            "7:08"
+        ],
+        [
+            "102",
+            "85",
+            "23. kör",
+            "00:48:50",
+            "7:17"
+        ],
+        [
+            "102",
+            "85",
+            "24. kör",
+            "00:49:24",
+            "7:22"
+        ],
+        [
+            "102",
+            "85",
+            "25. kör",
+            "00:49:25",
+            "7:22"
+        ],
+        [
+            "102",
+            "85",
+            "26. kör",
+            "00:45:46",
+            "6:49"
+        ],
+        [
+            "102",
+            "85",
+            "27. kör",
+            "00:48:23",
+            "7:13"
+        ],
+        [
+            "102",
+            "85",
+            "28. kör",
+            "00:50:52",
+            "7:35"
+        ],
+        [
+            "102",
+            "85",
+            "29. kör",
+            "00:49:11",
+            "7:20"
+        ],
+        [
+            "102",
+            "85",
+            "30. kör",
+            "00:51:24",
+            "7:40"
+        ],
+        [
+            "102",
+            "85",
+            "31. kör",
+            "00:53:02",
+            "7:54"
+        ],
+        [
+            "102",
+            "85",
+            "32. kör",
+            "00:48:46",
+            "7:16"
+        ],
+        [
+            "102",
+            "85",
+            "33. kör",
+            "00:50:47",
+            "7:34"
+        ],
+        [
+            "102",
+            "85",
+            "34. kör",
+            "00:50:52",
+            "7:35"
+        ],
+        [
+            "102",
+            "85",
+            "35. kör",
+            "00:51:27",
+            "7:40"
+        ],
+        [
+            "102",
+            "85",
+            "36. kör",
+            "00:53:48",
+            "8:01"
+        ],
+        [
+            "102",
+            "85",
+            "37. kör",
+            "00:53:05",
+            "7:55"
+        ],
+        [
+            "102",
+            "85",
+            "38. kör",
+            "00:53:29",
+            "7:58"
+        ],
+        [
+            "102",
+            "85",
+            "39. kör",
+            "00:51:54",
+            "7:44"
+        ],
+        [
+            "102",
+            "85",
+            "40. kör",
+            "00:52:16",
+            "7:47"
+        ],
+        [
+            "102",
+            "85",
+            "41. kör",
+            "00:55:07",
+            "8:13"
+        ]
+    ],
+    "DataFields": [
+        "BIB",
+        "ID",
+        "[{n}]&\". kör\"",
+        "[Round{n}]",
+        "format(pace([Round{n}.ROUNDED];6704);\"m:ss\")"
+    ],
+    "mid": 7708,
+    "groupFilters": [
+        {
+            "Type": 0,
+            "Value": "",
+            "Values": null
+        },
+        {
+            "Type": 0,
+            "Value": "",
+            "Values": null
+        }
+    ],
+    "comments": null,
+    "LiveUpdateInterval": 10
+}
