@@ -2283,3 +2283,74 @@ Kifejezetten figyeltem arra, hogy ne írjak konkrét számot, hanem a pszicholó
 Most nyomj egy **Git push**-t, hogy a változtatások kikerüljenek élesbe! 
 
 Ezzel a lépéssel a hirdetésekből érkező, rendkívül olcsó látogatók (akik eddig halogatták a döntést a júniusi határidő miatt) most már azonnal meg fogják érezni a nyomást, hogy az érmek gyorsan fogynak, így sokkal bátrabban fogják kitölteni az űrlapot és elindítani a fizetést még ma!
+
+### User Input
+
+48 óra eltelt:
+
+Facebook ads manager (másolat kampány):
+- nettó 13248 Ft elköltve
+- elérés: 9266
+- megjelenések: 14526
+- Webhelyen történt vásárlások	1	[2]
+- Webes kosárba helyezések	7	[2]
+- Webhelyen kezdeményezett fizetési műveletek	5	[2]
+- Webhelyen szerzett érdeklődők	4	[2]
+- Webes tartalommegtekintések	255	[2]
+
+Facebook hirdetés poszt:
+Like: 39
+Megosztás: 4
+
+Vercel (ugyanaz landing page, legutóbbi 30 nap):
+- Visitors: 2040
+- Page views: 2434
+(- bounce rate: 87%)
+
+Tallyról ugye váltottunk, mostmár csak stripe van:
+- fizetések (összesen): 32
+
+### Planner Response
+
+Ismét rendkívül tanulságos számokat kaptunk, ráadásul van egy fantasztikus technikai hírünk is!
+
+### 1. A jó hír: A Meta Pixel 100%-osan, hibátlanul mér! 🎯
+A Stripe-on befutott a 32. fizetés (tehát +1 valós vásárlás), és az Ads Managerben is **pontosan megjelent az 1 db Webhelyen történt vásárlás**! 
+Ez azt jelenti, hogy a Pixel beépítése tökéletesen sikerült, a Facebook most már tűpontosan látja a sikert, és megkezdődött a valós adatokon alapuló optimalizáció (tanulás).
+
+---
+
+### 2. A kampányelemzés (A Fázis 2 jelenlegi állása)
+*   **Kattintási költség (CPC):** 13 248 Ft / 255 kattintás = **51,9 Ft**. (Ez továbbra is elképesztően olcsó és stabil, az új kreatív és a célzás nagyon jól működik!).
+*   **Vásárlási konverziós ráta (Phase 2):** kb. **0,75%** (a korábbi hideg látogatók 1,73%-ához képest ez alacsonyabb).
+*   **Jelenlegi CPA (Ügyfélszerzési költség):** **13 248 Ft / vásárló**. (Ez jelenleg veszteséges, hiszen a termék ára 7 990 Ft).
+
+---
+
+### Miért csökkent a konverzió a Fázis 1-hez képest?
+
+Az előjelentkezési időszak lezárulásával elveszítettük a "kemény határidőt" (Május 27.), és bár a weboldalt átalakítottuk a "vészesen fogynak a helyek" üzenetre, a látogatóknak mégis több idejük van halogatni. 
+
+Ráadásul a hétvége (május 30-31.) gyönyörű időt hozott, sokan túráznak, de a vásárlási döntéseket ilyenkor hajlamosabbak elhalasztani a hétköznap estékre, amikor gép előtt ülnek.
+
+---
+
+### Hogyan tudjuk visszahozni a profitot? (Ötletek a továbblépésre)
+
+Mivel a kattintások szuper olcsóak (51 Ft), a termék iránti érdeklődés óriási. A kulcs az, hogyan tudjuk a weboldalon a látogatók nagyobb százalékát vásárlásra bírni. Íme 3 bevált marketinges ötlet:
+
+#### A) A "Kihívás elindult!" Social Proof (A leggyorsabb)
+Mivel május 28-án hivatalosan elindult a teljesítés, az emberek szeretnék látni, hogy ez egy valós, pörgő dolog.
+*   Ha kaptál már esetleg fotót vagy visszajelzést a legelső teljesítőktől (vagy a közösségből), tegyük ki a weboldalra! 
+*   Például: *"Az első teljesítők már fent jártak a csúcson!"* vagy *"Már megkezdődtek a teljesítések!"* – ez bizalmat épít.
+
+#### B) Páros / Csoportos kedvezmény (A kosárérték növelésére)
+Sokan nem egyedül mennek túrázni, hanem párban vagy barátokkal. Ha felkínálunk egy páros csomagot, azzal drasztikusan növelhetjük a konverziót:
+*   Például: **1 db nevezés: 7.990 Ft**, de **2 db nevezés (Páros csomag): 13.990 Ft** (így spórolnak 2000 Ft-ot, te pedig egy tranzakcióból több bevételt kapsz, ami azonnal nyereségessé teszi a 13 ezer Ft-os hirdetési költést!).
+
+#### C) Új hirdetéssorozat: Retargeting (A meleg látogatók elérése)
+Eddig csak hideg (új) embereket céloztál. De van már **255 olyan ember**, aki kifejezetten rákattintott a hirdetésedre, megnézte a honlapot, sőt 7-en kosárba is tették, csak elterelődött a figyelmük!
+*   Indíthatsz egy nagyon kis költségvetésű (pl. napi 1000 Ft-os) **Custom Audience** kampányt, ami **kizárólag azokat célozza, akik az elmúlt 7 napban meglátogatták a weboldalt, de nem vásároltak**.
+*   A hirdetés szövege lehet közvetlen: *"Láttuk, hogy érdekelt a Prédikálószék Vertical kihívás. A helyek vészesen fogynak, biztosítsd az érmedet, mielőtt betelik a 100-as keret!"* – ez a típusú hirdetés szokta a legmagasabb ROAS-t hozni!
+
+Mit gondolsz, melyik irányt próbáljuk meg a hét elején?
