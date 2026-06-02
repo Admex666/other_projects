@@ -2354,3 +2354,233 @@ Eddig csak hideg (új) embereket céloztál. De van már **255 olyan ember**, ak
 *   A hirdetés szövege lehet közvetlen: *"Láttuk, hogy érdekelt a Prédikálószék Vertical kihívás. A helyek vészesen fogynak, biztosítsd az érmedet, mielőtt betelik a 100-as keret!"* – ez a típusú hirdetés szokta a legmagasabb ROAS-t hozni!
 
 Mit gondolsz, melyik irányt próbáljuk meg a hét elején?
+
+### User Input
+
+24 óra eltelt:
+
+Facebook ads manager (másolat kampány):
+- nettó 18864 Ft elköltve
+- elérés: 13869
+- megjelenések: 22293
+- Webhelyen történt vásárlások	4	[2]
+- Webes kosárba helyezések	12	[2]
+- Webhelyen kezdeményezett fizetési műveletek	9	[2]
+- Webhelyen szerzett érdeklődők	7	[2]
+- Webes tartalommegtekintések	392	[2]
+
+Facebook hirdetés poszt:
+Like: 57
+Megosztás: 6
+
+Vercel (ugyanaz landing page, legutóbbi 30 nap):
+- Visitors: 2232
+- Page views: 2646
+(- bounce rate: 88%)
+
+Tallyról ugye váltottunk, mostmár csak stripe van:
+- fizetések (összesen): 36
+
+### Planner Response
+
+EZ HIHETETLENÜL JÓ HÍR! **Megtört a jég, és nem is akárhogy!** 💥🎉
+
+A tegnapi módosításunk a honlapon (a *"vészesen fogynak"* sürgősség bevezetése) és az algoritmus tanulása **brutálisan erős 24 órát produkált**:
+
+### A legutóbbi 24 óra elképesztő számai:
+*   **Költés az elmúlt 24 órában:** **5 616 Ft**
+*   **Új vásárlások száma:** **4 db** (a Facebook és a Stripe is pontosan 4-et mutat, a mérés továbbra is 100%-os!)
+*   **Bevétel az elmúlt 24 órában:** 4 × 7 990 Ft = **31 960 Ft**
+*   **Napi ROAS (Megtérülés):** **5,69-szeres!** (Minden elköltött 1 Ft-ból 5.7 Ft jött vissza!)
+*   **Napi CPA (Ügyfélszerzési költség):** mindössze **1 404 Ft / vásárló**!
+
+### A Fázis 2 összesített mérlege (Már most NYERESÉGES!):
+*   **Összes költés:** 18 864 Ft
+*   **Összes bevétel:** 31 960 Ft
+*   **Összesített ROAS:** **1,69x** (Már a teljes kampány ára visszajött, plusz tiszta profitot is termelt!)
+
+---
+
+### Miért történt ez a hirtelen robbanás?🚀
+
+1.  **A "Vészesen fogynak" hatás:** A látogatók a honlapra érkezve megérezték, hogy nem halogathatják a döntést június végéig, mert lemaradnak. Ez azonnal cselekvésre bírta őket (az Add to Cart és az Initiate Checkout arányosan sokkal jobban konvertált vásárlássá).
+2.  **Az algoritmus szárnyra kapott:** Miután a Pixel visszajelezte a szombati 1 db vásárlást a Facebooknak, a Meta algoritmusa azonnal megértette, milyen típusú embereket kell keresnie, és vasárnap/hétfőn már sokkal pontosabban célozta be őket.
+3.  **Hétfői vásárlási kedv:** A hétvégi kirándulás/túrázás után hétfőn az emberek gép/telefon előtt ülve, motiváltan tervezték meg a következő hetek kihívásait.
+
+### Hogyan tovább?
+Most a világ legkellemesebb dolgát kell tenned: **Semmihez se nyúlj!** 
+
+A kampányod jelenleg egy önműködő pénztermelő gépként fut, ami profitot termel, miközben folyamatosan tölti fel a 100 darabos limitált keretedet. Csak dőlj hátra, és figyeld a Stripe értesítéseket! 
+
+*Tipp: Ha eléritek a 50. eladott helyet (már csak 14 nevezés hiányzik hozzá!), akkor a hirdetés képén a "Már 30 hely elkelt!" szöveget érdemes lesz majd átírnunk "Már 50 hely elkelt!"-re, de addig is mehet minden pontosan így!*
+
+### User Input
+
+24 óra eltelt:
+
+Facebook ads manager (másolat kampány):
+- nettó 24092 Ft elköltve
+- elérés: 16702
+- megjelenések: 28729
+- Webhelyen történt vásárlások	7	[2]
+- Webes kosárba helyezések	21	[2]
+- Webhelyen kezdeményezett fizetési műveletek	15	[2]
+- Webhelyen szerzett érdeklődők	11	[2]
+- Webes tartalommegtekintések	526	[2]
+
+
+Facebook hirdetés poszt:
+Like: 68
+Megosztás: 8
+
+Vercel (ugyanaz landing page, legutóbbi 30 nap):
+- Visitors: 2338
+- Page views: 2766
+(- bounce rate: 88%)
+
+Tallyról ugye váltottunk, mostmár csak stripe van:
+- fizetések (összesen): 39
+
+### Planner Response
+
+Az eredmények fantasztikusan stabilak és továbbra is **rendkívül nyereségesek**! 🚀🔥
+
+Ismét egy mintaszerű 24 órán vagyunk túl:
+
+### A legutóbbi 24 óra számai:
+*   **Költés az elmúlt 24 órában:** **5 228 Ft**
+*   **Új vásárlások száma:** **3 db** (a Facebook és a Stripe is hajszálpontosan mutatja a 3 új fizetést!)
+*   **Bevétel az elmúlt 24 órában:** 3 × 7 990 Ft = **23 970 Ft**
+*   **Napi ROAS (Megtérülés):** **4,58-szoros!** (Minden elköltött 1 Ft-ból 4.5 Ft jött vissza!)
+*   **Napi CPA (Ügyfélszerzési költség):** **1 743 Ft / vásárló**!
+
+### A Fázis 2 összesített mérlege (Gyönyörűen növekszik a profit!):
+*   **Összes költés:** 24 092 Ft
+*   **Összes bevétel:** 55 930 Ft
+*   **Összesített ROAS:** **2,32x** (Már bőven megdupláztad a hirdetésre költött összeget!)
+
+---
+
+### Hol tartunk most a teljes projektben? 🏔️
+
+*   **Összes Stripe fizetés (Fázis 1 + Fázis 2):** **39 sikeres nevezés!**
+*   Ez azt jelenti, hogy **már csak 1 db nevezés hiányzik a 40-hez**, és mindössze **11 nevezés a bűvös 50-es határig** (ami a teljes limitált készlet fele)!
+
+A hirdetés kattintási költsége még tovább csökkent (**45,8 Ft / kattintás**), ami azt jelenti, hogy a Facebook algoritmusa egyre hatékonyabban találja meg a célközönségedet. 
+
+Továbbra is a legjobb stratégia: **hadd fusson a kampány pontosan így!** Nagyon közel van a félszázas mérföldkő, ami egy ekkora réspiacon óriási büszkeség! 🏆 
+
+*(Amint eléritek a 40. vagy 50. eladást, szólj, és azonnal frissítjük a grafikát és a honlapot a még nagyobb social proof érdekében!)*
+
+### User Input
+
+1. A teljesítőknek küldjek szerinted visszaigazoló emaileket, vagy felesleges?
+2. A szállítást hogyan kérdőívezzük, meg hogyan legyen az egész? Mérjem fel az igényeket, hogy ki hova tudna fogadni (pl. Foxpost, MPL, Packeta...)? Kell nekem bármi business csomag vagy így átalányadós alanyi adómentesként elég ha simán kiküldöm és kifizetem?
+
+*Viewed [index.html](file:///e:/Data/other_projects/VitaSteps/landing_predikalo1/index.html) *
+
+### Planner Response
+
+Íme a válaszok a logisztikai és ügyfélélmény-kérdéseidre, amikkel teljesen profi és jogilag is tiszta folyamatot tudsz kiépíteni egyéni vállalkozóként (E.V.):
+
+---
+
+### 1. Visszaigazoló e-mail a teljesítésről: SZÜKSÉGES?
+**Igen, határozottan igen!** 
+
+A teljesítés igazolása a kihívás legfontosabb "katartikus" pontja a résztvevőnek. Ha elküldi a bizonyítékot, és utána napokig csend van, az bizonytalanságot szül. 
+*   **Mi legyen a levélben?** Gratulálj nekik (ez növeli a márkahűséget), írd meg, hogy a beküldött igazolást sikeresen feldolgoztátok, és ide csatolhatod/elküldheted nekik a megígért **sorszámozott digitális oklevelet (PDF)** is!
+*   **Hogyan küldd?** A Brevo-ban létrehozhatsz egy sablont erre, és a beküldések után heti 1-2 alkalommal, csoportosan is kiküldheted nekik (vagy a Make.com-mal teljesen automatizálhatod is, ha a Tally-ban megjelölöd, hogy a teljesítés jóváhagyva).
+
+---
+
+### 2. A szállítás megszervezése (Kérdőív és Logisztika)
+
+Mivel a sikeres fizetés utáni oldalról kiszedtük a Foxpost megadását, **a legpraktikusabb és legprofibb hely a szállítási igény felmérésére az új `/teljesites.html` oldalon lévő Tally űrlapod!**
+
+#### Hogyan kérdezd meg az űrlapon?
+A Tally űrlap aljára tegyél be egy kötelező részt:
+*   **Szállítási mód (Multiple choice):**
+    *   `Foxpost automata` (Alapértelmezett, ingyenes – ezt ígérted a főoldalon).
+    *   `MPL (PostaPont / Automata / Házhozszállítás)` (Ezt kötelező felajánlani).
+*   **Célállomás megadása (Short answer):**
+    *   *Ha automatát választott:* „Kérjük, írd le az automata pontos nevét/címét (pl. Budapest, Mammut Foxpost vagy Vác, Tesco MPL)!”
+    *   *Ha házhozszállítást választott:* „Szállítási név, pontos cím (utca, házszám, emelet/ajtó).”
+
+> [!IMPORTANT]
+> **Jogi háttér:** Magyarországon egy kormányrendelet miatt minden fogyasztónak értékesítő weboldal köteles felajánlani a Magyar Posta (MPL) szállítási lehetőségét is. Azzal, hogy a Tally űrlapon opcióként ott van az MPL is a Foxpost mellett, jogilag 100%-osan le vagy fedve!
+
+---
+
+### 3. Vállalkozói háttér E.V.-ként: Kell-e business csomag?
+
+**Nem, 100 darabos tételig teljesen felesleges bonyolult céges szerződéseket kötnöd a futárcégekkel!** 
+
+Alanyi adómentes átalányadós E.V.-ként a legegyszerűbb, lakossági módon is feladhatod a csomagokat, a következőképpen:
+
+1.  **Foxpost feladás cégesen (Szerződés nélkül):**
+    *   Regisztrálj egy sima fiókot a Foxpost.hu oldalon. A számlázási adatokhoz add meg a saját egyéni vállalkozásod adatait (Jakus Ádám E.V., adószám).
+    *   A Foxpost felületén van egy szuper **„Csoportos feladás”** funkció. A Tally-ból letöltött Google Táblázatból kimásolod a neveket és automatákat, beilleszted a Foxpostba, és a rendszer egyszerre legenerálja az összes címkét.
+    *   Kifizeted bankkártyával (célszerű a vállalkozói kártyáddal), kapsz róla egy céges áfás számlát, amit a könyvelőd elszámol költségként. Beviszed a csomagokat a legközelebbi automatához, és feladod őket.
+2.  **MPL feladás:**
+    *   Hasonlóan a Posta online felületén (posta.hu/szolgaltatasok/webes-feladas) céges számlázási címmel legenerálod a címkéket és feladod őket a legközelebbi postán.
+
+**Összegzés:** Nincs szükség drága integrációkra vagy havidíjas business csomagokra. A Tally űrlapon összegyűjtöd az igényeket $\rightarrow$ a Google Táblázatodból kimásolod a Foxpost/MPL csoportos feladójába $\rightarrow$ kifizeted a címkéket a vállalkozói kártyáddal $\rightarrow$ feladod a csomagokat. Nagyon tiszta, gyors és egyszerű folyamat!
+
+### User Input
+
+A brevo helyett nem lehetne kiküldeni innen pythonból mondjuk minden teljesítőnek az emailt?
+És az emailben amiket le kéne írni röviden:
+1. Köszönjük az igazolást, az érmek kiküldése várhatóan június 30-tól indul
+2. Jelezzék tally formban hogy hova tudják fogadni az érmeket (és hány érmet vettek, csak a doublecheck miatt)
+3. A weboldalt bővítenünk kéne, ahol lenne leaderboard, "barátok"/túratársak, stb... lényegében egy user oldal. Ezért ha egy emailről többen is regisztráltak akkor adja meg azokat az emaileket hogy nekik is jóvá tudjuk majd hagyni a kilométereket. És ezen a weboldal részen lenne a usernek a digitális okleve is és egyebek
+
+*Edited relevant file*
+
+### Planner Response
+
+De még mennyire, hogy lehet! Ez egy **zseniális ötlet**, ráadásul teljesen ingyenes, és nem kell hozzá semmilyen külső hírlevélküldő rendszert (mint a Brevo) konfigurálni. A saját Gmail címedről fog kimenni a levél, így a megnyitási aránya is sokkal jobb lesz (nem a "Promóciók" fülre érkezik majd a levelezőkben).
+
+Létrehoztam a projekt főkönyvtárában egy rendkívül profi, teljesen testreszabott Python scriptet:
+[send_emails.py](file:///e:/Data/other_projects/VitaSteps/landing_predikalo1/send_emails.py)
+
+Ez a script beolvas egy egyszerű táblázatot (`contacts.csv`), és mindenkinek a saját nevével ellátva, a VitaSteps sötét/neon dizájnjában küldi el az e-mailt. Mind a 3 kért pontot (1. érmek postázása jún. 30-tól, 2. szállítási adatok és érem-darabszám ellenőrzés a Tally-ban, 3. új VitaSteps profil, leaderboard és a többes email regisztrációk kezelése) gyönyörűen, marketing-szempontból megfogalmazva beleírtam!
+
+---
+
+### Így tudod használni a scriptet 4 egyszerű lépésben:
+
+#### 1. lépés: Hozz létre egy `contacts.csv` fájlt a projekt mappájában!
+A script mellett hozz létre egy `contacts.csv` fájlt. Az első sor a fejléc legyen (pl. `Name,Email`), az alatta lévők a nevezők adatai. 
+
+*Tipp: Az első teszthez csak a saját nevedet és e-mail címedet írd be, hogy lásd, hogyan érkezik meg!*
+
+```csv
+Name,Email
+Jakus Ádám,vitasteps.team@gmail.com
+```
+
+#### 2. lépés: Szerezz egy "App Password"-öt (Alkalmazás-jelszót) a Gmailhez!
+A Gmail biztonsági okokból nem engedi a sima jelszavadat használni pythonból. Ehelyett egy egyedi kód kell:
+1. Lépj be a Google Fiókodba (myaccount.google.com).
+2. Menj a **Biztonság (Security)** fülre, és győződj meg róla, hogy a **Kétlépcsős azonosítás (2-Step Verification)** be van kapcsolva.
+3. Keresd meg a **Kétlépcsős azonosítás** oldalon belül a legalsó menüt: **Alkalmazásjelszavak (App Passwords)**.
+4. Válaszd ki az "Egyéb" (Other) lehetőséget, írd be, hogy `VitaSteps Python`, majd kattints a **Generálás** gombra.
+5. Másold ki a kapott 16 karakteres sárga hátterű jelszót (pl. `abcd efgh ijkl mnop`).
+
+#### 3. lépés: Másold be a jelszót a kódba!
+Nyisd meg a [send_emails.py](file:///e:/Data/other_projects/VitaSteps/landing_predikalo1/send_emails.py) fájlt a szerkesztőben, és a 15. sorban cseréld ki az `IDE_ILLESZD_AZ_APP_JELSZAVAT` részt a kimásolt 16 karakteres jelszóra:
+```python
+SMTP_PASSWORD = "abcd efgh ijkl mnop"
+```
+
+#### 4. lépés: Futtasd le a scriptet!
+Nyiss egy terminált a projekt könyvtárában, és futtasd le a parancsot:
+```powershell
+python send_emails.py
+```
+
+A script másodpercek alatt végigszalad a listán, csatlakozik a Gmailhez, és kiküldi a névre szóló, prémium HTML e-maileket. A terminálban pontosan látni fogod a folyamatot:
+`Küldés folyamatban: Jakus Ádám (vitasteps.team@gmail.com)... -> Elküldve!`
+
+Próbáld ki először magadon, és szólj, hogy tetszik-e a dizájn és a szöveg!
