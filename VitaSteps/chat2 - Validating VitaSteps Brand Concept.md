@@ -1019,3 +1019,68 @@ A kód végén a plotolás automatikusan megmutatja mindkét görbét, így lát
 **Szeretnéd, hogy futtassuk is le a kódot, hogy lássuk a végeredményt?** 📈🦾🚀🦾
 
 (Megjegyzés: A fájlban még ott maradtak a régi `optimistic` stb. szcenáriók is, ha esetleg később vissza akarnád nézni őket, de a fő fókusz most már a valóságon van.)
+
+### User Input
+
+Na közben sok minden történt. Tegnapi kampányértékelő:
+@[c:\Users\Adam\Data\other_projects\VitaSteps\chat1.2 - Launching VitaSteps Business Operations.md:L2428-L2484] 
+
+Frissített adatok:
+
+
+Facebook ads manager (másolat kampány):
+- nettó 27881 Ft elköltve
+- elérés: 18608
+- megjelenések: 33584
+- Webhelyen történt vásárlások	8	[2]
+- Webes kosárba helyezések	23	[2]
+- Webhelyen kezdeményezett fizetési műveletek	17	[2]
+- Webhelyen szerzett érdeklődők	12	[2]
+- Webes tartalommegtekintések	633	[2]
+
+
+Facebook hirdetés poszt:
+Like: 73
+Megosztás: 8
+
+Vercel (ugyanaz landing page, legutóbbi 30 nap):
+- Visitors: 2437
+- Page views: 2883
+(- bounce rate: 88%)
+
+Tallyról ugye váltottunk, mostmár csak stripe van:
+- fizetések (összesen): 40
+
+### Planner Response
+
+Ezek a számok továbbra is nagyon szépek, és ami a legfontosabb: **elértük a bűvös 40. eladást!** 🎉 Ez azt jelenti, hogy az első 100 darabos szériád **40%-a már gazdára is talált!**
+
+Lássuk a kíméletlen, „vállalkozói szemüvegen” keresztüli elemzést az elmúlt 24 óráról:
+
+### 📊 A legutóbbi 24 óra mérlege (Higgadt elemzés)
+*   **Elköltött összeg:** 27 881 Ft - 24 092 Ft = **3 789 Ft**
+*   **Új vásárlás:** **1 db** (A Stripe 39-ről 40-re, a Facebook 7-ről 8-ra ugrott – tökéletes szinkron!)
+*   **Napi Bevétel:** **7 990 Ft**
+*   **Napi Ügyfélszerzési Költség (CPA):** **3 789 Ft**
+*   **Napi ROAS (Megtérülés):** **2,1x**
+
+**Mentor Verdict a napról:** 
+Tegnap egy kiugróan erős napod volt (3 eladás), ma pedig egy csendesebb. A CPA-d (3 789 Ft) ezen a napon elég közel került az érmenkénti profitodhoz (~3 805 Ft a `finances.py` alapján). Ez normális a hétköznapok során, a Facebook algoritmusa ilyenkor "pihen" vagy tesztel. Viszont még ezen a gyengébb napon is **nyereséges maradtál** (vagy legalábbis nullszaldós), ami a legfontosabb!
+
+### 📈 A "Másolat" Kampány Összesített Eredménye (Fázis 2)
+*   **Összes költés:** 27 881 Ft
+*   **Összes bevétel (8 eladás):** 63 920 Ft
+*   **Összesített ROAS:** **2,29x** (Még mindig gyönyörűen duplázza a pénzedet)
+*   **Átlagos CPA:** **3 485 Ft / vásárló**
+
+### 🧠 Mit jelentenek a felszíni adatok?
+*   **Kattintási költség (CPC):** (27 881 Ft / 633 megtekintés) = **44 Ft**. Ez egészen elképesztő! A magyar piacon a hirdetésed egy mágnes. Az emberek imádják a kreatívot, nagyon olcsón hozod be őket az oldalra.
+*   **Konverziós arány (Weboldal -> Vásárlás):** 633 megtekintésből 8 eladás = **1,26%**. Ez e-kereskedelemben teljesen reális, stabil szám.
+
+### 🚀 Hogyan tovább?
+A 40. eladás egy pszichológiai mérföldkő. Mivel a készlet 40%-a elfogyott, érdemes lehet **bevetni a Scarcity (hiányérzet) fegyvert**:
+
+1.  **Hirdetés módosítása (később):** Ha eléred az 50-et, a hirdetés szövegébe vagy a Landing Page-re kiírhatod: *"A limitált 100 darabos széria fele már elkelt! Ne maradj le!"* Ez drasztikusan le tudja nyomni a CPA-t a kampány végére.
+2.  **Kampány büdzsé:** Hagyd futni így, ahogy van! Az 1 500 Ft körüli napi keret tökéletes arra, hogy stabilan csepegtesse a vásárlókat anélkül, hogy elégetné a profitodat.
+
+Már csak 60 darab van hátra! Hogy áll a kínai gyártás, Kimmivel minden sínen van az érkezéshez?
