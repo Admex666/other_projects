@@ -21,9 +21,10 @@ interface TransactionModalProps {
   onSuccess: () => void;
   accounts?: any[];
   pockets?: any[];
+  editTransaction?: any;
 }
 
-export default function TransactionModal({ isOpen, onClose, onSuccess, accounts, pockets = [] }: TransactionModalProps) {
+export default function TransactionModal({ isOpen, onClose, onSuccess, accounts, pockets = [], editTransaction }: TransactionModalProps) {
   const [type, setType] = useState<'expense' | 'income'>('expense');
   const [amount, setAmount] = useState('');
   const [currency, setCurrency] = useState('HUF');
@@ -51,8 +52,27 @@ export default function TransactionModal({ isOpen, onClose, onSuccess, accounts,
       if (!pockets || pockets.length === 0) {
         fetchPockets();
       }
+
+      if (editTransaction) {
+        setType(editTransaction.type);
+        setAmount(editTransaction.amount.toString());
+        setCurrency(editTransaction.currency);
+        setAccountId(editTransaction.accountId?._id || editTransaction.accountId || '');
+        setCategoryId(editTransaction.categoryId?._id || editTransaction.categoryId || '');
+        setNote(editTransaction.note || '');
+        setDate(new Date(editTransaction.date).toISOString().split('T')[0]);
+        setIsBusiness(editTransaction.isBusinessTransaction || false);
+        setUsePocket(!!editTransaction.virtualPocketId);
+        setVirtualPocketId(editTransaction.virtualPocketId?._id || editTransaction.virtualPocketId || '');
+      } else {
+        setAmount('');
+        setNote('');
+        setDate(new Date().toISOString().split('T')[0]);
+        setUsePocket(false);
+        setIsBusiness(false);
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, editTransaction]);
 
   const fetchCategories = async () => {
     const res = await fetch('/api/categories');
@@ -81,8 +101,11 @@ export default function TransactionModal({ isOpen, onClose, onSuccess, accounts,
     setLoading(true);
 
     try {
-      const res = await fetch('/api/transactions', {
-        method: 'POST',
+      const url = editTransaction ? `/api/transactions/${editTransaction._id}` : '/api/transactions';
+      const method = editTransaction ? 'PUT' : 'POST';
+
+      const res = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           type,
@@ -101,9 +124,26 @@ export default function TransactionModal({ isOpen, onClose, onSuccess, accounts,
       if (res.ok) {
         onSuccess();
         onClose();
-        // Reset form
-        setAmount('');
-        setNote('');
+        if (!editTransaction) {
+          setAmount('');
+          setNote('');
+        }
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!editTransaction || !window.confirm('Biztosan törlöd ezt a tranzakciót?')) return;
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/transactions/${editTransaction._id}`, { method: 'DELETE' });
+      if (res.ok) {
+        onSuccess();
+        onClose();
       }
     } catch (err) {
       console.error(err);
@@ -124,7 +164,7 @@ export default function TransactionModal({ isOpen, onClose, onSuccess, accounts,
           <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-full text-on-surface-variant transition-colors">
             <X size={24} />
           </button>
-          <h2 className="text-xl font-bold text-white">Új {type === 'expense' ? 'Kiadás' : 'Bevétel'}</h2>
+          <h2 className="text-xl font-bold text-white">{editTransaction ? 'Tranzakció szerkesztése' : `Új ${type === 'expense' ? 'Kiadás' : 'Bevétel'}`}</h2>
           <div className="w-10"></div>
         </div>
 
@@ -356,14 +396,24 @@ export default function TransactionModal({ isOpen, onClose, onSuccess, accounts,
         </form>
 
         {/* Footer Action */}
-        <div className="p-6 border-t border-white/5 bg-surface-container rounded-b-3xl">
+        <div className="p-6 border-t border-white/5 bg-surface-container rounded-b-3xl flex gap-4">
+          {editTransaction && (
+            <button 
+              type="button"
+              onClick={handleDelete}
+              disabled={loading}
+              className="bg-error/10 hover:bg-error/20 text-error font-bold px-6 rounded-2xl transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              Törlés
+            </button>
+          )}
           <button 
             onClick={handleSubmit}
             disabled={loading || !amount}
-            className="w-full bg-primary hover:bg-opacity-90 text-background font-bold py-5 rounded-2xl shadow-xl shadow-primary/20 flex items-center justify-center gap-2 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            className="flex-1 bg-primary hover:bg-opacity-90 text-background font-bold py-5 rounded-2xl shadow-xl shadow-primary/20 flex items-center justify-center gap-2 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
           >
             {loading ? <Loader2 className="animate-spin" /> : <Check size={20} />}
-            <span>Tranzakció Mentése</span>
+            <span>{editTransaction ? 'Mentés' : 'Tranzakció Mentése'}</span>
           </button>
         </div>
       </div>

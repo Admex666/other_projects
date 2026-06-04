@@ -37,6 +37,8 @@ export default function DashboardClient() {
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState<'personal' | 'business'>('personal');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState<any>(null);
   const [isPocketModalOpen, setIsPocketModalOpen] = useState(false);
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
   const [debts, setDebts] = useState<any[]>([]);
@@ -311,13 +313,17 @@ export default function DashboardClient() {
            <div className="space-y-4 pb-12">
              <div className="flex justify-between items-center px-1">
                <h3 className="font-bold text-lg">Legutóbbi Tranzakciók</h3>
-               <button className="text-primary text-xs font-bold hover:underline underline-offset-4">Összes</button>
+               <Link href="/transactions" className="text-primary text-xs font-bold hover:underline underline-offset-4">Összes</Link>
              </div>
              <div className="space-y-3">
                 {data?.recentTransactions
                   .filter((tx: any) => view === 'personal' ? true : tx.isBusinessTransaction)
                   .map((tx: any) => (
-                  <div key={tx._id} className={`custom-glass p-4 rounded-2xl flex items-center justify-between border-l-4 transition-all hover:bg-white/5 ${tx.isBusinessTransaction ? 'border-secondary' : 'border-transparent'}`}>
+                  <div 
+                    key={tx._id} 
+                    onClick={() => { setSelectedTransaction(tx); setIsEditModalOpen(true); }}
+                    className={`custom-glass p-4 rounded-2xl flex items-center justify-between border-l-4 transition-all hover:bg-white/5 cursor-pointer ${tx.isBusinessTransaction ? 'border-secondary' : 'border-transparent'}`}
+                  >
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 rounded-full bg-surface-variant flex items-center justify-center text-xl shadow-inner">
                         {tx.categoryId?.icon || (tx.type === 'income' ? '💰' : '💸')}
@@ -348,6 +354,14 @@ export default function DashboardClient() {
       />
 
       <PWAInstallPrompt />
+
+      {/* Edit Transaction Modal */}
+      <TransactionModal 
+        isOpen={isEditModalOpen}
+        onClose={() => { setIsEditModalOpen(false); setSelectedTransaction(null); }}
+        onSuccess={fetchDashboard}
+        editTransaction={selectedTransaction}
+      />
 
       {/* Pocket Transfer Modal */}
       <PocketTransferModal

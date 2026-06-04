@@ -8,6 +8,31 @@ import { Debt } from '@/models/Debt';
 import mongoose from 'mongoose';
 import { syncEmitter } from '@/lib/sync-emitter';
 
+export async function GET(req: Request) {
+  const session = await getServerSession(authOptions);
+  if (!session || !(session.user as any).id) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  await dbConnect();
+  const userId = new mongoose.Types.ObjectId((session.user as any).id);
+
+  try {
+    const transactions = await Transaction.find({ userId })
+      .sort({ date: -1, createdAt: -1 })
+      .populate('categoryId', 'name icon')
+      .populate('accountId', 'name type isBusinessAccount color')
+      .populate('virtualPocketId', 'name color')
+      .lean();
+
+    return NextResponse.json(transactions);
+  } catch (error) {
+    console.error('Error fetching transactions:', error);
+    return NextResponse.json({ error: 'Failed to fetch transactions' }, { status: 500 });
+  }
+}
+
+
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
   if (!session || !(session.user as any).id) {
