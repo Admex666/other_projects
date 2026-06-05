@@ -4,19 +4,24 @@ import ssl
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import os
+from dotenv import load_dotenv
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Környezeti változók betöltése a script melletti .env fájlból
+load_dotenv(os.path.join(SCRIPT_DIR, '.env'))
 
 # ===== BEÁLLÍTÁSOK =====
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 465
 SENDER_EMAIL = "vitasteps.team@gmail.com"
-# Cseréld ki az alábbi App Password-re (Google App-jelszóra):
-# Útmutató az App Password megszerzéséhez: https://support.google.com/accounts/answer/185833
-# A kétlépcsős azonosításnak bekapcsolva kell lennie a Gmail fiókodon!
-SMTP_PASSWORD = "IDE_ILLESZD_AZ_APP_JELSZAVAT" 
 
-CSV_FILE_PATH = "contacts.csv"  # A Stripe-ból vagy kézzel készített CSV fájl helye
+# Az App Password most már a .env fájlból jön (SMTP_PASSWORD=...)
+SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
 
-EMAIL_SUBJECT = "🏔️ VitaSteps Prédikálószék Vertical – Fontos információk a teljesítésről és szállításról!"
+CSV_FILE_PATH = os.path.join(SCRIPT_DIR, "contacts.csv")  # A Stripe-ból vagy kézzel készített CSV fájl helye
+
+EMAIL_SUBJECT = "🏔️ VitaSteps Prédikálószék Vertical – Gratulálunk a teljesítéshez! (Szállítási adatok)"
 
 def get_html_template(name):
     return f"""<!DOCTYPE html>
@@ -56,32 +61,30 @@ def get_html_template(name):
                 <td class="content">
                     <h1>Kedves {name}!</h1>
                     
-                    <p>Hivatalosan is üdvözlünk a <span class="highlight">Prédikálószék Vertical</span> kihívás első szériájában! 🎉</p>
+                    <p>Sikeresen feldolgoztuk az igazolásodat! Gratulálunk a <span class="highlight">Prédikálószék Vertical</span> kihívás teljesítéséhez! 🎉</p>
                     
-                    <p>A teljesítési időszak már javában tart (egészen <strong>június 30-ig</strong>), és örömmel látjuk, hogy a közösségünk napról napra bővül.</p>
+                    <p>Óriási teljesítmény, és nagyon büszkék vagyunk rád, hogy a közösségünk része vagy.</p>
                     
-                    <h2>1. 🏅 Az igazolás és az érmek postázása</h2>
-                    <p>A túrát bármikor teljesítheted június 30-ig. Az érmek fizikai gyártása és a csomagok kiküldése várhatóan <strong>június 30-tól indul el folyamatosan</strong>.</p>
-                    
-                    <h2>2. 📦 Szállítási adatok megadása (Nagyon Fontos!)</h2>
-                    <p>Kérjük, hogy az alábbi gombra kattintva töltsd ki a hivatalos szállítási űrlapunkat! Itt tudod megadni, hogy melyik Foxpost vagy MPL automatába kéred az érmedet, illetve biztonsági ellenőrzésként (double-check) jelezheted, hány darab érmet vásároltál.</p>
+                    <h2>1. 📦 Szállítási adatok megadása (Nagyon Fontos!)</h2>
+                    <p>Az érmek kiküldése várhatóan <strong>június 30-tól indul el</strong>.</p>
+                    <p>Kérjük, hogy az alábbi gombra kattintva látogass el a szállítási oldalunkra, ahol kiválaszthatod, hogy melyik Foxpost, Packeta vagy MPL csomagpontra kéred a megérdemelt érmedet!</p>
                     
                     <div class="cta-container">
-                        <a href="https://vitasteps.vercel.app/teljesites.html" class="btn" target="_blank">🏆 Szállítási adatok és Igazolás megadása</a>
+                        <a href="https://vitasteps.vercel.app/szallitas.html" class="btn" target="_blank">📦 Szállítási adatok megadása</a>
                     </div>
                     
-                    <h2>3. 🚀 Érkezik a saját VitaSteps profilod és a Leaderboard!</h2>
-                    <p>Gőzerővel dolgozunk a weboldalunk bővítésén! Hamarosan elindul a saját <strong>felhasználói oldalad</strong>, ahol láthatod a megszerzett kilométereidet, lesz egy közös <strong>Leaderboard (ranglista)</strong>, és összekötheted a profilodat a barátaiddal/túratársaiddal is. A digitális, sorszámozott okleveledet is ezen a felületen fogod tudni elérni és letölteni.</p>
+                    <h2>2. 🚀 Érkezik a saját Felhasználói fiókod és a Ranglista!</h2>
+                    <p>Gőzerővel dolgozunk a weboldalunk bővítésén! Hamarosan elindul a saját <strong>Felhasználói fiókod</strong>, ahol nyomon követheted a megszerzett kilométereidet, láthatod a közös <strong>Ranglistát</strong>, és összekötheted a profilodat a túratársaiddal is. A digitális, sorszámozott okleveledet is ezen a felületen fogod tudni letölteni.</p>
                     
                     <div class="info-card" style="border-left: 4px solid #c4ff00;">
                         <p style="margin: 0; font-size: 14px; color: #ffffff;">
-                            <strong>💡 Fontos:</strong> Ha egyetlen e-mail címmel több nevezést is vásároltál (pl. a barátaidnak is te fizettél), kérjük, hogy a fenti szállítási űrlapon add meg az ő e-mail címeiket is! Így nekik is saját profilt tudunk létrehozni, és nekik is jóvá tudjuk majd írni a kilométereket.
+                            <strong>💡 Fontos:</strong> Ha egyetlen e-mail címmel több nevezést is vásároltál (tehát a családod vagy a barátaid is veled tartottak), kérjük, hogy a fenti szállítási űrlapon feltétlenül add meg az ő e-mail címeiket is! Így nekik is saját fiókot tudunk létrehozni, hogy jóváírhassuk a kilométereiket.
                         </p>
                     </div>
                     
-                    <p>Nagyon jó felkészülést és fantasztikus élményeket kívánunk a hegyen! Ha bármilyen kérdésed vagy észrevételed van, csak válaszolj erre az e-mailre.</p>
+                    <p>Még egyszer gratulálunk, várjuk a szállítási adataidat, és hamarosan jelentkezünk! Ha bármilyen kérdésed van, csak válaszolj erre az e-mailre.</p>
                     
-                    <p style="margin-top: 30px; margin-bottom: 0;">Baráti üdvözlettel,<br><strong>A VitaSteps Csapata</strong></p>
+                    <p style="margin-top: 30px; margin-bottom: 0;">Üdvözlettel,<br><strong>A VitaSteps Csapata</strong></p>
                 </td>
             </tr>
             <tr>

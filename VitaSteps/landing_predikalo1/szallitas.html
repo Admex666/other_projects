@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Szállítási Adatok Megadása – VitaSteps</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .shipping-page {
+            text-align: center;
+            padding: 4rem 0;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .shipping-icon {
+            font-size: 5rem;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        .map-container {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-accent);
+            margin-top: 2rem;
+            text-align: left;
+        }
+
+        .info-box {
+            background: rgba(196, 255, 0, 0.05);
+            border: 1px dashed var(--accent);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-box p {
+            margin: 0;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--text-high);
+        }
+
+        .provider-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn-provider {
+            background: #2a2a2a;
+            color: white;
+            border: 1px solid #444;
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-provider:hover {
+            background: #3a3a3a;
+            border-color: var(--accent);
+        }
+
+        .tally-placeholder {
+            margin-top: 3rem;
+            padding: 3rem;
+            border: 2px dashed var(--accent);
+            border-radius: var(--radius-lg);
+            background: rgba(196, 255, 0, 0.05);
+            text-align: center;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: #1a1a1a;
+            color: #888;
+            border: 1px solid #333;
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn:hover {
+            background: #2a2a2a;
+            color: #ccc;
+        }
+
+        .tab-btn.active {
+            background: rgba(196, 255, 0, 0.1);
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .fallback-link {
+            display: block;
+            text-align: center;
+            margin-top: 1rem;
+            color: #aaa;
+            font-size: 0.9rem;
+            text-decoration: underline;
+        }
+
+        .fallback-link:hover {
+            color: var(--accent);
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <div class="container nav-inner">
+            <div class="logo">VITASTEPS</div>
+            <!-- Nincs vissza gomb a főoldalra, hogy rejtett maradjon a folyamat -->
+        </div>
+    </nav>
+
+    <main class="container shipping-page">
+        <span class="shipping-icon">📦</span>
+        <h1 class="accent">Hova küldhetjük az érmedet?</h1>
+        <p style="font-size: 1.2rem; margin-top: 1rem; color: var(--text-mid);">Kérjük, keresd ki a számodra
+            legközelebbi csomagpontot az alábbi térképeken, majd a pontos nevét és címét add meg a lenti űrlapon!</p>
+
+        <div class="map-container">
+            <div class="info-box">
+                <p><strong>💡 Hogyan működik?</strong> 1. Keresd meg a térképen a hozzád legközelebb eső Foxpost,
+                    Packeta vagy MPL automatát/átvevőhelyet. 2. Jegyezd meg a nevét/címét. 3. Töltsd ki a lap alján
+                    található űrlapot az adataiddal!</p>
+            </div>
+
+            <h3 style="color: var(--accent); margin-bottom: 1rem;">1. Csomagpont kereső</h3>
+
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="openTab('foxpost')">🦊 Foxpost</button>
+                <button class="tab-btn" onclick="openTab('packeta')">📦 Packeta</button>
+                <button class="tab-btn" onclick="openTab('mpl')">📮 MPL</button>
+            </div>
+
+            <div id="tab-foxpost" class="tab-content active">
+                <h4 style="margin-bottom: 1rem;">Foxpost Automata kereső:</h4>
+                <iframe src="https://cdn.foxpost.hu/apt-finder/v1/app/" width="100%" height="450px" frameborder="0"
+                    style="border-radius: 8px; border: 1px solid #444;"></iframe>
+                <a href="https://foxpost.hu/csomagautomatak" target="_blank" class="fallback-link">Ha nem tölt be a
+                    térkép, kattints ide a manuális megnyitáshoz!</a>
+            </div>
+
+            <div id="tab-packeta" class="tab-content">
+                <h4 style="margin-bottom: 1rem;">Packeta Átvevőhely kereső:</h4>
+                <iframe src="https://widget.packeta.com/v6/" width="100%" height="450px" frameborder="0"
+                    style="border-radius: 8px; border: 1px solid #444;"></iframe>
+                <a href="https://www.packeta.hu/atvevohelyek" target="_blank" class="fallback-link">Ha nem tölt be a
+                    térkép, kattints ide a manuális megnyitáshoz!</a>
+            </div>
+
+            <div id="tab-mpl" class="tab-content">
+                <h4 style="margin-bottom: 1rem;">MPL Postapont kereső:</h4>
+                <iframe src="https://www.posta.hu/szolgaltatasok/szolgaltataskereso?types=postamachine" width="100%"
+                    height="450px" frameborder="0" style="border-radius: 8px; border: 1px solid #444;"></iframe>
+                <a href="https://www.posta.hu/szolgaltatasok/szolgaltataskereso?types=postamachine" target="_blank"
+                    class="fallback-link">Ha nem tölt be a térkép, kattints ide a manuális megnyitáshoz!</a>
+            </div>
+        </div>
+
+        <div class="tally-placeholder">
+            <h3 style="color: var(--accent); margin-bottom: 1rem;">2. Szállítási adatok megadása</h3>
+            <iframe
+                data-tally-src="https://tally.so/embed/RGj5aQ?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
+                loading="lazy" width="100%" height="1145" frameborder="0" marginheight="0" marginwidth="0"
+                title="Prédikálószék Vertical – Szállítás"></iframe>
+            <script>var d = document, w = "https://tally.so/widgets/embed.js", v = function () { "undefined" != typeof Tally ? Tally.loadEmbeds() : d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function (e) { e.src = e.dataset.tallySrc })) }; if ("undefined" != typeof Tally) v(); else if (d.querySelector('script[src="' + w + '"]') == null) { var s = d.createElement("script"); s.src = w, s.onload = v, s.onerror = v, d.body.appendChild(s); }</script>
+        </div>
+    </main>
+
+    <footer style="margin-top: 4rem;">
+        <div class="container footer-inner" style="text-align: center; opacity: 0.5;">
+            <p>© 2026 VitaSteps | Kérdés esetén: vitasteps.team@gmail.com</p>
+        </div>
+    </footer>
+
+    <script>
+        function openTab(tabName) {
+            // Rejtsd el az összes tab tartalmat
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].classList.remove("active");
+            }
+
+            // Vedd le az aktív stílust az összes gombról
+            tablinks = document.getElementsByClassName("tab-btn");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].classList.remove("active");
+            }
+
+            // Jelenítsd meg a kiválasztott tabot és gombot
+            document.getElementById('tab-' + tabName).classList.add("active");
+            event.currentTarget.classList.add("active");
+        }
+    </script>
+</body>
+
+</html>
