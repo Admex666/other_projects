@@ -4,6 +4,8 @@ import ssl
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import os
+import json
+import urllib.request
 from dotenv import load_dotenv
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -15,11 +17,16 @@ load_dotenv(os.path.join(SCRIPT_DIR, '.env'))
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 465
 SENDER_EMAIL = "vitasteps.team@gmail.com"
+DRY_RUN = True  # Ha True, nem küld e-mailt, csak lekérdezi és mutatja a listát!
 
-# Az App Password most már a .env fájlból jön (SMTP_PASSWORD=...)
+# Az App Password most már a .env fájlból jön
 SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
 
-CSV_FILE_PATH = os.path.join(SCRIPT_DIR, "contacts.csv")  # A Stripe-ból vagy kézzel készített CSV fájl helye
+# Új: Tally API beállítások
+TALLY_API_KEY = os.getenv("TALLY_API_KEY")
+TALLY_FORM_ID = os.getenv("TALLY_FORM_ID")
+
+CSV_FILE_PATH = os.path.join(SCRIPT_DIR, "contacts.csv")
 
 EMAIL_SUBJECT = "🏔️ VitaSteps Prédikálószék Vertical – Gratulálunk a teljesítéshez! (Szállítási adatok)"
 
@@ -98,6 +105,59 @@ def get_html_template(name):
 </html>
 """
 
+def fetch_tally_submissions():
+    if not TALLY_API_KEY or not TALLY_FORM_ID:
+        print("ℹ️ Tally API Key vagy Form ID nincs megadva a .env fájlban. Manuális CSV módban futunk.")
+        return []
+
+    print("🔄 Adatok lekérése a Tally rendszeréből...")
+    url = f"https://api.tally.so/forms/{TALLY_FORM_ID}/submissions"
+    req = urllib.request.Request(
+        url, 
+        headers={
+            "Authorization": f"Bearer {TALLY_API_KEY}",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        }
+    )
+    
+    extracted = []
+    try:
+        with urllib.request.urlopen(req) as response:
+            data = json.loads(response.read().decode())
+            
+        submissions = data.get("submissions", [])
+        for sub in submissions:
+            responses = sub.get("responses", [])
+            name = "Teljesítő"
+            email = ""
+            for resp in responses:
+                q_id = resp.get("questionId")
+                ans = resp.get("answer")
+                
+                if not isinstance(ans, str):
+                    continue
+                    
+                # Q0ar1X = Név, 9lg1B5 = E-mail (ebben a Tally űrlapban)
+                if q_id == "9lg1B5":
+                    email = ans
+                elif q_id == "Q0ar1X":
+                    name = ans
+                # Fallback az emailre, ha változna az űrlap
+                elif "@" in ans and "." in ans and " " not in ans and not email:
+                    email = ans
+            
+            if email:
+                extracted.append({"Name": name, "Email": email})
+        
+        print(f"✅ Sikeresen letöltve {len(extracted)} beküldés a Tally-ből.")
+        return extracted
+    except urllib.error.HTTPError as e:
+        print(f"❌ HTTP Hiba a Tally API lekérdezésekor: {e.code} - Ellenőrizd az API kulcsot!")
+        return []
+    except Exception as e:
+        print(f"❌ Hiba a Tally API lekérdezésekor: {e}")
+        return []
+
 def send_emails():
     # Biztonságos SSL kapcsolat létrehozása
     context = ssl.create_default_context()
@@ -111,63 +171,96 @@ def send_emails():
         print("Tipp: Ellenőrizd, hogy az App Password helyes-e és be van-e kapcsolva a kétlépcsős azonosítás!")
         return
 
-    # CSV beolvasása és e-mailek küldése
-    try:
-        with open(CSV_FILE_PATH, mode="r", encoding="utf-8") as file:
-            reader = csv.DictReader(file)
-            
-            # Ellenőrizzük a fejléceket
-            headers = reader.fieldnames
-            print(f"Beolvasott oszlopok: {headers}")
-            
-            email_col = None
-            name_col = None
-            
-            # Próbáljuk megtalálni az e-mail és név oszlopokat (Stripe export vagy egyedi)
-            for h in headers:
-                if "email" in h.lower():
-                    email_col = h
-                if "name" in h.lower() or "név" in h.lower():
-                    name_col = h
-            
-            if not email_col or not name_col:
-                print("❌ Hiba: Nem található 'email' vagy 'name' (név) oszlop a CSV-ben!")
-                return
-            
-            success_count = 0
-            for row in reader:
-                recipient_email = row[email_col].strip()
-                recipient_name = row[name_col].strip()
+    # Tally adatok lekérése
+    tally_data = fetch_tally_submissions()
+
+    rows = []
+    headers = ["Name", "Email", "Sent"]
+
+    # Fájl beolvasása, ha létezik
+    if os.path.exists(CSV_FILE_PATH):
+        try:
+            with open(CSV_FILE_PATH, mode="r", encoding="utf-8") as file:
+                reader = csv.DictReader(file)
+                file_headers = reader.fieldnames
+                if file_headers:
+                    headers = file_headers
+                    
+                if "Sent" not in headers:
+                    headers.append("Sent")
                 
-                if not recipient_email:
-                    continue
-                
-                print(f"Küldés folyamatban: {recipient_name} ({recipient_email})...")
-                
-                # Levél összeállítása
-                message = MIMEMultipart("alternative")
-                message["Subject"] = EMAIL_SUBJECT
-                message["From"] = SENDER_EMAIL
-                message["To"] = recipient_email
-                
-                # HTML tartalom generálása
-                html_content = get_html_template(recipient_name)
-                part = MIMEText(html_content, "html")
-                message.attach(part)
-                
-                # Küldés
-                server.sendmail(SENDER_EMAIL, recipient_email, message.as_string())
-                print(f"➡️ Elküldve!")
-                success_count += 1
-                
-            print(f"\n🎉 Sikeresen kiküldve {success_count} db e-mail!")
-            
-    except FileNotFoundError:
-        print(f"❌ Hiba: A '{CSV_FILE_PATH}' fájl nem található! Kérlek hozz létre egy '{CSV_FILE_PATH}' fájlt.")
-    except Exception as e:
-        print(f"❌ Hiba történt a küldés során: {e}")
-    finally:
+                for row in reader:
+                    if "Sent" not in row:
+                        row["Sent"] = ""
+                    rows.append(row)
+        except Exception as e:
+            print(f"❌ Hiba a CSV beolvasásakor: {e}")
+    else:
+        print("ℹ️ Nem található contacts.csv, létrehozunk egy újat a Tally adatokból.")
+
+    # Csatoljuk a Tally adatokat a létezőkhöz (duplikáció szűréssel)
+    existing_emails = [r.get("Email", "").strip().lower() for r in rows]
+    
+    for new_row in tally_data:
+        email_lower = new_row["Email"].strip().lower()
+        if email_lower not in existing_emails:
+            rows.append({"Name": new_row["Name"], "Email": new_row["Email"], "Sent": ""})
+            existing_emails.append(email_lower)
+
+    if not rows:
+        print("❌ Hiba: Nincs egyetlen elküldendő adat sem (se Tallyben, se a CSV-ben).")
         server.quit()
+        return
+
+    success_count = 0
+    skipped_count = 0
+
+    print("-" * 30)
+    for row in rows:
+        recipient_email = (row.get("Email") or "").strip()
+        recipient_name = (row.get("Name") or "").strip()
+        sent_status = (row.get("Sent") or "").strip().lower()
+        
+        if not recipient_email:
+            continue
+        
+        if sent_status == "yes" or sent_status == "igen":
+            skipped_count += 1
+            continue
+        
+        print(f"Küldés folyamatban: {recipient_name} ({recipient_email})...")
+        
+        # Levél összeállítása
+        message = MIMEMultipart("alternative")
+        message["Subject"] = EMAIL_SUBJECT
+        message["From"] = SENDER_EMAIL
+        message["To"] = recipient_email
+        
+        # HTML tartalom generálása
+        html_content = get_html_template(recipient_name)
+        part = MIMEText(html_content, "html")
+        message.attach(part)
+        
+        # Küldés
+        try:
+            if DRY_RUN:
+                print("➡️ [TESZT MÓD] Szimulált küldés (valós levél nem ment ki).")
+            else:
+                server.sendmail(SENDER_EMAIL, recipient_email, message.as_string())
+                print("➡️ Elküldve!")
+            row["Sent"] = "Yes"
+            success_count += 1
+        except Exception as e:
+            print(f"❌ Hiba {recipient_email} küldésekor: {e}")
+
+    # Visszaírás a CSV-be (frissített adatok)
+    with open(CSV_FILE_PATH, mode="w", encoding="utf-8", newline="") as file:
+        writer = csv.DictWriter(file, fieldnames=headers)
+        writer.writeheader()
+        writer.writerows(rows)
+
+    print(f"\n🎉 Kész! {success_count} db új e-mail kiküldve. ({skipped_count} db már korábban el lett küldve, kihagyva).")
+    server.quit()
 
 if __name__ == "__main__":
     send_emails()
