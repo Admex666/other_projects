@@ -101,7 +101,8 @@
                         </a>
                         <div style="font-size:0.8rem; color:var(--text-mid); text-align:center;">Kattints az adatok
                             megadásához és a fizetéshez</div>
-                        <div style="color:#ff4d4d; font-size:0.85rem; font-weight:600; text-align:center;">🔥 Már 50+ hely elkelt a 100-ból – csak 50 darab maradt!</div>
+                        <div style="color:#ff4d4d; font-size:0.85rem; font-weight:600; text-align:center;">🔥 Már 50+
+                            hely elkelt a 100-ból – csak 50 darab maradt!</div>
                     </div>
                     <a href="#hogyan" class="btn btn-ghost">Hogyan működik?</a>
                 </div>
@@ -291,7 +292,7 @@
                 <div class="price-block">
                     <div class="price-old">12.990 Ft</div>
                     <div class="price-current" id="price-current-display">7.990 Ft</div>
-                    <div class="price-tag" id="price-tag-display">🔥 Már 50+ hely elkelt a 100-ból – csak 50 darab maradt!</div>
+                    <div class="price-tag" id="price-tag-display">🔥 Már 50+ hely elkelt a 100-ból</div>
                 </div>
 
                 <ul class="checkout-includes">
@@ -305,83 +306,32 @@
                     <p>A fizetés gombra kattintva elfogadod az <a href="aszf.html" target="_blank">Általános Szerződési
                             Feltételeket</a> és az <a href="adatvedelem.html" target="_blank">Adatkezelési
                             Tájékoztatót</a>.</p>
-                    <p style="margin-top:0.5rem;">A biztonságos fizetést a <strong>Revolut</strong> rendszere kezeli. Az
+                    <p style="margin-top:0.5rem;">A biztonságos fizetést a <strong>Stripe</strong> rendszere kezeli. Az
                         érem kiszállítása a teljesítés igazolása után indul el (várható: 2026. június 30-tól).</p>
                 </div>
 
-                <!-- NATIVE CHECKOUT FORM -->
+                <!-- REDIRECT CTA TO CHECKOUT WIDGET -->
                 <div id="checkout-section"
-                    style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 2rem; margin-top: 1rem;">
-                    <h3 style="margin-top:0; margin-bottom: 1.5rem; font-size: 1.5rem; color: var(--text-high);">Kérjük
-                        add meg a számlázáshoz szükséges adataidat!</h3>
+                    style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 3rem 2rem; margin-top: 1rem; text-align: center;">
+                    <span style="font-size: 3rem; display: block; margin-bottom: 1rem;">🏅</span>
+                    <h3 style="margin-top:0; margin-bottom: 1rem; font-size: 1.8rem; color: var(--text-high);">Készen állsz a nevezésre?</h3>
+                    <p style="color: var(--text-mid); margin-bottom: 2rem; font-size: 1.05rem; max-width: 500px; margin-left: auto; margin-right: auto;">
+                        Kattints az alábbi gombra a szállítási adatok (Foxpost automata) megadásához, majd a biztonságos kártyás fizetéshez.
+                    </p>
+                    
+                    <div style="margin-bottom: 2rem; background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); display: inline-block; width: 100%; max-width: 400px; text-align: left;">
+                        <div style="font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-high);">Nevezési díj és szállítás összesen:</div>
+                        <div style="font-size: 2.5rem; font-weight: 800; color: var(--accent); margin-bottom: 0.5rem;">7.990 Ft</div>
+                        <div style="font-size: 0.82rem; color: var(--text-mid);">A fizetés és a szállítási adatok biztonságos kezelését a <strong>Stripe</strong> és a <strong>Foxpost</strong> rendszere végzi.</div>
+                    </div>
 
-                    <form id="vitasteps-checkout-form">
-                        <div style="margin-bottom: 1.5rem;">
-                            <label
-                                style="display:block; margin-bottom: 0.5rem; color: var(--text-high); font-weight: 500;">Teljes
-                                név <span style="color:#ff4d4d">*</span></label>
-                            <input type="text" id="cust-name" required
-                                style="width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: transparent; color: var(--text-high); font-family: inherit;"
-                                placeholder="Kovács Péter">
-                        </div>
-
-                        <div style="margin-bottom: 1.5rem;">
-                            <label
-                                style="display:block; margin-bottom: 0.5rem; color: var(--text-high); font-weight: 500;">Számlázási/Postázási
-                                cím <span style="color:#ff4d4d">*</span></label>
-                            <input type="text" id="cust-address" required
-                                style="width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: transparent; color: var(--text-high); font-family: inherit;"
-                                placeholder="Irányítószám, Város, Utca, Házszám">
-                            <div style="font-size: 0.8rem; color: var(--text-mid); margin-top: 0.5rem;">FIGYELEM:
-                                számlát <strong>kizárólag magyarországi</strong> címre tudunk kiállítani és postázni!
-                            </div>
-                        </div>
-
-                        <div style="margin-bottom: 2rem;">
-                            <label
-                                style="display:block; margin-bottom: 0.5rem; color: var(--text-high); font-weight: 500;">Milyen
-                                távot tervezel teljesíteni? <span style="color:#ff4d4d">*</span></label>
-                            <select id="cust-distance" required
-                                style="width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: #111; color: var(--text-high); font-family: inherit; appearance: none;">
-                                <option value="" disabled selected>Válassz távot...</option>
-                                <option value="10 km">10 km</option>
-                                <option value="15 km">15 km</option>
-                                <option value="20 km">20 km</option>
-                                <option value="25 km">25 km</option>
-                            </select>
-                        </div>
-
-                        <div
-                            style="margin-bottom: 2rem; background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
-                            <div style="font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-high);">A
-                                véglegesítéshez fizesd ki a nevezési díjat:</div>
-                            <div
-                                style="font-size: 2.5rem; font-weight: 800; color: var(--accent); margin-bottom: 1rem;">
-                                7.990 Ft</div>
-                            <div style="font-size: 0.85rem; color: var(--text-mid);">FIGYELEM: a kártyaadatokhoz
-                                <strong>NEM férünk hozzá</strong>, a tranzakció a Stripe szolgáltatón keresztül
-                                <strong>biztonságosan</strong> megy végbe. Érmék postázása: jún. 20-tól.
-                            </div>
-                        </div>
-
-                        <div style="margin-bottom: 2rem; display: flex; align-items: flex-start; gap: 0.75rem;">
-                            <input type="checkbox" id="cust-terms" required
-                                style="margin-top: 0.25rem; width: 1.2rem; height: 1.2rem;">
-                            <label for="cust-terms"
-                                style="font-size: 0.9rem; color: var(--text-mid); line-height: 1.4;">Elfogadom az <a
-                                    href="aszf.html" target="_blank" style="color:var(--accent);">ÁSZF</a>-et és az <a
-                                    href="adatvedelem.html" target="_blank" style="color:var(--accent);">Adatkezelési
-                                    Tájékoztatót</a> <span style="color:#ff4d4d">*</span></label>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary btn-xl" id="checkout-submit-btn"
-                            style="width: 100%;">
-                            Nevezés & fizetés &rarr;
-                        </button>
-                    </form>
+                    <a href="checkout-widget.html" id="checkout-section-btn" class="btn btn-primary btn-xl" style="display: block; width: 100%; max-width: 400px; margin: 0 auto; text-decoration: none; text-align: center; line-height: 1.5;">
+                        Nevezés és csomagpont választás &rarr;
+                    </a>
                 </div>
 
-                <div style="color:#ff4d4d; font-size:0.9rem; font-weight:700; text-align:center; margin-top:1rem;">🔥 Már 50+ hely elkelt a 100-ból – csak 50 darab maradt!</div>
+                <div style="color:#ff4d4d; font-size:0.9rem; font-weight:700; text-align:center; margin-top:1rem;">🔥
+                    Már 50+ hely elkelt a 100-ból – csak 50 darab maradt!</div>
 
                 <div class="payment-badges" style="margin-top: 1.5rem;">
                     <span>🔒 Biztonságos Stripe fizetés</span>

@@ -144,55 +144,34 @@
         <span class="shipping-icon">📦</span>
         <h1 class="accent">Hova küldhetjük az érmedet?</h1>
         <p style="font-size: 1.2rem; margin-top: 1rem; color: var(--text-mid);">Kérjük, keresd ki a számodra
-            legközelebbi csomagpontot az alábbi térképeken, majd a pontos nevét és címét add meg a lenti űrlapon!</p>
+            legközelebbi Foxpost automatát az alábbi térképen, majd a pontos nevét és címét add meg a lenti űrlapon!</p>
 
         <div class="map-container">
             <div class="info-box">
-                <p><strong>💡 Hogyan működik?</strong> 1. Keresd meg a térképen a hozzád legközelebb eső Foxpost,
-                    Packeta vagy MPL automatát/átvevőhelyet. 2. Jegyezd meg a nevét/címét. 3. Töltsd ki a lap alján
-                    található űrlapot az adataiddal!</p>
+                <p><strong>💡 Hogyan működik?</strong> 1. Keresd meg a térképen a hozzád legközelebb eső Foxpost automatát és kattints rá! 2. A lenti űrlapon automatikusan megjelennek a kiválasztott automata adatai (illetve ha a levélben lévő gombra kattintottál, a neved és az e-mail címed is). 3. Ellenőrizd a kitöltött adatokat, majd nyomd meg a Beküldés gombot!</p>
             </div>
 
             <h3 style="color: var(--accent); margin-bottom: 1rem;">1. Csomagpont kereső</h3>
 
-            <div class="tab-buttons">
-                <button class="tab-btn active" onclick="openTab('foxpost')">🦊 Foxpost</button>
-                <button class="tab-btn" onclick="openTab('packeta')">📦 Packeta</button>
-                <button class="tab-btn" onclick="openTab('mpl')">📮 MPL</button>
-            </div>
-
             <div id="tab-foxpost" class="tab-content active">
                 <h4 style="margin-bottom: 1rem;">Foxpost Automata kereső:</h4>
-                <iframe src="https://cdn.foxpost.hu/apt-finder/v1/app/" width="100%" height="450px" frameborder="0"
+                <iframe id="foxpost-iframe" src="https://cdn.foxpost.hu/apt-finder/v1/app/" width="100%" height="450px" frameborder="0"
                     style="border-radius: 8px; border: 1px solid #444;"></iframe>
                 <a href="https://foxpost.hu/csomagautomatak" target="_blank" class="fallback-link">Ha nem tölt be a
                     térkép, kattints ide a manuális megnyitáshoz!</a>
             </div>
 
-            <div id="tab-packeta" class="tab-content">
-                <h4 style="margin-bottom: 1rem;">Packeta Átvevőhely kereső:</h4>
-                <iframe src="https://widget.packeta.com/v6/" width="100%" height="450px" frameborder="0"
-                    style="border-radius: 8px; border: 1px solid #444;"></iframe>
-                <a href="https://www.packeta.hu/atvevohelyek" target="_blank" class="fallback-link">Ha nem tölt be a
-                    térkép, kattints ide a manuális megnyitáshoz!</a>
-            </div>
-
-            <div id="tab-mpl" class="tab-content">
-                <h4 style="margin-bottom: 1rem;">MPL Postapont kereső:</h4>
-                <iframe src="https://www.posta.hu/szolgaltatasok/szolgaltataskereso?types=postamachine" width="100%"
-                    height="450px" frameborder="0" style="border-radius: 8px; border: 1px solid #444;"></iframe>
-                <a href="https://www.posta.hu/szolgaltatasok/szolgaltataskereso?types=postamachine" target="_blank"
-                    class="fallback-link">Ha nem tölt be a térkép, kattints ide a manuális megnyitáshoz!</a>
+            <div id="selected-foxpost-info" style="display: none; margin-top: 1.5rem; padding: 1.2rem; background: rgba(196, 255, 0, 0.08); border: 1px solid var(--accent); border-radius: 8px; font-size: 1rem;">
             </div>
         </div>
 
         <div class="tally-placeholder">
             <h3 style="color: var(--accent); margin-bottom: 1rem;">2. Szállítási adatok megadása</h3>
             <iframe
-                data-tally-src="https://tally.so/embed/RGj5aQ?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
+                id="tally-iframe"
+                src="https://tally.so/embed/RGj5aQ?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
                 loading="lazy" width="100%" height="1145" frameborder="0" marginheight="0" marginwidth="0"
                 title="Prédikálószék Vertical – Szállítás"></iframe>
-            <script>var d = document, w = "https://tally.so/widgets/embed.js", v = function () { "undefined" != typeof Tally ? Tally.loadEmbeds() : d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function (e) { e.src = e.dataset.tallySrc })) }; if ("undefined" != typeof Tally) v(); else if (d.querySelector('script[src="' + w + '"]') == null) { var s = d.createElement("script"); s.src = w, s.onload = v, s.onerror = v, d.body.appendChild(s); }</script>
         </div>
     </main>
 
@@ -203,23 +182,90 @@
     </footer>
 
     <script>
-        function openTab(tabName) {
-            // Rejtsd el az összes tab tartalmat
-            var i, tabcontent, tablinks;
-            tabcontent = document.getElementsByClassName("tab-content");
-            for (i = 0; i < tabcontent.length; i++) {
-                tabcontent[i].classList.remove("active");
+        // Az URL-ből érkező név és email prefill-je betöltéskor
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const parentName = urlParams.get('name') || '';
+            const parentEmail = urlParams.get('email') || '';
+
+            if (parentName || parentEmail) {
+                updateTallyUrl('', '', parentName, parentEmail);
+            }
+        });
+
+        // Biztonsági ellenőrzés és Foxpost eseménykezelő
+        window.addEventListener('message', function (event) {
+            if (event.origin !== 'https://cdn.foxpost.hu') {
+                return;
             }
 
-            // Vedd le az aktív stílust az összes gombról
-            tablinks = document.getElementsByClassName("tab-btn");
-            for (i = 0; i < tablinks.length; i++) {
-                tablinks[i].classList.remove("active");
+            try {
+                const apt = JSON.parse(event.data);
+                if (apt && apt.name) {
+                    // Megjelenítjük a kiválasztott automatát
+                    const infoBox = document.getElementById('selected-foxpost-info');
+                    if (infoBox) {
+                        infoBox.innerHTML = `<strong>🦊 Kiválasztott automata:</strong> ${apt.name} (${apt.address})`;
+                        infoBox.style.display = 'block';
+                    }
+
+                    // URL paraméterek lekérése
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const parentName = urlParams.get('name') || '';
+                    const parentEmail = urlParams.get('email') || '';
+
+                    // Frissítjük az iframe-et az automata és személyes adatokkal
+                    updateTallyUrl(apt.name, apt.address, parentName, parentEmail);
+                }
+            } catch (e) {
+                console.error('Nem sikerült feldolgozni a Foxpost üzenetet:', e);
+            }
+        }, false);
+
+        function updateTallyUrl(lockerName, lockerAddress, personName, personEmail) {
+            const baseTallyUrl = "https://tally.so/embed/RGj5aQ?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1";
+            const params = new URLSearchParams();
+
+            // Automata adatok beállítása prefillhez
+            if (lockerName && lockerAddress) {
+                const lockerString = `${lockerName} (${lockerAddress})`;
+                params.set("Foxpost automata", lockerString);
+                params.set("Foxpost", lockerString);
+                params.set("Csomagpont", lockerString);
+                params.set("Csomagpont neve és címe", lockerString);
+                params.set("Szállítási cím", lockerString);
+                params.set("Cím", lockerString);
+                params.set("foxpost_automata", lockerString);
+                params.set("csomagpont", lockerString);
             }
 
-            // Jelenítsd meg a kiválasztott tabot és gombot
-            document.getElementById('tab-' + tabName).classList.add("active");
-            event.currentTarget.classList.add("active");
+            // Személyes adatok beállítása prefillhez
+            if (personName) {
+                params.set("Name", personName);
+                params.set("Név", personName);
+                params.set("Teljes név", personName);
+                params.set("Teljes neved", personName);
+                params.set("name", personName);
+            }
+            if (personEmail) {
+                params.set("Email", personEmail);
+                params.set("email", personEmail);
+                params.set("E-mail", personEmail);
+                params.set("E-mail cím", personEmail);
+                params.set("E-mail címed", personEmail);
+            }
+
+            const tallyIframe = document.getElementById('tally-iframe');
+            if (tallyIframe) {
+                tallyIframe.src = `${baseTallyUrl}&${params.toString()}`;
+                
+                // Gördítsük a felhasználót az űrlaphoz ha épp csomagpontot választott
+                if (lockerName) {
+                    setTimeout(() => {
+                        tallyIframe.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 400);
+                }
+            }
         }
     </script>
 </body>

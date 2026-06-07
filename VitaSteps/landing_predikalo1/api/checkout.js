@@ -8,7 +8,7 @@ module.exports = async (req, res) => {
     }
 
     try {
-        const { name, address, distance } = req.body;
+        const { name, billingAddress, address, distance, email, parcelCarrier, parcelName, parcelAddress, parcelId } = req.body;
         const origin = req.headers.origin || 'https://vitasteps.vercel.app'; // fallback
 
         const session = await stripe.checkout.sessions.create({
@@ -33,14 +33,24 @@ module.exports = async (req, res) => {
             payment_intent_data: {
                 metadata: {
                     Név: name,
-                    Cím: address,
-                    Táv: distance
+                    Email: email || '',
+                    Táv: distance,
+                    Futár: parcelCarrier || '',
+                    Csomagpont_neve: parcelName || address || '',
+                    Csomagpont_cím: parcelAddress || '',
+                    Csomagpont_id: parcelId || '',
+                    Számlázási_cím: billingAddress || ''
                 }
             },
             metadata: {
                 Név: name,
-                Cím: address,
-                Táv: distance
+                Email: email || '',
+                Táv: distance,
+                Futár: parcelCarrier || '',
+                Csomagpont_neve: parcelName || address || '',
+                Csomagpont_cím: parcelAddress || '',
+                Csomagpont_id: parcelId || '',
+                Számlázási_cím: billingAddress || ''
             }
         });
 

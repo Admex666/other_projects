@@ -30,7 +30,11 @@ CSV_FILE_PATH = os.path.join(SCRIPT_DIR, "contacts.csv")
 
 EMAIL_SUBJECT = "🏔️ VitaSteps Prédikálószék Vertical – Gratulálunk a teljesítéshez! (Szállítási adatok)"
 
-def get_html_template(name):
+def get_html_template(name, email):
+    import urllib.parse
+    encoded_name = urllib.parse.quote(name)
+    encoded_email = urllib.parse.quote(email)
+    link = f"https://vitasteps.vercel.app/szallitas.html?name={encoded_name}&email={encoded_email}"
     return f"""<!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -74,10 +78,10 @@ def get_html_template(name):
                     
                     <h2>1. 📦 Szállítási adatok megadása (Nagyon Fontos!)</h2>
                     <p>Az érmek kiküldése várhatóan <strong>június 30-tól indul el</strong>.</p>
-                    <p>Kérjük, hogy az alábbi gombra kattintva látogass el a szállítási oldalunkra, ahol kiválaszthatod, hogy melyik Foxpost, Packeta vagy MPL csomagpontra kéred a megérdemelt érmedet!</p>
+                    <p>Kérjük, hogy az alábbi gombra kattintva látogass el a szállítási oldalunkra, ahol kiválaszthatod, hogy melyik Foxpost csomagpontra kéred a megérdemelt érmedet!</p>
                     
                     <div class="cta-container">
-                        <a href="https://vitasteps.vercel.app/szallitas.html" class="btn" target="_blank">📦 Szállítási adatok megadása</a>
+                        <a href="{link}" class="btn" target="_blank">📦 Szállítási adatok megadása</a>
                     </div>
                     
                     <h2>2. 🚀 Érkezik a saját Felhasználói fiókod és a Ranglista!</h2>
@@ -237,7 +241,7 @@ def send_emails():
         message["To"] = recipient_email
         
         # HTML tartalom generálása
-        html_content = get_html_template(recipient_name)
+        html_content = get_html_template(recipient_name, recipient_email)
         part = MIMEText(html_content, "html")
         message.attach(part)
         

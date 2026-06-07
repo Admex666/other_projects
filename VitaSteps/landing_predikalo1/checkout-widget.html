@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Csomagpont kiválasztása – VitaSteps</title>
+    <style>
+        :root {
+            --bg: #0b0f19;
+            --surface: #121824;
+            --surface2: #1a2235;
+            --border: rgba(255, 255, 255, 0.08);
+            --accent: #c4ff00;
+            --text-high: #ffffff;
+            --text-mid: #8a99b3;
+            --text-low: #4a5568;
+            --radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text-high);
+            font-family: 'Inter', system-ui, sans-serif;
+            min-height: 100vh;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
+
+        /* NAV */
+        .nav {
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.3rem;
+            font-weight: 900;
+            letter-spacing: 3px;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .step-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--text-mid);
+        }
+
+        .step {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .step.active {
+            background: var(--accent);
+            color: #000;
+            font-weight: 700;
+            border-color: var(--accent);
+        }
+
+        .step.done {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* LAYOUT */
+        .page-wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 4rem;
+        }
+
+        .page-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+        }
+
+        .page-subtitle {
+            color: var(--text-mid);
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+        }
+
+        /* ORDER SUMMARY */
+        .order-summary {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+        }
+
+        .order-icon {
+            font-size: 2.2rem;
+        }
+
+        .order-info {
+            flex: 1;
+        }
+
+        .order-name {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .order-desc {
+            color: var(--text-mid);
+            font-size: 0.85rem;
+            margin-top: 0.2rem;
+        }
+
+        .order-price {
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: var(--accent);
+        }
+
+        /* CARRIER TABS */
+        .carrier-tabs {
+            display: flex;
+            gap: 0.6rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .carrier-tab {
+            flex: 1;
+            min-width: 120px;
+            padding: 0.9rem 1rem;
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+            color: var(--text-mid);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .carrier-tab:hover {
+            border-color: rgba(196, 255, 0, 0.4);
+            color: var(--text-high);
+        }
+
+        .carrier-tab.active {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(196, 255, 0, 0.06);
+        }
+
+        .carrier-tab .carrier-logo {
+            font-size: 1.6rem;
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+
+        /* WIDGET PANELS */
+        .widget-panel {
+            display: none;
+        }
+
+        .widget-panel.active {
+            display: block;
+        }
+
+        .widget-wrapper {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            min-height: 440px;
+            position: relative;
+        }
+
+        /* GLS widget */
+        gls-dpm {
+            width: 100%;
+            height: 440px;
+            display: block;
+        }
+
+        /* Packeta container */
+        #packeta-map-container {
+            width: 100%;
+            height: 440px;
+        }
+
+        /* Foxpost placeholder */
+        #foxpost-container {
+            width: 100%;
+            height: 440px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 1rem;
+            color: var(--text-mid);
+        }
+
+        #foxpost-open-btn {
+            background: var(--accent);
+            color: #000;
+            font-weight: 700;
+            border: none;
+            padding: 0.9rem 2rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        #foxpost-open-btn:hover {
+            opacity: 0.85;
+        }
+
+        /* SELECTED POINT */
+        .selected-point-box {
+            margin-top: 1.2rem;
+            padding: 1rem 1.4rem;
+            background: rgba(196, 255, 0, 0.07);
+            border: 1px solid rgba(196, 255, 0, 0.3);
+            border-radius: var(--radius);
+            display: none;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .selected-point-box.visible {
+            display: flex;
+        }
+
+        .selected-point-icon {
+            font-size: 1.8rem;
+        }
+
+        .selected-point-info {
+            flex: 1;
+        }
+
+        .selected-point-name {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .selected-point-addr {
+            color: var(--text-mid);
+            font-size: 0.85rem;
+            margin-top: 0.2rem;
+        }
+
+        .selected-point-change {
+            background: transparent;
+            color: var(--accent);
+            border: 1px solid rgba(196, 255, 0, 0.3);
+            padding: 0.4rem 0.9rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* FORM SECTION */
+        .form-section {
+            margin-top: 2rem;
+        }
+
+        .form-section h2 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1.2rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .form-row {
+            margin-bottom: 1.1rem;
+        }
+
+        .form-row label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-mid);
+            margin-bottom: 0.4rem;
+            font-weight: 500;
+        }
+
+        .form-row input,
+        .form-row select {
+            width: 100%;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-high);
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+            outline: none;
+        }
+
+        .form-row input:focus,
+        .form-row select:focus {
+            border-color: rgba(196, 255, 0, 0.5);
+        }
+
+        .form-row select option {
+            background: var(--surface2);
+        }
+
+        /* SUBMIT BUTTON */
+        .submit-btn {
+            width: 100%;
+            margin-top: 1.5rem;
+            padding: 1.1rem;
+            background: var(--accent);
+            color: #000;
+            font-size: 1.05rem;
+            font-weight: 800;
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 0.5px;
+        }
+
+        .submit-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .submit-btn.loading {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .error-msg {
+            color: #ff6b6b;
+            font-size: 0.85rem;
+            margin-top: 0.8rem;
+            text-align: center;
+            display: none;
+        }
+
+        .error-msg.visible {
+            display: block;
+        }
+
+        .legal-note {
+            text-align: center;
+            color: var(--text-low);
+            font-size: 0.78rem;
+            margin-top: 0.8rem;
+        }
+
+        .legal-note a {
+            color: var(--text-mid);
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="nav">
+        <div class="logo">VITA<span>STEPS</span></div>
+        <div class="step-indicator">
+            <div class="step done">1. Táv</div>
+            <div>→</div>
+            <div class="step active">2. Kézbesítés</div>
+            <div>→</div>
+            <div class="step">3. Fizetés</div>
+        </div>
+    </nav>
+
+    <div class="page-wrapper">
+
+        <h1 class="page-title">📦 Szállítási adatok megadása</h1>
+        <p class="page-subtitle">Válaszd ki, melyik csomagpontra küljük el a megérdemelt érmedet!</p>
+
+        <!-- ORDER SUMMARY -->
+        <div class="order-summary">
+            <div class="order-icon">🏅</div>
+            <div class="order-info">
+                <div class="order-name">Prédikálószék Kihívás Érem</div>
+                <div class="order-desc" id="summary-distance">Választott táv: –</div>
+            </div>
+            <div class="order-price">7.990 Ft</div>
+        </div>
+
+        <!-- SELECTED CARRIER INFO -->
+        <div
+            style="background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.2rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.8rem;">
+            <span style="font-size: 1.5rem;">🦊</span>
+            <div>
+                <div style="font-weight: 700; font-size: 0.95rem; color: var(--text-high);">Kézbesítés Foxpost
+                    automatába</div>
+                <div style="font-size: 0.8rem; color: var(--text-mid); margin-top: 0.1rem;">Országos lefedettség,
+                    ingyenes szállítás.</div>
+            </div>
+        </div>
+
+        <!-- FOXPOST WIDGET -->
+        <div class="widget-panel active" id="panel-foxpost">
+            <div class="widget-wrapper" style="min-height: 450px;">
+                <iframe id="foxpost-iframe" src="https://cdn.foxpost.hu/apt-finder/v1/app/" width="100%" height="450px"
+                    frameborder="0" style="border: none; display: block;"></iframe>
+            </div>
+        </div>
+
+        <!-- SELECTED POINT DISPLAY -->
+        <div class="selected-point-box" id="selected-point-box">
+            <div class="selected-point-icon" id="selected-icon">🦊</div>
+            <div class="selected-point-info">
+                <div class="selected-point-name" id="selected-name">–</div>
+                <div class="selected-point-addr" id="selected-address">–</div>
+            </div>
+            <button class="selected-point-change" onclick="clearSelection()">Másik pont</button>
+        </div>
+
+        <!-- CONTACT FORM -->
+        <div class="form-section">
+            <h2>👤 Számlázási adatok</h2>
+            <div class="form-row">
+                <label for="cust-name">Teljes név *</label>
+                <input type="text" id="cust-name" placeholder="Kovács János" required>
+            </div>
+            <div class="form-row">
+                <label for="cust-email">E-mail cím *</label>
+                <input type="email" id="cust-email" placeholder="nev@example.com" required>
+            </div>
+            <div class="form-row">
+                <label for="cust-billing-address">Számlázási cím *</label>
+                <input type="text" id="cust-billing-address" placeholder="Irányítószám, Város, Utca, Házszám" required>
+                <div style="font-size: 0.8rem; color: var(--text-mid); margin-top: 0.4rem;">FIGYELEM: számlát
+                    <strong>kizárólag magyarországi</strong> címre tudunk kiállítani!</div>
+            </div>
+            <div class="form-row">
+                <label for="cust-distance">Teljesített táv *</label>
+                <select id="cust-distance" required>
+                    <option value="">Válassz távot...</option>
+                    <option value="10 km">10 km</option>
+                    <option value="15 km">15 km</option>
+                    <option value="20 km">20 km</option>
+                    <option value="25 km">25 km</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="error-msg" id="error-msg">⚠️ Kérjük válassz egy csomagpontot és töltsd ki az összes mezőt!</div>
+
+        <button class="submit-btn" id="submit-btn" onclick="handleSubmit()">
+            🔒 Tovább a biztonságos fizetéshez
+        </button>
+
+        <p class="legal-note">
+            Biztonságos Stripe fizetés · <a href="aszf.html">ÁSZF</a> · <a href="adatvedelem.html">Adatvédelem</a>
+        </p>
+
+    </div>
+
+    <script>
+        // ===== STATE =====
+        let selectedParcelPoint = null;
+
+        // Read URL params if user came from index.html
+        const params = new URLSearchParams(window.location.search);
+        const prefilledDistance = params.get('distance');
+        if (prefilledDistance) {
+            document.getElementById('summary-distance').textContent = 'Választott táv: ' + prefilledDistance;
+            const distSelect = document.getElementById('cust-distance');
+            // Try to match
+            for (const opt of distSelect.options) {
+                if (opt.value.includes(prefilledDistance.replace(' km', ''))) {
+                    opt.selected = true;
+                    break;
+                }
+            }
+        }
+
+        // ===== FOXPOST WIDGET MESSAGE LISTENER =====
+        window.addEventListener('message', function (event) {
+            // Biztonsági ellenőrzés
+            if (event.origin !== 'https://cdn.foxpost.hu') {
+                return;
+            }
+
+            try {
+                const apt = JSON.parse(event.data);
+                if (apt && apt.name) {
+                    setSelectedPoint(
+                        'foxpost',
+                        apt.name,
+                        apt.address,
+                        apt.operator_id || apt.place_id || ''
+                    );
+                }
+            } catch (e) {
+                console.error('Nem sikerült feldolgozni a Foxpost üzenetet:', e);
+            }
+        }, false);
+
+        // ===== SELECTION MANAGEMENT =====
+        function setSelectedPoint(carrier, name, address, id) {
+            selectedParcelPoint = { carrier, name, address, id };
+            document.getElementById('selected-name').textContent = name || '–';
+            document.getElementById('selected-address').textContent = address || '–';
+            document.getElementById('selected-icon').textContent = '🦊';
+            document.getElementById('selected-point-box').classList.add('visible');
+            document.getElementById('error-msg').classList.remove('visible');
+        }
+
+        function clearSelection() {
+            selectedParcelPoint = null;
+            document.getElementById('selected-point-box').classList.remove('visible');
+            const iframe = document.getElementById('foxpost-iframe');
+            if (iframe) {
+                iframe.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        // ===== SUBMIT =====
+        async function handleSubmit() {
+            const name = document.getElementById('cust-name').value.trim();
+            const email = document.getElementById('cust-email').value.trim();
+            const billingAddress = document.getElementById('cust-billing-address').value.trim();
+            const distance = document.getElementById('cust-distance').value;
+
+            if (!name || !email || !billingAddress || !distance || !selectedParcelPoint) {
+                document.getElementById('error-msg').classList.add('visible');
+                document.getElementById('error-msg').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
+
+            const btn = document.getElementById('submit-btn');
+            btn.classList.add('loading');
+            btn.textContent = '⏳ Átirányítás a fizetéshez...';
+            btn.disabled = true;
+
+            try {
+                const parcelInfo = `${selectedParcelPoint.carrier.toUpperCase()}: ${selectedParcelPoint.name} – ${selectedParcelPoint.address}`;
+                const response = await fetch('/api/checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name,
+                        billingAddress,
+                        address: parcelInfo,
+                        distance,
+                        email,
+                        parcelCarrier: selectedParcelPoint.carrier,
+                        parcelName: selectedParcelPoint.name,
+                        parcelAddress: selectedParcelPoint.address,
+                        parcelId: selectedParcelPoint.id || ''
+                    })
+                });
+
+                const data = await response.json();
+                if (response.ok && data.url) {
+                    window.location.href = data.url;
+                } else {
+                    alert('Hiba a fizetés indításakor: ' + (data.error || 'Kérjük próbáld újra!'));
+                    btn.classList.remove('loading');
+                    btn.disabled = false;
+                    btn.textContent = '🔒 Tovább a biztonságos fizetéshez';
+                }
+            } catch (err) {
+                alert('Hálózati hiba. Kérjük ellenőrizd az internetkapcsolatod!');
+                btn.classList.remove('loading');
+                btn.disabled = false;
+                btn.textContent = '🔒 Tovább a biztonságos fizetéshez';
+            }
+        }
+    </script>
+</body>
+
+</html>
