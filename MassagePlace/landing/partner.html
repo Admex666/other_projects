@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZenSlot Partnerek - Töltse meg az üres óráit</title>
+    <link rel="icon" href="assets/zenslot_logo_nobg.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Custom overrides and layout extensions for the Partner page */
+        .container {
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        .partner-layout {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 2.5rem;
+            margin-top: 1rem;
+        }
+
+        .info-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .info-panel h1 {
+            font-size: 2.4rem;
+            font-weight: 600;
+            line-height: 1.25;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .info-panel .subtitle {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .features-list {
+            list-style: none;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .features-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+            font-size: 1.05rem;
+            line-height: 1.4;
+        }
+
+        .features-list .icon-bullet {
+            color: var(--primary);
+            font-size: 1.2rem;
+            line-height: 1;
+        }
+
+        .example-box {
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 3px solid var(--primary);
+            padding: 1.2rem;
+            border-radius: 0 16px 16px 0;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #d1d8d5;
+        }
+
+        .example-box strong {
+            color: #fff;
+        }
+
+        /* Personalized welcome banner */
+        .welcome-banner {
+            display: none;
+            background: rgba(195, 164, 121, 0.15);
+            border: 1px solid rgba(195, 164, 121, 0.3);
+            border-radius: 12px;
+            padding: 0.8rem 1.2rem;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+            color: var(--primary);
+            text-align: center;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        /* Calculator Styles */
+        .calculator-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            color: #fff;
+        }
+
+        .calc-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .calc-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .calc-val {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            outline: none;
+            margin: 10px 0;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            transition: transform 0.1s ease;
+        }
+
+        .slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        .results-box {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+        }
+
+        .result-row:not(:last-child) {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .result-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-align: left;
+        }
+
+        .result-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .result-value.highlighted {
+            color: #79c394;
+            /* Elegant green for profit */
+        }
+
+        /* Split Action Buttons */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .btn-reject {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: var(--text-muted);
+            padding: 0.8rem;
+            border-radius: 12px;
+            font-family: inherit;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+            text-align: center;
+        }
+
+        .btn-reject:hover {
+            background: rgba(226, 125, 96, 0.1);
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        /* Feedback / Option lists for rejection */
+        .feedback-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-top: 1.2rem;
+        }
+
+        .feedback-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 0.9rem 1.2rem;
+            color: var(--text-main);
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        .feedback-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--primary);
+        }
+
+        @media (max-width: 850px) {
+            .partner-layout {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .info-panel {
+                text-align: center;
+            }
+
+            .info-panel h1 {
+                font-size: 2rem;
+            }
+
+            .features-list {
+                align-items: center;
+                text-align: left;
+            }
+
+            .example-box {
+                border-left: none;
+                border-top: 3px solid var(--primary);
+                border-radius: 0 0 16px 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background-overlay"></div>
+
+    <main class="container">
+        <!-- Logo -->
+        <div class="logo-container" style="text-align: center; margin-bottom: 2rem;">
+            <img src="assets/zenslot_logo_nobg.png" alt="ZenSlot Logo"
+                style="height: 60px; width: auto; max-width: 100%; object-fit: contain; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.2));">
+        </div>
+
+        <!-- Personalization welcome slot -->
+        <div class="welcome-banner" id="personalized-welcome">
+            Üdvözöljük a <span id="welcome-salon-name">Szalon</span> csapatát!
+        </div>
+
+        <div class="partner-layout">
+            <!-- Left Panel: Pitch Copy -->
+            <section class="info-panel">
+                <h1>Töltse meg az üres óráit<br>last-minute vendégekkel</h1>
+                <p class="subtitle">
+                    A ZenSlot automatizáltan közvetíti a wellness- és masszázsszalonok utolsó pillanatban üresen maradó
+                    időpontjait helyi, fizető vendégeknek. Kifejezetten belvárosi, prémium szolgáltatóknak tervezve.
+                </p>
+
+                <ul class="features-list">
+                    <li>
+                        <span class="icon-bullet">✔</span>
+                        <div>
+                            <strong>Kizárólag sikerdíjas modell:</strong> Nincs csatlakozási díj és nincs havidíj. Ön
+                            kizárólag a sikeresen közvetített vendégek után fizet.
+                        </div>
+                    </li>
+                    <li>
+                        <span class="icon-bullet">✔</span>
+                        <div>
+                            <strong>Last-minute időpontok kitöltése:</strong> Az utolsó 24 órában felszabaduló, vagy
+                            üresen álló időpontok automatikus kiajánlása a környékbeli irodaházak dolgozóinak.
+                        </div>
+                    </li>
+                    <li>
+                        <span class="icon-bullet">✔</span>
+                        <div>
+                            <strong>Nulla fix költség és kockázat:</strong> Teljesen kockázatmentes tesztüzem. Ön szabja
+                            meg, mely időpontokat és milyen szolgáltatásokat kínál fel a rendszerben.
+                        </div>
+                    </li>
+                </ul>
+
+                <div class="example-box">
+                    💡 <strong>Gyakorlati példa:</strong><br>
+                    Egy 20 000 Ft értékű masszázs, amely a kezdés előtt 24 órával még szabadon áll, a ZenSlot
+                    segítségével 12 000 – 14 000 Ft közötti áron kel el egy közeli irodai dolgozó számára.
+                </div>
+            </section>
+
+            <!-- Right Panel: Interactive Calculator and Forms -->
+            <section class="glass-card" id="booking-card">
+
+                <!-- State 1: Calculator -->
+                <div class="step active" id="step-1">
+                    <h2 class="calculator-title">Számolja ki a kieső bevételeit!</h2>
+
+                    <div class="calc-group">
+                        <div class="calc-label">
+                            <span>Heti üres órák száma:</span>
+                            <span class="calc-val"><span id="hours-val">5</span> óra</span>
+                        </div>
+                        <input type="range" class="slider" id="hours-slider" min="1" max="40" value="5">
+                    </div>
+
+                    <div class="calc-group">
+                        <div class="calc-label">
+                            <span>Átlagos kezelési ár:</span>
+                            <span class="calc-val"><span id="price-val">15 000</span> Ft</span>
+                        </div>
+                        <input type="range" class="slider" id="price-slider" min="5000" max="30000" step="1000"
+                            value="15000">
+                    </div>
+
+                    <div class="results-box">
+                        <div class="result-row">
+                            <span class="result-label">Becsült éves kieső bevétel:</span>
+                            <span class="result-value" id="lost-revenue">3 900 000 Ft</span>
+                        </div>
+                        <div class="result-row" style="margin-top: 0.5rem; padding-top: 0.8rem;">
+                            <span class="result-label">ZenSlot-tal visszaszerezhető nettó:</span>
+                            <span class="result-value highlighted" id="recovered-revenue">1 326 000 Ft</span>
+                        </div>
+                    </div>
+
+                    <button class="submit-btn" onclick="showForm()">Érdekel a zárt tesztprogram</button>
+                    <button class="btn-reject" onclick="showFeedback()">Nem érdekel</button>
+                </div>
+
+                <!-- State 2: Opt-In Form -->
+                <div class="step" id="step-2">
+                    <h2>Csatlakozás a tesztüzemhez</h2>
+                    <p>Kérjük, adja meg az elérhetőségeit, és hamarosan felvesszük Önnel a kapcsolatot a pilot program
+                        részleteivel és a pontos kalkulációval.</p>
+
+                    <form id="partner-form" onsubmit="submitPartnerLead(event)">
+                        <div class="input-group">
+                            <input type="text" id="salon_name" placeholder="Szalon neve" required>
+                        </div>
+                        <div class="input-group">
+                            <input type="text" id="contact_name" placeholder="Kapcsolattartó neve" required>
+                        </div>
+                        <div class="input-group">
+                            <input type="email" id="partner_email" placeholder="E-mail cím" required>
+                        </div>
+                        <button type="submit" class="submit-btn">Jelentkezés beküldése</button>
+                    </form>
+                    <button class="btn-reject" style="margin-top: 1rem; width: 100%;" onclick="goBackToStep(1)">Vissza a
+                        kalkulátorhoz</button>
+                </div>
+
+                <!-- State 3: Rejection Feedback -->
+                <div class="step" id="step-3">
+                    <h2>Köszönjük az őszinteséget!</h2>
+                    <p>Fejlesztő csapatunk számára nagyon sokat jelent a visszajelzése. Megosztaná velünk egy
+                        kattintással, mi a legfőbb oka annak, hogy nem érdekli a lehetőség?</p>
+
+                    <div class="feedback-options">
+                        <button class="feedback-btn"
+                            onclick="submitRejection('Nincs üres kapacitásunk / teltházzal megyünk')">Nincs üres
+                            kapacitásunk / Teltházunk van</button>
+                        <button class="feedback-btn"
+                            onclick="submitRejection('Nem szeretnénk engedményt / kedvezményt adni')">Nem adunk
+                            kedvezményt az árakból</button>
+                        <button class="feedback-btn"
+                            onclick="submitRejection('Már használunk más foglaltság-növelő megoldást')">Már használunk
+                            más szoftvert/megoldást</button>
+                        <button class="feedback-btn"
+                            onclick="submitRejection('Nem bízunk az online közvetítő platformokban')">Nem bízunk a
+                            közvetítőkben</button>
+                        <button class="feedback-btn" onclick="submitRejection('Egyéb ok / nem releváns')">Egyéb
+                            ok</button>
+                    </div>
+                    <button class="btn-reject" style="margin-top: 1rem; width: 100%;" onclick="goBackToStep(1)">Vissza a
+                        kalkulátorhoz</button>
+                </div>
+
+                <!-- State 4: Success Opt-In -->
+                <div class="step success" id="step-4">
+                    <div class="icon-success">✨</div>
+                    <h2>Sikeresen jelentkezett!</h2>
+                    <p>Köszönjük a bizalmát! Hamarosan küldjük a részletes tájékoztatót a megadott e-mail címre.</p>
+                </div>
+
+                <!-- State 5: Success Rejection -->
+                <div class="step success" id="step-5">
+                    <div class="icon-success">🤝</div>
+                    <h2>Köszönjük a visszajelzését!</h2>
+                    <p>Segített nekünk abban, hogy jobb szolgáltatást építhessünk a jövőben.</p>
+                </div>
+
+            </section>
+        </div>
+    </main>
+
+    <script src="partner.js"></script>
+</body>
+
+</html>
