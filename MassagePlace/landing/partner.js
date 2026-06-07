@@ -147,6 +147,13 @@ function submitRejection(reason) {
     changeStep(3, 5);
 }
 
+function getHungarianArticle(name) {
+    if (!name) return "a";
+    const firstChar = name.trim().charAt(0).toLowerCase();
+    const vowels = ['a', 'á', 'e', 'é', 'i', 'í', 'o', 'ó', 'ö', 'ő', 'u', 'ú', 'ü', 'ű'];
+    return vowels.includes(firstChar) ? "az" : "a";
+}
+
 // URL paraméterek olvasása és inicializálás
 window.addEventListener('DOMContentLoaded', () => {
     // 1. URL paraméterek kinyerése
@@ -158,12 +165,11 @@ window.addEventListener('DOMContentLoaded', () => {
         partnerState.salon_name = decodeURIComponent(salonParam);
         partnerState.is_personalized = true;
 
-        // Személyre szabott banner megjelenítése
-        const welcomeEl = document.getElementById('personalized-welcome');
-        const welcomeNameEl = document.getElementById('welcome-salon-name');
-        if (welcomeEl && welcomeNameEl) {
-            welcomeNameEl.innerText = partnerState.salon_name;
-            welcomeEl.style.display = 'block';
+        // Személyre szabott szöveg a kalkulátorban a banner helyett (nyelvtani névelő-igazítással)
+        const labelEl = document.getElementById('recovered-label');
+        if (labelEl) {
+            const article = getHungarianArticle(partnerState.salon_name);
+            labelEl.innerText = "A ZenSlot segítségével " + article + " " + partnerState.salon_name + "-nek megmentett éves bevétel:";
         }
     }
 
