@@ -4761,3 +4761,13 @@ Mielőtt elindítanád az éles e-mailek küldését:
     DRY_RUN = False
     ```
 *   Futtasd a scriptet a teljesítések ellenőrzésére és az e-mailek automatikus kiküldésére!
+
+### User Input
+
+Na hát a mai hirdetés értékelés elmarad, mert hirdetéshiba miatt nem jelent meg (valszeg a kreatívnál rosszul érzékelt valamit, most javítottam).
+
+### Planner Response
+
+Sajnálom, a hirdetési rendszerek (különösen a Meta) néha nagyon finnyásak tudnak lenni a kreatívok szövegére vagy a képek elrendezésére (pl. túl sok szöveg a képen, vagy valamilyen automatikus szűrő téves riasztása). Remélhetőleg a javítással most már zökkenőmentesen jóváhagyják és elindul!
+
+Ha a kampányok futása közben vagy az élesítés során bármiben segítségre lenne szükséged (kódmódosítás, hibakeresés, vagy újabb finomhangolás), csak szólj, itt vagyok!
