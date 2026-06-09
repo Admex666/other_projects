@@ -127,7 +127,7 @@ EMAIL_HTML_TEMPLATE = """<!DOCTYPE html>
         
         <p class="content-text">Több szalon foglalási rendszerét áttekintve azt láttam, hogy időnként még az adott napon is maradnak szabad időpontok.</p>
         
-        <p class="content-text">Egy olyan rendszeren dolgozunk, amely olyan szalonoknál mint az Önöké, ezeket az utolsó pillanatban is üresen maradó időpontokat tölti fel last-minute vendégekkel, kizárólag sikerdíjas alapon (nincs semmiféle fix díj vagy előfizetés).</p>
+        <p class="content-text">Egy olyan rendszeren dolgozunk, amely olyan szalonoknál mint az Önöké, ezeket az utolsó pillanatban is üresen maradó időpontokat tölti fel vendégekkel, kizárólag sikerdíjas alapon (nincs semmiféle fix díj vagy előfizetés).</p>
         
         <p class="content-text">Az eddigi beszélgetések alapján ez sok szalonnál havi szinten átlagosan 10-30 üres órát jelenthet, ami részleges feltöltés esetén is már érezhető plusz bevételt adhat.</p>
         
