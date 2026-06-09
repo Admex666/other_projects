@@ -39,7 +39,7 @@ class Scenario:
     variable_cost_rate: float = 0.04      # payment + support + refund (% of revenue)
 
     # --- RETENTION ---
-    bookings_per_user_per_month: float = 1.5   # havi booking frekvencia
+    bookings_per_user_per_month: float = 0.8   # havi booking frekvencia
     monthly_churn: float = 0.20                # havi churn rate
 
     # --- SUPPLY ---
@@ -612,8 +612,8 @@ scenarios: List[Scenario] = [
         cvr=0.045,          # WEB-FIRST (nincs app letöltési súrlódás!)
         aov=15_000,         # Kicsit több prémium partner
         take_rate=0.20,     # Inkrementális bevételért cserébe reális a 20%
-        variable_cost_rate=0.02,
-        bookings_per_user_per_month=1.4,
+        variable_cost_rate=0.04,
+        bookings_per_user_per_month=0.6,
         monthly_churn=0.21, # CRM és lojalitás program hatása
         partners=20,        # Sűrűbb hálózat a kerületekben
         idle_slots_per_partner_per_day=3.5,

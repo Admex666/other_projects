@@ -129,13 +129,26 @@
         .fallback-link:hover {
             color: var(--accent);
         }
+
+        #foxpost-iframe {
+            height: 650px;
+        }
+
+        @media (max-width: 768px) {
+            #foxpost-iframe {
+                height: 75vh;
+                min-height: 550px;
+            }
+        }
     </style>
 </head>
 
 <body>
     <nav>
         <div class="container nav-inner">
-            <div class="logo">VITASTEPS</div>
+            <a href="index.html" style="text-decoration: none; color: inherit;">
+                <div class="logo">VITASTEPS</div>
+            </a>
             <!-- Nincs vissza gomb a főoldalra, hogy rejtett maradjon a folyamat -->
         </div>
     </nav>
@@ -155,8 +168,12 @@
 
             <div id="tab-foxpost" class="tab-content active">
                 <h4 style="margin-bottom: 1rem;">Foxpost Automata kereső:</h4>
-                <iframe id="foxpost-iframe" src="https://cdn.foxpost.hu/apt-finder/v1/app/" width="100%" height="450px" frameborder="0"
-                    style="border-radius: 8px; border: 1px solid #444;"></iframe>
+                <div style="font-size: 0.85rem; color: var(--text-mid); margin-bottom: 1.5rem; display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.8rem 1rem; background: rgba(255, 255, 255, 0.02); border-radius: 8px; border: 1px solid var(--border); line-height: 1.4;">
+                    <span>💡</span>
+                    <span>A térkép betöltése a hálózattól függően néhány másodpercet igénybe vehet, kérjük légy türelmes. Ha nem jelenne meg, próbáld meg frissíteni az oldalt!</span>
+                </div>
+                <iframe id="foxpost-iframe" src="https://cdn.foxpost.hu/apt-finder/v1/app/" width="100%" frameborder="0"
+                    style="border-radius: 8px; border: 1px solid #444; display: block;"></iframe>
                 <a href="https://foxpost.hu/csomagautomatak" target="_blank" class="fallback-link">Ha nem tölt be a
                     térkép, kattints ide a manuális megnyitáshoz!</a>
             </div>
