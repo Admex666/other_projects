@@ -70,7 +70,7 @@ const routeMap = {
     'domos_25': 'assets/predikalo_dömös25.4.gpx',
     'dobogoko_10': 'assets/predikalo_dobogoko9.5.gpx',
     'dobogoko_15': 'assets/predikalo_dobogoko15.2.gpx',
-    'dobogoko_20': 'assets/predikalo_dobogoko20.7.gpx',
+    'dobogoko_20': 'assets/predikalo_dobogoko21.2.gpx',
     'dobogoko_25': 'assets/predikalo_dobogoko25.6.gpx'
 };
 
