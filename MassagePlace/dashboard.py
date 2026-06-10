@@ -454,34 +454,54 @@ with tab2:
         st.info("Várakozás az első partner megkeresési (B2B) adatok betöltődésére... ⏳")
         st.caption("Megjegyzés: Ha még nem futtattad le a Supabase SQL szkriptet a 'fake_partner_leads' táblához, a B2B fül nem fog adatot kapni.")
     else:
-        # 1. Parse timestamps
+        # 1. Parse timestamps and clean test data
         df_b2b['created_at_dt'] = pd.to_datetime(df_b2b['created_at'])
         
+        # Filter out test leads
+        df_b2b_clean = df_b2b[
+            (df_b2b['salon_name'] != 'Test Thai Massage') &
+            (df_b2b['email'] != 'admexgm@gmail.com')
+        ].copy()
+        
         # 2. Sort and deduplicate by session_id to get the latest state of each partner
-        df_p_sorted = df_b2b.sort_values(by='created_at', ascending=True)
+        df_p_sorted = df_b2b_clean.sort_values(by='created_at', ascending=True)
         df_p_unique = df_p_sorted.drop_duplicates(subset=['session_id'], keep='last').copy()
         
         # Sort back to descending order (newest sessions first)
         df_p_unique = df_p_unique.sort_values(by='created_at_dt', ascending=False)
         
-        # 3. Calculate Core B2B metrics
-        total_views = len(df_p_unique)
+        # 3. Calculate Core B2B metrics based on unique contacted salons (from campaign_log.csv) vs Supabase
+        contacted_salons = 0
+        if os.path.exists("campaign_log.csv"):
+            try:
+                df_log = pd.read_csv("campaign_log.csv")
+                if 'status' in df_log.columns and 'salon_name' in df_log.columns and 'email' in df_log.columns:
+                    df_log_sent = df_log[
+                        df_log['status'].str.upper().isin(['SENT', 'SUCCESS', 'OK']) & 
+                        (df_log['salon_name'] != 'Test Thai Massage') &
+                        (df_log['email'] != 'admexgm@gmail.com')
+                    ]
+                    contacted_salons = df_log_sent['salon_name'].nunique()
+            except Exception as e:
+                pass
+
+        valid_salons = df_b2b_clean[
+            df_b2b_clean['salon_name'].notna() & 
+            (df_b2b_clean['salon_name'] != '') & 
+            (df_b2b_clean['salon_name'] != '-')
+        ]
         
-        # Interested Leads (completed opt-in form)
-        interested_df = df_p_unique[df_p_unique['event_name'] == 'partner_lead_submitted']
-        total_interested = len(interested_df)
+        opened_salons = valid_salons['salon_name'].nunique()
+        open_rate = (opened_salons / contacted_salons * 100) if contacted_salons > 0 else 0.0
         
-        # Rejected Leads (clicked 'Nem érdekel' or submitted feedback)
-        rejected_df = df_p_unique[df_p_unique['event_name'].isin(['partner_rejected_feedback', 'partner_clicked_reject'])]
-        total_rejected = len(rejected_df)
+        interested_salons = valid_salons[valid_salons['event_name'] == 'partner_lead_submitted']['salon_name'].nunique()
+        rejected_salons = valid_salons[valid_salons['event_name'].isin(['partner_rejected_feedback', 'partner_clicked_reject'])]['salon_name'].nunique()
         
-        # Conversion Rate (CVR)
-        cvr_b2b = (total_interested / total_views * 100) if total_views > 0 else 0.0
+        conversion_rate = (interested_salons / opened_salons * 100) if opened_salons > 0 else 0.0
         
         # Estimated Commission (ZenSlot takes 15% of the discounted list price)
         # Note: estimated_recovered = hours * 0.5 * 52 * (price * 0.68)
-        # Net to salon is discounted price (80% list price) minus ZenSlot's 15% commission (calculated from net = 80% * 0.85 = 68% list price).
-        # Therefore, ZenSlot commission is: Sum(Recovered Net) * (15/68) = 15% of transaction volume.
+        interested_df = df_p_unique[df_p_unique['event_name'] == 'partner_lead_submitted']
         sum_recovered = interested_df['estimated_recovered'].sum()
         est_commission_b2b = sum_recovered * (15 / 68)
 
@@ -491,24 +511,22 @@ with tab2:
         
         with b_col1:
             st.markdown("<div class='metric-card'>", unsafe_allow_html=True)
-            # Egyedi szalonok kiszámítása (kiszűrve a hiányzó és default értékeket)
-            total_salons = df_p_unique[df_p_unique['salon_name'].notna() & (df_p_unique['salon_name'] != '') & (df_p_unique['salon_name'] != '-')]['salon_name'].nunique()
-            st.metric("Összes Megnyitás", f"{total_views} session / {total_salons} szalon")
+            st.metric("Megkeresett / Megnyitott", f"{contacted_salons} / {opened_salons} szalon")
             st.markdown("</div>", unsafe_allow_html=True)
             
         with b_col2:
             st.markdown("<div class='metric-card'>", unsafe_allow_html=True)
-            st.metric("Érdeklődő Partner", f"{total_interested} szalon")
+            st.metric("Megnyitási Arány (Open Rate)", f"{open_rate:.1f} %")
             st.markdown("</div>", unsafe_allow_html=True)
             
         with b_col3:
             st.markdown("<div class='metric-card'>", unsafe_allow_html=True)
-            st.metric("Elutasító Partner", f"{total_rejected} szalon")
+            st.metric("Érdeklődő / Elutasító", f"{interested_salons} / {rejected_salons} szalon")
             st.markdown("</div>", unsafe_allow_html=True)
             
         with b_col4:
             st.markdown("<div class='metric-card'>", unsafe_allow_html=True)
-            st.metric("B2B Konverzió (CVR)", f"{cvr_b2b:.2f} %")
+            st.metric("Megnyitás -> Konverzió", f"{conversion_rate:.1f} %")
             st.markdown("</div>", unsafe_allow_html=True)
             
         with b_col5:
@@ -546,9 +564,9 @@ with tab2:
                 
         with col_b_right:
             st.subheader("📅 Partner Megnyitások Időbeli Eloszlása")
-            df_b2b['local_time'] = df_b2b['created_at_dt'].dt.tz_convert('Europe/Budapest').dt.tz_localize(None)
-            df_b2b['hour_dt'] = df_b2b['local_time'].dt.floor('h')
-            time_dist_b2b = df_b2b.groupby('hour_dt')['session_id'].nunique().reset_index()
+            df_b2b_clean['local_time'] = df_b2b_clean['created_at_dt'].dt.tz_convert('Europe/Budapest').dt.tz_localize(None)
+            df_b2b_clean['hour_dt'] = df_b2b_clean['local_time'].dt.floor('h')
+            time_dist_b2b = df_b2b_clean.groupby('hour_dt')['session_id'].nunique().reset_index()
             
             if not time_dist_b2b.empty:
                 min_time = time_dist_b2b['hour_dt'].min()

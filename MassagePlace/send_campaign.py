@@ -131,11 +131,78 @@ EMAIL_HTML_TEMPLATE = """<!DOCTYPE html>
         
         <p class="content-text">Az eddigi beszélgetések alapján ez sok szalonnál havi szinten átlagosan 10-30 üres órát jelenthet, ami részleges feltöltés esetén is már érezhető plusz bevételt adhat.</p>
         
-        <p class="content-text">Ha Önöket is érinti ez a probléma, az alábbi gombra kattintva a kalkulátorunk segítségével megnézheti, mennyi plusz bevételt tudna a rendszerünkkel visszaszerezni.</p>
+        <p class="content-text">Ha Önöket is érinti ez a probléma, az alábbi partner kezelőfelület előnézeten látható módon segítünk megmenteni a kieső bevételeit és feltölteni az üres óráit, kizárólag sikerdíjas alapon (fix költségek nélkül):</p>
         
-        <div class="btn-container">
-            <a href="{personalized_url}" class="cta-button" target="_blank">Bevételkalkuláció megtekintése</a>
-        </div>
+        <!-- ZenSlot Partner Dashboard Mockup (HTML Table) -->
+        <table align="center" border="0" cellpadding="0" cellspacing="0" style="max-width: 320px; background-color: #0f1412; border: 3px solid #c3a479; border-radius: 20px; font-family: 'Outfit', 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #f5f5f5; margin: 25px auto; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.15); width: 100%;">
+            <tr>
+                <td style="padding: 12px; text-align: center; border-bottom: 1px solid #1c221e; background-color: #121815;">
+                    <span style="font-size: 11px; font-weight: bold; color: #c3a479; letter-spacing: 1px; text-transform: uppercase;">ZenSlot Partner Kezelőfelület</span>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 12px; background-color: #0f1412;">
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; overflow: hidden;">
+                        <tr>
+                            <td style="background-color: #17201c; padding: 10px; text-align: left;">
+                                <div style="font-size: 13px; font-weight: bold; color: #ffffff;">{salon_name}</div>
+                                <div style="font-size: 10px; color: #c3a479; margin-top: 2px;">Aktív Partner • Budapest</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px;">
+                                <!-- Stats Cards Table -->
+                                <table border="0" cellpadding="0" cellspacing="4" width="100%" style="margin-bottom: 8px;">
+                                    <tr>
+                                        <td width="50%" style="background-color: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 8px; border-radius: 8px; text-align: center;">
+                                            <div style="font-size: 8px; color: #a0a8a3; text-transform: uppercase; letter-spacing: 0.5px;">Megmentett bevétel</div>
+                                            <div style="font-size: 12px; font-weight: bold; color: #79c394; margin-top: 2px;">+124 000 Ft</div>
+                                        </td>
+                                        <td width="50%" style="background-color: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 8px; border-radius: 8px; text-align: center;">
+                                            <div style="font-size: 8px; color: #a0a8a3; text-transform: uppercase; letter-spacing: 0.5px;">Megmentett órák</div>
+                                            <div style="font-size: 12px; font-weight: bold; color: #c3a479; margin-top: 2px;">8 óra</div>
+                                        </td>
+                                    </tr>
+                                </table>
+                                
+                                <div style="font-size: 9px; text-transform: uppercase; color: #a0a8a3; font-weight: bold; margin-top: 10px; margin-bottom: 6px; letter-spacing: 0.5px;">Legutóbbi feltöltések</div>
+                                
+                                <!-- Activity 1 -->
+                                <table border="0" cellpadding="6" cellspacing="0" width="100%" style="background-color: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 6px; margin-bottom: 4px;">
+                                    <tr>
+                                        <td style="font-size: 10px; color: #ffffff; text-align: left;">
+                                            <strong>Svédmasszázs (60')</strong><br>
+                                            <span style="font-size: 8px; color: #a0a8a3;">Közeli irodai dolgozó</span>
+                                        </td>
+                                        <td align="right" style="font-size: 11px; font-weight: bold; color: #79c394;">
+                                            +14 400 Ft
+                                        </td>
+                                    </tr>
+                                </table>
+                                
+                                <!-- Activity 2 -->
+                                <table border="0" cellpadding="6" cellspacing="0" width="100%" style="background-color: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 6px;">
+                                    <tr>
+                                        <td style="font-size: 10px; color: #ffffff; text-align: left;">
+                                            <strong>Thai masszázs (90')</strong><br>
+                                            <span style="font-size: 8px; color: #a0a8a3;">Helyi lakos foglalása</span>
+                                        </td>
+                                        <td align="right" style="font-size: 11px; font-weight: bold; color: #79c394;">
+                                            +20 000 Ft
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 0 12px 12px 12px; text-align: center; background-color: #0f1412;">
+                    <a href="{personalized_url}" style="display: block; background-color: #c3a479; color: #ffffff !important; text-decoration: none; padding: 10px; font-size: 12px; font-weight: bold; border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.15);">Visszaszerzem az elbukott profitot</a>
+                </td>
+            </tr>
+        </table>
         
         <p class="content-text">Amennyiben szeretnének többet megtudni, vagy bármiféle kérdésük van, állok rendelkezésükre.</p>
 

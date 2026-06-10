@@ -37,10 +37,10 @@ function formatCurrency(amount) {
 function updateCalculator() {
     const hours = parseInt(hoursSlider.value);
     const price = parseInt(priceSlider.value);
-    
+
     // Éves kieső bevétel = órák száma hetente * átlagos ár * 52 hét
     const annualLoss = hours * price * 52;
-    
+
     // ZenSlot-tal visszaszerezhető nettó bevétel:
     // Feltételezve, hogy a helyek 50%-át töltjük be 20% last-minute kedvezménnyel és 15% közvetítési díjjal.
     // Így a szalon nettó bevétele a listaár 68%-a (100% - 20% kedv. - 15% közvetítési díj az eladott árból, azaz 80% * 0.85 = 68%).
@@ -131,7 +131,7 @@ function saveDataToSupabase(eventName) {
 // Opt-In Jelentkezési Űrlap beküldése
 function submitPartnerLead(event) {
     event.preventDefault();
-    
+
     partnerState.salon_name = document.getElementById('salon_name').value;
     partnerState.contact_name = document.getElementById('contact_name').value;
     partnerState.email = document.getElementById('partner_email').value;
