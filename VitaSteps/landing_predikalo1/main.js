@@ -10,19 +10,15 @@ function updateCountdown() {
             countdownEl.innerHTML = '<span style="color:var(--text-mid); font-weight: 600;">A nevezés lezárult. Később új kihívással jelentkezünk!</span>';
         }
 
-        const heroCta = document.getElementById('hero-cta');
-        if (heroCta) {
-            heroCta.style.pointerEvents = 'none';
-            heroCta.style.opacity = '0.5';
-            heroCta.innerHTML = 'Nevezés lezárult';
-        }
-
-        const paymentBtn = document.getElementById('payment-btn');
-        if (paymentBtn) {
-            paymentBtn.style.pointerEvents = 'none';
-            paymentBtn.style.opacity = '0.5';
-            paymentBtn.innerHTML = 'Nevezés lezárult';
-        }
+        document.querySelectorAll('#hero-cta, #nav-cta, .sticky-cta-mobile a, #checkout-section-btn').forEach(btn => {
+            btn.style.pointerEvents = 'none';
+            btn.style.opacity = '0.5';
+            if (btn.id === 'checkout-section-btn') {
+                btn.innerHTML = 'Nevezés lezárult';
+            } else {
+                btn.textContent = 'Nevezés lezárult';
+            }
+        });
 
         const badge = document.getElementById('badge-earlybird');
         if (badge) {

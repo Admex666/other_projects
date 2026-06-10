@@ -431,25 +431,71 @@
             </div>
         </div>
 
-        <!-- SELECTED CARRIER INFO -->
-        <div
-            style="background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.2rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.8rem;">
-            <span style="font-size: 1.5rem;">🦊</span>
-            <div>
-                <div style="font-weight: 700; font-size: 0.95rem; color: var(--text-high);">Kézbesítés Foxpost
-                    automatába</div>
-                <div style="font-size: 0.8rem; color: var(--text-mid); margin-top: 0.1rem;">Országos lefedettség,
-                    <span style="color: var(--accent); font-weight: 700;">INGYENES</span> szállítás.
-                </div>
+        <!-- DELIVERY METHOD SELECTION -->
+        <div style="margin-bottom: 1.5rem;">
+            <h2
+                style="font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border);">
+                🚚 Átvétel módja</h2>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                <label
+                    style="flex: 1; min-width: 200px; display: flex; align-items: center; gap: 0.8rem; background: var(--surface); border: 2px solid var(--accent); border-radius: var(--radius); padding: 1.2rem 1.5rem; cursor: pointer; transition: all 0.2s; user-select: none;"
+                    id="label-deliv-foxpost">
+                    <input type="radio" name="delivery-method" value="foxpost" checked
+                        style="accent-color: var(--accent); width: 1.2rem; height: 1.2rem;"
+                        onchange="handleDeliveryChange('foxpost')">
+                    <div>
+                        <div style="font-weight: 700; font-size: 0.95rem; color: var(--text-high);">🦊 Foxpost automata
+                        </div>
+                        <div style="font-size: 0.78rem; color: var(--accent); font-weight: 600; margin-top: 0.1rem;">
+                            INGYENES ÉS TÖBB NAPON KERESZTÜL ÁTVEHETŐ</div>
+                    </div>
+                </label>
+                <label
+                    style="flex: 1; min-width: 200px; display: flex; align-items: center; gap: 0.8rem; background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius); padding: 1.2rem 1.5rem; cursor: pointer; transition: all 0.2s; user-select: none;"
+                    id="label-deliv-home">
+                    <input type="radio" name="delivery-method" value="home"
+                        style="accent-color: var(--accent); width: 1.2rem; height: 1.2rem;"
+                        onchange="handleDeliveryChange('home')">
+                    <div>
+                        <div style="font-weight: 700; font-size: 0.95rem; color: var(--text-high);">🏠 Házhozszállítás
+                        </div>
+                        <div style="font-size: 0.78rem; color: var(--text-mid); margin-top: 0.1rem;">Ingyenes
+                        </div>
+                    </div>
+                </label>
             </div>
         </div>
 
         <!-- LOADING WARNING -->
-        <div
+        <div id="panel-loading-warning"
             style="font-size: 0.85rem; color: var(--text-mid); margin-bottom: 1.5rem; display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.8rem 1rem; background: rgba(255, 255, 255, 0.02); border-radius: 8px; border: 1px solid var(--border); line-height: 1.4;">
             <span>💡</span>
-            <span>Az alábbi térkép betöltése a hálózattól függően néhány másodpercet igénybe vehet, kérjük légy
-                türelmes. Ha nem jelenne meg, próbáld meg frissíteni az oldalt!</span>
+            <span>A térkép betöltése a hálózattól függően néhány másodpercet igénybe vehet, kérjük légy türelmes. Ha nem
+                jelenne meg, próbáld meg frissíteni az oldalt!</span>
+        </div>
+
+        <!-- HOME DELIVERY DETAILS -->
+        <div id="panel-home-delivery"
+            style="display: none; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.5rem;">
+            <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 1rem; color: var(--accent);">🏠 Kézbesítési cím
+            </h3>
+
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                <input type="checkbox" id="same-as-billing" checked
+                    style="width: 1.1rem; height: 1.1rem; accent-color: var(--accent); cursor: pointer;"
+                    onchange="toggleShippingAddressField()">
+                <label for="same-as-billing"
+                    style="font-size: 0.9rem; color: var(--text-high); cursor: pointer; user-select: none;">A szállítási
+                    cím megegyezik a számlázási címmel</label>
+            </div>
+
+            <div id="shipping-address-container" style="display: none;">
+                <label for="cust-shipping-address"
+                    style="display: block; font-size: 0.85rem; color: var(--text-mid); margin-bottom: 0.4rem; font-weight: 500;">Szállítási
+                    cím *</label>
+                <input type="text" id="cust-shipping-address" placeholder="Irányítószám, Város, Utca, Házszám"
+                    style="width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text-high); padding: 0.75rem 1rem; font-size: 0.95rem; outline: none;">
+            </div>
         </div>
 
         <!-- FOXPOST WIDGET -->
@@ -530,6 +576,55 @@
             }
         }
 
+        // ===== DELIVERY METHOD TOGGLE =====
+        function handleDeliveryChange(method) {
+            const foxpostLabel = document.getElementById('label-deliv-foxpost');
+            const homeLabel = document.getElementById('label-deliv-home');
+
+            const foxpostWidget = document.getElementById('panel-foxpost');
+            const loadingWarning = document.getElementById('panel-loading-warning');
+            const selectedPointBox = document.getElementById('selected-point-box');
+
+            const homeFields = document.getElementById('panel-home-delivery');
+
+            if (method === 'foxpost') {
+                foxpostLabel.style.borderColor = 'var(--accent)';
+                homeLabel.style.borderColor = 'var(--border)';
+
+                foxpostWidget.style.display = 'block';
+                loadingWarning.style.display = 'flex';
+                if (selectedParcelPoint) {
+                    selectedPointBox.classList.add('visible');
+                } else {
+                    selectedPointBox.classList.remove('visible');
+                }
+
+                homeFields.style.display = 'none';
+            } else {
+                foxpostLabel.style.borderColor = 'var(--border)';
+                homeLabel.style.borderColor = 'var(--accent)';
+
+                foxpostWidget.style.display = 'none';
+                loadingWarning.style.display = 'none';
+                selectedPointBox.classList.remove('visible');
+
+                homeFields.style.display = 'block';
+            }
+        }
+
+        function toggleShippingAddressField() {
+            const sameAsBilling = document.getElementById('same-as-billing').checked;
+            const container = document.getElementById('shipping-address-container');
+            const input = document.getElementById('cust-shipping-address');
+            if (sameAsBilling) {
+                container.style.display = 'none';
+                input.required = false;
+            } else {
+                container.style.display = 'block';
+                input.required = true;
+            }
+        }
+
         // ===== FOXPOST WIDGET MESSAGE LISTENER =====
         window.addEventListener('message', function (event) {
             // Biztonsági ellenőrzés
@@ -578,7 +673,48 @@
             const billingAddress = document.getElementById('cust-billing-address').value.trim();
             const distance = document.getElementById('cust-distance').value;
 
-            if (!name || !email || !billingAddress || !distance || !selectedParcelPoint) {
+            const deliveryMethod = document.querySelector('input[name="delivery-method"]:checked').value;
+
+            let finalParcelCarrier = '';
+            let finalParcelName = '';
+            let finalParcelAddress = '';
+            let finalParcelId = '';
+            let finalAddressString = '';
+
+            if (deliveryMethod === 'foxpost') {
+                if (!selectedParcelPoint) {
+                    document.getElementById('error-msg').textContent = '⚠️ Kérjük válassz egy Foxpost csomagpontot a térképen!';
+                    document.getElementById('error-msg').classList.add('visible');
+                    document.getElementById('error-msg').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    return;
+                }
+                finalParcelCarrier = selectedParcelPoint.carrier;
+                finalParcelName = selectedParcelPoint.name;
+                finalParcelAddress = selectedParcelPoint.address;
+                finalParcelId = selectedParcelPoint.id || '';
+                finalAddressString = `${selectedParcelPoint.carrier.toUpperCase()}: ${selectedParcelPoint.name} – ${selectedParcelPoint.address}`;
+            } else {
+                // Home delivery
+                const sameAsBilling = document.getElementById('same-as-billing').checked;
+                let shippingAddress = billingAddress;
+                if (!sameAsBilling) {
+                    shippingAddress = document.getElementById('cust-shipping-address').value.trim();
+                    if (!shippingAddress) {
+                        document.getElementById('error-msg').textContent = '⚠️ Kérjük add meg a szállítási címet!';
+                        document.getElementById('error-msg').classList.add('visible');
+                        document.getElementById('error-msg').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        return;
+                    }
+                }
+                finalParcelCarrier = 'hazhozszallitas';
+                finalParcelName = 'Házhozszállítás';
+                finalParcelAddress = shippingAddress;
+                finalParcelId = '';
+                finalAddressString = `HÁZHOZSZÁLLÍTÁS: ${shippingAddress}`;
+            }
+
+            if (!name || !email || !billingAddress || !distance) {
+                document.getElementById('error-msg').textContent = '⚠️ Kérjük töltsd ki az összes kötelező mezőt!';
                 document.getElementById('error-msg').classList.add('visible');
                 document.getElementById('error-msg').scrollIntoView({ behavior: 'smooth', block: 'center' });
                 return;
@@ -590,20 +726,19 @@
             btn.disabled = true;
 
             try {
-                const parcelInfo = `${selectedParcelPoint.carrier.toUpperCase()}: ${selectedParcelPoint.name} – ${selectedParcelPoint.address}`;
                 const response = await fetch('/api/checkout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         name,
                         billingAddress,
-                        address: parcelInfo,
+                        address: finalAddressString,
                         distance,
                         email,
-                        parcelCarrier: selectedParcelPoint.carrier,
-                        parcelName: selectedParcelPoint.name,
-                        parcelAddress: selectedParcelPoint.address,
-                        parcelId: selectedParcelPoint.id || ''
+                        parcelCarrier: finalParcelCarrier,
+                        parcelName: finalParcelName,
+                        parcelAddress: finalParcelAddress,
+                        parcelId: finalParcelId
                     })
                 });
 
