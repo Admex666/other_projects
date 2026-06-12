@@ -3891,3 +3891,265 @@ Ez a szöveg tökéletesen fókuszál a veszteség elkerülésére (Loss Aversio
     *   Minden teszt adatot kiszűrtünk, így a dashboard tiszta és hiteles képet mutat a kampány állásáról.
 
 A rendszer teljesen készen áll a következő kampányok küldésére is! Ha bármi másra szükség van, szólj bátran.
+
+### User Input
+
+Na szuper. Akkor térjünk vissza Nitradee-ra (Niradi Thai Massage). Ezt írta: "Nitradee Galgoczi
+2026. jún. 9. 13:47 (3 nappal ezelőtt)
+címzett: én
+
+I'm having trouble recording customer bookings from other channels and walk-ins. Sometimes I delete the booking record after the customer has used the service, but I'm interested in how you can help me fulfill these bookings and what the costs would be. (Currently, I work alone, but I expect to have another massage therapist next month.) 
+Thank you very much,
+ Niradi Thai Massage." Mit válaszolhatnánk neki? NE írj konkrét üzenetet még, csak próbáljuk megtervezni hogy mi lehetne a válasz, mint a "Bridge" a @[validation.md] -ben? Ugye ő a landing page-en nem érdeklődött (igaz az csak magyarul van). 
+
+*Viewed [validation.md](file:///e:/Data/other_projects/MassagePlace/validation.md) *
+
+### Planner Response
+
+A `validation.md`-ben leírt **„Bridge” (híd) stratégia** lényege az elköteleződés és a bizalom kiépítése, miközben a saját technikai hiányosságainkat (nincs még kész app) **exkluzív, személyre szabott pilotként** keretezzük. 
+
+Niradinál a választervezésnél az alábbi stratégiai pilléreket kell felépítenünk, közvetlenül az ő egyedi helyzetére szabva:
+
+---
+
+### 1. A személyes hangvétel és gratuláció (Bizalomépítés)
+*   **A helyzet**: Jelenleg egyedül dolgozik, de jövő hónapban csatlakozik egy második masszőr.
+*   **A stratégia**: Első lépésként gratulálunk neki a bővüléshez! Ezzel jelezzük, hogy elolvastuk az üzenetét (nem egy automata bot válaszol), és egyből pozicionáljuk a ZenSlotot: a megnövekedett kapacitás (2x több szabad óra) miatt pont a legjobbkor fogunk együttműködni.
+
+### 2. A fájdalompont kezelése: A törölt foglalások és a naptár-súrlódás
+*   **A helyzet**: Nehezen kezeli a különböző csatornákból (telefontól a walk-in vendégekig) érkező foglalásokat, ráadásul törli a naptárból az elvégzett kezeléseket.
+*   **A stratégia**: Nem akarunk neki eladni egy bonyolult szoftvert (mert az elijesztené), helyette **tanácsadóként** lépünk fel:
+    *   *Szoftvermentes naptárkezelés*: Felajánljuk a legkisebb súrlódású modellt (WhatsApp/SMS vagy egy megosztott Google naptár), ahol csak átküldi nekünk az üres órákat, mi pedig intézzük a többit.
+    *   *Üzleti tipp*: Finoman felhívjuk a figyelmét, hogy a múltbeli foglalások törlése miért veszélyes az üzletére nézetéből (nem látja a visszatérő vendégeket, az elbukott bevételt, a terapeuták teljesítményét). Ezzel azonnal szakértői státuszba helyezzük magunkat nála.
+
+### 3. Az elszámolás (A költségek) egyértelmű tisztázása
+*   **A helyzet**: Tudni akarja a költségeket.
+*   **A stratégia**: Pontosan felvázoljuk a kockázatmentes sikerdíjas konstrukciót:
+    *   0 Ft belépési díj, 0 Ft havidíj.
+    *   Kizárólag a ZenSlot által hozott vendégek után fizet **15% jutalékot** a listaárból. (A landing page-en a lakosságnak adott 20% kedvezményt a válaszban most még nem feltétlenül részletezzük túl bonyolultan, vagy csak lazán megemlítjük, hogy a last-minute jelleget egy opcionális 10-20%-os kedvezménnyel pörgetjük fel, hogy gyors döntésre sarkalljuk a vendégeket).
+
+### 4. A "Bridge" keretezés: Zárt Pilot Program (Exclusive Closed Pilot)
+*   **A helyzet**: Nincs még kész szoftverünk.
+*   **A stratégia**: Úgy állítjuk be, hogy a jövő havi indulás előtt **most választjuk ki azt az 5 exkluzív budapesti szalont**, akikkel elindítjuk a zárt pilotot. 
+*   Ezzel megmagyarázzuk, miért „manuális” még a folyamat (a szoros együttműködés és a prémium minőség miatt), és egyben sürgősségérzetet (FOMO) is keltünk benne, hogy ne maradjon le a helyekről.
+
+### 5. Alacsony ellenállású CTA (Cselekvésre hívás)
+*   Nem akarjuk azonnal szerződtetni. Csak **3 egyszerű kérdést** teszünk fel neki a szalonjáról és a naptáráról, amire egy 2 perces válaszban tud reagálni. Ha ezekre válaszol, azzal megvan az első valódi B2B elköteleződésünk (micro-conversion).
+
+---
+
+Mit gondolsz erről a felépítésről? Ha a koncepció és a pontok iránya tetszik, összeállítom az ezekre épülő, konkrét angol nyelvű választervezetet!
+
+### User Input
+
+1. Ez tök jó, adom
+2. Na viszont én még nem akarok közvetíteni meg ténylegesen szolgáltatni, csak az igényeket, a nyitottságot, meg a pénzügyi lehetőségeket mérem fel az egészre.
+5. Ez megint jó.
+
+Valahogy gondoljuk tovább ezek alapján
+
+### Planner Response
+
+Ez egy kulcsfontosságú tisztázás! Ha a cél **tisztán a validáció és a piackutatás** (és nem a tényleges operatív közvetítés elindítása), akkor a „Bridge” e-mail felépítését ehhez kell igazítanunk. 
+
+Ahelyett, hogy azt mondanánk, hogy *„küldd el a jövő heti időpontjaidat és hozzuk a vendégeket”*, úgy kell kereteznünk a kommunikációt, hogy **a platform indulását készítjük elő, és most alakítjuk ki az Alapító Partneri kört (Founding Partner Program)**. 
+
+Így úgy gyűjtünk elköteleződést (nyitottságot, árelfogadást és naptár-adatokat), hogy közben nem terheljük magunkat a közvetítés logisztikájával.
+
+Íme a finomított stratégia a pontjaid alapján újragondolva:
+
+---
+
+### 1. A gratuláció és a fájdalompont elismerése (Változatlanul jó)
+*   **Stratégia**: Továbbra is gratulálunk a bővüléshez és reagálunk a naptár-problémájukra. Ez mutatja, hogy értjük a helyzetüket, és azonnal bizalmat épít.
+
+### 2. A modell bemutatása, mint "Tervezett konstrukció" (Pénzügyi validáció)
+*   **Stratégia**: Úgy mutatjuk be a 15%-os jutalékos modellt és a kockázatmentességet, mint a **platform végleges üzleti modelljét**. 
+*   **Mit validálunk itt?** Megkérdezzük, hogy ez a konstrukció (15% sikerdíj, fix költség nélkül) számukra elfogadható és életképes-e. Ha erre azt mondja, hogy *"Igen, ez korrekt"*, azzal megvan a pénzügyi validációnk.
+
+### 3. Operációs igények felmérése (Hogyan működne ideálisan?)
+*   **Stratégia**: Mivel a naptárkezelés a szűk keresztmetszetük, megkérdezzük, hogy a jövőbeni induláskor melyik integrációs mód lenne számukra a legkényelmesebb:
+    1. Ha csak simán átküldik az üres helyeket WhatsAppon/SMS-ben?
+    2. Vagy ha összekötjük a foglalási naptárukkal (pl. Salonic, Fresha)?
+*   **Mit validálunk?** Megtudjuk, hogy mekkora a technikai ellenállás a szalonok részéről, és milyen terméket kell majd fejleszteni.
+
+### 4. A "Bridge" keretezés: Alapító Partneri Várólista (Founding Partner Waitlist)
+*   **Stratégia**: Elmondjuk, hogy a zártkörű indulást (Pilot) a nyár végére/ősz elejére tervezzük Budapesten, és most mindössze **5 szalont** választunk ki Alapító Partnernek.
+*   **Az ajánlat**: Cserébe azért, hogy most válaszolnak a kérdéseinkre (segítve a fejlesztést), garantáljuk számukra a helyet az induláskor, és felajánlunk egy kedvezményt (pl. az első 3 hónapban a 15% helyett csak 10% a jutalék).
+
+### 5. Puha CTA (A visszajelzés kérése)
+*   Nem kérünk tőlük valós időpontokat a jövő hétre. Ehelyett **3 kérdést** teszünk fel:
+    1. Elfogadható-e a 15%-os jutalékos modell a bevételek megmentésére?
+    2. Hány üres órával küzdenek átlagosan egy héten?
+    3. Nyitottak-e arra, hogy az elsők között legyenek az induláskor?
+
+---
+
+### Miért jobb ez a megközelítés neked?
+*   **Nulla operatív munka**: Nem kell vendégeket vadásznod és naptárakat egyeztetned manuálisan.
+*   **Tiszta adatok**: Kapsz egy pontos képet arról, hogy hány órát buknak, és hajlandóak-e kifizetni a 15%-ot.
+*   **Kész adatbázis induláshoz**: Ha később úgy döntesz, hogy mégis elindítod, lesz egy listád olyan szalonokról, akik már igent mondtak a feltételekre.
+
+Ha ez az irány tökéletesen fedi a céljaidat, megírom az erre épülő angol levél vázlatát!
+
+### User Input
+
+1. Okés mehet
+2. Okés. Annyi, hogy a modellben a MI sikerdíjunk fix, viszont a leárazás mértékét ők határozhatják meg (minimum 10%)
+3. Ezt támmogatom
+4. Ősz elejét mondhatunk, 10 szalonnal.
+5. Nagyszerűűű. Annyi hogy meg kéne tudni azokat is amire kérdéseket teszünk fel ugye a landing page-en (mennyi üres időpontjuk van, és kiszámolni magunknak hogy nekem mennyi ebből a plafon bevétel és egy reális kezdő tartomány)
+
+### Planner Response
+
+A finomítások tökéletesek! Így a szalonok sokkal nagyobb biztonságban érzik magukat, hiszen náluk marad a kontroll az árak felett (ők döntik el a kedvezmény mértékét, mi pedig fix jutalékon vagyunk), a 10 szalonos kora őszi indulás pedig reális felkészülési időt ad.
+
+Először nézzük meg a **pénzügyi kalkulációs képletet**, amivel a válasza után azonnal ki tudod számolni magadnak, mekkora potenciál van a Niradi-ban:
+
+### 📊 A te saját B2B bevételi kalkulációd (Szalononként)
+Amikor a partner megadja a heti átlagos üres óráit ($H$) és a kezelések átlagos árát ($P$), a következő képletekkel számolhatsz:
+
+1. **Platon Bevétel (Maximum Éves Jutalék)**
+   *Ez a elméleti maximumod ennél a szalonnál, ha 100%-ban feltöltöd a helyeiket kedvezmény nélkül (15% jutalék mellett):*
+   $$\text{Éves Max Jutalék} = H \times P \times 52 \text{ hét} \times 0.15$$
+   *(Példa: heti 8 üres óra és 15 000 Ft-os ár esetén: $8 \times 15.000 \times 52 \times 0.15 = 936.000 \text{ Ft/év}$)*
+
+2. **Reális Kezdő Tartomány (Konzervatív Becslés)**
+   *Ez a realitás az induláskor: feltételezzük, hogy az üres helyeik **30%-át** sikerül megtöltenünk, ők a vendégeknek **15% kedvezményt** adnak (a listaár 85%-án futnak a slotok), a mi jutalékunk pedig a fix 15%:*
+   $$\text{Reális Éves Jutalék} = H \times 0.3 \times 52 \text{ hét} \times (P \times 0.85) \times 0.15$$
+   *(Példa: a fenti adatokkal: $8 \times 15.6 \times 12.750 \times 0.15 = 238.680 \text{ Ft/év}$)*
+
+---
+
+### ✉️ Válasz e-mail tervezet Nitradee részére (Angolul)
+
+A megállapodott pontok alapján (10 szalonos kora őszi indulás, szabadon választható min. 10%-os kedvezmény, fix 15%-os sikerdíj, tanácsadói tipp és adatbekérés):
+
+```text
+Subject: Re: Partner inquiry - ZenSlot
+
+Dear Nitradee,
+
+Thank you for your reply and for sharing your workflow with us! First of all, congratulations on expanding your business with a second therapist next month—that is a great milestone!
+
+Regarding your questions and how we can work together:
+
+1. How we help you fill empty hours (No complex IT integration needed):
+Since you are currently working alone and expanding next month, we want to keep things simple. You won’t need to connect any complicated software. 
+When we launch, you can simply share your calendar link (like Fresha or Google Calendar) or send us your open slots via WhatsApp/Email. We will display these last-minute slots on ZenSlot and match them with local customers in Budapest. Once a booking is made, you will get an instant notification so you can register it in your naptár.
+
+2. Fixed Success Fee & Custom Discounts:
+Our pricing is 100% performance-based. There are no registration fees, monthly costs, or hidden contracts. 
+* Our success fee is fixed at 15% on the bookings we actually bring you. 
+* You have full control over the discount offered to the customers (minimum 10% discount off your list price). If we don't bring you a client, you pay absolutely nothing.
+
+3. Managing your other bookings (A quick tip):
+You mentioned sometimes deleting booking records after the service is completed. We highly recommend keeping all past booking history in your naptár! Having historical data will make it much easier next month to manage schedules for two therapists, track returning customer rates, and see your actual monthly growth.
+
+We are currently selecting 10 exclusive founding partner salons in Budapest for our official launch in early autumn. 
+
+To see if Niradi Thai Massage is a good fit and to calculate your potential recovered revenue, could you reply with these 3 quick details?
+1. On average, how many empty/unsold hours do you have in a week?
+2. What is the average price of your massage treatments?
+3. Which discount percentage (minimum 10%) would you feel comfortable starting with for last-minute slots?
+
+Looking forward to hearing from you!
+
+Best regards,
+
+Adam
+ZenSlot Team
+```
+
+### Mit gondolsz erről a szövegről? 
+Pontosan lefedi a validációs célokat (árelfogadás, üres órák száma, átlagár, operációs nyitottság) anélkül, hogy azonnali munkát adna neked. Ha tetszik, másolhatod és küldheted is Nitradee-nek!
+
+### User Input
+
+Nos ugye van egy tök jó email template-ünk reachoutra. Viszont 
+1. kéne egy ugyanolyan a followupra (@[validation.md] )
+2. nem jobb ezeket HTML fájlban tárolni itt a mappában, és úgy meghívni függvény helyett?
+
+*Edited relevant file*
+
+*Edited relevant file*
+
+*Edited relevant file*
+
+*Edited relevant file*
+
+*Viewed [send_campaign.py](file:///e:/Data/other_projects/MassagePlace/send_campaign.py) *
+
+*Viewed [send_campaign.py](file:///e:/Data/other_projects/MassagePlace/send_campaign.py) *
+
+*Viewed [send_campaign.py](file:///e:/Data/other_projects/MassagePlace/send_campaign.py) *
+
+*Edited relevant file*
+
+*Viewed [send_campaign.py](file:///e:/Data/other_projects/MassagePlace/send_campaign.py) *
+
+*Viewed [send_campaign.py](file:///e:/Data/other_projects/MassagePlace/send_campaign.py) *
+
+*Viewed [send_campaign.py](file:///e:/Data/other_projects/MassagePlace/send_campaign.py) *
+
+*Edited relevant file*
+
+*Viewed [send_campaign.py](file:///e:/Data/other_projects/MassagePlace/send_campaign.py) *
+
+*Edited relevant file*
+
+*User accepted the command `python send_campaign.py`*
+
+*Edited relevant file*
+
+*Edited relevant file*
+
+*Edited relevant file*
+
+*Edited relevant file*
+
+*Viewed [send_campaign.py](file:///e:/Data/other_projects/MassagePlace/send_campaign.py) *
+
+*Viewed [send_campaign.py](file:///e:/Data/other_projects/MassagePlace/send_campaign.py) *
+
+*Viewed [send_campaign.py](file:///e:/Data/other_projects/MassagePlace/send_campaign.py) *
+
+*Viewed [send_campaign.py](file:///e:/Data/other_projects/MassagePlace/send_campaign.py) *
+
+*Edited relevant file*
+
+*User accepted the command `python -m py_compile send_campaign.py`*
+
+### Planner Response
+
+Minden kért módosítást elvégeztem, a sablonok tárolása és az e-mailek kétnyelvűsítése is teljesen kész!
+
+### 1. Kétnyelvű e-mail sablonok (Hungarian + English below)
+Létrehoztam a kétnyelvű sablonokat a `templates/` mappában (mind HTML, mind plain text formátumban):
+*   [initial_email.html](file:///e:/Data/other_projects/MassagePlace/templates/initial_email.html) & [initial_email.txt](file:///e:/Data/other_projects/MassagePlace/templates/initial_email.txt) (Első megkeresés)
+*   [followup_email.html](file:///e:/Data/other_projects/MassagePlace/templates/followup_email.html) & [followup_email.txt](file:///e:/Data/other_projects/MassagePlace/templates/followup_email.txt) (Követő levél)
+
+**Hogyan épülnek fel?**
+*   A levél tetején szerepel a magyar verzió, alatta egy szaggatott elválasztóvonal (`--- English version below ---`), majd alatta a teljes angol fordítás.
+*   **Kétnyelvű Kezelőfelület Mockup**: A beágyazott HTML mobil mockup feliratait is kétnyelvűsítettem (pl. *Megmentett bevétel / Saved Revenue*, *Megmentett órák / Saved Hours*, *Visszaszerzem az elbukott profitot / Recover Lost Profit*), így a külföldi tulajdonosok is azonnal megértik a vizuális előnézet lényegét.
+
+### 2. Külső HTML sablonok betöltése a Python scriptben
+A [send_campaign.py](file:///e:/Data/other_projects/MassagePlace/send_campaign.py) fájlból kitöröltem a több száz sornyi beágyazott HTML szöveget. 
+*   A script mostantól a `load_templates(campaign_type)` függvénnyel **dinamikusan olvassa be** a megfelelő `.html` és `.txt` fájlokat a futás pillanatában. Ezáltal a kód sokkal tisztább lett, és a sablonokat a Python kód módosítása nélkül is bármikor szerkesztheted.
+*   Az e-mailek tárgyait (Subject) is kétnyelvűvé tettem:
+    *   **Első megkeresés**: *Üres időpontok a következő 24 órában / Unsold slots in the next 24 hours*
+    *   **Követő levél**: *Re: Üres órák a naptárban / Unsold slots in your calendar*
+
+### 3. Kétlépcsős kampány-logika és deduplikáció
+Amikor elindítod a scriptet (`python send_campaign.py`), a program először megkérdezi:
+> *Melyik kampányt szeretnéd küldeni?*
+> `1. Első megkeresés (Initial Reachout)`
+> `2. Követő levél (Follow-up)`
+
+A script a válaszod alapján automatikusan a következő intelligens szűrést végzi el:
+*   **Ha az 1-es (Initial) módot választod**: Kihagyja azokat a szalonokat, akik a `campaign_log.csv` alapján már bármilyen e-mailt kaptak tőled korábban.
+*   **Ha a 2-es (Follow-up) módot választod**: 
+    *   **Csak azoknak fog küldeni**, akik korábban megkapták az első levelet (`SENT`, `SUCCESS` vagy `OK` státusszal).
+    *   Kihagyja azokat, akik még nem kaptak első levelet, és azokat is, akiknek már kiment a követő levél (`FOLLOWUP_SENT`).
+
+Ezzel a struktúrával teljesen automatizáltan tudsz több lépéses szekvenciákat futtatni a Google Sheets táblázatodból, miközben az e-mailek tökéletesen személyre szabottak és kétnyelvűek maradnak!

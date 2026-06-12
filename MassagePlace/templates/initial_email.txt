@@ -1,0 +1,31 @@
+Kedves {salon_name}!
+
+Több szalon foglalási rendszerét áttekintve azt láttam, hogy időnként még az adott napon is maradnak szabad időpontok.
+
+Egy olyan rendszeren dolgozunk, amely olyan szalonoknál mint az Önöké, ezeket az utolsó pillanatban is üresen maradó időpontokat tölti fel vendégekkel, kizárólag sikerdíjas alapon (nincs semmiféle fix díj vagy előfizetés).
+
+Az eddigi beszélgetések alapján ez havi szinten átlagosan 10-30 üres órát jelenthet, ami részleges feltöltés esetén is már érezhető plusz bevételt adhat.
+
+Ha érdekes lehet a lehetőség, az alábbi linken a kalkulátorunk segítségével megnézheti, mennyi plusz bevételt tudna a rendszerünkkel visszaszerezni, vagy egyszerűen válaszoljon erre az e-mailre.
+
+Megtekintés: {personalized_url}
+
+--- English version below ---
+
+Dear {salon_name},
+
+Looking at booking systems of various salons, I noticed that unsold time slots often remain empty even on the day of the appointment.
+
+We are building a platform that fills these last-minute empty slots with paying guests for salons like yours, purely on a performance-based commission (no fixed costs or monthly subscriptions).
+
+Based on our talks, this can mean an average of 10-30 empty hours per month, which can provide a significant revenue boost even with partial filling.
+
+If you experience this issue, we can help salvage your lost revenue and fill these open hours. Click the link below to calculate your potential recovered revenue, or simply reply to this email.
+
+View Calculation: {personalized_url}
+
+If you are not the right contact person, we would appreciate it if you could forward this email to the appropriate decision maker.
+
+Best regards,
+{sender_name}
+ZenSlot

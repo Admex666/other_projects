@@ -37,186 +37,31 @@ SEND_DELAY = 10
 # CSV fájlok nevei (ha nem a Google Sheets-et használod)
 CONTACTS_FILE = "contacts.csv"
 LOG_FILE = "campaign_log.csv"
-
-# --- EMAIL TEMPLATES ---
-EMAIL_SUBJECT = "Üres időpontok a következő 24 órában"
-
-# 1. Plain Text verzió
-EMAIL_BODY_TEMPLATE = """Kedves {salon_name}!
-
-Több szalon foglalási rendszerét áttekintve azt láttam, hogy időnként még az adott napon is maradnak szabad időpontok.
-
-Egy olyan rendszeren dolgozunk, amely olyan szalonoknál mint az Önöké, ezeket az utolsó pillanatban is üresen maradó időpontokat tölti fel last-minute vendégekkel, kizárólag sikerdíjas alapon (nincs semmiféle fix díj vagy előfizetés).
-
-Az eddigi beszélgetések alapján ez havi szinten átlagosan 10-30 üres órát jelenthet, ami részleges feltöltés esetén is már érezhető plusz bevételt adhat.
-
-Ha érdekes lehet a lehetőség, az alábbi linken a kalkulátorunk segítségével megnézheti, mennyi plusz bevételt tudna a rendszerünkkel visszaszerezni, vagy egyszerűen válaszoljon erre az e-mailre.
-
-Megtekintés: {personalized_url}
-
-Ha Ön nem a megfelelő kapcsolattartó ebben a témában, megköszönöm, ha továbbítja ezt az e-mailt az illetékes döntéshozónak.
-
-Amennyiben bármi felmerül, állok rendelkezésükre.
-
-Üdvözlettel,
-{sender_name}
-ZenSlot Partner Program
-"""
-
-# 2. HTML verzió a kattintható gombbal
-EMAIL_HTML_TEMPLATE = """<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <style>
-        body {{
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            color: #2c3e50;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-            background-color: #fcfcfc;
-        }}
-        .email-container {{
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #ffffff;
-            border: 1px solid #eeeeee;
-            border-radius: 8px;
-        }}
-        .greeting {{
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }}
-        .content-text {{
-            font-size: 15px;
-            margin-bottom: 20px;
-        }}
-        .btn-container {{
-            text-align: center;
-            margin: 30px 0;
-        }}
-        .cta-button {{
-            display: inline-block;
-            background-color: #c3a479;
-            color: #ffffff !important;
-            text-decoration: none;
-            padding: 12px 28px;
-            font-size: 15px;
-            font-weight: bold;
-            border-radius: 6px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }}
-        .signature {{
-            margin-top: 30px;
-            font-size: 15px;
-            border-top: 1px solid #eeeeee;
-            padding-top: 15px;
-        }}
-        .company-name {{
-            font-weight: bold;
-            color: #c3a479;
-        }}
-    </style>
-</head>
-<body>
-    <div class="email-container">
-        <p class="greeting">Kedves {salon_name}!</p>
+# --- SABLONOK BETÖLTÉSE ---
+def load_templates(campaign_type):
+    """Betölti a megadott kampánytípushoz tartozó HTML és TXT sablonokat."""
+    if campaign_type == "initial":
+        html_path = "templates/initial_email.html"
+        txt_path = "templates/initial_email.txt"
+        subject = "Üres időpontok a következő 24 órában / Unsold slots in the next 24 hours"
+    elif campaign_type == "followup":
+        html_path = "templates/followup_email.html"
+        txt_path = "templates/followup_email.txt"
+        subject = "Re: Üres órák a naptárban / Unsold slots in your calendar"
+    else:
+        raise ValueError("Ismeretlen kampánytípus")
         
-        <p class="content-text">Több szalon foglalási rendszerét áttekintve azt láttam, hogy időnként még az adott napon is maradnak szabad időpontok.</p>
+    try:
+        with open(html_path, "r", encoding="utf-8") as f:
+            html_template = f.read()
+        with open(txt_path, "r", encoding="utf-8") as f:
+            txt_template = f.read()
+    except Exception as e:
+        print(f"HIBA: Nem sikerült beolvasni a sablonokat a templates/ mappából: {e}")
+        sys.exit(1)
         
-        <p class="content-text">Egy olyan rendszeren dolgozunk, amely olyan szalonoknál mint az Önöké, ezeket az utolsó pillanatban is üresen maradó időpontokat tölti fel vendégekkel, kizárólag sikerdíjas alapon (nincs semmiféle fix díj vagy előfizetés).</p>
-        
-        <p class="content-text">Az eddigi beszélgetések alapján ez sok szalonnál havi szinten átlagosan 10-30 üres órát jelenthet, ami részleges feltöltés esetén is már érezhető plusz bevételt adhat.</p>
-        
-        <p class="content-text">Ha Önöket is érinti ez a probléma, az alábbi partner kezelőfelület előnézeten látható módon segítünk megmenteni a kieső bevételeit és feltölteni az üres óráit, kizárólag sikerdíjas alapon (fix költségek nélkül):</p>
-        
-        <!-- ZenSlot Partner Dashboard Mockup (HTML Table) -->
-        <table align="center" border="0" cellpadding="0" cellspacing="0" style="max-width: 320px; background-color: #0f1412; border: 3px solid #c3a479; border-radius: 20px; font-family: 'Outfit', 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #f5f5f5; margin: 25px auto; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.15); width: 100%;">
-            <tr>
-                <td style="padding: 12px; text-align: center; border-bottom: 1px solid #1c221e; background-color: #121815;">
-                    <span style="font-size: 11px; font-weight: bold; color: #c3a479; letter-spacing: 1px; text-transform: uppercase;">ZenSlot Partner Kezelőfelület</span>
-                </td>
-            </tr>
-            <tr>
-                <td style="padding: 12px; background-color: #0f1412;">
-                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; overflow: hidden;">
-                        <tr>
-                            <td style="background-color: #17201c; padding: 10px; text-align: left;">
-                                <div style="font-size: 13px; font-weight: bold; color: #ffffff;">{salon_name}</div>
-                                <div style="font-size: 10px; color: #c3a479; margin-top: 2px;">Aktív Partner • Budapest</div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="padding: 10px;">
-                                <!-- Stats Cards Table -->
-                                <table border="0" cellpadding="0" cellspacing="4" width="100%" style="margin-bottom: 8px;">
-                                    <tr>
-                                        <td width="50%" style="background-color: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 8px; border-radius: 8px; text-align: center;">
-                                            <div style="font-size: 8px; color: #a0a8a3; text-transform: uppercase; letter-spacing: 0.5px;">Megmentett bevétel</div>
-                                            <div style="font-size: 12px; font-weight: bold; color: #79c394; margin-top: 2px;">+124 000 Ft</div>
-                                        </td>
-                                        <td width="50%" style="background-color: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 8px; border-radius: 8px; text-align: center;">
-                                            <div style="font-size: 8px; color: #a0a8a3; text-transform: uppercase; letter-spacing: 0.5px;">Megmentett órák</div>
-                                            <div style="font-size: 12px; font-weight: bold; color: #c3a479; margin-top: 2px;">8 óra</div>
-                                        </td>
-                                    </tr>
-                                </table>
-                                
-                                <div style="font-size: 9px; text-transform: uppercase; color: #a0a8a3; font-weight: bold; margin-top: 10px; margin-bottom: 6px; letter-spacing: 0.5px;">Legutóbbi feltöltések</div>
-                                
-                                <!-- Activity 1 -->
-                                <table border="0" cellpadding="6" cellspacing="0" width="100%" style="background-color: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 6px; margin-bottom: 4px;">
-                                    <tr>
-                                        <td style="font-size: 10px; color: #ffffff; text-align: left;">
-                                            <strong>Svédmasszázs (60')</strong><br>
-                                            <span style="font-size: 8px; color: #a0a8a3;">Közeli irodai dolgozó</span>
-                                        </td>
-                                        <td align="right" style="font-size: 11px; font-weight: bold; color: #79c394;">
-                                            +14 400 Ft
-                                        </td>
-                                    </tr>
-                                </table>
-                                
-                                <!-- Activity 2 -->
-                                <table border="0" cellpadding="6" cellspacing="0" width="100%" style="background-color: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 6px;">
-                                    <tr>
-                                        <td style="font-size: 10px; color: #ffffff; text-align: left;">
-                                            <strong>Thai masszázs (90')</strong><br>
-                                            <span style="font-size: 8px; color: #a0a8a3;">Helyi lakos foglalása</span>
-                                        </td>
-                                        <td align="right" style="font-size: 11px; font-weight: bold; color: #79c394;">
-                                            +20 000 Ft
-                                        </td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-            <tr>
-                <td style="padding: 0 12px 12px 12px; text-align: center; background-color: #0f1412;">
-                    <a href="{personalized_url}" style="display: block; background-color: #c3a479; color: #ffffff !important; text-decoration: none; padding: 10px; font-size: 12px; font-weight: bold; border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.15);">Visszaszerzem az elbukott profitot</a>
-                </td>
-            </tr>
-        </table>
-        
-        <p class="content-text">Amennyiben szeretnének többet megtudni, vagy bármiféle kérdésük van, állok rendelkezésükre.</p>
+    return html_template, txt_template, subject
 
-        <p class="content-text" style="font-size: 13px; color: #7f8c8d; font-style: italic;">Ha Ön nem a megfelelő kapcsolattartó ebben a témában, megköszönöm, ha továbbítja ezt az e-mailt az illetékes döntéshozónak.</p>
-        
-        <div class="signature">
-            Üdvözlettel,<br>
-            <strong>{sender_name}</strong><br>
-            <span class="company-name">ZenSlot</span>
-        </div>
-    </div>
-</body>
-</html>
-"""
 
 def check_config():
     """Ellenőrzi a küldéshez szükséges alapfeltételeket."""
@@ -255,9 +100,9 @@ def get_csv_export_url(sheet_url):
         return export_url
     return sheet_url
 
-def get_already_sent_emails():
-    """Beolvassa a campaign_log.csv-t és kigyűjti a már sikeresen elküldött címeket."""
-    sent_emails = set()
+def get_campaign_status_logs():
+    """Beolvassa a campaign_log.csv-t és visszaadja az e-mailek legutolsó státuszait."""
+    status_map = {}
     if os.path.exists(LOG_FILE):
         try:
             with open(LOG_FILE, mode="r", encoding="utf-8") as f:
@@ -266,12 +111,10 @@ def get_already_sent_emails():
                     for row in reader:
                         email = row["email"].strip().lower()
                         status = row["status"].strip().upper()
-                        # Ha a státusz SENT vagy SUCCESS, akkor elküldöttnek vesszük
-                        if status in ("SENT", "SUCCESS", "OK"):
-                            sent_emails.add(email)
+                        status_map[email] = status
         except Exception as e:
             print(f"Figyelmeztetés: Nem sikerült beolvasni a korábbi logokat: {e}")
-    return sent_emails
+    return status_map
 
 def generate_personalized_url(salon_name, email):
     """Létrehozza a személyre szabott, követhető URL-t."""
@@ -289,21 +132,21 @@ def log_campaign_send(salon_name, email, status, details=""):
         timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
         writer.writerow([timestamp, salon_name, email, status, details])
 
-def send_email(session, salon_name, recipient_email, personalized_url):
+def send_email(session, salon_name, recipient_email, personalized_url, html_template, txt_template, subject):
     """Elküldi a személyre szabott e-mailt HTML és Plain Text formában is."""
     msg = MIMEMultipart('alternative')
     msg['From'] = f"{SENDER_NAME} <{SENDER_EMAIL}>"
     msg['To'] = recipient_email
-    msg['Subject'] = EMAIL_SUBJECT
+    msg['Subject'] = subject
 
     # Szövegek generálása
-    plain_body = EMAIL_BODY_TEMPLATE.format(
+    plain_body = txt_template.format(
         salon_name=salon_name,
         sender_name=SENDER_NAME,
         personalized_url=personalized_url
     )
     
-    html_body = EMAIL_HTML_TEMPLATE.format(
+    html_body = html_template.format(
         salon_name=salon_name,
         sender_name=SENDER_NAME,
         personalized_url=personalized_url
@@ -408,44 +251,74 @@ def run_campaign():
     global DRY_RUN
     check_config()
 
-    # Már elküldött címek betöltése (Deduplikáció)
-    already_sent = get_already_sent_emails()
-
     print("=" * 60)
-    print("               ZENSLOT B2B HIDEG E-MAIL KAMPÁNY")
+    print("               ZENSLOT B2B KAMPÁNY KEZELŐ")
     print("=" * 60)
-    print(f"Mód: {'[DRY RUN / TESZT - Nincs valódi küldés]' if DRY_RUN else '[VALÓDI KÜLDÉS]'}")
-    print(f"SMTP Szerver: {SMTP_SERVER}:{SMTP_PORT}")
-    print(f"Küldő: {SENDER_NAME} <{SENDER_EMAIL}>")
-    if GOOGLE_SHEETS_URL:
-        print("Forrás: Google Sheets")
+    print("Melyik kampányt szeretnéd küldeni?")
+    print("1. Első megkeresés (Initial Reachout)")
+    print("2. Követő levél (Follow-up)")
+    
+    try:
+        campaign_choice = input("Opció száma (1-2): ").strip()
+    except KeyboardInterrupt:
+        print("\nKilépés...")
+        return
+        
+    if campaign_choice == "1":
+        campaign_type = "initial"
+    elif campaign_choice == "2":
+        campaign_type = "followup"
     else:
-        print(f"Forrás: Helyi CSV ({CONTACTS_FILE})")
-    print(f"Korábban már elküldött címek száma: {len(already_sent)}")
-    print("-" * 60)
+        print("\nHibás választás. Kilépés...")
+        return
+        
+    # Sablonok betöltése fájlból
+    html_template, txt_template, email_subject = load_templates(campaign_type)
+
+    # Korábbi küldések naplójának betöltése
+    status_map = get_campaign_status_logs()
 
     # Címjegyzék betöltése
     contacts = load_contacts()
     
-    # Kapcsolatok és státuszok listázása
+    # Kapcsolatok és státuszok osztályozása
     print("\n--- KAPCSOLATOK STÁTUSZA ---")
     active_contacts = []
     skipped_count = 0
+    
     for i, contact in enumerate(contacts, 1):
         salon_name = contact["salon_name"]
         email = contact["email"]
-        if email.lower() in already_sent:
-            status = "Már elküldve (Kihagyva)"
-            skipped_count += 1
+        email_key = email.lower()
+        last_status = status_map.get(email_key)
+        
+        if campaign_type == "initial":
+            # Első megkeresés: Kihagyjuk, ha már kapott BÁRMILYEN levelet (sent, success, ok, followup)
+            if last_status in ("SENT", "SUCCESS", "OK", "FOLLOWUP_SENT"):
+                status = "Már kapott levelet (Kihagyva)"
+                skipped_count += 1
+            else:
+                status = "Küldendő (Új megkeresés)"
+                active_contacts.append(contact)
         else:
-            status = "Küldendő"
-            active_contacts.append(contact)
+            # Követő levél: Csak akkor küldünk, ha kapott elsőt (SENT, SUCCESS, OK) ÉS még nem kapott követőt (FOLLOWUP_SENT)
+            if last_status in ("SENT", "SUCCESS", "OK"):
+                status = "Küldendő (Követő levél)"
+                active_contacts.append(contact)
+            elif last_status == "FOLLOWUP_SENT":
+                status = "Már kapott követőt (Kihagyva)"
+                skipped_count += 1
+            else:
+                status = "Nincs elküldött első levél (Kihagyva)"
+                skipped_count += 1
+                
         print(f"[{i:02d}] {salon_name:<35} | {email:<35} | {status}")
+        
     print("-" * 75)
     print(f"Összesen: {len(contacts)} cím | Ebből kihagyva: {skipped_count} | Küldendő: {len(active_contacts)}")
     print("-" * 75)
 
-    # Interaktív választási menü
+    # Interaktív választási menü a küldés módjára
     print("\nHogyan szeretnél továbblépni? (Válassz egy számot):")
     print("1. Teszt e-mail küldése (Kizárólag admexgm@gmail.com-ra, valódi küldéssel)")
     print("2. Valódi kampány indítása (Csak a 'Küldendő' státuszú címekre)")
@@ -473,7 +346,7 @@ def run_campaign():
             print("\nNincs küldendő e-mail cím a listában. A kampány leáll.")
             return
         
-        print(f"\nBIZTONSÁGI MEGERŐSÍTÉS: Valóban el akarod küldeni a levelet {len(active_contacts)} címzettnek?")
+        print(f"\nBIZTONSÁGI MEGERŐSÍTÉS: Valóban el akarod küldeni a következőt: {campaign_type.upper()} kampány {len(active_contacts)} címzettnek?")
         print("A folytatáshoz írd be pontosan azt, hogy: Biztos!")
         try:
             confirm = input("Megerősítés: ").strip()
@@ -516,30 +389,31 @@ def run_campaign():
         
         if DRY_RUN:
             print(f"\n[{i}/{len(active_contacts)}] [DRY-RUN ELŐNÉZET] Címzett: {salon_name} <{email}>")
-            print(f"Tárgy: {EMAIL_SUBJECT}")
+            print(f"Tárgy: {email_subject}")
             print(f"Személyre szabott gomb linkje: {personalized_url}")
             print("-" * 40)
-            # Előnézet plain text
-            preview_body = EMAIL_BODY_TEMPLATE.format(
+            preview_body = txt_template.format(
                 salon_name=salon_name,
                 sender_name=SENDER_NAME,
                 personalized_url=personalized_url
             )
             print(preview_body)
             print("=" * 40)
-            log_campaign_send(salon_name, email, "DRY_RUN_PREVIEW", personalized_url)
+            log_campaign_send(salon_name, email, f"DRY_RUN_PREVIEW_{campaign_type.upper()}", personalized_url)
             success_count += 1
         else:
             print(f"[{i}/{len(active_contacts)}] Küldés: {salon_name} <{email}>...", end="", flush=True)
-            success, message = send_email(smtp_session, salon_name, email, personalized_url)
+            success, message = send_email(smtp_session, salon_name, email, personalized_url, html_template, txt_template, email_subject)
             
             if success:
                 print(" OK")
-                log_campaign_send(salon_name, email, "SENT", message)
+                log_status = "SENT" if campaign_type == "initial" else "FOLLOWUP_SENT"
+                log_campaign_send(salon_name, email, log_status, message)
                 success_count += 1
             else:
                 print(f" HIBA ({message})")
-                log_campaign_send(salon_name, email, "FAILED", message)
+                log_status = "FAILED" if campaign_type == "initial" else "FOLLOWUP_FAILED"
+                log_campaign_send(salon_name, email, log_status, message)
                 failed_count += 1
 
             # Késleltetés a levelek között (kivéve az utolsónál)
@@ -552,7 +426,7 @@ def run_campaign():
     print("\n" + "=" * 60)
     print("                      KAMPÁNY ÖSSZEGZÉS")
     print("=" * 60)
-    print(f"Kihagyott címek (már elküldve): {skipped_count}")
+    print(f"Kihagyott címek (már elküldve/nem releváns): {skipped_count}")
     print(f"Feldolgozott új címek: {len(active_contacts)}")
     print(f"Sikeres: {success_count}")
     print(f"Sikertelen: {failed_count}")

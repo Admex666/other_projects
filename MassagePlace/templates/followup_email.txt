@@ -1,0 +1,21 @@
+Kedves {salon_name}!
+
+Csak egy gyors követés a pár nappal ezelőtti levelemre.
+
+Ha Önöknél is akad heti néhány üres óra, amit szívesen töltenének fel plusz bevétellel, az alábbi linken a kalkulátorunk segítségével megnézheti, mennyi plusz bevételt tudna a rendszerünkkel visszaszerezni, vagy egyszerűen válaszoljon erre az e-mailre egy "Igen"-nel, ha érdeklik a részletek.
+
+Megtekintés: {personalized_url}
+
+--- English version below ---
+
+Dear {salon_name},
+
+Just a quick follow-up on my previous email.
+
+If you also have a few empty hours a week that you would like to fill with extra revenue, we can help (strictly commission-based, no fixed costs). Click the link below to calculate your potential recovered revenue, or simply reply to this email with a quick "Yes" if you would like to know the details!
+
+View Calculation: {personalized_url}
+
+Best regards,
+{sender_name}
+ZenSlot
