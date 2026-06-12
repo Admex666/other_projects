@@ -8,7 +8,8 @@ module.exports = async (req, res) => {
     }
 
     try {
-        const { name, billingAddress, address, distance, email, parcelCarrier, parcelName, parcelAddress, parcelId } = req.body;
+        console.log('Received payload:', req.body);
+        const { name, billingAddress, address, distance, email, parcelCarrier, parcelName, parcelAddress, parcelId, phone } = req.body;
         const origin = req.headers.origin || 'https://vitasteps.vercel.app'; // fallback
 
         const session = await stripe.checkout.sessions.create({
@@ -34,6 +35,7 @@ module.exports = async (req, res) => {
                 metadata: {
                     Név: name,
                     Email: email || '',
+                    Telefon: phone || '',
                     Táv: distance,
                     Futár: parcelCarrier || '',
                     Csomagpont_neve: parcelName || address || '',
@@ -45,6 +47,7 @@ module.exports = async (req, res) => {
             metadata: {
                 Név: name,
                 Email: email || '',
+                Telefon: phone || '',
                 Táv: distance,
                 Futár: parcelCarrier || '',
                 Csomagpont_neve: parcelName || address || '',

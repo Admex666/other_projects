@@ -528,6 +528,11 @@
                 <input type="email" id="cust-email" placeholder="nev@example.com" required>
             </div>
             <div class="form-row">
+                <label for="cust-phone">Telefonszám *</label>
+                <input type="tel" id="cust-phone" placeholder="+36 20 123 4567" required>
+                <div style="font-size: 0.8rem; color: var(--text-mid); margin-top: 0.4rem;">* A csomagküldő (Foxpost / futár) számára szükséges az átvételi értesítésekhez.</div>
+            </div>
+            <div class="form-row">
                 <label for="cust-billing-address">Számlázási cím *</label>
                 <input type="text" id="cust-billing-address" placeholder="Irányítószám, Város, Utca, Házszám" required>
                 <div style="font-size: 0.8rem; color: var(--text-mid); margin-top: 0.4rem;">FIGYELEM: számlát
@@ -670,6 +675,7 @@
         async function handleSubmit() {
             const name = document.getElementById('cust-name').value.trim();
             const email = document.getElementById('cust-email').value.trim();
+            const phone = document.getElementById('cust-phone').value.trim();
             const billingAddress = document.getElementById('cust-billing-address').value.trim();
             const distance = document.getElementById('cust-distance').value;
 
@@ -713,7 +719,7 @@
                 finalAddressString = `HÁZHOZSZÁLLÍTÁS: ${shippingAddress}`;
             }
 
-            if (!name || !email || !billingAddress || !distance) {
+            if (!name || !email || !phone || !billingAddress || !distance) {
                 document.getElementById('error-msg').textContent = '⚠️ Kérjük töltsd ki az összes kötelező mezőt!';
                 document.getElementById('error-msg').classList.add('visible');
                 document.getElementById('error-msg').scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -738,7 +744,8 @@
                         parcelCarrier: finalParcelCarrier,
                         parcelName: finalParcelName,
                         parcelAddress: finalParcelAddress,
-                        parcelId: finalParcelId
+                        parcelId: finalParcelId,
+                        phone
                     })
                 });
 
