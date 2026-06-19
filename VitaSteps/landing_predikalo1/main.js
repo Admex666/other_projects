@@ -180,3 +180,64 @@ document.querySelectorAll('#hero-cta, #nav-cta, .sticky-cta-mobile a, #checkout-
         window.location.href = `checkout-widget.html?distance=${selectedDist}%20km`;
     });
 });
+
+// ===== LEADERBOARD RENDERING =====
+async function loadLeaderboard() {
+    const listEl = document.getElementById('leaderboard-list');
+    const countEl = document.getElementById('leaderboard-count');
+    if (!listEl) return;
+
+    try {
+        const response = await fetch('/api/leaderboard');
+        if (!response.ok) throw new Error('API hiba');
+        const data = await response.json();
+        
+        if (countEl) {
+            countEl.textContent = data.totalFinishers;
+        }
+
+        if (!data.users || data.users.length === 0) {
+            listEl.innerHTML = '<div style="text-align: center; color: var(--text-mid); padding: 2rem;">Még nincsenek teljesítők. Legyél te az első!</div>';
+            return;
+        }
+
+        // Render users
+        let html = '';
+        data.users.forEach((user, index) => {
+            const rankNum = String(index + 1).padStart(2, '0');
+            const statusClass = user.finished ? 'status-finished' : 'status-ongoing';
+            const statusLabel = user.finished ? '✅ Teljesítve' : '⏳ Folyamatban';
+            
+            html += `
+                <div class="leaderboard-item ${statusClass}">
+                    <div class="leaderboard-rank">#${rankNum}</div>
+                    <div class="leaderboard-name">
+                        <span>${escapeHtml(user.name)}</span>
+                        <span class="leaderboard-county">${escapeHtml(user.county)}</span>
+                    </div>
+                    <div class="leaderboard-info">
+                        <span class="leaderboard-distance">🏔️ ${escapeHtml(user.distance)}</span>
+                        <span class="leaderboard-status">${statusLabel}</span>
+                    </div>
+                </div>
+            `;
+        });
+        listEl.innerHTML = html;
+    } catch (err) {
+        console.error('Nem sikerült betölteni a ranglistát:', err);
+        listEl.innerHTML = '<div style="text-align: center; color: #ff6b6b; padding: 2rem;">⚠️ Hiba történt a ranglista betöltésekor. Kérjük próbáld újra később!</div>';
+    }
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+// Call on load
+loadLeaderboard();
