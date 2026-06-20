@@ -3,6 +3,7 @@ import ssl
 import os
 import json
 import sys
+import time
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from dotenv import load_dotenv
@@ -34,17 +35,9 @@ SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets",   # olvasás + írás (visszajelöléshez)
 ]
 
-# Oszlopindexek (0-alapú) – egyeznek a Nevezések fül fejlécével
-COL_NUM           = 0   # #
-COL_EMAIL         = 3   # email
-COL_NEV           = 4   # név
-COL_TELJESITVE    = 11  # teljesítve dátum
-COL_HANY_KM       = 12  # hány km?
-COL_EMAIL_KULDVE  = 13  # teljesítés email?
-
 # ===== TALLY FORM =====
 # A visszajelzős Tally form ID-ja (ahol a Foxpost + kérdések vannak)
-TALLY_FORM_ID = "XXXXXXXX"   # ← cseréld ki a valódi ID-ra
+TALLY_FORM_ID = "NpRz5W"   # A .env-ből olvasott alapértelmezett érték
 
 EMAIL_SUBJECT = "🏔️ Gratulálunk a teljesítésedhez! + Szállítási adatok"
 
@@ -56,18 +49,19 @@ def get_sheets_service():
 
 
 def fetch_rows(service):
+    # Lekérünk elegendő oszlopot (pl. A-tól Z-ig)
     result = service.spreadsheets().values().get(
         spreadsheetId=SHEET_ID,
-        range=f"{SHEET_NAME}!A1:S500"
+        range=f"{SHEET_NAME}!A1:Z500"
     ).execute()
     return result.get("values", [])
 
 
-def write_back(service, row_index, value="Igen"):
-    """Visszaírja a 'teljesítés email kiküldve?' cellát (S oszlop, 1-alapú sor)."""
+def write_back(service, row_index, col_index, value="Igen"):
+    """Visszaírja a megadott cellát (1-alapú sor)."""
     # row_index: 0-alapú adatsor index (fejléc után), tehát sheet sor = row_index + 2
     sheet_row = row_index + 2
-    col_letter = chr(ord('A') + COL_EMAIL_KULDVE)  # S
+    col_letter = chr(ord('A') + col_index)
     cell_range = f"{SHEET_NAME}!{col_letter}{sheet_row}"
     service.spreadsheets().values().update(
         spreadsheetId=SHEET_ID,
@@ -83,9 +77,9 @@ def get_first_name(full_name: str) -> str:
     return parts[-1] if parts else full_name
 
 
-def make_tally_link(name: str, email: str) -> str:
-    """Tally form link prefill-el (név + email)."""
-    base = f"https://tally.so/r/{TALLY_FORM_ID}"
+def make_shipping_link(name: str, email: str) -> str:
+    """Szállítási oldal linkje prefill-el (név + email)."""
+    base = "https://vitastepsss.vercel.app/szallitas.html"
     params = urllib.parse.urlencode({
         "name": name,
         "email": email,
@@ -93,85 +87,44 @@ def make_tally_link(name: str, email: str) -> str:
     return f"{base}?{params}"
 
 
-def get_html_email(first_name: str, full_name: str, email: str, km: str, date: str) -> str:
-    tally_link = make_tally_link(full_name, email)
+def get_html_email(first_name: str, full_name: str, email: str, km: str, date: str, mode: str = "teljesites", has_address: bool = False, address_val: str = "") -> str:
+    shipping_link = make_shipping_link(full_name, email)
     km_display = f"{km} km" if km and not km.endswith("km") else km or "?"
-    return f"""<!DOCTYPE html>
-<html lang="hu">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VitaSteps – Teljesítés visszaigazolás</title>
-  <style>
-    body {{ margin:0; padding:0; background:#0b0f19; font-family:'Helvetica Neue',Arial,sans-serif; color:#fff; }}
-    .wrapper {{ width:100%; background:#0b0f19; padding-bottom:40px; }}
-    .main {{ background:#121824; margin:0 auto; max-width:600px; border-radius:12px; border:1px solid rgba(196,255,0,0.15); }}
-    .header {{ padding:40px 20px; text-align:center; background:linear-gradient(180deg,#161f33 0%,#121824 100%); border-bottom:1px solid rgba(255,255,255,0.05); }}
-    .logo {{ font-size:24px; font-weight:900; letter-spacing:4px; margin:0; }}
-    .logo span {{ color:#c4ff00; }}
-    .content {{ padding:40px 30px; }}
-    h1 {{ font-size:22px; margin-top:0; margin-bottom:20px; }}
-    h2 {{ font-size:18px; color:#c4ff00; margin-top:30px; margin-bottom:10px; }}
-    p {{ font-size:15px; line-height:1.6; color:#b0bcd0; margin:0 0 15px; }}
-    .highlight {{ color:#c4ff00; font-weight:bold; }}
-    .stat-box {{ background:rgba(196,255,0,0.06); border:1px solid rgba(196,255,0,0.2); border-radius:8px; padding:20px; margin:20px 0; text-align:center; }}
-    .stat-km {{ font-size:3rem; font-weight:900; color:#c4ff00; line-height:1; }}
-    .stat-label {{ font-size:0.85rem; color:#7a8aa0; text-transform:uppercase; letter-spacing:0.1em; margin-top:4px; }}
-    .cta-container {{ text-align:center; padding:25px 0; }}
-    .btn {{ background:#c4ff00; color:#000 !important; font-size:15px; font-weight:bold; text-decoration:none; padding:14px 30px; border-radius:8px; display:inline-block; }}
-    .divider {{ border:none; border-top:1px solid rgba(255,255,255,0.06); margin:30px 0; }}
-    .footer {{ padding:30px 20px; text-align:center; }}
-    .footer p {{ font-size:11px; color:#5d6b82; margin:0; }}
-  </style>
-</head>
-<body>
-  <center class="wrapper">
-    <table class="main" width="100%">
-      <tr><td class="header">
-        <h1 class="logo">VITA<span>STEPS</span></h1>
-      </td></tr>
-      <tr><td class="content">
-        <h1>Gratulálunk, {first_name}! 🎉</h1>
-        <p>Sikeresen teljesítetted a <span class="highlight">Prédikálószék Vertical Kihívást</span> {date}-án/{date}-én!</p>
+    
+    template_filename = "email_template.html" if mode == "teljesites" else "email_ping_template.html"
+    template_path = os.path.join(SCRIPT_DIR, template_filename)
+    try:
+        with open(template_path, "r", encoding="utf-8") as f:
+            html = f.read()
+    except Exception as e:
+        print(f"❌ Nem sikerült betölteni a sablon fájlt ({template_path}): {e}")
+        raise e
 
-        <div class="stat-box">
-          <div class="stat-km">{km_display}</div>
-          <div class="stat-label">Teljesített távolság</div>
-        </div>
+    # Ha már megadta a szállítási címet, lecseréljük a szállítási blokkot a "nincs teendő" szövegre
+    if has_address:
+        no_action_html = f"""
+          <h2>📦 Szállítási adatok rögzítve</h2>
+          <p>A szállítási címedet korábban már megadtad (<strong>{address_val}</strong>), így jelenleg <span class="highlight">nincs semmi további teendőd</span>!</p>
+        """
+        # Megkeressük a kommentek közötti részt és lecseréljük
+        start_tag = "<!-- STEP_SHIPPING_START -->"
+        end_tag = "<!-- STEP_SHIPPING_END -->"
+        if start_tag in html and end_tag in html:
+            parts = html.split(start_tag)
+            before = parts[0]
+            after = parts[1].split(end_tag)[1]
+            html = before + no_action_html + after
 
-        <p>Büszkék vagyunk rád, hogy a közösségünk részévé váltál – és a közösségi ranglistánkon is ott vagy! 🏆</p>
-
-        <hr class="divider">
-
-        <h2>📦 1. lépés – Szállítási adatok és visszajelzés</h2>
-        <p>Kattints az alábbi gombra, ahol kiválaszthatod a <strong>Foxpost automatádat</strong>, és válaszolhatsz néhány rövid kérdésre a tapasztalataidról. Az egész <strong>kb. 2 percet</strong> vesz igénybe.</p>
-
-        <div class="cta-container">
-          <a href="{tally_link}" class="btn" target="_blank">📦 Foxpost kiválasztása + Visszajelzés →</a>
-        </div>
-
-        <p style="text-align:center; font-size:0.82rem; color:#5d6b82;">A Foxpost automata és a visszajelzés egyazon felületen érhető el.</p>
-
-        <hr class="divider">
-
-        <h2>📬 2. lépés – Az érem útban van hozzád</h2>
-        <p>Amint megkaptuk a szállítási adataidat, elküldjük a <strong>kézzel festett Prédikálószék érmedet</strong> a megadott automatába. A kiszállítás várható ideje: <strong>2026. június 30-tól</strong>.</p>
-
-        <p>Ha bármilyen kérdésed van, csak válaszolj erre az emailre.</p>
-        <p style="margin-top:30px;">Üdvözlettel,<br><strong>A VitaSteps Csapata</strong></p>
-      </td></tr>
-      <tr><td class="footer">
-        <p>© 2026 VitaSteps. Minden jog fenntartva.<br>vitasteps.team@gmail.com</p>
-      </td></tr>
-    </table>
-  </center>
-</body>
-</html>"""
+    html = html.replace("{{FIRST_NAME}}", first_name)
+    html = html.replace("{{KM_DISPLAY}}", km_display)
+    html = html.replace("{{TALLY_LINK}}", shipping_link)
+    return html
 
 
-def send_emails():
+def send_emails(mode="teljesites"):
     print("=" * 50)
-    print(f"VitaSteps – Teljesítési email küldő {'[DRY RUN]' if DRY_RUN else '[ÉLES MÓD]'}")
+    print(f"VitaSteps – Email küldő ({'Teljesítés visszaigazolás' if mode == 'teljesites' else 'Szállítási adatok bekérése'})")
+    print(f"Mód: {'[DRY RUN]' if DRY_RUN else '[ÉLES MÓD]'}")
     print("=" * 50)
 
     service = get_sheets_service()
@@ -181,13 +134,42 @@ def send_emails():
         print("❌ Üres sheet vagy nem sikerült beolvasni.")
         return
 
-    header = rows[0]
+    # Fejlécek beolvasása és kisbetűs keresés
+    raw_header = rows[0]
+    header = [h.strip().lower() for h in raw_header]
     data_rows = rows[1:]
     print(f"✅ {len(data_rows)} sor beolvasva a Sheetből.")
 
+    # Dinamikus oszlop indexek (alapértelmezett értékekkel, ha nincs a fejlécben)
+    def find_col(name, default):
+        for idx, h in enumerate(header):
+            if h == name.lower().strip():
+                return idx
+        return default
+
+    col_email         = find_col("email", 3)
+    col_nev           = find_col("név", 4)
+    col_megnevezes    = find_col("megnevezés", 5)
+    col_teljesitve    = find_col("teljesítve dátum", 12)
+    col_hany_km       = find_col("tény táv?", 13)
+    col_email_kuldve  = find_col("teljesítés email?", 17)
+    col_szallitas_tip = find_col("szállítás típus", 18)
+    col_szallitasi_cim = find_col("szállítási cím", 19)
+    col_ping          = find_col("ping0620", 20)
+
+    print("🔍 Dinamikus oszlopindexek detektálva:")
+    print(f"  - email:               {col_email}")
+    print(f"  - név:                 {col_nev}")
+    print(f"  - megnevezés:          {col_megnevezes}")
+    print(f"  - teljesítve dátum:    {col_teljesitve}")
+    print(f"  - tény táv?:           {col_hany_km}")
+    print(f"  - teljesítés email?:   {col_email_kuldve}")
+    print(f"  - szállítás típus:     {col_szallitas_tip}")
+    print(f"  - szállítási cím:      {col_szallitasi_cim}")
+    print(f"  - ping0620:            {col_ping}")
+
     # SMTP kapcsolat
     server = None
-    # SMTP kapcsolat megnyitása éles módban, vagy DRY_RUN esetén a teszt emailhez (ha van SMTP_PASSWORD)
     if not DRY_RUN or (DRY_RUN and SMTP_PASSWORD):
         try:
             context = ssl.create_default_context()
@@ -204,41 +186,62 @@ def send_emails():
     eligible_count = 0
     preview_sent = False
 
+    subject = EMAIL_SUBJECT if mode == "teljesites" else "🏔️ VitaSteps Prédikálószék – Szállítási adatok megadása"
+
     for i, row in enumerate(data_rows):
         # Biztonságos oszlop-kiolvasás
         def col(idx):
             return row[idx].strip() if idx < len(row) else ""
 
-        teljesitve   = col(COL_TELJESITVE)
-        email_kuldve = col(COL_EMAIL_KULDVE)
-        email        = col(COL_EMAIL)
-        nev          = col(COL_NEV)
-        hany_km      = col(COL_HANY_KM)
+        teljesitve      = col(col_teljesitve)
+        email_kuldve    = col(col_email_kuldve)
+        szallitas_tipus = col(col_szallitas_tip)
+        szallitasi_cim  = col(col_szallitasi_cim)
+        email           = col(col_email)
+        nev             = col(col_nev)
+        megnevezes      = col(col_megnevezes)
+        hany_km         = col(col_hany_km)
+        ping_status     = col(col_ping)
 
-        # Szűrés: teljesítve kell, email még nem ment ki, email cím kell
-        if not teljesitve:
-            continue   # még nem teljesített
-        if email_kuldve.lower() in ("igen", "yes"):
-            skipped_count += 1
-            continue   # már ki lett küldve
-
-        if not email:
-            print(f"  ⚠️  [{i+2}. sor] Nincs email cím – kihagyva.")
+        if not email or not nev:
             continue
 
+        if mode == "teljesites":
+            if not teljesitve:
+                continue
+            if email_kuldve.lower() in ("igen", "yes"):
+                skipped_count += 1
+                continue
+        else:
+            if teljesitve:
+                continue
+            # Ha már megadta a szállítási címet, nem kell őt pingelni
+            if szallitasi_cim and szallitasi_cim.lower() not in ("", "#n/a", "#name?", "#value!"):
+                skipped_count += 1
+                continue
+            # Ha ma már kapott ping emailt
+            if ping_status.lower() in ("igen", "yes"):
+                skipped_count += 1
+                continue
+
         eligible_count += 1
-        first_name = get_first_name(nev) if nev else "Teljesítő"
-        print(f"\n  → [{i+2}. sor] {nev} ({email}) | {hany_km} km | teljesítve: {teljesitve}")
+        
+        # Megnevezés (F oszlop) használata, ha meg van adva, különben keresztnév generálása
+        first_name = megnevezes if megnevezes else get_first_name(nev)
+        
+        print(f"\n  → [{i+2}. sor] {nev} (megszólítás: {first_name}) ({email}) | mód: {mode}")
+
+        has_addr = bool(szallitasi_cim and szallitasi_cim.lower() not in ("", "#n/a", "#name?", "#value!"))
 
         if DRY_RUN:
             if not preview_sent and server:
                 test_recipient = "admexgm@gmail.com"
-                print(f"     [DRY RUN] Példa email küldése ide: {test_recipient} (adatok: {nev} ({email}))")
+                print(f"     [DRY RUN] Példa email küldése ide: {test_recipient} (eredeti címzett: {email})")
                 msg = MIMEMultipart("alternative")
-                msg["Subject"] = f"[TESZT - DRY RUN] {EMAIL_SUBJECT}"
+                msg["Subject"] = f"[TESZT - DRY RUN] {subject}"
                 msg["From"]    = SENDER_EMAIL
                 msg["To"]      = test_recipient
-                html_body = get_html_email(first_name, nev, email, hany_km, teljesitve)
+                html_body = get_html_email(first_name, nev, email, hany_km, teljesitve, mode, has_address=has_addr, address_val=szallitasi_cim)
                 msg.attach(MIMEText(html_body, "html"))
                 try:
                     server.sendmail(SENDER_EMAIL, test_recipient, msg.as_string())
@@ -247,37 +250,52 @@ def send_emails():
                 except Exception as e:
                     print(f"     ❌ Hiba a példa email küldésekor: {e}")
             else:
-                print(f"     [DRY RUN] Email NEM kerül kiküldésre (már ment példa vagy nincs kapcsolat).")
+                print(f"     [DRY RUN] Email NEM kerül kiküldésre.")
             continue
 
         # Email összeállítása (ÉLES MÓD)
         msg = MIMEMultipart("alternative")
-        msg["Subject"] = EMAIL_SUBJECT
+        msg["Subject"] = subject
         msg["From"]    = SENDER_EMAIL
         msg["To"]      = email
-        html_body = get_html_email(first_name, nev, email, hany_km, teljesitve)
+        html_body = get_html_email(first_name, nev, email, hany_km, teljesitve, mode, has_address=has_addr, address_val=szallitasi_cim)
         msg.attach(MIMEText(html_body, "html"))
 
         try:
             server.sendmail(SENDER_EMAIL, email, msg.as_string())
             print(f"     ✅ Elküldve!")
-            # Visszaírás a Sheetbe
-            write_back(service, i, value="Igen")
+            
+            # Visszaírás a Sheetbe a dinamikusan megtalált oszlop indexek alapján
+            if mode == "teljesites":
+                write_back(service, i, col_email_kuldve, value="Igen")
+            else:
+                write_back(service, i, col_ping, value="Igen")
+                
             sent_count += 1
+            
+            # Gmail SMTP rate limit (tiltás/spam szűrő) elkerülése miatt várunk egy kicsit
+            time.sleep(1.5)
         except Exception as e:
             print(f"     ❌ Hiba küldéskor: {e}")
+            time.sleep(1.5)
 
     if server:
         server.quit()
 
     print("\n" + "=" * 50)
-    print(f"Összesítő:")
-    print(f"  Teljesítők (emailre vár): {eligible_count}")
+    print(f"Összesítő ({mode} mód):")
+    print(f"  Célcsoport (küldésre vár): {eligible_count}")
     print(f"  Kiküldve:                 {sent_count if not DRY_RUN else 'N/A (DRY RUN)'}")
-    print(f"  Kihagyva (már kapott):    {skipped_count}")
+    print(f"  Kihagyva (már megkapta/nem érintett): {skipped_count}")
     print(f"  Teszt email kiküldve:     {'Igen' if (DRY_RUN and preview_sent) else 'Nem'}")
     print("=" * 50)
 
 
 if __name__ == "__main__":
-    send_emails()
+    # Használat: python send_emails.py [teljesites|ping]
+    mode = "teljesites"
+    if len(sys.argv) > 1:
+        arg = sys.argv[1].lower()
+        if arg in ("ping", "szallitas_ping"):
+            mode = "ping"
+    send_emails(mode)

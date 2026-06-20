@@ -1,0 +1,10 @@
+.env
+contacts.csv
+send_emails.py
+email_template.html
+test_sheets.js
+test_helpers.js
+test_leaderboard.js
+parse_tally.py
+__pycache__/
+.gitignore

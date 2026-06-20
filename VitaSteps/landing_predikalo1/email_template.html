@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VitaSteps – Teljesítés visszaigazolás</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #0b0f19;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      color: #fff;
+    }
+
+    .wrapper {
+      width: 100%;
+      background: #0b0f19;
+      padding-bottom: 40px;
+    }
+
+    .main {
+      background: #121824;
+      margin: 0 auto;
+      max-width: 600px;
+      border-radius: 12px;
+      border: 1px solid rgba(196, 255, 0, 0.15);
+    }
+
+    .header {
+      padding: 40px 20px;
+      text-align: center;
+      background: linear-gradient(180deg, #161f33 0%, #121824 100%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: 4px;
+      margin: 0;
+    }
+
+    .logo span {
+      color: #c4ff00;
+    }
+
+    .content {
+      padding: 40px 30px;
+    }
+
+    h1 {
+      font-size: 22px;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 18px;
+      color: #c4ff00;
+      margin-top: 30px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #f1f5f9;
+      margin: 0 0 15px;
+    }
+
+    .highlight {
+      color: #c4ff00;
+      font-weight: bold;
+    }
+
+    .stat-box {
+      background: rgba(196, 255, 0, 0.06);
+      border: 1px solid rgba(196, 255, 0, 0.2);
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    .stat-km {
+      font-size: 3rem;
+      font-weight: 900;
+      color: #c4ff00;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: #7a8aa0;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-top: 4px;
+    }
+
+    .cta-container {
+      text-align: center;
+      padding: 25px 0;
+    }
+
+    .btn {
+      background: #c4ff00;
+      color: #000 !important;
+      font-size: 15px;
+      font-weight: bold;
+      text-decoration: none;
+      padding: 14px 30px;
+      border-radius: 8px;
+      display: inline-block;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      margin: 30px 0;
+    }
+
+    .footer {
+      padding: 30px 20px;
+      text-align: center;
+    }
+
+    .footer p {
+      font-size: 11px;
+      color: #5d6b82;
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <center class="wrapper">
+    <table class="main" width="100%">
+      <tr>
+        <td class="header">
+          <h1 class="logo">VITA<span>STEPS</span></h1>
+        </td>
+      </tr>
+      <tr>
+        <td class="content">
+          <h1>Gratulálunk, {{FIRST_NAME}}! 🎉</h1>
+          <p>Sikeresen teljesítetted a <span class="highlight">Prédikálószék Vertical kihívást</span>!</p>
+
+          <div class="stat-box">
+            <div class="stat-km">{{KM_DISPLAY}}</div>
+            <div class="stat-label">Teljesített távolság</div>
+          </div>
+
+          <p>Örülünk, hogy a közösségünk részévé váltál, és így a büszkeségfalunkra is felkerültél! 🏆</p>
+
+          <hr class="divider">
+
+          <!-- STEP_SHIPPING_START -->
+          <h2>📦 1. lépés – Szállítási adatok</h2>
+          <p>Kattints az alábbi gombra, ahol kiválaszthatod a <strong>érmed szállítási címét</strong>.
+
+          <div class="cta-container">
+            <a href="{{TALLY_LINK}}" class="btn" target="_blank">📦 Szállítási cím megadása</a>
+          </div>
+          <!-- STEP_SHIPPING_END -->
+
+          <hr class="divider">
+
+          <h2>📬 2. lépés – Az érem úton lesz hozzád</h2>
+          <p>Amint megkaptuk a szállítási adataidat, elküldjük a <strong>Prédikálószék érmedet</strong> a
+            megadott címre. A <strong>legkorábbi</strong> feladás várható ideje: <strong>2026. június 30-tól</strong>.
+          </p>
+
+          <p>Ha bármilyen kérdésed van, nyugodtan válaszolj erre az emailre.</p>
+          <p style="margin-top:30px;">Üdvözlettel,<br><strong>A VitaSteps Csapata</strong></p>
+        </td>
+      </tr>
+      <tr>
+        <td class="footer">
+          <p>© 2026 VitaSteps. Minden jog fenntartva.<br>vitasteps.team@gmail.com</p>
+        </td>
+      </tr>
+    </table>
+  </center>
+</body>
+
+</html>
