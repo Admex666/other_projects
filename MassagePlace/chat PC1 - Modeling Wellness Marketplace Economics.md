@@ -4153,3 +4153,417 @@ A script a válaszod alapján automatikusan a következő intelligens szűrést 
     *   Kihagyja azokat, akik még nem kaptak első levelet, és azokat is, akiknek már kiment a követő levél (`FOLLOWUP_SENT`).
 
 Ezzel a struktúrával teljesen automatizáltan tudsz több lépéses szekvenciákat futtatni a Google Sheets táblázatodból, miközben az e-mailek tökéletesen személyre szabottak és kétnyelvűek maradnak!
+
+### User Input
+
+Okés, viszont úgy csináld meg, hogy konkrétan legyen egy magyar email és egy angol email is egymás alatt! Az ENGLISH VERSION BELOW szöveg legyen az első sor!
+
+### Planner Response
+
+I will start by listing the files in the project directory to see the project structure, especially the templates folder and files like `send_campaign.py`.
+
+*Listed directory [MassagePlace](file:///e:/Data/other_projects/MassagePlace) *
+
+### Planner Response
+
+I will list the contents of the `templates/` directory to see the available email template files.
+
+*Listed directory [templates](file:///e:/Data/other_projects/MassagePlace/templates) *
+
+### Planner Response
+
+I will read `templates/initial_email.html` to examine the structure of the initial email template.
+
+*Viewed [initial_email.html](file:///e:/Data/other_projects/MassagePlace/templates/initial_email.html) *
+
+### Planner Response
+
+I will view the `templates/followup_email.html` file to see its current implementation.
+
+*Viewed [followup_email.html](file:///e:/Data/other_projects/MassagePlace/templates/followup_email.html) *
+
+### Planner Response
+
+I will read the `templates/initial_email.txt` and `templates/followup_email.txt` files to see their contents.
+
+*Viewed [initial_email.txt](file:///e:/Data/other_projects/MassagePlace/templates/initial_email.txt) *
+
+### Planner Response
+
+I will view the `templates/followup_email.txt` file.
+
+*Viewed [followup_email.txt](file:///e:/Data/other_projects/MassagePlace/templates/followup_email.txt) *
+
+### Planner Response
+
+I will view the `send_campaign.py` file to understand how it uses the templates and sends emails.
+
+*Viewed [send_campaign.py](file:///e:/Data/other_projects/MassagePlace/send_campaign.py) *
+
+### Planner Response
+
+I will view the `validation.md` file mentioned by the user to check if there are details about the followup email structure or campaign rules.
+
+*Viewed [validation.md](file:///e:/Data/other_projects/MassagePlace/validation.md) *
+
+### Planner Response
+
+I will edit the `templates/initial_email.html` template to place the "ENGLISH VERSION BELOW" notice at the very beginning of the email body, formatted with a premium and clean styling.
+
+*Edited relevant file*
+
+### Planner Response
+
+I will edit `templates/followup_email.html` to add the "ENGLISH VERSION BELOW" text as the very first line of the email.
+
+*Edited relevant file*
+
+### Planner Response
+
+I will edit the plain text initial email template (`templates/initial_email.txt`) to add the "ENGLISH VERSION BELOW" line at the very top.
+
+*Edited relevant file*
+
+### Planner Response
+
+I will edit the plain text followup email template (`templates/followup_email.txt`) to add the "ENGLISH VERSION BELOW" line at the very top.
+
+*Edited relevant file*
+
+### Planner Response
+
+I will run a dry run test of the `send_campaign.py` script to ensure that the templates render correctly and there are no formatting or Python key errors.
+
+*User accepted the command `python send_campaign.py`*
+
+### Planner Response
+
+I will check the status of the running campaign script to see the prompt.
+
+### Planner Response
+
+I will send '1' to select the first campaign (Initial Reachout).
+
+### User Input
+
+de NE keveredjen az angol és a magyar szöveg. Írd meg magyarul a teljes emailt, azzal a kis mock dashboarddal együtt. Utána pedig ugyanezt rakd alá angolra fordítva
+
+### Planner Response
+
+I will cancel the background task that was running the command to avoid processes hanging.
+
+### Planner Response
+
+I will run a quick Python check to see if the current `templates/initial_email.html` is format-compatible, so that we can correct any curly brace issues in the CSS styles if necessary.
+
+*User accepted the command `python -c "open('templates/initial_email.html', 'r', encoding='utf-8').read().format(salon_name='Test', sender_name='Adam', personalized_url='http://test')"`*
+
+### Planner Response
+
+I will write the updated `templates/initial_email.html` template. It contains the English notice at the top, a clean Hungarian email with a Hungarian-only mock dashboard, a divider, and then the English email with an English-only mock dashboard. The CSS blocks use double curly braces to be fully compatible with Python's `.format()`.
+
+*Edited relevant file*
+
+### Planner Response
+
+I will write the updated `templates/followup_email.html` template. Like the initial template, it fully separates the Hungarian and English bodies and dashboards and includes double curly braces for the stylesheet.
+
+*Edited relevant file*
+
+### Planner Response
+
+I will write the updated `templates/initial_email.txt` plain text template, following the same separation format.
+
+*Edited relevant file*
+
+### Planner Response
+
+I will write the updated `templates/followup_email.txt` plain text template.
+
+*Edited relevant file*
+
+### Planner Response
+
+I will check the formatting compatibility of the initial HTML email template again using Python.
+
+*User accepted the command `python -c "open('templates/initial_email.html', 'r', encoding='utf-8').read().format(salon_name='Test', sender_name='Adam', personalized_url='http://test')"`*
+
+### Planner Response
+
+I will check the formatting compatibility of the followup HTML email template.
+
+*User accepted the command `python -c "open('templates/followup_email.html', 'r', encoding='utf-8').read().format(salon_name='Test', sender_name='Adam', personalized_url='http://test')"`*
+
+### Planner Response
+
+I will start the `send_campaign.py` script so that we can test run it in test mode and confirm everything works seamlessly.
+
+*User accepted the command `python send_campaign.py`*
+
+### Planner Response
+
+I will run a python compile check on all python scripts in the directory to verify there are no syntax or compile-time errors in the codebase.
+
+*User accepted the command `python -m py_compile send_campaign.py dashboard.py wellness_marketplace_sim.py test_sheets.py`*
+
+### Planner Response
+
+I will overwrite `templates/initial_email.html` with the refined layout that includes improved typography sizes, updated table widths, and completely separated translation parts.
+
+*Edited relevant file*
+
+### Planner Response
+
+I will overwrite `templates/followup_email.html` with the refined layout that includes improved typography sizes, updated table widths, and completely separated translation parts.
+
+*Edited relevant file*
+
+### Planner Response
+
+I will run the Python verification command once more to confirm both updated HTML templates compile without formatting exceptions.
+
+*User accepted the command `python -c "open('templates/initial_email.html', 'r', encoding='utf-8').read().format(salon_name='Test', sender_name='Adam', personalized_url='http://test'); open('templates/followup_email.html', 'r', encoding='utf-8').read().format(salon_name='Test', sender_name='Adam', personalized_url='http://test'); print('Mindkettő tökéletesen lefutott!')"`*
+
+### User Input
+
+@[e:\Data\other_projects\MassagePlace\templates\initial_email.html:L1-L46] itt vannak hibák: "} expected"
+
+*Viewed [initial_email.html](file:///e:/Data/other_projects/MassagePlace/templates/initial_email.html) *
+
+### Planner Response
+
+I will overwrite `templates/initial_email.html` to use inline styling for all layout and typography components, removing the `<style>` block entirely. This fixes the IDE syntax parser warning (`} expected` or syntax errors on double curly braces) and guarantees email client compatibility.
+
+*Edited relevant file*
+
+### Planner Response
+
+I will update `templates/followup_email.html` to convert all styles inline and remove the `<style>` tag in the header, resolving the linter warning in that file as well.
+
+*Edited relevant file*
+
+### Planner Response
+
+I have fixed the issue by converting all layout and text typography styles completely inline and removing the `<style>` block from the HTML head. 
+
+### Why this fixes the errors:
+1. **No Linter Errors:** Standard HTML/CSS code editors display parsing errors (`} expected`) when they encounter escaped double curly braces (`{{` and `}}`) in style declarations. Removing the style tags and moving CSS inline eliminates all stylesheet blocks, making it standard HTML.
+2. **Compatibility with `.format()`:** By having all styles inline (no stylesheets), the templates do not contain single curly braces `{}` except for the placeholders (`{salon_name}`, `{sender_name}`, `{personalized_url}`). This prevents Python's `.format()` method from throwing a `KeyError`.
+3. **Email Client Best Practices:** Inline styles are the industry standard for HTML emails because major clients (such as Gmail and desktop Outlook) often strip or ignore `<style>` blocks.
+
+---
+
+### What I did:
+- **`templates/initial_email.html`** & **`templates/followup_email.html`**:
+  - Moved the container, greeting, content text, divider, and signature styles entirely inline.
+  - Placed the `"ENGLISH VERSION BELOW"` warning on the very first line of the email.
+  - Created a **Hungarian-only** dashboard section first (`ZenSlot Kezelőfelület`, `Aktív Partner`, `Megmentett bevétel`, `Svédmasszázs`, `Irodai dolgozó a közelből`, etc.) with a Hungarian CTA button.
+  - Placed a divider and followed up with a **fully English** version including an English-only dashboard and signature.
+  - Increased font sizes and margins inside the dashboards for improved readability on both mobile and desktop screens.
+- **`templates/initial_email.txt`** & **`templates/followup_email.txt`**:
+  - Separated the text into a full Hungarian email followed by a full English email.
+  - Ensured `"ENGLISH VERSION BELOW"` is on the first line.
+
+### User Input
+
+Na okés, és akkor megvan a personalized URL, rakhatnánk bele egy ?lang paramétert is, és akkor azon a nyelven mutatjuk a weboldalt. Ez megoldható?
+
+### Planner Response
+
+I will list the contents of the `landing/` directory to see if there is code for the B2B landing page that parses the query parameters.
+
+*Listed directory [landing](file:///e:/Data/other_projects/MassagePlace/landing) *
+
+### Planner Response
+
+I will view the `landing/partner.js` file to check if it has logic for handling query parameters and whether we should update it to support the `lang` parameter for bilingual toggle.
+
+*Viewed [partner.js](file:///e:/Data/other_projects/MassagePlace/landing/partner.js) *
+
+### Planner Response
+
+I will view `landing/partner.html` to see the structure and check if it has English texts or if we should add bilingual translations and toggle logic for the landing page when `?lang=en` is passed.
+
+*Viewed [partner.html](file:///e:/Data/other_projects/MassagePlace/landing/partner.html) *
+
+### Planner Response
+
+I will view the HTML body of `landing/partner.html` to find exactly where to add IDs or clean selector targets for localization.
+
+*Viewed [partner.html](file:///e:/Data/other_projects/MassagePlace/landing/partner.html) *
+
+### Planner Response
+
+I will edit `landing/partner.html` to add descriptive ID attributes to the translatable text elements. This will allow our JavaScript to easily swap the text to English when the `lang=en` parameter is detected.
+
+*Edited relevant file*
+
+### Planner Response
+
+I will modify `landing/partner.js` to parse the `lang` query parameter and dynamically translate all UI elements, headings, text blocks, form placeholders, buttons, and calculations into English when `lang=en` is passed in the URL. First, I'll update the global state and formatting helpers.
+
+*Edited relevant file*
+
+### Planner Response
+
+I will now edit the second part of `landing/partner.js` to insert the `translatePageToEnglish()` function and wire it up to run in `DOMContentLoaded` if `lang=en` is set in the URL parameters.
+
+*Edited relevant file*
+
+### Planner Response
+
+I will update the URLs inside the `templates/initial_email.html` file so that clicking the Hungarian button appends `&lang=hu` and clicking the English button appends `&lang=en` to the custom tracking URL.
+
+*Edited relevant file*
+
+### Planner Response
+
+I will update the URLs inside the `templates/followup_email.html` file so that clicking the Hungarian button appends `&lang=hu` and clicking the English button appends `&lang=en` to the custom tracking URL.
+
+*Edited relevant file*
+
+### Planner Response
+
+I will update the URLs inside the `templates/initial_email.txt` file to append the `lang=hu` and `lang=en` parameters.
+
+*Edited relevant file*
+
+### Planner Response
+
+I will update the URLs inside the `templates/followup_email.txt` file to append the `lang=hu` and `lang=en` parameters.
+
+*Edited relevant file*
+
+### Planner Response
+
+I have implemented the query-based translation feature for the landing page and integrated it directly into the email templates!
+
+### Here is a summary of the changes:
+
+1. **Email Templates Updated:**
+   - **`templates/initial_email.html`** & **`templates/followup_email.html`**:
+     - Updated the Hungarian button CTA URL to append `&amp;lang=hu`.
+     - Updated the English button CTA URL to append `&amp;lang=en`.
+   - **`templates/initial_email.txt`** & **`templates/followup_email.txt`**:
+     - Appended `&lang=hu` and `&lang=en` to the respective text URLs.
+
+2. **Landing Page HTML (`landing/partner.html`):**
+   - Added descriptive `id` attributes to all translatable headings, bullet points, button elements, and forms (e.g., `main-title`, `main-subtitle`, `feature-1`, `lbl-avg-price`, `btn-interest`, `form-title`, etc.).
+
+3. **Landing Page JavaScript Logic (`landing/partner.js`):**
+   - **Natively detects the parameter:** Added query parameter checks during initialization:
+     ```javascript
+     const langParam = urlParams.get('lang');
+     if (langParam && langParam.toLowerCase() === 'en') {
+         partnerState.lang = 'en';
+     }
+     ```
+   - **English Translation Method (`translatePageToEnglish()`):** When `lang=en` is matched, it dynamically translates the page title, headings, bullet points, practical example, step form labels/placeholders, button CTAs, and rejection wizard buttons into English.
+   - **Localization Formatting:** Adjusted `formatCurrency` and the calculator logic to format numbers using English formatting (`15,000 HUF` instead of `15 000 Ft`) when rendering in English mode.
+
+### User Input
+
+Vercel devben megnézném ezt, viszont már van egy másik projekt az other_projects mappából, hogy tudom ezt megoldani? @[TerminalName: Python, ProcessId: 9560] 
+
+*Viewed [partner.html](file:///e:/Data/other_projects/MassagePlace/landing/partner.html) *
+
+*User accepted the command `cd ..`*
+
+### Planner Response
+
+A probléma az, hogy a Vercel projekthez a `landing/` mappa van linkelve (ott vannak az `index.html`, `partner.html` stb.), nem a gyökér `MassagePlace/` mappa. Tehát közvetlenül a `landing/` mappából kell futtatni a `vercel dev`-et:
+
+*User accepted the command `vercel dev`*
+
+*User accepted the command `vercel dev --yes`*
+
+### Planner Response
+
+Fut! 🎉
+
+**`vercel dev` elérhető: http://localhost:3000**
+
+Megnyithatod a következő URL-ekkel a teszteléshez:
+
+| Verzió | URL |
+|--------|-----|
+| Magyar (alapértelmezett) | http://localhost:3000/partner |
+| Magyar (explicit) | http://localhost:3000/partner?s=Niradi+Thai+Massage&email=test@test.com&lang=hu |
+| **Angol** | http://localhost:3000/partner?s=Niradi+Thai+Massage&email=test@test.com&lang=en |
+
+> **Megjegyzés:** A `landing/` mappából indítva most egy új `landing` project-ként linkelte (a meglévő `zenslot` helyett). Ha mindig a `zenslot` projecthez akarod kötni, érdemes az `e:\Data\other_projects\MassagePlace\landing\.vercel\project.json` fájlban manuálisan átírni a project ID-t — de dev teszteléshez ez tökéletesen megfelel, a kód ugyanaz.
+
+### User Input
+
+Okés, és akkor mi a küldés logikája?
+
+*Edited relevant file*
+
+*Edited relevant file*
+
+*Edited relevant file*
+
+*Viewed [followup_email.html](file:///e:/Data/other_projects/MassagePlace/templates/followup_email.html) *
+
+*Edited relevant file*
+
+*Edited relevant file*
+
+*Edited relevant file*
+
+### Planner Response
+
+Nézzük meg a küldési logikát:
+
+*Viewed [send_campaign.py](file:///e:/Data/other_projects/MassagePlace/send_campaign.py) *
+
+### Planner Response
+
+A küldési logika teljes folyamata:
+
+---
+
+## A küldési logika (`send_campaign.py`)
+
+### 1. Indítás
+```
+python send_campaign.py
+```
+Interaktív menü jelenik meg a terminálban.
+
+### 2. Adatforrás — Kapcsolatok
+A script **Google Sheets-ről vagy helyi `contacts.csv`-ből** tölti be a listát (automatikusan visszaesik CSV-re ha a Sheets nem elérhető). A Sheets URL a `.env`-ben van beállítva.
+
+### 3. Kampánylogika — Ki kap levelet?
+
+| Kampánytípus | Ki kapja? |
+|---|---|
+| **Initial** | Mindenki, aki még **soha nem kapott** levelet |
+| **Follow-up** | Csak akinek ment az initial (`SENT/SUCCESS/OK`), de követőt **még nem kapott** |
+
+A státuszokat a `campaign_log.csv` tárolja — minden küldés után automatikusan frissül.
+
+### 4. Személyre szabás
+Minden levélbe kerül egy **egyedi URL**:
+```
+https://zenslot.vercel.app/partner?s=SzalonNeve&email=email@cim.hu&lang=hu
+```
+Ez a landing page-en megjelenik a szalon nevével + az email-cím alapján azonosítja, ki kattintott.
+
+### 5. Küldési módok (interaktív menü)
+
+```
+1. Teszt → csak admexgm@gmail.com-ra megy
+2. Valódi kampány → "Biztos!" megerősítés után indul, 10 mp delay levelenként
+3. Kilépés
+```
+
+### 6. Logolás
+Minden küldés után a `campaign_log.csv`-be kerül a timestamp, szalon neve, email, státusz.
+
+---
+
+**Szóval a teljes flow:**  
+`contacts.csv / Google Sheets` → státusz-ellenőrzés → személyre szabott URL generálás → HTML + TXT email küldés SMTP-n → logolás
+
+Van valami amit változtatnál a logikán, vagy valami nem stimmel?

@@ -17,7 +17,8 @@ const partnerState = {
     estimated_recovered: 1326000,
     rejection_reason: null,
     ip_address: null,
-    is_personalized: false
+    is_personalized: false,
+    lang: 'hu'
 };
 
 // UI Elemek
@@ -30,6 +31,9 @@ const recoveredRevenueEl = document.getElementById('recovered-revenue');
 
 // Számok formázása ezres elválasztóval
 function formatCurrency(amount) {
+    if (partnerState.lang === 'en') {
+        return new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(amount) + " HUF";
+    }
     return new Intl.NumberFormat('hu-HU', { style: 'currency', currency: 'HUF', maximumFractionDigits: 0 }).format(amount);
 }
 
@@ -54,7 +58,7 @@ function updateCalculator() {
 
     // UI Frissítés
     hoursVal.innerText = hours;
-    priceVal.innerText = new Intl.NumberFormat('hu-HU').format(price);
+    priceVal.innerText = new Intl.NumberFormat(partnerState.lang === 'en' ? 'en-US' : 'hu-HU').format(price);
     lostRevenueEl.innerText = formatCurrency(annualLoss);
     recoveredRevenueEl.innerText = formatCurrency(recovered);
 }
@@ -154,12 +158,133 @@ function getHungarianArticle(name) {
     return vowels.includes(firstChar) ? "az" : "a";
 }
 
+function translatePageToEnglish() {
+    // Page Title
+    document.title = "ZenSlot Partners - Fill Your Empty Hours";
+
+    // H1
+    const mainTitle = document.getElementById('main-title');
+    if (mainTitle) mainTitle.innerHTML = "Fill your empty hours<br>with last-minute guests";
+
+    // Subtitle
+    const mainSubtitle = document.getElementById('main-subtitle');
+    if (mainSubtitle) mainSubtitle.innerText = "ZenSlot automatically matches last-minute empty slots at wellness and massage salons with local, paying guests. Specifically designed for premium downtown providers.";
+
+    // Features
+    const f1 = document.getElementById('feature-1');
+    if (f1) f1.innerHTML = "<strong>Performance-based model:</strong> No signup fees, no monthly subscriptions. You only pay for successfully matched guests.";
+    const f2 = document.getElementById('feature-2');
+    if (f2) f2.innerHTML = "<strong>Fill last-minute slots:</strong> Automatically match empty slots in the next 24 hours with local office workers in the area.";
+    const f3 = document.getElementById('feature-3');
+    if (f3) f3.innerHTML = "<strong>Zero fixed costs and risk:</strong> Completely risk-free pilot. You decide which time slots and services you offer on the platform.";
+
+    // Example Box
+    const exampleBox = document.getElementById('example-box');
+    if (exampleBox) exampleBox.innerHTML = "💡 <strong>Practical example:</strong><br>A massage valued at 20,000 HUF that remains unsold 24 hours before startup sells for between 12,000 and 14,000 HUF to a nearby office worker with ZenSlot.";
+
+    // Calculator Section
+    const calcTitle = document.getElementById('calc-title');
+    if (calcTitle) calcTitle.innerText = "Calculate your lost revenue!";
+    
+    const lblEmptyHours = document.getElementById('lbl-empty-hours');
+    if (lblEmptyHours) lblEmptyHours.innerText = "Number of empty hours per week:";
+    
+    const unitHours = document.getElementById('unit-hours');
+    if (unitHours) unitHours.innerText = "hours";
+
+    const lblAvgPrice = document.getElementById('lbl-avg-price');
+    if (lblAvgPrice) lblAvgPrice.innerText = "Average service price:";
+    
+    const unitPrice = document.getElementById('unit-price');
+    if (unitPrice) unitPrice.innerText = "HUF";
+
+    const lblAnnualLoss = document.getElementById('lbl-annual-loss');
+    if (lblAnnualLoss) lblAnnualLoss.innerText = "Estimated annual lost revenue:";
+
+    const recoveredLabel = document.getElementById('recovered-label');
+    if (recoveredLabel) {
+        if (partnerState.salon_name) {
+            recoveredLabel.innerText = "Estimated annual revenue saved for " + partnerState.salon_name + " with ZenSlot:";
+        } else {
+            recoveredLabel.innerText = "Net revenue saved with ZenSlot:";
+        }
+    }
+
+    const btnInterest = document.getElementById('btn-interest');
+    if (btnInterest) btnInterest.innerText = "Interested in the pilot program";
+
+    const btnReject = document.getElementById('btn-reject');
+    if (btnReject) btnReject.innerText = "Not interested";
+
+    // Form Section (Step 2)
+    const formTitle = document.getElementById('form-title');
+    if (formTitle) formTitle.innerText = "Join the Pilot Program";
+
+    const formSubtitle = document.getElementById('form-subtitle');
+    if (formSubtitle) formSubtitle.innerText = "Please provide your contact details, and we will get in touch with you shortly with the pilot details and a detailed calculation.";
+
+    const salonInput = document.getElementById('salon_name');
+    if (salonInput) salonInput.placeholder = "Salon name";
+
+    const contactInput = document.getElementById('contact_name');
+    if (contactInput) contactInput.placeholder = "Contact name";
+
+    const emailInput = document.getElementById('partner_email');
+    if (emailInput) emailInput.placeholder = "Email address";
+
+    const btnSubmitLead = document.getElementById('btn-submit-lead');
+    if (btnSubmitLead) btnSubmitLead.innerText = "Submit Application";
+
+    const btnBackCalc1 = document.getElementById('btn-back-calc-1');
+    if (btnBackCalc1) btnBackCalc1.innerText = "Back to calculator";
+
+    // Reject Section (Step 3)
+    const rejectTitle = document.getElementById('reject-title');
+    if (rejectTitle) rejectTitle.innerText = "Thank you for your honesty!";
+
+    const rejectSubtitle = document.getElementById('reject-subtitle');
+    if (rejectSubtitle) rejectSubtitle.innerText = "Your feedback means a lot to our development team. Could you share with us in one click the main reason you are not interested?";
+
+    const rBtn1 = document.getElementById('reject-btn-1');
+    if (rBtn1) rBtn1.innerText = "We have no empty slots / Fully booked";
+    const rBtn2 = document.getElementById('reject-btn-2');
+    if (rBtn2) rBtn2.innerText = "We do not want to give discounts";
+    const rBtn3 = document.getElementById('reject-btn-3');
+    if (rBtn3) rBtn3.innerText = "We already use another booking solution";
+    const rBtn4 = document.getElementById('reject-btn-4');
+    if (rBtn4) rBtn4.innerText = "We do not trust booking mediators";
+    const rBtn5 = document.getElementById('reject-btn-5');
+    if (rBtn5) rBtn5.innerText = "Other reason";
+
+    const btnBackCalc2 = document.getElementById('btn-back-calc-2');
+    if (btnBackCalc2) btnBackCalc2.innerText = "Back to calculator";
+
+    // Success Section (Step 4)
+    const successTitle = document.getElementById('success-title');
+    if (successTitle) successTitle.innerText = "Application Successful!";
+    
+    const successSubtitle = document.getElementById('success-subtitle');
+    if (successSubtitle) successSubtitle.innerText = "Thank you for your trust! We will send you detailed information to your email address shortly.";
+
+    // Success Reject Section (Step 5)
+    const successRejectTitle = document.getElementById('success-reject-title');
+    if (successRejectTitle) successRejectTitle.innerText = "Thank you for your feedback!";
+    
+    const successRejectSubtitle = document.getElementById('success-reject-subtitle');
+    if (successRejectSubtitle) successRejectSubtitle.innerText = "You helped us build a better service for the future.";
+}
+
 // URL paraméterek olvasása és inicializálás
 window.addEventListener('DOMContentLoaded', () => {
     // 1. URL paraméterek kinyerése
     const urlParams = new URLSearchParams(window.location.search);
     const salonParam = urlParams.get('s');
     const emailParam = urlParams.get('email');
+    const langParam = urlParams.get('lang');
+
+    if (langParam && langParam.toLowerCase() === 'en') {
+        partnerState.lang = 'en';
+    }
 
     if (salonParam) {
         partnerState.salon_name = decodeURIComponent(salonParam);
@@ -168,13 +293,22 @@ window.addEventListener('DOMContentLoaded', () => {
         // Személyre szabott szöveg a kalkulátorban a banner helyett (nyelvtani névelő-igazítással)
         const labelEl = document.getElementById('recovered-label');
         if (labelEl) {
-            const article = getHungarianArticle(partnerState.salon_name);
-            labelEl.innerText = "A ZenSlot segítségével " + article + " " + partnerState.salon_name + "-nek megmentett éves bevétel:";
+            if (partnerState.lang === 'en') {
+                labelEl.innerText = "Estimated annual revenue saved for " + partnerState.salon_name + " with ZenSlot:";
+            } else {
+                const article = getHungarianArticle(partnerState.salon_name);
+                labelEl.innerText = "A ZenSlot segítségével " + article + " " + partnerState.salon_name + "-nek megmentett éves bevétel:";
+            }
         }
     }
 
     if (emailParam) {
         partnerState.email = decodeURIComponent(emailParam);
+    }
+
+    // Ha angol a nyelv, lefordítjuk az elemeket a kalkulátor frissítése előtt
+    if (partnerState.lang === 'en') {
+        translatePageToEnglish();
     }
 
     // Kalkulátor inicializálása alapértékekkel

@@ -1,3 +1,5 @@
+ENGLISH VERSION BELOW
+
 Kedves {salon_name}!
 
 Több szalon foglalási rendszerét áttekintve azt láttam, hogy időnként még az adott napon is maradnak szabad időpontok.
@@ -8,7 +10,13 @@ Az eddigi beszélgetések alapján ez havi szinten átlagosan 10-30 üres órát
 
 Ha érdekes lehet a lehetőség, az alábbi linken a kalkulátorunk segítségével megnézheti, mennyi plusz bevételt tudna a rendszerünkkel visszaszerezni, vagy egyszerűen válaszoljon erre az e-mailre.
 
-Megtekintés: {personalized_url}
+Megtekintés: {personalized_url}&lang=hu
+
+Ha Ön nem a megfelelő kapcsolattartó ebben a témában, megköszönöm, ha továbbítja ezt az e-mailt az illetékes döntéshozónak.
+
+Üdvözlettel,
+{sender_name}
+ZenSlot Alapító
 
 --- English version below ---
 
@@ -22,10 +30,10 @@ Based on our talks, this can mean an average of 10-30 empty hours per month, whi
 
 If you experience this issue, we can help salvage your lost revenue and fill these open hours. Click the link below to calculate your potential recovered revenue, or simply reply to this email.
 
-View Calculation: {personalized_url}
+View Calculation: {personalized_url}&lang=en
 
 If you are not the right contact person, we would appreciate it if you could forward this email to the appropriate decision maker.
 
 Best regards,
 {sender_name}
-ZenSlot
+ZenSlot Founder

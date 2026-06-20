@@ -280,8 +280,8 @@
         <div class="partner-layout">
             <!-- Left Panel: Pitch Copy -->
             <section class="info-panel">
-                <h1>Töltse meg az üres óráit<br>last-minute vendégekkel</h1>
-                <p class="subtitle">
+                <h1 id="main-title">Töltse meg az üres óráit<br>last-minute vendégekkel</h1>
+                <p class="subtitle" id="main-subtitle">
                     A ZenSlot automatizáltan közvetíti a wellness- és masszázsszalonok utolsó pillanatban üresen maradó
                     időpontjait helyi, fizető vendégeknek. Kifejezetten belvárosi, prémium szolgáltatóknak tervezve.
                 </p>
@@ -289,28 +289,28 @@
                 <ul class="features-list">
                     <li>
                         <span class="icon-bullet">✔</span>
-                        <div>
+                        <div id="feature-1">
                             <strong>Kizárólag sikerdíjas modell:</strong> Nincs csatlakozási díj és nincs havidíj. Ön
                             kizárólag a sikeresen közvetített vendégek után fizet.
                         </div>
                     </li>
                     <li>
                         <span class="icon-bullet">✔</span>
-                        <div>
+                        <div id="feature-2">
                             <strong>Last-minute időpontok kitöltése:</strong> Az utolsó 24 órában felszabaduló, vagy
                             üresen álló időpontok automatikus kiajánlása a környékbeli irodaházak dolgozóinak.
                         </div>
                     </li>
                     <li>
                         <span class="icon-bullet">✔</span>
-                        <div>
+                        <div id="feature-3">
                             <strong>Nulla fix költség és kockázat:</strong> Teljesen kockázatmentes tesztüzem. Ön szabja
                             meg, mely időpontokat és milyen szolgáltatásokat kínál fel a rendszerben.
                         </div>
                     </li>
                 </ul>
 
-                <div class="example-box">
+                <div class="example-box" id="example-box">
                     💡 <strong>Gyakorlati példa:</strong><br>
                     Egy 20 000 Ft értékű masszázs, amely a kezdés előtt 24 órával még szabadon áll, a ZenSlot
                     segítségével 12 000 – 14 000 Ft közötti áron kel el egy közeli irodai dolgozó számára.
@@ -322,20 +322,20 @@
 
                 <!-- State 1: Calculator -->
                 <div class="step active" id="step-1">
-                    <h2 class="calculator-title">Számolja ki a kieső bevételeit!</h2>
+                    <h2 class="calculator-title" id="calc-title">Számolja ki a kieső bevételeit!</h2>
 
                     <div class="calc-group">
                         <div class="calc-label">
-                            <span>Heti üres órák száma:</span>
-                            <span class="calc-val"><span id="hours-val">5</span> óra</span>
+                            <span id="lbl-empty-hours">Heti üres órák száma:</span>
+                            <span class="calc-val"><span id="hours-val">5</span> <span id="unit-hours">óra</span></span>
                         </div>
                         <input type="range" class="slider" id="hours-slider" min="1" max="40" value="5">
                     </div>
 
                     <div class="calc-group">
                         <div class="calc-label">
-                            <span>Átlagos kezelési ár:</span>
-                            <span class="calc-val"><span id="price-val">15 000</span> Ft</span>
+                            <span id="lbl-avg-price">Átlagos kezelési ár:</span>
+                            <span class="calc-val"><span id="price-val">15 000</span> <span id="unit-price">Ft</span></span>
                         </div>
                         <input type="range" class="slider" id="price-slider" min="5000" max="30000" step="1000"
                             value="15000">
@@ -343,7 +343,7 @@
 
                     <div class="results-box">
                         <div class="result-row">
-                            <span class="result-label">Becsült éves kieső bevétel:</span>
+                            <span class="result-label" id="lbl-annual-loss">Becsült éves kieső bevétel:</span>
                             <span class="result-value" id="lost-revenue">3 900 000 Ft</span>
                         </div>
                         <div class="result-row" style="margin-top: 0.5rem; padding-top: 0.8rem;">
@@ -352,14 +352,14 @@
                         </div>
                     </div>
 
-                    <button class="submit-btn" onclick="showForm()">Érdekel a zárt tesztprogram</button>
-                    <button class="btn-reject" onclick="showFeedback()">Nem érdekel</button>
+                    <button class="submit-btn" id="btn-interest" onclick="showForm()">Érdekel a zárt tesztprogram</button>
+                    <button class="btn-reject" id="btn-reject" onclick="showFeedback()">Nem érdekel</button>
                 </div>
 
                 <!-- State 2: Opt-In Form -->
                 <div class="step" id="step-2">
-                    <h2>Csatlakozás a tesztüzemhez</h2>
-                    <p>Kérjük, adja meg az elérhetőségeit, és hamarosan felvesszük Önnel a kapcsolatot a pilot program
+                    <h2 id="form-title">Csatlakozás a tesztüzemhez</h2>
+                    <p id="form-subtitle">Kérjük, adja meg az elérhetőségeit, és hamarosan felvesszük Önnel a kapcsolatot a pilot program
                         részleteivel és a pontos kalkulációval.</p>
 
                     <form id="partner-form" onsubmit="submitPartnerLead(event)">
@@ -372,50 +372,50 @@
                         <div class="input-group">
                             <input type="email" id="partner_email" placeholder="E-mail cím" required>
                         </div>
-                        <button type="submit" class="submit-btn">Jelentkezés beküldése</button>
+                        <button type="submit" class="submit-btn" id="btn-submit-lead">Jelentkezés beküldése</button>
                     </form>
-                    <button class="btn-reject" style="margin-top: 1rem; width: 100%;" onclick="goBackToStep(1)">Vissza a
+                    <button class="btn-reject" id="btn-back-calc-1" style="margin-top: 1rem; width: 100%;" onclick="goBackToStep(1)">Vissza a
                         kalkulátorhoz</button>
                 </div>
 
                 <!-- State 3: Rejection Feedback -->
                 <div class="step" id="step-3">
-                    <h2>Köszönjük az őszinteséget!</h2>
-                    <p>Fejlesztő csapatunk számára nagyon sokat jelent a visszajelzése. Megosztaná velünk egy
+                    <h2 id="reject-title">Köszönjük az őszinteséget!</h2>
+                    <p id="reject-subtitle">Fejlesztő csapatunk számára nagyon sokat jelent a visszajelzése. Megosztaná velünk egy
                         kattintással, mi a legfőbb oka annak, hogy nem érdekli a lehetőség?</p>
 
                     <div class="feedback-options">
-                        <button class="feedback-btn"
+                        <button class="feedback-btn" id="reject-btn-1"
                             onclick="submitRejection('Nincs üres kapacitásunk / teltházzal megyünk')">Nincs üres
                             kapacitásunk / Teltházunk van</button>
-                        <button class="feedback-btn"
+                        <button class="feedback-btn" id="reject-btn-2"
                             onclick="submitRejection('Nem szeretnénk engedményt / kedvezményt adni')">Nem adunk
                             kedvezményt az árakból</button>
-                        <button class="feedback-btn"
+                        <button class="feedback-btn" id="reject-btn-3"
                             onclick="submitRejection('Már használunk más foglaltság-növelő megoldást')">Már használunk
                             más szoftvert/megoldást</button>
-                        <button class="feedback-btn"
+                        <button class="feedback-btn" id="reject-btn-4"
                             onclick="submitRejection('Nem bízunk az online közvetítő platformokban')">Nem bízunk a
                             közvetítőkben</button>
-                        <button class="feedback-btn" onclick="submitRejection('Egyéb ok / nem releváns')">Egyéb
+                        <button class="feedback-btn" id="reject-btn-5" onclick="submitRejection('Egyéb ok / nem releváns')">Egyéb
                             ok</button>
                     </div>
-                    <button class="btn-reject" style="margin-top: 1rem; width: 100%;" onclick="goBackToStep(1)">Vissza a
+                    <button class="btn-reject" id="btn-back-calc-2" style="margin-top: 1rem; width: 100%;" onclick="goBackToStep(1)">Vissza a
                         kalkulátorhoz</button>
                 </div>
 
                 <!-- State 4: Success Opt-In -->
                 <div class="step success" id="step-4">
                     <div class="icon-success">✨</div>
-                    <h2>Sikeresen jelentkezett!</h2>
-                    <p>Köszönjük a bizalmát! Hamarosan küldjük a részletes tájékoztatót a megadott e-mail címre.</p>
+                    <h2 id="success-title">Sikeresen jelentkezett!</h2>
+                    <p id="success-subtitle">Köszönjük a bizalmát! Hamarosan küldjük a részletes tájékoztatót a megadott e-mail címre.</p>
                 </div>
 
                 <!-- State 5: Success Rejection -->
                 <div class="step success" id="step-5">
                     <div class="icon-success">🤝</div>
-                    <h2>Köszönjük a visszajelzését!</h2>
-                    <p>Segített nekünk abban, hogy jobb szolgáltatást építhessünk a jövőben.</p>
+                    <h2 id="success-reject-title">Köszönjük a visszajelzését!</h2>
+                    <p id="success-reject-subtitle">Segített nekünk abban, hogy jobb szolgáltatást építhessünk a jövőben.</p>
                 </div>
 
             </section>
