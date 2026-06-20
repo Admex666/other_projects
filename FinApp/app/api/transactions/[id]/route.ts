@@ -8,7 +8,9 @@ import { Debt } from '@/models/Debt';
 import mongoose from 'mongoose';
 import { syncEmitter } from '@/lib/sync-emitter';
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = await params;
+  
   const session = await getServerSession(authOptions);
   if (!session || !(session.user as any).id) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -19,7 +21,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   const body = await req.json();
 
   try {
-    const transaction = await Transaction.findOne({ _id: params.id, userId });
+    const transaction = await Transaction.findOne({ _id: resolvedParams.id, userId });
     
     if (!transaction) {
       return NextResponse.json({ error: 'Transaction not found' }, { status: 404 });
@@ -87,7 +89,9 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   }
 }
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = await params;
+  
   const session = await getServerSession(authOptions);
   if (!session || !(session.user as any).id) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -97,7 +101,7 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
   const userId = new mongoose.Types.ObjectId((session.user as any).id);
 
   try {
-    const transaction = await Transaction.findOne({ _id: params.id, userId });
+    const transaction = await Transaction.findOne({ _id: resolvedParams.id, userId });
     
     if (!transaction) {
       return NextResponse.json({ error: 'Transaction not found' }, { status: 404 });
@@ -126,7 +130,7 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
     syncEmitter.emit('sync', {
       type: 'TRANSACTION_DELETED',
       userIds: userIdsToSync,
-      data: { id: params.id }
+      data: { id: resolvedParams.id }
     });
 
     return NextResponse.json({ success: true });
