@@ -4567,3 +4567,56 @@ Minden küldés után a `campaign_log.csv`-be kerül a timestamp, szalon neve, e
 `contacts.csv / Google Sheets` → státusz-ellenőrzés → személyre szabott URL generálás → HTML + TXT email küldés SMTP-n → logolás
 
 Van valami amit változtatnál a logikán, vagy valami nem stimmel?
+
+### User Input
+
+@[TerminalName: Python, ProcessId: 1712] 22 email címet ír, miközben a sheetsben csak 21 van, a 22. érdeklődik már.
+
+*Viewed [send_campaign.py](file:///e:/Data/other_projects/MassagePlace/send_campaign.py) *
+
+*User accepted the command `& C:/Users/Adam/AppData/Local/Programs/Python/Python313/python.exe e:/Data/other_projects/MassagePlace/send_campaign.py`*
+
+*User accepted the command `& C:/Users/Adam/AppData/Local/Programs/Python/Python313/python.exe e:/Data/other_projects/MassagePlace/send_campaign.py`*
+
+### Planner Response
+
+Nézzük meg a `campaign_log.csv`-t hogy értsük a jelenlegi státuszokat:
+
+*Viewed [campaign_log.csv](file:///e:/Data/other_projects/MassagePlace/campaign_log.csv) *
+
+### User Input
+
+NE a campaign_log.csv legyen az irányadó hanem a google sheets.
+
+*Read URL content from /spreadsheets/d/1xuHPImt9EW9y9lVOra9syN_wYI2otSIeQsksLr6GLEs/export *
+
+*Viewed [content.md](file:///C:/Users/Adam/.gemini/antigravity-ide/brain/d1c1ef8a-d404-4164-b227-f8d55770f079/.system_generated/steps/1002/content.md) *
+
+*Viewed [contacts.csv](file:///e:/Data/other_projects/MassagePlace/contacts.csv) *
+
+*Viewed [send_campaign.py](file:///e:/Data/other_projects/MassagePlace/send_campaign.py) *
+
+*Edited relevant file*
+
+*Viewed [send_campaign.py](file:///e:/Data/other_projects/MassagePlace/send_campaign.py) *
+
+*Edited relevant file*
+
+*User accepted the command `python send_campaign.py`*
+
+*Viewed [task-1016.log](file:///C:/Users/Adam/.gemini/antigravity-ide/brain/d1c1ef8a-d404-4164-b227-f8d55770f079/.system_generated/tasks/task-1016.log) *
+
+### Planner Response
+
+Átírtam a `send_campaign.py` fájlt úgy, hogy mostantól **kizárólag a Google Sheets "Státusz" oszlopa** határozza meg, hogy kinek küld ki levelet a rendszer, teljesen figyelmen kívül hagyva a helyi `campaign_log.csv` fájlt a szűrésnél.
+
+### Az új státusz-szűrési logika:
+
+*   **Initial (Első megkeresés):**
+    *   **Küldendő:** Ha a státusz mező a Google Sheetben teljesen **üres**.
+    *   **Kihagyja:** Ha a státusz tartalmazza az `"érdeklődik"`, `"küldött"`, `"sent"` vagy `"followup"` szavakat.
+*   **Follow-up (Követő levél):**
+    *   **Küldendő:** Kizárólag akkor, ha a státusz pontosan **`1. küldött`**.
+    *   **Kihagyja:** Ha a státusz `"2. érdeklődik"` (mint Niradinál és a Thai Vibe-nál) vagy már tartalmazza a `"followup"` szót.
+
+A teszt futtatás alapján a Niradi Thai Masszázs és a Thai Vibe Masszázs is sikeresen átugrásra került (`Már érdeklődik (Kihagyva)`), így az összesen 22 címből 2-t kihagyva **pontosan a 20 valóban küldendő** címet választotta ki a rendszer!

@@ -206,11 +206,15 @@ def load_contacts():
                                 cleaned_row.get("kapcsolattartó") or 
                                 cleaned_row.get("kapcsolattartó    "))
                 
+                sheet_status = (cleaned_row.get("státusz") or 
+                                cleaned_row.get("status") or "").strip()
+                
                 if email:
                     contacts.append({
                         "salon_name": salon_name or "Szalon",
                         "email": email,
-                        "contact_name": contact_name or salon_name or "Szalon Vezető"
+                        "contact_name": contact_name or salon_name or "Szalon Vezető",
+                        "status": sheet_status
                     })
                 elif raw_email and not raw_email.startswith("#"):
                     print(f"Figyelmeztetés: Hibás e-mail cím átugorva: '{raw_email}' ({salon_name})")
@@ -236,12 +240,15 @@ def load_contacts():
                 email = clean_email(raw_email)
                 
                 contact_name = cleaned_row.get("contact_name") or cleaned_row.get("kapcsolattartó")
+                sheet_status = (cleaned_row.get("státusz") or 
+                                cleaned_row.get("status") or "").strip()
                 
                 if email:
                     contacts.append({
                         "salon_name": salon_name or "Szalon",
                         "email": email,
-                        "contact_name": contact_name or salon_name or "Szalon Vezető"
+                        "contact_name": contact_name or salon_name or "Szalon Vezető",
+                        "status": sheet_status
                     })
         print(f"Betöltve {len(contacts)} cím a helyi fájlból.")
         
@@ -289,27 +296,40 @@ def run_campaign():
     for i, contact in enumerate(contacts, 1):
         salon_name = contact["salon_name"]
         email = contact["email"]
-        email_key = email.lower()
-        last_status = status_map.get(email_key)
+        sheet_status = contact.get("status", "").strip()
+        status_lower = sheet_status.lower()
         
         if campaign_type == "initial":
-            # Első megkeresés: Kihagyjuk, ha már kapott BÁRMILYEN levelet (sent, success, ok, followup)
-            if last_status in ("SENT", "SUCCESS", "OK", "FOLLOWUP_SENT"):
-                status = "Már kapott levelet (Kihagyva)"
-                skipped_count += 1
-            else:
+            # Első megkeresés: Csak akkor küldjük, ha még nincs semmilyen státusza (üres)
+            if not status_lower:
                 status = "Küldendő (Új megkeresés)"
                 active_contacts.append(contact)
-        else:
-            # Követő levél: Csak akkor küldünk, ha kapott elsőt (SENT, SUCCESS, OK) ÉS még nem kapott követőt (FOLLOWUP_SENT)
-            if last_status in ("SENT", "SUCCESS", "OK"):
-                status = "Küldendő (Követő levél)"
-                active_contacts.append(contact)
-            elif last_status == "FOLLOWUP_SENT":
-                status = "Már kapott követőt (Kihagyva)"
+            elif "érdeklődik" in status_lower:
+                status = f"Már érdeklődik: '{sheet_status}' (Kihagyva)"
+                skipped_count += 1
+            elif "küldött" in status_lower or "sent" in status_lower or "followup" in status_lower:
+                status = f"Már kapott levelet: '{sheet_status}' (Kihagyva)"
                 skipped_count += 1
             else:
+                # Bármi egyéb nem-üres státusz esetén is inkább kihagyjuk biztonságból
+                status = f"Egyedi státusz: '{sheet_status}' (Kihagyva)"
+                skipped_count += 1
+        else:
+            # Követő levél (followup): Csak akkor küldjük, ha a státusz pontosan "1. küldött"
+            if status_lower == "1. küldött":
+                status = "Küldendő (Követő levél)"
+                active_contacts.append(contact)
+            elif "érdeklődik" in status_lower:
+                status = f"Már érdeklődik: '{sheet_status}' (Kihagyva)"
+                skipped_count += 1
+            elif "followup" in status_lower:
+                status = f"Már kapott követőt: '{sheet_status}' (Kihagyva)"
+                skipped_count += 1
+            elif not status_lower:
                 status = "Nincs elküldött első levél (Kihagyva)"
+                skipped_count += 1
+            else:
+                status = f"Egyedi státusz: '{sheet_status}' (Kihagyva)"
                 skipped_count += 1
                 
         print(f"[{i:02d}] {salon_name:<35} | {email:<35} | {status}")
