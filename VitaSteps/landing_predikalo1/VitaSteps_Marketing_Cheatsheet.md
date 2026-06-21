@@ -24,7 +24,26 @@
 | **06.12.** | 58 417 | 67 669 | 33 533 | 15 | 54 | 68 | 80 | 88% |
 | **06.19.** | 87 732 | 90 405 | 43 456 | 21 | 65 | 512 (7 nap) | 599 (7 nap) | 88% |
 | **06.20.** | 91 365 | 92 731 | 44 349 | 22 | 65 | 65 | 75 | 89% |
+| **06.21.** | 95 122 | 95 352 | 45 490 | 22 | 65 | 62 | 70 | 90% |
 
+### 💡 Aktuális Stratégia & Fókusz (06.21.)
+**Az elmúlt 24 óra értékelése (Vasárnapi mélyponttal a záróhajrá előtt):**
+Az elmúlt 24 órában **3 757 Ft**-ot költöttünk el (+ÁFA). A Facebook Ads Manager vásárlásszáma **stagnált (22)**, és a Stripe is **változatlanul 65-ön áll** – valós új tranzakció nem volt.
+- **Kostségmutatók:**
+  - **Napi látogatók száma:** **62** – a hétvégi mélypontot tükrözi.
+  - **Bounce Rate:** **90%** – hétvégén jellemzően magasabb, kevésbé motivált forgalom érkezik.
+  - **Konverziós arány:** Hétvégi hatás: vasárnap jellemzően a legnehezebb nap az online vásárláshoz. A 0 új Stripe-fizetés nem aggasztó ebben a kontextusban.
+- **Összesített kampány mutatók (teljes futás):**
+  - **Összköltés:** ~95 122 Ft nettó
+  - **Stripe fizetések:** 65 db × 7 990 Ft = **519 350 Ft bevétel**
+  - **ROAS:** **5,46** (minden elköltött 1 Ft → 5,46 Ft bevétel) ✅
+  - **CPA:** ~1 463 Ft / vásárló ✅
+- **Akcióterv a záró 2 napra (Jún. 21. – 23.):**
+  1. **"Utolsó 48 óra" üzenet aktiválása:** Hétfő reggeltől a hirdetésben és a főoldalon az *"Már csak 2 nap maradt!"* üzenet domináljon.
+  2. **Leaderboard + készletjelző:** Ha a ranglista vagy a "X db maradt a 100-ból" elem még nincs kint, most az utolsó pillanat.
+  3. **Organikus csatornák:** Ha van Facebook/Instagram poszt, ma este / hétfő reggel érdemes posztolni organikusan is – az utolsó napokban az ingyenes forgalom is megnő.
+
+---
 ### 💡 Aktuális Stratégia & Fókusz (06.20.)
 **Az elmúlt 24 óra értékelése (Hétvégi stagnálás):**
 Az elmúlt 24 órában **3 633 Ft**-ot költöttünk el (+ÁFA). Ezalatt a Facebook Ads Manager szerint **+1 vásárlás** történt (21 -> 22), de a Stripe-ban a valós kifizetések száma **stagnált 65-ön**.

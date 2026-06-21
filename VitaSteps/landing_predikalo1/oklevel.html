@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>VitaSteps Virtuális Oklevél</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,600;1,400&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #04060a;
+            --surface: #0c0f15;
+            --surface2: #12161e;
+            --accent: #bfff00;
+            --accent-glow: rgba(191, 255, 0, 0.25);
+            --gold: #d4af37;
+            --gold-glow: rgba(212, 175, 55, 0.3);
+            --text-high: #f0f4ff;
+            --text-mid: #7a8aa0;
+            --text-low: #3d4a5c;
+            --border: rgba(255, 255, 255, 0.07);
+            --radius-md: 20px;
+            --radius-lg: 32px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-high);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+            overflow-x: hidden;
+        }
+
+        /* Certificate Container holding the design */
+        .certificate-container {
+            width: 100%;
+            max-width: 800px;
+            perspective: 1000px;
+            margin-bottom: 2rem;
+        }
+
+        /* The actual certificate card */
+        .certificate {
+            width: 100%;
+            aspect-ratio: 1.414;
+            /* A4 Ratio */
+            background: radial-gradient(circle at top left, #0e131f 0%, #05070c 100%);
+            border: 2px solid var(--gold);
+            border-radius: 12px;
+            padding: 3rem 4rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), 0 0 40px var(--gold-glow);
+            overflow: hidden;
+            transition: transform 0.5s ease;
+        }
+
+        /* Glow effects inside certificate */
+        .certificate::before {
+            content: '';
+            position: absolute;
+            top: -10%;
+            right: -10%;
+            width: 50%;
+            height: 50%;
+            background: var(--gold);
+            filter: blur(120px);
+            opacity: 0.08;
+            pointer-events: none;
+        }
+
+        .certificate::after {
+            content: '';
+            position: absolute;
+            bottom: -10%;
+            left: -10%;
+            width: 50%;
+            height: 50%;
+            background: var(--accent);
+            filter: blur(120px);
+            opacity: 0.05;
+            pointer-events: none;
+        }
+
+        /* Elegant inner border representing traditional diploma lines */
+        .certificate-border {
+            position: absolute;
+            top: 15px;
+            bottom: 15px;
+            left: 15px;
+            right: 15px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            pointer-events: none;
+        }
+
+        .certificate-border-inner {
+            position: absolute;
+            top: 22px;
+            bottom: 22px;
+            left: 22px;
+            right: 22px;
+            border: 1px dashed rgba(212, 175, 55, 0.1);
+            pointer-events: none;
+        }
+
+        /* Corner decorations */
+        .corner {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            border: 2px solid var(--gold);
+        }
+
+        .corner-tl {
+            top: 30px;
+            left: 30px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .corner-tr {
+            top: 30px;
+            right: 30px;
+            border-left: none;
+            border-bottom: none;
+        }
+
+        .corner-bl {
+            bottom: 30px;
+            left: 30px;
+            border-right: none;
+            border-top: none;
+        }
+
+        .corner-br {
+            bottom: 30px;
+            right: 30px;
+            border-left: none;
+            border-top: none;
+        }
+
+        /* Content elements */
+        .logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 900;
+            color: var(--accent);
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            margin-top: 1rem;
+        }
+
+        .cert-header {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--text-high);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, #ffffff 50%, var(--gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .cert-divider {
+            width: 120px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            margin: 0.5rem auto 1.5rem auto;
+        }
+
+        .cert-intro {
+            font-size: 0.95rem;
+            color: var(--text-mid);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+        }
+
+        /* Dynamically rendered name field */
+        .participant-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 600;
+            font-style: italic;
+            color: var(--gold);
+            margin: 1rem 0;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+            word-wrap: break-word;
+            max-width: 90%;
+        }
+
+        .cert-body {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--text-high);
+            max-width: 580px;
+            margin-bottom: 1rem;
+        }
+
+        .cert-body strong {
+            color: var(--accent);
+        }
+
+        .cert-footer {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: 1.5rem;
+            padding: 0 1rem;
+        }
+
+        .sign-block {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .sign-line {
+            width: 140px;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.2);
+            margin-bottom: 0.5rem;
+        }
+
+        .sign-title {
+            font-size: 0.75rem;
+            color: var(--text-mid);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .sign-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-high);
+        }
+
+        /* Center seal / medal graphic */
+        .seal {
+            width: 70px;
+            height: 70px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 4s infinite alternate;
+        }
+
+        .seal-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 2px double var(--gold);
+            border-radius: 50%;
+            background: rgba(20, 20, 20, 0.6);
+            transform: rotate(45deg);
+        }
+
+        .seal-content {
+            z-index: 2;
+            color: var(--gold);
+        }
+
+        .cert-serial {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--gold);
+            letter-spacing: 0.05em;
+            margin-top: 8px;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.15);
+        }
+
+        /* Controls card for interactivity */
+        .controls-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 2rem;
+            width: 100%;
+            max-width: 800px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .input-group {
+            flex: 1;
+            min-width: 250px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .input-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-mid);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .input-field {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.8rem 1rem;
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: border-color 0.25s;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.85rem 1.75rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+            text-decoration: none;
+            transition: all 0.25s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #000000;
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px var(--accent-glow);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-high);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            100% {
+                transform: scale(1.05);
+            }
+        }
+
+        /* Print styling to output just the certificate perfectly */
+        @media print {
+            body {
+                background: #ffffff !important;
+                color: #000000 !important;
+                padding: 0;
+                margin: 0;
+            }
+
+            .controls-card {
+                display: none !important;
+            }
+
+            .certificate-container {
+                margin: 0;
+                max-width: 100%;
+            }
+
+            .certificate {
+                border: 2px solid #000000 !important;
+                box-shadow: none !important;
+                background: #ffffff !important;
+                color: #000000 !important;
+                width: 297mm;
+                /* Force Landscape A4 */
+                height: 210mm;
+                padding: 25mm !important;
+            }
+
+            .certificate::before,
+            .certificate::after {
+                display: none !important;
+            }
+
+            .certificate-border {
+                border-color: #000000 !important;
+            }
+
+            .certificate-border-inner {
+                border-color: #000000 !important;
+            }
+
+            .corner {
+                border-color: #000000 !important;
+            }
+
+            .logo {
+                color: #000000 !important;
+            }
+
+            .cert-header {
+                background: none !important;
+                -webkit-text-fill-color: #000000 !important;
+                color: #000000 !important;
+            }
+
+            .cert-divider {
+                background: #000000 !important;
+            }
+
+            .participant-name {
+                color: #000000 !important;
+                text-shadow: none !important;
+            }
+
+            .cert-body {
+                color: #333333 !important;
+            }
+
+            .cert-body strong {
+                color: #000000 !important;
+            }
+
+            .sign-name {
+                color: #000000 !important;
+            }
+
+            .sign-line {
+                background: #000000 !important;
+            }
+
+            .seal-bg {
+                border-color: #000000 !important;
+                background: transparent !important;
+            }
+
+            .seal-content {
+                color: #000000 !important;
+            }
+
+            .cert-serial {
+                color: #000000 !important;
+            }
+        }
+
+        /* Responsiveness for smaller screens preview */
+        @media (max-width: 768px) {
+            .certificate {
+                padding: 1.5rem 2rem;
+                aspect-ratio: auto;
+                height: auto;
+            }
+
+            .participant-name {
+                font-size: 2rem;
+            }
+
+            .cert-header {
+                font-size: 1.6rem;
+            }
+
+            .corner {
+                width: 15px;
+                height: 15px;
+            }
+
+            .corner-tl {
+                top: 15px;
+                left: 15px;
+            }
+
+            .corner-tr {
+                top: 15px;
+                right: 15px;
+            }
+
+            .corner-bl {
+                bottom: 15px;
+                left: 15px;
+            }
+
+            .corner-br {
+                bottom: 15px;
+                right: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Virtual Certificate Showcase Container -->
+    <div class="certificate-container">
+        <div class="certificate" id="certificate">
+            <div class="certificate-border"></div>
+            <div class="certificate-border-inner"></div>
+
+            <div class="corner corner-tl"></div>
+            <div class="corner corner-tr"></div>
+            <div class="corner corner-bl"></div>
+            <div class="corner corner-br"></div>
+
+            <div class="logo">VitaSteps</div>
+
+            <div>
+                <h1 class="cert-header">Oklevél</h1>
+                <div class="cert-divider"></div>
+                <div class="cert-intro">Ezennel igazoljuk, hogy</div>
+            </div>
+
+            <div class="participant-name" id="display-name">Minta Péter</div>
+
+            <div class="cert-body">
+                sikeresen teljesítette a <strong>Prédikálószék Vertical</strong><br>
+                <strong id="display-distance">15 km-es</strong> kihívását, bizonyítva kitartását és sport iránti
+                elkötelezettségét.
+            </div>
+
+            <div class="cert-footer">
+                <div class="sign-block" style="align-items: flex-start;">
+                    <div class="sign-line"></div>
+                    <div class="sign-name">VitaSteps Team</div>
+                    <div class="sign-title">Kihívás Szervező</div>
+                </div>
+
+                <div class="seal-block-center"
+                    style="display: flex; flex-direction: column; align-items: center; justify-content: flex-end; min-height: 95px; margin-bottom: -15px;">
+                    <div class="seal">
+                        <div class="seal-bg"></div>
+                        <div class="seal-content">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path
+                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="cert-serial" id="display-serial">#065/100</div>
+                </div>
+
+                <div class="sign-block" style="align-items: flex-end;">
+                    <div class="sign-line"></div>
+                    <div class="sign-name" id="display-date">2026.06.21</div>
+                    <div class="sign-title">Dátum</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Customizer controls for Admin/User -->
+    <div class="controls-card">
+        <div class="form-row">
+            <div class="input-group">
+                <label for="input-name">Teljesítő neve</label>
+                <input type="text" id="input-name" class="input-field" value="Futó Partner"
+                    placeholder="Írd be a nevet...">
+            </div>
+            <div class="input-group">
+                <label for="input-serial">Sorszám</label>
+                <input type="text" id="input-serial" class="input-field" value="#065/100" placeholder="pl. #065/100">
+            </div>
+            <div class="input-group">
+                <label for="input-distance">Távolság</label>
+                <input type="text" id="input-distance" class="input-field" value="15 km" placeholder="pl. 15 km">
+            </div>
+            <div class="input-group">
+                <label for="input-date">Teljesítés dátuma</label>
+                <input type="text" id="input-date" class="input-field" value="2026.06.21">
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-primary" onclick="window.print()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;">
+                    <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                    <rect x="6" y="14" width="12" height="8"></rect>
+                </svg>
+                Oklevél Nyomtatása / Mentése PDF-ként
+            </button>
+            <button class="btn btn-secondary" onclick="shareCertificate()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;">
+                    <circle cx="18" cy="5" r="3"></circle>
+                    <circle cx="6" cy="12" r="3"></circle>
+                    <circle cx="18" cy="19" r="3"></circle>
+                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                </svg>
+                Megosztási link másolása
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const nameInput = document.getElementById('input-name');
+        const serialInput = document.getElementById('input-serial');
+        const distanceInput = document.getElementById('input-distance');
+        const dateInput = document.getElementById('input-date');
+
+        const displayName = document.getElementById('display-name');
+        const displaySerial = document.getElementById('display-serial');
+        const displayDistance = document.getElementById('display-distance');
+        const displayDate = document.getElementById('display-date');
+
+        // Parse query params for dynamic loads (e.g., oklevel.html?nev=Kovacs+Janos&datum=2026.06.21)
+        function getQueryParams() {
+            const params = {};
+            window.location.search.substring(1).split("&").forEach(pair => {
+                if (!pair) return;
+                const parts = pair.split("=");
+                params[decodeURIComponent(parts[0])] = decodeURIComponent(parts[1] || "");
+            });
+            return params;
+        }
+
+        // Initialize values
+        const params = getQueryParams();
+        if (params.nev) {
+            nameInput.value = params.nev;
+            displayName.textContent = params.nev;
+        }
+        if (params.sorszam) {
+            serialInput.value = params.sorszam;
+            displaySerial.textContent = params.sorszam;
+        }
+        if (params.tav) {
+            distanceInput.value = params.tav;
+            displayDistance.textContent = params.tav;
+        }
+        if (params.datum) {
+            dateInput.value = params.datum;
+            displayDate.textContent = params.datum;
+        } else {
+            // Set current date
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            let mm = today.getMonth() + 1; // Months start at 0!
+            let dd = today.getDate();
+            if (dd < 10) dd = '0' + dd;
+            if (mm < 10) mm = '0' + mm;
+            const formattedToday = yyyy + '.' + mm + '.' + dd;
+            dateInput.value = formattedToday;
+            displayDate.textContent = formattedToday;
+        }
+
+        // Input listeners to update the certificate layout live
+        nameInput.addEventListener('input', (e) => {
+            displayName.textContent = e.target.value || "Futó Partner";
+        });
+
+        serialInput.addEventListener('input', (e) => {
+            displaySerial.textContent = e.target.value || "#065/100";
+        });
+
+        distanceInput.addEventListener('input', (e) => {
+            displayDistance.textContent = e.target.value || "15 km";
+        });
+
+        dateInput.addEventListener('input', (e) => {
+            displayDate.textContent = e.target.value || "";
+        });
+
+        // Copy direct link to certificate
+        function shareCertificate() {
+            const nameVal = encodeURIComponent(nameInput.value);
+            const serialVal = encodeURIComponent(serialInput.value);
+            const distVal = encodeURIComponent(distanceInput.value);
+            const dateVal = encodeURIComponent(dateInput.value);
+            const shareUrl = `${window.location.origin}${window.location.pathname}?nev=${nameVal}&sorszam=${serialVal}&tav=${distVal}&datum=${dateVal}`;
+
+            navigator.clipboard.writeText(shareUrl).then(() => {
+                alert("Megosztási link sikeresen másolva a vágólapra!");
+            }).catch(err => {
+                console.error("Hiba a másoláskor: ", err);
+                alert("Nem sikerült másolni, itt a link: " + shareUrl);
+            });
+        }
+    </script>
+</body>
+
+</html>
