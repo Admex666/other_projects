@@ -4620,3 +4620,211 @@ NE a campaign_log.csv legyen az irányadó hanem a google sheets.
     *   **Kihagyja:** Ha a státusz `"2. érdeklődik"` (mint Niradinál és a Thai Vibe-nál) vagy már tartalmazza a `"followup"` szót.
 
 A teszt futtatás alapján a Niradi Thai Masszázs és a Thai Vibe Masszázs is sikeresen átugrásra került (`Már érdeklődik (Kihagyva)`), így az összesen 22 címből 2-t kihagyva **pontosan a 20 valóban küldendő** címet választotta ki a rendszer!
+
+### User Input
+
+Amúgy a legegyszerűbb ha a google sheetsben írod, nem csv-ben. Ehhez kéne appot és API kulcsot csinálni?
+
+### Planner Response
+
+Igen, a Google Sheets írásához mindenképpen szükséges hitelesítés, mert a sima API-kulcs (API Key) csak publikus táblázatok **olvasására** használható, írásra biztonsági okokból nem.
+
+Két egyszerűbb út áll rendelkezésedre ehhez:
+
+---
+
+### 1. Google Cloud Service Account (A sztenderd programozói megoldás)
+Ez a leggyakoribb megoldás, ha közvetlenül Pythonból (`gspread` könyvtárral) akarsz írni a táblázatba.
+
+**Mi kell hozzá?**
+1. Létre kell hozni egy ingyenes projektet a [Google Cloud Console](https://console.cloud.google.com/)-on.
+2. Be kell kapcsolni a **Google Drive API** és **Google Sheets API** szolgáltatásokat.
+3. Létre kell hozni egy **Service Account**-ot (Szolgáltatásfiók), és letölteni hozzá egy `credentials.json` fájlt.
+4. A Google Sheet táblázatot meg kell osztanod (Share) a Service Account egyedi email címével (pl. `my-bot@project.iam.gserviceaccount.com`), és szerkesztési (Editor) jogot adni neki.
+5. Pythonból a `gspread` könyvtárral 3 sorban írhatsz rá.
+
+---
+
+### 2. Google Apps Script Web App (A legegyszerűbb, Google Cloud nélküli megoldás)
+Ha nem akarsz Google Cloud projekttel, jogosultságokkal és JSON kulcsfájlokkal bajlódni, ez a leggyorsabb trükk:
+
+**Hogyan működik?**
+1. A Google Sheet-ben felül rámész a **Bővítmények (Extensions) -> Apps Script** menüre.
+2. Beillesztesz egy pár soros JavaScript kódot, ami fogadja az adatokat (POST kérésként) és beírja a táblázatba.
+3. Rákattintasz a **Telepítés (Deploy) -> Új telepítés (New deployment)** gombra, és **Webalkalmazásként (Web App)** közzéteszed.
+   * *Futtatás mint:* Te magad (Me)
+   * *Ki férhet hozzá:* Bárki (Anyone)
+4. Kapsz egy egyedi URL-t. Pythonból egyszerűen a beépített `requests.post(URL, json=...)` hívással elküldöd az emailt és az új státuszt, és a Google Script beírja a megfelelő sorba.
+
+---
+
+### Melyiket érdemes választani?
+* Ha szeretnéd megspórolni a Google Cloud fiók beállítását és a JSON fájlok tárolását a kódban, a **2. opció (Apps Script Web App)** a legegyszerűbb és leggyorsabb.
+* Ha szeretnéd, szívesen megírom hozzá akár az Apps Script kódot, amit csak be kell másolnod, és felkészítem rá a `send_campaign.py` fájlt is!
+
+### User Input
+
+Maradjunk a Cloud Service-nél. Megvan a kulcs, valamit .env-be rakjak hogy tudjuk olvasni és szerkeszteni?
+
+*Viewed [send_campaign.py](file:///e:/Data/other_projects/MassagePlace/send_campaign.py) *
+
+*Listed directory [MassagePlace](file:///e:/Data/other_projects/MassagePlace) *
+
+*Viewed [test_sheets.py](file:///e:/Data/other_projects/MassagePlace/test_sheets.py) *
+
+*Viewed [.env](file:///e:/Data/other_projects/MassagePlace/.env) *
+
+*Viewed [requirements.txt](file:///e:/Data/other_projects/MassagePlace/requirements.txt) *
+
+*Viewed [.gitignore](file:///e:/Data/other_projects/MassagePlace/.gitignore) *
+
+*Edited relevant file*
+
+*User accepted the command `pip install gspread google-auth`*
+
+*Edited relevant file*
+
+*Viewed [send_campaign.py](file:///e:/Data/other_projects/MassagePlace/send_campaign.py) *
+
+*Edited relevant file*
+
+*Viewed [send_campaign.py](file:///e:/Data/other_projects/MassagePlace/send_campaign.py) *
+
+*Edited relevant file*
+
+*Viewed [send_campaign.py](file:///e:/Data/other_projects/MassagePlace/send_campaign.py) *
+
+*Edited relevant file*
+
+*Viewed [send_campaign.py](file:///e:/Data/other_projects/MassagePlace/send_campaign.py) *
+
+*Viewed [send_campaign.py](file:///e:/Data/other_projects/MassagePlace/send_campaign.py) *
+
+*Edited relevant file*
+
+*User accepted the command `python send_campaign.py`*
+
+*Viewed [task-1073.log](file:///C:/Users/Adam/.gemini/antigravity-ide/brain/d1c1ef8a-d404-4164-b227-f8d55770f079/.system_generated/tasks/task-1073.log) *
+
+### Planner Response
+
+A közvetlen Google Sheets olvasás/írás integráció elkészült a `send_campaign.py` fájlban!
+
+A script most úgy lett felkészítve, hogy **ha megtalálja a hitelesítő fájlt**, akkor az API-n keresztül tölti be az adatokat, és sikeres email küldés után **automatikusan vissza is írja** a megfelelő státuszt a Google Sheet "Státusz" oszlopába (pl. `1. küldött` vagy `1. followup küldött`). Ha nem találja meg a fájlt, akkor visszalép a korábbi publikus CSV letöltésre (és nem próbál írni a Sheetsbe), így a script nem fog elszállni hibával.
+
+### Ezt kell tenned az élesítéshez:
+
+1.  **Hozd létre a kulcsfájlt:**
+    Mentsd el a letöltött Google Cloud Service Account JSON kulcsod tartalmát `service_account.json` néven a projekt gyökérkönyvtárába (`e:\Data\other_projects\MassagePlace\service_account.json`).
+    *(Megjegyzés: A `.gitignore`-hoz már hozzáadtam a fájlt, így nem fog véletlenül felkerülni a Git-re!)*
+
+2.  **Add meg a változót a `.env` fájlban:**
+    Nyisd meg a `.env` fájlt, és másold be az alábbi sort a végére:
+    ```env
+    GOOGLE_SERVICE_ACCOUNT_FILE=service_account.json
+    ```
+
+3.  **Oszd meg a Google Sheet táblázatot:**
+    Nyisd meg a letöltött JSON kulcsot, keresd ki benne a `"client_email"` mezőt (ami valahogy így néz ki: `valami-nev@projekt-id.iam.gserviceaccount.com`), és a Google Sheets **Megosztás (Share)** gombjával adj neki **Szerkesztő (Editor)** jogot.
+
+Amint ezeket megcsinálod, a következő futásnál már a közvetlen Google Sheets API-t fogja használni a rendszer és automatikusan beírja a küldés státuszait a táblázatba!
+
+### User Input
+
+Na elvileg .env-ben is megvan és meg van osztva. Teszteljük: olvasd be a G oszlopot, és írj a a J26 cellába hogy "hello world!"
+
+*Viewed [service_account.json](file:///e:/Data/other_projects/MassagePlace/service_account.json) *
+
+*Edited relevant file*
+
+*User accepted the command `python test_sheets_write.py`*
+
+*Edited relevant file*
+
+*User accepted the command `python test_sheets_write.py`*
+
+### Planner Response
+
+A teszt alapján a hitelesítés és a hozzáférés majdnem tökéletes, viszont a Google Cloud fiókodban még be kell kapcsolnod a **Google Sheets API**-t ehhez a projekthez.
+
+### Teendő:
+
+1.  Kattints az alábbi linkre (ez közvetlenül a projekted API kezelőjéhez visz):
+    👉 [Google Sheets API Bekapcsolása](https://console.developers.google.com/apis/api/sheets.googleapis.com/overview?project=679651228197)
+2.  Kattints a kék **Engedélyezés (Enable)** gombra.
+3.  *(Opcionális, de ajánlott)*: A biztonság kedvéért ugyanígy érdemes bekapcsolni a **Google Drive API**-t is ezen a linken:
+    👉 [Google Drive API Bekapcsolása](https://console.developers.google.com/apis/api/drive.googleapis.com/overview?project=679651228197)
+
+Ha ez megvan, szólj, és futtatom újra a tesztet!
+
+### User Input
+
+Siker: @[TerminalName: Python, ProcessId: 15256] 
+
+Na most, mint látod fázisokra bontottam a szalonokat. Akiknél a státusz "1."-el kezdődik, azok még nem nyitották meg a kalkulátor oldalt vagy nem válaszoltak az emailemre. Az 1.2 jelzi az első followupot hogy kiment. A "2."-vel kezdődők pedig akik már megnyitották.
+
+Most fogok még sok szalont hozzáadni, a lényeg hogy nekik a státuszuk "0. gyűjtés" lesz, és ha lefuttatom a @[send_campaign.py] -t, akkor nekik mehet az initial email. Lehetőleg Írjunk a H oszlopba dátumot is ehhez, és ha 72 óra eltelt, és a státuszuk továbbra is "1. kiküldve", akkor mehet a follow-up email is a futtatáskor. Akiknek már van follow-up, vagy 2. fázisban vannak azok legyenek skippelve.
+
+*Viewed [test_sheets_write.py](file:///e:/Data/other_projects/MassagePlace/test_sheets_write.py) *
+
+*User accepted the command `& C:/Users/Adam/AppData/Local/Programs/Python/Python313/python.exe e:/Data/other_projects/MassagePlace/test_sheets_write.py`*
+
+*Viewed [send_campaign.py](file:///e:/Data/other_projects/MassagePlace/send_campaign.py) *
+
+*Edited relevant file*
+
+*Viewed [send_campaign.py](file:///e:/Data/other_projects/MassagePlace/send_campaign.py) *
+
+*Viewed [send_campaign.py](file:///e:/Data/other_projects/MassagePlace/send_campaign.py) *
+
+*Edited relevant file*
+
+*Viewed [send_campaign.py](file:///e:/Data/other_projects/MassagePlace/send_campaign.py) *
+
+*Viewed [send_campaign.py](file:///e:/Data/other_projects/MassagePlace/send_campaign.py) *
+
+*Viewed [send_campaign.py](file:///e:/Data/other_projects/MassagePlace/send_campaign.py) *
+
+*Edited relevant file*
+
+*Edited relevant file*
+
+*Viewed [send_campaign.py](file:///e:/Data/other_projects/MassagePlace/send_campaign.py) *
+
+*Edited relevant file*
+
+*User accepted the command `python send_campaign.py`*
+
+*Viewed [task-1125.log](file:///C:/Users/Adam/.gemini/antigravity-ide/brain/d1c1ef8a-d404-4164-b227-f8d55770f079/.system_generated/tasks/task-1125.log) *
+
+*User accepted the command `Remove-Item test_sheets_write.py`*
+
+### Planner Response
+
+Nagyszerű, a teszt sikeres volt! A hitelesítés és az olvasás/írás is tökéletesen működik közvetlenül a Google Sheets API-n keresztül. A `test_sheets_write.py` tesztfájlt le is töröltem, hogy ne szemetelje a projektet.
+
+### Hogyan működik most a rendszer?
+
+A `send_campaign.py` fájlt felkészítettem a kért fázis- és időalapú szűrésekre:
+
+1.  **Initial (Első megkeresés) kampány:**
+    *   **Kit céloz meg?** Kizárólag azokat, akiknek a státusza pontosan **`0. gyűjtés`** (vagy ékezet nélkül `0. gyujtes`).
+    *   **Küldés után mi történik?**
+        *   A státuszuk frissül **`1. kiküldve`** értékre a Google Sheet-ben.
+        *   A **H oszlopba** (vagy az első "dátum" szót tartalmazó oszlopba) automatikusan beírja a kiküldés pontos időpontját (pl. `2026-06-21 10:04:15` formátumban).
+
+2.  **Follow-up (Követő) kampány:**
+    *   **Kit céloz meg?** Kizárólag azokat a szalonokat, ahol:
+        *   A státusz pontosan **`1. kiküldve`**.
+        *   **ÉS** a H oszlopba beírt kiküldési dátum óta **eltelt legalább 72 óra (3 nap)**.
+    *   **Küldés után mi történik?**
+        *   A státuszuk frissül **`1.2. follow-up`** értékre.
+        *   *(A dátumot békén hagyja, hogy megmaradjon a legelső kiküldés ideje).*
+
+3.  **Kihagyások:**
+    *   Mindenkit kihagy, aki már kapott követőt (`1.2. follow-up`).
+    *   Mindenkit kihagy, aki már a 2-es fázisba lépett (a státusza `2.`-vel kezdődik, pl. `2.1 érdeklődik`, `2.2 regisztrált`).
+
+A legutóbbi teszt futtatás szerint jelenleg minden szalonod a `1.2. follow-up` vagy `2.x` státuszokban van, így a program a follow-up kampányra 22 címből 22-t sikeresen átugrott (`Küldendő: 0`). 
+
+Amint elhelyezel új szalonokat **`0. gyűjtés`** státusszal a táblázatban, az initial kampány indításakor ők azonnal megkapják a levelet és megkapják a dátumbélyeget is!

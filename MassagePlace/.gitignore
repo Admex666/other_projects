@@ -1,1 +1,4 @@
 .vercel
+service_account.json
+credentials.json
+.env

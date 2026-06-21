@@ -2,12 +2,15 @@ import os
 import csv
 import sys
 import time
+import datetime
 import smtplib
 import urllib.parse
 import requests
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from dotenv import load_dotenv
+import gspread
+from google.oauth2.service_account import Credentials
 
 # Környezeti változók betöltése
 load_dotenv()
@@ -100,6 +103,100 @@ def get_csv_export_url(sheet_url):
         return export_url
     return sheet_url
 
+def get_sheets_client():
+    """Létrehozza a hitelesített gspread klienst a Service Account kulccsal."""
+    scopes = [
+        "https://www.googleapis.com/auth/spreadsheets",
+        "https://www.googleapis.com/auth/drive"
+    ]
+    credentials_file = os.getenv("GOOGLE_SERVICE_ACCOUNT_FILE", "service_account.json")
+    if not os.path.exists(credentials_file):
+        return None
+    try:
+        creds = Credentials.from_service_account_file(credentials_file, scopes=scopes)
+        client = gspread.authorize(creds)
+        return client
+    except Exception as e:
+        print(f"Figyelmeztetés: Nem sikerült a Google Sheets API hitelesítés: {e}")
+        return None
+
+def get_spreadsheet_id(sheet_url):
+    """Kinyeri a táblázat ID-t az URL-ből."""
+    if not sheet_url:
+        return None
+    if "/d/" in sheet_url:
+        return sheet_url.split("/d/")[1].split("/")[0]
+    return sheet_url
+
+def update_sheet_status(email, new_status, new_date=None):
+    """Közvetlenül frissíti a státuszt és opcionálisan a dátumot a Google Sheets-ben az e-mail cím alapján."""
+    client = get_sheets_client()
+    if not client:
+        return False
+        
+    try:
+        sheet_id = get_spreadsheet_id(GOOGLE_SHEETS_URL)
+        if not sheet_id:
+            return False
+            
+        sh = client.open_by_key(sheet_id)
+        worksheet = sh.get_worksheet(0)
+        
+        # Oszlopfejlécek beolvasása az indexek kinyeréséhez
+        headers = worksheet.row_values(1)
+        cleaned_headers = [h.strip().lower() for h in headers]
+        
+        try:
+            email_col_idx = cleaned_headers.index("email") + 1
+        except ValueError:
+            print("HIBA: Nem található 'Email' oszlop a Google Sheet-ben!")
+            return False
+            
+        try:
+            status_col_idx = cleaned_headers.index("státusz") + 1
+        except ValueError:
+            try:
+                status_col_idx = cleaned_headers.index("status") + 1
+            except ValueError:
+                print("HIBA: Nem található 'Státusz' vagy 'Status' oszlop a Google Sheet-ben!")
+                return False
+                
+        # Dátum oszlop indexe (H oszlop = 8. oszlop)
+        date_col_idx = 8
+        for idx, h in enumerate(cleaned_headers):
+            if "dátum" in h or "date" in h:
+                date_col_idx = idx + 1
+                break
+                
+        # Megkeressük a sort az e-mail cím alapján
+        email_list = worksheet.col_values(email_col_idx)
+        
+        target_row_idx = -1
+        for idx, email_val in enumerate(email_list):
+            cleaned_email_val = clean_email(email_val)
+            if cleaned_email_val and cleaned_email_val.lower() == email.lower():
+                target_row_idx = idx + 1
+                break
+                
+        if target_row_idx != -1:
+            worksheet.update_cell(target_row_idx, status_col_idx, new_status)
+            print(f" -> Google Sheet státusz frissítve: {email} -> {new_status}")
+            
+            if new_date:
+                # Biztosítjuk, hogy a fejléc létezzen a dátum oszlopban, ha a táblázat rövidebb volt
+                if len(headers) < date_col_idx:
+                    worksheet.update_cell(1, date_col_idx, "Kiküldés dátuma")
+                worksheet.update_cell(target_row_idx, date_col_idx, new_date)
+                print(f" -> Google Sheet dátum frissítve: {email} -> {new_date}")
+                
+            return True
+        else:
+            print(f" -> Figyelmeztetés: Nem található a(z) '{email}' e-mail cím a táblázatban a státusz frissítéséhez.")
+            return False
+    except Exception as e:
+        print(f" -> HIBA a Google Sheet frissítése közben: {e}")
+        return False
+
 def get_campaign_status_logs():
     """Beolvassa a campaign_log.csv-t és visszaadja az e-mailek legutolsó státuszait."""
     status_map = {}
@@ -183,46 +280,127 @@ def load_contacts():
     contacts = []
     
     if GOOGLE_SHEETS_URL:
-        csv_url = get_csv_export_url(GOOGLE_SHEETS_URL)
-        print(f"Kapcsolatok letöltése Google Sheets-ről: {csv_url} ...")
-        try:
-            res = requests.get(csv_url, timeout=15)
-            res.raise_for_status()
-            # A letöltött adatot CSV-ként parse-oljuk
-            csv_content = res.content.decode('utf-8')
-            reader = csv.DictReader(csv_content.splitlines())
-            for row in reader:
-                # Oszlopnevek kis/nagybetű függetlenítése és tisztítása
-                cleaned_row = {k.strip().lower(): v.strip() for k, v in row.items() if k}
-                salon_name = (cleaned_row.get("salon_name") or 
-                              cleaned_row.get("szalon_neve") or 
-                              cleaned_row.get("szalon neve") or 
-                              cleaned_row.get("szalon"))
-                
-                raw_email = cleaned_row.get("email") or cleaned_row.get("e-mail")
-                email = clean_email(raw_email)
-                
-                contact_name = (cleaned_row.get("contact_name") or 
-                                cleaned_row.get("kapcsolattartó") or 
-                                cleaned_row.get("kapcsolattartó    "))
-                
-                sheet_status = (cleaned_row.get("státusz") or 
-                                cleaned_row.get("status") or "").strip()
-                
-                if email:
-                    contacts.append({
-                        "salon_name": salon_name or "Szalon",
-                        "email": email,
-                        "contact_name": contact_name or salon_name or "Szalon Vezető",
-                        "status": sheet_status
-                    })
-                elif raw_email and not raw_email.startswith("#"):
-                    print(f"Figyelmeztetés: Hibás e-mail cím átugorva: '{raw_email}' ({salon_name})")
-            print(f"Sikeresen betöltve {len(contacts)} cím Google Sheets-ről.")
-        except Exception as e:
-            print(f"HIBA a Google Sheets letöltése közben: {e}")
-            print("Visszalépés a helyi contacts.csv fájlra...")
-            contacts = []
+        # 1. Próbáljuk meg közvetlenül a Google Sheets API-n keresztül olvasni
+        client = get_sheets_client()
+        if client:
+            print("Kapcsolatok betöltése közvetlenül a Google Sheets API-n keresztül...")
+            try:
+                sheet_id = get_spreadsheet_id(GOOGLE_SHEETS_URL)
+                sh = client.open_by_key(sheet_id)
+                worksheet = sh.get_worksheet(0)
+                rows = worksheet.get_all_values()
+                if rows:
+                    headers = [h.strip().lower() for h in rows[0]]
+                    
+                    # Oszlop indexek megkeresése
+                    try:
+                        salon_idx = headers.index("szalon neve")
+                    except ValueError:
+                        try:
+                            salon_idx = headers.index("salon_name")
+                        except ValueError:
+                            salon_idx = 0
+                            
+                    try:
+                        email_idx = headers.index("email")
+                    except ValueError:
+                        email_idx = 2
+                        
+                    try:
+                        contact_idx = headers.index("kapcsolattartó")
+                    except ValueError:
+                        contact_idx = 5
+                        
+                    try:
+                        status_idx = headers.index("státusz")
+                    except ValueError:
+                        try:
+                            status_idx = headers.index("status")
+                        except ValueError:
+                            status_idx = 6
+                            
+                    # Kiküldés dátuma (H oszlop alapértelmezetten a 8. oszlop, 0-alapú indexe: 7)
+                    date_idx = 7
+                    for idx, h in enumerate(headers):
+                        if "dátum" in h or "date" in h:
+                            date_idx = idx
+                            break
+                            
+                    for row in rows[1:]:
+                        if len(row) <= max(salon_idx, email_idx):
+                            continue
+                            
+                        salon_name = row[salon_idx].strip()
+                        raw_email = row[email_idx].strip()
+                        email = clean_email(raw_email)
+                        contact_name = row[contact_idx].strip() if contact_idx < len(row) else ""
+                        sheet_status = row[status_idx].strip() if status_idx < len(row) else ""
+                        send_date = row[date_idx].strip() if date_idx < len(row) else ""
+                        
+                        if email:
+                            contacts.append({
+                                "salon_name": salon_name or "Szalon",
+                                "email": email,
+                                "contact_name": contact_name or salon_name or "Szalon Vezető",
+                                "status": sheet_status,
+                                "send_date": send_date
+                            })
+                        elif raw_email and not raw_email.startswith("#"):
+                            print(f"Figyelmeztetés: Hibás e-mail cím átugorva: '{raw_email}' ({salon_name})")
+                    print(f"Sikeresen betöltve {len(contacts)} cím közvetlenül a Google Sheets-ből.")
+            except Exception as e:
+                print(f"Figyelmeztetés: Nem sikerült a Google Sheets API olvasás: {e}")
+                print("Visszalépés a publikus CSV export alapú letöltésre...")
+                contacts = []
+
+        # 2. Fallback a publikus CSV exportos URL-re, ha a Sheets API nem sikerült
+        if not contacts:
+            csv_url = get_csv_export_url(GOOGLE_SHEETS_URL)
+            print(f"Kapcsolatok letöltése Google Sheets-ről (CSV export): {csv_url} ...")
+            try:
+                res = requests.get(csv_url, timeout=15)
+                res.raise_for_status()
+                csv_content = res.content.decode('utf-8')
+                reader = csv.DictReader(csv_content.splitlines())
+                for row in reader:
+                    cleaned_row = {k.strip().lower(): v.strip() for k, v in row.items() if k}
+                    salon_name = (cleaned_row.get("salon_name") or 
+                                  cleaned_row.get("szalon_neve") or 
+                                  cleaned_row.get("szalon neve") or 
+                                  cleaned_row.get("szalon"))
+                    
+                    raw_email = cleaned_row.get("email") or cleaned_row.get("e-mail")
+                    email = clean_email(raw_email)
+                    
+                    contact_name = (cleaned_row.get("contact_name") or 
+                                    cleaned_row.get("kapcsolattartó") or 
+                                    cleaned_row.get("kapcsolattartó    "))
+                    
+                    sheet_status = (cleaned_row.get("státusz") or 
+                                    cleaned_row.get("status") or "").strip()
+                    
+                    # Dátum kinyerése a CSV-ből
+                    send_date = ""
+                    for k, v in cleaned_row.items():
+                        if "dátum" in k or "date" in k:
+                            send_date = v.strip()
+                            break
+                    
+                    if email:
+                        contacts.append({
+                            "salon_name": salon_name or "Szalon",
+                            "email": email,
+                            "contact_name": contact_name or salon_name or "Szalon Vezető",
+                            "status": sheet_status,
+                            "send_date": send_date
+                        })
+                    elif raw_email and not raw_email.startswith("#"):
+                        print(f"Figyelmeztetés: Hibás e-mail cím átugorva: '{raw_email}' ({salon_name})")
+                print(f"Sikeresen betöltve {len(contacts)} cím Google Sheets-ről (CSV export).")
+            except Exception as e:
+                print(f"HIBA a Google Sheets letöltése közben: {e}")
+                print("Visszalépés a helyi contacts.csv fájlra...")
+                contacts = []
 
     # Ha a Google Sheets sikertelen volt vagy nincs beállítva, a helyi CSV-t olvassuk
     if not contacts:
@@ -300,36 +478,57 @@ def run_campaign():
         status_lower = sheet_status.lower()
         
         if campaign_type == "initial":
-            # Első megkeresés: Csak akkor küldjük, ha még nincs semmilyen státusza (üres)
-            if not status_lower:
+            # Első megkeresés: Csak a "0. gyűjtés" státuszúaknak küldjük
+            if status_lower in ("0. gyűjtés", "0. gyujtes"):
                 status = "Küldendő (Új megkeresés)"
                 active_contacts.append(contact)
             elif "érdeklődik" in status_lower:
                 status = f"Már érdeklődik: '{sheet_status}' (Kihagyva)"
                 skipped_count += 1
-            elif "küldött" in status_lower or "sent" in status_lower or "followup" in status_lower:
+            elif "kiküldve" in status_lower or "sent" in status_lower or "follow-up" in status_lower or "followup" in status_lower:
                 status = f"Már kapott levelet: '{sheet_status}' (Kihagyva)"
                 skipped_count += 1
             else:
-                # Bármi egyéb nem-üres státusz esetén is inkább kihagyjuk biztonságból
-                status = f"Egyedi státusz: '{sheet_status}' (Kihagyva)"
+                status = f"Egyedi státusz: '{sheet_status}' (Kihagyva - nem '0. gyűjtés')"
                 skipped_count += 1
         else:
-            # Követő levél (followup): Csak akkor küldjük, ha a státusz pontosan "1. küldött"
-            if status_lower == "1. küldött":
-                status = "Küldendő (Követő levél)"
-                active_contacts.append(contact)
-            elif "érdeklődik" in status_lower:
-                status = f"Már érdeklődik: '{sheet_status}' (Kihagyva)"
-                skipped_count += 1
-            elif "followup" in status_lower:
+            # Követő levél (followup): Csak akkor küldjük, ha a státusz pontosan "1. kiküldve" ÉS eltelt 72 óra
+            if status_lower == "1. kiküldve":
+                send_date_str = contact.get("send_date", "").strip()
+                if not send_date_str:
+                    status = "Nincs kiküldési dátum (Kihagyva)"
+                    skipped_count += 1
+                else:
+                    try:
+                        # Dátum normalizálása és parse-olása
+                        date_str_clean = send_date_str.replace(".", "-").replace("/", "-").strip()
+                        if len(date_str_clean) >= 19:
+                            send_dt = datetime.datetime.strptime(date_str_clean[:19], "%Y-%m-%d %H:%M:%S")
+                        elif len(date_str_clean) >= 16:
+                            send_dt = datetime.datetime.strptime(date_str_clean[:16], "%Y-%m-%d %H:%M")
+                        else:
+                            send_dt = datetime.datetime.strptime(date_str_clean[:10], "%Y-%m-%d")
+                            
+                        now_dt = datetime.datetime.now()
+                        hours_elapsed = (now_dt - send_dt).total_seconds() / 3600.0
+                        
+                        if hours_elapsed >= 72.0:
+                            status = f"Küldendő (Követő levél - {hours_elapsed:.1f} órája kiküldve)"
+                            active_contacts.append(contact)
+                        else:
+                            status = f"Várólistás ({hours_elapsed:.1f}/72 óra telt el - Kihagyva)"
+                            skipped_count += 1
+                    except Exception:
+                        status = f"Hibás dátum formátum: '{send_date_str}' (Kihagyva)"
+                        skipped_count += 1
+            elif "follow-up" in status_lower or "followup" in status_lower:
                 status = f"Már kapott követőt: '{sheet_status}' (Kihagyva)"
                 skipped_count += 1
-            elif not status_lower:
-                status = "Nincs elküldött első levél (Kihagyva)"
+            elif status_lower.startswith("2."):
+                status = f"Már 2. fázisban van: '{sheet_status}' (Kihagyva)"
                 skipped_count += 1
             else:
-                status = f"Egyedi státusz: '{sheet_status}' (Kihagyva)"
+                status = f"Nem megfelelő státusz: '{sheet_status}' (Kihagyva)"
                 skipped_count += 1
                 
         print(f"[{i:02d}] {salon_name:<35} | {email:<35} | {status}")
@@ -429,6 +628,17 @@ def run_campaign():
                 print(" OK")
                 log_status = "SENT" if campaign_type == "initial" else "FOLLOWUP_SENT"
                 log_campaign_send(salon_name, email, log_status, message)
+                
+                # Google Sheet státusz frissítése
+                if campaign_type == "initial":
+                    sheet_status_val = "1. kiküldve"
+                    send_date_val = time.strftime("%Y-%m-%d %H:%M:%S")
+                else:
+                    sheet_status_val = "1.2. follow-up"
+                    send_date_val = None
+                    
+                update_sheet_status(email, sheet_status_val, send_date_val)
+                
                 success_count += 1
             else:
                 print(f" HIBA ({message})")
