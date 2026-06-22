@@ -24,7 +24,7 @@ SMTP_SERVER   = "smtp.gmail.com"
 SMTP_PORT     = 465
 SENDER_EMAIL  = "vitasteps.team@gmail.com"
 SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
-DRY_RUN       = True   # Ha True → csak kilistázza, NEM küld és NEM ír vissza a Sheetbe
+DRY_RUN       = False   # Ha True → csak kilistázza, NEM küld és NEM ír vissza a Sheetbe
 
 # ===== GOOGLE SHEETS BEÁLLÍTÁSOK =====
 SHEET_ID        = os.getenv("GOOGLE_SHEET_ID")
@@ -77,6 +77,19 @@ def get_first_name(full_name: str) -> str:
     return parts[-1] if parts else full_name
 
 
+def _swap_block(html: str, start_tag: str, end_tag: str, keep: bool) -> str:
+    """Ha keep=True: megtartja a blokk tartalmát (kommentek nélkül).
+       Ha keep=False: teljesen eltávolítja a blokkot."""
+    if start_tag not in html or end_tag not in html:
+        return html
+    parts = html.split(start_tag)
+    before = parts[0]
+    inner_and_after = parts[1].split(end_tag)
+    inner = inner_and_after[0]
+    after = inner_and_after[1]
+    return before + (inner if keep else "") + after
+
+
 def make_shipping_link(name: str, email: str) -> str:
     """Szállítási oldal linkje prefill-el (név + email)."""
     base = "https://vitastepsss.vercel.app/szallitas.html"
@@ -114,6 +127,14 @@ def get_html_email(first_name: str, full_name: str, email: str, km: str, date: s
             before = parts[0]
             after = parts[1].split(end_tag)[1]
             html = before + no_action_html + after
+
+        # 2. lépés szöveg: "már megkaptuk" verzió megtartása, "amint megkapjuk" eltávolítása
+        html = _swap_block(html, "<!-- STEP_DELIVERY_HAS_ADDRESS_START -->", "<!-- STEP_DELIVERY_HAS_ADDRESS_END -->", keep=True)
+        html = _swap_block(html, "<!-- STEP_DELIVERY_NO_ADDRESS_START -->", "<!-- STEP_DELIVERY_NO_ADDRESS_END -->", keep=False)
+    else:
+        # Nincs cím: a "már megkaptuk" blokkot eltávolítjuk, az "amint megkapjuk" marad
+        html = _swap_block(html, "<!-- STEP_DELIVERY_HAS_ADDRESS_START -->", "<!-- STEP_DELIVERY_HAS_ADDRESS_END -->", keep=False)
+        html = _swap_block(html, "<!-- STEP_DELIVERY_NO_ADDRESS_START -->", "<!-- STEP_DELIVERY_NO_ADDRESS_END -->", keep=True)
 
     html = html.replace("{{FIRST_NAME}}", first_name)
     html = html.replace("{{KM_DISPLAY}}", km_display)
