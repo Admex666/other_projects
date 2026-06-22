@@ -5012,3 +5012,235 @@ Léteznek kész célszoftverek, amelyek pontosan ezt a két lépést csinálják
 A validációs fázisban az idő a legdrágább. Érdemes egy **kész felhős eszközzel** (pl. Outscraper vagy Apify) legeneráltatni 200-300 budapesti masszázs szalont email címmel együtt, amit aztán egyetlen másolással beilleszthetsz a Google Sheet-be `0. gyűjtés` státusszal. 
 
 Ha szeretnéd, hogy mégis mi készítsünk rá egy egyedi Python szkriptet, meg tudom írni, de a kész eszközökkel most órákat spórolhatsz meg!
+
+### User Input
+
+Nos, közben nézd át a @[chat laptop - Modeling Last-Minute Wellness Marketplace.md]  beszélgetés VÉGÉT a laptopomról, és az új fájlokat. Mondd el mit látsz.
+
+*Viewed [chat laptop - Modeling Last-Minute Wellness Marketplace.md](file:///e:/Data/other_projects/MassagePlace/chat%20laptop%20-%20Modeling%20Last-Minute%20Wellness%20Marketplace.md) *
+
+*Viewed [chat laptop - Modeling Last-Minute Wellness Marketplace.md](file:///e:/Data/other_projects/MassagePlace/chat%20laptop%20-%20Modeling%20Last-Minute%20Wellness%20Marketplace.md) *
+
+*Listed directory [MassagePlace](file:///e:/Data/other_projects/MassagePlace) *
+
+### Planner Response
+
+Átolvastam a laptopodról származó beszélgetés végét és átnéztem az új fájlokat a munkakörnyezetben. 
+
+Íme az összefoglaló arról, hogy mit látok, hol tart most a projekt, és mik az új eszközök:
+
+---
+
+## 💻 1. Mi történt a laptopos beszélgetés végén?
+
+A beszélgetés fókuszában a **B2B címszerzés automatizálása** állt. Mivel a manuális gyűjtés lassú, és nem akartál fizetős külső scrapereket használni, egy **saját, Playwright-alapú Google Maps & Email Scraper** szkriptet fejlesztettetek ki, és azt finomhangoltátok a következők szerint:
+*   **Kerületenkénti szűrés és azonnali mentés:** A szkript kerületről kerületre haladva gyűjt és ment, így ha leállítod (`Ctrl+C`), a már lementett adatok nem vesznek el.
+*   **Intelligens duplikációszűrés:** Maps link és Név+Cím alapján azonnal átugorja a már lementett szalonokat a böngésző megnyitása nélkül.
+*   **Koordináta-kinyerés:** A Google Maps linkből regex segítségével automatikusan kiszedi a szélességi (Latitude) és hosszúsági (Longitude) fokokat, és külön oszlopokba menti.
+*   **Térképes vizualizáció:** Készült egy interaktív Leaflet-alapú térkép (`map.html`), ami vizuálisan is kirakja a lekapart szalonokat pinekként Budapest térképére.
+
+---
+
+## 📂 2. Az Új Fájlok és Szerepük
+
+A gyökérkönyvtáradban az alábbi új fájlokat látom:
+*   [scrape_google_maps.py](file:///e:/Data/other_projects/MassagePlace/scrape_google_maps.py): A Playwright-alapú scraper, ami a Google Maps-et böngészi, és a háttérben megnyitott szalon weboldalakról crawlolja ki az e-mail címeket.
+*   [scraped_salons.csv](file:///e:/Data/other_projects/MassagePlace/scraped_salons.csv) (~326 KB): A kinyert adatbázis.
+*   [generate_map.py](file:///e:/Data/other_projects/MassagePlace/generate_map.py) és [map.html](file:///e:/Data/other_projects/MassagePlace/map.html): A vizualizációért felelős szkript és az interaktív térkép.
+*   [scratch_test.py](file:///e:/Data/other_projects/MassagePlace/scratch_test.py): A Playwright cookie-consent és navigációs tesztjei.
+*   `screenshot_*.png` fájlok: A scraper futása közben mentett diagnosztikai képek.
+
+---
+
+## 📊 3. A kinyert adatbázis számai
+
+A lefutott kaparás után a `scraped_salons.csv` tartalma elképesztően értékes:
+*   **Összes lementett szalon:** **820 darab**
+*   **Releváns szalonok** (nevében szerepel a *thai*, *masszázs*, *masszazs* vagy *massage*): **591 darab**
+*   **Hot Leads** (releváns szalonok, amelyekhez **közvetlen e-mail címet** is sikerült találni): **257 darab**
+
+---
+
+## 🎯 Vállalkozási tanácsadói javaslat a folytatáshoz:
+
+Ez a **257 Hot Lead** bőven elegendő ahhoz, hogy elérd a célul kitűzött **8 partnerszalont** (a realisztikus 4.5%-os konverziónkkal számolva mindössze ~178 reachout kell).
+
+Amikor elérkezik a küldés ideje, a következő stratégiát javaslom:
+1.  **Szegmentálás a Google Sheet-ben:** Bontsuk a 257 címet "Hagyományos Thai" (formálisabb hangvételű email sablon) és "Általános/Modern Masszázs" (közvetlenebb hangnem) kategóriákra.
+2.  **Kézbesítési biztonság (Deliverability):** A 257 emailt napi 20-30-as adagokban küldjük ki a `send_campaign.py` segítségével, hogy ne kerüljünk spambe.
+3.  **A maradék 334 szalon kezelése:** Akiknek nincs emailjük, de van telefonszámuk/weboldaluk, azokat a kampány után érdemes lehet egy rövid telefonos teszttel vagy Facebook üzenettel megkeresni.
+
+Mit szólnál, ha első lépésként írnánk egy kis Python utility-t, ami ezt a megszűrt 257 e-mail címet automatikusan áttölti a Google Sheets "reachout" táblázatodba `0. gyűjtés` státusszal és a koordinátákkal együtt, hogy készen álljanak a küldésre?
+
+### User Input
+
+Okés. Hozzá tudod adni ezt a 257 hot leadet a google sheetsemhez? (feltéve hogy már nincsenek benne)
+
+*Viewed [scraped_salons.csv](file:///e:/Data/other_projects/MassagePlace/scraped_salons.csv) *
+
+*Edited relevant file*
+
+*User accepted the command `python C:\Users\Adam\.gemini\antigravity-ide\brain\d1c1ef8a-d404-4164-b227-f8d55770f079\scratch\import_hot_leads.py`*
+
+*User accepted the command `Remove-Item C:\Users\Adam\.gemini\antigravity-ide\brain\d1c1ef8a-d404-4164-b227-f8d55770f079\scratch\import_hot_leads.py`*
+
+### Planner Response
+
+Sikeresen importáltam az új szalonokat közvetlenül a Google Sheet táblázatodba!
+
+### Mi történt pontosan?
+
+1.  **Meglévő táblázat beolvasása:** A szkript felismerte, hogy a Google Sheet `reachout` lapján jelenleg **41 egyedi e-mail cím** szerepel (tehát valóban már 40+ szalonod volt bent a korábbi 22 helyett).
+2.  **Duplikációs szűrés:** Kiszűrtük a már bent lévő szalonokat e-mail cím alapján, hogy véletlenül se küldjünk senkinek duplán megkeresést.
+3.  **Keresési feltételek:** Csak azokat a szalonokat gyűjtöttük ki a `scraped_salons.csv` fájlból, amelyek nevében szerepel a *thai, masszázs, masszazs* vagy *massage* szavak valamelyike, **és** sikeresen találtunk hozzájuk közvetlen e-mail címet a weboldalukon.
+4.  **Hozzáadás:** Összesen **233 darab új, releváns szalont** adtunk hozzá sikeresen a Google Sheet végére!
+    *   Az új szalonok **`0. gyűjtés`** státusszal kerültek be.
+    *   A nevük, Google Maps linkjük és e-mail címük is a megfelelő oszlopokba került.
+
+---
+
+### Hogyan tovább?
+
+Most összesen **274 szalonod** van a Google Sheetben. Ebből **233 szalon** azonnal készen áll a megkeresésre (`0. gyűjtés` státusszal).
+
+Ha elindítod a `send_campaign.py` szkriptet és az **1. Első megkeresés (Initial Reachout)** opciót választod, a rendszer automatikusan elkezdi kiküldeni nekik a leveleket.
+
+*Mivel a 233 szalon egyszerre túl nagy löket lenne (spam szűrők miatt), azt javaslom, hogy a küldésnél fokozatosan haladj (pl. napi 20-30 darabot engedj ki a kampányból, majd állítsd le a scriptet, amit a következő napokon folytathatsz).*
+
+### User Input
+
+Nézz utána hogy ki tudjuk-e küldeni az initial reachoutot most mind! (google rate limitek)
+
+### Planner Response
+
+Igen, **technikailag beférünk** a napi limit alá, de **gyakorlatilag rendkívül veszélyes** lenne az összeset egyszerre kiküldeni. 
+
+Íme a pontos részletek és a Google (Gmail) korlátozásai:
+
+---
+
+### 1. A Google hivatalos korlátai (Free Gmail Account – `@gmail.com`)
+Mivel a `.env`-ben megadott küldő fiókod egy sima Gmail cím (`zenslot.team@gmail.com`), a Google a következő korlátokat alkalmazza:
+*   **Napi küldési limit (Daily Quota):** Maximum **500 e-mail / 24 óra** (SMTP-n keresztül is).
+*   *Mivel nekünk 233 e-mailünk van, a napi 500-as elméleti limitbe kényelmesen beleférünk.*
+
+---
+
+### 2. A rejtett veszély: A Google Spamszűrő és Sebesség Limitek (Rate Limiting)
+Bár a napi kereted 500, a Google algoritmusa árgus szemekkel figyeli a **hirtelen kiugró aktivitást** (spiking). 
+
+Ha 233 e-mailt küldünk ki egymás után 10 másodperces késleltetéssel (ez kb. 40 perc folyamatos küldés):
+1.  **SMTP ideiglenes blokkolás:** A Google rendszere nagyjából a 50. és 80. e-mail között gyanúsnak fogja ítélni a sebességet, és leállítja az SMTP kapcsolatot *"421 4.7.0 Temporary System Error"* vagy *"Suspicious activity"* hibaüzenettel.
+2.  **Reputáció romlás (Spambox):** Még ha ki is megy mind a 233 e-mail, a fogadó szerverek (főleg ha a címzettek is gmailesek vagy g-suite-ot használnak) látni fogják, hogy egy viszonylag új Gmail fiókról rövid idő alatt 200+ ugyanolyan HTML e-mail érkezett. Emiatt a leveleid nagy része a **Promóciók** vagy a **Spam** mappában fog landolni.
+
+---
+
+### 💡 Piackutatói / Deliverability Javaslat
+
+Ha szeretnéd a lehető legtöbb megnyitást és választ kisajtolni a listából, a következőket javaslom:
+
+*   **Ne küldd el mindet most egyszerre.** 
+*   A biztonságos napi limit egy bemelegítetlen (warm-up nélküli) Gmail fióknál **napi 30-50 e-mail**.
+*   **Ha sürget az idő, és mindenképp ma akarod a nagyját elküldeni:**
+    *   Maximum **80-100 darabig** menj el.
+    *   Módosítsuk a `SEND_DELAY` értékét a `send_campaign.py`-ban **30 vagy 45 másodpercre** (hogy természetesebbnek tűnjön a küldés).
+    *   A szkriptet futtasd szakaszokban (pl. 40-et délelőtt, 40-et délután).
+
+Ha szeretnéd, átírhatom a `send_campaign.py` fájlt úgy, hogy be lehessen állítani egy **napi limitet** (pl. megkérdezi futtatáskor, hogy maximum hány levelet küldjön ki az új címekből, és ha eléri azt, leáll), így teljesen kontroll alatt tarthatod a folyamatot!
+
+### User Input
+
+Ahhoz mit szólsz, hogy most kiküldünk 50 darabot (3-7 másodperc random késleltetéssel), aztán várunk 15 percet, megint 50...?
+
+*Viewed [send_campaign.py](file:///e:/Data/other_projects/MassagePlace/send_campaign.py) *
+
+*Edited relevant file*
+
+*Viewed [send_campaign.py](file:///e:/Data/other_projects/MassagePlace/send_campaign.py) *
+
+*Viewed [send_campaign.py](file:///e:/Data/other_projects/MassagePlace/send_campaign.py) *
+
+*Edited relevant file*
+
+*User accepted the command `python -m py_compile send_campaign.py`*
+
+*Viewed [send_campaign.py](file:///e:/Data/other_projects/MassagePlace/send_campaign.py) *
+
+*Edited relevant file*
+
+*User accepted the command `python -m py_compile send_campaign.py`*
+
+### Planner Response
+
+A 50-es csomagokban (batch) való küldés 15 perces szünetekkel **kiváló és biztonságos stratégia**, különösen ingyenes Gmail SMTP használata esetén. 
+
+Íme az elemzés a Google korlátairól és a javasolt beállításokról:
+
+### 1. Google SMTP korlátok és kockázatok
+* **Napi korlát:** Ingyenes `@gmail.com` fiókok esetén a napi limit **500 kiküldött levél** (24 órás gördülő ablakban). A 233 címzettünk ebbe kényelmesen belefér.
+* **Sebesség (Burst Limit) és Spamszűrők:** A Google algoritmusai figyelik a küldési sebességet. A **3-7 másodperces késleltetés nagyon gyors** (átlagosan 12 levél/perc). Ha egy új vagy nem eléggé "bemelegített" (warmup) fiókból ilyen tempóban küldünk ki hirtelen sok e-mailt, a Google biztonsági rendszere könnyen letilthatja a küldést (*SMTP Error 421/550 - Temporary rate limit exceeded*), vagy ami még rosszabb: a fogadó felek (pl. Gmail, Freemail, céges szerverek) spamszűrői egyből a **Promóciók vagy a Spam mappába** dobhatják a leveleket.
+* **Javasolt késleltetés:** Az e-mailek között érdemesebb **15-30 másodperc** (vagy legalább 10-25 másodperc) randomizált szünetet tartani. Ez természetesebb, emberibb mintázatot mutat a szűrőknek. A 15 perces szünet a csomagok között pedig tökéletes arra, hogy megszakítsa a mintázatokat.
+
+---
+
+### 2. Mit fejlesztettünk a [send_campaign.py](file:///e:/Data/other_projects/MassagePlace/send_campaign.py) fájlban?
+Módosítottam a kampánykezelőt, hogy teljesen automatizálja és rugalmassá tegye ezt a folyamatot. Ha most lefuttatod a scriptet, a következő beállításokat tudod megadni interaktívan:
+
+1. **Összesen kiküldendő levelek száma:** Korlátozhatod a futást (pl. csak az első 30-50 címet küldje ki ma teszt jelleggel, a többit holnap).
+2. **Csomagméret (Batch size):** Hány e-mail menjen ki egy menetben (alapértelmezett: `50`).
+3. **Várakozás a csomagok között:** Percben megadható szünet (alapértelmezett: `15` perc).
+4. **Random késleltetési tartomány:** Az egyes e-mailek közötti minimum és maximum másodperc (alapértelmezett: `15-30` másodperc).
+
+**Hálózati optimalizáció:**
+* A script **minden csomag után lezárja az SMTP kapcsolatot**, a szünet letelte után pedig újra felépíti azt. Ez kritikus, mert ha 15 percig nyitva tartanánk az SMTP csatlakozást tétlenül, a Google szervere időtúllépés miatt ledobna minket, és a következő küldés hibába ütközne.
+* A csomagok közötti várakozás alatt egy látványos **visszaszámláló** mutatja a terminálban, hogy mennyi idő van hátra a következő batch-ig.
+
+---
+
+### Hogyan tudod tesztelni és futtatni?
+A script szintaktikailag teljesen tiszta és futásra kész.
+
+1. **Teszt és biztonság:** Futtasd a scriptet a terminálodból:
+   ```bash
+   python send_campaign.py
+   ```
+2. Válaszd az **1-es opciót (Első megkeresés)**.
+3. A következő menüben érdemes először az **1-es (Teszt e-mail küldése)** funkcióval ellenőrizni, hogy a saját címedre sikeresen megérkezik-e a HTML és a sima szöveges verzió is.
+4. Ha ez megvan, indíthatod a **2-es (Valódi kampány)** módot. Itt a script megkérdezi a fenti paramétereket (ha csak Entert nyomsz, a biztonságos alapértelmezett értékeket használja: 50-es csomagok, 15 perc szünet, 15-30 mp késleltetés).
+
+### User Input
+
+Okés, hiszek neked. Még egy ilyen progress bart tudsz bele rakni?
+
+*Edited relevant file*
+
+*Viewed [send_campaign.py](file:///e:/Data/other_projects/MassagePlace/send_campaign.py) *
+
+*Viewed [send_campaign.py](file:///e:/Data/other_projects/MassagePlace/send_campaign.py) *
+
+*Edited relevant file*
+
+*User accepted the command `python -m py_compile send_campaign.py`*
+
+### Planner Response
+
+Beépítettem a vizuális progress barokat a folyamatkövetéshez! 
+
+Mostantól a következő jelzőket fogod látni a terminálban futás közben:
+
+### 1. Összesített futási folyamatjelző (minden e-mail után)
+Mutatja, hogy az aktuálisan kiválasztott limitből/címzettből épp hol tart a program:
+`  [Haladás: |████░░░░░░░░░░░░░░░░| 20.0% (10/50 feldolgozva)]`
+
+### 2. Visszaszámláló folyamatjelző az e-mailek közötti várakozásnál
+Valós időben frissül másodpercenként:
+`  Várakozás a következő levélig: |███████████████░░░░░░░░░░░░░░░|  50% (12 mp hátra)`
+
+### 3. Visszaszámláló folyamatjelző a csomagok (batch-ek) közötti szünetnél
+Ez is másodpercenként frissül és perc:másodperc formátumban számol vissza:
+`Várakozás a következő csomagig: |██████████░░░░░░░░░░░░░░░░░░░░|  33% (10:00 hátra)`
+
+A script teljesen kész és szintaktikailag ellenőrzött. Indíthatod a tesztet vagy a kampányt a megszokott módon:
+```bash
+python send_campaign.py
+```

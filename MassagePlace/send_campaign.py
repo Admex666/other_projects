@@ -2,6 +2,7 @@ import os
 import csv
 import sys
 import time
+import random
 import datetime
 import smtplib
 import urllib.parse
@@ -34,8 +35,9 @@ GOOGLE_SHEETS_URL = os.getenv("GOOGLE_SHEETS_URL")
 # A Vercel partner landing page alap címe (ide irányítjuk őket)
 BASE_URL = os.getenv("BASE_URL", "https://zenslot.vercel.app/partner")
 
-# Késleltetés az e-mailek küldése között (másodpercben), hogy elkerüljük a spam szűrőket
-SEND_DELAY = 10
+# Alapértelmezett késleltetési tartomány az e-mailek küldése között (másodpercben)
+MIN_DELAY = 15
+MAX_DELAY = 30
 
 # CSV fájlok nevei (ha nem a Google Sheets-et használod)
 CONTACTS_FILE = "contacts.csv"
@@ -432,6 +434,31 @@ def load_contacts():
         
     return contacts
 
+def countdown_bar(seconds, label="Várakozás"):
+    """Megjelenít egy visszaszámlálót folyamatjelző sávval (progress bar)."""
+    if seconds <= 0:
+        return
+    bar_length = 30
+    total = seconds
+    for remaining in range(seconds, -1, -1):
+        elapsed = total - remaining
+        filled_length = int(bar_length * elapsed // total) if total > 0 else bar_length
+        bar = '█' * filled_length + '░' * (bar_length - filled_length)
+        percent = (elapsed / total) * 100 if total > 0 else 100
+        
+        # Idő formázása
+        if total >= 60:
+            rem_mins, rem_secs = divmod(remaining, 60)
+            time_str = f"{rem_mins:02d}:{rem_secs:02d}"
+        else:
+            time_str = f"{remaining} mp"
+            
+        sys.stdout.write(f"\r{label}: |{bar}| {percent:3.0f}% ({time_str} hátra)   ")
+        sys.stdout.flush()
+        if remaining > 0:
+            time.sleep(1)
+    print()
+
 def run_campaign():
     global DRY_RUN
     check_config()
@@ -560,12 +587,53 @@ def run_campaign():
         # Kikényszerítjük a küldést teszt módban
         DRY_RUN = False
         skipped_count = 0  # tesztben nincs skippelt cím
+        batch_size = 1
+        max_total = 1
+        min_del = 1
+        max_del = 1
+        pause_min = 0
     elif choice == "2":
         if not active_contacts:
             print("\nNincs küldendő e-mail cím a listában. A kampány leáll.")
             return
         
+        print(f"\nKüldendő e-mailek száma összesen: {len(active_contacts)}")
+        
+        # Batch konfiguráció bekérése a felhasználótól
+        try:
+            max_total_str = input(f"Összesen hány e-mailt küldjünk ki ebben a futásban? (Alapértelmezett: {len(active_contacts)}): ").strip()
+            max_total = int(max_total_str) if max_total_str else len(active_contacts)
+            
+            batch_size_str = input("Csomagméret (Hány e-mail menjen ki egy menetben? Alapértelmezett: 50): ").strip()
+            batch_size = int(batch_size_str) if batch_size_str else 50
+            
+            pause_min_str = input("Várakozás a csomagok között (percben? Alapértelmezett: 15): ").strip()
+            pause_min = int(pause_min_str) if pause_min_str else 15
+            
+            min_del_str = input(f"Minimális késleltetés e-mailek között (másodperc? Alapértelmezett: {MIN_DELAY}): ").strip()
+            min_del = int(min_del_str) if min_del_str else MIN_DELAY
+            
+            max_del_str = input(f"Maximális késleltetés e-mailek között (másodperc? Alapértelmezett: {MAX_DELAY}): ").strip()
+            max_del = int(max_del_str) if max_del_str else MAX_DELAY
+            
+            if min_del > max_del:
+                min_del, max_del = max_del, min_del
+        except ValueError:
+            print("\nHibás érték, alapértelmezett biztonságos beállítások használata.")
+            max_total = len(active_contacts)
+            batch_size = 50
+            pause_min = 15
+            min_del = MIN_DELAY
+            max_del = MAX_DELAY
+        except KeyboardInterrupt:
+            print("\nKüldés megszakítva.")
+            return
+
+        # Korlátozzuk a küldendő listát a megadott maximumra
+        active_contacts = active_contacts[:max_total]
+        
         print(f"\nBIZTONSÁGI MEGERŐSÍTÉS: Valóban el akarod küldeni a következőt: {campaign_type.upper()} kampány {len(active_contacts)} címzettnek?")
+        print(f"Konfiguráció: {batch_size} db-os csomagok, {pause_min} perc szünet, {min_del}-{max_del} mp random késleltetés.")
         print("A folytatáshoz írd be pontosan azt, hogy: Biztos!")
         try:
             confirm = input("Megerősítés: ").strip()
@@ -581,83 +649,111 @@ def run_campaign():
         print("\nKilépés...")
         return
 
-    smtp_session = None
-    if not DRY_RUN:
-        print("Csatlakozás az SMTP szerverhez...")
-        try:
-            if SMTP_PORT == 465:
-                smtp_session = smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT)
-            else:
-                smtp_session = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
-                smtp_session.starttls()
-            
-            smtp_session.login(SMTP_USER, SMTP_PASSWORD)
-            print("Sikeres SMTP bejelentkezés.")
-        except Exception as e:
-            print(f"HIBA az SMTP csatlakozás során: {e}")
-            sys.exit(1)
-
     success_count = 0
     failed_count = 0
 
-    for i, contact in enumerate(active_contacts, 1):
-        salon_name = contact["salon_name"]
-        email = contact["email"]
+    # Felosztás csomagokra
+    batches = [active_contacts[i:i + batch_size] for i in range(0, len(active_contacts), batch_size)]
+    total_batches = len(batches)
+
+    for b_idx, batch in enumerate(batches, 1):
+        print(f"\n=== CSOMAG INDÍTÁSA: {b_idx}/{total_batches} ({len(batch)} e-mail) ===")
         
-        personalized_url = generate_personalized_url(salon_name, email)
-        
-        if DRY_RUN:
-            print(f"\n[{i}/{len(active_contacts)}] [DRY-RUN ELŐNÉZET] Címzett: {salon_name} <{email}>")
-            print(f"Tárgy: {email_subject}")
-            print(f"Személyre szabott gomb linkje: {personalized_url}")
-            print("-" * 40)
-            preview_body = txt_template.format(
-                salon_name=salon_name,
-                sender_name=SENDER_NAME,
-                personalized_url=personalized_url
-            )
-            print(preview_body)
-            print("=" * 40)
-            log_campaign_send(salon_name, email, f"DRY_RUN_PREVIEW_{campaign_type.upper()}", personalized_url)
-            success_count += 1
-        else:
-            print(f"[{i}/{len(active_contacts)}] Küldés: {salon_name} <{email}>...", end="", flush=True)
-            success, message = send_email(smtp_session, salon_name, email, personalized_url, html_template, txt_template, email_subject)
-            
-            if success:
-                print(" OK")
-                log_status = "SENT" if campaign_type == "initial" else "FOLLOWUP_SENT"
-                log_campaign_send(salon_name, email, log_status, message)
-                
-                # Google Sheet státusz frissítése
-                if campaign_type == "initial":
-                    sheet_status_val = "1. kiküldve"
-                    send_date_val = time.strftime("%Y-%m-%d %H:%M:%S")
+        smtp_session = None
+        if not DRY_RUN:
+            print("Csatlakozás az SMTP szerverhez...")
+            try:
+                if SMTP_PORT == 465:
+                    smtp_session = smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT)
                 else:
-                    sheet_status_val = "1.2. follow-up"
-                    send_date_val = None
-                    
-                update_sheet_status(email, sheet_status_val, send_date_val)
+                    smtp_session = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
+                    smtp_session.starttls()
                 
+                smtp_session.login(SMTP_USER, SMTP_PASSWORD)
+                print("Sikeres SMTP bejelentkezés.")
+            except Exception as e:
+                print(f"HIBA az SMTP csatlakozás során: {e}")
+                print("A kampány leáll.")
+                break
+
+        for i, contact in enumerate(batch, 1):
+            salon_name = contact["salon_name"]
+            email = contact["email"]
+            
+            personalized_url = generate_personalized_url(salon_name, email)
+            
+            if DRY_RUN:
+                print(f"\n[Csomag {b_idx}, {i}/{len(batch)}] [DRY-RUN ELŐNÉZET] Címzett: {salon_name} <{email}>")
+                print(f"Tárgy: {email_subject}")
+                print(f"Személyre szabott gomb linkje: {personalized_url}")
+                print("-" * 40)
+                preview_body = txt_template.format(
+                    salon_name=salon_name,
+                    sender_name=SENDER_NAME,
+                    personalized_url=personalized_url
+                )
+                print(preview_body)
+                print("=" * 40)
+                log_campaign_send(salon_name, email, f"DRY_RUN_PREVIEW_{campaign_type.upper()}", personalized_url)
                 success_count += 1
             else:
-                print(f" HIBA ({message})")
-                log_status = "FAILED" if campaign_type == "initial" else "FOLLOWUP_FAILED"
-                log_campaign_send(salon_name, email, log_status, message)
-                failed_count += 1
+                print(f"[Csomag {b_idx}, {i}/{len(batch)}] Küldés: {salon_name} <{email}>...", end="", flush=True)
+                success, message = send_email(smtp_session, salon_name, email, personalized_url, html_template, txt_template, email_subject)
+                
+                if success:
+                    print(" OK")
+                    log_status = "SENT" if campaign_type == "initial" else "FOLLOWUP_SENT"
+                    log_campaign_send(salon_name, email, log_status, message)
+                    
+                    # Google Sheet státusz frissítése
+                    if campaign_type == "initial":
+                        sheet_status_val = "1. kiküldve"
+                        send_date_val = time.strftime("%Y-%m-%d %H:%M:%S")
+                    else:
+                        sheet_status_val = "1.2. follow-up"
+                        send_date_val = None
+                        
+                    update_sheet_status(email, sheet_status_val, send_date_val)
+                    
+                    success_count += 1
+                else:
+                    print(f" HIBA ({message})")
+                    log_status = "FAILED" if campaign_type == "initial" else "FOLLOWUP_FAILED"
+                    log_campaign_send(salon_name, email, log_status, message)
+                    failed_count += 1
 
-            # Késleltetés a levelek között (kivéve az utolsónál)
-            if i < len(active_contacts):
-                time.sleep(SEND_DELAY)
+            # Összesített haladás kijelzése
+            processed_so_far = success_count + failed_count
+            total_to_send = len(active_contacts)
+            bar_len = 20
+            filled_len = int(bar_len * processed_so_far // total_to_send) if total_to_send > 0 else bar_len
+            run_bar = '█' * filled_len + '░' * (bar_len - filled_len)
+            run_percent = (processed_so_far / total_to_send) * 100 if total_to_send > 0 else 100
+            print(f"  [Haladás: |{run_bar}| {run_percent:.1f}% ({processed_so_far}/{total_to_send} feldolgozva)]")
 
-    if smtp_session:
-        smtp_session.quit()
+            # Késleltetés a levelek között a csomagon belül
+            if i < len(batch):
+                delay = random.randint(min_del, max_del)
+                countdown_bar(delay, label="  Várakozás a következő levélig")
+
+        if smtp_session:
+            try:
+                smtp_session.quit()
+                print("SMTP kapcsolat lezárva.")
+            except Exception:
+                pass
+
+        # Ha van még hátra csomag, várunk a megadott ideig
+        if b_idx < total_batches:
+            print()
+            countdown_bar(pause_min * 60, label="Várakozás a következő csomagig")
+            print("Szünet vége. Indul a következő csomag.")
 
     print("\n" + "=" * 60)
     print("                      KAMPÁNY ÖSSZEGZÉS")
     print("=" * 60)
     print(f"Kihagyott címek (már elküldve/nem releváns): {skipped_count}")
-    print(f"Feldolgozott új címek: {len(active_contacts)}")
+    print(f"Feldolgozott új címek: {success_count + failed_count}")
     print(f"Sikeres: {success_count}")
     print(f"Sikertelen: {failed_count}")
     print(f"Küldési napló frissítve ide: {LOG_FILE}")
