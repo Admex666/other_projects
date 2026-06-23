@@ -25,6 +25,34 @@
 | **06.19.** | 87 732 | 90 405 | 43 456 | 21 | 65 | 512 (7 nap) | 599 (7 nap) | 88% |
 | **06.20.** | 91 365 | 92 731 | 44 349 | 22 | 65 | 65 | 75 | 89% |
 | **06.21.** | 95 122 | 95 352 | 45 490 | 22 | 65 | 62 | 70 | 90% |
+| **06.23.** | 103 632 | 101 051 | 47 554 | 23 | 66 | 42 | 44 | 95% |
+
+### 🏆 Kampányzárás & Összegzés (06.23. - Dél)
+**A kampány utolsó szakaszának értékelése (Záró 48 óra):**
+Az elmúlt 24-48 órában a kampány lezárult. Összesen **8 510 Ft**-ot költöttünk el az utolsó szakaszban (+ÁFA). Ezalatt a Facebook Ads Manager szerint **+1 vásárlás** történt (22 -> 23), és a Stripe-ban is **+1 új kifizetés** realizálódott (65 -> 66).
+- **Konverziós mutatók az utolsó 24 órában:**
+  - **Napi látogatók száma:** **42** – jelentős visszaesés a korábbi napokhoz képest.
+  - **Bounce Rate:** **95%** – rendkívül magas, a látogatók szinte azonnal elhagyták az oldalt.
+  - **CPA az utolsó napokban:** **~8 510 Ft / vásárlás** – ez a szakasz önmagában már veszteséges volt (a nevezési díj 7 990 Ft). A célközönség teljesen telítődött.
+
+**Összesített kampány értékelés (Másolat kampány - 06.05. és 06.23. között):**
+- **Összköltés:** **103 632 Ft** nettó (+ÁFA, azaz ~131 612 Ft bruttó).
+- **Facebook Ads vásárlások:** **23 db** (attribúció szerint).
+- **Stripe fizetések növekménye:** **+18 db** (48 -> 66).
+- **Valós ROAS (Stripe alapján):** **1,39** (18 db × 7 990 Ft = 143 820 Ft bruttó bevétel / 103 632 Ft nettó költés). A kampány önmagában a közvetlen ad-spend szintjén épphogy nullszaldó felett zárt.
+- **CPA (Stripe alapján):** **~5 757 Ft / vásárló** (szemben az első fázis ~1 370 Ft-os CPA-jával).
+
+**A teljes projekt összesített mérlege (05.20. - 06.23.):**
+- **Teljes hirdetési költés:** **148 480 Ft** nettó (~188 569 Ft bruttó ÁFÁ-val).
+- **Teljes Stripe fizetések száma:** **66 db** (ebből a hirdetések alatt +44 új vásárló konvertált).
+- **Teljes bevétel:** **527 340 Ft** (ebből a hirdetések alatti közvetlen bevétel: 351 560 Ft).
+- **Teljes projekt ROAS (új bevételekre vetítve):** **2,37** nettó költésre vetítve (**1,86** bruttó költésre).
+- **Éremkészlet státusz:** A 100 db limitált éremből **66 db sikeresen gazdára talált** (66%-os értékesítési arány). A megmaradt 34 db érem raktárkészletként megmarad a következő kampányhoz.
+
+**Főbb tanulságok a jövőre nézve:**
+1. **Szűk célközönség korlátja (Ad Fatigue):** A Prédikálószék mint lokális és specifikus hegyi futás nagyon szűk célközönséget vonz. A hirdetési frekvencia elérte a **2,12**-t, ami azt jelenti, hogy a potenciális futók/túrázók szinte mindegyike többször is találkozott a hirdetéssel. A 2-3 hétnél hosszabb kampányok ebben a niche-ben nem fenntarthatók gazdaságosan.
+2. **FOMO és Sürgősség korlátai:** Bár a záró szakaszban hangsúlyoztuk a határidőt, a telített piacon ez már nem tudott új konverziós hullámot indítani, a CPA megemelkedett.
+3. **Csomagautomata bevezetés hatása:** A szállítási adatok rugalmasabb kezelése (Foxpost/csomagautomata) segített a korábbi fázisokban a konverzió növelésében, ezt a jövőben is meg kell tartani.
 
 ### 💡 Aktuális Stratégia & Fókusz (06.21.)
 **Az elmúlt 24 óra értékelése (Vasárnapi mélyponttal a záróhajrá előtt):**
