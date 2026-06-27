@@ -196,6 +196,16 @@ def share_family_name(name1, name2):
 
 def main():
     st.title("🏔️ VitaSteps Logisztikai Dashboard & Elemző")
+    # Sidebar
+    st.sidebar.header("⚙️ Beállítások & Műveletek")
+    if st.sidebar.button("🔄 Google Sheets Adatok Frissítése", use_container_width=True):
+        st.cache_data.clear()
+        st.success("Adatok frissítve!")
+        st.rerun()
+        
+    st.sidebar.markdown("---")
+    st.sidebar.markdown(f"**Aktív Google Sheet:**\n`...{SHEET_ID[-6:] if SHEET_ID else ''}`")
+    
     st.markdown("---")
     
     # Check setup files
@@ -299,7 +309,7 @@ def main():
             "locker_code": resolved_code,
             "completed": bool(teljesitve),
             "completion_date": teljesitve,
-            "shipped": kikuldve in ("igen", "yes"),
+            "shipped": bool(kikuldve) and kikuldve.lower() not in ("", "#n/a", "#name?", "#value!", "nem", "no", "false", "0"),
             "comment": comment,
             "tally_comment": tally_comment,
             "egyutt_kuldve": egyutt_kuldve,
@@ -374,11 +384,23 @@ def main():
             "ermek_szama": r["ermek_szama"]
         })
 
+    # If any runner in a shipment group has shipped == True, mark all runners in that group as shipped == True
+    shipped_groups = set()
+    for r in all_runners:
+        key = r["primary_buyer"] if (r["is_sub_order"] and r["primary_buyer"]) else r["email"]
+        if r["shipped"]:
+            shipped_groups.add(key)
+            
+    for r in all_runners:
+        key = r["primary_buyer"] if (r["is_sub_order"] and r["primary_buyer"]) else r["email"]
+        if key in shipped_groups:
+            r["shipped"] = True
+
     # Segmenting runners
-    # Group 1: Completed + All data OK
-    group1 = [r for r in all_runners if r["completed"] and r["all_data_ok"]]
-    # Group 2: Completed + Incomplete data
-    group2 = [r for r in all_runners if r["completed"] and not r["all_data_ok"]]
+    # Group 1: Completed + All data OK + Not shipped
+    group1 = [r for r in all_runners if r["completed"] and r["all_data_ok"] and not r["shipped"]]
+    # Group 2: Completed + Incomplete data + Not shipped
+    group2 = [r for r in all_runners if r["completed"] and not r["all_data_ok"] and not r["shipped"]]
     # Group 3: Not completed + Has data (at least phone or point)
     group3 = [r for r in all_runners if not r["completed"] and (r["phone"] or r["point_description"])]
     # Group 4: Not completed + No data
@@ -428,8 +450,8 @@ def main():
         completed_unshipped = [m for m in completed_members if not m["shipped"]]
         completed_unshipped_count = len(completed_unshipped)
         
-        # Show package if there's at least one completed runner in the group
-        if completed_count > 0:
+        # Show package if there's at least one completed unshipped runner in the group
+        if completed_unshipped_count > 0:
             member_desc_list = []
             for m in members:
                 status_icon = "🟢" if m["completed"] else "🔴"
@@ -483,39 +505,39 @@ def main():
     
     with m_col1:
         st.markdown(f"""
-        <div class="matrix-card">
-            <div class="matrix-header">🟢 Teljesített + Minden adat megvan</div>
-            <div class="matrix-val">{len(group1)} fő</div>
-            <div class="matrix-sub">Ők teljesítették a távot és minden adatuk (tel., cím, kód) megvan a postázáshoz.</div>
+        <div class="matrix-card" style="background: #d4fc34; border: 1px solid #b2db16;">
+            <div class="matrix-header" style="color: #000000; font-weight: bold;">🟢 Teljesített + Minden adat megvan</div>
+            <div class="matrix-val" style="color: #000000; font-weight: 800;">{len(group1)} fő</div>
+            <div class="matrix-sub" style="color: #222222;">Ők teljesítették a távot és minden adatuk (tel., cím, kód) megvan a postázáshoz.</div>
         </div>
         """, unsafe_allow_html=True)
         
         st.markdown("<div style='margin-top: 1.5rem;'></div>", unsafe_allow_html=True)
         
         st.markdown(f"""
-        <div class="matrix-card" style="border-color: rgba(255,255,255,0.08); background: rgba(255,255,255,0.01);">
-            <div class="matrix-header" style="color: #cccccc;">⚪ Nem teljesített + Van adata</div>
-            <div class="matrix-val" style="color: #dddddd;">{len(group3)} fő</div>
-            <div class="matrix-sub">Ők még nem fejezték be a futást, de már adtak meg szállítási adatokat.</div>
+        <div class="matrix-card" style="background: #f3f4f6; border: 1px solid #e5e7eb;">
+            <div class="matrix-header" style="color: #000000; font-weight: bold;">⚪ Nem teljesített + Van adata</div>
+            <div class="matrix-val" style="color: #000000; font-weight: 800;">{len(group3)} fő</div>
+            <div class="matrix-sub" style="color: #222222;">Ők még nem fejezték be a futást, de már adtak meg szállítási adatokat.</div>
         </div>
         """, unsafe_allow_html=True)
         
     with m_col2:
         st.markdown(f"""
-        <div class="matrix-card" style="background: rgba(255, 193, 7, 0.02); border-color: rgba(255, 193, 7, 0.25);">
-            <div class="matrix-header" style="color: #ffc107;">🟡 Teljesített + Hiányos adatok</div>
-            <div class="matrix-val" style="color: #ffc107;">{len(group2)} fő</div>
-            <div class="matrix-sub">Kiküldhető lenne az érmük, de hiányzik a telefonszámuk vagy a csomagpontjuk.</div>
+        <div class="matrix-card" style="background: #fef08a; border: 1px solid #fde047;">
+            <div class="matrix-header" style="color: #000000; font-weight: bold;">🟡 Teljesített + Hiányos adatok</div>
+            <div class="matrix-val" style="color: #000000; font-weight: 800;">{len(group2)} fő</div>
+            <div class="matrix-sub" style="color: #222222;">Kiküldhető lenne az érmük, de hiányzik a telefonszámuk vagy a csomagpontjuk.</div>
         </div>
         """, unsafe_allow_html=True)
         
         st.markdown("<div style='margin-top: 1.5rem;'></div>", unsafe_allow_html=True)
         
         st.markdown(f"""
-        <div class="matrix-card" style="background: rgba(220, 53, 69, 0.02); border-color: rgba(220, 53, 69, 0.2);">
-            <div class="matrix-header" style="color: #dc3545;">🔴 Nem teljesített + Nincs adata</div>
-            <div class="matrix-val" style="color: #dc3545;">{len(group4)} fő</div>
-            <div class="matrix-sub">Még nem teljesítették a kihívást és semmilyen adatot nem adtak meg.</div>
+        <div class="matrix-card" style="background: #fee2e2; border: 1px solid #fca5a5;">
+            <div class="matrix-header" style="color: #000000; font-weight: bold;">🔴 Nem teljesített + Nincs adata</div>
+            <div class="matrix-val" style="color: #000000; font-weight: 800;">{len(group4)} fő</div>
+            <div class="matrix-sub" style="color: #222222;">Még nem teljesítették a kihívást és semmilyen adatot nem adtak meg.</div>
         </div>
         """, unsafe_allow_html=True)
         
@@ -738,6 +760,84 @@ def main():
                 st.success(f"Találat! Kód: **{res_code}** ({off_name})")
             else:
                 st.error("Nincs találat erre a címszövegre.")
+
+    st.markdown("---")
+    st.subheader("🖨️ Foxpost Címke Grid Készítő (85x85 -> A4 2x3)")
+    st.write("Ezzel a modullal a Foxpost oldaláról letöltött, oldalanként 1 db 85x85 mm-es címkét tartalmazó PDF-eket tudod összevonni egyetlen A4-es lapra, 2x3-as elrendezésben (szaggatott vágási segédvonalakkal).")
+
+    import glob
+    downloads_dir = r"C:\Users\Adam\Downloads"
+    pdf_files = glob.glob(os.path.join(downloads_dir, "cimkek-*.pdf"))
+    pdf_files.sort(key=os.path.getmtime, reverse=True)
+
+    if pdf_files:
+        latest_file = pdf_files[0]
+        st.write(f"Legutóbb talált címke PDF a Letöltésekben: `{os.path.basename(latest_file)}`")
+        selected_file = st.selectbox("Válassz címkefájlt az átalakításhoz:", pdf_files, format_func=os.path.basename)
+    else:
+        st.warning("Nem találtam `cimkek-*.pdf` fájlt a Letöltések mappádban.")
+        selected_file = st.text_input("Vagy add meg a PDF fájl pontos elérési útját:", "")
+
+    if selected_file and os.path.exists(selected_file):
+        col_pdf1, col_pdf2 = st.columns([1, 2])
+        with col_pdf1:
+            if st.button("🔗 Címkék Rendezése A4 Gridbe", use_container_width=True):
+                with st.spinner("Rendezés folyamatban..."):
+                    try:
+                        import fitz  # PyMuPDF
+                        src_doc = fitz.open(selected_file)
+                        out_doc = fitz.open()
+                        
+                        total_pages = len(src_doc)
+                        a4_width = 595.27
+                        a4_height = 841.89
+                        label_w = 241.0
+                        label_h = 241.0
+                        cols = 2
+                        rows = 3
+                        labels_per_page = cols * rows
+                        
+                        grid_w = cols * label_w
+                        grid_h = rows * label_h
+                        margin_x = (a4_width - grid_w) / 2
+                        margin_y = (a4_height - grid_h) / 2
+                        
+                        for i in range(total_pages):
+                            page_in_out_doc_idx = i // labels_per_page
+                            label_pos_idx = i % labels_per_page
+                            
+                            if label_pos_idx == 0:
+                                out_page = out_doc.new_page(width=a4_width, height=a4_height)
+                                shape = out_page.new_shape()
+                                shape.draw_rect(fitz.Rect(margin_x, margin_y, margin_x + grid_w, margin_y + grid_h))
+                                shape.draw_line(fitz.Point(margin_x + label_w, margin_y), fitz.Point(margin_x + label_w, margin_y + grid_h))
+                                shape.draw_line(fitz.Point(margin_x, margin_y + label_h), fitz.Point(margin_x + grid_w, margin_y + label_h))
+                                shape.draw_line(fitz.Point(margin_x, margin_y + 2 * label_h), fitz.Point(margin_x + grid_w, margin_y + 2 * label_h))
+                                shape.finish(color=(0.8, 0.8, 0.8), width=0.5, dashes="[2 2] 0")
+                                shape.commit()
+                            else:
+                                out_page = out_doc[page_in_out_doc_idx]
+                                
+                            row_idx = label_pos_idx // cols
+                            col_idx = label_pos_idx % cols
+                            x0 = margin_x + col_idx * label_w
+                            y0 = margin_y + row_idx * label_h
+                            x1 = x0 + label_w
+                            y1 = y0 + label_h
+                            rect = fitz.Rect(x0, y0, x1, y1)
+                            
+                            out_page.show_pdf_page(rect, src_doc, i)
+                            
+                        # Save in Downloads
+                        out_name = os.path.basename(selected_file).replace(".pdf", "_grid_A4.pdf")
+                        output_path = os.path.join(downloads_dir, out_name)
+                        out_doc.save(output_path)
+                        out_doc.close()
+                        src_doc.close()
+                        
+                        st.success(f"Sikeres átalakítás! Az A4-es grid fájl elmentve ide:\n`{output_path}`")
+                    except Exception as pdf_ex:
+                        st.error(f"Hiba a PDF feldolgozása során: {pdf_ex}")
 
 if __name__ == "__main__":
     main()

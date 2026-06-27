@@ -1,5 +1,5 @@
 // ===== COUNTDOWN =====
-const CAMPAIGN_END = new Date('2026-06-23T23:59:59');
+const CAMPAIGN_END = new Date('2026-08-31T23:59:59');
 
 function updateCountdown() {
     const now = new Date();
