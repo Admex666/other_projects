@@ -169,7 +169,7 @@ def send_feedback_email(name, email):
     
     if DRY_RUN:
         print(f"[DRY RUN] Would send feedback email to {name} ({email})")
-        print(f"          Link: {feedback_link}")
+        print(f"          Link: {portal_link}")
         return True
         
     try:
