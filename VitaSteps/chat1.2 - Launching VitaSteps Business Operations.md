@@ -4308,3 +4308,37 @@ Ha a `.env` fájlból másoltad át a kulcsot, előfordulhat, hogy a GitHub Secr
 Menj a GitHub-on a **Settings -> Secrets and variables -> Actions** menüpontba, szerkeszd meg az `SMTP_PASSWORD` secretet, és másold be az alkalmazásjelszavadat **idézőjelek és szóközök nélkül**. 
 
 Utána futtasd újra, és minden email ki fog menni!
+
+### User Input
+
+Amúgy a @[landing_predikalo1/send_emails.py] -nél annyi, hogy mivel már június 30 van, a "legkorábbi feladás várható ideje" helyett azt írd hogy várhatóan 1-3 munkanapon belül feladjuk.
+
+*Viewed [send_emails.py](file:///e:/Data/other_projects/VitaSteps/landing_predikalo1/send_emails.py) *
+
+*User accepted the command `& C:/Users/Adam/AppData/Local/Programs/Python/Python313/python.exe e:/Data/other_projects/VitaSteps/landing_predikalo1/send_emails.py`*
+
+*Grep searched codebase*
+
+*Grep searched codebase*
+
+*Viewed [send_emails.py](file:///e:/Data/other_projects/VitaSteps/landing_predikalo1/send_emails.py) *
+
+*Viewed [send_emails.py](file:///e:/Data/other_projects/VitaSteps/landing_predikalo1/send_emails.py) *
+
+*Grep searched codebase*
+
+*Viewed [email_template.html](file:///e:/Data/other_projects/VitaSteps/landing_predikalo1/email_template.html) *
+
+*Grep searched codebase*
+
+*Edited relevant file*
+
+### Planner Response
+
+Átírtam az [email_template.html](file:///e:/Data/other_projects/VitaSteps/landing_predikalo1/email_template.html) sablont!
+
+Mivel már elértük a június 30-át, a korábbi *„legkorábbi feladás várható ideje: 2026. június 30-tól”* szöveget mindkét szállítási blokkban (akinek már megvan a címe, és akinek még meg kell adnia) átírtam erre:
+
+> **„Az érmet várhatóan 1-3 munkanapon belül feladjuk.”**
+
+Így a mai naptól kiküldött összes teljesítési visszaigazoló emailben már ez a frissített, valós idejű szállítási ígéret fog szerepelni!
