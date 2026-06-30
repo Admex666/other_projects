@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
     <title>VitaSteps Virtuális Oklevél</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -100,6 +101,21 @@
             filter: blur(120px);
             opacity: 0.05;
             pointer-events: none;
+        }
+
+        /* During PDF export: hide blur glows (html2canvas can't render CSS blur)
+           and fix text-gradient clip which renders as a solid box */
+        .certificate.pdf-export::before,
+        .certificate.pdf-export::after {
+            display: none !important;
+        }
+
+        .certificate.pdf-export .cert-header {
+            background: none !important;
+            -webkit-background-clip: initial !important;
+            background-clip: initial !important;
+            -webkit-text-fill-color: #ffffff !important;
+            color: #ffffff !important;
         }
 
         /* Elegant inner border representing traditional diploma lines */
@@ -533,7 +549,124 @@
                 right: 15px;
             }
         }
+
+        /* Black and White Printer-Friendly styling */
+        .certificate.print-bw {
+            background: #ffffff !important;
+            background-color: #ffffff !important;
+            color: #000000 !important;
+            border-color: #111111 !important;
+            box-shadow: none !important;
+        }
+
+        .certificate.print-bw::before,
+        .certificate.print-bw::after {
+            display: none !important;
+        }
+
+        .certificate.print-bw .certificate-border {
+            border-color: rgba(0, 0, 0, 0.3) !important;
+        }
+
+        .certificate.print-bw .certificate-border-inner {
+            border-color: rgba(0, 0, 0, 0.15) !important;
+        }
+
+        .certificate.print-bw .corner {
+            border-color: #111111 !important;
+        }
+
+        .certificate.print-bw .logo {
+            color: #000000 !important;
+        }
+
+        .certificate.print-bw .cert-header {
+            background: none !important;
+            -webkit-text-fill-color: initial !important;
+            color: #000000 !important;
+        }
+
+        .certificate.print-bw .cert-divider {
+            background: linear-gradient(90deg, transparent, #333333, transparent) !important;
+        }
+
+        .certificate.print-bw .cert-intro {
+            color: #444444 !important;
+        }
+
+        .certificate.print-bw .participant-name {
+            color: #000000 !important;
+            text-shadow: none !important;
+        }
+
+        .certificate.print-bw .cert-body {
+            color: #111111 !important;
+        }
+
+        .certificate.print-bw .cert-body strong {
+            color: #000000 !important;
+        }
+
+        .certificate.print-bw .sign-line {
+            background: rgba(0, 0, 0, 0.3) !important;
+        }
+
+        .certificate.print-bw .sign-title {
+            color: #444444 !important;
+        }
+
+        .certificate.print-bw .sign-name {
+            color: #000000 !important;
+        }
+
+        .certificate.print-bw .seal-bg {
+            border-color: #111111 !important;
+            background: rgba(240, 240, 240, 0.8) !important;
+        }
+
+        .certificate.print-bw .seal-content {
+            color: #111111 !important;
+        }
+
+        .certificate.print-bw .cert-serial {
+            color: #111111 !important;
+            text-shadow: none !important;
+        }
+
+        /* Print Media Overrides */
+        @media print {
+            body {
+                background: none !important;
+                background-color: transparent !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            .controls-card {
+                display: none !important;
+            }
+
+            .certificate-container {
+                margin: 0 !important;
+                padding: 0 !important;
+                max-width: 100% !important;
+            }
+
+            .certificate {
+                border-radius: 0 !important;
+                box-shadow: none !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .certificate.print-bw {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+        }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 
 <body>
@@ -604,29 +737,49 @@
                 <input type="text" id="input-name" class="input-field" value="Futó Partner"
                     placeholder="Írd be a nevet...">
             </div>
-            <div class="input-group">
+            <div class="input-group" style="display: none;">
                 <label for="input-serial">Sorszám</label>
                 <input type="text" id="input-serial" class="input-field" value="#065/100" placeholder="pl. #065/100">
             </div>
-            <div class="input-group">
+            <div class="input-group" style="display: none;">
                 <label for="input-distance">Távolság</label>
                 <input type="text" id="input-distance" class="input-field" value="15 km" placeholder="pl. 15 km">
             </div>
-            <div class="input-group">
+            <div class="input-group" style="display: none;">
                 <label for="input-date">Teljesítés dátuma</label>
                 <input type="text" id="input-date" class="input-field" value="2026.06.21">
             </div>
         </div>
 
+        <div class="form-row" style="margin-top: 1rem; margin-bottom: 1.5rem;">
+            <div class="input-group">
+                <label
+                    style="color: var(--text-mid); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Oklevél
+                    dizájn stílusa</label>
+                <div style="display: flex; gap: 1.5rem; margin-top: 0.5rem; font-weight: 600;">
+                    <label
+                        style="display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--text-high); font-size: 0.95rem;">
+                        <input type="radio" name="cert-theme" value="color" checked onclick="setCertTheme('color')">
+                        <span>Színes (Eredeti sötét)</span>
+                    </label>
+                    <label
+                        style="display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--text-high); font-size: 0.95rem;">
+                        <input type="radio" name="cert-theme" value="bw" onclick="setCertTheme('bw')">
+                        <span>Nyomtatóbarát (Fekete-Fehér)</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
         <div class="actions">
-            <button class="btn btn-primary" onclick="window.print()">
+            <button class="btn btn-primary" id="btn-download-pdf" onclick="downloadColorPDF()">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;">
-                    <polyline points="6 9 6 2 18 2 18 9"></polyline>
-                    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
-                    <rect x="6" y="14" width="12" height="8"></rect>
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
                 </svg>
-                Oklevél Nyomtatása / Mentése PDF-ként
+                Oklevél Letöltése PDF-ként
             </button>
             <button class="btn btn-secondary" onclick="shareCertificate()">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -639,6 +792,12 @@
                 </svg>
                 Megosztási link másolása
             </button>
+        </div>
+
+        <div style="margin-top: 1rem; text-align: center; font-size: 0.8rem; color: var(--text-mid); line-height: 1.4;">
+            💡 <strong>Tipp színes mentéshez/nyomtatáshoz:</strong> A megnyíló nyomtatási ablakban a <em>További
+                beállítások (More settings)</em> résznél mindenképp pipáld be a <strong>Háttérgrafikák (Background
+                graphics)</strong> opciót, különben a böngésző fehér háttérrel és fekete szöveggel jeleníti meg a lapot!
         </div>
     </div>
 
@@ -664,35 +823,140 @@
             return params;
         }
 
+        // Supabase Initialization
+        const SUPABASE_URL = "https://ncsathcqpvlrygkphced.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jc2F0aGNxcHZscnlna3BoY2VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3OTU3NTEsImV4cCI6MjA5ODM3MTc1MX0.4036PLTmBdhjUj8-qu2fpmZU6hvrXbc5-S_XJusKEYo";
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
         // Initialize values
-        const params = getQueryParams();
-        if (params.nev) {
-            nameInput.value = params.nev;
-            displayName.textContent = params.nev;
+        async function initializeCertificate() {
+            const params = getQueryParams();
+            let name = params.nev;
+            if (name) {
+                name = name.replace(/\+/g, ' ');
+            }
+            let serial = params.sorszam;
+            let distance = params.tav;
+            let date = params.datum;
+
+            // Try to load from Supabase session if available
+            try {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                if (session && session.user) {
+                    const { data: runner, error } = await supabaseClient
+                        .from('runners')
+                        .select('*')
+                        .eq('email', session.user.email.toLowerCase())
+                        .maybeSingle();
+
+                    if (!error && runner) {
+                        // Force override parameters with database values to keep them FIX
+                        name = runner.name;
+                        serial = runner.serial_number;
+                        distance = runner.distance_km ? `${runner.distance_km} km` : '';
+                        date = runner.received_date || runner.completion_date;
+
+                        // Disable input fields to make them un-editable
+                        serialInput.disabled = true;
+                        dateInput.disabled = true;
+                        distanceInput.disabled = true;
+                    }
+                }
+            } catch (err) {
+                console.error("Supabase load error in certificate:", err);
+            }
+
+            // Render details
+            nameInput.value = name || "";
+            displayName.textContent = name || "Futó Partner";
+
+            serialInput.value = serial || "";
+            displaySerial.textContent = serial || "#---/---";
+
+            distanceInput.value = distance || "";
+            displayDistance.textContent = distance || "15 km";
+
+            if (date) {
+                dateInput.value = date;
+                displayDate.textContent = date;
+            } else {
+                // Set current date
+                const today = new Date();
+                const yyyy = today.getFullYear();
+                let mm = today.getMonth() + 1; // Months start at 0!
+                let dd = today.getDate();
+                if (dd < 10) dd = '0' + dd;
+                if (mm < 10) mm = '0' + mm;
+                const formattedToday = yyyy + '.' + mm + '.' + dd;
+                dateInput.value = formattedToday;
+                displayDate.textContent = formattedToday;
+            }
         }
-        if (params.sorszam) {
-            serialInput.value = params.sorszam;
-            displaySerial.textContent = params.sorszam;
+
+        initializeCertificate();
+
+        function setCertTheme(theme) {
+            const cert = document.getElementById('certificate');
+            if (theme === 'bw') {
+                cert.classList.add('print-bw');
+            } else {
+                cert.classList.remove('print-bw');
+            }
         }
-        if (params.tav) {
-            distanceInput.value = params.tav;
-            displayDistance.textContent = params.tav;
+
+        async function downloadColorPDF() {
+            const btn = document.getElementById('btn-download-pdf');
+            const cert = document.getElementById('certificate');
+            const originalText = btn.innerHTML;
+
+            btn.disabled = true;
+            btn.innerHTML = '<span style="display:inline-flex;align-items:center;gap:8px;"><svg style="animation:spin 1s linear infinite" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Generálás...</span>';
+
+            // Apply export-safe overrides (hides blur glows, fixes text-gradient)
+            cert.classList.add('pdf-export');
+
+            try {
+                // Small delay so styles apply before capture
+                await new Promise(r => setTimeout(r, 50));
+
+                const canvas = await html2canvas(cert, {
+                    scale: 3,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: null,
+                    logging: false,
+                });
+
+                const certW = cert.offsetWidth;
+                const certH = cert.offsetHeight;
+                const ratio = certH / certW;
+
+                const pdfW = 297;
+                const pdfH = pdfW * ratio;
+
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({
+                    orientation: pdfH > pdfW ? 'portrait' : 'landscape',
+                    unit: 'mm',
+                    format: [pdfW, pdfH]
+                });
+
+                const imgData = canvas.toDataURL('image/png');
+                pdf.addImage(imgData, 'PNG', 0, 0, pdfW, pdfH);
+
+                const name = document.getElementById('input-name').value.trim().replace(/\s+/g, '_') || 'oklevel';
+                pdf.save(`VitaSteps_Oklevel_${name}.pdf`);
+            } catch (err) {
+                console.error('PDF generálás hiba:', err);
+                alert('Hiba a PDF generálásakor. Kérjük, próbáld újra!');
+            } finally {
+                // Always remove export class
+                cert.classList.remove('pdf-export');
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
         }
-        if (params.datum) {
-            dateInput.value = params.datum;
-            displayDate.textContent = params.datum;
-        } else {
-            // Set current date
-            const today = new Date();
-            const yyyy = today.getFullYear();
-            let mm = today.getMonth() + 1; // Months start at 0!
-            let dd = today.getDate();
-            if (dd < 10) dd = '0' + dd;
-            if (mm < 10) mm = '0' + mm;
-            const formattedToday = yyyy + '.' + mm + '.' + dd;
-            dateInput.value = formattedToday;
-            displayDate.textContent = formattedToday;
-        }
+
 
         // Input listeners to update the certificate layout live
         nameInput.addEventListener('input', (e) => {

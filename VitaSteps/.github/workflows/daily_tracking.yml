@@ -1,0 +1,39 @@
+name: Daily Foxpost Tracking & Follow-up Email
+
+on:
+  schedule:
+    # 16:30 UTC is 18:30 Hungarian time in CEST (Summer Time, UTC+2)
+    # and 17:30 Hungarian time in CET (Winter Time, UTC+1).
+    - cron: '30 16 * * *'
+  workflow_dispatch: # Allows manual trigger from GitHub UI
+
+jobs:
+  track-and-email:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests google-auth google-api-python-client python-dotenv
+
+    - name: Run daily tracking script
+      working-directory: ./landing_predikalo1
+      env:
+        GOOGLE_SHEET_ID: ${{ secrets.GOOGLE_SHEET_ID }}
+        GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+        FOXPOST_API_KEY: ${{ secrets.FOXPOST_API_KEY }}
+        FOXPOST_USERNAME: ${{ secrets.FOXPOST_USERNAME }}
+        FOXPOST_PASSWORD: ${{ secrets.FOXPOST_PASSWORD }}
+        SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+        TALLY_FEEDBACK_FORM_ID: ${{ secrets.TALLY_FEEDBACK_FORM_ID }}
+      run: |
+        python daily_tracking.py

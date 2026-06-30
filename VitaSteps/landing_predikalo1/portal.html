@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VitaSteps – Teljesítő Portál</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #04060a;
+            --surface: #0c0f15;
+            --surface2: #12161e;
+            --accent: #bfff00;
+            --accent-glow: rgba(191, 255, 0, 0.2);
+            --accent-hover: #a3d900;
+            --text-high: #f0f4ff;
+            --text-mid: #7a8aa0;
+            --text-low: #3d4a5c;
+            --border: rgba(255, 255, 255, 0.07);
+            --radius-md: 16px;
+            --radius-lg: 24px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-high);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+            margin: 2rem 0;
+        }
+
+        .logo {
+            text-align: center;
+            font-family: 'Outfit', sans-serif;
+            font-size: 2rem;
+            font-weight: 900;
+            letter-spacing: 4px;
+            margin-bottom: 2.5rem;
+        }
+
+        .logo span {
+            color: var(--accent);
+            text-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .card {
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.3s ease;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(191, 255, 0, 0.25);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        p {
+            color: var(--text-mid);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-mid);
+            margin-bottom: 0.5rem;
+        }
+
+        .input-text {
+            width: 100%;
+            background-color: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-high);
+            padding: 0.9rem 1.2rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-text:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            background-color: var(--accent);
+            color: #04060a;
+            border: none;
+            border-radius: 8px;
+            padding: 1rem;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            box-shadow: 0 8px 20px var(--accent-glow);
+        }
+
+        .btn:hover {
+            background-color: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(191, 255, 0, 0.35);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background-color: var(--surface2);
+            color: var(--text-high);
+            border: 1px solid var(--border);
+            box-shadow: none;
+            margin-top: 1rem;
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--text-high);
+            box-shadow: none;
+        }
+
+        /* Profile Header */
+        .profile-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1.5rem;
+        }
+
+        .profile-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .profile-email {
+            font-size: 0.85rem;
+            color: var(--text-mid);
+            margin-top: 0.2rem;
+        }
+
+        .badge-serial {
+            background: rgba(191, 255, 0, 0.1);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .status-badge {
+            display: inline-block;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text-mid);
+            padding: 0.3rem 0.7rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-badge.completed {
+            border-color: #22c55e;
+            color: #22c55e;
+            background: rgba(34, 197, 94, 0.05);
+        }
+
+        /* Star Rating */
+        .stars-container {
+            display: flex;
+            gap: 0.5rem;
+            margin: 0.5rem 0 1.5rem;
+        }
+
+        .star-svg {
+            width: 32px;
+            height: 32px;
+            fill: #1a2233;
+            stroke: var(--text-low);
+            stroke-width: 1.5;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .star-svg.active {
+            fill: #ffd700;
+            stroke: #ffd700;
+            filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5));
+        }
+
+        /* NPS Slider scale */
+        .nps-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 0.25rem;
+            margin: 0.5rem 0 1.5rem;
+        }
+
+        .nps-btn {
+            flex: 1;
+            aspect-ratio: 1;
+            background-color: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            color: var(--text-mid);
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .nps-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .nps-btn.active {
+            background-color: var(--accent);
+            color: #04060a;
+            border-color: var(--accent);
+            box-shadow: 0 0 12px var(--accent-glow);
+        }
+
+        /* Checkbox grid */
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            text-transform: none;
+            letter-spacing: 0;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .checkbox-custom {
+            width: 18px;
+            height: 18px;
+            background-color: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        input[type="checkbox"] {
+            display: none;
+        }
+
+        input[type="checkbox"]:checked+.checkbox-custom {
+            background-color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        input[type="checkbox"]:checked+.checkbox-custom::after {
+            content: '✓';
+            color: #04060a;
+            font-size: 0.7rem;
+            font-weight: 900;
+        }
+
+        /* Radio group */
+        .radio-group {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+            text-transform: none;
+            letter-spacing: 0;
+            cursor: pointer;
+        }
+
+        .radio-custom {
+            width: 18px;
+            height: 18px;
+            background-color: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        input[type="radio"] {
+            display: none;
+        }
+
+        input[type="radio"]:checked+.radio-custom {
+            border-color: var(--accent);
+        }
+
+        input[type="radio"]:checked+.radio-custom::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent);
+            border-radius: 50%;
+        }
+
+        /* Textarea */
+        textarea.input-text {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* Upload area */
+        .upload-zone {
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: rgba(255, 255, 255, 0.01);
+        }
+
+        .upload-zone:hover,
+        .upload-zone.dragover {
+            border-color: var(--accent);
+            background-color: rgba(191, 255, 0, 0.02);
+        }
+
+        .upload-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-text {
+            font-size: 0.85rem;
+            color: var(--text-mid);
+        }
+
+        .file-preview {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background-color: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+        }
+
+        .preview-img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .preview-name {
+            font-size: 0.85rem;
+            flex-grow: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .preview-remove {
+            color: #ef4444;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Screens */
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .loading-spinner {
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid var(--accent);
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .success-checkmark {
+            color: #22c55e;
+            font-size: 4rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="logo">VITA<span>STEPS</span></h1>
+
+        <!-- SCREEN: Loading -->
+        <div id="screen-loading" class="screen active" style="text-align: center; padding: 4rem;">
+            <div class="loading-spinner" style="width: 40px; height: 40px;"></div>
+            <p style="margin-top: 1.5rem;">Kapcsolódás a biztonságos felhőhöz...</p>
+        </div>
+
+        <!-- SCREEN: Login -->
+        <div id="screen-login" class="screen">
+            <div class="card">
+                <h2>Belépés a Teljesítő Portálra</h2>
+                <p>Add meg a regisztrációkor használt email címedet! Küldünk neked egy varázslinket, amivel jelszó
+                    nélkül, azonnal be tudsz lépni.</p>
+
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="login-email">Email cím</label>
+                        <input type="email" id="login-email" class="input-text" placeholder="minta@email.hu" required
+                            autocomplete="email">
+                    </div>
+                    <button type="submit" id="btn-login-submit" class="btn">
+                        <span>Belépési link küldése</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- SCREEN: Login Sent -->
+        <div id="screen-login-sent" class="screen">
+            <div class="card" style="text-align: center;">
+                <div style="font-size: 4rem; margin-bottom: 1.5rem;">✉️</div>
+                <h2>A belépési linket elküldtük!</h2>
+                <p>Ellenőrizd a bejövő leveleidet (és a spam mappát is, ha nem találod)! Kattints a levélben található
+                    linkre a bejelentkezéshez.</p>
+                <button onclick="showScreen('screen-login')" class="btn btn-secondary">Vissza a belépéshez</button>
+            </div>
+        </div>
+
+        <!-- SCREEN: Dashboard -->
+        <div id="screen-dashboard" class="screen">
+            <!-- Profile Info Card -->
+            <div class="card" style="padding-bottom: 1.5rem;">
+                <div class="profile-info">
+                    <div>
+                        <div class="profile-name" id="user-display-name">Futó Partner</div>
+                        <div class="profile-email" id="user-display-email">email@address.com</div>
+                    </div>
+                    <div class="badge-serial" id="user-display-serial">#---/---</div>
+                </div>
+
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 1rem;">
+                    <div>
+                        <span style="font-size: 0.85rem; color: var(--text-mid);">Kihívás állapota:</span>
+                        <div id="user-display-status" style="margin-top: 0.25rem;">
+                            <span class="status-badge">Feldolgozás alatt</span>
+                        </div>
+                    </div>
+                    <div id="cert-container" style="display: none;">
+                        <a id="btn-oklevel" href="oklevel.html" class="btn"
+                            style="padding: 0.6rem 1.2rem; font-size: 0.85rem; box-shadow: none;">🏆 Oklevél
+                            megtekintése</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feedback Card -->
+            <div id="feedback-card" class="card" style="display: none;">
+                <h2>Érem átvéve, jelezz vissza! 💬</h2>
+                <p>Nagyszerű! Látjuk, hogy az érmedet már sikeresen átvetted. Kérünk, oszd meg velünk a véleményedet az
+                    alábbi kérdések megválaszolásával (kb. 2 perc):</p>
+
+                <form id="feedback-form">
+                    <!-- Q1 -->
+                    <div class="form-group">
+                        <label>1. Mennyire vagy elégedett az érem minőségével?</label>
+                        <div class="stars-container" id="stars-quality">
+                            <!-- Clickable SVG stars will be inserted here by JS -->
+                        </div>
+                        <input type="hidden" id="q-quality" required>
+                    </div>
+
+                    <!-- Q2 -->
+                    <div class="form-group">
+                        <label>2. Mennyire volt zökkenőmentes a szállítás?</label>
+                        <div class="stars-container" id="stars-delivery">
+                            <!-- Clickable SVG stars will be inserted here by JS -->
+                        </div>
+                        <input type="hidden" id="q-delivery" required>
+                    </div>
+
+                    <!-- Q3 -->
+                    <div class="form-group">
+                        <label>3. Részt vennél-e legközelebb is VitaSteps kihíváson?</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="q-reszvetel" value="Igen" required>
+                                <span class="radio-custom"></span>
+                                <span>Igen</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="q-reszvetel" value="Nem">
+                                <span class="radio-custom"></span>
+                                <span>Nem</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="q-reszvetel" value="Talán">
+                                <span class="radio-custom"></span>
+                                <span>Talán</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Q4 -->
+                    <div class="form-group">
+                        <label>4. Mennyire ajánlanád a VitaSteps-et egy barátodnak?</label>
+                        <div class="nps-container" id="nps-scale">
+                            <!-- Clickable NPS scale circles will be inserted here by JS -->
+                        </div>
+                        <input type="hidden" id="q-nps" required>
+                        <div
+                            style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-mid); margin-top: -1rem; margin-bottom: 1.5rem;">
+                            <span>Egyáltalán nem (0)</span>
+                            <span>Teljes mértékben (10)</span>
+                        </div>
+                    </div>
+
+                    <!-- Q5 -->
+                    <div class="form-group">
+                        <label>5. Melyik tájegységre mennél legközelebb?</label>
+                        <div class="checkbox-grid">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="q-location" value="Balaton-felvidék">
+                                <span class="checkbox-custom"></span>
+                                <span>Balaton-felvidék</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="q-location" value="Bükk">
+                                <span class="checkbox-custom"></span>
+                                <span>Bükk</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="q-location" value="Mátra">
+                                <span class="checkbox-custom"></span>
+                                <span>Mátra</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="q-location" value="Magas-Tátra">
+                                <span class="checkbox-custom"></span>
+                                <span>Magas-Tátra</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="q-location" value="Pilis">
+                                <span class="checkbox-custom"></span>
+                                <span>Pilis</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="q-location" value="Mecsek">
+                                <span class="checkbox-custom"></span>
+                                <span>Mecsek</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="q-location" value="Börzsöny">
+                                <span class="checkbox-custom"></span>
+                                <span>Börzsöny</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="q-location" value="Egyéb">
+                                <span class="checkbox-custom"></span>
+                                <span>Egyéb...</span>
+                            </label>
+                        </div>
+                        <input type="text" id="q-location-other" class="input-text"
+                            placeholder="Írd ide, ha más tájegységet szeretnél"
+                            style="display: none; margin-top: -0.5rem; margin-bottom: 1.5rem;">
+                    </div>
+
+                    <!-- Q6 -->
+                    <div class="form-group">
+                        <label for="q-best">6. Mi tetszett legjobban a kihívásban? (opcionális)</label>
+                        <textarea id="q-best" class="input-text" placeholder="Írd le tapasztalataidat..."></textarea>
+                    </div>
+
+                    <!-- Q7 -->
+                    <div class="form-group">
+                        <label for="q-improvement">7. Mi tenné még jobbá számodra a kihívást? (opcionális)</label>
+                        <textarea id="q-improvement" class="input-text"
+                            placeholder="Pl. szállítási módok, weboldal felülete, árak..."></textarea>
+                    </div>
+
+                    <!-- Q8 -->
+                    <div class="form-group">
+                        <label>8. Tölts fel egy fotót az érmedről! 📸 (opcionális)</label>
+                        <div class="upload-zone" id="upload-zone">
+                            <div class="upload-icon">📷</div>
+                            <div style="font-weight: 700; margin-bottom: 0.25rem;">Húzd ide a fotót</div>
+                            <div class="upload-text">vagy kattints ide a tallózáshoz (JPG, PNG, max 10MB)</div>
+                            <input type="file" id="file-input" accept="image/*" style="display: none;">
+                        </div>
+                        <div id="preview-container" style="display: none;">
+                            <!-- Will be populated dynamically -->
+                        </div>
+                    </div>
+
+                    <button type="submit" id="btn-feedback-submit" class="btn" style="margin-top: 1.5rem;">
+                        <span>Visszajelzés beküldése</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Feedback Already Submitted Card -->
+            <div id="feedback-completed-card" class="card" style="display: none; text-align: center;">
+                <div style="font-size: 4rem; margin-bottom: 1rem;">💖</div>
+                <h2>Köszönjük a visszajelzésedet!</h2>
+                <p>A visszajelzésedet sikeresen rögzítettük a Google Sheets táblázatunkban és a Supabase adatbázisunkban
+                    is. Véleményeddel sokat segítesz nekünk a fejlődésben!</p>
+            </div>
+
+            <!-- Medal In Transit Card -->
+            <div id="medal-transit-card" class="card" style="display: none;">
+                <h2>📦 Érmed kézbesítése folyamatban</h2>
+                <p>Az érmed már feladásra került vagy úton van a célautomatád felé! A visszajelző kérdőívet csak azután
+                    tudod itt kitölteni, ha a Foxpost rendszere szerint sikeresen átvetted a csomagot.</p>
+                <p>Köszönjük a türelmedet! Státusz frissülése naponta egyszer történik.</p>
+            </div>
+
+            <button onclick="handleLogout()" class="btn btn-secondary">Kijelentkezés</button>
+        </div>
+    </div>
+
+    <!-- CDN scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Initialize Supabase client
+        const SUPABASE_URL = "https://ncsathcqpvlrygkphced.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jc2F0aGNxcHZscnlna3BoY2VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3OTU3NTEsImV4cCI6MjA5ODM3MTc1MX0.4036PLTmBdhjUj8-qu2fpmZU6hvrXbc5-S_XJusKEYo";
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // State variables
+        let currentUser = null;
+        let selectedFile = null;
+
+        // UI Helpers
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        // Render ratings
+        function setupFormControls() {
+            // Quality stars
+            const qContainer = document.getElementById('stars-quality');
+            qContainer.innerHTML = '';
+            for (let i = 1; i <= 5; i++) {
+                qContainer.appendChild(createStarSvg(i, 'q-quality'));
+            }
+
+            // Delivery stars
+            const dContainer = document.getElementById('stars-delivery');
+            dContainer.innerHTML = '';
+            for (let i = 1; i <= 5; i++) {
+                dContainer.appendChild(createStarSvg(i, 'q-delivery'));
+            }
+
+            // NPS scale
+            const npsContainer = document.getElementById('nps-scale');
+            npsContainer.innerHTML = '';
+            for (let i = 0; i <= 10; i++) {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'nps-btn';
+                btn.textContent = i;
+                btn.onclick = () => {
+                    document.querySelectorAll('#nps-scale .nps-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    document.getElementById('q-nps').value = i;
+                };
+                npsContainer.appendChild(btn);
+            }
+
+            // Toggle other location input
+            document.querySelectorAll('input[name="q-location"]').forEach(chk => {
+                chk.addEventListener('change', () => {
+                    const otherInput = document.getElementById('q-location-other');
+                    if (chk.value === 'Egyéb') {
+                        otherInput.style.display = chk.checked ? 'block' : 'none';
+                        if (chk.checked) otherInput.focus();
+                    }
+                });
+            });
+        }
+
+        function createStarSvg(rating, targetInputId) {
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.setAttribute('class', 'star-svg');
+            svg.setAttribute('viewBox', '0 0 24 24');
+            svg.innerHTML = '<polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9" />';
+            svg.onclick = () => {
+                const parent = svg.parentNode;
+                const stars = parent.querySelectorAll('.star-svg');
+                stars.forEach((s, idx) => {
+                    if (idx < rating) {
+                        s.classList.add('active');
+                    } else {
+                        s.classList.remove('active');
+                    }
+                });
+                document.getElementById(targetInputId).value = rating;
+            };
+            return svg;
+        }
+
+        // File Uploader Setup
+        const uploadZone = document.getElementById('upload-zone');
+        const fileInput = document.getElementById('file-input');
+        const previewContainer = document.getElementById('preview-container');
+
+        uploadZone.onclick = () => fileInput.click();
+
+        uploadZone.ondragover = (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('dragover');
+        };
+
+        uploadZone.ondragleave = () => {
+            uploadZone.classList.remove('dragover');
+        };
+
+        uploadZone.ondrop = (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+            if (e.dataTransfer.files.length) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        };
+
+        fileInput.onchange = () => {
+            if (fileInput.files.length) {
+                handleFile(fileInput.files[0]);
+            }
+        };
+
+        function handleFile(file) {
+            if (!file.type.startsWith('image/')) {
+                alert('Csak képfájlok feltöltése támogatott!');
+                return;
+            }
+            if (file.size > 10 * 1024 * 1024) {
+                alert('A fájl mérete nem haladhatja meg a 10MB-ot!');
+                return;
+            }
+            selectedFile = file;
+
+            // Render Preview
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                previewContainer.innerHTML = `
+                    <div class="file-preview">
+                        <img src="${e.target.result}" class="preview-img" alt="Medal Preview">
+                        <div class="preview-name">${file.name}</div>
+                        <div class="preview-remove" onclick="removeSelectedFile()">X</div>
+                    </div>
+                `;
+                previewContainer.style.display = 'block';
+                uploadZone.style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeSelectedFile() {
+            selectedFile = null;
+            fileInput.value = '';
+            previewContainer.style.display = 'none';
+            uploadZone.style.display = 'block';
+        }
+
+        // Auth management
+        async function checkSession() {
+            const { data: { session }, error } = await supabaseClient.auth.getSession();
+            if (session) {
+                currentUser = session.user;
+                await loadDashboardData();
+            } else {
+                // Not logged in. Check query params for prefilled email
+                const params = new URLSearchParams(window.location.search);
+                const emailParam = params.get('email');
+                if (emailParam) {
+                    document.getElementById('login-email').value = emailParam;
+                }
+                showScreen('screen-login');
+            }
+        }
+
+        // Login Handler
+        document.getElementById('login-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value.trim();
+            const btnSubmit = document.getElementById('btn-login-submit');
+
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = '<span class="loading-spinner"></span> Küldés...';
+
+            const { error } = await supabaseClient.auth.signInWithOtp({
+                email: email,
+                options: {
+                    emailRedirectTo: window.location.origin + '/portal.html'
+                }
+            });
+
+            btnSubmit.disabled = false;
+            btnSubmit.innerHTML = '<span>Belépési link küldése</span>';
+
+            if (error) {
+                alert('Hiba a belépési kód küldésekor: ' + error.message);
+            } else {
+                showScreen('screen-login-sent');
+            }
+        };
+
+        // Load Dashboard Data
+        async function loadDashboardData() {
+            showScreen('screen-loading');
+            document.getElementById('user-display-email').textContent = currentUser.email;
+
+            try {
+                // 1. Fetch profile from 'runners'
+                const { data: runner, error } = await supabaseClient
+                    .from('runners')
+                    .select('*')
+                    .eq('email', currentUser.email.toLowerCase())
+                    .maybeSingle();
+
+                if (error) throw error;
+
+                if (!runner) {
+                    // Runner not found in DB
+                    document.getElementById('user-display-name').textContent = "Regisztrált Felhasználó";
+                    document.getElementById('user-display-serial').textContent = "#Nincs";
+                    document.getElementById('user-display-status').innerHTML = '<span class="status-badge">Nincs aktív kihívásod</span>';
+                    showScreen('screen-dashboard');
+                    return;
+                }
+
+                // Populate runner info
+                document.getElementById('user-display-name').textContent = runner.name;
+                document.getElementById('user-display-serial').textContent = runner.serial_number || '#---/---';
+
+                const statusContainer = document.getElementById('user-display-status');
+                const certContainer = document.getElementById('cert-container');
+
+                if (runner.completed) {
+                    statusContainer.innerHTML = '<span class="status-badge completed">Teljesítve</span>';
+
+                    // Update oklevel.html link with parameters (backup)
+                    const params = new URLSearchParams({
+                        nev: runner.name,
+                        sorszam: runner.serial_number || '',
+                        tav: runner.distance_km ? `${runner.distance_km} km` : '',
+                        datum: runner.completion_date || ''
+                    });
+                    document.getElementById('btn-oklevel').href = `oklevel.html?${params.toString()}`;
+                    certContainer.style.display = 'block';
+                } else {
+                    statusContainer.innerHTML = '<span class="status-badge">Kihívás folyamatban</span>';
+                    certContainer.style.display = 'none';
+                }
+
+                // Check feedback status
+                const { data: existingFeedback } = await supabaseClient
+                    .from('feedbacks')
+                    .select('id')
+                    .eq('runner_email', currentUser.email.toLowerCase())
+                    .maybeSingle();
+
+                if (existingFeedback) {
+                    // Already submitted
+                    document.getElementById('feedback-completed-card').style.display = 'block';
+                    document.getElementById('feedback-card').style.display = 'none';
+                } else if (runner.received_date) {
+                    // Medal received, show feedback form
+                    document.getElementById('feedback-card').style.display = 'block';
+                    document.getElementById('feedback-completed-card').style.display = 'none';
+                } else if (runner.shipped) {
+                    // Medal in transit
+                    document.getElementById('medal-transit-card').style.display = 'block';
+                    document.getElementById('feedback-card').style.display = 'none';
+                }
+
+                showScreen('screen-dashboard');
+            } catch (err) {
+                console.error("Dashboard error:", err);
+                alert("Nem sikerült betölteni a profil adataidat. Hiba: " + err.message);
+                showScreen('screen-dashboard');
+            }
+        }
+
+        // Feedback Submission
+        document.getElementById('feedback-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const btnSubmit = document.getElementById('btn-feedback-submit');
+
+            // Validate ratings
+            const quality = document.getElementById('q-quality').value;
+            const delivery = document.getElementById('q-delivery').value;
+            const nps = document.getElementById('q-nps').value;
+
+            if (!quality) {
+                alert('Kérjük, értékeld az érem minőségét!');
+                return;
+            }
+            if (!delivery) {
+                alert('Kérjük, értékeld a szállítás zökkenőmentességét!');
+                return;
+            }
+            if (!nps) {
+                alert('Kérjük, válaszd ki a 0-10 NPS ajánlási értéket!');
+                return;
+            }
+
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = '<span class="loading-spinner"></span> Beküldés...';
+
+            let photoUrl = '';
+
+            try {
+                // 1. Upload photo if selected
+                if (selectedFile) {
+                    const fileExt = selectedFile.name.split('.').pop();
+                    const fileName = `${currentUser.email.toLowerCase()}_${Date.now()}.${fileExt}`;
+
+                    const { data: uploadData, error: uploadError } = await supabaseClient.storage
+                        .from('medals')
+                        .upload(fileName, selectedFile);
+
+                    if (uploadError) throw uploadError;
+
+                    // Get public URL
+                    const { data: { publicUrl } } = supabaseClient.storage
+                        .from('medals')
+                        .getPublicUrl(fileName);
+
+                    photoUrl = publicUrl;
+                }
+
+                // Gather locations
+                const selectedLocations = [];
+                document.querySelectorAll('input[name="q-location"]:checked').forEach(chk => {
+                    if (chk.value === 'Egyéb') {
+                        const otherVal = document.getElementById('q-location-other').value.trim();
+                        if (otherVal) selectedLocations.push(`Egyéb: ${otherVal}`);
+                    } else {
+                        selectedLocations.push(chk.value);
+                    }
+                });
+
+                const payload = {
+                    erem_minoseg: quality,
+                    szallitas_elegedett: delivery,
+                    reszvetel_ujra: document.querySelector('input[name="q-reszvetel"]:checked').value,
+                    nps_score: nps,
+                    kovetkezo_tajegyseg: selectedLocations.join(', '),
+                    tetszett_legjobban: document.getElementById('q-best').value.trim(),
+                    jobba_tenne: document.getElementById('q-improvement').value.trim(),
+                    photo_url: photoUrl
+                };
+
+                // 2. Submit to backend API route (Vercel serverless function)
+                const { data: { session } } = await supabaseClient.auth.getSession();
+
+                const response = await fetch('/api/submit-feedback', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${session.access_token}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const resData = await response.json();
+                if (!response.ok) {
+                    throw new Error(resData.error || 'API hívás sikertelen.');
+                }
+
+                // Show success screen
+                document.getElementById('feedback-card').style.display = 'none';
+                document.getElementById('feedback-completed-card').style.display = 'block';
+            } catch (err) {
+                console.error("Submission error:", err);
+                alert("Sikertelen beküldés: " + err.message);
+            } finally {
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = '<span>Visszajelzés beküldése</span>';
+            }
+        };
+
+        // Logout
+        async function handleLogout() {
+            await supabaseClient.auth.signOut();
+            currentUser = null;
+            selectedFile = null;
+            showScreen('screen-login');
+        }
+
+        // Init
+        setupFormControls();
+        checkSession();
+    </script>
+</body>
+
+</html>
