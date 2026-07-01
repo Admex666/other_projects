@@ -16,12 +16,13 @@ module.exports = async (req, res) => {
         console.log('Starting synchronization: Google Sheets -> Supabase...');
 
         const serviceAccountJson = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON);
-        const auth = new google.auth.JWT(
-            serviceAccountJson.client_email,
-            null,
-            serviceAccountJson.private_key,
-            ['https://www.googleapis.com/auth/spreadsheets.readonly']
-        );
+        const auth = new google.auth.GoogleAuth({
+            credentials: {
+                client_email: serviceAccountJson.client_email,
+                private_key: serviceAccountJson.private_key
+            },
+            scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly']
+        });
 
         const sheets = google.sheets({ version: 'v4', auth });
         const sheetId = process.env.GOOGLE_SHEET_ID;
@@ -120,12 +121,11 @@ module.exports = async (req, res) => {
             return serialA - serialB;
         });
 
-        // Assign rank-based serial numbers
-        const totalCompleted = completedRunners.length;
+        // Assign rank-based serial numbers (always out of 100)
         completedRunners.forEach((runner, idx) => {
             const rank = idx + 1;
             const paddedRank = rank.toString().padStart(3, '0');
-            runner.serial_number = `#${paddedRank}/${totalCompleted}`;
+            runner.serial_number = `#${paddedRank}/100`;
         });
 
         // Recombine and clean raw_serial
@@ -146,16 +146,35 @@ module.exports = async (req, res) => {
             completion_date: '2026.06.30',
             shipped: true,
             received_date: '2026.06.30',
-            serial_number: '#999',
+            serial_number: '#999/100',
             distance_km: 15
         });
 
-        console.log(`Parsed and ranked ${finalRunnersToUpsert.length} runners from Sheet. Syncing with Supabase...`);
+        // Deduplicate runners by email to avoid ON CONFLICT DO UPDATE constraint violations
+        const runnersMap = new Map();
+        for (const runner of finalRunnersToUpsert) {
+            const emailKey = runner.email.toLowerCase();
+            if (runnersMap.has(emailKey)) {
+                const existing = runnersMap.get(emailKey);
+                if (!existing.completed && runner.completed) {
+                    runnersMap.set(emailKey, runner);
+                } else if (existing.completed && runner.completed) {
+                    if (!existing.serial_number && runner.serial_number) {
+                        runnersMap.set(emailKey, runner);
+                    }
+                }
+            } else {
+                runnersMap.set(emailKey, runner);
+            }
+        }
+        const deduplicatedRunners = Array.from(runnersMap.values());
+
+        console.log(`Parsed and ranked ${deduplicatedRunners.length} unique runners from Sheet. Syncing with Supabase...`);
 
         // Batch upsert to Supabase
         const { data, error } = await supabase
             .from('runners')
-            .upsert(finalRunnersToUpsert, { onConflict: 'email' });
+            .upsert(deduplicatedRunners, { onConflict: 'email' });
 
         if (error) {
             throw error;

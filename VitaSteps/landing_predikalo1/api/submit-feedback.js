@@ -66,12 +66,13 @@ module.exports = async (req, res) => {
 
         // 2. Write to Google Sheets
         const serviceAccountJson = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON);
-        const auth = new google.auth.JWT(
-            serviceAccountJson.client_email,
-            null,
-            serviceAccountJson.private_key,
-            ['https://www.googleapis.com/auth/spreadsheets']
-        );
+        const auth = new google.auth.GoogleAuth({
+            credentials: {
+                client_email: serviceAccountJson.client_email,
+                private_key: serviceAccountJson.private_key
+            },
+            scopes: ['https://www.googleapis.com/auth/spreadsheets']
+        });
 
         const sheets = google.sheets({ version: 'v4', auth });
         const sheetId = process.env.GOOGLE_SHEET_ID;

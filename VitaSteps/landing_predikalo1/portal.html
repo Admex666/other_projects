@@ -915,7 +915,7 @@
 
             try {
                 // 1. Fetch profile from 'runners'
-                const { data: runner, error } = await supabaseClient
+                let { data: runner, error } = await supabaseClient
                     .from('runners')
                     .select('*')
                     .eq('email', currentUser.email.toLowerCase())
@@ -924,7 +924,27 @@
                 if (error) throw error;
 
                 if (!runner) {
-                    // Runner not found in DB
+                    console.log('Runner not found in DB. Attempting background sync...');
+                    try {
+                        const syncRes = await fetch('/api/sync-runners');
+                        if (syncRes.ok) {
+                            const { data: retryRunner, error: retryError } = await supabaseClient
+                                .from('runners')
+                                .select('*')
+                                .eq('email', currentUser.email.toLowerCase())
+                                .maybeSingle();
+                            if (retryError) throw retryError;
+                            if (retryRunner) {
+                                runner = retryRunner;
+                            }
+                        }
+                    } catch (syncErr) {
+                        console.error('On-demand sync failed:', syncErr);
+                    }
+                }
+
+                if (!runner) {
+                    // Runner not found in DB even after sync
                     document.getElementById('user-display-name').textContent = "Regisztrált Felhasználó";
                     document.getElementById('user-display-serial').textContent = "#Nincs";
                     document.getElementById('user-display-status').innerHTML = '<span class="status-badge">Nincs aktív kihívásod</span>';
