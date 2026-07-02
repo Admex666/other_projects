@@ -485,6 +485,37 @@
             text-align: center;
             margin-bottom: 1.5rem;
         }
+
+        /* Tabs Styles */
+        .tabs-nav {
+            display: flex;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            gap: 1.5rem;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-mid);
+            font-weight: 600;
+            padding: 0.8rem 0;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-family: inherit;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-high);
+        }
+
+        .tab-btn.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+            font-weight: 700;
+        }
     </style>
 </head>
 
@@ -556,8 +587,20 @@
                 </div>
             </div>
 
-            <!-- Feedback Card -->
-            <div id="feedback-card" class="card" style="display: none;">
+            <!-- Tabs Navigation -->
+            <div class="tabs-nav" id="dashboard-tabs" style="display: none;">
+                <button class="tab-btn active" id="tab-btn-feedback" onclick="switchTab('feedback')">
+                    💬 Visszajelzés
+                </button>
+                <button class="tab-btn" id="tab-btn-referral" onclick="switchTab('referral')">
+                    🎁 Ajánlói Program
+                </button>
+            </div>
+
+            <!-- TAB CONTENT: Feedback -->
+            <div id="tab-content-feedback">
+                <!-- Feedback Card -->
+                <div id="feedback-card" class="card" style="display: none;">
                 <h2>Érem átvéve, jelezz vissza! 💬</h2>
                 <p>Nagyszerű! Látjuk, hogy az érmedet már sikeresen átvetted. Kérünk, oszd meg velünk a véleményedet az
                     alábbi kérdések megválaszolásával (kb. 2 perc):</p>
@@ -715,14 +758,14 @@
                 <p>Köszönjük a türelmedet! Státusz frissülése naponta egyszer történik.</p>
             </div>
 
-            <!-- Referral Program Card -->
-            <div id="referral-card" class="card" style="display: none; margin-top: 1.5rem;">
-                <h2 style="color: var(--accent); margin-top: 0;">🎁 Ajánlói Program (Win-Win)</h2>
-                <p>Oszd meg a kódodat a barátaiddal: ők <strong>10% kedvezményt</strong> kapnak a Prédikálószék nevezésből, te pedig akár <strong>100% ingyenes nevezést</strong> kapsz a következő VitaSteps kihívásunkra!</p>
-                
-                <div class="coupon-box" id="ref-coupon-display" style="margin: 1.5rem auto; padding: 0.8rem; font-size: 1.3rem; border: 2px dashed var(--accent); background: rgba(196,255,0,0.05); text-align: center; font-weight: bold; border-radius: 8px; color: var(--accent); max-width: 250px; letter-spacing: 2px;">
-                    VSBARAT10
-                </div>
+            </div>
+
+            <!-- TAB CONTENT: Referral -->
+            <div id="tab-content-referral" style="display: none;">
+                <!-- Referral Program Card -->
+                <div id="referral-card" class="card" style="display: block; margin-top: 0;">
+                    <h2 style="color: var(--accent); margin-top: 0;">🎁 Ajánlói Program</h2>
+                    <p>Küldd el a lenti linkedet a barátaidnak: ha ezen keresztül neveznek, ők <strong>10% kedvezményt</strong> kapnak a Prédikálószék nevezésből, te pedig akár <strong>100% ingyenes nevezést</strong> kapsz a következő VitaSteps kihívásunkra!</p>
 
                 <div class="form-group" style="margin-top: 1rem;">
                     <label style="font-size: 0.85rem; color: var(--text-mid); display: block; margin-bottom: 0.4rem;">A te egyedi ajánlói linked (kattints rá a másoláshoz):</label>
@@ -744,6 +787,7 @@
                         • 5 barát: <strong>100% INGYENES</strong> nevezés a következő túrára!
                     </div>
                 </div>
+            </div>
             </div>
 
             <button onclick="handleLogout()" class="btn btn-secondary">Kijelentkezés</button>
@@ -1029,7 +1073,6 @@
                 }
 
                 // Referral logic for completed runners
-                const referralCard = document.getElementById('referral-card');
                 if (runner.completed) {
                     let refCount = 0;
                     try {
@@ -1044,7 +1087,7 @@
                         console.error('Error fetching referrals:', e);
                     }
 
-                    referralCard.style.display = 'block';
+                    document.getElementById('dashboard-tabs').style.display = 'flex';
                     document.getElementById('ref-link-input').value = `${window.location.origin}/checkout-widget.html?ref=${encodeURIComponent(currentUser.email.toLowerCase())}`;
                     document.getElementById('ref-count-display').textContent = `${refCount} barát`;
 
@@ -1062,8 +1105,13 @@
                     } else {
                         rewardDisplay.innerHTML = '🎉 Gratulálunk! Elérted az <strong>5 barátot</strong>, a következő nevezésed <strong>100% INGYENES</strong>!';
                     }
+
+                    // Activate default tab
+                    switchTab('feedback');
                 } else {
-                    referralCard.style.display = 'none';
+                    document.getElementById('dashboard-tabs').style.display = 'none';
+                    document.getElementById('tab-content-feedback').style.display = 'block';
+                    document.getElementById('tab-content-referral').style.display = 'none';
                 }
 
                 showScreen('screen-dashboard');
@@ -1194,6 +1242,28 @@
                     document.execCommand('copy');
                     alert('Sikeresen kimásolva! 🎁');
                 });
+        }
+
+        // Tab Switching Utility
+        function switchTab(tabId) {
+            const btnFeedback = document.getElementById('tab-btn-feedback');
+            const btnReferral = document.getElementById('tab-btn-referral');
+            const contentFeedback = document.getElementById('tab-content-feedback');
+            const contentReferral = document.getElementById('tab-content-referral');
+
+            if (!btnFeedback || !btnReferral || !contentFeedback || !contentReferral) return;
+
+            if (tabId === 'feedback') {
+                btnFeedback.classList.add('active');
+                btnReferral.classList.remove('active');
+                contentFeedback.style.display = 'block';
+                contentReferral.style.display = 'none';
+            } else if (tabId === 'referral') {
+                btnFeedback.classList.remove('active');
+                btnReferral.classList.add('active');
+                contentFeedback.style.display = 'none';
+                contentReferral.style.display = 'block';
+            }
         }
 
         // Init

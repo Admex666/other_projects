@@ -97,9 +97,12 @@ def send_referral_email(name, email, portal_link, coupon_code):
         print("❌ Error: email_referral_template.html not found!")
         return False
         
+    referral_link = f"https://vitastepsss.vercel.app/checkout-widget.html?ref={urllib.parse.quote(email)}"
+    
     html = html.replace("{{FIRST_NAME}}", first_name)
     html = html.replace("{{COUPON_CODE}}", coupon_code)
     html = html.replace("{{PORTAL_LINK}}", portal_link)
+    html = html.replace("{{REFERRAL_LINK}}", referral_link)
     
     msg = MIMEMultipart("alternative")
     msg["Subject"] = "🎁 Ajánld a VitaSteps-et, teljesíts legközelebb ingyen!"
