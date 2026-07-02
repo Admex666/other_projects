@@ -2,110 +2,6 @@
 
 Note: _This is purely the output of the chat conversation and does not contain any raw data, codebase snippets, etc. used to generate the output._
 
-### Planner Response
-
-I will run the updated Foxpost script to verify if the token-matching correctly resolves the unresolved lockers and automatically consolidates the packages (like Mester Anita & Erős Rezső, and family members).
-
-*User accepted the command `C:/Users/Adam/AppData/Local/Programs/Python/Python313/python.exe C:\Users\Adam\.gemini\antigravity-ide\brain\188d6723-5707-4e3c-8111-02429d950f5a\scratch\generate_foxpost_import.py`*
-
-### Planner Response
-
-A scriptet megírtam és sikeresen lefutott! A kész, tömeges Foxpost importfájl elmentve a gépedre:
-📁 [Foxpost_import_ready.xlsx](file:///C:/Users/Adam/Downloads/Foxpost_import_ready.xlsx)
-
-A script intelligens algoritmusokat használt a csomagok csoportosítására, a nevek elemzésére és az automata kódok feloldására. Az alábbiakban összefoglalom az eredményeket és a rád váró teendőket:
-
----
-
-### 📦 1. Összevont csomagok (Jelentős szállítási költségmegtakarítás!)
-Az algoritmus a nevek, e-mailek, családi nevek és egyedi kommentek alapján az alábbi **nevezéseket vonta össze egy-egy csomagba**:
-
-1.  **Mester Anita** csomagja (3 db érem):
-    *   *Összevonva:* **Mester Anita**, **Erős Rezső** és **Bódiné Hellebrand Anita** (Anita megjegyzésében kérte az összevonást, így mindhárom érem egyben megy Anita telefonszámával).
-2.  **Mikó Balázs** csomagja (2 db érem):
-    *   *Összevonva:* **Mikó Balázs** és **Szabó Éva** (ugyanaz az email és csomagpont).
-3.  **Szabó Richárd** csomagja (2 db érem):
-    *   *Összevonva:* **Szabó Richárd** és **Szabó-Mráz Anita** (ugyanaz az email és csomagpont).
-4.  **Korpos-Kakas Vivien** csomagja (2 db érem):
-    *   *Összevonva:* **Korpos-Kakas Vivien** és **Korpos Levente** (családi név egyezés alapján, ugyanazon a Mammut automatánál).
-5.  **Mike Gyula** csomagja (4 db érem):
-    *   *Összevonva:* **Mike Gyula**, **Kuli Erika**, **Mike Botond** és **Mike Petra** (ugyanaz a rendelés).
-
----
-
-### 🗺️ 2. Trükkös csomagpontok feloldva (Kódok sikeresen megvannak)
-A korábban hibás/hiányos csomagpontok a kulcsszó-alapú token-egyeztetéssel **mind sikeresen feloldásra kerültek**:
-*   *Makkai Zsoltné* (Regős u. Mr Mosi Z-box) ➡️ **`hu10017`**
-*   *Balaton Edit* (Kiskunfélegyháza Béke téri SPAR) ➡️ **`hu665`**
-*   *Jakab Miklós* (Packeta Z-Pont Pátria) ➡️ **`25967`** (a Foxpost rendszerben szereplő azonosító)
-
----
-
-### ⚠️ 3. AZONNALI TEENDŐ: Hiányzó telefonszámok (6 csomag)
-A következő **sikeresen teljesített** futók megadták a csomagpontot (pl. a Stripe fizetésnél), de a Tally szállítási űrlapot nem töltötték ki, így **nincs meg a telefonszámuk**. Telefonszám nélkül a Foxpost import hibát fog jelezni (nem tud SMS-t küldeni a rekesz nyitásához). 
-
-**Velük fel kell venni a kapcsolatot (vagy ki kell nekik küldeni a szállítás-bekérőt):**
-*   ❌ **Földi Tünde** (`vaczakne@hotmail.com`)
-*   ❌ **Korpos-Kakas Vivien** (`kkvivien1994@gmail.com`) – *a Leventével közös csomaghoz kell a szám.*
-*   ❌ **Jakab Miklós** (`jakab.miklos@gmail.com`)
-*   ❌ **Mike Gyula** (`gyula.mike@kerpet.hu`) – *a 4 db éremhez.*
-*   ❌ **Nebehaj Zoltán** (`nebehajzoli@icloud.com`)
-*   ❌ **Kőmüves-Mars Mária** (`komuvesmarsmaria@gmail.com`)
-
----
-
-### ⚠️ 4. AZONNALI TEENDŐ: Hiányzó szállítási adatok (5 futó)
-Ők **sikeresen teljesítettek**, de még **semmilyen szállítási adatot** (sem csomagpontot, sem telefonszámot) nem adtak meg. Az ő érmeiket még nem tudjuk postázni:
-*   ⚠️ **Drázsnyák Eszter** (`drazseester@gmail.com`)
-*   ⚠️ **Pillerné Kiss Erzsébet** (`kissbobi@gmail.com`)
-*   ⚠️ **Matyók Tibor** (`matyoktibor75@gmail.com`)
-*   ⚠️ **Hajdinák István** (`spanyol68@freemail.hu`)
-*   ⚠️ **Menyhért Emese Angéla** (`spanyol68@freemail.hu`)
-
----
-
-### Javasolt lépések:
-1.  **Telefonszámmal rendelkező csomagok feladása:** A letöltött [Foxpost_import_ready.xlsx](file:///C:/Users/Adam/Downloads/Foxpost_import_ready.xlsx) fájlt töltsd fel a Foxpost felületére. Az algoritmus a hiányzó telefonszámú sorokat is beírta (üres telefonszámmal), így a feltöltésnél azokat a hibás sorokat jelölje majd ki a rendszer, és manuálisan ki tudod őket hagyni, vagy ott helyben beírni a telefonszámot, ha közben megkaptad.
-2.  **Szállítási ping kiküldése:** A fenti 11 főnek (6 hiányzó telefonszám + 5 hiányzó cím) küldjük ki a szállítási adatok bekérőjét. Ezt megtehetjük a `send_emails.py` script `ping` módjával:
-    `python send_emails.py ping` (előtte ellenőrizve, hogy a `DRY_RUN` ki van-e kapcsolva).
-
-### User Input
-
-Akkor most jó a foxpost_import_ready.xlsx? 
-
-### Planner Response
-
-I will create a temporary scratch script `read_generated_xlsx.py` to inspect the generated `Foxpost_import_ready.xlsx` file and print the exact rows that will be uploaded to Foxpost. This will confirm that the columns, names, formatting, and numeric codes are correct.
-
-*Edited relevant file*
-
-### Planner Response
-
-I will execute the script to read the contents of the generated `Foxpost_import_ready.xlsx` file.
-
-*User accepted the command `C:/Users/Adam/AppData/Local/Programs/Python/Python313/python.exe C:\Users\Adam\.gemini\antigravity-ide\brain\188d6723-5707-4e3c-8111-02429d950f5a\scratch\read_generated_xlsx.py`*
-
-### Planner Response
-
-**Igen, a fájl szerkezetileg és tartalmilag is tökéletes lett, és pontosan követi a Foxpost elvárásait.**
-
-A generált [Foxpost_import_ready.xlsx](file:///C:/Users/Adam/Downloads/Foxpost_import_ready.xlsx) ellenőrzése alapján:
-
-1.  **A 2–16. sorok (15 csomag, összesen 21 éremmel) teljesen hibátlanok.** Megvan a név, az érvényes telefonszám (pl. `36204108365` formátumban), a helyes e-mail és a sikeresen feloldott automata azonosító kód (pl. `hu5482`). Ezeket azonnal fel tudod adni.
-2.  **A 17–22. sorok (6 csomag, összesen 10 éremmel) hiányzó telefonszámot tartalmaznak** (`None` értékkel). 
-    *   Ha ezt a fájlt így töltöd fel a Foxpost felületére, a rendszer el fogja fogadni, de ezt a 6 sort **piros hibaüzenettel fogja megjelölni** a telefonszám hiánya miatt.
-    *   **Mit tehetsz velük?**
-        *   *Opció A:* Törlöd ezt a 6 sort az Excelből a feltöltés előtt, és csak a 15 hibátlan csomagot adod fel most, a maradékot pedig később, ha megadták a számukat.
-        *   *Opció B:* Feltöltöd így, és a Foxpost webes felületén manuálisan beírod a telefonszámaikat, ha addigra megkapod tőlük e-mailben.
-
-*Megjegyzés:* A csomagok mérete egységesen **XS**, a beszedendő utánvét összege pedig **0 Ft** lett beállítva. A saját megjegyzés rovatba pedig bekerült, hogy melyik érmeket vontuk össze (pl. *Mike Gyula* csomagjánál jelzi, hogy +3 érem van benne Kuli Erikának és a két Mike gyereknek).
-
-### User Input
-
-A hiányzó telefonszámokhoz írj egy email template szöveget ide a chatre
-
-*Edited relevant file*
-
 *Viewed [chat1.2 - Launching VitaSteps Business Operations.md](file:///e:/Data/other_projects/VitaSteps/chat1.2%20-%20Launching%20VitaSteps%20Business%20Operations.md) *
 
 ### Planner Response
@@ -3663,3 +3559,48 @@ Eltávolítottam a kuponkódot és a kupon dobozokat mindkét felületről, és 
     *   A szövegezés teljesen át lett alakítva: a barátoknak a **linken keresztüli regisztrációval** jár a 10% automatikus kedvezmény, az ajánló pedig a **linken keresztül beérkező nevezéseket** tudja követni a portálon.
 3.  **Teszt Email Kiküldve:**
     *   Újra kiküldtem a frissített sablonú tesztet az **`admexgm@gmail.com`** címedre, így a postafiókodban már az új, kuponkód nélküli változatot láthatod!
+
+### User Input
+
+Wohoo. Akkor minden készen áll, hogy kiküldjük a @[landing_predikalo1/send_referral_emails.py] -t? Nézd át mint supervisor!
+
+*Viewed [send_referral_emails.py](file:///e:/Data/other_projects/VitaSteps/landing_predikalo1/send_referral_emails.py) *
+
+### Planner Response
+
+Átnéztem supervisor szemmel. Van 3 dolog, amit javítani kell mielőtt élesbe megy:
+
+**🔴 1. A `headers` változó neve ütközik!** (komoly bug)
+A 147. sorban definiálsz egy `headers` dict-et az HTTP kéréshez, de a 172. sorban **ugyanezt a változónevet** felülírja a Google Sheets fejléc sor! Ezért a `find_col` függvény helytelen adatban fog keresni. Vissza kell nevezni az egyiket.
+
+**🔴 2. A `col_serial` teljesen szükségtelen** – a küldőfüggvénynek nem kell a sorszám, sehol nem is adja át. Elhagyható, de nem okoz hibát. Csak dead code.
+
+**🟡 3. A `coupon_code` paramétert a sablonból már kiszedtük** – a `send_referral_email` függvény még mindig kapja és behelyettesíti `{{COUPON_CODE}}`-ot a sablonba, de a sablonban már nincs ilyen placeholder. Ez nem okoz hibát, de felesleges.
+
+*Edited relevant file*
+
+*User accepted the command `$env:DRY_RUN="True"; C:/Users/Adam/AppData/Local/Programs/Python/Python313/python.exe e:\Data\other_projects\VitaSteps\landing_predikalo1\send_referral_emails.py`*
+
+### Planner Response
+
+A DRY RUN hibátlanul lefutott! ✅ Minden oké.
+
+### 🔍 Supervisor átvizsgálás eredménye:
+
+| | Ellenőrzési pont | Státusz |
+|---|---|---|
+| ✅ | **`headers` névütközés** — javítva (`http_headers`) | Javítva |
+| ✅ | **6 visszajelzős felhasználó** azonosítva Supabase-ből | OK |
+| ✅ | **Email + ajánlói link generálása** minden titokzatos karaktert URLencode-ol | OK |
+| ✅ | **`referral email sent?` oszlop** automatikusan létrejön, ha hiányzik (Col AD) | OK |
+| ✅ | **Idempotencia** — a már elküldötteknél (ref_sent == "igen") kihagyja | OK |
+| ✅ | **2 másodperces késleltetés** emailek között, nem löki túl a SMTP limiteket | OK |
+| ✅ | **DRY RUN mód** — éles futáshoz le kell venni az env változót | OK |
+
+**Indítás élesben:**
+
+```bash
+python landing_predikalo1/send_referral_emails.py
+```
+
+Mehet? 🚀

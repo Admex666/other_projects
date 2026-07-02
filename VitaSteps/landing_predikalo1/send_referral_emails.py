@@ -85,7 +85,7 @@ def get_first_name(full_name: str) -> str:
     parts = full_name.strip().split()
     return parts[-1] if parts else full_name
 
-def send_referral_email(name, email, portal_link, coupon_code):
+def send_referral_email(name, email, portal_link):
     first_name = get_first_name(name)
     
     # Load referral template
@@ -100,7 +100,6 @@ def send_referral_email(name, email, portal_link, coupon_code):
     referral_link = f"https://vitastepsss.vercel.app/checkout-widget.html?ref={urllib.parse.quote(email)}"
     
     html = html.replace("{{FIRST_NAME}}", first_name)
-    html = html.replace("{{COUPON_CODE}}", coupon_code)
     html = html.replace("{{PORTAL_LINK}}", portal_link)
     html = html.replace("{{REFERRAL_LINK}}", referral_link)
     
@@ -113,7 +112,7 @@ def send_referral_email(name, email, portal_link, coupon_code):
     
     if DRY_RUN:
         print(f"[DRY RUN] Would send referral email to {name} ({email})")
-        print(f"          Coupon: {coupon_code} | Link: {portal_link}")
+        print(f"          Referral link: {referral_link}")
         return True
         
     try:
@@ -144,14 +143,14 @@ def main():
         return
 
     url = f"{SUPABASE_URL.rstrip('/')}/rest/v1/feedbacks?select=runner_email"
-    headers = {
+    http_headers = {
         "apikey": SUPABASE_SERVICE_ROLE_KEY,
         "Authorization": f"Bearer {SUPABASE_SERVICE_ROLE_KEY}",
         "Content-Type": "application/json"
     }
 
     try:
-        r = requests.get(url, headers=headers, timeout=10)
+        r = requests.get(url, headers=http_headers, timeout=10)
         if r.status_code != 200:
             print(f"Error fetching feedbacks from Supabase: {r.status_code} - {r.text}")
             return
@@ -179,13 +178,6 @@ def main():
         
     col_nev = find_col("név", 4)
     col_email = find_col("email", 3)
-    col_serial = find_col("érem átvéve", 26) # fallback
-    # Find serial in header
-    for idx, h in enumerate(headers):
-        if "sorszám" in h.strip().lower() or "serial" in h.strip().lower() or h.strip().lower() == "#":
-            col_serial = idx
-            break
-            
     col_ref_sent, headers = ensure_column_exists(service, headers, "referral email sent?")
     
     # 3. Process each row
@@ -195,8 +187,7 @@ def main():
         
         email = row[col_email].strip().lower()
         name = row[col_nev].strip()
-        serial = row[col_serial].strip() if len(row) > col_serial else ''
-        ref_sent = row[col_ref_sent].strip().lower()
+        ref_sent = row[col_ref_sent].strip().lower() if len(row) > col_ref_sent else ''
         
         if not email or not name:
             continue
@@ -205,11 +196,9 @@ def main():
         if email in feedback_emails and ref_sent != "igen":
             print(f"\nProcessing {name} ({email})...")
             
-            # Generate referral coupon details
             portal_link = f"https://vitastepsss.vercel.app/portal.html?email={urllib.parse.quote(email)}"
-            coupon_code = "VSBARAT10" # standard coupon
             
-            success = send_referral_email(name, email, portal_link, coupon_code)
+            success = send_referral_email(name, email, portal_link)
             if success:
                 write_cell(service, idx, col_ref_sent, "Igen")
                 sent_count += 1
