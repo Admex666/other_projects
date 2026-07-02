@@ -52,6 +52,7 @@ module.exports = async (req, res) => {
         const colDistance = findCol("tény táv?", 13);
         const colShipped = findCol("érem kiküldve?", 24);
         const colReceived = findCol("érem átvéve", 26); // Will match the dynamically created column index
+        const colReferredBy = findCol("ajánló email", -1);
 
         const dataRows = rows.slice(1);
         const runnersToUpsert = [];
@@ -69,6 +70,7 @@ module.exports = async (req, res) => {
             const distanceRaw = colVal(colDistance);
             const shippedVal = colVal(colShipped);
             const receivedDate = colVal(colReceived);
+            const referredBy = colReferredBy !== -1 ? colVal(colReferredBy) : '';
 
             const completed = !!completedDate;
             const shipped = !!shippedVal && !["", "#n/a", "#name?", "#value!", "nem", "no", "false", "0"].includes(shippedVal.toLowerCase());
@@ -88,7 +90,8 @@ module.exports = async (req, res) => {
                 received_date: receivedDate || null,
                 raw_serial: serial,
                 serial_number: null,
-                distance_km: distanceKm
+                distance_km: distanceKm,
+                referred_by: referredBy.toLowerCase().trim() || null
             });
         }
 
@@ -147,7 +150,8 @@ module.exports = async (req, res) => {
             shipped: true,
             received_date: '2026.06.30',
             serial_number: '#999/100',
-            distance_km: 15
+            distance_km: 15,
+            referred_by: null
         });
 
         // Deduplicate runners by email to avoid ON CONFLICT DO UPDATE constraint violations

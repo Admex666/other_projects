@@ -566,9 +566,31 @@
     <script>
         // ===== STATE =====
         let selectedParcelPoint = null;
+        let referredBy = '';
 
         // Read URL params if user came from index.html
         const params = new URLSearchParams(window.location.search);
+        referredBy = params.get('ref') || '';
+
+        // Update price display if referred by a friend
+        if (referredBy) {
+            document.addEventListener('DOMContentLoaded', () => {
+                const priceDiv = document.querySelector('.order-price');
+                if (priceDiv) priceDiv.textContent = '7.190 Ft';
+                
+                const infoDiv = document.querySelector('.order-info');
+                if (infoDiv) {
+                    const badge = document.createElement('div');
+                    badge.style.color = 'var(--accent)';
+                    badge.style.fontSize = '0.78rem';
+                    badge.style.fontWeight = 'bold';
+                    badge.style.marginTop = '0.2rem';
+                    badge.textContent = '🎁 10% AJÁNLÓI KEDVEZMÉNY AKTIVÁLVA';
+                    infoDiv.appendChild(badge);
+                }
+            });
+        }
+
         const prefilledDistance = params.get('distance');
         if (prefilledDistance) {
             const distSelect = document.getElementById('cust-distance');
@@ -580,6 +602,39 @@
                 }
             }
         }
+
+        // Check if checkout is closed (limit 99)
+        async function checkLimit() {
+            try {
+                const response = await fetch('/api/check-limit');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.closed) {
+                        // Limit reached! Lock checkout.
+                        const btn = document.getElementById('submit-btn');
+                        btn.disabled = true;
+                        btn.textContent = '❌ A nevezés betelt / Minden érem elfogyott';
+                        btn.style.background = '#334155';
+                        btn.style.color = '#94a3b8';
+                        btn.style.cursor = 'not-allowed';
+                        
+                        const errorMsg = document.getElementById('error-msg');
+                        errorMsg.textContent = '⚠️ Sajnos elértük a 99 db-os limitet, a Prédikálószék érmek elfogytak!';
+                        errorMsg.classList.add('visible');
+                        errorMsg.style.display = 'block';
+                        
+                        // Disable form elements
+                        document.querySelectorAll('.form-section input, .form-section select').forEach(el => {
+                            el.disabled = true;
+                            el.style.opacity = '0.5';
+                        });
+                    }
+                }
+            } catch (err) {
+                console.error('Error checking limit:', err);
+            }
+        }
+        checkLimit();
 
         // ===== DELIVERY METHOD TOGGLE =====
         function handleDeliveryChange(method) {
@@ -745,7 +800,8 @@
                         parcelName: finalParcelName,
                         parcelAddress: finalParcelAddress,
                         parcelId: finalParcelId,
-                        phone
+                        phone,
+                        referredBy
                     })
                 });
 

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VitaSteps Ajánlói Program</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #0b0f19;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      color: #fff;
+    }
+
+    .wrapper {
+      width: 100%;
+      background: #0b0f19;
+      padding-bottom: 40px;
+    }
+
+    .main {
+      background: #121824;
+      margin: 0 auto;
+      max-width: 600px;
+      border-radius: 12px;
+      border: 1px solid rgba(196, 255, 0, 0.15);
+    }
+
+    .header {
+      padding: 40px 20px;
+      text-align: center;
+      background: linear-gradient(180deg, #161f33 0%, #121824 100%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: 4px;
+      margin: 0;
+    }
+
+    .logo span {
+      color: #c4ff00;
+    }
+
+    .content {
+      padding: 40px 30px;
+    }
+
+    h1 {
+      font-size: 22px;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 18px;
+      color: #c4ff00;
+      margin-top: 30px;
+      margin-bottom: 15px;
+      border-bottom: 1px solid rgba(196, 255, 0, 0.1);
+      padding-bottom: 5px;
+    }
+
+    p {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #f1f5f9;
+      margin: 0 0 15px;
+    }
+
+    .highlight {
+      color: #c4ff00;
+      font-weight: bold;
+    }
+
+    .coupon-box {
+      background: rgba(196, 255, 0, 0.05);
+      border: 2px dashed #c4ff00;
+      border-radius: 8px;
+      padding: 15px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      color: #c4ff00;
+      margin: 20px auto;
+      max-width: 250px;
+    }
+
+    .rewards-list {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 8px;
+      padding: 20px 20px 20px 40px;
+      margin: 20px 0;
+      color: #f1f5f9;
+      font-size: 15px;
+      line-height: 1.8;
+    }
+
+    .rewards-list li strong {
+      color: #c4ff00;
+    }
+
+    .cta-container {
+      text-align: center;
+      padding: 25px 0;
+    }
+
+    .btn {
+      background: #c4ff00;
+      color: #000 !important;
+      font-size: 15px;
+      font-weight: bold;
+      text-decoration: none;
+      padding: 14px 30px;
+      border-radius: 8px;
+      display: inline-block;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      margin: 30px 0;
+    }
+
+    .footer {
+      padding: 30px 20px;
+      text-align: center;
+    }
+
+    .footer p {
+      font-size: 11px;
+      color: #5d6b82;
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <center class="wrapper">
+    <table class="main" width="100%">
+      <tr>
+        <td class="header">
+          <h1 class="logo">VITA<span>STEPS</span></h1>
+        </td>
+      </tr>
+      <tr>
+        <td class="content">
+          <h1>Szia {{FIRST_NAME}}!</h1>
+          <p>Még egyszer nagyon köszönjük a kitöltött visszajelzésedet! Elképesztően sokat jelent nekünk, hogy <span
+              class="highlight">maximális pontszámmal</span> értékelted a Prédikálószék kihívást és az érmet. 💚</p>
+
+          <p>Mivel ennyire elégedett vagy, szeretnénk egy különleges lehetőséget felajánlani Neked és a barátaidnak.
+
+          <h2>🤝 Ajánlói Program</h2>
+          <p>Oszd meg az alábbi kuponkódot barátaiddal, ismerőseiddel. Ezzel mindenki nyer:</p>
+
+          <p>1. <strong>A barátod</strong> a kuponkódot megadva a fizetésnél <span class="highlight">10% azonnali
+              kedvezményt</span> kap a nevezési díjból.</p>
+          <p>2. <strong>Te pedig</strong> minden sikeresen regisztrált barátod után egyre nagyobb kedvezményt gyűjtesz a
+            <strong>következő VitaSteps kihívásunkra</strong>:
+          </p>
+
+          <ul class="rewards-list">
+            <li>👤 1 barát: <strong>10%</strong> kedvezmény</li>
+            <li>👥 2 barát: <strong>25%</strong> kedvezmény</li>
+            <li>🏔️ 3 barát: <strong>45%</strong> kedvezmény</li>
+            <li>🎯 4 barát: <strong>70%</strong> kedvezmény</li>
+            <li>🏆 5 barát: <strong>100% INGYENES</strong> nevezés + fizikai érem!</li>
+          </ul>
+
+          <p>Íme az egyedi kuponkódotok, amit továbbíthatsz nekik:</p>
+          <div class="coupon-box">{{COUPON_CODE}}</div>
+
+          <p style="text-align: center; font-size: 13px; color: #a1a1a1; margin-top: -10px;">
+            (A barátaidnak nevezéskor a kuponkód mezőbe kell beírniuk ezt a kódot.)
+          </p>
+
+          <h2>📊 Kövesd az ajánlásaidat!</h2>
+          <p>A portálodra belépve bármikor élőben láthatod, hogy hányan használták már fel a kuponkódodat, és éppen
+            mekkora kedvezménynél tartasz a következő túrára.</p>
+
+          <div class="cta-container">
+            <a href="{{PORTAL_LINK}}" class="btn" target="_blank">🚀 Belépés a Teljesítő Portálra</a>
+          </div>
+
+          <hr class="divider">
+
+          <p>Közös erővel segítsünk még több embernek eljutni a csúcsra! Köszönjük, ha te is továbbítod ezt a levelet.
+          </p>
+          <p style="margin-top:30px;">Üdvözlettel,<br><strong>A VitaSteps Csapata</strong></p>
+        </td>
+      </tr>
+      <tr>
+        <td class="footer">
+          <p>© 2026 VitaSteps. Minden jog fenntartva.<br>vitasteps.team@gmail.com</p>
+        </td>
+      </tr>
+    </table>
+  </center>
+</body>
+
+</html>

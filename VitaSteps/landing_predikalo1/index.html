@@ -434,6 +434,63 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/1.7.0/gpx.min.js"></script>
     <script src="main.js"></script>
+    <script>
+        // Check if checkout limit has been reached
+        async function checkCheckoutLimit() {
+            try {
+                const response = await fetch('/api/check-limit');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.closed) {
+                        // Change hero and nav buttons
+                        const ctas = [
+                            document.getElementById('nav-cta'),
+                            document.getElementById('hero-cta'),
+                            document.querySelector('.sticky-cta-mobile a')
+                        ];
+                        ctas.forEach(btn => {
+                            if (btn) {
+                                btn.textContent = 'Betelt / Lezárult';
+                                btn.style.background = '#334155';
+                                btn.style.color = '#94a3b8';
+                                btn.style.borderColor = '#334155';
+                                btn.style.pointerEvents = 'none';
+                                btn.style.cursor = 'not-allowed';
+                            }
+                        });
+
+                        // Change main checkout box
+                        const mainBtn = document.getElementById('checkout-section-btn');
+                        if (mainBtn) {
+                            mainBtn.textContent = '❌ A nevezés lezárult / Betelt';
+                            mainBtn.style.background = '#334155';
+                            mainBtn.style.color = '#94a3b8';
+                            mainBtn.style.borderColor = '#334155';
+                            mainBtn.style.pointerEvents = 'none';
+                            mainBtn.style.cursor = 'not-allowed';
+                        }
+
+                        const checkoutBox = document.getElementById('checkout-section');
+                        if (checkoutBox) {
+                            const desc = checkoutBox.querySelector('p');
+                            if (desc) {
+                                desc.textContent = 'Sajnos a 99 darabos limitünk teljesen megtelt. További érem nevezések leadására már nincs lehetőség ezen a kihíváson. Köszönjük a hatalmas érdeklődést!';
+                                desc.style.color = '#ff4d4d';
+                                desc.style.fontWeight = 'bold';
+                            }
+                            const priceTag = checkoutBox.querySelector('div');
+                            if (priceTag) {
+                                priceTag.style.opacity = '0.5';
+                            }
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error('Error checking checkout limit:', e);
+            }
+        }
+        checkCheckoutLimit();
+    </script>
 </body>
 
 </html>

@@ -715,6 +715,37 @@
                 <p>Köszönjük a türelmedet! Státusz frissülése naponta egyszer történik.</p>
             </div>
 
+            <!-- Referral Program Card -->
+            <div id="referral-card" class="card" style="display: none; margin-top: 1.5rem;">
+                <h2 style="color: var(--accent); margin-top: 0;">🎁 Ajánlói Program (Win-Win)</h2>
+                <p>Oszd meg a kódodat a barátaiddal: ők <strong>10% kedvezményt</strong> kapnak a Prédikálószék nevezésből, te pedig akár <strong>100% ingyenes nevezést</strong> kapsz a következő VitaSteps kihívásunkra!</p>
+                
+                <div class="coupon-box" id="ref-coupon-display" style="margin: 1.5rem auto; padding: 0.8rem; font-size: 1.3rem; border: 2px dashed var(--accent); background: rgba(196,255,0,0.05); text-align: center; font-weight: bold; border-radius: 8px; color: var(--accent); max-width: 250px; letter-spacing: 2px;">
+                    VSBARAT10
+                </div>
+
+                <div class="form-group" style="margin-top: 1rem;">
+                    <label style="font-size: 0.85rem; color: var(--text-mid); display: block; margin-bottom: 0.4rem;">A te egyedi ajánlói linked (kattints rá a másoláshoz):</label>
+                    <input type="text" id="ref-link-input" class="input-text" readonly style="background: rgba(255,255,255,0.03); color: #fff; cursor: pointer; text-align: center; font-family: monospace; font-size: 0.85rem;" onclick="copyReferralLink()">
+                </div>
+
+                <div style="margin-top: 1.5rem; background: var(--surface2); padding: 1.2rem; border-radius: 8px; border: 1px solid var(--border);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem;">
+                        <span style="font-weight: 700; font-size: 0.95rem;">Sikeres ajánlásaid száma:</span>
+                        <span class="status-badge completed" id="ref-count-display">0 barát</span>
+                    </div>
+                    <div style="font-size: 0.82rem; color: var(--text-mid); line-height: 1.5;" id="ref-reward-display">
+                        Következő mérföldkő: <strong>1 barát után 10%</strong> kedvezmény
+                    </div>
+                    
+                    <div style="margin-top: 1rem; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 0.8rem; font-size: 0.78rem; color: var(--text-mid); line-height: 1.4;">
+                        📈 <strong>Jutalom szintek:</strong><br>
+                        • 1 barát: <strong>10%</strong> · 2 barát: <strong>25%</strong> · 3 barát: <strong>45%</strong> · 4 barát: <strong>70%</strong><br>
+                        • 5 barát: <strong>100% INGYENES</strong> nevezés a következő túrára!
+                    </div>
+                </div>
+            </div>
+
             <button onclick="handleLogout()" class="btn btn-secondary">Kijelentkezés</button>
         </div>
     </div>
@@ -997,6 +1028,44 @@
                     document.getElementById('feedback-card').style.display = 'none';
                 }
 
+                // Referral logic for completed runners
+                const referralCard = document.getElementById('referral-card');
+                if (runner.completed) {
+                    let refCount = 0;
+                    try {
+                        const { count, error: refError } = await supabaseClient
+                            .from('runners')
+                            .select('*', { count: 'exact', head: true })
+                            .eq('referred_by', currentUser.email.toLowerCase());
+                        if (!refError) {
+                            refCount = count || 0;
+                        }
+                    } catch (e) {
+                        console.error('Error fetching referrals:', e);
+                    }
+
+                    referralCard.style.display = 'block';
+                    document.getElementById('ref-link-input').value = `${window.location.origin}/checkout-widget.html?ref=${encodeURIComponent(currentUser.email.toLowerCase())}`;
+                    document.getElementById('ref-count-display').textContent = `${refCount} barát`;
+
+                    const rewardDisplay = document.getElementById('ref-reward-display');
+                    if (refCount === 0) {
+                        rewardDisplay.innerHTML = 'Következő mérföldkő: <strong>1 barát után 10% kedvezmény</strong>';
+                    } else if (refCount === 1) {
+                        rewardDisplay.innerHTML = 'Aktuális jutalom: <strong>10%</strong> | Következő: <strong>2 barát után 25% kedvezmény</strong>';
+                    } else if (refCount === 2) {
+                        rewardDisplay.innerHTML = 'Aktuális jutalom: <strong>25%</strong> | Következő: <strong>3 barát után 45% kedvezmény</strong>';
+                    } else if (refCount === 3) {
+                        rewardDisplay.innerHTML = 'Aktuális jutalom: <strong>45%</strong> | Következő: <strong>4 barát után 70% kedvezmény</strong>';
+                    } else if (refCount === 4) {
+                        rewardDisplay.innerHTML = 'Aktuális jutalom: <strong>70%</strong> | Következő: <strong>5 barát után 100% INGYENES nevezés</strong>';
+                    } else {
+                        rewardDisplay.innerHTML = '🎉 Gratulálunk! Elérted az <strong>5 barátot</strong>, a következő nevezésed <strong>100% INGYENES</strong>!';
+                    }
+                } else {
+                    referralCard.style.display = 'none';
+                }
+
                 showScreen('screen-dashboard');
             } catch (err) {
                 console.error("Dashboard error:", err);
@@ -1110,6 +1179,21 @@
             currentUser = null;
             selectedFile = null;
             showScreen('screen-login');
+        }
+
+        // Copy Referral Link Utility
+        function copyReferralLink() {
+            const input = document.getElementById('ref-link-input');
+            input.select();
+            input.setSelectionRange(0, 99999); // mobile support
+            navigator.clipboard.writeText(input.value)
+                .then(() => {
+                    alert('Sikeresen kimásolva! Küldd el a barátaidnak a kedvezményes nevezéshez! 🎁');
+                })
+                .catch(() => {
+                    document.execCommand('copy');
+                    alert('Sikeresen kimásolva! 🎁');
+                });
         }
 
         // Init

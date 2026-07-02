@@ -52,15 +52,15 @@
         .certificate-container {
             width: 100%;
             max-width: 800px;
-            perspective: 1000px;
+            position: relative;
+            overflow: visible;
             margin-bottom: 2rem;
         }
 
         /* The actual certificate card */
         .certificate {
-            width: 100%;
-            aspect-ratio: 1.414;
-            /* A4 Ratio */
+            width: 800px;
+            height: 566px; /* A4 aspect ratio 1.414 */
             background: radial-gradient(circle at top left, #0e131f 0%, #05070c 100%);
             border: 2px solid var(--gold);
             border-radius: 12px;
@@ -70,10 +70,13 @@
             justify-content: space-between;
             align-items: center;
             text-align: center;
-            position: relative;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform-origin: top left;
             box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), 0 0 40px var(--gold-glow);
             overflow: hidden;
-            transition: transform 0.5s ease;
+            box-sizing: border-box;
         }
 
         /* Glow effects inside certificate */
@@ -650,9 +653,16 @@
                 margin: 0 !important;
                 padding: 0 !important;
                 max-width: 100% !important;
+                width: 100% !important;
+                height: 100% !important;
+                position: relative !important;
             }
 
             .certificate {
+                width: 297mm !important;
+                height: 210mm !important;
+                position: relative !important;
+                transform: none !important;
                 border-radius: 0 !important;
                 box-shadow: none !important;
                 -webkit-print-color-adjust: exact !important;
@@ -811,6 +821,33 @@
         const displaySerial = document.getElementById('display-serial');
         const displayDistance = document.getElementById('display-distance');
         const displayDate = document.getElementById('display-date');
+
+        // Dynamic certificate scaling function for pixel-perfect mobile view
+        function scaleCertificate() {
+            const container = document.querySelector('.certificate-container');
+            const cert = document.getElementById('certificate');
+            if (!container || !cert) return;
+
+            const containerWidth = container.clientWidth;
+            const certWidth = 800;
+            const certHeight = 566;
+
+            if (containerWidth < certWidth) {
+                const scale = containerWidth / certWidth;
+                cert.style.transform = `scale(${scale})`;
+                container.style.height = `${certHeight * scale}px`;
+            } else {
+                cert.style.transform = 'none';
+                container.style.height = `${certHeight}px`;
+            }
+        }
+
+        // Attach listeners
+        window.addEventListener('resize', scaleCertificate);
+        window.addEventListener('load', scaleCertificate);
+        // Run scaling on DOMContentLoaded and slightly after to catch final offsets
+        document.addEventListener('DOMContentLoaded', scaleCertificate);
+        setTimeout(scaleCertificate, 50);
 
         // Parse query params for dynamic loads (e.g., oklevel.html?nev=Kovacs+Janos&datum=2026.06.21)
         function getQueryParams() {

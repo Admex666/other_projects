@@ -45,6 +45,20 @@ module.exports = async (req, res) => {
 
         console.log(`Received feedback submission from ${email}...`);
 
+        // Check if feedback already exists in Supabase to prevent duplicates
+        const { data: existingFeedback, error: checkError } = await supabase
+            .from('feedbacks')
+            .select('id')
+            .eq('runner_email', email)
+            .maybeSingle();
+
+        if (checkError) throw checkError;
+
+        if (existingFeedback) {
+            console.log(`Feedback from ${email} already exists. Skipping duplicate write.`);
+            return res.status(200).json({ success: true, message: 'Feedback already submitted.' });
+        }
+
         // 1. Save feedback to Supabase Database
         const { error: dbError } = await supabase
             .from('feedbacks')
