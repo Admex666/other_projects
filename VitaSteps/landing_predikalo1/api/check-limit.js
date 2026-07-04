@@ -15,32 +15,40 @@ const sheetId = process.env.GOOGLE_SHEET_ID;
 const sheetName = 'Nevezések';
 
 module.exports = async (req, res) => {
-    // Only allow GET requests
     if (req.method !== 'GET') {
         return res.status(405).json({ error: 'Method Not Allowed' });
     }
 
     try {
-        // Cache the response at edge for 30 seconds to prevent hitting Google API rate limits
         res.setHeader('Cache-Control', 's-maxage=30, stale-while-revalidate');
 
-        // Fetch just the 'fizetett' column (Column J)
+        const campaign = req.query.campaign || 'predikaloszek';
+        const isPilis = campaign === 'pilis';
+
         const response = await sheets.spreadsheets.values.get({
             spreadsheetId: sheetId,
-            range: `${sheetName}!J2:J500`,
+            range: `${sheetName}!A2:AJ500`,
         });
 
         const rows = response.data.values || [];
         
-        // Count non-empty values
         let paidCount = 0;
         for (const row of rows) {
-            if (row && row.length > 0 && row[0] && row[0].trim() !== '') {
-                paidCount++;
+            if (row.length > 9) {
+                const rowCampaign = (row[2] || '').toString().trim().toLowerCase();
+                const rowPaid = (row[9] || '').toString().trim();
+                
+                if (rowPaid !== '') {
+                    if (isPilis && rowCampaign.includes('pilis')) {
+                        paidCount++;
+                    } else if (!isPilis && !rowCampaign.includes('pilis')) {
+                        paidCount++;
+                    }
+                }
             }
         }
 
-        const limit = 99;
+        const limit = isPilis ? 100 : 99;
         const closed = paidCount >= limit;
 
         return res.status(200).json({

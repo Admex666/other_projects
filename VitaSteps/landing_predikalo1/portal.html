@@ -1088,7 +1088,21 @@
                     }
 
                     document.getElementById('dashboard-tabs').style.display = 'flex';
-                    document.getElementById('ref-link-input').value = `${window.location.origin}/checkout-widget.html?ref=${encodeURIComponent(currentUser.email.toLowerCase())}`;
+                    
+                    const isPilisK = runner.serial_number && runner.serial_number.includes('PK');
+                    const refLink = isPilisK 
+                        ? `${window.location.origin}/nagykevely/checkout-widget.html?ref=${encodeURIComponent(currentUser.email.toLowerCase())}`
+                        : `${window.location.origin}/checkout-widget.html?ref=${encodeURIComponent(currentUser.email.toLowerCase())}`;
+                    document.getElementById('ref-link-input').value = refLink;
+
+                    const refText = document.querySelector('#referral-card p');
+                    if (refText) {
+                        if (isPilisK) {
+                            refText.innerHTML = `Küldd el a lenti linkedet a barátaidnak: ha ezen keresztül neveznek, ők <strong>10% kedvezményt</strong> kapnak a Nagy-Kevély nevezésből, te pedig akár <strong>100% ingyenes nevezést</strong> kapsz a következő VitaSteps kihívásunkra!`;
+                        } else {
+                            refText.innerHTML = `Küldd el a lenti linkedet a barátaidnak: ha ezen keresztül neveznek, ők <strong>10% kedvezményt</strong> kapnak a Prédikálószék nevezésből, te pedig akár <strong>100% ingyenes nevezést</strong> kapsz a következő VitaSteps kihívásunkra!`;
+                        }
+                    }
                     document.getElementById('ref-count-display').textContent = `${refCount} barát`;
 
                     const rewardDisplay = document.getElementById('ref-reward-display');

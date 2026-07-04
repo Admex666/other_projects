@@ -703,7 +703,7 @@
             <div class="participant-name" id="display-name">Minta Péter</div>
 
             <div class="cert-body">
-                sikeresen teljesítette a <strong>Prédikálószék Vertical</strong><br>
+                sikeresen teljesítette a <strong id="display-campaign">Prédikálószék Vertical</strong><br>
                 <strong id="display-distance">15 km-es</strong> kihívását, bizonyítva kitartását és sport iránti
                 elkötelezettségét.
             </div>
@@ -904,6 +904,16 @@
             }
 
             // Render details
+            const displayCampaign = document.getElementById('display-campaign');
+            const urlCampaign = params.kihivas || params.campaign || '';
+            if (urlCampaign.toLowerCase().includes('pilis') || (serial && (serial.includes('PK') || serial.includes('999')))) {
+                displayCampaign.textContent = 'A Nagy-Kevély csillagjai';
+            } else if (urlCampaign) {
+                displayCampaign.textContent = urlCampaign;
+            } else {
+                displayCampaign.textContent = 'Prédikálószék Vertical';
+            }
+
             nameInput.value = name || "";
             displayName.textContent = name || "Futó Partner";
 

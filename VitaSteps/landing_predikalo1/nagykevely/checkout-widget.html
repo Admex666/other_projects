@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nevezés & Szállítás – VitaSteps</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
+
+        :root {
+            --bg: #0b0f19;
+            --surface: #121824;
+            --surface2: #1a2235;
+            --border: rgba(255, 255, 255, 0.08);
+            --accent: #c4ff00;
+            --accent-dim: rgba(196, 255, 0, 0.12);
+            --text-high: #ffffff;
+            --text-mid: #8a99b3;
+            --text-low: #4a5568;
+            --radius: 12px;
+            --danger: #ff6b6b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: var(--bg);
+            color: var(--text-high);
+            font-family: 'Inter', system-ui, sans-serif;
+            min-height: 100vh;
+        }
+
+        /* NAV */
+        .nav {
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .logo { font-size: 1.3rem; font-weight: 900; letter-spacing: 3px; }
+        .logo span { color: var(--accent); }
+
+        /* LAYOUT */
+        .page-wrapper { max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+        .page-title { font-size: 1.6rem; font-weight: 700; margin-bottom: 0.4rem; }
+        .page-subtitle { color: var(--text-mid); font-size: 0.95rem; margin-bottom: 2rem; }
+
+        /* SECTION */
+        .section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.8rem 2rem;
+            margin-bottom: 1.5rem;
+        }
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1.4rem;
+            padding-bottom: 0.6rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* QUANTITY SELECTOR */
+        .qty-row {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            flex-wrap: wrap;
+        }
+        .qty-label { font-size: 0.95rem; color: var(--text-mid); flex: 1; min-width: 180px; }
+        .qty-controls {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .qty-btn {
+            width: 42px;
+            height: 42px;
+            background: transparent;
+            border: none;
+            color: var(--text-high);
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .qty-btn:hover { background: rgba(196,255,0,0.1); }
+        .qty-display {
+            width: 52px;
+            text-align: center;
+            font-size: 1.15rem;
+            font-weight: 700;
+            border-left: 1px solid var(--border);
+            border-right: 1px solid var(--border);
+            height: 42px;
+            line-height: 42px;
+        }
+
+        /* MEDAL PANEL */
+        .medal-panel {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.4rem 1.6rem;
+            margin-bottom: 1rem;
+            position: relative;
+            transition: border-color 0.2s;
+        }
+        .medal-panel:last-child { margin-bottom: 0; }
+        .medal-panel-title {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--accent);
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* FORM ROWS */
+        .form-row { margin-bottom: 1.1rem; }
+        .form-row:last-child { margin-bottom: 0; }
+        .form-row label {
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-mid);
+            margin-bottom: 0.45rem;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+        .form-row input[type="text"],
+        .form-row input[type="email"],
+        .form-row select {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            background: rgba(0,0,0,0.25);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-high);
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+        .form-row input:focus,
+        .form-row select:focus {
+            outline: none;
+            border-color: rgba(196,255,0,0.5);
+        }
+        .form-row select option { background: var(--surface2); }
+
+        .form-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        @media (max-width: 540px) { .form-grid-2 { grid-template-columns: 1fr; } }
+
+        /* DELIVERY OPTION */
+        .delivery-options { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .delivery-card {
+            flex: 1;
+            min-width: 220px;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.9rem;
+            background: var(--surface2);
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.1rem 1.3rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .delivery-card.selected {
+            border-color: var(--accent);
+            background: var(--accent-dim);
+        }
+        .delivery-card input[type="radio"] {
+            accent-color: var(--accent);
+            width: 1.15rem;
+            height: 1.15rem;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+        .delivery-card-name { font-weight: 700; font-size: 0.95rem; }
+        .delivery-card-sub { font-size: 0.78rem; margin-top: 0.15rem; font-weight: 600; }
+        .delivery-card-sub.free { color: var(--accent); }
+        .delivery-card-sub.paid { color: #ffcc44; }
+
+        /* ORDER SUMMARY BOX */
+        .order-summary-box {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            font-size: 0.92rem;
+            color: var(--text-mid);
+            border-bottom: 1px solid var(--border);
+        }
+        .summary-row:last-child { border-bottom: none; }
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 0 0;
+            font-size: 1.25rem;
+            font-weight: 900;
+            color: var(--text-high);
+        }
+        .summary-total-price { color: var(--accent); }
+
+        /* FOXPOST / HOME DELIVERY */
+        #foxpost-container,
+        #home-delivery-container { margin-bottom: 1.5rem; }
+
+        .selected-point-box {
+            background: rgba(196,255,0,0.05);
+            border: 1px solid rgba(196,255,0,0.2);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.2rem;
+            display: none;
+        }
+        .foxpost-iframe-wrap {
+            width: 100%;
+            height: 500px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        /* SUBMIT */
+        .submit-btn {
+            width: 100%;
+            margin-top: 0.5rem;
+            padding: 1.15rem;
+            background: var(--accent);
+            color: #000;
+            font-size: 1.05rem;
+            font-weight: 800;
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 0.5px;
+        }
+        .submit-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+        .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+        .error-msg {
+            color: var(--danger);
+            font-size: 0.87rem;
+            margin-top: 0.9rem;
+            text-align: center;
+            display: none;
+        }
+        .error-msg.visible { display: block; }
+
+        .legal-note {
+            text-align: center;
+            color: var(--text-low);
+            font-size: 0.78rem;
+            margin-top: 0.8rem;
+        }
+        .legal-note a { color: var(--text-mid); }
+
+        .badge-note {
+            font-size: 0.75rem;
+            color: var(--text-low);
+            margin-left: 0.4rem;
+            font-weight: 400;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="nav">
+        <a href="/nagykevely/index.html" style="text-decoration: none; color: inherit;">
+            <div class="logo">VITA<span>STEPS</span></div>
+        </a>
+    </nav>
+
+    <div class="page-wrapper">
+
+        <h1 class="page-title">📦 Nevezés & Szállítás</h1>
+        <p class="page-subtitle">Add meg a nevezők adatait, és válaszd ki a szállítási módot!</p>
+
+        <!-- ── QUANTITY ─────────────────────────────────────── -->
+        <div class="section">
+            <div class="section-title">🏅 Hány érmet rendelsz?</div>
+            <div class="qty-row">
+                <div class="qty-label">Egy érem ára: <strong style="color:var(--accent);">8 990 Ft</strong></div>
+                <div class="qty-controls">
+                    <button class="qty-btn" id="qty-minus" onclick="changeQty(-1)">−</button>
+                    <div class="qty-display" id="qty-display">1</div>
+                    <button class="qty-btn" id="qty-plus" onclick="changeQty(1)">+</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── MEDAL PANELS (dynamically rendered) ──────────── -->
+        <div id="medal-panels-container"></div>
+
+        <!-- ── VÁSÁRLÓ ADATAI (billing + contact) ───────────── -->
+        <div class="section" id="buyer-section">
+            <div class="section-title">🧾 Vásárló adatai <span class="badge-note">(számla & portál)</span></div>
+            <div class="form-grid-2">
+                <div class="form-row">
+                    <label for="cust-email">E-mail cím *</label>
+                    <input type="email" id="cust-email" placeholder="janos@email.com">
+                </div>
+                <div class="form-row">
+                    <label for="cust-phone">Telefonszám *</label>
+                    <input type="text" id="cust-phone" placeholder="+36 30 123 4567">
+                </div>
+            </div>
+            <div class="form-row" style="margin-top:1rem;">
+                <label for="cust-billing-address">Számlázási cím * <span style="font-size:0.75rem;color:var(--text-low);">(Számlázz.hu e-számlához)</span></label>
+                <input type="text" id="cust-billing-address" placeholder="1139 Budapest, Csizma utca 3.">
+            </div>
+        </div>
+
+        <!-- ── SZÁLLÍTÁSI MÓD ────────────────────────────────── -->
+        <div class="section">
+            <div class="section-title">🚚 Szállítás módja</div>
+            <div class="delivery-options">
+                <label class="delivery-card selected" id="label-foxpost" for="deliv-foxpost">
+                    <input type="radio" id="deliv-foxpost" name="delivery-method" value="foxpost" checked
+                        onchange="handleDeliveryChange('foxpost')">
+                    <div>
+                        <div class="delivery-card-name">🦊 Foxpost automata</div>
+                        <div class="delivery-card-sub free">INGYENES – TÖBB NAPON ÁT ÁTVEHETŐ</div>
+                    </div>
+                </label>
+                <label class="delivery-card" id="label-home" for="deliv-home">
+                    <input type="radio" id="deliv-home" name="delivery-method" value="home"
+                        onchange="handleDeliveryChange('home')">
+                    <div>
+                        <div class="delivery-card-name">📬 Házhozszállítás</div>
+                        <div class="delivery-card-sub paid">+1 200 Ft – Magyar Posta</div>
+                    </div>
+                </label>
+            </div>
+        </div>
+
+        <!-- ── FOXPOST MAP ───────────────────────────────────── -->
+        <div id="foxpost-container" class="section" style="padding: 1.5rem;">
+            <div class="section-title" style="margin-bottom:1rem;">🗺️ Foxpost Automata választás</div>
+            <div class="selected-point-box" id="selected-point-box">
+                <div style="font-weight:700;color:var(--accent);margin-bottom:0.3rem;">Kiválasztott automata:</div>
+                <div style="display:flex;align-items:center;gap:0.8rem;">
+                    <span id="selected-icon" style="font-size:1.5rem;"></span>
+                    <div>
+                        <div id="selected-name" style="font-weight:700;"></div>
+                        <div id="selected-address" style="font-size:0.85rem;color:var(--text-mid);margin-top:0.15rem;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="foxpost-iframe-wrap">
+                <iframe id="foxpost-iframe" src="https://cdn.foxpost.hu/apt-finder/v1/app/" width="100%" height="500px" frameborder="0"></iframe>
+            </div>
+        </div>
+
+        <!-- ── HÁZHOZSZÁLLÍTÁS CIME ──────────────────────────── -->
+        <div id="home-delivery-container" class="section" style="display:none;">
+            <div class="section-title">📬 Szállítási cím megadása</div>
+            <div class="form-row">
+                <label for="home-address">Pontos szállítási cím *</label>
+                <input type="text" id="home-address" placeholder="1139 Budapest, Csizma utca 3.">
+            </div>
+            <p style="font-size:0.82rem;color:var(--text-low);margin-top:0.5rem;">Ha megegyezik a számlázási címeddel, hagyd üresen – azt fogjuk használni.</p>
+        </div>
+
+        <!-- ── ÖSSZESÍTŐ ─────────────────────────────────────── -->
+        <div class="order-summary-box">
+            <div class="summary-row">
+                <span id="summary-medal-label">Kihívás Érem × 1 db</span>
+                <span id="summary-medal-price">8 990 Ft</span>
+            </div>
+            <div class="summary-row" id="summary-shipping-row" style="display:none;">
+                <span>Házhozszállítás</span>
+                <span>+1 200 Ft</span>
+            </div>
+            <div class="summary-total">
+                <span>Végösszeg</span>
+                <span class="summary-total-price" id="summary-total">8 990 Ft</span>
+            </div>
+        </div>
+
+        <!-- ── SUBMIT ────────────────────────────────────────── -->
+        <button id="submit-btn" class="submit-btn" onclick="handleSubmit()">🔒 Tovább a biztonságos fizetéshez</button>
+        <div id="error-msg" class="error-msg"></div>
+
+        <p class="legal-note" style="margin-top:1rem;">
+            A fizetés gombra kattintva elfogadod a <a href="../aszf.html" target="_blank">Nevezési feltételeket (ÁSZF)</a> és az <a href="../adatvedelem.html" target="_blank">Adatvédelmi nyilatkozatot</a>.
+        </p>
+
+    </div>
+
+    <script>
+        // ── CONFIG ───────────────────────────────────────────
+        const MEDAL_PRICE = 8990;
+        const SHIPPING_SURCHARGE = 1200;
+        const MAX_QTY = 5;
+        const DISTANCES = [
+            { value: '10 km', label: 'Kevély Kör (10 km)' },
+            { value: '15 km', label: 'Kevély Félmaraton (15 km)' },
+            { value: '25 km', label: 'Kevély Ultra (25 km)' }
+        ];
+
+        // ── STATE ────────────────────────────────────────────
+        const urlParams = new URLSearchParams(window.location.search);
+        const referredBy = urlParams.get('ref') || '';
+        const isTest = urlParams.get('test') === 'true' || window.location.hostname === 'localhost';
+
+        let qty = 1;
+        let deliveryMethod = 'foxpost';
+        let selectedParcelPoint = null;
+
+        // ── FOXPOST MESSAGE LISTENER ─────────────────────────
+        window.addEventListener('message', function (event) {
+            try {
+                if (event.origin.includes('foxpost.hu')) {
+                    const apt = JSON.parse(event.data);
+                    setSelectedPoint('foxpost', apt.name, apt.address, apt.operator_id || apt.place_id || '');
+                }
+            } catch (e) {}
+        }, false);
+
+        function setSelectedPoint(carrier, name, address, id) {
+            selectedParcelPoint = { carrier, name, address, id };
+            document.getElementById('selected-name').textContent = name || '–';
+            document.getElementById('selected-address').textContent = address || '–';
+            document.getElementById('selected-icon').textContent = '🦊';
+            document.getElementById('selected-point-box').style.display = 'block';
+            clearError();
+        }
+
+        // ── QUANTITY ─────────────────────────────────────────
+        function changeQty(delta) {
+            const newQty = qty + delta;
+            if (newQty < 1 || newQty > MAX_QTY) return;
+            qty = newQty;
+            document.getElementById('qty-display').textContent = qty;
+            document.getElementById('qty-minus').disabled = qty <= 1;
+            document.getElementById('qty-plus').disabled = qty >= MAX_QTY;
+            renderMedalPanels();
+            updateSummary();
+        }
+
+        function renderMedalPanels() {
+            const container = document.getElementById('medal-panels-container');
+            const current = container.querySelectorAll('.medal-panel');
+            const currentQty = current.length;
+
+            // Add panels
+            for (let i = currentQty; i < qty; i++) {
+                const panel = createMedalPanel(i);
+                container.appendChild(panel);
+            }
+            // Remove excess panels
+            for (let i = currentQty - 1; i >= qty; i--) {
+                current[i].remove();
+            }
+
+            // Update titles
+            container.querySelectorAll('.medal-panel-title').forEach((el, idx) => {
+                el.textContent = qty === 1 ? '🏅 Nevező adatai' : `🏅 ${idx + 1}. érem – Nevező adatai`;
+            });
+        }
+
+        function createMedalPanel(index) {
+            const panel = document.createElement('div');
+            panel.className = 'medal-panel section';
+            panel.innerHTML = `
+                <div class="medal-panel-title">${qty === 1 ? '🏅 Nevező adatai' : `🏅 ${index + 1}. érem – Nevező adatai`}</div>
+                <div class="form-grid-2">
+                    <div class="form-row">
+                        <label>Nevező teljes neve *</label>
+                        <input type="text" class="medal-name" placeholder="Minta János">
+                    </div>
+                    <div class="form-row">
+                        <label>Választott távolság *</label>
+                        <select class="medal-distance">
+                            ${DISTANCES.map(d => `<option value="${d.value}">${d.label}</option>`).join('')}
+                        </select>
+                    </div>
+                </div>
+            `;
+            return panel;
+        }
+
+        // ── DELIVERY ─────────────────────────────────────────
+        function handleDeliveryChange(method) {
+            deliveryMethod = method;
+            const foxpostEl = document.getElementById('foxpost-container');
+            const homeEl = document.getElementById('home-delivery-container');
+            const labelFox = document.getElementById('label-foxpost');
+            const labelHome = document.getElementById('label-home');
+            const shippingRow = document.getElementById('summary-shipping-row');
+
+            if (method === 'foxpost') {
+                foxpostEl.style.display = 'block';
+                homeEl.style.display = 'none';
+                labelFox.classList.add('selected');
+                labelHome.classList.remove('selected');
+                shippingRow.style.display = 'none';
+            } else {
+                foxpostEl.style.display = 'none';
+                homeEl.style.display = 'block';
+                labelFox.classList.remove('selected');
+                labelHome.classList.add('selected');
+                shippingRow.style.display = 'flex';
+            }
+            updateSummary();
+        }
+
+        // ── SUMMARY ──────────────────────────────────────────
+        function updateSummary() {
+            const medalTotal = MEDAL_PRICE * qty;
+            const shippingFee = deliveryMethod === 'home' ? SHIPPING_SURCHARGE : 0;
+            const total = medalTotal + shippingFee;
+
+            document.getElementById('summary-medal-label').textContent = `Kihívás Érem × ${qty} db`;
+            document.getElementById('summary-medal-price').textContent = formatHuf(medalTotal);
+            document.getElementById('summary-total').textContent = formatHuf(total);
+        }
+
+        function formatHuf(amount) {
+            return amount.toLocaleString('hu-HU') + ' Ft';
+        }
+
+        // ── VALIDATION & SUBMIT ──────────────────────────────
+        function showError(msg) {
+            const el = document.getElementById('error-msg');
+            el.textContent = msg;
+            el.classList.add('visible');
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        function clearError() {
+            document.getElementById('error-msg').classList.remove('visible');
+        }
+
+        async function handleSubmit() {
+            clearError();
+
+            // Collect medals
+            const medals = [];
+            const panels = document.querySelectorAll('.medal-panel');
+            for (let i = 0; i < panels.length; i++) {
+                const nameEl = panels[i].querySelector('.medal-name');
+                const distEl = panels[i].querySelector('.medal-distance');
+                const mName = nameEl.value.trim();
+                const mDist = distEl.value;
+                if (!mName) {
+                    showError(`⚠️ Kérjük add meg a ${i + 1}. nevező nevét!`);
+                    nameEl.focus();
+                    return;
+                }
+                medals.push({ name: mName, distance: mDist });
+            }
+
+            // Buyer fields
+            const email = document.getElementById('cust-email').value.trim();
+            const phone = document.getElementById('cust-phone').value.trim();
+            const billingAddress = document.getElementById('cust-billing-address').value.trim();
+
+            if (!email || !phone || !billingAddress) {
+                showError('⚠️ Kérjük töltsd ki az összes vásárlói mezőt (e-mail, telefon, számlázási cím)!');
+                return;
+            }
+
+            // Delivery validation
+            if (deliveryMethod === 'foxpost' && !selectedParcelPoint) {
+                showError('⚠️ Kérjük válassz egy Foxpost csomagpontot a térképen!');
+                return;
+            }
+
+            const homeAddressVal = document.getElementById('home-address').value.trim();
+            const resolvedHomeAddress = homeAddressVal || billingAddress;
+
+            const btn = document.getElementById('submit-btn');
+            btn.classList.add('loading');
+            btn.textContent = '⏳ Átirányítás a fizetéshez...';
+            btn.disabled = true;
+
+            const payload = {
+                medals,
+                email,
+                phone,
+                billingAddress,
+                deliveryMethod,
+                // foxpost
+                parcelCarrier: deliveryMethod === 'foxpost' ? (selectedParcelPoint?.carrier || '') : '',
+                parcelName: deliveryMethod === 'foxpost' ? (selectedParcelPoint?.name || '') : '',
+                parcelAddress: deliveryMethod === 'foxpost' ? (selectedParcelPoint?.address || '') : '',
+                parcelId: deliveryMethod === 'foxpost' ? (selectedParcelPoint?.id || '') : '',
+                // home
+                homeAddress: deliveryMethod === 'home' ? resolvedHomeAddress : '',
+                referredBy,
+                isTest,
+                campaign: 'pilis'
+            };
+
+            try {
+                const response = await fetch('/api/checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+                if (response.ok && data.url) {
+                    window.location.href = data.url;
+                } else {
+                    showError('Hiba a fizetés indításakor: ' + (data.error || 'Kérjük próbáld újra!'));
+                    btn.classList.remove('loading');
+                    btn.disabled = false;
+                    btn.textContent = '🔒 Tovább a biztonságos fizetéshez';
+                }
+            } catch (err) {
+                showError('Hálózati hiba. Kérjük ellenőrizd az internetkapcsolatod!');
+                btn.classList.remove('loading');
+                btn.disabled = false;
+                btn.textContent = '🔒 Tovább a biztonságos fizetéshez';
+            }
+        }
+
+        // ── INIT ─────────────────────────────────────────────
+        renderMedalPanels();
+        updateSummary();
+    </script>
+</body>
+
+</html>

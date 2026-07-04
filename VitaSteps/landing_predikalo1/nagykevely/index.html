@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Nagy-Kevély csillagjai – VitaSteps | Limitált 100 darabos érem</title>
+    <meta name="description"
+        content="Teljesítsd a Nagy-Kevély túrát augusztus 1. és augusztus 31. között, igazold a teljesítményed, és szerezd meg a kézzel festett 'A Nagy-Kevély csillagjai' érmet. Limitált, 100 darabos széria.">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="icon" type="image/png" href="../assets/logo.png">
+
+    <!-- Leaflet CSS for Map -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+
+    <style>
+        .btn-group {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-mid);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .filter-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .filter-btn.active {
+            background: var(--accent);
+            color: #000;
+            border-color: var(--accent);
+            font-weight: 600;
+        }
+    </style>
+
+    <!-- Meta Pixel Code -->
+    <script>
+        !function (f, b, e, v, n, t, s) {
+            if (f.fbq) return; n = f.fbq = function () {
+                n.callMethod ?
+                    n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+            };
+            if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+            n.queue = []; t = b.createElement(e); t.async = !0;
+            t.src = v; s = b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t, s)
+        }(window, document, 'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+            fbq('init', '808533555643359');
+            fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+            src="https://www.facebook.com/tr?id=808533555643359&ev=PageView&noscript=1" /></noscript>
+    <!-- End Meta Pixel Code -->
+
+    <!-- Vercel Web Analytics -->
+    <script>
+        window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+</head>
+
+<body>
+
+    <!-- STICKY NAV -->
+    <nav>
+        <div class="container nav-inner">
+            <div class="logo">VITASTEPS</div>
+            <a href="#checkout-section" class="btn btn-primary btn-sm" id="nav-cta">Nevezek &rarr;</a>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="container hero-inner">
+            <div class="hero-text">
+                <div class="badge" id="badge-earlybird">🔥 PILIS VERTICAL ELŐREGISZTRÁCIÓ</div>
+                <h1>Mászd meg a <span class="accent">Nagy-Kevélyt</span>.<br>Szerezd meg a csillagait.</h1>
+                <p>Az érem, amit <strong>nem lehet megvenni</strong>, csak teljesíteni. Nevezz be az előregisztráció alatt,
+                    teljesítsd a túrát <strong>augusztus 1. és augusztus 31. között</strong>, és megszolgálod a csodás kézzel festett
+                    érmedet.</p>
+                <p style="margin-top:-1rem; color: var(--text-mid); font-size:0.95rem;">Választhatsz több távolság közül
+                    (10, 15, 20, 25 km), egy biztos: a <strong style="color:var(--text-high)">Nagy-Kevély csúcsa és a
+                        teljesítmény</strong>.</p>
+                <div class="hero-actions">
+                    <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                        <div style="font-size:0.9rem; opacity:0.55; text-decoration:line-through; text-align:center;">
+                            13.990 Ft</div>
+                        <a href="#checkout-section" class="btn btn-primary btn-lg" id="hero-cta">
+                            Nevezek – 8.990 Ft + INGYENES SZÁLLÍTÁS 🏔️
+                        </a>
+                        <div style="font-size:0.8rem; color:var(--text-mid); text-align:center;">Kattints az adatok
+                            megadásához és a fizetéshez</div>
+                        <div style="color:#c4ff00; font-size:0.85rem; font-weight:600; text-align:center;">🔥 Limitált széria: összesen 100 darab egyedi, számozott érem készül!</div>
+                    </div>
+                    <a href="#hogyan" class="btn btn-ghost">Hogyan működik?</a>
+                </div>
+                <div class="trust-row">
+                    <span class="trust-item">🔒 Biztonságos fizetés</span>
+                    <span class="trust-item">📦 Ingyenes szállítás</span>
+                    <span class="trust-item">🏅 Limitált 100 db</span>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="medal-float">
+                    <img src="../assets/nagy_kevely_medal.png" alt="Nagy-Kevély Érem"
+                        id="medal-hero-img" style="border-radius: 50%; box-shadow: 0 0 30px rgba(196,255,0,0.25);">
+                    <div class="glow-ring"></div>
+                </div>
+                <div class="serial-badge">
+                    <span class="serial-label">Pilis széria</span>
+                    <span class="serial-num">100 darab</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- COUNTDOWN -->
+    <div class="countdown-bar">
+        <div class="container countdown-inner">
+            <span class="countdown-label">⏳ Az előregisztráció lezárul és a kihívás indul:</span>
+            <div class="countdown" id="countdown">
+                <div class="cd-unit"><span id="cd-days">--</span><small>nap</small></div>
+                <div class="cd-sep">:</div>
+                <div class="cd-unit"><span id="cd-hours">--</span><small>óra</small></div>
+                <div class="cd-sep">:</div>
+                <div class="cd-unit"><span id="cd-mins">--</span><small>perc</small></div>
+                <div class="cd-sep">:</div>
+                <div class="cd-unit"><span id="cd-secs">--</span><small>mp</small></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HOW IT WORKS -->
+    <section id="hogyan" class="how-section">
+        <div class="container">
+            <div class="section-label">A folyamat</div>
+            <h2 class="section-title">Három lépés. Egy valódi érem.</h2>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-num">01</div>
+                    <h3>Nevezés</h3>
+                    <p>Nevezz be és add meg a számlázási / szállítási adataidat. A biztonságos fizetést a Stripe kezeli.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-num">02</div>
+                    <h3>Teljesítés</h3>
+                    <p>Mászd meg a Nagy-Kevélyt a megadott időszakban (augusztus 1-31.). Mérd a távot Stravával vagy bármilyen GPS appal.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-num">03</div>
+                    <h3>Érem átvétel</h3>
+                    <p>Töltsd fel az igazolást (GPX/fotó) a túrázó portálodon. Sikeres ellenőrzés után ingyen postázzuk az érmedet!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAP SECTION -->
+    <section class="map-section">
+        <div class="container">
+            <div class="section-label">Helyszín</div>
+            <h2 class="section-title">A Nagy-Kevély csillagai túraútvonalak</h2>
+            <p style="color: var(--text-mid); max-width: 650px; margin: 0 auto 2rem; text-align: center;">
+                Bárhonnan indulhatsz és bármelyik útvonalat választhatod, a lényeg, hogy érintsd a **Nagy-Kevély csúcskövét** a megadott távok egyikén.
+            </p>
+
+            <div class="btn-group">
+                <button class="filter-btn active" onclick="setRoute('pilis-10')">Kevély Kör (10 km)</button>
+                <button class="filter-btn" onclick="setRoute('pilis-15')">Kevély Félmaraton (15 km)</button>
+                <button class="filter-btn" onclick="setRoute('pilis-25')">Kevély Ultra (25 km)</button>
+            </div>
+
+            <div class="map-container" style="margin-top: 1.5rem; height: 450px; border-radius: 12px; border: 1px solid var(--border); overflow: hidden;">
+                <div id="map" style="width: 100%; height: 100%;"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CHECKOUT BOX -->
+    <section id="checkout-section" class="checkout-section" style="padding: 5rem 0; background: var(--surface);">
+        <div class="container checkout-inner" style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start;">
+            <div class="checkout-left">
+                <div class="section-label">Biztonságos nevezés</div>
+                <h2 style="font-size: 2.2rem; font-weight: 700; margin-bottom: 1.5rem;">Biztosítsd a helyed még ma</h2>
+                
+                <div style="background: var(--surface2); padding: 2rem; border-radius: 12px; border: 1px solid var(--border); text-align: center;">
+                    <span style="font-size: 3rem; display: block; margin-bottom: 1rem;">🏅</span>
+                    <h3 style="margin-top:0; margin-bottom: 1rem; font-size: 1.8rem; color: var(--text-high);">Készen állsz a nevezésre?</h3>
+                    <p style="color: var(--text-mid); margin-bottom: 2rem; font-size: 1.05rem; max-width: 500px; margin-left: auto; margin-right: auto;">
+                        Kattints az alábbi gombra a szállítási adatok (Foxpost automata) megadásához, majd a biztonságos kártyás fizetéshez.
+                    </p>
+                    
+                    <div style="margin-bottom: 2rem; background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); display: inline-block; width: 100%; max-width: 400px; text-align: left;">
+                        <div style="font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-high);">Nevezési díj és szállítás összesen:</div>
+                        <div style="font-size: 2.5rem; font-weight: 800; color: var(--accent); margin-bottom: 0.5rem;">8.990 Ft</div>
+                        <div style="font-size: 0.82rem; color: var(--text-mid);">A fizetés és a szállítási adatok biztonságos kezelését a <strong>Stripe</strong> és a <strong>Foxpost</strong> rendszere végzi.</div>
+                    </div>
+
+                    <a href="/nagykevely/checkout-widget.html" id="checkout-section-btn" class="btn btn-primary btn-xl" style="display: block; width: 100%; max-width: 400px; margin: 0 auto; text-decoration: none; text-align: center; line-height: 1.5;">
+                        Nevezés és csomagpont választás &rarr;
+                    </a>
+                </div>
+
+                <div class="payment-badges" style="margin-top: 1.5rem; text-align: center;">
+                    <span>🔒 Biztonságos Stripe fizetés</span>
+                    <span>💳 Bankkártya / Apple Pay / Google Pay</span>
+                </div>
+            </div>
+
+            <div class="checkout-right">
+                <div class="faq-card">
+                    <h3>Gyakori kérdések</h3>
+                    <div class="faq-item">
+                        <div class="faq-q">Mi van, ha nem tudom teljesíteni a túrát?</div>
+                        <div class="faq-a">A nevezési díj a kihívásban való részvételt fedezi. Ha augusztusban nem sikerül, az érmet egy következő kihíváson felhasználhatod (feltételek az ÁSZF-ben).</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-q">Mikor kapom meg az érmet?</div>
+                        <div class="faq-a">A teljesítéseket folyamatosan bíráljuk el, és a teljesítést követően azonnal postázzuk az érmet a választott automatába.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-q">Hogyan igazolom a teljesítést?</div>
+                        <div class="faq-a">Rögzítsd a túrát bármilyen GPS alkalmazással (pl. Strava, Komoot, Garmin Connect) és töltsd fel a gpx fájlt vagy szelfit a személyes portálodon.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-q">Hogyan választok Foxpost automatát?</div>
+                        <div class="faq-a">A "Nevezés" gombra kattintva megnyílik a regisztrációs űrlap, ahol közvetlenül térképről választhatod ki az átvételi pontot.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-q">Kapok számlát?</div>
+                        <div class="faq-a">Igen, a sikeres fizetés után a Számlázz.hu automatikusan kiállítja és e-mailben elküldi a hivatalos elektronikus számlát.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container footer-inner">
+            <div class="footer-brand">
+                <div class="logo">VITASTEPS</div>
+                <p>Real World Accomplishments. Verified.</p>
+            </div>
+            <div class="footer-links">
+                <a href="../aszf.html">Általános Szerződési Feltételek</a>
+                <a href="../adatvedelem.html">Adatkezelési Tájékoztató</a>
+                <a href="mailto:vitasteps.team@gmail.com">vitasteps.team@gmail.com</a>
+            </div>
+            <div class="footer-legal">
+                <p>© 2026 VitaSteps</p>
+                <p>A biztonságos bankkártyás fizetést a <strong>Stripe</strong> biztosítja. Arcképet és személyes igazolványt nem tárolunk.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- STICKY CTA MOBILE -->
+    <div class="sticky-cta-mobile">
+        <a href="#checkout-section" class="btn btn-primary btn-sm" style="width:100%;" onclick="typeof fbq === 'function' && fbq('track', 'Lead');">
+            Nevezek
+        </a>
+    </div>
+
+    <!-- Leaflet JS for Map -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+    <script>
+        // Simple map simulation since we don't have direct GPX files for Nagy-Kevély in the assets folder yet
+        let map = L.map('map').setView([47.6186, 18.9950], 13); // Nagy-Kevély center
+        L.tileLayer('https://{s}.tile.thunderforest.com/outdoors/{z}/{x}/{y}.png?apikey=de5f3ce1de6a47aeb50c9509df639c0d', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Add a beautiful marker on the top of Nagy-Kevély
+        L.marker([47.6186, 18.9950]).addTo(map)
+            .bindPopup('⛰️ Nagy-Kevély Csúcs (534m) - Érintési pont!')
+            .openPopup();
+
+        function setRoute(routeId) {
+            // Remove active class
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            // Find target button
+            event.target.classList.add('active');
+            
+            // Highlight target center or mock route
+            if (routeId === 'pilis-10') {
+                map.setView([47.6186, 18.9950], 13);
+            } else if (routeId === 'pilis-15') {
+                map.setView([47.6186, 18.9950], 12);
+            } else {
+                map.setView([47.6186, 18.9950], 11);
+            }
+        }
+
+        // Countdown timer for 2026.08.01
+        const targetDate = new Date('2026-08-01T00:00:00+02:00').getTime();
+        const interval = setInterval(() => {
+            const now = new Date().getTime();
+            const diff = targetDate - now;
+
+            if (diff <= 0) {
+                clearInterval(interval);
+                document.getElementById('countdown').innerHTML = '<span style="color: var(--accent); font-weight: bold;">A KIHÍVÁS ELINDULT!</span>';
+                return;
+            }
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+            document.getElementById('cd-days').textContent = days;
+            document.getElementById('cd-hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('cd-mins').textContent = mins.toString().padStart(2, '0');
+            document.getElementById('cd-secs').textContent = secs.toString().padStart(2, '0');
+        }, 1000);
+
+        // Check checkout limit for campaign=pilis
+        async function checkCheckoutLimit() {
+            try {
+                const response = await fetch('/api/check-limit?campaign=pilis');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.closed) {
+                        const ctas = [
+                            document.getElementById('nav-cta'),
+                            document.getElementById('hero-cta'),
+                            document.querySelector('.sticky-cta-mobile a')
+                        ];
+                        ctas.forEach(btn => {
+                            if (btn) {
+                                btn.textContent = 'Betelt / Lezárult';
+                                btn.style.background = '#334155';
+                                btn.style.color = '#94a3b8';
+                                btn.style.borderColor = '#334155';
+                                btn.style.pointerEvents = 'none';
+                                btn.style.cursor = 'not-allowed';
+                            }
+                        });
+
+                        const mainBtn = document.getElementById('checkout-section-btn');
+                        if (mainBtn) {
+                            mainBtn.textContent = '❌ A nevezés lezárult / Betelt';
+                            mainBtn.style.background = '#334155';
+                            mainBtn.style.color = '#94a3b8';
+                            mainBtn.style.borderColor = '#334155';
+                            mainBtn.style.pointerEvents = 'none';
+                            mainBtn.style.cursor = 'not-allowed';
+                        }
+
+                        const checkoutBox = document.getElementById('checkout-section');
+                        if (checkoutBox) {
+                            const desc = checkoutBox.querySelector('p');
+                            if (desc) {
+                                desc.textContent = 'Sajnos a 100 darabos limitünk teljesen betelt. További érem nevezések leadására már nincs lehetőség ezen a kihíváson. Köszönjük!';
+                                desc.style.color = '#ff4d4d';
+                                desc.style.fontWeight = 'bold';
+                            }
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error('Error checking checkout limit:', e);
+            }
+        }
+        checkCheckoutLimit();
+    </script>
+</body>
+
+</html>
