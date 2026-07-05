@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DreamTrip v2 - Város Választó & Felfedező</title>
+    <link rel="icon" type="image/png" href="/static/logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #122915 0%, #0d1a0e 100%);
+            color: #f3f3f3;
+            min-height: 100vh;
+            padding-bottom: 60px;
+        }
+        .navbar {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 20px 40px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .logo-link {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: #90DC25;
+        }
+        .badge {
+            background: rgba(144, 220, 37, 0.1);
+            color: #90DC25;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            border: 1px solid rgba(144, 220, 37, 0.2);
+            letter-spacing: 0.5px;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .logout-btn:hover {
+            background: #90DC25;
+            color: #122915;
+            border-color: #90DC25;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 40px auto 0 auto;
+            padding: 0 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            font-size: 48px;
+            font-weight: 800;
+            background: linear-gradient(90deg, #ffffff, #90DC25);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .header p {
+            font-size: 18px;
+            color: #a0a0a0;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .content-grid {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+        .search-panel {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            padding: 30px;
+            backdrop-filter: blur(20px);
+        }
+        .search-panel h2 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 12px;
+            color: #90DC25;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: #b0b0b0;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .input-group input[type="text"],
+        .input-group input[type="date"],
+        .input-group input[type="number"],
+        .input-group select {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: white;
+            font-family: inherit;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: #90DC25;
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 15px rgba(144, 220, 37, 0.15);
+        }
+        .slider-container {
+            margin-bottom: 25px;
+        }
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #b0b0b0;
+            margin-bottom: 8px;
+        }
+        .slider-header span.val {
+            color: #90DC25;
+            font-weight: 600;
+        }
+        .slider-container input[type="range"] {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        .slider-container input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #90DC25;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(144, 220, 37, 0.5);
+            transition: transform 0.1s;
+        }
+        .slider-container input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+        .range-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #707070;
+            margin-top: 6px;
+        }
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 5px;
+        }
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .checkbox-item input {
+            cursor: pointer;
+            accent-color: #90DC25;
+            width: 16px;
+            height: 16px;
+        }
+        .btn-search {
+            width: 100%;
+            background: #90DC25;
+            color: #122915;
+            border: none;
+            border-radius: 14px;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 20px rgba(144, 220, 37, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-search:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(144, 220, 37, 0.4);
+            background: #a4eb38;
+        }
+        .results-panel {
+            background: rgba(255, 255, 255, 0.01);
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .placeholder-box {
+            border: 2px dashed rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            text-align: center;
+            color: #707070;
+        }
+        .placeholder-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        .loader {
+            display: none;
+            border: 4px solid rgba(255, 255, 255, 0.05);
+            border-top: 4px solid #90DC25;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .loading-text {
+            display: none;
+            text-align: center;
+            color: #a0a0a0;
+            margin-top: 15px;
+            font-size: 15px;
+        }
+        .city-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            transition: all 0.3s;
+        }
+        .city-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(144, 220, 37, 0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            background: rgba(255, 255, 255, 0.03);
+        }
+        .city-image-container {
+            position: relative;
+            height: 100%;
+            min-height: 180px;
+            background-size: cover;
+            background-position: center;
+        }
+        .score-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: #90DC25;
+            color: #122915;
+            font-weight: 800;
+            font-size: 18px;
+            padding: 8px 14px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .city-details {
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .city-header-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        .city-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+        }
+        .city-country {
+            font-size: 14px;
+            color: #a0a0a0;
+        }
+        .city-explanation {
+            font-size: 14px;
+            color: #90DC25;
+            background: rgba(144, 220, 37, 0.08);
+            border: 1px solid rgba(144, 220, 37, 0.15);
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .metric-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 8px 12px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .metric-label {
+            font-size: 10px;
+            color: #707070;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+        .metric-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #e0e0e0;
+        }
+        .btn-plan {
+            align-self: flex-end;
+            background: transparent;
+            border: 1px solid rgba(144, 220, 37, 0.5);
+            color: #90DC25;
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            text-align: center;
+        }
+        .btn-plan:hover {
+            background: #90DC25;
+            color: #122915;
+            border-color: #90DC25;
+            box-shadow: 0 5px 15px rgba(144, 220, 37, 0.2);
+        }
+        @media (max-width: 900px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            .city-card {
+                grid-template-columns: 1fr;
+            }
+            .city-image-container {
+                height: 180px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="/home" class="logo-link">
+            <img src="/static/logo.png" alt="Optivoya" style="height: 40px;">
+            <span class="logo-text">Optivoya</span>
+            <span class="badge">DreamTrip v2</span>
+        </a>
+        <div class="user-info">
+            <span style="color: #a0a0a0;">👤 {{ user }}</span>
+            <a href="/logout" class="logout-btn">Kilépés</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>DreamTrip v2 Felfedező</h1>
+            <p>Találd meg a számodra legideálisabb utazási célpontot a repülőjegy árak, Numbeo megélhetési indexek, időjárás és Google Maps POI sűrűség alapján!</p>
+        </div>
+
+        <div class="content-grid">
+            <!-- Baloldali preferenciák és keresés panel -->
+            <div class="search-panel">
+                <h2>Preferenciák finomhangolása</h2>
+                <form id="discoverForm" onsubmit="event.preventDefault(); searchCities();">
+                    <div class="input-group">
+                        <label for="origin">Indulási hely (Város)</label>
+                        <input type="text" id="origin" value="Budapest" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="start_date">Utazás kezdete</label>
+                        <input type="date" id="start_date" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="end_date">Utazás vége</label>
+                        <input type="date" id="end_date" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="budget">Maximális Budget (EUR)</label>
+                        <input type="number" id="budget" value="1000" min="100" required>
+                    </div>
+
+                    <!-- Sliders -->
+                    <div class="slider-container">
+                        <div class="slider-header">
+                            <span>Ideális hőmérséklet</span>
+                            <span class="val" id="val_temp">22°C</span>
+                        </div>
+                        <input type="range" id="weather_temp" min="10" max="35" value="22" oninput="document.getElementById('val_temp').innerText = this.value + '°C'">
+                        <div class="range-labels">
+                            <span>Hűvös (10°C)</span>
+                            <span>Forró (35°C)</span>
+                        </div>
+                    </div>
+
+                    <div class="slider-container">
+                        <div class="slider-header">
+                            <span>Város vs Természet</span>
+                            <span class="val" id="val_vibe">Kiegyensúlyozott</span>
+                        </div>
+                        <input type="range" id="vibe_urban_nature" min="0" max="100" value="50" oninput="updateVibeLabel(this.value)">
+                        <div class="range-labels">
+                            <span>Természet</span>
+                            <span>Nagyváros</span>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="cost_pref">Megélhetési költségek</label>
+                        <select id="cost_pref">
+                            <option value="low">Minél alacsonyabb (Budget utazó)</option>
+                            <option value="medium" selected>Közepes ár-érték arány</option>
+                            <option value="high">Nem számít az ár (Prémium/Luxus)</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="safety_level">Biztonsági elvárás</label>
+                        <select id="safety_level">
+                            <option value="low">Nem zavar a kaland</option>
+                            <option value="medium" selected>Közepes biztonság (Standard)</option>
+                            <option value="high">Csak kiemelkedően biztonságos</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Érdeklődési körök</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" id="int_culture" checked> Kultúra</label>
+                            <label class="checkbox-item"><input type="checkbox" id="int_food" checked> Gasztronómia</label>
+                            <label class="checkbox-item"><input type="checkbox" id="int_nature" checked> Természet</label>
+                            <label class="checkbox-item"><input type="checkbox" id="int_nightlife"> Éjszakai élet</label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-search">
+                        <span>🎯 Városok Rangsorolása</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Jobboldali eredmények panel -->
+            <div class="results-panel" id="resultsPanel">
+                <div class="placeholder-box" id="placeholderBox">
+                    <div class="placeholder-icon">🗺️</div>
+                    <h3>Állítsd be a preferenciáidat és kattints a keresésre!</h3>
+                    <p style="margin-top: 10px; font-size: 14px;">A rendszer összegyűjti és rangsorolja a repülőjegy árakat és megélhetési adatokat.</p>
+                </div>
+
+                <div class="loader" id="loader"></div>
+                <div class="loading-text" id="loadingText">Járatok, időjárás és POI-k lekérése folyamatban...<br><small>Ez eltarthat fél percig is.</small></div>
+
+                <div id="citiesList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Default dátumok beállítása: ma + 14 nap, 5 napos időtartam
+        const today = new Date();
+        const start = new Date(today);
+        start.setDate(today.getDate() + 14);
+        const end = new Date(start);
+        end.setDate(start.getDate() + 5);
+
+        document.getElementById('start_date').value = start.toISOString().split('T')[0];
+        document.getElementById('end_date').value = end.toISOString().split('T')[0];
+
+        function updateVibeLabel(val) {
+            let label = "Kiegyensúlyozott";
+            if (val < 30) label = "Természetközeli";
+            else if (val > 70) label = "Nagyvárosi pörgés";
+            document.getElementById('val_vibe').innerText = label;
+        }
+
+        async function searchCities() {
+            const placeholder = document.getElementById('placeholderBox');
+            const loader = document.getElementById('loader');
+            const loadingText = document.getElementById('loadingText');
+            const list = document.getElementById('citiesList');
+
+            placeholder.style.display = 'none';
+            list.innerHTML = '';
+            loader.style.display = 'block';
+            loadingText.style.display = 'block';
+
+            const start_date = document.getElementById('start_date').value;
+            const end_date = document.getElementById('end_date').value;
+            const month = parseInt(start_date.split('-')[1]);
+
+            // Kinyerjük az érdeklődési köröket
+            const interests = [];
+            if (document.getElementById('int_culture').checked) interests.push('culture');
+            if (document.getElementById('int_food').checked) interests.push('food');
+            if (document.getElementById('int_nature').checked) interests.push('nature');
+            if (document.getElementById('int_nightlife').checked) interests.push('nightlife');
+
+            const payload = {
+                origin: document.getElementById('origin').value,
+                month: month,
+                preferences: {
+                    weather_temp: parseFloat(document.getElementById('weather_temp').value),
+                    cost_pref: document.getElementById('cost_pref').value,
+                    vibe_urban_nature: parseInt(document.getElementById('vibe_urban_nature').value),
+                    vibe_calm_party: 50, // default
+                    vibe_history: 5, // default
+                    safety_level: document.getElementById('safety_level').value,
+                    crowds_pref: "medium", // default
+                    travel_time_max: 12,
+                    interests: interests
+                },
+                exclusions: [],
+                budget_daily: parseFloat(document.getElementById('budget').value) / 5, // becsült napi budget
+                budget_strictness: "soft"
+            };
+
+            try {
+                const response = await fetch('/api/v2/discover', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                loader.style.display = 'none';
+                loadingText.style.display = 'none';
+
+                if (response.ok) {
+                    const cities = await response.json();
+                    if (cities.length === 0) {
+                        list.innerHTML = '<div class="placeholder-box"><h3>Nem találtunk a preferenciáknak megfelelő várost.</h3></div>';
+                        return;
+                    }
+                    renderCities(cities, start_date, end_date);
+                } else {
+                    list.innerHTML = '<div class="placeholder-box"><h3>Hiba történt a városok rangsorolása során. Próbáld újra!</h3></div>';
+                }
+            } catch (e) {
+                console.error(e);
+                loader.style.display = 'none';
+                loadingText.style.display = 'none';
+                list.innerHTML = '<div class="placeholder-box"><h3>Hálózati hiba történt.</h3></div>';
+            }
+        }
+
+        function renderCities(cities, start_date, end_date) {
+            const list = document.getElementById('citiesList');
+            list.innerHTML = '';
+
+            cities.forEach(city => {
+                const card = document.createElement('div');
+                card.className = 'city-card';
+
+                const imageStyle = city.image ? `background-image: url('${city.image}');` : `background-color: #235B2A;`;
+                
+                // Formázzuk a repülőjegyet
+                const flightText = city.flight_score > 0 ? "Repjegy kereshető" : "Nincs járat adat";
+                
+                card.innerHTML = `
+                    <div class="city-image-container" style="${imageStyle}">
+                        <div class="score-badge">${city.computed_score}</div>
+                    </div>
+                    <div class="city-details">
+                        <div>
+                            <div class="city-header-info">
+                                <div>
+                                    <div class="city-name">${city.name}</div>
+                                    <div class="city-country">${city.country}</div>
+                                </div>
+                            </div>
+                            <div class="city-explanation">
+                                💡 ${city.explanation || "Kiváló úti cél a megadott igényekhez."}
+                            </div>
+                        </div>
+                        <div class="metrics-grid">
+                            <div class="metric-item">
+                                <div class="metric-label">Repjegy score</div>
+                                <div class="metric-value">${city.flight_score > 0 ? Math.round(city.flight_score) + "/100" : "N/A"}</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-label">Kinti árak</div>
+                                <div class="metric-value">${Math.round(city.cost_index)} EUR/nap</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-label">Biztonság</div>
+                                <div class="metric-value">${Math.round(city.safety_index)}/100</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-label">Gyalogos</div>
+                                <div class="metric-value">${Math.round(city.walkability_score)}/100</div>
+                            </div>
+                        </div>
+                        <a href="/dreamtrip-planner?city_id=${city.id}&city_name=${city.name}&lat=${city.lat}&lng=${city.lon}&start_date=${start_date}&end_date=${end_date}" class="btn-plan">
+                            🗺️ Napi Útiterv Generálása &rarr;
+                        </a>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>

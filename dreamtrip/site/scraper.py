@@ -13,7 +13,7 @@ def get_kiwi_tokens(headless: bool = False) -> dict:
     A modern API nem igényel szigorú token ellenőrzést, így a böngészős megoldás
     kiváltható egy egyszerű visszatéréssel. Ez drasztikusan csökkenti a memóriahasználatot.
     """
-    print("🚀 Tokenek optimalizált megszerzése (No-Selenium)...")
+    print("[INFO] Tokenek optimalizált megszerzése (No-Selenium)...")
     return {
         "umbrella_token": None,
         "visitor_id": None,
@@ -172,7 +172,7 @@ def _perform_single_search(
             departure_date["end"] = f"{date_to}T23:59:59"
         graphql_payload["variables"]["search"]["itinerary"]["outboundDepartureDate"] = departure_date
         if debug:
-            print(f"🔧 Dátum intervallum: {departure_date}")
+            print(f"[DEBUG] Dátum intervallum: {departure_date}")
     
     # Átszállások szűrése
     if direct_flights_only:
@@ -181,7 +181,7 @@ def _perform_single_search(
         graphql_payload["variables"]["filter"]["maxStopovers"] = max_stopovers
     
     if debug:
-        print(f"🔧 Request payload: {json.dumps(graphql_payload['variables'], indent=2, ensure_ascii=False)}")
+        print(f"[DEBUG] Request payload: {json.dumps(graphql_payload['variables'], indent=2, ensure_ascii=False)}")
     
     # API hívás
     headers = {
@@ -205,30 +205,30 @@ def _perform_single_search(
         )
         
         if debug:
-            print(f"🔧 Response status: {response.status_code}")
+            print(f"[DEBUG] Response status: {response.status_code}")
         
         data = response.json()
         
         if "errors" in data:
-            print("❌ GraphQL hibák:")
+            print("[ERROR] GraphQL hibák:")
             for error in data["errors"]:
                 print(f"  - {error['message']}")
             return []
         
         if not data.get("data") or not data["data"].get("onewayItineraries"):
-            print("❌ Nem érkezett adat")
+            print("[ERROR] Nem érkezett adat")
             return []
         
         result = data["data"]["onewayItineraries"]
         
         if result["__typename"] != "Itineraries":
-            print(f"❌ Hiba: {result.get('error', 'Ismeretlen hiba')}")
+            print(f"[ERROR] Hiba: {result.get('error', 'Ismeretlen hiba')}")
             return []
         
         return result.get("itineraries", [])
         
     except Exception as e:
-        print(f"❌ Hiba a kérés során: {e}")
+        print(f"[ERROR] Hiba a kérés során: {e}")
         return []
 
 def search_one_way_flights(
@@ -252,7 +252,7 @@ def search_one_way_flights(
     Kiwi.com egyirányú járatok keresése.
     Automatikusan darabolja a keresést 5 napos intervallumokra, ha szükséges.
     """
-    print(f"🔍 Egyirányú járatok: {origin} → {destination}", end="")
+    print(f"[INFO] Egyirányú járatok: {origin} -> {destination}", end="")
     if date_from and date_to:
         print(f" ({date_from} - {date_to})")
     else:
@@ -285,7 +285,7 @@ def search_one_way_flights(
         
         # Ha a különbség nagyobb mint 5 nap, daraboljuk
         if delta > 5:
-            print(f"ℹ️ Nagy időintervallum ({delta} nap) -> Darabolás 5 napos csonkokra, limit=50/chunk")
+            print(f"[INFO] Nagy időintervallum ({delta} nap) -> Darabolás 5 napos csonkokra, limit=50/chunk")
             current = start
             while current <= end:
                 chunk_end = min(current + timedelta(days=4), end)
@@ -338,7 +338,7 @@ def search_one_way_flights(
         all_itineraries.extend(itineraries)
         time.sleep(1) # Kis pihenő a kérések között
         
-    print(f"✅ Összesen {len(all_itineraries)} járat találva\n")
+    print(f"[INFO] Összesen {len(all_itineraries)} járat találva\n")
 
     # DataFrame építése
     flights_data = []
@@ -436,7 +436,7 @@ def create_return_combinations(
     Returns:
         DataFrame a visszajárat kombinációkkal
     """
-    print(f"\n🔄 Kombinációk generálása...")
+    print(f"\n[INFO] Kombinációk generálása...")
     print(f"   Oda járatok: {len(outbound_df)}")
     print(f"   Vissza járatok: {len(inbound_df)}")
     
@@ -496,9 +496,9 @@ def create_return_combinations(
     
     if not df.empty:
         df = df.sort_values("total_price_huf").reset_index(drop=True)
-        print(f"✅ {len(df)} érvényes kombináció\n")
+        print(f"[INFO] {len(df)} érvényes kombináció\n")
     else:
-        print("❌ Nincs érvényes kombináció\n")
+        print("[INFO] Nincs érvényes kombináció\n")
     
     return df
 
@@ -511,7 +511,7 @@ def get_city_id_api(city_name: str) -> Optional[str]:
         if data.get('locations'):
             return data['locations'][0]['id']
     except Exception as e:
-        print(f"❌ API hiba a városkeresésnél ({city_name}): {e}")
+        print(f"[ERROR] API hiba a városkeresésnél ({city_name}): {e}")
     return None
 
 def search_flights_by_city_name_v2(
@@ -537,17 +537,17 @@ def search_flights_by_city_name_v2(
     """
     origin_city_id = get_city_id_api(origin_name)
     if not origin_city_id:
-        print(f"❌ Nem sikerült megszerezni az origin ID-t: {origin_name}")
+        print(f"[ERROR] Nem sikerült megszerezni az origin ID-t: {origin_name}")
         return pd.DataFrame()
     
     dest_city_id = get_city_id_api(destination_name)
     if not dest_city_id:
-        print(f"❌ Nem sikerült megszerezni a destination ID-t: {destination_name}")
+        print(f"[ERROR] Nem sikerült megszerezni a destination ID-t: {destination_name}")
         return pd.DataFrame()
     
     
     if not origin_city_id or not dest_city_id:
-        print(f"❌ Nem sikerült megszerezni a City ID-kat")
+        print(f"[ERROR] Nem sikerült megszerezni a City ID-kat")
         return pd.DataFrame()
     
     # 3. Eredeti keresés a helyes City ID-kkel

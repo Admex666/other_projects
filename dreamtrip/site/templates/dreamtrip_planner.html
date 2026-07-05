@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DreamTrip v2 - Interaktív Tervező</title>
+    <link rel="icon" type="image/png" href="/static/logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #122915 0%, #0d1a0e 100%);
+            color: #f3f3f3;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .navbar {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 15px 40px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+        .logo-link {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: #90DC25;
+        }
+        .badge {
+            background: rgba(144, 220, 37, 0.1);
+            color: #90DC25;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            border: 1px solid rgba(144, 220, 37, 0.2);
+            letter-spacing: 0.5px;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .btn-home {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .btn-home:hover {
+            background: #90DC25;
+            color: #122915;
+            border-color: #90DC25;
+        }
+        .main-container {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 350px 1fr 400px;
+            overflow: hidden;
+            height: calc(100vh - 73px);
+        }
+        /* Baloldali panel: POI Pool */
+        .poi-pool-panel {
+            background: rgba(255, 255, 255, 0.01);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .panel-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .panel-header h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #90DC25;
+            margin-bottom: 10px;
+        }
+        .search-poi {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: white;
+            font-size: 14px;
+            outline: none;
+        }
+        .search-poi:focus {
+            border-color: #90DC25;
+        }
+        .poi-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .pool-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 12px;
+            cursor: grab;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .pool-card:hover {
+            border-color: #90DC25;
+            background: rgba(255, 255, 255, 0.06);
+            transform: translateY(-2px);
+        }
+        .pool-card-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 5px;
+        }
+        .tag {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+        .tag-attraction { background: rgba(52, 152, 219, 0.15); color: #3498db; }
+        .tag-restaurant { background: rgba(231, 76, 60, 0.15); color: #e74c3c; }
+        .tag-cafe { background: rgba(241, 196, 15, 0.15); color: #f1c40f; }
+        .tag-viewpoint { background: rgba(155, 89, 182, 0.15); color: #9b59b6; }
+
+        .pool-card-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 4px;
+        }
+        .pool-card-rating {
+            font-size: 12px;
+            color: #90DC25;
+        }
+        /* Középső panel: Timeline */
+        .timeline-panel {
+            padding: 25px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        .day-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 15px;
+            overflow-x: auto;
+        }
+        .day-tab {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #a0a0a0;
+            white-space: nowrap;
+            transition: all 0.3s;
+        }
+        .day-tab:hover {
+            border-color: rgba(144, 220, 37, 0.5);
+            color: white;
+        }
+        .day-tab.active {
+            background: #90DC25;
+            color: #122915;
+            border-color: #90DC25;
+            box-shadow: 0 5px 15px rgba(144, 220, 37, 0.3);
+        }
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            position: relative;
+            padding-left: 20px;
+            border-left: 2px solid rgba(255, 255, 255, 0.05);
+        }
+        .timeline-item {
+            position: relative;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s;
+        }
+        .timeline-item.dragover {
+            border-color: #90DC25;
+            background: rgba(144, 220, 37, 0.05);
+            transform: scale(1.02);
+        }
+        .timeline-item-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex: 1;
+        }
+        .item-time {
+            font-size: 15px;
+            font-weight: 700;
+            color: #90DC25;
+            min-width: 60px;
+        }
+        .item-icon {
+            font-size: 24px;
+        }
+        .item-details {
+            flex: 1;
+        }
+        .item-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+        }
+        .item-desc {
+            font-size: 13px;
+            color: #888;
+            margin-top: 2px;
+        }
+        .item-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .btn-lock {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            color: #707070;
+            transition: color 0.2s;
+        }
+        .btn-lock.locked {
+            color: #f1c40f;
+        }
+        .btn-delete {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            color: #707070;
+            transition: color 0.2s;
+        }
+        .btn-delete:hover {
+            color: #e74c3c;
+        }
+        .drag-handle {
+            cursor: grab;
+            font-size: 18px;
+            color: #505050;
+            margin-right: 5px;
+        }
+        /* Utazás kártya */
+        .timeline-item.item-travel {
+            background: rgba(255, 255, 255, 0.005);
+            border: 1px dashed rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            padding: 8px 15px;
+            margin: -5px 0;
+        }
+        .timeline-item.item-travel .item-time {
+            color: #707070;
+            font-size: 13px;
+        }
+        .timeline-item.item-travel .item-title {
+            font-size: 13px;
+            color: #888;
+        }
+        .conflict-warning {
+            color: #e74c3c;
+            background: rgba(231, 76, 60, 0.08);
+            border: 1px solid rgba(231, 76, 60, 0.15);
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            margin-top: 6px;
+            display: inline-block;
+        }
+        /* Jobboldali panel: Map */
+        .map-panel {
+            background: #0d1a0e;
+            border-left: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+        }
+        #map {
+            flex: 1;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="/home" class="logo-link">
+            <img src="/static/logo.png" alt="Optivoya" style="height: 40px;">
+            <span class="logo-text">Optivoya</span>
+            <span class="badge">DreamTrip v2</span>
+        </a>
+        <h3 id="tripTitle" style="color: white; font-weight: 600;"></h3>
+        <div class="user-info">
+            <a href="/dreamtrip-discover" class="btn-home">&larr; Vissza a Választóhoz</a>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <!-- Baloldali panel: Elérhető helyek pool -->
+        <div class="poi-pool-panel">
+            <div class="panel-header">
+                <h2>Elérhető Helyek Pool</h2>
+                <input type="text" class="search-poi" id="searchPoiInput" placeholder="Keresés látnivalók között..." oninput="filterPoiPool(this.value)">
+            </div>
+            <div class="poi-list" id="poiPool" ondragover="event.preventDefault();" ondrop="handlePoolDrop(event)">
+                <!-- POI kártyák dinamikusan -->
+            </div>
+        </div>
+
+        <!-- Középső panel: Idővonal -->
+        <div class="timeline-panel">
+            <div class="day-selector" id="dayTabs">
+                <!-- Nap fülek dinamikusan -->
+            </div>
+            <div class="timeline" id="timelineList" ondragover="event.preventDefault();" ondrop="handleTimelineDrop(event)">
+                <!-- Napi elemek dinamikusan -->
+            </div>
+        </div>
+
+        <!-- Jobboldali panel: Térkép -->
+        <div class="map-panel">
+            <div id="map"></div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // URL paraméterek beolvasása
+        const urlParams = new URLSearchParams(window.location.search);
+        const cityId = urlParams.get('city_id');
+        const cityName = urlParams.get('city_name');
+        const cityLat = parseFloat(urlParams.get('lat'));
+        const cityLng = parseFloat(urlParams.get('lng'));
+        const startDate = urlParams.get('start_date');
+        const endDate = urlParams.get('end_date');
+
+        document.getElementById('tripTitle').innerText = `${cityName} Útiterv`;
+
+        let itineraryData = []; // Az összes nap adata
+        let allPois = []; // A város összes elérhető helye
+        let activeDayIndex = 0; // Aktuálisan kijelölt nap indexe
+        let draggedItemInfo = null; // Dragged item átmeneti tárolója
+
+        // Térkép inicializálása
+        const map = L.map('map').setView([cityLat, cityLng], 13);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
+        }).addTo(map);
+
+        let mapLayers = [];
+
+        // Kezdeti adatok betöltése
+        window.addEventListener('load', async () => {
+            await Promise.all([
+                loadPoiPool(),
+                generateItinerary()
+            ]);
+            renderDayTabs();
+            renderActiveDay();
+        });
+
+        // 1. POI pool betöltése
+        async function loadPoiPool() {
+            try {
+                const r = await fetch(`/api/v2/poi/search?city_name=${cityName}&city_id=${cityId}&lat=${cityLat}&lng=${cityLng}`);
+                if (r.ok) {
+                    allPois = await r.json();
+                }
+            } catch (e) {
+                console.error("Hiba a POI-k betöltésekor", e);
+            }
+        }
+
+        // 2. Kezdeti útiterv generálása a backenddel
+        async function generateItinerary() {
+            try {
+                const response = await fetch('/api/v2/trip/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        city_id: cityId,
+                        city_name: cityName,
+                        lat: cityLat,
+                        lng: cityLng,
+                        start_date: startDate,
+                        end_date: endDate
+                    })
+                });
+                if (response.ok) {
+                    itineraryData = await response.json();
+                }
+            } catch (e) {
+                console.error("Hiba az útiterv generálása során", e);
+            }
+        }
+
+        // Fül gombok kirajzolása
+        function renderDayTabs() {
+            const container = document.getElementById('dayTabs');
+            container.innerHTML = '';
+            itineraryData.forEach((day, idx) => {
+                const tab = document.createElement('div');
+                tab.className = `day-tab ${idx === activeDayIndex ? 'active' : ''}`;
+                tab.innerText = `${idx + 1}. Nap (${day.date})`;
+                tab.onclick = () => {
+                    activeDayIndex = idx;
+                    renderDayTabs();
+                    renderActiveDay();
+                };
+                container.appendChild(tab);
+            });
+        }
+
+        // POI pool szűrése és renderelése
+        function filterPoiPool(query) {
+            renderPoiPool(query);
+        }
+
+        function renderPoiPool(query = "") {
+            const container = document.getElementById('poiPool');
+            container.innerHTML = '';
+            
+            // Csak azokat mutatjuk, amik nincsenek benne a jelenlegi napon
+            const currentDayPoiIds = itineraryData[activeDayIndex]?.items
+                .map(item => item.poi_id)
+                .filter(id => id !== null) || [];
+
+            const filtered = allPois.filter(poi => {
+                const matchesQuery = poi.name.toLowerCase().includes(query.toLowerCase());
+                const notInTimeline = !currentDayPoiIds.includes(poi.id);
+                return matchesQuery && notInTimeline;
+            });
+
+            filtered.forEach(poi => {
+                const card = document.createElement('div');
+                card.className = 'pool-card';
+                card.draggable = true;
+                
+                // Beállítjuk a drag start eseményt
+                card.ondragstart = (e) => {
+                    draggedItemInfo = {
+                        source: 'pool',
+                        poi_id: poi.id,
+                        poi_name: poi.name,
+                        type: poi.type
+                    };
+                    e.dataTransfer.setData('text/plain', poi.id);
+                };
+
+                card.innerHTML = `
+                    <div class="pool-card-header">
+                        <span class="tag tag-${poi.type}">${poi.type}</span>
+                        <span class="pool-card-rating">⭐ ${poi.rating}</span>
+                    </div>
+                    <div class="pool-card-name">${poi.name}</div>
+                    <div style="font-size: 11px; color: #666;">${poi.address || ''}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Aktív nap idővonalának és térképének kirajzolása
+        function renderActiveDay() {
+            if (!itineraryData || itineraryData.length === 0) return;
+            const day = itineraryData[activeDayIndex];
+            
+            // Pool kártyák frissítése
+            renderPoiPool(document.getElementById('searchPoiInput').value);
+
+            // Idővonal render
+            const container = document.getElementById('timelineList');
+            container.innerHTML = '';
+
+            day.items.forEach((item, idx) => {
+                const timelineItem = document.createElement('div');
+                
+                if (item.type === 'travel') {
+                    timelineItem.className = 'timeline-item item-travel';
+                    const conflictText = item.details?.conflict ? `<div class="conflict-warning">⚠️ ${item.details.conflict}</div>` : '';
+                    timelineItem.innerHTML = `
+                        <div class="timeline-item-left">
+                            <span class="item-time">${item.start_time} - ${item.end_time}</span>
+                            <span class="item-icon">${item.details?.mode === 'walk' ? '🚶' : '🚌'}</span>
+                            <div class="item-details">
+                                <div class="item-title">Utazás: ${item.details?.distance_km || 0} km (${item.details?.duration_min || 0} perc)</div>
+                                ${conflictText}
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    timelineItem.className = 'timeline-item';
+                    timelineItem.draggable = true;
+                    
+                    // Drag events a rendezéshez
+                    timelineItem.ondragstart = (e) => {
+                        draggedItemInfo = {
+                            source: 'timeline',
+                            index: idx
+                        };
+                        e.dataTransfer.setData('text/plain', idx.toString());
+                    };
+
+                    timelineItem.ondragover = (e) => {
+                        e.preventDefault();
+                        timelineItem.classList.add('dragover');
+                    };
+
+                    timelineItem.ondragleave = () => {
+                        timelineItem.classList.remove('dragover');
+                    };
+
+                    const icon = item.type === 'meal' ? '🍔' : (item.details?.category === 'viewpoint' ? '📸' : '🏛️');
+                    const conflictText = item.details?.conflict ? `<div class="conflict-warning">⚠️ ${item.details.conflict}</div>` : '';
+                    const lockClass = item.locked ? 'locked' : '';
+                    const lockIcon = item.locked ? '🔒' : '🔓';
+
+                    timelineItem.innerHTML = `
+                        <div class="timeline-item-left">
+                            <span class="drag-handle">☰</span>
+                            <span class="item-time">${item.start_time} - ${item.end_time}</span>
+                            <span class="item-icon">${icon}</span>
+                            <div class="item-details">
+                                <div class="item-title">${item.poi_name}</div>
+                                <div class="item-desc">${item.details?.address || 'Nincs cím megadva'}</div>
+                                ${conflictText}
+                            </div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="btn-lock ${lockClass}" onclick="toggleLock(${idx})" title="Időpont rögzítése">${lockIcon}</button>
+                            <button class="btn-delete" onclick="removeItem(${idx})" title="Eltávolítás">🗑️</button>
+                        </div>
+                    `;
+                }
+
+                container.appendChild(timelineItem);
+            });
+
+            updateMap(day.items);
+        }
+
+        // Zárolás/Lakatalás kezelése
+        async function toggleLock(idx) {
+            const day = itineraryData[activeDayIndex];
+            day.items[idx].locked = !day.items[idx].locked;
+            
+            // Lokális optimalizálás futtatása backend API-val
+            await reoptimizeActiveDay();
+            renderActiveDay();
+        }
+
+        // Elem eltávolítása
+        async function removeItem(idx) {
+            const day = itineraryData[activeDayIndex];
+            day.items.splice(idx, 1);
+            
+            // Újraszámolás
+            await reoptimizeActiveDay();
+            renderDayTabs();
+            renderActiveDay();
+        }
+
+        // Térkép markerek és útvonal frissítése
+        function updateMap(items) {
+            // Töröljük a régi layereket
+            mapLayers.forEach(layer => map.removeLayer(layer));
+            mapLayers = [];
+
+            const points = [];
+            const poisDict = {};
+            allPois.forEach(p => poisDict[p.id] = p);
+
+            // Csak azokat a helyeket jelenítjük meg, amik nem utazási típusok
+            const activePois = items
+                .filter(item => item.poi_id && poisDict[item.poi_id])
+                .map(item => poisDict[item.poi_id]);
+
+            activePois.forEach((poi, index) => {
+                const latLng = [poi.location.lat, poi.location.lng];
+                points.push(latLng);
+
+                // Színes marker ikonok kategóriák szerint
+                let markerColor = '#3498db'; // default attraction
+                if (poi.type === 'restaurant') markerColor = '#e74c3c';
+                else if (poi.type === 'cafe') markerColor = '#f1c40f';
+                else if (poi.type === 'viewpoint') markerColor = '#9b59b6';
+
+                const markerHtml = `
+                    <div style="
+                        background-color: ${markerColor};
+                        width: 24px;
+                        height: 24px;
+                        border-radius: 50%;
+                        border: 2px solid white;
+                        color: white;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        font-weight: bold;
+                        font-size: 11px;
+                        box-shadow: 0 0 10px rgba(0,0,0,0.5);
+                    ">${index + 1}</div>
+                `;
+
+                const icon = L.divIcon({
+                    html: markerHtml,
+                    className: 'custom-poi-icon',
+                    iconSize: [24, 24],
+                    iconAnchor: [12, 12]
+                });
+
+                const marker = L.marker(latLng, { icon: icon })
+                    .bindPopup(`<b>${index + 1}. Helyszín: ${poi.name}</b><br>${poi.address || ''}<br>⭐ ${poi.rating}`)
+                    .addTo(map);
+
+                mapLayers.push(marker);
+            });
+
+            // Polylines (útvonal összekötése)
+            if (points.length > 1) {
+                const polyline = L.polyline(points, {
+                    color: '#90DC25',
+                    weight: 3,
+                    opacity: 0.8,
+                    dashArray: '5, 10'
+                }).addTo(map);
+
+                mapLayers.push(polyline);
+                
+                // Térkép igazítása az útvonalra
+                map.fitBounds(polyline.getBounds(), { padding: [50, 50] });
+            } else if (points.length === 1) {
+                map.setView(points[0], 14);
+            }
+        }
+
+        // Drag and Drop drop esemény a timeline-on
+        async function handleTimelineDrop(e) {
+            e.preventDefault();
+            if (!draggedItemInfo) return;
+
+            const day = itineraryData[activeDayIndex];
+            
+            // Kiszűrjük az utazásokat, mert az indexelés a tisztított POI listára vonatkozik
+            const cleanItems = day.items.filter(item => item.type !== 'travel');
+
+            // Hol történt a dobás (megkeressük a legközelebbi kártyát)
+            const targetElement = e.target.closest('.timeline-item');
+            let targetIdx = cleanItems.length; // Default a lista végére kerül
+
+            if (targetElement && !targetElement.classList.contains('item-travel')) {
+                // Megkeressük az indexét a DOM-ban a nem-travel elemek között
+                const timelineItemsDom = Array.from(document.querySelectorAll('.timeline-item:not(.item-travel)'));
+                targetIdx = timelineItemsDom.indexOf(targetElement);
+            }
+
+            if (draggedItemInfo.source === 'pool') {
+                // POI hozzáadása a poolból
+                const poi = allPois.find(p => p.id === draggedItemInfo.poi_id);
+                if (poi) {
+                    const defaultDuration = draggedItemInfo.type === 'restaurant' || draggedItemInfo.type === 'cafe' ? 60 : 120;
+                    
+                    const newItem = {
+                        poi_id: poi.id,
+                        poi_name: poi.name,
+                        start_time: "10:00", // Átmeneti, backend korrigálja
+                        end_time: "11:00",
+                        type: (poi.type === 'restaurant' || poi.type === 'cafe') ? 'meal' : 'activity',
+                        locked: false,
+                        details: {
+                            category: poi.type,
+                            address: poi.address,
+                            image: poi.image_url,
+                            rating: poi.rating
+                        }
+                    };
+                    
+                    // Beillesztjük az elemek közé
+                    cleanItems.splice(targetIdx, 0, newItem);
+                }
+            } else if (draggedItemInfo.source === 'timeline') {
+                // Meglévő elem áthelyezése
+                const srcIdx = draggedItemInfo.index;
+                
+                // Mivel a day.items-ben utazások is vannak, át kell váltani a clean indexet a rendes indexre
+                const itemToMove = day.items[srcIdx];
+                
+                // Eltávolítjuk a régi helyről
+                day.items.splice(srcIdx, 1);
+                
+                // Kiszűrjük újra az utazásokat, hogy pontosan a célobjektum elé szúrhassuk be
+                const cleanItemsNow = day.items.filter(item => item.type !== 'travel');
+                cleanItemsNow.splice(targetIdx, 0, itemToMove);
+                
+                // Felülírjuk az ideiglenes tisztított listával
+                day.items = cleanItemsNow;
+            }
+
+            if (draggedItemInfo.source === 'pool') {
+                day.items = cleanItems;
+            }
+
+            // Hívjuk a backend optimalizálást
+            await reoptimizeActiveDay();
+            renderDayTabs();
+            renderActiveDay();
+            draggedItemInfo = null;
+        }
+
+        // Drag from timeline to pool (törlés)
+        async function handlePoolDrop(e) {
+            e.preventDefault();
+            if (draggedItemInfo && draggedItemInfo.source === 'timeline') {
+                await removeItem(draggedItemInfo.index);
+                draggedItemInfo = null;
+            }
+        }
+
+        // Aktív nap re-optimalizálása API-n keresztül
+        async function reoptimizeActiveDay() {
+            const day = itineraryData[activeDayIndex];
+            try {
+                const response = await fetch('/api/v2/trip/reoptimize', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        day_data: day,
+                        city_id: cityId,
+                        city_name: cityName,
+                        lat: cityLat,
+                        lng: cityLng
+                    })
+                });
+
+                if (response.ok) {
+                    const updatedDay = await response.json();
+                    itineraryData[activeDayIndex] = updatedDay;
+                }
+            } catch (e) {
+                console.error("Hiba az újraszámolás során", e);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -20,6 +20,10 @@ from pydantic import BaseModel
 import scraper # Kiwi scraper
 import accommodation_scraper
 from contextlib import asynccontextmanager
+from models import TravelPreferences, Trip, ItineraryDay, ItineraryItem
+import scoring_service
+import itinerary_service
+import maps_service
 
 
 # Felhasználók
@@ -1472,6 +1476,144 @@ async def results_page(request: Request):
         "weights": ahp_weights[user]["weights"],
         "criteria_names": ["Ár", "Időpont", "Utazás", "Átszállás", "Tartózkodás"]
     })
+
+# --- DREAMTRIP V2 PAGE ROUTERS ---
+
+@app.get("/dreamtrip-discover", response_class=HTMLResponse)
+async def dreamtrip_discover_page(request: Request):
+    user = get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/", status_code=303)
+    return templates.TemplateResponse("dreamtrip_discover.html", {"request": request, "user": user})
+
+@app.get("/dreamtrip-planner", response_class=HTMLResponse)
+async def dreamtrip_planner_page(request: Request):
+    user = get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/", status_code=303)
+    return templates.TemplateResponse("dreamtrip_planner.html", {"request": request, "user": user})
+
+# --- DREAMTRIP V2 API ENDPOINTS ---
+
+class DiscoverRequest(BaseModel):
+    origin: str
+    month: int
+    preferences: TravelPreferences
+    exclusions: List[str] = []
+    budget_daily: float = 0.0
+    budget_strictness: str = "soft"
+
+class GenerateTripRequest(BaseModel):
+    city_id: str
+    city_name: str
+    lat: float
+    lng: float
+    start_date: str
+    end_date: str
+
+class ReoptimizeRequest(BaseModel):
+    day_data: ItineraryDay
+    city_id: str
+    city_name: str
+    lat: float
+    lng: float
+
+@app.post("/api/v2/discover")
+async def api_discover(req: DiscoverRequest, request: Request):
+    user = get_current_user(request)
+    if not user:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    
+    # Betöltjük a város adatbázist
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    dest_path = os.path.join(base_dir, "data", "destinations.json")
+    if not os.path.exists(dest_path):
+        raise HTTPException(status_code=404, detail="Destinations database not found")
+        
+    with open(dest_path, "r", encoding="utf-8") as f:
+        dests = json.load(f)
+        
+    # Szűrés kizárásokra
+    if req.exclusions:
+        dests = [d for d in dests if d.get("region") not in req.exclusions]
+        
+    # Pontszámok számítása
+    try:
+        scored_cities = scoring_service.calculate_city_scores(
+            dests=dests,
+            prefs=req.preferences,
+            origin_city=req.origin,
+            month=req.month
+        )
+        
+        # JSON formátumra alakítás (explanation-nel együtt)
+        results = []
+        for c in scored_cities:
+            c_dict = c.dict()
+            c_dict["explanation"] = c.__dict__.get("explanation", "Optimális választás a szempontjaid alapján.")
+            results.append(c_dict)
+            
+        return results
+    except Exception as e:
+        print(f"ERROR in api_discover: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/v2/trip/generate")
+async def api_generate_trip(req: GenerateTripRequest, request: Request):
+    user = get_current_user(request)
+    if not user:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+        
+    try:
+        itinerary = itinerary_service.generate_default_itinerary(
+            city_id=req.city_id,
+            city_name=req.city_name,
+            lat=req.lat,
+            lng=req.lng,
+            start_date_str=req.start_date,
+            end_date_str=req.end_date
+        )
+        return itinerary
+    except Exception as e:
+        print(f"ERROR in api_generate_trip: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/v2/trip/reoptimize")
+async def api_reoptimize_trip(req: ReoptimizeRequest, request: Request):
+    user = get_current_user(request)
+    if not user:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+        
+    try:
+        updated_day = itinerary_service.reoptimize_itinerary_day(
+            day_data=req.day_data,
+            city_id=req.city_id,
+            city_name=req.city_name,
+            lat=req.lat,
+            lng=req.lng
+        )
+        return updated_day
+    except Exception as e:
+        print(f"ERROR in api_reoptimize_trip: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v2/poi/search")
+async def api_search_poi(city_name: str, city_id: str, lat: float, lng: float, request: Request):
+    user = get_current_user(request)
+    if not user:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+        
+    try:
+        pois = maps_service.get_city_pois(
+            city_name=city_name,
+            city_id=city_id,
+            lat=lat,
+            lng=lng
+        )
+        return pois
+    except Exception as e:
+        print(f"ERROR in api_search_poi: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
     import uvicorn

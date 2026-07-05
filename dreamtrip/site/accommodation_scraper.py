@@ -87,7 +87,7 @@ def get_all_stays(city, country, start_date, end_date,
 
     driver = None
     try:
-        print("🚀 Chrome indítása (Optimized)...")
+        print("[INFO] Chrome indítása (Optimized)...")
         driver = webdriver.Chrome(options=chrome_options)
         
         # Bypass detection
@@ -96,7 +96,7 @@ def get_all_stays(city, country, start_date, end_date,
 
         if progress_callback: progress_callback(5)
     except Exception as e:
-        print(f"❌ CRITICAL: Chrome indítás sikertelen: {e}")
+        print(f"[ERROR] CRITICAL: Chrome indítás sikertelen: {e}")
         return {"entries": [], "error": f"Böngésző indítási hiba (RAM?): {str(e)}"}
     
     try:
