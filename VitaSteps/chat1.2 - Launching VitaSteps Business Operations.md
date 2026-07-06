@@ -3072,3 +3072,535 @@ Most ellenőrizd a Google Sheetet, Supabase-t és Számlázz.hu-t:
 ---
 
 Ha az ellenőrzés kész és minden rendben, a teljes checkout flow-t megtesztelhetjük valódi böngészőn keresztül is a Vercel dev szerveren (`localhost:3000/nagykevely/checkout-widget.html`).
+
+### User Input
+
+Láttam egy ilyet: "## Hogyan építs saját AI csapatot, amely ismeri a vállalkozásodat és helyetted végzi a rutinmunkát?
+
+> **💡 Fő tanulság:** Az AI igazi értéke nem egyetlen chatbot használata, hanem egy **közös tudásbázisra épülő AI operációs rendszer (AIOS)**, ahol több specializált AI ügynök dolgozik együtt, miközben te kizárólag a stratégiai döntéseket hozod meg.
+> 
+
+---
+
+# 🎯 A nagy szemléletváltás
+
+### Régen
+
+Te végeztél mindent:
+
+- Email válaszok
+- Ajánlatírás
+- Ügyfélkutatás
+- Landing page-ek
+- CRM kezelés
+- Adminisztráció
+- Marketing riportok
+
+→ Minden feladat a te fejedben volt.
+
+---
+
+### Most
+
+Te vagy a **CEO**, az AI pedig a csapatod.
+
+```
+Te
+ ↓
+AI Manager
+ ↓
+────────────────────────
+📧 Email Agent
+💰 Sales Agent
+📈 Marketing Agent
+🌐 Weboldal Agent
+📊 Report Agent
+🗂️ CRM Agent
+📝 Tudásbázis Agent
+────────────────────────
+```
+
+Te csak:
+
+- célt adsz
+- jóváhagysz
+- döntéseket hozol
+
+Az AI végzi a kivitelezést.
+
+---
+
+# 🧠 A rendszer lelke: Second Brain
+
+A legfontosabb elem egy **közös tudásbázis**, amelyet minden AI ügynök használ.
+
+Ebben lehet:
+
+- ügyfelek
+- emailek
+- meeting jegyzetek
+- YouTube transcriptek
+- ajánlatok
+- dokumentáció
+- weboldalak
+- CRM
+- kampányok
+- Google Drive
+- social media beszélgetések
+
+👉 Minél több információ kerül ide, annál okosabb lesz az AI.
+
+---
+
+# ⚙️ Milyen feladatokat lehet automatizálni?
+
+## 📧 Email
+
+- heti összegzés
+- fontos emailek kiemelése
+- választervezetek
+- inbox rendezés
+
+---
+
+## 💼 Sales
+
+- ajánlatírás
+- landing page készítés
+- korábbi ügyféladatok felhasználása
+- follow-up
+
+---
+
+## 📊 Marketing
+
+- riportok
+- kampányelemzés
+- statisztikák
+- trendek
+
+---
+
+## 💰 Admin
+
+- számlák feldolgozása
+- Stripe jóváhagyások
+- pénzügyi riportok
+- automatizációk
+
+---
+
+## 🌐 Weboldalak
+
+AI képes:
+
+- landing page készítésére
+- weboldalak szerkesztésére
+- korábbi projektek újrahasznosítására
+
+---
+
+# 🧩 Minden munkára külön AI
+
+Nem egyetlen chatbot dolgozik.
+
+Hanem specializált AI munkatársak.
+
+Például:
+
+- ✍️ Content Agent
+- 📧 Email Agent
+- 💰 Sales Agent
+- 🌍 Website Agent
+- 📈 Marketing Agent
+- 📊 Report Agent
+- 💼 CRM Agent
+- 📂 Project Manager Agent
+
+Ezek együtt dolgoznak ugyanazon tudásbázisból.
+
+---
+
+# 📚 Honnan tanul az AI?
+
+Lehetséges adatforrások:
+
+- Gmail
+- CRM
+- Google Drive
+- Social Media
+- YouTube
+- dokumentumok
+- PDF-ek
+- meeting jegyzetek
+- ügyfélmappák
+- API kapcsolatok
+- weboldalak
+
+Az AI folyamatosan frissíti saját tudását.
+
+---
+
+# 🏗️ Hogyan épül fel a rendszer?
+
+## 1️⃣ Tudásbázis
+
+Obsidian
+
+↓
+
+Minden dokumentum egy helyen
+
+---
+
+## 2️⃣ AI környezet
+
+Visual Studio Code
+
+↓
+
+Claude / Codex / Hermes
+
+---
+
+## 3️⃣ AI csapat
+
+Specializált agentek
+
+↓
+
+közös memória
+
+↓
+
+együttműködés
+
+---
+
+## 4️⃣ Automatizáció
+
+API kapcsolatok
+
+↓
+
+Gmail
+
+↓
+
+Google Drive
+
+↓
+
+CRM
+
+↓
+
+Stripe
+
+↓
+
+stb.
+
+---
+
+# 🛠️ Eszközök
+
+### Tudásbázis
+
+- Obsidian
+
+---
+
+### AI környezet
+
+- Visual Studio Code
+
+---
+
+### AI modellek
+
+- Claude
+- ChatGPT / Codex
+- Hermes
+
+---
+
+### Tudás import
+
+- GitHub
+- Web Clipper
+- Google Drive
+
+---
+
+# 📂 Ajánlott mappastruktúra
+
+```
+Knowledge Base
+
+Clients
+
+Projects
+
+Marketing
+
+Sales
+
+Finance
+
+Content
+
+Prompts
+
+Templates
+
+Memory
+
+Agents
+
+Secrets (.env)
+```
+
+---
+
+# 🔒 ENV fájl szerepe
+
+Ide kerülnek:
+
+- API kulcsok
+- jelszavak
+- tokenek
+- hozzáférések
+
+Az AI használhatja őket, de nem oszthatja meg.
+
+---
+
+# 🧠 Fontos mentális modellek
+
+## 1. AI = alkalmazott
+
+Ne chatbotként kezeld.
+
+Hanem munkatársként.
+
+---
+
+## 2. Egy közös memória
+
+Ne minden beszélgetés külön induljon.
+
+Legyen egy közös tudásbázis.
+
+---
+
+## 3. Specializáció
+
+Egy AI = egy feladat.
+
+Ne próbáljon egyetlen AI mindent csinálni.
+
+---
+
+## 4. Te maradsz a döntéshozó
+
+Az AI javasol.
+
+Te döntesz.
+
+A felelősség mindig nálad marad.
+
+---
+
+# ⚠️ Mire kell figyelni?
+
+A videó egyik legfontosabb tanulsága:
+
+> **Nem minden automatizáció éri meg.**
+> 
+
+Sok feladat:
+
+- gyorsabb kézzel
+- olcsóbb kézzel
+- egyszerűbb kézzel
+
+Az AI-t ott érdemes használni, ahol:
+
+- ismétlődő feladatok vannak,
+- sok adatot kell feldolgozni,
+- összetett információkat kell összekapcsolni,
+- vagy jelentős idő takarítható meg.
+
+---
+
+# 🚀 Egyszerű indulási terv
+
+### 1.
+
+Hozz létre egy Obsidian tudásbázist.
+
+---
+
+### 2.
+
+Gyűjts össze minden fontos dokumentumot.
+
+---
+
+### 3.
+
+Kösd össze Claude-dal vagy ChatGPT-vel.
+
+---
+
+### 4.
+
+Építs egyetlen AI Agentet.
+
+(pl. Email)
+
+---
+
+### 5.
+
+Utána:
+
+- Sales Agent
+- Marketing Agent
+- CRM Agent
+- Content Agent
+
+---
+
+### 6.
+
+Csak ezután automatizálj API-kon keresztül.
+
+---
+
+# 📝 Ismételhető keretrendszer
+
+```
+1. Tudás összegyűjtése
+
+↓
+
+2. Közös memória létrehozása
+
+↓
+
+3. Specializált AI agentek építése
+
+↓
+
+4. API kapcsolatok
+
+↓
+
+5. Automatizáció
+
+↓
+
+6. Emberi jóváhagyás
+
+↓
+
+7. Folyamatos tanítás
+```
+
+---
+
+# ⭐ Mit érdemes megjegyezni?
+
+- A legnagyobb érték nem maga az AI, hanem a **jól strukturált tudásbázis**.
+- Az AI akkor igazán hasznos, ha **ismeri a vállalkozásod teljes kontextusát**.
+- Specializált AI ügynökök hatékonyabbak, mint egyetlen "mindentudó" chatbot.
+- Az automatizáció célja **nem az ember kiváltása**, hanem a döntési terhek csökkentése és az ismétlődő feladatok delegálása.
+- **Egyszerűen kezdd el:** először építs rendszert, utána automatizálj."
+
+Mi is tudnánk ilyet a VitaSteps-re csinálni? Ha igen konkrétan hogyan, és az hogyan változtatna az egész vállalkozáson?
+
+### Planner Response
+
+Igen, **abszolút meg tudjuk csinálni**, és a VitaSteps-nél a legjobb az egészben az, hogy a technikai alapok (Supabase, Google Sheets, Stripe, Számlázz.hu, Gmail SMTP) **már most is mind működnek és össze vannak kötve!** Nem a nulláról kell építkeznünk.
+
+Az alábbiakban felvázolom, hogyan nézne ki konkrétan a **VitaSteps AI Operációs Rendszere (AIOS)**, hogyan építenénk fel, és ez hogyan alakítaná át a vállalkozásodat.
+
+---
+
+# 🏔️ A VitaSteps AI Csapat felépítése (Terv)
+
+Ahelyett, hogy te manuálisan bogarásznád a táblázatokat, futtatnád a Python szkripteket, vagy válaszolnál az e-mailekre, a rendszert specializált ügynökök (Agentek) kezébe adhatjuk, akik egy közös adatbázisból dolgoznak.
+
+```
+                  [ TE (a CEO) ]
+                        ↓ (Célok, stratégia, jóváhagyás)
+                 [ AI Orchestrator ]
+                        ↓
+  ─────────────────────────────────────────────────────────────
+  📦 Logistics Agent   📧 Support Agent   📈 Growth Agent   📊 Finance Agent
+  - Címellenőrzés      - E-mail piszkozat - Ajánlói hálózat  - Stripe/Számlázz
+  - Foxpost export     - Portál belépők   - Kampányok       - Heti pénzügyi
+  - PDF nyomtatás      - Távolság módos.  - Copywriting     - riportok
+  ─────────────────────────────────────────────────────────────
+                        ↑
+           [ KÖZÖS TUDÁSBÁZIS (Second Brain) ]
+   (Supabase + Google Sheets + Stripe logs + Ügyfélszolgálati QA)
+```
+
+---
+
+## 🛠️ Konkrétan hogyan működnének az Agentek?
+
+### 1. 📦 Logistics & Fulfillment Agent (A "Raktáros")
+Jelenleg vannak Python szkriptjeid a PDF-ek rendezésére (`arrange_pdf_grid.py`) és a Foxpost címkék vizsgálatára. 
+*   **Mit csinál az Agent?** 
+    *   Minden nap végén átnézi a Supabase-t és a Google Sheets-t (`stripe_raw2`).
+    *   Ha hibás címet talál (pl. hiányzó irányítószám vagy elírt Foxpost név), megpróbálja kijavítani az interneten keresve (pl. Foxpost API vagy Google Maps alapján). Ha nem biztos benne, a Slacken/Telegramon küld neked egy jóváhagyást: *"Adam, ezt a címet nem tudom automatikusan javítani. Ez a helyes: [Cím]?"*
+    *   Automatikusan legenerálja a Foxpost tömeges import CSV-t.
+    *   Meghívja a PDF-szerkesztő szkriptet, és készen a kezedbe adja a kinyomtatandó matrica-íveket.
+*   **A te feladatod:** Csak rányomsz a nyomtatás gombra.
+
+### 2. 📧 Support & Portal Agent (Az "Ügyfélszolgálatos")
+A futók gyakran elírják az e-mail címüket, nem találják a portál belépő linkjüket, vagy át akarják regisztrálni a távjukat (pl. 15 km-ről 25 km-re).
+*   **Mit csinál az Agent?**
+    *   Össze van kötve a `vitasteps.team@gmail.com` fiókkal.
+    *   Ha e-mail érkezik, beazonosítja a futót a Supabase-ben.
+    *   **Megoldja a problémát:** Ha a futó azt írja, hogy elírta a nevét vagy távot váltana, az Agent elvégzi a módosítást a Supabase-ben és a Google Sheetben, majd megírja a választ: *"Szia! A módosítást elvégeztem, a portálodon már a frissített adatok látszanak..."*
+    *   Ha panasz van (pl. sérült érem), elkészít egy választervezetet neked jóváhagyásra.
+*   **A te feladatod:** Nem kell manuálisan SQL-t vagy Sheets-et szerkesztened a futók kérései miatt.
+
+### 3. 📈 Growth & Referral Agent (A "Marketinges")
+A VitaSteps-nek van egy szuper ajánlói rendszere (a portálon generált egyedi linkekkel).
+*   **Mit csinál az Agent?**
+    *   Figyeli a Google Sheets-ben, ki kinek ajánlotta a túrát, és ki a legaktívabb "nagyköveted".
+    *   Ha valaki eléri az 5 sikeres ajánlást, az Agent automatikusan kiküld neki egy egyedi gratuláló e-mailt a különdíjával.
+    *   A korábbi kampányok statisztikái (Prédikálószék vs. Nagy-Kevély) alapján megírja a következő hírlevél és Facebook hirdetések szövegtervezeteit (copywriting).
+*   **A te feladatod:** Csak átolvasod és kiküldöd a megírt szövegeket.
+
+### 4. 📊 Finance Agent (A "Könyvelő")
+*   **Mit csinál az Agent?**
+    *   Összefésüli a Stripe bevételeket a Számlázz.hu kimenő számláival és a Google Sheets adataival.
+    *   Minden vasárnap este küld neked egy 5 mondatos összefoglalót: *"Ezen a héten X Ft bevételünk volt, ebből Y Ft Pilis és Z Ft Prédikálószék. A konverziós ráta W%. A becsült profitmarzs a szállítási díjak levonása után V%."*
+*   **A te feladatod:** Képben vagy a számokkal anélkül, hogy táblázatokat elemeznél.
+
+---
+
+# 🚀 Hogyan változtatná meg ez a VitaSteps-et?
+
+1.  **Végtelen skálázhatóság:** Mindegy, hogy egy kampányban 50 futó van vagy 5000. Az adminisztrációs teher nem fog növekedni számodra. Nincs több "elúsztam a Foxpost címkékkel" vagy "nem volt időm válaszolni a levelekre".
+2.  **CEO üzemmód:** Te kizárólag a túrák kitalálásával, az érmek dizájnjával, a fotózással és a stratégiai növekedéssel foglalkozol. A rutinüzemeltetés szinte teljesen autonómmá válik.
+3.  **Új kampányok indítása percek alatt:** Ha új túrát akarsz indítani (pl. "A Dobogókő fényei"), csak utasítod az Agentet: *"Duplikáld a Kevély landinget és a checkoutot Dobogókő néven, 9990 Ft-os áron, 150-es limittel."* A kód és a Stripe termékek maguktól létrejönnek.
+
+---
+
+# 🏁 Hogyan tudjuk ezt elkezdeni?
+
+Nem kell mindent egyszerre megépíteni. A fokozatosság a lényeg:
+
+*   **1. lépés (Second Brain):** Összegyűjtjük a meglévő rendszerek (Supabase sémák, Sheets elrendezés, Foxpost és Számlázz.hu API-k, gyakori ügyfélkérdések) dokumentációját egyetlen mappába a VS Code-on belül (ahol én is elérem).
+*   **2. lépés (Logistics Agent):** Automatizáljuk a szállítás előkészítését. A scriptjeidet (címke rendezés, Foxpost export) beépítjük egy olyan folyamatba, amit egy kattintással (vagy teljesen automatikusan) le tudsz futtatni.
+*   **3. lépés (Support Agent):** Készítünk egy egyszerű Gmail-es scriptet, ami a bejövő support leveleket értelmezi, és a Supabase-ben elvégzi az olyan gyakori kéréseket, mint a portál belépő link újraküldése vagy név elírás javítása.
+
+Mit gondolsz, melyik lenne az a rutinmunka a VitaSteps-ben, amit a legszívesebben átadnál először egy AI csapattagnak?
