@@ -348,6 +348,30 @@
       {
         "sender": "me",
         "message": "Hi Kimmi! That is perfect!  I accept your quotation of $481 (DDP terms) for 100 units. I would like to order as a sole trader, so I need the invoice to be issued to my business.  Please prepare the Trade Assurance order link on Alibaba. I will provide my business name, address, and EU Tax Number (HU) as soon as you draft the order.  Could you also confirm the current estimated production and shipping time?"
+      },
+      {
+        "sender": "me",
+        "message": "Starting new campaign"
+      },
+      {
+        "sender": "Kimmi Lin",
+        "message": "Hi Adam, for this medal, could we change the craft way to be UV printing? We see that the artwork is a little different from the previous one. In order to show as much detail as possible, it may look a little better with UV printing. May I know your ideas about it?"
+      },
+      {
+        "sender": "me",
+        "message": "We prefer to stick with Soft Enamel for the premium 3D textured feel. Please ask your designers to simplify any details that are too small for die-casting when they create the digital proof."
+      },
+      {
+        "sender": "Kimmi Lin",
+        "message": "OK, and this medal is a little bit more expensive than previous according to the craft way.  We will update the price for you in a moment.  [offer screenshot sent: $1.02 per unit, $140 mold fee, $260 shipping = $502 total]"
+      },
+      {
+        "sender": "me",
+        "message": "The price of $502 DDP is acceptable for us. Please draft the Trade Assurance payment link based on our sole trader business details below:  Company Name: [Egyéni Vállalkozásod Hivatalos Neve]  EU Tax Number: [Adószámom]  Billing & Shipping Address: [Számlázási és Szállítási Cím]  Contact Person: [Nevem]  Phone Number: [Telefonszámom]  Thank you!"
+      },
+      {
+        "sender": "Kimmi Lin",
+        "message": "The production time is about 18 days, and the transportation time is about 15~20 days."
       }
     ]
   },

@@ -77,7 +77,7 @@ module.exports = async (req, res) => {
         }
 
         const campaignName = campaign === 'pilis' ? 'A Nagy-Kevély csillagjai' : 'Prédikálószék';
-        const medalPrice = campaign === 'pilis' ? 8990 : 7990;
+        const medalPrice = 7990;
         const totalPaid = session.amount_total
             ? Math.round(session.amount_total / 100) // Stripe no-decimal for HUF = already in HUF
             : medalPrice * medals.length + (deliveryMethod === 'home' ? 1200 : 0);

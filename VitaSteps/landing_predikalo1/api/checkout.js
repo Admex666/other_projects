@@ -84,7 +84,7 @@ module.exports = async (req, res) => {
 
         // ── PRICING ──────────────────────────────────────────────────────────
         const productName = isPilis ? 'A Nagy-Kevély csillagjai Kihívás Érem' : 'Prédikálószék Kihívás Érem';
-        const unitAmountCents = isPilis ? 899000 : 799000; // HUF (Stripe no-decimal)
+        const unitAmountCents = 799000; // HUF (Stripe no-decimal) for both campaigns
         const shippingAmountCents = 120000; // 1200 Ft
         const isHomeDelivery = deliveryMethod === 'home';
 
