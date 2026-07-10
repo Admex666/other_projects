@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prédikálószék Kihívás – VitaSteps | Limitált 100 darabos érem</title>
+    <meta name="description"
+        content="Teljesítsd a Prédikálószék túrát május 28. és június 30. között, igazold a teljesítményed, és szerezd meg a kézzel festett Antique Nickel érmedet. Limitált, 100 darabos első széria.">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="icon" type="image/png" href="/assets/logo.png">
+
+    <!-- Leaflet CSS for Map -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+
+    <style>
+        .btn-group {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-mid);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .filter-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .filter-btn.active {
+            background: var(--accent);
+            color: #000;
+            border-color: var(--accent);
+            font-weight: 600;
+        }
+    </style>
+
+    <!-- Meta Pixel Code -->
+    <script>
+        !function (f, b, e, v, n, t, s) {
+            if (f.fbq) return; n = f.fbq = function () {
+                n.callMethod ?
+                    n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+            };
+            if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+            n.queue = []; t = b.createElement(e); t.async = !0;
+            t.src = v; s = b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t, s)
+        }(window, document, 'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '808533555643359');
+        fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+            src="https://www.facebook.com/tr?id=808533555643359&ev=PageView&noscript=1" /></noscript>
+    <!-- End Meta Pixel Code -->
+
+    <!-- Vercel Web Analytics -->
+    <script>
+        window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+</head>
+
+<body>
+
+    <!-- STICKY NAV -->
+    <nav>
+        <div class="container nav-inner">
+            <div class="logo">VITASTEPS</div>
+            <a href="#checkout-section" class="btn btn-primary btn-sm" id="nav-cta">Nevezek &rarr;</a>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="container hero-inner">
+            <div class="hero-text">
+                <div class="badge" id="badge-earlybird">✅ A Kihívás Elindult! &mdash; Nevezés a készlet erejéig</div>
+                <h1>Mászd meg a <span class="accent">Prédikálószéket</span>.<br>Viseld a bizonyítékát.</h1>
+                <p>Az érem, amit <strong>nem lehet megvenni</strong>, csak teljesíteni. Nevezz be,
+                    teljesítsd a túrát <strong>május 28. és június 30. között</strong>, és postázzuk a kézzel festett
+                    érmedet.</p>
+                <p style="margin-top:-1rem; color: var(--text-mid); font-size:0.95rem;">Választhatsz több távolság közül
+                    (10, 15, 20, 25 km), egy biztos: a <strong style="color:var(--text-high)">Prédikálószék és a
+                        teljesítmény</strong>.</p>
+                <div class="hero-actions">
+                    <div style="display:flex; flex-direction:column; gap:0.5rem;">
+                        <div style="font-size:0.9rem; opacity:0.55; text-decoration:line-through; text-align:center;">
+                            12.990 Ft</div>
+                        <a href="#checkout-section" class="btn btn-primary btn-lg" id="hero-cta">
+                            Nevezek – 7.990 Ft + INGYENES SZÁLLÍTÁS 🏔️
+                        </a>
+                        <div style="font-size:0.8rem; color:var(--text-mid); text-align:center;">Kattints az adatok
+                            megadásához és a fizetéshez</div>
+                        <div style="color:#ff4d4d; font-size:0.85rem; font-weight:600; text-align:center;">🔥 Már 65 hely elkelt – A kedvezményes ár és teljesítés június 23. éjfélig érvényes!</div>
+                    </div>
+                    <a href="#hogyan" class="btn btn-ghost">Hogyan működik?</a>
+                </div>
+                <div class="trust-row">
+                    <span class="trust-item">🔒 Biztonságos fizetés</span>
+                    <span class="trust-item">📦 Ingyenes szállítás</span>
+                    <span class="trust-item">🏅 Limitált 100 db</span>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="medal-float">
+                    <img src="/assets/vitasteps_v2_medal_predikaloszek_1775926135052.png" alt="Prédikálószék Érem"
+                        id="medal-hero-img">
+                    <div class="glow-ring"></div>
+                </div>
+                <div class="serial-badge">
+                    <span class="serial-label">Limitált széria</span>
+                    <span class="serial-num">100 darab</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- COUNTDOWN -->
+    <div class="countdown-bar">
+        <div class="container countdown-inner">
+            <span class="countdown-label">⏳ A nevezés és teljesítés lezárul:</span>
+            <div class="countdown" id="countdown">
+                <div class="cd-unit"><span id="cd-days">--</span><small>nap</small></div>
+                <div class="cd-sep">:</div>
+                <div class="cd-unit"><span id="cd-hours">--</span><small>óra</small></div>
+                <div class="cd-sep">:</div>
+                <div class="cd-unit"><span id="cd-mins">--</span><small>perc</small></div>
+                <div class="cd-sep">:</div>
+                <div class="cd-unit"><span id="cd-secs">--</span><small>mp</small></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HOW IT WORKS -->
+    <section id="hogyan" class="how-section">
+        <div class="container">
+            <div class="section-label">A folyamat</div>
+            <h2 class="section-title">Három lépés. Egy valódi érem.</h2>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-num">01</div>
+                    <h3>Nevezz be</h3>
+                    <p>Fizess a kihívásért (<span id="price-step1-display">7.990 Ft</span>). Azonnal visszaigazolást és
+                        digitális oklevelet kapsz, az érmedet
+                        eltesszük számodra.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-num">02</div>
+                    <h3>Teljesítsd a túrát</h3>
+                    <p>Menj fel a Prédikálószékre <strong>június 23-ig</strong>, bármikor.
+                        Választhatsz 10, 15, 20 vagy 25 km-es útvonalat – a lényeg a csúcs és a teljesítmény.</p>>
+                </div>
+                <div class="step-card">
+                    <div class="step-num">03</div>
+                    <h3>Küldd az igazolást</h3>
+                    <p>Rögzítsd a túrát bármilyen GPS applikációval (pl. Strava, Komoot, Garmin) vagy küldj egy csúcson
+                        készült szelfit – és postázzuk az érmet.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- TIMELINE -->
+    <section class="timeline-section">
+        <div class="container">
+            <div class="section-label">Menetrend</div>
+            <h2 class="section-title">Mi mikor történik?</h2>
+            <div class="timeline">
+                <div class="tl-item" id="tl-item-early">
+                    <div class="tl-dot"></div>
+                    <div class="tl-content">
+                        <div class="tl-date">Máj. 27. 12:00-ig</div>
+                        <div class="tl-title">⚡ Előjelentkezés</div>
+                        <div class="tl-desc">Korai nevezés kedvezményes áron</div>
+                    </div>
+                </div>
+                <div class="tl-item active" id="tl-item-normal">
+                    <div class="tl-dot"></div>
+                    <div class="tl-content">
+                        <div class="tl-date">Jún. 23-ig</div>
+                        <div class="tl-title">🚨 Jelentkezés és Teljesítés</div>
+                        <div class="tl-desc">Jelentkezz a kihívásra és teljesítsd a túrát!</div>
+                    </div>
+                </div>
+                <div class="tl-item">
+                    <div class="tl-dot"></div>
+                    <div class="tl-content">
+                        <div class="tl-date">Jún. 20-tól</div>
+                        <div class="tl-title">📦 Kiszállítás</div>
+                        <div class="tl-desc">Érmek postázása a teljesítőknek</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAP SECTION -->
+    <section class="map-section" style="padding: 4rem 0;">
+        <div class="container">
+            <div class="section-label">Térkép és Navigáció</div>
+            <h2 class="section-title">Az Útvonalak</h2>
+            <p style="text-align:center; max-width:600px; margin: 0 auto 2rem; color:var(--text-mid);">Válaszd ki a
+                számodra megfelelő útvonalat. Töltsd le a GPX fájlt az órádhoz vagy a telefonos appodhoz (Strava,
+                Garmin, Locus, Komoot).</p>
+
+            <div class="route-filters"
+                style="display:flex; flex-wrap:wrap; gap: 2rem; justify-content: center; margin-bottom: 2rem;">
+                <div class="filter-group" style="text-align:center;">
+                    <div
+                        style="font-size:0.9rem; color:var(--text-mid); margin-bottom:0.5rem; text-transform:uppercase; letter-spacing:1px;">
+                        Indulás</div>
+                    <div class="btn-group" id="btn-group-start">
+                        <button class="filter-btn active" data-start="domos">Dömös</button>
+                        <button class="filter-btn" data-start="dobogoko">Dobogókő</button>
+                    </div>
+                </div>
+                <div class="filter-group" style="text-align:center;">
+                    <div
+                        style="font-size:0.9rem; color:var(--text-mid); margin-bottom:0.5rem; text-transform:uppercase; letter-spacing:1px;">
+                        Táv</div>
+                    <div class="btn-group" id="btn-group-dist">
+                        <button class="filter-btn active" data-dist="10">10 km</button>
+                        <button class="filter-btn" data-dist="15">15 km</button>
+                        <button class="filter-btn" data-dist="20">20 km</button>
+                        <button class="filter-btn" data-dist="25">25 km</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="map-container" style="position:relative;">
+                <div id="map"
+                    style="width: 100%; height: 400px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 1rem; z-index: 1;">
+                </div>
+
+                <div id="route-stats"
+                    style="display:none; justify-content:space-around; background:rgba(255,255,255,0.05); padding: 1rem; border-radius:12px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 1.5rem;">
+                    <div style="text-align:center;">
+                        <div
+                            style="font-size:0.8rem; color:var(--text-mid); text-transform:uppercase; letter-spacing:1px; margin-bottom:0.2rem;">
+                            Távolság</div>
+                        <div id="stat-dist" style="font-size:1.5rem; font-weight:bold; color:var(--text-high);">-- km
+                        </div>
+                    </div>
+                    <div style="text-align:center;">
+                        <div
+                            style="font-size:0.8rem; color:var(--text-mid); text-transform:uppercase; letter-spacing:1px; margin-bottom:0.2rem;">
+                            Szintemelkedés</div>
+                        <div id="stat-elev" style="font-size:1.5rem; font-weight:bold; color:var(--accent);">-- m</div>
+                    </div>
+                </div>
+
+                <div id="map-fallback"
+                    style="display:none; width: 100%; height: 400px; border-radius: 12px; border: 1px dashed rgba(255,255,255,0.2); margin-bottom: 1.5rem; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,0,0,0.2);">
+                    <div style="font-size: 2rem; margin-bottom: 1rem;">🚧</div>
+                    <h3 style="margin: 0; color: var(--text-high);">Hamarosan érkezik!</h3>
+                    <p style="color: var(--text-mid); max-width: 300px; text-align:center; margin-top:0.5rem;">Ezt az
+                        útvonalat még tervezzük. Térj vissza később, vagy válassz másikat!</p>
+                </div>
+            </div>
+
+            <div style="text-align: center;" id="download-wrapper">
+                <a href="#" id="download-btn" download class="btn btn-ghost"
+                    style="border: 1px solid var(--accent); color: var(--accent);">
+                    ⬇️ GPX (Nyomvonal) Letöltése
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- COMMUNITY LEADERBOARD -->
+    <section id="leaderboard-section" class="leaderboard-section">
+        <div class="container">
+            <div class="leaderboard-container">
+                <div class="leaderboard-header">
+                    <div class="leaderboard-title">
+                        <span style="font-size: 1.5rem;">🏔️</span>
+                        <h3 style="margin: 0; font-size: 1.3rem; color: var(--text-high);">Kihívók Ranglistája</h3>
+                    </div>
+                    <div class="leaderboard-count-badge">
+                        <span id="leaderboard-count">--</span> résztvevő
+                    </div>
+                </div>
+                <p style="color: var(--text-mid); font-size: 0.9rem; margin-top: -0.5rem; margin-bottom: 1.5rem;">
+                    A dicsőségfal valós időben mutatja a sikeres nevezéseket (GDPR-kompatibilis módon: keresztnév, megye és távolság).
+                </p>
+                <div class="leaderboard-list" id="leaderboard-list">
+                    <div style="text-align: center; color: var(--text-mid); padding: 2rem;">
+                        ⏳ Ranglista betöltése...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRICING / CHECKOUT -->
+    <section id="fizetes" class="checkout-section">
+        <div class="container checkout-inner">
+            <div class="checkout-left">
+                <div class="section-label">Nevezés</div>
+                <h2>Prédikálószék Vertical Kihívás</h2>
+                <p class="checkout-sub">Limitált 100 darabos érem · Ingyenes szállítás · Teljesítés: máj. 28. – jún. 30.
+                </p>
+
+                <div class="price-block">
+                    <div class="price-old">12.990 Ft</div>
+                    <div class="price-current" id="price-current-display">7.990 Ft</div>
+                    <div class="price-tag" id="price-tag-display">🔥 Már 65 hely elkelt az Első Szériából!</div>
+                </div>
+
+                <ul class="checkout-includes">
+                    <li>✅ Digitális sorszámozott oklevél (PDF, email)</li>
+                    <li>✅ Ingyenes Foxpost automata szállítás</li>
+                    <li>✅ Választható automata (az űrlapon megadható)</li>
+                    <li>✅ Teljesítés: bármikor máj. 28. – jún. 30. között</li>
+                </ul>
+
+                <div class="checkout-legal">
+                    <p>A fizetés gombra kattintva elfogadod az <a href="/aszf.html" target="_blank">Általános Szerződési
+                            Feltételeket</a> és az <a href="/adatvedelem.html" target="_blank">Adatkezelési
+                            Tájékoztatót</a>.</p>
+                    <p style="margin-top:0.5rem;">A biztonságos fizetést a <strong>Stripe</strong> rendszere kezeli. Az
+                        érem kiszállítása a teljesítés igazolása után indul el (várható: 2026. június 30-tól).</p>
+                </div>
+
+                <!-- REDIRECT CTA TO CHECKOUT WIDGET -->
+                <div id="checkout-section"
+                    style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 3rem 2rem; margin-top: 1rem; text-align: center;">
+                    <span style="font-size: 3rem; display: block; margin-bottom: 1rem;">🏅</span>
+                    <h3 style="margin-top:0; margin-bottom: 1rem; font-size: 1.8rem; color: var(--text-high);">Készen állsz a nevezésre?</h3>
+                    <p style="color: var(--text-mid); margin-bottom: 2rem; font-size: 1.05rem; max-width: 500px; margin-left: auto; margin-right: auto;">
+                        Kattints az alábbi gombra a szállítási adatok (Foxpost automata) megadásához, majd a biztonságos kártyás fizetéshez.
+                    </p>
+                    
+                    <div style="margin-bottom: 2rem; background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); display: inline-block; width: 100%; max-width: 400px; text-align: left;">
+                        <div style="font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-high);">Nevezési díj és szállítás összesen:</div>
+                        <div style="font-size: 2.5rem; font-weight: 800; color: var(--accent); margin-bottom: 0.5rem;">7.990 Ft</div>
+                        <div style="font-size: 0.82rem; color: var(--text-mid);">A fizetés és a szállítási adatok biztonságos kezelését a <strong>Stripe</strong> és a <strong>Foxpost</strong> rendszere végzi.</div>
+                    </div>
+
+                    <a href="/checkout.html?c=predikaloszek" id="checkout-section-btn" class="btn btn-primary btn-xl" style="display: block; width: 100%; max-width: 400px; margin: 0 auto; text-decoration: none; text-align: center; line-height: 1.5;">
+                        Nevezés és csomagpont választás &rarr;
+                    </a>
+                </div>
+
+                <div style="color:#ff4d4d; font-size:0.9rem; font-weight:700; text-align:center; margin-top:1rem;">🔥
+                    Már 65 hely elkelt – A kedvezményes ár június 23. éjfélig érhető el!</div>
+
+                <div class="payment-badges" style="margin-top: 1.5rem;">
+                    <span>🔒 Biztonságos Stripe fizetés</span>
+                    <span>💳 Bankkártya / Apple Pay / Google Pay</span>
+                </div>
+            </div>
+
+            <div class="checkout-right">
+                <div class="faq-card">
+                    <h3>Gyakori kérdések</h3>
+                    <div class="faq-item">
+                        <div class="faq-q">Mi van, ha nem tudom teljesíteni a túrát?</div>
+                        <div class="faq-a">A nevezési díj a kihívásban való részvételt fedezi. Ha júniusban nem sikerül,
+                            az érmet egy következő kihíváson felhasználhatod (feltételek az ÁSZF-ben).</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-q">Mikor kapom meg az érmet?</div>
+                        <div class="faq-a">Az teljesítéseket várhatóan június végén bíráljuk el, és utána postázzuk az
+                            érmeket.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-q">Hogyan igazolom a teljesítést?</div>
+                        <div class="faq-a">Rögzítsd a túrát bármilyen GPS alkalmazással (pl. Strava, Komoot, Garmin
+                            Connect) és küldd el az aktivitás linkjét emailben. Alternatívaként fogadunk egy csúcson
+                            készült szelfit is – arcképet nem tárolunk (GDPR).</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-q">Mi az a digitális oklevél?</div>
+                        <div class="faq-a">Minden teljesítő kap egy egyedi, sorszámozott digitális oklevelet (PDF
+                            formátumban, emailen), amely igazolja a kihívás teljesítését. Ez a fizikai érem digitális
+                            párja.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-q">Hogyan választok Foxpost automatát?</div>
+                        <div class="faq-a">A "Nevezek" gombra kattintva megnyílik a regisztrációs űrlap, ahol
+                            közvetlenül megadhatod, melyik automatába kéred a csomagot.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-q">Kapok számlát?</div>
+                        <div class="faq-a">Igen, a fizetés után e-mailben küldjük a hivatalos elektronikus számlát.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container footer-inner">
+            <div class="footer-brand">
+                <div class="logo">VITASTEPS</div>
+                <p>Real World Accomplishments. Verified.</p>
+            </div>
+            <div class="footer-links">
+                <a href="/aszf.html">Általános Szerződési Feltételek</a>
+                <a href="/adatvedelem.html">Adatkezelési Tájékoztató</a>
+                <a href="mailto:vitasteps.team@gmail.com">vitasteps.team@gmail.com</a>
+            </div>
+            <div class="footer-legal">
+                <p>© 2026 VitaSteps</p>
+                <p>A biztonságos bankkártyás fizetést a <strong>Stripe</strong> biztosítja. Arcképet és személyes
+                    igazolványt nem tárolunk.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- STICKY CTA MOBILE -->
+    <div class="sticky-cta-mobile">
+        <a href="#checkout-section" class="btn btn-primary btn-sm" style="width:100%;" onclick="typeof fbq === 'function' && fbq('track', 'Lead');">
+            Nevezek
+        </a>
+    </div>
+
+    <!-- Leaflet JS for Map -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/1.7.0/gpx.min.js"></script>
+    <script src="/main.js"></script>
+    <script>
+        // Check if checkout limit has been reached
+        async function checkCheckoutLimit() {
+            try {
+                const response = await fetch('/api/check-limit');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.closed) {
+                        // Change hero and nav buttons
+                        const ctas = [
+                            document.getElementById('nav-cta'),
+                            document.getElementById('hero-cta'),
+                            document.querySelector('.sticky-cta-mobile a')
+                        ];
+                        ctas.forEach(btn => {
+                            if (btn) {
+                                btn.textContent = 'Betelt / Lezárult';
+                                btn.style.background = '#334155';
+                                btn.style.color = '#94a3b8';
+                                btn.style.borderColor = '#334155';
+                                btn.style.pointerEvents = 'none';
+                                btn.style.cursor = 'not-allowed';
+                            }
+                        });
+
+                        // Change main checkout box
+                        const mainBtn = document.getElementById('checkout-section-btn');
+                        if (mainBtn) {
+                            mainBtn.textContent = '❌ A nevezés lezárult / Betelt';
+                            mainBtn.style.background = '#334155';
+                            mainBtn.style.color = '#94a3b8';
+                            mainBtn.style.borderColor = '#334155';
+                            mainBtn.style.pointerEvents = 'none';
+                            mainBtn.style.cursor = 'not-allowed';
+                        }
+
+                        const checkoutBox = document.getElementById('checkout-section');
+                        if (checkoutBox) {
+                            const desc = checkoutBox.querySelector('p');
+                            if (desc) {
+                                desc.textContent = 'Sajnos a 99 darabos limitünk teljesen megtelt. További érem nevezések leadására már nincs lehetőség ezen a kihíváson. Köszönjük a hatalmas érdeklődést!';
+                                desc.style.color = '#ff4d4d';
+                                desc.style.fontWeight = 'bold';
+                            }
+                            const priceTag = checkoutBox.querySelector('div');
+                            if (priceTag) {
+                                priceTag.style.opacity = '0.5';
+                            }
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error('Error checking checkout limit:', e);
+            }
+        }
+        checkCheckoutLimit();
+    </script>
+</body>
+
+</html>

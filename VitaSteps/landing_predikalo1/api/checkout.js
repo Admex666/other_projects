@@ -1,5 +1,6 @@
 const Stripe = require('stripe');
 const { google } = require('googleapis');
+const campaigns = require('../config/campaigns.json');
 
 module.exports = async (req, res) => {
     if (req.method !== 'POST') {
@@ -29,6 +30,10 @@ module.exports = async (req, res) => {
             return res.status(400).json({ error: 'Legalább egy nevező adatait meg kell adni!' });
         }
 
+        // Default to pilis if not specified or invalid
+        const campaignKey = (campaign === 'predikaloszek' || campaign === 'predikalo') ? 'predikaloszek' : 'pilis';
+        const config = campaigns[campaignKey];
+
         const origin = req.headers.origin || 'https://vitasteps.vercel.app';
         const useTestKey = isTest || (req.headers.host && req.headers.host.includes('localhost'));
         const stripeKey = useTestKey
@@ -55,23 +60,22 @@ module.exports = async (req, res) => {
 
         const rows = sheetResponse.data.values || [];
         let paidCount = 0;
-        const isPilis = campaign === 'pilis';
 
         for (const row of rows) {
             if (row.length > 9) {
                 const rowCampaign = (row[2] || '').toString().trim().toLowerCase();
                 const rowPaid = (row[9] || '').toString().trim();
                 if (rowPaid !== '') {
-                    if (isPilis && rowCampaign.includes('pilis')) {
+                    if (campaignKey === 'pilis' && rowCampaign.includes('pilis')) {
                         paidCount++;
-                    } else if (!isPilis && !rowCampaign.includes('pilis')) {
+                    } else if (campaignKey === 'predikaloszek' && (rowCampaign.includes('predikalo') || rowCampaign.includes('prédikáló'))) {
                         paidCount++;
                     }
                 }
             }
         }
 
-        const maxLimit = isPilis ? 100 : 99;
+        const maxLimit = config.limit;
         if (paidCount + medals.length > maxLimit) {
             const remaining = maxLimit - paidCount;
             if (remaining <= 0) {
@@ -83,13 +87,15 @@ module.exports = async (req, res) => {
         }
 
         // ── PRICING ──────────────────────────────────────────────────────────
-        const productName = isPilis ? 'A Nagy-Kevély csillagjai Kihívás Érem' : 'Prédikálószék Kihívás Érem';
-        const unitAmountCents = 799000; // HUF (Stripe no-decimal) for both campaigns
+        const productName = config.productName;
+        const unitAmountCents = config.price * 100; // HUF (Stripe no-decimal)
         const shippingAmountCents = 120000; // 1200 Ft
         const isHomeDelivery = deliveryMethod === 'home';
 
-        const successUrl = isPilis ? `${origin}/nagykevely/siker.html` : `${origin}/sikeres-nevezes.html`;
-        const cancelUrl = isPilis ? `${origin}/nagykevely/index.html` : `${origin}/`;
+        const successUrl = `${origin}/siker.html?c=${campaignKey}`;
+        const cancelUrl = campaignKey === 'predikaloszek'
+            ? `${origin}/predikalo/index.html`
+            : `${origin}/nagykevely/index.html`;
 
         // ── METADATA ─────────────────────────────────────────────────────────
         // Stripe metadata values must be strings, max 500 chars each
@@ -103,7 +109,7 @@ module.exports = async (req, res) => {
             Csomagpont_id: parcelId || '',
             Hazhoz_cim: homeAddress || '',
             Ajanlо_Email: referredBy || '',
-            Kampany: isPilis ? 'pilis' : 'predikaloszek',
+            Kampany: campaignKey,
             IsTest: useTestKey ? 'true' : 'false',
             Medaliok: JSON.stringify(medals).substring(0, 490) // serialize array, max 490 chars
         };

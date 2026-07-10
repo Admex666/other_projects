@@ -298,7 +298,7 @@
 <body>
 
     <nav class="nav">
-        <a href="/nagykevely/index.html" style="text-decoration: none; color: inherit;">
+        <a id="nav-home-link" href="#" style="text-decoration: none; color: inherit;">
             <div class="logo">VITA<span>STEPS</span></div>
         </a>
     </nav>
@@ -312,7 +312,7 @@
         <div class="section">
             <div class="section-title">🏅 Hány érmet rendelsz?</div>
             <div class="qty-row">
-                <div class="qty-label">Egy érem ára: <strong style="color:var(--accent);">7 990 Ft</strong></div>
+                <div class="qty-label">Egy érem ára: <strong id="qty-price-display" style="color:var(--accent);">-- Ft</strong></div>
                 <div class="qty-controls">
                     <button class="qty-btn" id="qty-minus" onclick="changeQty(-1)">−</button>
                     <div class="qty-display" id="qty-display">1</div>
@@ -321,7 +321,7 @@
             </div>
         </div>
 
-        <!-- ── MEDAL PANELS (dynamically rendered) ──────────── -->
+        <!-- ── MEDAL PANELS ──────────── -->
         <div id="medal-panels-container"></div>
 
         <!-- ── VÁSÁRLÓ ADATAI (billing + contact) ───────────── -->
@@ -338,7 +338,7 @@
                 </div>
             </div>
             <div class="form-row" style="margin-top:1rem;">
-                <label for="cust-billing-address">Számlázási cím * <span style="font-size:0.75rem;color:var(--text-low);">(Számlázz.hu e-számlához)</span></label>
+                <label for="cust-billing-address">Számlázási cím * <span style="font-size:0.75rem;color:var(--text-low);">(e-számlához)</span></label>
                 <input type="text" id="cust-billing-address" placeholder="1139 Budapest, Csizma utca 3.">
             </div>
         </div>
@@ -352,7 +352,7 @@
                         onchange="handleDeliveryChange('foxpost')">
                     <div>
                         <div class="delivery-card-name">🦊 Foxpost automata</div>
-                        <div class="delivery-card-sub free">INGYENES – TÖBB NAPON ÁT ÁTVEHETŐ</div>
+                        <div class="delivery-card-sub free">INGYENES – CSOMAGPONTI ÁTVÉTEL</div>
                     </div>
                 </label>
                 <label class="delivery-card" id="label-home" for="deliv-home">
@@ -360,7 +360,7 @@
                         onchange="handleDeliveryChange('home')">
                     <div>
                         <div class="delivery-card-name">📬 Házhozszállítás</div>
-                        <div class="delivery-card-sub paid">+1 200 Ft – Magyar Posta</div>
+                        <div class="delivery-card-sub paid">+1 200 Ft – FoxPost Házhoz</div>
                     </div>
                 </label>
             </div>
@@ -398,7 +398,7 @@
         <div class="order-summary-box">
             <div class="summary-row">
                 <span id="summary-medal-label">Kihívás Érem × 1 db</span>
-                <span id="summary-medal-price">7 990 Ft</span>
+                <span id="summary-medal-price">-- Ft</span>
             </div>
             <div class="summary-row" id="summary-shipping-row" style="display:none;">
                 <span>Házhozszállítás</span>
@@ -406,7 +406,7 @@
             </div>
             <div class="summary-total">
                 <span>Végösszeg</span>
-                <span class="summary-total-price" id="summary-total">7 990 Ft</span>
+                <span class="summary-total-price" id="summary-total">-- Ft</span>
             </div>
         </div>
 
@@ -415,30 +415,52 @@
         <div id="error-msg" class="error-msg"></div>
 
         <p class="legal-note" style="margin-top:1rem;">
-            A fizetés gombra kattintva elfogadod a <a href="../aszf.html" target="_blank">Nevezési feltételeket (ÁSZF)</a> és az <a href="../adatvedelem.html" target="_blank">Adatvédelmi nyilatkozatot</a>.
+            A fizetés gombra kattintva elfogadod a <a href="/aszf.html" target="_blank">Nevezési feltételeket (ÁSZF)</a> és az <a href="/adatvedelem.html" target="_blank">Adatvédelmi nyilatkozatot</a>.
         </p>
 
     </div>
 
     <script>
-        // ── CONFIG ───────────────────────────────────────────
-        const MEDAL_PRICE = 7990;
+        // ── CONFIG & STATE ──────────────────────────────────
+        let campaignConfig = null;
+        let campaignKey = 'pilis'; // default
+        let medalPrice = 7990;
         const SHIPPING_SURCHARGE = 1200;
         const MAX_QTY = 5;
-        const DISTANCES = [
-            { value: '10 km', label: 'Kevély Kör (10 km)' },
-            { value: '15 km', label: 'Kevély Félmaraton (15 km)' },
-            { value: '25 km', label: 'Kevély Ultra (25 km)' }
-        ];
 
-        // ── STATE ────────────────────────────────────────────
+        // Parse query params
         const urlParams = new URLSearchParams(window.location.search);
         const referredBy = urlParams.get('ref') || '';
-        const isTest = urlParams.get('test') === 'true' || window.location.hostname === 'localhost';
+        const paramCampaign = urlParams.get('c') || '';
+        if (paramCampaign === 'predikaloszek' || paramCampaign === 'predikalo') {
+            campaignKey = 'predikaloszek';
+        } else {
+            campaignKey = 'pilis';
+        }
 
+        const isTest = urlParams.get('test') === 'true' || window.location.hostname === 'localhost';
         let qty = 1;
         let deliveryMethod = 'foxpost';
         let selectedParcelPoint = null;
+
+        // ── LOAD CONFIG ─────────────────────────────────────
+        async function loadConfig() {
+            try {
+                const res = await fetch('/config/campaigns.json');
+                const config = await res.json();
+                campaignConfig = config[campaignKey];
+                
+                // Set page values
+                medalPrice = campaignConfig.price;
+                document.getElementById('qty-price-display').textContent = formatHuf(medalPrice);
+                document.getElementById('nav-home-link').href = campaignKey === 'pilis' ? '/nagykevely/index.html' : '/predikalo/index.html';
+                
+                renderMedalPanels();
+                updateSummary();
+            } catch (err) {
+                console.error("Config load error:", err);
+            }
+        }
 
         // ── FOXPOST MESSAGE LISTENER ─────────────────────────
         window.addEventListener('message', function (event) {
@@ -495,6 +517,12 @@
         function createMedalPanel(index) {
             const panel = document.createElement('div');
             panel.className = 'medal-panel section';
+            
+            // Build options from config
+            const optionsHtml = (campaignConfig?.distances || []).map(d => 
+                `<option value="${d.value}">${d.label || d.value}</option>`
+            ).join('');
+
             panel.innerHTML = `
                 <div class="medal-panel-title">${qty === 1 ? '🏅 Nevező adatai' : `🏅 ${index + 1}. érem – Nevező adatai`}</div>
                 <div class="form-grid-2">
@@ -505,7 +533,7 @@
                     <div class="form-row">
                         <label>Választott távolság *</label>
                         <select class="medal-distance">
-                            ${DISTANCES.map(d => `<option value="${d.value}">${d.label}</option>`).join('')}
+                            ${optionsHtml}
                         </select>
                     </div>
                 </div>
@@ -540,7 +568,7 @@
 
         // ── SUMMARY ──────────────────────────────────────────
         function updateSummary() {
-            const medalTotal = MEDAL_PRICE * qty;
+            const medalTotal = medalPrice * qty;
             const shippingFee = deliveryMethod === 'home' ? SHIPPING_SURCHARGE : 0;
             const total = medalTotal + shippingFee;
 
@@ -613,16 +641,14 @@
                 phone,
                 billingAddress,
                 deliveryMethod,
-                // foxpost
                 parcelCarrier: deliveryMethod === 'foxpost' ? (selectedParcelPoint?.carrier || '') : '',
                 parcelName: deliveryMethod === 'foxpost' ? (selectedParcelPoint?.name || '') : '',
                 parcelAddress: deliveryMethod === 'foxpost' ? (selectedParcelPoint?.address || '') : '',
                 parcelId: deliveryMethod === 'foxpost' ? (selectedParcelPoint?.id || '') : '',
-                // home
                 homeAddress: deliveryMethod === 'home' ? resolvedHomeAddress : '',
                 referredBy,
                 isTest,
-                campaign: 'pilis'
+                campaign: campaignKey
             };
 
             try {
@@ -650,8 +676,7 @@
         }
 
         // ── INIT ─────────────────────────────────────────────
-        renderMedalPanels();
-        updateSummary();
+        loadConfig();
     </script>
 </body>
 

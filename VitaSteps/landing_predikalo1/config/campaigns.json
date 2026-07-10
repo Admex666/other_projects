@@ -1,0 +1,28 @@
+{
+  "predikaloszek": {
+    "name": "Prédikálószék",
+    "productName": "Prédikálószék Kihívás Érem",
+    "price": 7990,
+    "limit": 99,
+    "prefix": "-PS",
+    "distances": [
+      {"value": "10 km", "label": "Kevély Kör (10 km)"},
+      {"value": "15 km", "label": "Kevély Félmaraton (15 km)"},
+      {"value": "20 km", "label": "Kevély Hosszú (20 km)"},
+      {"value": "25 km", "label": "Kevély Ultra (25 km)"}
+    ]
+  },
+  "pilis": {
+    "name": "A Nagy-Kevély csillagjai",
+    "productName": "A Nagy-Kevély csillagjai Kihívás Érem",
+    "price": 7990,
+    "limit": 100,
+    "prefix": "-PK",
+    "distances": [
+      {"value": "10 km", "label": "Kevély Kör (6–7 km)"},
+      {"value": "10 km_classic", "label": "Kevély Kör (10 km)"},
+      {"value": "15 km", "label": "Kevély Félmaraton (15 km)"},
+      {"value": "25 km", "label": "Kevély Ultra (20–25 km)"}
+    ]
+  }
+}

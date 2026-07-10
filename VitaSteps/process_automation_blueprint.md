@@ -104,10 +104,10 @@ Megszűnik a kézi számlázás és a manuális üdvözlő levelek küldözgeté
 ---
 
 ### 3. Fázis: Teljesítés igazolása és Jóváhagyás
-Nincs szükség kézi emailezésre a jóváhagyás után.
+Nincs szükség kézi emailezésre a jóváhagyás után. A portálon a felhasználó egyszerre több fájlt is feltölthet (pl. GPX nyomvonalat ÉS fotót is), javítva az első kampány korlátozásait.
 
 *   **Bemenő adatok (Inputs):**
-    *   A túrázó által a Portálra feltöltött GPX fájl vagy szelfi kép (Supabase Storage).
+    *   A túrázó által a Portálra feltöltött GPX fájl(ok) és/vagy fotó(k) (több fájl egyidejű feltöltése támogatott a Supabase Storage-ba).
 *   **Automatizációs folyamat:**
     1.  Az Admin felületeden (Supabase Dashboard vagy egy egyszerű belső admin oldal) láthatóvá válik a beküldés.
     2.  A beküldést átnézed, majd rákattintasz a **"Jóváhagyás" (Approve)** gombra.

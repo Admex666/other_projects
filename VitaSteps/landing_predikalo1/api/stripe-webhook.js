@@ -2,6 +2,7 @@ const Stripe = require('stripe');
 const { google } = require('googleapis');
 const { createClient } = require('@supabase/supabase-js');
 const nodemailer = require('nodemailer');
+const campaigns = require('../config/campaigns.json');
 
 module.exports = async (req, res) => {
     if (req.method !== 'POST') {
@@ -76,8 +77,10 @@ module.exports = async (req, res) => {
             return res.status(200).json({ received: true, error: 'Missing metadata' });
         }
 
-        const campaignName = campaign === 'pilis' ? 'A Nagy-Kevély csillagjai' : 'Prédikálószék';
-        const medalPrice = 7990;
+        const campaignKey = (campaign === 'predikaloszek' || campaign === 'predikalo') ? 'predikaloszek' : 'pilis';
+        const config = campaigns[campaignKey];
+        const campaignName = config.name;
+        const medalPrice = config.price;
         const totalPaid = session.amount_total
             ? Math.round(session.amount_total / 100) // Stripe no-decimal for HUF = already in HUF
             : medalPrice * medals.length + (deliveryMethod === 'home' ? 1200 : 0);
@@ -197,8 +200,8 @@ module.exports = async (req, res) => {
             const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
             // Get current max serial for this campaign
-            const suffix = campaign === 'pilis' ? '-PK' : '-PS';
-            const limit = campaign === 'pilis' ? 100 : 99;
+            const suffix = config.prefix;
+            const limit = config.limit;
 
             const { data: existingRunners, error: fetchErr } = await supabase
                 .from('runners')
@@ -210,7 +213,10 @@ module.exports = async (req, res) => {
             }
 
             const existingSerials = (existingRunners || [])
-                .map(r => parseInt((r.serial_number || '').replace(/[^0-9]/g, '')) || 0);
+                .map(r => {
+                    const match = (r.serial_number || '').match(/#(\d+)\//);
+                    return match ? parseInt(match[1]) : 0;
+                });
             let nextSerial = existingSerials.length > 0 ? Math.max(...existingSerials) + 1 : 1;
 
             for (const medal of medals) {
