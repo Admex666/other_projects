@@ -4259,3 +4259,248 @@ Az elvégzett munkáról és a verifikációs eredményekről elkészítettem a 
 4.  **Sikeres szimuláció:** A mock webhook teszt 200 OK-val, hiba nélkül futott le a helyi Vercel szerveren a javított kóddal, a Google Sheets táblák és a Supabase adatbázis is tökéletesen frissült a helyes árakkal és adatokkal.
 
 A projekt most már 100%-osan tiszta, skálázható és készen áll a Nagy-Kevély csillagai kampány éles startjára!
+
+### User Input
+
+A daily foxpost trackinget írd át az új mappastruktúrára!:
+"
+Run python daily_tracking.py
+python: can't open file '/home/runner/work/other_projects/other_projects/VitaSteps/landing_predikalo1/daily_tracking.py': [Errno 2] No such file or directory
+Error: Process completed with exit code 2.
+"
+
+*Listed directory [VitaSteps](file:///e:/Data/other_projects/VitaSteps) *
+
+*Grep searched codebase*
+
+*Grep searched codebase*
+
+*Listed directory [other_projects](file:///e:/Data/other_projects) *
+
+*Listed directory [workflows](file:///e:/Data/other_projects/.github/workflows) *
+
+*Viewed [daily_tracking.yml](file:///e:/Data/other_projects/.github/workflows/daily_tracking.yml) *
+
+### Planner Response
+
+Ah, a 28-42. soroknál látható:
+```yaml
+    - name: Run daily tracking script
+      working-directory: ./VitaSteps/landing_predikalo1
+...
+      run: |
+        python daily_tracking.py
+```
+Mivel a `daily_tracking.py` átkerült a `scripts/` könyvtárba, a futtatandó parancsnak `python scripts/daily_tracking.py`-nek kell lennie!
+Módosítom a `daily_tracking.yml` fájlt a `replace_file_content` eszközzel:
+`python daily_tracking.py` -> `python scripts/daily_tracking.py`.
+(A `working-directory` marad `./VitaSteps/landing_predikalo1`, ami tökéletes, mert a `scripts/` mappa ezen belül van!).
+
+Írjuk át:
+
+*Edited relevant file*
+
+### Planner Response
+
+Átírtam a GitHub Actions munkafolyamat (`daily_tracking.yml`) konfigurációs fájlját az új mappaszerkezetnek megfelelően!
+
+Mostantól a napi Foxpost csomagkövető és utánkövető (follow-up) e-mail kiküldő automatizáció a `scripts/daily_tracking.py` útvonalon fut le a GitHub Action-ben is, megszüntetve a hibát.
+
+### User Input
+
+Na okés, akkor csináljuk a Meta kampány előkészítését. Miket kell kipipálnunk hogy meglegyen egy jobb kampány mint az előző? (részletes todo list)
+
+### Planner Response
+
+Ahhoz, hogy a Nagy-Kevély kampányod **pénzügyileg és konverziós szempontból is túlszárnyalja** a Prédikálószéket, az alábbi részletes feladatlistát (TODO) kell végrehajtanunk az indulásig. 
+
+A listát a korábbi kampány tanulságai (NPS visszajelzések, CPA emelkedés, vásárlási csúcsok) alapján állítottam össze.
+
+---
+
+# 🎯 Meta Kampány Előkészületi TODO List
+
+## 1. 👥 Célzás & Közönségek (A büdzsé-pazarlás ellen)
+*   [ ] **Stripe vevőlista exportálása:** A 66 korábbi Prédikálószék vásárló e-mail címének kimentése CSV-be.
+*   [ ] **Custom Audience létrehozása:** A CSV lista feltöltése a Meta Business Managerbe mint *Egyéni célközönség (Vásárlók)*.
+*   [ ] **Hasonmás Közönség (Lookalike - LAL):** 1%-os és 2%-os hasonmás közönség generálása a vevőlistából Magyarországra (kiemelt fókusszal a túrázókra és terepfutókra).
+*   [ ] **Kizárások beállítása (Exclusions):**
+    *   A hideg (prospecting) kampányból **zárd ki a korábbi vevők listáját**.
+    *   Zárd ki azokat is, akik elérték a `/siker.html` oldalt az elmúlt 180 napban.
+*   [ ] **Retargeting kampány felkészítése:** Hozz létre egy alacsony költségvetésű (napi 1-2 ezer Ft) hirdetéssorozatot, ami kizárólag azokat célozza, akik meglátogatták a landinget az elmúlt 30 napban, de nem vásároltak (belőlük is zárd ki a vásárlókat).
+
+---
+
+## 2. ✍️ Kreatívok & Hirdetésszöveg (Evergreen & FOMO különválasztása)
+*   [ ] **Evergreen prospecting szövegek:** A fő hirdetésekben ne említs határidőket (pl. "június 23."), hogy ne törd meg a hirdetés tanulási fázisát. Fókuszálj az érem prémium minőségére, a természet szépségére és az új távokra.
+*   [ ] **Ajándék Kalandkönyv (Lead magnet-szerű hook):** A hirdetés szövegébe írd bele: *„Minden nevező ingyenes, letölthető Nagy-Kevély Kalandkönyvet kap Pilisborosjenő rejtélyeiről!”*
+*   [ ] **A 4 távolság kiemelése:** Hangsúlyozd, hogy már kezdő/családi táv (6-7 km) is van a profi félmaraton (15 km) és ultra (25 km) mellett.
+*   [ ] **Retargeting kreatívok (Tiszta FOMO):** Készíts külön grafikákat a retargeting kampányhoz az utolsó napokra: *„Már csak 3 nap maradt a nevezésre!”*, *„A 100 limitált érem 85%-a már elfogyott!”*
+
+---
+
+## 3. 🌐 Landing Page & Web-oldali FOMO (Bizalom & Sürgősség)
+*   [ ] **Kalandkönyv promóció:** Helyezzünk el egy látványos szekciót a `nagykevely/index.html`-en, ami bemutatja az ingyenes Kalandkönyvet (várrom története, Teve-szikla geológiája).
+*   [ ] **Közösségi statisztika (Social Proof):** A távok szekció alá tegyünk be egy számlálót: *„A VitaSteps közösség tagjai már összesen 1 230 kilométert teljesítettek az előző kihívásunkon! Csatlakozz te is hozzájuk!”*
+*   [ ] **Dinamikus Készlet- és Időjelző:** A landing tetején/alján működjön a visszaszámláló (a szeptember 6-i nevezési zárásig) és a szabad érmek számlálója.
+*   [ ] **Térkép frissítése:** A Leaflet térképen jelenjen meg a 4 új táv GPX nyomvonala (6-7 km, 10 km, 15 km, 25 km).
+
+---
+
+## 4. ⚙️ Technikai Ellenőrzés (Mérések & Fizetés)
+*   [ ] **Pixel események tesztelése:** Győződj meg róla, hogy a Meta Pixel Helper bővítmény zölden világít:
+    *   A főoldalon (`PageView`),
+    *   A checkout oldalon (`InitiateCheckout` - `/checkout.html?c=pilis`),
+    *   A köszönőoldalon (`Purchase` esemény pontosan 7990 HUF értékkel - `/siker.html?c=pilis`).
+*   [ ] **Ajánlói kupon ellenőrzése:** A Stripe live fiókodban ellenőrizd, hogy a `VSBARAT10` kuponkód aktív-e és 10% kedvezményt ad-e, hogy az ajánlói program az első naptól működjön.
+
+---
+
+### Mivel folytassuk?
+Javaslom, hogy menjünk végig a **3. ponton (Landing Page fejlesztések)**. Első lépésként beépíthetem a **Kalandkönyv promóciót** és a **1 230 km-es közösségi statisztikát** a `nagykevely/index.html` kódjába. Kezdhetjük ezzel?
+
+### User Input
+
+Okés, ezeket mentsd a docsban egy nagykevely_todo.md-be! Jelöld melyik manuális (nekem kell) és melyiket tudod te is csinálni! 
+Az előző kampány meta pixelén nem kell semmit állítanunk?
+
+*Edited relevant file*
+
+### Planner Response
+
+Elmentettem a feladatlistát az új helyére:
+👉 [nagykevely_todo.md](file:///e:/Data/other_projects/VitaSteps/landing_predikalo1/docs/nagykevely_todo.md)
+
+Ebben pontosan felcímkéztem, hogy melyiket tudjuk közösen/AI-val csinálni (szövegírás, landing kódolás, számlálók beépítése, térkép frissítés), és melyik igényel tőled manuális beállítást (a Stripe és Meta Ads felületeken).
+
+---
+
+### Válasz a Meta Pixel kérdésedre:
+**Nem, a Meta Pixel hirdetéskezelői (Meta Ads) oldalán semmit nem kell állítanod!**
+
+Mivel ugyanazt a Pixelt használod (ID: `808533555643359`) és ugyanazon a domainen fut a Nagy-Kevély is, a rendszer automatikusan működni fog:
+1.  **Dinamikus Purchase Esemény:** A legutóbbi refaktorálásunk során az univerzális `siker.html`-be beépítettük, hogy a fizetés után dinamikusan küldje el a termék nevét (`A Nagy-Kevély csillagjai Kihívás Érem`) és a pontos árat (`7990 HUF`) a Facebooknak.
+2.  **Az algoritmus magától tanul:** A Meta algoritmusa a termékparaméterek (content_name) alapján látni fogja, hogy ki melyik kampányt vásárolta meg, és automatikusan az új termék vásárlóira fog optimalizálni.
+3.  **Domain & Esemény prioritás:** Mivel a domain nem változott, a domain-verifikáció és az Összesített Eseménymérés (Aggregated Event Measurement) beállításai – ahol a `Purchase` a legmagasabb prioritású esemény – változatlanul tökéletesek maradnak.
+
+A Pixel tehát teljesen készen áll, semmilyen kézi konfigurációt nem igényel a Meta felületén!
+
+Kezdhetjük a **Landing Page frontend fejlesztéseit (Kalandkönyv promóció, 1230 km-es statisztika és számlálók beépítése)** a `nagykevely/index.html` oldalon?
+
+### User Input
+
+@[e:\Data\other_projects\VitaSteps\landing_predikalo1\docs\nagykevely_todo.md:L8] ezt a google sheets-en a Nevezések munkalap email oszlopában megtalálod!
+Amik megvannak amúgy azokat pipáld ki a to-do listen! Most csak ezt az egyet csináld egyelőre
+
+*Viewed [nagykevely_todo.md](file:///e:/Data/other_projects/VitaSteps/landing_predikalo1/docs/nagykevely_todo.md) *
+
+*Edited relevant file*
+
+*Edited relevant file*
+
+### Planner Response
+
+Now I will execute `extract_emails.py` using `.\.venv\Scripts\python.exe`.
+Wait, let's make sure python packages `requests`, `google-auth`, `google-api-python-client`, and `python-dotenv` are installed in the user's `.venv`.
+Actually, `.github/workflows/daily_tracking.yml` had them, but let's run it. If it fails with import error, I can install them or use the global python. Let's run with `.\.venv\Scripts\python.exe` first!
+Wait, is there a `.venv` folder in `e:\Data\other_projects\VitaSteps\landing_predikalo1`?
+Ah, let's check `e:\Data\other_projects\VitaSteps\landing_predikalo1\.venv` or is the `.venv` in the parent folder `e:\Data\other_projects\`?
+The permissions list shows: `command(.\.venv\Scripts\python.exe)`.
+This usually runs from the current active folder. Let's try running `python` or `.\.venv\Scripts\python.exe`.
+Actually, the user's current terminal CWD is `e:\Data\other_projects\VitaSteps\landing_predikalo1` based on previous turns. Let's look at the run command parameters. I will target Cwd: `e:\Data\other_projects\VitaSteps\landing_predikalo1`. Let's see if python can execute it.
+
+*User accepted the command `python "C:\Users\Adam\.gemini\antigravity-ide\brain\188d6723-5707-4e3c-8111-02429d950f5a\scratch\extract_emails.py"`*
+
+### Planner Response
+
+Ah, a Windows-os `cp1250` kódolású konzol nem tudta kiírni az ékezetes karaktereket (pl. `ő`, `ű`, `á` stb.) a `print` sorokban, ami miatt a Python elszállt egy `UnicodeEncodeError`-ral.
+De a logból kiválóan látjuk a tábla fejléckiosztását!
+Az első sor (Row 0):
+`['1', 'Pródi...szék', 'előjelentkezés 1', 'drazseester@gmail.com', 'Drázsnyák Eszter', ...]`
+Eszerint az oszlopok indexei:
+- `row[0]`: Id / Sorszám (pl. '1')
+- `row[1]`: Kampány név (pl. 'Prédikálószék')
+- `row[2]`: Kampány hullám (pl. 'előjelentkezés 1')
+- `row[3]`: **Email cím** (`drazseester@gmail.com`) -> ez az index **3**! (Nem az 1-es!)
+- `row[4]`: Név (pl. 'Drázsnyák Eszter')
+- ...
+- `row[9]`: **Fizetett összeg / státusz** (pl. '7990') -> ez az index **9**!
+
+Nagyszerű!
+Tehát:
+- Az email indexe: `3`
+- A kampány név indexe: `1`
+- A fizetési státusz indexe: `9`
+
+Most átírom az `extract_emails.py` kódját:
+1. Eltávolítom a debug print-eket, amik a konzol kódolása miatt elszállnak.
+2. Beállítom az email indexét `3`-ra, a kampány indexét `1`-re.
+3. Elmentjük a listát a megadott CSV fájlba.
+
+Írjuk át a szkriptet:
+
+*Edited relevant file*
+
+### Planner Response
+
+Futtatom a javított e-mail kinyerő szkriptet a `run_command` eszközzel:
+`python "C:\Users\Adam\.gemini\antigravity-ide\brain\188d6723-5707-4e3c-8111-02429d950f5a\scratch\extract_emails.py"`
+Cwd: `e:\Data\other_projects\VitaSteps\landing_predikalo1`
+WaitMsBeforeAsync: 5000ms.
+
+*User accepted the command `python "C:\Users\Adam\.gemini\antigravity-ide\brain\188d6723-5707-4e3c-8111-02429d950f5a\scratch\extract_emails.py"`*
+
+### Planner Response
+
+Szuper! Kinyertem a 61 darab egyedi, érvényes Prédikálószék vásárlói e-mail címet a Google Sheets-ből és elmentettem egy könnyen feltölthető CSV fájlba:
+👉 [predikaloszek_emails.csv](file:///e:/Data/other_projects/VitaSteps/landing_predikalo1/docs/predikaloszek_emails.csv)
+
+Most pedig kipipálom ezt a feladatot a `docs/nagykevely_todo.md` listádban, illetve átminősítem az Ads Manageres listafeltöltést is manuálisról AI-támogatottra, mivel a CSV generálást már elvégeztem!
+
+Módosítom a `docs/nagykevely_todo.md` fájlt a `replace_file_content` eszközzel (sorok: 7-9):
+*   A `Stripe vevőlista exportálása:` kapjon egy `[x]` pipát és változtassuk át a szövegét, hogy elkészült.
+*   A `Custom Audience feltöltése` részhez megjegyzésként odaírjuk, hogy a CSV elkészült a `/docs` mappában, már csak fel kell tölteni.
+
+Írjuk át:
+
+*Edited relevant file*
+
+### Planner Response
+
+Kész! A feladatot kihúztam és frissítettem a TODO listát:
+👉 [nagykevely_todo.md](file:///e:/Data/other_projects/VitaSteps/landing_predikalo1/docs/nagykevely_todo.md)
+
+Az e-mailek kinyerése sikeresen lefutott, a CSV fájl készen áll a feltöltésre a hirdetéskezelőben. 
+
+Mivel kérted, hogy egyelőre csak ezt az egy feladatot végezzem el, átadom neked a szót! Készen állsz arra, hogy a listáról a következő pontra lépjünk (pl. a hirdetésszövegek megírására vagy a landing oldal frontend fejlesztéseire)?
+
+### User Input
+
+Hol tudom ezt a custom audience-et felölteni?
+
+*Viewed [predikaloszek_emails.csv](file:///e:/Data/other_projects/VitaSteps/landing_predikalo1/docs/predikaloszek_emails.csv) *
+
+### Planner Response
+
+A hirdetési fiókodban az alábbi lépésekkel tudod feltölteni a legenerált listát:
+
+### 1. Navigáció a Célközönségekhez
+1.  Nyisd meg a **Meta Hirdetéskezelőt (Ads Manager)** az alábbi közvetlen linken:
+    👉 [Meta Hirdetéskezelő – Célközönségek](https://adsmanager.facebook.com/adsmanager/audiences)
+2.  *(Győződj meg róla a bal felső sarokban, hogy a megfelelő hirdetési fiókod van kiválasztva.)*
+
+### 2. A lista feltöltése lépésről lépésre
+1.  Kattints a kék **Célközönség létrehozása (Create Audience)** gombra, majd válaszd az **Egyéni célközönség (Custom Audience)** lehetőséget.
+2.  A források közül válaszd ki az **Ügyféllista (Customer list)** opciót, majd kattints a **Tovább** gombra.
+3.  A következő oldalon kattints a **Tovább** gombra (a formázási útmutatót átugorhatod).
+4.  Arra a kérdésre, hogy *„Tartalmaz-e a lista ügyfélérték oszlopot?”*, válaszd azt, hogy **NEM (No)**, majd kattints a **Tovább** gombra.
+5.  Kattints a **Fájl feltöltése (Upload file)** gombra, és válaszd ki a gépedről a legenerált **`predikaloszek_emails.csv`** fájlt.
+6.  Adj nevet a célközönségnek, például: `VitaSteps - Prédikálószék Vásárlók (61 fő)`.
+7.  Kattints a **Tovább**, majd az **Importálás és létrehozás (Import and Create)** gombra.
+
+---
+
+### 🔥 Extra tipp (Azonnali Hasonmás létrehozás):
+Miután a Meta végzett a feltöltéssel (ez kb. 10 másodperc), a sikeres feltöltést jelző ablakban fel fogja ajánlani a **Hasonmás célközönség létrehozása (Create Lookalike Audience)** opciót. 
+*   Kattints rá, állítsd be az országot **Magyarországra**, a méretét pedig **1%**-ra (ez a legpontosabb). 
+*   Ezzel a lépéssel a Lookalike (LAL) hirdetési célközönséged is azonnal elkészül!
