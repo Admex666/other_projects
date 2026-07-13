@@ -17,14 +17,15 @@ sys.stderr.reconfigure(encoding='utf-8')
 
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-load_dotenv(os.path.join(SCRIPT_DIR, '.env'))
+PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)
+load_dotenv(os.path.join(PROJECT_ROOT, '.env'))
 
 # ===== BEÁLLÍTÁSOK =====
 SMTP_SERVER   = "smtp.gmail.com"
 SMTP_PORT     = 465
 SENDER_EMAIL  = "vitasteps.team@gmail.com"
 SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
-DRY_RUN       = False   # Ha True → csak kilistázza, NEM küld és NEM ír vissza a Sheetbe
+DRY_RUN       = True   # Ha True → csak kilistázza, NEM küld és NEM ír vissza a Sheetbe
 
 # ===== GOOGLE SHEETS BEÁLLÍTÁSOK =====
 SHEET_ID        = os.getenv("GOOGLE_SHEET_ID")
@@ -92,7 +93,17 @@ def _swap_block(html: str, start_tag: str, end_tag: str, keep: bool) -> str:
 
 def make_shipping_link(name: str, email: str) -> str:
     """Szállítási oldal linkje prefill-el (név + email)."""
-    base = "https://vitastepsss.vercel.app/szallitas.html"
+    base = "https://vitastepsss.vercel.app/predikalo/szallitas.html"
+    params = urllib.parse.urlencode({
+        "name": name,
+        "email": email,
+    })
+    return f"{base}?{params}"
+
+
+def make_completion_link(name: str, email: str) -> str:
+    """Teljesítés igazolása Tally form linkje (NpRz5W), prefill-el."""
+    base = "https://tally.so/r/NpRz5W"
     params = urllib.parse.urlencode({
         "name": name,
         "email": email,
@@ -102,10 +113,11 @@ def make_shipping_link(name: str, email: str) -> str:
 
 def get_html_email(first_name: str, full_name: str, email: str, km: str, date: str, mode: str = "teljesites", has_address: bool = False, address_val: str = "") -> str:
     shipping_link = make_shipping_link(full_name, email)
+    completion_link = make_completion_link(full_name, email)
     km_display = f"{km} km" if km and not km.endswith("km") else km or "?"
     
     template_filename = "email_template.html" if mode == "teljesites" else "email_ping_template.html"
-    template_path = os.path.join(SCRIPT_DIR, template_filename)
+    template_path = os.path.join(PROJECT_ROOT, template_filename)
     try:
         with open(template_path, "r", encoding="utf-8") as f:
             html = f.read()
@@ -116,8 +128,8 @@ def get_html_email(first_name: str, full_name: str, email: str, km: str, date: s
     # Ha már megadta a szállítási címet, lecseréljük a szállítási blokkot a "nincs teendő" szövegre
     if has_address:
         no_action_html = f"""
-          <h2>📦 Szállítási adatok rögzítve</h2>
-          <p>A szállítási címedet korábban már megadtad (<strong>{address_val}</strong>), így jelenleg <span class="highlight">nincs semmi további teendőd</span>!</p>
+          <h2 style="margin-top: 30px;">2️⃣ Szállítási adatok – már rögzítve ✅</h2>
+          <p>A szállítási adataidat korábban már megadtad (<strong>{address_val}</strong>), ezzel a lépéssel nincs semmi teendőd.</p>
         """
         # Megkeressük a kommentek közötti részt és lecseréljük
         start_tag = "<!-- STEP_SHIPPING_START -->"
@@ -139,6 +151,21 @@ def get_html_email(first_name: str, full_name: str, email: str, km: str, date: s
     html = html.replace("{{FIRST_NAME}}", first_name)
     html = html.replace("{{KM_DISPLAY}}", km_display)
     html = html.replace("{{TALLY_LINK}}", shipping_link)
+    html = html.replace("{{COMPLETION_LINK}}", completion_link)
+    
+    # Ha ping módban vagyunk, és már teljesítette a túrát (van dátum)
+    if mode == "ping" and date:
+        html = html.replace("A csúcs hódítása folyamatban van ⛰️", "Sikeresen teljesítetted a kihívást! 🎉")
+        html = html.replace("Teljesítés vége: 2026. június 30.", f"Teljesítve: {date}")
+        html = html.replace(
+            "Rendszerünkben jelenleg <strong>nem szerepel sem igazolás a teljesítésedről, sem szállítási cím</strong> a részedről – ezért keresünk meg ezzel a rövid üzenettel.",
+            "Rendszerünkben azonban <strong>még nem szerepel szállítási cím</strong> a részedről, ezért nem tudtuk elküldeni az érmedet.",
+        )
+        html = html.replace(
+            "Kérünk, jelezd nekünk, hogy mi a helyzet:",
+            "Kérünk, add meg a szállítási adataidat, hogy azonnal postázhassuk az érmedet:",
+        )
+        
     return html
 
 
@@ -176,9 +203,13 @@ def send_emails(mode="teljesites"):
     col_email_kuldve  = find_col("teljesítés email?", 17)
     col_szallitas_tip = find_col("szállítás típus", 18)
     col_szallitasi_cim = find_col("szállítási cím", 19)
-    col_ping          = find_col("ping0620", 20)
+    # Ha a 'ping0713' oszlop nem létezik a sheetben, 99-et adunk vissza
+    # col(99) mindig "" lesz (a sor rövidebb), tehát mindenki küldeni kell
+    col_ping          = find_col("ping0713", 99)
+    col_szeria        = find_col("széria", 1)
 
     print("🔍 Dinamikus oszlopindexek detektálva:")
+    print(f"  - széria:              {col_szeria}")
     print(f"  - email:               {col_email}")
     print(f"  - név:                 {col_nev}")
     print(f"  - megnevezés:          {col_megnevezes}")
@@ -187,7 +218,7 @@ def send_emails(mode="teljesites"):
     print(f"  - teljesítés email?:   {col_email_kuldve}")
     print(f"  - szállítás típus:     {col_szallitas_tip}")
     print(f"  - szállítási cím:      {col_szallitasi_cim}")
-    print(f"  - ping0620:            {col_ping}")
+    print(f"  - ping0713 (visszaír): {col_ping}")
 
     # SMTP kapcsolat
     server = None
@@ -207,7 +238,7 @@ def send_emails(mode="teljesites"):
     eligible_count = 0
     preview_sent = False
 
-    subject = EMAIL_SUBJECT if mode == "teljesites" else "🏔️ VitaSteps Prédikálószék – Szállítási adatok megadása"
+    subject_default = EMAIL_SUBJECT if mode == "teljesites" else "🏔️ VitaSteps Prédikálószék – Szállítási adatok megadása"
 
     for i, row in enumerate(data_rows):
         # Biztonságos oszlop-kiolvasás
@@ -223,8 +254,13 @@ def send_emails(mode="teljesites"):
         megnevezes      = col(col_megnevezes)
         hany_km         = col(col_hany_km)
         ping_status     = col(col_ping)
+        szeria          = col(col_szeria)
 
         if not email or not nev:
+            continue
+
+        # Kizárólag a Prédikálószék széria indulóit pingeljük meg
+        if "prédikálószék" not in szeria.lower() and "predikalo" not in szeria.lower():
             continue
 
         if mode == "teljesites":
@@ -233,17 +269,16 @@ def send_emails(mode="teljesites"):
             if email_kuldve.lower() in ("igen", "yes"):
                 skipped_count += 1
                 continue
+            subject = subject_default
         else:
+            # PING MÓD: csak azokat, akiknél ÜRES a teljesítve dátum ÉS ÜRES a ping0713
             if teljesitve:
-                continue
-            # Ha már megadta a szállítási címet, nem kell őt pingelni
-            if szallitasi_cim and szallitasi_cim.lower() not in ("", "#n/a", "#name?", "#value!"):
                 skipped_count += 1
                 continue
-            # Ha ma már kapott ping emailt
             if ping_status.lower() in ("igen", "yes"):
                 skipped_count += 1
                 continue
+            subject = "🏔️ VitaSteps Prédikálószék – Kérdés a teljesítésedről"
 
         eligible_count += 1
         
@@ -313,10 +348,11 @@ def send_emails(mode="teljesites"):
 
 
 if __name__ == "__main__":
-    # Használat: python send_emails.py [teljesites|ping]
-    mode = "teljesites"
+    # Használat: python send_emails.py [ping|teljesites]
+    # Alapértelmezett: ping (szállítási adatok bekérése a nem teljesítőktől)
+    mode = "ping"
     if len(sys.argv) > 1:
         arg = sys.argv[1].lower()
-        if arg in ("ping", "szallitas_ping"):
-            mode = "ping"
+        if arg in ("teljesites", "teljesítés"):
+            mode = "teljesites"
     send_emails(mode)

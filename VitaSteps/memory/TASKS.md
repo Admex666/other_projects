@@ -15,5 +15,14 @@
 
 ---
 
+## 📧 Prédikálószék – Post-Campaign Follow-Up
+*   **[x]** Identify non-finisher participants with no shipping data from Sheets (15 fő).
+*   **[x]** Build ping email system (`send_emails.py` ping mode + `email_ping_template.html`).
+*   **[x]** Send 15 ping emails to non-finishers (2026-07-13). `ping0713` column auto-updated.
+*   **[ ]** Monitor replies and Tally form submissions (NpRz5W) for new completion proofs.
+*   **[ ]** Once proofs are received, manually update `teljesítve dátum` in Sheets and trigger fulfillment (`send_emails.py teljesites`).
+
+---
+
 ## 🔧 Maintenance & Testing
 *   **[ ]** Verify standard pixel events (PageView, InitiateCheckout, Purchase) using Meta Pixel Helper on local server (port 3001).
