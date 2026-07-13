@@ -6,6 +6,24 @@ All notable changes to the VitaSteps challenge platform project are documented h
 
 ## [1.4.0] - 2026-07-13
 ### Added
+*   **Nagy-Kevély Landing Page CTA Optimization:**
+    *   **Price Positioning:** Positioned the discounted price (7.990 Ft) highlighted above all call-to-action buttons.
+    *   **CTA Button Copy:** Updated all main action buttons with the chosen high-converting text: *"Megszerzem az érmemet! 🏅"* (nav bar layout uses *"Kérem az érmet 🏅"* for space).
+    *   **Benefit Tags:** Positioned clear checklist tags (*"✓ Ingyenes szállítás • ✓ Ajándék kalandkönyv"*) directly below all CTA buttons.
+    *   **Hero Image Replacement:** Replaced the broken or missing medal image with the official product creative banner (`nagy_kevely_creative_v4.png`), adjusting styles with 12px border radius.
+    *   **Mobile Sticky CTA Fix:** Implemented width, padding, flexbox, and box-sizing overrides to prevent the mobile sticky button container from overflowing horizontally.
+    *   **Branding Uniformity:** Replaced all leftover 'Pilis' text references with 'Nagy-Kevély' or 'Kevély' (e.g., stats bar, serial badges, mockups).
+    *   **Direct Checkout Links:** Changed all navigation, hero, and mobile sticky buttons to link directly to `/checkout.html?c=pilis` instead of scrolling down to the local anchor.
+*   **Personalized Adventure Guidebook (Kalandkönyv):**
+    *   **Dynamic Generator Page:** Created `nagykevely/kalandkonyv.html` providing dynamically built, customizable, printable A5/A4 adventure guidebooks and hiking logs.
+    *   **Prefilled Portal Tab:** Added a dedicated "Kalandkönyv" tab in `portal.html` visible exclusively to Nagy-Kevély challengers (`PK` serial code prefix). Prefills the runner's name, offers route selections (Family 6km, Classic 10km, Half Marathon 15km, Long 25km), B&W or color themes, and launches print setups.
+    *   **Dynamic GPX QR-Codes:** Generates real-time QR codes linked to official GPX track files (`01csaladi.gpx`, `02klasszik.gpx`, `04felmaraton.gpx`, `03extra.gpx`) using a lightweight public redirect API.
+    *   **Interactive Activities:** Included custom trail timelines, weather logs, journal sections, a nature scavenger Hunt bingo grid, and a history/trivia section.
+*   **Meta Ads Campaign Configuration** – configured the Ads Manager setup for the Nagy-Kevély campaign:
+    *   **Prospecting Ad Set:** Targets 1% LAL from previous buyers, excluding actual buyers.
+    *   **Retargeting Ad Set:** Targets 30-day website visitors and 90-day FB/IG social media engagers, excluding previous buyers.
+    *   **Budgeting:** Configured with an initial starting budget of **1 600 HUF / day**.
+    *   **Copywriting:** Added optimized, high-converting primary texts, headlines, and descriptions focusing on premium 3D metal medals, FOMO, and natural achievement.
 *   **Prédikálószék Ping Email System** – built a re-engagement script to contact participants who haven't completed the challenge and haven't been pinged yet:
     *   **Logic:** Targets rows in the `Nevezések` sheet where `széria` = Prédikálószék, `teljesítve dátum` is EMPTY, and `ping0713` column is EMPTY.
     *   **Write-back:** After each successful send, the script immediately writes `Igen` to the `ping0713` column to prevent duplicate sends.
@@ -23,6 +41,8 @@ All notable changes to the VitaSteps challenge platform project are documented h
 *   **`ping0713` column default index collision** – changed `find_col("ping0713", 20)` default from `20` to `99`; `col(99)` always returns `""` (row is shorter), ensuring new participants are never wrongly skipped.
 *   **Script ran in wrong mode** – added `PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)` to correctly load `.env` and HTML templates from the project root (not the `/scripts` subfolder).
 *   **Igazolás button disappeared when `has_address=True`** – moved the completion button above the `STEP_SHIPPING_START` comment so it is never replaced by the "already registered" block.
+*   **Mobile View Layout Overflow (iPhone 12 Pro)** – Fixed global horizontal overflow by adding `html { overflow-x: hidden; }` and strict `max-width` rules, ensuring no elements slide or overflow to the right on 390px screens.
+*   **Mobile Medal Image Placement** – Swapped the visual order on mobile viewports so the physical medal illustration renders *before* the pricing structure and CTA buttons (above the fold/actions flow).
 
 ### Sent
 *   **15 ping emails sent** (2026-07-13) to non-finisher Prédikálószék participants with no prior ping. Google Sheets `ping0713` column updated automatically.

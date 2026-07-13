@@ -3,15 +3,18 @@
 ### 👥 Audiences & Ads Manager (Manual)
 *   **[x]** Upload `docs/predikaloszek_emails.csv` as a Custom Audience in Meta Business Manager.
 *   **[x]** Generate a 1% and 2% Lookalike (LAL) audience for Hungary.
-*   **[ ]** Configure Prospecting campaigns to exclude the purchaser custom list and success page visitors.
-*   **[ ]** Setup Retargeting ad sets targeting page visitors from the last 30 days (excluding buyers).
+*   **[x]** Configure Prospecting campaigns to exclude the purchaser custom list and success page visitors.
+*   **[x]** Setup Retargeting ad sets targeting page visitors from the last 30 days (excluding buyers).
 *   **[ ]** Verify Stripe live environment for the `VSBARAT10` coupon code.
 
 ### 🌐 Frontend Page Enhancements (AI)
-*   **[ ]** Promote free Kalandkönyv (PDF Guidebook) on `nagykevely/index.html` (add mockups and descriptions).
-*   **[ ]** Add community total distance stat (1,230 km completed) to `nagykevely/index.html`.
-*   **[ ]** Add countdown timer (ticking to Sept 6/13) and limited stock counter (100 medals max) JS logic to `nagykevely/index.html`.
-*   **[ ]** Update map filters to show the 4 new route options (Family 6km, Classic 10km, Half Marathon 15km, Ultra 25km).
+*   **[x]** Promote free Kalandkönyv (PDF Guidebook) on `nagykevely/index.html` (add mockups and descriptions).
+*   **[x]** Add community total distance stat (1,230 km completed) to `nagykevely/index.html`.
+*   **[x]** Add countdown timer (ticking to Sept 6/13) and limited stock counter (100 medals max) JS logic to `nagykevely/index.html`.
+*   **[x]** Update map filters to show the 4 new route options (Family 6km, Classic 10km, Half Marathon 15km, Ultra 25km).
+*   **[x]** Fix mobile layout responsiveness (prevent horizontal overflow, iPhone 12 Pro compatibility).
+*   **[x]** Reposition medal image on mobile to be shown before pricing inside the Hero section.
+*   **[ ]** Útvonalak POI-jainak (érdekességek, látnivalók) kigyűjtése és részletes információk összegyűjtése az egyes pontokról.
 
 ---
 

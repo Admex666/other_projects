@@ -595,6 +595,9 @@
                 <button class="tab-btn" id="tab-btn-referral" onclick="switchTab('referral')">
                     🎁 Ajánlói Program
                 </button>
+                <button class="tab-btn" id="tab-btn-guidebook" onclick="switchTab('guidebook')" style="display: none;">
+                    📖 Kalandkönyv
+                </button>
             </div>
 
             <!-- TAB CONTENT: Feedback -->
@@ -788,6 +791,67 @@
                     </div>
                 </div>
             </div>
+            </div>
+
+            <!-- TAB CONTENT: Guidebook -->
+            <div id="tab-content-guidebook" style="display: none;">
+                <div class="card" style="margin-top: 0;">
+                    <h2 style="color: var(--accent); margin-top: 0;">📖 Nagy-Kevély Kalandkönyv</h2>
+                    <p>Töltsd le és nyomtasd ki a személyre szabott kalandkönyvedet! Vidd magaddal a túrára, vezesd benne a legszebb élményeidet, és teljesítsd a kihívást!</p>
+                    
+                    <form id="guidebook-download-form" onsubmit="generateGuidebook(event)">
+                        <div class="form-group">
+                            <label for="guidebook-name">Név a borítólapon</label>
+                            <input type="text" id="guidebook-name" class="input-text" required placeholder="Add meg a neved...">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Válaszd ki a távodat</label>
+                            <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.5rem;">
+                                <label class="radio-label">
+                                    <input type="radio" name="guidebook-route" value="csaladi" checked>
+                                    <span class="radio-custom"></span>
+                                    <span>Családi táv (6 km)</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="guidebook-route" value="klasszikus">
+                                    <span class="radio-custom"></span>
+                                    <span>Klasszikus táv (10 km)</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="guidebook-route" value="felmaraton">
+                                    <span class="radio-custom"></span>
+                                    <span>Kevély Félmaraton (15 km)</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="guidebook-route" value="hosszu">
+                                    <span class="radio-custom"></span>
+                                    <span>Kevély Ultra / Hosszú (25 km)</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Nyomtatási stílus</label>
+                            <div style="display: flex; gap: 1.5rem; margin-top: 0.5rem; font-weight: 600;">
+                                <label class="radio-label" style="color: var(--text-high); font-size: 0.95rem;">
+                                    <input type="radio" name="guidebook-style" value="bw" checked>
+                                    <span class="radio-custom"></span>
+                                    <span>Tintakímélő (Fekete-Fehér)</span>
+                                </label>
+                                <label class="radio-label" style="color: var(--text-high); font-size: 0.95rem;">
+                                    <input type="radio" name="guidebook-style" value="color">
+                                    <span class="radio-custom"></span>
+                                    <span>Színes (Eredeti zöld-limonádé)</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn" style="margin-top: 1rem;">
+                            📖 Kalandkönyv Generálása & Nyomtatása
+                        </button>
+                    </form>
+                </div>
             </div>
 
             <button onclick="handleLogout()" class="btn btn-secondary">Kijelentkezés</button>
@@ -1072,7 +1136,19 @@
                     document.getElementById('feedback-card').style.display = 'none';
                 }
 
-                // Referral logic for completed runners
+                // Check if user is Nagy-Kevely (Pilis) challenger
+                const isPilisK = runner.serial_number && runner.serial_number.includes('PK');
+                
+                if (isPilisK) {
+                    // Prefill guidebook form name
+                    document.getElementById('guidebook-name').value = runner.name;
+                    // Show guidebook tab button
+                    document.getElementById('tab-btn-guidebook').style.display = 'block';
+                } else {
+                    document.getElementById('tab-btn-guidebook').style.display = 'none';
+                }
+
+                // Referral logic and tab switching
                 if (runner.completed) {
                     let refCount = 0;
                     try {
@@ -1089,7 +1165,6 @@
 
                     document.getElementById('dashboard-tabs').style.display = 'flex';
                     
-                    const isPilisK = runner.serial_number && runner.serial_number.includes('PK');
                     const refLink = isPilisK 
                         ? `${window.location.origin}/nagykevely/checkout-widget.html?ref=${encodeURIComponent(currentUser.email.toLowerCase())}`
                         : `${window.location.origin}/checkout-widget.html?ref=${encodeURIComponent(currentUser.email.toLowerCase())}`;
@@ -1120,12 +1195,20 @@
                         rewardDisplay.innerHTML = '🎉 Gratulálunk! Elérted az <strong>5 barátot</strong>, a következő nevezésed <strong>100% INGYENES</strong>!';
                     }
 
-                    // Activate default tab
+                    // Activate default tab for completed runners
                     switchTab('feedback');
                 } else {
-                    document.getElementById('dashboard-tabs').style.display = 'none';
-                    document.getElementById('tab-content-feedback').style.display = 'block';
-                    document.getElementById('tab-content-referral').style.display = 'none';
+                    if (isPilisK) {
+                        // For non-completed Nagy-Kevely runners: show tabs nav (containing Guidebook) and activate it
+                        document.getElementById('dashboard-tabs').style.display = 'flex';
+                        switchTab('guidebook');
+                    } else {
+                        // For other non-completed runners: hide tabs and show standard pending feedback
+                        document.getElementById('dashboard-tabs').style.display = 'none';
+                        document.getElementById('tab-content-feedback').style.display = 'block';
+                        document.getElementById('tab-content-referral').style.display = 'none';
+                        document.getElementById('tab-content-guidebook').style.display = 'none';
+                    }
                 }
 
                 showScreen('screen-dashboard');
@@ -1262,22 +1345,49 @@
         function switchTab(tabId) {
             const btnFeedback = document.getElementById('tab-btn-feedback');
             const btnReferral = document.getElementById('tab-btn-referral');
+            const btnGuidebook = document.getElementById('tab-btn-guidebook');
             const contentFeedback = document.getElementById('tab-content-feedback');
             const contentReferral = document.getElementById('tab-content-referral');
+            const contentGuidebook = document.getElementById('tab-content-guidebook');
 
             if (!btnFeedback || !btnReferral || !contentFeedback || !contentReferral) return;
 
+            // Remove active classes
+            btnFeedback.classList.remove('active');
+            btnReferral.classList.remove('active');
+            if (btnGuidebook) btnGuidebook.classList.remove('active');
+
+            // Hide contents
+            contentFeedback.style.display = 'none';
+            contentReferral.style.display = 'none';
+            if (contentGuidebook) contentGuidebook.style.display = 'none';
+
+            // Show and activate target
             if (tabId === 'feedback') {
                 btnFeedback.classList.add('active');
-                btnReferral.classList.remove('active');
                 contentFeedback.style.display = 'block';
-                contentReferral.style.display = 'none';
             } else if (tabId === 'referral') {
-                btnFeedback.classList.remove('active');
                 btnReferral.classList.add('active');
-                contentFeedback.style.display = 'none';
                 contentReferral.style.display = 'block';
+            } else if (tabId === 'guidebook' && btnGuidebook && contentGuidebook) {
+                btnGuidebook.classList.add('active');
+                contentGuidebook.style.display = 'block';
             }
+        }
+
+        function generateGuidebook(e) {
+            e.preventDefault();
+            const nev = document.getElementById('guidebook-name').value.trim();
+            const tav = document.querySelector('input[name="guidebook-route"]:checked').value;
+            const style = document.querySelector('input[name="guidebook-style"]:checked').value;
+            
+            const params = new URLSearchParams({
+                nev: nev,
+                tav: tav,
+                style: style
+            });
+            
+            window.open(`nagykevely/kalandkonyv.html?${params.toString()}`, '_blank');
         }
 
         // Init

@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>VitaSteps Kalandkönyv és Túranapló – Nagy-Kevély</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-page: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #cbd5e1;
+            --accent: #78a900;
+            /* Tintabarát tompított zöld */
+            --accent-glow: rgba(120, 169, 0, 0.15);
+            --card-bg: #f8fafc;
+        }
+
+        /* Color theme styles override */
+        body.theme-color {
+            background-color: #04060a;
+            color: #f0f4ff;
+        }
+
+        body.theme-color .controls-card {
+            background: #0c0f15;
+            border: 1px solid rgba(255, 255, 255, 0.07);
+        }
+
+        body.theme-color .page {
+            background: #0c0f15;
+            color: #f0f4ff;
+            border: 2px solid rgba(255, 255, 255, 0.07);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        body.theme-color .page-border {
+            border: 1px solid rgba(191, 255, 0, 0.15);
+        }
+
+        body.theme-color .page-border-inner {
+            border: 1px dashed rgba(191, 255, 0, 0.08);
+        }
+
+        body.theme-color .page-title {
+            color: #bfff00;
+            text-shadow: 0 0 10px rgba(191, 255, 0, 0.2);
+        }
+
+        body.theme-color .badge {
+            background: rgba(191, 255, 0, 0.08);
+            border-color: rgba(191, 255, 0, 0.25);
+            color: #bfff00;
+        }
+
+        body.theme-color .info-card {
+            background: rgba(255, 255, 255, 0.02);
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+
+        body.theme-color .line-field {
+            border-bottom-color: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+        }
+
+        body.theme-color .bullet-point::before {
+            background-color: #bfff00;
+        }
+
+        body.theme-color .trivia-q {
+            background: rgba(191, 255, 0, 0.03);
+            border-left-color: #bfff00;
+        }
+
+        body.theme-color .checkbox-box {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* BW / Printer friendly styles */
+        body.theme-bw {
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+
+        body.theme-bw .controls-card {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: #0f172a;
+        }
+
+        body.theme-bw .page {
+            background: #ffffff;
+            color: #0f172a;
+            border: 2px solid #0f172a;
+            box-shadow: none;
+        }
+
+        body.theme-bw .page-border {
+            border: 1px solid rgba(15, 23, 42, 0.2);
+        }
+
+        body.theme-bw .page-border-inner {
+            border: 1px dashed rgba(15, 23, 42, 0.1);
+        }
+
+        body.theme-bw .page-title {
+            color: #0f172a;
+        }
+
+        body.theme-bw .badge {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+            color: #0f172a;
+        }
+
+        body.theme-bw .info-card {
+            background: #f8fafc;
+            border-color: #e2e8f0;
+        }
+
+        body.theme-bw .line-field {
+            border-bottom-color: #94a3b8;
+            color: #0f172a;
+        }
+
+        body.theme-bw .bullet-point::before {
+            background-color: #0f172a;
+        }
+
+        body.theme-bw .trivia-q {
+            background: #f8fafc;
+            border-left-color: #475569;
+        }
+
+        body.theme-bw .checkbox-box {
+            border-color: #475569;
+        }
+
+        /* General styling */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        /* Controls Panel */
+        .controls-card {
+            width: 100%;
+            max-width: 800px;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            z-index: 10;
+        }
+
+        .controls-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.25rem;
+            flex-wrap: wrap;
+        }
+
+        .input-group {
+            flex: 1;
+            min-width: 220px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .input-group label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            opacity: 0.85;
+        }
+
+        .input-field {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            color: inherit;
+            font-family: inherit;
+            font-size: 0.95rem;
+        }
+
+        body.theme-color .input-field {
+            background: #12161e;
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        body.theme-bw .input-field {
+            background: #ffffff;
+            border-color: #cbd5e1;
+        }
+
+        .radio-options {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 0.3rem;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+
+        .btn-print {
+            background: #78a900;
+            color: #ffffff;
+            border: none;
+            padding: 0.85rem 2rem;
+            border-radius: 8px;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(120, 169, 0, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        body.theme-color .btn-print {
+            background: #bfff00;
+            color: #04060a;
+            box-shadow: 0 4px 15px rgba(191, 255, 0, 0.3);
+        }
+
+        .btn-print:hover {
+            transform: translateY(-2px);
+            opacity: 0.95;
+        }
+
+        /* Page Layout & Sizing */
+        .pages-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+            align-items: center;
+            width: 100%;
+        }
+
+        .page {
+            width: 100%;
+            max-width: 595px;
+            /* A5 size relative scale (148mm x 210mm) */
+            height: 842px;
+            border-radius: 8px;
+            padding: 2.2rem;
+            position: relative;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+        }
+
+        .page-border {
+            position: absolute;
+            top: 10px;
+            bottom: 10px;
+            left: 10px;
+            right: 10px;
+            border-radius: 6px;
+            pointer-events: none;
+        }
+
+        .page-border-inner {
+            position: absolute;
+            top: 15px;
+            bottom: 15px;
+            left: 15px;
+            right: 15px;
+            border-radius: 4px;
+            pointer-events: none;
+        }
+
+        /* Layout details */
+        .page-header {
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+
+        .page-header .brand {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            opacity: 0.6;
+            margin-bottom: 0.25rem;
+        }
+
+        .page-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            line-height: 1.2;
+        }
+
+        .page-divider {
+            width: 80px;
+            height: 2px;
+            background: currentColor;
+            opacity: 0.3;
+            margin: 0.6rem auto;
+        }
+
+        .page-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin: 1rem 0;
+            z-index: 2;
+        }
+
+        .page-footer {
+            text-align: center;
+            font-size: 0.75rem;
+            opacity: 0.6;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid rgba(128, 128, 128, 0.15);
+            padding-top: 0.6rem;
+        }
+
+        /* Specific Page Designs */
+        /* Cover Page */
+        .cover-graphics {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+
+        .cover-icon {
+            font-size: 4.5rem;
+            margin-bottom: 1rem;
+            animation: pulse 4s infinite alternate;
+        }
+
+        .cover-badge {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 800;
+            padding: 0.4rem 1rem;
+            border-radius: 99px;
+            border: 1px solid;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1.5rem;
+        }
+
+        .cover-subtitle {
+            font-size: 1.05rem;
+            font-weight: 600;
+            text-align: center;
+            max-width: 280px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        .cover-form {
+            width: 100%;
+            max-width: 320px;
+            margin: 1.5rem auto 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .line-field-group {
+            display: flex;
+            align-items: flex-end;
+            gap: 0.5rem;
+            width: 100%;
+        }
+
+        .line-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            white-space: nowrap;
+            opacity: 0.8;
+        }
+
+        .line-field {
+            flex-grow: 1;
+            border: none;
+            border-bottom: 1px solid;
+            background: transparent;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            padding: 0.15rem 0.5rem;
+            text-align: center;
+        }
+
+        /* Checklists and logs */
+        .bullet-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+        }
+
+        .bullet-point {
+            position: relative;
+            padding-left: 1.25rem;
+            font-size: 0.88rem;
+            line-height: 1.45;
+        }
+
+        .bullet-point::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 7px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .bullet-point strong {
+            font-weight: 700;
+        }
+
+        .info-card {
+            border: 1px solid;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Route Info Page */
+        .route-grid {
+            display: grid;
+            grid-template-columns: 1fr 120px;
+            gap: 1.25rem;
+            align-items: center;
+        }
+
+        .route-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .route-stat-item {
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .qr-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 0.4rem;
+        }
+
+        .qr-image {
+            width: 110px;
+            height: 110px;
+            border: 3px solid #ffffff;
+            border-radius: 6px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .qr-label {
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .checkpoint-timeline {
+            margin-top: 1.25rem;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .checkpoint-timeline::before {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 6px;
+            bottom: 6px;
+            width: 2px;
+            background: currentColor;
+            opacity: 0.2;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 0.85rem;
+            font-size: 0.82rem;
+            line-height: 1.4;
+        }
+
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+
+        .timeline-item::before {
+            content: '📍';
+            position: absolute;
+            left: -23px;
+            top: 0;
+            font-size: 0.75rem;
+        }
+
+        /* Log / Diary page styles */
+        .diary-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.1rem;
+        }
+
+        .diary-cell {
+            flex: 1;
+        }
+
+        .write-in-lines {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            margin-top: 1.5rem;
+            width: 100%;
+        }
+
+        .write-line {
+            border-bottom: 1px solid;
+            opacity: 0.35;
+            height: 10px;
+        }
+
+        /* Quest / Trivia Page */
+        .bingo-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .bingo-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .checkbox-box {
+            width: 18px;
+            height: 18px;
+            border: 2px solid;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+
+        .trivia-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .trivia-q {
+            border-left: 3px solid;
+            padding: 0.6rem 0.8rem;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .trivia-text {
+            font-size: 0.82rem;
+            font-weight: 600;
+            line-height: 1.4;
+            margin-bottom: 0.4rem;
+        }
+
+        .trivia-a {
+            font-size: 0.68rem;
+            opacity: 0.75;
+            transform: rotate(180deg);
+            display: inline-block;
+            direction: rtl;
+            unicode-bidi: bidi-override;
+        }
+
+        /* Final Steps Page */
+        .final-badge {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .stars-row {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            margin-top: 0.5rem;
+            opacity: 0.35;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            100% {
+                transform: scale(1.06);
+            }
+        }
+
+        /* Print Media Styles */
+        @media print {
+            body {
+                background: none !important;
+                background-color: transparent !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            .controls-card {
+                display: none !important;
+            }
+
+            .pages-container {
+                gap: 0 !important;
+            }
+
+            .page {
+                border: 2px solid #000000 !important;
+                box-shadow: none !important;
+                background: #ffffff !important;
+                color: #000000 !important;
+                width: 148mm !important;
+                height: 210mm !important;
+                page-break-after: always !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                border-radius: 0 !important;
+            }
+
+            /* Force black/white print adjustments for ink saving */
+            body.theme-bw .page {
+                border-color: #000000 !important;
+            }
+
+            body.theme-bw .page-border {
+                border-color: rgba(0,0,0,0.3) !important;
+            }
+
+            body.theme-bw .page-border-inner {
+                border-color: rgba(0,0,0,0.15) !important;
+            }
+
+            body.theme-bw .line-field {
+                border-bottom-color: #000000 !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="theme-bw">
+
+    <!-- Controls Panel -->
+    <div class="controls-card">
+        <div class="controls-title">📖 Kalandkönyv Testreszabása</div>
+        <form onsubmit="printBook(event)">
+            <div class="form-row">
+                <div class="input-group">
+                    <label for="input-name">Név a borítólapon</label>
+                    <input type="text" id="input-name" class="input-field" value="Kalandor Hiker" oninput="updateName(this.value)">
+                </div>
+                <div class="input-group">
+                    <label>Nyomtatási stílus</label>
+                    <div class="radio-options">
+                        <label class="radio-option">
+                            <input type="radio" name="style-select" value="bw" checked onclick="setTheme('bw')">
+                            <span>Fekete-Fehér (Tintakímélő)</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="style-select" value="color" onclick="setTheme('color')">
+                            <span>Színes (Eredeti)</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; border-top: 1px solid rgba(128,128,128,0.15); padding-top: 1.25rem;">
+                <span style="font-size: 0.85rem; opacity: 0.8; font-weight: 600;">Az oldalt A5 vagy A4 lapméretben is kinyomtathatod.</span>
+                <button type="submit" class="btn-print">
+                    🖨️ Nyomtatás / Mentés PDF-ként
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Pages list -->
+    <div class="pages-container">
+
+        <!-- PAGE 1: COVER -->
+        <div class="page" id="p1">
+            <div class="page-border"></div>
+            <div class="page-border-inner"></div>
+
+            <div class="page-header">
+                <div class="brand">VitaSteps</div>
+            </div>
+
+            <div class="page-content">
+                <div class="cover-graphics">
+                    <div class="cover-icon">⛰️</div>
+                    <div class="cover-badge">Kihívás Napló</div>
+                </div>
+
+                <h1 class="page-title" style="text-align: center; font-size: 1.85rem; margin-bottom: 0.5rem;">A Nagy-Kevély<br>Csillagai</h1>
+                <div class="page-divider"></div>
+                <div class="cover-subtitle">Kalandkönyv és Hivatalos Túranapló</div>
+
+                <div class="cover-form">
+                    <div class="line-field-group">
+                        <span class="line-label">Kalandor:</span>
+                        <div class="line-field" id="disp-name">Kalandor Hiker</div>
+                    </div>
+                    <div class="line-field-group">
+                        <span class="line-label">Távolág:</span>
+                        <div class="line-field" id="disp-distance">Családi táv (6 km)</div>
+                    </div>
+                    <div class="line-field-group">
+                        <span class="line-label">Sorszám:</span>
+                        <div class="line-field" style="font-family: monospace; font-size: 0.95rem;" placeholder="pl. PK-023">PK-____</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-footer">
+                <span>VITASTEPS CHALLENGE</span>
+                <span>OLDAL 1</span>
+            </div>
+        </div>
+
+        <!-- PAGE 2: SAFETY & CODE -->
+        <div class="page" id="p2">
+            <div class="page-border"></div>
+            <div class="page-border-inner"></div>
+
+            <div class="page-header">
+                <div class="brand">VitaSteps</div>
+                <h2 class="page-title" style="font-size: 1.15rem;">Felkészülés & Kódex</h2>
+                <div class="page-divider"></div>
+            </div>
+
+            <div class="page-content" style="justify-content: flex-start; gap: 1rem;">
+                <div class="info-card">
+                    <h3 style="font-size: 0.9rem; font-weight: 700; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">🎒 Túra Csekklista</h3>
+                    <ul class="bullet-list">
+                        <li class="bullet-point"><strong>Folyadék:</strong> Legalább 1.5 - 2 liter víz / izotóniás ital.</li>
+                        <li class="bullet-point"><strong>Lábbeli:</strong> Jó tapadású, bejáratott túracipő vagy terepfutó cipő.</li>
+                        <li class="bullet-point"><strong>Ruházat:</strong> Réteges öltözet, esőkabát váratlan záporok esetére.</li>
+                        <li class="bullet-point"><strong>Navigáció:</strong> Letöltött GPX és offline térkép (térerő hiány esetére).</li>
+                        <li class="bullet-point"><strong>Energia:</strong> Magvak, energiaszelet, szőlőcukor a csúcstámadáshoz.</li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <h3 style="font-size: 0.9rem; font-weight: 700; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">🌲 Kalandorok Kódexe</h3>
+                    <ul class="bullet-list" style="gap: 0.65rem;">
+                        <li class="bullet-point"><strong>1. A szemetet hazaviszem:</strong> Semmilyen hulladékot nem hagyok hátra.</li>
+                        <li class="bullet-point"><strong>2. Tisztelem a csendet:</strong> Nem hangoskodom, tisztelem a vadon nyugalmát.</li>
+                        <li class="bullet-point"><strong>3. Úton maradok:</strong> Nem térek le a jelzett ösvényről az erózió elkerüléséért.</li>
+                        <li class="bullet-point"><strong>4. Segítő kéz:</strong> Ha bajbajutottat látok, megállok segíteni. Segélyhívó: <strong>112</strong></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="page-footer">
+                <span>BIZTONSÁGI ÚTMUTATÓ</span>
+                <span>OLDAL 2</span>
+            </div>
+        </div>
+
+        <!-- PAGE 3: ROUTE DETAILS (DYNAMIC) -->
+        <div class="page" id="p3">
+            <div class="page-border"></div>
+            <div class="page-border-inner"></div>
+
+            <div class="page-header">
+                <div class="brand">VitaSteps</div>
+                <h2 class="page-title" style="font-size: 1.15rem;" id="route-title">Családi táv (6 km)</h2>
+                <div class="page-divider"></div>
+            </div>
+
+            <div class="page-content" style="justify-content: flex-start; gap: 1rem;">
+                <div class="route-grid">
+                    <div class="route-stats">
+                        <div class="route-stat-item"><strong>Távolság:</strong> <span id="route-dist">6.2 km</span></div>
+                        <div class="route-stat-item"><strong>Szintemelkedés:</strong> <span id="route-elev">190 m</span></div>
+                        <div class="route-stat-item"><strong>Becsült idő:</strong> <span id="route-time">~2 óra</span></div>
+                        <div class="route-stat-item"><strong>Nehézség:</strong> <span id="route-diff">Könnyű (Családi)</span></div>
+                    </div>
+                    <div class="qr-wrapper">
+                        <img src="" class="qr-image" id="route-qr" alt="GPX QR Code">
+                        <div class="qr-label">GPX Letöltés</div>
+                    </div>
+                </div>
+
+                <div class="info-card" style="margin-top: 0.5rem; margin-bottom: 0;">
+                    <h3 style="font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem; text-transform: uppercase;">📍 Főbb Ellenőrzőpontok</h3>
+                    <div class="checkpoint-timeline" id="route-timeline">
+                        <!-- Filled dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-footer">
+                <span>ÚTVONAL ADATOK</span>
+                <span>OLDAL 3</span>
+            </div>
+        </div>
+
+        <!-- PAGE 4: DIARY LOG -->
+        <div class="page" id="p4">
+            <div class="page-border"></div>
+            <div class="page-border-inner"></div>
+
+            <div class="page-header">
+                <div class="brand">VitaSteps</div>
+                <h2 class="page-title" style="font-size: 1.15rem;">Túranapló bejegyzés</h2>
+                <div class="page-divider"></div>
+            </div>
+
+            <div class="page-content" style="justify-content: flex-start;">
+                <div class="diary-row">
+                    <div class="diary-cell">
+                        <div class="line-field-group">
+                            <span class="line-label">Dátum:</span>
+                            <div class="line-field">2026.____.____</div>
+                        </div>
+                    </div>
+                    <div class="diary-cell">
+                        <div class="line-field-group">
+                            <span class="line-label">Időjárás:</span>
+                            <div class="line-field" style="font-size: 0.85rem; opacity: 0.7;">☀️ / ⛅ / 🌧️ / ❄️</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="diary-row">
+                    <div class="diary-cell">
+                        <div class="line-field-group">
+                            <span class="line-label">Indulás:</span>
+                            <div class="line-field">____ : ____</div>
+                        </div>
+                    </div>
+                    <div class="diary-cell">
+                        <div class="line-field-group">
+                            <span class="line-label">Csúcs:</span>
+                            <div class="line-field">____ : ____</div>
+                        </div>
+                    </div>
+                    <div class="diary-cell">
+                        <div class="line-field-group">
+                            <span class="line-label">Érkezés:</span>
+                            <div class="line-field">____ : ____</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="line-field-group" style="margin-top: 0.5rem;">
+                    <span class="line-label">Társak:</span>
+                    <div class="line-field"></div>
+                </div>
+
+                <div class="write-in-lines">
+                    <span style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; opacity: 0.8;">Saját élményeim & emlékezetes pillanatok:</span>
+                    <div class="write-line"></div>
+                    <div class="write-line"></div>
+                    <div class="write-line"></div>
+                    <div class="write-line"></div>
+                    <div class="write-line"></div>
+                    <div class="write-line"></div>
+                    <div class="write-line"></div>
+                </div>
+            </div>
+
+            <div class="page-footer">
+                <span>SZEMÉLYES NAPLÓ</span>
+                <span>OLDAL 4</span>
+            </div>
+        </div>
+
+        <!-- PAGE 5: QUESTS & TRIVIA -->
+        <div class="page" id="p5">
+            <div class="page-border"></div>
+            <div class="page-border-inner"></div>
+
+            <div class="page-header">
+                <div class="brand">VitaSteps</div>
+                <h2 class="page-title" style="font-size: 1.15rem;">Kevély Bingó & Kvíz</h2>
+                <div class="page-divider"></div>
+            </div>
+
+            <div class="page-content" style="justify-content: flex-start; gap: 0.8rem;">
+                <h3 style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">🌲 Erdei Bingó (Pipáld ki!)</h3>
+                <div class="bingo-grid">
+                    <div class="bingo-item">
+                        <div class="checkbox-box"></div>
+                        <span>Dolomit sziklafal (Teve-szikla)</span>
+                    </div>
+                    <div class="bingo-item">
+                        <div class="checkbox-box"></div>
+                        <span>Egri vár másolatának kapubástyája</span>
+                    </div>
+                    <div class="bingo-item">
+                        <div class="checkbox-box"></div>
+                        <span>Sárga turistajelzés (sáv, kereszt vagy kör)</span>
+                    </div>
+                    <div class="bingo-item">
+                        <div class="checkbox-box"></div>
+                        <span>Gyönyörű panoráma a Kevély csúcsáról</span>
+                    </div>
+                    <div class="bingo-item">
+                        <div class="checkbox-box"></div>
+                        <span>Erdei madárdal vagy mókus neszezés</span>
+                    </div>
+                </div>
+
+                <h3 style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">🧠 Kevély Tudástár</h3>
+                <div class="trivia-container">
+                    <div class="trivia-q">
+                        <div class="trivia-text">Miért épült az Egri vár másolata Pilisborosjenő mellett?</div>
+                        <div class="trivia-a">.zséztéwzém mliF kokagillatsz irgE sa-8691 zA</div>
+                    </div>
+                    <div class="trivia-q">
+                        <div class="trivia-text">Milyen magasan fekszik a Nagy-Kevély csúcsa?</div>
+                        <div class="trivia-a">.tteléf tznisregnet a lettém 435</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-footer">
+                <span>INTERAKTÍV KÜLDETÉSEK</span>
+                <span>OLDAL 5</span>
+            </div>
+        </div>
+
+        <!-- PAGE 6: COMPLETION & MEDAL -->
+        <div class="page" id="p6">
+            <div class="page-border"></div>
+            <div class="page-border-inner"></div>
+
+            <div class="page-header">
+                <div class="brand">VitaSteps</div>
+                <h2 class="page-title" style="font-size: 1.15rem;">Kihívás teljesítve</h2>
+                <div class="page-divider"></div>
+            </div>
+
+            <div class="page-content" style="justify-content: space-around; align-items: center; gap: 1rem;">
+                <div class="final-badge">🏆</div>
+                <h3 style="font-size: 1.2rem; font-weight: 800; text-align: center; color: var(--accent);">Gratulálunk a túrához!</h3>
+                <p style="text-align: center; font-size: 0.85rem; max-width: 320px; line-height: 1.5; color: inherit;">
+                    Megmásztad a csúcsot és teljesítetted a távot! Ezzel megszolgáltad a kézzel festett, egyedi <strong>A Nagy-Kevély csillagjai</strong> érmedet.
+                </p>
+
+                <div class="info-card" style="width: 100%; margin-bottom: 0;">
+                    <h4 style="font-size: 0.78rem; font-weight: 800; text-transform: uppercase; margin-bottom: 0.4rem; text-align: center;">Hogyan kapod meg az érmet?</h4>
+                    <ul class="bullet-list" style="gap: 0.45rem;">
+                        <li class="bullet-point" style="font-size: 0.78rem;"><strong>1. Igazolás:</strong> Mentsd el a GPS túrarögzítést (GPX, Strava, Garmin).</li>
+                        <li class="bullet-point" style="font-size: 0.78rem;"><strong>2. Feltöltés:</strong> Lépj be a VitaSteps portálra és töltsd fel a fájlt vagy szelfit.</li>
+                        <li class="bullet-point" style="font-size: 0.78rem;"><strong>3. Postázás:</strong> Az igazolás jóváhagyása után azonnal küldjük az érmet a Foxpost pontodra.</li>
+                    </ul>
+                </div>
+
+                <div style="width: 100%; text-align: center;">
+                    <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; opacity: 0.75;">Saját értékelésem (1-5):</span>
+                    <div class="stars-row">⭐ ⭐ ⭐ ⭐ ⭐</div>
+                </div>
+            </div>
+
+            <div class="page-footer">
+                <span>ÉREM ÁTVÉTEL</span>
+                <span>OLDAL 6</span>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Route configurations
+        const routes = {
+            csaladi: {
+                title: "Családi táv (6 km)",
+                distance: "6.2 km",
+                elevation: "190 m",
+                time: "~2 óra",
+                difficulty: "Könnyű (Családi)",
+                gpx: "01csaladi.gpx",
+                timeline: [
+                    "Pilisborosjenő sorompó (Indulás)",
+                    "Teve-szikla (Dolomit tornyok)",
+                    "Egri vár másolata (Filmforgatás helyszíne)",
+                    "Kevély-nyereg (Pihenő & Kéktúra pecsételő)",
+                    "Pilisborosjenő sorompó (Visszaérkezés)"
+                ]
+            },
+            klasszikus: {
+                title: "Klasszikus táv (10 km)",
+                distance: "10.1 km",
+                elevation: "340 m",
+                time: "~3.5 óra",
+                difficulty: "Közepes",
+                gpx: "02klasszik.gpx",
+                timeline: [
+                    "Pilisborosjenő sorompó (Indulás)",
+                    "Teve-szikla (Szép panoráma)",
+                    "Egri vár másolata (Ostrombástya)",
+                    "Nagy-Kevély csúcs (534m, Csúcskő)",
+                    "Kevély-nyereg (Kéktúra elágazás)",
+                    "Pilisborosjenő sorompó (Visszaérkezés)"
+                ]
+            },
+            felmaraton: {
+                title: "Kevély Félmaraton (15 km)",
+                distance: "15.3 km",
+                elevation: "520 m",
+                time: "~4.5 óra",
+                difficulty: "Haladó",
+                gpx: "04felmaraton.gpx",
+                timeline: [
+                    "Csobánka főtér (Indulás)",
+                    "Kevély-nyereg (Erdészeti út)",
+                    "Nagy-Kevély csúcs (534m, Csodás panoráma)",
+                    "Ezüst-hegy (Egykori kőbánya vonulata)",
+                    "Egri vár másolata (Romos várfalak)",
+                    "Teve-szikla (Fura formációk)",
+                    "Csobánka főtér (Visszaérkezés)"
+                ]
+            },
+            hosszu: {
+                title: "Kevély Ultra / Hosszú (25 km)",
+                distance: "24.8 km",
+                elevation: "810 m",
+                time: "~7-8 óra",
+                difficulty: "Nehéz (Kihívást jelentő)",
+                gpx: "03extra.gpx",
+                timeline: [
+                    "Pomáz HÉV állomás (Indulás)",
+                    "Kő-hegyi Menedékház (Pihenőpont)",
+                    "Csobánka völgye (Zöld sáv jelzés)",
+                    "Kevély-nyereg (Nyeregpont)",
+                    "Nagy-Kevély csúcs (534m, Csúcstámadás)",
+                    "Ezüst-hegy (Sziklás gerinc)",
+                    "Egri vár másolata & Teve-szikla",
+                    "Pomáz HÉV állomás (Visszaérkezés)"
+                ]
+            }
+        };
+
+        // Parse query parameters
+        const params = new URLSearchParams(window.location.search);
+        const nameParam = params.get('nev') || "Kalandor Hiker";
+        const routeParam = params.get('tav') || "csaladi";
+        const styleParam = params.get('style') || "bw";
+
+        // Initialize values
+        document.getElementById('input-name').value = nameParam;
+        updateName(nameParam);
+        
+        // Select route input
+        const routeRadio = document.querySelector(`input[name="style-select"][value="${styleParam}"]`);
+        if (routeRadio) {
+            routeRadio.checked = true;
+        }
+        setTheme(styleParam);
+
+        // Select correct route radio option
+        // Find if page has options, but since they customize via URL, we set the layout directly
+        renderRoute(routeParam);
+
+        function updateName(val) {
+            document.getElementById('disp-name').textContent = val || "Kalandor Hiker";
+        }
+
+        function setTheme(theme) {
+            if (theme === 'color') {
+                document.body.className = 'theme-color';
+            } else {
+                document.body.className = 'theme-bw';
+            }
+        }
+
+        function renderRoute(routeKey) {
+            const route = routes[routeKey] || routes.csaladi;
+            
+            // Update Page 1 Cover
+            document.getElementById('disp-distance').textContent = route.title;
+            
+            // Update Page 3 Route details
+            document.getElementById('route-title').textContent = route.title;
+            document.getElementById('route-dist').textContent = route.distance;
+            document.getElementById('route-elev').textContent = route.elevation;
+            document.getElementById('route-time').textContent = route.time;
+            document.getElementById('route-diff').textContent = route.difficulty;
+            
+            // Set dynamic QR code using free public API redirecting to the GPX track
+            const gpxUrl = `${window.location.origin}/assets/nagykevely/tracks/${route.gpx}`;
+            const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(gpxUrl)}`;
+            document.getElementById('route-qr').src = qrApiUrl;
+            
+            // Render Timeline
+            const timelineContainer = document.getElementById('route-timeline');
+            timelineContainer.innerHTML = '';
+            route.timeline.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'timeline-item';
+                div.textContent = item;
+                timelineContainer.appendChild(div);
+            });
+        }
+
+        function printBook(e) {
+            e.preventDefault();
+            window.print();
+        }
+    </script>
+</body>
+
+</html>
