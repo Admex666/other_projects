@@ -14,7 +14,7 @@
 *   **[x]** Update map filters to show the 4 new route options (Family 6km, Classic 10km, Half Marathon 15km, Ultra 25km).
 *   **[x]** Fix mobile layout responsiveness (prevent horizontal overflow, iPhone 12 Pro compatibility).
 *   **[x]** Reposition medal image on mobile to be shown before pricing inside the Hero section.
-*   **[ ]** Útvonalak POI-jainak (érdekességek, látnivalók) kigyűjtése és részletes információk összegyűjtése az egyes pontokról.
+*   **[x]** Útvonalak POI-jainak (érdekességek, látnivalók) kigyűjtése és részletes információk összegyűjtése az egyes pontokról.
 
 ---
 

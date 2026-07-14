@@ -348,7 +348,7 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            margin: 1rem 0;
+            margin: 0.6rem 0;
             z-index: 2;
         }
 
@@ -470,7 +470,7 @@
             border: 1px solid;
             border-radius: 8px;
             padding: 1rem;
-            margin-bottom: 1rem;
+            margin-bottom: 0.8rem;
         }
 
         /* Route Info Page */
@@ -600,32 +600,49 @@
             flex-shrink: 0;
         }
 
-        .trivia-container {
+        /* Dynamic POI Styles */
+        .poi-container {
             display: flex;
             flex-direction: column;
             gap: 1rem;
         }
 
-        .trivia-q {
-            border-left: 3px solid;
-            padding: 0.6rem 0.8rem;
-            border-radius: 0 6px 6px 0;
+        .poi-card {
+            border-bottom: 1px solid rgba(128, 128, 128, 0.15);
+            padding-bottom: 1rem;
         }
 
-        .trivia-text {
+        .poi-card:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .poi-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+            display: flex;
+            justify-content: space-between;
+            color: var(--accent);
+        }
+
+        body.theme-bw .poi-title {
+            color: #0f172a;
+        }
+
+        .poi-desc {
             font-size: 0.82rem;
-            font-weight: 600;
-            line-height: 1.4;
+            line-height: 1.5;
             margin-bottom: 0.4rem;
         }
 
-        .trivia-a {
-            font-size: 0.68rem;
-            opacity: 0.75;
-            transform: rotate(180deg);
-            display: inline-block;
-            direction: rtl;
-            unicode-bidi: bidi-override;
+        .poi-extra {
+            font-size: 0.75rem;
+            font-style: italic;
+            opacity: 0.8;
+            padding-left: 0.5rem;
+            border-left: 2px solid currentColor;
         }
 
         /* Final Steps Page */
@@ -779,7 +796,7 @@
 
             <div class="page-footer">
                 <span>VITASTEPS CHALLENGE</span>
-                <span>OLDAL 1</span>
+                <span>OLDAL 1 / 8</span>
             </div>
         </div>
 
@@ -819,7 +836,7 @@
 
             <div class="page-footer">
                 <span>BIZTONSÁGI ÚTMUTATÓ</span>
-                <span>OLDAL 2</span>
+                <span>OLDAL 2 / 8</span>
             </div>
         </div>
 
@@ -834,13 +851,13 @@
                 <div class="page-divider"></div>
             </div>
 
-            <div class="page-content" style="justify-content: flex-start; gap: 1rem;">
+            <div class="page-content" style="justify-content: flex-start; gap: 0.8rem;">
                 <div class="route-grid">
                     <div class="route-stats">
                         <div class="route-stat-item"><strong>Távolság:</strong> <span id="route-dist">6.2 km</span></div>
                         <div class="route-stat-item"><strong>Szintemelkedés:</strong> <span id="route-elev">190 m</span></div>
                         <div class="route-stat-item"><strong>Becsült idő:</strong> <span id="route-time">~2 óra</span></div>
-                        <div class="route-stat-item"><strong>Nehézség:</strong> <span id="route-diff">Könnyű (Családi)</span></div>
+                        <div class="route-stat-item"><strong>Nehézség:</strong> <span id="route-diff">Könnyű</span></div>
                     </div>
                     <div class="qr-wrapper">
                         <img src="" class="qr-image" id="route-qr" alt="GPX QR Code">
@@ -848,7 +865,7 @@
                     </div>
                 </div>
 
-                <div class="info-card" style="margin-top: 0.5rem; margin-bottom: 0;">
+                <div class="info-card" style="margin-top: 0.5rem; margin-bottom: 0; flex-grow: 1;">
                     <h3 style="font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem; text-transform: uppercase;">📍 Főbb Ellenőrzőpontok</h3>
                     <div class="checkpoint-timeline" id="route-timeline">
                         <!-- Filled dynamically -->
@@ -858,18 +875,115 @@
 
             <div class="page-footer">
                 <span>ÚTVONAL ADATOK</span>
-                <span>OLDAL 3</span>
+                <span>OLDAL 3 / 8</span>
             </div>
         </div>
 
-        <!-- PAGE 4: DIARY LOG -->
+        <!-- PAGE 4: DYNAMIC POI DETAILS I. -->
         <div class="page" id="p4">
             <div class="page-border"></div>
             <div class="page-border-inner"></div>
 
             <div class="page-header">
                 <div class="brand">VitaSteps</div>
-                <h2 class="page-title" style="font-size: 1.15rem;">Túranapló bejegyzés</h2>
+                <h2 class="page-title" style="font-size: 1.15rem;">Útvonal Látnivalók I.</h2>
+                <div class="page-divider"></div>
+            </div>
+
+            <div class="page-content" style="justify-content: flex-start;">
+                <div class="poi-container" id="poi-list-1">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+
+            <div class="page-footer">
+                <span>TÖRTÉNELEM ÉS GEOLÓGIA</span>
+                <span>OLDAL 4 / 8</span>
+            </div>
+        </div>
+
+        <!-- PAGE 5: DYNAMIC POI DETAILS II. -->
+        <div class="page" id="p5">
+            <div class="page-border"></div>
+            <div class="page-border-inner"></div>
+
+            <div class="page-header">
+                <div class="brand">VitaSteps</div>
+                <h2 class="page-title" style="font-size: 1.15rem;">Útvonal Látnivalók II.</h2>
+                <div class="page-divider"></div>
+            </div>
+
+            <div class="page-content" style="justify-content: flex-start;">
+                <div class="poi-container" id="poi-list-2">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+
+            <div class="page-footer">
+                <span>LEGENDÁK ÉS ÉRDEKESSÉGEK</span>
+                <span>OLDAL 5 / 8</span>
+            </div>
+        </div>
+
+        <!-- PAGE 6: BINGO QUESTS -->
+        <div class="page" id="p6">
+            <div class="page-border"></div>
+            <div class="page-border-inner"></div>
+
+            <div class="page-header">
+                <div class="brand">VitaSteps</div>
+                <h2 class="page-title" style="font-size: 1.15rem;">Erdei Megfigyelő Bingó</h2>
+                <div class="page-divider"></div>
+            </div>
+
+            <div class="page-content" style="justify-content: flex-start; gap: 0.8rem;">
+                <p style="font-size: 0.85rem; margin-bottom: 0.5rem; text-align: center;">Keresd meg és pipáld ki a túra során az alábbi dolgokat! Nagyszerű szórakozás egyedül vagy a családdal.</p>
+                <div class="bingo-grid">
+                    <div class="bingo-item">
+                        <div class="checkbox-box"></div>
+                        <span>Dolomit sziklafal (pl. a Teve-sziklánál vagy az Ezüst-hegyen)</span>
+                    </div>
+                    <div class="bingo-item">
+                        <div class="checkbox-box"></div>
+                        <span>Az Egri vár másolatának kapubástyája vagy falai</span>
+                    </div>
+                    <div class="bingo-item">
+                        <div class="checkbox-box"></div>
+                        <span>Egy sárga turistajelzés (sáv, kereszt vagy kör)</span>
+                    </div>
+                    <div class="bingo-item">
+                        <div class="checkbox-box"></div>
+                        <span>Gyönyörű panoráma a Kevély csúcsáról vagy szikláiról</span>
+                    </div>
+                    <div class="bingo-item">
+                        <div class="checkbox-box"></div>
+                        <span>Kellemes erdei illat vagy virágzó növény (levendula, vadvirág)</span>
+                    </div>
+                    <div class="bingo-item">
+                        <div class="checkbox-box"></div>
+                        <span>Erdei madárdal vagy mókus neszezés a lombkoronák között</span>
+                    </div>
+                    <div class="bingo-item">
+                        <div class="checkbox-box"></div>
+                        <span>Barlangbejárat vagy sziklahasadék (pl. Mackó-barlang vagy Kőfülke)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-footer">
+                <span>INTERAKTÍV JÁTÉKOK</span>
+                <span>OLDAL 6 / 8</span>
+            </div>
+        </div>
+
+        <!-- PAGE 7: DIARY LOG -->
+        <div class="page" id="p7">
+            <div class="page-border"></div>
+            <div class="page-border-inner"></div>
+
+            <div class="page-header">
+                <div class="brand">VitaSteps</div>
+                <h2 class="page-title" style="font-size: 1.15rem;">Személyes Túranaplóm</h2>
                 <div class="page-divider"></div>
             </div>
 
@@ -911,7 +1025,7 @@
                 </div>
 
                 <div class="line-field-group" style="margin-top: 0.5rem;">
-                    <span class="line-label">Társak:</span>
+                    <span class="line-label">Társaim:</span>
                     <div class="line-field"></div>
                 </div>
 
@@ -929,67 +1043,12 @@
 
             <div class="page-footer">
                 <span>SZEMÉLYES NAPLÓ</span>
-                <span>OLDAL 4</span>
+                <span>OLDAL 7 / 8</span>
             </div>
         </div>
 
-        <!-- PAGE 5: QUESTS & TRIVIA -->
-        <div class="page" id="p5">
-            <div class="page-border"></div>
-            <div class="page-border-inner"></div>
-
-            <div class="page-header">
-                <div class="brand">VitaSteps</div>
-                <h2 class="page-title" style="font-size: 1.15rem;">Kevély Bingó & Kvíz</h2>
-                <div class="page-divider"></div>
-            </div>
-
-            <div class="page-content" style="justify-content: flex-start; gap: 0.8rem;">
-                <h3 style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">🌲 Erdei Bingó (Pipáld ki!)</h3>
-                <div class="bingo-grid">
-                    <div class="bingo-item">
-                        <div class="checkbox-box"></div>
-                        <span>Dolomit sziklafal (Teve-szikla)</span>
-                    </div>
-                    <div class="bingo-item">
-                        <div class="checkbox-box"></div>
-                        <span>Egri vár másolatának kapubástyája</span>
-                    </div>
-                    <div class="bingo-item">
-                        <div class="checkbox-box"></div>
-                        <span>Sárga turistajelzés (sáv, kereszt vagy kör)</span>
-                    </div>
-                    <div class="bingo-item">
-                        <div class="checkbox-box"></div>
-                        <span>Gyönyörű panoráma a Kevély csúcsáról</span>
-                    </div>
-                    <div class="bingo-item">
-                        <div class="checkbox-box"></div>
-                        <span>Erdei madárdal vagy mókus neszezés</span>
-                    </div>
-                </div>
-
-                <h3 style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">🧠 Kevély Tudástár</h3>
-                <div class="trivia-container">
-                    <div class="trivia-q">
-                        <div class="trivia-text">Miért épült az Egri vár másolata Pilisborosjenő mellett?</div>
-                        <div class="trivia-a">.zséztéwzém mliF kokagillatsz irgE sa-8691 zA</div>
-                    </div>
-                    <div class="trivia-q">
-                        <div class="trivia-text">Milyen magasan fekszik a Nagy-Kevély csúcsa?</div>
-                        <div class="trivia-a">.tteléf tznisregnet a lettém 435</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="page-footer">
-                <span>INTERAKTÍV KÜLDETÉSEK</span>
-                <span>OLDAL 5</span>
-            </div>
-        </div>
-
-        <!-- PAGE 6: COMPLETION & MEDAL -->
-        <div class="page" id="p6">
+        <!-- PAGE 8: COMPLETION & MEDAL -->
+        <div class="page" id="p8">
             <div class="page-border"></div>
             <div class="page-border-inner"></div>
 
@@ -1023,28 +1082,48 @@
 
             <div class="page-footer">
                 <span>ÉREM ÁTVÉTEL</span>
-                <span>OLDAL 6</span>
+                <span>OLDAL 8 / 8</span>
             </div>
         </div>
 
     </div>
 
     <script>
-        // Route configurations
+        // Route configurations with detailed, research-backed POIs
         const routes = {
             csaladi: {
                 title: "Családi táv (6 km)",
                 distance: "6.2 km",
                 elevation: "190 m",
                 time: "~2 óra",
-                difficulty: "Könnyű (Családi)",
+                difficulty: "Könnyű",
                 gpx: "01csaladi.gpx",
                 timeline: [
                     "Pilisborosjenő sorompó (Indulás)",
-                    "Teve-szikla (Dolomit tornyok)",
-                    "Egri vár másolata (Filmforgatás helyszíne)",
-                    "Kevély-nyereg (Pihenő & Kéktúra pecsételő)",
+                    "Teve-szikla (Különleges dolomittornyok)",
+                    "Egri vár másolata (Történelmi díszletrom)",
+                    "Kevély-nyereg (Kéktúra elágazás & pihenő)",
                     "Pilisborosjenő sorompó (Visszaérkezés)"
+                ],
+                pois: [
+                    {
+                        name: "Teve-szikla",
+                        subtitle: "Különleges dolomittornyok",
+                        desc: "Mintegy 220 millió éves fődolomit, amelyet forró kovás oldatok jártak át, így ellenállóvá vált a lepusztulással szemben. A puha részek koptak el, így alakult ki a fekvő teve alakzat.",
+                        extra: "Tudtad-e? Az Egri Csillagok filmben a lőporraktárba vezető titkos jeleneteket ennél a sziklánál forgatták."
+                    },
+                    {
+                        name: "Egri vár másolata",
+                        subtitle: "Filmtörténeti emlékhely",
+                        desc: "Várkonyi Zoltán rendező építtette 1968-ban az Egri csillagok forgatásához. Részben fából és kőből épült a monumentális ostromjelenetek felvételéhez.",
+                        extra: "Tudtad-e? A forgatás alatt a vár egy része ténylegesen leégett, de a felvételeket a lángok ellenére is folytatták."
+                    },
+                    {
+                        name: "Kevélyhegyi Levendulamező",
+                        subtitle: "Mediterrán illatfelhő a hegy lábánál",
+                        desc: "2016-ban alapított biogazdaság Pilisborosjenő határában, amely ma több mint 20 ezer levendulabokornak és tavasszal 150 ezer virágzó tulipánnak ad otthont.",
+                        extra: "Tudtad-e? A vadvirágos rétek felett magasodó hegycsúcs és a lila levendula-sorok kontrasztja a Pilis egyik legszebb látványa."
+                    }
                 ]
             },
             klasszikus: {
@@ -1056,11 +1135,31 @@
                 gpx: "02klasszik.gpx",
                 timeline: [
                     "Pilisborosjenő sorompó (Indulás)",
-                    "Teve-szikla (Szép panoráma)",
-                    "Egri vár másolata (Ostrombástya)",
-                    "Nagy-Kevély csúcs (534m, Csúcskő)",
-                    "Kevély-nyereg (Kéktúra elágazás)",
+                    "Teve-szikla (Geológiai látványosság)",
+                    "Egri vár másolata (Filmes romok)",
+                    "Nagy-Kevély csúcs (534m, Csúcsszikla)",
+                    "Kevély-nyereg ( Stromfeld Aurél pad)",
                     "Pilisborosjenő sorompó (Visszaérkezés)"
+                ],
+                pois: [
+                    {
+                        name: "Nagy-Kevély csúcs (534m)",
+                        subtitle: "A Kevélyek legmagasabb pontja",
+                        desc: "Sasbércként kiemelkedő kőzettömb. A Kevély név a 18. században betelepülő szerb lakosság 'kovily' szavából ered, ami árvalányhajat jelent – ezt költötte át a nyelvújítás 'kevély'-re.",
+                        extra: "Tudtad-e? Tiszta időben egyszerre látni innen a Gellért-hegyet, a János-hegyet és Dobogókőt is."
+                    },
+                    {
+                        name: "Kevély-nyereg és a hajdani turistaház",
+                        subtitle: "Egy elfeledett menedék emléke",
+                        desc: "1928-ban épült fel a hatvan férőhelyes Stromfeld Aurél turistaház. Az építőanyagot a természetbarátok hátizsákban, kézzel hordták fel. A ház 1992-ben rejtélyes körülmények között leégett.",
+                        extra: "Tudtad-e? A hajdani ház helyén ma esőbeálló és egy emléktábla várja a túrázókat."
+                    },
+                    {
+                        name: "Kevély-hegyi kőfülke (Szódás-barlang)",
+                        subtitle: "Panorámás sziklaüreg",
+                        desc: "A Nagy-Kevély meredek dolomitfalában nyíló barlang. A Szódás-barlang nevet onnan kapta, hogy az alatta futó úton szállították fel egykor a szódát a nyergi turistaházhoz.",
+                        extra: "Tudtad-e? Az üregből lenyűgöző kilátás nyílik a Pilisborosjenő alatti völgyekre."
+                    }
                 ]
             },
             felmaraton: {
@@ -1072,12 +1171,31 @@
                 gpx: "04felmaraton.gpx",
                 timeline: [
                     "Csobánka főtér (Indulás)",
-                    "Kevély-nyereg (Erdészeti út)",
-                    "Nagy-Kevély csúcs (534m, Csodás panoráma)",
-                    "Ezüst-hegy (Egykori kőbánya vonulata)",
-                    "Egri vár másolata (Romos várfalak)",
-                    "Teve-szikla (Fura formációk)",
+                    "Kevély-nyereg (Pihenőhely)",
+                    "Nagy-Kevély csúcs (534m, Csúcstámadás)",
+                    "Ezüst-hegy (Sziklás gerincvonulat)",
+                    "Egri vár másolata & Teve-szikla",
                     "Csobánka főtér (Visszaérkezés)"
+                ],
+                pois: [
+                    {
+                        name: "Mackó-barlang (Kis-Kevély)",
+                        subtitle: "Világhírű jégkorszaki lelőhely",
+                        desc: "Magyarország egyik legrégebben feltárt barlangja. Hatalmas ásító medveszájhoz hasonlító bejárata van. Barlangi medve, mamut, gyapjas orrszarvú csontok és őskori kőeszközök kerültek elő.",
+                        extra: "Tudtad-e? A barlang ma fokozottan védett, mennyezetén védett denevérkolóniák és barlangi pókok élnek."
+                    },
+                    {
+                        name: "Sicambria titka (Monalovac)",
+                        subtitle: "Hunok legendás birodalmi központja",
+                        desc: "A középkori krónikák szerint ezen a vidéken állt Sicambria, Attila hun király fővárosa és temetkezési helye. Pilis-kutatók régészeti romokat és barlangokat azonosítottak a Monalovac hegyen.",
+                        extra: "Tudtad-e? A helyi monda szerint az Ezüst-hegy és Arany-lyuk elnevezések a király ezüst- és aranykoporsójára utalhatnak."
+                    },
+                    {
+                        name: "Oszoly-csúcs (329m)",
+                        subtitle: "A magyar sziklamászás bölcsője",
+                        desc: "Csobánka felett magasodó, fehér mészkőszirt. Tetején kettős kereszt és zászlórúd áll. A sziklaláncolat több mint húsz barlangot rejt és kiváló edzőterep sziklamászóknak.",
+                        extra: "Tudtad-e? A legenda szerint a csobánkai völgy úgy keletkezett, hogy a Jóisten megpihent itt a világ teremtése után."
+                    }
                 ]
             },
             hosszu: {
@@ -1085,17 +1203,35 @@
                 distance: "24.8 km",
                 elevation: "810 m",
                 time: "~7-8 óra",
-                difficulty: "Nehéz (Kihívást jelentő)",
+                difficulty: "Nehéz",
                 gpx: "03extra.gpx",
                 timeline: [
                     "Pomáz HÉV állomás (Indulás)",
-                    "Kő-hegyi Menedékház (Pihenőpont)",
-                    "Csobánka völgye (Zöld sáv jelzés)",
-                    "Kevély-nyereg (Nyeregpont)",
-                    "Nagy-Kevély csúcs (534m, Csúcstámadás)",
-                    "Ezüst-hegy (Sziklás gerinc)",
-                    "Egri vár másolata & Teve-szikla",
+                    "Kő-hegyi Menedékház (Pihenő & sziklák)",
+                    "Csobánka völgye (Kis-Kevély alatt)",
+                    "Nagy-Kevély csúcs (534m, Csúcshódítás)",
+                    "Ezüst-hegyi kőfejtő & Teve-szikla",
                     "Pomáz HÉV állomás (Visszaérkezés)"
+                ],
+                pois: [
+                    {
+                        name: "Kő-hegyi Menedékház & Petőfi-kilátó",
+                        subtitle: "Történelmi menedékhely",
+                        desc: "1933-ban épült a Czibulka János menedékház Pomáz felett. Petőfi Sándor 1845. szeptember 23-án megpihent a Kő-hegy teraszán, ami ihletet adott a 'Visegrád táján' verséhez.",
+                        extra: "Tudtad-e? A kilátópont mellett áll a különleges vulkáni breccsa kőzetből álló, gomba alakú 'Napóleon kalapja' szikla."
+                    },
+                    {
+                        name: "Ezüst-hegyi kőfejtő",
+                        subtitle: "Csillogó dolomitbánya a hegygerincen",
+                        desc: "Felhagyott, lépcsőzetes bánya. A nevével ellentétben ezüstöt sosem találtak itt, az elnevezés a kőzet napfényben ezüstösen csillogó baritkristályos felszínére utal.",
+                        extra: "Tudtad-e? Itt található a Pilis leghosszabb barlangja, a 400 méter hosszú, szűk kürtővel rendelkező Papp Ferenc-barlang."
+                    },
+                    {
+                        name: "Mackó-barlang & Sicambria",
+                        subtitle: "Az ősemberektől a hun birodalomig",
+                        desc: "Az útvonal érinti a Kis-Kevély ősemberleleteiről híres Mackó-barlangját és a Monalovac hegy titokzatos, hun vármaradványként emlegetett Sicambria legendájának helyszínét.",
+                        extra: "Tudtad-e? A 25 km-es táv teljesítése során a Kevélyek szinte összes nagy történelmi és természeti misztikumát bejárod."
+                    }
                 ]
             }
         };
@@ -1118,7 +1254,6 @@
         setTheme(styleParam);
 
         // Select correct route radio option
-        // Find if page has options, but since they customize via URL, we set the layout directly
         renderRoute(routeParam);
 
         function updateName(val) {
@@ -1160,6 +1295,36 @@
                 div.textContent = item;
                 timelineContainer.appendChild(div);
             });
+
+            // Render Dynamic POIs
+            const p1 = document.getElementById('poi-list-1');
+            const p2 = document.getElementById('poi-list-2');
+            p1.innerHTML = '';
+            p2.innerHTML = '';
+
+            // We have 3 POIs per route
+            if (route.pois && route.pois.length >= 3) {
+                // Render first 2 POIs on Page 4
+                for (let i = 0; i < 2; i++) {
+                    p1.appendChild(createPoiHtml(route.pois[i]));
+                }
+                // Render 3rd POI on Page 5
+                p2.appendChild(createPoiHtml(route.pois[2]));
+            }
+        }
+
+        function createPoiHtml(poi) {
+            const div = document.createElement('div');
+            div.className = 'poi-card';
+            div.innerHTML = `
+                <div class="poi-title">
+                    <span>${poi.name}</span>
+                    <span style="font-size: 0.75rem; font-weight: 600; opacity: 0.8; text-transform: uppercase;">Látnivaló</span>
+                </div>
+                <div class="poi-desc">${poi.desc}</div>
+                <div class="poi-extra">${poi.extra}</div>
+            `;
+            return div;
         }
 
         function printBook(e) {

@@ -16,9 +16,18 @@ All notable changes to the VitaSteps challenge platform project are documented h
     *   **Direct Checkout Links:** Changed all navigation, hero, and mobile sticky buttons to link directly to `/checkout.html?c=pilis` instead of scrolling down to the local anchor.
 *   **Personalized Adventure Guidebook (Kalandkönyv):**
     *   **Dynamic Generator Page:** Created `nagykevely/kalandkonyv.html` providing dynamically built, customizable, printable A5/A4 adventure guidebooks and hiking logs.
+    *   **8-Page Premium Booklet Layout:** Upgraded the guidebook to a complete 8-page format (ideal for double-sided A4 printing folded in half). Added a dynamic POI reader spanning Pages 4 & 5.
+    *   **POI & Heritage Integration:** Integrated rich geological, historical, and cultural stories sourced from local research, featuring the Teve-szikla (geology and Egri Csillagok scene), Egri vár replica, Kevélyhegyi Levendulamező, Mackó-barlang (ice age fauna and Neanderthal archaeology), the csobánkai Sicambria (Monalovac) hun capital theories, and Kő-hegy history (Czibulka menedékház, Petőfi's 1845 visit, Napóleon kalapja rock).
     *   **Prefilled Portal Tab:** Added a dedicated "Kalandkönyv" tab in `portal.html` visible exclusively to Nagy-Kevély challengers (`PK` serial code prefix). Prefills the runner's name, offers route selections (Family 6km, Classic 10km, Half Marathon 15km, Long 25km), B&W or color themes, and launches print setups.
     *   **Dynamic GPX QR-Codes:** Generates real-time QR codes linked to official GPX track files (`01csaladi.gpx`, `02klasszik.gpx`, `04felmaraton.gpx`, `03extra.gpx`) using a lightweight public redirect API.
-    *   **Interactive Activities:** Included custom trail timelines, weather logs, journal sections, a nature scavenger Hunt bingo grid, and a history/trivia section.
+    *   **Interactive Activities:** Included custom trail timelines, weather logs, journal sections, and a nature scavenger Hunt bingo grid, and a history/trivia section.
+*   **Tiered Referral Discount System:**
+    *   **Automated Discounting:** Refactored `api/checkout.js` to look up the runner's email in Supabase and calculate past successful referrals. Applies 10% (1 referral) up to 50% (5+ referrals) discount automatically.
+    *   **Programmatic Stripe Sync:** If the computed discount coupon (e.g., `VS_AJANLO_20`) does not exist on the merchant's Stripe account, the backend creates it automatically on the fly to prevent transaction failures.
+    *   **Fallback Friend Promo:** Maintains the `VSBARAT10` 10% discount for referred friends if they are buying for the first time.
+*   **Checkout Pre-Launch Safety Blocking:**
+    *   **Client-Side Gate:** Added conditional script checks in `checkout.html` blocking the order form for the live `pilis` campaign on non-localhost/non-test URLs, showing a customized "Coming Soon" screen.
+    *   **Backend Validation:** Refactored `api/checkout.js` to reject any public checkout requests targeting `pilis` on live deployments, returning HTTP 403 Forbidden to prevent unauthorized card transactions. Local development and explicit test triggers (`?test=true`) remain bypassable.
 *   **Meta Ads Campaign Configuration** – configured the Ads Manager setup for the Nagy-Kevély campaign:
     *   **Prospecting Ad Set:** Targets 1% LAL from previous buyers, excluding actual buyers.
     *   **Retargeting Ad Set:** Targets 30-day website visitors and 90-day FB/IG social media engagers, excluding previous buyers.

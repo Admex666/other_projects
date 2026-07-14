@@ -21,7 +21,7 @@
     *   **Hero kép cseréje (FIXED):** A korábbi nem betöltődő éremképet lecseréltük az éles termék kreatívra (`nagy_kevely_creative_v4.png`), 12px border-radius-szal.
     *   **Mobil Sticky CTA és Kicsúszás Fixek (FIXED):** Globális CSS szabályokkal (`html, body { overflow-x: hidden; }` és `max-width` megkötések) megszüntettük a vízszintes kicsúszást (különös tekintettel az iPhone 12 Pro 390px szélességű kijelzőjére). A navigációs sávot és a sticky gombsávot reszponzívvá tettük.
     *   **Érem kép pozicionálása mobilon (FIXED):** Telefonos nézetben az érem képe az akciós árazás és a CTA gombok elé került beágyazásra a jobb vizuális elrendezés érdekében.
-    *   **Nagy-Kevély Kalandkönyv Generátor (COMPLETED 2026-07-13):** Elkészült a `nagykevely/kalandkonyv.html` személyre szabható és nyomtatható A5/A4 túranapló és kalandkönyv generátor (dinamikus útvonal ellenőrzőpontok, GPX QR-kód API-k, erdei bingók, kvízek, kitölthető túranaplók).
+    *   **Nagy-Kevély Kalandkönyv Generátor (COMPLETED 2026-07-14):** Elkészült a `nagykevely/kalandkonyv.html` személyre szabható és nyomtatható A5/A4 méretű 8 oldalas túranapló és kalandkönyv füzet generátor (dinamikus útvonal ellenőrzőpontok, GPX QR-kód letöltések, erdei bingók, kitölthető túranaplók). A füzet tartalmát feltöltöttük a legújabb helytörténeti, geológiai és kulturális háttéranyagokkal, beleértve a Teve-sziklát, Egri várat, Kevélyhegyi Levendulamezőt, Mackó-barlangot, a csobánkai Sicambria (Monalovac) legendát és a Kő-hegyi menedékházat Petőfi emlékével.
     *   **Személyes Portál Kalandkönyv Tab (COMPLETED 2026-07-13):** A `portal.html` oldalon létrehoztunk egy új "Kalandkönyv" fület, ami kizárólag a Nagy-Kevély kihívás nevezőinek (`PK` sorszám előtag) jelenik meg, lehetővé téve a névvel és távval előre kitöltött könyv színes vagy tintakímélő B&W exportálását.
 *   **Prédikálószék Ping Email System (COMPLETED 2026-07-13):**
     *   `scripts/send_emails.py` updated with `ping` mode as default.
@@ -32,6 +32,7 @@
 
 ## 🎯 Current Focus
 *   **Nagy-Kevély csillagai Campaign Pre-launch:**
+    *   Secure checkout: Added client-side (`checkout.html`) and backend-side (`api/checkout.js`) blocks to prevent public live registrations for the Pilis/Kevély campaign, while keeping local development (localhost) and explicitly bypassed tests (`?test=true`) open.
     *   Verify Stripe live environment for the `VSBARAT10` coupon code.
     *   Verify standard pixel events (PageView, InitiateCheckout, Purchase) using Meta Pixel Helper.
 
@@ -39,4 +40,5 @@
 
 ## 🛑 Known Blockers / Issues
 *   `DRY_RUN = True` is currently set in `scripts/send_emails.py` — must be manually changed to `False` before any live email send.
+*   Nagy-Kevély campaign pre-launch: Checkout is blocked globally on live Vercel domains to avoid premature signups. Must be removed when launching.
 *   Stripe `VSBARAT10` referral coupon code: live environment testing still pending.

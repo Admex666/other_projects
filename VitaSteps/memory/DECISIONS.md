@@ -29,3 +29,10 @@
 *   **Decision:** Standardized the Facebook Pixel Purchase event triggering inside the unified `siker.html`. It dynamically fires:
     `fbq('track', 'Purchase', { value: config.price, currency: 'HUF', content_name: config.productName })`
 *   **Impact:** Meta Pixel automatically tracks correct transaction values and maps conversions to specific campaigns without manual custom conversion adjustments in Meta.
+
+---
+
+## 5. Tiered Referral Discount System (2026-07-14)
+*   **Context:** We wanted to reward loyal participants who actively refer friends to VitaSteps, incentivizing them to sign up for subsequent challenges at a lower price point.
+*   **Decision:** Implemented a backend check in `api/checkout.js` matching the purchaser's email against the `referred_by` column in Supabase `runners`. A tiered discount is computed (1 referral = 10% off, 2 = 20% off, up to 5+ = 50% off). The code programmatically creates the corresponding discount coupon in Stripe if it does not yet exist.
+*   **Impact:** Fully automated loyalty program without requiring manual coupon generation on Stripe or promo code inputs from the customer. Users are dynamically recognized and rewarded upon checkout.

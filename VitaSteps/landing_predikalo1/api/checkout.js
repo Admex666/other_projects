@@ -1,5 +1,6 @@
 const Stripe = require('stripe');
 const { google } = require('googleapis');
+const { createClient } = require('@supabase/supabase-js');
 const campaigns = require('../config/campaigns.json');
 
 module.exports = async (req, res) => {
@@ -36,10 +37,37 @@ module.exports = async (req, res) => {
 
         const origin = req.headers.origin || 'https://vitasteps.vercel.app';
         const useTestKey = isTest || (req.headers.host && req.headers.host.includes('localhost'));
+        
+        // Block live registrations for Pilis campaign
+        if (campaignKey === 'pilis' && !useTestKey) {
+            return res.status(403).json({
+                error: 'A Nagy-Kevély csillagai kihívás éles nevezése még nem indult el! Kérjük látogass vissza később.'
+            });
+        }
+
         const stripeKey = useTestKey
             ? (process.env.STRIPE_TEST_KEY || process.env.STRIPE_SECRET_KEY)
             : process.env.STRIPE_SECRET_KEY;
         const stripe = Stripe(stripeKey);
+
+        const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+
+        // ── REFERRAL COUNT CHECK ─────────────────────────────────────────────
+        let referralCount = 0;
+        if (email) {
+            const cleanEmail = email.trim().toLowerCase();
+            const { count, error: countErr } = await supabase
+                .from('runners')
+                .select('*', { count: 'exact', head: true })
+                .eq('referred_by', cleanEmail);
+            
+            if (countErr) {
+                console.error('Error fetching referral count from Supabase:', countErr);
+            } else {
+                referralCount = count || 0;
+                console.log(`Referral count for ${cleanEmail}: ${referralCount}`);
+            }
+        }
 
         // ── LIMIT CHECK ──────────────────────────────────────────────────────
         const serviceAccountJson = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON);
@@ -157,8 +185,53 @@ module.exports = async (req, res) => {
             metadata: meta
         };
 
-        if (referredBy) {
-            sessionOptions.discounts = [{ coupon: 'VSBARAT10' }];
+        // Determine correct discount coupon:
+        // - Own referrals give tiered coupon: VS_AJANLO_10, VS_AJANLO_20, etc.
+        // - Friend referral gives fallback: VSBARAT10 (10%)
+        let appliedCoupon = null;
+        if (referralCount > 0) {
+            const discountPercent = Math.min(50, referralCount * 10);
+            appliedCoupon = `VS_AJANLO_${discountPercent}`;
+            
+            // Ensure this coupon exists in Stripe programmatically
+            try {
+                await stripe.coupons.retrieve(appliedCoupon);
+                console.log(`Stripe coupon verified: ${appliedCoupon}`);
+            } catch (err) {
+                if (err.statusCode === 404) {
+                    console.log(`Creating missing Stripe coupon: ${appliedCoupon}`);
+                    await stripe.coupons.create({
+                        id: appliedCoupon,
+                        percent_off: discountPercent,
+                        duration: 'forever',
+                        name: `${discountPercent}% Ajánlói Kedvezmény (VitaSteps)`,
+                    });
+                } else {
+                    console.error('Error retrieving/creating Stripe coupon:', err);
+                }
+            }
+        } else if (referredBy) {
+            appliedCoupon = 'VSBARAT10';
+            
+            // Ensure fallback friend coupon exists in Stripe
+            try {
+                await stripe.coupons.retrieve(appliedCoupon);
+            } catch (err) {
+                if (err.statusCode === 404) {
+                    console.log(`Creating missing fallback Stripe coupon: ${appliedCoupon}`);
+                    await stripe.coupons.create({
+                        id: appliedCoupon,
+                        percent_off: 10,
+                        duration: 'forever',
+                        name: '10% Ajánlói Barát Kedvezmény (VitaSteps)',
+                    });
+                }
+            }
+        }
+
+        if (appliedCoupon) {
+            sessionOptions.discounts = [{ coupon: appliedCoupon }];
+            console.log(`Checkout Session will apply coupon: ${appliedCoupon}`);
         } else {
             sessionOptions.allow_promotion_codes = true;
         }
