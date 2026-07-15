@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sikeres Nevezés – VitaSteps</title>
     <link rel="stylesheet" href="/style.css">
-    
+
     <!-- Meta Pixel Code -->
     <script>
         !function (f, b, e, v, n, t, s) {
@@ -28,9 +28,28 @@
     <!-- End Meta Pixel Code -->
 
     <style>
-        .success-page { text-align: center; padding: 6rem 0; max-width: 700px; margin: 0 auto; }
-        .success-icon { font-size: 5rem; margin-bottom: 2rem; display: block; }
-        .details-container { background: var(--surface); padding: 2.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border-accent); margin-top: 3rem; text-align: left; }
+        .success-page {
+            text-align: center;
+            padding: 6rem 0;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .success-icon {
+            font-size: 5rem;
+            margin-bottom: 2rem;
+            display: block;
+        }
+
+        .details-container {
+            background: var(--surface);
+            padding: 2.5rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-accent);
+            margin-top: 3rem;
+            text-align: left;
+        }
+
         .btn-kalandkonyv {
             display: inline-flex;
             align-items: center;
@@ -44,7 +63,10 @@
             margin-top: 1.5rem;
             transition: opacity 0.2s;
         }
-        .btn-kalandkonyv:hover { opacity: 0.9; }
+
+        .btn-kalandkonyv:hover {
+            opacity: 0.9;
+        }
     </style>
 </head>
 
@@ -58,17 +80,21 @@
     <main class="container success-page">
         <span class="success-icon">🏔️</span>
         <h1 class="accent">Gratulálunk, a nevezésed sikeres!</h1>
-        <p style="font-size: 1.2rem; margin-top: 1rem; color: var(--text-mid);" id="success-sub">Hivatalosan is a kihívás résztvevője vagy.</p>
+        <p style="font-size: 1.2rem; margin-top: 1rem; color: var(--text-mid);" id="success-sub">Hivatalosan is a
+            kihívás résztvevője vagy.</p>
 
         <div class="details-container">
             <h3 style="margin-bottom: 0.8rem; color: var(--accent);" id="campaign-title">Kihívás adatai</h3>
             <p style="font-size: 1.05rem; line-height: 1.6; margin-bottom: 1.2rem;" id="success-desc">
-                Köszönjük a nevezésedet! A teljesítéssel, az érmed kézbesítésével és a további részletekkel kapcsolatban a sikeres bankkártyás fizetést követően hamarosan küldjük az e-mailt a portálbelépéssel és a számlával.
+                Köszönjük a nevezésedet! A teljesítéssel, az érmed kézbesítésével és a további részletekkel kapcsolatban
+                a sikeres bankkártyás fizetést követően hamarosan küldjük az e-mailt a portálbelépéssel és a számlával.
             </p>
-            
-            <div id="kalandkonyv-section" style="display:none; border-top: 1px solid var(--border); padding-top: 1.2rem;">
-                <p style="font-weight:600; font-size:1.05rem;">🎁 Töltsd le az ingyenes Nagy-Kevély Kalandkönyvet most:</p>
-                <a href="/assets/Nagy_Kevely_Kalandkonyv.pdf" target="_blank" class="btn-kalandkonyv">
+
+            <div id="kalandkonyv-section"
+                style="display:none; border-top: 1px solid var(--border); padding-top: 1.2rem;">
+                <p style="font-weight:600; font-size:1.05rem;">🎁 Töltsd le az ingyenes Nagy-Kevély Kalandkönyvet most:
+                </p>
+                <a href="/nagykevely/kalandkonyv.html" target="_blank" class="btn-kalandkonyv">
                     📖 Kalandkönyv Letöltése (PDF)
                 </a>
             </div>
@@ -101,13 +127,13 @@
                 const res = await fetch('/config/campaigns.json');
                 const config = await res.json();
                 const campaignConfig = config[campaignKey];
-                
+
                 if (campaignConfig) {
                     // Update texts
                     document.getElementById('success-sub').textContent = `Hivatalosan is a ${campaignConfig.name} kihívás résztvevője vagy.`;
                     document.getElementById('campaign-title').textContent = campaignConfig.name;
                     document.getElementById('btn-back-home').href = campaignKey === 'pilis' ? '/nagykevely/index.html' : '/predikalo/index.html';
-                    
+
                     // Show PDF guide if Pilis
                     if (campaignKey === 'pilis') {
                         document.getElementById('kalandkonyv-section').style.display = 'block';

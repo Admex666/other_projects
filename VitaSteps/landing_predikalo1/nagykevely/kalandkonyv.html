@@ -11,6 +11,11 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
+    
+    <!-- Leaflet.js Mapping Library CDN -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
     <style>
         :root {
             --bg-page: #ffffff;
@@ -190,7 +195,7 @@
 
         .input-group {
             flex: 1;
-            min-width: 220px;
+            min-width: 200px;
             display: flex;
             flex-direction: column;
             gap: 0.4rem;
@@ -212,6 +217,8 @@
             color: inherit;
             font-family: inherit;
             font-size: 0.95rem;
+            outline: none;
+            width: 100%;
         }
 
         body.theme-color .input-field {
@@ -227,7 +234,7 @@
         .radio-options {
             display: flex;
             gap: 1.5rem;
-            margin-top: 0.3rem;
+            margin-top: 0.5rem;
         }
 
         .radio-option {
@@ -328,7 +335,7 @@
 
         .page-title {
             font-family: 'Outfit', sans-serif;
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: 900;
             text-transform: uppercase;
             letter-spacing: 0.05em;
@@ -348,7 +355,7 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            margin: 0.6rem 0;
+            margin: 0.5rem 0;
             z-index: 2;
         }
 
@@ -484,11 +491,11 @@
         .route-stats {
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.35rem;
         }
 
         .route-stat-item {
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             line-height: 1.4;
         }
 
@@ -497,58 +504,55 @@
             flex-direction: column;
             align-items: center;
             text-align: center;
-            gap: 0.4rem;
+            gap: 0.3rem;
         }
 
         .qr-image {
-            width: 110px;
-            height: 110px;
+            width: 90px;
+            height: 90px;
             border: 3px solid #ffffff;
             border-radius: 6px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
         .qr-label {
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
 
-        .checkpoint-timeline {
-            margin-top: 1.25rem;
+        /* Map and Elevation Containers */
+        #map-container {
+            width: 100%;
+            height: 340px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin: 0.4rem 0;
+            z-index: 1;
             position: relative;
-            padding-left: 1.5rem;
         }
 
-        .checkpoint-timeline::before {
-            content: '';
-            position: absolute;
-            left: 5px;
-            top: 6px;
-            bottom: 6px;
-            width: 2px;
-            background: currentColor;
-            opacity: 0.2;
+        /* Leaflet custom gray-filtering for B&W theme */
+        body.theme-bw #map-container {
+            filter: grayscale(100%) contrast(1.1) brightness(1.03);
         }
 
-        .timeline-item {
+        #elevation-container {
+            width: 100%;
+            height: 110px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: rgba(128, 128, 128, 0.04);
+            padding: 2px;
             position: relative;
-            padding-bottom: 0.85rem;
-            font-size: 0.82rem;
-            line-height: 1.4;
+            margin-top: 0.2rem;
         }
 
-        .timeline-item:last-child {
-            padding-bottom: 0;
-        }
-
-        .timeline-item::before {
-            content: '📍';
-            position: absolute;
-            left: -23px;
-            top: 0;
-            font-size: 0.75rem;
+        #elevation-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
         }
 
         /* Log / Diary page styles */
@@ -600,16 +604,16 @@
             flex-shrink: 0;
         }
 
-        /* Dynamic POI Styles */
+        /* Dynamic POI Styles (Merged to 1 Page) */
         .poi-container {
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: 0.65rem;
         }
 
         .poi-card {
-            border-bottom: 1px solid rgba(128, 128, 128, 0.15);
-            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(128, 128, 128, 0.12);
+            padding-bottom: 0.65rem;
         }
 
         .poi-card:last-child {
@@ -619,12 +623,16 @@
 
         .poi-title {
             font-family: 'Outfit', sans-serif;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 700;
-            margin-bottom: 0.3rem;
+            margin-bottom: 0.2rem;
             display: flex;
             justify-content: space-between;
             color: var(--accent);
+        }
+
+        body.theme-color .poi-title span:first-child {
+            color: #bfff00;
         }
 
         body.theme-bw .poi-title {
@@ -632,17 +640,55 @@
         }
 
         .poi-desc {
-            font-size: 0.82rem;
-            line-height: 1.5;
-            margin-bottom: 0.4rem;
+            font-size: 0.8rem;
+            line-height: 1.45;
+            margin-bottom: 0.3rem;
+            text-align: justify;
         }
 
         .poi-extra {
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             font-style: italic;
-            opacity: 0.8;
-            padding-left: 0.5rem;
+            opacity: 0.85;
+            padding-left: 0.4rem;
             border-left: 2px solid currentColor;
+        }
+
+        /* Trivia Questions Styling */
+        .trivia-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .trivia-q {
+            border-left: 3px solid var(--accent);
+            padding: 0.6rem 0.8rem;
+            border-radius: 0 6px 6px 0;
+        }
+
+        body.theme-color .trivia-q {
+            border-left-color: #bfff00;
+        }
+
+        body.theme-bw .trivia-q {
+            border-left-color: #0f172a;
+        }
+
+        .trivia-text {
+            font-size: 0.85rem;
+            font-weight: 600;
+            line-height: 1.45;
+            margin-bottom: 0.4rem;
+        }
+
+        .trivia-a {
+            font-size: 0.72rem;
+            opacity: 0.75;
+            transform: rotate(180deg);
+            display: inline-block;
+            direction: rtl;
+            unicode-bidi: bidi-override;
         }
 
         /* Final Steps Page */
@@ -673,6 +719,11 @@
 
         /* Print Media Styles */
         @media print {
+            @page {
+                size: A5;
+                margin: 0;
+            }
+
             body {
                 background: none !important;
                 background-color: transparent !important;
@@ -689,33 +740,102 @@
             }
 
             .page {
-                border: 2px solid #000000 !important;
+                border: 1px solid #000000 !important;
                 box-shadow: none !important;
                 background: #ffffff !important;
                 color: #000000 !important;
                 width: 148mm !important;
                 height: 210mm !important;
                 page-break-after: always !important;
+                page-break-inside: avoid !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
                 border-radius: 0 !important;
+                padding: 1.2rem !important; /* Smaller margins during print */
+                box-sizing: border-box !important;
             }
 
-            /* Force black/white print adjustments for ink saving */
+            /* Ink saving border colors */
             body.theme-bw .page {
                 border-color: #000000 !important;
             }
 
             body.theme-bw .page-border {
-                border-color: rgba(0,0,0,0.3) !important;
+                border-color: rgba(0, 0, 0, 0.25) !important;
+                top: 6px !important;
+                bottom: 6px !important;
+                left: 6px !important;
+                right: 6px !important;
             }
 
             body.theme-bw .page-border-inner {
-                border-color: rgba(0,0,0,0.15) !important;
+                border-color: rgba(0, 0, 0, 0.12) !important;
+                top: 9px !important;
+                bottom: 9px !important;
+                left: 9px !important;
+                right: 9px !important;
             }
 
             body.theme-bw .line-field {
                 border-bottom-color: #000000 !important;
+            }
+
+            /* Shrink map and elements to fit exactly in A5 print layout */
+            #map-container {
+                height: 230px !important; /* Shorter on print to fit on page 3 */
+                margin: 0.3rem 0 !important;
+            }
+
+            #elevation-container {
+                height: 85px !important; /* Shorter on print */
+                margin-top: 0.1rem !important;
+            }
+
+            .qr-image {
+                width: 70px !important;
+                height: 70px !important;
+            }
+
+            .route-grid {
+                grid-template-columns: 1fr 100px !important;
+                gap: 0.5rem !important;
+                margin-bottom: 0.1rem !important;
+            }
+
+            .poi-card {
+                padding: 0.35rem 0 !important; /* Denser POI spacing */
+            }
+
+            .poi-desc {
+                font-size: 0.72rem !important;
+                line-height: 1.35 !important;
+                margin-bottom: 0.2rem !important;
+            }
+
+            .poi-extra {
+                font-size: 0.65rem !important;
+            }
+
+            .write-in-lines {
+                gap: 0.85rem !important;
+                margin-top: 0.8rem !important;
+            }
+
+            .info-card {
+                padding: 0.6rem !important;
+                margin-bottom: 0.4rem !important;
+            }
+
+            .bullet-list {
+                gap: 0.3rem !important;
+            }
+
+            .cover-graphics {
+                margin: 1.2rem 0 !important;
+            }
+
+            .cover-icon {
+                font-size: 3.5rem !important;
             }
         }
     </style>
@@ -730,25 +850,37 @@
             <div class="form-row">
                 <div class="input-group">
                     <label for="input-name">Név a borítólapon</label>
-                    <input type="text" id="input-name" class="input-field" value="Kalandor Hiker" oninput="updateName(this.value)">
+                    <input type="text" id="input-name" class="input-field" value="Kalandor"
+                        oninput="updateName(this.value)">
+                </div>
+                <div class="input-group">
+                    <label for="select-route">Választott túraútvonal</label>
+                    <select id="select-route" class="input-field" onchange="changeRoute(this.value)">
+                        <option value="csaladi">Családi táv (6 km)</option>
+                        <option value="klasszikus">Klasszikus táv (10 km)</option>
+                        <option value="hosszu">Kevély Ultra / Hosszú (25 km)</option>
+                        <option value="felmaraton">Kevély Félmaraton (15 km)</option>
+                    </select>
                 </div>
                 <div class="input-group">
                     <label>Nyomtatási stílus</label>
                     <div class="radio-options">
                         <label class="radio-option">
                             <input type="radio" name="style-select" value="bw" checked onclick="setTheme('bw')">
-                            <span>Fekete-Fehér (Tintakímélő)</span>
+                            <span>Fekete-Fehér</span>
                         </label>
                         <label class="radio-option">
                             <input type="radio" name="style-select" value="color" onclick="setTheme('color')">
-                            <span>Színes (Eredeti)</span>
+                            <span>Színes</span>
                         </label>
                     </div>
                 </div>
             </div>
 
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; border-top: 1px solid rgba(128,128,128,0.15); padding-top: 1.25rem;">
-                <span style="font-size: 0.85rem; opacity: 0.8; font-weight: 600;">Az oldalt A5 vagy A4 lapméretben is kinyomtathatod.</span>
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; border-top: 1px solid rgba(128,128,128,0.15); padding-top: 1.25rem;">
+                <span style="font-size: 0.85rem; opacity: 0.8; font-weight: 600;">Az oldalt A5 vagy A4 lapméretben is
+                    kinyomtathatod.</span>
                 <button type="submit" class="btn-print">
                     🖨️ Nyomtatás / Mentés PDF-ként
                 </button>
@@ -774,29 +906,31 @@
                     <div class="cover-badge">Kihívás Napló</div>
                 </div>
 
-                <h1 class="page-title" style="text-align: center; font-size: 1.85rem; margin-bottom: 0.5rem;">A Nagy-Kevély<br>Csillagai</h1>
+                <h1 class="page-title" style="text-align: center; font-size: 1.85rem; margin-bottom: 0.5rem;">A
+                    Nagy-Kevély<br>Csillagai</h1>
                 <div class="page-divider"></div>
                 <div class="cover-subtitle">Kalandkönyv és Hivatalos Túranapló</div>
 
                 <div class="cover-form">
                     <div class="line-field-group">
-                        <span class="line-label">Kalandor:</span>
-                        <div class="line-field" id="disp-name">Kalandor Hiker</div>
+                        <span class="line-label">Név:</span>
+                        <div class="line-field" id="disp-name">Kalandor</div>
                     </div>
                     <div class="line-field-group">
-                        <span class="line-label">Távolág:</span>
+                        <span class="line-label">Távolság:</span>
                         <div class="line-field" id="disp-distance">Családi táv (6 km)</div>
                     </div>
                     <div class="line-field-group">
                         <span class="line-label">Sorszám:</span>
-                        <div class="line-field" style="font-family: monospace; font-size: 0.95rem;" placeholder="pl. PK-023">PK-____</div>
+                        <div class="line-field" style="font-family: monospace; font-size: 0.95rem;"
+                            placeholder="pl. PK-023">PK-____</div>
                     </div>
                 </div>
             </div>
 
             <div class="page-footer">
                 <span>VITASTEPS CHALLENGE</span>
-                <span>OLDAL 1 / 8</span>
+                <span>1 / 8</span>
             </div>
         </div>
 
@@ -813,35 +947,48 @@
 
             <div class="page-content" style="justify-content: flex-start; gap: 1rem;">
                 <div class="info-card">
-                    <h3 style="font-size: 0.9rem; font-weight: 700; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">🎒 Túra Csekklista</h3>
+                    <h3
+                        style="font-size: 0.9rem; font-weight: 700; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                        🎒 Túra Csekklista</h3>
                     <ul class="bullet-list">
-                        <li class="bullet-point"><strong>Folyadék:</strong> Legalább 1.5 - 2 liter víz / izotóniás ital.</li>
-                        <li class="bullet-point"><strong>Lábbeli:</strong> Jó tapadású, bejáratott túracipő vagy terepfutó cipő.</li>
-                        <li class="bullet-point"><strong>Ruházat:</strong> Réteges öltözet, esőkabát váratlan záporok esetére.</li>
-                        <li class="bullet-point"><strong>Navigáció:</strong> Letöltött GPX és offline térkép (térerő hiány esetére).</li>
-                        <li class="bullet-point"><strong>Energia:</strong> Magvak, energiaszelet, szőlőcukor a csúcstámadáshoz.</li>
+                        <li class="bullet-point"><strong>Folyadék:</strong> Legalább 1.5 - 2 liter víz / izotóniás ital.
+                        </li>
+                        <li class="bullet-point"><strong>Lábbeli:</strong> Jó tapadású, bejáratott túracipő vagy
+                            terepfutó cipő.</li>
+                        <li class="bullet-point"><strong>Ruházat:</strong> Réteges öltözet, esőkabát váratlan záporok
+                            esetére.</li>
+                        <li class="bullet-point"><strong>Navigáció:</strong> Letöltött GPX és offline térkép (térerő
+                            hiány esetére).</li>
+                        <li class="bullet-point"><strong>Energia:</strong> Magvak, energiaszelet, szőlőcukor a
+                            csúcstámadáshoz.</li>
                     </ul>
                 </div>
 
                 <div class="info-card">
-                    <h3 style="font-size: 0.9rem; font-weight: 700; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">🌲 Kalandorok Kódexe</h3>
+                    <h3
+                        style="font-size: 0.9rem; font-weight: 700; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                        🌲 Kalandorok Kódexe</h3>
                     <ul class="bullet-list" style="gap: 0.65rem;">
-                        <li class="bullet-point"><strong>1. A szemetet hazaviszem:</strong> Semmilyen hulladékot nem hagyok hátra.</li>
-                        <li class="bullet-point"><strong>2. Tisztelem a csendet:</strong> Nem hangoskodom, tisztelem a vadon nyugalmát.</li>
-                        <li class="bullet-point"><strong>3. Úton maradok:</strong> Nem térek le a jelzett ösvényről az erózió elkerüléséért.</li>
-                        <li class="bullet-point"><strong>4. Segítő kéz:</strong> Ha bajbajutottat látok, megállok segíteni. Segélyhívó: <strong>112</strong></li>
+                        <li class="bullet-point"><strong>1. A szemetet hazaviszem:</strong> Semmilyen hulladékot nem
+                            hagyok hátra.</li>
+                        <li class="bullet-point"><strong>2. Tisztelem a csendet:</strong> Nem hangoskodom, tisztelem a
+                            vadon nyugalmát.</li>
+                        <li class="bullet-point"><strong>3. Úton maradok:</strong> Nem térek le a jelzett ösvényről az
+                            erózió elkerüléséért.</li>
+                        <li class="bullet-point"><strong>4. Segítő kéz:</strong> Ha bajbajutottat látok, megállok
+                            segíteni. Segélyhívó: <strong>112</strong></li>
                     </ul>
                 </div>
             </div>
 
             <div class="page-footer">
                 <span>BIZTONSÁGI ÚTMUTATÓ</span>
-                <span>OLDAL 2 / 8</span>
+                <span>2 / 6</span>
             </div>
         </div>
 
-        <!-- PAGE 3: ROUTE DETAILS (DYNAMIC) -->
-        <div class="page" id="p3">
+        <!-- PAGE 3: ROUTE MAP & ELEVATION PROFILE -->
+        <div class="page" id="p3" style="padding: 1.8rem 2.2rem;">
             <div class="page-border"></div>
             <div class="page-border-inner"></div>
 
@@ -851,13 +998,12 @@
                 <div class="page-divider"></div>
             </div>
 
-            <div class="page-content" style="justify-content: flex-start; gap: 0.8rem;">
-                <div class="route-grid">
+            <div class="page-content" style="justify-content: flex-start; gap: 0.2rem;">
+                <!-- Compact stats and QR row -->
+                <div class="route-grid" style="margin-bottom: 0.2rem;">
                     <div class="route-stats">
                         <div class="route-stat-item"><strong>Távolság:</strong> <span id="route-dist">6.2 km</span></div>
                         <div class="route-stat-item"><strong>Szintemelkedés:</strong> <span id="route-elev">190 m</span></div>
-                        <div class="route-stat-item"><strong>Becsült idő:</strong> <span id="route-time">~2 óra</span></div>
-                        <div class="route-stat-item"><strong>Nehézség:</strong> <span id="route-diff">Könnyű</span></div>
                     </div>
                     <div class="qr-wrapper">
                         <img src="" class="qr-image" id="route-qr" alt="GPX QR Code">
@@ -865,114 +1011,41 @@
                     </div>
                 </div>
 
-                <div class="info-card" style="margin-top: 0.5rem; margin-bottom: 0; flex-grow: 1;">
-                    <h3 style="font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem; text-transform: uppercase;">📍 Főbb Ellenőrzőpontok</h3>
-                    <div class="checkpoint-timeline" id="route-timeline">
-                        <!-- Filled dynamically -->
-                    </div>
+                <!-- Leaflet Interactive Map div -->
+                <div id="map-container"></div>
+
+                <!-- HTML5 Canvas Elevation Profile -->
+                <div id="elevation-container">
+                    <canvas id="elevation-canvas"></canvas>
                 </div>
             </div>
 
             <div class="page-footer">
-                <span>ÚTVONAL ADATOK</span>
-                <span>OLDAL 3 / 8</span>
+                <span>TÉRKÉP ÉS SZINTMETSZET</span>
+                <span>3 / 6</span>
             </div>
         </div>
 
-        <!-- PAGE 4: DYNAMIC POI DETAILS I. -->
+        <!-- PAGE 4: MERGED POI DETAILS -->
         <div class="page" id="p4">
             <div class="page-border"></div>
             <div class="page-border-inner"></div>
 
             <div class="page-header">
                 <div class="brand">VitaSteps</div>
-                <h2 class="page-title" style="font-size: 1.15rem;">Útvonal Látnivalók I.</h2>
+                <h2 class="page-title" style="font-size: 1.15rem;">Útvonal Látnivalók</h2>
                 <div class="page-divider"></div>
             </div>
 
             <div class="page-content" style="justify-content: flex-start;">
-                <div class="poi-container" id="poi-list-1">
-                    <!-- Loaded dynamically -->
+                <div class="poi-container" id="poi-list">
+                    <!-- Loaded dynamically (All 3 POIs in strict geographic order) -->
                 </div>
             </div>
 
             <div class="page-footer">
-                <span>TÖRTÉNELEM ÉS GEOLÓGIA</span>
-                <span>OLDAL 4 / 8</span>
-            </div>
-        </div>
-
-        <!-- PAGE 5: DYNAMIC POI DETAILS II. -->
-        <div class="page" id="p5">
-            <div class="page-border"></div>
-            <div class="page-border-inner"></div>
-
-            <div class="page-header">
-                <div class="brand">VitaSteps</div>
-                <h2 class="page-title" style="font-size: 1.15rem;">Útvonal Látnivalók II.</h2>
-                <div class="page-divider"></div>
-            </div>
-
-            <div class="page-content" style="justify-content: flex-start;">
-                <div class="poi-container" id="poi-list-2">
-                    <!-- Loaded dynamically -->
-                </div>
-            </div>
-
-            <div class="page-footer">
-                <span>LEGENDÁK ÉS ÉRDEKESSÉGEK</span>
-                <span>OLDAL 5 / 8</span>
-            </div>
-        </div>
-
-        <!-- PAGE 6: BINGO QUESTS -->
-        <div class="page" id="p6">
-            <div class="page-border"></div>
-            <div class="page-border-inner"></div>
-
-            <div class="page-header">
-                <div class="brand">VitaSteps</div>
-                <h2 class="page-title" style="font-size: 1.15rem;">Erdei Megfigyelő Bingó</h2>
-                <div class="page-divider"></div>
-            </div>
-
-            <div class="page-content" style="justify-content: flex-start; gap: 0.8rem;">
-                <p style="font-size: 0.85rem; margin-bottom: 0.5rem; text-align: center;">Keresd meg és pipáld ki a túra során az alábbi dolgokat! Nagyszerű szórakozás egyedül vagy a családdal.</p>
-                <div class="bingo-grid">
-                    <div class="bingo-item">
-                        <div class="checkbox-box"></div>
-                        <span>Dolomit sziklafal (pl. a Teve-sziklánál vagy az Ezüst-hegyen)</span>
-                    </div>
-                    <div class="bingo-item">
-                        <div class="checkbox-box"></div>
-                        <span>Az Egri vár másolatának kapubástyája vagy falai</span>
-                    </div>
-                    <div class="bingo-item">
-                        <div class="checkbox-box"></div>
-                        <span>Egy sárga turistajelzés (sáv, kereszt vagy kör)</span>
-                    </div>
-                    <div class="bingo-item">
-                        <div class="checkbox-box"></div>
-                        <span>Gyönyörű panoráma a Kevély csúcsáról vagy szikláiról</span>
-                    </div>
-                    <div class="bingo-item">
-                        <div class="checkbox-box"></div>
-                        <span>Kellemes erdei illat vagy virágzó növény (levendula, vadvirág)</span>
-                    </div>
-                    <div class="bingo-item">
-                        <div class="checkbox-box"></div>
-                        <span>Erdei madárdal vagy mókus neszezés a lombkoronák között</span>
-                    </div>
-                    <div class="bingo-item">
-                        <div class="checkbox-box"></div>
-                        <span>Barlangbejárat vagy sziklahasadék (pl. Mackó-barlang vagy Kőfülke)</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="page-footer">
-                <span>INTERAKTÍV JÁTÉKOK</span>
-                <span>OLDAL 6 / 8</span>
+                <span>KÖRNYÉK ÖRÖKSÉGE</span>
+                <span>4 / 6</span>
             </div>
         </div>
 
@@ -1030,7 +1103,8 @@
                 </div>
 
                 <div class="write-in-lines">
-                    <span style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; opacity: 0.8;">Saját élményeim & emlékezetes pillanatok:</span>
+                    <span style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; opacity: 0.8;">Saját
+                        élményeim & emlékezetes pillanatok:</span>
                     <div class="write-line"></div>
                     <div class="write-line"></div>
                     <div class="write-line"></div>
@@ -1043,12 +1117,12 @@
 
             <div class="page-footer">
                 <span>SZEMÉLYES NAPLÓ</span>
-                <span>OLDAL 7 / 8</span>
+                <span>5 / 6</span>
             </div>
         </div>
 
-        <!-- PAGE 8: COMPLETION & MEDAL -->
-        <div class="page" id="p8">
+        <!-- PAGE 6: COMPLETION & MEDAL -->
+        <div class="page" id="p6">
             <div class="page-border"></div>
             <div class="page-border-inner"></div>
 
@@ -1060,36 +1134,65 @@
 
             <div class="page-content" style="justify-content: space-around; align-items: center; gap: 1rem;">
                 <div class="final-badge">🏆</div>
-                <h3 style="font-size: 1.2rem; font-weight: 800; text-align: center; color: var(--accent);">Gratulálunk a túrához!</h3>
+                <h3 style="font-size: 1.2rem; font-weight: 800; text-align: center; color: var(--accent);">Gratulálunk a
+                    túrához!</h3>
                 <p style="text-align: center; font-size: 0.85rem; max-width: 320px; line-height: 1.5; color: inherit;">
-                    Megmásztad a csúcsot és teljesítetted a távot! Ezzel megszolgáltad a kézzel festett, egyedi <strong>A Nagy-Kevély csillagjai</strong> érmedet.
+                    Megmásztad a csúcsot és teljesítetted a távot! Ezzel megszolgáltad a kézzel festett, egyedi
+                    <strong>A Nagy-Kevély csillagjai</strong> érmedet.
                 </p>
 
                 <div class="info-card" style="width: 100%; margin-bottom: 0;">
-                    <h4 style="font-size: 0.78rem; font-weight: 800; text-transform: uppercase; margin-bottom: 0.4rem; text-align: center;">Hogyan kapod meg az érmet?</h4>
+                    <h4
+                        style="font-size: 0.78rem; font-weight: 800; text-transform: uppercase; margin-bottom: 0.4rem; text-align: center;">
+                        Hogyan kapod meg az érmet?</h4>
                     <ul class="bullet-list" style="gap: 0.45rem;">
-                        <li class="bullet-point" style="font-size: 0.78rem;"><strong>1. Igazolás:</strong> Mentsd el a GPS túrarögzítést (GPX, Strava, Garmin).</li>
-                        <li class="bullet-point" style="font-size: 0.78rem;"><strong>2. Feltöltés:</strong> Lépj be a VitaSteps portálra és töltsd fel a fájlt vagy szelfit.</li>
-                        <li class="bullet-point" style="font-size: 0.78rem;"><strong>3. Postázás:</strong> Az igazolás jóváhagyása után azonnal küldjük az érmet a Foxpost pontodra.</li>
+                        <li class="bullet-point" style="font-size: 0.78rem;"><strong>1. Igazolás:</strong> Mentsd el a
+                            GPS túrarögzítést (GPX, Strava, Garmin).</li>
+                        <li class="bullet-point" style="font-size: 0.78rem;"><strong>2. Feltöltés:</strong> Lépj be a
+                            VitaSteps portálra és töltsd fel a fájlt vagy szelfit.</li>
+                        <li class="bullet-point" style="font-size: 0.78rem;"><strong>3. Postázás:</strong> Az igazolás
+                            jóváhagyása után azonnal küldjük az érmet a Foxpost pontodra.</li>
                     </ul>
                 </div>
 
                 <div style="width: 100%; text-align: center;">
-                    <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; opacity: 0.75;">Saját értékelésem (1-5):</span>
+                    <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; opacity: 0.75;">Saját
+                        értékelésem (1-5):</span>
                     <div class="stars-row">⭐ ⭐ ⭐ ⭐ ⭐</div>
                 </div>
             </div>
 
             <div class="page-footer">
                 <span>ÉREM ÁTVÉTEL</span>
-                <span>OLDAL 8 / 8</span>
+                <span>6 / 6</span>
             </div>
         </div>
 
     </div>
 
     <script>
-        // Route configurations with detailed, research-backed POIs
+        // Global map & state pointers
+        let map = null;
+        let polyline = null;
+        let markersGroup = null;
+
+        // Earth radius in meters (for math)
+        const EARTH_RADIUS = 6371000;
+
+        function haversineDistance(lat1, lon1, lat2, lon2) {
+            const phi1 = lat1 * Math.PI / 180;
+            const phi2 = lat2 * Math.PI / 180;
+            const deltaPhi = (lat2 - lat1) * Math.PI / 180;
+            const deltaLambda = (lon2 - lon1) * Math.PI / 180;
+
+            const a = Math.sin(deltaPhi / 2) * Math.sin(deltaPhi / 2) +
+                Math.cos(phi1) * Math.cos(phi2) *
+                Math.sin(deltaLambda / 2) * Math.sin(deltaLambda / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return EARTH_RADIUS * c;
+        }
+
+        // Route configurations with detailed, research-backed POIs in strict GEOGRAPHIC sequence
         const routes = {
             csaladi: {
                 title: "Családi táv (6 km)",
@@ -1108,21 +1211,37 @@
                 pois: [
                     {
                         name: "Teve-szikla",
-                        subtitle: "Különleges dolomittornyok",
-                        desc: "Mintegy 220 millió éves fődolomit, amelyet forró kovás oldatok jártak át, így ellenállóvá vált a lepusztulással szemben. A puha részek koptak el, így alakult ki a fekvő teve alakzat.",
-                        extra: "Tudtad-e? Az Egri Csillagok filmben a lőporraktárba vezető titkos jeleneteket ennél a sziklánál forgatták."
+                        lat: 47.61258,
+                        lon: 18.97862,
+                        location: "Útvonal elején, ~1.2 km-nél",
+                        desc: "Mintegy 220 millió éves fődolomit szikla, amelyet 25-37 millió éve forró kovás oldatok jártak át, így kőkeménnyé és ellenállóvá vált. A puha részek koptak el, így alakult ki a teve alakú orom.",
+                        extra: "Tudtad-e? Az Egri csillagok film lőporraktárba vezető jeleneteinek egy részét ennél a sziklánál rögzítették."
                     },
                     {
                         name: "Egri vár másolata",
-                        subtitle: "Filmtörténeti emlékhely",
-                        desc: "Várkonyi Zoltán rendező építtette 1968-ban az Egri csillagok forgatásához. Részben fából és kőből épült a monumentális ostromjelenetek felvételéhez.",
-                        extra: "Tudtad-e? A forgatás alatt a vár egy része ténylegesen leégett, de a felvételeket a lángok ellenére is folytatták."
+                        lat: 47.618529,
+                        lon: 18.969906,
+                        location: "Útvonal közepén, ~2.0 km-nél",
+                        desc: "Várkonyi Zoltán rendező építtette 1968-ban az Egri csillagok film monumentalitásának bemutatására. A díszletvár részben fából és kőből épült fel a statisztákat felvonultató csaták kedvéért.",
+                        extra: "Tudtad-e? A forgatások alatt a vár egy része ténylegesen leégett, de a felvételeket nem állították le."
                     },
                     {
                         name: "Kevélyhegyi Levendulamező",
-                        subtitle: "Mediterrán illatfelhő a hegy lábánál",
-                        desc: "2016-ban alapított biogazdaság Pilisborosjenő határában, amely ma több mint 20 ezer levendulabokornak és tavasszal 150 ezer virágzó tulipánnak ad otthont.",
-                        extra: "Tudtad-e? A vadvirágos rétek felett magasodó hegycsúcs és a lila levendula-sorok kontrasztja a Pilis egyik legszebb látványa."
+                        lat: 47.610500,
+                        lon: 18.983800,
+                        location: "Útvonal végén, ~5.5 km-nél",
+                        desc: "2016-ban alapított biogazdaság Pilisborosjenő lábánál, közvetlenül a hegy lábánál, ahol mára több mint 20 ezer levendulabokor illatozik, kiegészülve tavasszal 150 ezer tulipán virágzásával.",
+                        extra: "Tudtad-e? A sötétlila virágsorok és a felette büszkén tornyosuló hegycsúcs sziluettje az egyik legszebb kilátás a Pilisben."
+                    }
+                ],
+                quizzes: [
+                    {
+                        q: "Miért épült az Egri vár másolata Pilisborosjenő mellett?",
+                        a: ".zséztéwzém mliF kokagillatsz irgE sa-8691 zA"
+                    },
+                    {
+                        q: "Milyen virágzás borítja lilába a Kevély lábát minden nyáron?",
+                        a: ".őzemaludneveL irőnejosorobsiliP A"
                     }
                 ]
             },
@@ -1135,30 +1254,62 @@
                 gpx: "02klasszik.gpx",
                 timeline: [
                     "Pilisborosjenő sorompó (Indulás)",
-                    "Teve-szikla (Geológiai látványosság)",
+                    "Teve-szikla (Geológiai orom)",
                     "Egri vár másolata (Filmes romok)",
                     "Nagy-Kevély csúcs (534m, Csúcsszikla)",
-                    "Kevély-nyereg ( Stromfeld Aurél pad)",
+                    "Kevély-nyereg (Stromfeld Aurél pad)",
                     "Pilisborosjenő sorompó (Visszaérkezés)"
                 ],
                 pois: [
                     {
-                        name: "Nagy-Kevély csúcs (534m)",
-                        subtitle: "A Kevélyek legmagasabb pontja",
-                        desc: "Sasbércként kiemelkedő kőzettömb. A Kevély név a 18. században betelepülő szerb lakosság 'kovily' szavából ered, ami árvalányhajat jelent – ezt költötte át a nyelvújítás 'kevély'-re.",
-                        extra: "Tudtad-e? Tiszta időben egyszerre látni innen a Gellért-hegyet, a János-hegyet és Dobogókőt is."
+                        name: "Teve-szikla",
+                        lat: 47.612580,
+                        lon: 18.978620,
+                        location: "Útvonal elején, ~1.2 km-nél",
+                        desc: "Mintegy 220 millió éves fődolomit szikla, amelyet 25-37 millió éve forró kovás oldatok jártak át, így kőkeménnyé és ellenállóvá vált. A puha részek koptak el, így alakult ki a teve alakú orom.",
+                        extra: "Tudtad? Az Egri csillagok film lőporraktárba vezető jeleneteinek egy részét ennél a sziklánál rögzítették."
                     },
                     {
-                        name: "Kevély-nyereg és a hajdani turistaház",
-                        subtitle: "Egy elfeledett menedék emléke",
-                        desc: "1928-ban épült fel a hatvan férőhelyes Stromfeld Aurél turistaház. Az építőanyagot a természetbarátok hátizsákban, kézzel hordták fel. A ház 1992-ben rejtélyes körülmények között leégett.",
-                        extra: "Tudtad-e? A hajdani ház helyén ma esőbeálló és egy emléktábla várja a túrázókat."
+                        name: "Egri vár másolata",
+                        lat: 47.618529,
+                        lon: 18.969906,
+                        location: "Útvonal elején, ~2.0 km-nél",
+                        desc: "Várkonyi Zoltán rendező építtette 1968-ban az Egri csillagok film monumentalitásának bemutatására. A díszletvár részben fából és kőből épült fel a statisztákat felvonultató csaták kedvéért.",
+                        extra: "Tudtad? A forgatások alatt a vár egy része ténylegesen leégett, de a felvételeket nem állították le."
+                    },
+                    {
+                        name: "Kevély-nyereg és a menedékház helye",
+                        lat: 47.626850,
+                        lon: 18.976753,
+                        location: "Kapaszkodás közben, ~4.5 km-nél",
+                        desc: "A Nagy- és Kis-Kevély közti nyeregben állt a híres Stromfeld Aurél menedékház, melyet a természetbarátok kézi erővel hordtak fel. A ház 1992-ben rejtélyes körülmények között teljesen leégett.",
+                        extra: "Tudtad? Ma egy kis esőbeálló és egy emléktábla jelzi a hajdani legendás menedékház helyét."
+                    },
+                    {
+                        name: "Nagy-Kevély csúcs (534m)",
+                        lat: 47.622870,
+                        lon: 18.984690,
+                        location: "A csúcson, ~5.8 km-nél",
+                        desc: "A Kevély-csoport legmagasabb pontja. Nevének eredete a szerb 'kovily' szóból származik, ami árvalányhajat jelent, mivel a szerb lakosság a hegy kopár, fátlan, árvalányhajjal borított oldalára utalt ezzel.",
+                        extra: "Tudtad? Tiszta időben egyszerre látható innen a Gellért-hegy, a János-hegy, a Hármashatár-hegy és Dobogókő."
                     },
                     {
                         name: "Kevély-hegyi kőfülke (Szódás-barlang)",
-                        subtitle: "Panorámás sziklaüreg",
+                        lat: 47.623800,
+                        lon: 18.980067,
+                        location: "Ereszkedés közben, ~6.5 km-nél",
                         desc: "A Nagy-Kevély meredek dolomitfalában nyíló barlang. A Szódás-barlang nevet onnan kapta, hogy az alatta futó úton szállították fel egykor a szódát a nyergi turistaházhoz.",
-                        extra: "Tudtad-e? Az üregből lenyűgöző kilátás nyílik a Pilisborosjenő alatti völgyekre."
+                        extra: "Tudtad? A barlang teraszáról csodálatos kilátás nyílik a Pilisborosjenő alatti medencére."
+                    }
+                ],
+                quizzes: [
+                    {
+                        q: "Honnan ered a Kevély név a legvalószínűbb elmélet szerint?",
+                        a: ".őljnelej tajahynálavra ta 'ylivok' brézs a lbőzséR"
+                    },
+                    {
+                        q: "Milyen menedékház állt egykor a Kevély-nyeregben?",
+                        a: ".záhdenem léruA dlefmortS zA"
                     }
                 ]
             },
@@ -1180,21 +1331,53 @@
                 pois: [
                     {
                         name: "Mackó-barlang (Kis-Kevély)",
-                        subtitle: "Világhírű jégkorszaki lelőhely",
-                        desc: "Magyarország egyik legrégebben feltárt barlangja. Hatalmas ásító medveszájhoz hasonlító bejárata van. Barlangi medve, mamut, gyapjas orrszarvú csontok és őskori kőeszközök kerültek elő.",
-                        extra: "Tudtad-e? A barlang ma fokozottan védett, mennyezetén védett denevérkolóniák és barlangi pókok élnek."
+                        lat: 47.632640,
+                        lon: 18.971420,
+                        location: "Csobánka után, ~3.2 km-nél",
+                        desc: "Világhírű jégkorszaki lelőhely. Óriási ásító medveszájhoz hasonlító bejárata van. A kutatások során barlangi medve, mamut és gyapjas orrszarvú csontok mellett neandervölgyi ősember eszközei kerültek elő.",
+                        extra: "Tudtad? Fokozottan védett barlang, bejárata előtt kis turistapihenő van kialakítva padokkal."
+                    },
+                    {
+                        name: "Kevély-nyereg és a menedékház helye",
+                        lat: 47.626850,
+                        lon: 18.976753,
+                        location: "Ereszkedés előtt, ~4.5 km-nél",
+                        desc: "A Nagy- és Kis-Kevély közti nyeregben állt a híres Stromfeld Aurél menedékház, melyet a természetbarátok kézi erővel hordtak fel. A ház 1992-ben rejtélyes körülmények között teljesen leégett.",
+                        extra: "Tudtad? Ma egy kis esőbeálló és egy emléktábla jelzi a hajdani legendás menedékház helyét."
+                    },
+                    {
+                        name: "Nagy-Kevély csúcs (534m)",
+                        lat: 47.622870,
+                        lon: 18.984690,
+                        location: "A csúcson, ~5.5 km-nél",
+                        desc: "A Kevély-csoport legmagasabb pontja. Nevének eredete a szerb 'kovily' szóból származik, ami árvalányhajat jelent, mivel a szerb lakosság a hegy kopár, fátlan, árvalányhajjal borított oldalára utalt ezzel.",
+                        extra: "Tudtad? Tiszta időben egyszerre látható innen a Gellért-hegy, a János-hegy, a Hármashatár-hegy és Dobogókő."
                     },
                     {
                         name: "Sicambria titka (Monalovac)",
-                        subtitle: "Hunok legendás birodalmi központja",
-                        desc: "A középkori krónikák szerint ezen a vidéken állt Sicambria, Attila hun király fővárosa és temetkezési helye. Pilis-kutatók régészeti romokat és barlangokat azonosítottak a Monalovac hegyen.",
-                        extra: "Tudtad-e? A helyi monda szerint az Ezüst-hegy és Arany-lyuk elnevezések a király ezüst- és aranykoporsójára utalhatnak."
+                        lat: 47.625800,
+                        lon: 19.019200,
+                        location: "Budakalász felé, ~10.0 km-nél",
+                        desc: "A középkori krónikák szerint ezen a területen állt Sicambria, Attila hun király fővárosa és temetkezési helye. Pilis-kutatók várfalmaradványokat és feltételezett fejedelmi sírokat azonosítottak a Monalovac hegyen.",
+                        extra: "Tudtad? A környékbeli Ezüst-hegy és Arany-lyuk nevek a legenda szerint az arany- és ezüstkoporsókra utalhatnak."
                     },
                     {
                         name: "Oszoly-csúcs (329m)",
-                        subtitle: "A magyar sziklamászás bölcsője",
-                        desc: "Csobánka felett magasodó, fehér mészkőszirt. Tetején kettős kereszt és zászlórúd áll. A sziklaláncolat több mint húsz barlangot rejt és kiváló edzőterep sziklamászóknak.",
-                        extra: "Tudtad-e? A legenda szerint a csobánkai völgy úgy keletkezett, hogy a Jóisten megpihent itt a világ teremtése után."
+                        lat: 47.646700,
+                        lon: 18.974000,
+                        location: "Útvonal legvégén, ~13.5 km-nél",
+                        desc: "Csobánka felett magasodó mészkőszirt, a magyar sziklamászás történelmi bölcsője. Tetején kettős kereszt és nemzeti zászló áll, ahonnan teljes 360 fokos panoráma nyílik a Csobánkai-medencére.",
+                        extra: "Tudtad? A legenda szerint a völgy úgy keletkezett, hogy a Jóisten megpihent itt az oldalára dőlve a világ teremtése után."
+                    }
+                ],
+                quizzes: [
+                    {
+                        q: "Milyen jégkorszaki állatok leleteit találták a Mackó-barlangban?",
+                        a: ".tkotso csmedem ignalraB"
+                    },
+                    {
+                        q: "Melyik hun király sírját és fővárosát sejtik a Pilis-kutatók Sicambriánál?",
+                        a: ".tátilaKirák kounH zA"
                     }
                 ]
             },
@@ -1216,21 +1399,61 @@
                 pois: [
                     {
                         name: "Kő-hegyi Menedékház & Petőfi-kilátó",
-                        subtitle: "Történelmi menedékhely",
-                        desc: "1933-ban épült a Czibulka János menedékház Pomáz felett. Petőfi Sándor 1845. szeptember 23-án megpihent a Kő-hegy teraszán, ami ihletet adott a 'Visegrád táján' verséhez.",
-                        extra: "Tudtad-e? A kilátópont mellett áll a különleges vulkáni breccsa kőzetből álló, gomba alakú 'Napóleon kalapja' szikla."
+                        lat: 47.675833,
+                        lon: 19.018611,
+                        location: "Útvonal elején, ~4.5 km-nél",
+                        desc: "1933-ban épült a Czibulka János menedékház Pomáz felett. Petőfi Sándor 1845. szeptember 23-án megpihent a sziklás teraszon, ami ihletet adott a 'Visegrád táján' verséhez.",
+                        extra: "Tudtad? Közvetlen mellette áll a vulkáni breccsa kőzetből álló bizarr, gomba alakú 'Napóleon kalapja' szikla."
+                    },
+                    {
+                        name: "Mackó-barlang (Kis-Kevély)",
+                        lat: 47.632640,
+                        lon: 18.971420,
+                        location: "Csobánkai szakaszon, ~12.5 km-nél",
+                        desc: "Világhírű jégkorszaki lelőhely. Óriási ásító medveszájhoz hasonlító bejárata van. A kutatások során barlangi medve, mamut és gyapjas orrszarvú csontok mellett neandervölgyi ősember eszközei kerültek elő.",
+                        extra: "Tudtad? Fokozottan védett barlang, bejárata előtt kis turistapihenő van kialakítva padokkal."
+                    },
+                    {
+                        name: "Nagy-Kevély csúcs (534m)",
+                        lat: 47.622870,
+                        lon: 18.984690,
+                        location: "A csúcson, ~16.0 km-nél",
+                        desc: "A Kevély-csoport legmagasabb pontja. Nevének eredete a szerb 'kovily' szóból származik, ami árvalányhajat jelent, mivel a szerb lakosság a hegy kopár, fátlan, árvalányhajjal borított oldalára utalt ezzel.",
+                        extra: "Tudtad? Tiszta időben egyszerre látható innen a Gellért-hegy, a János-hegy, a Hármashatár-hegy és Dobogókő."
                     },
                     {
                         name: "Ezüst-hegyi kőfejtő",
-                        subtitle: "Csillogó dolomitbánya a hegygerincen",
-                        desc: "Felhagyott, lépcsőzetes bánya. A nevével ellentétben ezüstöt sosem találtak itt, az elnevezés a kőzet napfényben ezüstösen csillogó baritkristályos felszínére utal.",
-                        extra: "Tudtad-e? Itt található a Pilis leghosszabb barlangja, a 400 méter hosszú, szűk kürtővel rendelkező Papp Ferenc-barlang."
+                        lat: 47.611975,
+                        lon: 19.004692,
+                        location: "A csúcs után, lefelé haladva, ~17.5 km-nél",
+                        desc: "Egykori dolomit- és homokkőbánya. Az elnevezés a kőzet napfényben ezüstösen csillogó baritkristályos felszínére utal. Itt található a Pilis leghosszabb barlangja, a 400 megnevezett Papp Ferenc-barlang.",
+                        extra: "Tudtad? A bányaudvaron járva a 20 millió éves egykori Pannon-tenger cementesedett üledékén lépkedünk."
                     },
                     {
-                        name: "Mackó-barlang & Sicambria",
-                        subtitle: "Az ősemberektől a hun birodalomig",
-                        desc: "Az útvonal érinti a Kis-Kevély ősemberleleteiről híres Mackó-barlangját és a Monalovac hegy titokzatos, hun vármaradványként emlegetett Sicambria legendájának helyszínét.",
-                        extra: "Tudtad-e? A 25 km-es táv teljesítése során a Kevélyek szinte összes nagy történelmi és természeti misztikumát bejárod."
+                        name: "Teve-szikla",
+                        lat: 47.612580,
+                        lon: 18.978620,
+                        location: "Útvonal végén, ~21.5 km-nél",
+                        desc: "Mintegy 220 millió éves fődolomit szikla, amelyet 25-37 millió éve forró kovás oldatok jártak át, így kőkeménnyé és ellenállóvá vált. A puha részek koptak el, így alakult ki a teve alakú orom.",
+                        extra: "Tudtad? Az Egri csillagok film lőporraktárba vezető jeleneteinek egy részét ennél a sziklánál rögzítették."
+                    },
+                    {
+                        name: "Egri vár másolata",
+                        lat: 47.618529,
+                        lon: 18.969906,
+                        location: "Útvonal végén, ~22.5 km-nél",
+                        desc: "Várkonyi Zoltán rendező építtette 1968-ban az Egri csillagok film monumentalitásának bemutatására. A díszletvár részben forgatások kedvéért épült fel a statisztákat felvonultató csatákhoz.",
+                        extra: "Tudtad? A forgatások alatt a vár egy része ténylegesen leégett, de a felvételeket nem állították le."
+                    }
+                ],
+                quizzes: [
+                    {
+                        q: "Melyik költőnk pihent meg 1845-ben a Kő-hegy teraszán?",
+                        a: ".rodnáSifeőteP"
+                    },
+                    {
+                        q: "Hogyan nevezik a Kő-hegyi kilátó melletti vulkáni gomba-sziklát?",
+                        a: ".szikla aja-palaK noelópaN"
                     }
                 ]
             }
@@ -1238,26 +1461,32 @@
 
         // Parse query parameters
         const params = new URLSearchParams(window.location.search);
-        const nameParam = params.get('nev') || "Kalandor Hiker";
+        const nameParam = params.get('nev') || "Kalandor";
         const routeParam = params.get('tav') || "csaladi";
         const styleParam = params.get('style') || "bw";
 
         // Initialize values
         document.getElementById('input-name').value = nameParam;
         updateName(nameParam);
-        
-        // Select route input
-        const routeRadio = document.querySelector(`input[name="style-select"][value="${styleParam}"]`);
-        if (routeRadio) {
-            routeRadio.checked = true;
+
+        // Set dropdown route selector
+        const routeSelect = document.getElementById('select-route');
+        if (routeSelect) {
+            routeSelect.value = routeParam;
+        }
+
+        // Select style radio input
+        const styleRadio = document.querySelector(`input[name="style-select"][value="${styleParam}"]`);
+        if (styleRadio) {
+            styleRadio.checked = true;
         }
         setTheme(styleParam);
 
-        // Select correct route radio option
+        // Render initial route layout
         renderRoute(routeParam);
 
         function updateName(val) {
-            document.getElementById('disp-name').textContent = val || "Kalandor Hiker";
+            document.getElementById('disp-name').textContent = val || "Kalandor";
         }
 
         function setTheme(theme) {
@@ -1266,65 +1495,348 @@
             } else {
                 document.body.className = 'theme-bw';
             }
+            // Trigger chart re-render with new colors
+            const activeRoute = document.getElementById('select-route').value;
+            renderRoute(activeRoute);
         }
 
-        function renderRoute(routeKey) {
+        function changeRoute(routeVal) {
+            renderRoute(routeVal);
+        }
+
+        async function renderRoute(routeKey) {
             const route = routes[routeKey] || routes.csaladi;
-            
+            const activePois = (route.pois || []).slice(0, 5);
+
             // Update Page 1 Cover
             document.getElementById('disp-distance').textContent = route.title;
-            
+
             // Update Page 3 Route details
             document.getElementById('route-title').textContent = route.title;
             document.getElementById('route-dist').textContent = route.distance;
             document.getElementById('route-elev').textContent = route.elevation;
-            document.getElementById('route-time').textContent = route.time;
-            document.getElementById('route-diff').textContent = route.difficulty;
-            
-            // Set dynamic QR code using free public API redirecting to the GPX track
+
+            // Set dynamic QR code pointing to the GPX track
             const gpxUrl = `${window.location.origin}/assets/nagykevely/tracks/${route.gpx}`;
             const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(gpxUrl)}`;
             document.getElementById('route-qr').src = qrApiUrl;
-            
-            // Render Timeline
+
+            // Render Timeline (if the container exists in DOM)
             const timelineContainer = document.getElementById('route-timeline');
-            timelineContainer.innerHTML = '';
-            route.timeline.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'timeline-item';
-                div.textContent = item;
-                timelineContainer.appendChild(div);
-            });
-
-            // Render Dynamic POIs
-            const p1 = document.getElementById('poi-list-1');
-            const p2 = document.getElementById('poi-list-2');
-            p1.innerHTML = '';
-            p2.innerHTML = '';
-
-            // We have 3 POIs per route
-            if (route.pois && route.pois.length >= 3) {
-                // Render first 2 POIs on Page 4
-                for (let i = 0; i < 2; i++) {
-                    p1.appendChild(createPoiHtml(route.pois[i]));
-                }
-                // Render 3rd POI on Page 5
-                p2.appendChild(createPoiHtml(route.pois[2]));
+            if (timelineContainer) {
+                timelineContainer.innerHTML = '';
+                route.timeline.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'timeline-item';
+                    div.textContent = item;
+                    timelineContainer.appendChild(div);
+                });
             }
+
+            // Render Dynamic POIs on Page 4 (Max 5 POIs in order to prevent page overflow)
+            const p1 = document.getElementById('poi-list');
+            if (p1) {
+                p1.innerHTML = '';
+                if (activePois.length > 0) {
+                    activePois.forEach((poi, idx) => {
+                        p1.appendChild(createPoiHtml(poi, idx));
+                    });
+                }
+            }
+
+            // Render Dynamic Trivia Questions on Page 5
+            const triviaContainer = document.getElementById('trivia-list');
+            if (triviaContainer) {
+                triviaContainer.innerHTML = '';
+                if (route.quizzes && route.quizzes.length > 0) {
+                    route.quizzes.forEach(quiz => {
+                        const qDiv = document.createElement('div');
+                        qDiv.className = 'trivia-q';
+                        qDiv.innerHTML = `
+                            <div class="trivia-text">${quiz.q}</div>
+                            <div class="trivia-a">${quiz.a}</div>
+                        `;
+                        triviaContainer.appendChild(qDiv);
+                    });
+                }
+            }
+
+            // Dynamically load GPX points & Render Map + Elevation Profile
+            // Wrapped in try-catch to allow local file:// path CORS failures to degrade gracefully
+            const gpxPath = `/assets/nagykevely/tracks/${route.gpx}`;
+            fetch(gpxPath)
+                .then(res => {
+                    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+                    return res.text();
+                })
+                .then(gpxText => {
+                    const parser = new DOMParser();
+                    const xmlDoc = parser.parseFromString(gpxText, "text/xml");
+                    const trkpts = xmlDoc.querySelectorAll("trkpt");
+
+                    const points = [];
+                    let totalDistance = 0;
+                    let lastPt = null;
+
+                    trkpts.forEach(pt => {
+                        const lat = parseFloat(pt.getAttribute("lat"));
+                        const lon = parseFloat(pt.getAttribute("lon"));
+                        const eleEl = pt.querySelector("ele");
+                        const ele = eleEl ? parseFloat(eleEl.textContent) : 0;
+
+                        if (lastPt) {
+                            const dist = haversineDistance(lastPt.lat, lastPt.lon, lat, lon);
+                            totalDistance += dist;
+                        }
+
+                        points.push({ lat, lon, ele, dist: totalDistance });
+                        lastPt = { lat, lon };
+                    });
+
+                    const isColor = document.body.className.includes('theme-color');
+                    
+                    // Draw map and elevation profile
+                    drawLeafletMap(points, activePois, isColor);
+                    drawElevationProfile(points, activePois, isColor);
+                })
+                .catch(err => {
+                    console.warn("Could not load GPX track dynamically. This is expected if opening from file:// filesystem due to CORS restrictions.", err);
+                    
+                    // Provide a nice fallback layout for file:// filesystem previews
+                    const mapEl = document.getElementById('map-container');
+                    if (mapEl) {
+                        mapEl.innerHTML = `
+                            <div style="padding: 2.2rem 1.2rem; text-align: center; font-size: 0.82rem; line-height: 1.5; color: inherit; opacity: 0.85;">
+                                🗺️ <strong>Térkép előnézet</strong><br>
+                                A GPX nyomvonal és a térkép kirajzolásához futtass egy helyi webszervert (pl. a futó <code>vercel dev</code> szervert), 
+                                vagy nyisd meg a portálon keresztül!<br>
+                                <span style="font-size: 0.72rem; opacity: 0.7;">(A böngészők biztonsági okokból blokkolják a lokális fájlok lekérését file:// séma alatt.)</span>
+                            </div>
+                        `;
+                    }
+                    const elevEl = document.getElementById('elevation-container');
+                    if (elevEl) {
+                        elevEl.innerHTML = `
+                            <div style="padding: 1.5rem 1rem; text-align: center; font-size: 0.82rem; line-height: 1.4; color: inherit; opacity: 0.85;">
+                                📈 <strong>Szintmetszet előnézet</strong><br>
+                                A domborzati szintmetszet betöltéséhez helyi webszerver szükséges.
+                            </div>
+                        `;
+                    }
+                });
         }
 
-        function createPoiHtml(poi) {
+        function createPoiHtml(poi, idx) {
             const div = document.createElement('div');
             div.className = 'poi-card';
+            // Replace "Tudtad-e?" with "Tudtad?" dynamically
+            const formattedExtra = (poi.extra || "").replace("Tudtad-e?", "Tudtad?");
             div.innerHTML = `
                 <div class="poi-title">
-                    <span>${poi.name}</span>
-                    <span style="font-size: 0.75rem; font-weight: 600; opacity: 0.8; text-transform: uppercase;">Látnivaló</span>
+                    <span>${idx + 1}. ${poi.name}</span>
+                    <span style="font-size: 0.72rem; font-weight: 600; opacity: 0.85; text-transform: uppercase;">📍 ${poi.location}</span>
                 </div>
                 <div class="poi-desc">${poi.desc}</div>
-                <div class="poi-extra">${poi.extra}</div>
+                <div class="poi-extra">${formattedExtra}</div>
             `;
             return div;
+        }
+
+        // Draw the route on Leaflet Map
+        function drawLeafletMap(points, pois, isColor) {
+            // Remove previous map instance if initialized
+            if (map) {
+                map.remove();
+                map = null;
+            }
+
+            // Create new Leaflet instance inside map-container
+            map = L.map('map-container', {
+                zoomControl: false,
+                attributionControl: false,
+                scrollWheelZoom: false,
+                dragging: false,
+                doubleClickZoom: false,
+                boxZoom: false,
+                touchZoom: false
+            });
+
+            // Base map tile layer (OSM)
+            const baseMapUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+            L.tileLayer(baseMapUrl).addTo(map);
+
+            // Hiking trails layer (Waymarked Trails)
+            const hikingTrailsUrl = 'https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png';
+            L.tileLayer(hikingTrailsUrl, { opacity: 0.8 }).addTo(map);
+
+            // Draw route line
+            const latlngs = points.map(p => [p.lat, p.lon]);
+            const polylineColor = isColor ? '#bfff00' : '#0f172a';
+            polyline = L.polyline(latlngs, {
+                color: polylineColor,
+                weight: 4,
+                opacity: 0.95
+            }).addTo(map);
+
+            // Fit bounds with comfortable spacing
+            map.fitBounds(polyline.getBounds(), { padding: [15, 15] });
+
+            // Place POI markers matching the numbers (1, 2, 3)
+            pois.forEach((poi, index) => {
+                const markerBg = isColor ? '#bfff00' : '#0f172a';
+                const markerText = isColor ? '#04060a' : '#ffffff';
+
+                const numIcon = L.divIcon({
+                    className: 'custom-marker',
+                    html: `<div style="background: ${markerBg}; color: ${markerText}; border: 2px solid ${markerBg}; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; box-shadow: 0 2px 4px rgba(0,0,0,0.3); font-family: 'Outfit', sans-serif;">${index + 1}</div>`,
+                    iconSize: [22, 22],
+                    iconAnchor: [11, 11]
+                });
+
+                L.marker([poi.lat, poi.lon], { icon: numIcon }).addTo(map);
+            });
+        }
+
+        // Draw the elevation profile chart on HTML5 Canvas
+        function drawElevationProfile(points, pois, isColor) {
+            const canvas = document.getElementById('elevation-canvas');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            
+            // Adjust canvas resolution for high-DPI displays
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
+
+            const width = rect.width;
+            const height = rect.height;
+
+            const elevations = points.map(p => p.ele);
+            const minEle = Math.max(0, Math.min(...elevations) - 30);
+            const maxEle = Math.max(...elevations) + 30;
+            const totalDist = points[points.length - 1].dist;
+
+            const paddingLeft = 35;
+            const paddingRight = 15;
+            const paddingTop = 15;
+            const paddingBottom = 18;
+            const chartWidth = width - paddingLeft - paddingRight;
+            const chartHeight = height - paddingTop - paddingBottom;
+
+            ctx.clearRect(0, 0, width, height);
+
+            // Draw Y-axis gridlines & labels
+            ctx.strokeStyle = isColor ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)';
+            ctx.lineWidth = 1;
+            ctx.fillStyle = isColor ? '#8a99b3' : '#64748b';
+            ctx.font = '8px Plus Jakarta Sans';
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+
+            const steps = 3;
+            for (let i = 0; i <= steps; i++) {
+                const val = minEle + (maxEle - minEle) * (i / steps);
+                const y = paddingTop + chartHeight - (i / steps) * chartHeight;
+
+                ctx.beginPath();
+                ctx.moveTo(paddingLeft, y);
+                ctx.lineTo(width - paddingRight, y);
+                ctx.stroke();
+
+                ctx.fillText(`${Math.round(val)}m`, paddingLeft - 5, y);
+            }
+
+            // Draw elevation profile polyline
+            ctx.beginPath();
+            points.forEach((p, idx) => {
+                const x = paddingLeft + (p.dist / totalDist) * chartWidth;
+                const y = paddingTop + chartHeight - ((p.ele - minEle) / (maxEle - minEle)) * chartHeight;
+
+                if (idx === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+
+            ctx.strokeStyle = isColor ? '#bfff00' : '#0f172a';
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+
+            // Fill area below profile
+            ctx.lineTo(paddingLeft + chartWidth, paddingTop + chartHeight);
+            ctx.lineTo(paddingLeft, paddingTop + chartHeight);
+            ctx.closePath();
+            ctx.fillStyle = isColor ? 'rgba(191, 255, 0, 0.08)' : 'rgba(15, 23, 42, 0.05)';
+            ctx.fill();
+
+            // Draw X-axis labels (kilometers)
+            ctx.fillStyle = isColor ? '#8a99b3' : '#64748b';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+
+            const maxKm = totalDist / 1000;
+            const interval = maxKm > 15 ? 5 : (maxKm > 8 ? 2 : 1);
+
+            for (let d = 0; d <= totalDist; d += interval * 1000) {
+                const x = paddingLeft + (d / totalDist) * chartWidth;
+                const y = paddingTop + chartHeight + 4;
+                ctx.fillText(`${d / 1000} km`, x, y);
+            }
+
+            // Final kilometer marker
+            const finalX = paddingLeft + chartWidth;
+            ctx.fillText(`${maxKm.toFixed(1)} km`, finalX, paddingTop + chartHeight + 4);
+
+            // Draw POI markers on the elevation profile
+            pois.forEach((poi, index) => {
+                // Find closest track point to the POI coordinate
+                let closestPt = points[0];
+                let minDelta = Infinity;
+
+                points.forEach(p => {
+                    const d = haversineDistance(p.lat, p.lon, poi.lat, poi.lon);
+                    if (d < minDelta) {
+                        minDelta = d;
+                        closestPt = p;
+                    }
+                });
+
+                const x = paddingLeft + (closestPt.dist / totalDist) * chartWidth;
+                const y = paddingTop + chartHeight - ((closestPt.ele - minEle) / (maxEle - minEle)) * chartHeight;
+
+                // Vertical helper dashed line to the bottom
+                ctx.beginPath();
+                ctx.strokeStyle = isColor ? 'rgba(191, 255, 0, 0.4)' : 'rgba(15, 23, 42, 0.3)';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([2, 3]);
+                ctx.moveTo(x, y);
+                ctx.lineTo(x, paddingTop + chartHeight);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Peak point dot
+                ctx.beginPath();
+                ctx.arc(x, y, 4, 0, 2 * Math.PI);
+                ctx.fillStyle = isColor ? '#bfff00' : '#0f172a';
+                ctx.fill();
+
+                // Small circle with sequence number above the point
+                const badgeY = y - 9;
+                ctx.beginPath();
+                ctx.arc(x, badgeY, 6, 0, 2 * Math.PI);
+                ctx.fillStyle = isColor ? '#bfff00' : '#0f172a';
+                ctx.fill();
+
+                ctx.fillStyle = isColor ? '#04060a' : '#ffffff';
+                ctx.font = 'bold 7px Plus Jakarta Sans';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(index + 1, x, badgeY);
+            });
         }
 
         function printBook(e) {

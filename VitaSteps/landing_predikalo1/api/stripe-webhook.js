@@ -53,7 +53,7 @@ module.exports = async (req, res) => {
         const homeAddress = metadata.Hazhoz_cim || '';
         const referredBy = (metadata.Ajanlо_Email || metadata['Ajánló_Email'] || '').trim().toLowerCase();
         const campaign = metadata.Kampany || 'predikaloszek';
-        const isTestTx = metadata.IsTest === 'true';
+        const isTestTx = (metadata.IsTest === 'true' || session.livemode === false);
 
         // Parse medals JSON (new) or fall back to old single-medal format
         let medals = [];
@@ -206,6 +206,7 @@ module.exports = async (req, res) => {
             const { data: existingRunners, error: fetchErr } = await supabase
                 .from('runners')
                 .select('serial_number')
+                .eq('is_test', false)
                 .ilike('serial_number', `%${suffix}`);
 
             if (fetchErr) {
@@ -232,7 +233,8 @@ module.exports = async (req, res) => {
                     received_date: null,
                     serial_number: serialNumber,
                     distance_km: parseFloat(medal.distance) || null,
-                    referred_by: referredBy || null
+                    referred_by: referredBy || null,
+                    is_test: isTestTx
                 };
 
                 // For multiple medals on same email, append index to email to allow multiple records

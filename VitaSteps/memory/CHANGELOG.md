@@ -4,6 +4,18 @@ All notable changes to the VitaSteps challenge platform project are documented h
 
 ---
 
+## [1.4.1] - 2026-07-15
+### Added
+*   **Guidebook Map Size and Loading Optimizations:**
+    *   **Map Size Expansion:** Increased Leaflet map container height to 340px on screen and optimized to 230px height in print layout for perfect legibility.
+    *   **6-Page Booklet Layout:** Deleted the dedicated Quiz (Page 5) and Bingo (Page 6) pages to tighten the content, reducing the total layout to a clean 6-page booklet. Updated all page footers (1/6 to 6/6) and layout constraints.
+    *   **Print Page Sizing Fixes:** Added `@page` size rules, print-only padding overrides, and scale-down rules for elements in `@media print` to guarantee the booklet fits exactly on A5 paper without generating extra blank pages.
+    *   **POI Coordinates & Dynamic Limits:** Corrected coordinates of several landmarks using official OpenStreetMap (OSM) nodes. Allowed showing all relevant POIs per route but capped at a maximum of 5 in order to prevent page overflow. Updated Sicambria (Monalovac) to its correct eastern location (`47.625800, 19.019200`).
+    *   **Dropdown Order Swap:** Swapped the select menu options to match chronological file ordering: Option 3 is now Extra (25 km), Option 4 is Felmaraton (15 km).
+    *   **Text & Info Cleanup:** Removed the "időtartam" (duration) and "nehézség" (difficulty) stats. Dynamically converted all "Tudtad-e?" instances to "Tudtad?" for a cleaner and more concise look.
+    *   **Test Transactions Separation:** Updated the webhook (`api/stripe-webhook.js`) to automatically detect Stripe test mode transactions (`livemode === false`) and sync them to production database with `is_test = true`. Excluded test runs from the maximum serial number calculation queries to preserve the integrity and continuity of official buyer rank sequences.
+    *   **Bugfix:** Fixed a null pointer exception caused by referencing the removed `route-timeline` DOM container inside `renderRoute`.
+
 ## [1.4.0] - 2026-07-13
 ### Added
 *   **Nagy-Kevély Landing Page CTA Optimization:**
@@ -16,9 +28,12 @@ All notable changes to the VitaSteps challenge platform project are documented h
     *   **Direct Checkout Links:** Changed all navigation, hero, and mobile sticky buttons to link directly to `/checkout.html?c=pilis` instead of scrolling down to the local anchor.
 *   **Personalized Adventure Guidebook (Kalandkönyv):**
     *   **Dynamic Generator Page:** Created `nagykevely/kalandkonyv.html` providing dynamically built, customizable, printable A5/A4 adventure guidebooks and hiking logs.
-    *   **8-Page Premium Booklet Layout:** Upgraded the guidebook to a complete 8-page format (ideal for double-sided A4 printing folded in half). Added a dynamic POI reader spanning Pages 4 & 5.
-    *   **POI & Heritage Integration:** Integrated rich geological, historical, and cultural stories sourced from local research, featuring the Teve-szikla (geology and Egri Csillagok scene), Egri vár replica, Kevélyhegyi Levendulamező, Mackó-barlang (ice age fauna and Neanderthal archaeology), the csobánkai Sicambria (Monalovac) hun capital theories, and Kő-hegy history (Czibulka menedékház, Petőfi's 1845 visit, Napóleon kalapja rock).
-    *   **Prefilled Portal Tab:** Added a dedicated "Kalandkönyv" tab in `portal.html` visible exclusively to Nagy-Kevély challengers (`PK` serial code prefix). Prefills the runner's name, offers route selections (Family 6km, Classic 10km, Half Marathon 15km, Long 25km), B&W or color themes, and launches print setups.
+    *   **8-Page Premium Booklet Layout:** Upgraded the guidebook to a complete 8-page format (ideal for double-sided A4 printing folded in half). Added a dynamic POI reader on Page 4 and a dedicated Trivia & Quiz on Page 5.
+    *   **Dynamic Route Mapping:** Integrated Leaflet.js inside Page 3, fetching and parsing GPX files client-side to render tracks, zoom bounds, and place custom numbered markers for each POI (1, 2, 3) in geographic order. Applied smart grayscale CSS filters for ink-saving printer-friendly BW theme.
+    *   **Dynamic Canvas Elevation Profile:** Programmed a custom HTML5 Canvas drawing system that computes cumulative distance and elevations from the loaded GPX to render elevation profiles, complete with gridlines, axis labels, and vertical dashed pointer markers showing the exact location and altitude of each POI.
+    *   **POI & Heritage Integration:** Integrated rich geological, historical, and cultural stories sorted in strict geographic sequence along each track with explicit distance markings (Teve-szikla, Egri vár, Levendulamező, Nagy-Kevély, Kevély-nyereg, Ezüst-hegy, Mackó-barlang, Oszoly, Sicambria/Monalovac, Kő-hegy).
+    *   **Interactive Controls & Selector:** Added a live route selector dropdown to the top customization card, allowing runners to dynamically switch tracks and instantly preview guidebooks.
+    *   **Prefilled Portal Tab:** Added a dedicated "Kalandkönyv" tab in `portal.html` visible exclusively to Nagy-Kevély challengers (`PK` serial code prefix). Prefills the runner's name, offers route selections, B&W or color themes, and launches print setups.
     *   **Dynamic GPX QR-Codes:** Generates real-time QR codes linked to official GPX track files (`01csaladi.gpx`, `02klasszik.gpx`, `04felmaraton.gpx`, `03extra.gpx`) using a lightweight public redirect API.
     *   **Interactive Activities:** Included custom trail timelines, weather logs, journal sections, and a nature scavenger Hunt bingo grid, and a history/trivia section.
 *   **Tiered Referral Discount System:**
