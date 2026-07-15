@@ -142,31 +142,7 @@ module.exports = async (req, res) => {
         });
         console.log('tally_raw written.');
 
-        // ── 1b. tally_szallitas ───────────────────────────────────────────
-        const tallySzallitasRow = Array(10).fill('');
-        tallySzallitasRow[0] = sessionId;
-        tallySzallitasRow[1] = sessionId;
-        tallySzallitasRow[2] = submittedAt;
-        tallySzallitasRow[3] = primaryName;
-        tallySzallitasRow[4] = email;
-        tallySzallitasRow[5] = shippingDisplay;
-        tallySzallitasRow[6] = primaryName;
-        tallySzallitasRow[7] = email;
-        tallySzallitasRow[8] = phone;
-        tallySzallitasRow[9] = deliveryMethod === 'home'
-            ? (homeAddress || billingAddress)
-            : `${parcelName} (${parcelAddress})`;
-
-        await sheets.spreadsheets.values.append({
-            spreadsheetId: sheetId,
-            range: 'tally_szallitas!A:J',
-            valueInputOption: 'USER_ENTERED',
-            insertDataOption: 'INSERT_ROWS',
-            requestBody: { values: [tallySzallitasRow] }
-        });
-        console.log('tally_szallitas written.');
-
-        // ── 1c. stripe_raw2 – one row per medal ──────────────────────────
+        // ── 1b. stripe_raw2 – one row per medal ──────────────────────────
         const stripe_raw2_rows = medals.map((medal, idx) => [
             submittedAt,
             sessionId,

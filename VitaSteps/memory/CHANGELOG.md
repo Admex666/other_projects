@@ -4,6 +4,20 @@ All notable changes to the VitaSteps challenge platform project are documented h
 
 ---
 
+## [1.4.2] - 2026-07-15
+### Added
+*   **Webhook-Free Payment Pipeline (`api/process-payment.js`):**
+    *   Created new `api/process-payment.js` endpoint as a full replacement for Stripe webhook-based post-payment processing (Stripe free plan does not support webhook registration via Dashboard).
+    *   `siker.html` now reads the `?session_id=cs_xxx` parameter (passed by Stripe via `{CHECKOUT_SESSION_ID}` placeholder in `success_url`) and calls `/api/process-payment` in a fire-and-forget fetch on page load.
+    *   `process-payment.js` retrieves and verifies the Stripe session (`payment_status === 'paid'`), then runs the full pipeline: Google Sheets (`tally_raw` + `stripe_raw2`), Supabase, Számlázz.hu invoice, and welcome email.
+    *   **Idempotency:** Stores `stripe_session_id` in Supabase `runners` table; skips reprocessing if the session was already handled. Requires `ALTER TABLE runners ADD COLUMN IF NOT EXISTS stripe_session_id text;` in Supabase.
+    *   **Test/live auto-detection:** Uses `cs_test_` prefix on session_id to select correct Stripe key and Számlázz.hu key.
+*   **Test Mode Improvements:**
+    *   `checkout.js`: Added hard guard — if `?test=true` is requested but `STRIPE_TEST_KEY` env var is missing, returns 500 error instead of silently falling back to live key.
+    *   `stripe-webhook.js`: Updated signature verification to select `STRIPE_TEST_WEBHOOK_SECRET` for test events and `STRIPE_WEBHOOK_SECRET` for live events, detected via `"livemode":false` in raw body peek.
+    *   `is_test` column added to Supabase `runners` table. Test transactions marked `is_test=true`; excluded from serial number max-calculation to preserve live sequence continuity.
+*   **Google Sheets Cleanup:** Removed `tally_szallitas` writes from both `stripe-webhook.js` and `process-payment.js`. Shipping data (including `parcelId` at column I) is fully captured in `stripe_raw2`.
+
 ## [1.4.1] - 2026-07-15
 ### Added
 *   **Guidebook Map Size and Loading Optimizations:**

@@ -29,3 +29,12 @@
 
 ## 🔧 Maintenance & Testing
 *   **[ ]** Verify standard pixel events (PageView, InitiateCheckout, Purchase) using Meta Pixel Helper on local server (port 3001).
+
+---
+
+## 💳 Payment Pipeline – Kövi feladatok
+*   **[ ]** Átnézni és tesztelni a **Számlázz.hu** e-számla generálást (`process-payment.js` → Számlázz.hu API hívás) — valóban megérkezik-e a számla emailben.
+*   **[ ]** Átnézni és tesztelni a **welcome email** küldést (`process-payment.js` → nodemailer SMTP) — megérkezik-e a köszöntő email a vásárlónak.
+*   **[ ]** End-to-end teszt: `checkout.html?campaign=pilis&test=true` → Stripe sandbox → `siker.html` → `process-payment` → Sheets + Supabase + számla + email.
+*   **[ ]** Supabase: lefuttatni `ALTER TABLE runners ADD COLUMN IF NOT EXISTS stripe_session_id text;`
+*   **[ ]** Deploy Vercel-re (`vercel --prod`) az összes mai változással.
