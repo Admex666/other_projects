@@ -45,8 +45,11 @@ module.exports = async (req, res) => {
             });
         }
 
+        if (useTestKey && !process.env.STRIPE_TEST_KEY) {
+            return res.status(500).json({ error: 'A STRIPE_TEST_KEY nincs beállítva a szerveren. Kérjük jelezd a fejlesztőknek!' });
+        }
         const stripeKey = useTestKey
-            ? (process.env.STRIPE_TEST_KEY || process.env.STRIPE_SECRET_KEY)
+            ? process.env.STRIPE_TEST_KEY
             : process.env.STRIPE_SECRET_KEY;
         const stripe = Stripe(stripeKey);
 
@@ -120,7 +123,7 @@ module.exports = async (req, res) => {
         const shippingAmountCents = 120000; // 1200 Ft
         const isHomeDelivery = deliveryMethod === 'home';
 
-        const successUrl = `${origin}/siker.html?c=${campaignKey}`;
+        const successUrl = `${origin}/siker.html?c=${campaignKey}&session_id={CHECKOUT_SESSION_ID}`;
         const cancelUrl = campaignKey === 'predikaloszek'
             ? `${origin}/predikalo/index.html`
             : `${origin}/nagykevely/index.html`;

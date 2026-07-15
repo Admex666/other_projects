@@ -115,11 +115,21 @@
         let campaignKey = 'pilis';
         const urlParams = new URLSearchParams(window.location.search);
         const paramCampaign = urlParams.get('c') || '';
+        const sessionId = urlParams.get('session_id') || '';
 
         if (paramCampaign === 'predikaloszek' || paramCampaign === 'predikalo') {
             campaignKey = 'predikaloszek';
         } else {
             campaignKey = 'pilis';
+        }
+
+        // ── Trigger post-payment pipeline (Sheets, Supabase, invoice, email) ──
+        // Fire-and-forget: does not block page load, idempotent on server side
+        if (sessionId) {
+            fetch(`/api/process-payment?session_id=${encodeURIComponent(sessionId)}`)
+                .then(r => r.json())
+                .then(data => console.log('process-payment result:', data))
+                .catch(err => console.warn('process-payment error (non-critical):', err));
         }
 
         async function initPage() {

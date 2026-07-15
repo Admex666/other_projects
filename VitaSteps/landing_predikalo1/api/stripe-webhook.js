@@ -18,13 +18,21 @@ module.exports = async (req, res) => {
             rawBody = JSON.stringify(req.body);
         }
 
-        const isTest = rawBody.includes('IsTest":"true') || rawBody.includes('test_');
-        const stripeKey = isTest
-            ? (process.env.STRIPE_TEST_KEY || process.env.STRIPE_SECRET_KEY)
+        // Detect test mode by peeking at raw body before signature verification
+        // (livemode:false appears in the event JSON for test events)
+        const rawBodyStr = Buffer.isBuffer(rawBody) ? rawBody.toString('utf8') : rawBody;
+        const isTestEvent = rawBodyStr.includes('"livemode":false') || rawBodyStr.includes('IsTest":"true');
+
+        const stripeKey = isTestEvent
+            ? process.env.STRIPE_TEST_KEY || process.env.STRIPE_SECRET_KEY
             : process.env.STRIPE_SECRET_KEY;
         const stripe = Stripe(stripeKey);
 
-        const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+        // Select the correct webhook signing secret based on mode
+        const webhookSecret = isTestEvent
+            ? (process.env.STRIPE_TEST_WEBHOOK_SECRET || process.env.STRIPE_WEBHOOK_SECRET)
+            : process.env.STRIPE_WEBHOOK_SECRET;
+
         if (webhookSecret && sig) {
             event = stripe.webhooks.constructEvent(rawBody, sig, webhookSecret);
         } else {
