@@ -67,10 +67,27 @@ gantt
 
 ---
 
-## 📈 Meta Ads & FOMO Stratégia
-*   **Azonos Kreatívok:** A prospecting hirdetéseket nem módosítjuk menet közben, hogy a Meta algoritmusa ne essen vissza a tanulási fázisba (Learning Phase).
-*   **Weboldal-oldali sürgősség:** A FOMO-t a landing page-en lévő dinamikus készlet- és visszaszámláló órával érjük el.
-*   **Targetált Retargeting:** Augusztus végétől különálló ad set-ből célzunk vissza azokra, akik az oldalon jártak, de nem vásároltak (pl. "Már csak 3 nap maradt!" kreatívval).
+## 📈 Meta Ads, Költségvetés & Sell-out Stratégia
+A cél a 100 db-os éremkészlet teljes értékesítése (sell-out) szeptember 13-ig (58 nap, átlagosan napi ~1.7 eladás szükséges). A pénzügyi fedezeti pont (break-even) ~45-60 eladott éremnél van.
+
+### 💰 Hirdetési Költségvetési Terv (3 fázis)
+
+#### 1. Validációs & Tesztfázis (Július 16. – Július 23.)
+*   **Induló keret:** Napi **2 000 Ft**.
+*   **Cél:** A hirdetési szövegek/kreatívok validálása és a valós ügyfélszerzési költség (CPA) kiderítése.
+*   **Döntési fa az első 5-7 nap után:**
+    *   **Ha a CPA kedvező (< 3 000 Ft):** Fokozatos skálázás indítása. A büdzsét 2-3 naponta növeljük max. **20-30%-kal** (pl. 2 000 Ft → 2 600 Ft → 3 300 Ft → 4 000 Ft).
+    *   **Ha a CPA magas (> 4 500 Ft):** **NE** növeljük a büdzsét. Ehelyett állítsuk le a gyenge hirdetéseket, frissítsük a kreatívokat (kép/szöveg), vagy szűkítsük a hasonmás (LAL) célzást pontosabb túrázó érdeklődési körökre.
+
+#### 2. Skálázási & Stabilizálási Fázis (Augusztus)
+*   **Keret:** Napi **3 000 – 4 500 Ft** (tesztfázis eredménye alapján skálázva).
+*   **Cél:** Stabil napi 1.5 - 2 eladás biztosítása.
+*   **Retargeting:** Különítsünk el napi 500-800 Ft-ot az oldal-látogatók és kosárelhagyók visszacélzására, mivel sokan csak később konvertálnak.
+
+#### 3. FOMO & Sell-out Fázis (Szeptember 1. – Szeptember 13.)
+*   **Keret:** Napi **4 000 – 5 000 Ft**.
+*   **Cél:** Az utolsó 15-25 érem gyors kisöprése.
+*   **Üzenet:** Hirdetésekben és retargetingben hangsúlyozzuk a szűkösséget: *"Már csak X db érem maradt!"*, *"Szeptember 13-án a nevezés végleg lezárul!"*.
 
 ---
 

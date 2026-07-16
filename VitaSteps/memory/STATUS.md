@@ -9,8 +9,8 @@
 *   **Meta Ads Campaign Configuration:**
     *   Prospecting Ad Set (LAL 1% exclusion of buyers) is active/ready.
     *   Retargeting Ad Set (VitaSteps Webhelylátogatók 30 nap + FB/IG Engagers 90 nap, buyer exclusions) configured.
-    *   Ads setup configured at a starting budget of **1 600 HUF / day**.
-    *   High-converting, sales-oriented ad copywriting variations for V4 (product) and V5 (hiker) saved and prepared.
+    *   Ads setup configured at a starting budget of **2 000 HUF / day** (as of July 16, 2026).
+    *   **3-Phase Sell-Out Strategy:** Starting with 2 000 HUF/day for validation, scaling by 20-30% every few days if CPA < 3 000 HUF, keeping budget flat and updating creatives if CPA > 4 500 HUF. High-converting copywriting and visuals (V4/V5) are prepared. See detailed strategy at [nagy_kevely_csillagai.md](file:///e:/Data/other_projects/VitaSteps/campaigns/nagy_kevely_csillagai.md#L70-L100).
 *   **Nagy-Kevély Landing Page Megújítás (UPDATED 2026-07-13):**
     *   Beillesztettük a közösségi kilométer-statisztikát (1 230 km completed) és a Kalandkönyv (PDF) promóciós szekciót.
     *   A visszaszámlálót a kihívás végére (**szeptember 13. 23:59**) állítottuk be.
@@ -43,5 +43,3 @@
 *   `DRY_RUN = True` is currently set in `scripts/send_emails.py` — must be manually changed to `False` before any live email send.
 *   Nagy-Kevély campaign pre-launch: Checkout is blocked globally on live Vercel domains to avoid premature signups. Must be removed when launching.
 *   Stripe `VSBARAT10` referral coupon code: live environment testing still pending.
-*   **Supabase migration pending:** `ALTER TABLE runners ADD COLUMN IF NOT EXISTS stripe_session_id text;` — szükséges a process-payment idempotencia-ellenőrzéshez.
-*   **Vercel deploy pending:** Összes mai változás (`process-payment.js`, `siker.html`, `checkout.js`, `stripe-webhook.js`) még nincs élesítve.

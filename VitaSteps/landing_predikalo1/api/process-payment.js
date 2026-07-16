@@ -61,8 +61,16 @@ module.exports = async (req, res) => {
     const parcelAddress = metadata.Csomagpont_cim || '';
     const parcelId = metadata.Csomagpont_id || '';
     const homeAddress = metadata.Hazhoz_cim || '';
-    const referredBy = (metadata.Ajanlо_Email || '').trim().toLowerCase();
-    const campaign = metadata.Kampany || 'predikaloszek';
+    const referredBy = (metadata.Ajanlо_Email || metadata['Ajánló_Email'] || '').trim().toLowerCase();
+    // Find campaign robustly matching any variation of 'kampany' or 'campaign' (case-insensitive, handles cyrillic typos)
+    let campaign = 'predikaloszek';
+    for (const key of Object.keys(metadata)) {
+        const lowerKey = key.toLowerCase();
+        if (lowerKey.includes('kampany') || lowerKey.includes('campaign') || lowerKey.includes('kampány')) {
+            campaign = metadata[key];
+            break;
+        }
+    }
 
     let medals = [];
     try {
@@ -113,34 +121,39 @@ module.exports = async (req, res) => {
         const sheetId = process.env.GOOGLE_SHEET_ID;
 
         // ── 1a. tally_raw ─────────────────────────────────────────────────
-        const campaignDisplay = campaign === 'pilis' ? 'A Nagy-Kevély csillagjai' : 'Prédikálószék';
-        const tallyRawRow = Array(22).fill('');
-        tallyRawRow[0] = sessionId;
-        tallyRawRow[1] = sessionId;
-        tallyRawRow[2] = submittedAt;
-        tallyRawRow[5] = primaryName;
-        tallyRawRow[6] = String(totalPaid);
-        tallyRawRow[7] = 'HUF';
-        tallyRawRow[8] = primaryName;
-        tallyRawRow[9] = email;
-        tallyRawRow[11] = billingAddress;
-        tallyRawRow[12] = medals[0].distance;
-        tallyRawRow[13] = String(totalPaid);
-        tallyRawRow[14] = 'HUF';
-        tallyRawRow[15] = primaryName;
-        tallyRawRow[16] = email;
-        tallyRawRow[19] = 'Igen';
-        tallyRawRow[20] = campaignDisplay;
-        tallyRawRow[21] = campaign === 'pilis' ? 'jelentkezés 1' : 'előjelentkezés 1';
+        const isPilis = (campaign || '').toString().toLowerCase().includes('pilis');
+        if (!isPilis) {
+            const campaignDisplay = campaign === 'pilis' ? 'A Nagy-Kevély csillagjai' : 'Prédikálószék';
+            const tallyRawRow = Array(22).fill('');
+            tallyRawRow[0] = sessionId;
+            tallyRawRow[1] = sessionId;
+            tallyRawRow[2] = submittedAt;
+            tallyRawRow[5] = primaryName;
+            tallyRawRow[6] = String(totalPaid);
+            tallyRawRow[7] = 'HUF';
+            tallyRawRow[8] = primaryName;
+            tallyRawRow[9] = email;
+            tallyRawRow[11] = billingAddress;
+            tallyRawRow[12] = medals[0].distance;
+            tallyRawRow[13] = String(totalPaid);
+            tallyRawRow[14] = 'HUF';
+            tallyRawRow[15] = primaryName;
+            tallyRawRow[16] = email;
+            tallyRawRow[19] = 'Igen';
+            tallyRawRow[20] = campaignDisplay;
+            tallyRawRow[21] = campaign === 'pilis' ? 'jelentkezés 1' : 'előjelentkezés 1';
 
-        await sheets.spreadsheets.values.append({
-            spreadsheetId: sheetId,
-            range: 'tally_raw!A:V',
-            valueInputOption: 'USER_ENTERED',
-            insertDataOption: 'INSERT_ROWS',
-            requestBody: { values: [tallyRawRow] }
-        });
-        console.log('tally_raw written.');
+            await sheets.spreadsheets.values.append({
+                spreadsheetId: sheetId,
+                range: 'tally_raw!A:V',
+                valueInputOption: 'USER_ENTERED',
+                insertDataOption: 'INSERT_ROWS',
+                requestBody: { values: [tallyRawRow] }
+            });
+            console.log('tally_raw written.');
+        } else {
+            console.log('Skipping tally_raw write for campaign pilis.');
+        }
 
         // ── 1b. stripe_raw2 – one row per medal ──────────────────────────
         const stripe_raw2_rows = medals.map((medal, idx) => [
@@ -157,12 +170,17 @@ module.exports = async (req, res) => {
             phone,
             idx === 0 ? String(totalPaid) : '',
             isTestTx ? 'true' : 'false',
-            ''
+            '',
+            metadata.Medaliok || JSON.stringify(medals),
+            referredBy || '',
+            parcelName || '',
+            parcelAddress || '',
+            homeAddress || ''
         ]);
 
         await sheets.spreadsheets.values.append({
             spreadsheetId: sheetId,
-            range: 'stripe_raw2!A:N',
+            range: 'stripe_raw2!A:S',
             valueInputOption: 'USER_ENTERED',
             insertDataOption: 'INSERT_ROWS',
             requestBody: { values: stripe_raw2_rows }
@@ -225,10 +243,10 @@ module.exports = async (req, res) => {
 
         // ── 3. SZÁMLÁZZ.HU INVOICE ────────────────────────────────────────
         console.log('Generating Számlázz.hu invoice...');
-        const szamlaKey = (isTestTx
+        const rawSzamlaKey = isTestTx
             ? (process.env.SZAMLAZZ_TEST_KEY || process.env.SZAMLAZZ_AGENT_KEY)
-            : process.env.SZAMLAZZ_AGENT_KEY
-        ).toString().trim().toLowerCase();
+            : process.env.SZAMLAZZ_AGENT_KEY;
+        const szamlaKey = rawSzamlaKey ? rawSzamlaKey.toString().trim() : '';
 
         if (szamlaKey) {
             let zip = '1000', city = 'Budapest', street = billingAddress || 'Külföld';
@@ -242,7 +260,7 @@ module.exports = async (req, res) => {
             const today = new Date().toISOString().split('T')[0];
             const invoiceItems = medals.map(medal =>
                 `    <tetel>
-      <megnevezes>${campaignName} Nevezési díj (${medal.distance}) – ${medal.name}</megnevezes>
+      <megnevezes>${campaignName} érem</megnevezes>
       <mennyiseg>1.0</mennyiseg>
       <mennyisegiEgyseg>db</mennyisegiEgyseg>
       <nettoEgysegar>${medalPrice}</nettoEgysegar>
