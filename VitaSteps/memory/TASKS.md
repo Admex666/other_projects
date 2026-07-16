@@ -5,7 +5,6 @@
 *   **[x]** Generate a 1% and 2% Lookalike (LAL) audience for Hungary.
 *   **[x]** Configure Prospecting campaigns to exclude the purchaser custom list and success page visitors.
 *   **[x]** Setup Retargeting ad sets targeting page visitors from the last 30 days (excluding buyers).
-*   **[ ]** Verify Stripe live environment for the `VSBARAT10` coupon code.
 
 ### 🌐 Frontend Page Enhancements (AI)
 *   **[x]** Promote free Kalandkönyv (PDF Guidebook) on `nagykevely/index.html` (add mockups and descriptions).
@@ -22,13 +21,10 @@
 *   **[x]** Identify non-finisher participants with no shipping data from Sheets (15 fő).
 *   **[x]** Build ping email system (`send_emails.py` ping mode + `email_ping_template.html`).
 *   **[x]** Send 15 ping emails to non-finishers (2026-07-13). `ping0713` column auto-updated.
-*   **[ ]** Monitor replies and Tally form submissions (NpRz5W) for new completion proofs.
-*   **[ ]** Once proofs are received, manually update `teljesítve dátum` in Sheets and trigger fulfillment (`send_emails.py teljesites`).
 
 ---
 
 ## 🔧 Maintenance, Documentation & Testing
-*   **[ ]** Verify standard pixel events (PageView, InitiateCheckout, Purchase) using Meta Pixel Helper on local server (port 3001).
 *   **[ ]** Elkészíteni a folyamat-dokumentációt (melyik script/végpont mit csinál, honnan olvas, hova ír) a `/memory/ARCHITECTURE.md` fájlban vagy egy külön `docs/folyamat.md`-ben.
 
 
@@ -36,7 +32,9 @@
 
 ## 💳 Payment Pipeline – Kövi feladatok
 *   **[x]** Átnézni és tesztelni a **Számlázz.hu** e-számla generálást (`process-payment.js` → Számlázz.hu API hívás) — valóban megérkezik-e a számla emailben.
-*   **[ ]** Átnézni és tesztelni a **welcome email** küldést (`process-payment.js` → nodemailer SMTP) — megérkezik-e a köszöntő email a vásárlónak.
-*   **[ ]** End-to-end teszt: `checkout.html?campaign=pilis&test=true` → Stripe sandbox → `siker.html` → `process-payment` → Sheets + Supabase + számla + email.
+*   **[x]** Átnézni és tesztelni a **welcome email** küldést (`process-payment.js` → nodemailer SMTP) — megérkezik-e a köszöntő email a vásárlónak.
+*   **[ ]** "Sikeres nevezés" Welcome emailben legyen tájékoztató mindenről (GPX/szelfi feltöltés), portál elérhetősége és szerepe.
+*   **[ ]** Referral kedvezmények beépítése, tesztelése
+*   **[x]** End-to-end teszt: `checkout.html?campaign=pilis&test=true` → Stripe sandbox → `siker.html` → `process-payment` → Sheets + Supabase + számla + email.
 *   **[x]** Supabase: lefuttatni `ALTER TABLE runners ADD COLUMN IF NOT EXISTS stripe_session_id text;`
 *   **[x]** Deploy Vercel-re (`vercel --prod`) az összes mai változással.

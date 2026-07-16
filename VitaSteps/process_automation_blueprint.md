@@ -14,7 +14,7 @@ sequenceDiagram
     participant S as 💳 Stripe & Webhook
     participant GS as 📝 Google Sheet
     participant DB as 🗄️ Supabase DB
-    participant API as ✉️ Email (Resend/SendGrid) + Billingo
+    participant API as ✉️ Email (Resend/SendGrid) + Számlázz.hu
     actor A as 👑 Admin (Te)
     participant F as 🦊 Foxpost API
 
@@ -28,7 +28,7 @@ sequenceDiagram
 
     %% 2. Fázis: Onboarding
     Note over S, API: 2. Automata Onboarding (Azonnali)
-    S-->>API: Billingo API trigger: Számla kiállítása
+    S-->>API: Számlázz.hu API trigger: Számla kiállítása
     API-->>V: Email: Számla PDF + Üdvözlő levél (Egyedi Portál Linkkel)
 
     %% 3. Fázis: Teljesítés és Jóváhagyás
@@ -93,7 +93,7 @@ Megszűnik a kézi számlázás és a manuális üdvözlő levelek küldözgeté
 *   **Bemenő adatok (Inputs):**
     *   Stripe Webhook sikeres fizetés esemény (E-mail, Név, Számlázási Cím, Összeg).
 *   **Automatizációs folyamat:**
-    1.  A Stripe webhook azonnal meghívja a **Billingo API**-t (vagy Számlázz.hu), amely kiállítja az e-számlát, és elküldi a túrázónak e-mailben.
+    1.  A Stripe webhook azonnal meghívja a **Számlázz.hu** API-t, amely kiállítja az e-számlát, és elküldi a túrázónak e-mailben.
     2.  Ezzel egy időben a rendszer a **Resend API**-n keresztül kiküldi a hivatalos VitaSteps üdvözlő levelet.
     3.  A levél tartalmazza a személyre szabott Portál linket:
         `https://vitastepsss.vercel.app/portal.html?email=turanév%40gmail.com`
@@ -159,5 +159,5 @@ A visszajelzések és ajánlások gyűjtése teljesen önműködővé válik, po
 
 1.  **Stripe Metadata binding:** A landing page fizetési űrlapján a `checkout.session.create` API hívásban össze kell kötni a Foxpost widget változóit a Stripe metadata mezőivel.
 2.  **Webhook Handler:** Egy egyszerű API endpoint (pl. Vercel serverless function vagy Supabase Edge Function), ami figyeli a Stripe webhookokat és a Supabase adatbázis eseményeit, majd frissíti a Google Sheet-et.
-3.  **Billingo / Számlázz.hu API:** Egyszeri beállítás a számlák automata kiállításához sikeres fizetés után.
+3.  **Számlázz.hu API:** Egyszeri beállítás a számlák automata kiállításához sikeres fizetés után.
 4.  **Resend / SendGrid API:** A tranzakciós emailek (üdvözlő levél, gratuláció, feedback, referral) kiküldésére, így nem kell kézzel leveleket küldened.

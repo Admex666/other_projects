@@ -855,7 +855,9 @@
             window.location.search.substring(1).split("&").forEach(pair => {
                 if (!pair) return;
                 const parts = pair.split("=");
-                params[decodeURIComponent(parts[0])] = decodeURIComponent(parts[1] || "");
+                const key = decodeURIComponent(parts[0].replace(/\+/g, ' '));
+                const val = decodeURIComponent((parts[1] || "").replace(/\+/g, ' '));
+                params[key] = val;
             });
             return params;
         }
@@ -879,19 +881,19 @@
             // Try to load from Supabase session if available
             try {
                 const { data: { session } } = await supabaseClient.auth.getSession();
-                if (session && session.user) {
-                    const { data: runner, error } = await supabaseClient
-                        .from('runners')
-                        .select('*')
-                        .eq('email', session.user.email.toLowerCase())
+                if (session && session.user && serial) {
+                    const { data: run, error } = await supabaseClient
+                        .from('runs')
+                        .select('*, runners(email, name)')
+                        .eq('serial_number', serial)
                         .maybeSingle();
 
-                    if (!error && runner) {
+                    if (!error && run) {
                         // Force override parameters with database values to keep them FIX
-                        name = runner.name;
-                        serial = runner.serial_number;
-                        distance = runner.distance_km ? `${runner.distance_km} km` : '';
-                        date = runner.received_date || runner.completion_date;
+                        name = run.name || run.runners?.name;
+                        serial = run.serial_number;
+                        distance = run.distance_km ? `${run.distance_km} km` : '';
+                        date = run.completion_date || run.received_date;
 
                         // Disable input fields to make them un-editable
                         serialInput.disabled = true;

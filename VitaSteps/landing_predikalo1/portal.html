@@ -232,6 +232,151 @@
             background: rgba(34, 197, 94, 0.05);
         }
 
+        .status-badge.pending-review {
+            border-color: #f59e0b;
+            color: #f59e0b;
+            background: rgba(245, 158, 11, 0.05);
+        }
+
+        /* Proof Upload Dropzone */
+        .dropzone {
+            border: 2px dashed rgba(191, 255, 0, 0.3);
+            border-radius: 12px;
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(191, 255, 0, 0.02);
+            position: relative;
+        }
+
+        .dropzone:hover,
+        .dropzone.dragover {
+            border-color: var(--accent);
+            background: rgba(191, 255, 0, 0.05);
+            box-shadow: 0 0 20px rgba(191, 255, 0, 0.1);
+        }
+
+        .dropzone-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+
+        .dropzone-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-high);
+            margin-bottom: 0.4rem;
+        }
+
+        .dropzone-hint {
+            font-size: 0.82rem;
+            color: var(--text-mid);
+            line-height: 1.5;
+        }
+
+        .dropzone-browse {
+            color: var(--accent);
+            font-weight: 700;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .proof-file-list {
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .proof-file-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.6rem 1rem;
+            animation: fadeIn 0.2s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .proof-file-icon {
+            font-size: 1.4rem;
+            flex-shrink: 0;
+        }
+
+        .proof-file-name {
+            flex: 1;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-high);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .proof-file-size {
+            font-size: 0.75rem;
+            color: var(--text-mid);
+            flex-shrink: 0;
+        }
+
+        .proof-file-remove {
+            background: none;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 0 0.2rem;
+            flex-shrink: 0;
+            transition: opacity 0.2s;
+        }
+
+        .proof-file-remove:hover { opacity: 0.7; }
+
+        .proof-progress-bar {
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            margin: 0.75rem 0;
+            overflow: hidden;
+            display: none;
+        }
+
+        .proof-progress-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .format-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-top: 0.75rem;
+            justify-content: center;
+        }
+
+        .format-badge {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 0.15rem 0.5rem;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-mid);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
         /* Star Rating */
         .stars-container {
             display: flex;
@@ -572,6 +717,13 @@
                     <div class="badge-serial" id="user-display-serial">#---/---</div>
                 </div>
 
+                <div id="campaign-selector-container" style="display: none; margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+                    <label for="campaign-select" style="font-size: 0.85rem; color: var(--text-mid); display: block; margin-bottom: 0.5rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Válassz kihívást:</label>
+                    <select id="campaign-select" style="width: 100%; padding: 0.6rem; border-radius: 8px; background: var(--surface2); color: #fff; border: 1px solid var(--border); font-weight: 600; font-family: inherit; font-size: 0.9rem; outline: none; transition: border-color 0.25s;" onchange="onCampaignChange(this.value)">
+                        <!-- Dynamic options -->
+                    </select>
+                </div>
+
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 1rem;">
                     <div>
                         <span style="font-size: 0.85rem; color: var(--text-mid);">Kihívás állapota:</span>
@@ -580,7 +732,7 @@
                         </div>
                     </div>
                     <div id="cert-container" style="display: none;">
-                        <a id="btn-oklevel" href="oklevel.html" class="btn"
+                        <a id="btn-oklevel" href="predikalo/oklevel.html" class="btn"
                             style="padding: 0.6rem 1.2rem; font-size: 0.85rem; box-shadow: none;">🏆 Oklevél
                             megtekintése</a>
                     </div>
@@ -598,6 +750,27 @@
                 <button class="tab-btn" id="tab-btn-guidebook" onclick="switchTab('guidebook')" style="display: none;">
                     📖 Kalandkönyv
                 </button>
+                <button class="tab-btn" id="tab-btn-proof" onclick="switchTab('proof')" style="display: none;">
+                    📤 Teljesítés beküldése
+                </button>
+            </div>
+            
+            <!-- PENDING CHALLENGE INFO (Predikálószék only – no PK) -->
+            <div id="pending-challenge-card" class="card" style="display: none;">
+                <h2 style="color: var(--accent); margin-top: 0;">🏔️ Kihívás folyamatban</h2>
+                <p>Teljesítsd a választott távot, majd igazold a teljesítésedet a beküldő űrlapon keresztül.</p>
+                <p>A teljesítés jóváhagyása után itt érheted el a személyre szabott okleveledet, a visszajelzési ívet és a kedvezményeket nyújtó ajánlói programot!</p>
+                <a id="btn-tally-submit" href="https://tally.so/r/NpRz5W" target="_blank" class="btn">
+                    <span>Teljesítés Igazolása (Tally)</span>
+                </a>
+            </div>
+
+            <!-- PROOF PENDING REVIEW CARD (shown after upload until admin approves) -->
+            <div id="proof-pending-card" class="card" style="display: none; text-align: center;">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">⏳</div>
+                <h2 style="margin-top: 0;">Ellenőrzés alatt</h2>
+                <p>Köszönjük a beküldést! A feltöltött igazolásaid feldolgozás alatt vannak – általában <strong>1–2 munkanapon belül</strong> értesítünk az eredményről.</p>
+                <p style="margin-bottom: 0;">Ha kérdésed van, írj nekünk: <a href="mailto:vitasteps.team@gmail.com" style="color: var(--accent);">vitasteps.team@gmail.com</a></p>
             </div>
 
             <!-- TAB CONTENT: Feedback -->
@@ -854,6 +1027,47 @@
                 </div>
             </div>
 
+            <!-- TAB CONTENT: Proof Upload -->
+            <div id="tab-content-proof" style="display: none;">
+                <div class="card">
+                    <h2>📤 Teljesítés Igazolása</h2>
+                    <p>Töltsd fel a GPS nyomvonalad (.gpx fájl) és legalább egy selfie-t / fotót a csúcsról vagy az úton. Az igazolást az adminisztrátorunk néhány munkanapon belül elbírálja.</p>
+
+                    <!-- Dropzone -->
+                    <div class="dropzone" id="proof-dropzone" onclick="document.getElementById('proof-file-input').click()">
+                        <input type="file" id="proof-file-input" multiple
+                            accept=".gpx,.fit,.tcx,image/jpeg,image/png,image/webp,image/heic"
+                            style="display:none" onchange="onProofFilesSelected(this.files)">
+                        <span class="dropzone-icon">🗂️</span>
+                        <div class="dropzone-title">Húzd ide a fájlokat, vagy <span class="dropzone-browse">kattints a tallózáshoz</span></div>
+                        <div class="dropzone-hint">GPX nyomvonal + fotók a túráról</div>
+                        <div class="format-badges">
+                            <span class="format-badge">GPX</span>
+                            <span class="format-badge">FIT</span>
+                            <span class="format-badge">TCX</span>
+                            <span class="format-badge">JPG</span>
+                            <span class="format-badge">PNG</span>
+                            <span class="format-badge">WEBP</span>
+                            <span class="format-badge">HEIC</span>
+                        </div>
+                    </div>
+
+                    <!-- File list -->
+                    <div class="proof-file-list" id="proof-file-list"></div>
+
+                    <!-- Progress -->
+                    <div class="proof-progress-bar" id="proof-progress-bar">
+                        <div class="proof-progress-fill" id="proof-progress-fill"></div>
+                    </div>
+
+                    <!-- Submit -->
+                    <button class="btn" id="btn-proof-submit" onclick="submitProof()" style="margin-top: 1.25rem;" disabled>
+                        <span>Igazolás Beküldése</span>
+                    </button>
+                    <p style="font-size: 0.8rem; color: var(--text-low); margin-top: 0.75rem; margin-bottom: 0; text-align: center;">Max 10 fájl, egyenként max 50 MB</p>
+                </div>
+            </div>
+
             <button onclick="handleLogout()" class="btn btn-secondary">Kijelentkezés</button>
         </div>
     </div>
@@ -869,6 +1083,8 @@
         // State variables
         let currentUser = null;
         let selectedFile = null;
+        let userProfile = null;
+        let selectedRun = null;
 
         // UI Helpers
         function showScreen(screenId) {
@@ -1053,28 +1269,28 @@
             document.getElementById('user-display-email').textContent = currentUser.email;
 
             try {
-                // 1. Fetch profile from 'runners'
-                let { data: runner, error } = await supabaseClient
+                // 1. Fetch profile from 'runners' with runs joined
+                let { data: profile, error } = await supabaseClient
                     .from('runners')
-                    .select('*')
+                    .select('*, runs(*)')
                     .eq('email', currentUser.email.toLowerCase())
                     .maybeSingle();
 
                 if (error) throw error;
 
-                if (!runner) {
-                    console.log('Runner not found in DB. Attempting background sync...');
+                if (!profile) {
+                    console.log('Runner profile not found in DB. Attempting background sync...');
                     try {
                         const syncRes = await fetch('/api/sync-runners');
                         if (syncRes.ok) {
-                            const { data: retryRunner, error: retryError } = await supabaseClient
+                            const { data: retryProfile, error: retryError } = await supabaseClient
                                 .from('runners')
-                                .select('*')
+                                .select('*, runs(*)')
                                 .eq('email', currentUser.email.toLowerCase())
                                 .maybeSingle();
                             if (retryError) throw retryError;
-                            if (retryRunner) {
-                                runner = retryRunner;
+                            if (retryProfile) {
+                                profile = retryProfile;
                             }
                         }
                     } catch (syncErr) {
@@ -1082,78 +1298,177 @@
                     }
                 }
 
-                if (!runner) {
+                if (!profile) {
                     // Runner not found in DB even after sync
                     document.getElementById('user-display-name').textContent = "Regisztrált Felhasználó";
                     document.getElementById('user-display-serial').textContent = "#Nincs";
                     document.getElementById('user-display-status').innerHTML = '<span class="status-badge">Nincs aktív kihívásod</span>';
+                    document.getElementById('campaign-selector-container').style.display = 'none';
                     showScreen('screen-dashboard');
                     return;
                 }
 
-                // Populate runner info
-                document.getElementById('user-display-name').textContent = runner.name;
-                document.getElementById('user-display-serial').textContent = runner.serial_number || '#---/---';
+                userProfile = profile;
+                const runs = profile.runs || [];
 
-                const statusContainer = document.getElementById('user-display-status');
-                const certContainer = document.getElementById('cert-container');
+                if (runs.length === 0) {
+                    document.getElementById('user-display-name').textContent = profile.name || "Regisztrált Felhasználó";
+                    document.getElementById('user-display-serial').textContent = "#Nincs";
+                    document.getElementById('user-display-status').innerHTML = '<span class="status-badge">Nincs aktív kihívásod</span>';
+                    document.getElementById('campaign-selector-container').style.display = 'none';
+                    showScreen('screen-dashboard');
+                    return;
+                }
 
-                if (runner.completed) {
-                    statusContainer.innerHTML = '<span class="status-badge completed">Teljesítve</span>';
+                // Populate user profile details
+                document.getElementById('user-display-name').textContent = profile.name;
 
-                    // Update oklevel.html link with parameters (backup)
-                    const params = new URLSearchParams({
-                        nev: runner.name,
-                        sorszam: runner.serial_number || '',
-                        tav: runner.distance_km ? `${runner.distance_km} km` : '',
-                        datum: runner.completion_date || ''
+                // Handle multi-run selection UI
+                const selectContainer = document.getElementById('campaign-selector-container');
+                const selectElement = document.getElementById('campaign-select');
+
+                if (runs.length > 1) {
+                    // Populate select options
+                    selectElement.innerHTML = '';
+                    runs.forEach(run => {
+                        const isPilisK = run.serial_number && (run.serial_number.includes('PK') || run.serial_number.includes('999'));
+                        const campaignName = isPilisK ? 'A Nagy-Kevély csillagjai érem' : 'Prédikálószék Vertical';
+                        const opt = document.createElement('option');
+                        opt.value = run.id;
+                        opt.textContent = `${campaignName} (${run.serial_number})`;
+                        selectElement.appendChild(opt);
                     });
-                    document.getElementById('btn-oklevel').href = `oklevel.html?${params.toString()}`;
-                    certContainer.style.display = 'block';
+                    selectContainer.style.display = 'block';
+
+                    // Default to first run, or keep previously selected if still exists
+                    const previouslySelected = selectedRun ? runs.find(r => r.id === selectedRun.id) : null;
+                    selectedRun = previouslySelected || runs[0];
+                    selectElement.value = selectedRun.id;
                 } else {
-                    statusContainer.innerHTML = '<span class="status-badge">Kihívás folyamatban</span>';
-                    certContainer.style.display = 'none';
+                    // Exactly 1 run
+                    selectContainer.style.display = 'none';
+                    selectedRun = runs[0];
                 }
 
-                // Check feedback status
-                const { data: existingFeedback } = await supabaseClient
-                    .from('feedbacks')
-                    .select('id')
-                    .eq('runner_email', currentUser.email.toLowerCase())
-                    .maybeSingle();
+                await renderRunDashboard();
+            } catch (err) {
+                console.error("Dashboard error:", err);
+                alert("Nem sikerült betölteni a profil adataidat. Hiba: " + err.message);
+                showScreen('screen-dashboard');
+            }
+        }
 
-                if (existingFeedback) {
-                    // Already submitted
-                    document.getElementById('feedback-completed-card').style.display = 'block';
-                    document.getElementById('feedback-card').style.display = 'none';
-                } else if (runner.received_date) {
-                    // Medal received, show feedback form
-                    document.getElementById('feedback-card').style.display = 'block';
-                    document.getElementById('feedback-completed-card').style.display = 'none';
-                } else if (runner.shipped) {
-                    // Medal in transit
-                    document.getElementById('medal-transit-card').style.display = 'block';
-                    document.getElementById('feedback-card').style.display = 'none';
+        // Render Run Details
+        async function renderRunDashboard() {
+            if (!selectedRun) return;
+
+            const run = selectedRun;
+            const isPilisK = run.serial_number && (run.serial_number.includes('PK') || run.serial_number.includes('999'));
+
+            // Populate serial
+            document.getElementById('user-display-serial').textContent = run.serial_number || '#---/---';
+
+            // Populate status
+            const statusContainer = document.getElementById('user-display-status');
+            const certContainer = document.getElementById('cert-container');
+
+            if (run.completed) {
+                statusContainer.innerHTML = '<span class="status-badge completed">Teljesítve</span>';
+
+                // Update oklevel.html link with parameters
+                const params = new URLSearchParams({
+                    nev: run.name || userProfile.name,
+                    sorszam: run.serial_number || '',
+                    tav: run.distance_km ? `${run.distance_km} km` : '',
+                    datum: run.completion_date || '',
+                    campaign: isPilisK ? 'A Nagy-Kevély csillagjai' : 'Prédikálószék Vertical'
+                });
+                document.getElementById('btn-oklevel').href = `predikalo/oklevel.html?${params.toString()}`;
+                certContainer.style.display = 'block';
+            } else {
+                statusContainer.innerHTML = '<span class="status-badge">Kihívás folyamatban</span>';
+                certContainer.style.display = 'none';
+            }
+
+            // Hide cards by default to avoid overlapping states
+            document.getElementById('feedback-completed-card').style.display = 'none';
+            document.getElementById('feedback-card').style.display = 'none';
+            document.getElementById('medal-transit-card').style.display = 'none';
+
+            // Check feedback status for this specific run
+            const { data: existingFeedback } = await supabaseClient
+                .from('feedbacks')
+                .select('id')
+                .eq('run_id', run.id)
+                .maybeSingle();
+
+            if (existingFeedback) {
+                // Already submitted
+                document.getElementById('feedback-completed-card').style.display = 'block';
+            } else if (run.received_date) {
+                // Medal received, show feedback form
+                document.getElementById('feedback-card').style.display = 'block';
+            } else if (run.shipped) {
+                // Medal in transit
+                document.getElementById('medal-transit-card').style.display = 'block';
+            }
+
+            // Hide proof-pending-card by default
+            document.getElementById('proof-pending-card').style.display = 'none';
+
+            if (isPilisK) {
+                // Prefill guidebook form name
+                document.getElementById('guidebook-name').value = run.name || userProfile.name;
+
+                // Show proof-pending-card if already submitted but not yet approved
+                if (!run.completed && run.proof_submitted) {
+                    statusContainer.innerHTML = '<span class="status-badge pending-review">Ellenőrzés alatt</span>';
+                    document.getElementById('proof-pending-card').style.display = 'block';
                 }
+            }
 
-                // Check if user is Nagy-Kevely (Pilis) challenger
-                const isPilisK = runner.serial_number && runner.serial_number.includes('PK');
-                
-                if (isPilisK) {
-                    // Prefill guidebook form name
-                    document.getElementById('guidebook-name').value = runner.name;
-                    // Show guidebook tab button
-                    document.getElementById('tab-btn-guidebook').style.display = 'block';
-                } else {
-                    document.getElementById('tab-btn-guidebook').style.display = 'none';
-                }
+            // --- DYNAMIC TABS & PENDING CARD LOGIC ---
+            const btnFeedback = document.getElementById('tab-btn-feedback');
+            const btnReferral = document.getElementById('tab-btn-referral');
+            const btnGuidebook = document.getElementById('tab-btn-guidebook');
+            const btnProof = document.getElementById('tab-btn-proof');
+            const pendingCard = document.getElementById('pending-challenge-card');
 
-                // Referral logic and tab switching
-                if (runner.completed) {
+            // Determine visibility of each tab button
+            const showFeedbackTab = run.completed;
+            const showReferralTab = run.completed;
+            const showGuidebookTab = !!isPilisK; // Only shown for Nagy-Kevély
+            // Proof tab: PK runners who haven't completed yet and haven't submitted proof
+            const showProofTab = !!(isPilisK && !run.completed && !run.proof_submitted);
+
+            // Apply button visibility
+            btnFeedback.style.display = showFeedbackTab ? 'block' : 'none';
+            btnReferral.style.display = showReferralTab ? 'block' : 'none';
+            btnGuidebook.style.display = showGuidebookTab ? 'block' : 'none';
+            btnProof.style.display = showProofTab ? 'block' : 'none';
+
+            // Count visible tabs
+            let visibleTabsCount = 0;
+            let firstVisibleTabId = '';
+
+            if (showFeedbackTab) { visibleTabsCount++; if (!firstVisibleTabId) firstVisibleTabId = 'feedback'; }
+            if (showReferralTab) { visibleTabsCount++; if (!firstVisibleTabId) firstVisibleTabId = 'referral'; }
+            if (showGuidebookTab) { visibleTabsCount++; if (!firstVisibleTabId) firstVisibleTabId = 'guidebook'; }
+            if (showProofTab) { visibleTabsCount++; if (!firstVisibleTabId) firstVisibleTabId = 'proof'; }
+
+            // Hide pending card by default
+            pendingCard.style.display = 'none';
+
+            if (visibleTabsCount > 1) {
+                // Show tabs nav
+                document.getElementById('dashboard-tabs').style.display = 'flex';
+
+                // Populate referral data if relevant
+                if (run.completed) {
                     let refCount = 0;
                     try {
                         const { count, error: refError } = await supabaseClient
-                            .from('runners')
+                            .from('runs')
                             .select('*', { count: 'exact', head: true })
                             .eq('referred_by', currentUser.email.toLowerCase());
                         if (!refError) {
@@ -1163,20 +1478,16 @@
                         console.error('Error fetching referrals:', e);
                     }
 
-                    document.getElementById('dashboard-tabs').style.display = 'flex';
-                    
-                    const refLink = isPilisK 
+                    const refLink = isPilisK
                         ? `${window.location.origin}/nagykevely/checkout-widget.html?ref=${encodeURIComponent(currentUser.email.toLowerCase())}`
                         : `${window.location.origin}/checkout-widget.html?ref=${encodeURIComponent(currentUser.email.toLowerCase())}`;
                     document.getElementById('ref-link-input').value = refLink;
 
                     const refText = document.querySelector('#referral-card p');
                     if (refText) {
-                        if (isPilisK) {
-                            refText.innerHTML = `Küldd el a lenti linkedet a barátaidnak: ha ezen keresztül neveznek, ők <strong>10% kedvezményt</strong> kapnak a Nagy-Kevély nevezésből, te pedig akár <strong>100% ingyenes nevezést</strong> kapsz a következő VitaSteps kihívásunkra!`;
-                        } else {
-                            refText.innerHTML = `Küldd el a lenti linkedet a barátaidnak: ha ezen keresztül neveznek, ők <strong>10% kedvezményt</strong> kapnak a Prédikálószék nevezésből, te pedig akár <strong>100% ingyenes nevezést</strong> kapsz a következő VitaSteps kihívásunkra!`;
-                        }
+                        refText.innerHTML = isPilisK
+                            ? `Küldd el a lenti linkedet a barátaidnak: ha ezen keresztül neveznek, ők <strong>10% kedvezményt</strong> kapnak a Nagy-Kevély nevezésből, te pedig akár <strong>100% ingyenes nevezést</strong> kapsz a következő VitaSteps kihívásunkra!`
+                            : `Küldd el a lenti linkedet a barátaidnak: ha ezen keresztül neveznek, ők <strong>10% kedvezményt</strong> kapnak a Prédikálószék nevezésből, te pedig akár <strong>100% ingyenes nevezést</strong> kapsz a következő VitaSteps kihívásunkra!`;
                     }
                     document.getElementById('ref-count-display').textContent = `${refCount} barát`;
 
@@ -1194,28 +1505,214 @@
                     } else {
                         rewardDisplay.innerHTML = '🎉 Gratulálunk! Elérted az <strong>5 barátot</strong>, a következő nevezésed <strong>100% INGYENES</strong>!';
                     }
-
-                    // Activate default tab for completed runners
-                    switchTab('feedback');
-                } else {
-                    if (isPilisK) {
-                        // For non-completed Nagy-Kevely runners: show tabs nav (containing Guidebook) and activate it
-                        document.getElementById('dashboard-tabs').style.display = 'flex';
-                        switchTab('guidebook');
-                    } else {
-                        // For other non-completed runners: hide tabs and show standard pending feedback
-                        document.getElementById('dashboard-tabs').style.display = 'none';
-                        document.getElementById('tab-content-feedback').style.display = 'block';
-                        document.getElementById('tab-content-referral').style.display = 'none';
-                        document.getElementById('tab-content-guidebook').style.display = 'none';
-                    }
                 }
 
-                showScreen('screen-dashboard');
+                // Switch to active tab
+                if (run.completed) {
+                    switchTab('feedback');
+                } else {
+                    switchTab(firstVisibleTabId);
+                }
+            } else if (visibleTabsCount === 1) {
+                // Only one tab visible
+                document.getElementById('dashboard-tabs').style.display = 'none';
+                switchTab(firstVisibleTabId);
+            } else {
+                // No tabs visible (non-completed Prédikálószék, or PK after proof review)
+                document.getElementById('dashboard-tabs').style.display = 'none';
+                document.getElementById('tab-content-feedback').style.display = 'none';
+                document.getElementById('tab-content-referral').style.display = 'none';
+                document.getElementById('tab-content-guidebook').style.display = 'none';
+                document.getElementById('tab-content-proof').style.display = 'none';
+
+                // For Prédikálószék: show Tally pending card
+                if (!isPilisK) {
+                    const tallyUrl = `https://tally.so/r/NpRz5W?email=${encodeURIComponent(currentUser.email)}&name=${encodeURIComponent(run.name || userProfile.name)}`;
+                    document.getElementById('btn-tally-submit').href = tallyUrl;
+                    pendingCard.style.display = 'block';
+                }
+                // For PK: proof-pending-card was already shown above if proof_submitted
+            }
+
+            showScreen('screen-dashboard');
+        }
+
+        // On Change campaign select
+        function onCampaignChange(runId) {
+            const run = userProfile.runs.find(r => r.id === runId);
+            if (run) {
+                selectedRun = run;
+                // Reset proof file list when switching campaigns
+                proofFiles = [];
+                renderProofFileList();
+                renderRunDashboard();
+            }
+        }
+
+        // ============================================================
+        // PROOF UPLOAD LOGIC
+        // ============================================================
+
+        let proofFiles = []; // Accumulates File objects selected by user
+        const MAX_FILES = 10;
+        const MAX_FILE_SIZE_MB = 50;
+
+        function getFileIcon(file) {
+            const ext = file.name.split('.').pop().toLowerCase();
+            if (['gpx', 'fit', 'tcx'].includes(ext)) return '🗺️';
+            if (['jpg', 'jpeg', 'png', 'webp', 'heic'].includes(ext)) return '📸';
+            return '📄';
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+
+        function renderProofFileList() {
+            const list = document.getElementById('proof-file-list');
+            const submitBtn = document.getElementById('btn-proof-submit');
+            list.innerHTML = '';
+
+            proofFiles.forEach((file, idx) => {
+                const item = document.createElement('div');
+                item.className = 'proof-file-item';
+                item.innerHTML = `
+                    <span class="proof-file-icon">${getFileIcon(file)}</span>
+                    <span class="proof-file-name" title="${file.name}">${file.name}</span>
+                    <span class="proof-file-size">${formatFileSize(file.size)}</span>
+                    <button class="proof-file-remove" onclick="removeProofFile(${idx})" title="Eltávolítás">✕</button>
+                `;
+                list.appendChild(item);
+            });
+
+            submitBtn.disabled = proofFiles.length === 0;
+        }
+
+        function removeProofFile(idx) {
+            proofFiles.splice(idx, 1);
+            renderProofFileList();
+        }
+
+        function onProofFilesSelected(fileList) {
+            const newFiles = Array.from(fileList);
+            const errors = [];
+
+            for (const file of newFiles) {
+                if (proofFiles.length >= MAX_FILES) {
+                    errors.push(`Maximum ${MAX_FILES} fájlt tölthetsz fel.`);
+                    break;
+                }
+                if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+                    errors.push(`${file.name} mérete meghaladja a ${MAX_FILE_SIZE_MB} MB-os limitet.`);
+                    continue;
+                }
+                // Avoid exact duplicates
+                const isDupe = proofFiles.some(f => f.name === file.name && f.size === file.size);
+                if (!isDupe) {
+                    proofFiles.push(file);
+                }
+            }
+
+            if (errors.length > 0) alert(errors.join('\n'));
+
+            renderProofFileList();
+            // Reset input so same file can be re-selected if removed
+            document.getElementById('proof-file-input').value = '';
+        }
+
+        // Drag & drop wiring
+        document.addEventListener('DOMContentLoaded', () => {
+            const dropzone = document.getElementById('proof-dropzone');
+            if (!dropzone) return;
+
+            dropzone.addEventListener('dragover', e => {
+                e.preventDefault();
+                dropzone.classList.add('dragover');
+            });
+            dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+            dropzone.addEventListener('drop', e => {
+                e.preventDefault();
+                dropzone.classList.remove('dragover');
+                if (e.dataTransfer.files.length > 0) {
+                    onProofFilesSelected(e.dataTransfer.files);
+                }
+            });
+        });
+
+        async function submitProof() {
+            if (!selectedRun || proofFiles.length === 0) return;
+
+            const btn = document.getElementById('btn-proof-submit');
+            const progressBar = document.getElementById('proof-progress-bar');
+            const progressFill = document.getElementById('proof-progress-fill');
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading-spinner"></span> Feltöltés...';
+            progressBar.style.display = 'block';
+            progressFill.style.width = '0%';
+
+            const uploadedUrls = [];
+            const runId = selectedRun.id;
+
+            try {
+                for (let i = 0; i < proofFiles.length; i++) {
+                    const file = proofFiles[i];
+                    const ext = file.name.split('.').pop().toLowerCase();
+                    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+                    const storagePath = `proofs/${runId}/${Date.now()}_${safeName}`;
+
+                    const { data: uploadData, error: uploadError } = await supabaseClient.storage
+                        .from('medals')
+                        .upload(storagePath, file, { upsert: false });
+
+                    if (uploadError) throw new Error(`Feltöltési hiba (${file.name}): ${uploadError.message}`);
+
+                    const { data: { publicUrl } } = supabaseClient.storage
+                        .from('medals')
+                        .getPublicUrl(storagePath);
+
+                    uploadedUrls.push(publicUrl);
+
+                    // Update progress
+                    progressFill.style.width = `${Math.round(((i + 1) / proofFiles.length) * 90)}%`;
+                }
+
+                // Save to runs table
+                const { error: dbError } = await supabaseClient
+                    .from('runs')
+                    .update({
+                        proof_submitted: true,
+                        proof_urls: uploadedUrls,
+                        proof_submitted_at: new Date().toISOString()
+                    })
+                    .eq('id', runId);
+
+                if (dbError) throw new Error('Adatbázis frissítési hiba: ' + dbError.message);
+
+                progressFill.style.width = '100%';
+
+                // Update local selectedRun state so UI re-renders correctly
+                selectedRun.proof_submitted = true;
+                selectedRun.proof_urls = uploadedUrls;
+                if (userProfile && userProfile.runs) {
+                    const idx = userProfile.runs.findIndex(r => r.id === runId);
+                    if (idx !== -1) userProfile.runs[idx].proof_submitted = true;
+                }
+
+                setTimeout(() => {
+                    progressBar.style.display = 'none';
+                    // Rerender to show proof-pending-card
+                    renderRunDashboard();
+                }, 600);
+
             } catch (err) {
-                console.error("Dashboard error:", err);
-                alert("Nem sikerült betölteni a profil adataidat. Hiba: " + err.message);
-                showScreen('screen-dashboard');
+                console.error('Proof upload error:', err);
+                alert('Hiba történt a feltöltés során: ' + err.message);
+                progressBar.style.display = 'none';
+                btn.disabled = false;
+                btn.innerHTML = '<span>Igazolás Beküldése</span>';
             }
         }
 
@@ -1279,6 +1776,7 @@
                 });
 
                 const payload = {
+                    run_id: selectedRun.id,
                     erem_minoseg: quality,
                     szallitas_elegedett: delivery,
                     reszvetel_ujra: document.querySelector('input[name="q-reszvetel"]:checked').value,
@@ -1343,35 +1841,26 @@
 
         // Tab Switching Utility
         function switchTab(tabId) {
-            const btnFeedback = document.getElementById('tab-btn-feedback');
-            const btnReferral = document.getElementById('tab-btn-referral');
-            const btnGuidebook = document.getElementById('tab-btn-guidebook');
-            const contentFeedback = document.getElementById('tab-content-feedback');
-            const contentReferral = document.getElementById('tab-content-referral');
-            const contentGuidebook = document.getElementById('tab-content-guidebook');
+            const tabs = [
+                { id: 'feedback',  btn: 'tab-btn-feedback',  content: 'tab-content-feedback' },
+                { id: 'referral',  btn: 'tab-btn-referral',  content: 'tab-content-referral' },
+                { id: 'guidebook', btn: 'tab-btn-guidebook', content: 'tab-content-guidebook' },
+                { id: 'proof',     btn: 'tab-btn-proof',     content: 'tab-content-proof' },
+            ];
 
-            if (!btnFeedback || !btnReferral || !contentFeedback || !contentReferral) return;
+            tabs.forEach(t => {
+                const btn = document.getElementById(t.btn);
+                const content = document.getElementById(t.content);
+                if (btn) btn.classList.remove('active');
+                if (content) content.style.display = 'none';
+            });
 
-            // Remove active classes
-            btnFeedback.classList.remove('active');
-            btnReferral.classList.remove('active');
-            if (btnGuidebook) btnGuidebook.classList.remove('active');
-
-            // Hide contents
-            contentFeedback.style.display = 'none';
-            contentReferral.style.display = 'none';
-            if (contentGuidebook) contentGuidebook.style.display = 'none';
-
-            // Show and activate target
-            if (tabId === 'feedback') {
-                btnFeedback.classList.add('active');
-                contentFeedback.style.display = 'block';
-            } else if (tabId === 'referral') {
-                btnReferral.classList.add('active');
-                contentReferral.style.display = 'block';
-            } else if (tabId === 'guidebook' && btnGuidebook && contentGuidebook) {
-                btnGuidebook.classList.add('active');
-                contentGuidebook.style.display = 'block';
+            const target = tabs.find(t => t.id === tabId);
+            if (target) {
+                const btn = document.getElementById(target.btn);
+                const content = document.getElementById(target.content);
+                if (btn) btn.classList.add('active');
+                if (content) content.style.display = 'block';
             }
         }
 

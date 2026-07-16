@@ -4,6 +4,27 @@ All notable changes to the VitaSteps challenge platform project are documented h
 
 ---
 
+## [1.5.0] - 2026-07-16
+### Added
+*   **Adatbázis Normalizáció & Több Kihívás Támogatása:**
+    *   Felbontottuk a sémát `runners` (név, egyedi email) és `runs` (kihívás regisztrációk, egyedi sorszám, a teljesítő nevével) táblákra.
+    *   Módosítottuk a `process-payment.js`, `stripe-webhook.js`, `submit-feedback.js` és `daily_tracking.py` állományokat a két-táblás logikának megfelelően.
+    *   A portálon (`portal.html`) bevezettünk egy legördülő választómenüt, amellyel a több kihívásra regisztrált felhasználók azonnal válthatnak a túráik között. A teljes felület (státusz, oklevél link, Kalandkönyv és Ajánlói fülek) dinamikusan frissül.
+    *   Javítottuk a portál oklevél gombjának útvonalát `/predikalo/oklevel.html` értékre.
+
+## [1.4.3] - 2026-07-16
+### Added
+*   **Dynamic Portal Tabs & Pending Challenge Card (`portal.html`):**
+    *   Refactored the dashboard tab logic to dynamically show/hide tabs based on the runner's campaign and completion status.
+    *   *Visszajelzés* and *Ajánlói Program* tabs are hidden for runners who have not completed their challenge.
+    *   *Kalandkönyv* tab is only shown for Nagy-Kevély (Pilis) challengers.
+    *   If only one tab is visible, the tab bar is hidden and that tab is activated automatically (e.g. non-completed Nagy-Kevély runners see the Guidebook card directly).
+    *   If zero tabs are visible (non-completed Prédikálószék runners), the tab bar is hidden and a new `#pending-challenge-card` is displayed with instructions and a pre-filled Tally submission button (`https://tally.so/r/NpRz5W?email=...&name=...`).
+*   **Payment Pipeline Hardening & Invoice Name Simplification:**
+    *   **Golyóálló Kampány Kulcskereső:** Implemented a case-insensitive search loop over the entire Stripe metadata keys to match and extract campaign values regardless of character encoding anomalies (e.g. cyrillic "a" key error) or spelling variations.
+    *   **Safe Számlázz.hu Key parsing:** Guarded `szamlaKey` extraction in `process-payment.js` and `stripe-webhook.js` against undefined values to prevent TypeError crashes in production when credentials are not set on Vercel.
+    *   **Simplified Invoice Name:** Updated product name on Számlázz.hu invoices to be simply `${campaignName} érem` (e.g. "A Nagy-Kevély csillagai érem") instead of including the participant name and distance.
+
 ## [1.4.2] - 2026-07-15
 ### Added
 *   **Webhook-Free Payment Pipeline (`api/process-payment.js`):**

@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VitaSteps – Admin Panel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #04060a;
+            --surface: #0c0f15;
+            --surface2: #12161e;
+            --accent: #f97316; /* orange for admin */
+            --accent-glow: rgba(249, 115, 22, 0.2);
+            --green: #22c55e;
+            --green-glow: rgba(34, 197, 94, 0.2);
+            --red: #ef4444;
+            --red-glow: rgba(239, 68, 68, 0.2);
+            --text-high: #f0f4ff;
+            --text-mid: #7a8aa0;
+            --text-low: #3d4a5c;
+            --border: rgba(255, 255, 255, 0.07);
+            --radius-md: 12px;
+            --radius-lg: 20px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text-high);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        .container { max-width: 900px; margin: 0 auto; }
+
+        .logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: 4px;
+            margin-bottom: 0.5rem;
+        }
+        .logo span { color: var(--accent); }
+        .admin-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--accent);
+            background: rgba(249, 115, 22, 0.1);
+            border: 1px solid rgba(249, 115, 22, 0.3);
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            margin-bottom: 2.5rem;
+        }
+
+        /* Login Screen */
+        #screen-login {
+            max-width: 420px;
+            margin: 5rem auto;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
+        h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+        }
+
+        .input-text {
+            width: 100%;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-high);
+            padding: 0.85rem 1rem;
+            font-size: 1rem;
+            font-family: inherit;
+            margin-bottom: 1rem;
+            transition: border-color 0.2s;
+        }
+        .input-text:focus { outline: none; border-color: var(--accent); }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            padding: 0.9rem 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+            box-shadow: 0 4px 15px var(--accent-glow);
+        }
+        .btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
+        .btn-approve {
+            background: var(--green);
+            color: #04060a;
+            box-shadow: 0 4px 12px var(--green-glow);
+            width: auto;
+            padding: 0.6rem 1.2rem;
+            font-size: 0.9rem;
+        }
+        .btn-approve:hover { filter: brightness(1.1); }
+
+        .btn-reject {
+            background: transparent;
+            color: var(--red);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            width: auto;
+            padding: 0.6rem 1.2rem;
+            font-size: 0.9rem;
+        }
+        .btn-reject:hover { background: rgba(239, 68, 68, 0.1); }
+
+        /* Dashboard */
+        #screen-dashboard { display: none; }
+
+        .dashboard-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .stats-bar {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-chip {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+        }
+        .stat-chip strong { color: var(--accent); }
+
+        .filter-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+        .filter-tab {
+            background: none;
+            border: none;
+            color: var(--text-mid);
+            font-weight: 600;
+            font-size: 0.9rem;
+            font-family: inherit;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        .filter-tab.active {
+            background: rgba(249, 115, 22, 0.1);
+            color: var(--accent);
+        }
+
+        /* Proof Cards */
+        .proof-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            margin-bottom: 1.25rem;
+            transition: border-color 0.2s;
+        }
+        .proof-card:hover { border-color: rgba(249, 115, 22, 0.25); }
+
+        .proof-card.approved { border-color: rgba(34, 197, 94, 0.3); }
+        .proof-card.rejected { opacity: 0.5; }
+
+        .proof-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+            flex-wrap: wrap;
+        }
+
+        .runner-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.2rem;
+        }
+        .runner-meta {
+            font-size: 0.82rem;
+            color: var(--text-mid);
+            line-height: 1.6;
+        }
+
+        .badges {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .badge {
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 0.25rem 0.6rem;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .badge-serial {
+            background: rgba(249, 115, 22, 0.1);
+            border: 1px solid rgba(249, 115, 22, 0.4);
+            color: var(--accent);
+        }
+        .badge-pending {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            color: #f59e0b;
+        }
+        .badge-approved {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.4);
+            color: var(--green);
+        }
+
+        /* File previews */
+        .proof-files {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .proof-thumb {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: transform 0.2s;
+            flex-shrink: 0;
+        }
+        .proof-thumb:hover { transform: scale(1.04); border-color: var(--accent); }
+        .proof-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .proof-file-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-high);
+            text-decoration: none;
+            transition: border-color 0.2s;
+            height: 100px;
+            flex-direction: column;
+            justify-content: center;
+            width: 100px;
+            text-align: center;
+            word-break: break-all;
+            font-size: 0.75rem;
+        }
+        .proof-file-link:hover { border-color: var(--accent); color: var(--accent); }
+        .proof-file-link .file-icon { font-size: 1.8rem; }
+
+        .proof-actions {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .action-result {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-mid);
+        }
+
+        .submitted-time {
+            font-size: 0.78rem;
+            color: var(--text-low);
+            margin-top: 0.5rem;
+        }
+
+        /* Lightbox */
+        #lightbox {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            cursor: zoom-out;
+        }
+        #lightbox.open { display: flex; }
+        #lightbox img {
+            max-width: 90vw;
+            max-height: 90vh;
+            border-radius: 8px;
+            box-shadow: 0 0 60px rgba(0,0,0,0.8);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-mid);
+        }
+        .empty-state .icon { font-size: 3rem; margin-bottom: 1rem; }
+
+        .loading-spinner {
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top: 3px solid var(--accent);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 0.8s linear infinite;
+            display: inline-block;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .logout-btn {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text-mid);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .logout-btn:hover { border-color: var(--red); color: var(--red); }
+
+        @media (max-width: 600px) {
+            .proof-header { flex-direction: column; }
+            .proof-thumb, .proof-file-link { width: 80px; height: 80px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="logo">VITA<span>STEPS</span></div>
+    <div class="admin-label">🔐 Admin Panel</div>
+
+    <!-- LOGIN SCREEN -->
+    <div id="screen-login">
+        <div class="card">
+            <h2>Adminisztrátori Belépés</h2>
+            <p style="color: var(--text-mid); font-size: 0.9rem; margin-bottom: 1.25rem;">
+                Ez az oldal kizárólag VitaSteps adminisztrátorok számára érhető el.
+            </p>
+            <input type="password" id="admin-password" class="input-text" placeholder="Admin jelszó" onkeydown="if(event.key==='Enter') doLogin()">
+            <button class="btn btn-primary" onclick="doLogin()">
+                <span id="login-btn-text">Belépés</span>
+            </button>
+            <p id="login-error" style="color: var(--red); font-size: 0.85rem; margin-top: 0.75rem; display: none;">
+                ❌ Hibás jelszó. Próbáld újra.
+            </p>
+        </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="screen-dashboard">
+        <div class="dashboard-header">
+            <div>
+                <div style="font-family: 'Outfit', sans-serif; font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem;">
+                    Beküldött Teljesítések
+                </div>
+                <div class="stats-bar" id="stats-bar">
+                    <div class="stat-chip">Betöltés... <span class="loading-spinner" style="width:14px;height:14px;border-width:2px;vertical-align:middle;"></span></div>
+                </div>
+            </div>
+            <button class="logout-btn" onclick="doLogout()">Kijelentkezés</button>
+        </div>
+
+        <div class="filter-tabs">
+            <button class="filter-tab active" onclick="setFilter('pending')" id="tab-pending">⏳ Várakozó</button>
+            <button class="filter-tab" onclick="setFilter('approved')" id="tab-approved">✅ Jóváhagyott</button>
+            <button class="filter-tab" onclick="setFilter('all')" id="tab-all">📋 Összes</button>
+        </div>
+
+        <div id="proof-list">
+            <div class="empty-state">
+                <div class="icon">⏳</div>
+                <div>Adatok betöltése...</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Lightbox -->
+<div id="lightbox" onclick="closeLightbox()">
+    <img id="lightbox-img" src="" alt="">
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+    const SUPABASE_URL = "https://ncsathcqpvlrygkphced.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jc2F0aGNxcHZscnlna3BoY2VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3OTU3NTEsImV4cCI6MjA5ODM3MTc1MX0.4036PLTmBdhjUj8-qu2fpmZU6hvrXbc5-S_XJusKEYo";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let adminSecret = '';
+    let allRuns = [];
+    let currentFilter = 'pending';
+
+    // ─── Auth ───────────────────────────────────────────────
+    async function doLogin() {
+        const pw = document.getElementById('admin-password').value;
+        if (!pw) return;
+
+        const btnText = document.getElementById('login-btn-text');
+        btnText.innerHTML = '<span class="loading-spinner"></span>';
+
+        // Validate against backend (don't expose secret in JS)
+        const res = await fetch('/api/admin-approve', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'ping', admin_secret: pw })
+        });
+
+        if (res.ok || res.status === 400) {
+            // 400 = bad action but valid secret
+            adminSecret = pw;
+            document.getElementById('screen-login').style.display = 'none';
+            document.getElementById('screen-dashboard').style.display = 'block';
+            loadData();
+        } else {
+            document.getElementById('login-error').style.display = 'block';
+            btnText.textContent = 'Belépés';
+        }
+    }
+
+    function doLogout() {
+        adminSecret = '';
+        allRuns = [];
+        document.getElementById('screen-dashboard').style.display = 'none';
+        document.getElementById('screen-login').style.display = 'block';
+        document.getElementById('admin-password').value = '';
+        document.getElementById('login-error').style.display = 'none';
+    }
+
+    // ─── Data ────────────────────────────────────────────────
+    async function loadData() {
+        document.getElementById('proof-list').innerHTML = `
+            <div class="empty-state">
+                <div class="icon">⏳</div>
+                <div>Adatok betöltése...</div>
+            </div>`;
+
+        // Fetch all PK runs with proof_submitted or completed, joined with runner info
+        const { data, error } = await supabaseClient
+            .from('runs')
+            .select('*, runners(name, email)')
+            .or('proof_submitted.eq.true,completed.eq.true')
+            .ilike('serial_number', '%PK%')
+            .order('proof_submitted_at', { ascending: false });
+
+        if (error) {
+            document.getElementById('proof-list').innerHTML = `
+                <div class="empty-state" style="color: #ef4444;">
+                    <div class="icon">❌</div>
+                    <div>Hiba az adatok betöltésekor: ${error.message}</div>
+                </div>`;
+            return;
+        }
+
+        allRuns = data || [];
+        updateStats();
+        renderList();
+    }
+
+    function updateStats() {
+        const pending = allRuns.filter(r => r.proof_submitted && !r.completed).length;
+        const approved = allRuns.filter(r => r.completed).length;
+        const total = allRuns.length;
+
+        document.getElementById('stats-bar').innerHTML = `
+            <div class="stat-chip">⏳ Várakozó: <strong>${pending}</strong></div>
+            <div class="stat-chip">✅ Jóváhagyott: <strong>${approved}</strong></div>
+            <div class="stat-chip">📋 Összes: <strong>${total}</strong></div>
+        `;
+    }
+
+    function setFilter(filter) {
+        currentFilter = filter;
+        document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+        document.getElementById(`tab-${filter}`).classList.add('active');
+        renderList();
+    }
+
+    function renderList() {
+        let runs = allRuns;
+        if (currentFilter === 'pending') runs = allRuns.filter(r => r.proof_submitted && !r.completed);
+        if (currentFilter === 'approved') runs = allRuns.filter(r => r.completed);
+
+        const container = document.getElementById('proof-list');
+
+        if (runs.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="icon">${currentFilter === 'pending' ? '🎉' : '📭'}</div>
+                    <div>${currentFilter === 'pending' ? 'Nincs várakozó igazolás!' : 'Nincs megjeleníthető elem.'}</div>
+                </div>`;
+            return;
+        }
+
+        container.innerHTML = runs.map(run => buildCard(run)).join('');
+    }
+
+    function buildCard(run) {
+        const runner = run.runners || {};
+        const name = run.name || runner.name || 'Ismeretlen';
+        const email = runner.email || '–';
+        const serial = run.serial_number || '–';
+        const submittedAt = run.proof_submitted_at
+            ? new Date(run.proof_submitted_at).toLocaleString('hu-HU', { dateStyle: 'short', timeStyle: 'short' })
+            : '–';
+        const completionDate = run.completion_date || '–';
+
+        const statusBadge = run.completed
+            ? `<span class="badge badge-approved">✅ Jóváhagyva${completionDate !== '–' ? ' · ' + completionDate : ''}</span>`
+            : `<span class="badge badge-pending">⏳ Várakozó</span>`;
+
+        const filesHtml = buildFileGrid(run.proof_urls || []);
+
+        const actionsHtml = run.completed
+            ? `<div class="action-result">✅ Jóváhagyva – ${completionDate}</div>`
+            : `
+                <button class="btn btn-approve" onclick="doAction('approve', '${run.id}', this)">
+                    ✓ Jóváhagyás
+                </button>
+                <button class="btn btn-reject" onclick="doAction('reject', '${run.id}', this)">
+                    ✕ Elutasítás
+                </button>
+            `;
+
+        return `
+        <div class="proof-card ${run.completed ? 'approved' : ''}" id="card-${run.id}">
+            <div class="proof-header">
+                <div>
+                    <div class="runner-name">${name}</div>
+                    <div class="runner-meta">
+                        📧 ${email}<br>
+                        📅 Beküldve: ${submittedAt}
+                    </div>
+                </div>
+                <div class="badges">
+                    <span class="badge badge-serial">${serial}</span>
+                    ${statusBadge}
+                </div>
+            </div>
+
+            <div class="proof-files">${filesHtml}</div>
+
+            <div class="proof-actions">${actionsHtml}</div>
+        </div>`;
+    }
+
+    function buildFileGrid(urls) {
+        if (!urls || urls.length === 0) {
+            return `<div style="color: var(--text-low); font-size: 0.85rem; padding: 0.5rem 0;">Nincs csatolt fájl.</div>`;
+        }
+
+        return urls.map(url => {
+            const filename = url.split('/').pop().split('?')[0];
+            const ext = filename.split('.').pop().toLowerCase();
+            const isImage = ['jpg', 'jpeg', 'png', 'webp', 'heic'].includes(ext);
+            const isGpx = ['gpx', 'fit', 'tcx'].includes(ext);
+
+            if (isImage) {
+                return `
+                    <div class="proof-thumb" onclick="openLightbox('${url}')" title="${filename}">
+                        <img src="${url}" alt="${filename}" loading="lazy" onerror="this.parentElement.innerHTML='<div style=\\'display:flex;align-items:center;justify-content:center;height:100%;font-size:1.5rem;\\'>📷</div>'">
+                    </div>`;
+            } else if (isGpx) {
+                return `
+                    <a href="${url}" download="${filename}" target="_blank" class="proof-file-link" title="${filename}">
+                        <span class="file-icon">🗺️</span>
+                        <span>${ext.toUpperCase()}</span>
+                    </a>`;
+            } else {
+                return `
+                    <a href="${url}" download="${filename}" target="_blank" class="proof-file-link" title="${filename}">
+                        <span class="file-icon">📄</span>
+                        <span>${filename.substring(0, 12)}...</span>
+                    </a>`;
+            }
+        }).join('');
+    }
+
+    // ─── Actions ─────────────────────────────────────────────
+    async function doAction(action, runId, btn) {
+        const card = document.getElementById(`card-${runId}`);
+        const allBtns = card.querySelectorAll('.btn');
+        allBtns.forEach(b => { b.disabled = true; });
+        btn.innerHTML = '<span class="loading-spinner"></span>';
+
+        const res = await fetch('/api/admin-approve', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action, run_id: runId, admin_secret: adminSecret })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+            // Update local state
+            const idx = allRuns.findIndex(r => r.id === runId);
+            if (idx !== -1) {
+                if (action === 'approve') {
+                    allRuns[idx].completed = true;
+                    allRuns[idx].completion_date = new Date().toISOString().split('T')[0];
+                } else {
+                    allRuns[idx].proof_submitted = false;
+                    allRuns[idx].proof_urls = [];
+                }
+            }
+            updateStats();
+            renderList();
+        } else {
+            alert('Hiba: ' + (data.error || 'Ismeretlen hiba'));
+            allBtns.forEach(b => { b.disabled = false; });
+            btn.innerHTML = action === 'approve' ? '✓ Jóváhagyás' : '✕ Elutasítás';
+        }
+    }
+
+    // ─── Lightbox ────────────────────────────────────────────
+    function openLightbox(url) {
+        document.getElementById('lightbox-img').src = url;
+        document.getElementById('lightbox').classList.add('open');
+    }
+    function closeLightbox() {
+        document.getElementById('lightbox').classList.remove('open');
+    }
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') closeLightbox();
+    });
+</script>
+</body>
+</html>

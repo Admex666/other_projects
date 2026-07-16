@@ -18,7 +18,7 @@ module.exports = async (req, res) => {
     // Idempotency: check Supabase if session was already processed
     const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
     const { data: existing } = await supabase
-        .from('runners')
+        .from('runs')
         .select('id')
         .eq('stripe_session_id', sessionId)
         .limit(1);
@@ -192,15 +192,15 @@ module.exports = async (req, res) => {
         const suffix = config.prefix;
         const limit = config.limit;
 
-        const { data: existingRunners, error: fetchErr } = await supabase
-            .from('runners')
+        const { data: existingRuns, error: fetchErr } = await supabase
+            .from('runs')
             .select('serial_number')
             .eq('is_test', false)
             .ilike('serial_number', `%${suffix}`);
 
         if (fetchErr) console.error('Supabase fetch error:', fetchErr);
 
-        const existingSerials = (existingRunners || []).map(r => {
+        const existingSerials = (existingRuns || []).map(r => {
             const match = (r.serial_number || '').match(/#(\d+)\//);
             return match ? parseInt(match[1]) : 0;
         });
@@ -210,8 +210,22 @@ module.exports = async (req, res) => {
             const paddedRank = nextSerial.toString().padStart(3, '0');
             const serialNumber = `#${paddedRank}/${limit}${suffix}`;
 
-            const runnerObj = {
-                email: email,
+            // 1. Upsert identity to runners table
+            const { data: runnerData, error: runnerErr } = await supabase
+                .from('runners')
+                .upsert({ email: email.toLowerCase(), name: medal.name }, { onConflict: 'email' })
+                .select()
+                .single();
+
+            if (runnerErr) {
+                console.error(`Supabase runner upsert error for medal ${nextSerial}:`, runnerErr);
+                nextSerial++;
+                continue;
+            }
+
+            // 2. Insert challenge run to runs table
+            const runObj = {
+                runner_id: runnerData.id,
                 name: medal.name,
                 completed: false,
                 completion_date: null,
@@ -224,16 +238,12 @@ module.exports = async (req, res) => {
                 stripe_session_id: sessionId
             };
 
-            if (medals.length > 1) {
-                runnerObj.email = `${email}+medal${nextSerial}`;
-            }
-
             const { error: dbErr } = await supabase
-                .from('runners')
-                .upsert(runnerObj, { onConflict: 'email' });
+                .from('runs')
+                .upsert(runObj, { onConflict: 'serial_number' });
 
             if (dbErr) {
-                console.error(`Supabase upsert error for medal ${nextSerial}:`, dbErr);
+                console.error(`Supabase runs upsert error for medal ${nextSerial}:`, dbErr);
             } else {
                 console.log(`Runner synced: ${serialNumber} – ${medal.name}`);
             }

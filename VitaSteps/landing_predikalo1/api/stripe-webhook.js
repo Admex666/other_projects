@@ -206,8 +206,8 @@ module.exports = async (req, res) => {
             const suffix = config.prefix;
             const limit = config.limit;
 
-            const { data: existingRunners, error: fetchErr } = await supabase
-                .from('runners')
+            const { data: existingRuns, error: fetchErr } = await supabase
+                .from('runs')
                 .select('serial_number')
                 .eq('is_test', false)
                 .ilike('serial_number', `%${suffix}`);
@@ -216,7 +216,7 @@ module.exports = async (req, res) => {
                 console.error('Supabase fetch error:', fetchErr);
             }
 
-            const existingSerials = (existingRunners || [])
+            const existingSerials = (existingRuns || [])
                 .map(r => {
                     const match = (r.serial_number || '').match(/#(\d+)\//);
                     return match ? parseInt(match[1]) : 0;
@@ -227,8 +227,22 @@ module.exports = async (req, res) => {
                 const paddedRank = nextSerial.toString().padStart(3, '0');
                 const serialNumber = `#${paddedRank}/${limit}${suffix}`;
 
-                const runnerObj = {
-                    email: email,
+                // 1. Upsert identity to runners table
+                const { data: runnerData, error: runnerErr } = await supabase
+                    .from('runners')
+                    .upsert({ email: email.toLowerCase(), name: medal.name }, { onConflict: 'email' })
+                    .select()
+                    .single();
+
+                if (runnerErr) {
+                    console.error(`Supabase runner upsert error for medal ${nextSerial}:`, runnerErr);
+                    nextSerial++;
+                    continue;
+                }
+
+                // 2. Insert challenge run to runs table
+                const runObj = {
+                    runner_id: runnerData.id,
                     name: medal.name,
                     completed: false,
                     completion_date: null,
@@ -237,20 +251,16 @@ module.exports = async (req, res) => {
                     serial_number: serialNumber,
                     distance_km: parseFloat(medal.distance) || null,
                     referred_by: referredBy || null,
-                    is_test: isTestTx
+                    is_test: isTestTx,
+                    stripe_session_id: sessionId
                 };
 
-                // For multiple medals on same email, append index to email to allow multiple records
-                if (medals.length > 1) {
-                    runnerObj.email = `${email}+medal${nextSerial}`;
-                }
-
                 const { error: dbErr } = await supabase
-                    .from('runners')
-                    .upsert(runnerObj, { onConflict: 'email' });
+                    .from('runs')
+                    .upsert(runObj, { onConflict: 'serial_number' });
 
                 if (dbErr) {
-                    console.error(`Supabase upsert error for medal ${nextSerial}:`, dbErr);
+                    console.error(`Supabase runs upsert error for medal ${nextSerial}:`, dbErr);
                 } else {
                     console.log(`Runner synced: ${serialNumber} – ${medal.name}`);
                 }

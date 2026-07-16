@@ -60,21 +60,44 @@ Pre-validates medal availability limits, generates a Stripe Checkout Session wit
 ### 2. `POST /api/stripe-webhook`
 Handles Stripe `checkout.session.completed` callback, creates invoices, logs rows, registers runner, and sends onboarding emails.
 
+### 3. `POST /api/admin-approve`
+Secure serverless function triggered by the admin dashboard to approve or reject a participant's completion proof. Requires `admin_secret` header verification, updates completion state, and triggers nodemailer congratulatory email with oklevél redirect links on approval.
+
 ---
 
-## 🗄️ Database Schema (Supabase `runners` table)
+## 🗄️ Database Schema (Supabase)
+
+### 1. `runners` Table (User profiles)
+Stores the personal identity details of registered runners.
 
 | Column | Type | Description |
 | :--- | :--- | :--- |
-| **email** | VARCHAR (PK) | Primary Key. Format: `email` or `email+medal{serial}` for multi-medal orders. |
-| **name** | VARCHAR | Full name of the finisher. |
+| **id** | UUID (PK) | Primary Key. |
+| **email** | TEXT (UNIQUE) | Email address of the user. |
+| **name** | TEXT | Billing / profile name. |
+| **created_at** | TIMESTAMP | Registration timestamp. |
+
+### 2. `runs` Table (Challenge registrations)
+Stores individual challenge entries associated with a runner. A runner can have multiple rows (one for each challenge).
+
+| Column | Type | Description |
+| :--- | :--- | :--- |
+| **id** | UUID (PK) | Primary Key. |
+| **runner_id** | UUID (FK) | Foreign key pointing to `runners.id`. |
+| **name** | TEXT | Participant's name for the specific certificate/medal. |
 | **completed** | BOOLEAN | Completion validation state (True/False). |
-| **completion_date** | DATE | Approved date of completion. |
+| **completion_date** | TEXT | Approved date of completion. |
 | **shipped** | BOOLEAN | Package shipping status. |
-| **received_date** | DATE | Finisher locker collection date. |
-| **serial_number** | VARCHAR | Unique rank index (e.g. `#001/100-PK`). |
+| **received_date** | TEXT | Finisher locker collection date. |
+| **serial_number** | TEXT (UNIQUE) | Unique rank index (e.g. `#001/100-PK` or `#042/100`). |
 | **distance_km** | NUMERIC | Route length. |
-| **referred_by** | VARCHAR | Email of the referrer. |
+| **is_test** | BOOLEAN | Indicates if this was a sandbox/test run. |
+| **stripe_session_id** | TEXT | Stripe session ID (enforces payment transaction idempotency). |
+| **referred_by** | TEXT | Email of the referrer. |
+| **proof_submitted** | BOOLEAN | Indicates if the runner uploaded GPX/photo proofs. |
+| **proof_urls** | TEXT[] | Array of public URLs containing uploaded proofs. |
+| **proof_submitted_at** | TIMESTAMP | Timestamp when completion proof was uploaded. |
+| **created_at** | TIMESTAMP | Creation timestamp. |
 
 ---
 

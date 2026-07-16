@@ -52,25 +52,38 @@ SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY")
 SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
 
 def update_supabase_runner(email, received_date):
-    """Updates the received_date for the runner in Supabase."""
+    """Updates the received_date for the Prédikálószék run in Supabase."""
     if not SUPABASE_URL or not SUPABASE_SERVICE_ROLE_KEY:
         print("Supabase credentials missing. Skipping Supabase update.")
         return
-    url = f"{SUPABASE_URL.rstrip('/')}/rest/v1/runners?email=eq.{email.lower()}"
+    
     headers = {
         "apikey": SUPABASE_ANON_KEY,
         "Authorization": f"Bearer {SUPABASE_SERVICE_ROLE_KEY}",
         "Content-Type": "application/json"
     }
-    payload = {
-        "received_date": received_date
-    }
+    
     if DRY_RUN:
-        print(f"[DRY RUN] Would update Supabase runner {email} with received_date={received_date}")
+        print(f"[DRY RUN] Would update Supabase Prédikálószék run for {email} with received_date={received_date}")
         return
+
     try:
-        r = requests.patch(url, headers=headers, json=payload, timeout=10)
-        print(f"Supabase update for {email}: status {r.status_code}")
+        # 1. Fetch runner_id by email
+        fetch_url = f"{SUPABASE_URL.rstrip('/')}/rest/v1/runners?email=eq.{email.lower()}&select=id"
+        r_fetch = requests.get(fetch_url, headers=headers, timeout=10)
+        if r_fetch.status_code != 200 or not r_fetch.json():
+            print(f"Runner not found in Supabase for email {email}")
+            return
+            
+        runner_id = r_fetch.json()[0]['id']
+        
+        # 2. Update runs table for this runner where serial_number is for Predikaloszek (does not contain 'PK' or 'TEST')
+        patch_url = f"{SUPABASE_URL.rstrip('/')}/rest/v1/runs?runner_id=eq.{runner_id}&serial_number=not.ilike.%PK%&serial_number=not.ilike.%TEST%"
+        payload = {
+            "received_date": received_date
+        }
+        r_patch = requests.patch(patch_url, headers=headers, json=payload, timeout=10)
+        print(f"Supabase runs update for {email}: status {r_patch.status_code}")
     except Exception as e:
         print(f"Supabase update failed for {email}: {e}")
 

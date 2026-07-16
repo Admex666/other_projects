@@ -45,17 +45,16 @@ module.exports = async (req, res) => {
 
         console.log(`Received feedback submission from ${email}...`);
 
-        // Check if feedback already exists in Supabase to prevent duplicates
         const { data: existingFeedback, error: checkError } = await supabase
             .from('feedbacks')
             .select('id')
-            .eq('runner_email', email)
+            .eq('run_id', req.body.run_id)
             .maybeSingle();
 
         if (checkError) throw checkError;
 
         if (existingFeedback) {
-            console.log(`Feedback from ${email} already exists. Skipping duplicate write.`);
+            console.log(`Feedback for run ${req.body.run_id} already exists. Skipping duplicate write.`);
             return res.status(200).json({ success: true, message: 'Feedback already submitted.' });
         }
 
@@ -64,6 +63,7 @@ module.exports = async (req, res) => {
             .from('feedbacks')
             .insert({
                 runner_email: email,
+                run_id: req.body.run_id || null,
                 erem_minoseg: parseInt(erem_minoseg),
                 szallitas_elegedett: parseInt(szallitas_elegedett),
                 reszvetel_ujra: reszvetel_ujra,
