@@ -19,12 +19,11 @@ sequenceDiagram
     participant F as 🦊 Foxpost API
 
     %% 1. Fázis: Jelentkezés és Vásárlás
-    Note over V, GS: 1. Regisztráció & Vásárlás (Azonnali)
+    Note over V, DB: 1. Regisztráció & Vásárlás (Azonnali)
     V->>L: Kiválasztja a Foxpost pontot a widgetben
     L->>S: Fizetés indítása (Stripe Checkout + Metadata)
     V->>S: Sikeres bankkártyás fizetés
-    S-->>GS: Webhook: Új sor rögzítése szállítási adatokkal & telefonszámmal
-    S-->>DB: Webhook: Felhasználó regisztrálása
+    S-->>DB: Webhook/API: Adatok mentése (runners, orders, runs, shipments)
 
     %% 2. Fázis: Onboarding
     Note over S, API: 2. Automata Onboarding (Azonnali)
@@ -37,23 +36,22 @@ sequenceDiagram
     V->>DB: Feltölti a GPX-et & fotót a Portálon
     DB-->>A: Admin felületen értesítés ellenőrzésre
     A->>DB: Egy kattintással jóváhagyja a teljesítést
-    DB-->>GS: Auto-frissítés: teljesítve dátum = MA
     DB-->>API: Trigger: Gratulációs email küldése oklevéllel
 
     %% 4. Fázis: Érem szállítás
-    Note over GS, F: 4. Logisztika (Tömeges)
-    A->>GS: Exportálja a Foxpost import XLSX-et (Szkripttel, 1 kattintás)
+    Note over DB, F: 4. Logisztika (Tömeges)
+    A->>DB: Exportálja a Foxpost import XLSX-et a shipments táblából (1 kattintás)
     A->>F: Feltölti a címkegenerátorba
     F-->>A: Vonalkódos címkék (PDF)
     A->>F: Csomagokat feladja az automatában
     F-->>V: SMS/Email: Csomag megérkezett
     V->>F: Átveszi az érmet
-    F-->>GS: Webhook: érem átvéve = DÁTUM
+    F-->>DB: Webhook: érem átvéve = DÁTUM (shipments táblában)
 
     %% 5. Fázis: Visszajelzés
-    Note over GS, V: 5. Visszajelzés & Ajánlói Program
-    GS-->>API: 3 nappal az átvétel után: NPS kérdőív email
-    V->>DB: Kitölti az NPS-t (9-10-es promoter pontszám)
+    Note over DB, V: 5. Visszajelzés & Ajánlói Program
+    DB-->>API: 3 nappal az átvétel után: NPS kérdőív email
+    V->>DB: Kitölti az NPS-t (feedbacks táblában)
     DB-->>API: Trigger: Ajánlói Program email (egyedi referral linkkel)
 ```
 
@@ -80,10 +78,10 @@ A legnagyobb fejlesztés az első kampányhoz képest, hogy **semmilyen szállí
           "Csomagpont_cim": "3300 Eger, Mátyás király út 138."
         }
         ```
-    3.  A sikeres fizetés után a Stripe webhook (`checkout.session.completed`) automatikusan lefut, és beírja a Google Sheet `Nevezések` táblájába a megfelelő oszlopok alá a nevet, emailt, fizetett összeget, telefonszámot és a csomagpont részleteit.
+    3.  A sikeres fizetés után a backend kód automatikusan lefut, és elmenti a vásárlói adatokat a `runners`, `orders`, `runs` és `shipments` táblákba a Supabase-ben.
 *   **Kimenő adatok (Outputs):**
     *   Stripe sikeres tranzakció.
-    *   Új, teljesen kitöltött adatsor a Google Sheet-ben (manuális adatrögzítés = 0).
+    *   Új, teljesen kitöltött adatsorok a Supabase adatbázisban (manuális adatrögzítés = 0).
 
 ---
 
@@ -93,8 +91,8 @@ Megszűnik a kézi számlázás és a manuális üdvözlő levelek küldözgeté
 *   **Bemenő adatok (Inputs):**
     *   Stripe Webhook sikeres fizetés esemény (E-mail, Név, Számlázási Cím, Összeg).
 *   **Automatizációs folyamat:**
-    1.  A Stripe webhook azonnal meghívja a **Számlázz.hu** API-t, amely kiállítja az e-számlát, és elküldi a túrázónak e-mailben.
-    2.  Ezzel egy időben a rendszer a **Resend API**-n keresztül kiküldi a hivatalos VitaSteps üdvözlő levelet.
+    1.  A Stripe webhook/API handler azonnal meghívja a **Számlázz.hu** API-t, amely kiállítja az e-számlát, és elküldi a túrázónak e-mailben.
+    2.  Ezzel egy időben a rendszer a **Resend API**-n vagy SMTP-n keresztül kiküldi a hivatalos VitaSteps üdvözlő levelet.
     3.  A levél tartalmazza a személyre szabott Portál linket:
         `https://vitastepsss.vercel.app/portal.html?email=turanév%40gmail.com`
 *   **Kimenő adatok (Outputs):**
@@ -109,31 +107,29 @@ Nincs szükség kézi emailezésre a jóváhagyás után. A portálon a felhaszn
 *   **Bemenő adatok (Inputs):**
     *   A túrázó által a Portálra feltöltött GPX fájl(ok) és/vagy fotó(k) (több fájl egyidejű feltöltése támogatott a Supabase Storage-ba).
 *   **Automatizációs folyamat:**
-    1.  Az Admin felületeden (Supabase Dashboard vagy egy egyszerű belső admin oldal) láthatóvá válik a beküldés.
+    1.  Az Admin felületen (`admin.html`) láthatóvá válik a beküldés.
     2.  A beküldést átnézed, majd rákattintasz a **"Jóváhagyás" (Approve)** gombra.
     3.  A jóváhagyás triggereli a backendet, ami:
-        *   Beírja a Google Sheet-be a teljesítési dátumot és a valós paramétereket (km, szint, idő).
-        *   Automatizáltan legenerálja a digitális oklevelet PDF formátumban.
-        *   A Resend API segítségével kiküldi a gratulációs e-mailt, benne az oklevél linkjével és a megerősítéssel, hogy az érem hamarosan indul a korábban megadott Foxpost automatába.
+        *   Beírja a Supabase-be a teljesítési dátumot és a valós paramétereket.
+        *   Nodemailer segítségével automatikusan kiküldi a gratulációs e-mailt, benne az oklevél letöltési linkjével és a megerősítéssel, hogy az érem hamarosan indul a korábban megadott szállítási mód alapján.
 *   **Kimenő adatok (Outputs):**
     *   Jóváhagyott státusz az adatbázisban.
-    *   Automatikusan frissített Google Sheet sor.
     *   Automata gratulációs e-mail + digitális oklevél.
 
 ---
 
 ### 4. Fázis: Csomagfeladás és Szállítás (Foxpost)
-Mivel a telefonszámok és a pontos automata ID-k már a fizetésnél bekerültek a Google Sheetbe, a postázás előkészítése teljesen automatikus.
+Mivel a telefonszámok és a pontos automata adatok már a fizetésnél bekerültek a Supabase `shipments` táblájába, a postázás előkészítése teljesen automatikus.
 
 *   **Bemenő adatok (Inputs):**
-    *   Google Sheet `Nevezések` adatsorai (ahol a `teljesítve dátum` kitöltött, de az `érem kiküldve?` még üres).
+    *   Supabase `shipments` adatsorai (ahol a teljesítés már jóváhagyott, de a `shipped` még hamis).
 *   **Automatizációs folyamat:**
-    1.  Lefuttatod az érem-logisztikai Python scriptet. A script összegyűjti az összes teljesítőt, akik még nem kaptak érmet, és kimenti őket egy Foxpost-kompatibilis tömeges import fájlba (XLSX).
+    1.  Lefuttatod az érem-logisztikai Python scriptet. A script összegyűjti az összes teljesítőt a `shipments` táblából, akik még nem kaptak érmet, és kimenti őket egy Foxpost-kompatibilis tömeges import fájlba (XLSX).
     2.  A fájlt feltöltöd a Foxpost admin felületére. A Foxpost generálja a vonalkódos címkéket.
     3.  A címkéket kinyomtatod, felragasztod az érmek dobozára, és feladod őket az automatában.
-    4.  *(Opcionális)* A Foxpost API-n keresztül szinkronizáljuk a csomagkövetési státuszt, így a Google Sheetben automatikusan kitöltődik az `érem átvéve = DÁTUM` mező, amint a túrázó kivette az automatából.
+    4.  A Foxpost API-n keresztül szinkronizáljuk a csomagkövetési státuszt, így a Supabase `shipments` táblában automatikusan frissül a `received` és `received_at` mező, amint a túrázó kivette az automatából.
 *   **Kimenő adatok (Outputs):**
-    *   Foxpost tömeges import táblázat.
+    *   Foxpost tömeges import táblázat (Supabase export).
     *   Nyomtatásra kész csomagcímkék.
 
 ---
@@ -142,11 +138,11 @@ Mivel a telefonszámok és a pontos automata ID-k már a fizetésnél bekerülte
 A visszajelzések és ajánlások gyűjtése teljesen önműködővé válik, pontosan célozva a legelégedettebb futókat.
 
 *   **Bemenő adatok (Inputs):**
-    *   Az érem átvételének dátuma (Google Sheet / Foxpost webhook).
+    *   Az érem átvételének dátuma (Supabase `shipments.received_at`).
 *   **Automatizációs folyamat:**
-    1.  Egy háttérben futó ütemezett feladat (Cron job) figyeli az átvételi dátumokat.
+    1.  Egy háttérben futó ütemezett feladat (Cron job) figyeli a shipments tábla átvételi dátumait.
     2.  **3 nappal az érem átvétele után** automatikusan kiküldi az NPS elégedettségi kérdőív e-mailt a túrázónak.
-    3.  A túrázó kitölti a visszajelzést (Supabase).
+    3.  A túrázó kitölti a visszajelzést (Supabase `feedbacks` tábla).
     4.  **Ha az NPS értékelés 9 vagy 10 (Promoter):** A rendszer azonnal kiküldi az automata **Ajánlói Program** levelet, amely tartalmazza az egyedi, másolható ajánlói linkjét:
         `https://vitastepsss.vercel.app/checkout-widget.html?ref=turazo_email%40gmail.com`
 *   **Kimenő adatok (Outputs):**
@@ -158,6 +154,6 @@ A visszajelzések és ajánlások gyűjtése teljesen önműködővé válik, po
 ## 🛠️ Szükséges technikai integrációk a következő kampányhoz:
 
 1.  **Stripe Metadata binding:** A landing page fizetési űrlapján a `checkout.session.create` API hívásban össze kell kötni a Foxpost widget változóit a Stripe metadata mezőivel.
-2.  **Webhook Handler:** Egy egyszerű API endpoint (pl. Vercel serverless function vagy Supabase Edge Function), ami figyeli a Stripe webhookokat és a Supabase adatbázis eseményeit, majd frissíti a Google Sheet-et.
+2.  **API Handler / Webhook:** API endpointok (Vercel serverless function), amik feldolgozzák a sikeres tranzakciót és mentik az adatokat a Supabase normalizált tábláiba.
 3.  **Számlázz.hu API:** Egyszeri beállítás a számlák automata kiállításához sikeres fizetés után.
-4.  **Resend / SendGrid API:** A tranzakciós emailek (üdvözlő levél, gratuláció, feedback, referral) kiküldésére, így nem kell kézzel leveleket küldened.
+4.  **Nodemail SMTP / Resend API:** A tranzakciós emailek (üdvözlő levél, gratuláció, feedback, referral) kiküldésére.

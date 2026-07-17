@@ -1,5 +1,4 @@
 const Stripe = require('stripe');
-const { google } = require('googleapis');
 const { createClient } = require('@supabase/supabase-js');
 const nodemailer = require('nodemailer');
 const campaigns = require('../config/campaigns.json');
@@ -112,97 +111,52 @@ module.exports = async (req, res) => {
         const sessionId = session.id || `stripe_${Date.now()}`;
 
         try {
-            // ── GOOGLE SHEETS ─────────────────────────────────────────────
-            console.log('Writing to Google Sheets...');
-            const serviceAccountJson = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON);
-            const auth = new google.auth.GoogleAuth({
-                credentials: {
-                    client_email: serviceAccountJson.client_email,
-                    private_key: serviceAccountJson.private_key
-                },
-                scopes: ['https://www.googleapis.com/auth/spreadsheets']
-            });
-            const sheets = google.sheets({ version: 'v4', auth });
-            const sheetId = process.env.GOOGLE_SHEET_ID;
-
-            // ── 1a. tally_raw – one row per order (legacy compatibility) ──
-            const isPilis = (campaign || '').toString().toLowerCase().includes('pilis');
-            if (!isPilis) {
-                const campaignDisplay = campaign === 'pilis' ? 'A Nagy-Kevély csillagjai' : 'Prédikálószék';
-                const tallyRawRow = Array(22).fill('');
-                tallyRawRow[0] = sessionId;
-                tallyRawRow[1] = sessionId;
-                tallyRawRow[2] = submittedAt;
-                tallyRawRow[5] = primaryName;
-                tallyRawRow[6] = String(totalPaid);
-                tallyRawRow[7] = 'HUF';
-                tallyRawRow[8] = primaryName;
-                tallyRawRow[9] = email;
-                tallyRawRow[11] = billingAddress;
-                tallyRawRow[12] = medals[0].distance;
-                tallyRawRow[13] = String(totalPaid);
-                tallyRawRow[14] = 'HUF';
-                tallyRawRow[15] = primaryName;
-                tallyRawRow[16] = email;
-                tallyRawRow[19] = 'Igen';
-                tallyRawRow[20] = campaignDisplay;
-                tallyRawRow[21] = campaign === 'pilis' ? 'jelentkezés 1' : 'előjelentkezés 1';
-
-                await sheets.spreadsheets.values.append({
-                    spreadsheetId: sheetId,
-                    range: 'tally_raw!A:V',
-                    valueInputOption: 'USER_ENTERED',
-                    insertDataOption: 'INSERT_ROWS',
-                    requestBody: { values: [tallyRawRow] }
-                });
-                console.log('tally_raw written.');
-            } else {
-                console.log('Skipping tally_raw write for campaign pilis.');
-            }
-
-            // ── 1b. stripe_raw2 – one row per medal ───────────────────────
-            // Columns: A=Timestamp, B=SessionID, C=VásárlóEmail, D=NevezoNev, E=Táv,
-            //          F=Kampány, G=Szállítás, H=CsomagpontVagyHázhoz, I=CsomagpontID,
-            //          J=SzámlázásiCím, K=Telefon, L=VégösszegFt, M=Test, N=Sorszám,
-            //          O=MedaliokJSON, P=AjánlóEmail, Q=CsomagpontNeve, R=CsomagpontCíme, S=HázhozszállításiCím
-            const stripe_raw2_rows = medals.map((medal, idx) => [
-                submittedAt,                              // A: Timestamp
-                sessionId,                                // B: Session ID
-                email,                                    // C: Vásárló email
-                medal.name,                               // D: Nevező neve
-                medal.distance,                           // E: Táv
-                campaign,                                 // F: Kampány
-                deliveryMethod,                           // G: Szállítás módja
-                deliveryMethod === 'home'
-                    ? (homeAddress || billingAddress)
-                    : `${parcelName} – ${parcelAddress}`, // H: Csomagpont / házhozszállítási cím
-                parcelId,                                 // I: Csomagpont ID
-                billingAddress,                           // J: Számlázási cím
-                phone,                                    // K: Telefon
-                idx === 0 ? String(totalPaid) : '',       // L: Végösszeg (csak első sorban)
-                isTestTx ? 'true' : 'false',              // M: Test?
-                '',                                       // N: Sorszám (webhook tölti be alább)
-                metadata.Medaliok || JSON.stringify(medals), // O: Medaliok JSON
-                referredBy || '',                         // P: Ajánló Email
-                parcelName || '',                         // Q: Csomagpont neve
-                parcelAddress || '',                      // R: Csomagpont címe
-                homeAddress || ''                         // S: Házhozszállítási cím
-            ]);
-
-            await sheets.spreadsheets.values.append({
-                spreadsheetId: sheetId,
-                range: 'stripe_raw2!A:S',
-                valueInputOption: 'USER_ENTERED',
-                insertDataOption: 'INSERT_ROWS',
-                requestBody: { values: stripe_raw2_rows }
-            });
-            console.log(`stripe_raw2 written (${medals.length} medal rows).`);
-
-            // ── 2. SUPABASE – one runner per medal ────────────────────────
-            console.log('Syncing to Supabase...');
+            // ── 1. SUPABASE DATABASE TRANSACTION ─────────────────────────────
+            console.log('Syncing payment data to Supabase...');
             const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
-            // Get current max serial for this campaign
+            // 1a. Upsert runner details
+            const { data: runnerData, error: runnerErr } = await supabase
+                .from('runners')
+                .upsert({
+                    email: email.toLowerCase(),
+                    name: primaryName,
+                    phone: phone || null,
+                    billing_address: billingAddress || null,
+                    billing_name: primaryName
+                }, { onConflict: 'email' })
+                .select()
+                .single();
+
+            if (runnerErr) {
+                console.error('Supabase runner upsert error:', runnerErr);
+                throw runnerErr;
+            }
+
+            // 1b. Create the order
+            const { data: orderData, error: orderErr } = await supabase
+                .from('orders')
+                .insert({
+                    runner_id: runnerData.id,
+                    stripe_session_id: sessionId,
+                    stripe_payment_status: session.payment_status || 'paid',
+                    amount_total: totalPaid,
+                    currency: session.currency || 'HUF',
+                    campaign: campaign || null,
+                    is_test: isTestTx,
+                    billing_name: primaryName,
+                    billing_email: email,
+                    billing_address: billingAddress || null
+                })
+                .select()
+                .single();
+
+            if (orderErr) {
+                console.error('Supabase orders insert error:', orderErr);
+                throw orderErr;
+            }
+
+            // 1c. Create runs and shipments for each medal
             const suffix = config.prefix;
             const limit = config.limit;
 
@@ -227,22 +181,9 @@ module.exports = async (req, res) => {
                 const paddedRank = nextSerial.toString().padStart(3, '0');
                 const serialNumber = `#${paddedRank}/${limit}${suffix}`;
 
-                // 1. Upsert identity to runners table
-                const { data: runnerData, error: runnerErr } = await supabase
-                    .from('runners')
-                    .upsert({ email: email.toLowerCase(), name: medal.name }, { onConflict: 'email' })
-                    .select()
-                    .single();
-
-                if (runnerErr) {
-                    console.error(`Supabase runner upsert error for medal ${nextSerial}:`, runnerErr);
-                    nextSerial++;
-                    continue;
-                }
-
-                // 2. Insert challenge run to runs table
                 const runObj = {
                     runner_id: runnerData.id,
+                    order_id: orderData.id,
                     name: medal.name,
                     completed: false,
                     completion_date: null,
@@ -250,19 +191,46 @@ module.exports = async (req, res) => {
                     received_date: null,
                     serial_number: serialNumber,
                     distance_km: parseFloat(medal.distance) || null,
-                    referred_by: referredBy || null,
+                    campaign: campaign || null,
                     is_test: isTestTx,
-                    stripe_session_id: sessionId
+                    // Keep legacy columns for backward compatibility before database migration
+                    stripe_session_id: sessionId,
+                    referred_by: referredBy || null
                 };
 
-                const { error: dbErr } = await supabase
+                const { data: runData, error: dbErr } = await supabase
                     .from('runs')
-                    .upsert(runObj, { onConflict: 'serial_number' });
+                    .upsert(runObj, { onConflict: 'serial_number' })
+                    .select()
+                    .single();
 
                 if (dbErr) {
                     console.error(`Supabase runs upsert error for medal ${nextSerial}:`, dbErr);
+                    nextSerial++;
+                    continue;
                 } else {
                     console.log(`Runner synced: ${serialNumber} – ${medal.name}`);
+                }
+
+                // 1d. Create shipment entry for this run
+                const shipmentObj = {
+                    run_id: runData.id,
+                    method: deliveryMethod || null,
+                    phone: phone || null,
+                    parcel_id: parcelId || null,
+                    parcel_name: parcelName || null,
+                    parcel_address: parcelAddress || null,
+                    home_address: homeAddress || null,
+                    shipped: false,
+                    received: false
+                };
+
+                const { error: shipErr } = await supabase
+                    .from('shipments')
+                    .insert(shipmentObj);
+
+                if (shipErr) {
+                    console.error(`Supabase shipments insert error for run ${runData.id}:`, shipErr);
                 }
 
                 nextSerial++;

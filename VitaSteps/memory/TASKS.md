@@ -38,3 +38,17 @@
 *   **[x]** End-to-end teszt: `checkout.html?campaign=pilis&test=true` → Stripe sandbox → `siker.html` → `process-payment` → Sheets + Supabase + számla + email.
 *   **[x]** Supabase: lefuttatni `ALTER TABLE runners ADD COLUMN IF NOT EXISTS stripe_session_id text;`
 *   **[x]** Deploy Vercel-re (`vercel --prod`) az összes mai változással.
+
+---
+
+## 🗄️ Database Migration & Cleanup (Deferred)
+*   **[ ]** Database Migration: Normalize payment and shipping data
+    *   `[ ]` orders tábla létrehozása production előtt (a `supabase_schema.sql` alapján)
+    *   `[ ]` shipments tábla létrehozása
+    *   `[ ]` runners mezők bővítése (`phone`, `billing_name`, `billing_address`)
+    *   `[ ]` meglévő `stripe_raw2` adatok importálása a Supabase orders/shipments táblákba (migrációs scripttel)
+    *   `[ ]` runs kapcsolatok ellenőrzése és `order_id` / `campaign` értékek feltöltése a múltbeli futásokhoz
+    *   `[ ]` feedbacks tisztítása: `runner_id` idegen kulcs beállítása a meglévő visszajelzésekre e-mail helyett
+    *   `[ ]` régi Google Sheet adatforrás megszüntetése (amikor a Foxpost automatizációs szkripteket átállítottuk a shipments táblára)
+    *   `[ ]` régi, elavult oszlopok törlése a `runs` táblából (`stripe_session_id`, `referred_by`)
+

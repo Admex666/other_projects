@@ -4,6 +4,19 @@ All notable changes to the VitaSteps challenge platform project are documented h
 
 ---
 
+## [1.6.0] - 2026-07-17
+### Added
+*   **Google Sheets Lecsatolás és Adatmodell Bővítés:**
+    *   Töröltük a Google Sheets írási logikát az `api/process-payment.js` és `api/stripe-webhook.js` állományokból, megszüntetve a Google Sheets függőséget a fizetési pipeline-ból.
+    *   Létrehoztuk a Supabase-ben az `orders` (Stripe fizetések) és `shipments` (szállítási adatok) táblákat.
+    *   Kibővítettük a `runners` és `runs` táblákat az új normalizált mezőkkel (`phone`, `billing_name`, `billing_address` a runner-hez; `order_id` és `campaign` a run-hoz).
+    *   Refaktoráltuk a fizetés feldolgozókat, hogy az adatokat tranzakciós jelleggel az új, normalizált Supabase táblákba mentsék el.
+*   **Beépített Teljesítés Igazoló és Admin Dashboard:**
+    *   Létrehoztunk egy drag & drop fájlfeltöltő felületet a portálon (GPX és kép feltöltéssel) Nagy-Kevély futók számára.
+    *   Elkészítettünk egy biztonságos adminisztrátori ellenőrző felületet (`admin.html` és `api/admin-approve.js`), ahol a beküldött igazolások egy kattintással jóváhagyhatók vagy elutasíthatók.
+    *   A jóváhagyás után automatikus gratulációs e-mailt küld a rendszer, benne a közvetlen, dinamikus oklevél letöltési és portál belépési linkekkel.
+    *   Javítottuk az `oklevel.html` paraméter-dekódolását és adatbázis lekérdezését, hogy az új `runs` táblából kinyert adatokkal helyesen, dinamikusan jelenítse meg a kihívás nevét.
+
 ## [1.5.0] - 2026-07-16
 ### Added
 *   **Adatbázis Normalizáció & Több Kihívás Támogatása:**
