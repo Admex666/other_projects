@@ -1,4 +1,14 @@
-# Finance OS
+from migration import migrate_data
+from excel_builder import build_excel
+import os
+
+def main():
+    print("Starting Finance OS generation...")
+    data_dict = migrate_data()
+    build_excel(data_dict, output_file='../Finance_OS.xlsx')
+    
+    # Write README
+    readme = """# Finance OS
 
 ## Hogyan használd?
 A legenerált `Finance_OS.xlsx` egy moduláris, Google Sheets kompatibilis pénzügyi rendszer.
@@ -17,3 +27,11 @@ Mivel az Excel adatérvényesítését (Data Validation) konvertáljuk Google Sh
 4. Ezt tedd meg az *Account* és *Pocket* oszlopoknál is a `10_Accounts` és `14_Pockets` lapokra mutatva.
 
 Jó pénzügyezést!
+"""
+    with open('../README.md', 'w', encoding='utf-8') as f:
+        f.write(readme)
+        
+    print("Done! Check Finance_OS.xlsx, Migration_Report.txt, and README.md in the FinApp root.")
+
+if __name__ == "__main__":
+    main()

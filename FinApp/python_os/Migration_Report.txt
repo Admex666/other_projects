@@ -1,0 +1,7 @@
+Migration Report
+====================
+User: Adam
+Accounts migrated: 13
+Categories migrated: 14
+Pockets migrated: 3
+Transactions migrated: 605
