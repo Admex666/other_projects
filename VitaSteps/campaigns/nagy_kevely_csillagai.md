@@ -38,12 +38,12 @@ gantt
     Rendszer & kód tesztelése   :des2, 2026-07-13, 2026-07-19
     
     section Regisztráció & Hirdetések
-    Előnevezés (meleg lista)    :des3, 2026-07-19, 2026-07-22
-    Fő Meta Ads hirdetések      :des4, 2026-07-22, 2026-09-06
-    Retargeting / FOMO kampány  :des5, 2026-08-24, 2026-08-31
+    Előnevezés (meleg lista)    :des3, 2026-07-24, 2026-07-27
+    Fő Meta Ads hirdetések      :des4, 2026-07-27, 2026-09-11
+    Retargeting / FOMO kampány  :des5, 2026-08-29, 2026-09-04
     
     section Kihívás & Postázás
-    Hivatalos teljesítési idő   :active, des6, 2026-08-01, 2026-09-13
+    Hivatalos teljesítési idő   :active, des6, 2026-08-01, 2026-09-18
     Folyamatos postázás (heti)  :des8, 2026-08-17, 2026-09-18
 ```
 

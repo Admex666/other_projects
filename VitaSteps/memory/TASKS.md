@@ -30,6 +30,13 @@
 
 ---
 
+## 🚚 Logisztika és Csomagkezelés
+*   **[x]** Foxpost tömeges export felület integrálása az `admin.html`-be (1 kattintásos letöltés SheetJS segítségével).
+*   **[x]** Címadatok szétbontása (település, irányítószám, utca) házhozszállítás esetén a Foxpost XLSX sablonnak megfelelően.
+*   **[x]** Kijelölt futások és szállítmányok feladottként való megjelölése az admin felületen (bulk `/api/admin-approve` hívás).
+
+---
+
 ## 💳 Payment Pipeline – Kövi feladatok
 *   **[x]** Átnézni és tesztelni a **Számlázz.hu** e-számla generálást (`process-payment.js` → Számlázz.hu API hívás) — valóban megérkezik-e a számla emailben.
 *   **[x]** Átnézni és tesztelni a **welcome email** küldést (`process-payment.js` → nodemailer SMTP) — megérkezik-e a köszöntő email a vásárlónak.

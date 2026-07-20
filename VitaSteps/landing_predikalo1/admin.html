@@ -378,6 +378,133 @@
             .proof-header { flex-direction: column; }
             .proof-thumb, .proof-file-link { width: 80px; height: 80px; }
         }
+
+        /* Logistics Dashboard Styles */
+        .logistics-container {
+            margin-top: 1rem;
+        }
+        .logistics-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1.25rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .logistics-sub-tabs {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .logistics-sub-tab {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text-mid);
+            font-size: 0.82rem;
+            font-weight: 600;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .logistics-sub-tab:hover {
+            color: var(--text-high);
+            border-color: rgba(255,255,255,0.2);
+        }
+        .logistics-sub-tab.active {
+            background: rgba(249, 115, 22, 0.15);
+            border-color: #f97316;
+            color: #f97316;
+        }
+        .logistics-buttons {
+            display: flex;
+            gap: 0.75rem;
+        }
+        .btn-orange {
+            background: #f97316;
+            color: #ffffff;
+            border: none;
+        }
+        .btn-orange:hover {
+            background: #ea580c;
+        }
+        .btn-orange:disabled {
+            background: #9a3412;
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .logistics-table-wrapper {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            width: 100%;
+        }
+        .logistics-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            text-align: left;
+            min-width: 800px;
+        }
+        .logistics-table th, .logistics-table td {
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-high);
+        }
+        .logistics-table th {
+            background: var(--surface2);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            color: var(--text-mid);
+            text-transform: uppercase;
+            font-size: 0.72rem;
+            letter-spacing: 0.5px;
+        }
+        .logistics-table tr:hover td {
+            background: rgba(255,255,255,0.02);
+        }
+        .checkbox-custom {
+            width: 18px;
+            height: 18px;
+            accent-color: #f97316;
+            cursor: pointer;
+            vertical-align: middle;
+        }
+        .shipped-badge {
+            font-size: 0.75rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        .badge-waiting {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: #f59e0b;
+        }
+        .badge-shipped {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: var(--green);
+        }
+        .search-logistics {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-high);
+            padding: 0.4rem 0.8rem;
+            font-size: 0.82rem;
+            width: 200px;
+            font-family: inherit;
+        }
+        .search-logistics:focus {
+            border-color: #f97316;
+            outline: none;
+        }
     </style>
 </head>
 <body>
@@ -420,6 +547,7 @@
             <button class="filter-tab active" onclick="setFilter('pending')" id="tab-pending">⏳ Várakozó</button>
             <button class="filter-tab" onclick="setFilter('approved')" id="tab-approved">✅ Jóváhagyott</button>
             <button class="filter-tab" onclick="setFilter('all')" id="tab-all">📋 Összes</button>
+            <button class="filter-tab" onclick="setFilter('logistics')" id="tab-logistics" style="margin-left: auto; border: 1px solid rgba(249, 115, 22, 0.3); color: #f97316;">🦊 Logisztika (Foxpost)</button>
         </div>
 
         <div id="proof-list">
@@ -437,6 +565,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
     const SUPABASE_URL = "https://ncsathcqpvlrygkphced.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jc2F0aGNxcHZscnlna3BoY2VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3OTU3NTEsImV4cCI6MjA5ODM3MTc1MX0.4036PLTmBdhjUj8-qu2fpmZU6hvrXbc5-S_XJusKEYo";
@@ -490,12 +619,11 @@
                 <div>Adatok betöltése...</div>
             </div>`;
 
-        // Fetch all PK runs with proof_submitted or completed, joined with runner info
+        // Fetch all runs with proof_submitted or completed, joined with runner and shipment info
         const { data, error } = await supabaseClient
             .from('runs')
-            .select('*, runners(name, email)')
+            .select('*, runners(name, email, phone, billing_address), shipments(*)')
             .or('proof_submitted.eq.true,completed.eq.true')
-            .ilike('serial_number', '%PK%')
             .order('proof_submitted_at', { ascending: false });
 
         if (error) {
@@ -532,11 +660,136 @@
     }
 
     function renderList() {
+        const container = document.getElementById('proof-list');
+
+        if (currentFilter === 'logistics') {
+            const completedRuns = allRuns.filter(r => r.completed);
+            
+            // Filter by sub-filter
+            let filtered = completedRuns.filter(run => {
+                const shipment = run.shipments?.[0] || {};
+                const isShipped = !!shipment.shipped;
+                if (logisticsSubFilter === 'pending') return !isShipped;
+                if (logisticsSubFilter === 'shipped') return isShipped;
+                return true; // 'all'
+            });
+
+            // Filter by search query
+            if (logisticsSearch) {
+                filtered = filtered.filter(run => {
+                    const runner = run.runners || {};
+                    const name = (run.name || runner.name || '').toLowerCase();
+                    const email = (runner.email || '').toLowerCase();
+                    const serial = (run.serial_number || '').toLowerCase();
+                    return name.includes(logisticsSearch) || email.includes(logisticsSearch) || serial.includes(logisticsSearch);
+                });
+            }
+
+            if (completedRuns.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">📦</div>
+                        <div>Még nincs jóváhagyott teljesítés, nincs mit postázni.</div>
+                    </div>`;
+                return;
+            }
+
+            const totalWaiting = completedRuns.filter(r => !r.shipments?.[0]?.shipped).length;
+            const totalShipped = completedRuns.filter(r => r.shipments?.[0]?.shipped).length;
+
+            let tableRowsHtml = filtered.map(run => {
+                const runner = run.runners || {};
+                const name = run.name || runner.name || 'Ismeretlen';
+                const email = runner.email || '–';
+                const phone = run.shipments?.[0]?.phone || runner.phone || '–';
+                const serial = run.serial_number || '–';
+                const shipment = run.shipments?.[0] || {};
+                const method = shipment.method || 'foxpost';
+                
+                let details = '–';
+                if (method === 'foxpost') {
+                    details = `🦊 ${shipment.parcel_name || 'Foxpost automata'} (${shipment.parcel_id || 'ID nélkül'})${shipment.tracking_code ? '<br>📦 Csomagszám: <b>' + shipment.tracking_code + '</b>' : ''}`;
+                } else if (method === 'home') {
+                    details = `🏠 Házhoz: ${shipment.home_address || 'Cím nélkül'}`;
+                }
+
+                const statusText = shipment.shipped
+                    ? '<span class="shipped-badge badge-shipped">Feladva</span>'
+                    : '<span class="shipped-badge badge-waiting">Szállításra vár</span>';
+
+                return `
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="checkbox-custom logistics-checkbox" data-run-id="${run.id}" onchange="updateLogisticsButtonsState()">
+                        </td>
+                        <td style="font-weight: 600;">${name}</td>
+                        <td>${serial}</td>
+                        <td>${phone}</td>
+                        <td>${email}</td>
+                        <td style="font-size: 0.8rem; max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${details}">${details}</td>
+                        <td>${statusText}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            if (filtered.length === 0) {
+                tableRowsHtml = `<tr><td colspan="7" class="empty-state" style="padding: 2rem;">Nincs a szűrésnek megfelelő szállítási tétel.</td></tr>`;
+            }
+
+            container.innerHTML = `
+                <div class="logistics-container">
+                    <div class="logistics-bar">
+                        <div class="logistics-sub-tabs">
+                            <button class="logistics-sub-tab ${logisticsSubFilter === 'pending' ? 'active' : ''}" onclick="setLogisticsSubFilter('pending')">
+                                ⏳ Szállításra vár (${totalWaiting})
+                            </button>
+                            <button class="logistics-sub-tab ${logisticsSubFilter === 'shipped' ? 'active' : ''}" onclick="setLogisticsSubFilter('shipped')">
+                                ✅ Már feladva (${totalShipped})
+                            </button>
+                            <button class="logistics-sub-tab ${logisticsSubFilter === 'all' ? 'active' : ''}" onclick="setLogisticsSubFilter('all')">
+                                📋 Összes (${completedRuns.length})
+                            </button>
+                        </div>
+                        <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+                            <input type="text" class="search-logistics" placeholder="Keresés..." value="${logisticsSearch.replace(/"/g, '&quot;')}" oninput="handleLogisticsSearch(event)">
+                            <div class="logistics-buttons">
+                                <button id="btn-submit-foxpost" class="btn btn-primary" style="margin: 0; padding: 0.45rem 1rem; font-size: 0.82rem;" onclick="triggerSubmitFoxpost(this)" disabled>
+                                    🦊 Foxpost API Feladás
+                                </button>
+                                <button id="btn-mark-shipped" class="btn btn-orange" style="margin: 0; padding: 0.45rem 1rem; font-size: 0.82rem;" onclick="triggerMarkShipped(this)" disabled>
+                                    🚚 Kézi Feladottnak jelölés
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="logistics-table-wrapper">
+                        <table class="logistics-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40px;">
+                                        <input type="checkbox" class="checkbox-custom" onchange="toggleAllLogistics(this)">
+                                    </th>
+                                    <th>Címzett neve</th>
+                                    <th>Sorszám</th>
+                                    <th>Telefonszám</th>
+                                    <th>Email címe</th>
+                                    <th>Kézbesítés helye</th>
+                                    <th>Státusz</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${tableRowsHtml}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+
         let runs = allRuns;
         if (currentFilter === 'pending') runs = allRuns.filter(r => r.proof_submitted && !r.completed);
         if (currentFilter === 'approved') runs = allRuns.filter(r => r.completed);
-
-        const container = document.getElementById('proof-list');
 
         if (runs.length === 0) {
             container.innerHTML = `
@@ -548,6 +801,165 @@
         }
 
         container.innerHTML = runs.map(run => buildCard(run)).join('');
+    }
+
+    let logisticsSubFilter = 'pending';
+    let logisticsSearch = '';
+
+    function setLogisticsSubFilter(sub) {
+        logisticsSubFilter = sub;
+        renderList();
+    }
+
+    function handleLogisticsSearch(e) {
+        logisticsSearch = e.target.value.toLowerCase();
+        renderList();
+    }
+
+    function toggleAllLogistics(masterCheckbox) {
+        const checkboxes = document.querySelectorAll('.logistics-checkbox');
+        checkboxes.forEach(cb => {
+            cb.checked = masterCheckbox.checked;
+        });
+        updateLogisticsButtonsState();
+    }
+
+    function updateLogisticsButtonsState() {
+        const checkedCount = document.querySelectorAll('.logistics-checkbox:checked').length;
+        const btnSubmit = document.getElementById('btn-submit-foxpost');
+        if (btnSubmit) {
+            btnSubmit.disabled = checkedCount === 0 || logisticsSubFilter === 'shipped';
+        }
+        const btnShip = document.getElementById('btn-mark-shipped');
+        if (btnShip) {
+            btnShip.disabled = checkedCount === 0 || logisticsSubFilter === 'shipped';
+        }
+    }
+
+    function getSelectedRuns() {
+        const checkedBoxes = document.querySelectorAll('.logistics-checkbox:checked');
+        const ids = Array.from(checkedBoxes).map(cb => cb.dataset.runId);
+        return allRuns.filter(r => ids.includes(r.id));
+    }
+
+    function formatPhone(phone) {
+        if (!phone) return '';
+        let cleaned = phone.replace(/\D/g, '');
+        if (cleaned.startsWith('06')) {
+            cleaned = '36' + cleaned.substring(2);
+        }
+        if (!cleaned.startsWith('36') && cleaned.length === 9) {
+            cleaned = '36' + cleaned;
+        }
+        return `+${cleaned}`;
+    }
+
+    function parseAddress(addr) {
+        if (!addr) return { zip: '', city: '', street: '' };
+        const match = addr.match(/^(\d{4})[,\s]+([A-Za-záéíóöőúüűÁÉÍÓÖŐÚÜŰ\s\-]+?)[,\s]+(.*)$/);
+        if (match) {
+            return {
+                zip: match[1],
+                city: match[2].trim(),
+                street: match[3].trim()
+            };
+        }
+        return { zip: '', city: '', street: addr };
+    }
+
+    async function triggerSubmitFoxpost(btn) {
+        const runs = getSelectedRuns();
+        if (runs.length === 0) return;
+
+        // Filter runs to only include Foxpost locker deliveries that are not shipped yet
+        const eligibleRuns = runs.filter(run => {
+            const shipment = run.shipments?.[0] || {};
+            return (shipment.method || 'foxpost') === 'foxpost' && !shipment.shipped;
+        });
+
+        if (eligibleRuns.length === 0) {
+            alert('A kijelöltek között nincs érvényes (még fel nem adott) Foxpost automatás szállítás.');
+            return;
+        }
+
+        if (!confirm(`Biztosan feladsz ${eligibleRuns.length} db csomagot közvetlenül a Foxpost API-n keresztül?`)) return;
+
+        btn.disabled = true;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<span class="loading-spinner"></span>';
+
+        const runIds = eligibleRuns.map(r => r.id);
+
+        const res = await fetch('/api/create-foxpost-parcels', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ run_ids: runIds, admin_secret: adminSecret })
+        });
+
+        const resData = await res.json();
+
+        if (res.ok) {
+            let msg = '';
+            if (resData.created_count > 0) {
+                msg += `Sikeres beküldés! ${resData.created_count} db csomag sikeresen létrejött a Foxpostban és szinkronizálva lett a Supabase-be.`;
+            } else {
+                msg += 'Egyetlen csomagnál sem sikerült generálni a vonalkódot a Foxpostnál.';
+            }
+
+            if (resData.failed && resData.failed.length > 0) {
+                msg += '\n\nAz alábbi csomagok beküldése sikertelen volt (ellenőrizd a címet/telefont!):\n';
+                resData.failed.forEach(f => {
+                    const errMsgs = f.errors.map(e => `${e.field || ''}: ${e.message}`).join(', ');
+                    msg += `- ${f.serial_number} (${f.recipient || 'Ismeretlen'}): ${errMsgs}\n`;
+                });
+            }
+            alert(msg);
+            loadData();
+        } else {
+            alert('Hiba a beküldés során: ' + (resData.error || 'Ismeretlen hiba'));
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        }
+    }
+
+    async function triggerMarkShipped(btn) {
+        const runs = getSelectedRuns();
+        if (runs.length === 0) return;
+
+        if (!confirm(`Biztosan feladottnak jelölsz ${runs.length} db csomagot?`)) return;
+
+        btn.disabled = true;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<span class="loading-spinner"></span>';
+
+        const runIds = runs.map(r => r.id);
+
+        const res = await fetch('/api/admin-approve', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'ship', run_ids: runIds, admin_secret: adminSecret })
+        });
+
+        const resData = await res.json();
+
+        if (res.ok) {
+            // Update local runs
+            runIds.forEach(id => {
+                const idx = allRuns.findIndex(r => r.id === id);
+                if (idx !== -1) {
+                    if (!allRuns[idx].shipments) allRuns[idx].shipments = [{}];
+                    allRuns[idx].shipments[0].shipped = true;
+                    allRuns[idx].shipments[0].shipped_at = new Date().toISOString();
+                    allRuns[idx].shipped = true;
+                }
+            });
+            updateStats();
+            renderList();
+        } else {
+            alert('Hiba: ' + (resData.error || 'Ismeretlen hiba'));
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        }
     }
 
     function buildCard(run) {

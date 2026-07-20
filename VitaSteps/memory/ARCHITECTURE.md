@@ -131,6 +131,7 @@ Stores shipping details for each run.
 | **parcel_name** | TEXT | Foxpost locker name. |
 | **parcel_address** | TEXT | Foxpost locker address. |
 | **home_address** | TEXT | Full home shipping address. |
+| **tracking_code** | TEXT | Foxpost package barcode/tracking code (e.g. `CLFOX123...`). |
 | **shipped** | BOOLEAN | Indicates if shipped. |
 | **shipped_at** | TIMESTAMP | Timestamp when shipped. |
 | **received** | BOOLEAN | Indicates if received. |

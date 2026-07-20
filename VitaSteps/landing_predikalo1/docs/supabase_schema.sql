@@ -114,6 +114,7 @@ create table if not exists public.shipments (
   parcel_name text,
   parcel_address text,
   home_address text,
+  tracking_code text,
   shipped boolean default false,
   shipped_at timestamp with time zone,
   received boolean default false,

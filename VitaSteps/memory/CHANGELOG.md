@@ -4,6 +4,15 @@ All notable changes to the VitaSteps challenge platform project are documented h
 
 ---
 
+## [1.7.0] - 2026-07-20
+### Added
+*   **Foxpost Tömeges Export & Csomagkezelő Dashboard (`admin.html`):**
+    *   Beépítettük a SheetJS (XLSX) CDN könyvtárat a kliensoldali Excel generáláshoz.
+    *   Létrehoztunk egy új "Logisztika (Foxpost)" fület az admin felületen, amely kilistázza az összes sikeresen jóváhagyott teljesítést, azok szállítási részleteivel (automata azonosító, név, telefonszám, házhozszállítási cím).
+    *   Megírtuk a címadat-bontó regex logikát a házhozszállítási címek (irányítószám, település, utca/házszám) szétbontására.
+    *   Implementáltuk a Foxpost XLSX sablonnak (`Tomeges-import-pelda-hu-HU.xlsx`) pontosan megfelelő tömeges import Excel generálást.
+    *   Létrehoztunk egy csoportos "Feladottnak jelölés" funkciót az adminon, ami a kijelölt tételeknél egyszerre frissíti a `runs` és `shipments` táblákat a Supabase-ben a `/api/admin-approve` API meghívásán keresztül.
+
 ## [1.6.0] - 2026-07-17
 ### Added
 *   **Google Sheets Lecsatolás és Adatmodell Bővítés:**

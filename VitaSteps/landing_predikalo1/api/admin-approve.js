@@ -13,14 +13,19 @@ module.exports = async (req, res) => {
     if (req.method === 'OPTIONS') return res.status(200).end();
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-    const { action, run_id, admin_secret } = req.body;
+    const { action, run_id, run_ids, admin_secret } = req.body;
 
     // Validate admin secret
     if (!admin_secret || admin_secret !== process.env.ADMIN_SECRET) {
         return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    if (!run_id) return res.status(400).json({ error: 'run_id is required' });
+    if (action !== 'ping' && action !== 'ship' && !run_id) {
+        return res.status(400).json({ error: 'run_id is required' });
+    }
+    if (action === 'ship' && (!run_ids || !Array.isArray(run_ids))) {
+        return res.status(400).json({ error: 'run_ids (array) is required' });
+    }
 
     try {
         if (action === 'approve') {
@@ -118,8 +123,28 @@ module.exports = async (req, res) => {
             if (error) throw error;
             return res.status(200).json({ success: true, message: 'Run rejected and reset.' });
 
+        } else if (action === 'ship') {
+            const { error: shipErr } = await supabase
+                .from('shipments')
+                .update({
+                    shipped: true,
+                    shipped_at: new Date().toISOString()
+                })
+                .in('run_id', run_ids);
+
+            if (shipErr) throw shipErr;
+
+            const { error: runErr } = await supabase
+                .from('runs')
+                .update({ shipped: true })
+                .in('id', run_ids);
+
+            if (runErr) throw runErr;
+
+            return res.status(200).json({ success: true, message: 'Shipments marked as shipped.' });
+
         } else {
-            return res.status(400).json({ error: 'Invalid action. Use "approve" or "reject".' });
+            return res.status(400).json({ error: 'Invalid action. Use "approve", "reject" or "ship".' });
         }
     } catch (err) {
         console.error('Admin action error:', err);
