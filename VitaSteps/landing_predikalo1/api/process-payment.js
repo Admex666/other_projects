@@ -151,13 +151,13 @@ module.exports = async (req, res) => {
         }
 
         // 1c. Create runs and shipments for each medal
-        const suffix = config.prefix;
+        const suffix = config.prefix + (isTestTx ? '-TEST' : '');
         const limit = config.limit;
 
         const { data: existingRuns, error: fetchErr } = await supabase
             .from('runs')
             .select('serial_number')
-            .eq('is_test', false)
+            .eq('is_test', isTestTx)
             .ilike('serial_number', `%${suffix}`);
 
         if (fetchErr) console.error('Supabase fetch error:', fetchErr);
@@ -218,10 +218,10 @@ module.exports = async (req, res) => {
 
             const { error: shipErr } = await supabase
                 .from('shipments')
-                .insert(shipmentObj);
+                .upsert(shipmentObj, { onConflict: 'run_id' });
 
             if (shipErr) {
-                console.error(`Supabase shipments insert error for run ${runData.id}:`, shipErr);
+                console.error(`Supabase shipments upsert error for run ${runData.id}:`, shipErr);
             }
 
             nextSerial++;

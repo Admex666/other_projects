@@ -1,18 +1,4 @@
-const { google } = require('googleapis');
-
-// Initialize Google Sheets auth
-const serviceAccountJson = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON);
-const auth = new google.auth.GoogleAuth({
-    credentials: {
-        client_email: serviceAccountJson.client_email,
-        private_key: serviceAccountJson.private_key
-    },
-    scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly']
-});
-
-const sheets = google.sheets({ version: 'v4', auth });
-const sheetId = process.env.GOOGLE_SHEET_ID;
-const sheetName = 'Nevezések';
+const { createClient } = require('@supabase/supabase-js');
 
 module.exports = async (req, res) => {
     if (req.method !== 'GET') {
@@ -23,37 +9,31 @@ module.exports = async (req, res) => {
         res.setHeader('Cache-Control', 's-maxage=30, stale-while-revalidate');
 
         const campaign = req.query.campaign || 'predikaloszek';
-        const isPilis = campaign === 'pilis';
+        const campaignKey = (campaign === 'predikaloszek' || campaign === 'predikalo') ? 'predikaloszek' : 'pilis';
+        const isPilis = campaignKey === 'pilis';
 
-        const response = await sheets.spreadsheets.values.get({
-            spreadsheetId: sheetId,
-            range: `${sheetName}!A2:AJ500`,
-        });
+        const useTestKey = req.query.is_test === 'true' || (req.headers.host && req.headers.host.includes('localhost'));
 
-        const rows = response.data.values || [];
+        const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
         
-        let paidCount = 0;
-        for (const row of rows) {
-            if (row.length > 9) {
-                const rowCampaign = (row[2] || '').toString().trim().toLowerCase();
-                const rowPaid = (row[9] || '').toString().trim();
-                
-                if (rowPaid !== '') {
-                    if (isPilis && rowCampaign.includes('pilis')) {
-                        paidCount++;
-                    } else if (!isPilis && !rowCampaign.includes('pilis')) {
-                        paidCount++;
-                    }
-                }
-            }
+        // Count runs for this campaign from Supabase
+        const { count: paidCount, error: fetchErr } = await supabase
+            .from('runs')
+            .select('id', { count: 'exact', head: true })
+            .eq('is_test', useTestKey)
+            .eq('campaign', campaignKey);
+
+        if (fetchErr) {
+            console.error('Supabase count error in check-limit:', fetchErr);
+            throw fetchErr;
         }
 
         const limit = isPilis ? 100 : 99;
-        const closed = paidCount >= limit;
+        const closed = (paidCount || 0) >= limit;
 
         return res.status(200).json({
             success: true,
-            count: paidCount,
+            count: paidCount || 0,
             limit: limit,
             closed: closed
         });

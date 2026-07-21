@@ -38,15 +38,19 @@ sequenceDiagram
     A->>DB: Egy kattintással jóváhagyja a teljesítést
     DB-->>API: Trigger: Gratulációs email küldése oklevéllel
 
-    %% 4. Fázis: Érem szállítás
-    Note over DB, F: 4. Logisztika (Tömeges)
-    A->>DB: Exportálja a Foxpost import XLSX-et a shipments táblából (1 kattintás)
-    A->>F: Feltölti a címkegenerátorba
-    F-->>A: Vonalkódos címkék (PDF)
-    A->>F: Csomagokat feladja az automatában
-    F-->>V: SMS/Email: Csomag megérkezett
+    %% 4. Fázis: Érem szállítás (Foxpost API)
+    Note over DB, F: 4. Logisztika (1 kattintásos API)
+    A->>API: Admin Panel: Foxpost API Feladás indítása
+    API->>F: POST /api/parcel (Foxpost Web API tömeges csomaglétrehozás)
+    F-->>API: Vonalkódok visszaadása (clFoxId)
+    API-->>DB: shipments.tracking_code = clFoxId & shipped = true mentése
+    A->>F: Csomagok feladása az automatában (címkenyomtatás a Foxpost partner portálról)
+    F-->>V: SMS/Email: Csomag megérkezett az automatába
     V->>F: Átveszi az érmet
-    F-->>DB: Webhook: érem átvéve = DÁTUM (shipments táblában)
+    Note over DB, F: daily_tracking.py (Daily Cron GitHub Action)
+    API->>F: GET /api/tracking (Csomag státusz lekérdezése)
+    F-->>API: Státusz: RECEIVE (átvéve)
+    API-->>DB: shipments.received = true & received_at = MA rögzítése
 
     %% 5. Fázis: Visszajelzés
     Note over DB, V: 5. Visszajelzés & Ajánlói Program
@@ -118,19 +122,19 @@ Nincs szükség kézi emailezésre a jóváhagyás után. A portálon a felhaszn
 
 ---
 
-### 4. Fázis: Csomagfeladás és Szállítás (Foxpost)
-Mivel a telefonszámok és a pontos automata adatok már a fizetésnél bekerültek a Supabase `shipments` táblájába, a postázás előkészítése teljesen automatikus.
+### 4. Fázis: Csomagfeladás és Szállítás (Foxpost API)
+A szállítási adatok és csomagpont azonosítók a Supabase `shipments` táblájából kerülnek feldolgozásra. A feladási folyamat teljesen papírmentes és 100%-ban automatizált a közvetlen Foxpost Web API összeköttetésnek köszönhetően.
 
 *   **Bemenő adatok (Inputs):**
     *   Supabase `shipments` adatsorai (ahol a teljesítés már jóváhagyott, de a `shipped` még hamis).
 *   **Automatizációs folyamat:**
-    1.  Lefuttatod az érem-logisztikai Python scriptet. A script összegyűjti az összes teljesítőt a `shipments` táblából, akik még nem kaptak érmet, és kimenti őket egy Foxpost-kompatibilis tömeges import fájlba (XLSX).
-    2.  A fájlt feltöltöd a Foxpost admin felületére. A Foxpost generálja a vonalkódos címkéket.
-    3.  A címkéket kinyomtatod, felragasztod az érmek dobozára, és feladod őket az automatában.
-    4.  A Foxpost API-n keresztül szinkronizáljuk a csomagkövetési státuszt, így a Supabase `shipments` táblában automatikusan frissül a `received` és `received_at` mező, amint a túrázó kivette az automatából.
+    1.  Az Admin felületen (`admin.html`) kijelölöd a küldendő teljesítőket, majd rákattintasz a **🦊 Foxpost API Feladás** gombra.
+    2.  A böngésző meghívja a `/api/create-foxpost-parcels` végpontot, amely tömeges lekérdezést futtat, formázza a telefonszámokat (pl. `+36301234567`), és a Foxpost Web API-n keresztül azonnal létrehozza a csomagokat.
+    3.  A kapott egyedi vonalkódokat (`clFoxId`) a backend elmenti a `shipments.tracking_code` oszlopba, a státuszokat pedig beállítja `shipped = true` értékre. A Foxpost Partner Portálodon a csomagok azonnal megjelennek a "Címkenyomtatásra vár" fülön, ahonnan közvetlenül kinyomtathatod a címkéket és feladhatod őket az automatában.
+    4.  A napi háttérkövető script (`scripts/daily_tracking.py`) rendszeres időközönként lekérdezi a Foxpost API-t. Amint a csomag státusza `RECEIVE` (átvéve) állapotba kerül, a script a Supabase-ben rögzíti az átvétel dátumát (`received = true` és `received_at`), és azonnal kiküldi a visszajelzés-kérő e-mailt.
 *   **Kimenő adatok (Outputs):**
-    *   Foxpost tömeges import táblázat (Supabase export).
-    *   Nyomtatásra kész csomagcímkék.
+    *   Automatán létrejött csomagok a Foxpost partner fiókban.
+    *   Csomag vonalkódok mentve a Supabase-be (`tracking_code`).
 
 ---
 

@@ -540,7 +540,12 @@
                     <div class="stat-chip">Betöltés... <span class="loading-spinner" style="width:14px;height:14px;border-width:2px;vertical-align:middle;"></span></div>
                 </div>
             </div>
-            <button class="logout-btn" onclick="doLogout()">Kijelentkezés</button>
+            <div style="display: flex; gap: 0.75rem; align-items: center;">
+                <button class="logout-btn" style="border-color: rgba(34, 197, 94, 0.3); color: #22c55e;" onclick="triggerRefresh(this)">
+                    🔄 Frissítés
+                </button>
+                <button class="logout-btn" onclick="doLogout()">Kijelentkezés</button>
+            </div>
         </div>
 
         <div class="filter-tabs">
@@ -574,6 +579,14 @@
     let adminSecret = '';
     let allRuns = [];
     let currentFilter = 'pending';
+
+    function getShipment(run) {
+        if (!run) return {};
+        if (Array.isArray(run.shipments)) {
+            return run.shipments[0] || {};
+        }
+        return run.shipments || {};
+    }
 
     // ─── Auth ───────────────────────────────────────────────
     async function doLogin() {
@@ -609,6 +622,21 @@
         document.getElementById('screen-login').style.display = 'block';
         document.getElementById('admin-password').value = '';
         document.getElementById('login-error').style.display = 'none';
+    }
+
+    async function triggerRefresh(btn) {
+        if (btn.disabled) return;
+        btn.disabled = true;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '🔄 Frissítés...';
+        try {
+            await loadData();
+        } catch (err) {
+            console.error(err);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        }
     }
 
     // ─── Data ────────────────────────────────────────────────
@@ -667,7 +695,7 @@
             
             // Filter by sub-filter
             let filtered = completedRuns.filter(run => {
-                const shipment = run.shipments?.[0] || {};
+                const shipment = getShipment(run);
                 const isShipped = !!shipment.shipped;
                 if (logisticsSubFilter === 'pending') return !isShipped;
                 if (logisticsSubFilter === 'shipped') return isShipped;
@@ -694,16 +722,16 @@
                 return;
             }
 
-            const totalWaiting = completedRuns.filter(r => !r.shipments?.[0]?.shipped).length;
-            const totalShipped = completedRuns.filter(r => r.shipments?.[0]?.shipped).length;
+            const totalWaiting = completedRuns.filter(r => !getShipment(r).shipped).length;
+            const totalShipped = completedRuns.filter(r => getShipment(r).shipped).length;
 
             let tableRowsHtml = filtered.map(run => {
                 const runner = run.runners || {};
                 const name = run.name || runner.name || 'Ismeretlen';
                 const email = runner.email || '–';
-                const phone = run.shipments?.[0]?.phone || runner.phone || '–';
+                const shipment = getShipment(run);
+                const phone = shipment.phone || runner.phone || '–';
                 const serial = run.serial_number || '–';
-                const shipment = run.shipments?.[0] || {};
                 const method = shipment.method || 'foxpost';
                 
                 let details = '–';
@@ -873,7 +901,7 @@
 
         // Filter runs to only include Foxpost locker deliveries that are not shipped yet
         const eligibleRuns = runs.filter(run => {
-            const shipment = run.shipments?.[0] || {};
+            const shipment = getShipment(run);
             return (shipment.method || 'foxpost') === 'foxpost' && !shipment.shipped;
         });
 
@@ -947,9 +975,17 @@
             runIds.forEach(id => {
                 const idx = allRuns.findIndex(r => r.id === id);
                 if (idx !== -1) {
-                    if (!allRuns[idx].shipments) allRuns[idx].shipments = [{}];
-                    allRuns[idx].shipments[0].shipped = true;
-                    allRuns[idx].shipments[0].shipped_at = new Date().toISOString();
+                    if (!allRuns[idx].shipments) {
+                        allRuns[idx].shipments = {};
+                    }
+                    if (Array.isArray(allRuns[idx].shipments)) {
+                        if (allRuns[idx].shipments.length === 0) allRuns[idx].shipments.push({});
+                        allRuns[idx].shipments[0].shipped = true;
+                        allRuns[idx].shipments[0].shipped_at = new Date().toISOString();
+                    } else {
+                        allRuns[idx].shipments.shipped = true;
+                        allRuns[idx].shipments.shipped_at = new Date().toISOString();
+                    }
                     allRuns[idx].shipped = true;
                 }
             });

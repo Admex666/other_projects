@@ -54,7 +54,7 @@ module.exports = async (req, res) => {
 
         for (const run of runs) {
             const runner = run.runners || {};
-            const shipment = run.shipments?.[0] || {};
+            const shipment = Array.isArray(run.shipments) ? (run.shipments[0] || {}) : (run.shipments || {});
 
             // Skip if already shipped (to prevent duplicate parcel creation on Foxpost)
             if (shipment.shipped) {

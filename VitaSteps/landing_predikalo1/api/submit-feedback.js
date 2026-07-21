@@ -1,5 +1,7 @@
-const { google } = require('googleapis');
 const { createClient } = require('@supabase/supabase-js');
+const fs = require('fs');
+const path = require('path');
+const nodemailer = require('nodemailer');
 
 // Initialize Supabase Client
 const supabaseUrl = process.env.SUPABASE_URL;
@@ -33,6 +35,7 @@ module.exports = async (req, res) => {
 
     try {
         const {
+            run_id,
             erem_minoseg,
             szallitas_elegedett,
             reszvetel_ujra,
@@ -43,18 +46,22 @@ module.exports = async (req, res) => {
             photo_url
         } = req.body;
 
-        console.log(`Received feedback submission from ${email}...`);
+        console.log(`Received feedback submission from ${email} for run ${run_id}...`);
+
+        if (!run_id) {
+            return res.status(400).json({ error: 'Missing run_id.' });
+        }
 
         const { data: existingFeedback, error: checkError } = await supabase
             .from('feedbacks')
             .select('id')
-            .eq('run_id', req.body.run_id)
+            .eq('run_id', run_id)
             .maybeSingle();
 
         if (checkError) throw checkError;
 
         if (existingFeedback) {
-            console.log(`Feedback for run ${req.body.run_id} already exists. Skipping duplicate write.`);
+            console.log(`Feedback for run ${run_id} already exists. Skipping duplicate write.`);
             return res.status(200).json({ success: true, message: 'Feedback already submitted.' });
         }
 
@@ -63,7 +70,7 @@ module.exports = async (req, res) => {
             .from('feedbacks')
             .insert({
                 runner_email: email,
-                run_id: req.body.run_id || null,
+                run_id: run_id,
                 erem_minoseg: parseInt(erem_minoseg),
                 szallitas_elegedett: parseInt(szallitas_elegedett),
                 reszvetel_ujra: reszvetel_ujra,
@@ -78,114 +85,68 @@ module.exports = async (req, res) => {
             throw dbError;
         }
 
-        // 2. Write to Google Sheets
-        const serviceAccountJson = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON);
-        const auth = new google.auth.GoogleAuth({
-            credentials: {
-                client_email: serviceAccountJson.client_email,
-                private_key: serviceAccountJson.private_key
-            },
-            scopes: ['https://www.googleapis.com/auth/spreadsheets']
-        });
+        // Fetch run details to find first name and campaign
+        const { data: runData, error: runErr } = await supabase
+            .from('runs')
+            .select('*, runners(*)')
+            .eq('id', run_id)
+            .maybeSingle();
 
-        const sheets = google.sheets({ version: 'v4', auth });
-        const sheetId = process.env.GOOGLE_SHEET_ID;
+        if (runErr) {
+            console.error("Error fetching run details for feedback email:", runErr);
+        }
 
-        // Fetch user name from 'Nevezések' to populate sheet
-        const nezvesekResponse = await sheets.spreadsheets.values.get({
-            spreadsheetId: sheetId,
-            range: 'Nevezések!A1:Z500',
-        });
-        const nevesekRows = nezvesekResponse.data.values || [];
-        
-        let runnerName = '';
-        let rowIdxToUpdate = -1;
-        let colFollowupIdx = -1;
+        const runnerName = runData?.name || runData?.runners?.name || 'Futó Partner';
+        const parts = runnerName.trim().split(/\s+/);
+        // Hungarian naming convention: first name is usually the last word (e.g. Jakus Ádám -> Ádám)
+        const firstName = parts.pop() || runnerName;
+        const campaign = runData?.campaign || 'predikaloszek';
 
-        if (nevesekRows.length > 0) {
-            const headers = nevesekRows[0];
-            const colEmail = headers.findIndex(h => h.trim().toLowerCase() === 'email');
-            const colName = headers.findIndex(h => h.trim().toLowerCase() === 'név');
-            colFollowupIdx = headers.findIndex(h => h.trim().toLowerCase() === 'follow-up email?');
+        // 2. Trigger Referral Email if NPS is 9 or 10
+        const npsVal = parseInt(nps_score);
+        const smtpPassword = process.env.SMTP_PASSWORD;
 
-            if (colEmail !== -1) {
-                for (let i = 1; i < nevesekRows.length; i++) {
-                    const row = nevesekRows[i];
-                    if (row[colEmail] && row[colEmail].trim().toLowerCase() === email) {
-                        runnerName = colName !== -1 ? (row[colName] || '') : '';
-                        rowIdxToUpdate = i + 1; // 1-based index (including header)
-                        break;
-                    }
-                }
+        if (npsVal >= 9 && smtpPassword && campaign !== 'pilis') {
+            console.log(`User ${email} is a promoter (NPS ${npsVal}). Sending referral email...`);
+            
+            const isPilis = campaign === 'pilis';
+            const portalLink = `https://vitastepsss.vercel.app/portal.html?email=${encodeURIComponent(email)}`;
+            const refLink = isPilis
+                ? `https://vitastepsss.vercel.app/nagykevely/checkout-widget.html?ref=${encodeURIComponent(email)}`
+                : `https://vitastepsss.vercel.app/checkout-widget.html?ref=${encodeURIComponent(email)}`;
+
+            // Load email_referral_template.html
+            const templatePath = path.join(process.cwd(), 'email_referral_template.html');
+            if (fs.existsSync(templatePath)) {
+                let html = fs.readFileSync(templatePath, 'utf8');
+                html = html.replace(/{{FIRST_NAME}}/g, firstName);
+                html = html.replace(/{{REFERRAL_LINK}}/g, refLink);
+                html = html.replace(/{{PORTAL_LINK}}/g, portalLink);
+
+                const transporter = nodemailer.createTransport({
+                    host: 'smtp.gmail.com',
+                    port: 587,
+                    secure: false,
+                    auth: { user: 'vitasteps.team@gmail.com', pass: smtpPassword }
+                });
+
+                const mailOptions = {
+                    from: 'VitaSteps <vitasteps.team@gmail.com>',
+                    to: email,
+                    subject: '🎁 10% kedvezmény a barátaidnak, ingyenes nevezés Neked!',
+                    html: html
+                };
+
+                await transporter.sendMail(mailOptions);
+                console.log(`Referral email successfully sent to ${email}`);
+            } else {
+                console.error(`Referral template not found at path: ${templatePath}`);
             }
         }
 
-        if (email === 'admexgm@gmail.com') {
-            runnerName = 'Admex Dev';
-        }
-
-        // Write to 'feedback_raw' sheet
-        const feedbackSheetName = 'feedback_raw';
-        const feedbackResponse = await sheets.spreadsheets.values.get({
-            spreadsheetId: sheetId,
-            range: `${feedbackSheetName}!A1:Z100`,
-        });
-
-        const feedbackRows = feedbackResponse.data.values || [];
-        const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19);
-
-        // If sheet is empty, write headers first
-        if (feedbackRows.length === 0) {
-            const defaultHeaders = [
-                'Timestamp', 'Email', 'Név', 'Érem minősége', 'Szállítás zökkenőmentes', 
-                'Új részvétel', 'NPS Ajánlás (0-10)', 'Következő tájegység', 
-                'Mi tetszett legjobban', 'Mi tenné jobbá', 'Kép URL'
-            ];
-            await sheets.spreadsheets.values.update({
-                spreadsheetId: sheetId,
-                range: `${feedbackSheetName}!A1`,
-                valueInputOption: 'RAW',
-                body: { values: [defaultHeaders] },
-            });
-        }
-
-        // Append feedback row
-        const newFeedbackRow = [
-            timestamp, email, runnerName, erem_minoseg, szallitas_elegedett,
-            reszvetel_ujra, nps_score, kovetkezo_tajegyseg,
-            tetszett_legjobban || '', jobba_tenne || '', photo_url || ''
-        ];
-
-        await sheets.spreadsheets.values.append({
-            spreadsheetId: sheetId,
-            range: `${feedbackSheetName}!A:A`,
-            valueInputOption: 'RAW',
-            body: { values: [newFeedbackRow] },
-        });
-
-        // 3. Mark 'follow-up email?' as 'Igen' in 'Nevezések' to prevent double emailing
-        if (rowIdxToUpdate !== -1 && colFollowupIdx !== -1) {
-            const colLetter = chrLetter(colFollowupIdx);
-            await sheets.spreadsheets.values.update({
-                spreadsheetId: sheetId,
-                range: `Nevezések!${colLetter}${rowIdxToUpdate}`,
-                valueInputOption: 'RAW',
-                body: { values: [['Igen']] },
-            });
-        }
-
-        res.status(200).json({ success: true, message: 'Feedback successfully submitted.' });
+        return res.status(200).json({ success: true, message: 'Feedback successfully submitted.' });
     } catch (err) {
         console.error('Submit feedback error:', err);
-        res.status(500).json({ error: err.message });
+        return res.status(500).json({ error: err.message });
     }
 };
-
-// Helper function to convert column index to letters (0-indexed A, B, C...)
-function chrLetter(idx) {
-    if (idx < 26) {
-        return String.fromCharCode(65 + idx);
-    } else {
-        return String.fromCharCode(64 + Math.floor(idx / 26)) + String.fromCharCode(65 + (idx % 26));
-    }
-}

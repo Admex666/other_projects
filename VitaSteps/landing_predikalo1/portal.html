@@ -1436,7 +1436,7 @@
 
             // Determine visibility of each tab button
             const showFeedbackTab = run.completed;
-            const showReferralTab = run.completed;
+            const showReferralTab = run.completed && !isPilisK;
             const showGuidebookTab = !!isPilisK; // Only shown for Nagy-Kevély
             // Proof tab: PK runners who haven't completed yet and haven't submitted proof
             const showProofTab = !!(isPilisK && !run.completed && !run.proof_submitted);

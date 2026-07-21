@@ -41,6 +41,7 @@
 *   **[x]** Átnézni és tesztelni a **Számlázz.hu** e-számla generálást (`process-payment.js` → Számlázz.hu API hívás) — valóban megérkezik-e a számla emailben.
 *   **[x]** Átnézni és tesztelni a **welcome email** küldést (`process-payment.js` → nodemailer SMTP) — megérkezik-e a köszöntő email a vásárlónak.
 *   **[ ]** Normális supabase email megerősítés (most alap "confirm your email" van)
+*   **[ ]** Számla template javítás: bank, cím, megnevezés!!!
 *   **[ ]**  Portálon kezelni, ha több jelentkező van egy e-mail címről, teljesítés igazolása felületen szintén, lehetőleg egy képpel lehessen több embert is igazolni.
 *   **[ ]** "Sikeres nevezés" Welcome emailben legyen tájékoztató mindenről (GPX/szelfi feltöltés), portál elérhetősége és szerepe.
 *   **[ ]** Referral kedvezmények beépítése, tesztelése

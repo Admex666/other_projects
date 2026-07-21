@@ -1,5 +1,4 @@
 const Stripe = require('stripe');
-const { google } = require('googleapis');
 const { createClient } = require('@supabase/supabase-js');
 const campaigns = require('../config/campaigns.json');
 
@@ -73,37 +72,16 @@ module.exports = async (req, res) => {
         }
 
         // ── LIMIT CHECK ──────────────────────────────────────────────────────
-        const serviceAccountJson = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON);
-        const auth = new google.auth.GoogleAuth({
-            credentials: {
-                client_email: serviceAccountJson.client_email,
-                private_key: serviceAccountJson.private_key
-            },
-            scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly']
-        });
-        const sheets = google.sheets({ version: 'v4', auth });
-        const sheetId = process.env.GOOGLE_SHEET_ID;
+        const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+        const { count: paidCount, error: fetchErr } = await supabase
+            .from('runs')
+            .select('id', { count: 'exact', head: true })
+            .eq('is_test', useTestKey)
+            .eq('campaign', campaignKey);
 
-        const sheetResponse = await sheets.spreadsheets.values.get({
-            spreadsheetId: sheetId,
-            range: `Nevezések!A2:AJ500`,
-        });
-
-        const rows = sheetResponse.data.values || [];
-        let paidCount = 0;
-
-        for (const row of rows) {
-            if (row.length > 9) {
-                const rowCampaign = (row[2] || '').toString().trim().toLowerCase();
-                const rowPaid = (row[9] || '').toString().trim();
-                if (rowPaid !== '') {
-                    if (campaignKey === 'pilis' && rowCampaign.includes('pilis')) {
-                        paidCount++;
-                    } else if (campaignKey === 'predikaloszek' && (rowCampaign.includes('predikalo') || rowCampaign.includes('prédikáló'))) {
-                        paidCount++;
-                    }
-                }
-            }
+        if (fetchErr) {
+            console.error('Supabase count error in limit check:', fetchErr);
+            throw fetchErr;
         }
 
         const maxLimit = config.limit;
