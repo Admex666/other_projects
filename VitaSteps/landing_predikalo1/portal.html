@@ -984,22 +984,22 @@
                                 <label class="radio-label">
                                     <input type="radio" name="guidebook-route" value="csaladi" checked>
                                     <span class="radio-custom"></span>
-                                    <span>Családi táv (6 km)</span>
+                                    <span>Családi táv (~5 km)</span>
                                 </label>
                                 <label class="radio-label">
                                     <input type="radio" name="guidebook-route" value="klasszikus">
                                     <span class="radio-custom"></span>
-                                    <span>Klasszikus táv (10 km)</span>
+                                    <span>Klasszikus táv (~10 km)</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="guidebook-route" value="extra">
+                                    <span class="radio-custom"></span>
+                                    <span>Kevély Extra (~13 km)</span>
                                 </label>
                                 <label class="radio-label">
                                     <input type="radio" name="guidebook-route" value="felmaraton">
                                     <span class="radio-custom"></span>
-                                    <span>Kevély Félmaraton (15 km)</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="guidebook-route" value="hosszu">
-                                    <span class="radio-custom"></span>
-                                    <span>Kevély Ultra / Hosszú (25 km)</span>
+                                    <span>Kevély Félmaraton (~21 km)</span>
                                 </label>
                             </div>
                         </div>
@@ -1059,6 +1059,9 @@
                     <div class="proof-progress-bar" id="proof-progress-bar">
                         <div class="proof-progress-fill" id="proof-progress-fill"></div>
                     </div>
+
+                    <!-- Verify others (group verification) -->
+                    <div id="verify-others-container" style="display:none; margin-top: 1.25rem; border-top: 1px solid var(--border); padding-top: 1.25rem; text-align: left;"></div>
 
                     <!-- Submit -->
                     <button class="btn" id="btn-proof-submit" onclick="submitProof()" style="margin-top: 1.25rem;" disabled>
@@ -1220,6 +1223,12 @@
             uploadZone.style.display = 'block';
         }
 
+        function toggleVerifyOthersList(checked) {
+            document.querySelectorAll('.verify-other-run-chk').forEach(chk => {
+                chk.checked = checked;
+            });
+        }
+
         // Auth management
         async function checkSession() {
             const { data: { session }, error } = await supabaseClient.auth.getSession();
@@ -1320,9 +1329,6 @@
                     return;
                 }
 
-                // Populate user profile details
-                document.getElementById('user-display-name').textContent = profile.name;
-
                 // Handle multi-run selection UI
                 const selectContainer = document.getElementById('campaign-selector-container');
                 const selectElement = document.getElementById('campaign-select');
@@ -1332,10 +1338,10 @@
                     selectElement.innerHTML = '';
                     runs.forEach(run => {
                         const isPilisK = run.serial_number && (run.serial_number.includes('PK') || run.serial_number.includes('999'));
-                        const campaignName = isPilisK ? 'A Nagy-Kevély csillagjai érem' : 'Prédikálószék Vertical';
+                        const campaignName = isPilisK ? 'Nagy-Kevély' : 'Prédikálószék';
                         const opt = document.createElement('option');
                         opt.value = run.id;
-                        opt.textContent = `${campaignName} (${run.serial_number})`;
+                        opt.textContent = `${campaignName} – ${run.name || profile.name || 'Résztvevő'} (${run.serial_number})`;
                         selectElement.appendChild(opt);
                     });
                     selectContainer.style.display = 'block';
@@ -1364,6 +1370,9 @@
 
             const run = selectedRun;
             const isPilisK = run.serial_number && (run.serial_number.includes('PK') || run.serial_number.includes('999'));
+
+            // Populate name
+            document.getElementById('user-display-name').textContent = run.name || userProfile.name || "Futó Partner";
 
             // Populate serial
             document.getElementById('user-display-serial').textContent = run.serial_number || '#---/---';
@@ -1415,6 +1424,41 @@
 
             // Hide proof-pending-card by default
             document.getElementById('proof-pending-card').style.display = 'none';
+
+            // Check if there are other uncompleted runs for the same campaign (same prefix/type of serial number)
+            const otherUncompleted = userProfile.runs.filter(r => 
+                r.id !== run.id && 
+                !r.completed && 
+                !r.proof_submitted &&
+                (r.serial_number && (r.serial_number.includes('PK') || r.serial_number.includes('999'))) === isPilisK
+            );
+
+            const verifyOthersContainer = document.getElementById('verify-others-container');
+            if (verifyOthersContainer) {
+                if (otherUncompleted.length > 0) {
+                    let checkboxHtml = `
+                        <label style="display: flex; align-items: flex-start; gap: 0.5rem; color: var(--text-high); font-weight: 600; cursor: pointer; font-size: 0.95rem; margin-bottom: 0.75rem;">
+                            <input type="checkbox" id="verify-others-checkbox" checked style="margin-top: 0.2rem;" onchange="toggleVerifyOthersList(this.checked)">
+                            <span>Csoportos igazolás (a többi nevezőm teljesítését is igazolom ezzel a fájllal)</span>
+                        </label>
+                        <div id="verify-others-list" style="margin-left: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                    `;
+                    otherUncompleted.forEach(r => {
+                        checkboxHtml += `
+                            <label style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-mid); font-size: 0.9rem; cursor: pointer;">
+                                <input type="checkbox" class="verify-other-run-chk" value="${r.id}" checked>
+                                <span>${r.name || 'Névtelen partner'} (${r.serial_number})</span>
+                            </label>
+                        `;
+                    });
+                    checkboxHtml += '</div>';
+                    verifyOthersContainer.innerHTML = checkboxHtml;
+                    verifyOthersContainer.style.display = 'block';
+                } else {
+                    verifyOthersContainer.style.display = 'none';
+                    verifyOthersContainer.innerHTML = '';
+                }
+            }
 
             if (isPilisK) {
                 // Prefill guidebook form name
@@ -1680,6 +1724,12 @@
                 }
 
                 // Save to runs table
+                const targetIds = [runId];
+                const otherChks = document.querySelectorAll('.verify-other-run-chk:checked');
+                otherChks.forEach(chk => {
+                    targetIds.push(chk.value);
+                });
+
                 const { error: dbError } = await supabaseClient
                     .from('runs')
                     .update({
@@ -1687,19 +1737,20 @@
                         proof_urls: uploadedUrls,
                         proof_submitted_at: new Date().toISOString()
                     })
-                    .eq('id', runId);
+                    .in('id', targetIds);
 
                 if (dbError) throw new Error('Adatbázis frissítési hiba: ' + dbError.message);
 
                 progressFill.style.width = '100%';
 
-                // Update local selectedRun state so UI re-renders correctly
-                selectedRun.proof_submitted = true;
-                selectedRun.proof_urls = uploadedUrls;
-                if (userProfile && userProfile.runs) {
-                    const idx = userProfile.runs.findIndex(r => r.id === runId);
-                    if (idx !== -1) userProfile.runs[idx].proof_submitted = true;
-                }
+                // Update local states so UI re-renders correctly
+                targetIds.forEach(id => {
+                    const runObj = userProfile.runs.find(r => r.id === id);
+                    if (runObj) {
+                        runObj.proof_submitted = true;
+                        runObj.proof_urls = uploadedUrls;
+                    }
+                });
 
                 setTimeout(() => {
                     progressBar.style.display = 'none';

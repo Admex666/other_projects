@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Regisztráció Megerősítése</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #0b0f19;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      color: #fff;
+    }
+
+    .wrapper {
+      width: 100%;
+      background: #0b0f19;
+      padding-bottom: 40px;
+    }
+
+    .main {
+      background: #121824;
+      margin: 0 auto;
+      max-width: 600px;
+      border-radius: 12px;
+      border: 1px solid rgba(196, 255, 0, 0.15);
+    }
+
+    .header {
+      padding: 40px 20px;
+      text-align: center;
+      background: linear-gradient(180deg, #161f33 0%, #121824 100%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: 4px;
+      margin: 0;
+    }
+
+    .logo span {
+      color: #c4ff00;
+    }
+
+    .content {
+      padding: 40px 30px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 22px;
+      margin-top: 0;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+
+    p {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #f1f5f9;
+      margin: 0 0 25px;
+    }
+
+    .highlight {
+      color: #c4ff00;
+      font-weight: bold;
+    }
+
+    .cta-container {
+      text-align: center;
+      padding: 15px 0 25px;
+    }
+
+    .btn {
+      background: #c4ff00;
+      color: #000 !important;
+      font-size: 15px;
+      font-weight: bold;
+      text-decoration: none;
+      padding: 14px 35px;
+      border-radius: 8px;
+      display: inline-block;
+    }
+
+    .link-info {
+      font-size: 12px;
+      color: #7a8aa0;
+      margin-top: 20px;
+      line-height: 1.4;
+    }
+
+    .footer {
+      padding: 30px 20px;
+      text-align: center;
+    }
+
+    .footer p {
+      font-size: 11px;
+      color: #5d6b82;
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <center class="wrapper">
+    <table class="main" width="100%">
+      <tr>
+        <td class="header">
+          <h1 class="logo">VITA<span>STEPS</span></h1>
+        </td>
+      </tr>
+      <tr>
+        <td class="content">
+          <h1>Üdvözlünk a VitaSteps-nél! 🏔️</h1>
+          <p>Kérjük, erősítsd meg a regisztrációdat a <span class="highlight">VitaSteps Teljesítői Portálon</span>.</p>
+          <p>Kattints az alábbi gombra a fiókod megerősítéséhez és a belépéshez:</p>
+
+          <div class="cta-container">
+            <a href="{{ .ConfirmationURL }}" class="btn" target="_blank">✅ Regisztráció Megerősítése</a>
+          </div>
+
+          <p class="link-info">Ha a fenti gomb nem működne, másold ki az alábbi linket a böngésződbe:<br>
+            <span style="word-break: break-all; color: #c4ff00;">{{ .ConfirmationURL }}</span>
+          </p>
+
+          <p style="font-size: 13px; color: #7a8aa0; margin-top: 30px;">Ha nem te kezdeményezted ezt a regisztrációt,
+            nyugodtan törölheted ezt a levelet.</p>
+          <p style="margin-top:30px; font-size: 15px;">Üdvözlettel,<br><strong>A VitaSteps Csapata</strong></p>
+        </td>
+      </tr>
+      <tr>
+        <td class="footer">
+          <p>© 2026 VitaSteps. Minden jog fenntartva.<br>vitasteps.team@gmail.com</p>
+        </td>
+      </tr>
+    </table>
+  </center>
+</body>
+
+</html>

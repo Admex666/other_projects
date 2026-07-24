@@ -39,7 +39,7 @@ gantt
     
     section Regisztráció & Hirdetések
     Előnevezés (meleg lista)    :des3, 2026-07-24, 2026-07-27
-    Fő Meta Ads hirdetések      :des4, 2026-07-27, 2026-09-11
+    Fő Meta Ads hirdetések      :des4, 2026-07-28, 2026-09-11
     Retargeting / FOMO kampány  :des5, 2026-08-29, 2026-09-04
     
     section Kihívás & Postázás

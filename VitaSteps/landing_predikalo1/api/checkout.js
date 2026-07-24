@@ -72,7 +72,6 @@ module.exports = async (req, res) => {
         }
 
         // ── LIMIT CHECK ──────────────────────────────────────────────────────
-        const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
         const { count: paidCount, error: fetchErr } = await supabase
             .from('runs')
             .select('id', { count: 'exact', head: true })

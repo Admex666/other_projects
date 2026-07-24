@@ -1,6 +1,8 @@
 const Stripe = require('stripe');
 const { createClient } = require('@supabase/supabase-js');
 const nodemailer = require('nodemailer');
+const fs = require('fs');
+const path = require('path');
 const campaigns = require('../config/campaigns.json');
 
 module.exports = async (req, res) => {
@@ -259,7 +261,7 @@ module.exports = async (req, res) => {
 
             const shippingItem = deliveryMethod === 'home' ? `
     <tetel>
-      <megnevezes>Házhozszállítás (Magyar Posta)</megnevezes>
+      <megnevezes>Házhozszállítás</megnevezes>
       <mennyiseg>1.0</mennyiseg>
       <mennyisegiEgyseg>db</mennyisegiEgyseg>
       <nettoEgysegar>1200</nettoEgysegar>
@@ -284,14 +286,13 @@ module.exports = async (req, res) => {
     <fizmod>Bankkártya</fizmod>
     <penznem>HUF</penznem>
     <szamlaNyelve>hu</szamlaNyelve>
-    <megjegyzes>Biztonságos Stripe kártyás fizetés.</megjegyzes>
     <arfolyamBank>MNB</arfolyamBank>
     <arfolyam>1.0</arfolyam>
     <fizetve>true</fizetve>
   </fejlec>
   <elado>
-    <bank>OTP Bank</bank>
-    <bankszamlaszam>11773004-00000000-00000000</bankszamlaszam>
+    <bank>Revolut</bank>
+    <bankszamlaszam>30200014-19613410-97640164</bankszamlaszam>
   </elado>
   <vevo>
     <nev>${primaryName}</nev>
@@ -347,31 +348,64 @@ ${invoiceItems}${shippingItem}
             });
 
             const portalLink = `https://vitastepsss.vercel.app/portal.html?email=${encodeURIComponent(email)}`;
+            const isPilisK = (campaignKey === 'pilis');
+            const locationName = isPilisK ? 'Nagy-Kevély' : 'Prédikálószék';
+            const challengePeriod = isPilisK ? '2026. augusztus 1. és szeptember 18.' : '2026. május 28. és június 30.';
+
+            const participantNames = medals.map(m => m.name).filter(Boolean);
+            let greetingNames = firstName;
+            if (participantNames.length > 0) {
+                if (participantNames.length === 1) {
+                    greetingNames = participantNames[0];
+                } else {
+                    greetingNames = participantNames.slice(0, -1).join(', ') + ' és ' + participantNames[participantNames.length - 1];
+                }
+            }
+
+            const isPlural = participantNames.length > 1;
+            const introText = isPlural
+                ? `Üdvözlünk a VitaSteps <strong>${campaignName}</strong> kihívásán! Ezzel megtettétek az első lépést afelé, hogy a teljesítményeteket és élményeiteket egyedi emlékekké alakítsátok! 💚`
+                : `Üdvözlünk a VitaSteps <strong>${campaignName}</strong> kihívásán! Ezzel megtetted az első lépést afelé, hogy a teljesítményedet és élményeidet egyedi emlékekké alakítsd! 💚`;
+
+            const challengePeriodText = isPlural
+                ? `A kihívást <strong>${challengePeriod}</strong> között tudjátok teljesíteni.`
+                : `A kihívást <strong>${challengePeriod}</strong> között tudod teljesíteni.`;
+
+            const proofMethodText = isPlural
+                ? `A teljesítést igazolni GPS-es rögzítéssel (pl. Strava, Garmin GPX nyomvonal feltöltésével) és/vagy csúcsfotóval (szelfivel) tudjátok a személyes portálotokon.`
+                : `A teljesítést igazolni GPS-es rögzítéssel (pl. Strava, Garmin GPX nyomvonal feltöltésével) és/vagy csúcsfotóval (szelfivel) tudod a személyes portálodon.`;
+
+            const deliveryText = `Az érmek postázása a teljesítés igazolását követő 3-5 munkanapon belül történik a választott átvételi pontra.`;
+
             const medalsHtml = medals.length === 1
-                ? `<p><strong>Nevező:</strong> ${medals[0].name} &nbsp;|&nbsp; <strong>Táv:</strong> ${medals[0].distance}</p>`
-                : `<ul style="padding-left:18px; margin:10px 0;">${medals.map((m, i) =>
+                ? `<p style="margin: 5px 0; color: #ffffff;"><strong>Nevező:</strong> ${medals[0].name} &nbsp;|&nbsp; <strong>Táv:</strong> ${medals[0].distance}</p>`
+                : `<ul style="padding-left:18px; margin:10px 0; color: #ffffff;">${medals.map((m, i) =>
                     `<li>${i + 1}. érem – <strong>${m.name}</strong> (${m.distance})</li>`
                 ).join('')}</ul>`;
 
             const shippingHtml = deliveryMethod === 'home'
-                ? `<p><strong>Szállítás:</strong> Házhozszállítás – ${homeAddress || billingAddress}</p>`
-                : `<p><strong>Szállítás:</strong> Foxpost automata – ${parcelName || 'választva'}</p>`;
+                ? `<p style="margin: 5px 0; color: #ffffff;"><strong>Szállítás:</strong> Házhozszállítás – ${homeAddress || billingAddress}</p>`
+                : `<p style="margin: 5px 0; color: #ffffff;"><strong>Szállítás:</strong> Foxpost automata – ${parcelName || 'választva'}</p>`;
 
-            const welcomeHtml = `
-            <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #0b0f19; color: #ffffff; border-radius: 8px;">
-              <h1 style="color: #c4ff00; text-align: center;">🏔️ Sikeres Nevezés!</h1>
-              <p>Szia <strong>${firstName}</strong>,</p>
-              <p>Sikeresen beneveztél a <strong>${campaignName}</strong> kihívásunkra! Köszönjük a bizalmadat! 💚</p>
-              ${medalsHtml}
-              ${shippingHtml}
-              <p>A számlát a Számlázz.hu hamarosan kiküldi e-mailben.</p>
-              <div style="background: #121824; border: 1px solid #1a2235; padding: 15px; border-radius: 6px; margin: 20px 0; text-align: center;">
-                <p style="margin-top: 0; color: #ffffff;">Lépj be a személyes túrázó portálodra:</p>
-                <a href="${portalLink}" style="background: #c4ff00; color: #000000; padding: 10px 20px; border-radius: 4px; text-decoration: none; font-weight: bold; display: inline-block;">Belépés a Portálra</a>
-              </div>
-              <p style="font-size: 0.90rem; color: #8a99b3;">Sok sikert kívánunk a kihíváshoz!<br>A VitaSteps csapata</p>
-            </div>
-            `;
+            let welcomeHtml = '';
+            try {
+                const templatePath = path.join(__dirname, '../email_welcome_template.html');
+                const rawTemplate = fs.readFileSync(templatePath, 'utf8');
+                welcomeHtml = rawTemplate
+                    .replace('{{GREETING_NAMES}}', greetingNames)
+                    .replace('{{INTRO_TEXT}}', introText)
+                    .replace('{{MEDALS_HTML}}', medalsHtml)
+                    .replace('{{SHIPPING_HTML}}', shippingHtml)
+                    .replace('{{LOCATION_NAME}}', locationName)
+                    .replace('{{CHALLENGE_PERIOD_TEXT}}', challengePeriodText)
+                    .replace('{{PROOF_METHOD_TEXT}}', proofMethodText)
+                    .replace('{{DELIVERY_TEXT}}', deliveryText)
+                    .replace('{{PORTAL_LINK}}', portalLink);
+            } catch (err) {
+                console.error('Error reading email_welcome_template.html:', err);
+                // Fallback basic text if template loading fails
+                welcomeHtml = `<p>Kedves ${greetingNames}! Sikeresen regisztráltál a ${campaignName} kihívásra. Jelentkezz be itt: ${portalLink}</p>`;
+            }
 
             await transporter.sendMail({
                 from: '"VitaSteps" <vitasteps.team@gmail.com>',

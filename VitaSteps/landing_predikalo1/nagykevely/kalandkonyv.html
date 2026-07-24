@@ -856,10 +856,10 @@
                 <div class="input-group">
                     <label for="select-route">Választott túraútvonal</label>
                     <select id="select-route" class="input-field" onchange="changeRoute(this.value)">
-                        <option value="csaladi">Családi táv (6 km)</option>
-                        <option value="klasszikus">Klasszikus táv (10 km)</option>
-                        <option value="hosszu">Kevély Ultra / Hosszú (25 km)</option>
-                        <option value="felmaraton">Kevély Félmaraton (15 km)</option>
+                        <option value="csaladi">Családi táv (~5 km)</option>
+                        <option value="klasszikus">Klasszikus táv (~10 km)</option>
+                        <option value="extra">Kevély Extra (~13 km)</option>
+                        <option value="felmaraton">Kevély Félmaraton (~21 km)</option>
                     </select>
                 </div>
                 <div class="input-group">
@@ -1313,80 +1313,12 @@
                     }
                 ]
             },
-            felmaraton: {
-                title: "Kevély Félmaraton (15 km)",
-                distance: "15.3 km",
+            extra: {
+                title: "Kevély Extra (~13 km)",
+                distance: "12.9 km",
                 elevation: "520 m",
                 time: "~4.5 óra",
-                difficulty: "Haladó",
-                gpx: "04felmaraton.gpx",
-                timeline: [
-                    "Csobánka főtér (Indulás)",
-                    "Kevély-nyereg (Pihenőhely)",
-                    "Nagy-Kevély csúcs (534m, Csúcstámadás)",
-                    "Ezüst-hegy (Sziklás gerincvonulat)",
-                    "Egri vár másolata & Teve-szikla",
-                    "Csobánka főtér (Visszaérkezés)"
-                ],
-                pois: [
-                    {
-                        name: "Mackó-barlang (Kis-Kevély)",
-                        lat: 47.632640,
-                        lon: 18.971420,
-                        location: "Csobánka után, ~3.2 km-nél",
-                        desc: "Világhírű jégkorszaki lelőhely. Óriási ásító medveszájhoz hasonlító bejárata van. A kutatások során barlangi medve, mamut és gyapjas orrszarvú csontok mellett neandervölgyi ősember eszközei kerültek elő.",
-                        extra: "Tudtad? Fokozottan védett barlang, bejárata előtt kis turistapihenő van kialakítva padokkal."
-                    },
-                    {
-                        name: "Kevély-nyereg és a menedékház helye",
-                        lat: 47.626850,
-                        lon: 18.976753,
-                        location: "Ereszkedés előtt, ~4.5 km-nél",
-                        desc: "A Nagy- és Kis-Kevély közti nyeregben állt a híres Stromfeld Aurél menedékház, melyet a természetbarátok kézi erővel hordtak fel. A ház 1992-ben rejtélyes körülmények között teljesen leégett.",
-                        extra: "Tudtad? Ma egy kis esőbeálló és egy emléktábla jelzi a hajdani legendás menedékház helyét."
-                    },
-                    {
-                        name: "Nagy-Kevély csúcs (534m)",
-                        lat: 47.622870,
-                        lon: 18.984690,
-                        location: "A csúcson, ~5.5 km-nél",
-                        desc: "A Kevély-csoport legmagasabb pontja. Nevének eredete a szerb 'kovily' szóból származik, ami árvalányhajat jelent, mivel a szerb lakosság a hegy kopár, fátlan, árvalányhajjal borított oldalára utalt ezzel.",
-                        extra: "Tudtad? Tiszta időben egyszerre látható innen a Gellért-hegy, a János-hegy, a Hármashatár-hegy és Dobogókő."
-                    },
-                    {
-                        name: "Sicambria titka (Monalovac)",
-                        lat: 47.625800,
-                        lon: 19.019200,
-                        location: "Budakalász felé, ~10.0 km-nél",
-                        desc: "A középkori krónikák szerint ezen a területen állt Sicambria, Attila hun király fővárosa és temetkezési helye. Pilis-kutatók várfalmaradványokat és feltételezett fejedelmi sírokat azonosítottak a Monalovac hegyen.",
-                        extra: "Tudtad? A környékbeli Ezüst-hegy és Arany-lyuk nevek a legenda szerint az arany- és ezüstkoporsókra utalhatnak."
-                    },
-                    {
-                        name: "Oszoly-csúcs (329m)",
-                        lat: 47.646700,
-                        lon: 18.974000,
-                        location: "Útvonal legvégén, ~13.5 km-nél",
-                        desc: "Csobánka felett magasodó mészkőszirt, a magyar sziklamászás történelmi bölcsője. Tetején kettős kereszt és nemzeti zászló áll, ahonnan teljes 360 fokos panoráma nyílik a Csobánkai-medencére.",
-                        extra: "Tudtad? A legenda szerint a völgy úgy keletkezett, hogy a Jóisten megpihent itt az oldalára dőlve a világ teremtése után."
-                    }
-                ],
-                quizzes: [
-                    {
-                        q: "Milyen jégkorszaki állatok leleteit találták a Mackó-barlangban?",
-                        a: ".tkotso csmedem ignalraB"
-                    },
-                    {
-                        q: "Melyik hun király sírját és fővárosát sejtik a Pilis-kutatók Sicambriánál?",
-                        a: ".tátilaKirák kounH zA"
-                    }
-                ]
-            },
-            hosszu: {
-                title: "Kevély Ultra / Hosszú (25 km)",
-                distance: "24.8 km",
-                elevation: "810 m",
-                time: "~7-8 óra",
-                difficulty: "Nehéz",
+                difficulty: "Közepes",
                 gpx: "03extra.gpx",
                 timeline: [
                     "Pomáz HÉV állomás (Indulás)",
@@ -1454,6 +1386,74 @@
                     {
                         q: "Hogyan nevezik a Kő-hegyi kilátó melletti vulkáni gomba-sziklát?",
                         a: ".szikla aja-palaK noelópaN"
+                    }
+                ]
+            },
+            felmaraton: {
+                title: "Kevély Félmaraton (~21 km)",
+                distance: "21.0 km",
+                elevation: "810 m",
+                time: "~6 óra",
+                difficulty: "Nehéz",
+                gpx: "04felmaraton.gpx",
+                timeline: [
+                    "Csobánka főtér (Indulás)",
+                    "Kevély-nyereg (Pihenőhely)",
+                    "Nagy-Kevély csúcs (534m, Csúcstámadás)",
+                    "Ezüst-hegy (Sziklás gerincvonulat)",
+                    "Egri vár másolata & Teve-szikla",
+                    "Csobánka főtér (Visszaérkezés)"
+                ],
+                pois: [
+                    {
+                        name: "Mackó-barlang (Kis-Kevély)",
+                        lat: 47.632640,
+                        lon: 18.971420,
+                        location: "Csobánka után, ~3.2 km-nél",
+                        desc: "Világhírű jégkorszaki lelőhely. Óriási ásító medveszájhoz hasonlító bejárata van. A kutatások során barlangi medve, mamut és gyapjas orrszarvú csontok mellett neandervölgyi ősember eszközei kerültek elő.",
+                        extra: "Tudtad? Fokozottan védett barlang, bejárata előtt kis turistapihenő van kialakítva padokkal."
+                    },
+                    {
+                        name: "Kevély-nyereg és a menedékház helye",
+                        lat: 47.626850,
+                        lon: 18.976753,
+                        location: "Ereszkedés előtt, ~4.5 km-nél",
+                        desc: "A Nagy- és Kis-Kevély közti nyeregben állt a híres Stromfeld Aurél menedékház, melyet a természetbarátok kézi erővel hordtak fel. A ház 1992-ben rejtélyes körülmények között teljesen leégett.",
+                        extra: "Tudtad? Ma egy kis esőbeálló és egy emléktábla jelzi a hajdani legendás menedékház helyét."
+                    },
+                    {
+                        name: "Nagy-Kevély csúcs (534m)",
+                        lat: 47.622870,
+                        lon: 18.984690,
+                        location: "A csúcson, ~5.5 km-nél",
+                        desc: "A Kevély-csoport legmagasabb pontja. Nevének eredete a szerb 'kovily' szóból származik, ami árvalányhajat jelent, mivel a szerb lakosság a hegy kopár, fátlan, árvalányhajjal borított oldalára utalt ezzel.",
+                        extra: "Tudtad? Tiszta időben egyszerre látható innen a Gellért-hegy, a János-hegy, a Hármashatár-hegy és Dobogókő."
+                    },
+                    {
+                        name: "Sicambria titka (Monalovac)",
+                        lat: 47.625800,
+                        lon: 19.019200,
+                        location: "Budakalász felé, ~10.0 km-nél",
+                        desc: "A középkori krónikák szerint ezen a területen állt Sicambria, Attila hun király fővárosa és temetkezési helye. Pilis-kutatók várfalmaradványokat és feltételezett fejedelmi sírokat azonosítottak a Monalovac hegyen.",
+                        extra: "Tudtad? A környékbeli Ezüst-hegy és Arany-lyuk nevek a legenda szerint az arany- és ezüstkoporsókra utalhatnak."
+                    },
+                    {
+                        name: "Oszoly-csúcs (329m)",
+                        lat: 47.646700,
+                        lon: 18.974000,
+                        location: "Útvonal legvégén, ~13.5 km-nél",
+                        desc: "Csobánka felett magasodó mészkőszirt, a magyar sziklamászás történelmi bölcsője. Tetején kettős kereszt és nemzeti zászló áll, ahonnan teljes 360 fokos panoráma nyílik a Csobánkai-medencére.",
+                        extra: "Tudtad? A legenda szerint a völgy úgy keletkezett, hogy a Jóisten megpihent ici az oldalára dőlve a világ teremtése után."
+                    }
+                ],
+                quizzes: [
+                    {
+                        q: "Milyen jégkorszaki állatok leleteit találták a Mackó-barlangban?",
+                        a: ".tkotso csmedem ignalraB"
+                    },
+                    {
+                        q: "Melyik hun király sírját és fővárosát sejtik a Pilis-kutatók Sicambriánál?",
+                        a: ".tátilaKirák kounH zA"
                     }
                 ]
             }
