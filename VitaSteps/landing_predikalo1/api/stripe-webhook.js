@@ -241,8 +241,8 @@ module.exports = async (req, res) => {
             // ── 3. SZÁMLÁZZ.HU INVOICE ────────────────────────────────────
             console.log('Generating Számlázz.hu invoice...');
             const rawSzamlaKey = isTestTx
-                ? (process.env.SZAMLAZZ_TEST_KEY || process.env.SZAMLAZZ_AGENT_KEY)
-                : process.env.SZAMLAZZ_AGENT_KEY;
+                ? process.env.SZAMLAZZ_TEST_KEY
+                : (process.env.SZAMLAZZ_PROD_KEY || process.env.SZAMLAZZ_AGENT_KEY);
             const szamlaKey = rawSzamlaKey ? rawSzamlaKey.toString().trim() : '';
 
             if (szamlaKey) {
