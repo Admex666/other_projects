@@ -37,13 +37,6 @@ module.exports = async (req, res) => {
         const origin = req.headers.origin || 'https://vitasteps.vercel.app';
         const useTestKey = isTest || (req.headers.host && req.headers.host.includes('localhost'));
         
-        // Block live registrations for Pilis campaign
-        if (campaignKey === 'pilis' && !useTestKey) {
-            return res.status(403).json({
-                error: 'A Nagy-Kevély csillagai kihívás éles nevezése még nem indult el! Kérjük látogass vissza később.'
-            });
-        }
-
         if (useTestKey && !process.env.STRIPE_TEST_KEY) {
             return res.status(500).json({ error: 'A STRIPE_TEST_KEY nincs beállítva a szerveren. Kérjük jelezd a fejlesztőknek!' });
         }

@@ -17,8 +17,8 @@
 | :--- | :--- | :--- |
 | **Július 10.** | **Éremgyártás indítása** | Alibaba fizetés teljesítése Kimmi Linnek ($502). |
 | **Július 13. – 19.** | **Rendszer-teszt** | `stripe_raw2` tábla, Supabase és a Vercel backend tesztelése. |
-| **Július 19. (Vasárnap, 19:00)** | **Előnevezés Start** | Hírlevél a korábbi 67 futónak egyedi ajánlói kódokkal. |
-| **Július 22. (Szerda)** | **Meta Hirdetések Start** | Célközönség elérése (Bp. és agglomeráció). Hagyjuk a hirdetést tanulni. |
+| **Július 26. (Vasárnap, 15:00)** | **Előnevezés Start** | Hírlevél a korábbi 67 futónak egyedi ajánlói kódokkal. |
+| **Július 26. (Szerda)** | **Meta Hirdetések Start** | Célközönség elérése (Bp. és agglomeráció). Hagyjuk a hirdetést tanulni. |
 | **Augusztus 1. (Szombat)** | **Kihívás Start** | Megnyílik a teljesítés és a GPX feltöltő felület a portálon. |
 | **Augusztus 8. – 13.** | **Érmek beérkezése** | Fizikai éremcsomag megérkezése a kínai gyártótól. |
 | **Augusztus 17.** | **Első postázási hullám** | Az első teljesítők érmeinek feladása (Foxpost/Posta). |
@@ -38,8 +38,8 @@ gantt
     Rendszer & kód tesztelése   :des2, 2026-07-13, 2026-07-26
     
     section Regisztráció & Hirdetések
-    Előnevezés (meleg lista)    :des3, 2026-07-27, 2026-07-30
-    Fő Meta Ads hirdetések      :des4, 2026-07-27, 2026-09-11
+    Előnevezés (meleg lista)    :des3, 2026-07-26, 2026-07-30
+    Fő Meta Ads hirdetések      :des4, 2026-07-26, 2026-09-11
     Retargeting / FOMO kampány  :des5, 2026-08-28, 2026-09-04
     
     section Kihívás & Postázás
