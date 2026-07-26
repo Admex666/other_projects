@@ -2,152 +2,6 @@
 
 Note: _This is purely the output of the chat conversation and does not contain any raw data, codebase snippets, etc. used to generate the output._
 
-### Planner Response
-
-Outstanding! Let's view `stripe-webhook.js` lines 400 to 445 using `view_file` to be absolutely certain it's perfectly syntactically correct and fully restored.
-Cwd: `e:\Data\other_projects\VitaSteps`. Let's perform `view_file`.
-
-*Viewed [stripe-webhook.js](file:///e:/Data/other_projects/VitaSteps/landing_predikalo1/api/stripe-webhook.js) *
-
-### Planner Response
-
-Oh! This is absolutely beautiful and fully compliant with the user's instructions!
-Let's review the session rules and completes:
-1. Review whether the project state changed (yes, we refactored welcome emails to standalone HTML and read them dynamically).
-2. Update the appropriate memory files (`STATUS.md`, `walkthrough.md`, `CHANGELOG.md` etc.).
-Let's look at `memory/STATUS.md` to update it.
-Wait, let's view `memory/STATUS.md` lines 1 to 30.
-Cwd: `e:\Data\other_projects\VitaSteps`. Let's perform `view_file`.
-
-*Viewed [STATUS.md](file:///e:/Data/other_projects/VitaSteps/memory/STATUS.md) *
-
-### Planner Response
-
-Let's view the rest of `memory/STATUS.md` to see what is in focus and if we need to change it.
-Cwd: `e:\Data\other_projects\VitaSteps`. Let's perform `view_file`.
-
-*Viewed [STATUS.md](file:///e:/Data/other_projects/VitaSteps/memory/STATUS.md) *
-
-### Planner Response
-
-Let's update the blockers/current focus in `memory/STATUS.md` and check off completed tasks.
-Let's see:
-Under `🟢 What is Working` in `memory/STATUS.md` we can add:
-- **Csoportos és többes nevezések kezelése a portálon (COMPLETED 2026-07-24):** A portálon a fejlécben a kiválasztott résztvevő neve jelenik meg, a többes nevezés dropdownja kiírja a résztvevők neveit, és a teljesítés igazolásakor egyetlen kattintással az összes kijelölt résztvevő teljesítése igazolható (tömeges GPX/fotó feltöltés).
-- **Külső HTML Email Sablonok (COMPLETED 2026-07-24):** Külön HTML fájlokba szerveztük ki az összes tranzakciós e-mail sablont (a Supabase Auth megerősítő és Magic Link leveleit, valamint a sikeres nevezés welcome levelét). Ezzel megszüntettük az inline szövegeket, könnyen szerkeszthetővé és egységessé téve a kommunikációt.
-
-Let's modify `memory/STATUS.md` using `replace_file_content`. Cwd: `e:\Data\other_projects\VitaSteps`. Let's perform `replace_file_content`. Let's update `memory/STATUS.md`.
-
-*Edited relevant file*
-
-### Planner Response
-
-Excellent! Let's write the response to the user.Kipakoltam a teljes „Sikeres nevezés” e-mail sablont egy különálló, tisztán formázott HTML fájlba:
-
-💾 **[landing_predikalo1/email_welcome_template.html](file:///e:/Data/other_projects/VitaSteps/landing_predikalo1/email_welcome_template.html)**
-
-Ezután módosítottam mindkét fizetést feldolgozó és levelet küldő API végpontot, hogy **dinamikusan olvassák be ezt a HTML állományt a fájlrendszerből**, majd helyettesítsék be a szükséges személyes, táv- és kampányspecifikus adatokat:
-
-1.  **[landing_predikalo1/api/process-payment.js](file:///e:/Data/other_projects/VitaSteps/landing_predikalo1/api/process-payment.js#L388-L410)**
-2.  **[landing_predikalo1/api/stripe-webhook.js](file:///e:/Data/other_projects/VitaSteps/landing_predikalo1/api/stripe-webhook.js#L405-L427)**
-
-Így most már teljesen követjük a megadott elvet: **minden e-mail sablon külön HTML-ben van**, és a backend csak dinamikusan beolvassa és kitölti őket!
-
-*(A Vercel deployt nem futtattam le, azt a kérésed szerint rábízom a manuális indításodra).*
-
-### User Input
-
-@[e:\Data\other_projects\VitaSteps\memory\TASKS.md:L47] kövi feladat hogy a referral kedvezmények teszteljük és építsük be. A portálon most ha minden igaz van egy kedvezmény. Ez igaz? Ha igen hogy működik? Röviden írd le, NE kódolj fájlokban!
-
-*Grep searched codebase*
-
-### Planner Response
-
-Wow!
-Let's see: in `landing_predikalo1/api/checkout.js` around line 170-175, there is indeed some logic related to coupon creation or selection:
-`appliedCoupon = "VS_AJANLO_" + discountPercent;` or `VS_AJANLO_10`, `VS_AJANLO_20` etc.!
-
-Let's read `landing_predikalo1/api/checkout.js` lines 145 to 200 using `view_file` to understand how it works!
-Cwd: `e:\Data\other_projects\VitaSteps`. Let's perform `view_file`.
-
-*Viewed [checkout.js](file:///e:/Data/other_projects/VitaSteps/landing_predikalo1/api/checkout.js) *
-
-### Planner Response
-
-Wow! Look at that code!
-Let's see:
-How does it determine `referralCount` and `referredBy`?
-Let's check lines 110 to 145 of `api/checkout.js` using `view_file` to see how those variables are calculated!
-Cwd: `e:\Data\other_projects\VitaSteps`. Let's perform `view_file`.
-
-*Viewed [checkout.js](file:///e:/Data/other_projects/VitaSteps/landing_predikalo1/api/checkout.js) *
-
-### Planner Response
-
-Let's look earlier in `api/checkout.js` (lines 50 to 110) to see where `referralCount` and `referredBy` are extracted and queried.
-Cwd: `e:\Data\other_projects\VitaSteps`. Let's perform `view_file`.
-
-*Viewed [checkout.js](file:///e:/Data/other_projects/VitaSteps/landing_predikalo1/api/checkout.js) *
-
-### Planner Response
-
-Okay! Let's examine:
-- Line 58 to 72:
-```javascript
-        let referralCount = 0;
-        if (email) {
-            const cleanEmail = email.trim().toLowerCase();
-            const { count, error: countErr } = await supabase
-                .from('runners')
-                .select('*', { count: 'exact', head: true })
-                .eq('referred_by', cleanEmail);
-```
-Wait! It checks the `runners` table where `referred_by` equals the buyer's `email`.
-If `count > 0`, it determines the discount percentage:
-`const discountPercent = Math.min(50, referralCount * 10);` (which is 10% per friend referred, up to 50%).
-Then it creates/retrieves a dynamic Stripe coupon:
-`appliedCoupon = "VS_AJANLO_" + discountPercent` (e.g. `VS_AJANLO_10` for 1 friend, `VS_AJANLO_20` for 2 friends).
-Wait! Is it applied to the Stripe session?
-Let's see: how is the coupon applied to the Stripe checkout session options?
-Let's view `landing_predikalo1/api/checkout.js` lines 201 to 228 to find out!
-Cwd: `e:\Data\other_projects\VitaSteps`. Let's perform `view_file`.
-
-*Viewed [checkout.js](file:///e:/Data/other_projects/VitaSteps/landing_predikalo1/api/checkout.js) *
-
-### Planner Response
-
-Wow, this is exceptionally clear! Let's understand how the referral system works in VitaSteps:
-
-1. **Own Referrals (Saját meghívások utáni kedvezmény):**
-   - When a runner accesses the checkout under their email, the checkout backend checks the `runners` table in Supabase to find how many runners registered with their email listed in the `referred_by` column.
-   - For every referred runner (who has successfully registered), the user gets a **10% discount**, up to a maximum of **50%** (i.e. `Math.min(50, referralCount * 10)`).
-   - In Stripe, a dynamic coupon is retrieved or automatically created programmatically: `VS_AJANLO_10` (10%), `VS_AJANLO_20` (20%), etc., up to `VS_AJANLO_50` (50%).
-   - This coupon is automatically applied to their checkout session (`sessionOptions.discounts = [{ coupon: appliedCoupon }]`).
-
-2. **Friend Referral (Meghívott barát kedvezménye):**
-   - If a new buyer registers using a referral link (which appends `?ref=...` and passes `referredBy` via checkout metadata), the checkout applies a fallback coupon: `VSBARAT10`.
-   - This gives the friend a **10% discount** immediately.
-   - In Stripe, if `VSBARAT10` does not exist, the checkout creates it programmatically as a 10% lifetime coupon named `10% Ajánlói Barát Kedvezmény (VitaSteps)`.
-
-3. **No Referral:**
-   - If there is no referral, the checkout allows the user to manually enter promotion codes during Stripe checkout (`sessionOptions.allow_promotion_codes = true`), allowing codes like `VSBARAT10` or general coupons to be used.
-
-This is an incredibly smart, automated, and robust implementation! It auto-generates coupons in Stripe so nothing breaks if they are deleted or if it's run in test mode.
-
-Let's compose the short, clear, and concise explanation in Hungarian as requested, without making any file changes.A VitaSteps ajánlói rendszere a következőképpen működik, teljesen automatizált módon:
-
-### 1. Meghívott barát kedvezménye (Friend Referral)
-*   Ha egy új vásárló egy ajánlói linken keresztül érkezik (a link végén ott van a `?ref=ajanlo@email.com` paraméter), a fizetés indításakor a rendszer automatikusan érvényesíti rá a **`VSBARAT10`** kuponkódot.
-*   Ez a meghívott barátnak azonnali **10% kedvezményt** biztosít a nevezési díjból a Stripe felületén.
-
-### 2. Saját meghívások utáni kedvezmény (Own Referrals)
-*   Amikor valaki nevezni szeretne, a checkout végpont a megadott e-mail címe alapján lekéri a Supabase `runners` táblájából, hogy hány sikeres nevező regisztrált az ő ajánlásával (`referred_by` mező).
-*   Minden egyes sikeresen meghívott barát után **10% kedvezmény jár, maximum 50%-ig**.
-*   A rendszer a háttérben automatikusan lekéri vagy létrehozza a megfelelő kuponkódot a Stripe-ban (pl. **`VS_AJANLO_10`**, **`VS_AJANLO_20`**, ..., **`VS_AJANLO_50`**), és ezt programozottan ráégeti a fizetési munkamenetre, így a vásárló a saját kedvezményes árával szembesül.
-
-### 3. Automatikus kuponkezelés (Stripe Auto-Creation)
-*   A backend kód minden indításkor ellenőrzi, hogy a szükséges kupon (`VSBARAT10` vagy a szintenkénti `VS_AJANLO_X`) létezik-e a Stripe fiókban. Ha nem létezik (például teszt üzemmódban vagy ha törölve lett), a kód **programozottan létrehozza a kupont a Stripe API-n keresztül**, így a fizetési folyamat sosem akad el.
-
 ### User Input
 
 Okés, de itt nincs olyan rés, hogy például valaki ismeri a VS_AJANLO_50 kuponkódot és csak beírja magának a kuponkód mezőbe, úgy hogy nem is lenne jogosult rá? Röviden gondolkozz és válaszolj
@@ -4550,3 +4404,304 @@ Meta ads fut, referral emailek kimentek az összes Prédikálószék finisher-ne
 | ~15:22 | ✅ 43 Prédikálószék finisher megkapta a referral promo emailt |
 
 Mostantól minden csatorna fut — ad traffic, organikus referral, és az áttört Foxpost checkout. Sok konverziót! 🏔️
+
+### User Input
+
+54-es hibakódot adott két tranzakciónál is a szamlazz.hu, ezért a ChatGPT-vel ezt beszéltem:
+"
+@Internetes keresés
+ a számlázz.hu-n az XML alapú automatikus számlázás hogy működik?
+
+Igen. A Számlázz.hu XML alapú automatikus számlázása a Számla Agent nevű API-n keresztül működik. Lényegében nem REST/JSON API-t használsz (bár ma már JSON is támogatott bizonyos esetekben), hanem egy HTTP POST kérést küldesz egy XML dokumentummal, amely tartalmazza a számla összes adatát. A Számlázz.hu feldolgozza ezt, elkészíti a számlát, majd XML-ben vagy PDF-ben visszaküldi az eredményt.
+
+A folyamat röviden:
+
+API kulcs létrehozása
+A Számlázz.hu fiókodban létrehozol egy Számla Agent API kulcsot.
+Ez hitelesíti a kéréseidet.
+XML összeállítása
+Az XML-ben szerepelnek például:
+vevő adatai,
+számla fejléce,
+fizetési mód,
+teljesítés dátuma,
+számlatételek,
+ÁFA kulcsok,
+pénznem stb.
+Fontos, hogy a mezők sorrendje kötött, az XML-nek meg kell felelnie a Számlázz.hu XSD sémájának.
+HTTP POST küldése
+A saját alkalmazásod elküldi ezt az XML-t a Számla Agent végpontjára.
+Igény szerint fájlmellékletet is küldhetsz.
+Válasz feldolgozása
+Siker esetén visszakapod például:
+a számlaszámot,
+PDF-et (ha kéred),
+XML választ,
+vagy hibaüzenetet, ha valami nem megfelelő.
+Egyszerűsített példa
+Saját rendszer
+      │
+      │ HTTP POST + XML
+      ▼
+Számlázz.hu Számla Agent
+      │
+      │ számla elkészül
+      ▼
+XML válasz + PDF + számlaszám
+Mire használható?
+
+Nem csak új számlák készítésére, hanem többek között:
+
+számla kiállítása,
+előlegszámla,
+végszámla,
+sztornózás,
+helyesbítés,
+díjbekérő,
+számla PDF letöltése,
+meglévő számla XML lekérése.
+Ha saját rendszert fejlesztesz
+
+A tipikus folyamat így néz ki:
+
+Megrendelés érkezik
+        ↓
+Adatok összegyűjtése
+        ↓
+XML generálása
+        ↓
+POST a Számlázz.hu API-ra
+        ↓
+Válasz feldolgozása
+        ↓
+Számlaszám + PDF mentése
+
+A hivatalos dokumentáció itt érhető el:
+
+Számlázz.hu API dokumentáció
+Számla Agent dokumentáció
+
+Ha a célod például egy n8n workflow, Python, PHP, Node.js, vagy Make.com integráció, tudok mutatni egy konkrét XML mintát és végigvezetni a teljes megvalósításon.
+
+A 54-es hibakód alapján valószínűleg nem maga az API-hozzáférés a probléma.
+
+A 54-es hibakód jelentése:
+
+„E-számla készítés nincs engedélyezve.”
+
+Ez arra utal, hogy e-számlát próbáltál kiállítani (eszamla=true), de a fiókodban ez nincs engedélyezve. Nem feltétlenül azt jelenti, hogy a Számla Agent nem használható.
+
+Mi a helyzet a #free csomaggal?
+
+A #free csomagban a Számla Agent API külön szolgáltatásként érhető el, tehát nem része az ingyenes csomagnak. A Számlázz.hu külön is kiemeli, hogy a Számla Agent a #free csomagban külön díj ellenében használható.
+
+Ha előfizetsz a #start csomagra
+
+A #start csomag (1690 Ft + ÁFA/hó-tól) többek között tartalmazza:
+
+✅ e-számla kiállítását,
+✅ számos extra funkciót,
+❌ de nem írja, hogy a Számla Agent díjmentes lenne.
+
+Ez fontos különbség:
+
+az előfizetés a számlázó funkciókat bővíti,
+a Számla Agent/API használata külön szolgáltatás lehet, amelynek saját díjazása van.
+Kell fizetni minden API-val kiállított számláért?
+
+A jelenlegi nyilvános információk alapján nem úgy működik, hogy minden egyes API-val kiállított számla után automatikusan fizetsz. Inkább:
+
+van a számlázócsomagod (#start, #digital, #profi),
+és ehhez jöhet külön a Számla Agent szolgáltatás díja, ha használod.
+
+A nyilvános dokumentáció azonban nem tartalmaz konkrét árlistát a Számla Agent díjazására, ezért ezt a Számlázz.hu egyedi vagy aktuális árazás alapján kezeli.
+
+Amit én először ellenőriznék
+
+Ha korábban működött az API, akkor nézd meg, hogy az XML-ben nem változott-e ez a mező:
+
+<eszamla>true</eszamla>
+
+Ha ezt false-ra állítod (papíralapú számla), könnyen lehet, hogy a 54-es hiba megszűnik, mert az kizárólag az e-számlára vonatkozik.
+
+Ha megmutatod a beallitasok.xml vagy a számla XML-ed releváns részét (különösen az <eszamla> és a fejléc részt), meg tudom mondani, hogy valóban ez okozza-e a hibát.
+
+Itt van a számla: 
+            const xml = <?xml version="1.0" encoding="UTF-8"?>
+<xmlszamla xmlns="http://www.szamlazz.hu/xmlszamla" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.szamlazz.hu/xmlszamla https://www.szamlazz.hu/szamla/docs/xmlszamla.xsd">
+  <beallitasok>
+    <szamlaagentkulcs>${szamlaKey}</szamlaagentkulcs>
+    <eszamla>true</eszamla>
+    <szamlaLetoltes>false</szamlaLetoltes>
+    <valaszVerzio>2</valaszVerzio>
+  </beallitasok>
+  <fejlec>
+    <keltDatum>${today}</keltDatum>
+    <teljesitesDatum>${today}</teljesitesDatum>
+    <fizetesiHataridoDatum>${today}</fizetesiHataridoDatum>
+    <fizmod>Bankkártya</fizmod>
+    <penznem>HUF</penznem>
+    <szamlaNyelve>hu</szamlaNyelve>
+    <arfolyamBank>MNB</arfolyamBank>
+    <arfolyam>1.0</arfolyam>
+    <fizetve>true</fizetve>
+  </fejlec>
+  <elado>
+    <bank>Revolut</bank>
+    <bankszamlaszam>30200014-19613410-97640164</bankszamlaszam>
+  </elado>
+  <vevo>
+    <nev>${primaryName}</nev>
+    <irsz>${zip}</irsz>
+    <telepules>${city}</telepules>
+    <cim>${street}</cim>
+    <email>${email}</email>
+    <sendEmail>true</sendEmail>
+  </vevo>
+  <tetelek>
+${invoiceItems}${shippingItem}
+  </tetelek>
+</xmlszamla>;
+
+Megnéztem az XML-edet: a hiba oka benne van. Nem az API kulccsal van gond, hanem ez a sor váltja ki:
+
+<eszamla>true</eszamla>
+
+A 54-es hibakód konkrétan ezt jelenti:
+
+„E-számla készítés nincs engedélyezve.”
+Az e-számla kibocsátása nincs engedélyezve az előfizetésedben, vagy nincs megfelelő tanúsítvány beállítva.
+
+Tehát a teszt módban azért működhetett, mert ott nem feltétlenül ellenőrzik ugyanazokat a jogosultságokat.
+
+Megoldás 1: maradsz #free csomagban
+
+Állítsd át:
+
+<eszamla>false</eszamla>
+
+vagy akár hagyd ki (ha a séma engedi).
+
+Ekkor papíralapú számlát állít ki az API. A Számla Agent papíralapú számlát #free csomagban is tud kezelni, de használati díja van.
+
+Megoldás 2: e-számlát szeretnél (ami szerintem nálad logikus)
+
+Akkor kell egy olyan csomag, amely tartalmazza az e-számla funkciót:
+
+#start
+#digital
+#profi
+
+A #start például már tartalmazza az e-számlát.
+
+Viszont fontos:
+
+A Számla Agent díja nem lesz automatikusan ingyenes attól, hogy előfizetsz egy csomagra.
+
+A kettő külön dolog:
+
+Számlázz.hu csomagdíj → pl. #start havi díja
+Számla Agent használati díj → API-n keresztüli automatikus számlázás díja
+
+A Számla Agent külön, használati alapú szolgáltatás.
+
+A te esetedben valószínűleg ezt választanám
+
+Mivel kódból automatikusan számlázol:
+
+Weboldal / app
+       ↓
+Számla Agent API
+       ↓
+E-számla PDF + NAV adatszolgáltatás
+
+én inkább:
+
+#start csomag
+Számla Agent bekapcsolva
+<eszamla>true</eszamla>
+
+irányba mennék.
+
+Egy webshopos vagy SaaS jellegű automatizációnál az e-számla sokkal tisztább, mert nincs papír/PDF kézi kezelés.
+
+Még egy apróság: az XML-edben van egy potenciális későbbi gond:
+
+<fizmod>Bankkártya</fizmod>
+<fizetve>true</fizetve>
+
+Ez rendben van, ha tényleg előre fizetett bankkártyás rendelésről van szó (pl. Stripe/Barion). Ha viszont csak automatikusan számlázol rendeléskor, de még nincs kiegyenlítve, akkor ezt majd érdemes átállítani.
+
+A jelenlegi 54-es hibát viszont 100%-ban az <eszamla>true</eszamla> okozza.
+
+és papír alapú számla esetén NEM generálódik le online, és nem tudom kiküldeni? 
+@Internetes keresés
+ 
+
+Nem, papír alapú számla esetén is online generálódik le. A név kicsit félrevezető. A „papír alapú” itt nem azt jelenti, hogy kézzel kell nyomtatnod vagy postáznod. A Számla Agent ugyanúgy létrehozza a számlát a Számlázz.hu rendszerében, vissza tud adni PDF-et, és e-mailben is kiküldhető.
+
+A különbség csak a számla jogi típusa:
+
+	Papírszámla (<eszamla>false)	E-számla (<eszamla>true)
+Számlázz.hu generálja	✅	✅
+API-ból készül	✅	✅
+PDF lekérhető	✅	✅
+Emailben küldhető	✅	✅
+Elektronikus számla minősítés	❌	✅
+E-számla archiválási szabályok	❌	✅
+
+A te XML-edben ez már majdnem meg is van:
+
+<vevo>
+  ...
+  <email>${email}</email>
+  <sendEmail>true</sendEmail>
+</vevo>
+
+Ez azt jelenti, hogy a Számla Agent a létrehozott bizonylatról értesítőt tud küldeni a vevőnek. A dokumentáció szerint ha az email mező ki van töltve és sendEmail=true, akkor a rendszer elküldi a számlát a vevőnek.
+
+Tehát nálad a legegyszerűbb változat:
+
+<beallitasok>
+  <szamlaagentkulcs>...</szamlaagentkulcs>
+  <eszamla>false</eszamla>
+  <szamlaLetoltes>true</szamlaLetoltes>
+</beallitasok>
+
+Ekkor:
+
+Webshopban fizetés megtörténik
+Saját backend elküldi az XML-t
+Számlázz.hu létrehozza a számlát
+Visszakapod a PDF-et
+A vevő megkapja emailben
+
+A különbség az e-számlához képest az, hogy a PDF nem minősül elektronikus számlának, hanem egy hagyományos számla elektronikus másolata/értesítője.
+
+A te use case-ed (online bankkártyás vásárlások, automatikus számlázás) alapján amúgy érdemes átgondolni, hogy kell-e egyáltalán e-számla. Sok webshop simán papírszámla módban automatizál, PDF emaillel. Az e-számla inkább akkor érdekes, ha kifejezetten elektronikus számlát akarsz kibocsátani és kezelni.
+"
+
+ezért átállítottam az eszamla paramétert false-ra
+
+*Grep searched codebase*
+
+*Viewed [stripe-webhook.js](file:///e:/Data/other_projects/VitaSteps/landing_predikalo1/api/stripe-webhook.js) *
+
+*Viewed [process-payment.js](file:///e:/Data/other_projects/VitaSteps/landing_predikalo1/api/process-payment.js) *
+
+*Edited relevant file*
+
+*Grep searched codebase*
+
+### Planner Response
+
+Nagyszerű döntés! Átállítottam az `<eszamla>false</eszamla>` értéket az **`api/stripe-webhook.js`** fájlban is (az `api/process-payment.js`-ben már frissítve volt).
+
+### Miért volt ez fontos?
+Éles Stripe fizetéseknél a tranzakció sikeres lefutása után a **Stripe Webhook** (`api/stripe-webhook.js`) generálja le a számlát a Számlázz.hu API-n keresztül. Mivel ott még `<eszamla>true</eszamla>` szerepelt, az éles tranzakcióknál a Számlázz.hu visszadobta a **54-es hibakódot** (*"E-számla készítés nincs engedélyezve"*).
+
+Most mindkét helyen felül lett bírálva:
+- `api/process-payment.js`: `<eszamla>false</eszamla>`
+- `api/stripe-webhook.js`: `<eszamla>false</eszamla>`
+
+Ne felejtsd el elindítani a **`vercel --prod`** élesítés/deploy parancsot, hogy a Vercel szerverre is kikerüljön a javítás!
