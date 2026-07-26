@@ -445,23 +445,7 @@
 
         // ── LOAD CONFIG ─────────────────────────────────────
         async function loadConfig() {
-            if (campaignKey === 'pilis' && !isTest) {
-                document.querySelector('.page-wrapper').innerHTML = `
-                    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 3rem 2rem; text-align: center; max-width: 600px; margin: 3rem auto;">
-                        <span style="font-size: 4rem; display: block; margin-bottom: 1.5rem;">⛰️</span>
-                        <h2 style="font-size: 1.8rem; font-weight: 900; margin-bottom: 1rem; letter-spacing: 1px; text-transform: uppercase;">A nevezés még nem nyílt meg!</h2>
-                        <div style="width: 60px; height: 3px; background: var(--accent); margin: 1.2rem auto; border-radius: 9px;"></div>
-                        <p style="color: var(--text-mid); font-size: 1rem; line-height: 1.6; margin-bottom: 2rem; max-width: 480px; margin-left: auto; margin-right: auto;">
-                            A **Nagy-Kevély csillagai** kihívás éles nevezése hamarosan elstartol. <br>
-                            Addig is gyűjtsd az edzéskilométereket!
-                        </p>
-                        <a href="/nagykevely/index.html" style="display: inline-block; padding: 0.9rem 2.2rem; background: var(--accent); color: var(--bg); text-decoration: none; border-radius: 10px; font-weight: 800; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; transition: opacity 0.2s;">
-                            Vissza a főoldalra
-                        </a>
-                    </div>
-                `;
-                return;
-            }
+
 
             try {
                 const res = await fetch('/config/campaigns.json');
