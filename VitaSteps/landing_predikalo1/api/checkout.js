@@ -59,7 +59,7 @@ module.exports = async (req, res) => {
         if (email) {
             const cleanEmail = email.trim().toLowerCase();
             const { count, error: countErr } = await supabase
-                .from('runners')
+                .from('runs')
                 .select('*', { count: 'exact', head: true })
                 .eq('referred_by', cleanEmail);
             
@@ -94,16 +94,7 @@ module.exports = async (req, res) => {
             });
         }
 
-        // ── PRICING ──────────────────────────────────────────────────────────
-        const productName = config.productName;
-        const unitAmountCents = config.price * 100; // HUF (Stripe no-decimal)
-        const shippingAmountCents = 120000; // 1200 Ft
-        const isHomeDelivery = deliveryMethod === 'home';
 
-        const successUrl = `${origin}/siker.html?c=${campaignKey}&session_id={CHECKOUT_SESSION_ID}`;
-        const cancelUrl = campaignKey === 'predikaloszek'
-            ? `${origin}/predikalo/index.html`
-            : `${origin}/nagykevely/index.html`;
 
         // ── METADATA ─────────────────────────────────────────────────────────
         // Stripe metadata values must be strings, max 500 chars each
@@ -122,9 +113,63 @@ module.exports = async (req, res) => {
             Medaliok: JSON.stringify(medals).substring(0, 490) // serialize array, max 490 chars
         };
 
+        // ── PRICING & DISCOUNTS ──────────────────────────────────────────────
+        let discountPercent = 0;
+        if (referralCount > 0) {
+            if (referralCount === 1) discountPercent = 10;
+            else if (referralCount === 2) discountPercent = 25;
+            else if (referralCount === 3) discountPercent = 45;
+            else if (referralCount === 4) discountPercent = 70;
+            else if (referralCount >= 5) discountPercent = 100;
+        } else if (referredBy) {
+            discountPercent = 10;
+        }
+
+        const productName = config.productName;
+        const unitAmountCents = config.price * 100; // HUF (Stripe no-decimal)
+        const shippingAmountCents = 120000; // 1200 Ft
+        const isHomeDelivery = deliveryMethod === 'home';
+
+        const successUrl = `${origin}/siker.html?c=${campaignKey}&session_id={CHECKOUT_SESSION_ID}`;
+        const cancelUrl = campaignKey === 'predikaloszek'
+            ? `${origin}/predikalo/index.html`
+            : `${origin}/nagykevely/index.html`;
+
         // ── STRIPE LINE ITEMS ─────────────────────────────────────────────────
-        const lineItems = [
-            {
+        const lineItems = [];
+
+        if (discountPercent > 0) {
+            // Apply discount strictly to the first medal
+            const discountedUnitAmountCents = Math.round(config.price * (1 - discountPercent / 100)) * 100;
+            lineItems.push({
+                price_data: {
+                    currency: 'huf',
+                    product_data: {
+                        name: `${productName} (Ajánlói Kedvezménnyel)`,
+                        description: `Nevező: ${medals[0].name} | Táv: ${medals[0].distance} (${discountPercent}% ajánlói kedvezmény az éremből)`,
+                    },
+                    unit_amount: discountedUnitAmountCents,
+                },
+                quantity: 1,
+            });
+
+            // The rest of the medals are at full price
+            if (medals.length > 1) {
+                lineItems.push({
+                    price_data: {
+                        currency: 'huf',
+                        product_data: {
+                            name: productName,
+                            description: `${medals.length - 1} db érem | Nevezők: ${medals.slice(1).map(m => m.name).join(', ')}`,
+                        },
+                        unit_amount: unitAmountCents,
+                    },
+                    quantity: medals.length - 1,
+                });
+            }
+        } else {
+            // No discount applied
+            lineItems.push({
                 price_data: {
                     currency: 'huf',
                     product_data: {
@@ -136,8 +181,8 @@ module.exports = async (req, res) => {
                     unit_amount: unitAmountCents,
                 },
                 quantity: medals.length,
-            }
-        ];
+            });
+        }
 
         if (isHomeDelivery) {
             lineItems.push({
@@ -162,59 +207,9 @@ module.exports = async (req, res) => {
             success_url: successUrl,
             cancel_url: cancelUrl,
             payment_intent_data: { metadata: meta },
-            metadata: meta
+            metadata: meta,
+            allow_promotion_codes: true
         };
-
-        // Determine correct discount coupon:
-        // - Own referrals give tiered coupon: VS_AJANLO_10, VS_AJANLO_20, etc.
-        // - Friend referral gives fallback: VSBARAT10 (10%)
-        let appliedCoupon = null;
-        if (referralCount > 0) {
-            const discountPercent = Math.min(50, referralCount * 10);
-            appliedCoupon = `VS_AJANLO_${discountPercent}`;
-            
-            // Ensure this coupon exists in Stripe programmatically
-            try {
-                await stripe.coupons.retrieve(appliedCoupon);
-                console.log(`Stripe coupon verified: ${appliedCoupon}`);
-            } catch (err) {
-                if (err.statusCode === 404) {
-                    console.log(`Creating missing Stripe coupon: ${appliedCoupon}`);
-                    await stripe.coupons.create({
-                        id: appliedCoupon,
-                        percent_off: discountPercent,
-                        duration: 'forever',
-                        name: `${discountPercent}% Ajánlói Kedvezmény (VitaSteps)`,
-                    });
-                } else {
-                    console.error('Error retrieving/creating Stripe coupon:', err);
-                }
-            }
-        } else if (referredBy) {
-            appliedCoupon = 'VSBARAT10';
-            
-            // Ensure fallback friend coupon exists in Stripe
-            try {
-                await stripe.coupons.retrieve(appliedCoupon);
-            } catch (err) {
-                if (err.statusCode === 404) {
-                    console.log(`Creating missing fallback Stripe coupon: ${appliedCoupon}`);
-                    await stripe.coupons.create({
-                        id: appliedCoupon,
-                        percent_off: 10,
-                        duration: 'forever',
-                        name: '10% Ajánlói Barát Kedvezmény (VitaSteps)',
-                    });
-                }
-            }
-        }
-
-        if (appliedCoupon) {
-            sessionOptions.discounts = [{ coupon: appliedCoupon }];
-            console.log(`Checkout Session will apply coupon: ${appliedCoupon}`);
-        } else {
-            sessionOptions.allow_promotion_codes = true;
-        }
 
         const session = await stripe.checkout.sessions.create(sessionOptions);
         res.status(200).json({ url: session.url });

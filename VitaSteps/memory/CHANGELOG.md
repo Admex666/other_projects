@@ -4,6 +4,17 @@ All notable changes to the VitaSteps challenge platform project are documented h
 
 ---
 
+## [1.8.0] - 2026-07-26
+### Added
+*   **Google Sheets to Supabase Teljes Migráció:**
+    *   Biztonságosan átmentettük az összes korábbi Prédikálószék résztvevő személyes adatát, teljesítés-igazolását, és Foxpost szállítási vonalkódjait a Google Sheetsből a Supabase adatbázisba (`runners`, `orders`, `runs`, `shipments`).
+    *   Kitakarítottuk a hibás tesztsorokat a Supabase-ből, így most már pontosan 69 db Prédikálószék és 7 db Pilis futás él az adatbázisban, és 0 db a null-kampányos bejegyzés.
+*   **Közös Szállítás (Csomagösszevonás) és Csomagolási Lista Segédlet:**
+    *   **Portál:** Beépítettünk egy barát e-mail cím megadására szolgáló beviteli mezőt a teljesítés igazolásánál (`runs.ship_together_with`), amellyel a túratársak közös szállítást kérhetnek.
+    *   **Admin Panel:** Hozzáadtunk egy összecsukható **Csomagolási és Kiszállítási Segédlet** kártyát, amely valós időben összesíti és listázza a még fel nem adott csomagok pontos éremszámát és címzettjeit.
+    *   **API Feladás:** Átírtuk az API feladót (`api/create-foxpost-parcels.js`), hogy a közös szállításokat automatikusan **egyetlen Foxpost csomaggá vonja össze** (spórolva a szállítási költségeken), de a kapott vonalkódot és szállítási állapotot az összes érintett csapattag rekordjában egyszerre rögzítse.
+    *   **Csoportos Kijelölés:** Az admin felületen egy csomagcsoport bármely tagjának kijelölésekor az összes többi tag checkboxa automatikusan bejelölődik.
+
 ## [1.7.0] - 2026-07-20
 ### Added
 *   **Foxpost Tömeges Export & Csomagkezelő Dashboard (`admin.html`):**

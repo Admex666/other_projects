@@ -791,6 +791,17 @@
             }
         }
         checkCheckoutLimit();
+
+        // Forward 'ref' parameter to all checkout links
+        const urlParams = new URLSearchParams(window.location.search);
+        const ref = urlParams.get('ref');
+        if (ref) {
+            document.querySelectorAll('a[href*="checkout.html"]').forEach(link => {
+                const url = new URL(link.href, window.location.origin);
+                url.searchParams.set('ref', ref);
+                link.href = url.pathname + url.search;
+            });
+        }
     </script>
 </body>
 

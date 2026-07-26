@@ -588,6 +588,62 @@
         return run.shipments || {};
     }
 
+    function getGroupedRunIds(targetRun) {
+        if (!targetRun || !targetRun.completed) return [targetRun.id];
+        const groupRunIds = [targetRun.id];
+        const targetEmail = (targetRun.runners?.email || '').toLowerCase().trim();
+        const targetShipTogether = (targetRun.ship_together_with || '').toLowerCase().trim();
+        const targetShipment = getShipment(targetRun);
+        const targetDest = targetShipment.parcel_id || targetRun.parcel_id || '';
+
+        allRuns.forEach(run => {
+            if (run.id === targetRun.id || !run.completed) return;
+            const shipment = getShipment(run);
+            const isShipped = !!shipment.shipped;
+            if (isShipped) return; // Skip already shipped
+
+            const method = shipment.method || run.shipping_method || 'foxpost';
+            if (method !== 'foxpost') return; // Only group foxpost locker shipments
+
+            const dest = shipment.parcel_id || run.parcel_id || '';
+            if (dest !== targetDest || !dest) return; // Lockers must match
+
+            const email = (run.runners?.email || '').toLowerCase().trim();
+            const shipTogether = (run.ship_together_with || '').toLowerCase().trim();
+
+            const isMatch = (
+                email === targetEmail ||
+                (targetShipTogether && targetShipTogether === email) ||
+                (shipTogether && shipTogether === targetEmail) ||
+                (targetShipTogether && shipTogether && targetShipTogether === shipTogether)
+            );
+
+            if (isMatch) {
+                groupRunIds.push(run.id);
+            }
+        });
+
+        return Array.from(new Set(groupRunIds));
+    }
+
+    function onLogisticsCheckboxChange(checkboxElement, runId) {
+        const run = allRuns.find(r => r.id === runId);
+        if (!run) return;
+
+        const groupRunIds = getGroupedRunIds(run);
+        const isChecked = checkboxElement.checked;
+
+        // Toggle all checkboxes in the same group
+        groupRunIds.forEach(id => {
+            const chk = document.querySelector(`.logistics-checkbox[data-run-id="${id}"]`);
+            if (chk) {
+                chk.checked = isChecked;
+            }
+        });
+
+        updateLogisticsButtonsState();
+    }
+
     // ─── Auth ───────────────────────────────────────────────
     async function doLogin() {
         const pw = document.getElementById('admin-password').value;
@@ -725,6 +781,49 @@
             const totalWaiting = completedRuns.filter(r => !getShipment(r).shipped).length;
             const totalShipped = completedRuns.filter(r => getShipment(r).shipped).length;
 
+            // Compute consolidated Packing List
+            const unshippedCompleted = completedRuns.filter(r => !getShipment(r).shipped);
+            const packingGroups = [];
+            const processedRunIds = new Set();
+
+            unshippedCompleted.forEach(run => {
+                if (processedRunIds.has(run.id)) return;
+                const groupRunIds = getGroupedRunIds(run);
+                const groupRuns = groupRunIds.map(id => allRuns.find(r => r.id === id)).filter(Boolean);
+                groupRunIds.forEach(id => processedRunIds.add(id));
+                packingGroups.push(groupRuns);
+            });
+
+            let packingRowsHtml = packingGroups.map(group => {
+                const primary = group[0];
+                const primaryName = primary.name || primary.runners?.name || 'Ismeretlen';
+                const others = group.slice(1).map(r => r.name || r.runners?.name || '').filter(Boolean);
+                const othersText = others.length > 0 ? ` (+ ${others.join(', ')})` : '';
+                const shipment = getShipment(primary);
+                const method = shipment.method || 'foxpost';
+                let destText = '';
+                if (method === 'foxpost') {
+                    destText = `🦊 Foxpost: ${shipment.parcel_name || 'Locker'}`;
+                } else {
+                    destText = `🏠 Házhoz: ${shipment.home_address || 'Cím'}`;
+                }
+                return `
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.4rem; padding-top: 0.4rem;">
+                        <div>
+                            <strong style="color: #fff;">${primaryName}</strong>${othersText}
+                            <div style="font-size: 0.75rem; color: var(--text-mid); margin-top: 0.1rem;">${destText}</div>
+                        </div>
+                        <div style="background: rgba(168, 85, 247, 0.15); color: #c084fc; font-weight: bold; border-radius: 4px; padding: 0.2rem 0.5rem; font-size: 0.8rem; border: 1px solid rgba(168, 85, 247, 0.3);">
+                            ${group.length} db érem
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            if (packingGroups.length === 0) {
+                packingRowsHtml = '<div style="color: var(--text-mid); font-size: 0.85rem; padding: 0.5rem 0;">Nincsenek postázásra váró érmek.</div>';
+            }
+
             let tableRowsHtml = filtered.map(run => {
                 const runner = run.runners || {};
                 const name = run.name || runner.name || 'Ismeretlen';
@@ -745,12 +844,20 @@
                     ? '<span class="shipped-badge badge-shipped">Feladva</span>'
                     : '<span class="shipped-badge badge-waiting">Szállításra vár</span>';
 
+                const groupRunIds = getGroupedRunIds(run);
+                const groupBadge = groupRunIds.length > 1
+                    ? `<span class="shipped-badge" style="background: #a855f7; color: #fff; margin-left: 0.5rem; font-size: 0.65rem; padding: 0.1rem 0.35rem; border-radius: 4px; display: inline-flex; align-items: center;" title="Együtt teljesítve, egy csomagban szállítva">🔗 csoport (${groupRunIds.length} db)</span>`
+                    : '';
+
                 return `
                     <tr>
                         <td>
-                            <input type="checkbox" class="checkbox-custom logistics-checkbox" data-run-id="${run.id}" onchange="updateLogisticsButtonsState()">
+                            <input type="checkbox" class="checkbox-custom logistics-checkbox" data-run-id="${run.id}" onchange="onLogisticsCheckboxChange(this, '${run.id}')">
                         </td>
-                        <td style="font-weight: 600;">${name}</td>
+                        <td style="font-weight: 600; display: flex; align-items: center; gap: 0.25rem;">
+                            <span>${name}</span>
+                            ${groupBadge}
+                        </td>
                         <td>${serial}</td>
                         <td>${phone}</td>
                         <td>${email}</td>
@@ -766,6 +873,15 @@
 
             container.innerHTML = `
                 <div class="logistics-container">
+                    <details class="packing-list-details" style="margin-bottom: 1.5rem; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 8px; padding: 0.75rem 1rem;">
+                        <summary style="font-weight: 600; color: #a855f7; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; outline: none; list-style: none;">
+                            <span>📦</span> <strong>Csomagolási és Kiszállítási Segédlet</strong> (Közös és egyedi csomagok listája)
+                        </summary>
+                        <div style="margin-top: 0.75rem; display: flex; flex-direction: column; gap: 0.6rem; max-height: 300px; overflow-y: auto; padding-right: 0.5rem;">
+                            ${packingRowsHtml}
+                        </div>
+                    </details>
+
                     <div class="logistics-bar">
                         <div class="logistics-sub-tabs">
                             <button class="logistics-sub-tab ${logisticsSubFilter === 'pending' ? 'active' : ''}" onclick="setLogisticsSubFilter('pending')">

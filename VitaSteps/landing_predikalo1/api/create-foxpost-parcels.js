@@ -48,10 +48,8 @@ module.exports = async (req, res) => {
             return res.status(404).json({ error: 'No matching runs found' });
         }
 
-        // 2. Build parcel creation payload for Foxpost API
-        const parcelsPayload = [];
-        const runMap = new Map(); // to lookup runs by serial number later
-
+        // 2. Group runs into consolidated packages
+        const groups = [];
         for (const run of runs) {
             const runner = run.runners || {};
             const shipment = Array.isArray(run.shipments) ? (run.shipments[0] || {}) : (run.shipments || {});
@@ -62,36 +60,105 @@ module.exports = async (req, res) => {
                 continue;
             }
 
-            const name = run.name || runner.name || 'Ismeretlen';
-            const email = runner.email || '';
-            const rawPhone = shipment.phone || run.phone || runner.phone || '';
-            const phone = formatPhone(rawPhone);
-            const destination = shipment.parcel_id || run.parcel_id || '';
             const method = shipment.method || run.shipping_method || 'foxpost';
-
-            // Foxpost bulk API only supports parcel lockers. Home delivery is handled separately or ignored here.
             if (method !== 'foxpost') {
                 console.log(`Skipping home delivery run ${run.serial_number} from direct Foxpost API upload`);
-                continue;
+                continue; // Foxpost bulk API only supports parcel lockers
             }
 
+            const destination = shipment.parcel_id || run.parcel_id || '';
             if (!destination) {
                 console.warn(`No destination locker ID found for run ${run.serial_number}`);
                 continue;
             }
 
+            const email = (runner.email || '').toLowerCase().trim();
+            const shipTogether = (run.ship_together_with || '').toLowerCase().trim();
+
+            // Try to find an existing group that matches
+            let foundGroup = null;
+            for (const g of groups) {
+                const match = g.some(other => {
+                    const otherRunner = other.runners || {};
+                    const otherShipment = Array.isArray(other.shipments) ? (other.shipments[0] || {}) : (other.shipments || {});
+                    const otherDest = otherShipment.parcel_id || other.parcel_id || '';
+
+                    // Destination locker must match
+                    if (destination !== otherDest) return false;
+
+                    const otherEmail = (otherRunner.email || '').toLowerCase().trim();
+                    const otherShipTogether = (other.ship_together_with || '').toLowerCase().trim();
+
+                    // Same email, or bidirectional ship_together_with link
+                    return (
+                        email === otherEmail ||
+                        (shipTogether && shipTogether === otherEmail) ||
+                        (otherShipTogether && otherShipTogether === email) ||
+                        (shipTogether && otherShipTogether && shipTogether === otherShipTogether)
+                    );
+                });
+
+                if (match) {
+                    foundGroup = g;
+                    break;
+                }
+            }
+
+            if (foundGroup) {
+                foundGroup.push(run);
+            } else {
+                groups.push([run]);
+            }
+        }
+
+        // 3. Build parcel creation payload for Foxpost API
+        const parcelsPayload = [];
+        const runMap = new Map(); // to lookup runs by serial number later
+
+        for (const group of groups) {
+            // Representative run (we take the first run as the primary contact)
+            const primaryRun = group[0];
+            const primaryRunner = primaryRun.runners || {};
+            const primaryShipment = Array.isArray(primaryRun.shipments) ? (primaryRun.shipments[0] || {}) : (primaryRun.shipments || {});
+
+            // Recipient name: always the first member only
+            let recipientName = primaryRun.name || primaryRunner.name || 'Ismeretlen';
+            if (recipientName.length > 50) {
+                recipientName = recipientName.substring(0, 47) + '...';
+            }
+
+            // Recipient email: first person's email
+            const email = primaryRunner.email || '';
+
+            // Recipient phone: find a valid phone in the group
+            let rawPhone = '';
+            for (const r of group) {
+                const rShipment = Array.isArray(r.shipments) ? (r.shipments[0] || {}) : (r.shipments || {});
+                rawPhone = rShipment.phone || r.phone || r.runners?.phone || '';
+                if (rawPhone) break;
+            }
+            const phone = formatPhone(rawPhone);
+
+            const destination = primaryShipment.parcel_id || primaryRun.parcel_id || '';
+
+            // RefCode: join serial numbers of all group runs (comma separated)
+            const refCode = group.map(r => r.serial_number).join(', ');
+
             parcelsPayload.push({
-                recipientName: name,
+                recipientName: recipientName,
                 recipientEmail: email,
                 recipientPhone: phone,
                 destination: destination,
                 size: "XS",
                 cod: 0,
-                refCode: run.serial_number, // Use unique serial number as the reference code
-                comment: "VitaSteps erem"
+                refCode: refCode,
+                comment: ""
             });
 
-            runMap.set(run.serial_number, run);
+            // Map each run in the group to the runMap so we can resolve them when barcodes are returned
+            group.forEach(r => {
+                runMap.set(r.serial_number, r);
+            });
         }
 
         if (parcelsPayload.length === 0) {
@@ -148,8 +215,14 @@ module.exports = async (req, res) => {
                 continue;
             }
 
-            if (matchedRun) {
-                // Update shipments record
+            const matchedRunSerials = refCode.split(',').map(s => s.trim());
+            const matchedRuns = matchedRunSerials.map(s => runMap.get(s)).filter(Boolean);
+            console.log('Mapping parcel:', { barcode, refCode, matchedCount: matchedRuns.length });
+
+            if (matchedRuns.length > 0) {
+                const runIdsToUpdate = matchedRuns.map(r => r.id);
+
+                // Update shipments records
                 const { error: shipErr } = await supabase
                     .from('shipments')
                     .update({
@@ -157,23 +230,23 @@ module.exports = async (req, res) => {
                         shipped: true,
                         shipped_at: new Date().toISOString()
                     })
-                    .eq('run_id', matchedRun.id);
+                    .in('run_id', runIdsToUpdate);
 
                 if (shipErr) {
-                    console.error(`Error updating shipment for run ${matchedRun.serial_number}:`, shipErr);
+                    console.error(`Error updating shipments for serials [${refCode}]:`, shipErr);
                 }
 
-                // Update runs record
+                // Update runs records
                 const { error: runErr } = await supabase
                     .from('runs')
                     .update({ shipped: true })
-                    .eq('id', matchedRun.id);
+                    .in('id', runIdsToUpdate);
 
                 if (runErr) {
-                    console.error(`Error updating run ${matchedRun.serial_number}:`, runErr);
+                    console.error(`Error updating runs for serials [${refCode}]:`, runErr);
                 }
 
-                updatedRunIds.push(matchedRun.id);
+                updatedRunIds.push(...runIdsToUpdate);
             }
         }
 

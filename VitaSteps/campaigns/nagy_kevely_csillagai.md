@@ -22,9 +22,9 @@
 | **Augusztus 1. (Szombat)** | **Kihívás Start** | Megnyílik a teljesítés és a GPX feltöltő felület a portálon. |
 | **Augusztus 8. – 13.** | **Érmek beérkezése** | Fizikai éremcsomag megérkezése a kínai gyártótól. |
 | **Augusztus 17.** | **Első postázási hullám** | Az első teljesítők érmeinek feladása (Foxpost/Posta). |
-| **Augusztus 24.** | **Retargeting Hirdetések** | Különálló, kis költségvetésű FOMO kampány indítása a hezitálóknak. |
-| **Szeptember 6. (Vasárnap, 23:59)**| **NEVEZÉS LEZÁRÁSA** | A weboldalon és a checkout felületen leáll a fizetés. |
-| **Szeptember 13. (Vasárnap, 23:59)**| **TELJESÍTÉS LEZÁRÁSA** | Utolsó nap a túra lefutására és a GPX feltöltésére. |
+| **Augusztus 28.** | **Retargeting Hirdetések** | Különálló, kis költségvetésű FOMO kampány indítása a hezitálóknak. |
+| **Szeptember 13. (Vasárnap, 23:59)**| **NEVEZÉS LEZÁRÁSA** | A weboldalon és a checkout felületen leáll a fizetés. |
+| **Szeptember 18. (Vasárnap, 23:59)**| **TELJESÍTÉS LEZÁRÁSA** | Utolsó nap a túra lefutására és a GPX feltöltésére. |
 | **Szeptember 14. – 18.** | **Kampányzárás** | Utolsó érmek postázása, pénzügyi elszámolás (P&L), Börzsöny előkészítés. |
 
 ```mermaid
@@ -35,12 +35,12 @@ gantt
     
     section Előkészítés & Gyártás
     Érmek szállítása            :active, des1, 2026-07-10, 2026-08-10
-    Rendszer & kód tesztelése   :des2, 2026-07-13, 2026-07-19
+    Rendszer & kód tesztelése   :des2, 2026-07-13, 2026-07-26
     
     section Regisztráció & Hirdetések
-    Előnevezés (meleg lista)    :des3, 2026-07-24, 2026-07-27
-    Fő Meta Ads hirdetések      :des4, 2026-07-28, 2026-09-11
-    Retargeting / FOMO kampány  :des5, 2026-08-29, 2026-09-04
+    Előnevezés (meleg lista)    :des3, 2026-07-27, 2026-07-30
+    Fő Meta Ads hirdetések      :des4, 2026-07-27, 2026-09-11
+    Retargeting / FOMO kampány  :des5, 2026-08-28, 2026-09-04
     
     section Kihívás & Postázás
     Hivatalos teljesítési idő   :active, des6, 2026-08-01, 2026-09-18

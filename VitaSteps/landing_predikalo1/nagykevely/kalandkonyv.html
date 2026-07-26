@@ -11,10 +11,12 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
-    
+
     <!-- Leaflet.js Mapping Library CDN -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
     <style>
         :root {
@@ -751,7 +753,8 @@
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
                 border-radius: 0 !important;
-                padding: 1.2rem !important; /* Smaller margins during print */
+                padding: 1.2rem !important;
+                /* Smaller margins during print */
                 box-sizing: border-box !important;
             }
 
@@ -782,12 +785,14 @@
 
             /* Shrink map and elements to fit exactly in A5 print layout */
             #map-container {
-                height: 230px !important; /* Shorter on print to fit on page 3 */
+                height: 230px !important;
+                /* Shorter on print to fit on page 3 */
                 margin: 0.3rem 0 !important;
             }
 
             #elevation-container {
-                height: 85px !important; /* Shorter on print */
+                height: 85px !important;
+                /* Shorter on print */
                 margin-top: 0.1rem !important;
             }
 
@@ -803,7 +808,8 @@
             }
 
             .poi-card {
-                padding: 0.35rem 0 !important; /* Denser POI spacing */
+                padding: 0.35rem 0 !important;
+                /* Denser POI spacing */
             }
 
             .poi-desc {
@@ -841,7 +847,7 @@
     </style>
 </head>
 
-<body class="theme-bw">
+<body class="theme-color">
 
     <!-- Controls Panel -->
     <div class="controls-card">
@@ -850,8 +856,7 @@
             <div class="form-row">
                 <div class="input-group">
                     <label for="input-name">Név a borítólapon</label>
-                    <input type="text" id="input-name" class="input-field" value="Kalandor"
-                        oninput="updateName(this.value)">
+                    <input type="text" id="input-name" class="input-field" value="" oninput="updateName(this.value)">
                 </div>
                 <div class="input-group">
                     <label for="select-route">Választott túraútvonal</label>
@@ -866,11 +871,11 @@
                     <label>Nyomtatási stílus</label>
                     <div class="radio-options">
                         <label class="radio-option">
-                            <input type="radio" name="style-select" value="bw" checked onclick="setTheme('bw')">
+                            <input type="radio" name="style-select" value="bw" onclick="setTheme('bw')">
                             <span>Fekete-Fehér</span>
                         </label>
                         <label class="radio-option">
-                            <input type="radio" name="style-select" value="color" onclick="setTheme('color')">
+                            <input type="radio" name="style-select" value="color" checked onclick="setTheme('color')">
                             <span>Színes</span>
                         </label>
                     </div>
@@ -949,10 +954,10 @@
                 <div class="info-card">
                     <h3
                         style="font-size: 0.9rem; font-weight: 700; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">
-                        🎒 Túra Csekklista</h3>
+                        🎒 Túra lista</h3>
                     <ul class="bullet-list">
-                        <li class="bullet-point"><strong>Folyadék:</strong> Legalább 1.5 - 2 liter víz / izotóniás ital.
-                        </li>
+                        <li class="bullet-point"><strong>Folyadék:</strong> Legalább 2 - 3 liter víz vagy izotóniás ital
+                            (meleg időben még több!).</li>
                         <li class="bullet-point"><strong>Lábbeli:</strong> Jó tapadású, bejáratott túracipő vagy
                             terepfutó cipő.</li>
                         <li class="bullet-point"><strong>Ruházat:</strong> Réteges öltözet, esőkabát váratlan záporok
@@ -964,6 +969,18 @@
                     </ul>
                 </div>
 
+                <div class="info-card"
+                    style="background: rgba(120, 169, 0, 0.08); border-color: rgba(120, 169, 0, 0.25);">
+                    <h3
+                        style="font-size: 0.9rem; font-weight: 700; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent-color);">
+                        ⚠️ Útvonal & Biztonság</h3>
+                    <p style="font-size: 0.8rem; line-height: 1.45; margin: 0; opacity: 0.9;">
+                        Bár az ajánlott GPX útvonalat letöltheted, <strong>nyugodtan letérhetsz az eredeti
+                            útvonalról</strong>, ha az időjárás vagy a terepviszonyok megkívánják. A teljesítést ettől
+                        függetlenül el fogjuk fogadni – a testi épség és a jó élmény az elsődleges!
+                    </p>
+                </div>
+
                 <div class="info-card">
                     <h3
                         style="font-size: 0.9rem; font-weight: 700; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">
@@ -973,9 +990,7 @@
                             hagyok hátra.</li>
                         <li class="bullet-point"><strong>2. Tisztelem a csendet:</strong> Nem hangoskodom, tisztelem a
                             vadon nyugalmát.</li>
-                        <li class="bullet-point"><strong>3. Úton maradok:</strong> Nem térek le a jelzett ösvényről az
-                            erózió elkerüléséért.</li>
-                        <li class="bullet-point"><strong>4. Segítő kéz:</strong> Ha bajbajutottat látok, megállok
+                        <li class="bullet-point"><strong>3. Segítő kéz:</strong> Ha bajbajutottat látok, megállok
                             segíteni. Segélyhívó: <strong>112</strong></li>
                     </ul>
                 </div>
@@ -1002,8 +1017,10 @@
                 <!-- Compact stats and QR row -->
                 <div class="route-grid" style="margin-bottom: 0.2rem;">
                     <div class="route-stats">
-                        <div class="route-stat-item"><strong>Távolság:</strong> <span id="route-dist">6.2 km</span></div>
-                        <div class="route-stat-item"><strong>Szintemelkedés:</strong> <span id="route-elev">190 m</span></div>
+                        <div class="route-stat-item"><strong>Távolság:</strong> <span id="route-dist">6.2 km</span>
+                        </div>
+                        <div class="route-stat-item"><strong>Szintemelkedés:</strong> <span id="route-elev">190 m</span>
+                        </div>
                     </div>
                     <div class="qr-wrapper">
                         <img src="" class="qr-image" id="route-qr" alt="GPX QR Code">
@@ -1219,16 +1236,16 @@
                     },
                     {
                         name: "Egri vár másolata",
-                        lat: 47.618529,
-                        lon: 18.969906,
+                        lat: 47.61844,
+                        lon: 18.97218,
                         location: "Útvonal közepén, ~2.0 km-nél",
                         desc: "Várkonyi Zoltán rendező építtette 1968-ban az Egri csillagok film monumentalitásának bemutatására. A díszletvár részben fából és kőből épült fel a statisztákat felvonultató csaták kedvéért.",
                         extra: "Tudtad-e? A forgatások alatt a vár egy része ténylegesen leégett, de a felvételeket nem állították le."
                     },
                     {
                         name: "Kevélyhegyi Levendulamező",
-                        lat: 47.610500,
-                        lon: 18.983800,
+                        lat: 47.61178,
+                        lon: 18.98545,
                         location: "Útvonal végén, ~5.5 km-nél",
                         desc: "2016-ban alapított biogazdaság Pilisborosjenő lábánál, közvetlenül a hegy lábánál, ahol mára több mint 20 ezer levendulabokor illatozik, kiegészülve tavasszal 150 ezer tulipán virágzásával.",
                         extra: "Tudtad-e? A sötétlila virágsorok és a felette büszkén tornyosuló hegycsúcs sziluettje az egyik legszebb kilátás a Pilisben."
@@ -1271,8 +1288,8 @@
                     },
                     {
                         name: "Egri vár másolata",
-                        lat: 47.618529,
-                        lon: 18.969906,
+                        lat: 47.61844,
+                        lon: 18.97218,
                         location: "Útvonal elején, ~2.0 km-nél",
                         desc: "Várkonyi Zoltán rendező építtette 1968-ban az Egri csillagok film monumentalitásának bemutatására. A díszletvár részben fából és kőből épült fel a statisztákat felvonultató csaták kedvéért.",
                         extra: "Tudtad? A forgatások alatt a vár egy része ténylegesen leégett, de a felvételeket nem állították le."
@@ -1371,8 +1388,8 @@
                     },
                     {
                         name: "Egri vár másolata",
-                        lat: 47.618529,
-                        lon: 18.969906,
+                        lat: 47.61844,
+                        lon: 18.97218,
                         location: "Útvonal végén, ~22.5 km-nél",
                         desc: "Várkonyi Zoltán rendező építtette 1968-ban az Egri csillagok film monumentalitásának bemutatására. A díszletvár részben forgatások kedvéért épült fel a statisztákat felvonultató csatákhoz.",
                         extra: "Tudtad? A forgatások alatt a vár egy része ténylegesen leégett, de a felvételeket nem állították le."
@@ -1461,9 +1478,9 @@
 
         // Parse query parameters
         const params = new URLSearchParams(window.location.search);
-        const nameParam = params.get('nev') || "Kalandor";
+        const nameParam = params.get('nev') || "";
         const routeParam = params.get('tav') || "csaladi";
-        const styleParam = params.get('style') || "bw";
+        const styleParam = params.get('style') || "color";
 
         // Initialize values
         document.getElementById('input-name').value = nameParam;
@@ -1486,7 +1503,7 @@
         renderRoute(routeParam);
 
         function updateName(val) {
-            document.getElementById('disp-name').textContent = val || "Kalandor";
+            document.getElementById('disp-name').textContent = val || "";
         }
 
         function setTheme(theme) {
@@ -1593,15 +1610,41 @@
                         lastPt = { lat, lon };
                     });
 
+                    // Sort active POIs based on their distance along the GPX track
+                    activePois.sort((a, b) => {
+                        const findClosestIndex = (poi) => {
+                            let minDistance = Infinity;
+                            let minIndex = -1;
+                            points.forEach((pt, idx) => {
+                                const d = haversineDistance(pt.lat, pt.lon, poi.lat, poi.lon);
+                                if (d < minDistance) {
+                                    minDistance = d;
+                                    minIndex = idx;
+                                }
+                            });
+                            return minIndex;
+                        };
+                        return findClosestIndex(a) - findClosestIndex(b);
+                    });
+
+                    // Re-render the POI list with the sorted activePois
+                    const p1 = document.getElementById('poi-list');
+                    if (p1) {
+                        p1.innerHTML = '';
+                        activePois.forEach((poi, idx) => {
+                            p1.appendChild(createPoiHtml(poi, idx));
+                        });
+                    }
+
                     const isColor = document.body.className.includes('theme-color');
-                    
+
                     // Draw map and elevation profile
                     drawLeafletMap(points, activePois, isColor);
                     drawElevationProfile(points, activePois, isColor);
                 })
                 .catch(err => {
                     console.warn("Could not load GPX track dynamically. This is expected if opening from file:// filesystem due to CORS restrictions.", err);
-                    
+
                     // Provide a nice fallback layout for file:// filesystem previews
                     const mapEl = document.getElementById('map-container');
                     if (mapEl) {
@@ -1705,7 +1748,7 @@
             const ctx = canvas.getContext('2d');
             const dpr = window.devicePixelRatio || 1;
             const rect = canvas.getBoundingClientRect();
-            
+
             // Adjust canvas resolution for high-DPI displays
             canvas.width = rect.width * dpr;
             canvas.height = rect.height * dpr;

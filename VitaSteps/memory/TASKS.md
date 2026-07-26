@@ -44,7 +44,7 @@
 *   **[x]** Számla template javítás: bank, cím, megnevezés!!!
 *   **[x]**  Portálon kezelni, ha több jelentkező van egy e-mail címről, teljesítés igazolása felületen szintén, lehetőleg egy képpel lehessen több embert is igazolni.
 *   **[x]** "Sikeres nevezés" Welcome emailben legyen tájékoztató mindenről (GPX/szelfi feltöltés), portál elérhetősége és szerepe.
-*   **[ ]** Referral kedvezmények beépítése, tesztelése
+*   **[x]** Referral kedvezmények beépítése, tesztelése (progresszív sávos árazás a Line Items szétbontásával)
 *   **[ ]** Normális kalandkönyv
 *   **[x]** End-to-end teszt: `checkout.html?campaign=pilis&test=true` → Stripe sandbox → `siker.html` → `process-payment` → Sheets + Supabase + számla + email.
 *   **[x]** Supabase: lefuttatni `ALTER TABLE runners ADD COLUMN IF NOT EXISTS stripe_session_id text;`

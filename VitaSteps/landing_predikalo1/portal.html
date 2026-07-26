@@ -1063,6 +1063,17 @@
                     <!-- Verify others (group verification) -->
                     <div id="verify-others-container" style="display:none; margin-top: 1.25rem; border-top: 1px solid var(--border); padding-top: 1.25rem; text-align: left;"></div>
 
+                    <!-- Shipping consolidation (merge packages) -->
+                    <div style="margin-top: 1.25rem; border-top: 1px solid var(--border); padding-top: 1.25rem; text-align: left;">
+                        <label for="ship-together-email" style="font-size: 0.85rem; font-weight: 600; color: var(--text-high); display: block; margin-bottom: 0.4rem;">
+                            Együtt szállítva egy barátoddal? (Opcionális)
+                        </label>
+                        <p style="font-size: 0.78rem; color: var(--text-mid); margin: 0 0 0.5rem 0; line-height: 1.4;">
+                            Ha közös csomagban (egy Foxpost fiókba vagy ugyanarra a címre) szeretnéd kérni az érmedet egy barátoddal, add meg az ő regisztrált e-mail címét:
+                        </p>
+                        <input type="email" id="ship-together-email" class="input-text" placeholder="Barátod regisztrált e-mail címe..." style="background: rgba(255,255,255,0.03); color: #fff; width: 100%; box-sizing: border-box;">
+                    </div>
+
                     <!-- Submit -->
                     <button class="btn" id="btn-proof-submit" onclick="submitProof()" style="margin-top: 1.25rem;" disabled>
                         <span>Igazolás Beküldése</span>
@@ -1371,6 +1382,11 @@
             const run = selectedRun;
             const isPilisK = run.serial_number && (run.serial_number.includes('PK') || run.serial_number.includes('999'));
 
+            // Initialize ship-together-email field
+            if (document.getElementById('ship-together-email')) {
+                document.getElementById('ship-together-email').value = run.ship_together_with || '';
+            }
+
             // Populate name
             document.getElementById('user-display-name').textContent = run.name || userProfile.name || "Futó Partner";
 
@@ -1523,8 +1539,8 @@
                     }
 
                     const refLink = isPilisK
-                        ? `${window.location.origin}/nagykevely/checkout-widget.html?ref=${encodeURIComponent(currentUser.email.toLowerCase())}`
-                        : `${window.location.origin}/checkout-widget.html?ref=${encodeURIComponent(currentUser.email.toLowerCase())}`;
+                        ? `${window.location.origin}/nagykevely/index.html?ref=${encodeURIComponent(currentUser.email.toLowerCase())}`
+                        : `${window.location.origin}/predikalo/index.html?ref=${encodeURIComponent(currentUser.email.toLowerCase())}`;
                     document.getElementById('ref-link-input').value = refLink;
 
                     const refText = document.querySelector('#referral-card p');
@@ -1730,12 +1746,15 @@
                     targetIds.push(chk.value);
                 });
 
+                const shipTogetherEmail = document.getElementById('ship-together-email')?.value.trim().toLowerCase() || null;
+
                 const { error: dbError } = await supabaseClient
                     .from('runs')
                     .update({
                         proof_submitted: true,
                         proof_urls: uploadedUrls,
-                        proof_submitted_at: new Date().toISOString()
+                        proof_submitted_at: new Date().toISOString(),
+                        ship_together_with: shipTogetherEmail
                     })
                     .in('id', targetIds);
 
@@ -1749,6 +1768,7 @@
                     if (runObj) {
                         runObj.proof_submitted = true;
                         runObj.proof_urls = uploadedUrls;
+                        runObj.ship_together_with = shipTogetherEmail;
                     }
                 });
 
