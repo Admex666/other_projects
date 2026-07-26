@@ -4,6 +4,16 @@ All notable changes to the VitaSteps challenge platform project are documented h
 
 ---
 
+## [1.9.0] - 2026-07-26
+### Launch
+*   **Nagy-Kevély csillagai kampány élesítve (15:00):**
+    *   Eltávolítva a checkout.js és checkout.html pre-launch 403 blokk.
+    *   `SZAMLAZZ_PROD_KEY` beállítva az éles számla generáláshoz (live → SZAMLAZZ_PROD_KEY, test → SZAMLAZZ_TEST_KEY).
+    *   Meta prospecting 1% lookalike kampány elindítva.
+*   **Referral Promo Email kiküldve:**
+    *   Megírva `scripts/send_promo_referral.py` — lekérdezi a Supabase-ből az összes `received=TRUE` Prédikálószék futót.
+    *   43 db email sikeresen kiküldve (0 hiba) az `email_promo_referral_template.html` sablonnal, személyre szabott ajánlói linkkel (`checkout.html?c=pilis&ref=EMAIL`).
+
 ## [1.8.0] - 2026-07-26
 ### Added
 *   **Google Sheets to Supabase Teljes Migráció:**

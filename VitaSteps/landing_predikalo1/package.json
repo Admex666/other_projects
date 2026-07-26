@@ -2,10 +2,10 @@
   "name": "vitasteps-checkout",
   "version": "1.0.0",
   "dependencies": {
-    "@supabase/supabase-js": "^2.39.0",
+    "@supabase/supabase-js": "^2.110.8",
+    "dotenv": "^17.4.2",
     "googleapis": "^173.0.0",
-    "nodemailer": "^8.0.10",
+    "nodemailer": "^8.0.11",
     "stripe": "^15.0.0"
   }
 }
-
