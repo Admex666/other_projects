@@ -13,6 +13,7 @@ const state = {
     highlightedLayer: null, // L.geoJSON for highlighted/searched trails
     wmsLayer: null, // L.esri.dynamicMapLayer for entire network
     activeSignFilter: null, // Active trail mark string
+    isForestLayerActive: false,
 };
 
 // Coded values mappings from ArcGIS Server
@@ -57,6 +58,10 @@ const basemaps = {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
         subdomains: 'abcd',
         maxZoom: 20
+    }),
+    topo: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+        attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
+        maxZoom: 17
     })
 };
 
@@ -70,8 +75,9 @@ state.wmsLayer = L.esri.dynamicMapLayer({
     useCors: true
 }).addTo(map);
 
-// Create layer groups for routing stops & highlighting
+// Create layer groups for routing stops, highlighting & forests
 const stopsGroup = L.layerGroup().addTo(map);
+const forestGroup = L.layerGroup().addTo(map);
 
 // Remove loading screen when map is ready
 map.whenReady(() => {
@@ -185,6 +191,182 @@ function displaySectionDetails(properties) {
     switchTab('tab-info');
 }
 
+const OVERPASS_MIRRORS = [
+    'https://overpass.osm.ch/api/interpreter',
+    'https://lz4.overpass-api.de/api/interpreter',
+    'https://z.overpass-api.de/api/interpreter',
+    'https://overpass-api.de/api/interpreter'
+];
+
+/**
+ * Robust fetch helper that cycles through Overpass mirrors with a timeout
+ */
+async function fetchFromOverpass(query) {
+    let lastError = null;
+    for (const url of OVERPASS_MIRRORS) {
+        try {
+            const controller = new AbortController();
+            const id = setTimeout(() => controller.abort(), 5000); // 5 seconds timeout per mirror
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'data=' + encodeURIComponent(query),
+                signal: controller.signal
+            });
+            clearTimeout(id);
+
+            if (response.ok) {
+                return await response.json();
+            } else {
+                console.warn(`Overpass mirror ${url} returned status ${response.status}`);
+                lastError = new Error(`Status ${response.status}`);
+            }
+        } catch (err) {
+            console.warn(`Failed to fetch from Overpass mirror ${url}:`, err);
+            lastError = err;
+        }
+    }
+    throw lastError || new Error('All Overpass mirrors failed');
+}
+
+const landuseTranslations = {
+    forest: 'Erdő',
+    wood: 'Erdő',
+    meadow: 'Rét / Legelő',
+    grassland: 'Füves terület',
+    farmland: 'Szántóföld / Mező',
+    farm: 'Mezőgazdasági terület',
+    vineyard: 'Szőlőskert',
+    orchard: 'Gyümölcsös',
+    residential: 'Lakott terület',
+    commercial: 'Kereskedelmi övezet',
+    industrial: 'Ipari terület',
+    quarry: 'Kőbánya',
+    scree: 'Kőtörmelék / Kőfolyás',
+    heath: 'Cserjés / Bozótos',
+    scrub: 'Bozótos',
+    water: 'Vízfelület',
+    wetland: 'Mocsár / Láp',
+    nature_reserve: 'Természetvédelmi terület',
+    recreation_ground: 'Szabadidőpark',
+    cemetery: 'Temető',
+    allotments: 'Hobbikert'
+};
+
+/**
+ * Query landuse or natural area type for a clicked coordinate from OSM Nominatim reverse geocoding
+ */
+async function queryLocationType(lat, lng) {
+    const nominatimUrl = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&zoom=18&accept-language=hu`;
+
+    try {
+        const response = await fetch(nominatimUrl);
+        if (!response.ok) return null;
+        const data = await response.json();
+
+        if (data && data.address) {
+            const addr = data.address;
+            let info = { type: 'Egyéb terület', name: '', isForest: false, isNationalPark: false, parkName: '' };
+            
+            // Check if inside a national park
+            if (data.display_name && data.display_name.includes('Nemzeti Park')) {
+                info.isNationalPark = true;
+                const parts = data.display_name.split(',');
+                const parkPart = parts.find(p => p.includes('Nemzeti Park'));
+                info.parkName = parkPart ? parkPart.trim() : 'Nemzeti park';
+            }
+            
+            const cls = data.class || '';
+            const type = data.type || '';
+
+            if (cls === 'natural' && (type === 'wood' || type === 'forest')) {
+                info.isForest = true;
+                info.type = 'Erdő';
+                info.name = data.name || addr.forest || addr.wood || '';
+            } else if (cls === 'landuse' && (type === 'forest' || type === 'wood')) {
+                info.isForest = true;
+                info.type = 'Erdő';
+                info.name = data.name || addr.forest || addr.wood || '';
+            } else if (cls === 'highway' && (type === 'path' || type === 'track' || type === 'footway' || type === 'cycleway' || type === 'bridleway')) {
+                info.type = 'Erdei út / Gyalogút';
+                info.name = data.name || addr.road || 'Névtelen ösvény';
+            } else if (cls === 'natural' && type === 'peak') {
+                info.type = 'Hegycsúcs';
+                info.name = data.name || '';
+            } else if (cls === 'natural' && type === 'spring') {
+                info.type = 'Forrás';
+                info.name = data.name || '';
+            } else if (cls === 'waterway' || (cls === 'natural' && (type === 'water' || type === 'wetland'))) {
+                info.type = 'Vízfelület / Patak';
+                info.name = data.name || addr.water || addr.river || '';
+            } else if (addr.meadow || addr.grassland || type === 'meadow' || type === 'grassland') {
+                info.type = 'Rét / Legelő';
+                info.name = addr.meadow || addr.grassland || data.name || '';
+            } else if (cls === 'highway') {
+                info.type = 'Lakott terület';
+                info.name = `${addr.village || addr.town || addr.city || ''} (Út: ${addr.road || 'Névtelen utca'})`;
+            } else if (addr.village || addr.town || addr.city || addr.suburb) {
+                info.type = 'Terület';
+                info.name = addr.village || addr.town || addr.city || addr.suburb || '';
+            }
+
+            return info;
+        }
+    } catch (err) {
+        console.error('Error in queryLocationType:', err);
+    }
+    return null;
+}
+
+/**
+ * Background query for enclosing forest details using only a single mirror with a short timeout
+ */
+async function queryEnclosingForest(lat, lng) {
+    const query = `[out:json][timeout:2];is_in(${lat},${lng})->.a;(way(pivot.a)["landuse"="forest"];relation(pivot.a)["landuse"="forest"];way(pivot.a)["natural"="wood"];relation(pivot.a)["natural"="wood"];way(pivot.a)["boundary"="national_park"];relation(pivot.a)["boundary"="national_park"];way(pivot.a)["boundary"="protected_area"];relation(pivot.a)["boundary"="protected_area"];);out tags;`;
+    const url = OVERPASS_MIRRORS[0]; 
+
+    try {
+        const controller = new AbortController();
+        const id = setTimeout(() => controller.abort(), 2000); // 2 seconds strict timeout
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: 'data=' + encodeURIComponent(query),
+            signal: controller.signal
+        });
+        clearTimeout(id);
+
+        if (response.ok) {
+            const data = await response.json();
+            if (data.elements && data.elements.length > 0) {
+                let info = { isForest: false, forestName: '', isNationalPark: false, parkName: '' };
+                data.elements.forEach(el => {
+                    const tags = el.tags || {};
+                    if (tags.boundary === 'national_park' || tags.boundary === 'protected_area') {
+                        info.isNationalPark = true;
+                        info.parkName = tags.name || 'Nemzeti park / Védett terület';
+                    }
+                    const landuse = tags.landuse || tags.natural;
+                    if (landuse === 'forest' || landuse === 'wood') {
+                        info.isForest = true;
+                        info.forestName = tags.name || 'Erdő';
+                    }
+                });
+                return info;
+            }
+        }
+    } catch (err) {
+        console.warn('Overpass enclosing lookup skipped or failed:', err);
+    }
+    return null;
+}
+
 /**
  * Handle clicks on map to identify closest trail when NOT in planning mode
  */
@@ -194,8 +376,14 @@ map.on('click', async (e) => {
         return;
     }
 
-    // Spatial query to find clicked path
-    const buffer = 0.001; // Approx 100 meters
+    // Open a loading popup immediately
+    const popup = L.popup()
+        .setLatLng(e.latlng)
+        .setContent('<div style="text-align: center; padding: 5px;"><div class="spinner" style="width:16px;height:16px;margin:0 auto 8px auto;"></div>Lekérdezés...</div>')
+        .openOn(map);
+
+    // Bounding box for tourist path spatial query
+    const buffer = 0.001; 
     const bbox = {
         xmin: e.latlng.lng - buffer,
         ymin: e.latlng.lat - buffer,
@@ -203,12 +391,103 @@ map.on('click', async (e) => {
         ymax: e.latlng.lat + buffer
     };
 
-    const result = await queryFeatureLayer(null, bbox);
-    if (result && result.features && result.features.length > 0) {
-        // Find closest feature
-        let closestFeature = result.features[0];
-        highlightFeatures(result);
-        displaySectionDetails(closestFeature.properties);
+    // Run Nominatim and Trail queries in parallel for instant display
+    try {
+        const [trailResult, locationInfo] = await Promise.all([
+            queryFeatureLayer(null, bbox),
+            queryLocationType(e.latlng.lat, e.latlng.lng)
+        ]);
+
+        let areaDesc = 'Egyéb táj';
+        let isForest = false;
+        let nationalParkHtml = '';
+
+        if (locationInfo) {
+            isForest = locationInfo.isForest;
+            areaDesc = locationInfo.name ? `${locationInfo.name} (${locationInfo.type})` : locationInfo.type;
+            if (locationInfo.isNationalPark) {
+                nationalParkHtml = `<div class="popup-row" id="popup-park-row"><strong>Nemzeti park:</strong> <span style="color: #4ade80;">${locationInfo.parkName}</span></div>`;
+            }
+        }
+
+        let popupContent = `<div style="min-width: 180px;">
+            <div class="popup-title"><i data-lucide="map-pin" style="width:16px;height:16px;color:var(--accent);"></i> Helyszín adatok</div>
+            <div class="popup-row"><strong>Szélesség:</strong> ${e.latlng.lat.toFixed(5)}°</div>
+            <div class="popup-row"><strong>Hosszúság:</strong> ${e.latlng.lng.toFixed(5)}°</div>
+            <div class="popup-row" style="margin-top:0.5rem; border-top: 1px solid var(--border-color); padding-top:0.5rem;">
+                <strong>Terület:</strong> <span id="popup-area-type" style="${isForest ? 'color: var(--accent-success); font-weight:700;' : ''}">${areaDesc}</span>
+            </div>
+            <span id="popup-forest-loading" style="font-size:0.7rem; color:var(--text-secondary); display:flex; align-items:center; gap:4px; margin-top:2px;">
+                <div class="spinner" style="width:8px;height:8px;border-width:1px;margin:0;"></div> Részletes adatok lekérése...
+            </span>
+            <div id="popup-additional-info">
+                ${nationalParkHtml}
+            </div>`;
+
+        // Handle trail result
+        if (trailResult && trailResult.features && trailResult.features.length > 0) {
+            let closestFeature = trailResult.features[0];
+            highlightFeatures(trailResult);
+            displaySectionDetails(closestFeature.properties);
+
+            const props = closestFeature.properties;
+            const signText = props.signs ? props.signs : '?';
+            
+            popupContent += `<div class="popup-trail-card">
+                <span class="trail-badge" style="padding: 2px 6px; font-size: 0.75rem; border-radius:4px;">${signText}</span>
+                <div>
+                    <div style="font-weight:700; font-size:0.8rem;">Turistaút a közelben</div>
+                    <div style="font-size:0.7rem; color:var(--text-secondary);">${props.utvonal_id || 'Nincs ID'}</div>
+                </div>
+            </div>`;
+        }
+
+        popupContent += `</div>`;
+        popup.setContent(popupContent);
+        
+        // Re-trigger icon rendering for popup icons
+        setTimeout(() => {
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+        }, 50);
+
+        // Async query Overpass in background for enclosing details
+        queryEnclosingForest(e.latlng.lat, e.latlng.lng).then(forestInfo => {
+            if (!map.hasLayer(popup)) return; // Guard if popup closed
+
+            const loadingEl = document.getElementById('popup-forest-loading');
+            if (loadingEl) loadingEl.remove();
+
+            if (forestInfo) {
+                if (forestInfo.isForest) {
+                    const areaEl = document.getElementById('popup-area-type');
+                    if (areaEl) {
+                        areaEl.style.color = 'var(--accent-success)';
+                        areaEl.style.fontWeight = '700';
+                        if (forestInfo.forestName && !areaEl.textContent.includes(forestInfo.forestName)) {
+                            areaEl.textContent = `${forestInfo.forestName} (Erdő)`;
+                        } else if (!areaEl.textContent.includes('Erdő')) {
+                            areaEl.textContent += ' (Erdő)';
+                        }
+                    }
+                }
+
+                if (forestInfo.isNationalPark) {
+                    const addInfoEl = document.getElementById('popup-additional-info');
+                    const parkRow = document.getElementById('popup-park-row');
+                    if (addInfoEl && !parkRow) {
+                        addInfoEl.innerHTML += `<div class="popup-row" id="popup-park-row">
+                            <strong>Nemzeti park:</strong> <span style="color: #4ade80;">${forestInfo.parkName}</span>
+                        </div>`;
+                    }
+                }
+            }
+        });
+
+    } catch (err) {
+        console.error('Error during map click queries:', err);
+        popup.setContent('Hiba történt a helyszín lekérdezése közben.');
     }
 });
 
@@ -283,7 +562,7 @@ document.getElementById('toggle-wms-layer').addEventListener('change', (e) => {
 });
 
 /**
- * Theme Toggler
+ * Theme & Basemap Toggler (Cycles: Dark -> Light -> Topo)
  */
 document.getElementById('btn-theme-toggle').addEventListener('click', () => {
     const body = document.body;
@@ -296,16 +575,122 @@ document.getElementById('btn-theme-toggle').addEventListener('click', () => {
         map.removeLayer(basemaps.dark);
         basemaps.light.addTo(map);
         icon.setAttribute('data-lucide', 'moon');
+    } else if (state.theme === 'light') {
+        state.theme = 'topo';
+        body.classList.remove('light-theme');
+        body.classList.add('light-theme'); // Topo uses light panel colors
+        map.removeLayer(basemaps.light);
+        basemaps.topo.addTo(map);
+        icon.setAttribute('data-lucide', 'mountain');
     } else {
         state.theme = 'dark';
         body.classList.remove('light-theme');
         body.classList.add('dark-theme');
-        map.removeLayer(basemaps.light);
+        map.removeLayer(basemaps.topo);
         basemaps.dark.addTo(map);
         icon.setAttribute('data-lucide', 'sun');
     }
     lucide.createIcons();
 });
+
+/**
+ * Toggle forest overlay layer visibility and loading
+ */
+document.getElementById('toggle-forest-layer').addEventListener('change', async (e) => {
+    state.isForestLayerActive = e.target.checked;
+    
+    if (state.isForestLayerActive) {
+        map.on('moveend', loadForestsForCurrentBounds);
+        await loadForestsForCurrentBounds();
+    } else {
+        map.off('moveend', loadForestsForCurrentBounds);
+        forestGroup.clearLayers();
+        document.getElementById('forest-status-label').textContent = 'Erdő területek betöltése (OSM)';
+    }
+});
+
+/**
+ * Loads forest areas from OpenStreetMap Overpass API for the current viewport.
+ */
+async function loadForestsForCurrentBounds() {
+    if (!state.isForestLayerActive) return;
+
+    const zoom = map.getZoom();
+    const label = document.getElementById('forest-status-label');
+
+    // Prevent massive downloads at low zoom levels
+    if (zoom < 12) {
+        forestGroup.clearLayers();
+        label.innerHTML = 'Erdő: <span style="color: var(--accent-danger);">Nagyíts közelebb!</span>';
+        return;
+    }
+
+    label.innerHTML = 'Erdő: <span style="color: var(--accent);">Betöltés...</span>';
+
+    const bounds = map.getBounds();
+    const south = bounds.getSouth();
+    const west = bounds.getWest();
+    const north = bounds.getNorth();
+    const east = bounds.getEast();
+
+    // Query ways and relations with landuse=forest or natural=wood
+    const query = `[out:json][timeout:15];
+(
+  way["landuse"="forest"](${south},${west},${north},${east});
+  relation["landuse"="forest"](${south},${west},${north},${east});
+  way["natural"="wood"](${south},${west},${north},${east});
+  relation["natural"="wood"](${south},${west},${north},${east});
+);
+out 400 geom;`;
+
+    try {
+        const data = await fetchFromOverpass(query);
+
+        if (!state.isForestLayerActive) return; // Guard if toggled off during request
+
+        forestGroup.clearLayers();
+
+        if (data.elements && data.elements.length > 0) {
+            data.elements.forEach(el => {
+                let coords = null;
+
+                if (el.type === 'way' && el.geometry) {
+                    coords = el.geometry.map(pt => [pt.lat, pt.lon]);
+                    drawForestPolygon(coords, el.tags);
+                } else if (el.type === 'relation' && el.members) {
+                    el.members.forEach(member => {
+                        if (member.type === 'way' && member.role !== 'inner' && member.geometry) {
+                            coords = member.geometry.map(pt => [pt.lat, pt.lon]);
+                            drawForestPolygon(coords, el.tags || member.tags);
+                        }
+                    });
+                }
+            });
+            label.textContent = `Erdő területek (${data.elements.length} db)`;
+        } else {
+            label.textContent = 'Erdő területek: nincs találat';
+        }
+    } catch (err) {
+        console.error('Error fetching forests:', err);
+        label.innerHTML = 'Erdő: <span style="color: var(--accent-danger);">Hiba történt</span>';
+    }
+}
+
+function drawForestPolygon(latlngs, tags) {
+    if (!latlngs || latlngs.length < 3) return;
+
+    const forestName = tags && tags.name ? tags.name : 'Erdőterület';
+    
+    L.polygon(latlngs, {
+        color: '#16a34a',
+        weight: 1.5,
+        fillColor: '#22c55e',
+        fillOpacity: 0.15,
+        className: 'forest-polygon'
+    })
+    .bindTooltip(forestName, { sticky: true, className: 'forest-tooltip' })
+    .addTo(forestGroup);
+}
 
 /**
  * Self Location finder

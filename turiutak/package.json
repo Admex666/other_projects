@@ -1,0 +1,8 @@
+{
+  "name": "turiutak",
+  "version": "1.0.0",
+  "description": "TuristaÚt Kalandtervező",
+  "scripts": {
+    "dev": "python -m http.server 8000"
+  }
+}

@@ -925,3 +925,72 @@ body, html {
         right: 1rem;
     }
 }
+
+/* Custom styles for forests and tooltips */
+.forest-polygon {
+    transition: fill-opacity 0.2s ease, stroke-width 0.2s ease;
+}
+
+.forest-polygon:hover {
+    fill-opacity: 0.25 !important;
+    stroke-width: 2.5 !important;
+}
+
+.forest-tooltip {
+    background-color: rgba(15, 23, 42, 0.9) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+    font-family: var(--font-stack) !important;
+    font-size: 0.8rem !important;
+    font-weight: 600 !important;
+    border-radius: 6px !important;
+    box-shadow: var(--shadow) !important;
+    padding: 4px 8px !important;
+}
+
+/* Popup styling for Leaflet */
+.leaflet-popup-content-wrapper {
+    background: var(--bg-panel) !important;
+    backdrop-filter: blur(12px) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+    font-family: var(--font-stack) !important;
+    border-radius: 12px !important;
+    box-shadow: var(--shadow) !important;
+}
+
+.leaflet-popup-tip {
+    background: var(--bg-panel) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+.popup-title {
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.popup-row {
+    font-size: 0.8rem;
+    margin-bottom: 0.25rem;
+    color: var(--text-secondary);
+}
+
+.popup-row strong {
+    color: var(--text-primary);
+}
+
+.popup-trail-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
