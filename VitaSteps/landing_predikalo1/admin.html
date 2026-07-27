@@ -505,6 +505,167 @@
             border-color: #f97316;
             outline: none;
         }
+
+        /* ── Marketing Dashboard ── */
+        #section-marketing { display: none; }
+        .mkt-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .mkt-tab {
+            padding: 0.4rem 1rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-mid);
+            font-family: inherit;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .mkt-tab.active {
+            background: rgba(249, 115, 22, 0.15);
+            border-color: rgba(249, 115, 22, 0.5);
+            color: var(--accent);
+        }
+        .mkt-tab:hover:not(.active) { border-color: rgba(255,255,255,0.2); color: var(--text-high); }
+        .kpi-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem 1.75rem;
+            margin-bottom: 1.25rem;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.3s;
+        }
+        .kpi-card.status-good  { border-color: rgba(34, 197, 94, 0.35); }
+        .kpi-card.status-warn  { border-color: rgba(245, 158, 11, 0.35); }
+        .kpi-card.status-crit  { border-color: rgba(239, 68, 68, 0.35); }
+        .kpi-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.25rem;
+        }
+        .kpi-card-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-high);
+        }
+        .kpi-status-badge {
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 0.25rem 0.65rem;
+            border-radius: 20px;
+        }
+        .badge-good  { background: rgba(34,197,94,0.12);  color: #22c55e; border: 1px solid rgba(34,197,94,0.3); }
+        .badge-warn  { background: rgba(245,158,11,0.12); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); }
+        .badge-crit  { background: rgba(239,68,68,0.12);  color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
+        .badge-neu   { background: rgba(255,255,255,0.06); color: var(--text-mid); border: 1px solid var(--border); }
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+        .kpi-item {}
+        .kpi-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-mid);
+            margin-bottom: 0.25rem;
+        }
+        .kpi-value {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--text-high);
+        }
+        .kpi-sub {
+            font-size: 0.78rem;
+            color: var(--text-mid);
+            margin-top: 0.15rem;
+        }
+        .kpi-bar-row {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .kpi-bar-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.78rem;
+            color: var(--text-mid);
+        }
+        .kpi-bar-track {
+            flex: 1;
+            height: 4px;
+            background: rgba(255,255,255,0.07);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .kpi-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        .kpi-bar-fill.green { background: #22c55e; }
+        .kpi-bar-fill.yellow { background: #f59e0b; }
+        .kpi-bar-fill.red { background: #ef4444; }
+        .kpi-bar-val { min-width: 60px; text-align: right; color: var(--text-high); font-weight: 600; }
+        #mkt-loading { color: var(--text-mid); font-size: 0.9rem; text-align: center; padding: 3rem; }
+        .mkt-no-data { color: var(--text-mid); text-align: center; padding: 3rem; }
+        .mkt-last-updated { font-size: 0.72rem; color: var(--text-low); text-align: right; margin-bottom: 0.5rem; }
+
+        /* P&L + Cashflow */
+        .fin-section {
+            margin-top: 1.25rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+        .fin-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--text-mid);
+            margin-bottom: 0.65rem;
+            font-weight: 700;
+        }
+        .fin-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            padding: 0.22rem 0;
+            color: var(--text-mid);
+        }
+        .fin-row.total {
+            border-top: 1px solid rgba(255,255,255,0.1);
+            margin-top: 0.35rem;
+            padding-top: 0.5rem;
+            font-weight: 700;
+            color: var(--text-high);
+            font-size: 0.9rem;
+        }
+        .fin-plus  { color: #22c55e; font-weight: 600; }
+        .fin-minus { color: var(--text-mid); }
+        .fin-profit-pos { color: #22c55e; font-weight: 800; font-size: 1rem; }
+        .fin-profit-neg { color: #ef4444; font-weight: 800; font-size: 1rem; }
+        .fin-two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0 1.5rem;
+        }
+        @media (max-width: 600px) {
+            .fin-two-col { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -553,6 +714,7 @@
             <button class="filter-tab" onclick="setFilter('approved')" id="tab-approved">✅ Jóváhagyott</button>
             <button class="filter-tab" onclick="setFilter('all')" id="tab-all">📋 Összes</button>
             <button class="filter-tab" onclick="setFilter('logistics')" id="tab-logistics" style="margin-left: auto; border: 1px solid rgba(249, 115, 22, 0.3); color: #f97316;">🦊 Logisztika (Foxpost)</button>
+            <button class="filter-tab" onclick="setFilter('marketing')" id="tab-marketing" style="border: 1px solid rgba(196, 255, 0, 0.3); color: #c4ff00;">📊 Marketing</button>
         </div>
 
         <div id="proof-list">
@@ -560,6 +722,18 @@
                 <div class="icon">⏳</div>
                 <div>Adatok betöltése...</div>
             </div>
+        </div>
+
+        <!-- MARKETING DASHBOARD -->
+        <div id="section-marketing">
+            <div class="mkt-tabs">
+                <button class="mkt-tab active" onclick="setMktRange('1d')" id="mkt-tab-1d">📅 Ma / Tegnap</button>
+                <button class="mkt-tab" onclick="setMktRange('3d')" id="mkt-tab-3d">📈 3 nap</button>
+                <button class="mkt-tab" onclick="setMktRange('7d')" id="mkt-tab-7d">🗓️ 7 nap</button>
+                <button class="mkt-tab" onclick="setMktRange('all')" id="mkt-tab-all">♾️ Összesített</button>
+            </div>
+            <div id="mkt-last-updated" class="mkt-last-updated"></div>
+            <div id="mkt-cards"><div id="mkt-loading">⏳ Adatok betöltése...</div></div>
         </div>
     </div>
 </div>
@@ -722,8 +896,310 @@
         allRuns = data || [];
         updateStats();
         renderList();
+        loadMarketing();
     }
 
+    // ─── Marketing Dashboard ──────────────────────────────────
+    let mktRange = '1d';
+    let mktMetrics = [];
+    let mktTargets = [];
+
+    async function loadMarketing() {
+        const cardsEl = document.getElementById('mkt-cards');
+        cardsEl.innerHTML = '<div id="mkt-loading">⏳ Marketing adatok betöltése...</div>';
+
+        // Fetch targets
+        const { data: targets } = await supabaseClient.from('marketing_targets').select('*');
+        mktTargets = targets || [];
+
+        // Fetch all meta_daily_metrics ordered newest first
+        const { data: metrics, error } = await supabaseClient
+            .from('meta_daily_metrics')
+            .select('*')
+            .order('date', { ascending: false })
+            .limit(200);
+
+        if (error) {
+            cardsEl.innerHTML = `<div class="mkt-no-data">❌ Hiba: ${error.message}</div>`;
+            return;
+        }
+
+        mktMetrics = metrics || [];
+
+        const lastUpdated = mktMetrics[0]?.created_at
+            ? new Date(mktMetrics[0].created_at).toLocaleString('hu-HU')
+            : 'ismeretlen';
+        document.getElementById('mkt-last-updated').textContent = `Utolsó frissítés: ${lastUpdated}`;
+
+        renderMktCards();
+    }
+
+    function setMktRange(range) {
+        mktRange = range;
+        document.querySelectorAll('.mkt-tab').forEach(t => t.classList.remove('active'));
+        document.getElementById(`mkt-tab-${range}`).classList.add('active');
+        renderMktCards();
+    }
+
+    function getDateRange() {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        if (mktRange === '1d') {
+            const yesterday = new Date(today); yesterday.setDate(today.getDate() - 1);
+            return { from: yesterday, label: 'Tegnap' };
+        } else if (mktRange === '3d') {
+            const d = new Date(today); d.setDate(today.getDate() - 3);
+            return { from: d, label: 'Elmúlt 3 nap' };
+        } else if (mktRange === '7d') {
+            const d = new Date(today); d.setDate(today.getDate() - 7);
+            return { from: d, label: 'Elmúlt 7 nap' };
+        }
+        return { from: null, label: 'Összesített' };
+    }
+
+    function aggregateMetrics(rows) {
+        const byName = {};
+        for (const r of rows) {
+            const k = r.campaign_name || r.campaign_id;
+            if (!byName[k]) byName[k] = {
+                campaign_id: r.campaign_id, campaign_name: r.campaign_name,
+                spend: 0, impressions: 0, reach: 0, clicks: 0, link_clicks: 0,
+                purchases: 0, revenue: 0, ctr_sum: 0, cpm_sum: 0, cpc_sum: 0, count: 0
+            };
+            const a = byName[k];
+            a.spend       += Number(r.spend       || 0);
+            a.impressions += Number(r.impressions || 0);
+            a.reach       += Number(r.reach       || 0);
+            a.clicks      += Number(r.clicks      || 0);
+            a.link_clicks += Number(r.link_clicks || 0);
+            a.purchases   += Number(r.purchases   || 0);
+            a.revenue     += Number(r.revenue     || 0);
+            a.ctr_sum     += Number(r.ctr         || 0);
+            a.cpm_sum     += Number(r.cpm         || 0);
+            a.cpc_sum     += Number(r.cpc         || 0);
+            a.count++;
+        }
+        return Object.values(byName).map(a => ({
+            ...a,
+            ctr:  a.count > 0 ? a.ctr_sum / a.count : 0,
+            cpm:  a.count > 0 ? a.cpm_sum / a.count : 0,
+            cpc:  a.count > 0 ? a.cpc_sum / a.count : 0,
+            cpa:  a.purchases > 0 ? a.spend / a.purchases : 0,
+            roas: a.spend > 0 ? a.revenue / a.spend : 0,
+        }));
+    }
+
+    function getTarget(campaignName) {
+        return mktTargets.find(t =>
+            t.campaign_name?.toLowerCase().trim() === campaignName?.toLowerCase().trim()
+        ) || {};
+    }
+
+    function statusBadge(cpa, roas, target) {
+        if (!target || !target.target_cpa) return { label: '⬜ Nincs cél', cls: 'badge-neu', card: '' };
+        const isCrit = (target.critical_cpa && cpa >= target.critical_cpa)
+                    || (target.critical_roas && roas <= target.critical_roas && roas > 0);
+        const isGood = (target.target_cpa  && cpa < target.target_cpa)
+                    && (target.target_roas  && roas >= target.target_roas);
+        const isWarn = (target.warning_cpa && cpa >= target.warning_cpa)
+                    || (target.warning_roas && roas <= target.warning_roas && roas > 0);
+        if (isCrit) return { label: '🔴 Kritikus', cls: 'badge-crit', card: 'status-crit' };
+        if (isGood) return { label: '🟢 Jó',       cls: 'badge-good', card: 'status-good' };
+        if (isWarn) return { label: '🟡 Figyelem',  cls: 'badge-warn', card: 'status-warn' };
+        return { label: '⚪ Semleges', cls: 'badge-neu', card: '' };
+    }
+
+    function barColor(val, good, warn) {
+        // For CPA: lower is better
+        if (val <= good) return 'green';
+        if (val <= warn) return 'yellow';
+        return 'red';
+    }
+
+    function barPct(val, max) {
+        return Math.min(100, max > 0 ? (val / max) * 100 : 0).toFixed(1);
+    }
+
+    function fmt(n, unit = 'Ft') {
+        if (!n && n !== 0) return '–';
+        return Number(n).toLocaleString('hu-HU', { maximumFractionDigits: 0 }) + ' ' + unit;
+    }
+
+    function renderMktCards() {
+        const STRIPE_PCT   = 0.015;
+        const STRIPE_FIXED = 50;
+
+        const cardsEl = document.getElementById('mkt-cards');
+        const { from, label } = getDateRange();
+
+        let filtered = mktMetrics;
+        if (from) {
+            filtered = mktMetrics.filter(r => new Date(r.date) >= from);
+        }
+
+        if (!filtered.length) {
+            cardsEl.innerHTML = `<div class="mkt-no-data">📭 Nincs adat a(z) <strong>${label}</strong> időszakra.<br><span style="font-size:0.8rem">A script első futtatása után jelenik meg itt az adat.</span></div>`;
+            return;
+        }
+
+        const campaigns = aggregateMetrics(filtered);
+        let html = `<div style="color: var(--text-mid); font-size: 0.8rem; margin-bottom: 1rem;">${label} összesítve:</div>`;
+
+        for (const c of campaigns) {
+            const target = getTarget(c.campaign_name);
+            const { label: statusLabel, cls: statusCls, card: cardCls } = statusBadge(c.cpa, c.roas, target);
+
+            const cpaColor = c.cpa && target.target_cpa
+                ? barColor(c.cpa, target.target_cpa, target.warning_cpa)
+                : 'green';
+            const roasColor = c.roas && target.warning_roas
+                ? (c.roas >= (target.target_roas || 3) ? 'green' : c.roas >= (target.warning_roas || 2) ? 'yellow' : 'red')
+                : 'green';
+
+            // Financial calculations (on-the-fly from stored metrics + targets)
+            const revenue   = c.revenue;
+            const purchases = c.purchases;
+            const spend     = c.spend;
+
+            const medalUnitCost    = Number(target.medal_cost    || 2200);
+            const shippingUnitCost = Number(target.shipping_cost || 1290);
+
+            const stripeFees    = Math.round(revenue * STRIPE_PCT + STRIPE_FIXED * purchases);
+            const medalCosts    = Math.round(purchases * medalUnitCost);
+            const shippingCosts = Math.round(purchases * shippingUnitCost);
+
+            const grossProfit = Math.round(revenue - stripeFees - medalCosts - shippingCosts - spend);
+            const marginPct   = revenue > 0 ? (grossProfit / revenue * 100).toFixed(1) : 0;
+
+            const stripeNet   = revenue - stripeFees;
+            const netCashflow = Math.round(stripeNet - spend - medalCosts - shippingCosts);
+
+            const profitCls  = grossProfit >= 0 ? 'fin-profit-pos' : 'fin-profit-neg';
+            const cfCls      = netCashflow >= 0 ? 'fin-profit-pos' : 'fin-profit-neg';
+            const profitSign = grossProfit >= 0 ? '+' : '';
+            const cfSign     = netCashflow >= 0 ? '+' : '';
+
+            html += `
+            <div class="kpi-card ${cardCls}">
+                <div class="kpi-card-header">
+                    <div class="kpi-card-title">🏔️ ${c.campaign_name || c.campaign_id}</div>
+                    <span class="kpi-status-badge ${statusCls}">${statusLabel}</span>
+                </div>
+
+                <!-- KPI grid -->
+                <div class="kpi-grid">
+                    <div class="kpi-item">
+                        <div class="kpi-label">Költés</div>
+                        <div class="kpi-value">${fmt(spend)}</div>
+                    </div>
+                    <div class="kpi-item">
+                        <div class="kpi-label">Vásárlások</div>
+                        <div class="kpi-value">${purchases} db</div>
+                        <div class="kpi-sub">${fmt(revenue)} bevétel</div>
+                    </div>
+                    <div class="kpi-item">
+                        <div class="kpi-label">CPA</div>
+                        <div class="kpi-value" style="color: ${cpaColor === 'green' ? '#22c55e' : cpaColor === 'yellow' ? '#f59e0b' : '#ef4444'}">${c.cpa ? fmt(c.cpa) : '–'}</div>
+                        <div class="kpi-sub">cél: ${fmt(target.target_cpa || 0)}</div>
+                    </div>
+                    <div class="kpi-item">
+                        <div class="kpi-label">ROAS</div>
+                        <div class="kpi-value" style="color: ${roasColor === 'green' ? '#22c55e' : roasColor === 'yellow' ? '#f59e0b' : '#ef4444'}">${c.roas ? c.roas.toFixed(2) + 'x' : '–'}</div>
+                        <div class="kpi-sub">cél: ${(target.target_roas || 0).toFixed(1)}x</div>
+                    </div>
+                </div>
+
+                <!-- Engagement bars -->
+                <div class="kpi-bar-row">
+                    <div class="kpi-bar-item">
+                        <span style="min-width:40px">CPM</span>
+                        <div class="kpi-bar-track"><div class="kpi-bar-fill green" style="width:${barPct(c.cpm, 5000)}%"></div></div>
+                        <span class="kpi-bar-val">${fmt(c.cpm)}</span>
+                    </div>
+                    <div class="kpi-bar-item">
+                        <span style="min-width:40px">CTR</span>
+                        <div class="kpi-bar-track"><div class="kpi-bar-fill green" style="width:${barPct(c.ctr, 5)}%"></div></div>
+                        <span class="kpi-bar-val">${c.ctr.toFixed(2)}%</span>
+                    </div>
+                    <div class="kpi-bar-item">
+                        <span style="min-width:40px">Reach</span>
+                        <div class="kpi-bar-track"><div class="kpi-bar-fill green" style="width:60%"></div></div>
+                        <span class="kpi-bar-val">${Number(c.reach).toLocaleString('hu-HU')}</span>
+                    </div>
+                    <div class="kpi-bar-item">
+                        <span style="min-width:40px">Katt</span>
+                        <div class="kpi-bar-track"><div class="kpi-bar-fill green" style="width:${barPct(c.link_clicks, Math.max(c.clicks, 1))}%"></div></div>
+                        <span class="kpi-bar-val">${c.link_clicks} link</span>
+                    </div>
+                </div>
+
+                <!-- P&L + Cashflow -->
+                <div class="fin-section">
+                    <div class="fin-two-col">
+
+                        <!-- Eredménykimutatás -->
+                        <div>
+                            <div class="fin-title">📊 Eredménykimutatás</div>
+                            <div class="fin-row">
+                                <span>(+) Br. bevétel</span>
+                                <span class="fin-plus">+${fmt(revenue)}</span>
+                            </div>
+                            <div class="fin-row">
+                                <span>(-) Stripe díj</span>
+                                <span class="fin-minus">−${fmt(stripeFees)}</span>
+                            </div>
+                            <div class="fin-row">
+                                <span>(-) Éremköltség</span>
+                                <span class="fin-minus">−${fmt(medalCosts)}</span>
+                            </div>
+                            <div class="fin-row">
+                                <span>(-) Szállítás (est.)</span>
+                                <span class="fin-minus">−${fmt(shippingCosts)}</span>
+                            </div>
+                            <div class="fin-row">
+                                <span>(-) Marketing</span>
+                                <span class="fin-minus">−${fmt(spend)}</span>
+                            </div>
+                            <div class="fin-row total">
+                                <span>Nettó Profit</span>
+                                <span class="${profitCls}">${profitSign}${fmt(grossProfit)}<small style="font-size:0.7rem;opacity:0.7"> (${marginPct}%)</small></span>
+                            </div>
+                        </div>
+
+                        <!-- Cashflow -->
+                        <div>
+                            <div class="fin-title">💵 Cashflow</div>
+                            <div class="fin-row">
+                                <span>(+) Stripe nettó</span>
+                                <span class="fin-plus">+${fmt(stripeNet)}</span>
+                            </div>
+                            <div class="fin-row">
+                                <span>(-) Meta kifiz.</span>
+                                <span class="fin-minus">−${fmt(spend)}</span>
+                            </div>
+                            <div class="fin-row">
+                                <span>(-) Éremgyártás</span>
+                                <span class="fin-minus">−${fmt(medalCosts)}</span>
+                            </div>
+                            <div class="fin-row">
+                                <span>(-) Foxpost</span>
+                                <span class="fin-minus">−${fmt(shippingCosts)}</span>
+                            </div>
+                            <div class="fin-row" style="visibility:hidden"><span>-</span><span>-</span></div>
+                            <div class="fin-row total">
+                                <span>Net Cashflow</span>
+                                <span class="${cfCls}">${cfSign}${fmt(netCashflow)}</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>`;
+        }
+
+        cardsEl.innerHTML = html;
+    }
     function updateStats() {
         const pending = allRuns.filter(r => r.proof_submitted && !r.completed).length;
         const approved = allRuns.filter(r => r.completed).length;
@@ -740,7 +1216,12 @@
         currentFilter = filter;
         document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
         document.getElementById(`tab-${filter}`).classList.add('active');
-        renderList();
+
+        const isMkt = filter === 'marketing';
+        document.getElementById('proof-list').style.display   = isMkt ? 'none' : '';
+        document.getElementById('section-marketing').style.display = isMkt ? 'block' : 'none';
+
+        if (!isMkt) renderList();
     }
 
     function renderList() {
