@@ -689,11 +689,58 @@ elif page == '📋 Tranzakciók (CRUD)':
 
     df_tx_view = pd.DataFrame(rows)
 
-    # Action bar
+    # Action bar & Add form at the top
     btn_add, btn_info = st.columns([2.5, 7.5])
     if btn_add.button('➕ Új Tranzakció Rögzítése', type='primary', use_container_width=True):
-        st.session_state['show_add_form'] = True
+        st.session_state['show_add_form'] = not st.session_state.get('show_add_form', False)
         st.session_state['edit_tx_id'] = None
+
+    # Add form (top position)
+    if st.session_state.get('show_add_form'):
+        st.markdown('<div class="section-title">➕ Új Tranzakció Rögzítése</div>', unsafe_allow_html=True)
+        res = tx_form(user_id, acc_map, acc_docs, cat_map, cat_docs, poc_map, poc_docs, key_prefix='new')
+        if res:
+            res['createdAt'] = datetime.now()
+            db.transactions.insert_one(res)
+            st.session_state['show_add_form'] = False
+            load_data.clear()
+            st.success('Új tranzakció sikeresen rögzítve!')
+            st.rerun()
+        if st.button('❌ Mégse', key='cancel_add'):
+            st.session_state['show_add_form'] = False
+            st.rerun()
+
+    # Edit form (top position)
+    if st.session_state.get('edit_tx_id'):
+        edit_id = st.session_state['edit_tx_id']
+        existing_tx = db.transactions.find_one({'_id': ObjectId(edit_id)})
+        if existing_tx:
+            st.markdown('<div class="section-title">✏️ Tranzakció szerkesztése</div>', unsafe_allow_html=True)
+            res = tx_form(user_id, acc_map, acc_docs, cat_map, cat_docs, poc_map, poc_docs, existing=existing_tx, key_prefix=f'edit_{edit_id}')
+            if res:
+                db.transactions.update_one({'_id': ObjectId(edit_id)}, {'$set': res})
+                st.session_state['edit_tx_id'] = None
+                load_data.clear()
+                st.success('Tranzakció frissítve!')
+                st.rerun()
+            if st.button('❌ Mégse', key='cancel_edit'):
+                st.session_state['edit_tx_id'] = None
+                st.rerun()
+
+    # Delete confirmation
+    if st.session_state.get('confirm_delete_id'):
+        del_id = st.session_state['confirm_delete_id']
+        st.warning(f'⚠️ Biztosan törlöd ezt a tranzakciót?')
+        cc1, cc2 = st.columns(2)
+        if cc1.button('✅ Igen, törlöm', type='primary'):
+            db.transactions.delete_one({'_id': ObjectId(del_id)})
+            st.session_state['confirm_delete_id'] = None
+            load_data.clear()
+            st.success('Tranzakció törölve!')
+            st.rerun()
+        if cc2.button('❌ Mégsem'):
+            st.session_state['confirm_delete_id'] = None
+            st.rerun()
 
     if df_tx_view.empty:
         st.info('Nincs találat a beállított szűrőkre.')
@@ -725,53 +772,6 @@ elif page == '📋 Tranzakciók (CRUD)':
 
             if c_del.button('🗑️', key=f'del_{row["_id"]}', help='Törlés'):
                 st.session_state['confirm_delete_id'] = row['_id']
-
-    # Delete confirmation
-    if st.session_state.get('confirm_delete_id'):
-        del_id = st.session_state['confirm_delete_id']
-        st.warning(f'⚠️ Biztosan törlöd ezt a tranzakciót?')
-        cc1, cc2 = st.columns(2)
-        if cc1.button('✅ Igen, törlöm', type='primary'):
-            db.transactions.delete_one({'_id': ObjectId(del_id)})
-            st.session_state['confirm_delete_id'] = None
-            load_data.clear()
-            st.success('Tranzakció törölve!')
-            st.rerun()
-        if cc2.button('❌ Mégsem'):
-            st.session_state['confirm_delete_id'] = None
-            st.rerun()
-
-    # Edit form
-    if st.session_state.get('edit_tx_id'):
-        edit_id = st.session_state['edit_tx_id']
-        existing_tx = db.transactions.find_one({'_id': ObjectId(edit_id)})
-        if existing_tx:
-            st.markdown('<div class="section-title">✏️ Tranzakció szerkesztése</div>', unsafe_allow_html=True)
-            res = tx_form(user_id, acc_map, acc_docs, cat_map, cat_docs, poc_map, poc_docs, existing=existing_tx, key_prefix=f'edit_{edit_id}')
-            if res:
-                db.transactions.update_one({'_id': ObjectId(edit_id)}, {'$set': res})
-                st.session_state['edit_tx_id'] = None
-                load_data.clear()
-                st.success('Tranzakció frissítve!')
-                st.rerun()
-            if st.button('Mégse'):
-                st.session_state['edit_tx_id'] = None
-                st.rerun()
-
-    # Add form
-    if st.session_state.get('show_add_form'):
-        st.markdown('<div class="section-title">➕ Új Tranzakció Rögzítése</div>', unsafe_allow_html=True)
-        res = tx_form(user_id, acc_map, acc_docs, cat_map, cat_docs, poc_map, poc_docs, key_prefix='new')
-        if res:
-            res['createdAt'] = datetime.now()
-            db.transactions.insert_one(res)
-            st.session_state['show_add_form'] = False
-            load_data.clear()
-            st.success('Új tranzakció sikeresen rögzítve!')
-            st.rerun()
-        if st.button('Mégse', key='cancel_add'):
-            st.session_state['show_add_form'] = False
-            st.rerun()
 
 # ═════════════════════════════════════════════════════════════════════════════
 # 13. BEÁLLÍTÁSOK

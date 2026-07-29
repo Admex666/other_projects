@@ -2308,3 +2308,761 @@ A **`📋 Tranzakciók (CRUD)`** menüpont alatt újra elérhető a teljes tranz
 - **Szűrők:** Szöveges kereső, típus, számla, kategória és átcsoportosítások elrejtése opció.
 
 Frissíts rá az appra a böngésződben, és már tesztelheted is!
+
+### User Input
+
+a secrets-hez nem kéne egy gitignore?
+
+*Viewed [secrets.toml](file:///e:/Data/other_projects/FinApp/python_os/.streamlit/secrets.toml) *
+
+*Viewed [.gitignore](file:///e:/Data/other_projects/FinApp/.gitignore) *
+
+*Edited relevant file*
+
+### Planner Response
+
+De még mennyire! Nagyon jó észrevétel! 🎯
+
+A `.streamlit/secrets.toml` fájl érzékeny adatokat és jelszavakat tartalmaz, így **szigorúan tilos feltölteni a Git repóba** (GitHubra).
+
+### Mit csináltam?
+Hozzáadtam a projekt `.gitignore` fájljához a következő sorokat:
+
+```gitignore
+# streamlit secrets
+.streamlit/secrets.toml
+secrets.toml
+```
+
+Így amikor beküldöd a kódot a GitHubra (`git push`), a Git automatikusan kihagyja a helyi `secrets.toml` fájlt, és a Streamlit Cloud-on a Secrets felületen megadott jelszó lesz az egyedüli érvényes!
+
+### User Input
+
+már felraktam. Azt nem tudjuk visszavonni, módosítani?
+
+### Planner Response
+
+De, teljesen visszavonható és javítható! 
+
+Íme a **2 lépéses azonnali megoldás**:
+
+---
+
+### 1. Törlés a Gitből (hogy a jövőben ne legyen fent GitHubon)
+
+Futtasd le ezt a pár parancsot a terminálban (ez törli a fájlt a GitHubról, de a gépeden megmarad):
+
+```bash
+git rm --cached python_os/.streamlit/secrets.toml
+git commit -m "Remove secrets.toml from git tracking"
+git push
+```
+
+Ezután a GitHubon a legfrissebb állapotban már **nem fog szerepelni** a fájl!
+
+---
+
+### 2. A Cloud-os jelszó megváltoztatása (Biztonsági lépés)
+
+Mivel a commit előzményekben (Git history) elméletileg visszakereshető a régi tesztjelszó, a legbiztonságosabb és legegyszerűbb szabály:
+
+- **Helyileg (a gépeden):** Maradhat a `secrets.toml`-ban pl. a teszt jelszó.
+- **A Streamlit Cloud felületén (élesben):** Állíts be egy **másik, erős jelszót** a *Settings ➔ Secrets* menüpont alatt (pl. `APP_PASSWORD = "MasikTetszolegesJelszo123!"`).
+
+Így ha valaki meg is nézi a GitHub előzményeket, az ottani jelszóval **nem fog tudni belépni** az éles Streamlit Cloud alkalmazásodba!
+
+### User Input
+
+ezt írja a cloudban: ────────────────────────────────────────────────────────────────────────────────
+
+ServerSelectionTimeoutError: localhost:27017: [Errno 111] Connection refused 
+
+(configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms), 
+
+Timeout: 30s, Topology Description: <TopologyDescription id: 
+
+6a69f2e9cbfa74b2d762cc61, topology_type: Unknown, servers: [<ServerDescription 
+
+('localhost', 27017) server_type: Unknown, rtt: None, 
+
+error=AutoReconnect('localhost:27017: [Errno 111] Connection refused (configured
+
+timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>
+
+────────────────────── Traceback (most recent call last) ───────────────────────
+
+  /home/adminuser/venv/lib/python3.14/site-packages/streamlit/runtime/scriptru  
+
+  nner/exec_code.py:129 in exec_func_with_error_handling                        
+
+                                                                                
+
+  /home/adminuser/venv/lib/python3.14/site-packages/streamlit/runtime/scriptru  
+
+  nner/script_runner.py:807 in code_to_exec                                     
+
+                                                                                
+
+  /mount/src/other_projects/FinApp/python_os/finspace_app.py:278 in <module>    
+
+                                                                                
+
+    275 │   return None                                                         
+
+    276                                                                         
+
+    277 # ─── Initialize User & Data ─────────────────────────────────────────  
+
+  ❱ 278 user = get_user()                                                       
+
+    279 if not user:                                                            
+
+    280 │   st.error('Adam felhasználó nem található a MongoDB-ben!')           
+
+    281 │   st.stop()                                                           
+
+                                                                                
+
+  /mount/src/other_projects/FinApp/python_os/finspace_app.py:134 in get_user    
+
+                                                                                
+
+    131 │   except: return client.get_database('test')                          
+
+    132                                                                         
+
+    133 def get_user():                                                         
+
+  ❱ 134 │   return get_db().users.find_one({'username': 'adam'})                
+
+    135                                                                         
+
+    136 @st.cache_data(ttl=30)                                                  
+
+    137 def load_data(user_id_str):                                             
+
+                                                                                
+
+  /home/adminuser/venv/lib/python3.14/site-packages/pymongo/synchronous/collec  
+
+  tion.py:1754 in find_one                                                      
+
+                                                                                
+
+    1751 │   │   if filter is not None and not isinstance(filter, abc.Mapping)  
+
+    1752 │   │   │   filter = {"_id": filter}                                   
+
+    1753 │   │   cursor = self.find(filter, *args, **kwargs)                    
+
+  ❱ 1754 │   │   for result in cursor.limit(-1):                                
+
+    1755 │   │   │   return result                                              
+
+    1756 │   │   return None                                                    
+
+    1757                                                                        
+
+                                                                                
+
+  /home/adminuser/venv/lib/python3.14/site-packages/pymongo/synchronous/cursor  
+
+  .py:1166 in __next__                                                          
+
+                                                                                
+
+    1163 │   │   │   return False                                               
+
+    1164 │                                                                      
+
+    1165 │   def __next__(self) -> _DocumentType:                               
+
+  ❱ 1166 │   │   return self.next()                                             
+
+    1167 │                                                                      
+
+    1168 │   def __iter__(self) -> Cursor[_DocumentType]:                       
+
+    1169 │   │   return self                                                    
+
+                                                                                
+
+  /home/adminuser/venv/lib/python3.14/site-packages/pymongo/synchronous/cursor  
+
+  .py:1142 in next                                                              
+
+                                                                                
+
+    1139 │   │   │   self._supports_exhaust()                                   
+
+    1140 │   │   if self._empty:                                                
+
+    1141 │   │   │   raise StopIteration                                        
+
+  ❱ 1142 │   │   if len(self._data) or self._refresh():                         
+
+    1143 │   │   │   return self._data.popleft()                                
+
+    1144 │   │   else:                                                          
+
+    1145 │   │   │   raise StopIteration                                        
+
+                                                                                
+
+  /home/adminuser/venv/lib/python3.14/site-packages/pymongo/synchronous/cursor  
+
+  .py:1090 in _refresh                                                          
+
+                                                                                
+
+    1087 │   │   │   │   self._allow_disk_use,                                  
+
+    1088 │   │   │   │   self._exhaust,                                         
+
+    1089 │   │   │   )                                                          
+
+  ❱ 1090 │   │   │   self._send_message(q)                                      
+
+    1091 │   │   elif self._id:  # Get More                                     
+
+    1092 │   │   │   if self._limit:                                            
+
+    1093 │   │   │   │   limit = self._limit - self._retrieved                  
+
+                                                                                
+
+  /home/adminuser/venv/lib/python3.14/site-packages/pymongo/synchronous/cursor  
+
+  .py:985 in _send_message                                                      
+
+                                                                                
+
+     982 │   │   │   raise InvalidOperation("exhaust cursors do not support au  
+
+     983 │   │                                                                  
+
+     984 │   │   try:                                                           
+
+  ❱  985 │   │   │   response = client._run_operation(                          
+
+     986 │   │   │   │   operation, self._unpack_response, address=self._addre  
+
+     987 │   │   │   )                                                          
+
+     988 │   │   except OperationFailure as exc:                                
+
+                                                                                
+
+  /home/adminuser/venv/lib/python3.14/site-packages/pymongo/_csot.py:125 in     
+
+  csot_wrapper                                                                  
+
+                                                                                
+
+    122 │   │   │   │   if timeout is not None:                                 
+
+    123 │   │   │   │   │   with _TimeoutContext(timeout):                      
+
+    124 │   │   │   │   │   │   return func(self, *args, **kwargs)              
+
+  ❱ 125 │   │   │   return func(self, *args, **kwargs)                          
+
+    126 │                                                                       
+
+    127 │   return cast(F, csot_wrapper)                                        
+
+    128                                                                         
+
+                                                                                
+
+  /home/adminuser/venv/lib/python3.14/site-packages/pymongo/synchronous/mongo_  
+
+  client.py:1956 in _run_operation                                              
+
+                                                                                
+
+    1953 │   │   │   │   self,                                                  
+
+    1954 │   │   │   )                                                          
+
+    1955 │   │                                                                  
+
+  ❱ 1956 │   │   return self._retryable_read(                                   
+
+    1957 │   │   │   _cmd,                                                      
+
+    1958 │   │   │   operation.read_preference,                                 
+
+    1959 │   │   │   operation.session,  # type: ignore[arg-type]               
+
+                                                                                
+
+  /home/adminuser/venv/lib/python3.14/site-packages/pymongo/synchronous/mongo_  
+
+  client.py:2076 in _retryable_read                                             
+
+                                                                                
+
+    2073 │   │   │   retryable and self.options.retry_reads and not (session a  
+
+    2074 │   │   )                                                              
+
+    2075 │   │   with self._tmp_session(session) as s:                          
+
+  ❱ 2076 │   │   │   return self._retry_internal(                               
+
+    2077 │   │   │   │   func,                                                  
+
+    2078 │   │   │   │   s,                                                     
+
+    2079 │   │   │   │   None,                                                  
+
+                                                                                
+
+  /home/adminuser/venv/lib/python3.14/site-packages/pymongo/_csot.py:125 in     
+
+  csot_wrapper                                                                  
+
+                                                                                
+
+    122 │   │   │   │   if timeout is not None:                                 
+
+    123 │   │   │   │   │   with _TimeoutContext(timeout):                      
+
+    124 │   │   │   │   │   │   return func(self, *args, **kwargs)              
+
+  ❱ 125 │   │   │   return func(self, *args, **kwargs)                          
+
+    126 │                                                                       
+
+    127 │   return cast(F, csot_wrapper)                                        
+
+    128                                                                         
+
+                                                                                
+
+  /home/adminuser/venv/lib/python3.14/site-packages/pymongo/synchronous/mongo_  
+
+  client.py:2038 in _retry_internal                                             
+
+                                                                                
+
+    2035 │   │   │   operation_id=operation_id,                                 
+
+    2036 │   │   │   is_run_command=is_run_command,                             
+
+    2037 │   │   │   is_aggregate_write=is_aggregate_write,                     
+
+  ❱ 2038 │   │   ).run()                                                        
+
+    2039 │                                                                      
+
+    2040 │   def _retryable_read(                                               
+
+    2041 │   │   self,                                                          
+
+                                                                                
+
+  /home/adminuser/venv/lib/python3.14/site-packages/pymongo/synchronous/mongo_  
+
+  client.py:2811 in run                                                         
+
+                                                                                
+
+    2808 │   │   while True:                                                    
+
+    2809 │   │   │   self._check_last_error(check_csot=True)                    
+
+    2810 │   │   │   try:                                                       
+
+  ❱ 2811 │   │   │   │   res = self._read() if self._is_read else self._write(  
+
+    2812 │   │   │   │   # Track whether the transaction has completed a comma  
+
+    2813 │   │   │   │   # If we need to apply backpressure to the first comma  
+
+    2814 │   │   │   │   # we will need to revert back to starting state.       
+
+                                                                                
+
+  /home/adminuser/venv/lib/python3.14/site-packages/pymongo/synchronous/mongo_  
+
+  client.py:3027 in _read                                                       
+
+                                                                                
+
+    3024 │   │                                                                  
+
+    3025 │   │   :return: Output for func()'s call                              
+
+    3026 │   │   """                                                            
+
+  ❱ 3027 │   │   self._server = self._get_server()                              
+
+    3028 │   │   assert self._read_pref is not None, "Read Preference required  
+
+    3029 │   │   with self._client._conn_from_server(self._read_pref, self._se  
+
+    3030 │   │   │   conn,                                                      
+
+                                                                                
+
+  /home/adminuser/venv/lib/python3.14/site-packages/pymongo/synchronous/mongo_  
+
+  client.py:2975 in _get_server                                                 
+
+                                                                                
+
+    2972 │   │                                                                  
+
+    2973 │   │   :return: Abstraction to connect to server                      
+
+    2974 │   │   """                                                            
+
+  ❱ 2975 │   │   return self._client._select_server(                            
+
+    2976 │   │   │   self._server_selector,                                     
+
+    2977 │   │   │   self._session,                                             
+
+    2978 │   │   │   self._operation,                                           
+
+                                                                                
+
+  /home/adminuser/venv/lib/python3.14/site-packages/pymongo/synchronous/mongo_  
+
+  client.py:1851 in _select_server                                              
+
+                                                                                
+
+    1848 │   │   │   │   if not server:                                         
+
+    1849 │   │   │   │   │   raise AutoReconnect("server %s:%s no longer avail  
+
+    1850 │   │   │   else:                                                      
+
+  ❱ 1851 │   │   │   │   server = topology.select_server(                       
+
+    1852 │   │   │   │   │   server_selector,                                   
+
+    1853 │   │   │   │   │   operation,                                         
+
+    1854 │   │   │   │   │   deprioritized_servers=deprioritized_servers,       
+
+                                                                                
+
+  /home/adminuser/venv/lib/python3.14/site-packages/pymongo/synchronous/topolo  
+
+  gy.py:428 in select_server                                                    
+
+                                                                                
+
+     425 │   │   operation_id: Optional[int] = None,                            
+
+     426 │   ) -> Server:                                                       
+
+     427 │   │   """Like select_servers, but choose a random server if several  
+
+  ❱  428 │   │   server = self._select_server(                                  
+
+     429 │   │   │   selector,                                                  
+
+     430 │   │   │   operation,                                                 
+
+     431 │   │   │   server_selection_timeout,                                  
+
+                                                                                
+
+  /home/adminuser/venv/lib/python3.14/site-packages/pymongo/synchronous/topolo  
+
+  gy.py:402 in _select_server                                                   
+
+                                                                                
+
+     399 │   │   deprioritized_servers: Optional[list[Server]] = None,          
+
+     400 │   │   operation_id: Optional[int] = None,                            
+
+     401 │   ) -> Server:                                                       
+
+  ❱  402 │   │   servers = self.select_servers(                                 
+
+     403 │   │   │   selector,                                                  
+
+     404 │   │   │   operation,                                                 
+
+     405 │   │   │   server_selection_timeout,                                  
+
+                                                                                
+
+  /home/adminuser/venv/lib/python3.14/site-packages/pymongo/synchronous/topolo  
+
+  gy.py:298 in select_servers                                                   
+
+                                                                                
+
+     295 │   │   │   self.cleanup_monitors()                                    
+
+     296 │   │                                                                  
+
+     297 │   │   with self._lock:                                               
+
+  ❱  298 │   │   │   server_descriptions = self._select_servers_loop(           
+
+     299 │   │   │   │   selector,                                              
+
+     300 │   │   │   │   server_timeout,                                        
+
+     301 │   │   │   │   operation,                                             
+
+                                                                                
+
+  /home/adminuser/venv/lib/python3.14/site-packages/pymongo/synchronous/topolo  
+
+  gy.py:359 in _select_servers_loop                                             
+
+                                                                                
+
+     356 │   │   │   │   │   │   clientId=self.description._topology_settings.  
+
+     357 │   │   │   │   │   │   failure=self._error_message(selector),         
+
+     358 │   │   │   │   │   )                                                  
+
+  ❱  359 │   │   │   │   raise ServerSelectionTimeoutError(                     
+
+     360 │   │   │   │   │   f"{self._error_message(selector)}, Timeout: {time  
+
+     361 │   │   │   │   )                                                      
+
+     362                                                                        
+
+────────────────────────────────────────────────────────────────────────────────
+
+ServerSelectionTimeoutError: localhost:27017: [Errno 111] Connection refused 
+
+(configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms), 
+
+Timeout: 30s, Topology Description: <TopologyDescription id: 
+
+6a69f2e9cbfa74b2d762cc61, topology_type: Unknown, servers: [<ServerDescription 
+
+('localhost', 27017) server_type: Unknown, rtt: None, 
+
+error=AutoReconnect('localhost:27017: [Errno 111] Connection refused (configured
+
+timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>
+
+*User accepted the command `git rm --cached python_os/.streamlit/secrets.toml
+git commit -m "Remove secrets.toml from git tracking"
+git push
+`*
+
+*Viewed [secrets.toml](file:///e:/Data/other_projects/FinApp/python_os/.streamlit/secrets.toml) *
+
+*Edited relevant file*
+
+### Planner Response
+
+Megvan a hiba oka, és már ki is javítottam a kódban! 🎯
+
+### Miért történt ez a hiba?
+
+A felhőben (Streamlit Cloud) a Python nem éri el a gépeden lévő `.env.local` fájlt (mivel azt sem töltjük fel Gitre). Így az adatbázis elérés hiányában a PyMongo megpróbált a felhős szerver saját `localhost:27017` portjához csatlakozni, ahol természetesen nem fut MongoDB (ezért jött a `Connection refused` hiba).
+
+---
+
+### Mit csináltam a kódban?
+
+Kijavítottam a `finspace_app.py`-ban az adatbázis csatlakozási logikát: felkészítettem arra, hogy a Streamlit Cloud **Secrets** beállításaiból olvassa ki a `MONGODB_URI` címet!
+
+---
+
+### Mit kell tenned a Streamlit Cloud-on?
+
+1. Nyisd meg az alkalmazásodat a Streamlit Cloud-on.
+2. Kattints a jobb alsó/felső sarokban lévő **Settings (Beállítások / 3 pötty)** gombra ➔ **Secrets**.
+3. Másold be az alábbi 2 sort (a `MONGODB_URI` értékét a helyi `.env.local` fájlodból másold át):
+
+```toml
+APP_PASSWORD = "Eztt0rdfel"
+MONGODB_URI = "mongodb+srv://..."
+```
+
+4. Nyomj a **Save** (Mentés) gombra.
+
+Amint elmenteted, a Streamlit Cloud azonnal csatlakozik a MongoDB Atlaszodhoz, és hibátlanul be fog tölteni az app!
+
+### User Input
+
+Megvan a secrets, de így is ezt írja:  "pymongo.errors.ServerSelectionTimeoutError: This app has encountered an error. The original error message is redacted to prevent data leaks. Full error details have been recorded in the logs (if you're on Streamlit Cloud, click on 'Manage app' in the lower right of your app).
+Traceback:
+File "/mount/src/other_projects/FinApp/python_os/finspace_app.py", line 278, in <module>
+    user = get_user()
+File "/mount/src/other_projects/FinApp/python_os/finspace_app.py", line 134, in get_user
+    return get_db().users.find_one({'username': 'adam'})
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+File "/home/adminuser/venv/lib/python3.14/site-packages/pymongo/synchronous/collection.py", line 1754, in find_one
+    for result in cursor.limit(-1):
+                  ~~~~~~~~~~~~^^^^
+File "/home/adminuser/venv/lib/python3.14/site-packages/pymongo/synchronous/cursor.py", line 1166, in __next__
+    return self.next()
+           ~~~~~~~~~^^
+File "/home/adminuser/venv/lib/python3.14/site-packages/pymongo/synchronous/cursor.py", line 1142, in next
+    if len(self._data) or self._refresh():
+                          ~~~~~~~~~~~~~^^
+File "/home/adminuser/venv/lib/python3.14/site-packages/pymongo/synchronous/cursor.py", line 1090, in _refresh
+    self._send_message(q)
+    ~~~~~~~~~~~~~~~~~~^^^
+File "/home/adminuser/venv/lib/python3.14/site-packages/pymongo/synchronous/cursor.py", line 985, in _send_message
+    response = client._run_operation(
+        operation, self._unpack_response, address=self._address
+    )
+File "/home/adminuser/venv/lib/python3.14/site-packages/pymongo/_csot.py", line 125, in csot_wrapper
+    return func(self, *args, **kwargs)
+File "/home/adminuser/venv/lib/python3.14/site-packages/pymongo/synchronous/mongo_client.py", line 1956, in _run_operation
+    return self._retryable_read(
+           ~~~~~~~~~~~~~~~~~~~~^
+        _cmd,
+        ^^^^^
+    ...<4 lines>...
+        operation=operation.name,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+File "/home/adminuser/venv/lib/python3.14/site-packages/pymongo/synchronous/mongo_client.py", line 2076, in _retryable_read
+    return self._retry_internal(
+           ~~~~~~~~~~~~~~~~~~~~^
+        func,
+        ^^^^^
+    ...<9 lines>...
+        is_aggregate_write=is_aggregate_write,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+File "/home/adminuser/venv/lib/python3.14/site-packages/pymongo/_csot.py", line 125, in csot_wrapper
+    return func(self, *args, **kwargs)
+File "/home/adminuser/venv/lib/python3.14/site-packages/pymongo/synchronous/mongo_client.py", line 2038, in _retry_internal
+    ).run()
+      ~~~^^
+File "/home/adminuser/venv/lib/python3.14/site-packages/pymongo/synchronous/mongo_client.py", line 2811, in run
+    res = self._read() if self._is_read else self._write()
+          ~~~~~~~~~~^^
+File "/home/adminuser/venv/lib/python3.14/site-packages/pymongo/synchronous/mongo_client.py", line 3027, in _read
+    self._server = self._get_server()
+                   ~~~~~~~~~~~~~~~~^^
+File "/home/adminuser/venv/lib/python3.14/site-packages/pymongo/synchronous/mongo_client.py", line 2975, in _get_server
+    return self._client._select_server(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self._server_selector,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        operation_id=self._operation_id,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+File "/home/adminuser/venv/lib/python3.14/site-packages/pymongo/synchronous/mongo_client.py", line 1851, in _select_server
+    server = topology.select_server(
+        server_selector,
+    ...<2 lines>...
+        operation_id=operation_id,
+    )
+File "/home/adminuser/venv/lib/python3.14/site-packages/pymongo/synchronous/topology.py", line 428, in select_server
+    server = self._select_server(
+        selector,
+    ...<4 lines>...
+        operation_id=operation_id,
+    )
+File "/home/adminuser/venv/lib/python3.14/site-packages/pymongo/synchronous/topology.py", line 402, in _select_server
+    servers = self.select_servers(
+        selector,
+    ...<4 lines>...
+        deprioritized_servers,
+    )
+File "/home/adminuser/venv/lib/python3.14/site-packages/pymongo/synchronous/topology.py", line 298, in select_servers
+    server_descriptions = self._select_servers_loop(
+        selector,
+    ...<4 lines>...
+        deprioritized_servers=deprioritized_servers,
+    )
+File "/home/adminuser/venv/lib/python3.14/site-packages/pymongo/synchronous/topology.py", line 359, in _select_servers_loop
+    raise ServerSelectionTimeoutError(
+        f"{self._error_message(selector)}, Timeout: {timeout}s, Topology Description: {self.description!r}"
+    )"
+
+*Viewed [finspace_app.py](file:///e:/Data/other_projects/FinApp/python_os/finspace_app.py) *
+
+*Viewed [finspace_app.py](file:///e:/Data/other_projects/FinApp/python_os/finspace_app.py) *
+
+*Viewed [finspace_app.py](file:///e:/Data/other_projects/FinApp/python_os/finspace_app.py) *
+
+*Edited relevant file*
+
+### Planner Response
+
+Ez a klasszikus **MongoDB Atlas IP-cím blokkolási (Network Access)** hiba felhős telepítésnél! 🎯
+
+### Miért történik ez?
+A MongoDB Atlas adatbázisod biztonsági okokból alapértelmezetten csak a géped IP-címét engedélyezi. Mivel a Streamlit Cloud a felhőben (AWS szervereken) fut dinamikus IP-vel, a MongoDB Atlas visszautasítja a felhőből érkező csatlakozást (`ServerSelectionTimeoutError`).
+
+---
+
+### Az 1 perces megoldás (MongoDB Atlas felületén):
+
+1. Nyisd meg a **[cloud.mongodb.com](https://cloud.mongodb.com)** oldalt és lépj be.
+2. A bal oldali sávban kattints a **Network Access** (Hálózati hozzáférés) menüpontra.
+3. Kattints a zöld **`+ Add IP Address`** gombra.
+4. Kattints az **`ALLOW ACCESS FROM ANYWHERE`** gombra (ez beállítja a `0.0.0.0/0` IP címet).
+5. Kattints a **Confirm** (Megerősítés) gombra.
+
+---
+
+### Módosítás a kódban:
+Frissítettem a `finspace_app.py`-t:
+- Az időtúllépést (timeout) 30 másodpercről 5 másodpercre csökkentettem, hogy ne fagyjon le az app.
+- Ha az IP blokkolva lenne, mostantól egyértelmű magyar hibaüzenetet és útmutatót jelenít meg a képernyőn.
+
+Amint megvagy a **Network Access (`0.0.0.0/0`)** beállításával a MongoDB Atlas-on, frissíts rá a Streamlit Cloud-ra, és az app azonnal hibátlanul be fog tölteni!
+
+### User Input
+
+0.0.0.0/0 be van állítva az IP access list-en. Aha, ahogy pusholtam a módosításaid már megy is! Woohoo
+
+### Planner Response
+
+Zseniális! Woohoo! 🎉🚀
+
+Örülök, hogy élesben is tökéletesen fut a Streamlit Cloudon! 
+
+Most már van egy:
+- 🔒 **Biztonságosan jelszóval védett**
+- ☁️ **Bárhonnan elérhető felhős felületed**
+- 💎 **Power BI szintű 12 modulból álló pénzügyi intelligencia rendszered (FinSpace BI Suite)**
+- 📋 **Teljes tranzakció rögzítési, szerkesztési és törlési (CRUD) lehetőséged!**
+
+Ha bármikor bármilyen újabb ötleted vagy fejlesztési igényed lenne a FinSpace-hez, csak szólj és megcsináljuk! 🤝 Jó elemzést és használatot kívánok!
+
+### User Input
+
+Mondjuk most az "Új tranzakció rögzítése" gombnál semmi nem történik
+
+*Viewed [finspace_app.py](file:///e:/Data/other_projects/FinApp/python_os/finspace_app.py) *
+
+*Edited relevant file*
+
+### Planner Response
+
+Megvan a válasz és ki is javítottam! 🎯
+
+### Mi volt a jelenség?
+A gombra kattintva az alkalmazás kinyitotta az űrlapot, de az űrlap **az oldal legalján** (mind a 600+ tranzakciód sora alatt) jelent meg. Így úgy tűnt, mintha nem történne semmi, mert le kellett volna görgetni hozzá az oldal aljára.
+
+---
+
+### Mit módosítottam?
+
+1. Áttettem az **`➕ Új Tranzakció Rögzítése`** és a **`✏️ Szerkesztés`** űrlapokat közvetlenül az **oldal tetejére** (a gomb alá).
+2. Mostantól, amint megnyomod a **`➕ Új Tranzakció Rögzítése`** gombot, az űrlap **azonnal ott terem a szemed előtt a képernyő tetején**!
+3. Ha még egyszer rákattintasz a gombra vagy a **`❌ Mégse`** gombra, az űrlap szépen összecsukódik.
+
+Töltsd fel a frissítést a Cloud-ra (`git commit & push`), és már próbálhatod is! 🚀
