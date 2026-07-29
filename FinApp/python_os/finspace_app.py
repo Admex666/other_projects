@@ -122,13 +122,35 @@ div.stButton > button { border-radius: 8px; font-weight: 600; }
 
 # ─── DB Connection ────────────────────────────────────────────────────────────
 load_dotenv(os.path.join(os.path.dirname(__file__), '../.env.local'))
-MONGO_URI = os.getenv('MONGODB_URI')
+
+MONGO_URI = None
+try:
+    MONGO_URI = st.secrets.get("MONGODB_URI")
+except Exception:
+    pass
+
+if not MONGO_URI:
+    MONGO_URI = os.getenv('MONGODB_URI')
 
 @st.cache_resource
 def get_db():
-    client = MongoClient(MONGO_URI)
-    try:    return client.get_default_database()
-    except: return client.get_database('test')
+    if not MONGO_URI:
+        st.error('❌ MONGODB_URI hiányzik! Kérlek állítsd be a Streamlit Cloud Secrets menüpontjában.')
+        st.stop()
+    try:
+        client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
+        # Ping server to verify network connectivity
+        client.admin.command('ping')
+        try:    return client.get_default_database()
+        except: return client.get_database('test')
+    except Exception as err:
+        st.error('❌ **Nem sikerült csatlakozni a MongoDB Atlas-hoz!** (Network Timeout / IP Blocked)\n\n'
+                 '**Megoldás a MongoDB Atlas-on:**\n'
+                 '1. Nyisd meg a [MongoDB Atlas](https://cloud.mongodb.com) felületét.\n'
+                 '2. A bal oldali menüben kattints a **Network Access** lehetőségre.\n'
+                 '3. Kattints az **Add IP Address** gombra.\n'
+                 '4. Válaszd az **ALLOW ACCESS FROM ANYWHERE (`0.0.0.0/0`)** opciót, majd mentsd el!')
+        st.stop()
 
 def get_user():
     return get_db().users.find_one({'username': 'adam'})
