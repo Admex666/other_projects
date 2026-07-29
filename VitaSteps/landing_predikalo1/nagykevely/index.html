@@ -554,18 +554,32 @@
             </p>
 
             <div class="btn-group" style="flex-wrap: wrap; gap: 0.5rem; justify-content: center;">
-                <button class="filter-btn active" onclick="setRoute('pilis-6')">Családi (5 km)</button>
-                <button class="filter-btn" onclick="setRoute('pilis-10')">Klasszikus (10 km)</button>
-                <button class="filter-btn" onclick="setRoute('pilis-15')">Extra (13 km)</button>
-                <button class="filter-btn" onclick="setRoute('pilis-25')">Félmaraton (21 km)</button>
+                <button class="filter-btn active" onclick="setRoute('pilis-6', event)">Családi (5 km)</button>
+                <button class="filter-btn" onclick="setRoute('pilis-10', event)">Klasszikus (10 km)</button>
+                <button class="filter-btn" onclick="setRoute('pilis-15', event)">Extra (13 km)</button>
+                <button class="filter-btn" onclick="setRoute('pilis-25', event)">Félmaraton (21 km)</button>
+            </div>
+
+            <!-- Route Stats & Download Bar -->
+            <div id="route-stats" style="display: flex; justify-content: center; align-items: center; gap: 1.5rem; margin-top: 1.25rem; font-size: 0.9rem; flex-wrap: wrap;">
+                <div style="background: var(--surface2); padding: 0.5rem 1.2rem; border-radius: 20px; border: 1px solid var(--border); font-weight: 600;">
+                    📏 Táv: <strong id="stat-dist" style="color: var(--accent);">-- km</strong>
+                </div>
+                <div style="background: var(--surface2); padding: 0.5rem 1.2rem; border-radius: 20px; border: 1px solid var(--border); font-weight: 600;">
+                    ⛰️ Szintemelkedés: <strong id="stat-elev" style="color: var(--accent);">-- m</strong>
+                </div>
+                <a id="download-gpx-btn" href="#" download style="background: rgba(191,255,0,0.1); color: var(--accent); border: 1px solid var(--border-accent); padding: 0.5rem 1.2rem; border-radius: 20px; text-decoration: none; font-weight: 700; font-size: 0.85rem; transition: all 0.2s;">
+                    📥 GPX Nyomvonal Letöltése
+                </a>
             </div>
 
             <div class="map-container"
-                style="margin-top: 1.5rem; height: 450px; border-radius: 12px; border: 1px solid var(--border); overflow: hidden;">
+                style="margin-top: 1rem; height: 450px; border-radius: 12px; border: 1px solid var(--border); overflow: hidden;">
                 <div id="map" style="width: 100%; height: 100%;"></div>
             </div>
         </div>
     </section>
+
 
     <!-- CHECKOUT BOX -->
     <section id="checkout-section" class="checkout-section" style="padding: 5rem 0; background: var(--surface);">
@@ -687,37 +701,102 @@
         </a>
     </div>
 
-    <!-- Leaflet JS for Map -->
+    <!-- Leaflet JS & GPX Plugin for Map -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/1.7.0/gpx.min.js"></script>
     <script>
-        // Simple map simulation since we don't have direct GPX files for Nagy-Kevély in the assets folder yet
-        let map = L.map('map').setView([47.6186, 18.9950], 13); // Nagy-Kevély center
-        L.tileLayer('https://{s}.tile.thunderforest.com/outdoors/{z}/{x}/{y}.png?apikey=de5f3ce1de6a47aeb50c9509df639c0d', {
-            attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(map);
+        let mapInstance = null;
+        let currentGpxLayer = null;
 
-        // Add a beautiful marker on the top of Nagy-Kevély
-        L.marker([47.6186, 18.9950]).addTo(map)
-            .bindPopup('⛰️ Nagy-Kevély Csúcs (534m) - Érintési pont!')
-            .openPopup();
+        const gpxRoutes = {
+            'pilis-6':  '/assets/nagykevely/tracks/01csaladi.gpx',
+            'pilis-10': '/assets/nagykevely/tracks/02klasszik.gpx',
+            'pilis-15': '/assets/nagykevely/tracks/03extra.gpx',
+            'pilis-25': '/assets/nagykevely/tracks/04felmaraton.gpx'
+        };
 
-        function setRoute(routeId) {
-            // Remove active class
-            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-            // Find target button
-            event.target.classList.add('active');
+        function initMap() {
+            const mapEl = document.getElementById('map');
+            if (!mapEl) return;
 
-            // Highlight target center or mock route
-            if (routeId === 'pilis-6') {
-                map.setView([47.6186, 18.9950], 14.5);
-            } else if (routeId === 'pilis-10') {
-                map.setView([47.6186, 18.9950], 13.5);
-            } else if (routeId === 'pilis-15') {
-                map.setView([47.6186, 18.9950], 12.5);
-            } else {
-                map.setView([47.6186, 18.9950], 11.5);
+            if (!mapInstance) {
+                mapInstance = L.map('map').setView([47.6186, 18.9950], 13);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap contributors'
+                }).addTo(mapInstance);
             }
+
+            loadGpxRoute('pilis-6');
         }
+
+        function loadGpxRoute(routeId) {
+            const gpxUrl = gpxRoutes[routeId];
+            if (!gpxUrl || !mapInstance) return;
+
+            // Update download button
+            const downloadBtn = document.getElementById('download-gpx-btn');
+            if (downloadBtn) {
+                downloadBtn.href = gpxUrl;
+                downloadBtn.setAttribute('download', gpxUrl.split('/').pop());
+            }
+
+            if (currentGpxLayer) {
+                mapInstance.removeLayer(currentGpxLayer);
+                currentGpxLayer = null;
+            }
+
+            fetch(gpxUrl)
+                .then(r => {
+                    if (!r.ok) throw new Error('HTTP error ' + r.status);
+                    return r.text();
+                })
+                .then(gpxData => {
+                    currentGpxLayer = new L.GPX(gpxData, {
+                        async: true,
+                        marker_options: {
+                            startIconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/1.7.0/pin-icon-start.png',
+                            endIconUrl:   'https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/1.7.0/pin-icon-end.png',
+                            shadowUrl:    'https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/1.7.0/pin-shadow.png'
+                        },
+                        polyline_options: {
+                            color: '#c4ff00',
+                            weight: 5,
+                            opacity: 0.95
+                        }
+                    }).on('loaded', function(e) {
+                        const gpxObj = e.target;
+                        mapInstance.fitBounds(gpxObj.getBounds(), { padding: [30, 30] });
+
+                        const distKm = (gpxObj.get_distance() / 1000).toFixed(1);
+                        const elevM  = Math.round(gpxObj.get_elevation_gain());
+
+                        const distEl = document.getElementById('stat-dist');
+                        const elevEl = document.getElementById('stat-elev');
+                        if (distEl) distEl.textContent = distKm + ' km';
+                        if (elevEl) elevEl.textContent = elevM + ' m';
+                    }).addTo(mapInstance);
+                })
+                .catch(err => {
+                    console.error('GPX betöltési hiba:', err);
+                });
+        }
+
+        function setRoute(routeId, evt) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            if (evt && evt.target) {
+                evt.target.classList.add('active');
+            } else if (window.event && window.event.target) {
+                window.event.target.classList.add('active');
+            }
+            loadGpxRoute(routeId);
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initMap);
+        } else {
+            setTimeout(initMap, 100);
+        }
+
 
         // Countdown timer for 2026.09.13 (A kihívás vége)
         const targetDate = new Date('2026-09-13T23:59:59+02:00').getTime();
