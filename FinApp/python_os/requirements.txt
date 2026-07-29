@@ -1,4 +1,5 @@
 pandas
 pymongo
-xlsxwriter
 python-dotenv
+streamlit
+plotly

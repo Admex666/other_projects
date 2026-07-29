@@ -1,19 +1,31 @@
-# Finance OS
+# Finance OS – Gyors Útmutató
 
-## Hogyan használd?
-A legenerált `Finance_OS.xlsx` egy moduláris, Google Sheets kompatibilis pénzügyi rendszer.
+## Lapok és szerepük
 
-- **01_Transactions**: Ide rögzítsd az új tranzakciókat. A legördülő menük a többi fülről veszik az adatokat.
-- **00_Dashboard**: Teljesen automatizált (🔒), ne szerkeszd kézzel!
-- **10_Accounts, 12_Categories, 14_Pockets**: Ha új kategóriát vagy számlát szeretnél, ide írd be, és automatikusan megjelenik a Transactions legördülőiben.
+| Lap              | Mit csinálsz itt?            | Szerkeszthető? |
+|------------------|------------------------------|----------------|
+| 00_Dashboard     | Naponta nézed                | ❌ Csak olvasható |
+| 01_Transactions  | Ide viszed fel a kiadásokat  | ✅ Igen |
+| 02_Accounts      | Bankszámlák listája          | ✅ Igen |
+| 03_BudgetsGoals  | Célok és havi limitek        | ✅ Igen |
+| 04_Pockets       | Borítékos rendszer           | ✅ Igen |
+| 90_Settings      | Kategóriák, People, stb.    | ✅ Igen |
+| 91_Data_ExRates  | Devizaárfolyamok (háttér)   | ❌ |
+| 91_Data_IDMap    | Mongo ID mapping (háttér)   | ❌ |
 
-## Fontos (Manuális Teendő Google Sheets-ben)
-Mivel az Excel adatérvényesítését (Data Validation) konvertáljuk Google Sheets formátumra, feltöltés után előfordulhat, hogy a legördülő menük "Másik munkalapra" mutató hivatkozásai nem egyből kattinthatók. 
+## Manuális teendők (Google Sheets feltöltés után)
 
-**Teendő:**
-1. Jelöld ki a *Category* oszlopot a `01_Transactions` fülön.
-2. Kattints: Adatok -> Adatok érvényesítése.
-3. A kritériumnál válaszd: "Legördülő menü (tartományból)", majd válaszd ki a `12_Categories` lap C oszlopát.
-4. Ezt tedd meg az *Account* és *Pocket* oszlopoknál is a `10_Accounts` és `14_Pockets` lapokra mutatva.
+A legördülő menük (Category, Account, stb.) Excelben azonnal működnek.
+Google Sheets-ben 1-2 dropdown esetleg manuális aktiválást igényel:
+1. Jelöld ki az oszlopot (pl. Category a 01_Transactions-ban)
+2. Adatok → Adatok érvényesítése
+3. Forrás: 90_Settings B oszlopa (kategóriák)
 
-Jó pénzügyezést!
+## Bővítés
+
+- Új kategória: 90_Settings → Categories oszlopba írni
+- Új számla: 02_Accounts-ba felvenni
+- Új zseb: 04_Pockets-ba felvenni
+
+A script bármikor újrafuttatható az adatbázis friss állapotával:
+  python src/main.py

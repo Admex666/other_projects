@@ -1,0 +1,7 @@
+Migration Report
+====================
+User: Adam
+Accounts migrated:      13
+Pockets migrated:       3
+Transactions migrated:  611
+Exchange rate rows:     5668
