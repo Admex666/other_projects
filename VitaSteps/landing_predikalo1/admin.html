@@ -1028,6 +1028,7 @@
     function renderMktCards() {
         const STRIPE_PCT   = 0.015;
         const STRIPE_FIXED = 50;
+        const INITIAL_INVESTMENT = 163000; // 163 000 Ft éremgyártási kezdő tőke
 
         const cardsEl = document.getElementById('mkt-cards');
         const { from, label } = getDateRange();
@@ -1043,7 +1044,75 @@
         }
 
         const campaigns = aggregateMetrics(filtered);
-        let html = `<div style="color: var(--text-mid); font-size: 0.8rem; margin-bottom: 1rem;">${label} összesítve:</div>`;
+
+        // Overall Totals for Breakeven Card
+        let totRev = 0, totSpend = 0, totPurchases = 0;
+        for (const r of filtered) {
+            totRev       += Number(r.revenue || 0);
+            totSpend     += Number(r.spend || 0);
+            totPurchases += Number(r.purchases || 0);
+        }
+
+        const totMetaVat   = Math.round(totSpend * 1.27);
+        const totStripe    = Math.round(totRev * STRIPE_PCT + STRIPE_FIXED * totPurchases);
+        const totShipping  = Math.round(totPurchases * 1141);
+        const totNetContrib = Math.round(totRev - totMetaVat - totStripe - totShipping);
+        
+        const paybackPct    = Math.min(100, Math.max(0, (totNetContrib / INITIAL_INVESTMENT) * 100)).toFixed(1);
+        const remainingToBe = Math.max(0, INITIAL_INVESTMENT - totNetContrib);
+        const unitNetProfit = totPurchases > 0 ? (totNetContrib / totPurchases) : 0;
+        const ordersNeeded  = (remainingToBe > 0 && unitNetProfit > 0) ? Math.ceil(remainingToBe / unitNetProfit) : 0;
+
+        const isFullyPaid   = totNetContrib >= INITIAL_INVESTMENT;
+        const paybackColor  = isFullyPaid ? '#22c55e' : (paybackPct > 50 ? '#f59e0b' : '#ef4444');
+
+        let html = `
+        <!-- OVERALL BREAKEVEN / PAYBACK CARD -->
+        <div style="background: var(--surface2); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+                <div style="font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 800; color: #fff;">
+                    🎯 Befektetés Megtérülés (163 000 Ft éremgyártás)
+                </div>
+                <div style="font-size: 0.85rem; font-weight: 700; color: ${paybackColor}; background: rgba(255,255,255,0.05); padding: 0.3rem 0.8rem; border-radius: 20px; border: 1px solid ${paybackColor};">
+                    ${isFullyPaid ? '✅ Teljesen Megtérült!' : `${paybackPct}% Megtérült`}
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div style="height: 10px; background: rgba(255,255,255,0.08); border-radius: 6px; overflow: hidden; margin-bottom: 1rem;">
+                <div style="height: 100%; width: ${paybackPct}%; background: ${paybackColor}; transition: width 0.5s;"></div>
+            </div>
+
+            <!-- Summary Grid -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; font-size: 0.82rem;">
+                <div>
+                    <div style="color: var(--text-mid); font-size: 0.7rem; text-transform: uppercase;">Kezdő befektetés</div>
+                    <div style="font-size: 1.1rem; font-weight: 700; color: #fff;">163 000 Ft</div>
+                    <div style="color: var(--text-mid); font-size: 0.75rem;">100 db érem gyártása</div>
+                </div>
+                <div>
+                    <div style="color: var(--text-mid); font-size: 0.7rem; text-transform: uppercase;">Termelt nettó fedezet</div>
+                    <div style="font-size: 1.1rem; font-weight: 700; color: #22c55e;">+${fmt(totNetContrib)}</div>
+                    <div style="color: var(--text-mid); font-size: 0.75rem;">Stripe, szállítás, Meta+ÁFA levonva</div>
+                </div>
+                <div>
+                    <div style="color: var(--text-mid); font-size: 0.7rem; text-transform: uppercase;">Breakeven-ig hiányzik</div>
+                    <div style="font-size: 1.1rem; font-weight: 700; color: ${remainingToBe === 0 ? '#22c55e' : '#f59e0b'};">
+                        ${remainingToBe === 0 ? '0 Ft 🎉' : `${fmt(remainingToBe)}`}
+                    </div>
+                    <div style="color: var(--text-mid); font-size: 0.75rem;">
+                        ${remainingToBe === 0 ? 'Már nyereséges!' : `kb. ${ordersNeeded} db vásárlás kell még`}
+                    </div>
+                </div>
+                <div>
+                    <div style="color: var(--text-mid); font-size: 0.7rem; text-transform: uppercase;">Átlagos nettó árrés / rendelés</div>
+                    <div style="font-size: 1.1rem; font-weight: 700; color: #fff;">${fmt(unitNetProfit)}</div>
+                    <div style="color: var(--text-mid); font-size: 0.75rem;">tiszta haszon / eladott érem</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="color: var(--text-mid); font-size: 0.8rem; margin-bottom: 1rem;">${label} kampányokként részletezve:</div>`;
 
         for (const c of campaigns) {
             const target = getTarget(c.campaign_name);
@@ -1056,28 +1125,28 @@
                 ? (c.roas >= (target.target_roas || 3) ? 'green' : c.roas >= (target.warning_roas || 2) ? 'yellow' : 'red')
                 : 'green';
 
-            // Financial calculations (on-the-fly from stored metrics + targets)
+            // Financial calculations for this campaign
             const revenue   = c.revenue;
             const purchases = c.purchases;
             const spend     = c.spend;
+            const spendVat  = Math.round(spend * 1.27); // Meta 27% ÁFA
 
-            const medalUnitCost    = Number(target.medal_cost    || 2200);
-            const shippingUnitCost = Number(target.shipping_cost || 1290);
+            const medalUnitCost    = Number(target.medal_cost    || 1630);
+            const shippingUnitCost = Number(target.shipping_cost || 1141);
 
             const stripeFees    = Math.round(revenue * STRIPE_PCT + STRIPE_FIXED * purchases);
             const medalCosts    = Math.round(purchases * medalUnitCost);
             const shippingCosts = Math.round(purchases * shippingUnitCost);
 
-            const grossProfit = Math.round(revenue - stripeFees - medalCosts - shippingCosts - spend);
-            const marginPct   = revenue > 0 ? (grossProfit / revenue * 100).toFixed(1) : 0;
+            // Gross Profit (beleértve az éremgyártási költséget is)
+            const grossProfit   = Math.round(revenue - stripeFees - medalCosts - shippingCosts - spendVat);
+            const marginPct     = revenue > 0 ? (grossProfit / revenue * 100).toFixed(1) : 0;
 
-            const stripeNet   = revenue - stripeFees;
-            const netCashflow = Math.round(stripeNet - spend - medalCosts - shippingCosts);
+            // Nettó fedezet (az éremgyártás előtti árrés a 163 000 Ft törlesztésére)
+            const netContrib    = Math.round(revenue - stripeFees - shippingCosts - spendVat);
 
             const profitCls  = grossProfit >= 0 ? 'fin-profit-pos' : 'fin-profit-neg';
-            const cfCls      = netCashflow >= 0 ? 'fin-profit-pos' : 'fin-profit-neg';
             const profitSign = grossProfit >= 0 ? '+' : '';
-            const cfSign     = netCashflow >= 0 ? '+' : '';
 
             html += `
             <div class="kpi-card ${cardCls}">
@@ -1089,8 +1158,9 @@
                 <!-- KPI grid -->
                 <div class="kpi-grid">
                     <div class="kpi-item">
-                        <div class="kpi-label">Költés</div>
-                        <div class="kpi-value">${fmt(spend)}</div>
+                        <div class="kpi-label">Meta Költés (+ÁFA)</div>
+                        <div class="kpi-value">${fmt(spendVat)}</div>
+                        <div class="kpi-sub">nettó: ${fmt(spend)}</div>
                     </div>
                     <div class="kpi-item">
                         <div class="kpi-label">Vásárlások</div>
@@ -1133,7 +1203,7 @@
                     </div>
                 </div>
 
-                <!-- P&L + Cashflow -->
+                <!-- P&L + Megtérülés szekció -->
                 <div class="fin-section">
                     <div class="fin-two-col">
 
@@ -1145,20 +1215,20 @@
                                 <span class="fin-plus">+${fmt(revenue)}</span>
                             </div>
                             <div class="fin-row">
+                                <span>(-) Meta hirdetés (+27% ÁFA)</span>
+                                <span class="fin-minus">−${fmt(spendVat)}</span>
+                            </div>
+                            <div class="fin-row">
                                 <span>(-) Stripe díj</span>
                                 <span class="fin-minus">−${fmt(stripeFees)}</span>
                             </div>
                             <div class="fin-row">
-                                <span>(-) Éremköltség</span>
-                                <span class="fin-minus">−${fmt(medalCosts)}</span>
-                            </div>
-                            <div class="fin-row">
-                                <span>(-) Szállítás (est.)</span>
+                                <span>(-) Szállítás</span>
                                 <span class="fin-minus">−${fmt(shippingCosts)}</span>
                             </div>
                             <div class="fin-row">
-                                <span>(-) Marketing</span>
-                                <span class="fin-minus">−${fmt(spend)}</span>
+                                <span>(-) Éremgyártás arányos</span>
+                                <span class="fin-minus">−${fmt(medalCosts)}</span>
                             </div>
                             <div class="fin-row total">
                                 <span>Nettó Profit</span>
@@ -1166,29 +1236,26 @@
                             </div>
                         </div>
 
-                        <!-- Cashflow -->
+                        <!-- Megtérülési árrés -->
                         <div>
-                            <div class="fin-title">💵 Cashflow</div>
+                            <div class="fin-title">🎯 Megtérülésre fordítható nettó árrés</div>
                             <div class="fin-row">
-                                <span>(+) Stripe nettó</span>
-                                <span class="fin-plus">+${fmt(stripeNet)}</span>
+                                <span>(+) Br. bevétel</span>
+                                <span class="fin-plus">+${fmt(revenue)}</span>
                             </div>
                             <div class="fin-row">
-                                <span>(-) Meta kifiz.</span>
-                                <span class="fin-minus">−${fmt(spend)}</span>
+                                <span>(-) Változó költségek összesen</span>
+                                <span class="fin-minus">−${fmt(spendVat + stripeFees + shippingCosts)}</span>
                             </div>
-                            <div class="fin-row">
-                                <span>(-) Éremgyártás</span>
-                                <span class="fin-minus">−${fmt(medalCosts)}</span>
-                            </div>
-                            <div class="fin-row">
-                                <span>(-) Foxpost</span>
-                                <span class="fin-minus">−${fmt(shippingCosts)}</span>
+                            <div class="fin-row" style="font-size:0.75rem; opacity:0.7;">
+                                <span>(Meta+ÁFA + Stripe + Szállítás)</span>
+                                <span></span>
                             </div>
                             <div class="fin-row" style="visibility:hidden"><span>-</span><span>-</span></div>
+                            <div class="fin-row" style="visibility:hidden"><span>-</span><span>-</span></div>
                             <div class="fin-row total">
-                                <span>Net Cashflow</span>
-                                <span class="${cfCls}">${cfSign}${fmt(netCashflow)}</span>
+                                <span>Nettó kitermelt fedezet</span>
+                                <span style="color: #22c55e; font-weight:800;">+${fmt(netContrib)}</span>
                             </div>
                         </div>
 
@@ -1200,6 +1267,7 @@
 
         cardsEl.innerHTML = html;
     }
+
     function updateStats() {
         const pending = allRuns.filter(r => r.proof_submitted && !r.completed).length;
         const approved = allRuns.filter(r => r.completed).length;
