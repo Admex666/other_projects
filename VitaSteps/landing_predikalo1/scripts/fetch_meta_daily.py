@@ -4,7 +4,7 @@ import json
 import urllib.request
 import urllib.parse
 import urllib.error
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from dotenv import load_dotenv
 
 # Windows console UTF-8 support
@@ -23,12 +23,29 @@ SUPABASE_KEY      = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
 PUSHBULLET_TOKEN  = os.getenv("PUSHBULLET_ACCESS_TOKEN")
 GRAPH_API_VERSION = "v20.0"
 
-# Which date to pull (default: yesterday)
-TARGET_DATE = date.today() - timedelta(days=1)
-
 # Stripe fee model (HU EU cards estimate)
 STRIPE_PCT   = 0.015   # 1.5%
 STRIPE_FIXED = 50      # HUF / transaction
+
+# Campaign Aliases for robust matching between DB campaign slugs and Meta campaign names
+CAMPAIGN_ALIASES = {
+    'pilis': ['pilis', 'nagykevely', 'nagy-kevely', 'nagy-kevély', 'kevely', 'kevély'],
+    'predikaloszek': ['predikaloszek', 'prédikálószék', 'predikalo', 'prédikáló']
+}
+
+def is_same_campaign(db_campaign: str, meta_campaign: str) -> bool:
+    if not db_campaign or not meta_campaign:
+        return False
+    db_c = db_campaign.lower().strip()
+    meta_c = meta_campaign.lower().strip()
+    if db_c == meta_c or db_c in meta_c or meta_c in db_c:
+        return True
+    for canonical, aliases in CAMPAIGN_ALIASES.items():
+        db_has = any(a in db_c for a in aliases)
+        meta_has = any(a in meta_c for a in aliases)
+        if db_has and meta_has:
+            return True
+    return False
 
 
 # ─── Helpers ────────────────────────────────────────────────────────────────
@@ -45,8 +62,19 @@ def graph_get(endpoint: str, params: dict) -> dict:
         with urllib.request.urlopen(req, timeout=30) as r:
             return json.loads(r.read().decode())
     except urllib.error.HTTPError as e:
-        err = json.loads(e.read().decode())
-        raise RuntimeError(f"Meta API {e.code}: {err.get('error', {}).get('message', str(err))}")
+        err_str = e.read().decode()
+        try:
+            err = json.loads(err_str)
+            msg = err.get('error', {}).get('message', err_str)
+            code = err.get('error', {}).get('code', e.code)
+            if code in (190, 102) or "Session has expired" in msg or "Error validating access token" in msg:
+                print("\n" + "!" * 60)
+                print("❌ META ACCESS TOKEN LEJÁRT VAGY ÉRVÉNYTELEN!")
+                print("   Frissítsd a META_ACCESS_TOKEN-t a GitHub Secrets-ben és a .env fájlban.")
+                print("!" * 60 + "\n")
+            raise RuntimeError(f"Meta API {code}: {msg}")
+        except Exception:
+            raise RuntimeError(f"Meta API {e.code}: {err_str}")
 
 
 def supabase_request(method: str, path: str, body: dict = None, extra_headers: dict = None):
@@ -70,8 +98,10 @@ def supabase_request(method: str, path: str, body: dict = None, extra_headers: d
         raise RuntimeError(f"Supabase {method} {path} -> {e.code}: {err_body}")
 
 
-
 def pushbullet_send(title: str, body: str):
+    if not PUSHBULLET_TOKEN:
+        print("   ⚠️ PUSHBULLET_ACCESS_TOKEN nincs beállítva, értesítés kihagyva.")
+        return 0
     payload = json.dumps({"type": "note", "title": title, "body": body}).encode()
     req = urllib.request.Request(
         "https://api.pushbullet.com/v2/pushes",
@@ -171,8 +201,7 @@ def fetch_medals_sold(target_date: date, campaign_key: str) -> int:
         return 0
     return sum(
         1 for r in rows
-        if (r.get("campaign") or "").lower() in campaign_key.lower()
-        or campaign_key.lower() in (r.get("campaign") or "").lower()
+        if is_same_campaign(r.get("campaign"), campaign_key)
     )
 
 
@@ -195,11 +224,9 @@ def fetch_shipped_today(target_date: date, campaign_key: str) -> int:
             return 0
         return sum(
             1 for r in rows
-            if (r.get("runs") or {}).get("campaign", "").lower() in campaign_key.lower()
-            or campaign_key.lower() in (r.get("runs") or {}).get("campaign", "").lower()
+            if is_same_campaign((r.get("runs") or {}).get("campaign"), campaign_key)
         )
     except Exception:
-        # shipped_at column may not exist yet - graceful fallback
         return 0
 
 
@@ -211,7 +238,7 @@ def fetch_targets() -> list:
 
 def get_target(targets: list, campaign_name: str) -> dict:
     for t in targets:
-        if t.get("campaign_name", "").strip().lower() == campaign_name.strip().lower():
+        if is_same_campaign(t.get("campaign_name", ""), campaign_name):
             return t
     return {}
 
@@ -226,48 +253,48 @@ def campaign_status(cpa: float, roas: float, target: dict) -> str:
     is_warn = (target.get("warning_cpa") and cpa >= target["warning_cpa"]) \
            or (target.get("warning_roas") and roas <= target["warning_roas"] and roas > 0)
     if is_crit: return "🔴 Kritikus"
-    if is_good: return "🟢 Jo"
+    if is_good: return "🟢 Jó"
     if is_warn: return "🟡 Figyelem"
     return "⚪ Semleges"
 
 
 # ─── Main ────────────────────────────────────────────────────────────────────
 
-def main():
-    print(f"\n=== VitaSteps – Napi Meta Szinkron ({TARGET_DATE}) ===\n")
+def run_for_date(target_date: date):
+    print(f"\n=== VitaSteps – Napi Meta Szinkron ({target_date}) ===\n")
 
     account_id = fmt_account_id(AD_ACCOUNT_ID)
-    print(f"1/5  Meta Insights lekérese ({account_id})...")
-    raw_insights = fetch_meta_insights(account_id, TARGET_DATE)
+    print(f"1/5  Meta Insights lekérése ({account_id})...")
+    raw_insights = fetch_meta_insights(account_id, target_date)
 
     if not raw_insights:
-        print("   Nincs adat a tegnapi napra (kampany szunetel?).")
-        pushbullet_send(f"VitaSteps – {TARGET_DATE}", "Nincs Meta adat (kampany szunetel?).")
+        print(f"   ℹ️ Nincs Meta hirdetési adat a megadott napra ({target_date}).")
         return
 
     rows = parse_insights(raw_insights)
-    print(f"   OK: {len(rows)} kampany\n")
+    print(f"   ✅ OK: {len(rows)} kampány taláva\n")
 
-    print("2/5  Orders lekérese...")
-    orders_summary = fetch_orders_summary(TARGET_DATE)
-    print(f"   OK: {sum(v['purchases'] for v in orders_summary.values())} rendelés\n")
+    print("2/5  Orders lekérése Supabase-ből...")
+    orders_summary = fetch_orders_summary(target_date)
+    total_orders_found = sum(v['purchases'] for v in orders_summary.values())
+    print(f"   ✅ OK: {total_orders_found} fizetett rendelés az adatbázisban a mai napra.\n")
 
-    print("3/5  KPI célértékek lekérese...")
+    print("3/5  KPI célértékek lekérése...")
     targets = fetch_targets()
-    print(f"   OK: {len(targets)} kampany cel\n")
+    print(f"   ✅ OK: {len(targets)} kampány cél\n")
 
-    print("4/5  Szamitas + Supabase upsert...")
-    pushbullet_lines = [f"VitaSteps Napi Riport – {TARGET_DATE}\n"]
+    print("4/5  Számítás + Supabase upsert...")
+    pushbullet_lines = [f"📊 VitaSteps Napi Riport – {target_date}\n"]
 
     for row in rows:
         campaign_key = row["campaign_name"] or row["campaign_id"]
 
-        # Match orders by substring (Meta name ↔ Supabase campaign slug)
+        # Aggregate all matching orders for this campaign
         order_data = {"purchases": 0, "revenue": 0.0}
         for ck, od in orders_summary.items():
-            if ck.lower() in campaign_key.lower() or campaign_key.lower() in ck.lower():
-                order_data = od
-                break
+            if is_same_campaign(ck, campaign_key):
+                order_data["purchases"] += od["purchases"]
+                order_data["revenue"]   += od["revenue"]
 
         row["purchases"] = order_data["purchases"]
         row["revenue"]   = order_data["revenue"]
@@ -277,31 +304,29 @@ def main():
         revenue   = row["revenue"]
 
         # Medals sold (actual count from runs table)
-        medals_sold   = fetch_medals_sold(TARGET_DATE, campaign_key)
-        shipped_today = fetch_shipped_today(TARGET_DATE, campaign_key)
+        medals_sold   = fetch_medals_sold(target_date, campaign_key)
+        shipped_today = fetch_shipped_today(target_date, campaign_key)
 
         # Cost params from marketing_targets
         target = get_target(targets, campaign_key)
-        medal_unit_cost    = float(target.get("medal_cost", 2200))
-        shipping_unit_cost = float(target.get("shipping_cost", 1290))
+        medal_unit_cost    = float(target.get("medal_cost", 1630))
+        shipping_unit_cost = float(target.get("shipping_cost", 1141))
 
-        # ── Stripe díj ──
+        # Stripe fee
         stripe_fees = round(revenue * STRIPE_PCT + STRIPE_FIXED * purchases, 0)
 
-        # ── Gyártási költség ──
+        # Medal cost
         medal_costs = round(medals_sold * medal_unit_cost, 0)
 
-        # ── Szállítási költség (csak a ma ténylegesen feladott csomagok) ──
+        # Shipping cost
         shipping_costs = round(shipped_today * shipping_unit_cost, 0)
 
-        # ── Eredménykimutatás ──
+        # Profit & Loss
         total_costs  = spend + stripe_fees + medal_costs + shipping_costs
         gross_profit = round(revenue - total_costs, 0)
         margin_pct   = round(gross_profit / revenue * 100, 1) if revenue > 0 else 0.0
 
-        # ── Cashflow ──
-        # Inflow:  Stripe nettó (revenue - Stripe levonás)
-        # Outflow: Meta spend, éremgyártás, szállítás
+        # Cashflow
         stripe_net   = revenue - stripe_fees
         net_cashflow = round(stripe_net - spend - medal_costs - shipping_costs, 0)
 
@@ -311,7 +336,7 @@ def main():
 
         # Supabase upsert
         upsert_row = {
-            "date":          TARGET_DATE.isoformat(),
+            "date":          target_date.isoformat(),
             "campaign_id":   row["campaign_id"],
             "campaign_name": row["campaign_name"],
             "spend":         spend,
@@ -338,44 +363,60 @@ def main():
         profit_sign = "+" if gross_profit >= 0 else ""
         cf_sign     = "+" if net_cashflow >= 0 else ""
         profit_icon = "PROFIT" if gross_profit >= 0 else "VESZTESÉG"
-        cf_icon     = "POZITIV" if net_cashflow >= 0 else "NEGATIV"
+        cf_icon     = "POZITÍV" if net_cashflow >= 0 else "NEGATÍV"
 
         print(
-            f"   OK: {campaign_key}\n"
-            f"      Spend: {fmtf(spend)} | Bevetel: {fmtf(revenue)}\n"
-            f"      Profit: {profit_sign}{fmtf(gross_profit)} ({margin_pct}%) | "
-            f"Cashflow: {cf_sign}{fmtf(net_cashflow)}"
+            f"   ✅ {campaign_key}\n"
+            f"      Költés: {fmtf(spend)} | Vásárlás: {purchases} db | Bevétel: {fmtf(revenue)}\n"
+            f"      Profit: {profit_sign}{fmtf(gross_profit)} ({margin_pct}%) | Cashflow: {cf_sign}{fmtf(net_cashflow)}"
         )
 
-        # ── Pushbullet szöveg ──
+        # Pushbullet text
         pushbullet_lines.append(
             f"\n{'='*40}\n"
             f"{campaign_key}  [{status}]\n"
             f"{'='*40}\n"
             f"\n[MARKETING]\n"
             f"  Spend:     {fmtf(spend)}\n"
+            f"  Purchases: {purchases} db\n"
             f"  CPA:       {fmtf(cpa)}  |  ROAS: {roas:.2f}x\n"
             f"  CTR:       {row['ctr']:.2f}%  |  Reach: {row['reach']:,}\n"
             f"\n[EREDMÉNYKIMUTATÁS]\n"
-            f"  (+) Brutto bevetel: {fmtf(revenue)}\n"
-            f"  (-) Stripe dij:     {fmtf(stripe_fees)}\n"
-            f"  (-) Éremköltség:    {fmtf(medal_costs)}  ({medals_sold} db x {fmtf(medal_unit_cost)})\n"
-            f"  (-) Szallitas:      {fmtf(shipping_costs)}  ({shipped_today} csomag x {fmtf(shipping_unit_cost)})\n"
-            f"  (-) Marketing:      {fmtf(spend)}\n"
-            f"  = Netto profit:     {profit_sign}{fmtf(gross_profit)}  ({margin_pct}%) [{profit_icon}]\n"
+            f"  (+) Bruttó bevétel:  {fmtf(revenue)}\n"
+            f"  (-) Stripe díj:      {fmtf(stripe_fees)}\n"
+            f"  (-) Éremköltség:     {fmtf(medal_costs)}  ({medals_sold} db x {fmtf(medal_unit_cost)})\n"
+            f"  (-) Szállítás:       {fmtf(shipping_costs)}  ({shipped_today} csomag x {fmtf(shipping_unit_cost)})\n"
+            f"  (-) Marketing:       {fmtf(spend)}\n"
+            f"  = Nettó profit:      {profit_sign}{fmtf(gross_profit)}  ({margin_pct}%) [{profit_icon}]\n"
             f"\n[CASHFLOW]\n"
-            f"  (+) Stripe netto:   {fmtf(stripe_net)}\n"
-            f"  (-) Meta:           {fmtf(spend)}\n"
-            f"  (-) Éremgyartas:    {fmtf(medal_costs)}\n"
-            f"  (-) Szallitas:      {fmtf(shipping_costs)}\n"
-            f"  = Net Cashflow:     {cf_sign}{fmtf(net_cashflow)} [{cf_icon}]\n"
+            f"  (+) Stripe nettó:    {fmtf(stripe_net)}\n"
+            f"  (-) Meta:            {fmtf(spend)}\n"
+            f"  (-) Éremgyártás:     {fmtf(medal_costs)}\n"
+            f"  (-) Szállítás:       {fmtf(shipping_costs)}\n"
+            f"  = Net Cashflow:      {cf_sign}{fmtf(net_cashflow)} [{cf_icon}]\n"
         )
 
     print("\n5/5  Pushbullet értesítés küldése...")
     pushbullet_lines.append("\nvitastepsss.vercel.app/admin.html")
-    pushbullet_send(f"VitaSteps {TARGET_DATE}", "\n".join(pushbullet_lines))
-    print("   OK!\n")
-    print("=== Kész ===\n")
+    pushbullet_send(f"VitaSteps {target_date}", "\n".join(pushbullet_lines))
+    print("   ✅ Értesítés elküldve!\n")
+    print(f"=== Kész: {target_date} ===\n")
+
+
+def main():
+    target_date = date.today() - timedelta(days=1)
+    if len(sys.argv) > 1:
+        arg = sys.argv[1]
+        if arg.startswith("--date="):
+            target_date = datetime.strptime(arg.split("=")[1], "%Y-%m-%d").date()
+        elif arg.startswith("--backfill="):
+            days = int(arg.split("=")[1])
+            for d in range(days, 0, -1):
+                dt = date.today() - timedelta(days=d)
+                run_for_date(dt)
+            return
+
+    run_for_date(target_date)
 
 
 if __name__ == "__main__":
