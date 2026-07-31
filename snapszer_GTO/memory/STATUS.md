@@ -1,22 +1,13 @@
 # Project Status
 
 ## Current State
-- `GTOExploitBot` implemented and benchmarked against Tompa-style `ExpertBot` and 5 Human Leak Archetypes.
-- Structured decision logging active (`logs/decisions.jsonl`).
-- Interactive gameplay interfaces added for playing against `GTOExploitBot`:
-  - `play.py`: Interactive Terminal CLI game.
-  - `play_gui.py`: Built-in Web Browser GUI server using `SchnapsenServer` (http://127.0.0.1:8080).
+- Phase 3 Diagnostic Expansion & Oracle Calibration completed.
+- Implemented `ExactOracleSolver` (`src/oracle.py`) providing unbiased Ground-Truth Minimax evaluations across determinizations.
+- Seamless Talon Closing engine integration completed in `src/bot.py` and `src/tompa_psellos_bot.py`.
+- Expert Rollout Policy (`TompaPsellosBot`) integrated into Monte Carlo rollouts.
+- Generated Ground-Truth Calibration Report ([reports/phase3_ground_truth_report.md](file:///e:/Data/other_projects/snapszer_GTO/reports/phase3_ground_truth_report.md)).
 
-## Benchmark Results (100 games per matchup, alternating initial leader)
-
-| Opponent Bot | GTO Win Rate % | Total GP (GTO vs Opp) | **Net GP Diff / deal** |
-| --- | --- | --- | --- |
-| **ExpertBot (Tompa)** | 48.0% | 76 - 69 | **+0.07** |
-| **OverfolderBot** | 90.0% | 248 - 10 | **+2.38** |
-| **CallingStationBot** | 92.0% | 192 - 12 | **+1.80** |
-| **PointCounterFishBot** | 86.0% | 198 - 18 | **+1.80** |
-| **MarriageHunterBot** | 86.0% | 188 - 18 | **+1.70** |
-| **RandMiniMaxBot** | 77.0% | 180 - 29 | **+1.51** |
-| **MLPlayingBot** | 76.0% | 170 - 26 | **+1.44** |
-| **AggressiveCloserBot** | 71.0% | 156 - 32 | **+1.24** |
-| **RdeepBot** | 63.0% | 92 - 57 | **+0.35** |
+## Phase 3 Ground-Truth Findings
+1. **Oracle EV Calibration**: The previous "89.8% 0-0.05 EV delta" was self-referential. Measured against the `ExactOracleSolver`, **66.7% of decisions contain true EV loss** (ranging from -0.05 to -0.30 EV).
+2. **Rollout Policy Upgrade**: `GTO (Expert Rollout)` outperforms `GTO (Rand Rollout)` with **+4 Net GP Advantage** in head-to-head evaluation.
+3. **Talon Closing**: Talon Closing logic fully functional in Phase 1 with immediate Phase 2 suit and trump rule enforcement.

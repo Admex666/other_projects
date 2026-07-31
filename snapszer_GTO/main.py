@@ -101,7 +101,7 @@ def main():
         RandMiniMaxBot(rng=random.Random(208), name="RandMiniMaxBot"),
     ]
 
-    games_per_matchup = 100
+    games_per_matchup = 500
     suite = BenchmarkSuite(seed=seed)
 
     print(f"\n[2/3] Running League Tournament ({games_per_matchup} games per opponent)...")

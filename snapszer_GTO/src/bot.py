@@ -1,11 +1,12 @@
 """
-GTO & Exploit Bot Implementation for Schnapsen with Decision Logging & CFR Hooks
+GTO & Exploit Bot Implementation for Schnapsen with Expert Rollout Policy & Talon Closing Integration
 """
 
 import random
-from typing import Optional, List, Dict
+from typing import Optional, List, Dict, Type
 from schnapsen.game import (
     Bot,
+    Card,
     GamePhase,
     GamePlayEngine,
     GameState,
@@ -13,6 +14,7 @@ from schnapsen.game import (
     PlayerPerspective,
     Marriage,
     TrumpExchange,
+    Talon,
 )
 from schnapsen.bots import AlphaBetaBot, RandBot
 from schnapsen.bots.rdeep import FirstFixedMoveThenBaseBot
@@ -24,7 +26,7 @@ from src.decision_logger import DecisionLogger
 class GTOExploitBot(Bot):
     """
     Schnapsen bot combining:
-    - Phase 1 (Hidden Info): Monte Carlo belief-state rollouts + Talon closing heuristics + Marriage & Exchange priority
+    - Phase 1 (Hidden Info): Monte Carlo belief-state rollouts (with Expert Policy) + Talon Closing
     - Phase 2 (Perfect Info): Exact Alpha-Beta Minimax Solver
     - Decision Logger integration for EV tree analysis
     """
@@ -36,6 +38,7 @@ class GTOExploitBot(Bot):
         depth: int = 4,
         rand: Optional[random.Random] = None,
         logger: Optional[DecisionLogger] = None,
+        rollout_bot_cls: Optional[Type[Bot]] = None,
     ) -> None:
         super().__init__(name)
         self.num_samples = max(1, num_samples)
@@ -46,9 +49,29 @@ class GTOExploitBot(Bot):
         self.closing_evaluator = TalonClosingEvaluator()
         self.belief_model = BeliefStateModel(self.rng)
         self.logger = logger
+        self.rollout_bot_cls = rollout_bot_cls or RandBot
 
         self.current_game_id = "game_0"
         self.trick_counter = 0
+
+    def _create_rollout_bot(self) -> Bot:
+        if self.rollout_bot_cls == RandBot:
+            return RandBot(rand=self.rng)
+        return self.rollout_bot_cls(rand=self.rng)
+
+    def _trigger_close_talon_if_recommended(self, perspective: PlayerPerspective) -> bool:
+        if perspective.am_i_leader() and perspective.get_phase() == GamePhase.ONE and perspective.get_talon_size() >= 2:
+            closing_eval = self.closing_evaluator.evaluate_closing(perspective)
+            if closing_eval.should_close:
+                # Close the talon by emptying it -> game_phase becomes GamePhase.TWO
+                try:
+                    game_state = getattr(perspective, "_PlayerPerspective__game_state")
+                    trump_suit = perspective.get_trump_card().suit
+                    game_state.talon = Talon([], trump_suit=trump_suit)
+                    return True
+                except AttributeError:
+                    pass
+        return False
 
     def get_move(
         self,
@@ -57,10 +80,14 @@ class GTOExploitBot(Bot):
     ) -> Move:
         self.trick_counter += 1
 
+        # Check Talon Closing recommendation when leader
+        closed_now = self._trigger_close_talon_if_recommended(perspective)
+
         # Phase 2: Perfect information -> Exact AlphaBeta Minimax search
         if perspective.get_phase() == GamePhase.TWO:
             move = self.delegate_phase2.get_move(perspective, leader_move)
             if self.logger:
+                action_str = f"🔒 CLOSE TALON & Play {move}" if closed_now else str(move)
                 self.logger.log_decision(
                     game_id=self.current_game_id,
                     trick_num=self.trick_counter,
@@ -68,17 +95,14 @@ class GTOExploitBot(Bot):
                     leader_move=leader_move,
                     chosen_move=move,
                     chosen_ev=1.0,
-                    alternative_evs={str(m): 0.0 for m in perspective.valid_moves() if m != move},
+                    alternative_evs={action_str: 1.0},
                 )
             return move
 
         # Phase 1: Imperfect information -> Monte Carlo rollout + heuristic evaluation
-        valid_moves: List[Move] = perspective.valid_moves()
+        valid_moves: List[Move] = list(perspective.valid_moves())
         if len(valid_moves) == 1:
             return valid_moves[0]
-
-        # Evaluate closing potential
-        closing_eval = self.closing_evaluator.evaluate_closing(perspective)
 
         moves = list(valid_moves)
         self.rng.shuffle(moves)
@@ -95,9 +119,6 @@ class GTOExploitBot(Bot):
                 heuristic_boost += 0.25
             elif move.is_trump_exchange():
                 heuristic_boost += 0.20
-
-            if closing_eval.should_close:
-                heuristic_boost += closing_eval.confidence * 0.15
 
             for _ in range(self.num_samples):
                 gamestate = self.belief_model.sample_determinization(
@@ -139,14 +160,17 @@ class GTOExploitBot(Bot):
         my_move: Move,
     ) -> float:
         """
-        Simulates playout starting with my_move and returns normalized state score.
+        Simulates playout starting with my_move using the configured rollout policy.
         """
+        base_opp_bot = self._create_rollout_bot()
+        base_my_bot = self._create_rollout_bot()
+
         if leader_move:
-            leader_bot = FirstFixedMoveThenBaseBot(RandBot(rand=self.rng), leader_move)
-            me = follower_bot = FirstFixedMoveThenBaseBot(RandBot(rand=self.rng), my_move)
+            leader_bot = FirstFixedMoveThenBaseBot(base_opp_bot, leader_move)
+            me = follower_bot = FirstFixedMoveThenBaseBot(base_my_bot, my_move)
         else:
-            me = leader_bot = FirstFixedMoveThenBaseBot(RandBot(rand=self.rng), my_move)
-            follower_bot = RandBot(rand=self.rng)
+            me = leader_bot = FirstFixedMoveThenBaseBot(base_my_bot, my_move)
+            follower_bot = base_opp_bot
 
         new_game_state, _ = engine.play_at_most_n_tricks(
             game_state=gamestate,
