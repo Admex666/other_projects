@@ -902,7 +902,7 @@
     // ─── Marketing Dashboard ──────────────────────────────────
     let mktRange = '1d';
     let mktMetrics = [];
-    let mktTargets = [];
+    let allMktOrders = [];
 
     async function loadMarketing() {
         const cardsEl = document.getElementById('mkt-cards');
@@ -911,6 +911,15 @@
         // Fetch targets
         const { data: targets } = await supabaseClient.from('marketing_targets').select('*');
         mktTargets = targets || [];
+
+        // Fetch paid real orders for customer cohort analysis
+        const { data: ordersData } = await supabaseClient
+            .from('orders')
+            .select('id, runner_id, campaign, created_at, stripe_payment_status, is_test')
+            .eq('stripe_payment_status', 'paid')
+            .eq('is_test', false)
+            .order('created_at', { ascending: true });
+        allMktOrders = ordersData || [];
 
         // Fetch all meta_daily_metrics ordered newest first
         const { data: metrics, error } = await supabaseClient
@@ -933,6 +942,7 @@
 
         renderMktCards();
     }
+
 
     function setMktRange(range) {
         mktRange = range;
@@ -1025,6 +1035,59 @@
         return Number(n).toLocaleString('hu-HU', { maximumFractionDigits: 0 }) + ' ' + unit;
     }
 
+    function analyzeCustomerCohorts(orders, fromDate) {
+        const runnerCampaigns = new Map();
+        const orderCohort = new Map();
+
+        for (const o of orders) {
+            const runnerId = o.runner_id;
+            const campaign = (o.campaign || 'unknown').toLowerCase().trim();
+
+            if (!runnerCampaigns.has(runnerId)) {
+                runnerCampaigns.set(runnerId, new Set([campaign]));
+                orderCohort.set(o.id, 'new');
+            } else {
+                const prevCamps = runnerCampaigns.get(runnerId);
+                if (!prevCamps.has(campaign)) {
+                    orderCohort.set(o.id, 'returning');
+                    prevCamps.add(campaign);
+                } else {
+                    orderCohort.set(o.id, 'repeat');
+                }
+            }
+        }
+
+        const filtered = fromDate
+            ? orders.filter(o => new Date(o.created_at) >= fromDate)
+            : orders;
+
+        let totalNew = 0;
+        let totalReturning = 0;
+        const byCamp = {};
+
+        for (const o of filtered) {
+            const cohort = orderCohort.get(o.id) || 'new';
+            const camp = (o.campaign || 'unknown').toLowerCase().trim();
+            if (!byCamp[camp]) byCamp[camp] = { newCount: 0, returningCount: 0, total: 0 };
+
+            if (cohort === 'new') {
+                totalNew++;
+                byCamp[camp].newCount++;
+            } else {
+                totalReturning++;
+                byCamp[camp].returningCount++;
+            }
+            byCamp[camp].total++;
+        }
+
+        return {
+            totalNew,
+            totalReturning,
+            totalOrders: filtered.length,
+            byCamp
+        };
+    }
+
     function renderMktCards() {
         const STRIPE_PCT   = 0.015;
         const STRIPE_FIXED = 50;
@@ -1044,6 +1107,7 @@
         }
 
         const campaigns = aggregateMetrics(filtered);
+        const cohorts   = analyzeCustomerCohorts(allMktOrders, from);
 
         // Overall Totals for Breakeven Card
         let totRev = 0, totSpend = 0, totPurchases = 0;
@@ -1065,6 +1129,15 @@
 
         const isFullyPaid   = totNetContrib >= INITIAL_INVESTMENT;
         const paybackColor  = isFullyPaid ? '#22c55e' : (paybackPct > 50 ? '#f59e0b' : '#ef4444');
+
+        // Filter cohorts specifically for active campaign (pilis / Nagy-Kevély csillagai)
+        const pilisCohort = cohorts.byCamp['pilis'] || { newCount: 0, returningCount: 0, total: 0 };
+        const activeCohortTotal = pilisCohort.total > 0 ? pilisCohort.total : cohorts.totalOrders;
+        const activeCohortNew   = pilisCohort.total > 0 ? pilisCohort.newCount : cohorts.totalNew;
+        const activeCohortRet   = pilisCohort.total > 0 ? pilisCohort.returningCount : cohorts.totalReturning;
+
+        const newPct = activeCohortTotal > 0 ? (activeCohortNew / activeCohortTotal * 100).toFixed(1) : 0;
+        const retPct = activeCohortTotal > 0 ? (activeCohortRet / activeCohortTotal * 100).toFixed(1) : 0;
 
         let html = `
         <!-- OVERALL BREAKEVEN / PAYBACK CARD -->
@@ -1112,7 +1185,45 @@
             </div>
         </div>
 
+        <!-- CUSTOMER ACQUISITION & RETENTION COHORT CARD -->
+        <div style="background: var(--surface2); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+                <div style="font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 800; color: #fff;">
+                    👥 Nagy-Kevély Csillagai Vásárlói Összetétel
+                </div>
+                <div style="font-size: 0.85rem; font-weight: 700; color: #38bdf8; background: rgba(56,189,248,0.1); padding: 0.3rem 0.8rem; border-radius: 20px; border: 1px solid rgba(56,189,248,0.3);">
+                    ${activeCohortTotal} db eladott érem (${label.toLowerCase()})
+                </div>
+            </div>
+
+            <!-- Visual Cohort Split Bar -->
+            <div style="height: 10px; background: rgba(255,255,255,0.08); border-radius: 6px; overflow: hidden; margin-bottom: 1rem; display: flex;">
+                <div style="height: 100%; width: ${newPct}%; background: #38bdf8;" title="Új vásárlók: ${newPct}%"></div>
+                <div style="height: 100%; width: ${retPct}%; background: #22c55e;" title="Visszatérő vásárlók: ${retPct}%"></div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; font-size: 0.82rem;">
+                <div>
+                    <div style="color: var(--text-mid); font-size: 0.7rem; text-transform: uppercase;">🆕 Új vásárlók (Első nevezés)</div>
+                    <div style="font-size: 1.2rem; font-weight: 800; color: #38bdf8;">${activeCohortNew} fő</div>
+                    <div style="color: var(--text-mid); font-size: 0.75rem;">${newPct}% az eladott érmekből</div>
+                </div>
+                <div>
+                    <div style="color: var(--text-mid); font-size: 0.7rem; text-transform: uppercase;">🔄 Visszatérő vásárlók (Prédikálószékből)</div>
+                    <div style="font-size: 1.2rem; font-weight: 800; color: #22c55e;">${activeCohortRet} fő</div>
+                    <div style="color: var(--text-mid); font-size: 0.75rem;">${retPct}% az eladott érmekből</div>
+                </div>
+                <div style="grid-column: 1 / -1;">
+                    <div style="background: rgba(34,197,94,0.08); border: 1px dashed rgba(34,197,94,0.3); padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.82rem; color: #e2e8f0; line-height: 1.4;">
+                        💡 <strong>Lojalitás Insight:</strong> A Nagy-Kevély csillagai kihívás vásárlóinak <strong style="color:#22c55e;">${retPct}%-a (${activeCohortRet} fő)</strong> a korábbi Prédikálószék kihívás teljesítőiből került ki!
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div style="color: var(--text-mid); font-size: 0.8rem; margin-bottom: 1rem;">${label} kampányokként részletezve:</div>`;
+
+
 
         for (const c of campaigns) {
             const target = getTarget(c.campaign_name);
@@ -1148,6 +1259,12 @@
             const profitCls  = grossProfit >= 0 ? 'fin-profit-pos' : 'fin-profit-neg';
             const profitSign = grossProfit >= 0 ? '+' : '';
 
+            // Campaign Cohort calculation
+            const cNameLower = (c.campaign_name || '').toLowerCase();
+            const cSlug = (cNameLower.includes('kevély') || cNameLower.includes('kevely') || cNameLower.includes('pilis')) ? 'pilis' : 'predikaloszek';
+            const cCohort = cohorts.byCamp[cSlug] || { newCount: 0, returningCount: 0, total: 0 };
+            const cRetPct = cCohort.total > 0 ? (cCohort.returningCount / cCohort.total * 100).toFixed(1) : 0;
+
             html += `
             <div class="kpi-card ${cardCls}">
                 <div class="kpi-card-header">
@@ -1178,6 +1295,17 @@
                         <div class="kpi-sub">cél: ${(target.target_roas || 0).toFixed(1)}x</div>
                     </div>
                 </div>
+
+                <!-- Customer Cohort Breakdown Badge -->
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); padding: 0.5rem 0.8rem; border-radius: 8px; font-size: 0.78rem; display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem;">
+                    <span style="color: var(--text-mid);">👥 Vásárlói Összetétel:</span>
+                    <span>
+                        <strong style="color: #38bdf8;">🆕 ${cCohort.newCount} új</strong>
+                        <span style="color: var(--text-mid); margin: 0 0.3rem;">•</span>
+                        <strong style="color: #22c55e;">🔄 ${cCohort.returningCount} visszatérő (${cRetPct}%)</strong>
+                    </span>
+                </div>
+
 
                 <!-- Engagement bars -->
                 <div class="kpi-bar-row">
