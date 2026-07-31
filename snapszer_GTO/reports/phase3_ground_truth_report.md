@@ -6,26 +6,27 @@ This report evaluates `GTOExploitBot` against an **Exact Minimax Ground-Truth Or
 
 | Evaluation Model | Disagreement % vs. Oracle | Total True EV Loss | Avg True EV Loss / decision | Status |
 | --- | --- | --- | --- | --- |
-| `MC_N16_Rand` | **66.7%** | **-0.43 EV** | -0.1434 EV | Baseline (Naive) |
-| `MC_N16_Expert` | **66.7%** | **-0.24 EV** | -0.0789 EV | High Variance |
-| `MC_N64_Expert` | **66.7%** | **-0.35 EV** | -0.1181 EV | Ground Truth Approximated |
+| `MC_N16_Rand` | **40.0%** | **-0.13 EV** | -0.0130 EV | Baseline (Naive) |
+| `MC_N16_Expert` | **40.0%** | **-0.18 EV** | -0.0177 EV | High Variance |
+| `MC_N256_Expert` | **10.0%** | **-0.02 EV** | **-0.0025 EV** | **Ground Truth Approximated (85% Error Drop!)** |
+| `MC_N1024_Expert` | **20.0%** | **-0.03 EV** | -0.0031 EV | Ground Truth Approximated |
 
 ## 2. Ground-Truth EV Error Delta Histogram (Oracle-Calibrated)
 
 | True EV Loss Bracket (`Oracle_Best - Oracle_Chosen`) | Decision Count | Percentage | Severity Assessment |
 | --- | --- | --- | --- |
-| `0.00 - 0.05 (optimal)` | 1 decisions | 33.3% | Optimal |
-| `0.05 - 0.15 (suboptimal)` | 0 decisions | 0.0% | Suboptimal / Error |
-| `0.15 - 0.30 (moderate mistake)` | 2 decisions | 66.7% | Suboptimal / Error |
+| `0.00 - 0.05 (optimal)` | 9 decisions | 90.0% | Optimal |
+| `0.05 - 0.15 (suboptimal)` | 1 decisions | 10.0% | Suboptimal / Error |
+| `0.15 - 0.30 (moderate mistake)` | 0 decisions | 0.0% | Suboptimal / Error |
 | `0.30 - 0.60 (severe error)` | 0 decisions | 0.0% | Suboptimal / Error |
 | `0.60+ (blunder)` | 0 decisions | 0.0% | Suboptimal / Error |
 
 ## 3. Rollout Policy Upgrade: Random Rollout vs. Expert Rollout
 
-- **Matchup**: GTO (Rand Rollout) vs. GTO (Expert Rollout) - 6 Games
-- **GTO (Rand Rollout)**: 3 Wins | 3 Game Points
-- **GTO (Expert Rollout)**: 3 Wins | 6 Game Points
-- **Net Advantage**: GTO (Expert Rollout) won **+3 Net GP** with **50.0% win rate**.
+- **Matchup**: GTO (Rand Rollout) vs. GTO (Expert Rollout) - 30 Games
+- **GTO (Rand Rollout)**: 15 Wins | 22 Game Points
+- **GTO (Expert Rollout)**: 15 Wins | 27 Game Points
+- **Net Advantage**: GTO (Expert Rollout) won **+5 Net GP** with **50.0% win rate**.
 
 ## 4. Talon Closing Engine Support & Verification
 
