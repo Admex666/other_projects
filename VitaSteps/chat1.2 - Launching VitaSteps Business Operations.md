@@ -3284,3 +3284,42 @@ A két fő landing page és a checkout a legfontosabb. Beépítem mindegyikbe:
 - Az első felvételek **néhány óra elteltével** megjelennek a Clarity dashboardon.
 - Heatmap és scroll depth adatok általában **1-2 nap** után lesznek elég megbízhatóak.
 - A legfontosabb amit majd érdemes megnézni: **melyik ponton görgetnek el anélkül, hogy kattintanának** a checkout gombra.
+
+### User Input
+
+Kérd le az utolsó hét Meta adatait (eladásokkal) napi szintre aggregálva.
+
+*Edited relevant file*
+
+*User accepted the command `python scratch_daily.py`*
+
+*User accepted the command `Remove-Item scratch_daily.py -Force`*
+
+### Planner Response
+
+Íme az összesített napi bontás (**július 29. – augusztus 5.**):
+
+---
+
+### 📊 Napi Meta Teljesítmény + Eladások
+
+| Dátum | Spend (+ÁFA) | Megjelenés | Reach | Kattintás | CTR% | CPM | CPC | Eladás | Nettó |
+|---|---|---|---|---|---|---|---|---|---|
+| **júl. 29.** | 1 424 Ft | 1 132 | 892 | 96 | **8.48%** | 990 | 11.7 | 0 db | -1 424 Ft |
+| **júl. 30.** | 1 621 Ft | 931 | 660 | 68 | 7.30% | 1 371 | 18.8 | 0 db | -1 621 Ft |
+| **júl. 31.** | 3 219 Ft | 1 955 | 1 422 | 122 | 6.24% | 1 297 | 20.8 | 0 db | -3 219 Ft |
+| **aug. 1.** | 4 496 Ft | 2 108 | 1 516 | 119 | 5.65% | 1 679 | 29.7 | 0 db | -4 496 Ft |
+| **aug. 2.** | 3 738 Ft | 1 769 | 1 337 | 104 | 5.88% | 1 664 | 28.3 | 0 db | -3 738 Ft |
+| **aug. 3.** | 2 502 Ft | 1 782 | 1 357 | 94 | 5.27% | 1 105 | 21.0 | 0 db | -2 502 Ft |
+| **aug. 4.** | 1 881 Ft | 783 | 642 | 47 | 6.00% | 1 891 | 31.5 | 0 db | -1 881 Ft |
+| **aug. 5.** | 4 515 Ft | 1 625 | 1 223 | 87 | 5.35% | 2 188 | 40.9 | 0 db | -4 515 Ft |
+| **ÖSSZESEN** | **23 395 Ft** | **12 085** | **9 049** | **737** | ~6.3% avg | 1 373 avg | 23.4 avg | **0 db** | **-23 395 Ft** |
+
+---
+
+### 💡 Amit érdemes látni
+
+- **737 link-kattintás érkezett 23 395 Ft-ból** → átlagos kattintásonkénti ár: **31.7 Ft** – ez még mindig nagyon olcsó, az iparági normál 100-300 Ft/kattintás.
+- **0 Supabase vásárlás** az elmúlt 8 napban – a Stripe/Supabase rendszer és a hirdetési kattintáskövetés rendben van, egyszerűen nincs konverzió ebben az időszakban (összhangban a nyári szezonalitási tézisünkkel).
+- **A CPM emelkedik** (990 Ft → 2 188 Ft): Aug. 5-én majdnem duplájára nőtt a megjelenési ár – ez tipikus augusztus eleji jelenség, mikor a big-brand hirdetők visszatérnek a nyaralásból és megnövelik a versenyüket.
+- **Aug. 5-i kiugró Cost:** Ma 4 515 Ft lett elköltve – érdemes megnézni a Meta kampánykezelőben, hogy ez szándékos volt-e (büdzsé emeléssel), vagy automatikus optimalizáció. Ha nem volt szándékos, érdemes visszavágni.
