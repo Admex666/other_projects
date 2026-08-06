@@ -34,6 +34,13 @@
 *   **[x]** Foxpost tömeges export felület integrálása az `admin.html`-be (1 kattintásos letöltés SheetJS segítségével).
 *   **[x]** Címadatok szétbontása (település, irányítószám, utca) házhozszállítás esetén a Foxpost XLSX sablonnak megfelelően.
 *   **[x]** Kijelölt futások és szállítmányok feladottként való megjelölése az admin felületen (bulk `/api/admin-approve` hívás).
+*   **[x]** Google Sheets szállítási adatok (`együtt küldve` & feladva státuszok) átmigrálása a Supabase `runs` és `shipments` tábláiba.
+*   **[x]** Prédikálószék manuális jóváhagyás fül az admin panelen a portálon kívüli teljesítések jóváhagyására.
+*   **[x]** Dinamikus éremkiszállítási határidő szöveg az admin jóváhagyó e-mailben kampányonként (`predikaloszek`: azonnali feladás, `pilis`: aug. 25. után).
+*   **[x]** Kampány-szintű elkülönítés a logisztikai csoportosításban és a Foxpost API feladóban a visszatérő vásárlók csomagszámainak védelmére.
+*   **[x]** Microsoft Clarity beépítése az összes főoldalra (`xx85zg2g25`).
+*   **[x]** Teszt felhasználó elrejtő kapcsoló a Logisztika fülön.
+
 
 ---
 

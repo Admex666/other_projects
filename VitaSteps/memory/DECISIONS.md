@@ -36,3 +36,13 @@
 *   **Context:** We wanted to reward loyal participants who actively refer friends to VitaSteps, incentivizing them to sign up for subsequent challenges at a lower price point.
 *   **Decision:** Implemented a backend check in `api/checkout.js` matching the purchaser's email against the `referred_by` column in Supabase `runners`. A tiered discount is computed (1 referral = 10% off, 2 = 20% off, up to 5+ = 50% off). The code programmatically creates the corresponding discount coupon in Stripe if it does not yet exist.
 *   **Impact:** Fully automated loyalty program without requiring manual coupon generation on Stripe or promo code inputs from the customer. Users are dynamically recognized and rewarded upon checkout.
+
+---
+
+## 6. Campaign-Isolated Parcel Grouping & Dynamic Shipping Notices (2026-08-06)
+*   **Context:** As runners participate in multiple challenges over time (Prédikálószék, Nagy-Kevély), logistics tools risked grouping runs from different campaigns under the same tracking number if matching purely by email address. Additionally, approval emails needed campaign-aware shipping dates.
+*   **Decision:** 
+    *   Enforced explicit campaign matching (`run.campaign === targetRun.campaign`) across all grouping functions in `admin.html` and `api/create-foxpost-parcels.js`.
+    *   Replaced env-based shipping dates in `/api/admin-approve.js` with a campaign config mapping (`MEDAL_SHIP_DATES`). Past dates automatically output "néhány munkanapon belül feladjuk", while future dates output the formatted date string.
+*   **Impact:** Perfect logistics isolation between campaigns for repeat customers, accurate package tracking, and clear customer expectations in emails without manual environment variable edits.
+

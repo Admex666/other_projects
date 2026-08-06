@@ -713,6 +713,7 @@
             <button class="filter-tab active" onclick="setFilter('pending')" id="tab-pending">⏳ Várakozó</button>
             <button class="filter-tab" onclick="setFilter('approved')" id="tab-approved">✅ Jóváhagyott</button>
             <button class="filter-tab" onclick="setFilter('all')" id="tab-all">📋 Összes</button>
+            <button class="filter-tab" onclick="setFilter('predikalo')" id="tab-predikalo" style="border: 1px solid rgba(99,179,237,0.4); color: #63b3ed;">🏔️ Prédikálószék</button>
             <button class="filter-tab" onclick="setFilter('logistics')" id="tab-logistics" style="margin-left: auto; border: 1px solid rgba(249, 115, 22, 0.3); color: #f97316;">🦊 Logisztika (Foxpost)</button>
             <button class="filter-tab" onclick="setFilter('marketing')" id="tab-marketing" style="border: 1px solid rgba(196, 255, 0, 0.3); color: #c4ff00;">📊 Marketing</button>
         </div>
@@ -769,9 +770,15 @@
         const targetShipTogether = (targetRun.ship_together_with || '').toLowerCase().trim();
         const targetShipment = getShipment(targetRun);
         const targetDest = targetShipment.parcel_id || targetRun.parcel_id || '';
+        const targetCampaign = targetRun.campaign || 'predikaloszek';
 
         allRuns.forEach(run => {
             if (run.id === targetRun.id || !run.completed) return;
+
+            // Must belong to the exact same campaign
+            const runCampaign = run.campaign || 'predikaloszek';
+            if (runCampaign !== targetCampaign) return;
+
             const shipment = getShipment(run);
             const isShipped = !!shipment.shipped;
             if (isShipped) return; // Skip already shipped
@@ -877,12 +884,11 @@
                 <div>Adatok betöltése...</div>
             </div>`;
 
-        // Fetch all runs with proof_submitted or completed, joined with runner and shipment info
+        // Fetch all runs – proof-list tabs filter client-side; Prédikálószék tab needs all rows
         const { data, error } = await supabaseClient
             .from('runs')
             .select('*, runners(name, email, phone, billing_address), shipments(*)')
-            .or('proof_submitted.eq.true,completed.eq.true')
-            .order('proof_submitted_at', { ascending: false });
+            .order('proof_submitted_at', { ascending: false, nullsFirst: false });
 
         if (error) {
             document.getElementById('proof-list').innerHTML = `
@@ -1408,6 +1414,35 @@
         `;
     }
 
+    function isPredikaloRun(run) {
+        const serial = run.serial_number || '';
+        return !serial.includes('PK') && !serial.includes('999');
+    }
+
+    async function approvePredikaloRun(runId, btn) {
+        if (!confirm('Biztosan jóváhagyod ezt a Prédikálószék teljesítést?')) return;
+        btn.disabled = true;
+        btn.textContent = '⏳ Folyamatban...';
+        try {
+            const res = await fetch('/api/admin-approve', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'approve', run_id: runId, admin_secret: adminSecret })
+            });
+            const json = await res.json();
+            if (!res.ok) throw new Error(json.error || 'Ismeretlen hiba');
+            btn.textContent = '✅ Jóváhagyva';
+            btn.style.background = 'rgba(34,197,94,0.2)';
+            btn.style.color = '#22c55e';
+            btn.style.borderColor = '#22c55e';
+            await loadData();
+        } catch (err) {
+            btn.disabled = false;
+            btn.textContent = '✅ Jóváhagyás';
+            alert('Hiba: ' + err.message);
+        }
+    }
+
     function setFilter(filter) {
         currentFilter = filter;
         document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
@@ -1423,9 +1458,52 @@
     function renderList() {
         const container = document.getElementById('proof-list');
 
+        // ── PRÉDIKÁLÓSZÉK TAB ────────────────────────────────────
+        if (currentFilter === 'predikalo') {
+            const predRuns = allRuns.filter(isPredikaloRun);
+            const notApproved = predRuns.filter(r => !r.completed);
+            const approvedCount = predRuns.filter(r => r.completed).length;
+
+            let html = `
+            <div style="background: rgba(99,179,237,0.07); border: 1px solid rgba(99,179,237,0.25); border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1.25rem;">
+                <div style="font-family:'Outfit',sans-serif; font-size:1rem; font-weight:800; color:#63b3ed; margin-bottom:0.4rem;">🏔️ Prédikálószék Vertical – Manuális Jóváhagyás</div>
+                <div style="font-size:0.82rem; color:var(--text-mid); margin-bottom:0.75rem;">Ezeknél a futóknál az igazolás NEM a portálon keresztül érkezett. Az alábbi gombokkal manuálisan hagyhatod jóvá a teljesítést és küldöd ki a gratuláló emailt.</div>
+                <div style="display:flex; gap:1rem; font-size:0.82rem;">
+                    <span style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);padding:0.25rem 0.75rem;border-radius:20px;color:#22c55e;">✅ Jóváhagyott: <strong>${approvedCount}</strong></span>
+                    <span style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);padding:0.25rem 0.75rem;border-radius:20px;color:#ef4444;">⏳ Jóváhagyásra vár: <strong>${notApproved.length}</strong></span>
+                </div>
+            </div>`;
+
+            if (notApproved.length === 0) {
+                html += `<div class="empty-state"><div class="icon">✅</div><div>Minden Prédikálószék teljesítés jóváhagyva!</div></div>`;
+            } else {
+                notApproved.forEach(run => {
+                    const email = run.runners?.email || '–';
+                    const name  = run.name || run.runners?.name || 'Ismeretlen';
+                    const serial = run.serial_number || '–';
+                    html += `
+                    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:1rem 1.25rem;margin-bottom:0.75rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.75rem;">
+                        <div>
+                            <div style="font-weight:700;font-size:0.95rem;">${name} <span style="color:#63b3ed;font-size:0.8rem;font-weight:600;">${serial}</span></div>
+                            <div style="color:var(--text-mid);font-size:0.8rem;margin-top:0.2rem;">📧 ${email}</div>
+                            <div style="color:var(--text-mid);font-size:0.75rem;margin-top:0.1rem;">🏔️ Prédikálószék Vertical</div>
+                        </div>
+                        <button
+                            onclick="approvePredikaloRun('${run.id}', this)"
+                            style="background:rgba(99,179,237,0.1);border:1px solid rgba(99,179,237,0.4);color:#63b3ed;padding:0.5rem 1.1rem;border-radius:8px;cursor:pointer;font-weight:700;font-size:0.85rem;white-space:nowrap;">
+                            ✅ Jóváhagyás
+                        </button>
+                    </div>`;
+                });
+            }
+            container.innerHTML = html;
+            return;
+        }
+
         if (currentFilter === 'logistics') {
-            const completedRuns = allRuns.filter(r => r.completed);
-            
+            let completedRuns = allRuns.filter(r => r.completed);
+            if (logisticsHideTest) completedRuns = completedRuns.filter(r => !isTestRun(r));
+
             // Filter by sub-filter
             let filtered = completedRuns.filter(run => {
                 const shipment = getShipment(run);
@@ -1573,6 +1651,12 @@
                         </div>
                         <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
                             <input type="text" class="search-logistics" placeholder="Keresés..." value="${logisticsSearch.replace(/"/g, '&quot;')}" oninput="handleLogisticsSearch(event)">
+                            <!-- Teszt switch -->
+                            <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.78rem;color:var(--text-mid);cursor:pointer;user-select:none;white-space:nowrap;">
+                                <input type="checkbox" id="hide-test-toggle" ${logisticsHideTest ? 'checked' : ''} onchange="toggleHideTest(this)"
+                                    style="width:14px;height:14px;accent-color:#f97316;cursor:pointer;">
+                                Tesztek elrejtve
+                            </label>
                             <div class="logistics-buttons">
                                 <button id="btn-submit-foxpost" class="btn btn-primary" style="margin: 0; padding: 0.45rem 1rem; font-size: 0.82rem;" onclick="triggerSubmitFoxpost(this)" disabled>
                                     🦊 Foxpost API Feladás
@@ -1609,8 +1693,10 @@
         }
 
         let runs = allRuns;
-        if (currentFilter === 'pending') runs = allRuns.filter(r => r.proof_submitted && !r.completed);
+        if (currentFilter === 'pending')  runs = allRuns.filter(r => r.proof_submitted && !r.completed);
         if (currentFilter === 'approved') runs = allRuns.filter(r => r.completed);
+        if (currentFilter === 'all')      runs = allRuns.filter(r => r.proof_submitted || r.completed);
+
 
         if (runs.length === 0) {
             container.innerHTML = `
@@ -1626,6 +1712,18 @@
 
     let logisticsSubFilter = 'pending';
     let logisticsSearch = '';
+    let logisticsHideTest = true; // teszt userek alapból rejtve
+
+    function isTestRun(run) {
+        const serial = (run.serial_number || '').toUpperCase();
+        const email  = (run.runners?.email || '').toLowerCase();
+        return serial.includes('TEST') || email.includes('admex');
+    }
+
+    function toggleHideTest(el) {
+        logisticsHideTest = el.checked;
+        renderList();
+    }
 
     function setLogisticsSubFilter(sub) {
         logisticsSubFilter = sub;

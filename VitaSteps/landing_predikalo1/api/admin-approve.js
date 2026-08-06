@@ -7,8 +7,8 @@ const supabase = createClient(
 
 // Éremkiszállítás dátumai kampányonként (YYYY-MM-DD)
 const MEDAL_SHIP_DATES = {
-    pilis:        '2026-08-25',  // Nagy-Kevély csillagai
-    predikaloszek: '2026-08-25', // Prédikálószék Vertical
+    pilis:         '2026-08-25',  // Nagy-Kevély csillagai – kiszállítás aug. 25. után
+    predikaloszek: '2026-01-01',  // Prédikálószék – érmek megvannak, azonnal postázható
 };
 
 function getMedalShippingText(campaignKey) {

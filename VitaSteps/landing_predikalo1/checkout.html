@@ -145,6 +145,7 @@
         }
         .form-row input[type="text"],
         .form-row input[type="email"],
+        .form-row input[type="tel"],
         .form-row select {
             width: 100%;
             padding: 0.85rem 1rem;
@@ -162,6 +163,24 @@
             border-color: rgba(196,255,0,0.5);
         }
         .form-row select option { background: var(--surface2); }
+
+        /* INLINE FIELD ERRORS */
+        .form-row input.input-error,
+        .form-row select.input-error {
+            border-color: var(--danger) !important;
+            box-shadow: 0 0 0 2px rgba(255,107,107,0.18);
+        }
+        .field-error {
+            display: none;
+            color: var(--danger);
+            font-size: 0.78rem;
+            font-weight: 600;
+            margin-top: 0.35rem;
+            padding-left: 0.1rem;
+            animation: fadeIn 0.18s ease;
+        }
+        .field-error.visible { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; transform: translateY(0); } }
 
         .form-grid-2 {
             display: grid;
@@ -339,15 +358,18 @@
                 <div class="form-row">
                     <label for="cust-email">E-mail cím *</label>
                     <input type="email" id="cust-email" placeholder="janos@email.com">
+                    <div class="field-error" id="err-email"></div>
                 </div>
                 <div class="form-row">
-                    <label for="cust-phone">Telefonszám *</label>
-                    <input type="text" id="cust-phone" placeholder="+36 30 123 4567">
+                    <label for="cust-phone">Telefonszám * <span style="font-size:0.75rem;color:var(--text-low);">(Foxpost SMS-hez: +36 30...)</span></label>
+                    <input type="tel" id="cust-phone" placeholder="+36 30 123 4567">
+                    <div class="field-error" id="err-phone"></div>
                 </div>
             </div>
             <div class="form-row" style="margin-top:1rem;">
                 <label for="cust-billing-address">Számlázási cím * <span style="font-size:0.75rem;color:var(--text-low);">(e-számlához)</span></label>
                 <input type="text" id="cust-billing-address" placeholder="1139 Budapest, Csizma utca 3.">
+                <div class="field-error" id="err-billing"></div>
             </div>
         </div>
 
@@ -398,6 +420,7 @@
             <div class="form-row">
                 <label for="home-address">Pontos szállítási cím *</label>
                 <input type="text" id="home-address" placeholder="1139 Budapest, Csizma utca 3.">
+                <div class="field-error" id="err-home-address"></div>
             </div>
             <p style="font-size:0.82rem;color:var(--text-low);margin-top:0.5rem;">Ha megegyezik a számlázási címeddel, hagyd üresen – azt fogjuk használni.</p>
         </div>
@@ -539,6 +562,7 @@
                     <div class="form-row">
                         <label>Nevező teljes neve *</label>
                         <input type="text" class="medal-name" placeholder="Minta János">
+                        <div class="field-error medal-name-error"></div>
                     </div>
                     <div class="form-row">
                         <label>Választott távolság *</label>
@@ -591,21 +615,58 @@
             return amount.toLocaleString('hu-HU') + ' Ft';
         }
 
-        // ── VALIDATION & SUBMIT ──────────────────────────────
-        function showError(msg) {
-            const el = document.getElementById('error-msg');
-            el.textContent = msg;
-            el.classList.add('visible');
-            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // ── VALIDATION HELPER FUNCTIONS ───────────────────────
+        function isValidEmail(email) {
+            return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
         }
-        function clearError() {
+
+        function isValidPhone(phone) {
+            const cleaned = phone.replace(/\D/g, '');
+            // Hungarian phones: starting with 06 or 36, total 9-11 digits
+            return (cleaned.startsWith('06') || cleaned.startsWith('36')) && cleaned.length >= 9 && cleaned.length <= 11;
+        }
+
+        function isValidName(name) {
+            const trimmed = name.trim();
+            const parts = trimmed.split(/\s+/);
+            // Must have at least 2 words (Vezetéknév + Keresztnév)
+            if (parts.length < 2) return false;
+            // No single-letter words or digits allowed
+            return parts.every(p => p.length >= 2) && !/\d/.test(trimmed);
+        }
+
+        function isValidAddress(address) {
+            const trimmed = address.trim();
+            // Must contain a 4-digit zip code and street name/number
+            const hasZip = /\b\d{4}\b/.test(trimmed);
+            return hasZip && trimmed.length >= 8 && trimmed.includes(' ');
+        }
+
+        // ── INLINE FIELD ERROR HELPERS ───────────────────────
+        function setFieldError(inputEl, errElId, msg) {
+            inputEl.classList.add('input-error');
+            const errEl = document.getElementById(errElId);
+            if (errEl) { errEl.textContent = msg; errEl.classList.add('visible'); }
+        }
+        function clearFieldError(inputEl, errElId) {
+            inputEl.classList.remove('input-error');
+            const errEl = document.getElementById(errElId);
+            if (errEl) { errEl.textContent = ''; errEl.classList.remove('visible'); }
+        }
+        function clearAllFieldErrors() {
+            document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
+            document.querySelectorAll('.field-error').forEach(el => { el.textContent = ''; el.classList.remove('visible'); });
+            // also clear panel name errors
+            document.querySelectorAll('.medal-name-error').forEach(el => { el.textContent = ''; el.classList.remove('visible'); });
             document.getElementById('error-msg').classList.remove('visible');
         }
 
+        // ── VALIDATION & SUBMIT ──────────────────────────────
         async function handleSubmit() {
-            clearError();
+            clearAllFieldErrors();
+            let hasError = false;
 
-            // Collect medals
+            // 1. Validate participants (medals)
             const medals = [];
             const panels = document.querySelectorAll('.medal-panel');
             for (let i = 0; i < panels.length; i++) {
@@ -613,31 +674,82 @@
                 const distEl = panels[i].querySelector('.medal-distance');
                 const mName = nameEl.value.trim();
                 const mDist = distEl.value;
-                if (!mName) {
-                    showError(`⚠️ Kérjük add meg a ${i + 1}. nevező nevét!`);
-                    nameEl.focus();
-                    return;
+                const nameErrEl = panels[i].querySelector('.medal-name-error');
+
+                if (!mName || !isValidName(mName)) {
+                    nameEl.classList.add('input-error');
+                    if (nameErrEl) {
+                        nameErrEl.textContent = !mName
+                            ? `Kérjük add meg a(z) ${i + 1}. nevező teljes nevét!`
+                            : `Teljes nevet adj meg (Vezetéknév + Keresztnév, pl. Minta János)!`;
+                        nameErrEl.classList.add('visible');
+                    }
+                    hasError = true;
+                } else {
+                    medals.push({ name: mName, distance: mDist });
                 }
-                medals.push({ name: mName, distance: mDist });
             }
 
-            // Buyer fields
-            const email = document.getElementById('cust-email').value.trim();
-            const phone = document.getElementById('cust-phone').value.trim();
-            const billingAddress = document.getElementById('cust-billing-address').value.trim();
+            // 2. Validate buyer fields
+            const emailEl = document.getElementById('cust-email');
+            const phoneEl = document.getElementById('cust-phone');
+            const addressEl = document.getElementById('cust-billing-address');
 
-            if (!email || !phone || !billingAddress) {
-                showError('⚠️ Kérjük töltsd ki az összes vásárlói mezőt (e-mail, telefon, számlázási cím)!');
+            const email = emailEl.value.trim();
+            const phone = phoneEl.value.trim();
+            const billingAddress = addressEl.value.trim();
+
+            if (!email) {
+                setFieldError(emailEl, 'err-email', 'Kérjük add meg az e-mail címedet!');
+                hasError = true;
+            } else if (!isValidEmail(email)) {
+                setFieldError(emailEl, 'err-email', 'Kérjük érvényes e-mail címet adj meg (pl. janos@email.com)!');
+                hasError = true;
+            }
+
+            if (!phone) {
+                setFieldError(phoneEl, 'err-phone', 'Kérjük add meg a telefonszámodat!');
+                hasError = true;
+            } else if (!isValidPhone(phone)) {
+                setFieldError(phoneEl, 'err-phone', 'Érvényes magyar telefonszámot adj meg (pl. +36 30 123 4567 vagy 06301234567)!');
+                hasError = true;
+            }
+
+            if (!billingAddress) {
+                setFieldError(addressEl, 'err-billing', 'Kérjük add meg a számlázási címedet az e-számlához!');
+                hasError = true;
+            } else if (!isValidAddress(billingAddress)) {
+                setFieldError(addressEl, 'err-billing', 'Teljes számlázási cím kell irányítószámmal (pl. 1139 Budapest, Csizma utca 3.)!');
+                hasError = true;
+            }
+
+            // 3. Delivery validation
+            const homeAddressEl = document.getElementById('home-address');
+            const homeAddressVal = homeAddressEl.value.trim();
+
+            if (deliveryMethod === 'home' && homeAddressVal && !isValidAddress(homeAddressVal)) {
+                setFieldError(homeAddressEl, 'err-home-address', 'Teljes szállítási cím kell irányítószámmal (pl. 1139 Budapest, Csizma utca 3.)!');
+                hasError = true;
+            }
+
+            // If any input has error, scroll into view and focus the VERY FIRST error element on top
+            if (hasError) {
+                const firstErrorEl = document.querySelector('.input-error');
+                if (firstErrorEl) {
+                    firstErrorEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstErrorEl.focus();
+                }
                 return;
             }
 
-            // Delivery validation
             if (deliveryMethod === 'foxpost' && !selectedParcelPoint) {
-                showError('⚠️ Kérjük válassz egy Foxpost csomagpontot a térképen!');
+                const errEl = document.getElementById('error-msg');
+                errEl.textContent = '⚠️ Kérjük válassz egy Foxpost csomagpontot a térképen!';
+                errEl.classList.add('visible');
+                errEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 return;
             }
 
-            const homeAddressVal = document.getElementById('home-address').value.trim();
             const resolvedHomeAddress = homeAddressVal || billingAddress;
 
             const btn = document.getElementById('submit-btn');

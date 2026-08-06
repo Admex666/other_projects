@@ -83,6 +83,11 @@ module.exports = async (req, res) => {
                     const otherShipment = Array.isArray(other.shipments) ? (other.shipments[0] || {}) : (other.shipments || {});
                     const otherDest = otherShipment.parcel_id || other.parcel_id || '';
 
+                    // Campaign must match
+                    const runCampaign = run.campaign || 'predikaloszek';
+                    const otherCampaign = other.campaign || 'predikaloszek';
+                    if (runCampaign !== otherCampaign) return false;
+
                     // Destination locker must match
                     if (destination !== otherDest) return false;
 

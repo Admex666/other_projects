@@ -4,7 +4,26 @@ All notable changes to the VitaSteps challenge platform project are documented h
 
 ---
 
+## [2.0.0] - 2026-08-06
+### Added
+*   **Microsoft Clarity Heatmap & Session Recording (`xx85zg2g25`):**
+    *   Beépítve a Clarity tracking script az `index.html`, `nagykevely/index.html`, `predikalo/index.html`, `checkout.html` és `siker.html` oldalakra hőtérképek és felvételek rögzítéséhez.
+*   **Prédikálószék Manuális Jóváhagyás Tab az Admin Panelen (`admin.html`):**
+    *   Létrehoztunk egy dedikált **🏔️ Prédikálószék** fület az admin panelen a portálon kívüli igazolások áttekintésére és azonnali jóváhagyására.
+    *   Frissítettük az `/api/admin-approve` végpontot: a jóváhagyó e-mailben szereplő éremkiszállítási szöveget dinamikussá tettük kampányonként (`predikaloszek`: „néhány munkanapon belül", `pilis`: „2026. augusztus 25. után", aug. 25. után automatikusan átvált „néhány munkanapon belül" szövegre).
+*   **Google Sheets Szállítási Adatok Migrációja Supabase-be:**
+    *   Sikeresen átmigráltuk a Google Sheets `Nevezések` munkalapjáról az `együtt küldve` (csoportos szállítás) kapcsolatokat és a feladási dátumokat a Supabase `runs` (`ship_together_with`) és `shipments` (`shipped`) tábláiba.
+    *   A csomagban már kiküldött érmek státusza automatikusan `shipped = true`-ra frissült.
+*   **Kampány-Szintű Csoportosítási Elkülönítés Logisztikában & Foxpost API-nál:**
+    *   Módosítottuk a `getGroupedRunIds` (`admin.html`) és az `api/create-foxpost-parcels.js` funkciókat: a csomagösszevonás szigorúan csak azonos kampányhoz tartozó futások között engedélyezett (`run.campaign === targetRun.campaign`).
+    *   Megszüntettük a visszatérő vásárlók korábbi csomagszámainak téves átszivárgását az új kampányos bejegyzéseikre.
+*   **Szigorú Mező Formátumvizsgálat a Checkout Oldalon (`checkout.html`):**
+    *   Beépítettünk szigorú formátumkényszereket: teljes nevezői név ellenőrzés (min. 2 szó), szabványos magyar telefonszám formátum (`+36` / `06`), szigorú e-mail RegEx szűrés, valamint 4 jegyű irányítószámot és utcát/házszámot megkövetelő számlázási és szállítási cím ellenőrzés. Piros kiemelés mezőnként, és automatikus görgetés/fókusz a legfelső hibás mezőre (`document.querySelector('.input-error')`).
+*   **Logisztikai Teszt Felhasználó Elrejtés:**
+    *   Hozzáadtunk egy "Tesztek elrejtése" szűrőt a Logisztika fülön, ami alapértelmezetten elrejti a teszt sorszámokat és e-maileket.
+
 ## [1.9.0] - 2026-07-26
+
 ### Launch
 *   **Nagy-Kevély csillagai kampány élesítve (15:00):**
     *   Eltávolítva a checkout.js és checkout.html pre-launch 403 blokk.
