@@ -5,6 +5,23 @@ const supabase = createClient(
     process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
+// Éremkiszállítás dátumai kampányonként (YYYY-MM-DD)
+const MEDAL_SHIP_DATES = {
+    pilis:        '2026-08-25',  // Nagy-Kevély csillagai
+    predikaloszek: '2026-08-25', // Prédikálószék Vertical
+};
+
+function getMedalShippingText(campaignKey) {
+    const raw = MEDAL_SHIP_DATES[campaignKey] || '2026-08-25';
+    const shipDate = new Date(raw + 'T12:00:00Z');
+    const now = new Date();
+    if (now > shipDate) {
+        return 'Az érmeket néhány munkanapon belül feladjuk, a megadott szállítási módnak megfelelően. 📦';
+    }
+    const dateHu = shipDate.toLocaleDateString('hu-HU', { year: 'numeric', month: 'long', day: 'numeric' });
+    return `Az érmeket <strong>${dateHu}</strong> után postázzuk ki, a megadott szállítási módnak megfelelően. 📦`;
+}
+
 module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -61,6 +78,8 @@ module.exports = async (req, res) => {
                 const runnerName = runData.name || runData.runners?.name || 'Futó Partner';
                 const isPilisK = runData.serial_number && (runData.serial_number.includes('PK') || runData.serial_number.includes('999'));
                 const campaignName = isPilisK ? 'A Nagy-Kevély csillagjai érem' : 'Prédikálószék Vertical';
+                const campaignKey  = isPilisK ? 'pilis' : 'predikaloszek';
+                const shippingText = getMedalShippingText(campaignKey);
 
                 const transporter = nodemailer.createTransport({
                     host: 'smtp.gmail.com',
@@ -70,7 +89,7 @@ module.exports = async (req, res) => {
                 });
 
                 const portalLink = `https://vitastepsss.vercel.app/portal.html?email=${encodeURIComponent(runnerEmail)}`;
-                
+
                 // Construct parameters for oklevel.html link
                 const params = new URLSearchParams({
                     nev: runnerName,
@@ -86,7 +105,7 @@ module.exports = async (req, res) => {
                   <h1 style="color: #c4ff00; text-align: center;">🏆 Szuper teljesítés!</h1>
                   <p>Szia <strong>${runnerName}</strong>,</p>
                   <p>Gratulálunk! Az adminisztrátorunk ellenőrizte és <strong>jóváhagyta</strong> a beküldött igazolásodat a <strong>${campaignName}</strong> kihíváson! 🎉</p>
-                  <p>Hatalmas gratuláció a sikeres teljesítésedhez! Az érmed hamarosan útnak indul a megadott szállítási módnak megfelelően.</p>
+                  <p>Hatalmas gratuláció a sikeres teljesítésedhez! ${shippingText}</p>
                   
                   <div style="background: #121824; border: 1px solid #1a2235; padding: 15px; border-radius: 6px; margin: 20px 0; text-align: center;">
                     <p style="margin-top: 0; color: #ffffff;">Töltsd le a személyre szabott okleveledet, vagy oszd meg a visszajelzésedet a portálon:</p>
@@ -95,7 +114,7 @@ module.exports = async (req, res) => {
                     <a href="${oklevelLink}" target="_blank" style="color: #c4ff00; text-decoration: underline; font-size: 0.9rem;">Közvetlen oklevél link</a>
                   </div>
                   
-                  <p style="font-size: 0.90rem; color: #8a99b3;">További szép napot és jó futást kívánunk!<br>A VitaSteps csapata</p>
+                  <p style="font-size: 0.90rem; color: #8a99b3;">További szép napot és jó sportolást kívánunk!<br>A VitaSteps csapata</p>
                 </div>
                 `;
 
