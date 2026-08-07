@@ -17,6 +17,9 @@ from bi_analytics import (
     get_merchant_stats, get_category_stats, get_budget_insights,
     get_pocket_etas, compare_periods, generate_insights
 )
+from report_engine import (
+    generate_weekly_report, generate_monthly_report, generate_quarterly_report
+)
 
 # ─── Page Config ──────────────────────────────────────────────────────────────
 st.set_page_config(
@@ -325,12 +328,20 @@ NAV_OPTIONS = [
     '9. Net Worth Explorer',
     '10. Compare Mode ⭐',
     '11. Automated Insights',
+    '📊 Riportok',
     '📋 Tranzakciók (CRUD)',
     '⚙️ Beállítások',
 ]
 
 with st.sidebar:
     st.title('💎 FinSpace BI')
+    if st.button('⚡ Gyorstranzakció ➕', type='primary', use_container_width=True):
+        st.session_state['page'] = '📋 Tranzakciók (CRUD)'
+        st.session_state['show_add_form'] = True
+        st.session_state['edit_tx_id'] = None
+        st.rerun()
+
+    st.markdown('---')
     selected_page = st.selectbox('Navigáció', NAV_OPTIONS,
                                  index=NAV_OPTIONS.index(st.session_state['page']) if st.session_state['page'] in NAV_OPTIONS else 0)
     st.session_state['page'] = selected_page
@@ -774,7 +785,208 @@ elif page == '📋 Tranzakciók (CRUD)':
                 st.session_state['confirm_delete_id'] = row['_id']
 
 # ═════════════════════════════════════════════════════════════════════════════
-# 13. BEÁLLÍTÁSOK
+# RIPORTOK
+# ═════════════════════════════════════════════════════════════════════════════
+elif page == '📊 Riportok':
+    st.markdown('<h2 style="color:#0f172a">📊 Riportok</h2>', unsafe_allow_html=True)
+
+    # Report type & period selector
+    rc1, rc2, rc3 = st.columns([2, 3, 2])
+    report_type = rc1.selectbox('Riport típusa', ['Heti', 'Havi', 'Negyedéves'], index=1)
+
+    # Build period options dynamically
+    if report_type == 'Heti':
+        available = sorted(df_tx['Week'].dropna().unique().tolist(), reverse=True) if not df_tx.empty else []
+        if not available:
+            now = datetime.now()
+            available = [f"{now.isocalendar()[0]}-W{now.isocalendar()[1]:02d}"]
+        sel_period = rc2.selectbox('Időszak', available[:24], index=0)
+        rpt = generate_weekly_report(df_tx, acc_docs, poc_docs, rates, sel_period)
+    elif report_type == 'Havi':
+        available = sorted(df_tx['Month'].dropna().unique().tolist(), reverse=True) if not df_tx.empty else []
+        if not available:
+            available = [datetime.now().strftime('%Y-%m')]
+        sel_period = rc2.selectbox('Időszak', available[:24], index=0)
+        rpt = generate_monthly_report(df_tx, acc_docs, poc_docs, rates, sel_period)
+    else:  # Negyedéves
+        available = sorted(df_tx['Quarter'].dropna().unique().tolist(), reverse=True) if not df_tx.empty else []
+        if not available:
+            now = datetime.now()
+            available = [f"{now.year}-Q{(now.month-1)//3+1}"]
+        sel_period = rc2.selectbox('Időszak', available[:12], index=0)
+        rpt = generate_quarterly_report(df_tx, acc_docs, poc_docs, rates, sel_period)
+
+    # ── KPI Cards ──
+    st.markdown('---')
+    if report_type == 'Heti':
+        k1, k2, k3, k4, k5 = st.columns(5)
+        k1.metric('Bevétel', fmt_huf(rpt['income']), delta=f"{rpt['income_change']:+.0f}%")
+        k2.metric('Kiadás', fmt_huf(rpt['expense']), delta=f"{rpt['expense_change']:+.0f}%")
+        k3.metric('Cashflow', fmt_huf(rpt['cashflow']), delta=fmt_huf(rpt['cashflow']))
+        k4.metric('Megtakarítás', fmt_huf(rpt['savings']))
+        k5.metric('Tranzakciók', f"{rpt['tx_count']} db")
+
+    elif report_type == 'Havi':
+        k1, k2, k3, k4, k5, k6 = st.columns(6)
+        k1.metric('Nettó Vagyon', fmt_huf(rpt['net_worth']), delta=f"{rpt['net_worth_change_pct']:+.1f}%")
+        k2.metric('Bevétel', fmt_huf(rpt['income']), delta=f"{rpt['income_change']:+.0f}%")
+        k3.metric('Kiadás', fmt_huf(rpt['expense']), delta=f"{rpt['expense_change']:+.0f}%")
+        k4.metric('Cashflow', fmt_huf(rpt['cashflow']), delta=fmt_huf(rpt['cashflow']))
+        k5.metric('Savings Rate', f"{rpt['savings_rate']:.1f}%")
+        k6.metric('YTD Vagyon Változás', f"{rpt['net_worth_ytd_change_pct']:+.1f}%")
+
+    else:  # Negyedéves
+        k1, k2, k3, k4, k5 = st.columns(5)
+        k1.metric('Nettó Vagyon', fmt_huf(rpt['net_worth']), delta=f"{rpt['net_worth_change_pct']:+.1f}%")
+        k2.metric('Bevétel', fmt_huf(rpt['income']), delta=f"{rpt['income_change']:+.0f}%")
+        k3.metric('Kiadás', fmt_huf(rpt['expense']), delta=f"{rpt['expense_change']:+.0f}%")
+        k4.metric('Cashflow', fmt_huf(rpt['cashflow']))
+        k5.metric('Átl. Savings Rate', f"{rpt.get('avg_savings_rate', 0):.1f}%")
+
+    # ── Insights ──
+    st.markdown('---')
+    st.markdown('<div class="section-title">💡 Insightok</div>', unsafe_allow_html=True)
+    for ins in rpt.get('insights', []):
+        st.markdown(f'<div class="insight-card">⚡ {ins}</div>', unsafe_allow_html=True)
+    if not rpt.get('insights'):
+        st.info('Nincs kiemelendő insight ebben az időszakban.')
+
+    # ── Top Expenses (weekly & monthly) ──
+    top_exp = rpt.get('top_expenses', pd.DataFrame())
+    if not top_exp.empty:
+        st.markdown('<div class="section-title">🔥 Legnagyobb Kiadások (Top 5)</div>', unsafe_allow_html=True)
+        st.dataframe(
+            top_exp.rename(columns={'Date': 'Dátum', 'AmountBase': 'Összeg (Ft)', 'Category': 'Kategória', 'Merchant': 'Merchant', 'Note': 'Megjegyzés'}),
+            use_container_width=True, hide_index=True
+        )
+
+    # ── Categories ──
+    st.markdown('---')
+    col_cat, col_merch = st.columns(2)
+
+    with col_cat:
+        cats = rpt.get('categories', pd.DataFrame())
+        if report_type == 'Havi':
+            cats_avg = rpt.get('categories_vs_avg', pd.DataFrame())
+            if not cats_avg.empty:
+                cats = cats_avg
+
+        if not cats.empty:
+            st.markdown('<div class="section-title">🏷️ Kategóriák</div>', unsafe_allow_html=True)
+            fig_cat = px.bar(cats.head(10), x='Amount', y='Category', orientation='h',
+                             text='Amount', color='Amount', color_continuous_scale='Blues')
+            fig_cat.update_layout(paper_bgcolor='white', plot_bgcolor='white', font_color='#0f172a',
+                                  height=350, margin=dict(t=10, b=10, l=0, r=0), showlegend=False)
+            fig_cat.update_traces(texttemplate='%{text:,.0f} Ft', textposition='auto')
+            st.plotly_chart(fig_cat, use_container_width=True)
+
+            # Table with % and change
+            display_cols = ['Category', 'Amount', 'Pct']
+            if 'Change' in cats.columns:
+                display_cols.append('Change')
+            if 'VsAvgPct' in cats.columns:
+                display_cols.append('VsAvgPct')
+            st.dataframe(
+                cats[display_cols].head(10).rename(columns={
+                    'Amount': 'Összeg (Ft)', 'Pct': 'Arány (%)',
+                    'Change': 'Változás (%)', 'VsAvgPct': 'vs 12h Átlag (%)'
+                }),
+                use_container_width=True, hide_index=True
+            )
+
+    with col_merch:
+        merchants = rpt.get('merchants', pd.DataFrame())
+        if not merchants.empty:
+            st.markdown('<div class="section-title">🏪 Top Merchantok</div>', unsafe_allow_html=True)
+            fig_m = px.bar(merchants.head(10), x='Amount', y='Merchant', orientation='h',
+                           text='Amount', color_discrete_sequence=['#3b82f6'])
+            fig_m.update_layout(paper_bgcolor='white', plot_bgcolor='white', font_color='#0f172a',
+                                height=350, margin=dict(t=10, b=10, l=0, r=0))
+            fig_m.update_traces(texttemplate='%{text:,.0f} Ft', textposition='auto')
+            st.plotly_chart(fig_m, use_container_width=True)
+
+    # ── Cashflow Trend (monthly & quarterly) ──
+    cf_trend = rpt.get('cashflow_trend', pd.DataFrame())
+    if not cf_trend.empty:
+        st.markdown('---')
+        st.markdown('<div class="section-title">📈 Cashflow Trend</div>', unsafe_allow_html=True)
+        x_col = 'Month' if 'Month' in cf_trend.columns else 'Quarter'
+        fig_cf = go.Figure()
+        fig_cf.add_bar(x=cf_trend[x_col], y=cf_trend['Income'], name='Bevétel', marker_color='#10b981')
+        fig_cf.add_bar(x=cf_trend[x_col], y=cf_trend['Expense'], name='Kiadás', marker_color='#ef4444')
+        fig_cf.add_scatter(x=cf_trend[x_col], y=cf_trend['Cashflow'], name='Cashflow',
+                           mode='lines+markers', line=dict(color='#2563eb', width=2))
+        fig_cf.update_layout(paper_bgcolor='white', plot_bgcolor='white', font_color='#0f172a',
+                             barmode='group', height=350, margin=dict(t=20, b=20, l=0, r=0))
+        fig_cf.update_xaxes(gridcolor='#e2e8f0')
+        fig_cf.update_yaxes(gridcolor='#e2e8f0')
+        st.plotly_chart(fig_cf, use_container_width=True)
+
+    # ── Savings Trend (quarterly only) ──
+    sv_trend = rpt.get('savings_trend', pd.DataFrame())
+    if not sv_trend.empty:
+        st.markdown('<div class="section-title">💰 Megtakarítási Trend (Havi bontás)</div>', unsafe_allow_html=True)
+        fig_sv = go.Figure()
+        fig_sv.add_bar(x=sv_trend['Month'], y=sv_trend['Cashflow'], name='Cashflow', marker_color='#2563eb')
+        fig_sv.add_scatter(x=sv_trend['Month'], y=sv_trend['SavingsRate'], name='Savings Rate %',
+                           mode='lines+markers', line=dict(color='#f59e0b', width=2), yaxis='y2')
+        fig_sv.update_layout(
+            paper_bgcolor='white', plot_bgcolor='white', font_color='#0f172a',
+            height=300, margin=dict(t=20, b=20, l=0, r=0),
+            yaxis2=dict(title='Savings Rate %', overlaying='y', side='right', showgrid=False)
+        )
+        st.plotly_chart(fig_sv, use_container_width=True)
+
+    # ── Asset Allocation (quarterly only) ──
+    asset_alloc = rpt.get('asset_allocation', pd.DataFrame())
+    if not asset_alloc.empty:
+        st.markdown('---')
+        col_aa1, col_aa2 = st.columns(2)
+        with col_aa1:
+            st.markdown('<div class="section-title">🏦 Asset Allocation</div>', unsafe_allow_html=True)
+            fig_aa = px.pie(asset_alloc, names='Type', values='Balance', hole=0.4,
+                            color_discrete_sequence=px.colors.qualitative.Pastel)
+            fig_aa.update_layout(paper_bgcolor='white', font_color='#0f172a', height=300)
+            st.plotly_chart(fig_aa, use_container_width=True)
+        with col_aa2:
+            st.dataframe(
+                asset_alloc.rename(columns={'Type': 'Típus', 'Balance': 'Összeg (Ft)', 'Pct': 'Arány (%)'}),
+                use_container_width=True, hide_index=True
+            )
+
+    # ── Accounts & Pockets ──
+    st.markdown('---')
+    col_acc, col_poc = st.columns(2)
+
+    with col_acc:
+        accs = rpt.get('accounts', pd.DataFrame())
+        if not accs.empty:
+            st.markdown('<div class="section-title">🏦 Számlák</div>', unsafe_allow_html=True)
+            st.dataframe(
+                accs.rename(columns={'Account': 'Számla', 'Currency': 'Deviza', 'Balance': 'Egyenleg (Ft)', 'IsBusiness': 'Business'}),
+                use_container_width=True, hide_index=True
+            )
+
+    with col_poc:
+        pocs = rpt.get('pockets', pd.DataFrame())
+        if not pocs.empty:
+            st.markdown('<div class="section-title">👝 Virtuális Zsebek</div>', unsafe_allow_html=True)
+            for _, p in pocs.iterrows():
+                st.write(f"**{p['Pocket']}**: {fmt_huf(p['Current'])} / {fmt_huf(p['Target'])} ({p['Pct']:.0f}%)")
+                st.progress(min(1.0, p['Pct'] / 100.0))
+
+    # ── CSV Export ──
+    st.markdown('---')
+    csv_parts = []
+    cats = rpt.get('categories', pd.DataFrame())
+    if not cats.empty:
+        csv_parts.append(cats.to_csv(index=False))
+    if csv_parts:
+        st.download_button('📥 Riport Exportálása (CSV)', data='\n'.join(csv_parts),
+                           file_name=f'finspace_report_{sel_period}.csv', mime='text/csv')
+
+# ═════════════════════════════════════════════════════════════════════════════
+# BEÁLLÍTÁSOK
 # ═════════════════════════════════════════════════════════════════════════════
 elif page == '⚙️ Beállítások':
     st.markdown('<h2 style="color:#0f172a">⚙️ Beállítások</h2>', unsafe_allow_html=True)

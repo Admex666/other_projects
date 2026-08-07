@@ -1,0 +1,34 @@
+name: FinSpace Weekly Report Notification
+
+on:
+  schedule:
+    # Every Sunday at 18:00 UTC = 20:00 Budapest (CEST)
+    - cron: '0 18 * * 0'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  weekly-report:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: FinApp/python_os
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          pip install pymongo requests python-dotenv pandas numpy
+
+      - name: Send weekly notification
+        env:
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          PUSHBULLET_ACCESS_TOKEN: ${{ secrets.PUSHBULLET_ACCESS_TOKEN }}
+        run: |
+          python src/weekly_notify.py
