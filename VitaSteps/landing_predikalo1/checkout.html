@@ -357,7 +357,7 @@
             <div class="form-grid-2">
                 <div class="form-row">
                     <label for="cust-email">E-mail cím *</label>
-                    <input type="email" id="cust-email" placeholder="janos@email.com">
+                    <input type="email" id="cust-email" placeholder="janos@email.com" oninput="handleEmailInput()">
                     <div class="field-error" id="err-email"></div>
                 </div>
                 <div class="form-row">
@@ -461,7 +461,8 @@
 
         // Parse query params
         const urlParams = new URLSearchParams(window.location.search);
-        const referredBy = urlParams.get('ref') || '';
+        const referredBy = urlParams.get('ref') || localStorage.getItem('vitasteps_ref') || '';
+        const utmCampaign = urlParams.get('utm_campaign') || localStorage.getItem('vitasteps_utm_campaign') || '';
         const paramCampaign = urlParams.get('c') || '';
         if (paramCampaign === 'predikaloszek' || paramCampaign === 'predikalo') {
             campaignKey = 'predikaloszek';
@@ -600,15 +601,62 @@
             updateSummary();
         }
 
-        // ── SUMMARY ──────────────────────────────────────────
-        function updateSummary() {
-            const medalTotal = medalPrice * qty;
-            const shippingFee = deliveryMethod === 'home' ? SHIPPING_SURCHARGE : 0;
-            const total = medalTotal + shippingFee;
+        // ── SUMMARY & DISCOUNTS ──────────────────────────────
+        let activeDiscountData = null;
+        let discountDebounceTimer = null;
 
-            document.getElementById('summary-medal-label').textContent = `Kihívás Érem × ${qty} db`;
-            document.getElementById('summary-medal-price').textContent = formatHuf(medalTotal);
+        function updateSummary() {
+            fetchDiscountInfo();
+        }
+
+        async function fetchDiscountInfo() {
+            const emailEl = document.getElementById('cust-email');
+            const email = emailEl ? emailEl.value.trim() : '';
+            try {
+                const res = await fetch(`/api/check-referral-discount?email=${encodeURIComponent(email)}&qty=${qty}&referredBy=${encodeURIComponent(referredBy)}&campaign=${encodeURIComponent(campaignKey)}`);
+                if (res.ok) {
+                    activeDiscountData = await res.json();
+                }
+            } catch (e) {
+                console.error('Error checking referral discount:', e);
+            }
+            updateSummaryUI();
+        }
+
+        function updateSummaryUI() {
+            const shippingFee = deliveryMethod === 'home' ? SHIPPING_SURCHARGE : 0;
+            const price = medalPrice;
+
+            let medalTotal = price * qty;
+
+            if (activeDiscountData && activeDiscountData.discountPercent > 0) {
+                const d = activeDiscountData;
+                medalTotal = d.totalMedalsPrice;
+
+                let badgeText = '';
+                if (d.effectiveReferrals >= 5) badgeText = `🏆 100% ingyen saját érem (${d.effectiveReferrals} ajánlás)`;
+                else if (d.effectiveReferrals > 0) badgeText = `🎉 ${d.effectiveReferrals} ajánlás → ${d.discountPercent}% kedvezmény a saját érmedre!`;
+                else if (referredBy) badgeText = `🎁 Ajánlói hivatkozás: 10% kedvezmény a saját érmedre`;
+
+                if (qty === 1) {
+                    document.getElementById('summary-medal-label').innerHTML = `1 db érem (Saját) <div style="font-size:0.75rem;color:var(--accent);font-weight:700;margin-top:2px;">${badgeText}</div>`;
+                    document.getElementById('summary-medal-price').innerHTML = `<span style="text-decoration:line-through;color:var(--text-low);margin-right:6px;font-size:0.85rem;">${formatHuf(price)}</span>${formatHuf(d.firstMedalPrice)}`;
+                } else {
+                    document.getElementById('summary-medal-label').innerHTML = `Kihívás Érem × ${qty} db <div style="font-size:0.75rem;color:var(--accent);font-weight:700;margin-top:2px;">${badgeText}</div>`;
+                    document.getElementById('summary-medal-price').innerHTML = `${formatHuf(d.firstMedalPrice)} <span style="font-size:0.75rem;color:var(--text-mid);">(Saját)</span> + ${formatHuf(d.otherMedalsPrice)} <span style="font-size:0.75rem;color:var(--text-mid);">(${qty-1} db)</span>`;
+                }
+            } else {
+                document.getElementById('summary-medal-label').textContent = `Kihívás Érem × ${qty} db`;
+                document.getElementById('summary-medal-price').textContent = formatHuf(medalTotal);
+            }
+
+            const total = medalTotal + shippingFee;
             document.getElementById('summary-total').textContent = formatHuf(total);
+        }
+
+        function handleEmailInput() {
+            clearTimeout(discountDebounceTimer);
+            discountDebounceTimer = setTimeout(fetchDiscountInfo, 350);
         }
 
         function formatHuf(amount) {
@@ -627,12 +675,13 @@
         }
 
         function isValidName(name) {
+            if (!name) return false;
             const trimmed = name.trim();
+            if (trimmed.length < 3) return false;
+            if (/\d/.test(trimmed)) return false; // No numbers allowed in names
             const parts = trimmed.split(/\s+/);
-            // Must have at least 2 words (Vezetéknév + Keresztnév)
-            if (parts.length < 2) return false;
-            // No single-letter words or digits allowed
-            return parts.every(p => p.length >= 2) && !/\d/.test(trimmed);
+            // Must have at least 2 words (e.g. Vezetéknév + Keresztnév, or 3+ words like Kovács János Péter)
+            return parts.length >= 2 && parts.every(p => p.length >= 1);
         }
 
         function isValidAddress(address) {
@@ -769,6 +818,7 @@
                 parcelId: deliveryMethod === 'foxpost' ? (selectedParcelPoint?.id || '') : '',
                 homeAddress: deliveryMethod === 'home' ? resolvedHomeAddress : '',
                 referredBy,
+                utmCampaign,
                 isTest,
                 campaign: campaignKey
             };

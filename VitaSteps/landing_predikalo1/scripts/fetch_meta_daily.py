@@ -123,11 +123,11 @@ def fetch_meta_insights(account_id: str, target_date: date) -> list:
     res = graph_get(
         endpoint=f"{account_id}/insights",
         params={
-            "level":          "campaign",
-            "fields":         "campaign_id,campaign_name,spend,impressions,reach,frequency,clicks,actions,ctr,cpc,cpm",
+            "level":          "ad",
+            "fields":         "campaign_id,campaign_name,adset_id,adset_name,ad_id,ad_name,spend,impressions,reach,frequency,clicks,actions,ctr,cpc,cpm",
             "time_range":     json.dumps({"since": date_str, "until": date_str}),
             "time_increment": 1,
-            "limit":          50,
+            "limit":          100,
         }
     )
     return res.get("data", [])
@@ -140,6 +140,10 @@ def parse_insights(raw: list) -> list:
         rows.append({
             "campaign_id":   item.get("campaign_id"),
             "campaign_name": item.get("campaign_name"),
+            "adset_id":      item.get("adset_id"),
+            "adset_name":     item.get("adset_name"),
+            "ad_id":         item.get("ad_id"),
+            "ad_name":       item.get("ad_name"),
             "spend":         float(item.get("spend", 0)),
             "impressions":   int(item.get("impressions", 0)),
             "reach":         int(item.get("reach", 0)),
@@ -157,8 +161,8 @@ def parse_insights(raw: list) -> list:
 
 # ─── Supabase: Orders ────────────────────────────────────────────────────────
 
-def fetch_orders_summary(target_date: date) -> dict:
-    """Returns {campaign_slug: {purchases, revenue}} for paid real orders on target_date."""
+def fetch_orders_summary(target_date: date) -> list:
+    """Returns list of paid real order dicts for target_date."""
     date_str = target_date.isoformat()
     next_day = (target_date + timedelta(days=1)).isoformat()
     path = (
@@ -167,20 +171,11 @@ def fetch_orders_summary(target_date: date) -> dict:
         f"&created_at=lt.{next_day}T00:00:00Z"
         "&stripe_payment_status=eq.paid"
         "&is_test=eq.false"
-        "&select=amount_total,campaign"
+        "&select=*"
     )
     rows = supabase_request("GET", path)
-    if not isinstance(rows, list):
-        return {}
-    summary: dict = {}
-    for row in rows:
-        campaign = row.get("campaign") or "unknown"
-        amount   = float(row.get("amount_total", 0))
-        if campaign not in summary:
-            summary[campaign] = {"purchases": 0, "revenue": 0.0}
-        summary[campaign]["purchases"] += 1
-        summary[campaign]["revenue"]   += amount
-    return summary
+    return rows if isinstance(rows, list) else []
+
 
 
 # ─── Supabase: Medals sold (runs count) ─────────────────────────────────────
@@ -275,9 +270,8 @@ def run_for_date(target_date: date):
     print(f"   ✅ OK: {len(rows)} kampány taláva\n")
 
     print("2/5  Orders lekérése Supabase-ből...")
-    orders_summary = fetch_orders_summary(target_date)
-    total_orders_found = sum(v['purchases'] for v in orders_summary.values())
-    print(f"   ✅ OK: {total_orders_found} fizetett rendelés az adatbázisban a mai napra.\n")
+    paid_orders = fetch_orders_summary(target_date)
+    print(f"   ✅ OK: {len(paid_orders)} fizetett rendelés az adatbázisban a mai napra.\n")
 
     print("3/5  KPI célértékek lekérése...")
     targets = fetch_targets()
@@ -286,29 +280,67 @@ def run_for_date(target_date: date):
     print("4/5  Számítás + Supabase upsert...")
     pushbullet_lines = [f"📊 VitaSteps Napi Riport – {target_date}\n"]
 
+    # 4a. Attribute orders to Ads (by utm_content -> utm_campaign -> product highest-spend ad fallback)
+    sales_allocation = {row["ad_id"]: {"purchases": 0, "revenue": 0.0} for row in rows}
+
+    for order in paid_orders:
+        amount = float(order.get("amount_total", 0))
+        utm_content  = (order.get("utm_content") or "").strip().lower()
+        utm_campaign = (order.get("utm_campaign") or "").strip().lower()
+        order_prod   = (order.get("campaign") or "pilis").strip().lower()
+
+        matched_ad = None
+
+        # 1. Match by utm_content (Ad name or Ad ID)
+        if utm_content:
+            for r in rows:
+                ad_name = (r.get("ad_name") or "").strip().lower()
+                ad_id   = (r.get("ad_id") or "").strip().lower()
+                if utm_content == ad_name or utm_content == ad_id or utm_content in ad_name or ad_name in utm_content:
+                    matched_ad = r
+                    break
+
+        # 2. Match by utm_campaign
+        if not matched_ad and utm_campaign:
+            matching_campaign_ads = [
+                r for r in rows
+                if utm_campaign == (r.get("campaign_name") or "").strip().lower()
+                or utm_campaign == (r.get("campaign_id") or "").strip().lower()
+                or utm_campaign in (r.get("campaign_name") or "").strip().lower()
+            ]
+            if matching_campaign_ads:
+                matched_ad = max(matching_campaign_ads, key=lambda r: r["spend"])
+
+        # 3. Fallback to product highest-spend Ad
+        if not matched_ad:
+            matching_product_ads = [
+                r for r in rows
+                if is_same_campaign(order_prod, r.get("campaign_name") or "")
+            ]
+            if matching_product_ads:
+                matched_ad = max(matching_product_ads, key=lambda r: r["spend"])
+
+        # If an ad was matched, allocate sales
+        if matched_ad:
+            sales_allocation[matched_ad["ad_id"]]["purchases"] += 1
+            sales_allocation[matched_ad["ad_id"]]["revenue"]   += amount
+
     for row in rows:
-        campaign_key = row["campaign_name"] or row["campaign_id"]
-
-        # Aggregate all matching orders for this campaign
-        order_data = {"purchases": 0, "revenue": 0.0}
-        for ck, od in orders_summary.items():
-            if is_same_campaign(ck, campaign_key):
-                order_data["purchases"] += od["purchases"]
-                order_data["revenue"]   += od["revenue"]
-
-        row["purchases"] = order_data["purchases"]
-        row["revenue"]   = order_data["revenue"]
+        campaign_key = row["ad_name"] or row["campaign_name"] or row["campaign_id"]
+        alloc = sales_allocation.get(row["ad_id"], {"purchases": 0, "revenue": 0.0})
+        row["purchases"] = alloc["purchases"]
+        row["revenue"]   = alloc["revenue"]
 
         spend     = row["spend"]
         purchases = row["purchases"]
         revenue   = row["revenue"]
 
         # Medals sold (actual count from runs table)
-        medals_sold   = fetch_medals_sold(target_date, campaign_key)
-        shipped_today = fetch_shipped_today(target_date, campaign_key)
+        medals_sold   = fetch_medals_sold(target_date, row["campaign_name"])
+        shipped_today = fetch_shipped_today(target_date, row["campaign_name"])
 
         # Cost params from marketing_targets
-        target = get_target(targets, campaign_key)
+        target = get_target(targets, row["campaign_name"])
         medal_unit_cost    = float(target.get("medal_cost", 1630))
         shipping_unit_cost = float(target.get("shipping_cost", 1141))
 
@@ -334,11 +366,15 @@ def run_for_date(target_date: date):
         roas = round(revenue / spend, 2)   if spend > 0 else 0.0
         status = campaign_status(cpa, roas, target)
 
-        # Supabase upsert
-        upsert_row = {
+        # Supabase upsert (Try Ad level first, fallback to Campaign level if schema cache lacks ad_id)
+        upsert_row_ad = {
             "date":          target_date.isoformat(),
             "campaign_id":   row["campaign_id"],
             "campaign_name": row["campaign_name"],
+            "adset_id":      row["adset_id"],
+            "adset_name":    row["adset_name"],
+            "ad_id":         row["ad_id"],
+            "ad_name":       row["ad_name"],
             "spend":         spend,
             "impressions":   row["impressions"],
             "reach":         row["reach"],
@@ -353,12 +389,39 @@ def run_for_date(target_date: date):
             "cpa":           cpa,
             "roas":          roas,
         }
-        supabase_request(
-            "POST",
-            "meta_daily_metrics?on_conflict=date,campaign_id",
-            body=upsert_row,
-            extra_headers={"Prefer": "resolution=merge-duplicates,return=minimal"}
-        )
+        try:
+            supabase_request(
+                "POST",
+                "meta_daily_metrics?on_conflict=date,ad_id",
+                body=upsert_row_ad,
+                extra_headers={"Prefer": "resolution=merge-duplicates,return=minimal"}
+            )
+        except Exception:
+            # Fallback to campaign level upsert if ad_id column is not in DB schema yet
+            upsert_row_camp = {
+                "date":          target_date.isoformat(),
+                "campaign_id":   row["campaign_id"],
+                "campaign_name": row["campaign_name"],
+                "spend":         spend,
+                "impressions":   row["impressions"],
+                "reach":         row["reach"],
+                "frequency":     row["frequency"],
+                "clicks":        row["clicks"],
+                "link_clicks":   row["link_clicks"],
+                "ctr":           row["ctr"],
+                "cpc":           row["cpc"],
+                "cpm":           row["cpm"],
+                "purchases":     purchases,
+                "revenue":       revenue,
+                "cpa":           cpa,
+                "roas":          roas,
+            }
+            supabase_request(
+                "POST",
+                "meta_daily_metrics?on_conflict=date,campaign_id",
+                body=upsert_row_camp,
+                extra_headers={"Prefer": "resolution=merge-duplicates,return=minimal"}
+            )
 
         profit_sign = "+" if gross_profit >= 0 else ""
         cf_sign     = "+" if net_cashflow >= 0 else ""

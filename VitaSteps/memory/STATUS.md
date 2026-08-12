@@ -42,8 +42,15 @@
             *   A Prédikálószék mind az 58 jóváhagyott éremjének feladási állapota frissült (0 feladatlan maradt).
         *   **Microsoft Clarity Heatmap & Session Recording (COMPLETED 2026-08-04):**
             *   Beépítve a Clarity tracking script (`xx85zg2g25`) az `index.html`, `nagykevely/index.html`, `predikalo/index.html`, `checkout.html` és `siker.html` oldalakra a felhasználói hőtérképek és videófelvételek rögzítéséhez.
+        *   **Kombinált Ajánlói Kedvezmény Számítás & Levonási Rendszer (`checkout.html` & `api/checkout.js`) (COMPLETED 2026-08-12):**
+            *   Módosítottuk az ajánlói kedvezmény kerekítését: a rendszer a még fel nem használt meglévő ajánlásokat (`unusedReferrals = totalReferrals - pastRedeemed`) összegzi a jelenlegi rendelésben vásárolt extra érmek számával (`qty - 1`). Az így kapott effektív ajánlásszám alapján határozza meg a kedvezmény szintjét (1: 10%, 2: 25%, 3: 45%, 4: 70%, 5+: 100%).
+            *   **Visszaélés-védelem:** A sikeres vásárláskor a felhasznált ajánlási kreditek elmentődnek a `orders.referrals_redeemed` mezőbe, így a vásárló a jövőbeli rendeléseinél **nem tudja újra felhasználni a már levásárolt kedvezményt / ingyen érmet**.
+            *   A kedvezmény **kizárólag a vásárló 1. (saját) érmére érvényesül**, a többi `(qty - 1)` érem teljes áron (`7 990 Ft`) marad.
+        *   **Hirdetés (Ad) Szintű Meta Szinkron & Kreatív Követés (`fetch_meta_daily.py`) (COMPLETED 2026-08-12):**
+            *   Átállítottuk a Meta szinkronizációt Ad (hirdetés) szintre: a szkript mostantól hirdetésenként menti a mutatókat (`ad_id`, `ad_name`, `adset_id`, `adset_name`).
+            *   Beépítettük az UTM követést (`utm_campaign`, `utm_content` / `{{ad.name}}`) a landing oldalakon, a checkout felületen és a Stripe fizetésnél, így a rendelések automatikusan a vásárlást hozó pontos kreatívhoz (Ad) rendelődnek hozzá.
         *   **Szigorú Checkout Formátumvizsgálat (`checkout.html`) (COMPLETED 2026-08-06):**
-            *   Szigorú kliensoldali formátumkényszereket építettünk be: nevező neve (min. 2 szó, Vezetéknév + Keresztnév), e-mail cím RegEx szűrés, magyar telefonszám formátum (`+36` / `06` + min. 9-11 számjegy), és számlázási/szállítási cím ellenőrzés (4 jegyű irányítószám + utca/házszám). Hibás mezők piros kiemelést kapnak, a nézet automatikusan a legfelső hibás mezőre ugrik és arra fókuszál.
+            *   Szigorú kliensoldali formátumkényszereket építettünk be: nevező neve (min. 2 szó, pl. Vezetéknév + Keresztnév, de engedélyezi a 3 vagy több szavas neveket is pl. két keresztnév vagy titulus esetén), e-mail cím RegEx szűrés, magyar telefonszám formátum (`+36` / `06` + min. 9-11 számjegy), és számlázási/szállítási cím ellenőrzés (4 jegyű irányítószám + utca/házszám). Hibás mezők piros kiemelést kapnak, a nézet automatikusan a legfelső hibás mezőre ugrik és arra fókuszál.
         *   **Logisztikai Teszt Felhasználó Elrejtés (COMPLETED 2026-08-06):**
 
             *   Tesztek elrejtése toggle switch a Logisztika fülön, ami kiszűri a teszt sorszámos/emailes tételeket a csomagolási listából és a táblázatból.

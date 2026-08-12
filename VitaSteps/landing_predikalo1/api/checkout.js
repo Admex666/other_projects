@@ -21,6 +21,7 @@ module.exports = async (req, res) => {
             parcelAddress,
             parcelId,
             referredBy,
+            utmCampaign,
             isTest,
             campaign
         } = req.body;
@@ -48,21 +49,43 @@ module.exports = async (req, res) => {
         const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
         // ── REFERRAL COUNT CHECK ─────────────────────────────────────────────
-        let referralCount = 0;
+        let totalReferrals = 0;
+        let pastRedeemed = 0;
         if (email) {
             const cleanEmail = email.trim().toLowerCase();
-            const { count, error: countErr } = await supabase
+            const { count: refCount } = await supabase
                 .from('runs')
                 .select('*', { count: 'exact', head: true })
-                .eq('referred_by', cleanEmail);
-            
-            if (countErr) {
-                console.error('Error fetching referral count from Supabase:', countErr);
-            } else {
-                referralCount = count || 0;
-                console.log(`Referral count for ${cleanEmail}: ${referralCount}`);
+                .eq('referred_by', cleanEmail)
+                .eq('is_test', false);
+
+            totalReferrals = refCount || 0;
+
+            const { data: pastOrders } = await supabase
+                .from('orders')
+                .select('referrals_redeemed')
+                .eq('billing_email', cleanEmail)
+                .eq('stripe_payment_status', 'paid')
+                .eq('is_test', false);
+
+            if (pastOrders) {
+                pastRedeemed = pastOrders.reduce((sum, o) => sum + (o.referrals_redeemed || 0), 0);
             }
         }
+
+        const unusedReferrals = Math.max(0, totalReferrals - pastRedeemed);
+        const additionalMedals = Math.max(0, medals.length - 1);
+        const effectiveReferrals = unusedReferrals + additionalMedals;
+
+        let discountPercent = 0;
+        let redeemedThisOrder = 0;
+
+        if (effectiveReferrals >= 5) { discountPercent = 100; redeemedThisOrder = Math.min(5, unusedReferrals + additionalMedals); }
+        else if (effectiveReferrals === 4) { discountPercent = 70; redeemedThisOrder = Math.min(4, unusedReferrals + additionalMedals); }
+        else if (effectiveReferrals === 3) { discountPercent = 45; redeemedThisOrder = Math.min(3, unusedReferrals + additionalMedals); }
+        else if (effectiveReferrals === 2) { discountPercent = 25; redeemedThisOrder = Math.min(2, unusedReferrals + additionalMedals); }
+        else if (effectiveReferrals === 1) { discountPercent = 10; redeemedThisOrder = Math.min(1, unusedReferrals + additionalMedals); }
+        else if (referredBy) { discountPercent = 10; redeemedThisOrder = 0; }
 
         // ── LIMIT CHECK ──────────────────────────────────────────────────────
         const { count: paidCount, error: fetchErr } = await supabase
@@ -87,8 +110,6 @@ module.exports = async (req, res) => {
             });
         }
 
-
-
         // ── METADATA ─────────────────────────────────────────────────────────
         // Stripe metadata values must be strings, max 500 chars each
         const meta = {
@@ -101,23 +122,14 @@ module.exports = async (req, res) => {
             Csomagpont_id: parcelId || '',
             Hazhoz_cim: homeAddress || '',
             Ajanlо_Email: referredBy || '',
+            Utm_Campaign: utmCampaign || '',
             Kampany: campaignKey,
             IsTest: useTestKey ? 'true' : 'false',
-            Medaliok: JSON.stringify(medals).substring(0, 490) // serialize array, max 490 chars
+            Medaliok: JSON.stringify(medals).substring(0, 490),
+            Referrals_Redeemed: String(redeemedThisOrder)
         };
 
         // ── PRICING & DISCOUNTS ──────────────────────────────────────────────
-        let discountPercent = 0;
-        if (referralCount > 0) {
-            if (referralCount === 1) discountPercent = 10;
-            else if (referralCount === 2) discountPercent = 25;
-            else if (referralCount === 3) discountPercent = 45;
-            else if (referralCount === 4) discountPercent = 70;
-            else if (referralCount >= 5) discountPercent = 100;
-        } else if (referredBy) {
-            discountPercent = 10;
-        }
-
         const productName = config.productName;
         const unitAmountCents = config.price * 100; // HUF (Stripe no-decimal)
         const shippingAmountCents = 120000; // 1200 Ft

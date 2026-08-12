@@ -17,8 +17,15 @@ All notable changes to the VitaSteps challenge platform project are documented h
 *   **Kampány-Szintű Csoportosítási Elkülönítés Logisztikában & Foxpost API-nál:**
     *   Módosítottuk a `getGroupedRunIds` (`admin.html`) és az `api/create-foxpost-parcels.js` funkciókat: a csomagösszevonás szigorúan csak azonos kampányhoz tartozó futások között engedélyezett (`run.campaign === targetRun.campaign`).
     *   Megszüntettük a visszatérő vásárlók korábbi csomagszámainak téves átszivárgását az új kampányos bejegyzéseikre.
+*   **Kombinált Ajánlói Kedvezmény Számítás & Visszaélés-védelem (`checkout.html`, `api/checkout.js`, `api/check-referral-discount.js`):**
+    *   Az ajánlói kedvezmény összeadódik: Meglévő fel nem használt ajánlások száma + az aktuális rendelésben vett extra érmek száma (`qty - 1`).
+    *   **Megszüntettük az újrafelhasználási hibát:** A felhasznált ajánlások elmentődnek az `orders.referrals_redeemed` mezőbe. A vásárló a korábbi vásárlásakor már levásárolt ajánlási krediteket a következő rendelésnél nem tudja újra felhasználni (nem kap újra végtelen ingyen érmet).
+    *   A kedvezmény lépcsők (10%, 25%, 45%, 70%, 100%) **szigorúan csak a vásárló 1. (saját) érmére érvényesülnek**, míg az összes további érem teljes áron (`7 990 Ft`) marad a kosárban.
+*   **Hirdetés (Ad) Szintű Meta Szinkron & Kreatív Követés (`fetch_meta_daily.py`):**
+    *   Átállítottuk a lekérdezést Kampány szintről Hirdetés (Ad) szintre: a szinkronizáló szkript mostantól hirdetésenként menti a mutatókat (`ad_id`, `ad_name`, `adset_id`, `adset_name`).
+    *   Kiterjesztettük a frontend & Stripe checkout rendszert: eltárolja a `utm_content` (`{{ad.name}}`) paramétert, így a vásárlások pontosan ahhoz a hirdetéshez/kreatívhoz íródnak jóvá a Supabase-ben, ami a konverziót hozta.
 *   **Szigorú Mező Formátumvizsgálat a Checkout Oldalon (`checkout.html`):**
-    *   Beépítettünk szigorú formátumkényszereket: teljes nevezői név ellenőrzés (min. 2 szó), szabványos magyar telefonszám formátum (`+36` / `06`), szigorú e-mail RegEx szűrés, valamint 4 jegyű irányítószámot és utcát/házszámot megkövetelő számlázási és szállítási cím ellenőrzés. Piros kiemelés mezőnként, és automatikus görgetés/fókusz a legfelső hibás mezőre (`document.querySelector('.input-error')`).
+    *   Beépítettünk szigorú formátumkényszereket: teljes nevezői név ellenőrzés (min. 2 szó, engedélyezve a 3 vagy több szavas neveket pl. két keresztnév vagy titulus esetén), szabványos magyar telefonszám formátum (`+36` / `06`), szigorú e-mail RegEx szűrés, valamint 4 jegyű irányítószámot és utcát/házszámot megkövetelő számlázási és szállítási cím ellenőrzés. Piros kiemelés mezőnként, és automatikus görgetés/fókusz a legfelső hibás mezőre (`document.querySelector('.input-error')`).
 *   **Logisztikai Teszt Felhasználó Elrejtés:**
     *   Hozzáadtunk egy "Tesztek elrejtése" szűrőt a Logisztika fülön, ami alapértelmezetten elrejti a teszt sorszámokat és e-maileket.
 

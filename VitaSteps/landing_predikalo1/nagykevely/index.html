@@ -879,16 +879,25 @@
         }
         checkCheckoutLimit();
 
-        // Forward 'ref' parameter to all checkout links
+        // Forward 'ref' and UTM parameters to all checkout links + persist in localStorage
         const urlParams = new URLSearchParams(window.location.search);
         const ref = urlParams.get('ref');
-        if (ref) {
-            document.querySelectorAll('a[href*="checkout.html"]').forEach(link => {
-                const url = new URL(link.href, window.location.origin);
-                url.searchParams.set('ref', ref);
-                link.href = url.pathname + url.search;
-            });
-        }
+        const utmCampaign = urlParams.get('utm_campaign');
+        const utmSource = urlParams.get('utm_source');
+
+        if (utmCampaign) localStorage.setItem('vitasteps_utm_campaign', utmCampaign);
+        if (utmSource) localStorage.setItem('vitasteps_utm_source', utmSource);
+        if (ref) localStorage.setItem('vitasteps_ref', ref);
+
+        const savedUtm = utmCampaign || localStorage.getItem('vitasteps_utm_campaign');
+        const savedRef = ref || localStorage.getItem('vitasteps_ref');
+
+        document.querySelectorAll('a[href*="checkout.html"]').forEach(link => {
+            const url = new URL(link.href, window.location.origin);
+            if (savedRef) url.searchParams.set('ref', savedRef);
+            if (savedUtm) url.searchParams.set('utm_campaign', savedUtm);
+            link.href = url.pathname + url.search;
+        });
     </script>
 </body>
 

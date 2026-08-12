@@ -61,6 +61,9 @@ module.exports = async (req, res) => {
         const parcelId = metadata.Csomagpont_id || '';
         const homeAddress = metadata.Hazhoz_cim || '';
         const referredBy = (metadata.Ajanlо_Email || metadata['Ajánló_Email'] || '').trim().toLowerCase();
+        const utmCampaign = metadata.Utm_Campaign || metadata.utm_campaign || null;
+        const utmContent = metadata.Utm_Content || metadata.utm_content || null;
+        const referralsRedeemed = parseInt(metadata.Referrals_Redeemed || metadata.referrals_redeemed || '0', 10);
         // Find campaign robustly matching any variation of 'kampany' or 'campaign' (case-insensitive, handles cyrillic typos)
         let campaign = 'predikaloszek';
         for (const key of Object.keys(metadata)) {
@@ -145,6 +148,9 @@ module.exports = async (req, res) => {
                     amount_total: totalPaid,
                     currency: session.currency || 'HUF',
                     campaign: campaign || null,
+                    utm_campaign: utmCampaign || null,
+                    utm_content: utmContent || null,
+                    referrals_redeemed: referralsRedeemed,
                     is_test: isTestTx,
                     billing_name: primaryName,
                     billing_email: email,
