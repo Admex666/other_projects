@@ -504,18 +504,28 @@
         const ref = urlParams.get('ref');
         const utmCampaign = urlParams.get('utm_campaign');
         const utmSource = urlParams.get('utm_source');
+        const utmTerm = urlParams.get('utm_term');
+        const utmContent = urlParams.get('utm_content');
 
         if (utmCampaign) localStorage.setItem('vitasteps_utm_campaign', utmCampaign);
         if (utmSource) localStorage.setItem('vitasteps_utm_source', utmSource);
+        if (utmTerm) localStorage.setItem('vitasteps_utm_term', utmTerm);
+        if (utmContent) localStorage.setItem('vitasteps_utm_content', utmContent);
         if (ref) localStorage.setItem('vitasteps_ref', ref);
 
-        const savedUtm = utmCampaign || localStorage.getItem('vitasteps_utm_campaign');
+        const savedUtmCamp = utmCampaign || localStorage.getItem('vitasteps_utm_campaign');
+        const savedUtmSrc = utmSource || localStorage.getItem('vitasteps_utm_source');
+        const savedUtmTerm = utmTerm || localStorage.getItem('vitasteps_utm_term');
+        const savedUtmContent = utmContent || localStorage.getItem('vitasteps_utm_content');
         const savedRef = ref || localStorage.getItem('vitasteps_ref');
 
         document.querySelectorAll('a[href*="checkout.html"]').forEach(link => {
             const url = new URL(link.href, window.location.origin);
             if (savedRef) url.searchParams.set('ref', savedRef);
-            if (savedUtm) url.searchParams.set('utm_campaign', savedUtm);
+            if (savedUtmCamp) url.searchParams.set('utm_campaign', savedUtmCamp);
+            if (savedUtmSrc) url.searchParams.set('utm_source', savedUtmSrc);
+            if (savedUtmTerm) url.searchParams.set('utm_term', savedUtmTerm);
+            if (savedUtmContent) url.searchParams.set('utm_content', savedUtmContent);
             link.href = url.pathname + url.search;
         });
     </script>

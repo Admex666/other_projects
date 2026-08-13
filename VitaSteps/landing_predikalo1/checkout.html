@@ -463,6 +463,8 @@
         const urlParams = new URLSearchParams(window.location.search);
         const referredBy = urlParams.get('ref') || localStorage.getItem('vitasteps_ref') || '';
         const utmCampaign = urlParams.get('utm_campaign') || localStorage.getItem('vitasteps_utm_campaign') || '';
+        const utmTerm = urlParams.get('utm_term') || localStorage.getItem('vitasteps_utm_term') || '';
+        const utmContent = urlParams.get('utm_content') || localStorage.getItem('vitasteps_utm_content') || '';
         const paramCampaign = urlParams.get('c') || '';
         if (paramCampaign === 'predikaloszek' || paramCampaign === 'predikalo') {
             campaignKey = 'predikaloszek';
@@ -819,6 +821,8 @@
                 homeAddress: deliveryMethod === 'home' ? resolvedHomeAddress : '',
                 referredBy,
                 utmCampaign,
+                utmTerm,
+                utmContent,
                 isTest,
                 campaign: campaignKey
             };

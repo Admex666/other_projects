@@ -23,7 +23,7 @@ All notable changes to the VitaSteps challenge platform project are documented h
     *   A kedvezmény lépcsők (10%, 25%, 45%, 70%, 100%) **szigorúan csak a vásárló 1. (saját) érmére érvényesülnek**, míg az összes további érem teljes áron (`7 990 Ft`) marad a kosárban.
 *   **Hirdetés (Ad) Szintű Meta Szinkron & Kreatív Követés (`fetch_meta_daily.py`):**
     *   Átállítottuk a lekérdezést Kampány szintről Hirdetés (Ad) szintre: a szinkronizáló szkript mostantól hirdetésenként menti a mutatókat (`ad_id`, `ad_name`, `adset_id`, `adset_name`).
-    *   Kiterjesztettük a frontend & Stripe checkout rendszert: eltárolja a `utm_content` (`{{ad.name}}`) paramétert, így a vásárlások pontosan ahhoz a hirdetéshez/kreatívhoz íródnak jóvá a Supabase-ben, ami a konverziót hozta.
+    *   Kiterjesztettük a frontend & Stripe checkout rendszert: A landing oldalak (`index.html`), a checkout oldal (`checkout.html`) és az `api/checkout.js` mostantól hiánytalanul eltárolja és továbbítja az `utm_content` (`{{ad.name}}`) és `utm_term` (`{{adset.name}}`) paramétereket a Stripe metadata-ba és a Supabase `orders.utm_content` oszlopába.
 *   **Szigorú Mező Formátumvizsgálat a Checkout Oldalon (`checkout.html`):**
     *   Beépítettünk szigorú formátumkényszereket: teljes nevezői név ellenőrzés (min. 2 szó, engedélyezve a 3 vagy több szavas neveket pl. két keresztnév vagy titulus esetén), szabványos magyar telefonszám formátum (`+36` / `06`), szigorú e-mail RegEx szűrés, valamint 4 jegyű irányítószámot és utcát/házszámot megkövetelő számlázási és szállítási cím ellenőrzés. Piros kiemelés mezőnként, és automatikus görgetés/fókusz a legfelső hibás mezőre (`document.querySelector('.input-error')`).
 *   **Logisztikai Teszt Felhasználó Elrejtés:**

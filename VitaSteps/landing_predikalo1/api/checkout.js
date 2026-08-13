@@ -22,6 +22,8 @@ module.exports = async (req, res) => {
             parcelId,
             referredBy,
             utmCampaign,
+            utmTerm,
+            utmContent,
             isTest,
             campaign
         } = req.body;
@@ -123,6 +125,8 @@ module.exports = async (req, res) => {
             Hazhoz_cim: homeAddress || '',
             Ajanlо_Email: referredBy || '',
             Utm_Campaign: utmCampaign || '',
+            Utm_Term: utmTerm || '',
+            Utm_Content: utmContent || '',
             Kampany: campaignKey,
             IsTest: useTestKey ? 'true' : 'false',
             Medaliok: JSON.stringify(medals).substring(0, 490),
