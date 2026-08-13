@@ -4,9 +4,9 @@ import requests
 import numpy as np
 from concurrent.futures import ThreadPoolExecutor
 from typing import List, Dict, Optional, Tuple
-from models import City, TravelPreferences
-import scraper
-import maps_service
+from app.models.models import City, TravelPreferences
+from app.scrapers import scraper
+from app.services import maps_service
 
 # Statikus walkability pontszámok (ha nem áll rendelkezésre más adat)
 WALKABILITY_SCORES = {
@@ -26,7 +26,7 @@ WALKABILITY_SCORES = {
 def load_numbeo_data() -> Dict:
     """Betölti a Numbeo adatokat."""
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    numbeo_path = os.path.join(base_dir, "data", "live_numbeo_indices.json")
+    numbeo_path = os.path.abspath(os.path.join(base_dir, "..", "..", "data", "live_numbeo_indices.json"))
     if os.path.exists(numbeo_path):
         try:
             with open(numbeo_path, "r", encoding="utf-8") as f:

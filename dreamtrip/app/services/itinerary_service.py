@@ -1,8 +1,8 @@
 import math
 from datetime import datetime, timedelta
 from typing import List, Dict, Optional, Set, Tuple
-from models import POI, ItineraryDay, ItineraryItem, POILocation
-import maps_service
+from app.models.models import POI, ItineraryDay, ItineraryItem, POILocation
+from app.services import maps_service
 
 def haversine_distance(loc1: POILocation, loc2: POILocation) -> float:
     """Kiszámolja a távolságot két koordináta között kilométerben (Haversine képlet)."""

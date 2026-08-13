@@ -4,10 +4,10 @@ import time
 import requests
 import random
 from typing import List, Dict, Optional
-from models import POI, POILocation
+from app.models.models import POI, POILocation
 
 # Cache fájl elérési útja
-CACHE_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "poi_cache.json")
+CACHE_FILE = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "poi_cache.json"))
 CACHE_EXPIRY_SECONDS = 7 * 24 * 60 * 60  # 7 nap
 
 def load_poi_cache() -> Dict:

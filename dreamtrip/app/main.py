@@ -5,8 +5,8 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 import pandas as pd
-from scraper import get_kiwi_tokens, search_flights_by_city_name_v2, create_return_combinations
-from accommodation_scraper import get_all_stays, parse_accommodation_results
+from app.scrapers.scraper import get_kiwi_tokens, search_flights_by_city_name_v2, create_return_combinations
+from app.scrapers.accommodation_scraper import get_all_stays, parse_accommodation_results
 import os
 import secrets
 import json
@@ -17,13 +17,13 @@ import numpy as np
 import requests
 from typing import List, Dict, Optional
 from pydantic import BaseModel
-import scraper # Kiwi scraper
-import accommodation_scraper
+from app.scrapers import scraper # Kiwi scraper
+from app.scrapers import accommodation_scraper
 from contextlib import asynccontextmanager
-from models import TravelPreferences, Trip, ItineraryDay, ItineraryItem
-import scoring_service
-import itinerary_service
-import maps_service
+from app.models.models import TravelPreferences, Trip, ItineraryDay, ItineraryItem
+from app.services import scoring_service
+from app.services import itinerary_service
+from app.services import maps_service
 
 
 # Felhasználók
@@ -66,7 +66,7 @@ def load_destinations():
     global destination_db
     try:
         base_dir = os.path.dirname(os.path.abspath(__file__))
-        json_path = os.path.join(base_dir, "data", "destinations.json")
+        json_path = os.path.abspath(os.path.join(base_dir, "..", "data", "destinations.json"))
         with open(json_path, "r", encoding="utf-8") as f:
             destination_db = json.load(f)
         print(f"Loaded {len(destination_db)} destinations from {json_path}")
@@ -83,8 +83,9 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 # Static és templates
-app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="templates")
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+app.mount("/static", StaticFiles(directory=os.path.join(ROOT_DIR, "static")), name="static")
+templates = Jinja2Templates(directory=os.path.join(ROOT_DIR, "templates"))
 
 security = HTTPBasic()
 
