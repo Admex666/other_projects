@@ -21,49 +21,49 @@ A rendszer 4 moduláris rétegből áll:
 
 ```mermaid
 graph TD
-    subgraph Client Layer
-        UI_Disc[Városválasztó Dashboard / Discover]
-        UI_Plan[Útiterv Tervező Dashboard / Planner]
-        Leaflet[Leaflet.js Interaktív Térkép]
+    subgraph Client["Client Layer"]
+        UI_Disc["Városválasztó Dashboard / Discover"]
+        UI_Plan["Útiterv Tervező Dashboard / Planner"]
+        Leaflet["Leaflet.js Interaktív Térkép"]
     end
 
-    subgraph FastAPI Application (app/)
-        Router[API Endpoints & Controllers]
-        Scoring[Scoring Service / Városrangsoroló]
-        Itinerary[Itinerary Service / Napi Útiterv Engine]
-        Maps[Maps Service / POI Kezelő]
+    subgraph Backend["FastAPI Application - app/"]
+        Router["API Endpoints & Controllers"]
+        Scoring["Scoring Service / Városrangsoroló"]
+        Itinerary["Itinerary Service / Napi Útiterv Engine"]
+        Maps["Maps Service / POI Kezelő"]
     end
 
-    subgraph Data & Scraper Layer
-        Cache[POI JSON Cache / poi_cache.json]
-        ScraperKiwi[Kiwi GraphQL Scraper]
-        ScraperStays[Cozycozy Playwright Scraper]
+    subgraph DataLayer["Data & Scraper Layer"]
+        Cache["POI JSON Cache / poi_cache.json"]
+        ScraperKiwi["Kiwi GraphQL Scraper"]
+        ScraperStays["Cozycozy Playwright Scraper"]
     end
 
-    subgraph External APIs
-        KiwiAPI[Kiwi Flight API]
-        GoogleAPI[Google Places API]
-        MeteoAPI[Open-Meteo Weather API]
-        NumbeoData[Numbeo Cost & Safety Data]
+    subgraph ExtAPIs["External APIs"]
+        KiwiAPI["Kiwi Flight API"]
+        GoogleAPI["Google Places API"]
+        MeteoAPI["Open-Meteo Weather API"]
+        NumbeoData["Numbeo Cost & Safety Data"]
     end
 
     UI_Disc -->|POST /api/v2/discover| Router
     UI_Plan -->|POST /api/v2/trip/reoptimize| Router
-    
+
     Router --> Scoring
     Router --> Itinerary
-    
+
     Scoring --> ScraperKiwi
     ScraperKiwi --> KiwiAPI
     Scoring --> MeteoAPI
     Scoring --> NumbeoData
-    
+
     Itinerary --> Maps
     Maps --> Cache
     Maps --> GoogleAPI
-    
+
     Router --> ScraperStays
-    
+
     UI_Plan <--> Leaflet
 ```
 
