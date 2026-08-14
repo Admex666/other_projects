@@ -2,6 +2,14 @@
 
 ## [Unreleased] - 2026-08-14
 ### Hozzáadva
+- **PROD és DEV Üzemmód ([`app/main.py`](file:///e:/Data/other_projects/dreamtrip/app/main.py), [`templates/home.html`](file:///e:/Data/other_projects/dreamtrip/templates/home.html), [`app/scrapers/accommodation_scraper.py`](file:///e:/Data/other_projects/dreamtrip/app/scrapers/accommodation_scraper.py))**:
+  - `DEV` módban (`APP_ENV=development`): Lokális Selenium Chrome fut a szálláskereséshez (0 Browserless quota felhasználás), és a főoldalon minden modul elérhető.
+  - `PROD` módban (`APP_ENV=production`): Kizárólag a **Flight Intelligence** és az **Accommodation Intelligence** modulok aktívak és kattinthatók. A többi modul disabled/Hamarosan jelölést kap, a védett útvonalak átirányítanak a `/home`-ra, a szálláskereső pedig felhős Browserless motort használ.
+- **Vercel Serverless Konfiguráció ([`vercel.json`](file:///e:/Data/other_projects/dreamtrip/vercel.json), [`api/index.py`](file:///e:/Data/other_projects/dreamtrip/api/index.py))**:
+  - Elkészült a Vercel ASGI belépési pont és rewrite szabályrendszer, így a projekt azonnal deployolható a `vercel` CLI paranccsal.
+- **Browserless.io Felhős Scraping Integráció**:
+  - A szálláskereső scraper mostantól automatikusan a `BROWSERLESS_KEY` környezeti változóval megadott felhős Chrome motort használja, így **100%-ban Vercel- és felhőkompatibilis** (nincs szükség helyi Chrome/Selenium telepítésre).
+  - Ha nincs megadva kulcs, a rendszer észrevétlenül visszalép a helyi Selenium Chrome-ra.
 - **Szállás Keresési Kínálat & Limit Bővítés ([`app/scrapers/accommodation_scraper.py`](file:///e:/Data/other_projects/dreamtrip/app/scrapers/accommodation_scraper.py), [`templates/accommodation_intelligence.html`](file:///e:/Data/other_projects/dreamtrip/templates/accommodation_intelligence.html))**:
   - A korábbi 500-as pagination limitet 1500-ra növeltük, és kikapcsoltuk a szigorú `instantBooking: true` szűrést.
   - Alapértelmezetten bekapcsoltuk az összes elterjedt szállástípust (Hotel, Apartman, Vendégház, Nyaraló, Hostel), így a találati szám ~495-ről **1477+ valós szállásra** ugrott fel, lefedve a Cozycozy teljes aggregált adatbázisát.

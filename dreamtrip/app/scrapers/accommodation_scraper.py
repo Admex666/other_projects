@@ -7,6 +7,8 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import os
+import requests
 import urllib.parse
 from typing import Optional, List, Dict
 
@@ -73,6 +75,102 @@ def get_all_stays(city, country, start_date, end_date,
     encoded_city = urllib.parse.quote(city.strip())
     encoded_country = urllib.parse.quote(normalized_country)
 
+    # 1. BROWSERLESS CLOUD MOTOR (Csak PROD módban vagy kifejezett USE_BROWSERLESS=true esetén)
+    app_env = os.getenv("APP_ENV", "development").lower()
+    browserless_key = os.getenv("BROWSERLESS_KEY")
+    use_browserless = (app_env == "production" or os.getenv("USE_BROWSERLESS", "false").lower() == "true")
+
+    if use_browserless and browserless_key:
+        print("[INFO] Szálláskeresés PROD módban: Browserless felhős Chrome motor...")
+        try:
+            if progress_callback: progress_callback(10)
+            target_url = f"https://www.cozycozy.com/en/search/{encoded_city}%2C%20{encoded_country}/{start_date}/{end_date}/{rooms}-{adults}-{children}/results"
+            
+            fn_code = f"""
+export default async ({{ page }}) => {{
+  await page.goto('{target_url}', {{ waitUntil: 'domcontentloaded' }});
+  await page.waitForSelector('a[href*="searchId="]', {{ timeout: 20000 }});
+  
+  const href = await page.$eval('a[href*="searchId="]', el => el.href);
+  const match = href.match(/searchId=([A-Za-z0-9]+)/);
+  if (!match) return {{ error: 'searchId not found' }};
+  const searchId = match[1];
+  
+  const allEntries = [];
+  const batchSize = 100;
+  const maxLimit = 1500;
+  
+  for (let offset = 0; offset < maxLimit; offset += batchSize) {{
+    const res = await page.evaluate(async (sId, off, bSize) => {{
+      const response = await fetch('https://www.cozycozy.com/api/getResultList', {{
+        method: 'POST',
+        headers: {{
+          'accept': 'application/json, text/plain, */*',
+          'content-type': 'application/json',
+          'x-search-id': sId,
+          'x-split-id': '0'
+        }},
+        body: JSON.stringify({{
+          searchId: sId,
+          sorting: 'ranking',
+          offset: off,
+          count: bSize,
+          filters: {{
+            bounds: null,
+            noBounds: true,
+            price: [{price_min}, {price_max}],
+            instantBooking: false,
+            combinedTypeCodes: {json.dumps(combined_types)},
+            starRatings: [],
+            minRating: {min_rating},
+            ratingRequired: {str(min_rating > 0).lower()},
+            amenityCodes: {json.dumps(amenity_codes)},
+            providerCodes: [],
+            minBedRoomCount: 1,
+            minBathRoomCount: 0,
+            cityCodes: [],
+            areaCodes: [],
+            minResponseTime: null,
+            updateBounds: true,
+            breakfast: {str(breakfast).lower()},
+            minCancellationCategory: 0
+          }},
+          estimateBounds: {{ targetSize: {{ width: 1136, height: 925 }} }},
+          prefixAccommodationIds: [],
+          processNewResults: true,
+          columnCount: 3,
+          excludeAds: false
+        }})
+      }});
+      return await response.json();
+    }}, searchId, offset, batchSize);
+    
+    if (!res || !res.entries || res.entries.length === 0) break;
+    allEntries.push(...res.entries);
+    if (res.entries.length < batchSize) break;
+  }}
+  
+  return {{ searchId, entries: allEntries }};
+}};
+"""
+            if progress_callback: progress_callback(30)
+            res = requests.post(
+                f"https://chrome.browserless.io/function?token={browserless_key}",
+                headers={"Content-Type": "application/javascript"},
+                data=fn_code,
+                timeout=60
+            )
+            if res.status_code == 200:
+                data = res.json()
+                if "entries" in data:
+                    print(f"[INFO] Browserless sikeresen letöltött {len(data['entries'])} szálláshelyet.")
+                    if progress_callback: progress_callback(95)
+                    return data
+            print(f"[WARN] Browserless hiba ({res.status_code}), fallback lokális böngészőre...")
+        except Exception as be:
+            print(f"[WARN] Browserless kivétel: {be}, fallback lokális Chrome-ra...")
+
+    # 2. LOKÁLIS CHROME FALLBACK
     filter_string = build_filter_string(price_min, price_max, min_rating, 
                                         accommodation_types, amenities, breakfast)
 

@@ -80,6 +80,10 @@ async def lifespan(app: FastAPI):
     load_destinations()
     yield
 
+APP_ENV = os.getenv("APP_ENV", "development").lower()
+IS_PRODUCTION = (APP_ENV == "production")
+print(f"[CONFIG] DreamTrip futási mód: {APP_ENV.upper()} (IS_PRODUCTION={IS_PRODUCTION})")
+
 app = FastAPI(lifespan=lifespan)
 
 # Static és templates
@@ -116,13 +120,21 @@ async def home(request: Request):
     user = get_current_user(request)
     if not user:
         return RedirectResponse(url="/", status_code=303)
-    return templates.TemplateResponse("home.html", {"request": request, "user": user})
+    return templates.TemplateResponse("home.html", {
+        "request": request, 
+        "user": user,
+        "is_production": IS_PRODUCTION,
+        "app_env": APP_ENV
+    })
 
 @app.get("/destination-matcher", response_class=HTMLResponse)
 async def destination_matcher(request: Request):
     user = get_current_user(request)
     if not user:
         return RedirectResponse(url="/", status_code=303)
+    # PROD módban csak a Flight és Accommodation Intelligence érhető el
+    if IS_PRODUCTION:
+        return RedirectResponse(url="/home", status_code=303)
     return templates.TemplateResponse("destination_matcher.html", {"request": request})
 
 @app.get("/flight-intelligence", response_class=HTMLResponse)
