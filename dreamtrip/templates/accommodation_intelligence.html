@@ -127,11 +127,28 @@
 
         input,
         select {
-            padding: 12px 15px;
-            border: 2px solid #eee;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 13px 16px;
+            border: 2px solid #e0e0e0;
             border-radius: var(--radius);
             font-size: 14px;
             transition: 0.3s;
+        }
+
+        #destination {
+            padding: 15px 20px;
+            font-size: 16px;
+            font-weight: 500;
+            border-color: #cce5cf;
+            background: #fbfdfb;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.03);
+        }
+
+        #destination:focus {
+            background: #ffffff;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(35, 91, 42, 0.12);
         }
 
         input:focus,
@@ -237,6 +254,72 @@
             transition: width 0.3s;
         }
 
+        /* Autocomplete dropdown styles */
+        .autocomplete-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .autocomplete-dropdown {
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: var(--radius);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            max-height: 260px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+
+        .autocomplete-item {
+            padding: 10px 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #f5f5f5;
+            transition: background 0.15s ease;
+            text-align: left;
+        }
+
+        .autocomplete-item:last-child {
+            border-bottom: none;
+        }
+
+        .autocomplete-item:hover,
+        .autocomplete-item.active {
+            background: #f0f7f0;
+        }
+
+        .autocomplete-main {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .autocomplete-title {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 14px;
+        }
+
+        .autocomplete-sub {
+            font-size: 11px;
+            color: #777;
+            margin-top: 2px;
+        }
+
+        .autocomplete-empty {
+            padding: 12px 15px;
+            color: #888;
+            font-size: 13px;
+            text-align: center;
+            font-style: italic;
+        }
+
         @media (max-width: 600px) {
             .search-grid {
                 grid-template-columns: 1fr;
@@ -270,14 +353,16 @@
         <div class="form-section">
             <div class="section-title"><i data-lucide="map-pin"></i> Úticél és Időpont</div>
             <div class="search-grid">
-                <div class="input-group">
-                    <label>Város</label>
-                    <input type="text" id="city" placeholder="Pl: Budapest" value="{{ prefill.city or 'Budapest' }}">
-                </div>
-                <div class="input-group">
-                    <label>Ország</label>
-                    <input type="text" id="country" placeholder="Pl: Magyarország"
-                        value="{{ prefill.country or 'Magyarország' }}">
+                <div class="input-group" style="grid-column: 1 / -1;">
+                    <label>📍 Úti cél (Város vagy Régió)</label>
+                    <div class="autocomplete-container" id="dest-container">
+                        <input type="text" id="destination" placeholder="Pl: Barcelona, Róma, Párizs vagy Budapest..."
+                            value="{{ (prefill.city + ', ' + prefill.country) if (prefill.city and prefill.country) else (prefill.city or 'Barcelona, Spanyolország') }}" autocomplete="off">
+                        <input type="hidden" id="selected_city" value="{{ prefill.city or 'Barcelona' }}">
+                        <input type="hidden" id="selected_country" value="{{ prefill.country or 'Spanyolország' }}">
+                        <div class="autocomplete-dropdown" id="dest-dropdown"></div>
+                    </div>
+                    <small style="color: #666; font-size: 11px; margin-top: 4px;">Kezdj el gépelni egy várost vagy úti célt a felajánlott listához.</small>
                 </div>
                 <div class="input-group">
                     <label>Érkezés</label>
@@ -311,29 +396,29 @@
                     <i data-lucide="hotel"></i>
                     <span>Hotel</span>
                 </div>
-                <div class="filter-card" data-value="APARTMENT">
+                <div class="filter-card active" data-value="APARTMENT">
                     <i data-lucide="home"></i>
                     <span>Apartman</span>
                 </div>
-                <div class="filter-card" data-value="GUEST">
+                <div class="filter-card active" data-value="GUEST">
                     <i data-lucide="door-open"></i>
                     <span>Vendégház</span>
                 </div>
-                <div class="filter-card" data-value="VR">
+                <div class="filter-card active" data-value="VR">
                     <i data-lucide="palmtree"></i>
                     <span>Nyaraló</span>
                 </div>
-                <div class="filter-card" data-value="HOSTEL">
+                <div class="filter-card active" data-value="HOSTEL">
                     <i data-lucide="bed"></i>
                     <span>Hostel</span>
                 </div>
             </div>
 
-            <label style="display: block; margin: 20px 0 10px;">Kiemelt kényelmi szolgáltatások</label>
+            <label style="display: block; margin: 20px 0 10px 0;">Kényelmi szolgáltatások</label>
             <div class="filter-grid" id="amenity-grid">
                 <div class="filter-card" data-value="WIFI">
                     <i data-lucide="wifi"></i>
-                    <span>Wifi</span>
+                    <span>Ingyenes Wifi</span>
                 </div>
                 <div class="filter-card" data-value="POOL">
                     <i data-lucide="waves"></i>
@@ -345,7 +430,7 @@
                 </div>
                 <div class="filter-card" data-value="AC">
                     <i data-lucide="wind"></i>
-                    <span>Klíma</span>
+                    <span>Klímaberendezés</span>
                 </div>
                 <div class="filter-card" data-value="KITCHEN">
                     <i data-lucide="utensils"></i>
@@ -356,59 +441,168 @@
             <div class="search-grid" style="margin-top: 20px;">
                 <div class="input-group">
                     <label>Maximum ár / éjszaka (Ft)</label>
-                    <input type="number" id="price_max" value="500000" step="5000">
+                    <input type="number" id="price_max" value="100000" step="5000">
                 </div>
                 <div class="input-group">
-                    <label>Minimum értékelés</label>
-                    <select id="min_rating">
-                        <option value="0">Összes</option>
-                        <option value="90">9.0+ Szuper</option>
-                        <option value="80">8.0+ Nagyon jó</option>
-                        <option value="70">7.0+ Jó</option>
-                    </select>
+                    <label>Minimális értékelés (0-10)</label>
+                    <input type="number" id="min_rating" value="7" min="0" max="10" step="0.5">
                 </div>
             </div>
         </div>
 
-        <button id="searchBtn" class="btn-search" onclick="startSearch()">🔍 Keresés indítása</button>
+        <button id="searchBtn" class="btn-search" onclick="startSearch()">
+            Szállások keresése
+        </button>
 
         <div id="status">
-            <div id="statusText"></div>
+            <div id="statusText" style="font-weight: 600; color: var(--primary); margin-bottom: 10px;"></div>
             <div class="loading-bar-container" id="loadingBar">
                 <div class="loading-bar"></div>
             </div>
         </div>
+
         <div id="results"></div>
     </div>
 
     <script>
         lucide.createIcons();
 
-        // Date selection logic
+        // ===== SINGLE DESTINATION AUTOCOMPLETE KONTROLLER =====
+        function setupAccommodationAutocomplete() {
+            const destInput = document.getElementById('destination');
+            const destDropdown = document.getElementById('dest-dropdown');
+            const selectedCity = document.getElementById('selected_city');
+            const selectedCountry = document.getElementById('selected_country');
+            let debounceTimer = null;
+            let currentItems = [];
+            let activeIndex = -1;
+
+            async function fetchSuggestions(term) {
+                try {
+                    const res = await fetch(`/api/locations/autocomplete?term=${encodeURIComponent(term)}&mode=destination`);
+                    if (!res.ok) return [];
+                    return await res.json();
+                } catch (e) {
+                    return [];
+                }
+            }
+
+            function renderDropdown(items) {
+                currentItems = items;
+                activeIndex = -1;
+                if (!items || items.length === 0) {
+                    destDropdown.innerHTML = '<div class="autocomplete-empty">Nincs találat</div>';
+                    destDropdown.style.display = 'block';
+                    return;
+                }
+
+                destDropdown.innerHTML = items.map((item, idx) => `
+                    <div class="autocomplete-item" data-index="${idx}">
+                        <div class="autocomplete-main">
+                            <div class="autocomplete-title">
+                                📍 ${item.city_name || item.name}
+                            </div>
+                            <div class="autocomplete-sub">${item.country_name || ''}</div>
+                        </div>
+                    </div>
+                `).join('');
+
+                destDropdown.querySelectorAll('.autocomplete-item').forEach(el => {
+                    el.addEventListener('mousedown', (e) => {
+                        e.preventDefault();
+                        const idx = parseInt(el.dataset.index);
+                        selectItem(currentItems[idx]);
+                    });
+                });
+
+                destDropdown.style.display = 'block';
+            }
+
+            function selectItem(item) {
+                if (!item) return;
+                const cityName = item.city_name || item.name;
+                const countryName = item.country_name || '';
+                destInput.value = countryName ? `${cityName}, ${countryName}` : cityName;
+                selectedCity.value = cityName;
+                selectedCountry.value = countryName;
+                destDropdown.style.display = 'none';
+            }
+
+            destInput.addEventListener('focus', async () => {
+                const items = await fetchSuggestions(destInput.value.trim());
+                renderDropdown(items);
+            });
+
+            destInput.addEventListener('input', () => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(async () => {
+                    const items = await fetchSuggestions(destInput.value.trim());
+                    renderDropdown(items);
+                }, 150);
+            });
+
+            destInput.addEventListener('keydown', (e) => {
+                const itemsEls = destDropdown.querySelectorAll('.autocomplete-item');
+                if (destDropdown.style.display === 'block' && itemsEls.length > 0) {
+                    if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        activeIndex = (activeIndex + 1) % itemsEls.length;
+                        updateActiveItem(itemsEls);
+                    } else if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        activeIndex = (activeIndex - 1 + itemsEls.length) % itemsEls.length;
+                        updateActiveItem(itemsEls);
+                    } else if (e.key === 'Enter') {
+                        if (activeIndex >= 0 && activeIndex < currentItems.length) {
+                            e.preventDefault();
+                            selectItem(currentItems[activeIndex]);
+                        }
+                    } else if (e.key === 'Escape') {
+                        destDropdown.style.display = 'none';
+                    }
+                }
+            });
+
+            function updateActiveItem(itemsEls) {
+                itemsEls.forEach((el, idx) => {
+                    if (idx === activeIndex) {
+                        el.classList.add('active');
+                        el.scrollIntoView({ block: 'nearest' });
+                    } else {
+                        el.classList.remove('active');
+                    }
+                });
+            }
+
+            document.addEventListener('click', (e) => {
+                if (!destInput.contains(e.target) && !destDropdown.contains(e.target)) {
+                    destDropdown.style.display = 'none';
+                }
+            });
+        }
+
+        setupAccommodationAutocomplete();
+
+        // Default dates setup
         const today = new Date();
-        const tomorrow = new Date(today);
-        tomorrow.setDate(today.getDate() + 1);
-        const nextWeek = new Date(today);
-        nextWeek.setDate(today.getDate() + 7);
+        const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+        const nextWeekEnd = new Date(today.getTime() + 11 * 24 * 60 * 60 * 1000);
 
         const startInput = document.getElementById('start_date');
         const endInput = document.getElementById('end_date');
 
+        startInput.value = "{{ prefill.start_date or '' }}" || nextWeek.toISOString().split('T')[0];
+        endInput.value = "{{ prefill.end_date or '' }}" || nextWeekEnd.toISOString().split('T')[0];
         startInput.min = today.toISOString().split('T')[0];
-        endInput.min = tomorrow.toISOString().split('T')[0];
-        startInput.value = "{{ prefill.start_date or '' }}" || tomorrow.toISOString().split('T')[0];
-        endInput.value = "{{ prefill.end_date or '' }}" || nextWeek.toISOString().split('T')[0];
+        endInput.min = startInput.value;
 
         startInput.addEventListener('change', () => {
-            const startDate = new Date(startInput.value);
-            const minEndDate = new Date(startDate);
-            minEndDate.setDate(startDate.getDate() + 1);
-            endInput.min = minEndDate.toISOString().split('T')[0];
+            endInput.min = startInput.value;
             if (endInput.value < endInput.min) endInput.value = endInput.min;
         });
 
         // Filter selection logic
-        const selectedTypes = ['HOTEL'];
+        const selectedTypes = ['HOTEL', 'APARTMENT', 'GUEST', 'VR', 'HOSTEL'];
         const selectedAmenities = [];
 
         function setupGrid(id, list) {
@@ -439,9 +633,30 @@
             const loadingBar = document.getElementById('loadingBar');
             const resultsDiv = document.getElementById('results');
 
+            const rawDest = document.getElementById('destination').value.trim();
+            const hiddenCity = document.getElementById('selected_city').value.trim();
+            const hiddenCountry = document.getElementById('selected_country').value.trim();
+
+            let cityVal = hiddenCity;
+            let countryVal = hiddenCountry;
+
+            // Ha a felhasználó átírta a szövegmezőt kézzel
+            if (!rawDest) {
+                alert("Kérlek adj meg egy úti célt!");
+                return;
+            }
+
+            if (rawDest.includes(',')) {
+                const parts = rawDest.split(',');
+                cityVal = parts[0].trim();
+                countryVal = parts[1].trim();
+            } else if (!cityVal || !rawDest.includes(cityVal)) {
+                cityVal = rawDest;
+            }
+
             const payload = {
-                city: document.getElementById('city').value,
-                country: document.getElementById('country').value,
+                city: cityVal,
+                country: countryVal,
                 start_date: document.getElementById('start_date').value,
                 end_date: document.getElementById('end_date').value,
                 rooms: parseInt(document.getElementById('rooms').value),
@@ -462,6 +677,7 @@
 
             btn.disabled = true;
             statusDiv.style.display = 'block';
+            statusDiv.style.background = '#f0f7f0';
             statusText.innerText = "🔍 Keresés indítása...";
             loadingBar.style.display = 'block';
             loadingBar.querySelector('.loading-bar').style.width = "5%";
@@ -473,7 +689,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-                pollInterval = setInterval(checkStatus, 3000);
+                pollInterval = setInterval(checkStatus, 2000);
             } catch (e) {
                 statusText.innerText = "❌ Hiba a szerverkapcsolatban.";
                 btn.disabled = false;
@@ -483,6 +699,7 @@
         async function checkStatus() {
             const response = await fetch('/api/accommodation-status');
             const data = await response.json();
+            const statusDiv = document.getElementById('status');
             const statusText = document.getElementById('statusText');
             const loadingBar = document.getElementById('loadingBar');
 
@@ -494,7 +711,7 @@
             } else if (data.status === 'done') {
                 clearInterval(pollInterval);
                 loadingBar.style.display = 'none';
-                document.getElementById('status').style.background = '#e8f5e9';
+                statusDiv.style.background = '#e8f5e9';
                 document.getElementById('searchBtn').disabled = false;
 
                 const resultsDiv = document.getElementById('results');
@@ -514,6 +731,8 @@
                 statusText.innerText = "✅ Keresés befejezve.";
             } else if (data.status === 'error') {
                 clearInterval(pollInterval);
+                loadingBar.style.display = 'none';
+                statusDiv.style.background = '#ffebee';
                 statusText.innerText = "❌ Hiba: " + data.error;
                 document.getElementById('searchBtn').disabled = false;
             }

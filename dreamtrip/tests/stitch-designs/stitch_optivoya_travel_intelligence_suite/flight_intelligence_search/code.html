@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Optivoya - Flight Intelligence</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-container": "#a7f540",
+                    "on-secondary": "#ffffff",
+                    "on-tertiary-container": "#ed9aae",
+                    "primary": "#003710",
+                    "tertiary-fixed": "#ffd9e0",
+                    "status-alert": "#E11D48",
+                    "outline": "#71796f",
+                    "on-tertiary": "#ffffff",
+                    "background": "#f8faf8",
+                    "error-container": "#ffdad6",
+                    "primary-container": "#1c4e24",
+                    "surface": "#FFFFFF",
+                    "inverse-surface": "#2e3130",
+                    "secondary": "#406900",
+                    "primary-fixed": "#b8f1b7",
+                    "secondary-fixed-dim": "#8fdb24",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-fixed-dim": "#9dd49d",
+                    "outline-variant": "#c1c9bd",
+                    "on-secondary-fixed-variant": "#2f4f00",
+                    "on-error-container": "#93000a",
+                    "surface-tint": "#37693c",
+                    "on-surface": "#191c1b",
+                    "surface-container-highest": "#e1e3e1",
+                    "secondary-fixed": "#aaf843",
+                    "tertiary": "#521a2c",
+                    "surface-bright": "#f8faf8",
+                    "inverse-on-surface": "#eff1ef",
+                    "surface-container": "#eceeec",
+                    "on-primary-container": "#89bf89",
+                    "on-surface-variant": "#414940",
+                    "surface-dim": "#d8dad9",
+                    "status-success": "#10B981",
+                    "on-error": "#ffffff",
+                    "error": "#ba1a1a",
+                    "on-primary-fixed": "#002107",
+                    "on-secondary-container": "#436e00",
+                    "on-tertiary-fixed-variant": "#713244",
+                    "on-primary-fixed-variant": "#1f5026",
+                    "on-secondary-fixed": "#102000",
+                    "border-subtle": "#E5E7EB",
+                    "inverse-primary": "#9dd49d",
+                    "surface-container-high": "#e6e9e7",
+                    "on-tertiary-fixed": "#3a071a",
+                    "status-caution": "#F59E0B",
+                    "tertiary-container": "#6e3042",
+                    "tertiary-fixed-dim": "#ffb1c3",
+                    "on-primary": "#ffffff",
+                    "surface-variant": "#e1e3e1",
+                    "text-main": "#08090A",
+                    "surface-container-low": "#f2f4f2",
+                    "on-background": "#191c1b"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-mobile": "16px",
+                    "max-width": "1440px",
+                    "base": "4px",
+                    "gutter": "24px",
+                    "margin-desktop": "40px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "body-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "display-lg": ["Plus Jakarta Sans"],
+                    "display-lg-mobile": ["Plus Jakarta Sans"],
+                    "mono-data": ["JetBrains Mono"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-sm": ["13px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "display-lg-mobile": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "mono-data": ["14px", {"lineHeight": "20px", "fontWeight": "450"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bg-pattern {
+            background-image: radial-gradient(var(--tw-colors-outline-variant) 1px, transparent 1px);
+            background-size: 24px 24px;
+            opacity: 0.15;
+        }
+        /* Custom scrollbar for matrix if needed */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #d8dad9; border-radius: 3px; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col antialiased relative">
+<!-- Subtle Background Pattern -->
+<div class="absolute inset-0 bg-pattern pointer-events-none z-0"></div>
+<!-- TopAppBar -->
+<nav class="sticky top-0 w-full z-50 bg-surface/80 dark:bg-surface-container/80 backdrop-blur-xl border-b border-outline-variant/30 shadow-sm">
+<div class="flex justify-between items-center px-margin-desktop py-4 max-w-max-width mx-auto">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed" style="font-variation-settings: 'FILL' 1;">travel_explore</span>
+<span class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">Optivoya</span>
+</div>
+<div class="cursor-pointer active:scale-95 transition-transform flex items-center gap-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200">Early Access</span>
+</div>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-grow w-full max-w-[900px] mx-auto px-margin-mobile md:px-gutter pt-12 pb-32 relative z-10 flex flex-col justify-center">
+<!-- Header Text -->
+<div class="text-center mb-10">
+<h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mb-3 tracking-tight">Intelligence Network</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl mx-auto">Define parameters for multi-node routing discovery. Uncover optimal flight sequences with deep schedule visibility.</p>
+</div>
+<!-- The Core Form Surface (Glass/Surface hybrid) -->
+<div class="bg-surface rounded-xl border border-border-subtle shadow-[0_8px_30px_rgb(0,0,0,0.03)] p-6 md:p-8 relative overflow-hidden">
+<!-- Type Toggle -->
+<div class="flex items-center gap-1 bg-surface-container-low p-1 rounded-lg w-fit mb-8 border border-border-subtle/50">
+<button class="px-5 py-1.5 rounded-md bg-surface shadow-sm border border-border-subtle font-label-sm text-label-sm text-on-surface font-semibold transition-all">Round Trip</button>
+<button class="px-5 py-1.5 rounded-md text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm transition-all">One Way</button>
+<button class="px-5 py-1.5 rounded-md text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm transition-all flex items-center gap-1">
+                    Multi-City <span class="material-symbols-outlined text-[14px]">add</span>
+</button>
+</div>
+<!-- Route Configuration -->
+<div class="space-y-6">
+<!-- Location Row -->
+<div class="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-4 items-start relative">
+<!-- Origin -->
+<div class="w-full">
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1.5 ml-1">Origin Node</label>
+<div class="relative flex items-center bg-surface border border-border-subtle rounded-lg focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10 transition-all group">
+<span class="material-symbols-outlined text-outline ml-3 group-focus-within:text-primary transition-colors">flight_takeoff</span>
+<input class="w-full bg-transparent border-none focus:ring-0 font-body-md text-body-md text-on-surface py-3 pl-3 pr-16 outline-none" type="text" value="Budapest"/>
+<div class="absolute right-2 top-1/2 -translate-y-1/2 bg-surface-container-high border border-border-subtle px-2 py-0.5 rounded font-mono-data text-mono-data text-on-surface-variant text-[11px] font-medium tracking-wider">BUD</div>
+</div>
+</div>
+<!-- Swap Visual -->
+<div class="flex justify-center md:pt-8 md:-mx-2 relative z-10 hidden md:flex">
+<button class="w-10 h-10 rounded-full bg-surface-container-low border border-border-subtle flex items-center justify-center text-on-surface-variant hover:text-primary hover:border-primary hover:shadow-sm transition-all">
+<span class="material-symbols-outlined text-[20px]">sync_alt</span>
+</button>
+</div>
+<div class="md:hidden flex justify-center -my-3 relative z-10">
+<button class="w-8 h-8 rounded-full bg-surface border border-border-subtle shadow-sm flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">swap_vert</span>
+</button>
+</div>
+<!-- Destination -->
+<div class="w-full">
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-1.5 ml-1">Destination Node</label>
+<div class="relative flex items-center bg-surface border border-border-subtle rounded-lg focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10 transition-all group">
+<span class="material-symbols-outlined text-outline ml-3 group-focus-within:text-primary transition-colors">flight_land</span>
+<input class="w-full bg-transparent border-none focus:ring-0 font-body-md text-body-md text-on-surface py-3 pl-3 pr-16 outline-none" type="text" value="Barcelona"/>
+<div class="absolute right-2 top-1/2 -translate-y-1/2 bg-surface-container-high border border-border-subtle px-2 py-0.5 rounded font-mono-data text-mono-data text-on-surface-variant text-[11px] font-medium tracking-wider">BCN</div>
+</div>
+</div>
+</div>
+<!-- Date Matrix Configuration -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-border-subtle/60">
+<!-- Departure Range -->
+<div>
+<div class="flex justify-between items-center mb-2 ml-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant">Departure Tolerance</label>
+<span class="font-mono-data text-[10px] text-outline px-1.5 py-0.5 rounded bg-surface-container-low border border-border-subtle">EARLIEST / LATEST</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="flex-1 bg-surface border border-border-subtle rounded-lg px-3 py-2.5 flex items-center gap-2 cursor-pointer hover:border-primary transition-colors group">
+<span class="material-symbols-outlined text-outline text-[18px] group-hover:text-primary transition-colors">calendar_month</span>
+<span class="font-body-md text-body-md text-on-surface">Oct 12</span>
+</div>
+<span class="material-symbols-outlined text-outline text-[16px]">arrow_forward</span>
+<div class="flex-1 bg-surface border border-border-subtle rounded-lg px-3 py-2.5 flex items-center gap-2 cursor-pointer hover:border-primary transition-colors">
+<span class="font-body-md text-body-md text-on-surface">Oct 14</span>
+</div>
+</div>
+</div>
+<!-- Return Range -->
+<div>
+<div class="flex justify-between items-center mb-2 ml-1">
+<label class="font-label-sm text-label-sm text-on-surface-variant">Return Tolerance</label>
+<span class="font-mono-data text-[10px] text-outline px-1.5 py-0.5 rounded bg-surface-container-low border border-border-subtle">EARLIEST / LATEST</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="flex-1 bg-surface border border-border-subtle rounded-lg px-3 py-2.5 flex items-center gap-2 cursor-pointer hover:border-primary transition-colors group">
+<span class="material-symbols-outlined text-outline text-[18px] group-hover:text-primary transition-colors">find_replace</span>
+<span class="font-body-md text-body-md text-on-surface">Oct 20</span>
+</div>
+<span class="material-symbols-outlined text-outline text-[16px]">arrow_forward</span>
+<div class="flex-1 bg-surface border border-border-subtle rounded-lg px-3 py-2.5 flex items-center gap-2 cursor-pointer hover:border-primary transition-colors">
+<span class="font-body-md text-body-md text-on-surface">Oct 24</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- CTA Row -->
+<div class="mt-10 pt-6 border-t border-border-subtle flex justify-between items-center">
+<div class="flex items-center gap-2 text-outline">
+<span class="material-symbols-outlined text-[16px]">info</span>
+<span class="font-label-sm text-label-sm">Query spans 35 potential route combinations.</span>
+</div>
+<button class="relative overflow-hidden group bg-primary text-on-primary rounded-lg px-6 py-3 flex items-center gap-3 transition-all shadow-sm hover:shadow-md active:scale-95" id="search-cta">
+<!-- Progress Fill Simulation -->
+<div class="absolute left-0 top-0 bottom-0 w-0 bg-secondary-container/30 transition-all duration-1000 ease-in-out" id="progress-fill"></div>
+<span class="font-label-sm text-label-sm font-semibold relative z-10 group-hover:text-secondary-container transition-colors">Search &amp; Retrieve Network</span>
+<span class="material-symbols-outlined text-[18px] relative z-10 group-hover:translate-x-1 group-hover:text-secondary-container transition-all">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Recent Queries (Subtle context) -->
+<div class="mt-12 opacity-80">
+<h3 class="font-label-sm text-label-sm text-on-surface-variant mb-4 uppercase tracking-widest text-[11px] ml-1">Recent Intelligence Queries</h3>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+<div class="bg-surface/50 border border-border-subtle p-3 rounded-lg hover:bg-surface hover:border-primary/40 cursor-pointer transition-all group">
+<div class="flex items-center justify-between mb-1">
+<div class="flex items-center gap-1.5 text-on-surface">
+<span class="font-mono-data text-mono-data font-semibold text-xs">LHR</span>
+<span class="material-symbols-outlined text-outline text-[14px]">sync_alt</span>
+<span class="font-mono-data text-mono-data font-semibold text-xs">DXB</span>
+</div>
+</div>
+<div class="font-label-sm text-[11px] text-on-surface-variant">Nov 10 - Nov 15</div>
+</div>
+<div class="bg-surface/50 border border-border-subtle p-3 rounded-lg hover:bg-surface hover:border-primary/40 cursor-pointer transition-all group">
+<div class="flex items-center justify-between mb-1">
+<div class="flex items-center gap-1.5 text-on-surface">
+<span class="font-mono-data text-mono-data font-semibold text-xs">JFK</span>
+<span class="material-symbols-outlined text-outline text-[14px]">sync_alt</span>
+<span class="font-mono-data text-mono-data font-semibold text-xs">CDG</span>
+</div>
+</div>
+<div class="font-label-sm text-[11px] text-on-surface-variant">Dec 01 - Dec 14</div>
+</div>
+<div class="bg-surface/50 border border-border-subtle p-3 rounded-lg hover:bg-surface hover:border-primary/40 cursor-pointer transition-all group">
+<div class="flex items-center justify-between mb-1">
+<div class="flex items-center gap-1.5 text-on-surface">
+<span class="font-mono-data text-mono-data font-semibold text-xs">FRA</span>
+<span class="material-symbols-outlined text-outline text-[14px]">arrow_right_alt</span>
+<span class="font-mono-data text-mono-data font-semibold text-xs">SIN</span>
+</div>
+</div>
+<div class="font-label-sm text-[11px] text-on-surface-variant">One Way • Jan 05</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center space-x-2 bg-surface/90 dark:bg-inverse-surface/90 backdrop-blur-md border border-outline-variant/20 shadow-lg rounded-full px-6 py-3 w-auto">
+<!-- Intelligence (Active) -->
+<a class="flex items-center gap-2 bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary rounded-full px-4 py-2 scale-100 active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">insights</span>
+<span class="font-label-sm text-label-sm">Intelligence</span>
+</a>
+<!-- Analytics (Inactive) -->
+<a class="flex items-center gap-2 text-on-surface-variant dark:text-surface-variant px-4 py-2 hover:bg-surface-container-high dark:hover:bg-surface-container-highest rounded-full transition-all scale-100 active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">query_stats</span>
+</a>
+<!-- Bookings (Inactive) -->
+<a class="flex items-center gap-2 text-on-surface-variant dark:text-surface-variant px-4 py-2 hover:bg-surface-container-high dark:hover:bg-surface-container-highest rounded-full transition-all scale-100 active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">flight_takeoff</span>
+</a>
+<!-- Profile (Inactive) -->
+<a class="flex items-center gap-2 text-on-surface-variant dark:text-surface-variant px-4 py-2 hover:bg-surface-container-high dark:hover:bg-surface-container-highest rounded-full transition-all scale-100 active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">account_circle</span>
+</a>
+</nav>
+<!-- Simple interaction script for CTA progress -->
+<script>
+        const cta = document.getElementById('search-cta');
+        const fill = document.getElementById('progress-fill');
+        
+        cta.addEventListener('click', (e) => {
+            e.preventDefault();
+            fill.style.width = '100%';
+            
+            // Reset simulation after a bit
+            setTimeout(() => {
+                fill.style.transition = 'none';
+                fill.style.width = '0';
+                setTimeout(() => {
+                    fill.style.transition = 'all 1000ms ease-in-out';
+                }, 50);
+            }, 1200);
+        });
+    </script>
+</body></html>

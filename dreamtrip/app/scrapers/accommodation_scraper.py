@@ -8,6 +8,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import urllib.parse
+from typing import Optional, List, Dict
 
 def get_all_stays(city, country, start_date, end_date, 
                   rooms=1, adults=2, children=0,
@@ -56,34 +57,41 @@ def get_all_stays(city, country, start_date, end_date,
             filters.append("b:1")
         return ';'.join(filters)
 
-    encoded_city = urllib.parse.quote(city)
-    encoded_country = urllib.parse.quote(country)
+    COUNTRY_TRANSLATIONS = {
+        "magyarország": "Hungary", "spanyolország": "Spain", "olaszország": "Italy",
+        "franciaország": "France", "németország": "Germany", "ausztria": "Austria",
+        "egyesült királyság": "United Kingdom", "anglia": "United Kingdom",
+        "görögország": "Greece", "horvátország": "Croatia", "portugália": "Portugal",
+        "hollandia": "Netherlands", "svájc": "Switzerland", "lengyelország": "Poland",
+        "csehország": "Czech Republic", "ciprus": "Cyprus", "málta": "Malta",
+        "törökország": "Turkey", "thaiföld": "Thailand", "egyesült államok": "United States"
+    }
+    
+    clean_country = country.strip()
+    normalized_country = COUNTRY_TRANSLATIONS.get(clean_country.lower(), clean_country)
+
+    encoded_city = urllib.parse.quote(city.strip())
+    encoded_country = urllib.parse.quote(normalized_country)
 
     filter_string = build_filter_string(price_min, price_max, min_rating, 
                                         accommodation_types, amenities, breakfast)
 
     chrome_options = Options()
-    # EXTRÉM MEMÓRIA OPTIMALIZÁLÁS (RAILWAY 512MB RAM COMPATIBILITY)
     chrome_options.add_argument("--headless=new") # Modern headless
     chrome_options.add_argument("--disable-gpu")
-    chrome_options.add_argument("--window-size=1024,768")
+    chrome_options.add_argument("--window-size=1280,800")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--disable-extensions")
-    chrome_options.add_argument("--disable-infobars")
     chrome_options.add_argument("--disable-notifications")
-    chrome_options.add_argument("--disable-browser-side-navigation")
-    chrome_options.add_argument("--disable-features=VizDisplayCompositor")
-    chrome_options.add_argument("--disable-features=NetworkService") 
     chrome_options.add_argument("--blink-settings=imagesEnabled=false") # Képek letiltása
     chrome_options.add_argument("--disk-cache-size=1") # Cache minimalizálás
-    chrome_options.add_argument("--single-process") # Veszélyes lehet, de memóriát spórol
     
     chrome_options.add_argument("--disable-blink-features=AutomationControlled")
     chrome_options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
     chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
     chrome_options.add_experimental_option('useAutomationExtension', False)
-    chrome_options.page_load_strategy = 'eager' # Ne várja meg a teljes betöltést
+    chrome_options.page_load_strategy = 'eager'
 
     driver = None
     try:
@@ -102,17 +110,18 @@ def get_all_stays(city, country, start_date, end_date,
     try:
         # Base URL without filters first (we just need the searchId)
         base_url = f"https://www.cozycozy.com/en/search/{encoded_city}%2C%20{encoded_country}/{start_date}/{end_date}/{rooms}-{adults}-{children}/results"
+        print(f"[INFO] Cozycozy megnyitása: {base_url}")
         driver.get(base_url)
         if progress_callback: progress_callback(10)
         
-        # Wait for the results to start loading - Increased timeout to 30s
-        WebDriverWait(driver, 30).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "a.m-card-button"))
+        # Wait for the results links with searchId - selector frissítve
+        elem = WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "a[href*='searchId=']"))
         )
 
         found = False
         search_id = None
-        for link in driver.find_elements(By.CSS_SELECTOR, "a.m-card-button"):
+        for link in driver.find_elements(By.CSS_SELECTOR, "a[href*='searchId=']"):
             href = link.get_attribute("href")
             if "searchId=" in href:
                 match = re.search(r"searchId=([A-Za-z0-9]+)", href)
@@ -130,12 +139,11 @@ def get_all_stays(city, country, start_date, end_date,
         # Pagination logic
         all_results = []
         offset = 0
-        limit = 500 # Valid limit is around 500 usually
+        limit = 1500 # Megnövelt limit a teljes Cozycozy kínálat lefedéséhez
         batch_size = 100
         
         while offset < limit:
             # API call via script execution
-            # Enforcing instantBooking: true and removing Hostelworld later in parsing if needed
             api_call_script = f"""
             return fetch('https://www.cozycozy.com/api/getResultList', {{
                 method: 'POST',
@@ -154,7 +162,7 @@ def get_all_stays(city, country, start_date, end_date,
                         bounds: null,
                         noBounds: true,
                         price: [{price_min}, {price_max}],
-                        instantBooking: true,
+                        instantBooking: false,
                         combinedTypeCodes: {json.dumps(combined_types)},
                         starRatings: [],
                         minRating: {min_rating},
@@ -184,7 +192,7 @@ def get_all_stays(city, country, start_date, end_date,
             try:
                 # Add a small delay between batches
                 if offset > 0:
-                    time.sleep(1)
+                    time.sleep(0.3)
                     
                 batch_results = driver.execute_script(api_call_script)
                 
@@ -198,7 +206,7 @@ def get_all_stays(city, country, start_date, end_date,
                     
                 offset += batch_size
                 
-                # Update progress: Map offset (0-500) to percentage (20-90)
+                # Update progress: Map offset (0-1500) to percentage (20-90)
                 if progress_callback:
                     p = 20 + int((offset / limit) * 70)
                     progress_callback(min(p, 90))
@@ -231,7 +239,79 @@ def parse_distance(location_text):
     match = re.search(r"([\d\.]+)\s*km", location_text)
     if match:
         return float(match.group(1))
-    return 10.0
+def clean_hotel_booking_url(raw_url: Optional[str], hotel_name: str = "", city_name: str = "") -> str:
+    """
+    Kitisztítja a Cozycozy által visszaadott szállás linkeket:
+    1. Kibontja az affiliate wrappereket (pl. prf.hn destination: paraméter, Cozycozy /redirect?to=).
+    2. Eltávolítja a Booking.com-ot átirányító törött tokeneket (%CLICK_ID%).
+    3. Ha nem közvetlen szálláslink, intelligensen a konkrét szálláskeresésre irányít.
+    """
+    if not raw_url or raw_url == '#' or raw_url == 'None':
+        if hotel_name:
+            q = urllib.parse.quote(f"{hotel_name} {city_name}".strip())
+            return f"https://www.google.com/search?q={q}+booking"
+        return "#"
+        
+    url = raw_url.strip()
+    
+    # 0. Localhost prefix eltávolítása (ha van)
+    if "localhost:8000/" in url:
+        url = url.split("localhost:8000/")[-1]
+
+    # 1. Affiliate wrapperek kibontása (destination: vagy to= paraméter)
+    if "destination:" in url:
+        parts = url.split("destination:")
+        if len(parts) > 1:
+            url = parts[1]
+    elif "to=" in url:
+        try:
+            parsed = urllib.parse.urlparse(url)
+            params = urllib.parse.parse_qs(parsed.query)
+            if "to" in params and params["to"]:
+                url = params["to"][0]
+        except:
+            pass
+
+    # 2. Rekurzív unquote (többszörösen kódolt URL-ek kibontása)
+    for _ in range(3):
+        try:
+            decoded = urllib.parse.unquote(url)
+            if decoded == url:
+                break
+            url = decoded
+        except:
+            break
+
+    # 3. Ha az unquote után újabb destination: bukkant fel
+    if "destination:" in url:
+        parts = url.split("destination:")
+        if len(parts) > 1:
+            url = parts[1]
+
+    url = url.strip()
+
+    # 4. Törött macro tokenek eltávolítása (ezek miatt dob a Booking a főoldalra)
+    url = re.sub(r'%25CLICK_ID%25|%CLICK_ID%|%click_id%', '', url)
+    url = re.sub(r'([?&])label=(?:&|$)', r'\1', url)
+    url = re.sub(r'[?&]$', '', url)
+
+    # 5. Protokoll ellenőrzése
+    if not url.startswith('http'):
+        if url.startswith('//'):
+            url = 'https:' + url
+        elif url.startswith('www.'):
+            url = 'https://' + url
+        elif '.' in url and '/' in url:
+            url = 'https://' + url.lstrip('/')
+
+    # 6. Ha általános Booking keresési URL érkezett konkrét szállás ID nélkül
+    if 'booking.com/searchresults' in url and 'hotel/' not in url:
+        if hotel_name:
+            q_hotel = urllib.parse.quote(hotel_name)
+            q_city = urllib.parse.quote(city_name) if city_name else ""
+            url = f"https://www.booking.com/searchresults.html?ss={q_hotel}&ssne={q_city}"
+
+    return url
 
 def parse_accommodation_results(results):
     """Converts Cozycozy API JSON response to a structured list of dictionaries."""
@@ -281,47 +361,7 @@ def parse_accommodation_results(results):
             'accommodation_type': acc_type
         }
         
-        booking_url = cheapest.get('deeplinkUrl')
-        
-        if booking_url:
-            print(f"DEBUG_URL_RAW: {booking_url}")
-
-            # 0. Handle potential localhost prefix (User Request)
-            if "localhost:8000/" in booking_url:
-                 # Logic change: just take the end part
-                 booking_url = booking_url.split("localhost:8000/")[-1]
-                 print(f"DEBUG_URL_NO_LOCALHOST: {booking_url}")
-
-            # 1. Handle prf.hn / destination: params
-            if "destination:" in booking_url:
-                parts = booking_url.split("destination:")
-                if len(parts) > 1:
-                    booking_url = parts[1]
-                    print(f"DEBUG_URL_DEST_SPLIT: {booking_url}")
-            
-            # 2. Recursive unquote (handle double/triple encoding)
-            for i in range(3): 
-                try:
-                    decoded = urllib.parse.unquote(booking_url)
-                    if decoded == booking_url:
-                        break
-                    booking_url = decoded
-                    print(f"DEBUG_URL_DECODED_{i+1}: {booking_url}")
-                except:
-                    break
-            
-            # 3. Cleanup and Protocol check
-            booking_url = booking_url.strip()
-            
-            # 4. Final Protocol Safety Check
-            if booking_url and not booking_url.startswith("http"):
-                if booking_url.startswith("www."):
-                     booking_url = "https://" + booking_url
-                elif "." in booking_url and "/" in booking_url: 
-                     booking_url = "https://" + booking_url
-                print(f"DEBUG_URL_FINAL_FIX: {booking_url}")
-
-            print(f"DEBUG_URL_FINAL: {booking_url}")
+        booking_url = clean_hotel_booking_url(cheapest.get('deeplinkUrl'), name, base_info.get('city') or '')
 
         base_info.update({
             'price_per_night_eur': cheapest.get('eurPricePerNight'),

@@ -272,6 +272,94 @@
                 font-size: 12px;
             }
         }
+
+        /* Sticky Floating Live Counter */
+        .live-counter-box {
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(240, 247, 240, 0.96);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 2px solid #235B2A;
+            border-radius: 14px;
+            padding: 14px 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 25px rgba(35, 91, 42, 0.18);
+            transition: all 0.3s ease;
+        }
+
+        .live-counter-box.warning {
+            background: rgba(255, 235, 238, 0.96);
+            border-color: #d32f2f;
+            box-shadow: 0 10px 25px rgba(211, 47, 47, 0.2);
+        }
+
+        .counter-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .counter-icon {
+            font-size: 28px;
+        }
+
+        .counter-label {
+            font-size: 13px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .counter-val {
+            font-size: 22px;
+            color: #235B2A;
+            font-weight: 700;
+        }
+
+        .live-counter-box.warning .counter-val {
+            color: #d32f2f;
+        }
+
+        .counter-total {
+            font-size: 14px;
+            font-weight: normal;
+            color: #777;
+        }
+
+        .counter-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+        }
+
+        .counter-badge.ok {
+            background: #90DC25;
+            color: #235B2A;
+        }
+
+        .counter-badge.zero {
+            background: #d32f2f;
+            color: white;
+        }
+
+        .filter-zero-alert {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ef9a9a;
+            padding: 14px 18px;
+            border-radius: 10px;
+            font-size: 13.5px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 
@@ -293,6 +381,22 @@
         <h1>🔍 Járatok technikai szűrése</h1>
         <p class="subtitle">Jelenleg <strong>{{ flight_count }}</strong> járatkombináció érhető el. Kérjük, csak a
             valódi <strong>kizáró okokat</strong> állítsd be!</p>
+
+        <!-- Live Matching Counter Banner -->
+        <div class="live-counter-box" id="liveCounterBox">
+            <div class="counter-left">
+                <div class="counter-icon">✈️</div>
+                <div class="counter-details">
+                    <div class="counter-label">Feltételeknek megfelelő járatok száma:</div>
+                    <div class="counter-val"><strong id="matchingCount">{{ flight_count }}</strong> <span class="counter-total">/ <span id="totalCount">{{ flight_count }}</span> kombináció</span></div>
+                </div>
+            </div>
+            <div id="counterBadge" class="counter-badge ok">Megfelelő</div>
+        </div>
+
+        <div id="filterZeroWarning" class="filter-zero-alert" style="display: none;">
+            ⚠️ <strong>0 járat felel meg a beállított szűrőknek!</strong> A feltételek túl szigorúak (pl. túl alacsony maximális ár vagy szűk időablak). Kérlek módosíts a szűrőkön a továbblépéshez!
+        </div>
 
         <!-- Warning Box -->
         <div
@@ -392,7 +496,7 @@
         </div>
 
         <button class="btn-primary" id="filterBtn" onclick="applyFilters()">
-            Szűrés és tovább az értékeléshez
+            Szűrés és tovább az értékeléshez ➔
         </button>
 
         <div id="status">
@@ -404,44 +508,110 @@
     </div>
 
     <script>
+        let liveCountDebounce = null;
+        let lastMatchingCount = parseInt("{{ flight_count }}", 10) || 0;
+
+        function getPayload() {
+            const outDays = Array.from(document.querySelectorAll('#out_days .day-btn.active'))
+                .map(btn => btn.dataset.day);
+            const inDays = Array.from(document.querySelectorAll('#in_days .day-btn.active'))
+                .map(btn => btn.dataset.day);
+
+            return {
+                out_time_min: parseInt(document.getElementById('out_time_min').value) || 0,
+                out_time_max: parseInt(document.getElementById('out_time_max').value) || 23,
+                in_time_min: parseInt(document.getElementById('in_time_min').value) || 0,
+                in_time_max: parseInt(document.getElementById('in_time_max').value) || 23,
+                out_days: outDays,
+                in_days: inDays,
+                max_stops: parseInt(document.getElementById('max_stops').value) || 0,
+                price_min: parseFloat(document.getElementById('price_min').value) || 0,
+                price_max: parseFloat(document.getElementById('price_max').value) || 99999999,
+                stay_min: parseInt(document.getElementById('stay_min').value) || 1,
+                stay_max: parseInt(document.getElementById('stay_max').value) || 99,
+                max_total_duration: parseFloat(document.getElementById('max_total_duration').value) || 99
+            };
+        }
+
+        async function updateLiveFilterCount() {
+            clearTimeout(liveCountDebounce);
+            liveCountDebounce = setTimeout(async () => {
+                const payload = getPayload();
+                try {
+                    const res = await fetch('/api/preview-filter-count', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        lastMatchingCount = data.matching_count;
+                        
+                        const countEl = document.getElementById('matchingCount');
+                        const totalEl = document.getElementById('totalCount');
+                        const box = document.getElementById('liveCounterBox');
+                        const badge = document.getElementById('counterBadge');
+                        const zeroAlert = document.getElementById('filterZeroWarning');
+                        const btn = document.getElementById('filterBtn');
+
+                        if (countEl) countEl.innerText = data.matching_count;
+                        if (totalEl) totalEl.innerText = data.total_count;
+
+                        if (data.matching_count === 0) {
+                            box.className = 'live-counter-box warning';
+                            badge.className = 'counter-badge zero';
+                            badge.innerText = '0 találat';
+                            zeroAlert.style.display = 'block';
+                            btn.disabled = true;
+                            btn.innerText = '⚠️ 0 járat - Lazíts a szűrőkön!';
+                        } else {
+                            box.className = 'live-counter-box';
+                            badge.className = 'counter-badge ok';
+                            badge.innerText = 'Megfelelő';
+                            zeroAlert.style.display = 'none';
+                            btn.disabled = false;
+                            btn.innerText = 'Szűrés és tovább az értékeléshez ➔';
+                        }
+                    }
+                } catch (e) {
+                    console.error("Live filter preview error:", e);
+                }
+            }, 100);
+        }
+
         // Napok toggle
         document.querySelectorAll('.day-btn').forEach(btn => {
             btn.addEventListener('click', function (e) {
                 e.preventDefault();
                 this.classList.toggle('active');
+                updateLiveFilterCount();
             });
         });
+
+        // Input események figyelése
+        document.querySelectorAll('input[type="number"]').forEach(input => {
+            input.addEventListener('input', updateLiveFilterCount);
+            input.addEventListener('change', updateLiveFilterCount);
+        });
+
+        // Inicializálás
+        updateLiveFilterCount();
 
         let pollInterval;
 
         async function applyFilters() {
+            if (lastMatchingCount <= 0) {
+                alert("Nem léphetsz tovább 0 járattal! Kérlek lazíts a szűrőkön!");
+                return;
+            }
+
             const btn = document.getElementById('filterBtn');
             const statusDiv = document.getElementById('status');
             const statusText = document.getElementById('statusText');
             const loadingBar = document.getElementById('loadingBar');
             const loadingBarInner = loadingBar.querySelector('.loading-bar');
 
-            // Napok összegyűjtése
-            const outDays = Array.from(document.querySelectorAll('#out_days .day-btn.active'))
-                .map(btn => btn.dataset.day);
-            const inDays = Array.from(document.querySelectorAll('#in_days .day-btn.active'))
-                .map(btn => btn.dataset.day);
-
-            const payload = {
-                // ❌ NE küldj origin/destination/dátum adatokat
-                out_time_min: parseInt(document.getElementById('out_time_min').value),
-                out_time_max: parseInt(document.getElementById('out_time_max').value),
-                in_time_min: parseInt(document.getElementById('in_time_min').value),
-                in_time_max: parseInt(document.getElementById('in_time_max').value),
-                out_days: outDays,
-                in_days: inDays,
-                max_stops: parseInt(document.getElementById('max_stops').value),
-                price_min: parseFloat(document.getElementById('price_min').value),
-                price_max: parseFloat(document.getElementById('price_max').value),
-                stay_min: parseInt(document.getElementById('stay_min').value),
-                stay_max: parseInt(document.getElementById('stay_max').value),
-                max_total_duration: parseFloat(document.getElementById('max_total_duration').value)
-            };
+            const payload = getPayload();
 
             btn.disabled = true;
             statusDiv.style.display = 'block';
@@ -476,6 +646,14 @@
                 }
             } else if (data.status === 'done') {
                 clearInterval(pollInterval);
+                if (data.count === 0) {
+                    loadingBar.style.display = 'none';
+                    statusDiv.className = 'status-error';
+                    statusText.innerText = "⚠️ 0 járat maradt a szűrés után. Kérlek állíts be enyhébb szűrőket!";
+                    document.getElementById('filterBtn').disabled = true;
+                    return;
+                }
+
                 loadingBarInner.style.width = "100%";
                 statusDiv.className = 'status-done';
                 statusText.innerText = `✅ ${data.count} járat megfelel a kritériumoknak! Átirányítás...`;
@@ -487,7 +665,7 @@
                 clearInterval(pollInterval);
                 loadingBar.style.display = 'none';
                 statusDiv.className = 'status-error';
-                statusText.innerText = "❌ Hiba: " + data.error;
+                statusText.innerText = "❌ " + data.error;
                 document.getElementById('filterBtn').disabled = false;
             }
         }

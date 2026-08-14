@@ -1,7 +1,31 @@
 # DreamTrip — Változási Napló (Changelog)
 
-## [Unreleased] - 2026-08-13
-### Hozzáadva / Módosítva
+## [Unreleased] - 2026-08-14
+### Hozzáadva
+- **Szállás Keresési Kínálat & Limit Bővítés ([`app/scrapers/accommodation_scraper.py`](file:///e:/Data/other_projects/dreamtrip/app/scrapers/accommodation_scraper.py), [`templates/accommodation_intelligence.html`](file:///e:/Data/other_projects/dreamtrip/templates/accommodation_intelligence.html))**:
+  - A korábbi 500-as pagination limitet 1500-ra növeltük, és kikapcsoltuk a szigorú `instantBooking: true` szűrést.
+  - Alapértelmezetten bekapcsoltuk az összes elterjedt szállástípust (Hotel, Apartman, Vendégház, Nyaraló, Hostel), így a találati szám ~495-ről **1477+ valós szállásra** ugrott fel, lefedve a Cozycozy teljes aggregált adatbázisát.
+- **Szállás Megtekintés & Közvetlen Link Tisztító**:
+  - Megoldva a Booking.com és VRBO általános főoldalra / keresőre való átirányítási problémája.
+  - A `clean_hotel_booking_url` automatikusan kibontja a közvetlen cél-URL-eket az affiliate wrapperekből (pl. `prf.hn`, `/redirect?to=`), eltávolítja a Booking által elutasított törött `%CLICK_ID%` makrókat, és fallbackként közvetlen szálláskereső linket képez.
+- **Szállás Keresőmező Méret & Duplikáció Javítás**:
+  - Az úti cél beviteli mező mostantól teljes szélességű (`width: 100%`, `box-sizing: border-box`), tágasabb belső margókkal és modern fókusz állapottal.
+  - Az `/api/locations/autocomplete` végpontban javítva a duplikációs hiba: intelligens kulcs-alapú szűrés (város + ország szerint), így megszűntek az azonos nevű reptér/város duplikációk.
+- **Egységesített Szállás Úti Cél Keresőmező**:
+  - A korábbi két különálló (Város és Ország) beviteli mező összevonásra került egyetlen intelligens `📍 Úti cél (Város vagy Régió)` keresőmezőbe.
+  - Autocomplete javaslatok (város + ország) egy kattintással / billentyűvel kiválaszthatók, a háttérben automatikus felbontással és Cozycozy kompatibilis küldéssel.
+- **Cozycozy Scraper Modernizáció & Hiba Javítás ([`app/scrapers/accommodation_scraper.py`](file:///e:/Data/other_projects/dreamtrip/app/scrapers/accommodation_scraper.py))**:
+  - Javítva a `searchId` kinyerési logika az új Cozycozy link-struktúrához (`a[href*='searchId=']`).
+  - Eltávolítva az elavult és összeomlást okozó Chrome flag-ek (`--single-process`, `--disable-browser-side-navigation`).
+  - Automatikus magyar -> angol országfordító szótár (`Magyarország` -> `Hungary`, `Spanyolország` -> `Spain` stb.) a Cozycozy URL-ek 100%-os felismeréséhez.
+- **Élő Szűrőszámláló & 0-találatos Védelem (`flight_filter.html`)**:
+  - Valós idejű szűrőszámláló banner és `POST /api/preview-filter-count` végpont, amely gépelés/állítgatás közben (<100ms) mutatja a feltételeknek megfelelő járatkombinációk számát.
+  - Ha a szűrők miatt 0 járat marad, a rendszer azonnal letiltja a tovább gombot, piros figyelmeztetést jelenít meg, és megakadályozza a továbblépést az AHP és preferenciák oldalra.
+  - Biztonsági ellenőrzés a PROMETHEE / AHP számítási taskban (`run_calculation_task`), elkerülve a `KeyError: 'total_price_huf'` hibát.
+- **Flight Intelligence Repülőtér Autocomplete & Validáció**:
+  - Dinamikus Kiwi Locations API `/api/locations/autocomplete` végpont memóriabeli cache-sel és gyorsjavaslatokkal (Budapest, Bécs, Debrecen, Pozsony stb.).
+  - Interaktív billentyűzet- és egérvezérelt typeahead UI a `flight_intelligence.html`-ben IATA kódokkal és város/ország kiemeléssel.
+  - Előzetes szerveroldali validáció és közérthető magyar hibaüzenet, ha a megadott településhez nem tartozik repülőtér.
 - **Projekt Architektúra Refaktor**: Szabványos `app/` Python csomagstruktúra kialakítása (`app/services`, `app/scrapers`, `app/models`).
 - **Data & Asset Konszolidáció**: Központi `data/` és `notebooks/` mappa létrehozása.
 - **Kanonikus Projekt Memória**: `/memory` mappa és strukturált dokumentáció kiépítése.

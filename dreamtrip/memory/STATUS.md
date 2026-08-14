@@ -10,6 +10,8 @@ A projekt átkerült a szabványos `app/` Python architektúrába. Az alkalmazá
 
 | Modul | Állapot | Megjegyzés / Implementáció |
 | :--- | :---: | :--- |
+| **Flight Intelligence Autocomplete & Validáció** | **VALÓS** | Kiwi Locations API-ra épülő dinamikus typeahead (IATA kódok, repülőterek), és indulás előtti validáció hibajelzéssel. |
+| **Accommodation Intelligence Autocomplete & Scraper** | **VALÓS** | Helymeghatározó typeahead (Város + Ország kitöltéssel), javított Cozycozy searchId selector és automatikus országfordítás. |
 | **Városrangsoroló Motor** (`app.services.scoring_service`) | **VALÓS** | 6-tényezős súlyozás (Kiwi, Open-Meteo, Numbeo Cost/Safety, Walkability, POI density). |
 | **Google Places Integráció** (`app.services.maps_service`) | **VALÓS** | Real-time lekérdezés + 7 napos local cache (`data/poi_cache.json`) + Mock fallback ha nincs API kulcs. |
 | **Constraint Útiterv Engine** (`app.services.itinerary_service`) | **VALÓS** | Haversine távolság, időablakok, étkezési slotok, lelakatolt elemek, nyitvatartás ellenőrzése. |

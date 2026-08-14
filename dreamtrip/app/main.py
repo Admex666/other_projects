@@ -159,6 +159,91 @@ async def accommodation_intelligence(request: Request, city: Optional[str] = Non
         }
     })
 
+# ===== LOCATION AUTOCOMPLETE API =====
+location_autocomplete_cache = {}
+
+POPULAR_ORIGINS = [
+    {"id": "budapest_hu", "code": "BUD", "name": "Budapest", "city_name": "Budapest", "country_name": "Magyarország", "type": "city", "display": "Budapest (BUD)", "sub": "Magyarország • Minden repülőtér"},
+    {"id": "debrecen_hu", "code": "DEB", "name": "Debrecen", "city_name": "Debrecen", "country_name": "Magyarország", "type": "city", "display": "Debrecen (DEB)", "sub": "Magyarország • Minden repülőtér"},
+    {"id": "vienna_at", "code": "VIE", "name": "Bécs", "city_name": "Bécs / Vienna", "country_name": "Ausztria", "type": "city", "display": "Bécs / Vienna (VIE)", "sub": "Ausztria • Minden repülőtér"},
+    {"id": "bratislava_sk", "code": "BTS", "name": "Pozsony", "city_name": "Pozsony / Bratislava", "country_name": "Szlovákia", "type": "city", "display": "Pozsony / Bratislava (BTS)", "sub": "Szlovákia • Minden repülőtér"},
+]
+
+POPULAR_DESTINATIONS = [
+    {"id": "barcelona_es", "code": "BCN", "name": "Barcelona", "city_name": "Barcelona", "country_name": "Spanyolország", "type": "city", "display": "Barcelona (BCN)", "sub": "Spanyolország • Minden repülőtér"},
+    {"id": "rome_it", "code": "ROM", "name": "Róma", "city_name": "Róma / Rome", "country_name": "Olaszország", "type": "city", "display": "Róma (ROM)", "sub": "Olaszország • Minden repülőtér"},
+    {"id": "london_gb", "code": "LON", "name": "London", "city_name": "London", "country_name": "Egyesült Királyság", "type": "city", "display": "London (LON)", "sub": "Egyesült Királyság • Minden repülőtér"},
+    {"id": "paris_fr", "code": "PAR", "name": "Párizs", "city_name": "Párizs / Paris", "country_name": "Franciaország", "type": "city", "display": "Párizs (PAR)", "sub": "Franciaország • Minden repülőtér"},
+    {"id": "milan_it", "code": "MIL", "name": "Milánó", "city_name": "Milánó / Milan", "country_name": "Olaszország", "type": "city", "display": "Milánó (MIL)", "sub": "Olaszország • Minden repülőtér"},
+    {"id": "palma_de_mallorca_es", "code": "PMI", "name": "Palma de Mallorca", "city_name": "Mallorca (PMI)", "country_name": "Spanyolország", "type": "city", "display": "Mallorca (PMI)", "sub": "Spanyolország • Palma repülőtér"},
+]
+
+@app.get("/api/locations/autocomplete")
+async def autocomplete_locations(term: str = "", mode: str = "all"):
+    clean_term = term.strip()
+    if not clean_term:
+        if mode == "origin":
+            return JSONResponse(content=POPULAR_ORIGINS)
+        elif mode == "destination":
+            return JSONResponse(content=POPULAR_DESTINATIONS)
+        return JSONResponse(content=POPULAR_ORIGINS + POPULAR_DESTINATIONS[:2])
+    
+    cache_key = clean_term.lower()
+    if cache_key in location_autocomplete_cache:
+        return JSONResponse(content=location_autocomplete_cache[cache_key])
+    
+    url = f"https://api.skypicker.com/locations?term={requests.utils.quote(clean_term)}&limit=15&active_only=true"
+    try:
+        r = requests.get(url, timeout=5)
+        if r.status_code == 200:
+            data = r.json().get("locations", [])
+            results = []
+            seen_keys = set()
+            for loc in data:
+                loc_type = loc.get("type")
+                if loc_type not in ["city", "airport"]:
+                    continue
+                
+                code = loc.get("code", "")
+                name = loc.get("name", "")
+                city = loc.get("city", {})
+                city_name = city.get("name", name) if isinstance(city, dict) else name
+                country = loc.get("country") or (loc.get("city", {}).get("country") if isinstance(loc.get("city"), dict) else {}) or {}
+                country_name = country.get("name", "") if isinstance(country, dict) else ""
+                
+                display_str = f"{city_name} ({code})" if code else city_name
+                
+                # Duplikáció szűrése
+                if mode == "destination":
+                    dedup_key = (city_name.strip().lower(), country_name.strip().lower())
+                else:
+                    dedup_key = (display_str.strip().lower(), country_name.strip().lower())
+                
+                if dedup_key in seen_keys:
+                    continue
+                seen_keys.add(dedup_key)
+                
+                sub = "Minden repülőtér" if loc_type == "city" else name
+                
+                results.append({
+                    "id": loc.get("id"),
+                    "code": code,
+                    "name": name,
+                    "city_name": city_name,
+                    "country_name": country_name,
+                    "type": loc_type,
+                    "display": display_str,
+                    "sub": f"{country_name} • {sub}" if country_name else sub
+                })
+                if len(results) >= 8:
+                    break
+            location_autocomplete_cache[cache_key] = results
+            return JSONResponse(content=results)
+    except Exception as e:
+        print(f"[WARN] Error fetching locations for '{clean_term}': {e}")
+    
+    return JSONResponse(content=[])
+
 # Ezt add hozzá a main.py-hoz a többi végpont mellé
 @app.get("/search-status")
 async def get_search_status():
@@ -195,13 +280,32 @@ class StaySearchParams(BaseModel):
 # Módosított háttérfolyamat
 def run_intelligence_scraper(p: SearchParams):
     global results, raw_flight_data
-    results = {"status": "running", "progress": 0, "status_text": "Keresés indítása...", "data": None, "error": None}
+    results = {"status": "running", "progress": 0, "status_text": "Keresési paraméterek ellenőrzése...", "data": None, "error": None}
     
     def update_progress(base, scale, p):
         current = base + (p * scale / 100)
         results["progress"] = int(current)
     
     try:
+        from app.scrapers.scraper import get_city_id_api
+        
+        # 1. Előzetes validáció: létezik-e reptérrel rendelkező város/reptér
+        origin_id = get_city_id_api(p.origin)
+        if not origin_id:
+            results = {
+                "status": "error", 
+                "error": f"Nem található érvényes repülőtér a megadott indulási városhoz: '{p.origin}'. Kérlek válassz egy várost a felajánlott listából!"
+            }
+            return
+            
+        dest_id = get_city_id_api(p.destination)
+        if not dest_id:
+            results = {
+                "status": "error", 
+                "error": f"Nem található érvényes repülőtér a megadott célállomáshoz: '{p.destination}'. Kérlek válassz egy várost a felajánlott listából!"
+            }
+            return
+
         results["status_text"] = "Adatkapcsolat megteremtése..."
         tokens = get_kiwi_tokens(headless=True)
         
@@ -275,10 +379,18 @@ def run_accommodation_scraper(p: StaySearchParams):
         p_min_eur = p.price_min / 400
         p_max_eur = p.price_max / 400
         
+        city_clean = p.city.strip()
+        country_clean = p.country.strip() if p.country else ""
+        
+        if "," in city_clean and not country_clean:
+            parts = city_clean.split(",", 1)
+            city_clean = parts[0].strip()
+            country_clean = parts[1].strip()
+            
         # Alapértelmezett szűrők az első keresésnél
         raw_results = get_all_stays(
-            city=p.city,
-            country=p.country,
+            city=city_clean,
+            country=country_clean,
             start_date=p.start_date,
             end_date=p.end_date,
             rooms=p.rooms,
@@ -373,6 +485,57 @@ class StayFilterParams(BaseModel):
     amenities: Optional[List[str]] = None
     breakfast: bool = False
 
+@app.post("/api/preview-filter-count")
+async def preview_filter_count(p: FilterParams, request: Request):
+    user = get_current_user(request)
+    if not user:
+        raise HTTPException(status_code=401)
+    
+    if raw_flight_data.get("data") is None or raw_flight_data["count"] == 0:
+        return JSONResponse({"total_count": 0, "matching_count": 0})
+    
+    try:
+        df = raw_flight_data["data"].copy()
+        
+        # Időpontok
+        df['out_hour'] = pd.to_datetime(df['out_dep_time']).dt.hour
+        df = df[(df['out_hour'] >= p.out_time_min) & (df['out_hour'] <= p.out_time_max)]
+        
+        df['in_hour'] = pd.to_datetime(df['in_dep_time']).dt.hour
+        df = df[(df['in_hour'] >= p.in_time_min) & (df['in_hour'] <= p.in_time_max)]
+        
+        # Napok
+        if p.out_days:
+            day_map = {"monday": 0, "tuesday": 1, "wednesday": 2, "thursday": 3, "friday": 4, "saturday": 5, "sunday": 6}
+            allowed_days = [day_map[d] for d in p.out_days if d in day_map]
+            if allowed_days:
+                df['out_weekday'] = pd.to_datetime(df['out_dep_time']).dt.dayofweek
+                df = df[df['out_weekday'].isin(allowed_days)]
+        
+        if p.in_days:
+            day_map = {"monday": 0, "tuesday": 1, "wednesday": 2, "thursday": 3, "friday": 4, "saturday": 5, "sunday": 6}
+            allowed_days = [day_map[d] for d in p.in_days if d in day_map]
+            if allowed_days:
+                df['in_weekday'] = pd.to_datetime(df['in_dep_time']).dt.dayofweek
+                df = df[df['in_weekday'].isin(allowed_days)]
+        
+        # Technikai szűrők
+        df = df[df['total_stops'] <= p.max_stops]
+        df = df[(df['total_price_huf'] >= p.price_min) & (df['total_price_huf'] <= p.price_max)]
+        df = df[(df['stay_days'] >= p.stay_min) & (df['stay_days'] <= p.stay_max)]
+        df['total_duration'] = df['out_duration_h'] + df['in_duration_h']
+        df = df[df['total_duration'] <= p.max_total_duration]
+        
+        matching = len(df)
+        del df
+        return JSONResponse({
+            "total_count": raw_flight_data["count"],
+            "matching_count": matching
+        })
+    except Exception as e:
+        print(f"[WARN] Error in preview_filter_count: {e}")
+        return JSONResponse({"total_count": raw_flight_data.get("count", 0), "matching_count": 0, "error": str(e)})
+
 @app.post("/api/apply-filters")
 async def apply_filters(params: FilterParams, background_tasks: BackgroundTasks, request: Request):
     user = get_current_user(request)
@@ -394,7 +557,7 @@ def run_filter_scraper(username: str, p: FilterParams):
     try:
         # ✅ JAVÍTÁS: is None ellenőrzés
         if raw_flight_data.get("data") is None or raw_flight_data["count"] == 0:
-            filtered_flights[username] = {"status": "done", "progress": 100, "count": 0, "error": "Nincs adat a memóriában"}
+            filtered_flights[username] = {"status": "error", "progress": 0, "count": 0, "error": "Nincs adat a memóriában. Kérlek indíts új járatkeresést!"}
             return
         
         filtered_flights[username]["progress"] = 10
@@ -414,15 +577,17 @@ def run_filter_scraper(username: str, p: FilterParams):
         # Napok szűrése
         if p.out_days:
             day_map = {"monday": 0, "tuesday": 1, "wednesday": 2, "thursday": 3, "friday": 4, "saturday": 5, "sunday": 6}
-            allowed_days = [day_map[d] for d in p.out_days]
-            df['out_weekday'] = pd.to_datetime(df['out_dep_time']).dt.dayofweek
-            df = df[df['out_weekday'].isin(allowed_days)]
+            allowed_days = [day_map[d] for d in p.out_days if d in day_map]
+            if allowed_days:
+                df['out_weekday'] = pd.to_datetime(df['out_dep_time']).dt.dayofweek
+                df = df[df['out_weekday'].isin(allowed_days)]
         
         if p.in_days:
             day_map = {"monday": 0, "tuesday": 1, "wednesday": 2, "thursday": 3, "friday": 4, "saturday": 5, "sunday": 6}
-            allowed_days = [day_map[d] for d in p.in_days]
-            df['in_weekday'] = pd.to_datetime(df['in_dep_time']).dt.dayofweek
-            df = df[df['in_weekday'].isin(allowed_days)]
+            allowed_days = [day_map[d] for d in p.in_days if d in day_map]
+            if allowed_days:
+                df['in_weekday'] = pd.to_datetime(df['in_dep_time']).dt.dayofweek
+                df = df[df['in_weekday'].isin(allowed_days)]
         
         filtered_flights[username]["progress"] = 50
         filtered_flights[username]["status_text"] = "Technikai szűrők alkalmazása..."
@@ -440,6 +605,18 @@ def run_filter_scraper(username: str, p: FilterParams):
         df['total_duration'] = df['out_duration_h'] + df['in_duration_h']
         df = df[df['total_duration'] <= p.max_total_duration]
         
+        # ✅ 0 találat ellenőrzése
+        if len(df) == 0:
+            filtered_flights[username] = {
+                "status": "error",
+                "progress": 0,
+                "count": 0,
+                "error": "A megadott szűrőkkel 0 járatkombináció maradt. Kérlek állíts be enyhébb feltételeket!"
+            }
+            del df
+            gc.collect()
+            return
+
         filtered_flights[username]["progress"] = 80
         filtered_flights[username]["status_text"] = "Eredmények mentése..."
         
@@ -477,16 +654,15 @@ async def flight_intelligence_ahp(request: Request):
     if not user:
         return RedirectResponse(url="/", status_code=303)
     
-    # Ellenőrizzük, hogy van-e szűrt adat
-    if user not in filtered_flights or filtered_flights[user].get("status") != "done":
+    # Ellenőrizzük, hogy van-e szűrt adat és nem 0
+    if user not in filtered_flights or filtered_flights[user].get("status") != "done" or filtered_flights[user].get("count", 0) == 0:
         return RedirectResponse(url="/flight-intelligence-filter", status_code=303)
     
     flight_data = filtered_flights[user]
-    
     return templates.TemplateResponse("flight_ahp.html", {
         "request": request, 
         "user": user,
-        "flight_count": flight_data["count"]
+        "flight_count": flight_data.get("count", 0)
     })
 
 # --- ACCOMMODATION FILTER ---
@@ -781,8 +957,16 @@ def run_calculation_task(user: str, config: PreferenceConfig):
     
     try:
         # 1. Adatok előkészítése
-        flight_data = filtered_flights[user]["data"]
+        flight_data = filtered_flights[user].get("data", [])
+        if not flight_data or len(flight_data) == 0:
+            calculation_status[user] = {"status": "error", "progress": 0, "error": "Nincs értékelhető járat a szűrés után (0 találat). Kérlek állíts be enyhébb szűrőket!"}
+            return
+            
         df = pd.DataFrame(flight_data)
+        if df.empty or 'total_price_huf' not in df.columns:
+            calculation_status[user] = {"status": "error", "progress": 0, "error": "A szűrt adatok üresek vagy érvénytelenek. Kérlek indíts új keresést vagy módosíts a szűrőkön!"}
+            return
+            
         weights = ahp_weights[user]["weights"] # Sorrend: Ár, Időpont, Utazás, Átszállás, Tartózkodás
         
         calculation_status[user]["progress"] = 5

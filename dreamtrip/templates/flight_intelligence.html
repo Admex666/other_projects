@@ -204,6 +204,83 @@
             font-size: 11px;
         }
 
+        /* Autocomplete dropdown styles */
+        .autocomplete-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .autocomplete-dropdown {
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            max-height: 280px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+
+        .autocomplete-item {
+            padding: 10px 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #f5f5f5;
+            transition: background 0.15s ease;
+            text-align: left;
+        }
+
+        .autocomplete-item:last-child {
+            border-bottom: none;
+        }
+
+        .autocomplete-item:hover,
+        .autocomplete-item.active {
+            background: #f0f7f0;
+        }
+
+        .autocomplete-main {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .autocomplete-title {
+            font-weight: 600;
+            color: #235B2A;
+            font-size: 14px;
+        }
+
+        .autocomplete-sub {
+            font-size: 11px;
+            color: #777;
+            margin-top: 2px;
+        }
+
+        .autocomplete-badge {
+            background: #eef6ec;
+            color: #235B2A;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            border: 1px solid #cde4c9;
+            white-space: nowrap;
+        }
+
+        .autocomplete-empty {
+            padding: 12px 15px;
+            color: #888;
+            font-size: 13px;
+            text-align: center;
+            font-style: italic;
+        }
+
         /* Mobile Adjustments */
         @media (max-width: 768px) {
             body {
@@ -275,12 +352,18 @@
 
         <div class="search-grid">
             <div class="input-group">
-                <label>Honnan</label>
-                <input type="text" id="origin" placeholder="Pl: Budapest" value="{{ prefill.origin or 'Budapest' }}">
+                <label>Honnan (Indulási repülőtér / város)</label>
+                <div class="autocomplete-container" id="origin-container">
+                    <input type="text" id="origin" placeholder="Pl: Budapest (BUD)" value="{{ prefill.origin or 'Budapest' }}" autocomplete="off">
+                    <div class="autocomplete-dropdown" id="origin-dropdown"></div>
+                </div>
             </div>
             <div class="input-group">
-                <label>Hova</label>
-                <input type="text" id="destination" placeholder="Pl: Barcelona" value="{{ prefill.destination or '' }}">
+                <label>Hova (Érkezési repülőtér / város)</label>
+                <div class="autocomplete-container" id="destination-container">
+                    <input type="text" id="destination" placeholder="Pl: Barcelona (BCN)" value="{{ prefill.destination or '' }}" autocomplete="off">
+                    <div class="autocomplete-dropdown" id="destination-dropdown"></div>
+                </div>
             </div>
             <div class="input-group">
                 <label>Odaút (ettől - eddig)</label>
@@ -297,6 +380,126 @@
                 </div>
             </div>
         </div>
+
+        <script>
+            // ===== AUTOCOMPLETE CONTROLLER =====
+            function setupAutocomplete(inputId, dropdownId, mode) {
+                const input = document.getElementById(inputId);
+                const dropdown = document.getElementById(dropdownId);
+                let debounceTimer = null;
+                let activeIndex = -1;
+                let currentItems = [];
+
+                async function fetchSuggestions(term) {
+                    try {
+                        const res = await fetch(`/api/locations/autocomplete?term=${encodeURIComponent(term)}&mode=${mode}`);
+                        if (!res.ok) return [];
+                        return await res.json();
+                    } catch (e) {
+                        console.error("Autocomplete error:", e);
+                        return [];
+                    }
+                }
+
+                function renderDropdown(items) {
+                    currentItems = items;
+                    activeIndex = -1;
+                    if (!items || items.length === 0) {
+                        dropdown.innerHTML = '<div class="autocomplete-empty">Nincs találat repülőtérrel</div>';
+                        dropdown.style.display = 'block';
+                        return;
+                    }
+
+                    dropdown.innerHTML = items.map((item, idx) => `
+                        <div class="autocomplete-item" data-index="${idx}">
+                            <div class="autocomplete-main">
+                                <div class="autocomplete-title">
+                                    ${item.type === 'city' ? '🏙️' : '✈️'} ${item.city_name || item.name}
+                                </div>
+                                <div class="autocomplete-sub">${item.sub || item.country_name || ''}</div>
+                            </div>
+                            ${item.code ? `<span class="autocomplete-badge">${item.code}</span>` : ''}
+                        </div>
+                    `).join('');
+
+                    dropdown.querySelectorAll('.autocomplete-item').forEach(el => {
+                        el.addEventListener('mousedown', (e) => {
+                            e.preventDefault();
+                            const idx = parseInt(el.dataset.index);
+                            selectItem(currentItems[idx]);
+                        });
+                    });
+
+                    dropdown.style.display = 'block';
+                }
+
+                function selectItem(item) {
+                    if (!item) return;
+                    const val = item.code ? `${item.city_name || item.name} (${item.code})` : (item.city_name || item.name);
+                    input.value = val;
+                    input.dataset.selectedId = item.id || '';
+                    dropdown.style.display = 'none';
+                    activeIndex = -1;
+                }
+
+                input.addEventListener('focus', async () => {
+                    const items = await fetchSuggestions(input.value.trim());
+                    renderDropdown(items);
+                });
+
+                input.addEventListener('input', () => {
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(async () => {
+                        const items = await fetchSuggestions(input.value.trim());
+                        renderDropdown(items);
+                    }, 150);
+                });
+
+                input.addEventListener('keydown', (e) => {
+                    const itemsEls = dropdown.querySelectorAll('.autocomplete-item');
+                    if (dropdown.style.display === 'block' && itemsEls.length > 0) {
+                        if (e.key === 'ArrowDown') {
+                            e.preventDefault();
+                            activeIndex = (activeIndex + 1) % itemsEls.length;
+                            updateActiveItem(itemsEls);
+                        } else if (e.key === 'ArrowUp') {
+                            e.preventDefault();
+                            activeIndex = (activeIndex - 1 + itemsEls.length) % itemsEls.length;
+                            updateActiveItem(itemsEls);
+                        } else if (e.key === 'Enter') {
+                            if (activeIndex >= 0 && activeIndex < currentItems.length) {
+                                e.preventDefault();
+                                selectItem(currentItems[activeIndex]);
+                            }
+                        } else if (e.key === 'Escape') {
+                            dropdown.style.display = 'none';
+                            activeIndex = -1;
+                        }
+                    }
+                });
+
+                function updateActiveItem(itemsEls) {
+                    itemsEls.forEach((el, idx) => {
+                        if (idx === activeIndex) {
+                            el.classList.add('active');
+                            el.scrollIntoView({ block: 'nearest' });
+                        } else {
+                            el.classList.remove('active');
+                        }
+                    });
+                }
+
+                document.addEventListener('click', (e) => {
+                    if (!input.contains(e.target) && !dropdown.contains(e.target)) {
+                        dropdown.style.display = 'none';
+                    }
+                });
+            }
+
+            // Autocomplete inicializálása
+            setupAutocomplete('origin', 'origin-dropdown', 'origin');
+            setupAutocomplete('destination', 'destination-dropdown', 'destination');
+        </script>
 
         <script>
             const outFromInput = document.getElementById('out_from');
@@ -322,7 +525,6 @@
             outFromInput.addEventListener('change', () => {
                 if (outFromInput.value) {
                     const d = outFromInput.value;
-                    // Az összes többi dátum legalább az odaút eleje kell legyen
                     [outToInput, inFromInput, inToInput].forEach(el => {
                         el.min = d;
                         if (el.value && el.value < d) el.value = d;
@@ -332,8 +534,6 @@
 
             outToInput.addEventListener('change', () => {
                 if (outToInput.value) {
-                    // Csak a legkésőbbi visszaút (in_to) minimumát kell az odaút végéhez kötni
-                    // a legkorábbi visszaút (in_from) maradhat korábban, mint az odaút vége!
                     inToInput.min = outToInput.value;
                     if (inToInput.value && inToInput.value < outToInput.value) {
                         inToInput.value = outToInput.value;
@@ -343,7 +543,6 @@
 
             inFromInput.addEventListener('change', () => {
                 if (inFromInput.value) {
-                    // A visszaút vége legalább a visszaút eleje legyen
                     if (inToInput.value && inToInput.value < inFromInput.value) {
                         inToInput.value = inFromInput.value;
                     }
@@ -351,9 +550,6 @@
                 }
             });
         </script>
-
-        <div class="search-grid">
-        </div>
 
         <button id="searchBtn" class="btn-search" onclick="startSearch()">Járatok keresése</button>
 
@@ -378,24 +574,37 @@
             const loadingBarInner = loadingBar.querySelector('.loading-bar');
             const resultsDiv = document.getElementById('results');
 
+            const originVal = document.getElementById('origin').value.trim();
+            const destinationVal = document.getElementById('destination').value.trim();
+
+            if (!originVal) {
+                alert("Kérlek válassz indulási várost / repülőteret!");
+                return;
+            }
+
+            if (!destinationVal) {
+                alert("Kérlek válassz célállomást / repülőteret!");
+                return;
+            }
+
             const payload = {
-                origin: document.getElementById('origin').value,
-                destination: document.getElementById('destination').value,
+                origin: originVal,
+                destination: destinationVal,
                 out_from: document.getElementById('out_from').value,
                 out_to: document.getElementById('out_to').value,
                 in_from: document.getElementById('in_from').value,
                 in_to: document.getElementById('in_to').value
             };
 
-            if (!payload.destination || !payload.out_from) {
-                alert("Kérlek töltsd ki a célállomást és a dátumokat!");
+            if (!payload.out_from) {
+                alert("Kérlek válaszd ki az odaút indulási dátumát!");
                 return;
             }
 
             btn.disabled = true;
             statusDiv.style.display = 'block';
             statusDiv.className = 'status-running';
-            statusText.innerText = "🔍 Keresés indítása...";
+            statusText.innerText = "🔍 Keresési paraméterek ellenőrzése...";
 
             // Reset bar to 0 and remove animation for determinate progress
             loadingBar.style.display = 'block';
@@ -404,13 +613,27 @@
 
             resultsDiv.innerHTML = "";
 
-            await fetch('/start-intelligence-search', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
+            try {
+                const res = await fetch('/start-intelligence-search', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (!res.ok) {
+                    const errData = await res.json();
+                    throw new Error(errData.detail || "Hiba a keresés indításakor");
+                }
+            } catch (err) {
+                btn.disabled = false;
+                statusDiv.style.display = 'block';
+                statusDiv.className = 'status-error';
+                statusText.innerText = "❌ " + err.message;
+                loadingBar.style.display = 'none';
+                return;
+            }
 
-            pollInterval = setInterval(checkStatus, 1000); // Faster polling
+            pollInterval = setInterval(checkStatus, 1000);
         }
 
         async function checkStatus() {
@@ -454,7 +677,11 @@
             } else if (data.status === 'error') {
                 clearInterval(pollInterval);
                 loadingBar.style.display = 'none';
-                statusText.innerText = "❌ Hiba történt: " + data.error;
+                statusDiv.style.display = 'block';
+                statusDiv.style.background = '#ffebee';
+                statusDiv.style.color = '#c62828';
+                statusDiv.style.border = '1px solid #ef9a9a';
+                statusText.innerText = "❌ " + data.error;
                 document.getElementById('searchBtn').disabled = false;
             }
         }

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Optivoya - Decision Preference Calibration (PROMETHEE II)</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&amp;family=JetBrains+Mono:wght@400;500&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "secondary-container": "#a7f540",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-container": "#ed9aae",
+                        "primary": "#003710",
+                        "tertiary-fixed": "#ffd9e0",
+                        "status-alert": "#E11D48",
+                        "outline": "#71796f",
+                        "on-tertiary": "#ffffff",
+                        "background": "#f8faf8",
+                        "error-container": "#ffdad6",
+                        "primary-container": "#1c4e24",
+                        "surface": "#FFFFFF",
+                        "inverse-surface": "#2e3130",
+                        "secondary": "#406900",
+                        "primary-fixed": "#b8f1b7",
+                        "secondary-fixed-dim": "#8fdb24",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed-dim": "#9dd49d",
+                        "outline-variant": "#c1c9bd",
+                        "on-secondary-fixed-variant": "#2f4f00",
+                        "on-error-container": "#93000a",
+                        "surface-tint": "#37693c",
+                        "on-surface": "#191c1b",
+                        "surface-container-highest": "#e1e3e1",
+                        "secondary-fixed": "#aaf843",
+                        "tertiary": "#521a2c",
+                        "surface-bright": "#f8faf8",
+                        "inverse-on-surface": "#eff1ef",
+                        "surface-container": "#eceeec",
+                        "on-primary-container": "#89bf89",
+                        "on-surface-variant": "#414940",
+                        "surface-dim": "#d8dad9",
+                        "status-success": "#10B981",
+                        "on-error": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed": "#002107",
+                        "on-secondary-container": "#436e00",
+                        "on-tertiary-fixed-variant": "#713244",
+                        "on-primary-fixed-variant": "#1f5026",
+                        "on-secondary-fixed": "#102000",
+                        "border-subtle": "#E5E7EB",
+                        "inverse-primary": "#9dd49d",
+                        "surface-container-high": "#e6e9e7",
+                        "on-tertiary-fixed": "#3a071a",
+                        "status-caution": "#F59E0B",
+                        "tertiary-container": "#6e3042",
+                        "tertiary-fixed-dim": "#ffb1c3",
+                        "on-primary": "#ffffff",
+                        "surface-variant": "#e1e3e1",
+                        "text-main": "#08090A",
+                        "surface-container-low": "#f2f4f2",
+                        "on-background": "#191c1b"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "margin-mobile": "16px",
+                        "max-width": "1440px",
+                        "base": "4px",
+                        "gutter": "24px",
+                        "margin-desktop": "40px"
+                    },
+                    fontFamily: {
+                        "body-md": ["Inter"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "display-lg": ["Plus Jakarta Sans"],
+                        "display-lg-mobile": ["Plus Jakarta Sans"],
+                        "mono-data": ["JetBrains Mono"]
+                    },
+                    fontSize: {
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-sm": ["13px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "display-lg-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "mono-data": ["14px", { "lineHeight": "20px", "fontWeight": "500" }]
+                    }
+                }
+            }
+        };
+    </script>
+<style>
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: theme('colors.background'); 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: theme('colors.surface-variant'); 
+            border-radius: theme('borderRadius.full');
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: theme('colors.outline'); 
+        }
+        
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        /* Range slider styling */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: theme('colors.primary');
+            cursor: pointer;
+            margin-top: -6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: theme('colors.surface-variant');
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md antialiased min-h-screen flex flex-col selection:bg-primary/20 selection:text-primary">
+<!-- TopAppBar -->
+<header class="bg-surface/80 backdrop-blur-xl sticky top-0 w-full z-50 border-b border-outline-variant/30 shadow-sm flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 max-w-max-width mx-auto">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[24px]">travel_explore</span>
+<span class="text-headline-md font-headline-md font-bold text-primary">Optivoya</span>
+</div>
+<!-- Desktop Nav -->
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-on-surface-variant text-label-sm font-label-sm hover:text-primary transition-colors duration-200 cursor-pointer active:scale-95 transition-transform" href="#">Intelligence</a>
+<a class="text-primary font-semibold text-label-sm font-label-sm hover:text-primary transition-colors duration-200 cursor-pointer active:scale-95 transition-transform border-b-2 border-primary pb-1" href="#">Analytics</a>
+<a class="text-on-surface-variant text-label-sm font-label-sm hover:text-primary transition-colors duration-200 cursor-pointer active:scale-95 transition-transform" href="#">Bookings</a>
+</nav>
+<div>
+<button class="bg-primary-container text-on-primary-container px-4 py-2 rounded-full font-label-sm text-label-sm hover:bg-primary-container/90 transition-colors cursor-pointer active:scale-95 transition-transform">Early Access</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow w-full max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-8 md:py-12 mb-24 md:mb-0">
+<!-- Page Header -->
+<div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<p class="font-label-sm text-label-sm text-primary tracking-widest uppercase mb-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">tune</span> 
+                    Algorithm Configuration
+                </p>
+<h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface">PROMETHEE II Calibration</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2 max-w-2xl">
+                    Configure preference functions and thresholds for multi-criteria decision analysis. These parameters directly influence the net outranking flow for destination selection.
+                </p>
+</div>
+<div class="flex gap-3">
+<button class="px-6 py-2 rounded-lg border border-outline-variant text-on-surface-variant font-label-sm text-label-sm hover:bg-surface-variant/50 transition-colors">Reset Defaults</button>
+<button class="px-6 py-2 rounded-lg bg-primary text-on-primary font-label-sm text-label-sm hover:bg-primary/90 transition-colors shadow-sm">Apply Calibration</button>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Left Column: Preference Functions -->
+<div class="lg:col-span-8 flex flex-col gap-6">
+<h2 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined">function</span>
+                    Preference Functions (Pi)
+                </h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- V-Shape Card (Active) -->
+<div class="bg-surface rounded-xl border border-primary p-6 shadow-[0_4px_20px_rgba(0,0,0,0.03)] relative overflow-hidden ring-1 ring-primary/20">
+<div class="absolute top-4 right-4 bg-secondary-container text-on-secondary-container px-2 py-1 rounded text-[11px] font-bold tracking-wide">ACTIVE</div>
+<div class="flex items-start gap-4 mb-4">
+<div class="w-12 h-12 rounded-full bg-surface-variant flex items-center justify-center text-primary">
+<svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24"><path d="M4 14l8-8 8 8"></path></svg>
+</div>
+<div>
+<h3 class="font-headline-md text-[18px] font-semibold text-on-surface">V-Shape with Indifference</h3>
+<p class="font-body-md text-[14px] text-on-surface-variant">Type III Function</p>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6 min-h-[48px]">
+                            Linear preference increase between indifference (q) and strict preference (p) thresholds.
+                        </p>
+<!-- Mini Curve Preview -->
+<div class="w-full h-24 bg-surface-container-low rounded-lg mb-6 relative border border-border-subtle flex items-end px-4 pt-4 pb-2">
+<!-- SVG Curve -->
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 100 100">
+<path d="M0,90 L30,90 L70,10 L100,10" fill="none" stroke="theme('colors.primary')" stroke-linejoin="round" stroke-width="3"></path>
+<!-- Axes -->
+<line stroke="theme('colors.outline-variant')" stroke-width="1" x1="0" x2="100" y1="90" y2="90"></line>
+<line stroke="theme('colors.outline-variant')" stroke-width="1" x1="0" x2="0" y1="10" y2="90"></line>
+<!-- Markers -->
+<line stroke="theme('colors.outline')" stroke-width="1" x1="30" x2="30" y1="90" y2="95"></line>
+<text fill="theme('colors.on-surface-variant')" font-family="monospace" font-size="8" text-anchor="middle" x="30" y="105">q</text>
+<line stroke="theme('colors.outline')" stroke-width="1" x1="70" x2="70" y1="90" y2="95"></line>
+<text fill="theme('colors.on-surface-variant')" font-family="monospace" font-size="8" text-anchor="middle" x="70" y="105">p</text>
+</svg>
+</div>
+<!-- Inputs -->
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="font-label-sm text-label-sm text-on-surface-variant block mb-1">Indifference (q)</label>
+<div class="relative">
+<input class="w-full bg-surface border border-border-subtle rounded-md px-3 py-2 font-mono-data text-mono-data focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" step="0.1" type="number" value="1.5"/>
+</div>
+</div>
+<div>
+<label class="font-label-sm text-label-sm text-on-surface-variant block mb-1">Preference (p)</label>
+<div class="relative">
+<input class="w-full bg-surface border border-border-subtle rounded-md px-3 py-2 font-mono-data text-mono-data focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" step="0.1" type="number" value="4.0"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Gaussian Card (Inactive) -->
+<div class="bg-surface rounded-xl border border-border-subtle p-6 shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:border-outline-variant transition-colors cursor-pointer group opacity-70 hover:opacity-100">
+<div class="flex items-start gap-4 mb-4">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant group-hover:text-primary transition-colors">
+<svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24"><path d="M22 12c-4 0-5-8-10-8S6 12 2 12"></path></svg>
+</div>
+<div>
+<h3 class="font-headline-md text-[18px] font-semibold text-on-surface">Gaussian</h3>
+<p class="font-body-md text-[14px] text-on-surface-variant">Type VI Function</p>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6 min-h-[48px]">
+                            Continuous exponential increase without strict thresholds. Best for continuous variables.
+                        </p>
+<!-- Mini Curve Preview -->
+<div class="w-full h-24 bg-surface-container-low rounded-lg mb-6 relative border border-border-subtle flex items-end px-4 pt-4 pb-2 opacity-60">
+<!-- SVG Curve -->
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 100 100">
+<path d="M0,90 Q50,90 50,50 T100,10" fill="none" stroke="theme('colors.on-surface-variant')" stroke-linejoin="round" stroke-width="2"></path>
+<!-- Axes -->
+<line stroke="theme('colors.outline-variant')" stroke-width="1" x1="0" x2="100" y1="90" y2="90"></line>
+<line stroke="theme('colors.outline-variant')" stroke-width="1" x1="0" x2="0" y1="10" y2="90"></line>
+<!-- Markers -->
+<line stroke="theme('colors.outline')" stroke-width="1" x1="50" x2="50" y1="90" y2="95"></line>
+<text fill="theme('colors.on-surface-variant')" font-family="monospace" font-size="8" text-anchor="middle" x="50" y="105">s</text>
+</svg>
+</div>
+<!-- Inputs -->
+<div class="grid grid-cols-1 gap-4">
+<div>
+<label class="font-label-sm text-label-sm text-on-surface-variant block mb-1">Inflection Point (s)</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low border border-border-subtle rounded-md px-3 py-2 font-mono-data text-mono-data text-on-surface-variant cursor-not-allowed" disabled="" step="0.1" type="number" value="2.5"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Contextual Variables -->
+<div class="lg:col-span-4 flex flex-col gap-6">
+<h2 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined">psychology</span>
+                    Contextual Weights
+                </h2>
+<div class="bg-surface rounded-xl border border-border-subtle p-6 shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
+<div class="mb-6">
+<div class="flex justify-between items-end mb-2">
+<label class="font-label-sm text-label-sm font-semibold text-on-surface">Cost Sensitivity</label>
+<span class="font-mono-data text-[12px] text-primary">w_cost: 0.65</span>
+</div>
+<input class="w-full" max="1" min="0" step="0.05" type="range" value="0.65"/>
+<div class="flex justify-between mt-1 text-[11px] text-on-surface-variant uppercase tracking-wider">
+<span>Indifferent</span>
+<span>Strict</span>
+</div>
+</div>
+<div class="mb-6">
+<div class="flex justify-between items-end mb-2">
+<label class="font-label-sm text-label-sm font-semibold text-on-surface">Transit Duration</label>
+<span class="font-mono-data text-[12px] text-primary">w_time: 0.80</span>
+</div>
+<input class="w-full" max="1" min="0" step="0.05" type="range" value="0.80"/>
+<div class="flex justify-between mt-1 text-[11px] text-on-surface-variant uppercase tracking-wider">
+<span>Flexible</span>
+<span>Critical</span>
+</div>
+</div>
+<div class="pt-4 border-t border-border-subtle">
+<h4 class="font-label-sm text-label-sm font-semibold text-on-surface mb-4">Logistical Constraints</h4>
+<div class="space-y-4">
+<div>
+<label class="font-label-sm text-label-sm text-on-surface-variant block mb-1">Preferred Departure Hour (UTC)</label>
+<select class="w-full bg-surface border border-border-subtle rounded-md px-3 py-2 font-mono-data text-mono-data focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all appearance-none">
+<option>06:00 - 10:00 (Morning)</option>
+<option selected="">10:00 - 14:00 (Midday)</option>
+<option>14:00 - 18:00 (Afternoon)</option>
+<option>18:00 - 22:00 (Evening)</option>
+</select>
+</div>
+<div>
+<label class="font-label-sm text-label-sm text-on-surface-variant block mb-1">Minimum Stay Length (Days)</label>
+<input class="w-full bg-surface border border-border-subtle rounded-md px-3 py-2 font-mono-data text-mono-data focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" max="30" min="1" type="number" value="3"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-auto rounded-full px-6 py-3 bg-surface/90 backdrop-blur-md border border-outline-variant/20 shadow-lg z-50 flex items-center space-x-2">
+<a class="flex items-center gap-2 text-on-surface-variant px-4 py-2 hover:bg-surface-container-high rounded-full transition-all scale-100 active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">insights</span>
+<span class="font-label-sm text-label-sm hidden sm:inline-block">Intelligence</span>
+</a>
+<a class="flex items-center gap-2 bg-secondary-container text-on-secondary-container rounded-full px-4 py-2 hover:bg-surface-container-high transition-all scale-100 active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined" data-weight="fill">query_stats</span>
+<span class="font-label-sm text-label-sm">Analytics</span>
+</a>
+<a class="flex items-center gap-2 text-on-surface-variant px-4 py-2 hover:bg-surface-container-high rounded-full transition-all scale-100 active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">flight_takeoff</span>
+<span class="font-label-sm text-label-sm hidden sm:inline-block">Bookings</span>
+</a>
+</nav>
+</body></html>

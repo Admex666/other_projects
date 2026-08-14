@@ -503,13 +503,34 @@ def create_return_combinations(
     return df
 
 def get_city_id_api(city_name: str) -> Optional[str]:
-    """Kiwi API használata város ID lekéréséhez Selenium helyett."""
-    url = f"https://api.skypicker.com/locations?term={city_name}&location_types=city"
+    """Kiwi API használata város / reptér ID lekéréséhez."""
+    if not city_name or not city_name.strip():
+        return None
+    
+    clean = city_name.strip()
+    # 1. Ha van zárójelben IATA kód (pl. 'Budapest (BUD)'), azt használjuk fel kereséshez
+    import re
+    match = re.search(r'\(([A-Z]{3})\)', clean)
+    term = match.group(1) if match else clean
+    term = term.split('_')[0] if ('_' in term and not term.startswith('_')) else term
+    
+    url = f"https://api.skypicker.com/locations?term={requests.utils.quote(term)}&limit=10"
     try:
         response = requests.get(url, timeout=10)
-        data = response.json()
-        if data.get('locations'):
-            return data['locations'][0]['id']
+        if response.status_code == 200:
+            data = response.json().get('locations', [])
+            # 1. Elsődlegesen város szintű azonosítót keresünk (e.g. 'budapest_hu')
+            for loc in data:
+                if loc.get('type') == 'city':
+                    return loc.get('id')
+            # 2. Ha csak repülőtér van, de van szülő városa
+            for loc in data:
+                if loc.get('type') == 'airport' and loc.get('city'):
+                    return loc.get('city', {}).get('id')
+            # 3. Fallback bármelyik reptér/város ID-ra
+            for loc in data:
+                if loc.get('type') in ['city', 'airport']:
+                    return loc.get('id')
     except Exception as e:
         print(f"[ERROR] API hiba a városkeresésnél ({city_name}): {e}")
     return None

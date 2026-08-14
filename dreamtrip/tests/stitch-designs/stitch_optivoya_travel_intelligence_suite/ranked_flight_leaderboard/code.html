@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Ranked Flight Leaderboard - Optivoya</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;family=JetBrains+Mono:wght@450&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#a7f540",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-container": "#ed9aae",
+                        "primary": "#003710",
+                        "tertiary-fixed": "#ffd9e0",
+                        "status-alert": "#E11D48",
+                        "outline": "#71796f",
+                        "on-tertiary": "#ffffff",
+                        "background": "#f8faf8",
+                        "error-container": "#ffdad6",
+                        "primary-container": "#1c4e24",
+                        "surface": "#FFFFFF",
+                        "inverse-surface": "#2e3130",
+                        "secondary": "#406900",
+                        "primary-fixed": "#b8f1b7",
+                        "secondary-fixed-dim": "#8fdb24",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed-dim": "#9dd49d",
+                        "outline-variant": "#c1c9bd",
+                        "on-secondary-fixed-variant": "#2f4f00",
+                        "on-error-container": "#93000a",
+                        "surface-tint": "#37693c",
+                        "on-surface": "#191c1b",
+                        "surface-container-highest": "#e1e3e1",
+                        "secondary-fixed": "#aaf843",
+                        "tertiary": "#521a2c",
+                        "surface-bright": "#f8faf8",
+                        "inverse-on-surface": "#eff1ef",
+                        "surface-container": "#eceeec",
+                        "on-primary-container": "#89bf89",
+                        "on-surface-variant": "#414940",
+                        "surface-dim": "#d8dad9",
+                        "status-success": "#10B981",
+                        "on-error": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed": "#002107",
+                        "on-secondary-container": "#436e00",
+                        "on-tertiary-fixed-variant": "#713244",
+                        "on-primary-fixed-variant": "#1f5026",
+                        "on-secondary-fixed": "#102000",
+                        "border-subtle": "#E5E7EB",
+                        "inverse-primary": "#9dd49d",
+                        "surface-container-high": "#e6e9e7",
+                        "on-tertiary-fixed": "#3a071a",
+                        "status-caution": "#F59E0B",
+                        "tertiary-container": "#6e3042",
+                        "tertiary-fixed-dim": "#ffb1c3",
+                        "on-primary": "#ffffff",
+                        "surface-variant": "#e1e3e1",
+                        "text-main": "#08090A",
+                        "surface-container-low": "#f2f4f2",
+                        "on-background": "#191c1b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "max-width": "1440px",
+                        "base": "4px",
+                        "gutter": "24px",
+                        "margin-desktop": "40px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "display-lg": ["Plus Jakarta Sans"],
+                        "display-lg-mobile": ["Plus Jakarta Sans"],
+                        "mono-data": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-sm": ["13px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "display-lg-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "mono-data": ["14px", { "lineHeight": "20px", "fontWeight": "450" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: theme('colors.background'); color: theme('colors.on-background'); }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid theme('colors.border-subtle');
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, theme('colors.primary') 0%, theme('colors.primary-container') 100%);
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md antialiased min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="sticky top-0 w-full z-50 bg-surface/80 dark:bg-surface-container/80 backdrop-blur-xl border-b border-outline-variant/30 shadow-sm">
+<div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 max-w-max-width mx-auto">
+<div class="flex items-center gap-2 cursor-pointer active:scale-95 transition-transform group">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed">travel_explore</span>
+<span class="text-headline-md font-headline-md font-bold text-primary dark:text-primary-fixed group-hover:text-primary-container transition-colors duration-200">Optivoya</span>
+</div>
+<!-- Desktop Nav (Hidden on Mobile) -->
+<nav class="hidden md:flex items-center gap-8">
+<a class="font-label-sm text-label-sm text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200" href="#">Intelligence</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200" href="#">Analytics</a>
+<a class="font-label-sm text-label-sm text-primary dark:text-primary-fixed font-semibold hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200" href="#">Bookings</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200" href="#">Profile</a>
+</nav>
+<button class="font-label-sm text-label-sm px-4 py-2 rounded-full border border-primary text-primary hover:bg-primary hover:text-on-primary transition-colors duration-300">
+                Early Access
+            </button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow w-full max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-8 md:py-12 pb-32 md:pb-12">
+<div class="mb-10">
+<h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-background mb-2">Flight Intelligence</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">LHR to JFK • 14 Oct 2024 • Decision Matrix</p>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Hero Card: #1 Recommendation (Spans 8 columns on large screens) -->
+<div class="lg:col-span-8 rounded-xl hero-gradient text-on-primary p-6 md:p-8 flex flex-col md:flex-row justify-between items-start md:items-center relative overflow-hidden shadow-lg">
+<!-- Subtle background pattern -->
+<div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 24px 24px;"></div>
+<div class="relative z-10 w-full">
+<div class="flex items-center gap-3 mb-4">
+<div class="bg-secondary text-on-secondary px-3 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider">Optimal Route</span>
+</div>
+<span class="font-label-sm text-label-sm text-primary-fixed-dim">PROMETHEE Score</span>
+</div>
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 w-full">
+<div>
+<h2 class="font-headline-md text-headline-md mb-1">British Airways BA117</h2>
+<div class="flex items-center gap-4 text-primary-fixed-dim font-body-md text-body-md">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[18px]">schedule</span> 08:25 - 11:15</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[18px]">timelapse</span> 7h 50m</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[18px]">flight_class</span> Business</span>
+</div>
+</div>
+<div class="text-left md:text-right">
+<div class="font-display-lg text-display-lg text-secondary-container leading-none">94.8</div>
+<div class="font-label-sm text-label-sm text-primary-fixed-dim mt-1">Matrix Score / 100</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Action / Advisor CTA Card (Spans 4 columns) -->
+<div class="lg:col-span-4 glass-card rounded-xl p-6 flex flex-col justify-between">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-background mb-4">Advisor Actions</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">Distribute this intelligence matrix to your stakeholders.</p>
+</div>
+<div class="flex flex-col gap-3">
+<button class="w-full flex items-center justify-center gap-2 bg-primary-container text-on-primary-container hover:bg-primary transition-colors duration-200 py-3 rounded-lg font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[18px]">add_task</span>
+                        Add to Itinerary
+                    </button>
+<div class="grid grid-cols-2 gap-3">
+<button class="flex items-center justify-center gap-2 bg-surface hover:bg-surface-container-low border border-border-subtle transition-colors duration-200 py-3 rounded-lg font-label-sm text-label-sm text-on-surface">
+<span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
+                            Export
+                        </button>
+<button class="flex items-center justify-center gap-2 bg-surface hover:bg-surface-container-low border border-border-subtle transition-colors duration-200 py-3 rounded-lg font-label-sm text-label-sm text-on-surface">
+<span class="material-symbols-outlined text-[18px]">link</span>
+                            Share
+                        </button>
+</div>
+</div>
+</div>
+<!-- Leaderboard List -->
+<div class="lg:col-span-12 mt-4">
+<div class="glass-card rounded-xl overflow-hidden">
+<!-- Table Header -->
+<div class="grid grid-cols-12 gap-4 p-4 border-b border-border-subtle bg-surface-container-lowest font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">
+<div class="col-span-1 text-center">Rank</div>
+<div class="col-span-4">Flight Details</div>
+<div class="col-span-3">Schedule &amp; Duration</div>
+<div class="col-span-2 text-right">Fare (USD)</div>
+<div class="col-span-2 text-right">Score</div>
+</div>
+<!-- Row 1 (Highlight) -->
+<div class="grid grid-cols-12 gap-4 p-4 border-b border-border-subtle items-center hover:bg-surface-container-low transition-colors bg-surface-bright">
+<div class="col-span-1 flex justify-center">
+<div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center font-headline-md text-label-sm">1</div>
+</div>
+<div class="col-span-4 flex items-center gap-3">
+<img class="w-10 h-10 rounded-md border border-border-subtle object-cover" data-alt="A minimalist vector logo of British Airways, featuring a stylized blue and red ribbon motif on a clean white background, high-end corporate identity design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtD9xs1WxynjfJJK7VtiRjTbtx8tx8NdKQP7cF7GAE4REZSQq9a2AaH-9twKctbVWdjheSidkv6c6_rj_mh4xEO5qDZnS0ChPfidInEMcPArFKviydxQB0Sf5vj56iDyO_QAk8t_uFEpQ4Ghd81nm5ugzgJM6lOoipL3M5Yi5x99YumySVEJrM3sKEsa-UdnZ5mhyFol_KMAHClGuPv7bHVUaZNA8K-Y_wiBRLr6hZApv3wMNQXOYa7w"/>
+<div>
+<div class="font-body-md text-body-md font-medium text-on-surface">British Airways BA117</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">Boeing 777 • Direct</div>
+</div>
+</div>
+<div class="col-span-3">
+<div class="font-mono-data text-mono-data text-on-surface">08:25 - 11:15</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">7h 50m</div>
+</div>
+<div class="col-span-2 text-right font-mono-data text-mono-data text-on-surface">$4,250</div>
+<div class="col-span-2 flex justify-end">
+<div class="bg-secondary-container/20 text-on-secondary-container border border-secondary-container px-3 py-1 rounded-full font-mono-data text-mono-data">94.8</div>
+</div>
+</div>
+<!-- Row 2 -->
+<div class="grid grid-cols-12 gap-4 p-4 border-b border-border-subtle items-center hover:bg-surface-container-low transition-colors bg-surface">
+<div class="col-span-1 flex justify-center">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface flex items-center justify-center font-headline-md text-label-sm">2</div>
+</div>
+<div class="col-span-4 flex items-center gap-3">
+<img class="w-10 h-10 rounded-md border border-border-subtle object-cover" data-alt="A minimalist vector logo of Virgin Atlantic, featuring a sleek, modern red flying lady motif and crisp typography on a pristine white background, conveying luxury travel." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB_SqpgX-ePXew-Z7GWzr5H3_khGrwK7JfEFUbNJHAcGXRPMONoY1cd_pUEf9aYgZ8nT2p9UmyjX1_0OY4Bf4VpjCDV5gTR-3qArWnDlNEdV1pnOJh7u8kY6pqGXA0A5oExf2QpgfhP7ME17IQ0PyiAZn_FjIFvlfkKH-Wc-6qp4zkmcjbkn9JedS19GQGjarsQ4tzRIkrj1Oz3atC1pIf_1Zrv5wA6IDztIXxdUgGa9MP5GXcxIek6BQ"/>
+<div>
+<div class="font-body-md text-body-md font-medium text-on-surface">Virgin Atlantic VS3</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">Airbus A350 • Direct</div>
+</div>
+</div>
+<div class="col-span-3">
+<div class="font-mono-data text-mono-data text-on-surface">10:30 - 13:20</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">7h 50m</div>
+</div>
+<div class="col-span-2 text-right font-mono-data text-mono-data text-on-surface">$4,100</div>
+<div class="col-span-2 flex justify-end">
+<div class="bg-status-success/10 text-status-success border border-status-success/30 px-3 py-1 rounded-full font-mono-data text-mono-data">91.2</div>
+</div>
+</div>
+<!-- Row 3 -->
+<div class="grid grid-cols-12 gap-4 p-4 items-center hover:bg-surface-container-low transition-colors bg-surface">
+<div class="col-span-1 flex justify-center">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface flex items-center justify-center font-headline-md text-label-sm">3</div>
+</div>
+<div class="col-span-4 flex items-center gap-3">
+<img class="w-10 h-10 rounded-md border border-border-subtle object-cover" data-alt="A minimalist vector logo of American Airlines, displaying the modern silver and red stylized eagle graphic on a clean white background, reflecting precise corporate branding." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDlsJ1N8DEkg3ysLqi5_wz_sNsbN2OdV7p1vAzPVU9I3Cn_vwLEI4xxg1Bku71mEb8DruICZ1Oy2Wk-yyiD_Aii4A62SXoUWafmxn-OxEiuCJjBp7PHhSVdZOdgsY56FElnaoRhsZDDAP-oN5CEmIG46XnyeNSESTSVSiY3B_XqiHnrPq4MQqFKKDrAkAVXk-nl2fnTlexPMq1Ix223dJklOIASnhroKxmsS8yi8oOz1UIAoCwmizfhsw"/>
+<div>
+<div class="font-body-md text-body-md font-medium text-on-surface">American Airlines AA101</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">Boeing 777 • Direct</div>
+</div>
+</div>
+<div class="col-span-3">
+<div class="font-mono-data text-mono-data text-on-surface">17:15 - 20:10</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">7h 55m</div>
+</div>
+<div class="col-span-2 text-right font-mono-data text-mono-data text-on-surface">$3,850</div>
+<div class="col-span-2 flex justify-end">
+<div class="bg-status-caution/10 text-status-caution border border-status-caution/30 px-3 py-1 rounded-full font-mono-data text-mono-data">87.5</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Visible on Mobile) -->
+<nav class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center space-x-2 bg-surface/90 dark:bg-inverse-surface/90 backdrop-blur-md rounded-full px-6 py-3 border border-outline-variant/20 shadow-lg md:hidden">
+<a class="flex items-center gap-2 text-on-surface-variant dark:text-surface-variant px-4 py-2 hover:bg-surface-container-high dark:hover:bg-surface-container-highest rounded-full transition-all scale-100 active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">insights</span>
+<span class="font-label-sm text-label-sm hidden sm:inline">Intelligence</span>
+</a>
+<a class="flex items-center gap-2 text-on-surface-variant dark:text-surface-variant px-4 py-2 hover:bg-surface-container-high dark:hover:bg-surface-container-highest rounded-full transition-all scale-100 active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">query_stats</span>
+<span class="font-label-sm text-label-sm hidden sm:inline">Analytics</span>
+</a>
+<a class="flex items-center gap-2 bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary rounded-full px-4 py-2 scale-100 active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">flight_takeoff</span>
+<span class="font-label-sm text-label-sm">Bookings</span>
+</a>
+<a class="flex items-center gap-2 text-on-surface-variant dark:text-surface-variant px-4 py-2 hover:bg-surface-container-high dark:hover:bg-surface-container-highest rounded-full transition-all scale-100 active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">account_circle</span>
+<span class="font-label-sm text-label-sm hidden sm:inline">Profile</span>
+</a>
+</nav>
+</body></html>

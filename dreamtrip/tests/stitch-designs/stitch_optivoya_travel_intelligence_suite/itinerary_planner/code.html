@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Optivoya - Itinerary Planner</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#a7f540",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-container": "#ed9aae",
+                        "primary": "#003710",
+                        "tertiary-fixed": "#ffd9e0",
+                        "status-alert": "#E11D48",
+                        "outline": "#71796f",
+                        "on-tertiary": "#ffffff",
+                        "background": "#f8faf8",
+                        "error-container": "#ffdad6",
+                        "primary-container": "#1c4e24",
+                        "surface": "#FFFFFF",
+                        "inverse-surface": "#2e3130",
+                        "secondary": "#406900",
+                        "primary-fixed": "#b8f1b7",
+                        "secondary-fixed-dim": "#8fdb24",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed-dim": "#9dd49d",
+                        "outline-variant": "#c1c9bd",
+                        "on-secondary-fixed-variant": "#2f4f00",
+                        "on-error-container": "#93000a",
+                        "surface-tint": "#37693c",
+                        "on-surface": "#191c1b",
+                        "surface-container-highest": "#e1e3e1",
+                        "secondary-fixed": "#aaf843",
+                        "tertiary": "#521a2c",
+                        "surface-bright": "#f8faf8",
+                        "inverse-on-surface": "#eff1ef",
+                        "surface-container": "#eceeec",
+                        "on-primary-container": "#89bf89",
+                        "on-surface-variant": "#414940",
+                        "surface-dim": "#d8dad9",
+                        "status-success": "#10B981",
+                        "on-error": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed": "#002107",
+                        "on-secondary-container": "#436e00",
+                        "on-tertiary-fixed-variant": "#713244",
+                        "on-primary-fixed-variant": "#1f5026",
+                        "on-secondary-fixed": "#102000",
+                        "border-subtle": "#E5E7EB",
+                        "inverse-primary": "#9dd49d",
+                        "surface-container-high": "#e6e9e7",
+                        "on-tertiary-fixed": "#3a071a",
+                        "status-caution": "#F59E0B",
+                        "tertiary-container": "#6e3042",
+                        "tertiary-fixed-dim": "#ffb1c3",
+                        "on-primary": "#ffffff",
+                        "surface-variant": "#e1e3e1",
+                        "text-main": "#08090A",
+                        "surface-container-low": "#f2f4f2",
+                        "on-background": "#191c1b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "max-width": "1440px",
+                        "base": "4px",
+                        "gutter": "24px",
+                        "margin-desktop": "40px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "display-lg": ["Plus Jakarta Sans"],
+                        "display-lg-mobile": ["Plus Jakarta Sans"],
+                        "mono-data": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-sm": ["13px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "display-lg-mobile": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "mono-data": ["14px", { "lineHeight": "20px", "fontWeight": "450" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .drag-handle { cursor: grab; }
+        .drag-handle:active { cursor: grabbing; }
+        .timeline-line::before {
+            content: '';
+            position: absolute;
+            left: 23px; /* Center relative to icon */
+            top: 24px;
+            bottom: -24px;
+            width: 2px;
+            background-color: theme('colors.outline-variant');
+            z-index: 0;
+            opacity: 0.3;
+        }
+        .timeline-item:last-child .timeline-line::before {
+            display: none;
+        }
+        
+        /* Glassmorphism utilities */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(229, 231, 235, 0.5);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen font-body-md antialiased flex flex-col">
+<!-- TopAppBar -->
+<header class="bg-surface/80 dark:bg-surface-container/80 backdrop-blur-xl sticky top-0 w-full z-50 border-b border-outline-variant/30 shadow-sm flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 mx-auto">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed text-[28px]" data-icon="travel_explore">travel_explore</span>
+<span class="text-headline-md font-headline-md font-bold text-primary dark:text-primary-fixed tracking-tight">Optivoya</span>
+</div>
+<!-- Desktop Nav Cluster -->
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-on-surface-variant dark:text-surface-variant font-label-sm text-label-sm hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200 cursor-pointer active:scale-95 transition-transform flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-[18px]">insights</span>
+                Intelligence
+            </a>
+<a class="text-on-surface-variant dark:text-surface-variant font-label-sm text-label-sm hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200 cursor-pointer active:scale-95 transition-transform flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-[18px]">query_stats</span>
+                Analytics
+            </a>
+<a class="text-primary dark:text-primary-fixed font-semibold font-label-sm text-label-sm hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200 cursor-pointer active:scale-95 transition-transform flex items-center gap-2 relative" href="#">
+<span class="material-symbols-outlined text-[18px]">flight_takeoff</span>
+                Bookings
+                <div class="absolute -bottom-5 left-0 w-full h-[2px] bg-secondary-container"></div>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant font-label-sm text-label-sm hover:text-primary dark:hover:text-primary-fixed transition-colors duration-200 cursor-pointer active:scale-95 transition-transform flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-[18px]">account_circle</span>
+                Profile
+            </a>
+</nav>
+<button class="font-label-sm text-label-sm bg-primary-container text-on-primary hover:bg-primary-container/90 px-4 py-2 rounded-full transition-colors duration-200 cursor-pointer active:scale-95 hidden md:block">
+            Early Access
+        </button>
+<!-- Mobile Menu Toggle -->
+<button class="md:hidden text-on-surface-variant">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</header>
+<!-- Main Canvas -->
+<main class="flex-grow flex flex-col md:flex-row w-full max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-8 gap-gutter relative">
+<!-- Left Panel: Context & Details -->
+<aside class="w-full md:w-[320px] lg:w-[400px] flex-shrink-0 flex flex-col gap-6">
+<!-- Trip Header Card -->
+<div class="bg-surface rounded-xl border border-border-subtle p-6 shadow-[0_4px_20px_rgba(0,0,0,0.03)] flex flex-col gap-4 relative overflow-hidden">
+<!-- Abstract visual element -->
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary-fixed-dim/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+<div>
+<div class="flex justify-between items-start mb-1">
+<h1 class="font-headline-md text-headline-md text-on-surface">Tokyo Executive Summit</h1>
+<span class="bg-secondary-container/30 text-on-secondary-container font-label-sm text-label-sm px-2 py-1 rounded-md">Q3 Planning</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">Oct 12 - Oct 15, 2024</p>
+</div>
+<div class="flex gap-2 mt-2">
+<div class="flex -space-x-2">
+<img class="w-8 h-8 rounded-full border-2 border-surface object-cover" data-alt="A small circular avatar showing a professional looking business person in a modern bright setting. Minimalist style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBsJo6ln1PYmDUmmCbn__XrpqzxTSqafsIldIGL_C0hHJ0au6RHE2qAEisMNoQKgIvYtlcG3sW_AjUWEvBl1Ua5Xj7AGJOfoWZoXGXwlrheMqmK5K5WJz732NG-IYE3ob8BaU69Kv6-1Qg-YyYLW3e6j2g8tgx6oCEFgBDTlW-cvWXprrBOSoL5vCSohPgYVpinMEWPxejyB5IXHGRqZ3__BmKodMKmqJW9xNESpGhjK_2fDynkoAB5mQ"/>
+<img class="w-8 h-8 rounded-full border-2 border-surface object-cover" data-alt="A small circular avatar showing a professional looking business person in a modern bright setting. Minimalist style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcxHi0chxkXg9vjLvJA-2ZPY5VsdCCF8uD-INfCVZUsa2AdZ7M7BZY8t9o1plJJlU1FftSaAFfkWpjNknChRYAj7OK5B9PgjHpUEvf7X_4J-YoHw5pqoa2cXT8jhLuSXQH4I3zu2e05H-9a8Cwl__3L6wwEorzOEMXF0KiuG1B1sZe5lSYpjKuyoyHgiUp7GmyrZnNuIm-st9ESEppxl33n4fU51VSTtsOWxy-ZKIAjMdResTjd4kmgw"/>
+<div class="w-8 h-8 rounded-full border-2 border-surface bg-surface-container flex items-center justify-center font-label-sm text-label-sm text-on-surface-variant">+3</div>
+</div>
+<button class="ml-auto flex items-center gap-1 text-primary font-label-sm text-label-sm hover:underline">
+<span class="material-symbols-outlined text-[16px]">group_add</span>
+                        Invite
+                    </button>
+</div>
+</div>
+<!-- Optimization Panel (Bento Style) -->
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface rounded-xl border border-border-subtle p-4 shadow-[0_4px_20px_rgba(0,0,0,0.03)] flex flex-col gap-2">
+<span class="material-symbols-outlined text-secondary-container text-[24px]">speed</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Logistics</span>
+<span class="font-headline-md text-[20px] font-semibold text-on-surface">Optimal</span>
+<span class="font-label-sm text-[11px] text-status-success flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                        No conflicts
+                    </span>
+</div>
+<div class="bg-surface rounded-xl border border-border-subtle p-4 shadow-[0_4px_20px_rgba(0,0,0,0.03)] flex flex-col gap-2">
+<span class="material-symbols-outlined text-primary text-[24px]">directions_walk</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Transit Time</span>
+<span class="font-headline-md text-[20px] font-semibold text-on-surface">1h 45m</span>
+<span class="font-label-sm text-[11px] text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">info</span>
+                        Est. total today
+                    </span>
+</div>
+</div>
+<!-- Mini Map Placeholder -->
+<div class="bg-surface rounded-xl border border-border-subtle shadow-[0_4px_20px_rgba(0,0,0,0.03)] h-48 overflow-hidden relative">
+<div class="bg-cover bg-center w-full h-full grayscale opacity-70" data-alt="A clean, minimalist map interface showing a sleek urban area with a few discrete markers connected by a subtle line, indicating a route. High-key lighting, muted neutral tones with subtle green accents. Professional SaaS aesthetic." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAG8kownsJTeueol3FrDXg3n2iId-_V2x7c3TcrxExN2wUcS8-A4WF4OvhqUcXtZqRkgoLB2OVuTTfbvHiWIr6yognjTcxxZD_ZizJ7VNJIDr7hI-p4lBJr21UZhiz9wncZ8FM9K-DAOgbqL3bF9_icDA6E4FI_7oe3hSbtlKldMYL5pzFG9iAXBDbufLlV61cFPYrMxYl9JFq5zECgSY0h8agCTrRWsCL9c3jL1dkBNATncfdJ2UiR0Q')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface/80 to-transparent"></div>
+<button class="absolute bottom-4 right-4 bg-primary-container text-on-primary font-label-sm text-label-sm px-3 py-1.5 rounded-full shadow-sm flex items-center gap-1 hover:bg-primary-container/90 transition">
+<span class="material-symbols-outlined text-[16px]">map</span>
+                    Expand Map
+                </button>
+</div>
+</aside>
+<!-- Right Panel: Interactive Vertical Timeline -->
+<section class="flex-grow flex flex-col gap-6 bg-surface-bright rounded-2xl p-2 md:p-6 border border-border-subtle/50 relative">
+<!-- Timeline Toolbar -->
+<div class="flex items-center justify-between pb-4 border-b border-border-subtle">
+<div class="flex items-center gap-4">
+<h2 class="font-headline-md text-[20px] text-on-surface">Day 2 Schedule</h2>
+<span class="font-body-md text-on-surface-variant text-sm">Oct 13, Tue</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 rounded-md hover:bg-surface-container text-on-surface-variant transition">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+<button class="flex items-center gap-2 bg-surface border border-border-subtle px-3 py-1.5 rounded-md text-on-surface font-label-sm text-label-sm shadow-sm hover:bg-surface-container-low transition">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                        Add Slot
+                    </button>
+</div>
+</div>
+<!-- Timeline Canvas -->
+<div class="flex-grow overflow-y-auto pr-2 flex flex-col gap-4 relative">
+<!-- Time Indicator Line (Absolute) -->
+<div class="absolute left-[70px] top-0 bottom-0 w-[1px] bg-border-subtle/50 pointer-events-none hidden sm:block"></div>
+<!-- Timeline Slot 1: Hotel Departure -->
+<div class="flex items-start gap-4 sm:gap-6 group relative timeline-item">
+<div class="w-14 pt-3 flex-shrink-0 text-right">
+<span class="font-mono-data text-mono-data text-on-surface-variant">08:00</span>
+</div>
+<div class="relative z-10 pt-2.5 timeline-line">
+<div class="w-6 h-6 rounded-full bg-surface border border-border-subtle flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[14px] text-on-surface-variant">hotel</span>
+</div>
+</div>
+<div class="flex-grow bg-surface border border-border-subtle rounded-xl p-4 shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:shadow-md transition-shadow cursor-grab active:cursor-grabbing flex items-center justify-between">
+<div>
+<h3 class="font-label-sm text-[15px] font-semibold text-on-surface">Depart Aman Tokyo</h3>
+<p class="font-body-md text-sm text-on-surface-variant mt-1">Lobby pickup arranged.</p>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1 hover:bg-surface-container rounded"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+<button class="p-1 hover:bg-surface-container rounded drag-handle"><span class="material-symbols-outlined text-[18px]">drag_indicator</span></button>
+</div>
+</div>
+</div>
+<!-- Haversine Transit Estimate -->
+<div class="flex items-center gap-6 ml-[90px] py-2 relative">
+<div class="absolute left-[-23px] top-1/2 -translate-y-1/2 w-4 h-[1px] bg-border-subtle"></div>
+<div class="flex items-center gap-2 text-on-surface-variant font-mono-data text-[12px] bg-surface-container-low px-2 py-1 rounded border border-border-subtle/50">
+<span class="material-symbols-outlined text-[14px] text-primary">directions_car</span>
+<span>25 min</span>
+<span class="mx-1">•</span>
+<span>6.2 km</span>
+</div>
+</div>
+<!-- Timeline Slot 2: Meeting -->
+<div class="flex items-start gap-4 sm:gap-6 group relative timeline-item">
+<div class="w-14 pt-3 flex-shrink-0 text-right">
+<span class="font-mono-data text-mono-data text-on-surface-variant">08:30</span>
+<div class="text-[10px] text-on-surface-variant/70 mt-1">1h 30m</div>
+</div>
+<div class="relative z-10 pt-2.5 timeline-line">
+<div class="w-6 h-6 rounded-full bg-primary-container text-on-primary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[14px]">business_center</span>
+</div>
+</div>
+<div class="flex-grow bg-surface border-l-4 border-l-primary border border-border-subtle rounded-xl p-4 shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:shadow-md transition-shadow cursor-grab active:cursor-grabbing flex flex-col gap-3">
+<div class="flex items-start justify-between">
+<div>
+<h3 class="font-label-sm text-[15px] font-semibold text-on-surface">Client Pitch: TechCorp</h3>
+<p class="font-body-md text-sm text-on-surface-variant mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">location_on</span>
+                                    Shinjuku Nomura Bldg, Fl 42
+                                </p>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1 hover:bg-surface-container rounded"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+<button class="p-1 hover:bg-surface-container rounded drag-handle"><span class="material-symbols-outlined text-[18px]">drag_indicator</span></button>
+</div>
+</div>
+<!-- Documents Attachment Pill -->
+<div class="flex items-center gap-2 self-start bg-surface-container-low px-2 py-1 rounded-md border border-border-subtle cursor-pointer hover:bg-surface-container transition">
+<span class="material-symbols-outlined text-[14px] text-on-surface-variant">description</span>
+<span class="font-label-sm text-[11px] text-on-surface-variant">Q3_Deck_v2.pdf</span>
+</div>
+</div>
+</div>
+<!-- Haversine Transit Estimate -->
+<div class="flex items-center gap-6 ml-[90px] py-2 relative">
+<div class="absolute left-[-23px] top-1/2 -translate-y-1/2 w-4 h-[1px] bg-border-subtle"></div>
+<div class="flex items-center gap-2 text-on-surface-variant font-mono-data text-[12px] bg-surface-container-low px-2 py-1 rounded border border-border-subtle/50">
+<span class="material-symbols-outlined text-[14px] text-primary">directions_walk</span>
+<span>15 min</span>
+<span class="mx-1">•</span>
+<span>1.1 km</span>
+</div>
+</div>
+<!-- Timeline Slot 3: Conflict Alert Example -->
+<div class="flex items-start gap-4 sm:gap-6 group relative timeline-item">
+<div class="w-14 pt-3 flex-shrink-0 text-right">
+<span class="font-mono-data text-mono-data text-error">10:15</span>
+<div class="text-[10px] text-error/70 mt-1">45m</div>
+</div>
+<div class="relative z-10 pt-2.5 timeline-line">
+<div class="w-6 h-6 rounded-full bg-error-container border border-error/20 flex items-center justify-center shadow-sm relative">
+<span class="material-symbols-outlined text-[14px] text-on-error-container">warning</span>
+<!-- Pulse effect -->
+<div class="absolute inset-0 rounded-full border border-error animate-ping opacity-50"></div>
+</div>
+</div>
+<div class="flex-grow bg-surface border-l-4 border-l-status-alert border border-border-subtle rounded-xl p-4 shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:shadow-md transition-shadow flex flex-col gap-3">
+<div class="flex items-start justify-between">
+<div>
+<h3 class="font-label-sm text-[15px] font-semibold text-on-surface">Coffee &amp; Debrief</h3>
+<p class="font-body-md text-sm text-on-surface-variant mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">location_on</span>
+                                    Blue Bottle Coffee, Shinjuku
+                                </p>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1 hover:bg-surface-container rounded"><span class="material-symbols-outlined text-[18px]">edit</span></button>
+<button class="p-1 hover:bg-surface-container rounded drag-handle"><span class="material-symbols-outlined text-[18px]">drag_indicator</span></button>
+</div>
+</div>
+<!-- Smart Constraint Alert -->
+<div class="bg-error-container/30 border border-error-container rounded-md p-2 flex items-start gap-2">
+<span class="material-symbols-outlined text-[16px] text-on-error-container mt-0.5">error</span>
+<div>
+<span class="font-label-sm text-[12px] text-on-error-container font-semibold block">Opening Hours Conflict</span>
+<span class="font-body-md text-[11px] text-on-error-container/80 block">Venue opens at 11:00 AM. Adjust slot or find alternative.</span>
+</div>
+<button class="ml-auto font-label-sm text-[11px] bg-surface text-on-surface px-2 py-1 rounded shadow-sm border border-border-subtle hover:bg-surface-container-lowest">
+                                Auto-Fix
+                            </button>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-auto rounded-full px-6 py-3 bg-surface/90 dark:bg-inverse-surface/90 backdrop-blur-md border border-outline-variant/20 shadow-lg z-50 flex items-center space-x-2">
+<a class="flex items-center gap-2 text-on-surface-variant dark:text-surface-variant px-4 py-2 hover:bg-surface-container-high dark:hover:bg-surface-container-highest rounded-full transition-all scale-100 active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">insights</span>
+</a>
+<a class="flex items-center gap-2 text-on-surface-variant dark:text-surface-variant px-4 py-2 hover:bg-surface-container-high dark:hover:bg-surface-container-highest rounded-full transition-all scale-100 active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">query_stats</span>
+</a>
+<!-- Active state -->
+<a class="flex items-center gap-2 bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary rounded-full px-4 py-2 hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all scale-100 active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">flight_takeoff</span>
+<span class="font-label-sm text-label-sm hidden sm:block">Bookings</span>
+</a>
+<a class="flex items-center gap-2 text-on-surface-variant dark:text-surface-variant px-4 py-2 hover:bg-surface-container-high dark:hover:bg-surface-container-highest rounded-full transition-all scale-100 active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">account_circle</span>
+</a>
+</nav>
+</body></html>
