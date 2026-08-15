@@ -273,13 +273,13 @@ Nagy volumenű, releváns B2B lead adatbázis létrehozása.
 
 #### Tasks
 
-- MUISZ adatforrás feldolgozása
-- Google Maps / Search adatgyűjtés
-- Website enrichment
-- Email extraction
-- Social profile enrichment
-- Lead database
-- Lead scoring
+- [ ] MUISZ adatforrás feldolgozása
+- [ ] Google Maps / Search adatgyűjtés
+- [ ] Website enrichment
+- [ ] Email extraction
+- [ ] Social profile enrichment
+- [ ] Lead database
+- [ ] Lead scoring
 
 ### PROJECT: Outreach System
 
@@ -297,14 +297,14 @@ Ismételhető outbound acquisition folyamat létrehozása.
 
 #### Tasks
 
-- ICP definiálása
-- Email template v1
-- Follow-up sequence
-- Personalization rules
-- Email tracking
-- Outreach database
-- 100 leades teszt
-- Eredmények elemzése
+- [ ] ICP definiálása
+- [ ] Email template v1
+- [ ] Follow-up sequence
+- [ ] Personalization rules
+- [ ] Email tracking
+- [ ] Outreach database
+- [ ] 100 leades teszt
+- [ ] Eredmények elemzése
 
 ### PROJECT: Outreach Landing Page
 
@@ -332,13 +332,13 @@ Bizalomépítés és érdeklődés → beta signup.
 
 #### Tasks
 
-- Vercel landing page
-- Analytics
-- Session recording
-- Calculator
-- CTA
-- Trust elements
-- A/B tesztelhető headline
+- [ ] Vercel landing page
+- [ ] Analytics
+- [ ] Session recording
+- [ ] Calculator
+- [ ] CTA
+- [ ] Trust elements
+- [ ] A/B tesztelhető headline
 
 ### PROJECT: Beta Product
 
@@ -368,13 +368,13 @@ A lehető legkisebb, de valódi értéket adó termék.
 
 #### Tasks
 
-- Existing MVP audit
-- Critical bugok javítása
-- UX friction javítása
-- Analytics
-- User onboarding
-- Beta accounts
-- Feedback mechanism
+- [ ] Existing MVP audit
+- [ ] Critical bugok javítása
+- [ ] UX friction javítása
+- [ ] Analytics
+- [ ] User onboarding
+- [ ] Beta accounts
+- [ ] Feedback mechanism
 
 ### PROJECT: Pricing
 
@@ -391,12 +391,12 @@ Az Optivoya értékéhez igazodó, fenntartható ár kialakítása.
 
 #### Tasks
 
-- Competitor pricing research
-- Value-based pricing model
-- Pricing hypotheses
-- Price test
-- B2B package-ek
-- B2C monetization test
+- [ ] Competitor pricing research
+- [ ] Value-based pricing model
+- [ ] Pricing hypotheses
+- [ ] Price test
+- [ ] B2B package-ek
+- [ ] B2C monetization test
 
 ### PROJECT: Product Analytics
 
@@ -414,11 +414,11 @@ Tudjuk, hogy ténylegesen létrejön-e az ígért érték.
 
 #### Tasks
 
-- Event tracking
-- User funnel
-- Usage dashboard
-- Time-saving measurement
-- Error tracking
+- [ ] Event tracking
+- [ ] User funnel
+- [ ] Usage dashboard
+- [ ] Time-saving measurement
+- [ ] Error tracking
 
 ## 5. TASK SYSTEM
 

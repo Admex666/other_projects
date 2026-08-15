@@ -135,14 +135,14 @@ async def destination_matcher(request: Request):
     # PROD módban csak a Flight és Accommodation Intelligence érhető el
     if IS_PRODUCTION:
         return RedirectResponse(url="/home", status_code=303)
-    return templates.TemplateResponse("destination_matcher.html", {"request": request})
+    return templates.TemplateResponse("destination/destination_matcher.html", {"request": request})
 
 @app.get("/flight-intelligence", response_class=HTMLResponse)
 async def flight_intelligence(request: Request, destination: Optional[str] = None, origin: Optional[str] = None, out_from: Optional[str] = None, out_to: Optional[str] = None, in_from: Optional[str] = None, in_to: Optional[str] = None):
     user = get_current_user(request)
     if not user:
         return RedirectResponse(url="/", status_code=303)
-    return templates.TemplateResponse("flight_intelligence.html", {
+    return templates.TemplateResponse("flights/flight_intelligence.html", {
         "request": request, 
         "user": user,
         "prefill": {
@@ -160,7 +160,7 @@ async def accommodation_intelligence(request: Request, city: Optional[str] = Non
     user = get_current_user(request)
     if not user:
         return RedirectResponse(url="/", status_code=303)
-    return templates.TemplateResponse("accommodation_intelligence.html", {
+    return templates.TemplateResponse("accommodation/accommodation_intelligence.html", {
         "request": request, 
         "user": user,
         "prefill": {
@@ -460,7 +460,7 @@ async def flight_intelligence_filter(request: Request):
     if raw_flight_data.get("data") is None or raw_flight_data["count"] == 0:
         return RedirectResponse(url="/flight-intelligence", status_code=303)
     
-    return templates.TemplateResponse("flight_filter.html", {
+    return templates.TemplateResponse("flights/flight_filter.html", {
         "request": request,
         "user": user,  # ✅ EZ HIÁNYZOTT!
         "flight_count": raw_flight_data["count"]
@@ -671,7 +671,7 @@ async def flight_intelligence_ahp(request: Request):
         return RedirectResponse(url="/flight-intelligence-filter", status_code=303)
     
     flight_data = filtered_flights[user]
-    return templates.TemplateResponse("flight_ahp.html", {
+    return templates.TemplateResponse("flights/flight_ahp.html", {
         "request": request, 
         "user": user,
         "flight_count": flight_data.get("count", 0)
@@ -827,7 +827,7 @@ async def accommodation_ahp_page(request: Request):
             "error": None
         }
     
-    return templates.TemplateResponse("accommodation_ahp.html", {
+    return templates.TemplateResponse("accommodation/accommodation_ahp.html", {
         "request": request,
         "user": user,
         "stay_count": filtered_stays[user]["count"]
@@ -899,7 +899,7 @@ async def flight_preferences_page(request: Request):
     if user not in filtered_flights or filtered_flights[user].get("status") != "done":
         return RedirectResponse(url="/flight-intelligence-filter", status_code=303)
     
-    return templates.TemplateResponse("flight_preferences.html", {
+    return templates.TemplateResponse("flights/flight_preferences.html", {
         "request": request,
         "user": user,
         "flight_count": filtered_flights[user]["count"],
@@ -1093,7 +1093,7 @@ async def stay_preferences_page(request: Request):
             return RedirectResponse(url="/accommodation-intelligence", status_code=303)
         filtered_stays[user] = {"status":"done", "data": raw_stay_data["data"], "count": raw_stay_data["count"]}
     
-    return templates.TemplateResponse("accommodation_preferences.html", {
+    return templates.TemplateResponse("accommodation/accommodation_preferences.html", {
         "request": request,
         "user": user,
         "stay_count": filtered_stays[user]["count"]
@@ -1210,7 +1210,7 @@ async def stay_results_page(request: Request):
     if not user: return RedirectResponse(url="/", status_code=303)
     if user not in stay_ranked_results: return RedirectResponse(url="/accommodation-intelligence", status_code=303)
     
-    return templates.TemplateResponse("accommodation_results.html", {
+    return templates.TemplateResponse("accommodation/accommodation_results.html", {
         "request": request, 
         "user": user, 
         "results": stay_ranked_results[user],
@@ -1226,12 +1226,12 @@ async def destination_matcher_page(request: Request):
         session["results"] = []
         if user in dest_calculation_status:
             dest_calculation_status[user] = {"status": "idle", "progress": 0}
-    return templates.TemplateResponse("destination_matcher.html", {"request": request, "user": user})
+    return templates.TemplateResponse("destination/destination_matcher.html", {"request": request, "user": user})
 
 @app.get("/destination-criteria", response_class=HTMLResponse)
 async def destination_criteria_page(request: Request):
     user = get_current_user(request)
-    return templates.TemplateResponse("destination_criteria.html", {"request": request, "user": user})
+    return templates.TemplateResponse("destination/destination_criteria.html", {"request": request, "user": user})
 
 @app.get("/destination-ahp", response_class=HTMLResponse)
 async def destination_ahp_page(request: Request):
@@ -1246,7 +1246,7 @@ async def destination_ahp_page(request: Request):
     }
     selected_criteria = [{"id": c, "name": crit_map.get(c, c)} for c in session.get("criteria", [])]
 
-    return templates.TemplateResponse("destination_ahp.html", {
+    return templates.TemplateResponse("destination/destination_ahp.html", {
         "request": request, 
         "selected_criteria": selected_criteria
     })
@@ -1263,8 +1263,8 @@ async def destination_preferences_page(request: Request):
         dest_calculation_status[user] = {"status": "idle", "progress": 0}
     
     selected_criteria = [{"id": c} for c in session.get("criteria", [])]
-    return templates.TemplateResponse("destination_preferences.html", {
-        "request": request,
+    return templates.TemplateResponse("destination/destination_preferences.html", {
+        "request": request, 
         "selected_criteria": selected_criteria
     })
 
@@ -1284,9 +1284,9 @@ async def destination_results_page(request: Request):
     start_date = f"2026-{int(month):02d}-10"
     end_date = f"2026-{int(month):02d}-{10 + int(duration)}"
     
-    response = templates.TemplateResponse("destination_results.html", {
-        "request": request,
-        "user": user,
+    response = templates.TemplateResponse("destination/destination_results.html", {
+        "request": request, 
+        "user": user, 
         "results": session.get("results", []),
         "constraints": constraints,
         "dates": {
@@ -1666,7 +1666,7 @@ async def results_page(request: Request):
     if user not in ranked_results:
         return RedirectResponse(url="/flight-intelligence", status_code=303)
     
-    return templates.TemplateResponse("flight_results.html", {
+    return templates.TemplateResponse("flights/flight_results.html", {
         "request": request, 
         "user": user, 
         "results": ranked_results[user],

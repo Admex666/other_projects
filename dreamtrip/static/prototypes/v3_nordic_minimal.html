@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optivoya — v3: Nordic Minimal (Skandináv Letisztult)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #faf9f6;
+            --bg-surface: #ffffff;
+            --primary: #1e3a2f;
+            --primary-hover: #14271f;
+            --primary-soft: #f0f4f1;
+            --accent: #b45309;
+            --text-main: #1c1917;
+            --text-secondary: #78716c;
+            --text-muted: #a8a29e;
+            --border-subtle: #e7e5e4;
+            --border-strong: #d6d3d1;
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* TOP NAVIGATION */
+        .navbar {
+            background: var(--bg-surface);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 0 40px;
+            height: 70px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .nav-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+
+        .badge-access {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .view-switcher {
+            display: flex;
+            background: var(--bg-base);
+            padding: 4px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-subtle);
+            gap: 4px;
+        }
+
+        .view-btn {
+            padding: 7px 18px;
+            border-radius: var(--radius-sm);
+            font-size: 12.5px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            background: transparent;
+            color: var(--text-secondary);
+            transition: all 0.15s;
+        }
+
+        .view-btn.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logout-btn {
+            background: transparent;
+            color: var(--text-secondary);
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            text-decoration: none;
+            font-size: 12.5px;
+            font-weight: 600;
+            border: 1px solid var(--border-subtle);
+            transition: all 0.2s;
+        }
+
+        .logout-btn:hover {
+            border-color: var(--text-main);
+            color: var(--text-main);
+        }
+
+        /* PAGE VIEWS */
+        .page-content {
+            flex: 1;
+            padding: 40px 40px;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .view-container {
+            display: none;
+        }
+
+        .view-container.active {
+            display: block;
+        }
+
+        /* ================= 1. HOME VIEW ================= */
+        .home-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .home-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .home-header p {
+            font-size: 15px;
+            color: var(--text-secondary);
+        }
+
+        .module-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .module-row {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 24px 28px;
+            text-decoration: none;
+            color: inherit;
+            display: grid;
+            grid-template-columns: 48px 1fr auto;
+            align-items: center;
+            gap: 24px;
+            transition: all 0.2s;
+        }
+
+        .module-row:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            transform: translateX(4px);
+        }
+
+        .module-icon {
+            font-size: 24px;
+        }
+
+        .module-info h3 {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .module-info p {
+            font-size: 13.5px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        .module-arrow {
+            font-size: 18px;
+            color: var(--text-muted);
+            transition: transform 0.2s;
+        }
+
+        .module-row:hover .module-arrow {
+            color: var(--primary);
+            transform: translateX(4px);
+        }
+
+        .module-row.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+            background: #f5f5f4;
+        }
+
+        /* ================= 2. FLIGHT INTELLIGENCE VIEW ================= */
+        .flight-grid {
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            gap: 32px;
+        }
+
+        .filter-panel {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .filter-panel h2 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .form-row {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-row label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-row input, .form-row select {
+            padding: 10px 12px;
+            border: 1px solid var(--border-strong);
+            border-radius: var(--radius-sm);
+            font-size: 13.5px;
+            background: white;
+            outline: none;
+        }
+
+        .form-row input:focus, .form-row select:focus {
+            border-color: var(--primary);
+        }
+
+        .btn-submit {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            font-size: 13.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-submit:hover {
+            background: var(--primary-hover);
+        }
+
+        /* FLIGHT STREAM */
+        .stream-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .stream-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-subtle);
+            font-size: 13.5px;
+            color: var(--text-secondary);
+        }
+
+        .flight-card-nordic {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 22px 24px;
+            display: grid;
+            grid-template-columns: 1fr 100px 130px;
+            align-items: center;
+            gap: 24px;
+            transition: all 0.2s;
+        }
+
+        .flight-card-nordic:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+
+        .flight-card-nordic.featured {
+            border-left: 4px solid var(--primary);
+        }
+
+        .legs-box {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .leg {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .airline-tag {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            background: var(--bg-base);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .time-bold {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .code-gray {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .dur-center {
+            font-size: 11.5px;
+            color: var(--text-secondary);
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .score-box-nordic {
+            text-align: center;
+            padding: 8px;
+            background: var(--primary-soft);
+            border-radius: var(--radius-sm);
+        }
+
+        .score-val {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .score-lbl {
+            font-size: 9.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--primary);
+        }
+
+        .price-box-nordic {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .price-text {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .btn-select-nordic {
+            background: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn-select-nordic:hover {
+            background: var(--primary);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TOP NAVIGATION -->
+    <header class="navbar">
+        <a href="#" class="nav-brand">
+            <span class="nav-title">Optivoya</span>
+            <span class="badge-access">Nordic Minimal</span>
+        </a>
+
+        <!-- PROTOTYPE VIEW SWITCHER -->
+        <div class="view-switcher">
+            <button class="view-btn active" onclick="switchView('home', this)">1. Home Nézet</button>
+            <button class="view-btn" onclick="switchView('flight', this)">2. Flight Intelligence Nézet</button>
+        </div>
+
+        <div class="user-menu">
+            <span style="font-size: 13px; color: var(--text-secondary);">👤 admin</span>
+            <a href="#" class="logout-btn">Kilépés</a>
+        </div>
+    </header>
+
+    <main class="page-content">
+
+        <!-- ================= 1. HOME VIEW ================= -->
+        <section id="view-home" class="view-container active">
+            <div class="home-header">
+                <h1>Mi az utazási célod?</h1>
+                <p>Válaszd ki a használni kívánt döntéstámogató modult</p>
+            </div>
+
+            <div class="module-list">
+                <!-- FLIGHT -->
+                <a href="javascript:void(0)" onclick="switchView('flight', document.querySelectorAll('.view-btn')[1])" class="module-row">
+                    <div class="module-icon">✈️</div>
+                    <div class="module-info">
+                        <h3>Flight Intelligence</h3>
+                        <p>Intelligens járatkeresés személyre szabott kritériumokkal és döntéstámogatással.</p>
+                    </div>
+                    <div class="module-arrow">→</div>
+                </a>
+
+                <!-- ACCOMMODATION -->
+                <a href="#" class="module-row">
+                    <div class="module-icon">🏨</div>
+                    <div class="module-info">
+                        <h3>Accommodation Intelligence</h3>
+                        <p>Aggregált szálláskeresés és adatvezérelt elhelyezkedési és ár/érték elemzés.</p>
+                    </div>
+                    <div class="module-arrow">→</div>
+                </a>
+
+                <!-- DESTINATION -->
+                <div class="module-row disabled">
+                    <div class="module-icon" style="filter: grayscale(1);">🌍</div>
+                    <div class="module-info">
+                        <h3 style="color: var(--text-muted);">Destination Matcher (Hamarosan)</h3>
+                        <p>Többszempontos úti cél rangsorolás időjárási és költségvetési szűrésekkel.</p>
+                    </div>
+                    <div class="module-arrow" style="opacity: 0.3;">→</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= 2. FLIGHT INTELLIGENCE VIEW ================= -->
+        <section id="view-flight" class="view-container">
+            <div style="margin-bottom: 28px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1 style="font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; color: var(--primary);">Flight Intelligence</h1>
+                    <p style="font-size: 13.5px; color: var(--text-secondary);">Járatok keresése és rangsorolása többkritériumos döntési modellel</p>
+                </div>
+                <button class="logout-btn" onclick="switchView('home', document.querySelectorAll('.view-btn')[0])">← Vissza a Főoldalra</button>
+            </div>
+
+            <div class="flight-grid">
+                <!-- SEARCH FORM -->
+                <div class="filter-panel">
+                    <h2>Keresési Paraméterek</h2>
+
+                    <div class="form-row">
+                        <label>Honnan</label>
+                        <input type="text" value="Budapest (BUD)">
+                    </div>
+
+                    <div class="form-row">
+                        <label>Hová</label>
+                        <input type="text" value="Lisszabon (LIS)">
+                    </div>
+
+                    <div class="form-row">
+                        <label>Indulás Dátuma</label>
+                        <input type="date" value="2026-05-10">
+                    </div>
+
+                    <div class="form-row">
+                        <label>Visszaút Dátuma</label>
+                        <input type="date" value="2026-05-17">
+                    </div>
+
+                    <div class="form-row">
+                        <label>Utasok</label>
+                        <select>
+                            <option>1 Felnőtt</option>
+                            <option selected>2 Felnőtt</option>
+                        </select>
+                    </div>
+
+                    <button class="btn-submit">Keresés Indítása</button>
+                </div>
+
+                <!-- RESULTS FEED -->
+                <div class="stream-wrap">
+                    <div class="stream-header">
+                        <span>Találatok: <strong>18 járat</strong></span>
+                        <span>Rendezés: <strong>Optimalizált pontszám</strong></span>
+                    </div>
+
+                    <!-- CARD 1 -->
+                    <div class="flight-card-nordic featured">
+                        <div class="legs-box">
+                            <div class="leg">
+                                <span class="airline-tag">W6</span>
+                                <div><span class="time-bold">06:15</span> <span class="code-gray">BUD</span></div>
+                                <span class="dur-center">3ó 45p (közv.)</span>
+                                <div><span class="time-bold">09:00</span> <span class="code-gray">LIS</span></div>
+                            </div>
+                            <div class="leg">
+                                <span class="airline-tag">W6</span>
+                                <div><span class="time-bold">10:10</span> <span class="code-gray">LIS</span></div>
+                                <span class="dur-center">3ó 40p (közv.)</span>
+                                <div><span class="time-bold">14:50</span> <span class="code-gray">BUD</span></div>
+                            </div>
+                        </div>
+
+                        <div class="score-box-nordic">
+                            <div class="score-val">0.94</div>
+                            <div class="score-lbl">Optimum</div>
+                        </div>
+
+                        <div class="price-box-nordic">
+                            <div class="price-text">48 900 Ft</div>
+                            <button class="btn-select-nordic">Kiválasztás</button>
+                        </div>
+                    </div>
+
+                    <!-- CARD 2 -->
+                    <div class="flight-card-nordic">
+                        <div class="legs-box">
+                            <div class="leg">
+                                <span class="airline-tag">LH</span>
+                                <div><span class="time-bold">09:30</span> <span class="code-gray">BUD</span></div>
+                                <span class="dur-center">5ó 20p (1 átsz.)</span>
+                                <div><span class="time-bold">13:50</span> <span class="code-gray">LIS</span></div>
+                            </div>
+                            <div class="leg">
+                                <span class="airline-tag">LH</span>
+                                <div><span class="time-bold">14:40</span> <span class="code-gray">LIS</span></div>
+                                <span class="dur-center">5ó 15p (1 átsz.)</span>
+                                <div><span class="time-bold">20:55</span> <span class="code-gray">BUD</span></div>
+                            </div>
+                        </div>
+
+                        <div class="score-box-nordic" style="background: #f5f5f4;">
+                            <div class="score-val" style="color: var(--text-secondary);">0.82</div>
+                            <div class="score-lbl" style="color: var(--text-secondary);">Score</div>
+                        </div>
+
+                        <div class="price-box-nordic">
+                            <div class="price-text" style="color: var(--text-main);">64 200 Ft</div>
+                            <button class="btn-select-nordic">Kiválasztás</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        function switchView(viewName, btn) {
+            document.querySelectorAll('.view-container').forEach(el => el.classList.remove('active'));
+            document.getElementById('view-' + viewName).classList.add('active');
+
+            document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+        }
+    </script>
+</body>
+</html>

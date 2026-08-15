@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optivoya Storyboard — Koncepció C (B2B2C Client Pitch & Trip Builder)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-canvas: #fcfbf9;
+            --bg-surface: #ffffff;
+            --primary-forest: #14532d;
+            --primary-light: #f0fdf4;
+            --accent-gold: #b45309;
+            --accent-gold-light: #fef3c7;
+            --accent-emerald: #059669;
+            
+            --text-dark: #1c1917;
+            --text-muted: #78716c;
+            --border-warm: #e7e5e4;
+            
+            --radius-box: 16px;
+            --radius-btn: 10px;
+            --shadow-soft: 0 10px 25px -5px rgba(28, 25, 23, 0.05), 0 8px 10px -6px rgba(28, 25, 23, 0.03);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-canvas);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* WARM LUXURY NAVBAR */
+        .top-nav {
+            background: white;
+            border-bottom: 1px solid var(--border-warm);
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 40;
+        }
+
+        .brand-group {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        .brand-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--primary-forest);
+            letter-spacing: -0.5px;
+        }
+
+        .brand-sub {
+            font-size: 11.5px;
+            font-weight: 700;
+            color: var(--accent-gold);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .story-tabs {
+            display: flex;
+            gap: 8px;
+            background: var(--bg-canvas);
+            padding: 4px;
+            border-radius: var(--radius-btn);
+            border: 1px solid var(--border-warm);
+        }
+
+        .story-tab {
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+
+        .story-tab.active {
+            background: white;
+            color: var(--primary-forest);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        .btn-gold {
+            background: var(--primary-forest);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: var(--radius-btn);
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(20, 83, 45, 0.2);
+        }
+
+        .btn-gold:hover {
+            background: #166534;
+            transform: translateY(-1px);
+        }
+
+        /* MAIN CONTAINER */
+        .workspace-wrap {
+            max-width: 1440px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 32px 40px;
+            display: grid;
+            grid-template-columns: 1fr 420px;
+            gap: 36px;
+            flex: 1;
+        }
+
+        /* SECTION HEADER */
+        .section-header {
+            margin-bottom: 24px;
+        }
+
+        .client-banner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+            padding: 16px 24px;
+            border-radius: var(--radius-box);
+            border: 1px solid var(--border-warm);
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .client-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary-forest);
+        }
+
+        .client-meta {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* TRIP STORYBOARD CARDS (Integrated flight + hotel proposal) */
+        .story-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .package-card {
+            background: white;
+            border-radius: var(--radius-box);
+            border: 1px solid var(--border-warm);
+            overflow: hidden;
+            box-shadow: var(--shadow-soft);
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .package-card:hover {
+            border-color: var(--primary-forest);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .package-header {
+            padding: 16px 24px;
+            background: #fafaf9;
+            border-bottom: 1px solid var(--border-warm);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .package-tag {
+            background: var(--primary-light);
+            color: var(--primary-forest);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+        }
+
+        .package-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .item-row {
+            display: grid;
+            grid-template-columns: 36px 1fr auto;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .item-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--bg-canvas);
+            border: 1px solid var(--border-warm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .item-details h4 {
+            font-size: 14.5px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .item-details p {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .item-price {
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--text-dark);
+        }
+
+        .story-badge {
+            background: #fffbeb;
+            border: 1px solid #fef3c7;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            color: #92400e;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .package-footer {
+            padding: 18px 24px;
+            background: #fafaf9;
+            border-top: 1px solid var(--border-warm);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .total-price {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--primary-forest);
+        }
+
+        /* RIGHT PITCH & MARGIN BUILDER */
+        .pitch-panel {
+            background: white;
+            border-radius: var(--radius-box);
+            border: 1px solid var(--border-warm);
+            padding: 28px;
+            box-shadow: var(--shadow-soft);
+            height: fit-content;
+            position: sticky;
+            top: 104px;
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+        }
+
+        .pitch-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .margin-box {
+            background: var(--bg-canvas);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border-warm);
+        }
+
+        .margin-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .phone-preview-mockup {
+            border: 8px solid #292524;
+            border-radius: 28px;
+            padding: 18px 14px;
+            background: #f8fafc;
+            box-shadow: 0 20px 30px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .mockup-header {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--primary-forest);
+            text-align: center;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 8px;
+        }
+
+        .mockup-item {
+            background: white;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 10.5px;
+            border: 1px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="top-nav">
+        <div class="brand-group">
+            <span class="brand-name">Optivoya</span>
+            <span class="brand-sub">Client Pitch Studio</span>
+        </div>
+
+        <nav class="story-tabs">
+            <a href="#" class="story-tab active">1. Repjegy & Szállás Összeállítás</a>
+            <a href="#" class="story-tab">2. Kliens Prezentáció</a>
+            <a href="#" class="story-tab">3. PDF & Web Link</a>
+        </nav>
+
+        <button class="btn-gold" onclick="alert('Kliens landing page sikeresen legenerálva!')">
+            <span>✨</span> Interaktív Ajánlat Küldése
+        </button>
+    </header>
+
+    <div class="workspace-wrap">
+        
+        <!-- LEFT: CLIENT TRIP PACKAGES -->
+        <main>
+            <div class="client-banner">
+                <div>
+                    <div class="client-title">Kovács Családi Utazás — Portugália 2026</div>
+                    <div class="client-meta">4 fő (2 felnőtt, 2 gyerek) • 2026. Május 10–17 • 7 éjszaka</div>
+                </div>
+                <button style="background: none; border: 1px solid var(--border-warm); padding: 8px 14px; border-radius: 8px; font-weight: 600; cursor: pointer;">Módosítás</button>
+            </div>
+
+            <div class="story-flow">
+                
+                <!-- PACKAGE 1: THE BEST FIT -->
+                <div class="package-card" style="border: 2px solid var(--primary-forest);">
+                    <div class="package-header">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="font-weight: 700; font-size: 15px;">A Opció: Prémium Családi Nyugalom</span>
+                            <span class="package-tag">★ Fő Ajánlat</span>
+                        </div>
+                        <span style="font-size: 13px; color: var(--accent-gold); font-weight: 700;">PROMETHEE Score: 9.6/10</span>
+                    </div>
+
+                    <div class="package-body">
+                        <!-- FLIGHT -->
+                        <div class="item-row">
+                            <div class="item-icon">✈️</div>
+                            <div class="item-details">
+                                <h4>Közvetlen Wizz Air járatok (optimális délelőtti érkezés)</h4>
+                                <p>BUD 06:15 → LIS 09:00 | Vissza: LIS 10:10 → BUD 14:50 (4x feladott poggyásszal)</p>
+                            </div>
+                            <div class="item-price">195 600 Ft</div>
+                        </div>
+
+                        <!-- HOTEL -->
+                        <div class="item-row">
+                            <div class="item-icon">🏨</div>
+                            <div class="item-details">
+                                <h4>Hotel Santa Justa Lisboa ★★★★ (Családi lakosztály)</h4>
+                                <p>Központban, 9.2 Booking értékelés, ingyenes lemondás, reggelivel</p>
+                            </div>
+                            <div class="item-price">340 000 Ft</div>
+                        </div>
+
+                        <div class="story-badge">
+                            <span>💡</span>
+                            <span><strong>Szakértői indoklás az ügyfélnek:</strong> A szálloda gyalogos távolságra van az óvárostól, így nincs szükség taxizásra babakocsival, a közvetlen reggeli járat pedig teljes első napot biztosít.</span>
+                        </div>
+                    </div>
+
+                    <div class="package-footer">
+                        <div>
+                            <span style="font-size: 12px; color: var(--text-muted); display: block;">Teljes utazási csomagár (repjegy + szállás):</span>
+                            <span class="total-price">535 600 Ft</span>
+                        </div>
+                        <button class="btn-gold" style="padding: 8px 16px; font-size: 12.5px;">Ajánlati Csomagba Téve ✓</button>
+                    </div>
+                </div>
+
+                <!-- PACKAGE 2: BUDGET VALUE -->
+                <div class="package-card">
+                    <div class="package-header">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="font-weight: 700; font-size: 15px;">B Opció: Költséghatékony Alternatíva</span>
+                            <span class="package-tag" style="background: #f1f5f9; color: #475569;">Budget Fit</span>
+                        </div>
+                        <span style="font-size: 13px; color: var(--text-muted); font-weight: 600;">Score: 8.4/10</span>
+                    </div>
+
+                    <div class="package-body">
+                        <div class="item-row">
+                            <div class="item-icon">✈️</div>
+                            <div class="item-details">
+                                <h4>Ryanair járat (esti visszaindulás)</h4>
+                                <p>BUD 12:40 → LIS 15:30 | Vissza: LIS 18:40 → BUD 23:15</p>
+                            </div>
+                            <div class="item-price">162 000 Ft</div>
+                        </div>
+
+                        <div class="item-row">
+                            <div class="item-icon">🏨</div>
+                            <div class="item-details">
+                                <h4>Turim Lisboa Hotel ★★★★ (2 egybenyíló szoba)</h4>
+                                <p>Metró mellett, 8.4 értékelés</p>
+                            </div>
+                            <div class="item-price">265 000 Ft</div>
+                        </div>
+                    </div>
+
+                    <div class="package-footer">
+                        <div>
+                            <span style="font-size: 12px; color: var(--text-muted); display: block;">Teljes csomagár:</span>
+                            <span class="total-price" style="color: #334155;">427 000 Ft</span>
+                        </div>
+                        <button style="background: white; border: 1px solid var(--border-warm); padding: 8px 16px; border-radius: var(--radius-btn); font-weight: 600; cursor: pointer;">+ Hozzáadás összehasonlításhoz</button>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+        <!-- RIGHT: PITCH CONTROLS & LIVE CLIENT VIEW PREVIEW -->
+        <aside class="pitch-panel">
+            <div class="pitch-title">
+                <span>📱</span> Kliens Nézet Előnézet (Mobil & Web)
+            </div>
+
+            <div class="margin-box">
+                <div class="margin-label">
+                    <span>Ügynöki Szervezési Díj / Margin</span>
+                    <span id="margin-pct" style="color: var(--primary-forest); font-weight: 700;">+8% (42 800 Ft)</span>
+                </div>
+                <input type="range" min="0" max="20" value="8" style="width: 100%;" oninput="document.getElementById('margin-pct').innerText='+'+this.value+'% ('+(this.value*5350).toLocaleString()+' Ft)'">
+            </div>
+
+            <!-- PHONE SIMULATION -->
+            <div class="phone-preview-mockup">
+                <div class="mockup-header">Optivoya Client Portal • Kovács Család</div>
+                <div class="mockup-item">
+                    <strong>🏆 #1 Ajánlat: Lisszabon (7 nap)</strong>
+                    <div style="color: #64748b; font-size: 9.5px; margin-top: 2px;">Wizz Air közvetlen + Hotel Santa Justa ★★★★</div>
+                    <div style="color: #14532d; font-weight: 700; margin-top: 4px;">578 400 Ft (Bruttó)</div>
+                </div>
+                <div class="mockup-item" style="opacity: 0.7;">
+                    <strong>Alternatív Opció: Turim Hotel</strong>
+                    <div style="color: #64748b; font-size: 9.5px;">461 160 Ft</div>
+                </div>
+                <button style="background: #14532d; color: white; border: none; padding: 6px; border-radius: 6px; font-size: 10px; font-weight: 700;">Elfogadom az Ajánlatot ➔</button>
+            </div>
+
+            <button class="btn-gold" style="width: 100%; justify-content: center;">
+                Branded PDF & Link Küldése (Kovács Család)
+            </button>
+        </aside>
+
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,487 @@
+{% extends "base.html" %}
+
+{% block title %}Optivoya — Járatok Szűrése{% endblock %}
+
+{% block head %}
+<style>
+    .day-selector {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 6px;
+    }
+
+    .day-btn {
+        padding: 8px 14px;
+        border: 1px solid var(--border-strong);
+        background: var(--bg-surface);
+        color: var(--text-secondary);
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 600;
+        transition: all var(--transition-fast);
+        min-width: 40px;
+        text-align: center;
+    }
+
+    .day-btn:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    .day-btn.active {
+        background: var(--primary);
+        color: var(--primary-contrast);
+        border-color: var(--primary);
+    }
+
+    .live-counter-panel {
+        position: sticky;
+        top: 80px;
+        z-index: 40;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--bg-surface-elevated);
+        border: 1.5px solid var(--primary);
+        border-radius: var(--radius-md);
+        padding: 16px 20px;
+        margin-bottom: 24px;
+        box-shadow: var(--shadow-md);
+        backdrop-filter: blur(16px);
+        transition: all var(--transition-fast);
+    }
+
+    .live-counter-panel.warning {
+        border-color: var(--status-error);
+        background: var(--status-error-bg);
+    }
+
+    .counter-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .counter-icon-wrap {
+        width: 40px;
+        height: 40px;
+        background: var(--primary-light);
+        color: var(--primary);
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .live-counter-panel.warning .counter-icon-wrap {
+        background: var(--status-error-bg);
+        color: var(--status-error);
+    }
+
+    .counter-label {
+        font-size: 12px;
+        color: var(--text-secondary);
+        font-weight: 600;
+    }
+
+    .counter-num-wrap {
+        font-size: 20px;
+        font-weight: 800;
+        color: var(--text-main);
+        font-family: var(--font-mono);
+    }
+
+    .counter-badge-pill {
+        padding: 4px 12px;
+        border-radius: var(--radius-full);
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .counter-badge-pill.ok {
+        background: var(--status-success-bg);
+        color: var(--status-success);
+        border: 1px solid var(--status-success);
+    }
+
+    .counter-badge-pill.zero {
+        background: var(--status-error-bg);
+        color: var(--status-error);
+        border: 1px solid var(--status-error);
+    }
+
+    .tip-box {
+        background: var(--status-warning-bg);
+        border-left: 4px solid var(--status-warning);
+        padding: 14px 18px;
+        border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+        font-size: 13px;
+        line-height: 1.5;
+        color: var(--text-main);
+        margin-bottom: 24px;
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+    }
+
+    .filter-section-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text-main);
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<a href="/flight-intelligence" class="btn-back-link">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+    </svg>
+    <span>Vissza a keresési paraméterekhez</span>
+</a>
+
+<div class="page-header">
+    <h1 class="page-title">Járatok technikai szűrése</h1>
+    <p class="page-subtitle">Jelenleg <strong>{{ flight_count }}</strong> járatkombináció érhető el. Csak a valódi kizáró okokat állítsd be!</p>
+</div>
+
+<!-- LIVE FLOATING COUNTER -->
+<div class="live-counter-panel" id="liveCounterBox">
+    <div class="counter-left">
+        <div class="counter-icon-wrap">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>
+            </svg>
+        </div>
+        <div>
+            <div class="counter-label">Feltételeknek megfelelő járatok száma:</div>
+            <div class="counter-num-wrap">
+                <span id="matchingCount">{{ flight_count }}</span>
+                <span style="font-size: 13px; font-weight: normal; color: var(--text-muted);">/ <span id="totalCount">{{ flight_count }}</span></span>
+            </div>
+        </div>
+    </div>
+    <div id="counterBadge" class="counter-badge-pill ok">Megfelelő</div>
+</div>
+
+<div id="filterZeroWarning" class="status-box status-error" style="display: none; margin-bottom: 20px;">
+    <strong>0 járat felel meg a beállított szűrőknek!</strong> A feltételek túl szigorúak. Kérlek módosíts a szűrőkön a továbblépéshez!
+</div>
+
+<div class="tip-box">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink: 0; margin-top: 2px;">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="16" x2="12" y2="12"></line>
+        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+    </svg>
+    <div>
+        <strong>Tipp az algoritmushoz:</strong> Minél több járat marad a rendszerben, annál pontosabb lesz az összehasonlítás. Csak azokat a korlátokat állítsd be, amik biztos kizáró okok. A finom preferenciákat a következő lépésekben tudod súlyozni!
+    </div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 20px; max-width: 900px; margin: 0 auto;">
+
+    <!-- IDŐBELI KIZÁRÁSOK -->
+    <div class="card">
+        <h2 class="filter-section-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span>Időbeli kizárások</span>
+        </h2>
+        
+        <div class="form-grid-2">
+            <div class="form-group">
+                <label class="form-label">Odaút indulási idősáv (óra)</label>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <input type="number" id="out_time_min" class="form-control" min="0" max="23" value="0" placeholder="0">
+                    <span>—</span>
+                    <input type="number" id="out_time_max" class="form-control" min="0" max="23" value="23" placeholder="23">
+                </div>
+                <small style="color: var(--text-muted); font-size: 11px;">Példa: 08:00 és 20:00 között</small>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Visszaút indulási idősáv (óra)</label>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <input type="number" id="in_time_min" class="form-control" min="0" max="23" value="0">
+                    <span>—</span>
+                    <input type="number" id="in_time_max" class="form-control" min="0" max="23" value="23">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NAPOK SZERINTI KIZÁRÁS -->
+    <div class="card">
+        <h2 class="filter-section-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span>Napok szerinti kizárás</span>
+        </h2>
+
+        <div class="form-group">
+            <label class="form-label">Kizárólag melyik napokon indulnál el? (Ha mind jó, hagyd üresen)</label>
+            <div class="day-selector" id="out_days">
+                <button type="button" class="day-btn" data-day="monday">H</button>
+                <button type="button" class="day-btn" data-day="tuesday">K</button>
+                <button type="button" class="day-btn" data-day="wednesday">Sze</button>
+                <button type="button" class="day-btn" data-day="thursday">Cs</button>
+                <button type="button" class="day-btn" data-day="friday">P</button>
+                <button type="button" class="day-btn" data-day="saturday">Szo</button>
+                <button type="button" class="day-btn" data-day="sunday">V</button>
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 14px;">
+            <label class="form-label">Kizárólag melyik napokon jönnél vissza? (Ha mind jó, hagyd üresen)</label>
+            <div class="day-selector" id="in_days">
+                <button type="button" class="day-btn" data-day="monday">H</button>
+                <button type="button" class="day-btn" data-day="tuesday">K</button>
+                <button type="button" class="day-btn" data-day="wednesday">Sze</button>
+                <button type="button" class="day-btn" data-day="thursday">Cs</button>
+                <button type="button" class="day-btn" data-day="friday">P</button>
+                <button type="button" class="day-btn" data-day="saturday">Szo</button>
+                <button type="button" class="day-btn" data-day="sunday">V</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FIX FELTÉTELEK -->
+    <div class="card">
+        <h2 class="filter-section-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+            <span>Fix feltételek</span>
+        </h2>
+
+        <div class="form-grid-2">
+            <div class="form-group">
+                <label class="form-label">Max. elfogadható átszállásszám</label>
+                <input type="number" id="max_stops" class="form-control" min="0" max="5" value="2">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Tartózkodási napok száma (min — max)</label>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <input type="number" id="stay_min" class="form-control" min="1" value="2">
+                    <span>—</span>
+                    <input type="number" id="stay_max" class="form-control" min="1" value="14">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Maximális ár összesen (Ft)</label>
+                <input type="number" id="price_min" value="0" step="1000" style="display:none;">
+                <input type="number" id="price_max" class="form-control" value="500000" step="1000">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Max. összesített utazási idő (óra)</label>
+                <input type="number" id="max_total_duration" class="form-control" min="1" max="48" value="24" step="0.5">
+            </div>
+        </div>
+    </div>
+
+    <button class="btn btn-primary btn-block" id="filterBtn" style="padding: 14px; font-size: 15px;" onclick="applyFilters()">
+        <span>Szűrés és tovább a súlyozáshoz</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+    </button>
+
+    <div id="status" class="status-box">
+        <div id="statusText" style="font-weight: 600;"></div>
+        <div class="progress-container" id="loadingBar" style="display: none; margin-top: 10px;">
+            <div class="progress-bar" style="width: 0%;"></div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let liveCountDebounce = null;
+    let lastMatchingCount = parseInt("{{ flight_count }}", 10) || 0;
+
+    function getPayload() {
+        const outDays = Array.from(document.querySelectorAll('#out_days .day-btn.active'))
+            .map(btn => btn.dataset.day);
+        const inDays = Array.from(document.querySelectorAll('#in_days .day-btn.active'))
+            .map(btn => btn.dataset.day);
+
+        return {
+            out_time_min: parseInt(document.getElementById('out_time_min').value) || 0,
+            out_time_max: parseInt(document.getElementById('out_time_max').value) || 23,
+            in_time_min: parseInt(document.getElementById('in_time_min').value) || 0,
+            in_time_max: parseInt(document.getElementById('in_time_max').value) || 23,
+            out_days: outDays,
+            in_days: inDays,
+            max_stops: parseInt(document.getElementById('max_stops').value) || 0,
+            price_min: parseFloat(document.getElementById('price_min').value) || 0,
+            price_max: parseFloat(document.getElementById('price_max').value) || 99999999,
+            stay_min: parseInt(document.getElementById('stay_min').value) || 1,
+            stay_max: parseInt(document.getElementById('stay_max').value) || 99,
+            max_total_duration: parseFloat(document.getElementById('max_total_duration').value) || 99
+        };
+    }
+
+    async function updateLiveFilterCount() {
+        clearTimeout(liveCountDebounce);
+        liveCountDebounce = setTimeout(async () => {
+            const payload = getPayload();
+            try {
+                const res = await fetch('/api/preview-filter-count', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    lastMatchingCount = data.matching_count;
+                    
+                    const countEl = document.getElementById('matchingCount');
+                    const totalEl = document.getElementById('totalCount');
+                    const box = document.getElementById('liveCounterBox');
+                    const badge = document.getElementById('counterBadge');
+                    const zeroAlert = document.getElementById('filterZeroWarning');
+                    const btn = document.getElementById('filterBtn');
+
+                    if (countEl) countEl.innerText = data.matching_count;
+                    if (totalEl) totalEl.innerText = data.total_count;
+
+                    if (data.matching_count === 0) {
+                        box.className = 'live-counter-panel warning';
+                        badge.className = 'counter-badge-pill zero';
+                        badge.innerText = '0 találat';
+                        zeroAlert.style.display = 'block';
+                        btn.disabled = true;
+                        btn.innerHTML = '<span>0 járat — Lazíts a szűrőkön</span>';
+                    } else {
+                        box.className = 'live-counter-panel';
+                        badge.className = 'counter-badge-pill ok';
+                        badge.innerText = 'Megfelelő';
+                        zeroAlert.style.display = 'none';
+                        btn.disabled = false;
+                        btn.innerHTML = `
+                            <span>Szűrés és tovább a súlyozáshoz</span>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <polyline points="12 5 19 12 12 19"></polyline>
+                            </svg>
+                        `;
+                    }
+                }
+            } catch (e) {
+                console.error("Live filter preview error:", e);
+            }
+        }, 100);
+    }
+
+    // Day toggles
+    document.querySelectorAll('.day-btn').forEach(btn => {
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            this.classList.toggle('active');
+            updateLiveFilterCount();
+        });
+    });
+
+    // Input changes
+    document.querySelectorAll('input[type="number"]').forEach(input => {
+        input.addEventListener('input', updateLiveFilterCount);
+        input.addEventListener('change', updateLiveFilterCount);
+    });
+
+    updateLiveFilterCount();
+
+    let pollInterval;
+
+    async function applyFilters() {
+        if (lastMatchingCount <= 0) {
+            alert("Nem léphetsz tovább 0 járattal! Kérlek lazíts a szűrőkön!");
+            return;
+        }
+
+        const btn = document.getElementById('filterBtn');
+        const statusDiv = document.getElementById('status');
+        const statusText = document.getElementById('statusText');
+        const loadingBar = document.getElementById('loadingBar');
+        const loadingBarInner = loadingBar.querySelector('.progress-bar');
+
+        const payload = getPayload();
+
+        btn.disabled = true;
+        statusDiv.style.display = 'block';
+        statusDiv.className = 'status-box status-running';
+        statusText.innerText = "Szűrés előkészítése...";
+
+        loadingBar.style.display = 'block';
+        loadingBarInner.style.width = '0%';
+
+        await fetch('/api/apply-filters', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        pollInterval = setInterval(checkFilterStatus, 500);
+    }
+
+    async function checkFilterStatus() {
+        const response = await fetch('/api/filter-status/{{ user }}');
+        const data = await response.json();
+        const statusDiv = document.getElementById('status');
+        const statusText = document.getElementById('statusText');
+        const loadingBar = document.getElementById('loadingBar');
+        const loadingBarInner = loadingBar.querySelector('.progress-bar');
+
+        if (data.status === 'running') {
+            statusText.innerText = data.status_text || "Adatok feldolgozása...";
+            if (data.progress !== undefined) {
+                loadingBarInner.style.width = data.progress + "%";
+            }
+        } else if (data.status === 'done') {
+            clearInterval(pollInterval);
+            if (data.count === 0) {
+                loadingBar.style.display = 'none';
+                statusDiv.className = 'status-box status-error';
+                statusText.innerText = "0 járat maradt a szűrés után. Kérlek állíts be enyhébb szűrőket!";
+                document.getElementById('filterBtn').disabled = true;
+                return;
+            }
+
+            loadingBarInner.style.width = "100%";
+            statusDiv.className = 'status-box status-success';
+            statusText.innerText = `${data.count} járat megfelel a kritériumoknak! Átirányítás...`;
+
+            setTimeout(() => {
+                window.location.href = '/flight-intelligence-ahp';
+            }, 800);
+        } else if (data.status === 'error') {
+            clearInterval(pollInterval);
+            loadingBar.style.display = 'none';
+            statusDiv.className = 'status-box status-error';
+            statusText.innerText = "Hiba: " + data.error;
+            document.getElementById('filterBtn').disabled = false;
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optivoya — v1: Clean Emerald (Világos Modern SaaS)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #f8fafc;
+            --bg-surface: #ffffff;
+            --primary: #059669;
+            --primary-hover: #047857;
+            --primary-light: #ecfdf5;
+            --primary-subtle: #d1fae5;
+            --text-main: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border-subtle: #e2e8f0;
+            --border-strong: #cbd5e1;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.04);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* TOP NAVBAR */
+        .navbar {
+            background: var(--bg-surface);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 0 32px;
+            height: 64px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .nav-logo {
+            width: 34px;
+            height: 34px;
+            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+            font-size: 16px;
+        }
+
+        .nav-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+        }
+
+        .badge-access {
+            background: var(--primary-light);
+            color: var(--primary);
+            font-size: 10.5px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* VIEW SWITCHER TABS */
+        .view-switcher {
+            display: flex;
+            background: #f1f5f9;
+            padding: 4px;
+            border-radius: 10px;
+            gap: 4px;
+        }
+
+        .view-btn {
+            padding: 6px 16px;
+            border-radius: 7px;
+            font-size: 12.5px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            background: transparent;
+            color: var(--text-secondary);
+            transition: all 0.15s;
+        }
+
+        .view-btn.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .user-tag {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            background: #f1f5f9;
+            color: var(--text-secondary);
+            padding: 7px 14px;
+            border-radius: var(--radius-sm);
+            text-decoration: none;
+            font-size: 12.5px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: #e2e8f0;
+            color: var(--text-main);
+        }
+
+        /* PAGE VIEWS */
+        .page-content {
+            flex: 1;
+            padding: 36px 32px;
+            max-width: 1280px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .view-container {
+            display: none;
+        }
+
+        .view-container.active {
+            display: block;
+        }
+
+        /* ================= 1. HOME VIEW ================= */
+        .home-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .home-header h1 {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+
+        .home-header p {
+            font-size: 15px;
+            color: var(--text-secondary);
+        }
+
+        .module-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 24px;
+        }
+
+        .module-card {
+            background: var(--bg-surface);
+            border: 1.5px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 32px 28px;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+        }
+
+        .module-card:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-3px);
+        }
+
+        .module-icon-wrap {
+            width: 52px;
+            height: 52px;
+            background: var(--primary-light);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .module-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
+
+        .module-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+
+        .module-cta {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .module-card.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            pointer-events: none;
+            background: #fafafa;
+        }
+
+        .soon-tag {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #e2e8f0;
+            color: #64748b;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 12px;
+            text-transform: uppercase;
+        }
+
+        /* ================= 2. FLIGHT INTELLIGENCE VIEW ================= */
+        .flight-layout {
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 28px;
+        }
+
+        .search-box {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .box-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .form-group input, .form-group select {
+            padding: 10px 12px;
+            border: 1px solid var(--border-strong);
+            border-radius: var(--radius-sm);
+            font-size: 13.5px;
+            outline: none;
+            transition: all 0.15s;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-subtle);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .btn-search {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-search:hover {
+            background: var(--primary-hover);
+        }
+
+        /* RESULTS FEED */
+        .results-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .results-header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-surface);
+            padding: 14px 20px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .feed-title {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .feed-title strong {
+            color: var(--text-main);
+        }
+
+        .flight-item-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 20px 24px;
+            display: grid;
+            grid-template-columns: 1fr 120px 140px;
+            align-items: center;
+            gap: 20px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .flight-item-card:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .flight-item-card.best-rank {
+            border: 2px solid var(--primary);
+        }
+
+        .rank-tag {
+            position: absolute;
+            top: -1px;
+            left: 20px;
+            background: var(--primary);
+            color: white;
+            font-size: 10.5px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-bottom-left-radius: 4px;
+            border-bottom-right-radius: 4px;
+        }
+
+        .flight-segments {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .segment-line {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .carrier-pill {
+            background: #f1f5f9;
+            color: var(--text-main);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .time-text {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .airport-code {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .mid-flight {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 100px;
+            gap: 2px;
+        }
+
+        .dur-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .dur-line {
+            height: 2px;
+            width: 100%;
+            background: #e2e8f0;
+            position: relative;
+        }
+
+        .direct-tag {
+            font-size: 10.5px;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .stop-tag {
+            font-size: 10.5px;
+            color: #d97706;
+            font-weight: 600;
+        }
+
+        .score-pill {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: var(--primary-light);
+            padding: 10px;
+            border-radius: var(--radius-sm);
+        }
+
+        .score-num {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        .score-lbl {
+            font-size: 10px;
+            font-weight: 700;
+            color: #065f46;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        .price-column {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+        }
+
+        .price-val {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-main);
+            font-feature-settings: "tnum";
+        }
+
+        .btn-view {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 12.5px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+        }
+
+        .btn-view:hover {
+            background: var(--primary-hover);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TOP NAVIGATION -->
+    <header class="navbar">
+        <a href="#" class="nav-brand">
+            <div class="nav-logo">O</div>
+            <span class="nav-title">Optivoya</span>
+            <span class="badge-access">Early Access</span>
+        </a>
+
+        <!-- PROTOTYPE VIEW SWITCHER -->
+        <div class="view-switcher">
+            <button class="view-btn active" onclick="switchView('home', this)">1. Home Nézet</button>
+            <button class="view-btn" onclick="switchView('flight', this)">2. Flight Intelligence Nézet</button>
+        </div>
+
+        <div class="user-menu">
+            <span class="user-tag">👤 admin</span>
+            <a href="#" class="logout-btn">Kilépés</a>
+        </div>
+    </header>
+
+    <main class="page-content">
+
+        <!-- ================= 1. HOME VIEW ================= -->
+        <section id="view-home" class="view-container active">
+            <div class="home-header">
+                <h1>Mi az utazási célod?</h1>
+                <p>Válaszd ki a használni kívánt döntéstámogató modult</p>
+            </div>
+
+            <div class="module-grid">
+                <!-- FLIGHT -->
+                <a href="javascript:void(0)" onclick="switchView('flight', document.querySelectorAll('.view-btn')[1])" class="module-card">
+                    <div>
+                        <div class="module-icon-wrap">✈️</div>
+                        <h2 class="module-title">Flight Intelligence</h2>
+                        <p class="module-desc">Intelligens járatkeresés személyre szabott kritériumokkal és AHP / PROMETHEE II döntéstámogatással.</p>
+                    </div>
+                    <div class="module-cta">Modul megnyitása ➔</div>
+                </a>
+
+                <!-- ACCOMMODATION -->
+                <a href="#" class="module-card">
+                    <div>
+                        <div class="module-icon-wrap">🏨</div>
+                        <h2 class="module-title">Accommodation Intelligence</h2>
+                        <p class="module-desc">Aggregált szálláskeresés és adatvezérelt összehasonlító elhelyezkedési és ár/érték elemzés.</p>
+                    </div>
+                    <div class="module-cta">Modul megnyitása ➔</div>
+                </a>
+
+                <!-- DESTINATION -->
+                <div class="module-card disabled">
+                    <span class="soon-tag">Hamarosan</span>
+                    <div>
+                        <div class="module-icon-wrap" style="background: #f1f5f9; filter: grayscale(1);">🌍</div>
+                        <h2 class="module-title" style="color: #64748b;">Destination Matcher</h2>
+                        <p class="module-desc">Többszempontos úti cél rangsorolás időjárási, költségvetési és biztonsági szűrésekkel.</p>
+                    </div>
+                    <div class="module-cta" style="color: #94a3b8;">Fejlesztés alatt</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= 2. FLIGHT INTELLIGENCE VIEW ================= -->
+        <section id="view-flight" class="view-container">
+            <div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1 style="font-size: 24px; font-weight: 800; color: var(--text-main);">Flight Intelligence</h1>
+                    <p style="font-size: 13.5px; color: var(--text-secondary);">Járatok keresése és rangsorolása többkritériumos döntési modellel</p>
+                </div>
+                <button class="logout-btn" onclick="switchView('home', document.querySelectorAll('.view-btn')[0])">← Vissza a Főoldalra</button>
+            </div>
+
+            <div class="flight-layout">
+                <!-- SEARCH FORM -->
+                <div class="search-box">
+                    <div class="box-title">
+                        <span>🔍</span> Keresési Feltételek
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Honnan</label>
+                            <input type="text" value="Budapest (BUD)">
+                        </div>
+                        <div class="form-group">
+                            <label>Hová</label>
+                            <input type="text" value="Lisszabon (LIS)">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Indulás</label>
+                            <input type="date" value="2026-05-10">
+                        </div>
+                        <div class="form-group">
+                            <label>Visszaút</label>
+                            <input type="date" value="2026-05-17">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Utasok száma</label>
+                        <select>
+                            <option>1 Felnőtt</option>
+                            <option selected>2 Felnőtt</option>
+                            <option>Család (2 felnőtt, 2 gyerek)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Max. átszállás</label>
+                        <select>
+                            <option selected>Legfeljebb 1 átszállás</option>
+                            <option>Csak közvetlen járat</option>
+                        </select>
+                    </div>
+
+                    <button class="btn-search">Járatok Keresése & Értékelése</button>
+                </div>
+
+                <!-- RESULTS FEED -->
+                <div class="results-feed">
+                    <div class="results-header-bar">
+                        <div class="feed-title">
+                            Találatok: <strong>18 járat</strong> (PROMETHEE II pontszám szerint rangsorolva)
+                        </div>
+                        <div style="font-size: 12px; color: var(--text-secondary);">
+                            Rendezés: <strong>Legjobb összpontszám</strong>
+                        </div>
+                    </div>
+
+                    <!-- CARD 1 -->
+                    <div class="flight-item-card best-rank">
+                        <span class="rank-tag">🏆 1. Helyezett</span>
+                        
+                        <div class="flight-segments">
+                            <div class="segment-line">
+                                <span class="carrier-pill">W6 2315</span>
+                                <div><span class="time-text">06:15</span> <span class="airport-code">BUD</span></div>
+                                <div class="mid-flight">
+                                    <span class="dur-label">3ó 45p</span>
+                                    <div class="dur-line"></div>
+                                    <span class="direct-tag">Közvetlen</span>
+                                </div>
+                                <div><span class="time-text">09:00</span> <span class="airport-code">LIS</span></div>
+                            </div>
+
+                            <div class="segment-line">
+                                <span class="carrier-pill">W6 2316</span>
+                                <div><span class="time-text">10:10</span> <span class="airport-code">LIS</span></div>
+                                <div class="mid-flight">
+                                    <span class="dur-label">3ó 40p</span>
+                                    <div class="dur-line"></div>
+                                    <span class="direct-tag">Közvetlen</span>
+                                </div>
+                                <div><span class="time-text">14:50</span> <span class="airport-code">BUD</span></div>
+                            </div>
+                        </div>
+
+                        <div class="score-pill">
+                            <span class="score-num">0.94</span>
+                            <span class="score-lbl">Relevancia</span>
+                        </div>
+
+                        <div class="price-column">
+                            <span class="price-val">48 900 Ft</span>
+                            <span style="font-size: 11px; color: var(--text-muted);">/fő oda-vissza</span>
+                            <button class="btn-view">Kiválasztás</button>
+                        </div>
+                    </div>
+
+                    <!-- CARD 2 -->
+                    <div class="flight-item-card">
+                        <div class="flight-segments">
+                            <div class="segment-line">
+                                <span class="carrier-pill">LH 1337</span>
+                                <div><span class="time-text">09:30</span> <span class="airport-code">BUD</span></div>
+                                <div class="mid-flight">
+                                    <span class="dur-label">5ó 20p</span>
+                                    <div class="dur-line"></div>
+                                    <span class="stop-tag">1 átszállás (FRA)</span>
+                                </div>
+                                <div><span class="time-text">13:50</span> <span class="airport-code">LIS</span></div>
+                            </div>
+
+                            <div class="segment-line">
+                                <span class="carrier-pill">LH 1338</span>
+                                <div><span class="time-text">14:40</span> <span class="airport-code">LIS</span></div>
+                                <div class="mid-flight">
+                                    <span class="dur-label">5ó 15p</span>
+                                    <div class="dur-line"></div>
+                                    <span class="stop-tag">1 átszállás (MUC)</span>
+                                </div>
+                                <div><span class="time-text">20:55</span> <span class="airport-code">BUD</span></div>
+                            </div>
+                        </div>
+
+                        <div class="score-pill" style="background: #f1f5f9;">
+                            <span class="score-num" style="color: #475569;">0.82</span>
+                            <span class="score-lbl" style="color: #64748b;">Relevancia</span>
+                        </div>
+
+                        <div class="price-column">
+                            <span class="price-val">64 200 Ft</span>
+                            <span style="font-size: 11px; color: var(--text-muted);">/fő oda-vissza</span>
+                            <button class="btn-view" style="background: #334155;">Kiválasztás</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        function switchView(viewName, btn) {
+            document.querySelectorAll('.view-container').forEach(el => el.classList.remove('active'));
+            document.getElementById('view-' + viewName).classList.add('active');
+
+            document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+        }
+    </script>
+</body>
+</html>

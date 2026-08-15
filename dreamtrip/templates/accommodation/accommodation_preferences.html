@@ -1,0 +1,432 @@
+{% extends "base.html" %}
+
+{% block title %}Optivoya — Szállás Kritériumok Finomhangolása{% endblock %}
+
+{% block head %}
+<style>
+    .pref-section {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        padding: 24px;
+        margin-bottom: 20px;
+        box-shadow: var(--shadow-sm);
+        transition: border-color var(--transition-fast);
+    }
+
+    .pref-section:hover {
+        border-color: var(--primary);
+    }
+
+    .pref-section-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text-main);
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .param-inputs-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        margin-top: 14px;
+    }
+
+    .explanation-box {
+        background: var(--bg-surface-subtle);
+        border-left: 3px solid var(--primary);
+        padding: 10px 14px;
+        border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+        font-size: 12.5px;
+        color: var(--text-secondary);
+        margin-top: 14px;
+        line-height: 1.5;
+    }
+
+    .input-group.disabled {
+        opacity: 0.4;
+        pointer-events: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<a href="/accommodation-intelligence-ahp" class="btn-back-link">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+    </svg>
+    <span>Vissza a súlyozáshoz</span>
+</a>
+
+<div class="page-header centered">
+    <h1 class="page-title">Szállás kritériumok finomhangolása</h1>
+    <p class="page-subtitle">PROMETHEE II döntési modellezés — add meg a küszöbértékeket</p>
+</div>
+
+<div style="max-width: 860px; margin: 0 auto;">
+
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar" style="width: 50%;"></div>
+    </div>
+    <div id="progressText" style="text-align: center; font-size: 12.5px; color: var(--text-muted); margin-bottom: 24px; font-weight: 600;">
+        Folyamat: 0 / 4 beállítva
+    </div>
+
+    <!-- 1. ÁR PREFERENCIA -->
+    <div class="pref-section">
+        <h2 class="pref-section-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="1" x2="12" y2="23"></line>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
+            <span>Ár érzékenység</span>
+        </h2>
+
+        <select id="price_type" class="form-control">
+            <option value="">-- Hogyan hasonlítsunk össze két szállásárat? --</option>
+            <option value="usual">Szigorú - Amelyik szállás olcsóbb, az a jobb (mindegy hogy mennyivel)</option>
+            <option value="v-shape">Fokozatos - Amennyivel olcsóbb az egyik a másiknál, annyival jobb</option>
+            <option value="linear">Rugalmas - Pár ezer Ft különbség még nem számít, de azon túl egyre jobb az olcsóbb</option>
+        </select>
+
+        <div class="param-inputs-row">
+            <div class="form-group">
+                <label class="form-label" id="price_q_label">Küszöb 1</label>
+                <input type="number" id="price_q" class="form-control" placeholder="Pl. 5000" value="0" min="0">
+            </div>
+            <div class="form-group">
+                <label class="form-label" id="price_p_label">Küszöb 2</label>
+                <input type="number" id="price_p" class="form-control" placeholder="Pl. 20000" value="20000" min="0">
+            </div>
+        </div>
+
+        <div class="explanation-box" id="price_explanation">
+            Válassz egy összehasonlítási módot a részletes magyarázathoz
+        </div>
+    </div>
+
+    <!-- 2. ÉRTÉKELÉS PREFERENCIA -->
+    <div class="pref-section">
+        <h2 class="pref-section-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+            <span>Értékelés pontszám</span>
+        </h2>
+
+        <select id="rating_type" class="form-control">
+            <option value="">-- Két értékelés összehasonlítása... --</option>
+            <option value="v-shape">Fokozatos - A magasabb értékelés arányosan jobb</option>
+            <option value="linear">Rugalmas - Kis pontkülönbség még nem döntő (pl. 8.8 vs 9.0)</option>
+            <option value="usual">Szigorú - Amelyik értékelése akár 0.1 ponttal jobb, az nyer</option>
+        </select>
+
+        <div class="param-inputs-row">
+            <div class="form-group">
+                <label class="form-label" id="rating_q_label">Küszöb 1</label>
+                <input type="number" id="rating_q" class="form-control" placeholder="Pl. 0.3" value="0" min="0" max="5" step="0.1">
+            </div>
+            <div class="form-group">
+                <label class="form-label" id="rating_p_label">Küszöb 2</label>
+                <input type="number" id="rating_p" class="form-control" placeholder="Pl. 1.0" value="1.0" min="0" max="5" step="0.1">
+            </div>
+        </div>
+
+        <div class="explanation-box" id="rating_explanation">
+            Válassz egy összehasonlítási módot a részletes magyarázathoz
+        </div>
+    </div>
+
+    <!-- 3. VÉLEMÉNYEK SZÁMA -->
+    <div class="pref-section">
+        <h2 class="pref-section-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <span>Népszerűség (vélemények száma)</span>
+        </h2>
+
+        <select id="reviews_type" class="form-control">
+            <option value="">-- Két szállás megbízhatósága a vélemények alapján... --</option>
+            <option value="linear">Rugalmas - Csak lényegesen több vélemény esetén tekintsük jobbnak</option>
+            <option value="v-shape">Fokozatos - Minél több a vélemény, annál megbízhatóbb</option>
+            <option value="usual">Szigorú - Amelyikre több vélemény érkezett, az a jobb</option>
+        </select>
+
+        <div class="param-inputs-row">
+            <div class="form-group">
+                <label class="form-label" id="reviews_q_label">Küszöb 1</label>
+                <input type="number" id="reviews_q" class="form-control" placeholder="Pl. 50" value="0" min="0">
+            </div>
+            <div class="form-group">
+                <label class="form-label" id="reviews_p_label">Küszöb 2</label>
+                <input type="number" id="reviews_p" class="form-control" placeholder="Pl. 200" value="200" min="0">
+            </div>
+        </div>
+
+        <div class="explanation-box" id="reviews_explanation">
+            Válassz egy összehasonlítási módot a részletes magyarázathoz
+        </div>
+    </div>
+
+    <!-- 4. TÁVOLSÁG A KÖZPONTBÓL -->
+    <div class="pref-section">
+        <h2 class="pref-section-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+            </svg>
+            <span>Központtól való távolság</span>
+        </h2>
+
+        <select id="distance_type" class="form-control">
+            <option value="">-- Két szállás elhelyezkedése alapján... --</option>
+            <option value="v-shape">Fokozatos - Minél közelebb van a belvároshoz, annál jobb</option>
+            <option value="linear">Rugalmas - Pár km séta még nem számít, de a külváros már nem jó</option>
+            <option value="usual">Szigorú - Amelyik közelebb van, az nyer</option>
+        </select>
+
+        <div class="param-inputs-row">
+            <div class="form-group">
+                <label class="form-label" id="distance_q_label">Küszöb 1</label>
+                <input type="number" id="distance_q" class="form-control" placeholder="Pl. 1" value="0" min="0" step="0.5">
+            </div>
+            <div class="form-group">
+                <label class="form-label" id="distance_p_label">Küszöb 2</label>
+                <input type="number" id="distance_p" class="form-control" placeholder="Pl. 5" value="5" min="0" step="0.5">
+            </div>
+        </div>
+
+        <div class="explanation-box" id="distance_explanation">
+            Válassz egy összehasonlítási módot a részletes magyarázathoz
+        </div>
+    </div>
+
+    <!-- SUBMIT BUTTONS -->
+    <div style="display: flex; gap: 14px; margin-top: 32px;">
+        <button type="button" class="btn btn-secondary" onclick="window.location.href='/accommodation-intelligence-ahp'" style="flex: 1;">
+            Vissza a súlyokhoz
+        </button>
+        <button type="button" id="calcBtn" class="btn btn-primary" style="flex: 2; padding: 14px 24px; font-size: 15px;" onclick="calculate()" disabled>
+            <span>Kiértékelés és rangsorolás</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+        </button>
+    </div>
+
+    <!-- LOADER -->
+    <div id="loader" class="status-box status-running" style="display: none; margin-top: 24px;">
+        <p id="loaderText" style="font-weight: 600;">Szállások kiértékelése és rangsorolása folyamatban...</p>
+        <div class="progress-container" style="display: block; margin-top: 12px;">
+            <div class="progress-bar" id="calcProgressBar" style="width: 0%;"></div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const units = { price: 'Ft', rating: 'pont', reviews: 'db', distance: 'km' };
+
+    const explanations = {
+        price: {
+            usual: "Szigorú: Az olcsóbb szállás egyértelműen jobb, bármekkora is a különbség.",
+            "v-shape": "Fokozatos: Minél olcsóbb az egyik a másiknál ({p} különbség felett már teljesen), annál inkább azt választjuk.",
+            "linear": "Rugalmas: {q} különbség alatt egyformának tekintjük őket, {p} felett már egyértelműen az olcsóbb a jobb."
+        },
+        rating: {
+            usual: "Szigorú: A magasabb értékelésű szállás a jobb.",
+            "v-shape": "Fokozatos: A jobb értékelésű szállás annyival preferáltabb, amennyivel magasabb a pontszáma ({p} pont felett teljesen).",
+            "linear": "Rugalmas: {q} pont eltérés még elhanyagolható, de {p} pont különbség már döntő."
+        },
+        reviews: {
+            usual: "Szigorú: A több értékeléssel rendelkező szállás a megbízhatóbb.",
+            "v-shape": "Fokozatos: Minél több a vélemény, annál inkább preferált ({p} db plusz véleménynél már teljesen).",
+            "linear": "Rugalmas: {q} vélemény eltérés még nem dönt, de {p} plusz véleménynél már jelentős az előnye."
+        },
+        distance: {
+            usual: "Szigorú: A központhoz közelebbi szállás a jobb.",
+            "v-shape": "Fokozatos: Minél közelebb van a szállás a belvároshoz ({p} km eltérésnél teljesen), annál jobb.",
+            "linear": "Rugalmas: {q} km séta még nem számít hátránynak, de {p} km-nél messzebb már jelentősen rosszabb."
+        }
+    };
+
+    const labelConfigs = {
+        usual: { q: "(Nem kell beállítás)", p: "(Nem kell beállítás)", showQ: false, showP: false },
+        "v-shape": { q: "(Nem használt)", p: "Mekkora a kritikus különbség?", showQ: false, showP: true },
+        linear: { q: "Mekkora különbség nem számít még?", p: "Mekkora különbség ami már döntő?", showQ: true, showP: true }
+    };
+
+    const specificLabels = {
+        price: {
+            "v-shape": { p: "Mekkora az az árkülönbség, ami felett már sokkal drágább egy szállás?" },
+            "linear": { q: "Mennyi az a pár ezer Ft ami nem számít?", p: "Honnan számít már nagyon soknak?" }
+        },
+        rating: {
+            "v-shape": { p: "Mennyivel rosszabb értékelés az, ami már nagyon számít?" },
+            "linear": { q: "Hány pont eltérés nem számít még?", p: "Hány pont eltérés már kritikus?" }
+        },
+        reviews: {
+            "linear": { p: "Mennyivel több vélemény kell a döntéshez?" }
+        },
+        distance: {
+            "v-shape": { p: "Hány km plusz távolság az, ami már zavaró?" },
+            "linear": { q: "Hány km séta nem számít még?", p: "Hány km felett érzed túl messzinek?" }
+        }
+    };
+
+    function updateProgress() {
+        const criteria = ['price', 'rating', 'reviews', 'distance'];
+        let completed = 0;
+
+        criteria.forEach(c => {
+            const type = document.getElementById(c + '_type').value;
+            if (type) completed++;
+        });
+
+        const progress = (completed / 4) * 100;
+        document.getElementById('progressBar').style.width = progress + '%';
+        document.getElementById('progressText').innerText = `Folyamat: ${completed} / 4 beállítva`;
+        document.getElementById('calcBtn').disabled = (completed < 4);
+    }
+
+    function updateCriterionUI(criterion) {
+        const type = document.getElementById(criterion + '_type').value;
+        const qWrapper = document.getElementById(criterion + '_q').closest('.form-group');
+        const pWrapper = document.getElementById(criterion + '_p').closest('.form-group');
+        const qLabel = document.getElementById(criterion + '_q_label');
+        const pLabel = document.getElementById(criterion + '_p_label');
+        const explanationDiv = document.getElementById(criterion + '_explanation');
+
+        if (!type) {
+            qWrapper.classList.add('disabled');
+            pWrapper.classList.add('disabled');
+            explanationDiv.innerHTML = "Válassz egy összehasonlítási módot a magyarázathoz";
+            updateProgress();
+            return;
+        }
+
+        const config = labelConfigs[type];
+        let qText = config.q;
+        let pText = config.p;
+
+        if (specificLabels[criterion] && specificLabels[criterion][type]) {
+            if (specificLabels[criterion][type].q) qText = specificLabels[criterion][type].q;
+            if (specificLabels[criterion][type].p) pText = specificLabels[criterion][type].p;
+        }
+
+        qLabel.innerText = qText;
+        pLabel.innerText = pText;
+
+        if (config.showQ) qWrapper.classList.remove('disabled');
+        else qWrapper.classList.add('disabled');
+
+        if (config.showP) pWrapper.classList.remove('disabled');
+        else pWrapper.classList.add('disabled');
+
+        let txt = explanations[criterion][type] || "";
+        const qVal = document.getElementById(criterion + '_q').value || 0;
+        const pVal = document.getElementById(criterion + '_p').value || 0;
+        const unit = units[criterion];
+
+        txt = txt.replace(/{q}/g, `<strong>${qVal} ${unit}</strong>`)
+            .replace(/{p}/g, `<strong>${pVal} ${unit}</strong>`);
+        explanationDiv.innerHTML = txt;
+
+        updateProgress();
+    }
+
+    const criteria = ['price', 'rating', 'reviews', 'distance'];
+
+    criteria.forEach(c => {
+        document.getElementById(c + '_type').addEventListener('change', () => updateCriterionUI(c));
+        document.getElementById(c + '_q').addEventListener('input', () => updateCriterionUI(c));
+        document.getElementById(c + '_p').addEventListener('input', () => updateCriterionUI(c));
+        updateCriterionUI(c);
+    });
+
+    let calcPollInterval;
+
+    async function calculate() {
+        const btn = document.getElementById('calcBtn');
+        const loader = document.getElementById('loader');
+        const loaderText = document.getElementById('loaderText');
+        const loadingBarInner = document.getElementById('calcProgressBar');
+
+        btn.disabled = true;
+        loader.style.display = 'block';
+        loaderText.innerText = "Rangsorolás indítása...";
+        loadingBarInner.style.width = '0%';
+
+        const configs = {};
+        criteria.forEach(c => {
+            configs[c] = {
+                type: document.getElementById(c + '_type').value,
+                q: parseFloat(document.getElementById(c + '_q').value) || 0,
+                p: parseFloat(document.getElementById(c + '_p').value) || 0
+            };
+        });
+
+        try {
+            const response = await fetch('/api/calculate-stay-results', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ configs })
+            });
+
+            if (response.ok) {
+                calcPollInterval = setInterval(checkCalculationStatus, 500);
+            } else {
+                const err = await response.json();
+                alert("Hiba: " + (err.detail || "Ismeretlen hiba"));
+                btn.disabled = false;
+                loader.style.display = 'none';
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Hálózati hiba.");
+            btn.disabled = false;
+            loader.style.display = 'none';
+        }
+    }
+
+    async function checkCalculationStatus() {
+        try {
+            const response = await fetch('/api/stay-calculation-status');
+            const data = await response.json();
+            const loader = document.getElementById('loader');
+            const loaderText = document.getElementById('loaderText');
+            const loadingBarInner = document.getElementById('calcProgressBar');
+
+            if (data.status === 'running') {
+                loaderText.innerText = data.status_text || "Számítás folyamatban...";
+                if (data.progress !== undefined) {
+                    loadingBarInner.style.width = data.progress + "%";
+                }
+            } else if (data.status === 'done') {
+                clearInterval(calcPollInterval);
+                loadingBarInner.style.width = "100%";
+                loaderText.innerText = "Kész! Átirányítás...";
+                setTimeout(() => {
+                    window.location.href = '/accommodation-intelligence-results';
+                }, 500);
+            } else if (data.status === 'error') {
+                clearInterval(calcPollInterval);
+                alert("Hiba: " + data.error);
+                const btn = document.getElementById('calcBtn');
+                btn.disabled = false;
+                loader.style.display = 'none';
+            }
+        } catch (e) {
+            console.error("Status check error", e);
+        }
+    }
+</script>
+{% endblock %}

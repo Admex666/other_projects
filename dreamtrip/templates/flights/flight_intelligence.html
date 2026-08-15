@@ -1,0 +1,368 @@
+{% extends "base.html" %}
+
+{% block title %}Optivoya — Flight Intelligence Kereső{% endblock %}
+
+{% block content %}
+<a href="/home" class="btn-back-link">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+    </svg>
+    <span>Vissza a főoldalra</span>
+</a>
+
+<div class="page-header">
+    <h1 class="page-title">Flight Intelligence</h1>
+    <p class="page-subtitle">Járatok keresése és rangsorolása többkritériumos döntési modellel</p>
+</div>
+
+<div class="card" style="max-width: 900px; margin: 0 auto;">
+    
+    <div class="form-grid-2">
+        <!-- INDULÁS -->
+        <div class="form-group">
+            <label class="form-label" for="origin">Indulási repülőtér / város</label>
+            <div class="autocomplete-container" id="origin-container">
+                <input type="text" id="origin" class="form-control" placeholder="Pl. Budapest (BUD)" value="{{ prefill.origin or 'Budapest' }}" autocomplete="off">
+                <div class="autocomplete-dropdown" id="origin-dropdown"></div>
+            </div>
+        </div>
+
+        <!-- ÉRKEZÉS -->
+        <div class="form-group">
+            <label class="form-label" for="destination">Érkezési repülőtér / város</label>
+            <div class="autocomplete-container" id="destination-container">
+                <input type="text" id="destination" class="form-control" placeholder="Pl. Barcelona (BCN)" value="{{ prefill.destination or '' }}" autocomplete="off">
+                <div class="autocomplete-dropdown" id="destination-dropdown"></div>
+            </div>
+        </div>
+
+        <!-- ODAÚT DÁTUMABLAK -->
+        <div class="form-group">
+            <label class="form-label">Odaút időablak (mettől - meddig)</label>
+            <div style="display: flex; gap: 8px;">
+                <input type="date" id="out_from" class="form-control">
+                <input type="date" id="out_to" class="form-control">
+            </div>
+        </div>
+
+        <!-- VISSZAÚT DÁTUMABLAK -->
+        <div class="form-group">
+            <label class="form-label">Visszaút időablak (mettől - meddig)</label>
+            <div style="display: flex; gap: 8px;">
+                <input type="date" id="in_from" class="form-control">
+                <input type="date" id="in_to" class="form-control">
+            </div>
+        </div>
+    </div>
+
+    <button id="searchBtn" class="btn btn-primary btn-block" style="margin-top: 20px; padding: 14px;" onclick="startSearch()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <span>Járatok keresése</span>
+    </button>
+
+    <!-- STATUS & PROGRESS INDICATOR -->
+    <div id="status" class="status-box">
+        <div id="statusText" style="font-weight: 600;"></div>
+        <div class="progress-container" id="loadingBar" style="display: none; margin-top: 10px;">
+            <div class="progress-bar" style="width: 0%;"></div>
+        </div>
+    </div>
+
+    <!-- SUCCESS RESULTS BANNER -->
+    <div id="results"></div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // ===== AUTOCOMPLETE CONTROLLER =====
+    function setupAutocomplete(inputId, dropdownId, mode) {
+        const input = document.getElementById(inputId);
+        const dropdown = document.getElementById(dropdownId);
+        let debounceTimer = null;
+        let activeIndex = -1;
+        let currentItems = [];
+
+        async function fetchSuggestions(term) {
+            try {
+                const res = await fetch(`/api/locations/autocomplete?term=${encodeURIComponent(term)}&mode=${mode}`);
+                if (!res.ok) return [];
+                return await res.json();
+            } catch (e) {
+                console.error("Autocomplete error:", e);
+                return [];
+            }
+        }
+
+        function renderDropdown(items) {
+            currentItems = items;
+            activeIndex = -1;
+            if (!items || items.length === 0) {
+                dropdown.innerHTML = '<div style="padding: 12px; font-size: 13px; color: var(--text-muted); text-align: center;">Nincs találat repülőtérrel</div>';
+                dropdown.style.display = 'block';
+                return;
+            }
+
+            dropdown.innerHTML = items.map((item, idx) => `
+                <div class="autocomplete-item" data-index="${idx}">
+                    <div class="autocomplete-main">
+                        <div class="autocomplete-name">${item.city_name || item.name}</div>
+                        <div class="autocomplete-sub">${item.sub || item.country_name || ''}</div>
+                    </div>
+                    ${item.code ? `<span class="autocomplete-code">${item.code}</span>` : ''}
+                </div>
+            `).join('');
+
+            dropdown.querySelectorAll('.autocomplete-item').forEach(el => {
+                el.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
+                    const idx = parseInt(el.dataset.index);
+                    selectItem(currentItems[idx]);
+                });
+            });
+
+            dropdown.style.display = 'block';
+        }
+
+        function selectItem(item) {
+            if (!item) return;
+            const val = item.code ? `${item.city_name || item.name} (${item.code})` : (item.city_name || item.name);
+            input.value = val;
+            input.dataset.selectedId = item.id || '';
+            dropdown.style.display = 'none';
+            activeIndex = -1;
+        }
+
+        input.addEventListener('focus', async () => {
+            const items = await fetchSuggestions(input.value.trim());
+            renderDropdown(items);
+        });
+
+        input.addEventListener('input', () => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(async () => {
+                const items = await fetchSuggestions(input.value.trim());
+                renderDropdown(items);
+            }, 150);
+        });
+
+        input.addEventListener('keydown', (e) => {
+            const itemsEls = dropdown.querySelectorAll('.autocomplete-item');
+            if (dropdown.style.display === 'block' && itemsEls.length > 0) {
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    activeIndex = (activeIndex + 1) % itemsEls.length;
+                    updateActiveItem(itemsEls);
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    activeIndex = (activeIndex - 1 + itemsEls.length) % itemsEls.length;
+                    updateActiveItem(itemsEls);
+                } else if (e.key === 'Enter') {
+                    if (activeIndex >= 0 && activeIndex < currentItems.length) {
+                        e.preventDefault();
+                        selectItem(currentItems[activeIndex]);
+                    }
+                } else if (e.key === 'Escape') {
+                    dropdown.style.display = 'none';
+                    activeIndex = -1;
+                }
+            }
+        });
+
+        function updateActiveItem(itemsEls) {
+            itemsEls.forEach((el, idx) => {
+                if (idx === activeIndex) {
+                    el.classList.add('active');
+                    el.scrollIntoView({ block: 'nearest' });
+                } else {
+                    el.classList.remove('active');
+                }
+            });
+        }
+
+        document.addEventListener('click', (e) => {
+            if (!input.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+    }
+
+    setupAutocomplete('origin', 'origin-dropdown', 'origin');
+    setupAutocomplete('destination', 'destination-dropdown', 'destination');
+
+    // ===== DATE PICKER INITIALIZATION =====
+    const outFromInput = document.getElementById('out_from');
+    const outToInput = document.getElementById('out_to');
+    const inFromInput = document.getElementById('in_from');
+    const inToInput = document.getElementById('in_to');
+
+    const today = new Date().toISOString().split('T')[0];
+    const tomorrow = new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+    const nextWeek = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+    const nextWeekLater = new Date(new Date().getTime() + 10 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+    [outFromInput, outToInput, inFromInput, inToInput].forEach(el => {
+        el.min = today;
+    });
+
+    outFromInput.value = "{{ prefill.out_from or '' }}" || tomorrow;
+    outToInput.value = "{{ prefill.out_to or '' }}" || nextWeek;
+    inFromInput.value = "{{ prefill.in_from or '' }}" || nextWeek;
+    inToInput.value = "{{ prefill.in_to or '' }}" || nextWeekLater;
+
+    outFromInput.addEventListener('change', () => {
+        if (outFromInput.value) {
+            const d = outFromInput.value;
+            [outToInput, inFromInput, inToInput].forEach(el => {
+                el.min = d;
+                if (el.value && el.value < d) el.value = d;
+            });
+        }
+    });
+
+    outToInput.addEventListener('change', () => {
+        if (outToInput.value) {
+            inToInput.min = outToInput.value;
+            if (inToInput.value && inToInput.value < outToInput.value) {
+                inToInput.value = outToInput.value;
+            }
+        }
+    });
+
+    inFromInput.addEventListener('change', () => {
+        if (inFromInput.value) {
+            if (inToInput.value && inToInput.value < inFromInput.value) {
+                inToInput.value = inFromInput.value;
+            }
+            inToInput.min = inFromInput.value;
+        }
+    });
+
+    // ===== SEARCH & STATUS POLLING =====
+    let pollInterval;
+
+    async function startSearch() {
+        const btn = document.getElementById('searchBtn');
+        const statusDiv = document.getElementById('status');
+        const statusText = document.getElementById('statusText');
+        const loadingBar = document.getElementById('loadingBar');
+        const loadingBarInner = loadingBar.querySelector('.progress-bar');
+        const resultsDiv = document.getElementById('results');
+
+        const originVal = document.getElementById('origin').value.trim();
+        const destinationVal = document.getElementById('destination').value.trim();
+
+        if (!originVal) {
+            alert("Kérlek válassz indulási várost / repülőteret!");
+            return;
+        }
+
+        if (!destinationVal) {
+            alert("Kérlek válassz célállomást / repülőteret!");
+            return;
+        }
+
+        const payload = {
+            origin: originVal,
+            destination: destinationVal,
+            out_from: document.getElementById('out_from').value,
+            out_to: document.getElementById('out_to').value,
+            in_from: document.getElementById('in_from').value,
+            in_to: document.getElementById('in_to').value
+        };
+
+        if (!payload.out_from) {
+            alert("Kérlek válaszd ki az odaút indulási dátumát!");
+            return;
+        }
+
+        btn.disabled = true;
+        statusDiv.style.display = 'block';
+        statusDiv.className = 'status-box status-running';
+        statusText.innerText = "Keresési paraméterek ellenőrzése...";
+
+        loadingBar.style.display = 'block';
+        loadingBarInner.style.width = '0%';
+
+        resultsDiv.innerHTML = "";
+
+        try {
+            const res = await fetch('/start-intelligence-search', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            
+            if (!res.ok) {
+                const errData = await res.json();
+                throw new Error(errData.detail || "Hiba a keresés indításakor");
+            }
+        } catch (err) {
+            btn.disabled = false;
+            statusDiv.style.display = 'block';
+            statusDiv.className = 'status-box status-error';
+            statusText.innerText = err.message;
+            loadingBar.style.display = 'none';
+            return;
+        }
+
+        pollInterval = setInterval(checkStatus, 1000);
+    }
+
+    async function checkStatus() {
+        const response = await fetch('/search-status');
+        const data = await response.json();
+        const statusDiv = document.getElementById('status');
+        const statusText = document.getElementById('statusText');
+        const loadingBar = document.getElementById('loadingBar');
+        const loadingBarInner = loadingBar.querySelector('.progress-bar');
+
+        if (data.status === 'running') {
+            statusText.innerText = data.status_text || "Adatok gyűjtése a járatokról...";
+            if (data.progress !== undefined) {
+                loadingBarInner.style.width = data.progress + "%";
+            }
+        } else if (data.status === 'done') {
+            clearInterval(pollInterval);
+            loadingBarInner.style.width = "100%";
+
+            setTimeout(() => {
+                statusDiv.style.display = 'none';
+                loadingBar.style.display = 'none';
+                document.getElementById('searchBtn').disabled = false;
+
+                const resultsDiv = document.getElementById('results');
+                resultsDiv.innerHTML = `
+                    <div style="background: var(--status-success-bg); border: 1.5px solid var(--primary); border-radius: var(--radius-md); padding: 28px 24px; text-align: center; margin-top: 24px;">
+                        <h2 style="color: var(--primary); font-size: 20px; font-weight: 700; margin-bottom: 8px;">Sikeres adatgyűjtés!</h2>
+                        <p style="font-size: 15px; color: var(--text-secondary); margin-bottom: 20px;">Összesen <strong>${data.count}</strong> lehetséges járatkombinációt találtunk.</p>
+                        
+                        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                            <button onclick="window.location.href='/flight-intelligence'" class="btn btn-secondary">Új keresés</button>
+                            <button onclick="window.location.href='/flight-intelligence-filter'" class="btn btn-primary" style="padding: 12px 24px;">
+                                <span>Tovább a preferenciák beállításához</span>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    <polyline points="12 5 19 12 12 19"></polyline>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }, 500);
+        } else if (data.status === 'error') {
+            clearInterval(pollInterval);
+            loadingBar.style.display = 'none';
+            statusDiv.style.display = 'block';
+            statusDiv.className = 'status-box status-error';
+            statusText.innerText = "Hiba történt: " + data.error;
+            document.getElementById('searchBtn').disabled = false;
+        }
+    }
+</script>
+{% endblock %}

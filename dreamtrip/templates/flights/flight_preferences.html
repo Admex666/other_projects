@@ -1,0 +1,570 @@
+{% extends "base.html" %}
+
+{% block title %}Optivoya — Kritériumok Finomhangolása{% endblock %}
+
+{% block head %}
+<style>
+    .pref-section {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        padding: 24px;
+        margin-bottom: 20px;
+        box-shadow: var(--shadow-sm);
+        transition: border-color var(--transition-fast);
+    }
+
+    .pref-section:hover {
+        border-color: var(--primary);
+    }
+
+    .pref-section-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text-main);
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .param-inputs-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        margin-top: 14px;
+    }
+
+    .explanation-box {
+        background: var(--bg-surface-subtle);
+        border-left: 3px solid var(--primary);
+        padding: 10px 14px;
+        border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+        font-size: 12.5px;
+        color: var(--text-secondary);
+        margin-top: 14px;
+        line-height: 1.5;
+    }
+
+    .input-group.disabled {
+        opacity: 0.4;
+        pointer-events: none;
+    }
+
+    .time-badge-display {
+        font-family: var(--font-mono);
+        font-size: 13px;
+        font-weight: 700;
+        background: var(--primary);
+        color: var(--primary-contrast);
+        padding: 2px 8px;
+        border-radius: 4px;
+        margin-left: 8px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<a href="/flight-intelligence-ahp" class="btn-back-link">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+    </svg>
+    <span>Vissza a preferenciák súlyozásához</span>
+</a>
+
+<div class="page-header centered">
+    <h1 class="page-title">Kritériumok finomhangolása</h1>
+    <p class="page-subtitle">PROMETHEE II döntési modellezés — add meg, hogyan hasonlítsuk össze a járatokat</p>
+</div>
+
+<div style="max-width: 860px; margin: 0 auto;">
+
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar" style="width: 70%;"></div>
+    </div>
+    <div id="progressText" style="text-align: center; font-size: 12.5px; color: var(--text-muted); margin-bottom: 24px; font-weight: 600;">
+        Folyamat: 12 / 17
+    </div>
+
+    <!-- IDEÁLIS ÉRTÉKEK -->
+    <div class="pref-section">
+        <h2 class="pref-section-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <circle cx="12" cy="12" r="6"></circle>
+                <circle cx="12" cy="12" r="2"></circle>
+            </svg>
+            <span>Ideális értékek meghatározása</span>
+        </h2>
+
+        <div class="form-group">
+            <label class="form-label">
+                Mikor lenne a legideálisabb elindulnod?
+                <span class="time-badge-display" id="hour_display">10:00</span>
+            </label>
+            <input type="range" id="ideal_departure_hour" min="0" max="23" value="10" step="1">
+            <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);">
+                <span>00:00 (Éjfél)</span>
+                <span>12:00 (Dél)</span>
+                <span>23:00 (Késő este)</span>
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 20px;">
+            <label class="form-label">Hány napot szeretnél ott tölteni ideálisan?</label>
+            <input type="number" id="ideal_stay_days" class="form-control"
+                value="{{ (filter_params.stay_min + filter_params.stay_max) // 2 }}"
+                min="{{ filter_params.stay_min }}" max="{{ filter_params.stay_max }}">
+            <small style="color: var(--text-muted); font-size: 11.5px; margin-top: 4px;">
+                A korábbi szűrésed alapján: {{ filter_params.stay_min }} - {{ filter_params.stay_max }} nap között.
+            </small>
+        </div>
+    </div>
+
+    <!-- ÁR PREFERENCIA -->
+    <div class="pref-section">
+        <h2 class="pref-section-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="1" x2="12" y2="23"></line>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
+            <span>Ár érzékenység</span>
+        </h2>
+
+        <select id="price_type" class="form-control">
+            <option value="">-- Hogyan hasonlítsunk össze két árat? --</option>
+            <option value="usual">Szigorú - Amelyik jegy olcsóbb, az a jobb (mindegy hogy mennyivel)</option>
+            <option value="v-shape">Fokozatos - Amennyivel olcsóbb egy jegy a másiknál, annyival jobb</option>
+            <option value="linear">Rugalmas - Pár ezer Ft különbség még nem számít, de azon túl egyre jobb az olcsóbb</option>
+        </select>
+
+        <div class="param-inputs-row">
+            <div class="form-group">
+                <label class="form-label" id="price_q_label">Küszöb 1</label>
+                <input type="number" id="price_q" class="form-control" placeholder="Pl. 5000" value="0" min="0">
+            </div>
+            <div class="form-group">
+                <label class="form-label" id="price_p_label">Küszöb 2</label>
+                <input type="number" id="price_p" class="form-control" placeholder="Pl. 20000" value="10000" min="0">
+            </div>
+        </div>
+
+        <div class="explanation-box" id="price_explanation">
+            Válassz egy összehasonlítási módot a részletes magyarázathoz
+        </div>
+    </div>
+
+    <!-- IDŐPONT PREFERENCIA -->
+    <div class="pref-section">
+        <h2 class="pref-section-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span>Indulási időpont érzékenység</span>
+        </h2>
+
+        <select id="departure_type" class="form-control">
+            <option value="">-- Két indulási időpont közül... --</option>
+            <option value="linear">Rugalmas - Pár óra eltérés az ideálistól még nem döntő</option>
+            <option value="v-shape">Fokozatos - Amelyik közelebb van az ideálishoz, az annyival jobb</option>
+            <option value="usual">Szigorú - Csak az számít, melyik van közelebb (bármilyen kicsit is)</option>
+        </select>
+
+        <div class="param-inputs-row">
+            <div class="form-group">
+                <label class="form-label" id="departure_q_label">Küszöb 1</label>
+                <input type="number" id="departure_q" class="form-control" placeholder="Pl. 1" value="0" min="0" max="12">
+            </div>
+            <div class="form-group">
+                <label class="form-label" id="departure_p_label">Küszöb 2</label>
+                <input type="number" id="departure_p" class="form-control" placeholder="Pl. 4" value="4" min="0" max="12">
+            </div>
+        </div>
+
+        <div class="explanation-box" id="departure_explanation">
+            Válassz egy összehasonlítási módot a részletes magyarázathoz
+        </div>
+    </div>
+
+    <!-- UTAZÁSI IDŐ PREFERENCIA -->
+    <div class="pref-section">
+        <h2 class="pref-section-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>
+            </svg>
+            <span>Utazási idő érzékenység</span>
+        </h2>
+
+        <select id="travel_time_type" class="form-control">
+            <option value="">-- Két repülőút közül... --</option>
+            <option value="v-shape">Fokozatos - Amennyivel gyorsabb az egyik, annyival jobb</option>
+            <option value="linear">Rugalmas - Kisebb időnyereség még nem számít, de a sok igen</option>
+            <option value="usual">Szigorú - Amelyik akár 1 perccel is gyorsabb, az a jobb</option>
+        </select>
+
+        <div class="param-inputs-row">
+            <div class="form-group">
+                <label class="form-label" id="travel_time_q_label">Küszöb 1</label>
+                <input type="number" id="travel_time_q" class="form-control" placeholder="Pl. 0.5" value="0" min="0" step="0.5">
+            </div>
+            <div class="form-group">
+                <label class="form-label" id="travel_time_p_label">Küszöb 2</label>
+                <input type="number" id="travel_time_p" class="form-control" placeholder="Pl. 3" value="3" min="0" step="0.5">
+            </div>
+        </div>
+
+        <div class="explanation-box" id="travel_time_explanation">
+            Válassz egy összehasonlítási módot a részletes magyarázathoz
+        </div>
+    </div>
+
+    <!-- ÁTSZÁLLÁSOK PREFERENCIA -->
+    <div class="pref-section">
+        <h2 class="pref-section-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+            </svg>
+            <span>Átszállások száma</span>
+        </h2>
+
+        <select id="stops_type" class="form-control">
+            <option value="">-- Ha az egyik járaton több az átszállás... --</option>
+            <option value="usual">Szigorú - Amelyiken kevesebb van, az az egyértelmű győztes</option>
+            <option value="v-shape">Fokozatos - Minden plusz átszállás arányosan rontja az esélyeit</option>
+        </select>
+
+        <div class="param-inputs-row">
+            <div class="form-group">
+                <label class="form-label" id="stops_q_label">Küszöb 1</label>
+                <input type="number" id="stops_q" class="form-control" placeholder="Pl. 0" value="0" min="0" max="3">
+            </div>
+            <div class="form-group">
+                <label class="form-label" id="stops_p_label">Küszöb 2</label>
+                <input type="number" id="stops_p" class="form-control" placeholder="Pl. 1" value="1" min="0" max="3">
+            </div>
+        </div>
+
+        <div class="explanation-box" id="stops_explanation">
+            Válassz egy összehasonlítási módot a részletes magyarázathoz
+        </div>
+    </div>
+
+    <!-- TARTÓZKODÁS PREFERENCIA -->
+    <div class="pref-section">
+        <h2 class="pref-section-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span>Tartózkodási idő érzékenység</span>
+        </h2>
+
+        <select id="stay_type" class="form-control">
+            <option value="">-- A kint töltött napok száma alapján... --</option>
+            <option value="linear">Rugalmas - Pár nap eltérés az ideálistól még belefér</option>
+            <option value="v-shape">Fokozatos - Amelyik közelebb van az álom-időtartamhoz, az annyival jobb</option>
+            <option value="usual">Szigorú - Csak az számít, melyik áll közelebb a tervemhez</option>
+        </select>
+
+        <div class="param-inputs-row">
+            <div class="form-group">
+                <label class="form-label" id="stay_q_label">Küszöb 1</label>
+                <input type="number" id="stay_q" class="form-control" placeholder="Pl. 1" value="0" min="0" max="7">
+            </div>
+            <div class="form-group">
+                <label class="form-label" id="stay_p_label">Küszöb 2</label>
+                <input type="number" id="stay_p" class="form-control" placeholder="Pl. 3" value="3" min="0" max="14">
+            </div>
+        </div>
+
+        <div class="explanation-box" id="stay_explanation">
+            Válassz egy összehasonlítási módot a részletes magyarázathoz
+        </div>
+    </div>
+
+    <!-- SUBMIT BUTTONS -->
+    <div style="display: flex; gap: 14px; margin-top: 32px;">
+        <button type="button" class="btn btn-secondary" onclick="window.location.href='/flight-intelligence-ahp'" style="flex: 1;">
+            Vissza a súlyokhoz
+        </button>
+        <button type="button" id="calcBtn" class="btn btn-primary" style="flex: 2; padding: 14px 24px; font-size: 15px;" onclick="calculate()" disabled>
+            <span>Kiértékelés és rangsorolás</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+        </button>
+    </div>
+
+    <!-- LOADER -->
+    <div id="loader" class="status-box status-running" style="display: none; margin-top: 24px;">
+        <p id="loaderText" style="font-weight: 600;">Járatok kiértékelése és rangsorolása folyamatban...</p>
+        <div class="progress-container" style="display: block; margin-top: 12px;">
+            <div class="progress-bar" id="calcProgressBar" style="width: 0%;"></div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const units = { price: 'Ft', departure: 'óra', travel_time: 'óra', stops: 'db', stay: 'nap' };
+
+    const explanations = {
+        price: {
+            usual: "Szigorú: Ha két jegy ára eltér, az olcsóbbat részesítem teljes előnyben, a különbség nagyságától függetlenül.",
+            "v-shape": "Fokozatos: Minél nagyobb az árkülönbség, annál inkább az olcsóbbat választom ({p} különbségnél már teljes az előnye).",
+            "linear": "Rugalmas: Ha az árkülönbség {q} alatt van, egyformának tekintem őket. {p} felett már egyértelműen az olcsóbb nyer.",
+            "u-shape": "Küszöb: Csak akkor preferálom az olcsóbbat, ha legalább {q} összeggel kevesebbe kerül.",
+            level: "Lépcsőzetes értékelés az árkülönbségre."
+        },
+        departure: {
+            usual: "Szigorú: Amelyik járat akár egy perccel is közelebb esik az ideális időponthoz, az a jobb.",
+            "linear": "Rugalmas: Ha mindkét járat {q} belül van az ideálishoz képest, egyformának tekintem őket. {p} eltérés felett már sokkal gyengébbnek számít az egyik.",
+            "v-shape": "Fokozatos: Két járat közül az a jobb, amelyik közelebb van az ideális időhöz; minél közelebb, annál jobb.",
+            "u-shape": "Küszöb: Csak akkor teszek különbséget, ha az egyik járat legalább {q}-val közelebb van a tervemhez.",
+            level: "Lépcsőzetes értékelés az indulási időre."
+        },
+        travel_time: {
+            "v-shape": "Fokozatos: Két járat közül a gyorsabb a jobb; amennyivel rövidebb az út, annyival preferáltabb.",
+            usual: "Szigorú: Amelyik járat bármivel is gyorsabb, az nyeri az összehasonlítást.",
+            "linear": "Rugalmas: Ha a menetidő különbség {q} alatt van, egyformának veszem őket. De {p} különbség felett már egyértelműen a gyorsabb a jobb.",
+            "u-shape": "Küszöb: Csak legalább {q} időnyereség esetén preferálom a gyorsabbat.",
+            level: "Lépcsőzetes értékelés a menetidőkre."
+        },
+        stops: {
+            usual: "Szigorú: A kevesebb átszállásos járat egyértelműen jobb.",
+            "v-shape": "Fokozatos: Minden plusz átszállás rontja az esélyeit.",
+            "linear": "Rugalmas: Kis eltérés esetén még nem ítélem jobbnak az egyiket, de {p} különbségnél már igen.",
+            "u-shape": "Küszöb: Csak akkor részesítem előnyben a kevesebb átszállást, ha legalább {q} a különbség.",
+            level: "Lépcsőzetes értékelés az átszállásokra."
+        },
+        stay: {
+            "linear": "Rugalmas: {q} nap eltérés a két járat között még belefér az egyformán jó kategóriába. {p} nap különbségnél már döntő.",
+            usual: "Szigorú: Amelyik járat kint tartózkodási ideje közelebb van a tervemhez, azt választom.",
+            "v-shape": "Fokozatos: Amelyik közelebb hoz az ideális napok számához, az annyival jobb.",
+            "u-shape": "Küszöb: Csak akkor részesítem előnyben az egyiket, ha legalább {q} nappal közelebb áll a tervemhez.",
+            level: "Lépcsőzetes értékelés a tartózkodásra."
+        }
+    };
+
+    const labelConfigs = {
+        usual: { q: "(Nem kell beállítás)", p: "(Nem kell beállítás)", showQ: false, showP: false },
+        "v-shape": { q: "(Nem használt)", p: "Mekkora a kritikus különbség?", showQ: false, showP: true },
+        "u-shape": { q: "Mekkora különbség fér még bele?", p: "(Nem használt)", showQ: true, showP: false },
+        level: { q: "Indifferencia", p: "Preferencia", showQ: true, showP: true },
+        linear: { q: "Mekkora különbség nem számít még?", p: "Mekkora különbség ami már döntő?", showQ: true, showP: true }
+    };
+
+    const specificLabels = {
+        price: {
+            "v-shape": { p: "Mekkora az az árkülönbség, ami felett már sokkal drágább egy repjegy?" },
+            "linear": { q: "Mennyi az a pár forint ami nem számít?", p: "Honnan számít már jelentősnek?" }
+        }
+    };
+
+    function updateProgress() {
+        const criteria = ['price', 'departure', 'travel_time', 'stops', 'stay'];
+        let completed = 2;
+
+        criteria.forEach(c => {
+            const type = document.getElementById(c + '_type').value;
+            if (type) {
+                const q = parseFloat(document.getElementById(c + '_q').value);
+                const p = parseFloat(document.getElementById(c + '_p').value);
+
+                const config = labelConfigs[type];
+                let ok = true;
+                if (config.showQ && isNaN(q)) ok = false;
+                if (config.showP && isNaN(p)) ok = false;
+                if (ok) completed++;
+            }
+        });
+
+        const currentStep = 10 + completed;
+        const progress = (currentStep / 17) * 100;
+        document.getElementById('progressBar').style.width = progress + '%';
+        document.getElementById('progressText').innerText = `Folyamat: ${currentStep} / 17`;
+
+        const allSelected = criteria.every(c => document.getElementById(c + '_type').value !== '');
+        document.getElementById('calcBtn').disabled = !allSelected;
+    }
+
+    function updateCriterionUI(criterion) {
+        const type = document.getElementById(criterion + '_type').value;
+        const qWrapper = document.getElementById(criterion + '_q').closest('.form-group');
+        const pWrapper = document.getElementById(criterion + '_p').closest('.form-group');
+        const qLabel = document.getElementById(criterion + '_q_label');
+        const pLabel = document.getElementById(criterion + '_p_label');
+        const explanationDiv = document.getElementById(criterion + '_explanation');
+
+        if (!type) {
+            qWrapper.classList.add('disabled');
+            pWrapper.classList.add('disabled');
+            explanationDiv.innerHTML = "Válassz egy összehasonlítási módot a magyarázathoz";
+            return;
+        }
+
+        const config = labelConfigs[type];
+        let qText = config.q;
+        let pText = config.p;
+
+        if (specificLabels[criterion] && specificLabels[criterion][type]) {
+            if (specificLabels[criterion][type].q) qText = specificLabels[criterion][type].q;
+            if (specificLabels[criterion][type].p) pText = specificLabels[criterion][type].p;
+        }
+
+        qLabel.innerText = qText;
+        pLabel.innerText = pText;
+
+        if (config.showQ) qWrapper.classList.remove('disabled');
+        else qWrapper.classList.add('disabled');
+
+        if (config.showP) pWrapper.classList.remove('disabled');
+        else pWrapper.classList.add('disabled');
+
+        let txt = explanations[criterion][type] || "";
+        const qVal = document.getElementById(criterion + '_q').value || 0;
+        const pVal = document.getElementById(criterion + '_p').value || 0;
+        const unit = units[criterion];
+
+        txt = txt.replace(/{q}/g, `<strong>${qVal} ${unit}</strong>`)
+            .replace(/{p}/g, `<strong>${pVal} ${unit}</strong>`);
+        explanationDiv.innerHTML = txt;
+    }
+
+    function updateHourDisplay(val) {
+        document.getElementById('hour_display').innerText = val + ':00';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const criteria = ['price', 'departure', 'travel_time', 'stops', 'stay'];
+
+        const idealSlider = document.getElementById('ideal_departure_hour');
+        const hourDisplay = document.getElementById('hour_display');
+
+        idealSlider.addEventListener('input', (e) => {
+            const val = e.target.value;
+            hourDisplay.innerText = val + ':00';
+            updateProgress();
+        });
+
+        document.getElementById('ideal_stay_days').addEventListener('input', updateProgress);
+
+        criteria.forEach(c => {
+            const typeSelect = document.getElementById(c + '_type');
+            const qInput = document.getElementById(c + '_q');
+            const pInput = document.getElementById(c + '_p');
+
+            typeSelect.addEventListener('change', () => {
+                updateCriterionUI(c);
+                updateProgress();
+            });
+
+            qInput.addEventListener('input', () => {
+                updateCriterionUI(c);
+                updateProgress();
+            });
+
+            pInput.addEventListener('input', () => {
+                updateCriterionUI(c);
+                updateProgress();
+            });
+
+            updateCriterionUI(c);
+        });
+
+        updateProgress();
+        updateHourDisplay(document.getElementById('ideal_departure_hour').value);
+    });
+
+    let calcPollInterval;
+
+    async function calculate() {
+        const btn = document.getElementById('calcBtn');
+        const loader = document.getElementById('loader');
+        const loaderText = document.getElementById('loaderText');
+        const loadingBarInner = document.getElementById('calcProgressBar');
+
+        btn.disabled = true;
+        loader.style.display = 'block';
+        loaderText.innerText = "Rangsorolás indítása...";
+        loadingBarInner.style.width = '0%';
+
+        const criteriaNames = ['price', 'departure', 'travel_time', 'stops', 'stay'];
+        const configs = {};
+
+        criteriaNames.forEach(name => {
+            configs[name] = {
+                type: document.getElementById(`${name}_type`).value,
+                q: parseFloat(document.getElementById(`${name}_q`).value) || 0,
+                p: parseFloat(document.getElementById(`${name}_p`).value) || 0
+            };
+        });
+
+        try {
+            const payload = {
+                ideal_departure_hour: parseInt(document.getElementById('ideal_departure_hour').value),
+                ideal_stay_days: parseInt(document.getElementById('ideal_stay_days').value),
+                configs: configs
+            };
+
+            const response = await fetch('/api/calculate-results', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (response.ok) {
+                calcPollInterval = setInterval(checkCalculationStatus, 500);
+            } else {
+                const err = await response.json();
+                alert("Hiba: " + (err.detail || "Ismeretlen hiba"));
+                btn.disabled = false;
+                loader.style.display = 'none';
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Hálózati hiba.");
+            btn.disabled = false;
+            loader.style.display = 'none';
+        }
+    }
+
+    async function checkCalculationStatus() {
+        try {
+            const response = await fetch('/api/calculation-status');
+            const data = await response.json();
+            const loader = document.getElementById('loader');
+            const loaderText = document.getElementById('loaderText');
+            const loadingBarInner = document.getElementById('calcProgressBar');
+
+            if (data.status === 'running') {
+                loaderText.innerText = data.status_text || "Számítás folyamatban...";
+                if (data.progress !== undefined) {
+                    loadingBarInner.style.width = data.progress + "%";
+                }
+            } else if (data.status === 'done') {
+                clearInterval(calcPollInterval);
+                loadingBarInner.style.width = "100%";
+                loaderText.innerText = "Kész! Átirányítás az eredményekhez...";
+                setTimeout(() => {
+                    window.location.href = '/flight-intelligence-results';
+                }, 500);
+            } else if (data.status === 'error') {
+                clearInterval(calcPollInterval);
+                alert("Hiba: " + data.error);
+                document.getElementById('calcBtn').disabled = false;
+                loader.style.display = 'none';
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }
+</script>
+{% endblock %}

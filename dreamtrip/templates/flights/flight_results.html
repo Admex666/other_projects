@@ -1,0 +1,477 @@
+{% extends "base.html" %}
+
+{% block title %}Optivoya — Személyre Szabott Járatok{% endblock %}
+
+{% block head %}
+<style>
+    .results-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        padding: 16px 20px;
+        margin-bottom: 24px;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+    .results-grid-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+        gap: 20px;
+    }
+
+    .styled-table-wrap {
+        display: none;
+        width: 100%;
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        overflow-x: auto;
+    }
+
+    .styled-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+    }
+
+    .styled-table th {
+        background: var(--bg-surface-subtle);
+        padding: 12px 16px;
+        font-size: 11.5px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .styled-table td {
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--border-subtle);
+        font-size: 13.5px;
+        color: var(--text-main);
+    }
+
+    .styled-table tr:hover td {
+        background: var(--bg-surface-subtle);
+    }
+
+    /* MODAL */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.65);
+        backdrop-filter: blur(8px);
+        z-index: 1000;
+        padding: 20px;
+        overflow-y: auto;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-card {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-lg);
+        max-width: 780px;
+        width: 100%;
+        margin: auto;
+        padding: 32px 28px;
+        box-shadow: var(--shadow-xl);
+        position: relative;
+    }
+
+    .modal-close-btn {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: transparent;
+        border: none;
+        color: var(--text-muted);
+        font-size: 24px;
+        cursor: pointer;
+        line-height: 1;
+    }
+
+    .modal-close-btn:hover {
+        color: var(--text-main);
+    }
+
+    .modal-section {
+        background: var(--bg-surface-subtle);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        padding: 18px;
+        margin-bottom: 16px;
+    }
+
+    .modal-section-title {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text-main);
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .detail-item-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 13px;
+        margin-bottom: 8px;
+    }
+
+    .detail-item-row:last-child {
+        margin-bottom: 0;
+    }
+
+    .detail-item-label {
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+
+    .detail-item-val {
+        color: var(--text-main);
+        font-weight: 700;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+    <a href="/flight-intelligence-preferences" class="btn-back-link" style="margin-bottom: 0;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        <span>Vissza a finomhangoláshoz</span>
+    </a>
+
+    <div style="font-size: 13px; color: var(--text-secondary);">
+        Összes találat: <strong>{{ results|length }}</strong> | Megjelenítve: <strong id="shown_count">{{ [results|length, 5]|min }}</strong>
+    </div>
+</div>
+
+<div class="page-header">
+    <h1 class="page-title">Személyre szabott járatok</h1>
+    <p class="page-subtitle">A beállított szűrők és súlyok alapján optimális repülőjegy opciók</p>
+</div>
+
+<!-- CONTROLS & VIEW TOGGLE -->
+<div class="results-toolbar">
+    <div style="display: flex; align-items: center; gap: 12px;">
+        <label class="form-label" style="margin-bottom: 0;" for="limit_select">Megjelenítés:</label>
+        <select id="limit_select" class="form-control" style="width: auto; padding: 7px 12px;" onchange="filterResults()">
+            <option value="5">Top 5 járat</option>
+            <option value="10">Top 10 járat</option>
+            <option value="20">Top 20 járat</option>
+            <option value="all">Összes ({{ results|length }})</option>
+        </select>
+    </div>
+
+    <div style="display: flex; gap: 6px;">
+        <button type="button" class="btn btn-primary" id="btn_grid" onclick="switchView('grid')" style="padding: 7px 14px; font-size: 12.5px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            <span>Kártyák</span>
+        </button>
+        <button type="button" class="btn btn-secondary" id="btn_table" onclick="switchView('table')" style="padding: 7px 14px; font-size: 12.5px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="8" y1="6" x2="21" y2="6"></line>
+                <line x1="8" y1="12" x2="21" y2="12"></line>
+                <line x1="8" y1="18" x2="21" y2="18"></line>
+                <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                <line x1="3" y1="18" x2="3.01" y2="18"></line>
+            </svg>
+            <span>Táblázat</span>
+        </button>
+    </div>
+</div>
+
+<!-- 1. GRID VIEW (DEFAULT) -->
+<div class="results-grid-container" id="grid_view">
+    {% for flight in results %}
+    <div class="flight-card result-card-item {% if loop.index == 1 %}rank-top{% endif %}" data-index="{{ loop.index0 }}">
+        <div class="rank-corner-badge">#{{ loop.index }} Rang</div>
+
+        <div class="route-segments">
+            <!-- ODAÚT -->
+            <div>
+                <div style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-bottom: 4px;">
+                    {{ (flight.out_dep_time.split('T')[0][5:].replace('-', '.') if 'T' in flight.out_dep_time else flight.out_dep_time[5:10]) }} • Odaút
+                </div>
+                <div class="route-row">
+                    <div>
+                        <span class="time-val">{{ (flight.out_dep_time.split('T')[1][:5] if 'T' in flight.out_dep_time else flight.out_dep_time[11:16]) }}</span>
+                        <span class="airport-val">{{ flight.out_dep_airport }}</span>
+                    </div>
+                    <div class="route-line-wrap">
+                        {% set h = (flight.out_duration_h)|int %}
+                        {% set m = ((flight.out_duration_h - h) * 60)|round|int %}
+                        <span class="route-dur">{{ h }}ó {{ m }}p</span>
+                        <div class="route-line"></div>
+                        <span class="{% if flight.out_stops == 0 %}route-type-direct{% else %}route-type-stop{% endif %}">
+                            {% if flight.out_stops == 0 %}Közvetlen{% else %}{{ flight.out_stops }} átszállás{% endif %}
+                        </span>
+                    </div>
+                    <div>
+                        <span class="time-val">{{ (flight.out_arr_time.split('T')[1][:5] if 'T' in flight.out_arr_time else flight.out_arr_time[11:16]) }}</span>
+                        <span class="airport-val">{{ flight.out_arr_airport }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VISSZAÚT -->
+            <div style="margin-top: 8px;">
+                <div style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-bottom: 4px;">
+                    {{ (flight.in_dep_time.split('T')[0][5:].replace('-', '.') if 'T' in flight.in_dep_time else flight.in_dep_time[5:10]) }} • Visszaút ({{ flight.stay_days }} éj)
+                </div>
+                <div class="route-row">
+                    <div>
+                        <span class="time-val">{{ (flight.in_dep_time.split('T')[1][:5] if 'T' in flight.in_dep_time else flight.in_dep_time[11:16]) }}</span>
+                        <span class="airport-val">{{ flight.in_dep_airport }}</span>
+                    </div>
+                    <div class="route-line-wrap">
+                        {% set h = (flight.in_duration_h)|int %}
+                        {% set m = ((flight.in_duration_h - h) * 60)|round|int %}
+                        <span class="route-dur">{{ h }}ó {{ m }}p</span>
+                        <div class="route-line"></div>
+                        <span class="{% if flight.in_stops == 0 %}route-type-direct{% else %}route-type-stop{% endif %}">
+                            {% if flight.in_stops == 0 %}Közvetlen{% else %}{{ flight.in_stops }} átszállás{% endif %}
+                        </span>
+                    </div>
+                    <div>
+                        <span class="time-val">{{ (flight.in_arr_time.split('T')[1][:5] if 'T' in flight.in_arr_time else flight.in_arr_time[11:16]) }}</span>
+                        <span class="airport-val">{{ flight.in_arr_airport }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCORE -->
+        <div class="score-display-box">
+            <span class="score-display-num">{{ "%.2f"|format(flight.phi_net * 100) }}%</span>
+            <span class="score-display-label">Relevancia</span>
+        </div>
+
+        <!-- PRICE & ACTION -->
+        <div class="card-action-col">
+            <span class="card-price-main">{{ "{:,.0f}".format(flight.total_price_huf) }} Ft</span>
+            <span class="card-price-sub">oda-vissza</span>
+            <button type="button" class="btn btn-primary btn-block" style="padding: 8px 12px; font-size: 13px;" onclick="showDetails({{ loop.index0 }})">
+                Részletek
+            </button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- 2. TABLE VIEW -->
+<div class="styled-table-wrap" id="table_view">
+    <table class="styled-table">
+        <thead>
+            <tr>
+                <th>Rang</th>
+                <th>Ár (összesen)</th>
+                <th>Indulás</th>
+                <th>Utazási idő</th>
+                <th>Átszállás</th>
+                <th>Tartózkodás</th>
+                <th>Relevancia</th>
+                <th>Művelet</th>
+            </tr>
+        </thead>
+        <tbody id="results_tbody">
+            {% for flight in results %}
+            <tr class="result-row" data-index="{{ loop.index0 }}">
+                <td style="font-weight: 700; font-family: var(--font-mono); color: var(--primary);">#{{ loop.index }}</td>
+                <td style="font-weight: 800; font-family: var(--font-mono);">{{ "{:,.0f}".format(flight.total_price_huf) }} Ft</td>
+                <td>{{ flight.out_dep_airport }} ➔ {{ flight.out_arr_airport }}</td>
+                <td>
+                    {% set avg_dur = (flight.out_duration_h + flight.in_duration_h) / 2 %}
+                    {{ avg_dur|round(1) }} óra átlag
+                </td>
+                <td>{{ flight.out_stops + flight.in_stops }} átszállás</td>
+                <td>{{ flight.stay_days }} nap</td>
+                <td>
+                    <span class="badge badge-success">{{ "%.2f"|format(flight.phi_net * 100) }}%</span>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="showDetails({{ loop.index0 }})">
+                        Részletek
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- DETAILS MODAL -->
+<div id="detailsModal" class="modal-overlay" onclick="handleOverlayClick(event)">
+    <div class="modal-card">
+        <button type="button" class="modal-close-btn" onclick="closeModal()">&times;</button>
+        <div style="font-size: 18px; font-weight: 800; color: var(--text-main); margin-bottom: 20px;" id="modal_title">Járat részletei</div>
+        <div id="modal_body"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    var allResults = {{ results | tojson | safe if results else '[]' }};
+
+    function filterResults() {
+        const limit = document.getElementById('limit_select').value;
+        const rows = document.querySelectorAll('.result-row');
+        const cards = document.querySelectorAll('.result-card-item');
+
+        let showCount = limit === 'all' ? rows.length : parseInt(limit);
+
+        rows.forEach((row, index) => {
+            row.style.display = index < showCount ? '' : 'none';
+        });
+
+        cards.forEach((card, index) => {
+            card.style.display = index < showCount ? 'grid' : 'none';
+        });
+
+        const countEl = document.getElementById('shown_count');
+        if (countEl) countEl.innerText = showCount;
+    }
+
+    function switchView(view) {
+        const tableView = document.getElementById('table_view');
+        const gridView = document.getElementById('grid_view');
+        const btnTable = document.getElementById('btn_table');
+        const btnGrid = document.getElementById('btn_grid');
+
+        if (view === 'table') {
+            tableView.style.display = 'block';
+            gridView.style.display = 'none';
+            btnTable.className = 'btn btn-primary';
+            btnGrid.className = 'btn btn-secondary';
+        } else {
+            tableView.style.display = 'none';
+            gridView.style.display = 'grid';
+            btnTable.className = 'btn btn-secondary';
+            btnGrid.className = 'btn btn-primary';
+        }
+    }
+
+    function showDetails(index) {
+        const flight = allResults[index];
+        const modal = document.getElementById('detailsModal');
+        const modalBody = document.getElementById('modal_body');
+
+        const formatDateTime = (dt) => {
+            if (!dt) return 'N/A';
+            const d = new Date(dt);
+            return d.toLocaleString('hu-HU', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        };
+
+        const getFullUrl = (url) => {
+            if (!url) return null;
+            if (url.startsWith('http')) return url;
+            if (url.startsWith('www')) return 'https://' + url;
+            return 'https://www.kiwi.com' + (url.startsWith('/') ? '' : '/') + url;
+        };
+
+        const outUrl = getFullUrl(flight.out_booking_url);
+        const inUrl = getFullUrl(flight.in_booking_url);
+
+        modalBody.innerHTML = `
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 20px;">
+                <!-- ODAÚT SZEKCIÓ -->
+                <div class="modal-section">
+                    <h3 class="modal-section-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                        <span>Odaút</span>
+                    </h3>
+                    <div class="detail-item-row"><span class="detail-item-label">Indulás:</span><span class="detail-item-val">${flight.out_dep_city || ''} (${flight.out_dep_airport || ''}) - ${formatDateTime(flight.out_dep_time)}</span></div>
+                    <div class="detail-item-row"><span class="detail-item-label">Érkezés:</span><span class="detail-item-val">${flight.out_arr_city || ''} (${flight.out_arr_airport || ''}) - ${formatDateTime(flight.out_arr_time)}</span></div>
+                    <div class="detail-item-row"><span class="detail-item-label">Menetidő:</span><span class="detail-item-val">${flight.out_duration_h || ''} óra</span></div>
+                    <div class="detail-item-row"><span class="detail-item-label">Átszállások:</span><span class="detail-item-val">${flight.out_stops || 0} db</span></div>
+                    <div class="detail-item-row"><span class="detail-item-label">Légitársaság:</span><span class="detail-item-val">${flight.out_carriers || 'N/A'}</span></div>
+                    <div class="detail-item-row"><span class="detail-item-label">Odaút ára:</span><span class="detail-item-val">${flight.out_price_huf ? flight.out_price_huf.toLocaleString('hu-HU') : 'N/A'} Ft</span></div>
+
+                    ${outUrl ? `
+                        <a href="${outUrl}" target="_blank" class="btn btn-primary btn-block" style="margin-top: 14px; padding: 10px; font-size: 13px;">
+                            Foglalás: Odaút
+                        </a>
+                    ` : ''}
+                </div>
+
+                <!-- VISSZAÚT SZEKCIÓ -->
+                <div class="modal-section">
+                    <h3 class="modal-section-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="19" y1="12" x2="5" y2="12"></line>
+                            <polyline points="12 19 5 12 12 5"></polyline>
+                        </svg>
+                        <span>Visszaút</span>
+                    </h3>
+                    <div class="detail-item-row"><span class="detail-item-label">Indulás:</span><span class="detail-item-val">${flight.in_dep_city || ''} (${flight.in_dep_airport || ''}) - ${formatDateTime(flight.in_dep_time)}</span></div>
+                    <div class="detail-item-row"><span class="detail-item-label">Érkezés:</span><span class="detail-item-val">${flight.in_arr_city || ''} (${flight.in_arr_airport || ''}) - ${formatDateTime(flight.in_arr_time)}</span></div>
+                    <div class="detail-item-row"><span class="detail-item-label">Menetidő:</span><span class="detail-item-val">${flight.in_duration_h || ''} óra</span></div>
+                    <div class="detail-item-row"><span class="detail-item-label">Átszállások:</span><span class="detail-item-val">${flight.in_stops || 0} db</span></div>
+                    <div class="detail-item-row"><span class="detail-item-label">Légitársaság:</span><span class="detail-item-val">${flight.in_carriers || 'N/A'}</span></div>
+                    <div class="detail-item-row"><span class="detail-item-label">Visszaút ára:</span><span class="detail-item-val">${flight.in_price_huf ? flight.in_price_huf.toLocaleString('hu-HU') : 'N/A'} Ft</span></div>
+
+                    ${inUrl ? `
+                        <a href="${inUrl}" target="_blank" class="btn btn-secondary btn-block" style="margin-top: 14px; padding: 10px; font-size: 13px;">
+                            Foglalás: Visszaút
+                        </a>
+                    ` : ''}
+                </div>
+            </div>
+
+            <!-- ÖSSZESÍTŐ SZEKCIÓ -->
+            <div class="modal-section" style="margin-bottom: 0;">
+                <h3 class="modal-section-title">Összesítés</h3>
+                <div class="detail-item-row"><span class="detail-item-label">Teljes ár:</span><span class="detail-item-val" style="font-size: 16px; color: var(--primary);">${flight.total_price_huf ? flight.total_price_huf.toLocaleString('hu-HU') : 'N/A'} Ft</span></div>
+                <div class="detail-item-row"><span class="detail-item-label">Tartózkodási idő:</span><span class="detail-item-val">${flight.stay_days || 'N/A'} nap</span></div>
+                <div class="detail-item-row"><span class="detail-item-label">Összes átszállás:</span><span class="detail-item-val">${(flight.out_stops || 0) + (flight.in_stops || 0)} db</span></div>
+                <div class="detail-item-row"><span class="detail-item-label">Relevancia pontszám:</span><span class="detail-item-val">${flight.phi_net ? (flight.phi_net * 100).toFixed(2) : 'N/A'}%</span></div>
+            </div>
+        `;
+
+        modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('detailsModal').style.display = 'none';
+    }
+
+    function handleOverlayClick(event) {
+        if (event.target.id === 'detailsModal') {
+            closeModal();
+        }
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeModal();
+    });
+
+    filterResults();
+</script>
+{% endblock %}
