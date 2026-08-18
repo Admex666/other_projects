@@ -14,7 +14,7 @@ export const defaultQuestConfig: QuestConfig = {
     year: 2026,
     title: 'Markó 22. Születésnapi Program',
     subtitle: 'Közös szülinapi este & kihívások',
-    eventDate: '2026. Május / Nyár [PLACEHOLDER]',
+    eventDate: '2026. augusztus 19.',
   },
 
   security: {
@@ -26,7 +26,7 @@ export const defaultQuestConfig: QuestConfig = {
   stages: {
     teaser: {
       title: 'Születésnapi Este Zárolva',
-      lockedMessage: 'Isten éltessen Markó! A mai program zárolva van az indulásig. A feloldó kódot a találkozáskor kapod meg.',
+      lockedMessage: 'Isten éltessen, Lukács! A program zárolva van, amíg nem beszéled meg Ádámmal a konkrét dátumot. A feloldó kódot a találkozáskor kapod meg.',
       hint: 'Kérd el a 4 számjegyű kódot a csapattól az ajándék átadásakor!',
     },
 
