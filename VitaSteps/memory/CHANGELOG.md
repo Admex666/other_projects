@@ -17,6 +17,10 @@ All notable changes to the VitaSteps challenge platform project are documented h
 *   **Kampány-Szintű Csoportosítási Elkülönítés Logisztikában & Foxpost API-nál:**
     *   Módosítottuk a `getGroupedRunIds` (`admin.html`) és az `api/create-foxpost-parcels.js` funkciókat: a csomagösszevonás szigorúan csak azonos kampányhoz tartozó futások között engedélyezett (`run.campaign === targetRun.campaign`).
     *   Megszüntettük a visszatérő vásárlók korábbi csomagszámainak téves átszivárgását az új kampányos bejegyzéseikre.
+*   **Supabase Row-Level Security (RLS) & Adatbiztonsági Megoldás:**
+    *   Az összes publikus táblán (`runners`, `runs`, `feedbacks`, `orders`, `meta_daily_metrics`, `marketing_targets`, `shipments`) bekapcsoltuk az RLS védelmet.
+    *   Megszüntettük a korábbi hibás `using (true)` szabályokat, amelyek a publikus anon kulccsal is engedték a táblák olvasását.
+    *   Létrehoztuk a `/api/admin-data` szerveroldali végpontot az `admin.html` számára, így az adminisztrációs felület a Service Role kulccsal és jelszó-ellenőrzéssel kommunikál, külső látogatók pedig egyetlen sorhoz sem férhetnek hozzá.
 *   **Kombinált Ajánlói Kedvezmény Számítás & Visszaélés-védelem (`checkout.html`, `api/checkout.js`, `api/check-referral-discount.js`):**
     *   Az ajánlói kedvezmény összeadódik: Meglévő fel nem használt ajánlások száma + az aktuális rendelésben vett extra érmek száma (`qty - 1`).
     *   **Megszüntettük az újrafelhasználási hibát:** A felhasznált ajánlások elmentődnek az `orders.referrals_redeemed` mezőbe. A vásárló a korábbi vásárlásakor már levásárolt ajánlási krediteket a következő rendelésnél nem tudja újra felhasználni (nem kap újra végtelen ingyen érmet).

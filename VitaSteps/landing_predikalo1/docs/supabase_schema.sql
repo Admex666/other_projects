@@ -1,190 +1,80 @@
--- ==========================================
--- VITASTEPS SUPABASE DATABASE SCHEMA (UPDATED 2026-07-17)
--- Normalized Schema: Google Sheets removed as datastore
--- ==========================================
+-- ============================================================
+-- VITASTEPS SUPABASE DATABASE SCHEMA (SECURED WITH RLS)
+-- ============================================================
 
--- 1. Create the 'runners' table (Personal identity & details)
-create table if not exists public.runners (
-  id uuid default gen_random_uuid() primary key,
-  email text unique not null,
-  name text,
-  phone text,
-  billing_name text,
-  billing_address text,
-  created_at timestamp with time zone default timezone('utc'::text, now()) not null
-);
+-- 1. Enable RLS on ALL public tables
+ALTER TABLE public.runners ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.runs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.feedbacks ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.meta_daily_metrics ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.marketing_targets ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.shipments ENABLE ROW LEVEL SECURITY;
 
--- Enable RLS on runners
-alter table public.runners enable row level security;
+-- 2. Drop any legacy insecure or open policies
+DROP POLICY IF EXISTS "Allow all actions for service role on runners" ON public.runners;
+DROP POLICY IF EXISTS "Allow all actions for service role on runs" ON public.runs;
+DROP POLICY IF EXISTS "Allow all actions for service role on orders" ON public.orders;
+DROP POLICY IF EXISTS "Allow all actions for service role on shipments" ON public.shipments;
+DROP POLICY IF EXISTS "Allow all actions for service role on feedbacks" ON public.feedbacks;
+DROP POLICY IF EXISTS "Users can view their own profile" ON public.runners;
+DROP POLICY IF EXISTS "Users can update their own profile" ON public.runners;
+DROP POLICY IF EXISTS "Users can view their own runs" ON public.runs;
+DROP POLICY IF EXISTS "Users can view runs they referred" ON public.runs;
+DROP POLICY IF EXISTS "Users can view their own orders" ON public.orders;
+DROP POLICY IF EXISTS "Users can view their own shipments" ON public.shipments;
+DROP POLICY IF EXISTS "Users can insert their own feedback" ON public.feedbacks;
+DROP POLICY IF EXISTS "Users can view their own feedback" ON public.feedbacks;
 
--- Create policies for runners
-create policy "Users can view their own profile" on public.runners
-  for select using (auth.jwt() ->> 'email' = email);
+-- 3. Define Clean, Secure Policies for Authenticated Portal Users (auth.jwt())
 
-create policy "Allow all actions for service role on runners" on public.runners
-  for all using (true);
+-- RUNNERS: Authenticated users can only view and update their own profile
+CREATE POLICY "Users can view their own profile" ON public.runners
+  FOR SELECT TO authenticated
+  USING ((auth.jwt() ->> 'email') = email);
 
+CREATE POLICY "Users can update their own profile" ON public.runners
+  FOR UPDATE TO authenticated
+  USING ((auth.jwt() ->> 'email') = email);
 
--- 2. Create the 'orders' table (Stripe transactions)
-create table if not exists public.orders (
-  id uuid default gen_random_uuid() primary key,
-  runner_id uuid references public.runners(id) on delete cascade,
-  stripe_session_id text unique not null,
-  stripe_payment_status text,
-  amount_total integer,
-  currency text default 'HUF',
-  campaign text,
-  is_test boolean default false,
-  billing_name text,
-  billing_email text,
-  billing_address text,
-  created_at timestamp with time zone default timezone('utc'::text, now()) not null
-);
-
--- Enable RLS on orders
-alter table public.orders enable row level security;
-
--- Create policies for orders
-create policy "Users can view their own orders" on public.orders
-  for select using (
-    exists (
-      select 1 from public.runners 
-      where public.runners.id = public.orders.runner_id 
-      and auth.jwt() ->> 'email' = public.runners.email
+-- RUNS: Authenticated users can only view their own runs or runs they referred
+CREATE POLICY "Users can view their own runs" ON public.runs
+  FOR SELECT TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.runners
+      WHERE public.runners.id = public.runs.runner_id
+      AND (auth.jwt() ->> 'email') = public.runners.email
     )
   );
 
-create policy "Allow all actions for service role on orders" on public.orders
-  for all using (true);
+CREATE POLICY "Users can view runs they referred" ON public.runs
+  FOR SELECT TO authenticated
+  USING (
+    referred_by = (auth.jwt() ->> 'email')
+  );
 
-
--- 3. Create the 'runs' table (Challenge entries)
-create table if not exists public.runs (
-  id uuid default gen_random_uuid() primary key,
-  runner_id uuid references public.runners(id) on delete cascade,
-  order_id uuid references public.orders(id) on delete set null,
-  name text,
-  completed boolean default false,
-  completion_date text,
-  shipped boolean default false,
-  received_date text,
-  serial_number text unique,
-  distance_km numeric,
-  campaign text,
-  is_test boolean default false,
-  proof_submitted boolean default false,
-  proof_urls text[] default '{}'::text[],
-  proof_submitted_at timestamp with time zone,
-  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
-  
-  -- Legacy columns (kept for compatibility until migration complete)
-  stripe_session_id text,
-  referred_by text
-);
-
--- Enable RLS on runs
-alter table public.runs enable row level security;
-
--- Create policies for runs
-create policy "Users can view their own runs" on public.runs
-  for select using (
-    exists (
-      select 1 from public.runners 
-      where public.runners.id = public.runs.runner_id 
-      and auth.jwt() ->> 'email' = public.runners.email
+-- SHIPMENTS: Authenticated users can view shipments linked to their own runs
+CREATE POLICY "Users can view their own shipments" ON public.shipments
+  FOR SELECT TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.runs
+      JOIN public.runners ON public.runners.id = public.runs.runner_id
+      WHERE public.runs.id = public.shipments.run_id
+      AND (auth.jwt() ->> 'email') = public.runners.email
     )
   );
 
-create policy "Users can view runs they referred" on public.runs
-  for select using (
-    referred_by = auth.jwt() ->> 'email'
-  );
+-- FEEDBACKS: Authenticated users can insert and view their own feedbacks
+CREATE POLICY "Users can insert their own feedback" ON public.feedbacks
+  FOR INSERT TO authenticated
+  WITH CHECK ((auth.jwt() ->> 'email') = runner_email);
 
-create policy "Allow all actions for service role on runs" on public.runs
-  for all using (true);
+CREATE POLICY "Users can view their own feedback" ON public.feedbacks
+  FOR SELECT TO authenticated
+  USING ((auth.jwt() ->> 'email') = runner_email);
 
-
--- 4. Create the 'shipments' table (Shipping details)
-create table if not exists public.shipments (
-  id uuid default gen_random_uuid() primary key,
-  run_id uuid references public.runs(id) on delete cascade,
-  method text,
-  phone text,
-  parcel_id text,
-  parcel_name text,
-  parcel_address text,
-  home_address text,
-  tracking_code text,
-  shipped boolean default false,
-  shipped_at timestamp with time zone,
-  received boolean default false,
-  received_at timestamp with time zone,
-  created_at timestamp with time zone default timezone('utc'::text, now()) not null
-);
-
--- Enable RLS on shipments
-alter table public.shipments enable row level security;
-
--- Create policies for shipments
-create policy "Users can view their own shipments" on public.shipments
-  for select using (
-    exists (
-      select 1 from public.runs
-      join public.runners on public.runners.id = public.runs.runner_id
-      where public.runs.id = public.shipments.run_id
-      and auth.jwt() ->> 'email' = public.runners.email
-    )
-  );
-
-create policy "Allow all actions for service role on shipments" on public.shipments
-  for all using (true);
-
-
--- 5. Create the 'feedbacks' table (NPS and reviews linked via runner_id)
-create table if not exists public.feedbacks (
-  id uuid default gen_random_uuid() primary key,
-  runner_id uuid references public.runners(id) on delete cascade,
-  run_id uuid references public.runs(id) on delete set null,
-  erem_minoseg integer check (erem_minoseg >= 1 and erem_minoseg <= 5),
-  szallitas_elegedett integer check (szallitas_elegedett >= 1 and szallitas_elegedett <= 5),
-  reszvetel_ujra text,
-  nps_score integer check (nps_score >= 0 and nps_score <= 10),
-  kovetkezo_tajegyseg text,
-  tetszett_legjobban text,
-  jobba_tenne text,
-  photo_url text,
-  created_at timestamp with time zone default timezone('utc'::text, now()) not null
-);
-
--- Enable RLS on feedbacks
-alter table public.feedbacks enable row level security;
-
--- Create policies for feedbacks
-create policy "Users can insert their own feedback" on public.feedbacks
-  for insert with check (
-    exists (
-      select 1 from public.runners
-      where public.runners.id = public.feedbacks.runner_id
-      and auth.jwt() ->> 'email' = public.runners.email
-    )
-  );
-
-create policy "Users can view their own feedback" on public.feedbacks
-  for select using (
-    exists (
-      select 1 from public.runners
-      where public.runners.id = public.feedbacks.runner_id
-      and auth.jwt() ->> 'email' = public.runners.email
-    )
-  );
-
-
--- 6. Storage Bucket Policies (medals bucket)
-create policy "Allow authenticated uploads to medals" on storage.objects
-  for insert with check (
-    bucket_id = 'medals' 
-    and auth.role() = 'authenticated'
-  );
-
-create policy "Allow public read access to medals" on storage.objects
-  for select using (bucket_id = 'medals');
+-- 4. ORDERS, META_DAILY_METRICS, MARKETING_TARGETS:
+-- These tables have RLS enabled with NO public/anon policies.
+-- They are strictly accessible only by the backend via SUPABASE_SERVICE_ROLE_KEY.

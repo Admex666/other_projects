@@ -884,25 +884,29 @@
                 <div>Adatok betöltése...</div>
             </div>`;
 
-        // Fetch all runs – proof-list tabs filter client-side; Prédikálószék tab needs all rows
-        const { data, error } = await supabaseClient
-            .from('runs')
-            .select('*, runners(name, email, phone, billing_address), shipments(*)')
-            .order('proof_submitted_at', { ascending: false, nullsFirst: false });
+        try {
+            const res = await fetch('/api/admin-data', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ admin_secret: adminSecret })
+            });
+            const data = await res.json();
 
-        if (error) {
+            if (!res.ok) {
+                throw new Error(data.error || 'Hiba a betöltéskor');
+            }
+
+            allRuns = data.runs || [];
+            updateStats();
+            renderList();
+            loadMarketing();
+        } catch (error) {
             document.getElementById('proof-list').innerHTML = `
                 <div class="empty-state" style="color: #ef4444;">
                     <div class="icon">❌</div>
                     <div>Hiba az adatok betöltésekor: ${error.message}</div>
                 </div>`;
-            return;
         }
-
-        allRuns = data || [];
-        updateStats();
-        renderList();
-        loadMarketing();
     }
 
     // ─── Marketing Dashboard ──────────────────────────────────
@@ -914,39 +918,31 @@
         const cardsEl = document.getElementById('mkt-cards');
         cardsEl.innerHTML = '<div id="mkt-loading">⏳ Marketing adatok betöltése...</div>';
 
-        // Fetch targets
-        const { data: targets } = await supabaseClient.from('marketing_targets').select('*');
-        mktTargets = targets || [];
+        try {
+            const res = await fetch('/api/admin-data', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ admin_secret: adminSecret, type: 'marketing' })
+            });
+            const data = await res.json();
 
-        // Fetch paid real orders for customer cohort analysis
-        const { data: ordersData } = await supabaseClient
-            .from('orders')
-            .select('id, runner_id, campaign, created_at, stripe_payment_status, is_test')
-            .eq('stripe_payment_status', 'paid')
-            .eq('is_test', false)
-            .order('created_at', { ascending: true });
-        allMktOrders = ordersData || [];
+            if (!res.ok) {
+                throw new Error(data.error || 'Hiba a marketing adatok betöltésekor');
+            }
 
-        // Fetch all meta_daily_metrics ordered newest first
-        const { data: metrics, error } = await supabaseClient
-            .from('meta_daily_metrics')
-            .select('*')
-            .order('date', { ascending: false })
-            .limit(200);
+            mktTargets = data.targets || [];
+            allMktOrders = data.orders || [];
+            mktMetrics = data.metrics || [];
 
-        if (error) {
+            const lastUpdated = mktMetrics[0]?.created_at
+                ? new Date(mktMetrics[0].created_at).toLocaleString('hu-HU')
+                : 'ismeretlen';
+            document.getElementById('mkt-last-updated').textContent = `Utolsó frissítés: ${lastUpdated}`;
+
+            renderMktCards();
+        } catch (error) {
             cardsEl.innerHTML = `<div class="mkt-no-data">❌ Hiba: ${error.message}</div>`;
-            return;
         }
-
-        mktMetrics = metrics || [];
-
-        const lastUpdated = mktMetrics[0]?.created_at
-            ? new Date(mktMetrics[0].created_at).toLocaleString('hu-HU')
-            : 'ismeretlen';
-        document.getElementById('mkt-last-updated').textContent = `Utolsó frissítés: ${lastUpdated}`;
-
-        renderMktCards();
     }
 
 

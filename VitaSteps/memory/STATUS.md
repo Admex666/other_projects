@@ -42,6 +42,10 @@
             *   A Prédikálószék mind az 58 jóváhagyott éremjének feladási állapota frissült (0 feladatlan maradt).
         *   **Microsoft Clarity Heatmap & Session Recording (COMPLETED 2026-08-04):**
             *   Beépítve a Clarity tracking script (`xx85zg2g25`) az `index.html`, `nagykevely/index.html`, `predikalo/index.html`, `checkout.html` és `siker.html` oldalakra a felhasználói hőtérképek és videófelvételek rögzítéséhez.
+        *   **Supabase Row-Level Security (RLS) & Adatbiztonsági Megoldás (COMPLETED 2026-08-19):**
+            *   Megszüntettük a nyitott adatbázis-hozzáféréseket: RLS engedélyezése az összes publikus táblán (`runners`, `runs`, `feedbacks`, `orders`, `meta_daily_metrics`, `marketing_targets`, `shipments`).
+            *   Töröltük a korábbi hibás `using (true)` szabályokat, és szigorú, csak a bejelentkezett felhasználók saját adataira (`auth.jwt() ->> 'email' = email`) korlátozott RLS szabályokat hoztunk létre.
+            *   Az `admin.html` adatlekéréseit leválasztottuk a publikus anon kulcsról, és a jelszóval védett `/api/admin-data` szerveroldali végponton keresztül biztosítottuk a biztonságos betöltést.
         *   **Kombinált Ajánlói Kedvezmény Számítás & Levonási Rendszer (`checkout.html` & `api/checkout.js`) (COMPLETED 2026-08-12):**
             *   Módosítottuk az ajánlói kedvezmény kerekítését: a rendszer a még fel nem használt meglévő ajánlásokat (`unusedReferrals = totalReferrals - pastRedeemed`) összegzi a jelenlegi rendelésben vásárolt extra érmek számával (`qty - 1`). Az így kapott effektív ajánlásszám alapján határozza meg a kedvezmény szintjét (1: 10%, 2: 25%, 3: 45%, 4: 70%, 5+: 100%).
             *   **Visszaélés-védelem:** A sikeres vásárláskor a felhasznált ajánlási kreditek elmentődnek a `orders.referrals_redeemed` mezőbe, így a vásárló a jövőbeli rendeléseinél **nem tudja újra felhasználni a már levásárolt kedvezményt / ingyen érmet**.
