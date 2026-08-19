@@ -59,6 +59,32 @@ def get_all_stays(city, country, start_date, end_date,
             filters.append("b:1")
         return ';'.join(filters)
 
+    CITY_TRANSLATIONS = {
+        "róma": "Rome", "roma": "Rome", "rome": "Rome",
+        "párizs": "Paris", "paris": "Paris",
+        "bécs": "Vienna", "vienna": "Vienna", "wien": "Vienna",
+        "london": "London",
+        "barcelona": "Barcelona",
+        "prága": "Prague", "prague": "Prague",
+        "varsó": "Warsaw", "warsaw": "Warsaw",
+        "krakkó": "Krakow", "krakow": "Krakow",
+        "athén": "Athens", "athens": "Athens",
+        "berlin": "Berlin",
+        "münchen": "Munich", "munich": "Munich",
+        "pozsony": "Bratislava", "bratislava": "Bratislava",
+        "zágráb": "Zagreb", "zagreb": "Zagreb",
+        "velence": "Venice", "venice": "Venice",
+        "milánó": "Milan", "milan": "Milan",
+        "firenze": "Florence", "florence": "Florence",
+        "nápoly": "Naples", "naples": "Naples",
+        "lisszabon": "Lisbon", "lisbon": "Lisbon",
+        "madrid": "Madrid",
+        "amszterdam": "Amsterdam", "amsterdam": "Amsterdam",
+        "brüsszel": "Brussels", "brussels": "Brussels",
+        "budapest": "Budapest",
+        "debrecen": "Debrecen"
+    }
+
     COUNTRY_TRANSLATIONS = {
         "magyarország": "Hungary", "spanyolország": "Spain", "olaszország": "Italy",
         "franciaország": "France", "németország": "Germany", "ausztria": "Austria",
@@ -69,11 +95,32 @@ def get_all_stays(city, country, start_date, end_date,
         "törökország": "Turkey", "thaiföld": "Thailand", "egyesült államok": "United States"
     }
     
-    clean_country = country.strip()
+    # 1. Clean city (strip slashes like 'Róma / Rome' and commas)
+    raw_city = str(city or "").strip()
+    if "/" in raw_city:
+        parts = [p.strip() for p in raw_city.split("/") if p.strip()]
+        chosen = parts[0]
+        for p in parts:
+            if p.lower() in CITY_TRANSLATIONS:
+                chosen = CITY_TRANSLATIONS[p.lower()]
+                break
+        clean_city = chosen
+    elif "," in raw_city:
+        clean_city = raw_city.split(",")[0].strip()
+    else:
+        clean_city = raw_city
+
+    normalized_city = CITY_TRANSLATIONS.get(clean_city.lower(), clean_city)
+
+    # 2. Clean country
+    raw_country = str(country or "").strip()
+    if not raw_country and "," in str(city or ""):
+        raw_country = str(city).split(",")[1].strip()
+    clean_country = raw_country.split("/")[0].strip()
     normalized_country = COUNTRY_TRANSLATIONS.get(clean_country.lower(), clean_country)
 
-    encoded_city = urllib.parse.quote(city.strip())
-    encoded_country = urllib.parse.quote(normalized_country)
+    encoded_city = urllib.parse.quote(normalized_city.strip())
+    encoded_country = urllib.parse.quote(normalized_country.strip())
 
     # 1. BROWSERLESS CLOUD MOTOR (Csak PROD módban vagy kifejezett USE_BROWSERLESS=true esetén)
     app_env = os.getenv("APP_ENV", "development").lower()
@@ -239,6 +286,7 @@ export default async ({{ page }}) => {{
         offset = 0
         limit = 1500 # Megnövelt limit a teljes Cozycozy kínálat lefedéséhez
         batch_size = 100
+        retry_count = 0
         
         while offset < limit:
             # API call via script execution
@@ -295,6 +343,11 @@ export default async ({{ page }}) => {{
                 batch_results = driver.execute_script(api_call_script)
                 
                 if not batch_results or 'entries' not in batch_results or not batch_results['entries']:
+                    if offset == 0 and retry_count < 4:
+                        retry_count += 1
+                        print(f"[INFO] Várakozás a Cozycozy eredmények betöltésére (újrapróbálás {retry_count}/4)...")
+                        time.sleep(1.5)
+                        continue
                     break
                     
                 all_results.extend(batch_results['entries'])
@@ -310,6 +363,11 @@ export default async ({{ page }}) => {{
                     progress_callback(min(p, 90))
                 
             except Exception as e:
+                if offset == 0 and retry_count < 4:
+                    retry_count += 1
+                    print(f"[INFO] Hiba az első lekérésnél ({e}), újrapróbálás ({retry_count}/4)...")
+                    time.sleep(1.5)
+                    continue
                 print(f"Error fetching batch at offset {offset}: {e}")
                 break
 
@@ -460,9 +518,17 @@ def parse_accommodation_results(results):
         }
         
         booking_url = clean_hotel_booking_url(cheapest.get('deeplinkUrl'), name, base_info.get('city') or '')
+        price_eur = cheapest.get('eurPricePerNight')
+
+        try:
+            from app.services.exchange_service import get_eur_huf_rate
+            eur_rate = get_eur_huf_rate()
+        except Exception:
+            eur_rate = 395.0
 
         base_info.update({
-            'price_per_night_eur': cheapest.get('eurPricePerNight'),
+            'price_per_night_eur': price_eur,
+            'price_huf': round(price_eur * eur_rate) if price_eur else 0,
             'total_price': cheapest.get('totalPrice', {}).get('value'),
             'currency': cheapest.get('totalPrice', {}).get('currencyCode'),
             'provider': provider,

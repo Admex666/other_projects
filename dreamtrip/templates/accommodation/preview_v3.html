@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optivoya — Accommodation UI v3 (Step Wizard & Metric Gauges)</title>
+    <link rel="icon" type="image/png" href="/static/logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #235B2A;
+            --primary-light: #EBF4EC;
+            --accent: #90DC25;
+            --bg-page: #F0F4F1;
+            --card-bg: #FFFFFF;
+            --text-dark: #102613;
+            --text-muted: #5E7162;
+            --border: #D8E4D9;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-page);
+            color: var(--text-dark);
+            min-height: 100vh;
+            padding: 30px 20px 100px;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        /* Top Nav */
+        .header-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 8px 16px;
+            background: white;
+            border-radius: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .variant-switch {
+            display: flex;
+            gap: 8px;
+            background: white;
+            padding: 4px;
+            border-radius: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .variant-link {
+            padding: 6px 14px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+
+        .variant-link.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Header */
+        .page-title-box {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .badge-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(144, 220, 37, 0.2);
+            color: #1A4D22;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .page-title-box h1 {
+            font-size: 34px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        /* Wizard Step Cards */
+        .step-card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            padding: 30px;
+            margin-bottom: 24px;
+            box-shadow: 0 6px 20px rgba(20, 45, 25, 0.05);
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .step-card:hover {
+            border-color: rgba(35, 91, 42, 0.4);
+            box-shadow: 0 12px 30px rgba(20, 45, 25, 0.08);
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 22px;
+        }
+
+        .step-badge {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            background: var(--primary);
+            color: var(--accent);
+            font-size: 16px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(35, 91, 42, 0.3);
+        }
+
+        .step-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .step-subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* Inputs */
+        .hero-input-wrap {
+            position: relative;
+        }
+
+        .hero-input {
+            width: 100%;
+            height: 60px;
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 0 20px 0 54px;
+            font-size: 17px;
+            font-weight: 600;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .hero-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(144, 220, 37, 0.3);
+        }
+
+        .hero-input-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+            width: 22px;
+            height: 22px;
+        }
+
+        /* 2-Col Dates */
+        .date-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .date-tile {
+            border: 1.5px solid var(--border);
+            border-radius: 16px;
+            padding: 14px 18px;
+            background: #FAFCFA;
+            transition: all 0.2s;
+        }
+
+        .date-tile:focus-within {
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(144, 220, 37, 0.25);
+        }
+
+        .date-tile-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .date-tile-input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+            outline: none;
+        }
+
+        /* Step 2: Traveler Pills */
+        .travelers-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .traveler-box {
+            background: #FAFCFA;
+            border: 1.5px solid var(--border);
+            border-radius: 18px;
+            padding: 18px;
+            text-align: center;
+        }
+
+        .traveler-box-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .circular-pill-group {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .cir-pill {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            background: white;
+            color: var(--text-dark);
+            font-size: 15px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.15s;
+            user-select: none;
+        }
+
+        .cir-pill:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: scale(1.08);
+        }
+
+        .cir-pill.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: var(--accent);
+            box-shadow: 0 4px 12px rgba(35, 91, 42, 0.35);
+            transform: scale(1.12);
+        }
+
+        /* Step 3: Rating Gauges */
+        .rating-gauge-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .gauge-card {
+            border: 1.5px solid var(--border);
+            background: #FAFCFA;
+            border-radius: 16px;
+            padding: 14px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .gauge-card:hover {
+            border-color: var(--primary);
+            background: white;
+        }
+
+        .gauge-card.active {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            box-shadow: 0 4px 12px rgba(35, 91, 42, 0.15);
+        }
+
+        .gauge-score {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 2px;
+        }
+
+        .gauge-desc {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        /* Sticky Bottom Summary Bar */
+        .sticky-summary {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 40px);
+            max-width: 960px;
+            background: rgba(35, 91, 42, 0.95);
+            backdrop-filter: blur(14px);
+            border-radius: 24px;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 16px 40px rgba(10, 30, 15, 0.4);
+            border: 1px solid rgba(144, 220, 37, 0.4);
+            z-index: 1000;
+        }
+
+        .summary-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: white;
+        }
+
+        .summary-dest {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .summary-details {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .btn-sticky-search {
+            background: var(--accent);
+            color: #102613;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-sticky-search:hover {
+            background: #A5F530;
+            transform: scale(1.04);
+            box-shadow: 0 0 20px rgba(144, 220, 37, 0.6);
+        }
+
+        @media (max-width: 768px) {
+            .travelers-row, .rating-gauge-grid { grid-template-columns: 1fr; }
+            .date-grid { grid-template-columns: 1fr; }
+            .sticky-summary { flex-direction: column; gap: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-nav">
+        <a href="/home" class="back-btn">
+            <i data-lucide="arrow-left" style="width: 16px;"></i> Vissza a Dashboardra
+        </a>
+        <div class="variant-switch">
+            <a href="/accommodation-ui-v1" class="variant-link">V1: Bento Grid</a>
+            <a href="/accommodation-ui-v2" class="variant-link">V2: Dark Luxury</a>
+            <a href="/accommodation-ui-v3" class="variant-link active">V3: Step Wizard</a>
+        </div>
+    </div>
+
+    <div class="page-title-box">
+        <div class="badge-pill">
+            <i data-lucide="layers" style="width: 14px;"></i> UI Mockup 3 • Step Wizard & Metric Gauges
+        </div>
+        <h1>Szálláskeresési Varázsló</h1>
+        <p>Lépésről lépésre felépített kártyák, körgombos léptetőkkel és lebegő összefoglaló sávval</p>
+    </div>
+
+    <!-- Step 1: Destination & Dates -->
+    <div class="step-card">
+        <div class="step-header">
+            <div class="step-badge">1</div>
+            <div>
+                <div class="step-title">Hová és mikor utazol?</div>
+                <div class="step-subtitle">Add meg a célvárost és a tervezett utazás időtartamát</div>
+            </div>
+        </div>
+
+        <div class="hero-input-wrap">
+            <i data-lucide="map-pin" class="hero-input-icon"></i>
+            <input type="text" class="hero-input" id="v3-dest" value="Barcelona, Spanyolország" placeholder="Város, régió vagy konkrét helyszín...">
+        </div>
+
+        <div class="date-grid">
+            <div class="date-tile">
+                <div class="date-tile-label">Érkezés (Check-in)</div>
+                <input type="date" id="v3-start" class="date-tile-input">
+            </div>
+            <div class="date-tile">
+                <div class="date-tile-label">Távozás (Check-out)</div>
+                <input type="date" id="v3-end" class="date-tile-input">
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 2: Rooms & Guests Circular Group -->
+    <div class="step-card">
+        <div class="step-header">
+            <div class="step-badge">2</div>
+            <div>
+                <div class="step-title">Ki és hányan utaznak?</div>
+                <div class="step-subtitle">Kattints a körgombokra a létszám kiválasztásához</div>
+            </div>
+        </div>
+
+        <div class="travelers-row">
+            <div class="traveler-box">
+                <div class="traveler-box-title">Szobák száma</div>
+                <div class="circular-pill-group">
+                    <div class="cir-pill active" onclick="pickPill(this)">1</div>
+                    <div class="cir-pill" onclick="pickPill(this)">2</div>
+                    <div class="cir-pill" onclick="pickPill(this)">3</div>
+                    <div class="cir-pill" onclick="pickPill(this)">4+</div>
+                </div>
+            </div>
+
+            <div class="traveler-box">
+                <div class="traveler-box-title">Felnőttek száma</div>
+                <div class="circular-pill-group">
+                    <div class="cir-pill" onclick="pickPill(this)">1</div>
+                    <div class="cir-pill active" onclick="pickPill(this)">2</div>
+                    <div class="cir-pill" onclick="pickPill(this)">3</div>
+                    <div class="cir-pill" onclick="pickPill(this)">4</div>
+                    <div class="cir-pill" onclick="pickPill(this)">5+</div>
+                </div>
+            </div>
+
+            <div class="traveler-box">
+                <div class="traveler-box-title">Gyermekek száma</div>
+                <div class="circular-pill-group">
+                    <div class="cir-pill active" onclick="pickPill(this)">0</div>
+                    <div class="cir-pill" onclick="pickPill(this)">1</div>
+                    <div class="cir-pill" onclick="pickPill(this)">2</div>
+                    <div class="cir-pill" onclick="pickPill(this)">3+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 3: Quality & Budget -->
+    <div class="step-card">
+        <div class="step-header">
+            <div class="step-badge">3</div>
+            <div>
+                <div class="step-title">Minőség és Költségkeret</div>
+                <div class="step-subtitle">Állítsd be az elvárt minimum értékelést és a plafon árat</div>
+            </div>
+        </div>
+
+        <div style="font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 10px; text-transform: uppercase;">Minimális Értékelési Küszöb</div>
+        <div class="rating-gauge-grid">
+            <div class="gauge-card" onclick="pickGauge(this)">
+                <div class="gauge-score">Összes</div>
+                <div class="gauge-desc">Bármilyen értékelés</div>
+            </div>
+            <div class="gauge-card" onclick="pickGauge(this)">
+                <div class="gauge-score">7.0+</div>
+                <div class="gauge-desc">Jó szállások</div>
+            </div>
+            <div class="gauge-card active" onclick="pickGauge(this)">
+                <div class="gauge-score">8.0+</div>
+                <div class="gauge-desc">Nagyon jó (Ajánlott)</div>
+            </div>
+            <div class="gauge-card" onclick="pickGauge(this)">
+                <div class="gauge-score">9.0+</div>
+                <div class="gauge-desc">Kiváló / Luxus</div>
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
+            <span style="font-size: 14px; font-weight: 700; color: var(--primary);">Maximális ár / éjszaka:</span>
+            <span style="font-size: 22px; font-weight: 800; color: var(--primary);" id="v3-price-txt">85 000 Ft</span>
+        </div>
+        <input type="range" min="15000" max="300000" step="5000" value="85000" style="width: 100%; accent-color: var(--primary); height: 8px;" oninput="document.getElementById('v3-price-txt').innerText = parseInt(this.value).toLocaleString('hu-HU') + ' Ft'">
+    </div>
+</div>
+
+<!-- Sticky Floating Summary Bar -->
+<div class="sticky-summary">
+    <div class="summary-info">
+        <div>
+            <div class="summary-dest">📍 Barcelona, Spanyolország</div>
+            <div class="summary-details">2 felnőtt • 1 szoba • Min. 8.0+ értékelés • Max. 85k Ft/éj</div>
+        </div>
+    </div>
+    <button class="btn-sticky-search" onclick="alert('Demo: Keresés indítása a varázsló adataival!')">
+        <i data-lucide="search" style="width: 18px; height: 18px;"></i>
+        <span>Szállások Keresése</span>
+    </button>
+</div>
+
+<script>
+    lucide.createIcons();
+
+    const today = new Date();
+    const start = new Date(today.getTime() + 7 * 24 * 3600 * 1000);
+    const end = new Date(today.getTime() + 11 * 24 * 3600 * 1000);
+    document.getElementById('v3-start').value = start.toISOString().split('T')[0];
+    document.getElementById('v3-end').value = end.toISOString().split('T')[0];
+
+    function pickPill(el) {
+        el.parentElement.querySelectorAll('.cir-pill').forEach(p => p.classList.remove('active'));
+        el.classList.add('active');
+    }
+
+    function pickGauge(el) {
+        el.parentElement.querySelectorAll('.gauge-card').forEach(g => g.classList.remove('active'));
+        el.classList.add('active');
+    }
+</script>
+
+</body>
+</html>

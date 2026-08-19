@@ -1,8 +1,17 @@
 # DreamTrip — Változási Napló (Changelog)
 
-## [Unreleased] - 2026-08-14
+## [Unreleased] - 2026-08-19
+
 ### Hozzáadva
-- **PROD és DEV Üzemmód ([`app/main.py`](file:///e:/Data/other_projects/dreamtrip/app/main.py), [`templates/home.html`](file:///e:/Data/other_projects/dreamtrip/templates/home.html), [`app/scrapers/accommodation_scraper.py`](file:///e:/Data/other_projects/dreamtrip/app/scrapers/accommodation_scraper.py))**:
+- **Élő EUR/HUF Árfolyam Lekérő Szolgáltatás ([`app/services/exchange_service.py`](file:///e:/Data/other_projects/dreamtrip/app/services/exchange_service.py))**:
+  - Valós idejű, hivatalos **Európai Központi Bank (EKB / Frankfurter API)** devizaárfolyam integráció, automatikus **Open Exchange Rates** tartalékkal és 1 órás memóriagyorsítótárral.
+  - A korábbi égetett 400 Ft-os szorzó helyett a teljes rendszer (szállás- és repülőjegy átszámítások, histogram, AHP rangsorolás) a legfrissebb élő árfolyammal számol.
+- **Accommodation Intelligence UI Újratervezés (V2.2 Élesítve) & Teljes Éjszakai Mód Támogatás ([`templates/accommodation/accommodation_intelligence.html`](file:///e:/Data/other_projects/dreamtrip/templates/accommodation/accommodation_intelligence.html))**:
+  - A korábbi egyszerű űrlap helyett a finomított V2.2 dizájn került élesítésre.
+  - Teljes körű **Light & Dark Mode** támogatás a központi változókkal (`var(--bg-surface)`, `var(--bg-surface-subtle)`, `var(--text-main)`, `var(--border-subtle)`), sötét módra optimalizált Flatpickr naptár-felugróval és kontrasztos ikonokkal.
+  - Integrálva az egyedi magyar nyelvű dátumtartomány-választó (Flatpickr), szigorú $\pm 1$-es léptető gombok (`stepUp`, `stepDown`), feltételes tizedespontos manuális minőségi értékelés (`[✏️ Saját]` gombbal), és a szinkronizált maximális árbevitel (szerkeszthető Ft mező + csúszka).
+  - Teljes körű mobil-reszponzivitás (rugalmas kártyák, érintésbarát gombtávolságok).
+- **PROD és DEV Üzemmód**:
   - `DEV` módban (`APP_ENV=development`): Lokális Selenium Chrome fut a szálláskereséshez (0 Browserless quota felhasználás), és a főoldalon minden modul elérhető.
   - `PROD` módban (`APP_ENV=production`): Kizárólag a **Flight Intelligence** és az **Accommodation Intelligence** modulok aktívak és kattinthatók. A többi modul disabled/Hamarosan jelölést kap, a védett útvonalak átirányítanak a `/home`-ra, a szálláskereső pedig felhős Browserless motort használ.
 - **Vercel Serverless Konfiguráció ([`vercel.json`](file:///e:/Data/other_projects/dreamtrip/vercel.json), [`api/index.py`](file:///e:/Data/other_projects/dreamtrip/api/index.py))**:

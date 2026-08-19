@@ -23,6 +23,7 @@ from contextlib import asynccontextmanager
 from app.models.models import TravelPreferences, Trip, ItineraryDay, ItineraryItem
 from app.services import scoring_service
 from app.services import itinerary_service
+from app.services.exchange_service import get_eur_huf_rate
 from app.services import maps_service
 
 
@@ -170,6 +171,24 @@ async def accommodation_intelligence(request: Request, city: Optional[str] = Non
             "end_date": end_date
         }
     })
+
+# ===== ACCOMMODATION UI REDESIGN MOCKUP PREVIEWS =====
+@app.get("/accommodation-ui-v1", response_class=HTMLResponse)
+async def accommodation_ui_v1(request: Request):
+    return templates.TemplateResponse("accommodation/preview_v1.html", {"request": request})
+
+@app.get("/accommodation-ui-v2", response_class=HTMLResponse)
+async def accommodation_ui_v2(request: Request):
+    return templates.TemplateResponse("accommodation/preview_v2.html", {"request": request})
+
+@app.get("/accommodation-ui-v3", response_class=HTMLResponse)
+async def accommodation_ui_v3(request: Request):
+    return templates.TemplateResponse("accommodation/preview_v3.html", {"request": request})
+
+@app.get("/accommodation-ui-v2.2", response_class=HTMLResponse)
+@app.get("/accommodation-ui-v2-2", response_class=HTMLResponse)
+async def accommodation_ui_v2_2(request: Request):
+    return templates.TemplateResponse("accommodation/preview_v2_2.html", {"request": request})
 
 # ===== LOCATION AUTOCOMPLETE API =====
 location_autocomplete_cache = {}
@@ -387,9 +406,23 @@ def run_accommodation_scraper(p: StaySearchParams):
              accommodation_results["status_text"] = f"Szállásadatok betöltése... ({p_val}%)"
 
     try:
-        # Árváltás (becsült 400 HUF/EUR) a scrapernek
-        p_min_eur = p.price_min / 400
-        p_max_eur = p.price_max / 400
+        # Éjszakák számának kiszámítása
+        try:
+            from datetime import datetime as dt
+            d_start = dt.strptime(p.start_date, "%Y-%m-%d")
+            d_end = dt.strptime(p.end_date, "%Y-%m-%d")
+            num_nights = max(1, (d_end - d_start).days)
+        except Exception:
+            num_nights = 1
+
+        # A Cozycozy a TELJES tartózkodás árára szűr EUR-ban (nem éjszakánkénti árra)
+        # Bőkezű plafont adunk meg, hogy minden releváns szállást letöltsön
+        eur_rate = get_eur_huf_rate()
+        p_min_eur = (p.price_min * num_nights) / eur_rate
+        p_max_eur = (p.price_max * num_nights) / eur_rate if p.price_max < 900000 else 9007199254740991
+        
+        # Min rating a Cozycozy API-ban 0-100 skálán mozog (pl. 7.0 -> 70, 8.0 -> 80)
+        cozy_min_rating = (p.min_rating * 10) if (0 < p.min_rating <= 10) else p.min_rating
         
         city_clean = p.city.strip()
         country_clean = p.country.strip() if p.country else ""
@@ -410,7 +443,7 @@ def run_accommodation_scraper(p: StaySearchParams):
             children=p.children,
             price_min=p_min_eur,
             price_max=p_max_eur,
-            min_rating=p.min_rating,
+            min_rating=cozy_min_rating,
             accommodation_types=p.accommodation_types,
             amenities=p.amenities,
             breakfast=p.breakfast,
@@ -695,14 +728,15 @@ async def stay_filter_status(username: str):
 def filter_stays_dataframe(df, p: StayFilterParams):
     """Helper to apply filters to a DataFrame."""
     # Filter - Price
-    eur_to_huf = 400
+    eur_to_huf = get_eur_huf_rate()
     if 'price_huf' not in df.columns:
         df['price_huf'] = df['price_per_night_eur'] * eur_to_huf
     
     df = df[(df['price_huf'] >= p.price_min) & (df['price_huf'] <= p.price_max)]
     
-    # Filter - Rating
-    df = df[df['rating_score'] >= p.min_rating]
+    # Filter - Rating (kezeli a 0-10 és 0-100 skálákat is)
+    target_rating = (p.min_rating * 10) if (0 < p.min_rating <= 10) else p.min_rating
+    df = df[df['rating_score'] >= target_rating]
     
     # Filter - Accommodation Types
     if p.accommodation_types:
@@ -745,7 +779,7 @@ async def stay_price_histogram(request: Request):
     try:
         df = pd.DataFrame(raw_stay_data["data"])
         if 'price_huf' not in df.columns:
-            df['price_huf'] = df['price_per_night_eur'] * 400
+            df['price_huf'] = df['price_per_night_eur'] * get_eur_huf_rate()
         
         # Calculate histogram
         prices = df['price_huf'].dropna()
@@ -1119,7 +1153,7 @@ def run_stay_calculation_task(user: str, config: StayPreferenceConfig):
         # Ensure price_huf exists (fallback for stale session data)
         if 'price_huf' not in df.columns:
             if 'price_per_night_eur' in df.columns:
-                df['price_huf'] = df['price_per_night_eur'] * 400
+                df['price_huf'] = df['price_per_night_eur'] * get_eur_huf_rate()
             else:
                 df['price_huf'] = 0
 
@@ -1548,7 +1582,7 @@ def run_destination_calculation_task(user: str, prefs: DestPreferenceDetails):
                     # Combined index: Daily cost (static or live lookup) + Flight cost (scaled to daily)
                     # Stay duration approx from constraints
                     duration = constraints.get("duration", 7)
-                    daily_flight = cheapest_price / (duration * 400) # Convert HUF to EUR and div by days
+                    daily_flight = cheapest_price / (duration * get_eur_huf_rate()) # Convert HUF to EUR and div by days
                     
                     # Try to get live daily cost from Numbeo
                     city_cost = dest["metrics"]["cost_index_daily_eur"]

@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optivoya — Accommodation UI v2 (Dark Luxury & Radial Dials)</title>
+    <link rel="icon" type="image/png" href="/static/logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --bg-dark: #0A1B0E;
+            --bg-card: rgba(22, 48, 27, 0.7);
+            --bg-card-hover: rgba(30, 64, 37, 0.85);
+            --border-glass: rgba(144, 220, 37, 0.2);
+            --border-glass-strong: rgba(144, 220, 37, 0.45);
+            --accent-lime: #90DC25;
+            --accent-lime-hover: #A5F530;
+            --accent-glow: 0 0 24px rgba(144, 220, 37, 0.4);
+            --text-light: #F0FDF4;
+            --text-muted: #8EAE94;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', 'Poppins', sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at 50% 10%, #15381C 0%, #08150B 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+            padding: 30px 20px 80px;
+        }
+
+        .container {
+            max-width: 1040px;
+            margin: 0 auto;
+        }
+
+        /* Top Nav */
+        .header-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent-lime);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 8px 18px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-glass);
+            border-radius: 30px;
+            backdrop-filter: blur(10px);
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            background: rgba(144, 220, 37, 0.15);
+            border-color: var(--accent-lime);
+            transform: translateX(-3px);
+        }
+
+        .variant-switch {
+            display: flex;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 4px;
+            border-radius: 30px;
+            border: 1px solid var(--border-glass);
+            backdrop-filter: blur(10px);
+        }
+
+        .variant-link {
+            padding: 6px 14px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+
+        .variant-link.active {
+            background: var(--accent-lime);
+            color: #0A1B0E;
+            font-weight: 700;
+            box-shadow: 0 0 14px rgba(144, 220, 37, 0.4);
+        }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+
+        .badge-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(144, 220, 37, 0.12);
+            color: var(--accent-lime);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border-glass-strong);
+            box-shadow: var(--accent-glow);
+        }
+
+        .hero h1 {
+            font-size: 40px;
+            font-weight: 800;
+            color: #FFFFFF;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+
+        .hero p {
+            color: var(--text-muted);
+            font-size: 16px;
+        }
+
+        /* Glass Form Panel */
+        .glass-panel {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
+            border-radius: 28px;
+            padding: 36px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        /* Section Titles */
+        .section-label {
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent-lime);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        /* Hero Destination Field */
+        .dest-box {
+            position: relative;
+            margin-bottom: 28px;
+        }
+
+        .dest-input {
+            width: 100%;
+            height: 70px;
+            background: rgba(10, 27, 14, 0.8);
+            border: 2px solid var(--border-glass);
+            border-radius: 20px;
+            padding: 0 24px 0 64px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #FFFFFF;
+            outline: none;
+            transition: all 0.25s;
+        }
+
+        .dest-input:focus {
+            border-color: var(--accent-lime);
+            box-shadow: var(--accent-glow), 0 0 0 1px var(--accent-lime);
+            background: rgba(10, 27, 14, 0.95);
+        }
+
+        .dest-icon {
+            position: absolute;
+            left: 22px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accent-lime);
+            width: 26px;
+            height: 26px;
+        }
+
+        /* 3-Col Flex Row */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+
+        .sub-card {
+            background: rgba(10, 27, 14, 0.6);
+            border: 1px solid rgba(144, 220, 37, 0.15);
+            border-radius: 20px;
+            padding: 20px;
+            transition: all 0.2s;
+        }
+
+        .sub-card:hover {
+            border-color: var(--border-glass-strong);
+            background: rgba(10, 27, 14, 0.8);
+        }
+
+        /* Circular Stepper Dials */
+        .dial-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .dial-row:last-child { margin-bottom: 0; }
+
+        .dial-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .dial-stepper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dial-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border-glass);
+            color: var(--accent-lime);
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.15s;
+            user-select: none;
+        }
+
+        .dial-btn:hover {
+            background: var(--accent-lime);
+            color: #0A1B0E;
+            transform: scale(1.1);
+        }
+
+        .dial-val {
+            font-size: 16px;
+            font-weight: 800;
+            color: #FFFFFF;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        /* Date pickers */
+        .date-picker-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            padding: 10px 14px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-light);
+            outline: none;
+            margin-top: 6px;
+        }
+
+        .date-picker-input:focus {
+            border-color: var(--accent-lime);
+        }
+
+        /* Circular Rating Dials */
+        .rating-circles {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .rate-circle {
+            flex: 1;
+            padding: 10px 4px;
+            border-radius: 14px;
+            border: 1px solid var(--border-glass);
+            background: rgba(0,0,0,0.25);
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 700;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .rate-circle:hover {
+            border-color: var(--accent-lime);
+            color: var(--text-light);
+        }
+
+        .rate-circle.active {
+            background: var(--accent-lime);
+            color: #08150B;
+            border-color: var(--accent-lime);
+            box-shadow: 0 0 12px rgba(144, 220, 37, 0.4);
+        }
+
+        /* Types Pill Cluster */
+        .types-cluster {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .type-glass-card {
+            background: rgba(10, 27, 14, 0.6);
+            border: 1px solid var(--border-glass);
+            border-radius: 18px;
+            padding: 16px 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .type-glass-card:hover {
+            background: rgba(20, 50, 28, 0.8);
+            border-color: var(--accent-lime);
+            transform: translateY(-2px);
+        }
+
+        .type-glass-card.active {
+            background: linear-gradient(135deg, rgba(144, 220, 37, 0.25) 0%, rgba(35, 91, 42, 0.6) 100%);
+            border-color: var(--accent-lime);
+            box-shadow: 0 0 18px rgba(144, 220, 37, 0.25);
+        }
+
+        .type-glass-card.active i {
+            color: var(--accent-lime);
+        }
+
+        .type-glass-card span {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        /* Glowing Submit */
+        .btn-launch-glow {
+            width: 100%;
+            height: 68px;
+            background: linear-gradient(135deg, #90DC25 0%, #68A714 100%);
+            color: #0A1B0E;
+            border: none;
+            border-radius: 20px;
+            font-size: 19px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(144, 220, 37, 0.4);
+            transition: all 0.25s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-launch-glow:hover {
+            transform: translateY(-3px);
+            background: linear-gradient(135deg, #A5F530 0%, #79C218 100%);
+            box-shadow: 0 14px 40px rgba(144, 220, 37, 0.6);
+        }
+
+        @media (max-width: 840px) {
+            .grid-3 { grid-template-columns: 1fr; }
+            .types-cluster { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-nav">
+        <a href="/home" class="back-btn">
+            <i data-lucide="arrow-left" style="width: 16px;"></i> Vissza a Dashboardra
+        </a>
+        <div class="variant-switch">
+            <a href="/accommodation-ui-v1" class="variant-link">V1: Bento Grid</a>
+            <a href="/accommodation-ui-v2" class="variant-link active">V2: Dark Luxury</a>
+            <a href="/accommodation-ui-v3" class="variant-link">V3: Step Wizard</a>
+        </div>
+    </div>
+
+    <div class="hero">
+        <div class="badge-pill">
+            <i data-lucide="shield-check" style="width: 14px;"></i> UI Mockup 2 • Dark Luxury Glass & Radial Dials
+        </div>
+        <h1>Executive Travel Advisor Panel</h1>
+        <p>Prémium sötét tónusú felület, finomhangolt léptető tárcsákkal és neon-kiemelésekkel</p>
+    </div>
+
+    <div class="glass-panel">
+        
+        <!-- 1. Destination -->
+        <div class="section-label">
+            <i data-lucide="compass"></i> <span>1. Célállomás (Város vagy Régió)</span>
+        </div>
+        <div class="dest-box">
+            <i data-lucide="map-pin" class="dest-icon"></i>
+            <input type="text" class="dest-input" value="Barcelona, Spanyolország" placeholder="Írd be az úti célt...">
+        </div>
+
+        <!-- 2. Grid (Dates, Guests, Rating) -->
+        <div class="grid-3">
+            
+            <!-- Dates -->
+            <div class="sub-card">
+                <div class="section-label" style="font-size: 11px;">
+                    <i data-lucide="calendar"></i> <span>Dátumtartomány</span>
+                </div>
+                <div>
+                    <label style="font-size: 11px; color: var(--text-muted);">Check-in</label>
+                    <input type="date" id="v2-start" class="date-picker-input">
+                </div>
+                <div style="margin-top: 10px;">
+                    <label style="font-size: 11px; color: var(--text-muted);">Check-out</label>
+                    <input type="date" id="v2-end" class="date-picker-input">
+                </div>
+            </div>
+
+            <!-- Stepper Dials -->
+            <div class="sub-card">
+                <div class="section-label" style="font-size: 11px;">
+                    <i data-lucide="users"></i> <span>Vendégek & Szobák</span>
+                </div>
+                
+                <div class="dial-row">
+                    <span class="dial-title">Szoba:</span>
+                    <div class="dial-stepper">
+                        <div class="dial-btn" onclick="stepVal('r-val', -1, 1)">-</div>
+                        <span class="dial-val" id="r-val">1</span>
+                        <div class="dial-btn" onclick="stepVal('r-val', 1, 10)">+</div>
+                    </div>
+                </div>
+
+                <div class="dial-row">
+                    <span class="dial-title">Felnőtt:</span>
+                    <div class="dial-stepper">
+                        <div class="dial-btn" onclick="stepVal('a-val', -1, 1)">-</div>
+                        <span class="dial-val" id="a-val">2</span>
+                        <div class="dial-btn" onclick="stepVal('a-val', 1, 10)">+</div>
+                    </div>
+                </div>
+
+                <div class="dial-row">
+                    <span class="dial-title">Gyermek:</span>
+                    <div class="dial-stepper">
+                        <div class="dial-btn" onclick="stepVal('c-val', -1, 0)">-</div>
+                        <span class="dial-val" id="c-val">0</span>
+                        <div class="dial-btn" onclick="stepVal('c-val', 1, 6)">+</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quality Rating -->
+            <div class="sub-card">
+                <div class="section-label" style="font-size: 11px;">
+                    <i data-lucide="award"></i> <span>Minimális Értékelés</span>
+                </div>
+                <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 6px;">Válassz minőségi küszöböt:</div>
+                <div class="rating-circles">
+                    <div class="rate-circle" onclick="setRatingV2(this)">Mind</div>
+                    <div class="rate-circle" onclick="setRatingV2(this)">7.5+</div>
+                    <div class="rate-circle active" onclick="setRatingV2(this)">8.0+</div>
+                    <div class="rate-circle" onclick="setRatingV2(this)">9.0+ ★</div>
+                </div>
+
+                <div style="margin-top: 18px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 700;">
+                        <span>Max. ár / éj:</span>
+                        <span style="color: var(--accent-lime);" id="price-v2-txt">95 000 Ft</span>
+                    </div>
+                    <input type="range" min="20000" max="300000" step="5000" value="95000" style="width: 100%; accent-color: var(--accent-lime); margin-top: 6px;" oninput="document.getElementById('price-v2-txt').innerText = parseInt(this.value).toLocaleString() + ' Ft'">
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 3. Types -->
+        <div class="section-label">
+            <i data-lucide="home"></i> <span>Szállástípusok és preferenciák</span>
+        </div>
+        <div class="types-cluster">
+            <div class="type-glass-card active" onclick="this.classList.toggle('active')">
+                <i data-lucide="hotel" style="width: 24px; height: 24px;"></i>
+                <span>Hotel</span>
+            </div>
+            <div class="type-glass-card active" onclick="this.classList.toggle('active')">
+                <i data-lucide="home" style="width: 24px; height: 24px;"></i>
+                <span>Apartman</span>
+            </div>
+            <div class="type-glass-card active" onclick="this.classList.toggle('active')">
+                <i data-lucide="door-open" style="width: 24px; height: 24px;"></i>
+                <span>Vendégház</span>
+            </div>
+            <div class="type-glass-card active" onclick="this.classList.toggle('active')">
+                <i data-lucide="palmtree" style="width: 24px; height: 24px;"></i>
+                <span>Nyaraló</span>
+            </div>
+            <div class="type-glass-card active" onclick="this.classList.toggle('active')">
+                <i data-lucide="bed" style="width: 24px; height: 24px;"></i>
+                <span>Hostel</span>
+            </div>
+        </div>
+
+        <!-- Submit -->
+        <button class="btn-launch-glow" onclick="alert('Demo: Keresés indítása a kiválasztott prémium paraméterekkel!')">
+            <i data-lucide="flame" style="width: 22px; height: 22px;"></i>
+            <span>Szállások Intelligens Lekérése</span>
+            <i data-lucide="arrow-right" style="width: 22px; height: 22px;"></i>
+        </button>
+
+    </div>
+</div>
+
+<script>
+    lucide.createIcons();
+
+    const today = new Date();
+    const start = new Date(today.getTime() + 7 * 24 * 3600 * 1000);
+    const end = new Date(today.getTime() + 11 * 24 * 3600 * 1000);
+    document.getElementById('v2-start').value = start.toISOString().split('T')[0];
+    document.getElementById('v2-end').value = end.toISOString().split('T')[0];
+
+    function stepVal(id, delta, minVal) {
+        const el = document.getElementById(id);
+        let cur = parseInt(el.innerText) + delta;
+        if (cur < minVal) cur = minVal;
+        el.innerText = cur;
+    }
+
+    function setRatingV2(el) {
+        el.parentElement.querySelectorAll('.rate-circle').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
+    }
+</script>
+
+</body>
+</html>

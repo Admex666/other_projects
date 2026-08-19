@@ -3,225 +3,947 @@
 {% block title %}Optivoya — Accommodation Intelligence{% endblock %}
 
 {% block head %}
+<!-- Flatpickr Custom Date Picker -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/hu.js"></script>
+
 <style>
-    .filter-grid-chips {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-        gap: 10px;
-        margin-top: 8px;
+    /* Accommodation Intelligence — Fully Theme-Aware (Light & Dark) */
+    .acc-container {
+        max-width: 1040px;
+        margin: 0 auto;
     }
 
-    .filter-chip {
-        padding: 12px 10px;
-        border: 1px solid var(--border-strong);
-        border-radius: var(--radius-sm);
+    .main-form-card {
         background: var(--bg-surface);
+        border-radius: var(--radius-lg, 24px);
+        border: 1px solid var(--border-subtle);
+        padding: 36px;
+        box-shadow: var(--shadow-md);
+        transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    .section-label {
+        font-size: 13px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 14px;
+    }
+
+    /* 1. Destination Input */
+    .dest-wrap {
+        position: relative;
+        margin-bottom: 24px;
+    }
+
+    .dest-input {
+        width: 100%;
+        height: 68px;
+        background: var(--bg-surface-subtle);
+        border: 1.5px solid var(--border-strong);
+        border-radius: 20px;
+        padding: 0 24px 0 62px;
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--text-main);
+        outline: none;
+        transition: all var(--transition-fast);
+    }
+
+    .dest-input:focus {
+        border-color: var(--primary);
+        background: var(--bg-surface);
+        box-shadow: 0 0 0 4px var(--accent-glow);
+    }
+
+    .dest-icon {
+        position: absolute;
+        left: 22px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--primary);
+        width: 24px;
+        height: 24px;
+    }
+
+    .dest-quick-pills {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: -14px;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+    }
+
+    .dest-pill {
+        background: var(--bg-surface-subtle);
+        border: 1px solid var(--border-subtle);
+        padding: 6px 14px;
+        border-radius: 16px;
+        font-size: 12.5px;
+        font-weight: 600;
         color: var(--text-secondary);
+        cursor: pointer;
+        transition: all var(--transition-fast);
+        user-select: none;
+    }
+
+    .dest-pill:hover {
+        background: var(--primary);
+        color: var(--primary-contrast);
+        border-color: var(--primary);
+    }
+
+    /* 2. Grid-3 Layout */
+    .grid-3 {
+        display: grid;
+        grid-template-columns: 1.15fr 1fr 1.15fr;
+        gap: 20px;
+        margin-bottom: 26px;
+    }
+
+    .panel-box {
+        background: var(--bg-surface-subtle);
+        border: 1.5px solid var(--border-subtle);
+        border-radius: 20px;
+        padding: 22px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: all var(--transition-fast);
+    }
+
+    .panel-box:hover {
+        border-color: var(--primary);
+        box-shadow: var(--shadow-sm);
+    }
+
+    /* Custom Date Picker Card */
+    .date-range-display {
+        background: var(--bg-surface);
+        border: 1.5px solid var(--border-strong);
+        border-radius: 16px;
+        padding: 12px 16px;
+        cursor: pointer;
+        transition: all var(--transition-fast);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        user-select: none;
+    }
+
+    .date-range-display:hover, .date-range-display.active {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .date-col {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .date-col-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--text-muted);
+        text-transform: uppercase;
+    }
+
+    .date-col-val {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text-main);
+        margin-top: 2px;
+    }
+
+    .date-arrow {
+        color: var(--primary);
+        font-weight: 800;
+        font-size: 16px;
+    }
+
+    .hidden-date-picker {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+        width: 0;
+        height: 0;
+    }
+
+    .date-presets {
+        display: flex;
+        gap: 6px;
+        margin-top: 12px;
+        flex-wrap: wrap;
+    }
+
+    .date-preset-chip {
+        font-size: 11.5px;
+        font-weight: 600;
+        padding: 5px 12px;
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: 12px;
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: all var(--transition-fast);
+    }
+
+    .date-preset-chip:hover {
+        background: var(--primary);
+        color: var(--primary-contrast);
+        border-color: var(--primary);
+    }
+
+    /* Steppers (Strictly +/- 1) */
+    .stepper-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        padding-bottom: 10px;
+        border-bottom: 1px dashed var(--border-subtle);
+    }
+    .stepper-row:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+
+    .stepper-info-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text-main);
+    }
+
+    .stepper-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-stepper {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: 2px solid var(--border-strong);
+        background: var(--bg-surface);
+        color: var(--primary);
+        font-size: 20px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all var(--transition-fast);
+        user-select: none;
+        line-height: 1;
+        outline: none;
+    }
+
+    .btn-stepper:hover {
+        border-color: var(--primary);
+        background: var(--primary);
+        color: var(--primary-contrast);
+        transform: scale(1.1);
+    }
+
+    .btn-stepper:active {
+        transform: scale(0.95);
+    }
+
+    .stepper-number {
+        font-size: 16px;
+        font-weight: 800;
+        color: var(--text-main);
+        min-width: 28px;
+        text-align: center;
+    }
+
+    /* Rating & Price Controls */
+    .rating-quick-pills {
+        display: flex;
+        gap: 6px;
+        margin-top: 4px;
+        margin-bottom: 14px;
+        flex-wrap: wrap;
+    }
+
+    .rating-pill {
+        flex: 1;
+        min-width: 44px;
+        padding: 7px 2px;
+        background: var(--bg-surface);
+        border: 1.5px solid var(--border-strong);
+        border-radius: 12px;
+        font-size: 11.5px;
+        font-weight: 700;
+        text-align: center;
+        cursor: pointer;
+        transition: all var(--transition-fast);
+        color: var(--text-secondary);
+        user-select: none;
+    }
+
+    .rating-pill:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    .rating-pill.active {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: var(--primary-contrast);
+        box-shadow: 0 2px 8px var(--accent-glow);
+    }
+
+    .input-number-custom {
+        width: 85px;
+        height: 36px;
+        border: 2px solid var(--border-strong);
+        border-radius: 12px;
+        padding: 0 8px;
+        font-size: 15px;
+        font-weight: 800;
+        color: var(--text-main);
+        background: var(--bg-surface);
+        text-align: center;
+        outline: none;
+        transition: all var(--transition-fast);
+    }
+
+    .input-number-custom:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .price-sync-box {
+        border-top: 1px dashed var(--border-subtle);
+        padding-top: 12px;
+        margin-top: 4px;
+    }
+
+    .price-input-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 6px;
+    }
+
+    .price-input-styled {
+        width: 130px;
+        height: 36px;
+        border: 2px solid var(--border-strong);
+        border-radius: 12px;
+        padding: 0 10px;
+        font-size: 15px;
+        font-weight: 800;
+        color: var(--text-main);
+        background: var(--bg-surface);
+        text-align: right;
+        outline: none;
+        transition: all var(--transition-fast);
+    }
+
+    .price-input-styled:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .price-range-slider {
+        width: 100%;
+        height: 6px;
+        accent-color: var(--primary);
+        cursor: pointer;
+        margin-top: 4px;
+    }
+
+    /* 3. Types & Amenities Grid */
+    .types-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 12px;
+        margin-bottom: 24px;
+    }
+
+    .type-card {
+        background: var(--bg-surface-subtle);
+        border: 1.5px solid var(--border-subtle);
+        border-radius: 18px;
+        padding: 16px 10px;
         text-align: center;
         cursor: pointer;
         transition: all var(--transition-fast);
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 6px;
-        font-size: 12.5px;
-        font-weight: 600;
+        gap: 8px;
         user-select: none;
+        color: var(--text-secondary);
     }
 
-    .filter-chip:hover {
+    .type-card svg {
+        stroke: var(--text-secondary);
+        transition: stroke var(--transition-fast);
+    }
+
+    .type-card:hover {
         border-color: var(--primary);
+        background: var(--bg-surface);
         color: var(--primary);
+        transform: translateY(-2px);
+    }
+
+    .type-card:hover svg {
+        stroke: var(--primary);
+    }
+
+    .type-card.active {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: var(--primary-contrast);
+        box-shadow: 0 6px 18px var(--accent-glow);
+    }
+
+    .type-card.active svg {
+        stroke: var(--primary-contrast);
+    }
+
+    .type-card span {
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    /* Autocomplete dropdown */
+    .autocomplete-dropdown {
+        position: absolute;
+        top: calc(100% + 8px);
+        left: 0;
+        right: 0;
+        background: var(--bg-surface-elevated);
+        border-radius: 18px;
+        box-shadow: var(--shadow-xl);
+        border: 1px solid var(--border-strong);
+        z-index: 1000;
+        display: none;
+        max-height: 280px;
+        overflow-y: auto;
+        padding: 8px;
+    }
+
+    .autocomplete-item {
+        padding: 12px 16px;
+        border-radius: 12px;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: background var(--transition-fast);
+    }
+
+    .autocomplete-item:hover {
         background: var(--bg-surface-subtle);
     }
 
-    .filter-chip.active {
-        border-color: var(--primary);
-        background: var(--primary);
-        color: var(--primary-contrast);
-        box-shadow: 0 2px 8px var(--accent-glow);
+    .autocomplete-name {
+        font-weight: 700;
+        color: var(--text-main);
     }
 
-    .filter-chip svg {
-        width: 20px;
-        height: 20px;
+    .autocomplete-sub {
+        font-size: 12px;
+        color: var(--text-muted);
+    }
+
+    /* Submit Button */
+    .btn-search-hero {
+        width: 100%;
+        height: 66px;
+        background: var(--primary);
+        color: var(--primary-contrast);
+        border: none;
+        border-radius: 20px;
+        font-size: 18px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        cursor: pointer;
+        box-shadow: 0 12px 30px var(--accent-glow);
+        transition: all var(--transition-fast);
+    }
+
+    .btn-search-hero:hover:not(:disabled) {
+        transform: translateY(-3px);
+        background: var(--primary-hover);
+        box-shadow: 0 16px 40px var(--accent-glow);
+    }
+
+    .btn-search-hero:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    /* Flatpickr Theme Adjustments for Dark Mode */
+    [data-theme="dark"] .flatpickr-calendar {
+        background: var(--bg-surface-elevated) !important;
+        border: 1px solid var(--border-strong) !important;
+        box-shadow: var(--shadow-xl) !important;
+        color: var(--text-main) !important;
+    }
+
+    [data-theme="dark"] .flatpickr-day {
+        color: var(--text-main) !important;
+    }
+
+    [data-theme="dark"] .flatpickr-day.flatpickr-disabled,
+    [data-theme="dark"] .flatpickr-day.prevMonthDay,
+    [data-theme="dark"] .flatpickr-day.nextMonthDay {
+        color: var(--text-muted) !important;
+    }
+
+    [data-theme="dark"] .flatpickr-day.selected,
+    [data-theme="dark"] .flatpickr-day.startRange,
+    [data-theme="dark"] .flatpickr-day.endRange {
+        background: var(--primary) !important;
+        border-color: var(--primary) !important;
+        color: var(--primary-contrast) !important;
+    }
+
+    [data-theme="dark"] .flatpickr-day.inRange {
+        background: var(--primary-light) !important;
+        border-color: transparent !important;
+        color: var(--text-main) !important;
+    }
+
+    [data-theme="dark"] .flatpickr-months .flatpickr-month,
+    [data-theme="dark"] .flatpickr-current-month,
+    [data-theme="dark"] span.flatpickr-weekday {
+        color: var(--text-main) !important;
+        fill: var(--text-main) !important;
+    }
+
+    [data-theme="dark"] .flatpickr-months .flatpickr-prev-month svg,
+    [data-theme="dark"] .flatpickr-months .flatpickr-next-month svg {
+        fill: var(--text-main) !important;
+    }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 860px) {
+        .grid-3 { grid-template-columns: 1fr; }
+        .types-grid { grid-template-columns: repeat(2, 1fr); }
+        .main-form-card { padding: 20px 16px; border-radius: 18px; }
+        .dest-input { height: 58px; font-size: 16px; }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<a href="/home" class="btn-back-link">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <line x1="19" y1="12" x2="5" y2="12"></line>
-        <polyline points="12 19 5 12 12 5"></polyline>
-    </svg>
-    <span>Vissza a főoldalra</span>
-</a>
-
-<div class="page-header">
-    <h1 class="page-title">Accommodation Intelligence</h1>
-    <p class="page-subtitle">Aggregált szálláskeresés és adatvezérelt összehasonlító elemzés</p>
-</div>
-
-<div class="card" style="max-width: 900px; margin: 0 auto;">
+<div class="acc-container">
     
-    <!-- 1. ALAPADATOK -->
-    <div style="margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--border-subtle);">
-        <h2 style="font-size: 16px; font-weight: 700; color: var(--text-main); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+    <a href="/home" class="btn-back-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        <span>Vissza a főoldalra</span>
+    </a>
+
+    <div class="page-header" style="text-align: center; margin-bottom: 28px;">
+        <h1 class="page-title" style="font-size: 34px; font-weight: 800; color: var(--primary);">Accommodation Intelligence</h1>
+        <p class="page-subtitle">Aggregált szálláskeresés és adatvezérelt döntéstámogató elemzés</p>
+    </div>
+
+    <!-- Main Card -->
+    <div class="main-form-card">
+        
+        <!-- 1. Úti cél -->
+        <div class="section-label">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                 <circle cx="12" cy="10" r="3"></circle>
             </svg>
-            <span>Alapadatok</span>
-        </h2>
-
-        <div class="form-group">
-            <label class="form-label" for="destination">Úticél (Város, Ország)</label>
-            <div class="autocomplete-container" id="dest-container">
-                <input type="text" id="destination" class="form-control" placeholder="Pl. Barcelona, Spanyolország" 
-                       value="{{ prefill.city ~ (', ' ~ prefill.country if prefill.country else '') if prefill.city else '' }}" autocomplete="off">
-                <div class="autocomplete-dropdown" id="dest-dropdown"></div>
-                <input type="hidden" id="selected_city" value="{{ prefill.city or '' }}">
-                <input type="hidden" id="selected_country" value="{{ prefill.country or '' }}">
-            </div>
+            <span>1. Úti cél (Város vagy Régió)</span>
         </div>
 
-        <div class="form-grid-2" style="margin-top: 14px;">
-            <div class="form-group">
-                <label class="form-label" for="start_date">Érkezés napja (Check-in)</label>
-                <input type="date" id="start_date" class="form-control">
-            </div>
-            <div class="form-group">
-                <label class="form-label" for="end_date">Távozás napja (Check-out)</label>
-                <input type="date" id="end_date" class="form-control">
-            </div>
-        </div>
-
-        <div class="form-grid-3" style="margin-top: 14px;">
-            <div class="form-group">
-                <label class="form-label">Szobák száma</label>
-                <select id="rooms" class="form-control">
-                    <option value="1" selected>1 szoba</option>
-                    <option value="2">2 szoba</option>
-                    <option value="3">3 szoba</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Felnőttek száma</label>
-                <select id="adults" class="form-control">
-                    <option value="1">1 felnőtt</option>
-                    <option value="2" selected>2 felnőtt</option>
-                    <option value="3">3 felnőtt</option>
-                    <option value="4">4 felnőtt</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Gyermekek száma</label>
-                <select id="children" class="form-control">
-                    <option value="0" selected>0 gyermek</option>
-                    <option value="1">1 gyermek</option>
-                    <option value="2">2 gyermek</option>
-                </select>
-            </div>
-        </div>
-    </div>
-
-    <!-- 2. SZŰRÉSI FELTÉTELEK -->
-    <div style="margin-bottom: 24px;">
-        <h2 style="font-size: 16px; font-weight: 700; color: var(--text-main); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+        <div class="dest-wrap">
+            <svg class="dest-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
-            <span>Szállástípusok és kényelmi preferenciák</span>
-        </h2>
+            <input type="text" id="destination" class="dest-input" placeholder="Írd be a célvárost (pl. Barcelona, Róma, Bécs...)"
+                   value="{{ prefill.city ~ (', ' ~ prefill.country if prefill.country else '') if prefill.city else '' }}" autocomplete="off">
+            <div class="autocomplete-dropdown" id="dest-dropdown"></div>
+            <input type="hidden" id="selected_city" value="{{ prefill.city or '' }}">
+            <input type="hidden" id="selected_country" value="{{ prefill.country or '' }}">
+        </div>
 
-        <div class="form-group">
-            <label class="form-label">Elfogadható szállástípusok</label>
-            <div class="filter-grid-chips" id="type-grid">
-                <div class="filter-chip active" data-value="HOTEL">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 7v14M21 7v14M6 11h2M6 15h2M10 11h2M10 15h2M14 11h2M14 15h2M6 7h12l-6-4-6 4z"/></svg>
-                    <span>Hotel</span>
+        <div class="dest-quick-pills">
+            <span style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Népszerű úti célok:</span>
+            <span class="dest-pill" onclick="setQuickDest('Barcelona', 'Spanyolország')">🇪🇸 Barcelona</span>
+            <span class="dest-pill" onclick="setQuickDest('Róma', 'Olaszország')">🇮🇹 Róma</span>
+            <span class="dest-pill" onclick="setQuickDest('Párizs', 'Franciaország')">🇫🇷 Párizs</span>
+            <span class="dest-pill" onclick="setQuickDest('Bécs', 'Ausztria')">🇦🇹 Bécs</span>
+            <span class="dest-pill" onclick="setQuickDest('Budapest', 'Magyarország')">🇭🇺 Budapest</span>
+        </div>
+
+        <!-- 2. Grid-3: Dátumtartomány, Utazók (±1), Rating & Ár -->
+        <div class="grid-3">
+            
+            <!-- Custom Date Picker -->
+            <div class="panel-box">
+                <div>
+                    <div class="section-label" style="font-size: 11px;">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                        <span>Dátumtartomány</span>
+                    </div>
+                    
+                    <div class="date-range-display" id="date_picker_trigger">
+                        <div class="date-col">
+                            <span class="date-col-label">Check-in</span>
+                            <span class="date-col-val" id="disp_checkin">--</span>
+                        </div>
+                        <span class="date-arrow">➔</span>
+                        <div class="date-col" style="text-align: right;">
+                            <span class="date-col-label">Check-out</span>
+                            <span class="date-col-val" id="disp_checkout">--</span>
+                        </div>
+                    </div>
+                    <input type="text" id="flatpickr_range" class="hidden-date-picker">
+                    <input type="hidden" id="start_date">
+                    <input type="hidden" id="end_date">
                 </div>
-                <div class="filter-chip active" data-value="APARTMENT">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
-                    <span>Apartman</span>
+
+                <div class="date-presets">
+                    <span class="date-preset-chip" onclick="setRelativeDates(7, 11)">Jövő hét</span>
+                    <span class="date-preset-chip" onclick="setRelativeDates(14, 18)">2 hét múlva</span>
+                    <span class="date-preset-chip" onclick="setRelativeDates(30, 35)">1 hónap</span>
                 </div>
-                <div class="filter-chip active" data-value="GUEST">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V6a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v14M2 20h20M14 12v.01"/></svg>
-                    <span>Vendégház</span>
+            </div>
+
+            <!-- Stepper Controls (Strictly +/- 1) -->
+            <div class="panel-box">
+                <div class="section-label" style="font-size: 11px;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    <span>Utazók & Szobák (±1)</span>
                 </div>
-                <div class="filter-chip active" data-value="VR">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/></svg>
-                    <span>Nyaraló</span>
+
+                <!-- Szoba -->
+                <div class="stepper-row">
+                    <span class="stepper-info-title">Szoba:</span>
+                    <div class="stepper-controls">
+                        <button type="button" class="btn-stepper" onclick="stepDown('room_count', 1)">−</button>
+                        <span class="stepper-number" id="room_count">1</span>
+                        <button type="button" class="btn-stepper" onclick="stepUp('room_count', 10)">+</button>
+                    </div>
                 </div>
-                <div class="filter-chip active" data-value="HOSTEL">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9"/></svg>
-                    <span>Hostel</span>
+
+                <!-- Felnőtt -->
+                <div class="stepper-row">
+                    <span class="stepper-info-title">Felnőtt:</span>
+                    <div class="stepper-controls">
+                        <button type="button" class="btn-stepper" onclick="stepDown('adult_count', 1)">−</button>
+                        <span class="stepper-number" id="adult_count">2</span>
+                        <button type="button" class="btn-stepper" onclick="stepUp('adult_count', 20)">+</button>
+                    </div>
                 </div>
+
+                <!-- Gyermek -->
+                <div class="stepper-row">
+                    <span class="stepper-info-title">Gyermek:</span>
+                    <div class="stepper-controls">
+                        <button type="button" class="btn-stepper" onclick="stepDown('child_count', 0)">−</button>
+                        <span class="stepper-number" id="child_count">0</span>
+                        <button type="button" class="btn-stepper" onclick="stepUp('child_count', 10)">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quality Rating & Price Sync -->
+            <div class="panel-box">
+                <div>
+                    <div class="section-label" style="font-size: 11px;">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <span>Min. Értékelési Küszöb</span>
+                    </div>
+
+                    <div class="rating-quick-pills">
+                        <div class="rating-pill" id="pill_r_0" onclick="selectRatingPreset(0, this)">Mind</div>
+                        <div class="rating-pill" id="pill_r_7" onclick="selectRatingPreset(7.0, this)">7.0+</div>
+                        <div class="rating-pill active" id="pill_r_8" onclick="selectRatingPreset(8.0, this)">8.0+</div>
+                        <div class="rating-pill" id="pill_r_85" onclick="selectRatingPreset(8.5, this)">8.5+</div>
+                        <div class="rating-pill" id="pill_r_9" onclick="selectRatingPreset(9.0, this)">9.0+</div>
+                        <div class="rating-pill" id="pill_r_custom" onclick="enableCustomRating(this)" title="Saját tizedespontos érték megadása">✏️ Saját</div>
+                    </div>
+
+                    <!-- Custom Rating Expandable Input Box -->
+                    <div id="custom_rating_box" style="display: none; background: var(--bg-surface); border: 1.5px solid var(--primary); border-radius: 14px; padding: 10px 14px; margin-bottom: 12px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                            <span style="font-size: 12px; font-weight: 700; color: var(--primary);">Egyéni minimum pontszám:</span>
+                            <div style="display: flex; align-items: center; gap: 4px;">
+                                <input type="number" id="rating_input" class="input-number-custom" min="0" max="9.5" step="0.1" value="8.0" oninput="updateCustomRatingFromInput(this.value)">
+                                <span style="font-size: 13px; font-weight: 700; color: var(--primary);">/ 10</span>
+                            </div>
+                        </div>
+                        <input type="range" id="rating_slider" min="0" max="9.5" step="0.1" value="8.0" style="width: 100%; accent-color: var(--primary); height: 5px; cursor: pointer;" oninput="updateCustomRatingFromSlider(this.value)">
+                    </div>
+                </div>
+
+                <!-- Max Price Sync -->
+                <div class="price-sync-box">
+                    <div class="price-input-row">
+                        <span style="font-size: 12px; font-weight: 700; color: var(--primary);">Max. ár / éj:</span>
+                        <div style="display: flex; align-items: center; gap: 4px;">
+                            <input type="number" id="price_num_input" class="price-input-styled" min="10000" max="500000" step="5000" value="85000" oninput="syncPriceFromInput(this.value)">
+                            <span style="font-size: 13px; font-weight: 700; color: var(--primary);">Ft</span>
+                        </div>
+                    </div>
+                    <input type="range" id="price_range_slider" class="price-range-slider" min="15000" max="300000" step="5000" value="85000" oninput="syncPriceFromSlider(this.value)">
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 3. Szállástípusok -->
+        <div class="section-label">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 7v14M21 7v14M6 11h2M6 15h2M10 11h2M10 15h2M14 11h2M14 15h2M6 7h12l-6-4-6 4z"/></svg>
+            <span>3. Elfogadható Szállástípusok</span>
+        </div>
+        <div class="types-grid" id="type-grid">
+            <div class="type-card active" data-value="HOTEL">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 7v14M21 7v14M6 11h2M6 15h2M10 11h2M10 15h2M14 11h2M14 15h2M6 7h12l-6-4-6 4z"/></svg>
+                <span>Hotel</span>
+            </div>
+            <div class="type-card active" data-value="APARTMENT">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+                <span>Apartman</span>
+            </div>
+            <div class="type-card active" data-value="GUEST">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V6a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v14M2 20h20M14 12v.01"/></svg>
+                <span>Vendégház</span>
+            </div>
+            <div class="type-card active" data-value="VR">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/></svg>
+                <span>Nyaraló</span>
+            </div>
+            <div class="type-card active" data-value="HOSTEL">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9"/></svg>
+                <span>Hostel</span>
             </div>
         </div>
 
-        <div class="form-group" style="margin-top: 18px;">
-            <label class="form-label">Kényelmi szolgáltatások</label>
-            <div class="filter-grid-chips" id="amenity-grid">
-                <div class="filter-chip" data-value="WIFI">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0M1.42 9a16 16 0 0 1 21.16 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01"/></svg>
-                    <span>Wifi</span>
-                </div>
-                <div class="filter-chip" data-value="POOL">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></svg>
-                    <span>Medence</span>
-                </div>
-                <div class="filter-chip" data-value="PARKING">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-                    <span>Parkoló</span>
-                </div>
-                <div class="filter-chip" data-value="AC">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg>
-                    <span>Klíma</span>
-                </div>
-                <div class="filter-chip" data-value="KITCHEN">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2v20M6 2v20M2 7h8"/></svg>
-                    <span>Konyha</span>
-                </div>
+        <!-- 4. Kényelmi Extrák -->
+        <div class="section-label">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+            <span>4. Kényelmi Extrák</span>
+        </div>
+        <div class="types-grid" id="amenity-grid" style="margin-bottom: 30px;">
+            <div class="type-card" data-value="WIFI">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0M1.42 9a16 16 0 0 1 21.16 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01"/></svg>
+                <span>Wifi</span>
+            </div>
+            <div class="type-card" data-value="POOL">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></svg>
+                <span>Medence</span>
+            </div>
+            <div class="type-card" data-value="PARKING">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                <span>Parkoló</span>
+            </div>
+            <div class="type-card" data-value="AC">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg>
+                <span>Klíma (AC)</span>
+            </div>
+            <div class="type-card" data-value="KITCHEN">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2v20M6 2v20M2 7h8"/></svg>
+                <span>Konyha</span>
             </div>
         </div>
 
-        <div class="form-grid-2" style="margin-top: 20px;">
-            <div class="form-group">
-                <label class="form-label">Max. ár / éjszaka (Ft)</label>
-                <input type="number" id="price_max" class="form-control" value="100000" step="5000">
-            </div>
-            <div class="form-group">
-                <label class="form-label">Minimális értékelés (0 — 10)</label>
-                <input type="number" id="min_rating" class="form-control" value="7" min="0" max="10" step="0.5">
+        <!-- Submit Button -->
+        <button id="searchBtn" class="btn-search-hero" onclick="startSearch()">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <span>Intelligens Szálláskeresés Indítása</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+        </button>
+
+        <!-- Progress & Status Box -->
+        <div id="status" class="status-box" style="margin-top: 20px;">
+            <div id="statusText" style="font-weight: 600;"></div>
+            <div class="progress-container" id="loadingBar" style="display: none; margin-top: 10px;">
+                <div class="progress-bar" style="width: 0%;"></div>
             </div>
         </div>
+
+        <div id="results"></div>
+
     </div>
-
-    <button id="searchBtn" class="btn btn-primary btn-block" style="padding: 14px;" onclick="startSearch()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-        </svg>
-        <span>Szállások keresése</span>
-    </button>
-
-    <div id="status" class="status-box">
-        <div id="statusText" style="font-weight: 600;"></div>
-        <div class="progress-container" id="loadingBar" style="display: none; margin-top: 10px;">
-            <div class="progress-bar" style="width: 0%;"></div>
-        </div>
-    </div>
-
-    <div id="results"></div>
-
 </div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-    // ===== AUTOCOMPLETE =====
+    // ===== 1. PRECISE STEPPER (+/- 1) =====
+    function stepUp(elementId, maxLimit = 30) {
+        if (window.event) {
+            window.event.preventDefault();
+            window.event.stopPropagation();
+        }
+        const el = document.getElementById(elementId);
+        let current = parseInt(el.textContent.trim(), 10) || 1;
+        if (current < maxLimit) {
+            el.textContent = current + 1;
+        }
+    }
+
+    function stepDown(elementId, minLimit = 1) {
+        if (window.event) {
+            window.event.preventDefault();
+            window.event.stopPropagation();
+        }
+        const el = document.getElementById(elementId);
+        let current = parseInt(el.textContent.trim(), 10) || minLimit;
+        if (current > minLimit) {
+            el.textContent = current - 1;
+        }
+    }
+
+    // ===== 2. RATING PRESETS & CUSTOM INPUT =====
+    let selectedRatingValue = 8.0;
+
+    function selectRatingPreset(val, pillElement) {
+        selectedRatingValue = val;
+        document.getElementById('custom_rating_box').style.display = 'none';
+        document.querySelectorAll('.rating-pill').forEach(p => p.classList.remove('active'));
+        if (pillElement) pillElement.classList.add('active');
+        
+        document.getElementById('rating_input').value = val.toFixed(1);
+        document.getElementById('rating_slider').value = val.toFixed(1);
+    }
+
+    function enableCustomRating(pillElement) {
+        document.querySelectorAll('.rating-pill').forEach(p => p.classList.remove('active'));
+        if (pillElement) pillElement.classList.add('active');
+
+        const box = document.getElementById('custom_rating_box');
+        box.style.display = 'block';
+        const input = document.getElementById('rating_input');
+        input.focus();
+        input.select();
+    }
+
+    function updateCustomRatingFromInput(valStr) {
+        let val = parseFloat(valStr);
+        if (isNaN(val)) return;
+        if (val < 0) val = 0;
+        if (val > 9.5) val = 9.5;
+        selectedRatingValue = val;
+        document.getElementById('rating_slider').value = val;
+    }
+
+    function updateCustomRatingFromSlider(val) {
+        selectedRatingValue = parseFloat(val);
+        document.getElementById('rating_input').value = parseFloat(val).toFixed(1);
+    }
+
+    // ===== 3. PRICE SYNC (MANUAL INPUT + SLIDER) =====
+    function syncPriceFromSlider(val) {
+        document.getElementById('price_num_input').value = val;
+    }
+
+    function syncPriceFromInput(val) {
+        let num = parseInt(val) || 0;
+        if (num > 500000) num = 500000;
+        document.getElementById('price_range_slider').value = num;
+    }
+
+    // ===== 4. CUSTOM FLATPICKR DATE RANGE =====
+    const today = new Date();
+    const defaultStart = new Date(today.getTime() + 7 * 24 * 3600 * 1000);
+    const defaultEnd = new Date(today.getTime() + 11 * 24 * 3600 * 1000);
+
+    const initialStart = "{{ prefill.start_date or '' }}" || defaultStart.toISOString().split('T')[0];
+    const initialEnd = "{{ prefill.end_date or '' }}" || defaultEnd.toISOString().split('T')[0];
+
+    document.getElementById('start_date').value = initialStart;
+    document.getElementById('end_date').value = initialEnd;
+
+    let fp = flatpickr("#flatpickr_range", {
+        mode: "range",
+        dateFormat: "Y-m-d",
+        locale: "hu",
+        minDate: "today",
+        defaultDate: [initialStart, initialEnd],
+        onChange: function(selectedDates, dateStr, instance) {
+            if (selectedDates.length >= 1) {
+                document.getElementById('disp_checkin').innerText = formatDateHU(selectedDates[0]);
+                document.getElementById('start_date').value = selectedDates[0].toISOString().split('T')[0];
+            }
+            if (selectedDates.length === 2) {
+                document.getElementById('disp_checkout').innerText = formatDateHU(selectedDates[1]);
+                document.getElementById('end_date').value = selectedDates[1].toISOString().split('T')[0];
+            }
+        }
+    });
+
+    document.getElementById('disp_checkin').innerText = formatDateHU(new Date(initialStart));
+    document.getElementById('disp_checkout').innerText = formatDateHU(new Date(initialEnd));
+
+    document.getElementById('date_picker_trigger').addEventListener('click', () => {
+        fp.open();
+    });
+
+    function formatDateHU(d) {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${y}. ${m}. ${day}.`;
+    }
+
+    function setRelativeDates(daysStart, daysEnd) {
+        const now = new Date();
+        const s = new Date(now.getTime() + daysStart * 24 * 3600 * 1000);
+        const e = new Date(now.getTime() + daysEnd * 24 * 3600 * 1000);
+        fp.setDate([s, e], true);
+    }
+
+    // ===== 5. TYPES & AMENITIES TOGGLES =====
+    const selectedTypes = ['HOTEL', 'APARTMENT', 'GUEST', 'VR', 'HOSTEL'];
+    const selectedAmenities = [];
+
+    function setupToggles(gridId, list) {
+        document.querySelectorAll(`#${gridId} .type-card`).forEach(card => {
+            card.addEventListener('click', () => {
+                const val = card.dataset.value;
+                const idx = list.indexOf(val);
+                if (idx > -1) {
+                    list.splice(idx, 1);
+                    card.classList.remove('active');
+                } else {
+                    list.push(val);
+                    card.classList.add('active');
+                }
+            });
+        });
+    }
+
+    setupToggles('type-grid', selectedTypes);
+    setupToggles('amenity-grid', selectedAmenities);
+
+    // ===== 6. AUTOCOMPLETE FOR DESTINATION =====
     function setupAccommodationAutocomplete() {
         const destInput = document.getElementById('destination');
         const destDropdown = document.getElementById('dest-dropdown');
@@ -229,7 +951,6 @@
         const selectedCountry = document.getElementById('selected_country');
         let debounceTimer = null;
         let currentItems = [];
-        let activeIndex = -1;
 
         async function fetchSuggestions(term) {
             try {
@@ -243,7 +964,6 @@
 
         function renderDropdown(items) {
             currentItems = items;
-            activeIndex = -1;
             if (!items || items.length === 0) {
                 destDropdown.innerHTML = '<div style="padding: 12px; font-size: 13px; color: var(--text-muted); text-align: center;">Nincs találat</div>';
                 destDropdown.style.display = 'block';
@@ -302,46 +1022,13 @@
 
     setupAccommodationAutocomplete();
 
-    // Default dates setup
-    const today = new Date();
-    const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
-    const nextWeekEnd = new Date(today.getTime() + 11 * 24 * 60 * 60 * 1000);
-
-    const startInput = document.getElementById('start_date');
-    const endInput = document.getElementById('end_date');
-
-    startInput.value = "{{ prefill.start_date or '' }}" || nextWeek.toISOString().split('T')[0];
-    endInput.value = "{{ prefill.end_date or '' }}" || nextWeekEnd.toISOString().split('T')[0];
-    startInput.min = today.toISOString().split('T')[0];
-    endInput.min = startInput.value;
-
-    startInput.addEventListener('change', () => {
-        endInput.min = startInput.value;
-        if (endInput.value < endInput.min) endInput.value = endInput.min;
-    });
-
-    const selectedTypes = ['HOTEL', 'APARTMENT', 'GUEST', 'VR', 'HOSTEL'];
-    const selectedAmenities = [];
-
-    function setupGrid(id, list) {
-        document.querySelectorAll(`#${id} .filter-chip`).forEach(card => {
-            card.addEventListener('click', () => {
-                const val = card.dataset.value;
-                const idx = list.indexOf(val);
-                if (idx > -1) {
-                    list.splice(idx, 1);
-                    card.classList.remove('active');
-                } else {
-                    list.push(val);
-                    card.classList.add('active');
-                }
-            });
-        });
+    function setQuickDest(city, country) {
+        document.getElementById('destination').value = `${city}, ${country}`;
+        document.getElementById('selected_city').value = city;
+        document.getElementById('selected_country').value = country;
     }
 
-    setupGrid('type-grid', selectedTypes);
-    setupGrid('amenity-grid', selectedAmenities);
-
+    // ===== 7. SEARCH & STATUS POLLING =====
     let pollInterval;
 
     async function startSearch() {
@@ -377,26 +1064,26 @@
             country: countryVal,
             start_date: document.getElementById('start_date').value,
             end_date: document.getElementById('end_date').value,
-            rooms: parseInt(document.getElementById('rooms').value),
-            adults: parseInt(document.getElementById('adults').value),
-            children: parseInt(document.getElementById('children').value),
+            rooms: parseInt(document.getElementById('room_count').textContent.trim()) || 1,
+            adults: parseInt(document.getElementById('adult_count').textContent.trim()) || 2,
+            children: parseInt(document.getElementById('child_count').textContent.trim()) || 0,
             price_min: 0,
-            price_max: parseFloat(document.getElementById('price_max').value),
-            min_rating: parseFloat(document.getElementById('min_rating').value),
+            price_max: parseFloat(document.getElementById('price_num_input').value) || 100000,
+            min_rating: selectedRatingValue,
             accommodation_types: selectedTypes,
             amenities: selectedAmenities,
             breakfast: false
         };
 
-        if (!payload.city || !payload.country) {
-            alert("Kérlek add meg a várost és az országot!");
+        if (!payload.city) {
+            alert("Kérlek add meg a várost!");
             return;
         }
 
         btn.disabled = true;
         statusDiv.style.display = 'block';
         statusDiv.className = 'status-box status-running';
-        statusText.innerText = "Keresés indítása...";
+        statusText.innerText = "Keresés indítása a felhőben...";
         loadingBar.style.display = 'block';
         loadingBarInner.style.width = "5%";
         resultsDiv.innerHTML = "";
@@ -436,14 +1123,14 @@
 
             const resultsDiv = document.getElementById('results');
             resultsDiv.innerHTML = `
-                <div style="background: var(--status-success-bg); border: 1.5px solid var(--primary); border-radius: var(--radius-md); padding: 28px 24px; text-align: center; margin-top: 24px;">
-                    <h2 style="color: var(--primary); font-size: 20px; font-weight: 700; margin-bottom: 8px;">Találtunk ${data.count} szállást!</h2>
-                    <p style="font-size: 15px; color: var(--text-secondary); margin-bottom: 20px;">A megadott szűrők alapján a legrelevánsabb ajánlatokat gyűjtöttük össze.</p>
+                <div style="background: var(--status-success-bg); border: 1.5px solid var(--primary); border-radius: 20px; padding: 28px 24px; text-align: center; margin-top: 24px;">
+                    <h2 style="color: var(--primary); font-size: 22px; font-weight: 800; margin-bottom: 8px;">Találtunk ${data.count} szállást!</h2>
+                    <p style="font-size: 15px; color: var(--text-secondary); margin-bottom: 20px;">A megadott szűrők alapján a legrelevánsabb ajánlatokat gyűjtöttük össze a felhőben.</p>
                     
                     <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
                         <button onclick="location.reload()" class="btn btn-secondary">Új keresés</button>
                         <button onclick="window.location.href='/accommodation-intelligence-ahp'" class="btn btn-primary" style="padding: 12px 24px;">
-                            <span>Tovább az elemzéshez</span>
+                            <span>Tovább az AHP súlyozáshoz</span>
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
                                 <polyline points="12 5 19 12 12 19"></polyline>
@@ -452,7 +1139,7 @@
                     </div>
                 </div>
             `;
-            statusText.innerText = "Keresés befejezve.";
+            statusText.innerText = "Keresés sikeresen befejezve.";
         } else if (data.status === 'error') {
             clearInterval(pollInterval);
             loadingBar.style.display = 'none';

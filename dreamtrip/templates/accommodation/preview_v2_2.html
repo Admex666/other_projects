@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optivoya — Accommodation UI v2.2 (Refined Light/Brand Theme)</title>
+    <link rel="icon" type="image/png" href="/static/logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Flatpickr for custom elegant date picker -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_green.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/hu.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #235B2A;
+            --primary-dark: #163E1C;
+            --primary-light: #2E7537;
+            --primary-subtle: #EBF4EC;
+            --accent: #90DC25;
+            --accent-hover: #A3EC3B;
+            --accent-glow: rgba(144, 220, 37, 0.35);
+            --bg-page: #F4F7F4;
+            --bg-card: #FFFFFF;
+            --text-main: #142818;
+            --text-muted: #5C7260;
+            --border: #D8E4D9;
+            --border-focus: #235B2A;
+            --shadow-sm: 0 4px 14px rgba(20, 40, 24, 0.05);
+            --shadow-md: 0 10px 30px rgba(20, 40, 24, 0.08);
+            --shadow-lg: 0 20px 48px rgba(20, 40, 24, 0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 30px 20px 80px;
+        }
+
+        .container {
+            max-width: 1060px;
+            margin: 0 auto;
+        }
+
+        /* Top Nav */
+        .header-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 8px 18px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            transform: translateX(-3px);
+            border-color: var(--primary);
+        }
+
+        .variant-switch {
+            display: flex;
+            gap: 6px;
+            background: white;
+            padding: 4px;
+            border-radius: 30px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .variant-link {
+            padding: 6px 14px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+
+        .variant-link.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Page Hero */
+        .hero {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .badge-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(144, 220, 37, 0.2);
+            color: #1A4D22;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(144, 220, 37, 0.4);
+        }
+
+        .hero h1 {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--primary-dark);
+            letter-spacing: -0.5px;
+            margin-bottom: 6px;
+        }
+
+        .hero p {
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+
+        /* Main Form Card */
+        .main-form-card {
+            background: var(--bg-card);
+            border-radius: 28px;
+            border: 1px solid var(--border);
+            padding: 36px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .section-label {
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .section-label i {
+            color: var(--primary);
+        }
+
+        /* 1. Destination Box */
+        .dest-wrap {
+            position: relative;
+            margin-bottom: 26px;
+        }
+
+        .dest-input {
+            width: 100%;
+            height: 68px;
+            background: #FAFCFA;
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 0 24px 0 62px;
+            font-size: 19px;
+            font-weight: 600;
+            color: var(--text-main);
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .dest-input:focus {
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 4px var(--accent-glow);
+        }
+
+        .dest-icon {
+            position: absolute;
+            left: 22px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+            width: 26px;
+            height: 26px;
+        }
+
+        .dest-quick-pills {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .dest-pill {
+            background: #F4F8F4;
+            border: 1px solid var(--border);
+            padding: 5px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary-dark);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .dest-pill:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* 2. Grid-3 Row: Dates, Guests, Rating & Price */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1.15fr 1fr 1.1fr;
+            gap: 20px;
+            margin-bottom: 26px;
+        }
+
+        .panel-box {
+            background: #FAFCFA;
+            border: 1.5px solid var(--border);
+            border-radius: 22px;
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.2s;
+        }
+
+        .panel-box:hover {
+            border-color: rgba(35, 91, 42, 0.35);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Custom Date Picker Card */
+        .date-range-display {
+            background: white;
+            border: 1.5px solid var(--border);
+            border-radius: 16px;
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .date-range-display:hover, .date-range-display.active {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .date-col {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .date-col-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .date-col-val {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-top: 2px;
+        }
+
+        .date-arrow {
+            color: var(--primary);
+            font-weight: 800;
+            font-size: 16px;
+        }
+
+        .hidden-date-picker {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+            width: 0;
+            height: 0;
+        }
+
+        .date-presets {
+            display: flex;
+            gap: 6px;
+            margin-top: 12px;
+        }
+
+        .date-preset-chip {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .date-preset-chip:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Steppers (+ / - strictly by 1) */
+        .stepper-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed var(--border);
+        }
+        .stepper-row:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .stepper-info-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .stepper-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-stepper {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            background: white;
+            color: var(--primary);
+            font-size: 20px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.15s;
+            user-select: none;
+            line-height: 1;
+        }
+
+        .btn-stepper:hover {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: var(--accent);
+            transform: scale(1.1);
+        }
+
+        .btn-stepper:active {
+            transform: scale(0.95);
+        }
+
+        .stepper-number {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--primary-dark);
+            min-width: 28px;
+            text-align: center;
+        }
+
+        /* Rating & Price Controls with MANUAL INPUT */
+        .manual-input-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .input-number-custom {
+            width: 90px;
+            height: 38px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 0 8px;
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--primary-dark);
+            background: white;
+            text-align: center;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .input-number-custom:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .rating-quick-pills {
+            display: flex;
+            gap: 6px;
+            margin-top: 6px;
+            margin-bottom: 14px;
+        }
+
+        .rating-pill {
+            flex: 1;
+            padding: 6px 2px;
+            background: white;
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.15s;
+            color: var(--text-muted);
+        }
+
+        .rating-pill:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .rating-pill.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: var(--accent);
+            box-shadow: 0 2px 8px rgba(35, 91, 42, 0.25);
+        }
+
+        /* Price Slider + Manual Input Sync */
+        .price-sync-box {
+            border-top: 1px dashed var(--border);
+            padding-top: 12px;
+            margin-top: 4px;
+        }
+
+        .price-input-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .price-input-styled {
+            width: 140px;
+            height: 38px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 0 10px;
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--primary-dark);
+            background: white;
+            text-align: right;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .price-input-styled:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .price-range-slider {
+            width: 100%;
+            height: 6px;
+            accent-color: var(--primary);
+            cursor: pointer;
+            margin-top: 4px;
+        }
+
+        /* 3. Types & Amenities Grid */
+        .types-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            margin-bottom: 26px;
+        }
+
+        .type-card {
+            background: #FAFCFA;
+            border: 1.5px solid var(--border);
+            border-radius: 18px;
+            padding: 16px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            user-select: none;
+        }
+
+        .type-card:hover {
+            border-color: var(--primary);
+            background: white;
+            transform: translateY(-2px);
+        }
+
+        .type-card.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            box-shadow: 0 6px 18px rgba(35, 91, 42, 0.25);
+        }
+
+        .type-card.active i {
+            color: var(--accent);
+        }
+
+        .type-card span {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        /* Submit Button */
+        .btn-search-primary {
+            width: 100%;
+            height: 66px;
+            background: linear-gradient(135deg, #235B2A 0%, #163E1C 100%);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            cursor: pointer;
+            box-shadow: 0 12px 30px rgba(35, 91, 42, 0.35);
+            transition: all 0.25s;
+        }
+
+        .btn-search-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 16px 40px var(--accent-glow);
+            background: linear-gradient(135deg, #2D7436 0%, #1A4B22 100%);
+        }
+
+        .btn-search-primary i.sparkle {
+            color: var(--accent);
+        }
+
+        @media (max-width: 860px) {
+            .grid-3 { grid-template-columns: 1fr; }
+            .types-grid { grid-template-columns: repeat(2, 1fr); }
+            .main-form-card { padding: 22px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Header Nav -->
+    <div class="header-nav">
+        <a href="/home" class="back-btn">
+            <i data-lucide="arrow-left" style="width: 16px;"></i> Vissza a Dashboardra
+        </a>
+        <div class="variant-switch">
+            <a href="/accommodation-ui-v1" class="variant-link">V1</a>
+            <a href="/accommodation-ui-v2" class="variant-link">V2</a>
+            <a href="/accommodation-ui-v3" class="variant-link">V3</a>
+            <a href="/accommodation-ui-v2.2" class="variant-link active">V2.2 (Finomított)</a>
+        </div>
+    </div>
+
+    <!-- Page Title -->
+    <div class="hero">
+        <div class="badge-pill">
+            <i data-lucide="sparkles" style="width: 14px;"></i> UI Mockup 2.2 • Finomított Hagyományos Stílus
+        </div>
+        <h1>Szálláskeresési Paraméterek</h1>
+        <p>V2 elrendezés hagyományos világos háttérrel, custom naptárral, ±1 léptetőkkel és manuális mezőkkel</p>
+    </div>
+
+    <!-- Main Form Card -->
+    <div class="main-form-card">
+        
+        <!-- 1. Úti cél -->
+        <div class="section-label">
+            <i data-lucide="map-pin"></i> <span>1. Úti cél (Város vagy Régió)</span>
+        </div>
+        <div class="dest-wrap">
+            <i data-lucide="search" class="dest-icon"></i>
+            <input type="text" id="dest_field" class="dest-input" value="Barcelona, Spanyolország" placeholder="Írd be a célvárost...">
+        </div>
+        <div class="dest-quick-pills" style="margin-top: -16px; margin-bottom: 24px;">
+            <span style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Gyorsválasztás:</span>
+            <span class="dest-pill" onclick="document.getElementById('dest_field').value='Barcelona, Spanyolország'">🇪🇸 Barcelona</span>
+            <span class="dest-pill" onclick="document.getElementById('dest_field').value='Róma, Olaszország'">🇮🇹 Róma</span>
+            <span class="dest-pill" onclick="document.getElementById('dest_field').value='Párizs, Franciaország'">🇫🇷 Párizs</span>
+            <span class="dest-pill" onclick="document.getElementById('dest_field').value='Bécs, Ausztria'">🇦🇹 Bécs</span>
+            <span class="dest-pill" onclick="document.getElementById('dest_field').value='Budapest, Magyarország'">🇭🇺 Budapest</span>
+        </div>
+
+        <!-- 2. Grid-3: Dátum, Utazók (+/- 1), Rating & Ár -->
+        <div class="grid-3">
+            
+            <!-- Custom Date Picker -->
+            <div class="panel-box">
+                <div>
+                    <div class="section-label" style="font-size: 11px;">
+                        <i data-lucide="calendar"></i> <span>Dátumtartomány</span>
+                    </div>
+                    
+                    <div class="date-range-display" id="date_picker_trigger">
+                        <div class="date-col">
+                            <span class="date-col-label">Check-in</span>
+                            <span class="date-col-val" id="disp_checkin">2026. 09. 01.</span>
+                        </div>
+                        <span class="date-arrow">➔</span>
+                        <div class="date-col" style="text-align: right;">
+                            <span class="date-col-label">Check-out</span>
+                            <span class="date-col-val" id="disp_checkout">2026. 09. 05.</span>
+                        </div>
+                    </div>
+                    <input type="text" id="flatpickr_range" class="hidden-date-picker">
+                </div>
+
+                <div class="date-presets">
+                    <span class="date-preset-chip" onclick="setRelativeDates(7, 11)">Jövő hét</span>
+                    <span class="date-preset-chip" onclick="setRelativeDates(14, 18)">2 hét múlva</span>
+                    <span class="date-preset-chip" onclick="setRelativeDates(30, 35)">1 hónap</span>
+                </div>
+            </div>
+
+            <!-- Stepper Dials (Strictly +/- 1 with native button elements) -->
+            <div class="panel-box">
+                <div class="section-label" style="font-size: 11px;">
+                    <i data-lucide="users"></i> <span>Utazók & Szobák (±1)</span>
+                </div>
+
+                <!-- Szoba -->
+                <div class="stepper-row">
+                    <span class="stepper-info-title">Szoba:</span>
+                    <div class="stepper-controls">
+                        <button type="button" class="btn-stepper" onclick="stepDown('room_count', 1)">−</button>
+                        <span class="stepper-number" id="room_count">1</span>
+                        <button type="button" class="btn-stepper" onclick="stepUp('room_count', 10)">+</button>
+                    </div>
+                </div>
+
+                <!-- Felnőtt -->
+                <div class="stepper-row">
+                    <span class="stepper-info-title">Felnőtt:</span>
+                    <div class="stepper-controls">
+                        <button type="button" class="btn-stepper" onclick="stepDown('adult_count', 1)">−</button>
+                        <span class="stepper-number" id="adult_count">2</span>
+                        <button type="button" class="btn-stepper" onclick="stepUp('adult_count', 20)">+</button>
+                    </div>
+                </div>
+
+                <!-- Gyermek -->
+                <div class="stepper-row">
+                    <span class="stepper-info-title">Gyermek:</span>
+                    <div class="stepper-controls">
+                        <button type="button" class="btn-stepper" onclick="stepDown('child_count', 0)">−</button>
+                        <span class="stepper-number" id="child_count">0</span>
+                        <button type="button" class="btn-stepper" onclick="stepUp('child_count', 10)">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quality Rating & Price WITH CONDITIONAL CUSTOM RATING -->
+            <div class="panel-box">
+                <div>
+                    <div class="section-label" style="font-size: 11px;">
+                        <i data-lucide="star"></i> <span>Min. Értékelési Küszöb</span>
+                    </div>
+
+                    <!-- Rating Pills -->
+                    <div class="rating-quick-pills">
+                        <div class="rating-pill" id="pill_r_0" onclick="selectRatingPreset(0, this)">Mind</div>
+                        <div class="rating-pill" id="pill_r_7" onclick="selectRatingPreset(7.0, this)">7.0+</div>
+                        <div class="rating-pill active" id="pill_r_8" onclick="selectRatingPreset(8.0, this)">8.0+</div>
+                        <div class="rating-pill" id="pill_r_85" onclick="selectRatingPreset(8.5, this)">8.5+</div>
+                        <div class="rating-pill" id="pill_r_9" onclick="selectRatingPreset(9.0, this)">9.0+</div>
+                        <div class="rating-pill" id="pill_r_custom" onclick="enableCustomRating(this)" title="Saját tizedespontos érték megadása">✏️ Saját</div>
+                    </div>
+
+                    <!-- Custom Manual Rating Input Box (Csak a Saját gomb megnyomásakor jelenik meg) -->
+                    <div id="custom_rating_box" style="display: none; background: white; border: 1.5px solid var(--primary); border-radius: 14px; padding: 10px 14px; margin-bottom: 12px; animation: fadeIn 0.2s ease;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                            <span style="font-size: 12px; font-weight: 700; color: var(--primary);">Egyéni minimum pontszám:</span>
+                            <div style="display: flex; align-items: center; gap: 4px;">
+                                <input type="number" id="rating_input" class="input-number-custom" min="0" max="9.5" step="0.1" value="8.2" oninput="updateCustomRatingFromInput(this.value)">
+                                <span style="font-size: 13px; font-weight: 700; color: var(--primary);">/ 10</span>
+                            </div>
+                        </div>
+                        <input type="range" id="rating_slider" min="0" max="9.5" step="0.1" value="8.2" style="width: 100%; accent-color: var(--primary); height: 5px; cursor: pointer;" oninput="updateCustomRatingFromSlider(this.value)">
+                    </div>
+                </div>
+
+                <!-- Max Price Sync (Manual Input + Slider) -->
+                <div class="price-sync-box">
+                    <div class="price-input-row">
+                        <span style="font-size: 12px; font-weight: 700; color: var(--primary);">Max. ár / éj:</span>
+                        <div style="display: flex; align-items: center; gap: 4px;">
+                            <input type="number" id="price_num_input" class="price-input-styled" min="10000" max="500000" step="5000" value="85000" oninput="syncPriceFromInput(this.value)">
+                            <span style="font-size: 13px; font-weight: 700; color: var(--primary);">Ft</span>
+                        </div>
+                    </div>
+                    <input type="range" id="price_range_slider" class="price-range-slider" min="15000" max="300000" step="5000" value="85000" oninput="syncPriceFromSlider(this.value)">
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 3. Szállástípusok -->
+        <div class="section-label">
+            <i data-lucide="building"></i> <span>Szállástípusok kiválasztása</span>
+        </div>
+        <div class="types-grid">
+            <div class="type-card active" onclick="this.classList.toggle('active')">
+                <i data-lucide="hotel" style="width: 24px; height: 24px;"></i>
+                <span>Hotel</span>
+            </div>
+            <div class="type-card active" onclick="this.classList.toggle('active')">
+                <i data-lucide="home" style="width: 24px; height: 24px;"></i>
+                <span>Apartman</span>
+            </div>
+            <div class="type-card active" onclick="this.classList.toggle('active')">
+                <i data-lucide="door-open" style="width: 24px; height: 24px;"></i>
+                <span>Vendégház</span>
+            </div>
+            <div class="type-card active" onclick="this.classList.toggle('active')">
+                <i data-lucide="palmtree" style="width: 24px; height: 24px;"></i>
+                <span>Nyaraló</span>
+            </div>
+            <div class="type-card active" onclick="this.classList.toggle('active')">
+                <i data-lucide="bed" style="width: 24px; height: 24px;"></i>
+                <span>Hostel</span>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button class="btn-search-primary" onclick="alert('Keresés indítása a finomhangolt v2.2 paraméterekkel!')">
+            <i data-lucide="sparkles" class="sparkle" style="width: 22px; height: 22px;"></i>
+            <span>Intelligens Szálláskeresés Indítása</span>
+            <i data-lucide="arrow-right" style="width: 20px; height: 20px;"></i>
+        </button>
+
+    </div>
+</div>
+
+<script>
+    lucide.createIcons();
+
+    // 1. Precise Stepper (+/- strictly 1 with integer safety)
+    function stepUp(elementId, maxLimit = 30) {
+        if (window.event) {
+            window.event.preventDefault();
+            window.event.stopPropagation();
+        }
+        const el = document.getElementById(elementId);
+        let current = parseInt(el.textContent.trim(), 10) || 1;
+        if (current < maxLimit) {
+            el.textContent = current + 1;
+        }
+    }
+
+    function stepDown(elementId, minLimit = 1) {
+        if (window.event) {
+            window.event.preventDefault();
+            window.event.stopPropagation();
+        }
+        const el = document.getElementById(elementId);
+        let current = parseInt(el.textContent.trim(), 10) || minLimit;
+        if (current > minLimit) {
+            el.textContent = current - 1;
+        }
+    }
+
+    // 2. Rating Logic (Presets vs Custom Mode)
+    let selectedRatingValue = 8.0;
+
+    function selectRatingPreset(val, pillElement) {
+        selectedRatingValue = val;
+        // Hide custom manual rating box
+        document.getElementById('custom_rating_box').style.display = 'none';
+        
+        // Update pill active styles
+        document.querySelectorAll('.rating-pill').forEach(p => p.classList.remove('active'));
+        if (pillElement) {
+            pillElement.classList.add('active');
+        }
+        
+        // Sync hidden rating value
+        document.getElementById('rating_input').value = val.toFixed(1);
+        document.getElementById('rating_slider').value = val.toFixed(1);
+    }
+
+    function enableCustomRating(pillElement) {
+        // Update pill active styles
+        document.querySelectorAll('.rating-pill').forEach(p => p.classList.remove('active'));
+        if (pillElement) {
+            pillElement.classList.add('active');
+        }
+
+        // Open and focus custom rating box
+        const box = document.getElementById('custom_rating_box');
+        box.style.display = 'block';
+        const input = document.getElementById('rating_input');
+        input.focus();
+        input.select();
+    }
+
+    function updateCustomRatingFromInput(valStr) {
+        let val = parseFloat(valStr);
+        if (isNaN(val)) return;
+        if (val < 0) val = 0;
+        if (val > 9.5) val = 9.5;
+        selectedRatingValue = val;
+        document.getElementById('rating_slider').value = val;
+    }
+
+    function updateCustomRatingFromSlider(val) {
+        selectedRatingValue = parseFloat(val);
+        document.getElementById('rating_input').value = parseFloat(val).toFixed(1);
+    }
+
+    // 3. Price Sync (Slider + Manual Input)
+    function syncPriceFromSlider(val) {
+        document.getElementById('price_num_input').value = val;
+    }
+
+    function syncPriceFromInput(val) {
+        let num = parseInt(val) || 0;
+        if (num > 500000) num = 500000;
+        document.getElementById('price_range_slider').value = num;
+    }
+
+    // 4. Custom Flatpickr Date Picker
+    let fp = flatpickr("#flatpickr_range", {
+        mode: "range",
+        dateFormat: "Y-m-d",
+        locale: "hu",
+        minDate: "today",
+        defaultDate: ["2026-09-01", "2026-09-05"],
+        onChange: function(selectedDates, dateStr, instance) {
+            if (selectedDates.length >= 1) {
+                document.getElementById('disp_checkin').innerText = formatDateHU(selectedDates[0]);
+            }
+            if (selectedDates.length === 2) {
+                document.getElementById('disp_checkout').innerText = formatDateHU(selectedDates[1]);
+            }
+        }
+    });
+
+    document.getElementById('date_picker_trigger').addEventListener('click', () => {
+        fp.open();
+    });
+
+    function formatDateHU(d) {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${y}. ${m}. ${day}.`;
+    }
+
+    function setRelativeDates(daysFromNowStart, daysFromNowEnd) {
+        const now = new Date();
+        const s = new Date(now.getTime() + daysFromNowStart * 24 * 3600 * 1000);
+        const e = new Date(now.getTime() + daysFromNowEnd * 24 * 3600 * 1000);
+        fp.setDate([s, e], true);
+    }
+</script>
+
+</body>
+</html>
