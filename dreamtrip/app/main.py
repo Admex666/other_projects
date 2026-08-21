@@ -48,7 +48,14 @@ def get_current_user(request: Request):
     return sessions.get(token) if token else None
 
 class DestConstraints(BaseModel):
-    month: str; duration: int; origin: str; budget_daily: float; budget_strictness: str; exclusions: List[str]
+    month: str
+    duration: int = 7
+    origin: str = "Budapest"
+    budget_daily: float = 150.0
+    budget_strictness: str = "soft"
+    exclusions: List[str] = []
+    adults: int = 2
+    children: int = 0
 
 class DestCriteria(BaseModel):
     criteria: List[str]
@@ -57,7 +64,11 @@ class DestAHP(BaseModel):
     comparisons: Dict[str, float]
 
 class DestPreferenceDetails(BaseModel):
-    weather_temp: float; weather_rain: str; cost_pref: str; vibe_urban_nature: int; vibe_calm_party: int; vibe_history: int; safety_level: str; crowds_pref: str; travel_time_max: int
+    weather_temp: float = 24.0
+    weight_flight: float = 25.0
+    weight_cost: float = 25.0
+    weight_weather: float = 25.0
+    weight_safety: float = 25.0
 
 destination_db = []
 destination_sessions = {}
@@ -139,7 +150,19 @@ async def destination_matcher(request: Request):
     return templates.TemplateResponse("destination/destination_matcher.html", {"request": request})
 
 @app.get("/flight-intelligence", response_class=HTMLResponse)
-async def flight_intelligence(request: Request, destination: Optional[str] = None, origin: Optional[str] = None, out_from: Optional[str] = None, out_to: Optional[str] = None, in_from: Optional[str] = None, in_to: Optional[str] = None):
+async def flight_intelligence(
+    request: Request, 
+    destination: Optional[str] = None, 
+    origin: Optional[str] = None, 
+    out_from: Optional[str] = None, 
+    out_to: Optional[str] = None, 
+    in_from: Optional[str] = None, 
+    in_to: Optional[str] = None,
+    adults: Optional[int] = None,
+    children: Optional[int] = None,
+    duration: Optional[int] = None,
+    from_matcher: Optional[int] = None
+):
     user = get_current_user(request)
     if not user:
         return RedirectResponse(url="/", status_code=303)
@@ -152,7 +175,11 @@ async def flight_intelligence(request: Request, destination: Optional[str] = Non
             "out_from": out_from,
             "out_to": out_to,
             "in_from": in_from,
-            "in_to": in_to
+            "in_to": in_to,
+            "adults": adults,
+            "children": children,
+            "duration": duration,
+            "from_matcher": bool(from_matcher)
         }
     })
 
@@ -288,6 +315,10 @@ class SearchParams(BaseModel):
     out_to: str
     in_from: str
     in_to: str
+    adults: int = 1
+    children: int = 0
+    infants: int = 0
+    duration: int = 7
 
 # Globális tároló a nyers adatoknak
 raw_flight_data = {"data": None, "count": 0}
@@ -340,18 +371,22 @@ def run_intelligence_scraper(p: SearchParams):
         results["status_text"] = "Adatkapcsolat megteremtése..."
         tokens = get_kiwi_tokens(headless=True)
         
-        results["status_text"] = f"Odaút keresése ({p.origin} -> {p.destination})..."
+        results["status_text"] = f"Odaút keresése ({p.origin} -> {p.destination}, {p.adults} felnőtt)..."
         outbound = search_flights_by_city_name_v2(
             origin_name=p.origin,
             destination_name=p.destination,
             tokens=tokens,
             date_from=p.out_from,
             date_to=p.out_to,
-            progress_callback=lambda p: update_progress(5, 40, p)
+            adults=p.adults,
+            children=p.children,
+            infants=p.infants,
+            limit=50,
+            progress_callback=lambda p_val: update_progress(5, 40, p_val)
         )
         
         results["progress"] = 45
-        results["status_text"] = f"Visszaút keresése ({p.destination} -> {p.origin})..."
+        results["status_text"] = f"Visszaút keresése ({p.destination} -> {p.origin}, {p.adults} felnőtt)..."
         
         inbound = search_flights_by_city_name_v2(
             origin_name=p.destination,
@@ -359,17 +394,24 @@ def run_intelligence_scraper(p: SearchParams):
             tokens=tokens,
             date_from=p.in_from,
             date_to=p.in_to,
-            progress_callback=lambda p: update_progress(45, 40, p)
+            adults=p.adults,
+            children=p.children,
+            infants=p.infants,
+            limit=50,
+            progress_callback=lambda p_val: update_progress(45, 40, p_val)
         )
         
         results["progress"] = 90
         results["status_text"] = "Útvonalak kombinálása és ellenőrzése..."
         
         if outbound.empty or inbound.empty:
-            results = {"status": "done", "progress": 100, "data": [], "count": 0, "error": "Nincs járat."}
+            results = {"status": "done", "progress": 100, "data": [], "count": 0, "error": "Nincs járat a megadott feltételekkel."}
             return
 
-        combinations = create_return_combinations(outbound, inbound)
+        # Rugalmas kinttartózkodás figyelembe vétele
+        min_stay = max(1, p.duration - 2) if p.duration else 1
+        max_stay = (p.duration + 2) if p.duration else None
+        combinations = create_return_combinations(outbound, inbound, min_stay_days=min_stay, max_stay_days=max_stay)
         
         # ✅ MÓDOSÍTÁS: Mentés a raw_flight_data globális változóba
         raw_flight_data["data"] = combinations
@@ -1338,53 +1380,20 @@ def get_dest_session(user):
         destination_sessions[user] = {"filtered": [], "criteria": [], "weights": [], "constraints": {}}
     return destination_sessions[user]
 
+from app.services.destination_service import get_filtered_destinations
+from app.services.destination_scoring_service import evaluate_destination_candidate, calculate_destination_rankings
+
 @app.post("/api/destination-constraints")
 async def save_constraints(data: DestConstraints, request: Request):
     user = get_current_user(request)
     if not user: return JSONResponse({"error": "Unauthorized"}, status_code=401)
     
-    global destination_db
-    if not destination_db:
-        print("Destination DB empty, attempting reload...")
-        try:
-            # Use absolute path relative to this file
-            base_dir = os.path.dirname(os.path.abspath(__file__))
-            json_path = os.path.join(base_dir, "data", "destinations.json")
-            with open(json_path, "r", encoding="utf-8") as f:
-                destination_db = json.load(f)
-            print(f"Reloaded {len(destination_db)} destinations from {json_path}")
-        except Exception as e:
-            print(f"Error re-loading destinations: {e}")
-
     session = get_dest_session(user)
     session["constraints"] = data.dict()
     
-    filtered = []
-    print(f"Filtering {len(destination_db)} destinations with exclusions: {data.exclusions}")
-    
-    for dest in destination_db:
-        keep = True
-        
-        # 1. Exclusions
-        for excl in data.exclusions:
-            # Region checks
-            if excl == "region_asia" and dest.get("region") == "Asia": keep = False
-            if excl == "region_america" and dest.get("region") == "America": keep = False
-            if excl == "region_europe" and dest.get("region") == "Europe": keep = False
-            if excl == "region_australia" and dest.get("region") == "Australia": keep = False
-
-        # 2. Budget (Simple pre-filter)
-        # If strict, filter out if cost > budget + 10% buffer
-        if keep and data.budget_strictness == "hard" and data.budget_daily > 0:
-            cost = dest["metrics"].get("cost_index_daily_eur", 0)
-            if cost > (data.budget_daily * 1.1):
-                keep = False
-
-        if keep:
-            filtered.append(dest)
-    
+    filtered = get_filtered_destinations(data.exclusions)
     session["filtered"] = filtered
-    print(f"User {user} filtered destinations: {len(filtered)} remaining.")
+    print(f"[INFO] Felhasználó ({user}) szűrt célállomásai: {len(filtered)} desztináció maradt (Kizárások: {data.exclusions}).")
     
     return {"status": "ok", "count": len(filtered)}
 
@@ -1407,7 +1416,6 @@ async def save_ahp(data: DestAHP, request: Request):
     session = get_dest_session(user)
     criteria = session.get("criteria", [])
     if not criteria:
-        # Fallback if empty (should not happen if flow followed)
         return JSONResponse({"error": "No criteria selected"}, status_code=400)
     
     n = len(criteria)
@@ -1437,7 +1445,7 @@ async def save_ahp(data: DestAHP, request: Request):
         normalized_weights = []
     
     session["weights"] = normalized_weights.tolist()
-    print(f"User {user} AHP weights computed.")
+    print(f"User {user} AHP weights computed: {session['weights']}")
     
     return {"status": "ok", "weights": session["weights"]}
 
@@ -1455,10 +1463,12 @@ async def calculate_destinations(prefs: DestPreferenceDetails, background_tasks:
     
     session = get_dest_session(user)
     dests = session.get("filtered", [])
-    criteria = session.get("criteria", [])
-    
-    if not dests or not criteria:
-        return JSONResponse({"error": "Missing data (Dests or Criteria)"}, status_code=400)
+    if not dests:
+        dests = get_filtered_destinations(session.get("constraints", {}).get("exclusions", []))
+        session["filtered"] = dests
+
+    if not dests:
+        return JSONResponse({"error": "Nincs elérhető célállomás"}, status_code=400)
 
     dest_calculation_status[user] = {"status": "running", "progress": 0, "status_text": "Kalkuláció indítása..."}
     background_tasks.add_task(run_destination_calculation_task, user, prefs)
@@ -1473,222 +1483,93 @@ def run_destination_calculation_task(user: str, prefs: DestPreferenceDetails):
     try:
         session = get_dest_session(user)
         dests = session.get("filtered", [])
-        criteria = session.get("criteria", [])
-        weights = session.get("weights", [])
+        if not dests:
+            dests = get_filtered_destinations(session.get("constraints", {}).get("exclusions", []))
+            session["filtered"] = dests
+        
         constraints = session.get("constraints", {})
         
+        if not dests:
+            dest_calculation_status[user] = {"status": "error", "error": "Nincs elérhető célállomás a megadott szűrőkkel."}
+            return
+
         n = len(dests)
-        k = len(criteria)
-        if not weights or len(weights) != k:
-            weights = [1.0/k] * k
-            
-        # 1. LIVE DATA COLLECTION
-        live_data_matrix = np.zeros((n, k))
-        # Additional data for explanation/display
-        dest_live_details = [{} for _ in range(n)]
-        
         origin_city = constraints.get("origin", "Budapest")
-        month = constraints.get("month", "any")
-        if month == "any": month = 6 # Default to June for weather check if ANY
+        # Tisztítsuk meg a repülőtéri kódtól ha szükséges (pl. "Budapest (BUD)" -> "Budapest")
+        origin_clean = origin_city.split("(")[0].strip()
+
+        month = constraints.get("month", "6")
+        if month == "any": month = 6
         else: month = int(month)
         
-        # Determine representative dates for 2024
-        weather_start = f"2024-{month:02d}-10"
-        weather_end = f"2024-{month:02d}-16"
-        
+        duration_days = int(constraints.get("duration", 7))
+        target_temp = float(prefs.weather_temp) if prefs.weather_temp else 24.0
+        adults = int(constraints.get("adults", 2))
+        children = int(constraints.get("children", 0))
+
+        dest_calculation_status[user] = {
+            "status": "running", 
+            "progress": 5, 
+            "status_text": "Kiwi és Open-Meteo adatkapcsolat inicializálása..."
+        }
+
         tokens = scraper.get_kiwi_tokens()
-        
-        # Load live Numbeo data
-        numbeo_data = {}
-        try:
-            base_dir = os.path.dirname(os.path.abspath(__file__))
-            numbeo_path = os.path.join(base_dir, "data", "live_numbeo_indices.json")
-            if os.path.exists(numbeo_path):
-                with open(numbeo_path, "r", encoding="utf-8") as f:
-                    numbeo_data = json.load(f)
-        except Exception as e:
-            print(f"Numbeo load error: {e}")
+        print(f"\n[DESTINATION PIPELINE] {n} célállomás elemzése indul (Indulás: {origin_clean}, Hónap: {month}, Időtartam: {duration_days} nap, Utasok: {adults} felnőtt + {children} gyerek, Célhőm: {target_temp}°C)...")
 
-        def fetch_destination_data(i):
-            dest = dests[i]
-            dest_name = dest["name"]
-            
-            # --- WEATHER FETCHING (Open-Meteo) ---
-            avg_temp_max = 25.0 # Default fallback
-            avg_temp_min = 15.0 # Default fallback
-            if "weather" in criteria:
-                try:
-                    lat, lon = dest.get("lat"), dest.get("lon")
-                    if lat and lon:
-                        w_url = f"https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={weather_start}&end_date={weather_end}&daily=temperature_2m_max,temperature_2m_min&timezone=GMT"
-                        wr = requests.get(w_url, timeout=5)
-                        if wr.status_code == 200:
-                            w_data = wr.json()
-                            max_temps = w_data.get("daily", {}).get("temperature_2m_max", [])
-                            min_temps = w_data.get("daily", {}).get("temperature_2m_min", [])
-                            if max_temps and min_temps:
-                                avg_temp_max = sum([t for t in max_temps if t is not None]) / len(max_temps)
-                                avg_temp_min = sum([t for t in min_temps if t is not None]) / len(min_temps)
-                except Exception as e:
-                    print(f"Weather error for {dest_name}: {e}")
-            
-            # --- FLIGHT FETCHING (Kiwi) ---
-            cheapest_price = 50000.0 # Default fallback
-            travel_time = 4.0 # Default fallback
-            if "cost" in criteria or "travel_time" in criteria:
-                try:
-                    # Flight search (One way for proxy)
-                    flight_df = scraper.search_flights_by_city_name_v2(
-                        origin_name=origin_city,
-                        destination_name=dest_name,
-                        tokens=tokens,
-                        date_from=f"2026-{month:02d}-10", 
-                        date_to=f"2026-{month:02d}-20",
-                        limit=5
-                    )
-                    if not flight_df.empty:
-                        cheapest_price = float(flight_df["price_huf"].min())
-                        travel_time = float(flight_df["duration_h"].min())
-                except Exception as e:
-                    print(f"Flight error for {dest_name}: {e}")
-            
-            return i, avg_temp_min, avg_temp_max, cheapest_price, travel_time
-
-        dest_calculation_status[user]["status_text"] = "Adatok lekérése párhuzamosan..."
-        
+        # Párhuzamos adatgyűjtés a valós API-kból
         completed_count = 0
-        def fetch_with_progress(i):
+        def process_candidate(dest):
             nonlocal completed_count
-            res = fetch_destination_data(i)
+            res = evaluate_destination_candidate(
+                dest=dest,
+                origin_city=origin_clean,
+                month=month,
+                duration_days=duration_days,
+                tokens=tokens,
+                target_temp=target_temp,
+                adults=adults,
+                children=children
+            )
             with dest_calc_lock:
                 completed_count += 1
-                # Progress from 0 to 85 during fetching
-                prog = int((completed_count / n) * 85)
+                prog = 5 + int((completed_count / n) * 80)
                 dest_calculation_status[user]["progress"] = prog
-                dest_calculation_status[user]["status_text"] = f"Adatok betöltése ({completed_count}/{n})..."
+                dest_calculation_status[user]["status_text"] = f"Valós adatok gyűjtése ({completed_count}/{n}): {dest.get('name')}..."
             return res
 
-        with ThreadPoolExecutor(max_workers=5) as executor:
-            task_results = list(executor.map(fetch_with_progress, range(n)))
+        with ThreadPoolExecutor(max_workers=10) as executor:
+            candidates_raw = list(executor.map(process_candidate, dests))
 
-        for i, avg_temp_min, avg_temp_max, cheapest_price, travel_time in task_results:
-            dest = dests[i]
-
-            # Fill live data matrix
-            for j, crit_id in enumerate(criteria):
-                if crit_id == "weather":
-                    live_data_matrix[i, j] = abs(((avg_temp_max + avg_temp_min) / 2) - prefs.weather_temp)
-                elif crit_id == "cost":
-                    # Combined index: Daily cost (static or live lookup) + Flight cost (scaled to daily)
-                    # Stay duration approx from constraints
-                    duration = constraints.get("duration", 7)
-                    daily_flight = cheapest_price / (duration * get_eur_huf_rate()) # Convert HUF to EUR and div by days
-                    
-                    # Try to get live daily cost from Numbeo
-                    city_cost = dest["metrics"]["cost_index_daily_eur"]
-                    for nk, nv in numbeo_data.items():
-                        if dest["name"].lower() in nk.lower() and nv.get("cost_index"):
-                            # Adjusted linear model for EUR: max(65, round(Index * 4.7 - 115))
-                            city_cost = max(65, round(nv["cost_index"] * 4.7 - 115))
-                            break
-                            
-                    live_data_matrix[i, j] = city_cost + daily_flight
-                elif crit_id == "safety":
-                    # Try to get live safety index from Numbeo
-                    city_safety = dest["metrics"]["safety_index"]
-                    for nk, nv in numbeo_data.items():
-                        if dest["name"].lower() in nk.lower() and nv.get("safety_index"):
-                            city_safety = round(nv["safety_index"])
-                            break
-                    live_data_matrix[i, j] = city_safety
-                elif crit_id == "vibe":
-                    u_ideal = prefs.vibe_urban_nature / 100.0
-                    p_ideal = prefs.vibe_calm_party / 100.0
-                    h_ideal = prefs.vibe_history / 10.0
-                    
-                    v_metrics = dest.get("vibe_metrics", {})
-                    live_data_matrix[i, j] = (abs(v_metrics.get("urban_scale", 0.5) - u_ideal) + 
-                                            abs(v_metrics.get("nightlife_scale", 0.5) - p_ideal) + 
-                                            abs(v_metrics.get("historical_scale", 0.5) - h_ideal)) / 3.0
-                elif crit_id == "travel_time":
-                    live_data_matrix[i, j] = travel_time
-                elif crit_id == "crowds":
-                    # Placeholder or use city population density if we had it
-                    live_data_matrix[i, j] = 0.5
-            
-            dest_live_details[i] = {
-                "temp_min": round(avg_temp_min, 1),
-                "temp_max": round(avg_temp_max, 1),
-                "flight_price": cheapest_price,
-                "travel_time": travel_time
-            }
-
-        # 2. PROMETHEE CALCULATION
-        dest_calculation_status[user]["status_text"] = "Rangsorolás..."
+        dest_calculation_status[user]["status_text"] = "Determinisztikus pontszámok és indoklások számítása..."
         dest_calculation_status[user]["progress"] = 90
-        
-        directions = []
-        thresholds = []
-        for c in criteria:
-            if c == "weather": directions.append(-1); thresholds.append((2, 10))
-            elif c == "cost": directions.append(-1); thresholds.append((5, 30))
-            elif c == "safety": directions.append(1); thresholds.append((5, 20))
-            elif c == "vibe": directions.append(-1); thresholds.append((0.1, 0.4))
-            elif c == "travel_time": directions.append(-1); thresholds.append((1, 5))
-            else: directions.append(1); thresholds.append((0, 1))
 
-        pi_matrix = np.zeros((n, n))
-        for i in range(n):
-            for j in range(n):
-                if i == j: continue
-                total_p = 0.0
-                for idx_c in range(k):
-                    vi, vj = live_data_matrix[i, idx_c], live_data_matrix[j, idx_c]
-                    diff = (vi - vj) if directions[idx_c] == 1 else (vj - vi)
-                    q, p = thresholds[idx_c]
-                    pref = 1.0 if diff >= p else (0.0 if diff <= q else (diff - q)/(p - q))
-                    total_p += weights[idx_c] * pref
-                pi_matrix[i, j] = total_p
+        # Súlyok kinyerése közvetlenül a 2. lépés preferenciáiból
+        weights_dict = {
+            "flight": float(prefs.weight_flight),
+            "cost": float(prefs.weight_cost),
+            "weather": float(prefs.weight_weather),
+            "safety": float(prefs.weight_safety)
+        }
 
-        phi_plus = np.sum(pi_matrix, axis=1) / (n - 1) if n > 1 else np.ones(n)
-        phi_minus = np.sum(pi_matrix, axis=0) / (n - 1) if n > 1 else np.zeros(n)
-        phi_net = phi_plus - phi_minus
-        
-        # 3. FORMAT RESULTS
-        results = []
-        for i in range(n):
-            live = dest_live_details[i]
-            d = dests[i]
-            
-            reasons = []
-            if "weather" in criteria and abs(((live["temp_max"] + live["temp_min"]) / 2) - prefs.weather_temp) < 3: reasons.append("Ideális időjárás")
-            if "cost" in criteria and live["flight_price"] < 40000: reasons.append("Olcsó repülőjegy")
-            if "safety" in criteria and d["metrics"]["safety_index"] > 80: reasons.append("Kiemelkedő biztonság")
-            
-            results.append({
-                "id": d["id"],
-                "name": d["name"],
-                "country": d["country"],
-                "score": round((phi_net[i] + 1) * 50),
-                "phi_net": phi_net[i],
-                "image": d.get("image", ""),
-                "explanation": " • ".join(reasons) if reasons else "Optimális választás a szempontjaid alapján.",
-                "metrics": {
-                    "temp": f"{int(live['temp_min'])} - {int(live['temp_max'])}°C",
-                    "cost": f"{d['metrics']['cost_index_daily_eur']}€/nap",
-                    "flight": f"{int(live['flight_price']):,} Ft",
-                    "travel": f"{live['travel_time']} óra"
-                }
-            })
-        
-        results.sort(key=lambda x: x["phi_net"], reverse=True)
-        for idx, r in enumerate(results): r["rank"] = idx + 1
-        
-        session["results"] = results
-        dest_calculation_status[user] = {"status": "done", "progress": 100}
-        
+        ranked_results = calculate_destination_rankings(
+            candidates_raw=candidates_raw,
+            weights=weights_dict,
+            target_temp=target_temp,
+            adults=adults
+        )
+
+        for idx, r in enumerate(ranked_results):
+            r["rank"] = idx + 1
+
+        session["results"] = ranked_results
+        dest_calculation_status[user] = {
+            "status": "done", 
+            "progress": 100, 
+            "count": len(ranked_results)
+        }
+        print(f"[DESTINATION PIPELINE SIKERES] {len(ranked_results)} célállomás rangsorolva és elmentve a munkamenetbe.\n")
     except Exception as e:
-        print(f"DEST ERROR: {e}")
+        print(f"[DESTINATION PIPELINE HIBA] {e}")
         dest_calculation_status[user] = {"status": "error", "error": str(e)}
 
 @app.get("/flight-intelligence-results", response_class=HTMLResponse)

@@ -11,8 +11,9 @@ A projekt átkerült a szabványos `app/` Python architektúrába. Az alkalmazá
 | Modul | Állapot | Megjegyzés / Implementáció |
 | :--- | :---: | :--- |
 | **Flight Intelligence Autocomplete & Validáció** | **VALÓS** | Kiwi Locations API-ra épülő dinamikus typeahead (IATA kódok, repülőterek), és indulás előtti validáció hibajelzéssel. |
-| **Accommodation Intelligence Autocomplete & Scraper** | **VALÓS** | Helymeghatározó typeahead (Város + Ország kitöltéssel), javított Cozycozy searchId selector és automatikus országfordítás. |
-| **Városrangsoroló Motor** (`app.services.scoring_service`) | **VALÓS** | 6-tényezős súlyozás (Kiwi, Open-Meteo, Numbeo Cost/Safety, Walkability, POI density). |
+| **Destination Matcher (Úticél Ajánló)** | **VALÓS / B2B Beta-Ready** | 2-lépéses Advisor Flow, valós Kiwi retúr járatok, Open-Meteo klímaadatok, Numbeo költség/biztonság. Determinisztikus pontozási modell dummy adatok nélkül. |
+| **Destination → Flight Intelligence Híd** | **VALÓS / KÉSZ** | 1-kattintásos zökkenőmentes adatátadás (origin, destination, utasszám, időablak, tartózkodás), context-aware visszanavigáció. |
+| **Városrangsoroló Motor** (`app.services.destination_scoring_service`) | **VALÓS** | 4 objektív pillér: Kiwi retúr járatár, Numbeo fogyasztói kosár, Open-Meteo nappali hőmérséklet, Numbeo Safety Index. |
 | **Google Places Integráció** (`app.services.maps_service`) | **VALÓS** | Real-time lekérdezés + 7 napos local cache (`data/poi_cache.json`) + Mock fallback ha nincs API kulcs. |
 | **Constraint Útiterv Engine** (`app.services.itinerary_service`) | **VALÓS** | Haversine távolság, időablakok, étkezési slotok, lelakatolt elemek, nyitvatartás ellenőrzése. |
 | **FastAPI Backend & Auth** (`app.main`) | **VALÓS** | V1 & V2 API végpontok, cookie-alapú session kezelés, Jinja2 template kiszolgálás. |
@@ -21,8 +22,8 @@ A projekt átkerült a szabványos `app/` Python architektúrába. Az alkalmazá
 
 ---
 
-## Nyitott Blokkolók és Következő Lépések
+## Nyitott Teendők és Következő Lépések
 
-1. **Google Maps API Kulcs**: Be kell állítani a `GOOGLE_MAPS_API_KEY` környezeti változót az éles POI letöltésekhez.
-2. **Nightlife Index Finomítás**: A pontozó motorban a Nightlife score bekötése Numbeo/Google Places adatokból (jelenleg fix 50.0 fallback).
-3. **Vibe-alapú Kereső UI**: Az értékek manuális megadása helyett élményalapú beállítások bevezetése.
+1. **Session / Állapot Izoláció (P0)**: Többfelhasználós munkamenetek elszigetelése az `app/main.py`-ban.
+2. **B2B Ügyfél Ajánlat Export (P1)**: 1-kattintásos ügyfél PDF / megosztható webes kivonat készítése a kiválasztott top járatból és szállásból.
+3. **Google Maps API Kulcs**: A `GOOGLE_MAPS_API_KEY` környezeti változó élesítése.

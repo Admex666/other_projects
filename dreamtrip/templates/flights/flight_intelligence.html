@@ -1,255 +1,378 @@
 {% extends "base.html" %}
 
-{% block title %}Optivoya — Flight Intelligence Kereső{% endblock %}
+{% block title %}Optivoya — Flight Intelligence{% endblock %}
 
 {% block content %}
-<a href="/home" class="btn-back-link">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <line x1="19" y1="12" x2="5" y2="12"></line>
-        <polyline points="12 19 5 12 12 5"></polyline>
-    </svg>
-    <span>Vissza a főoldalra</span>
-</a>
+<div class="advisor-container">
 
-<div class="page-header">
-    <h1 class="page-title">Flight Intelligence</h1>
-    <p class="page-subtitle">Járatok keresése és rangsorolása többkritériumos döntési modellel</p>
-</div>
-
-<div class="card" style="max-width: 900px; margin: 0 auto;">
-    
-    <div class="form-grid-2">
-        <!-- INDULÁS -->
-        <div class="form-group">
-            <label class="form-label" for="origin">Indulási repülőtér / város</label>
-            <div class="autocomplete-container" id="origin-container">
-                <input type="text" id="origin" class="form-control" placeholder="Pl. Budapest (BUD)" value="{{ prefill.origin or 'Budapest' }}" autocomplete="off">
-                <div class="autocomplete-dropdown" id="origin-dropdown"></div>
-            </div>
-        </div>
-
-        <!-- ÉRKEZÉS -->
-        <div class="form-group">
-            <label class="form-label" for="destination">Érkezési repülőtér / város</label>
-            <div class="autocomplete-container" id="destination-container">
-                <input type="text" id="destination" class="form-control" placeholder="Pl. Barcelona (BCN)" value="{{ prefill.destination or '' }}" autocomplete="off">
-                <div class="autocomplete-dropdown" id="destination-dropdown"></div>
-            </div>
-        </div>
-
-        <!-- ODAÚT DÁTUMABLAK -->
-        <div class="form-group">
-            <label class="form-label">Odaút időablak (mettől - meddig)</label>
-            <div style="display: flex; gap: 8px;">
-                <input type="date" id="out_from" class="form-control">
-                <input type="date" id="out_to" class="form-control">
-            </div>
-        </div>
-
-        <!-- VISSZAÚT DÁTUMABLAK -->
-        <div class="form-group">
-            <label class="form-label">Visszaút időablak (mettől - meddig)</label>
-            <div style="display: flex; gap: 8px;">
-                <input type="date" id="in_from" class="form-control">
-                <input type="date" id="in_to" class="form-control">
-            </div>
-        </div>
-    </div>
-
-    <button id="searchBtn" class="btn btn-primary btn-block" style="margin-top: 20px; padding: 14px;" onclick="startSearch()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+    <!-- VISSZA GOMB -->
+    {% if prefill.from_matcher %}
+    <a href="/destination-results" class="btn-back-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
         </svg>
-        <span>Járatok keresése</span>
-    </button>
+        <span>Vissza a célállomások rangsorához</span>
+    </a>
+    {% else %}
+    <a href="/home" class="btn-back-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        <span>Vissza a főoldalra</span>
+    </a>
+    {% endif %}
 
-    <!-- STATUS & PROGRESS INDICATOR -->
-    <div id="status" class="status-box">
-        <div id="statusText" style="font-weight: 600;"></div>
-        <div class="progress-container" id="loadingBar" style="display: none; margin-top: 10px;">
-            <div class="progress-bar" style="width: 0%;"></div>
+    <!-- FEJLÉC -->
+    <div class="page-header" style="text-align: left; margin-bottom: 24px;">
+        <div style="display: inline-flex; align-items: center; gap: 8px; background: var(--accent-glow); color: var(--primary); padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 10px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>
+            </svg>
+            <span>Döntéstámogató Repülőjegy Kereső</span>
         </div>
+        <h1 class="page-title" style="margin-bottom: 6px;">Flight Intelligence</h1>
+        <p class="page-subtitle" style="margin: 0;">Valós idejű aggregáció, többkritériumos AHP páros mátrix és PROMETHEE II rangsorolás.</p>
     </div>
 
-    <!-- SUCCESS RESULTS BANNER -->
-    <div id="results"></div>
+    <!-- ÁTADÁS BANNER (HA DESTINATION MATCHERBŐL ÉRKEZETT) -->
+    {% if prefill.from_matcher %}
+    <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid var(--status-success, #10b981); color: var(--text-main); padding: 14px 18px; border-radius: 14px; margin-bottom: 24px; font-size: 13.5px; display: flex; align-items: center; justify-content: space-between; gap: 14px; box-shadow: var(--shadow-sm);">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="font-size: 22px;">🎯</span>
+            <div>
+                <strong style="color: var(--status-success, #10b981);">Destination Matcher adatátadás aktív:</strong> A célállomás (<strong>{{ prefill.destination }}</strong>), az indulás (<strong>{{ prefill.origin }}</strong>), a létszám (<strong>{{ prefill.adults or 2 }} felnőtt</strong>) és az időablak automatikusan be lett töltve.
+            </div>
+        </div>
+        <span style="font-size: 11.5px; font-weight: 700; background: var(--bg-surface); padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border-subtle); color: var(--text-muted); white-space: nowrap;">1-Kattintásos Járatkeresés</span>
+    </div>
+    {% endif %}
+
+    <!-- FŐ KÁRTYA -->
+    <div class="advisor-main-card">
+
+        <!-- 1. INDULÁSI ÉS ÉRKEZÉSI REPÜLŐTEREK HERO MEZŐK -->
+        <div class="advisor-section-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            </svg>
+            <span>1. Útvonal és Repülőterek</span>
+        </div>
+
+        <div class="advisor-grid-2" style="margin-bottom: 8px;">
+            <!-- INDULÁS -->
+            <div>
+                <label class="form-label" for="origin" style="font-size: 13px; font-weight: 700; margin-bottom: 6px;">Indulási repülőtér / város</label>
+                <div class="autocomplete-field-box">
+                    <div class="hero-search-wrap">
+                        <svg class="hero-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>
+                        </svg>
+                        <input type="text" id="origin" class="hero-search-input" placeholder="Pl. Budapest (BUD)" value="{{ prefill.origin or 'Budapest (BUD)' }}" autocomplete="off">
+                    </div>
+                    <div class="autocomplete-float-results" id="origin-dropdown"></div>
+                </div>
+                <div class="quick-pills-group" style="margin-bottom: 16px;">
+                    <span style="font-size: 11.5px; color: var(--text-muted); font-weight: 600;">Gyorsválasztó:</span>
+                    <div class="quick-pill active" onclick="setOrigin('Budapest (BUD)')">Budapest</div>
+                    <div class="quick-pill" onclick="setOrigin('Bécs (VIE)')">Bécs</div>
+                    <div class="quick-pill" onclick="setOrigin('Debrecen (DEB)')">Debrecen</div>
+                    <div class="quick-pill" onclick="setOrigin('Pozsony (BTS)')">Pozsony</div>
+                </div>
+            </div>
+
+            <!-- ÉRKEZÉS -->
+            <div>
+                <label class="form-label" for="destination" style="font-size: 13px; font-weight: 700; margin-bottom: 6px;">Érkezési repülőtér / város</label>
+                <div class="autocomplete-field-box">
+                    <div class="hero-search-wrap">
+                        <svg class="hero-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        <input type="text" id="destination" class="hero-search-input" placeholder="Pl. Barcelona, Róma, Párizs..." value="{{ prefill.destination or '' }}" autocomplete="off">
+                    </div>
+                    <div class="autocomplete-float-results" id="destination-dropdown"></div>
+                </div>
+                <div class="quick-pills-group" style="margin-bottom: 16px;">
+                    <span style="font-size: 11.5px; color: var(--text-muted); font-weight: 600;">Népszerű:</span>
+                    <div class="quick-pill" onclick="setDest('Barcelona (BCN)')">Barcelona</div>
+                    <div class="quick-pill" onclick="setDest('Róma (FCO)')">Róma</div>
+                    <div class="quick-pill" onclick="setDest('Párizs (CDG)')">Párizs</div>
+                    <div class="quick-pill" onclick="setDest('London (STN)')">London</div>
+                    <div class="quick-pill" onclick="setDest('Málta (MLA)')">Málta</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. BENTO GRID 3: IDŐSZAK, UTASOK & PREFERENCIÁK -->
+        <div class="advisor-section-label" style="margin-top: 10px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="3" y1="9" x2="21" y2="9"></line>
+                <line x1="9" y1="21" x2="9" y2="9"></line>
+            </svg>
+            <span>2. Paraméterek és Utazási Időablak</span>
+        </div>
+
+        <div class="advisor-grid-3">
+
+            <!-- BENTO 1: DÁTUMTARTOMÁNY (KÖZPONTI FLATPICKR) -->
+            <div class="advisor-panel">
+                <div>
+                    <div class="panel-header-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        <span>Időablak & Dátumok</span>
+                    </div>
+                    <div class="panel-header-desc">Oda- és visszaút időtartama</div>
+
+                    <!-- Custom Date Trigger -->
+                    <div class="custom-date-display" id="date_picker_trigger">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 38px; height: 38px; border-radius: 10px; background: var(--bg-surface-subtle); display: flex; align-items: center; justify-content: center; color: var(--primary);">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="date-text-primary" id="flight_date_primary">Dátum kiválasztása</div>
+                                <div class="date-text-sub" id="flight_date_sub">Kattints a naptár megnyitásához</div>
+                            </div>
+                        </div>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--text-muted);">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+
+                    <!-- Rejtett Form Inputok a Scrapernek -->
+                    <input type="hidden" id="out_from" value="{{ prefill.out_from or '' }}">
+                    <input type="hidden" id="out_to" value="{{ prefill.out_to or '' }}">
+                    <input type="hidden" id="in_from" value="{{ prefill.in_from or '' }}">
+                    <input type="hidden" id="in_to" value="{{ prefill.in_to or '' }}">
+                </div>
+
+                <!-- Gyors Dátum Presets -->
+                <div class="date-preset-pills">
+                    <div class="preset-pill active" onclick="applyFlightPreset(7, 7, this)">Jövő hét</div>
+                    <div class="preset-pill" onclick="applyFlightPreset(14, 7, this)">2 hét múlva</div>
+                    <div class="preset-pill" onclick="applyFlightPreset(30, 7, this)">1 hónap</div>
+                    <div class="preset-pill" onclick="applyFlightPreset(4, 3, this)">Hétvége</div>
+                </div>
+            </div>
+
+            <!-- BENTO 2: UTASOK & CSOMAGOK -->
+            <div class="advisor-panel">
+                <div>
+                    <div class="panel-header-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        <span>Utasok & Csomagok</span>
+                    </div>
+                    <div class="panel-header-desc">Utazók létszáma és poggyász</div>
+
+                    <div class="steppers-stack">
+                        <!-- Felnőtt -->
+                        <div class="stepper-row">
+                            <div>
+                                <div class="stepper-title">Felnőtt</div>
+                                <div class="stepper-subtitle">12+ év felett</div>
+                            </div>
+                            <div class="stepper-control-box">
+                                <button type="button" class="stepper-circle-btn" onclick="stepDown('adults_count', 1)">−</button>
+                                <input type="hidden" id="adults_count" value="{{ prefill.adults or 1 }}">
+                                <span class="stepper-num-val" id="adults_display">{{ prefill.adults or 1 }}</span>
+                                <button type="button" class="stepper-circle-btn" onclick="stepUp('adults_count', 9)">+</button>
+                            </div>
+                        </div>
+
+                        <!-- Gyermek -->
+                        <div class="stepper-row">
+                            <div>
+                                <div class="stepper-title">Gyermek</div>
+                                <div class="stepper-subtitle">0–11 év</div>
+                            </div>
+                            <div class="stepper-control-box">
+                                <button type="button" class="stepper-circle-btn" onclick="stepDown('children_count', 0)">−</button>
+                                <input type="hidden" id="children_count" value="{{ prefill.children or 0 }}">
+                                <span class="stepper-num-val" id="children_display">{{ prefill.children or 0 }}</span>
+                                <button type="button" class="stepper-circle-btn" onclick="stepUp('children_count', 8)">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 8px; margin-top: 14px;">
+                    <div class="chip-select-btn active" id="btn_cabin_bag" onclick="toggleChip(this)">
+                        <span>🎒 Kézipoggyász</span>
+                    </div>
+                    <div class="chip-select-btn" id="btn_checked_bag" onclick="toggleChip(this)">
+                        <span>🧳 Feladott</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BENTO 3: ÁTSZÁLLÁS ÉS MENETIDŐ STRATÉGIA -->
+            <div class="advisor-panel">
+                <div>
+                    <div class="panel-header-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 14 14"></polyline>
+                        </svg>
+                        <span>Átszállási Preferenciák</span>
+                    </div>
+                    <div class="panel-header-desc">Átszállások száma és kényelem</div>
+
+                    <div class="chips-grid" style="margin-bottom: 14px;">
+                        <div class="chip-select-btn active" data-stops="all" onclick="selectStopFilter(this, 'all')">Bármely</div>
+                        <div class="chip-select-btn" data-stops="direct" onclick="selectStopFilter(this, '0')">Csak közvetlen</div>
+                        <div class="chip-select-btn" data-stops="max1" onclick="selectStopFilter(this, '1')">Max 1 átszállás</div>
+                    </div>
+                </div>
+
+                <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); padding: 12px 14px; border-radius: 14px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <span style="font-size: 12.5px; font-weight: 700; color: var(--text-main);">Max. menetidő:</span>
+                        <span style="font-size: 13px; font-weight: 800; font-family: var(--font-mono); color: var(--primary);" id="max_duration_label">24 óra</span>
+                    </div>
+                    <input type="range" id="duration_slider" min="2" max="24" step="1" value="24" style="width: 100%; accent-color: var(--primary);" oninput="document.getElementById('max_duration_label').innerText = this.value + ' óra'">
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 3. KERESÉS INDÍTÁSA CTA -->
+        <button id="searchBtn" class="btn btn-primary btn-block" style="padding: 18px 24px; font-size: 16px; border-radius: 16px; box-shadow: 0 4px 20px var(--accent-glow);" onclick="startFlightSearch()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>
+            </svg>
+            <span>Járatok Keresése és Intelligens Elemzés Indítása</span>
+        </button>
+
+        <!-- STÁTUSZ ÉS PROGRESS DOBOZ -->
+        <div id="status" class="status-box" style="margin-top: 20px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                <span id="statusText" style="font-weight: 700; font-size: 14.5px; color: var(--text-main);"></span>
+                <span id="statusPercent" style="font-family: var(--font-mono); font-weight: 700; color: var(--primary);">0%</span>
+            </div>
+            <div class="progress-container" id="loadingBar" style="display: none; height: 8px; border-radius: 4px;">
+                <div class="progress-bar" style="width: 0%;"></div>
+            </div>
+        </div>
+
+        <!-- SIKERES EREDMÉNY BANNER -->
+        <div id="results"></div>
+
+    </div>
 
 </div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-    // ===== AUTOCOMPLETE CONTROLLER =====
-    function setupAutocomplete(inputId, dropdownId, mode) {
-        const input = document.getElementById(inputId);
-        const dropdown = document.getElementById(dropdownId);
-        let debounceTimer = null;
-        let activeIndex = -1;
-        let currentItems = [];
+    let flightDatePicker = null;
+    let pollInterval = null;
 
-        async function fetchSuggestions(term) {
-            try {
-                const res = await fetch(`/api/locations/autocomplete?term=${encodeURIComponent(term)}&mode=${mode}`);
-                if (!res.ok) return [];
-                return await res.json();
-            } catch (e) {
-                console.error("Autocomplete error:", e);
-                return [];
+    document.addEventListener('DOMContentLoaded', () => {
+        // 1. Central Flatpickr Date Picker Inicializálása
+        flightDatePicker = window.initAdvisorDatePicker({
+            triggerElementId: 'date_picker_trigger',
+            datePrimaryLabelId: 'flight_date_primary',
+            dateSubLabelId: 'flight_date_sub',
+            hiddenStartInputId: 'out_from',
+            hiddenEndInputId: 'in_from',
+            defaultStartDays: 7,
+            defaultDurationDays: 7,
+            onDateChange: (startIso, endIso, nights) => {
+                // A Kiwi 1 napos rugalmassági ablakot használ
+                const s = new Date(startIso);
+                const sEnd = new Date(s);
+                sEnd.setDate(s.getDate() + 1);
+
+                const e = new Date(endIso);
+                const eEnd = new Date(e);
+                eEnd.setDate(e.getDate() + 1);
+
+                document.getElementById('out_from').value = startIso;
+                document.getElementById('out_to').value = sEnd.toISOString().split('T')[0];
+                document.getElementById('in_from').value = endIso;
+                document.getElementById('in_to').value = eEnd.toISOString().split('T')[0];
             }
-        }
+        });
 
-        function renderDropdown(items) {
-            currentItems = items;
-            activeIndex = -1;
-            if (!items || items.length === 0) {
-                dropdown.innerHTML = '<div style="padding: 12px; font-size: 13px; color: var(--text-muted); text-align: center;">Nincs találat repülőtérrel</div>';
-                dropdown.style.display = 'block';
-                return;
-            }
+        // 2. Central Autocomplete Inicializálása Induláshoz és Érkezéshez
+        window.initLocationAutocomplete({
+            inputId: 'origin',
+            dropdownId: 'origin-dropdown',
+            mode: 'origin'
+        });
 
-            dropdown.innerHTML = items.map((item, idx) => `
-                <div class="autocomplete-item" data-index="${idx}">
-                    <div class="autocomplete-main">
-                        <div class="autocomplete-name">${item.city_name || item.name}</div>
-                        <div class="autocomplete-sub">${item.sub || item.country_name || ''}</div>
-                    </div>
-                    ${item.code ? `<span class="autocomplete-code">${item.code}</span>` : ''}
-                </div>
-            `).join('');
+        window.initLocationAutocomplete({
+            inputId: 'destination',
+            dropdownId: 'destination-dropdown',
+            mode: 'destination'
+        });
 
-            dropdown.querySelectorAll('.autocomplete-item').forEach(el => {
-                el.addEventListener('mousedown', (e) => {
-                    e.preventDefault();
-                    const idx = parseInt(el.dataset.index);
-                    selectItem(currentItems[idx]);
+        // 3. Stepper eseményfigyelők feliratkozása
+        ['adults_count', 'children_count'].forEach(id => {
+            const input = document.getElementById(id);
+            if (input) {
+                input.addEventListener('change', () => {
+                    const displayId = id.replace('_count', '_display');
+                    const disp = document.getElementById(displayId);
+                    if (disp) disp.innerText = input.value;
                 });
-            });
-
-            dropdown.style.display = 'block';
-        }
-
-        function selectItem(item) {
-            if (!item) return;
-            const val = item.code ? `${item.city_name || item.name} (${item.code})` : (item.city_name || item.name);
-            input.value = val;
-            input.dataset.selectedId = item.id || '';
-            dropdown.style.display = 'none';
-            activeIndex = -1;
-        }
-
-        input.addEventListener('focus', async () => {
-            const items = await fetchSuggestions(input.value.trim());
-            renderDropdown(items);
-        });
-
-        input.addEventListener('input', () => {
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(async () => {
-                const items = await fetchSuggestions(input.value.trim());
-                renderDropdown(items);
-            }, 150);
-        });
-
-        input.addEventListener('keydown', (e) => {
-            const itemsEls = dropdown.querySelectorAll('.autocomplete-item');
-            if (dropdown.style.display === 'block' && itemsEls.length > 0) {
-                if (e.key === 'ArrowDown') {
-                    e.preventDefault();
-                    activeIndex = (activeIndex + 1) % itemsEls.length;
-                    updateActiveItem(itemsEls);
-                } else if (e.key === 'ArrowUp') {
-                    e.preventDefault();
-                    activeIndex = (activeIndex - 1 + itemsEls.length) % itemsEls.length;
-                    updateActiveItem(itemsEls);
-                } else if (e.key === 'Enter') {
-                    if (activeIndex >= 0 && activeIndex < currentItems.length) {
-                        e.preventDefault();
-                        selectItem(currentItems[activeIndex]);
-                    }
-                } else if (e.key === 'Escape') {
-                    dropdown.style.display = 'none';
-                    activeIndex = -1;
-                }
             }
         });
+    });
 
-        function updateActiveItem(itemsEls) {
-            itemsEls.forEach((el, idx) => {
-                if (idx === activeIndex) {
-                    el.classList.add('active');
-                    el.scrollIntoView({ block: 'nearest' });
-                } else {
-                    el.classList.remove('active');
-                }
-            });
-        }
-
-        document.addEventListener('click', (e) => {
-            if (!input.contains(e.target) && !dropdown.contains(e.target)) {
-                dropdown.style.display = 'none';
-            }
-        });
+    // Gyorsválasztó gombok
+    function setOrigin(city) {
+        document.getElementById('origin').value = city;
     }
 
-    setupAutocomplete('origin', 'origin-dropdown', 'origin');
-    setupAutocomplete('destination', 'destination-dropdown', 'destination');
+    function setDest(city) {
+        document.getElementById('destination').value = city;
+    }
 
-    // ===== DATE PICKER INITIALIZATION =====
-    const outFromInput = document.getElementById('out_from');
-    const outToInput = document.getElementById('out_to');
-    const inFromInput = document.getElementById('in_from');
-    const inToInput = document.getElementById('in_to');
-
-    const today = new Date().toISOString().split('T')[0];
-    const tomorrow = new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-    const nextWeek = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-    const nextWeekLater = new Date(new Date().getTime() + 10 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-
-    [outFromInput, outToInput, inFromInput, inToInput].forEach(el => {
-        el.min = today;
-    });
-
-    outFromInput.value = "{{ prefill.out_from or '' }}" || tomorrow;
-    outToInput.value = "{{ prefill.out_to or '' }}" || nextWeek;
-    inFromInput.value = "{{ prefill.in_from or '' }}" || nextWeek;
-    inToInput.value = "{{ prefill.in_to or '' }}" || nextWeekLater;
-
-    outFromInput.addEventListener('change', () => {
-        if (outFromInput.value) {
-            const d = outFromInput.value;
-            [outToInput, inFromInput, inToInput].forEach(el => {
-                el.min = d;
-                if (el.value && el.value < d) el.value = d;
-            });
+    function applyFlightPreset(daysFromNow, durationDays, btn) {
+        if (flightDatePicker) {
+            flightDatePicker.applyPreset(daysFromNow, durationDays);
+            document.querySelectorAll('.preset-pill').forEach(p => p.classList.remove('active'));
+            if (btn) btn.classList.add('active');
         }
-    });
+    }
 
-    outToInput.addEventListener('change', () => {
-        if (outToInput.value) {
-            inToInput.min = outToInput.value;
-            if (inToInput.value && inToInput.value < outToInput.value) {
-                inToInput.value = outToInput.value;
-            }
-        }
-    });
+    function toggleChip(btn) {
+        btn.classList.toggle('active');
+    }
 
-    inFromInput.addEventListener('change', () => {
-        if (inFromInput.value) {
-            if (inToInput.value && inToInput.value < inFromInput.value) {
-                inToInput.value = inFromInput.value;
-            }
-            inToInput.min = inFromInput.value;
-        }
-    });
+    function selectStopFilter(btn, stops) {
+        btn.parentElement.querySelectorAll('.chip-select-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
 
-    // ===== SEARCH & STATUS POLLING =====
-    let pollInterval;
-
-    async function startSearch() {
+    // Járatkeresés Indítása
+    async function startFlightSearch() {
         const btn = document.getElementById('searchBtn');
         const statusDiv = document.getElementById('status');
         const statusText = document.getElementById('statusText');
+        const statusPercent = document.getElementById('statusPercent');
         const loadingBar = document.getElementById('loadingBar');
         const loadingBarInner = loadingBar.querySelector('.progress-bar');
         const resultsDiv = document.getElementById('results');
@@ -267,28 +390,36 @@
             return;
         }
 
+        const outFrom = document.getElementById('out_from').value;
+        const outTo = document.getElementById('out_to').value || outFrom;
+        const inFrom = document.getElementById('in_from').value;
+        const inTo = document.getElementById('in_to').value || inFrom;
+
+        if (!outFrom || !inFrom) {
+            alert("Kérlek válassz ki érvényes oda- és visszaút dátumokat a naptárban!");
+            return;
+        }
+
         const payload = {
             origin: originVal,
             destination: destinationVal,
-            out_from: document.getElementById('out_from').value,
-            out_to: document.getElementById('out_to').value,
-            in_from: document.getElementById('in_from').value,
-            in_to: document.getElementById('in_to').value
+            out_from: outFrom,
+            out_to: outTo,
+            in_from: inFrom,
+            in_to: inTo,
+            adults: parseInt(document.getElementById('adults_count')?.value || 1, 10),
+            children: parseInt(document.getElementById('children_count')?.value || 0, 10),
+            duration: parseInt("{{ prefill.duration or 7 }}", 10)
         };
-
-        if (!payload.out_from) {
-            alert("Kérlek válaszd ki az odaút indulási dátumát!");
-            return;
-        }
 
         btn.disabled = true;
         statusDiv.style.display = 'block';
         statusDiv.className = 'status-box status-running';
-        statusText.innerText = "Keresési paraméterek ellenőrzése...";
+        statusText.innerText = "Keresési paraméterek és repülőterek ellenőrzése...";
+        statusPercent.innerText = "5%";
 
         loadingBar.style.display = 'block';
-        loadingBarInner.style.width = '0%';
-
+        loadingBarInner.style.width = '5%';
         resultsDiv.innerHTML = "";
 
         try {
@@ -300,7 +431,7 @@
             
             if (!res.ok) {
                 const errData = await res.json();
-                throw new Error(errData.detail || "Hiba a keresés indításakor");
+                throw new Error(errData.detail || errData.error || "Hiba a keresés indításakor");
             }
         } catch (err) {
             btn.disabled = false;
@@ -311,57 +442,68 @@
             return;
         }
 
-        pollInterval = setInterval(checkStatus, 1000);
+        pollInterval = setInterval(checkFlightStatus, 1000);
     }
 
-    async function checkStatus() {
-        const response = await fetch('/search-status');
-        const data = await response.json();
-        const statusDiv = document.getElementById('status');
-        const statusText = document.getElementById('statusText');
-        const loadingBar = document.getElementById('loadingBar');
-        const loadingBarInner = loadingBar.querySelector('.progress-bar');
+    async function checkFlightStatus() {
+        try {
+            const response = await fetch('/search-status');
+            const data = await response.json();
+            const statusDiv = document.getElementById('status');
+            const statusText = document.getElementById('statusText');
+            const statusPercent = document.getElementById('statusPercent');
+            const loadingBar = document.getElementById('loadingBar');
+            const loadingBarInner = loadingBar.querySelector('.progress-bar');
 
-        if (data.status === 'running') {
-            statusText.innerText = data.status_text || "Adatok gyűjtése a járatokról...";
-            if (data.progress !== undefined) {
-                loadingBarInner.style.width = data.progress + "%";
-            }
-        } else if (data.status === 'done') {
-            clearInterval(pollInterval);
-            loadingBarInner.style.width = "100%";
+            if (data.status === 'running') {
+                statusText.innerText = data.status_text || "Járatadatok gyűjtése és útvonalkombinációk számítása...";
+                const prog = data.progress !== undefined ? data.progress : 25;
+                loadingBarInner.style.width = prog + "%";
+                statusPercent.innerText = prog + "%";
+            } else if (data.status === 'done') {
+                clearInterval(pollInterval);
+                loadingBarInner.style.width = "100%";
+                statusPercent.innerText = "100%";
 
-            setTimeout(() => {
-                statusDiv.style.display = 'none';
-                loadingBar.style.display = 'none';
-                document.getElementById('searchBtn').disabled = false;
+                setTimeout(() => {
+                    statusDiv.style.display = 'none';
+                    loadingBar.style.display = 'none';
+                    document.getElementById('searchBtn').disabled = false;
 
-                const resultsDiv = document.getElementById('results');
-                resultsDiv.innerHTML = `
-                    <div style="background: var(--status-success-bg); border: 1.5px solid var(--primary); border-radius: var(--radius-md); padding: 28px 24px; text-align: center; margin-top: 24px;">
-                        <h2 style="color: var(--primary); font-size: 20px; font-weight: 700; margin-bottom: 8px;">Sikeres adatgyűjtés!</h2>
-                        <p style="font-size: 15px; color: var(--text-secondary); margin-bottom: 20px;">Összesen <strong>${data.count}</strong> lehetséges járatkombinációt találtunk.</p>
-                        
-                        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
-                            <button onclick="window.location.href='/flight-intelligence'" class="btn btn-secondary">Új keresés</button>
-                            <button onclick="window.location.href='/flight-intelligence-filter'" class="btn btn-primary" style="padding: 12px 24px;">
-                                <span>Tovább a preferenciák beállításához</span>
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                                    <polyline points="12 5 19 12 12 19"></polyline>
+                    const resultsDiv = document.getElementById('results');
+                    resultsDiv.innerHTML = `
+                        <div style="background: var(--bg-surface); border: 2px solid var(--primary); border-radius: var(--radius-lg, 20px); padding: 32px 24px; text-align: center; margin-top: 24px; box-shadow: var(--shadow-md);">
+                            <div style="width: 52px; height: 52px; border-radius: 50%; background: var(--accent-glow); color: var(--primary); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+                                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
                                 </svg>
-                            </button>
+                            </div>
+                            <h2 style="color: var(--text-main); font-size: 22px; font-weight: 800; margin-bottom: 8px;">Járatok sikeresen összegyűjtve!</h2>
+                            <p style="font-size: 15px; color: var(--text-secondary); margin-bottom: 24px;">Összesen <strong style="color: var(--primary); font-family: var(--font-mono); font-size: 17px;">${data.count}</strong> valós retúr járatkombináció áll készen az AHP döntési elemzésre.</p>
+                            
+                            <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
+                                <button onclick="window.location.href='/flight-intelligence'" class="btn btn-secondary" style="padding: 12px 22px; border-radius: 12px;">Új keresés</button>
+                                <button onclick="window.location.href='/flight-intelligence-filter'" class="btn btn-primary" style="padding: 12px 28px; border-radius: 12px; font-size: 15px;">
+                                    <span>Tovább a preferenciák és AHP beállításához</span>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                        <polyline points="12 5 19 12 12 19"></polyline>
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                `;
-            }, 500);
-        } else if (data.status === 'error') {
-            clearInterval(pollInterval);
-            loadingBar.style.display = 'none';
-            statusDiv.style.display = 'block';
-            statusDiv.className = 'status-box status-error';
-            statusText.innerText = "Hiba történt: " + data.error;
-            document.getElementById('searchBtn').disabled = false;
+                    `;
+                }, 400);
+            } else if (data.status === 'error') {
+                clearInterval(pollInterval);
+                loadingBar.style.display = 'none';
+                statusDiv.style.display = 'block';
+                statusDiv.className = 'status-box status-error';
+                statusText.innerText = "Hiba történt: " + data.error;
+                document.getElementById('searchBtn').disabled = false;
+            }
+        } catch (e) {
+            console.error("Status poll error:", e);
         }
     }
 </script>

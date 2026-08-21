@@ -246,11 +246,11 @@ def search_one_way_flights(
     max_stopovers: Optional[int] = None,
     direct_flights_only: bool = False,
     debug: bool = False,
-    progress_callback: Optional[Callable[[int], None]] = None
+    progress_callback: Optional[Callable[[int], None]] = None,
+    split_chunks: bool = False
 ) -> pd.DataFrame:
     """
     Kiwi.com egyirányú járatok keresése.
-    Automatikusan darabolja a keresést 5 napos intervallumokra, ha szükséges.
     """
     print(f"[INFO] Egyirányú járatok: {origin} -> {destination}", end="")
     if date_from and date_to:
@@ -283,8 +283,8 @@ def search_one_way_flights(
         end = datetime.strptime(date_to, "%Y-%m-%d")
         delta = (end - start).days
         
-        # Ha a különbség nagyobb mint 5 nap, daraboljuk
-        if delta > 5:
+        # Csak akkor daraboljuk, ha split_chunks=True van kérve
+        if split_chunks and delta > 5:
             print(f"[INFO] Nagy időintervallum ({delta} nap) -> Darabolás 5 napos csonkokra, limit=50/chunk")
             current = start
             while current <= end:
@@ -302,7 +302,6 @@ def search_one_way_flights(
                 "limit": limit
             })
     else:
-        # Ha nincs dátum megadva, vagy csak egyik, marad az eredeti logikánál
         search_intervals.append({
             "from": date_from,
             "to": date_to,
@@ -317,8 +316,6 @@ def search_one_way_flights(
             percent = int((idx / total_intervals) * 100)
             progress_callback(percent)
 
-        print(f"   -> Keresés: {interval['from']} - {interval['to']} (Limit: {interval['limit']})")
-        
         itineraries = _perform_single_search(
             origin_id=origin_id,
             dest_id=dest_id,
@@ -336,7 +333,8 @@ def search_one_way_flights(
             debug=debug
         )
         all_itineraries.extend(itineraries)
-        time.sleep(1) # Kis pihenő a kérések között
+        if split_chunks and total_intervals > 1:
+            time.sleep(0.5)
         
     print(f"[INFO] Összesen {len(all_itineraries)} járat találva\n")
 
@@ -512,8 +510,33 @@ def get_city_id_api(city_name: str) -> Optional[str]:
     import re
     match = re.search(r'\(([A-Z]{3})\)', clean)
     term = match.group(1) if match else clean
-    term = term.split('_')[0] if ('_' in term and not term.startswith('_')) else term
-    
+    HU_CITY_ALIASES = {
+        "bécs": "Vienna",
+        "róma": "Rome",
+        "párizs": "Paris",
+        "london": "London",
+        "málta": "Malta",
+        "valletta": "Valletta",
+        "barcelona": "Barcelona",
+        "budapest": "Budapest",
+        "tokió": "Tokyo",
+        "tokyo": "Tokyo",
+        "debrecen": "Debrecen",
+        "pozsony": "Bratislava",
+        "prága": "Prague",
+        "funchal": "Funchal",
+        "madeira": "Funchal",
+        "lisszabon": "Lisbon",
+        "athén": "Athens",
+        "szantorini": "Santorini"
+    }
+
+    clean_lower = clean.lower()
+    for hu_name, en_name in HU_CITY_ALIASES.items():
+        if hu_name in clean_lower:
+            term = en_name
+            break
+
     url = f"https://api.skypicker.com/locations?term={requests.utils.quote(term)}&limit=10"
     try:
         response = requests.get(url, timeout=10)
@@ -551,7 +574,8 @@ def search_flights_by_city_name_v2(
     direct_flights_only: bool = False,
     headless: bool = True,
     debug: bool = False,
-    progress_callback: Optional[Callable[[int], None]] = None
+    progress_callback: Optional[Callable[[int], None]] = None,
+    split_chunks: bool = False
 ) -> pd.DataFrame:
     """
     Járatok keresése város nevek alapján - JAVÍTOTT VERZIÓ.
@@ -566,12 +590,11 @@ def search_flights_by_city_name_v2(
         print(f"[ERROR] Nem sikerült megszerezni a destination ID-t: {destination_name}")
         return pd.DataFrame()
     
-    
     if not origin_city_id or not dest_city_id:
         print(f"[ERROR] Nem sikerült megszerezni a City ID-kat")
         return pd.DataFrame()
     
-    # 3. Eredeti keresés a helyes City ID-kkel
+    # 3. Keresés a helyes City ID-kkel
     return search_one_way_flights(
         origin=origin_city_id,
         destination=dest_city_id,
@@ -587,5 +610,6 @@ def search_flights_by_city_name_v2(
         max_stopovers=max_stopovers,
         direct_flights_only=direct_flights_only,
         debug=debug,
-        progress_callback=progress_callback
+        progress_callback=progress_callback,
+        split_chunks=split_chunks
     )

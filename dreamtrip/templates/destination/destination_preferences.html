@@ -1,266 +1,264 @@
 {% extends "base.html" %}
 
-{% block title %}Optivoya — Részletes Úticél Preferenciák{% endblock %}
-
-{% block head %}
-<style>
-    .pref-section {
-        display: none;
-        margin-bottom: 20px;
-        padding: 24px;
-        background: var(--bg-surface);
-        border: 1px solid var(--border-subtle);
-        border-radius: var(--radius-md);
-        box-shadow: var(--shadow-sm);
-    }
-
-    .pref-section.active {
-        display: block;
-    }
-
-    .pref-section-title {
-        color: var(--text-main);
-        font-size: 16px;
-        font-weight: 700;
-        margin-bottom: 16px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .range-values {
-        display: flex;
-        justify-content: space-between;
-        font-size: 11.5px;
-        color: var(--text-muted);
-        font-weight: 500;
-        margin-top: 4px;
-    }
-</style>
-{% endblock %}
+{% block title %}Optivoya — Döntési Preferenciák & Súlyozás{% endblock %}
 
 {% block content %}
-<a href="/destination-ahp" class="btn-back-link">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <line x1="19" y1="12" x2="5" y2="12"></line>
-        <polyline points="12 19 5 12 12 5"></polyline>
-    </svg>
-    <span>Vissza a súlyozáshoz</span>
-</a>
+<div class="advisor-container">
 
-<div class="page-header centered">
-    <h1 class="page-title">Részletes preferenciák finomhangolása</h1>
-    <p class="page-subtitle">4. lépés: Add meg pontosan, mit keresel az egyes kategóriákban</p>
-</div>
+    <!-- VISSZA GOMB -->
+    <a href="/destination-matcher" class="btn-back-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        <span>Vissza az alapadatokhoz (1. lépés)</span>
+    </a>
 
-<div style="max-width: 800px; margin: 0 auto;">
+    <!-- FEJLÉC -->
+    <div class="page-header" style="text-align: left; margin-bottom: 24px;">
+        <div style="display: inline-flex; align-items: center; gap: 8px; background: var(--accent-glow); color: var(--primary); padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 10px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+            </svg>
+            <span>Döntési Modell & Súlyozás</span>
+        </div>
+        <h1 class="page-title" style="margin-bottom: 6px;">Preferenciák & Fontossági Szempontok</h1>
+        <p class="page-subtitle" style="margin: 0;">2. lépés: Állítsd be a kívánt célhőmérsékletet és a 4 döntési pillér fontosságát</p>
+    </div>
 
-    <form id="preferencesForm">
-        <!-- WEATHER -->
-        <div class="pref-section" id="sec_weather">
-            <h2 class="pref-section-title">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="5"></circle>
-                    <line x1="12" y1="1" x2="12" y2="3"></line>
-                    <line x1="12" y1="21" x2="12" y2="23"></line>
-                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                    <line x1="1" y1="12" x2="3" y2="12"></line>
-                    <line x1="21" y1="12" x2="23" y2="12"></line>
-                </svg>
-                <span>Időjárás preferenciák</span>
-            </h2>
-            <div class="form-group">
-                <label class="form-label">
-                    Ideális nappali hőmérséklet:
-                    <strong id="val_temp" style="color: var(--primary); font-family: var(--font-mono);">25</strong> °C
-                </label>
-                <input type="range" min="10" max="40" value="25"
-                    oninput="document.getElementById('val_temp').innerText = this.value">
-                <div class="range-values">
-                    <span>10°C (Hűvös)</span>
-                    <span>25°C (Kellemes)</span>
-                    <span>40°C (Forró)</span>
+    <!-- FŐ KÁRTYA -->
+    <div class="advisor-main-card">
+
+        <!-- 1. GYORS STRATÉGIA PRESETEK -->
+        <div class="advisor-section-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            </svg>
+            <span>Gyors Döntési Stratégiák</span>
+        </div>
+
+        <div class="quick-pills-group" style="margin-bottom: 24px;">
+            <div class="quick-pill active" onclick="applyStrategy('balanced', this)">⚖️ Kiegyensúlyozott (Egyenlő súlyok)</div>
+            <div class="quick-pill" onclick="applyStrategy('budget', this)">💰 Budget-first (Olcsó repülő & megélhetés)</div>
+            <div class="quick-pill" onclick="applyStrategy('weather', this)">☀️ Weather-first (Klíma & Ideális meleg)</div>
+            <div class="quick-pill" onclick="applyStrategy('safety', this)">🛡️ Safety-first (Kiemelt közbiztonság)</div>
+        </div>
+
+        <!-- 2. BENTO GRID 2: KLÍMA ÉS SÚLYOK -->
+        <div class="advisor-grid-2" style="margin-bottom: 24px;">
+
+            <!-- BENTO 1: KLÍMA & HŐMÉRSÉKLET -->
+            <div class="advisor-panel">
+                <div>
+                    <div class="panel-header-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <span>Célhőmérséklet (Nappali Csúcs)</span>
+                    </div>
+                    <div class="panel-header-desc">Milyen nappali melegben szeretnél lenni?</div>
+
+                    <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); padding: 18px 20px; border-radius: 16px; margin-bottom: 14px; text-align: center;">
+                        <div style="font-size: 38px; font-weight: 800; font-family: var(--font-mono); color: var(--primary); margin-bottom: 6px;">
+                            <span id="temp_display">24</span>°C
+                        </div>
+                        <div style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 14px;" id="temp_subtitle">
+                            Kellemes, meleg nyári időjárás
+                        </div>
+                        <input type="range" id="weather_temp" min="15" max="38" step="1" value="24" style="width: 100%; accent-color: var(--primary);" oninput="updateTemp(this.value)">
+                    </div>
+
+                    <div class="date-preset-pills" style="justify-content: center;">
+                        <div class="preset-pill" onclick="setTempPreset(18, 'Hűvösebb, kiránduló idő', this)">❄️ 18°C</div>
+                        <div class="preset-pill" onclick="setTempPreset(22, 'Kellemes városnéző klíma', this)">🌤️ 22°C</div>
+                        <div class="preset-pill active" onclick="setTempPreset(25, 'Meleg, napos nyár', this)">☀️ 25°C</div>
+                        <div class="preset-pill" onclick="setTempPreset(30, 'Forró tengerparti idő', this)">🔥 30°C</div>
+                    </div>
+                </div>
+
+                <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 14px; line-height: 1.4;">
+                    ℹ️ Az Open-Meteo valós történelmi klímaarchívumából számoljuk a célhoz legközelebb eső desztinációkat.
                 </div>
             </div>
-            <div class="form-group" style="margin-top: 14px;">
-                <label class="form-label">Eső tolerancia</label>
-                <select class="form-control">
-                    <option value="strict">Csak napsütés (Minimális eső)</option>
-                    <option value="moderate" selected>Egy-két zápor belefér</option>
-                    <option value="loose">Nem zavar az eső</option>
-                </select>
-            </div>
-        </div>
 
-        <!-- COST -->
-        <div class="pref-section" id="sec_cost">
-            <h2 class="pref-section-title">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="12" y1="1" x2="12" y2="23"></line>
-                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                </svg>
-                <span>Költség preferenciák</span>
-            </h2>
-            <div class="form-group">
-                <label class="form-label">Fókusz</label>
-                <select class="form-control">
-                    <option value="min">Minél olcsóbb legyen</option>
-                    <option value="value" selected>Legjobb ár-érték arány</option>
-                </select>
-            </div>
-        </div>
+            <!-- BENTO 2: A 4 DÖNTÉSI PILLÉR SÚLYOZÁSA -->
+            <div class="advisor-panel">
+                <div>
+                    <div class="panel-header-title">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="3" y1="9" x2="21" y2="9"></line>
+                            <line x1="9" y1="21" x2="9" y2="9"></line>
+                        </svg>
+                        <span>A 4 Döntési Pillér Súlya</span>
+                    </div>
+                    <div class="panel-header-desc">Állítsd be, melyik szempont mennyire fontos:</div>
 
-        <!-- VIBE -->
-        <div class="pref-section" id="sec_vibe">
-            <h2 class="pref-section-title">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                </svg>
-                <span>Hangulat és környezet</span>
-            </h2>
-            <div class="form-group">
-                <label class="form-label">Városias jelleg vs Természet</label>
-                <input type="range" min="0" max="100" value="50">
-                <div class="range-values">
-                    <span>100% Természet</span>
-                    <span>50-50</span>
-                    <span>100% Nagyváros</span>
+                    <!-- 1. Repülőjegy -->
+                    <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); padding: 10px 14px; border-radius: 12px; margin-bottom: 10px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                            <span style="font-size: 13px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
+                                <span>✈️ Repülőjegy & Járatok</span>
+                            </span>
+                            <span style="font-size: 12.5px; font-weight: 800; font-family: var(--font-mono); color: var(--primary);" id="disp_flight">25%</span>
+                        </div>
+                        <input type="range" id="w_flight" min="0" max="100" step="5" value="25" style="width: 100%; accent-color: var(--primary);" oninput="updateWeightDisplay()">
+                    </div>
+
+                    <!-- 2. Napi Megélhetés -->
+                    <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); padding: 10px 14px; border-radius: 12px; margin-bottom: 10px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                            <span style="font-size: 13px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
+                                <span>💰 Napi Megélhetési Költség</span>
+                            </span>
+                            <span style="font-size: 12.5px; font-weight: 800; font-family: var(--font-mono); color: var(--primary);" id="disp_cost">25%</span>
+                        </div>
+                        <input type="range" id="w_cost" min="0" max="100" step="5" value="25" style="width: 100%; accent-color: var(--primary);" oninput="updateWeightDisplay()">
+                    </div>
+
+                    <!-- 3. Időjárás -->
+                    <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); padding: 10px 14px; border-radius: 12px; margin-bottom: 10px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                            <span style="font-size: 13px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
+                                <span>☀️ Klíma / Hőmérséklet</span>
+                            </span>
+                            <span style="font-size: 12.5px; font-weight: 800; font-family: var(--font-mono); color: var(--primary);" id="disp_weather">25%</span>
+                        </div>
+                        <input type="range" id="w_weather" min="0" max="100" step="5" value="25" style="width: 100%; accent-color: var(--primary);" oninput="updateWeightDisplay()">
+                    </div>
+
+                    <!-- 4. Biztonság -->
+                    <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); padding: 10px 14px; border-radius: 12px; margin-bottom: 0;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                            <span style="font-size: 13px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
+                                <span>🛡️ Közbiztonság (Numbeo)</span>
+                            </span>
+                            <span style="font-size: 12.5px; font-weight: 800; font-family: var(--font-mono); color: var(--primary);" id="disp_safety">25%</span>
+                        </div>
+                        <input type="range" id="w_safety" min="0" max="100" step="5" value="25" style="width: 100%; accent-color: var(--primary);" oninput="updateWeightDisplay()">
+                    </div>
                 </div>
             </div>
-            <div class="form-group" style="margin-top: 14px;">
-                <label class="form-label">Nyugalom vs Éjszakai élet</label>
-                <input type="range" min="0" max="100" value="50">
-                <div class="range-values">
-                    <span>Csendes pihenés</span>
-                    <span>Kiegyensúlyozott</span>
-                    <span>Pörgős bulik</span>
-                </div>
-            </div>
-            <div class="form-group" style="margin-top: 14px;">
-                <label class="form-label">Történelmi látnivalók fontossága</label>
-                <input type="range" min="0" max="10" value="5">
-                <div class="range-values">
-                    <span>Nem mérvadó</span>
-                    <span>Nagyon fontos</span>
-                </div>
-            </div>
+
         </div>
 
-        <!-- SAFETY -->
-        <div class="pref-section" id="sec_safety">
-            <h2 class="pref-section-title">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                </svg>
-                <span>Biztonsági elvárások</span>
-            </h2>
-            <div class="form-group">
-                <label class="form-label">Elvárt biztonsági szint</label>
-                <select class="form-control">
-                    <option value="high">Kiemelkedően biztonságos célpontok</option>
-                    <option value="mid" selected>Átlagos európai biztonsági szint</option>
-                    <option value="low">Kalandvágyó (Bevállalósabb helyszínek is)</option>
-                </select>
-            </div>
-        </div>
-
-        <!-- CROWDS -->
-        <div class="pref-section" id="sec_crowds">
-            <h2 class="pref-section-title">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="9" cy="7" r="4"></circle>
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                </svg>
-                <span>Tömegkerülés</span>
-            </h2>
-            <div class="form-group">
-                <label class="form-label">Turisztikai zsúfoltság preferenciája</label>
-                <select class="form-control">
-                    <option value="hidden">Rejtett kincsek (Turistamentes)</option>
-                    <option value="balanced" selected>Kiegyensúlyozott (Életteli, de nem zsúfolt)</option>
-                    <option value="popular">Népszerű világsláger helyek</option>
-                </select>
-            </div>
-        </div>
-
-        <!-- TRAVEL TIME -->
-        <div class="pref-section" id="sec_travel_time">
-            <h2 class="pref-section-title">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>
-                </svg>
-                <span>Utazási idő</span>
-            </h2>
-            <div class="form-group">
-                <label class="form-label">Maximális repülési idő (óra)</label>
-                <input type="number" class="form-control" value="12" min="1" max="48">
-            </div>
-        </div>
-
-        <button type="button" class="btn btn-primary btn-block" style="padding: 14px; font-size: 15px;" onclick="calculate()">
-            <span>Úticélok rangsorolása</span>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <!-- 3. INDÍTÁS CTA GOMB -->
+        <button type="button" class="btn btn-primary btn-block" style="padding: 18px 24px; font-size: 16px; border-radius: 16px; box-shadow: 0 4px 20px var(--accent-glow);" onclick="startCalculation()">
+            <span>🚀 Célállomások Kiszámítása & Elemzése (Valós adatokkal)</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <line x1="5" y1="12" x2="19" y2="12"></line>
                 <polyline points="12 5 19 12 12 19"></polyline>
             </svg>
         </button>
-    </form>
+
+    </div>
 
 </div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-    var criteriaList;
-    criteriaList = {{ selected_criteria | tojson if selected_criteria else '["weather", "cost", "vibe", "safety", "crowds", "travel_time"]' }};
-    if (criteriaList.length > 0 && typeof criteriaList[0] === 'object') {
-        criteriaList = criteriaList.map(c => c.id);
+    function updateTemp(val) {
+        document.getElementById('temp_display').innerText = val;
+        const sub = document.getElementById('temp_subtitle');
+        const v = parseInt(val, 10);
+        if (v < 20) sub.innerText = 'Hűvösebb, friss kiránduló idő';
+        else if (v <= 24) sub.innerText = 'Kellemes, ideális városnéző klíma';
+        else if (v <= 29) sub.innerText = 'Meleg, napos nyári időjárás';
+        else sub.innerText = 'Forró, strandolós tengerparti idő';
     }
 
-    criteriaList.forEach(id => {
-        const el = document.getElementById('sec_' + id);
-        if (el) el.classList.add('active');
-    });
+    function setTempPreset(val, text, btn) {
+        document.getElementById('weather_temp').value = val;
+        document.getElementById('temp_display').innerText = val;
+        document.getElementById('temp_subtitle').innerText = text;
+        document.querySelectorAll('.date-preset-pills .preset-pill').forEach(p => p.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+    }
 
-    async function calculate() {
-        const getVal = (selector, defaultValue) => {
-            const el = document.querySelector(selector);
-            return el ? el.value : defaultValue;
-        };
+    function updateWeightDisplay() {
+        const wf = parseFloat(document.getElementById('w_flight').value) || 0;
+        const wc = parseFloat(document.getElementById('w_cost').value) || 0;
+        const ww = parseFloat(document.getElementById('w_weather').value) || 0;
+        const ws = parseFloat(document.getElementById('w_safety').value) || 0;
 
-        const vibeInputs = document.querySelectorAll('#sec_vibe input[type="range"]');
+        const total = wf + wc + ww + ws;
+        if (total === 0) {
+            document.getElementById('disp_flight').innerText = '0%';
+            document.getElementById('disp_cost').innerText = '0%';
+            document.getElementById('disp_weather').innerText = '0%';
+            document.getElementById('disp_safety').innerText = '0%';
+            return;
+        }
 
-        const prefs = {
-            weather_temp: parseInt(getVal('#sec_weather input[type="range"]', 25)),
-            weather_rain: getVal('#sec_weather select', "moderate"),
-            cost_pref: getVal('#sec_cost select', "value"),
-            vibe_urban_nature: parseInt(vibeInputs[0] ? vibeInputs[0].value : 50),
-            vibe_calm_party: parseInt(vibeInputs[1] ? vibeInputs[1].value : 50),
-            vibe_history: parseInt(vibeInputs[2] ? vibeInputs[2].value : 5),
-            safety_level: getVal('#sec_safety select', "mid"),
-            crowds_pref: getVal('#sec_crowds select', "balanced"),
-            travel_time_max: parseInt(getVal('#sec_travel_time input[type="number"]', 12))
+        document.getElementById('disp_flight').innerText = Math.round((wf / total) * 100) + '%';
+        document.getElementById('disp_cost').innerText = Math.round((wc / total) * 100) + '%';
+        document.getElementById('disp_weather').innerText = Math.round((ww / total) * 100) + '%';
+        document.getElementById('disp_safety').innerText = Math.round((ws / total) * 100) + '%';
+    }
+
+    function applyStrategy(strat, btn) {
+        document.querySelectorAll('.quick-pills-group .quick-pill').forEach(p => p.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+
+        if (strat === 'balanced') {
+            document.getElementById('w_flight').value = 25;
+            document.getElementById('w_cost').value = 25;
+            document.getElementById('w_weather').value = 25;
+            document.getElementById('w_safety').value = 25;
+        } else if (strat === 'budget') {
+            document.getElementById('w_flight').value = 40;
+            document.getElementById('w_cost').value = 40;
+            document.getElementById('w_weather').value = 10;
+            document.getElementById('w_safety').value = 10;
+        } else if (strat === 'weather') {
+            document.getElementById('w_flight').value = 15;
+            document.getElementById('w_cost').value = 15;
+            document.getElementById('w_weather').value = 60;
+            document.getElementById('w_safety').value = 10;
+        } else if (strat === 'safety') {
+            document.getElementById('w_flight').value = 15;
+            document.getElementById('w_cost').value = 15;
+            document.getElementById('w_weather').value = 10;
+            document.getElementById('w_safety').value = 60;
+        }
+        updateWeightDisplay();
+    }
+
+    async function startCalculation() {
+        const payload = {
+            weather_temp: parseFloat(document.getElementById('weather_temp').value) || 24.0,
+            weight_flight: parseFloat(document.getElementById('w_flight').value) || 0.0,
+            weight_cost: parseFloat(document.getElementById('w_cost').value) || 0.0,
+            weight_weather: parseFloat(document.getElementById('w_weather').value) || 0.0,
+            weight_safety: parseFloat(document.getElementById('w_safety').value) || 0.0
         };
 
         try {
-            const response = await fetch('/api/calculate-destinations', {
+            const resp = await fetch('/api/calculate-destinations', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(prefs)
+                body: JSON.stringify(payload)
             });
 
-            if (response.ok) {
-                window.location.href = '/destination-results';
-            } else {
-                alert("Hiba a számítás során");
-            }
+            window.location.href = '/destination-results';
         } catch (e) {
             console.error(e);
             window.location.href = '/destination-results';
         }
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        updateWeightDisplay();
+    });
 </script>
 {% endblock %}

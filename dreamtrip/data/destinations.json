@@ -2,859 +2,401 @@
   {
     "id": "barcelona_es",
     "name": "Barcelona",
+    "city": "Barcelona",
     "country": "Spanyolország",
     "region": "Europe",
     "lat": 41.3851,
     "lon": 2.1734,
-    "vibe_metrics": {
-      "urban_scale": 0.9,
-      "beach_scale": 0.8,
-      "nature_scale": 0.3,
-      "historical_scale": 0.8,
-      "nightlife_scale": 0.9,
-      "luxury_scale": 0.6
-    },
-    "metrics": {
-      "safety_index": 48,
-      "cost_index_daily_eur": 153,
-      "happiness_score": 75
-    },
     "image": "https://images.unsplash.com/photo-1583422409516-2895a77efded?auto=format&fit=crop&w=800&q=80"
   },
   {
     "id": "rome_it",
     "name": "Róma",
+    "city": "Róma",
     "country": "Olaszország",
     "region": "Europe",
     "lat": 41.9028,
     "lon": 12.4964,
-    "vibe_metrics": {
-      "urban_scale": 0.9,
-      "beach_scale": 0.1,
-      "nature_scale": 0.2,
-      "historical_scale": 1.0,
-      "nightlife_scale": 0.7,
-      "luxury_scale": 0.5
-    },
-    "metrics": {
-      "safety_index": 52,
-      "cost_index_daily_eur": 151,
-      "happiness_score": 70
-    },
     "image": "https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=800&q=80"
   },
   {
     "id": "bali_id",
     "name": "Bali",
+    "city": "Bali",
     "country": "Indonézia",
     "region": "Asia",
     "lat": -8.4095,
     "lon": 115.1889,
-    "vibe_metrics": {
-      "urban_scale": 0.3,
-      "beach_scale": 0.9,
-      "nature_scale": 1.0,
-      "historical_scale": 0.6,
-      "nightlife_scale": 0.8,
-      "luxury_scale": 0.4
-    },
-    "metrics": {
-      "safety_index": 50,
-      "cost_index_daily_eur": 65,
-      "happiness_score": 80
-    },
     "image": "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=800&q=80"
   },
   {
     "id": "reykjavik_is",
     "name": "Reykjavík",
+    "city": "Reykjavík",
     "country": "Izland",
     "region": "Europe",
     "lat": 64.1466,
     "lon": -21.9426,
-    "vibe_metrics": {
-      "urban_scale": 0.5,
-      "beach_scale": 0.1,
-      "nature_scale": 1.0,
-      "historical_scale": 0.4,
-      "nightlife_scale": 0.4,
-      "luxury_scale": 0.9
-    },
-    "metrics": {
-      "safety_index": 76,
-      "cost_index_daily_eur": 337,
-      "happiness_score": 90
-    },
     "image": "https://images.unsplash.com/photo-1476610182048-b716b8518aae?auto=format&fit=crop&w=800&q=80"
   },
   {
     "id": "tokyo_jp",
     "name": "Tokió",
+    "city": "Tokió",
     "country": "Japán",
     "region": "Asia",
     "lat": 35.6762,
     "lon": 139.6503,
-    "vibe_metrics": {
-      "urban_scale": 1.0,
-      "beach_scale": 0.2,
-      "nature_scale": 0.3,
-      "historical_scale": 0.7,
-      "nightlife_scale": 0.9,
-      "luxury_scale": 0.7
-    },
-    "metrics": {
-      "safety_index": 75,
-      "cost_index_daily_eur": 150,
-      "happiness_score": 60
-    },
     "image": "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=800&q=80"
   },
   {
     "id": "santorini_gr",
     "name": "Szantorini",
+    "city": "Szantorini",
     "country": "Görögország",
     "region": "Europe",
     "lat": 36.3932,
     "lon": 25.4615,
-    "vibe_metrics": {
-      "urban_scale": 0.2,
-      "beach_scale": 0.8,
-      "nature_scale": 0.6,
-      "historical_scale": 0.5,
-      "nightlife_scale": 0.5,
-      "luxury_scale": 0.9
-    },
-    "metrics": {
-      "safety_index": 50,
-      "cost_index_daily_eur": 188,
-      "happiness_score": 85
-    },
     "image": "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&w=800&q=80"
   },
   {
     "id": "ny_us",
     "name": "New York",
+    "city": "New York",
     "country": "USA",
     "region": "America",
     "lat": 40.7128,
     "lon": -74.006,
-    "vibe_metrics": {
-      "urban_scale": 1.0,
-      "beach_scale": 0.3,
-      "nature_scale": 0.2,
-      "historical_scale": 0.5,
-      "nightlife_scale": 1.0,
-      "luxury_scale": 0.8
-    },
-    "metrics": {
-      "safety_index": 49,
-      "cost_index_daily_eur": 355,
-      "happiness_score": 70
-    },
     "image": "https://images.unsplash.com/photo-1518315348364-99104788af60?auto=format&fit=crop&w=800&q=80"
   },
   {
     "id": "amsterdam_nl",
     "name": "Amszterdam",
+    "city": "Amszterdam",
     "country": "Hollandia",
     "region": "Europe",
     "lat": 52.3676,
     "lon": 4.9041,
-    "vibe_metrics": {
-      "urban_scale": 0.8,
-      "beach_scale": 0.2,
-      "nature_scale": 0.5,
-      "historical_scale": 0.8,
-      "nightlife_scale": 0.8,
-      "luxury_scale": 0.7
-    },
-    "metrics": {
-      "safety_index": 74,
-      "cost_index_daily_eur": 242,
-      "happiness_score": 85
-    },
     "image": "https://images.unsplash.com/photo-1691746942863-e2469c3809f9?auto=format&fit=crop&w=800&q=80"
   },
   {
     "id": "dubai_ae",
     "name": "Dubaj",
+    "city": "Dubaj",
     "country": "Egyesült Arab Emírségek",
     "region": "Asia",
     "lat": 25.2048,
     "lon": 55.2708,
-    "vibe_metrics": {
-      "urban_scale": 1.0,
-      "beach_scale": 0.7,
-      "nature_scale": 0.1,
-      "historical_scale": 0.1,
-      "nightlife_scale": 0.8,
-      "luxury_scale": 1.0
-    },
-    "metrics": {
-      "safety_index": 84,
-      "cost_index_daily_eur": 159,
-      "happiness_score": 75
-    },
     "image": "https://images.unsplash.com/photo-1661630804516-10393c1bb0a8?auto=format&fit=crop&w=800&q=80"
   },
   {
     "id": "paris_fr",
     "name": "Párizs",
+    "city": "Párizs",
     "country": "Franciaország",
     "region": "Europe",
     "lat": 48.8566,
     "lon": 2.3522,
-    "vibe_metrics": {
-      "urban_scale": 1.0,
-      "beach_scale": 0.0,
-      "nature_scale": 0.2,
-      "historical_scale": 0.9,
-      "nightlife_scale": 0.8,
-      "luxury_scale": 0.9
-    },
-    "metrics": {
-      "safety_index": 42,
-      "cost_index_daily_eur": 236,
-      "happiness_score": 70
-    },
     "image": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=800&q=80"
   },
   {
     "id": "lisbon_pt",
     "name": "Lisszabon",
+    "city": "Lisszabon",
     "country": "Portugália",
     "region": "Europe",
     "lat": 38.7223,
     "lon": -9.1393,
-    "vibe_metrics": {
-      "urban_scale": 0.8,
-      "beach_scale": 0.6,
-      "nature_scale": 0.4,
-      "historical_scale": 0.8,
-      "nightlife_scale": 0.7,
-      "luxury_scale": 0.5
-    },
-    "metrics": {
-      "safety_index": 68,
-      "cost_index_daily_eur": 127,
-      "happiness_score": 80
-    },
     "image": "https://images.unsplash.com/photo-1585208798174-6cedd86e019a?q=80&w=1173&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   },
   {
     "id": "bangkok_th",
     "name": "Bangkok",
+    "city": "Bangkok",
     "country": "Thaiföld",
     "region": "Asia",
     "lat": 13.7563,
     "lon": 100.5018,
-    "vibe_metrics": {
-      "urban_scale": 1.0,
-      "beach_scale": 0.1,
-      "nature_scale": 0.2,
-      "historical_scale": 0.7,
-      "nightlife_scale": 0.9,
-      "luxury_scale": 0.4
-    },
-    "metrics": {
-      "safety_index": 61,
-      "cost_index_daily_eur": 65,
-      "happiness_score": 70
-    },
     "image": "https://images.unsplash.com/photo-1683317617081-74b271f8c8b3?auto=format&fit=crop&w=800&q=80"
   },
   {
     "id": "sydney_au",
     "name": "Sydney",
+    "city": "Sydney",
     "country": "Ausztrália",
     "region": "Australia",
     "lat": -33.8688,
     "lon": 151.2093,
-    "vibe_metrics": {
-      "urban_scale": 0.8,
-      "beach_scale": 0.9,
-      "nature_scale": 0.6,
-      "historical_scale": 0.3,
-      "nightlife_scale": 0.7,
-      "luxury_scale": 0.8
-    },
-    "metrics": {
-      "safety_index": 66,
-      "cost_index_daily_eur": 211,
-      "happiness_score": 85
-    },
     "image": "https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?auto=format&fit=crop&w=800&q=80"
   },
   {
     "id": "berlin_de",
     "name": "Berlin",
+    "city": "Berlin",
     "country": "Németország",
     "region": "Europe",
     "lat": 52.52,
     "lon": 13.405,
-    "vibe_metrics": {
-      "urban_scale": 1.0,
-      "beach_scale": 0.0,
-      "nature_scale": 0.4,
-      "historical_scale": 0.9,
-      "nightlife_scale": 1.0,
-      "luxury_scale": 0.7
-    },
-    "metrics": {
-      "safety_index": 55,
-      "cost_index_daily_eur": 195,
-      "happiness_score": 70
-    },
     "image": "https://images.unsplash.com/photo-1560969184-10fe8719e047?auto=format&fit=crop&w=800&q=80"
   },
   {
     "id": "london_uk",
     "name": "London",
+    "city": "London",
     "country": "Egyesült Királyság",
     "region": "Europe",
     "lat": 51.5074,
     "lon": -0.1278,
-    "vibe_metrics": {
-      "urban_scale": 1.0,
-      "beach_scale": 0.0,
-      "nature_scale": 0.5,
-      "historical_scale": 1.0,
-      "nightlife_scale": 1.0,
-      "luxury_scale": 0.9
-    },
-    "metrics": {
-      "safety_index": 45,
-      "cost_index_daily_eur": 276,
-      "happiness_score": 70
-    },
     "image": "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=800&q=80"
   },
   {
     "id": "vienna_at",
     "name": "Bécs",
+    "city": "Bécs",
     "country": "Ausztria",
     "region": "Europe",
     "lat": 48.2082,
     "lon": 16.3738,
-    "vibe_metrics": {
-      "urban_scale": 0.8,
-      "beach_scale": 0.0,
-      "nature_scale": 0.4,
-      "historical_scale": 1.0,
-      "nightlife_scale": 0.6,
-      "luxury_scale": 0.8
-    },
-    "metrics": {
-      "safety_index": 72,
-      "cost_index_daily_eur": 205,
-      "happiness_score": 70
-    },
     "image": "https://images.unsplash.com/photo-1516550893923-42d28e5677af?auto=format&fit=crop&w=800&q=80"
   },
   {
     "id": "zurich_ch",
     "name": "Zürich",
+    "city": "Zürich",
     "country": "Svájc",
     "region": "Europe",
     "lat": 47.3769,
     "lon": 8.5417,
-    "vibe_metrics": {
-      "urban_scale": 0.7,
-      "beach_scale": 0.2,
-      "nature_scale": 0.8,
-      "historical_scale": 0.7,
-      "nightlife_scale": 0.6,
-      "luxury_scale": 1.0
-    },
-    "metrics": {
-      "safety_index": 77,
-      "cost_index_daily_eur": 414,
-      "happiness_score": 70
-    },
     "image": "https://images.unsplash.com/photo-1515488764276-beab7607c1e6?auto=format&fit=crop&w=800&q=80"
   },
   {
     "id": "brussels_be",
     "name": "Brüsszel",
+    "city": "Brüsszel",
     "country": "Belgium",
     "region": "Europe",
     "lat": 50.8503,
     "lon": 4.3517,
-    "vibe_metrics": {
-      "urban_scale": 0.8,
-      "beach_scale": 0.0,
-      "nature_scale": 0.3,
-      "historical_scale": 0.9,
-      "nightlife_scale": 0.7,
-      "luxury_scale": 0.6
-    },
-    "metrics": {
-      "safety_index": 45,
-      "cost_index_daily_eur": 214,
-      "happiness_score": 70
-    },
     "image": "https://images.unsplash.com/photo-1726577488536-081e16b3b892?auto=format&fit=crop&w=800&q=80"
   },
   {
     "id": "prague_cz",
     "name": "Prága",
+    "city": "Prága",
     "country": "Csehország",
     "region": "Europe",
     "lat": 50.0755,
     "lon": 14.4378,
-    "vibe_metrics": {
-      "urban_scale": 0.8,
-      "beach_scale": 0.0,
-      "nature_scale": 0.4,
-      "historical_scale": 1.0,
-      "nightlife_scale": 0.9,
-      "luxury_scale": 0.5
-    },
-    "metrics": {
-      "safety_index": 75,
-      "cost_index_daily_eur": 129,
-      "happiness_score": 70
-    },
     "image": "https://images.unsplash.com/photo-1541849546-216549ae216d?auto=format&fit=crop&w=800&q=80"
   },
   {
     "id": "warsaw_pl",
     "name": "Varsó",
+    "city": "Varsó",
     "country": "Lengyelország",
     "region": "Europe",
     "lat": 52.2297,
     "lon": 21.0122,
-    "vibe_metrics": {
-      "urban_scale": 0.9,
-      "beach_scale": 0.0,
-      "nature_scale": 0.4,
-      "historical_scale": 0.8,
-      "nightlife_scale": 0.8,
-      "luxury_scale": 0.5
-    },
-    "metrics": {
-      "safety_index": 75,
-      "cost_index_daily_eur": 118,
-      "happiness_score": 70
-    },
     "image": "https://images.unsplash.com/photo-1519197924294-4ba991a11128?auto=format&fit=crop&w=800&q=80"
   },
   {
     "id": "copenhagen_dk",
     "name": "Koppenhága",
+    "city": "Koppenhága",
     "country": "Dánia",
     "region": "Europe",
     "lat": 55.6761,
     "lon": 12.5683,
-    "vibe_metrics": {
-      "urban_scale": 0.8,
-      "beach_scale": 0.3,
-      "nature_scale": 0.6,
-      "historical_scale": 0.7,
-      "nightlife_scale": 0.7,
-      "luxury_scale": 0.8
-    },
-    "metrics": {
-      "safety_index": 74,
-      "cost_index_daily_eur": 267,
-      "happiness_score": 70
-    },
     "image": "https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?auto=format&fit=crop&w=800&q=80"
   },
   {
     "id": "stockholm_se",
     "name": "Stockholm",
+    "city": "Stockholm",
     "country": "Svédország",
     "region": "Europe",
     "lat": 59.3293,
     "lon": 18.0686,
-    "vibe_metrics": {
-      "urban_scale": 0.8,
-      "beach_scale": 0.2,
-      "nature_scale": 0.7,
-      "historical_scale": 0.8,
-      "nightlife_scale": 0.7,
-      "luxury_scale": 0.8
-    },
-    "metrics": {
-      "safety_index": 54,
-      "cost_index_daily_eur": 224,
-      "happiness_score": 70
-    },
     "image": "https://images.unsplash.com/photo-1715589632802-66aa0194c1c8?auto=format&fit=crop&w=800&q=80"
   },
   {
     "id": "oslo_no",
     "name": "Oslo",
+    "city": "Oslo",
     "country": "Norvégia",
     "region": "Europe",
     "lat": 59.9139,
     "lon": 10.7522,
-    "vibe_metrics": {
-      "urban_scale": 0.7,
-      "beach_scale": 0.3,
-      "nature_scale": 0.9,
-      "historical_scale": 0.6,
-      "nightlife_scale": 0.5,
-      "luxury_scale": 0.8
-    },
-    "metrics": {
-      "safety_index": 66,
-      "cost_index_daily_eur": 281,
-      "happiness_score": 70
-    },
     "image": "https://images.unsplash.com/photo-1677746745272-2d62d5e1ca42?auto=format&fit=crop&w=800&q=80"
   },
   {
     "id": "helsinki_fi",
     "name": "Helsinki",
+    "city": "Helsinki",
     "country": "Finnország",
     "region": "Europe",
     "lat": 60.1699,
     "lon": 24.9384,
-    "vibe_metrics": {
-      "urban_scale": 0.7,
-      "beach_scale": 0.3,
-      "nature_scale": 0.8,
-      "historical_scale": 0.6,
-      "nightlife_scale": 0.5,
-      "luxury_scale": 0.7
-    },
-    "metrics": {
-      "safety_index": 75,
-      "cost_index_daily_eur": 208,
-      "happiness_score": 70
-    },
     "image": "https://images.unsplash.com/photo-1758650712601-20c9494316cf?auto=format&fit=crop&w=800&q=80"
   },
   {
     "id": "dublin_ie",
     "name": "Dublin",
+    "city": "Dublin",
     "country": "Írország",
     "region": "Europe",
     "lat": 53.3498,
     "lon": -6.2603,
-    "vibe_metrics": {
-      "urban_scale": 0.8,
-      "beach_scale": 0.2,
-      "nature_scale": 0.6,
-      "historical_scale": 0.8,
-      "nightlife_scale": 1.0,
-      "luxury_scale": 0.6
-    },
-    "metrics": {
-      "safety_index": 46,
-      "cost_index_daily_eur": 224,
-      "happiness_score": 70
-    },
     "image": "https://images.unsplash.com/photo-1692624459321-518f34276661?auto=format&fit=crop&w=800&q=80"
   },
   {
     "id": "tallinn_ee",
     "name": "Tallinn",
+    "city": "Tallinn",
     "country": "Észtország",
     "region": "Europe",
     "lat": 59.437,
     "lon": 24.7535,
-    "vibe_metrics": {
-      "urban_scale": 0.6,
-      "beach_scale": 0.3,
-      "nature_scale": 0.6,
-      "historical_scale": 1.0,
-      "nightlife_scale": 0.6,
-      "luxury_scale": 0.5
-    },
-    "metrics": {
-      "safety_index": 78,
-      "cost_index_daily_eur": 169,
-      "happiness_score": 70
-    },
     "image": "https://images.unsplash.com/photo-1601297830297-738d875c18c8?q=80&w=651&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   },
   {
     "id": "riga_lv",
     "name": "Riga",
+    "city": "Riga",
     "country": "Lettország",
     "region": "Europe",
     "lat": 56.9496,
     "lon": 24.1052,
-    "vibe_metrics": {
-      "urban_scale": 0.6,
-      "beach_scale": 0.2,
-      "nature_scale": 0.5,
-      "historical_scale": 0.9,
-      "nightlife_scale": 0.7,
-      "luxury_scale": 0.4
-    },
-    "metrics": {
-      "safety_index": 62,
-      "cost_index_daily_eur": 127,
-      "happiness_score": 70
-    },
     "image": "https://images.unsplash.com/photo-1766246720575-d99418c03fd8?auto=format&fit=crop&w=800&q=80"
   },
   {
     "id": "vilnius_lt",
     "name": "Vilnius",
+    "city": "Vilnius",
     "country": "Litvánia",
     "region": "Europe",
     "lat": 54.6872,
     "lon": 25.2797,
-    "vibe_metrics": {
-      "urban_scale": 0.6,
-      "beach_scale": 0.0,
-      "nature_scale": 0.6,
-      "historical_scale": 0.9,
-      "nightlife_scale": 0.6,
-      "luxury_scale": 0.4
-    },
-    "metrics": {
-      "safety_index": 71,
-      "cost_index_daily_eur": 119,
-      "happiness_score": 70
-    },
     "image": "https://images.unsplash.com/photo-1660562278746-72e961bb9644?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   },
   {
     "id": "istanbul_tr",
     "name": "Isztambul",
+    "city": "Isztambul",
     "country": "Törökország",
     "region": "Europe",
     "lat": 41.0082,
     "lon": 28.9784,
-    "vibe_metrics": {
-      "urban_scale": 1.0,
-      "beach_scale": 0.3,
-      "nature_scale": 0.3,
-      "historical_scale": 1.0,
-      "nightlife_scale": 0.9,
-      "luxury_scale": 0.8
-    },
-    "metrics": {
-      "safety_index": 52,
-      "cost_index_daily_eur": 80,
-      "happiness_score": 70
-    },
     "image": "https://images.unsplash.com/photo-1564407727371-3eece6c58961?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   },
   {
     "id": "valletta_mt",
     "name": "Valletta",
+    "city": "Valletta",
     "country": "Málta",
     "region": "Europe",
     "lat": 35.8989,
     "lon": 14.5146,
-    "vibe_metrics": {
-      "urban_scale": 0.5,
-      "beach_scale": 0.9,
-      "nature_scale": 0.2,
-      "historical_scale": 1.0,
-      "nightlife_scale": 0.7,
-      "luxury_scale": 0.7
-    },
-    "metrics": {
-      "safety_index": 50,
-      "cost_index_daily_eur": 100,
-      "happiness_score": 70
-    },
     "image": "https://images.unsplash.com/photo-1669294841689-0ceb34ad40c1?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   },
   {
     "id": "larnaca_cy",
     "name": "Larnaca",
+    "city": "Larnaca",
     "country": "Ciprus",
     "region": "Europe",
     "lat": 34.924,
     "lon": 33.6232,
-    "vibe_metrics": {
-      "urban_scale": 0.4,
-      "beach_scale": 1.0,
-      "nature_scale": 0.4,
-      "historical_scale": 0.6,
-      "nightlife_scale": 0.7,
-      "luxury_scale": 0.6
-    },
-    "metrics": {
-      "safety_index": 50,
-      "cost_index_daily_eur": 133,
-      "happiness_score": 70
-    },
     "image": "https://images.unsplash.com/photo-1704870886543-9cbe256c55f5?auto=format&fit=crop&w=800&q=80"
   },
   {
     "id": "luxembourg_lu",
     "name": "Luxembourg",
+    "city": "Luxembourg",
     "country": "Luxemburg",
     "region": "Europe",
     "lat": 49.6116,
     "lon": 6.1319,
-    "vibe_metrics": {
-      "urban_scale": 0.6,
-      "beach_scale": 0.0,
-      "nature_scale": 0.6,
-      "historical_scale": 0.8,
-      "nightlife_scale": 0.4,
-      "luxury_scale": 0.9
-    },
-    "metrics": {
-      "safety_index": 71,
-      "cost_index_daily_eur": 234,
-      "happiness_score": 70
-    },
     "image": "https://images.unsplash.com/photo-1727059244730-0579bc98c9ca?auto=format&fit=crop&w=800&q=80"
   },
   {
     "id": "split_hr",
     "name": "Split",
+    "city": "Split",
     "country": "Horvátország",
     "region": "Europe",
     "lat": 43.5081,
     "lon": 16.4402,
-    "vibe_metrics": {
-      "urban_scale": 0.5,
-      "beach_scale": 1.0,
-      "nature_scale": 0.5,
-      "historical_scale": 0.9,
-      "nightlife_scale": 0.8,
-      "luxury_scale": 0.6
-    },
-    "metrics": {
-      "safety_index": 70,
-      "cost_index_daily_eur": 138,
-      "happiness_score": 70
-    },
     "image": "https://images.unsplash.com/photo-1629997865848-f4353a9296c9?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   },
   {
     "id": "sofia_bg",
     "name": "Szófia",
+    "city": "Szófia",
     "country": "Bulgária",
     "region": "Europe",
     "lat": 42.6977,
     "lon": 23.3219,
-    "vibe_metrics": {
-      "urban_scale": 0.7,
-      "beach_scale": 0.0,
-      "nature_scale": 0.7,
-      "historical_scale": 0.8,
-      "nightlife_scale": 0.7,
-      "luxury_scale": 0.4
-    },
-    "metrics": {
-      "safety_index": 61,
-      "cost_index_daily_eur": 86,
-      "happiness_score": 70
-    },
     "image": "https://plus.unsplash.com/premium_photo-1677620678835-0e7cd29fc496?q=80&w=720&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   },
   {
     "id": "bucharest_ro",
     "name": "Bukarest",
+    "city": "Bukarest",
     "country": "Románia",
     "region": "Europe",
     "lat": 44.4268,
     "lon": 26.1025,
-    "vibe_metrics": {
-      "urban_scale": 0.8,
-      "beach_scale": 0.0,
-      "nature_scale": 0.4,
-      "historical_scale": 0.7,
-      "nightlife_scale": 0.9,
-      "luxury_scale": 0.5
-    },
-    "metrics": {
-      "safety_index": 72,
-      "cost_index_daily_eur": 90,
-      "happiness_score": 70
-    },
     "image": "https://images.unsplash.com/photo-1654529046084-a38c42b6920f?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   },
   {
     "id": "belgrade_rs",
     "name": "Belgrád",
+    "city": "Belgrád",
     "country": "Szerbia",
     "region": "Europe",
     "lat": 44.7866,
     "lon": 20.4489,
-    "vibe_metrics": {
-      "urban_scale": 0.8,
-      "beach_scale": 0.1,
-      "nature_scale": 0.4,
-      "historical_scale": 0.7,
-      "nightlife_scale": 1.0,
-      "luxury_scale": 0.5
-    },
-    "metrics": {
-      "safety_index": 62,
-      "cost_index_daily_eur": 91,
-      "happiness_score": 70
-    },
     "image": "https://plus.unsplash.com/premium_photo-1697729779919-991cc0b2a149?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   },
   {
     "id": "tirana_al",
     "name": "Tirana",
+    "city": "Tirana",
     "country": "Albánia",
     "region": "Europe",
     "lat": 41.3275,
     "lon": 19.8187,
-    "vibe_metrics": {
-      "urban_scale": 0.7,
-      "beach_scale": 0.2,
-      "nature_scale": 0.6,
-      "historical_scale": 0.5,
-      "nightlife_scale": 0.8,
-      "luxury_scale": 0.4
-    },
-    "metrics": {
-      "safety_index": 60,
-      "cost_index_daily_eur": 103,
-      "happiness_score": 70
-    },
     "image": "https://images.unsplash.com/photo-1705174315361-a1ee617a3d5b?q=80&w=685&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   },
   {
     "id": "ljubljana_si",
     "name": "Ljubljana",
+    "city": "Ljubljana",
     "country": "Szlovénia",
     "region": "Europe",
     "lat": 46.0569,
     "lon": 14.5058,
-    "vibe_metrics": {
-      "urban_scale": 0.5,
-      "beach_scale": 0.0,
-      "nature_scale": 1.0,
-      "historical_scale": 0.8,
-      "nightlife_scale": 0.5,
-      "luxury_scale": 0.6
-    },
-    "metrics": {
-      "safety_index": 79,
-      "cost_index_daily_eur": 134,
-      "happiness_score": 70
-    },
     "image": "https://images.unsplash.com/photo-1611576191056-3e6696029388?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   },
   {
     "id": "sarajevo_ba",
     "name": "Szarajevó",
+    "city": "Szarajevó",
     "country": "Bosznia-Hercegovina",
     "region": "Europe",
     "lat": 43.8563,
     "lon": 18.4131,
-    "vibe_metrics": {
-      "urban_scale": 0.6,
-      "beach_scale": 0.0,
-      "nature_scale": 0.7,
-      "historical_scale": 1.0,
-      "nightlife_scale": 0.6,
-      "luxury_scale": 0.4
-    },
-    "metrics": {
-      "safety_index": 56,
-      "cost_index_daily_eur": 69,
-      "happiness_score": 70
-    },
     "image": "https://images.unsplash.com/photo-1570831709673-03320e9d734f?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+  },
+  {
+    "id": "funchal_pt",
+    "name": "Madeira (Funchal)",
+    "city": "Funchal",
+    "country": "Portugália",
+    "region": "Europe",
+    "lat": 32.65,
+    "lon": -16.9086,
+    "image": "https://images.unsplash.com/photo-1549144511-f099e773c147?auto=format&fit=crop&w=800&q=80"
   }
 ]

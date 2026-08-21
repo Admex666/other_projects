@@ -1,8 +1,40 @@
 # DreamTrip — Változási Napló (Changelog)
 
-## [Unreleased] - 2026-08-19
+## [Unreleased] - 2026-08-21
 
 ### Hozzáadva
+- **Destination Matcher → Flight Intelligence Zökkenőmentes Workflow Összekötés ([`templates/destination/destination_results.html`](file:///e:/Data/other_projects/dreamtrip/templates/destination/destination_results.html), [`templates/flights/flight_intelligence.html`](file:///e:/Data/other_projects/dreamtrip/templates/flights/flight_intelligence.html), [`app/main.py`](file:///e:/Data/other_projects/dreamtrip/app/main.py))**:
+  - **1-Kattintásos Adatátadás**: A kiválasztott város kártyáján lévő „Járatok összehasonlítása” gomb mostantól az összes utazási paramétert (Indulási hely, Célállomás, Felnőtt és Gyermek létszám, Hónapon belüli időablak, Tartózkodási napok száma) adatvesztés és újragépelés nélkül átadja a Flight Intelligence-nek.
+  - **Context-Aware Visszanavigáció**: A Flight Intelligence fejlécében megjelenik a „Vissza a célállomások rangsorához” link és egy megerősítő státuszbanner.
+  - **Valós Csoportos Árkalkuláció**: A járatkereső motor mostantól a pontos utaslétszámra keresi meg a legkedvezőbb retúr járatokat.
+  - Megszüntettük a felesleges 5-napos csonkolást és az 1 másodperces mesterséges alvási várakozásokat (`split_chunks=False`).
+  - A Kiwi GraphQL motorja mostantól közvetlenül 1etlen hívással (`limit=20`) kéri le a hónap legolcsóbb járatait (12 API hívás helyett városonként mindössze 2 hívás).
+  - Párhuzamos feldolgozási szálak számát megemeltük (`max_workers=10`), így a 40 célállomás teljes retúr kalkulációja drasztikusan lerövidült.
+- **Hónapon Belüli Rugalmas Járat- & Ároptimalizáció ([`app/services/destination_scoring_service.py`](file:///e:/Data/other_projects/dreamtrip/app/services/destination_scoring_service.py))**:
+  - A szűk 2-napos fix ablak helyett a rendszer mostantól a kiválasztott hónap teljes időszakában (`1 - 24. nap`) keres oda- és visszautakat $\pm 2$ napos rugalmas tartózkodási sávval (`duration_days +- 2 nap`).
+  - Ezzel desztinációnként több ezer (akár 12 000+) retúr járatkombinációt vizsgál meg a háttérben, megtalálva az adott hónap ténylegesen legolcsóbb retúr árait (pl. Párizs: 23 506 Ft, Barcelona: 28 243 Ft, Funchal: 58 726 Ft, Dubaj: 117 373 Ft, Tokió: 237 541 Ft).
+  - Megszüntettük a töredezett, elavult 4-lépcsős folyamatot (kritérium-válogatás, páros mátrix, dummy vibe/tömeg szűrők).
+  - Létrehoztuk a letisztult **2-lépéses B2B Advisor Flow-t**:
+    1. **1. lépés:** Indulási hely, Utazási hónap, Tartam ($\pm 1$ stepper), Napi költségkeret csúszka és Régióbeli kizárások.
+    2. **2. lépés:** Célhőmérséklet (nappali csúcs) + A 4 valós pillér fontossága (Repülő, Költség, Időjárás, Biztonság) dinamikus csúszkákkal és 1-kattintásos stratégiákkal (*Budget-first*, *Weather-first*, *Safety-first*, *Kiegyensúlyozott*).
+- **Destination Matcher Kritikus Adat- és Súlyozásjavítások ([`app/services/destination_scoring_service.py`](file:///e:/Data/other_projects/dreamtrip/app/services/destination_scoring_service.py), [`app/services/numbeo_service.py`](file:///e:/Data/other_projects/dreamtrip/app/services/numbeo_service.py))**:
+  - **Repülőjárat kombináció bug javítva**: megszüntettük a pandas DataFrame `ambiguous boolean` kivételt, így a Kiwi valós retúr árai (18 231 Ft – 294 656 Ft) közvetlenül bekerülnek a számításba a 75 000 Ft-os fallback helyett.
+  - **Magyar városnév Numbeo leképezés**: minden magyar városnév (Párizs, Bécs, Róma, Lisszabon stb.) közvetlenül megkapja a valós Numbeo költségkosarát (€32.4 – €70.7/nap) és valós biztonsági indexét (43 – 84) a statikus 44.6 € / 60 fallback helyett.
+  - **Nem választott szempontok súlyának nullázása**: ha a felhasználó nem választja ki a Biztonságot vagy Repülőjegyet, azok súlya szigorúan `0.00`.
+  - **Nappali csúcshőmérséklet**: az időjárási egyezést a nappali hőmérséklet határozza meg, a felületen megjelenítve mind a nappali, mind az éjszakai értékeket (`Nappal: 26°C / Éjjel: 19°C`).
+  - **Minden dummy/szubjektív adat kiirtva**: eltávolítottuk a fix `vibe_metrics`, `crowds = 0.5` és elavult statikus mutatókat.
+  - **Dinamikus & bővíthető városkezelés**: Madeira (Funchal), Tokió és bármely új desztináció kódmódosítás nélkül azonnal feldolgozható.
+  - **Valós Numbeo Költségkosár & Biztonsági Index**: standard utazási kosár ($1.5 \times \text{olcsó étkezés} + 0.5 \times \text{középkategóriás étkezés} + 2 \times \text{kávé} + 2 \times \text{helyi jegy}$) és hivatalos Numbeo Safety Index.
+  - **Valós Open-Meteo Klímaarchívum**: havi átlaghőmérséklet és szigorúan monoton normalizált időjárási pontszám.
+  - **Transzparens & Reprodukálható Döntési Modell**: $\Sigma w_i \times s_i$ pontszámítás, részletes terminál printeléssel és a valós adatokból generált objektív „Miért ezt ajánljuk?” réteggel.
+- **Keresőmező Ikon & Szöveg Átfedés Javítás ([`static/css/components.css`](file:///e:/Data/other_projects/dreamtrip/static/css/components.css))**:
+  - Megszüntettük az általános `input[type="text"]` szelektor által okozott CSS prioritási hibát: a `.hero-search-input` mostantól szigorú `padding-left: 64px !important` és `box-sizing: border-box` beállítást kapott, így a szöveges tartalom és a placeholder tökéletes távolságot tart az ikonoktól.
+- **Központosított Komponens Rendszer ([`static/css/components.css`](file:///e:/Data/other_projects/dreamtrip/static/css/components.css), [`static/js/components.js`](file:///e:/Data/other_projects/dreamtrip/static/js/components.js), [`templates/base.html`](file:///e:/Data/other_projects/dreamtrip/templates/base.html))**:
+  - Az ismétlődő UI elemek (egyedi Flatpickr naptár, magyar lokalizáció, Light & Dark téma felülírások, diszkrét $\pm 1$ léptetők `stepUp`/`stepDown`, debounced autocomplete) központi CSS és JS fájlokba lettek kiszervezve, megszüntetve a HTML oldalak közötti kódismétlést.
+- **Destination Matcher UI Újratervezés ([`templates/destination/destination_matcher.html`](file:///e:/Data/other_projects/dreamtrip/templates/destination/destination_matcher.html))**:
+  - A célállomás-ajánló felületet is átállítottuk a központi Executive Advisor dizájnrendszerre: Hero indulási autocomplete, Bento-box elrendezésű időzítés & időtartam léptető, szinkronizált napi költségkeret csúszka + mező, modern régióbeli kizárás chipek, teljes Light/Dark mode kompatibilitás.
+- **Flight Intelligence UI Újratervezés ([`templates/flights/flight_intelligence.html`](file:///e:/Data/other_projects/dreamtrip/templates/flights/flight_intelligence.html))**:
+  - A repülőjegy kereső felületet teljes mértékben hozzáigazítottuk az Accommodation Intelligence V2.2 Executive Advisor dizájnjához: Bento-box elrendezés, központi Flatpickr időablak választó, népszerű indulási és érkezési gyorsgombok, utas- és átszállásszűrők, teljes Light/Dark mode támogatás.
 - **Élő EUR/HUF Árfolyam Lekérő Szolgáltatás ([`app/services/exchange_service.py`](file:///e:/Data/other_projects/dreamtrip/app/services/exchange_service.py))**:
   - Valós idejű, hivatalos **Európai Központi Bank (EKB / Frankfurter API)** devizaárfolyam integráció, automatikus **Open Exchange Rates** tartalékkal és 1 órás memóriagyorsítótárral.
   - A korábbi égetett 400 Ft-os szorzó helyett a teljes rendszer (szállás- és repülőjegy átszámítások, histogram, AHP rangsorolás) a legfrissebb élő árfolyammal számol.
