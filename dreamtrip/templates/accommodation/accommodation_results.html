@@ -379,13 +379,18 @@
                         <span class="stay-metric-chip" style="color: var(--primary); font-weight: 700;">Match: {{ "%.1f"|format(stay.phi_net * 100) }}%</span>
                     </div>
 
-                    <a href="{{ stay.booking_url }}" target="_blank" class="btn btn-primary btn-block" style="margin-top: auto; padding: 10px; font-size: 13px;">
-                        <span>Szállás megtekintése</span>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                            <polyline points="12 5 19 12 12 19"></polyline>
-                        </svg>
-                    </a>
+                    <div style="display: flex; gap: 8px; margin-top: auto;">
+                        <a href="{{ stay.booking_url }}" target="_blank" class="btn btn-primary" style="flex: 1; padding: 10px; font-size: 13px;">
+                            <span>Megtekintés</span>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <polyline points="12 5 19 12 12 19"></polyline>
+                            </svg>
+                        </a>
+                        <button type="button" class="btn-add-to-trip" style="flex: 1; padding: 10px; font-size: 13px;" onclick="addStayToCart({{ loop.index0 }}, this)">
+                            <span>➕ Tervbe</span>
+                        </button>
+                    </div>
                 </div>
             </div>
             {% endfor %}
@@ -564,6 +569,26 @@
             }
         });
         runLocalFilter();
+    }
+
+    function addStayToCart(index, btn) {
+        const stay = allResults[index];
+        if (!stay) return;
+        if (window.TripCart) {
+            window.TripCart.setStay({
+                name: stay.name || 'Szállás',
+                price_huf: stay.price_huf || 0,
+                rating: stay.rating_score ? Math.round(stay.rating_score / 10) : 8.5,
+                stars: stay.stars || 4,
+                address: stay.address || '',
+                image: stay.image_url || '',
+                city: stay.city || ''
+            });
+        }
+        if (btn) {
+            btn.innerHTML = '<span>✅ Tervben</span>';
+            btn.classList.add('added');
+        }
     }
 
     window.onload = () => {

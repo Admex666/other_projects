@@ -261,26 +261,82 @@
                     </div>
 
                     <!-- ACTION BUTTONS -->
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px;">
-                        <a href="${flightUrl}" class="btn btn-primary" style="padding: 10px; font-size: 13px;">
-                            <span>Járatok összehasonlítása</span>
+                    <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 10px; margin-top: 16px;">
+                        <button type="button" class="btn btn-primary" style="padding: 10px 14px; font-size: 13px;" onclick="chooseDestinationAndFlights('${encodeURIComponent(JSON.stringify(res))}', '${flightUrl}')">
+                            <span>Járatok keresése</span>
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
                                 <polyline points="12 5 19 12 12 19"></polyline>
                             </svg>
-                        </a>
-                        <a href="${accommodationUrl}" class="btn btn-secondary" style="padding: 10px; font-size: 13px;">
-                            <span>Szállások elemzése</span>
+                        </button>
+                        <button type="button" class="btn btn-secondary" style="padding: 10px 14px; font-size: 13px;" onclick="chooseDestinationAndStays('${encodeURIComponent(JSON.stringify(res))}', '${accommodationUrl}')">
+                            <span>Szállások</span>
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
                                 <polyline points="12 5 19 12 12 19"></polyline>
                             </svg>
-                        </a>
+                        </button>
                     </div>
                 </div>
             `;
             grid.appendChild(card);
         });
+    }
+
+    function chooseDestinationAndFlights(resJsonEncoded, url) {
+        try {
+            const res = JSON.parse(decodeURIComponent(resJsonEncoded));
+            if (window.TripCart) {
+                const m = res.metrics || {};
+                window.TripCart.setDestination({
+                    name: res.name,
+                    city: res.city || res.name,
+                    country: res.country || '',
+                    region: res.region || '',
+                    month: month,
+                    duration: duration,
+                    adults: adults,
+                    children: children,
+                    origin: origin,
+                    daily_cost_eur: m.daily_cost_raw || 45,
+                    flight_price_huf: m.flight_price_raw || 0,
+                    image: res.image || ''
+                });
+            }
+        } catch (e) {
+            console.error(e);
+        }
+        setTimeout(() => {
+            window.location.href = url;
+        }, 150);
+    }
+
+    function chooseDestinationAndStays(resJsonEncoded, url) {
+        try {
+            const res = JSON.parse(decodeURIComponent(resJsonEncoded));
+            if (window.TripCart) {
+                const m = res.metrics || {};
+                window.TripCart.setDestination({
+                    name: res.name,
+                    city: res.city || res.name,
+                    country: res.country || '',
+                    region: res.region || '',
+                    month: month,
+                    duration: duration,
+                    adults: adults,
+                    children: children,
+                    origin: origin,
+                    daily_cost_eur: m.daily_cost_raw || 45,
+                    flight_price_huf: m.flight_price_raw || 0,
+                    image: res.image || ''
+                });
+            }
+        } catch (e) {
+            console.error(e);
+        }
+        setTimeout(() => {
+            window.location.href = url;
+        }, 150);
     }
 
     if (results.length === 0) {

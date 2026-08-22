@@ -36,14 +36,23 @@ Ez a dokumentum a projekt hosszú távú architektúrális és fejlesztési dön
 
 ## 3. Döntés: V3 "Őszinte Mode" a Szállás Scrapingben (Mock Helyett Hibaüzenet)
 
-* **Dátum**: 2026-08-01
-* **Kontextus**: Korábban a szállás scraper Playwright/Selenium összeomlás esetén automatikusan hamis (mock) szállásadatokat generált, ami megtévesztette a tesztelőket.
+* **Dátum:** 2026-08-21
+* **Döntés:** A repülőjegy árak a pontos utaslétszámra (`adults`, `children`) vonatkozó valós retúr jegyárakat tükrözik a hónap legolcsóbb kombinációjával, és a UI-on egyértelműen megjelenik a csoportos teljes ár és az 1 főre jutó ár.
+
+---
+
+## 4. Perzisztens Utazási Kosár & Unified Workspace (Trip Builder Cart)
+
+- **Dátum:** 2026-08-22
+- **Döntés:** Bevezettünk egy globális, perzisztens „Aktív Utazási Terv / Kosár” (`TripCart`) modult, amely a Destination Matcher, Flight Intelligence és Accommodation Intelligence modulok között folyamatosan megőrzi és lebegő sávban/drawerben megjeleníti az eldöntött elemeket (célállomás, járat, szállás, összköltség).
+- **Indoklás:** A felhasználó így sosem veszíti el a már kiválasztott vagy beállított adatokat modulváltáskor, rugalmasan kivehet vagy módosíthat elemeket, és 1 kattintással készíthet összegző ügyfélajánlatot / PDF-et.
+- **Hatás:** Zökkenőmentes B2B tanácsadói felhasználói élmény, magasabb konverzió és átláthatóbb költségösszesítés.
 * **Döntés**: A rendszert visszaállítottuk "ősszinte" hibakezelésre: ha kevés a RAM vagy lejár a timeout, a szerver pontos hibaüzenettel áll le és jelzi a valódi korlátot (`status: "error"`).
 * **Hatás**: Átlátható és transzparens tesztelés/demo.
 
 ---
 
-## 4. Döntés: Szabványos Python Csomagstruktúra (`app/` Refaktor)
+## 5. Döntés: Szabványos Python Csomagstruktúra (`app/` Refaktor)
 
 * **Dátum**: 2026-08-13
 * **Kontextus**: A projekt prototípus formában, monolitikus `site/main.py` fájllal és lapos könyvtárszerkezettel működött.

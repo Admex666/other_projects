@@ -1,0 +1,546 @@
+/* GLOBAL BOTTOM CLEARANCE SO FLOATING BAR NEVER OVERLAPS CONTENT */
+body {
+    padding-bottom: 140px;
+}
+main.main-container {
+    padding-bottom: 140px !important;
+}
+
+/* 1. FLOATING TRIP BAR (Bottom-docked Executive Bar) */
+.floating-trip-bar {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(140%);
+    background: var(--bg-surface-elevated, #ffffff);
+    border: 1px solid var(--border-strong, #e2e8f0);
+    border-radius: 20px;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.18), 0 0 0 1px var(--border-subtle, #cbd5e1);
+    padding: 10px 18px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    z-index: 1000;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+    max-width: calc(100vw - 32px);
+    width: auto;
+    box-sizing: border-box;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.floating-trip-bar.visible {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+@media (max-width: 768px) {
+    .floating-trip-bar {
+        bottom: 12px;
+        left: 12px;
+        right: 12px;
+        transform: translateY(160%);
+        width: calc(100% - 24px);
+        max-width: calc(100% - 24px);
+        padding: 8px 12px;
+        gap: 8px;
+        border-radius: 16px;
+        justify-content: space-between;
+    }
+
+    .floating-trip-bar.visible {
+        transform: translateY(0);
+    }
+
+    .trip-bar-title {
+        padding-right: 8px;
+        font-size: 11px;
+        gap: 4px;
+    }
+
+    .trip-bar-title span {
+        display: none;
+    }
+
+    .trip-bar-items-group {
+        max-width: 40vw;
+        gap: 6px;
+    }
+
+    .trip-pill-slot {
+        padding: 4px 8px;
+        font-size: 11.5px;
+        border-radius: 8px;
+    }
+
+    .trip-bar-total-wrap {
+        padding-left: 8px;
+    }
+
+    .trip-bar-total-label {
+        display: none;
+    }
+
+    .trip-bar-total-val {
+        font-size: 13px;
+    }
+
+    .btn-open-trip-drawer {
+        padding: 6px 10px;
+        font-size: 11.5px;
+        border-radius: 10px;
+    }
+
+    .btn-open-trip-drawer span {
+        display: none;
+    }
+}
+
+.trip-bar-close-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: transparent;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast, 0.15s ease);
+    margin-left: 4px;
+    flex-shrink: 0;
+}
+
+.trip-bar-close-btn:hover {
+    color: var(--status-error, #ef4444);
+    background: rgba(239, 68, 68, 0.08);
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+/* 2. FLOATING REOPEN PILL (Bottom-Right) */
+.trip-floating-reopen-btn {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--bg-surface-elevated, #ffffff);
+    border: 1px solid var(--border-strong, #e2e8f0);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+    border-radius: 30px;
+    padding: 8px 16px;
+    display: none;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--primary);
+    cursor: pointer;
+    z-index: 999;
+    transition: all var(--transition-fast, 0.15s ease);
+}
+
+.trip-floating-reopen-btn:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
+}
+
+.trip-floating-reopen-btn.visible {
+    display: flex;
+}
+
+.trip-bar-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding-right: 14px;
+    border-right: 1px solid var(--border-subtle);
+    white-space: nowrap;
+}
+
+.trip-bar-items-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    overflow-x: auto;
+    max-width: 55vw;
+}
+
+.trip-pill-slot {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 12px;
+    background: var(--bg-surface-subtle);
+    border: 1px solid var(--border-subtle);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-main);
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all var(--transition-fast, 0.15s ease);
+}
+
+.trip-pill-slot:hover {
+    border-color: var(--primary);
+    background: var(--bg-surface);
+    transform: translateY(-1px);
+}
+
+.trip-pill-slot.active-filled {
+    background: rgba(37, 99, 235, 0.08);
+    border-color: rgba(37, 99, 235, 0.3);
+    color: var(--primary);
+}
+
+.trip-pill-slot.empty-slot {
+    border-style: dashed;
+    color: var(--text-muted);
+    background: transparent;
+}
+
+.trip-pill-slot.empty-slot:hover {
+    color: var(--primary);
+    border-color: var(--primary);
+}
+
+.trip-bar-total-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    padding-left: 14px;
+    border-left: 1px solid var(--border-subtle);
+    white-space: nowrap;
+}
+
+.trip-bar-total-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.trip-bar-total-val {
+    font-size: 15px;
+    font-weight: 800;
+    font-family: var(--font-mono);
+    color: var(--primary);
+}
+
+.btn-open-trip-drawer {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: var(--primary);
+    color: #ffffff !important;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    box-shadow: 0 4px 12px var(--accent-glow);
+    white-space: nowrap;
+}
+
+.btn-open-trip-drawer:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px var(--accent-glow);
+}
+
+/* 2. TRIP DRAWER MODAL (Side-Slide / Center Workspace) */
+.trip-drawer-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(4px);
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.trip-drawer-backdrop.open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.trip-drawer-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 460px;
+    max-width: 95vw;
+    background: var(--bg-surface);
+    border-left: 1px solid var(--border-strong);
+    box-shadow: -10px 0 40px rgba(0, 0, 0, 0.25);
+    z-index: 10001;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.trip-drawer-backdrop.open .trip-drawer-panel {
+    transform: translateX(0);
+}
+
+.trip-drawer-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--bg-surface-elevated);
+}
+
+.trip-drawer-header-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.trip-drawer-close-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-surface);
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+}
+
+.trip-drawer-close-btn:hover {
+    color: var(--text-main);
+    border-color: var(--border-strong);
+    background: var(--bg-surface-subtle);
+}
+
+.trip-drawer-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Itemized Cards in Drawer */
+.trip-card-slot {
+    background: var(--bg-surface-elevated);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    padding: 16px 18px;
+    position: relative;
+    transition: all var(--transition-fast);
+}
+
+.trip-card-slot.filled {
+    border-color: rgba(37, 99, 235, 0.3);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+.trip-card-slot-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.trip-card-slot-type {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.trip-card-slot-remove {
+    font-size: 12px;
+    color: var(--status-error, #ef4444);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 6px;
+    transition: background 0.15s ease;
+}
+
+.trip-card-slot-remove:hover {
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.trip-card-main-info {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--text-main);
+    margin-bottom: 4px;
+}
+
+.trip-card-sub-info {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.trip-card-price-badge {
+    margin-top: 10px;
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 8px;
+    background: rgba(37, 99, 235, 0.08);
+    color: var(--primary);
+    font-size: 13px;
+    font-weight: 800;
+    font-family: var(--font-mono);
+}
+
+.trip-card-empty-action {
+    text-align: center;
+    padding: 14px 10px;
+}
+
+.trip-card-empty-action a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--primary);
+    text-decoration: none;
+    padding: 8px 14px;
+    border-radius: 10px;
+    background: var(--bg-surface-subtle);
+    border: 1px dashed var(--primary);
+    transition: all var(--transition-fast);
+}
+
+.trip-card-empty-action a:hover {
+    background: rgba(37, 99, 235, 0.08);
+    transform: translateY(-1px);
+}
+
+/* Drawer Footer */
+.trip-drawer-footer {
+    padding: 20px 24px;
+    border-top: 1px solid var(--border-subtle);
+    background: var(--bg-surface-elevated);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.trip-drawer-summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.trip-drawer-summary-total {
+    font-size: 22px;
+    font-weight: 800;
+    font-family: var(--font-mono);
+    color: var(--primary);
+}
+
+.btn-proposal-export {
+    width: 100%;
+    padding: 14px 20px;
+    background: var(--primary);
+    color: #ffffff;
+    border: none;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 16px var(--accent-glow);
+    transition: all var(--transition-fast);
+}
+
+.btn-proposal-export:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--accent-glow);
+}
+
+/* Toast Notifications */
+.trip-toast {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    background: var(--bg-surface-elevated);
+    border: 1px solid var(--status-success, #10b981);
+    color: var(--text-main);
+    padding: 14px 20px;
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 100000;
+    transform: translateY(-40px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    font-size: 13.5px;
+    font-weight: 600;
+}
+
+.trip-toast.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Button in Result Cards */
+.btn-add-to-trip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    background: var(--bg-surface-subtle);
+    border: 1px solid var(--border-strong);
+    color: var(--text-main);
+    transition: all var(--transition-fast);
+}
+
+.btn-add-to-trip:hover {
+    background: var(--primary);
+    color: #ffffff;
+    border-color: var(--primary);
+    box-shadow: 0 2px 8px var(--accent-glow);
+}
+
+.btn-add-to-trip.added {
+    background: rgba(16, 185, 129, 0.1);
+    border-color: var(--status-success, #10b981);
+    color: var(--status-success, #10b981);
+}

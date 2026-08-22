@@ -485,12 +485,14 @@ input[type="range"]::-webkit-slider-thumb:hover {
     border-radius: var(--radius-md);
     padding: 20px 24px;
     display: grid;
-    grid-template-columns: 1fr 110px 140px;
+    grid-template-columns: 1fr 110px 190px;
     align-items: center;
-    gap: 20px;
+    gap: 24px;
     box-shadow: var(--shadow-sm);
     transition: all var(--transition-fast);
     position: relative;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .flight-card:hover {
@@ -628,13 +630,16 @@ input[type="range"]::-webkit-slider-thumb:hover {
     .flight-card {
         grid-template-columns: 1fr;
         gap: 16px;
+        padding: 16px;
     }
 
     .card-action-col {
         align-items: stretch;
+        width: 100%;
     }
 
-    .card-action-col .btn {
+    .card-action-col .btn,
+    .card-action-col .btn-add-to-trip {
         width: 100%;
     }
 }

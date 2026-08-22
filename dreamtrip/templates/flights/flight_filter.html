@@ -298,18 +298,20 @@
         </div>
     </div>
 
-    <button class="btn btn-primary btn-block" id="filterBtn" style="padding: 14px; font-size: 15px;" onclick="applyFilters()">
-        <span>Szűrés és tovább a súlyozáshoz</span>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-            <polyline points="12 5 19 12 12 19"></polyline>
-        </svg>
-    </button>
+    <div style="margin-top: 10px; margin-bottom: 50px;">
+        <button class="btn btn-primary btn-block" id="filterBtn" style="padding: 14px; font-size: 15px;" onclick="applyFilters()">
+            <span>Szűrés és tovább a súlyozáshoz</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+        </button>
 
-    <div id="status" class="status-box">
-        <div id="statusText" style="font-weight: 600;"></div>
-        <div class="progress-container" id="loadingBar" style="display: none; margin-top: 10px;">
-            <div class="progress-bar" style="width: 0%;"></div>
+        <div id="status" class="status-box">
+            <div id="statusText" style="font-weight: 600;"></div>
+            <div class="progress-container" id="loadingBar" style="display: none; margin-top: 10px;">
+                <div class="progress-bar" style="width: 0%;"></div>
+            </div>
         </div>
     </div>
 
