@@ -578,7 +578,8 @@
             window.TripCart.setStay({
                 name: stay.name || 'Szállás',
                 price_huf: stay.price_huf || 0,
-                rating: stay.rating_score ? Math.round(stay.rating_score / 10) : 8.5,
+                price_total_huf: stay.price_huf || 0,
+                rating: stay.rating_score ? (stay.rating_score > 10 ? Math.round(stay.rating_score / 10) : stay.rating_score) : 8.5,
                 stars: stay.stars || 4,
                 address: stay.address || '',
                 image: stay.image_url || '',
@@ -586,9 +587,31 @@
             });
         }
         if (btn) {
-            btn.innerHTML = '<span>✅ Tervben</span>';
+            btn.innerHTML = '<span>✅ Rögzítve</span>';
             btn.classList.add('added');
         }
+
+        // Show Next Step CTA Toast
+        const toast = document.createElement('div');
+        toast.className = 'trip-cart-toast';
+        toast.style.background = '#0f172a';
+        toast.style.color = '#fff';
+        toast.style.border = '1px solid #38bdf8';
+        toast.innerHTML = `
+            <span>🏨</span>
+            <div>
+                <strong>${stay.name} rögzítve!</strong><br>
+                <a href="javascript:void(0)" onclick="TripCart.showDrawer()" style="color: #38bdf8; font-weight: 700; text-decoration: underline;">
+                    Teljes utazási terv és ügyfélajánlat megnyitása →
+                </a>
+            </div>
+        `;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.classList.add('show'), 10);
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 400);
+        }, 6000);
     }
 
     window.onload = () => {

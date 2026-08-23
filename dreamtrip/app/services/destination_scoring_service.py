@@ -282,6 +282,7 @@ def calculate_destination_rankings(
                 "temp_avg": m["temp_max"],
                 "safety_formatted": f"{int(m['safety_index'])}/100 (Numbeo)",
                 "safety_raw": m["safety_index"],
+                "numbeo_breakdown": m.get("cost_breakdown", {}),
                 "adults": adults
             },
             "highlights": reasons_pos[:2],

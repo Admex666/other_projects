@@ -116,10 +116,12 @@ def get_city_cost_and_safety(city_name: str, country_name: str = "", region: str
     drinks_coffee = matched["coffee"] * 2.0
     transit = matched["transport_ticket"] * 2.0
     
+    daily_food_eur = round(inexpensive_meals + midrange_meals + drinks_coffee, 1)
     daily_cost_eur = round(inexpensive_meals + midrange_meals + drinks_coffee + transit, 1)
     safety_index = round(float(matched["safety_index"]), 1)
     
     eur_rate = get_eur_huf_rate()
+    daily_food_huf = round(daily_food_eur * eur_rate)
     daily_cost_huf = round(daily_cost_eur * eur_rate)
 
     breakdown = {
@@ -127,6 +129,8 @@ def get_city_cost_and_safety(city_name: str, country_name: str = "", region: str
         "meal_midrange": matched["meal_midrange"],
         "coffee": matched["coffee"],
         "transport_ticket": matched["transport_ticket"],
+        "daily_food_eur": daily_food_eur,
+        "daily_food_huf": daily_food_huf,
         "daily_cost_eur": daily_cost_eur,
         "daily_cost_huf": daily_cost_huf,
         "safety_index": safety_index

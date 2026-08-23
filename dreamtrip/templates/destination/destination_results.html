@@ -270,18 +270,11 @@
                         <span style="background: var(--bg-surface-subtle); padding: 2px 6px; border-radius: 6px;">🛡️ Biztonság: ${Math.round((sub.safety||0)*100)}%</span>
                     </div>
 
-                    <!-- ACTION BUTTONS -->
-                    <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 10px; margin-top: 16px;">
-                        <button type="button" class="btn btn-primary" style="padding: 10px 14px; font-size: 13px;" onclick="chooseDestinationAndFlights('${encodeURIComponent(JSON.stringify(res))}', '${flightUrl}')">
-                            <span>Járatok keresése</span>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                                <polyline points="12 5 19 12 12 19"></polyline>
-                            </svg>
-                        </button>
-                        <button type="button" class="btn btn-secondary" style="padding: 10px 14px; font-size: 13px;" onclick="chooseDestinationAndStays('${encodeURIComponent(JSON.stringify(res))}', '${accommodationUrl}')">
-                            <span>Szállások</span>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <!-- ACTION BUTTONS: SINGLE PRIMARY CTA -->
+                    <div style="display: grid; grid-template-columns: 1fr; gap: 8px; margin-top: 16px;">
+                        <button type="button" class="btn btn-primary" style="padding: 12px 16px; font-size: 14px; font-weight: 700; display: flex; justify-content: space-between; align-items: center;" onclick="chooseDestinationAndFlights('${encodeURIComponent(JSON.stringify(res))}', '${flightUrl}')">
+                            <span>🏆 ${res.name} kiválasztása & Járatok összehasonlítása</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
                                 <polyline points="12 5 19 12 12 19"></polyline>
                             </svg>
@@ -310,6 +303,7 @@
                     origin: origin,
                     daily_cost_eur: m.daily_cost_raw || 45,
                     flight_price_huf: m.flight_price_raw || 0,
+                    numbeo: m.numbeo_breakdown || {},
                     image: res.image || ''
                 });
             }
@@ -338,6 +332,7 @@
                     origin: origin,
                     daily_cost_eur: m.daily_cost_raw || 45,
                     flight_price_huf: m.flight_price_raw || 0,
+                    numbeo: m.numbeo_breakdown || {},
                     image: res.image || ''
                 });
             }

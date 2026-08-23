@@ -15,12 +15,12 @@ import gc
 import pandas as pd
 import numpy as np
 import requests
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Any
 from pydantic import BaseModel
 from app.scrapers import scraper # Kiwi scraper
 from app.scrapers import accommodation_scraper
 from contextlib import asynccontextmanager
-from app.models.models import TravelPreferences, Trip, ItineraryDay, ItineraryItem
+from app.models.models import TravelPreferences, Trip, ItineraryDay, ItineraryItem, UnifiedTrip
 from app.services import scoring_service
 from app.services import itinerary_service
 from app.services.exchange_service import get_eur_huf_rate
@@ -1755,6 +1755,28 @@ async def api_search_poi(city_name: str, city_id: str, lat: float, lng: float, r
     except Exception as e:
         print(f"ERROR in api_search_poi: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+# ============================================================================
+# UNIFIED TRIP PERSISTENCE & SYNC ENDPOINTS
+# ============================================================================
+active_trips: Dict[str, Any] = {}
+
+@app.post("/api/trip/sync")
+async def sync_unified_trip(trip: UnifiedTrip, request: Request):
+    user = get_current_user(request) or "default_user"
+    data = trip.model_dump()
+    active_trips[user] = data
+    active_trips[trip.trip_id] = data
+    return JSONResponse({"status": "ok", "trip_id": trip.trip_id})
+
+@app.get("/api/trip/active")
+async def get_active_trip(request: Request, trip_id: Optional[str] = None):
+    user = get_current_user(request) or "default_user"
+    if trip_id and trip_id in active_trips:
+        return JSONResponse(active_trips[trip_id])
+    if user in active_trips:
+        return JSONResponse(active_trips[user])
+    return JSONResponse({"trip_id": None, "status": "empty"})
 
 if __name__ == "__main__":
     import uvicorn

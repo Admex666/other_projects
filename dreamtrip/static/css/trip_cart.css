@@ -280,7 +280,7 @@ main.main-container {
     top: 0;
     right: 0;
     bottom: 0;
-    width: 460px;
+    width: 520px;
     max-width: 95vw;
     background: var(--bg-surface);
     border-left: 1px solid var(--border-strong);
@@ -442,6 +442,91 @@ main.main-container {
     transform: translateY(-1px);
 }
 
+/* Itemized Breakdown & Formula Breakdown */
+.trip-breakdown-card {
+    background: var(--bg-surface-elevated);
+    border: 1.5px solid var(--border-strong);
+    border-radius: 16px;
+    padding: 16px 18px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+    margin-top: 4px;
+}
+
+.trip-breakdown-title {
+    font-size: 13.5px;
+    font-weight: 800;
+    color: var(--text-main);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-subtle);
+    padding-bottom: 10px;
+    margin-bottom: 12px;
+}
+
+.trip-breakdown-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 8px;
+    border-bottom: 1px dashed var(--border-subtle);
+    gap: 12px;
+}
+
+.breakdown-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.breakdown-left {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.breakdown-item-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.breakdown-formula {
+    font-size: 11.5px;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    margin-top: 2px;
+}
+
+.breakdown-right {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.breakdown-amount {
+    font-size: 14px;
+    font-weight: 800;
+    font-family: var(--font-mono);
+    color: var(--text-main);
+}
+
+.breakdown-badge-est {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--bg-surface-subtle);
+    color: var(--text-muted);
+}
+
 /* Drawer Footer */
 .trip-drawer-footer {
     padding: 20px 24px;
@@ -544,3 +629,106 @@ main.main-container {
     border-color: var(--status-success, #10b981);
     color: var(--status-success, #10b981);
 }
+
+/* WORKFLOW PROGRESS STEPPER */
+.trip-workflow-stepper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    background: var(--bg-surface-subtle);
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+}
+
+.step-node {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--text-muted);
+}
+
+.step-node .step-num {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--bg-surface);
+    border: 1.5px solid var(--border-strong);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-muted);
+}
+
+.step-node.active {
+    color: var(--primary);
+}
+
+.step-node.active .step-num {
+    border-color: var(--primary);
+    background: var(--primary);
+    color: #ffffff;
+    box-shadow: 0 0 10px var(--accent-glow);
+}
+
+.step-node.completed {
+    color: var(--status-success, #10b981);
+}
+
+.step-node.completed .step-num {
+    border-color: var(--status-success, #10b981);
+    background: var(--status-success, #10b981);
+    color: #ffffff;
+}
+
+.step-connector {
+    flex: 1;
+    height: 2px;
+    background: var(--border-subtle);
+    margin: 0 10px;
+}
+
+.step-connector.completed {
+    background: var(--status-success, #10b981);
+}
+
+.btn-trip-bar-next {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: #0284c7;
+    color: #ffffff !important;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
+    white-space: nowrap;
+}
+
+.btn-trip-bar-next:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(2, 132, 199, 0.45);
+    background: #0369a1;
+}
+
+.breakdown-badge-tag {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 6px;
+    background: rgba(2, 132, 199, 0.1);
+    color: #0284c7;
+    border: 1px solid rgba(2, 132, 199, 0.25);
+    margin-left: 6px;
+}
+

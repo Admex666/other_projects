@@ -3,6 +3,24 @@
 ## [Unreleased] - 2026-08-21
 
 ### Hozzáadva
+- **Egységes Trip-Centrikus Architektúra & Végponttól Végpontig tartó Handoff ([`app/models/models.py`](file:///e:/Data/other_projects/dreamtrip/app/models/models.py), [`app/main.py`](file:///e:/Data/other_projects/dreamtrip/app/main.py), [`static/js/trip_cart.js`](file:///e:/Data/other_projects/dreamtrip/static/js/trip_cart.js), [`templates/destination/destination_results.html`](file:///e:/Data/other_projects/dreamtrip/templates/destination/destination_results.html), [`templates/flights/flight_results.html`](file:///e:/Data/other_projects/dreamtrip/templates/flights/flight_results.html), [`templates/accommodation/accommodation_intelligence.html`](file:///e:/Data/other_projects/dreamtrip/templates/accommodation/accommodation_intelligence.html))**:
+  - **Közös `UnifiedTrip` Adatmodell**: Bevezettük az explicit `trip_id`, `input`, `destination`, `flight` (search_params, shortlist, selected_flight), `accommodation` (search_params, shortlist, selected_accommodation) és `budget` struktúrát mind backend Pydantic modellekben, mind kliensoldali JavaScript motorban (`TripEngine`).
+  - **Automatikus Dátum- és Kontextus-átvitel (Source of Truth)**:
+    - Destination Matcher kiválasztáskor a célváros, hónap, időtartam és létszám automatikusan inicializálja a Flight keresőt.
+    - Járat kiválasztásakor (pl. Wizz Air szept. 10–17., 7 éj) a szálláskereső automatikusan zárolja a pontos check-in (`2026-09-10`) és check-out (`2026-09-17`) dátumokat és az éjszakák számát.
+  - **Egyértelmű Lépésenkénti CTA-k („Mi a következő lépés?”)**:
+    - 1. Célállomás után: `🏆 Róma kiválasztása & Járatok összehasonlítása →`
+    - 2. Járat után: `→ Szállások keresése (2026. szept. 10–17. · 7 éj)`
+    - 3. Szállás után: `→ Utazási terv megnyitása & Ajánlatkészítés`
+    - 4. Workspace: `📄 Ügyfélajánlat készítése (Nyomtatás / PDF)`
+  - **Shortlist és Numbeo Költségbontás**: A kosár fiók lépésjelzővel (Stepper: Célállomás ✓ | Járat ✓ | Szállás ✓) és tételes matematikai számítási képletekkel prezentálja a végösszeget.
+- **Hivatalos Numbeo Étkezési & Közlekedési Adatbázis Bekötése a Kosár Kalkulációba ([`static/js/trip_cart.js`](file:///e:/Data/other_projects/dreamtrip/static/js/trip_cart.js), [`app/services/numbeo_service.py`](file:///e:/Data/other_projects/dreamtrip/app/services/numbeo_service.py))**:
+  - **Valós Numbeo Étel- és Jegyárak**: Becsült hasraütés helyett a célváros hivatalos Numbeo Cost of Living komponensei alapján határozzuk meg az étkezést és helyi közlekedést:
+    - 🍽️ **Ételek & étkezések**: `Numbeo (1.5× Olcsó étkezés [€] + 0.5× Középkategóriás vacsora [€] + 2× Kávé [€]) / nap / fő × Napok × Utaslétszám`
+    - 🚇 **Helyi tömegközlekedés**: `Numbeo Vonaljegyár [€] × 2 jegy/nap/fő × Napok × Utaslétszám`
+    - A Drawer és az Ügyfél Ajánlat / PDF kiírja az adott város valós Numbeo éttermi árait (pl. Olcsó étkezés: €16.0, Középkategóriás vacsora: €32.0, Kávé: €1.6) és a `[Numbeo Index]` hitelesítő jelvényt.
+- **Destination Matcher Utazási Időszak Módváltó Javítása ([`templates/destination/destination_matcher.html`](file:///e:/Data/other_projects/dreamtrip/templates/destination/destination_matcher.html))**:
+  - **Script Blokk Becsomagolása**: A `<script>` szekciót hiányzó `{% block scripts %}` blokkba helyeztük, mivel Jinja sablonöröklésnél a blokkon kívüli kód eldobásra került. Ezzel a 3 utazási időszak fül („📅 Konkrét”, „⏱️ Intervallum”, „🗓️ Hónap”), a dátumválasztó flatpickr naptárak, gyorsgombok és stepperek azonnal interaktívvá és kattinthatóvá váltak.
 - **Flight Results Kártyák 440px Mobile (iPhone 16 Pro Max) & Desktop Elrendezésének Finomhangolása ([`templates/flights/flight_results.html`](file:///e:/Data/other_projects/dreamtrip/templates/flights/flight_results.html), [`static/css/trip_cart.css`](file:///e:/Data/other_projects/dreamtrip/static/css/trip_cart.css))**:
   - **440px Képernyőszélesség Túlcsordulás Mentesség**: `html, body { overflow-x: hidden }`, `.route-loc-col` flex oszlopok és rugalmas `35-70px` útvonalvonalak bevezetésével a kártyák mostantól 100%-ban kitöltik a 440px képernyőt anélkül, hogy vízszintesen kilógna bármilyen elem.
   - **Lebegő Trip Bar Mobil Igazítás**: A lebegő utazási kosár mobil nézetben kompakt alsó dokkolt sávvá alakul (`calc(100% - 24px)` szélességben), így nem kényszeríti túl a viewport szélességét.

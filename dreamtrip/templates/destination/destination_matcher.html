@@ -353,6 +353,7 @@
 </div>
 {% endblock %}
 
+{% block scripts %}
 <script>
     const exclusions = new Set();
     let exactFp = null;
@@ -720,4 +721,5 @@
             window.location.href = '/destination-preferences';
         }
     }
-</script>
+</script>
+{% endblock %}

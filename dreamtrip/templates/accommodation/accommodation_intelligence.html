@@ -27,6 +27,9 @@
         <p class="page-subtitle" style="margin: 0;">1500+ szállás aggregációja, Deeplink tisztítás és többkritériumos PROMETHEE rangsorolás.</p>
     </div>
 
+    <!-- TRIP CONTEXT BANNER -->
+    <div id="tripAccContextBanner" style="display: none; background: rgba(16, 185, 129, 0.1); border: 1px solid var(--status-success, #10b981); color: var(--text-main); padding: 14px 18px; border-radius: 14px; margin-bottom: 24px; font-size: 13.5px; align-items: center; justify-content: space-between; gap: 14px; box-shadow: var(--shadow-sm);"></div>
+
     <!-- FŐ KÁRTYA -->
     <div class="advisor-main-card">
 
@@ -471,10 +474,48 @@
                 statusDiv.className = 'status-box status-error';
                 statusText.innerText = "Hiba történt: " + data.error;
                 document.getElementById('searchBtn').disabled = false;
+    document.addEventListener('DOMContentLoaded', () => {
+        if (window.TripCart) {
+            const trip = window.TripCart.getTrip();
+            const d = trip.destination;
+            const f = trip.flight?.selected_flight;
+            const banner = document.getElementById('tripAccContextBanner');
+
+            if (d || f) {
+                const cityName = d?.city || d?.name || (f?.in_airport || '');
+                const destInput = document.getElementById('destination');
+                const cityInput = document.getElementById('selected_city');
+                const countryInput = document.getElementById('selected_country');
+
+                if (destInput && (!destInput.value || destInput.value.trim() === '')) {
+                    destInput.value = cityName;
+                }
+                if (cityInput && !cityInput.value) cityInput.value = cityName;
+                if (countryInput && !countryInput.value && d?.country) countryInput.value = d.country;
+
+                if (f && f.out_date && f.in_date) {
+                    const dateInput = document.getElementById('date_range');
+                    if (dateInput && dateInput._flatpickr) {
+                        dateInput._flatpickr.setDate([f.out_date, f.in_date], true);
+                    }
+                }
+
+                if (banner) {
+                    banner.style.display = 'flex';
+                    banner.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span style="font-size: 22px;">🏨</span>
+                            <div>
+                                <strong style="color: var(--status-success, #10b981);">Utazási terv kontextus aktív:</strong> 
+                                ${cityName ? `Célállomás: <strong>${cityName}</strong>` : ''} 
+                                ${f ? `• Járat: <strong>${f.airline}</strong> (${f.out_date} – ${f.in_date} · <strong>${f.exact_stay_nights} éjszaka</strong> · <strong>${trip.input.adults || 2} felnőtt</strong>)` : ''}
+                            </div>
+                        </div>
+                        <span style="font-size: 11.5px; font-weight: 700; background: var(--bg-surface); padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border-subtle); color: var(--text-muted); white-space: nowrap;">Dátumok zárolva</span>
+                    `;
+                }
             }
-        } catch (e) {
-            console.error("Status poll error:", e);
         }
-    }
+    });
 </script>
 {% endblock %}

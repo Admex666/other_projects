@@ -726,23 +726,57 @@
     function addFlightToCart(index, btn) {
         const flight = allResults[index];
         if (!flight) return;
+        
+        const outDate = (flight.out_dep_time || '').split('T')[0];
+        const inDate = (flight.in_dep_time || '').split('T')[0];
+        const nights = flight.stay_days || 7;
+
         if (window.TripCart) {
             window.TripCart.setFlight({
                 airline: flight.out_airline || flight.in_airline || 'Repülőjárat',
                 price_huf: flight.total_price_huf || 0,
-                out_date: (flight.out_dep_time || '').split('T')[0],
-                in_date: (flight.in_dep_time || '').split('T')[0],
+                total_price_huf: flight.total_price_huf || 0,
+                out_date: outDate,
+                in_date: inDate,
                 out_time: (flight.out_dep_time || '').split('T')[1]?.slice(0, 5) || '',
                 in_time: (flight.in_dep_time || '').split('T')[1]?.slice(0, 5) || '',
+                out_airport: flight.out_dep_airport || 'BUD',
+                in_airport: flight.out_arr_airport || '',
                 duration_h: (flight.out_duration_h || 0) + (flight.in_duration_h || 0),
                 stops: (flight.out_stops || 0) + (flight.in_stops || 0),
+                stay_days: nights,
+                exact_stay_nights: nights,
+                phi_net: flight.phi_net,
+                rank: flight.rank,
                 adults: flight.adults || 2
             });
         }
         if (btn) {
-            btn.innerHTML = '<span>✅ Tervben rögzítve</span>';
+            btn.innerHTML = '<span>✅ Rögzítve</span>';
             btn.classList.add('added');
         }
+
+        // Show Next Step CTA Toast
+        const toast = document.createElement('div');
+        toast.className = 'trip-cart-toast';
+        toast.style.background = '#0f172a';
+        toast.style.color = '#fff';
+        toast.style.border = '1px solid #38bdf8';
+        toast.innerHTML = `
+            <span>✈️</span>
+            <div>
+                <strong>Járat rögzítve (${outDate} – ${inDate})!</strong><br>
+                <a href="/accommodation-intelligence?city=${encodeURIComponent(window.TripCart?.getTrip()?.destination?.city || flight.out_arr_airport)}&checkin=${outDate}&checkout=${inDate}&adults=${flight.adults || 2}&from_matcher=1" style="color: #38bdf8; font-weight: 700; text-decoration: underline;">
+                    Tovább a szállások kereséséhez (${nights} éjszaka) →
+                </a>
+            </div>
+        `;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.classList.add('show'), 10);
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 400);
+        }, 6000);
     }
 
     filterResults();
