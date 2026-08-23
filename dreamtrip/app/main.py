@@ -48,7 +48,16 @@ def get_current_user(request: Request):
     return sessions.get(token) if token else None
 
 class DestConstraints(BaseModel):
-    month: str
+    date_mode: str = "month" # 'exact' | 'interval' | 'month'
+    exact_out_date: Optional[str] = None
+    exact_in_date: Optional[str] = None
+    out_from: Optional[str] = None
+    out_to: Optional[str] = None
+    in_from: Optional[str] = None
+    in_to: Optional[str] = None
+    min_stay: Optional[int] = None
+    max_stay: Optional[int] = None
+    month: str = "9"
     duration: int = 7
     origin: str = "Budapest"
     budget_daily: float = 150.0
@@ -56,6 +65,7 @@ class DestConstraints(BaseModel):
     exclusions: List[str] = []
     adults: int = 2
     children: int = 0
+
 
 class DestCriteria(BaseModel):
     criteria: List[str]
@@ -158,6 +168,8 @@ async def flight_intelligence(
     out_to: Optional[str] = None, 
     in_from: Optional[str] = None, 
     in_to: Optional[str] = None,
+    min_stay: Optional[int] = None,
+    max_stay: Optional[int] = None,
     adults: Optional[int] = None,
     children: Optional[int] = None,
     duration: Optional[int] = None,
@@ -176,12 +188,15 @@ async def flight_intelligence(
             "out_to": out_to,
             "in_from": in_from,
             "in_to": in_to,
+            "min_stay": min_stay,
+            "max_stay": max_stay,
             "adults": adults,
             "children": children,
             "duration": duration,
             "from_matcher": bool(from_matcher)
         }
     })
+
 
 @app.get("/accommodation-intelligence", response_class=HTMLResponse)
 async def accommodation_intelligence(request: Request, city: Optional[str] = None, country: Optional[str] = None, start_date: Optional[str] = None, end_date: Optional[str] = None):
@@ -1507,6 +1522,13 @@ def run_destination_calculation_task(user: str, prefs: DestPreferenceDetails):
         adults = int(constraints.get("adults", 2))
         children = int(constraints.get("children", 0))
 
+        out_from = constraints.get("out_from")
+        out_to = constraints.get("out_to")
+        in_from = constraints.get("in_from")
+        in_to = constraints.get("in_to")
+        min_stay = constraints.get("min_stay")
+        max_stay = constraints.get("max_stay")
+
         dest_calculation_status[user] = {
             "status": "running", 
             "progress": 5, 
@@ -1514,7 +1536,7 @@ def run_destination_calculation_task(user: str, prefs: DestPreferenceDetails):
         }
 
         tokens = scraper.get_kiwi_tokens()
-        print(f"\n[DESTINATION PIPELINE] {n} célállomás elemzése indul (Indulás: {origin_clean}, Hónap: {month}, Időtartam: {duration_days} nap, Utasok: {adults} felnőtt + {children} gyerek, Célhőm: {target_temp}°C)...")
+        print(f"\n[DESTINATION PIPELINE] {n} célállomás elemzése indul (Indulás: {origin_clean}, Hónap: {month}, Időtartam: {duration_days} nap, Tartózkodás: {min_stay}-{max_stay} nap, Utasok: {adults} felnőtt + {children} gyerek, Célhőm: {target_temp}°C)...")
 
         # Párhuzamos adatgyűjtés a valós API-kból
         completed_count = 0
@@ -1528,7 +1550,13 @@ def run_destination_calculation_task(user: str, prefs: DestPreferenceDetails):
                 tokens=tokens,
                 target_temp=target_temp,
                 adults=adults,
-                children=children
+                children=children,
+                out_from=out_from,
+                out_to=out_to,
+                in_from=in_from,
+                in_to=in_to,
+                min_stay=min_stay,
+                max_stay=max_stay
             )
             with dest_calc_lock:
                 completed_count += 1
@@ -1536,6 +1564,7 @@ def run_destination_calculation_task(user: str, prefs: DestPreferenceDetails):
                 dest_calculation_status[user]["progress"] = prog
                 dest_calculation_status[user]["status_text"] = f"Valós adatok gyűjtése ({completed_count}/{n}): {dest.get('name')}..."
             return res
+
 
         with ThreadPoolExecutor(max_workers=10) as executor:
             candidates_raw = list(executor.map(process_candidate, dests))

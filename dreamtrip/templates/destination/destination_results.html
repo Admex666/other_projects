@@ -185,17 +185,26 @@
     const duration = {{ constraints.get('duration', 7) if constraints else 7 }};
     const adults = {{ constraints.get('adults', 2) if constraints else 2 }};
     const children = {{ constraints.get('children', 0) if constraints else 0 }};
+    const dateMode = "{{ constraints.get('date_mode', 'month') if constraints else 'month' }}";
+    const cOutFrom = "{{ constraints.get('out_from', '') if constraints else '' }}";
+    const cOutTo = "{{ constraints.get('out_to', '') if constraints else '' }}";
+    const cInFrom = "{{ constraints.get('in_from', '') if constraints else '' }}";
+    const cInTo = "{{ constraints.get('in_to', '') if constraints else '' }}";
+    const minStay = {{ constraints.get('min_stay', 5) if constraints else 5 }};
+    const maxStay = {{ constraints.get('max_stay', 9) if constraints else 9 }};
 
     const mNum = parseInt(month === 'any' ? '9' : month, 10);
     const mStr = String(mNum).padStart(2, '0');
-    const outFrom = `2026-${mStr}-01`;
-    const outTo = `2026-${mStr}-24`;
+    
+    // Resolve final dates
+    const outFrom = cOutFrom || `2026-${mStr}-01`;
+    const outTo = cOutTo || `2026-${mStr}-24`;
     const nextMNum = (mNum % 12) + 1;
-    const inFrom = `2026-${mStr}-${String(Math.min(28, 1 + duration)).padStart(2, '0')}`;
-    const inTo = `2026-${String(nextMNum).padStart(2, '0')}-08`;
+    const inFrom = cInFrom || `2026-${mStr}-${String(Math.min(28, 1 + duration)).padStart(2, '0')}`;
+    const inTo = cInTo || `2026-${String(nextMNum).padStart(2, '0')}-08`;
 
-    const startStayDate = `2026-${mStr}-10`;
-    const endStayDate = `2026-${mStr}-${Math.min(28, 10 + duration)}`;
+    const startStayDate = cOutFrom || `2026-${mStr}-10`;
+    const endStayDate = cInFrom || `2026-${mStr}-${Math.min(28, 10 + duration)}`;
 
     function renderResults() {
         grid.innerHTML = '';
@@ -206,8 +215,9 @@
             const m = res.metrics || {};
             const sub = res.subscores || {};
             const destCity = res.city || res.name;
-            const flightUrl = `/flight-intelligence?destination=${encodeURIComponent(destCity)}&origin=${encodeURIComponent(origin)}&out_from=${outFrom}&out_to=${outTo}&in_from=${inFrom}&in_to=${inTo}&adults=${adults}&children=${children}&duration=${duration}&from_matcher=1`;
-            const accommodationUrl = `/accommodation-intelligence?city=${encodeURIComponent(destCity)}&country=${encodeURIComponent(res.country || '')}&start_date=${startStayDate}&end_date=${endStayDate}&adults=${adults}&children=${children}&from_matcher=1`;
+            const flightUrl = `/flight-intelligence?destination=${encodeURIComponent(destCity)}&origin=${encodeURIComponent(origin)}&out_from=${encodeURIComponent(outFrom)}&out_to=${encodeURIComponent(outTo)}&in_from=${encodeURIComponent(inFrom)}&in_to=${encodeURIComponent(inTo)}&min_stay=${minStay}&max_stay=${maxStay}&adults=${adults}&children=${children}&duration=${duration}&from_matcher=1`;
+            const accommodationUrl = `/accommodation-intelligence?city=${encodeURIComponent(destCity)}&country=${encodeURIComponent(res.country || '')}&start_date=${encodeURIComponent(startStayDate)}&end_date=${encodeURIComponent(endStayDate)}&adults=${adults}&children=${children}&from_matcher=1`;
+
 
             card.innerHTML = `
                 <div class="rank-corner-badge">#${res.rank}</div>

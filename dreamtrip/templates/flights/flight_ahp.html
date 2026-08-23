@@ -1,429 +1,85 @@
 {% extends "base.html" %}
 
-{% block title %}Optivoya — Személyes Preferenciák Súlyozása{% endblock %}
-
-{% block head %}
-<style>
-    .comparison-grid {
-        display: grid;
-        grid-template-columns: 1fr auto 1fr;
-        gap: 12px;
-        align-items: center;
-        margin: 24px 0;
-    }
-
-    .criterion-card-btn {
-        padding: 20px 16px;
-        border: 2px solid var(--border-strong);
-        background: var(--bg-surface);
-        color: var(--text-main);
-        border-radius: var(--radius-md);
-        font-size: 14.5px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all var(--transition-fast);
-        text-align: center;
-        min-height: 84px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .criterion-card-btn:hover {
-        border-color: var(--primary);
-        transform: translateY(-2px);
-    }
-
-    .criterion-card-btn.selected {
-        background: var(--primary);
-        color: var(--primary-contrast);
-        border-color: var(--primary);
-        box-shadow: 0 4px 14px var(--accent-glow);
-    }
-
-    .equal-card-btn {
-        padding: 14px 18px;
-        border: 1px solid var(--border-strong);
-        background: var(--bg-surface-subtle);
-        color: var(--text-secondary);
-        border-radius: var(--radius-sm);
-        font-size: 13px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all var(--transition-fast);
-        white-space: nowrap;
-    }
-
-    .equal-card-btn:hover {
-        border-color: var(--text-main);
-        color: var(--text-main);
-    }
-
-    .equal-card-btn.selected {
-        background: var(--text-main);
-        color: var(--text-inverse);
-        border-color: var(--text-main);
-    }
-
-    .slider-box {
-        background: var(--bg-surface-subtle);
-        border: 1px solid var(--border-subtle);
-        border-radius: var(--radius-md);
-        padding: 18px 20px;
-        margin-top: 20px;
-    }
-
-    .slider-header-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 12px;
-    }
-
-    .weight-row-bar {
-        background: var(--border-subtle);
-        height: 10px;
-        border-radius: var(--radius-full);
-        overflow: hidden;
-        width: 100%;
-        max-width: 300px;
-    }
-
-    .weight-row-fill {
-        height: 100%;
-        background: linear-gradient(90deg, var(--primary), var(--accent));
-        border-radius: var(--radius-full);
-    }
-
-    @media (max-width: 768px) {
-        .comparison-grid {
-            grid-template-columns: 1fr;
-            gap: 10px;
-        }
-
-        .equal-card-btn {
-            order: 3;
-        }
-    }
-</style>
-{% endblock %}
+{% block title %}Optivoya — Repülőjegy Preferenciák Súlyozása{% endblock %}
 
 {% block content %}
-<a href="/flight-intelligence-filter" class="btn-back-link">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <line x1="19" y1="12" x2="5" y2="12"></line>
-        <polyline points="12 19 5 12 12 5"></polyline>
-    </svg>
-    <span>Vissza a szűréshez</span>
-</a>
-
-<div class="page-header centered">
-    <h1 class="page-title">Személyes preferenciák beállítása</h1>
-    <p class="page-subtitle">Páros összehasonlítások — határozd meg, mi a legfontosabb számodra</p>
-</div>
-
-<div style="max-width: 840px; margin: 0 auto; margin-bottom: 60px; padding-bottom: 40px;">
-    
-    <div class="progress-container">
-        <div class="progress-bar" id="progressBar" style="width: 20%;"></div>
-    </div>
-    <div id="progressText" style="text-align: center; font-size: 12.5px; color: var(--text-muted); margin-bottom: 24px; font-weight: 600;">
-        Kérdés 1 / 4
-    </div>
-
-    <!-- DYNAMIC QUESTION CONTAINER -->
-    <div id="questionContainer" class="card" style="margin-bottom: 20px;">
-        <!-- Injected via JavaScript -->
-    </div>
-
-    <!-- NAVIGATION BUTTONS -->
-    <div id="navigationButtons" style="display: flex; gap: 12px; justify-content: space-between;">
-        <button type="button" class="btn btn-secondary" id="prevBtn" onclick="prevQuestion()" style="display: none;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="19" y1="12" x2="5" y2="12"></line>
-                <polyline points="12 19 5 12 12 5"></polyline>
-            </svg>
-            <span>Előző kérdés</span>
-        </button>
-        <button type="button" class="btn btn-primary" id="nextBtn" style="margin-left: auto; min-width: 180px;" onclick="nextQuestion()" disabled>
-            <span>Következő kérdés</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-                <polyline points="12 5 19 12 12 19"></polyline>
-            </svg>
-        </button>
-    </div>
-
-    <!-- SUMMARY RESULTS -->
-    <div id="results" class="card" style="display: none; text-align: center; padding: 32px 24px;">
-        <div style="width: 48px; height: 48px; background: var(--status-success-bg); color: var(--status-success); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-        </div>
-
-        <h2 style="font-size: 22px; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">Preferenciák rögzítve!</h2>
-        <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 24px;">Az alábbi relatív súlyok kerülnek alkalmazásra a járatok rangsorolásakor:</p>
-
-        <div style="background: var(--bg-surface-subtle); border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); overflow: hidden; margin-bottom: 28px;">
-            <table style="width: 100%; border-collapse: collapse; text-align: left;">
-                <thead>
-                    <tr style="background: var(--bg-surface); border-bottom: 1px solid var(--border-subtle);">
-                        <th style="padding: 12px 16px; font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--text-muted);">Szempont</th>
-                        <th style="padding: 12px 16px; font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--text-muted);">Fontossági arány</th>
-                    </tr>
-                </thead>
-                <tbody id="weightsTable"></tbody>
-            </table>
-        </div>
-
-        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
-            <button class="btn btn-secondary" onclick="window.location.href='/flight-intelligence-filter'">Vissza a szűréshez</button>
-            <button class="btn btn-primary" style="padding: 12px 24px;" onclick="window.location.href='/flight-intelligence-preferences'">
-                <span>Tovább a kritériumok finomhangolásához</span>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                    <polyline points="12 5 19 12 12 19"></polyline>
-                </svg>
-            </button>
-        </div>
-    </div>
-
-</div>
+<div id="ahp_flight_container"></div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-    const criteria = [
-        { name: "Ár", human: "A repjegy ára" },
-        { name: "Időpont", human: "Kényelmes indulási időpont" },
-        { name: "Utazás", human: "Rövid repülési idő" },
-        { name: "Átszállás", human: "Minél kevesebb átszállás" },
-        { name: "Tartózkodás", human: "Tartózkodási napok száma közel legyen az ideálishoz" }
-    ];
+    document.addEventListener('DOMContentLoaded', () => {
+        const criteria = [
+            {
+                id: 'price',
+                name: 'Repülőjegy ára',
+                icon: '💳',
+                desc: 'A retúr repülőjegyek teljes költsége az összes utasra'
+            },
+            {
+                id: 'departure',
+                name: 'Indulási időpont',
+                icon: '⏰',
+                desc: 'Ideális napszakban történő indulás és érkezés'
+            },
+            {
+                id: 'travel_time',
+                name: 'Összes utazási idő',
+                icon: '⏱️',
+                desc: 'Menetidő és átszállási várakozások hossza'
+            },
+            {
+                id: 'stops',
+                name: 'Átszállások száma',
+                icon: '🔄',
+                desc: 'Közvetlen járatok előnyben részesítése átszállásokkal szemben'
+            },
+            {
+                id: 'stay',
+                name: 'Tartózkodási idő',
+                icon: '📅',
+                desc: 'A célállomáson eltöltött ideális napok száma'
+            }
+        ];
 
-    const questions = [];
-    for (let i = 0; i < criteria.length - 1; i++) {
-        questions.push({
-            c1: criteria[i],
-            c2: criteria[i + 1]
-        });
-    }
+        window._ahpInstance = new AHPWizard({
+            containerId: 'ahp_flight_container',
+            criteria: criteria,
+            title: 'Repülőjegy Preferenciák & Súlyozás',
+            subtitle: 'Határozd meg a repülési szempontok fontosságát a PROMETHEE II döntési modellhez',
+            badge: 'Flight Intelligence',
+            introTitle: 'Mi a legfontosabb a járatok kiválasztásakor?',
+            introDesc: 'Hasonlítsd össze az 5 repülési szempontot páronként a 7 fokozatú skálán, és személyre szabjuk a járatkombinációk rangsorát.',
+            ctaText: 'Tovább a Kritériumok Finomhangolásához',
+            backLinkUrl: '/flight-intelligence-filter',
+            backLinkText: 'Vissza a szűrőkhöz',
+            onComplete: async function (result) {
+                const orderedKeys = ['price', 'departure', 'travel_time', 'stops', 'stay'];
+                const weightsArray = orderedKeys.map(k => result.weights[k] || (1 / orderedKeys.length));
 
-    let currentQuestion = 0;
-    let answers = {};
+                try {
+                    const submitBtn = document.querySelector('.ahp-btn-submit');
+                    if (submitBtn) {
+                        submitBtn.disabled = true;
+                        submitBtn.innerHTML = '<span>Preferenciák mentése...</span>';
+                    }
 
-    const sliderLabels = {
-        2: "Alig fontosabb",
-        3: "Kicsit fontosabb",
-        4: "Mérsékelten fontosabb",
-        5: "Jelentősen fontosabb",
-        6: "Erősen fontosabb",
-        7: "Sokkal fontosabb",
-        8: "Nagyon sokkal fontosabb",
-        9: "Meghatározóan fontosabb"
-    };
+                    await fetch('/api/save-ahp-weights', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            weights: weightsArray,
+                            criteria: orderedKeys
+                        })
+                    });
 
-    function renderQuestion() {
-        const q = questions[currentQuestion];
-        const container = document.getElementById('questionContainer');
-
-        container.innerHTML = `
-            <div style="font-size: 16px; font-weight: 700; color: var(--text-main); text-align: center; margin-bottom: 20px;">
-                Melyik fontosabb számodra az alábbi kettő közül?
-            </div>
-            
-            <div class="comparison-grid">
-                <button type="button" class="criterion-card-btn" id="btn_c1" onclick="selectCriterion('c1')">
-                    ${q.c1.human}
-                </button>
-                
-                <button type="button" class="equal-card-btn" id="btn_equal" onclick="selectCriterion('equal')">
-                    Egyformán fontos
-                </button>
-                
-                <button type="button" class="criterion-card-btn" id="btn_c2" onclick="selectCriterion('c2')">
-                    ${q.c2.human}
-                </button>
-            </div>
-            
-            <div class="slider-box" id="sliderContainer" style="display: none;">
-                <div class="slider-header-row">
-                    <span style="font-size: 13.5px; font-weight: 600; color: var(--text-main);">Mennyivel fontosabb?</span>
-                    <span id="sliderDesc" style="font-size: 13px; font-weight: 700; color: var(--primary);">Kicsit fontosabb</span>
-                </div>
-                <input type="range" id="importanceSlider" min="2" max="9" value="3" step="1" oninput="updateSliderDesc(this.value)">
-            </div>
-        `;
-
-        if (answers[currentQuestion]) {
-            const ans = answers[currentQuestion];
-            document.getElementById('btn_' + ans.selected).classList.add('selected');
-            if (ans.selected !== 'equal') {
-                const sliderContainer = document.getElementById('sliderContainer');
-                sliderContainer.style.display = 'block';
-                if (ans.importance) {
-                    const slider = document.getElementById('importanceSlider');
-                    slider.value = ans.importance;
-                    updateSliderDesc(ans.importance);
+                    window.location.href = '/flight-intelligence-preferences';
+                } catch (e) {
+                    console.error('Hiba a súlyok mentésekor:', e);
+                    window.location.href = '/flight-intelligence-preferences';
                 }
             }
-            updateNextButton();
-        } else {
-            document.getElementById('nextBtn').disabled = true;
-        }
-
-        const progress = ((currentQuestion + 1) / questions.length) * 100;
-        document.getElementById('progressBar').style.width = progress + '%';
-        document.getElementById('progressText').innerText = `Kérdés ${currentQuestion + 1} / ${questions.length}`;
-
-        const prevBtn = document.getElementById('prevBtn');
-        prevBtn.style.display = currentQuestion > 0 ? 'inline-flex' : 'none';
-    }
-
-    function updateSliderDesc(value) {
-        document.getElementById('sliderDesc').innerText = sliderLabels[value];
-        if (answers[currentQuestion]) {
-            answers[currentQuestion].importance = parseInt(value);
-        }
-        updateNextButton();
-    }
-
-    function selectCriterion(choice) {
-        document.querySelectorAll('.criterion-card-btn, .equal-card-btn').forEach(btn => {
-            btn.classList.remove('selected');
         });
-
-        document.getElementById('btn_' + choice).classList.add('selected');
-
-        const sliderContainer = document.getElementById('sliderContainer');
-        if (choice === 'equal') {
-            sliderContainer.style.display = 'none';
-            answers[currentQuestion] = { selected: choice, importance: 1 };
-            updateNextButton();
-        } else {
-            sliderContainer.style.display = 'block';
-            const sliderValue = document.getElementById('importanceSlider').value;
-            answers[currentQuestion] = { selected: choice, importance: parseInt(sliderValue) };
-            updateSliderDesc(sliderValue);
-            updateNextButton();
-        }
-    }
-
-    function updateNextButton() {
-        const ans = answers[currentQuestion];
-        const nextBtn = document.getElementById('nextBtn');
-        nextBtn.disabled = !(ans && (ans.selected === 'equal' || ans.importance));
-    }
-
-    function nextQuestion() {
-        currentQuestion++;
-        if (currentQuestion < questions.length) {
-            renderQuestion();
-        } else {
-            calculateWeights();
-        }
-    }
-
-    function prevQuestion() {
-        if (currentQuestion > 0) {
-            currentQuestion--;
-            renderQuestion();
-        }
-    }
-
-    function calculateWeights() {
-        const n = criteria.length;
-        const matrix = Array(n).fill(0).map(() => Array(n).fill(1));
-
-        questions.forEach((q, idx) => {
-            const ans = answers[idx];
-            const i = criteria.findIndex(c => c.name === q.c1.name);
-            const j = criteria.findIndex(c => c.name === q.c2.name);
-
-            let val = 1;
-            if (ans.selected === 'equal') {
-                val = 1;
-            } else if (ans.selected === 'c1') {
-                val = ans.importance;
-            } else {
-                val = 1 / ans.importance;
-            }
-
-            matrix[i][j] = val;
-            matrix[j][i] = 1 / val;
-        });
-
-        for (let gap = 2; gap < n; gap++) {
-            for (let i = 0; i < n - gap; i++) {
-                const j = i + gap;
-                const k = i + 1;
-                matrix[i][j] = matrix[i][k] * matrix[k][j];
-                matrix[j][i] = 1 / matrix[i][j];
-            }
-        }
-
-        const weights = [];
-        const colSums = Array(n).fill(0);
-
-        for (let j = 0; j < n; j++) {
-            for (let i = 0; i < n; i++) {
-                colSums[j] += matrix[i][j];
-            }
-        }
-
-        const normalizedMatrix = matrix.map((row, i) =>
-            row.map((val, j) => val / colSums[j])
-        );
-
-        for (let i = 0; i < n; i++) {
-            const avg = normalizedMatrix[i].reduce((a, b) => a + b) / n;
-            weights.push(avg);
-        }
-
-        document.getElementById('questionContainer').style.display = 'none';
-        document.getElementById('navigationButtons').style.display = 'none';
-        document.getElementById('progressBar').style.width = '100%';
-        document.getElementById('progressText').innerText = 'Preferenciák kész';
-
-        const resultsDiv = document.getElementById('results');
-        const tbody = document.getElementById('weightsTable');
-        const maxWeight = Math.max(...weights);
-
-        tbody.innerHTML = '';
-        criteria.forEach((c, i) => {
-            const normalizedPercent = (weights[i] / maxWeight) * 100;
-            const row = document.createElement('tr');
-            row.style.borderBottom = '1px solid var(--border-subtle)';
-            row.innerHTML = `
-                <td style="padding: 12px 16px; font-weight: 600; font-size: 13.5px; color: var(--text-main);">${c.human}</td>
-                <td style="padding: 12px 16px;">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <div class="weight-row-bar">
-                            <div class="weight-row-fill" style="width: ${normalizedPercent}%;"></div>
-                        </div>
-                        <span style="font-size: 12px; font-family: var(--font-mono); font-weight: 700; color: var(--primary);">${Math.round(weights[i] * 100)}%</span>
-                    </div>
-                </td>
-            `;
-            tbody.appendChild(row);
-        });
-
-        resultsDiv.style.display = 'block';
-        saveWeights(weights);
-    }
-
-    async function saveWeights(weights) {
-        await fetch('/api/save-ahp-weights', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                weights: weights,
-                criteria: criteria.map(c => c.name)
-            })
-        });
-    }
-
-    renderQuestion();
+    });
 </script>
 {% endblock %}

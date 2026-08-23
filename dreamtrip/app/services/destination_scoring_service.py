@@ -15,7 +15,13 @@ def evaluate_destination_candidate(
     tokens: Dict[str, str],
     target_temp: float = 24.0,
     adults: int = 2,
-    children: int = 0
+    children: int = 0,
+    out_from: Optional[str] = None,
+    out_to: Optional[str] = None,
+    in_from: Optional[str] = None,
+    in_to: Optional[str] = None,
+    min_stay: Optional[int] = None,
+    max_stay: Optional[int] = None
 ) -> Dict[str, Any]:
     """
     Összegyűjti egyetlen célállomás valós nyers adatait:
@@ -36,7 +42,7 @@ def evaluate_destination_candidate(
     # 2. VALÓS NUMBEO KÖLTSÉGKOSÁR ÉS BIZTONSÁG
     daily_cost_eur, safety_index, cost_breakdown = get_city_cost_and_safety(dest_name, country, region)
 
-    # 3. VALÓS KIWI REPÜLŐJEGY (Hónapon belüli rugalmas retúr keresés adott utasszámra)
+    # 3. VALÓS KIWI REPÜLŐJEGY (Pontos vagy rugalmas dátumkeret / intervallum alapján)
     if month in [1, 3, 5, 7, 8, 10, 12]:
         last_day = 31
     elif month in [4, 6, 9, 11]:
@@ -44,19 +50,23 @@ def evaluate_destination_candidate(
     else:
         last_day = 28
 
-    date_out_start = f"2026-{month:02d}-01"
-    date_out_end = f"2026-{month:02d}-{min(24, last_day):02d}"
+    date_out_start = out_from if out_from else f"2026-{month:02d}-01"
+    date_out_end = out_to if out_to else f"2026-{month:02d}-{min(24, last_day):02d}"
     
     next_m = (month % 12) + 1
-    date_in_start = f"2026-{month:02d}-{min(last_day, max(1, 1 + duration_days)):02d}"
-    date_in_end = f"2026-{next_m:02d}-08"
+    date_in_start = in_from if in_from else f"2026-{month:02d}-{min(last_day, max(1, 1 + duration_days)):02d}"
+    date_in_end = in_to if in_to else f"2026-{next_m:02d}-08"
+
+    # Tartózkodási napok határai
+    effective_min_stay = int(min_stay) if min_stay is not None else max(1, duration_days - 2)
+    effective_max_stay = int(max_stay) if max_stay is not None else (duration_days + 2)
 
     flight_price_huf = None
     flight_duration_h = None
     flight_is_direct = False
 
     try:
-        # Odaút keresése a hónap legolcsóbb járataira a pontos utasszámra
+        # Odaút keresése a legolcsóbb járatokra a pontos utasszámra
         out_df = scraper.search_flights_by_city_name_v2(
             origin_name=origin_city,
             destination_name=dest_name,
@@ -68,7 +78,7 @@ def evaluate_destination_candidate(
             limit=20
         )
         
-        # Visszaút keresése a hónap legolcsóbb járataira a pontos utasszámra
+        # Visszaút keresése a legolcsóbb járatokra a pontos utasszámra
         in_df = scraper.search_flights_by_city_name_v2(
             origin_name=dest_name,
             destination_name=origin_city,
@@ -81,10 +91,7 @@ def evaluate_destination_candidate(
         )
 
         if isinstance(out_df, pd.DataFrame) and not out_df.empty and isinstance(in_df, pd.DataFrame) and not in_df.empty:
-            # Rugalmas tartózkodás: duration_days +- 2 nap (pl. 7 napos út -> 5-9 nap közötti visszautak)
-            min_stay = max(1, duration_days - 2)
-            max_stay = duration_days + 2
-            combos_df = scraper.create_return_combinations(out_df, in_df, min_stay_days=min_stay, max_stay_days=max_stay)
+            combos_df = scraper.create_return_combinations(out_df, in_df, min_stay_days=effective_min_stay, max_stay_days=effective_max_stay)
             
             if isinstance(combos_df, pd.DataFrame) and not combos_df.empty:
                 cheapest_row = combos_df.iloc[0] # Alapból ár szerint rendezve
@@ -96,6 +103,7 @@ def evaluate_destination_candidate(
             flight_duration_h = round(float(out_df["duration_h"].min()) * 2.0, 1)
     except Exception as e:
         print(f"  [FLIGHT SEARCH WARN] {dest_name}: {e}")
+
 
     # Ha a járatkereső API nem adott vissza járatot
     if flight_price_huf is None:

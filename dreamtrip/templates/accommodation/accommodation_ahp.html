@@ -2,355 +2,79 @@
 
 {% block title %}Optivoya — Szállás Preferenciák Súlyozása{% endblock %}
 
-{% block head %}
-<style>
-    .comparison-grid {
-        display: grid;
-        grid-template-columns: 1fr auto 1fr;
-        gap: 12px;
-        align-items: center;
-        margin: 24px 0;
-    }
-
-    .criterion-card-btn {
-        padding: 20px 16px;
-        border: 2px solid var(--border-strong);
-        background: var(--bg-surface);
-        color: var(--text-main);
-        border-radius: var(--radius-md);
-        font-size: 14.5px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all var(--transition-fast);
-        text-align: center;
-        min-height: 84px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .criterion-card-btn:hover {
-        border-color: var(--primary);
-        transform: translateY(-2px);
-    }
-
-    .criterion-card-btn.selected {
-        background: var(--primary);
-        color: var(--primary-contrast);
-        border-color: var(--primary);
-        box-shadow: 0 4px 14px var(--accent-glow);
-    }
-
-    .equal-card-btn {
-        padding: 14px 18px;
-        border: 1px solid var(--border-strong);
-        background: var(--bg-surface-subtle);
-        color: var(--text-secondary);
-        border-radius: var(--radius-sm);
-        font-size: 13px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all var(--transition-fast);
-        white-space: nowrap;
-    }
-
-    .equal-card-btn:hover {
-        border-color: var(--text-main);
-        color: var(--text-main);
-    }
-
-    .equal-card-btn.selected {
-        background: var(--text-main);
-        color: var(--text-inverse);
-        border-color: var(--text-main);
-    }
-
-    .slider-box {
-        background: var(--bg-surface-subtle);
-        border: 1px solid var(--border-subtle);
-        border-radius: var(--radius-md);
-        padding: 18px 20px;
-        margin-top: 20px;
-    }
-
-    .slider-header-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 12px;
-    }
-
-    .weight-row-bar {
-        background: var(--border-subtle);
-        height: 10px;
-        border-radius: var(--radius-full);
-        overflow: hidden;
-        width: 100%;
-        max-width: 300px;
-    }
-
-    .weight-row-fill {
-        height: 100%;
-        background: linear-gradient(90deg, var(--primary), var(--accent));
-        border-radius: var(--radius-full);
-    }
-
-    @media (max-width: 768px) {
-        .comparison-grid {
-            grid-template-columns: 1fr;
-            gap: 10px;
-        }
-
-        .equal-card-btn {
-            order: 3;
-        }
-    }
-</style>
-{% endblock %}
-
 {% block content %}
-<a href="/accommodation-intelligence" class="btn-back-link">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <line x1="19" y1="12" x2="5" y2="12"></line>
-        <polyline points="12 19 5 12 12 5"></polyline>
-    </svg>
-    <span>Vissza a kereséshez</span>
-</a>
-
-<div class="page-header centered">
-    <h1 class="page-title">Szállás preferenciák beállítása</h1>
-    <p class="page-subtitle">Melyik szempont fontosabb számodra a választásnál?</p>
-</div>
-
-<div style="max-width: 840px; margin: 0 auto;">
-
-    <div class="progress-container">
-        <div class="progress-bar" id="progressBar" style="width: 15%;"></div>
-    </div>
-    <div id="progressText" style="text-align: center; font-size: 12.5px; color: var(--text-muted); margin-bottom: 24px; font-weight: 600;">
-        Kérdés 1 / 6
-    </div>
-
-    <!-- DYNAMIC QUESTION CONTAINER -->
-    <div id="questionContainer" class="card" style="margin-bottom: 20px;"></div>
-
-    <!-- NAVIGATION BUTTONS -->
-    <div id="navigationButtons" style="display: flex; gap: 12px; justify-content: space-between;">
-        <button type="button" class="btn btn-secondary" id="prevBtn" onclick="prevQuestion()" style="display: none;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="19" y1="12" x2="5" y2="12"></line>
-                <polyline points="12 19 5 12 12 5"></polyline>
-            </svg>
-            <span>Előző</span>
-        </button>
-        <button type="button" class="btn btn-primary" id="nextBtn" style="margin-left: auto; min-width: 180px;" onclick="nextQuestion()" disabled>
-            <span>Következő kérdés</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-                <polyline points="12 5 19 12 12 19"></polyline>
-            </svg>
-        </button>
-    </div>
-
-    <!-- RESULTS SUMMARY -->
-    <div id="results" class="card" style="display: none; text-align: center; padding: 32px 24px;">
-        <div style="width: 48px; height: 48px; background: var(--status-success-bg); color: var(--status-success); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-        </div>
-
-        <h2 style="font-size: 22px; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">Fontossági súlyok számítva!</h2>
-        <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 24px;">A megadott válaszok alapján meghatározott szempont-fontosságok:</p>
-
-        <div style="background: var(--bg-surface-subtle); border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); overflow: hidden; margin-bottom: 28px;">
-            <table style="width: 100%; border-collapse: collapse; text-align: left;">
-                <thead>
-                    <tr style="background: var(--bg-surface); border-bottom: 1px solid var(--border-subtle);">
-                        <th style="padding: 12px 16px; font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--text-muted);">Szempont</th>
-                        <th style="padding: 12px 16px; font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--text-muted);">Relatív fontosság</th>
-                    </tr>
-                </thead>
-                <tbody id="weightsTable"></tbody>
-            </table>
-        </div>
-
-        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
-            <button class="btn btn-secondary" onclick="window.location.href='/accommodation-intelligence'">Vissza a kereséshez</button>
-            <button class="btn btn-primary" style="padding: 12px 24px;" onclick="window.location.href='/accommodation-intelligence-preferences'">
-                <span>Tovább a kritériumok finomhangolásához</span>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                    <polyline points="12 5 19 12 12 19"></polyline>
-                </svg>
-            </button>
-        </div>
-    </div>
-
-</div>
+<div id="ahp_stay_container"></div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-    const criteria = [
-        { id: "price", human: "Alacsonyabb ár" },
-        { id: "rating", human: "Kiváló vendégértékelés" },
-        { id: "reviews", human: "Népszerűség (sok vélemény)" },
-        { id: "distance", human: "Városközponthoz való közelség" }
-    ];
-
-    const pairs = [];
-    for (let i = 0; i < criteria.length; i++) {
-        for (let j = i + 1; j < criteria.length; j++) {
-            pairs.push([criteria[i], criteria[j]]);
-        }
-    }
-
-    let currentIdx = 0;
-    let answers = {};
-
-    const labels = { 2: "Alig", 3: "Kicsit", 4: "Mérsékelten", 5: "Jelentősen", 6: "Erősen", 7: "Sokkal", 8: "Nagyon sokkal", 9: "Meghatározóan" };
-    function updateDesc(v) { document.getElementById('sliderDesc').innerText = labels[v] + " fontosabb"; }
-
-    function renderQuestion() {
-        const [c1, c2] = pairs[currentIdx];
-        const cont = document.getElementById('questionContainer');
-        cont.innerHTML = `
-            <div style="font-size: 16px; font-weight: 700; color: var(--text-main); text-align: center; margin-bottom: 20px;">
-                Melyik fontosabb számodra az alábbi kettő közül?
-            </div>
-            <div class="comparison-grid">
-                <button type="button" class="criterion-card-btn" id="btn_c1" onclick="select(1)">${c1.human}</button>
-                <button type="button" class="equal-card-btn" id="btn_equal" onclick="select(0)">Egyformán fontos</button>
-                <button type="button" class="criterion-card-btn" id="btn_c2" onclick="select(2)">${c2.human}</button>
-            </div>
-            <div class="slider-box" id="sliderCont" style="display: none;">
-                <div class="slider-header-row">
-                    <span style="font-size: 13.5px; font-weight: 600; color: var(--text-main);">Mennyivel fontosabb?</span>
-                    <span id="sliderDesc" style="font-size: 13px; font-weight: 700; color: var(--primary);">Kicsit fontosabb</span>
-                </div>
-                <input type="range" id="importanceSlider" min="2" max="9" value="3" step="1" oninput="updateDesc(this.value)">
-            </div>
-        `;
-
-        if (answers[currentIdx]) {
-            const ans = answers[currentIdx];
-            select(ans.winner);
-            if (ans.winner !== 0) {
-                const slider = document.getElementById('importanceSlider');
-                slider.value = ans.importance;
-                updateDesc(ans.importance);
+    document.addEventListener('DOMContentLoaded', () => {
+        const criteria = [
+            {
+                id: 'price',
+                name: 'Szállás ára',
+                icon: '🏨',
+                desc: 'Éjszakánkénti és teljes tartózkodási szállásköltség'
+            },
+            {
+                id: 'rating',
+                name: 'Vendégértékelés',
+                icon: '⭐',
+                desc: 'Korábbi utazók minőségi értékelése (0-10 skálán)'
+            },
+            {
+                id: 'reviews',
+                name: 'Vélemények száma',
+                icon: '💬',
+                desc: 'Népszerűség és az értékelések megbízhatósága'
+            },
+            {
+                id: 'distance',
+                name: 'Belvárosi távolság',
+                icon: '📍',
+                desc: 'Központi elhelyezkedés és a látnivalók elérhetősége'
             }
-        } else {
-            document.getElementById('nextBtn').disabled = true;
-        }
+        ];
 
-        const progress = ((currentIdx + 1) / pairs.length) * 100;
-        document.getElementById('progressBar').style.width = progress + '%';
-        document.getElementById('progressText').innerText = `Kérdés ${currentIdx + 1} / ${pairs.length}`;
+        window._ahpInstance = new AHPWizard({
+            containerId: 'ahp_stay_container',
+            criteria: criteria,
+            title: 'Szállás Preferenciák & Súlyozás',
+            subtitle: 'Határozd meg a szállásválasztási szempontjaid prioritását',
+            badge: 'Accommodation Intelligence',
+            introTitle: 'Mi a legfontosabb számodra a szállásnál?',
+            introDesc: 'Hasonlítsd össze a 4 szálláskritériumot páronként a 7 fokozatú skálán, és személyre szabjuk az ajánlatok rangsorát.',
+            ctaText: 'Tovább a Küszöbértékek Finomhangolásához',
+            backLinkUrl: '/accommodation-intelligence',
+            backLinkText: 'Vissza a kereséshez',
+            onComplete: async function (result) {
+                const payload = {
+                    price: result.weights.price || 0.25,
+                    rating: result.weights.rating || 0.25,
+                    reviews: result.weights.reviews || 0.25,
+                    distance: result.weights.distance || 0.25
+                };
 
-        const prevBtn = document.getElementById('prevBtn');
-        prevBtn.style.display = currentIdx > 0 ? 'inline-flex' : 'none';
-    }
+                try {
+                    const submitBtn = document.querySelector('.ahp-btn-submit');
+                    if (submitBtn) {
+                        submitBtn.disabled = true;
+                        submitBtn.innerHTML = '<span>Preferenciák mentése...</span>';
+                    }
 
-    function select(choice) {
-        document.querySelectorAll('.criterion-card-btn, .equal-card-btn').forEach(b => b.classList.remove('selected'));
-        const btn = (choice === 0) ? 'btn_equal' : (choice === 1 ? 'btn_c1' : 'btn_c2');
-        document.getElementById(btn).classList.add('selected');
+                    await fetch('/api/save-stay-ahp-weights', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
 
-        const slider = document.getElementById('sliderCont');
-        slider.style.display = (choice === 0) ? 'none' : 'block';
-        document.getElementById('nextBtn').disabled = false;
-    }
-
-    function nextQuestion() {
-        const btnEqual = document.getElementById('btn_equal').classList.contains('selected');
-        const btnC1 = document.getElementById('btn_c1').classList.contains('selected');
-        const importance = btnEqual ? 1 : parseInt(document.getElementById('importanceSlider').value);
-        const winner = btnEqual ? 0 : (btnC1 ? 1 : 2);
-
-        answers[currentIdx] = { winner, importance };
-        currentIdx++;
-
-        if (currentIdx < pairs.length) {
-            renderQuestion();
-        } else {
-            calculate();
-        }
-    }
-
-    function prevQuestion() {
-        if (currentIdx > 0) {
-            currentIdx--;
-            renderQuestion();
-        }
-    }
-
-    async function calculate() {
-        const n = criteria.length;
-        const matrix = Array(n).fill(0).map(() => Array(n).fill(1));
-
-        pairs.forEach((pair, idx) => {
-            const ans = answers[idx];
-            const i = criteria.indexOf(pair[0]);
-            const j = criteria.indexOf(pair[1]);
-            if (ans.winner === 0) {
-                matrix[i][j] = matrix[j][i] = 1;
-            } else if (ans.winner === 1) {
-                matrix[i][j] = ans.importance;
-                matrix[j][i] = 1 / ans.importance;
-            } else {
-                matrix[j][i] = ans.importance;
-                matrix[i][j] = 1 / ans.importance;
+                    window.location.href = '/accommodation-intelligence-preferences';
+                } catch (e) {
+                    console.error('Hiba a súlyok mentésekor:', e);
+                    window.location.href = '/accommodation-intelligence-preferences';
+                }
             }
         });
-
-        const colSums = Array(n).fill(0);
-        for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) colSums[j] += matrix[i][j];
-        const weights = Array(n).fill(0);
-        for (let i = 0; i < n; i++) {
-            let sum = 0;
-            for (let j = 0; j < n; j++) sum += (matrix[i][j] / colSums[j]);
-            weights[i] = sum / n;
-        }
-
-        const weightObj = {};
-        criteria.forEach((c, idx) => weightObj[c.id] = weights[idx]);
-
-        await fetch('/api/save-stay-ahp-weights', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(weightObj)
-        });
-
-        document.getElementById('questionContainer').style.display = 'none';
-        document.getElementById('navigationButtons').style.display = 'none';
-        document.getElementById('progressBar').style.width = '100%';
-        document.getElementById('progressText').innerText = 'Preferenciák kész';
-
-        const tbody = document.getElementById('weightsTable');
-        const maxW = Math.max(...weights);
-        tbody.innerHTML = '';
-        criteria.forEach((c, i) => {
-            const row = document.createElement('tr');
-            row.style.borderBottom = '1px solid var(--border-subtle)';
-            row.innerHTML = `
-                <td style="padding: 12px 16px; font-weight: 600; font-size: 13.5px; color: var(--text-main);">${c.human}</td>
-                <td style="padding: 12px 16px;">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <div class="weight-row-bar">
-                            <div class="weight-row-fill" style="width: ${(weights[i] / maxW) * 100}%;"></div>
-                        </div>
-                        <span style="font-size: 12px; font-family: var(--font-mono); font-weight: 700; color: var(--primary);">${Math.round(weights[i] * 100)}%</span>
-                    </div>
-                </td>
-            `;
-            tbody.appendChild(row);
-        });
-
-        document.getElementById('results').style.display = 'block';
-    }
-
-    renderQuestion();
+    });
 </script>
 {% endblock %}

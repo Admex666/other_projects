@@ -153,6 +153,19 @@
     <p class="page-subtitle">Jelenleg <strong>{{ flight_count }}</strong> járatkombináció érhető el. Csak a valódi kizáró okokat állítsd be!</p>
 </div>
 
+<!-- FOLYAMAT PROGRESS BAR -->
+<div class="flow-progress-bar-container" style="margin-bottom: 24px;">
+    <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px;">
+        <span style="color: var(--primary); font-weight: 800;">● Járatok Szűrése</span>
+        <span>○ Preferenciák Súlyozása (AHP)</span>
+        <span>○ Finomhangolás</span>
+        <span>○ Eredmények</span>
+    </div>
+    <div style="height: 6px; background: var(--border-subtle); border-radius: 10px; overflow: hidden;">
+        <div style="width: 25%; height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent, #6366f1)); border-radius: 10px;"></div>
+    </div>
+</div>
+
 <!-- LIVE FLOATING COUNTER -->
 <div class="live-counter-panel" id="liveCounterBox">
     <div class="counter-left">
