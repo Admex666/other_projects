@@ -10,11 +10,13 @@ interface QuestContextType {
   state: QuestState;
   unlockWithCode: (code: string) => boolean;
   advanceToNextStage: () => void;
+  goToPreviousStage: () => void;
   jumpToStage: (stageId: StageId) => void;
   selectFoodOption: (foodId: string) => void;
+  selectBarOption: (barId: string) => void;
+  setBowlingScanCompleted: (completed: boolean) => void;
   incrementBowlingStrike: () => void;
   unlockBarClue: () => void;
-  toggleSound: () => void;
   toggleDevMode: () => void;
   setSimulatedDistance: (distance: number | null) => void;
   setSimulatedHeading: (heading: number | null) => void;
@@ -29,7 +31,9 @@ const initialState: QuestState = {
   isUnlocked: false,
   currentStageId: 'teaser',
   stageHistory: ['teaser'],
+  isBowlingUnlockedByScan: false,
   selectedFoodId: null,
+  selectedBarId: null,
   bowlingStrikesCount: 0,
   unlockedBarClueCount: 0,
   soundEnabled: true,
@@ -60,7 +64,7 @@ export const QuestProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     } catch {
       // Ignored
     }
-    sound.enabled = state.soundEnabled;
+    sound.enabled = true; // Sound is always enabled, cannot be muted
   }, [state]);
 
   const unlockWithCode = (code: string): boolean => {
@@ -102,6 +106,20 @@ export const QuestProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
+  const goToPreviousStage = () => {
+    const currentIndex = STAGE_ORDER.indexOf(state.currentStageId);
+    // Can go back to previous stage (as long as it's not before intro)
+    if (currentIndex > 1) {
+      const prevStage = STAGE_ORDER[currentIndex - 1];
+      sound.playClick();
+      triggerHaptic('light');
+      setState((prev) => ({
+        ...prev,
+        currentStageId: prevStage,
+      }));
+    }
+  };
+
   const jumpToStage = (stageId: StageId) => {
     sound.playClick();
     triggerHaptic('medium');
@@ -122,6 +140,22 @@ export const QuestProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }));
   };
 
+  const selectBarOption = (barId: string) => {
+    sound.playClick();
+    triggerHaptic('medium');
+    setState((prev) => ({
+      ...prev,
+      selectedBarId: barId,
+    }));
+  };
+
+  const setBowlingScanCompleted = (completed: boolean) => {
+    setState((prev) => ({
+      ...prev,
+      isBowlingUnlockedByScan: completed,
+    }));
+  };
+
   const incrementBowlingStrike = () => {
     sound.playUnlock();
     triggerHaptic('success');
@@ -136,17 +170,8 @@ export const QuestProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     triggerHaptic('light');
     setState((prev) => ({
       ...prev,
-      unlockedBarClueCount: Math.min(prev.unlockedBarClueCount + 1, config.stages.bar.clues.length),
+      unlockedBarClueCount: prev.unlockedBarClueCount + 1,
     }));
-  };
-
-  const toggleSound = () => {
-    setState((prev) => {
-      const next = !prev.soundEnabled;
-      sound.enabled = next;
-      if (next) sound.playClick();
-      return { ...prev, soundEnabled: next };
-    });
   };
 
   const toggleDevMode = () => {
@@ -175,11 +200,13 @@ export const QuestProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         state,
         unlockWithCode,
         advanceToNextStage,
+        goToPreviousStage,
         jumpToStage,
         selectFoodOption,
+        selectBarOption,
+        setBowlingScanCompleted,
         incrementBowlingStrike,
         unlockBarClue,
-        toggleSound,
         toggleDevMode,
         setSimulatedDistance,
         setSimulatedHeading,

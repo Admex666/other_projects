@@ -49,7 +49,7 @@ export const Stage1Intro: React.FC = () => {
             🔒 Titkosított Állomások
           </div>
           <p className="text-xs text-slate-400 leading-relaxed">
-            Minden állomás egy meglepetés, amely csak az adott feladatok és azonosítások után tárul fel előtted!
+            Minden állomás meglepetés, amely csak az adott feladatok és azonosítások után tárul fel előtted!
           </p>
         </div>
       </div>

@@ -47,11 +47,8 @@ export const Stage0Teaser: React.FC = () => {
       {/* Top Banner */}
       <div className="w-full text-left">
         <span className="text-xs font-mono font-bold text-amber-400 uppercase tracking-widest">
-          Születésnapi Küldetés
+          Születésnapi Quest
         </span>
-        <h1 className="text-2xl font-black text-white mt-1">
-          {config.meta.birthdayPerson} 22. Szülinapja
-        </h1>
       </div>
 
       {/* Center Lock Status Box */}

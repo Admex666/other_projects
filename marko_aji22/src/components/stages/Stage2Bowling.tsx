@@ -3,20 +3,20 @@ import { useQuest } from '../../context/QuestContext';
 import { sound } from '../../utils/sound';
 import { triggerHaptic } from '../../utils/haptics';
 import { fireConfettiBurst } from '../../utils/confetti';
-import { MapPin, Plus, Check, ExternalLink, ArrowRight, ScanFace, X, ShieldCheck, Lock, Sparkles } from 'lucide-react';
+import { MapPin, Plus, Check, ArrowRight, ScanFace, X, ShieldCheck, Lock, Sparkles } from 'lucide-react';
 import { Button } from '../common/Button';
 
 export const Stage2Bowling: React.FC = () => {
-  const { config, state, incrementBowlingStrike, advanceToNextStage } = useQuest();
+  const { config, state, incrementBowlingStrike, setBowlingScanCompleted, advanceToNextStage } = useQuest();
   const bowling = config.stages.bowling;
   const isGoalReached = state.bowlingStrikesCount >= bowling.challenge.targetStrikes;
+  const isUnlockedByScan = state.isBowlingUnlockedByScan;
 
-  // Face scanner state & unlock reveal state
-  const [isUnlockedByScan, setIsUnlockedByScan] = useState(false);
+  // Face scanner modal state
   const [isScanOpen, setIsScanOpen] = useState(false);
   const [scanStep, setScanStep] = useState<'idle' | 'scanning' | 'revealed'>('idle');
   const [scanProgress, setScanProgress] = useState(0);
-  const [scanStatusText, setScanStatusText] = useState('Kamera inicializálása...');
+  const [scanStatusText, setScanStatusText] = useState('Arc keresése...');
   const [imgError, setImgError] = useState(false);
 
   const startFaceScan = () => {
@@ -27,7 +27,7 @@ export const Stage2Bowling: React.FC = () => {
     sound.playClick();
     triggerHaptic('medium');
 
-    // Várakozás 4 másodpercig az arcfelismerés indulása előtt
+    // 4 másodperces várakozás
     setTimeout(() => {
       const scanMessages = [
         { progress: 20, text: 'Arcvonások és életkor elemzése...' },
@@ -46,7 +46,7 @@ export const Stage2Bowling: React.FC = () => {
         } else {
           clearInterval(interval);
           setScanStep('revealed');
-          // Play the custom omg-bruh-oh-hell-nah or victory audio!
+          // Play the custom omg-bruh-oh-hell-nah audio!
           sound.playCustomAudio(bowling.faceScan.soundPath, () => {
             sound.playVictoryFanfare();
           });
@@ -59,7 +59,7 @@ export const Stage2Bowling: React.FC = () => {
 
   const handleFinishScan = () => {
     setIsScanOpen(false);
-    setIsUnlockedByScan(true);
+    setBowlingScanCompleted(true);
     sound.playUnlock();
     triggerHaptic('success');
     fireConfettiBurst();
@@ -94,7 +94,7 @@ export const Stage2Bowling: React.FC = () => {
               Az 1. program zárolva van
             </h2>
             <p className="text-xs text-slate-400 max-w-xs mx-auto leading-relaxed">
-              Kérlek végezd el a személyazonosítást, hogy ellenőrizzük a szülinapos jogosultságát és feloldjuk a helyszínt!
+              Kérlek végezd el a személyazonosítást, hogy ellenőrizzük szülinapos jogosultságod meglétét, és feloldjuk a programot!
             </p>
           </div>
 
@@ -126,27 +126,17 @@ export const Stage2Bowling: React.FC = () => {
             </button>
           </div>
 
-          {/* Venue Information */}
-          <div>
-            <div className="flex items-center justify-between text-xs font-mono font-bold text-slate-400 mb-1">
-              <span>HELYSZÍN ÉS IDŐPONT</span>
+          {/* Venue Information (Térkép és 'itt találkozunk' nélkül) */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-xs font-mono font-bold text-slate-400">
+              <span>PROGRAM & HELYSZÍN</span>
               <span className="text-amber-400 font-bold">{bowling.meetingTime}</span>
             </div>
             <h2 className="text-lg font-bold text-white">{bowling.venueName}</h2>
-            <p className="text-xs text-slate-300 mt-1 flex items-start gap-1.5">
+            <p className="text-xs text-slate-300 flex items-start gap-1.5">
               <MapPin className="w-3.5 h-3.5 text-amber-400 flex-shrink-0 mt-0.5" />
               <span>{bowling.venueAddress}</span>
             </p>
-
-            <a
-              href={bowling.mapsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-1.5 w-full mt-3 py-2 rounded-xl bg-[#161F32] hover:bg-[#1E293B] border border-[#28354D] text-xs font-bold text-slate-200 transition-colors"
-            >
-              <ExternalLink className="w-3.5 h-3.5 text-amber-400" />
-              <span>Útvonal megnyitása Google Térképen</span>
-            </a>
           </div>
 
           {/* Strike Counter Section */}
@@ -179,14 +169,14 @@ export const Stage2Bowling: React.FC = () => {
             {isGoalReached && (
               <div className="flex items-center gap-2 text-xs font-bold text-emerald-400 mt-2.5">
                 <Check className="w-4 h-4 stroke-[3]" />
-                <span>Kihívás teljesítve! Készen álltok a vacsorára.</span>
+                <span>Kihívás teljesítve! Készen álltok a következő állomásra.</span>
               </div>
             )}
           </div>
         </div>
       )}
 
-      {/* Action Advance (Only enabled after scan unlock) */}
+      {/* Action Advance */}
       <div className="pt-2 sticky bottom-4">
         <Button
           variant="primary"
@@ -196,7 +186,7 @@ export const Stage2Bowling: React.FC = () => {
           onClick={advanceToNextStage}
           icon={<ArrowRight className="w-5 h-5" />}
         >
-          {isGoalReached ? 'TOVÁBBLÉPÉS A VACSORÁHOZ' : 'KÖVETKEZŐ ÁLLOMÁS'}
+          {isGoalReached ? 'KÖVETKEZŐ ÁLLOMÁS (VACSORA)' : 'KÖVETKEZŐ ÁLLOMÁS'}
         </Button>
       </div>
 

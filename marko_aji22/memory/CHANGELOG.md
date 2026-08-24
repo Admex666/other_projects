@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.6.0] - 2026-08-24 - Perzisztencia, Visszalépés & 5 Mystery Kocsma Jellegzetesség
+- **1. Állomás (Bowling):** Eltávolítottuk a Google Maps útvonaltervező linket és az „itt találkozunk” szövegeket.
+- **Állapotmentés (State persistence):** Minden feloldás (arcfelismerés állapota, pontszámok, étel és kocsma választások) a `localStorage`-ban tárolódik, így oldalfrissítéskor sem vész el semmi.
+- **Visszalépés (Back navigation):** A fejlécben elhelyeztünk egy balra mutató nyílgombot, amellyel bármikor vissza lehet lépni a korábbi állomásokra.
+- **Hangerő némítás:** Eltávolítottuk a némító gombot a jobb felső sarokból, a hangok mindig aktívak.
+- **3. Állomás (5 Mystery Kocsma opció):** Bekerült az 5 megadott rejtélyes mondat külön dummy koordinátákkal a [`questConfig.ts`](file:///e:/Data/other_projects/marko_aji22/src/config/questConfig.ts)-be:
+  1. *„az xG mindig nyüzsgő otthona”* (A Grund)
+  2. *„Choose your character”* (BarCraft Corvin)
+  3. *„nyugalom a káoszban”* (7ker pub)
+  4. *„irány a romok közé”* (Füge Udvar)
+  5. *„bort iszik és vizet prédikál”* (Humbák Borkápolna)
+
 ## [1.5.2] - 2026-08-17 - Vercel Deployment Configuration
 - Hozzáadtuk a [`vercel.json`](file:///e:/Data/other_projects/marko_aji22/vercel.json) konfigurációs fájlt SPA útválasztási átirányításokkal (rewrite), HTTPS biztonsági fejlécekkel és az egyedi képek/hangok (`/images`, `/sounds`) gyorsítótárazásával.
 

@@ -17,7 +17,17 @@ export interface FoodOption {
   venueName: string;
   venueAddress: string;
   mapsUrl: string;
-  targetLocation: Coordinates; // PLACEHOLDER coordinates for each restaurant option
+  targetLocation: Coordinates; // PLACEHOLDER coordinates
+}
+
+export interface BarOption {
+  id: string;
+  mysteryPhrase: string;
+  note: string;
+  venueName: string;
+  venueAddress: string;
+  mapsUrl: string;
+  targetLocation: Coordinates; // DUMMY coordinates [lat, lng]
 }
 
 export interface QuestConfig {
@@ -50,7 +60,6 @@ export interface QuestConfig {
       venueName: string;
       venueAddress: string;
       meetingTime: string;
-      mapsUrl: string;
       description: string;
       challenge: {
         goalText: string;
@@ -73,11 +82,7 @@ export interface QuestConfig {
     bar: {
       title: string;
       riddle: string;
-      clues: string[];
-      targetLocation: Coordinates; // PLACEHOLDER
-      venueNameRevealed: string;
-      venueAddressRevealed: string;
-      mapsUrl: string;
+      options: BarOption[];
       thresholdsMeters: {
         burning: number;
         hot: number;
@@ -102,7 +107,9 @@ export interface QuestState {
   isUnlocked: boolean;
   currentStageId: StageId;
   stageHistory: StageId[];
+  isBowlingUnlockedByScan: boolean;
   selectedFoodId: string | null;
+  selectedBarId: string | null;
   bowlingStrikesCount: number;
   unlockedBarClueCount: number;
   soundEnabled: boolean;

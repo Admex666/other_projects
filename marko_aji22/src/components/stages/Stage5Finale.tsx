@@ -13,13 +13,14 @@ export const Stage5Finale: React.FC = () => {
   }, []);
 
   const selectedFood = config.stages.food.options.find((o) => o.id === state.selectedFoodId);
+  const selectedBar = config.stages.bar.options.find((o) => o.id === state.selectedBarId);
 
   const handleShare = async () => {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: `Markó 22. Szülinapi Quest Teljesítve!`,
-          text: `Sikeresen végigcsináltuk a szülinapi estét: Bowling, Vacsora és Kocsma pipa! 🎳🍔🍻🎉`,
+          title: `Markó level 22 quest teljesítve!`,
+          text: `Sikeresen végigcsináltad az estét: Bowling, Vacsora és Kocsma pipa! 🎳🍔🍻🎉`,
           url: window.location.href,
         });
       } catch {
@@ -72,7 +73,7 @@ export const Stage5Finale: React.FC = () => {
           <div className="flex items-center justify-between p-2.5 rounded-lg bg-[#161F32] text-xs">
             <span className="text-slate-400">3. Titkos kocsma:</span>
             <span className="font-bold text-white flex items-center gap-1">
-              <Check className="w-3.5 h-3.5 text-amber-400" /> Megtalálva & feloldva
+              <Check className="w-3.5 h-3.5 text-amber-400" /> {selectedBar ? selectedBar.venueName : 'Megtalálva'}
             </span>
           </div>
         </div>

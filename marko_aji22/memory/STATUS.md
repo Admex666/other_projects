@@ -1,15 +1,18 @@
 # Current Status
 
 ## Status
-- **Current Phase:** Design System Redesign & De-slopping Complete
+- **Current Phase:** Updates & Persistence Complete
 - **What is working:**
-  - Teljesen letisztított, natív mobilapp-érzetű dizájn:
-    - Eltávolítva: neon glow-k, háttér amorf blur foltok, felesleges `Sparkles` ikonok és állandó animációk.
-    - Bevezetve: szilárd felületi hierarchia (`#0A0E17`, `#121826`, `#161F32`), tiszta balra zárt tipográfia, tapintható gombok.
-    - Egybefüggő forgatókönyv és vezérlőpult elrendezések az egymásra halmozott kártyák helyett.
-  - Személyes, autentikus baráti születésnapi szövegezés a generikus AI sci-fi zsargon helyett.
-  - Étterem szakasz: "BOWLING UTÁNI TÁPLÁLKOZÁSI STRATÉGIA" 4 opcióval és dedikált radar navigációval.
-  - Kocsma szakasz: KIZÁRÓLAG Hideg-Meleg termikus kijelző (hőmérsékleti sáv, állapot, távolság, nyomok).
-  - Production build sikeresen lefutott (`npm run build`).
-- **Current focus:** Kész a bemutatásra és a konkrét helyszínek megadására.
+  - 1. Bowling állomás: Térkép link és "itt találkozunk" szövegek eltávolítva.
+  - Állapotmentés: Teljes `localStorage` perzisztencia (beleértve a feloldott arcfelismerést és a kiválasztott állomásokat oldalfrissítés után is).
+  - Visszalépés (Back navigation): Balra mutató nyílgomb a fejlécben, amivel bármikor vissza lehet lépni az előző állomásra.
+  - Hangerő némítás: Eltávolítva a jobb felső némító gomb (a hangok mindig aktívak).
+  - 3. Kocsma állomás: 5 rejtélyes jelige választó lista dummy koordinátákkal a `questConfig.ts`-ben, tiszta Hideg-Meleg vezérléssel:
+    1. "az xG mindig nyüzsgő otthona" (A Grund)
+    2. "Choose your character" (BarCraft Corvin)
+    3. "nyugalom a káoszban" (7ker pub)
+    4. "irány a romok közé" (Füge Udvar)
+    5. "bort iszik és vizet prédikál" (Humbák Borkápolna)
+  - Vercel-ready `vercel.json` SPA útválasztás.
+- **Current focus:** Kész az élesítésre / koordináták manuális beírására.
 - **Known blockers:** None.

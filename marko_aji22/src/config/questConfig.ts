@@ -5,7 +5,7 @@ import { QuestConfig } from '../types/quest';
  * 🎯 MARKO 22ND BIRTHDAY QUEST CONFIGURATION
  * ============================================================================
  * Ebben a fájlban találhatók az alkalmazás szövegei és a
- * [PLACEHOLDER] adatok (jelszó, helyszínek, opciók, GPS koordináták).
+ * [PLACEHOLDER] / [DUMMY] adatok (jelszó, helyszínek, opciók, GPS koordináták).
  */
 export const defaultQuestConfig: QuestConfig = {
   meta: {
@@ -19,28 +19,28 @@ export const defaultQuestConfig: QuestConfig = {
 
   security: {
     // 🔑 PLACEHOLDER JELSZÓ: Ezt kell beírni a Teaser képernyőn a feloldáshoz
-    unlockCode: '2208',
+    unlockCode: '1899',
     allowOverride: true,
   },
 
   stages: {
     teaser: {
       title: 'Születésnapi Este Zárolva',
-      lockedMessage: 'Isten éltessen, Lukács! A program zárolva van, amíg nem beszéled meg Ádámmal a konkrét dátumot. A feloldó kódot a találkozáskor kapod meg.',
-      hint: 'Kérd el a 4 számjegyű kódot a csapattól az ajándék átadásakor!',
+      lockedMessage: 'Isten éltessen Markó! A mai program zárolva van. A feloldó kódot a találkozáskor kapod meg Ádámtól.',
+      hint: 'Kérd el a 4 számjegyű kódot Ádámtól!',
     },
 
     intro: {
-      title: 'Isten éltessen 22. szülinapodon!',
+      title: 'Isten éltessen 22. születésnapodon!',
       briefing: [
-        'A mai este nem a sablonos meghívásról szól: egy közös estélyi programot raktunk össze neked.',
-        'Minden állomáson mi álljuk a számlát és a programot, neked csak választanod és vezetned kell a csapatot.',
-        'Gurítsunk, vacsorázzunk egy jót, majd kutassuk fel a titkos kocsmát a koccintáshoz!'
+        'Ma egy cseppet csapdába csaltunk, ugyanis nem hagyományos kocsmázás vár rád.',
+        'Ahhoz, hogy eljuss a végső célhoz, meg kell csinálnod a yearly questjeidet.',
+        'Minden állomáson Ádám állja a számlát, neked csak választanod és vezetned a csapatot.'
       ],
       rules: [
-        'A szülinapos pénztárcája ma este pihen.',
-        'A kihívások becsülettel teljesítendők.',
-        'A jókedv és a koccintás kötelező!'
+        'Markó pénztárcája ma este pihen.',
+        'Hajrá szex!',
+        'Jóisten a mennybe, emide menj be!'
       ],
       inventory: [
         '🎳 Bowling pálya & versenyszellem',
@@ -50,26 +50,25 @@ export const defaultQuestConfig: QuestConfig = {
       ]
     },
 
-    // 1. ÁLLOMÁS: BOWLING (Fix program)
+    // 1. ÁLLOMÁS: BOWLING (Fix program, térkép és "itt találkozunk" nélkül)
     bowling: {
-      title: '1. Állomás: Bowling',
+      title: '1. Állomás: Bowling Showdown',
       venueName: 'Strike Bowling Club [PLACEHOLDER]',
       venueAddress: '1117 Budapest, Október huszonharmadika u. 8-10. [PLACEHOLDER]',
       meetingTime: '18:00 [PLACEHOLDER]',
-      mapsUrl: 'https://maps.google.com/?q=Strike+Bowling+Club+Budapest',
-      description: 'Itt találkozunk és indul az este! Gurítsunk minél több strike-ot a 22. születésnap megünneplésére!',
+      description: 'Gurítsunk minél több strike-ot a 22. születésnap méltó megünneplésére!',
       challenge: {
         goalText: 'Gyűjts össze legalább 3 Strike-ot vagy Spare-t a meccs alatt!',
         targetStrikes: 3
       },
-      // 🎭 VICCES ARCFELISMERÉS (PLACEHOLDER kép és hang)
+      // 🎭 VICCES ARCFELISMERÉS
       faceScan: {
         title: 'BIOMETRIKUS AZONOSÍTÁS',
         subtitle: 'Kérlek nézz a kamerába a születésnapi jogosultság igazolásához...',
-        imagePath: '/images/marko_funny.jpg', // Ide másold be a képet: public/images/marko_funny.jpg
-        soundPath: '/sounds/omg-bruh-oh-hell-nah.mp3', // Ide másold be a hangot: public/sounds/omg-bruh-oh-hell-nah.mp3
+        imagePath: '/images/marko_funny.jpg',
+        soundPath: '/sounds/omg-bruh-oh-hell-nah.mp3',
         identifiedName: 'MARKÓ (22 ÉVES GYANÚSÍTOTT)',
-        caption: '⚠️ FIGYELEM: Az arcfelismerő Markó későbbi állapotát ismerte fel! Azonnali bowlingozásra kötelezve.'
+        caption: '⚠️ FIGYELEM: Az arcfelismerő Markó későbbi állapotát ismerte fel! Azonnali bowlingozásra lettél kötelezve.'
       }
     },
 
@@ -89,7 +88,7 @@ export const defaultQuestConfig: QuestConfig = {
           venueAddress: '1117 Budapest, Október 23. u. [PLACEHOLDER]',
           mapsUrl: 'https://maps.google.com/?q=Fresh+Fit+Budapest',
           targetLocation: {
-            lat: 47.4765,
+            lat: 47.4765, // PLACEHOLDER koordináta
             lng: 19.0520,
           }
         },
@@ -104,7 +103,7 @@ export const defaultQuestConfig: QuestConfig = {
           venueAddress: '1092 Budapest, Ráday utca [PLACEHOLDER]',
           mapsUrl: 'https://maps.google.com/?q=Ramen+Budapest',
           targetLocation: {
-            lat: 47.4840,
+            lat: 47.4840, // PLACEHOLDER koordináta
             lng: 19.0620,
           }
         },
@@ -119,7 +118,7 @@ export const defaultQuestConfig: QuestConfig = {
           venueAddress: '1053 Budapest, Kálvin tér környéke [PLACEHOLDER]',
           mapsUrl: 'https://maps.google.com/?q=Burger+Kalvin+Budapest',
           targetLocation: {
-            lat: 47.4920,
+            lat: 47.4920, // PLACEHOLDER koordináta
             lng: 19.0560,
           }
         },
@@ -134,29 +133,79 @@ export const defaultQuestConfig: QuestConfig = {
           venueAddress: '1074 Budapest, Kazinczy u. [PLACEHOLDER]',
           mapsUrl: 'https://maps.google.com/?q=Kazinczy+Budapest',
           targetLocation: {
-            lat: 47.4990,
+            lat: 47.4990, // PLACEHOLDER koordináta
             lng: 19.0650,
           }
         }
       ]
     },
 
-    // 3. ÁLLOMÁS: KOCSMÁZÁS (CSAK HIDEG-MELEG)
+    // 3. ÁLLOMÁS: KOCSMÁZÁS (CSAK HIDEG-MELEG + MYSTERY MONDATOK)
     bar: {
       title: '3. Állomás: A Titkos Kocsma Kereső',
-      riddle: 'Itt már nincs nyíl vagy térkép: csak a hideg-meleg jelzés vezet el a záró koccintás helyszínéhez!',
-      clues: [
-        '1. Nyom: Keresd a belváros legélettelibb macskaköves utcáit...',
-        '2. Nyom: Egy hangulatos belső udvar vagy cégér jelzi a bejáratot...',
-        '3. Nyom: Ha már lángol a jelzés, 30 méteren belül vagytok a csapolt söröktől!'
+      riddle: 'Válasszátok ki a záró kocsma rejtélyes jeligéjét, majd kövessétek a Hideg-Meleg jelzést a célba érésig!',
+      options: [
+        {
+          id: 'bar_1',
+          mysteryPhrase: 'az xG mindig nyüzsgő otthona',
+          note: 'A Grund, Corvin negyed',
+          venueName: 'A Grund [PLACEHOLDER]',
+          venueAddress: '1082 Budapest, Nagytemplom u. 30. [PLACEHOLDER]',
+          mapsUrl: 'https://maps.google.com/?q=A+Grund+Budapest',
+          targetLocation: {
+            lat: 47.4862, // DUMMY KOORDINÁTA - Írd át szabadon!
+            lng: 19.0760, // DUMMY KOORDINÁTA - Írd át szabadon!
+          }
+        },
+        {
+          id: 'bar_2',
+          mysteryPhrase: 'Choose your character',
+          note: 'BarCraft Corvin',
+          venueName: 'BarCraft Corvin [PLACEHOLDER]',
+          venueAddress: '1092 Budapest, Ferenc krt. 34. [PLACEHOLDER]',
+          mapsUrl: 'https://maps.google.com/?q=BarCraft+Corvin+Budapest',
+          targetLocation: {
+            lat: 47.4850, // DUMMY KOORDINÁTA - Írd át szabadon!
+            lng: 19.0690, // DUMMY KOORDINÁTA - Írd át szabadon!
+          }
+        },
+        {
+          id: 'bar_3',
+          mysteryPhrase: 'nyugalom a káoszban',
+          note: '7ker pub (Blaha)',
+          venueName: '7ker Pub [PLACEHOLDER]',
+          venueAddress: '1072 Budapest, Blaha Lujza tér környéke [PLACEHOLDER]',
+          mapsUrl: 'https://maps.google.com/?q=7ker+Pub+Budapest',
+          targetLocation: {
+            lat: 47.4960, // DUMMY KOORDINÁTA - Írd át szabadon!
+            lng: 19.0680, // DUMMY KOORDINÁTA - Írd át szabadon!
+          }
+        },
+        {
+          id: 'bar_4',
+          mysteryPhrase: 'irány a romok közé',
+          note: 'Füge Udvar romkocsma',
+          venueName: 'Füge Udvar [PLACEHOLDER]',
+          venueAddress: '1072 Budapest, Klauzál u. 19. [PLACEHOLDER]',
+          mapsUrl: 'https://maps.google.com/?q=Fuge+Udvar+Budapest',
+          targetLocation: {
+            lat: 47.4990, // DUMMY KOORDINÁTA - Írd át szabadon!
+            lng: 19.0640, // DUMMY KOORDINÁTA - Írd át szabadon!
+          }
+        },
+        {
+          id: 'bar_5',
+          mysteryPhrase: 'bort iszik és vizet prédikál',
+          note: 'Humbák Borkápolna',
+          venueName: 'Humbák Borkápolna [PLACEHOLDER]',
+          venueAddress: '1074 Budapest, Dohány u. / Erzsébet krt. [PLACEHOLDER]',
+          mapsUrl: 'https://maps.google.com/?q=Humbak+Borkapolna+Budapest',
+          targetLocation: {
+            lat: 47.4975, // DUMMY KOORDINÁTA - Írd át szabadon!
+            lng: 19.0655, // DUMMY KOORDINÁTA - Írd át szabadon!
+          }
+        }
       ],
-      targetLocation: {
-        lat: 47.4984, // PLACEHOLDER LAT
-        lng: 19.0583, // PLACEHOLDER LNG
-      },
-      venueNameRevealed: 'Központ Bar / Hops Beer Bar [PLACEHOLDER]',
-      venueAddressRevealed: '1075 Budapest, Madách Imre út [PLACEHOLDER]',
-      mapsUrl: 'https://maps.google.com/?q=Madach+ter+Budapest',
       thresholdsMeters: {
         burning: 30,
         hot: 100,
