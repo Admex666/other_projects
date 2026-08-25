@@ -527,10 +527,10 @@
         /* Map and Elevation Containers */
         #map-container {
             width: 100%;
-            height: 340px;
+            height: 280px;
             border-radius: 8px;
             border: 1px solid var(--border-color);
-            margin: 0.4rem 0;
+            margin: 0.35rem 0;
             z-index: 1;
             position: relative;
         }
@@ -542,7 +542,7 @@
 
         #elevation-container {
             width: 100%;
-            height: 110px;
+            height: 95px;
             border-radius: 8px;
             border: 1px solid var(--border-color);
             background: rgba(128, 128, 128, 0.04);
@@ -726,11 +726,12 @@
                 margin: 0;
             }
 
-            body {
+            html, body {
                 background: none !important;
                 background-color: transparent !important;
                 padding: 0 !important;
                 margin: 0 !important;
+                height: auto !important;
             }
 
             .controls-card {
@@ -739,6 +740,8 @@
 
             .pages-container {
                 gap: 0 !important;
+                margin: 0 !important;
+                padding: 0 !important;
             }
 
             .page {
@@ -748,14 +751,23 @@
                 color: #000000 !important;
                 width: 148mm !important;
                 height: 210mm !important;
+                max-height: 210mm !important;
                 page-break-after: always !important;
+                break-after: page !important;
                 page-break-inside: avoid !important;
+                break-inside: avoid !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
                 border-radius: 0 !important;
                 padding: 1.2rem !important;
-                /* Smaller margins during print */
                 box-sizing: border-box !important;
+                overflow: hidden !important;
+            }
+
+            .page:last-child,
+            .page:last-of-type {
+                page-break-after: avoid !important;
+                break-after: avoid !important;
             }
 
             /* Ink saving border colors */
@@ -783,16 +795,14 @@
                 border-bottom-color: #000000 !important;
             }
 
-            /* Shrink map and elements to fit exactly in A5 print layout */
+            /* Map and elements in A5 print layout */
             #map-container {
-                height: 230px !important;
-                /* Shorter on print to fit on page 3 */
-                margin: 0.3rem 0 !important;
+                height: 280px !important;
+                margin: 0.35rem 0 !important;
             }
 
             #elevation-container {
-                height: 85px !important;
-                /* Shorter on print */
+                height: 95px !important;
                 margin-top: 0.1rem !important;
             }
 
@@ -1166,7 +1176,7 @@
                         <li class="bullet-point" style="font-size: 0.78rem;"><strong>1. Igazolás:</strong> Mentsd el a
                             GPS túrarögzítést (GPX, Strava, Garmin).</li>
                         <li class="bullet-point" style="font-size: 0.78rem;"><strong>2. Feltöltés:</strong> Lépj be a
-                            VitaSteps portálra és töltsd fel a fájlt vagy szelfit.</li>
+                            <a href="/portal.html" target="_blank" style="color: inherit; font-weight: 700; text-decoration: underline;">VitaSteps portálra</a> és töltsd fel a fájlt vagy szelfit.</li>
                         <li class="bullet-point" style="font-size: 0.78rem;"><strong>3. Postázás:</strong> Az igazolás
                             jóváhagyása után azonnal küldjük az érmet a Foxpost pontodra.</li>
                     </ul>
@@ -1192,6 +1202,9 @@
         let map = null;
         let polyline = null;
         let markersGroup = null;
+        let currentBounds = null;
+        let currentPoints = [];
+        let currentPois = [];
 
         // Earth radius in meters (for math)
         const EARTH_RADIUS = 6371000;
@@ -1338,35 +1351,35 @@
                 difficulty: "Közepes",
                 gpx: "03extra.gpx",
                 timeline: [
-                    "Pomáz HÉV állomás (Indulás)",
-                    "Kő-hegyi Menedékház (Pihenő & sziklák)",
-                    "Csobánka völgye (Kis-Kevély alatt)",
+                    "Pilisborosjenő sorompó (Indulás)",
+                    "Mackó-barlang (Kis-Kevély)",
+                    "Kevély-nyereg (Pihenőhely)",
                     "Nagy-Kevély csúcs (534m, Csúcshódítás)",
                     "Ezüst-hegyi kőfejtő & Teve-szikla",
-                    "Pomáz HÉV állomás (Visszaérkezés)"
+                    "Pilisborosjenő (Visszaérkezés)"
                 ],
                 pois: [
-                    {
-                        name: "Kő-hegyi Menedékház & Petőfi-kilátó",
-                        lat: 47.675833,
-                        lon: 19.018611,
-                        location: "Útvonal elején, ~4.5 km-nél",
-                        desc: "1933-ban épült a Czibulka János menedékház Pomáz felett. Petőfi Sándor 1845. szeptember 23-án megpihent a sziklás teraszon, ami ihletet adott a 'Visegrád táján' verséhez.",
-                        extra: "Tudtad? Közvetlen mellette áll a vulkáni breccsa kőzetből álló bizarr, gomba alakú 'Napóleon kalapja' szikla."
-                    },
                     {
                         name: "Mackó-barlang (Kis-Kevély)",
                         lat: 47.632640,
                         lon: 18.971420,
-                        location: "Csobánkai szakaszon, ~12.5 km-nél",
+                        location: "Csobánkai szakaszon, ~3.8 km-nél",
                         desc: "Világhírű jégkorszaki lelőhely. Óriási ásító medveszájhoz hasonlító bejárata van. A kutatások során barlangi medve, mamut és gyapjas orrszarvú csontok mellett neandervölgyi ősember eszközei kerültek elő.",
                         extra: "Tudtad? Fokozottan védett barlang, bejárata előtt kis turistapihenő van kialakítva padokkal."
+                    },
+                    {
+                        name: "Kevély-nyereg és a menedékház helye",
+                        lat: 47.626850,
+                        lon: 18.976753,
+                        location: "Kapaszkodás közben, ~5.2 km-nél",
+                        desc: "A Nagy- és Kis-Kevély közti nyeregben állt a híres Stromfeld Aurél menedékház, melyet a természetbarátok kézi erővel hordtak fel. A ház 1992-ben rejtélyes körülmények között teljesen leégett.",
+                        extra: "Tudtad? Ma egy kis esőbeálló és egy emléktábla jelzi a hajdani legendás menedékház helyét."
                     },
                     {
                         name: "Nagy-Kevély csúcs (534m)",
                         lat: 47.622870,
                         lon: 18.984690,
-                        location: "A csúcson, ~16.0 km-nél",
+                        location: "A csúcson, ~6.8 km-nél",
                         desc: "A Kevély-csoport legmagasabb pontja. Nevének eredete a szerb 'kovily' szóból származik, ami árvalányhajat jelent, mivel a szerb lakosság a hegy kopár, fátlan, árvalányhajjal borított oldalára utalt ezzel.",
                         extra: "Tudtad? Tiszta időben egyszerre látható innen a Gellért-hegy, a János-hegy, a Hármashatár-hegy és Dobogókő."
                     },
@@ -1374,35 +1387,27 @@
                         name: "Ezüst-hegyi kőfejtő",
                         lat: 47.611975,
                         lon: 19.004692,
-                        location: "A csúcs után, lefelé haladva, ~17.5 km-nél",
+                        location: "A csúcs után, lefelé haladva, ~8.5 km-nél",
                         desc: "Egykori dolomit- és homokkőbánya. Az elnevezés a kőzet napfényben ezüstösen csillogó baritkristályos felszínére utal. Itt található a Pilis leghosszabb barlangja, a 400 megnevezett Papp Ferenc-barlang.",
                         extra: "Tudtad? A bányaudvaron járva a 20 millió éves egykori Pannon-tenger cementesedett üledékén lépkedünk."
                     },
                     {
-                        name: "Teve-szikla",
+                        name: "Teve-szikla & Egri vár másolata",
                         lat: 47.612580,
                         lon: 18.978620,
-                        location: "Útvonal végén, ~21.5 km-nél",
-                        desc: "Mintegy 220 millió éves fődolomit szikla, amelyet 25-37 millió éve forró kovás oldatok jártak át, így kőkeménnyé és ellenállóvá vált. A puha részek koptak el, így alakult ki a teve alakú orom.",
-                        extra: "Tudtad? Az Egri csillagok film lőporraktárba vezető jeleneteinek egy részét ennél a sziklánál rögzítették."
-                    },
-                    {
-                        name: "Egri vár másolata",
-                        lat: 47.61844,
-                        lon: 18.97218,
-                        location: "Útvonal végén, ~22.5 km-nél",
-                        desc: "Várkonyi Zoltán rendező építtette 1968-ban az Egri csillagok film monumentalitásának bemutatására. A díszletvár részben forgatások kedvéért épült fel a statisztákat felvonultató csatákhoz.",
-                        extra: "Tudtad? A forgatások alatt a vár egy része ténylegesen leégett, de a felvételeket nem állították le."
+                        location: "Útvonal végén, ~11.5 km-nél",
+                        desc: "Mintegy 220 millió éves fődolomit szikla, amely forró kovás oldatok hatására vált kőkeménnyé. Mellette áll az Egri csillagok forgatására 1968-ban felépített díszletvár.",
+                        extra: "Tudtad? A film forgatása során a vár egy része ténylegesen leégett a lőporos ostromjelenetek felvételekor."
                     }
                 ],
                 quizzes: [
                     {
-                        q: "Melyik költőnk pihent meg 1845-ben a Kő-hegy teraszán?",
-                        a: ".rodnáSifeőteP"
+                        q: "Milyen jégkorszaki állatok leleteit találták a Mackó-barlangban?",
+                        a: ".tkotsoccsmedem ignalraB"
                     },
                     {
-                        q: "Hogyan nevezik a Kő-hegyi kilátó melletti vulkáni gomba-sziklát?",
-                        a: ".szikla aja-palaK noelópaN"
+                        q: "Honnan ered a Kevély név a legvalószínűbb elmélet szerint?",
+                        a: ".őljnelej tajahynálavra ta 'ylivok' brézs a lbőzséR"
                     }
                 ]
             },
@@ -1687,13 +1692,16 @@
 
         // Draw the route on Leaflet Map
         function drawLeafletMap(points, pois, isColor) {
+            currentPoints = points;
+            currentPois = pois;
+
             // Remove previous map instance if initialized
             if (map) {
                 map.remove();
                 map = null;
             }
 
-            // Create new Leaflet instance inside map-container
+            // Create new Leaflet instance inside map-container with fractional zoom
             map = L.map('map-container', {
                 zoomControl: false,
                 attributionControl: false,
@@ -1701,7 +1709,9 @@
                 dragging: false,
                 doubleClickZoom: false,
                 boxZoom: false,
-                touchZoom: false
+                touchZoom: false,
+                zoomSnap: 0.1,
+                zoomDelta: 0.1
             });
 
             // Base map tile layer (OSM)
@@ -1721,10 +1731,20 @@
                 opacity: 0.95
             }).addTo(map);
 
-            // Fit bounds with comfortable spacing
-            map.fitBounds(polyline.getBounds(), { padding: [15, 15] });
+            // Calculate comprehensive bounds including BOTH polyline and all POIs
+            currentBounds = L.latLngBounds(latlngs);
+            if (pois && pois.length > 0) {
+                pois.forEach(poi => {
+                    if (poi.lat && poi.lon) {
+                        currentBounds.extend([poi.lat, poi.lon]);
+                    }
+                });
+            }
 
-            // Place POI markers matching the numbers (1, 2, 3)
+            // Pad geographic bounds by 18% so there is ample breathing room on all sides
+            map.fitBounds(currentBounds.pad(0.18));
+
+            // Place POI markers matching the numbers (1, 2, 3...)
             pois.forEach((poi, index) => {
                 const markerBg = isColor ? '#bfff00' : '#0f172a';
                 const markerText = isColor ? '#04060a' : '#ffffff';
@@ -1738,6 +1758,16 @@
 
                 L.marker([poi.lat, poi.lon], { icon: numIcon }).addTo(map);
             });
+
+            // Delayed refit to guarantee layout settlement and perfect bounds
+            setTimeout(() => fitMapToTrack(), 80);
+            setTimeout(() => fitMapToTrack(), 300);
+        }
+
+        function fitMapToTrack() {
+            if (!map || !currentBounds) return;
+            map.invalidateSize();
+            map.fitBounds(currentBounds.pad(0.18));
         }
 
         // Draw the elevation profile chart on HTML5 Canvas
@@ -1882,10 +1912,31 @@
             });
         }
 
-        function printBook(e) {
-            e.preventDefault();
-            window.print();
+        function prepareForPrint() {
+            fitMapToTrack();
+            if (currentPoints.length > 0) {
+                const isColor = document.body.className.includes('theme-color');
+                drawElevationProfile(currentPoints, currentPois, isColor);
+            }
         }
+
+        function printBook(e) {
+            if (e) e.preventDefault();
+            prepareForPrint();
+            setTimeout(() => {
+                window.print();
+            }, 180);
+        }
+
+        window.addEventListener('resize', () => {
+            fitMapToTrack();
+            if (currentPoints.length > 0) {
+                const isColor = document.body.className.includes('theme-color');
+                drawElevationProfile(currentPoints, currentPois, isColor);
+            }
+        });
+
+        window.addEventListener('beforeprint', prepareForPrint);
     </script>
 </body>
 
