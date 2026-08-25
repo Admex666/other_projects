@@ -4,6 +4,15 @@ All notable changes to the VitaSteps challenge platform project are documented h
 
 ---
 
+## [2.1.0] - 2026-08-25
+### Fixed & Improved
+*   **Kalandkönyv Nyomtatási és Térképnézet Tökéletesítés (`kalandkonyv.html`):**
+    *   Kijavítottuk a nyomvonal és a POI-k levágódását: geográfiai kiterjesztést (`currentBounds.pad(0.18)`), egységes 280px-es konténermagasságot és `zoomSnap: 0.1` tört zoomot vezettünk be.
+    *   Megszüntettük a nyomtatási nézet végén megjelenő üres plusz oldalt (`page-break-after: avoid` az utolsó lapon).
+    *   A 6. oldalon elhelyeztünk egy közvetlen, kattintható hivatkozást a `/portal.html` oldalra.
+*   **Kreatív Szintű Napi Meta CSV Riport (`meta_kreativ_napi_riport.csv`):**
+    *   Frissítettük az exportáló szkriptet (`export_meta_creatives_csv.py`), és legeneráltuk a napi szintű kreatív riportot 2026. július 26-tól egészen a mai napig (2026. augusztus 25.), 140 részletes sorral, egyedi vásárlás-hozzárendeléssel, CPA és ROAS értékekkel.
+
 ## [2.0.0] - 2026-08-06
 ### Added
 *   **Microsoft Clarity Heatmap & Session Recording (`xx85zg2g25`):**
