@@ -9,89 +9,127 @@ interface GeolocationState {
   permissionGranted: boolean;
 }
 
-export function useGeolocation(options: PositionOptions = { enableHighAccuracy: true, maximumAge: 5000, timeout: 10000 }) {
-  const [geoState, setGeoState] = useState<GeolocationState>({
-    coords: null,
-    accuracy: null,
-    error: null,
-    isLoading: true,
-    permissionGranted: false,
-  });
+// Global in-memory cache so coords persist across stages with ZERO delay
+let globalGeoState: GeolocationState = {
+  coords: null,
+  accuracy: null,
+  error: null,
+  isLoading: true,
+  permissionGranted: false,
+};
+
+const listeners = new Set<(state: GeolocationState) => void>();
+
+function updateGlobalGeo(next: Partial<GeolocationState>) {
+  globalGeoState = { ...globalGeoState, ...next };
+  listeners.forEach((listener) => listener(globalGeoState));
+}
+
+let isGlobalWatchInitialized = false;
+
+function initGlobalWatch() {
+  if (isGlobalWatchInitialized || typeof window === 'undefined' || !('geolocation' in navigator)) return;
+  isGlobalWatchInitialized = true;
+
+  const handleSuccess = (position: GeolocationPosition) => {
+    updateGlobalGeo({
+      coords: {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+      },
+      accuracy: position.coords.accuracy,
+      error: null,
+      isLoading: false,
+      permissionGranted: true,
+    });
+  };
+
+  // Immediate fast fetch
+  navigator.geolocation.getCurrentPosition(
+    handleSuccess,
+    () => {
+      // Fallback
+      navigator.geolocation.getCurrentPosition(handleSuccess, () => {}, {
+        enableHighAccuracy: false,
+        timeout: 10000,
+      });
+    },
+    { enableHighAccuracy: true, timeout: 5000, maximumAge: 30000 }
+  );
+
+  // Persistent continuous watch
+  navigator.geolocation.watchPosition(
+    handleSuccess,
+    () => {},
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 2000 }
+  );
+}
+
+// Auto-start watcher on load
+if (typeof window !== 'undefined') {
+  initGlobalWatch();
+}
+
+export function useGeolocation() {
+  const [geoState, setGeoState] = useState<GeolocationState>(() => globalGeoState);
+
+  useEffect(() => {
+    listeners.add(setGeoState);
+    if (!globalGeoState.coords) {
+      initGlobalWatch();
+    }
+    return () => {
+      listeners.delete(setGeoState);
+    };
+  }, []);
 
   const requestLocation = useCallback(() => {
     if (!('geolocation' in navigator)) {
-      setGeoState((prev) => ({
-        ...prev,
+      updateGlobalGeo({
         isLoading: false,
-        error: 'A böngésződ nem támogatja a helymeghatározást.',
-      }));
+        error: 'A böngésződ nem támogatja a GPS helymeghatározást.',
+      });
       return;
     }
 
-    setGeoState((prev) => ({ ...prev, isLoading: true, error: null }));
+    if (!globalGeoState.coords) {
+      updateGlobalGeo({ isLoading: true, error: null });
+    }
+
+    const handleSuccess = (position: GeolocationPosition) => {
+      updateGlobalGeo({
+        coords: {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        },
+        accuracy: position.coords.accuracy,
+        error: null,
+        isLoading: false,
+        permissionGranted: true,
+      });
+    };
 
     navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setGeoState({
-          coords: {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          },
-          accuracy: position.coords.accuracy,
-          error: null,
-          isLoading: false,
-          permissionGranted: true,
-        });
-      },
+      handleSuccess,
       (err) => {
-        setGeoState({
-          coords: null,
-          accuracy: null,
-          error: err.message || 'Nem sikerült lekérni a helyzetet.',
-          isLoading: false,
-          permissionGranted: false,
-        });
-      },
-      options
-    );
-  }, [options]);
-
-  useEffect(() => {
-    if (!('geolocation' in navigator)) {
-      setGeoState((prev) => ({
-        ...prev,
-        isLoading: false,
-        error: 'A böngésződ nem támogatja a helymeghatározást.',
-      }));
-      return;
-    }
-
-    const watchId = navigator.geolocation.watchPosition(
-      (position) => {
-        setGeoState({
-          coords: {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
+        navigator.geolocation.getCurrentPosition(
+          handleSuccess,
+          (err2) => {
+            let msg = 'Nem sikerült lekérni a valós GPS pozíciót.';
+            if (err2.code === err2.PERMISSION_DENIED || err.code === err.PERMISSION_DENIED) {
+              msg = 'A böngészőben le van tiltva a helyhozzáférés. Kattints a címsorban lévő lakat ikonra és engedélyezd!';
+            }
+            updateGlobalGeo({
+              error: msg,
+              isLoading: false,
+              permissionGranted: false,
+            });
           },
-          accuracy: position.coords.accuracy,
-          error: null,
-          isLoading: false,
-          permissionGranted: true,
-        });
+          { enableHighAccuracy: false, timeout: 8000, maximumAge: 30000 }
+        );
       },
-      (err) => {
-        setGeoState((prev) => ({
-          ...prev,
-          isLoading: false,
-          error: err.message,
-        }));
-      },
-      options
+      { enableHighAccuracy: true, timeout: 6000, maximumAge: 10000 }
     );
-
-    return () => {
-      navigator.geolocation.clearWatch(watchId);
-    };
   }, []);
 
   return { ...geoState, requestLocation };

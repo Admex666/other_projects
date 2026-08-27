@@ -8,9 +8,9 @@ export const Stage1Intro: React.FC = () => {
   const { intro } = config.stages;
 
   return (
-    <div className="flex flex-col min-h-[78vh] justify-between px-2 py-4 max-w-md mx-auto space-y-6">
+    <div className="flex flex-col px-1 py-1 max-w-md mx-auto space-y-3">
       {/* Title */}
-      <div className="text-left space-y-2">
+      <div className="text-left space-y-1">
         <span className="text-xs font-mono font-bold text-amber-400 uppercase tracking-widest">
           Esti Forgatókönyv
         </span>

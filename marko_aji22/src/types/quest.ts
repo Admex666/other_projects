@@ -1,4 +1,4 @@
-export type StageId = 'teaser' | 'intro' | 'bowling' | 'food' | 'bar' | 'finale';
+export type StageId = 'teaser' | 'intro' | 'billiard' | 'food' | 'bar1' | 'bar2' | 'bar3' | 'finale';
 
 export type ProximityState = 'freezing' | 'cold' | 'warm' | 'hot' | 'burning';
 
@@ -15,19 +15,26 @@ export interface FoodOption {
   badge: string;
   image: string;
   venueName: string;
-  venueAddress: string;
+  venueAddress?: string;
   mapsUrl: string;
-  targetLocation: Coordinates; // PLACEHOLDER coordinates
+  targetLocation: Coordinates;
 }
 
 export interface BarOption {
   id: string;
   mysteryPhrase: string;
-  note: string;
+  note?: string;
   venueName: string;
-  venueAddress: string;
-  mapsUrl: string;
-  targetLocation: Coordinates; // DUMMY coordinates [lat, lng]
+  venueAddress?: string;
+  mapsUrl?: string;
+  targetLocation: Coordinates; // coordinates [lat, lng]
+}
+
+export interface BarStageConfig {
+  id: 'bar1' | 'bar2' | 'bar3';
+  title: string;
+  riddle: string;
+  options: BarOption[];
 }
 
 export interface QuestConfig {
@@ -55,16 +62,13 @@ export interface QuestConfig {
       rules: string[];
       inventory: string[];
     };
-    bowling: {
+    billiard: {
       title: string;
       venueName: string;
-      venueAddress: string;
+      venueAddress?: string;
       meetingTime: string;
+      targetLocation: Coordinates;
       description: string;
-      challenge: {
-        goalText: string;
-        targetStrikes: number;
-      };
       faceScan: {
         title: string;
         subtitle: string;
@@ -79,16 +83,14 @@ export interface QuestConfig {
       introText: string;
       options: FoodOption[];
     };
-    bar: {
-      title: string;
-      riddle: string;
-      options: BarOption[];
+    bars: {
       thresholdsMeters: {
         burning: number;
         hot: number;
         warm: number;
         cold: number;
       };
+      stages: BarStageConfig[];
     };
     finale: {
       title: string;
@@ -107,10 +109,9 @@ export interface QuestState {
   isUnlocked: boolean;
   currentStageId: StageId;
   stageHistory: StageId[];
-  isBowlingUnlockedByScan: boolean;
+  isBilliardUnlockedByScan: boolean;
   selectedFoodId: string | null;
-  selectedBarId: string | null;
-  bowlingStrikesCount: number;
+  selectedBarIds: Record<string, string>; // e.g. { bar1: 'bar1_opt1', bar2: 'bar2_opt1', ... }
   unlockedBarClueCount: number;
   soundEnabled: boolean;
   devModeEnabled: boolean;

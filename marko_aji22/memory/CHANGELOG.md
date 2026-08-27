@@ -1,5 +1,102 @@
 # Changelog
 
+## [1.9.11] - 2026-08-27 - Nulla Késleltetésű Globális GPS Gyorsítótár
+- Bevezettünk egy globális memóriabeli GPS cache-t és folyamatos háttérfigyelőt (`singleton watchPosition`):
+  - Amint az alkalmazás az első kéréskor megkapja a valós GPS pozíciót, a koordináták azonnal mentésre kerülnek a globális állapotba.
+  - A 2. és 3. kocsmaállomásra lépéskor **0 másodperc késleltetéssel**, azonnal az ismert valós koordinátákból számolja a távolságot anélkül, hogy újra lekérdezési várakozásba vagy töltőképernyőbe kezdene!
+
+## [1.9.10] - 2026-08-27 - Kettős GPS Fallback & Asztali PC Tesztelés Támogatás
+- **Kettős GPS Lekérés:** Ha a böngésző asztali gépen elakad a precíz hardveres GPS lekérésén (mivel a PC-kben nincs GPS chip), a rendszer automatikusan átvált normál Wi-Fi/IP alapú helymeghatározásra.
+- **Asztali PC Tesztelés Gomb:** Közvetlen egykattintásos tesztelési lehetőség a kártyán, ami azonnal beállítja a Kálvin téri pozíciót a Hideg-Meleg funkció kipróbálásához.
+- **Mobil optimalizáció:** Mobiltelefonon nyitva azonnal a telefon valós beépített GPS-ét használja.
+
+## [1.9.9] - 2026-08-27 - 3 Kocsma Állomásra Zárás & Valós GPS Helyadat Kérés
+- **Valós GPS integráció:**
+  - A kocsmatúra keresője mostantól aktívan kéri és figyeli a valós műholdas GPS pozíciót (`HighAccuracy: true`, élő pontosság kijelzés).
+  - Ha a böngészőben le van tiltva a helyhozzáférés, egy kiemelt gomb segítségével azonnal felugrik az engedélykérés.
+- **3 Kocsma Állomás (6. állomás / 4. kocsma eltávolítva):**
+  - A küldetés sorrendje: `Teaser` ➔ `Intro` ➔ `1. Állomás: Biliárd` ➔ `2. Állomás: Vacsora` ➔ `3. Állomás: 1. Kocsma` ➔ `4. Állomás: 2. Kocsma` ➔ `5. Állomás: 3. Kocsma` ➔ `6. Zárás: Grand Finale`.
+
+## [1.9.8] - 2026-08-27 - PASTA. Opció Eltávolítása a Vacsora Listából
+- Eltávolítottuk a `PASTA.` tésztázót a 2. állomás választható opciói közül. A 4 aktív lehetőség: **`Kálvin Kebab`**, **`Wrapido`**, **`Heybao`**, **`Burger King`**.
+
+## [1.9.7] - 2026-08-27 - Kép Előtöltés & Hang Szinkronizálás az 1. Állomásnál
+- Beépítettünk egy kép-előtöltőt (`Image` preload) az arcfelismeréshez:
+  - Az alkalmazás betöltésekor és a scan indításakor a böngésző a háttérben azonnal letölti és memóriában tartja a képet.
+  - A progress bar lefutásakor a kód megvárja, hogy a kép **100%-osan, fixen betöltsön**, és csak a kép sikeres renderelésekor indul el a hang és a leleplezés.
+
+## [1.9.6] - 2026-08-27 - Felesleges Térközök Megszüntetése & Kocsma Loop Újraindítási Javítás
+- **Felső térközök javítása:** Eltávolítottuk a képernyők közötti felesleges margókat és `justify-between` elrendezést. A felső fejlécek és a kártyák mostantól kompakt, természetes távolságban követik egymást.
+- **Kocsma Loop Javítás:**
+  - Biztosítottuk, hogy a következő kocsmaállomásra lépéskor (`bar1` ➔ `bar2` ➔ `bar3` ➔ `bar4`) a képernyő **mindig tiszta Mystery Választással induljon**.
+  - A loop lépései:
+    1. **Mystery választás:** 3 opció közül választás ➔ `KOCSMA KIVÁLASZTÁSA & KERESÉS INDÍTÁSA`
+    2. **Hideg-Meleg / Radar:** Követitek a távolságot ➔ 30m alá érve VAGY `MEGÉRKEZTÜNK! (CHECK-IN)` megnyomásakor
+    3. **Helyszín Felfedve:** Csak a kocsma neve ➔ rányom a `KÖVETKEZŐ ITAL ➔` gombra
+    4. **Új Mystery Választás:** Azonnal a következő állomás 3 jelige-választójával nyit!
+
+## [1.9.5] - 2026-08-27 - Pontos Kocsma Koordináták & Letisztult Felfedés (Csak Név)
+- **1. Kocsma lehetőségek rögzítve:**
+  - *„Imádom Csehországot”* ➔ **Prága Pub** (`47.489690, 19.063920`)
+  - *„Imádom Írországot”* ➔ **Harat’s Pub Budapest** (`47.489073, 19.061649`)
+  - *„Csapról kérném”* ➔ **MONYO Tap House** (`47.488715, 19.061126`)
+- **2. Kocsma lehetőségek rögzítve:**
+  - *„Irány bölcsészkedni”* ➔ **Zuzmó** (`47.487275, 19.070044`)
+  - *„Choose your character”* ➔ **BarCraft Corvin** (`47.484505, 19.069262`)
+  - *„az xG-kért bármit megteszek”* ➔ **A Grund** (`47.485192, 19.076712`)
+- **3. Kocsma lehetőségek rögzítve:**
+  - *„nyugalom a káoszban”* ➔ **Hétker pub** (`47.497731, 19.069439`)
+  - *„irány a romok közé”* ➔ **Füge Udvar** (`47.498438, 19.066556`)
+  - *„bort iszik és vizet prédikál”* ➔ **Humbák Borkápolna** (`47.500232, 19.069864`)
+- **Felfedési képernyő tisztítása:** Eltávolítottuk a címet és a Google Maps gombot; megérkezéskor kizárólag a kocsma neve látható tisztán, az alján lévő `KÖVETKEZŐ ITAL ➔` gombbal!
+
+## [1.9.4] - 2026-08-27 - Kocsma Loop: Mystery ➔ Radar ➔ Helyszín Felfedve ➔ Következő Ital
+- **„Keleti felé” eltávolítása:** Minden szövegből és címből kivettük a „Keleti felé” megfogalmazást.
+- **Pontos Kocsmatúra Loop:**
+  1. **Mystery választás:** 3 rejtélyes jelige közül választás.
+  2. **Hideg-Meleg / Radar:** Követik a távolságot és a hőmérsékletet (30 méteren belülre érve vagy a `MEGÉRKEZTÜNK! (CHECK-IN)` gombra nyomva lelepleződik a hely).
+  3. **Helyszín Felfedve:** Ünneplő képernyő, zene, konfetti, pontos kocsmanév és leírás.
+  4. **`KÖVETKEZŐ ITAL ➔` gomb:** Rákattintva automatikusan elindul a következő kocsmaállomás újra a Mystery választással!
+
+## [1.9.3] - 2026-08-27 - Vacsora Radar Eltávolítása & „Jó utat és jó étvágyat” Képernyő
+- A 2. állomásnál eltávolítottuk a radart és az iránytűt.
+- A vacsora kiválasztása után egy barátságos **„Jó utat és jó étvágyat!”** képernyő jelenik meg a választott hellyel, alján pedig az **`A HASAK MÁR MEGTELTEK`** továbbvezető gombbal!
+
+## [1.9.2] - 2026-08-27 - Vacsora Kártyák Letisztítása
+- Eltávolítottuk a felesleges badge-eket és kategória címkéket (pl. „MEXIKÓI”, „BK GRILL”, „FAVORIT”) a vacsora választó kártyákról, így csak a tiszta név, leírás és ikon látható.
+
+## [1.9.1] - 2026-08-27 - Vacsora Opciók Címeinek Tisztítása
+- A 2. állomásnál eltávolítottuk az idézőjeles és szlogenes feliratokat a címekből; mostantól tisztán az éttermek nevei szerepelnek: **`Kálvin Kebab`**, **`Wrapido`**, **`Heybao`**, **`PASTA.`**, **`Burger King`**.
+
+## [1.9.0] - 2026-08-27 - All-inn Pub & 4 Kocsma Állomás a Keleti Felé
+- **1. Állomás (Biliárd - All-inn Pub):**
+  - Beállítottuk a helyszín nevét: **`All-inn Pub`**.
+  - Rögzítettük a pontos koordinátákat: `lat: 47.4892848, lng: 19.0628989`.
+  - A címet teljesen elrejtettük a felületről.
+- **4 Kocsma Állomás (Kálvintól a Keleti felé):**
+  - Kibővítettük a küldetést **4 egymást követő kocsmaállomásra** (`bar1`, `bar2`, `bar3`, `bar4`).
+  - Mind a 4 állomáson **3 különálló rejtélyes választási lehetőség** (placeholder névvel, koordinátákkal és jeligékkel) érhető el.
+  - Mind a 4 állomáson a Hideg-Meleg termikus navigáció vezeti el a csapatot a kiválasztott célponthoz!
+
+## [1.8.0] - 2026-08-27 - Teljes Biliárd Átállás & Számláló Eltávolítása
+- **Biliárd refactor a teljes kódbázisban:**
+  - Minden bowling hivatkozást, típust és szöveget átírtunk **biliárdra** (`billiard`).
+  - Eltávolítottuk a beütött golyók / partik számlálóját a biliárd állomásról; mostantól egy letisztult meccs- és helyszínleírást kapnak, a következő állomásra vezető gombbal.
+- **Tiszta építés:** Felesleges korábbi komponensek eltávolítva, production build 100%-ban sikeres.
+
+## [1.7.0] - 2026-08-27 - Kálvin Téri Kezdés: Biliárd Showdown & Új Vacsora Opciók
+- **1. Állomás (Biliárd):**
+  - Átkereteztük a kezdő állomást: Kálvin téri **Biliárd Showdown** (golyóbelökések / partigyőzelmek számlálóval, a bowling helyett).
+  - Az arcfelismerés utáni leleplezés mostantól az azonnali biliárdozást írja elő.
+- **2. Állomás (Kálvin Téri Gasztro Stratégia):**
+  - Fő favoritként kiemelve: **Kálvin Kebab** (A Királyi Választás).
+  - Mellette bekerültek a kért alternatívák a pontos megjelenő szövegekkel és valós Kálvin környéki koordinátákkal:
+    1. **Kálvin Kebab**: *„A Királyi Választás”*
+    2. **Wrapido mexikói étterem**: *„latin-amerika itt kezdődik”*
+    3. **Heybao kínai étterem**: *„az ősi kínai eledel”*
+    4. **PASTA. tésztázó**: *„Itáliától Thaiföldig”*
+    5. **Burger King**: *„Junk food a grillről”*
+
 ## [1.6.0] - 2026-08-24 - Perzisztencia, Visszalépés & 5 Mystery Kocsma Jellegzetesség
 - **1. Állomás (Bowling):** Eltávolítottuk a Google Maps útvonaltervező linket és az „itt találkozunk” szövegeket.
 - **Állapotmentés (State persistence):** Minden feloldás (arcfelismerés állapota, pontszámok, étel és kocsma választások) a `localStorage`-ban tárolódik, így oldalfrissítéskor sem vész el semmi.

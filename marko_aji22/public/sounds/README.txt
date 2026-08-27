@@ -4,7 +4,7 @@ HANGEFFEKTEK MAPPA (Custom Audio SFX)
 Ide másolhatod be az egyedi MP3 hangeffektjeidet:
 
 1. `public/sounds/omg-bruh-oh-hell-nah.mp3`:
-   - Lejátszódik a Bowlingnál, amikor a kamu "Arcfelismerés" befejeződik és felugrik a vicces kép!
+   - Lejátszódik a Biliárdnál, amikor a kamu "Arcfelismerés" befejeződik és felugrik a vicces kép!
 
 2. `public/sounds/arrival.mp3`:
    - Lejátszódik, amikor 30 méteren belülre érkeztek az étteremhez vagy a kocsmához!

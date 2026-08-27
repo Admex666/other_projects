@@ -13,14 +13,13 @@ export const Stage5Finale: React.FC = () => {
   }, []);
 
   const selectedFood = config.stages.food.options.find((o) => o.id === state.selectedFoodId);
-  const selectedBar = config.stages.bar.options.find((o) => o.id === state.selectedBarId);
 
   const handleShare = async () => {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: `Markó level 22 quest teljesítve!`,
-          text: `Sikeresen végigcsináltad az estét: Bowling, Vacsora és Kocsma pipa! 🎳🍔🍻🎉`,
+          title: `Markó 22. Szülinapi Quest Teljesítve!`,
+          text: `Sikeresen végigcsináltuk a szülinapi estét: Biliárd, Vacsora és 4 Kocsma pipa! 🎱🍔🍻🎉`,
           url: window.location.href,
         });
       } catch {
@@ -30,9 +29,9 @@ export const Stage5Finale: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-[78vh] justify-between px-2 py-4 max-w-md mx-auto space-y-6">
+    <div className="flex flex-col px-1 py-1 max-w-md mx-auto space-y-3">
       {/* Header Banner */}
-      <div className="text-left space-y-2">
+      <div className="text-left space-y-1">
         <span className="text-xs font-mono font-bold text-amber-400 uppercase tracking-widest">
           Küldetés Teljesítve
         </span>
@@ -57,9 +56,9 @@ export const Stage5Finale: React.FC = () => {
           </h2>
 
           <div className="flex items-center justify-between p-2.5 rounded-lg bg-[#161F32] text-xs">
-            <span className="text-slate-400">1. Bowling:</span>
+            <span className="text-slate-400">1. Biliárd:</span>
             <span className="font-bold text-white flex items-center gap-1">
-              <Check className="w-3.5 h-3.5 text-amber-400" /> {state.bowlingStrikesCount} Strike / Spare
+              <Check className="w-3.5 h-3.5 text-amber-400" /> All-inn Pub (Kálvin)
             </span>
           </div>
 
@@ -70,12 +69,18 @@ export const Stage5Finale: React.FC = () => {
             </span>
           </div>
 
-          <div className="flex items-center justify-between p-2.5 rounded-lg bg-[#161F32] text-xs">
-            <span className="text-slate-400">3. Titkos kocsma:</span>
-            <span className="font-bold text-white flex items-center gap-1">
-              <Check className="w-3.5 h-3.5 text-amber-400" /> {selectedBar ? selectedBar.venueName : 'Megtalálva'}
-            </span>
-          </div>
+          {config.stages.bars.stages.map((stg, idx) => {
+            const chosenOptId = state.selectedBarIds[stg.id];
+            const chosenOpt = stg.options.find((o) => o.id === chosenOptId);
+            return (
+              <div key={stg.id} className="flex items-center justify-between p-2.5 rounded-lg bg-[#161F32] text-xs">
+                <span className="text-slate-400">{idx + 3}. Kocsma:</span>
+                <span className="font-bold text-white flex items-center gap-1">
+                  <Check className="w-3.5 h-3.5 text-amber-400" /> {chosenOpt ? chosenOpt.venueName : 'Kocsma felkeresve'}
+                </span>
+              </div>
+            );
+          })}
         </div>
 
         {/* Medals List */}

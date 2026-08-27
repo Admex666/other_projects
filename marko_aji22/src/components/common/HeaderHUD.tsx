@@ -6,9 +6,11 @@ import { Wrench, Check, Lock, HelpCircle, ChevronLeft } from 'lucide-react';
 const STAGES: { id: StageId; label: string; icon: string }[] = [
   { id: 'teaser', label: 'Zárolva', icon: '🔒' },
   { id: 'intro', label: 'Indulás', icon: '📋' },
-  { id: 'bowling', label: '1. Állomás', icon: '❓' },
+  { id: 'billiard', label: '1. Állomás', icon: '❓' },
   { id: 'food', label: '2. Állomás', icon: '❓' },
-  { id: 'bar', label: '3. Állomás', icon: '❓' },
+  { id: 'bar1', label: '3. Állomás', icon: '❓' },
+  { id: 'bar2', label: '4. Állomás', icon: '❓' },
+  { id: 'bar3', label: '5. Állomás', icon: '❓' },
   { id: 'finale', label: 'Zárás', icon: '⭐' },
 ];
 

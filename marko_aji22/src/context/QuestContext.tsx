@@ -13,9 +13,8 @@ interface QuestContextType {
   goToPreviousStage: () => void;
   jumpToStage: (stageId: StageId) => void;
   selectFoodOption: (foodId: string) => void;
-  selectBarOption: (barId: string) => void;
-  setBowlingScanCompleted: (completed: boolean) => void;
-  incrementBowlingStrike: () => void;
+  selectBarOption: (stageId: string, barOptionId: string) => void;
+  setBilliardScanCompleted: (completed: boolean) => void;
   unlockBarClue: () => void;
   toggleDevMode: () => void;
   setSimulatedDistance: (distance: number | null) => void;
@@ -25,16 +24,24 @@ interface QuestContextType {
 
 const STORAGE_KEY = 'marko_quest_v1';
 
-const STAGE_ORDER: StageId[] = ['teaser', 'intro', 'bowling', 'food', 'bar', 'finale'];
+const STAGE_ORDER: StageId[] = [
+  'teaser',
+  'intro',
+  'billiard',
+  'food',
+  'bar1',
+  'bar2',
+  'bar3',
+  'finale'
+];
 
 const initialState: QuestState = {
   isUnlocked: false,
   currentStageId: 'teaser',
   stageHistory: ['teaser'],
-  isBowlingUnlockedByScan: false,
+  isBilliardUnlockedByScan: false,
   selectedFoodId: null,
-  selectedBarId: null,
-  bowlingStrikesCount: 0,
+  selectedBarIds: {},
   unlockedBarClueCount: 0,
   soundEnabled: true,
   devModeEnabled: false,
@@ -64,7 +71,7 @@ export const QuestProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     } catch {
       // Ignored
     }
-    sound.enabled = true; // Sound is always enabled, cannot be muted
+    sound.enabled = true;
   }, [state]);
 
   const unlockWithCode = (code: string): boolean => {
@@ -108,7 +115,6 @@ export const QuestProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const goToPreviousStage = () => {
     const currentIndex = STAGE_ORDER.indexOf(state.currentStageId);
-    // Can go back to previous stage (as long as it's not before intro)
     if (currentIndex > 1) {
       const prevStage = STAGE_ORDER[currentIndex - 1];
       sound.playClick();
@@ -140,28 +146,22 @@ export const QuestProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }));
   };
 
-  const selectBarOption = (barId: string) => {
+  const selectBarOption = (stageId: string, barOptionId: string) => {
     sound.playClick();
     triggerHaptic('medium');
     setState((prev) => ({
       ...prev,
-      selectedBarId: barId,
+      selectedBarIds: {
+        ...prev.selectedBarIds,
+        [stageId]: barOptionId,
+      },
     }));
   };
 
-  const setBowlingScanCompleted = (completed: boolean) => {
+  const setBilliardScanCompleted = (completed: boolean) => {
     setState((prev) => ({
       ...prev,
-      isBowlingUnlockedByScan: completed,
-    }));
-  };
-
-  const incrementBowlingStrike = () => {
-    sound.playUnlock();
-    triggerHaptic('success');
-    setState((prev) => ({
-      ...prev,
-      bowlingStrikesCount: prev.bowlingStrikesCount + 1,
+      isBilliardUnlockedByScan: completed,
     }));
   };
 
@@ -204,8 +204,7 @@ export const QuestProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         jumpToStage,
         selectFoodOption,
         selectBarOption,
-        setBowlingScanCompleted,
-        incrementBowlingStrike,
+        setBilliardScanCompleted,
         unlockBarClue,
         toggleDevMode,
         setSimulatedDistance,

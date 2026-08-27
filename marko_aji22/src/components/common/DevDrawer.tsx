@@ -7,10 +7,12 @@ import { Button } from './Button';
 const ALL_STAGES: { id: StageId; name: string }[] = [
   { id: 'teaser', name: '0. Teaser / Locked' },
   { id: 'intro', name: '1. Briefing & Rules' },
-  { id: 'bowling', name: '2. Bowling Stage' },
+  { id: 'billiard', name: '2. Biliárd Stage' },
   { id: 'food', name: '3. Étterem Radar' },
-  { id: 'bar', name: '4. Kocsma Hideg-Meleg' },
-  { id: 'finale', name: '5. Grand Finale' },
+  { id: 'bar1', name: '4. Kocsma #1' },
+  { id: 'bar2', name: '5. Kocsma #2' },
+  { id: 'bar3', name: '6. Kocsma #3' },
+  { id: 'finale', name: '7. Grand Finale' },
 ];
 
 export const DevDrawer: React.FC = () => {
@@ -79,7 +81,7 @@ export const DevDrawer: React.FC = () => {
         </div>
 
         {/* GPS Distance Simulation (for Food & Bar Quests) */}
-        {(state.currentStageId === 'food' || state.currentStageId === 'bar') && (
+        {(state.currentStageId === 'food' || state.currentStageId.startsWith('bar')) && (
           <div className="bg-slate-900/90 rounded-2xl p-3 border border-slate-800 space-y-3">
             <div className="flex items-center justify-between">
               <label className="text-xs font-bold text-slate-300 flex items-center gap-1.5">

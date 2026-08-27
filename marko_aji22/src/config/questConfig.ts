@@ -26,16 +26,16 @@ export const defaultQuestConfig: QuestConfig = {
   stages: {
     teaser: {
       title: 'Születésnapi Este Zárolva',
-      lockedMessage: 'Isten éltessen Markó! A mai program zárolva van. A feloldó kódot a találkozáskor kapod meg Ádámtól.',
-      hint: 'Kérd el a 4 számjegyű kódot Ádámtól!',
+      lockedMessage: 'Isten éltessen Lukács! A mai program zárolva van az indulásig. A feloldó kódot a találkozáskor kapod meg.',
+      hint: 'Kérd el a 4 számjegyű kódot Ádámtól az ajándék átadásakor!',
     },
 
     intro: {
-      title: 'Isten éltessen 22. születésnapodon!',
+      title: 'Isten éltessen 22. szülinapodon!',
       briefing: [
-        'Ma egy cseppet csapdába csaltunk, ugyanis nem hagyományos kocsmázás vár rád.',
-        'Ahhoz, hogy eljuss a végső célhoz, meg kell csinálnod a yearly questjeidet.',
-        'Minden állomáson Ádám állja a számlát, neked csak választanod és vezetned a csapatot.'
+        'A mai este egy kisebb quest sorozatot raktunk össze neked.',
+        'Minden állomáson Ádám állja a számládat, neked csak választanod és vezetned kell a csapatot.',
+        'Készülj lélekben az állomasokra!'
       ],
       rules: [
         'Markó pénztárcája ma este pihen.',
@@ -43,24 +43,23 @@ export const defaultQuestConfig: QuestConfig = {
         'Jóisten a mennybe, emide menj be!'
       ],
       inventory: [
-        '🎳 Bowling pálya & versenyszellem',
-        '🍔 Választott szülinapi vacsora',
-        '🍻 Titkos kocsma hideg-meleg kereső',
+        '🎱 Biliárd asztal & dákópárbaj',
+        '🥙 Születésnapi vacsora választás',
+        '🍻 3 Kocsma hideg-meleg kereső',
         '👥 A legjobb baráti társaság'
       ]
     },
 
-    // 1. ÁLLOMÁS: BOWLING (Fix program, térkép és "itt találkozunk" nélkül)
-    bowling: {
-      title: '1. Állomás: Bowling Showdown',
-      venueName: 'Strike Bowling Club [PLACEHOLDER]',
-      venueAddress: '1117 Budapest, Október huszonharmadika u. 8-10. [PLACEHOLDER]',
-      meetingTime: '18:00 [PLACEHOLDER]',
-      description: 'Gurítsunk minél több strike-ot a 22. születésnap méltó megünneplésére!',
-      challenge: {
-        goalText: 'Gyűjts össze legalább 3 Strike-ot vagy Spare-t a meccs alatt!',
-        targetStrikes: 3
+    // 1. ÁLLOMÁS: BILIÁRD SHOWDOWN (All-inn Pub, Kálvin tér, cím nélkül)
+    billiard: {
+      title: '1. Állomás: Biliárd',
+      venueName: 'All-inn Pub',
+      meetingTime: '18:30',
+      targetLocation: {
+        lat: 47.4892848,
+        lng: 19.0628989,
       },
+      description: 'Kezdjük az estét egy jó öreg biliárd partival a 22. születésnap méltó megünneplésére!',
       // 🎭 VICCES ARCFELISMERÉS
       faceScan: {
         title: 'BIOMETRIKUS AZONOSÍTÁS',
@@ -68,176 +67,194 @@ export const defaultQuestConfig: QuestConfig = {
         imagePath: '/images/marko_funny.jpg',
         soundPath: '/sounds/omg-bruh-oh-hell-nah.mp3',
         identifiedName: 'MARKÓ (22 ÉVES GYANÚSÍTOTT)',
-        caption: '⚠️ FIGYELEM: Az arcfelismerő Markó későbbi állapotát ismerte fel! Azonnali bowlingozásra lettél kötelezve.'
+        caption: '⚠️ FIGYELEM: Az arcfelismerő Markó későbbi állapotát ismerte fel! Azonnali biliárdozásra lettél kötelezve.'
       }
     },
 
-    // 2. ÁLLOMÁS: BOWLING UTÁNI TÁPLÁLKOZÁSI STRATÉGIA
+    // 2. ÁLLOMÁS: BILIÁRD UTÁNI TÁPLÁLKOZÁSI STRATÉGIA (Kálvin tér gasztro)
     food: {
-      title: 'BOWLING UTÁNI TÁPLÁLKOZÁSI STRATÉGIA',
-      introText: 'Sportolás után szükséges a megfelelő (vagy kevésbé megfelelő) táplálkozás. Tiéd a választás lehetősége.',
+      title: 'BILIÁRD UTÁNI TÁPLÁLKOZÁSI STRATÉGIA',
+      introText: 'Sportolás után szükséges a megfelelő (vagy kevésbé megfelelő) táplálkozás. A Kálvin Kebab az örök favorit, de van itt még pár komoly versenyző a Kálvin téren:',
       options: [
         {
-          id: 'strategy_1',
-          title: '1 — Felelős döntés',
-          category: 'Könnyű & Egészséges',
-          description: 'Friss salátatál, grillezett csirkemell, semmi zsíros túlzás. A tested holnap megköszöni.',
-          badge: '🥗 FELELŐS',
-          image: '🥗',
-          venueName: 'Fresh & Fit Bistro [PLACEHOLDER]',
-          venueAddress: '1117 Budapest, Október 23. u. [PLACEHOLDER]',
-          mapsUrl: 'https://maps.google.com/?q=Fresh+Fit+Budapest',
+          id: 'food_kebab',
+          title: 'Kálvin Kebab',
+          category: 'A Verhetetlen Favorit',
+          description: 'A legendás Kálvin Kebab: szaftos hús, ropogós zöldségek, tökéletes szószok. Nem vitás, a szív erre vágyik (no nem a zsírok miatt).',
+          badge: '🥙 FAVORIT',
+          image: '🥙',
+          venueName: 'Kálvin Kebab',
+          venueAddress: '1053 Budapest, Kálvin tér 2.',
+          mapsUrl: 'https://maps.google.com/?q=Kalvin+Kebab+Budapest',
           targetLocation: {
-            lat: 47.4765, // PLACEHOLDER koordináta
-            lng: 19.0520,
+            lat: 47.4896,
+            lng: 19.0592,
           }
         },
         {
-          id: 'strategy_2',
-          title: '2 — Normális ember',
-          category: 'Tartalmas & Finom',
-          description: 'Gőzölgő ázsiai ramen vagy egy jó tésztaétel. Nem éhezel, de nem is dőlsz ki tőle.',
-          badge: '🍜 NORMÁLIS',
-          image: '🍜',
-          venueName: 'Ramen & Noodle Bar [PLACEHOLDER]',
-          venueAddress: '1092 Budapest, Ráday utca [PLACEHOLDER]',
-          mapsUrl: 'https://maps.google.com/?q=Ramen+Budapest',
+          id: 'food_wrapido',
+          title: 'Wrapido',
+          category: 'Mexikói Étterem',
+          description: 'Burritók, quesadillák, tacók és fűszeres mexikói ízkavalkád egyenesen a Kálvin térnél.',
+          badge: '🌯 MEXIKÓI',
+          image: '🌯',
+          venueName: 'Wrapido Mexikói Étterem',
+          venueAddress: '1092 Budapest, Ráday u. 1-3. (Kálvin tér)',
+          mapsUrl: 'https://maps.google.com/?q=Wrapido+Budapest',
           targetLocation: {
-            lat: 47.4840, // PLACEHOLDER koordináta
-            lng: 19.0620,
+            lat: 47.4890,
+            lng: 19.0601,
           }
         },
         {
-          id: 'strategy_3',
-          title: '3 — Leszarom',
-          category: 'Szaftos Burger & Sültkrumpli',
-          description: 'Dupla marhahúsos smash burger, olvasztott cheddar sajt és ropogós sültkrumpli.',
-          badge: '🍔 LESZAROM',
+          id: 'food_heybao',
+          title: 'Heybao',
+          category: 'Kínai Bao Étterem',
+          description: 'Autentikus gőzölt bao bucik, gazdag húsos és zöldséges töltelékek Ázsia szívéből.',
+          badge: '🥟 HEYBAO',
+          image: '🥟',
+          venueName: 'Heybao Kínai Étterem',
+          venueAddress: '1053 Budapest, Múzeum krt. / Kálvin tér',
+          mapsUrl: 'https://maps.google.com/?q=Heybao+Budapest',
+          targetLocation: {
+            lat: 47.4912,
+            lng: 19.0608,
+          }
+        },
+        {
+          id: 'food_bk',
+          title: 'Burger King',
+          category: 'Kálvin tér',
+          description: 'Lángon grillezett marhahúsos Whopper, ropogós hagymakarikák és klasszikus gyorséttermi élvezet.',
+          badge: '🍔 BK GRILL',
           image: '🍔',
-          venueName: 'Epic Smash Burger [PLACEHOLDER]',
-          venueAddress: '1053 Budapest, Kálvin tér környéke [PLACEHOLDER]',
-          mapsUrl: 'https://maps.google.com/?q=Burger+Kalvin+Budapest',
+          venueName: 'Burger King Kálvin tér',
+          venueAddress: '1085 Budapest, Kálvin tér 9.',
+          mapsUrl: 'https://maps.google.com/?q=Burger+King+Kalvin+ter+Budapest',
           targetLocation: {
-            lat: 47.4920, // PLACEHOLDER koordináta
-            lng: 19.0560,
-          }
-        },
-        {
-          id: 'strategy_4',
-          title: '4 — Holnap megbánom',
-          category: 'Extrém Kalóriabomba',
-          description: 'Mindenből a legnagyobb adag, extra csípős fűszerezés, tripla sajt. Ma este élünk!',
-          badge: '💀 MEGBÁNOM',
-          image: '💀',
-          venueName: 'Monster BBQ & Feast [PLACEHOLDER]',
-          venueAddress: '1074 Budapest, Kazinczy u. [PLACEHOLDER]',
-          mapsUrl: 'https://maps.google.com/?q=Kazinczy+Budapest',
-          targetLocation: {
-            lat: 47.4990, // PLACEHOLDER koordináta
-            lng: 19.0650,
+            lat: 47.4898,
+            lng: 19.0605,
           }
         }
       ]
     },
 
-    // 3. ÁLLOMÁS: KOCSMÁZÁS (CSAK HIDEG-MELEG + MYSTERY MONDATOK)
-    bar: {
-      title: '3. Állomás: A Titkos Kocsma Kereső',
-      riddle: 'Válasszátok ki a záró kocsma rejtélyes jeligéjét, majd kövessétek a Hideg-Meleg jelzést a célba érésig!',
-      options: [
-        {
-          id: 'bar_1',
-          mysteryPhrase: 'az xG mindig nyüzsgő otthona',
-          note: 'A Grund, Corvin negyed',
-          venueName: 'A Grund [PLACEHOLDER]',
-          venueAddress: '1082 Budapest, Nagytemplom u. 30. [PLACEHOLDER]',
-          mapsUrl: 'https://maps.google.com/?q=A+Grund+Budapest',
-          targetLocation: {
-            lat: 47.4862, // DUMMY KOORDINÁTA - Írd át szabadon!
-            lng: 19.0760, // DUMMY KOORDINÁTA - Írd át szabadon!
-          }
-        },
-        {
-          id: 'bar_2',
-          mysteryPhrase: 'Choose your character',
-          note: 'BarCraft Corvin',
-          venueName: 'BarCraft Corvin [PLACEHOLDER]',
-          venueAddress: '1092 Budapest, Ferenc krt. 34. [PLACEHOLDER]',
-          mapsUrl: 'https://maps.google.com/?q=BarCraft+Corvin+Budapest',
-          targetLocation: {
-            lat: 47.4850, // DUMMY KOORDINÁTA - Írd át szabadon!
-            lng: 19.0690, // DUMMY KOORDINÁTA - Írd át szabadon!
-          }
-        },
-        {
-          id: 'bar_3',
-          mysteryPhrase: 'nyugalom a káoszban',
-          note: '7ker pub (Blaha)',
-          venueName: '7ker Pub [PLACEHOLDER]',
-          venueAddress: '1072 Budapest, Blaha Lujza tér környéke [PLACEHOLDER]',
-          mapsUrl: 'https://maps.google.com/?q=7ker+Pub+Budapest',
-          targetLocation: {
-            lat: 47.4960, // DUMMY KOORDINÁTA - Írd át szabadon!
-            lng: 19.0680, // DUMMY KOORDINÁTA - Írd át szabadon!
-          }
-        },
-        {
-          id: 'bar_4',
-          mysteryPhrase: 'irány a romok közé',
-          note: 'Füge Udvar romkocsma',
-          venueName: 'Füge Udvar [PLACEHOLDER]',
-          venueAddress: '1072 Budapest, Klauzál u. 19. [PLACEHOLDER]',
-          mapsUrl: 'https://maps.google.com/?q=Fuge+Udvar+Budapest',
-          targetLocation: {
-            lat: 47.4990, // DUMMY KOORDINÁTA - Írd át szabadon!
-            lng: 19.0640, // DUMMY KOORDINÁTA - Írd át szabadon!
-          }
-        },
-        {
-          id: 'bar_5',
-          mysteryPhrase: 'bort iszik és vizet prédikál',
-          note: 'Humbák Borkápolna',
-          venueName: 'Humbák Borkápolna [PLACEHOLDER]',
-          venueAddress: '1074 Budapest, Dohány u. / Erzsébet krt. [PLACEHOLDER]',
-          mapsUrl: 'https://maps.google.com/?q=Humbak+Borkapolna+Budapest',
-          targetLocation: {
-            lat: 47.4975, // DUMMY KOORDINÁTA - Írd át szabadon!
-            lng: 19.0655, // DUMMY KOORDINÁTA - Írd át szabadon!
-          }
-        }
-      ],
+    // 🍻 4 KOCSMA ÁLLOMÁS A KELETI FELÉ (MINDENGYIKNÉL 3 VÁLASZTÁSI LEHETŐSÉG)
+    bars: {
       thresholdsMeters: {
         burning: 30,
         hot: 100,
         warm: 250,
         cold: 500,
-      }
+      },
+      stages: [
+        // 3. ÁLLOMÁS: 1. KOCSMA
+        {
+          id: 'bar1',
+          title: '3. Állomás: 1. Kocsma',
+          riddle: 'Válaszd ki az 1. kocsma jeligéjét, majd kövesd a Hideg-Meleg jelzést!',
+          options: [
+            {
+              id: 'bar1_opt1',
+              mysteryPhrase: 'Imádom Csehországot',
+              venueName: 'Prága Pub',
+              targetLocation: { lat: 47.48969006241866, lng: 19.06392063313614 }
+            },
+            {
+              id: 'bar1_opt2',
+              mysteryPhrase: 'Imádom Írországot',
+              venueName: 'Harat’s Pub Budapest',
+              targetLocation: { lat: 47.48907362739634, lng: 19.06164956530825 }
+            },
+            {
+              id: 'bar1_opt3',
+              mysteryPhrase: 'Csapról kérném',
+              venueName: 'MONYO Tap House',
+              targetLocation: { lat: 47.488715833121496, lng: 19.061126454185892 }
+            }
+          ]
+        },
+
+        // 4. ÁLLOMÁS: 2. KOCSMA
+        {
+          id: 'bar2',
+          title: '4. Állomás: 2. Kocsma',
+          riddle: 'Válaszd ki a 2. kocsma jeligéjét, majd indulhat a Hideg-Meleg keresés!',
+          options: [
+            {
+              id: 'bar2_opt1',
+              mysteryPhrase: 'Irány bölcsészkedni',
+              venueName: 'Zuzmó',
+              targetLocation: { lat: 47.48727557025906, lng: 19.070044755840495 }
+            },
+            {
+              id: 'bar2_opt2',
+              mysteryPhrase: 'Choose your character',
+              venueName: 'BarCraft Corvin',
+              targetLocation: { lat: 47.484505564631526, lng: 19.069262890441227 }
+            },
+            {
+              id: 'bar2_opt3',
+              mysteryPhrase: 'az xG-kért bármit megteszek',
+              venueName: 'A Grund',
+              targetLocation: { lat: 47.48519255558903, lng: 19.076712767309782 }
+            }
+          ]
+        },
+
+        // 5. ÁLLOMÁS: 3. KOCSMA
+        {
+          id: 'bar3',
+          title: '5. Állomás: 3. Kocsma',
+          riddle: 'Válaszd ki a 3. kocsma jeligéjét, és kövesd a hőmérsékletjelzőt!',
+          options: [
+            {
+              id: 'bar3_opt1',
+              mysteryPhrase: 'Nyugalom a káoszban',
+              venueName: 'Hétker pub',
+              targetLocation: { lat: 47.49773118720746, lng: 19.069439627701048 }
+            },
+            {
+              id: 'bar3_opt2',
+              mysteryPhrase: 'Irány a romok közé',
+              venueName: 'Füge Udvar',
+              targetLocation: { lat: 47.49843850710749, lng: 19.06655678333415 }
+            },
+            {
+              id: 'bar3_opt3',
+              mysteryPhrase: 'Bort iszik és vizet prédikál',
+              venueName: 'Humbák Borkápolna',
+              targetLocation: { lat: 47.50023239166089, lng: 19.06986446792354 }
+            }
+          ]
+        }
+      ]
     },
 
-    // 4. LEZÁRÁS: GRAND FINALE
+    // 6. LEZÁRÁS: GRAND FINALE
     finale: {
       title: 'Küldetés Teljesítve',
       celebrationTitle: 'Boldog 22. Születésnapot, Markó!',
       message: [
-        'Sikeresen végigjártuk a tervezett állomásokat: a bowlingot, a vacsorát és a kocsmát is!',
+        'Sikeresen végigjártuk a tervezett állomásokat: a biliárdot, a vacsorát és a 3 kocsmát is!',
         'Nagyon örülünk, hogy együtt ünnepelhetünk veled. Isten éltessen még nagyon sokáig!',
         'Most már nincs több küldetés: élvezd az estét és a közös koccintást! 🍻🎉'
       ],
       badges: [
         {
-          title: 'Strike Master',
-          icon: '🎳',
-          desc: 'Sikeres dobások a bowling pályán'
+          title: 'Biliárd Mester',
+          icon: '🎱',
+          desc: 'Közös játék az All-inn Pub asztalainál'
         },
         {
-          title: 'Stratégiai Gasztro',
+          title: 'Kálvin Gasztro Király',
           icon: '👑',
           desc: 'Tökéletesen megválasztott születésnapi vacsora'
         },
         {
-          title: 'Mesterfelderítő',
-          icon: '🧭',
-          desc: 'Célba érés a radar és a hideg-meleg alapján'
+          title: 'Kocsmatúra Bajnok',
+          icon: '🍻',
+          desc: '3 sikeres kocsmaállomás teljesítve a Hideg-Meleg alapján'
         },
         {
           title: '22 Éves Legenda',
