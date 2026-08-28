@@ -1,14 +1,14 @@
 {
   "main": {
-    "id": "f6b76cc262ba319a",
+    "id": "86b7819d694d6364",
     "type": "split",
     "children": [
       {
-        "id": "fcdde3dd49e804a5",
+        "id": "3d684b07ea3298f6",
         "type": "tabs",
         "children": [
           {
-            "id": "d849f9747f6b5359",
+            "id": "3f3cad93e671166d",
             "type": "leaf",
             "state": {
               "type": "graph",
@@ -23,15 +23,15 @@
     "direction": "vertical"
   },
   "left": {
-    "id": "90f78c80bea516d3",
+    "id": "6417e70baf0117ad",
     "type": "split",
     "children": [
       {
-        "id": "7fa01a6743a57bc7",
+        "id": "6c31748e8e6f3cb1",
         "type": "tabs",
         "children": [
           {
-            "id": "cb44d27ca207b825",
+            "id": "474ec9949729c628",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -46,7 +46,7 @@
             }
           },
           {
-            "id": "b1c9b4603a2329be",
+            "id": "f39e79e0f1924c9c",
             "type": "leaf",
             "state": {
               "type": "search",
@@ -63,11 +63,14 @@
             }
           },
           {
-            "id": "e1d689e6bd2d3ef4",
+            "id": "6a8a76c22961b36a",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
-              "state": {},
+              "state": {
+                "showSearch": false,
+                "searchQuery": ""
+              },
               "icon": "lucide-bookmark",
               "title": "Könyvjelzők"
             }
@@ -79,15 +82,15 @@
     "width": 300
   },
   "right": {
-    "id": "2bc11084b11422c8",
+    "id": "3e44ca80fb8984f0",
     "type": "split",
     "children": [
       {
-        "id": "4d97c0ef3f717620",
+        "id": "9deeb67e8f8655bf",
         "type": "tabs",
         "children": [
           {
-            "id": "85eed9ebb3bea69e",
+            "id": "35d442e559015cfe",
             "type": "leaf",
             "state": {
               "type": "backlink",
@@ -105,7 +108,7 @@
             }
           },
           {
-            "id": "efcfdfce22ea3750",
+            "id": "93e7bd5223fc6dbe",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
@@ -118,7 +121,7 @@
             }
           },
           {
-            "id": "428a9633b2de6137",
+            "id": "8f72c720d50827d6",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -133,7 +136,7 @@
             }
           },
           {
-            "id": "80aacc0b1c13329a",
+            "id": "b8723679f4679129",
             "type": "leaf",
             "state": {
               "type": "all-properties",
@@ -147,7 +150,7 @@
             }
           },
           {
-            "id": "1865de5e21e6020c",
+            "id": "fc1575afdbb80033",
             "type": "leaf",
             "state": {
               "type": "outline",
@@ -178,21 +181,11 @@
       "bases:Új bázis létrehozása": false
     }
   },
-  "active": "d849f9747f6b5359",
+  "active": "3f3cad93e671166d",
   "lastOpenFiles": [
-    "systems/admin-panel.md",
-    "metrics/unit-economics.md",
-    "metrics/fixed-costs.md",
-    "metrics/variable-costs.md",
-    "metrics/break-even.md",
-    "Admin Panel.md",
-    "systems/microsoft-clarity.md",
-    "Microsoft Clarity.md",
-    "ADR-001.md",
-    "Checkout Pipeline.md",
-    "metrics/roas.md",
-    "systems/vercel.md",
-    "Campaign Predikaloszek.md",
-    "INDEX.md"
+    "systems/trip-cart-engine.md",
+    "systems/google-places-service.md",
+    "systems/numbeo-database.md",
+    "systems/open-meteo-api.md"
   ]
 }
