@@ -73,7 +73,9 @@
             this.ctaText = options.ctaText || 'Kalkuláció Indítása';
             this.backLinkUrl = options.backLinkUrl || '/home';
             this.backLinkText = options.backLinkText || 'Vissza az alapadatokhoz';
+            this.onBack = options.onBack || null;
             this.onComplete = options.onComplete || function () {};
+            window._ahpInstance = this;
 
             // Build list of pairs
             this.pairs = [];
@@ -270,11 +272,23 @@
         }
 
 
+        handleBackClick(e) {
+            if (e) e.preventDefault();
+            if (this.onBack) {
+                this.onBack();
+            } else if (this.backLinkUrl) {
+                window.location.href = this.backLinkUrl;
+            } else {
+                window.history.back();
+            }
+        }
+
         renderIntro() {
+            window._ahpInstance = this;
             this.container.innerHTML = `
                 <div class="advisor-container">
                     <!-- VISSZA GOMB FENT -->
-                    <a href="${this.backLinkUrl}" class="btn-back-link">
+                    <a href="javascript:void(0)" onclick="window._ahpInstance.handleBackClick(event)" class="btn-back-link">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <line x1="19" y1="12" x2="5" y2="12"></line>
                             <polyline points="12 19 5 12 12 5"></polyline>
@@ -346,6 +360,7 @@
         }
 
         startWizard() {
+            window._ahpInstance = this;
             this.currentStep = 1;
             this.saveState();
             this.render();

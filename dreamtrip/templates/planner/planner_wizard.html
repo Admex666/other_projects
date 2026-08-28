@@ -1,9 +1,67 @@
 {% extends "base.html" %}
 
-{% block title %}Optivoya — Master Travel Planner (Teljes Út Megtervezése){% endblock %}
+{% block title %}Optivoya — Master Travel Planner (Teljes Utazástervezés){% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<style>
+    .modal-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(15, 23, 42, 0.7);
+        backdrop-filter: blur(8px);
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .modal-card {
+        background: var(--bg-surface);
+        border: 1.5px solid var(--border-strong);
+        border-radius: var(--radius-lg, 24px);
+        box-shadow: var(--shadow-xl);
+        position: relative;
+    }
+    .modal-close-btn {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: var(--bg-surface-subtle);
+        border: 1px solid var(--border-subtle);
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        font-weight: 800;
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        z-index: 10;
+    }
+    .modal-close-btn:hover {
+        background: var(--border-subtle);
+        color: var(--text-main);
+    }
+    .badge-accent {
+        font-size: 12px;
+        font-weight: 800;
+        color: var(--primary);
+        background: var(--accent-glow);
+        padding: 3px 10px;
+        border-radius: 10px;
+        border: 1px solid rgba(37, 99, 235, 0.2);
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="advisor-container" style="max-width: 1200px; margin: 0 auto; padding: 24px 16px 120px;">
+<div class="advisor-container" style="max-width: 1180px; margin: 0 auto; padding-bottom: 120px;">
 
     <!-- FEJLÉC -->
     <div class="page-header" style="text-align: left; margin-bottom: 24px;">
@@ -11,16 +69,16 @@
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
             </svg>
-            <span>Master Travel Planner — End-to-End Wizard</span>
+            <span>Master Travel Planner — Integrált Döntéstámogató Rendszer</span>
         </div>
-        <h1 class="page-title" style="margin-bottom: 6px; font-size: 28px; font-weight: 900;">Teljes Utazás Tervezése 1 Folyamatban</h1>
-        <p class="page-subtitle" style="margin: 0; font-size: 15px; color: var(--text-secondary);">
-            Add meg a preferenciáidat egyszerre: a rendszer automatikusan összekapcsolja a desztinációt, a legjobb járatot és a szállást, miközben folyamatosan finomhangolhatod a feltételeket.
+        <h1 class="page-title" style="margin-bottom: 6px;">Teljes Utazás Tervezése 1 Folyamatban</h1>
+        <p class="page-subtitle" style="margin: 0;">
+            Közös preferencia-felmérés, valós idejű páros összehasonlító prioritásmodellezés, intelligens járat- és szállásajánló.
         </p>
     </div>
 
     <!-- WORKFLOW STEPPER -->
-    <div class="trip-workflow-stepper" id="wizardStepper" style="margin-bottom: 28px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 14px 24px; box-shadow: var(--shadow-sm);">
+    <div class="trip-workflow-stepper" id="wizardStepper" style="margin-bottom: 28px;">
         <div class="step-node active" id="stepNode0" onclick="Wizard.goToStep(0)">
             <div class="step-num">0</div>
             <span>Preferenciák</span>
@@ -51,175 +109,438 @@
         </div>
     </div>
 
-    <!-- WIZARD STEP CONTAINERS -->
-    
-    <!-- STEP 0: UNIFIED INTAKE FORM -->
+    <!-- STEP 0: UNIFIED INTAKE & PREFERENCES -->
     <div id="wizardStep0" class="wizard-step-section active">
-        <form id="intakeForm" onsubmit="event.preventDefault(); Wizard.startPlanning();">
-            <div class="advisor-main-card" style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 20px; padding: 32px 28px; box-shadow: var(--shadow-md);">
-                
-                <!-- BENTO GRID 1: ALAPADATOK -->
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; font-weight: 800; font-size: 15px; color: var(--primary); text-transform: uppercase;">
-                    <span>📍 1. Utazási Alapadatok</span>
-                </div>
+        
+        <!-- FŐ KÁRTYA -->
+        <div class="advisor-main-card">
+            
+            <!-- 1. ÚTVONAL & UTASOK -->
+            <div class="advisor-section-label">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>
+                </svg>
+                <span>1. Indulási Helyszín és Utazók Létszáma</span>
+            </div>
 
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 28px;">
-                    <div>
-                        <label class="form-label" style="font-weight: 700; font-size: 13px;">Indulási repülőtér</label>
-                        <select id="intake_origin" class="form-input" style="width: 100%; padding: 10px 14px; border-radius: 12px; font-weight: 600;">
-                            <option value="Budapest" selected>🇭🇺 Budapest (BUD)</option>
-                            <option value="Bécs">🇦🇹 Bécs (VIE)</option>
-                            <option value="Debrecen">🇭🇺 Debrecen (DEB)</option>
-                            <option value="Pozsony">🇸🇰 Pozsony (BTS)</option>
-                        </select>
+            <div class="advisor-grid-2" style="margin-bottom: 24px;">
+                <!-- INDULÁSI AUTOCOMPLETE -->
+                <div>
+                    <label class="form-label" for="origin">Indulási repülőtér / város (bármilyen helyszín megadható):</label>
+                    <div class="autocomplete-field-box">
+                        <div class="hero-search-wrap">
+                            <svg class="hero-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>
+                            </svg>
+                            <input type="text" id="origin" class="hero-search-input" placeholder="Pl. Budapest (BUD), Bécs, London, Berlin..." value="Budapest (BUD)" autocomplete="off">
+                        </div>
+                        <div class="autocomplete-float-results" id="origin-dropdown"></div>
                     </div>
-
-                    <div>
-                        <label class="form-label" style="font-weight: 700; font-size: 13px;">Felnőttek száma</label>
-                        <select id="intake_adults" class="form-input" style="width: 100%; padding: 10px 14px; border-radius: 12px; font-weight: 600;">
-                            <option value="1">1 felnőtt (egyéni utazó)</option>
-                            <option value="2" selected>2 felnőtt (pár / barátok)</option>
-                            <option value="3">3 felnőtt</option>
-                            <option value="4">4 felnőtt (csoport)</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="form-label" style="font-weight: 700; font-size: 13px;">Gyermekek száma</label>
-                        <select id="intake_children" class="form-input" style="width: 100%; padding: 10px 14px; border-radius: 12px; font-weight: 600;">
-                            <option value="0" selected>0 gyermek</option>
-                            <option value="1">1 gyermek</option>
-                            <option value="2">2 gyermek</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="form-label" style="font-weight: 700; font-size: 13px;">Utazás hónapja (2026)</label>
-                        <select id="intake_month" class="form-input" style="width: 100%; padding: 10px 14px; border-radius: 12px; font-weight: 600;">
-                            <option value="5">Május (tavasz)</option>
-                            <option value="6">Június (előnyár)</option>
-                            <option value="7">Július (főszezon)</option>
-                            <option value="8">Augusztus (főszezon)</option>
-                            <option value="9" selected>Szeptember (utószezon)</option>
-                            <option value="10">Október (ősz)</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="form-label" style="font-weight: 700; font-size: 13px;">Időtartam (napok)</label>
-                        <select id="intake_duration" class="form-input" style="width: 100%; padding: 10px 14px; border-radius: 12px; font-weight: 600;">
-                            <option value="4">Hosszú hétvége (3–4 nap)</option>
-                            <option value="7" selected>1 hét (6–8 nap)</option>
-                            <option value="10">10 nap (9–11 nap)</option>
-                            <option value="14">2 hét (13–15 nap)</option>
-                        </select>
+                    <div class="quick-pills-group" style="margin-top: 8px;">
+                        <span style="font-size: 11.5px; color: var(--text-muted); font-weight: 600;">Gyorsválasztó:</span>
+                        <div class="quick-pill active" onclick="Wizard.setOrigin('Budapest (BUD)')">Budapest</div>
+                        <div class="quick-pill" onclick="Wizard.setOrigin('Bécs (VIE)')">Bécs</div>
+                        <div class="quick-pill" onclick="Wizard.setOrigin('Debrecen (DEB)')">Debrecen</div>
+                        <div class="quick-pill" onclick="Wizard.setOrigin('Pozsony (BTS)')">Pozsony</div>
+                        <div class="quick-pill" onclick="Wizard.setOrigin('London (LON)')">London</div>
                     </div>
                 </div>
 
-                <!-- BENTO GRID 2: DESZTINÁCIÓ & ÉGHAJLAT -->
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px; font-weight: 800; font-size: 15px; color: var(--primary); text-transform: uppercase;">
-                    <span>☀️ 2. Célállomás & Éghajlati Elvárások</span>
-                </div>
+                <!-- UTASOK STEPPEREK -->
+                <div>
+                    <label class="form-label">Utazók létszáma:</label>
+                    <div class="advisor-panel" style="padding: 14px 18px;">
+                        <div class="steppers-stack">
+                            <!-- Felnőtt -->
+                            <div class="stepper-row">
+                                <div>
+                                    <div class="stepper-title">Felnőtt</div>
+                                    <div class="stepper-subtitle">12+ év felett</div>
+                                </div>
+                                <div class="stepper-control-box">
+                                    <button type="button" class="stepper-circle-btn" onclick="stepDown('adults_count', 1)">−</button>
+                                    <input type="hidden" id="adults_count" value="2">
+                                    <span class="stepper-num-val" id="adults_display">2</span>
+                                    <button type="button" class="stepper-circle-btn" onclick="stepUp('adults_count', 20)">+</button>
+                                </div>
+                            </div>
 
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 28px;">
-                    <div style="background: var(--bg-surface-subtle); padding: 16px; border-radius: 14px; border: 1px solid var(--border-subtle);">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                            <label class="form-label" style="font-weight: 700; font-size: 13px; margin: 0;">Ideális nappali hőmérséklet:</label>
-                            <span id="tempValDisplay" style="font-weight: 800; color: var(--primary);">24 °C</span>
-                        </div>
-                        <input type="range" id="intake_temp" min="18" max="34" value="24" class="range-slider" style="width: 100%;" oninput="document.getElementById('tempValDisplay').innerText = this.value + ' °C'">
-                        <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-top: 4px;">
-                            <span>Kellemes (18°C)</span>
-                            <span>Ideális (24°C)</span>
-                            <span>Trópusi (34°C)</span>
-                        </div>
-                    </div>
-
-                    <div style="background: var(--bg-surface-subtle); padding: 16px; border-radius: 14px; border: 1px solid var(--border-subtle);">
-                        <label class="form-label" style="font-weight: 700; font-size: 13px; margin-bottom: 8px;">Előnyben részesített régiók:</label>
-                        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-                            <label class="filter-pill-label"><input type="checkbox" name="regions" value="europe_south" checked> 🏖️ Dél-Európa (Mediterrán)</label>
-                            <label class="filter-pill-label"><input type="checkbox" name="regions" value="europe_west" checked> 🏛️ Nyugat-Európa</label>
-                            <label class="filter-pill-label"><input type="checkbox" name="regions" value="europe_central" checked> 🏰 Közép-Európa</label>
-                        </div>
-                    </div>
-
-                    <div style="background: var(--bg-surface-subtle); padding: 16px; border-radius: 14px; border: 1px solid var(--border-subtle);">
-                        <label class="form-label" style="font-weight: 700; font-size: 13px; margin-bottom: 8px;">Közbiztonsági elvárás:</label>
-                        <select id="intake_safety" class="form-input" style="width: 100%; padding: 10px; border-radius: 10px; font-weight: 600;">
-                            <option value="40">Átlagos biztonság elegendő (40+)</option>
-                            <option value="55" selected>Jó közbiztonság (55+ Numbeo Index)</option>
-                            <option value="70">Kifejezetten biztonságos (70+)</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- BENTO GRID 3: REPÜLŐ & SZÁLLÁS PREFERENCIÁK -->
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-bottom: 32px;">
-                    <!-- REPÜLÉSI PREFERENCIÁK -->
-                    <div style="background: var(--bg-surface-subtle); padding: 20px; border-radius: 16px; border: 1px solid var(--border-subtle);">
-                        <div style="font-weight: 800; font-size: 14px; color: var(--text-main); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-                            <span>✈️ Repülési Elvárások</span>
-                        </div>
-                        <div style="display: flex; flex-direction: column; gap: 10px;">
-                            <label style="display: flex; align-items: center; gap: 10px; font-size: 13.5px; font-weight: 600; cursor: pointer;">
-                                <input type="checkbox" id="intake_flight_direct">
-                                <span>Csak közvetlen (átszállás nélküli) járatok</span>
-                            </label>
-                            <div>
-                                <label style="font-size: 12.5px; color: var(--text-muted); font-weight: 600;">Max. átszállások száma:</label>
-                                <select id="intake_flight_stops" class="form-input" style="width: 100%; padding: 8px 12px; border-radius: 10px; margin-top: 4px;">
-                                    <option value="0">0 (Kizárólag közvetlen)</option>
-                                    <option value="1" selected>Max 1 átszállás (rugalmas)</option>
-                                    <option value="2">2 átszállás is elfogadható</option>
-                                </select>
+                            <!-- Gyermek -->
+                            <div class="stepper-row" style="margin-bottom: 0;">
+                                <div>
+                                    <div class="stepper-title">Gyermek</div>
+                                    <div class="stepper-subtitle">0–11 év</div>
+                                </div>
+                                <div class="stepper-control-box">
+                                    <button type="button" class="stepper-circle-btn" onclick="stepDown('children_count', 0)">−</button>
+                                    <input type="hidden" id="children_count" value="0">
+                                    <span class="stepper-num-val" id="children_display">0</span>
+                                    <button type="button" class="stepper-circle-btn" onclick="stepUp('children_count', 10)">+</button>
+                                </div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- SZÁLLÁS PREFERENCIÁK -->
-                    <div style="background: var(--bg-surface-subtle); padding: 20px; border-radius: 16px; border: 1px solid var(--border-subtle);">
-                        <div style="font-weight: 800; font-size: 14px; color: var(--text-main); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-                            <span>🏨 Szállás Elvárások</span>
-                        </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                            <div>
-                                <label style="font-size: 12.5px; color: var(--text-muted); font-weight: 600;">Minimum besorolás:</label>
-                                <select id="intake_hotel_stars" class="form-input" style="width: 100%; padding: 8px 12px; border-radius: 10px; margin-top: 4px;">
-                                    <option value="0">Bármilyen kategória</option>
-                                    <option value="3" selected>3★ vagy jobb</option>
-                                    <option value="4">4★ vagy jobb (Prémium)</option>
-                                    <option value="5">5★ (Luxus)</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label style="font-size: 12.5px; color: var(--text-muted); font-weight: 600;">Min. vendégértékelés:</label>
-                                <select id="intake_hotel_rating" class="form-input" style="width: 100%; padding: 8px 12px; border-radius: 10px; margin-top: 4px;">
-                                    <option value="0">Bármilyen</option>
-                                    <option value="7.5" selected>7.5+ Jó</option>
-                                    <option value="8.0">8.0+ Nagyon jó</option>
-                                    <option value="8.5">8.5+ Kiváló</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- SUBMIT BUTTON -->
-                <div style="text-align: center; margin-top: 10px;">
-                    <button type="submit" class="btn btn-primary" style="padding: 16px 42px; font-size: 16px; font-weight: 800; border-radius: 16px; box-shadow: 0 8px 24px var(--accent-glow);">
-                        <span>🎯 Keresés Indítása & Teljes Út Tervezése →</span>
-                    </button>
                 </div>
             </div>
-        </form>
+
+            <!-- 2. UTATÁSI IDŐSZAK ÉS 3 DÁTUMMÓD -->
+            <div class="advisor-section-label">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span>2. Utazási Időszak és Kinttartózkodás</span>
+            </div>
+
+            <div class="advisor-panel" style="margin-bottom: 24px;">
+                <div style="margin-bottom: 14px;">
+                    <div class="panel-header-title" style="font-size: 16px; font-weight: 800;">Hogyan tervezed az utazás időpontját?</div>
+                    <div class="panel-header-desc">Válassz az alábbi három lehetőség közül az időzítés megadásához:</div>
+                </div>
+
+                <!-- 3-MÓD TABOK (SZÖVEG ALATT TELJES SZÉLESSÉGBEN, RESZPONZÍV GRID) -->
+                <div class="date-mode-tabs" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; background: var(--bg-surface-subtle); padding: 6px; border-radius: 14px; border: 1px solid var(--border-subtle); margin-bottom: 18px;">
+                    <button type="button" class="tab-pill-btn active" id="tab_mode_month" onclick="Wizard.switchDateMode('month')" style="padding: 12px 14px; font-size: 13.5px; font-weight: 800; border-radius: 10px; cursor: pointer; transition: all 0.2s ease;">
+                        <span>🗓️ Rugalmas Hónap</span>
+                    </button>
+                    <button type="button" class="tab-pill-btn" id="tab_mode_interval" onclick="Wizard.switchDateMode('interval')" style="padding: 12px 14px; font-size: 13.5px; font-weight: 800; border-radius: 10px; cursor: pointer; transition: all 0.2s ease;">
+                        <span>⏱️ Időintervallum</span>
+                    </button>
+                    <button type="button" class="tab-pill-btn" id="tab_mode_exact" onclick="Wizard.switchDateMode('exact')" style="padding: 12px 14px; font-size: 13.5px; font-weight: 800; border-radius: 10px; cursor: pointer; transition: all 0.2s ease;">
+                        <span>📅 Pontos Dátumok</span>
+                    </button>
+                </div>
+
+                <!-- 1. MONTH MODE -->
+                <div id="panel_mode_month" class="mode-panel-content">
+                    <div class="advisor-grid-2" style="align-items: center; gap: 20px;">
+                        <div>
+                            <label class="form-label" for="intake_month">Preferált hónap (2026):</label>
+                            <select id="intake_month" class="form-control" style="width: 100%; padding: 12px 14px; border-radius: 12px; font-weight: 700; background: var(--bg-surface);">
+                                <option value="5">2026. Május (Kellemes tavasz)</option>
+                                <option value="6">2026. Június (Előnyár)</option>
+                                <option value="7">2026. Július (Főszezon)</option>
+                                <option value="8">2026. Augusztus (Főszezon)</option>
+                                <option value="9" selected>2026. Szeptember (Ideális utószezon)</option>
+                                <option value="10">2026. Október (Őszi városnézés)</option>
+                                <option value="11">2026. November</option>
+                                <option value="12">2026. December</option>
+                            </select>
+                        </div>
+                        <div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <label class="form-label" style="margin: 0;">Kinttartózkodás napokban:</label>
+                                <span class="badge-accent" id="month_duration_badge">7 napos utazás</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+                                <input type="range" id="month_duration_slider" min="1" max="30" value="7" class="range-slider" style="flex: 1; min-width: 140px;" oninput="Wizard.onDurationSliderChange(this.value)">
+                                <div class="stepper-control-box" style="margin: 0;">
+                                    <button type="button" class="stepper-circle-btn" onclick="stepDown('month_duration_input', 1)">−</button>
+                                    <input type="hidden" id="month_duration_input" value="7">
+                                    <span class="stepper-num-val" id="month_duration_display" style="min-width: 48px;">7 nap</span>
+                                    <button type="button" class="stepper-circle-btn" onclick="stepUp('month_duration_input', 60)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. INTERVAL MODE -->
+                <div id="panel_mode_interval" class="mode-panel-content" style="display: none;">
+                    <div class="advisor-grid-3" style="margin-bottom: 16px;">
+                        <div>
+                            <label class="form-label" for="interval_out_from">🛫 Odaút legkorábban:</label>
+                            <input type="date" id="interval_out_from" value="2026-09-01" class="form-control" style="width: 100%; padding: 10px 12px; border-radius: 10px; background: var(--bg-surface);">
+                        </div>
+                        <div>
+                            <label class="form-label" for="interval_out_to">🛫 Odaút legkésőbb:</label>
+                            <input type="date" id="interval_out_to" value="2026-09-15" class="form-control" style="width: 100%; padding: 10px 12px; border-radius: 10px; background: var(--bg-surface);">
+                        </div>
+                        <div>
+                            <label class="form-label" for="interval_in_to">🛬 Visszaút legkésőbb:</label>
+                            <input type="date" id="interval_in_to" value="2026-09-30" class="form-control" style="width: 100%; padding: 10px 12px; border-radius: 10px; background: var(--bg-surface);">
+                        </div>
+                    </div>
+                    <div style="background: var(--bg-surface); padding: 14px 18px; border-radius: 14px; border: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+                        <span style="font-size: 13.5px; font-weight: 700; color: var(--text-main);">Kívánt kinttartózkodási sáv:</span>
+                        <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+                            <div class="stepper-control-box" style="margin: 0;">
+                                <span style="font-size: 11px; color: var(--text-muted); font-weight: 700; margin-right: 4px;">MIN</span>
+                                <button type="button" class="stepper-circle-btn" onclick="stepDown('interval_min_stay_input', 1)">−</button>
+                                <input type="hidden" id="interval_min_stay_input" value="5">
+                                <span class="stepper-num-val" id="interval_min_stay_display" style="min-width: 44px;">5 nap</span>
+                                <button type="button" class="stepper-circle-btn" onclick="stepUp('interval_min_stay_input', 30)">+</button>
+                            </div>
+                            <div class="stepper-control-box" style="margin: 0;">
+                                <span style="font-size: 11px; color: var(--text-muted); font-weight: 700; margin-right: 4px;">MAX</span>
+                                <button type="button" class="stepper-circle-btn" onclick="stepDown('interval_max_stay_input', 1)">−</button>
+                                <input type="hidden" id="interval_max_stay_input" value="10">
+                                <span class="stepper-num-val" id="interval_max_stay_display" style="min-width: 44px;">10 nap</span>
+                                <button type="button" class="stepper-circle-btn" onclick="stepUp('interval_max_stay_input', 60)">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. EXACT MODE (FLATPICKR RANGE PICKER FROM FLIGHT INTELLIGENCE) -->
+                <div id="panel_mode_exact" class="mode-panel-content" style="display: none;">
+                    <div>
+                        <label class="form-label" style="font-size: 13px; font-weight: 700; margin-bottom: 8px;">Oda- és visszautazás pontos dátuma:</label>
+                        
+                        <!-- Custom Date Trigger from Flight Intelligence -->
+                        <div class="custom-date-display" id="exact_date_picker_trigger" style="cursor: pointer; padding: 14px 18px; border-radius: 14px; background: var(--bg-surface); border: 1.5px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; align-items: center; gap: 14px;">
+                                <div style="width: 42px; height: 42px; border-radius: 12px; background: var(--accent-glow); display: flex; align-items: center; justify-content: center; color: var(--primary);">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="date-text-primary" id="exact_date_primary" style="font-size: 15px; font-weight: 800; color: var(--text-main);">2026. szept. 10. — szept. 17.</div>
+                                    <div class="date-text-sub" id="exact_date_sub" style="font-size: 12px; color: var(--text-muted); font-weight: 600;">7 éjszaka • 2026</div>
+                                </div>
+                            </div>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: var(--text-muted);">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </div>
+
+                        <input type="hidden" id="exact_out_date" value="2026-09-10">
+                        <input type="hidden" id="exact_in_date" value="2026-09-17">
+
+                        <div class="date-preset-pills" style="margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap;">
+                            <div class="preset-pill active" onclick="Wizard.applyExactPreset(14, 7, this)">2 hét múlva (7 nap)</div>
+                            <div class="preset-pill" onclick="Wizard.applyExactPreset(28, 7, this)">1 hónap múlva (7 nap)</div>
+                            <div class="preset-pill" onclick="Wizard.applyExactPreset(4, 3, this)">Hosszú hétvége (3 nap)</div>
+                            <div class="preset-pill" onclick="Wizard.applyExactPreset(35, 14, this)">2 hetes nyaralás (14 nap)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. SZEMPONTOK SÚLYOZÁSA (EMBERKÖZELI MEGFOGALMAZÁS) -->
+            <div class="advisor-section-label">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <span>3. Döntési Szempontok és Prioritások Súlyozása</span>
+            </div>
+
+            <div class="advisor-panel" style="border: 2px solid var(--primary); background: linear-gradient(135deg, rgba(37, 99, 235, 0.06) 0%, rgba(16, 185, 129, 0.05) 100%); margin-bottom: 24px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 16px;">
+                    <div>
+                        <div class="panel-header-title" style="color: var(--primary); font-size: 17px;">🎯 Személyre Szabott Prioritási Kérdőív</div>
+                        <div class="panel-header-desc">A repülési és szállás részletek finomhangolásához előbb töltsd ki a páros kérdőívet:</div>
+                    </div>
+
+                    <!-- GOMB AZ ÖSSZEHASONLÍTÓ MODALHOZ -->
+                    <button type="button" class="btn btn-primary" id="btn_open_criteria_modal" onclick="Wizard.openAHPModal()" style="padding: 12px 24px; font-size: 14px; font-weight: 800; border-radius: 14px; box-shadow: 0 4px 16px var(--accent-glow);">
+                        <span id="criteria_btn_label">⚖️ Prioritások Kitöltése (Páros Összehasonlítás) →</span>
+                    </button>
+                </div>
+
+                <!-- AKTUÁLIS SÚLYVEKTOR VIZUALIZÁCIÓ -->
+                <div id="criteria_status_box" style="margin-bottom: 12px; padding: 10px 14px; border-radius: 10px; background: rgba(234, 179, 8, 0.1); border: 1px solid rgba(234, 179, 8, 0.3); font-size: 13px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 8px;">
+                    <span>⚠️</span>
+                    <span id="criteria_status_text">A 4. és 5. pont finomhangolása zárolva van, amíg ki nem töltöd a prioritási kérdőívet!</span>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px;">
+                    <div style="background: var(--bg-surface); padding: 10px; border-radius: 10px; border: 1px solid var(--border-subtle); text-align: center;">
+                        <span style="font-size: 11px; font-weight: 700; color: var(--text-muted); display: block;">✈️ REPÜLŐ ÁR</span>
+                        <strong style="font-size: 17px; font-family: var(--font-mono); color: var(--primary);" id="ahp_badge_flight">—</strong>
+                    </div>
+                    <div style="background: var(--bg-surface); padding: 10px; border-radius: 10px; border: 1px solid var(--border-subtle); text-align: center;">
+                        <span style="font-size: 11px; font-weight: 700; color: var(--text-muted); display: block;">💰 NAPI KÖLTÉS</span>
+                        <strong style="font-size: 17px; font-family: var(--font-mono); color: var(--primary);" id="ahp_badge_cost">—</strong>
+                    </div>
+                    <div style="background: var(--bg-surface); padding: 10px; border-radius: 10px; border: 1px solid var(--border-subtle); text-align: center;">
+                        <span style="font-size: 11px; font-weight: 700; color: var(--text-muted); display: block;">☀️ KLÍMA</span>
+                        <strong style="font-size: 17px; font-family: var(--font-mono); color: var(--primary);" id="ahp_badge_weather">—</strong>
+                    </div>
+                    <div style="background: var(--bg-surface); padding: 10px; border-radius: 10px; border: 1px solid var(--border-subtle); text-align: center;">
+                        <span style="font-size: 11px; font-weight: 700; color: var(--text-muted); display: block;">🛡️ BIZTONSÁG</span>
+                        <strong style="font-size: 17px; font-family: var(--font-mono); color: var(--primary);" id="ahp_badge_safety">—</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ZÁROLT SZEKCIÓK KONTÉNER (CSAK AHP KITÖLTÉSE UTÁN AKTIVÁLÓDIK) -->
+            <div id="details_progressive_lock_wrapper" style="opacity: 0.45; pointer-events: none; filter: grayscale(30%); transition: all 0.3s ease;">
+
+                <!-- 4. FLIGHT INTELLIGENCE RÉSZLETES PREFERENCIÁK -->
+                <div class="advisor-section-label">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>
+                    </svg>
+                    <span>4. Repülési Szűrők és Napszaki Preferenciák</span>
+                </div>
+
+                <div class="advisor-panel" style="margin-bottom: 24px;">
+                    <div class="advisor-grid-3">
+                        <!-- ÁTSZÁLLÁSI TOLERANCIA -->
+                        <div>
+                            <label class="form-label" for="intake_flight_stops">Átszállási tolerancia:</label>
+                            <select id="intake_flight_stops" class="form-control" style="width: 100%; padding: 10px; border-radius: 10px; background: var(--bg-surface); font-weight: 600;">
+                                <option value="0">Kizárólag közvetlen járatok (0 átszállás)</option>
+                                <option value="1" selected>Max 1 átszállás (Rugalmas)</option>
+                                <option value="2">Max 2 átszállás</option>
+                                <option value="99">Korlátlan</option>
+                            </select>
+                        </div>
+
+                        <!-- MAX MENETIDŐ IRÁNYONKÉNT (SAJÁT DESIGNÚ STEPPER) -->
+                        <div>
+                            <label class="form-label">Max. menetidő irányonként:</label>
+                            <div class="stepper-row" style="margin-bottom: 8px; padding: 6px 10px; background: var(--bg-surface); border-radius: 12px; border: 1px solid var(--border-subtle);">
+                                <div>
+                                    <div class="stepper-title" style="font-size: 12px;">Menetidő limit</div>
+                                    <div class="stepper-subtitle" style="font-size: 11px;">0 = Korlátlan</div>
+                                </div>
+                                <div class="stepper-control-box">
+                                    <button type="button" class="stepper-circle-btn" onclick="stepDown('intake_max_flight_duration', 0)">−</button>
+                                    <input type="hidden" id="intake_max_flight_duration" value="0">
+                                    <span class="stepper-num-val" id="intake_max_flight_duration_display" style="min-width: 65px;">Korlátlan</span>
+                                    <button type="button" class="stepper-circle-btn" onclick="stepUp('intake_max_flight_duration', 36)">+</button>
+                                </div>
+                            </div>
+                            <div class="quick-pills-group" style="margin-top: 4px;">
+                                <div class="quick-pill" onclick="Wizard.setMaxDuration(4)">≤ 4ó</div>
+                                <div class="quick-pill" onclick="Wizard.setMaxDuration(6)">≤ 6ó</div>
+                                <div class="quick-pill" onclick="Wizard.setMaxDuration(10)">≤ 10ó</div>
+                                <div class="quick-pill active" onclick="Wizard.setMaxDuration(0)">Korlátlan</div>
+                            </div>
+                        </div>
+
+                        <!-- PREFERÁLT INDULÁSI NAPSZAK (PIPÁLÓS + CSÚSZKA 00:00-TÓL) -->
+                        <div>
+                            <div style="margin-bottom: 6px;">
+                                <label class="checkbox-container" style="font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                                    <input type="checkbox" id="has_departure_pref" onchange="Wizard.toggleDeparturePref(this.checked)">
+                                    <span>Van preferált indulási időpontom</span>
+                                </label>
+                            </div>
+                            <div id="departure_time_box" style="display: none; background: var(--bg-surface); padding: 8px 12px; border-radius: 10px; border: 1px solid var(--border-subtle);">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                    <span style="font-size: 11.5px; font-weight: 700; color: var(--text-muted);">Ideális indulási óra:</span>
+                                    <span class="time-badge-display" id="dep_hour_badge">00:00 (Éjfél / Kora hajnal)</span>
+                                </div>
+                                <input type="range" id="intake_departure_hour" min="0" max="23" value="0" class="range-slider" style="width: 100%;" oninput="Wizard.onDepHourChange(this.value)">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. ACCOMMODATION INTELLIGENCE TELJES KÉSZLET + SZÁLLÁS PRIORITÁSOK -->
+                <div class="advisor-section-label">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M3 21h18M3 7v14M21 7v14M6 11h2M6 15h2M10 11h2M10 15h2M14 11h2M14 15h2M6 7h12l-6-4-6 4z"/>
+                    </svg>
+                    <span>5. Szálláskategóriák, Felszereltség és Ellátás</span>
+                </div>
+
+                <div class="advisor-panel" style="margin-bottom: 32px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+                        <div>
+                            <div class="panel-header-title">Szállás Szűrők és Kényelmi Opciók</div>
+                            <div class="panel-header-desc">Állítsd be az elvárt kategóriákat vagy finomhangold a szállás prioritási modelljét:</div>
+                        </div>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="Wizard.openStayPrioritiesModal()" style="font-weight: 700; border-radius: 10px;">
+                            <span>⚖️ Szállás Prioritási Szempontok Testreszabása →</span>
+                        </button>
+                    </div>
+
+                    <div class="advisor-grid-3" style="margin-bottom: 16px;">
+                        <!-- CSILLAGSZÁM -->
+                        <div>
+                            <label class="form-label">Minimum besorolás:</label>
+                            <select id="intake_hotel_stars" class="form-control" style="width: 100%; padding: 10px; border-radius: 10px; background: var(--bg-surface); font-weight: 700;">
+                                <option value="0">Bármilyen kategória</option>
+                                <option value="3" selected>3★ vagy jobb</option>
+                                <option value="4">4★ vagy jobb (Prémium)</option>
+                                <option value="5">5★ (Luxus)</option>
+                            </select>
+                        </div>
+
+                        <!-- MIN VENDÉGÉRTÉKELÉS (0-10) -->
+                        <div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                <label class="form-label" style="margin: 0;">Min. vendégértékelés:</label>
+                                <span class="badge-accent" id="hotel_rating_badge">7.5+ Jó</span>
+                            </div>
+                            <input type="range" id="intake_hotel_rating" min="0" max="9.5" step="0.5" value="7.5" class="range-slider" style="width: 100%; margin-top: 8px;" oninput="Wizard.onRatingChange(this.value)">
+                        </div>
+
+                        <!-- ELLÁTÁS -->
+                        <div>
+                            <label class="form-label">Ellátás & Reggeli:</label>
+                            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 6px;">
+                                <label class="checkbox-container" style="font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                                    <input type="checkbox" id="intake_breakfast">
+                                    <span>☕ Reggeli az árban kötelező</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SZÁLLÁSTÍPUSOK -->
+                    <div style="margin-bottom: 16px;">
+                        <label class="form-label" style="margin-bottom: 8px; display: block;">Elfogadott szállástípusok:</label>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <label class="chip-select-btn active"><input type="checkbox" name="stay_types" value="hotel" checked style="display: none;"> 🏨 Hotel / Szálloda</label>
+                            <label class="chip-select-btn active"><input type="checkbox" name="stay_types" value="apartment" checked style="display: none;"> 🏢 Apartman</label>
+                            <label class="chip-select-btn active"><input type="checkbox" name="stay_types" value="resort" checked style="display: none;"> 🌴 Üdülő / Resort</label>
+                            <label class="chip-select-btn active"><input type="checkbox" name="stay_types" value="guesthouse" checked style="display: none;"> 🏡 Vendégház / Panzió</label>
+                            <label class="chip-select-btn"><input type="checkbox" name="stay_types" value="hostel" style="display: none;"> 🛏️ Hostel</label>
+                            <label class="chip-select-btn"><input type="checkbox" name="stay_types" value="villa" style="display: none;"> 🏰 Villa</label>
+                        </div>
+                    </div>
+
+                    <!-- KÉNYELMI FELSZERELTSÉG & AMENITIES -->
+                    <div>
+                        <label class="form-label" style="margin-bottom: 8px; display: block;">Kényelmi felszereltség & Extrák:</label>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <label class="chip-select-btn"><input type="checkbox" name="amenities" value="wifi" style="display: none;"> 📶 Ingyenes WiFi</label>
+                            <label class="chip-select-btn"><input type="checkbox" name="amenities" value="pool" style="display: none;"> 🏊 Medence</label>
+                            <label class="chip-select-btn"><input type="checkbox" name="amenities" value="spa" style="display: none;"> 🧖 Wellness / Spa</label>
+                            <label class="chip-select-btn"><input type="checkbox" name="amenities" value="ac" style="display: none;"> ❄️ Légkondicionáló</label>
+                            <label class="chip-select-btn"><input type="checkbox" name="amenities" value="parking" style="display: none;"> 🚗 Parkoló</label>
+                            <label class="chip-select-btn"><input type="checkbox" name="amenities" value="kitchen" style="display: none;"> 🍳 Saját konyha</label>
+                        </div>
+                    </div>
+                </div>
+
+            </div> <!-- END LOCKED CONTAINER -->
+
+            <!-- FŐ INDÍTÓ GOMB -->
+            <div style="text-align: center; margin-top: 16px;">
+                <button type="submit" class="btn btn-primary" onclick="Wizard.startPlanning()" style="padding: 18px 48px; font-size: 16px; font-weight: 800; border-radius: 16px; box-shadow: 0 8px 28px var(--accent-glow);">
+                    <span>🎯 Teljes Út Tervezése & Célállomások Kiszámítása →</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DIALOG CONTAINER (AHP & PRIORITÁSOK) -->
+    <div id="ahpModalBackdrop" class="modal-backdrop" style="display: none;" onclick="if(event.target===this) Wizard.closeAHPModal()">
+        <div class="modal-card" style="max-width: 860px; width: 95%; max-height: 90vh; overflow-y: auto; padding: 32px 28px;">
+            <button type="button" class="modal-close-btn" onclick="Wizard.closeAHPModal()">✕</button>
+            <div id="ahp_wizard_render_container"></div>
+        </div>
     </div>
 
     <!-- LOADING SCREEN -->
     <div id="wizardLoading" style="display: none; text-align: center; padding: 60px 20px;">
         <div style="width: 56px; height: 56px; border: 4px solid var(--border-subtle); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
         <h2 id="wizardLoadingTitle" style="font-size: 22px; font-weight: 800; margin-bottom: 8px; color: var(--text-main);">Elemzés folyamatban...</h2>
-        <p id="wizardLoadingSubtitle" style="font-size: 15px; color: var(--text-secondary); max-width: 500px; margin: 0 auto 20px;">Valós éghajlati, járat- és szállásadatok aggregálása és többkritériumos rangsorolása...</p>
+        <p id="wizardLoadingSubtitle" style="font-size: 15px; color: var(--text-secondary); max-width: 500px; margin: 0 auto 20px;">Valós éghajlati, járat- és szállásadatok aggregálása és intelligens rangsorolása...</p>
         <div class="progress-bar-container" style="max-width: 400px; margin: 0 auto; height: 8px; background: var(--bg-surface-subtle); border-radius: 8px; overflow: hidden;">
             <div id="wizardProgressBar" class="progress-bar" style="width: 15%; height: 100%; background: var(--primary); transition: width 0.3s ease;"></div>
         </div>
@@ -228,7 +549,6 @@
     <!-- STEP 1: DESTINATION SELECTION -->
     <div id="wizardStep1" class="wizard-step-section" style="display: none;">
         
-        <!-- INLINE FILTER MODIFIER ACCORDION -->
         <details class="inline-modifier-accordion" style="margin-bottom: 24px;">
             <summary style="padding: 12px 18px; font-weight: 700; font-size: 13.5px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
                 <span>⚙️ Desztináció szűrők és feltételek azonnali finomhangolása</span>
@@ -241,7 +561,7 @@
                 </div>
                 <div>
                     <label style="font-size: 12px; font-weight: 700;">Min. Biztonság:</label>
-                    <select id="mod_safety" onchange="Wizard.recalculateDestinations()" class="form-input" style="width: 100%; padding: 6px;">
+                    <select id="mod_safety" onchange="Wizard.recalculateDestinations()" class="form-control" style="width: 100%; padding: 6px; background: var(--bg-surface);">
                         <option value="40">40+ Bármilyen</option>
                         <option value="55" selected>55+ Jó</option>
                         <option value="70">70+ Kiemelkedő</option>
@@ -264,18 +584,16 @@
     <!-- STEP 2: FLIGHT SELECTION -->
     <div id="wizardStep2" class="wizard-step-section" style="display: none;">
         
-        <!-- CONTEXT BANNER -->
         <div id="flightContextBanner" style="background: rgba(37, 99, 235, 0.08); border: 1px solid rgba(37, 99, 235, 0.3); border-radius: 14px; padding: 14px 18px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
             <div>
-                <strong style="color: var(--primary);">Kiválasztott célállomás:</strong> <span id="flightContextCity" style="font-weight: 800;">Róma</span> • <span id="flightContextDetails">2 felnőtt, 7 nap, szeptember</span>
+                <strong style="color: var(--primary);">Kiválasztott célállomás:</strong> <span id="flightContextCity" style="font-weight: 800;">Róma</span> • <span id="flightContextDetails">2 felnőtt, 7 nap</span>
             </div>
             <button type="button" class="btn btn-secondary btn-sm" onclick="Wizard.goToStep(1)">← Város módosítása</button>
         </div>
 
-        <!-- INLINE FILTER MODIFIER ACCORDION -->
         <details class="inline-modifier-accordion" style="margin-bottom: 24px;">
             <summary style="padding: 12px 18px; font-weight: 700; font-size: 13.5px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
-                <span>⚙️ Járat preferenciák módosítása (Átszállások, légitársaságok)</span>
+                <span>⚙️ Járat preferenciák módosítása (Átszállások, menetidő)</span>
                 <span style="font-size: 12px; color: var(--primary);">Kattints a megnyitáshoz ▾</span>
             </summary>
             <div style="padding: 18px; border-top: 1px solid var(--border-subtle); display: flex; gap: 20px; flex-wrap: wrap;">
@@ -297,15 +615,13 @@
     <!-- STEP 3: ACCOMMODATION SELECTION -->
     <div id="wizardStep3" class="wizard-step-section" style="display: none;">
         
-        <!-- CONTEXT BANNER -->
         <div id="stayContextBanner" style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 14px; padding: 14px 18px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
             <div>
-                <strong style="color: var(--status-success, #10b981);">Járat rögzítve:</strong> <span id="stayContextFlight">Wizz Air (2026. szept. 10–17. · 7 éj)</span> • <strong id="stayContextCity">Róma</strong>
+                <strong style="color: var(--status-success, #10b981);">Járat rögzítve:</strong> <span id="stayContextFlight">Járat (7 éj)</span> • <strong id="stayContextCity">Róma</strong>
             </div>
             <button type="button" class="btn btn-secondary btn-sm" onclick="Wizard.goToStep(2)">← Járat módosítása</button>
         </div>
 
-        <!-- INLINE FILTER MODIFIER ACCORDION -->
         <details class="inline-modifier-accordion" style="margin-bottom: 24px;">
             <summary style="padding: 12px 18px; font-weight: 700; font-size: 13.5px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
                 <span>⚙️ Szállás szűrők módosítása (Csillagszám, értékelés)</span>
@@ -314,7 +630,7 @@
             <div style="padding: 18px; border-top: 1px solid var(--border-subtle); display: flex; gap: 16px; flex-wrap: wrap;">
                 <div>
                     <label style="font-size: 12px; font-weight: 700;">Min. Csillag:</label>
-                    <select id="mod_hotel_stars" onchange="Wizard.recalculateStays()" class="form-input" style="padding: 6px;">
+                    <select id="mod_hotel_stars" onchange="Wizard.recalculateStays()" class="form-control" style="padding: 6px; background: var(--bg-surface);">
                         <option value="0">Mind</option>
                         <option value="3" selected>3★+</option>
                         <option value="4">4★+</option>
@@ -322,7 +638,7 @@
                 </div>
                 <div>
                     <label style="font-size: 12px; font-weight: 700;">Min. Értékelés:</label>
-                    <select id="mod_hotel_rating" onchange="Wizard.recalculateStays()" class="form-input" style="padding: 6px;">
+                    <select id="mod_hotel_rating" onchange="Wizard.recalculateStays()" class="form-control" style="padding: 6px; background: var(--bg-surface);">
                         <option value="0">Mind</option>
                         <option value="7.5" selected>7.5+</option>
                         <option value="8.5">8.5+</option>
@@ -368,21 +684,21 @@
                 <div style="background: var(--bg-surface-subtle); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 20px;">
                     <div style="font-size: 12px; font-weight: 700; color: var(--primary); text-transform: uppercase; margin-bottom: 6px;">📍 Célállomás</div>
                     <div id="sumDestName" style="font-size: 20px; font-weight: 800; color: var(--text-main); margin-bottom: 4px;">Róma, Olaszország</div>
-                    <div id="sumDestClimate" style="font-size: 13px; color: var(--text-secondary);">☀️ Nappal: ~24°C • Numbeo biztonság: 55/100</div>
+                    <div id="sumDestClimate" style="font-size: 13px; color: var(--text-secondary);">☀️ Nappal: ~24°C • Biztonság: 55/100</div>
                 </div>
 
                 <!-- FLIGHT CARD -->
                 <div style="background: var(--bg-surface-subtle); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 20px;">
                     <div style="font-size: 12px; font-weight: 700; color: var(--primary); text-transform: uppercase; margin-bottom: 6px;">✈️ Repülőjegy & Menetrend</div>
-                    <div id="sumFlightAirline" style="font-size: 20px; font-weight: 800; color: var(--text-main); margin-bottom: 4px;">Wizz Air Retúr</div>
-                    <div id="sumFlightDates" style="font-size: 13px; color: var(--text-secondary);">2026.09.10 – 2026.09.17 • Közvetlen járat</div>
+                    <div id="sumFlightAirline" style="font-size: 20px; font-weight: 800; color: var(--text-main); margin-bottom: 4px;">Retúr Járat</div>
+                    <div id="sumFlightDates" style="font-size: 13px; color: var(--text-secondary);">2026.09.10 – 2026.09.17 • Járatinformáció</div>
                     <div id="sumFlightPrice" style="font-size: 16px; font-weight: 800; color: var(--primary); margin-top: 8px;">48 900 Ft</div>
                 </div>
 
                 <!-- STAY CARD -->
                 <div style="background: var(--bg-surface-subtle); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 20px;">
                     <div style="font-size: 12px; font-weight: 700; color: var(--primary); text-transform: uppercase; margin-bottom: 6px;">🏨 Szállás</div>
-                    <div id="sumStayName" style="font-size: 20px; font-weight: 800; color: var(--text-main); margin-bottom: 4px;">Hotel Colosseum ⭐⭐⭐⭐</div>
+                    <div id="sumStayName" style="font-size: 20px; font-weight: 800; color: var(--text-main); margin-bottom: 4px;">Szálloda ⭐⭐⭐⭐</div>
                     <div id="sumStayRating" style="font-size: 13px; color: var(--text-secondary);">7 éjszaka • Értékelés: 8.8/10</div>
                     <div id="sumStayPrice" style="font-size: 16px; font-weight: 800; color: var(--primary); margin-top: 8px;">148 000 Ft</div>
                 </div>
@@ -394,7 +710,7 @@
             <!-- RESTART OR SWAP BUTTONS -->
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 24px; border-top: 1px solid var(--border-subtle); padding-top: 20px;">
                 <button type="button" class="btn btn-secondary" onclick="Wizard.goToStep(0)">
-                    <span>⚙️ Preferenciák újraszerkesztése</span>
+                    <span>⚙️ Preferenciák módosítása</span>
                 </button>
                 <div style="display: flex; gap: 10px;">
                     <button type="button" class="btn btn-secondary" onclick="Wizard.goToStep(2)">Járat cseréje</button>
@@ -404,37 +720,12 @@
         </div>
     </div>
 </div>
+{% endblock %}
 
-<style>
-    .inline-modifier-accordion {
-        background: var(--bg-surface);
-        border: 1px dashed var(--border-strong);
-        border-radius: 14px;
-        overflow: hidden;
-        transition: all 0.2s ease;
-    }
-    .inline-modifier-accordion[open] {
-        border-style: solid;
-        border-color: var(--primary);
-    }
-    .filter-pill-label {
-        font-size: 12.5px;
-        font-weight: 600;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        background: var(--bg-surface);
-        padding: 6px 12px;
-        border-radius: 10px;
-        border: 1px solid var(--border-subtle);
-        cursor: pointer;
-    }
-    .dest-card-hover:hover {
-        transform: translateY(-4px);
-        box-shadow: var(--shadow-lg);
-        border-color: var(--primary) !important;
-    }
-</style>
-
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/hu.js"></script>
+<script src="/static/js/ahp_wizard.js"></script>
+<script src="/static/js/components.js"></script>
 <script src="/static/js/planner_wizard.js"></script>
 {% endblock %}

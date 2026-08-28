@@ -20,6 +20,7 @@ related:
 
 used_by:
   - "[[fastapi-backend]]"
+  - "[[master-planner-wizard]]"
 ---
 
 # System: Cozycozy Accommodation Aggregator

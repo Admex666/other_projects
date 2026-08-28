@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "3d684b07ea3298f6",
+        "id": "90ff6eb91a5a19dc",
         "type": "tabs",
         "children": [
           {
-            "id": "3f3cad93e671166d",
+            "id": "875b4f97a22b55ab",
             "type": "leaf",
             "state": {
               "type": "graph",
@@ -79,7 +79,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 242.5
   },
   "right": {
     "id": "3e44ca80fb8984f0",
@@ -181,7 +181,7 @@
       "bases:Új bázis létrehozása": false
     }
   },
-  "active": "3f3cad93e671166d",
+  "active": "875b4f97a22b55ab",
   "lastOpenFiles": [
     "decisions/ADR-006-master-planner-wizard.md",
     "processes/master-planner-wizard.md",

@@ -164,18 +164,22 @@ window.initLocationAutocomplete = function(config) {
             return;
         }
 
-        dropdown.innerHTML = items.map((item, idx) => `
+        dropdown.innerHTML = items.map((item, idx) => {
+            const title = item.display || item.name || item.city_name || 'Helyszín';
+            const subtitle = item.sub || [item.city_name || item.city, item.country_name || item.country].filter(Boolean).join(' • ') || item.country_name || item.country || '';
+            return `
             <div class="autocomplete-row-item" data-index="${idx}">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                     <circle cx="12" cy="10" r="3"></circle>
                 </svg>
                 <div style="display: flex; flex-direction: column; text-align: left;">
-                    <span style="font-weight: 600; font-size: 14px;">${item.display}</span>
-                    <span style="font-size: 11.5px; color: var(--text-muted);">${item.city}, ${item.country}${item.code ? ' (' + item.code + ')' : ''}</span>
+                    <span style="font-weight: 600; font-size: 14px;">${title}</span>
+                    <span style="font-size: 11.5px; color: var(--text-muted);">${subtitle}</span>
                 </div>
             </div>
-        `).join('');
+            `;
+        }).join('');
 
         dropdown.style.display = 'block';
 
@@ -190,7 +194,7 @@ window.initLocationAutocomplete = function(config) {
 
     function selectItem(item) {
         if (!item) return;
-        input.value = item.display || `${item.city}, ${item.country}`;
+        input.value = item.display || item.city_name || item.name || [item.city, item.country].filter(Boolean).join(', ');
         dropdown.style.display = 'none';
         if (onSelect) onSelect(item);
     }
