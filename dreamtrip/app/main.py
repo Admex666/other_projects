@@ -1757,6 +1757,178 @@ async def api_search_poi(city_name: str, city_id: str, lat: float, lng: float, r
         raise HTTPException(status_code=500, detail=str(e))
 
 # ============================================================================
+# MASTER TRAVEL PLANNER (END-TO-END WIZARD) ENDPOINTS
+# ============================================================================
+
+class MasterPlannerIntake(BaseModel):
+    origin: str = "Budapest"
+    adults: int = 2
+    children: int = 0
+    month: int = 9
+    duration: int = 7
+    budget_total_huf: Optional[float] = None
+    target_temp: float = 24.0
+    min_safety: int = 50
+    preferred_regions: Optional[List[str]] = None
+    exclusions: Optional[List[str]] = None
+    flight_direct_only: bool = False
+    flight_max_stops: int = 1
+    preferred_departure_time: str = "any"
+    hotel_min_stars: int = 3
+    hotel_min_rating: float = 7.5
+    hotel_type: str = "all"
+    weight_flight: float = 30.0
+    weight_cost: float = 20.0
+    weight_weather: float = 30.0
+    weight_safety: float = 20.0
+
+class PlannerFlightSearchRequest(BaseModel):
+    origin: str = "Budapest"
+    destination: str = "Róma"
+    month: int = 9
+    duration: int = 7
+    adults: int = 2
+    children: int = 0
+    direct_only: bool = False
+    max_stops: int = 1
+    departure_pref: str = "any"
+
+class PlannerStaySearchRequest(BaseModel):
+    city: str = "Róma"
+    country: Optional[str] = "Olaszország"
+    checkin: str = "2026-09-10"
+    checkout: str = "2026-09-17"
+    adults: int = 2
+    min_stars: int = 3
+    min_rating: float = 7.5
+    hotel_type: str = "all"
+
+planner_dest_status: Dict[str, Any] = {}
+
+from app.services.planner_service import calculate_planner_destinations_sync, search_and_rank_planner_flights
+
+@app.get("/planner", response_class=HTMLResponse)
+async def master_planner_page(request: Request):
+    user = get_current_user(request)
+    return templates.TemplateResponse("planner/planner_wizard.html", {
+        "request": request,
+        "user": user,
+        "is_production": IS_PRODUCTION
+    })
+
+def run_planner_destinations_task(user_key: str, data: MasterPlannerIntake):
+    global planner_dest_status
+    planner_dest_status[user_key] = {
+        "status": "running",
+        "progress": 5,
+        "status_text": "Célállomások éghajlati és repülési adatainak elemzése..."
+    }
+    try:
+        def on_prog(p, txt):
+            planner_dest_status[user_key]["progress"] = p
+            planner_dest_status[user_key]["status_text"] = txt
+
+        weights = {
+            "flight": data.weight_flight,
+            "cost": data.weight_cost,
+            "weather": data.weight_weather,
+            "safety": data.weight_safety
+        }
+
+        results = calculate_planner_destinations_sync(
+            origin=data.origin,
+            adults=data.adults,
+            children=data.children,
+            month=data.month,
+            duration_days=data.duration,
+            target_temp=data.target_temp,
+            min_safety=data.min_safety,
+            preferred_regions=data.preferred_regions,
+            exclusions=data.exclusions,
+            weights=weights,
+            progress_callback=on_prog
+        )
+
+        planner_dest_status[user_key] = {
+            "status": "done",
+            "progress": 100,
+            "count": len(results),
+            "results": results
+        }
+    except Exception as e:
+        print(f"[PLANNER ERROR] {e}")
+        planner_dest_status[user_key] = {
+            "status": "error",
+            "progress": 0,
+            "error": str(e)
+        }
+
+@app.post("/api/planner/init-destinations")
+async def init_planner_destinations(data: MasterPlannerIntake, background_tasks: BackgroundTasks, request: Request):
+    user = get_current_user(request) or "guest_planner"
+    user_key = f"planner_{user}"
+    planner_dest_status[user_key] = {"status": "running", "progress": 0, "status_text": "Keresés indítása..."}
+    background_tasks.add_task(run_planner_destinations_task, user_key, data)
+    return JSONResponse({"status": "ok", "message": "Destination calculation started"})
+
+@app.get("/api/planner/destinations-status")
+async def get_planner_destinations_status(request: Request):
+    user = get_current_user(request) or "guest_planner"
+    user_key = f"planner_{user}"
+    return JSONResponse(planner_dest_status.get(user_key, {"status": "idle"}))
+
+@app.post("/api/planner/search-flights")
+async def api_planner_search_flights(req: PlannerFlightSearchRequest, request: Request):
+    try:
+        flights = search_and_rank_planner_flights(
+            origin=req.origin,
+            destination=req.destination,
+            month=req.month,
+            duration_days=req.duration,
+            adults=req.adults,
+            children=req.children,
+            direct_only=req.direct_only,
+            max_stops=req.max_stops,
+            departure_pref=req.departure_pref
+        )
+        return JSONResponse({"status": "ok", "count": len(flights), "flights": flights})
+    except Exception as e:
+        print(f"[PLANNER FLIGHT ERROR] {e}")
+        return JSONResponse({"status": "error", "error": str(e)}, status_code=500)
+
+@app.post("/api/planner/search-stays")
+async def api_planner_search_stays(req: PlannerStaySearchRequest, request: Request):
+    try:
+        stays_df = accommodation_scraper.search_cozycozy(
+            destination=req.city,
+            checkin=req.checkin,
+            checkout=req.checkout,
+            adults=req.adults,
+            limit=40
+        )
+        if stays_df is None or stays_df.empty:
+            return JSONResponse({"status": "ok", "count": 0, "stays": []})
+
+        df = stays_df.copy()
+        if 'rating_score' in df.columns and req.min_rating > 0:
+            df = df[df['rating_score'] >= (req.min_rating * 10 if df['rating_score'].max() > 10 else req.min_rating)]
+        
+        if df.empty:
+            df = stays_df.copy()
+
+        # Számítsunk PROMETHEE vagy ár szerinti rendezést
+        if 'price_huf' in df.columns:
+            df_sorted = df.sort_values('price_huf', ascending=True)
+        else:
+            df_sorted = df
+
+        stays_list = df_sorted.head(25).to_dict(orient='records')
+        return JSONResponse({"status": "ok", "count": len(stays_list), "stays": stays_list})
+    except Exception as e:
+        print(f"[PLANNER STAY ERROR] {e}")
+        return JSONResponse({"status": "error", "error": str(e)}, status_code=500)
+
+# ============================================================================
 # UNIFIED TRIP PERSISTENCE & SYNC ENDPOINTS
 # ============================================================================
 active_trips: Dict[str, Any] = {}

@@ -19,6 +19,7 @@ Ez a fájl az Optivoya (DreamTrip) projekt navigációs térképe. Minden lénye
 * [[honest-scraping-policy]] — Transzparens hibakezelés mesterséges dummy adatok helyett.
 
 ## 🔄 Processes (Folyamatok)
+* [[master-planner-wizard]] — Master Travel Planner: integrált 4-lépéses end-to-end utazástervező varázsló.
 * [[destination-matching]] — Úticél-keresési és éghajlat/ár/biztonság optimalizálási folyamat.
 * [[flight-intelligence-workflow]] — Élő repülőjegy gyűjtés, AHP súlyozás és PROMETHEE rangsorolás.
 * [[accommodation-search-workflow]] — Zárolt dátumú szálláskeresés és kényelmi szűrés.
@@ -48,6 +49,7 @@ Ez a fájl az Optivoya (DreamTrip) projekt navigációs térképe. Minden lénye
 * [[ADR-003-promethee-ii-outranking]] — PROMETHEE II alkalmazása AHP súlyozással kombinálva.
 * [[ADR-004-honest-scraping-mode]] — Fiktív mock járatok eltávolítása, hibák transzparens jelzése.
 * [[ADR-005-fastapi-modular-structure]] — Moduláris `app/` architektúra és V2 route-ok bevezetése.
+* [[ADR-006-master-planner-wizard]] — Master Travel Planner: egybefüggő 4-lépéses folyamat.
 
 ## 🧠 Learnings (Megfigyelések & Tanulságok)
 * [[kiwi-pagination-and-tokens]] — Kiwi GraphQL keresési tokenek és lapozás sajátosságai.

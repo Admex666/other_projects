@@ -33,15 +33,20 @@
 
     <!-- CENTRAL APP NAVBAR -->
     <header class="app-navbar">
-        <a href="/home" class="nav-brand">
-            <div class="brand-icon-box">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                </svg>
-            </div>
-            <span class="brand-title">Optivoya</span>
-            <span class="brand-badge">Early Access</span>
-        </a>
+        <div style="display: flex; align-items: center; gap: 14px;">
+            <a href="/home" class="brand-link">
+                <div class="brand-icon-wrap">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                    </svg>
+                </div>
+                <span class="brand-title">Optivoya</span>
+                <span class="brand-badge">Early Access</span>
+            </a>
+            <a href="/planner" style="font-size: 13px; font-weight: 800; color: var(--primary); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; background: rgba(37, 99, 235, 0.08); padding: 6px 14px; border-radius: 12px; border: 1px solid rgba(37, 99, 235, 0.2); transition: all 0.2s ease;">
+                <span>🚀 Master Planner</span>
+            </a>
+        </div>
 
         <div class="nav-actions">
             <!-- Theme toggle button -->

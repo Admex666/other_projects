@@ -183,6 +183,8 @@
   },
   "active": "3f3cad93e671166d",
   "lastOpenFiles": [
+    "decisions/ADR-006-master-planner-wizard.md",
+    "processes/master-planner-wizard.md",
     "systems/trip-cart-engine.md",
     "systems/google-places-service.md",
     "systems/numbeo-database.md",
