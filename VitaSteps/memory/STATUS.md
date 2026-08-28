@@ -31,13 +31,14 @@
         *   **Beépített Teljesítés Igazoló és Admin Dashboard (COMPLETED 2026-07-16):** Létrehoztunk egy fájlfeltöltő tabot a portálon (GPX és fotó feltöltésével), egy hozzá tartozó adminisztrátori ellenőrző felületet (`admin.html` és `api/admin-approve.js`), valamint automatikus gratulációs e-mail küldést és dinamikus oklevél-sablon javítást (`oklevel.html` paraméter-dekódolás és tábla lekérdezés).
         *   **Google Sheets Teljes Leválasztás és Supabase Migráció (COMPLETED 2026-07-21, UPDATED 2026-07-26):** Teljesen megszüntettük a Google Sheets függőséget a fizetési, limit-ellenőrzési és visszajelzési folyamatokban. Biztonságos migrációval átmentettük az összes korábbi Prédikálószék résztvevőt a Google Sheets-ből a Supabase-be (`runners`, `orders`, `runs`, `shipments`) a Foxpost csomagszámokkal együtt. Az adatbázist megtisztítottuk a hibás tesztsoroktól (0 db null-campaign run maradt).
         *   **Foxpost API Közvetlen Feladás & Követés (COMPLETED 2026-07-21, UPDATED 2026-07-26):** Kialakítottunk egy teljesen automatizált Foxpost csomagfeladást közvetlenül az admin felületről. A háttérben futó követő script (`daily_tracking.py`) folyamatosan frissíti a státuszokat.
-        *   **Közös Szállítás (Csomagösszevonás) és Csomagolási Segédlet (COMPLETED 2026-07-26, UPDATED 2026-08-06):**
-            *   *Portál:* Opcionális csoportos szállítás e-mail megadás a teljesítés feltöltésnél.
-            *   *Admin panel:* Minimalista Csomagolási és Kiszállítási Segédlet kártya, ami valól időben mutatja az összevont csomagok darabszámát és a célautomatát. A csoporttagok checkboxai egyszerre jelölődnek ki. Kampány-szintű elkülönítés (`run.campaign`) véd a visszatérő vásárlók előző csomagjainak téves összevonásától.
-            *   *Foxpost végpont:* Az összevont csomagokhoz csak egyetlen csomagot hoz létre a Foxpost API-nál (spórolva a szállítási díjjal), de a kapott vonalkódot mindegyik taghoz visszamenti.
-        *   **Prédikálószék Manuális Jóváhagyás Tab (`admin.html`) & Éremkiszállítás Dátum Kezelés (COMPLETED 2026-08-06):**
-            *   Dedeikált **🏔️ Prédikálószék** fül az admin panelen a portálon kívüli igazolások azonnali, egykattintásos jóváhagyására.
-            *   A jóváhagyáskor elküldött e-mail dinamikusan jelzi a szállítás várható idejét (`predikaloszek`: „néhány munkanapon belül", `pilis`: „2026. augusztus 25. után", aug. 25. után automatikusan „néhány munkanapon belül").
+        *   **Közös Szállítás & Csomagolási Segédlet Részletezés (UPDATED 2026-08-28):**
+            *   *Admin panel:* A Csomagolási és Kiszállítási Segédlet kártyái mostantól pontosan, színes jelvényekkel és sorszámokkal részletezik, hogy **melyik kampányból hány darab érmet** kell ugyanabba a borítékba/csomagba tenni (pl. `1x 🏔️ Prédikálószék (#006/100) + 1x 🌌 Nagy-Kevély (#006/100-PK)`).
+            *   *Több kampányos összevonás:* Azonos email/címzett esetén a rendszer egy csomagba rendezi az összes feladatlan érmet, spórolva a szállítási díjjal.
+            *   *Foxpost végpont:* Az összevont csomagokhoz egyetlen közös címkét generál a Foxpost API-nál.
+        *   **Egységes Várakozó Lista & Manuális Jóváhagyás (`admin.html`) (UPDATED 2026-08-28):**
+            *   *Külön Prédikálószék fül megszüntetve:* Az összes várakozó (beküldött igazolások ÉS még nem igazolt nevezők) egyetlen, átlátható felületre került a `⏳ Várakozó` fül alá.
+            *   *Al-szűrők & Kampány jelvények:* Gyorsszűrők (`⏳ Összes várakozó`, `📥 Beküldött igazolások`, `🏃 Még nem igazolt`) és kampány szerinti szűrés (`🏔️ Prédikálószék`, `🌌 Nagy-Kevély`). Minden kártyán és a táblázatban is jól látható a kihívás neve és színe.
+            *   *Azonnali Manuális Jóváhagyás:* Bármelyik nevezőnél közvetlenül a kártyáról elérhető a `✅ Manuális Jóváhagyás` gomb (pl. ha a futó e-mailben/Facebookon küldte az igazolást), ami azonnal kiküldi a gratulációs e-mailt és aktiválja az oklevelet.
         *   **Google Sheets Szállítási Adat Migráció & Tisztítás (COMPLETED 2026-08-06):**
             *   A Google Sheets `Nevezések` munkalapjáról hiánytalanul átmigráltuk a `ship_together_with` (együtt küldve) partnereket és a feladási állapotokat a Supabase `runs` és `shipments` táblákba.
             *   A Prédikálószék mind az 58 jóváhagyott éremjének feladási állapota frissült (0 feladatlan maradt).

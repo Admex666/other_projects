@@ -713,7 +713,6 @@
             <button class="filter-tab active" onclick="setFilter('pending')" id="tab-pending">⏳ Várakozó</button>
             <button class="filter-tab" onclick="setFilter('approved')" id="tab-approved">✅ Jóváhagyott</button>
             <button class="filter-tab" onclick="setFilter('all')" id="tab-all">📋 Összes</button>
-            <button class="filter-tab" onclick="setFilter('predikalo')" id="tab-predikalo" style="border: 1px solid rgba(99,179,237,0.4); color: #63b3ed;">🏔️ Prédikálószék</button>
             <button class="filter-tab" onclick="setFilter('logistics')" id="tab-logistics" style="margin-left: auto; border: 1px solid rgba(249, 115, 22, 0.3); color: #f97316;">🦊 Logisztika (Foxpost)</button>
             <button class="filter-tab" onclick="setFilter('marketing')" id="tab-marketing" style="border: 1px solid rgba(196, 255, 0, 0.3); color: #c4ff00;">📊 Marketing</button>
         </div>
@@ -755,6 +754,14 @@
     let allRuns = [];
     let currentFilter = 'pending';
 
+    function getCampaignInfo(run) {
+        const c = (run?.campaign || '').toLowerCase();
+        if (c.includes('pilis') || c.includes('kevely') || c.includes('pk')) {
+            return { name: 'Nagy-Kevély', fullName: 'Nagy-Kevély csillagai', icon: '🌌', color: '#c4ff00' };
+        }
+        return { name: 'Prédikálószék', fullName: 'Prédikálószék Vertical', icon: '🏔️', color: '#63b3ed' };
+    }
+
     function getShipment(run) {
         if (!run) return {};
         if (Array.isArray(run.shipments)) {
@@ -770,14 +777,9 @@
         const targetShipTogether = (targetRun.ship_together_with || '').toLowerCase().trim();
         const targetShipment = getShipment(targetRun);
         const targetDest = targetShipment.parcel_id || targetRun.parcel_id || '';
-        const targetCampaign = targetRun.campaign || 'predikaloszek';
 
         allRuns.forEach(run => {
             if (run.id === targetRun.id || !run.completed) return;
-
-            // Must belong to the exact same campaign
-            const runCampaign = run.campaign || 'predikaloszek';
-            if (runCampaign !== targetCampaign) return;
 
             const shipment = getShipment(run);
             const isShipped = !!shipment.shipped;
@@ -787,13 +789,11 @@
             if (method !== 'foxpost') return; // Only group foxpost locker shipments
 
             const dest = shipment.parcel_id || run.parcel_id || '';
-            if (dest !== targetDest || !dest) return; // Lockers must match
-
             const email = (run.runners?.email || '').toLowerCase().trim();
             const shipTogether = (run.ship_together_with || '').toLowerCase().trim();
 
             const isMatch = (
-                email === targetEmail ||
+                (email && targetEmail && email === targetEmail) ||
                 (targetShipTogether && targetShipTogether === email) ||
                 (shipTogether && shipTogether === targetEmail) ||
                 (targetShipTogether && shipTogether && targetShipTogether === shipTogether)
@@ -1093,7 +1093,15 @@
     function renderMktCards() {
         const STRIPE_PCT   = 0.015;
         const STRIPE_FIXED = 50;
-        const INITIAL_INVESTMENT = 163000; // 163 000 Ft éremgyártási kezdő tőke
+        const FOXPOST_UNIT = 1250; // Foxpost automata: 1141 Ft + ÁFA
+        const SZAMLAZZ_UNIT = 35;  // Számlázz.hu autószámla költség
+        const PACKAGING_UNIT = 120; // Párnázott boríték + kísérőkártya
+
+        // Fix költségek (Capex + Opex)
+        const MEDAL_CAPEX = 163000;         // 100 db érem gyártási kezdőtőkéje
+        const ACCOUNTING_MONTHLY = 15000;   // 15 000 Ft / hó könyvelés
+        const ACCOUNTING_MONTHS = 2;        // 2 havi kampányidőszak
+        const TOTAL_FIXED_COSTS = MEDAL_CAPEX + (ACCOUNTING_MONTHLY * ACCOUNTING_MONTHS); // 193 000 Ft
 
         const cardsEl = document.getElementById('mkt-cards');
         const { from, label } = getDateRange();
@@ -1119,17 +1127,23 @@
             totPurchases += Number(r.purchases || 0);
         }
 
-        const totMetaVat   = Math.round(totSpend * 1.27);
-        const totStripe    = Math.round(totRev * STRIPE_PCT + STRIPE_FIXED * totPurchases);
-        const totShipping  = Math.round(totPurchases * 1141);
-        const totNetContrib = Math.round(totRev - totMetaVat - totStripe - totShipping);
+        const totMetaVat    = Math.round(totSpend * 1.27);
+        const totStripe     = Math.round(totRev * STRIPE_PCT + STRIPE_FIXED * totPurchases);
+        const totShipping   = Math.round(totPurchases * FOXPOST_UNIT);
+        const totSzamlazz   = Math.round(totPurchases * SZAMLAZZ_UNIT);
+        const totPackaging  = Math.round(totPurchases * PACKAGING_UNIT);
+        const totVarCosts   = totMetaVat + totStripe + totShipping + totSzamlazz + totPackaging;
         
-        const paybackPct    = Math.min(100, Math.max(0, (totNetContrib / INITIAL_INVESTMENT) * 100)).toFixed(1);
-        const remainingToBe = Math.max(0, INITIAL_INVESTMENT - totNetContrib);
+        // Termelt nettó fedezet (Contribution Margin)
+        const totNetContrib = Math.round(totRev - totVarCosts);
+        
+        const paybackPct    = Math.min(100, Math.max(0, (totNetContrib / TOTAL_FIXED_COSTS) * 100)).toFixed(1);
+        const remainingToBe = Math.max(0, TOTAL_FIXED_COSTS - totNetContrib);
         const unitNetProfit = totPurchases > 0 ? (totNetContrib / totPurchases) : 0;
         const ordersNeeded  = (remainingToBe > 0 && unitNetProfit > 0) ? Math.ceil(remainingToBe / unitNetProfit) : 0;
 
-        const isFullyPaid   = totNetContrib >= INITIAL_INVESTMENT;
+        const isFullyPaid   = totNetContrib >= TOTAL_FIXED_COSTS;
+        const netProfitAfterFC = totNetContrib - TOTAL_FIXED_COSTS;
         const paybackColor  = isFullyPaid ? '#22c55e' : (paybackPct > 50 ? '#f59e0b' : '#ef4444');
 
         // Filter cohorts specifically for active campaign (pilis / Nagy-Kevély csillagai)
@@ -1146,10 +1160,10 @@
         <div style="background: var(--surface2); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.5rem;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
                 <div style="font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 800; color: #fff;">
-                    🎯 Befektetés Megtérülés (163 000 Ft éremgyártás)
+                    🎯 Megtérülés és Break-Even (Fix Költségek: 163k gyártás + 30k könyvelés = 193 000 Ft)
                 </div>
                 <div style="font-size: 0.85rem; font-weight: 700; color: ${paybackColor}; background: rgba(255,255,255,0.05); padding: 0.3rem 0.8rem; border-radius: 20px; border: 1px solid ${paybackColor};">
-                    ${isFullyPaid ? '✅ Teljesen Megtérült!' : `${paybackPct}% Megtérült`}
+                    ${isFullyPaid ? '✅ Break-Even elérve! Nyereséges' : `${paybackPct}% Megtérült`}
                 </div>
             </div>
 
@@ -1161,28 +1175,28 @@
             <!-- Summary Grid -->
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; font-size: 0.82rem;">
                 <div>
-                    <div style="color: var(--text-mid); font-size: 0.7rem; text-transform: uppercase;">Kezdő befektetés</div>
-                    <div style="font-size: 1.1rem; font-weight: 700; color: #fff;">163 000 Ft</div>
-                    <div style="color: var(--text-mid); font-size: 0.75rem;">100 db érem gyártása</div>
+                    <div style="color: var(--text-mid); font-size: 0.7rem; text-transform: uppercase;">Összes Fix Költség</div>
+                    <div style="font-size: 1.1rem; font-weight: 700; color: #fff;">193 000 Ft</div>
+                    <div style="color: var(--text-mid); font-size: 0.75rem;">163k érem + 30k könyvelés</div>
                 </div>
                 <div>
                     <div style="color: var(--text-mid); font-size: 0.7rem; text-transform: uppercase;">Termelt nettó fedezet</div>
                     <div style="font-size: 1.1rem; font-weight: 700; color: #22c55e;">+${fmt(totNetContrib)}</div>
-                    <div style="color: var(--text-mid); font-size: 0.75rem;">Stripe, szállítás, Meta+ÁFA levonva</div>
+                    <div style="color: var(--text-mid); font-size: 0.75rem;">Változó költségek levonva</div>
                 </div>
                 <div>
-                    <div style="color: var(--text-mid); font-size: 0.7rem; text-transform: uppercase;">Breakeven-ig hiányzik</div>
+                    <div style="color: var(--text-mid); font-size: 0.7rem; text-transform: uppercase;">Break-Even állása</div>
                     <div style="font-size: 1.1rem; font-weight: 700; color: ${remainingToBe === 0 ? '#22c55e' : '#f59e0b'};">
-                        ${remainingToBe === 0 ? '0 Ft 🎉' : `${fmt(remainingToBe)}`}
+                        ${remainingToBe === 0 ? `+${fmt(netProfitAfterFC)} profit 🎉` : `${fmt(remainingToBe)}`}
                     </div>
                     <div style="color: var(--text-mid); font-size: 0.75rem;">
-                        ${remainingToBe === 0 ? 'Már nyereséges!' : `kb. ${ordersNeeded} db vásárlás kell még`}
+                        ${remainingToBe === 0 ? 'Fix költségek megtérültek!' : `kb. ${ordersNeeded} db eladás kell még`}
                     </div>
                 </div>
                 <div>
-                    <div style="color: var(--text-mid); font-size: 0.7rem; text-transform: uppercase;">Átlagos nettó árrés / rendelés</div>
+                    <div style="color: var(--text-mid); font-size: 0.7rem; text-transform: uppercase;">Átl. egységfedezet / eladás</div>
                     <div style="font-size: 1.1rem; font-weight: 700; color: #fff;">${fmt(unitNetProfit)}</div>
-                    <div style="color: var(--text-mid); font-size: 0.75rem;">tiszta haszon / eladott érem</div>
+                    <div style="color: var(--text-mid); font-size: 0.75rem;">nettó fedezet / eladott érem</div>
                 </div>
             </div>
         </div>
@@ -1244,22 +1258,22 @@
             const spend     = c.spend;
             const spendVat  = Math.round(spend * 1.27); // Meta 27% ÁFA
 
-            const medalUnitCost    = Number(target.medal_cost    || 1630);
-            const shippingUnitCost = Number(target.shipping_cost || 1141);
-
+            const shippingCosts = Math.round(purchases * FOXPOST_UNIT);
             const stripeFees    = Math.round(revenue * STRIPE_PCT + STRIPE_FIXED * purchases);
-            const medalCosts    = Math.round(purchases * medalUnitCost);
-            const shippingCosts = Math.round(purchases * shippingUnitCost);
+            const szamlazzCosts = Math.round(purchases * SZAMLAZZ_UNIT);
+            const packCosts     = Math.round(purchases * PACKAGING_UNIT);
+            const otherVarCosts = szamlazzCosts + packCosts;
 
-            // Gross Profit (beleértve az éremgyártási költséget is)
-            const grossProfit   = Math.round(revenue - stripeFees - medalCosts - shippingCosts - spendVat);
-            const marginPct     = revenue > 0 ? (grossProfit / revenue * 100).toFixed(1) : 0;
+            const totalVarCosts = spendVat + shippingCosts + stripeFees + otherVarCosts;
 
-            // Nettó fedezet (az éremgyártás előtti árrés a 163 000 Ft törlesztésére)
-            const netContrib    = Math.round(revenue - stripeFees - shippingCosts - spendVat);
+            // Nettó fedezet (Contribution Margin az eladott érmek után)
+            const netContrib    = Math.round(revenue - totalVarCosts);
+            const marginPct     = revenue > 0 ? (netContrib / revenue * 100).toFixed(1) : 0;
 
-            const profitCls  = grossProfit >= 0 ? 'fin-profit-pos' : 'fin-profit-neg';
-            const profitSign = grossProfit >= 0 ? '+' : '';
+            // Fix költség arányos megtérülési eredmény
+            const netBalance    = netContrib - TOTAL_FIXED_COSTS;
+            const profitCls     = netBalance >= 0 ? 'fin-profit-pos' : 'fin-profit-neg';
+            const profitSign    = netBalance >= 0 ? '+' : '';
 
             // Campaign Cohort calculation
             const cNameLower = (c.campaign_name || '').toLowerCase();
@@ -1337,55 +1351,57 @@
                 <div class="fin-section">
                     <div class="fin-two-col">
 
-                        <!-- Eredménykimutatás -->
+                        <!-- Termékenkénti Fedezet (Contribution Margin) -->
                         <div>
-                            <div class="fin-title">📊 Eredménykimutatás</div>
+                            <div class="fin-title">📊 Termékenkénti Fedezet</div>
                             <div class="fin-row">
-                                <span>(+) Br. bevétel</span>
+                                <span>(+) Bruttó bevétel</span>
                                 <span class="fin-plus">+${fmt(revenue)}</span>
                             </div>
                             <div class="fin-row">
-                                <span>(-) Meta hirdetés (+27% ÁFA)</span>
+                                <span>(-) Meta hirdetés (+ÁFA)</span>
                                 <span class="fin-minus">−${fmt(spendVat)}</span>
                             </div>
                             <div class="fin-row">
-                                <span>(-) Stripe díj</span>
-                                <span class="fin-minus">−${fmt(stripeFees)}</span>
-                            </div>
-                            <div class="fin-row">
-                                <span>(-) Szállítás</span>
+                                <span>(-) Foxpost szállítás</span>
                                 <span class="fin-minus">−${fmt(shippingCosts)}</span>
                             </div>
                             <div class="fin-row">
-                                <span>(-) Éremgyártás arányos</span>
-                                <span class="fin-minus">−${fmt(medalCosts)}</span>
+                                <span>(-) Stripe tranzakció</span>
+                                <span class="fin-minus">−${fmt(stripeFees)}</span>
+                            </div>
+                            <div class="fin-row">
+                                <span>(-) Számlázás & csomagolás</span>
+                                <span class="fin-minus">−${fmt(otherVarCosts)}</span>
                             </div>
                             <div class="fin-row total">
-                                <span>Nettó Profit</span>
-                                <span class="${profitCls}">${profitSign}${fmt(grossProfit)}<small style="font-size:0.7rem;opacity:0.7"> (${marginPct}%)</small></span>
+                                <span>Kitermelt fedezet (CM)</span>
+                                <span style="color: #22c55e; font-weight:800;">+${fmt(netContrib)}<small style="font-size:0.7rem;opacity:0.7"> (${marginPct}%)</small></span>
                             </div>
                         </div>
 
-                        <!-- Megtérülési árrés -->
+                        <!-- Fix Költség Megtérülés -->
                         <div>
-                            <div class="fin-title">🎯 Megtérülésre fordítható nettó árrés</div>
+                            <div class="fin-title">🎯 Fix Költségek Törlesztése</div>
                             <div class="fin-row">
-                                <span>(+) Br. bevétel</span>
-                                <span class="fin-plus">+${fmt(revenue)}</span>
+                                <span>(+) Kitermelt fedezet</span>
+                                <span class="fin-plus">+${fmt(netContrib)}</span>
                             </div>
                             <div class="fin-row">
-                                <span>(-) Változó költségek összesen</span>
-                                <span class="fin-minus">−${fmt(spendVat + stripeFees + shippingCosts)}</span>
+                                <span>(-) Éremgyártás (100 db)</span>
+                                <span class="fin-minus">−163 000 Ft</span>
+                            </div>
+                            <div class="fin-row">
+                                <span>(-) Könyvelés (2 hó)</span>
+                                <span class="fin-minus">−30 000 Ft</span>
                             </div>
                             <div class="fin-row" style="font-size:0.75rem; opacity:0.7;">
-                                <span>(Meta+ÁFA + Stripe + Szállítás)</span>
+                                <span>(Összes Fix Költség: 193 000 Ft)</span>
                                 <span></span>
                             </div>
-                            <div class="fin-row" style="visibility:hidden"><span>-</span><span>-</span></div>
-                            <div class="fin-row" style="visibility:hidden"><span>-</span><span>-</span></div>
                             <div class="fin-row total">
-                                <span>Nettó kitermelt fedezet</span>
-                                <span style="color: #22c55e; font-weight:800;">+${fmt(netContrib)}</span>
+                                <span>Mérleg szerinti eredmény</span>
+                                <span class="${profitCls}">${profitSign}${fmt(netBalance)}</span>
                             </div>
                         </div>
 
@@ -1398,51 +1414,52 @@
         cardsEl.innerHTML = html;
     }
 
+    let pendingSubFilter = 'all'; // 'all', 'submitted', 'unsubmitted'
+    let pendingCampaignFilter = 'all'; // 'all', 'predikalo', 'pilis'
+    let pendingSearchQuery = '';
+    let pendingHideTest = true;
+
     function updateStats() {
-        const pending = allRuns.filter(r => r.proof_submitted && !r.completed).length;
-        const approved = allRuns.filter(r => r.completed).length;
-        const total = allRuns.length;
+        const proofPending = allRuns.filter(r => r.proof_submitted && !r.completed && (!pendingHideTest || !isTestRun(r))).length;
+        const notSubmitted = allRuns.filter(r => !r.proof_submitted && !r.completed && (!pendingHideTest || !isTestRun(r))).length;
+        const approved = allRuns.filter(r => r.completed && (!pendingHideTest || !isTestRun(r))).length;
+        const total = allRuns.filter(r => (!pendingHideTest || !isTestRun(r))).length;
 
         document.getElementById('stats-bar').innerHTML = `
-            <div class="stat-chip">⏳ Várakozó: <strong>${pending}</strong></div>
+            <div class="stat-chip">📥 Igazolásra vár: <strong>${proofPending}</strong></div>
+            <div class="stat-chip">🏃 Még nem igazolt: <strong>${notSubmitted}</strong></div>
             <div class="stat-chip">✅ Jóváhagyott: <strong>${approved}</strong></div>
             <div class="stat-chip">📋 Összes: <strong>${total}</strong></div>
         `;
     }
 
-    function isPredikaloRun(run) {
-        const serial = run.serial_number || '';
-        return !serial.includes('PK') && !serial.includes('999');
+    function setPendingSubFilter(sub) {
+        pendingSubFilter = sub;
+        renderList();
     }
 
-    async function approvePredikaloRun(runId, btn) {
-        if (!confirm('Biztosan jóváhagyod ezt a Prédikálószék teljesítést?')) return;
-        btn.disabled = true;
-        btn.textContent = '⏳ Folyamatban...';
-        try {
-            const res = await fetch('/api/admin-approve', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'approve', run_id: runId, admin_secret: adminSecret })
-            });
-            const json = await res.json();
-            if (!res.ok) throw new Error(json.error || 'Ismeretlen hiba');
-            btn.textContent = '✅ Jóváhagyva';
-            btn.style.background = 'rgba(34,197,94,0.2)';
-            btn.style.color = '#22c55e';
-            btn.style.borderColor = '#22c55e';
-            await loadData();
-        } catch (err) {
-            btn.disabled = false;
-            btn.textContent = '✅ Jóváhagyás';
-            alert('Hiba: ' + err.message);
-        }
+    function setPendingCampaignFilter(camp) {
+        pendingCampaignFilter = camp;
+        renderList();
+    }
+
+    function handlePendingSearch(e) {
+        pendingSearchQuery = e.target.value;
+        renderList();
+    }
+
+    function togglePendingHideTest(el) {
+        pendingHideTest = el.checked;
+        logisticsHideTest = el.checked;
+        updateStats();
+        renderList();
     }
 
     function setFilter(filter) {
         currentFilter = filter;
         document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-        document.getElementById(`tab-${filter}`).classList.add('active');
+        const tabBtn = document.getElementById(`tab-${filter}`);
+        if (tabBtn) tabBtn.classList.add('active');
 
         const isMkt = filter === 'marketing';
         document.getElementById('proof-list').style.display   = isMkt ? 'none' : '';
@@ -1453,48 +1470,6 @@
 
     function renderList() {
         const container = document.getElementById('proof-list');
-
-        // ── PRÉDIKÁLÓSZÉK TAB ────────────────────────────────────
-        if (currentFilter === 'predikalo') {
-            const predRuns = allRuns.filter(isPredikaloRun);
-            const notApproved = predRuns.filter(r => !r.completed);
-            const approvedCount = predRuns.filter(r => r.completed).length;
-
-            let html = `
-            <div style="background: rgba(99,179,237,0.07); border: 1px solid rgba(99,179,237,0.25); border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1.25rem;">
-                <div style="font-family:'Outfit',sans-serif; font-size:1rem; font-weight:800; color:#63b3ed; margin-bottom:0.4rem;">🏔️ Prédikálószék Vertical – Manuális Jóváhagyás</div>
-                <div style="font-size:0.82rem; color:var(--text-mid); margin-bottom:0.75rem;">Ezeknél a futóknál az igazolás NEM a portálon keresztül érkezett. Az alábbi gombokkal manuálisan hagyhatod jóvá a teljesítést és küldöd ki a gratuláló emailt.</div>
-                <div style="display:flex; gap:1rem; font-size:0.82rem;">
-                    <span style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);padding:0.25rem 0.75rem;border-radius:20px;color:#22c55e;">✅ Jóváhagyott: <strong>${approvedCount}</strong></span>
-                    <span style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);padding:0.25rem 0.75rem;border-radius:20px;color:#ef4444;">⏳ Jóváhagyásra vár: <strong>${notApproved.length}</strong></span>
-                </div>
-            </div>`;
-
-            if (notApproved.length === 0) {
-                html += `<div class="empty-state"><div class="icon">✅</div><div>Minden Prédikálószék teljesítés jóváhagyva!</div></div>`;
-            } else {
-                notApproved.forEach(run => {
-                    const email = run.runners?.email || '–';
-                    const name  = run.name || run.runners?.name || 'Ismeretlen';
-                    const serial = run.serial_number || '–';
-                    html += `
-                    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:1rem 1.25rem;margin-bottom:0.75rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.75rem;">
-                        <div>
-                            <div style="font-weight:700;font-size:0.95rem;">${name} <span style="color:#63b3ed;font-size:0.8rem;font-weight:600;">${serial}</span></div>
-                            <div style="color:var(--text-mid);font-size:0.8rem;margin-top:0.2rem;">📧 ${email}</div>
-                            <div style="color:var(--text-mid);font-size:0.75rem;margin-top:0.1rem;">🏔️ Prédikálószék Vertical</div>
-                        </div>
-                        <button
-                            onclick="approvePredikaloRun('${run.id}', this)"
-                            style="background:rgba(99,179,237,0.1);border:1px solid rgba(99,179,237,0.4);color:#63b3ed;padding:0.5rem 1.1rem;border-radius:8px;cursor:pointer;font-weight:700;font-size:0.85rem;white-space:nowrap;">
-                            ✅ Jóváhagyás
-                        </button>
-                    </div>`;
-                });
-            }
-            container.innerHTML = html;
-            return;
-        }
 
         if (currentFilter === 'logistics') {
             let completedRuns = allRuns.filter(r => r.completed);
@@ -1558,14 +1533,42 @@
                 } else {
                     destText = `🏠 Házhoz: ${shipment.home_address || 'Cím'}`;
                 }
+
+                // Group medals by campaign in this package
+                const campMap = {};
+                group.forEach(r => {
+                    const info = getCampaignInfo(r);
+                    if (!campMap[info.name]) {
+                        campMap[info.name] = { count: 0, info: info, serials: [] };
+                    }
+                    campMap[info.name].count++;
+                    if (r.serial_number) {
+                        campMap[info.name].serials.push(r.serial_number);
+                    }
+                });
+
+                const breakdownBadges = Object.values(campMap).map(c => {
+                    return `<span style="background: rgba(255,255,255,0.06); border: 1px solid ${c.info.color}40; color: #fff; padding: 0.2rem 0.55rem; border-radius: 6px; font-size: 0.78rem; display: inline-flex; align-items: center; gap: 0.35rem;">
+                        <span>${c.info.icon}</span>
+                        <strong style="color: ${c.info.color}; font-size: 0.82rem;">${c.count}x ${c.info.name}</strong>
+                        <span style="opacity: 0.9; font-size: 0.75rem; font-family: monospace;">(${c.serials.join(', ')})</span>
+                    </span>`;
+                }).join(' <span style="color:var(--text-mid); font-weight:bold; font-size:0.8rem; margin: 0 0.15rem;">+</span> ');
+
                 return `
-                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.4rem; padding-top: 0.4rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; border-bottom: 1px solid rgba(255,255,255,0.06); padding: 0.6rem 0.25rem; flex-wrap: wrap; gap: 0.6rem;">
                         <div>
-                            <strong style="color: #fff;">${primaryName}</strong>${othersText}
-                            <div style="font-size: 0.75rem; color: var(--text-mid); margin-top: 0.1rem;">${destText}</div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                                <strong style="color: #fff; font-size: 0.95rem;">${primaryName}</strong>${othersText}
+                                <span style="font-size: 0.75rem; color: var(--text-mid);">📧 ${(primary.runners?.email || '')}</span>
+                            </div>
+                            <div style="font-size: 0.78rem; color: var(--text-mid); margin-top: 0.2rem;">${destText}</div>
+                            <div style="margin-top: 0.4rem; display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center;">
+                                ${breakdownBadges}
+                            </div>
                         </div>
-                        <div style="background: rgba(168, 85, 247, 0.15); color: #c084fc; font-weight: bold; border-radius: 4px; padding: 0.2rem 0.5rem; font-size: 0.8rem; border: 1px solid rgba(168, 85, 247, 0.3);">
-                            ${group.length} db érem
+                        <div style="background: rgba(168, 85, 247, 0.18); color: #d8b4fe; font-weight: 800; border-radius: 8px; padding: 0.35rem 0.75rem; font-size: 0.85rem; border: 1px solid rgba(168, 85, 247, 0.4); text-align: center; white-space: nowrap;">
+                            📦 Összesen: <strong>${group.length} db érem</strong>
                         </div>
                     </div>
                 `;
@@ -1583,6 +1586,8 @@
                 const phone = shipment.phone || runner.phone || '–';
                 const serial = run.serial_number || '–';
                 const method = shipment.method || 'foxpost';
+                const campInfo = getCampaignInfo(run);
+                const campBadge = `<span style="font-size:0.7rem; color:${campInfo.color}; border:1px solid ${campInfo.color}40; background:${campInfo.color}15; padding:0.12rem 0.4rem; border-radius:4px; margin-right:0.35rem; display:inline-flex; align-items:center; gap:0.2rem;">${campInfo.icon} ${campInfo.name}</span>`;
                 
                 let details = '–';
                 if (method === 'foxpost') {
@@ -1609,7 +1614,7 @@
                             <span>${name}</span>
                             ${groupBadge}
                         </td>
-                        <td>${serial}</td>
+                        <td>${campBadge}<strong>${serial}</strong></td>
                         <td>${phone}</td>
                         <td>${email}</td>
                         <td style="font-size: 0.8rem; max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${details}">${details}</td>
@@ -1689,21 +1694,103 @@
         }
 
         let runs = allRuns;
-        if (currentFilter === 'pending')  runs = allRuns.filter(r => r.proof_submitted && !r.completed);
-        if (currentFilter === 'approved') runs = allRuns.filter(r => r.completed);
-        if (currentFilter === 'all')      runs = allRuns.filter(r => r.proof_submitted || r.completed);
+        if (pendingHideTest) runs = runs.filter(r => !isTestRun(r));
 
+        if (currentFilter === 'pending') {
+            if (pendingSubFilter === 'submitted') {
+                runs = runs.filter(r => r.proof_submitted && !r.completed);
+            } else if (pendingSubFilter === 'unsubmitted') {
+                runs = runs.filter(r => !r.proof_submitted && !r.completed);
+            } else {
+                runs = runs.filter(r => !r.completed);
+            }
+        } else if (currentFilter === 'approved') {
+            runs = runs.filter(r => r.completed);
+        } else if (currentFilter === 'all') {
+            // all
+        }
+
+        // Campaign filter
+        if (pendingCampaignFilter !== 'all') {
+            runs = runs.filter(r => {
+                const c = (r.campaign || '').toLowerCase();
+                if (pendingCampaignFilter === 'pilis') return c.includes('pilis') || c.includes('kevely') || c.includes('pk');
+                if (pendingCampaignFilter === 'predikalo') return !c.includes('pilis') && !c.includes('kevely') && !c.includes('pk');
+                return true;
+            });
+        }
+
+        // Search query
+        if (pendingSearchQuery) {
+            const q = pendingSearchQuery.toLowerCase().trim();
+            runs = runs.filter(r => {
+                const name = (r.name || r.runners?.name || '').toLowerCase();
+                const email = (r.runners?.email || '').toLowerCase();
+                const serial = (r.serial_number || '').toLowerCase();
+                return name.includes(q) || email.includes(q) || serial.includes(q);
+            });
+        }
+
+        // Calculate counts for toolbar
+        const uncompletedAll = allRuns.filter(r => !r.completed && (!pendingHideTest || !isTestRun(r)));
+        const proofSubmittedCount = uncompletedAll.filter(r => r.proof_submitted).length;
+        const notSubmittedCount = uncompletedAll.filter(r => !r.proof_submitted).length;
+        const totalPendingCount = uncompletedAll.length;
+
+        let toolbarHtml = `
+            <div style="background: var(--surface); border: 1px solid var(--border); padding: 1rem; border-radius: 12px; margin-bottom: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+                    ${currentFilter === 'pending' ? `
+                    <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                        <button class="logistics-sub-tab ${pendingSubFilter === 'all' ? 'active' : ''}" onclick="setPendingSubFilter('all')">
+                            ⏳ Összes várakozó (${totalPendingCount})
+                        </button>
+                        <button class="logistics-sub-tab ${pendingSubFilter === 'submitted' ? 'active' : ''}" onclick="setPendingSubFilter('submitted')">
+                            📥 Beküldött igazolások (${proofSubmittedCount})
+                        </button>
+                        <button class="logistics-sub-tab ${pendingSubFilter === 'unsubmitted' ? 'active' : ''}" onclick="setPendingSubFilter('unsubmitted')">
+                            🏃 Még nem igazolt (${notSubmittedCount})
+                        </button>
+                    </div>
+                    ` : '<div style="font-weight: 700; font-size: 0.95rem; color: #fff;">' + (currentFilter === 'approved' ? '✅ Jóváhagyott teljesítések' : '📋 Összes regisztráció') + '</div>'}
+
+                    <!-- Campaign Filter -->
+                    <div style="display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center;">
+                        <span style="font-size: 0.78rem; color: var(--text-mid); font-weight: 600;">Kihívás:</span>
+                        <button class="logistics-sub-tab ${pendingCampaignFilter === 'all' ? 'active' : ''}" onclick="setPendingCampaignFilter('all')">
+                            Összes
+                        </button>
+                        <button class="logistics-sub-tab ${pendingCampaignFilter === 'predikalo' ? 'active' : ''}" onclick="setPendingCampaignFilter('predikalo')" style="border-color: rgba(99,179,237,0.3); color: #63b3ed;">
+                            🏔️ Prédikálószék
+                        </button>
+                        <button class="logistics-sub-tab ${pendingCampaignFilter === 'pilis' ? 'active' : ''}" onclick="setPendingCampaignFilter('pilis')" style="border-color: rgba(196,255,0,0.3); color: #c4ff00;">
+                            🌌 Nagy-Kevély
+                        </button>
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 0.75rem;">
+                    <input type="text" class="search-logistics" style="width: 260px;" placeholder="Keresés (név, email, sorszám)..." value="${pendingSearchQuery.replace(/"/g, '&quot;')}" oninput="handlePendingSearch(event)">
+                    
+                    <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.78rem;color:var(--text-mid);cursor:pointer;user-select:none;">
+                        <input type="checkbox" ${pendingHideTest ? 'checked' : ''} onchange="togglePendingHideTest(this)"
+                            style="width:14px;height:14px;accent-color:#f97316;cursor:pointer;">
+                        Tesztek elrejtve
+                    </label>
+                </div>
+            </div>
+        `;
 
         if (runs.length === 0) {
-            container.innerHTML = `
+            container.innerHTML = toolbarHtml + `
                 <div class="empty-state">
                     <div class="icon">${currentFilter === 'pending' ? '🎉' : '📭'}</div>
-                    <div>${currentFilter === 'pending' ? 'Nincs várakozó igazolás!' : 'Nincs megjeleníthető elem.'}</div>
+                    <div>Nincs a szűrésnek megfelelő tétel.</div>
                 </div>`;
             return;
         }
 
-        container.innerHTML = runs.map(run => buildCard(run)).join('');
+        container.innerHTML = toolbarHtml + runs.map(run => buildCard(run)).join('');
     }
 
     let logisticsSubFilter = 'pending';
@@ -1718,6 +1805,8 @@
 
     function toggleHideTest(el) {
         logisticsHideTest = el.checked;
+        pendingHideTest = el.checked;
+        updateStats();
         renderList();
     }
 
@@ -1890,20 +1979,36 @@
         const name = run.name || runner.name || 'Ismeretlen';
         const email = runner.email || '–';
         const serial = run.serial_number || '–';
+        const campInfo = getCampaignInfo(run);
+        const shipment = getShipment(run);
+        const phone = shipment.phone || runner.phone || '–';
         const submittedAt = run.proof_submitted_at
             ? new Date(run.proof_submitted_at).toLocaleString('hu-HU', { dateStyle: 'short', timeStyle: 'short' })
             : '–';
         const completionDate = run.completion_date || '–';
 
-        const statusBadge = run.completed
-            ? `<span class="badge badge-approved">✅ Jóváhagyva${completionDate !== '–' ? ' · ' + completionDate : ''}</span>`
-            : `<span class="badge badge-pending">⏳ Várakozó</span>`;
+        let statusBadge = '';
+        if (run.completed) {
+            statusBadge = `<span class="badge badge-approved">✅ Jóváhagyva${completionDate !== '–' ? ' · ' + completionDate : ''}</span>`;
+        } else if (run.proof_submitted) {
+            statusBadge = `<span class="badge badge-pending">📥 Igazolás beküldve</span>`;
+        } else {
+            statusBadge = `<span class="badge" style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); color: #f59e0b;">⏳ Még nem igazolt</span>`;
+        }
 
-        const filesHtml = buildFileGrid(run.proof_urls || []);
+        const campBadge = `<span class="badge" style="background: ${campInfo.color}15; border: 1px solid ${campInfo.color}40; color: ${campInfo.color}; font-weight: 700; font-size: 0.72rem;">
+            ${campInfo.icon} ${campInfo.fullName}
+        </span>`;
 
-        const actionsHtml = run.completed
-            ? `<div class="action-result">✅ Jóváhagyva – ${completionDate}</div>`
-            : `
+        const filesHtml = (run.proof_urls && run.proof_urls.length > 0)
+            ? buildFileGrid(run.proof_urls)
+            : `<div style="color: var(--text-mid); font-size: 0.8rem; font-style: italic; margin-bottom: 0.75rem;">A résztvevő még nem töltött fel igazoló képet vagy GPX-et a portálon.</div>`;
+
+        let actionsHtml = '';
+        if (run.completed) {
+            actionsHtml = `<div class="action-result">✅ Jóváhagyva – ${completionDate}</div>`;
+        } else if (run.proof_submitted) {
+            actionsHtml = `
                 <button class="btn btn-approve" onclick="doAction('approve', '${run.id}', this)">
                     ✓ Jóváhagyás
                 </button>
@@ -1911,19 +2016,37 @@
                     ✕ Elutasítás
                 </button>
             `;
+        } else {
+            actionsHtml = `
+                <button class="btn btn-approve" style="background: rgba(34, 197, 94, 0.15); border: 1px solid #22c55e; color: #22c55e;" onclick="doAction('approve', '${run.id}', this)">
+                    ✅ Manuális Jóváhagyás
+                </button>
+            `;
+        }
+
+        let destInfo = '';
+        if (shipment.parcel_name) {
+            destInfo = `<div style="font-size: 0.75rem; color: var(--text-mid); margin-top: 0.15rem;">📍 Csomagpont: 🦊 Foxpost – ${shipment.parcel_name}</div>`;
+        } else if (shipment.home_address) {
+            destInfo = `<div style="font-size: 0.75rem; color: var(--text-mid); margin-top: 0.15rem;">📍 Házhoz: 🏠 ${shipment.home_address}</div>`;
+        }
 
         return `
         <div class="proof-card ${run.completed ? 'approved' : ''}" id="card-${run.id}">
             <div class="proof-header">
                 <div>
-                    <div class="runner-name">${name}</div>
-                    <div class="runner-meta">
-                        📧 ${email}<br>
-                        📅 Beküldve: ${submittedAt}
+                    <div class="runner-name" style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                        <span>${name}</span>
+                        ${campBadge}
+                    </div>
+                    <div class="runner-meta" style="margin-top: 0.25rem;">
+                        📧 ${email} ${phone !== '–' ? '· 📞 ' + phone : ''}<br>
+                        ${run.proof_submitted ? '📅 Beküldve: ' + submittedAt : '📅 Nevezés regisztrálva'}
+                        ${destInfo}
                     </div>
                 </div>
                 <div class="badges">
-                    <span class="badge badge-serial">${serial}</span>
+                    <span class="badge badge-serial" style="font-size: 0.85rem; padding: 0.3rem 0.7rem;">${serial}</span>
                     ${statusBadge}
                 </div>
             </div>
@@ -1968,8 +2091,19 @@
 
     // ─── Actions ─────────────────────────────────────────────
     async function doAction(action, runId, btn) {
+        const run = allRuns.find(r => r.id === runId);
+        if (!run) return;
+
+        if (action === 'approve' && !run.proof_submitted) {
+            const runnerName = run.name || run.runners?.name || 'résztvevő';
+            const camp = getCampaignInfo(run).name;
+            if (!confirm(`Biztosan manuálisan jóváhagyod ${runnerName} (${camp}, ${run.serial_number}) teljesítését? A rendszer elküldi a gratulációs e-mailt és aktiválja az oklevelet.`)) {
+                return;
+            }
+        }
+
         const card = document.getElementById(`card-${runId}`);
-        const allBtns = card.querySelectorAll('.btn');
+        const allBtns = card ? card.querySelectorAll('.btn') : [];
         allBtns.forEach(b => { b.disabled = true; });
         btn.innerHTML = '<span class="loading-spinner"></span>';
 

@@ -4,6 +4,19 @@ All notable changes to the VitaSteps challenge platform project are documented h
 
 ---
 
+## [2.2.0] - 2026-08-28
+### Added & Improved
+*   **Csomagolási és Kiszállítási Segédlet Kampányonkénti Érembontás (`admin.html`):**
+    *   A csomagolási segédlet kártyái mostantól pontosan és vizuálisan (ikonokkal, színes jelvényekkel és sorszámokkal) megjelenítik, hogy az adott csomagba melyik kihívásból hány darab érmet kell betenni (pl. `1x 🏔️ Prédikálószék (#006/100) + 1x 🌌 Nagy-Kevély (#006/100-PK)`).
+    *   Több kampányos összevonás engedélyezve: ha egy visszatérő vásárlónak (pl. Szebeli István) több kihívásból is van még feladatlan érme, a rendszer egyetlen közös csomagba csoportosítja őket.
+    *   A logisztikai táblázatban az érmek mellett megjelent a kampány jelvénye is.
+    *   A Foxpost feladási végpont (`api/create-foxpost-parcels.js`) is támogatja az azonos címzetthez tartozó, több kampányos érmek egyetlen Foxpost csomagba történő összevonását.
+*   **Egységes Várakozó Lista & Manuális Jóváhagyás (`admin.html`):**
+    *   Megszüntettük a külön Prédikálószék fület a felső menüben; minden várakozó résztvevő a `⏳ Várakozó` nézetben érhető el.
+    *   Beépítettük a még nem igazolt futókat is a listába (al-szűrőkkel: `Összes várakozó`, `📥 Beküldött igazolások`, `🏃 Még nem igazolt`).
+    *   Minden kártyán külön, színes kampány-jelvény (`🏔️ Prédikálószék` vs `🌌 Nagy-Kevély`) jelzi a kihívást.
+    *   Közvetlenül a kártyákról elérhető az egykattintásos `✅ Manuális Jóváhagyás` funkció.
+
 ## [2.1.0] - 2026-08-25
 ### Fixed & Improved
 *   **Kalandkönyv Nyomtatási és Térképnézet Tökéletesítés (`kalandkonyv.html`):**
