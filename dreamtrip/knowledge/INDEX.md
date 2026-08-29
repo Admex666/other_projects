@@ -4,12 +4,16 @@ Ez a fájl az Optivoya (DreamTrip) projekt navigációs térképe. Minden lénye
 
 ---
 
+## 🎯 Strategy (Stratégia)
+* [[optivoya-strategy]] — Az Optivoya kanonikus termékstratégiája, víziója, B2B/B2C modellje, termékelvei és a B2B Beta validációs hatóköre.
+
 ## 🏛️ Entities (Entitások)
 * [[trip]] — Az utazás központi aggregált entitása (UnifiedTrip).
 * [[destination]] — Úti cél város, éghajlati és költségadatokkal.
 * [[flight]] — Retúr vagy egyirányú repülőjárat ajánlat.
 * [[accommodation]] — Szálláslehetőség és ár-érték attribútumai.
 * [[poi]] — Látványosság, étterem vagy programpont (Point of Interest).
+
 
 ## 💡 Concepts (Koncepciók)
 * [[unified-trip-model]] — A három modult összefogó közös utazási adatmodell és kézfogási elv.

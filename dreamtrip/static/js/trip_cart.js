@@ -364,12 +364,29 @@
             if (confirm("Biztosan törölni szeretnéd az egész aktív utazási tervet?")) {
                 const fresh = createDefaultTrip();
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(fresh));
+                
+                // Töröljük a kliensoldali keresési gyorsítótárakat is
+                try {
+                    Object.keys(sessionStorage).forEach(k => {
+                        if (k.startsWith('optivoya_cache_')) {
+                            sessionStorage.removeItem(k);
+                        }
+                    });
+                } catch (e) {}
+
                 this.render();
                 this.syncToServer(fresh);
                 this.showToast("Utazási terv kiürítve.", "🧹");
                 this.hideDrawer();
+
+                // Ha a /planner vagy bármely eredményoldalon vagyunk, azonnali átirányítás a főoldalra
+                if (window.location.pathname.startsWith('/planner') || 
+                    window.location.pathname.includes('-results')) {
+                    window.location.href = '/home';
+                }
             }
         },
+
 
         getNumbeoMetrics(cityName) {
             if (!cityName) return { meal_inexpensive: 14.0, meal_midrange: 28.0, coffee: 2.8, transport: 2.0 };
@@ -774,12 +791,13 @@
                                 <div class="trip-card-slot-type">✈️ 2. Rögzített Repülőjegy</div>
                                 <button type="button" class="trip-card-slot-remove" onclick="TripCart.removeFlight()">Eltávolítás</button>
                             </div>
-                            <div class="trip-card-main-info">${f.airline} (Retúr járat)</div>
+                            <div class="trip-card-main-info">${f.airline || 'Légitársaság'} (Retúr járat)</div>
                             <div class="trip-card-sub-info">
-                                ${f.out_date ? `🛫 Odaút: ${f.out_date}` : ''} ${f.in_date ? `• 🛬 Visszaút: ${f.in_date}` : ''}
-                                (${f.exact_stay_nights} éjszaka)
+                                ${f.out_date ? `🛫 Odaút: ${String(f.out_date).split('T')[0].split(' ')[0]}` : ''} ${f.in_date ? `• 🛬 Visszaút: ${String(f.in_date).split('T')[0].split(' ')[0]}` : ''}
+                                (${f.exact_stay_nights || f.stay_days || 7} éjszaka)
                             </div>
-                            <div class="trip-card-price-badge">${Math.round(f.price_total_huf || f.price_huf).toLocaleString()} Ft (${f.adults} főre)</div>
+                            <div class="trip-card-price-badge">${Math.round(f.price_total_huf || f.price_huf || 0).toLocaleString()} Ft (${f.adults || 1} főre)</div>
+
                         </div>
                     `;
                 } else {
@@ -1039,15 +1057,21 @@
         },
 
         goToPlannerStep(step) {
+            const trip = this.getTrip();
             if (window.location.pathname.startsWith('/planner') && window.Wizard) {
                 if (step === 'flight') window.Wizard.goToStep(2);
                 else if (step === 'stay') window.Wizard.goToStep(3);
                 else if (step === 'summary') window.Wizard.goToStep(4);
                 else window.Wizard.goToStep(1);
             } else {
-                window.location.href = `/planner?resume=${step}`;
+                if (step === 'flight' && trip.flight?.selected_flight) {
+                    window.location.href = `/planner?resume=flight&change=flight`;
+                } else {
+                    window.location.href = `/planner?resume=${step}`;
+                }
             }
         }
+
     };
 
     window.TripCart = TripEngine;

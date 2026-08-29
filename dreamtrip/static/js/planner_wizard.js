@@ -13,11 +13,12 @@ window.Wizard = (function() {
             origin: "Budapest (BUD)",
             adults: 2,
             children: 0,
-            date_mode: "month",
+            date_mode: "exact",
             month: "9",
             duration: 7,
             exact_out_date: "2026-09-10",
             exact_in_date: "2026-09-17",
+
             out_from: "2026-09-01",
             out_to: "2026-09-15",
             in_to: "2026-09-30",
@@ -116,7 +117,7 @@ window.Wizard = (function() {
     function switchDateMode(mode) {
         state.date_mode = mode;
         state.intake.date_mode = mode;
-        const modes = ['month', 'interval', 'exact'];
+        const modes = ['exact', 'interval'];
         modes.forEach(m => {
             const btn = document.getElementById(`tab_mode_${m}`);
             const pnl = document.getElementById(`panel_mode_${m}`);
@@ -140,6 +141,7 @@ window.Wizard = (function() {
             }
         });
     }
+
 
     function onDurationSliderChange(val) {
         const numVal = parseInt(val, 10) || 7;
@@ -554,7 +556,32 @@ window.Wizard = (function() {
         }).join('');
     }
 
-    async function triggerFlightSearch(dest) {
+    function getSessionCache(key) {
+
+        try {
+            const raw = sessionStorage.getItem(`optivoya_cache_${key}`);
+            if (!raw) return null;
+            const item = JSON.parse(raw);
+            if (Date.now() - item.ts > 30 * 60 * 1000) { // 30 perc TTL
+                sessionStorage.removeItem(`optivoya_cache_${key}`);
+                return null;
+            }
+            return item.data;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    function setSessionCache(key, data) {
+        try {
+            sessionStorage.setItem(`optivoya_cache_${key}`, JSON.stringify({
+                ts: Date.now(),
+                data: data
+            }));
+        } catch (e) {}
+    }
+
+    async function triggerFlightSearch(dest, forceRefresh = false) {
         if (!dest) return;
         state.selectedDest = dest;
         const destName = dest.name || dest.city;
@@ -563,6 +590,20 @@ window.Wizard = (function() {
         const fDetails = document.getElementById('flightContextDetails');
         if (fCity) fCity.innerText = destName;
         if (fDetails) fDetails.innerText = `${state.intake.origin} → ${destName} • ${state.intake.adults} felnőtt • ${state.intake.duration} nap`;
+
+        // Cache kulcs képzése a keresési paraméterekből
+        const cacheKey = `fl_${destName}_${state.intake.origin}_${state.intake.date_mode}_${state.intake.exact_out_date}_${state.intake.exact_in_date}_${state.intake.out_from}_${state.intake.out_to}_${state.intake.in_to}_${state.intake.min_stay}_${state.intake.max_stay}_${state.intake.adults}_${state.intake.flight_direct_only}_${state.intake.flight_max_stops}_${state.intake.preferred_departure_time}_${JSON.stringify(state.intake.ahp_weights || {})}`;
+
+        if (!forceRefresh) {
+            const cached = getSessionCache(cacheKey);
+            if (cached && cached.length > 0) {
+                console.log("[CACHE HIT] Repülőjáratok betöltve kliens gyorsítótárból (0 ms):", destName);
+                state.flights = cached;
+                renderFlights();
+                setStep(2);
+                return;
+            }
+        }
 
         showLoader(
             `Járatok keresése (${destName})...`,
@@ -601,6 +642,7 @@ window.Wizard = (function() {
             const data = await res.json();
             if (data.status === 'ok') {
                 state.flights = data.flights || [];
+                setSessionCache(cacheKey, state.flights);
                 renderFlights();
                 setStep(2);
             } else {
@@ -612,6 +654,7 @@ window.Wizard = (function() {
             setStep(1);
         }
     }
+
 
     async function selectDestination(index) {
         const dest = state.destinations[index];
@@ -640,68 +683,198 @@ window.Wizard = (function() {
         await triggerFlightSearch(dest);
     }
 
+    function formatFlightTime(raw) {
+        if (!raw) return '--:--';
+        const str = String(raw).trim();
+        const parts = str.includes('T') ? str.split('T') : str.split(' ');
+        if (parts.length > 1) {
+            return parts[1].slice(0, 5);
+        }
+        if (str.includes(':')) {
+            return str.slice(0, 5);
+        }
+        return str;
+    }
+
+    function formatFlightDate(raw) {
+        if (!raw) return '';
+        const str = String(raw).trim().split('T')[0].split(' ')[0];
+        const parts = str.split('-');
+        if (parts.length === 3) {
+            const months = ['jan.', 'febr.', 'márc.', 'ápr.', 'máj.', 'jún.', 'júl.', 'aug.', 'szept.', 'okt.', 'nov.', 'dec.'];
+            const mIdx = parseInt(parts[1], 10) - 1;
+            const mName = months[mIdx] || parts[1];
+            return `${parts[0]}. ${mName} ${parseInt(parts[2], 10)}.`;
+        }
+        return str;
+    }
+
+    function formatFlightDuration(hours) {
+        if (!hours && hours !== 0) return '';
+        const h = Math.floor(hours);
+        const m = Math.round((hours - h) * 60);
+        return `${h}ó ${m}p`;
+    }
+
     function renderFlights() {
         const container = document.getElementById('flightsGrid');
         if (!container) return;
 
         if (state.flights.length === 0) {
-            container.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--text-secondary);">Nem találtunk járatot a megadott szigorú feltételekkel. Kérlek módosíts az átszállás tolerancián a fenti menüben!</div>`;
+            container.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--text-secondary); background: var(--bg-surface); border-radius: 16px; border: 1px dashed var(--border-subtle);">Nem találtunk járatot a megadott szigorú feltételekkel. Kérlek módosíts az átszállás tolerancián a fenti menüben!</div>`;
             return;
         }
 
+        const originCity = state.intake.origin || 'Budapest';
+        const destCity = state.selectedDest?.name || state.selectedDest?.city || 'Célállomás';
+
         container.innerHTML = state.flights.map((fl, idx) => {
-            const outDate = (fl.out_dep_time || '').split('T')[0];
-            const inDate = (fl.in_dep_time || '').split('T')[0];
-            const outTime = (fl.out_dep_time || '').split('T')[1]?.slice(0, 5) || 'Reggel';
-            const inTime = (fl.in_dep_time || '').split('T')[1]?.slice(0, 5) || 'Este';
-            const nights = fl.stay_days || state.intake.duration;
-            const priceTotal = fl.total_price_huf || 0;
-            const pricePerPerson = Math.round(priceTotal / Math.max(1, state.intake.adults));
+            const outDepTime = formatFlightTime(fl.out_dep_time);
+            const outArrTime = formatFlightTime(fl.out_arr_time);
+            const outDate = formatFlightDate(fl.out_dep_time || fl.out_date);
+            const outArrDate = formatFlightDate(fl.out_arr_time || fl.out_dep_time);
+            const outDur = formatFlightDuration(fl.out_duration_h);
+
+            const inDepTime = formatFlightTime(fl.in_dep_time);
+            const inArrTime = formatFlightTime(fl.in_arr_time);
+            const inDate = formatFlightDate(fl.in_dep_time || fl.in_date);
+            const inArrDate = formatFlightDate(fl.in_arr_time || fl.in_dep_time);
+            const inDur = formatFlightDuration(fl.in_duration_h);
+
+            const outDepAirport = fl.out_dep_airport || (originCity.includes('(') ? originCity.split('(')[1].replace(')', '') : 'BUD');
+            const outArrAirport = fl.out_arr_airport || (destCity.length <= 4 ? destCity : destCity.slice(0, 3).toUpperCase());
+            const inDepAirport = fl.in_dep_airport || outArrAirport;
+            const inArrAirport = fl.in_arr_airport || outDepAirport;
+
+            const airline = fl.out_carriers || fl.out_airline || fl.in_carriers || fl.in_airline || 'Légitársaság';
+            const nights = fl.stay_days || fl.exact_stay_nights || state.intake.duration || 7;
+            const priceTotal = fl.total_price_huf || fl.price_total_huf || fl.price_huf || 0;
+            const adults = Math.max(1, state.intake.adults || 1);
+            const pricePerPerson = Math.round(priceTotal / adults);
+            const relevancePct = fl.relevance_pct || Math.round((fl.phi_net !== undefined ? (fl.phi_net + 1) / 2 : 0.85) * 100);
+            const isTop = idx === 0;
+            const stayDiff = fl.stay_diff_days !== undefined ? fl.stay_diff_days : 0;
+            const stayFitText = stayDiff === 0 ? 'Tökéletes időtartam' : `±${stayDiff} nap eltérés`;
 
             return `
-                <div class="advisor-main-card" style="background: var(--bg-surface); border: 1.5px solid var(--border-subtle); border-radius: 16px; padding: 20px 24px; display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: center;">
-                    <div>
-                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
-                            <span style="font-size: 16px; font-weight: 900; color: var(--text-main);">${fl.out_airline || fl.in_airline || 'Légitársaság'}</span>
-                            <span style="background: var(--bg-surface-subtle); font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px; color: var(--primary);">
+                <div class="planner-flight-card ${isTop ? 'top-match' : ''}">
+                    <!-- FEJLÉC -->
+                    <div class="flight-card-header">
+                        <div class="flight-carrier-badge-wrap">
+                            <span class="flight-carrier-name">✈️ ${airline}</span>
+                            <span class="flight-rank-badge ${isTop ? 'top-rank' : ''}">
                                 #${fl.rank || (idx + 1)} Ajánlat
                             </span>
-                            <span style="font-size: 12px; font-weight: 700; color: var(--status-success, #10b981);">
-                                ${Math.round((fl.phi_net || 0.85) * 100)}% Relevancia
+                            <span class="flight-relevance-pill">
+                                ⭐ ${relevancePct}% PROMETHEE Illeszkedés
                             </span>
                         </div>
-
-                        <div style="display: flex; flex-wrap: wrap; gap: 16px; font-size: 13.5px; color: var(--text-secondary); margin-bottom: 6px;">
-                            <div>🛫 <strong>Odaút:</strong> ${outDate} (${outTime}) • ${fl.out_stops === 0 ? 'Közvetlen' : fl.out_stops + ' átszállás'}</div>
-                            <div>🛬 <strong>Visszaút:</strong> ${inDate} (${inTime}) • ${fl.in_stops === 0 ? 'Közvetlen' : fl.in_stops + ' átszállás'}</div>
-                        </div>
-
-                        <div style="font-size: 12px; color: var(--text-muted);">
-                            🌙 Tartózkodás: <strong>${nights} éjszaka</strong> (${state.selectedDest?.name || 'Célállomás'})
+                        <div class="flight-stay-badge" title="${stayFitText}">
+                            🌙 <strong>${nights} éjszaka</strong> · ${destCity} <span style="opacity: 0.75; font-size: 11px;">(${stayFitText})</span>
                         </div>
                     </div>
 
-                    <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
-                        <div>
-                            <div style="font-size: 22px; font-weight: 900; color: var(--primary); font-family: var(--font-mono);">${Math.round(priceTotal).toLocaleString()} Ft</div>
-                            <div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">~${pricePerPerson.toLocaleString()} Ft / fő</div>
+
+                    <!-- TÖRZS (Útvonalak + Ár és CTA) -->
+                    <div class="flight-card-body">
+                        <div class="flight-segments-container">
+                            <!-- 1. ODAÚT -->
+                            <div class="flight-segment-row">
+                                <div class="segment-tag tag-outbound">
+                                    <span>🛫 Odaút</span>
+                                </div>
+                                <div class="segment-times-grid">
+                                    <div class="flight-time-col dep">
+                                        <span class="time-large">${outDepTime}</span>
+                                        <span class="airport-code">${outDepAirport} (${originCity.split('(')[0].trim()})</span>
+                                        <span class="date-sub">${outDate}</span>
+                                    </div>
+
+                                    <div class="flight-path-wrap">
+                                        <span class="flight-duration">${outDur}</span>
+                                        <div class="flight-line">
+                                            <span class="line-dot"></span>
+                                            <span class="line-bar"></span>
+                                            <span class="line-plane">✈</span>
+                                            <span class="line-bar"></span>
+                                            <span class="line-dot"></span>
+                                        </div>
+                                        <span class="flight-stops ${fl.out_stops === 0 ? 'direct' : 'with-stops'}">
+                                            ${fl.out_stops === 0 ? 'Közvetlen' : fl.out_stops + ' átszállás'}
+                                        </span>
+                                    </div>
+
+                                    <div class="flight-time-col arr">
+                                        <span class="time-large">${outArrTime}</span>
+                                        <span class="airport-code">${outArrAirport} (${destCity.split('(')[0].trim()})</span>
+                                        <span class="date-sub">${outArrDate}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 2. VISSZAÚT -->
+                            <div class="flight-segment-row">
+                                <div class="segment-tag tag-inbound">
+                                    <span>🛬 Visszaút</span>
+                                </div>
+                                <div class="segment-times-grid">
+                                    <div class="flight-time-col dep">
+                                        <span class="time-large">${inDepTime}</span>
+                                        <span class="airport-code">${inDepAirport} (${destCity.split('(')[0].trim()})</span>
+                                        <span class="date-sub">${inDate}</span>
+                                    </div>
+
+                                    <div class="flight-path-wrap">
+                                        <span class="flight-duration">${inDur}</span>
+                                        <div class="flight-line">
+                                            <span class="line-dot"></span>
+                                            <span class="line-bar"></span>
+                                            <span class="line-plane" style="transform: scaleX(-1);">✈</span>
+                                            <span class="line-bar"></span>
+                                            <span class="line-dot"></span>
+                                        </div>
+                                        <span class="flight-stops ${fl.in_stops === 0 ? 'direct' : 'with-stops'}">
+                                            ${fl.in_stops === 0 ? 'Közvetlen' : fl.in_stops + ' átszállás'}
+                                        </span>
+                                    </div>
+
+                                    <div class="flight-time-col arr">
+                                        <span class="time-large">${inArrTime}</span>
+                                        <span class="airport-code">${inArrAirport} (${originCity.split('(')[0].trim()})</span>
+                                        <span class="date-sub">${inArrDate}</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <button type="button" class="btn btn-primary" onclick="Wizard.selectFlight(${idx})" style="padding: 10px 18px; font-size: 13px; font-weight: 700; border-radius: 10px; white-space: nowrap;">
-                            <span>✈️ Járat Kiválasztása & Szállások →</span>
-                        </button>
+
+                        <!-- JOBB OLDALI ÁR & CTA -->
+                        <div class="flight-pricing-cta-box">
+                            <div class="flight-price-wrap">
+                                <div class="total-price-tag">${Math.round(priceTotal).toLocaleString()} Ft</div>
+                                <div class="per-person-tag">~${pricePerPerson.toLocaleString()} Ft / fő · ${adults} felnőtt</div>
+                            </div>
+                            <button type="button" class="btn btn-primary select-flight-btn" onclick="Wizard.selectFlight(${idx})">
+                                <span>Járat Kiválasztása</span>
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    <polyline points="12 5 19 12 12 19"></polyline>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
             `;
         }).join('');
     }
 
-    async function triggerStaySearch(fl) {
+
+    async function triggerStaySearch(fl, forceRefresh = false) {
         if (!fl) return;
         state.selectedFlight = fl;
 
         const outDate = (fl.out_dep_time || fl.out_date || '').split('T')[0];
         const inDate = (fl.in_dep_time || fl.in_date || '').split('T')[0];
-        const nights = fl.stay_days || fl.exact_stay_nights || state.intake.duration;
+        const nights = fl.stay_days || fl.exact_stay_nights || state.intake.duration || 7;
         const destCity = state.selectedDest?.name || state.selectedDest?.city || 'Célállomás';
         const destCountry = state.selectedDest?.country || 'Olaszország';
 
@@ -711,6 +884,20 @@ window.Wizard = (function() {
         if (sFl) sFl.innerText = `${fl.out_airline || fl.airline || 'Járat'} (${outDate} – ${inDate} · ${nights} éj)`;
         if (sCity) sCity.innerText = destCity;
         if (sNights) sNights.innerText = nights;
+
+        // Cache kulcs képzése a szálláskeresési paraméterekből
+        const cacheKey = `stays_${destCity}_${destCountry}_${outDate}_${inDate}_${nights}_${state.intake.adults}_${state.intake.hotel_min_stars}_${state.intake.hotel_min_rating}_${state.intake.breakfast}_${(state.intake.hotel_types || []).join(',')}_${(state.intake.amenities || []).join(',')}`;
+
+        if (!forceRefresh) {
+            const cached = getSessionCache(cacheKey);
+            if (cached && cached.length > 0) {
+                console.log("[CACHE HIT] Szállások betöltve kliens gyorsítótárból (0 ms):", destCity);
+                state.stays = cached;
+                renderStays();
+                setStep(3);
+                return;
+            }
+        }
 
         showLoader(
             `Szállások keresése (${destCity})...`,
@@ -738,6 +925,7 @@ window.Wizard = (function() {
             const data = await res.json();
             if (data.status === 'ok') {
                 state.stays = data.stays || [];
+                setSessionCache(cacheKey, state.stays);
                 renderStays();
                 setStep(3);
             } else {
@@ -749,6 +937,7 @@ window.Wizard = (function() {
             setStep(2);
         }
     }
+
 
     async function selectFlight(index) {
         const fl = state.flights[index];
@@ -789,47 +978,90 @@ window.Wizard = (function() {
             return;
         }
 
+        const destCity = state.selectedDest?.name || state.selectedDest?.city || 'Célállomás';
+
         container.innerHTML = state.stays.map((stay, idx) => {
             const priceTotal = stay.price_total_huf || (stay.price_per_night_huf ? stay.price_per_night_huf * (state.selectedFlight?.stay_days || 7) : stay.price_huf || 120000);
-            const nights = state.selectedFlight?.stay_days || state.intake.duration;
+            const nights = state.selectedFlight?.stay_days || state.intake.duration || 7;
             const pricePerNight = stay.price_per_night_huf || Math.round(priceTotal / nights);
-            const rating = stay.rating_score ? (stay.rating_score > 10 ? (stay.rating_score / 10).toFixed(1) : stay.rating_score) : 8.5;
-            const stars = stay.stars || 3;
+            const rating = stay.rating_score ? (stay.rating_score > 10 ? (stay.rating_score / 10).toFixed(1) : parseFloat(stay.rating_score).toFixed(1)) : 8.5;
+            const stars = stay.stars || (stay.accommodation_type === '$HOTEL' ? 4 : 3);
+            const provider = stay.provider || 'Booking.com';
+            
+            // Kép URL és fallback
+            const defaultImg = `https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&auto=format&fit=crop&q=80`;
+            const photoUrl = stay.image_url || stay.image || stay.photo_url || defaultImg;
+
+            // Külső foglalási / megtekintési link
+            const bookingUrl = stay.booking_url && stay.booking_url !== '#' 
+                ? stay.booking_url 
+                : `https://www.google.com/search?q=${encodeURIComponent((stay.name || 'Hotel') + ' ' + destCity + ' booking')}`;
 
             return `
-                <div class="advisor-main-card" style="background: var(--bg-surface); border: 1.5px solid var(--border-subtle); border-radius: 18px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.2s ease;">
-                    <div>
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-                            <h3 style="font-size: 17px; font-weight: 800; color: var(--text-main); margin: 0;">${stay.name || 'Szálloda'}</h3>
-                            <span style="font-size: 13px; color: #eab308; font-weight: 800;">${'⭐'.repeat(stars)}</span>
-                        </div>
-
-                        <div style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px;">
-                            📍 ${stay.address || stay.city || state.selectedDest?.name}
-                        </div>
-
-                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
-                            <span style="background: rgba(16, 185, 129, 0.1); color: var(--status-success, #10b981); font-weight: 800; font-size: 12px; padding: 3px 8px; border-radius: 6px;">
+                <div class="planner-stay-card">
+                    <!-- SZÁLLÁS FOTÓ & BADGEK -->
+                    <div class="stay-image-container">
+                        <img src="${photoUrl}" alt="${stay.name || 'Szállás'}" class="stay-image-img" loading="lazy" onerror="this.src='${defaultImg}'">
+                        <div class="stay-badge-overlay">
+                            <span style="background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); color: #eab308; font-weight: 800; font-size: 11.5px; padding: 4px 8px; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.15);">
                                 ★ ${rating} / 10
                             </span>
-                            <span style="font-size: 12px; color: var(--text-secondary);">${stay.rating_text || 'Nagyon jó értékelés'}</span>
+                        </div>
+                        <div class="stay-provider-overlay">
+                            ${provider}
                         </div>
                     </div>
 
-                    <div style="border-top: 1px solid var(--border-subtle); padding-top: 14px; display: flex; justify-content: space-between; align-items: center;">
+                    <!-- SZÁLLÁS ADATOK -->
+                    <div class="stay-card-content">
                         <div>
-                            <div style="font-size: 18px; font-weight: 900; color: var(--primary); font-family: var(--font-mono);">${Math.round(priceTotal).toLocaleString()} Ft</div>
-                            <div style="font-size: 11px; color: var(--text-muted);">~${pricePerNight.toLocaleString()} Ft / éj (${nights} éj)</div>
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; gap: 8px;">
+                                <h3 style="font-size: 16px; font-weight: 800; color: var(--text-main); margin: 0; line-height: 1.3;">
+                                    ${stay.name || 'Szálloda'}
+                                </h3>
+                                <span style="font-size: 12px; color: #eab308; font-weight: 800; white-space: nowrap;">
+                                    ${'⭐'.repeat(Math.min(5, Math.max(1, stars)))}
+                                </span>
+                            </div>
+
+                            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">
+                                📍 ${stay.address || stay.location_text || stay.city || destCity}
+                            </div>
+
+                            <div style="font-size: 11.5px; color: var(--text-secondary); margin-bottom: 4px;">
+                                ${stay.room_type ? `🛏️ ${stay.room_type}` : (stay.rating_text || 'Kiváló elhelyezkedés és szolgáltatások')}
+                            </div>
                         </div>
 
-                        <button type="button" class="btn btn-primary" onclick="Wizard.selectStay(${idx})" style="padding: 9px 16px; font-size: 13px; font-weight: 700; border-radius: 10px;">
-                            <span>🏨 Kiválasztás →</span>
-                        </button>
+                        <!-- ÁR ÉS CTA GOMBOK -->
+                        <div>
+                            <div style="margin-top: 12px; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: flex-end;">
+                                <div>
+                                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">Teljes ár (${nights} éjszaka):</div>
+                                    <div style="font-size: 20px; font-weight: 900; color: var(--primary); font-family: var(--font-mono); line-height: 1.1;">
+                                        ${Math.round(priceTotal).toLocaleString()} Ft
+                                    </div>
+                                </div>
+                                <div style="font-size: 11.5px; color: var(--text-muted); font-weight: 600; text-align: right;">
+                                    ~${Math.round(pricePerNight).toLocaleString()} Ft / éj
+                                </div>
+                            </div>
+
+                            <div class="stay-card-actions">
+                                <a href="${bookingUrl}" target="_blank" rel="noopener noreferrer" class="stay-preview-link" title="Szállás megtekintése a szolgáltató külső oldalán (${provider})">
+                                    <span>Megtekintés ↗</span>
+                                </a>
+                                <button type="button" class="btn btn-primary" onclick="Wizard.selectStay(${idx})" style="flex: 1; padding: 10px 14px; font-size: 13px; font-weight: 800; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+                                    <span>🏨 Kiválasztás →</span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             `;
         }).join('');
     }
+
 
     function selectStay(index) {
         const stay = state.stays[index];
@@ -848,9 +1080,12 @@ window.Wizard = (function() {
                 stars: stay.stars || 4,
                 address: stay.address || '',
                 city: state.selectedDest?.name || '',
-                nights: nights
+                nights: nights,
+                image_url: stay.image_url || stay.image || '',
+                booking_url: stay.booking_url || ''
             });
         }
+
 
         renderFinalSummary();
         setStep(4);
@@ -928,19 +1163,20 @@ window.Wizard = (function() {
     }
 
     function recalculateFlights() {
-        state.intake.flight_direct_only = document.getElementById('mod_direct_only').checked;
+        state.intake.flight_direct_only = document.getElementById('mod_direct_only')?.checked || false;
         if (state.selectedDest) {
-            selectDestination(state.destinations.indexOf(state.selectedDest));
+            triggerFlightSearch(state.selectedDest, true);
         }
     }
 
     function recalculateStays() {
-        state.intake.hotel_min_stars = parseInt(document.getElementById('mod_hotel_stars').value, 10) || 0;
-        state.intake.hotel_min_rating = parseFloat(document.getElementById('mod_hotel_rating').value) || 0;
+        state.intake.hotel_min_stars = parseInt(document.getElementById('mod_hotel_stars')?.value, 10) || 0;
+        state.intake.hotel_min_rating = parseFloat(document.getElementById('mod_hotel_rating')?.value) || 0;
         if (state.selectedFlight) {
-            selectFlight(state.flights.indexOf(state.selectedFlight));
+            triggerStaySearch(state.selectedFlight, true);
         }
     }
+
 
     // Inicializálás az oldal betöltésekor
     document.addEventListener('DOMContentLoaded', () => {
@@ -1088,23 +1324,47 @@ window.Wizard = (function() {
             state.selectedStay = trip.accommodation.selected_accommodation;
         }
 
-        // Auto-navigate ONLY if explicit resume param is present in URL
-        if (resumeMode === 'summary' && trip.destination && trip.flight?.selected_flight && trip.accommodation?.selected_accommodation) {
+        // Intelligens léptetés: Ha már van repülőjárat a tervben, ne dobjon vissza a járatválasztásra
+        const isExplicitChangeFlight = urlParams.get('change') === 'flight';
+        
+        let targetResume = resumeMode;
+        if (!targetResume) {
+            if (trip.destination && trip.flight?.selected_flight && trip.accommodation?.selected_accommodation) {
+                targetResume = 'summary';
+            } else if (trip.destination && trip.flight?.selected_flight) {
+                targetResume = 'stay';
+            } else if (trip.destination) {
+                targetResume = 'flight';
+            }
+        } else if (targetResume === 'flight' && trip.flight?.selected_flight && !isExplicitChangeFlight) {
+            // Ha már rögzítve van egy járat, automatikusan a következő hiányzó elemhez (szállás / összefoglaló) viszünk
+            if (trip.accommodation?.selected_accommodation) {
+                targetResume = 'summary';
+            } else {
+                targetResume = 'stay';
+            }
+        }
+
+        // Auto-navigate to determined step
+        if (targetResume === 'summary' && trip.destination && trip.flight?.selected_flight && trip.accommodation?.selected_accommodation) {
             renderFinalSummary();
             setStep(4);
-        } else if (resumeMode === 'stay' && trip.destination && trip.flight?.selected_flight) {
+        } else if (targetResume === 'stay' && trip.destination && trip.flight?.selected_flight) {
             if (state.stays.length === 0 && state.selectedFlight) {
                 await triggerStaySearch(state.selectedFlight);
             } else {
+                renderStays();
                 setStep(3);
             }
-        } else if (resumeMode === 'flight' && trip.destination) {
+        } else if (targetResume === 'flight' && trip.destination) {
             if (state.flights.length === 0 && state.selectedDest) {
                 await triggerFlightSearch(state.selectedDest);
             } else {
+                renderFlights();
                 setStep(2);
             }
         }
+
     }
 
     return {

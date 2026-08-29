@@ -197,57 +197,22 @@
             <div class="advisor-panel" style="margin-bottom: 24px;">
                 <div style="margin-bottom: 14px;">
                     <div class="panel-header-title" style="font-size: 16px; font-weight: 800;">Hogyan tervezed az utazás időpontját?</div>
-                    <div class="panel-header-desc">Válassz az alábbi három lehetőség közül az időzítés megadásához:</div>
+                    <div class="panel-header-desc">Válassz az alábbi két lehetőség közül az utazás időzítéséhez:</div>
                 </div>
 
-                <!-- 3-MÓD TABOK (SZÖVEG ALATT TELJES SZÉLESSÉGBEN, RESZPONZÍV GRID) -->
-                <div class="date-mode-tabs" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; background: var(--bg-surface-subtle); padding: 6px; border-radius: 14px; border: 1px solid var(--border-subtle); margin-bottom: 18px;">
-                    <button type="button" class="tab-pill-btn active" id="tab_mode_month" onclick="Wizard.switchDateMode('month')" style="padding: 12px 14px; font-size: 13.5px; font-weight: 800; border-radius: 10px; cursor: pointer; transition: all 0.2s ease;">
-                        <span>🗓️ Rugalmas Hónap</span>
-                    </button>
-                    <button type="button" class="tab-pill-btn" id="tab_mode_interval" onclick="Wizard.switchDateMode('interval')" style="padding: 12px 14px; font-size: 13.5px; font-weight: 800; border-radius: 10px; cursor: pointer; transition: all 0.2s ease;">
-                        <span>⏱️ Időintervallum</span>
-                    </button>
-                    <button type="button" class="tab-pill-btn" id="tab_mode_exact" onclick="Wizard.switchDateMode('exact')" style="padding: 12px 14px; font-size: 13.5px; font-weight: 800; border-radius: 10px; cursor: pointer; transition: all 0.2s ease;">
+                <!-- 2-MÓD TABOK (PONTOS DÁTUMOK VAGY IDŐINTERVALLUM) -->
+                <div class="date-mode-tabs" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: var(--bg-surface-subtle); padding: 6px; border-radius: 14px; border: 1px solid var(--border-subtle); margin-bottom: 18px;">
+                    <button type="button" class="tab-pill-btn active" id="tab_mode_exact" onclick="Wizard.switchDateMode('exact')" style="padding: 12px 14px; font-size: 13.5px; font-weight: 800; border-radius: 10px; cursor: pointer; transition: all 0.2s ease;">
                         <span>📅 Pontos Dátumok</span>
                     </button>
+                    <button type="button" class="tab-pill-btn" id="tab_mode_interval" onclick="Wizard.switchDateMode('interval')" style="padding: 12px 14px; font-size: 13.5px; font-weight: 800; border-radius: 10px; cursor: pointer; transition: all 0.2s ease;">
+                        <span>⏱️ Időintervallum & Tartózkodási Keret</span>
+                    </button>
                 </div>
 
-                <!-- 1. MONTH MODE -->
-                <div id="panel_mode_month" class="mode-panel-content">
-                    <div class="advisor-grid-2" style="align-items: center; gap: 20px;">
-                        <div>
-                            <label class="form-label" style="display: block; margin-bottom: 6px;">Preferált hónap:</label>
-                            <div style="display: grid; grid-template-columns: 110px 1fr; gap: 10px;">
-                                <select id="intake_year" class="form-control" style="width: 100%; padding: 12px 14px; border-radius: 12px; font-weight: 700; background: var(--bg-surface);" onchange="Wizard.onYearChange(this.value)">
-                                    <option value="2026" selected>2026</option>
-                                    <option value="2027">2027</option>
-                                </select>
-                                <select id="intake_month" class="form-control" style="width: 100%; padding: 12px 14px; border-radius: 12px; font-weight: 700; background: var(--bg-surface);" onchange="Wizard.onMonthChange(this.value)">
-                                    <!-- Dinamikusan töltve kizárólag a hónap nevével, a múltbeli hónapok kiszűrésével -->
-                                </select>
-                            </div>
-                        </div>
-                        <div>
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                <label class="form-label" style="margin: 0;">Kinttartózkodás napokban:</label>
-                                <span class="badge-accent" id="month_duration_badge">7 napos utazás</span>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
-                                <input type="range" id="month_duration_slider" min="1" max="30" value="7" class="range-slider" style="flex: 1; min-width: 140px;" oninput="Wizard.onDurationSliderChange(this.value)">
-                                <div class="stepper-control-box" style="margin: 0;">
-                                    <button type="button" class="stepper-circle-btn" onclick="stepDown('month_duration_input', 1)">−</button>
-                                    <input type="hidden" id="month_duration_input" value="7">
-                                    <span class="stepper-num-val" id="month_duration_display" style="min-width: 48px;">7 nap</span>
-                                    <button type="button" class="stepper-circle-btn" onclick="stepUp('month_duration_input', 60)">+</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 2. INTERVAL MODE -->
+                <!-- 1. INTERVAL MODE -->
                 <div id="panel_mode_interval" class="mode-panel-content" style="display: none;">
+
                     <div class="advisor-grid-3" style="margin-bottom: 16px;">
                         <div>
                             <label class="form-label" for="interval_out_from">🛫 Odaút legkorábban:</label>
@@ -283,8 +248,9 @@
                     </div>
                 </div>
 
-                <!-- 3. EXACT MODE (FLATPICKR RANGE PICKER FROM FLIGHT INTELLIGENCE) -->
-                <div id="panel_mode_exact" class="mode-panel-content" style="display: none;">
+                <!-- 2. EXACT MODE (FLATPICKR RANGE PICKER FROM FLIGHT INTELLIGENCE) -->
+                <div id="panel_mode_exact" class="mode-panel-content" style="display: block;">
+
                     <div>
                         <label class="form-label" style="font-size: 13px; font-weight: 700; margin-bottom: 8px;">Oda- és visszautazás pontos dátuma:</label>
                         

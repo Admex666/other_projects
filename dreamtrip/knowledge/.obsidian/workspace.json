@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "90ff6eb91a5a19dc",
+        "id": "1b454d734340f7cd",
         "type": "tabs",
         "children": [
           {
-            "id": "875b4f97a22b55ab",
+            "id": "2b56452be8d9697c",
             "type": "leaf",
             "state": {
               "type": "graph",
@@ -181,8 +181,10 @@
       "bases:Új bázis létrehozása": false
     }
   },
-  "active": "875b4f97a22b55ab",
+  "active": "2b56452be8d9697c",
   "lastOpenFiles": [
+    "strategy/OPTIVOYA_STRATEGY.md",
+    "strategy",
     "entities/trip.md",
     "INDEX.md",
     "decisions/ADR-006-master-planner-wizard.md",

@@ -13,6 +13,10 @@ from app.services.exchange_service import get_eur_huf_rate
 from app.scrapers import scraper
 from app.scrapers import accommodation_scraper
 
+# In-Memory Gyorsítótár a lekérdezett és PROMETHEE II szerint rangsorolt járatokhoz (TTL: 30 perc)
+_FLIGHTS_CACHE: Dict[str, Dict[str, Any]] = {}
+
+
 def compute_ahp_weights_from_comparisons(
     criteria: List[str],
     comparisons: Dict[str, float]
@@ -288,9 +292,18 @@ def search_and_rank_planner_flights(
         actual_min_stay = min_stay or max(1, duration_days - 2)
         actual_max_stay = max_stay or (duration_days + 2)
 
+    # 0. Backend gyorsítótár ellenőrzése (30 perc TTL)
+    cache_key = f"{origin_clean}_{dest_clean}_{date_mode}_{date_out_start}_{date_out_end}_{date_in_start}_{date_in_end}_{actual_min_stay}_{actual_max_stay}_{adults}_{children}_{direct_only}_{max_stops}_{departure_pref}_{max_duration_h}_{json.dumps(weights or {}, sort_keys=True)}"
+    if cache_key in _FLIGHTS_CACHE:
+        entry = _FLIGHTS_CACHE[cache_key]
+        if time.time() - entry["ts"] < 1800:
+            print(f"\n[BACKEND CACHE HIT] Repülőjáratok betöltve szerver gyorsítótárból: {origin_clean} → {dest_clean} ({len(entry['data'])} járat)")
+            return entry["data"]
+
     # Dinamikus járatlekérdezési limit: napi 5 járat, min 30, max 150
     try:
         d_out_s = pd.to_datetime(date_out_start)
+
         d_out_e = pd.to_datetime(date_out_end)
         out_days = max(1, (d_out_e - d_out_s).days + 1)
         out_limit = int(min(150, max(30, out_days * 5)))
@@ -366,50 +379,141 @@ def search_and_rank_planner_flights(
     if df.empty:
         df = combinations.copy() if isinstance(combinations, pd.DataFrame) else pd.DataFrame(combinations)
 
-    # PROMETHEE II rangsorolás
+    # =========================================================================
+    # PROMETHEE II MULTIKRITÉRIUMOS RANGSOROLÓ MOTOR (AHP SÚLYOZÁSSAL & TARTÓZKODÁSI ILLESZKEDÉSSEL)
+    # =========================================================================
     n = len(df)
     if n == 0:
         return []
 
-    df['g1'] = df['total_price_huf']
-    df['g2'] = df['out_duration_h'] + df['in_duration_h']
-    df['g3'] = df['out_stops'] + df['in_stops']
+    # 1. Kritériumok előkészítése
+    # g1: Repülőjegy teljes ára (HUF) [Min]
+    df['g1_price'] = df['total_price_huf'].astype(float)
 
-    cols = ['g1', 'g2', 'g3']
-    w = [0.45, 0.35, 0.20]
+    # g2: Teljes menetidő oda-vissza (óra) [Min]
+    df['g2_duration'] = (df['out_duration_h'].astype(float) + df['in_duration_h'].astype(float))
+
+    # g3: Átszállások száma oda-vissza [Min]
+    df['g3_stops'] = (df['out_stops'].astype(float) + df['in_stops'].astype(float))
+
+    # g4: Tartózkodási időtartam illeszkedése / eltérése a kívánt céltól (nap) [Min]
+    # Ha a felhasználó KONKRÉT dátumokat választ, a tartózkodás fix (nincs mérlegelés, stay_diff = 0)
+    target_dur = float(duration_days) if duration_days else 7.0
+    if date_mode == "exact":
+        df['g4_stay_diff'] = 0.0
+    elif actual_min_stay is not None and actual_max_stay is not None:
+        # Ha intervallum van megadva: a tartományon kívüli távolság, vagy a középértéktől való eltérés
+        mid_stay = (actual_min_stay + actual_max_stay) / 2.0
+        df['g4_stay_diff'] = df['stay_days'].apply(
+            lambda s: 0.0 if (actual_min_stay <= s <= actual_max_stay) else min(abs(s - actual_min_stay), abs(s - actual_max_stay))
+        ) + (df['stay_days'] - mid_stay).abs() * 0.2
+    else:
+        df['g4_stay_diff'] = (df['stay_days'] - target_dur).abs()
+
+    # g5: Indulási napszak eltérése az ideálistól (óra) [Min]
+    target_dep_hour = None
+    if departure_pref == "morning":
+        target_dep_hour = 9.0
+    elif departure_pref == "afternoon":
+        target_dep_hour = 14.0
+    elif departure_pref == "evening":
+        target_dep_hour = 19.0
+
+    if target_dep_hour is not None and 'out_dep_time' in df.columns:
+        try:
+            dep_hours = pd.to_datetime(df['out_dep_time']).dt.hour + pd.to_datetime(df['out_dep_time']).dt.minute / 60.0
+            # Körkörös távolság a nap 24 órájában
+            df['g5_dep_diff'] = dep_hours.apply(
+                lambda h: min(abs(h - target_dep_hour), 24.0 - abs(h - target_dep_hour))
+            )
+        except Exception:
+            df['g5_dep_diff'] = 0.0
+    else:
+        df['g5_dep_diff'] = 0.0
+
+    # 2. Súlyok dinamikus felépítése az AHP és felhasználói preferenciákból
+    # Konkrét dátumok esetén w_stay = 0, intervallum esetén w_stay aktív
+    w_stay = 0.0 if date_mode == "exact" else 0.20
+    w_price = 0.40 if date_mode == "exact" else 0.35
+    w_time = 0.35 if date_mode == "exact" else 0.25
+    w_stops = 0.25 if date_mode == "exact" else 0.15
+    w_dep = 0.05 if target_dep_hour is not None else 0.0
+
     if weights:
-        w = [
-            float(weights.get("flight", weights.get("price", 0.45))),
-            float(weights.get("travel_time", 0.35)),
-            float(weights.get("stops", 0.20))
-        ]
-        total_w = sum(w)
-        if total_w > 0:
-            w = [x / total_w for x in w]
+        cost_weight = float(weights.get("total_cost", weights.get("cost", weights.get("flight", 34)))) / 100.0
+        w_price = max(0.20, min(0.65, cost_weight * 1.1))
+        rem = max(0.20, 1.0 - w_price)
+        if date_mode == "exact":
+            w_stay = 0.0
+            if target_dep_hour is not None:
+                w_time = rem * 0.50
+                w_stops = rem * 0.35
+                w_dep = rem * 0.15
+            else:
+                w_time = rem * 0.58
+                w_stops = rem * 0.42
+                w_dep = 0.0
+        else:
+            if target_dep_hour is not None:
+                w_time = rem * 0.35
+                w_stops = rem * 0.25
+                w_stay = rem * 0.25
+                w_dep = rem * 0.15
+            else:
+                w_time = rem * 0.40
+                w_stops = rem * 0.30
+                w_stay = rem * 0.30
+                w_dep = 0.0
 
-    # Ha a kombinációk száma meghaladja a 200-at, szűrjük le a legígéretesebb top 200-ra a gyors és precíz rangsoroláshoz
+    total_w = w_price + w_time + w_stops + w_stay + w_dep
+    w_vec = np.array([w_price / total_w, w_time / total_w, w_stops / total_w, w_stay / total_w, w_dep / total_w])
+
+
+    cols = ['g1_price', 'g2_duration', 'g3_stops', 'g4_stay_diff', 'g5_dep_diff']
+    # Küszöbértékek (Preference Thresholds - p): lineáris V-alakú preferencia függvényhez
+    # Árnál 35 000 Ft eltérés már 100% preferencia; menetidőnél 3.5 óra; átszállásnál 1; tartózkodásnál 2 nap; napszaknál 5 óra
+    thresholds = np.array([35000.0, 3.5, 1.0, 2.0, 5.0])
+
+    # Ha a kombinációk száma meghaladja a 200-at, szűrjük a legígéretesebb top 200-ra
     if n > 200:
-        min_p = max(1.0, float(df['g1'].min()))
-        min_d = max(0.5, float(df['g2'].min()))
-        df['quick_score'] = (df['g1'] / min_p) * w[0] + (df['g2'] / min_d) * w[1] + (df['g3'] + 1) * w[2]
+        min_p = max(1.0, float(df['g1_price'].min()))
+        min_d = max(0.5, float(df['g2_duration'].min()))
+        df['quick_score'] = (
+            (df['g1_price'] / min_p) * w_vec[0] +
+            (df['g2_duration'] / min_d) * w_vec[1] +
+            (df['g3_stops'] + 1.0) * w_vec[2] +
+            (df['g4_stay_diff'] + 1.0) * w_vec[3]
+        )
         df = df.sort_values('quick_score').head(200).copy()
         n = len(df)
 
-    data_mat = df[cols].values.astype(float)
-    # Vektorizált PROMETHEE II preferencia mátrix (N x N tenzorművelet ms alatt)
-    diffs = data_mat[:, np.newaxis, :] - data_mat[np.newaxis, :, :] # (n, n, 3)
-    # Mivel kisebb ár, menetidő és átszállás a jobb: i jobb mint j, ha data[i] < data[j] (azaz diffs < 0)
-    prefs = (diffs < 0).astype(float)
-    w_arr = np.array(w)
-    pref_mat = np.tensordot(prefs, w_arr, axes=([2], [0])) # (n, n)
+    data_mat = df[cols].values.astype(float) # (n, 5)
+
+    # 3. Vektorizált PROMETHEE II preferencia mátrix (V-alakú lineáris preferencia függvény)
+    # diffs[i, j, k] = data[j, k] - data[i, k] (mivel minimalizálunk: ha data[i] < data[j], akkor i jobb mint j, diff > 0)
+    diffs = data_mat[np.newaxis, :, :] - data_mat[:, np.newaxis, :] # (n, n, 5)
+    
+    # Lineáris preferencia: P_k(i, j) = clip(diff / p_k, 0, 1)
+    prefs = np.clip(diffs / thresholds[np.newaxis, np.newaxis, :], 0.0, 1.0) # (n, n, 5)
+
+    # Aggregált preferencia mátrix: Pi(i, j) = sum_k w_k * P_k(i, j)
+    pref_mat = np.tensordot(prefs, w_vec, axes=([2], [0])) # (n, n)
     np.fill_diagonal(pref_mat, 0.0)
 
+    # 4. Outranking Flows kalkuláció
     if n > 1:
-        phi_plus = pref_mat.sum(axis=1) / (n - 1)
-        phi_minus = pref_mat.sum(axis=0) / (n - 1)
-        df['phi_net'] = (phi_plus - phi_minus + 1) / 2
+        phi_plus = pref_mat.sum(axis=1) / (n - 1)  # Pozitív kiáramló erő
+        phi_minus = pref_mat.sum(axis=0) / (n - 1) # Negatív beáramló gyengeség
+        df['phi_net'] = phi_plus - phi_minus       # Nettó Outranking Flow: [-1, +1]
     else:
         df['phi_net'] = 1.0
+
+    # 5. Relevancia százalék normalizálás (45% - 99%)
+    df['relevance_pct'] = np.clip(
+        np.round(((df['phi_net'] + 1.0) / 2.0) * 100.0),
+        45.0,
+        99.0
+    ).astype(int)
 
     # Convert Timestamp columns to str for JSON serialization
     for col in ['out_dep_time', 'out_arr_time', 'in_dep_time', 'in_arr_time']:
@@ -421,5 +525,15 @@ def search_and_rank_planner_flights(
     
     for idx, r in enumerate(results_list):
         r["rank"] = idx + 1
+        r["stay_diff_days"] = round(float(r.get("g4_stay_diff", 0)), 1)
+        r["total_duration_h"] = round(float(r.get("g2_duration", 0)), 1)
+
+    print(f"\n[PROMETHEE II FLIGHT ENGINE] {n} járatkombináció kiértékelve. Súlyok: Ár={w_vec[0]:.2f}, Idő={w_vec[1]:.2f}, Átszállás={w_vec[2]:.2f}, Tartózkodás={w_vec[3]:.2f}, Napszak={w_vec[4]:.2f}")
+    if results_list:
+        top_fl = results_list[0]
+    # Eredmények mentése a memóriagyorsítótárba
+    _FLIGHTS_CACHE[cache_key] = {"ts": time.time(), "data": results_list}
 
     return results_list
+
+

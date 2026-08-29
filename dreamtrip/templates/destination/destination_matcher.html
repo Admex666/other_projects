@@ -99,22 +99,19 @@
                     </div>
                     <div class="panel-header-desc">Hogyan tervezed az utazás időpontját?</div>
 
-                    <!-- 3-MÓD VÁLASZTÓ TABOK -->
-                    <div class="date-mode-tabs" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 14px; background: var(--bg-surface-subtle); padding: 4px; border-radius: 12px; border: 1px solid var(--border-subtle);">
-                        <button type="button" class="tab-pill-btn" id="btn_mode_exact" onclick="switchDateMode('exact')">
-                            <span>📅 Konkrét</span>
+                    <!-- 2-MÓD VÁLASZTÓ TABOK (KONKRÉT VAGY INTERVALLUM) -->
+                    <div class="date-mode-tabs" style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 14px; background: var(--bg-surface-subtle); padding: 4px; border-radius: 12px; border: 1px solid var(--border-subtle);">
+                        <button type="button" class="tab-pill-btn active" id="btn_mode_exact" onclick="switchDateMode('exact')">
+                            <span>📅 Konkrét Dátum</span>
                         </button>
                         <button type="button" class="tab-pill-btn" id="btn_mode_interval" onclick="switchDateMode('interval')">
-                            <span>⏱️ Intervallum</span>
-                        </button>
-                        <button type="button" class="tab-pill-btn active" id="btn_mode_month" onclick="switchDateMode('month')">
-                            <span>🗓️ Hónap</span>
+                            <span>⏱️ Időintervallum</span>
                         </button>
                     </div>
-                    <input type="hidden" id="selected_date_mode" value="month">
+                    <input type="hidden" id="selected_date_mode" value="exact">
 
-                    <!-- 1. KONKRÉT DÁTUMOK TARTALOM -->
-                    <div id="mode_exact_container" style="display: none;">
+                    <!-- 1. KONKRÉT DÁTUMOK TARTALOM (ALAPÉRTELMEZETT) -->
+                    <div id="mode_exact_container" style="display: block;">
                         <label class="form-label" style="font-size: 12px; font-weight: 700; margin-bottom: 6px;">Oda- és visszautazás napja:</label>
                         <div class="custom-date-display" id="exact_picker_trigger" style="margin-bottom: 10px; cursor: pointer;">
                             <div style="display: flex; align-items: center; gap: 10px;">
@@ -191,57 +188,9 @@
                             <div class="preset-pill" onclick="setStayPreset(13, 16, this)">2 hét (13–16 nap)</div>
                         </div>
                     </div>
-
-                    <!-- 3. HÓNAP TARTALOM (ALAPÉRTELMEZETT) -->
-                    <div id="mode_month_container">
-                        <div style="margin-bottom: 12px;">
-                            <label class="form-label" for="month" style="font-size: 12px; font-weight: 700; margin-bottom: 4px;">Tervezett hónap:</label>
-                            <select id="month" class="form-control" style="font-size: 13px; font-weight: 600; padding: 9px 12px; border-radius: 12px;">
-                                <option value="any">Bármikor a közeljövőben</option>
-                                <option value="1">Január (2026)</option>
-                                <option value="2">Február (2026)</option>
-                                <option value="3">Március (2026)</option>
-                                <option value="4">Április (2026)</option>
-                                <option value="5">Május (2026)</option>
-                                <option value="6">Június (2026)</option>
-                                <option value="7">Július (2026)</option>
-                                <option value="8">Augusztus (2026)</option>
-                                <option value="9" selected>Szeptember (2026)</option>
-                                <option value="10">Október (2026)</option>
-                                <option value="11">November (2026)</option>
-                                <option value="12">December (2026)</option>
-                            </select>
-                        </div>
-
-                        <!-- Időtartam tartomány (Min / Max napok) -->
-                        <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); padding: 10px 12px; border-radius: 12px; margin-bottom: 10px;">
-                            <div style="font-size: 11.5px; font-weight: 700; color: var(--text-main); margin-bottom: 6px; display: flex; justify-content: space-between;">
-                                <span>Tartózkodás:</span>
-                                <span style="color: var(--primary); font-family: var(--font-mono); font-weight: 800;" id="month_stay_summary">6 – 8 nap</span>
-                            </div>
-                            <div class="stepper-row" style="margin-bottom: 0;">
-                                <div>
-                                    <div class="stepper-title" style="font-size: 12px;">Célzott napok</div>
-                                    <div class="stepper-subtitle">Átlagos időtartam</div>
-                                </div>
-                                <div class="stepper-control-box">
-                                    <button type="button" class="stepper-circle-btn" onclick="stepDown('duration_input', 2)">−</button>
-                                    <input type="hidden" id="duration_input" value="7">
-                                    <span class="stepper-num-val" id="duration_display">7 nap</span>
-                                    <button type="button" class="stepper-circle-btn" onclick="stepUp('duration_input', 30)">+</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="date-preset-pills" style="margin-top: 10px;">
-                            <div class="preset-pill" onclick="setDurationPreset(4, this)">4 nap (3–5)</div>
-                            <div class="preset-pill active" onclick="setDurationPreset(7, this)">7 nap (6–8)</div>
-                            <div class="preset-pill" onclick="setDurationPreset(10, this)">10 nap (9–11)</div>
-                            <div class="preset-pill" onclick="setDurationPreset(14, this)">14 nap (13–15)</div>
-                        </div>
-                    </div>
                 </div>
             </div>
+
 
 
             <!-- BENTO 2: NAPI KÖLTSÉGKERET -->
@@ -386,8 +335,8 @@
 
         document.getElementById('mode_exact_container').style.display = (mode === 'exact') ? 'block' : 'none';
         document.getElementById('mode_interval_container').style.display = (mode === 'interval') ? 'block' : 'none';
-        document.getElementById('mode_month_container').style.display = (mode === 'month') ? 'block' : 'none';
     }
+
 
     function initTimingPickers() {
         const huLocale = (typeof flatpickr !== 'undefined' && flatpickr.l10ns && flatpickr.l10ns.hu) ? flatpickr.l10ns.hu : 'default';
@@ -659,7 +608,8 @@
             minStay = duration;
             maxStay = duration;
             monthVal = String(startD.getMonth() + 1);
-        } else if (mode === 'interval') {
+        } else {
+            // interval mode
             outFrom = document.getElementById('interval_out_from').value;
             outTo = document.getElementById('interval_out_to').value;
             inFrom = document.getElementById('interval_in_from').value;
@@ -672,21 +622,8 @@
                 const sDate = new Date(outFrom);
                 monthVal = String(sDate.getMonth() + 1);
             }
-        } else {
-            // Month mode
-            monthVal = document.getElementById('month').value;
-            duration = parseInt(document.getElementById('duration_input').value, 10) || 7;
-            minStay = Math.max(1, duration - 1);
-            maxStay = duration + 1;
-
-            const mNum = parseInt(monthVal === 'any' ? '9' : monthVal, 10);
-            const mStr = String(mNum).padStart(2, '0');
-            outFrom = `2026-${mStr}-01`;
-            outTo = `2026-${mStr}-24`;
-            const nextM = (mNum % 12) + 1;
-            inFrom = `2026-${mStr}-${String(Math.min(28, 1 + duration)).padStart(2, '0')}`;
-            inTo = `2026-${String(nextM).padStart(2, '0')}-08`;
         }
+
 
         const data = {
             date_mode: mode,
