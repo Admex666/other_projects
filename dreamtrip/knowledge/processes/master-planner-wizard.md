@@ -45,7 +45,7 @@ A **Master Travel Planner** a platform legmagasabb szintű folyamata, amely öss
    (Sajátvektor-súlyozott Open-Meteo klíma + Kiwi járatárak + Numbeo költség/biztonság pontozás)
          ↓ (🏆 Kiválasztás -> Automatikus járatkeresés indul a háttérben)
 2. Lépés: Járat kiválasztása
-   (Kiwi GraphQL retúr járatok + PROMETHEE II preferenciafüggvényes rangsorolás)
+   (Kiwi GraphQL retúr járatok dinamikus skálázással [napi 5 járat, 30–150 db] + PROMETHEE II rangsorolás)
          ↓ (✈️ Kiválasztás -> Automatikus szálláskeresés indul, járatdátumok zárolva)
 3. Lépés: Szállás kiválasztása
    (Cozycozy élő szállásaggregáció a pontos éjszakaszámra + kategória/típus/reggeli/felszereltség szűrés)
@@ -68,7 +68,7 @@ A **Master Travel Planner** a platform legmagasabb szintű folyamata, amely öss
 3. **Pontos Dátumok (`exact`):** A Flight Intelligence-ben bevált `window.initAdvisorDatePicker` Flatpickr naptárkomponens és gyorsválasztó pilulák (`2 hét múlva`, `1 hónap múlva`, `Hosszú hétvége`, `2 hetes nyaralás`).
 
 ### 3. Modális Prioritásvarázslók és Progressive Disclosure (Zárolási Rendszer)
-* **Desztináció prioritások:** Repülőjegy ár, Napi költségek, Klíma és Közbiztonság páros összehasonlítása az `AHPWizard` modálban.
+* **3-Pilléres Desztináció prioritások:** A redundáns pénz-pénz összevetések kivezetésével 3 független pillér (Teljes Utazási Költség, Klíma, Közbiztonság) páros összehasonlítása mindössze 3 gyors kérdésben az `AHPWizard` modálban.
 * **Progressive Disclosure:** A 4. pont (Repülési szűrők) és az 5. pont (Szállás szűrők) addig zárolva (`opacity: 0.45; pointer-events: none`) maradnak, amíg a felhasználó ki nem tölti a prioritási kérdőívet.
 * **Preset-mentes döntéshozatal:** A repülési szempontoknál nincsenek mesterséges preset sablonok, így a döntési súlyok valódi felhasználói válaszokból származnak.
 * **Szállás prioritások:** Ár / Éjszaka, Vendégértékelés & Csillagok, Központi Elhelyezkedés, és Felszereltség & Reggeli páros összehasonlítása.

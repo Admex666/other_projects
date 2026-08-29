@@ -385,9 +385,26 @@ def run_intelligence_scraper(p: SearchParams):
             }
             return
 
+        # Dinamikus járatlekérdezési limit: napi 5 járat, min 30, max 150
+        try:
+            d_out_s = pd.to_datetime(p.out_from)
+            d_out_e = pd.to_datetime(p.out_to)
+            out_days = max(1, (d_out_e - d_out_s).days + 1)
+            out_limit = int(min(150, max(30, out_days * 5)))
+        except Exception:
+            out_limit = 50
+
+        try:
+            d_in_s = pd.to_datetime(p.in_from)
+            d_in_e = pd.to_datetime(p.in_to)
+            in_days = max(1, (d_in_e - d_in_s).days + 1)
+            in_limit = int(min(150, max(30, in_days * 5)))
+        except Exception:
+            in_limit = 50
+
         results["status_text"] = "Adatkapcsolat megteremtése..."
         tokens = get_kiwi_tokens(headless=True)
-        
+
         results["status_text"] = f"Odaút keresése ({p.origin} -> {p.destination}, {p.adults} felnőtt)..."
         outbound = search_flights_by_city_name_v2(
             origin_name=p.origin,
@@ -398,7 +415,7 @@ def run_intelligence_scraper(p: SearchParams):
             adults=p.adults,
             children=p.children,
             infants=p.infants,
-            limit=50,
+            limit=out_limit,
             progress_callback=lambda p_val: update_progress(5, 40, p_val)
         )
         
@@ -414,7 +431,7 @@ def run_intelligence_scraper(p: SearchParams):
             adults=p.adults,
             children=p.children,
             infants=p.infants,
-            limit=50,
+            limit=in_limit,
             progress_callback=lambda p_val: update_progress(45, 40, p_val)
         )
         
@@ -1768,6 +1785,7 @@ class MasterPlannerIntake(BaseModel):
     children: int = 0
     date_mode: str = "month" # 'exact' | 'interval' | 'month'
     month: str = "9"
+    year: int = 2026
     duration: int = 7
     exact_out_date: Optional[str] = None
     exact_in_date: Optional[str] = None
@@ -1792,10 +1810,9 @@ class MasterPlannerIntake(BaseModel):
     hotel_types: Optional[List[str]] = None
     breakfast: bool = False
     amenities: Optional[List[str]] = None
-    weight_flight: float = 30.0
-    weight_cost: float = 20.0
-    weight_weather: float = 30.0
-    weight_safety: float = 20.0
+    weight_total_cost: float = 34.0
+    weight_weather: float = 33.0
+    weight_safety: float = 33.0
     ahp_comparisons: Optional[Dict[str, float]] = None
     ahp_weights: Optional[Dict[str, float]] = None
 
@@ -1804,6 +1821,7 @@ class PlannerFlightSearchRequest(BaseModel):
     destination: str = "Róma"
     date_mode: str = "month"
     month: int = 9
+    year: int = 2026
     duration: int = 7
     exact_out_date: Optional[str] = None
     exact_in_date: Optional[str] = None
@@ -1861,8 +1879,7 @@ def run_planner_destinations_task(user_key: str, data: MasterPlannerIntake):
             planner_dest_status[user_key]["status_text"] = txt
 
         weights = data.ahp_weights or {
-            "flight": data.weight_flight,
-            "cost": data.weight_cost,
+            "total_cost": getattr(data, "weight_total_cost", 34.0),
             "weather": data.weight_weather,
             "safety": data.weight_safety
         }
@@ -1890,6 +1907,7 @@ def run_planner_destinations_task(user_key: str, data: MasterPlannerIntake):
             in_to=data.in_to,
             min_stay=data.min_stay,
             max_stay=data.max_stay,
+            year=data.year,
             target_temp=data.target_temp,
             min_safety=data.min_safety,
             preferred_regions=data.preferred_regions,
@@ -1948,6 +1966,7 @@ async def api_planner_search_flights(req: PlannerFlightSearchRequest, request: R
             children=req.children,
             direct_only=req.direct_only,
             max_stops=req.max_stops,
+            year=req.year,
             departure_pref=req.departure_pref,
             max_duration_h=req.max_duration_h,
             weights=req.weights

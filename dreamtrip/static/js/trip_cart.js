@@ -532,6 +532,7 @@
         },
 
         // SINGLE PRIMARY NEXT STEP CTA GENERATOR
+        // SINGLE PRIMARY NEXT STEP CTA GENERATOR (Master Planner Integration)
         getNextStepCTA() {
             const trip = this.getTrip();
             const d = trip.destination;
@@ -541,8 +542,8 @@
             if (!d) {
                 return {
                     step: 1,
-                    text: 'Célállomás választása →',
-                    url: '/destination-matcher',
+                    text: 'Tervezés indítása / Célállomás →',
+                    url: '/planner',
                     icon: '📍',
                     badge: '1. Lépés'
                 };
@@ -552,20 +553,17 @@
                 return {
                     step: 2,
                     text: `Járatok keresése (${d.name}) →`,
-                    url: `/flight-intelligence?destination=${encodeURIComponent(d.city || d.name)}&origin=${encodeURIComponent(trip.input.origin || d.origin)}&adults=${trip.input.adults || d.adults}&children=${trip.input.children || 0}&duration=${trip.input.duration_days || d.duration}&from_matcher=1`,
+                    url: '/planner?resume=flight',
                     icon: '✈️',
                     badge: '2. Lépés'
                 };
             }
 
             if (!s) {
-                const checkin = f.out_date || '';
-                const checkout = f.in_date || '';
-                const dateLabel = checkin && checkout ? ` (${checkin} – ${checkout})` : '';
                 return {
                     step: 3,
-                    text: `Szállások keresése${dateLabel} →`,
-                    url: `/accommodation-intelligence?city=${encodeURIComponent(d.city || d.name)}&country=${encodeURIComponent(d.country || '')}&checkin=${checkin}&checkout=${checkout}&adults=${trip.input.adults || 2}&from_matcher=1`,
+                    text: 'Szállások keresése →',
+                    url: '/planner?resume=stay',
                     icon: '🏨',
                     badge: '3. Lépés'
                 };
@@ -573,8 +571,8 @@
 
             return {
                 step: 4,
-                text: 'Utazási terv megnyitása & Ajánlatkészítés →',
-                action: 'open_drawer',
+                text: 'Összesített terv & B2B Ajánlat →',
+                url: '/planner?resume=summary',
                 icon: '📄',
                 badge: 'Ajánlatkész'
             };
@@ -616,14 +614,14 @@
                 // Célállomás Slot
                 if (d) {
                     slotsHtml += `
-                        <div class="trip-pill-slot active-filled" onclick="TripCart.showDrawer()">
+                        <div class="trip-pill-slot active-filled" onclick="TripCart.goToPlannerStep('destination')">
                             <span>📍 ${d.name}</span>
                             <span style="font-size: 11px; opacity: 0.85;">(${d.duration || 7}n, ${d.adults || 2}fő)</span>
                         </div>
                     `;
                 } else {
                     slotsHtml += `
-                        <a href="/destination-matcher" class="trip-pill-slot empty-slot">
+                        <a href="/planner" class="trip-pill-slot empty-slot">
                             <span>📍 + Célállomás</span>
                         </a>
                     `;
@@ -632,19 +630,19 @@
                 // Járat Slot
                 if (f) {
                     slotsHtml += `
-                        <div class="trip-pill-slot active-filled" onclick="TripCart.showDrawer()">
+                        <div class="trip-pill-slot active-filled" onclick="TripCart.goToPlannerStep('flight')">
                             <span>✈️ ${f.airline} (${Math.round(f.price_total_huf || f.price_huf).toLocaleString()} Ft)</span>
                         </div>
                     `;
                 } else if (d) {
                     slotsHtml += `
-                        <a href="/flight-intelligence?destination=${encodeURIComponent(d.city || d.name)}&origin=${encodeURIComponent(trip.input.origin)}&adults=${trip.input.adults}&children=${trip.input.children}&duration=${trip.input.duration_days}&from_matcher=1" class="trip-pill-slot empty-slot">
+                        <a href="/planner?resume=flight" class="trip-pill-slot empty-slot" onclick="if(window.location.pathname.startsWith('/planner') && window.Wizard){ event.preventDefault(); window.Wizard.goToStep(2); }">
                             <span>✈️ + Járat</span>
                         </a>
                     `;
                 } else {
                     slotsHtml += `
-                        <a href="/flight-intelligence" class="trip-pill-slot empty-slot">
+                        <a href="/planner?resume=flight" class="trip-pill-slot empty-slot">
                             <span>✈️ + Járat</span>
                         </a>
                     `;
@@ -653,25 +651,25 @@
                 // Szállás Slot
                 if (s) {
                     slotsHtml += `
-                        <div class="trip-pill-slot active-filled" onclick="TripCart.showDrawer()">
+                        <div class="trip-pill-slot active-filled" onclick="TripCart.goToPlannerStep('stay')">
                             <span>🏨 ${s.name} (${Math.round(s.price_total_huf || s.price_huf).toLocaleString()} Ft)</span>
                         </div>
                     `;
                 } else if (f && d) {
                     slotsHtml += `
-                        <a href="/accommodation-intelligence?city=${encodeURIComponent(d.city || d.name)}&country=${encodeURIComponent(d.country)}&checkin=${f.out_date}&checkout=${f.in_date}&adults=${trip.input.adults}&from_matcher=1" class="trip-pill-slot empty-slot">
+                        <a href="/planner?resume=stay" class="trip-pill-slot empty-slot" onclick="if(window.location.pathname.startsWith('/planner') && window.Wizard){ event.preventDefault(); window.Wizard.goToStep(3); }">
                             <span>🏨 + Szállás</span>
                         </a>
                     `;
                 } else if (d) {
                     slotsHtml += `
-                        <a href="/accommodation-intelligence?city=${encodeURIComponent(d.city || d.name)}&country=${encodeURIComponent(d.country)}&adults=${trip.input.adults}&from_matcher=1" class="trip-pill-slot empty-slot">
+                        <a href="/planner?resume=stay" class="trip-pill-slot empty-slot" onclick="if(window.location.pathname.startsWith('/planner') && window.Wizard){ event.preventDefault(); window.Wizard.goToStep(3); }">
                             <span>🏨 + Szállás</span>
                         </a>
                     `;
                 } else {
                     slotsHtml += `
-                        <a href="/accommodation-intelligence" class="trip-pill-slot empty-slot">
+                        <a href="/planner?resume=stay" class="trip-pill-slot empty-slot">
                             <span>🏨 + Szállás</span>
                         </a>
                     `;
@@ -684,12 +682,23 @@
             const nextCta = this.getNextStepCTA();
             if (nextBtn) {
                 nextBtn.innerText = nextCta.text;
-                if (nextCta.action === 'open_drawer') {
-                    nextBtn.onclick = () => this.showDrawer();
+                if (window.location.pathname.startsWith('/planner') && window.Wizard) {
+                    nextBtn.onclick = (e) => {
+                        e.preventDefault();
+                        if (nextCta.step === 2) window.Wizard.goToStep(2);
+                        else if (nextCta.step === 3) window.Wizard.goToStep(3);
+                        else if (nextCta.step === 4) window.Wizard.goToStep(4);
+                        else window.Wizard.goToStep(1);
+                    };
                     nextBtn.removeAttribute('href');
                 } else {
-                    nextBtn.onclick = null;
-                    nextBtn.href = nextCta.url;
+                    if (nextCta.action === 'open_drawer') {
+                        nextBtn.onclick = () => this.showDrawer();
+                        nextBtn.removeAttribute('href');
+                    } else {
+                        nextBtn.onclick = null;
+                        nextBtn.href = nextCta.url;
+                    }
                 }
             }
 
@@ -749,8 +758,8 @@
                                 <div class="trip-card-slot-type" style="color: var(--text-muted);">📍 1. Célállomás</div>
                             </div>
                             <div class="trip-card-empty-action">
-                                <a href="/destination-matcher">
-                                    <span>+ Célállomás választása a Matcherben</span>
+                                <a href="/planner">
+                                    <span>+ Célállomás választása a Plannerben</span>
                                 </a>
                             </div>
                         </div>
@@ -780,8 +789,8 @@
                                 <div class="trip-card-slot-type" style="color: var(--text-muted);">✈️ 2. Járat kiválasztása</div>
                             </div>
                             <div class="trip-card-empty-action">
-                                <a href="${d ? `/flight-intelligence?destination=${encodeURIComponent(d.city || d.name)}&origin=${encodeURIComponent(trip.input.origin)}&adults=${trip.input.adults}&children=${trip.input.children}&duration=${trip.input.duration_days}&from_matcher=1` : '/flight-intelligence'}">
-                                    <span>+ Járat keresése és kiválasztása</span>
+                                <a href="/planner?resume=flight">
+                                    <span>+ Járat keresése és kiválasztása (${d ? d.name : 'Planner'})</span>
                                 </a>
                             </div>
                         </div>
@@ -804,14 +813,13 @@
                         </div>
                     `;
                 } else {
-                    const checkinParam = f?.out_date ? `&checkin=${f.out_date}&checkout=${f.in_date}` : '';
                     drawerHtml += `
                         <div class="trip-card-slot">
                             <div class="trip-card-slot-header">
                                 <div class="trip-card-slot-type" style="color: var(--text-muted);">🏨 3. Szállás kiválasztása</div>
                             </div>
                             <div class="trip-card-empty-action">
-                                <a href="${d ? `/accommodation-intelligence?city=${encodeURIComponent(d.city || d.name)}&country=${encodeURIComponent(d.country)}&adults=${trip.input.adults}${checkinParam}&from_matcher=1` : '/accommodation-intelligence'}">
+                                <a href="/planner?resume=stay">
                                     <span>+ Szállás keresése és rögzítése</span>
                                 </a>
                             </div>
@@ -1028,6 +1036,17 @@
                 </html>
             `);
             win.document.close();
+        },
+
+        goToPlannerStep(step) {
+            if (window.location.pathname.startsWith('/planner') && window.Wizard) {
+                if (step === 'flight') window.Wizard.goToStep(2);
+                else if (step === 'stay') window.Wizard.goToStep(3);
+                else if (step === 'summary') window.Wizard.goToStep(4);
+                else window.Wizard.goToStep(1);
+            } else {
+                window.location.href = `/planner?resume=${step}`;
+            }
         }
     };
 

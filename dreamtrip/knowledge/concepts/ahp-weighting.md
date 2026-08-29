@@ -23,16 +23,11 @@ used_by:
   - "[[fastapi-backend]]"
 ---
 
-# Concept: Analytic Hierarchy Process (AHP)
+## 3-Pilléres Célállomás Döntési Modell (Master Planner & Destination Matcher)
 
-Az AHP lehetővé teszi, hogy a felhasználó ne absztrakt százalékokat adjon meg, hanem intuitív páros preferenciákat (pl. „Az ár 3-szor fontosabb számomra, mint az átszállások száma”).
+A redundáns pénz-pénz (repülőjegy vs. napi étkezés) párosítások elkerülésére a célállomás-szintű AHP 3 független, nem átfedő pillérre épül:
+1. **💰 Teljes Becsült Utazási Költség (`total_cost`)**: Repülőjegy + Napi megélhetés (Numbeo) + Becsült szállásköltség együttes összege.
+2. **☀️ Időjárás / Klíma (`weather`)**: Célhőmérséklethez és napsütéshez való illeszkedés (Open-Meteo).
+3. **🛡️ Közbiztonság (`safety`)**: Biztonsági index és utazási nyugalom (Numbeo Safety Index).
 
-## Matematikai Háttér
-
-1. **Páros összehasonlítási mátrix ($A$)**:
-   $$a_{ij} = \frac{1}{a_{ji}}, \quad a_{ii} = 1$$
-   ahol az értékek a Saaty-féle 1–9-es skálán mozognak.
-2. **Súlyvektor ($\mathbf{w}$)**:
-   A normalizált geometriai átlagok vagy a mátrix domináns sajátvektora.
-3. **Konzisztencia Index ($CI$) és Ráta ($CR$)**:
-   Biztosítja, hogy a megadott preferenciák logikailag konzisztensek legyenek ($CR < 0.10$).
+Ez mindössze **3 gyors páros kérdést** igényel ($n=3$), miközben a mikroszintű preferenciák (pl. közvetlen járat, hotelcsillag, reggeli) a saját lépéseikben érvényesülnek.

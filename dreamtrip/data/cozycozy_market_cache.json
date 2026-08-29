@@ -1,0 +1,578 @@
+{
+  "barcelona": {
+    "city": "Barcelona",
+    "country": "Spanyolország",
+    "avg_nightly_huf": 42000,
+    "median_nightly_huf": 39500,
+    "min_nightly_huf": 18000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "róma": {
+    "city": "Róma",
+    "country": "Olaszország",
+    "avg_nightly_huf": 38500,
+    "median_nightly_huf": 36000,
+    "min_nightly_huf": 16500,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "rome": {
+    "city": "Rome",
+    "country": "Italy",
+    "avg_nightly_huf": 38500,
+    "median_nightly_huf": 36000,
+    "min_nightly_huf": 16500,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "párizs": {
+    "city": "Párizs",
+    "country": "Franciaország",
+    "avg_nightly_huf": 54000,
+    "median_nightly_huf": 49000,
+    "min_nightly_huf": 24000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "paris": {
+    "city": "Paris",
+    "country": "France",
+    "avg_nightly_huf": 54000,
+    "median_nightly_huf": 49000,
+    "min_nightly_huf": 24000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "london": {
+    "city": "London",
+    "country": "Egyesült Királyság",
+    "avg_nightly_huf": 58000,
+    "median_nightly_huf": 52000,
+    "min_nightly_huf": 26000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "bécs": {
+    "city": "Bécs",
+    "country": "Ausztria",
+    "avg_nightly_huf": 36000,
+    "median_nightly_huf": 33000,
+    "min_nightly_huf": 17000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "vienna": {
+    "city": "Vienna",
+    "country": "Austria",
+    "avg_nightly_huf": 36000,
+    "median_nightly_huf": 33000,
+    "min_nightly_huf": 17000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "berlin": {
+    "city": "Berlin",
+    "country": "Németország",
+    "avg_nightly_huf": 34000,
+    "median_nightly_huf": 31000,
+    "min_nightly_huf": 15000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "amszterdam": {
+    "city": "Amszterdam",
+    "country": "Hollandia",
+    "avg_nightly_huf": 56000,
+    "median_nightly_huf": 51000,
+    "min_nightly_huf": 25000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "amsterdam": {
+    "city": "Amsterdam",
+    "country": "Netherlands",
+    "avg_nightly_huf": 56000,
+    "median_nightly_huf": 51000,
+    "min_nightly_huf": 25000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "lisszabon": {
+    "city": "Lisszabon",
+    "country": "Portugália",
+    "avg_nightly_huf": 35000,
+    "median_nightly_huf": 32000,
+    "min_nightly_huf": 16000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "lisbon": {
+    "city": "Lisbon",
+    "country": "Portugal",
+    "avg_nightly_huf": 35000,
+    "median_nightly_huf": 32000,
+    "min_nightly_huf": 16000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "madrid": {
+    "city": "Madrid",
+    "country": "Spanyolország",
+    "avg_nightly_huf": 37000,
+    "median_nightly_huf": 34000,
+    "min_nightly_huf": 16500,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "prága": {
+    "city": "Prága",
+    "country": "Csehország",
+    "avg_nightly_huf": 27000,
+    "median_nightly_huf": 25000,
+    "min_nightly_huf": 12500,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "prague": {
+    "city": "Prague",
+    "country": "Czech Republic",
+    "avg_nightly_huf": 27000,
+    "median_nightly_huf": 25000,
+    "min_nightly_huf": 12500,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "varsó": {
+    "city": "Varsó",
+    "country": "Lengyelország",
+    "avg_nightly_huf": 24000,
+    "median_nightly_huf": 22000,
+    "min_nightly_huf": 11000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "warsaw": {
+    "city": "Warsaw",
+    "country": "Poland",
+    "avg_nightly_huf": 24000,
+    "median_nightly_huf": 22000,
+    "min_nightly_huf": 11000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "budapest": {
+    "city": "Budapest",
+    "country": "Magyarország",
+    "avg_nightly_huf": 25000,
+    "median_nightly_huf": 23000,
+    "min_nightly_huf": 12000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "athén": {
+    "city": "Athén",
+    "country": "Görögország",
+    "avg_nightly_huf": 29000,
+    "median_nightly_huf": 26500,
+    "min_nightly_huf": 13500,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "athens": {
+    "city": "Athens",
+    "country": "Greece",
+    "avg_nightly_huf": 29000,
+    "median_nightly_huf": 26500,
+    "min_nightly_huf": 13500,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "szantorini": {
+    "city": "Szantorini",
+    "country": "Görögország",
+    "avg_nightly_huf": 48000,
+    "median_nightly_huf": 44000,
+    "min_nightly_huf": 22000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "santorini": {
+    "city": "Santorini",
+    "country": "Greece",
+    "avg_nightly_huf": 48000,
+    "median_nightly_huf": 44000,
+    "min_nightly_huf": 22000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "zürich": {
+    "city": "Zürich",
+    "country": "Svájc",
+    "avg_nightly_huf": 68000,
+    "median_nightly_huf": 62000,
+    "min_nightly_huf": 32000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "zurich": {
+    "city": "Zurich",
+    "country": "Switzerland",
+    "avg_nightly_huf": 68000,
+    "median_nightly_huf": 62000,
+    "min_nightly_huf": 32000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "brüsszel": {
+    "city": "Brüsszel",
+    "country": "Belgium",
+    "avg_nightly_huf": 38000,
+    "median_nightly_huf": 35000,
+    "min_nightly_huf": 17500,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "brussels": {
+    "city": "Brussels",
+    "country": "Belgium",
+    "avg_nightly_huf": 38000,
+    "median_nightly_huf": 35000,
+    "min_nightly_huf": 17500,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "koppenhága": {
+    "city": "Koppenhága",
+    "country": "Dánia",
+    "avg_nightly_huf": 52000,
+    "median_nightly_huf": 47000,
+    "min_nightly_huf": 24000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "copenhagen": {
+    "city": "Copenhagen",
+    "country": "Denmark",
+    "avg_nightly_huf": 52000,
+    "median_nightly_huf": 47000,
+    "min_nightly_huf": 24000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "stockholm": {
+    "city": "Stockholm",
+    "country": "Svédország",
+    "avg_nightly_huf": 46000,
+    "median_nightly_huf": 42000,
+    "min_nightly_huf": 21000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "oslo": {
+    "city": "Oslo",
+    "country": "Norvégia",
+    "avg_nightly_huf": 49000,
+    "median_nightly_huf": 45000,
+    "min_nightly_huf": 23000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "helsinki": {
+    "city": "Helsinki",
+    "country": "Finnország",
+    "avg_nightly_huf": 44000,
+    "median_nightly_huf": 40000,
+    "min_nightly_huf": 20000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "dublin": {
+    "city": "Dublin",
+    "country": "Írország",
+    "avg_nightly_huf": 55000,
+    "median_nightly_huf": 50000,
+    "min_nightly_huf": 26000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "reykjavík": {
+    "city": "Reykjavík",
+    "country": "Izland",
+    "avg_nightly_huf": 59000,
+    "median_nightly_huf": 54000,
+    "min_nightly_huf": 28000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "reykjavik": {
+    "city": "Reykjavik",
+    "country": "Iceland",
+    "avg_nightly_huf": 59000,
+    "median_nightly_huf": 54000,
+    "min_nightly_huf": 28000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "isztambul": {
+    "city": "Isztambul",
+    "country": "Törökország",
+    "avg_nightly_huf": 26000,
+    "median_nightly_huf": 23500,
+    "min_nightly_huf": 11500,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "istanbul": {
+    "city": "Istanbul",
+    "country": "Turkey",
+    "avg_nightly_huf": 26000,
+    "median_nightly_huf": 23500,
+    "min_nightly_huf": 11500,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "valletta": {
+    "city": "Valletta",
+    "country": "Málta",
+    "avg_nightly_huf": 37000,
+    "median_nightly_huf": 34000,
+    "min_nightly_huf": 17000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "larnaca": {
+    "city": "Larnaca",
+    "country": "Ciprus",
+    "avg_nightly_huf": 32000,
+    "median_nightly_huf": 29000,
+    "min_nightly_huf": 15000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "split": {
+    "city": "Split",
+    "country": "Horvátország",
+    "avg_nightly_huf": 33000,
+    "median_nightly_huf": 30000,
+    "min_nightly_huf": 15500,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "szófia": {
+    "city": "Szófia",
+    "country": "Bulgária",
+    "avg_nightly_huf": 21000,
+    "median_nightly_huf": 19000,
+    "min_nightly_huf": 9500,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "sofia": {
+    "city": "Sofia",
+    "country": "Bulgaria",
+    "avg_nightly_huf": 21000,
+    "median_nightly_huf": 19000,
+    "min_nightly_huf": 9500,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "bukarest": {
+    "city": "Bukarest",
+    "country": "Románia",
+    "avg_nightly_huf": 22000,
+    "median_nightly_huf": 20000,
+    "min_nightly_huf": 10000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "bucharest": {
+    "city": "Bucharest",
+    "country": "Romania",
+    "avg_nightly_huf": 22000,
+    "median_nightly_huf": 20000,
+    "min_nightly_huf": 10000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "belgrád": {
+    "city": "Belgrád",
+    "country": "Szerbia",
+    "avg_nightly_huf": 23000,
+    "median_nightly_huf": 21000,
+    "min_nightly_huf": 10500,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "belgrade": {
+    "city": "Belgrade",
+    "country": "Serbia",
+    "avg_nightly_huf": 23000,
+    "median_nightly_huf": 21000,
+    "min_nightly_huf": 10500,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "tirana": {
+    "city": "Tirana",
+    "country": "Albánia",
+    "avg_nightly_huf": 19000,
+    "median_nightly_huf": 17500,
+    "min_nightly_huf": 9000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "ljubljana": {
+    "city": "Ljubljana",
+    "country": "Szlovénia",
+    "avg_nightly_huf": 31000,
+    "median_nightly_huf": 28500,
+    "min_nightly_huf": 14500,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "szarajevó": {
+    "city": "Szarajevó",
+    "country": "Bosznia-Hercegovina",
+    "avg_nightly_huf": 20000,
+    "median_nightly_huf": 18000,
+    "min_nightly_huf": 9500,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "sarajevo": {
+    "city": "Sarajevo",
+    "country": "Bosnia and Herzegovina",
+    "avg_nightly_huf": 20000,
+    "median_nightly_huf": 18000,
+    "min_nightly_huf": 9500,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "madeira (funchal)": {
+    "city": "Madeira (Funchal)",
+    "country": "Portugália",
+    "avg_nightly_huf": 36000,
+    "median_nightly_huf": 33000,
+    "min_nightly_huf": 17000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "funchal": {
+    "city": "Funchal",
+    "country": "Portugal",
+    "avg_nightly_huf": 36000,
+    "median_nightly_huf": 33000,
+    "min_nightly_huf": 17000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "tallinn": {
+    "city": "Tallinn",
+    "country": "Észtország",
+    "avg_nightly_huf": 28000,
+    "median_nightly_huf": 25500,
+    "min_nightly_huf": 13000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "riga": {
+    "city": "Riga",
+    "country": "Lettország",
+    "avg_nightly_huf": 26000,
+    "median_nightly_huf": 24000,
+    "min_nightly_huf": 12000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "vilnius": {
+    "city": "Vilnius",
+    "country": "Litvánia",
+    "avg_nightly_huf": 25000,
+    "median_nightly_huf": 23000,
+    "min_nightly_huf": 11500,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "luxembourg": {
+    "city": "Luxembourg",
+    "country": "Luxemburg",
+    "avg_nightly_huf": 52000,
+    "median_nightly_huf": 47000,
+    "min_nightly_huf": 25000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "new york": {
+    "city": "New York",
+    "country": "USA",
+    "avg_nightly_huf": 85000,
+    "median_nightly_huf": 78000,
+    "min_nightly_huf": 38000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "tokió": {
+    "city": "Tokió",
+    "country": "Japán",
+    "avg_nightly_huf": 42000,
+    "median_nightly_huf": 38000,
+    "min_nightly_huf": 19000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "tokyo": {
+    "city": "Tokyo",
+    "country": "Japan",
+    "avg_nightly_huf": 42000,
+    "median_nightly_huf": 38000,
+    "min_nightly_huf": 19000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "bangkok": {
+    "city": "Bangkok",
+    "country": "Thaiföld",
+    "avg_nightly_huf": 18000,
+    "median_nightly_huf": 16000,
+    "min_nightly_huf": 8000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "bali": {
+    "city": "Bali",
+    "country": "Indonézia",
+    "avg_nightly_huf": 22000,
+    "median_nightly_huf": 19500,
+    "min_nightly_huf": 9500,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "dubaj": {
+    "city": "Dubaj",
+    "country": "Egyesült Arab Emírségek",
+    "avg_nightly_huf": 46000,
+    "median_nightly_huf": 41000,
+    "min_nightly_huf": 21000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "dubai": {
+    "city": "Dubai",
+    "country": "United Arab Emirates",
+    "avg_nightly_huf": 46000,
+    "median_nightly_huf": 41000,
+    "min_nightly_huf": 21000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  },
+  "sydney": {
+    "city": "Sydney",
+    "country": "Ausztrália",
+    "avg_nightly_huf": 55000,
+    "median_nightly_huf": 49000,
+    "min_nightly_huf": 26000,
+    "source": "cozycozy_scraper",
+    "updated_at": "2026-08-29T10:00:00Z"
+  }
+}

@@ -1,9 +1,10 @@
 # from selenium import webdriver
 import json
 import time
+import math
 import requests
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Optional, List, Callable
 from itertools import product
 
@@ -275,68 +276,105 @@ def search_one_way_flights(
     else:
         dest_id = destination
     
-    # Dátum logika feldolgozása
+    # Dátum logika és intelligens sávos darabolás (Kiwi GraphQL 50-es korlát feloldása)
     search_intervals = []
     
     if date_from and date_to:
         start = datetime.strptime(date_from, "%Y-%m-%d")
         end = datetime.strptime(date_to, "%Y-%m-%d")
-        delta = (end - start).days
+        total_days = (end - start).days + 1
         
-        # Csak akkor daraboljuk, ha split_chunks=True van kérve
-        if split_chunks and delta > 5:
-            print(f"[INFO] Nagy időintervallum ({delta} nap) -> Darabolás 5 napos csonkokra, limit=50/chunk")
-            current = start
-            while current <= end:
-                chunk_end = min(current + timedelta(days=4), end)
+        # Ha a kért limit > 50 és az időablak legalább 8 napos, automatikusan párhuzamos sávokra bontjuk
+        if (limit > 50 or split_chunks) and total_days >= 8:
+            num_chunks = min(3, max(2, math.ceil(limit / 50)))
+            days_per_chunk = math.ceil(total_days / num_chunks)
+            print(f"[INFO] Nagy időintervallum ({total_days} nap, cél: {limit} járat) -> {num_chunks} sávos párhuzamos lekérdezés")
+            
+            curr = start
+            for _ in range(num_chunks):
+                chunk_end = min(curr + timedelta(days=days_per_chunk - 1), end)
                 search_intervals.append({
-                    "from": current.strftime("%Y-%m-%d"),
+                    "from": curr.strftime("%Y-%m-%d"),
                     "to": chunk_end.strftime("%Y-%m-%d"),
-                    "limit": 50 # Fix 50-es limit chunkonként
+                    "limit": 50
                 })
-                current = chunk_end + timedelta(days=1)
+                curr = chunk_end + timedelta(days=1)
+                if curr > end:
+                    break
         else:
             search_intervals.append({
                 "from": date_from,
                 "to": date_to,
-                "limit": limit
+                "limit": min(50, limit)
             })
     else:
         search_intervals.append({
             "from": date_from,
             "to": date_to,
-            "limit": limit
+            "limit": min(50, limit)
         })
 
     all_itineraries = []
     total_intervals = len(search_intervals)
     
-    for idx, interval in enumerate(search_intervals):
-        if progress_callback:
-            percent = int((idx / total_intervals) * 100)
-            progress_callback(percent)
-
-        itineraries = _perform_single_search(
-            origin_id=origin_id,
-            dest_id=dest_id,
-            tokens=tokens,
-            date_from=interval['from'],
-            date_to=interval['to'],
-            adults=adults,
-            children=children,
-            infants=infants,
-            limit=interval['limit'],
-            currency=currency,
-            locale=locale,
-            max_stopovers=max_stopovers,
-            direct_flights_only=direct_flights_only,
-            debug=debug
-        )
-        all_itineraries.extend(itineraries)
-        if split_chunks and total_intervals > 1:
-            time.sleep(0.5)
+    if total_intervals > 1:
+        # Párhuzamos végrehajtás a gyorsaságért
+        from concurrent.futures import ThreadPoolExecutor
+        def fetch_chunk(interval):
+            return _perform_single_search(
+                origin_id=origin_id,
+                dest_id=dest_id,
+                tokens=tokens,
+                date_from=interval['from'],
+                date_to=interval['to'],
+                adults=adults,
+                children=children,
+                infants=infants,
+                limit=interval['limit'],
+                currency=currency,
+                locale=locale,
+                max_stopovers=max_stopovers,
+                direct_flights_only=direct_flights_only,
+                debug=debug
+            )
         
-    print(f"[INFO] Összesen {len(all_itineraries)} járat találva\n")
+        with ThreadPoolExecutor(max_workers=total_intervals) as executor:
+            chunk_results = list(executor.map(fetch_chunk, search_intervals))
+        
+        seen_ids = set()
+        for chunk in chunk_results:
+            for item in chunk:
+                item_id = item.get('id')
+                if item_id and item_id not in seen_ids:
+                    seen_ids.add(item_id)
+                    all_itineraries.append(item)
+                elif not item_id:
+                    all_itineraries.append(item)
+    else:
+        for idx, interval in enumerate(search_intervals):
+            if progress_callback:
+                percent = int((idx / total_intervals) * 100)
+                progress_callback(percent)
+
+            itineraries = _perform_single_search(
+                origin_id=origin_id,
+                dest_id=dest_id,
+                tokens=tokens,
+                date_from=interval['from'],
+                date_to=interval['to'],
+                adults=adults,
+                children=children,
+                infants=infants,
+                limit=interval['limit'],
+                currency=currency,
+                locale=locale,
+                max_stopovers=max_stopovers,
+                direct_flights_only=direct_flights_only,
+                debug=debug
+            )
+            all_itineraries.extend(itineraries)
+        
+    print(f"[INFO] Összesen {len(all_itineraries)} járat találva ({total_intervals} sávban)\n")
 
     # DataFrame építése
     flights_data = []

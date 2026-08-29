@@ -183,6 +183,8 @@
   },
   "active": "875b4f97a22b55ab",
   "lastOpenFiles": [
+    "entities/trip.md",
+    "INDEX.md",
     "decisions/ADR-006-master-planner-wizard.md",
     "processes/master-planner-wizard.md",
     "systems/trip-cart-engine.md",

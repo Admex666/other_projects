@@ -28,5 +28,6 @@ used_by:
 Az Optivoya professzionális B2B utazási tanácsadói eszköz. Amennyiben egy külső aggregátor (pl. Kiwi vagy Cozycozy) nem ad vissza valós találatot egy adott szűrésre:
 
 * **Tilos** a felhasználónak hardkódolt, fiktív 12.000 Ft-os járatokat vagy nem létező szállodákat mutatni.
+* **Tilos** mesterséges heurisztikus szorzókat használni a célállomás szintű kalkulációban: a szállásárak a desztinációs döntési modellben is valós, Cozycozy-ból scrapelt és gyorsítótárazott piaci mediánárakból (`app.services.accommodation_market_service`) származnak.
 * **Kötelező** egyértelmű, őszinte állapotjelzést adni (pl. „Nem találtunk közvetlen járatot a megadott dátumra, kérjük bővítsd az időablakot”).
 * A hibakezelésnek meg kell őriznie a felhasználó által beállított szűrőket, hogy 1 kattintással módosíthassa azokat.

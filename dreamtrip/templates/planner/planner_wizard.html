@@ -217,17 +217,16 @@
                 <div id="panel_mode_month" class="mode-panel-content">
                     <div class="advisor-grid-2" style="align-items: center; gap: 20px;">
                         <div>
-                            <label class="form-label" for="intake_month">Preferált hónap (2026):</label>
-                            <select id="intake_month" class="form-control" style="width: 100%; padding: 12px 14px; border-radius: 12px; font-weight: 700; background: var(--bg-surface);">
-                                <option value="5">2026. Május (Kellemes tavasz)</option>
-                                <option value="6">2026. Június (Előnyár)</option>
-                                <option value="7">2026. Július (Főszezon)</option>
-                                <option value="8">2026. Augusztus (Főszezon)</option>
-                                <option value="9" selected>2026. Szeptember (Ideális utószezon)</option>
-                                <option value="10">2026. Október (Őszi városnézés)</option>
-                                <option value="11">2026. November</option>
-                                <option value="12">2026. December</option>
-                            </select>
+                            <label class="form-label" style="display: block; margin-bottom: 6px;">Preferált hónap:</label>
+                            <div style="display: grid; grid-template-columns: 110px 1fr; gap: 10px;">
+                                <select id="intake_year" class="form-control" style="width: 100%; padding: 12px 14px; border-radius: 12px; font-weight: 700; background: var(--bg-surface);" onchange="Wizard.onYearChange(this.value)">
+                                    <option value="2026" selected>2026</option>
+                                    <option value="2027">2027</option>
+                                </select>
+                                <select id="intake_month" class="form-control" style="width: 100%; padding: 12px 14px; border-radius: 12px; font-weight: 700; background: var(--bg-surface);" onchange="Wizard.onMonthChange(this.value)">
+                                    <!-- Dinamikusan töltve kizárólag a hónap nevével, a múltbeli hónapok kiszűrésével -->
+                                </select>
+                            </div>
                         </div>
                         <div>
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
@@ -352,22 +351,18 @@
                     <span id="criteria_status_text">A 4. és 5. pont finomhangolása zárolva van, amíg ki nem töltöd a prioritási kérdőívet!</span>
                 </div>
 
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px;">
-                    <div style="background: var(--bg-surface); padding: 10px; border-radius: 10px; border: 1px solid var(--border-subtle); text-align: center;">
-                        <span style="font-size: 11px; font-weight: 700; color: var(--text-muted); display: block;">✈️ REPÜLŐ ÁR</span>
-                        <strong style="font-size: 17px; font-family: var(--font-mono); color: var(--primary);" id="ahp_badge_flight">—</strong>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px;">
+                    <div style="background: var(--bg-surface); padding: 12px; border-radius: 12px; border: 1px solid var(--border-subtle); text-align: center;">
+                        <span style="font-size: 11.5px; font-weight: 800; color: var(--text-muted); display: block; margin-bottom: 2px;">💰 TELJES KÖLTSÉG</span>
+                        <strong style="font-size: 18px; font-family: var(--font-mono); color: var(--primary);" id="ahp_badge_cost">—</strong>
                     </div>
-                    <div style="background: var(--bg-surface); padding: 10px; border-radius: 10px; border: 1px solid var(--border-subtle); text-align: center;">
-                        <span style="font-size: 11px; font-weight: 700; color: var(--text-muted); display: block;">💰 NAPI KÖLTÉS</span>
-                        <strong style="font-size: 17px; font-family: var(--font-mono); color: var(--primary);" id="ahp_badge_cost">—</strong>
+                    <div style="background: var(--bg-surface); padding: 12px; border-radius: 12px; border: 1px solid var(--border-subtle); text-align: center;">
+                        <span style="font-size: 11.5px; font-weight: 800; color: var(--text-muted); display: block; margin-bottom: 2px;">☀️ KLÍMA</span>
+                        <strong style="font-size: 18px; font-family: var(--font-mono); color: var(--primary);" id="ahp_badge_weather">—</strong>
                     </div>
-                    <div style="background: var(--bg-surface); padding: 10px; border-radius: 10px; border: 1px solid var(--border-subtle); text-align: center;">
-                        <span style="font-size: 11px; font-weight: 700; color: var(--text-muted); display: block;">☀️ KLÍMA</span>
-                        <strong style="font-size: 17px; font-family: var(--font-mono); color: var(--primary);" id="ahp_badge_weather">—</strong>
-                    </div>
-                    <div style="background: var(--bg-surface); padding: 10px; border-radius: 10px; border: 1px solid var(--border-subtle); text-align: center;">
-                        <span style="font-size: 11px; font-weight: 700; color: var(--text-muted); display: block;">🛡️ BIZTONSÁG</span>
-                        <strong style="font-size: 17px; font-family: var(--font-mono); color: var(--primary);" id="ahp_badge_safety">—</strong>
+                    <div style="background: var(--bg-surface); padding: 12px; border-radius: 12px; border: 1px solid var(--border-subtle); text-align: center;">
+                        <span style="font-size: 11.5px; font-weight: 800; color: var(--text-muted); display: block; margin-bottom: 2px;">🛡️ BIZTONSÁG</span>
+                        <strong style="font-size: 18px; font-family: var(--font-mono); color: var(--primary);" id="ahp_badge_safety">—</strong>
                     </div>
                 </div>
             </div>

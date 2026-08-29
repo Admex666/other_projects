@@ -4,7 +4,7 @@ import time
 import numpy as np
 import pandas as pd
 from typing import List, Dict, Any, Optional
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from app.services.destination_service import get_filtered_destinations
 from app.services.destination_scoring_service import evaluate_destination_candidate, calculate_destination_rankings
@@ -64,6 +64,7 @@ def calculate_planner_destinations_sync(
     in_to: Optional[str] = None,
     min_stay: Optional[int] = None,
     max_stay: Optional[int] = None,
+    year: int = 2026,
     target_temp: float = 24.0,
     min_safety: int = 50,
     preferred_regions: Optional[List[str]] = None,
@@ -102,18 +103,30 @@ def calculate_planner_destinations_sync(
             actual_min_stay = duration_days
             actual_max_stay = duration_days
             month = d1.month
+            year = d1.year
         except:
             actual_min_stay = duration_days
             actual_max_stay = duration_days
     elif date_mode == "interval" and out_from and out_to:
         actual_out_from = out_from
         actual_out_to = out_to
-        actual_in_from = in_from or out_to
-        actual_in_to = in_to
-        actual_min_stay = min_stay or max(1, duration_days - 2)
-        actual_max_stay = max_stay or (duration_days + 2)
+        actual_min_stay = int(min_stay) if min_stay is not None else max(1, duration_days - 2)
+        actual_max_stay = int(max_stay) if max_stay is not None else (duration_days + 2)
+        
+        # A legkorábbi lehetséges visszautazási dátum a legkorábbi indulás + min_stay
+        if in_from:
+            actual_in_from = in_from
+        else:
+            try:
+                actual_in_from = (pd.to_datetime(out_from) + pd.Timedelta(days=actual_min_stay)).strftime("%Y-%m-%d")
+            except Exception:
+                actual_in_from = out_from
+
+        actual_in_to = in_to if in_to else out_to
         try:
-            month = pd.to_datetime(out_from).month
+            d = pd.to_datetime(out_from)
+            month = d.month
+            year = d.year
         except:
             pass
     else:
@@ -137,6 +150,7 @@ def calculate_planner_destinations_sync(
             target_temp=target_temp,
             adults=adults,
             children=children,
+            year=year,
             out_from=actual_out_from,
             out_to=actual_out_to,
             in_from=actual_in_from,
@@ -150,43 +164,30 @@ def calculate_planner_destinations_sync(
         return res
 
     with ThreadPoolExecutor(max_workers=8) as executor:
-        candidates_raw = list(executor.map(process_dest, all_dests))
+        futures = [executor.submit(process_dest, d) for d in all_dests]
+        results = [f.result() for f in as_completed(futures)]
 
-    # Súlyok összeállítása AHP-ból ha meg van adva
+    # 4. SÚLYOZOTT MULTIKRITÉRIUMOS PONTOZÁS (3-Pilléres Modell)
+    if progress_callback:
+        progress_callback(90, "Multikritériumos döntési mátrix kalkulációja...")
+
     w_dict = weights
     if not w_dict and ahp_comparisons:
         ahp_computed = compute_ahp_weights_from_comparisons(
-            ["flight", "cost", "weather", "safety"],
+            ["total_cost", "weather", "safety"],
             ahp_comparisons
         )
         w_dict = {k: v * 100.0 for k, v in ahp_computed.items()}
 
-    if not w_dict:
-        w_dict = {
-            "flight": 30.0,
-            "cost": 20.0,
-            "weather": 30.0,
-            "safety": 20.0
-        }
-
-    if progress_callback:
-        progress_callback(90, "Végső AHP rangsorolás és indoklások összeállítása...")
-
     ranked = calculate_destination_rankings(
-        candidates_raw=candidates_raw,
-        weights=w_dict,
+        candidates_raw=results,
+        weights=w_dict or {"total_cost": 34.0, "weather": 33.0, "safety": 33.0},
         target_temp=target_temp,
         adults=adults
     )
 
-    # Biztonsági minimum szűrés
-    if min_safety > 0:
-        filtered_ranked = [r for r in ranked if r.get("metrics", {}).get("safety_raw", 100) >= min_safety]
-        if filtered_ranked:
-            ranked = filtered_ranked
-
-    for idx, r in enumerate(ranked):
-        r["rank"] = idx + 1
+    if progress_callback:
+        progress_callback(100, "Kiértékelés kész!")
 
     return ranked
 
@@ -208,6 +209,7 @@ def search_and_rank_planner_flights(
     children: int = 0,
     direct_only: bool = False,
     max_stops: int = 1,
+    year: int = 2026,
     departure_pref: str = "any",
     max_duration_h: Optional[float] = None,
     weights: Optional[Dict[str, float]] = None
@@ -236,24 +238,72 @@ def search_and_rank_planner_flights(
     elif date_mode == "interval" and out_from and out_to:
         date_out_start = out_from
         date_out_end = out_to
-        date_in_start = in_from or out_to
+        actual_min_stay = int(min_stay) if min_stay is not None else max(1, duration_days - 2)
+        actual_max_stay = int(max_stay) if max_stay is not None else (duration_days + 2)
+
+        if in_from:
+            date_in_start = in_from
+        else:
+            try:
+                date_in_start = (pd.to_datetime(out_from) + pd.Timedelta(days=actual_min_stay)).strftime("%Y-%m-%d")
+            except Exception:
+                date_in_start = out_from
+
         date_in_end = in_to or out_to
-        actual_min_stay = min_stay or max(1, duration_days - 2)
-        actual_max_stay = max_stay or (duration_days + 2)
     else:
         # Month mode
+        from datetime import datetime as dt_cls
+        today = dt_cls.now()
+        cur_year = today.year
+        cur_month = today.month
+
+        if year < cur_year or (year == cur_year and month < cur_month):
+            year = cur_year + 1
+
         if month in [1, 3, 5, 7, 8, 10, 12]: last_day = 31
         elif month in [4, 6, 9, 11]: last_day = 30
         else: last_day = 28
 
-        date_out_start = f"2026-{month:02d}-01"
-        date_out_end = f"2026-{month:02d}-{min(24, last_day):02d}"
+        if year == cur_year and month == cur_month:
+            if today.day >= (last_day - 4):
+                month = (month % 12) + 1
+                if month == 1:
+                    year += 1
+                if month in [1, 3, 5, 7, 8, 10, 12]: last_day = 31
+                elif month in [4, 6, 9, 11]: last_day = 30
+                else: last_day = 28
+                start_day = 1
+            else:
+                start_day = today.day + 1
+        else:
+            start_day = 1
+
+        date_out_start = f"{year}-{month:02d}-{start_day:02d}"
+        date_out_end = f"{year}-{month:02d}-{min(last_day, max(start_day, last_day - 6)):02d}"
         
         next_m = (month % 12) + 1
-        date_in_start = f"2026-{month:02d}-{min(last_day, max(1, 1 + duration_days)):02d}"
-        date_in_end = f"2026-{next_m:02d}-10"
+        next_y = year if next_m > month else year + 1
+        date_in_start = f"{year}-{month:02d}-{min(last_day, max(1, start_day + duration_days)):02d}"
+        date_in_end = f"{next_y}-{next_m:02d}-15"
         actual_min_stay = min_stay or max(1, duration_days - 2)
         actual_max_stay = max_stay or (duration_days + 2)
+
+    # Dinamikus járatlekérdezési limit: napi 5 járat, min 30, max 150
+    try:
+        d_out_s = pd.to_datetime(date_out_start)
+        d_out_e = pd.to_datetime(date_out_end)
+        out_days = max(1, (d_out_e - d_out_s).days + 1)
+        out_limit = int(min(150, max(30, out_days * 5)))
+    except Exception:
+        out_limit = 50
+
+    try:
+        d_in_s = pd.to_datetime(date_in_start)
+        d_in_e = pd.to_datetime(date_in_end)
+        in_days = max(1, (d_in_e - d_in_s).days + 1)
+        in_limit = int(min(150, max(30, in_days * 5)))
+    except Exception:
+        in_limit = 50
 
     outbound = scraper.search_flights_by_city_name_v2(
         origin_name=origin_clean,
@@ -263,7 +313,7 @@ def search_and_rank_planner_flights(
         date_to=date_out_end,
         adults=adults,
         children=children,
-        limit=50
+        limit=out_limit
     )
 
     inbound = scraper.search_flights_by_city_name_v2(
@@ -274,7 +324,7 @@ def search_and_rank_planner_flights(
         date_to=date_in_end,
         adults=adults,
         children=children,
-        limit=50
+        limit=in_limit
     )
 
     if outbound.empty or inbound.empty:
@@ -337,22 +387,26 @@ def search_and_rank_planner_flights(
         if total_w > 0:
             w = [x / total_w for x in w]
 
-    data_mat = df[cols].values
-    phi_plus = np.zeros(n)
-    phi_minus = np.zeros(n)
+    # Ha a kombinációk száma meghaladja a 200-at, szűrjük le a legígéretesebb top 200-ra a gyors és precíz rangsoroláshoz
+    if n > 200:
+        min_p = max(1.0, float(df['g1'].min()))
+        min_d = max(0.5, float(df['g2'].min()))
+        df['quick_score'] = (df['g1'] / min_p) * w[0] + (df['g2'] / min_d) * w[1] + (df['g3'] + 1) * w[2]
+        df = df.sort_values('quick_score').head(200).copy()
+        n = len(df)
 
-    for i in range(n):
-        for j in range(n):
-            if i == j: continue
-            diff = data_mat[j] - data_mat[i]
-            pref = np.where(diff > 0, 1.0, 0.0)
-            score = np.dot(w, pref)
-            phi_plus[i] += score
-            phi_minus[j] += score
+    data_mat = df[cols].values.astype(float)
+    # Vektorizált PROMETHEE II preferencia mátrix (N x N tenzorművelet ms alatt)
+    diffs = data_mat[:, np.newaxis, :] - data_mat[np.newaxis, :, :] # (n, n, 3)
+    # Mivel kisebb ár, menetidő és átszállás a jobb: i jobb mint j, ha data[i] < data[j] (azaz diffs < 0)
+    prefs = (diffs < 0).astype(float)
+    w_arr = np.array(w)
+    pref_mat = np.tensordot(prefs, w_arr, axes=([2], [0])) # (n, n)
+    np.fill_diagonal(pref_mat, 0.0)
 
     if n > 1:
-        phi_plus /= (n - 1)
-        phi_minus /= (n - 1)
+        phi_plus = pref_mat.sum(axis=1) / (n - 1)
+        phi_minus = pref_mat.sum(axis=0) / (n - 1)
         df['phi_net'] = (phi_plus - phi_minus + 1) / 2
     else:
         df['phi_net'] = 1.0

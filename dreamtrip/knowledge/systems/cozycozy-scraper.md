@@ -12,6 +12,8 @@ source:
 
 code:
   - app/scrapers/accommodation_scraper.py
+  - app/services/accommodation_market_service.py
+  - data/cozycozy_market_cache.json
 
 related:
   - "[[accommodation]]"
@@ -21,6 +23,7 @@ related:
 used_by:
   - "[[fastapi-backend]]"
   - "[[master-planner-wizard]]"
+  - "[[destination-matching]]"
 ---
 
 # System: Cozycozy Accommodation Aggregator
@@ -28,5 +31,6 @@ used_by:
 A szálláskereső motor:
 
 * **Real-time lekérdezés**: Városnév, check-in, check-out, felnőttek száma és valutabeállítás alapján.
+* **Piaci gyorsítótár és Desztinációs integráció**: A `data/cozycozy_market_cache.json` és `app.services.accommodation_market_service` segítségével a célállomások döntési modellje valós, scrapelt éjszakánkénti piaci mediánárakkal számol heurisztikus becslések helyett.
 * **Tisztítás és normalizálás**: Csillagbesorolás, vendégértékelés (0–10), képek és foglalási deeplinkek kinyerése.
-* **Transzparens hibakezelés**: Memória- vagy hálózati probléma esetén explicit hibaüzenetet küld.
+* **Transzparens hibakezelés**: Memória- vagy hálózati probléma esetén explicit hibaüzenetet küld az [[honest-scraping-policy]] szerint.
