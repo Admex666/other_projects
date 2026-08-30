@@ -19,8 +19,10 @@ Ez a fájl az Optivoya (DreamTrip) projekt navigációs térképe. Minden lénye
 * [[unified-trip-model]] — A három modult összefogó közös utazási adatmodell és kézfogási elv.
 * [[ahp-weighting]] — Analytic Hierarchy Process (AHP) páros összehasonlító döntési mátrix.
 * [[promethee-ranking]] — PROMETHEE II többkritériumos preferenciarangsorolási algoritmus.
+* [[guided-progressive-decision-flow]] — Vezérelt progresszív döntési folyamat és Zero Analysis-Paralysis alapelv.
 * [[numbeo-cost-model]] — Hivatalos Numbeo étkezési és helyi közlekedési fogyasztói kosár modell.
 * [[honest-scraping-policy]] — Transzparens hibakezelés mesterséges dummy adatok helyett.
+
 
 ## 🔄 Processes (Folyamatok)
 * [[master-planner-wizard]] — Master Travel Planner: integrált 4-lépéses end-to-end utazástervező varázsló.

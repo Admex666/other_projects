@@ -216,11 +216,14 @@ def search_and_rank_planner_flights(
     year: int = 2026,
     departure_pref: str = "any",
     max_duration_h: Optional[float] = None,
-    weights: Optional[Dict[str, float]] = None
+    weights: Optional[Dict[str, float]] = None,
+    promethee_params: Optional[Dict[str, Any]] = None
 ) -> List[Dict[str, Any]]:
     """
-    Lekéri és PROMETHEE II szerint rangsorolja a járatokat az összes dátummód (exact/interval/month) támogatásával.
+    Lekéri és PROMETHEE II szerint rangsorolja a járatokat az összes dátummód (exact/interval/month) támogatásával,
+    felhasználó által definiált vagy intelligens preferenciafüggvényekkel és (q, p) toleranciaküszöbökkel.
     """
+
     origin_clean = origin.split("(")[0].strip()
     dest_clean = destination.split("(")[0].strip()
 
@@ -293,12 +296,13 @@ def search_and_rank_planner_flights(
         actual_max_stay = max_stay or (duration_days + 2)
 
     # 0. Backend gyorsítótár ellenőrzése (30 perc TTL)
-    cache_key = f"{origin_clean}_{dest_clean}_{date_mode}_{date_out_start}_{date_out_end}_{date_in_start}_{date_in_end}_{actual_min_stay}_{actual_max_stay}_{adults}_{children}_{direct_only}_{max_stops}_{departure_pref}_{max_duration_h}_{json.dumps(weights or {}, sort_keys=True)}"
+    cache_key = f"{origin_clean}_{dest_clean}_{date_mode}_{date_out_start}_{date_out_end}_{date_in_start}_{date_in_end}_{actual_min_stay}_{actual_max_stay}_{adults}_{children}_{direct_only}_{max_stops}_{departure_pref}_{max_duration_h}_{json.dumps(weights or {}, sort_keys=True)}_{json.dumps(promethee_params or {}, sort_keys=True)}"
     if cache_key in _FLIGHTS_CACHE:
         entry = _FLIGHTS_CACHE[cache_key]
         if time.time() - entry["ts"] < 1800:
             print(f"\n[BACKEND CACHE HIT] Repülőjáratok betöltve szerver gyorsítótárból: {origin_clean} → {dest_clean} ({len(entry['data'])} járat)")
             return entry["data"]
+
 
     # Dinamikus járatlekérdezési limit: napi 5 járat, min 30, max 150
     try:
@@ -470,9 +474,16 @@ def search_and_rank_planner_flights(
 
 
     cols = ['g1_price', 'g2_duration', 'g3_stops', 'g4_stay_diff', 'g5_dep_diff']
-    # Küszöbértékek (Preference Thresholds - p): lineáris V-alakú preferencia függvényhez
-    # Árnál 35 000 Ft eltérés már 100% preferencia; menetidőnél 3.5 óra; átszállásnál 1; tartózkodásnál 2 nap; napszaknál 5 óra
-    thresholds = np.array([35000.0, 3.5, 1.0, 2.0, 5.0])
+    
+    # Felhasználó által beállított vagy intelligens alapértelmezett PROMETHEE preferenciafüggvények és (q, p) küszöbök
+    prom = promethee_params or {}
+    crit_configs = [
+        prom.get("price", {"type": 5, "q": 5000.0, "p": 35000.0}),       # g1: Ár (Type 5: 5k Ft közömbös, 35k Ft teljes előny)
+        prom.get("duration", {"type": 5, "q": 0.5, "p": 3.0}),          # g2: Menetidő (Type 5: 30p közömbös, 3.0ó teljes előny)
+        prom.get("stops", {"type": 1, "q": 0.0, "p": 1.0}),              # g3: Átszállás (Type 1: szigorú)
+        prom.get("stay", {"type": 5, "q": 1.0, "p": 3.0}),              # g4: Tartózkodási illeszkedés (Type 5: 1 nap közömbös, 3 nap teljes)
+        prom.get("dep_time", {"type": 3, "q": 0.0, "p": 5.0})           # g5: Indulási napszak eltérés (Type 3: lineáris 5ó)
+    ]
 
     # Ha a kombinációk száma meghaladja a 200-at, szűrjük a legígéretesebb top 200-ra
     if n > 200:
@@ -489,16 +500,48 @@ def search_and_rank_planner_flights(
 
     data_mat = df[cols].values.astype(float) # (n, 5)
 
-    # 3. Vektorizált PROMETHEE II preferencia mátrix (V-alakú lineáris preferencia függvény)
-    # diffs[i, j, k] = data[j, k] - data[i, k] (mivel minimalizálunk: ha data[i] < data[j], akkor i jobb mint j, diff > 0)
+    # 3. Vektorizált PROMETHEE II preferencia mátrix generálás a kiválasztott típusok szerint
+    # diffs[i, j, k] = data[j, k] - data[i, k] (minimalizálás: ha data[i] < data[j], akkor i jobb mint j, diff > 0)
     diffs = data_mat[np.newaxis, :, :] - data_mat[:, np.newaxis, :] # (n, n, 5)
-    
-    # Lineáris preferencia: P_k(i, j) = clip(diff / p_k, 0, 1)
-    prefs = np.clip(diffs / thresholds[np.newaxis, np.newaxis, :], 0.0, 1.0) # (n, n, 5)
+    prefs = np.zeros((n, n, 5), dtype=float)
+
+    for k in range(5):
+        cfg = crit_configs[k]
+        fn_type = int(cfg.get("type", 5))
+        q_k = float(cfg.get("q", 0.0))
+        p_k = float(cfg.get("p", 1.0))
+        if p_k <= q_k:
+            p_k = q_k + 0.001
+            
+        d_k = diffs[:, :, k]
+        
+        if fn_type == 1:
+            # Type 1: Usual (Strict) — ha d > 0, azonnal P = 1.0
+            prefs[:, :, k] = (d_k > 0.0).astype(float)
+        elif fn_type == 2:
+            # Type 2: U-shape (Quasi) — ha d > q, akkor P = 1.0, egyébként 0
+            prefs[:, :, k] = (d_k > q_k).astype(float)
+        elif fn_type == 3:
+            # Type 3: V-shape (Linear) — P = d / p
+            prefs[:, :, k] = np.clip(d_k / p_k, 0.0, 1.0)
+        elif fn_type == 4:
+            # Type 4: Level (Lépcsős) — q < d <= p esetén 0.5, d > p esetén 1.0
+            p_mat = np.zeros_like(d_k)
+            p_mat[d_k > q_k] = 0.5
+            p_mat[d_k > p_k] = 1.0
+            prefs[:, :, k] = p_mat
+        else:
+            # Type 5: V-shape with Indifference — d <= q -> 0, q < d <= p -> (d - q)/(p - q), d > p -> 1.0
+            p_mat = np.zeros_like(d_k)
+            mask = (d_k > q_k) & (d_k <= p_k)
+            p_mat[mask] = (d_k[mask] - q_k) / (p_k - q_k)
+            p_mat[d_k > p_k] = 1.0
+            prefs[:, :, k] = np.clip(p_mat, 0.0, 1.0)
 
     # Aggregált preferencia mátrix: Pi(i, j) = sum_k w_k * P_k(i, j)
     pref_mat = np.tensordot(prefs, w_vec, axes=([2], [0])) # (n, n)
     np.fill_diagonal(pref_mat, 0.0)
+
 
     # 4. Outranking Flows kalkuláció
     if n > 1:

@@ -11,13 +11,15 @@ source:
   ref: app.services.planner_service
 
 code:
+  - app/api/v2/planner.py
   - app/services/planner_service.py
   - app/main.py
   - app/scrapers/accommodation_scraper.py
   - templates/planner/planner_wizard.html
   - static/js/planner_wizard.js
-  - static/js/ahp_wizard.js
+  - static/js/decision_dna_wizard.js
   - static/js/components.js
+
 
 related:
   - "[[unified-trip-model]]"
@@ -27,10 +29,12 @@ related:
   - "[[proposal-generation]]"
   - "[[ahp-weighting]]"
   - "[[promethee-ranking]]"
+  - "[[guided-progressive-decision-flow]]"
   - "[[cozycozy-scraper]]"
 
 used_by:
   - "[[fastapi-backend]]"
+
 ---
 
 # Process: Master Travel Planner Wizard

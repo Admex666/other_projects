@@ -1,5 +1,8 @@
 ---
 id: optivoya-strategy
+aliases:
+  - optivoya-strategy
+  - OPTIVOYA_STRATEGY
 type: strategy
 name: Optivoya Canonical Strategic Context & Product Direction
 status: active
@@ -12,6 +15,7 @@ related:
   - "[[flight-intelligence-workflow]]"
   - "[[accommodation-search-workflow]]"
   - "[[master-planner-wizard]]"
+  - "[[guided-progressive-decision-flow]]"
   - "[[proposal-generation]]"
 
 used_by:
@@ -93,6 +97,11 @@ A program- és élményajánlások a **hosszú távú termékvízió** részei, 
 
 ## 📐 Product Principles (Termékelvek)
 
+* **Decisions over data dumps**: Do not overwhelm the user with raw data. Provide curated, ranked options with clear rationales.
+* **Zero Analysis-Paralysis & Guided Progressive Flow**: Mindig legyen egyértelmű, fókuszált útja a felhasználónak. Soha ne terheljük túl egyidejű választási kényszerekkel; az űrlapok és döntési helyzetek fokozatosan (progressive disclosure), lépésről lépésre oldódjanak fel a választások után.
+* **Transparency**: Show why a flight or stay is recommended (e.g. AHP weights, PROMETHEE scores, trade-offs).
+* **Speed with depth**: Fast initial recommendations with optional deep dives.
+* **Agentic workflow**: Users declare constraints and preferences; Optivoya executes the search, scoring, and assembly.
 * **Valós adatok a kitalált adatok felett:** Nem használunk mesterséges dummy adatokat; a transzparens valós adatforrások élveznek prioritást.
 * **Döntéstámogatás az információtúlterhelés felett:** Rangsorolás, magyarázat és kiemelés a nyers opciók tömege helyett.
 * **Egyetlen Terv (UnifiedTrip) mint hiteles forrás:** Minden modul ugyanazt az állapotot gazdagítja és látja.
