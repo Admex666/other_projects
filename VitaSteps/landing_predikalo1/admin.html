@@ -666,6 +666,239 @@
         @media (max-width: 600px) {
             .fin-two-col { grid-template-columns: 1fr; }
         }
+
+        /* ── Campaign Breakdown & Creative Comparison Table ── */
+        .campaign-breakdown-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin-top: 1.25rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+        .campaign-mini-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 10px;
+            padding: 1rem 1.15rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.45rem;
+            transition: border-color 0.2s;
+        }
+        .campaign-mini-card:hover {
+            border-color: rgba(255,255,255,0.15);
+        }
+        .campaign-mini-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+        .campaign-mini-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            margin-top: 0.25rem;
+        }
+        .campaign-mini-stat-item {
+            display: flex;
+            flex-direction: column;
+        }
+        .campaign-mini-stat-label {
+            font-size: 0.68rem;
+            color: var(--text-mid);
+            text-transform: uppercase;
+        }
+        .campaign-mini-stat-val {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-high);
+        }
+
+        .creative-table-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+        .creative-table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+        .creative-filter-group {
+            display: flex;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+        }
+        .creative-filter-btn {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-mid);
+            font-size: 0.78rem;
+            font-weight: 600;
+            padding: 0.35rem 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .creative-filter-btn.active {
+            background: rgba(249, 115, 22, 0.15);
+            border-color: rgba(249, 115, 22, 0.5);
+            color: var(--accent);
+        }
+        .creative-filter-btn:hover:not(.active) {
+            border-color: rgba(255,255,255,0.2);
+            color: var(--text-high);
+        }
+        .creative-table-scroll {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .creative-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+            text-align: left;
+            white-space: nowrap;
+        }
+        .creative-table th {
+            padding: 0.75rem 0.85rem;
+            background: rgba(255,255,255,0.03);
+            color: var(--text-mid);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            border-bottom: 1px solid var(--border);
+            user-select: none;
+        }
+        .creative-table th.sortable {
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .creative-table th.sortable:hover {
+            color: var(--accent);
+        }
+        .creative-table th.active-sort {
+            color: var(--accent);
+            background: rgba(249, 115, 22, 0.08);
+        }
+        .creative-table td {
+            padding: 0.75rem 0.85rem;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            color: var(--text-high);
+            vertical-align: middle;
+        }
+        .creative-table tr:hover td {
+            background: rgba(255,255,255,0.025);
+        }
+        .creative-badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+        }
+
+        /* ─── Finance Dashboard Styles ─── */
+        #section-finance {
+            display: none;
+        }
+        .fin-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.85rem;
+            margin-bottom: 1.5rem;
+        }
+        .fin-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem 1.15rem;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .fin-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255,255,255,0.15);
+        }
+        .fin-card-hero {
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.12) 0%, rgba(168, 85, 247, 0.12) 100%);
+            border: 1px solid rgba(56, 189, 248, 0.35);
+        }
+        .fin-label {
+            font-size: 0.72rem;
+            color: var(--text-mid);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-weight: 700;
+            margin-bottom: 0.35rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .fin-val {
+            font-size: 1.45rem;
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: -0.02em;
+        }
+        .fin-val.pos { color: #4ade80; }
+        .fin-val.neg { color: #f87171; }
+        .fin-val.hero { color: #38bdf8; }
+        .fin-sub {
+            font-size: 0.75rem;
+            color: var(--text-low);
+            margin-top: 0.25rem;
+        }
+        .fin-cat-chips {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 0.65rem;
+            margin-bottom: 1.5rem;
+        }
+        .fin-cat-chip {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 8px;
+            padding: 0.65rem 0.85rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+        .fin-cat-chip-label {
+            font-size: 0.72rem;
+            color: var(--text-mid);
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+        .fin-cat-chip-val {
+            font-size: 1.05rem;
+            font-weight: 800;
+        }
+        .fin-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 0.2rem 0.55rem;
+            border-radius: 6px;
+            white-space: nowrap;
+        }
     </style>
 </head>
 <body>
@@ -715,6 +948,7 @@
             <button class="filter-tab" onclick="setFilter('all')" id="tab-all">📋 Összes</button>
             <button class="filter-tab" onclick="setFilter('logistics')" id="tab-logistics" style="margin-left: auto; border: 1px solid rgba(249, 115, 22, 0.3); color: #f97316;">🦊 Logisztika (Foxpost)</button>
             <button class="filter-tab" onclick="setFilter('marketing')" id="tab-marketing" style="border: 1px solid rgba(196, 255, 0, 0.3); color: #c4ff00;">📊 Marketing</button>
+            <button class="filter-tab" onclick="setFilter('finance')" id="tab-finance" style="border: 1px solid rgba(56, 189, 248, 0.4); color: #38bdf8;">💳 Pénzügy & Cashflow</button>
         </div>
 
         <div id="proof-list">
@@ -726,14 +960,54 @@
 
         <!-- MARKETING DASHBOARD -->
         <div id="section-marketing">
-            <div class="mkt-tabs">
-                <button class="mkt-tab active" onclick="setMktRange('1d')" id="mkt-tab-1d">📅 Ma / Tegnap</button>
-                <button class="mkt-tab" onclick="setMktRange('3d')" id="mkt-tab-3d">📈 3 nap</button>
-                <button class="mkt-tab" onclick="setMktRange('7d')" id="mkt-tab-7d">🗓️ 7 nap</button>
-                <button class="mkt-tab" onclick="setMktRange('all')" id="mkt-tab-all">♾️ Összesített</button>
+            <!-- Kihívás / Kampány Választó -->
+            <div style="margin-bottom: 0.85rem;">
+                <div style="font-size: 0.72rem; color: var(--text-mid); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem; font-weight: 700;">
+                    🏔️ Kihívás kiválasztása:
+                </div>
+                <div class="mkt-tabs" id="mkt-campaign-tabs" style="margin-bottom: 0.5rem;">
+                    <button class="mkt-tab active" onclick="setMktCampaign('pilis')" id="mkt-camp-pilis">🌌 Nagy-Kevély csillagai</button>
+                    <button class="mkt-tab" onclick="setMktCampaign('predikalo')" id="mkt-camp-predikalo">🏔️ Prédikálószék Vertical</button>
+                    <button class="mkt-tab" onclick="setMktCampaign('all')" id="mkt-camp-all">♾️ Összesített (Minden kihívás)</button>
+                </div>
             </div>
+
+            <!-- Időablak Választó -->
+            <div style="margin-bottom: 1.25rem;">
+                <div style="font-size: 0.72rem; color: var(--text-mid); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem; font-weight: 700;">
+                    📅 Időablak:
+                </div>
+                <div class="mkt-tabs" id="mkt-time-tabs" style="margin-bottom: 0.5rem;">
+                    <button class="mkt-tab" onclick="setMktRange('1d')" id="mkt-tab-1d">📅 Ma / Tegnap</button>
+                    <button class="mkt-tab" onclick="setMktRange('3d')" id="mkt-tab-3d">📈 3 nap</button>
+                    <button class="mkt-tab" onclick="setMktRange('7d')" id="mkt-tab-7d">🗓️ 7 nap</button>
+                    <button class="mkt-tab active" onclick="setMktRange('all')" id="mkt-tab-all">♾️ Összesített időszak</button>
+                </div>
+            </div>
+
             <div id="mkt-last-updated" class="mkt-last-updated"></div>
             <div id="mkt-cards"><div id="mkt-loading">⏳ Adatok betöltése...</div></div>
+        </div>
+
+        <!-- FINANCE & CASHFLOW DASHBOARD -->
+        <div id="section-finance">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
+                <div>
+                    <h2 style="font-size: 1.25rem; font-weight: 800; color: #fff; margin: 0;">💳 Pénzügyi Egyenleg & Cashflow Főkönyv</h2>
+                    <div style="font-size: 0.8rem; color: var(--text-mid); margin-top: 0.2rem;">Élő Stripe egyenlegek és Revolut Pro bankszámla tranzakciók a kezdetektől.</div>
+                </div>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <input type="file" id="revolut-file-input" accept=".csv" style="display: none;" onchange="handleRevolutFileSelect(event)">
+                    <button class="mkt-tab" onclick="document.getElementById('revolut-file-input').click()" style="background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;">
+                        📥 Új Revolut CSV Feltöltése
+                    </button>
+                    <button class="mkt-tab" onclick="loadFinance()" style="background: rgba(255,255,255,0.05); border-color: var(--border);">
+                        🔄 Frissítés
+                    </button>
+                </div>
+            </div>
+
+            <div id="fin-cards"><div id="fin-loading">⏳ Pénzügyi adatok betöltése...</div></div>
         </div>
     </div>
 </div>
@@ -910,7 +1184,8 @@
     }
 
     // ─── Marketing Dashboard ──────────────────────────────────
-    let mktRange = '1d';
+    let mktSelectedCampaign = 'pilis'; // 'pilis', 'predikalo', 'all'
+    let mktRange = 'all'; // '1d', '3d', '7d', 'all'
     let mktMetrics = [];
     let allMktOrders = [];
 
@@ -945,11 +1220,19 @@
         }
     }
 
+    function setMktCampaign(camp) {
+        mktSelectedCampaign = camp;
+        document.querySelectorAll('#mkt-campaign-tabs .mkt-tab').forEach(t => t.classList.remove('active'));
+        const btn = document.getElementById(`mkt-camp-${camp}`);
+        if (btn) btn.classList.add('active');
+        renderMktCards();
+    }
 
     function setMktRange(range) {
         mktRange = range;
-        document.querySelectorAll('.mkt-tab').forEach(t => t.classList.remove('active'));
-        document.getElementById(`mkt-tab-${range}`).classList.add('active');
+        document.querySelectorAll('#mkt-time-tabs .mkt-tab').forEach(t => t.classList.remove('active'));
+        const btn = document.getElementById(`mkt-tab-${range}`);
+        if (btn) btn.classList.add('active');
         renderMktCards();
     }
 
@@ -1090,53 +1373,201 @@
         };
     }
 
+    let creativeFilter = 'all'; // 'all', 'pilis', 'predikalo', 'retarget'
+    let creativeSortKey = 'spend';
+    let creativeSortAsc = false;
+
+    function setCreativeFilter(filter) {
+        creativeFilter = filter;
+        renderMktCards();
+    }
+
+    function setCreativeSort(key) {
+        if (creativeSortKey === key) {
+            creativeSortAsc = !creativeSortAsc;
+        } else {
+            creativeSortKey = key;
+            creativeSortAsc = false;
+        }
+        renderMktCards();
+    }
+
+    function aggregateCreativeMetrics(rows) {
+        const byAd = {};
+        for (const r of rows) {
+            const adName = (r.ad_name || 'Ismeretlen kreatív').trim();
+            const campName = (r.campaign_name || 'Ismeretlen kampány').trim();
+            const adsetName = (r.adset_name || '').trim();
+            const key = `${campName}___${adsetName}___${adName}`;
+            if (!byAd[key]) {
+                byAd[key] = {
+                    key,
+                    ad_name: adName,
+                    ad_id: r.ad_id,
+                    adset_name: adsetName,
+                    campaign_name: campName,
+                    spend: 0,
+                    impressions: 0,
+                    reach: 0,
+                    clicks: 0,
+                    link_clicks: 0,
+                    purchases: 0,
+                    revenue: 0,
+                    ctr_sum: 0,
+                    cpm_sum: 0,
+                    cpc_sum: 0,
+                    count: 0
+                };
+            }
+            const a = byAd[key];
+            a.spend       += Number(r.spend || 0);
+            a.impressions += Number(r.impressions || 0);
+            a.reach       += Number(r.reach || 0);
+            a.clicks      += Number(r.clicks || 0);
+            a.link_clicks += Number(r.link_clicks || 0);
+            a.purchases   += Number(r.purchases || 0);
+            a.revenue     += Number(r.revenue || 0);
+            a.ctr_sum     += Number(r.ctr || 0);
+            a.cpm_sum     += Number(r.cpm || 0);
+            a.cpc_sum     += Number(r.cpc || 0);
+            a.count++;
+        }
+
+        return Object.values(byAd).map(a => {
+            const spendVat = Math.round(a.spend * 1.27);
+            const purchases = a.purchases;
+            const revenue = a.revenue;
+            const cpa = purchases > 0 ? Math.round(spendVat / purchases) : 0;
+            const roas = a.spend > 0 ? Number((revenue / a.spend).toFixed(2)) : 0;
+            const ctr = a.impressions > 0 ? Number(((a.link_clicks / a.impressions) * 100).toFixed(2)) : (a.count > 0 ? Number((a.ctr_sum / a.count).toFixed(2)) : 0);
+            const cpc = a.link_clicks > 0 ? Math.round(spendVat / a.link_clicks) : (a.count > 0 ? Math.round(a.cpc_sum / a.count) : 0);
+            const cpm = a.impressions > 0 ? Math.round((spendVat / a.impressions) * 1000) : (a.count > 0 ? Math.round(a.cpm_sum / a.count) : 0);
+
+            // Unit variable costs: Foxpost (1250 Ft), Stripe (1.5% + 50 Ft), Számlázz + Csomagolás (155 Ft)
+            const shipping = purchases * 1250;
+            const stripe = Math.round(revenue * 0.015 + 50 * purchases);
+            const otherVar = purchases * 155;
+            const totalVar = spendVat + shipping + stripe + otherVar;
+            const netContrib = revenue - totalVar;
+            const marginPct = revenue > 0 ? Number(((netContrib / revenue) * 100).toFixed(1)) : 0;
+
+            // Status evaluation
+            let status = { label: '⚪ Teszt', color: '#94a3b8', bg: 'rgba(148, 163, 184, 0.1)' };
+            if (purchases >= 1) {
+                if (roas >= 3.0 && (cpa <= 2500 || cpa === 0)) {
+                    status = { label: '🟢 Skálázható', color: '#22c55e', bg: 'rgba(34, 197, 94, 0.12)' };
+                } else if (roas >= 2.0 && cpa <= 3500) {
+                    status = { label: '🟡 Megfelelő', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.12)' };
+                } else {
+                    status = { label: '🔴 Drága / Gyenge', color: '#ef4444', bg: 'rgba(239, 68, 68, 0.12)' };
+                }
+            } else if (spendVat >= 3500) {
+                status = { label: '🔴 Nem konvertál', color: '#ef4444', bg: 'rgba(239, 68, 68, 0.12)' };
+            }
+
+            return {
+                ...a,
+                spendVat,
+                ctr,
+                cpc,
+                cpm,
+                cpa,
+                roas,
+                netContrib,
+                marginPct,
+                status
+            };
+        });
+    }
+
     function renderMktCards() {
         const STRIPE_PCT   = 0.015;
         const STRIPE_FIXED = 50;
         const FOXPOST_UNIT = 1250; // Foxpost automata: 1141 Ft + ÁFA
         const SZAMLAZZ_UNIT = 35;  // Számlázz.hu autószámla költség
         const PACKAGING_UNIT = 120; // Párnázott boríték + kísérőkártya
+        const OTHER_VAR_UNIT = SZAMLAZZ_UNIT + PACKAGING_UNIT; // 155 Ft
 
-        // Fix költségek (Capex + Opex)
-        const MEDAL_CAPEX = 163000;         // 100 db érem gyártási kezdőtőkéje
-        const ACCOUNTING_MONTHLY = 15000;   // 15 000 Ft / hó könyvelés
-        const ACCOUNTING_MONTHS = 2;        // 2 havi kampányidőszak
-        const TOTAL_FIXED_COSTS = MEDAL_CAPEX + (ACCOUNTING_MONTHLY * ACCOUNTING_MONTHS); // 193 000 Ft
+        // Fix költségek (Capex + Opex) kampány szerint
+        let TOTAL_FIXED_COSTS = 193000;
+        let batchMedals = 100;
+        let campaignHeaderTitle = '🌌 Nagy-Kevély csillagai – Eredménykimutatás';
+        let challengeBatchLabel = '100 db Nagy-Kevély érem (163k gyártás + 30k könyvelés = 193 000 Ft)';
+        let capexLabel = 'Induló Éremgyártás (100 db)';
+        let capexAmount = 163000;
+        let opexLabel = 'Fix Könyvelés (2 hó)';
+        let opexAmount = 30000;
+
+        if (mktSelectedCampaign === 'predikalo') {
+            TOTAL_FIXED_COSTS = 193000;
+            batchMedals = 100;
+            campaignHeaderTitle = '🏔️ Prédikálószék Vertical – Eredménykimutatás';
+            challengeBatchLabel = '100 db Prédikálószék érem (163k gyártás + 30k könyvelés = 193 000 Ft)';
+            capexLabel = 'Induló Éremgyártás (100 db)';
+            capexAmount = 163000;
+            opexLabel = 'Fix Könyvelés (2 hó)';
+            opexAmount = 30000;
+        } else if (mktSelectedCampaign === 'all') {
+            TOTAL_FIXED_COSTS = 386000; // 2 különálló 100-as érem széria együtt
+            batchMedals = 200;
+            campaignHeaderTitle = '♾️ Összesített Vállalkozási Eredmény (Mindkét Kihívás)';
+            challengeBatchLabel = '200 db érem (2 × 163k gyártás + 2 × 30k könyvelés = 386 000 Ft)';
+            capexLabel = '2 Széria Éremgyártás (200 db)';
+            capexAmount = 326000;
+            opexLabel = 'Fix Könyvelés (2 kampány)';
+            opexAmount = 60000;
+        }
 
         const cardsEl = document.getElementById('mkt-cards');
         const { from, label } = getDateRange();
 
-        let filtered = mktMetrics;
-        if (from) {
-            filtered = mktMetrics.filter(r => new Date(r.date) >= from);
+        // 1. Időszaki szűrés
+        const timeFilteredOrders = from ? allMktOrders.filter(o => new Date(o.created_at) >= from) : allMktOrders;
+        const timeFilteredMetrics = from ? mktMetrics.filter(r => new Date(r.date) >= from) : mktMetrics;
+
+        // 2. Kampány szűrés
+        let activeOrders = timeFilteredOrders;
+        let activeMetrics = timeFilteredMetrics;
+
+        if (mktSelectedCampaign === 'pilis') {
+            activeOrders = timeFilteredOrders.filter(o => (o.campaign || '').toLowerCase().match(/pilis|kevely|kevély/));
+            activeMetrics = timeFilteredMetrics.filter(r => (r.campaign_name || '').toLowerCase().match(/pilis|kevely|kevély/));
+        } else if (mktSelectedCampaign === 'predikalo') {
+            activeOrders = timeFilteredOrders.filter(o => (o.campaign || '').toLowerCase().match(/predikalo|prédikáló/));
+            activeMetrics = timeFilteredMetrics.filter(r => (r.campaign_name || '').toLowerCase().match(/predikalo|prédikáló/));
         }
 
-        if (!filtered.length) {
-            cardsEl.innerHTML = `<div class="mkt-no-data">📭 Nincs adat a(z) <strong>${label}</strong> időszakra.<br><span style="font-size:0.8rem">A script első futtatása után jelenik meg itt az adat.</span></div>`;
+        if (!activeOrders.length && !activeMetrics.length) {
+            cardsEl.innerHTML = `<div class="mkt-no-data">📭 Nincs adat a(z) <strong>${label}</strong> időszakra ehhez a kihíváshoz.<br><span style="font-size:0.8rem">Válassz másik időablakot vagy kampányt a fenti gombokkal.</span></div>`;
             return;
         }
 
-        const campaigns = aggregateMetrics(filtered);
-        const cohorts   = analyzeCustomerCohorts(allMktOrders, from);
+        // Fő KPI aggregáció
+        const totRev = activeOrders.reduce((sum, o) => sum + Number(o.amount_total || 7990), 0);
+        const totPurchases = activeOrders.length;
 
-        // Overall Totals for Breakeven Card
-        let totRev = 0, totSpend = 0, totPurchases = 0;
-        for (const r of filtered) {
-            totRev       += Number(r.revenue || 0);
-            totSpend     += Number(r.spend || 0);
-            totPurchases += Number(r.purchases || 0);
+        let totSpend = 0, totImpressions = 0, totReach = 0, totLinkClicks = 0;
+        for (const r of activeMetrics) {
+            totSpend       += Number(r.spend || 0);
+            totImpressions += Number(r.impressions || 0);
+            totReach       += Number(r.reach || 0);
+            totLinkClicks  += Number(r.link_clicks || 0);
         }
 
         const totMetaVat    = Math.round(totSpend * 1.27);
         const totStripe     = Math.round(totRev * STRIPE_PCT + STRIPE_FIXED * totPurchases);
         const totShipping   = Math.round(totPurchases * FOXPOST_UNIT);
-        const totSzamlazz   = Math.round(totPurchases * SZAMLAZZ_UNIT);
-        const totPackaging  = Math.round(totPurchases * PACKAGING_UNIT);
-        const totVarCosts   = totMetaVat + totStripe + totShipping + totSzamlazz + totPackaging;
+        const totOtherVar   = Math.round(totPurchases * OTHER_VAR_UNIT);
+        const totVarCosts   = totMetaVat + totStripe + totShipping + totOtherVar;
         
         // Termelt nettó fedezet (Contribution Margin)
         const totNetContrib = Math.round(totRev - totVarCosts);
+        const totMarginPct  = totRev > 0 ? (totNetContrib / totRev * 100).toFixed(1) : 0;
         
+        const blendedCPA    = totPurchases > 0 ? Math.round(totMetaVat / totPurchases) : 0;
+        const blendedROAS   = totSpend > 0 ? (totRev / totSpend).toFixed(2) : '0.00';
+        const blendedCTR    = totImpressions > 0 ? ((totLinkClicks / totImpressions) * 100).toFixed(2) : '0.00';
+
         const paybackPct    = Math.min(100, Math.max(0, (totNetContrib / TOTAL_FIXED_COSTS) * 100)).toFixed(1);
         const remainingToBe = Math.max(0, TOTAL_FIXED_COSTS - totNetContrib);
         const unitNetProfit = totPurchases > 0 ? (totNetContrib / totPurchases) : 0;
@@ -1145,271 +1576,874 @@
         const isFullyPaid   = totNetContrib >= TOTAL_FIXED_COSTS;
         const netProfitAfterFC = totNetContrib - TOTAL_FIXED_COSTS;
         const paybackColor  = isFullyPaid ? '#22c55e' : (paybackPct > 50 ? '#f59e0b' : '#ef4444');
+        const profitCls     = netProfitAfterFC >= 0 ? 'fin-profit-pos' : 'fin-profit-neg';
+        const profitSign    = netProfitAfterFC >= 0 ? '+' : '';
 
-        // Filter cohorts specifically for active campaign (pilis / Nagy-Kevély csillagai)
+        // Részletezés mindkét kampányra (Összesített nézethez)
+        const pilisOrdersAll = timeFilteredOrders.filter(o => (o.campaign || '').toLowerCase().match(/pilis|kevely|kevély/));
+        const predikaloOrdersAll = timeFilteredOrders.filter(o => (o.campaign || '').toLowerCase().match(/predikalo|prédikáló/));
+
+        let pilisSpendAll = 0, predikaloSpendAll = 0;
+        for (const r of timeFilteredMetrics) {
+            const nameLower = (r.campaign_name || '').toLowerCase();
+            if (nameLower.includes('kevély') || nameLower.includes('kevely') || nameLower.includes('pilis')) {
+                pilisSpendAll += Number(r.spend || 0);
+            } else {
+                predikaloSpendAll += Number(r.spend || 0);
+            }
+        }
+
+        const pilisPurchases  = pilisOrdersAll.length;
+        const pilisRev        = pilisPurchases > 0 ? pilisOrdersAll.reduce((sum, o) => sum + Number(o.amount_total || 7990), 0) : 0;
+        const pilisSpendVat   = Math.round(pilisSpendAll * 1.27);
+        const pilisVarCosts   = pilisSpendVat + (pilisPurchases * FOXPOST_UNIT) + Math.round(pilisRev * STRIPE_PCT + STRIPE_FIXED * pilisPurchases) + (pilisPurchases * OTHER_VAR_UNIT);
+        const pilisNetContrib = Math.round(pilisRev - pilisVarCosts);
+        const pilisCPA        = pilisPurchases > 0 ? Math.round(pilisSpendVat / pilisPurchases) : 0;
+        const pilisROAS       = pilisSpendAll > 0 ? (pilisRev / pilisSpendAll).toFixed(2) : '0.00';
+        const pilisRevPct     = totRev > 0 ? ((pilisRev / totRev) * 100).toFixed(0) : 0;
+
+        const predikaloPurchases  = predikaloOrdersAll.length;
+        const predikaloRev        = predikaloPurchases > 0 ? predikaloOrdersAll.reduce((sum, o) => sum + Number(o.amount_total || 7990), 0) : 0;
+        const predikaloSpendVat   = Math.round(predikaloSpendAll * 1.27);
+        const predikaloVarCosts   = predikaloSpendVat + (predikaloPurchases * FOXPOST_UNIT) + Math.round(predikaloRev * STRIPE_PCT + STRIPE_FIXED * predikaloPurchases) + (predikaloPurchases * OTHER_VAR_UNIT);
+        const predikaloNetContrib = Math.round(predikaloRev - predikaloVarCosts);
+        const predikaloCPA        = predikaloPurchases > 0 ? Math.round(predikaloSpendVat / predikaloPurchases) : 0;
+        const predikaloROAS       = predikaloSpendAll > 0 ? (predikaloRev / predikaloSpendAll).toFixed(2) : '0.00';
+        const predikaloRevPct     = totRev > 0 ? ((predikaloRev / totRev) * 100).toFixed(0) : 0;
+
+        // Vásárlói kohorsz
+        const cohorts = analyzeCustomerCohorts(allMktOrders, from);
         const pilisCohort = cohorts.byCamp['pilis'] || { newCount: 0, returningCount: 0, total: 0 };
-        const activeCohortTotal = pilisCohort.total > 0 ? pilisCohort.total : cohorts.totalOrders;
-        const activeCohortNew   = pilisCohort.total > 0 ? pilisCohort.newCount : cohorts.totalNew;
-        const activeCohortRet   = pilisCohort.total > 0 ? pilisCohort.returningCount : cohorts.totalReturning;
-
+        const predikaloCohort = cohorts.byCamp['predikaloszek'] || { newCount: 0, returningCount: 0, total: 0 };
+        const activeCohortTotal = mktSelectedCampaign === 'pilis' ? pilisCohort.total : (mktSelectedCampaign === 'predikalo' ? predikaloCohort.total : cohorts.totalOrders);
+        const activeCohortNew   = mktSelectedCampaign === 'pilis' ? pilisCohort.newCount : (mktSelectedCampaign === 'predikalo' ? predikaloCohort.newCount : cohorts.totalNew);
+        const activeCohortRet   = mktSelectedCampaign === 'pilis' ? pilisCohort.returningCount : (mktSelectedCampaign === 'predikalo' ? predikaloCohort.returningCount : cohorts.totalReturning);
         const newPct = activeCohortTotal > 0 ? (activeCohortNew / activeCohortTotal * 100).toFixed(1) : 0;
         const retPct = activeCohortTotal > 0 ? (activeCohortRet / activeCohortTotal * 100).toFixed(1) : 0;
 
+        // Kreatív adatok aggregálása
+        const allCreatives = aggregateCreativeMetrics(activeMetrics);
+        let displayCreatives = [...allCreatives];
+        if (creativeFilter === 'pilis') {
+            displayCreatives = allCreatives.filter(c => (c.campaign_name || '').toLowerCase().match(/pilis|kevely|kevély/));
+        } else if (creativeFilter === 'predikalo') {
+            displayCreatives = allCreatives.filter(c => (c.campaign_name || '').toLowerCase().match(/predikalo|prédikáló/));
+        } else if (creativeFilter === 'retarget') {
+            displayCreatives = allCreatives.filter(c => (c.campaign_name + c.adset_name).toLowerCase().includes('retarget'));
+        }
+
+        // Rendezés
+        displayCreatives.sort((a, b) => {
+            let valA = a[creativeSortKey];
+            let valB = b[creativeSortKey];
+            if (typeof valA === 'string') valA = valA.toLowerCase();
+            if (typeof valB === 'string') valB = valB.toLowerCase();
+            if (valA < valB) return creativeSortAsc ? -1 : 1;
+            if (valA > valB) return creativeSortAsc ? 1 : -1;
+            return 0;
+        });
+
+        function sortIcon(key) {
+            if (creativeSortKey !== key) return '<span style="opacity:0.3;font-size:0.7rem;"> ↕</span>';
+            return creativeSortAsc ? '<span style="color:var(--accent);font-size:0.75rem;"> ▲</span>' : '<span style="color:var(--accent);font-size:0.75rem;"> ▼</span>';
+        }
+
         let html = `
-        <!-- OVERALL BREAKEVEN / PAYBACK CARD -->
-        <div style="background: var(--surface2); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.5rem;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
-                <div style="font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 800; color: #fff;">
-                    🎯 Megtérülés és Break-Even (Fix Költségek: 163k gyártás + 30k könyvelés = 193 000 Ft)
+        <!-- 1. FŐ EREDMÉNY & PROFIT KÁRTYA -->
+        <div class="kpi-card" style="border-color: rgba(255,255,255,0.15); margin-bottom: 1.5rem;">
+            <div class="kpi-card-header" style="margin-bottom: 1rem;">
+                <div>
+                    <div style="font-family: 'Outfit', sans-serif; font-size: 1.15rem; font-weight: 800; color: #fff;">
+                        ${campaignHeaderTitle} (${label})
+                    </div>
+                    <div style="color: var(--text-mid); font-size: 0.78rem; margin-top: 0.2rem;">
+                        ${challengeBatchLabel}
+                    </div>
                 </div>
-                <div style="font-size: 0.85rem; font-weight: 700; color: ${paybackColor}; background: rgba(255,255,255,0.05); padding: 0.3rem 0.8rem; border-radius: 20px; border: 1px solid ${paybackColor};">
-                    ${isFullyPaid ? '✅ Break-Even elérve! Nyereséges' : `${paybackPct}% Megtérült`}
+                <div style="font-size: 0.85rem; font-weight: 700; color: ${paybackColor}; background: rgba(255,255,255,0.05); padding: 0.35rem 0.85rem; border-radius: 20px; border: 1px solid ${paybackColor};">
+                    ${isFullyPaid ? `✅ Break-Even elérve! (+${fmt(netProfitAfterFC)} profit)` : `${paybackPct}% Megtérült`}
                 </div>
             </div>
 
-            <!-- Progress Bar -->
-            <div style="height: 10px; background: rgba(255,255,255,0.08); border-radius: 6px; overflow: hidden; margin-bottom: 1rem;">
-                <div style="height: 100%; width: ${paybackPct}%; background: ${paybackColor}; transition: width 0.5s;"></div>
+            <!-- Fő KPI rács -->
+            <div class="kpi-grid" style="grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));">
+                <div class="kpi-item">
+                    <div class="kpi-label">Összes Bruttó Bevétel</div>
+                    <div class="kpi-value" style="color: #22c55e;">+${fmt(totRev)}</div>
+                    <div class="kpi-sub">${totPurchases} db eladott érem</div>
+                </div>
+                <div class="kpi-item">
+                    <div class="kpi-label">Meta Hirdetés (+ÁFA)</div>
+                    <div class="kpi-value" style="color: #f87171;">−${fmt(totMetaVat)}</div>
+                    <div class="kpi-sub">nettó: ${fmt(totSpend)}</div>
+                </div>
+                <div class="kpi-item">
+                    <div class="kpi-label">Blended CPA</div>
+                    <div class="kpi-value" style="color: ${blendedCPA <= 2500 ? '#22c55e' : (blendedCPA <= 3500 ? '#f59e0b' : '#ef4444')};">
+                        ${blendedCPA > 0 ? fmt(blendedCPA) : '–'}
+                    </div>
+                    <div class="kpi-sub">átl. költség / vásárlás</div>
+                </div>
+                <div class="kpi-item">
+                    <div class="kpi-label">Blended ROAS</div>
+                    <div class="kpi-value" style="color: ${Number(blendedROAS) >= 3 ? '#22c55e' : (Number(blendedROAS) >= 2 ? '#f59e0b' : '#ef4444')};">
+                        ${Number(blendedROAS) > 0 ? blendedROAS + 'x' : '–'}
+                    </div>
+                    <div class="kpi-sub">bevétel / nettó költés</div>
+                </div>
+                <div class="kpi-item">
+                    <div class="kpi-label">Termelt Nettó Fedezet (CM)</div>
+                    <div class="kpi-value" style="color: #38bdf8;">+${fmt(totNetContrib)}</div>
+                    <div class="kpi-sub">${totMarginPct}% fedezeti árrés</div>
+                </div>
             </div>
 
-            <!-- Summary Grid -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; font-size: 0.82rem;">
-                <div>
-                    <div style="color: var(--text-mid); font-size: 0.7rem; text-transform: uppercase;">Összes Fix Költség</div>
-                    <div style="font-size: 1.1rem; font-weight: 700; color: #fff;">193 000 Ft</div>
-                    <div style="color: var(--text-mid); font-size: 0.75rem;">163k érem + 30k könyvelés</div>
-                </div>
-                <div>
-                    <div style="color: var(--text-mid); font-size: 0.7rem; text-transform: uppercase;">Termelt nettó fedezet</div>
-                    <div style="font-size: 1.1rem; font-weight: 700; color: #22c55e;">+${fmt(totNetContrib)}</div>
-                    <div style="color: var(--text-mid); font-size: 0.75rem;">Változó költségek levonva</div>
-                </div>
-                <div>
-                    <div style="color: var(--text-mid); font-size: 0.7rem; text-transform: uppercase;">Break-Even állása</div>
-                    <div style="font-size: 1.1rem; font-weight: 700; color: ${remainingToBe === 0 ? '#22c55e' : '#f59e0b'};">
-                        ${remainingToBe === 0 ? `+${fmt(netProfitAfterFC)} profit 🎉` : `${fmt(remainingToBe)}`}
+            <!-- KAMPÁNYONKÉNTI RÉSZLETEZÉS (ha Összesített nézet van) -->
+            ${mktSelectedCampaign === 'all' ? `
+            <div class="campaign-breakdown-grid">
+                <!-- Nagy-Kevély csillagai mini kártya -->
+                <div class="campaign-mini-card">
+                    <div class="campaign-mini-header">
+                        <span style="color: #38bdf8;">🌌 Nagy-Kevély csillagai</span>
+                        <span style="font-size:0.75rem; color:var(--text-mid);">${pilisRevPct}% a bevételből</span>
                     </div>
-                    <div style="color: var(--text-mid); font-size: 0.75rem;">
-                        ${remainingToBe === 0 ? 'Fix költségek megtérültek!' : `kb. ${ordersNeeded} db eladás kell még`}
+                    <div class="campaign-mini-stats">
+                        <div class="campaign-mini-stat-item">
+                            <span class="campaign-mini-stat-label">Eladás</span>
+                            <span class="campaign-mini-stat-val">${pilisPurchases} db</span>
+                        </div>
+                        <div class="campaign-mini-stat-item">
+                            <span class="campaign-mini-stat-label">Bevétel</span>
+                            <span class="campaign-mini-stat-val" style="color:#22c55e;">+${fmt(pilisRev)}</span>
+                        </div>
+                        <div class="campaign-mini-stat-item">
+                            <span class="campaign-mini-stat-label">Meta (+ÁFA)</span>
+                            <span class="campaign-mini-stat-val" style="color:#f87171;">−${fmt(pilisSpendVat)}</span>
+                        </div>
+                        <div class="campaign-mini-stat-item">
+                            <span class="campaign-mini-stat-label">CPA</span>
+                            <span class="campaign-mini-stat-val">${pilisCPA > 0 ? fmt(pilisCPA) : '–'}</span>
+                        </div>
+                        <div class="campaign-mini-stat-item">
+                            <span class="campaign-mini-stat-label">ROAS</span>
+                            <span class="campaign-mini-stat-val">${Number(pilisROAS) > 0 ? pilisROAS + 'x' : '–'}</span>
+                        </div>
+                        <div class="campaign-mini-stat-item">
+                            <span class="campaign-mini-stat-label">Fedezet</span>
+                            <span class="campaign-mini-stat-val" style="color:#38bdf8;">+${fmt(pilisNetContrib)}</span>
+                        </div>
                     </div>
                 </div>
-                <div>
-                    <div style="color: var(--text-mid); font-size: 0.7rem; text-transform: uppercase;">Átl. egységfedezet / eladás</div>
-                    <div style="font-size: 1.1rem; font-weight: 700; color: #fff;">${fmt(unitNetProfit)}</div>
-                    <div style="color: var(--text-mid); font-size: 0.75rem;">nettó fedezet / eladott érem</div>
+
+                <!-- Prédikálószék mini kártya -->
+                <div class="campaign-mini-card">
+                    <div class="campaign-mini-header">
+                        <span style="color: #f59e0b;">🏔️ Prédikálószék Vertical</span>
+                        <span style="font-size:0.75rem; color:var(--text-mid);">${predikaloRevPct}% a bevételből</span>
+                    </div>
+                    <div class="campaign-mini-stats">
+                        <div class="campaign-mini-stat-item">
+                            <span class="campaign-mini-stat-label">Eladás</span>
+                            <span class="campaign-mini-stat-val">${predikaloPurchases} db</span>
+                        </div>
+                        <div class="campaign-mini-stat-item">
+                            <span class="campaign-mini-stat-label">Bevétel</span>
+                            <span class="campaign-mini-stat-val" style="color:#22c55e;">+${fmt(predikaloRev)}</span>
+                        </div>
+                        <div class="campaign-mini-stat-item">
+                            <span class="campaign-mini-stat-label">Meta (+ÁFA)</span>
+                            <span class="campaign-mini-stat-val" style="color:#f87171;">−${fmt(predikaloSpendVat)}</span>
+                        </div>
+                        <div class="campaign-mini-stat-item">
+                            <span class="campaign-mini-stat-label">CPA</span>
+                            <span class="campaign-mini-stat-val">${predikaloCPA > 0 ? fmt(predikaloCPA) : '–'}</span>
+                        </div>
+                        <div class="campaign-mini-stat-item">
+                            <span class="campaign-mini-stat-label">ROAS</span>
+                            <span class="campaign-mini-stat-val">${Number(predikaloROAS) > 0 ? predikaloROAS + 'x' : '–'}</span>
+                        </div>
+                        <div class="campaign-mini-stat-item">
+                            <span class="campaign-mini-stat-label">Fedezet</span>
+                            <span class="campaign-mini-stat-val" style="color:#38bdf8;">+${fmt(predikaloNetContrib)}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            ` : ''}
+
+            <!-- P&L ÉS BREAK-EVEN -->
+            <div class="fin-section">
+                <div class="fin-two-col">
+                    <!-- Termékenkénti Fedezet (Contribution Margin) -->
+                    <div>
+                        <div class="fin-title">📊 Teljes Időszaki Eredménykimutatás</div>
+                        <div class="fin-row">
+                            <span>(+) Bruttó bevétel</span>
+                            <span class="fin-plus">+${fmt(totRev)}</span>
+                        </div>
+                        <div class="fin-row">
+                            <span>(-) Meta hirdetés (+27% ÁFA)</span>
+                            <span class="fin-minus">−${fmt(totMetaVat)}</span>
+                        </div>
+                        <div class="fin-row">
+                            <span>(-) Foxpost szállítás (1 250 Ft / db)</span>
+                            <span class="fin-minus">−${fmt(totShipping)}</span>
+                        </div>
+                        <div class="fin-row">
+                            <span>(-) Stripe tranzakció (1,5% + 50 Ft)</span>
+                            <span class="fin-minus">−${fmt(totStripe)}</span>
+                        </div>
+                        <div class="fin-row">
+                            <span>(-) Számlázás & csomagolás (155 Ft / db)</span>
+                            <span class="fin-minus">−${fmt(totOtherVar)}</span>
+                        </div>
+                        <div class="fin-row total">
+                            <span>Összes Termelt Fedezet (CM)</span>
+                            <span style="color: #22c55e; font-weight:800;">+${fmt(totNetContrib)}<small style="font-size:0.7rem;opacity:0.7"> (${totMarginPct}%)</small></span>
+                        </div>
+                    </div>
+
+                    <!-- Fix Költség Megtérülés -->
+                    <div>
+                        <div class="fin-title">🎯 Fix Költségek Törlesztése (${label})</div>
+                        <div class="fin-row">
+                            <span>(+) Termelt nettó fedezet</span>
+                            <span class="fin-plus">+${fmt(totNetContrib)}</span>
+                        </div>
+                        <div class="fin-row">
+                            <span>(-) ${capexLabel}</span>
+                            <span class="fin-minus">−${fmt(capexAmount)}</span>
+                        </div>
+                        <div class="fin-row">
+                            <span>(-) ${opexLabel}</span>
+                            <span class="fin-minus">−${fmt(opexAmount)}</span>
+                        </div>
+                        <div class="fin-row" style="font-size:0.75rem; opacity:0.7;">
+                            <span>(Összes Fix Költség Keret: ${fmt(TOTAL_FIXED_COSTS)})</span>
+                            <span></span>
+                        </div>
+                        <div class="fin-row total">
+                            <span>Mérleg szerinti eredmény</span>
+                            <span class="${profitCls}">${profitSign}${fmt(netProfitAfterFC)}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Megtérülési sáv és státusz -->
+            <div style="margin-top: 1.25rem;">
+                <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--text-mid); margin-bottom:0.35rem;">
+                    <span>Fix Költség Megtérülés Haladása (${fmt(TOTAL_FIXED_COSTS)})</span>
+                    <strong style="color:${paybackColor};">
+                        ${isFullyPaid ? `100% Megtérült (+${fmt(netProfitAfterFC)} profit)` : `${paybackPct}% (Még hiányzik: ${fmt(remainingToBe)}${ordersNeeded > 0 ? ` ~${ordersNeeded} db eladás` : ''})`}
+                    </strong>
+                </div>
+                <div style="height: 8px; background: rgba(255,255,255,0.08); border-radius: 6px; overflow: hidden;">
+                    <div style="height: 100%; width: ${paybackPct}%; background: ${paybackColor}; transition: width 0.5s;"></div>
                 </div>
             </div>
         </div>
 
-        <!-- CUSTOMER ACQUISITION & RETENTION COHORT CARD -->
-        <div style="background: var(--surface2); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.5rem;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
-                <div style="font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 800; color: #fff;">
-                    👥 Nagy-Kevély Csillagai Vásárlói Összetétel
+        <!-- 2. VÁSÁRLÓI KOHORSZ KÁRTYA -->
+        <div style="background: var(--surface2); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; margin-bottom: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+                <div style="font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 800; color: #fff;">
+                    👥 Vásárlói Összetétel & Lojalitás (${mktSelectedCampaign === 'pilis' ? 'Nagy-Kevély' : (mktSelectedCampaign === 'predikalo' ? 'Prédikálószék' : 'Összesített')})
                 </div>
-                <div style="font-size: 0.85rem; font-weight: 700; color: #38bdf8; background: rgba(56,189,248,0.1); padding: 0.3rem 0.8rem; border-radius: 20px; border: 1px solid rgba(56,189,248,0.3);">
+                <div style="font-size: 0.8rem; font-weight: 700; color: #38bdf8; background: rgba(56,189,248,0.1); padding: 0.25rem 0.75rem; border-radius: 20px; border: 1px solid rgba(56,189,248,0.3);">
                     ${activeCohortTotal} db eladott érem (${label.toLowerCase()})
                 </div>
             </div>
 
-            <!-- Visual Cohort Split Bar -->
-            <div style="height: 10px; background: rgba(255,255,255,0.08); border-radius: 6px; overflow: hidden; margin-bottom: 1rem; display: flex;">
+            <div style="height: 8px; background: rgba(255,255,255,0.08); border-radius: 6px; overflow: hidden; margin-bottom: 0.85rem; display: flex;">
                 <div style="height: 100%; width: ${newPct}%; background: #38bdf8;" title="Új vásárlók: ${newPct}%"></div>
                 <div style="height: 100%; width: ${retPct}%; background: #22c55e;" title="Visszatérő vásárlók: ${retPct}%"></div>
             </div>
 
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; font-size: 0.82rem;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; font-size: 0.8rem;">
                 <div>
-                    <div style="color: var(--text-mid); font-size: 0.7rem; text-transform: uppercase;">🆕 Új vásárlók (Első nevezés)</div>
-                    <div style="font-size: 1.2rem; font-weight: 800; color: #38bdf8;">${activeCohortNew} fő</div>
-                    <div style="color: var(--text-mid); font-size: 0.75rem;">${newPct}% az eladott érmekből</div>
+                    <div style="color: var(--text-mid); font-size: 0.68rem; text-transform: uppercase;">🆕 Új vásárlók (Első nevezés)</div>
+                    <div style="font-size: 1.1rem; font-weight: 800; color: #38bdf8;">${activeCohortNew} fő <span style="font-size:0.75rem;font-weight:400;color:var(--text-mid)">(${newPct}%)</span></div>
                 </div>
                 <div>
-                    <div style="color: var(--text-mid); font-size: 0.7rem; text-transform: uppercase;">🔄 Visszatérő vásárlók (Prédikálószékből)</div>
-                    <div style="font-size: 1.2rem; font-weight: 800; color: #22c55e;">${activeCohortRet} fő</div>
-                    <div style="color: var(--text-mid); font-size: 0.75rem;">${retPct}% az eladott érmekből</div>
-                </div>
-                <div style="grid-column: 1 / -1;">
-                    <div style="background: rgba(34,197,94,0.08); border: 1px dashed rgba(34,197,94,0.3); padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.82rem; color: #e2e8f0; line-height: 1.4;">
-                        💡 <strong>Lojalitás Insight:</strong> A Nagy-Kevély csillagai kihívás vásárlóinak <strong style="color:#22c55e;">${retPct}%-a (${activeCohortRet} fő)</strong> a korábbi Prédikálószék kihívás teljesítőiből került ki!
-                    </div>
+                    <div style="color: var(--text-mid); font-size: 0.68rem; text-transform: uppercase;">🔄 Visszatérő vásárlók</div>
+                    <div style="font-size: 1.1rem; font-weight: 800; color: #22c55e;">${activeCohortRet} fő <span style="font-size:0.75rem;font-weight:400;color:var(--text-mid)">(${retPct}%)</span></div>
                 </div>
             </div>
         </div>
 
-        <div style="color: var(--text-mid); font-size: 0.8rem; margin-bottom: 1rem;">${label} kampányokként részletezve:</div>`;
-
-
-
-        for (const c of campaigns) {
-            const target = getTarget(c.campaign_name);
-            const { label: statusLabel, cls: statusCls, card: cardCls } = statusBadge(c.cpa, c.roas, target);
-
-            const cpaColor = c.cpa && target.target_cpa
-                ? barColor(c.cpa, target.target_cpa, target.warning_cpa)
-                : 'green';
-            const roasColor = c.roas && target.warning_roas
-                ? (c.roas >= (target.target_roas || 3) ? 'green' : c.roas >= (target.warning_roas || 2) ? 'yellow' : 'red')
-                : 'green';
-
-            // Financial calculations for this campaign
-            const revenue   = c.revenue;
-            const purchases = c.purchases;
-            const spend     = c.spend;
-            const spendVat  = Math.round(spend * 1.27); // Meta 27% ÁFA
-
-            const shippingCosts = Math.round(purchases * FOXPOST_UNIT);
-            const stripeFees    = Math.round(revenue * STRIPE_PCT + STRIPE_FIXED * purchases);
-            const szamlazzCosts = Math.round(purchases * SZAMLAZZ_UNIT);
-            const packCosts     = Math.round(purchases * PACKAGING_UNIT);
-            const otherVarCosts = szamlazzCosts + packCosts;
-
-            const totalVarCosts = spendVat + shippingCosts + stripeFees + otherVarCosts;
-
-            // Nettó fedezet (Contribution Margin az eladott érmek után)
-            const netContrib    = Math.round(revenue - totalVarCosts);
-            const marginPct     = revenue > 0 ? (netContrib / revenue * 100).toFixed(1) : 0;
-
-            // Fix költség arányos megtérülési eredmény
-            const netBalance    = netContrib - TOTAL_FIXED_COSTS;
-            const profitCls     = netBalance >= 0 ? 'fin-profit-pos' : 'fin-profit-neg';
-            const profitSign    = netBalance >= 0 ? '+' : '';
-
-            // Campaign Cohort calculation
-            const cNameLower = (c.campaign_name || '').toLowerCase();
-            const cSlug = (cNameLower.includes('kevély') || cNameLower.includes('kevely') || cNameLower.includes('pilis')) ? 'pilis' : 'predikaloszek';
-            const cCohort = cohorts.byCamp[cSlug] || { newCount: 0, returningCount: 0, total: 0 };
-            const cRetPct = cCohort.total > 0 ? (cCohort.returningCount / cCohort.total * 100).toFixed(1) : 0;
-
-            html += `
-            <div class="kpi-card ${cardCls}">
-                <div class="kpi-card-header">
-                    <div class="kpi-card-title">🏔️ ${c.campaign_name || c.campaign_id}</div>
-                    <span class="kpi-status-badge ${statusCls}">${statusLabel}</span>
-                </div>
-
-                <!-- KPI grid -->
-                <div class="kpi-grid">
-                    <div class="kpi-item">
-                        <div class="kpi-label">Meta Költés (+ÁFA)</div>
-                        <div class="kpi-value">${fmt(spendVat)}</div>
-                        <div class="kpi-sub">nettó: ${fmt(spend)}</div>
+        <!-- 3. KREATÍV ÉS KAMPÁNY SZINTŰ ÖSSZEHASONLÍTÓ TÁBLÁZAT -->
+        ${mktSelectedCampaign === 'predikalo' ? `
+        <div class="creative-table-card" style="text-align: center; padding: 2.5rem 1.5rem;">
+            <div style="font-size: 1.8rem; margin-bottom: 0.5rem;">🏔️</div>
+            <div style="font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 800; color: #fff; margin-bottom: 0.35rem;">
+                Prédikálószék Vertical – Korábbi Kihívás
+            </div>
+            <div style="color: var(--text-mid); font-size: 0.82rem; max-width: 500px; margin: 0 auto;">
+                A Prédikálószék 68 eladott érméhez nem tartoznak napi Meta hirdetési kreatív szintű bontások. A fenti P&L és a rendelési lista tartalmazza a valós Stripe bevételeket.
+            </div>
+        </div>
+        ` : `
+        <div class="creative-table-card">
+            <div class="creative-table-header">
+                <div>
+                    <div style="font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 800; color: #fff;">
+                        🎨 Kreatívok és Hirdetések Teljesítménye (${label})
                     </div>
-                    <div class="kpi-item">
-                        <div class="kpi-label">Vásárlások</div>
-                        <div class="kpi-value">${purchases} db</div>
-                        <div class="kpi-sub">${fmt(revenue)} bevétel</div>
-                    </div>
-                    <div class="kpi-item">
-                        <div class="kpi-label">CPA</div>
-                        <div class="kpi-value" style="color: ${cpaColor === 'green' ? '#22c55e' : cpaColor === 'yellow' ? '#f59e0b' : '#ef4444'}">${c.cpa ? fmt(c.cpa) : '–'}</div>
-                        <div class="kpi-sub">cél: ${fmt(target.target_cpa || 0)}</div>
-                    </div>
-                    <div class="kpi-item">
-                        <div class="kpi-label">ROAS</div>
-                        <div class="kpi-value" style="color: ${roasColor === 'green' ? '#22c55e' : roasColor === 'yellow' ? '#f59e0b' : '#ef4444'}">${c.roas ? c.roas.toFixed(2) + 'x' : '–'}</div>
-                        <div class="kpi-sub">cél: ${(target.target_roas || 0).toFixed(1)}x</div>
+                    <div style="color: var(--text-mid); font-size: 0.75rem; margin-top: 0.2rem;">
+                        Kreatív szintű konverzió, CPA, ROAS, átkattintás (CTR) és megtermelt nettó fedezet
                     </div>
                 </div>
 
-                <!-- Customer Cohort Breakdown Badge -->
-                <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); padding: 0.5rem 0.8rem; border-radius: 8px; font-size: 0.78rem; display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem;">
-                    <span style="color: var(--text-mid);">👥 Vásárlói Összetétel:</span>
-                    <span>
-                        <strong style="color: #38bdf8;">🆕 ${cCohort.newCount} új</strong>
-                        <span style="color: var(--text-mid); margin: 0 0.3rem;">•</span>
-                        <strong style="color: #22c55e;">🔄 ${cCohort.returningCount} visszatérő (${cRetPct}%)</strong>
-                    </span>
+                <!-- Szűrőgombok -->
+                <div class="creative-filter-group">
+                    <button class="creative-filter-btn ${creativeFilter === 'all' ? 'active' : ''}" onclick="setCreativeFilter('all')">
+                        Összes (${allCreatives.length})
+                    </button>
+                    <button class="creative-filter-btn ${creativeFilter === 'pilis' ? 'active' : ''}" onclick="setCreativeFilter('pilis')">
+                        🌌 Nagy-Kevély
+                    </button>
+                    <button class="creative-filter-btn ${creativeFilter === 'retarget' ? 'active' : ''}" onclick="setCreativeFilter('retarget')">
+                        🎯 Retargeting
+                    </button>
                 </div>
+            </div>
 
+            <!-- Táblázat -->
+            <div class="creative-table-scroll">
+                <table class="creative-table">
+                    <thead>
+                        <tr>
+                            <th class="sortable ${creativeSortKey === 'ad_name' ? 'active-sort' : ''}" onclick="setCreativeSort('ad_name')">
+                                Kreatív Neve ${sortIcon('ad_name')}
+                            </th>
+                            <th class="sortable ${creativeSortKey === 'campaign_name' ? 'active-sort' : ''}" onclick="setCreativeSort('campaign_name')">
+                                Kampány / Célzás ${sortIcon('campaign_name')}
+                            </th>
+                            <th class="sortable ${creativeSortKey === 'spend' ? 'active-sort' : ''}" onclick="setCreativeSort('spend')" style="text-align:right;">
+                                Költés (+ÁFA) ${sortIcon('spend')}
+                            </th>
+                            <th class="sortable ${creativeSortKey === 'impressions' ? 'active-sort' : ''}" onclick="setCreativeSort('impressions')" style="text-align:right;">
+                                Megjelenés / Elérés ${sortIcon('impressions')}
+                            </th>
+                            <th class="sortable ${creativeSortKey === 'ctr' ? 'active-sort' : ''}" onclick="setCreativeSort('ctr')" style="text-align:right;">
+                                CTR & Link Katt ${sortIcon('ctr')}
+                            </th>
+                            <th class="sortable ${creativeSortKey === 'cpc' ? 'active-sort' : ''}" onclick="setCreativeSort('cpc')" style="text-align:right;">
+                                CPC / CPM ${sortIcon('cpc')}
+                            </th>
+                            <th class="sortable ${creativeSortKey === 'purchases' ? 'active-sort' : ''}" onclick="setCreativeSort('purchases')" style="text-align:right;">
+                                Vásárlás ${sortIcon('purchases')}
+                            </th>
+                            <th class="sortable ${creativeSortKey === 'revenue' ? 'active-sort' : ''}" onclick="setCreativeSort('revenue')" style="text-align:right;">
+                                Bevétel ${sortIcon('revenue')}
+                            </th>
+                            <th class="sortable ${creativeSortKey === 'cpa' ? 'active-sort' : ''}" onclick="setCreativeSort('cpa')" style="text-align:right;">
+                                CPA ${sortIcon('cpa')}
+                            </th>
+                            <th class="sortable ${creativeSortKey === 'roas' ? 'active-sort' : ''}" onclick="setCreativeSort('roas')" style="text-align:right;">
+                                ROAS ${sortIcon('roas')}
+                            </th>
+                            <th class="sortable ${creativeSortKey === 'netContrib' ? 'active-sort' : ''}" onclick="setCreativeSort('netContrib')" style="text-align:right;">
+                                Kitermelt Fedezet ${sortIcon('netContrib')}
+                            </th>
+                            <th style="text-align:center;">Minősítés</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${displayCreatives.length === 0 ? `
+                            <tr><td colspan="12" style="text-align:center; padding:2rem; color:var(--text-mid);">Nincs a szűrésnek megfelelő kreatív ebben az időszakban.</td></tr>
+                        ` : displayCreatives.map(c => {
+                            const isPilis = (c.campaign_name || '').toLowerCase().match(/pilis|kevely|kevély/);
+                            const campBadgeColor = isPilis ? '#38bdf8' : '#f59e0b';
+                            const campBadgeText = isPilis ? '🌌 Nagy-Kevély' : '🏔️ Prédikálószék';
+                            const isRetarget = (c.campaign_name + c.adset_name).toLowerCase().includes('retarget');
 
-                <!-- Engagement bars -->
-                <div class="kpi-bar-row">
-                    <div class="kpi-bar-item">
-                        <span style="min-width:40px">CPM</span>
-                        <div class="kpi-bar-track"><div class="kpi-bar-fill green" style="width:${barPct(c.cpm, 5000)}%"></div></div>
-                        <span class="kpi-bar-val">${fmt(c.cpm)}</span>
-                    </div>
-                    <div class="kpi-bar-item">
-                        <span style="min-width:40px">CTR</span>
-                        <div class="kpi-bar-track"><div class="kpi-bar-fill green" style="width:${barPct(c.ctr, 5)}%"></div></div>
-                        <span class="kpi-bar-val">${c.ctr.toFixed(2)}%</span>
-                    </div>
-                    <div class="kpi-bar-item">
-                        <span style="min-width:40px">Reach</span>
-                        <div class="kpi-bar-track"><div class="kpi-bar-fill green" style="width:60%"></div></div>
-                        <span class="kpi-bar-val">${Number(c.reach).toLocaleString('hu-HU')}</span>
-                    </div>
-                    <div class="kpi-bar-item">
-                        <span style="min-width:40px">Katt</span>
-                        <div class="kpi-bar-track"><div class="kpi-bar-fill green" style="width:${barPct(c.link_clicks, Math.max(c.clicks, 1))}%"></div></div>
-                        <span class="kpi-bar-val">${c.link_clicks} link</span>
-                    </div>
-                </div>
+                            const cpaColor = c.cpa > 0 ? (c.cpa <= 2500 ? '#22c55e' : (c.cpa <= 3500 ? '#f59e0b' : '#ef4444')) : 'inherit';
+                            const roasColor = c.roas > 0 ? (c.roas >= 3.0 ? '#22c55e' : (c.roas >= 2.0 ? '#f59e0b' : '#ef4444')) : 'inherit';
+                            const contribColor = c.netContrib > 0 ? '#22c55e' : (c.netContrib < 0 ? '#ef4444' : 'inherit');
 
-                <!-- P&L + Megtérülés szekció -->
-                <div class="fin-section">
-                    <div class="fin-two-col">
+                            return `
+                            <tr>
+                                <td>
+                                    <div style="font-weight:700; color:#fff; font-size:0.86rem;">${c.ad_name}</div>
+                                    <div style="font-size:0.7rem; color:var(--text-mid);">${c.adset_name || 'Alapértelmezett AdSet'}</div>
+                                </td>
+                                <td>
+                                    <span style="font-size:0.7rem; font-weight:700; color:${campBadgeColor}; background:rgba(255,255,255,0.04); padding:0.15rem 0.4rem; border-radius:4px; border:1px solid rgba(255,255,255,0.08);">
+                                        ${campBadgeText}
+                                    </span>
+                                    ${isRetarget ? '<span style="font-size:0.65rem; font-weight:600; color:#c084fc; margin-left:0.25rem;">[Meleg]</span>' : ''}
+                                </td>
+                                <td style="text-align:right;">
+                                    <div style="font-weight:700;">${fmt(c.spendVat)}</div>
+                                    <div style="font-size:0.68rem; color:var(--text-mid);">net: ${fmt(c.spend)}</div>
+                                </td>
+                                <td style="text-align:right;">
+                                    <div>${c.impressions.toLocaleString('hu-HU')}</div>
+                                    <div style="font-size:0.68rem; color:var(--text-mid);">${c.reach.toLocaleString('hu-HU')} elérés</div>
+                                </td>
+                                <td style="text-align:right;">
+                                    <div style="font-weight:700; color:${c.ctr >= 4.0 ? '#22c55e' : (c.ctr >= 2.0 ? '#f59e0b' : 'inherit')};">${c.ctr.toFixed(2)}%</div>
+                                    <div style="font-size:0.68rem; color:var(--text-mid);">${c.link_clicks} katt</div>
+                                </td>
+                                <td style="text-align:right;">
+                                    <div>${fmt(c.cpc)}</div>
+                                    <div style="font-size:0.68rem; color:var(--text-mid);">${fmt(c.cpm)} /k</div>
+                                </td>
+                                <td style="text-align:right;">
+                                    <strong style="font-size:0.95rem; color:${c.purchases > 0 ? '#22c55e' : 'inherit'};">${c.purchases} db</strong>
+                                </td>
+                                <td style="text-align:right;">
+                                    <div style="font-weight:700; color:${c.revenue > 0 ? '#22c55e' : 'inherit'};">${c.revenue > 0 ? '+' + fmt(c.revenue) : '0 Ft'}</div>
+                                </td>
+                                <td style="text-align:right;">
+                                    <strong style="color:${cpaColor};">${c.cpa > 0 ? fmt(c.cpa) : '–'}</strong>
+                                </td>
+                                <td style="text-align:right;">
+                                    <strong style="color:${roasColor};">${c.roas > 0 ? c.roas.toFixed(2) + 'x' : '–'}</strong>
+                                </td>
+                                <td style="text-align:right;">
+                                    <strong style="color:${contribColor};">${c.netContrib > 0 ? '+' : ''}${fmt(c.netContrib)}</strong>
+                                    <div style="font-size:0.68rem; color:var(--text-mid);">${c.marginPct}% árrés</div>
+                                </td>
+                                <td style="text-align:center;">
+                                    <span class="creative-badge" style="color:${c.status.color}; background:${c.status.bg}; border:1px solid ${c.status.color}40;">
+                                        ${c.status.label}
+                                    </span>
+                                </td>
+                            </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        `}
+        `;
 
-                        <!-- Termékenkénti Fedezet (Contribution Margin) -->
-                        <div>
-                            <div class="fin-title">📊 Termékenkénti Fedezet</div>
-                            <div class="fin-row">
-                                <span>(+) Bruttó bevétel</span>
-                                <span class="fin-plus">+${fmt(revenue)}</span>
-                            </div>
-                            <div class="fin-row">
-                                <span>(-) Meta hirdetés (+ÁFA)</span>
-                                <span class="fin-minus">−${fmt(spendVat)}</span>
-                            </div>
-                            <div class="fin-row">
-                                <span>(-) Foxpost szállítás</span>
-                                <span class="fin-minus">−${fmt(shippingCosts)}</span>
-                            </div>
-                            <div class="fin-row">
-                                <span>(-) Stripe tranzakció</span>
-                                <span class="fin-minus">−${fmt(stripeFees)}</span>
-                            </div>
-                            <div class="fin-row">
-                                <span>(-) Számlázás & csomagolás</span>
-                                <span class="fin-minus">−${fmt(otherVarCosts)}</span>
-                            </div>
-                            <div class="fin-row total">
-                                <span>Kitermelt fedezet (CM)</span>
-                                <span style="color: #22c55e; font-weight:800;">+${fmt(netContrib)}<small style="font-size:0.7rem;opacity:0.7"> (${marginPct}%)</small></span>
-                            </div>
-                        </div>
+        cardsEl.innerHTML = html;
+    }
 
-                        <!-- Fix Költség Megtérülés -->
-                        <div>
-                            <div class="fin-title">🎯 Fix Költségek Törlesztése</div>
-                            <div class="fin-row">
-                                <span>(+) Kitermelt fedezet</span>
-                                <span class="fin-plus">+${fmt(netContrib)}</span>
-                            </div>
-                            <div class="fin-row">
-                                <span>(-) Éremgyártás (100 db)</span>
-                                <span class="fin-minus">−163 000 Ft</span>
-                            </div>
-                            <div class="fin-row">
-                                <span>(-) Könyvelés (2 hó)</span>
-                                <span class="fin-minus">−30 000 Ft</span>
-                            </div>
-                            <div class="fin-row" style="font-size:0.75rem; opacity:0.7;">
-                                <span>(Összes Fix Költség: 193 000 Ft)</span>
-                                <span></span>
-                            </div>
-                            <div class="fin-row total">
-                                <span>Mérleg szerinti eredmény</span>
-                                <span class="${profitCls}">${profitSign}${fmt(netBalance)}</span>
-                            </div>
-                        </div>
+    // ─── Finance & Cashflow Dashboard ─────────────────────────
+    let finData = null;
+    let finPeriod = 'all'; // 'all', '30d', '7d', '2026-08', '2026-07', '2026-06', '2026-05'
+    let finAccount = 'all'; // 'all', 'revolut', 'stripe'
+    let finCategory = 'all';
+    let finSearchQuery = '';
 
-                    </div>
-                </div>
+    async function loadFinance() {
+        const cardsEl = document.getElementById('fin-cards');
+        if (!cardsEl) return;
+        cardsEl.innerHTML = '<div id="fin-loading">⏳ Pénzügyi adatok és számlaegyenlegek lekérése...</div>';
 
-            </div>`;
+        try {
+            const res = await fetch('/api/admin-data', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ admin_secret: adminSecret, type: 'finance' })
+            });
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.error || 'Hiba a pénzügyi adatok betöltésekor');
+            }
+
+            finData = data;
+            renderFinance();
+        } catch (error) {
+            cardsEl.innerHTML = `<div class="mkt-no-data">❌ Hiba: ${error.message}</div>`;
         }
+    }
+
+    async function handleRevolutFileSelect(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            const csvContent = e.target.result;
+            const cardsEl = document.getElementById('fin-cards');
+            cardsEl.innerHTML = '<div id="fin-loading">⏳ Revolut CSV feldolgozása és szinkronizálása...</div>';
+
+            try {
+                const res = await fetch('/api/admin-data', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ admin_secret: adminSecret, type: 'upload_revolut', csv_content: csvContent })
+                });
+                const resData = await res.json();
+                if (res.ok) {
+                    alert(`Sikeres feltöltés! ${resData.count} db Revolut tranzakció sikeresen beolvasva.`);
+                    loadFinance();
+                } else {
+                    alert('Hiba a feltöltés során: ' + (resData.error || 'Ismeretlen hiba'));
+                    loadFinance();
+                }
+            } catch (err) {
+                alert('Feltöltési hiba: ' + err.message);
+                loadFinance();
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    function setFinPeriod(period) {
+        finPeriod = period;
+        renderFinance();
+    }
+
+    function setFinAccount(acc) {
+        finAccount = acc;
+        renderFinance();
+    }
+
+    function setFinCategory(cat) {
+        finCategory = cat;
+        renderFinance();
+    }
+
+    function handleFinSearch(e) {
+        finSearchQuery = e.target.value.toLowerCase().trim();
+        renderFinance();
+    }
+
+    function renderFinance() {
+        if (!finData) return;
+        const cardsEl = document.getElementById('fin-cards');
+        if (!cardsEl) return;
+
+        // Extract Stripe
+        const stripeAvail = (finData.stripe?.balance?.available || []).reduce((s, b) => b.currency.toLowerCase() === 'huf' ? s + (b.amount / 100) : s, 0);
+        const stripePending = (finData.stripe?.balance?.pending || []).reduce((s, b) => b.currency.toLowerCase() === 'huf' ? s + (b.amount / 100) : s, 0);
+        const stripeTxs = finData.stripe?.transactions || [];
+
+        // Extract Revolut
+        const revolutTxs = finData.revolut?.transactions || [];
+        const revolutBal = finData.revolut?.currentBalance || 0;
+
+        // Total liquid cash
+        const totalLiquid = stripeAvail + revolutBal;
+
+        // Date filtering helper
+        const now = new Date();
+        function matchPeriod(dateStr) {
+            if (finPeriod === 'all') return true;
+            if (!dateStr) return true;
+            const d = new Date(dateStr);
+            if (isNaN(d.getTime())) return true;
+
+            if (finPeriod === '30d') {
+                const past = new Date(now); past.setDate(now.getDate() - 30);
+                return d >= past;
+            }
+            if (finPeriod === '7d') {
+                const past = new Date(now); past.setDate(now.getDate() - 7);
+                return d >= past;
+            }
+            if (finPeriod.startsWith('2026-')) {
+                return dateStr.startsWith(finPeriod);
+            }
+            return true;
+        }
+
+        // Filtered transactions for the ledger table
+        const unifiedLedger = [];
+
+        // 1. Convert Revolut rows to standardized ledger items
+        revolutTxs.forEach((r, idx) => {
+            const dateStr = r.completedDate || r.startedDate;
+            if (!matchPeriod(dateStr)) return;
+            if (finAccount === 'stripe') return;
+            if (finCategory !== 'all' && r.category !== finCategory) return;
+
+            unifiedLedger.push({
+                id: `rev-${idx}`,
+                rawDate: dateStr,
+                dateDisplay: dateStr ? new Date(dateStr).toLocaleString('hu-HU', { dateStyle: 'short', timeStyle: 'short' }) : '–',
+                source: 'revolut',
+                sourceLabel: '🔵 Revolut Pro',
+                category: r.category,
+                categoryLabel: r.categoryLabel,
+                categoryColor: r.categoryColor,
+                description: r.description || r.type,
+                type: r.type,
+                grossAmount: r.amount,
+                fee: r.fee,
+                netAmount: r.amount - r.fee,
+                currency: r.currency,
+                balance: r.balance
+            });
+        });
+
+        // 2. Convert Stripe transactions to standardized ledger items
+        stripeTxs.forEach((s) => {
+            const dateStr = s.created ? new Date(s.created).toISOString().replace('T', ' ').substring(0, 19) : '';
+            if (!matchPeriod(dateStr)) return;
+            if (finAccount === 'revolut') return;
+
+            let cat = 'direct_sale';
+            let catLabel = '💳 Stripe Vásárlás';
+            let catColor = '#22c55e';
+
+            if (s.type === 'payout') {
+                cat = 'stripe_payout';
+                catLabel = '💸 Stripe Kiutalás';
+                catColor = '#38bdf8';
+            } else if (s.type === 'refund') {
+                cat = 'refund';
+                catLabel = '↩️ Visszatérítés';
+                catColor = '#ef4444';
+            } else if (s.type === 'stripe_fee') {
+                cat = 'stripe_fee';
+                catLabel = '🏦 Stripe Díj';
+                catColor = '#94a3b8';
+            }
+
+            if (finCategory !== 'all' && cat !== finCategory && !(finCategory === 'stripe_payout' && cat === 'stripe_payout')) return;
+
+            unifiedLedger.push({
+                id: s.id,
+                rawDate: dateStr,
+                dateDisplay: dateStr ? new Date(s.created).toLocaleString('hu-HU', { dateStyle: 'short', timeStyle: 'short' }) : '–',
+                source: 'stripe',
+                sourceLabel: '🟢 Stripe',
+                category: cat,
+                categoryLabel: catLabel,
+                categoryColor: catColor,
+                description: s.description || (s.type === 'charge' ? 'Kártyás fizetés (Stripe Checkout)' : (s.type === 'payout' ? 'Automatikus bankszámla kifizetés' : s.type)),
+                type: s.type,
+                grossAmount: s.amount,
+                fee: s.fee,
+                netAmount: s.net,
+                currency: s.currency,
+                balance: null
+            });
+        });
+
+        // Search filtering
+        let displayLedger = unifiedLedger;
+        if (finSearchQuery) {
+            displayLedger = displayLedger.filter(t => 
+                (t.description || '').toLowerCase().includes(finSearchQuery) ||
+                (t.categoryLabel || '').toLowerCase().includes(finSearchQuery) ||
+                (t.type || '').toLowerCase().includes(finSearchQuery) ||
+                String(t.grossAmount).includes(finSearchQuery)
+            );
+        }
+
+        // Sort descending by date
+        displayLedger.sort((a, b) => new Date(b.rawDate || 0) - new Date(a.rawDate || 0));
+
+        // Calculate Period Totals (Revolut Cashflow in period)
+        const periodRevolut = revolutTxs.filter(r => matchPeriod(r.completedDate || r.startedDate));
+        const periodInflow = periodRevolut.filter(r => r.amount > 0).reduce((s, r) => s + r.amount, 0);
+        const periodOutflow = periodRevolut.filter(r => r.amount < 0).reduce((s, r) => s + r.amount, 0);
+
+        // Categories Summary for active period
+        const periodCatSummary = {};
+        periodRevolut.forEach(r => {
+            periodCatSummary[r.category] = (periodCatSummary[r.category] || 0) + r.amount;
+        });
+
+        let html = `
+            <!-- Top Liquidity Grid -->
+            <div class="fin-summary-grid">
+                <div class="fin-card fin-card-hero">
+                    <div class="fin-label">
+                        <span>💎 Összes Likvid Tőke</span>
+                        <span style="font-size: 0.68rem; color: #38bdf8; font-weight: 800;">ÉLŐ</span>
+                    </div>
+                    <div class="fin-val hero">${fmt(totalLiquid)}</div>
+                    <div class="fin-sub">Revolut Pro (${fmt(revolutBal)}) + Stripe (${fmt(stripeAvail)})</div>
+                </div>
+
+                <div class="fin-card">
+                    <div class="fin-label">
+                        <span>🟢 Stripe Elérhető Egyenleg</span>
+                        <span style="font-size: 0.68rem; color: #4ade80;">Stripe API</span>
+                    </div>
+                    <div class="fin-val pos">${fmt(stripeAvail)}</div>
+                    <div class="fin-sub">+ ${fmt(stripePending)} jóváírás alatt</div>
+                </div>
+
+                <div class="fin-card">
+                    <div class="fin-label">
+                        <span>🔵 Revolut Pro Egyenleg</span>
+                        <span style="font-size: 0.68rem; color: #60a5fa;">Bankszámla</span>
+                    </div>
+                    <div class="fin-val">${fmt(revolutBal)}</div>
+                    <div class="fin-sub">${revolutTxs.length} könyvelt banki tranzakció</div>
+                </div>
+
+                <div class="fin-card">
+                    <div class="fin-label">
+                        <span>📈 Időszaki Pénzbeáramlás</span>
+                    </div>
+                    <div class="fin-val pos">+${fmt(periodInflow)}</div>
+                    <div class="fin-sub">Stripe kifizetések & feltöltések</div>
+                </div>
+
+                <div class="fin-card">
+                    <div class="fin-label">
+                        <span>📉 Időszaki Pénzkiáramlás</span>
+                    </div>
+                    <div class="fin-val neg">${fmt(periodOutflow)}</div>
+                    <div class="fin-sub">Meta, Foxpost, Éremgyártás, Opex</div>
+                </div>
+            </div>
+
+            <!-- Category Breakdown Grid -->
+            <div style="margin-bottom: 0.5rem; font-size: 0.75rem; color: var(--text-mid); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;">
+                📊 Banki Költségnemek & Cash Flow Bontás (${finPeriod === 'all' ? 'Kezdetektől' : finPeriod}):
+            </div>
+            <div class="fin-cat-chips">
+                <div class="fin-cat-chip" style="border-left: 3px solid #38bdf8;">
+                    <div class="fin-cat-chip-label">🏅 Éremgyártás (Capex)</div>
+                    <div class="fin-cat-chip-val neg">${fmt(periodCatSummary.capex || 0)}</div>
+                </div>
+                <div class="fin-cat-chip" style="border-left: 3px solid #f87171;">
+                    <div class="fin-cat-chip-label">📢 Meta Ads Hirdetés</div>
+                    <div class="fin-cat-chip-val neg">${fmt(periodCatSummary.marketing || 0)}</div>
+                </div>
+                <div class="fin-cat-chip" style="border-left: 3px solid #f97316;">
+                    <div class="fin-cat-chip-label">🦊 Foxpost & Csomagolás</div>
+                    <div class="fin-cat-chip-val neg">${fmt((periodCatSummary.shipping || 0) + (periodCatSummary.packaging || 0))}</div>
+                </div>
+                <div class="fin-cat-chip" style="border-left: 3px solid #c084fc;">
+                    <div class="fin-cat-chip-label">💼 Könyvelés & Számlázz</div>
+                    <div class="fin-cat-chip-val neg">${fmt((periodCatSummary.accounting || 0) + (periodCatSummary.software || 0))}</div>
+                </div>
+                <div class="fin-cat-chip" style="border-left: 3px solid #eab308;">
+                    <div class="fin-cat-chip-label">🏛️ NAV ÁFA & Adók</div>
+                    <div class="fin-cat-chip-val neg">${fmt(periodCatSummary.tax || 0)}</div>
+                </div>
+                <div class="fin-cat-chip" style="border-left: 3px solid #22c55e;">
+                    <div class="fin-cat-chip-label">💰 Stripe Kifizetés (beérkezett)</div>
+                    <div class="fin-cat-chip-val pos">+${fmt(periodCatSummary.stripe_payout || 0)}</div>
+                </div>
+                <div class="fin-cat-chip" style="border-left: 3px solid #a3e635;">
+                    <div class="fin-cat-chip-label">🏦 Kezdőtőke / Betétek</div>
+                    <div class="fin-cat-chip-val pos">+${fmt(periodCatSummary.deposit || 0)}</div>
+                </div>
+                <div class="fin-cat-chip" style="border-left: 3px solid #4ade80;">
+                    <div class="fin-cat-chip-label">✨ Pro Pénzvisszatérítés</div>
+                    <div class="fin-cat-chip-val pos">+${fmt(periodCatSummary.cashback || 0)}</div>
+                </div>
+            </div>
+
+            <!-- Filter Toolbar -->
+            <div style="background: var(--surface); border: 1px solid var(--border); padding: 1rem; border-radius: 12px; margin-bottom: 1.25rem; display: flex; flex-direction: column; gap: 0.85rem;">
+                <!-- Period Selector -->
+                <div style="display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center;">
+                    <span style="font-size: 0.75rem; color: var(--text-mid); font-weight: 700;">📅 Időszak:</span>
+                    <button class="mkt-tab ${finPeriod === 'all' ? 'active' : ''}" onclick="setFinPeriod('all')">♾️ Kezdetektől (Összes)</button>
+                    <button class="mkt-tab ${finPeriod === '30d' ? 'active' : ''}" onclick="setFinPeriod('30d')">📅 30 nap</button>
+                    <button class="mkt-tab ${finPeriod === '7d' ? 'active' : ''}" onclick="setFinPeriod('7d')">🗓️ 7 nap</button>
+                    <button class="mkt-tab ${finPeriod === '2026-08' ? 'active' : ''}" onclick="setFinPeriod('2026-08')">Augusztus</button>
+                    <button class="mkt-tab ${finPeriod === '2026-07' ? 'active' : ''}" onclick="setFinPeriod('2026-07')">Július</button>
+                    <button class="mkt-tab ${finPeriod === '2026-06' ? 'active' : ''}" onclick="setFinPeriod('2026-06')">Június</button>
+                    <button class="mkt-tab ${finPeriod === '2026-05' ? 'active' : ''}" onclick="setFinPeriod('2026-05')">Május</button>
+                </div>
+
+                <!-- Account & Category Filters + Search -->
+                <div style="display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center;">
+                        <span style="font-size: 0.75rem; color: var(--text-mid); font-weight: 700;">🏦 Forrás:</span>
+                        <select onchange="setFinAccount(this.value)" style="background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: #fff; border-radius: 6px; padding: 0.35rem 0.65rem; font-size: 0.8rem; outline: none;">
+                            <option value="all" ${finAccount === 'all' ? 'selected' : ''}>Összes számla (Revolut + Stripe)</option>
+                            <option value="revolut" ${finAccount === 'revolut' ? 'selected' : ''}>🔵 Csak Revolut Pro</option>
+                            <option value="stripe" ${finAccount === 'stripe' ? 'selected' : ''}>🟢 Csak Stripe</option>
+                        </select>
+
+                        <span style="font-size: 0.75rem; color: var(--text-mid); font-weight: 700; margin-left: 0.4rem;">🏷️ Kategória:</span>
+                        <select onchange="setFinCategory(this.value)" style="background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: #fff; border-radius: 6px; padding: 0.35rem 0.65rem; font-size: 0.8rem; outline: none;">
+                            <option value="all" ${finCategory === 'all' ? 'selected' : ''}>Összes kategória</option>
+                            <option value="marketing" ${finCategory === 'marketing' ? 'selected' : ''}>📢 Marketing (Meta)</option>
+                            <option value="shipping" ${finCategory === 'shipping' ? 'selected' : ''}>🦊 Foxpost Szállítás</option>
+                            <option value="capex" ${finCategory === 'capex' ? 'selected' : ''}>🏅 Éremgyártás (Capex)</option>
+                            <option value="accounting" ${finCategory === 'accounting' ? 'selected' : ''}>💼 Könyvelés</option>
+                            <option value="tax" ${finCategory === 'tax' ? 'selected' : ''}>🏛️ NAV ÁFA</option>
+                            <option value="stripe_payout" ${finCategory === 'stripe_payout' ? 'selected' : ''}>💰 Stripe Kifizetés</option>
+                            <option value="deposit" ${finCategory === 'deposit' ? 'selected' : ''}>🏦 Kezdőtőke</option>
+                        </select>
+                    </div>
+
+                    <div style="flex: 1; min-width: 200px; max-width: 320px;">
+                        <input type="text" placeholder="🔍 Keresés leírás, összeg..." value="${finSearchQuery}" oninput="handleFinSearch(event)" style="width: 100%; background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: #fff; border-radius: 6px; padding: 0.35rem 0.75rem; font-size: 0.8rem; outline: none;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transactions Ledger Table -->
+            <div class="creative-table-container" style="margin-top: 0.5rem;">
+                <div class="creative-table-header">
+                    <div>
+                        <span style="font-weight: 800; font-size: 0.95rem; color: #fff;">📜 Kombinált Pénzügyi Főkönyv</span>
+                        <span style="font-size: 0.75rem; color: var(--text-mid); margin-left: 0.5rem;">(${displayLedger.length} tranzakció)</span>
+                    </div>
+                </div>
+                <div class="creative-table-scroll">
+                    <table class="creative-table">
+                        <thead>
+                            <tr>
+                                <th>Dátum</th>
+                                <th>Számla / Forrás</th>
+                                <th>Kategória</th>
+                                <th>Partner / Leírás</th>
+                                <th>Típus</th>
+                                <th style="text-align:right;">Összeg</th>
+                                <th style="text-align:right;">Díj</th>
+                                <th style="text-align:right;">Nettó Tétel</th>
+                                <th style="text-align:right;">Egyenleg (Záró)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${displayLedger.length === 0 ? `
+                                <tr><td colspan="9" style="text-align:center; padding: 2rem; color: var(--text-mid);">Nincs a szűrésnek megfelelő tranzakció.</td></tr>
+                            ` : displayLedger.map(t => {
+                                const isPos = t.netAmount > 0;
+                                const isNeg = t.netAmount < 0;
+                                const amtColor = isPos ? '#4ade80' : (isNeg ? '#f87171' : '#94a3b8');
+                                const amtSign = isPos ? '+' : '';
+
+                                return `
+                                <tr>
+                                    <td style="font-size: 0.75rem; color: var(--text-mid); font-family: monospace;">${t.dateDisplay}</td>
+                                    <td>
+                                        <span class="fin-badge" style="background: ${t.source === 'revolut' ? 'rgba(59, 130, 246, 0.15)' : 'rgba(34, 197, 94, 0.15)'}; color: ${t.source === 'revolut' ? '#60a5fa' : '#4ade80'}; border: 1px solid ${t.source === 'revolut' ? 'rgba(59, 130, 246, 0.3)' : 'rgba(34, 197, 94, 0.3)'};">
+                                            ${t.sourceLabel}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="fin-badge" style="background: ${t.categoryColor}15; color: ${t.categoryColor}; border: 1px solid ${t.categoryColor}40;">
+                                            ${t.categoryLabel}
+                                        </span>
+                                    </td>
+                                    <td style="font-weight: 600; max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${t.description}">
+                                        ${t.description}
+                                    </td>
+                                    <td style="font-size: 0.75rem; color: var(--text-mid);">${t.type}</td>
+                                    <td style="text-align:right; font-family: monospace; font-weight: 700; color: ${amtColor};">
+                                        ${amtSign}${fmt(t.grossAmount)}
+                                    </td>
+                                    <td style="text-align:right; font-size: 0.75rem; color: var(--text-mid); font-family: monospace;">
+                                        ${t.fee > 0 ? '−' + fmt(t.fee) : '–'}
+                                    </td>
+                                    <td style="text-align:right; font-family: monospace; font-weight: 800; color: ${amtColor};">
+                                        ${amtSign}${fmt(t.netAmount)}
+                                    </td>
+                                    <td style="text-align:right; font-family: monospace; font-size: 0.8rem; color: #fff;">
+                                        ${t.balance !== null && t.balance !== undefined ? fmt(t.balance) : '–'}
+                                    </td>
+                                </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `;
 
         cardsEl.innerHTML = html;
     }
@@ -1462,10 +2496,16 @@
         if (tabBtn) tabBtn.classList.add('active');
 
         const isMkt = filter === 'marketing';
-        document.getElementById('proof-list').style.display   = isMkt ? 'none' : '';
+        const isFin = filter === 'finance';
+        document.getElementById('proof-list').style.display = (isMkt || isFin) ? 'none' : '';
         document.getElementById('section-marketing').style.display = isMkt ? 'block' : 'none';
+        document.getElementById('section-finance').style.display = isFin ? 'block' : 'none';
 
-        if (!isMkt) renderList();
+        if (isFin) {
+            loadFinance();
+        } else if (!isMkt) {
+            renderList();
+        }
     }
 
     function renderList() {

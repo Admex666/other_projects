@@ -1,6 +1,7 @@
 import os
 import sys
 import json
+import csv
 import urllib.request
 import urllib.parse
 import urllib.error
@@ -459,11 +460,83 @@ def run_for_date(target_date: date):
             f"  = Net Cashflow:      {cf_sign}{fmtf(net_cashflow)} [{cf_icon}]\n"
         )
 
+        # Collect for CSV export
+        row["cpa"]  = cpa
+        row["roas"] = roas
+
+    # Automatically synchronize daily rows into meta_kreativ_napi_riport.csv
+    update_creative_csv(rows, target_date)
+
     print("\n5/5  Pushbullet értesítés küldése...")
     pushbullet_lines.append("\nvitastepsss.vercel.app/admin.html")
     pushbullet_send(f"VitaSteps {target_date}", "\n".join(pushbullet_lines))
     print("   ✅ Értesítés elküldve!\n")
     print(f"=== Kész: {target_date} ===\n")
+
+
+def update_creative_csv(rows, target_date):
+    csv_paths = [
+        os.path.join(PROJECT_ROOT, 'meta_kreativ_napi_riport.csv'),
+        os.path.join(PROJECT_ROOT, 'landing_predikalo1', 'meta_kreativ_napi_riport.csv'),
+        os.path.join(os.getcwd(), 'landing_predikalo1', 'meta_kreativ_napi_riport.csv'),
+        os.path.join(os.getcwd(), 'meta_kreativ_napi_riport.csv')
+    ]
+    target_csv = None
+    for p in csv_paths:
+        if os.path.exists(os.path.dirname(os.path.abspath(p))):
+            target_csv = p
+            break
+    if not target_csv:
+        target_csv = os.path.join(PROJECT_ROOT, 'meta_kreativ_napi_riport.csv')
+
+    fieldnames = [
+        'Datum', 'Kampany', 'Hirdetes_Sorozat', 'Kreativ_Nev', 'Hirdetes_ID',
+        'Koltes_HUF', 'Megjelenes', 'Eleres', 'Gyakorisag', 'Osszes_Kattintas',
+        'Link_Kattintas', 'CTR_Szazalek', 'CPC_HUF', 'CPM_HUF', 'Vasarlas_DB',
+        'Bevetel_HUF', 'CPA_HUF', 'ROAS'
+    ]
+
+    target_d_str = target_date.isoformat()
+    existing_rows = []
+
+    if os.path.exists(target_csv):
+        try:
+            with open(target_csv, 'r', encoding='utf-8-sig') as f:
+                reader = csv.DictReader(f, delimiter=';')
+                for r in reader:
+                    if r.get('Datum') != target_d_str:
+                        existing_rows.append(r)
+        except Exception as e:
+            print(f"Figyelmeztetés a CSV olvasásakor: {e}")
+
+    for r in rows:
+        existing_rows.append({
+            'Datum': target_d_str,
+            'Kampany': r.get('campaign_name', ''),
+            'Hirdetes_Sorozat': r.get('adset_name', ''),
+            'Kreativ_Nev': r.get('ad_name', ''),
+            'Hirdetes_ID': r.get('ad_id', ''),
+            'Koltes_HUF': int(round(float(r.get('spend', 0)))),
+            'Megjelenes': int(r.get('impressions', 0)),
+            'Eleres': int(r.get('reach', 0)),
+            'Gyakorisag': round(float(r.get('frequency', 0)), 2),
+            'Osszes_Kattintas': int(r.get('clicks', 0)),
+            'Link_Kattintas': int(r.get('link_clicks', 0)),
+            'CTR_Szazalek': round(float(r.get('ctr', 0)), 2),
+            'CPC_HUF': int(round(float(r.get('cpc', 0)))),
+            'CPM_HUF': int(round(float(r.get('cpm', 0)))),
+            'Vasarlas_DB': int(r.get('purchases', 0)),
+            'Bevetel_HUF': int(round(float(r.get('revenue', 0)))),
+            'CPA_HUF': int(round(float(r.get('cpa', 0)))),
+            'ROAS': round(float(r.get('roas', 0)), 2)
+        })
+
+    existing_rows.sort(key=lambda x: (x.get('Datum', ''), -int(x.get('Koltes_HUF', 0))), reverse=True)
+    with open(target_csv, 'w', newline='', encoding='utf-8-sig') as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames, delimiter=';')
+        writer.writeheader()
+        writer.writerows(existing_rows)
+    print(f"   📁 Napi kreatív riport CSV automatikusan frissítve ({len(existing_rows)} sor): {target_csv}")
 
 
 def main():

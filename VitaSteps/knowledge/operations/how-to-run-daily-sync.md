@@ -11,18 +11,26 @@ code:
 related:
   - "[[meta-sync-pipeline|Meta Sync Pipeline]]"
   - "[[foxpost]]"
+  - "[[ADR-006-multicampaign-unit-economics|ADR-006 Multi-Campaign Unit Economics]]"
 ---
 
 # Operation: How to Run Daily Sync & Marketing Reports
 
 Daily tracking is automated via GitHub Actions, but can also be executed on demand from your terminal:
 
-## 1. Syncing Meta Marketing Insights & Exporting CSV
-Run in PowerShell:
+## 1. Syncing Meta Marketing Insights & Updating CSV
+Run in PowerShell (from repository root or `landing_predikalo1/`):
 ```powershell
+# Sync yesterday's metrics
 python landing_predikalo1/scripts/fetch_meta_daily.py
+
+# Backfill the last 7 days after launching new campaigns or creatives
+python landing_predikalo1/scripts/fetch_meta_daily.py --backfill=7
+
+# Sync a specific date
+python landing_predikalo1/scripts/fetch_meta_daily.py --date=2026-08-30
 ```
-* **Output:** Fetches latest spend from Meta Marketing API, calculates exact CPA/ROAS against Supabase orders, updates table `meta_daily_metrics`, and rewrites `meta_kreativ_napi_riport.csv`.
+* **Output:** Fetches latest ad-level spend from Meta Marketing API, matches with Supabase orders, updates table `meta_daily_metrics`, automatically updates `meta_kreativ_napi_riport.csv`, and sends a Pushbullet summary notification.
 
 ## 2. Syncing Foxpost Package Statuses & Sending Reviews
 ```powershell

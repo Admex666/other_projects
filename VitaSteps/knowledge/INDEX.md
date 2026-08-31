@@ -50,6 +50,7 @@ Integrated technical components and infrastructure.
 * [[admin-panel|Admin Panel]]: Web dashboard (`admin.html`) for proofs, shipments, and live analytics.
 * [[supabase|Supabase]]: PostgreSQL schema, Row-Level Security (RLS) policies, database triggers.
 * [[stripe|Stripe]]: Payment processing, session metadata, webhook-free fulfillment.
+* [[revolut|Revolut Pro]]: Business bank account, expense classification, and cashflow ledger.
 * [[foxpost|Foxpost]]: Parcel locker automated API, shipment status lifecycle & tracking.
 * [[szamlazz-hu|Számlázz.hu]]: Automated NAV-compliant electronic invoice generation.
 * [[meta-ads|Meta Ads]]: Marketing API, Ad Sets, UTM tracking, creative performance analytics.
@@ -78,6 +79,8 @@ Durable architectural and strategic decisions.
 * [[ADR-003-unified-campaign-config|ADR-003 Unified Campaign Config]]: Centralizing campaign settings in `config/campaigns.json`.
 * [[ADR-004-consolidated-shipping|ADR-004 Consolidated Shipping]]: Multi-medal & cross-campaign package merging.
 * [[ADR-005-strict-rls-security|ADR-005 Strict RLS Security]]: Supabase database hardening and admin endpoints.
+* [[ADR-006-multicampaign-unit-economics|ADR-006 Multi-Campaign Unit Economics]]: Challenge batch capex isolation & ad-level creative sync pipeline.
+* [[ADR-007-revolut-stripe-cashflow-integration|ADR-007 Revolut & Stripe Cashflow]]: Unifying live Stripe balance and historical Revolut Pro ledger.
 
 ---
 
