@@ -1,0 +1,20 @@
+{
+  "useMarkdownLinks": false,
+  "newLinkFormat": "shortest",
+  "attachmentFolderPath": "assets",
+  "userIgnoreFilters": [
+    "node_modules",
+    ".git",
+    ".vercel",
+    "archive",
+    "scratch",
+    "data",
+    "static",
+    "templates",
+    "app",
+    "tests",
+    "api",
+    "notebooks",
+    "scripts"
+  ]
+}

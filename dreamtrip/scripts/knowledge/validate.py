@@ -4,16 +4,19 @@ import sys
 import yaml
 
 KNOWLEDGE_DIR = os.path.abspath("knowledge")
+GOVERNANCE_DIR = os.path.abspath("governance")
+WORK_DIR = os.path.abspath("work")
 CONTEXT_DIR = os.path.abspath("context")
 
 VALID_TYPES = {
     "entity", "concept", "process", "system", 
-    "metric", "decision", "learning", "operation", "strategy"
+    "metric", "decision", "learning", "operation", "strategy",
+    "strategic_concept", "governance", "work_item"
 }
 
-
 VALID_STATUSES = {
-    "active", "draft", "deprecated", "superseded", "archived", "accepted"
+    "active", "draft", "deprecated", "superseded", "archived", "accepted",
+    "in_progress", "planned", "completed"
 }
 
 def parse_frontmatter(content):
@@ -37,7 +40,7 @@ def parse_frontmatter(content):
 
 def find_all_markdown_files():
     files = []
-    for root_dir in [KNOWLEDGE_DIR, CONTEXT_DIR]:
+    for root_dir in [KNOWLEDGE_DIR, GOVERNANCE_DIR, WORK_DIR, CONTEXT_DIR]:
         if not os.path.exists(root_dir):
             continue
         for root, _, filenames in os.walk(root_dir):
@@ -72,12 +75,10 @@ def main():
         with open(fpath, "r", encoding="utf-8") as f:
             content = f.read()
 
-        # Skip INDEX.md from mandatory frontmatter
-        if os.path.basename(fpath) == "INDEX.md":
-            continue
-
         frontmatter, body = parse_frontmatter(content)
         if not frontmatter:
+            if os.path.basename(fpath) == "INDEX.md":
+                continue
             warnings.append(f"[{rel_path}] Missing or invalid YAML frontmatter.")
             continue
 
@@ -98,6 +99,20 @@ def main():
             # Also add hyphenated version
             slug = node_name.lower().replace(" ", "-")
             nodes_by_name[slug] = rel_path
+
+        aliases = frontmatter.get("aliases", [])
+        if isinstance(aliases, list):
+            for al in aliases:
+                al_str = str(al).strip()
+                if al_str:
+                    nodes_by_id[al_str] = {"file": rel_path, "meta": frontmatter, "content": content}
+                    nodes_by_id[al_str.lower()] = {"file": rel_path, "meta": frontmatter, "content": content}
+                    nodes_by_name[al_str.lower()] = rel_path
+
+        # Check substantive content (No empty placeholder documents)
+        clean_body = body.strip()
+        if len(clean_body) < 120:
+            errors.append(f"[{rel_path}] Document body is too sparse or empty ({len(clean_body)} chars). Substantive, domain-rich content is required (>= 120 chars).")
 
         if node_type not in VALID_TYPES:
             errors.append(f"[{rel_path}] Invalid type '{node_type}'. Expected one of: {VALID_TYPES}")

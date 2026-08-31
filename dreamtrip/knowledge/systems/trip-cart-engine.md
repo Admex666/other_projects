@@ -11,6 +11,10 @@ source:
   ref: static/js/trip_cart.js
 
 code:
+  - static/js/trip/trip_store.js
+  - static/js/trip/trip_calculator.js
+  - static/js/trip/trip_report.js
+  - static/js/trip/trip_drawer.js
   - static/js/trip_cart.js
   - static/css/trip_cart.css
   - templates/base.html
@@ -30,5 +34,5 @@ A `TripEngine` (elérhető a `window.TripCart` globális változón) biztosítja
 
 * **Lebegő Sáv (Floating Bar)**: Minden oldalon mutatja az aktív célállomást, járatot, szállást, az összköltséget és a következő lépés CTA gombot.
 * **Oldalsó Fiók (Slide-over Drawer)**: Lépésjelzővel (Stepper), kártyás összefoglalóval és tételes Numbeo kalkulációval.
-* **1-kattintásos B2B Ajánlat Export**: Nyomtatható és PDF-be menthető professzionális ajánlat generálása.
+* **1-kattintásos Ajánlat Export**: Nyomtatható és PDF-be menthető professzionális ajánlat generálása.
 * **Backend szinkronizáció**: Automatikus `POST /api/trip/sync` mentés minden módosításkor.

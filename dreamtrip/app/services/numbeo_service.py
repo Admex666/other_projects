@@ -110,30 +110,88 @@ def get_city_cost_and_safety(city_name: str, country_name: str = "", region: str
         else:
             matched = REGIONAL_FALLBACK["default"]
 
-    # Fogyasztói kosár pontos kiszámítása
-    inexpensive_meals = matched["meal_inexpensive"] * 1.5
-    midrange_meals = matched["meal_midrange"] * 0.5
-    drinks_coffee = matched["coffee"] * 2.0
-    transit = matched["transport_ticket"] * 2.0
+    inexpensive = float(matched["meal_inexpensive"])
+    midrange = float(matched["meal_midrange"])
+    coffee = float(matched["coffee"])
+    transit_ticket = float(matched["transport_ticket"])
+    transit_daily = round(transit_ticket * 2.0, 1)
+
+    # 1. Takarékos (Budget): 0.5 market reggeli + 1 olcsó ebéd + 1 olcsó vacsora + 1 kávé
+    food_budget = round(inexpensive * 2.5 + coffee * 1.0, 1)
     
-    daily_food_eur = round(inexpensive_meals + midrange_meals + drinks_coffee, 1)
-    daily_cost_eur = round(inexpensive_meals + midrange_meals + drinks_coffee + transit, 1)
-    safety_index = round(float(matched["safety_index"]), 1)
-    
+    # 2. Átlagos (Standard - Default): 1 reggeli/market + 1 olcsó ebéd + 0.5 mid-range vacsora (1 főre) + 1 kávé
+    food_standard = round(inexpensive * 2.0 + midrange * 0.5 + coffee * 1.0, 1)
+
+    # 3. Kényelmes (Comfort): 1 kávézós reggeli + 0.5 mid-range ebéd + 0.5 mid-range vacsora + 2 kávé/ital
+    food_comfort = round(inexpensive * 1.0 + midrange * 1.0 + coffee * 2.0, 1)
+
     eur_rate = get_eur_huf_rate()
-    daily_food_huf = round(daily_food_eur * eur_rate)
-    daily_cost_huf = round(daily_cost_eur * eur_rate)
+    safety_index = round(float(matched["safety_index"]), 1)
+
+    profiles = {
+        "budget": {
+            "name": "Takarékos",
+            "icon": "🥪",
+            "description": "Pékség/reggeli + olcsó ebéd & vacsora + 1 kávé",
+            "daily_food_eur": food_budget,
+            "daily_food_huf": round(food_budget * eur_rate),
+            "daily_transit_eur": transit_daily,
+            "daily_transit_huf": round(transit_daily * eur_rate),
+            "daily_total_eur": round(food_budget + transit_daily, 1),
+            "daily_total_huf": round((food_budget + transit_daily) * eur_rate),
+            "formula": "2.5 × olcsó étkezés + 1 × kávé + 2 × vonaljegy"
+        },
+        "standard": {
+            "name": "Átlagos",
+            "icon": "🍝",
+            "description": "Egyszerű reggeli + olcsó ebéd + 3-fogásos vacsora (1 fő) + 1 kávé",
+            "daily_food_eur": food_standard,
+            "daily_food_huf": round(food_standard * eur_rate),
+            "daily_transit_eur": transit_daily,
+            "daily_transit_huf": round(transit_daily * eur_rate),
+            "daily_total_eur": round(food_standard + transit_daily, 1),
+            "daily_total_huf": round((food_standard + transit_daily) * eur_rate),
+            "formula": "2 × olcsó étkezés + 0.5 × 2-személyes vacsora + 1 × kávé + 2 × vonaljegy"
+        },
+        "comfort": {
+            "name": "Kényelmes",
+            "icon": "🍷",
+            "description": "Kávézós reggeli + beülős ebéd & vacsora + 2 kávé/ital",
+            "daily_food_eur": food_comfort,
+            "daily_food_huf": round(food_comfort * eur_rate),
+            "daily_transit_eur": transit_daily,
+            "daily_transit_huf": round(transit_daily * eur_rate),
+            "daily_total_eur": round(food_comfort + transit_daily, 1),
+            "daily_total_huf": round((food_comfort + transit_daily) * eur_rate),
+            "formula": "1 × olcsó étkezés + 1 × 2-személyes étkezés + 2 × kávé + 2 × vonaljegy"
+        }
+    }
+
+    # Alapértelmezett a Standard profil
+    selected_profile = profiles["standard"]
+    daily_food_eur = selected_profile["daily_food_eur"]
+    daily_transit_eur = selected_profile["daily_transit_eur"]
+    daily_cost_eur = selected_profile["daily_total_eur"]
+    daily_food_huf = selected_profile["daily_food_huf"]
+    daily_transit_huf = selected_profile["daily_transit_huf"]
+    daily_cost_huf = selected_profile["daily_total_huf"]
 
     breakdown = {
-        "meal_inexpensive": matched["meal_inexpensive"],
-        "meal_midrange": matched["meal_midrange"],
-        "coffee": matched["coffee"],
-        "transport_ticket": matched["transport_ticket"],
+        "meal_inexpensive": inexpensive,
+        "meal_midrange": midrange,
+        "coffee": coffee,
+        "transport_ticket": transit_ticket,
         "daily_food_eur": daily_food_eur,
         "daily_food_huf": daily_food_huf,
+        "daily_transit_eur": daily_transit_eur,
+        "daily_transit_huf": daily_transit_huf,
         "daily_cost_eur": daily_cost_eur,
         "daily_cost_huf": daily_cost_huf,
-        "safety_index": safety_index
+        "safety_index": safety_index,
+        "eur_rate": eur_rate,
+        "active_profile": "standard",
+        "profiles": profiles,
+        "formula_text": selected_profile["formula"]
     }
 
     return daily_cost_eur, safety_index, breakdown

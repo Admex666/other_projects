@@ -16,7 +16,18 @@ code:
   - app/main.py
   - app/scrapers/accommodation_scraper.py
   - templates/planner/planner_wizard.html
+  - static/js/planner/planner_state.js
+  - static/js/planner/planner_intake.js
+  - static/js/planner/planner_destinations.js
+  - static/js/planner/planner_flights.js
+  - static/js/planner/planner_stays.js
+  - static/js/planner/planner_summary.js
   - static/js/planner_wizard.js
+  - static/js/decision_dna/dna_math.js
+  - static/js/decision_dna/dna_dest_step.js
+  - static/js/decision_dna/dna_flight_step.js
+  - static/js/decision_dna/dna_stay_step.js
+  - static/js/decision_dna/dna_summary_step.js
   - static/js/decision_dna_wizard.js
   - static/js/components.js
 
@@ -54,7 +65,7 @@ A **Master Travel Planner** a platform legmagasabb szintű folyamata, amely öss
 3. Lépés: Szállás kiválasztása
    (Cozycozy élő szállásaggregáció a pontos éjszakaszámra + kategória/típus/reggeli/felszereltség szűrés)
          ↓ (🏨 Kiválasztás -> Összesített terv)
-4. Lépés: Összesített Terv & B2B Ajánlat
+4. Lépés: Összesített Terv
    (Tételes Numbeo matematikai költségbontás + 1-kattintásos PDF / Nyomtatás)
 ```
 

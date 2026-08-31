@@ -38,6 +38,7 @@ window.initAdvisorDatePicker = function(config) {
         hiddenEndInputId,
         defaultStartDays = 7,
         defaultDurationDays = 7,
+        minDate = "today",
         onDateChange
     } = config;
 
@@ -67,13 +68,13 @@ window.initAdvisorDatePicker = function(config) {
         if (startDate && endDate) {
             const nights = Math.max(1, Math.round((endDate - startDate) / (1000 * 60 * 60 * 24)));
             if (primaryLabel) primaryLabel.innerText = `${formatHuDate(startDate)} — ${formatHuDate(endDate)}`;
-            if (subLabel) subLabel.innerText = `${nights} éjszaka • ${startDate.getFullYear()}`;
+            if (subLabel) subLabel.innerText = `${nights} napos időablak • ${startDate.getFullYear()}`;
             if (startInput) startInput.value = formatIsoDate(startDate);
             if (endInput) endInput.value = formatIsoDate(endDate);
             if (onDateChange) onDateChange(formatIsoDate(startDate), formatIsoDate(endDate), nights);
         } else if (startDate) {
-            if (primaryLabel) primaryLabel.innerText = `${formatHuDate(startDate)} — Válassz visszaútat`;
-            if (subLabel) subLabel.innerText = "Kattints a visszaút dátumára";
+            if (primaryLabel) primaryLabel.innerText = `${formatHuDate(startDate)} — Válassz záró dátumot`;
+            if (subLabel) subLabel.innerText = "Kattints a záró dátumra";
             if (startInput) startInput.value = formatIsoDate(startDate);
         }
     }
@@ -97,7 +98,7 @@ window.initAdvisorDatePicker = function(config) {
 
     const fp = flatpickr(triggerEl, {
         mode: "range",
-        minDate: "today",
+        minDate: minDate,
         dateFormat: "Y-m-d",
         locale: (typeof flatpickr !== 'undefined' && flatpickr.l10ns && flatpickr.l10ns.hu) ? flatpickr.l10ns.hu : 'default',
         defaultDate: [initialStart, initialEnd],
@@ -110,6 +111,8 @@ window.initAdvisorDatePicker = function(config) {
             }
         }
     });
+
+    fp.updateDisplay = updateDisplay;
 
     // Run initial display update
     updateDisplay(initialStart, initialEnd);

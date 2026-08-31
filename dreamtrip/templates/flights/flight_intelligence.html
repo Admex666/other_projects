@@ -33,7 +33,7 @@
             <span>Döntéstámogató Repülőjegy Kereső</span>
         </div>
         <h1 class="page-title" style="margin-bottom: 6px;">Flight Intelligence</h1>
-        <p class="page-subtitle" style="margin: 0;">Valós idejű aggregáció, többkritériumos AHP páros mátrix és PROMETHEE II rangsorolás.</p>
+        <p class="page-subtitle" style="margin: 0;">Valós idejű repülőjegy keresés és intelligens rangsorolás a te prioritásaid szerint.</p>
     </div>
 
     <!-- ÁTADÁS BANNER (HA DESTINATION MATCHERBŐL ÉRKEZETT) -->
@@ -479,12 +479,12 @@
                                 </svg>
                             </div>
                             <h2 style="color: var(--text-main); font-size: 22px; font-weight: 800; margin-bottom: 8px;">Járatok sikeresen összegyűjtve!</h2>
-                            <p style="font-size: 15px; color: var(--text-secondary); margin-bottom: 24px;">Összesen <strong style="color: var(--primary); font-family: var(--font-mono); font-size: 17px;">${data.count}</strong> valós retúr járatkombináció áll készen az AHP döntési elemzésre.</p>
+                            <p style="font-size: 15px; color: var(--text-secondary); margin-bottom: 24px;">Összesen <strong style="color: var(--primary); font-family: var(--font-mono); font-size: 17px;">${data.count}</strong> valós retúr járatkombináció áll készen az elemzésre.</p>
                             
                             <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
                                 <button onclick="window.location.href='/flight-intelligence'" class="btn btn-secondary" style="padding: 12px 22px; border-radius: 12px;">Új keresés</button>
                                 <button onclick="window.location.href='/flight-intelligence-filter'" class="btn btn-primary" style="padding: 12px 28px; border-radius: 12px; font-size: 15px;">
-                                    <span>Tovább a preferenciák és AHP beállításához</span>
+                                    <span>Tovább a szempontok és prioritások beállításához</span>
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <line x1="5" y1="12" x2="19" y2="12"></line>
                                         <polyline points="12 5 19 12 12 19"></polyline>

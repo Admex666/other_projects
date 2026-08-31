@@ -1,59 +1,50 @@
 {% extends "base.html" %}
 
-{% block title %}Optivoya — Kezdőlap{% endblock %}
+{% block title %}Optivoya — Speciális Keresők Hub{% endblock %}
 
 {% block content %}
 <div class="page-header centered">
-    <h1 class="page-title">Mi az utazási célod?</h1>
-    <p class="page-subtitle">Válaszd ki az intelligens döntéstámogató modult a munkafolyamatodhoz</p>
+    <div style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; background: rgba(37, 99, 235, 0.08); border-radius: 20px; font-size: 12px; font-weight: 700; color: var(--primary); margin-bottom: 8px;">
+        <span>🛠️ Szakértői Keresőmodulok</span>
+    </div>
+    <h1 class="page-title">Speciális Keresők & Eszközök</h1>
+    <p class="page-subtitle">Válassz a dedikált, mélyreható döntéstámogató keresőmotorok közül, vagy használd az egybefüggő Master Plannert</p>
 </div>
 
 <style>
     .master-hero-banner {
-        background: linear-gradient(135deg, rgba(37, 99, 235, 0.12) 0%, rgba(16, 185, 129, 0.08) 100%);
-        border: 2px solid var(--primary);
-        border-radius: 24px;
-        padding: 36px 32px;
+        background: var(--bg-surface);
+        border: 1.5px solid var(--primary);
+        border-radius: var(--radius-lg);
+        padding: 32px 30px;
         margin-bottom: 32px;
-        box-shadow: 0 10px 30px rgba(37, 99, 235, 0.12);
+        box-shadow: var(--shadow-md);
         display: flex;
         justify-content: space-between;
         align-items: center;
         flex-wrap: wrap;
         gap: 24px;
         position: relative;
-        overflow: hidden;
-    }
-    .master-hero-banner::after {
-        content: "";
-        position: absolute;
-        top: -50%;
-        right: -10%;
-        width: 300px;
-        height: 300px;
-        background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
-        opacity: 0.6;
-        pointer-events: none;
     }
     .btn-hero-start {
         display: inline-flex;
         align-items: center;
         gap: 10px;
-        padding: 16px 36px;
+        padding: 14px 28px;
         background: var(--primary);
         color: #ffffff !important;
-        font-size: 16px;
-        font-weight: 800;
-        border-radius: 16px;
+        font-size: 15px;
+        font-weight: 700;
+        border-radius: var(--radius-md);
         text-decoration: none;
-        box-shadow: 0 8px 24px var(--accent-glow);
-        transition: all 0.25s ease;
+        box-shadow: var(--shadow-md);
+        transition: all var(--transition-fast);
         white-space: nowrap;
     }
     .btn-hero-start:hover {
         transform: translateY(-2px);
-        box-shadow: 0 12px 32px var(--accent-glow);
-        background: #0369a1;
+        box-shadow: var(--shadow-lg);
+        background: var(--primary-hover);
     }
     .intent-grid {
         display: grid;
@@ -153,19 +144,19 @@
 <!-- MASTER TRAVEL PLANNER HERO CARD -->
 <div class="master-hero-banner">
     <div style="max-width: 680px;">
-        <div style="display: inline-flex; align-items: center; gap: 6px; background: var(--accent-glow); color: var(--primary); font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; margin-bottom: 12px;">
-            ✨ Új: End-to-End Master Planner
+        <div style="display: inline-flex; align-items: center; gap: 6px; background: var(--primary-light); color: var(--primary); font-size: 11.5px; font-weight: 700; padding: 4px 10px; border-radius: var(--radius-sm); text-transform: uppercase; margin-bottom: 12px; border: 1px solid var(--primary-subtle);">
+            <span>Integrált Munkafolyamat</span>
         </div>
-        <h2 style="font-size: 26px; font-weight: 900; color: var(--text-main); margin: 0 0 10px; line-height: 1.25;">
-            Teljes Utazás Tervezése 1 Folyamatban
+        <h2 style="font-size: 24px; font-weight: 800; color: var(--text-main); margin: 0 0 10px; line-height: 1.25;">
+            Teljes Utazás Tervezése Egyetlen Folyamatban
         </h2>
-        <p style="font-size: 14.5px; color: var(--text-secondary); margin: 0; line-height: 1.6;">
-            Add meg a preferenciáidat az elején: a rendszer automatikusan összeköti a desztinációt, a repülőjegyet és a szállást, miközben minden lépésnél szabadon finomhangolhatod a feltételeket.
+        <p style="font-size: 14px; color: var(--text-secondary); margin: 0; line-height: 1.6;">
+            A Master Planner összekapcsolja a desztináció kiválasztását, a repülőjegy-keresést, a szállásfoglalást és a költségbecslést egy folyamatos, 4-lépéses döntési láncban.
         </p>
     </div>
     <div>
         <a href="/planner" class="btn-hero-start">
-            <span>🚀 Teljes Út Megtervezése →</span>
+            <span>Tervező indítása →</span>
         </a>
     </div>
 </div>
@@ -180,7 +171,7 @@
                 </svg>
             </div>
             <h2 class="intent-card-title">Flight Intelligence</h2>
-            <p class="intent-card-desc">Intelligens járatkeresés személyre szabott kritériumokkal és AHP / PROMETHEE II döntéstámogatással.</p>
+            <p class="intent-card-desc">Járatkeresés a te szempontjaid szerint: ár, repülési idő és indulási időpontok intelligens rangsorolásával.</p>
         </div>
         <div class="intent-card-cta">
             <span>Járatkereső indítása</span>
