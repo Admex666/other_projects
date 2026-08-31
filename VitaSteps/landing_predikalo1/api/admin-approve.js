@@ -160,10 +160,45 @@ module.exports = async (req, res) => {
 
             if (runErr) throw runErr;
 
-            return res.status(200).json({ success: true, message: 'Shipments marked as shipped.' });
+        } else if (action === 'update_shipment') {
+            const { phone, parcel_id, parcel_name, method, home_address } = req.body;
+            
+            // 1. Update shipments table
+            const updatePayload = {};
+            if (phone !== undefined) updatePayload.phone = phone;
+            if (parcel_id !== undefined) updatePayload.parcel_id = parcel_id;
+            if (parcel_name !== undefined) updatePayload.parcel_name = parcel_name;
+            if (method !== undefined) updatePayload.method = method;
+            if (home_address !== undefined) updatePayload.home_address = home_address;
+
+            const { error: shipErr } = await supabase
+                .from('shipments')
+                .update(updatePayload)
+                .eq('run_id', run_id);
+
+            if (shipErr) throw shipErr;
+
+            // 2. Also update runner phone if provided
+            if (phone) {
+                const { data: runData } = await supabase
+                    .from('runs')
+                    .select('runner_id')
+                    .eq('id', run_id)
+                    .single();
+
+                if (runData && runData.runner_id) {
+                    await supabase
+                        .from('runners')
+                        .update({ phone: phone })
+                        .eq('id', runData.runner_id);
+                }
+            }
+
+        } else if (action === 'ping') {
+            return res.status(200).json({ success: true, message: 'Pong' });
 
         } else {
-            return res.status(400).json({ error: 'Invalid action. Use "approve", "reject" or "ship".' });
+            return res.status(400).json({ error: 'Invalid action. Use "approve", "reject", "ship", "update_shipment" or "ping".' });
         }
     } catch (err) {
         console.error('Admin action error:', err);

@@ -81,6 +81,7 @@ Durable architectural and strategic decisions.
 * [[ADR-005-strict-rls-security|ADR-005 Strict RLS Security]]: Supabase database hardening and admin endpoints.
 * [[ADR-006-multicampaign-unit-economics|ADR-006 Multi-Campaign Unit Economics]]: Challenge batch capex isolation & ad-level creative sync pipeline.
 * [[ADR-007-revolut-stripe-cashflow-integration|ADR-007 Revolut & Stripe Cashflow]]: Unifying live Stripe balance and historical Revolut Pro ledger.
+* [[ADR-008-foxpost-batch-resilience|ADR-008 Foxpost Batch Resilience]]: Pre-validation, phone number sanitization, and batch error isolation.
 
 ---
 

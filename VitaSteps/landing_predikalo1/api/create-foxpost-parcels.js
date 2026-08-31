@@ -5,15 +5,35 @@ const supabase = createClient(
     process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-function formatPhone(phone) {
-    if (!phone) return '';
-    let cleaned = phone.replace(/\D/g, '');
+function formatPhone(phone, fallbackText = '') {
+    let raw = phone ? String(phone).trim() : '';
+
+    // If phone is not a valid sequence of digits, attempt to extract from fallbackText
+    if (!raw || !raw.match(/\d/)) {
+        if (fallbackText) {
+            const m = String(fallbackText).match(/(?:(?:\+|00)?36|06)[\s\-]?[1-9]\d[\s\-]?\d{3}[\s\-]?\d{3,4}/);
+            if (m) raw = m[0];
+        }
+    }
+
+    if (!raw) return null;
+
+    let cleaned = raw.replace(/\D/g, '');
+    if (cleaned.startsWith('0036')) {
+        cleaned = cleaned.substring(2);
+    }
     if (cleaned.startsWith('06')) {
         cleaned = '36' + cleaned.substring(2);
     }
-    if (!cleaned.startsWith('36') && cleaned.length === 9) {
+    if (!cleaned.startsWith('36') && (cleaned.length === 8 || cleaned.length === 9)) {
         cleaned = '36' + cleaned;
     }
+
+    // Hungarian mobile numbers standard format: +36 (20|30|70|...) XXXXXXX -> length 11 with country code
+    if (cleaned.length < 10 || cleaned.length > 12) {
+        return null;
+    }
+
     return `+${cleaned}`;
 }
 
@@ -37,10 +57,10 @@ module.exports = async (req, res) => {
     }
 
     try {
-        // 1. Fetch runs and shipments from Supabase
+        // 1. Fetch runs, runners, and shipments from Supabase
         const { data: runs, error: fetchErr } = await supabase
             .from('runs')
-            .select('*, runners(name, email, phone), shipments(*)')
+            .select('*, runners(name, email, phone, billing_address), shipments(*)')
             .in('id', run_ids);
 
         if (fetchErr) throw fetchErr;
@@ -48,13 +68,13 @@ module.exports = async (req, res) => {
             return res.status(404).json({ error: 'No matching runs found' });
         }
 
-        // 2. Group runs into consolidated packages
+        // 2. Group runs into consolidated packages (multi-medal / ship_together)
         const groups = [];
         for (const run of runs) {
             const runner = run.runners || {};
             const shipment = Array.isArray(run.shipments) ? (run.shipments[0] || {}) : (run.shipments || {});
 
-            // Skip if already shipped (to prevent duplicate parcel creation on Foxpost)
+            // Skip if already shipped
             if (shipment.shipped) {
                 console.log(`Skipping already shipped run: ${run.serial_number}`);
                 continue;
@@ -62,20 +82,14 @@ module.exports = async (req, res) => {
 
             const method = shipment.method || run.shipping_method || 'foxpost';
             if (method !== 'foxpost') {
-                console.log(`Skipping home delivery run ${run.serial_number} from direct Foxpost API upload`);
-                continue; // Foxpost bulk API only supports parcel lockers
-            }
-
-            const destination = shipment.parcel_id || run.parcel_id || '';
-            if (!destination) {
-                console.warn(`No destination locker ID found for run ${run.serial_number}`);
+                console.log(`Skipping home delivery run ${run.serial_number} from direct Foxpost locker API`);
                 continue;
             }
 
+            const destination = shipment.parcel_id || run.parcel_id || '';
             const email = (runner.email || '').toLowerCase().trim();
             const shipTogether = (run.ship_together_with || '').toLowerCase().trim();
 
-            // Try to find an existing group that matches
             let foundGroup = null;
             for (const g of groups) {
                 const match = g.some(other => {
@@ -83,15 +97,13 @@ module.exports = async (req, res) => {
                     const otherShipment = Array.isArray(other.shipments) ? (other.shipments[0] || {}) : (other.shipments || {});
                     const otherDest = otherShipment.parcel_id || other.parcel_id || '';
 
-                    // Destination locker must match
-                    if (destination !== otherDest) return false;
+                    if (destination && otherDest && destination !== otherDest) return false;
 
                     const otherEmail = (otherRunner.email || '').toLowerCase().trim();
                     const otherShipTogether = (other.ship_together_with || '').toLowerCase().trim();
 
-                    // Same email, or bidirectional ship_together_with link
                     return (
-                        email === otherEmail ||
+                        (email && otherEmail && email === otherEmail) ||
                         (shipTogether && shipTogether === otherEmail) ||
                         (otherShipTogether && otherShipTogether === email) ||
                         (shipTogether && otherShipTogether && shipTogether === otherShipTogether)
@@ -111,40 +123,59 @@ module.exports = async (req, res) => {
             }
         }
 
-        // 3. Build parcel creation payload for Foxpost API
-        const parcelsPayload = [];
-        const runMap = new Map(); // to lookup runs by serial number later
+        // 3. Build & Pre-validate parcel creation payloads
+        const validParcelsPayload = [];
+        const failedParcels = [];
+        const runMap = new Map();
 
         for (const group of groups) {
-            // Representative run (we take the first run as the primary contact)
             const primaryRun = group[0];
             const primaryRunner = primaryRun.runners || {};
             const primaryShipment = Array.isArray(primaryRun.shipments) ? (primaryRun.shipments[0] || {}) : (primaryRun.shipments || {});
+            const refCode = group.map(r => r.serial_number).join(', ');
 
-            // Recipient name: always the first member only
             let recipientName = primaryRun.name || primaryRunner.name || 'Ismeretlen';
             if (recipientName.length > 50) {
                 recipientName = recipientName.substring(0, 47) + '...';
             }
 
-            // Recipient email: first person's email
             const email = primaryRunner.email || '';
 
-            // Recipient phone: find a valid phone in the group
-            let rawPhone = '';
+            // Find valid phone across the group (checking shipment, runner phone, and billing_address fallback)
+            let phone = null;
             for (const r of group) {
+                const rRunner = r.runners || {};
                 const rShipment = Array.isArray(r.shipments) ? (r.shipments[0] || {}) : (r.shipments || {});
-                rawPhone = rShipment.phone || r.phone || r.runners?.phone || '';
-                if (rawPhone) break;
+                phone = formatPhone(rShipment.phone, rRunner.billing_address) ||
+                        formatPhone(r.phone, rRunner.billing_address) ||
+                        formatPhone(rRunner.phone, rRunner.billing_address);
+                if (phone) break;
             }
-            const phone = formatPhone(rawPhone);
 
             const destination = primaryShipment.parcel_id || primaryRun.parcel_id || '';
 
-            // RefCode: join serial numbers of all group runs (comma separated)
-            const refCode = group.map(r => r.serial_number).join(', ');
+            // Validation checks before sending to Foxpost API
+            const validationErrors = [];
+            if (!phone) {
+                validationErrors.push({ field: 'phone', message: 'Hiányzó vagy érvénytelen telefonszám (pl. +36301234567 szükséges)' });
+            }
+            if (!destination) {
+                validationErrors.push({ field: 'destination', message: 'Hiányzó Foxpost csomagautomata azonosító' });
+            }
+            if (!email) {
+                validationErrors.push({ field: 'email', message: 'Hiányzó email cím' });
+            }
 
-            parcelsPayload.push({
+            if (validationErrors.length > 0) {
+                failedParcels.push({
+                    serial_number: refCode,
+                    recipient: recipientName,
+                    errors: validationErrors
+                });
+                continue;
+            }
+
+            validParcelsPayload.push({
                 recipientName: recipientName,
                 recipientEmail: email,
                 recipientPhone: phone,
@@ -155,22 +186,22 @@ module.exports = async (req, res) => {
                 comment: ""
             });
 
-            // Map each run in the group to the runMap so we can resolve them when barcodes are returned
             group.forEach(r => {
                 runMap.set(r.serial_number, r);
             });
         }
 
-        if (parcelsPayload.length === 0) {
-            return res.status(200).json({ 
-                success: true, 
-                message: 'No eligible Foxpost locker shipments found for creation.',
-                created_count: 0
+        if (validParcelsPayload.length === 0) {
+            return res.status(200).json({
+                success: false,
+                message: 'Egyetlen csomag sem felelt meg az előzetes ellenőrzésnek (pl. hiányzó telefonszám vagy automata).',
+                created_count: 0,
+                failed: failedParcels
             });
         }
 
-        // 3. Send payload to Foxpost API
-        console.log(`Sending ${parcelsPayload.length} parcels to Foxpost API...`);
+        // 4. Send valid parcels to Foxpost API
+        console.log(`Sending ${validParcelsPayload.length} valid parcels to Foxpost API...`);
         const foxpostUrl = "https://webapi.foxpost.hu/api/parcel";
         const authHeader = 'Basic ' + Buffer.from(process.env.FOXPOST_USERNAME + ':' + process.env.FOXPOST_PASSWORD).toString('base64');
 
@@ -182,42 +213,37 @@ module.exports = async (req, res) => {
                 'Accept': 'application/json',
                 'Authorization': authHeader
             },
-            body: JSON.stringify(parcelsPayload)
+            body: JSON.stringify(validParcelsPayload)
         });
 
         if (!fResponse.ok) {
             const errText = await fResponse.text();
-            console.error('Foxpost API error:', errText);
-            return res.status(502).json({ error: `Foxpost API error: ${errText}` });
+            console.error('Foxpost API HTTP error:', errText);
+            return res.status(502).json({ error: `Foxpost API error: ${errText}`, failed: failedParcels });
         }
 
         const resData = await fResponse.json();
         console.log('Foxpost response data:', JSON.stringify(resData, null, 2));
-        const createdParcels = resData.parcels || [];
-        console.log(`Foxpost successfully created ${createdParcels.length} parcels.`);
+        const returnedParcels = resData.parcels || [];
 
-        // 4. Update Supabase with the generated barcodes
+        // 5. Update Supabase with generated barcodes
         const updatedRunIds = [];
-        const failedParcels = [];
 
-        for (const p of createdParcels) {
-            const barcode = p.clFoxId;
+        for (const p of returnedParcels) {
+            const barcode = p.clFoxId || p.barcode || p.uniqueBarcode;
             const refCode = p.refCode;
-            const matchedRun = runMap.get(refCode);
-            console.log('Mapping parcel:', { barcode, refCode, matchedRunId: matchedRun ? matchedRun.id : null });
 
             if (!barcode || (p.errors && p.errors.length > 0)) {
                 failedParcels.push({
                     serial_number: refCode,
                     recipient: p.recipientName,
-                    errors: p.errors || [{ message: 'Nem sikerült csomagszámot generálni' }]
+                    errors: p.errors || [{ message: 'A Foxpost nem adott vissza érvényes csomagszámot' }]
                 });
                 continue;
             }
 
             const matchedRunSerials = refCode.split(',').map(s => s.trim());
             const matchedRuns = matchedRunSerials.map(s => runMap.get(s)).filter(Boolean);
-            console.log('Mapping parcel:', { barcode, refCode, matchedCount: matchedRuns.length });
 
             if (matchedRuns.length > 0) {
                 const runIdsToUpdate = matchedRuns.map(r => r.id);
@@ -232,9 +258,7 @@ module.exports = async (req, res) => {
                     })
                     .in('run_id', runIdsToUpdate);
 
-                if (shipErr) {
-                    console.error(`Error updating shipments for serials [${refCode}]:`, shipErr);
-                }
+                if (shipErr) console.error(`Error updating shipments for serials [${refCode}]:`, shipErr);
 
                 // Update runs records
                 const { error: runErr } = await supabase
@@ -242,17 +266,15 @@ module.exports = async (req, res) => {
                     .update({ shipped: true })
                     .in('id', runIdsToUpdate);
 
-                if (runErr) {
-                    console.error(`Error updating runs for serials [${refCode}]:`, runErr);
-                }
+                if (runErr) console.error(`Error updating runs for serials [${refCode}]:`, runErr);
 
                 updatedRunIds.push(...runIdsToUpdate);
             }
         }
 
         return res.status(200).json({
-            success: true,
-            message: `Successfully created ${updatedRunIds.length} Foxpost parcels and synced to database.`,
+            success: updatedRunIds.length > 0,
+            message: `${updatedRunIds.length} db csomag sikeresen feladva és szinkronizálva a Foxpostból.`,
             created_count: updatedRunIds.length,
             run_ids: updatedRunIds,
             failed: failedParcels

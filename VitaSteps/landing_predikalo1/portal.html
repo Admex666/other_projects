@@ -1289,10 +1289,10 @@
             document.getElementById('user-display-email').textContent = currentUser.email;
 
             try {
-                // 1. Fetch profile from 'runners' with runs joined
+                // 1. Fetch profile from 'runners' with runs and shipments joined
                 let { data: profile, error } = await supabaseClient
                     .from('runners')
-                    .select('*, runs(*)')
+                    .select('*, runs(*, shipments(*))')
                     .eq('email', currentUser.email.toLowerCase())
                     .maybeSingle();
 
@@ -1305,7 +1305,7 @@
                         if (syncRes.ok) {
                             const { data: retryProfile, error: retryError } = await supabaseClient
                                 .from('runners')
-                                .select('*, runs(*)')
+                                .select('*, runs(*, shipments(*))')
                                 .eq('email', currentUser.email.toLowerCase())
                                 .maybeSingle();
                             if (retryError) throw retryError;
@@ -1427,13 +1427,17 @@
                 .eq('run_id', run.id)
                 .maybeSingle();
 
+            const shipment = Array.isArray(run.shipments) ? (run.shipments[0] || {}) : (run.shipments || {});
+            const isReceived = !!(shipment.received || run.received_date);
+            const isShipped = !!(shipment.shipped || run.shipped);
+
             if (existingFeedback) {
                 // Already submitted
                 document.getElementById('feedback-completed-card').style.display = 'block';
-            } else if (run.received_date) {
+            } else if (isReceived) {
                 // Medal received, show feedback form
                 document.getElementById('feedback-card').style.display = 'block';
-            } else if (run.shipped) {
+            } else if (isShipped) {
                 // Medal in transit
                 document.getElementById('medal-transit-card').style.display = 'block';
             }
