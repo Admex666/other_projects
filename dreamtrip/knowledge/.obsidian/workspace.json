@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "90ff6eb91a5a19dc",
+        "id": "bfff5368ab3891f4",
         "type": "tabs",
         "children": [
           {
-            "id": "875b4f97a22b55ab",
+            "id": "b119f1ce9fee3621",
             "type": "leaf",
             "state": {
               "type": "graph",
@@ -181,8 +181,14 @@
       "bases:Új bázis létrehozása": false
     }
   },
-  "active": "875b4f97a22b55ab",
+  "active": "b119f1ce9fee3621",
   "lastOpenFiles": [
+    "strategy/optivoya-strategy.md",
+    "concepts/guided-progressive-decision-flow.md",
+    "learnings/kiwi-pagination-and-tokens.md",
+    "concepts/promethee-ranking.md",
+    "strategy/OPTIVOYA_STRATEGY.md",
+    "strategy",
     "entities/trip.md",
     "INDEX.md",
     "decisions/ADR-006-master-planner-wizard.md",

@@ -1920,3 +1920,406 @@ span.flatpickr-weekday {
     }
 }
 
+/* ==========================================================================
+   12. PLANNER WIZARD FLIGHT CARD COMPONENT (FLIGHT INTELLIGENCE PRO UI)
+   ========================================================================== */
+
+.planner-flight-card {
+    background: var(--bg-surface);
+    border: 1.5px solid var(--border-subtle);
+    border-radius: 18px;
+    padding: 20px 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    transition: all var(--transition-fast);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.planner-flight-card:hover {
+    border-color: var(--primary);
+    box-shadow: 0 8px 28px var(--accent-glow);
+    transform: translateY(-2px);
+}
+
+.planner-flight-card.top-match {
+    border-color: rgba(37, 99, 235, 0.4);
+    background: linear-gradient(180deg, rgba(37, 99, 235, 0.02) 0%, var(--bg-surface) 100%);
+}
+
+.planner-flight-card.top-match::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary) 0%, #10b981 100%);
+}
+
+/* Card Header: Airline & Tags */
+.flight-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.flight-carrier-badge-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.flight-carrier-name {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--text-main);
+    letter-spacing: -0.2px;
+}
+
+.flight-rank-badge {
+    background: var(--bg-surface-subtle);
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 9px;
+    border-radius: 6px;
+    border: 1px solid var(--border-subtle);
+}
+
+.flight-rank-badge.top-rank {
+    background: rgba(37, 99, 235, 0.12);
+    color: var(--primary);
+    border-color: rgba(37, 99, 235, 0.3);
+}
+
+.flight-relevance-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--status-success, #10b981);
+    background: rgba(16, 185, 129, 0.1);
+    padding: 3px 8px;
+    border-radius: 6px;
+}
+
+.flight-stay-badge {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: var(--bg-surface-subtle);
+    padding: 4px 10px;
+    border-radius: 8px;
+}
+
+/* Card Body Layout */
+.flight-card-body {
+    display: grid;
+    grid-template-columns: 1fr 220px;
+    gap: 24px;
+    align-items: center;
+}
+
+/* Route Segments */
+.flight-segments-container {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.flight-segment-row {
+    display: grid;
+    grid-template-columns: 86px 1fr;
+    gap: 14px;
+    align-items: center;
+    background: var(--bg-surface-subtle);
+    padding: 10px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--border-subtle);
+}
+
+.segment-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    width: fit-content;
+}
+
+.segment-tag.tag-outbound {
+    background: rgba(37, 99, 235, 0.1);
+    color: var(--primary);
+}
+
+.segment-tag.tag-inbound {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+}
+
+/* Segment Times & Flight Path */
+.segment-times-grid {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 18px;
+}
+
+.flight-time-col {
+    display: flex;
+    flex-direction: column;
+    min-width: 90px;
+}
+
+.flight-time-col.dep {
+    text-align: left;
+}
+
+.flight-time-col.arr {
+    text-align: right;
+}
+
+.flight-time-col .time-large {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text-main);
+    font-family: var(--font-mono);
+    line-height: 1.2;
+}
+
+.flight-time-col .airport-code {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-top: 1px;
+}
+
+.flight-time-col .date-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+/* Flight Path Graphic */
+.flight-path-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    min-width: 120px;
+}
+
+.flight-duration {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+}
+
+.flight-line {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    position: relative;
+}
+
+.flight-line .line-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--border-strong);
+    flex-shrink: 0;
+}
+
+.flight-line .line-bar {
+    flex: 1;
+    height: 2px;
+    background: var(--border-strong);
+}
+
+.flight-line .line-plane {
+    font-size: 11px;
+    color: var(--primary);
+    margin: 0 4px;
+    display: inline-block;
+    line-height: 1;
+}
+
+.flight-stops {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 4px;
+}
+
+.flight-stops.direct {
+    color: var(--status-success, #10b981);
+}
+
+.flight-stops.with-stops {
+    color: var(--status-warning, #f59e0b);
+}
+
+/* Right Side: Pricing & CTA */
+.flight-pricing-cta-box {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 12px;
+    padding-left: 20px;
+    border-left: 1px dashed var(--border-subtle);
+    height: 100%;
+}
+
+.flight-price-wrap {
+    text-align: right;
+}
+
+.total-price-tag {
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--primary);
+    font-family: var(--font-mono);
+    line-height: 1.1;
+    letter-spacing: -0.5px;
+}
+
+.per-person-tag {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-top: 3px;
+}
+
+.select-flight-btn {
+    padding: 11px 20px;
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 12px;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 14px var(--accent-glow);
+}
+
+/* ============================================================================
+   13. PLANNER WIZARD STAY (ACCOMMODATION) CARD COMPONENT
+   ============================================================================ */
+.planner-stay-card {
+    background: var(--bg-surface);
+    border: 1.5px solid var(--border-subtle);
+    border-radius: 18px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.2s ease;
+    position: relative;
+}
+
+.planner-stay-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--primary);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.14);
+}
+
+.planner-stay-card:hover .stay-image-img {
+    transform: scale(1.05);
+}
+
+.stay-image-container {
+    position: relative;
+    width: 100%;
+    height: 180px;
+    overflow: hidden;
+    background: var(--bg-surface-subtle);
+}
+
+.stay-image-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+}
+
+.stay-badge-overlay {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    display: flex;
+    gap: 6px;
+    z-index: 2;
+}
+
+.stay-provider-overlay {
+    position: absolute;
+    bottom: 10px;
+    right: 12px;
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(8px);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    letter-spacing: 0.2px;
+}
+
+.stay-card-content {
+    padding: 18px 18px 16px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.stay-card-actions {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.stay-preview-link {
+    padding: 9px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: 10px;
+    background: var(--bg-surface-subtle);
+    border: 1px solid var(--border-strong);
+    color: var(--text-main);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.stay-preview-link:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--bg-hover);
+    transform: translateY(-1px);
+}
+
+

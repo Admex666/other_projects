@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "Optivoya B2B Travel Intelligence Suite",
   "scripts": {
-    "dev": "uvicorn app.main:app --reload --reload-dir app --reload-dir templates --reload-dir static --host 127.0.0.1 --port 8000",
-    "start": "uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    "dev": "python -m uvicorn app.main:app --reload --reload-dir app --reload-dir templates --reload-dir static --host 127.0.0.1 --port 8000",
+    "start": "python -m uvicorn app.main:app --host 0.0.0.0 --port 8000"
   }
 }
+

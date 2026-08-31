@@ -11,13 +11,15 @@ source:
   ref: app.services.planner_service
 
 code:
+  - app/api/v2/planner.py
   - app/services/planner_service.py
   - app/main.py
   - app/scrapers/accommodation_scraper.py
   - templates/planner/planner_wizard.html
   - static/js/planner_wizard.js
-  - static/js/ahp_wizard.js
+  - static/js/decision_dna_wizard.js
   - static/js/components.js
+
 
 related:
   - "[[unified-trip-model]]"
@@ -27,10 +29,12 @@ related:
   - "[[proposal-generation]]"
   - "[[ahp-weighting]]"
   - "[[promethee-ranking]]"
+  - "[[guided-progressive-decision-flow]]"
   - "[[cozycozy-scraper]]"
 
 used_by:
   - "[[fastapi-backend]]"
+
 ---
 
 # Process: Master Travel Planner Wizard
@@ -63,9 +67,8 @@ A **Master Travel Planner** a platform legmagasabb szintű folyamata, amely öss
 * **Egyedi léptetők (`+` és `−` stepperek):** A natív böngésző inputok helyett a platform egységes stílusú `stepper-circle-btn` és `stepper-control-box` komponensei kezelik a felnőttek, gyermekek, kinttartózkodási napok és max. menetidő kiválasztását.
 
 ### 2. Dátumkezelési Módok és Flatpickr Integráció
-1. **Rugalmas Hónap (`month`):** Tetszőleges hónap kiválasztása és 1-től akár 30+ napos tartózkodási időtartam, kétirányúan szinkronizált csúszkával és léptetővel.
-2. **Időintervallum (`interval`):** Odaút időablak (`out_from`–`out_to`), visszaút időablak (`in_to`) és Min-Max kinttartózkodási napok (`min_stay`, `max_stay`).
-3. **Pontos Dátumok (`exact`):** A Flight Intelligence-ben bevált `window.initAdvisorDatePicker` Flatpickr naptárkomponens és gyorsválasztó pilulák (`2 hét múlva`, `1 hónap múlva`, `Hosszú hétvége`, `2 hetes nyaralás`).
+1. **Pontos Dátumok (`exact` — Alapértelmezett):** A bevált `window.initAdvisorDatePicker` Flatpickr naptárkomponens és gyorsválasztó pilulák (`Jövő hét`, `3 hét múlva`, `Hosszú hétvége`). Pontos dátumok esetén a tartózkodási időtartam fix, így az AHP és PROMETHEE súlya automatikusan $w_{stay} = 0.0$.
+2. **Időintervallum & Tartózkodási Keret (`interval`):** Odaút időablak (`out_from`–`out_to`), visszaút időablak (`in_to`) és Min-Max kinttartózkodási napok (`min_stay`, `max_stay`). Ekkor a tartózkodási időtartam illeszkedése ($g_4$) aktívan beleszámít a PROMETHEE II outranking flow-ba.
 
 ### 3. Modális Prioritásvarázslók és Progressive Disclosure (Zárolási Rendszer)
 * **3-Pilléres Desztináció prioritások:** A redundáns pénz-pénz összevetések kivezetésével 3 független pillér (Teljes Utazási Költség, Klíma, Közbiztonság) páros összehasonlítása mindössze 3 gyors kérdésben az `AHPWizard` modálban.
@@ -74,7 +77,10 @@ A **Master Travel Planner** a platform legmagasabb szintű folyamata, amely öss
 * **Szállás prioritások:** Ár / Éjszaka, Vendégértékelés & Csillagok, Központi Elhelyezkedés, és Felszereltség & Reggeli páros összehasonlítása.
 * **Felhasználóbarát felület:** Szakzsargon (AHP, sajátvektor, CR) kivezetve; a vissza nyíl biztonságosan bezárja a modált (`this.onBack()`).
 
-### 4. Napszaki és Szállás Intelligencia Szűrés
-* **Feltételes indulási napszak:** Checkbox-szal aktiválható konkrét indulási óra (00:00–23:00) vizuális napszak-jelvénnyel.
-* **Max. menetidő:** Saját `+`/`−` léptetővel állítható (0 = Korlátlan, 1–36 óra) és gyorsgombokkal (`≤ 4ó`, `≤ 6ó`, `≤ 10ó`, `Korlátlan`).
-* **Cozycozy élő szállásaggregáció:** A backend `get_all_stays` és `parse_accommodation_results` függvényeket alkalmazza zárolt éjszakaszámra és automatikus fallback kezeléssel.
+### 4. 5-Dimenziós PROMETHEE II Járatrangsoroló és Kétirányú Gyorsítótár
+* **PROMETHEE II 5-dimenziós kiértékelés:** $g_1$ Teljes ár, $g_2$ Menetidő, $g_3$ Átszállások, $g_4$ Tartózkodási illeszkedés (intervallum módban), $g_5$ Napszak-illeszkedés V-alakú lineáris preferenciafüggvénnyel és nettó outranking flow ($\Phi_{net}$) relevanciával.
+* **Kétirányú Intelligens Gyorsítótár (Frontend Session Storage & Backend Memory Cache):**
+  * Kliensoldalon a `sessionStorage` kulcsok alapján az azonos feltételekkel már lekérdezett járatok és szállások **0 ms alatt, azonnal, loader nélkül** jelennek meg visszalépés vagy oldalfrissítés esetén.
+  * Szerveroldalon a `_FLIGHTS_CACHE` in-memory dict 30 perces TTL-lel tehermentesíti a Kiwi és Cozycozy scrapereket.
+* **Szálláskártyák fotókkal és közvetlen `Megtekintés ↗` linkkel:** Élő Cozycozy képek, szolgáltatói badgek, valamint új lapon megnyitható külső előnézeti link a foglalás előtti ellenőrzéshez.
+

@@ -8,8 +8,9 @@ CONTEXT_DIR = os.path.abspath("context")
 
 VALID_TYPES = {
     "entity", "concept", "process", "system", 
-    "metric", "decision", "learning", "operation"
+    "metric", "decision", "learning", "operation", "strategy"
 }
+
 
 VALID_STATUSES = {
     "active", "draft", "deprecated", "superseded", "archived", "accepted"

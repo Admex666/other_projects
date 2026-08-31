@@ -13,11 +13,12 @@ window.Wizard = (function() {
             origin: "Budapest (BUD)",
             adults: 2,
             children: 0,
-            date_mode: "month",
+            date_mode: "exact",
             month: "9",
             duration: 7,
             exact_out_date: "2026-09-10",
             exact_in_date: "2026-09-17",
+
             out_from: "2026-09-01",
             out_to: "2026-09-15",
             in_to: "2026-09-30",
@@ -38,6 +39,11 @@ window.Wizard = (function() {
                 weather: 33.0,
                 safety: 33.0
             },
+            promethee_params: {
+                price: { type: 5, q: 5000, p: 35000 },
+                duration: { type: 5, q: 0.5, p: 3.0 },
+                stay: { type: 5, q: 1.0, p: 3.0 }
+            },
             stay_weights: {
                 price: 35.0,
                 rating: 30.0,
@@ -45,6 +51,7 @@ window.Wizard = (function() {
                 amenities: 15.0
             }
         },
+
         destinations: [],
         selectedDest: null,
         flights: [],
@@ -116,7 +123,7 @@ window.Wizard = (function() {
     function switchDateMode(mode) {
         state.date_mode = mode;
         state.intake.date_mode = mode;
-        const modes = ['month', 'interval', 'exact'];
+        const modes = ['exact', 'interval'];
         modes.forEach(m => {
             const btn = document.getElementById(`tab_mode_${m}`);
             const pnl = document.getElementById(`panel_mode_${m}`);
@@ -140,6 +147,7 @@ window.Wizard = (function() {
             }
         });
     }
+
 
     function onDurationSliderChange(val) {
         const numVal = parseInt(val, 10) || 7;
@@ -307,89 +315,112 @@ window.Wizard = (function() {
         }
     }
 
-    function openAHPModal() {
-        const backdrop = document.getElementById('ahpModalBackdrop');
-        const container = document.getElementById('ahp_wizard_render_container');
-        if (!backdrop || !container) return;
+    function updateDecisionDNACard() {
+        const unconf = document.getElementById('dna_unconfigured_view');
+        const conf = document.getElementById('dna_configured_view');
+        const submitBtn = document.getElementById('btn_submit_main_planner');
 
-        backdrop.style.display = 'flex';
-        container.innerHTML = '';
+        if (state.criteria_completed) {
+            if (unconf) unconf.style.display = 'none';
+            if (conf) conf.style.display = 'block';
 
-        const criteria = [
-            { id: 'total_cost', name: 'Teljes Utazási Költség', icon: '💰', desc: 'Repülőjegy, szállás és helyi megélhetés (étkezés, közlekedés) teljes összege' },
-            { id: 'weather', name: 'Időjárás / Klíma', icon: '☀️', desc: 'Ideális célhőmérséklethez és kellemes időjáráshoz való illeszkedés' },
-            { id: 'safety', name: 'Közbiztonság', icon: '🛡️', desc: 'Biztonsági index, megbízhatóság és utazási nyugalom' }
-        ];
-
-        new AHPWizard({
-            containerId: 'ahp_wizard_render_container',
-            criteria: criteria,
-            title: 'Döntési Szempontok Prioritása',
-            subtitle: 'Hasonlítsd össze a 3 fő szempontot páronként (mindössze 3 gyors kérdés)',
-            badge: 'Prioritási Kérdőív',
-            introTitle: 'Mi a legfontosabb számodra a célállomás kiválasztásakor?',
-            introDesc: 'A 3 fő pillér (Összköltség, Klíma, Biztonság) páros súlyozása alapján személyre szabjuk a rangsort és feloldjuk a további szűrőket.',
-            ctaText: 'Prioritások mentése & Bezárás',
-            onBack: () => closeAHPModal(),
-            onComplete: function(result) {
-                console.log("[DESTINATION CRITERIA COMPLETED]", result);
-                if (result.cr !== undefined) console.log(`[CONFORMITY CHECK] CR=${result.cr.toFixed(4)}`);
-
-                const rawW = result.weights || {};
-                const total = (rawW.total_cost || 0.34) + (rawW.weather || 0.33) + (rawW.safety || 0.33);
-                const w = {
-                    total_cost: Math.round(((rawW.total_cost || 0.34) / total) * 100),
-                    weather: Math.round(((rawW.weather || 0.33) / total) * 100),
-                    safety: Math.round(((rawW.safety || 0.33) / total) * 100)
-                };
-
-                updateAHPBadges(w);
-                closeAHPModal();
+            // 1. AHP összefoglaló
+            const ahpEl = document.getElementById('dna_card_ahp_summary');
+            if (ahpEl && state.intake.ahp_weights) {
+                const w = state.intake.ahp_weights;
+                ahpEl.innerHTML = `💰 ${w.total_cost}% · ☀️ ${w.weather}% · 🛡️ ${w.safety}%`;
             }
-        });
+
+            // 2. PROMETHEE összefoglaló
+            const promEl = document.getElementById('dna_card_prom_summary');
+            if (promEl && state.intake.promethee_params) {
+                const pPrice = state.intake.promethee_params.price;
+                const pDur = state.intake.promethee_params.duration;
+                const qPStr = pPrice.type === 5 ? `≤${(pPrice.q/1000)}k Ft közömbös` : `Lineáris`;
+                const qDStr = pDur.type === 5 ? `≤${Math.round(pDur.q*60)}p tűrés` : `Lineáris`;
+                promEl.innerHTML = `Ár: ${qPStr} · Menetidő: ${qDStr}`;
+            }
+
+            // 3. Szállás összefoglaló
+            const stayEl = document.getElementById('dna_card_stay_summary');
+            if (stayEl) {
+                const stars = state.intake.hotel_min_stars ? `${state.intake.hotel_min_stars}★+` : 'Bármilyen kategória';
+                const rating = `${state.intake.hotel_min_rating}+ Értékelés`;
+                const bf = state.intake.breakfast ? '· ☕ Reggelivel' : '';
+                stayEl.innerHTML = `${stars} · ${rating} ${bf}`;
+            }
+
+            // Fő CTA gomb szöveg és esemény frissítése
+            if (submitBtn) {
+                if (state.destinations && state.destinations.length > 0) {
+                    submitBtn.innerHTML = `<span>🏆 Célállomások Megtekintése (${state.destinations.length} találat) →</span>`;
+                    submitBtn.onclick = () => setStep(1);
+                } else {
+                    submitBtn.innerHTML = `<span>🚀 2. Célállomások Keresése & Teljes Út Tervezése →</span>`;
+                    submitBtn.onclick = () => startPlanning();
+                }
+            }
+        } else {
+            if (unconf) unconf.style.display = 'flex';
+            if (conf) conf.style.display = 'none';
+
+            if (submitBtn) {
+                submitBtn.innerHTML = `<span>✨ 1. Döntési Profil Létrehozása (AHP + PROMETHEE) →</span>`;
+                submitBtn.onclick = () => openDecisionDNA();
+            }
+        }
+    }
+
+
+
+    function openDecisionDNA() {
+        if (!window.DecisionDNAWizard) return;
+        new window.DecisionDNAWizard({
+            initialIntake: state.intake,
+            onSave: function(savedDNA) {
+                if (savedDNA.ahp_weights) state.intake.ahp_weights = savedDNA.ahp_weights;
+                if (savedDNA.flight_ahp_weights) state.intake.flight_ahp_weights = savedDNA.flight_ahp_weights;
+                if (savedDNA.stay_ahp_weights) state.intake.stay_ahp_weights = savedDNA.stay_ahp_weights;
+                if (savedDNA.promethee_params) state.intake.promethee_params = savedDNA.promethee_params;
+                if (savedDNA.dest_promethee) state.intake.dest_promethee = savedDNA.dest_promethee;
+                if (savedDNA.stay_promethee) state.intake.stay_promethee = savedDNA.stay_promethee;
+                if (savedDNA.stay) {
+                    state.intake.hotel_min_stars = savedDNA.stay.hotel_min_stars;
+                    state.intake.hotel_min_rating = savedDNA.stay.hotel_min_rating;
+                    state.intake.breakfast = savedDNA.stay.breakfast;
+                    state.intake.hotel_types = savedDNA.stay.hotel_types;
+                    state.intake.amenities = savedDNA.stay.amenities;
+                }
+                state.criteria_completed = true;
+                updateDecisionDNACard();
+                
+                if (window.TripCart) {
+                    window.TripCart.showToast("Döntési DNS élesítve! Célállomások betöltése...", "🧬");
+                }
+
+                // AUTOMATIC CONTINUATION: Proceed to destination search or active step seamlessly
+                if (!state.destinations || state.destinations.length === 0) {
+                    startPlanning();
+                } else {
+                    recalculateDestinations();
+                    setStep(1);
+                }
+            }
+        }).show();
+
+    }
+
+
+    function openAHPModal() {
+        openDecisionDNA();
+    }
+
+    function openPrometheeModal() {
+        openDecisionDNA();
     }
 
     function openStayPrioritiesModal() {
-        const backdrop = document.getElementById('ahpModalBackdrop');
-        const container = document.getElementById('ahp_wizard_render_container');
-        if (!backdrop || !container) return;
-
-        backdrop.style.display = 'flex';
-        container.innerHTML = '';
-
-        const stayCriteria = [
-            { id: 'price', name: 'Szállás Ára / Éjszaka', icon: '💳', desc: 'Kedvező éjszakánkénti ár előnyben részesítése' },
-            { id: 'rating', name: 'Értékelés & Csillagok', icon: '⭐', desc: 'Magas vendégértékelés és megbízható minőség' },
-            { id: 'location', name: 'Központi Elhelyezkedés', icon: '📍', desc: 'Városközpont vagy strand közelsége' },
-            { id: 'amenities', name: 'Felszereltség & Reggeli', icon: '☕', desc: 'Ingyenes reggeli, medence vagy wellness megléte' }
-        ];
-
-        new AHPWizard({
-            containerId: 'ahp_wizard_render_container',
-            criteria: stayCriteria,
-            title: 'Szállás Szempontok Prioritása',
-            subtitle: 'Hasonlítsd össze a 4 szálláskritériumot páronként',
-            badge: 'Szállás Prioritások',
-            introTitle: 'Mi a legfontosabb számodra a szállás kiválasztásakor?',
-            introDesc: 'Állítsd be, hogy az ár, a vendégértékelés, a központi elhelyezkedés vagy a reggeli/wellness a meghatározóbb a szállások rangsorolásakor.',
-            ctaText: 'Szállás prioritások mentése & Bezárás',
-            onBack: () => closeAHPModal(),
-            onComplete: function(result) {
-                console.log("[STAY CRITERIA COMPLETED]", result);
-                if (result.cr !== undefined) console.log(`[CONFORMITY CHECK] CR=${result.cr.toFixed(4)}`);
-
-                const rawW = result.weights || {};
-                const total = (rawW.price || 0.25) + (rawW.rating || 0.25) + (rawW.location || 0.25) + (rawW.amenities || 0.25);
-                state.intake.stay_weights = {
-                    price: Math.round(((rawW.price || 0.25) / total) * 100),
-                    rating: Math.round(((rawW.rating || 0.25) / total) * 100),
-                    location: Math.round(((rawW.location || 0.25) / total) * 100),
-                    amenities: Math.round(((rawW.amenities || 0.25) / total) * 100)
-                };
-
-                closeAHPModal();
-            }
-        });
+        openDecisionDNA();
     }
 
     function closeAHPModal() {
@@ -399,9 +430,10 @@ window.Wizard = (function() {
 
     async function startPlanning() {
         if (!state.criteria_completed) {
-            openAHPModal();
+            openDecisionDNA();
             return;
         }
+
 
         const stayTypeBoxes = document.querySelectorAll('input[name="stay_types"]:checked');
         const selectedStayTypes = Array.from(stayTypeBoxes).map(cb => cb.value);
@@ -487,8 +519,10 @@ window.Wizard = (function() {
                 if (pBar) pBar.style.width = '100%';
 
                 state.destinations = data.results || [];
+                updateDecisionDNACard();
                 renderDestinations();
                 setStep(1);
+
             } else if (data.status === 'error') {
                 clearInterval(pollInterval);
                 alert("Hiba történt a kalkuláció során: " + (data.error || 'Ismeretlen hiba'));
@@ -554,7 +588,32 @@ window.Wizard = (function() {
         }).join('');
     }
 
-    async function triggerFlightSearch(dest) {
+    function getSessionCache(key) {
+
+        try {
+            const raw = sessionStorage.getItem(`optivoya_cache_${key}`);
+            if (!raw) return null;
+            const item = JSON.parse(raw);
+            if (Date.now() - item.ts > 30 * 60 * 1000) { // 30 perc TTL
+                sessionStorage.removeItem(`optivoya_cache_${key}`);
+                return null;
+            }
+            return item.data;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    function setSessionCache(key, data) {
+        try {
+            sessionStorage.setItem(`optivoya_cache_${key}`, JSON.stringify({
+                ts: Date.now(),
+                data: data
+            }));
+        } catch (e) {}
+    }
+
+    async function triggerFlightSearch(dest, forceRefresh = false) {
         if (!dest) return;
         state.selectedDest = dest;
         const destName = dest.name || dest.city;
@@ -563,6 +622,20 @@ window.Wizard = (function() {
         const fDetails = document.getElementById('flightContextDetails');
         if (fCity) fCity.innerText = destName;
         if (fDetails) fDetails.innerText = `${state.intake.origin} → ${destName} • ${state.intake.adults} felnőtt • ${state.intake.duration} nap`;
+
+        // Cache kulcs képzése a keresési paraméterekből és PROMETHEE preferenciákból
+        const cacheKey = `fl_${destName}_${state.intake.origin}_${state.intake.date_mode}_${state.intake.exact_out_date}_${state.intake.exact_in_date}_${state.intake.out_from}_${state.intake.out_to}_${state.intake.in_to}_${state.intake.min_stay}_${state.intake.max_stay}_${state.intake.adults}_${state.intake.flight_direct_only}_${state.intake.flight_max_stops}_${state.intake.preferred_departure_time}_${JSON.stringify(state.intake.ahp_weights || {})}_${JSON.stringify(state.intake.promethee_params || {})}`;
+
+        if (!forceRefresh) {
+            const cached = getSessionCache(cacheKey);
+            if (cached && cached.length > 0) {
+                console.log("[CACHE HIT] Repülőjáratok betöltve kliens gyorsítótárból (0 ms):", destName);
+                state.flights = cached;
+                renderFlights();
+                setStep(2);
+                return;
+            }
+        }
 
         showLoader(
             `Járatok keresése (${destName})...`,
@@ -594,13 +667,16 @@ window.Wizard = (function() {
                     max_stops: state.intake.flight_max_stops,
                     departure_pref: state.intake.preferred_departure_time,
                     max_duration_h: state.intake.max_flight_duration_h,
-                    weights: state.intake.ahp_weights
+                    weights: state.intake.ahp_weights,
+                    promethee_params: state.intake.promethee_params
                 })
             });
+
 
             const data = await res.json();
             if (data.status === 'ok') {
                 state.flights = data.flights || [];
+                setSessionCache(cacheKey, state.flights);
                 renderFlights();
                 setStep(2);
             } else {
@@ -612,6 +688,7 @@ window.Wizard = (function() {
             setStep(1);
         }
     }
+
 
     async function selectDestination(index) {
         const dest = state.destinations[index];
@@ -640,68 +717,236 @@ window.Wizard = (function() {
         await triggerFlightSearch(dest);
     }
 
+    function formatFlightTime(raw) {
+        if (!raw) return '--:--';
+        const str = String(raw).trim();
+        const parts = str.includes('T') ? str.split('T') : str.split(' ');
+        if (parts.length > 1) {
+            return parts[1].slice(0, 5);
+        }
+        if (str.includes(':')) {
+            return str.slice(0, 5);
+        }
+        return str;
+    }
+
+    function formatFlightDate(raw) {
+        if (!raw) return '';
+        const str = String(raw).trim().split('T')[0].split(' ')[0];
+        const parts = str.split('-');
+        if (parts.length === 3) {
+            const months = ['jan.', 'febr.', 'márc.', 'ápr.', 'máj.', 'jún.', 'júl.', 'aug.', 'szept.', 'okt.', 'nov.', 'dec.'];
+            const mIdx = parseInt(parts[1], 10) - 1;
+            const mName = months[mIdx] || parts[1];
+            return `${parts[0]}. ${mName} ${parseInt(parts[2], 10)}.`;
+        }
+        return str;
+    }
+
+    function formatFlightDuration(hours) {
+        if (!hours && hours !== 0) return '';
+        const h = Math.floor(hours);
+        const m = Math.round((hours - h) * 60);
+        return `${h}ó ${m}p`;
+    }
+
+    function getPercentileStyle(val, minVal, maxVal, lowerIsBetter = true) {
+        if (minVal === maxVal || isNaN(val)) {
+            return { bg: 'rgba(16, 185, 129, 0.12)', text: '#059669', border: 'rgba(16, 185, 129, 0.25)', label: 'Kiváló' };
+        }
+        // 0.0 = legjobb, 1.0 = legrosszabb
+        const ratio = lowerIsBetter ? (val - minVal) / (maxVal - minVal) : (maxVal - val) / (maxVal - minVal);
+        
+        if (ratio <= 0.28) {
+            return { bg: 'rgba(16, 185, 129, 0.14)', text: '#059669', border: 'rgba(16, 185, 129, 0.3)', label: 'Top 25% (Legjobb)' };
+        } else if (ratio <= 0.65) {
+            return { bg: 'rgba(245, 158, 11, 0.14)', text: '#d97706', border: 'rgba(245, 158, 11, 0.3)', label: 'Átlagos mezőny' };
+        } else {
+            return { bg: 'rgba(239, 68, 68, 0.14)', text: '#dc2626', border: 'rgba(239, 68, 68, 0.3)', label: 'Magasabb érték' };
+        }
+    }
+
     function renderFlights() {
         const container = document.getElementById('flightsGrid');
         if (!container) return;
 
         if (state.flights.length === 0) {
-            container.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--text-secondary);">Nem találtunk járatot a megadott szigorú feltételekkel. Kérlek módosíts az átszállás tolerancián a fenti menüben!</div>`;
+            container.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--text-secondary); background: var(--bg-surface); border-radius: 16px; border: 1px dashed var(--border-subtle);">Nem találtunk járatot a megadott szigorú feltételekkel. Kérlek módosíts az átszállás tolerancián a fenti menüben!</div>`;
             return;
         }
 
+        const originCity = state.intake.origin || 'Budapest';
+        const destCity = state.selectedDest?.name || state.selectedDest?.city || 'Célállomás';
+
+        // Mezőny szélsőértékeinek felmérése a relatív hőtérképhez
+        const allPrices = state.flights.map(f => f.total_price_huf || f.price_huf || 0).filter(p => p > 0);
+        const minPrice = allPrices.length ? Math.min(...allPrices) : 0;
+        const maxPrice = allPrices.length ? Math.max(...allPrices) : 0;
+
+        const allDurs = state.flights.map(f => (f.out_duration_h || 0) + (f.in_duration_h || 0)).filter(d => d > 0);
+        const minDur = allDurs.length ? Math.min(...allDurs) : 0;
+        const maxDur = allDurs.length ? Math.max(...allDurs) : 0;
+
         container.innerHTML = state.flights.map((fl, idx) => {
-            const outDate = (fl.out_dep_time || '').split('T')[0];
-            const inDate = (fl.in_dep_time || '').split('T')[0];
-            const outTime = (fl.out_dep_time || '').split('T')[1]?.slice(0, 5) || 'Reggel';
-            const inTime = (fl.in_dep_time || '').split('T')[1]?.slice(0, 5) || 'Este';
-            const nights = fl.stay_days || state.intake.duration;
-            const priceTotal = fl.total_price_huf || 0;
-            const pricePerPerson = Math.round(priceTotal / Math.max(1, state.intake.adults));
+            const outDepTime = formatFlightTime(fl.out_dep_time);
+            const outArrTime = formatFlightTime(fl.out_arr_time);
+            const outDate = formatFlightDate(fl.out_dep_time || fl.out_date);
+            const outArrDate = formatFlightDate(fl.out_arr_time || fl.out_dep_time);
+            const outDur = formatFlightDuration(fl.out_duration_h);
+
+            const inDepTime = formatFlightTime(fl.in_dep_time);
+            const inArrTime = formatFlightTime(fl.in_arr_time);
+            const inDate = formatFlightDate(fl.in_dep_time || fl.in_date);
+            const inArrDate = formatFlightDate(fl.in_arr_time || fl.in_dep_time);
+            const inDur = formatFlightDuration(fl.in_duration_h);
+
+            const outDepAirport = fl.out_dep_airport || (originCity.includes('(') ? originCity.split('(')[1].replace(')', '') : 'BUD');
+            const outArrAirport = fl.out_arr_airport || (destCity.length <= 4 ? destCity : destCity.slice(0, 3).toUpperCase());
+            const inDepAirport = fl.in_dep_airport || outArrAirport;
+            const inArrAirport = fl.in_arr_airport || outDepAirport;
+
+            const airline = fl.out_carriers || fl.out_airline || fl.in_carriers || fl.in_airline || 'Légitársaság';
+            const nights = fl.stay_days || fl.exact_stay_nights || state.intake.duration || 7;
+            const priceTotal = fl.total_price_huf || fl.price_total_huf || fl.price_huf || 0;
+            const adults = Math.max(1, state.intake.adults || 1);
+            const pricePerPerson = Math.round(priceTotal / adults);
+            const relevancePct = fl.relevance_pct || Math.round((fl.phi_net !== undefined ? (fl.phi_net + 1) / 2 : 0.85) * 100);
+            const isTop = idx === 0;
+            const stayDiff = fl.stay_diff_days !== undefined ? fl.stay_diff_days : 0;
+            const stayFitText = stayDiff === 0 ? 'Tökéletes időtartam' : `±${stayDiff} nap eltérés`;
+
+            // Relatív hőtérképes színstílusok
+            const totalDur = (fl.out_duration_h || 0) + (fl.in_duration_h || 0);
+            const priceHeatmap = getPercentileStyle(priceTotal, minPrice, maxPrice, true);
+            const durHeatmap = getPercentileStyle(totalDur, minDur, maxDur, true);
+            const relevanceHeatmap = relevancePct >= 80 
+                ? { bg: 'rgba(16, 185, 129, 0.15)', text: '#059669', border: 'rgba(16, 185, 129, 0.3)' }
+                : (relevancePct >= 65 ? { bg: 'rgba(245, 158, 11, 0.15)', text: '#d97706', border: 'rgba(245, 158, 11, 0.3)' } : { bg: 'rgba(100, 116, 139, 0.15)', text: '#64748b', border: 'rgba(100, 116, 139, 0.3)' });
 
             return `
-                <div class="advisor-main-card" style="background: var(--bg-surface); border: 1.5px solid var(--border-subtle); border-radius: 16px; padding: 20px 24px; display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: center;">
-                    <div>
-                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
-                            <span style="font-size: 16px; font-weight: 900; color: var(--text-main);">${fl.out_airline || fl.in_airline || 'Légitársaság'}</span>
-                            <span style="background: var(--bg-surface-subtle); font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px; color: var(--primary);">
+                <div class="planner-flight-card ${isTop ? 'top-match' : ''}">
+                    <!-- FEJLÉC -->
+                    <div class="flight-card-header">
+                        <div class="flight-carrier-badge-wrap">
+                            <span class="flight-carrier-name">✈️ ${airline}</span>
+                            <span class="flight-rank-badge ${isTop ? 'top-rank' : ''}">
                                 #${fl.rank || (idx + 1)} Ajánlat
                             </span>
-                            <span style="font-size: 12px; font-weight: 700; color: var(--status-success, #10b981);">
-                                ${Math.round((fl.phi_net || 0.85) * 100)}% Relevancia
+                            <span class="flight-relevance-pill" style="background: ${relevanceHeatmap.bg}; color: ${relevanceHeatmap.text}; border: 1px solid ${relevanceHeatmap.border}; font-weight: 800;">
+                                ⭐ ${relevancePct}% PROMETHEE Illeszkedés
                             </span>
                         </div>
-
-                        <div style="display: flex; flex-wrap: wrap; gap: 16px; font-size: 13.5px; color: var(--text-secondary); margin-bottom: 6px;">
-                            <div>🛫 <strong>Odaút:</strong> ${outDate} (${outTime}) • ${fl.out_stops === 0 ? 'Közvetlen' : fl.out_stops + ' átszállás'}</div>
-                            <div>🛬 <strong>Visszaút:</strong> ${inDate} (${inTime}) • ${fl.in_stops === 0 ? 'Közvetlen' : fl.in_stops + ' átszállás'}</div>
-                        </div>
-
-                        <div style="font-size: 12px; color: var(--text-muted);">
-                            🌙 Tartózkodás: <strong>${nights} éjszaka</strong> (${state.selectedDest?.name || 'Célállomás'})
+                        <div class="flight-stay-badge" title="${stayFitText}">
+                            🌙 <strong>${nights} éjszaka</strong> · ${destCity} <span style="opacity: 0.75; font-size: 11px;">(${stayFitText})</span>
                         </div>
                     </div>
 
-                    <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
-                        <div>
-                            <div style="font-size: 22px; font-weight: 900; color: var(--primary); font-family: var(--font-mono);">${Math.round(priceTotal).toLocaleString()} Ft</div>
-                            <div style="font-size: 12px; color: var(--text-muted); font-weight: 600;">~${pricePerPerson.toLocaleString()} Ft / fő</div>
+
+
+                    <!-- TÖRZS (Útvonalak + Ár és CTA) -->
+                    <div class="flight-card-body">
+                        <div class="flight-segments-container">
+                            <!-- 1. ODAÚT -->
+                            <div class="flight-segment-row">
+                                <div class="segment-tag tag-outbound">
+                                    <span>🛫 Odaút</span>
+                                </div>
+                                <div class="segment-times-grid">
+                                    <div class="flight-time-col dep">
+                                        <span class="time-large">${outDepTime}</span>
+                                        <span class="airport-code">${outDepAirport} (${originCity.split('(')[0].trim()})</span>
+                                        <span class="date-sub">${outDate}</span>
+                                    </div>
+
+                                    <div class="flight-path-wrap">
+                                        <span class="flight-duration">${outDur}</span>
+                                        <div class="flight-line">
+                                            <span class="line-dot"></span>
+                                            <span class="line-bar"></span>
+                                            <span class="line-plane">✈</span>
+                                            <span class="line-bar"></span>
+                                            <span class="line-dot"></span>
+                                        </div>
+                                        <span class="flight-stops ${fl.out_stops === 0 ? 'direct' : 'with-stops'}">
+                                            ${fl.out_stops === 0 ? 'Közvetlen' : fl.out_stops + ' átszállás'}
+                                        </span>
+                                    </div>
+
+                                    <div class="flight-time-col arr">
+                                        <span class="time-large">${outArrTime}</span>
+                                        <span class="airport-code">${outArrAirport} (${destCity.split('(')[0].trim()})</span>
+                                        <span class="date-sub">${outArrDate}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 2. VISSZAÚT -->
+                            <div class="flight-segment-row">
+                                <div class="segment-tag tag-inbound">
+                                    <span>🛬 Visszaút</span>
+                                </div>
+                                <div class="segment-times-grid">
+                                    <div class="flight-time-col dep">
+                                        <span class="time-large">${inDepTime}</span>
+                                        <span class="airport-code">${inDepAirport} (${destCity.split('(')[0].trim()})</span>
+                                        <span class="date-sub">${inDate}</span>
+                                    </div>
+
+                                    <div class="flight-path-wrap">
+                                        <span class="flight-duration">${inDur}</span>
+                                        <div class="flight-line">
+                                            <span class="line-dot"></span>
+                                            <span class="line-bar"></span>
+                                            <span class="line-plane" style="transform: scaleX(-1);">✈</span>
+                                            <span class="line-bar"></span>
+                                            <span class="line-dot"></span>
+                                        </div>
+                                        <span class="flight-stops ${fl.in_stops === 0 ? 'direct' : 'with-stops'}">
+                                            ${fl.in_stops === 0 ? 'Közvetlen' : fl.in_stops + ' átszállás'}
+                                        </span>
+                                    </div>
+
+                                    <div class="flight-time-col arr">
+                                        <span class="time-large">${inArrTime}</span>
+                                        <span class="airport-code">${inArrAirport} (${originCity.split('(')[0].trim()})</span>
+                                        <span class="date-sub">${inArrDate}</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <button type="button" class="btn btn-primary" onclick="Wizard.selectFlight(${idx})" style="padding: 10px 18px; font-size: 13px; font-weight: 700; border-radius: 10px; white-space: nowrap;">
-                            <span>✈️ Járat Kiválasztása & Szállások →</span>
-                        </button>
+
+                        <!-- JOBB OLDALI ÁR & CTA -->
+                        <div class="flight-pricing-cta-box">
+                            <div class="flight-price-wrap">
+                                <div class="total-price-tag">${Math.round(priceTotal).toLocaleString()} Ft</div>
+                                <div class="per-person-tag">~${pricePerPerson.toLocaleString()} Ft / fő · ${adults} felnőtt</div>
+                                <div style="margin-top: 4px;">
+                                    <span style="font-size: 10.5px; font-weight: 800; padding: 2px 7px; border-radius: 6px; background: ${priceHeatmap.bg}; color: ${priceHeatmap.text}; border: 1px solid ${priceHeatmap.border}; display: inline-block;">${priceHeatmap.label}</span>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-primary select-flight-btn" onclick="Wizard.selectFlight(${idx})">
+                                <span>Járat Kiválasztása</span>
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    <polyline points="12 5 19 12 12 19"></polyline>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
             `;
         }).join('');
     }
 
-    async function triggerStaySearch(fl) {
+
+
+    async function triggerStaySearch(fl, forceRefresh = false) {
         if (!fl) return;
         state.selectedFlight = fl;
 
         const outDate = (fl.out_dep_time || fl.out_date || '').split('T')[0];
         const inDate = (fl.in_dep_time || fl.in_date || '').split('T')[0];
-        const nights = fl.stay_days || fl.exact_stay_nights || state.intake.duration;
+        const nights = fl.stay_days || fl.exact_stay_nights || state.intake.duration || 7;
         const destCity = state.selectedDest?.name || state.selectedDest?.city || 'Célállomás';
         const destCountry = state.selectedDest?.country || 'Olaszország';
 
@@ -711,6 +956,20 @@ window.Wizard = (function() {
         if (sFl) sFl.innerText = `${fl.out_airline || fl.airline || 'Járat'} (${outDate} – ${inDate} · ${nights} éj)`;
         if (sCity) sCity.innerText = destCity;
         if (sNights) sNights.innerText = nights;
+
+        // Cache kulcs képzése a szálláskeresési paraméterekből
+        const cacheKey = `stays_${destCity}_${destCountry}_${outDate}_${inDate}_${nights}_${state.intake.adults}_${state.intake.hotel_min_stars}_${state.intake.hotel_min_rating}_${state.intake.breakfast}_${(state.intake.hotel_types || []).join(',')}_${(state.intake.amenities || []).join(',')}`;
+
+        if (!forceRefresh) {
+            const cached = getSessionCache(cacheKey);
+            if (cached && cached.length > 0) {
+                console.log("[CACHE HIT] Szállások betöltve kliens gyorsítótárból (0 ms):", destCity);
+                state.stays = cached;
+                renderStays();
+                setStep(3);
+                return;
+            }
+        }
 
         showLoader(
             `Szállások keresése (${destCity})...`,
@@ -738,6 +997,7 @@ window.Wizard = (function() {
             const data = await res.json();
             if (data.status === 'ok') {
                 state.stays = data.stays || [];
+                setSessionCache(cacheKey, state.stays);
                 renderStays();
                 setStep(3);
             } else {
@@ -750,6 +1010,7 @@ window.Wizard = (function() {
         }
     }
 
+
     async function selectFlight(index) {
         const fl = state.flights[index];
         if (!fl) return;
@@ -761,21 +1022,26 @@ window.Wizard = (function() {
         const nights = fl.stay_days || fl.exact_stay_nights || state.intake.duration;
 
         if (window.TripCart) {
+            const flightPrice = fl.total_price_huf || fl.price_total_huf || fl.price_huf || 0;
+            const stopsCount = (fl.out_stops !== undefined) ? fl.out_stops : ((fl.stops !== undefined) ? fl.stops : 0);
             window.TripCart.setFlight({
                 airline: fl.out_airline || fl.in_airline || fl.airline || 'Repülőjárat',
-                price_huf: fl.total_price_huf || fl.price_huf || 0,
-                total_price_huf: fl.total_price_huf || fl.price_total_huf || 0,
+                price_huf: flightPrice,
+                price_total_huf: flightPrice,
                 out_date: outDate,
                 in_date: inDate,
                 out_time: (fl.out_dep_time || fl.out_time || '').split('T')[1]?.slice(0, 5) || '',
                 in_time: (fl.in_dep_time || fl.in_time || '').split('T')[1]?.slice(0, 5) || '',
                 out_airport: fl.out_dep_airport || 'BUD',
                 in_airport: fl.out_arr_airport || '',
+                stops: stopsCount,
+                out_stops: stopsCount,
                 exact_stay_nights: nights,
                 stay_days: nights,
                 adults: state.intake.adults
             });
         }
+
 
         await triggerStaySearch(fl);
     }
@@ -789,47 +1055,111 @@ window.Wizard = (function() {
             return;
         }
 
+        const destCity = state.selectedDest?.name || state.selectedDest?.city || 'Célállomás';
+
+        // Szállások mezőnyének szélsőértékei a hőtérképhez
+        const allStayPrices = state.stays.map(s => s.price_total_huf || s.price_huf || 0).filter(p => p > 0);
+        const minStayPrice = allStayPrices.length ? Math.min(...allStayPrices) : 0;
+        const maxStayPrice = allStayPrices.length ? Math.max(...allStayPrices) : 0;
+
+        const allRatings = state.stays.map(s => {
+            const raw = s.rating_score ? (s.rating_score > 10 ? s.rating_score / 10 : parseFloat(s.rating_score)) : 8.5;
+            return isNaN(raw) ? 8.5 : raw;
+        });
+        const minRating = allRatings.length ? Math.min(...allRatings) : 7.0;
+        const maxRating = allRatings.length ? Math.max(...allRatings) : 10.0;
+
         container.innerHTML = state.stays.map((stay, idx) => {
             const priceTotal = stay.price_total_huf || (stay.price_per_night_huf ? stay.price_per_night_huf * (state.selectedFlight?.stay_days || 7) : stay.price_huf || 120000);
-            const nights = state.selectedFlight?.stay_days || state.intake.duration;
+            const nights = state.selectedFlight?.stay_days || state.intake.duration || 7;
             const pricePerNight = stay.price_per_night_huf || Math.round(priceTotal / nights);
-            const rating = stay.rating_score ? (stay.rating_score > 10 ? (stay.rating_score / 10).toFixed(1) : stay.rating_score) : 8.5;
-            const stars = stay.stars || 3;
+            const rating = stay.rating_score ? (stay.rating_score > 10 ? (stay.rating_score / 10).toFixed(1) : parseFloat(stay.rating_score).toFixed(1)) : 8.5;
+            const stars = stay.stars || (stay.accommodation_type === '$HOTEL' ? 4 : 3);
+            const provider = stay.provider || 'Booking.com';
+            
+            // Relatív hőtérképes színstílusok
+            const stayPriceHeatmap = getPercentileStyle(priceTotal, minStayPrice, maxStayPrice, true);
+            const stayRatingHeatmap = getPercentileStyle(parseFloat(rating), minRating, maxRating, false);
+            
+            // Kép URL és fallback
+            const defaultImg = `https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&auto=format&fit=crop&q=80`;
+            const photoUrl = stay.image_url || stay.image || stay.photo_url || defaultImg;
+
+            // Külső foglalási / megtekintési link
+            const bookingUrl = stay.booking_url && stay.booking_url !== '#' 
+                ? stay.booking_url 
+                : `https://www.google.com/search?q=${encodeURIComponent((stay.name || 'Hotel') + ' ' + destCity + ' booking')}`;
 
             return `
-                <div class="advisor-main-card" style="background: var(--bg-surface); border: 1.5px solid var(--border-subtle); border-radius: 18px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.2s ease;">
-                    <div>
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-                            <h3 style="font-size: 17px; font-weight: 800; color: var(--text-main); margin: 0;">${stay.name || 'Szálloda'}</h3>
-                            <span style="font-size: 13px; color: #eab308; font-weight: 800;">${'⭐'.repeat(stars)}</span>
-                        </div>
-
-                        <div style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px;">
-                            📍 ${stay.address || stay.city || state.selectedDest?.name}
-                        </div>
-
-                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
-                            <span style="background: rgba(16, 185, 129, 0.1); color: var(--status-success, #10b981); font-weight: 800; font-size: 12px; padding: 3px 8px; border-radius: 6px;">
-                                ★ ${rating} / 10
+                <div class="planner-stay-card">
+                    <!-- SZÁLLÁS FOTÓ & BADGEK -->
+                    <div class="stay-image-container">
+                        <img src="${photoUrl}" alt="${stay.name || 'Szállás'}" class="stay-image-img" loading="lazy" onerror="this.src='${defaultImg}'">
+                        <div class="stay-badge-overlay">
+                            <span style="background: ${stayRatingHeatmap.bg}; color: ${stayRatingHeatmap.text}; border: 1px solid ${stayRatingHeatmap.border}; font-weight: 800; font-size: 11.5px; padding: 4px 8px; border-radius: 6px; backdrop-filter: blur(8px);">
+                                ★ ${rating} / 10 · ${stayRatingHeatmap.label}
                             </span>
-                            <span style="font-size: 12px; color: var(--text-secondary);">${stay.rating_text || 'Nagyon jó értékelés'}</span>
+                        </div>
+                        <div class="stay-provider-overlay">
+                            ${provider}
                         </div>
                     </div>
 
-                    <div style="border-top: 1px solid var(--border-subtle); padding-top: 14px; display: flex; justify-content: space-between; align-items: center;">
+                    <!-- SZÁLLÁS ADATOK -->
+                    <div class="stay-card-content">
                         <div>
-                            <div style="font-size: 18px; font-weight: 900; color: var(--primary); font-family: var(--font-mono);">${Math.round(priceTotal).toLocaleString()} Ft</div>
-                            <div style="font-size: 11px; color: var(--text-muted);">~${pricePerNight.toLocaleString()} Ft / éj (${nights} éj)</div>
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; gap: 8px;">
+                                <h3 style="font-size: 16px; font-weight: 800; color: var(--text-main); margin: 0; line-height: 1.3;">
+                                    ${stay.name || 'Szálloda'}
+                                </h3>
+                                <span style="font-size: 12px; color: #eab308; font-weight: 800; white-space: nowrap;">
+                                    ${'⭐'.repeat(Math.min(5, Math.max(1, stars)))}
+                                </span>
+                            </div>
+
+                            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">
+                                📍 ${stay.address || stay.location_text || stay.city || destCity}
+                            </div>
+
+                            <div style="font-size: 11.5px; color: var(--text-secondary); margin-bottom: 4px;">
+                                🌙 ${nights} éjszaka · ~${Math.round(pricePerNight).toLocaleString()} Ft / éj
+                            </div>
+                            <div style="margin-bottom: 12px;">
+                                <span style="font-size: 10.5px; font-weight: 800; padding: 2px 7px; border-radius: 6px; background: ${stayPriceHeatmap.bg}; color: ${stayPriceHeatmap.text}; border: 1px solid ${stayPriceHeatmap.border}; display: inline-block;">
+                                    ${stayPriceHeatmap.label}
+                                </span>
+                            </div>
                         </div>
 
-                        <button type="button" class="btn btn-primary" onclick="Wizard.selectStay(${idx})" style="padding: 9px 16px; font-size: 13px; font-weight: 700; border-radius: 10px;">
-                            <span>🏨 Kiválasztás →</span>
-                        </button>
+                        <!-- ÁR ÉS CTA GOMBOK -->
+                        <div>
+                            <div style="margin-top: 12px; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: flex-end;">
+                                <div>
+                                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">Teljes ár (${nights} éjszaka):</div>
+                                    <div style="font-size: 20px; font-weight: 900; color: var(--primary); font-family: var(--font-mono); line-height: 1.1;">
+                                        ${Math.round(priceTotal).toLocaleString()} Ft
+                                    </div>
+                                </div>
+                                <div style="font-size: 11.5px; color: var(--text-muted); font-weight: 600; text-align: right;">
+                                    ~${Math.round(pricePerNight).toLocaleString()} Ft / éj
+                                </div>
+                            </div>
+
+                            <div class="stay-card-actions">
+                                <a href="${bookingUrl}" target="_blank" rel="noopener noreferrer" class="stay-preview-link" title="Szállás megtekintése a szolgáltató külső oldalán (${provider})">
+                                    <span>Megtekintés ↗</span>
+                                </a>
+                                <button type="button" class="btn btn-primary" onclick="Wizard.selectStay(${idx})" style="flex: 1; padding: 10px 14px; font-size: 13px; font-weight: 800; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+                                    <span>🏨 Kiválasztás →</span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             `;
         }).join('');
     }
+
 
     function selectStay(index) {
         const stay = state.stays[index];
@@ -848,35 +1178,56 @@ window.Wizard = (function() {
                 stars: stay.stars || 4,
                 address: stay.address || '',
                 city: state.selectedDest?.name || '',
-                nights: nights
+                nights: nights,
+                image_url: stay.image_url || stay.image || '',
+                booking_url: stay.booking_url || ''
             });
         }
+
 
         renderFinalSummary();
         setStep(4);
     }
 
     function renderFinalSummary() {
-        const d = state.selectedDest;
-        const f = state.selectedFlight;
-        const s = state.selectedStay;
+        const cartTrip = window.TripCart ? window.TripCart.getTrip() : null;
+        const d = state.selectedDest || cartTrip?.destination;
+        const f = state.selectedFlight || cartTrip?.flight?.selected_flight || cartTrip?.flight;
+        const s = state.selectedStay || cartTrip?.accommodation?.selected_accommodation || cartTrip?.accommodation;
 
-        const outDate = (f?.out_dep_time || '').split('T')[0];
-        const inDate = (f?.in_dep_time || '').split('T')[0];
-        const nights = f?.stay_days || state.intake.duration;
+        // 1. Dátumok & éjszakák
+        const outDate = (f?.out_date || f?.out_dep_time || state.intake.exact_out_date || '').split('T')[0];
+        const inDate = (f?.in_date || f?.in_dep_time || state.intake.exact_in_date || '').split('T')[0];
+        const nights = f?.exact_stay_nights || f?.stay_days || f?.nights || s?.nights || state.intake.duration || 7;
+        const adults = state.intake.adults || cartTrip?.input?.adults || 2;
 
-        document.getElementById('summarySubtitle').innerText = `${d?.name || 'Célállomás'} utazás • ${state.intake.adults} felnőtt • ${nights} éjszaka (${outDate} – ${inDate})`;
+        document.getElementById('summarySubtitle').innerText = `${d?.name || d?.city || 'Célállomás'} utazás • ${adults} felnőtt • ${nights} éjszaka ${outDate ? `(${outDate} – ${inDate})` : ''}`;
 
-        document.getElementById('sumDestName').innerText = `${d?.name || ''}, ${d?.country || ''}`;
-        document.getElementById('sumDestClimate').innerText = `☀️ Nappal: ~${d?.metrics?.temp_avg || 24}°C • Biztonság: ${Math.round(d?.metrics?.safety_raw || 60)}/100`;
+        // 2. Célállomás kártya
+        document.getElementById('sumDestName').innerText = `${d?.name || d?.city || ''}${d?.country ? ', ' + d.country : ''}`;
+        const avgTemp = d?.metrics?.temp_avg || d?.temp_avg || 24;
+        const safetyScore = Math.round(d?.metrics?.safety_raw || d?.safety_score || d?.numbeo?.safety_index || 60);
+        document.getElementById('sumDestClimate').innerText = `☀️ Nappal: ~${avgTemp}°C • Biztonság: ${safetyScore}/100`;
 
-        document.getElementById('sumFlightAirline').innerText = `${f?.out_airline || f?.in_airline || 'Repülőjárat'} Retúr`;
-        document.getElementById('sumFlightDates').innerText = `${outDate} – ${inDate} • ${f?.out_stops === 0 ? 'Közvetlen járat' : f?.out_stops + ' átszállás'}`;
-        document.getElementById('sumFlightPrice').innerText = `${Math.round(f?.total_price_huf || 0).toLocaleString()} Ft`;
+        // 3. Repülő kártya
+        const airline = f?.airline || f?.out_airline || f?.in_airline || f?.carrier || 'Repülőjárat';
+        const stopsCount = (f?.out_stops !== undefined) ? f.out_stops : ((f?.stops !== undefined) ? f.stops : 0);
+        const stopsText = stopsCount === 0 ? 'Közvetlen járat' : `${stopsCount} átszállás`;
+        const flightPrice = Math.round(f?.total_price_huf || f?.price_total_huf || f?.price_huf || f?.price || 0);
 
-        document.getElementById('sumStayName').innerText = `${s?.name || 'Szállás'} ${'⭐'.repeat(s?.stars || 4)}`;
-        document.getElementById('sumStayRating').innerText = `${nights} éjszaka • Értékelés: ${s?.rating_score ? (s.rating_score > 10 ? (s.rating_score/10).toFixed(1) : s.rating_score) : 8.8}/10`;
-        document.getElementById('sumStayPrice').innerText = `${Math.round(s?.price_total_huf || s?.price_huf || 120000).toLocaleString()} Ft`;
+        document.getElementById('sumFlightAirline').innerText = `${airline} Retúr`;
+        document.getElementById('sumFlightDates').innerText = `${outDate || 'Időpont'} – ${inDate || 'Időpont'} • ${stopsText}`;
+        document.getElementById('sumFlightPrice').innerText = `${flightPrice.toLocaleString()} Ft`;
+
+        // 4. Szállás kártya
+        const stayStars = s?.stars || s?.stars_raw || 4;
+        const stayRating = s?.rating_score ? (s.rating_score > 10 ? (s.rating_score / 10).toFixed(1) : s.rating_score) : (s?.rating || 8.8);
+        const stayPrice = Math.round(s?.price_total_huf || s?.price_huf || s?.price || 120000);
+
+        document.getElementById('sumStayName').innerText = `${s?.name || 'Szálloda'} ${'⭐'.repeat(stayStars)}`;
+        document.getElementById('sumStayRating').innerText = `${nights} éjszaka • Értékelés: ${stayRating}/10`;
+        document.getElementById('sumStayPrice').innerText = `${stayPrice.toLocaleString()} Ft`;
+
 
         const wrap = document.getElementById('sumBreakdownWrap');
         if (wrap && window.TripCart) {
@@ -928,19 +1279,20 @@ window.Wizard = (function() {
     }
 
     function recalculateFlights() {
-        state.intake.flight_direct_only = document.getElementById('mod_direct_only').checked;
+        state.intake.flight_direct_only = document.getElementById('mod_direct_only')?.checked || false;
         if (state.selectedDest) {
-            selectDestination(state.destinations.indexOf(state.selectedDest));
+            triggerFlightSearch(state.selectedDest, true);
         }
     }
 
     function recalculateStays() {
-        state.intake.hotel_min_stars = parseInt(document.getElementById('mod_hotel_stars').value, 10) || 0;
-        state.intake.hotel_min_rating = parseFloat(document.getElementById('mod_hotel_rating').value) || 0;
+        state.intake.hotel_min_stars = parseInt(document.getElementById('mod_hotel_stars')?.value, 10) || 0;
+        state.intake.hotel_min_rating = parseFloat(document.getElementById('mod_hotel_rating')?.value) || 0;
         if (state.selectedFlight) {
-            selectFlight(state.flights.indexOf(state.selectedFlight));
+            triggerStaySearch(state.selectedFlight, true);
         }
     }
+
 
     // Inicializálás az oldal betöltésekor
     document.addEventListener('DOMContentLoaded', () => {
@@ -1088,23 +1440,47 @@ window.Wizard = (function() {
             state.selectedStay = trip.accommodation.selected_accommodation;
         }
 
-        // Auto-navigate ONLY if explicit resume param is present in URL
-        if (resumeMode === 'summary' && trip.destination && trip.flight?.selected_flight && trip.accommodation?.selected_accommodation) {
+        // Intelligens léptetés: Ha már van repülőjárat a tervben, ne dobjon vissza a járatválasztásra
+        const isExplicitChangeFlight = urlParams.get('change') === 'flight';
+        
+        let targetResume = resumeMode;
+        if (!targetResume) {
+            if (trip.destination && trip.flight?.selected_flight && trip.accommodation?.selected_accommodation) {
+                targetResume = 'summary';
+            } else if (trip.destination && trip.flight?.selected_flight) {
+                targetResume = 'stay';
+            } else if (trip.destination) {
+                targetResume = 'flight';
+            }
+        } else if (targetResume === 'flight' && trip.flight?.selected_flight && !isExplicitChangeFlight) {
+            // Ha már rögzítve van egy járat, automatikusan a következő hiányzó elemhez (szállás / összefoglaló) viszünk
+            if (trip.accommodation?.selected_accommodation) {
+                targetResume = 'summary';
+            } else {
+                targetResume = 'stay';
+            }
+        }
+
+        // Auto-navigate to determined step
+        if (targetResume === 'summary' && trip.destination && trip.flight?.selected_flight && trip.accommodation?.selected_accommodation) {
             renderFinalSummary();
             setStep(4);
-        } else if (resumeMode === 'stay' && trip.destination && trip.flight?.selected_flight) {
+        } else if (targetResume === 'stay' && trip.destination && trip.flight?.selected_flight) {
             if (state.stays.length === 0 && state.selectedFlight) {
                 await triggerStaySearch(state.selectedFlight);
             } else {
+                renderStays();
                 setStep(3);
             }
-        } else if (resumeMode === 'flight' && trip.destination) {
+        } else if (targetResume === 'flight' && trip.destination) {
             if (state.flights.length === 0 && state.selectedDest) {
                 await triggerFlightSearch(state.selectedDest);
             } else {
+                renderFlights();
                 setStep(2);
             }
         }
+
     }
 
     return {
@@ -1122,8 +1498,11 @@ window.Wizard = (function() {
         onRatingChange,
         openAHPModal,
         openStayPrioritiesModal,
+        openPrometheeModal,
+        openDecisionDNA,
         closeAHPModal,
         selectDestination,
+
         selectFlight,
         selectStay,
         exportProposal,
