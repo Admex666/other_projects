@@ -48,6 +48,19 @@ Az Optivoya alapvető küldetése, hogy **megkönnyítse és felgyorsítsa az ut
 - Csak természetes magyar kifejezések szerepelnek (*„Sokkal inkább”*, *„Kifejezetten inkább”*, *„Egyformán fontos”*).
 - A számított súlyszázalékok kizárólag a folyamat legvégén, az összefoglaló kártyán jelennek meg.
 
+### 5. Stepper Lépés-feloldás & Állapotmegőrzés (Step Access Control & State Preservation)
+- **Feltételes Lépéselérés (`canAccessStep`):**
+  - `0. Preferenciák`: Mindig elérhető.
+  - `1. Célállomás`: Csak akkor nyitható, ha lefutott a célállomás-keresés.
+  - `2. Járat`: Csak akkor nyitható, ha van kiválasztott célállomás és járatlista.
+  - `3. Szállás`: Csak akkor nyitható, ha a járat kiválasztása megtörtént.
+  - `4. Kész Terv`: Csak akkor nyitható, ha a szállás is kiválasztásra került.
+  - A még fel nem oldott lépések nem kattinthatók (`disabled`, `opacity: 0.45; cursor: not-allowed`).
+- **Kétirányú Módosíthatóság & Állapotérvénytelenítés (State Invalidation):**
+  - Korábbi lépésre visszalépve az addigi találati lista és a szűrők **változatlanul láthatók**.
+  - Bármelyik lépésen választott új opció (pl. új célállomás vagy más járat) azonnal érvényteleníti a későbbi részeredményeket, és a friss választás paramétereivel automatikusan újratölti a rákövetkező lépést.
+
+
 ---
 
 ## 🔗 Kapcsolódó Rendszerek

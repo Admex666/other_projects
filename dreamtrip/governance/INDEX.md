@@ -18,6 +18,8 @@ related:
   - "[[ANTI_AI_SLOP_POLICY]]"
   - "[[ENGINEERING_PRINCIPLES]]"
   - "[[ARCHITECTURE_RULES]]"
+  - "[[PROJECT_GRAPH]]"
+  - "[[PERFORMANCE_STANDARDS]]"
   - "[[CODE_QUALITY]]"
   - "[[TESTING]]"
   - "[[QUALITY_GATES]]"
@@ -34,6 +36,8 @@ Ez a dokumentum az Optivoya projekt szabályrendszerének és minőségbiztosít
 * [[PRODUCT_PRINCIPLES]] — Döntéstámogatási és termékelvek.
 * [[ANTI_AI_SLOP_POLICY]] — Anti AI Slop és autentikus dizájn/szövegezési invariánsok.
 * [[ENGINEERING_PRINCIPLES]] — Szoftverfejlesztési és architekturális alapelvek.
+* [[PROJECT_GRAPH]] — AI-Native multi-gráf architektúra és navigációs modell.
+* [[PERFORMANCE_STANDARDS]] — Iparági sebességi, válaszidő és skálázási sztenderdek.
 * [[QUALITY_GATES]] — Minőségi ellenőrzőkapuk minden módosítás előtt.
 
 ---
@@ -49,8 +53,12 @@ Ez a dokumentum az Optivoya projekt szabályrendszerének és minőségbiztosít
 
 ## ⚙️ Backend, Üzleti Logika & Adatok Módosításakor (When Changing Backend / Logic)
 * [[ARCHITECTURE_RULES]] — Réteghatárok (UI → Application → Domain → Infrastructure).
+* [[PROJECT_GRAPH]] — Szemantikai és implementációs gráfkapcsolatok, hatáselemzés.
+* [[PERFORMANCE_STANDARDS]] — Válaszidő korlátok (p50, p95), párhuzamosítás és telemetria.
 * [[CODE_QUALITY]] — Felelősségi körök, modularitás és refaktorálási szabályok.
 * [[TESTING]] — Integrációs, Playwright és egységtesztelési követelmények.
+
+
 
 ---
 

@@ -190,7 +190,10 @@
             window.PlannerIntake.initYearAndMonthPickers();
         }
 
-        // 8. Auto-resume from TripCart
+        // 8. Initialize Stepper accessibility states
+        state.updateStepperUI();
+
+        // 9. Auto-resume from TripCart
         setTimeout(() => {
             if (window.PlannerSummary) {
                 window.PlannerSummary.resumeSessionFromCart();
@@ -198,3 +201,4 @@
         }, 150);
     });
 })();
+

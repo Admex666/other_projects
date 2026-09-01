@@ -119,6 +119,10 @@ def get_all_stays(city, country, start_date, end_date,
     clean_country = raw_country.split("/")[0].strip()
     normalized_country = COUNTRY_TRANSLATIONS.get(clean_country.lower(), clean_country)
 
+    # Clean and standardize date format (YYYY-MM-DD only, strip hours/timestamps)
+    clean_start_date = str(start_date or "").strip().split(" ")[0].split("T")[0]
+    clean_end_date = str(end_date or "").strip().split(" ")[0].split("T")[0]
+
     encoded_city = urllib.parse.quote(normalized_city.strip())
     encoded_country = urllib.parse.quote(normalized_country.strip())
 
@@ -131,11 +135,12 @@ def get_all_stays(city, country, start_date, end_date,
         print("[INFO] Szálláskeresés PROD módban: Browserless felhős Chrome motor...")
         try:
             if progress_callback: progress_callback(10)
-            target_url = f"https://www.cozycozy.com/en/search/{encoded_city}%2C%20{encoded_country}/{start_date}/{end_date}/{rooms}-{adults}-{children}/results"
+            target_url = f"https://www.cozycozy.com/en/search/{encoded_city}%2C%20{encoded_country}/{clean_start_date}/{clean_end_date}/{rooms}-{adults}-{children}/results"
             
             fn_code = f"""
 export default async ({{ page }}) => {{
   await page.goto('{target_url}', {{ waitUntil: 'domcontentloaded' }});
+
   await page.waitForSelector('a[href*="searchId="]', {{ timeout: 20000 }});
   
   const href = await page.$eval('a[href*="searchId="]', el => el.href);
@@ -221,6 +226,7 @@ export default async ({{ page }}) => {{
     filter_string = build_filter_string(price_min, price_max, min_rating, 
                                         accommodation_types, amenities, breakfast)
 
+
     chrome_options = Options()
     chrome_options.add_argument("--headless=new") # Modern headless
     chrome_options.add_argument("--disable-gpu")
@@ -229,12 +235,18 @@ export default async ({{ page }}) => {{
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--disable-extensions")
     chrome_options.add_argument("--disable-notifications")
+    chrome_options.add_argument("--disable-logging")
+    chrome_options.add_argument("--log-level=3")
+    chrome_options.add_argument("--silent")
+    chrome_options.add_argument("--disable-background-networking")
+    chrome_options.add_argument("--disable-sync")
+    chrome_options.add_argument("--disable-default-apps")
     chrome_options.add_argument("--blink-settings=imagesEnabled=false") # Képek letiltása
     chrome_options.add_argument("--disk-cache-size=1") # Cache minimalizálás
     
     chrome_options.add_argument("--disable-blink-features=AutomationControlled")
     chrome_options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
-    chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    chrome_options.add_experimental_option("excludeSwitches", ["enable-automation", "enable-logging"])
     chrome_options.add_experimental_option('useAutomationExtension', False)
     chrome_options.page_load_strategy = 'eager'
 
@@ -254,9 +266,10 @@ export default async ({{ page }}) => {{
     
     try:
         # Base URL without filters first (we just need the searchId)
-        base_url = f"https://www.cozycozy.com/en/search/{encoded_city}%2C%20{encoded_country}/{start_date}/{end_date}/{rooms}-{adults}-{children}/results"
+        base_url = f"https://www.cozycozy.com/en/search/{encoded_city}%2C%20{encoded_country}/{clean_start_date}/{clean_end_date}/{rooms}-{adults}-{children}/results"
         print(f"[INFO] Cozycozy megnyitása: {base_url}")
         driver.get(base_url)
+
         if progress_callback: progress_callback(10)
         
         # Wait for the results links with searchId - selector frissítve

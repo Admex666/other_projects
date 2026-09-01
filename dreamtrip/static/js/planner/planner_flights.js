@@ -286,9 +286,15 @@
                     </div>
                 `;
             }).join('');
+
+            // Proactive Background Prefetching: Stays for the top-ranked flight
+            if (state.flights && state.flights.length > 0 && window.PlannerStays && window.PlannerStays.prefetchStays) {
+                window.PlannerStays.prefetchStays(state.flights[0]);
+            }
         },
 
         async selectFlight(index) {
+
             const state = window.PlannerState;
             if (!state) return;
             const fl = state.flights[index];

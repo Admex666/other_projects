@@ -39,7 +39,7 @@
                         💰 1. Hogyan gondolkodsz az úti cél összköltségéről?
                     </div>
                     
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: ${isCostChosen ? '12px' : '0'};">
+                    <div class="dna-scenario-grid" style="margin-bottom: ${isCostChosen ? '12px' : '0'};">
                         <div onclick="window.DecisionDNAInstance.selectScenario('dest_cost', 'A', 5)" style="cursor: pointer; padding: 12px; border-radius: 12px; border: 2px solid ${state.chosen_cards.dest_cost === 'A' ? 'var(--primary)' : 'var(--border-subtle)'}; background: ${state.chosen_cards.dest_cost === 'A' ? 'rgba(37, 99, 235, 0.08)' : 'var(--bg-card)'};">
                             <div style="font-weight: 800; font-size: 12px; color: var(--primary); margin-bottom: 4px;">🟢 A) Kisebb különbség még nem számít</div>
                             <div style="font-size: 11.5px; color: var(--text-muted);">Egy kisebb eltérés még nem döntő, de egy bizonyos összeg felett már biztosan az olcsóbb úti célt választom.</div>
@@ -87,7 +87,7 @@
                         ${!isTempUnlocked ? '<span style="font-size: 11px; font-weight: 700; color: var(--text-muted);">🔒 Válaszd ki az 1. pontot a feloldáshoz</span>' : ''}
                     </div>
                     
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: ${isTempChosen ? '12px' : '0'};">
+                    <div class="dna-scenario-grid" style="margin-bottom: ${isTempChosen ? '12px' : '0'};">
                         <div onclick="window.DecisionDNAInstance.selectScenario('dest_temp', 'A', 5)" style="cursor: pointer; padding: 12px; border-radius: 12px; border: 2px solid ${state.chosen_cards.dest_temp === 'A' ? 'var(--primary)' : 'var(--border-subtle)'}; background: ${state.chosen_cards.dest_temp === 'A' ? 'rgba(37, 99, 235, 0.08)' : 'var(--bg-card)'};">
                             <div style="font-weight: 800; font-size: 12px; color: var(--primary); margin-bottom: 4px;">🟢 A) Pár fok ide vagy oda még jó</div>
                             <div style="font-size: 11.5px; color: var(--text-muted);">Egy kisebb eltérés még kellemes idő, csak a szélsőséges hideget vagy hőséget kerülöm.</div>
@@ -135,7 +135,7 @@
                         ${!isSafeUnlocked ? '<span style="font-size: 11px; font-weight: 700; color: var(--text-muted);">🔒 Válaszd ki a 2. pontot a feloldáshoz</span>' : ''}
                     </div>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: ${isSafeChosen ? '12px' : '0'};">
+                    <div class="dna-scenario-grid" style="margin-bottom: ${isSafeChosen ? '12px' : '0'};">
                         <div onclick="window.DecisionDNAInstance.selectScenario('dest_safety', 'A', 5)" style="cursor: pointer; padding: 12px; border-radius: 12px; border: 2px solid ${state.chosen_cards.dest_safety === 'A' ? 'var(--primary)' : 'var(--border-subtle)'}; background: ${state.chosen_cards.dest_safety === 'A' ? 'rgba(37, 99, 235, 0.08)' : 'var(--bg-card)'};">
                             <div style="font-weight: 800; font-size: 12px; color: var(--primary); margin-bottom: 4px;">🟢 A) Kisebb különbség még belefér</div>
                             <div style="font-size: 11.5px; color: var(--text-muted);">Pár pont eltérés még nem döntő, de jelentős biztonsági különbségnél a biztonságosabb kell.</div>

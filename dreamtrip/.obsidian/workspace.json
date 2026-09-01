@@ -4,17 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "5f6160e298f6063d",
+        "id": "59839a7ef36c8282",
         "type": "tabs",
         "children": [
           {
-            "id": "07f1eeed09a472e1",
+            "id": "26f7061cb70a95c9",
             "type": "leaf",
             "state": {
-              "type": "graph",
+              "type": "empty",
               "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Gráf nézet"
+              "icon": "lucide-file",
+              "title": "Új lap"
             }
           }
         ]
@@ -181,8 +181,14 @@
       "bases:Új bázis létrehozása": false
     }
   },
-  "active": "07f1eeed09a472e1",
+  "active": "26f7061cb70a95c9",
   "lastOpenFiles": [
+    "knowledge/concepts/guided-progressive-decision-flow.md",
+    "knowledge/concepts/progressive-async-prefetching.md",
+    "governance/engineering/CODE_QUALITY.md",
+    "governance/engineering/PERFORMANCE_STANDARDS.md",
+    "knowledge/metrics/response-time-latency.md",
+    "governance/engineering/PROJECT_GRAPH.md",
     "knowledge/strategy/THESIS.md",
     "static/css/components/ahp_wizard.css",
     "static/css/components/cards.css",

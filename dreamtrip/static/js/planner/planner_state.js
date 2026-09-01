@@ -63,36 +63,96 @@
         stays: [],
         selectedStay: null,
 
-        setStep(stepNum) {
+        canAccessStep(stepNum) {
+            if (stepNum === 0) return true; // Preferenciák mindig elérhető
+            if (stepNum === 1) {
+                // Célállomások csak akkor, ha már lefutott a keresés és vannak célállomások
+                return Boolean(this.destinations && this.destinations.length > 0);
+            }
+            if (stepNum === 2) {
+                // Járatok csak akkor, ha van kiválasztott célállomás és vannak járatok
+                return Boolean(this.selectedDest && this.flights && this.flights.length > 0);
+            }
+            if (stepNum === 3) {
+                // Szállások csak akkor, ha van kiválasztott célállomás + járat és vannak szállások
+                return Boolean(this.selectedDest && this.selectedFlight && this.stays && this.stays.length > 0);
+            }
+            if (stepNum === 4) {
+                // Összegzés csak akkor, ha van kiválasztott célállomás + járat + szállás
+                return Boolean(this.selectedDest && this.selectedFlight && this.selectedStay);
+            }
+            return false;
+        },
+
+        setStep(stepNum, force = false) {
+            if (!force && !this.canAccessStep(stepNum)) {
+                console.warn(`[STEP BLOCKED] Lépés (${stepNum}) még nem érhető el.`);
+                // Ha a felhasználó egy még nem elérhető lépésre kattintott, jelezzük finoman
+                if (typeof showToast === 'function') {
+                    const stepNames = ["Preferenciák", "Célállomás", "Járat", "Szállás", "Kész Terv"];
+                    showToast(`Kérlek először fejezd be a korábbi lépést a(z) "${stepNames[stepNum] || stepNum}" feloldásához!`, 'info');
+                }
+                return false;
+            }
+
             this.step = stepNum;
 
-            // Update Stepper UI (Nodes 0..4)
-            for (let i = 0; i <= 4; i++) {
-                const node = document.getElementById(`stepNode${i}`);
-                const conn = document.getElementById(`stepConn${i}`);
-                const sec = document.getElementById(`wizardStep${i}`);
-
-                if (node) {
-                    node.classList.remove('active', 'completed');
-                    if (i < stepNum) node.classList.add('completed');
-                    else if (i === stepNum) node.classList.add('active');
-                }
-
-                if (conn) {
-                    conn.classList.remove('completed');
-                    if (i < stepNum) conn.classList.add('completed');
-                }
-
-                if (sec) {
-                    sec.style.display = (i === stepNum) ? 'block' : 'none';
-                }
+            // Ha visszalépünk egy korábbi lépésre, győződjünk meg róla, hogy a nézet ki van rajzolva
+            if (stepNum === 1 && window.PlannerDestinations && this.destinations && this.destinations.length > 0) {
+                window.PlannerDestinations.renderDestinations();
+            } else if (stepNum === 2 && window.PlannerFlights && this.flights && this.flights.length > 0) {
+                window.PlannerFlights.renderFlights();
+            } else if (stepNum === 3 && window.PlannerStays && this.stays && this.stays.length > 0) {
+                window.PlannerStays.renderStays();
+            } else if (stepNum === 4 && window.PlannerSummary) {
+                window.PlannerSummary.renderSummary();
             }
+
+            this.updateStepperUI();
 
             const loader = document.getElementById('wizardLoading');
             if (loader) loader.style.display = 'none';
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            return true;
         },
+
+        updateStepperUI() {
+            for (let i = 0; i <= 4; i++) {
+                const node = document.getElementById(`stepNode${i}`);
+                const conn = document.getElementById(`stepConn${i}`);
+                const sec = document.getElementById(`wizardStep${i}`);
+                const isAccessible = this.canAccessStep(i);
+
+                if (node) {
+                    node.classList.remove('active', 'completed', 'disabled');
+                    if (i < this.step) {
+                        node.classList.add('completed');
+                    } else if (i === this.step) {
+                        node.classList.add('active');
+                    }
+
+                    if (!isAccessible && i > this.step) {
+                        node.classList.add('disabled');
+                        node.style.cursor = 'not-allowed';
+                        node.style.opacity = '0.45';
+                    } else {
+                        node.style.cursor = 'pointer';
+                        node.style.opacity = '1';
+                    }
+                }
+
+                if (conn) {
+                    conn.classList.remove('completed');
+                    if (i < this.step) conn.classList.add('completed');
+                }
+
+                if (sec) {
+                    sec.style.display = (i === this.step) ? 'block' : 'none';
+                }
+            }
+        },
+
 
         showLoader(title, subtitle) {
             for (let i = 0; i <= 4; i++) {

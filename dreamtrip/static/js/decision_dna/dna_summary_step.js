@@ -20,7 +20,7 @@
                     </p>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 24px;">
+                <div class="dna-summary-grid" style="margin-bottom: 24px;">
                     <!-- 1. Desztináció Súlyok -->
                     <div style="background: var(--bg-surface); padding: 16px; border-radius: 16px; border: 1px solid var(--border-subtle);">
                         <div style="font-size: 11px; font-weight: 800; color: var(--primary); text-transform: uppercase; margin-bottom: 10px;">🌍 Célállomás Súlyok</div>

@@ -15,9 +15,9 @@ Do not rely on remembered conversation context when information can be verified 
 The project is organized into interconnected conceptual layers:
 
 ```text
-AGENTS.md
+AGENTS.md / PROJECT_MAP.md
     ↓
-Project Governance (governance/INDEX.md)
+Project Governance (governance/INDEX.md → [[PROJECT_GRAPH]])
     ↓
 Knowledge Index (knowledge/INDEX.md)
     ↓
@@ -27,7 +27,7 @@ Current State (knowledge/current/)
     ↓
 Active Work Items (work/active/)
     ↓
-Relevant Knowledge Graph (knowledge/entities/, concepts/, systems/)
+Relevant Knowledge & System Graph (knowledge/entities/, concepts/, systems/)
     ↓
 Canonical Data Sources (API, DB, Config)
     ↓
@@ -42,23 +42,24 @@ Quality Control & Validation (scripts/knowledge/validate.py, tests/)
 
 Before starting a non-trivial task, traverse using progressive disclosure:
 
-1. Read this file (`AGENTS.md`).
-2. Read `governance/INDEX.md` and check relevant governance rules (Product, UX, Design, Engineering, Quality).
+1. Read this file (`AGENTS.md`) and high-level map (`PROJECT_MAP.md`).
+2. Read `governance/INDEX.md` and check relevant governance rules (Product, UX, Design, Engineering, [[PROJECT_GRAPH]], Quality).
 3. Read `knowledge/INDEX.md` to identify the strategic context and current focus.
-4. Follow relevant relationships (`[[wikilinks]]`) to affected entities, processes, and systems.
+4. Follow relevant relationships (`[[wikilinks]]`) to affected entities, processes, systems, and modules.
 5. Read only the implementation, data, and tests required.
 
 ```text
 LEVEL 0 — PROJECT IDENTITY: Purpose, North Star, Mission, Vision
 LEVEL 1 — STRATEGY: Thesis, Customers, Value Proposition, Business Model, Principles
 LEVEL 2 — CURRENT DIRECTION: Current State, Objectives, Priorities, Constraints
-LEVEL 3 — GOVERNANCE: Product, UX, Design, Engineering & Quality Rules
+LEVEL 3 — GOVERNANCE: Product, UX, Design, Engineering, Project Graph & Quality Rules
 LEVEL 4 — WORK: Active, Planned and Completed Work Items
-LEVEL 5 — DOMAIN KNOWLEDGE: Entities, Concepts, Processes, Systems, Metrics
+LEVEL 5 — DOMAIN & SYSTEM KNOWLEDGE: Entities, Concepts, Processes, Systems, Metrics
 LEVEL 6 — HISTORY: Decisions (ADRs) & Durable Learnings
-LEVEL 7 — IMPLEMENTATION: Code, Configuration, Templates, Tests
+LEVEL 7 — IMPLEMENTATION: Code, Modules, Configuration, Templates, Tests
 LEVEL 8 — RUNTIME DATA: Live APIs, Database, LocalStorage
 ```
+
 
 ---
 

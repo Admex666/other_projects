@@ -315,7 +315,7 @@
                                 </div>
                                 <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">${p.desc}</div>
 
-                                <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px;">
+                                <div class="dna-scale-row">
                                     ${humanScale.map(opt => {
                                         const isSel = curAns === opt.idx;
                                         return `

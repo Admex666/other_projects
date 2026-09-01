@@ -649,6 +649,25 @@ main.main-container {
     font-size: 12.5px;
     font-weight: 700;
     color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.step-node:not(.disabled):hover {
+    color: var(--text-main);
+    transform: translateY(-1px);
+}
+
+.step-node.disabled {
+    cursor: not-allowed !important;
+    opacity: 0.45 !important;
+    pointer-events: auto;
+}
+
+.step-node.disabled:hover {
+    color: var(--text-muted);
+    transform: none;
 }
 
 .step-node .step-num {
@@ -663,6 +682,7 @@ main.main-container {
     font-size: 11px;
     font-weight: 800;
     color: var(--text-muted);
+    transition: all 0.2s ease;
 }
 
 .step-node.active {
@@ -685,6 +705,7 @@ main.main-container {
     background: var(--status-success, #10b981);
     color: #ffffff;
 }
+
 
 .step-connector {
     flex: 1;
@@ -731,4 +752,99 @@ main.main-container {
     border: 1px solid rgba(2, 132, 199, 0.25);
     margin-left: 6px;
 }
+
+/* ==========================================================================
+   MOBILE RESPONSIVENESS FOR STEPPER & DRAWER (<= 640px & 440px)
+   ========================================================================== */
+@media (max-width: 640px) {
+    /* Safe Bottom Clearance on Mobile */
+    body {
+        padding-bottom: 110px !important;
+    }
+    main.main-container {
+        padding-bottom: 110px !important;
+    }
+
+    /* Workflow Progress Stepper */
+    .trip-workflow-stepper {
+        padding: 8px 10px !important;
+        margin-bottom: 14px !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        scrollbar-width: none !important;
+        gap: 6px !important;
+        justify-content: flex-start !important;
+        border-radius: 12px !important;
+    }
+
+    .trip-workflow-stepper::-webkit-scrollbar {
+        display: none !important;
+    }
+
+    .step-node {
+        flex-shrink: 0 !important;
+        font-size: 11px !important;
+        gap: 5px !important;
+        padding: 4px 6px !important;
+    }
+
+    .step-node .step-num {
+        width: 20px !important;
+        height: 20px !important;
+        font-size: 10px !important;
+    }
+
+    .step-connector {
+        min-width: 10px !important;
+        flex-grow: 0 !important;
+        margin: 0 2px !important;
+    }
+
+    /* Floating Trip Bar Safe Area */
+    .floating-trip-bar {
+        bottom: max(10px, env(safe-area-inset-bottom, 10px)) !important;
+        left: 8px !important;
+        right: 8px !important;
+        width: calc(100% - 16px) !important;
+        max-width: calc(100% - 16px) !important;
+        padding: 6px 10px !important;
+        gap: 6px !important;
+    }
+
+    .btn-trip-bar-next {
+        padding: 6px 10px !important;
+        font-size: 11.5px !important;
+        border-radius: 8px !important;
+    }
+
+    /* Full Width Drawer Panel on Mobile */
+    .trip-drawer-panel {
+        width: 100% !important;
+        max-width: 100vw !important;
+        border-left: none !important;
+    }
+
+    .trip-drawer-header {
+        padding: 14px 16px !important;
+    }
+
+    .trip-drawer-header-title {
+        font-size: 16px !important;
+    }
+
+    .trip-drawer-body {
+        padding: 16px 14px !important;
+        gap: 12px !important;
+    }
+
+    .trip-drawer-footer {
+        padding: 14px 16px !important;
+        padding-bottom: max(16px, env(safe-area-inset-bottom, 16px)) !important;
+    }
+
+    .trip-drawer-summary-total {
+        font-size: 19px !important;
+    }
+}
+
 

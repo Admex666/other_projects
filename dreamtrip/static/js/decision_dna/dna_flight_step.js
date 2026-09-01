@@ -42,7 +42,7 @@
                         💰 1. Hogyan gondolkodsz a repjegyárakról két járat között?
                     </div>
                     
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: ${isPriceChosen ? '12px' : '0'};">
+                    <div class="dna-scenario-grid" style="margin-bottom: ${isPriceChosen ? '12px' : '0'};">
                         <div onclick="window.DecisionDNAInstance.selectScenario('flight_price', 'A', 5)" style="cursor: pointer; padding: 12px; border-radius: 12px; border: 2px solid ${state.chosen_cards.flight_price === 'A' ? 'var(--primary)' : 'var(--border-subtle)'}; background: ${state.chosen_cards.flight_price === 'A' ? 'rgba(37, 99, 235, 0.08)' : 'var(--bg-card)'};">
                             <div style="font-weight: 800; font-size: 12px; color: var(--primary); margin-bottom: 4px;">🟢 A) Pár ezer Ft még nem döntő</div>
                             <div style="font-size: 11.5px; color: var(--text-muted);">Egy minimális árkülönbség még nem számít, de nagyobb összegnél már egyértelműen az olcsóbb kell.</div>
@@ -90,7 +90,7 @@
                         ${!isDurUnlocked ? '<span style="font-size: 11px; font-weight: 700; color: var(--text-muted);">🔒 Válaszd ki az 1. pontot a feloldáshoz</span>' : ''}
                     </div>
                     
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: ${isDurChosen ? '12px' : '0'};">
+                    <div class="dna-scenario-grid" style="margin-bottom: ${isDurChosen ? '12px' : '0'};">
                         <div onclick="window.DecisionDNAInstance.selectScenario('flight_dur', 'A', 5)" style="cursor: pointer; padding: 12px; border-radius: 12px; border: 2px solid ${state.chosen_cards.flight_dur === 'A' ? 'var(--primary)' : 'var(--border-subtle)'}; background: ${state.chosen_cards.flight_dur === 'A' ? 'rgba(37, 99, 235, 0.08)' : 'var(--bg-card)'};">
                             <div style="font-weight: 800; font-size: 12px; color: var(--primary); margin-bottom: 4px;">🟢 A) Egy kis plusz idő még belefér</div>
                             <div style="font-size: 11.5px; color: var(--text-muted);">Egy fél óra vagy 1 óra többlet még rendben van, de több órával hosszabb utat már nem szívesen vállalok be.</div>
@@ -138,7 +138,7 @@
                         ${!isStopsUnlocked ? '<span style="font-size: 11px; font-weight: 700; color: var(--text-muted);">🔒 Válaszd ki a 2. pontot a feloldáshoz</span>' : ''}
                     </div>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: ${isStopsChosen ? '12px' : '0'};">
+                    <div class="dna-scenario-grid" style="margin-bottom: ${isStopsChosen ? '12px' : '0'};">
                         <div onclick="window.DecisionDNAInstance.selectScenario('flight_stops', 'A', 5)" style="cursor: pointer; padding: 12px; border-radius: 12px; border: 2px solid ${state.chosen_cards.flight_stops === 'A' ? 'var(--primary)' : 'var(--border-subtle)'}; background: ${state.chosen_cards.flight_stops === 'A' ? 'rgba(37, 99, 235, 0.08)' : 'var(--bg-card)'};">
                             <div style="font-weight: 800; font-size: 12px; color: var(--primary); margin-bottom: 4px;">🟢 A) Bevállalok átszállást spórolásért</div>
                             <div style="font-size: 11.5px; color: var(--text-muted);">Ha jelentősen olcsóbb, szívesen utazom 1 átszállással is.</div>

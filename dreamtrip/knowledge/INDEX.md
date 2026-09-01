@@ -37,6 +37,8 @@ Ez a fájl az Optivoya (DreamTrip) projekt navigációs térképe. Minden lénye
 * [[ANTI_AI_SLOP_POLICY]] — Anti AI Slop és autentikus dizájn/szövegezési szabályok.
 * [[ENGINEERING_PRINCIPLES]] — Felelősségi körök és kódminőség.
 * [[ARCHITECTURE_RULES]] — Réteghatárok és függőségi szabályok.
+* [[PROJECT_GRAPH]] — AI-Native multi-gráf architektúra és navigációs modell.
+* [[PERFORMANCE_STANDARDS]] — Iparági sebességi, válaszidő és skálázási sztenderdek.
 * [[CODE_QUALITY]] — Modularitás és refaktorálási szabványok.
 * [[TESTING]] — Integrációs, Playwright és egységtesztelési követelmények.
 * [[QUALITY_GATES]] — Minőségi ellenőrzőkapuk minden módosítás előtt.
@@ -65,6 +67,8 @@ Ez a fájl az Optivoya (DreamTrip) projekt navigációs térképe. Minden lénye
 * [[guided-progressive-decision-flow]] — Vezérelt progresszív döntési folyamat és Zero Analysis-Paralysis alapelv.
 * [[numbeo-cost-model]] — Hivatalos Numbeo étkezési és helyi közlekedési fogyasztói kosár modell.
 * [[honest-scraping-policy]] — Transzparens hibakezelés mesterséges dummy adatok helyett.
+* [[progressive-async-prefetching]] — Progresszív aszinkron előtöltés és multi-tier gyorsítótárazás.
+
 
 ---
 
@@ -96,6 +100,8 @@ Ez a fájl az Optivoya (DreamTrip) projekt navigációs térképe. Minden lénye
 * [[accommodation-nightly-rate]] — Éjszakánkénti és teljes szállásköltség.
 * [[safety-index]] — Numbeo Közbiztonsági Index (0–100 skála).
 * [[promethee-phi-net]] — PROMETHEE II Net Outranking Flow relevanciaérték.
+* [[response-time-latency]] — Válaszidő és keresési késleltetés (ms), rétegekre és szolgáltatásokra bontva.
+
 
 ---
 

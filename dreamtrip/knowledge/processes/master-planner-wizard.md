@@ -95,3 +95,14 @@ A **Master Travel Planner** a platform legmagasabb szintű folyamata, amely öss
   * Szerveroldalon a `_FLIGHTS_CACHE` in-memory dict 30 perces TTL-lel tehermentesíti a Kiwi és Cozycozy scrapereket.
 * **Szálláskártyák fotókkal és közvetlen `Megtekintés ↗` linkkel:** Élő Cozycozy képek, szolgáltatói badgek, valamint új lapon megnyitható külső előnézeti link a foglalás előtti ellenőrzéshez.
 
+### 5. Stepper Lépés-feloldás, Visszalépés és Döntésmódosítás (Step Lifecycle)
+* **Feltételes Lépéselérés:** A léptetőgombok csak akkor aktiválódnak, ha az előfeltételük teljesült:
+  * `0. Preferenciák`: Bármikor elérhető.
+  * `1. Célállomás`: Célállomások lekérése után.
+  * `2. Járat`: Célállomás kiválasztása után.
+  * `3. Szállás`: Járat kiválasztása után.
+  * `4. Kész Terv`: Szállás rögzítése után.
+* **Állapotmegőrzés:** Bármely korábbi lépésre visszatérve a korábban lekért és szűrt opciók sértetlenül megtekinthetők.
+* **Automatikus Érvénytelenítés & Továbblépés:** Ha a felhasználó egy korábbi lépésen módosít (új célállomást vagy másik járatot választ), a rendszer automatikusan felülírja a későbbi részeredményeket, és az új feltételekkel futtatja le a következő lépést.
+
+

@@ -89,6 +89,46 @@
             }
         },
 
+        async prefetchStays(fl) {
+            const state = window.PlannerState;
+            if (!fl || !state) return;
+            const outDate = (fl.out_dep_time || fl.out_date || '').split('T')[0];
+            const inDate = (fl.in_dep_time || fl.in_date || '').split('T')[0];
+            const nights = fl.stay_days || fl.exact_stay_nights || state.intake.duration || 7;
+            const destCity = state.selectedDest?.name || state.selectedDest?.city || 'Célállomás';
+            const destCountry = state.selectedDest?.country || 'Olaszország';
+            const cacheKey = `stays_${destCity}_${destCountry}_${outDate}_${inDate}_${nights}_${state.intake.adults}_${state.intake.hotel_min_stars}_${state.intake.hotel_min_rating}_${state.intake.breakfast}_${(state.intake.hotel_types || []).join(',')}_${(state.intake.amenities || []).join(',')}`;
+
+            if (state.getSessionCache(cacheKey)) return;
+
+            try {
+                const res = await fetch('/api/planner/search-stays', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        city: destCity,
+                        country: destCountry,
+                        checkin: outDate,
+                        checkout: inDate,
+                        adults: state.intake.adults,
+                        min_stars: state.intake.hotel_min_stars,
+                        min_rating: state.intake.hotel_min_rating,
+                        hotel_types: state.intake.hotel_types,
+                        breakfast: state.intake.breakfast,
+                        amenities: state.intake.amenities
+                    })
+                });
+                const data = await res.json();
+                if (data.status === 'ok' && data.stays && data.stays.length > 0) {
+                    state.setSessionCache(cacheKey, data.stays);
+                    console.log(`[PREFETCH SUCCESS] Stays prefetched and cached for ${destCity} (${outDate} - ${inDate})`);
+                }
+            } catch (e) {
+                // Silent prefetch failure
+            }
+        },
+
+
         renderStays() {
             const state = window.PlannerState;
             const container = document.getElementById('staysGrid');

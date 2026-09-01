@@ -41,7 +41,7 @@
                         💳 1. Hogyan viszonyulsz az éjszakánkénti szobaárhoz?
                     </div>
                     
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: ${isPriceChosen ? '12px' : '0'};">
+                    <div class="dna-scenario-grid" style="margin-bottom: ${isPriceChosen ? '12px' : '0'};">
                         <div onclick="window.DecisionDNAInstance.selectScenario('stay_price', 'A', 5)" style="cursor: pointer; padding: 12px; border-radius: 12px; border: 2px solid ${state.chosen_cards.stay_price === 'A' ? 'var(--primary)' : 'var(--border-subtle)'}; background: ${state.chosen_cards.stay_price === 'A' ? 'rgba(37, 99, 235, 0.08)' : 'var(--bg-card)'};">
                             <div style="font-weight: 800; font-size: 12px; color: var(--primary); margin-bottom: 4px;">🟢 A) Pár ezer Ft még nem számít</div>
                             <div style="font-size: 11.5px; color: var(--text-muted);">Pár ezer forint éjszakánként még nem oszt, nem szoroz, de nagyobb összegnél már az olcsóbb nyer.</div>
@@ -89,7 +89,7 @@
                         ${!isRatingUnlocked ? '<span style="font-size: 11px; font-weight: 700; color: var(--text-muted);">🔒 Válaszd ki az 1. pontot a feloldáshoz</span>' : ''}
                     </div>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: ${isRatingChosen ? '12px' : '0'};">
+                    <div class="dna-scenario-grid" style="margin-bottom: ${isRatingChosen ? '12px' : '0'};">
                         <div onclick="window.DecisionDNAInstance.selectScenario('stay_rating', 'A', 5)" style="cursor: pointer; padding: 12px; border-radius: 12px; border: 2px solid ${state.chosen_cards.stay_rating === 'A' ? 'var(--primary)' : 'var(--border-subtle)'}; background: ${state.chosen_cards.stay_rating === 'A' ? 'rgba(37, 99, 235, 0.08)' : 'var(--bg-card)'};">
                             <div style="font-weight: 800; font-size: 12px; color: var(--primary); margin-bottom: 4px;">🟢 A) Kisebb tizedes különbség még belefér</div>
                             <div style="font-size: 11.5px; color: var(--text-muted);">Egy minimális pontkülönbség még nem számít, de nagyobb minőségi ugrásnál a magasabb értékelésű nyer.</div>
@@ -137,7 +137,7 @@
                         ${!isLocUnlocked ? '<span style="font-size: 11px; font-weight: 700; color: var(--text-muted);">🔒 Válaszd ki a 2. pontot a feloldáshoz</span>' : ''}
                     </div>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;">
+                    <div class="dna-scenario-grid" style="margin-bottom: 14px;">
                         <div onclick="window.DecisionDNAInstance.selectScenario('stay_loc', 'A', 5)" style="cursor: pointer; padding: 12px; border-radius: 12px; border: 2px solid ${state.chosen_cards.stay_loc === 'A' ? 'var(--primary)' : 'var(--border-subtle)'}; background: ${state.chosen_cards.stay_loc === 'A' ? 'rgba(37, 99, 235, 0.08)' : 'var(--bg-card)'};">
                             <div style="font-weight: 800; font-size: 12px; color: var(--primary); margin-bottom: 4px;">🟢 A) Rugalmas lokáció</div>
                             <div style="font-size: 11.5px; color: var(--text-muted);">Nem feltétel a közvetlen belváros, ha jó a közlekedés vagy kedvezőbb az ár.</div>
@@ -150,7 +150,7 @@
                     </div>
 
                     <!-- Minőségi Kategória & Slider -->
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="dna-scenario-grid" style="gap: 12px;">
                         <div style="background: var(--bg-card); padding: 12px; border-radius: 12px; border: 1px solid var(--border-subtle);">
                             <label class="form-label" style="font-weight: 700; margin-bottom: 6px; display: block; font-size: 11.5px;">Minimális Csillag:</label>
                             <select onchange="window.DecisionDNAInstance.state.stay_filters.hotel_min_stars = parseInt(this.value, 10)" class="form-control" style="width: 100%; padding: 8px; border-radius: 8px; background: var(--bg-surface); font-weight: 700;">

@@ -1,10 +1,10 @@
-"""
-Optivoya Router: Master Travel Planner (End-to-End Wizard) & Unified Trip State
-"""
+import os
+import time
 from fastapi import APIRouter, Request, BackgroundTasks, HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from typing import List, Dict, Optional, Any
 from pydantic import BaseModel
+
 
 from app.core.config import templates, IS_PRODUCTION
 from app.core.auth import get_current_user
@@ -219,8 +219,11 @@ async def api_planner_search_flights(req: PlannerFlightSearchRequest, request: R
         print(f"[PLANNER FLIGHT ERROR] {e}")
         return JSONResponse({"status": "error", "error": str(e)}, status_code=500)
 
+_PLANNER_STAYS_CACHE: Dict[str, List[Dict[str, Any]]] = {}
+
 @router.post("/api/planner/search-stays")
 async def api_planner_search_stays(req: PlannerStaySearchRequest, request: Request):
+    t_start = time.perf_counter()
     try:
         from datetime import datetime as dt
         try:
@@ -242,6 +245,22 @@ async def api_planner_search_stays(req: PlannerStaySearchRequest, request: Reque
             city_clean = parts[0].strip()
             country_clean = parts[1].strip()
 
+        cache_key = f"{city_clean.lower()}_{country_clean.lower()}_{req.checkin}_{req.checkout}_{req.adults}_{req.min_stars}_{req.min_rating}_{req.breakfast}"
+        
+        # 1. Ellenőrizzük a szerveroldali memóriagyorsítótárat (0 ms)
+        if cache_key in _PLANNER_STAYS_CACHE and _PLANNER_STAYS_CACHE[cache_key]:
+            cached_stays = _PLANNER_STAYS_CACHE[cache_key]
+            duration_ms = round((time.perf_counter() - t_start) * 1000, 1)
+            return JSONResponse({
+                "status": "ok",
+                "count": len(cached_stays),
+                "stays": cached_stays[:35],
+                "meta": {
+                    "source": "server_memory_cache",
+                    "timings_ms": { "stays_fetch": duration_ms }
+                }
+            })
+
         from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
 
         raw_results = None
@@ -261,9 +280,10 @@ async def api_planner_search_stays(req: PlannerStaySearchRequest, request: Reque
                 amenities=req.amenities,
                 breakfast=req.breakfast
             )
-            raw_results = future.result(timeout=5.0)
+            # Várunk a valós Cozycozy scraperre (max 28 másodperc hidegen)
+            raw_results = future.result(timeout=28.0)
         except (FuturesTimeoutError, TimeoutError):
-            print(f"[PLANNER STAY INFO] Cozycozy live scraper timed out (>5s) for {city_clean}, using verified Cozycozy Market Benchmark.")
+            print(f"[PLANNER STAY INFO] Cozycozy live scraper timed out for {city_clean}, using verified Cozycozy Market Benchmark.")
             raw_results = None
         except Exception as se:
             print(f"[PLANNER STAY WARN] Scraper exception for {city_clean}: {se}")
@@ -283,6 +303,10 @@ async def api_planner_search_stays(req: PlannerStaySearchRequest, request: Reque
                 st['price_total_huf'] = nightly_huf * num_nights
                 st['stay_nights'] = num_nights
                 st['is_market_benchmark'] = False
+            
+            # Mentés a szerveroldali memóriagyorsítótárba
+            if parsed:
+                _PLANNER_STAYS_CACHE[cache_key] = parsed
 
         if not parsed:
             from app.services.accommodation_market_service import generate_market_benchmark_stays
@@ -297,7 +321,19 @@ async def api_planner_search_stays(req: PlannerStaySearchRequest, request: Reque
                 amenities=req.amenities
             )
 
-        return JSONResponse({"status": "ok", "count": len(parsed), "stays": parsed[:25]})
+        duration_ms = round((time.perf_counter() - t_start) * 1000, 1)
+        return JSONResponse({
+            "status": "ok",
+            "count": len(parsed),
+            "stays": parsed[:35],
+            "meta": {
+                "source": "live_cozycozy_scraper" if (raw_results and raw_results.get('entries')) else "market_benchmark",
+                "timings_ms": {
+                    "stays_fetch": duration_ms
+                }
+            }
+        })
+
     except Exception as e:
         print(f"[PLANNER STAY ERROR] {e}")
         from app.services.accommodation_market_service import generate_market_benchmark_stays
@@ -309,6 +345,7 @@ async def api_planner_search_stays(req: PlannerStaySearchRequest, request: Reque
             adults=req.adults
         )
         return JSONResponse({"status": "ok", "count": len(fallback_stays), "stays": fallback_stays, "is_fallback": True})
+
 
 @router.get("/api/numbeo/breakdown")
 async def get_numbeo_breakdown(city: str, country: Optional[str] = "", region: Optional[str] = ""):
