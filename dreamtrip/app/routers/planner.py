@@ -14,9 +14,11 @@ from app.services.planner_service import (
     search_and_rank_planner_flights
 )
 from app.services.exchange_service import get_eur_huf_rate
+from app.services.analytics_service import record_telemetry_event
 from app.scrapers.accommodation_scraper import get_all_stays, parse_accommodation_results
 
 router = APIRouter(tags=["Master Planner"])
+
 
 # In-memory status & active trips
 planner_dest_status: Dict[str, Any] = {}
@@ -153,6 +155,21 @@ def run_planner_destinations_task(user_key: str, data: MasterPlannerIntake):
             "count": len(results),
             "results": results
         }
+        record_telemetry_event(
+            user_id=user_key.replace("planner_", ""),
+            event_type="search_completed",
+            module="destination_matcher",
+            search_params={
+                "origin": data.origin,
+                "month": data.month,
+                "duration": data.duration,
+                "adults": data.adults,
+                "target_temp": data.target_temp,
+                "min_safety": data.min_safety
+            },
+            results_count=len(results),
+            success=True
+        )
     except Exception as e:
         print(f"[PLANNER ERROR] {e}")
         planner_dest_status[user_key] = {
@@ -160,6 +177,14 @@ def run_planner_destinations_task(user_key: str, data: MasterPlannerIntake):
             "progress": 0,
             "error": str(e)
         }
+        record_telemetry_event(
+            user_id=user_key.replace("planner_", ""),
+            event_type="search_completed",
+            module="destination_matcher",
+            search_params={"origin": data.origin, "month": data.month},
+            success=False,
+            error_message=str(e)
+        )
 
 # HTML View
 @router.get("/planner", response_class=HTMLResponse)
@@ -188,6 +213,8 @@ async def get_planner_destinations_status(request: Request):
 
 @router.post("/api/planner/search-flights")
 async def api_planner_search_flights(req: PlannerFlightSearchRequest, request: Request):
+    t0 = time.perf_counter()
+    user = get_current_user(request) or "guest_planner"
     try:
         flights = search_and_rank_planner_flights(
             origin=req.origin,
@@ -214,10 +241,37 @@ async def api_planner_search_flights(req: PlannerFlightSearchRequest, request: R
             promethee_params=req.promethee_params
         )
 
+        duration_ms = round((time.perf_counter() - t0) * 1000, 1)
+        record_telemetry_event(
+            user_id=user,
+            event_type="search_completed",
+            module="flight_intelligence",
+            search_params={
+                "origin": req.origin,
+                "destination": req.destination,
+                "date_mode": req.date_mode,
+                "month": req.month,
+                "duration": req.duration,
+                "adults": req.adults
+            },
+            duration_ms=duration_ms,
+            results_count=len(flights),
+            success=True
+        )
+
         return JSONResponse({"status": "ok", "count": len(flights), "flights": flights})
     except Exception as e:
         print(f"[PLANNER FLIGHT ERROR] {e}")
+        record_telemetry_event(
+            user_id=user,
+            event_type="search_completed",
+            module="flight_intelligence",
+            search_params={"origin": req.origin, "destination": req.destination},
+            success=False,
+            error_message=str(e)
+        )
         return JSONResponse({"status": "error", "error": str(e)}, status_code=500)
+
 
 _PLANNER_STAYS_CACHE: Dict[str, List[Dict[str, Any]]] = {}
 
@@ -322,6 +376,25 @@ async def api_planner_search_stays(req: PlannerStaySearchRequest, request: Reque
             )
 
         duration_ms = round((time.perf_counter() - t_start) * 1000, 1)
+        user = get_current_user(request) or "guest_planner"
+        record_telemetry_event(
+            user_id=user,
+            event_type="search_completed",
+            module="accommodation_intelligence",
+            search_params={
+                "city": req.city,
+                "country": req.country or "",
+                "checkin": req.checkin,
+                "checkout": req.checkout,
+                "adults": req.adults,
+                "min_stars": req.min_stars,
+                "min_rating": req.min_rating
+            },
+            duration_ms=duration_ms,
+            results_count=len(parsed),
+            success=True
+        )
+
         return JSONResponse({
             "status": "ok",
             "count": len(parsed),
@@ -336,6 +409,15 @@ async def api_planner_search_stays(req: PlannerStaySearchRequest, request: Reque
 
     except Exception as e:
         print(f"[PLANNER STAY ERROR] {e}")
+        user = get_current_user(request) or "guest_planner"
+        record_telemetry_event(
+            user_id=user,
+            event_type="search_completed",
+            module="accommodation_intelligence",
+            search_params={"city": req.city, "checkin": req.checkin, "checkout": req.checkout},
+            success=False,
+            error_message=str(e)
+        )
         from app.services.accommodation_market_service import generate_market_benchmark_stays
         fallback_stays = generate_market_benchmark_stays(
             city=req.city,
@@ -366,7 +448,26 @@ async def sync_unified_trip(trip: UnifiedTrip, request: Request):
     data = trip.model_dump()
     active_trips[user] = data
     active_trips[trip.trip_id] = data
+
+    # Rögzítjük az ajánlat export / szinkron eseményt ha az utazás elkészült
+    if data.get("destination") and data.get("flight", {}).get("selected_flight") and data.get("accommodation", {}).get("selected_accommodation"):
+        dest_name = data["destination"].get("name") or data["destination"].get("city") or "Célpont"
+        record_telemetry_event(
+            user_id=user,
+            event_type="proposal_exported",
+            module="proposal",
+            search_params={
+                "destination": dest_name, 
+                "trip_id": trip.trip_id,
+                "airline": data["flight"]["selected_flight"].get("airline"),
+                "hotel": data["accommodation"]["selected_accommodation"].get("name")
+            },
+            results_count=1,
+            success=True
+        )
+
     return JSONResponse({"status": "ok", "trip_id": trip.trip_id})
+
 
 @router.get("/api/trip/active")
 async def get_active_trip(request: Request, trip_id: Optional[str] = None):

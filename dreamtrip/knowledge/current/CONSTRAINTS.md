@@ -3,20 +3,37 @@ id: current-constraints
 aliases:
   - CONSTRAINTS
 type: strategic_concept
-name: Constraints
+name: Constraints & Scope Limits
 status: active
 
-description: A projekt aktuális technikai és üzleti korlátai.
+description: A projekt aktuális stratégiai, technikai és erőforrásbeli korlátai (Scope Rule, Founder Hours ≤10h, Nem Célok).
 
 related:
   - "[[CURRENT_STATE]]"
   - "[[PRIORITIES]]"
+  - "[[NORTH_STAR]]"
+  - "[[optivoya-strategy]]"
   - "[[honest-scraping-policy]]"
 ---
 
-# 🛑 Constraints & Non-Goals
+# 🛑 Constraints, Scope Limits & Non-Goals
 
-1. **Nem generálunk mesterséges / dummy járat- vagy szállásadatokat:** Ha a Kiwi vagy Cozycozy nem ad találatot, a felület nem találhat ki fiktív árakat (Honest Scraping Policy).
-2. **Külső API Rate Limitek:** A Kiwi és egyéb aggregátorok felé a lekérdezéseket kíméletesen, párhuzamosítva és optimalizált sávokban végezzük.
-3. **B2C fizetési átjáró (Stripe checkout) most nem cél:** A jelenlegi fázisban az utazási ajánlat előállítása és a partner linkek biztosítása a cél, közvetlen kártyás fizetési tranzakció lebonyolítása nélkül.
-4. **Böngészőfüggetlen kliensoldali perzisztencia:** A kosárnak működnie kell session cookie-k és LocalStorage segítségével is.
+## 🔒 Scope Szabály (Anti-Feature-Bloat)
+> **Aranyszabály:** Új feature csak akkor kerülhet a béta scope-ba, ha valódi felhasználó bizonyíthatóan emiatt nem tud értéket kapni vagy fizetni.
+
+---
+
+## 🚫 Stratégiai NEM Célok (Non-Goals)
+1. **Nincs VC / Tőkebevonás:** Nem cél nagy kockázati tőkés csapat felépítése.
+2. **Nincs Founder-intenzív Agency:** Nem vállalunk manuális utazási ügynökségi szolgáltatást.
+3. **Erőforráskorlát:** $\le 10$ founder óra / hét a cél, a rendszernek automatizáltnak és skálázhatónak kell maradnia.
+4. **Bétában NEM szükséges:**
+   * Teljes itinerary / programtervező engine
+   * Komplex TSP / VRPTW útvonaloptimalizáció
+   * Mobilapp, chatbot, CRM és enterprise funkciók
+
+---
+
+## ⚙️ Technikai & Adatinvariánsok
+* **Honest Scraping Invariant:** Nem jelenítünk meg hallucinált vagy kitalált árakat/járatokat.
+* **Kétirányú gyorsítótárazás és sebesség:** A válaszidőknek meg kell felelniük a `[[PERFORMANCE_STANDARDS]]` előírásainak.

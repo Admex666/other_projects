@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="hu" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optivoya — B2B Beta Usage Dashboard</title>
+    <link rel="stylesheet" href="/static/css/theme.css">
+    <link rel="stylesheet" href="/static/css/components.css">
+    <style>
+        :root {
+            --bg-base: #0b0f19;
+            --bg-card: #151d30;
+            --bg-card-hover: #1e293b;
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --primary: #6366f1;
+            --primary-glow: rgba(99, 102, 241, 0.25);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        .admin-nav {
+            background: rgba(21, 29, 48, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        .admin-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .admin-badge {
+            background: rgba(99, 102, 241, 0.2);
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            color: #a5b4fc;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .admin-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        .kpi-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+        .kpi-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .kpi-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: #fff;
+        }
+        .kpi-highlight {
+            font-size: 12px;
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        /* 2-Column Dashboard Layout */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .panel-header {
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .panel-title {
+            font-size: 16px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* User List */
+        .user-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 650px;
+            overflow-y: auto;
+        }
+        .user-item {
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: background 0.15s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+        .user-item:hover, .user-item.active {
+            background: var(--bg-card-hover);
+        }
+        .user-item.active {
+            border-left: 3px solid var(--primary);
+        }
+        .user-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 15px;
+            color: #fff;
+        }
+
+        /* Timeline Items */
+        .timeline-container {
+            padding: 16px 24px;
+            max-height: 750px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .event-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 16px;
+            transition: all 0.15s ease;
+        }
+        .event-card:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+            background: rgba(15, 23, 42, 0.9);
+        }
+        .event-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .event-module-badge {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+        .badge-destination { background: rgba(59, 130, 246, 0.2); color: #93c5fd; }
+        .badge-flight { background: rgba(139, 92, 246, 0.2); color: #c4b5fd; }
+        .badge-accommodation { background: rgba(236, 72, 153, 0.2); color: #f472b6; }
+        .badge-planner { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
+        .badge-proposal { background: rgba(245, 158, 11, 0.2); color: #fcd34d; }
+
+        .param-chip {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #cbd5e1;
+            display: inline-block;
+            margin: 2px 4px 2px 0;
+        }
+        .raw-json {
+            margin-top: 8px;
+            background: #090d16;
+            border-radius: 8px;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 11px;
+            color: #94a3b8;
+            overflow-x: auto;
+            display: none;
+        }
+
+        /* Modal */
+        .modal-backdrop {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        .modal-backdrop.open { display: flex; }
+        .modal-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+            padding: 32px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+        }
+        .form-row {
+            margin-bottom: 16px;
+        }
+        .form-row label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+        .form-row input, .form-row textarea {
+            width: 100%;
+            padding: 10px 14px;
+            background: rgba(11, 15, 25, 0.8);
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            color: #fff;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <nav class="admin-nav">
+        <div class="admin-brand">
+            <a href="/admin/dashboard" style="text-decoration:none; font-size:20px; font-weight:800; color:#fff;">Optivoya</a>
+            <span class="admin-badge">Usage Analytics</span>
+            <span style="font-size: 12px; color: var(--text-muted);">| B2B Beta Validation</span>
+        </div>
+        <div style="display: flex; gap: 12px; align-items: center;">
+            <button class="btn btn-primary btn-sm" onclick="openCreateUserModal()">+ Új Béta Felhasználó</button>
+            <a href="/planner" target="_blank" class="btn btn-outline btn-sm">Master Planner Megnyitása ↗</a>
+            <a href="/admin/logout" class="btn btn-ghost btn-sm" style="color:#ef4444;">Kijelentkezés</a>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <!-- KPI METRICS GRID -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-label">👥 Béta Felhasználók <span class="kpi-highlight">M1 Target: ≥5</span></div>
+                <div class="kpi-value">{{ kpis.total_users }}</div>
+                <div style="font-size: 12px; color: var(--text-muted);">{{ kpis.repeat_users_count }} visszatérő tanácsadó</div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-label">⚡ Összes Keresés <span class="kpi-highlight">{{ kpis.success_rate_pct }}% Siker</span></div>
+                <div class="kpi-value">{{ kpis.total_searches }}</div>
+                <div style="font-size: 12px; color: var(--text-muted);">{{ kpis.successful_searches }} sikeres művelet</div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-label">⏳ Megtakarított Idő <span class="kpi-highlight">H2 Hipotézis</span></div>
+                <div class="kpi-value">{{ kpis.total_time_saved_hours }} <span style="font-size: 16px; font-weight: 500;">óra</span></div>
+                <div style="font-size: 12px; color: var(--text-muted);">~42 perc megtakarítás / keresés</div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-label">⏱️ Átlagos Válaszidő <span class="kpi-highlight">&lt; 3.5s SLA</span></div>
+                <div class="kpi-value">{{ kpis.avg_duration_sec }}s</div>
+                <div style="font-size: 12px; color: var(--text-muted);">{{ kpis.avg_duration_ms }} ms latency</div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-label">📄 Generált Ajánlatok</div>
+                <div class="kpi-value">{{ kpis.proposals_exported }}</div>
+                <div style="font-size: 12px; color: var(--text-muted);">Exportált B2B utazási tervek</div>
+            </div>
+        </div>
+
+        <!-- 2-COLUMN DASHBOARD GRID -->
+        <div class="dashboard-grid">
+            <!-- USERS DIRECTORY -->
+            <div class="panel-card">
+                <div class="panel-header">
+                    <div class="panel-title">👥 Béta Tanácsadók ({{ users|length }})</div>
+                    {% if selected_user != 'all' %}
+                    <a href="/admin/dashboard" style="font-size: 12px; color: var(--primary); text-decoration: none;">Összes mutatása</a>
+                    {% endif %}
+                </div>
+                <div class="user-list">
+                    {% for u in users %}
+                    <a href="/admin/dashboard?user={{ u.username }}" class="user-item {% if selected_user == u.username %}active{% endif %}">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div class="user-avatar">{{ u.username[:2]|upper }}</div>
+                            <div>
+                                <div style="font-weight: 700; font-size: 14px;">{{ u.full_name }}</div>
+                                <div style="font-size: 12px; color: var(--text-muted);">@{{ u.username }} • {{ u.company_name }}</div>
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 13px; font-weight: 700; color: var(--primary);">{{ u.successful_searches }} keresés</div>
+                            <div style="font-size: 11px; color: var(--text-muted);">{{ u.last_active_at[:10] }}</div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- EVENT TIMELINE STREAM -->
+            <div class="panel-card">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        🔍 Eseménynapló & Idővonal 
+                        {% if selected_user != 'all' %}
+                        <span style="font-size: 13px; color: var(--primary); font-weight: 600;">— @{{ selected_user }}</span>
+                        {% else %}
+                        <span style="font-size: 13px; color: var(--text-muted); font-weight: 500;">(Összes felhasználó)</span>
+                        {% endif %}
+                    </div>
+                    <span style="font-size: 12px; color: var(--text-muted);">{{ timeline|length }} esemény</span>
+                </div>
+
+                <div class="timeline-container">
+                    {% if timeline|length == 0 %}
+                    <div style="padding: 40px; text-align: center; color: var(--text-muted);">
+                        Még nem érkezett telemetria esemény erre a szűrésre.
+                    </div>
+                    {% endif %}
+
+                    {% for ev in timeline %}
+                    <div class="event-card">
+                        <div class="event-header">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span class="event-module-badge badge-{{ ev.module.split('_')[0] }}">{{ ev.module }}</span>
+                                <strong style="font-size: 13px;">{{ ev.event_type }}</strong>
+                                <span style="font-size: 12px; color: var(--text-muted);">• @{{ ev.user_id }}</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                {% if ev.duration_ms %}
+                                <span style="font-size: 12px; font-weight: 600; color: #a5b4fc;">⏱️ {{ ev.duration_formatted }}</span>
+                                {% endif %}
+                                {% if ev.success %}
+                                <span style="font-size: 12px; color: var(--success); font-weight: 700;">✅ Siker ({{ ev.results_count }} db)</span>
+                                {% else %}
+                                <span style="font-size: 12px; color: var(--danger); font-weight: 700;">❌ Hiba</span>
+                                {% endif %}
+                                <span style="font-size: 11px; color: var(--text-muted);">{{ ev.created_at[11:19] }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Paraméterek -->
+                        <div style="margin-top: 6px;">
+                            {% if ev.search_params.origin %}
+                            <span class="param-chip">🛫 Indulás: {{ ev.search_params.origin }}</span>
+                            {% endif %}
+                            {% if ev.search_params.destination_city or ev.search_params.destination %}
+                            <span class="param-chip">📍 Cél: {{ ev.search_params.destination_city or ev.search_params.destination }}</span>
+                            {% endif %}
+                            {% if ev.search_params.adults %}
+                            <span class="param-chip">👥 {{ ev.search_params.adults }} felnőtt</span>
+                            {% endif %}
+                            {% if ev.search_params.duration %}
+                            <span class="param-chip">📅 {{ ev.search_params.duration }} nap</span>
+                            {% endif %}
+                            {% if ev.error_message %}
+                            <div style="color: var(--danger); font-size: 12px; margin-top: 4px;">⚠️ Hiba: {{ ev.error_message }}</div>
+                            {% endif %}
+                        </div>
+
+                        <button 
+                            onclick="toggleJson('json_{{ ev.id }}')" 
+                            style="background:none; border:none; color:var(--text-muted); font-size:11px; cursor:pointer; padding:4px 0; margin-top:6px; text-decoration:underline;">
+                            Adatstruktúra (JSON) megtekintése ▾
+                        </button>
+                        <pre id="json_{{ ev.id }}" class="raw-json">{{ ev.search_params | tojson(indent=2) }}</pre>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CREATE USER MODAL -->
+    <div id="createUserModal" class="modal-backdrop">
+        <div class="modal-box">
+            <h3 style="margin-top:0; font-size:18px; font-weight:800;">+ Új Béta Tanácsadó Létrehozása</h3>
+            <p style="font-size:13px; color:var(--text-muted); margin-bottom:20px;">
+                Állíts be egyedi felhasználónevet és jelszót az új béta partner számára.
+            </p>
+            <form action="/api/admin/users" method="POST">
+                <div class="form-row">
+                    <label>Felhasználónév (egyedi bejelentkezési azonosító) *</label>
+                    <input type="text" name="username" placeholder="pl. eva_travel" required>
+                </div>
+                <div class="form-row">
+                    <label>Kezdeti jelszó *</label>
+                    <input type="text" name="password" placeholder="pl. jelszo2026" required>
+                </div>
+                <div class="form-row">
+                    <label>Tanácsadó Teljes Neve</label>
+                    <input type="text" name="full_name" placeholder="pl. Kiss Éva">
+                </div>
+                <div class="form-row">
+                    <label>Utazási Iroda / Cég Neve</label>
+                    <input type="text" name="company_name" placeholder="pl. Éva Travel Boutique">
+                </div>
+                <div class="form-row">
+                    <label>E-mail cím</label>
+                    <input type="email" name="email" placeholder="eva@evatravel.hu">
+                </div>
+                <div class="form-row">
+                    <label>Megjegyzések / Hivatkozás</label>
+                    <textarea name="notes" rows="2" placeholder="pl. LinkedIn outbound kontakt, 5 fős boutique iroda"></textarea>
+                </div>
+
+                <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:24px;">
+                    <button type="button" class="btn btn-outline" onclick="closeCreateUserModal()">Mégse</button>
+                    <button type="submit" class="btn btn-primary">Felhasználó Mentése</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function toggleJson(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.style.display = (el.style.display === 'block') ? 'none' : 'block';
+            }
+        }
+        function openCreateUserModal() {
+            document.getElementById('createUserModal').classList.add('open');
+        }
+        function closeCreateUserModal() {
+            document.getElementById('createUserModal').classList.remove('open');
+        }
+    </script>
+</body>
+</html>

@@ -6,25 +6,30 @@ type: strategic_concept
 name: Current State
 status: active
 
-description: Az Optivoya projekt jelenlegi éles állapota és fókuszai.
+description: Az Optivoya projekt jelenlegi állapota — M1 B2B Beta Validation fázis, működő unified motorok és első fizető ügyfél fókusz.
 
 related:
   - "[[master-planner-wizard]]"
   - "[[unified-trip-model]]"
   - "[[OBJECTIVES]]"
   - "[[PRIORITIES]]"
+  - "[[optivoya-strategy]]"
 ---
 
-# 📍 Current State (B2B Beta Version)
+# 📍 Current State: M1 — B2B Beta Validation
 
-Az Optivoya jelenleg a **B2B Beta** fázisban van, teljesen működőképes Master Travel Planner varázslóval.
+Az Optivoya jelenleg az **M1 — B2B Beta Validation** mérföldkőnél tart.
 
-### 🚀 Működő Rendszerek:
-1. **Master Planner Wizard (`/planner`):** 4 lépéses integrált utazástervező munkafolyamat (Célpont → Járat → Szállás → Összegzés & Ajánlat).
-2. **Kanonikus Lebegő Kosár (`TripCart`):** LocalStorage és session szinkronizált perzisztens kosársáv és drawer.
-3. **Párhuzamos Sávos Járatkereső (Kiwi Scraper):** 150 járat lekérése 3 párhuzamos sávban, 0.007s alatt vektorizált PROMETHEE rangsorolással.
-4. **Cozycozy Szálláskereső:** Valós szállásárak zárolt dátumok alapján.
-5. **Numbeo Költségmodell:** Étkezési és helyi közlekedési fogyasztói kosár számítás.
+---
 
-### 🎯 Jelenlegi fókusz:
-A felhasználói élmény finomhangolása, a tudás- és governance réteg v2.0 kiterjesztése és a stabilitás biztosítása.
+## 🚀 Kész és Működő Rendszerek
+1. **Destination Matcher:** Személyre szabott desztinációrangsorolás Open-Meteo klíma, Kiwi repülőjegy árak és Numbeo költség/biztonság adatokkal.
+2. **Flight Intelligence:** Valós Kiwi.com járatadatok, ár, menetidő, átszállás és PROMETHEE II rangsorolás.
+3. **Accommodation Intelligence:** Cozycozy élő szállásadatok és piaci mediánok, pontos éjszakaszám és preferenciák alapján.
+4. **Master Planner Wizard (`/planner`):** Unified munkafolyamat (`ügyféligény → destination → flight → accommodation → shortlist / proposal`).
+5. **Kanonikus Lebegő Kosár & Ajánlatkészítő (`TripCart`):** Automatikus összegzés és professzionális PDF/nyomtatható ajánlat.
+
+---
+
+## 🎯 Jelenlegi Fókusz (Current Focus)
+* **B2B validáció:** Travel advisorok bevonása, időmegtakarítás mérése ($\text{Time Saved / Client}$) és az első fizető ügyfél megszerzése.

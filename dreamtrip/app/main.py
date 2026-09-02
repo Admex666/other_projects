@@ -14,7 +14,8 @@ from app.core.auth import USERS, sessions, verify_credentials, create_session, g
 from app.services.destination_service import load_all_destinations
 
 # Import Modular Routers
-from app.routers import auth, planner, flights, stays, destinations, trip
+from app.routers import auth, planner, flights, stays, destinations, trip, admin
+from app.services.analytics_service import record_telemetry_event
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -55,9 +56,31 @@ async def performance_telemetry_middleware(request: Request, call_next):
 # Mount Static Assets
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
+# Analytics Client Ingestion API
+@app.post("/api/analytics/event")
+async def api_record_client_event(request: Request):
+    try:
+        data = await request.json()
+        user_id = data.get("user_id") or get_current_user(request) or "anonymous_advisor"
+        event_id = record_telemetry_event(
+            user_id=user_id,
+            session_id=data.get("session_id"),
+            event_type=data.get("event_type", "custom_event"),
+            module=data.get("module", "general"),
+            search_params=data.get("search_params"),
+            duration_ms=data.get("duration_ms"),
+            results_count=data.get("results_count"),
+            success=data.get("success", True),
+            error_message=data.get("error_message"),
+            meta_data=data.get("meta_data")
+        )
+        return {"status": "ok", "event_id": event_id}
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
 
 # Register Routers
 app.include_router(auth.router)
+app.include_router(admin.router)
 app.include_router(planner.router)
 app.include_router(flights.router)
 app.include_router(stays.router)

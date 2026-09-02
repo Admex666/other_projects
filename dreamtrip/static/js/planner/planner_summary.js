@@ -150,16 +150,15 @@
 
             const isExplicitChangeFlight = urlParams.get('change') === 'flight';
             
+            // Csak akkor ugrunk automatikusan lépésre, ha a felhasználó kifejezetten a folytatásra kattintott (?resume=...)
+            if (!resumeMode && !isExplicitChangeFlight) {
+                // Alapesetben a 0. lépésen (Preferenciák) indulunk tiszta lappal
+                state.setStep(0);
+                return;
+            }
+
             let targetResume = resumeMode;
-            if (!targetResume) {
-                if (trip.destination && trip.flight?.selected_flight && trip.accommodation?.selected_accommodation) {
-                    targetResume = 'summary';
-                } else if (trip.destination && trip.flight?.selected_flight) {
-                    targetResume = 'stay';
-                } else if (trip.destination) {
-                    targetResume = 'flight';
-                }
-            } else if (targetResume === 'flight' && trip.flight?.selected_flight && !isExplicitChangeFlight) {
+            if (targetResume === 'flight' && trip.flight?.selected_flight && !isExplicitChangeFlight) {
                 if (trip.accommodation?.selected_accommodation) {
                     targetResume = 'summary';
                 } else {
@@ -173,6 +172,7 @@
             } else if (targetResume === 'stay' && trip.destination && trip.flight?.selected_flight) {
                 if (state.stays.length === 0 && state.selectedFlight) {
                     await window.PlannerStays.triggerStaySearch(state.selectedFlight);
+
                 } else {
                     window.PlannerStays.renderStays();
                     state.setStep(3);

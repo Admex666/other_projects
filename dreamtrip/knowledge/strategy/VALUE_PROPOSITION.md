@@ -6,17 +6,30 @@ type: strategic_concept
 name: Value Proposition
 status: active
 
-description: Az Optivoya egyedi értékajánlata (UVP).
+description: Az Optivoya egyedi értékajánlata (UVP) — Time Saved per Client és minőségi utazási döntéstámogatás.
 
 related:
   - "[[THESIS]]"
   - "[[TARGET_CUSTOMER]]"
+  - "[[optivoya-strategy]]"
   - "[[unified-trip-model]]"
 ---
 
-# 💎 Value Proposition
+# 💎 Value Proposition: Time Saved / Client
 
-1. **80%-kal gyorsabb utazástervezés:** Órák helyett percek alatt összeálló teljes utazási csomag (célpont + járat + szállás + költségek).
-2. **Matematikailag igazolható döntéstámogatás:** Nem reklám-szponzorált sorrend, hanem AHP súlyozott és PROMETHEE rangsorolt objektív adatok.
-3. **Valós adatok transzparenciája (Honest Scraping):** Nincs dummy vagy hallucinated ár — élő Kiwi, Cozycozy és Numbeo adatok.
-4. **Ügyfélkész professzionális export:** PDF/nyomtatható B2B ajánlat tételes Numbeo képletekkel alátámasztva.
+Az Optivoya alapvető értékajánlata a travel advisorok és utazásszervezők számára a kutatási és ajánlatkészítési idő radikális lecsökkentése:
+
+$$\text{Fő érték} = \text{Time Saved / Client} = T_{\text{manual}} - T_{\text{Optivoya}}$$
+
+---
+
+## 🚀 Fő Értékpillérek
+
+1. **80%-os Időmegtakarítás ($\text{Time Reduction \%}$):**
+   * A manuális, 10–15 böngészőlapos keresgélés órái helyett percek alatt összeálló, strukturált utazási csomag (desztináció + járat + szállás + költségek).
+2. **Matematikailag Igazolható, Objektív Rangsor:**
+   * Nem hirdetés-szponzorált lista, hanem AHP súlyozott és PROMETHEE II rangsorolt döntési intelligencia.
+3. **Valós Adatok Transzparenciája (Honest Scraping):**
+   * Élő Kiwi.com járatok, Cozycozy szállásadatok és Numbeo megélhetési kosarak.
+4. **Ügyfélkész B2B Ajánlat / PDF Export:**
+   * Egyetlen kattintással generálható, professzionális és átlátható ügyfélajánlat.

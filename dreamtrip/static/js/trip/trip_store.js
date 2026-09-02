@@ -64,6 +64,15 @@
                 if (!raw) return createDefaultTrip();
                 const parsed = JSON.parse(raw);
 
+                // Session Expiration: 2 óránál régebbi vagy előző napi terv automatikus törlése
+                const lastUpdated = parsed.updated_at ? new Date(parsed.updated_at).getTime() : 0;
+                const SESSION_TTL_MS = 2 * 60 * 60 * 1000; // 2 óra
+                if (lastUpdated > 0 && (Date.now() - lastUpdated > SESSION_TTL_MS)) {
+                    console.log("[TripStore] Previous trip session expired (>2 hours). Resetting workspace.");
+                    localStorage.removeItem(STORAGE_KEY);
+                    return createDefaultTrip();
+                }
+
                 if (!parsed.trip_id) {
                     const fresh = createDefaultTrip();
                     if (parsed.destination) fresh.destination = parsed.destination;
@@ -77,6 +86,7 @@
                 return createDefaultTrip();
             }
         },
+
 
         saveTrip(trip) {
             try {
