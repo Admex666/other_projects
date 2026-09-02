@@ -76,6 +76,19 @@ function handleFinSearch(e) {
     renderFinance();
 }
 
+function parseFinanceDate(str) {
+    if (!str) return 0;
+    const s = String(str).trim();
+    const parts = s.split(' ');
+    if (parts.length === 2 && parts[0].includes('-') && parts[1].includes(':')) {
+        const [y, m, d] = parts[0].split('-').map(Number);
+        const [hh, mm, ss] = parts[1].split(':').map(Number);
+        return new Date(y, m - 1, d, hh || 0, mm || 0, ss || 0).getTime();
+    }
+    const t = new Date(s.replace(' ', 'T')).getTime();
+    return isNaN(t) ? 0 : t;
+}
+
 function renderFinance() {
     if (!finData) return;
     const cardsEl = document.getElementById('fin-cards');
@@ -98,16 +111,16 @@ function renderFinance() {
     function matchPeriod(dateStr) {
         if (finPeriod === 'all') return true;
         if (!dateStr) return true;
-        const d = new Date(dateStr);
-        if (isNaN(d.getTime())) return true;
+        const time = parseFinanceDate(dateStr);
+        if (!time) return true;
 
         if (finPeriod === '30d') {
             const past = new Date(now); past.setDate(now.getDate() - 30);
-            return d >= past;
+            return time >= past.getTime();
         }
         if (finPeriod === '7d') {
             const past = new Date(now); past.setDate(now.getDate() - 7);
-            return d >= past;
+            return time >= past.getTime();
         }
         if (finPeriod.startsWith('2026-')) {
             return dateStr.startsWith(finPeriod);
@@ -125,10 +138,12 @@ function renderFinance() {
         if (finAccount === 'stripe') return;
         if (finCategory !== 'all' && r.category !== finCategory) return;
 
+        const time = parseFinanceDate(dateStr);
         unifiedLedger.push({
             id: `rev-${idx}`,
             rawDate: dateStr,
-            dateDisplay: dateStr ? new Date(dateStr).toLocaleString('hu-HU', { dateStyle: 'short', timeStyle: 'short' }) : '–',
+            time: time,
+            dateDisplay: time ? new Date(time).toLocaleString('hu-HU', { dateStyle: 'short', timeStyle: 'short' }) : '–',
             source: 'revolut',
             sourceLabel: '🔵 Revolut Pro',
             category: r.category,
@@ -170,10 +185,12 @@ function renderFinance() {
 
         if (finCategory !== 'all' && cat !== finCategory && !(finCategory === 'stripe_payout' && cat === 'stripe_payout')) return;
 
+        const time = s.created || parseFinanceDate(dateStr);
         unifiedLedger.push({
             id: s.id,
             rawDate: dateStr,
-            dateDisplay: dateStr ? new Date(s.created).toLocaleString('hu-HU', { dateStyle: 'short', timeStyle: 'short' }) : '–',
+            time: time,
+            dateDisplay: time ? new Date(time).toLocaleString('hu-HU', { dateStyle: 'short', timeStyle: 'short' }) : '–',
             source: 'stripe',
             sourceLabel: '🟢 Stripe',
             category: cat,
@@ -200,7 +217,7 @@ function renderFinance() {
         );
     }
 
-    displayLedger.sort((a, b) => new Date(b.rawDate || 0) - new Date(a.rawDate || 0));
+    displayLedger.sort((a, b) => b.time - a.time);
 
     // Calculate Period Totals (Revolut Cashflow)
     const periodRevolut = revolutTxs.filter(r => matchPeriod(r.completedDate || r.startedDate));
@@ -264,6 +281,7 @@ function renderFinance() {
                 <button class="logistics-sub-tab ${finPeriod === 'all' ? 'active' : ''}" onclick="setFinPeriod('all')">♾️ Kezdetektől (Összes)</button>
                 <button class="logistics-sub-tab ${finPeriod === '30d' ? 'active' : ''}" onclick="setFinPeriod('30d')">📅 30 nap</button>
                 <button class="logistics-sub-tab ${finPeriod === '7d' ? 'active' : ''}" onclick="setFinPeriod('7d')">🗓️ 7 nap</button>
+                <button class="logistics-sub-tab ${finPeriod === '2026-09' ? 'active' : ''}" onclick="setFinPeriod('2026-09')">Szeptember</button>
                 <button class="logistics-sub-tab ${finPeriod === '2026-08' ? 'active' : ''}" onclick="setFinPeriod('2026-08')">Augusztus</button>
                 <button class="logistics-sub-tab ${finPeriod === '2026-07' ? 'active' : ''}" onclick="setFinPeriod('2026-07')">Július</button>
                 <button class="logistics-sub-tab ${finPeriod === '2026-06' ? 'active' : ''}" onclick="setFinPeriod('2026-06')">Június</button>

@@ -37,6 +37,7 @@ VitaSteps uses a **Revolut Pro** account as its primary operating and settlement
 7. 🏦 **Kezdőtőke / Betétek:** Owner initial equity injections via Google Pay.
 
 ## Integration Architecture
-* Historical and current statements are stored in `landing_predikalo1/revolut_statement.csv`.
-* Ingested and categorized by `/api/admin-data` (when `type: 'finance'`).
-* Admin dashboard (`admin.html`) provides a 1-click upload interface to update statements and view live vs historical cashflow trends.
+* **Cloud Persistence:** Uploaded statements are stored in **Supabase Storage** (`medals/finance/revolut_statement.csv`), ensuring durable state persistence across Vercel Serverless Function instances (preventing `EROFS` read-only filesystem issues).
+* **Local Fallback:** Local development reads from `landing_predikalo1/revolut_statement.csv` or directly syncs with Supabase Storage.
+* **Ingestion & Classification:** Processed and categorized dynamically by `/api/admin-data` (when `type: 'finance'` or `type: 'upload_revolut'`).
+* **Admin Dashboard:** `admin.html` provides a 1-click upload interface to update statements and view live vs historical cashflow trends and unified bank ledger.

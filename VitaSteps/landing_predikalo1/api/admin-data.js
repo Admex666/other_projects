@@ -48,7 +48,7 @@ function getCreativeCsvData() {
                         purchases: Number(r['Vasarlas_DB'] || 0),
                         revenue: Number(r['Bevetel_HUF'] || 0),
                         cpa: Number(r['CPA_HUF'] || 0),
-                        roas: Number(r['ROAS'] || 0)
+                        roas: Number(r['ROAS'] || 0),
                     });
                 }
                 return rows;
@@ -60,7 +60,142 @@ function getCreativeCsvData() {
     return [];
 }
 
-function getRevolutData() {
+function parseRevolutDate(str) {
+    if (!str) return 0;
+    const parts = str.trim().split(' ');
+    if (parts.length === 2) {
+        const [y, m, d] = parts[0].split('-').map(Number);
+        const [hh, mm, ss] = parts[1].split(':').map(Number);
+        return new Date(y, m - 1, d, hh || 0, mm || 0, ss || 0).getTime();
+    }
+    const t = new Date(str).getTime();
+    return isNaN(t) ? 0 : t;
+}
+
+function parseRevolutCsv(content) {
+    if (!content) return [];
+    const cleanContent = content.replace(/\r/g, '');
+    const lines = cleanContent.trim().split('\n');
+    if (lines.length < 2) return [];
+    const rows = [];
+    for (let i = 1; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (!line) continue;
+        const parts = line.split(',');
+        if (parts.length < 6) continue;
+
+        const type = (parts[0] || '').trim();
+        const product = (parts[1] || '').trim();
+        const startedDate = (parts[2] || '').trim();
+        const completedDate = (parts[3] || '').trim();
+        const description = (parts[4] || '').trim();
+        const amount = parseFloat(parts[5]) || 0;
+        const fee = parseFloat(parts[6]) || 0;
+        const currency = (parts[7] || 'HUF').trim();
+        const state = (parts[8] || 'ELVÉGEZVE').trim();
+        const balance = parseFloat(parts[9]) || 0;
+
+        // Smart categorization
+        const descLower = description.toLowerCase();
+        let category = 'other';
+        let categoryLabel = '📦 Egyéb működés';
+        let categoryColor = '#94a3b8';
+
+        if (descLower.includes('facebook') || descLower.includes('meta')) {
+            category = 'marketing';
+            categoryLabel = '📢 Marketing (Meta)';
+            categoryColor = '#f87171';
+        } else if (descLower.includes('stripe') || descLower.includes('technology europe')) {
+            category = 'stripe_payout';
+            categoryLabel = '💰 Stripe Kifizetés';
+            categoryColor = '#22c55e';
+        } else if (descLower.includes('foxpost')) {
+            category = 'shipping';
+            categoryLabel = '🦊 Foxpost Szállítás';
+            categoryColor = '#f97316';
+        } else if (descLower.includes('simplep') || descLower.includes('boríték') || descLower.includes('csomagol')) {
+            category = 'packaging';
+            categoryLabel = '📦 Csomagolás';
+            categoryColor = '#fb923c';
+        } else if (descLower.includes('péter lászló') || descLower.includes('konyvel') || descLower.includes('könyvel')) {
+            category = 'accounting';
+            categoryLabel = '💼 Könyvelés (Opex)';
+            categoryColor = '#c084fc';
+        } else if (descLower.includes('kboss') || descLower.includes('számlázz') || descLower.includes('szamlazz')) {
+            category = 'software';
+            categoryLabel = '🧾 Számlázz.hu Szoftver';
+            categoryColor = '#a855f7';
+        } else if (descLower.includes('alibaba') || descLower.includes('devizaváltás') || descLower.includes('usd') || descLower.includes('érem') || descLower.includes('erem')) {
+            category = 'capex';
+            categoryLabel = '🏅 Éremgyártás (Capex)';
+            categoryColor = '#38bdf8';
+        } else if (descLower.includes('google pay') || descLower.includes('feltöltés') || descLower.includes('topup')) {
+            category = 'deposit';
+            categoryLabel = '🏦 Kezdőtőke / Betét';
+            categoryColor = '#a3e635';
+        } else if (descLower.includes('nav') || descLower.includes('adó') || descLower.includes('ado')) {
+            category = 'tax';
+            categoryLabel = '🏛️ NAV ÁFA / Adó';
+            categoryColor = '#eab308';
+        } else if (descLower.includes('cashback') || descLower.includes('pénzvisszatérítés')) {
+            category = 'cashback';
+            categoryLabel = '✨ Pro Cashback';
+            categoryColor = '#4ade80';
+        } else if (descLower.includes('merchant payment') || type === 'MERCHANT_PAYMENT') {
+            category = 'direct_sale';
+            categoryLabel = '💳 Közvetlen Eladás';
+            categoryColor = '#22c55e';
+        }
+
+        rows.push({
+            type,
+            product,
+            startedDate,
+            completedDate,
+            description,
+            amount,
+            fee,
+            currency,
+            state,
+            balance,
+            category,
+            categoryLabel,
+            categoryColor
+        });
+    }
+
+    // Sort descending so the most recent transaction is always first
+    rows.sort((a, b) => {
+        const dateA = parseRevolutDate(a.completedDate || a.startedDate);
+        const dateB = parseRevolutDate(b.completedDate || b.startedDate);
+        return dateB - dateA;
+    });
+
+    return rows;
+}
+
+async function getRevolutData(customCsvText) {
+    if (customCsvText) {
+        return parseRevolutCsv(customCsvText);
+    }
+
+    // 1. Try fetching from Supabase Storage (cloud persistent source)
+    try {
+        const { data: downData, error } = await supabase.storage
+            .from('medals')
+            .download('finance/revolut_statement.csv');
+
+        if (downData && !error) {
+            const text = await downData.text();
+            if (text && text.length > 20) {
+                return parseRevolutCsv(text);
+            }
+        }
+    } catch (err) {
+        console.warn('Supabase storage download skipped/failed:', err.message);
+    }
+
+    // 2. Fallback to local files
     const candidates = [
         path.join(__dirname, '..', 'revolut_statement.csv'),
         path.join(__dirname, 'revolut_statement.csv'),
@@ -71,97 +206,9 @@ function getRevolutData() {
         if (fs.existsSync(p)) {
             try {
                 const content = fs.readFileSync(p, 'utf8');
-                const lines = content.trim().split('\n');
-                if (lines.length < 2) continue;
-                const rows = [];
-                for (let i = 1; i < lines.length; i++) {
-                    const line = lines[i].trim();
-                    if (!line) continue;
-                    const parts = line.split(',');
-                    if (parts.length < 6) continue;
-
-                    const type = (parts[0] || '').trim();
-                    const product = (parts[1] || '').trim();
-                    const startedDate = (parts[2] || '').trim();
-                    const completedDate = (parts[3] || '').trim();
-                    const description = (parts[4] || '').trim();
-                    const amount = parseFloat(parts[5]) || 0;
-                    const fee = parseFloat(parts[6]) || 0;
-                    const currency = (parts[7] || 'HUF').trim();
-                    const state = (parts[8] || 'ELVÉGEZVE').trim();
-                    const balance = parseFloat(parts[9]) || 0;
-
-                    // Smart categorization
-                    const descLower = description.toLowerCase();
-                    let category = 'other';
-                    let categoryLabel = '📦 Egyéb működés';
-                    let categoryColor = '#94a3b8';
-
-                    if (descLower.includes('facebook') || descLower.includes('meta')) {
-                        category = 'marketing';
-                        categoryLabel = '📢 Marketing (Meta)';
-                        categoryColor = '#f87171';
-                    } else if (descLower.includes('stripe') || descLower.includes('technology europe')) {
-                        category = 'stripe_payout';
-                        categoryLabel = '💰 Stripe Kifizetés';
-                        categoryColor = '#22c55e';
-                    } else if (descLower.includes('foxpost')) {
-                        category = 'shipping';
-                        categoryLabel = '🦊 Foxpost Szállítás';
-                        categoryColor = '#f97316';
-                    } else if (descLower.includes('simplep') || descLower.includes('boríték') || descLower.includes('csomagol')) {
-                        category = 'packaging';
-                        categoryLabel = '📦 Csomagolás';
-                        categoryColor = '#fb923c';
-                    } else if (descLower.includes('péter lászló') || descLower.includes('konyvel') || descLower.includes('könyvel')) {
-                        category = 'accounting';
-                        categoryLabel = '💼 Könyvelés (Opex)';
-                        categoryColor = '#c084fc';
-                    } else if (descLower.includes('kboss') || descLower.includes('számlázz') || descLower.includes('szamlazz')) {
-                        category = 'software';
-                        categoryLabel = '🧾 Számlázz.hu Szoftver';
-                        categoryColor = '#a855f7';
-                    } else if (descLower.includes('alibaba') || descLower.includes('devizaváltás') || descLower.includes('usd') || descLower.includes('érem') || descLower.includes('erem')) {
-                        category = 'capex';
-                        categoryLabel = '🏅 Éremgyártás (Capex)';
-                        categoryColor = '#38bdf8';
-                    } else if (descLower.includes('google pay') || descLower.includes('feltöltés') || descLower.includes('topup')) {
-                        category = 'deposit';
-                        categoryLabel = '🏦 Kezdőtőke / Betét';
-                        categoryColor = '#a3e635';
-                    } else if (descLower.includes('nav') || descLower.includes('adó') || descLower.includes('ado')) {
-                        category = 'tax';
-                        categoryLabel = '🏛️ NAV ÁFA / Adó';
-                        categoryColor = '#eab308';
-                    } else if (descLower.includes('cashback') || descLower.includes('pénzvisszatérítés')) {
-                        category = 'cashback';
-                        categoryLabel = '✨ Pro Cashback';
-                        categoryColor = '#4ade80';
-                    } else if (descLower.includes('merchant payment') || type === 'MERCHANT_PAYMENT') {
-                        category = 'direct_sale';
-                        categoryLabel = '💳 Közvetlen Eladás';
-                        categoryColor = '#22c55e';
-                    }
-
-                    rows.push({
-                        type,
-                        product,
-                        startedDate,
-                        completedDate,
-                        description,
-                        amount,
-                        fee,
-                        currency,
-                        state,
-                        balance,
-                        category,
-                        categoryLabel,
-                        categoryColor
-                    });
-                }
-                return rows;
+                return parseRevolutCsv(content);
             } catch (e) {
-                console.error('Error parsing Revolut CSV:', e);
+                console.error('Error parsing local Revolut CSV:', e);
             }
         }
     }
@@ -190,9 +237,28 @@ module.exports = async (req, res) => {
     try {
         // Upload / Update Revolut statement CSV
         if (type === 'upload_revolut' && csv_content) {
-            const savePath = path.join(__dirname, '..', 'revolut_statement.csv');
-            fs.writeFileSync(savePath, csv_content, 'utf8');
-            const revolutRows = getRevolutData();
+            // 1. Upload to Supabase Storage (cloud persistent storage safe for Vercel Serverless)
+            try {
+                const { error: upErr } = await supabase.storage
+                    .from('medals')
+                    .upload('finance/revolut_statement.csv', Buffer.from(csv_content, 'utf8'), {
+                        upsert: true,
+                        contentType: 'text/csv'
+                    });
+                if (upErr) console.warn('Supabase storage upload error:', upErr);
+            } catch (storageErr) {
+                console.warn('Storage upload error:', storageErr);
+            }
+
+            // 2. Safe local file write attempt (ignored on read-only environments like Vercel)
+            try {
+                const savePath = path.join(__dirname, '..', 'revolut_statement.csv');
+                fs.writeFileSync(savePath, csv_content, 'utf8');
+            } catch (fsErr) {
+                // EROFS is expected on Vercel Lambda, ignore safely
+            }
+
+            const revolutRows = parseRevolutCsv(csv_content);
             return res.status(200).json({ success: true, count: revolutRows.length });
         }
 
@@ -225,85 +291,86 @@ module.exports = async (req, res) => {
                     amount: p.amount / 100,
                     currency: p.currency.toUpperCase(),
                     status: p.status,
-                    destination: p.destination
+                    method: p.method,
+                    description: p.description
                 }));
-            } catch (stripeErr) {
-                console.error('Stripe API error in finance fetch:', stripeErr.message);
+            } catch (sErr) {
+                console.error('Stripe API error:', sErr);
             }
 
-            // Revolut Statement Data
-            const revolutRows = getRevolutData();
-            const latestRevolutBalance = revolutRows.length > 0 ? revolutRows[revolutRows.length - 1].balance : 0;
-
-            // Summary by category
-            const revolutSummary = {};
-            revolutRows.forEach(r => {
-                revolutSummary[r.category] = (revolutSummary[r.category] || 0) + r.amount;
-            });
+            // Revolut Pro Data
+            const revolutRows = await getRevolutData();
+            const latestBalance = revolutRows.length > 0 ? (revolutRows[0].balance || 0) : 0;
 
             return res.status(200).json({
+                success: true,
                 stripe: {
                     balance: stripeBalance,
                     transactions: stripeTransactions,
                     payouts: stripePayouts
                 },
                 revolut: {
-                    currentBalance: latestRevolutBalance,
-                    transactions: revolutRows,
-                    summaryByCategory: revolutSummary,
-                    totalCount: revolutRows.length
+                    currentBalance: latestBalance,
+                    transactions: revolutRows
                 }
             });
         }
 
+        // Marketing Analytics Data
         if (type === 'marketing') {
-            // Fetch targets
-            const { data: targets, error: targetsErr } = await supabase
-                .from('marketing_targets')
-                .select('*');
-            if (targetsErr) throw targetsErr;
-
-            // Fetch paid real orders for customer cohort analysis and revenue calculation
-            const { data: orders, error: ordersErr } = await supabase
-                .from('orders')
-                .select('id, runner_id, campaign, amount_total, created_at, stripe_payment_status, is_test')
-                .eq('stripe_payment_status', 'paid')
-                .eq('is_test', false)
-                .order('created_at', { ascending: true });
-            if (ordersErr) throw ordersErr;
-
-            // Fetch meta daily metrics from Supabase
-            const { data: metrics, error: metricsErr } = await supabase
+            const creativeRows = getCreativeCsvData();
+            const { data: dbMetrics, error: mErr } = await supabase
                 .from('meta_daily_metrics')
                 .select('*')
-                .order('date', { ascending: false })
-                .limit(200);
-            if (metricsErr) throw metricsErr;
+                .order('date', { ascending: false });
 
-            // Fetch creative level daily report from CSV
-            const creativeRows = getCreativeCsvData();
+            if (mErr) console.error('Error fetching meta metrics:', mErr);
 
-            // Use creative rows if available, augmented with any metrics rows that have ad_name or fallback to metrics
-            const combinedMetrics = creativeRows.length > 0 ? creativeRows : (metrics || []);
+            const { data: orders, error: oErr } = await supabase
+                .from('orders')
+                .select('*')
+                .eq('stripe_payment_status', 'paid')
+                .order('created_at', { ascending: false });
+
+            if (oErr) console.error('Error fetching orders:', oErr);
+
+            const mergedMetrics = creativeRows.length > 0 ? creativeRows : (dbMetrics || []);
+            const lastUpdated = mergedMetrics.length > 0 ? mergedMetrics[0].date : null;
 
             return res.status(200).json({
-                targets: targets || [],
+                success: true,
+                metrics: mergedMetrics,
                 orders: orders || [],
-                metrics: combinedMetrics,
-                dbMetrics: metrics || []
+                lastUpdated
             });
         }
 
-        // Default: fetch all runs with runners and shipments
-        const { data: runs, error: runsErr } = await supabase
+        // Standard Admin Data (Runs + Campaigns)
+        const { data: runs, error: rErr } = await supabase
             .from('runs')
-            .select('*, runners(name, email, phone, billing_address), shipments(*)')
-            .order('proof_submitted_at', { ascending: false, nullsFirst: false });
-        if (runsErr) throw runsErr;
+            .select('*, runners(name, email, phone, billing_name, billing_address), shipments(*)')
+            .order('created_at', { ascending: false });
 
-        return res.status(200).json({ runs: runs || [] });
+        if (rErr) throw rErr;
+
+        let campaignsConfig = null;
+        try {
+            const configPath = path.join(__dirname, '..', 'config', 'campaigns.json');
+            if (fs.existsSync(configPath)) {
+                campaignsConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+            }
+        } catch (cErr) {
+            console.warn('Could not read campaigns.json:', cErr);
+        }
+
+        return res.status(200).json({
+            success: true,
+            runs: runs || [],
+            campaigns: campaignsConfig
+        });
+
     } catch (err) {
-        console.error('Error in admin-data API:', err);
+        console.error('Admin data fetch error:', err);
         return res.status(500).json({ error: err.message });
     }
 };
