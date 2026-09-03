@@ -26,13 +26,34 @@ let adminSecret = '';
 let allRuns = [];
 let currentFilter = 'pending'; // 'pending', 'approved', 'all', 'logistics', 'marketing', 'finance'
 
+// Helper to check if a run belongs to Pilis / Nagy-Kevély
+function isPilisRun(run) {
+    if (!run) return false;
+    const c = (run.campaign || '').toLowerCase();
+    const s = (run.serial_number || '').toLowerCase();
+    return c.includes('pilis') || c.includes('kevely') || s.includes('-pk') || s.includes('999');
+}
+
 // Helper to determine Campaign Info for a run
 function getCampaignInfo(run) {
-    const serial = run.serial_number || '';
-    if (run.campaign === 'pilis' || serial.includes('-PK') || serial.includes('999')) {
-        return CAMPAIGNS_CONFIG.pilis;
+    if (isPilisRun(run)) {
+        return {
+            id: 'pilis',
+            name: CAMPAIGNS_CONFIG.pilis?.name || 'A Nagy-Kevély csillagai',
+            icon: '🌌',
+            color: '#c4ff00',
+            limit: CAMPAIGNS_CONFIG.pilis?.limit || 100,
+            ...(CAMPAIGNS_CONFIG.pilis || {})
+        };
     }
-    return CAMPAIGNS_CONFIG.predikaloszek;
+    return {
+        id: 'predikaloszek',
+        name: CAMPAIGNS_CONFIG.predikaloszek?.name || 'Prédikálószék Vertical',
+        icon: '🏔️',
+        color: '#38bdf8',
+        limit: CAMPAIGNS_CONFIG.predikaloszek?.limit || 100,
+        ...(CAMPAIGNS_CONFIG.predikaloszek || {})
+    };
 }
 
 // Helper to extract primary shipment object
@@ -127,7 +148,12 @@ async function loadData() {
         allRuns = data.runs || [];
 
         if (data.campaigns) {
-            CAMPAIGNS_CONFIG = data.campaigns;
+            CAMPAIGNS_CONFIG = {
+                ...CAMPAIGNS_CONFIG,
+                ...data.campaigns
+            };
+            if (CAMPAIGNS_CONFIG.pilis) CAMPAIGNS_CONFIG.pilis.id = 'pilis';
+            if (CAMPAIGNS_CONFIG.predikaloszek) CAMPAIGNS_CONFIG.predikaloszek.id = 'predikaloszek';
         }
 
         updateStats();

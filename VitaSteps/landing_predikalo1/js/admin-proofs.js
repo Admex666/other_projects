@@ -6,10 +6,11 @@ let pendingSearchQuery = '';
 let pendingHideTest = true;
 
 function updateStats() {
-    const proofPending = allRuns.filter(r => r.proof_submitted && !r.completed && (!pendingHideTest || !isTestRun(r))).length;
-    const notSubmitted = allRuns.filter(r => !r.proof_submitted && !r.completed && (!pendingHideTest || !isTestRun(r))).length;
-    const approved = allRuns.filter(r => r.completed && (!pendingHideTest || !isTestRun(r))).length;
-    const total = allRuns.filter(r => (!pendingHideTest || !isTestRun(r))).length;
+    const validRuns = allRuns.filter(r => !pendingHideTest || !isTestRun(r));
+    const proofPending = validRuns.filter(r => r.proof_submitted && !r.completed).length;
+    const notSubmitted = validRuns.filter(r => !r.proof_submitted && !r.completed).length;
+    const approved = validRuns.filter(r => r.completed).length;
+    const total = validRuns.length;
 
     const statsEl = document.getElementById('stats-bar');
     if (statsEl) {
@@ -17,7 +18,108 @@ function updateStats() {
             <div class="stat-chip">📥 Igazolásra vár: <strong>${proofPending}</strong></div>
             <div class="stat-chip">🏃 Még nem igazolt: <strong>${notSubmitted}</strong></div>
             <div class="stat-chip">✅ Jóváhagyott: <strong>${approved}</strong></div>
-            <div class="stat-chip">📋 Összes: <strong>${total}</strong></div>
+            <div class="stat-chip">📋 Összes nevezés: <strong>${total}</strong></div>
+        `;
+    }
+
+    // Éremkészlet és kampány statisztikák
+    const pilisRuns = validRuns.filter(r => isPilisRun(r));
+    const predikaloRuns = validRuns.filter(r => !isPilisRun(r));
+
+    const pilisLimit = CAMPAIGNS_CONFIG.pilis?.limit || 100;
+    const predikaloLimit = CAMPAIGNS_CONFIG.predikaloszek?.limit || 100;
+
+    const pilisSold = pilisRuns.length;
+    const pilisRemaining = Math.max(0, pilisLimit - pilisSold);
+    const pilisPct = ((pilisSold / pilisLimit) * 100).toFixed(0);
+
+    const predikaloSold = predikaloRuns.length;
+    const predikaloRemaining = Math.max(0, predikaloLimit - predikaloSold);
+    const predikaloPct = ((predikaloSold / predikaloLimit) * 100).toFixed(0);
+
+    const totalLimit = pilisLimit + predikaloLimit;
+    const totalSold = pilisSold + predikaloSold;
+    const totalRemaining = pilisRemaining + predikaloRemaining;
+    const totalPct = ((totalSold / totalLimit) * 100).toFixed(0);
+
+    const invEl = document.getElementById('inventory-bar');
+    if (invEl) {
+        invEl.innerHTML = `
+            <div class="inventory-grid">
+                <!-- Nagy-Kevély Készlet Kártya -->
+                <div class="inventory-card" style="border-left: 4px solid #c4ff00; background: linear-gradient(145deg, rgba(196, 255, 0, 0.04) 0%, rgba(12, 15, 21, 0.95) 100%);">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.35rem;">
+                        <div>
+                            <span style="font-size: 0.78rem; font-weight: 800; color: #c4ff00; text-transform: uppercase; letter-spacing: 0.06em;">
+                                🌌 A Nagy-Kevély csillagai
+                            </span>
+                            <div style="font-size: 1.5rem; font-weight: 900; font-family: 'Outfit', sans-serif; color: #fff; margin-top: 0.2rem;">
+                                ${pilisRemaining} db <span style="font-size: 0.85rem; font-weight: 600; color: #a1a1aa;">szabad érem maradt</span>
+                            </div>
+                        </div>
+                        <span class="badge" style="background: rgba(196, 255, 0, 0.12); color: #c4ff00; border: 1px solid rgba(196, 255, 0, 0.35); font-weight: 800;">
+                            ${pilisSold} / ${pilisLimit} eladva (${pilisPct}%)
+                        </span>
+                    </div>
+                    <div class="inventory-progress-bg">
+                        <div class="inventory-progress-fill" style="width: ${pilisPct}%; background: #c4ff00;"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-mid); margin-top: 0.4rem;">
+                        <span>✅ Teljesítve: <strong style="color:#fff;">${pilisRuns.filter(r => r.completed).length} db</strong></span>
+                        <span>📦 Postázva: <strong style="color:#fff;">${pilisRuns.filter(r => r.completed && getShipment(r).shipped).length} db</strong></span>
+                        <span>⏳ Igazolatlan: <strong style="color:#f59e0b;">${pilisRuns.filter(r => !r.completed).length} db</strong></span>
+                    </div>
+                </div>
+
+                <!-- Prédikálószék Készlet Kártya -->
+                <div class="inventory-card" style="border-left: 4px solid #38bdf8; background: linear-gradient(145deg, rgba(56, 189, 248, 0.04) 0%, rgba(12, 15, 21, 0.95) 100%);">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.35rem;">
+                        <div>
+                            <span style="font-size: 0.78rem; font-weight: 800; color: #38bdf8; text-transform: uppercase; letter-spacing: 0.06em;">
+                                🏔️ Prédikálószék Vertical
+                            </span>
+                            <div style="font-size: 1.5rem; font-weight: 900; font-family: 'Outfit', sans-serif; color: #fff; margin-top: 0.2rem;">
+                                ${predikaloRemaining} db <span style="font-size: 0.85rem; font-weight: 600; color: #a1a1aa;">szabad érem maradt</span>
+                            </div>
+                        </div>
+                        <span class="badge" style="background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.35); font-weight: 800;">
+                            ${predikaloSold} / ${predikaloLimit} eladva (${predikaloPct}%)
+                        </span>
+                    </div>
+                    <div class="inventory-progress-bg">
+                        <div class="inventory-progress-fill" style="width: ${predikaloPct}%; background: #38bdf8;"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-mid); margin-top: 0.4rem;">
+                        <span>✅ Teljesítve: <strong style="color:#fff;">${predikaloRuns.filter(r => r.completed).length} db</strong></span>
+                        <span>📦 Postázva: <strong style="color:#fff;">${predikaloRuns.filter(r => r.completed && getShipment(r).shipped).length} db</strong></span>
+                        <span>⏳ Igazolatlan: <strong style="color:#f59e0b;">${predikaloRuns.filter(r => !r.completed).length} db</strong></span>
+                    </div>
+                </div>
+
+                <!-- Összesített Készlet Kártya -->
+                <div class="inventory-card" style="border-left: 4px solid #a855f7; background: linear-gradient(145deg, rgba(168, 85, 247, 0.04) 0%, rgba(12, 15, 21, 0.95) 100%);">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.35rem;">
+                        <div>
+                            <span style="font-size: 0.78rem; font-weight: 800; color: #c084fc; text-transform: uppercase; letter-spacing: 0.06em;">
+                                🏅 Összesített Éremkészlet
+                            </span>
+                            <div style="font-size: 1.5rem; font-weight: 900; font-family: 'Outfit', sans-serif; color: #fff; margin-top: 0.2rem;">
+                                ${totalRemaining} db <span style="font-size: 0.85rem; font-weight: 600; color: #a1a1aa;">szabad / ${totalLimit} limit</span>
+                            </div>
+                        </div>
+                        <span class="badge" style="background: rgba(168, 85, 247, 0.12); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.35); font-weight: 800;">
+                            ${totalSold} db eladva (${totalPct}%)
+                        </span>
+                    </div>
+                    <div class="inventory-progress-bg">
+                        <div class="inventory-progress-fill" style="width: ${totalPct}%; background: #a855f7;"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-mid); margin-top: 0.4rem;">
+                        <span>✅ Összes jóváhagyva: <strong style="color:#fff;">${approved} db</strong></span>
+                        <span>📦 Összes feladva: <strong style="color:#fff;">${validRuns.filter(r => r.completed && getShipment(r).shipped).length} db</strong></span>
+                    </div>
+                </div>
+            </div>
         `;
     }
 }
