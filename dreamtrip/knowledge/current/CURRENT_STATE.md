@@ -11,6 +11,7 @@ description: Az Optivoya projekt jelenlegi állapota — M1 B2B Beta Validation 
 related:
   - "[[master-planner-wizard]]"
   - "[[unified-trip-model]]"
+  - "[[supabase-database]]"
   - "[[OBJECTIVES]]"
   - "[[PRIORITIES]]"
   - "[[optivoya-strategy]]"
@@ -28,6 +29,9 @@ Az Optivoya jelenleg az **M1 — B2B Beta Validation** mérföldkőnél tart.
 3. **Accommodation Intelligence:** Cozycozy élő szállásadatok és piaci mediánok, pontos éjszakaszám és preferenciák alapján.
 4. **Master Planner Wizard (`/planner`):** Unified munkafolyamat (`ügyféligény → destination → flight → accommodation → shortlist / proposal`).
 5. **Kanonikus Lebegő Kosár & Ajánlatkészítő (`TripCart`):** Automatikus összegzés és professzionális PDF/nyomtatható ajánlat.
+6. **Supabase Cloud PostgreSQL & Telemetria (`[[supabase-database]]`):** Éles felhős adatbázis a béta felhasználók, hitelesítés és keresési analitika perzisztens tárolásához.
+7. **B2B Usage Analytics Dashboard (`/admin/dashboard`):** Valós idejű KPI-k, tanácsadói aktivitási napló és felhasználókezelő.
+
 
 ---
 

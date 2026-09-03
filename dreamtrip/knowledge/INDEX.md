@@ -84,6 +84,7 @@ Ez a fájl az Optivoya (DreamTrip) projekt navigációs térképe. Minden lénye
 
 ## ⚙️ Systems (Rendszerek)
 * [[fastapi-backend]] — Python FastAPI aszinkron backend szerver és REST végpontok.
+* [[supabase-database]] — Supabase Cloud PostgreSQL & PostgREST telemetria és béta felhasználói adatbázis.
 * [[kiwi-scraper]] — Kiwi.com GraphQL és REST járatkereső modul.
 * [[cozycozy-scraper]] — Cozycozy szállásaggregációs modul.
 * [[open-meteo-api]] — Open-Meteo éghajlati és időjárási adatforrás.
@@ -113,14 +114,18 @@ Ez a fájl az Optivoya (DreamTrip) projekt navigációs térképe. Minden lénye
 * [[ADR-005-fastapi-modular-structure]] — Moduláris `app/` architektúra és V2 route-ok bevezetése.
 * [[ADR-006-master-planner-wizard]] — Master Travel Planner: egybefüggő 4-lépéses folyamat.
 * [[ADR-007-fastapi-router-modularization]] — FastAPI Monolit Dekompozíció és Moduláris APIRouter Architektúra.
+* [[ADR-008-supabase-cloud-database]] — Supabase Cloud PostgreSQL & Telemetry Adatbázis Bevezetése.
+
 
 ---
 
 ## 🧠 Learnings (Megfigyelések & Tanulságok)
+* [[LEARNING-003-stitch-ui-design-principles]] — Stitch UI Benchmark: AI-slop tünetek felszámolása és prémium dizájn.
 * [[kiwi-pagination-and-tokens]] — Kiwi GraphQL keresési tokenek és lapozás sajátosságai.
 * [[jinja-template-block-inheritance]] — Jinja2 szkript blokkok öröklődése a lebegő kosár rendereléséhez.
 * [[mobile-viewport-overflow-fixed-bars]] — Keskeny mobilképernyők (440px) és lebegő elemek illesztése.
 * [[numbeo-hungarian-city-mapping]] — Magyar ékezetes városnevek leképezése Numbeo indexekhez.
+
 
 ---
 

@@ -132,41 +132,41 @@
                 modal.onclick = (e) => { if (e.target === modal) this.hide(); };
 
                 modal.innerHTML = `
-                    <div id="decisionDnaModalCard" style="background: var(--bg-card); width: 100%; max-width: 820px; border-radius: 24px; border: 1px solid var(--border-subtle); box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.6); overflow: hidden; display: flex; flex-direction: column; max-height: 92vh; animation: fadeInScale 0.25s ease;">
-                        <div style="padding: 18px 24px; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; background: var(--bg-surface);">
-                            <div style="display: flex; align-items: center; gap: 12px;">
-                                <div style="width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(56, 189, 248, 0.2)); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 20px; border: 1px solid rgba(37, 99, 235, 0.3);">
-                                    ✨
+                    <div id="decisionDnaModalCard" style="background: var(--bg-card); width: 100%; max-width: 820px; border-radius: 24px; border: 1.5px solid var(--border-subtle); box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.6); overflow: hidden; display: flex; flex-direction: column; max-height: 92vh; animation: fadeInScale 0.25s ease;">
+                        <div style="padding: 16px 22px; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; background: var(--bg-surface);">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div style="width: 36px; height: 36px; border-radius: 10px; background: var(--accent-glow); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 20px; border: 1px solid var(--border-strong);">
+                                    <span class="material-symbols-outlined" style="font-size: 20px;">tune</span>
                                 </div>
                                 <div>
-                                    <h3 style="margin: 0; font-size: 17px; font-weight: 800; color: var(--text-main); letter-spacing: -0.02em;">Utazási Döntési DNS Létrehozása</h3>
-                                    <p style="margin: 0; font-size: 12px; color: var(--text-muted);" id="dnaHeaderSubtitle">1/3. Célállomás Döntési Modell</p>
+                                    <h3 style="margin: 0; font-size: 16px; font-weight: 800; color: var(--text-main); letter-spacing: -0.01em;">Utazási Preferenciák és Prioritások</h3>
+                                    <p style="margin: 0; font-size: 11.5px; color: var(--text-muted);" id="dnaHeaderSubtitle">1/3. Célállomás Súlyozás</p>
                                 </div>
                             </div>
-                            <button type="button" onclick="window.DecisionDNAInstance.hide()" style="background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-muted); padding: 4px 8px; border-radius: 8px; line-height: 1;">✕</button>
+                            <button type="button" onclick="window.DecisionDNAInstance.hide()" style="background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-muted); padding: 4px 8px; border-radius: 8px; line-height: 1;">✕</button>
                         </div>
 
-                        <div style="padding: 10px 24px; background: rgba(0,0,0,0.03); border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                        <div style="padding: 10px 20px; background: var(--bg-surface-subtle); border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
                             <div id="dnaStepPills" style="display: flex; gap: 6px; flex-wrap: wrap;">
-                                <span class="step-pill" data-step="0" onclick="window.DecisionDNAInstance.goToStep(0)">1. 🌍 Deszt. Prioritás</span>
-                                <span class="step-pill" data-step="1" onclick="window.DecisionDNAInstance.goToStep(1)">2. 🌍 Deszt. Szituációk</span>
-                                <span class="step-pill" data-step="2" onclick="window.DecisionDNAInstance.goToStep(2)">3. ✈️ Járat Prioritás</span>
-                                <span class="step-pill" data-step="3" onclick="window.DecisionDNAInstance.goToStep(3)">4. ✈️ Járat Szituációk</span>
-                                <span class="step-pill" data-step="4" onclick="window.DecisionDNAInstance.goToStep(4)">5. 🏨 Szállás Prioritás</span>
-                                <span class="step-pill" data-step="5" onclick="window.DecisionDNAInstance.goToStep(5)">6. 🏨 Szállás Szituációk</span>
-                                <span class="step-pill" data-step="6" onclick="window.DecisionDNAInstance.goToStep(6)">7. 🧬 Profil</span>
+                                <span class="step-pill" data-step="0" onclick="window.DecisionDNAInstance.goToStep(0)">1. Célállomás Súlyok</span>
+                                <span class="step-pill" data-step="1" onclick="window.DecisionDNAInstance.goToStep(1)">2. Célállomás Döntések</span>
+                                <span class="step-pill" data-step="2" onclick="window.DecisionDNAInstance.goToStep(2)">3. Járat Súlyok</span>
+                                <span class="step-pill" data-step="3" onclick="window.DecisionDNAInstance.goToStep(3)">4. Járat Döntések</span>
+                                <span class="step-pill" data-step="4" onclick="window.DecisionDNAInstance.goToStep(4)">5. Szállás Súlyok</span>
+                                <span class="step-pill" data-step="5" onclick="window.DecisionDNAInstance.goToStep(5)">6. Szállás Döntések</span>
+                                <span class="step-pill" data-step="6" onclick="window.DecisionDNAInstance.goToStep(6)">7. Összegzés</span>
                             </div>
-                            <span id="dnaStepIndicator" style="font-size: 12px; font-weight: 800; font-family: var(--font-mono); color: var(--primary);">1 / 7</span>
+                            <span id="dnaStepIndicator" style="font-size: 11.5px; font-weight: 800; font-family: var(--font-mono); color: var(--primary);">1 / 7</span>
                         </div>
 
-                        <div id="decisionDnaStepBody" style="padding: 24px; overflow-y: auto; flex: 1;"></div>
+                        <div id="decisionDnaStepBody" style="padding: 22px; overflow-y: auto; flex: 1;"></div>
 
-                        <div style="padding: 16px 24px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; background: var(--bg-surface);">
-                            <button type="button" id="dnaBtnPrev" onclick="window.DecisionDNAInstance.prevStep()" class="btn btn-secondary" style="padding: 10px 18px; font-size: 13px; font-weight: 700;">
+                        <div id="dnaModalFooter" style="padding: 14px 22px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; background: var(--bg-surface); gap: 10px;">
+                            <button type="button" id="dnaBtnPrev" onclick="window.DecisionDNAInstance.prevStep()" class="btn btn-secondary" style="padding: 10px 18px; font-size: 13px; font-weight: 700; border-radius: var(--radius-md);">
                                 ← Vissza
                             </button>
-                            <div style="display: flex; gap: 10px;">
-                                <button type="button" id="dnaBtnNext" onclick="window.DecisionDNAInstance.nextStep()" class="btn btn-primary" style="padding: 11px 24px; font-size: 13.5px; font-weight: 800; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);">
+                            <div style="display: flex; gap: 8px;">
+                                <button type="button" id="dnaBtnNext" onclick="window.DecisionDNAInstance.nextStep()" class="btn btn-primary" style="padding: 11px 22px; font-size: 13.5px; font-weight: 700; border-radius: var(--radius-md);">
                                     Tovább →
                                 </button>
                             </div>
@@ -309,8 +309,8 @@
                             <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 16px;">
                                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                                     <strong style="font-size: 13.5px; color: var(--text-main);">${p.name1} <span style="color: var(--text-muted); font-weight: 500;">vs</span> ${p.name2}</strong>
-                                    <span style="font-size: 12px; font-weight: 800; color: var(--primary);">
-                                        ${curAns < 3 ? `👈 ${p.name1} (${humanScale[curAns].label})` : curAns > 3 ? `${p.name2} 👉 (${humanScale[curAns].label})` : '⚖️ Egyformán fontos'}
+                                    <span style="font-size: 12px; font-weight: 700; color: var(--primary);">
+                                        ${curAns < 3 ? `← ${p.name1} (${humanScale[curAns].label})` : curAns > 3 ? `${p.name2} → (${humanScale[curAns].label})` : 'Egyformán fontos'}
                                     </span>
                                 </div>
                                 <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">${p.desc}</div>
@@ -340,13 +340,13 @@
             const subtitle = document.getElementById('dnaHeaderSubtitle');
             if (subtitle) {
                 const titles = [
-                    '1/3. 🌍 Célállomás Prioritások (Páros Kérdések)',
-                    '1/3. 🌍 Célállomás Döntési Helyzetek (Költség, Klíma, Biztonság)',
-                    '2/3. ✈️ Repülőjárat Prioritások (Páros Kérdések)',
-                    '2/3. ✈️ Repülőjárat Döntési Helyzetek (Ár, Menetidő, Átszállás)',
-                    '3/3. 🏨 Szállás Prioritások (Páros Kérdések)',
-                    '3/3. 🏨 Szállás Döntési Helyzetek (Ár, Értékelés, Elhelyezkedés)',
-                    '🎯 Döntési DNS Profil Összefoglaló'
+                    '1/3. Célállomás Súlyok (Páros Összehasonlítás)',
+                    '1/3. Célállomás Döntések (Költség, Klíma, Biztonság)',
+                    '2/3. Repülőjárat Súlyok (Páros Összehasonlítás)',
+                    '2/3. Repülőjárat Döntések (Ár, Menetidő, Átszállás)',
+                    '3/3. Szállás Súlyok (Páros Összehasonlítás)',
+                    '3/3. Szállás Döntések (Ár, Értékelés, Elhelyezkedés)',
+                    'Profil Összefoglaló'
                 ];
                 subtitle.innerText = titles[this.state.step] || '';
             }
@@ -364,7 +364,7 @@
             if (btnPrev) btnPrev.style.visibility = this.state.step === 0 ? 'hidden' : 'visible';
             if (btnNext) {
                 if (this.state.step < 6) btnNext.innerText = 'Tovább →';
-                else btnNext.innerText = '✓ Döntési DNS Alkalmazása & Indítás';
+                else btnNext.innerText = 'Mentés és Tervezés indítása →';
             }
         }
 

@@ -40,7 +40,7 @@
     {% if prefill.from_matcher %}
     <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid var(--status-success, #10b981); color: var(--text-main); padding: 14px 18px; border-radius: 14px; margin-bottom: 24px; font-size: 13.5px; display: flex; align-items: center; justify-content: space-between; gap: 14px; box-shadow: var(--shadow-sm);">
         <div style="display: flex; align-items: center; gap: 12px;">
-            <span style="font-size: 22px;">🎯</span>
+            <span class="material-symbols-outlined" style="font-size: 22px; color: var(--status-success, #10b981);">flight_takeoff</span>
             <div>
                 <strong style="color: var(--status-success, #10b981);">Destination Matcher adatátadás aktív:</strong> A célállomás (<strong>{{ prefill.destination }}</strong>), az indulás (<strong>{{ prefill.origin }}</strong>), a létszám (<strong>{{ prefill.adults or 2 }} felnőtt</strong>) és az időablak automatikusan be lett töltve.
             </div>
@@ -218,10 +218,10 @@
 
                 <div style="display: flex; gap: 8px; margin-top: 14px;">
                     <div class="chip-select-btn active" id="btn_cabin_bag" onclick="toggleChip(this)">
-                        <span>🎒 Kézipoggyász</span>
+                        <span>Kézipoggyász</span>
                     </div>
                     <div class="chip-select-btn" id="btn_checked_bag" onclick="toggleChip(this)">
-                        <span>🧳 Feladott</span>
+                        <span>Feladott poggyász</span>
                     </div>
                 </div>
             </div>

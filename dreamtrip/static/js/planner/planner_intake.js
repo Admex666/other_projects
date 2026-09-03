@@ -194,7 +194,7 @@
                 const ahpEl = document.getElementById('dna_card_ahp_summary');
                 if (ahpEl && state.intake.ahp_weights) {
                     const w = state.intake.ahp_weights;
-                    ahpEl.innerHTML = `💰 ${w.total_cost}% · ☀️ ${w.weather}% · 🛡️ ${w.safety}%`;
+                    ahpEl.innerHTML = `Költség: ${w.total_cost}% · Időjárás: ${w.weather}% · Biztonság: ${w.safety}%`;
                 }
 
                 const promEl = document.getElementById('dna_card_prom_summary');

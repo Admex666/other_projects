@@ -13,47 +13,59 @@
 
             container.innerHTML = `
                 <div style="text-align: center; margin-bottom: 24px;">
-                    <div style="font-size: 32px; margin-bottom: 6px;">🧬</div>
-                    <h3 style="margin: 0 0 6px 0; font-size: 20px; font-weight: 800; color: var(--text-main);">Az Egyéni Utazási Döntési DNS-ed Készen Áll!</h3>
+                    <div style="width: 44px; height: 44px; border-radius: 50%; background: var(--accent-glow); color: var(--primary); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 10px; border: 1px solid var(--border-strong);">
+                        <span class="material-symbols-outlined" style="font-size: 24px;">task_alt</span>
+                    </div>
+                    <h3 style="margin: 0 0 6px 0; font-size: 19px; font-weight: 800; color: var(--text-main);">Személyes Utazási Preferenciák Készen Állnak</h3>
                     <p style="margin: 0 auto; max-width: 540px; font-size: 13px; color: var(--text-muted);">
-                        A páros összehasonlítások és az életszerű döntési helyzetek alapján a rendszer kiszámította a személyre szabott súlyokat és toleranciákat.
+                        A páros összehasonlítások és a döntési helyzetek alapján a rendszer meghatározta a személyre szabott súlyokat és toleranciákat.
                     </p>
                 </div>
 
                 <div class="dna-summary-grid" style="margin-bottom: 24px;">
                     <!-- 1. Desztináció Súlyok -->
-                    <div style="background: var(--bg-surface); padding: 16px; border-radius: 16px; border: 1px solid var(--border-subtle);">
-                        <div style="font-size: 11px; font-weight: 800; color: var(--primary); text-transform: uppercase; margin-bottom: 10px;">🌍 Célállomás Súlyok</div>
+                    <div style="background: var(--bg-surface); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+                        <div style="font-size: 11px; font-weight: 800; color: var(--primary); text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 5px;">
+                            <span class="material-symbols-outlined" style="font-size: 15px;">public</span>
+                            <span>Célállomás Súlyok</span>
+                        </div>
                         <div style="display: flex; flex-direction: column; gap: 6px;">
-                            <div style="display: flex; justify-content: space-between; font-size: 12.5px;"><span>💰 Teljes Költség:</span><strong style="font-family:var(--font-mono); color:var(--primary);">${wDest.total_cost}%</strong></div>
-                            <div style="display: flex; justify-content: space-between; font-size: 12.5px;"><span>☀️ Klíma / Időjárás:</span><strong style="font-family:var(--font-mono); color:var(--primary);">${wDest.weather}%</strong></div>
-                            <div style="display: flex; justify-content: space-between; font-size: 12.5px;"><span>🛡️ Közbiztonság:</span><strong style="font-family:var(--font-mono); color:var(--primary);">${wDest.safety}%</strong></div>
+                            <div style="display: flex; justify-content: space-between; font-size: 12.5px;"><span>Teljes Költség:</span><strong style="font-family:var(--font-mono); color:var(--primary);">${wDest.total_cost}%</strong></div>
+                            <div style="display: flex; justify-content: space-between; font-size: 12.5px;"><span>Klíma / Időjárás:</span><strong style="font-family:var(--font-mono); color:var(--primary);">${wDest.weather}%</strong></div>
+                            <div style="display: flex; justify-content: space-between; font-size: 12.5px;"><span>Közbiztonság:</span><strong style="font-family:var(--font-mono); color:var(--primary);">${wDest.safety}%</strong></div>
                         </div>
                     </div>
 
                     <!-- 2. Járat Súlyok -->
-                    <div style="background: var(--bg-surface); padding: 16px; border-radius: 16px; border: 1px solid var(--border-subtle);">
-                        <div style="font-size: 11px; font-weight: 800; color: var(--primary); text-transform: uppercase; margin-bottom: 10px;">✈️ Járat Súlyok</div>
+                    <div style="background: var(--bg-surface); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+                        <div style="font-size: 11px; font-weight: 800; color: var(--primary); text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 5px;">
+                            <span class="material-symbols-outlined" style="font-size: 15px;">flight</span>
+                            <span>Járat Súlyok</span>
+                        </div>
                         <div style="display: flex; flex-direction: column; gap: 6px;">
-                            <div style="display: flex; justify-content: space-between; font-size: 12.5px;"><span>💳 Repjegy Ár:</span><strong style="font-family:var(--font-mono); color:var(--primary);">${wFlight.price}%</strong></div>
-                            <div style="display: flex; justify-content: space-between; font-size: 12.5px;"><span>⏱️ Menetidő:</span><strong style="font-family:var(--font-mono); color:var(--primary);">${wFlight.duration}%</strong></div>
-                            <div style="display: flex; justify-content: space-between; font-size: 12.5px;"><span>🔄 Átszállásszám:</span><strong style="font-family:var(--font-mono); color:var(--primary);">${wFlight.stops}%</strong></div>
+                            <div style="display: flex; justify-content: space-between; font-size: 12.5px;"><span>Repjegy Ár:</span><strong style="font-family:var(--font-mono); color:var(--primary);">${wFlight.price}%</strong></div>
+                            <div style="display: flex; justify-content: space-between; font-size: 12.5px;"><span>Menetidő:</span><strong style="font-family:var(--font-mono); color:var(--primary);">${wFlight.duration}%</strong></div>
+                            <div style="display: flex; justify-content: space-between; font-size: 12.5px;"><span>Átszállásszám:</span><strong style="font-family:var(--font-mono); color:var(--primary);">${wFlight.stops}%</strong></div>
                         </div>
                     </div>
 
                     <!-- 3. Szállás Súlyok -->
-                    <div style="background: var(--bg-surface); padding: 16px; border-radius: 16px; border: 1px solid var(--border-subtle);">
-                        <div style="font-size: 11px; font-weight: 800; color: var(--primary); text-transform: uppercase; margin-bottom: 10px;">🏨 Szállás Súlyok</div>
+                    <div style="background: var(--bg-surface); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+                        <div style="font-size: 11px; font-weight: 800; color: var(--primary); text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 5px;">
+                            <span class="material-symbols-outlined" style="font-size: 15px;">hotel</span>
+                            <span>Szállás Súlyok</span>
+                        </div>
                         <div style="display: flex; flex-direction: column; gap: 6px;">
-                            <div style="display: flex; justify-content: space-between; font-size: 12.5px;"><span>💳 Szobaár / éj:</span><strong style="font-family:var(--font-mono); color:var(--primary);">${wStay.price}%</strong></div>
-                            <div style="display: flex; justify-content: space-between; font-size: 12.5px;"><span>⭐ Vendégértékelés:</span><strong style="font-family:var(--font-mono); color:var(--primary);">${wStay.rating}%</strong></div>
-                            <div style="display: flex; justify-content: space-between; font-size: 12.5px;"><span>📍 Lokáció:</span><strong style="font-family:var(--font-mono); color:var(--primary);">${wStay.location}%</strong></div>
+                            <div style="display: flex; justify-content: space-between; font-size: 12.5px;"><span>Szobaár / éj:</span><strong style="font-family:var(--font-mono); color:var(--primary);">${wStay.price}%</strong></div>
+                            <div style="display: flex; justify-content: space-between; font-size: 12.5px;"><span>Vendégértékelés:</span><strong style="font-family:var(--font-mono); color:var(--primary);">${wStay.rating}%</strong></div>
+                            <div style="display: flex; justify-content: space-between; font-size: 12.5px;"><span>Lokáció:</span><strong style="font-family:var(--font-mono); color:var(--primary);">${wStay.location}%</strong></div>
                         </div>
                     </div>
                 </div>
 
-                <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 14px; padding: 14px 18px; text-align: center; color: var(--text-main); font-size: 13px; font-weight: 700;">
-                    ✅ A döntési szabályok és küszöbértékek készen állnak az intelligens desztináció-, járat- és szálláselemzésre!
+                <div style="background: rgba(22, 163, 74, 0.08); border: 1px solid rgba(22, 163, 74, 0.25); border-radius: var(--radius-md); padding: 14px 18px; text-align: center; color: var(--text-main); font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <span class="material-symbols-outlined" style="font-size: 18px; color: #16a34a;">check_circle</span>
+                    <span>A preferenciák és prioritási szabályok készen állnak az utazástervezésre!</span>
                 </div>
             `;
         }

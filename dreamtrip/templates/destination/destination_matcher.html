@@ -100,14 +100,17 @@
                     <div class="panel-header-desc">Hogyan tervezed az utazás időpontját?</div>
 
                     <!-- 2-MÓD VÁLASZTÓ TABOK (KONKRÉT VAGY INTERVALLUM) -->
-                    <div class="date-mode-tabs" style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 14px; background: var(--bg-surface-subtle); padding: 4px; border-radius: 12px; border: 1px solid var(--border-subtle);">
+                    <div class="date-mode-tabs">
                         <button type="button" class="tab-pill-btn active" id="btn_mode_exact" onclick="switchDateMode('exact')">
-                            <span>📅 Konkrét Dátum</span>
+                            <span class="material-symbols-outlined" style="font-size: 17px;">calendar_today</span>
+                            <span>Pontos dátum</span>
                         </button>
                         <button type="button" class="tab-pill-btn" id="btn_mode_interval" onclick="switchDateMode('interval')">
-                            <span>⏱️ Időintervallum</span>
+                            <span class="material-symbols-outlined" style="font-size: 17px;">date_range</span>
+                            <span>Rugalmas időkeret</span>
                         </button>
                     </div>
+
                     <input type="hidden" id="selected_date_mode" value="exact">
 
                     <!-- 1. KONKRÉT DÁTUMOK TARTALOM (ALAPÉRTELMEZETT) -->
@@ -115,7 +118,7 @@
                         <label class="form-label" style="font-size: 12px; font-weight: 700; margin-bottom: 6px;">Oda- és visszautazás napja:</label>
                         <div class="custom-date-display" id="exact_picker_trigger" style="margin-bottom: 10px; cursor: pointer;">
                             <div style="display: flex; align-items: center; gap: 10px;">
-                                <span style="font-size: 18px;">✈️</span>
+                                <span class="material-symbols-outlined" style="font-size: 18px; color: var(--primary);">calendar_month</span>
                                 <div>
                                     <div class="date-text-primary" id="exact_date_display">2026. Szept 10. → Szept 17.</div>
                                     <div class="date-text-sub" id="exact_duration_display">7 napos utazás (6 éjszaka)</div>
@@ -243,10 +246,10 @@
                     <div style="display: flex; gap: 8px;">
                         <div class="chip-select-btn active" data-strictness="soft"
                             onclick="selectStrictness(this, 'soft')">
-                            <span>🌱 Rugalmas keret</span>
+                            <span>Rugalmas keret</span>
                         </div>
                         <div class="chip-select-btn" data-strictness="hard" onclick="selectStrictness(this, 'hard')">
-                            <span>🔒 Szigorú keret</span>
+                            <span>Szigorú keret</span>
                         </div>
                     </div>
                     <input type="hidden" id="budget_strictness" value="soft">
@@ -267,14 +270,10 @@
                     <div class="panel-header-desc">Kattints a kizárandó területekre:</div>
 
                     <div class="chips-grid" id="exclusionsGrid" style="gap: 8px;">
-                        <div class="chip-select-btn" data-value="region_europe" onclick="toggleExclusion(this)">🇪🇺
-                            Európa</div>
-                        <div class="chip-select-btn" data-value="region_asia" onclick="toggleExclusion(this)">🌏 Ázsia
-                        </div>
-                        <div class="chip-select-btn" data-value="region_america" onclick="toggleExclusion(this)">🌎
-                            Amerika</div>
-                        <div class="chip-select-btn" data-value="region_australia" onclick="toggleExclusion(this)">🦘
-                            Ausztrália</div>
+                        <div class="chip-select-btn" data-value="region_europe" onclick="toggleExclusion(this)">Európa</div>
+                        <div class="chip-select-btn" data-value="region_asia" onclick="toggleExclusion(this)">Ázsia</div>
+                        <div class="chip-select-btn" data-value="region_america" onclick="toggleExclusion(this)">Amerika</div>
+                        <div class="chip-select-btn" data-value="region_australia" onclick="toggleExclusion(this)">Ausztrália</div>
                     </div>
                 </div>
 

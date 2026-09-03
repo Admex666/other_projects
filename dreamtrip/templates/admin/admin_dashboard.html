@@ -6,6 +6,7 @@
     <title>Optivoya — B2B Beta Usage Dashboard</title>
     <link rel="stylesheet" href="/static/css/theme.css">
     <link rel="stylesheet" href="/static/css/components.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <style>
         :root {
             --bg-base: #0b0f19;
@@ -61,6 +62,50 @@
             margin: 0 auto;
             padding: 32px 24px;
         }
+
+        /* Active User Filter Bar */
+        .filter-status-bar {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 12px;
+            padding: 12px 18px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .filter-status-bar.hidden {
+            display: none;
+        }
+        .filter-tags-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .filter-tag-pill {
+            background: var(--bg-card);
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            color: #a5b4fc;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .filter-tag-remove {
+            cursor: pointer;
+            color: #94a3b8;
+            font-weight: 800;
+        }
+        .filter-tag-remove:hover {
+            color: #ef4444;
+        }
+
         .kpi-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -105,7 +150,7 @@
         /* 2-Column Dashboard Layout */
         .dashboard-grid {
             display: grid;
-            grid-template-columns: 360px 1fr;
+            grid-template-columns: 380px 1fr;
             gap: 24px;
             align-items: start;
         }
@@ -145,7 +190,7 @@
             overflow-y: auto;
         }
         .user-item {
-            padding: 16px 20px;
+            padding: 14px 18px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.04);
             display: flex;
             align-items: center;
@@ -154,24 +199,34 @@
             transition: background 0.15s ease;
             text-decoration: none;
             color: inherit;
+            user-select: none;
         }
-        .user-item:hover, .user-item.active {
+        .user-item:hover {
             background: var(--bg-card-hover);
         }
         .user-item.active {
+            background: rgba(99, 102, 241, 0.12);
             border-left: 3px solid var(--primary);
         }
+        .user-checkbox {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+            cursor: pointer;
+            margin-right: 12px;
+        }
         .user-avatar {
-            width: 38px;
-            height: 38px;
+            width: 36px;
+            height: 36px;
             border-radius: 10px;
             background: linear-gradient(135deg, #4f46e5, #7c3aed);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 15px;
+            font-size: 14px;
             color: #fff;
+            flex-shrink: 0;
         }
 
         /* Timeline Items */
@@ -291,35 +346,83 @@
     </nav>
 
     <div class="admin-container">
+
+        <!-- ACTIVE FILTER STATUS BAR -->
+        <div id="filterStatusBar" class="filter-status-bar {% if not selected_users %}hidden{% endif %}">
+            <div class="filter-tags-wrap">
+                <span style="font-size: 13px; font-weight: 700; color: #fff;">Szűrt felhasználók:</span>
+                <div id="filterTagsList" style="display: inline-flex; gap: 6px; flex-wrap: wrap;">
+                    {% for u in selected_users %}
+                    <span class="filter-tag-pill" data-user="{{ u }}">
+                        @{{ u }}
+                        <span class="filter-tag-remove" onclick="removeUserFilter('{{ u }}')">✕</span>
+                    </span>
+                    {% endfor %}
+                </div>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <button type="button" class="btn btn-outline btn-sm" onclick="clearAllFilters()" style="padding: 4px 10px; font-size: 11.5px;">Szűrés törlése (Összes mutatása)</button>
+            </div>
+        </div>
+
         <!-- KPI METRICS GRID -->
         <div class="kpi-grid">
             <div class="kpi-card">
-                <div class="kpi-label">👥 Béta Felhasználók <span class="kpi-highlight">M1 Target: ≥5</span></div>
-                <div class="kpi-value">{{ kpis.total_users }}</div>
-                <div style="font-size: 12px; color: var(--text-muted);">{{ kpis.repeat_users_count }} visszatérő tanácsadó</div>
+                <div class="kpi-label">
+                    <span style="display: flex; align-items: center; gap: 4px;">
+                        <span class="material-symbols-outlined" style="font-size: 16px;">group</span> 
+                        <span id="kpiLabelUsers">{% if selected_users %}Kijelölt Tanácsadók{% else %}Béta Felhasználók{% endif %}</span>
+                    </span>
+                    <span class="kpi-highlight" id="kpiTargetHighlight">M1 Target: ≥5</span>
+                </div>
+                <div class="kpi-value mono-data" id="kpiTotalUsers">{{ kpis.total_users }}</div>
+                <div style="font-size: 12px; color: var(--text-muted);" id="kpiRepeatUsers">{{ kpis.repeat_users_count }} visszatérő tanácsadó</div>
             </div>
 
             <div class="kpi-card">
-                <div class="kpi-label">⚡ Összes Keresés <span class="kpi-highlight">{{ kpis.success_rate_pct }}% Siker</span></div>
-                <div class="kpi-value">{{ kpis.total_searches }}</div>
-                <div style="font-size: 12px; color: var(--text-muted);">{{ kpis.successful_searches }} sikeres művelet</div>
+                <div class="kpi-label">
+                    <span style="display: flex; align-items: center; gap: 4px;">
+                        <span class="material-symbols-outlined" style="font-size: 16px;">search</span> 
+                        Összes Keresés
+                    </span>
+                    <span class="kpi-highlight" id="kpiSuccessRate">{{ kpis.success_rate_pct }}% Siker</span>
+                </div>
+                <div class="kpi-value mono-data" id="kpiTotalSearches">{{ kpis.total_searches }}</div>
+                <div style="font-size: 12px; color: var(--text-muted);" id="kpiSuccessfulSearches">{{ kpis.successful_searches }} sikeres művelet</div>
             </div>
 
             <div class="kpi-card">
-                <div class="kpi-label">⏳ Megtakarított Idő <span class="kpi-highlight">H2 Hipotézis</span></div>
-                <div class="kpi-value">{{ kpis.total_time_saved_hours }} <span style="font-size: 16px; font-weight: 500;">óra</span></div>
+                <div class="kpi-label">
+                    <span style="display: flex; align-items: center; gap: 4px;">
+                        <span class="material-symbols-outlined" style="font-size: 16px;">timer</span> 
+                        Megtakarított Idő
+                    </span>
+                    <span class="kpi-highlight">H2 Hipotézis</span>
+                </div>
+                <div class="kpi-value mono-data" id="kpiTimeSaved">{{ kpis.total_time_saved_hours }} <span style="font-size: 16px; font-weight: 500;">óra</span></div>
                 <div style="font-size: 12px; color: var(--text-muted);">~42 perc megtakarítás / keresés</div>
             </div>
 
             <div class="kpi-card">
-                <div class="kpi-label">⏱️ Átlagos Válaszidő <span class="kpi-highlight">&lt; 3.5s SLA</span></div>
-                <div class="kpi-value">{{ kpis.avg_duration_sec }}s</div>
-                <div style="font-size: 12px; color: var(--text-muted);">{{ kpis.avg_duration_ms }} ms latency</div>
+                <div class="kpi-label">
+                    <span style="display: flex; align-items: center; gap: 4px;">
+                        <span class="material-symbols-outlined" style="font-size: 16px;">speed</span> 
+                        Átlagos Válaszidő
+                    </span>
+                    <span class="kpi-highlight">&lt; 3.5s SLA</span>
+                </div>
+                <div class="kpi-value mono-data" id="kpiAvgDurationSec">{{ kpis.avg_duration_sec }}s</div>
+                <div style="font-size: 12px; color: var(--text-muted);" id="kpiAvgDurationMs">{{ kpis.avg_duration_ms }} ms latency</div>
             </div>
 
             <div class="kpi-card">
-                <div class="kpi-label">📄 Generált Ajánlatok</div>
-                <div class="kpi-value">{{ kpis.proposals_exported }}</div>
+                <div class="kpi-label">
+                    <span style="display: flex; align-items: center; gap: 4px;">
+                        <span class="material-symbols-outlined" style="font-size: 16px;">picture_as_pdf</span> 
+                        Generált Ajánlatok
+                    </span>
+                </div>
+                <div class="kpi-value mono-data" id="kpiProposals">{{ kpis.proposals_exported }}</div>
                 <div style="font-size: 12px; color: var(--text-muted);">Exportált B2B utazási tervek</div>
             </div>
         </div>
@@ -329,17 +432,21 @@
             <!-- USERS DIRECTORY -->
             <div class="panel-card">
                 <div class="panel-header">
-                    <div class="panel-title">👥 Béta Tanácsadók ({{ users|length }})</div>
-                    {% if selected_user != 'all' %}
-                    <a href="/admin/dashboard" style="font-size: 12px; color: var(--primary); text-decoration: none;">Összes mutatása</a>
-                    {% endif %}
+                    <div class="panel-title">
+                        <span class="material-symbols-outlined" style="font-size: 18px; color: var(--primary);">badge</span>
+                        Béta Tanácsadók ({{ users|length }})
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button type="button" class="btn btn-outline btn-sm" onclick="clearAllFilters()" style="padding: 2px 8px; font-size: 11px;">Összes</button>
+                    </div>
                 </div>
-                <div class="user-list">
+                <div class="user-list" id="usersListContainer">
                     {% for u in users %}
-                    <a href="/admin/dashboard?user={{ u.username }}" class="user-item {% if selected_user == u.username %}active{% endif %}">
-                        <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="user-item {% if u.username in selected_users %}active{% endif %}" onclick="handleUserItemClick(event, '{{ u.username }}')">
+                        <div style="display: flex; align-items: center;">
+                            <input type="checkbox" class="user-checkbox" value="{{ u.username }}" {% if u.username in selected_users %}checked{% endif %} onclick="handleCheckboxClick(event, '{{ u.username }}')">
                             <div class="user-avatar">{{ u.username[:2]|upper }}</div>
-                            <div>
+                            <div style="margin-left: 12px;">
                                 <div style="font-weight: 700; font-size: 14px;">{{ u.full_name }}</div>
                                 <div style="font-size: 12px; color: var(--text-muted);">@{{ u.username }} • {{ u.company_name }}</div>
                             </div>
@@ -348,7 +455,7 @@
                             <div style="font-size: 13px; font-weight: 700; color: var(--primary);">{{ u.successful_searches }} keresés</div>
                             <div style="font-size: 11px; color: var(--text-muted);">{{ u.last_active_at[:10] }}</div>
                         </div>
-                    </a>
+                    </div>
                     {% endfor %}
                 </div>
             </div>
@@ -357,17 +464,20 @@
             <div class="panel-card">
                 <div class="panel-header">
                     <div class="panel-title">
-                        🔍 Eseménynapló & Idővonal 
-                        {% if selected_user != 'all' %}
-                        <span style="font-size: 13px; color: var(--primary); font-weight: 600;">— @{{ selected_user }}</span>
-                        {% else %}
-                        <span style="font-size: 13px; color: var(--text-muted); font-weight: 500;">(Összes felhasználó)</span>
-                        {% endif %}
+                        <span class="material-symbols-outlined" style="font-size: 18px; color: var(--primary);">history</span>
+                        <span>Eseménynapló & Idővonal</span> 
+                        <span id="timelineScopeSubtitle" style="font-size: 13px; color: var(--text-muted); font-weight: 500;">
+                            {% if selected_users %}
+                            — @{{ selected_user }}
+                            {% else %}
+                            (Összes felhasználó)
+                            {% endif %}
+                        </span>
                     </div>
-                    <span style="font-size: 12px; color: var(--text-muted);">{{ timeline|length }} esemény</span>
+                    <span style="font-size: 12px; color: var(--text-muted);" id="timelineCount">{{ timeline|length }} esemény</span>
                 </div>
 
-                <div class="timeline-container">
+                <div class="timeline-container" id="timelineContainer">
                     {% if timeline|length == 0 %}
                     <div style="padding: 40px; text-align: center; color: var(--text-muted);">
                         Még nem érkezett telemetria esemény erre a szűrésre.
@@ -384,12 +494,16 @@
                             </div>
                             <div style="display: flex; align-items: center; gap: 12px;">
                                 {% if ev.duration_ms %}
-                                <span style="font-size: 12px; font-weight: 600; color: #a5b4fc;">⏱️ {{ ev.duration_formatted }}</span>
+                                <span style="font-size: 12px; font-weight: 600; color: #a5b4fc;">{{ ev.duration_formatted }}</span>
                                 {% endif %}
                                 {% if ev.success %}
-                                <span style="font-size: 12px; color: var(--success); font-weight: 700;">✅ Siker ({{ ev.results_count }} db)</span>
+                                <span style="font-size: 12px; color: var(--success); font-weight: 700; display: inline-flex; align-items: center; gap: 3px;">
+                                    <span class="material-symbols-outlined" style="font-size: 14px;">check_circle</span> Siker ({{ ev.results_count }} db)
+                                </span>
                                 {% else %}
-                                <span style="font-size: 12px; color: var(--danger); font-weight: 700;">❌ Hiba</span>
+                                <span style="font-size: 12px; color: var(--danger); font-weight: 700; display: inline-flex; align-items: center; gap: 3px;">
+                                    <span class="material-symbols-outlined" style="font-size: 14px;">cancel</span> Hiba
+                                </span>
                                 {% endif %}
                                 <span style="font-size: 11px; color: var(--text-muted);">{{ ev.created_at[11:19] }}</span>
                             </div>
@@ -398,19 +512,19 @@
                         <!-- Paraméterek -->
                         <div style="margin-top: 6px;">
                             {% if ev.search_params.origin %}
-                            <span class="param-chip">🛫 Indulás: {{ ev.search_params.origin }}</span>
+                            <span class="param-chip">Indulás: {{ ev.search_params.origin }}</span>
                             {% endif %}
                             {% if ev.search_params.destination_city or ev.search_params.destination %}
-                            <span class="param-chip">📍 Cél: {{ ev.search_params.destination_city or ev.search_params.destination }}</span>
+                            <span class="param-chip">Cél: {{ ev.search_params.destination_city or ev.search_params.destination }}</span>
                             {% endif %}
                             {% if ev.search_params.adults %}
-                            <span class="param-chip">👥 {{ ev.search_params.adults }} felnőtt</span>
+                            <span class="param-chip">{{ ev.search_params.adults }} felnőtt</span>
                             {% endif %}
                             {% if ev.search_params.duration %}
-                            <span class="param-chip">📅 {{ ev.search_params.duration }} nap</span>
+                            <span class="param-chip">{{ ev.search_params.duration }} nap</span>
                             {% endif %}
                             {% if ev.error_message %}
-                            <div style="color: var(--danger); font-size: 12px; margin-top: 4px;">⚠️ Hiba: {{ ev.error_message }}</div>
+                            <div style="color: var(--danger); font-size: 12px; margin-top: 4px;">Hiba: {{ ev.error_message }}</div>
                             {% endif %}
                         </div>
 
@@ -469,6 +583,180 @@
     </div>
 
     <script>
+        // State for active user filter
+        let selectedUsers = new Set({{ selected_users | tojson }});
+
+        function handleUserItemClick(e, username) {
+            // Prevent double handling if checkbox was directly clicked
+            if (e.target.tagName === 'INPUT') return;
+            
+            // Toggle selection
+            if (selectedUsers.has(username)) {
+                selectedUsers.delete(username);
+            } else {
+                selectedUsers.add(username);
+            }
+            updateFilterView();
+        }
+
+        function handleCheckboxClick(e, username) {
+            e.stopPropagation();
+            if (e.target.checked) {
+                selectedUsers.add(username);
+            } else {
+                selectedUsers.delete(username);
+            }
+            updateFilterView();
+        }
+
+        function removeUserFilter(username) {
+            selectedUsers.delete(username);
+            updateFilterView();
+        }
+
+        function clearAllFilters() {
+            selectedUsers.clear();
+            updateFilterView();
+        }
+
+        async function updateFilterView() {
+            const userArr = Array.from(selectedUsers);
+            const userParam = userArr.length > 0 ? userArr.join(',') : 'all';
+
+            // 1. Update URL without reloading page
+            const newUrl = userArr.length > 0 ? `/admin/dashboard?user=${encodeURIComponent(userParam)}` : '/admin/dashboard';
+            window.history.pushState(null, '', newUrl);
+
+            // 2. Update UI checkboxes & active item highlights
+            document.querySelectorAll('.user-item').forEach(item => {
+                const cb = item.querySelector('.user-checkbox');
+                if (cb) {
+                    const isSelected = selectedUsers.has(cb.value);
+                    cb.checked = isSelected;
+                    if (isSelected) item.classList.add('active');
+                    else item.classList.remove('active');
+                }
+            });
+
+            // 3. Update Filter Bar
+            const bar = document.getElementById('filterStatusBar');
+            const tagsList = document.getElementById('filterTagsList');
+            const scopeSubtitle = document.getElementById('timelineScopeSubtitle');
+
+            if (userArr.length > 0) {
+                bar.classList.remove('hidden');
+                tagsList.innerHTML = userArr.map(u => `
+                    <span class="filter-tag-pill" data-user="${u}">
+                        @${u}
+                        <span class="filter-tag-remove" onclick="removeUserFilter('${u}')">✕</span>
+                    </span>
+                `).join('');
+                scopeSubtitle.innerText = `— @${userArr.join(', @')}`;
+                document.getElementById('kpiLabelUsers').innerText = 'Kijelölt Tanácsadók';
+            } else {
+                bar.classList.add('hidden');
+                tagsList.innerHTML = '';
+                scopeSubtitle.innerText = '(Összes felhasználó)';
+                document.getElementById('kpiLabelUsers').innerText = 'Béta Felhasználók';
+            }
+
+            // 4. Fetch dynamic filtered KPIs & Timeline from API
+            try {
+                const [kpisRes, timelineRes] = await Promise.all([
+                    fetch(`/api/admin/kpis?user=${encodeURIComponent(userParam)}`),
+                    fetch(`/api/admin/timeline?user=${encodeURIComponent(userParam)}`)
+                ]);
+
+                if (kpisRes.ok) {
+                    const kpisData = await kpisRes.json();
+                    if (kpisData.status === 'ok') {
+                        renderKPIs(kpisData.kpis);
+                    }
+                }
+
+                if (timelineRes.ok) {
+                    const timelineData = await timelineRes.json();
+                    if (timelineData.status === 'ok') {
+                        renderTimeline(timelineData.events);
+                    }
+                }
+            } catch (err) {
+                console.error('Failed to update filtered dashboard data:', err);
+            }
+        }
+
+        function renderKPIs(k) {
+            document.getElementById('kpiTotalUsers').innerText = k.total_users;
+            document.getElementById('kpiRepeatUsers').innerText = `${k.repeat_users_count} visszatérő tanácsadó`;
+            document.getElementById('kpiTotalSearches').innerText = k.total_searches;
+            document.getElementById('kpiSuccessRate').innerText = `${k.success_rate_pct}% Siker`;
+            document.getElementById('kpiSuccessfulSearches').innerText = `${k.successful_searches} sikeres művelet`;
+            document.getElementById('kpiTimeSaved').innerHTML = `${k.total_time_saved_hours} <span style="font-size: 16px; font-weight: 500;">óra</span>`;
+            document.getElementById('kpiAvgDurationSec').innerText = `${k.avg_duration_sec}s`;
+            document.getElementById('kpiAvgDurationMs').innerText = `${k.avg_duration_ms} ms latency`;
+            document.getElementById('kpiProposals').innerText = k.proposals_exported;
+        }
+
+        function renderTimeline(events) {
+            const container = document.getElementById('timelineContainer');
+            document.getElementById('timelineCount').innerText = `${events.length} esemény`;
+
+            if (!events || events.length === 0) {
+                container.innerHTML = `
+                    <div style="padding: 40px; text-align: center; color: var(--text-muted);">
+                        Még nem érkezett telemetria esemény erre a szűrésre.
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = events.map(ev => {
+                const modPrefix = (ev.module || '').split('_')[0];
+                const p = ev.search_params || {};
+                const chipsHtml = [
+                    p.origin ? `<span class="param-chip">Indulás: ${p.origin}</span>` : '',
+                    (p.destination_city || p.destination) ? `<span class="param-chip">Cél: ${p.destination_city || p.destination}</span>` : '',
+                    p.adults ? `<span class="param-chip">${p.adults} felnőtt</span>` : '',
+                    p.duration ? `<span class="param-chip">${p.duration} nap</span>` : '',
+                    ev.error_message ? `<div style="color: var(--danger); font-size: 12px; margin-top: 4px;">Hiba: ${ev.error_message}</div>` : ''
+                ].filter(Boolean).join('');
+
+                return `
+                    <div class="event-card">
+                        <div class="event-header">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span class="event-module-badge badge-${modPrefix}">${ev.module}</span>
+                                <strong style="font-size: 13px;">${ev.event_type}</strong>
+                                <span style="font-size: 12px; color: var(--text-muted);">• @${ev.user_id}</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                ${ev.duration_ms ? `<span style="font-size: 12px; font-weight: 600; color: #a5b4fc;">${ev.duration_formatted}</span>` : ''}
+                                ${ev.success ? `
+                                    <span style="font-size: 12px; color: var(--success); font-weight: 700; display: inline-flex; align-items: center; gap: 3px;">
+                                        <span class="material-symbols-outlined" style="font-size: 14px;">check_circle</span> Siker (${ev.results_count} db)
+                                    </span>
+                                ` : `
+                                    <span style="font-size: 12px; color: var(--danger); font-weight: 700; display: inline-flex; align-items: center; gap: 3px;">
+                                        <span class="material-symbols-outlined" style="font-size: 14px;">cancel</span> Hiba
+                                    </span>
+                                `}
+                                <span style="font-size: 11px; color: var(--text-muted);">${(ev.created_at || '').substring(11, 19)}</span>
+                            </div>
+                        </div>
+
+                        ${chipsHtml ? `<div style="margin-top: 6px;">${chipsHtml}</div>` : ''}
+
+                        <button 
+                            onclick="toggleJson('json_${ev.id}')" 
+                            style="background:none; border:none; color:var(--text-muted); font-size:11px; cursor:pointer; padding:4px 0; margin-top:6px; text-decoration:underline;">
+                            Adatstruktúra (JSON) megtekintése ▾
+                        </button>
+                        <pre id="json_${ev.id}" class="raw-json">${JSON.stringify(p, null, 2)}</pre>
+                    </div>
+                `;
+            }).join('');
+        }
+
         function toggleJson(id) {
             const el = document.getElementById(id);
             if (el) {

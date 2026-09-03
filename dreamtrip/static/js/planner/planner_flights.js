@@ -74,7 +74,7 @@
 
             state.showLoader(
                 `Járatok keresése (${destName})...`,
-                `Kiwi retúr járatok aggregálása (${state.intake.origin} → ${destName}) és intelligens rangsorolása...`
+                `Retúr járatok aggregálása (${state.intake.origin} → ${destName}) és rangsorolása...`
             );
 
             try {

@@ -31,7 +31,7 @@
             const avgTemp = d?.metrics?.temp_avg || d?.temp_avg || 24;
             const safetyScore = Math.round(d?.metrics?.safety_raw || d?.safety_score || d?.numbeo?.safety_index || 60);
             const sumDestClimate = document.getElementById('sumDestClimate');
-            if (sumDestClimate) sumDestClimate.innerText = `☀️ Nappal: ~${avgTemp}°C • Biztonság: ${safetyScore}/100`;
+            if (sumDestClimate) sumDestClimate.innerText = `Nappal: ~${avgTemp}°C • Biztonság: ${safetyScore}/100`;
 
             // 3. Repülő kártya
             const airline = f?.airline || f?.out_airline || f?.in_airline || f?.carrier || 'Repülőjárat';
@@ -54,7 +54,7 @@
             const sumStayName = document.getElementById('sumStayName');
             const sumStayRating = document.getElementById('sumStayRating');
             const sumStayPrice = document.getElementById('sumStayPrice');
-            if (sumStayName) sumStayName.innerText = `${s?.name || 'Szálloda'} ${'⭐'.repeat(stayStars)}`;
+            if (sumStayName) sumStayName.innerText = `${s?.name || 'Szálloda'} ${'★'.repeat(stayStars)}`;
             if (sumStayRating) sumStayRating.innerText = `${nights} éjszaka • Értékelés: ${stayRating}/10`;
             if (sumStayPrice) sumStayPrice.innerText = `${stayPrice.toLocaleString()} Ft`;
 
@@ -65,7 +65,7 @@
                 wrap.innerHTML = `
                     <div style="background: var(--bg-surface-subtle); border: 1px solid var(--border-subtle); border-radius: 18px; padding: 24px; margin-top: 10px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                            <h3 style="font-size: 16px; font-weight: 800; color: var(--text-main); margin: 0;">📊 Tételes Költségkalkuláció</h3>
+                            <h3 style="font-size: 16px; font-weight: 800; color: var(--text-main); margin: 0;">Tételes Költségkalkuláció</h3>
                             <span style="font-size: 12px; font-weight: 700; color: var(--primary);">${b.days} nap / ${b.totalPersons} fő</span>
                         </div>
 
@@ -73,8 +73,8 @@
                             ${b.items.map(it => `
                                 <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: var(--bg-surface); border-radius: 10px; font-size: 13px;">
                                     <div>
-                                        <strong>${it.icon} ${it.name}</strong><br>
-                                        <small style="color: var(--text-muted); font-family: monospace;">📐 ${it.formula}</small>
+                                        <strong>${it.name}</strong><br>
+                                        <small style="color: var(--text-muted); font-family: monospace;">${it.formula}</small>
                                     </div>
                                     <div style="font-weight: 800; font-family: var(--font-mono); font-size: 14px; color: var(--text-main);">${it.amount.toLocaleString()} Ft</div>
                                 </div>

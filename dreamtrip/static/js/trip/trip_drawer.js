@@ -18,7 +18,7 @@
                     step: 1,
                     text: 'Tervezés indítása / Célállomás →',
                     url: '/planner',
-                    icon: '📍',
+                    icon: '',
                     badge: '1. Lépés'
                 };
             }
@@ -28,7 +28,7 @@
                     step: 2,
                     text: `Járatok keresése (${d.name}) →`,
                     url: '/planner?resume=flight',
-                    icon: '✈️',
+                    icon: '',
                     badge: '2. Lépés'
                 };
             }
@@ -38,7 +38,7 @@
                     step: 3,
                     text: 'Szállások keresése →',
                     url: '/planner?resume=stay',
-                    icon: '🏨',
+                    icon: '',
                     badge: '3. Lépés'
                 };
             }
@@ -47,7 +47,7 @@
                 step: 4,
                 text: 'Összesített terv →',
                 url: '/planner?resume=summary',
-                icon: '📄',
+                icon: '',
                 badge: 'Ajánlatkész'
             };
         },
@@ -90,14 +90,14 @@
                 if (d) {
                     slotsHtml += `
                         <div class="trip-pill-slot active-filled" onclick="TripCart.goToPlannerStep('destination')">
-                            <span>📍 ${d.name}</span>
-                            <span style="font-size: 11px; opacity: 0.85;">(${d.duration || 7}n, ${d.adults || 2}fő)</span>
+                            <span>${d.name}</span>
+                            <span style="font-size: 11px; opacity: 0.85;">(${d.duration || 7} nap, ${d.adults || 2} felnőtt)</span>
                         </div>
                     `;
                 } else {
                     slotsHtml += `
                         <a href="/planner" class="trip-pill-slot empty-slot">
-                            <span>📍 + Célállomás</span>
+                            <span>+ Célállomás</span>
                         </a>
                     `;
                 }
@@ -106,19 +106,19 @@
                 if (f) {
                     slotsHtml += `
                         <div class="trip-pill-slot active-filled" onclick="TripCart.goToPlannerStep('flight')">
-                            <span>✈️ ${f.airline} (${Math.round(f.price_total_huf || f.price_huf).toLocaleString()} Ft)</span>
+                            <span>${f.airline} (${Math.round(f.price_total_huf || f.price_huf).toLocaleString()} Ft)</span>
                         </div>
                     `;
                 } else if (d) {
                     slotsHtml += `
                         <a href="/planner?resume=flight" class="trip-pill-slot empty-slot" onclick="if(window.location.pathname.startsWith('/planner') && window.Wizard){ event.preventDefault(); window.Wizard.goToStep(2); }">
-                            <span>✈️ + Járat</span>
+                            <span>+ Járat</span>
                         </a>
                     `;
                 } else {
                     slotsHtml += `
                         <a href="/planner?resume=flight" class="trip-pill-slot empty-slot">
-                            <span>✈️ + Járat</span>
+                            <span>+ Járat</span>
                         </a>
                     `;
                 }
@@ -127,25 +127,25 @@
                 if (s) {
                     slotsHtml += `
                         <div class="trip-pill-slot active-filled" onclick="TripCart.goToPlannerStep('stay')">
-                            <span>🏨 ${s.name} (${Math.round(s.price_total_huf || s.price_huf).toLocaleString()} Ft)</span>
+                            <span>${s.name} (${Math.round(s.price_total_huf || s.price_huf).toLocaleString()} Ft)</span>
                         </div>
                     `;
                 } else if (f && d) {
                     slotsHtml += `
                         <a href="/planner?resume=stay" class="trip-pill-slot empty-slot" onclick="if(window.location.pathname.startsWith('/planner') && window.Wizard){ event.preventDefault(); window.Wizard.goToStep(3); }">
-                            <span>🏨 + Szállás</span>
+                            <span>+ Szállás</span>
                         </a>
                     `;
                 } else if (d) {
                     slotsHtml += `
                         <a href="/planner?resume=stay" class="trip-pill-slot empty-slot" onclick="if(window.location.pathname.startsWith('/planner') && window.Wizard){ event.preventDefault(); window.Wizard.goToStep(3); }">
-                            <span>🏨 + Szállás</span>
+                            <span>+ Szállás</span>
                         </a>
                     `;
                 } else {
                     slotsHtml += `
                         <a href="/planner?resume=stay" class="trip-pill-slot empty-slot">
-                            <span>🏨 + Szállás</span>
+                            <span>+ Szállás</span>
                         </a>
                     `;
                 }
@@ -216,21 +216,21 @@
                     drawerHtml += `
                         <div class="trip-card-slot filled">
                             <div class="trip-card-slot-header">
-                                <div class="trip-card-slot-type">📍 1. Kijelölt Célállomás</div>
+                                <div class="trip-card-slot-type">1. Kijelölt Célállomás</div>
                                 <button type="button" class="trip-card-slot-remove" onclick="TripCart.removeDestination()">Eltávolítás</button>
                             </div>
                             <div class="trip-card-main-info">${d.name}, ${d.country}</div>
                             <div class="trip-card-sub-info">
-                                🛫 Indulás: ${d.origin} • 🗓️ ${d.duration} nap (${d.adults} felnőtt${d.children > 0 ? `, ${d.children} gyerek` : ''})
+                                Indulás: ${d.origin} • ${d.duration} nap (${d.adults} felnőtt${d.children > 0 ? `, ${d.children} gyerek` : ''})
                             </div>
-                            ${d.explanation ? `<div style="font-size: 11.5px; color: var(--primary); margin-top: 4px;">✨ ${d.explanation}</div>` : ''}
+                            ${d.explanation ? `<div style="font-size: 11.5px; color: var(--primary); margin-top: 4px;">${d.explanation}</div>` : ''}
                         </div>
                     `;
                 } else {
                     drawerHtml += `
                         <div class="trip-card-slot">
                             <div class="trip-card-slot-header">
-                                <div class="trip-card-slot-type" style="color: var(--text-muted);">📍 1. Célállomás</div>
+                                <div class="trip-card-slot-type" style="color: var(--text-muted);">1. Célállomás</div>
                             </div>
                             <div class="trip-card-empty-action">
                                 <a href="/planner">
@@ -246,12 +246,12 @@
                     drawerHtml += `
                         <div class="trip-card-slot filled">
                             <div class="trip-card-slot-header">
-                                <div class="trip-card-slot-type">✈️ 2. Rögzített Repülőjegy</div>
+                                <div class="trip-card-slot-type">2. Rögzített Repülőjegy</div>
                                 <button type="button" class="trip-card-slot-remove" onclick="TripCart.removeFlight()">Eltávolítás</button>
                             </div>
                             <div class="trip-card-main-info">${f.airline || 'Légitársaság'} (Retúr járat)</div>
                             <div class="trip-card-sub-info">
-                                ${f.out_date ? `🛫 Odaút: ${String(f.out_date).split('T')[0].split(' ')[0]}` : ''} ${f.in_date ? `• 🛬 Visszaút: ${String(f.in_date).split('T')[0].split(' ')[0]}` : ''}
+                                ${f.out_date ? `Odaút: ${String(f.out_date).split('T')[0].split(' ')[0]}` : ''} ${f.in_date ? `• Visszaút: ${String(f.in_date).split('T')[0].split(' ')[0]}` : ''}
                                 (${f.exact_stay_nights || f.stay_days || 7} éjszaka)
                             </div>
                             <div class="trip-card-price-badge">${Math.round(f.price_total_huf || f.price_huf || 0).toLocaleString()} Ft (${f.adults || 1} főre)</div>
@@ -261,7 +261,7 @@
                     drawerHtml += `
                         <div class="trip-card-slot">
                             <div class="trip-card-slot-header">
-                                <div class="trip-card-slot-type" style="color: var(--text-muted);">✈️ 2. Járat kiválasztása</div>
+                                <div class="trip-card-slot-type" style="color: var(--text-muted);">2. Járat kiválasztása</div>
                             </div>
                             <div class="trip-card-empty-action">
                                 <a href="/planner?resume=flight">
@@ -277,12 +277,12 @@
                     drawerHtml += `
                         <div class="trip-card-slot filled">
                             <div class="trip-card-slot-header">
-                                <div class="trip-card-slot-type">🏨 3. Rögzített Szállás</div>
+                                <div class="trip-card-slot-type">3. Rögzített Szállás</div>
                                 <button type="button" class="trip-card-slot-remove" onclick="TripCart.removeStay()">Eltávolítás</button>
                             </div>
-                            <div class="trip-card-main-info">${s.name} ${s.stars ? '⭐'.repeat(s.stars) : ''}</div>
+                            <div class="trip-card-main-info">${s.name} ${s.stars ? '★'.repeat(s.stars) : ''}</div>
                             <div class="trip-card-sub-info">
-                                📍 ${s.address || s.city} • 🌙 ${s.nights} éjszaka ${s.rating ? `• Értékelés: ${s.rating}/10` : ''}
+                                ${s.address || s.city} • ${s.nights} éjszaka ${s.rating ? `• Értékelés: ${s.rating}/10` : ''}
                             </div>
                             <div class="trip-card-price-badge">${Math.round(s.price_total_huf || s.price_huf).toLocaleString()} Ft</div>
                         </div>
@@ -291,7 +291,7 @@
                     drawerHtml += `
                         <div class="trip-card-slot">
                             <div class="trip-card-slot-header">
-                                <div class="trip-card-slot-type" style="color: var(--text-muted);">🏨 3. Szállás kiválasztása</div>
+                                <div class="trip-card-slot-type" style="color: var(--text-muted);">3. Szállás kiválasztása</div>
                             </div>
                             <div class="trip-card-empty-action">
                                 <a href="/planner?resume=stay">
@@ -308,25 +308,25 @@
                     drawerHtml += `
                         <div class="trip-breakdown-card">
                             <div class="trip-breakdown-header">
-                                <span>📊 Tételes Költségkalkuláció</span>
+                                <span>Tételes Költségkalkuláció</span>
                                 <span style="font-size: 11px; font-weight: 600; color: var(--primary);">${breakdown.days} nap / ${breakdown.totalPersons} fő</span>
                             </div>
 
                             <!-- DINING PROFILE SELECTOR -->
                             <div style="margin-bottom: 12px; padding: 8px 10px; background: var(--bg-surface-subtle); border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
                                 <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; display: flex; justify-content: space-between;">
-                                    <span>Étkezési profil (Numbeo kosár)</span>
+                                    <span>Étkezési profil</span>
                                     <span style="color: var(--primary); font-size: 10.5px;">Válassz profilt</span>
                                 </div>
                                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;">
                                     <button type="button" onclick="TripCart.setDiningProfile('budget')" style="padding: 6px 8px; font-size: 11.5px; font-weight: 700; border-radius: var(--radius-sm); border: 1px solid ${activeProf === 'budget' ? 'var(--primary)' : 'var(--border-subtle)'}; background: ${activeProf === 'budget' ? 'var(--primary-light)' : 'var(--bg-surface)'}; color: ${activeProf === 'budget' ? 'var(--primary)' : 'var(--text-secondary)'}; cursor: pointer; transition: all 0.15s ease;">
-                                        🥪 Takarékos
+                                        Takarékos
                                     </button>
                                     <button type="button" onclick="TripCart.setDiningProfile('standard')" style="padding: 6px 8px; font-size: 11.5px; font-weight: 700; border-radius: var(--radius-sm); border: 1px solid ${activeProf === 'standard' ? 'var(--primary)' : 'var(--border-subtle)'}; background: ${activeProf === 'standard' ? 'var(--primary-light)' : 'var(--bg-surface)'}; color: ${activeProf === 'standard' ? 'var(--primary)' : 'var(--text-secondary)'}; cursor: pointer; transition: all 0.15s ease;">
-                                        🍝 Átlagos
+                                        Átlagos
                                     </button>
                                     <button type="button" onclick="TripCart.setDiningProfile('comfort')" style="padding: 6px 8px; font-size: 11.5px; font-weight: 700; border-radius: var(--radius-sm); border: 1px solid ${activeProf === 'comfort' ? 'var(--primary)' : 'var(--border-subtle)'}; background: ${activeProf === 'comfort' ? 'var(--primary-light)' : 'var(--bg-surface)'}; color: ${activeProf === 'comfort' ? 'var(--primary)' : 'var(--text-secondary)'}; cursor: pointer; transition: all 0.15s ease;">
-                                        🍷 Kényelmes
+                                        Kényelmes
                                     </button>
                                 </div>
                             </div>
@@ -336,12 +336,11 @@
                                     <div class="breakdown-row">
                                         <div class="breakdown-left">
                                             <div class="breakdown-item-name">
-                                                <span>${it.icon}</span>
                                                 <span>${it.name}</span>
                                                 <span class="breakdown-badge-tag">${it.badge}</span>
                                             </div>
                                             <div class="breakdown-formula">
-                                                📐 ${it.formula}
+                                                ${it.formula}
                                             </div>
                                         </div>
                                         <div class="breakdown-right">

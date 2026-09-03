@@ -8,11 +8,11 @@
     const DNADestStep = {
         renderDestAHP(wizard, container) {
             const pairs = [
-                { id: 'total_cost_vs_weather', name1: '💰 Teljes Költség', name2: '☀️ Klíma / Időjárás', desc: 'Olcsóbb utazás vagy garantáltan kellemes időjárás?' },
-                { id: 'total_cost_vs_safety', name1: '💰 Teljes Költség', name2: '🛡️ Közbiztonság', desc: 'Alacsonyabb összköltség vagy kiemelkedő biztonsági index?' },
-                { id: 'weather_vs_safety', name1: '☀️ Klíma / Időjárás', name2: '🛡️ Közbiztonság', desc: 'Ideális időjárás vagy a maximális biztonság a fontosabb?' }
+                { id: 'total_cost_vs_weather', name1: 'Teljes Költség', name2: 'Klíma / Időjárás', desc: 'Olcsóbb utazás vagy garantáltan kellemes időjárás?' },
+                { id: 'total_cost_vs_safety', name1: 'Teljes Költség', name2: 'Közbiztonság', desc: 'Alacsonyabb összköltség vagy kiemelkedő biztonsági index?' },
+                { id: 'weather_vs_safety', name1: 'Klíma / Időjárás', name2: 'Közbiztonság', desc: 'Ideális időjárás vagy a maximális biztonság a fontosabb?' }
             ];
-            wizard.renderPairwiseMatrix(container, '🌍 1. Lépés: Célállomás Súlyozás (Páros Döntés)', 'Melyik szempont mennyire fontosabb számodra a desztináció kiválasztásakor?', pairs, 'dest_ahp');
+            wizard.renderPairwiseMatrix(container, '1. Lépés: Célállomás Súlyozás (Páros Összehasonlítás)', 'Melyik szempont mennyire fontosabb számodra a desztináció kiválasztásakor?', pairs, 'dest_ahp');
         },
 
         renderDestScenarios(wizard, container) {
@@ -29,24 +29,24 @@
 
             container.innerHTML = `
                 <div style="margin-bottom: 18px;">
-                    <h4 style="margin: 0 0 4px 0; font-size: 16.5px; font-weight: 800; color: var(--text-main);">🌍 2. Lépés: Célállomás Döntési Helyzetek</h4>
+                    <h4 style="margin: 0 0 4px 0; font-size: 16.5px; font-weight: 800; color: var(--text-main);">2. Lépés: Célállomás Döntési Helyzetek</h4>
                     <p style="margin: 0; font-size: 12.5px; color: var(--text-muted);">Minden kritériumnál válaszd ki a döntési stílusodat (A vagy B), majd finomhangold a mondatot:</p>
                 </div>
 
                 <!-- 1. KÖLTSÉG SZITUÁCIÓ -->
                 <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 18px; padding: 18px; margin-bottom: 16px;">
                     <div style="font-size: 13px; font-weight: 800; color: var(--text-main); margin-bottom: 10px;">
-                        💰 1. Hogyan gondolkodsz az úti cél összköltségéről?
+                        1. Hogyan gondolkodsz az úti cél összköltségéről?
                     </div>
                     
                     <div class="dna-scenario-grid" style="margin-bottom: ${isCostChosen ? '12px' : '0'};">
                         <div onclick="window.DecisionDNAInstance.selectScenario('dest_cost', 'A', 5)" style="cursor: pointer; padding: 12px; border-radius: 12px; border: 2px solid ${state.chosen_cards.dest_cost === 'A' ? 'var(--primary)' : 'var(--border-subtle)'}; background: ${state.chosen_cards.dest_cost === 'A' ? 'rgba(37, 99, 235, 0.08)' : 'var(--bg-card)'};">
-                            <div style="font-weight: 800; font-size: 12px; color: var(--primary); margin-bottom: 4px;">🟢 A) Kisebb különbség még nem számít</div>
+                            <div style="font-weight: 800; font-size: 12px; color: var(--primary); margin-bottom: 4px;">A) Kisebb különbség még nem számít</div>
                             <div style="font-size: 11.5px; color: var(--text-muted);">Egy kisebb eltérés még nem döntő, de egy bizonyos összeg felett már biztosan az olcsóbb úti célt választom.</div>
                         </div>
 
                         <div onclick="window.DecisionDNAInstance.selectScenario('dest_cost', 'B', 3)" style="cursor: pointer; padding: 12px; border-radius: 12px; border: 2px solid ${state.chosen_cards.dest_cost === 'B' ? 'var(--primary)' : 'var(--border-subtle)'}; background: ${state.chosen_cards.dest_cost === 'B' ? 'rgba(37, 99, 235, 0.08)' : 'var(--bg-card)'};">
-                            <div style="font-weight: 800; font-size: 12px; color: var(--primary); margin-bottom: 4px;">🔵 B) Minden forint azonnal számít</div>
+                            <div style="font-weight: 800; font-size: 12px; color: var(--primary); margin-bottom: 4px;">B) Minden forint azonnal számít</div>
                             <div style="font-size: 11.5px; color: var(--text-muted);">Már a legelső forint különbség is azonnal előnyt jelent az olcsóbb célállomásnak.</div>
                         </div>
                     </div>
@@ -83,18 +83,18 @@
                 <!-- 2. HŐMÉRSÉKLET SZITUÁCIÓ -->
                 <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 18px; padding: 18px; margin-bottom: 16px; opacity: ${isTempUnlocked ? '1.0' : '0.45'}; pointer-events: ${isTempUnlocked ? 'auto' : 'none'}; filter: ${isTempUnlocked ? 'none' : 'grayscale(30%)'}; transition: all 0.3s ease;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                        <div style="font-size: 13px; font-weight: 800; color: var(--text-main);">☀️ 2. Mennyire vagy szigorú az időjárással?</div>
-                        ${!isTempUnlocked ? '<span style="font-size: 11px; font-weight: 700; color: var(--text-muted);">🔒 Válaszd ki az 1. pontot a feloldáshoz</span>' : ''}
+                        <div style="font-size: 13px; font-weight: 800; color: var(--text-main);">2. Mennyire vagy szigorú az időjárással?</div>
+                        ${!isTempUnlocked ? '<span style="font-size: 11px; font-weight: 700; color: var(--text-muted);">Válaszd ki az 1. pontot a feloldáshoz</span>' : ''}
                     </div>
                     
                     <div class="dna-scenario-grid" style="margin-bottom: ${isTempChosen ? '12px' : '0'};">
                         <div onclick="window.DecisionDNAInstance.selectScenario('dest_temp', 'A', 5)" style="cursor: pointer; padding: 12px; border-radius: 12px; border: 2px solid ${state.chosen_cards.dest_temp === 'A' ? 'var(--primary)' : 'var(--border-subtle)'}; background: ${state.chosen_cards.dest_temp === 'A' ? 'rgba(37, 99, 235, 0.08)' : 'var(--bg-card)'};">
-                            <div style="font-weight: 800; font-size: 12px; color: var(--primary); margin-bottom: 4px;">🟢 A) Pár fok ide vagy oda még jó</div>
+                            <div style="font-weight: 800; font-size: 12px; color: var(--primary); margin-bottom: 4px;">A) Pár fok ide vagy oda még jó</div>
                             <div style="font-size: 11.5px; color: var(--text-muted);">Egy kisebb eltérés még kellemes idő, csak a szélsőséges hideget vagy hőséget kerülöm.</div>
                         </div>
 
                         <div onclick="window.DecisionDNAInstance.selectScenario('dest_temp', 'B', 3)" style="cursor: pointer; padding: 12px; border-radius: 12px; border: 2px solid ${state.chosen_cards.dest_temp === 'B' ? 'var(--primary)' : 'var(--border-subtle)'}; background: ${state.chosen_cards.dest_temp === 'B' ? 'rgba(37, 99, 235, 0.08)' : 'var(--bg-card)'};">
-                            <div style="font-weight: 800; font-size: 12px; color: var(--primary); margin-bottom: 4px;">🔵 B) Pontosan az ideális hőfokot keresem</div>
+                            <div style="font-weight: 800; font-size: 12px; color: var(--primary); margin-bottom: 4px;">B) Pontosan az ideális hőfokot keresem</div>
                             <div style="font-size: 11.5px; color: var(--text-muted);">Minden egyes fok eltérés azonnal ront a helyszín vonzerején.</div>
                         </div>
                     </div>
@@ -131,18 +131,18 @@
                 <!-- 3. BIZTONSÁG SZITUÁCIÓ -->
                 <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 18px; padding: 18px; opacity: ${isSafeUnlocked ? '1.0' : '0.45'}; pointer-events: ${isSafeUnlocked ? 'auto' : 'none'}; filter: ${isSafeUnlocked ? 'none' : 'grayscale(30%)'}; transition: all 0.3s ease;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                        <div style="font-size: 13px; font-weight: 800; color: var(--text-main);">🛡️ 3. Hogyan tekintesz a közbiztonságra?</div>
-                        ${!isSafeUnlocked ? '<span style="font-size: 11px; font-weight: 700; color: var(--text-muted);">🔒 Válaszd ki a 2. pontot a feloldáshoz</span>' : ''}
+                        <div style="font-size: 13px; font-weight: 800; color: var(--text-main);">3. Hogyan tekintesz a közbiztonságra?</div>
+                        ${!isSafeUnlocked ? '<span style="font-size: 11px; font-weight: 700; color: var(--text-muted);">Válaszd ki a 2. pontot a feloldáshoz</span>' : ''}
                     </div>
 
                     <div class="dna-scenario-grid" style="margin-bottom: ${isSafeChosen ? '12px' : '0'};">
                         <div onclick="window.DecisionDNAInstance.selectScenario('dest_safety', 'A', 5)" style="cursor: pointer; padding: 12px; border-radius: 12px; border: 2px solid ${state.chosen_cards.dest_safety === 'A' ? 'var(--primary)' : 'var(--border-subtle)'}; background: ${state.chosen_cards.dest_safety === 'A' ? 'rgba(37, 99, 235, 0.08)' : 'var(--bg-card)'};">
-                            <div style="font-weight: 800; font-size: 12px; color: var(--primary); margin-bottom: 4px;">🟢 A) Kisebb különbség még belefér</div>
+                            <div style="font-weight: 800; font-size: 12px; color: var(--primary); margin-bottom: 4px;">A) Kisebb különbség még belefér</div>
                             <div style="font-size: 11.5px; color: var(--text-muted);">Pár pont eltérés még nem döntő, de jelentős biztonsági különbségnél a biztonságosabb kell.</div>
                         </div>
 
                         <div onclick="window.DecisionDNAInstance.selectScenario('dest_safety', 'B', 3)" style="cursor: pointer; padding: 12px; border-radius: 12px; border: 2px solid ${state.chosen_cards.dest_safety === 'B' ? 'var(--primary)' : 'var(--border-subtle)'}; background: ${state.chosen_cards.dest_safety === 'B' ? 'rgba(37, 99, 235, 0.08)' : 'var(--bg-card)'};">
-                            <div style="font-weight: 800; font-size: 12px; color: var(--primary); margin-bottom: 4px;">🔵 B) Minden biztonsági pont számít</div>
+                            <div style="font-weight: 800; font-size: 12px; color: var(--primary); margin-bottom: 4px;">B) Minden biztonsági pont számít</div>
                             <div style="font-size: 11.5px; color: var(--text-muted);">Minden egyes pont biztonsági előny azonnal a biztonságosabb város felé billenti a mérleget.</div>
                         </div>
                     </div>

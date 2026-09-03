@@ -6,10 +6,13 @@
     <title>{% block title %}Optivoya{% endblock %}</title>
     <link rel="icon" type="image/png" href="/static/logo.png">
     
-    <!-- Modern Typography -->
+    <!-- Modern Typography (3-Tier Font Stack: Plus Jakarta Sans, Inter, JetBrains Mono) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Google Material Symbols Outlined -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
     
     <!-- Central Design System -->
     <link rel="stylesheet" href="/static/css/theme.css">
@@ -97,16 +100,20 @@
                     </div>
                     <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); font-weight: 700; padding: 4px 12px;">Speciális Keresők (Deep-Dive)</div>
                     <a href="/tools" target="_blank" class="dropdown-item-link" style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; font-size: 13px; font-weight: 600; color: var(--text-primary); text-decoration: none; border-radius: 8px; transition: background 0.15s ease;">
-                        <span>🛠️ Eszközök & Keresők Hub ↗</span>
+                        <span class="material-symbols-outlined" style="font-size: 18px; color: var(--primary);">build</span>
+                        <span>Eszközök & Keresők Hub ↗</span>
                     </a>
                     <a href="/flight-intelligence" target="_blank" class="dropdown-item-link" style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; font-size: 13px; font-weight: 600; color: var(--text-primary); text-decoration: none; border-radius: 8px; transition: background 0.15s ease;">
-                        <span>✈️ Repülőjegy Kereső ↗</span>
+                        <span class="material-symbols-outlined" style="font-size: 18px; color: var(--primary);">flight</span>
+                        <span>Repülőjegy Kereső ↗</span>
                     </a>
                     <a href="/accommodation-intelligence" target="_blank" class="dropdown-item-link" style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; font-size: 13px; font-weight: 600; color: var(--text-primary); text-decoration: none; border-radius: 8px; transition: background 0.15s ease;">
-                        <span>🏨 Szállás Kereső ↗</span>
+                        <span class="material-symbols-outlined" style="font-size: 18px; color: var(--primary);">hotel</span>
+                        <span>Szállás Kereső ↗</span>
                     </a>
                     <a href="/destination-matcher" target="_blank" class="dropdown-item-link" style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; font-size: 13px; font-weight: 600; color: var(--text-primary); text-decoration: none; border-radius: 8px; transition: background 0.15s ease;">
-                        <span>📍 Célállomás Matcher ↗</span>
+                        <span class="material-symbols-outlined" style="font-size: 18px; color: var(--primary);">location_on</span>
+                        <span>Célállomás Matcher ↗</span>
                     </a>
                     <div style="border-top: 1px solid var(--border-subtle); margin-top: 6px; padding-top: 6px;">
                         <a href="/logout" class="dropdown-item-link" style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; font-size: 13px; font-weight: 700; color: #ef4444; text-decoration: none; border-radius: 8px; transition: background 0.15s ease;">
@@ -220,9 +227,11 @@
                     <button type="button" class="btn btn-secondary" style="flex: 1; padding: 12px; font-size: 13px;" onclick="window.TripCart.clearCart()">
                         <span>Terv ürítése</span>
                     </button>
-                    <button type="button" class="btn-proposal-export" style="flex: 2;" onclick="window.TripCart.exportProposal()">
-                        <span>📄 Ügyfél Ajánlat / PDF</span>
+                    <button type="button" class="btn-proposal-export" style="flex: 2; display: inline-flex; align-items: center; justify-content: center; gap: 6px;" onclick="window.TripCart.exportProposal()">
+                        <span class="material-symbols-outlined" style="font-size: 18px;">picture_as_pdf</span>
+                        <span>Ügyfél Ajánlat (PDF)</span>
                     </button>
+
                 </div>
             </div>
         </div>

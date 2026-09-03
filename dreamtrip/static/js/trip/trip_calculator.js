@@ -119,9 +119,9 @@
                 const perPerson = Math.round(flightEst / adults);
                 items.push({
                     key: 'flight',
-                    icon: '✈️',
+                    icon: '',
                     name: 'Odajutás és visszajutás (Repülőjegy irányár)',
-                    desc: `Irányadó Kiwi retúr járat ${trip.destination.origin} indulással`,
+                    desc: `Irányadó retúr járat ${trip.destination.origin} indulással`,
                     formula: `~${perPerson.toLocaleString()} Ft / fő × ${adults} felnőtt`,
                     amount: flightEst,
                     badge: 'Irányár',
@@ -139,7 +139,7 @@
                 const perNight = Math.round(stayTotal / Math.max(1, nights));
                 items.push({
                     key: 'stay',
-                    icon: '🏨',
+                    icon: '',
                     name: 'Szállásköltség',
                     desc: `${selStay.name} (${nights} éjszaka)`,
                     formula: `${perNight.toLocaleString()} Ft / éj × ${nights} éjszaka`,
@@ -154,7 +154,7 @@
                 const stayEst = estNightHuf * days;
                 items.push({
                     key: 'stay',
-                    icon: '🏨',
+                    icon: '',
                     name: 'Szállásköltség (Irányadó 3-4 csillagos hotel)',
                     desc: `Átlagos 3-4 csillagos szállodai éjszaka`,
                     formula: `~${estNightHuf.toLocaleString()} Ft / éj × ${days} éjszaka`,
@@ -166,7 +166,7 @@
                 hasAny = true;
             }
 
-            // 3. ÉTELEK ÉS ÉTKEZÉSEK (NUMBEO 3 DINING PROFILES)
+            // 3. ÉTELEK ÉS ÉTKEZÉSEK
             if (trip.destination) {
                 const numbeoData = (trip.destination.numbeo && trip.destination.numbeo.meal_inexpensive)
                     ? trip.destination.numbeo
@@ -187,7 +187,7 @@
                         const foodEur = Math.round((mealInexpensive * 2.5 + coffee * 1.0) * 10) / 10;
                         profileInfo = {
                             name: 'Takarékos',
-                            icon: '🥪',
+                            icon: '',
                             daily_food_eur: foodEur,
                             daily_food_huf: Math.round(foodEur * eurRate),
                             formula: '2.5 × olcsó étkezés + 1 × kávé'
@@ -196,7 +196,7 @@
                         const foodEur = Math.round((mealInexpensive * 1.0 + mealMidrange * 1.0 + coffee * 2.0) * 10) / 10;
                         profileInfo = {
                             name: 'Kényelmes',
-                            icon: '🍷',
+                            icon: '',
                             daily_food_eur: foodEur,
                             daily_food_huf: Math.round(foodEur * eurRate),
                             formula: '1 × olcsó étkezés + 1 × 2-személyes étkezés + 2 × kávé'
@@ -205,7 +205,7 @@
                         const foodEur = Math.round((mealInexpensive * 2.0 + mealMidrange * 0.5 + coffee * 1.0) * 10) / 10;
                         profileInfo = {
                             name: 'Átlagos',
-                            icon: '🍝',
+                            icon: '',
                             daily_food_eur: foodEur,
                             daily_food_huf: Math.round(foodEur * eurRate),
                             formula: '2 × olcsó étkezés + 0.5 × 2-személyes vacsora + 1 × kávé'
@@ -218,9 +218,9 @@
 
                 items.push({
                     key: 'food',
-                    icon: profileInfo.icon || '🍽️',
+                    icon: '',
                     name: `Ételek & étkezések [${profileInfo.name} profil] (${trip.destination.name})`,
-                    desc: `Numbeo árak: Olcsó étkezés: €${mealInexpensive.toFixed(1)} | 3-fogásos vacsora (2 fő): €${mealMidrange.toFixed(1)} | Kávé: €${coffee.toFixed(1)}`,
+                    desc: `Helyi árszínvonal: Olcsó étkezés: €${mealInexpensive.toFixed(1)} | 3-fogásos vacsora (2 fő): €${mealMidrange.toFixed(1)} | Kávé: €${coffee.toFixed(1)}`,
                     formula: `${dailyFoodHuf.toLocaleString()} Ft / nap / fő (${profileInfo.formula}) × ${days} nap × ${totalPersons} fő`,
                     amount: foodTotalHuf,
                     badge: `Profil: ${profileInfo.name}`,
@@ -230,7 +230,7 @@
                 hasAny = true;
             }
 
-            // 4. HELYI KÖZLEKEDÉS (NUMBEO TRANZIT)
+            // 4. HELYI KÖZLEKEDÉS
             if (trip.destination) {
                 const numbeoData = (trip.destination.numbeo && (trip.destination.numbeo.transport_ticket || trip.destination.numbeo.transport))
                     ? trip.destination.numbeo
@@ -244,12 +244,12 @@
 
                 items.push({
                     key: 'transit',
-                    icon: '🚇',
-                    name: `Helyi tömegközlekedés (Numbeo jegyár — ${trip.destination.name})`,
-                    desc: `Numbeo vonaljegy: €${ticketEur.toFixed(2)} (~${ticketHuf.toLocaleString()} Ft / jegy)`,
+                    icon: '',
+                    name: `Helyi tömegközlekedés (${trip.destination.name})`,
+                    desc: `Helyi vonaljegy: €${ticketEur.toFixed(2)} (~${ticketHuf.toLocaleString()} Ft / jegy)`,
                     formula: `${transitDailyHuf.toLocaleString()} Ft / nap / fő (2 jegy/nap) × ${days} nap × ${totalPersons} fő`,
                     amount: transitTotalHuf,
-                    badge: 'Numbeo Index',
+                    badge: 'Helyi árak',
                     isEstimated: false
                 });
                 totalHuf += transitTotalHuf;

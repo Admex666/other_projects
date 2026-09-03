@@ -73,7 +73,7 @@
         </div>
         <h1 class="page-title" style="margin-bottom: 6px;">Teljes Utazás Tervezése 1 Folyamatban</h1>
         <p class="page-subtitle" style="margin: 0;">
-            Közös preferencia-felmérés, valós idejű páros összehasonlító prioritásmodellezés, intelligens járat- és szállásajánló.
+            Állítsd be az utazási szempontjaidat, majd mi kiválasztjuk a legjobban illeszkedő célállomást, járatot és szállást.
         </p>
     </div>
 
@@ -200,15 +200,18 @@
                     <div class="panel-header-desc">Válassz az alábbi két lehetőség közül az utazás időzítéséhez:</div>
                 </div>
 
-                <!-- 2-MÓD TABOK (PONTOS DÁTUMOK VAGY IDŐINTERVALLUM) -->
-                <div class="date-mode-tabs" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: var(--bg-surface-subtle); padding: 6px; border-radius: 14px; border: 1px solid var(--border-subtle); margin-bottom: 18px;">
-                    <button type="button" class="tab-pill-btn active" id="tab_mode_exact" onclick="Wizard.switchDateMode('exact')" style="padding: 12px 14px; font-size: 13.5px; font-weight: 800; border-radius: 10px; cursor: pointer; transition: all 0.2s ease;">
-                        <span>📅 Pontos Dátumok</span>
+                <!-- 2-MÓD TABOK (PONTOS DÁTUMOK VAGY RUGALMAS KERET) -->
+                <div class="date-mode-tabs">
+                    <button type="button" class="tab-pill-btn active" id="tab_mode_exact" onclick="Wizard.switchDateMode('exact')">
+                        <span class="material-symbols-outlined" style="font-size: 18px;">calendar_today</span>
+                        <span>Pontos dátumok</span>
                     </button>
-                    <button type="button" class="tab-pill-btn" id="tab_mode_interval" onclick="Wizard.switchDateMode('interval')" style="padding: 12px 14px; font-size: 13.5px; font-weight: 800; border-radius: 10px; cursor: pointer; transition: all 0.2s ease;">
-                        <span>⏱️ Időintervallum & Tartózkodási Keret</span>
+                    <button type="button" class="tab-pill-btn" id="tab_mode_interval" onclick="Wizard.switchDateMode('interval')">
+                        <span class="material-symbols-outlined" style="font-size: 18px;">date_range</span>
+                        <span>Rugalmas időkeret</span>
                     </button>
                 </div>
+
 
                 <!-- 1. INTERVAL MODE -->
                 <div id="panel_mode_interval" class="mode-panel-content" style="display: none;">
@@ -328,16 +331,16 @@
                 </div>
             </div>
 
-            <!-- 3. EGYSÉGESÍTETT DÖNTÉSI DNS BLOKK (AHP + PROMETHEE + SZÁLLÁS) -->
+            <!-- 3. UTAZÁSI SZEMPONTOK BEÁLLÍTÁSA -->
 
             <div class="advisor-section-label">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                     <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
                 </svg>
-                <span>3. Személyre Szabott Utazási Döntési DNS</span>
+                <span>3. Személyes Utazási Szempontok</span>
             </div>
 
-            <div id="decision_dna_container" class="advisor-panel" style="margin-bottom: 28px; border: 2px solid rgba(37, 99, 235, 0.25); background: linear-gradient(135deg, rgba(37, 99, 235, 0.04) 0%, rgba(16, 185, 129, 0.03) 100%); border-radius: 20px; padding: 24px; position: relative; overflow: hidden;">
+            <div id="decision_dna_container" class="advisor-panel" style="margin-bottom: 28px; border: 1.5px solid var(--border-strong); background: var(--bg-surface-subtle); border-radius: 20px; padding: 24px; position: relative; overflow: hidden;">
                 
                 <!-- UNCONFIGURED STATE -->
                 <div id="dna_unconfigured_view" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
@@ -358,51 +361,53 @@
                 <div id="dna_configured_view" style="display: none;">
                     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--border-subtle);">
                         <div style="display: flex; align-items: center; gap: 10px;">
-                            <span style="font-size: 22px;">🧬</span>
-                            <div>
-                                <strong style="font-size: 16px; color: var(--text-main);">Saját Utazási Preferenciák</strong>
-                                <span style="font-size: 12px; color: #10b981; font-weight: 700; margin-left: 8px;">● Élesítve</span>
-                            </div>
+                            <span class="material-symbols-outlined" style="font-size: 22px; color: var(--primary);">tune</span>
+                            <strong style="font-size: 15px; color: var(--text-main);">Beállított szempontok</strong>
                         </div>
-                        <button type="button" class="btn btn-secondary btn-sm" onclick="Wizard.openDecisionDNA()" style="font-weight: 700; border-radius: 10px;">
-                            <span>Szempontok módosítása</span>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="Wizard.openDecisionDNA()" style="font-weight: 600; border-radius: 8px;">
+                            <span>Módosítás</span>
                         </button>
                     </div>
 
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px;">
                         <!-- 1. Desztináció Súlyok -->
-                        <div style="background: var(--bg-card); padding: 14px; border-radius: 14px; border: 1px solid var(--border-subtle);">
-                            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;">🌍 Célállomás prioritások</div>
-                            <div style="font-size: 13px; font-weight: 800; font-family: var(--font-mono); color: var(--primary);" id="dna_card_ahp_summary">
-                                💰 34% · ☀️ 33% · 🛡️ 33%
+                        <div style="background: var(--bg-surface-subtle); padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+                            <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                                <span class="material-symbols-outlined" style="font-size: 15px;">public</span>
+                                <span>Célállomás prioritások</span>
+                            </div>
+                            <div style="font-size: 13px; font-weight: 700; font-family: var(--font-mono); color: var(--primary);" id="dna_card_ahp_summary">
+                                Költség: 34% · Klíma: 33% · Biztonság: 33%
                             </div>
                         </div>
 
                         <!-- 2. Járat Szabályok -->
-                        <div style="background: var(--bg-card); padding: 14px; border-radius: 14px; border: 1px solid var(--border-subtle);">
-                            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;">✈️ Repülőjegy szempontok</div>
-                            <div style="font-size: 12px; font-weight: 700; color: var(--text-main);" id="dna_card_prom_summary">
+                        <div style="background: var(--bg-surface-subtle); padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+                            <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                                <span class="material-symbols-outlined" style="font-size: 15px;">flight</span>
+                                <span>Repülőjegy szempontok</span>
+                            </div>
+                            <div style="font-size: 12px; font-weight: 600; color: var(--text-main);" id="dna_card_prom_summary">
                                 Ár: ≤5k Ft közömbös · Menetidő: ≤30p
                             </div>
                         </div>
 
                         <!-- 3. Szállás Minőség -->
-                        <div style="background: var(--bg-card); padding: 14px; border-radius: 14px; border: 1px solid var(--border-subtle);">
-                            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;">🏨 Szállás elvárások</div>
-                            <div style="font-size: 12px; font-weight: 700; color: var(--text-main);" id="dna_card_stay_summary">
-                                3★+ · 7.5+ Értékelés · Bármilyen ellátás
+                        <div style="background: var(--bg-surface-subtle); padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+                            <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                                <span class="material-symbols-outlined" style="font-size: 15px;">hotel</span>
+                                <span>Szállás elvárások</span>
+                            </div>
+                            <div style="font-size: 12px; font-weight: 600; color: var(--text-main);" id="dna_card_stay_summary">
+                                3+ csillag · 7.5+ Értékelés · Bármilyen ellátás
                             </div>
                         </div>
                     </div>
                 </div>
+
             </div>
 
-            <!-- FŐ INDÍTÓ GOMB (DINAMIKUS 1. / 2. LÉPÉS) -->
-            <div style="text-align: center; margin-top: 16px;">
-                <button type="button" id="btn_submit_main_planner" class="btn btn-primary" onclick="Wizard.openDecisionDNA()" style="padding: 18px 48px; font-size: 16px; font-weight: 800; border-radius: 16px; box-shadow: 0 8px 28px rgba(37, 99, 235, 0.35);">
-                    <span>1. Szempontok és prioritások beállítása →</span>
-                </button>
-            </div>
+
 
         </div>
     </div>
@@ -420,7 +425,7 @@
     <div id="wizardLoading" style="display: none; text-align: center; padding: 60px 20px;">
         <div style="width: 56px; height: 56px; border: 4px solid var(--border-subtle); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
         <h2 id="wizardLoadingTitle" style="font-size: 22px; font-weight: 800; margin-bottom: 8px; color: var(--text-main);">Elemzés folyamatban...</h2>
-        <p id="wizardLoadingSubtitle" style="font-size: 15px; color: var(--text-secondary); max-width: 500px; margin: 0 auto 20px;">Valós éghajlati, járat- és szállásadatok aggregálása és intelligens rangsorolása...</p>
+        <p id="wizardLoadingSubtitle" style="font-size: 15px; color: var(--text-secondary); max-width: 500px; margin: 0 auto 20px;">Éghajlati adatok, repülőjegy árak és megélhetési indexek összehasonlítása az egyéni preferenciák alapján...</p>
         <div class="progress-bar-container" style="max-width: 400px; margin: 0 auto; height: 8px; background: var(--bg-surface-subtle); border-radius: 8px; overflow: hidden;">
             <div id="wizardProgressBar" class="progress-bar" style="width: 15%; height: 100%; background: var(--primary); transition: width 0.3s ease;"></div>
         </div>
@@ -431,7 +436,10 @@
         
         <details class="inline-modifier-accordion" style="margin-bottom: 24px;">
             <summary style="padding: 12px 18px; font-weight: 700; font-size: 13.5px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
-                <span>⚙️ Desztináció szűrők és feltételek azonnali finomhangolása</span>
+                <span style="display: flex; align-items: center; gap: 6px;">
+                    <span class="material-symbols-outlined" style="font-size: 17px; color: var(--primary);">tune</span>
+                    <span>Desztináció szűrők és feltételek finomhangolása</span>
+                </span>
                 <span style="font-size: 12px; color: var(--primary);">Kattints a megnyitáshoz ▾</span>
             </summary>
             <div style="padding: 18px; border-top: 1px solid var(--border-subtle); display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px;">
@@ -464,16 +472,22 @@
     <!-- STEP 2: FLIGHT SELECTION -->
     <div id="wizardStep2" class="wizard-step-section" style="display: none;">
         
-        <div id="flightContextBanner" style="background: rgba(37, 99, 235, 0.08); border: 1px solid rgba(37, 99, 235, 0.3); border-radius: 14px; padding: 14px 18px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
-            <div>
-                <strong style="color: var(--primary);">Kiválasztott célállomás:</strong> <span id="flightContextCity" style="font-weight: 800;">Róma</span> • <span id="flightContextDetails">2 felnőtt, 7 nap</span>
+        <div id="flightContextBanner" style="background: rgba(0, 55, 16, 0.05); border: 1px solid var(--border-strong); border-radius: var(--radius-md); padding: 14px 18px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="material-symbols-outlined" style="font-size: 18px; color: var(--primary);">flight</span>
+                <div>
+                    <strong style="color: var(--primary);">Kiválasztott célállomás:</strong> <span id="flightContextCity" style="font-weight: 700;">Róma</span> • <span id="flightContextDetails">2 felnőtt, 7 nap</span>
+                </div>
             </div>
             <button type="button" class="btn btn-secondary btn-sm" onclick="Wizard.goToStep(1)">← Város módosítása</button>
         </div>
 
         <details class="inline-modifier-accordion" style="margin-bottom: 24px;">
             <summary style="padding: 12px 18px; font-weight: 700; font-size: 13.5px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
-                <span>⚙️ Járat preferenciák módosítása (Átszállások, menetidő)</span>
+                <span style="display: flex; align-items: center; gap: 6px;">
+                    <span class="material-symbols-outlined" style="font-size: 17px; color: var(--primary);">flight</span>
+                    <span>Járat preferenciák módosítása (Átszállások, menetidő)</span>
+                </span>
                 <span style="font-size: 12px; color: var(--primary);">Kattints a megnyitáshoz ▾</span>
             </summary>
             <div style="padding: 18px; border-top: 1px solid var(--border-subtle); display: flex; gap: 20px; flex-wrap: wrap;">
@@ -495,16 +509,22 @@
     <!-- STEP 3: ACCOMMODATION SELECTION -->
     <div id="wizardStep3" class="wizard-step-section" style="display: none;">
         
-        <div id="stayContextBanner" style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 14px; padding: 14px 18px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
-            <div>
-                <strong style="color: var(--status-success, #10b981);">Járat rögzítve:</strong> <span id="stayContextFlight">Járat (7 éj)</span> • <strong id="stayContextCity">Róma</strong>
+        <div id="stayContextBanner" style="background: rgba(0, 55, 16, 0.05); border: 1px solid var(--border-strong); border-radius: var(--radius-md); padding: 14px 18px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="material-symbols-outlined" style="font-size: 18px; color: var(--primary);">hotel</span>
+                <div>
+                    <strong style="color: var(--primary);">Járat rögzítve:</strong> <span id="stayContextFlight">Járat (7 éj)</span> • <strong id="stayContextCity">Róma</strong>
+                </div>
             </div>
             <button type="button" class="btn btn-secondary btn-sm" onclick="Wizard.goToStep(2)">← Járat módosítása</button>
         </div>
 
         <details class="inline-modifier-accordion" style="margin-bottom: 24px;">
             <summary style="padding: 12px 18px; font-weight: 700; font-size: 13.5px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
-                <span>⚙️ Szállás szűrők módosítása (Csillagszám, értékelés)</span>
+                <span style="display: flex; align-items: center; gap: 6px;">
+                    <span class="material-symbols-outlined" style="font-size: 17px; color: var(--primary);">hotel</span>
+                    <span>Szállás szűrők módosítása (Csillagszám, értékelés)</span>
+                </span>
                 <span style="font-size: 12px; color: var(--primary);">Kattints a megnyitáshoz ▾</span>
             </summary>
             <div style="padding: 18px; border-top: 1px solid var(--border-subtle); display: flex; gap: 16px; flex-wrap: wrap;">
@@ -512,8 +532,8 @@
                     <label style="font-size: 12px; font-weight: 700;">Min. Csillag:</label>
                     <select id="mod_hotel_stars" onchange="Wizard.recalculateStays()" class="form-control" style="padding: 6px; background: var(--bg-surface);">
                         <option value="0">Mind</option>
-                        <option value="3" selected>3★+</option>
-                        <option value="4">4★+</option>
+                        <option value="3" selected>3+ csillag</option>
+                        <option value="4">4+ csillag</option>
                     </select>
                 </div>
                 <div>
@@ -540,19 +560,21 @@
 
     <!-- STEP 4: FINAL SUMMARY & PROPOSAL -->
     <div id="wizardStep4" class="wizard-step-section" style="display: none;">
-        <div style="background: var(--bg-surface); border: 2px solid var(--primary); border-radius: 24px; padding: 32px 28px; box-shadow: var(--shadow-lg); margin-bottom: 24px;">
+        <div style="background: var(--bg-surface); border: 2px solid var(--primary); border-radius: var(--radius-xl); padding: 32px 28px; box-shadow: var(--shadow-lg); margin-bottom: 24px;">
             
             <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 20px; margin-bottom: 24px;">
                 <div>
-                    <div style="display: inline-flex; align-items: center; gap: 6px; background: rgba(16, 185, 129, 0.1); color: var(--status-success, #10b981); padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 800; margin-bottom: 8px;">
-                        ✓ UTAZÁSI TERV TELJES
+                    <div style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 55, 16, 0.08); color: var(--primary); padding: 4px 12px; border-radius: var(--radius-full); font-size: 11.5px; font-weight: 700; margin-bottom: 8px;">
+                        <span class="material-symbols-outlined" style="font-size: 15px;">check_circle</span>
+                        <span>UTAZÁSI TERV TELJES</span>
                     </div>
-                    <h2 style="font-size: 26px; font-weight: 900; margin: 0; color: var(--text-main);">Összeállított Utazási Csomag</h2>
+                    <h2 style="font-size: 26px; font-weight: 800; margin: 0; color: var(--text-main);">Összeállított Utazási Csomag</h2>
                     <p style="margin: 4px 0 0; color: var(--text-secondary); font-size: 14px;" id="summarySubtitle">Róma utazás • 2 felnőtt • 7 éjszaka</p>
                 </div>
                 <div>
-                    <button type="button" class="btn btn-primary" onclick="Wizard.exportProposal()" style="padding: 12px 24px; font-size: 14px; font-weight: 800; border-radius: 12px; box-shadow: 0 4px 16px var(--accent-glow);">
-                        <span>📄 Ügyfélajánlat Készítése (Nyomtatás / PDF)</span>
+                    <button type="button" class="btn btn-primary" onclick="Wizard.exportProposal()" style="padding: 12px 22px; font-size: 14px; font-weight: 600; border-radius: var(--radius-md); display: inline-flex; align-items: center; gap: 8px;">
+                        <span class="material-symbols-outlined" style="font-size: 18px;">picture_as_pdf</span>
+                        <span>Ügyfélajánlat Készítése (PDF)</span>
                     </button>
                 </div>
             </div>
@@ -561,37 +583,48 @@
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; margin-bottom: 28px;">
                 
                 <!-- DEST CARD -->
-                <div style="background: var(--bg-surface-subtle); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 20px;">
-                    <div style="font-size: 12px; font-weight: 700; color: var(--primary); text-transform: uppercase; margin-bottom: 6px;">📍 Célállomás</div>
-                    <div id="sumDestName" style="font-size: 20px; font-weight: 800; color: var(--text-main); margin-bottom: 4px;">Róma, Olaszország</div>
-                    <div id="sumDestClimate" style="font-size: 13px; color: var(--text-secondary);">☀️ Nappal: ~24°C • Biztonság: 55/100</div>
+                <div style="background: var(--bg-surface-subtle); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 20px;">
+                    <div style="font-size: 11px; font-weight: 700; color: var(--primary); text-transform: uppercase; margin-bottom: 6px; display: flex; align-items: center; gap: 4px;">
+                        <span class="material-symbols-outlined" style="font-size: 15px;">location_on</span>
+                        <span>Célállomás</span>
+                    </div>
+                    <div id="sumDestName" style="font-size: 20px; font-weight: 700; color: var(--text-main); margin-bottom: 4px;">Róma, Olaszország</div>
+                    <div id="sumDestClimate" style="font-size: 13px; color: var(--text-secondary);">Nappal: ~24°C • Biztonság: 55/100</div>
                 </div>
 
                 <!-- FLIGHT CARD -->
-                <div style="background: var(--bg-surface-subtle); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 20px;">
-                    <div style="font-size: 12px; font-weight: 700; color: var(--primary); text-transform: uppercase; margin-bottom: 6px;">✈️ Repülőjegy & Menetrend</div>
-                    <div id="sumFlightAirline" style="font-size: 20px; font-weight: 800; color: var(--text-main); margin-bottom: 4px;">Retúr Járat</div>
+                <div style="background: var(--bg-surface-subtle); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 20px;">
+                    <div style="font-size: 11px; font-weight: 700; color: var(--primary); text-transform: uppercase; margin-bottom: 6px; display: flex; align-items: center; gap: 4px;">
+                        <span class="material-symbols-outlined" style="font-size: 15px;">flight</span>
+                        <span>Repülőjegy & Menetrend</span>
+                    </div>
+                    <div id="sumFlightAirline" style="font-size: 20px; font-weight: 700; color: var(--text-main); margin-bottom: 4px;">Retúr Járat</div>
                     <div id="sumFlightDates" style="font-size: 13px; color: var(--text-secondary);">2026.09.10 – 2026.09.17 • Járatinformáció</div>
-                    <div id="sumFlightPrice" style="font-size: 16px; font-weight: 800; color: var(--primary); margin-top: 8px;">48 900 Ft</div>
+                    <div id="sumFlightPrice" class="mono-data" style="font-size: 16px; font-weight: 700; color: var(--primary); margin-top: 8px;">48 900 Ft</div>
                 </div>
 
                 <!-- STAY CARD -->
-                <div style="background: var(--bg-surface-subtle); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 20px;">
-                    <div style="font-size: 12px; font-weight: 700; color: var(--primary); text-transform: uppercase; margin-bottom: 6px;">🏨 Szállás</div>
-                    <div id="sumStayName" style="font-size: 20px; font-weight: 800; color: var(--text-main); margin-bottom: 4px;">Szálloda ⭐⭐⭐⭐</div>
+                <div style="background: var(--bg-surface-subtle); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 20px;">
+                    <div style="font-size: 11px; font-weight: 700; color: var(--primary); text-transform: uppercase; margin-bottom: 6px; display: flex; align-items: center; gap: 4px;">
+                        <span class="material-symbols-outlined" style="font-size: 15px;">hotel</span>
+                        <span>Szállás</span>
+                    </div>
+                    <div id="sumStayName" style="font-size: 20px; font-weight: 700; color: var(--text-main); margin-bottom: 4px;">Szálloda</div>
                     <div id="sumStayRating" style="font-size: 13px; color: var(--text-secondary);">7 éjszaka • Értékelés: 8.8/10</div>
-                    <div id="sumStayPrice" style="font-size: 16px; font-weight: 800; color: var(--primary); margin-top: 8px;">148 000 Ft</div>
+                    <div id="sumStayPrice" class="mono-data" style="font-size: 16px; font-weight: 700; color: var(--primary); margin-top: 8px;">148 000 Ft</div>
                 </div>
             </div>
 
-            <!-- ITEMIZED NUMBEO BREAKDOWN -->
+            <!-- RÉSZLETES KÖLTSÉGBECSLÉS -->
             <div id="sumBreakdownWrap"></div>
 
             <!-- RESTART OR SWAP BUTTONS -->
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 24px; border-top: 1px solid var(--border-subtle); padding-top: 20px;">
-                <button type="button" class="btn btn-secondary" onclick="Wizard.goToStep(0)">
-                    <span>⚙️ Preferenciák módosítása</span>
+                <button type="button" class="btn btn-secondary" onclick="Wizard.goToStep(0)" style="display: inline-flex; align-items: center; gap: 6px;">
+                    <span class="material-symbols-outlined" style="font-size: 17px;">tune</span>
+                    <span>Preferenciák módosítása</span>
                 </button>
+
                 <div style="display: flex; gap: 10px;">
                     <button type="button" class="btn btn-secondary" onclick="Wizard.goToStep(2)">Járat cseréje</button>
                     <button type="button" class="btn btn-secondary" onclick="Wizard.goToStep(3)">Szállás cseréje</button>

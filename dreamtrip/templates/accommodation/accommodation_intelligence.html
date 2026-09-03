@@ -24,7 +24,7 @@
             <span>Döntéstámogató Szálláskereső</span>
         </div>
         <h1 class="page-title" style="margin-bottom: 6px;">Accommodation Intelligence</h1>
-        <p class="page-subtitle" style="margin: 0;">1500+ szállás aggregációja, Deeplink tisztítás és többkritériumos PROMETHEE rangsorolás.</p>
+        <p class="page-subtitle" style="margin: 0;">Több mint 1500 szállás összehasonlítása és intelligens rangsorolása az én preference diákon alapulva.</p>
     </div>
 
     <!-- TRIP CONTEXT BANNER -->
@@ -58,12 +58,12 @@
 
         <div class="quick-pills-group">
             <span style="font-size: 11.5px; color: var(--text-muted); font-weight: 600;">Népszerű:</span>
-            <div class="quick-pill" onclick="setQuickDest('Róma', 'Olaszország')">🇮🇹 Róma</div>
-            <div class="quick-pill" onclick="setQuickDest('Párizs', 'Franciaország')">🇫🇷 Párizs</div>
-            <div class="quick-pill" onclick="setQuickDest('Barcelona', 'Spanyolország')">🇪🇸 Barcelona</div>
-            <div class="quick-pill" onclick="setQuickDest('Bécs', 'Ausztria')">🇦🇹 Bécs</div>
-            <div class="quick-pill" onclick="setQuickDest('London', 'Egyesült Királyság')">🇬🇧 London</div>
-            <div class="quick-pill" onclick="setQuickDest('Málta', 'Málta')">🇲🇹 Málta</div>
+            <div class="quick-pill" onclick="setQuickDest('Róma', 'Olaszország')">Róma</div>
+            <div class="quick-pill" onclick="setQuickDest('Párizs', 'Franciaország')">Párizs</div>
+            <div class="quick-pill" onclick="setQuickDest('Barcelona', 'Spanyolország')">Barcelona</div>
+            <div class="quick-pill" onclick="setQuickDest('Bécs', 'Ausztria')">Bécs</div>
+            <div class="quick-pill" onclick="setQuickDest('London', 'Egyesült Királyság')">London</div>
+            <div class="quick-pill" onclick="setQuickDest('Málta', 'Málta')">Málta</div>
         </div>
 
         <!-- 2. BENTO GRID 3: IDŐSZAK, UTASOK & KÖLTSÉGKERET -->
@@ -216,7 +216,7 @@
                         <div class="chip-select-btn" data-val="8.0" onclick="setRatingVal(8.0, this)">8.0+</div>
                         <div class="chip-select-btn" data-val="8.5" onclick="setRatingVal(8.5, this)">8.5+</div>
                         <div class="chip-select-btn" data-val="9.0" onclick="setRatingVal(9.0, this)">9.0+</div>
-                        <div class="chip-select-btn" id="custom_rating_btn" onclick="toggleCustomRating()">✏️ Saját</div>
+                        <div class="chip-select-btn" id="custom_rating_btn" onclick="toggleCustomRating()">Saját</div>
                     </div>
 
                     <div id="custom_rating_box" style="display: none; margin-top: 8px; background: var(--bg-surface); padding: 8px 12px; border-radius: 10px; border: 1px solid var(--border-strong); align-items: center; justify-content: space-between;">
@@ -398,7 +398,7 @@
         btn.disabled = true;
         statusDiv.style.display = 'block';
         statusDiv.className = 'status-box status-running';
-        statusText.innerText = "Cozycozy felhős adatkapcsolat inicializálása...";
+        statusText.innerText = "Szállásadatok lekérdezése és összehasonlítása...";
         statusPercent.innerText = "5%";
         loadingBar.style.display = 'block';
         loadingBarInner.style.width = "5%";
@@ -504,7 +504,7 @@
                     banner.style.display = 'flex';
                     banner.innerHTML = `
                         <div style="display: flex; align-items: center; gap: 12px;">
-                            <span style="font-size: 22px;">🏨</span>
+                            <span class="material-symbols-outlined" style="font-size: 22px; color: var(--primary);">hotel</span>
                             <div>
                                 <strong style="color: var(--status-success, #10b981);">Utazási terv kontextus aktív:</strong> 
                                 ${cityName ? `Célállomás: <strong>${cityName}</strong>` : ''} 

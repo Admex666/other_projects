@@ -3,24 +3,24 @@ from fastapi import Request
 from typing import Optional, Dict
 from app.services.user_service import verify_user_login
 
-# Felhasználók adatbázisa (Memóriabeli fallback)
-USERS: Dict[str, str] = {
+# Alapértelmezett vészhelyzeti fiókok (Csak ha az adatbázis teljesen offline)
+FALLBACK_USERS: Dict[str, str] = {
     "admin": "optivoya2024",
-    "demo": "demo123",
-    "bean": "bean",
-    "wayzio": "demo",
-    "utazasmagus": "demo"
+    "bean": "bean"
 }
+USERS = FALLBACK_USERS
 
 # Aktív memóriabeli sessionök
+
 sessions: Dict[str, str] = {}
 
 def verify_credentials(username: str, password: str) -> bool:
-    # 1. Ellenőrzés a perzisztens DB-ben
+    # 1. Hitelesítés a Supabase felhős adatbázisból
     if verify_user_login(username, password):
         return True
-    # 2. Fallback a statikus listára
-    return username in USERS and USERS[username] == password
+    # 2. Vészhelyzeti offline fallback
+    return username in FALLBACK_USERS and FALLBACK_USERS[username] == password
+
 
 def create_session(username: str) -> str:
     token = secrets.token_urlsafe(32)

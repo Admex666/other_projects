@@ -67,17 +67,28 @@ async def admin_dashboard(request: Request, user: Optional[str] = None):
     if not is_admin_authenticated(request):
         return RedirectResponse(url="/admin", status_code=302)
 
-    kpis = get_analytics_kpis()
+    kpis = get_analytics_kpis(user_id=user)
     users = get_all_beta_users()
     timeline = get_user_timeline(user_id=user, limit=150)
+
+    selected_users = [u.strip() for u in (user or "").split(",") if u.strip() and u.strip() != "all"]
+    selected_user_str = ",".join(selected_users) if selected_users else "all"
 
     return templates.TemplateResponse("admin/admin_dashboard.html", {
         "request": request,
         "kpis": kpis,
         "users": users,
         "timeline": timeline,
-        "selected_user": user or "all"
+        "selected_users": selected_users,
+        "selected_user": selected_user_str
     })
+
+@router.get("/api/admin/kpis")
+async def api_admin_kpis(request: Request, user: Optional[str] = "all"):
+    if not is_admin_authenticated(request):
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    kpis = get_analytics_kpis(user_id=user)
+    return JSONResponse({"status": "ok", "kpis": kpis})
 
 @router.get("/api/admin/timeline")
 async def api_admin_timeline(request: Request, user: Optional[str] = "all"):

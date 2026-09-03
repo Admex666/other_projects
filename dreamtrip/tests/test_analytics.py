@@ -145,6 +145,25 @@ def test_admin_authentication_and_endpoints():
     assert json_data["status"] == "ok"
     assert len(json_data["events"]) > 0
 
+    # 6. User-filtered dashboard & API KPI endpoint
+    res_filtered_dash = client.get("/admin/dashboard?user=test_advisor_1,test_advisor_2", cookies=cookies)
+    assert res_filtered_dash.status_code == 200
+
+    res_api_kpis = client.get("/api/admin/kpis?user=test_advisor_1", cookies=cookies)
+    assert res_api_kpis.status_code == 200
+    kpi_json = res_api_kpis.json()
+    assert kpi_json["status"] == "ok"
+    assert kpi_json["kpis"]["is_filtered"] is True
+    assert kpi_json["kpis"]["total_users"] == 1
+
+def cleanup_test_data():
+    from app.core.supabase import get_supabase
+    sb = get_supabase()
+    if sb:
+        sb.table('beta_users').delete().like('username', 'test_advisor_%').execute()
+        sb.table('telemetry_events').delete().like('user_id', 'test_advisor_%').execute()
+        sb.table('user_sessions').delete().like('user_id', 'test_advisor_%').execute()
+
 if __name__ == "__main__":
     print("Running test_database_init()...")
     test_database_init()
@@ -162,6 +181,10 @@ if __name__ == "__main__":
     test_admin_authentication_and_endpoints()
     print("[PASS] test_admin_authentication_and_endpoints passed!")
 
+    cleanup_test_data()
+    print("[PASS] Temporary test data cleaned up!")
+
     print("\n>>> ALL ANALYTICS & ADMIN DASHBOARD TESTS PASSED 100%! <<<")
+
 
 

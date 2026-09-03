@@ -1,6 +1,6 @@
 /**
  * Optivoya — Trip Report & Proposal Export Module
- * Clean HTML & Print/PDF report generation for clients and travel advisors.
+ * Minimalist, plain black-and-white HTML & Print/PDF report generation.
  */
 
 (function () {
@@ -25,89 +25,241 @@
                 <html lang="hu">
                 <head>
                     <meta charset="UTF-8">
-                    <title>Optivoya Utazási Ajánlat — ${d ? d.name : 'Tervezet'}</title>
+                    <title>Utazási Tervezet — ${d ? d.name : 'Optivoya'}</title>
                     <style>
-                        body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin: 40px; color: #1e293b; background: #fff; line-height: 1.5; }
-                        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 30px; }
-                        .logo { font-size: 24px; font-weight: 900; color: #0284c7; letter-spacing: -0.5px; }
-                        .card { border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 20px; background: #f8fafc; }
-                        .card-title { font-size: 16px; font-weight: 700; color: #0f172a; margin-bottom: 8px; }
-                        .card-val { font-size: 20px; font-weight: 800; color: #0284c7; }
-                        .total-box { margin-top: 30px; padding: 24px; background: #0f172a; color: #fff; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; }
-                        .total-label { font-size: 14px; text-transform: uppercase; font-weight: 700; color: #94a3b8; }
-                        .total-num { font-size: 32px; font-weight: 900; color: #38bdf8; }
-                        .per-person-text { font-size: 15px; color: #cbd5e1; font-weight: 600; text-align: right; }
-                        .calc-table { width: 100%; border-collapse: collapse; margin-top: 16px; background: #fff; border-radius: 10px; overflow: hidden; border: 1px solid #e2e8f0; }
-                        .calc-table th, .calc-table td { padding: 12px 16px; text-align: left; border-bottom: 1px solid #f1f5f9; font-size: 13.5px; }
-                        .calc-table th { background: #f8fafc; font-weight: 700; color: #475569; }
-                        .formula-text { font-family: monospace; font-size: 12px; color: #0284c7; background: #f0f9ff; padding: 3px 8px; border-radius: 6px; }
-                        @media print { .no-print { display: none; } body { margin: 20px; } }
+                        * { box-sizing: border-box; }
+                        body {
+                            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+                            margin: 36px auto;
+                            max-width: 820px;
+                            color: #111827;
+                            background: #ffffff;
+                            line-height: 1.5;
+                            padding: 0 20px;
+                        }
+                        .header {
+                            border-bottom: 2px solid #111827;
+                            padding-bottom: 16px;
+                            margin-bottom: 24px;
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: flex-end;
+                        }
+                        .logo {
+                            font-size: 20px;
+                            font-weight: 900;
+                            letter-spacing: 0.5px;
+                            text-transform: uppercase;
+                        }
+                        .doc-meta {
+                            font-size: 12px;
+                            color: #4b5563;
+                            text-align: right;
+                        }
+                        .section-title {
+                            font-size: 13px;
+                            font-weight: 800;
+                            text-transform: uppercase;
+                            letter-spacing: 0.5px;
+                            border-bottom: 1px solid #111827;
+                            padding-bottom: 4px;
+                            margin: 24px 0 12px 0;
+                        }
+                        .grid-summary {
+                            display: grid;
+                            grid-template-columns: repeat(3, 1fr);
+                            gap: 16px;
+                            margin-bottom: 20px;
+                        }
+                        .summary-box {
+                            border: 1px solid #d1d5db;
+                            padding: 12px 14px;
+                        }
+                        .box-label {
+                            font-size: 11px;
+                            font-weight: 700;
+                            text-transform: uppercase;
+                            color: #4b5563;
+                            margin-bottom: 4px;
+                        }
+                        .box-value {
+                            font-size: 15px;
+                            font-weight: 800;
+                            color: #111827;
+                            margin-bottom: 4px;
+                        }
+                        .box-desc {
+                            font-size: 12px;
+                            color: #4b5563;
+                        }
+                        .calc-table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            margin-top: 10px;
+                        }
+                        .calc-table th {
+                            font-size: 11px;
+                            font-weight: 800;
+                            text-transform: uppercase;
+                            text-align: left;
+                            border-bottom: 1.5px solid #111827;
+                            padding: 8px 10px;
+                            color: #111827;
+                        }
+                        .calc-table td {
+                            padding: 10px;
+                            border-bottom: 1px solid #e5e7eb;
+                            font-size: 13px;
+                            vertical-align: top;
+                        }
+                        .calc-table .num-col {
+                            text-align: right;
+                            font-variant-numeric: tabular-nums;
+                            font-weight: 700;
+                            white-space: nowrap;
+                        }
+                        .formula-text {
+                            font-family: 'Courier New', Courier, monospace;
+                            font-size: 11.5px;
+                            color: #4b5563;
+                            display: block;
+                            margin-top: 2px;
+                        }
+                        .total-summary {
+                            margin-top: 28px;
+                            border-top: 2px solid #111827;
+                            border-bottom: 2px solid #111827;
+                            padding: 16px 10px;
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                        }
+                        .total-title {
+                            font-size: 14px;
+                            font-weight: 800;
+                            text-transform: uppercase;
+                            letter-spacing: 0.5px;
+                        }
+                        .total-value {
+                            font-size: 24px;
+                            font-weight: 900;
+                            font-variant-numeric: tabular-nums;
+                        }
+                        .per-person-val {
+                            font-size: 13px;
+                            font-weight: 600;
+                            color: #4b5563;
+                            text-align: right;
+                        }
+                        .footer-note {
+                            margin-top: 36px;
+                            font-size: 11px;
+                            color: #6b7280;
+                            text-align: center;
+                            border-top: 1px solid #e5e7eb;
+                            padding-top: 12px;
+                        }
+                        .no-print-bar {
+                            margin-bottom: 20px;
+                            padding: 10px 14px;
+                            background: #f3f4f6;
+                            border: 1px solid #d1d5db;
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                        }
+                        .btn-print {
+                            background: #111827;
+                            color: #ffffff;
+                            border: none;
+                            padding: 8px 18px;
+                            font-size: 13px;
+                            font-weight: 700;
+                            cursor: pointer;
+                        }
+                        @media print {
+                            body { margin: 0; padding: 0; max-width: 100%; }
+                            .no-print { display: none !important; }
+                            @page { margin: 15mm; size: A4 portrait; }
+                        }
                     </style>
                 </head>
                 <body>
+                    <div class="no-print no-print-bar">
+                        <span style="font-size: 13px; font-weight: 600;">Nyomtatási és PDF előnézet (fekete-fehér)</span>
+                        <button class="btn-print" onclick="window.print()">Nyomtatás / Mentés PDF-ként</button>
+                    </div>
+
                     <div class="header">
                         <div>
-                            <div class="logo">✦ OPTIVOYA TRAVEL INTELLIGENCE</div>
-                            <div style="color: #64748b; font-size: 13px; margin-top: 4px;">Hivatalos Utazási Ajánlat & Költségvetés</div>
+                            <div class="logo">OPTIVOYA</div>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 2px;">Utazási és Költségtervezet</div>
                         </div>
-                        <div style="text-align: right;">
-                            <div style="font-weight: 700; font-size: 14px;">Azonosító: ${trip.trip_id}</div>
-                            <div style="color: #64748b; font-size: 12px;">Dátum: ${new Date().toLocaleDateString('hu-HU')}</div>
-                            <button class="no-print" onclick="window.print()" style="margin-top: 8px; padding: 6px 14px; background: #0284c7; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Nyomtatás / PDF mentés</button>
+                        <div class="doc-meta">
+                            <div><strong>Azonosító:</strong> ${trip.trip_id || 'TRIP-' + Math.random().toString(36).substring(2, 8).toUpperCase()}</div>
+                            <div><strong>Készült:</strong> ${new Date().toLocaleDateString('hu-HU')}</div>
                         </div>
                     </div>
 
-                    ${d ? `
-                    <div class="card">
-                        <div class="card-title">📍 Célállomás</div>
-                        <div class="card-val">${d.name}, ${d.country}</div>
-                        <div>Indulás: ${trip.input.origin} • ${breakdown.days} napos időszak (${breakdown.totalPersons} fő)</div>
-                        ${d.explanation ? `<div style="margin-top: 6px; font-size: 12px; color: #64748b;">${d.explanation}</div>` : ''}
-                    </div>` : ''}
+                    <!-- 1. FŐBB ADATOK -->
+                    <div class="grid-summary">
+                        <div class="summary-box">
+                            <div class="box-label">1. Célállomás</div>
+                            <div class="box-value">${d ? d.name + (d.country ? ', ' + d.country : '') : 'Nincs megadva'}</div>
+                            <div class="box-desc">Indulás: ${trip.input?.origin || 'Budapest'} • ${breakdown.days} nap (${breakdown.totalPersons} fő)</div>
+                        </div>
+                        <div class="summary-box">
+                            <div class="box-label">2. Repülőjegy</div>
+                            <div class="box-value">${f ? f.airline + ' Retúr' : 'Irányár'}</div>
+                            <div class="box-desc">${f && f.out_date ? `${f.out_date.split('T')[0]} – ${f.in_date.split('T')[0]}` : 'Menetrend szerint'}</div>
+                        </div>
+                        <div class="summary-box">
+                            <div class="box-label">3. Szállás</div>
+                            <div class="box-value">${s ? s.name : 'Irányár'}</div>
+                            <div class="box-desc">${s ? `${s.nights} éjszaka ${s.stars ? `(${s.stars} csillag)` : ''}` : `${breakdown.days} éjszaka`}</div>
+                        </div>
+                    </div>
 
-                    ${f ? `
-                    <div class="card">
-                        <div class="card-title">✈️ Repülőjegy & Menetrend</div>
-                        <div class="card-val">${f.airline} Retúr Járat</div>
-                        <div>${f.out_date ? `Odaút: ${f.out_date}` : ''} ${f.in_date ? `• Visszaút: ${f.in_date}` : ''} (${f.adults} főre)</div>
-                        <div style="margin-top: 8px; font-weight: 700; color: #0284c7;">${Math.round(f.price_total_huf || f.price_huf).toLocaleString()} Ft</div>
-                    </div>` : ''}
-
-                    ${s ? `
-                    <div class="card">
-                        <div class="card-title">🏨 Szállás</div>
-                        <div class="card-val">${s.name} ${s.stars ? '⭐'.repeat(s.stars) : ''}</div>
-                        <div>${s.nights} éjszaka ${s.rating ? `• Értékelés: ${s.rating}/10` : ''}</div>
-                        <div style="margin-top: 8px; font-weight: 700; color: #0284c7;">${Math.round(s.price_total_huf || s.price_huf).toLocaleString()} Ft</div>
-                    </div>` : ''}
-
-                    <!-- DETAILED BREAKDOWN TABLE -->
-                    <h3 style="margin-top: 28px; margin-bottom: 8px; font-size: 16px; color: #0f172a;">📊 Részletes Matematikai Költségkalkuláció (Numbeo + Valós Árak)</h3>
+                    <!-- 2. TÉTELES KÖLTSÉGKALKULÁCIÓ -->
+                    <div class="section-title">Tételes Költségvetés</div>
                     <table class="calc-table">
                         <thead>
                             <tr>
-                                <th>Költségtétel</th>
-                                <th>Számítási Képlet</th>
-                                <th style="text-align: right;">Összeg</th>
+                                <th style="width: 35%;">Költségtétel</th>
+                                <th style="width: 45%;">Számítási Alap</th>
+                                <th style="width: 20%;" class="num-col">Összeg</th>
                             </tr>
                         </thead>
                         <tbody>
                             ${breakdown.items.map(it => `
                                 <tr>
-                                    <td><strong>${it.icon} ${it.name}</strong><br><small style="color: #64748b;">${it.desc}</small></td>
-                                    <td><span class="formula-text">${it.formula}</span></td>
-                                    <td style="text-align: right; font-weight: 800; font-family: monospace;">${it.amount.toLocaleString()} Ft</td>
+                                    <td>
+                                        <strong>${it.name}</strong>
+                                        ${it.desc ? `<div style="font-size: 11.5px; color: #4b5563; margin-top: 2px;">${it.desc}</div>` : ''}
+                                    </td>
+                                    <td>
+                                        <span class="formula-text">${it.formula}</span>
+                                    </td>
+                                    <td class="num-col">${it.amount.toLocaleString()} Ft</td>
                                 </tr>
                             `).join('')}
                         </tbody>
                     </table>
 
-                    <div class="total-box">
-                        <div class="total-label">Becsült teljes utazási költség:</div>
+                    <!-- 3. ÖSSZESÍTŐ -->
+                    <div class="total-summary">
                         <div>
-                            <div class="total-num">${breakdown.totalHuf.toLocaleString()} Ft</div>
-                            ${breakdown.totalPersons > 1 ? `<div class="per-person-text">~${breakdown.perPersonTotal.toLocaleString()} Ft / fő</div>` : ''}
+                            <div class="total-title">Becsült Teljes Utazási Költség</div>
+                            <div style="font-size: 12px; color: #4b5563;">Tartalmazza az utazás, szállás, étkezés és helyi közlekedés tételeit</div>
                         </div>
+                        <div style="text-align: right;">
+                            <div class="total-value">${breakdown.totalHuf.toLocaleString()} Ft</div>
+                            ${breakdown.totalPersons > 1 ? `<div class="per-person-val">~${breakdown.perPersonTotal.toLocaleString()} Ft / fő (${breakdown.totalPersons} utazóra)</div>` : ''}
+                        </div>
+                    </div>
+
+                    <div class="footer-note">
+                        Ez a dokumentum az Optivoya döntéstámogató rendszerével készült. Az árak az adatforrások aktuális adatai alapján becsült tájékoztató összegek.
                     </div>
                 </body>
                 </html>
