@@ -1,151 +1,250 @@
 """
-Vision & Card Recognition Module for Schnapsen Android App (Calibrated Layout)
-Exact RGB Background matching: White (255, 255, 255) vs Red Disabled (192, 123, 123).
+Vision & Card Recognition Module for Schnapsen Android App
+- Exact 216x343 Card Boundaries and (23, 23) RGB Playability / Emptiness check
+- Clockwise 90-deg Trump Card Matching against Template Top-Half
+- Full Hungarian Naming (Piros, Tök, Zöld, Makk / Ász, Tízes, Király, Felső, Alsó)
 """
 
-import cv2
-import numpy as np
+import sys
 from pathlib import Path
 from typing import List, Optional, Tuple, Dict
-from PIL import Image
+import cv2
+import numpy as np
 
-# 1920x1080 Calibrated Layout Coordinates
+ROOT_DIR = Path(__file__).resolve().parent.parent
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
 
-# 5 Hand card contiguous non-overlapping bounding boxes (x1, y1, x2, y2)
+from schnapsen.game import Card, Suit, Rank
+
+CARD_W = 216
+CARD_H = 343
+STEP_X = 229
+
+# 5 Hand slots
 CARD_SLOT_BOXES = [
-    (5, 675, 240, 1080),     # Slot 1
-    (240, 675, 475, 1080),   # Slot 2
-    (475, 675, 710, 1080),   # Slot 3
-    (710, 675, 945, 1080),   # Slot 4
-    (945, 675, 1180, 1080),  # Slot 5
+    (14 + i * STEP_X, 729, 230 + i * STEP_X, 1072)
+    for i in range(5)
 ]
 
-# Exact swipe start coordinates (centers of the 5 cards)
+# Centers for swiping cards up into Table Center
 CARD_SWIPE_STARTS = [
-    (122, 950),   # Slot 1
-    (357, 950),   # Slot 2
-    (592, 950),   # Slot 3
-    (827, 950),   # Slot 4
-    (1062, 950),  # Slot 5
+    (int(x1 + (x2 - x1) / 2), 900) for (x1, y1, x2, y2) in CARD_SLOT_BOXES
 ]
 
-# Table Center target where cards must be swiped to
 TABLE_CENTER_TARGET = (950, 430)
-
-# Trump Card Box (under talon on the right) & Tap point
-TRUMP_BOX = (1420, 235, 1660, 450)
-TRUMP_TAP = (1535, 340)
-
-# Talon Stack (Zárás / Csere)
+OPPONENT_CARD_BOX = (662, 207, 662 + CARD_W, 207 + CARD_H)
+TRUMP_BOX = (1431, 265, 1620, 481)
 TALON_BOX = (1630, 150, 1880, 500)
-TALON_TAP = (1750, 325)
 
-# Table Center Area (Hívás & Ütés)
-TABLE_CENTER_BOX = (750, 170, 1300, 620)
+SUIT_HU = {
+    "HEARTS": "Piros",
+    "DIAMONDS": "Tök",
+    "SPADES": "Zöld",
+    "CLUBS": "Makk"
+}
 
-# Action Buttons
-MARRIAGE_BUTTON_TAP = (1250, 700)
-PASS_BUTTON_TAP = (1250, 830)
+RANK_HU = {
+    "ACE": "Ász",
+    "TEN": "Tízes",
+    "KING": "Király",
+    "QUEEN": "Felső",
+    "JACK": "Alsó"
+}
+
+
+def card_to_hungarian(card_name: Optional[str]) -> str:
+    """Converts internal card name (e.g. HEARTS_JACK) to Hungarian (Piros Alsó)."""
+    if not card_name:
+        return "Ismeretlen"
+    parts = card_name.split("_")
+    if len(parts) == 2 and parts[0] in SUIT_HU and parts[1] in RANK_HU:
+        return f"{SUIT_HU[parts[0]]} {RANK_HU[parts[1]]}"
+    return card_name
+
+
+def suit_to_hungarian(suit_name: Optional[str]) -> str:
+    """Converts suit name (e.g. HEARTS) to Hungarian (Piros)."""
+    if not suit_name:
+        return "Ismeretlen"
+    return SUIT_HU.get(suit_name, suit_name)
 
 
 class AndroidCardDetector:
     """
-    Detects Schnapsen cards, trump, turn, and table state from Android screen captures.
+    Detects Schnapsen cards, trump, turn, and table state using template matching.
     """
 
     def __init__(self, templates_dir: Optional[Path] = None):
-        self.templates_dir = templates_dir or (Path(__file__).resolve().parent.parent / "templates")
-        self.templates_dir.mkdir(exist_ok=True)
+        self.templates_dir = templates_dir or (ROOT_DIR / "templates")
         self.templates: Dict[str, np.ndarray] = {}
+        self.last_known_trump_card: Optional[str] = None
         self._load_templates()
 
     def _load_templates(self):
         if not self.templates_dir.exists():
             return
         for file in self.templates_dir.glob("*.png"):
+            if file.name.startswith("unmapped"):
+                continue
             card_name = file.stem
             img = cv2.imread(str(file), cv2.IMREAD_COLOR)
             if img is not None:
                 self.templates[card_name] = img
+        print(f"Loaded {len(self.templates)} card templates from {self.templates_dir}")
 
-    def is_my_turn(self, screen_bgr: np.ndarray) -> bool:
+    def inspect_slot_color(self, crop_bgr: np.ndarray) -> Tuple[str, Tuple[int, int, int]]:
         """
-        Checks if it's currently the player's turn (at least one playable white card).
+        Samples the card at relative coordinate (23, 23) inside the crop (with small 5x5 patch).
+        - LEGAL: RGB ~ (255, 255, 255)
+        - DISABLED: RGB ~ (192, 123, 123)
+        - EMPTY: RGB ~ (191, 124, 52)
         """
-        h, w, _ = screen_bgr.shape
-        if h != 1080 or w != 1920:
-            return False
-        playable = self.get_playable_slots(screen_bgr)
-        return len(playable) > 0
+        if crop_bgr.size == 0 or crop_bgr.shape[0] < 30 or crop_bgr.shape[1] < 30:
+            return "EMPTY", (0, 0, 0)
+
+        crop_rgb = cv2.cvtColor(crop_bgr, cv2.COLOR_BGR2RGB)
+        patch = crop_rgb[21:26, 21:26]
+        r = int(np.median(patch[:, :, 0]))
+        g = int(np.median(patch[:, :, 1]))
+        b = int(np.median(patch[:, :, 2]))
+        rgb = (r, g, b)
+
+        # Clear white threshold
+        if r > 230 and g > 230 and b > 230:
+            return "LEGAL", rgb
+
+        # Asztal barna (B < 85 és R > 140)
+        if b < 85 and r > 140:
+            return "EMPTY", rgb
+
+        # Distance comparison
+        dist_white = np.linalg.norm(np.array([r, g, b]) - np.array([255, 255, 255]))
+        dist_red = np.linalg.norm(np.array([r, g, b]) - np.array([192, 123, 123]))
+        dist_brown = np.linalg.norm(np.array([r, g, b]) - np.array([191, 124, 52]))
+
+        closest = min([("LEGAL", dist_white), ("DISABLED", dist_red), ("EMPTY", dist_brown)], key=lambda x: x[1])
+        return closest[0], rgb
+
+    def is_slot_empty(self, crop_bgr: np.ndarray) -> bool:
+        status, _ = self.inspect_slot_color(crop_bgr)
+        return status == "EMPTY"
 
     def is_card_playable(self, crop_bgr: np.ndarray) -> bool:
+        status, _ = self.inspect_slot_color(crop_bgr)
+        return status == "LEGAL"
+
+    def match_card(self, crop_bgr: np.ndarray, min_score: float = 0.50) -> Tuple[Optional[str], float]:
         """
-        Exact RGB classification:
-        - White (playable): Background RGB is ~ (255, 255, 255)
-        - Red (disabled): Background RGB is ~ (192, 123, 123)
-        - Wood Table (empty slot): Brown wood background
+        Matches card crop against templates.
+        Uses normalized cross correlation on standard and Green/Blue channels.
         """
-        if crop_bgr.size == 0:
-            return False
+        if not self.templates:
+            return None, 0.0
 
-        # Convert to RGB
-        crop_rgb = cv2.cvtColor(crop_bgr, cv2.COLOR_BGR2RGB)
-        
-        # Sample the top margin background of the card (inside the card border, away from illustrations)
-        # In each slot crop: Y: 20..50, X: 20..70
-        h, w, _ = crop_rgb.shape
-        margin_sample = crop_rgb[int(h*0.06):int(h*0.16), int(w*0.08):int(w*0.35)]
+        best_card = None
+        best_val = -1.0
 
-        # Distance to White (255, 255, 255)
-        white_diff = np.abs(margin_sample.astype(np.float32) - np.array([255, 255, 255], dtype=np.float32)).mean(axis=-1)
-        white_pixels = np.count_nonzero(white_diff < 45)
+        h_c, w_c = crop_bgr.shape[:2]
 
-        # Distance to Red Disabled (192, 123, 123)
-        red_diff = np.abs(margin_sample.astype(np.float32) - np.array([192, 123, 123], dtype=np.float32)).mean(axis=-1)
-        red_pixels = np.count_nonzero(red_diff < 45)
+        for name, tmpl in self.templates.items():
+            if tmpl.shape[:2] != (h_c, w_c):
+                resized_tmpl = cv2.resize(tmpl, (w_c, h_c))
+            else:
+                resized_tmpl = tmpl
 
-        total_sample_pixels = margin_sample.shape[0] * margin_sample.shape[1]
-        
-        white_ratio = white_pixels / total_sample_pixels
-        red_ratio = red_pixels / total_sample_pixels
+            res = cv2.matchTemplate(crop_bgr, resized_tmpl, cv2.TM_CCOEFF_NORMED)
+            val = float(res[0][0])
+            if val > best_val:
+                best_val = val
+                best_card = name
 
-        # If red background is dominant -> Disabled (False)
-        if red_ratio > 0.30:
-            return False
+        if best_val >= min_score:
+            return best_card, best_val
+        return None, best_val
 
-        # If white background is dominant -> Playable (True)
-        if white_ratio > 0.25:
-            return True
-
-        # Fallback check across whole card: check if B & G channels are bright (>180) vs red-tinted (B < 150)
-        r, g, b = margin_sample[:, :, 0].mean(), margin_sample[:, :, 1].mean(), margin_sample[:, :, 2].mean()
-        if (r - g) > 40 and (r - b) > 40:
-            return False # Red disabled
-
-        return g > 170 and b > 170
-
-    def get_playable_slots(self, screen_bgr: np.ndarray) -> List[int]:
-        """
-        Returns a list of 0-based slot indices [0..4] that are currently legal / playable.
-        """
-        playable = []
-        for idx, (x1, y1, x2, y2) in enumerate(CARD_SLOT_BOXES):
+    def detect_hand_cards(self, screen_bgr: np.ndarray) -> List[Dict]:
+        """Detects cards in all 5 hand slots."""
+        results = []
+        for idx, (x1, y1, x2, y2) in enumerate(CARD_SLOT_BOXES, 1):
             crop = screen_bgr[y1:y2, x1:x2]
-            if self.is_card_playable(crop):
-                playable.append(idx)
-        return playable
+            status, rgb = self.inspect_slot_color(crop)
 
-    def get_hand_crops(self, screen_bgr: np.ndarray) -> List[np.ndarray]:
-        crops = []
-        for (x1, y1, x2, y2) in CARD_SLOT_BOXES:
-            crop = screen_bgr[y1:y2, x1:x2]
-            crops.append(crop)
-        return crops
+            if status == "EMPTY":
+                results.append({
+                    "slot": idx,
+                    "empty": True,
+                    "playable": False,
+                    "card_name": None,
+                    "card_hu": "Üres",
+                    "confidence": 0.0,
+                    "pixel_rgb": rgb,
+                    "status": "EMPTY"
+                })
+                continue
 
-    def get_trump_crop(self, screen_bgr: np.ndarray) -> np.ndarray:
-        x1, y1, x2, y2 = TRUMP_BOX
-        return screen_bgr[y1:y2, x1:x2]
+            card_name, conf = self.match_card(crop)
+            is_playable = (status == "LEGAL")
 
-    def get_opponent_played_card_crop(self, screen_bgr: np.ndarray) -> np.ndarray:
-        x1, y1, x2, y2 = TABLE_CENTER_BOX
-        return screen_bgr[y1:y2, x1:x2]
+            results.append({
+                "slot": idx,
+                "empty": False,
+                "playable": is_playable,
+                "card_name": card_name,
+                "card_hu": card_to_hungarian(card_name),
+                "confidence": conf,
+                "pixel_rgb": rgb,
+                "status": status
+            })
+        return results
+
+    def detect_trump_card(self, screen_bgr: np.ndarray, save_debug: bool = True) -> Tuple[Optional[str], str, float]:
+        """
+        Rotates trump crop 90 deg CLOCKWISE and matches ONLY against the TOP portion of templates.
+        Saves debug images for visual verification.
+        """
+        tx1, ty1, tx2, ty2 = TRUMP_BOX
+        crop = screen_bgr[ty1:ty2, tx1:tx2]
+        if crop.size == 0:
+            return self.last_known_trump_card, card_to_hungarian(self.last_known_trump_card), 0.0
+
+        # Rotate 90 degrees CLOCKWISE
+        crop_upright = cv2.rotate(crop, cv2.ROTATE_90_CLOCKWISE)
+        h_u, w_u = crop_upright.shape[:2]
+
+        if save_debug:
+            out_dir = ROOT_DIR / "browser_state"
+            out_dir.mkdir(exist_ok=True)
+            cv2.imwrite(str(out_dir / "trump_crop_raw.png"), crop)
+            cv2.imwrite(str(out_dir / "trump_crop_rotated.png"), crop_upright)
+
+        best_card = None
+        best_val = -1.0
+
+        for name, tmpl in self.templates.items():
+            # Match strictly against the TOP part of the template matching the crop height
+            tmpl_top = tmpl[:h_u, :w_u]
+            if tmpl_top.shape[:2] != (h_u, w_u):
+                tmpl_top = cv2.resize(tmpl_top, (w_u, h_u))
+
+            res = cv2.matchTemplate(crop_upright, tmpl_top, cv2.TM_CCOEFF_NORMED)
+            val = float(res[0][0])
+            if val > best_val:
+                best_val = val
+                best_card = name
+
+        if best_card and best_val > 0.40:
+            self.last_known_trump_card = best_card
+
+        chosen = best_card or self.last_known_trump_card
+        return chosen, card_to_hungarian(chosen), best_val
+
+    def detect_opponent_card(self, screen_bgr: np.ndarray) -> Tuple[Optional[str], str, float]:
+        """Detects if opponent has played a card on table."""
+        ox1, oy1, ox2, oy2 = OPPONENT_CARD_BOX
+        crop = screen_bgr[oy1:oy2, ox1:ox2]
+        status, _ = self.inspect_slot_color(crop)
+        if status == "EMPTY":
+            return None, "Nincs lap", 0.0
+        card_name, conf = self.match_card(crop)
+        return card_name, card_to_hungarian(card_name), conf

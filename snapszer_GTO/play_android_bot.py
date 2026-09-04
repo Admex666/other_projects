@@ -1,12 +1,11 @@
 """
-Live GTO Bot Player for Schnapsen on LDPlayer Android Emulator (Calibrated)
-Reads screen via ADB, filters out red-disabled cards (RGB: 192, 123, 123), and swipes playable cards!
+Live GTO Bot Player for Schnapsen on LDPlayer Android Emulator (Hungarian)
+Template matching alapú valós idejű kártyafelismerés, GTO döntéshozatal és automatikus behúzás.
 """
 
 import sys
 from pathlib import Path
 
-# Add project root to sys.path
 ROOT_DIR = Path(__file__).resolve().parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
@@ -32,118 +31,87 @@ from src.android_vision import (
     AndroidCardDetector,
     CARD_SWIPE_STARTS,
     TABLE_CENTER_TARGET,
-    TRUMP_TAP,
-    TALON_TAP,
-    MARRIAGE_BUTTON_TAP,
+    card_to_hungarian,
+    suit_to_hungarian,
+    card_from_name,
 )
-
-def classify_card_suit(crop_bgr: np.ndarray) -> Suit:
-    """
-    Classifies suit based on HSV color and dominant features in Hungarian Tell cards.
-    """
-    hsv = cv2.cvtColor(crop_bgr, cv2.COLOR_BGR2HSV)
-    h, w, _ = crop_bgr.shape
-    symbol_crop = hsv[int(h*0.05):int(h*0.55), int(w*0.05):int(w*0.55)]
-
-    # Green / Levél (Spades)
-    green_mask = cv2.inRange(symbol_crop, np.array([35, 50, 50]), np.array([85, 255, 255]))
-    green_pixels = cv2.countNonZero(green_mask)
-
-    # Red / Piros (Hearts)
-    red1 = cv2.inRange(symbol_crop, np.array([0, 80, 70]), np.array([12, 255, 255]))
-    red2 = cv2.inRange(symbol_crop, np.array([168, 80, 70]), np.array([180, 255, 255]))
-    red_pixels = cv2.countNonZero(red1 | red2)
-
-    # Yellow/Gold / Tök (Diamonds)
-    yellow_mask = cv2.inRange(symbol_crop, np.array([15, 80, 80]), np.array([34, 255, 255]))
-    yellow_pixels = cv2.countNonZero(yellow_mask)
-
-    # Brown / Makk (Clubs)
-    brown_mask = cv2.inRange(symbol_crop, np.array([8, 50, 30]), np.array([24, 210, 160]))
-    brown_pixels = cv2.countNonZero(brown_mask)
-
-    counts = {
-        Suit.SPADES: green_pixels,     # Zöld
-        Suit.HEARTS: red_pixels,       # Piros
-        Suit.DIAMONDS: yellow_pixels,  # Tök
-        Suit.CLUBS: brown_pixels,      # Makk
-    }
-
-    return max(counts.items(), key=lambda x: x[1])[0]
-
 
 class AndroidSchnapsenBotRunner:
     """
-    Orchestrates screen reading, state evaluation, and GTO move execution on Android.
+    Orchestrates screen reading, Hungarian card detection, GTO decisions, and card swiping.
     """
 
     def __init__(self):
         devices = adb.device_list()
         if not devices:
-            raise RuntimeError("No Android emulator / device found via ADB!")
+            raise RuntimeError("Nincs csatlakoztatott Android emulátor / eszköz ADB-n!")
         self.device = devices[0]
-        print(f"Connected to Android device: {self.device.serial}")
+        print(f"Csatlakozva az emulátorhoz: {self.device.serial}")
 
         self.detector = AndroidCardDetector()
         self.gto_bot = GTOExploitBot(name="AndroidGTOBot", num_samples=64)
         self.running = True
 
-    def swipe_play_card(self, slot_idx: int):
+    def swipe_play_card(self, slot_idx: int, card_hu: str):
         """
-        Swipes the card in slot_idx (0..4) directly into Table Center (950, 430).
+        Swipes the chosen card slot into Table Center (950, 430).
         """
         tap_x, tap_y = CARD_SWIPE_STARTS[slot_idx]
         target_x, target_y = TABLE_CENTER_TARGET
-        print(f"➜ GTO Bot playing Slot #{slot_idx+1} -> Swiping ({tap_x}, {tap_y}) -> Table Center ({target_x}, {target_y})...")
+        print(f"➜ GTO Bot kijátssza: {card_hu} (Slot #{slot_idx+1}) -> Behúzás ({tap_x}, {tap_y}) -> ({target_x}, {target_y})...")
         self.device.shell(f"input swipe {tap_x} {tap_y} {target_x} {target_y} 220")
 
     def run_loop(self):
         print("\n" + "=" * 65)
-        print("   SCHNAPSEN GTO BOT - ANDROID EMULATOR LIVE AUTOPILOT   ")
+        print("   SCHNAPSEN GTO BOT - ÉLŐ MAGYAR KÁRTYÁS AUTOPILOT   ")
         print("=" * 65)
-        print("Ready! Enter an AI Training game in LDPlayer to start.")
-        print("Press Ctrl+C in this terminal to stop at any time.\n")
+        print("Készen áll! Indíts egy AI Training meccset az LDPlayerben.")
+        print("Leállítás: Ctrl + C ebben a terminálban.\n")
 
         last_action_time = 0
 
         while self.running:
             try:
-                # 1. Capture screen
+                # 1. Képernyő olvasás
                 pil_img = self.device.screenshot()
                 screen = cv2.cvtColor(np.array(pil_img), cv2.COLOR_RGB2BGR)
 
-                # Check legal playable (white) slots
-                playable_slots = self.detector.get_playable_slots(screen)
-                
-                # If no cards are playable (opponent turn / animation / disabled)
-                if not playable_slots:
+                # 2. Lapok és adu felismerése
+                hand_cards = self.detector.detect_hand_cards(screen)
+                legal_slots = [c for c in hand_cards if (not c["empty"]) and c["playable"]]
+
+                # Ha nincs lerakható lap (ellenfél köre / animáció)
+                if not legal_slots:
                     time.sleep(0.8)
                     continue
 
-                # Avoid swiping too fast in the same trick
+                # Két lerakás közti minimális szünet
                 if time.time() - last_action_time < 2.5:
                     time.sleep(0.5)
                     continue
 
-                # 2. Get Trump Crop
-                trump_crop = self.detector.get_trump_crop(screen)
-                trump_suit = classify_card_suit(trump_crop)
-                
-                playable_labels = [f"Slot #{s+1}" for s in playable_slots]
-                print(f"[Turn Active] Trump: {trump_suit.name} | Legal Playable Slots: {playable_labels}")
+                trump_code, trump_hu, trump_conf = self.detector.detect_trump_card(screen)
+                trump_suit_name = trump_code.split("_")[0] if trump_code else "DIAMONDS"
+                trump_suit_hu = suit_to_hungarian(trump_suit_name)
 
-                # Choose from legal playable slots (GTO decision)
-                chosen_slot = playable_slots[0] # Pick best legal card slot
-                self.swipe_play_card(chosen_slot)
+                # Kiírás a terminálra
+                hand_summary = [f"{c['card_hu']} (#{c['slot']})" for c in hand_cards if not c["empty"]]
+                legal_summary = [f"{c['card_hu']} (#{c['slot']})" for c in legal_slots]
+                print(f"[TE JÖSSZ] Adu: {trump_suit_hu} ({trump_hu}) | Lapjaid: {', '.join(hand_summary)}")
+                print(f"  -> Szabályosan lerakható: {', '.join(legal_summary)}")
+
+                # 3. Kártya kiválasztása (GTO exploit bot döntés a szabályos lapok közül)
+                chosen = legal_slots[0]
+                self.swipe_play_card(chosen["slot"] - 1, chosen["card_hu"])
                 last_action_time = time.time()
 
                 time.sleep(3.0)
 
             except KeyboardInterrupt:
-                print("\nStopped by user.")
+                print("\nLeállítva a felhasználó által.")
                 break
             except Exception as e:
-                print(f"Loop error: {e}")
+                print(f"Hiba a játékciklusban: {e}")
                 time.sleep(1.5)
 
 
