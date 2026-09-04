@@ -9,12 +9,45 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from typing import Optional, Dict, Any
 
 from dotenv import load_dotenv
+from pydantic import BaseModel
 
-from app.core.config import templates, ENV_PATH
-from app.services.analytics_service import get_analytics_kpis, get_user_timeline, record_telemetry_event
+from app.core.config import templates, ENV_PATH, CLARITY_PROJECT_ID
+from app.services.analytics_service import (
+    get_analytics_kpis,
+    get_user_timeline,
+    get_user_sessions_summary,
+    record_telemetry_event
+)
 from app.services.user_service import get_all_beta_users, create_beta_user, toggle_user_active
 
 router = APIRouter(tags=["Admin & Analytics"])
+
+class ClientTelemetryEvent(BaseModel):
+    event_type: str = "button_click"
+    module: str = "master_planner"
+    session_id: Optional[str] = None
+    user_id: Optional[str] = None
+    duration_ms: Optional[float] = None
+    search_params: Optional[Dict[str, Any]] = None
+    meta_data: Optional[Dict[str, Any]] = None
+
+@router.post("/api/telemetry/event")
+async def api_record_client_telemetry(event: ClientTelemetryEvent, request: Request):
+    from app.core.auth import get_current_user
+    user = get_current_user(request) or event.user_id or request.cookies.get("optivoya_user") or "guest"
+    session_id = event.session_id or request.headers.get("x-session-id") or request.cookies.get("optivoya_session_id")
+    
+    evt_id = record_telemetry_event(
+        user_id=user,
+        session_id=session_id,
+        event_type=event.event_type,
+        module=event.module,
+        duration_ms=event.duration_ms,
+        search_params=event.search_params,
+        meta_data=event.meta_data,
+        success=True
+    )
+    return JSONResponse({"status": "ok", "event_id": evt_id})
 
 ADMIN_SESSION_TOKEN = secrets.token_urlsafe(32)
 
@@ -70,6 +103,7 @@ async def admin_dashboard(request: Request, user: Optional[str] = None):
     kpis = get_analytics_kpis(user_id=user)
     users = get_all_beta_users()
     timeline = get_user_timeline(user_id=user, limit=150)
+    sessions = get_user_sessions_summary(user_id=user, limit=50)
 
     selected_users = [u.strip() for u in (user or "").split(",") if u.strip() and u.strip() != "all"]
     selected_user_str = ",".join(selected_users) if selected_users else "all"
@@ -79,6 +113,8 @@ async def admin_dashboard(request: Request, user: Optional[str] = None):
         "kpis": kpis,
         "users": users,
         "timeline": timeline,
+        "sessions": sessions,
+        "clarity_project_id": CLARITY_PROJECT_ID,
         "selected_users": selected_users,
         "selected_user": selected_user_str
     })
@@ -96,6 +132,13 @@ async def api_admin_timeline(request: Request, user: Optional[str] = "all"):
         raise HTTPException(status_code=401, detail="Unauthorized")
     timeline = get_user_timeline(user_id=user, limit=150)
     return JSONResponse({"status": "ok", "events": timeline})
+
+@router.get("/api/admin/sessions")
+async def api_admin_sessions(request: Request, user: Optional[str] = "all"):
+    if not is_admin_authenticated(request):
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    sessions = get_user_sessions_summary(user_id=user, limit=50)
+    return JSONResponse({"status": "ok", "sessions": sessions, "clarity_project_id": CLARITY_PROJECT_ID})
 
 @router.post("/api/admin/users")
 async def api_create_user(

@@ -229,37 +229,198 @@
             flex-shrink: 0;
         }
 
-        /* Timeline Items */
-        .timeline-container {
+        /* Session Journeys & User Paths */
+        .sessions-container {
             padding: 16px 24px;
-            max-height: 750px;
+            max-height: 800px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 16px;
         }
-        .event-card {
+        .session-card {
             background: rgba(15, 23, 42, 0.6);
             border: 1px solid var(--border-subtle);
-            border-radius: 12px;
-            padding: 16px;
+            border-radius: 14px;
+            padding: 18px 20px;
+            transition: all 0.2s ease;
+        }
+        .session-card:hover {
+            border-color: rgba(99, 102, 241, 0.35);
+            background: rgba(15, 23, 42, 0.9);
+        }
+        .session-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .session-user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .session-meta-chips {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .duration-badge {
+            background: rgba(99, 102, 241, 0.15);
+            border: 1px solid rgba(99, 102, 241, 0.35);
+            color: #a5b4fc;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .btn-clarity {
+            background: rgba(0, 120, 212, 0.15);
+            border: 1px solid rgba(0, 120, 212, 0.4);
+            color: #60a5fa;
+            text-decoration: none;
+            font-size: 11.5px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.15s ease;
+        }
+        .btn-clarity:hover {
+            background: rgba(0, 120, 212, 0.3);
+            color: #93c5fd;
+            transform: translateY(-1px);
+        }
+
+        /* Horizontal Journey Breadcrumb Trail */
+        .journey-trail {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 4px 2px 8px 2px;
+            margin-bottom: 10px;
+        }
+        .journey-node {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 8px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 150px;
+            flex-shrink: 0;
+            transition: border-color 0.15s ease, background 0.15s ease;
+        }
+        .journey-node:hover {
+            border-color: rgba(99, 102, 241, 0.4);
+            background: rgba(255, 255, 255, 0.06);
+        }
+        .journey-node-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+        }
+        .journey-node-badge {
+            font-size: 10.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #a5b4fc;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .journey-node-dwell {
+            font-size: 10.5px;
+            color: #94a3b8;
+            background: rgba(255, 255, 255, 0.06);
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        .journey-node-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #f1f5f9;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .journey-node-subtitle {
+            font-size: 11px;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .journey-arrow {
+            color: #475569;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        /* Granular Events Inside Session Accordion */
+        .session-accordion-toggle {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 6px 0 0 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: color 0.15s ease;
+        }
+        .session-accordion-toggle:hover {
+            color: #a5b4fc;
+        }
+        .session-events-list {
+            margin-top: 12px;
+            border-top: 1px dashed rgba(255, 255, 255, 0.08);
+            padding-top: 12px;
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .session-events-list.open {
+            display: flex;
+        }
+        .event-card {
+            background: rgba(11, 15, 25, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 12px 14px;
             transition: all 0.15s ease;
         }
         .event-card:hover {
-            border-color: rgba(255, 255, 255, 0.15);
-            background: rgba(15, 23, 42, 0.9);
+            border-color: rgba(255, 255, 255, 0.12);
+            background: rgba(11, 15, 25, 0.95);
         }
         .event-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
         .event-module-badge {
-            font-size: 11px;
+            font-size: 10.5px;
             font-weight: 700;
-            padding: 3px 8px;
-            border-radius: 6px;
+            padding: 2px 7px;
+            border-radius: 5px;
             text-transform: uppercase;
         }
         .badge-destination { background: rgba(59, 130, 246, 0.2); color: #93c5fd; }
@@ -267,12 +428,14 @@
         .badge-accommodation { background: rgba(236, 72, 153, 0.2); color: #f472b6; }
         .badge-planner { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
         .badge-proposal { background: rgba(245, 158, 11, 0.2); color: #fcd34d; }
+        .badge-ui { background: rgba(168, 85, 247, 0.2); color: #d8b4fe; }
+        .badge-navigation { background: rgba(14, 165, 233, 0.2); color: #7dd3fc; }
 
         .param-chip {
             background: rgba(255, 255, 255, 0.05);
-            padding: 3px 8px;
+            padding: 2px 7px;
             border-radius: 4px;
-            font-size: 12px;
+            font-size: 11.5px;
             color: #cbd5e1;
             display: inline-block;
             margin: 2px 4px 2px 0;
@@ -460,12 +623,12 @@
                 </div>
             </div>
 
-            <!-- EVENT TIMELINE STREAM -->
+            <!-- SESSIONS & USER JOURNEYS STREAM -->
             <div class="panel-card">
                 <div class="panel-header">
                     <div class="panel-title">
-                        <span class="material-symbols-outlined" style="font-size: 18px; color: var(--primary);">history</span>
-                        <span>Eseménynapló & Idővonal</span> 
+                        <span class="material-symbols-outlined" style="font-size: 18px; color: var(--primary);">conversion_path</span>
+                        <span>Felhasználói Utak & Munkamenetek (Sessions)</span> 
                         <span id="timelineScopeSubtitle" style="font-size: 13px; color: var(--text-muted); font-weight: 500;">
                             {% if selected_users %}
                             — @{{ selected_user }}
@@ -474,66 +637,157 @@
                             {% endif %}
                         </span>
                     </div>
-                    <span style="font-size: 12px; color: var(--text-muted);" id="timelineCount">{{ timeline|length }} esemény</span>
+                    <span style="font-size: 12px; color: var(--text-muted);" id="sessionsCount">{{ sessions|length }} munkamenet</span>
                 </div>
 
-                <div class="timeline-container" id="timelineContainer">
-                    {% if timeline|length == 0 %}
+                <div class="sessions-container" id="sessionsContainer">
+                    {% if sessions|length == 0 %}
                     <div style="padding: 40px; text-align: center; color: var(--text-muted);">
-                        Még nem érkezett telemetria esemény erre a szűrésre.
+                        Még nem érkezett session telemetria erre a szűrésre.
                     </div>
                     {% endif %}
 
-                    {% for ev in timeline %}
-                    <div class="event-card">
-                        <div class="event-header">
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <span class="event-module-badge badge-{{ ev.module.split('_')[0] }}">{{ ev.module }}</span>
-                                <strong style="font-size: 13px;">{{ ev.event_type }}</strong>
-                                <span style="font-size: 12px; color: var(--text-muted);">• @{{ ev.user_id }}</span>
+                    {% for s in sessions %}
+                    <div class="session-card">
+                        <!-- Session Header -->
+                        <div class="session-header">
+                            <div class="session-user-info">
+                                <div class="user-avatar" style="width:30px; height:30px; font-size:12px;">{{ s.user_id[:2]|upper }}</div>
+                                <div>
+                                    <div style="font-weight: 700; font-size: 13.5px; color: #fff;">
+                                        {{ s.user_display }}
+                                        <span style="font-size: 11.5px; color: var(--text-muted); font-weight: normal;">• @{{ s.user_id }}</span>
+                                    </div>
+                                    <div style="font-size: 11px; color: var(--text-muted);">
+                                        Kezdés: {{ s.started_at }}
+                                    </div>
+                                </div>
                             </div>
-                            <div style="display: flex; align-items: center; gap: 12px;">
-                                {% if ev.duration_ms %}
-                                <span style="font-size: 12px; font-weight: 600; color: #a5b4fc;">{{ ev.duration_formatted }}</span>
-                                {% endif %}
-                                {% if ev.success %}
-                                <span style="font-size: 12px; color: var(--success); font-weight: 700; display: inline-flex; align-items: center; gap: 3px;">
-                                    <span class="material-symbols-outlined" style="font-size: 14px;">check_circle</span> Siker ({{ ev.results_count }} db)
+                            <div class="session-meta-chips">
+                                <span class="duration-badge">
+                                    <span class="material-symbols-outlined" style="font-size: 14px;">timer</span>
+                                    {{ s.duration_formatted }}
                                 </span>
-                                {% else %}
-                                <span style="font-size: 12px; color: var(--danger); font-weight: 700; display: inline-flex; align-items: center; gap: 3px;">
-                                    <span class="material-symbols-outlined" style="font-size: 14px;">cancel</span> Hiba
+                                {% if s.searches_count > 0 %}
+                                <span class="param-chip" style="color:#a5b4fc; font-weight:600;">{{ s.searches_count }} keresés</span>
+                                {% endif %}
+                                {% if s.clicks_count > 0 %}
+                                <span class="param-chip">{{ s.clicks_count }} interakció</span>
+                                {% endif %}
+                                {% if s.has_error %}
+                                <span style="font-size: 11.5px; color: var(--danger); font-weight: 700; display: inline-flex; align-items: center; gap: 3px;">
+                                    <span class="material-symbols-outlined" style="font-size: 14px;">warning</span> Hiba
                                 </span>
                                 {% endif %}
-                                <span style="font-size: 11px; color: var(--text-muted);">{{ ev.created_at[11:19] }}</span>
+                                {% if s.clarity_url %}
+                                <a href="{{ s.clarity_url }}" target="_blank" class="btn-clarity" title="Megnyitás Microsoft Clarity-ben">
+                                    <span class="material-symbols-outlined" style="font-size: 14px;">videocam</span>
+                                    Clarity Felvétel ↗
+                                </a>
+                                {% endif %}
                             </div>
                         </div>
 
-                        <!-- Paraméterek -->
-                        <div style="margin-top: 6px;">
-                            {% if ev.search_params.origin %}
-                            <span class="param-chip">Indulás: {{ ev.search_params.origin }}</span>
+                        <!-- User Journey Trail -->
+                        {% if s.journey_path and s.journey_path|length > 0 %}
+                        <div class="journey-trail">
+                            {% for step in s.journey_path %}
+                            <div class="journey-node">
+                                <div class="journey-node-top">
+                                    <span class="journey-node-badge">
+                                        <span class="material-symbols-outlined" style="font-size: 13px;">{{ step.icon }}</span>
+                                        {{ step.badge }}
+                                    </span>
+                                    {% if step.dwell_sec > 0 %}
+                                    <span class="journey-node-dwell" title="Tartózkodási idő">{{ step.dwell_formatted }}</span>
+                                    {% endif %}
+                                </div>
+                                <div class="journey-node-title" title="{{ step.title }}">{{ step.title }}</div>
+                                <div class="journey-node-subtitle" title="{{ step.subtitle }}">{{ step.subtitle }}</div>
+                            </div>
+                            {% if not loop.last %}
+                            <span class="material-symbols-outlined journey-arrow">arrow_forward</span>
                             {% endif %}
-                            {% if ev.search_params.destination_city or ev.search_params.destination %}
-                            <span class="param-chip">Cél: {{ ev.search_params.destination_city or ev.search_params.destination }}</span>
-                            {% endif %}
-                            {% if ev.search_params.adults %}
-                            <span class="param-chip">{{ ev.search_params.adults }} felnőtt</span>
-                            {% endif %}
-                            {% if ev.search_params.duration %}
-                            <span class="param-chip">{{ ev.search_params.duration }} nap</span>
-                            {% endif %}
-                            {% if ev.error_message %}
-                            <div style="color: var(--danger); font-size: 12px; margin-top: 4px;">Hiba: {{ ev.error_message }}</div>
-                            {% endif %}
+                            {% endfor %}
                         </div>
+                        {% else %}
+                        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">
+                            Közvetlen látogatás / Kezdő interakció
+                        </div>
+                        {% endif %}
 
-                        <button 
-                            onclick="toggleJson('json_{{ ev.id }}')" 
-                            style="background:none; border:none; color:var(--text-muted); font-size:11px; cursor:pointer; padding:4px 0; margin-top:6px; text-decoration:underline;">
-                            Adatstruktúra (JSON) megtekintése ▾
+                        <!-- Accordion for detailed events in this session -->
+                        <button class="session-accordion-toggle" onclick="toggleSessionEvents('sess_ev_{{ loop.index }}_{{ s.session_id }}', this)">
+                            <span class="material-symbols-outlined" style="font-size: 16px;">unfold_more</span>
+                            <span>Részletes eseménynapló ({{ s.events|length }} db esemény) ▾</span>
                         </button>
-                        <pre id="json_{{ ev.id }}" class="raw-json">{{ ev.search_params | tojson(indent=2) }}</pre>
+
+                        <div id="sess_ev_{{ loop.index }}_{{ s.session_id }}" class="session-events-list">
+                            {% for ev in s.events %}
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <span class="event-module-badge badge-{{ ev.module.split('_')[0] }}">{{ ev.module }}</span>
+                                        <strong style="font-size: 12.5px;">{{ ev.event_type }}</strong>
+                                        {% if ev.event_type == 'button_click' and ev.meta_data.button_text %}
+                                        <span style="font-size: 12px; color: #cbd5e1; font-weight:600;">„{{ ev.meta_data.button_text }}”</span>
+                                        {% endif %}
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        {% if ev.duration_ms %}
+                                        <span style="font-size: 11.5px; font-weight: 600; color: #a5b4fc;">{{ ev.duration_formatted }}</span>
+                                        {% endif %}
+                                        {% if ev.success %}
+                                        <span style="font-size: 11.5px; color: var(--success); font-weight: 700; display: inline-flex; align-items: center; gap: 2px;">
+                                            <span class="material-symbols-outlined" style="font-size: 13px;">check_circle</span>
+                                            {% if ev.results_count != "-" %}{{ ev.results_count }} db{% else %}OK{% endif %}
+                                        </span>
+                                        {% else %}
+                                        <span style="font-size: 11.5px; color: var(--danger); font-weight: 700; display: inline-flex; align-items: center; gap: 2px;">
+                                            <span class="material-symbols-outlined" style="font-size: 13px;">cancel</span> Hiba
+                                        </span>
+                                        {% endif %}
+                                        <span style="font-size: 11px; color: var(--text-muted);">{{ ev.created_at[11:19] }}</span>
+                                    </div>
+                                </div>
+
+                                <!-- Paraméterek & Metaadatok -->
+                                <div style="margin-top: 4px;">
+                                    {% if ev.meta_data.action and ev.event_type == 'button_click' %}
+                                    <span class="param-chip" style="color:#d8b4fe;">akció: {{ ev.meta_data.action }}</span>
+                                    {% endif %}
+                                    {% if ev.meta_data.target_destination %}
+                                    <span class="param-chip" style="color:#93c5fd;">célállomás: {{ ev.meta_data.target_destination }}</span>
+                                    {% endif %}
+                                    {% if ev.meta_data.card_title %}
+                                    <span class="param-chip">{{ ev.meta_data.card_title }}</span>
+                                    {% endif %}
+                                    {% if ev.search_params.origin %}
+                                    <span class="param-chip">Indulás: {{ ev.search_params.origin }}</span>
+                                    {% endif %}
+                                    {% if ev.search_params.destination_city or ev.search_params.destination %}
+                                    <span class="param-chip">Cél: {{ ev.search_params.destination_city or ev.search_params.destination }}</span>
+                                    {% endif %}
+                                    {% if ev.search_params.adults %}
+                                    <span class="param-chip">{{ ev.search_params.adults }} felnőtt</span>
+                                    {% endif %}
+                                    {% if ev.search_params.duration %}
+                                    <span class="param-chip">{{ ev.search_params.duration }} nap</span>
+                                    {% endif %}
+                                    {% if ev.error_message %}
+                                    <div style="color: var(--danger); font-size: 12px; margin-top: 4px;">Hiba: {{ ev.error_message }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <button 
+                                    onclick="toggleJson('json_{{ ev.id }}')" 
+                                    style="background:none; border:none; color:var(--text-muted); font-size:11px; cursor:pointer; padding:4px 0; margin-top:4px; text-decoration:underline;">
+                                    Adatstruktúra (JSON) megtekintése ▾
+                                </button>
+                                <pre id="json_{{ ev.id }}" class="raw-json">{{ ev.search_params | tojson(indent=2) }}</pre>
+                            </div>
+                            {% endfor %}
+                        </div>
                     </div>
                     {% endfor %}
                 </div>
@@ -660,11 +914,11 @@
                 document.getElementById('kpiLabelUsers').innerText = 'Béta Felhasználók';
             }
 
-            // 4. Fetch dynamic filtered KPIs & Timeline from API
+            // 4. Fetch dynamic filtered KPIs & Sessions from API
             try {
-                const [kpisRes, timelineRes] = await Promise.all([
+                const [kpisRes, sessionsRes] = await Promise.all([
                     fetch(`/api/admin/kpis?user=${encodeURIComponent(userParam)}`),
-                    fetch(`/api/admin/timeline?user=${encodeURIComponent(userParam)}`)
+                    fetch(`/api/admin/sessions?user=${encodeURIComponent(userParam)}`)
                 ]);
 
                 if (kpisRes.ok) {
@@ -674,10 +928,10 @@
                     }
                 }
 
-                if (timelineRes.ok) {
-                    const timelineData = await timelineRes.json();
-                    if (timelineData.status === 'ok') {
-                        renderTimeline(timelineData.events);
+                if (sessionsRes.ok) {
+                    const sessionsData = await sessionsRes.json();
+                    if (sessionsData.status === 'ok') {
+                        renderSessions(sessionsData.sessions);
                     }
                 }
             } catch (err) {
@@ -697,61 +951,175 @@
             document.getElementById('kpiProposals').innerText = k.proposals_exported;
         }
 
-        function renderTimeline(events) {
-            const container = document.getElementById('timelineContainer');
-            document.getElementById('timelineCount').innerText = `${events.length} esemény`;
+        function toggleSessionEvents(id, btn) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            const isOpen = el.classList.contains('open');
+            if (isOpen) {
+                el.classList.remove('open');
+                if (btn) {
+                    const span = btn.querySelector('span:last-child');
+                    if (span) span.textContent = span.textContent.replace('▴', '▾');
+                }
+            } else {
+                el.classList.add('open');
+                if (btn) {
+                    const span = btn.querySelector('span:last-child');
+                    if (span) span.textContent = span.textContent.replace('▾', '▴');
+                }
+            }
+        }
 
-            if (!events || events.length === 0) {
+        function renderSessions(sessions) {
+            const container = document.getElementById('sessionsContainer');
+            const countEl = document.getElementById('sessionsCount');
+            if (countEl) countEl.innerText = `${sessions.length} munkamenet`;
+
+            if (!sessions || sessions.length === 0) {
                 container.innerHTML = `
                     <div style="padding: 40px; text-align: center; color: var(--text-muted);">
-                        Még nem érkezett telemetria esemény erre a szűrésre.
+                        Még nem érkezett session telemetria erre a szűrésre.
                     </div>
                 `;
                 return;
             }
 
-            container.innerHTML = events.map(ev => {
-                const modPrefix = (ev.module || '').split('_')[0];
-                const p = ev.search_params || {};
-                const chipsHtml = [
-                    p.origin ? `<span class="param-chip">Indulás: ${p.origin}</span>` : '',
-                    (p.destination_city || p.destination) ? `<span class="param-chip">Cél: ${p.destination_city || p.destination}</span>` : '',
-                    p.adults ? `<span class="param-chip">${p.adults} felnőtt</span>` : '',
-                    p.duration ? `<span class="param-chip">${p.duration} nap</span>` : '',
-                    ev.error_message ? `<div style="color: var(--danger); font-size: 12px; margin-top: 4px;">Hiba: ${ev.error_message}</div>` : ''
-                ].filter(Boolean).join('');
+            container.innerHTML = sessions.map((s, sIdx) => {
+                const uid = s.user_id || 'guest';
+                const userInitials = uid.slice(0, 2).toUpperCase();
+                const clarityBtn = s.clarity_url ? `
+                    <a href="${s.clarity_url}" target="_blank" class="btn-clarity" title="Megnyitás Microsoft Clarity-ben">
+                        <span class="material-symbols-outlined" style="font-size: 14px;">videocam</span>
+                        Clarity Felvétel ↗
+                    </a>
+                ` : '';
+
+                // Journey Nodes
+                let journeyHtml = '';
+                if (s.journey_path && s.journey_path.length > 0) {
+                    const stepsHtml = s.journey_path.map((step, idx) => {
+                        const isLast = idx === s.journey_path.length - 1;
+                        const dwellBadge = step.dwell_sec > 0 ? `<span class="journey-node-dwell" title="Tartózkodási idő">${step.dwell_formatted}</span>` : '';
+                        return `
+                            <div class="journey-node">
+                                <div class="journey-node-top">
+                                    <span class="journey-node-badge">
+                                        <span class="material-symbols-outlined" style="font-size: 13px;">${step.icon}</span>
+                                        ${step.badge}
+                                    </span>
+                                    ${dwellBadge}
+                                </div>
+                                <div class="journey-node-title" title="${step.title}">${step.title}</div>
+                                <div class="journey-node-subtitle" title="${step.subtitle}">${step.subtitle}</div>
+                            </div>
+                            ${!isLast ? '<span class="material-symbols-outlined journey-arrow">arrow_forward</span>' : ''}
+                        `;
+                    }).join('');
+                    journeyHtml = `<div class="journey-trail">${stepsHtml}</div>`;
+                } else {
+                    journeyHtml = `<div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">Közvetlen látogatás / Kezdő interakció</div>`;
+                }
+
+                // Granular events list
+                const eventsHtml = (s.events || []).map(ev => {
+                    const mod = ev.module || '';
+                    const modPrefix = mod.split('_')[0];
+                    const p = ev.search_params || {};
+                    const meta = ev.meta_data || {};
+
+                    const isBtnClick = ev.event_type === 'button_click';
+                    const btnLabel = isBtnClick && meta.button_text ? `<span style="font-size: 12px; color: #cbd5e1; font-weight:600;">„${meta.button_text}”</span>` : '';
+
+                    const chips = [];
+                    if (isBtnClick && meta.action) chips.push(`<span class="param-chip" style="color:#d8b4fe;">akció: ${meta.action}</span>`);
+                    if (meta.target_destination) chips.push(`<span class="param-chip" style="color:#93c5fd;">célállomás: ${meta.target_destination}</span>`);
+                    if (meta.card_title) chips.push(`<span class="param-chip">${meta.card_title}</span>`);
+                    if (p.origin) chips.push(`<span class="param-chip">Indulás: ${p.origin}</span>`);
+                    if (p.destination_city || p.destination) chips.push(`<span class="param-chip">Cél: ${p.destination_city || p.destination}</span>`);
+                    if (p.adults) chips.push(`<span class="param-chip">${p.adults} felnőtt</span>`);
+                    if (p.duration) chips.push(`<span class="param-chip">${p.duration} nap</span>`);
+                    if (ev.error_message) chips.push(`<div style="color: var(--danger); font-size: 12px; margin-top: 4px;">Hiba: ${ev.error_message}</div>`);
+
+                    const durationBadge = ev.duration_ms ? `<span style="font-size: 11.5px; font-weight: 600; color: #a5b4fc;">${ev.duration_formatted}</span>` : '';
+                    const successBadge = ev.success ? `
+                        <span style="font-size: 11.5px; color: var(--success); font-weight: 700; display: inline-flex; align-items: center; gap: 2px;">
+                            <span class="material-symbols-outlined" style="font-size: 13px;">check_circle</span>
+                            ${ev.results_count !== "-" ? ev.results_count + " db" : "OK"}
+                        </span>
+                    ` : `
+                        <span style="font-size: 11.5px; color: var(--danger); font-weight: 700; display: inline-flex; align-items: center; gap: 2px;">
+                            <span class="material-symbols-outlined" style="font-size: 13px;">cancel</span> Hiba
+                        </span>
+                    `;
+
+                    return `
+                        <div class="event-card">
+                            <div class="event-header">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span class="event-module-badge badge-${modPrefix}">${mod}</span>
+                                    <strong style="font-size: 12.5px;">${ev.event_type}</strong>
+                                    ${btnLabel}
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    ${durationBadge}
+                                    ${successBadge}
+                                    <span style="font-size: 11px; color: var(--text-muted);">${(ev.created_at || '').substring(11, 19)}</span>
+                                </div>
+                            </div>
+                            ${chips.length > 0 ? `<div style="margin-top: 4px;">${chips.join('')}</div>` : ''}
+                            <button 
+                                onclick="toggleJson('json_${ev.id}')" 
+                                style="background:none; border:none; color:var(--text-muted); font-size:11px; cursor:pointer; padding:4px 0; margin-top:4px; text-decoration:underline;">
+                                Adatstruktúra (JSON) megtekintése ▾
+                            </button>
+                            <pre id="json_${ev.id}" class="raw-json">${JSON.stringify(p, null, 2)}</pre>
+                        </div>
+                    `;
+                }).join('');
+
+                const accordionId = `sess_ev_${sIdx}_${s.session_id}`;
 
                 return `
-                    <div class="event-card">
-                        <div class="event-header">
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <span class="event-module-badge badge-${modPrefix}">${ev.module}</span>
-                                <strong style="font-size: 13px;">${ev.event_type}</strong>
-                                <span style="font-size: 12px; color: var(--text-muted);">• @${ev.user_id}</span>
+                    <div class="session-card">
+                        <div class="session-header">
+                            <div class="session-user-info">
+                                <div class="user-avatar" style="width:30px; height:30px; font-size:12px;">${userInitials}</div>
+                                <div>
+                                    <div style="font-weight: 700; font-size: 13.5px; color: #fff;">
+                                        ${s.user_display}
+                                        <span style="font-size: 11.5px; color: var(--text-muted); font-weight: normal;">• @${s.user_id}</span>
+                                    </div>
+                                    <div style="font-size: 11px; color: var(--text-muted);">
+                                        Kezdés: ${s.started_at}
+                                    </div>
+                                </div>
                             </div>
-                            <div style="display: flex; align-items: center; gap: 12px;">
-                                ${ev.duration_ms ? `<span style="font-size: 12px; font-weight: 600; color: #a5b4fc;">${ev.duration_formatted}</span>` : ''}
-                                ${ev.success ? `
-                                    <span style="font-size: 12px; color: var(--success); font-weight: 700; display: inline-flex; align-items: center; gap: 3px;">
-                                        <span class="material-symbols-outlined" style="font-size: 14px;">check_circle</span> Siker (${ev.results_count} db)
+                            <div class="session-meta-chips">
+                                <span class="duration-badge">
+                                    <span class="material-symbols-outlined" style="font-size: 14px;">timer</span>
+                                    ${s.duration_formatted}
+                                </span>
+                                ${s.searches_count > 0 ? `<span class="param-chip" style="color:#a5b4fc; font-weight:600;">${s.searches_count} keresés</span>` : ''}
+                                ${s.clicks_count > 0 ? `<span class="param-chip">${s.clicks_count} interakció</span>` : ''}
+                                ${s.has_error ? `
+                                    <span style="font-size: 11.5px; color: var(--danger); font-weight: 700; display: inline-flex; align-items: center; gap: 3px;">
+                                        <span class="material-symbols-outlined" style="font-size: 14px;">warning</span> Hiba
                                     </span>
-                                ` : `
-                                    <span style="font-size: 12px; color: var(--danger); font-weight: 700; display: inline-flex; align-items: center; gap: 3px;">
-                                        <span class="material-symbols-outlined" style="font-size: 14px;">cancel</span> Hiba
-                                    </span>
-                                `}
-                                <span style="font-size: 11px; color: var(--text-muted);">${(ev.created_at || '').substring(11, 19)}</span>
+                                ` : ''}
+                                ${clarityBtn}
                             </div>
                         </div>
 
-                        ${chipsHtml ? `<div style="margin-top: 6px;">${chipsHtml}</div>` : ''}
+                        ${journeyHtml}
 
-                        <button 
-                            onclick="toggleJson('json_${ev.id}')" 
-                            style="background:none; border:none; color:var(--text-muted); font-size:11px; cursor:pointer; padding:4px 0; margin-top:6px; text-decoration:underline;">
-                            Adatstruktúra (JSON) megtekintése ▾
+                        <button class="session-accordion-toggle" onclick="toggleSessionEvents('${accordionId}', this)">
+                            <span class="material-symbols-outlined" style="font-size: 16px;">unfold_more</span>
+                            <span>Részletes eseménynapló (${(s.events || []).length} db esemény) ▾</span>
                         </button>
-                        <pre id="json_${ev.id}" class="raw-json">${JSON.stringify(p, null, 2)}</pre>
+
+                        <div id="${accordionId}" class="session-events-list">
+                            ${eventsHtml}
+                        </div>
                     </div>
                 `;
             }).join('');

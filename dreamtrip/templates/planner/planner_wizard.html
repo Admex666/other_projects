@@ -65,16 +65,37 @@
 
     <!-- FEJLÉC -->
     <div class="page-header" style="text-align: left; margin-bottom: 24px;">
-        <div style="display: inline-flex; align-items: center; gap: 8px; background: var(--accent-glow); color: var(--primary); padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 10px;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-            </svg>
-            <span>Master Travel Planner — Integrált Döntéstámogató Rendszer</span>
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 14px;">
+            <div>
+                <div style="display: inline-flex; align-items: center; gap: 8px; background: var(--accent-glow); color: var(--primary); padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 10px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                    <span>Master Travel Planner — Integrált Döntéstámogató Rendszer</span>
+                </div>
+                <h1 class="page-title" style="margin-bottom: 6px;">Teljes Utazás Tervezése 1 Folyamatban</h1>
+                <p class="page-subtitle" style="margin: 0;">
+                    Állítsd be az utazási szempontjaidat, majd mi kiválasztjuk a legjobban illeszkedő célállomást, járatot és szállást.
+                </p>
+            </div>
+            {% if dummy_mode_allowed %}
+            <div id="dummyModeWidget" style="background: rgba(245, 158, 11, 0.08); border: 1.5px solid rgba(245, 158, 11, 0.4); border-radius: 16px; padding: 10px 16px; display: inline-flex; align-items: center; gap: 12px; margin-top: 4px; transition: all 0.2s ease;">
+                <div>
+                    <div style="display: flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 800; color: #b45309; text-transform: uppercase; letter-spacing: 0.5px;">
+                        <span class="material-symbols-outlined" style="font-size: 16px;">biotech</span>
+                        <span>Tesztüzemmód (0 token)</span>
+                    </div>
+                    <div style="font-size: 11px; color: var(--text-secondary); margin-top: 1px;">
+                        Szimulált adatok azonnal
+                    </div>
+                </div>
+                <label style="display: inline-flex; align-items: center; gap: 6px; cursor: pointer; user-select: none; background: var(--bg-surface); padding: 5px 12px; border-radius: 20px; border: 1px solid rgba(245, 158, 11, 0.4); font-size: 12px; font-weight: 700; color: #d97706;">
+                    <input type="checkbox" id="dummyModeToggle" onchange="window.PlannerState.toggleDummyMode(this.checked)" style="accent-color: #d97706; width: 15px; height: 15px; cursor: pointer;">
+                    <span id="dummyModeStatusLabel">Dummy BE</span>
+                </label>
+            </div>
+            {% endif %}
         </div>
-        <h1 class="page-title" style="margin-bottom: 6px;">Teljes Utazás Tervezése 1 Folyamatban</h1>
-        <p class="page-subtitle" style="margin: 0;">
-            Állítsd be az utazási szempontjaidat, majd mi kiválasztjuk a legjobban illeszkedő célállomást, járatot és szállást.
-        </p>
     </div>
 
     <!-- WORKFLOW STEPPER -->

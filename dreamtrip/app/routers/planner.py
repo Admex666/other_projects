@@ -7,11 +7,16 @@ from pydantic import BaseModel
 
 
 from app.core.config import templates, IS_PRODUCTION
-from app.core.auth import get_current_user
+from app.core.auth import get_current_user, is_dummy_mode_allowed
 from app.models.models import UnifiedTrip
 from app.services.planner_service import (
     calculate_planner_destinations_sync,
     search_and_rank_planner_flights
+)
+from app.services.dummy_planner_service import (
+    generate_dummy_destinations,
+    generate_dummy_flights,
+    generate_dummy_stays
 )
 from app.services.exchange_service import get_eur_huf_rate
 from app.services.analytics_service import record_telemetry_event
@@ -59,6 +64,7 @@ class MasterPlannerIntake(BaseModel):
     weight_safety: float = 33.0
     ahp_comparisons: Optional[Dict[str, float]] = None
     ahp_weights: Optional[Dict[str, float]] = None
+    dummy_mode: Optional[bool] = False
 
 class PlannerFlightSearchRequest(BaseModel):
     origin: str = "Budapest"
@@ -83,6 +89,7 @@ class PlannerFlightSearchRequest(BaseModel):
     max_duration_h: Optional[float] = None
     weights: Optional[Dict[str, float]] = None
     promethee_params: Optional[Dict[str, Any]] = None
+    dummy_mode: Optional[bool] = False
 
 class PlannerStaySearchRequest(BaseModel):
     city: str = "Róma"
@@ -97,16 +104,44 @@ class PlannerStaySearchRequest(BaseModel):
     hotel_types: Optional[List[str]] = None
     breakfast: bool = False
     amenities: Optional[List[str]] = None
+    dummy_mode: Optional[bool] = False
 
 # Background Task
-def run_planner_destinations_task(user_key: str, data: MasterPlannerIntake):
+def run_planner_destinations_task(user_key: str, data: MasterPlannerIntake, is_dummy: bool = False, session_id: Optional[str] = None):
     global planner_dest_status
     planner_dest_status[user_key] = {
         "status": "running",
-        "progress": 5,
-        "status_text": "Célállomások éghajlati és repülési adatainak elemzése..."
+        "progress": 25,
+        "status_text": "[Szimulációs mód] Célállomások gyors betöltése..." if is_dummy else "Célállomások éghajlati és repülési adatainak elemzése..."
     }
     try:
+        if is_dummy:
+            time.sleep(0.35)
+            results = generate_dummy_destinations(data)
+            planner_dest_status[user_key] = {
+                "status": "done",
+                "progress": 100,
+                "count": len(results),
+                "results": results,
+                "is_dummy": True
+            }
+            record_telemetry_event(
+                user_id=user_key.replace("planner_", ""),
+                session_id=session_id,
+                event_type="search_completed",
+                module="destination_matcher",
+                search_params={
+                    "origin": data.origin,
+                    "month": data.month,
+                    "duration": data.duration,
+                    "adults": data.adults,
+                    "dummy_mode": True
+                },
+                results_count=len(results),
+                success=True
+            )
+            return
+
         def on_prog(p, txt):
             planner_dest_status[user_key]["progress"] = p
             planner_dest_status[user_key]["status_text"] = txt
@@ -157,6 +192,7 @@ def run_planner_destinations_task(user_key: str, data: MasterPlannerIntake):
         }
         record_telemetry_event(
             user_id=user_key.replace("planner_", ""),
+            session_id=session_id,
             event_type="search_completed",
             module="destination_matcher",
             search_params={
@@ -179,6 +215,7 @@ def run_planner_destinations_task(user_key: str, data: MasterPlannerIntake):
         }
         record_telemetry_event(
             user_id=user_key.replace("planner_", ""),
+            session_id=session_id,
             event_type="search_completed",
             module="destination_matcher",
             search_params={"origin": data.origin, "month": data.month},
@@ -190,9 +227,11 @@ def run_planner_destinations_task(user_key: str, data: MasterPlannerIntake):
 @router.get("/planner", response_class=HTMLResponse)
 async def master_planner_page(request: Request):
     user = get_current_user(request)
+    dummy_allowed = is_dummy_mode_allowed(user)
     return templates.TemplateResponse("planner/planner_wizard.html", {
         "request": request,
         "user": user,
+        "dummy_mode_allowed": dummy_allowed,
         "is_production": IS_PRODUCTION
     })
 
@@ -200,10 +239,21 @@ async def master_planner_page(request: Request):
 @router.post("/api/planner/init-destinations")
 async def init_planner_destinations(data: MasterPlannerIntake, background_tasks: BackgroundTasks, request: Request):
     user = get_current_user(request) or "guest_planner"
+    session_id = request.headers.get("x-session-id") or request.cookies.get("optivoya_session_id")
     user_key = f"planner_{user}"
-    planner_dest_status[user_key] = {"status": "running", "progress": 0, "status_text": "Keresés indítása..."}
-    background_tasks.add_task(run_planner_destinations_task, user_key, data)
-    return JSONResponse({"status": "ok", "message": "Destination calculation started"})
+    is_dummy = is_dummy_mode_allowed(user) and (
+        bool(data.dummy_mode)
+        or request.headers.get("x-planner-dummy-mode") == "true"
+        or request.cookies.get("planner_dummy_mode") == "1"
+        or request.query_params.get("dummy") == "1"
+    )
+    planner_dest_status[user_key] = {
+        "status": "running",
+        "progress": 0,
+        "status_text": "[Szimulációs mód] Célállomások indítása..." if is_dummy else "Keresés indítása..."
+    }
+    background_tasks.add_task(run_planner_destinations_task, user_key, data, is_dummy, session_id)
+    return JSONResponse({"status": "ok", "message": "Destination calculation started", "is_dummy": is_dummy})
 
 @router.get("/api/planner/destinations-status")
 async def get_planner_destinations_status(request: Request):
@@ -215,6 +265,32 @@ async def get_planner_destinations_status(request: Request):
 async def api_planner_search_flights(req: PlannerFlightSearchRequest, request: Request):
     t0 = time.perf_counter()
     user = get_current_user(request) or "guest_planner"
+    session_id = request.headers.get("x-session-id") or request.cookies.get("optivoya_session_id")
+    is_dummy = is_dummy_mode_allowed(user) and (
+        bool(req.dummy_mode)
+        or request.headers.get("x-planner-dummy-mode") == "true"
+        or request.cookies.get("planner_dummy_mode") == "1"
+        or request.query_params.get("dummy") == "1"
+    )
+    if is_dummy:
+        flights = generate_dummy_flights(req)
+        duration_ms = round((time.perf_counter() - t0) * 1000, 1)
+        record_telemetry_event(
+            user_id=user,
+            session_id=session_id,
+            event_type="search_completed",
+            module="flight_intelligence",
+            search_params={
+                "origin": req.origin,
+                "destination": req.destination,
+                "dummy_mode": True
+            },
+            duration_ms=duration_ms,
+            results_count=len(flights),
+            success=True
+        )
+        return JSONResponse({"status": "ok", "count": len(flights), "flights": flights, "is_dummy": True})
+
     try:
         flights = search_and_rank_planner_flights(
             origin=req.origin,
@@ -244,6 +320,7 @@ async def api_planner_search_flights(req: PlannerFlightSearchRequest, request: R
         duration_ms = round((time.perf_counter() - t0) * 1000, 1)
         record_telemetry_event(
             user_id=user,
+            session_id=session_id,
             event_type="search_completed",
             module="flight_intelligence",
             search_params={
@@ -264,6 +341,7 @@ async def api_planner_search_flights(req: PlannerFlightSearchRequest, request: R
         print(f"[PLANNER FLIGHT ERROR] {e}")
         record_telemetry_event(
             user_id=user,
+            session_id=session_id,
             event_type="search_completed",
             module="flight_intelligence",
             search_params={"origin": req.origin, "destination": req.destination},
@@ -278,6 +356,42 @@ _PLANNER_STAYS_CACHE: Dict[str, List[Dict[str, Any]]] = {}
 @router.post("/api/planner/search-stays")
 async def api_planner_search_stays(req: PlannerStaySearchRequest, request: Request):
     t_start = time.perf_counter()
+    user = get_current_user(request) or "guest_planner"
+    session_id = request.headers.get("x-session-id") or request.cookies.get("optivoya_session_id")
+    is_dummy = is_dummy_mode_allowed(user) and (
+        bool(req.dummy_mode)
+        or request.headers.get("x-planner-dummy-mode") == "true"
+        or request.cookies.get("planner_dummy_mode") == "1"
+        or request.query_params.get("dummy") == "1"
+    )
+    if is_dummy:
+        stays = generate_dummy_stays(req)
+        duration_ms = round((time.perf_counter() - t_start) * 1000, 1)
+        record_telemetry_event(
+            user_id=user,
+            session_id=session_id,
+            event_type="search_completed",
+            module="accommodation_intelligence",
+            search_params={
+                "city": req.city,
+                "country": req.country or "",
+                "dummy_mode": True
+            },
+            duration_ms=duration_ms,
+            results_count=len(stays),
+            success=True
+        )
+        return JSONResponse({
+            "status": "ok",
+            "count": len(stays),
+            "stays": stays[:35],
+            "meta": {
+                "source": "dummy_simulation_mode",
+                "timings_ms": { "stays_fetch": duration_ms }
+            },
+            "is_dummy": True
+        })
+
     try:
         from datetime import datetime as dt
         try:
@@ -379,6 +493,7 @@ async def api_planner_search_stays(req: PlannerStaySearchRequest, request: Reque
         user = get_current_user(request) or "guest_planner"
         record_telemetry_event(
             user_id=user,
+            session_id=session_id,
             event_type="search_completed",
             module="accommodation_intelligence",
             search_params={
@@ -412,6 +527,7 @@ async def api_planner_search_stays(req: PlannerStaySearchRequest, request: Reque
         user = get_current_user(request) or "guest_planner"
         record_telemetry_event(
             user_id=user,
+            session_id=session_id,
             event_type="search_completed",
             module="accommodation_intelligence",
             search_params={"city": req.city, "checkin": req.checkin, "checkout": req.checkout},
@@ -445,6 +561,7 @@ async def get_numbeo_breakdown(city: str, country: Optional[str] = "", region: O
 @router.post("/api/trip/sync")
 async def sync_unified_trip(trip: UnifiedTrip, request: Request):
     user = get_current_user(request) or "default_user"
+    session_id = request.headers.get("x-session-id") or request.cookies.get("optivoya_session_id")
     data = trip.model_dump()
     active_trips[user] = data
     active_trips[trip.trip_id] = data
@@ -454,6 +571,7 @@ async def sync_unified_trip(trip: UnifiedTrip, request: Request):
         dest_name = data["destination"].get("name") or data["destination"].get("city") or "Célpont"
         record_telemetry_event(
             user_id=user,
+            session_id=session_id,
             event_type="proposal_exported",
             module="proposal",
             search_params={

@@ -58,7 +58,11 @@
             try {
                 const res = await fetch('/api/planner/search-stays', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Planner-Dummy-Mode': state.dummy_mode ? 'true' : 'false',
+                        'X-Session-ID': state.getSessionId()
+                    },
                     body: JSON.stringify({
                         city: destCity,
                         country: destCountry,
@@ -69,7 +73,8 @@
                         min_rating: state.intake.hotel_min_rating,
                         hotel_types: state.intake.hotel_types,
                         breakfast: state.intake.breakfast,
-                        amenities: state.intake.amenities
+                        amenities: state.intake.amenities,
+                        dummy_mode: Boolean(state.dummy_mode)
                     })
                 });
 
@@ -104,7 +109,11 @@
             try {
                 const res = await fetch('/api/planner/search-stays', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Planner-Dummy-Mode': state.dummy_mode ? 'true' : 'false',
+                        'X-Session-ID': state.getSessionId()
+                    },
                     body: JSON.stringify({
                         city: destCity,
                         country: destCountry,
@@ -115,7 +124,8 @@
                         min_rating: state.intake.hotel_min_rating,
                         hotel_types: state.intake.hotel_types,
                         breakfast: state.intake.breakfast,
-                        amenities: state.intake.amenities
+                        amenities: state.intake.amenities,
+                        dummy_mode: Boolean(state.dummy_mode)
                     })
                 });
                 const data = await res.json();

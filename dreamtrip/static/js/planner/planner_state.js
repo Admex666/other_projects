@@ -12,6 +12,34 @@
         interval_in_fp: null,
         criteria_completed: false,
         pollInterval: null,
+        dummy_mode: localStorage.getItem('optivoya_dummy_mode') === 'true',
+
+        toggleDummyMode(enabled) {
+            this.dummy_mode = Boolean(enabled);
+            localStorage.setItem('optivoya_dummy_mode', this.dummy_mode ? 'true' : 'false');
+            this.updateDummyModeUI();
+            if (typeof showToast === 'function') {
+                showToast(this.dummy_mode ? 'Szimulációs mód aktív (Dummy adatok — 0 token).' : 'Élő keresések aktívak.', 'info');
+            }
+        },
+
+        updateDummyModeUI() {
+            const toggle = document.getElementById('dummyModeToggle');
+            if (toggle) toggle.checked = this.dummy_mode;
+            const label = document.getElementById('dummyModeStatusLabel');
+            if (label) label.innerText = this.dummy_mode ? 'Dummy BE' : 'Dummy KI';
+            const widget = document.getElementById('dummyModeWidget');
+            if (widget) {
+                widget.style.background = this.dummy_mode ? 'rgba(245, 158, 11, 0.12)' : 'var(--bg-surface-subtle)';
+                widget.style.borderColor = this.dummy_mode ? 'rgba(245, 158, 11, 0.5)' : 'var(--border-subtle)';
+            }
+        },
+
+        getSessionId() {
+            return (window.OptivoyaTelemetry && window.OptivoyaTelemetry.sessionId) 
+                || sessionStorage.getItem('optivoya_session_id') 
+                || 'sess_planner';
+        },
 
         intake: {
             origin: "Budapest (BUD)",
@@ -93,6 +121,12 @@
                     showToast(`Kérlek először fejezd be a korábbi lépést a(z) "${stepNames[stepNum] || stepNum}" feloldásához!`, 'info');
                 }
                 return false;
+            if (window.OptivoyaTelemetry && this.step !== stepNum) {
+                window.OptivoyaTelemetry.trackEvent('step_navigation', 'master_planner', {
+                    to_step: stepNum,
+                    from_step: this.step,
+                    step_name: ["Preferenciák", "Célállomás", "Járat", "Szállás", "Kész Terv"][stepNum] || String(stepNum)
+                });
             }
 
             this.step = stepNum;
@@ -198,4 +232,9 @@
     };
 
     window.PlannerState = PlannerState;
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => PlannerState.updateDummyModeUI());
+    } else {
+        PlannerState.updateDummyModeUI();
+    }
 })();

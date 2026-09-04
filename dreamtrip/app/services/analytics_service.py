@@ -390,3 +390,239 @@ def get_user_timeline(user_id: Optional[Union[str, List[str]]] = None, limit: in
 
     conn.close()
     return timeline
+
+
+def _parse_ts(ts_str: Any) -> Optional[datetime]:
+    if not ts_str:
+        return None
+    s = str(ts_str).replace("Z", "").replace("T", " ")
+    if "." in s:
+        s = s.split(".")[0]
+    for fmt in ("%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M", "%Y-%m-%d"):
+        try:
+            return datetime.strptime(s[:19], fmt)
+        except Exception:
+            pass
+    return None
+
+def format_duration_human(seconds: float) -> str:
+    s = max(0, int(round(seconds)))
+    if s < 60:
+        return f"{s} mp"
+    m = s // 60
+    rem_s = s % 60
+    if m < 60:
+        return f"{m} perc {rem_s} mp" if rem_s > 0 else f"{m} perc"
+    h = m // 60
+    rem_m = m % 60
+    return f"{h} óra {rem_m} perc"
+
+
+def get_user_sessions_summary(
+    user_id: Optional[Union[str, List[str]]] = None,
+    limit: int = 50
+) -> List[Dict[str, Any]]:
+    """
+    Összegzi a telemetria eseményeket összefüggő látogatási munkamenetekre (User Journeys).
+    Kiszámítja az egyes sessionök teljes időtartamát, a bejárt útvonalat és a lépések közötti tartózkodási időt (dwell time).
+    """
+    raw_events = get_user_timeline(user_id=user_id, limit=300)
+    if not raw_events:
+        return []
+
+    from app.core.config import CLARITY_PROJECT_ID
+
+    # Csoportosítás session_id szerint
+    sessions_dict: Dict[str, List[Dict[str, Any]]] = {}
+    for ev in raw_events:
+        sid = ev.get("session_id") or f"sess_orphan_{ev.get('user_id')}_{ev.get('id')}"
+        if sid not in sessions_dict:
+            sessions_dict[sid] = []
+        sessions_dict[sid].append(ev)
+
+    summaries = []
+    for sid, ev_list in sessions_dict.items():
+        # Kronológiai sorrend (legrégebbi elöl, hogy lássuk a haladást)
+        ev_list.sort(key=lambda x: str(x.get("created_at") or ""))
+        
+        first_ev = ev_list[0]
+        last_ev = ev_list[-1]
+        
+        uid = first_ev.get("user_id") or "guest"
+        user_disp = first_ev.get("user_display") or uid
+
+        t_start = _parse_ts(first_ev.get("created_at"))
+        t_end = _parse_ts(last_ev.get("created_at"))
+
+        if t_start and t_end and t_end >= t_start:
+            total_duration_sec = int((t_end - t_start).total_seconds())
+        else:
+            total_duration_sec = 0
+
+        # Ha csak 1 esemény volt, vagy 0 másodperc, nézzük meg a kliens dwell_sec metaadatot
+        if total_duration_sec == 0:
+            client_dwell = 0
+            for e in ev_list:
+                m = e.get("meta_data") or {}
+                if isinstance(m, dict) and m.get("dwell_sec"):
+                    client_dwell += int(m.get("dwell_sec", 0))
+            total_duration_sec = max(client_dwell, 15 if len(ev_list) > 1 else 8)
+
+        # Felhasználói út lépéseinek (Journey Path) kibontása
+        journey_path = []
+        searches_count = 0
+        clicks_count = 0
+        has_error = False
+
+        for i, ev in enumerate(ev_list):
+            ev_type = ev.get("event_type", "")
+            mod = ev.get("module", "")
+            params = ev.get("search_params") or {}
+            meta = ev.get("meta_data") or {}
+            if not isinstance(meta, dict): meta = {}
+            if not isinstance(params, dict): params = {}
+
+            if not ev.get("success"):
+                has_error = True
+
+            # Számoljuk a következő eseményig eltelt időt (dwell)
+            step_dwell_sec = 0
+            if i < len(ev_list) - 1:
+                cur_t = _parse_ts(ev.get("created_at"))
+                next_t = _parse_ts(ev_list[i + 1].get("created_at"))
+                if cur_t and next_t and next_t >= cur_t:
+                    step_dwell_sec = int((next_t - cur_t).total_seconds())
+            if step_dwell_sec == 0 and meta.get("dwell_sec"):
+                step_dwell_sec = int(meta.get("dwell_sec", 0))
+
+            # Szemantikus lépés azonosítása
+            step_obj = None
+            if mod == "destination_matcher" and ev_type == "search_completed":
+                searches_count += 1
+                cnt = ev.get("results_count")
+                origin = params.get("origin", "Budapest")
+                journey_path.append({
+                    "step_idx": 1,
+                    "title": f"Célállomások szűrése ({cnt} találat)",
+                    "subtitle": f"Indulás: {origin}",
+                    "icon": "location_on",
+                    "badge": "1. Célpont",
+                    "dwell_sec": step_dwell_sec,
+                    "dwell_formatted": format_duration_human(step_dwell_sec),
+                    "created_at": str(ev.get("created_at") or "")[-8:]
+                })
+            elif mod == "flight_intelligence" and ev_type == "search_completed":
+                searches_count += 1
+                cnt = ev.get("results_count")
+                dest = params.get("destination", "Célállomás")
+                journey_path.append({
+                    "step_idx": 2,
+                    "title": f"Járatkeresés ({cnt} járat)",
+                    "subtitle": f"Cél: {dest}",
+                    "icon": "flight",
+                    "badge": "2. Járat",
+                    "dwell_sec": step_dwell_sec,
+                    "dwell_formatted": format_duration_human(step_dwell_sec),
+                    "created_at": str(ev.get("created_at") or "")[-8:]
+                })
+            elif mod == "accommodation_intelligence" and ev_type == "search_completed":
+                searches_count += 1
+                cnt = ev.get("results_count")
+                city = params.get("city", "Szállás")
+                journey_path.append({
+                    "step_idx": 3,
+                    "title": f"Szálláskeresés ({cnt} szállás)",
+                    "subtitle": f"Város: {city}",
+                    "icon": "hotel",
+                    "badge": "3. Szállás",
+                    "dwell_sec": step_dwell_sec,
+                    "dwell_formatted": format_duration_human(step_dwell_sec),
+                    "created_at": str(ev.get("created_at") or "")[-8:]
+                })
+            elif ev_type == "proposal_exported" or mod == "proposal":
+                dest = params.get("destination") or "Kész Terv"
+                journey_path.append({
+                    "step_idx": 4,
+                    "title": "Ajánlat Exportálva (PDF)",
+                    "subtitle": dest,
+                    "icon": "picture_as_pdf",
+                    "badge": "4. Ajánlat",
+                    "dwell_sec": 0,
+                    "dwell_formatted": "Kész",
+                    "created_at": str(ev.get("created_at") or "")[-8:]
+                })
+            elif ev_type == "button_click":
+                clicks_count += 1
+                btn_txt = meta.get("button_text") or meta.get("action") or "Gombkattintás"
+                act = meta.get("action", "")
+                icon = "touch_app"
+                badge = "Kattintás"
+                step_idx = meta.get("planner_step", 0)
+
+                if "destination_selected" in act or "Járatok keresése" in btn_txt:
+                    icon = "check_circle"
+                    badge = "Célpont Kész"
+                    step_idx = 1
+                elif "flight_selected" in act or "Járat kiválasztása" in btn_txt:
+                    icon = "done_all"
+                    badge = "Járat Kész"
+                    step_idx = 2
+                elif "stay_selected" in act or "Szállás kiválasztása" in btn_txt:
+                    icon = "bed"
+                    badge = "Szállás Kész"
+                    step_idx = 3
+
+                # Csak érdemi interakciókat jelenítünk meg a fő útvonalban
+                if any(k in btn_txt for k in ("keresés", "Keresés", "kiválasztása", "Kiválasztása", "Ajánlat", "Export", "Preferenciák", "Dummy")):
+                    journey_path.append({
+                        "step_idx": step_idx,
+                        "title": btn_txt[:40],
+                        "subtitle": act.replace("_", " ").title(),
+                        "icon": icon,
+                        "badge": badge,
+                        "dwell_sec": step_dwell_sec,
+                        "dwell_formatted": format_duration_human(step_dwell_sec),
+                        "created_at": str(ev.get("created_at") or "")[-8:]
+                    })
+            elif ev_type == "step_navigation":
+                to_s = meta.get("to_step", 0)
+                name = meta.get("step_name") or f"{to_s}. lépés"
+                journey_path.append({
+                    "step_idx": to_s,
+                    "title": f"Navigáció: {name}",
+                    "subtitle": f"{to_s}. lépés megnyitva",
+                    "icon": "arrow_forward",
+                    "badge": "Lépésváltás",
+                    "dwell_sec": step_dwell_sec,
+                    "dwell_formatted": format_duration_human(step_dwell_sec),
+                    "created_at": str(ev.get("created_at") or "")[-8:]
+                })
+
+        # Clarity direkt URL ha be van állítva a projekt ID
+        clarity_url = None
+        if CLARITY_PROJECT_ID:
+            clarity_url = f"https://clarity.microsoft.com/projects/{CLARITY_PROJECT_ID}/dashboard?filters=customTags%7Ceq%7Csession_id%7C{sid}"
+
+        # Legújabb események legfelül az eseménylistában
+        ev_list_reversed = list(reversed(ev_list))
+
+        summaries.append({
+            "session_id": sid,
+            "user_id": uid,
+            "user_display": user_disp,
+            "started_at": str(first_ev.get("created_at") or "")[:19].replace("T", " "),
+            "ended_at": str(last_ev.get("created_at") or "")[:19].replace("T", " "),
+            "duration_sec": total_duration_sec,
+            "duration_formatted": format_duration_human(total_duration_sec),
+            "total_events": len(ev_list),
+            "searches_count": searches_count,
+            "clicks_count": clicks_count,
+            "has_error": has_error,
+            "clarity_url": clarity_url,
+            "journey_path": journey_path,
+            "events": ev_list_reversed
+        })
+
+    # Rendezés a session kezdete szerint DESC (a legfrissebb session legelöl)
+    summaries.sort(key=lambda s: s["started_at"], reverse=True)
+    return summaries[:limit]

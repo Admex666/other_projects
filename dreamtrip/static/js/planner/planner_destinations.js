@@ -97,14 +97,23 @@
             );
 
             try {
+                const payload = {
+                    ...state.intake,
+                    dummy_mode: Boolean(state.dummy_mode)
+                };
+
                 await fetch('/api/planner/init-destinations', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(state.intake)
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Planner-Dummy-Mode': state.dummy_mode ? 'true' : 'false',
+                        'X-Session-ID': state.getSessionId()
+                    },
+                    body: JSON.stringify(payload)
                 });
 
                 if (state.pollInterval) clearInterval(state.pollInterval);
-                state.pollInterval = setInterval(this.pollDestinations.bind(this), 1200);
+                state.pollInterval = setInterval(this.pollDestinations.bind(this), state.dummy_mode ? 400 : 1200);
             } catch (e) {
                 alert("Hiba a keresés indításakor: " + e.message);
                 state.setStep(0);

@@ -80,7 +80,11 @@
             try {
                 const res = await fetch('/api/planner/search-flights', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Planner-Dummy-Mode': state.dummy_mode ? 'true' : 'false',
+                        'X-Session-ID': state.getSessionId()
+                    },
                     body: JSON.stringify({
                         origin: state.intake.origin,
                         destination: destName,
@@ -103,7 +107,8 @@
                         departure_pref: state.intake.preferred_departure_time,
                         max_duration_h: state.intake.max_flight_duration_h,
                         weights: state.intake.ahp_weights,
-                        promethee_params: state.intake.promethee_params
+                        promethee_params: state.intake.promethee_params,
+                        dummy_mode: Boolean(state.dummy_mode)
                     })
                 });
 

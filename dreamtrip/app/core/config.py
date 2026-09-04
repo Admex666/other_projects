@@ -11,6 +11,8 @@ TEMPLATES_DIR = os.path.join(ROOT_DIR, "templates")
 
 APP_ENV = os.getenv("APP_ENV", "development").lower()
 IS_PRODUCTION = (APP_ENV == "production")
+CLARITY_PROJECT_ID = os.getenv("CLARITY_PROJECT_ID", "").strip().strip('"').strip("'")
 
 templates = Jinja2Templates(directory=TEMPLATES_DIR)
+templates.env.globals["clarity_project_id"] = CLARITY_PROJECT_ID
 
