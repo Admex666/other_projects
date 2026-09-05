@@ -158,6 +158,20 @@ module.exports = async (req, res) => {
             throw orderErr;
         }
 
+        // 1b-2. Mark lead as converted if this customer previously signed up as a lead
+        try {
+            await supabase
+                .from('leads')
+                .update({
+                    converted: true,
+                    converted_at: new Date().toISOString()
+                })
+                .eq('email', email.toLowerCase());
+            console.log(`Lead status marked as converted for ${email}`);
+        } catch (leadUpdateErr) {
+            console.warn('Optional lead conversion update skipped/warning:', leadUpdateErr.message);
+        }
+
         // 1c. Create runs and shipments for each medal
         const suffix = config.prefix + (isTestTx ? '-TEST' : '');
         const limit = config.limit;

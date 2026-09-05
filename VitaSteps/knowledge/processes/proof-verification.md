@@ -23,7 +23,8 @@ Runner on portal.html
        │ (Uploads GPX track file or summit photos to Supabase Storage 'proofs')
        ▼
 api/submit-proof.js
-       │ (Persists proof_urls, sets proof_submitted=true, proof_submitted_at via service role)
+       ├─► 1. Persists proof_urls, sets proof_submitted=true, proof_submitted_at via service role
+       └─► 2. Sends instant Pushbullet notification to admin (runner name, challenge, file count, direct admin link)
        ▼
 Admin on admin.html (⏳ Várakozó tab – prioritised at the top with image thumbnails)
        │ (Inspects GPS track / images / participant data)
@@ -32,8 +33,7 @@ api/admin-approve.js
        ├─► 1. Sets runs.completed = true & records completion_date
        ├─► 2. Generates oklevel diploma URL
        ├─► 3. Sends HTML Congratulatory Email with diploma link to runner
-       ├─► 4. Sends instant Pushbullet notification to admin (PUSHBULLET_ACCESS_TOKEN)
-       └─► 5. Moves run to 'Logisztika / Szállításra vár' state
+       └─► 4. Moves run to 'Logisztika / Szállításra vár' state
 ```
 
 ## Manual Verification Fallback

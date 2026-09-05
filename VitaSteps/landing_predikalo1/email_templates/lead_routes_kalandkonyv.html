@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nagy-Kevély Túraútvonalak és Kalandkönyv – VitaSteps</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #0b0f19;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      color: #fff;
+    }
+
+    .wrapper {
+      width: 100%;
+      background: #0b0f19;
+      padding-top: 20px;
+      padding-bottom: 40px;
+    }
+
+    .main {
+      background: #121824;
+      margin: 0 auto;
+      max-width: 600px;
+      border-radius: 12px;
+      border: 1px solid rgba(196, 255, 0, 0.15);
+      overflow: hidden;
+      text-align: left;
+    }
+
+    .header {
+      padding: 35px 20px;
+      text-align: center;
+      background: linear-gradient(180deg, #161f33 0%, #121824 100%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: 4px;
+      margin: 0;
+      color: #ffffff;
+    }
+
+    .logo span {
+      color: #c4ff00;
+    }
+
+    .header-subtitle {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: #c4ff00;
+      margin-top: 8px;
+      text-transform: uppercase;
+    }
+
+    .content {
+      padding: 30px;
+      line-height: 1.6;
+    }
+
+    h2 {
+      font-size: 20px;
+      color: #ffffff;
+      margin-top: 0;
+      margin-bottom: 15px;
+    }
+
+    p {
+      font-size: 15px;
+      color: #f1f5f9;
+      margin: 0 0 15px;
+    }
+
+    .highlight-box {
+      background: rgba(196, 255, 0, 0.04);
+      border: 1px solid rgba(196, 255, 0, 0.2);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .highlight-title {
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #c4ff00;
+      margin-top: 0;
+      margin-bottom: 12px;
+      font-weight: bold;
+    }
+
+    .info-list {
+      padding-left: 20px;
+      margin: 0;
+      color: #f1f5f9;
+      font-size: 14.5px;
+    }
+
+    .info-list li {
+      margin-bottom: 10px;
+    }
+
+    .action-box {
+      background: #0d131f;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      padding: 24px 20px;
+      border-radius: 8px;
+      text-align: center;
+      margin: 25px 0;
+    }
+
+    .btn {
+      background: #c4ff00;
+      color: #000000 !important;
+      padding: 14px 28px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+      display: inline-block;
+      font-size: 15px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 15px rgba(196, 255, 0, 0.3);
+    }
+
+    .btn-secondary {
+      color: #c4ff00 !important;
+      text-decoration: underline;
+      font-size: 13.5px;
+      font-weight: 600;
+      display: inline-block;
+      margin-top: 14px;
+    }
+
+    .medal-note {
+      font-size: 13.5px;
+      color: #94a3b8;
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+      padding-top: 20px;
+      margin-top: 25px;
+    }
+
+    .footer {
+      padding: 20px;
+      text-align: center;
+      background: #0b0f19;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .footer p {
+      font-size: 11px;
+      color: #5d6b82;
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <center class="wrapper">
+    <table class="main" width="100%" cellpadding="0" cellspacing="0">
+      <tr>
+        <td class="header">
+          <h1 class="logo">VITA<span>STEPS</span></h1>
+          <div class="header-subtitle">Nagy-Kevély Csillagai</div>
+        </td>
+      </tr>
+      <tr>
+        <td class="content">
+          <h2>Kedves {{NAME}}! 🌲</h2>
+          <p>Köszönjük az érdeklődésedet! Feloldottuk számodra a <strong>Nagy-Kevély csillagai</strong>
+            kihívás hivatalos digitális csomagját.</p>
+
+          <div class="highlight-box">
+            <div class="highlight-title">🗺️ A csomagod tartalma:</div>
+            <ul class="info-list">
+              <li><strong>4 választható útvonal GPX fájlja:</strong> Családi (5 km), Klasszikus (10 km), Extra (13 km),
+                Félmaraton (21 km).</li>
+              <li><strong>Digitális Kalandkönyv (PDF):</strong> Látnivalók (Teve-szikla, Egri vár másolata,
+                Mackó-barlang), helytörténeti legendák, ellenőrzőpontok és kódex.</li>
+            </ul>
+          </div>
+
+          <div class="action-box">
+            <p style="margin-top: 0; margin-bottom: 18px; color: #ffffff; font-size: 15px;">Kattints az alábbi gombra a
+              feloldott túraútvonalak és a térkép megtekintéséhez:</p>
+            <a href="{{UNLOCK_URL}}" class="btn">Útvonalak & Térkép Megnyitása 🏔️</a>
+            <br>
+            <a href="{{KALANDKONYV_URL}}" class="btn-secondary" target="_blank">Közvetlen nyomtatható Kalandkönyv (PDF)
+              →</a>
+          </div>
+
+          <p>Készülj fel alaposan, vigyél magaddal elegendő folyadékot, és élvezd a Kevély-hegy csodálatos
+            útjait!</p>
+
+          <div class="medal-note">
+            🏅 <strong>Szeretnéd megszolgálni a fizikai érmet is?</strong><br>
+            A kihívás teljesítése után kérheted a kézzel festett, egyedi sorszámozott <em>A Nagy-Kevély csillagai</em>
+            fémérmet. Nevezz be időben, mert a sorozat mindössze 100 limitált darabból áll!
+          </div>
+
+          <p style="margin-top: 25px; font-size: 15px; color: #8a99b3;">Üdvözlettel,<br><strong
+              style="color: #ffffff;">A VitaSteps Csapata</strong></p>
+        </td>
+      </tr>
+      <tr>
+        <td class="footer">
+          <p>© 2026 VitaSteps. Minden jog fenntartva.<br>vitasteps.team@gmail.com</p>
+        </td>
+      </tr>
+    </table>
+  </center>
+</body>
+
+</html>

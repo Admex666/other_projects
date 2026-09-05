@@ -192,6 +192,151 @@
             }
         }
 
+        /* LEAD GATE & GATED SECTIONS STYLING */
+        .lead-gate-card {
+            background: linear-gradient(135deg, rgba(18, 24, 36, 0.96) 0%, rgba(12, 15, 21, 0.98) 100%);
+            border: 2px solid var(--accent);
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(196, 255, 0, 0.15);
+            margin: 0 0 2.5rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .lead-gate-card::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 160px;
+            height: 160px;
+            background: radial-gradient(circle, rgba(196, 255, 0, 0.25) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .lead-gate-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(196, 255, 0, 0.12);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            font-size: 0.82rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 0.4rem 0.95rem;
+            border-radius: 20px;
+            margin-bottom: 1rem;
+        }
+
+        .lead-form-grid {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            max-width: 650px;
+            margin: 1.5rem auto 0;
+        }
+
+        .lead-input {
+            background: #06090e;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            color: #fff;
+            padding: 0.85rem 1.25rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: inherit;
+            flex: 1 1 200px;
+            min-width: 180px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .lead-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 12px rgba(196, 255, 0, 0.3);
+        }
+
+        .lead-submit-btn {
+            background: var(--accent);
+            color: #04060a;
+            border: none;
+            padding: 0.9rem 1.5rem;
+            border-radius: 10px;
+            font-size: 1.05rem;
+            font-weight: 800;
+            cursor: pointer;
+            font-family: inherit;
+            transition: transform 0.15s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(196, 255, 0, 0.35);
+            flex: 1 1 100%;
+        }
+
+        .lead-submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 22px rgba(196, 255, 0, 0.5);
+        }
+
+        .lead-submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .lead-unlocked-card {
+            background: rgba(196, 255, 0, 0.08);
+            border: 1px solid rgba(196, 255, 0, 0.4);
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            margin: 0 0 2rem 0;
+            text-align: center;
+        }
+
+        /* GATED SECTIONS BLUR STATES */
+        .gated-blur-locked {
+            filter: blur(4px);
+            opacity: 0.45;
+            pointer-events: none;
+            user-select: none;
+            transition: filter 0.4s ease, opacity 0.4s ease;
+        }
+
+        .gated-blur-unlocked {
+            filter: none !important;
+            opacity: 1 !important;
+            pointer-events: auto !important;
+            user-select: auto !important;
+        }
+
+        /* MAP LOCK OVERLAY */
+        .map-lock-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(4, 6, 10, 0.78);
+            backdrop-filter: blur(4px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 500;
+            text-align: center;
+            padding: 1.5rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .map-lock-overlay:hover {
+            background: rgba(4, 6, 10, 0.88);
+        }
+
         @media (max-width: 768px) {
 
             html,
@@ -493,58 +638,110 @@
     </section>
 
     <!-- GUIDEBOOK SECTION -->
-    <section class="guidebook-section"
+    <section id="kalandkonyv" class="guidebook-section"
         style="background: var(--surface2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
-        <div class="container guidebook-inner">
-            <div class="guidebook-text">
-                <div class="badge">🎁 INGYENES AJÁNDÉK MINDEN NEVEZŐNEK</div>
-                <h2 style="font-size: 2.2rem; margin-top: 1rem; margin-bottom: 1.5rem; line-height: 1.2;">
-                    A Nagy-Kevély Kalandkönyv <span class="accent">és Túrakalauz</span>
+        <div class="container">
+
+            <!-- LEAD GATE BOX (Megjelenik lezárt állapotban) -->
+            <div id="lead-gate-card" class="lead-gate-card">
+                <div class="lead-gate-badge">🔒 EXKLUZÍV TARTALOM – INGYENES FELOLDÁS</div>
+                <h2 style="font-size: 2.1rem; margin: 0.5rem 0 1rem; line-height: 1.2;">
+                    Férj hozzá a <span class="accent">Kalandkönyhöz</span> és a 4 Hivatalos Túraútvonalhoz!
                 </h2>
-                <p style="color: var(--text-high); font-size: 1.1rem; margin-bottom: 1rem; font-weight: 500;">
-                    Nem csak egy érmet kapsz. Egy teljes élményt adunk.
+                <p style="color: var(--text-mid); max-width: 620px; margin: 0 auto 1.5rem; font-size: 1.05rem;">
+                    Add meg a neved és az e-mail címed, és azonnal hozzáférhetsz az interaktív digitális Nagy-Kevély
+                    Kalandkönyvhöz, valamint mind a 4 túratáv letölthető GPX fájljaihoz!
                 </p>
-                <p style="color: var(--text-mid); margin-bottom: 1.5rem;">
-                    Az általunk összeállított digitális Kalandkönyv (PDF) tartalmazza mind a 4 túraútvonal részletes
-                    leírását, a letölthető GPX fájlokat, a kötelező és ajánlott ellenőrzőpontokat, valamint
-                    helytörténeti érdekességeket és profi túrázási tippeket a Kevély-csoport felfedezéséhez.
-                </p>
-
-                <ul
-                    style="color: var(--text-high); font-size: 0.95rem; line-height: 1.8; margin-bottom: 2rem; padding-left: 1.2rem;">
-                    <li>🗺️ <strong>4 választható útvonal:</strong> A családbarát sétától az hosszú távig</li>
-                    <li>📍 <strong>Ellenőrzőpontok és látnivalók:</strong> Kevély-nyereg, Teve-szikla, Egri vár
-                        másolata
-                    </li>
-                    <li>📲 <strong>Azonnali GPX export:</strong> Strava, Garmin, telefonos navigáció kompatibilis</li>
-                    <li>🌲 <strong>Túlélési és felszerelés útmutató:</strong> Hogy minden lépés biztonságos legyen</li>
-                </ul>
-
-                <div
-                    style="background: rgba(191, 255, 0, 0.05); border: 1px dashed var(--border-accent); padding: 1.25rem; border-radius: 8px; display: inline-block;">
-                    <span style="color: var(--accent); font-weight: 600; font-size: 0.9rem;">📲 Letöltés a nevezés
-                        befejezése után közvetlenül a sikeres fizetés oldalon!</span>
-                </div>
+                <form id="lead-capture-form" onsubmit="handleLeadSubmit(event)">
+                    <div class="lead-form-grid">
+                        <input type="text" id="lead-name" placeholder="Teljes neved" required class="lead-input"
+                            autocomplete="name">
+                        <input type="email" id="lead-email" placeholder="E-mail címed" required class="lead-input"
+                            autocomplete="email">
+                        <button type="submit" id="btn-lead-submit" class="lead-submit-btn">
+                            Kérem a túraútvonalakat és a kalandkönyvet 🔓
+                        </button>
+                    </div>
+                    <div id="lead-status-msg" style="margin-top: 1.25rem; font-size: 0.95rem; display: none;"></div>
+                    <div style="font-size: 0.8rem; color: var(--text-low); margin-top: 0.85rem;">
+                        🔒 Nem küldünk kéretlen leveleket.
+                    </div>
+                </form>
             </div>
 
-            <div class="guidebook-mockup-wrapper">
-                <div class="guidebook-mockup">
-                    <div class="guidebook-mockup-deco"></div>
-                    <div>
-                        <div style="font-size: 0.8rem; letter-spacing: 0.1em; color: var(--accent); font-weight: 800;">
-                            VITASTEPS KEVÉLY</div>
-                        <h3 style="font-size: 1.8rem; color: #fff; margin-top: 0.5rem; line-height: 1.1;">
-                            Nagy-Kevély<br><span style="color:var(--accent)">Kalandkönyv</span></h3>
-                        <p style="font-size: 0.8rem; color: var(--text-mid); margin-top: 0.5rem;">Digitális Útikalauz &
-                            GPX gyűjtemény</p>
-                    </div>
-                    <div
-                        style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-size: 0.75rem; color: var(--text-low); font-weight: 600;">2026</span>
-                        <span
-                            style="background: var(--accent); color: #000; font-size: 0.7rem; font-weight: 900; padding: 0.2rem 0.5rem; border-radius: 4px;">Letölthető
-                            vásárlás után
+            <!-- UNLOCKED ACCESS BANNER (Megjelenik feloldott állapotban) -->
+            <div id="lead-unlocked-card" class="lead-unlocked-card" style="display: none;">
+                <span style="font-size: 2rem; display: block; margin-bottom: 0.4rem;">🎉</span>
+                <div style="color: var(--accent); font-weight: 800; font-size: 1.3rem; margin-bottom: 0.4rem;">
+                    A Kalandkönyv és a 4 Túraútvonal sikeresen feloldva!
+                </div>
+                <p style="color: var(--text-mid); margin: 0 0 1.25rem; font-size: 0.95rem;">
+                    A teljes digitális túraútmutató és az összes GPX nyomvonal elérhető számodra.
+                </p>
+                <a href="/nagykevely/kalandkonyv.html?lead=true" id="btn-open-kalandkonyv" target="_blank"
+                    class="btn btn-primary btn-lg"
+                    style="display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; font-size: 1.1rem;">
+                    📖 Kalandkönyv Megnyitása & Nyomtatása (PDF) →
+                </a>
+            </div>
+
+            <!-- GUIDEBOOK DETAILS (Alapból diszkréten homályosítva a kártya mögött) -->
+            <div class="guidebook-inner gated-blur-locked" id="guidebook-details">
+                <div class="guidebook-text">
+                    <div class="badge">🎁 INGYENES AJÁNDÉK MINDEN RÉSZTVEVŐNEK</div>
+                    <h2 style="font-size: 2.2rem; margin-top: 1rem; margin-bottom: 1.5rem; line-height: 1.2;">
+                        A Nagy-Kevély Kalandkönyv <span class="accent">és Túrakalauz</span>
+                    </h2>
+                    <p style="color: var(--text-high); font-size: 1.1rem; margin-bottom: 1rem; font-weight: 500;">
+                        Nem csak egy érmet kapsz. Egy teljes élményt adunk.
+                    </p>
+                    <p style="color: var(--text-mid); margin-bottom: 1.5rem;">
+                        Az általunk összeállított digitális Kalandkönyv (PDF) tartalmazza mind a 4 túraútvonal részletes
+                        leírását, a letölthető GPX fájlokat, a kötelező és ajánlott ellenőrzőpontokat, valamint
+                        helytörténeti érdekességeket és profi túrázási tippeket a Kevély-csoport felfedezéséhez.
+                    </p>
+
+                    <ul
+                        style="color: var(--text-high); font-size: 0.95rem; line-height: 1.8; margin-bottom: 2rem; padding-left: 1.2rem;">
+                        <li>🗺️ <strong>4 választható útvonal:</strong> A családbarát sétától az hosszú távig</li>
+                        <li>📍 <strong>Ellenőrzőpontok és látnivalók:</strong> Kevély-nyereg, Teve-szikla, Egri vár
+                            másolata</li>
+                        <li>📲 <strong>Azonnali GPX export:</strong> Strava, Garmin, telefonos navigáció kompatibilis
+                        </li>
+                        <li>🌲 <strong>Túlélési és felszerelés útmutató:</strong> Hogy minden lépés biztonságos legyen
+                        </li>
+                    </ul>
+
+                    <div id="guidebook-cta-box"
+                        style="background: rgba(191, 255, 0, 0.05); border: 1px dashed var(--border-accent); padding: 1.25rem; border-radius: 8px; display: inline-block;">
+                        <span id="guidebook-cta-text"
+                            style="color: var(--accent); font-weight: 600; font-size: 0.9rem;">
+                            📲 Add meg az e-mailed a fenti űrlapon a Kalandkönyv és a GPX azonnali megnyitásához!
                         </span>
+                    </div>
+                </div>
+
+                <div class="guidebook-mockup-wrapper">
+                    <div class="guidebook-mockup" id="guidebook-mockup-card" onclick="onMockupClick()"
+                        style="cursor: pointer;">
+                        <div class="guidebook-mockup-deco"></div>
+                        <div>
+                            <div
+                                style="font-size: 0.8rem; letter-spacing: 0.1em; color: var(--accent); font-weight: 800;">
+                                VITASTEPS KEVÉLY</div>
+                            <h3 style="font-size: 1.8rem; color: #fff; margin-top: 0.5rem; line-height: 1.1;">
+                                Nagy-Kevély<br><span style="color:var(--accent)">Kalandkönyv</span></h3>
+                            <p style="font-size: 0.8rem; color: var(--text-mid); margin-top: 0.5rem;">Digitális
+                                Útikalauz & GPX gyűjtemény</p>
+                        </div>
+                        <div
+                            style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 0.75rem; color: var(--text-low); font-weight: 600;">2026</span>
+                            <span id="mockup-download-badge"
+                                style="background: var(--accent); color: #000; font-size: 0.7rem; font-weight: 900; padding: 0.2rem 0.5rem; border-radius: 4px;">
+                                🔒 Feloldás e-maillel
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -552,7 +749,7 @@
     </section>
 
     <!-- MAP SECTION -->
-    <section class="map-section">
+    <section id="map-section" class="map-section">
         <div class="container">
             <div class="section-label">Helyszín</div>
             <h2 class="section-title">A Nagy-Kevély csillagai túraútvonalak</h2>
@@ -579,15 +776,28 @@
                     style="background: var(--surface2); padding: 0.5rem 1.2rem; border-radius: 20px; border: 1px solid var(--border); font-weight: 600;">
                     ⛰️ Szintemelkedés: <strong id="stat-elev" style="color: var(--accent);">-- m</strong>
                 </div>
-                <a id="download-gpx-btn" href="#" download
+                <a id="download-gpx-btn" href="#" onclick="handleGpxClick(event)" download
                     style="background: rgba(191,255,0,0.1); color: var(--accent); border: 1px solid var(--border-accent); padding: 0.5rem 1.2rem; border-radius: 20px; text-decoration: none; font-weight: 700; font-size: 0.85rem; transition: all 0.2s;">
                     📥 GPX Nyomvonal Letöltése
                 </a>
             </div>
 
             <div class="map-container"
-                style="margin-top: 1rem; height: 450px; border-radius: 12px; border: 1px solid var(--border); overflow: hidden;">
+                style="margin-top: 1rem; height: 450px; border-radius: 12px; border: 1px solid var(--border); overflow: hidden; position: relative;">
                 <div id="map" style="width: 100%; height: 100%;"></div>
+
+                <!-- Map Lock Overlay (Zárolt állapotban kattintásra a feliratkozáshoz visz) -->
+                <div id="map-lock-overlay" class="map-lock-overlay" onclick="scrollToLeadForm(event)">
+                    <span style="font-size: 2.5rem; margin-bottom: 0.5rem;">🔒</span>
+                    <h3 style="color: #fff; margin: 0 0 0.5rem; font-size: 1.3rem;">A GPX nyomvonalak és a térkép
+                        zárolva vannak</h3>
+                    <p
+                        style="color: var(--text-mid); max-width: 440px; margin: 0 0 1.25rem; font-size: 0.92rem; line-height: 1.5;">
+                        Add meg a neved és az e-mail címed a Kalandkönyv és mind a 4 túratáv GPX fájljainak ingyenes
+                        feloldásához!
+                    </p>
+                    <span class="btn btn-primary btn-sm">Feloldom a túraútvonalakat 🔓</span>
+                </div>
             </div>
         </div>
     </section>
@@ -912,6 +1122,168 @@
             if (savedUtmContent) url.searchParams.set('utm_content', savedUtmContent);
             link.href = url.pathname + url.search;
         });
+
+        // ==========================================
+        // LEAD GATE & GATED CONTENT STATE MANAGEMENT
+        // ==========================================
+        function isLeadUnlocked() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('lead') === 'true') return true;
+            return localStorage.getItem('vitasteps_lead_unlocked') === 'true';
+        }
+
+        function updateLeadGateUI(unlocked) {
+            const gateCard = document.getElementById('lead-gate-card');
+            const unlockedCard = document.getElementById('lead-unlocked-card');
+            const guidebookDetails = document.getElementById('guidebook-details');
+            const mapOverlay = document.getElementById('map-lock-overlay');
+            const downloadBtn = document.getElementById('download-gpx-btn');
+            const mockupBadge = document.getElementById('mockup-download-badge');
+            const ctaBox = document.getElementById('guidebook-cta-box');
+
+            if (unlocked) {
+                if (gateCard) gateCard.style.display = 'none';
+                if (unlockedCard) unlockedCard.style.display = 'block';
+                if (guidebookDetails) {
+                    guidebookDetails.classList.remove('gated-blur-locked');
+                    guidebookDetails.classList.add('gated-blur-unlocked');
+                }
+                if (mapOverlay) mapOverlay.style.display = 'none';
+                if (downloadBtn) {
+                    downloadBtn.style.opacity = '1';
+                    downloadBtn.innerHTML = '📥 GPX Nyomvonal Letöltése';
+                    downloadBtn.title = 'Kattints a GPX letöltéséhez';
+                }
+                if (mockupBadge) {
+                    mockupBadge.textContent = '📖 Megnyitás most (PDF)';
+                    mockupBadge.style.cursor = 'pointer';
+                }
+                if (ctaBox) {
+                    ctaBox.innerHTML = `
+                        <a href="/nagykevely/kalandkonyv.html?lead=true" target="_blank" style="color: var(--accent); font-weight: 700; text-decoration: underline; font-size: 0.95rem;">
+                            📖 Kattints ide a digitális Kalandkönyv megnyitásához és nyomtatásához (PDF) →
+                        </a>
+                    `;
+                }
+            } else {
+                if (gateCard) gateCard.style.display = 'block';
+                if (unlockedCard) unlockedCard.style.display = 'none';
+                if (guidebookDetails) {
+                    guidebookDetails.classList.add('gated-blur-locked');
+                    guidebookDetails.classList.remove('gated-blur-unlocked');
+                }
+                if (mapOverlay) mapOverlay.style.display = 'flex';
+                if (downloadBtn) {
+                    downloadBtn.style.opacity = '0.9';
+                    downloadBtn.innerHTML = '🔒 GPX Nyomvonal Zárolva';
+                    downloadBtn.title = 'Add meg az email címed a feloldáshoz!';
+                }
+                if (mockupBadge) {
+                    mockupBadge.textContent = '🔒 Feloldás e-maillel';
+                }
+            }
+        }
+
+        function scrollToLeadForm(e) {
+            if (isLeadUnlocked()) return;
+            if (e) e.preventDefault();
+            const gateSection = document.getElementById('kalandkonyv');
+            if (gateSection) {
+                gateSection.scrollIntoView({ behavior: 'smooth' });
+                setTimeout(() => {
+                    const emailInput = document.getElementById('lead-email');
+                    if (emailInput) {
+                        emailInput.focus();
+                        emailInput.style.borderColor = 'var(--accent)';
+                        emailInput.style.boxShadow = '0 0 15px rgba(196, 255, 0, 0.4)';
+                    }
+                }, 400);
+            }
+        }
+
+        function handleGpxClick(e) {
+            if (!isLeadUnlocked()) {
+                e.preventDefault();
+                scrollToLeadForm(e);
+            }
+        }
+
+        function onMockupClick() {
+            if (isLeadUnlocked()) {
+                window.open('/nagykevely/kalandkonyv.html?lead=true', '_blank');
+            } else {
+                scrollToLeadForm();
+            }
+        }
+
+        async function handleLeadSubmit(e) {
+            e.preventDefault();
+            const nameInput = document.getElementById('lead-name');
+            const emailInput = document.getElementById('lead-email');
+            const submitBtn = document.getElementById('btn-lead-submit');
+            const statusMsg = document.getElementById('lead-status-msg');
+
+            const name = nameInput ? nameInput.value.trim() : '';
+            const email = emailInput ? emailInput.value.trim() : '';
+
+            if (!email || !email.includes('@')) {
+                alert('Kérjük, adj meg egy érvényes e-mail címet.');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="stock-pulse" style="display:inline-block; margin-right:8px; vertical-align:middle;"></span> Küldés és feloldás folyamatban...';
+            statusMsg.style.display = 'none';
+
+            try {
+                const res = await fetch('/api/capture-lead', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, campaign: 'pilis' })
+                });
+
+                const data = await res.json();
+                if (!res.ok || !data.success) {
+                    throw new Error(data.error || 'Nem sikerült rögzíteni a feliratkozást.');
+                }
+
+                // Feloldás lokális állapotba mentése
+                localStorage.setItem('vitasteps_lead_unlocked', 'true');
+                localStorage.setItem('vitasteps_lead_email', email);
+                if (name) localStorage.setItem('vitasteps_lead_name', name);
+
+                // UI azonnali átkapcsolása
+                updateLeadGateUI(true);
+
+                statusMsg.style.display = 'block';
+                statusMsg.style.color = '#c4ff00';
+                statusMsg.innerHTML = '🎉 <strong>Köszönjük!</strong> A hozzáférésed feloldva, és az emailt is elküldtük az útvonalakkal.';
+
+                // Finom görgetés a feloldott kártyához
+                const kalandSec = document.getElementById('kalandkonyv');
+                if (kalandSec) {
+                    kalandSec.scrollIntoView({ behavior: 'smooth' });
+                }
+
+            } catch (err) {
+                console.error('Lead submission error:', err);
+                statusMsg.style.display = 'block';
+                statusMsg.style.color = '#ef4444';
+                statusMsg.textContent = 'Hiba történt: ' + err.message;
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Kérem a túraútvonalakat és a kalandkönyvet 🔓';
+            }
+        }
+
+        // Kezdő állapot inicializálása
+        if (urlParams.get('lead') === 'true') {
+            localStorage.setItem('vitasteps_lead_unlocked', 'true');
+        }
+        if (urlParams.get('email')) {
+            const emailInp = document.getElementById('lead-email');
+            if (emailInp) emailInp.value = urlParams.get('email');
+        }
+        updateLeadGateUI(isLeadUnlocked());
     </script>
 </body>
 

@@ -37,6 +37,7 @@ Foundational business and architectural principles.
 ## 🔄 Processes (`knowledge/processes/`)
 Core end-to-end operational workflows.
 
+* [[customer-funnel|Customer Funnel]]: End-to-end vásárlói életciklus (Meta Ads $\rightarrow$ Landing $\rightarrow$ Checkout $\rightarrow$ Igazolás $\rightarrow$ Kiszállítás $\rightarrow$ Retenció).
 * [[checkout-pipeline|Checkout Pipeline]]: Stripe Checkout $\rightarrow$ `process-payment.js` $\rightarrow$ DB sync + E-Invoice + Welcome Email.
 * [[proof-verification|Proof Verification]]: User GPX/photo upload on `portal.html` $\rightarrow$ Admin approval $\rightarrow$ Diploma + Congratulation Email.
 * [[order-fulfillment|Order Fulfillment]]: Multi-medal & cross-campaign grouping $\rightarrow$ Packing guide $\rightarrow$ Foxpost locker dispatch.

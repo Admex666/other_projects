@@ -5,6 +5,66 @@ const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+function sendPushbulletSafe(title, body) {
+    const token = process.env.PUSHBULLET_ACCESS_TOKEN;
+    if (!token) {
+        console.log('[Pushbullet] No PUSHBULLET_ACCESS_TOKEN configured, skipping.');
+        return Promise.resolve(false);
+    }
+
+    return new Promise((resolve) => {
+        try {
+            const https = require('https');
+            const payload = JSON.stringify({
+                type: 'note',
+                title: String(title || 'VitaSteps Értesítés').slice(0, 250),
+                body: String(body || '').slice(0, 1500)
+            });
+
+            const req = https.request({
+                hostname: 'api.pushbullet.com',
+                path: '/v2/pushes',
+                method: 'POST',
+                timeout: 4000,
+                headers: {
+                    'Access-Token': token,
+                    'Content-Type': 'application/json',
+                    'Content-Length': Buffer.byteLength(payload)
+                }
+            }, (res) => {
+                let resData = '';
+                res.on('data', chunk => resData += chunk);
+                res.on('end', () => {
+                    if (res.statusCode >= 200 && res.statusCode < 300) {
+                        console.log('[Pushbullet] Notification sent successfully (HTTP ' + res.statusCode + ').');
+                        resolve(true);
+                    } else {
+                        console.warn('[Pushbullet] Service returned HTTP ' + res.statusCode + ': ' + resData);
+                        resolve(false);
+                    }
+                });
+            });
+
+            req.on('timeout', () => {
+                console.warn('[Pushbullet] Request timed out after 4000ms. Aborting.');
+                req.destroy();
+                resolve(false);
+            });
+
+            req.on('error', (err) => {
+                console.warn('[Pushbullet] Network error while sending push:', err.message);
+                resolve(false);
+            });
+
+            req.write(payload);
+            req.end();
+        } catch (err) {
+            console.warn('[Pushbullet] Unexpected exception in sendPushbulletSafe:', err.message);
+            resolve(false);
+        }
+    });
+}
+
 module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -64,7 +124,7 @@ module.exports = async (req, res) => {
             .from('runs')
             .update(updatePayload)
             .in('id', targetIds)
-            .select('id, serial_number, name');
+            .select('id, serial_number, name, campaign, runners(name, email)');
 
         if (dbError) {
             console.error('[submit-proof] DB error:', dbError);
@@ -72,6 +132,24 @@ module.exports = async (req, res) => {
         }
 
         console.log(`[submit-proof] Successfully updated ${data?.length || 0} run(s).`);
+
+        // Send Pushbullet notification to admin (resilient, non-blocking)
+        try {
+            const firstRun = data && data[0] ? data[0] : {};
+            const runnerName = firstRun.name || firstRun.runners?.name || 'Résztvevő';
+            const email = firstRun.runners?.email || userEmail || '–';
+            const serials = (data || []).map(r => r.serial_number).filter(Boolean).join(', ') || 'sorszám nélkül';
+            const isPilis = firstRun.campaign === 'pilis' || (firstRun.serial_number || '').includes('-PK');
+            const campaignName = isPilis ? 'A Nagy-Kevély csillagai' : 'Prédikálószék Vertical';
+            const filesCount = proof_urls.length;
+
+            const pbTitle = `📥 Új igazolás: ${runnerName} (${serials})`;
+            const pbBody = `Futó: ${runnerName}\nKihívás: ${campaignName}\nSorszám: ${serials}\nCsatolt igazolások: ${filesCount} db fájl\nEmail: ${email}\n\nNyisd meg az admin felületet az ellenőrzéshez:\nhttps://vitastepsss.vercel.app/admin.html`;
+
+            await sendPushbulletSafe(pbTitle, pbBody);
+        } catch (pushErr) {
+            console.warn('[submit-proof] Pushbullet notification failed gracefully:', pushErr);
+        }
 
         return res.status(200).json({
             success: true,

@@ -29,6 +29,7 @@ Supabase serves as the persistent single source of truth for all VitaSteps opera
 * **`runs`:** Challenge registrations (`id`, `runner_id`, `order_id`, `campaign`, `serial_number`, `serial_rank`, `proof_submitted`, `proof_urls`, `completed`, `completion_date`, `diploma_url`, `ship_together_with`).
 * **`shipments`:** Logistics records (`id`, `run_id`, `method`, `parcel_id`, `parcel_name`, `home_address`, `phone`, `shipped`, `shipped_at`, `tracking_code`).
 * **`feedbacks`:** Post-challenge ratings and reviews.
+* **`leads`:** Captured prospective runners from gated landing page content (`id`, `email` $\rightarrow$ `runners.email`, `name`, `campaign`, `source`, `converted`, `converted_at`, `created_at`).
 * **`meta_daily_metrics`:** Daily aggregated ad spend, revenue, and ROAS.
 * **`marketing_targets`:** Target CAC, ROAS, and unit thresholds per campaign.
 

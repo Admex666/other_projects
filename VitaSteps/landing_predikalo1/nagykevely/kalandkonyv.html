@@ -860,6 +860,28 @@
 
 <body class="theme-color">
 
+    <!-- LEAD LOCK GATE OVERLAY (Csak akkor jelenik meg, ha nincs feloldva) -->
+    <div id="kalandkonyv-lock-gate" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(4, 6, 10, 0.95); backdrop-filter: blur(10px); z-index: 99999; align-items: center; justify-content: center; padding: 20px;">
+        <div style="background: #0c0f15; border: 2px solid #c4ff00; border-radius: 16px; padding: 32px 24px; max-width: 480px; width: 100%; text-align: center; color: #fff; box-shadow: 0 15px 50px rgba(0,0,0,0.8), 0 0 35px rgba(196,255,0,0.2);">
+            <div style="font-size: 3rem; margin-bottom: 12px;">🔒</div>
+            <h2 style="font-size: 1.5rem; margin: 0 0 10px; color: #fff;">A Kalandkönyv megnyitásához add meg az e-mailed</h2>
+            <p style="color: #94a3b8; font-size: 0.95rem; line-height: 1.5; margin: 0 0 20px;">
+                A hivatalos Nagy-Kevély Kalandkönyv és túranapló feloldásához add meg a neved és az e-mail címed, és azonnal olvashatod vagy nyomtathatod a kiadványt!
+            </p>
+            <form onsubmit="unlockFromKalandkonyv(event)">
+                <input type="text" id="gate-kaland-name" placeholder="Teljes neved" style="width: 100%; box-sizing: border-box; margin-bottom: 12px; padding: 12px 14px; border-radius: 8px; background: #06090e; border: 1px solid rgba(255,255,255,0.2); color: #fff; font-size: 1rem;" required>
+                <input type="email" id="gate-kaland-email" placeholder="E-mail címed" style="width: 100%; box-sizing: border-box; margin-bottom: 16px; padding: 12px 14px; border-radius: 8px; background: #06090e; border: 1px solid rgba(255,255,255,0.2); color: #fff; font-size: 1rem;" required>
+                <button type="submit" id="btn-gate-unlock" style="width: 100%; background: #c4ff00; color: #04060a; font-weight: 800; border: none; padding: 14px; border-radius: 8px; font-size: 1.05rem; cursor: pointer; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.2s;">
+                    Feloldás és Olvasás 📖
+                </button>
+                <div id="gate-error" style="color: #ef4444; font-size: 0.85rem; margin-top: 10px; display: none;"></div>
+            </form>
+            <div style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
+                <a href="/nagykevely/index.html" style="color: #94a3b8; font-size: 0.85rem; text-decoration: underline;">← Vissza a Nagy-Kevély főoldalra</a>
+            </div>
+        </div>
+    </div>
+
     <!-- Controls Panel -->
     <div class="controls-card">
         <div class="controls-title">📖 Kalandkönyv Testreszabása</div>
@@ -1487,7 +1509,67 @@
 
         // Parse query parameters
         const params = new URLSearchParams(window.location.search);
-        const nameParam = params.get('nev') || "";
+
+        // Lead Gating Verification
+        const isLeadParam = params.get('lead') === 'true';
+        if (isLeadParam) {
+            localStorage.setItem('vitasteps_lead_unlocked', 'true');
+        }
+
+        const isAuthorized = isLeadParam
+            || localStorage.getItem('vitasteps_lead_unlocked') === 'true'
+            || params.get('order_id')
+            || params.get('email')
+            || params.get('nev');
+
+        const gateModal = document.getElementById('kalandkonyv-lock-gate');
+        if (!isAuthorized && gateModal) {
+            gateModal.style.display = 'flex';
+        }
+
+        async function unlockFromKalandkonyv(e) {
+            e.preventDefault();
+            const name = document.getElementById('gate-kaland-name').value.trim();
+            const email = document.getElementById('gate-kaland-email').value.trim();
+            const btn = document.getElementById('btn-gate-unlock');
+            const errDiv = document.getElementById('gate-error');
+
+            if (!email || !email.includes('@')) {
+                errDiv.textContent = 'Kérjük, adj meg egy érvényes e-mail címet.';
+                errDiv.style.display = 'block';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Feloldás folyamatban...';
+            errDiv.style.display = 'none';
+
+            try {
+                await fetch('/api/capture-lead', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, campaign: 'pilis' })
+                });
+
+                localStorage.setItem('vitasteps_lead_unlocked', 'true');
+                localStorage.setItem('vitasteps_lead_email', email);
+                if (name) {
+                    localStorage.setItem('vitasteps_lead_name', name);
+                    document.getElementById('input-name').value = name;
+                    updateName(name);
+                }
+
+                if (gateModal) gateModal.style.display = 'none';
+
+            } catch (err) {
+                console.error(err);
+                localStorage.setItem('vitasteps_lead_unlocked', 'true');
+                if (gateModal) gateModal.style.display = 'none';
+            }
+        }
+
+        const savedLeadName = localStorage.getItem('vitasteps_lead_name') || "";
+        const nameParam = params.get('nev') || savedLeadName;
         const routeParam = params.get('tav') || "csaladi";
         const styleParam = params.get('style') || "color";
 

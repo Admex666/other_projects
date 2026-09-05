@@ -22,46 +22,6 @@ function getMedalShippingText(campaignKey) {
     return `Az érmeket <strong>${dateHu}</strong> után postázzuk ki, a megadott szállítási módnak megfelelően. 📦`;
 }
 
-function sendPushbullet(title, body) {
-    const token = process.env.PUSHBULLET_ACCESS_TOKEN;
-    if (!token) return Promise.resolve(null);
-
-    return new Promise((resolve) => {
-        const https = require('https');
-        const payload = JSON.stringify({
-            type: 'note',
-            title: title,
-            body: body
-        });
-
-        const req = https.request({
-            hostname: 'api.pushbullet.com',
-            path: '/v2/pushes',
-            method: 'POST',
-            headers: {
-                'Access-Token': token,
-                'Content-Type': 'application/json',
-                'Content-Length': Buffer.byteLength(payload)
-            }
-        }, (res) => {
-            let data = '';
-            res.on('data', chunk => data += chunk);
-            res.on('end', () => {
-                console.log('[Pushbullet] Approval notification sent. Status:', res.statusCode);
-                resolve(data);
-            });
-        });
-
-        req.on('error', (err) => {
-            console.error('[Pushbullet] Error sending notification:', err.message);
-            resolve(null);
-        });
-
-        req.write(payload);
-        req.end();
-    });
-}
-
 module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -165,22 +125,6 @@ module.exports = async (req, res) => {
                     html: congratsHtml
                 });
                 console.log(`Congrats email sent to ${runnerEmail}`);
-            }
-
-            // Send Pushbullet notification to admin
-            try {
-                const runnerName = runData.name || runData.runners?.name || 'Futó Partner';
-                const isPilisK = runData.serial_number && (runData.serial_number.includes('PK') || runData.serial_number.includes('999'));
-                const campaignName = isPilisK ? 'A Nagy-Kevély csillagai' : 'Prédikálószék Vertical';
-                const serial = runData.serial_number || '–';
-                const runnerEmail = runData.runners?.email || '–';
-
-                await sendPushbullet(
-                    `🏆 Teljesítés jóváhagyva: ${runnerName}`,
-                    `Futó: ${runnerName} (${serial})\nKihívás: ${campaignName}\nEmail: ${runnerEmail}\nDátum: ${today}`
-                );
-            } catch (pbErr) {
-                console.error('[Pushbullet] Notification failed:', pbErr);
             }
 
             return res.status(200).json({ success: true, message: 'Run approved and email sent.' });
