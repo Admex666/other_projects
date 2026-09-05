@@ -2352,6 +2352,177 @@ span.flatpickr-weekday {
     gap: 5px;
 }
 
+/* Decision DNA Pairwise Comparison (Range Slider) */
+.dna-pairwise-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xl, 16px);
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.04));
+    transition: border-color var(--transition-fast, 0.15s ease);
+}
+
+.dna-pairwise-card:hover {
+    border-color: var(--border-strong);
+}
+
+.dna-pairwise-desc {
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+
+.dna-pairwise-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-top: 2px;
+}
+
+.dna-pairwise-name {
+    font-family: var(--font-display);
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text-main);
+    flex: 1;
+    line-height: 1.3;
+}
+
+.dna-pairwise-name.right {
+    text-align: right;
+}
+
+.dna-pairwise-vs {
+    font-family: var(--font-body);
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    flex-shrink: 0;
+    padding: 2px 7px;
+    background: var(--bg-surface-subtle, rgba(0, 0, 0, 0.04));
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm, 4px);
+}
+
+.dna-pairwise-slider-wrap {
+    position: relative;
+    padding: 2px 4px 0 4px;
+}
+
+.dna-pairwise-track-labels {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-body);
+    font-size: 10px;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 3px;
+}
+
+.dna-pairwise-ticks {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 9px;
+    margin-bottom: 2px;
+}
+
+.dna-pairwise-tick {
+    width: 2px;
+    height: 6px;
+    background: var(--border-strong, #c1c9bd);
+    border-radius: 1px;
+}
+
+.dna-pairwise-tick.center {
+    background: var(--status-warning, #f59e0b);
+    width: 3px;
+    height: 9px;
+    border-radius: 2px;
+}
+
+.dna-pairwise-range {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    background: var(--border-subtle);
+    border-radius: 999px;
+    outline: none;
+    accent-color: var(--primary);
+    cursor: pointer;
+    margin: 6px 0 8px 0;
+    touch-action: pan-y;
+}
+
+.dna-pairwise-range::-webkit-slider-runnable-track {
+    height: 6px;
+    background: var(--border-subtle);
+    border-radius: 999px;
+}
+
+.dna-pairwise-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--primary);
+    border: 3px solid var(--bg-surface);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.22);
+    cursor: pointer;
+    margin-top: -8px;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.dna-pairwise-range::-webkit-slider-thumb:active {
+    transform: scale(1.15);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+.dna-pairwise-range::-moz-range-track {
+    height: 6px;
+    background: var(--border-subtle);
+    border-radius: 999px;
+    border: none;
+}
+
+.dna-pairwise-range::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--primary);
+    border: 3px solid var(--bg-surface);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.22);
+    cursor: pointer;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.dna-pairwise-range::-moz-range-thumb:active {
+    transform: scale(1.15);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+.dna-pairwise-readout {
+    text-align: center;
+    font-family: var(--font-body);
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--primary);
+    min-height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: -0.01em;
+}
+
 .dna-summary-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -2683,6 +2854,15 @@ span.flatpickr-weekday {
     .dna-scale-row {
         grid-template-columns: repeat(4, 1fr) !important;
         gap: 5px !important;
+    }
+
+    .dna-pairwise-card {
+        padding: 14px 13px !important;
+        gap: 7px !important;
+    }
+
+    .dna-pairwise-name {
+        font-size: 12.5px !important;
     }
 
     .dna-scale-row button {

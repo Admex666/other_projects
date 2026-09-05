@@ -6,23 +6,23 @@ Ez a fájl az Optivoya (DreamTrip) projekt navigációs térképe. Minden lénye
 
 ## 🧭 Strategic Context (Stratégiai Réteg)
 * [[PURPOSE]] — Miért létezik a projekt? Alapvető küldetés és indoklás.
-* [[NORTH_STAR]] — Északi Csillag sikermérőszám (Accepted Unified Proposals).
-* [[MISSION]] — A projekt hivatalos küldetése.
-* [[VISION]] — Hosszú távú jövőkép (End-to-End utazástervező platform).
-* [[THESIS]] — Terméktézis és döntéstámogatási kurációs modell.
-* [[TARGET_CUSTOMER]] — Célközönség meghatározás (B2B fókusz + B2C jövőkép).
-* [[VALUE_PROPOSITION]] — Egyedi értékajánlat (UVP).
-* [[BUSINESS_MODEL]] — Üzleti és monetizációs modell.
-* [[PRINCIPLES]] — Alapvető stratégiai döntési elvek.
-* [[optivoya-strategy]] — Kanonikus összefoglaló stratégiai dokumentum.
+* [[NORTH_STAR]] — Stratégiai (Travel Decision Engine) és Üzleti North Star (Lifestyle Business, ≥600k Ft MRR, ≤10h/hét).
+* [[MISSION]] — A projekt hivatalos küldetése (természetes nyelvű igényből optimalizált, végrehajtható ajánlat).
+* [[VISION]] — Hosszú távú jövőkép (End-to-End Travel Decision Engine, nem flight+hotel kereső).
+* [[THESIS]] — Terméktézis, advisor human-in-the-loop workflow és validációs sorrend.
+* [[TARGET_CUSTOMER]] — Célközönség és Beachhead meghatározás (B2B Travel Advisor mint belépési pont).
+* [[VALUE_PROPOSITION]] — Egyedi értékajánlat (Total Time Saved / Client a teljes munkafolyamatban).
+* [[BUSINESS_MODEL]] — Üzleti és monetizációs modell (Lifestyle SaaS, ≥600k Ft MRR, ≤10h/hét).
+* [[PRINCIPLES]] — Alapvető stratégiai döntési elvek (Decisions over Data Dumps, Human-in-the-Loop).
+* [[optivoya-strategy]] — Kanonikus összefoglaló stratégiai dokumentum (Blueprint).
 
 ---
 
 ## 📍 Current Direction (Jelenlegi Fókusz & Állapot)
-* [[CURRENT_STATE]] — Jelenlegi éles állapot (B2B Beta fázis).
-* [[OBJECTIVES]] — Aktuális célkitűzések és mérföldkövek.
-* [[PRIORITIES]] — Prioritási sorrend (P1 stabilitás, P2 UX, P3 Governance).
-* [[CONSTRAINTS]] — Technikai és üzleti korlátok, non-goalok.
+* [[CURRENT_STATE]] — Jelenlegi éles állapot (M1 B2B Beta Validation fázis).
+* [[OBJECTIVES]] — Aktuális célkitűzések, H1-H6 validációs hipotézisek és M1-M5 roadmap.
+* [[PRIORITIES]] — Prioritási fókusz (Az Egyetlen Stratégiai Kérdés és a 8 kötelező feladat).
+* [[CONSTRAINTS]] — Technikai és üzleti korlátok, non-goalok és szigorú beta scope szabály.
 
 ---
 

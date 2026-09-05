@@ -10,8 +10,9 @@
             if (!state) return;
 
             if (!state.criteria_completed) {
-                if (window.PlannerIntake) window.PlannerIntake.openDecisionDNA();
-                return;
+                // User opted to search immediately with default balanced criteria
+                state.criteria_completed = true;
+                if (window.PlannerIntake) window.PlannerIntake.updateDecisionDNACard();
             }
 
             // Invariant: Changing preferences and starting a new search clears all subsequent steps (Destinations, Flights, Stays)
@@ -166,13 +167,15 @@
             // User target temperature
             const targetTemp = parseFloat(state.intake?.target_temp || 24.0);
 
-            // Compute cohort distribution statistics (mean, std) for relative Z-score calculation
-            const computeCohortStats = (arr) => {
+            // Compute cohort min/max for continuous colour scaling
+            const computeCohortRange = (arr) => {
                 const valid = arr.filter(v => typeof v === 'number' && !isNaN(v));
-                if (valid.length === 0) return { mean: 0, std: 0, count: 0 };
+                if (valid.length === 0) return { min: 0, max: 1, count: 0, mean: 0 };
+                const min = Math.min(...valid);
+                const max = Math.max(...valid);
                 const mean = valid.reduce((a, b) => a + b, 0) / valid.length;
                 const variance = valid.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / valid.length;
-                return { mean, std: Math.sqrt(variance), count: valid.length };
+                return { min, max, count: valid.length, mean, std: Math.sqrt(variance) };
             };
 
             const tempDiffs = state.destinations.map(d => {
@@ -184,13 +187,18 @@
             const dailyCosts = state.destinations.map(d => d.metrics?.daily_cost_raw_huf || ((d.metrics?.daily_cost_raw || 35) * 400));
             const scores = state.destinations.map(d => d.score ?? null);
 
-            const tempStats = computeCohortStats(tempDiffs);
-            const flightStats = computeCohortStats(flightPrices);
-            const safetyStats = computeCohortStats(safetyScores);
-            const costStats = computeCohortStats(dailyCosts);
-            const scoreStats = computeCohortStats(scores);
+            const tempStats = computeCohortRange(tempDiffs);
+            const flightStats = computeCohortRange(flightPrices);
+            const safetyStats = computeCohortRange(safetyScores);
+            const costStats = computeCohortRange(dailyCosts);
+            const scoreStats = computeCohortRange(scores);
 
-            // Returns color-coded style based on relative standing (Z-score) within the returned cohort
+            /**
+             * Continuous colour scale: green (120°) → yellow (60°) → red (0°) in HSL.
+             * t=0 → best colour, t=1 → worst colour.
+             * higherIsBetter=true  → high value = good (t near 0)
+             * higherIsBetter=false → low value  = good (t near 0)
+             */
             const getRelativeStyle = (val, stats, higherIsBetter = false) => {
                 if (val === null || val === undefined || isNaN(val)) {
                     return {
@@ -199,38 +207,31 @@
                         border: 'var(--border-subtle)'
                     };
                 }
-                // Fallback for uniform distribution or single result
-                if (stats.count <= 1 || stats.std < 0.001) {
-                    return {
-                        color: '#16a34a',
-                        bg: 'rgba(22, 163, 74, 0.08)',
-                        border: 'rgba(22, 163, 74, 0.25)'
-                    };
-                }
-                const z = (val - stats.mean) / stats.std;
-                // ±0.35 Z-score splits cohort into roughly top 33%, middle 33%, bottom 33%
-                const isGood = higherIsBetter ? (z >= 0.35) : (z <= -0.35);
-                const isBad = higherIsBetter ? (z <= -0.35) : (z >= 0.35);
 
-                if (isGood) {
-                    return {
-                        color: '#16a34a',
-                        bg: 'rgba(22, 163, 74, 0.08)',
-                        border: 'rgba(22, 163, 74, 0.25)'
-                    };
-                } else if (isBad) {
-                    return {
-                        color: '#dc2626',
-                        bg: 'rgba(220, 38, 38, 0.08)',
-                        border: 'rgba(220, 38, 38, 0.25)'
-                    };
+                // t = 0 (best) … 1 (worst) within the cohort min–max range
+                let t;
+                if (stats.count <= 1 || stats.max - stats.min < 0.001) {
+                    t = 0; // single or uniform → treat as best
                 } else {
-                    return {
-                        color: '#d97706',
-                        bg: 'rgba(217, 119, 6, 0.08)',
-                        border: 'rgba(217, 119, 6, 0.25)'
-                    };
+                    const norm = (val - stats.min) / (stats.max - stats.min); // 0=min, 1=max
+                    t = higherIsBetter ? (1 - norm) : norm;                    // 0=best, 1=worst
                 }
+
+                // Clamp to [0, 1]
+                t = Math.max(0, Math.min(1, t));
+
+                // Continuous HSL interpolation: green (hue 120) → yellow (60) → red (0)
+                const hue = Math.round(120 * (1 - t));   // 120 → 0
+                const saturation = 75;
+                // Lighten towards midrange so pure red/green are only at extremes
+                const lightness = Math.round(32 + t * 8); // 32–40%
+
+                const textColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+                const bgAlpha = 0.09 + 0.04 * (1 - Math.abs(t - 0.5) * 2); // slightly stronger at extremes
+                const bgColor = `hsla(${hue}, ${saturation}%, 55%, ${bgAlpha.toFixed(3)})`;
+                const borderColor = `hsla(${hue}, ${saturation}%, 48%, ${(bgAlpha * 2.5).toFixed(3)})`;
+
+                return { color: textColor, bg: bgColor, border: borderColor };
             };
 
             const pillStyle = (styleObj) =>

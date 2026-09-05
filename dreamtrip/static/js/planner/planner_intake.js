@@ -24,9 +24,10 @@
         },
 
         switchDateMode(mode) {
-            if (!window.PlannerState) return;
-            window.PlannerState.date_mode = mode;
-            window.PlannerState.intake.date_mode = mode;
+            if (window.PlannerState) {
+                window.PlannerState.date_mode = mode;
+                window.PlannerState.intake.date_mode = mode;
+            }
             const modes = ['exact', 'interval'];
             modes.forEach(m => {
                 const btn = document.getElementById(`tab_mode_${m}`);
@@ -132,9 +133,24 @@
         applyExactPreset(daysFromNow, durationDays, btn) {
             if (window.PlannerState && window.PlannerState.exact_fp) {
                 window.PlannerState.exact_fp.applyPreset(daysFromNow, durationDays);
-                document.querySelectorAll('#panel_mode_exact .preset-pill').forEach(p => p.classList.remove('active'));
-                if (btn) btn.classList.add('active');
+            } else {
+                const s = new Date();
+                s.setDate(s.getDate() + daysFromNow);
+                const e = new Date(s);
+                e.setDate(s.getDate() + durationDays);
+                const formatIso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+                const outInp = document.getElementById('exact_out_date');
+                const inInp = document.getElementById('exact_in_date');
+                if (outInp) outInp.value = formatIso(s);
+                if (inInp) inInp.value = formatIso(e);
+                const pLabel = document.getElementById('exact_date_primary');
+                if (pLabel) {
+                    const months = ['jan.', 'febr.', 'márc.', 'ápr.', 'máj.', 'jún.', 'júl.', 'aug.', 'szept.', 'okt.', 'nov.', 'dec.'];
+                    pLabel.innerText = `${months[s.getMonth()]} ${s.getDate()}. — ${months[e.getMonth()]} ${e.getDate()}.`;
+                }
             }
+            document.querySelectorAll('#panel_mode_exact .preset-pill').forEach(p => p.classList.remove('active'));
+            if (btn) btn.classList.add('active');
         },
 
         toggleDeparturePref(checked) {
@@ -215,7 +231,7 @@
                 }
 
                 if (submitBtn) {
-                    submitBtn.innerHTML = `<span>2. Célállomások Keresése & Tervezés Indítása →</span>`;
+                    submitBtn.innerHTML = `<span>Célállomások Keresése & Tervezés Indítása →</span>`;
                     submitBtn.onclick = () => window.PlannerDestinations.startPlanning();
                 }
             } else {
@@ -223,8 +239,8 @@
                 if (conf) conf.style.display = 'none';
 
                 if (submitBtn) {
-                    submitBtn.innerHTML = `<span>1. Saját szempontok és prioritások beállítása →</span>`;
-                    submitBtn.onclick = () => this.openDecisionDNA();
+                    submitBtn.innerHTML = `<span>Célállomások Keresése & Tervezés Indítása →</span>`;
+                    submitBtn.onclick = () => window.PlannerDestinations.startPlanning();
                 }
             }
         },

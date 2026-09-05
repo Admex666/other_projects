@@ -116,11 +116,14 @@
             if (!force && !this.canAccessStep(stepNum)) {
                 console.warn(`[STEP BLOCKED] Lépés (${stepNum}) még nem érhető el.`);
                 // Ha a felhasználó egy még nem elérhető lépésre kattintott, jelezzük finoman
-                if (typeof showToast === 'function') {
+                const toastFn = window.showToast || (window.TripCart && window.TripCart.showToast);
+                if (typeof toastFn === 'function') {
                     const stepNames = ["Preferenciák", "Célállomás", "Járat", "Szállás", "Kész Terv"];
-                    showToast(`Kérlek először fejezd be a korábbi lépést a(z) "${stepNames[stepNum] || stepNum}" feloldásához!`, 'info');
+                    toastFn(`Kérlek először fejezd be a korábbi lépést a(z) "${stepNames[stepNum] || stepNum}" feloldásához!`, 'info');
                 }
                 return false;
+            }
+
             if (window.OptivoyaTelemetry && this.step !== stepNum) {
                 window.OptivoyaTelemetry.trackEvent('step_navigation', 'master_planner', {
                     to_step: stepNum,

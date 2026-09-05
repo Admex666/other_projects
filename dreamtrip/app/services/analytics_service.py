@@ -430,7 +430,7 @@ def get_user_sessions_summary(
     if not raw_events:
         return []
 
-    from app.core.config import CLARITY_PROJECT_ID
+    from app.core.config import get_clarity_project_id
 
     # Csoportosítás session_id szerint
     sessions_dict: Dict[str, List[Dict[str, Any]]] = {}
@@ -600,8 +600,9 @@ def get_user_sessions_summary(
 
         # Clarity direkt URL ha be van állítva a projekt ID
         clarity_url = None
-        if CLARITY_PROJECT_ID:
-            clarity_url = f"https://clarity.microsoft.com/projects/{CLARITY_PROJECT_ID}/dashboard?filters=customTags%7Ceq%7Csession_id%7C{sid}"
+        c_proj_id = get_clarity_project_id()
+        if c_proj_id:
+            clarity_url = f"https://clarity.microsoft.com/projects/{c_proj_id}/recordings?filters=customTags%7Ceq%7Csession_id%7C{sid}"
 
         # Legújabb események legfelül az eseménylistában
         ev_list_reversed = list(reversed(ev_list))

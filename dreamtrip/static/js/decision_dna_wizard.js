@@ -285,6 +285,35 @@
             this.render();
         }
 
+        handlePairwiseSlider(input, storageKey, pairId, name1, name2) {
+            const val = parseInt(input.value, 10);
+            if (!this.state[storageKey]) {
+                this.state[storageKey] = {};
+            }
+            this.state[storageKey][pairId] = val;
+            this.persistState();
+
+            const readoutEl = document.getElementById(`dna-readout-${pairId}`);
+            if (readoutEl) {
+                const labels = [
+                    'Sokkal inkább',
+                    'Kifejezetten inkább',
+                    'Kissé inkább',
+                    'Egyformán fontos',
+                    'Kissé inkább',
+                    'Kifejezetten inkább',
+                    'Sokkal inkább'
+                ];
+                if (val < 3) {
+                    readoutEl.textContent = `← ${name1} (${labels[val]})`;
+                } else if (val > 3) {
+                    readoutEl.textContent = `${name2} → (${labels[val]})`;
+                } else {
+                    readoutEl.textContent = 'Egyformán fontos';
+                }
+            }
+        }
+
         renderPairwiseMatrix(container, title, desc, pairs, storageKey) {
             const humanScale = [
                 { idx: 0, label: 'Sokkal inkább' },
@@ -296,34 +325,50 @@
                 { idx: 6, label: 'Sokkal inkább' }
             ];
 
+            const getReadout = (val, name1, name2) => {
+                if (val < 3) return `← ${name1} (${humanScale[val].label})`;
+                if (val > 3) return `${name2} → (${humanScale[val].label})`;
+                return 'Egyformán fontos';
+            };
+
             container.innerHTML = `
                 <div style="margin-bottom: 18px;">
-                    <h4 style="margin: 0 0 4px 0; font-size: 16.5px; font-weight: 800; color: var(--text-main);">${title}</h4>
-                    <p style="margin: 0; font-size: 12.5px; color: var(--text-muted);">${desc}</p>
+                    <h4 style="margin: 0 0 4px 0; font-size: 16.5px; font-weight: 800; color: var(--text-main); font-family: var(--font-display);">${title}</h4>
+                    <p style="margin: 0; font-size: 12.5px; color: var(--text-muted); font-family: var(--font-body);">${desc}</p>
                 </div>
 
                 <div style="display: flex; flex-direction: column; gap: 14px;">
                     ${pairs.map(p => {
-                        const curAns = this.state[storageKey][p.id] ?? 3;
+                        const curAns = this.state[storageKey]?.[p.id] ?? 3;
+                        const readoutText = getReadout(curAns, p.name1, p.name2);
+                        const safeName1 = (p.name1 || '').replace(/'/g, "\\'");
+                        const safeName2 = (p.name2 || '').replace(/'/g, "\\'");
                         return `
-                            <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 16px;">
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                                    <strong style="font-size: 13.5px; color: var(--text-main);">${p.name1} <span style="color: var(--text-muted); font-weight: 500;">vs</span> ${p.name2}</strong>
-                                    <span style="font-size: 12px; font-weight: 700; color: var(--primary);">
-                                        ${curAns < 3 ? `← ${p.name1} (${humanScale[curAns].label})` : curAns > 3 ? `${p.name2} → (${humanScale[curAns].label})` : 'Egyformán fontos'}
-                                    </span>
+                            <div class="dna-pairwise-card">
+                                <div class="dna-pairwise-desc">${p.desc}</div>
+                                <div class="dna-pairwise-header">
+                                    <div class="dna-pairwise-name">${p.name1}</div>
+                                    <div class="dna-pairwise-vs">vs</div>
+                                    <div class="dna-pairwise-name right">${p.name2}</div>
                                 </div>
-                                <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">${p.desc}</div>
-
-                                <div class="dna-scale-row">
-                                    ${humanScale.map(opt => {
-                                        const isSel = curAns === opt.idx;
-                                        return `
-                                            <button type="button" onclick="window.DecisionDNAInstance.state['${storageKey}']['${p.id}'] = ${opt.idx}; window.DecisionDNAInstance.render();" style="padding: 8px 3px; border-radius: 8px; border: 1.5px solid ${isSel ? 'var(--primary)' : 'var(--border-subtle)'}; background: ${isSel ? 'var(--primary)' : 'var(--bg-card)'}; color: ${isSel ? '#ffffff' : 'var(--text-main)'}; font-size: 10px; font-weight: 700; cursor: pointer; transition: all 0.15s ease; text-align: center; line-height: 1.2;">
-                                                ${opt.label}
-                                            </button>
-                                        `;
-                                    }).join('')}
+                                <div class="dna-pairwise-slider-wrap">
+                                    <div class="dna-pairwise-track-labels">
+                                        <span>Sokkal inkább ←</span>
+                                        <span>→ Sokkal inkább</span>
+                                    </div>
+                                    <div class="dna-pairwise-ticks">
+                                        <div class="dna-pairwise-tick"></div>
+                                        <div class="dna-pairwise-tick"></div>
+                                        <div class="dna-pairwise-tick"></div>
+                                        <div class="dna-pairwise-tick center"></div>
+                                        <div class="dna-pairwise-tick"></div>
+                                        <div class="dna-pairwise-tick"></div>
+                                        <div class="dna-pairwise-tick"></div>
+                                    </div>
+                                    <input class="dna-pairwise-range" type="range" min="0" max="6" value="${curAns}" step="1"
+                                           aria-label="${p.name1} vs ${p.name2}"
+                                           oninput="window.DecisionDNAInstance.handlePairwiseSlider(this, '${storageKey}', '${p.id}', '${safeName1}', '${safeName2}')">
+                                    <div class="dna-pairwise-readout" id="dna-readout-${p.id}">${readoutText}</div>
                                 </div>
                             </div>
                         `;

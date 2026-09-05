@@ -6,7 +6,7 @@ type: strategic_concept
 name: Purpose
 status: active
 
-description: Miért létezik az Optivoya (DreamTrip) projekt? Az alapvető küldetés és létezési ok.
+description: Miért létezik az Optivoya projekt? Az utazási döntések fragmentációjának felszámolása és a Travel Decision Engine létezési oka.
 
 related:
   - "[[NORTH_STAR]]"
@@ -17,8 +17,16 @@ related:
 
 # 🎯 Project Purpose
 
-Az **Optivoya** célja, hogy megszüntesse az utazástervezés és ajánlatkészítés manuális fragmentációját. 
+Az **Optivoya** célja, hogy megszüntesse az utazási döntések és az ajánlatkészítés manuális fragmentációját.
 
-A modern utazó és az utazási szakember (tanácsadó / ügynökség) több tucat böngészőfülön, aggregátoron és Excel táblán keresztül próbálja összeállítani a járatokat, szállásokat, programokat és költségkereteket.
+A modern utazó és a professzionális utazási tanácsadó több tucat böngészőfülön, aggregátoron és táblázatban próbálja összerakni a válaszokat a legfontosabb döntési kérdésekre:
+* *Hova érdemes menni?*
+* *Mikor a legjobb utazni?*
+* *Hogyan érdemes odajutni?*
+* *Hol érdemes megszállni?*
+* *Mit érdemes ott csinálni?*
+* *Hogyan álljon össze a legjobb teljes utazás?*
 
-Az Optivoya ezt a széttöredezett folyamatot egyetlen **intelligens, transzparens és döntésközpontú end-to-end rendszerré** szervezi össze, ahol a valós éghajlati, repülési, szállási és megélhetési adatok automatikusan egységes utazási tervvé és professzionális ajánlattá állnak össze.
+Az Optivoya ezt a széttöredezett folyamatot egyetlen **intelligens, transzparens és döntésközpontú Travel Decision Engine**-né szervezi össze. 
+
+Első lépésként a B2B utazásszervezők (travel advisors) számára bizonyítja be, hogy a teljes kutatási és ajánlatkészítési folyamat radikálisan lerövidíthető anélkül, hogy a szakmai minőség vagy az emberi felülvizsgálat sérülne.

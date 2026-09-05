@@ -11,7 +11,7 @@ from typing import Optional, Dict, Any
 from dotenv import load_dotenv
 from pydantic import BaseModel
 
-from app.core.config import templates, ENV_PATH, CLARITY_PROJECT_ID
+from app.core.config import templates, ENV_PATH, get_clarity_project_id
 from app.services.analytics_service import (
     get_analytics_kpis,
     get_user_timeline,
@@ -114,7 +114,7 @@ async def admin_dashboard(request: Request, user: Optional[str] = None):
         "users": users,
         "timeline": timeline,
         "sessions": sessions,
-        "clarity_project_id": CLARITY_PROJECT_ID,
+        "clarity_project_id": get_clarity_project_id(),
         "selected_users": selected_users,
         "selected_user": selected_user_str
     })
@@ -138,7 +138,7 @@ async def api_admin_sessions(request: Request, user: Optional[str] = "all"):
     if not is_admin_authenticated(request):
         raise HTTPException(status_code=401, detail="Unauthorized")
     sessions = get_user_sessions_summary(user_id=user, limit=50)
-    return JSONResponse({"status": "ok", "sessions": sessions, "clarity_project_id": CLARITY_PROJECT_ID})
+    return JSONResponse({"status": "ok", "sessions": sessions, "clarity_project_id": get_clarity_project_id()})
 
 @router.post("/api/admin/users")
 async def api_create_user(

@@ -7,7 +7,7 @@ type: strategy
 name: Optivoya Canonical Strategic Context & Product Direction
 status: active
 
-description: Az Optivoya kanonikus stratégiai forrása és termékiránya — North Star (≥600k MRR, ≤10h/hét), B2B advisor use case, H1-H6 validációs hipotézisek, M1-M5 roadmap és döntési szabályok.
+description: Az Optivoya kanonikus stratégiai forrása és termékiránya — North Star (Stratégiai & Üzleti), Travel Decision Engine vízió, B2B beachhead use case, H1-H6 validációs hipotézisek, M1-M5 roadmap és döntési szabályok.
 
 related:
   - "[[NORTH_STAR]]"
@@ -27,96 +27,172 @@ used_by:
   - "[[ADR-006-master-planner-wizard]]"
 ---
 
-# 🛬 Optivoya — DreamTripPlanner Strategic Blueprint
+# 🛬 Optivoya — DreamTripPlanner
 
-> **North Star:** Egy profitábilis, alacsony founder-inputtal működő lifestyle business.  
-> **Első nagy cél:** $\ge 600k$ Ft MRR, $\le 10$ founder óra / hét.  
-> **Jelenlegi fókusz:** B2B validation $\to$ első fizető ügyfél.
+> **North Star:** egy profitábilis, alacsony founder-inputtal működő lifestyle business.  
+> **Első nagy cél:** $\ge 600k$ Ft MRR, $\le 10$ founder óra/hét.  
+> **Jelenlegi fókusz:** B2B validation $\to$ első fizető ügyfél.  
 
 ---
 
 # 1. NORTH STAR
 
-## Üzleti cél
-Egy kis, profitábilis, nagyrészt automatizált travel-tech SaaS:
+## Stratégiai North Star
+
+Az Optivoya hosszú távú célja egy **end-to-end Travel Decision Engine** felépítése, amely egy természetes nyelven megfogalmazott utazási igényből személyre szabott, kutatott, optimalizált és végrehajtható utazási ajánlatot állít elő.
+
+Nem egyszerűen utazást „tervezünk”, hanem segítünk eldönteni:
+- hova érdemes menni,
+- mikor érdemes menni,
+- hogyan érdemes odajutni,
+- hol érdemes megszállni,
+- mit érdemes ott csinálni,
+- és hogyan álljon ezekből össze a legjobb teljes utazás.
+
+## Üzleti North Star
+
+Egy kis, profitábilis, nagyrészt automatizált travel-tech business:
 - $\ge 600k$ Ft MRR
 - $\le 10$ founder óra / hét
-- Magas profitmargin
-- Alacsony support- és operációs igény
-- Automatizálható acquisition és működés
+- magas profitmargin
+- alacsony support- és operációs igény
+- automatizálható acquisition és működés
 
 ## Nem cél
+
 - VC / fundraising
-- Nagy csapat
-- Agresszív növekedés
-- Felesleges feature-fejlesztés
-- Founder-intenzív agency business
+- nagy csapat
+- agresszív növekedés
+- felesleges feature-fejlesztés
+- founder-intenzív agency business
 
 ---
 
 # 2. MIT ÉPÍTÜNK?
 
 ## Hosszú távú termék
-Az Optivoya egy **travel decision-support engine**, amely az utazási igénytől a kész, személyre szabott utazási ajánlatig segít.
+
+Az Optivoya egy **Travel Decision Engine**, amely az utazási igénytől a kész, személyre szabott és végrehajtható utazási ajánlatig segít.
 
 ```text
 UTAZÁSI IGÉNY
       ↓
+DESTINATION INTELLIGENCE
 Hova menjek?
       ↓
-DESTINATION MATCHER
-      ↓
+FLIGHT INTELLIGENCE
 Hogyan jutok oda?
       ↓
-FLIGHT INTELLIGENCE
-      ↓
+ACCOMMODATION INTELLIGENCE
 Hol aludjak?
       ↓
-ACCOMMODATION INTELLIGENCE
-      ↓
+EXPERIENCE / ACTIVITY INTELLIGENCE
 Mit csináljak ott?
       ↓
-EXPERIENCE / ACTIVITY INTELLIGENCE
-      ↓
+ITINERARY ENGINE
 Hogyan álljon össze?
       ↓
-ITINERARY ENGINE
-      ↓
+OPTIMIZED TRIP
 KÉSZ, SZEMÉLYRE SZABOTT UTAZÁS
 ```
 
-## B2B elsődleges use case
-A travel advisor munkájának felgyorsítása:
-$$\text{ügyféligény} \longrightarrow \text{research} \longrightarrow \text{összehasonlítás} \longrightarrow \text{shortlist} \longrightarrow \text{ajánlat}$$
+A hosszú távú cél tehát **nem egy flight + hotel kereső**, hanem egy olyan döntéstámogató rendszer, amely az utazás teljes összeállításában segít.
 
-### Fő érték
-**Time Saved / Client:**
-$$\text{Time Saved} = T_{\text{manual}} - T_{\text{Optivoya}}$$
+## Jelenlegi beachhead
+
+A hosszú távú vízió B2C és B2B2C irányban is használható, de a jelenlegi elsődleges beachhead:
+
+**B2B Travel Advisor / Travel Agency**
+
+A B2B nem a végső piac-definíció, hanem a jelenlegi legjobb belépési pont.
+
+A travel advisoron keresztül tudjuk először validálni:
+- a valódi travel-planning workflow-t,
+- a research problémákat,
+- a döntési logikát,
+- az output minőségét,
+- a time savinget,
+- és a willingness to pay-t.
+
+Később ugyanez a decision engine közvetlenül az utazó számára is használható (`B2B → B2B2C → B2C`).
+
+## B2B elsődleges use case
+
+$$\text{Ügyféligény} \longrightarrow \text{research} \longrightarrow \text{összehasonlítás} \longrightarrow \text{kombináció} \longrightarrow \text{shortlist} \longrightarrow \text{advisor review} \longrightarrow \text{ügyfélajánlat}$$
+
+Az Optivoya célja nem az advisor lecserélése, hanem annak elérése, hogy ugyanazt a professzionális munkát **lényegesen gyorsabban és jobb döntéstámogatással** tudja elvégezni.
+
+## Fő érték
+
+Nem az API válaszidejét mérjük, hanem a **teljes munkafolyamat során megtakarított időt**.
+
+$$T_{\text{manual}} = \text{teljes manuális research} + \text{összehasonlítás} + \text{shortlist készítés}$$
+
+$$T_{\text{Optivoya}} = \text{Optivoya futtatás} + \text{verification} + \text{editing} + \text{finalization}$$
+
+### Fő KPI
+**Total Time Saved / Client:**
+$$\text{Total Time Saved} = T_{\text{manual}} - T_{\text{Optivoya}}$$
+
+### Másodlagos KPI-k
+- Time Reduction %
+- Verification Time
+- Edit Time
+- Shortlist Acceptance Rate
+- Advisor Rejection / Edit Rate
+- Factual Error Rate
+- Missing Option Rate
+- Time to Client-Ready Proposal
+
+A valódi érték nem az, hogy az Optivoya milyen gyorsan generál outputot, hanem az, hogy **mennyi idő alatt jut el az advisor egy ügyfélnek elküldhető, megbízható ajánlatig.**
 
 ---
 
 # 3. JELENLEGI BETA
 
 ## Cél
+
 Nem teljes travel planner építése.  
 A beta célja annak bizonyítása, hogy a jelenlegi motorokkal az advisor **valódi ügyfélkérést gyorsabban és jobb minőségben tud feldolgozni**.
 
 ## Beta MUST HAVE
-* **Destination Matcher:** Desztinációk személyre szabott rangsorolása, releváns flight árak, fő döntési szempontok (klíma, költség, biztonság) kezelése.
-* **Flight Intelligence:** Valós flight adatok, ár, menetidő, átszállás, időzítés, személyre szabott rangsor.
-* **Accommodation Intelligence:** Releváns szállások, ár, értékelés, lokáció, személyre szabott rangsor.
-* **Unified workflow:** A három motor ne különálló tool legyen:  
-  $$\text{ügyféligény} \longrightarrow \text{destination} \longrightarrow \text{flight} \longrightarrow \text{accommodation} \longrightarrow \text{shortlist / proposal}$$
+
+### Destination Matcher
+- desztinációk személyre szabott rangsorolása
+- releváns flight árak
+- fő döntési szempontok kezelése
+
+### Flight Intelligence
+- valós flight adatok
+- ár
+- menetidő
+- átszállás
+- időzítés
+- személyre szabott rangsor
+
+### Accommodation Intelligence
+- releváns szállások
+- ár
+- értékelés
+- lokáció
+- személyre szabott rangsor
+
+### Unified workflow
+A három motor ne különálló tool legyen:
+> **Human-in-the-loop:** Optivoya $\to$ candidate solutions $\to$ ranking $\to$ trade-offs $\to$ advisor verification $\to$ advisor edit/approval $\to$ client proposal.
+
+> A beta nem azt bizonyítja, hogy az AI tud-e utazási ajánlatot generálni. Azt bizonyítja, hogy az advisor **gyorsabban tud-e jobb ügyfélajánlatot készíteni** az Optivoya segítségével.
 
 ## Még NEM szükséges
-* Teljes itinerary engine
-* Komplex TSP / VRPTW útvonaloptimalizáció
-* Teljes programtervezés
-* Mobilapp
-* Chatbot
-* Enterprise funkciók
-* Komplex CRM
-* Egyéb „nice-to-have” feature
+
+- teljes itinerary engine
+- komplex TSP / VRPTW
+- teljes programtervezés
+- mobilapp
+- chatbot
+- enterprise funkciók
+- komplex CRM
+- egyéb „nice-to-have” feature
 
 > **Vezérelv:** Új feature csak akkor kerülhet a beta scope-ba, ha valódi user bizonyíthatóan emiatt nem tud értéket kapni vagy fizetni.
 
@@ -125,61 +201,146 @@ A beta célja annak bizonyítása, hogy a jelenlegi motorokkal az advisor **val�
 # 4. MIT AKARUNK BIZONYÍTANI?
 
 ## H1 — A probléma létezik
-A travel advisorok jelentős időt töltenek travel research-csel.  
-*Bizonyíték:* Manual Research Time / Client, Research workflow, ismétlődő pain pointok.
+A travel advisorok valódi ügyfélkérések feldolgozásakor jelentős időt töltenek:
+- research-csel,
+- flight és accommodation kereséssel,
+- alternatívák összehasonlításával,
+- kombinációk ellenőrzésével,
+- shortlist készítésével.
 
-## H2 — Az Optivoya értéket teremt
-A rendszer csökkenti a researchhez szükséges időt.  
-*Fő mérőszám:* $\text{Time Saved / Client}$ és $\text{Time Reduction \%}$.
+**Bizonyíték:**
+- Manual Time / Client
+- workflow breakdown
+- ismétlődő pain pointok
 
-## H3 — Használható
-A user valódi ügyfélkérésen végig tud menni a workflow-n.  
-*Mérőszám:* Activation, Successful Search, Error Rate, Time to First Value.
+---
 
-## H4 — Visszatérnek
-A termék nem egyszeri érdekesség.  
-*Mérőszám:* Weekly Usage, Repeat Usage.
+## H2 — Az Optivoya ténylegesen időt takarít meg
+A teljes workflow rövidebbé válik az Optivoya használatával.
 
-## H5 — Fizetnek
-Az érték elég nagy ahhoz, hogy pénzt adjanak érte.  
-*Mérőszám:* Willingness to Pay, Paid Conversion, első tényleges fizetés.
+**Fő mérőszám:**
+- Total Time Saved / Client
+- Time Reduction %
 
-## H6 — Megismételhető az acquisition
-Nem csak személyes kapcsolatokból lehet ügyfelet szerezni.  
-*Mérőszám:* Qualified Leads, Reply Rate, Beta Conversion, Paid Conversion, CAC, Founder Hours / Customer.
+**Kritikus ellenőrzés:**
+- Verification Time
+- Edit Time
+
+---
+
+## H3 — Az output elég jó ahhoz, hogy használható legyen
+Az advisor nem csak érdekesnek találja az outputot, hanem azt tényleges munkában felhasználja.
+
+**Mérőszám:**
+- Shortlist Acceptance Rate
+- Advisor Edit Rate
+- Factual Error Rate
+- Missing Option Rate
+- „Would you send this to your client?”
+
+---
+
+## H4 — A workflow ismételhető
+Az advisor több valódi ügyfélkérésnél is használja a rendszert.
+
+**Mérőszám:**
+- Repeat Usage
+- Requests / Advisor
+- Weekly Usage
+- Retention
+
+---
+
+## H5 — A létrehozott értékért fizetnek
+Az időmegtakarítás és workflow-érték elég nagy ahhoz, hogy az advisor vagy agency ténylegesen fizessen.
+
+**Mérőszám:**
+- Paid Pilot
+- Willingness to Pay
+- Paid Conversion
+- ARPU
+- Churn
+
+---
+
+## H6 — Az ügyfélszerzés megismételhető
+Nem csak személyes kapcsolatokból lehet ügyfelet szerezni.
+
+**Mérőszám:**
+- Qualified Leads
+- Reply Rate
+- Demo / Pilot Conversion
+- Paid Conversion
+- CAC
+- Founder Hours / Customer
+
+---
+
+## Validációs alapelv
+
+Nem a feature-ök számát, az AI válaszidejét vagy a fejlesztési sebességet tekintjük bizonyítéknak.
+
+**A döntési sorrend:**
+$$\text{Problem} \longrightarrow \text{Value} \longrightarrow \text{Quality} \longrightarrow \text{Repeat Usage} \longrightarrow \text{Payment} \longrightarrow \text{Repeatable Acquisition}$$
 
 ---
 
 # 5. VALIDATION ROADMAP
 
 ## M1 — B2B Beta Validation
-*Cél:* Bizonyítani, hogy az Optivoya valódi munkában használható és mérhető értéket teremt.  
-*Sikerfeltételek:*
+**Cél:** Bizonyítani, hogy az Optivoya valódi munkában használható és mérhető értéket teremt.
+
+### Siker
 - 20–30 releváns lead elérése
 - $\ge 10$ valódi beszélgetés
 - $\ge 5$ aktív beta user
 - $\ge 3$ ismételt használó
-- Mérhető time saving
-- Pozitív érték-visszajelzés
+- mérhető time saving
+- pozitív érték-visszajelzés
 - $\ge 2$ komoly fizetési hajlandóság
-- Lehetőleg $\ge 1$ fizető ügyfél  
+- lehetőleg $\ge 1$ fizető ügyfél  
 $$\longrightarrow \textbf{Go / Iterate / Pivot / Stop}$$
 
 ## M2 — First Paid Customers
-*Cél:* Bizonyítani, hogy az Optivoyáért ténylegesen fizetnek.  
-*Sikerfeltételek:* Első fizető ügyfél, működő pricing hypothesis, bizonyított customer value, működő beta $\to$ paid folyamat.
+**Cél:** Bizonyítani, hogy az Optivoyáért ténylegesen fizetnek.
+
+### Siker
+- első fizető ügyfél
+- működő pricing hypothesis
+- bizonyított customer value
+- működő beta $\to$ paid folyamat
 
 ## M3 — Repeatable Acquisition
-*Cél:* Mérhető, részben automatizált ügyfélszerzés.  
-*Sikerfeltételek:* Stabil leadforrás, mérhető outbound funnel, elfogadható CAC, visszatérő ügyfelek, csökkenő founder effort / customer.
+**Cél:** Mérhető, részben automatizált ügyfélszerzés.
+
+### Siker
+- stabil leadforrás
+- mérhető outbound funnel
+- elfogadható CAC
+- visszatérő ügyfelek
+- csökkenő founder effort / customer
 
 ## M4 — $\ge 600k$ Ft MRR
-*Példa:* $20 \text{ ügyfél} \times 30k \text{ Ft} = 600k \text{ Ft MRR}$  
-*Fő metrikák:* MRR, Paid Customers, ARPU, Churn, CAC, Gross Margin.
+Példa: $20 \times 30k \text{ Ft} = 600k \text{ Ft MRR}$
+
+Fő metrikák:
+- MRR
+- Paid Customers
+- ARPU
+- Churn
+- CAC
+- Gross Margin
 
 ## M5 — Lifestyle Business
 $$\ge 600k \text{ Ft MRR} + \le 10 \text{ founder óra/hét}$$
-*Fő metrikák:* Founder Hours / Week, Support Hours, Profit, Gross Margin, Automation Rate, Churn.
+
+Fő metrikák:
+- Founder Hours / Week
+- Support Hours
+- Profit
+- Gross Margin
+- Automation Rate
+- Churn
 
 ---
 
@@ -187,20 +348,44 @@ $$\ge 600k \text{ Ft MRR} + \le 10 \text{ founder óra/hét}$$
 
 Minden milestone végén:
 
-* 🟢 **GO:** A bizonyíték elég erős $\to$ tovább.
-* 🟡 **ITERATE:** Van érték, de valami akadályozza a használatot / fizetést $\to$ csak ezt javítjuk.
-* 🟠 **PIVOT:** A probléma / ICP / use case másnak bizonyul $\to$ módosítjuk az irányt.
-* 🔴 **STOP:** Nincs elég bizonyíték valódi problémára, értékre vagy fizetési hajlandóságra.
+### 🟢 GO
+A bizonyíték elég erős $\to$ tovább.
 
-> **Döntési alapelv:** Nem fejlesztési mennyiség alapján döntünk, hanem bizonyíték alapján.
+### 🟡 ITERATE
+Van érték, de valami akadályozza a használatot / fizetést $\to$ csak ezt javítjuk.
+
+### 🟠 PIVOT
+A probléma / ICP / use case másnak bizonyul $\to$ módosítjuk az irányt.
+
+### 🔴 STOP
+Nincs elég bizonyíték valódi problémára, értékre vagy fizetési hajlandóságra.
+
+> **Döntési elv:** Nem fejlesztési mennyiség alapján döntünk, hanem bizonyíték alapján.
 
 ---
 
 # 7. AKTUÁLIS PRIORITÁS
 
-## Egyetlen kérdés
+## Egyetlen stratégiai kérdés
 
-> **„Hajlandó-e egy travel advisor pénzt fizetni azért, hogy az Optivoya segítségével lényegesen kevesebb idő alatt készítsen személyre szabott utazási ajánlatot?”**
+> **„Tudjuk-e bizonyítani, hogy az Optivoya egy valódi travel advisor számára lényegesen lerövidíti a teljes research → shortlist → client proposal workflow-t úgy, hogy az output minősége elég magas legyen a tényleges használathoz és fizetéshez?”**
 
-Minden jelenlegi fejlesztésnek, outreachnek és beta tesztnek ezt kell segítenie megválaszolni.  
+### Minden jelenlegi munka ezt kell, hogy segítse:
+1. valódi advisorok elérése
+2. valódi ügyfélkérések begyűjtése
+3. manuális baseline mérése
+4. Optivoya workflow mérése
+5. verification + editing idő mérése
+6. output quality mérése
+7. repeat usage mérése
+8. willingness to pay tesztelése
+
 **Minden más másodlagos.**
+
+### Stratégiai emlékeztető
+**B2B Travel Advisor = jelenlegi beachhead.**  
+Nem ez az Optivoya teljes víziója.
+
+A cél egy olyan Travel Decision Engine felépítése, amely később:
+$$\text{B2B} \longrightarrow \text{B2B2C} \longrightarrow \text{B2C}$$
+irányban is használható, és a flight + accommodation mellett az **experience/activity + itinerary + teljes end-to-end trip planning** problémát is kezeli.

@@ -113,69 +113,77 @@
         // Universal Button & Interaction Listener ("MINDEN GOMB LEGYEN TRACKELVE")
         bindGlobalButtonTracking() {
             document.addEventListener('click', (e) => {
-                // Broad selector for ANY clickable interactive element or button
-                const target = e.target.closest(
-                    'button, a.btn, a[role="button"], .btn, [class*="btn-"], .step-node, ' +
-                    'input[type="button"], input[type="submit"], input[type="reset"], [role="button"], ' +
-                    '.modal-close-btn, .modal-close, [data-action], [data-toggle], .tab-btn, .filter-pill, ' +
-                    '.user-item, .param-chip, input[type="checkbox"], input[type="radio"], [onclick]'
-                );
-                if (!target) return;
+                try {
+                    // Broad selector for ANY clickable interactive element or button
+                    const target = e.target.closest(
+                        'button, a.btn, a[role="button"], .btn, [class*="btn-"], .step-node, ' +
+                        'input[type="button"], input[type="submit"], input[type="reset"], [role="button"], ' +
+                        '.modal-close-btn, .modal-close, [data-action], [data-toggle], .tab-btn, .tab-pill-btn, .filter-pill, ' +
+                        '.quick-pill, .preset-pill, .chip-select-btn, .user-item, .param-chip, input[type="checkbox"], input[type="radio"], [onclick]'
+                    );
+                    if (!target) return;
 
-                const btnId = target.id || '';
-                let rawText = target.innerText || target.value || target.getAttribute('aria-label') || target.getAttribute('title') || '';
-                // Clean up whitespace & material icon names
-                let btnText = rawText.replace(/\b(material-symbols-outlined|material-icons)\b/g, '')
-                                     .replace(/\s+/g, ' ')
-                                     .trim()
-                                     .slice(0, 80);
-                if (!btnText && target.title) btnText = target.title;
-                if (!btnText && target.id) btnText = `#${target.id}`;
-                if (!btnText && target.name) btnText = `[name=${target.name}]`;
+                    const btnId = target.id || '';
+                    let rawText = target.innerText || target.value || target.getAttribute('aria-label') || target.getAttribute('title') || '';
+                    // Clean up whitespace & material icon names
+                    let btnText = rawText.replace(/\b(material-symbols-outlined|material-icons)\b/g, '')
+                                         .replace(/\s+/g, ' ')
+                                         .trim()
+                                         .slice(0, 80);
+                    if (!btnText && target.title) btnText = target.title;
+                    if (!btnText && target.id) btnText = `#${target.id}`;
+                    if (!btnText && target.name) btnText = `[name=${target.name}]`;
 
-                const btnClass = (target.className || '').toString().slice(0, 120);
-                const currentStep = (window.PlannerState && typeof window.PlannerState.step === 'number') ? window.PlannerState.step : null;
+                    const btnClass = (target.className || '').toString().slice(0, 120);
+                    const currentStep = (window.PlannerState && typeof window.PlannerState.step === 'number') ? window.PlannerState.step : null;
 
-                // Identify nearest contextual card/container
-                const card = target.closest('[data-destination], .destination-card, .flight-card, .stay-card, .kpi-card, .modal-box, .panel-card');
-                let contextInfo = {};
-                if (card) {
-                    if (card.dataset && card.dataset.destination) contextInfo.target_destination = card.dataset.destination;
-                    if (card.dataset && card.dataset.id) contextInfo.card_id = card.dataset.id;
-                    const cardTitle = card.querySelector('h3, h4, .destination-name, .city-name, .airline-name, .hotel-name, .panel-title');
-                    if (cardTitle) {
-                        contextInfo.card_title = cardTitle.innerText.trim().slice(0, 60);
+                    // Identify nearest contextual card/container
+                    const card = target.closest('[data-destination], .destination-card, .flight-card, .stay-card, .kpi-card, .modal-box, .panel-card');
+                    let contextInfo = {};
+                    if (card) {
+                        if (card.dataset && card.dataset.destination) contextInfo.target_destination = card.dataset.destination;
+                        if (card.dataset && card.dataset.id) contextInfo.card_id = card.dataset.id;
+                        const cardTitle = card.querySelector('h3, h4, .destination-name, .city-name, .airline-name, .hotel-name, .panel-title');
+                        if (cardTitle) {
+                            contextInfo.card_title = cardTitle.innerText.trim().slice(0, 60);
+                        }
                     }
-                }
 
-                // Determine semantic action name
-                let actionName = 'button_clicked';
-                const lowerText = btnText.toLowerCase();
-                if (target.classList.contains('step-node') || target.classList.contains('tab-btn')) {
-                    actionName = 'stepper_or_tab_clicked';
-                } else if (lowerText.includes('járatok keresése') || lowerText.includes('célállomás kiválasztása')) {
-                    actionName = 'destination_selected';
-                } else if (lowerText.includes('járat kiválasztása') || lowerText.includes('járatot választok')) {
-                    actionName = 'flight_selected';
-                } else if (lowerText.includes('szállás kiválasztása') || lowerText.includes('szállást választok')) {
-                    actionName = 'stay_selected';
-                } else if (lowerText.includes('ajánlat') || lowerText.includes('pdf') || lowerText.includes('export')) {
-                    actionName = 'proposal_export_clicked';
-                } else if (btnId === 'dummyModeToggle') {
-                    actionName = 'dummy_mode_toggled';
-                } else if (target.type === 'checkbox') {
-                    actionName = target.checked ? 'checkbox_checked' : 'checkbox_unchecked';
-                }
+                    // Determine semantic action name
+                    let actionName = 'button_clicked';
+                    const lowerText = btnText.toLowerCase();
+                    if (target.classList.contains('step-node') || target.classList.contains('tab-btn') || target.classList.contains('tab-pill-btn')) {
+                        actionName = 'stepper_or_tab_clicked';
+                    } else if (target.classList.contains('quick-pill')) {
+                        actionName = 'origin_quick_pill_clicked';
+                    } else if (target.classList.contains('preset-pill')) {
+                        actionName = 'date_preset_pill_clicked';
+                    } else if (lowerText.includes('járatok keresése') || lowerText.includes('célállomás kiválasztása')) {
+                        actionName = 'destination_selected';
+                    } else if (lowerText.includes('járat kiválasztása') || lowerText.includes('járatot választok')) {
+                        actionName = 'flight_selected';
+                    } else if (lowerText.includes('szállás kiválasztása') || lowerText.includes('szállást választok')) {
+                        actionName = 'stay_selected';
+                    } else if (lowerText.includes('ajánlat') || lowerText.includes('pdf') || lowerText.includes('export')) {
+                        actionName = 'proposal_export_clicked';
+                    } else if (btnId === 'dummyModeToggle') {
+                        actionName = 'dummy_mode_toggled';
+                    } else if (target.type === 'checkbox') {
+                        actionName = target.checked ? 'checkbox_checked' : 'checkbox_unchecked';
+                    }
 
-                this.trackEvent('button_click', 'ui_interaction', {
-                    action: actionName,
-                    button_id: btnId,
-                    button_text: btnText || '(Névtelen gomb)',
-                    button_class: btnClass,
-                    planner_step: currentStep,
-                    tag_name: target.tagName.toLowerCase(),
-                    ...contextInfo
-                });
+                    this.trackEvent('button_click', 'ui_interaction', {
+                        action: actionName,
+                        button_id: btnId,
+                        button_text: btnText || '(Névtelen gomb)',
+                        button_class: btnClass,
+                        planner_step: currentStep,
+                        tag_name: target.tagName.toLowerCase(),
+                        ...contextInfo
+                    });
+                } catch (trackErr) {
+                    console.debug("[TELEMETRY TRACK ERROR]", trackErr);
+                }
             }, true);
         },
 

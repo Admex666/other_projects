@@ -73,12 +73,15 @@
 
             if (hasItems && !this.isBarHidden) {
                 bar.classList.add('visible');
+                document.body.classList.add('floating-bar-visible');
                 if (reopenBtn) reopenBtn.classList.remove('visible');
             } else if (hasItems && this.isBarHidden) {
                 bar.classList.remove('visible');
+                document.body.classList.remove('floating-bar-visible');
                 if (reopenBtn) reopenBtn.classList.add('visible');
             } else {
                 bar.classList.remove('visible');
+                document.body.classList.remove('floating-bar-visible');
                 if (reopenBtn) reopenBtn.classList.remove('visible');
             }
 

@@ -13,6 +13,17 @@ window.stepUp = function(elementId, maxLimit = 99) {
         input.value = current + 1;
         input.dispatchEvent(new Event('input', { bubbles: true }));
         input.dispatchEvent(new Event('change', { bubbles: true }));
+        
+        // Direct display sync fallback for instant UI response
+        const displayId = elementId.replace('_count', '_display').replace('_input', '_display');
+        const disp = document.getElementById(displayId);
+        if (disp) {
+            if (displayId.includes('stay')) {
+                disp.innerText = `${input.value} nap`;
+            } else {
+                disp.innerText = input.value;
+            }
+        }
     }
 };
 
@@ -25,7 +36,28 @@ window.stepDown = function(elementId, minLimit = 0) {
         input.value = current - 1;
         input.dispatchEvent(new Event('input', { bubbles: true }));
         input.dispatchEvent(new Event('change', { bubbles: true }));
+        
+        // Direct display sync fallback for instant UI response
+        const displayId = elementId.replace('_count', '_display').replace('_input', '_display');
+        const disp = document.getElementById(displayId);
+        if (disp) {
+            if (displayId.includes('stay')) {
+                disp.innerText = `${input.value} nap`;
+            } else {
+                disp.innerText = input.value;
+            }
+        }
     }
+};
+
+// Global Toast Bridge
+window.showToast = function(message, icon = '✨') {
+    if (window.TripCart && typeof window.TripCart.showToast === 'function') {
+        return window.TripCart.showToast(message, icon);
+    } else if (window.TripDrawer && typeof window.TripDrawer.showToast === 'function') {
+        return window.TripDrawer.showToast(message, icon);
+    }
+    console.log(`[OPTIVOYA TOAST] ${icon} ${message}`);
 };
 
 // 2. CENTRAL DATE RANGE PICKER (FLATPICKR WRAPPER)

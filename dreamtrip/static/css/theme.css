@@ -153,10 +153,13 @@ html {
     background-color: var(--bg-base);
     color: var(--text-main);
     color-scheme: light dark;
+    /* Prevent elastic over-scroll past page end */
+    overscroll-behavior: none;
+    height: 100%;
 }
 
 body {
-    min-height: 100vh;
+    min-height: 100%;
     display: flex;
     flex-direction: column;
     font-family: var(--font-body);
@@ -165,6 +168,8 @@ body {
     transition: background-color var(--transition-normal), color var(--transition-normal);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* Prevent rubber-band / bounce scroll past content */
+    overscroll-behavior: none;
 }
 
 /* Headlines kapják a feszes Plus Jakarta Sans-t */
