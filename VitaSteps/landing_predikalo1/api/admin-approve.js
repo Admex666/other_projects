@@ -7,7 +7,7 @@ const supabase = createClient(
 
 // Éremkiszállítás dátumai kampányonként (YYYY-MM-DD)
 const MEDAL_SHIP_DATES = {
-    pilis:         '2026-08-25',  // Nagy-Kevély csillagai – kiszállítás aug. 25. után
+    pilis: '2026-08-25',  // Nagy-Kevély csillagai – kiszállítás aug. 25. után
     predikaloszek: '2026-01-01',  // Prédikálószék – érmek megvannak, azonnal postázható
 };
 
@@ -20,6 +20,46 @@ function getMedalShippingText(campaignKey) {
     }
     const dateHu = shipDate.toLocaleDateString('hu-HU', { year: 'numeric', month: 'long', day: 'numeric' });
     return `Az érmeket <strong>${dateHu}</strong> után postázzuk ki, a megadott szállítási módnak megfelelően. 📦`;
+}
+
+function sendPushbullet(title, body) {
+    const token = process.env.PUSHBULLET_ACCESS_TOKEN;
+    if (!token) return Promise.resolve(null);
+
+    return new Promise((resolve) => {
+        const https = require('https');
+        const payload = JSON.stringify({
+            type: 'note',
+            title: title,
+            body: body
+        });
+
+        const req = https.request({
+            hostname: 'api.pushbullet.com',
+            path: '/v2/pushes',
+            method: 'POST',
+            headers: {
+                'Access-Token': token,
+                'Content-Type': 'application/json',
+                'Content-Length': Buffer.byteLength(payload)
+            }
+        }, (res) => {
+            let data = '';
+            res.on('data', chunk => data += chunk);
+            res.on('end', () => {
+                console.log('[Pushbullet] Approval notification sent. Status:', res.statusCode);
+                resolve(data);
+            });
+        });
+
+        req.on('error', (err) => {
+            console.error('[Pushbullet] Error sending notification:', err.message);
+            resolve(null);
+        });
+
+        req.write(payload);
+        req.end();
+    });
 }
 
 module.exports = async (req, res) => {
@@ -77,8 +117,8 @@ module.exports = async (req, res) => {
             if (smtpPassword && runnerEmail) {
                 const runnerName = runData.name || runData.runners?.name || 'Futó Partner';
                 const isPilisK = runData.serial_number && (runData.serial_number.includes('PK') || runData.serial_number.includes('999'));
-                const campaignName = isPilisK ? 'A Nagy-Kevély csillagjai érem' : 'Prédikálószék Vertical';
-                const campaignKey  = isPilisK ? 'pilis' : 'predikaloszek';
+                const campaignName = isPilisK ? 'A Nagy-Kevély csillagai érem' : 'Prédikálószék Vertical';
+                const campaignKey = isPilisK ? 'pilis' : 'predikaloszek';
                 const shippingText = getMedalShippingText(campaignKey);
 
                 const transporter = nodemailer.createTransport({
@@ -96,7 +136,7 @@ module.exports = async (req, res) => {
                     sorszam: runData.serial_number || '',
                     tav: runData.distance_km ? `${runData.distance_km} km` : '',
                     datum: today,
-                    campaign: isPilisK ? 'A Nagy-Kevély csillagjai' : 'Prédikálószék Vertical'
+                    campaign: isPilisK ? 'A Nagy-Kevély csillagai' : 'Prédikálószék Vertical'
                 });
                 const oklevelLink = `https://vitastepsss.vercel.app/predikalo/oklevel.html?${params.toString()}`;
 
@@ -125,6 +165,22 @@ module.exports = async (req, res) => {
                     html: congratsHtml
                 });
                 console.log(`Congrats email sent to ${runnerEmail}`);
+            }
+
+            // Send Pushbullet notification to admin
+            try {
+                const runnerName = runData.name || runData.runners?.name || 'Futó Partner';
+                const isPilisK = runData.serial_number && (runData.serial_number.includes('PK') || runData.serial_number.includes('999'));
+                const campaignName = isPilisK ? 'A Nagy-Kevély csillagai' : 'Prédikálószék Vertical';
+                const serial = runData.serial_number || '–';
+                const runnerEmail = runData.runners?.email || '–';
+
+                await sendPushbullet(
+                    `🏆 Teljesítés jóváhagyva: ${runnerName}`,
+                    `Futó: ${runnerName} (${serial})\nKihívás: ${campaignName}\nEmail: ${runnerEmail}\nDátum: ${today}`
+                );
+            } catch (pbErr) {
+                console.error('[Pushbullet] Notification failed:', pbErr);
             }
 
             return res.status(200).json({ success: true, message: 'Run approved and email sent.' });
@@ -162,7 +218,7 @@ module.exports = async (req, res) => {
 
         } else if (action === 'update_shipment') {
             const { phone, parcel_id, parcel_name, method, home_address } = req.body;
-            
+
             // 1. Update shipments table
             const updatePayload = {};
             if (phone !== undefined) updatePayload.phone = phone;

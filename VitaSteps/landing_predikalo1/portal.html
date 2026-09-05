@@ -302,8 +302,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-4px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-4px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .proof-file-icon {
@@ -338,7 +345,9 @@
             transition: opacity 0.2s;
         }
 
-        .proof-file-remove:hover { opacity: 0.7; }
+        .proof-file-remove:hover {
+            opacity: 0.7;
+        }
 
         .proof-progress-bar {
             height: 4px;
@@ -366,7 +375,7 @@
         }
 
         .format-badge {
-            background: rgba(255,255,255,0.04);
+            background: rgba(255, 255, 255, 0.04);
             border: 1px solid var(--border);
             border-radius: 4px;
             padding: 0.15rem 0.5rem;
@@ -717,9 +726,14 @@
                     <div class="badge-serial" id="user-display-serial">#---/---</div>
                 </div>
 
-                <div id="campaign-selector-container" style="display: none; margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 1rem;">
-                    <label for="campaign-select" style="font-size: 0.85rem; color: var(--text-mid); display: block; margin-bottom: 0.5rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Válassz kihívást:</label>
-                    <select id="campaign-select" style="width: 100%; padding: 0.6rem; border-radius: 8px; background: var(--surface2); color: #fff; border: 1px solid var(--border); font-weight: 600; font-family: inherit; font-size: 0.9rem; outline: none; transition: border-color 0.25s;" onchange="onCampaignChange(this.value)">
+                <div id="campaign-selector-container"
+                    style="display: none; margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+                    <label for="campaign-select"
+                        style="font-size: 0.85rem; color: var(--text-mid); display: block; margin-bottom: 0.5rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Válassz
+                        kihívást:</label>
+                    <select id="campaign-select"
+                        style="width: 100%; padding: 0.6rem; border-radius: 8px; background: var(--surface2); color: #fff; border: 1px solid var(--border); font-weight: 600; font-family: inherit; font-size: 0.9rem; outline: none; transition: border-color 0.25s;"
+                        onchange="onCampaignChange(this.value)">
                         <!-- Dynamic options -->
                     </select>
                 </div>
@@ -754,12 +768,13 @@
                     📤 Teljesítés beküldése
                 </button>
             </div>
-            
+
             <!-- PENDING CHALLENGE INFO (Predikálószék only – no PK) -->
             <div id="pending-challenge-card" class="card" style="display: none;">
                 <h2 style="color: var(--accent); margin-top: 0;">🏔️ Kihívás folyamatban</h2>
                 <p>Teljesítsd a választott távot, majd igazold a teljesítésedet a beküldő űrlapon keresztül.</p>
-                <p>A teljesítés jóváhagyása után itt érheted el a személyre szabott okleveledet, a visszajelzési ívet és a kedvezményeket nyújtó ajánlói programot!</p>
+                <p>A teljesítés jóváhagyása után itt érheted el a személyre szabott okleveledet, a visszajelzési ívet és
+                    a kedvezményeket nyújtó ajánlói programot!</p>
                 <a id="btn-tally-submit" href="https://tally.so/r/NpRz5W" target="_blank" class="btn">
                     <span>Teljesítés Igazolása (Tally)</span>
                 </a>
@@ -769,170 +784,175 @@
             <div id="proof-pending-card" class="card" style="display: none; text-align: center;">
                 <div style="font-size: 3rem; margin-bottom: 1rem;">⏳</div>
                 <h2 style="margin-top: 0;">Ellenőrzés alatt</h2>
-                <p>Köszönjük a beküldést! A feltöltött igazolásaid feldolgozás alatt vannak – általában <strong>1–2 munkanapon belül</strong> értesítünk az eredményről.</p>
-                <p style="margin-bottom: 0;">Ha kérdésed van, írj nekünk: <a href="mailto:vitasteps.team@gmail.com" style="color: var(--accent);">vitasteps.team@gmail.com</a></p>
+                <p>Köszönjük a beküldést! A feltöltött igazolásaid feldolgozás alatt vannak – általában <strong>1–2
+                        munkanapon belül</strong> értesítünk az eredményről.</p>
+                <p style="margin-bottom: 0;">Ha kérdésed van, írj nekünk: <a href="mailto:vitasteps.team@gmail.com"
+                        style="color: var(--accent);">vitasteps.team@gmail.com</a></p>
             </div>
 
             <!-- TAB CONTENT: Feedback -->
             <div id="tab-content-feedback">
                 <!-- Feedback Card -->
                 <div id="feedback-card" class="card" style="display: none;">
-                <h2>Érem átvéve, jelezz vissza! 💬</h2>
-                <p>Nagyszerű! Látjuk, hogy az érmedet már sikeresen átvetted. Kérünk, oszd meg velünk a véleményedet az
-                    alábbi kérdések megválaszolásával (kb. 2 perc):</p>
+                    <h2>Érem átvéve, jelezz vissza! 💬</h2>
+                    <p>Nagyszerű! Látjuk, hogy az érmedet már sikeresen átvetted. Kérünk, oszd meg velünk a véleményedet
+                        az
+                        alábbi kérdések megválaszolásával (kb. 2 perc):</p>
 
-                <form id="feedback-form">
-                    <!-- Q1 -->
-                    <div class="form-group">
-                        <label>1. Mennyire vagy elégedett az érem minőségével?</label>
-                        <div class="stars-container" id="stars-quality">
-                            <!-- Clickable SVG stars will be inserted here by JS -->
+                    <form id="feedback-form">
+                        <!-- Q1 -->
+                        <div class="form-group">
+                            <label>1. Mennyire vagy elégedett az érem minőségével?</label>
+                            <div class="stars-container" id="stars-quality">
+                                <!-- Clickable SVG stars will be inserted here by JS -->
+                            </div>
+                            <input type="hidden" id="q-quality" required>
                         </div>
-                        <input type="hidden" id="q-quality" required>
-                    </div>
 
-                    <!-- Q2 -->
-                    <div class="form-group">
-                        <label>2. Mennyire volt zökkenőmentes a szállítás?</label>
-                        <div class="stars-container" id="stars-delivery">
-                            <!-- Clickable SVG stars will be inserted here by JS -->
+                        <!-- Q2 -->
+                        <div class="form-group">
+                            <label>2. Mennyire volt zökkenőmentes a szállítás?</label>
+                            <div class="stars-container" id="stars-delivery">
+                                <!-- Clickable SVG stars will be inserted here by JS -->
+                            </div>
+                            <input type="hidden" id="q-delivery" required>
                         </div>
-                        <input type="hidden" id="q-delivery" required>
-                    </div>
 
-                    <!-- Q3 -->
-                    <div class="form-group">
-                        <label>3. Részt vennél-e legközelebb is VitaSteps kihíváson?</label>
-                        <div class="radio-group">
-                            <label class="radio-label">
-                                <input type="radio" name="q-reszvetel" value="Igen" required>
-                                <span class="radio-custom"></span>
-                                <span>Igen</span>
-                            </label>
-                            <label class="radio-label">
-                                <input type="radio" name="q-reszvetel" value="Nem">
-                                <span class="radio-custom"></span>
-                                <span>Nem</span>
-                            </label>
-                            <label class="radio-label">
-                                <input type="radio" name="q-reszvetel" value="Talán">
-                                <span class="radio-custom"></span>
-                                <span>Talán</span>
-                            </label>
+                        <!-- Q3 -->
+                        <div class="form-group">
+                            <label>3. Részt vennél-e legközelebb is VitaSteps kihíváson?</label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="q-reszvetel" value="Igen" required>
+                                    <span class="radio-custom"></span>
+                                    <span>Igen</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="q-reszvetel" value="Nem">
+                                    <span class="radio-custom"></span>
+                                    <span>Nem</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="q-reszvetel" value="Talán">
+                                    <span class="radio-custom"></span>
+                                    <span>Talán</span>
+                                </label>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Q4 -->
-                    <div class="form-group">
-                        <label>4. Mennyire ajánlanád a VitaSteps-et egy barátodnak?</label>
-                        <div class="nps-container" id="nps-scale">
-                            <!-- Clickable NPS scale circles will be inserted here by JS -->
+                        <!-- Q4 -->
+                        <div class="form-group">
+                            <label>4. Mennyire ajánlanád a VitaSteps-et egy barátodnak?</label>
+                            <div class="nps-container" id="nps-scale">
+                                <!-- Clickable NPS scale circles will be inserted here by JS -->
+                            </div>
+                            <input type="hidden" id="q-nps" required>
+                            <div
+                                style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-mid); margin-top: -1rem; margin-bottom: 1.5rem;">
+                                <span>Egyáltalán nem (0)</span>
+                                <span>Teljes mértékben (10)</span>
+                            </div>
                         </div>
-                        <input type="hidden" id="q-nps" required>
-                        <div
-                            style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-mid); margin-top: -1rem; margin-bottom: 1.5rem;">
-                            <span>Egyáltalán nem (0)</span>
-                            <span>Teljes mértékben (10)</span>
+
+                        <!-- Q5 -->
+                        <div class="form-group">
+                            <label>5. Melyik tájegységre mennél legközelebb?</label>
+                            <div class="checkbox-grid">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="q-location" value="Balaton-felvidék">
+                                    <span class="checkbox-custom"></span>
+                                    <span>Balaton-felvidék</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="q-location" value="Bükk">
+                                    <span class="checkbox-custom"></span>
+                                    <span>Bükk</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="q-location" value="Mátra">
+                                    <span class="checkbox-custom"></span>
+                                    <span>Mátra</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="q-location" value="Magas-Tátra">
+                                    <span class="checkbox-custom"></span>
+                                    <span>Magas-Tátra</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="q-location" value="Pilis">
+                                    <span class="checkbox-custom"></span>
+                                    <span>Pilis</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="q-location" value="Mecsek">
+                                    <span class="checkbox-custom"></span>
+                                    <span>Mecsek</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="q-location" value="Börzsöny">
+                                    <span class="checkbox-custom"></span>
+                                    <span>Börzsöny</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="q-location" value="Egyéb">
+                                    <span class="checkbox-custom"></span>
+                                    <span>Egyéb...</span>
+                                </label>
+                            </div>
+                            <input type="text" id="q-location-other" class="input-text"
+                                placeholder="Írd ide, ha más tájegységet szeretnél"
+                                style="display: none; margin-top: -0.5rem; margin-bottom: 1.5rem;">
                         </div>
-                    </div>
 
-                    <!-- Q5 -->
-                    <div class="form-group">
-                        <label>5. Melyik tájegységre mennél legközelebb?</label>
-                        <div class="checkbox-grid">
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="q-location" value="Balaton-felvidék">
-                                <span class="checkbox-custom"></span>
-                                <span>Balaton-felvidék</span>
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="q-location" value="Bükk">
-                                <span class="checkbox-custom"></span>
-                                <span>Bükk</span>
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="q-location" value="Mátra">
-                                <span class="checkbox-custom"></span>
-                                <span>Mátra</span>
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="q-location" value="Magas-Tátra">
-                                <span class="checkbox-custom"></span>
-                                <span>Magas-Tátra</span>
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="q-location" value="Pilis">
-                                <span class="checkbox-custom"></span>
-                                <span>Pilis</span>
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="q-location" value="Mecsek">
-                                <span class="checkbox-custom"></span>
-                                <span>Mecsek</span>
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="q-location" value="Börzsöny">
-                                <span class="checkbox-custom"></span>
-                                <span>Börzsöny</span>
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="q-location" value="Egyéb">
-                                <span class="checkbox-custom"></span>
-                                <span>Egyéb...</span>
-                            </label>
+                        <!-- Q6 -->
+                        <div class="form-group">
+                            <label for="q-best">6. Mi tetszett legjobban a kihívásban? (opcionális)</label>
+                            <textarea id="q-best" class="input-text"
+                                placeholder="Írd le tapasztalataidat..."></textarea>
                         </div>
-                        <input type="text" id="q-location-other" class="input-text"
-                            placeholder="Írd ide, ha más tájegységet szeretnél"
-                            style="display: none; margin-top: -0.5rem; margin-bottom: 1.5rem;">
-                    </div>
 
-                    <!-- Q6 -->
-                    <div class="form-group">
-                        <label for="q-best">6. Mi tetszett legjobban a kihívásban? (opcionális)</label>
-                        <textarea id="q-best" class="input-text" placeholder="Írd le tapasztalataidat..."></textarea>
-                    </div>
-
-                    <!-- Q7 -->
-                    <div class="form-group">
-                        <label for="q-improvement">7. Mi tenné még jobbá számodra a kihívást? (opcionális)</label>
-                        <textarea id="q-improvement" class="input-text"
-                            placeholder="Pl. szállítási módok, weboldal felülete, árak..."></textarea>
-                    </div>
-
-                    <!-- Q8 -->
-                    <div class="form-group">
-                        <label>8. Tölts fel egy fotót az érmedről! 📸 (opcionális)</label>
-                        <div class="upload-zone" id="upload-zone">
-                            <div class="upload-icon">📷</div>
-                            <div style="font-weight: 700; margin-bottom: 0.25rem;">Húzd ide a fotót</div>
-                            <div class="upload-text">vagy kattints ide a tallózáshoz (JPG, PNG, max 10MB)</div>
-                            <input type="file" id="file-input" accept="image/*" style="display: none;">
+                        <!-- Q7 -->
+                        <div class="form-group">
+                            <label for="q-improvement">7. Mi tenné még jobbá számodra a kihívást? (opcionális)</label>
+                            <textarea id="q-improvement" class="input-text"
+                                placeholder="Pl. szállítási módok, weboldal felülete, árak..."></textarea>
                         </div>
-                        <div id="preview-container" style="display: none;">
-                            <!-- Will be populated dynamically -->
+
+                        <!-- Q8 -->
+                        <div class="form-group">
+                            <label>8. Tölts fel egy fotót az érmedről! 📸 (opcionális)</label>
+                            <div class="upload-zone" id="upload-zone">
+                                <div class="upload-icon">📷</div>
+                                <div style="font-weight: 700; margin-bottom: 0.25rem;">Húzd ide a fotót</div>
+                                <div class="upload-text">vagy kattints ide a tallózáshoz (JPG, PNG, max 10MB)</div>
+                                <input type="file" id="file-input" accept="image/*" style="display: none;">
+                            </div>
+                            <div id="preview-container" style="display: none;">
+                                <!-- Will be populated dynamically -->
+                            </div>
                         </div>
-                    </div>
 
-                    <button type="submit" id="btn-feedback-submit" class="btn" style="margin-top: 1.5rem;">
-                        <span>Visszajelzés beküldése</span>
-                    </button>
-                </form>
-            </div>
+                        <button type="submit" id="btn-feedback-submit" class="btn" style="margin-top: 1.5rem;">
+                            <span>Visszajelzés beküldése</span>
+                        </button>
+                    </form>
+                </div>
 
-            <!-- Feedback Already Submitted Card -->
-            <div id="feedback-completed-card" class="card" style="display: none; text-align: center;">
-                <div style="font-size: 4rem; margin-bottom: 1rem;">💖</div>
-                <h2>Köszönjük a visszajelzésedet!</h2>
-                <p>A visszajelzésedet sikeresen rögzítettük. Véleményeddel sokat segítesz nekünk a fejlődésben!</p>
-            </div>
+                <!-- Feedback Already Submitted Card -->
+                <div id="feedback-completed-card" class="card" style="display: none; text-align: center;">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">💖</div>
+                    <h2>Köszönjük a visszajelzésedet!</h2>
+                    <p>A visszajelzésedet sikeresen rögzítettük. Véleményeddel sokat segítesz nekünk a fejlődésben!</p>
+                </div>
 
-            <!-- Medal In Transit Card -->
-            <div id="medal-transit-card" class="card" style="display: none;">
-                <h2>📦 Érmed kézbesítése folyamatban</h2>
-                <p>Az érmed már feladásra került vagy úton van a célautomatád felé! A visszajelző kérdőívet csak azután
-                    tudod itt kitölteni, ha a Foxpost rendszere szerint sikeresen átvetted a csomagot.</p>
-                <p>Köszönjük a türelmedet! Státusz frissülése naponta egyszer történik.</p>
-            </div>
+                <!-- Medal In Transit Card -->
+                <div id="medal-transit-card" class="card" style="display: none;">
+                    <h2>📦 Érmed kézbesítése folyamatban</h2>
+                    <p>Az érmed már feladásra került vagy úton van a célautomatád felé! A visszajelző kérdőívet csak
+                        azután
+                        tudod itt kitölteni, ha a Foxpost rendszere szerint sikeresen átvetted a csomagot.</p>
+                    <p>Köszönjük a türelmedet! Státusz frissülése naponta egyszer történik.</p>
+                </div>
 
             </div>
 
@@ -941,43 +961,56 @@
                 <!-- Referral Program Card -->
                 <div id="referral-card" class="card" style="display: block; margin-top: 0;">
                     <h2 style="color: var(--accent); margin-top: 0;">🎁 Ajánlói Program</h2>
-                    <p>Küldd el a lenti linkedet a barátaidnak: ha ezen keresztül neveznek, ők <strong>10% kedvezményt</strong> kapnak a Prédikálószék nevezésből, te pedig akár <strong>100% ingyenes nevezést</strong> kapsz a következő VitaSteps kihívásunkra!</p>
+                    <p>Küldd el a lenti linkedet a barátaidnak: ha ezen keresztül neveznek, ők <strong>10%
+                            kedvezményt</strong> kapnak a Prédikálószék nevezésből, te pedig akár <strong>100% ingyenes
+                            nevezést</strong> kapsz a következő VitaSteps kihívásunkra!</p>
 
-                <div class="form-group" style="margin-top: 1rem;">
-                    <label style="font-size: 0.85rem; color: var(--text-mid); display: block; margin-bottom: 0.4rem;">A te egyedi ajánlói linked (kattints rá a másoláshoz):</label>
-                    <input type="text" id="ref-link-input" class="input-text" readonly style="background: rgba(255,255,255,0.03); color: #fff; cursor: pointer; text-align: center; font-family: monospace; font-size: 0.85rem;" onclick="copyReferralLink()">
-                </div>
+                    <div class="form-group" style="margin-top: 1rem;">
+                        <label
+                            style="font-size: 0.85rem; color: var(--text-mid); display: block; margin-bottom: 0.4rem;">A
+                            te egyedi ajánlói linked (kattints rá a másoláshoz):</label>
+                        <input type="text" id="ref-link-input" class="input-text" readonly
+                            style="background: rgba(255,255,255,0.03); color: #fff; cursor: pointer; text-align: center; font-family: monospace; font-size: 0.85rem;"
+                            onclick="copyReferralLink()">
+                    </div>
 
-                <div style="margin-top: 1.5rem; background: var(--surface2); padding: 1.2rem; border-radius: 8px; border: 1px solid var(--border);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem;">
-                        <span style="font-weight: 700; font-size: 0.95rem;">Sikeres ajánlásaid száma:</span>
-                        <span class="status-badge completed" id="ref-count-display">0 barát</span>
-                    </div>
-                    <div style="font-size: 0.82rem; color: var(--text-mid); line-height: 1.5;" id="ref-reward-display">
-                        Következő mérföldkő: <strong>1 barát után 10%</strong> kedvezmény
-                    </div>
-                    
-                    <div style="margin-top: 1rem; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 0.8rem; font-size: 0.78rem; color: var(--text-mid); line-height: 1.4;">
-                        📈 <strong>Jutalom szintek:</strong><br>
-                        • 1 barát: <strong>10%</strong> · 2 barát: <strong>25%</strong> · 3 barát: <strong>45%</strong> · 4 barát: <strong>70%</strong><br>
-                        • 5 barát: <strong>100% INGYENES</strong> nevezés a következő túrára!
+                    <div
+                        style="margin-top: 1.5rem; background: var(--surface2); padding: 1.2rem; border-radius: 8px; border: 1px solid var(--border);">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem;">
+                            <span style="font-weight: 700; font-size: 0.95rem;">Sikeres ajánlásaid száma:</span>
+                            <span class="status-badge completed" id="ref-count-display">0 barát</span>
+                        </div>
+                        <div style="font-size: 0.82rem; color: var(--text-mid); line-height: 1.5;"
+                            id="ref-reward-display">
+                            Következő mérföldkő: <strong>1 barát után 10%</strong> kedvezmény
+                        </div>
+
+                        <div
+                            style="margin-top: 1rem; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 0.8rem; font-size: 0.78rem; color: var(--text-mid); line-height: 1.4;">
+                            📈 <strong>Jutalom szintek:</strong><br>
+                            • 1 barát: <strong>10%</strong> · 2 barát: <strong>25%</strong> · 3 barát:
+                            <strong>45%</strong> · 4 barát: <strong>70%</strong><br>
+                            • 5 barát: <strong>100% INGYENES</strong> nevezés a következő túrára!
+                        </div>
                     </div>
                 </div>
-            </div>
             </div>
 
             <!-- TAB CONTENT: Guidebook -->
             <div id="tab-content-guidebook" style="display: none;">
                 <div class="card" style="margin-top: 0;">
                     <h2 style="color: var(--accent); margin-top: 0;">📖 Nagy-Kevély Kalandkönyv</h2>
-                    <p>Töltsd le és nyomtasd ki a személyre szabott kalandkönyvedet! Vidd magaddal a túrára, vezesd benne a legszebb élményeidet, és teljesítsd a kihívást!</p>
-                    
+                    <p>Töltsd le és nyomtasd ki a személyre szabott kalandkönyvedet! Vidd magaddal a túrára, vezesd
+                        benne a legszebb élményeidet, és teljesítsd a kihívást!</p>
+
                     <form id="guidebook-download-form" onsubmit="generateGuidebook(event)">
                         <div class="form-group">
                             <label for="guidebook-name">Név a borítólapon</label>
-                            <input type="text" id="guidebook-name" class="input-text" required placeholder="Add meg a neved...">
+                            <input type="text" id="guidebook-name" class="input-text" required
+                                placeholder="Add meg a neved...">
                         </div>
-                        
+
                         <div class="form-group">
                             <label>Válaszd ki a távodat</label>
                             <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.5rem;">
@@ -1003,7 +1036,7 @@
                                 </label>
                             </div>
                         </div>
-                        
+
                         <div class="form-group">
                             <label>Nyomtatási stílus</label>
                             <div style="display: flex; gap: 1.5rem; margin-top: 0.5rem; font-weight: 600;">
@@ -1019,7 +1052,7 @@
                                 </label>
                             </div>
                         </div>
-                        
+
                         <button type="submit" class="btn" style="margin-top: 1rem;">
                             📖 Kalandkönyv Generálása & Nyomtatása
                         </button>
@@ -1031,15 +1064,18 @@
             <div id="tab-content-proof" style="display: none;">
                 <div class="card">
                     <h2>📤 Teljesítés Igazolása</h2>
-                    <p>Töltsd fel a GPS nyomvonalad (.gpx fájl) és legalább egy selfie-t / fotót a csúcsról vagy az úton. Az igazolást az adminisztrátorunk néhány munkanapon belül elbírálja.</p>
+                    <p>Töltsd fel a GPS nyomvonalad (.gpx fájl) és legalább egy selfie-t / fotót a csúcsról vagy az
+                        úton. Az igazolást az adminisztrátorunk néhány munkanapon belül elbírálja.</p>
 
                     <!-- Dropzone -->
-                    <div class="dropzone" id="proof-dropzone" onclick="document.getElementById('proof-file-input').click()">
+                    <div class="dropzone" id="proof-dropzone"
+                        onclick="document.getElementById('proof-file-input').click()">
                         <input type="file" id="proof-file-input" multiple
-                            accept=".gpx,.fit,.tcx,image/jpeg,image/png,image/webp,image/heic"
-                            style="display:none" onchange="onProofFilesSelected(this.files)">
+                            accept=".gpx,.fit,.tcx,image/jpeg,image/png,image/webp,image/heic" style="display:none"
+                            onchange="onProofFilesSelected(this.files)">
                         <span class="dropzone-icon">🗂️</span>
-                        <div class="dropzone-title">Húzd ide a fájlokat, vagy <span class="dropzone-browse">kattints a tallózáshoz</span></div>
+                        <div class="dropzone-title">Húzd ide a fájlokat, vagy <span class="dropzone-browse">kattints a
+                                tallózáshoz</span></div>
                         <div class="dropzone-hint">GPX nyomvonal + fotók a túráról</div>
                         <div class="format-badges">
                             <span class="format-badge">GPX</span>
@@ -1061,24 +1097,34 @@
                     </div>
 
                     <!-- Verify others (group verification) -->
-                    <div id="verify-others-container" style="display:none; margin-top: 1.25rem; border-top: 1px solid var(--border); padding-top: 1.25rem; text-align: left;"></div>
+                    <div id="verify-others-container"
+                        style="display:none; margin-top: 1.25rem; border-top: 1px solid var(--border); padding-top: 1.25rem; text-align: left;">
+                    </div>
 
                     <!-- Shipping consolidation (merge packages) -->
-                    <div style="margin-top: 1.25rem; border-top: 1px solid var(--border); padding-top: 1.25rem; text-align: left;">
-                        <label for="ship-together-email" style="font-size: 0.85rem; font-weight: 600; color: var(--text-high); display: block; margin-bottom: 0.4rem;">
+                    <div
+                        style="margin-top: 1.25rem; border-top: 1px solid var(--border); padding-top: 1.25rem; text-align: left;">
+                        <label for="ship-together-email"
+                            style="font-size: 0.85rem; font-weight: 600; color: var(--text-high); display: block; margin-bottom: 0.4rem;">
                             Együtt szállítva egy barátoddal? (Opcionális)
                         </label>
                         <p style="font-size: 0.78rem; color: var(--text-mid); margin: 0 0 0.5rem 0; line-height: 1.4;">
-                            Ha közös csomagban (egy Foxpost fiókba vagy ugyanarra a címre) szeretnéd kérni az érmedet egy barátoddal, add meg az ő regisztrált e-mail címét:
+                            Ha közös csomagban (egy Foxpost fiókba vagy ugyanarra a címre) szeretnéd kérni az érmedet
+                            egy barátoddal, add meg az ő regisztrált e-mail címét:
                         </p>
-                        <input type="email" id="ship-together-email" class="input-text" placeholder="Barátod regisztrált e-mail címe..." style="background: rgba(255,255,255,0.03); color: #fff; width: 100%; box-sizing: border-box;">
+                        <input type="email" id="ship-together-email" class="input-text"
+                            placeholder="Barátod regisztrált e-mail címe..."
+                            style="background: rgba(255,255,255,0.03); color: #fff; width: 100%; box-sizing: border-box;">
                     </div>
 
                     <!-- Submit -->
-                    <button class="btn" id="btn-proof-submit" onclick="submitProof()" style="margin-top: 1.25rem;" disabled>
+                    <button class="btn" id="btn-proof-submit" onclick="submitProof()" style="margin-top: 1.25rem;"
+                        disabled>
                         <span>Igazolás Beküldése</span>
                     </button>
-                    <p style="font-size: 0.8rem; color: var(--text-low); margin-top: 0.75rem; margin-bottom: 0; text-align: center;">Max 10 fájl, egyenként max 50 MB</p>
+                    <p
+                        style="font-size: 0.8rem; color: var(--text-low); margin-top: 0.75rem; margin-bottom: 0; text-align: center;">
+                        Max 10 fájl, egyenként max 50 MB</p>
                 </div>
             </div>
 
@@ -1406,7 +1452,7 @@
                     sorszam: run.serial_number || '',
                     tav: run.distance_km ? `${run.distance_km} km` : '',
                     datum: run.completion_date || '',
-                    campaign: isPilisK ? 'A Nagy-Kevély csillagjai' : 'Prédikálószék Vertical'
+                    campaign: isPilisK ? 'A Nagy-Kevély csillagai' : 'Prédikálószék Vertical'
                 });
                 document.getElementById('btn-oklevel').href = `predikalo/oklevel.html?${params.toString()}`;
                 certContainer.style.display = 'block';
@@ -1446,9 +1492,9 @@
             document.getElementById('proof-pending-card').style.display = 'none';
 
             // Check if there are other uncompleted runs for the same campaign (same prefix/type of serial number)
-            const otherUncompleted = userProfile.runs.filter(r => 
-                r.id !== run.id && 
-                !r.completed && 
+            const otherUncompleted = userProfile.runs.filter(r =>
+                r.id !== run.id &&
+                !r.completed &&
                 !r.proof_submitted &&
                 (r.serial_number && (r.serial_number.includes('PK') || r.serial_number.includes('999'))) === isPilisK
             );
@@ -1752,17 +1798,28 @@
 
                 const shipTogetherEmail = document.getElementById('ship-together-email')?.value.trim().toLowerCase() || null;
 
-                const { error: dbError } = await supabaseClient
-                    .from('runs')
-                    .update({
-                        proof_submitted: true,
+                // Save to runs table via backend endpoint
+                const session = (await supabaseClient.auth.getSession())?.data?.session;
+                const token = session?.access_token;
+
+                const apiRes = await fetch('/api/submit-proof', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                    },
+                    body: JSON.stringify({
+                        run_id: runId,
+                        run_ids: targetIds,
                         proof_urls: uploadedUrls,
-                        proof_submitted_at: new Date().toISOString(),
                         ship_together_with: shipTogetherEmail
                     })
-                    .in('id', targetIds);
+                });
 
-                if (dbError) throw new Error('Adatbázis frissítési hiba: ' + dbError.message);
+                const apiData = await apiRes.json();
+                if (!apiRes.ok || !apiData.success) {
+                    throw new Error(apiData.error || 'Hiba történt az igazolás mentésekor.');
+                }
 
                 progressFill.style.width = '100%';
 
@@ -1917,10 +1974,10 @@
         // Tab Switching Utility
         function switchTab(tabId) {
             const tabs = [
-                { id: 'feedback',  btn: 'tab-btn-feedback',  content: 'tab-content-feedback' },
-                { id: 'referral',  btn: 'tab-btn-referral',  content: 'tab-content-referral' },
+                { id: 'feedback', btn: 'tab-btn-feedback', content: 'tab-content-feedback' },
+                { id: 'referral', btn: 'tab-btn-referral', content: 'tab-content-referral' },
                 { id: 'guidebook', btn: 'tab-btn-guidebook', content: 'tab-content-guidebook' },
-                { id: 'proof',     btn: 'tab-btn-proof',     content: 'tab-content-proof' },
+                { id: 'proof', btn: 'tab-btn-proof', content: 'tab-content-proof' },
             ];
 
             tabs.forEach(t => {
@@ -1944,13 +2001,13 @@
             const nev = document.getElementById('guidebook-name').value.trim();
             const tav = document.querySelector('input[name="guidebook-route"]:checked').value;
             const style = document.querySelector('input[name="guidebook-style"]:checked').value;
-            
+
             const params = new URLSearchParams({
                 nev: nev,
                 tav: tav,
                 style: style
             });
-            
+
             window.open(`nagykevely/kalandkonyv.html?${params.toString()}`, '_blank');
         }
 

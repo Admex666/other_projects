@@ -60,7 +60,8 @@
         /* The actual certificate card */
         .certificate {
             width: 800px;
-            height: 566px; /* A4 aspect ratio 1.414 */
+            height: 566px;
+            /* A4 aspect ratio 1.414 */
             background: radial-gradient(circle at top left, #0e131f 0%, #05070c 100%);
             border: 2px solid var(--gold);
             border-radius: 12px;
@@ -909,7 +910,7 @@
             const displayCampaign = document.getElementById('display-campaign');
             const urlCampaign = params.kihivas || params.campaign || '';
             if (urlCampaign.toLowerCase().includes('pilis') || (serial && (serial.includes('PK') || serial.includes('999')))) {
-                displayCampaign.textContent = 'A Nagy-Kevély csillagjai';
+                displayCampaign.textContent = 'A Nagy-Kevély csillagai';
             } else if (urlCampaign) {
                 displayCampaign.textContent = urlCampaign;
             } else {

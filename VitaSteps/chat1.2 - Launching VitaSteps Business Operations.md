@@ -581,7 +581,8 @@ orders alapján bevétel hozzárendelés
 dashboard frissítés
 ```
 
-Erre képesek vagyunk most, rendelkezésre áll minden adat? Csak ezt a kérdést válaszold meg, a kódban NE változtass!
+
+Erre képesek vagyunk most, rendelkezésre áll minden adat? Csak ezt a kérdést válaszold meg, a kódban NE változtass!
 
 
 *Edited relevant file*
@@ -2320,7 +2321,7 @@ Then we can display this Customer Retention & Acquisition Cohort directly on the
    - 👥 **Ügyfél-összetétel & Visszatérési arány**:
      - 🆕 **Új vásárlók (Első nevezés)**: X fő (Y%)
      - 🔄 **Visszatérő vásárlók (Korábbi kampányokból)**: Z fő (W%)
-     - 💡 *Különösen értékes adat: Megmutatja, hányan tértek vissza a Prédikálószék kihívás után a Nagy-Kevély csillagjai kihívásra!*
+     - 💡 *Különösen értékes adat: Megmutatja, hányan tértek vissza a Prédikálószék kihívás után a Nagy-Kevély csillagai kihívásra!*
 
 2. **Inside each Campaign Card** (under the KPI grid & financials):
    - A dedicated **👥 Vásárlói Összetétel** chip/row:

@@ -11,7 +11,7 @@ VitaSteps is a premium virtual hiking and running challenge platform. Participan
     *   *Finishers:* 67 paid participants.
     *   *Medal:* 75mm custom-designed, hand-painted Antique Nickel medal.
     *   *Outcome:* 10/10 NPS customer satisfaction, profitable first batch.
-2.  **A Nagy-Kevély csillagjai (Active/Upcoming - August-September 2026)**
+2.  **A Nagy-Kevély csillagai (Active/Upcoming - August-September 2026)**
     *   *Price:* 7 990 Ft (AAM invoice, free Foxpost delivery).
     *   *Finishers Limit:* 100 participants.
     *   *Medal:* 70mm custom 3D Antique Silver medal with green soft enamel coloring and custom printed ribbon.

@@ -210,6 +210,34 @@ function renderList() {
         });
     }
 
+    // Sort order:
+    // 1. Unapproved runs with submitted proofs ALWAYS come FIRST at the very top!
+    // 2. Ordered by proof_submitted_at descending (most recent proof first).
+    // 3. Followed by unsubmitted pending runs, then completed runs.
+    runs.sort((a, b) => {
+        const aHasProof = !a.completed && a.proof_submitted && (a.proof_urls && a.proof_urls.length > 0);
+        const bHasProof = !b.completed && b.proof_submitted && (b.proof_urls && b.proof_urls.length > 0);
+
+        if (aHasProof && !bHasProof) return -1;
+        if (!aHasProof && bHasProof) return 1;
+
+        if (aHasProof && bHasProof) {
+            const aTime = new Date(a.proof_submitted_at || 0).getTime();
+            const bTime = new Date(b.proof_submitted_at || 0).getTime();
+            return bTime - aTime;
+        }
+
+        if (!a.completed && a.proof_submitted && !b.proof_submitted) return -1;
+        if (!b.completed && b.proof_submitted && !a.proof_submitted) return 1;
+
+        if (!a.completed && b.completed) return -1;
+        if (a.completed && !b.completed) return 1;
+
+        const aCreated = new Date(a.created_at || 0).getTime();
+        const bCreated = new Date(b.created_at || 0).getTime();
+        return bCreated - aCreated;
+    });
+
     if (currentFilter === 'pending') {
         renderPendingProofs(runs, container);
     } else {
@@ -256,32 +284,48 @@ function renderPendingProofs(runs, container) {
         const serial = run.serial_number || 'Nincs sorszám';
         const urls = run.proof_urls || [];
         const campInfo = getCampaignInfo(run);
+        const hasProofImages = run.proof_submitted && urls.length > 0;
 
-        const badgeHtml = run.proof_submitted
-            ? `<span class="badge badge-pending">📥 Igazolás beküldve</span>`
-            : `<span class="badge badge-not-submitted">🏃 Még nem igazolt</span>`;
+        const badgeHtml = hasProofImages
+            ? `<span class="badge" style="background: rgba(196, 255, 0, 0.18); color: #c4ff00; border: 1px solid #c4ff00; font-weight: 800;">⚡ ÚJ IGAZOLÁS ÉRKEZETT</span>`
+            : (run.proof_submitted
+                ? `<span class="badge badge-pending">📥 Igazolás beküldve</span>`
+                : `<span class="badge badge-not-submitted">🏃 Még nem igazolt</span>`);
 
         let filesHtml = '';
         if (urls.length > 0) {
-            filesHtml = '<div class="proof-files">' + urls.map((url, i) => {
-                const isImg = url.match(/\.(jpg|jpeg|png|webp|gif)$/i) || url.includes('/proofs/');
-                if (isImg) {
-                    return `<img src="${url}" class="proof-thumb" onclick="showImageModal('${url}')" alt="Igazolás ${i+1}" title="Kattints a nagyításhoz">`;
-                }
-                return `<a href="${url}" target="_blank" class="proof-doc-link">📄 Igazolás fájl megnyitása</a>`;
-            }).join('') + '</div>';
+            filesHtml = `
+                <div style="background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 0.85rem; margin: 1rem 0;">
+                    <div style="font-size: 0.82rem; font-weight: 700; color: #e4e4e7; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.4rem;">
+                        📸 Csatolt igazolások (${urls.length} db) – <span style="font-weight: 400; color: var(--text-mid);">kattints a nagyításhoz:</span>
+                    </div>
+                    <div class="proof-files" style="margin-bottom: 0; gap: 0.85rem;">
+                        ${urls.map((url, i) => {
+                            const isImg = url.match(/\.(jpg|jpeg|png|webp|gif)$/i) || url.includes('/proofs/');
+                            if (isImg) {
+                                return `<img src="${url}" class="proof-thumb" style="width: 120px; height: 120px; border-radius: 8px; object-fit: cover; border: 2px solid rgba(196, 255, 0, 0.35); box-shadow: 0 4px 12px rgba(0,0,0,0.5); cursor: pointer;" onclick="showImageModal('${url}')" alt="Igazolás ${i+1}" title="Kattints a nagyításhoz">`;
+                            }
+                            return `<a href="${url}" target="_blank" class="proof-doc-link">📄 Igazolás fájl megnyitása</a>`;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
         } else {
-            filesHtml = '<div style="font-size: 0.82rem; color: var(--text-mid); margin-bottom: 1rem; font-style: italic;">A résztvevő még nem töltött fel igazolást.</div>';
+            filesHtml = '<div style="font-size: 0.82rem; color: var(--text-mid); margin: 0.85rem 0; font-style: italic;">A résztvevő még nem töltött fel igazolást.</div>';
         }
 
+        const cardHighlightStyle = hasProofImages
+            ? `border: 2px solid rgba(196, 255, 0, 0.5); background: linear-gradient(145deg, rgba(196, 255, 0, 0.04) 0%, rgba(18, 24, 36, 0.98) 100%); box-shadow: 0 4px 20px rgba(196, 255, 0, 0.08);`
+            : ``;
+
         return `
-            <div class="proof-card" id="card-${run.id}">
+            <div class="proof-card" id="card-${run.id}" style="${cardHighlightStyle}">
                 <div class="proof-header">
                     <div>
-                        <div class="runner-name">${name}</div>
+                        <div class="runner-name" style="${hasProofImages ? 'color: #fff; font-size: 1.2rem;' : ''}">${name}</div>
                         <div class="runner-meta">
                             📧 ${email} | 🗓️ Regisztrált: ${formatDate(run.created_at)}
-                            ${run.proof_submitted_at ? ` | ⏱️ Igazolva: ${formatDate(run.proof_submitted_at)}` : ''}
+                            ${run.proof_submitted_at ? ` | ⏱️ <strong>Igazolva: ${formatDate(run.proof_submitted_at)}</strong>` : ''}
                         </div>
                     </div>
                     <div class="badges">
@@ -328,12 +372,28 @@ function renderRunsTable(runs, container) {
             statusText = `<span class="badge badge-not-submitted">Folyamatban</span>`;
         }
 
+        const urls = run.proof_urls || [];
+        let proofPreview = '–';
+        if (urls.length > 0) {
+            const firstUrl = urls[0];
+            const isImg = firstUrl.match(/\.(jpg|jpeg|png|webp|gif)$/i) || firstUrl.includes('/proofs/');
+            if (isImg) {
+                proofPreview = `<div style="display:flex; align-items:center; gap:0.4rem;">
+                    <img src="${firstUrl}" style="width:36px; height:36px; border-radius:4px; object-fit:cover; border:1px solid var(--border); cursor:pointer;" onclick="showImageModal('${firstUrl}')" title="Kattints a nagyításhoz">
+                    <span style="font-size:0.75rem; color:var(--text-mid);">${urls.length > 1 ? `+${urls.length - 1} db` : ''}</span>
+                </div>`;
+            } else {
+                proofPreview = `<a href="${firstUrl}" target="_blank" style="font-size:0.78rem; color:var(--accent);">📄 Fájl</a>`;
+            }
+        }
+
         return `
             <tr>
                 <td style="font-weight: 600;">${name}</td>
                 <td>${campBadge}<strong>${serial}</strong></td>
                 <td>${email}</td>
                 <td>${formatDate(run.created_at)}</td>
+                <td>${proofPreview}</td>
                 <td>${statusText}</td>
             </tr>
         `;
@@ -348,6 +408,7 @@ function renderRunsTable(runs, container) {
                         <th>Kihívás & Sorszám</th>
                         <th>Email</th>
                         <th>Regisztráció</th>
+                        <th>Igazolás</th>
                         <th>Állapot</th>
                     </tr>
                 </thead>

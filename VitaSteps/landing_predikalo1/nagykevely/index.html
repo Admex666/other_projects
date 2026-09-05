@@ -4,9 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A Nagy-Kevély csillagjai – VitaSteps | Limitált 100 darabos érem</title>
+    <title>A Nagy-Kevély csillagai – VitaSteps | Limitált 100 darabos érem</title>
     <meta name="description"
-        content="Teljesítsd a Nagy-Kevély túrát augusztus 1. és szeptember 18. között, igazold a teljesítményed, és szerezd meg a kézzel festett 'A Nagy-Kevély csillagjai' érmet. Limitált, 100 darabos széria.">
+        content="Teljesítsd a Nagy-Kevély túrát augusztus 1. és szeptember 18. között, igazold a teljesítményed, és szerezd meg a kézzel festett 'A Nagy-Kevély csillagai' érmet. Limitált, 100 darabos széria.">
     <link rel="stylesheet" href="../style.css">
     <link rel="icon" type="image/png" href="../assets/logo.png">
 
@@ -335,10 +335,10 @@
     <script defer src="/_vercel/insights/script.js"></script>
     <!-- Microsoft Clarity -->
     <script type="text/javascript">
-        (function(c,l,a,r,i,t,y){
-            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        (function (c, l, a, r, i, t, y) {
+            c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
+            t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i;
+            y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
         })(window, document, "clarity", "script", "xx85zg2g25");
     </script>
 </head>
@@ -569,14 +569,18 @@
             </div>
 
             <!-- Route Stats & Download Bar -->
-            <div id="route-stats" style="display: flex; justify-content: center; align-items: center; gap: 1.5rem; margin-top: 1.25rem; font-size: 0.9rem; flex-wrap: wrap;">
-                <div style="background: var(--surface2); padding: 0.5rem 1.2rem; border-radius: 20px; border: 1px solid var(--border); font-weight: 600;">
+            <div id="route-stats"
+                style="display: flex; justify-content: center; align-items: center; gap: 1.5rem; margin-top: 1.25rem; font-size: 0.9rem; flex-wrap: wrap;">
+                <div
+                    style="background: var(--surface2); padding: 0.5rem 1.2rem; border-radius: 20px; border: 1px solid var(--border); font-weight: 600;">
                     📏 Táv: <strong id="stat-dist" style="color: var(--accent);">-- km</strong>
                 </div>
-                <div style="background: var(--surface2); padding: 0.5rem 1.2rem; border-radius: 20px; border: 1px solid var(--border); font-weight: 600;">
+                <div
+                    style="background: var(--surface2); padding: 0.5rem 1.2rem; border-radius: 20px; border: 1px solid var(--border); font-weight: 600;">
                     ⛰️ Szintemelkedés: <strong id="stat-elev" style="color: var(--accent);">-- m</strong>
                 </div>
-                <a id="download-gpx-btn" href="#" download style="background: rgba(191,255,0,0.1); color: var(--accent); border: 1px solid var(--border-accent); padding: 0.5rem 1.2rem; border-radius: 20px; text-decoration: none; font-weight: 700; font-size: 0.85rem; transition: all 0.2s;">
+                <a id="download-gpx-btn" href="#" download
+                    style="background: rgba(191,255,0,0.1); color: var(--accent); border: 1px solid var(--border-accent); padding: 0.5rem 1.2rem; border-radius: 20px; text-decoration: none; font-weight: 700; font-size: 0.85rem; transition: all 0.2s;">
                     📥 GPX Nyomvonal Letöltése
                 </a>
             </div>
@@ -717,7 +721,7 @@
         let currentGpxLayer = null;
 
         const gpxRoutes = {
-            'pilis-6':  '/assets/nagykevely/tracks/01csaladi.gpx',
+            'pilis-6': '/assets/nagykevely/tracks/01csaladi.gpx',
             'pilis-10': '/assets/nagykevely/tracks/02klasszik.gpx',
             'pilis-15': '/assets/nagykevely/tracks/03extra.gpx',
             'pilis-25': '/assets/nagykevely/tracks/04felmaraton.gpx'
@@ -763,20 +767,20 @@
                         async: true,
                         marker_options: {
                             startIconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/1.7.0/pin-icon-start.png',
-                            endIconUrl:   'https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/1.7.0/pin-icon-end.png',
-                            shadowUrl:    'https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/1.7.0/pin-shadow.png'
+                            endIconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/1.7.0/pin-icon-end.png',
+                            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/1.7.0/pin-shadow.png'
                         },
                         polyline_options: {
                             color: '#c4ff00',
                             weight: 5,
                             opacity: 0.95
                         }
-                    }).on('loaded', function(e) {
+                    }).on('loaded', function (e) {
                         const gpxObj = e.target;
                         mapInstance.fitBounds(gpxObj.getBounds(), { padding: [30, 30] });
 
                         const distKm = (gpxObj.get_distance() / 1000).toFixed(1);
-                        const elevM  = Math.round(gpxObj.get_elevation_gain());
+                        const elevM = Math.round(gpxObj.get_elevation_gain());
 
                         const distEl = document.getElementById('stat-dist');
                         const elevEl = document.getElementById('stat-elev');

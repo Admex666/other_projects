@@ -13,6 +13,7 @@ function getGroupedRunIds(run) {
     const shipment = getShipment(run);
     const dest = shipment.parcel_id || shipment.home_address || '';
     const trackingCode = shipment.tracking_code || '';
+    const isShipped = !!shipment.shipped;
 
     const matched = allRuns.filter(r => {
         if (r.id === run.id) return true;
@@ -21,10 +22,17 @@ function getGroupedRunIds(run) {
         const rShipment = getShipment(r);
         const rDest = rShipment.parcel_id || rShipment.home_address || '';
         const rTracking = rShipment.tracking_code || '';
+        const rShipped = !!rShipment.shipped;
 
-        // If both already shipped and share the same tracking code -> definitely same physical parcel
-        if (trackingCode && rTracking && trackingCode === rTracking) return true;
+        // Never group a shipped parcel with an unshipped parcel
+        if (isShipped !== rShipped) return false;
 
+        // If both already shipped, only group if they share the exact same tracking code
+        if (isShipped && rShipped) {
+            return trackingCode && rTracking && trackingCode === rTracking;
+        }
+
+        // Neither is shipped yet: check destination match
         if (dest && rDest && dest !== rDest) return false;
         if (orderId && r.order_id && orderId === r.order_id) return true;
         if (email && rEmail && email === rEmail) return true;
