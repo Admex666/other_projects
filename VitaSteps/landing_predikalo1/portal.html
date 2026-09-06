@@ -1345,23 +1345,7 @@
                 if (error) throw error;
 
                 if (!profile) {
-                    console.log('Runner profile not found in DB. Attempting background sync...');
-                    try {
-                        const syncRes = await fetch('/api/sync-runners');
-                        if (syncRes.ok) {
-                            const { data: retryProfile, error: retryError } = await supabaseClient
-                                .from('runners')
-                                .select('*, runs(*, shipments(*))')
-                                .eq('email', currentUser.email.toLowerCase())
-                                .maybeSingle();
-                            if (retryError) throw retryError;
-                            if (retryProfile) {
-                                profile = retryProfile;
-                            }
-                        }
-                    } catch (syncErr) {
-                        console.error('On-demand sync failed:', syncErr);
-                    }
+                    console.warn('Runner profile not found in DB for email:', currentUser.email);
                 }
 
                 if (!profile) {
