@@ -18,9 +18,8 @@ require('dotenv').config();
 
 const { createClient } = require('@supabase/supabase-js');
 
-// Pushbullet Access Token with fallback
-const DEFAULT_PUSHBULLET_TOKEN = 'o.AL09U6r5T6x65MzyOS2fSVrL4pUVzuOR';
-const PUSHBULLET_TOKEN = process.env.PUSHBULLET_ACCESS_TOKEN || DEFAULT_PUSHBULLET_TOKEN;
+// Pushbullet Access Token (from environment variable)
+const PUSHBULLET_TOKEN = process.env.PUSHBULLET_ACCESS_TOKEN;
 
 // Initialize Supabase Client with Service Role
 const supabaseUrl = process.env.SUPABASE_URL || 'https://ncsathcqpvlrygkphced.supabase.co';
