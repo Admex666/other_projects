@@ -1,0 +1,56 @@
+# Example multi-account configuration for LLM_email
+# Copy this file to accounts.yaml and configure your email accounts.
+# Note: accounts.yaml is gitignored for security.
+
+accounts:
+  - id: "personal_gmail"
+    name: "Személyes Gmail"
+    category: "személyes" # kategóriák: személyes, munka, egyetem, projekt, egyéb
+    provider: "imap"
+    imap_server: "imap.gmail.com"
+    imap_port: 993
+    use_ssl: true
+    username: "your.personal@gmail.com"
+    password: "your_gmail_app_password" # Gmail esetén alkalmazásjelszó szükséges (2-step verification)
+    folder: "INBOX"
+    fetch_hours: 24 # Hány órára visszamenőleg olvassa az új emaileket
+    enabled: true
+
+  - id: "university_mail"
+    name: "Egyetemi Fiók"
+    category: "egyetem"
+    provider: "imap"
+    imap_server: "mail.university.edu"
+    imap_port: 993
+    use_ssl: true
+    username: "student@university.edu"
+    password: "your_university_password"
+    folder: "INBOX"
+    fetch_hours: 24
+    enabled: false
+
+  - id: "work_mail"
+    name: "Munkahelyi Outlook / IMAP"
+    category: "munka"
+    provider: "imap"
+    imap_server: "outlook.office365.com"
+    imap_port: 993
+    use_ssl: true
+    username: "user@workplace.com"
+    password: "your_work_password_or_app_password"
+    folder: "INBOX"
+    fetch_hours: 24
+    enabled: false
+
+  - id: "project_mail"
+    name: "Projekt Fiók"
+    category: "projekt"
+    provider: "imap"
+    imap_server: "imap.yourdomain.com"
+    imap_port: 993
+    use_ssl: true
+    username: "dev@myproject.org"
+    password: "your_project_password"
+    folder: "INBOX"
+    fetch_hours: 24
+    enabled: false
