@@ -1802,23 +1802,78 @@
                 const session = (await supabaseClient.auth.getSession())?.data?.session;
                 const token = session?.access_token;
 
-                const apiRes = await fetch('/api/submit-proof', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-                    },
-                    body: JSON.stringify({
-                        run_id: runId,
-                        run_ids: targetIds,
-                        proof_urls: uploadedUrls,
-                        ship_together_with: shipTogetherEmail
-                    })
-                });
+                let pushAlreadySent = false;
+                let backendOk = false;
 
-                const apiData = await apiRes.json();
-                if (!apiRes.ok || !apiData.success) {
-                    throw new Error(apiData.error || 'Hiba történt az igazolás mentésekor.');
+                try {
+                    const apiRes = await fetch('/api/submit-proof', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                        },
+                        body: JSON.stringify({
+                            run_id: runId,
+                            run_ids: targetIds,
+                            proof_urls: uploadedUrls,
+                            ship_together_with: shipTogetherEmail
+                        })
+                    });
+
+                    if (apiRes.ok) {
+                        const apiData = await apiRes.json();
+                        if (apiData.success) {
+                            backendOk = true;
+                            pushAlreadySent = !!apiData.pushbullet_sent;
+                        }
+                    }
+                } catch (apiErr) {
+                    console.warn('[portal] Backend /api/submit-proof failed, using direct client fallback:', apiErr);
+                }
+
+                // If backend was not reached or failed, save directly to Supabase runs table
+                if (!backendOk) {
+                    const { error: directDbError } = await supabaseClient
+                        .from('runs')
+                        .update({
+                            proof_submitted: true,
+                            proof_urls: uploadedUrls,
+                            proof_submitted_at: new Date().toISOString(),
+                            ship_together_with: shipTogetherEmail
+                        })
+                        .in('id', targetIds);
+
+                    if (directDbError) {
+                        throw new Error('Adatbázis mentési hiba: ' + directDbError.message);
+                    }
+                }
+
+                // Client-side Pushbullet notification guarantee
+                if (!pushAlreadySent) {
+                    try {
+                        const runnerName = selectedRun.name || userProfile?.name || currentUser?.email || 'Résztvevő';
+                        const serialNum = selectedRun.serial_number || '';
+                        const isPilis = selectedRun.campaign === 'pilis' || (selectedRun.serial_number || '').includes('-PK');
+                        const campName = isPilis ? 'A Nagy-Kevély csillagai' : 'Prédikálószék Vertical';
+
+                        const pbBody = `Futó: ${runnerName}\nKihívás: ${campName}\nSorszám: ${serialNum}\nCsatolt igazolások: ${uploadedUrls.length} db fájl\nEmail: ${currentUser?.email || '–'}\n\nAdmin felület ellenőrzéshez:\nhttps://vitastepsss.vercel.app/admin.html`;
+
+                        fetch('https://api.pushbullet.com/v2/pushes', {
+                            method: 'POST',
+                            headers: {
+                                'Access-Token': 'o.AL09U6r5T6x65MzyOS2fSVrL4pUVzuOR',
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                type: 'note',
+                                title: `📥 Új igazolás: ${runnerName} (${serialNum})`,
+                                body: pbBody
+                            })
+                        }).then(r => console.log('[Pushbullet Client] Status:', r.status))
+                          .catch(e => console.warn('[Pushbullet Client] Error:', e));
+                    } catch (pushEx) {
+                        console.warn('[Pushbullet Client] Exception:', pushEx);
+                    }
                 }
 
                 progressFill.style.width = '100%';

@@ -1,4 +1,44 @@
+---
+id: campaign-spec-nagykevely
+type: entity
+name: A Nagy-Kevély csillagai – Kampány Specifikáció és Időterv
+status: active
+description: Részletes kampánystratégia, menetrend, pénzügyi modell, gyártási adatok és Meta Ads célzási terv a Nagy-Kevély csillagai kihíváshoz.
+source:
+  type: spec
+  ref: campaigns/nagy_kevely_csillagai.md
+code:
+  - landing_predikalo1/nagykevely/index.html
+  - landing_predikalo1/nagykevely/kalandkonyv.html
+  - landing_predikalo1/nagykevely/siker.html
+  - landing_predikalo1/config/campaigns.json
+related:
+  - "[[campaign-nagykevely|Campaign: Nagy-Kevély csillagai]]"
+  - "[[campaign-predikaloszek|Campaign: Prédikálószék Vertical]]"
+  - "[[medal|Érem specifikáció]]"
+  - "[[meta-ads|Meta Ads Kampányok]]"
+  - "[[customer-funnel|Ügyfélszerzési Tölcsér]]"
+  - "[[checkout-pipeline|Fizetési és Számlázási Pipeline]]"
+  - "[[order-fulfillment|Csomagküldési és Logisztikai Folyamat]]"
+  - "[[unified-campaign-config|Egységes Kampány Konfiguráció]]"
+  - "[[ADR-005-campaign-expansion|ADR-005: Több-kampányos Rendszer]]"
+  - "[[ADR-007-revolut-stripe-cashflow-integration|ADR-007: Cashflow és Készlet Integráció]]"
+---
+
 # 🏔️ A Nagy-Kevély csillagai – Kampány Specifikáció és Időterv
+
+## 🔗 Kapcsolódó Tudástár & Rendszer Elemek
+* **Hivatalos Kampány Entitás:** [[campaign-nagykevely|Campaign: Nagy-Kevély csillagai]]
+* **Előző Kihívás Entitás:** [[campaign-predikaloszek|Campaign: Prédikálószék Vertical]]
+* **Fizikai Érem és Gyártás:** [[medal|Érem specifikáció & Kínai beszállító]]
+* **Marketing & Kampány Analytics:** [[meta-ads|Meta Ads Rendszer & Napi Riport]] és [[customer-funnel|Ügyfélszerzési Tölcsér]]
+* **Fizetés & E-Számlázás:** [[checkout-pipeline|Stripe Fizetési és Számlázz.hu Pipeline]]
+* **Csomagküldés & Postázás:** [[foxpost|Foxpost API & Csomagpontok]] és [[order-fulfillment|Raktározási & Csomagolási Folyamat]]
+* **Döntési Napló (ADR-ek):**
+  * [[ADR-005-campaign-expansion|ADR-005: Több-kampányos Rendszer és Dinamikus Konfiguráció]]
+  * [[ADR-007-revolut-stripe-cashflow-integration|ADR-007: Revolut-Stripe Cashflow és Készletérték Idővonal]]
+
+---
 
 ## 💰 Pénzügyi Alapadatok
 *   **Nevezési díj:** 7 990 Ft (alanyi adómentes, AAM számlával)

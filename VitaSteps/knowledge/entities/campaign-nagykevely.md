@@ -7,6 +7,7 @@ description: The second VitaSteps challenge - Nagy-Kevély csillagai astronomica
 source:
   type: config
   ref: landing_predikalo1/config/campaigns.json
+  spec: campaigns/nagy_kevely_csillagai.md
 code:
   - landing_predikalo1/nagykevely/index.html
   - landing_predikalo1/nagykevely/kalandkonyv.html
@@ -23,6 +24,7 @@ related:
 The second official challenge of VitaSteps, launched in July 2026.
 
 ## Key Facts
+* **Campaign Specification & Timeline:** [nagy_kevely_csillagai.md](file:///e:/Data/other_projects/VitaSteps/campaigns/nagy_kevely_csillagai.md)
 * **Identifier:** `pilis` (or `nagykevely`)
 * **Route:** Pilisborosjenő $\rightarrow$ Teve-szikla $\rightarrow$ Egri vár másolata $\rightarrow$ Nagy-Kevély csúcs (534m).
 * **Options:** 4 modular distances (6 km, 10 km, 15 km, 25 km félmaraton).

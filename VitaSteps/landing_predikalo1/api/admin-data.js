@@ -271,8 +271,25 @@ module.exports = async (req, res) => {
 
             try {
                 stripeBalance = await stripe.balance.retrieve();
-                const txList = await stripe.balanceTransactions.list({ limit: 100 });
-                stripeTransactions = txList.data.map(t => ({
+
+                // Fetch ALL balance transactions from inception (auto-paging)
+                const allTxs = [];
+                let txHasMore = true;
+                let txStartingAfter = undefined;
+                while (txHasMore) {
+                    const params = { limit: 100 };
+                    if (txStartingAfter) params.starting_after = txStartingAfter;
+                    const resp = await stripe.balanceTransactions.list(params);
+                    allTxs.push(...resp.data);
+                    txHasMore = resp.has_more;
+                    if (txHasMore && resp.data.length > 0) {
+                        txStartingAfter = resp.data[resp.data.length - 1].id;
+                    } else {
+                        txHasMore = false;
+                    }
+                }
+
+                stripeTransactions = allTxs.map(t => ({
                     id: t.id,
                     created: t.created * 1000,
                     type: t.type,
@@ -283,8 +300,25 @@ module.exports = async (req, res) => {
                     status: t.status,
                     description: t.description
                 }));
-                const pList = await stripe.payouts.list({ limit: 50 });
-                stripePayouts = pList.data.map(p => ({
+
+                // Fetch ALL payouts from inception (auto-paging)
+                const allPayouts = [];
+                let pHasMore = true;
+                let pStartingAfter = undefined;
+                while (pHasMore) {
+                    const params = { limit: 100 };
+                    if (pStartingAfter) params.starting_after = pStartingAfter;
+                    const resp = await stripe.payouts.list(params);
+                    allPayouts.push(...resp.data);
+                    pHasMore = resp.has_more;
+                    if (pHasMore && resp.data.length > 0) {
+                        pStartingAfter = resp.data[resp.data.length - 1].id;
+                    } else {
+                        pHasMore = false;
+                    }
+                }
+
+                stripePayouts = allPayouts.map(p => ({
                     id: p.id,
                     created: p.created * 1000,
                     arrival_date: p.arrival_date * 1000,
@@ -302,6 +336,18 @@ module.exports = async (req, res) => {
             const revolutRows = await getRevolutData();
             const latestBalance = revolutRows.length > 0 ? (revolutRows[0].balance || 0) : 0;
 
+            // Paid Orders (for exact campaign-level medal attribution)
+            let paidOrders = [];
+            try {
+                const { data: oData } = await supabase
+                    .from('orders')
+                    .select('id, created_at, campaign, amount_total, stripe_payment_status')
+                    .eq('stripe_payment_status', 'paid');
+                paidOrders = oData || [];
+            } catch (oErr) {
+                console.warn('Orders fetch warning in finance:', oErr);
+            }
+
             return res.status(200).json({
                 success: true,
                 stripe: {
@@ -312,7 +358,8 @@ module.exports = async (req, res) => {
                 revolut: {
                     currentBalance: latestBalance,
                     transactions: revolutRows
-                }
+                },
+                orders: paidOrders
             });
         }
 
