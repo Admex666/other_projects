@@ -1,0 +1,3 @@
+﻿setup:
+  - project: whering-plus
+    config: dev

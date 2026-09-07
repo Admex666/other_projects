@@ -1,0 +1,3 @@
+﻿setup:
+  - project: ulti
+    config: dev
