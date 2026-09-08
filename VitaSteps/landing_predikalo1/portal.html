@@ -1431,10 +1431,29 @@
                 statusContainer.innerHTML = '<span class="status-badge completed">Teljesítve</span>';
 
                 // Update oklevel.html link with parameters
+                function formatPortalDistanceLabel(dist, isPilis) {
+                    if (dist == null || dist === '') return '';
+                    const num = typeof dist === 'number' ? dist : parseFloat(dist);
+                    if (isNaN(num)) return String(dist);
+                    if (isPilis) {
+                        if (num <= 6) return `Családi (${num} km)`;
+                        if (num >= 9 && num <= 11) return `Klasszikus (${num} km)`;
+                        if (num >= 12 && num <= 15) return `Extra (${num} km)`;
+                        if (num >= 20) return `Félmaraton (${num} km)`;
+                        return `Kevély (${num} km)`;
+                    } else {
+                        if (num <= 11) return `Klasszikus (${num} km)`;
+                        if (num >= 14 && num <= 16) return `Félmaraton (${num} km)`;
+                        if (num >= 19 && num <= 21) return `Hosszú (${num} km)`;
+                        if (num >= 24) return `Ultra (${num} km)`;
+                        return `Prédikáló (${num} km)`;
+                    }
+                }
+
                 const params = new URLSearchParams({
                     nev: run.name || userProfile.name,
                     sorszam: run.serial_number || '',
-                    tav: run.distance_km ? `${run.distance_km} km` : '',
+                    tav: formatPortalDistanceLabel(run.distance_km, isPilisK),
                     datum: run.completion_date || '',
                     campaign: isPilisK ? 'A Nagy-Kevély csillagai' : 'Prédikálószék Vertical'
                 });

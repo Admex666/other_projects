@@ -5,6 +5,24 @@ const fs = require('fs');
 const path = require('path');
 const campaigns = require('../config/campaigns.json');
 
+function parseDistanceKm(dist) {
+    if (dist == null) return null;
+    if (typeof dist === 'number') return dist;
+    const s = String(dist).toLowerCase().trim();
+    const slugMap = {
+        'csaladi': 5,
+        'családi': 5,
+        'klasszikus': 10,
+        'extra': 13,
+        'felmaraton': 21,
+        'félmaraton': 21,
+        'ultra': 25
+    };
+    if (slugMap[s]) return slugMap[s];
+    const match = s.match(/(\d+(?:[.,]\d+)?)/);
+    return match ? parseFloat(match[1].replace(',', '.')) : null;
+}
+
 module.exports = async (req, res) => {
     // Allow GET (from success page redirect) and POST
     if (req.method !== 'GET' && req.method !== 'POST') {
@@ -203,7 +221,7 @@ module.exports = async (req, res) => {
                 shipped: false,
                 received_date: null,
                 serial_number: serialNumber,
-                distance_km: parseFloat(medal.distance) || null,
+                distance_km: parseDistanceKm(medal.distance),
                 campaign: campaign || null,
                 is_test: isTestTx,
                 // Keep legacy columns for backward compatibility before database migration

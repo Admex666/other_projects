@@ -540,17 +540,22 @@ def update_creative_csv(rows, target_date):
 
 
 def main():
-    target_date = date.today() - timedelta(days=1)
-    if len(sys.argv) > 1:
-        arg = sys.argv[1]
-        if arg.startswith("--date="):
-            target_date = datetime.strptime(arg.split("=")[1], "%Y-%m-%d").date()
-        elif arg.startswith("--backfill="):
-            days = int(arg.split("=")[1])
-            for d in range(days, 0, -1):
-                dt = date.today() - timedelta(days=d)
-                run_for_date(dt)
-            return
+    import argparse
+    parser = argparse.ArgumentParser(description="VitaSteps Meta Daily Sync")
+    parser.add_argument("--date", type=str, help="Adott nap szinkronizálása (YYYY-MM-DD)")
+    parser.add_argument("--backfill", type=int, help="Visszamenőleges napok száma (pl. 7)")
+    args = parser.parse_args()
+
+    if args.backfill is not None:
+        for d in range(args.backfill, 0, -1):
+            dt = date.today() - timedelta(days=d)
+            run_for_date(dt)
+        return
+
+    if args.date:
+        target_date = datetime.strptime(args.date, "%Y-%m-%d").date()
+    else:
+        target_date = date.today() - timedelta(days=1)
 
     run_for_date(target_date)
 

@@ -705,7 +705,7 @@
 
             <div class="cert-body">
                 sikeresen teljesítette a <strong id="display-campaign">Prédikálószék Vertical</strong><br>
-                <strong id="display-distance">15 km-es</strong> kihívását, bizonyítva kitartását és sport iránti
+                <strong id="display-distance">Félmaraton (15 km)</strong> kihívását, bizonyítva kitartását és sport iránti
                 elkötelezettségét.
             </div>
 
@@ -868,6 +868,51 @@
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jc2F0aGNxcHZscnlna3BoY2VkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3OTU3NTEsImV4cCI6MjA5ODM3MTc1MX0.4036PLTmBdhjUj8-qu2fpmZU6hvrXbc5-S_XJusKEYo";
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+        function formatDistanceLabel(distanceVal, campaign) {
+            if (!distanceVal) return '';
+            const isPilis = String(campaign || '').toLowerCase().includes('pilis') || 
+                            String(campaign || '').toLowerCase().includes('kevely');
+
+            // If it already matches "Name (X km)" or "Name (Xkm)", return it as-is
+            if (typeof distanceVal === 'string' && /^[A-ZÁÉÍÓÖŐÚÜŰ].+\(\d+.*km\)$/i.test(distanceVal.trim())) {
+                return distanceVal.trim();
+            }
+
+            // Extract numeric distance
+            let num = null;
+            if (typeof distanceVal === 'number') {
+                num = distanceVal;
+            } else {
+                const str = String(distanceVal).toLowerCase().trim();
+                if (str.includes('csalad')) num = 5;
+                else if (str.includes('felmaraton') || str.includes('félmaraton')) num = isPilis ? 21 : 15;
+                else if (str.includes('extra')) num = 13;
+                else if (str.includes('ultra')) num = 25;
+                else if (str.includes('hossz')) num = 20;
+                else if (str.includes('klasszikus') || str.includes('kor') || str.includes('kör')) num = 10;
+                else {
+                    const m = str.match(/(\d+(?:[.,]\d+)?)/);
+                    if (m) num = parseFloat(m[1].replace(',', '.'));
+                }
+            }
+
+            if (num == null) return String(distanceVal);
+
+            if (isPilis) {
+                if (num <= 6) return `Családi (${num} km)`;
+                if (num >= 9 && num <= 11) return `Klasszikus (${num} km)`;
+                if (num >= 12 && num <= 15) return `Extra (${num} km)`;
+                if (num >= 20) return `Félmaraton (${num} km)`;
+                return `Kevély (${num} km)`;
+            } else {
+                if (num <= 11) return `Klasszikus (${num} km)`;
+                if (num >= 14 && num <= 16) return `Félmaraton (${num} km)`;
+                if (num >= 19 && num <= 21) return `Hosszú (${num} km)`;
+                if (num >= 24) return `Ultra (${num} km)`;
+                return `Prédikáló (${num} km)`;
+            }
+        }
+
         // Initialize values
         async function initializeCertificate() {
             const params = getQueryParams();
@@ -875,47 +920,82 @@
             if (name) {
                 name = name.replace(/\+/g, ' ');
             }
-            let serial = params.sorszam;
-            let distance = params.tav;
-            let date = params.datum;
+            let serial = params.sorszam || '';
+            let distance = params.tav || '';
+            let date = params.datum || '';
+            let urlCampaign = params.kihivas || params.campaign || '';
 
-            // Try to load from Supabase session if available
-            try {
-                const { data: { session } } = await supabaseClient.auth.getSession();
-                if (session && session.user && serial) {
-                    const { data: run, error } = await supabaseClient
-                        .from('runs')
-                        .select('*, runners(email, name)')
-                        .eq('serial_number', serial)
-                        .maybeSingle();
+            // 1. Authoritative fetch from Supabase via backend API (works without client auth session)
+            if (serial) {
+                try {
+                    const res = await fetch(`/api/oklevel-data?serial=${encodeURIComponent(serial)}`);
+                    if (res.ok) {
+                        const dbRun = await res.json();
+                        if (dbRun && dbRun.success) {
+                            if (dbRun.name) name = dbRun.name;
+                            if (dbRun.serial) serial = dbRun.serial;
+                            if (dbRun.campaign) urlCampaign = dbRun.campaign;
+                            if (dbRun.distance_label) {
+                                distance = dbRun.distance_label;
+                            } else if (dbRun.distance_km != null) {
+                                distance = formatDistanceLabel(dbRun.distance_km, urlCampaign);
+                            }
+                            if (dbRun.completion_date) date = dbRun.completion_date;
 
-                    if (!error && run) {
-                        // Force override parameters with database values to keep them FIX
-                        name = run.name || run.runners?.name;
-                        serial = run.serial_number;
-                        distance = run.distance_km ? `${run.distance_km} km` : '';
-                        date = run.completion_date || run.received_date;
-
-                        // Disable input fields to make them un-editable
-                        serialInput.disabled = true;
-                        dateInput.disabled = true;
-                        distanceInput.disabled = true;
+                            // Disable input fields to make them verified & read-only
+                            serialInput.disabled = true;
+                            dateInput.disabled = true;
+                            distanceInput.disabled = true;
+                        }
                     }
+                } catch (apiErr) {
+                    console.warn("Could not fetch oklevel-data from API, checking Supabase session fallback:", apiErr);
                 }
-            } catch (err) {
-                console.error("Supabase load error in certificate:", err);
+            }
+
+            // 2. Try to load from Supabase session if available as fallback
+            if ((!distance || !name) && serial) {
+                try {
+                    const { data: { session } } = await supabaseClient.auth.getSession();
+                    if (session && session.user) {
+                        const { data: run, error } = await supabaseClient
+                            .from('runs')
+                            .select('*, runners(email, name)')
+                            .eq('serial_number', serial)
+                            .maybeSingle();
+
+                        if (!error && run) {
+                            name = run.name || run.runners?.name || name;
+                            serial = run.serial_number;
+                            if (run.campaign) urlCampaign = run.campaign;
+                            if (run.distance_km != null) {
+                                distance = formatDistanceLabel(run.distance_km, urlCampaign);
+                            }
+                            date = run.completion_date || run.received_date || date;
+
+                            // Disable input fields to make them un-editable
+                            serialInput.disabled = true;
+                            dateInput.disabled = true;
+                            distanceInput.disabled = true;
+                        }
+                    }
+                } catch (err) {
+                    console.error("Supabase load error in certificate:", err);
+                }
             }
 
             // Render details
             const displayCampaign = document.getElementById('display-campaign');
-            const urlCampaign = params.kihivas || params.campaign || '';
-            if (urlCampaign.toLowerCase().includes('pilis') || (serial && (serial.includes('PK') || serial.includes('999')))) {
+            const isPilis = urlCampaign.toLowerCase().includes('pilis') || (serial && (serial.includes('PK') || serial.includes('999')));
+            if (isPilis) {
                 displayCampaign.textContent = 'A Nagy-Kevély csillagai';
             } else if (urlCampaign) {
                 displayCampaign.textContent = urlCampaign;
             } else {
                 displayCampaign.textContent = 'Prédikálószék Vertical';
             }
+
+            distance = formatDistanceLabel(distance, urlCampaign);
 
             nameInput.value = name || "";
             displayName.textContent = name || "Futó Partner";
@@ -924,7 +1004,7 @@
             displaySerial.textContent = serial || "#---/---";
 
             distanceInput.value = distance || "";
-            displayDistance.textContent = distance || "15 km";
+            displayDistance.textContent = distance || (isPilis ? "Klasszikus (10 km)" : "Félmaraton (15 km)");
 
             if (date) {
                 dateInput.value = date;
@@ -1018,7 +1098,8 @@
         });
 
         distanceInput.addEventListener('input', (e) => {
-            displayDistance.textContent = e.target.value || "15 km";
+            const urlCampaign = getQueryParams().campaign || getQueryParams().kihivas || '';
+            displayDistance.textContent = formatDistanceLabel(e.target.value, urlCampaign) || e.target.value || "Klasszikus (10 km)";
         });
 
         dateInput.addEventListener('input', (e) => {

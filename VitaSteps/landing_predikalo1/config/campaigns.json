@@ -8,19 +8,19 @@
     "distances": [
       {
         "value": "10 km",
-        "label": "Kevély Kör (10 km)"
+        "label": "Klasszikus (10 km)"
       },
       {
         "value": "15 km",
-        "label": "Kevély Félmaraton (15 km)"
+        "label": "Félmaraton (15 km)"
       },
       {
         "value": "20 km",
-        "label": "Kevély Hosszú (20 km)"
+        "label": "Hosszú (20 km)"
       },
       {
         "value": "25 km",
-        "label": "Kevély Ultra (25 km)"
+        "label": "Ultra (25 km)"
       }
     ]
   },
@@ -33,19 +33,19 @@
     "distances": [
       {
         "value": "csaladi",
-        "label": "Családi táv (~5 km)"
+        "label": "Családi (5 km)"
       },
       {
         "value": "klasszikus",
-        "label": "Klasszikus Kör (~10 km)"
+        "label": "Klasszikus (10 km)"
       },
       {
         "value": "extra",
-        "label": "Kevély Extra (~13 km)"
+        "label": "Extra (13 km)"
       },
       {
         "value": "felmaraton",
-        "label": "Kevély Félmaraton (~21 km)"
+        "label": "Félmaraton (21 km)"
       }
     ]
   }

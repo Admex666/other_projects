@@ -90,11 +90,30 @@ module.exports = async (req, res) => {
 
                 const portalLink = `https://vitastepsss.vercel.app/portal.html?email=${encodeURIComponent(runnerEmail)}`;
 
+                function formatDistanceLabel(dist, isPilis) {
+                    if (dist == null || dist === '') return '';
+                    const num = typeof dist === 'number' ? dist : parseFloat(dist);
+                    if (isNaN(num)) return String(dist);
+                    if (isPilis) {
+                        if (num <= 6) return `Családi (${num} km)`;
+                        if (num >= 9 && num <= 11) return `Klasszikus (${num} km)`;
+                        if (num >= 12 && num <= 15) return `Extra (${num} km)`;
+                        if (num >= 20) return `Félmaraton (${num} km)`;
+                        return `Kevély (${num} km)`;
+                    } else {
+                        if (num <= 11) return `Klasszikus (${num} km)`;
+                        if (num >= 14 && num <= 16) return `Félmaraton (${num} km)`;
+                        if (num >= 19 && num <= 21) return `Hosszú (${num} km)`;
+                        if (num >= 24) return `Ultra (${num} km)`;
+                        return `Prédikáló (${num} km)`;
+                    }
+                }
+
                 // Construct parameters for oklevel.html link
                 const params = new URLSearchParams({
                     nev: runnerName,
                     sorszam: runData.serial_number || '',
-                    tav: runData.distance_km ? `${runData.distance_km} km` : '',
+                    tav: formatDistanceLabel(runData.distance_km, isPilisK),
                     datum: today,
                     campaign: isPilisK ? 'A Nagy-Kevély csillagai' : 'Prédikálószék Vertical'
                 });
