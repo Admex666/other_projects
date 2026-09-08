@@ -928,7 +928,7 @@
             // 1. Authoritative fetch from Supabase via backend API (works without client auth session)
             if (serial) {
                 try {
-                    const res = await fetch(`/api/oklevel-data?serial=${encodeURIComponent(serial)}`);
+                    const res = await fetch(`/api/check-limit?serial=${encodeURIComponent(serial)}`);
                     if (res.ok) {
                         const dbRun = await res.json();
                         if (dbRun && dbRun.success) {
