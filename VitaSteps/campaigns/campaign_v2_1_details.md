@@ -3,14 +3,14 @@
 A kampány célja a **vásárlási szándék (intent)** mérése a V2.1 koncepció alapján.
 
 ## 1. Új Kreatív (Hiker on Summit)
-![**V2.1 Kreatív**: Prédikálószék tető, kezében a sorszámozott trófeával.](E:\Data\other_projects\VitaSteps\assets\v2_1\vitasteps_v2_ad_hiker_summit_1775930467929.png)
+![**V2.1 Kreatív**: Prédikálószék tető, kezében a prémium trófeával.](E:\Data\other_projects\VitaSteps\assets\v2_1\vitasteps_v2_ad_hiker_summit_1775930467929.png)
 
 ## 2. Hirdetési Szövegek (Ad Copies)
 
 ### Opció A: A "Státusz és Büszkeség" (Fókusz: Elismerés)
-*   **Elsődleges szöveg:** Bejártad a Mátrát? Megmásztad a Prédikálószéket? A Strava rögzítette, de te többet érdemelsz egy digitális értesítésnél. 🏔️ Alakítsd a büszkeségedet kézzel fogható, sorszámozott trófeává. Szinkronizáld a teljesítéseidet, és rendeld meg az érmet, amit valóban kiérdemeltél.
+*   **Elsődleges szöveg:** Bejártad a Mátrát? Megmásztad a Prédikálószéket? A Strava rögzítette, de te többet érdemelsz egy digitális értesítésnél. 🏔️ Alakítsd a büszkeségedet kézzel fogható, prémium trófeává. Szinkronizáld a teljesítéseidet, és rendeld meg az érmet, amit valóban kiérdemeltél.
 *   **Címsor:** A teljesítményed mostantól kézzelfogható.
-*   **Leírás:** Sorszámozott "Hungarian Heritage" trófeák.
+*   **Leírás:** Limitált "Hungarian Heritage" trófeák.
 *   **CTA:** Vásárlás / Jelentkezés
 
 ### Opció B: A "Validáció és Gyűjtés" (Fókusz: Bizonyíték)

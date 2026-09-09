@@ -14,7 +14,7 @@ A VitaSteps a mozgáshiány ellen küzd a játékiparból ismert pszichológiai 
 - **Szintek és Ranglisták:** A mozgásmennyiség alapján a felhasználók globális vagy baráti rangsorokban versenyezhetnek.
 
 ### Fizikai és Digitális Jutalmazás
-- **Prémium Trófeák:** Sorszámozott, ékszer minőségű fémérmek és jelvények, amelyek csak a GPS-alapú igazolás után érhetőek el.
+- **Prémium Trófeák:** Limitált szériás, ékszer minőségű fémérmek és jelvények, amelyek csak a GPS-alapú igazolás után érhetőek el.
 - **Digitális Vitrin:** Egy látványos felület az appon belül, ahol a még meg nem szerzett trófeák szürkén látszanak, vágyat ébresztve a "színesítésre".
 
 ## 3. Üzleti Modell és Funnel

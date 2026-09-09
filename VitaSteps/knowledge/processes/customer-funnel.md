@@ -62,7 +62,7 @@ flowchart TD
 ### 2. Érdeklődés és Lead Capture (Landing Page & Lead Magnet)
 * **Felület:** `nagykevely/index.html` és `predikalo/index.html`.
 * **Tartalom és bemutató:**
-  * Nagy felbontású 3D / fotózott érembemutató, számozott limitált darabszám (100 db).
+  * Nagy felbontású 3D / fotózott érembemutató, limitált széria (100 db).
   * Dinamikus készletszámláló és visszaszámláló az éremfoglaláshoz.
 * **Lead Magnet kapu (Gated Content):**
   * A **Kalandkönyv** és a **Túraútvonalak (GPX letöltések)** alapértelmezetten zárolva (lelakatolva) jelennek meg.

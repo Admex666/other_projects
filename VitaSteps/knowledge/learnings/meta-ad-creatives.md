@@ -35,5 +35,5 @@ Across $> 140$ ad-days of daily creative-level reporting in [`meta_kreativ_napi_
    - A meleg listás retargeting kampányok (`02.01 Termék V4`, `02.02 Túrázó V5`) alacsonyabb CPM mellett zárták a kosárelhagyókat.
 
 ## 3. Kulcs Megállapítások
-* **Exkluzivitás és Limitált Széria:** A `100 db sorszámozott érem` szűkösségi üzenet megduplázta az átkattintási hajlandóságot.
+* **Exkluzivitás és Limitált Széria:** A `100 db limitált szériás érem` szűkösségi üzenet megduplázta az átkattintási hajlandóságot.
 * **Ajándék Értéknövelők:** Az `"Ingyenes Kalandkönyv + Ingyenes Szállítás"` jelvény a hirdetési szövegben és a landing oldalon +18%-kal javította a vásárlási konverziót.
