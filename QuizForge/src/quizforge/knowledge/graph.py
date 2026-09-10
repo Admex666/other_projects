@@ -57,16 +57,18 @@ class KnowledgeGraph:
         target_subdomain = subdomain
         clean_correct = correct_label.strip()
 
-        # 1. Próbálkozás: szigorú subdomain és domain egyezés (kizárva kategóriákat, ismeretleneket)
+        # 1. Próbálkozás: szigorú subdomain és domain egyezés (kizárva kategóriákat, ismeretleneket, MEK szemetet)
         query = """
             SELECT DISTINCT label_hu FROM entities
             WHERE entity_id != ? 
               AND entity_id NOT LIKE 'wiki:cat:%'
+              AND entity_id NOT LIKE 'mek:%'
               AND subdomain NOT LIKE '%category%'
               AND label_hu NOT ILIKE '%Ismeretlen%'
               AND label_hu NOT ILIKE '%MEK szerző%'
               AND label_hu NOT ILIKE '%szerző nélkül%'
               AND label_hu NOT ILIKE '%Zsedényi%'
+              AND label_hu NOT ILIKE '%Zborovszky%'
               AND LOWER(label_hu) != LOWER(?)
         """
         params = [correct_entity_id, clean_correct]
@@ -91,11 +93,13 @@ class KnowledgeGraph:
                 SELECT DISTINCT label_hu FROM entities
                 WHERE entity_id != ?
                   AND entity_id NOT LIKE 'wiki:cat:%'
+                  AND entity_id NOT LIKE 'mek:%'
                   AND subdomain NOT LIKE '%category%'
                   AND label_hu NOT ILIKE '%Ismeretlen%'
                   AND label_hu NOT ILIKE '%MEK szerző%'
                   AND label_hu NOT ILIKE '%szerző nélkül%'
                   AND label_hu NOT ILIKE '%Zsedényi%'
+                  AND label_hu NOT ILIKE '%Zborovszky%'
                   AND domain = ?
                   AND LOWER(label_hu) != LOWER(?)
                 ORDER BY relevance_score DESC LIMIT ?

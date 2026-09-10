@@ -41,23 +41,46 @@ class DatabaseManager:
         self.clean_junk_data()
 
     def clean_junk_data(self):
-        """Kiszűri az 'Ismeretlen / MEK szerző' és haszontalan rekordokat az adatbázisból és relációkból."""
+        """Kiszűri a MEK félresikeredett scrape elemeit, ismeretleneket és haszontalan rekordokat az adatbázisból."""
         try:
             self.conn.execute("""
                 DELETE FROM relations 
-                WHERE source_entity_id IN (SELECT entity_id FROM entities WHERE label_hu ILIKE '%ismeretlen%' OR label_hu ILIKE '%MEK szerző%' OR label_hu ILIKE '%szerző nélkül%')
-                   OR target_entity_id IN (SELECT entity_id FROM entities WHERE label_hu ILIKE '%ismeretlen%' OR label_hu ILIKE '%MEK szerző%' OR label_hu ILIKE '%szerző nélkül%');
+                WHERE source_entity_id IN (
+                    SELECT entity_id FROM entities 
+                    WHERE entity_id LIKE 'mek:%' 
+                       OR label_hu ILIKE '%ismeretlen%' 
+                       OR label_hu ILIKE '%MEK szerző%' 
+                       OR label_hu ILIKE '%szerző nélkül%'
+                       OR label_hu ILIKE '%Zborovszky%'
+                       OR label_hu ILIKE '%Zsedényi%'
+                )
+                OR target_entity_id IN (
+                    SELECT entity_id FROM entities 
+                    WHERE entity_id LIKE 'mek:%' 
+                       OR label_hu ILIKE '%ismeretlen%' 
+                       OR label_hu ILIKE '%MEK szerző%' 
+                       OR label_hu ILIKE '%szerző nélkül%'
+                       OR label_hu ILIKE '%Zborovszky%'
+                       OR label_hu ILIKE '%Zsedényi%'
+                );
             """)
             self.conn.execute("""
                 DELETE FROM entities 
-                WHERE label_hu ILIKE '%ismeretlen%' 
+                WHERE entity_id LIKE 'mek:%' 
+                   OR label_hu ILIKE '%ismeretlen%' 
                    OR label_hu ILIKE '%MEK szerző%' 
-                   OR label_hu ILIKE '%szerző nélkül%';
+                   OR label_hu ILIKE '%szerző nélkül%'
+                   OR label_hu ILIKE '%Zborovszky%'
+                   OR label_hu ILIKE '%Zsedényi%';
             """)
             self.conn.execute("""
                 DELETE FROM quiz_questions 
                 WHERE text ILIKE '%ismeretlen%' 
-                   OR correct_answer ILIKE '%ismeretlen%';
+                   OR text ILIKE '%Zborovszky%'
+                   OR text ILIKE '%Zsedényi%'
+                   OR correct_answer ILIKE '%ismeretlen%'
+                   OR correct_answer ILIKE '%Zborovszky%'
+                   OR correct_answer ILIKE '%Zsedényi%';
             """)
         except Exception:
             pass
@@ -67,7 +90,7 @@ class DatabaseManager:
         target_dir = output_dir or settings.PARQUET_DATA_DIR
         target_dir.mkdir(parents=True, exist_ok=True)
 
-        tables = ["entities", "relations", "quiz_questions", "question_entities", "entity_relevance"]
+        tables = ["entities", "relations", "quiz_questions", "question_entities", "entity_relevance", "users", "player_answers", "player_skills"]
         for table in tables:
             parquet_file = target_dir / f"{table}.parquet"
             # Windowsos elérési utak formázása DuckDB kompatibilis perjelekkel
@@ -77,22 +100,25 @@ class DatabaseManager:
     def load_from_parquet(self, input_dir: Optional[Path] = None):
         """Adatok visszatöltése Parquet fájlokból."""
         source_dir = input_dir or settings.PARQUET_DATA_DIR
-        tables = ["entities", "relations", "quiz_questions", "question_entities", "entity_relevance"]
+        tables = ["entities", "relations", "quiz_questions", "question_entities", "entity_relevance", "users", "player_answers", "player_skills"]
 
         for table in tables:
             parquet_file = source_dir / f"{table}.parquet"
             if parquet_file.exists():
                 safe_path = str(parquet_file).replace("\\", "/")
-                self.conn.execute(f"INSERT OR REPLACE INTO {table} SELECT * FROM read_parquet('{safe_path}');")
+                self.conn.execute(f"INSERT OR IGNORE INTO {table} SELECT * FROM read_parquet('{safe_path}');")
         self.clean_junk_data()
 
     def get_stats(self) -> dict:
         """Adatbázis statisztikák lekérdezése."""
         stats = {}
-        tables = ["entities", "relations", "quiz_questions", "question_entities", "entity_relevance"]
+        tables = ["entities", "relations", "quiz_questions", "question_entities", "entity_relevance", "users", "player_answers", "player_skills"]
         for t in tables:
-            cnt = self.conn.execute(f"SELECT COUNT(*) FROM {t}").fetchone()[0]
-            stats[t] = cnt
+            try:
+                cnt = self.conn.execute(f"SELECT COUNT(*) FROM {t}").fetchone()[0]
+                stats[t] = cnt
+            except Exception:
+                stats[t] = 0
         return stats
 
     def close(self):

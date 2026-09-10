@@ -169,3 +169,23 @@ class QuizQuestionRepository:
                 "source_name": r[7]
             })
         return results
+
+    def get_by_id(self, question_id: str) -> Optional[RawQuizQuestion]:
+        row = self.db.conn.execute("""
+            SELECT question_id, text, mechanism, correct_answer, options, domain, subdomain, source_type, source_name, metadata
+            FROM quiz_questions WHERE question_id = ?
+        """, [question_id]).fetchone()
+        if not row:
+            return None
+        return RawQuizQuestion(
+            question_id=row[0],
+            text=row[1],
+            mechanism=QuestionMechanism(row[2]) if row[2] in [m.value for m in QuestionMechanism] else QuestionMechanism.ABCD,
+            correct_answer=row[3],
+            options=json.loads(row[4]) if row[4] else [],
+            domain=Domain(row[5]) if row[5] in [d.value for d in Domain] else Domain.GENERAL_KNOWLEDGE,
+            subdomain=row[6],
+            source_type=SourceType(row[7]) if row[7] in [s.value for s in SourceType] else SourceType.MANUAL,
+            source_name=row[8],
+            metadata=json.loads(row[9]) if row[9] else {}
+        )

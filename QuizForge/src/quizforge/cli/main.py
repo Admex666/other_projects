@@ -10,6 +10,12 @@ src_path = Path(__file__).resolve().parent.parent.parent
 if str(src_path) not in sys.path:
     sys.path.insert(0, str(src_path))
 
+try:
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
+except Exception:
+    pass
+
 from quizforge.core.config import settings
 from quizforge.core.constants import Domain, QuestionMechanism
 from quizforge.core.models import Entity, Relation
@@ -20,10 +26,14 @@ from quizforge.ingestion.wikidata import WikidataIngestor
 from quizforge.ingestion.wikipedia import WikipediaIngestor
 from quizforge.knowledge.graph import KnowledgeGraph
 from quizforge.knowledge.relevance import RelevanceEngine
+from quizforge.knowledge.bank_expander import expand_database_bank
 from quizforge.llm.groq_client import GroqClient
+from quizforge.optimizer.landscape import QuizLandscapeEngine
+from quizforge.optimizer.targeted import TargetedLearningEngine
 from quizforge.quiz_engine.generator import QuizGenerator
 from quizforge.storage.db import DatabaseManager
 from quizforge.storage.repositories import QuizQuestionRepository
+from quizforge.player.tracker import PlayerTracker
 
 
 def cmd_validate_sources(args):
@@ -234,6 +244,116 @@ def cmd_generate_quiz(args):
     db.close()
 
 
+def cmd_player_stats(args):
+    """Játékos statisztikák, Brier pontszám és kalibráció megtekintése."""
+    username = getattr(args, "user", "Teszt Játékos") or "Teszt Játékos"
+    db = DatabaseManager()
+    tracker = PlayerTracker(db)
+    user = tracker.player_repo.get_or_create_user(username)
+    prof = tracker.get_player_profile(user["user_id"])
+
+    print("=" * 60)
+    print(f"QuizForge - Játékos Profil & Kalibráció: {username}")
+    print("=" * 60)
+    print(f"  - Összes válasz:       {prof['total_answers']} db")
+    print(f"  - Helyességi arány:    {prof['accuracy'] * 100:.1f}%")
+    bs_str = f"{prof['brier_score']:.4f}" if prof['brier_score'] is not None else "N/A"
+    print(f"  - Brier Score:         {bs_str} (0.00 = tökéletes)")
+    bias = prof["bias_info"]
+    print(f"  - Kalibráció állapota: {bias['label']}")
+    print(f"  - Tanács:              {bias.get('advice', '')}")
+
+    if prof["skill_matrix"]:
+        print("\n" + "-" * 60)
+        print("Képességmátrix (Témakör × Mechanizmus):")
+        print(f"{'Téma':<15} | {'Mechanizmus':<12} | {'Minták':<8} | {'Pontosság':<10} | {'Torzítás'}")
+        print("-" * 60)
+        for row in prof["skill_matrix"]:
+            print(f"{row['domain']:<15} | {row['mechanism']:<12} | {row['sample_count']:<8} | {row['accuracy']*100:>8.1f}% | {row['bias']:>+.2f}")
+
+    print("=" * 60)
+    db.close()
+
+
+def cmd_quiz_profiles(args):
+    """Kvízestek és játékok profiljainak és ujjlenyomatainak listázása."""
+    engine = QuizLandscapeEngine()
+    profiles = engine.list_profiles()
+    print("=" * 70)
+    print("QuizForge - Magyar Kvízestek és Kvízjátékok Profiljai (Quiz Fingerprints)")
+    print("=" * 70)
+    for p in profiles:
+        print(f"\n[{p.name}] ({p.profile_id}) - Kategória: {p.category}")
+        print(f"  Leírás: {p.description}")
+        print(f"  Szabályok/Megjegyzés: {p.rules_notes}")
+        print("  Fő témakörök súlyai:")
+        for dom, w in sorted(p.domain_weights.items(), key=lambda x: x[1], reverse=True)[:4]:
+            print(f"    - {dom:<18}: {w*100:>4.0f}%")
+        print("  Mechanizmusok:")
+        for mech, w in sorted(p.mechanism_weights.items(), key=lambda x: x[1], reverse=True):
+            print(f"    - {mech:<18}: {w*100:>4.0f}%")
+    print("=" * 70)
+
+
+def cmd_expand_bank(args):
+    """Determinisztikus offline kérdésbank bővítés és Parquet szinkronizáció (0 Groq token)."""
+    db = DatabaseManager()
+    print("=" * 60)
+    print("QuizForge - Kérdésbank Bővítése Offline Kurált Kérdésekkel")
+    print("=" * 60)
+    added = expand_database_bank(db)
+    print(f"--> Sikeresen hozzáadva {added} új, kurált kérdés a kvízprofilokhoz!")
+    stats = db.conn.execute("SELECT COUNT(*), COUNT(DISTINCT domain), COUNT(DISTINCT mechanism) FROM quiz_questions").fetchone()
+    print(f"--> Adatbázisban tárolt kérdések: {stats[0]} db ({stats[1]} témakör, {stats[2]} mechanizmus).")
+    print("--> Parquet szinkronizáció: data/parquet/quiz_questions.parquet frissítve.")
+    print("=" * 60)
+    db.close()
+
+
+def cmd_targeted_quiz(args):
+    """Célzott edzéskérdések és vakfolt-elemzés egy kiválasztott kvízprofilhoz."""
+    username = getattr(args, "user", "Teszt Játékos") or "Teszt Játékos"
+    profile_id = getattr(args, "profile", "inquizitor") or "inquizitor"
+    count = getattr(args, "count", 5) or 5
+
+    db = DatabaseManager()
+    landscape = QuizLandscapeEngine()
+    profile = landscape.get_profile(profile_id)
+    if not profile:
+        print(f"Ismeretlen profil: {profile_id}. Használd a 'quiz-profiles' parancsot a lista megtekintéséhez.")
+        db.close()
+        return
+
+    tracker = PlayerTracker(db)
+    user = tracker.player_repo.get_or_create_user(username)
+    user_id = user["user_id"]
+
+    opt = TargetedLearningEngine(db)
+    weak_spots = opt.calculate_weak_spots(user_id, profile_id, limit=4)
+    targeted_qs = opt.select_targeted_questions(user_id, profile_id, count=count)
+
+    print("=" * 70)
+    print(f"QuizForge - Célzott Edzés: {profile.name}")
+    print(f"Játékos: {username} ({user_id})")
+    print("=" * 70)
+    print(f"\n[Vakfolt Radar & Kockázati Területek]")
+    print(f"{'Témakör':<18} | {'Mechanizmus':<15} | {'Kvízsúly':<10} | {'Tudásszint':<10} | {'Kockázat'}")
+    print("-" * 70)
+    for w in weak_spots:
+        print(f"{w['domain']:<18} | {w['mechanism']:<15} | {w['profile_weight']:<10} | {w['current_skill']*100:>8.0f}% | {w['risk_score']:<8.4f}")
+
+    print(f"\n[Kiválasztott Célzott Gyakorlókérdések ({len(targeted_qs)} db)]")
+    for idx, q in enumerate(targeted_qs, 1):
+        print(f"\n{idx}. [{q.domain.value} | {q.mechanism.value}]")
+        print(f"Kérdés: {q.text}")
+        if q.options:
+            print(f"Opciók: {', '.join(q.options)}")
+        print(f"Helyes válasz: {q.correct_answer}")
+
+    print("=" * 70)
+    db.close()
+
+
 def cmd_dashboard(args):
     """Streamlit webes felület indítása a böngészőben."""
     import subprocess
@@ -279,6 +399,22 @@ def main():
     # groq-quota
     subparsers.add_parser("groq-quota", help="Valós idejű GROQ API token- és kéréskvóta lekérdezése")
 
+    # player-stats
+    p_parser = subparsers.add_parser("player-stats", help="Játékos statisztikák, Brier score és kalibrációs profil lekérdezése")
+    p_parser.add_argument("--user", type=str, default="Teszt Játékos", help="Játékos felhasználóneve")
+
+    # quiz-profiles (Phase 5)
+    subparsers.add_parser("quiz-profiles", help="Magyar kvízestek és kvízjátékok profiljainak és súlyozásainak listázása")
+
+    # expand-bank (Phase 5)
+    subparsers.add_parser("expand-bank", help="Determinisztikus kérdésbank bővítés offline kurált kérdésekkel (0 Groq token)")
+
+    # targeted-quiz (Phase 5)
+    tq_parser = subparsers.add_parser("targeted-quiz", help="Személyre szabott célzott edzéskérdések és vakfoltok adott kvízprofilra")
+    tq_parser.add_argument("--user", type=str, default="Teszt Játékos", help="Játékos felhasználóneve")
+    tq_parser.add_argument("--profile", type=str, default="inquizitor", help="Kvízprofil (csomor, quizkrumpli, quizland, kertvarosi, inquizitor, honfoglalo)")
+    tq_parser.add_argument("--count", type=int, default=5, help="Kérdések száma")
+
     # dashboard (Streamlit)
     subparsers.add_parser("dashboard", help="Streamlit webes vizuális felület megnyitása a böngészőben")
 
@@ -295,6 +431,10 @@ def main():
         "test-groq": cmd_test_groq,
         "groq-quota": cmd_groq_quota,
         "generate-quiz": cmd_generate_quiz,
+        "player-stats": cmd_player_stats,
+        "quiz-profiles": cmd_quiz_profiles,
+        "expand-bank": cmd_expand_bank,
+        "targeted-quiz": cmd_targeted_quiz,
         "dashboard": cmd_dashboard,
         "ui": cmd_ui,
     }

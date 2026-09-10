@@ -171,9 +171,12 @@ class QuizGenerator:
                 filler_query = """
                     SELECT DISTINCT label_hu FROM entities
                     WHERE entity_id != ?
+                      AND entity_id NOT LIKE 'mek:%'
                       AND label_hu NOT ILIKE '%Ismeretlen%'
                       AND label_hu NOT ILIKE '%MEK szerző%'
                       AND label_hu NOT ILIKE '%szerző nélkül%'
+                      AND label_hu NOT ILIKE '%Zsedényi%'
+                      AND label_hu NOT ILIKE '%Zborovszky%'
                       AND subdomain NOT LIKE '%category%'
                       AND domain = ?
                     LIMIT 15

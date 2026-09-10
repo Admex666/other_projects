@@ -58,7 +58,15 @@ CREATE TABLE IF NOT EXISTS entity_relevance (
     last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 6. Player Layer: Játékos válaszok és önértékelés (confidence)
+-- 6. Player Layer: Felhasználók / Játékosok
+CREATE TABLE IF NOT EXISTS users (
+    user_id VARCHAR PRIMARY KEY,
+    username VARCHAR NOT NULL,
+    team_id VARCHAR,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 7. Player Layer: Játékos válaszok és önértékelés (confidence)
 CREATE TABLE IF NOT EXISTS player_answers (
     answer_id VARCHAR PRIMARY KEY,
     user_id VARCHAR NOT NULL,

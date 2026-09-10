@@ -1,6 +1,7 @@
 """Alapvető konstansok és enumerációk a QuizForge rendszerhez."""
 
 from enum import Enum
+from typing import Any
 
 
 class QuestionMechanism(str, Enum):
@@ -40,3 +41,61 @@ class SourceType(str, Enum):
     OPEN_TRIVIA = "open_trivia"
     QUIZ_PORTAL = "quiz_portal"
     MANUAL = "manual"
+
+
+# Felhasználóbarát, egységes magyar megjelenítési címkék
+DOMAIN_LABELS = {
+    Domain.HISTORY.value: "Történelem",
+    Domain.GEOGRAPHY.value: "Földrajz",
+    Domain.LITERATURE.value: "Irodalom és Nyelvészet",
+    Domain.SCIENCE_TECH.value: "Tudomány és Technológia",
+    Domain.POP_CULTURE.value: "Popkultúra",
+    Domain.SPORTS.value: "Sport",
+    Domain.ART_MUSIC.value: "Művészet és Zene",
+    Domain.GASTRONOMY.value: "Gasztronómia",
+    Domain.GENERAL_KNOWLEDGE.value: "Általános Műveltség",
+    "general": "Általános Műveltség",
+}
+
+MECHANISM_LABELS = {
+    QuestionMechanism.ABCD.value: "Feleletválasztós (ABCD)",
+    QuestionMechanism.TRUE_FALSE.value: "Igaz-Hamis",
+    QuestionMechanism.ESTIMATION.value: "Becslés / Saccolás",
+    QuestionMechanism.ORDERING.value: "Sorrendbe állítás",
+    QuestionMechanism.MATCHING.value: "Párosítás",
+    QuestionMechanism.CONNECTION.value: "Kapcsolat / Mi a közös?",
+    QuestionMechanism.FIRST_LETTER.value: "Kezdőbetűs",
+    QuestionMechanism.MISSING_LETTERS.value: "Betűkiegészítés",
+    QuestionMechanism.IMAGE_RECOGNITION.value: "Képfelismerés",
+    QuestionMechanism.AUDIO_RECOGNITION.value: "Zenefelismerés",
+    QuestionMechanism.DEDUCTION.value: "Dedukció / Sztori",
+    QuestionMechanism.PICTURE_PUZZLE.value: "Képrejtvény",
+}
+
+CATEGORY_LABELS = {
+    "pub_quiz": "Kocsmakvíz",
+    "board_game": "Társasjáték",
+}
+
+
+def get_domain_label(domain_val: Any) -> str:
+    """Visszaadja a domain szép magyar megnevezését."""
+    if hasattr(domain_val, "value"):
+        domain_val = domain_val.value
+    key = str(domain_val).strip().lower()
+    return DOMAIN_LABELS.get(key, key.replace("_", " ").title())
+
+
+def get_mechanism_label(mech_val: Any) -> str:
+    """Visszaadja a kérdésmechanizmus szép magyar megnevezését."""
+    if hasattr(mech_val, "value"):
+        mech_val = mech_val.value
+    key = str(mech_val).strip().lower()
+    return MECHANISM_LABELS.get(key, key.replace("_", " ").title())
+
+
+def get_category_label(cat_val: Any) -> str:
+    """Visszaadja a kvízkategória szép magyar megnevezését."""
+    key = str(cat_val).strip().lower()
+    return CATEGORY_LABELS.get(key, key.replace("_", " ").title())
+
