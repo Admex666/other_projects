@@ -29,11 +29,10 @@ Ne csak a legolcsóbbat keresd! Használd az alábbi szűrőket:
 > - Process: Hard Enamel (high-end jewelry finish)
 > - Size: 70mm diameter, 4mm thickness
 > - Plating: Antique Black Nickel / Gunmetal
-> - Serial Number: Engraved on the back for each unit
+> - Back: Embossed 2D brand logo (no serial numbers)
 >
 > Questions:
-> 1. Do you have experience with serial numbering?
-> 2. What is your lead time for 100 units and 500 units?
+> 1. What is your lead time for 100 units and 500 units?
 > 3. Please send high-resolution photos/videos of similar 'Antique finish + Hard Enamel' medals you have produced recently.
 >
 > Thank you,

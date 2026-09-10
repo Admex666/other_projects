@@ -24,8 +24,8 @@ Follow this procedure when preparing a physical shipping batch:
 ## Step 2: Review Packing Guide
 1. Click to expand **📦 Csomagolási és Kiszállítási Segédlet** at the top.
 2. For each package listed:
-   - Check the exact campaign and medal serial numbers needed (e.g. `1x 🏔️ Prédikálószék (#006/100) + 1x 🌌 Nagy-Kevély (#006/100-PK)`).
-   - Place the corresponding physical numbered medals into the padded envelope or box.
+   - Check the exact campaign and medal items needed (e.g. `1x 🏔️ Prédikálószék + 1x 🌌 Nagy-Kevély`).
+   - Place the corresponding physical medals into the padded envelope or box (the physical medals are not numbered).
 
 ## Step 3: Dispatch via Foxpost API
 1. In the logistics table below, select the checkboxes for the packages you have prepared.

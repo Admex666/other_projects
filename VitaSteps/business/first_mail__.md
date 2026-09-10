@@ -10,11 +10,11 @@ A túljelentkezés miatt szigorú keretszámokkal dolgozunk, de Te még időben 
 
 Miért fontos ez a szakasz?
 
-Az első gyártás összesen mindössze 100 darabból fog állni. Mindegyik érem egyedi sorszámmal lesz ellátva (001-100), ami örökre tanúsítja, hogy az alapító széria tagja vagy.
+Az első gyártás összesen mindössze 100 darabból fog állni, ami örökre tanúsítja, hogy az alapító széria tagja vagy.
 Ez nem egy bárki által megvehető dísztárgy. Csak a prédikálószéki túra igazolt teljesítése után kaphatod meg az érmet és a hozzá tartozó tanúsítványt.
 Induló ár: Az első széria teljesítői számára a részvételi díj (mely tartalmazza a hitelesítést és az érmet is) 12.990Ft helyett 7.990 Ft
 
-Most viszont egy gyors visszaigazolásra van szükségem tőled: Szeretnéd, hogy tartsuk Neked az egyik sorszámozott helyet az első 100-as keretből, amint megnyílik az előrendelési felület?
+Most viszont egy gyors visszaigazolásra van szükségem tőled: Szeretnéd, hogy tartsuk Neked az egyik helyet az első 100-as keretből, amint megnyílik az előrendelési felület?
 
 Válaszolj erre az emailre egy egyszerű „IGEN”-nel, hogy biztosítsd a helyedet a listán! (Ez még nem fizetési kötelezettség, csak a tagságod megerősítése, hogy tudjuk, számíthatunk-e rád az indulásnál).
 

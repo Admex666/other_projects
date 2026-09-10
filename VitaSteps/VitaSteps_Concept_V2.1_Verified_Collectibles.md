@@ -31,7 +31,7 @@ Nem akarunk új viselkedést tanítani. Rásimulunk a meglévő sportolói szok�
 ## 5. Roadmap (A Niche-től a Skálázásig)
 1. **MVP (Phase 1):** 15-20 kiemelt magyarországi útvonal és standard mérföldkő. Strava integráció. Minőségi, de elérhető árú érmek.
 2. **Growth (Phase 2):** User-generated kihívások validációja (közösségi szavazás útján válhat egy útvonal "hivatalossá"). Leaderboardok.
-3. **Elitization (Phase 3):** Exkluzív, számozott, drága darabok (Elite Series) a legkeményebb 5% számára.
+3. **Elitization (Phase 3):** Exkluzív, limitált szériás darabok (Elite Series) a legkeményebb 5% számára.
 
 ---
 *Készült a validációs adatok és a "Verified Achievement" stratégiai modell alapján.*

@@ -9,8 +9,8 @@ A VitaSteps V2 elhagyja a "segítünk mozogni" megközelítést. Feltételezzük
 
 ## 2. Termékfilozófia
 ### Luxusminőségű Fizikai Trófeák
--   **High-End anyagok:** Súlyos fémötvözetek, sorszámozott gravírozás, esetleg nemesfém bevonatok (arany, ezüst, fekete nikkel).
--   **Limited Drops:** Időszakos, limitált szériás kihívások (pl. "The Alpine Peak Series - 500 numbered pieces"). Ha elfogy, soha többet nem elérhető.
+-   **High-End anyagok:** Súlyos fémötvözetek, 3D dombornyomás, prémium felületkezelés (antik bronz, antik ezüst, tűzzománc).
+-   **Limited Drops:** Időszakos, limitált szériás kihívások (pl. "The Alpine Peak Series - 100 limitált darab"). Ha elfogy, soha többet nem elérhető.
 -   **Összekapcsolt Érték:** Minden fizikai tárgy egyedi azonosítóval rendelkezik, amely az appon belül egy digitális "Eredetigazoláshoz" (Certificate of Authenticity) kapcsolódik.
 
 ## 3. Üzleti Modell és Pricing
