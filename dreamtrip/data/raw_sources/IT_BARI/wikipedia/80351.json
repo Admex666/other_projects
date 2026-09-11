@@ -1,0 +1,62 @@
+{
+  "source": "wikipedia",
+  "source_id": "80351",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Rimini",
+  "raw_payload": {
+    "type": "standard",
+    "title": "Rimini",
+    "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Rimini</span></span>",
+    "namespace": {
+      "id": 0,
+      "text": ""
+    },
+    "wikibase_item": "Q13369",
+    "titles": {
+      "canonical": "Rimini",
+      "normalized": "Rimini",
+      "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Rimini</span></span>"
+    },
+    "pageid": 80351,
+    "thumbnail": {
+      "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9a/Rimini_Montage.jpg/330px-Rimini_Montage.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 330,
+      "height": 248
+    },
+    "originalimage": {
+      "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9a/Rimini_Montage.jpg/3840px-Rimini_Montage.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 5120,
+      "height": 3840
+    },
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1372657457",
+    "tid": "a0fdfb4f-a62b-11f1-b79c-d37c7ec529fe",
+    "timestamp": "2026-09-01T17:36:14Z",
+    "description": "City in Emilia-Romagna, Italy",
+    "description_source": "local",
+    "coordinates": {
+      "lat": 44.05944444,
+      "lon": 12.56833333
+    },
+    "content_urls": {
+      "desktop": {
+        "page": "https://en.wikipedia.org/wiki/Rimini",
+        "revisions": "https://en.wikipedia.org/wiki/Rimini?action=history",
+        "edit": "https://en.wikipedia.org/wiki/Rimini?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Rimini"
+      },
+      "mobile": {
+        "page": "https://en.wikipedia.org/wiki/Rimini",
+        "revisions": "https://en.wikipedia.org/wiki/Special:History/Rimini",
+        "edit": "https://en.wikipedia.org/wiki/Rimini?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Rimini"
+      }
+    },
+    "extract": "Rimini is a city in the Emilia-Romagna region of Northern Italy.",
+    "extract_html": "<p><b>Rimini</b> is a city in the Emilia-Romagna region of Northern Italy.</p>"
+  },
+  "license": "CC-BY-SA 4.0",
+  "retrieved_at": "2026-09-11T09:18:22.649874",
+  "parser_version": "v1.0"
+}

@@ -1,0 +1,18 @@
+{
+  "source": "wikidata",
+  "source_id": "Q113528651",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Biblioteca dell'Istituto di oncologia",
+  "raw_payload": {
+    "qid": "Q113528651",
+    "label": "Biblioteca dell'Istituto di oncologia",
+    "instance_of": "http://www.wikidata.org/entity/Q385994",
+    "instance_of_label": "biblioteca specializzata",
+    "location_wkt": "Point(16.887738 41.1020911)",
+    "wikipedia_url": null,
+    "image_url": null
+  },
+  "license": "CC-0",
+  "retrieved_at": "2026-09-11T09:23:31.465150",
+  "parser_version": "v1.0"
+}

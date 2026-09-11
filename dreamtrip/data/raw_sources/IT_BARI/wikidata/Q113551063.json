@@ -1,0 +1,18 @@
+{
+  "source": "wikidata",
+  "source_id": "Q113551063",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Masseria Attolico",
+  "raw_payload": {
+    "qid": "Q113551063",
+    "label": "Masseria Attolico",
+    "instance_of": "http://www.wikidata.org/entity/Q1416696",
+    "instance_of_label": "tenuta",
+    "location_wkt": "Point(16.818604 41.133525)",
+    "wikipedia_url": null,
+    "image_url": "http://commons.wikimedia.org/wiki/Special:FilePath/Bari%20-%20Masseria%20Attolico%20-%20202209291845%206.jpeg"
+  },
+  "license": "CC-0",
+  "retrieved_at": "2026-09-11T09:23:31.465150",
+  "parser_version": "v1.0"
+}

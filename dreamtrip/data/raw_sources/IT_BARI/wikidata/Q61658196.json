@@ -1,0 +1,18 @@
+{
+  "source": "wikidata",
+  "source_id": "Q61658196",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Scultura ai paracadutisti",
+  "raw_payload": {
+    "qid": "Q61658196",
+    "label": "Scultura ai paracadutisti",
+    "instance_of": "http://www.wikidata.org/entity/Q4989906",
+    "instance_of_label": "monumento",
+    "location_wkt": "Point(16.87448 41.10261)",
+    "wikipedia_url": null,
+    "image_url": "http://commons.wikimedia.org/wiki/Special:FilePath/Dettaglio%20Scultura%20ai%20Paracadusti%20a%20Parco%202%20Giugno.jpg"
+  },
+  "license": "CC-0",
+  "retrieved_at": "2026-09-11T09:23:31.465150",
+  "parser_version": "v1.0"
+}

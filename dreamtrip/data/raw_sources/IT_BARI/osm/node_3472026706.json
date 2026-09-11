@@ -1,0 +1,20 @@
+{
+  "source": "osm",
+  "source_id": "node/3472026706",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Ala di Bronzo",
+  "raw_payload": {
+    "type": "node",
+    "id": 3472026706,
+    "lat": 41.1026094,
+    "lon": 16.8744838,
+    "tags": {
+      "historic": "monument",
+      "name": "Ala di Bronzo",
+      "wikidata": "Q61658196"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

@@ -1,0 +1,123 @@
+{
+  "version": "1.0",
+  "description": "Peer group cohorts for robust Z-score normalization of destination vibe profiles. Cities are grouped by geography, scale, and character type.",
+  "groups": {
+    "mediterranean_coastal": [
+      "IT_BARI", "IT_PALERMO", "IT_CATANIA", "IT_NAPOLI", "IT_GENOVA",
+      "ES_VALENCIA", "ES_ALICANTE", "ES_MALAGA", "ES_BARCELONA",
+      "FR_MARSEILLE", "FR_NICE",
+      "HR_SPLIT", "HR_DUBROVNIK", "HR_ZADAR",
+      "GR_THESSALONIKI", "GR_HERAKLION",
+      "TR_IZMIR", "TR_ANTALYA",
+      "PT_FARO", "PT_SETUBAL",
+      "ME_BUDVA", "AL_TIRANA"
+    ],
+    "european_midsize": [
+      "IT_BARI", "IT_BOLOGNA", "IT_FIRENZE", "IT_TORINO",
+      "PT_PORTO", "PT_LISBOA",
+      "ES_SEVILLA", "ES_BILBAO", "ES_GRANADA",
+      "SI_LJUBLJANA", "SK_BRATISLAVA",
+      "CZ_BRNO", "PL_KRAKOW", "PL_WROCLAW", "PL_GDANSK",
+      "HU_DEBRECEN", "HU_PECS",
+      "RO_CLUJ", "RO_TIMISOARA",
+      "BG_PLOVDIV", "RS_NOVI_SAD",
+      "BE_GHENT", "BE_BRUGES",
+      "NL_UTRECHT", "NL_EINDHOVEN",
+      "DE_FREIBURG", "DE_HEIDELBERG", "DE_REGENSBURG"
+    ],
+    "european_capital": [
+      "HU_BUDAPEST", "CZ_PRAGUE", "AT_VIENNA", "PL_WARSAW",
+      "RO_BUCHAREST", "SK_BRATISLAVA",
+      "HR_ZAGREB", "SI_LJUBLJANA",
+      "PT_LISBOA", "ES_MADRID",
+      "IT_ROMA", "FR_PARIS",
+      "DE_BERLIN", "NL_AMSTERDAM",
+      "BE_BRUSSELS", "SE_STOCKHOLM",
+      "DK_COPENHAGEN", "FI_HELSINKI",
+      "NO_OSLO", "CH_ZURICH",
+      "GR_ATHENS"
+    ],
+    "island_resort": [
+      "GR_SANTORINI", "GR_MYKONOS", "GR_CORFU", "GR_RHODES", "GR_KOS",
+      "ES_IBIZA", "ES_MALLORCA", "ES_MENORCA", "ES_TENERIFE", "ES_GRAN_CANARIA",
+      "IT_SARDINIA", "IT_SICILY",
+      "HR_HVAR", "HR_BRAC", "HR_KRK",
+      "MT_MALTA", "MT_GOZO",
+      "CY_PAPHOS", "CY_LIMASSOL",
+      "PT_MADEIRA", "PT_AZORES"
+    ],
+    "mountain_alpine": [
+      "AT_INNSBRUCK", "AT_SALZBURG", "CH_INTERLAKEN", "CH_ZERMATT",
+      "SI_BLED", "SI_KRANJSKA_GORA",
+      "IT_COURMAYEUR", "IT_BOLZANO",
+      "FR_CHAMONIX", "FR_ANNECY",
+      "SK_POPRAD", "PL_ZAKOPANE",
+      "DE_GARMISCH"
+    ],
+    "european_all": [
+      "IT_BARI", "IT_ROMA", "IT_FIRENZE", "IT_VENEZIA", "IT_BOLOGNA",
+      "IT_NAPOLI", "IT_PALERMO", "IT_CATANIA", "IT_TORINO", "IT_GENOVA",
+      "ES_MADRID", "ES_BARCELONA", "ES_VALENCIA", "ES_SEVILLA",
+      "ES_GRANADA", "ES_BILBAO", "ES_ALICANTE", "ES_MALAGA",
+      "PT_LISBOA", "PT_PORTO", "PT_FARO",
+      "FR_PARIS", "FR_NICE", "FR_MARSEILLE", "FR_LYON", "FR_BORDEAUX",
+      "DE_BERLIN", "DE_MUNICH", "DE_HAMBURG", "DE_COLOGNE", "DE_FRANKFURT",
+      "DE_HEIDELBERG", "DE_FREIBURG",
+      "AT_VIENNA", "AT_SALZBURG", "AT_INNSBRUCK",
+      "CH_ZURICH", "CH_GENEVA", "CH_INTERLAKEN",
+      "NL_AMSTERDAM", "NL_ROTTERDAM", "NL_UTRECHT",
+      "BE_BRUSSELS", "BE_GHENT", "BE_BRUGES",
+      "HU_BUDAPEST", "HU_PECS",
+      "CZ_PRAGUE", "CZ_BRNO",
+      "PL_KRAKOW", "PL_WARSAW", "PL_WROCLAW", "PL_GDANSK",
+      "SK_BRATISLAVA",
+      "SI_LJUBLJANA", "SI_BLED",
+      "HR_ZAGREB", "HR_SPLIT", "HR_DUBROVNIK",
+      "GR_ATHENS", "GR_THESSALONIKI", "GR_HERAKLION",
+      "TR_ISTANBUL", "TR_IZMIR",
+      "RO_BUCHAREST", "RO_CLUJ",
+      "BG_SOFIA", "BG_PLOVDIV",
+      "RS_BELGRADE", "RS_NOVI_SAD",
+      "MT_MALTA",
+      "SE_STOCKHOLM", "DK_COPENHAGEN", "FI_HELSINKI", "NO_OSLO"
+    ]
+  },
+  "priors": {
+    "mediterranean_coastal": {
+      "culture": 60.0, "food": 65.0, "beach": 55.0, "nature": 45.0,
+      "nightlife": 45.0, "romance": 55.0, "authenticity": 55.0,
+      "locality": 55.0, "walkability": 55.0, "tourist_intensity": 50.0,
+      "adventure": 35.0, "family": 50.0
+    },
+    "european_midsize": {
+      "culture": 55.0, "food": 55.0, "beach": 10.0, "nature": 40.0,
+      "nightlife": 38.0, "romance": 48.0, "authenticity": 52.0,
+      "locality": 55.0, "walkability": 52.0, "tourist_intensity": 38.0,
+      "adventure": 30.0, "family": 48.0
+    },
+    "european_capital": {
+      "culture": 70.0, "food": 65.0, "beach": 15.0, "nature": 35.0,
+      "nightlife": 55.0, "romance": 55.0, "authenticity": 45.0,
+      "locality": 45.0, "walkability": 60.0, "tourist_intensity": 65.0,
+      "adventure": 30.0, "family": 50.0
+    },
+    "island_resort": {
+      "culture": 40.0, "food": 55.0, "beach": 80.0, "nature": 55.0,
+      "nightlife": 50.0, "romance": 65.0, "authenticity": 45.0,
+      "locality": 40.0, "walkability": 35.0, "tourist_intensity": 60.0,
+      "adventure": 45.0, "family": 55.0
+    },
+    "mountain_alpine": {
+      "culture": 45.0, "food": 50.0, "beach": 5.0, "nature": 80.0,
+      "nightlife": 30.0, "romance": 60.0, "authenticity": 55.0,
+      "locality": 50.0, "walkability": 40.0, "tourist_intensity": 45.0,
+      "adventure": 70.0, "family": 60.0
+    },
+    "european_all": {
+      "culture": 50.0, "food": 50.0, "beach": 20.0, "nature": 40.0,
+      "nightlife": 35.0, "romance": 45.0, "authenticity": 50.0,
+      "locality": 50.0, "walkability": 50.0, "tourist_intensity": 40.0,
+      "adventure": 30.0, "family": 45.0
+    }
+  }
+}

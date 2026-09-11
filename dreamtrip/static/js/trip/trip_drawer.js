@@ -43,9 +43,20 @@
                 };
             }
 
+            const acts = trip?.activities?.selected_activities;
+            if (!acts || acts.length === 0) {
+                return {
+                    step: 4,
+                    text: 'Programok kiválasztása →',
+                    url: '/planner?resume=activities',
+                    icon: '',
+                    badge: '4. Lépés'
+                };
+            }
+
             return {
-                step: 4,
-                text: 'Összesített terv →',
+                step: 5,
+                text: 'Kész terv megtekintése →',
                 url: '/planner?resume=summary',
                 icon: '',
                 badge: 'Ajánlatkész'
@@ -166,6 +177,7 @@
                         if (nextCta.step === 2) window.Wizard.goToStep(2);
                         else if (nextCta.step === 3) window.Wizard.goToStep(3);
                         else if (nextCta.step === 4) window.Wizard.goToStep(4);
+                        else if (nextCta.step === 5) window.Wizard.goToStep(5);
                         else window.Wizard.goToStep(1);
                     };
                     nextBtn.removeAttribute('href');
@@ -432,7 +444,8 @@
             if (window.location.pathname.startsWith('/planner') && window.Wizard) {
                 if (step === 'flight') window.Wizard.goToStep(2);
                 else if (step === 'stay') window.Wizard.goToStep(3);
-                else if (step === 'summary') window.Wizard.goToStep(4);
+                else if (step === 'activities') window.Wizard.goToStep(4);
+                else if (step === 'summary') window.Wizard.goToStep(5);
                 else window.Wizard.goToStep(1);
             } else {
                 if (step === 'flight' && trip?.flight?.selected_flight) {

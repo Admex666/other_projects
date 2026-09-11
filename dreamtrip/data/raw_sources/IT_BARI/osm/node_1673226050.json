@@ -1,0 +1,19 @@
+{
+  "source": "osm",
+  "source_id": "node/1673226050",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Porticciolo di Fesca",
+  "raw_payload": {
+    "type": "node",
+    "id": 1673226050,
+    "lat": 41.140174,
+    "lon": 16.8097513,
+    "tags": {
+      "leisure": "marina",
+      "name": "Porticciolo di Fesca"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

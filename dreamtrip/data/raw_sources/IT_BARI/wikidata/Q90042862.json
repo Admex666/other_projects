@@ -1,0 +1,18 @@
+{
+  "source": "wikidata",
+  "source_id": "Q90042862",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Stazione di Bari Lamasinata",
+  "raw_payload": {
+    "qid": "Q90042862",
+    "label": "Stazione di Bari Lamasinata",
+    "instance_of": "http://www.wikidata.org/entity/Q519608",
+    "instance_of_label": "stazione di smistamento",
+    "location_wkt": "Point(16.821675 41.128111111)",
+    "wikipedia_url": null,
+    "image_url": null
+  },
+  "license": "CC-0",
+  "retrieved_at": "2026-09-11T09:23:31.465150",
+  "parser_version": "v1.0"
+}

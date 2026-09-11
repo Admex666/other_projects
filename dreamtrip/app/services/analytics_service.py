@@ -8,7 +8,7 @@ import uuid
 from typing import Dict, Any, Optional, List, Union
 from datetime import datetime
 from app.models.analytics_models import get_db_connection
-from app.core.supabase import get_supabase
+from app.core.supabase import get_supabase, is_supabase_configured
 
 # Manual research baseline: egy átlagos utazási tanácsadó manuálisan ~45 percet tölt research-csel ügyfelenként
 MANUAL_RESEARCH_BASELINE_MINUTES = 45.0
@@ -25,53 +25,50 @@ def record_telemetry_event(
     error_message: Optional[str] = None,
     meta_data: Optional[Dict[str, Any]] = None
 ) -> str:
-    """Records an atomic telemetry event in Supabase or SQLite."""
+    """Records an atomic telemetry event in Supabase (or SQLite only if Supabase not configured)."""
     event_id = "evt_" + uuid.uuid4().hex[:12]
     clean_user = user_id or "anonymous_guest"
     clean_session = session_id or "sess_" + uuid.uuid4().hex[:8]
 
-    sb = get_supabase()
-    if sb:
-        try:
-            # 1. Auto-ensure user exists in Supabase beta_users
-            if clean_user and clean_user not in ('anonymous_guest', 'anonymous_advisor', 'guest_planner', 'default_user'):
-                sb.table("beta_users").upsert({
-                    "username": clean_user,
-                    "password_hash": "demo",
-                    "full_name": clean_user.capitalize(),
-                    "company_name": "Béta Advisor",
-                    "role": "advisor",
-                    "is_active": True,
-                    "last_active_at": datetime.utcnow().isoformat()
-                }, on_conflict="username").execute()
+    if is_supabase_configured():
+        sb = get_supabase()
+        if sb:
+            try:
+                # 1. Frissítsük az utolsó aktivitást, HA regisztrált béta tanácsadóról van szó (NEM hozunk létre fantom usert!)
+                if clean_user and clean_user not in ('anonymous_guest', 'anonymous_advisor', 'guest_planner', 'default_user', 'guest', 'guest_user'):
+                    sb.table("beta_users").update({
+                        "last_active_at": datetime.utcnow().isoformat()
+                    }).eq("username", clean_user).execute()
 
-            # 2. Insert telemetry event
-            sb.table("telemetry_events").insert({
-                "event_id": event_id,
-                "session_id": clean_session,
-                "user_id": clean_user,
-                "event_type": event_type,
-                "module": module,
-                "search_params": search_params or {},
-                "duration_ms": duration_ms,
-                "results_count": results_count,
-                "success": success,
-                "error_message": error_message,
-                "meta_data": meta_data or {}
-            }).execute()
+                # 2. Insert telemetry event
+                sb.table("telemetry_events").insert({
+                    "event_id": event_id,
+                    "session_id": clean_session,
+                    "user_id": clean_user,
+                    "event_type": event_type,
+                    "module": module,
+                    "search_params": search_params or {},
+                    "duration_ms": duration_ms,
+                    "results_count": results_count,
+                    "success": success,
+                    "error_message": error_message,
+                    "meta_data": meta_data or {}
+                }).execute()
 
-            # 3. Update session
-            sb.table("user_sessions").upsert({
-                "session_id": clean_session,
-                "user_id": clean_user,
-                "last_event_at": datetime.utcnow().isoformat()
-            }, on_conflict="session_id").execute()
+                # 3. Update session
+                sb.table("user_sessions").upsert({
+                    "session_id": clean_session,
+                    "user_id": clean_user,
+                    "last_event_at": datetime.utcnow().isoformat()
+                }, on_conflict="session_id").execute()
 
-            return event_id
-        except Exception as e:
-            print(f"[ANALYTICS ERROR] Supabase record_telemetry_event failed: {e}, falling back to SQLite...")
+                return event_id
+            except Exception as e:
+                print(f"[ANALYTICS ERROR] Supabase record_telemetry_event failed: {e}")
+                return event_id
+        return event_id
 
-    # Fallback to local SQLite
+    # Fallback to local SQLite only when Supabase is NOT configured
     conn = get_db_connection()
     cursor = conn.cursor()
     params_json = json.dumps(search_params or {}, ensure_ascii=False)
@@ -203,9 +200,24 @@ def get_analytics_kpis(user_id: Optional[Union[str, List[str]]] = None) -> Dict[
                 "filtered_users": target_users
             }
         except Exception as e:
-            print(f"[ANALYTICS ERROR] Supabase get_analytics_kpis failed: {e}, falling back to SQLite...")
+            print(f"[ANALYTICS ERROR] Supabase get_analytics_kpis failed: {e}")
+            if is_supabase_configured():
+                return {
+                    "total_users": 0,
+                    "total_searches": 0,
+                    "successful_searches": 0,
+                    "success_rate_pct": 0,
+                    "avg_duration_ms": 0,
+                    "avg_duration_sec": 0,
+                    "total_time_saved_hours": 0,
+                    "repeat_users_count": 0,
+                    "proposals_exported": 0,
+                    "module_usage": {},
+                    "is_filtered": is_filtered,
+                    "filtered_users": target_users
+                }
 
-    # Fallback to local SQLite
+    # Fallback to local SQLite ONLY when Supabase is NOT configured
     conn = get_db_connection()
     cursor = conn.cursor()
 
@@ -329,9 +341,11 @@ def get_user_timeline(user_id: Optional[Union[str, List[str]]] = None, limit: in
                 })
             return timeline
         except Exception as e:
-            print(f"[ANALYTICS ERROR] Supabase get_user_timeline failed: {e}, falling back to SQLite...")
+            print(f"[ANALYTICS ERROR] Supabase get_user_timeline failed: {e}")
+            if is_supabase_configured():
+                return []
 
-    # Fallback to local SQLite
+    # Fallback to local SQLite ONLY when Supabase is NOT configured
     conn = get_db_connection()
     cursor = conn.cursor()
 

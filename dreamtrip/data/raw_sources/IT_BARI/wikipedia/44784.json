@@ -1,0 +1,62 @@
+{
+  "source": "wikipedia",
+  "source_id": "44784",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Bari",
+  "raw_payload": {
+    "type": "standard",
+    "title": "Bari",
+    "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Bari</span></span>",
+    "namespace": {
+      "id": 0,
+      "text": ""
+    },
+    "wikibase_item": "Q3519",
+    "titles": {
+      "canonical": "Bari",
+      "normalized": "Bari",
+      "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Bari</span></span>"
+    },
+    "pageid": 44784,
+    "thumbnail": {
+      "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/44/Bari_-_Lungomare_Imperatore_Augusto_%26_Mare.jpg/330px-Bari_-_Lungomare_Imperatore_Augusto_%26_Mare.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 330,
+      "height": 220
+    },
+    "originalimage": {
+      "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/44/Bari_-_Lungomare_Imperatore_Augusto_%26_Mare.jpg/3840px-Bari_-_Lungomare_Imperatore_Augusto_%26_Mare.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 6539,
+      "height": 4363
+    },
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1373270646",
+    "tid": "a1aebffe-a8bf-11f1-9b05-f9dcb35eb21c",
+    "timestamp": "2026-09-05T00:20:43Z",
+    "description": "City in Apulia, Italy",
+    "description_source": "local",
+    "coordinates": {
+      "lat": 41.12527778,
+      "lon": 16.86666667
+    },
+    "content_urls": {
+      "desktop": {
+        "page": "https://en.wikipedia.org/wiki/Bari",
+        "revisions": "https://en.wikipedia.org/wiki/Bari?action=history",
+        "edit": "https://en.wikipedia.org/wiki/Bari?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Bari"
+      },
+      "mobile": {
+        "page": "https://en.wikipedia.org/wiki/Bari",
+        "revisions": "https://en.wikipedia.org/wiki/Special:History/Bari",
+        "edit": "https://en.wikipedia.org/wiki/Bari?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Bari"
+      }
+    },
+    "extract": "Bari is the capital city of the Metropolitan City of Bari and of the region of Apulia, on the Adriatic Sea in southern Italy. It is one of the most important economic centres of mainland southern Italy. It is a port and university city as well as the city of Saint Nicholas. The city itself is the 9th-largest city in Italy with a population of 316,248, while the urban area has approximately 750,000 inhabitants. Its metropolitan province is the 5th-largest metropolitan city in the country, with a population of 1,218,073.",
+    "extract_html": "<p><b>Bari</b> is the capital city of the Metropolitan City of Bari and of the region of Apulia, on the Adriatic Sea in southern Italy. It is one of the most important economic centres of mainland southern Italy. It is a port and university city as well as the city of Saint Nicholas. The city itself is the 9th-largest city in Italy with a population of 316,248, while the urban area has approximately 750,000 inhabitants. Its metropolitan province is the 5th-largest metropolitan city in the country, with a population of 1,218,073.</p>"
+  },
+  "license": "CC-BY-SA 4.0",
+  "retrieved_at": "2026-09-11T09:23:31.532899",
+  "parser_version": "v1.0"
+}

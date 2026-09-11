@@ -1,0 +1,20 @@
+{
+  "source": "osm",
+  "source_id": "node/10664849736",
+  "destination_id": "IT_BARI",
+  "name_candidate": "villa comunale",
+  "raw_payload": {
+    "type": "node",
+    "id": 10664849736,
+    "lat": 41.0233801,
+    "lon": 16.7105603,
+    "tags": {
+      "addr:street": "Via Grumo",
+      "leisure": "park",
+      "name": "villa comunale"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

@@ -1,0 +1,19 @@
+{
+  "source": "osm",
+  "source_id": "node/1818984454",
+  "destination_id": "IT_BARI",
+  "name_candidate": "weekly market/mercato settimanale",
+  "raw_payload": {
+    "type": "node",
+    "id": 1818984454,
+    "lat": 41.1047449,
+    "lon": 16.8820609,
+    "tags": {
+      "amenity": "marketplace",
+      "name": "weekly market/mercato settimanale"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

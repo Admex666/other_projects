@@ -1,0 +1,19 @@
+{
+  "source": "osm",
+  "source_id": "node/1559667134",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Basilica ipogea di Santa Candida",
+  "raw_payload": {
+    "type": "node",
+    "id": 1559667134,
+    "lat": 41.0878867,
+    "lon": 16.8595787,
+    "tags": {
+      "historic": "archaeological_site",
+      "name": "Basilica ipogea di Santa Candida"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

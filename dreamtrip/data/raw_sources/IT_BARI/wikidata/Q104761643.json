@@ -1,0 +1,18 @@
+{
+  "source": "wikidata",
+  "source_id": "Q104761643",
+  "destination_id": "IT_BARI",
+  "name_candidate": "basilica di Santa Fara",
+  "raw_payload": {
+    "qid": "Q104761643",
+    "label": "basilica di Santa Fara",
+    "instance_of": "http://www.wikidata.org/entity/Q697295",
+    "instance_of_label": "santuario",
+    "location_wkt": "Point(16.84851 41.10121)",
+    "wikipedia_url": null,
+    "image_url": "http://commons.wikimedia.org/wiki/Special:FilePath/Bari%20-%20Basilica%20di%20Santa%20Fara%20%28facciata%20con%20scalinata%29.jpeg"
+  },
+  "license": "CC-0",
+  "retrieved_at": "2026-09-11T09:23:31.465150",
+  "parser_version": "v1.0"
+}

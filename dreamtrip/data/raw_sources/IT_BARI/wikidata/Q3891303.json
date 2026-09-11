@@ -1,0 +1,18 @@
+{
+  "source": "wikidata",
+  "source_id": "Q3891303",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Palazzo del I ramo della famiglia Capitaneo",
+  "raw_payload": {
+    "qid": "Q3891303",
+    "label": "Palazzo del I ramo della famiglia Capitaneo",
+    "instance_of": "http://www.wikidata.org/entity/Q16560",
+    "instance_of_label": "palazzo",
+    "location_wkt": "Point(16.782434 41.081393)",
+    "wikipedia_url": null,
+    "image_url": null
+  },
+  "license": "CC-0",
+  "retrieved_at": "2026-09-11T09:18:22.623549",
+  "parser_version": "v1.0"
+}

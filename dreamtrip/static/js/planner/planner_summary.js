@@ -58,6 +58,28 @@
             if (sumStayRating) sumStayRating.innerText = `${nights} éjszaka • Értékelés: ${stayRating}/10`;
             if (sumStayPrice) sumStayPrice.innerText = `${stayPrice.toLocaleString()} Ft`;
 
+            // 4b. Programok & élmények kártya
+            const acts = state.selectedActivities || (cartTrip?.activities?.selected_activities) || [];
+            const sumActCount = document.getElementById('sumActivitiesCount');
+            const sumActDuration = document.getElementById('sumActivitiesDuration');
+            const sumActPrice = document.getElementById('sumActivitiesPrice');
+
+            let totalActCostPerPerson = 0;
+            acts.forEach(a => {
+                const pl = String(a.price_level || '1').toLowerCase();
+                if (pl === 'free' || pl === '0') totalActCostPerPerson += 0;
+                else if (pl === 'budget' || pl === '1') totalActCostPerPerson += 2500;
+                else if (pl === 'moderate' || pl === '2') totalActCostPerPerson += 6500;
+                else if (pl === 'premium' || pl === '3' || pl === '4') totalActCostPerPerson += 18000;
+                else totalActCostPerPerson += 3500;
+            });
+            const totalPersons = adults + (state.intake.children || cartTrip?.input?.children || 0);
+            const totalActGroupCost = totalActCostPerPerson * totalPersons;
+
+            if (sumActCount) sumActCount.innerText = `${acts.length} kiválasztott program`;
+            if (sumActDuration) sumActDuration.innerText = acts.length > 0 ? `Napi ~${Math.max(2, Math.round(acts.length * 1.5 / Math.max(1, nights)))} óra aktív élmény` : 'Nincsenek rögzített programok';
+            if (sumActPrice) sumActPrice.innerText = `${totalActGroupCost.toLocaleString()} Ft (~${totalActCostPerPerson.toLocaleString()} Ft / fő)`;
+
             // 5. Tételes költségkalkuláció blokk
             const wrap = document.getElementById('sumBreakdownWrap');
             if (wrap && window.TripCart) {
@@ -94,6 +116,177 @@
                     </div>
                 `;
             }
+
+            // 6. Napi élmény útiterv betöltése és renderelése
+            const destId = d?.dest_id || d?.id || 'IT_BARI';
+            const persona = state.intake.dest_promethee?.experience?.persona || 'culture_aficionado';
+            const personaSelect = document.getElementById('itineraryPersonaSelect');
+            if (personaSelect) {
+                personaSelect.value = persona;
+            }
+            this.loadItinerary(destId, nights, persona);
+        },
+
+        async loadItinerary(destId, days, persona) {
+            const box = document.getElementById('itineraryContentBox');
+            if (!box) return;
+
+            let formattedDestId = String(destId).toUpperCase();
+            if (!formattedDestId.includes('_') && formattedDestId.length > 3) {
+                if (formattedDestId.includes('BARI')) formattedDestId = 'IT_BARI';
+                else if (formattedDestId.includes('ROM')) formattedDestId = 'IT_ROME';
+                else formattedDestId = 'IT_BARI';
+            }
+
+            box.innerHTML = `
+                <div style="text-align: center; padding: 28px; color: var(--text-muted); font-size: 13.5px;">
+                    <div style="display: inline-block; width: 28px; height: 28px; border: 3px solid var(--border-subtle); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 10px;"></div>
+                    <div>Napi útiterv és sétaútvonalak generálása a desztináció élménygráfjából...</div>
+                </div>
+            `;
+
+            try {
+                const state = window.PlannerState;
+                const numDays = Math.min(7, Math.max(1, parseInt(days, 10) || 3));
+                const selectedIds = (state?.selectedActivities || []).map(a => a.entity_id).join(',');
+                const queryParams = new URLSearchParams({
+                    days: numDays,
+                    persona: persona || 'culture_aficionado'
+                });
+                if (selectedIds) {
+                    queryParams.set('selected_activities', selectedIds);
+                }
+                const res = await fetch(`/api/destinations/${encodeURIComponent(formattedDestId)}/itinerary?${queryParams.toString()}`);
+                if (!res.ok) {
+                    throw new Error(`HTTP ${res.status}`);
+                }
+                const data = await res.json();
+                window.PlannerState.currentItinerary = data;
+                window.PlannerState.activeItineraryDay = 0;
+                this.renderItinerary(data, 0);
+            } catch (err) {
+                console.warn("Could not load dynamic itinerary, rendering fallback:", err);
+                box.innerHTML = `
+                    <div style="text-align: center; padding: 20px; color: var(--text-secondary); font-size: 13px;">
+                        A kiválasztott célállomáshoz a sétaútvonalak hamarosan elérhetők. 
+                        Az alapvető látnivalók és gasztronómiai élmények a helyszínen rugalmasan felfedezhetők!
+                    </div>
+                `;
+            }
+        },
+
+        reloadItineraryWithPersona(newPersona) {
+            const state = window.PlannerState;
+            const d = state.selectedDest || (window.TripCart ? window.TripCart.getTrip()?.destination : null);
+            const nights = state.intake.duration || 3;
+            const destId = d?.dest_id || d?.id || 'IT_BARI';
+            this.loadItinerary(destId, nights, newPersona);
+        },
+
+        switchItineraryDay(dayIdx) {
+            const state = window.PlannerState;
+            if (!state.currentItinerary) return;
+            state.activeItineraryDay = dayIdx;
+            this.renderItinerary(state.currentItinerary, dayIdx);
+        },
+
+        renderItinerary(data, activeDayIdx = 0) {
+            const box = document.getElementById('itineraryContentBox');
+            if (!box || !data || !data.days || data.days.length === 0) return;
+
+            const days = data.days;
+            const safeDayIdx = Math.min(days.length - 1, Math.max(0, activeDayIdx));
+            const currentDay = days[safeDayIdx];
+
+            // 1. Day Tabs
+            const tabsHtml = `
+                <div class="itinerary-day-tabs">
+                    ${days.map((d, idx) => {
+                        const activeCls = idx === safeDayIdx ? 'active' : '';
+                        return `
+                            <button type="button" class="itinerary-day-tab ${activeCls}" onclick="window.PlannerSummary.switchItineraryDay(${idx})">
+                                <span class="material-symbols-outlined" style="font-size: 16px;">calendar_today</span>
+                                <span>${idx + 1}. Nap</span>
+                                <span style="font-size: 11px; opacity: 0.8;">(${d.date || ''})</span>
+                            </button>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+
+            // 2. Timeline Slots
+            const slotsHtml = (currentDay.slots || []).map((slot) => {
+                let icon = 'explore';
+                let timeLabel = slot.time_window || '';
+                
+                if (slot.slot === 'morning') {
+                    icon = 'wb_twilight';
+                    timeLabel = 'Délelőtt • ' + timeLabel;
+                } else if (slot.slot === 'lunch') {
+                    icon = 'restaurant';
+                    timeLabel = 'Ebédszünet • ' + timeLabel;
+                } else if (slot.slot === 'afternoon') {
+                    icon = 'attractions';
+                    timeLabel = 'Délután • ' + timeLabel;
+                } else if (slot.slot === 'sunset') {
+                    icon = 'wb_twilight';
+                    timeLabel = 'Naplemente • ' + timeLabel;
+                } else if (slot.slot === 'dinner_evening') {
+                    icon = 'nightlife';
+                    timeLabel = 'Esti program • ' + timeLabel;
+                }
+
+                const rainSafeBadge = slot.weather_resilience === 'rain_safe' 
+                    ? `<span class="itinerary-tag-pill itinerary-tag-rainsafe"><span class="material-symbols-outlined" style="font-size:13px;">umbrella</span> Esőbiztos</span>`
+                    : `<span class="itinerary-tag-pill itinerary-tag-outdoor"><span class="material-symbols-outlined" style="font-size:13px;">wb_sunny</span> Szabadtéri</span>`;
+
+                const priceBadge = slot.price_level 
+                    ? `<span class="itinerary-tag-pill itinerary-tag-price">${slot.price_level === 'free' ? 'Ingyenes' : (slot.price_level === 'budget' ? 'Kedvező belépő' : 'Standard')}</span>`
+                    : '';
+
+                const ratingBadge = slot.rating 
+                    ? `<span class="itinerary-tag-pill" style="background:rgba(245,158,11,0.12); color:#b45309; border:1px solid rgba(245,158,11,0.3); font-weight:800;">★ ${slot.rating.toFixed(1)}</span>`
+                    : '';
+
+                const walkDivider = (slot.walk_to_next_meters && slot.walk_to_next_meters > 0) ? `
+                    <div class="itinerary-walk-divider">
+                        <div class="itinerary-walk-line"></div>
+                        <div class="itinerary-walk-badge">
+                            <span class="material-symbols-outlined" style="font-size: 14px;">directions_walk</span>
+                            <span>${slot.walk_to_next_meters} m séta (~${slot.walk_to_next_min || Math.round(slot.walk_to_next_meters / 80)} perc)</span>
+                        </div>
+                        <div class="itinerary-walk-line"></div>
+                    </div>
+                ` : '';
+
+                return `
+                    <div class="itinerary-slot-card">
+                        <div class="itinerary-slot-icon-wrap">
+                            <span class="material-symbols-outlined" style="font-size: 22px;">${icon}</span>
+                        </div>
+                        <div class="itinerary-slot-body">
+                            <div class="itinerary-slot-header">
+                                <span class="itinerary-slot-time">${timeLabel}</span>
+                                <div style="display: flex; gap: 5px;">
+                                    ${ratingBadge}
+                                    ${priceBadge}
+                                    ${rainSafeBadge}
+                                </div>
+                            </div>
+                            <h4 class="itinerary-slot-title">${slot.title}</h4>
+                            ${slot.description ? `<p style="margin: 4px 0 0; font-size: 12.5px; color: var(--text-secondary); line-height: 1.5;">${slot.description}</p>` : ''}
+                        </div>
+                    </div>
+                    ${walkDivider}
+                `;
+            }).join('');
+
+            box.innerHTML = `
+                ${tabsHtml}
+                <div class="itinerary-timeline">
+                    ${slotsHtml}
+                </div>
+            `;
         },
 
         exportProposal() {
@@ -160,7 +353,7 @@
             let targetResume = resumeMode;
             if (targetResume === 'flight' && trip.flight?.selected_flight && !isExplicitChangeFlight) {
                 if (trip.accommodation?.selected_accommodation) {
-                    targetResume = 'summary';
+                    targetResume = 'activities';
                 } else {
                     targetResume = 'stay';
                 }
@@ -168,6 +361,9 @@
 
             if (targetResume === 'summary' && trip.destination && trip.flight?.selected_flight && trip.accommodation?.selected_accommodation) {
                 this.renderFinalSummary();
+                state.setStep(5);
+            } else if (targetResume === 'activities' && trip.destination && trip.flight?.selected_flight && trip.accommodation?.selected_accommodation) {
+                if (window.PlannerActivities) window.PlannerActivities.initActivities();
                 state.setStep(4);
             } else if (targetResume === 'stay' && trip.destination && trip.flight?.selected_flight) {
                 if (state.stays.length === 0 && state.selectedFlight) {

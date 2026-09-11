@@ -1,0 +1,18 @@
+{
+  "source": "wikidata",
+  "source_id": "Q3890371",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Palazzo Maffei",
+  "raw_payload": {
+    "qid": "Q3890371",
+    "label": "Palazzo Maffei",
+    "instance_of": "http://www.wikidata.org/entity/Q16560",
+    "instance_of_label": "palazzo",
+    "location_wkt": "Point(16.782348 41.081655)",
+    "wikipedia_url": null,
+    "image_url": "http://commons.wikimedia.org/wiki/Special:FilePath/Palazzo%20maffei.jpg"
+  },
+  "license": "CC-0",
+  "retrieved_at": "2026-09-11T09:18:22.623549",
+  "parser_version": "v1.0"
+}

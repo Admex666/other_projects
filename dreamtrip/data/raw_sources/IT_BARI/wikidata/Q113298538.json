@@ -1,0 +1,18 @@
+{
+  "source": "wikidata",
+  "source_id": "Q113298538",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Biblioteca del Dipartimento di Economia, Management e Diritto dell’Impresa. Area merceologica. Università degli studi di Bari",
+  "raw_payload": {
+    "qid": "Q113298538",
+    "label": "Biblioteca del Dipartimento di Economia, Management e Diritto dell’Impresa. Area merceologica. Università degli studi di Bari",
+    "instance_of": "http://www.wikidata.org/entity/Q1622062",
+    "instance_of_label": "biblioteca universitaria",
+    "location_wkt": "Point(16.8519905 41.0947877)",
+    "wikipedia_url": null,
+    "image_url": null
+  },
+  "license": "CC-0",
+  "retrieved_at": "2026-09-11T09:23:31.465150",
+  "parser_version": "v1.0"
+}

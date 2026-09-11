@@ -1,0 +1,19 @@
+{
+  "source": "osm",
+  "source_id": "node/3417926971",
+  "destination_id": "IT_BARI",
+  "name_candidate": "museo strumenti di Chimica",
+  "raw_payload": {
+    "type": "node",
+    "id": 3417926971,
+    "lat": 41.1088417,
+    "lon": 16.8834235,
+    "tags": {
+      "name": "museo strumenti di Chimica",
+      "tourism": "museum"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

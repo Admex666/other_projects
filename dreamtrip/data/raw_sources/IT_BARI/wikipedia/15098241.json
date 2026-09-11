@@ -1,0 +1,63 @@
+{
+  "source": "wikipedia",
+  "source_id": "15098241",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Air raid on Bari",
+  "raw_payload": {
+    "type": "standard",
+    "title": "Air raid on Bari",
+    "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Air raid on Bari</span></span>",
+    "namespace": {
+      "id": 0,
+      "text": ""
+    },
+    "wikibase_item": "Q714253",
+    "titles": {
+      "canonical": "Air_raid_on_Bari",
+      "normalized": "Air raid on Bari",
+      "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Air raid on Bari</span></span>"
+    },
+    "pageid": 15098241,
+    "thumbnail": {
+      "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a3/Atak_lotniczy_na_flot%C4%99_w_Bari_%282-2442%29.jpg/330px-Atak_lotniczy_na_flot%C4%99_w_Bari_%282-2442%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 330,
+      "height": 159
+    },
+    "originalimage": {
+      "source": "https://upload.wikimedia.org/wikipedia/commons/a/a3/Atak_lotniczy_na_flot%C4%99_w_Bari_%282-2442%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+      "width": 3500,
+      "height": 1690
+    },
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1370104433",
+    "tid": "d19b5b15-9b7e-11f1-9f76-b81d3bbbdc4a",
+    "timestamp": "2026-08-19T03:34:01Z",
+    "description": "1943 attack by German bombers on Allied forces and shipping in Bari, Italy, during WWII",
+    "description_source": "local",
+    "coordinates": {
+      "lat": 41.12527778,
+      "lon": 16.86666667
+    },
+    "content_urls": {
+      "desktop": {
+        "page": "https://en.wikipedia.org/wiki/Air_raid_on_Bari",
+        "revisions": "https://en.wikipedia.org/wiki/Air_raid_on_Bari?action=history",
+        "edit": "https://en.wikipedia.org/wiki/Air_raid_on_Bari?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Air_raid_on_Bari"
+      },
+      "mobile": {
+        "page": "https://en.wikipedia.org/wiki/Air_raid_on_Bari",
+        "revisions": "https://en.wikipedia.org/wiki/Special:History/Air_raid_on_Bari",
+        "edit": "https://en.wikipedia.org/wiki/Air_raid_on_Bari?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Air_raid_on_Bari"
+      }
+    },
+    "extract": "The air raid on Bari was an air attack by German bombers on Allied forces and shipping in Bari, Italy, on 2 December 1943, during World War II. 105 German Junkers Ju 88 bombers of Luftflotte 2 surprised the port's defenders and bombed shipping and personnel operating in support of the Allied Italian Campaign, sinking 27 cargo and transport ships, as well as a schooner, in Bari harbour.",
+    "extract_html": "<p>The <b>air raid on Bari</b> was an air attack by German bombers on Allied forces and shipping in Bari, Italy, on 2 December 1943, during World War II. 105 German Junkers Ju 88 bombers of <span><i>Luftflotte</i> 2</span> surprised the port's defenders and bombed shipping and personnel operating in support of the Allied Italian Campaign, sinking 27 cargo and transport ships, as well as a schooner, in Bari harbour.</p>",
+    "dist_meters": 1009.5
+  },
+  "license": "CC-BY-SA 4.0",
+  "retrieved_at": "2026-09-11T09:23:31.532899",
+  "parser_version": "v1.0"
+}

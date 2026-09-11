@@ -1,0 +1,18 @@
+{
+  "source": "wikidata",
+  "source_id": "Q55742459",
+  "destination_id": "IT_BARI",
+  "name_candidate": "pino d'Aleppo",
+  "raw_payload": {
+    "qid": "Q55742459",
+    "label": "pino d'Aleppo",
+    "instance_of": "http://www.wikidata.org/entity/Q811534",
+    "instance_of_label": "pianta monumentale",
+    "location_wkt": "Point(16.871306 41.098572)",
+    "wikipedia_url": null,
+    "image_url": "http://commons.wikimedia.org/wiki/Special:FilePath/Pino%20d%27Aeppo%20di.jpg"
+  },
+  "license": "CC-0",
+  "retrieved_at": "2026-09-11T09:23:31.465150",
+  "parser_version": "v1.0"
+}

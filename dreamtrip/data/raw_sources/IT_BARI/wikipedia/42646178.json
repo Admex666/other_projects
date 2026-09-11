@@ -1,0 +1,53 @@
+{
+  "source": "wikipedia",
+  "source_id": "42646178",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Francesco Crispi railway station",
+  "raw_payload": {
+    "type": "standard",
+    "title": "Francesco Crispi railway station",
+    "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Francesco Crispi railway station</span></span>",
+    "namespace": {
+      "id": 0,
+      "text": ""
+    },
+    "wikibase_item": "Q3969653",
+    "titles": {
+      "canonical": "Francesco_Crispi_railway_station",
+      "normalized": "Francesco Crispi railway station",
+      "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Francesco Crispi railway station</span></span>"
+    },
+    "pageid": 42646178,
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1370975405",
+    "tid": "5c030650-9f53-11f1-9211-26aece980aa8",
+    "timestamp": "2026-08-24T00:33:00Z",
+    "description": "Railway station in Bari, Italy",
+    "description_source": "local",
+    "coordinates": {
+      "lat": 41.12,
+      "lon": 16.84666667
+    },
+    "content_urls": {
+      "desktop": {
+        "page": "https://en.wikipedia.org/wiki/Francesco_Crispi_railway_station",
+        "revisions": "https://en.wikipedia.org/wiki/Francesco_Crispi_railway_station?action=history",
+        "edit": "https://en.wikipedia.org/wiki/Francesco_Crispi_railway_station?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Francesco_Crispi_railway_station"
+      },
+      "mobile": {
+        "page": "https://en.wikipedia.org/wiki/Francesco_Crispi_railway_station",
+        "revisions": "https://en.wikipedia.org/wiki/Special:History/Francesco_Crispi_railway_station",
+        "edit": "https://en.wikipedia.org/wiki/Francesco_Crispi_railway_station?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Francesco_Crispi_railway_station"
+      }
+    },
+    "extract": "Francesco Crispi is a railway station in the Italian city of Bari, in the Province of Bari, Apulia. The station lies on the Bari–Barletta railway. The train services are operated by Ferrotramviaria.",
+    "extract_html": "<p><b>Francesco Crispi</b> is a railway station in the Italian city of Bari, in the Province of Bari, Apulia. The station lies on the Bari–Barletta railway. The train services are operated by Ferrotramviaria.</p>",
+    "dist_meters": 2138.2
+  },
+  "license": "CC-BY-SA 4.0",
+  "retrieved_at": "2026-09-11T09:23:31.532899",
+  "parser_version": "v1.0"
+}

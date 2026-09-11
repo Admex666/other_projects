@@ -42,6 +42,12 @@
         selectStay(index) { return window.PlannerStays.selectStay(index); },
         recalculateStays() { return window.PlannerStays.recalculateStays(); },
 
+        // Activities Step
+        filterActivitiesCategory(cat) { return window.PlannerActivities && window.PlannerActivities.filterCategory(cat); },
+        toggleActivity(id) { return window.PlannerActivities && window.PlannerActivities.toggleActivity(id); },
+        selectAllActivities() { return window.PlannerActivities && window.PlannerActivities.selectAll(); },
+        deselectAllActivities() { return window.PlannerActivities && window.PlannerActivities.deselectAll(); },
+
         // Summary & Export
         exportProposal() { return window.PlannerSummary.exportProposal(); },
         resumeSessionFromCart() { return window.PlannerSummary.resumeSessionFromCart(); }

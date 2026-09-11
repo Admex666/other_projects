@@ -26,6 +26,7 @@
                     dest_cost: null,
                     dest_temp: null,
                     dest_safety: null,
+                    dest_exp: null,
                     flight_price: null,
                     flight_dur: null,
                     flight_stops: null,
@@ -36,12 +37,16 @@
                 dest_ahp: {
                     total_cost_vs_weather: 3,
                     total_cost_vs_safety: 3,
-                    weather_vs_safety: 3
+                    total_cost_vs_experience: 3,
+                    weather_vs_safety: 3,
+                    weather_vs_experience: 3,
+                    safety_vs_experience: 3
                 },
                 dest_promethee: {
                     cost: { type: 5, q: 20000, p: 80000, stepQ: 5000, stepP: 10000, unit: 'Ft' },
                     temp: { type: 5, q: 2, p: 6, stepQ: 1, stepP: 1, unit: '°C' },
-                    safety: { type: 5, q: 5, p: 20, stepQ: 1, stepP: 5, unit: 'pont' }
+                    safety: { type: 5, q: 5, p: 20, stepQ: 1, stepP: 5, unit: 'pont' },
+                    experience: { persona: 'culture_aficionado', style_name: 'Kulturális és ikonikus látnivalók' }
                 },
                 flight_ahp: {
                     price_vs_duration: 3,
@@ -75,7 +80,7 @@
                     amenities: []
                 },
                 calculated_weights: {
-                    dest: { total_cost: 34, weather: 33, safety: 33 },
+                    dest: { total_cost: 25, weather: 25, safety: 25, experience: 25 },
                     flight: { price: 40, duration: 35, stops: 25 },
                     stay: { price: 35, rating: 30, location: 20, amenities: 15 }
                 }
@@ -264,6 +269,12 @@
                 this.state.unlocked.dest_safety = true;
             } else if (groupKey === 'dest_safety') {
                 this.state.dest_promethee.safety.type = typeNum;
+                this.state.unlocked.dest_exp = true;
+            } else if (groupKey === 'dest_exp') {
+                this.state.dest_promethee.experience = {
+                    persona: typeNum,
+                    style_name: chosenCard === 'A' ? 'Kulturális és ikonikus látnivalók' : 'Helyi gasztronómia & Séta'
+                };
             } else if (groupKey === 'flight_price') {
                 this.state.flight_promethee.price.type = typeNum;
                 this.state.unlocked.flight_dur = true;

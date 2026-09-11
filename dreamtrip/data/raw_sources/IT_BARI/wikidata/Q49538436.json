@@ -1,0 +1,18 @@
+{
+  "source": "wikidata",
+  "source_id": "Q49538436",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Parco Due Giugno",
+  "raw_payload": {
+    "qid": "Q49538436",
+    "label": "Parco Due Giugno",
+    "instance_of": "http://www.wikidata.org/entity/Q1107656",
+    "instance_of_label": "giardino",
+    "location_wkt": "Point(16.87456 41.1029)",
+    "wikipedia_url": null,
+    "image_url": null
+  },
+  "license": "CC-0",
+  "retrieved_at": "2026-09-11T09:23:31.465150",
+  "parser_version": "v1.0"
+}

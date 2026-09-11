@@ -33,6 +33,7 @@
                             <div style="display: flex; justify-content: space-between; font-size: 12.5px;"><span>Teljes Költség:</span><strong style="font-family:var(--font-mono); color:var(--primary);">${wDest.total_cost}%</strong></div>
                             <div style="display: flex; justify-content: space-between; font-size: 12.5px;"><span>Klíma / Időjárás:</span><strong style="font-family:var(--font-mono); color:var(--primary);">${wDest.weather}%</strong></div>
                             <div style="display: flex; justify-content: space-between; font-size: 12.5px;"><span>Közbiztonság:</span><strong style="font-family:var(--font-mono); color:var(--primary);">${wDest.safety}%</strong></div>
+                            <div style="display: flex; justify-content: space-between; font-size: 12.5px;"><span>Élmények & Látnivalók:</span><strong style="font-family:var(--font-mono); color:var(--primary);">${wDest.experience || 25}%</strong></div>
                         </div>
                     </div>
 

@@ -57,6 +57,7 @@ Ez a fájl az Optivoya (DreamTrip) projekt navigációs térképe. Minden lénye
 * [[flight]] — Retúr vagy egyirányú repülőjárat ajánlat.
 * [[accommodation]] — Szálláslehetőség és ár-érték attribútumai.
 * [[poi]] — Látványosság, étterem vagy programpont (Point of Interest).
+* [[experience-entity]] — Kanonikus, több forrásból szintetizált és deduplikált élmény- és látványosság-modell.
 
 ---
 
@@ -68,6 +69,7 @@ Ez a fájl az Optivoya (DreamTrip) projekt navigációs térképe. Minden lénye
 * [[numbeo-cost-model]] — Hivatalos Numbeo étkezési és helyi közlekedési fogyasztói kosár modell.
 * [[honest-scraping-policy]] — Transzparens hibakezelés mesterséges dummy adatok helyett.
 * [[progressive-async-prefetching]] — Progresszív aszinkron előtöltés és multi-tier gyorsítótárazás.
+* [[experience-graph-modeling]] — Többforrásos (OSM, Wikidata, Wiki, Google) élménygráf szintézis és modellezés.
 
 
 ---
@@ -79,6 +81,7 @@ Ez a fájl az Optivoya (DreamTrip) projekt navigációs térképe. Minden lénye
 * [[accommodation-search-workflow]] — Zárolt dátumú szálláskeresés és kényelmi szűrés.
 * [[proposal-generation]] — B2B ügyfélajánlat exportálása tételes képletekkel.
 * [[itinerary-optimization]] — Időkorlátos és távolságoptimalizált napi útiterv készítés.
+* [[experience-ingestion-pipeline]] — Célállomások élmény- és programkínálatának 6 fázisú begyűjtési és profilozási munkafolyamata.
 
 ---
 
@@ -91,6 +94,7 @@ Ez a fájl az Optivoya (DreamTrip) projekt navigációs térképe. Minden lénye
 * [[numbeo-database]] — Helyi Numbeo megélhetési és biztonsági adatbázis.
 * [[google-places-service]] — Google Places POI és értékelés szolgáltatás.
 * [[trip-cart-engine]] — Kliensoldali JavaScript állapotkezelő és lebegő sáv/fiók UI.
+* [[experience-intelligence-engine]] — Többforrásos élmény- és aktivitás-intelligencia alrendszer és többszintű gyorsítótár.
 
 ---
 
@@ -115,6 +119,7 @@ Ez a fájl az Optivoya (DreamTrip) projekt navigációs térképe. Minden lénye
 * [[ADR-006-master-planner-wizard]] — Master Travel Planner: egybefüggő 4-lépéses folyamat.
 * [[ADR-007-fastapi-router-modularization]] — FastAPI Monolit Dekompozíció és Moduláris APIRouter Architektúra.
 * [[ADR-008-supabase-cloud-database]] — Supabase Cloud PostgreSQL & Telemetry Adatbázis Bevezetése.
+* [[ADR-009-experience-activity-intelligence-engine]] — Az Élmény- és Aktivitás-Intelligencia Rendszer 6 fázisú architektúrája.
 
 
 ---
@@ -135,3 +140,4 @@ Ez a fájl az Optivoya (DreamTrip) projekt navigációs térképe. Minden lénye
 * [[enrich-destinations]] — Úti célok éghajlati és repülési adatainak dúsítása.
 * [[run-validation-tests]] — Automatizált tesztek és folyamat-ellenőrzések futtatása.
 * [[export-client-proposal]] — Ügyfélajánlat generálása és PDF mentése.
+* [[run-experience-pipeline]] — Többforrásos élmény-ingestion és profilozó pipeline futtatása.

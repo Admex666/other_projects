@@ -1,0 +1,19 @@
+{
+  "source": "osm",
+  "source_id": "node/322787389",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Museo di Zoologia",
+  "raw_payload": {
+    "type": "node",
+    "id": 322787389,
+    "lat": 41.1100042,
+    "lon": 16.8837113,
+    "tags": {
+      "name": "Museo di Zoologia",
+      "tourism": "museum"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

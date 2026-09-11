@@ -1,0 +1,18 @@
+{
+  "source": "wikidata",
+  "source_id": "Q3969596",
+  "destination_id": "IT_BARI",
+  "name_candidate": "stazione di Fesca-San Girolamo",
+  "raw_payload": {
+    "qid": "Q3969596",
+    "label": "stazione di Fesca-San Girolamo",
+    "instance_of": "http://www.wikidata.org/entity/Q55488",
+    "instance_of_label": "stazione ferroviaria",
+    "location_wkt": "Point(16.8237 41.1299)",
+    "wikipedia_url": "https://en.wikipedia.org/wiki/Fesca%E2%80%93San_Girolamo_railway_station",
+    "image_url": "http://commons.wikimedia.org/wiki/Special:FilePath/Binari%20stazione%20Fesca%20-%20San%20Girolamo.jpg"
+  },
+  "license": "CC-0",
+  "retrieved_at": "2026-09-11T09:23:31.465150",
+  "parser_version": "v1.0"
+}

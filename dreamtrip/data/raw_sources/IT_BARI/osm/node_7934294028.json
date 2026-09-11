@@ -1,0 +1,19 @@
+{
+  "source": "osm",
+  "source_id": "node/7934294028",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Giuseppe Capruzzi",
+  "raw_payload": {
+    "type": "node",
+    "id": 7934294028,
+    "lat": 41.1253918,
+    "lon": 16.8625504,
+    "tags": {
+      "historic": "monument",
+      "name": "Giuseppe Capruzzi"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

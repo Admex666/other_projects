@@ -126,6 +126,12 @@
 
         <div class="step-node" id="stepNode4" onclick="Wizard.goToStep(4)">
             <div class="step-num">4</div>
+            <span>Programok</span>
+        </div>
+        <div class="step-connector" id="stepConn4"></div>
+
+        <div class="step-node" id="stepNode5" onclick="Wizard.goToStep(5)">
+            <div class="step-num">5</div>
             <span>Kész Terv</span>
         </div>
     </div>
@@ -596,8 +602,77 @@
         <div id="staysGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px;"></div>
     </div>
 
-    <!-- STEP 4: FINAL SUMMARY & PROPOSAL -->
+    <!-- STEP 4: ACTIVITIES & EXPERIENCES SELECTION -->
     <div id="wizardStep4" class="wizard-step-section" style="display: none;">
+        <div style="background: var(--bg-surface); border: 1.5px solid var(--border-subtle); border-radius: var(--radius-xl); padding: 28px 24px; box-shadow: var(--shadow-md); margin-bottom: 24px;">
+            
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 20px; margin-bottom: 20px;">
+                <div>
+                    <div style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 55, 16, 0.08); color: var(--primary); padding: 4px 12px; border-radius: var(--radius-full); font-size: 11.5px; font-weight: 700; margin-bottom: 8px;">
+                        <span class="material-symbols-outlined" style="font-size: 15px;">local_activity</span>
+                        <span>4. LÉPÉS • ÉLMÉNYEK & PROGRAMOK</span>
+                    </div>
+                    <h2 style="font-size: 24px; font-weight: 800; margin: 0; color: var(--text-main);">Programok és Élmények Kiválasztása</h2>
+                    <p style="margin: 4px 0 0; color: var(--text-secondary); font-size: 14px;">Válaszd ki azokat a látnivalókat és gasztro élményeket, amelyeket be szeretnél építeni a napi programtervedbe és utazási költségvetésedbe.</p>
+                </div>
+                
+                <!-- SUMMARY STATS BADGE & NEXT CTA -->
+                <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                    <div style="background: var(--bg-surface-subtle); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 10px 16px; display: flex; align-items: center; gap: 16px;">
+                        <div>
+                            <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Kiválasztva</div>
+                            <div id="selectedActCount" style="font-size: 16px; font-weight: 800; color: var(--text-main);">0 db</div>
+                        </div>
+                        <div style="width: 1px; height: 24px; background: var(--border-subtle);"></div>
+                        <div>
+                            <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Becsült belépők</div>
+                            <div id="selectedActCost" style="font-size: 16px; font-weight: 800; color: var(--primary);">0 Ft</div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-primary" onclick="Wizard.goToStep(5)" style="padding: 12px 20px; font-size: 14px; font-weight: 700; border-radius: var(--radius-md); display: inline-flex; align-items: center; gap: 8px;">
+                        <span>Kész terv megtekintése (5. Lépés)</span>
+                        <span class="material-symbols-outlined" style="font-size: 18px;">arrow_forward</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- CATEGORY FILTER CHIPS & BULK ACTIONS -->
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 20px;">
+                <div style="display: flex; flex-wrap: wrap; gap: 8px;" id="activityCategoryFilters">
+                    <button type="button" class="activity-filter-chip active btn btn-sm btn-secondary" data-cat="all" onclick="PlannerActivities.filterCategory('all')">Összes kategória</button>
+                    <button type="button" class="activity-filter-chip btn btn-sm btn-secondary" data-cat="culture_history" onclick="PlannerActivities.filterCategory('culture_history')">🏛️ Kultúra & Történelem</button>
+                    <button type="button" class="activity-filter-chip btn btn-sm btn-secondary" data-cat="food_market" onclick="PlannerActivities.filterCategory('food_market')">🍽️ Gasztronómia & Piac</button>
+                    <button type="button" class="activity-filter-chip btn btn-sm btn-secondary" data-cat="nature_viewpoint" onclick="PlannerActivities.filterCategory('nature_viewpoint')">🌄 Természet & Kilátók</button>
+                    <button type="button" class="activity-filter-chip btn btn-sm btn-secondary" data-cat="beach_coastal" onclick="PlannerActivities.filterCategory('beach_coastal')">🏖️ Strand & Part</button>
+                </div>
+
+                <div style="display: flex; gap: 8px;">
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="PlannerActivities.selectAll()" style="font-size: 12px; padding: 6px 12px;">Összes kijelölése</button>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="PlannerActivities.deselectAll()" style="font-size: 12px; padding: 6px 12px;">Kijelölések törlése</button>
+                </div>
+            </div>
+
+            <!-- ACTIVITIES GRID -->
+            <div id="activitiesGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; margin-bottom: 24px;"></div>
+
+            <!-- STEP 4 BOTTOM ACTIONS -->
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-top: 1px solid var(--border-subtle); padding-top: 20px;">
+                <button type="button" class="btn btn-secondary" onclick="Wizard.goToStep(3)" style="display: inline-flex; align-items: center; gap: 6px;">
+                    <span class="material-symbols-outlined" style="font-size: 17px;">arrow_back</span>
+                    <span>Vissza a szállásokhoz</span>
+                </button>
+
+                <button type="button" class="btn btn-primary" onclick="Wizard.goToStep(5)" style="padding: 12px 24px; font-size: 14px; font-weight: 700; border-radius: var(--radius-md); display: inline-flex; align-items: center; gap: 8px;">
+                    <span>Tovább a kész tervhez és költségbecsléshez (5. Lépés)</span>
+                    <span class="material-symbols-outlined" style="font-size: 18px;">arrow_forward</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- STEP 5: FINAL SUMMARY & PROPOSAL -->
+    <div id="wizardStep5" class="wizard-step-section" style="display: none;">
         <div style="background: var(--bg-surface); border: 2px solid var(--primary); border-radius: var(--radius-xl); padding: 32px 28px; box-shadow: var(--shadow-lg); margin-bottom: 24px;">
             
             <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 20px; margin-bottom: 24px;">
@@ -618,7 +693,7 @@
             </div>
 
             <!-- CARDS GRID -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; margin-bottom: 28px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; margin-bottom: 28px;">
                 
                 <!-- DEST CARD -->
                 <div style="background: var(--bg-surface-subtle); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 20px;">
@@ -651,6 +726,49 @@
                     <div id="sumStayRating" style="font-size: 13px; color: var(--text-secondary);">7 éjszaka • Értékelés: 8.8/10</div>
                     <div id="sumStayPrice" class="mono-data" style="font-size: 16px; font-weight: 700; color: var(--primary); margin-top: 8px;">148 000 Ft</div>
                 </div>
+
+                <!-- ACTIVITIES CARD -->
+                <div style="background: var(--bg-surface-subtle); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 20px;">
+                    <div style="font-size: 11px; font-weight: 700; color: var(--primary); text-transform: uppercase; margin-bottom: 6px; display: flex; align-items: center; gap: 4px;">
+                        <span class="material-symbols-outlined" style="font-size: 15px;">local_activity</span>
+                        <span>Programok & Belépők</span>
+                    </div>
+                    <div id="sumActivitiesCount" style="font-size: 20px; font-weight: 700; color: var(--text-main); margin-bottom: 4px;">8 kiválasztott program</div>
+                    <div id="sumActivitiesDuration" style="font-size: 13px; color: var(--text-secondary);">Napi ~3-4 óra programidő</div>
+                    <div id="sumActivitiesPrice" class="mono-data" style="font-size: 16px; font-weight: 700; color: var(--primary); margin-top: 8px;">24 000 Ft belépődíj</div>
+                </div>
+            </div>
+
+            <!-- NAPI RÉSZLETES PROGRAMTERV & ÉLMÉNYEK -->
+            <div id="sumExperienceItineraryWrap" style="margin-bottom: 28px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+                    <div>
+                        <div style="font-size: 11.5px; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">
+                            <span class="material-symbols-outlined" style="font-size: 16px;">calendar_month</span>
+                            <span>Napi Élménynaptár & Programterv</span>
+                        </div>
+                        <h3 style="font-size: 20px; font-weight: 800; margin: 2px 0 0; color: var(--text-main);">Ajánlott Napi Útiterv</h3>
+                    </div>
+                    
+                    <!-- STÍLUS ÉS PERSONA VÁLASZTÓ -->
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <span style="font-size: 12px; font-weight: 700; color: var(--text-muted);">Hangulat:</span>
+                        <select id="itineraryPersonaSelect" onchange="PlannerSummary.reloadItineraryWithPersona(this.value)" class="form-control" style="padding: 6px 12px; font-size: 12.5px; font-weight: 700; border-radius: 8px; background: var(--bg-surface); border: 1.5px solid var(--border-subtle); color: var(--text-main);">
+                            <option value="culture_aficionado">🏛️ Klasszikus látnivalók & Kultúra</option>
+                            <option value="foodie_local">🍽️ Gasztronómia & Helyi életérzés</option>
+                            <option value="couples_romantic">🌅 Romantikus séta & Panoráma</option>
+                            <option value="solo_explorer">🚶 Kötetlen felfedező</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- ITINERARY CONTAINER -->
+                <div id="itineraryContentBox" style="background: var(--bg-surface-subtle); border: 1.5px solid var(--border-subtle); border-radius: 20px; padding: 22px;">
+                    <div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 13.5px;">
+                        <div style="display: inline-block; width: 24px; height: 24px; border: 3px solid var(--border-subtle); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 8px;"></div>
+                        <div>Napi útiterv és sétaútvonalak generálása a desztináció élménygráfjából...</div>
+                    </div>
+                </div>
             </div>
 
             <!-- RÉSZLETES KÖLTSÉGBECSLÉS -->
@@ -663,9 +781,10 @@
                     <span>Preferenciák módosítása</span>
                 </button>
 
-                <div style="display: flex; gap: 10px;">
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                     <button type="button" class="btn btn-secondary" onclick="Wizard.goToStep(2)">Járat cseréje</button>
                     <button type="button" class="btn btn-secondary" onclick="Wizard.goToStep(3)">Szállás cseréje</button>
+                    <button type="button" class="btn btn-secondary" onclick="Wizard.goToStep(4)">Programok módosítása</button>
                 </div>
             </div>
         </div>
@@ -681,6 +800,7 @@
 <script src="/static/js/planner/planner_destinations.js"></script>
 <script src="/static/js/planner/planner_flights.js"></script>
 <script src="/static/js/planner/planner_stays.js"></script>
+<script src="/static/js/planner/planner_activities.js"></script>
 <script src="/static/js/planner/planner_summary.js"></script>
 <script src="/static/js/planner_wizard.js"></script>
 {% endblock %}

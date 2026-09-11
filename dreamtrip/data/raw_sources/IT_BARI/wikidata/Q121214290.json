@@ -1,0 +1,18 @@
+{
+  "source": "wikidata",
+  "source_id": "Q121214290",
+  "destination_id": "IT_BARI",
+  "name_candidate": "chiesa della Beata Vergine del Santissimo Rosario (in San Nicola)",
+  "raw_payload": {
+    "qid": "Q121214290",
+    "label": "chiesa della Beata Vergine del Santissimo Rosario (in San Nicola)",
+    "instance_of": "http://www.wikidata.org/entity/Q16970",
+    "instance_of_label": "chiesa",
+    "location_wkt": "Point(16.868639 41.070964)",
+    "wikipedia_url": null,
+    "image_url": "http://commons.wikimedia.org/wiki/Special:FilePath/SS.%20Rosario%20in%20San%20Nicola.jpg"
+  },
+  "license": "CC-0",
+  "retrieved_at": "2026-09-11T09:23:31.465150",
+  "parser_version": "v1.0"
+}

@@ -1,0 +1,53 @@
+{
+  "source": "wikipedia",
+  "source_id": "73746167",
+  "destination_id": "IT_BARI",
+  "name_candidate": "SS Testbank",
+  "raw_payload": {
+    "type": "standard",
+    "title": "SS Testbank",
+    "displaytitle": "SS <i>Testbank</i>",
+    "namespace": {
+      "id": 0,
+      "text": ""
+    },
+    "wikibase_item": "Q118905908",
+    "titles": {
+      "canonical": "SS_Testbank",
+      "normalized": "SS Testbank",
+      "display": "SS <i>Testbank</i>"
+    },
+    "pageid": 73746167,
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1327684892",
+    "tid": "9984bcca-d9e0-11f0-b130-37b27b1e43c2",
+    "timestamp": "2025-12-15T18:05:12Z",
+    "description": "British cargo steamship that was destroyed in the 1943 air raid on Bari",
+    "description_source": "local",
+    "coordinates": {
+      "lat": 41.12527778,
+      "lon": 16.86666667
+    },
+    "content_urls": {
+      "desktop": {
+        "page": "https://en.wikipedia.org/wiki/SS_Testbank",
+        "revisions": "https://en.wikipedia.org/wiki/SS_Testbank?action=history",
+        "edit": "https://en.wikipedia.org/wiki/SS_Testbank?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:SS_Testbank"
+      },
+      "mobile": {
+        "page": "https://en.wikipedia.org/wiki/SS_Testbank",
+        "revisions": "https://en.wikipedia.org/wiki/Special:History/SS_Testbank",
+        "edit": "https://en.wikipedia.org/wiki/SS_Testbank?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:SS_Testbank"
+      }
+    },
+    "extract": "SS Testbank was a British cargo steamship that was built in England in 1937 and sunk with heavy loss of life in the air raid on Bari in December 1943. She was the first of two Bank Line cargo ships to be called Testbank. The second was a motor ship that was built in 1961, sold and renamed in 1978, and scrapped in 1987.",
+    "extract_html": "<p><b>SS <i>Testbank</i></b> was a British cargo steamship that was built in England in 1937 and sunk with heavy loss of life in the air raid on Bari in December 1943. She was the first of two Bank Line cargo ships to be called <i>Testbank</i>. The second was a motor ship that was built in 1961, sold and renamed in 1978, and scrapped in 1987.</p>",
+    "dist_meters": 1009.5
+  },
+  "license": "CC-BY-SA 4.0",
+  "retrieved_at": "2026-09-11T09:23:31.532899",
+  "parser_version": "v1.0"
+}

@@ -1,0 +1,21 @@
+{
+  "source": "osm",
+  "source_id": "node/11361960806",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Omicidio di Benedetto Petrone",
+  "raw_payload": {
+    "type": "node",
+    "id": 11361960806,
+    "lat": 41.1262365,
+    "lon": 16.8669733,
+    "tags": {
+      "historic": "memorial",
+      "inscription": "Il 28 novembre 1977 in questa piazza una squadraccia missina uccise Benedetto Petrone, operaio comunista 18 anni.\nI democratici e antifascisti di Bari.",
+      "memorial": "plaque",
+      "name": "Omicidio di Benedetto Petrone"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

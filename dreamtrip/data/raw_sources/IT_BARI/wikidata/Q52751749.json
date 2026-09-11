@@ -1,0 +1,18 @@
+{
+  "source": "wikidata",
+  "source_id": "Q52751749",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Liceo Scientifico Statale \"Gaetano Salvemini\"",
+  "raw_payload": {
+    "qid": "Q52751749",
+    "label": "Liceo Scientifico Statale \"Gaetano Salvemini\"",
+    "instance_of": "http://www.wikidata.org/entity/Q3831968",
+    "instance_of_label": "liceo scientifico",
+    "location_wkt": "Point(16.908375712 41.101722215)",
+    "wikipedia_url": null,
+    "image_url": null
+  },
+  "license": "CC-0",
+  "retrieved_at": "2026-09-11T09:23:31.465150",
+  "parser_version": "v1.0"
+}

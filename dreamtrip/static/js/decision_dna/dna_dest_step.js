@@ -10,7 +10,10 @@
             const pairs = [
                 { id: 'total_cost_vs_weather', name1: 'Teljes Költség', name2: 'Klíma / Időjárás', desc: 'Olcsóbb utazás vagy garantáltan kellemes időjárás?' },
                 { id: 'total_cost_vs_safety', name1: 'Teljes Költség', name2: 'Közbiztonság', desc: 'Alacsonyabb összköltség vagy kiemelkedő biztonsági index?' },
-                { id: 'weather_vs_safety', name1: 'Klíma / Időjárás', name2: 'Közbiztonság', desc: 'Ideális időjárás vagy a maximális biztonság a fontosabb?' }
+                { id: 'total_cost_vs_experience', name1: 'Teljes Költség', name2: 'Élmények & Látnivalók', desc: 'Alacsonyabb költség vagy gazdag látnivaló- és élménykínálat?' },
+                { id: 'weather_vs_safety', name1: 'Klíma / Időjárás', name2: 'Közbiztonság', desc: 'Ideális időjárás vagy a maximális biztonság a fontosabb?' },
+                { id: 'weather_vs_experience', name1: 'Klíma / Időjárás', name2: 'Élmények & Látnivalók', desc: 'Tökéletes klíma és napsütés vagy világhírű látnivalók és programok?' },
+                { id: 'safety_vs_experience', name1: 'Közbiztonság', name2: 'Élmények & Látnivalók', desc: 'Maximális nyugalom/biztonság vagy nyüzsgő, élményekkel teli nagyváros?' }
             ];
             wizard.renderPairwiseMatrix(container, '1. Lépés: Célállomás Súlyozás (Páros Összehasonlítás)', 'Melyik szempont mennyire fontosabb számodra a desztináció kiválasztásakor?', pairs, 'dest_ahp');
         },
@@ -26,6 +29,8 @@
             const isTempChosen = state.chosen_cards.dest_temp !== null;
             const isSafeUnlocked = state.unlocked.dest_safety || isTempChosen;
             const isSafeChosen = state.chosen_cards.dest_safety !== null;
+            const isExpUnlocked = state.unlocked.dest_exp || isSafeChosen;
+            const isExpChosen = state.chosen_cards.dest_exp !== null;
 
             container.innerHTML = `
                 <div style="margin-bottom: 18px;">
@@ -129,7 +134,7 @@
                 </div>
 
                 <!-- 3. BIZTONSÁG SZITUÁCIÓ -->
-                <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 18px; padding: 18px; opacity: ${isSafeUnlocked ? '1.0' : '0.45'}; pointer-events: ${isSafeUnlocked ? 'auto' : 'none'}; filter: ${isSafeUnlocked ? 'none' : 'grayscale(30%)'}; transition: all 0.3s ease;">
+                <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 18px; padding: 18px; margin-bottom: 16px; opacity: ${isSafeUnlocked ? '1.0' : '0.45'}; pointer-events: ${isSafeUnlocked ? 'auto' : 'none'}; filter: ${isSafeUnlocked ? 'none' : 'grayscale(30%)'}; transition: all 0.3s ease;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                         <div style="font-size: 13px; font-weight: 800; color: var(--text-main);">3. Hogyan tekintesz a közbiztonságra?</div>
                         ${!isSafeUnlocked ? '<span style="font-size: 11px; font-weight: 700; color: var(--text-muted);">Válaszd ki a 2. pontot a feloldáshoz</span>' : ''}
@@ -172,6 +177,32 @@
                                 </span>
                                 pontkülönbségnél már <strong>100%-ban a biztonságosabb úti cél</strong> felé billen a mérleg.”
                             `}
+                        </div>
+                    ` : ''}
+                </div>
+
+                <!-- 4. ÉLMÉNY ÉS PROGRAM STÍLUS SZITUÁCIÓ -->
+                <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 18px; padding: 18px; opacity: ${isExpUnlocked ? '1.0' : '0.45'}; pointer-events: ${isExpUnlocked ? 'auto' : 'none'}; filter: ${isExpUnlocked ? 'none' : 'grayscale(30%)'}; transition: all 0.3s ease;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <div style="font-size: 13px; font-weight: 800; color: var(--text-main);">4. Milyen jellegű élményeket és programokat keresel leginkább?</div>
+                        ${!isExpUnlocked ? '<span style="font-size: 11px; font-weight: 700; color: var(--text-muted);">Válaszd ki a 3. pontot a feloldáshoz</span>' : ''}
+                    </div>
+
+                    <div class="dna-scenario-grid" style="margin-bottom: ${isExpChosen ? '12px' : '0'};">
+                        <div onclick="window.DecisionDNAInstance.selectScenario('dest_exp', 'A', 'culture_aficionado')" style="cursor: pointer; padding: 12px; border-radius: 12px; border: 2px solid ${state.chosen_cards.dest_exp === 'A' ? 'var(--primary)' : 'var(--border-subtle)'}; background: ${state.chosen_cards.dest_exp === 'A' ? 'rgba(37, 99, 235, 0.08)' : 'var(--bg-card)'};">
+                            <div style="font-weight: 800; font-size: 12px; color: var(--primary); margin-bottom: 4px;">A) Történelmi látnivalók & Kulturális ikonok</div>
+                            <div style="font-size: 11.5px; color: var(--text-muted);">Várak, múzeumok, óvárosi bazilikák és építészeti csodák felfedezése.</div>
+                        </div>
+
+                        <div onclick="window.DecisionDNAInstance.selectScenario('dest_exp', 'B', 'foodie_local')" style="cursor: pointer; padding: 12px; border-radius: 12px; border: 2px solid ${state.chosen_cards.dest_exp === 'B' ? 'var(--primary)' : 'var(--border-subtle)'}; background: ${state.chosen_cards.dest_exp === 'B' ? 'rgba(37, 99, 235, 0.08)' : 'var(--bg-card)'};">
+                            <div style="font-weight: 800; font-size: 12px; color: var(--primary); margin-bottom: 4px;">B) Helyi gasztronómia & Hangulatos séta</div>
+                            <div style="font-size: 11.5px; color: var(--text-muted);">Óvárosi terek, piacok, kávézók és tengerparti séták élvezete kötetlenül.</div>
+                        </div>
+                    </div>
+                    
+                    ${isExpChosen ? `
+                        <div style="background: linear-gradient(135deg, #0f172a, #1e293b); color: #fff; padding: 14px 18px; border-radius: 14px; font-size: 13.5px; line-height: 1.8; animation: fadeInScale 0.2s ease;">
+                            „A programtervezéskor <strong>${state.chosen_cards.dest_exp === 'A' ? 'a kiemelt történelmi látnivalók és kulturális örökségek' : 'a helyi gasztronómiai élmények, a kávézók és a hangulatos séták'}</strong> élveznek prioritást.”
                         </div>
                     ` : ''}
                 </div>

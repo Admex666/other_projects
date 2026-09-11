@@ -90,5 +90,11 @@ def init_analytics_db():
     conn.commit()
     conn.close()
 
-# Auto-initialize database on module import
-init_analytics_db()
+# Auto-initialize SQLite only if Supabase is NOT configured
+def _is_supabase_active() -> bool:
+    url = (os.getenv("SUPABASE_URL") or "").strip().strip('"').strip("'")
+    key = (os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_KEY") or os.getenv("SUPABASE_ANON_KEY") or "").strip().strip('"').strip("'")
+    return bool(url and key and url.startswith("http"))
+
+if not _is_supabase_active():
+    init_analytics_db()

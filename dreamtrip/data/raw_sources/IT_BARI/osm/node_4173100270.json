@@ -1,0 +1,23 @@
+{
+  "source": "osm",
+  "source_id": "node/4173100270",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Teatro dell'Anonima",
+  "raw_payload": {
+    "type": "node",
+    "id": 4173100270,
+    "lat": 41.0865903,
+    "lon": 16.8536951,
+    "tags": {
+      "addr:housenumber": "52",
+      "addr:postcode": "70124",
+      "addr:street": "Via Camillo Rosalba",
+      "amenity": "theatre",
+      "name": "Teatro dell'Anonima",
+      "wheelchair": "yes"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

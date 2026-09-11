@@ -1,0 +1,63 @@
+{
+  "source": "wikipedia",
+  "source_id": "46671439",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Metropolitan City of Bari",
+  "raw_payload": {
+    "type": "standard",
+    "title": "Metropolitan City of Bari",
+    "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Metropolitan City of Bari</span></span>",
+    "namespace": {
+      "id": 0,
+      "text": ""
+    },
+    "wikibase_item": "Q18241854",
+    "titles": {
+      "canonical": "Metropolitan_City_of_Bari",
+      "normalized": "Metropolitan City of Bari",
+      "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Metropolitan City of Bari</span></span>"
+    },
+    "pageid": 46671439,
+    "thumbnail": {
+      "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/51/Bari%2C_palazzo_della_provincia%2C_di_luigi_baffa%2C_1935%2C_01.jpg/330px-Bari%2C_palazzo_della_provincia%2C_di_luigi_baffa%2C_1935%2C_01.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 330,
+      "height": 291
+    },
+    "originalimage": {
+      "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/51/Bari%2C_palazzo_della_provincia%2C_di_luigi_baffa%2C_1935%2C_01.jpg/3840px-Bari%2C_palazzo_della_provincia%2C_di_luigi_baffa%2C_1935%2C_01.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 4053,
+      "height": 3576
+    },
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1369023475",
+    "tid": "08d0b0f0-9645-11f1-ab5b-fed9f934129c",
+    "timestamp": "2026-08-12T11:57:47Z",
+    "description": "Metropolitan City in Apulia, Italy",
+    "description_source": "local",
+    "coordinates": {
+      "lat": 41.12527778,
+      "lon": 16.86666667
+    },
+    "content_urls": {
+      "desktop": {
+        "page": "https://en.wikipedia.org/wiki/Metropolitan_City_of_Bari",
+        "revisions": "https://en.wikipedia.org/wiki/Metropolitan_City_of_Bari?action=history",
+        "edit": "https://en.wikipedia.org/wiki/Metropolitan_City_of_Bari?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Metropolitan_City_of_Bari"
+      },
+      "mobile": {
+        "page": "https://en.wikipedia.org/wiki/Metropolitan_City_of_Bari",
+        "revisions": "https://en.wikipedia.org/wiki/Special:History/Metropolitan_City_of_Bari",
+        "edit": "https://en.wikipedia.org/wiki/Metropolitan_City_of_Bari?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Metropolitan_City_of_Bari"
+      }
+    },
+    "extract": "The Metropolitan City of Bari is a metropolitan city in the region of Apulia of Italy. Its capital is the city of Bari. It replaced the province of Bari and includes the city of Bari and 40 other municipalities. It was first created by the reform of local authorities and then established by the Law 56/2014. It has been operative since January 1, 2015.",
+    "extract_html": "<p>The <b>Metropolitan City of Bari</b> is a metropolitan city in the region of Apulia of Italy. Its capital is the city of Bari. It replaced the province of Bari and includes the city of Bari and 40 other municipalities. It was first created by the reform of local authorities and then established by the Law 56/2014. It has been operative since January 1, 2015.</p>",
+    "dist_meters": 1009.5
+  },
+  "license": "CC-BY-SA 4.0",
+  "retrieved_at": "2026-09-11T09:23:31.532899",
+  "parser_version": "v1.0"
+}

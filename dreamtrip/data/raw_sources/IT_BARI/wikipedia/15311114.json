@@ -1,0 +1,61 @@
+{
+  "source": "wikipedia",
+  "source_id": "15311114",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Teatro Margherita",
+  "raw_payload": {
+    "type": "standard",
+    "title": "Teatro Margherita",
+    "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Teatro Margherita</span></span>",
+    "namespace": {
+      "id": 0,
+      "text": ""
+    },
+    "wikibase_item": "Q3982048",
+    "titles": {
+      "canonical": "Teatro_Margherita",
+      "normalized": "Teatro Margherita",
+      "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Teatro Margherita</span></span>"
+    },
+    "pageid": 15311114,
+    "thumbnail": {
+      "source": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Teatro_Margherita_dall%27alto.jpg/330px-Teatro_Margherita_dall%27alto.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 330,
+      "height": 220
+    },
+    "originalimage": {
+      "source": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Teatro_Margherita_dall%27alto.jpg/3840px-Teatro_Margherita_dall%27alto.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 5830,
+      "height": 3879
+    },
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1326168442",
+    "tid": "fcd5784c-d374-11f0-99a0-d04e0a20b3d5",
+    "timestamp": "2025-12-07T13:59:46Z",
+    "coordinates": {
+      "lat": 41.126354,
+      "lon": 16.872833
+    },
+    "content_urls": {
+      "desktop": {
+        "page": "https://en.wikipedia.org/wiki/Teatro_Margherita",
+        "revisions": "https://en.wikipedia.org/wiki/Teatro_Margherita?action=history",
+        "edit": "https://en.wikipedia.org/wiki/Teatro_Margherita?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Teatro_Margherita"
+      },
+      "mobile": {
+        "page": "https://en.wikipedia.org/wiki/Teatro_Margherita",
+        "revisions": "https://en.wikipedia.org/wiki/Special:History/Teatro_Margherita",
+        "edit": "https://en.wikipedia.org/wiki/Teatro_Margherita?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Teatro_Margherita"
+      }
+    },
+    "extract": "Teatro Margherita is a former theatre in the city of Bari, Apulia on the east coast of Italy. Its predecessor, a wooden structure called Varietà Margherita opened on September 5, 1910. From 1912–1914, a new theatre was erected by architect Francesco De Giglio. It opened in 1914.",
+    "extract_html": "<p><b>Teatro Margherita</b> is a former theatre in the city of Bari, Apulia on the east coast of Italy. Its predecessor, a wooden structure called <i>Varietà Margherita</i> opened on September 5, 1910. From 1912–1914, a new theatre was erected by architect Francesco De Giglio. It opened in 1914.</p>",
+    "dist_meters": 1032
+  },
+  "license": "CC-BY-SA 4.0",
+  "retrieved_at": "2026-09-11T09:23:31.532899",
+  "parser_version": "v1.0"
+}

@@ -1,0 +1,20 @@
+{
+  "source": "osm",
+  "source_id": "node/9254279837",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Menhir",
+  "raw_payload": {
+    "type": "node",
+    "id": 9254279837,
+    "lat": 41.0960541,
+    "lon": 16.8827034,
+    "tags": {
+      "access": "yes",
+      "historic": "monument",
+      "name": "Menhir"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

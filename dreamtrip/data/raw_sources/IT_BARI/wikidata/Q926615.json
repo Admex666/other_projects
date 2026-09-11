@@ -1,0 +1,18 @@
+{
+  "source": "wikidata",
+  "source_id": "Q926615",
+  "destination_id": "IT_BARI",
+  "name_candidate": "assedio di Modugno",
+  "raw_payload": {
+    "qid": "Q926615",
+    "label": "assedio di Modugno",
+    "instance_of": "http://www.wikidata.org/entity/Q188055",
+    "instance_of_label": "assedio",
+    "location_wkt": "Point(16.783333333 41.083333333)",
+    "wikipedia_url": null,
+    "image_url": null
+  },
+  "license": "CC-0",
+  "retrieved_at": "2026-09-11T09:18:22.623549",
+  "parser_version": "v1.0"
+}

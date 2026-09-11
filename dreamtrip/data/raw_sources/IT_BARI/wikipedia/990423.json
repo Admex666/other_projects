@@ -1,0 +1,62 @@
+{
+  "source": "wikipedia",
+  "source_id": "990423",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Sibu",
+  "raw_payload": {
+    "type": "standard",
+    "title": "Sibu",
+    "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Sibu</span></span>",
+    "namespace": {
+      "id": 0,
+      "text": ""
+    },
+    "wikibase_item": "Q1048700",
+    "titles": {
+      "canonical": "Sibu",
+      "normalized": "Sibu",
+      "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Sibu</span></span>"
+    },
+    "pageid": 990423,
+    "thumbnail": {
+      "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7d/Sibu_composite_image.png/330px-Sibu_composite_image.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 330,
+      "height": 264
+    },
+    "originalimage": {
+      "source": "https://upload.wikimedia.org/wikipedia/commons/7/7d/Sibu_composite_image.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+      "width": 1599,
+      "height": 1280
+    },
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1373842908",
+    "tid": "857780d5-ab54-11f1-8be8-dd31e7952999",
+    "timestamp": "2026-09-08T07:11:33Z",
+    "description": "Town in Sarawak, Malaysia",
+    "description_source": "local",
+    "coordinates": {
+      "lat": 2.28777778,
+      "lon": 111.83083333
+    },
+    "content_urls": {
+      "desktop": {
+        "page": "https://en.wikipedia.org/wiki/Sibu",
+        "revisions": "https://en.wikipedia.org/wiki/Sibu?action=history",
+        "edit": "https://en.wikipedia.org/wiki/Sibu?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Sibu"
+      },
+      "mobile": {
+        "page": "https://en.wikipedia.org/wiki/Sibu",
+        "revisions": "https://en.wikipedia.org/wiki/Special:History/Sibu",
+        "edit": "https://en.wikipedia.org/wiki/Sibu?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Sibu"
+      }
+    },
+    "extract": "Sibu is a city located in the central region of Sarawak, Malaysia. It serves as the capital of Sibu District within Sibu Division and is situated on the island of Borneo. Covering an area of 129.5 square kilometres (50.0 sq mi), the city is positioned at the confluence of the Rajang and Igan Rivers, approximately 60 kilometres from the South China Sea and 191.5 kilometres (119 mi) north-east of the state capital, Kuching.",
+    "extract_html": "<p><b>Sibu</b> is a city located in the central region of Sarawak, Malaysia. It serves as the capital of Sibu District within Sibu Division and is situated on the island of Borneo. Covering an area of 129.5 square kilometres (50.0 sq mi), the city is positioned at the confluence of the Rajang and Igan Rivers, approximately 60 kilometres from the South China Sea and 191.5 kilometres (119 mi) north-east of the state capital, Kuching.</p>"
+  },
+  "license": "CC-BY-SA 4.0",
+  "retrieved_at": "2026-09-11T09:18:22.649874",
+  "parser_version": "v1.0"
+}

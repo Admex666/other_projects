@@ -1,0 +1,63 @@
+{
+  "source": "wikipedia",
+  "source_id": "42646131",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Quintino Sella railway station",
+  "raw_payload": {
+    "type": "standard",
+    "title": "Quintino Sella railway station",
+    "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Quintino Sella railway station</span></span>",
+    "namespace": {
+      "id": 0,
+      "text": ""
+    },
+    "wikibase_item": "Q3970626",
+    "titles": {
+      "canonical": "Quintino_Sella_railway_station",
+      "normalized": "Quintino Sella railway station",
+      "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Quintino Sella railway station</span></span>"
+    },
+    "pageid": 42646131,
+    "thumbnail": {
+      "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bc/Quintino_Sella_w_Train.jpg/330px-Quintino_Sella_w_Train.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 330,
+      "height": 248
+    },
+    "originalimage": {
+      "source": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Quintino_Sella_w_Train.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+      "width": 1280,
+      "height": 960
+    },
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1370976582",
+    "tid": "375b5eaa-9f54-11f1-b1aa-fdb2043920de",
+    "timestamp": "2026-08-24T00:39:08Z",
+    "description": "Railway station in Bari, Italy",
+    "description_source": "local",
+    "coordinates": {
+      "lat": 41.11777778,
+      "lon": 16.8625
+    },
+    "content_urls": {
+      "desktop": {
+        "page": "https://en.wikipedia.org/wiki/Quintino_Sella_railway_station",
+        "revisions": "https://en.wikipedia.org/wiki/Quintino_Sella_railway_station?action=history",
+        "edit": "https://en.wikipedia.org/wiki/Quintino_Sella_railway_station?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Quintino_Sella_railway_station"
+      },
+      "mobile": {
+        "page": "https://en.wikipedia.org/wiki/Quintino_Sella_railway_station",
+        "revisions": "https://en.wikipedia.org/wiki/Special:History/Quintino_Sella_railway_station",
+        "edit": "https://en.wikipedia.org/wiki/Quintino_Sella_railway_station?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Quintino_Sella_railway_station"
+      }
+    },
+    "extract": "Quintino Sella is a railway station in the Italian city of Bari, in the Province of Bari, Apulia. The station lies on the Bari–Barletta railway. The train services are operated by Ferrotramviaria. The station is a one-platform station serving a single-track railway with trains going in both directions. The station is semi-subterranean with the platform opening directly to the street.",
+    "extract_html": "<p><b>Quintino Sella</b> is a railway station in the Italian city of Bari, in the Province of Bari, Apulia. The station lies on the Bari–Barletta railway. The train services are operated by Ferrotramviaria. The station is a one-platform station serving a single-track railway with trains going in both directions. The station is semi-subterranean with the platform opening directly to the street.</p>",
+    "dist_meters": 791
+  },
+  "license": "CC-BY-SA 4.0",
+  "retrieved_at": "2026-09-11T09:23:31.532899",
+  "parser_version": "v1.0"
+}

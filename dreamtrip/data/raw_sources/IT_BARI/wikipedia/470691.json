@@ -1,0 +1,62 @@
+{
+  "source": "wikipedia",
+  "source_id": "470691",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Patras",
+  "raw_payload": {
+    "type": "standard",
+    "title": "Patras",
+    "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Patras</span></span>",
+    "namespace": {
+      "id": 0,
+      "text": ""
+    },
+    "wikibase_item": "Q133123",
+    "titles": {
+      "canonical": "Patras",
+      "normalized": "Patras",
+      "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Patras</span></span>"
+    },
+    "pageid": 470691,
+    "thumbnail": {
+      "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e2/Patras_Montage_L.png/330px-Patras_Montage_L.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 330,
+      "height": 546
+    },
+    "originalimage": {
+      "source": "https://upload.wikimedia.org/wikipedia/commons/e/e2/Patras_Montage_L.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+      "width": 1005,
+      "height": 1662
+    },
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1372193565",
+    "tid": "8e5fb82b-a4b1-11f1-b272-199bc88a5e71",
+    "timestamp": "2026-08-30T20:29:53Z",
+    "description": "City in Peloponnese, Greece",
+    "description_source": "local",
+    "coordinates": {
+      "lat": 38.25,
+      "lon": 21.73333333
+    },
+    "content_urls": {
+      "desktop": {
+        "page": "https://en.wikipedia.org/wiki/Patras",
+        "revisions": "https://en.wikipedia.org/wiki/Patras?action=history",
+        "edit": "https://en.wikipedia.org/wiki/Patras?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Patras"
+      },
+      "mobile": {
+        "page": "https://en.wikipedia.org/wiki/Patras",
+        "revisions": "https://en.wikipedia.org/wiki/Special:History/Patras",
+        "edit": "https://en.wikipedia.org/wiki/Patras?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Patras"
+      }
+    },
+    "extract": "Patras is the capital and largest city of Western Greece, in the northern Peloponnese, 215 km (134 mi) west of Athens. It is Greece's third-largest city. The city is built at the foot of Mount Panachaikon, overlooking the Gulf of Patras.",
+    "extract_html": "<p><b>Patras</b> is the capital and largest city of Western Greece, in the northern Peloponnese, 215 km (134 mi) west of Athens. It is Greece's third-largest city. The city is built at the foot of Mount Panachaikon, overlooking the Gulf of Patras.</p>"
+  },
+  "license": "CC-BY-SA 4.0",
+  "retrieved_at": "2026-09-11T09:18:22.649874",
+  "parser_version": "v1.0"
+}

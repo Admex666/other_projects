@@ -1,0 +1,20 @@
+{
+  "source": "osm",
+  "source_id": "node/5647265624",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Spaccabari",
+  "raw_payload": {
+    "type": "node",
+    "id": 5647265624,
+    "lat": 41.1282103,
+    "lon": 16.8728567,
+    "tags": {
+      "amenity": "arts_centre",
+      "name": "Spaccabari",
+      "wheelchair": "no"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

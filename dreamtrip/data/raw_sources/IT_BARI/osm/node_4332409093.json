@@ -1,0 +1,19 @@
+{
+  "source": "osm",
+  "source_id": "node/4332409093",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Spiaggia bianca",
+  "raw_payload": {
+    "type": "node",
+    "id": 4332409093,
+    "lat": 41.172488,
+    "lon": 16.7145325,
+    "tags": {
+      "name": "Spiaggia bianca",
+      "tourism": "attraction"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

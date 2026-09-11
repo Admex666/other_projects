@@ -1,0 +1,18 @@
+{
+  "source": "wikidata",
+  "source_id": "Q3969422",
+  "destination_id": "IT_BARI",
+  "name_candidate": "stazione di Cittadella",
+  "raw_payload": {
+    "qid": "Q3969422",
+    "label": "stazione di Cittadella",
+    "instance_of": "http://www.wikidata.org/entity/Q55678",
+    "instance_of_label": "fermata ferroviaria",
+    "location_wkt": "Point(16.7926 41.1268)",
+    "wikipedia_url": "https://en.wikipedia.org/wiki/Cittadella_(Bari)_railway_station",
+    "image_url": null
+  },
+  "license": "CC-0",
+  "retrieved_at": "2026-09-11T09:23:31.465150",
+  "parser_version": "v1.0"
+}

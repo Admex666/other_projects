@@ -1,0 +1,63 @@
+{
+  "source": "wikipedia",
+  "source_id": "4885323",
+  "destination_id": "IT_BARI",
+  "name_candidate": "HMS Hebe (J24)",
+  "raw_payload": {
+    "type": "standard",
+    "title": "HMS Hebe (J24)",
+    "displaytitle": "HMS <i>Hebe</i> (J24)",
+    "namespace": {
+      "id": 0,
+      "text": ""
+    },
+    "wikibase_item": "Q5632738",
+    "titles": {
+      "canonical": "HMS_Hebe_(J24)",
+      "normalized": "HMS Hebe (J24)",
+      "display": "HMS <i>Hebe</i> (J24)"
+    },
+    "pageid": 4885323,
+    "thumbnail": {
+      "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0f/HMS_Hebe_1940_IWM_A_1434.jpg/330px-HMS_Hebe_1940_IWM_A_1434.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 330,
+      "height": 254
+    },
+    "originalimage": {
+      "source": "https://upload.wikimedia.org/wikipedia/commons/0/0f/HMS_Hebe_1940_IWM_A_1434.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+      "width": 800,
+      "height": 615
+    },
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1373527805",
+    "tid": "b17df116-a9f8-11f1-bc69-30518a248c51",
+    "timestamp": "2026-09-06T13:41:42Z",
+    "description": "Royal Navy minesweeper",
+    "description_source": "local",
+    "coordinates": {
+      "lat": 41.13333333,
+      "lon": 16.86666667
+    },
+    "content_urls": {
+      "desktop": {
+        "page": "https://en.wikipedia.org/wiki/HMS_Hebe_(J24)",
+        "revisions": "https://en.wikipedia.org/wiki/HMS_Hebe_(J24)?action=history",
+        "edit": "https://en.wikipedia.org/wiki/HMS_Hebe_(J24)?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:HMS_Hebe_(J24)"
+      },
+      "mobile": {
+        "page": "https://en.wikipedia.org/wiki/HMS_Hebe_(J24)",
+        "revisions": "https://en.wikipedia.org/wiki/Special:History/HMS_Hebe_(J24)",
+        "edit": "https://en.wikipedia.org/wiki/HMS_Hebe_(J24)?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:HMS_Hebe_(J24)"
+      }
+    },
+    "extract": "HMS Hebe was one of 21 Halcyon-class minesweepers built for the Royal Navy in the 1930s. Commissioned in 1936, Hebe served during World War II, notably taking part in the Dunkirk evacuation in 1940 and then serving in the Mediterranean, carrying out minesweeping operations from Malta. After taking part in several operations, including Operations Harpoon and Torch, and the invasion of Pantelleria, Hebe was sunk by a mine off Bari in November 1943, with the loss of 37 of the vessel's crew.",
+    "extract_html": "<p><b>HMS <i>Hebe</i></b> was one of 21 <span><i>Halcyon</i>-class</span> minesweepers built for the Royal Navy in the 1930s. Commissioned in 1936, <i>Hebe</i> served during World War II, notably taking part in the Dunkirk evacuation in 1940 and then serving in the Mediterranean, carrying out minesweeping operations from Malta. After taking part in several operations, including Operations Harpoon and Torch, and the invasion of Pantelleria, <i>Hebe</i> was sunk by a mine off Bari in November 1943, with the loss of 37 of the vessel's crew.</p>",
+    "dist_meters": 1857.5
+  },
+  "license": "CC-BY-SA 4.0",
+  "retrieved_at": "2026-09-11T09:23:31.532899",
+  "parser_version": "v1.0"
+}

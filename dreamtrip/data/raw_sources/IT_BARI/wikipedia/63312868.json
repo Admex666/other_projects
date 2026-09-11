@@ -1,0 +1,61 @@
+{
+  "source": "wikipedia",
+  "source_id": "63312868",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Russian Orthodox Church of Saint Nicholas, Bari",
+  "raw_payload": {
+    "type": "standard",
+    "title": "Russian Orthodox Church of Saint Nicholas, Bari",
+    "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Russian Orthodox Church of Saint Nicholas, Bari</span></span>",
+    "namespace": {
+      "id": 0,
+      "text": ""
+    },
+    "wikibase_item": "Q753483",
+    "titles": {
+      "canonical": "Russian_Orthodox_Church_of_Saint_Nicholas,_Bari",
+      "normalized": "Russian Orthodox Church of Saint Nicholas, Bari",
+      "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Russian Orthodox Church of Saint Nicholas, Bari</span></span>"
+    },
+    "pageid": 63312868,
+    "thumbnail": {
+      "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fa/La_Chiesa_Russa_Ortodossa_di_Bari.jpg/330px-La_Chiesa_Russa_Ortodossa_di_Bari.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 330,
+      "height": 407
+    },
+    "originalimage": {
+      "source": "https://upload.wikimedia.org/wikipedia/commons/f/fa/La_Chiesa_Russa_Ortodossa_di_Bari.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+      "width": 486,
+      "height": 600
+    },
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1366823877",
+    "tid": "6f51dae8-8c16-11f1-b588-2ae962b02593",
+    "timestamp": "2026-07-30T12:59:01Z",
+    "coordinates": {
+      "lat": 41.11034,
+      "lon": 16.87234
+    },
+    "content_urls": {
+      "desktop": {
+        "page": "https://en.wikipedia.org/wiki/Russian_Orthodox_Church_of_Saint_Nicholas%2C_Bari",
+        "revisions": "https://en.wikipedia.org/wiki/Russian_Orthodox_Church_of_Saint_Nicholas%2C_Bari?action=history",
+        "edit": "https://en.wikipedia.org/wiki/Russian_Orthodox_Church_of_Saint_Nicholas%2C_Bari?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Russian_Orthodox_Church_of_Saint_Nicholas%2C_Bari"
+      },
+      "mobile": {
+        "page": "https://en.wikipedia.org/wiki/Russian_Orthodox_Church_of_Saint_Nicholas%2C_Bari",
+        "revisions": "https://en.wikipedia.org/wiki/Special:History/Russian_Orthodox_Church_of_Saint_Nicholas%2C_Bari",
+        "edit": "https://en.wikipedia.org/wiki/Russian_Orthodox_Church_of_Saint_Nicholas%2C_Bari?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Russian_Orthodox_Church_of_Saint_Nicholas%2C_Bari"
+      }
+    },
+    "extract": "The Russian Orthodox Church of Saint Nicholas is an Eastern Orthodox church building in Bari, Italy.",
+    "extract_html": "<p>The <b>Russian Orthodox Church of Saint Nicholas</b> is an Eastern Orthodox church building in Bari, Italy.</p>",
+    "dist_meters": 752.6
+  },
+  "license": "CC-BY-SA 4.0",
+  "retrieved_at": "2026-09-11T09:23:31.532899",
+  "parser_version": "v1.0"
+}

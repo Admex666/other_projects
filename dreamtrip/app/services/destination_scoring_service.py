@@ -190,24 +190,26 @@ def calculate_destination_rankings(
     if not candidates_raw:
         return []
 
-    # Súlyok meghatározása: 3-Pilléres Tiszta Modell
+    # Súlyok meghatározása: 4-Pilléres Tiszta Modell (Költség, Időjárás, Biztonság, Élmények)
     if "total_cost" in weights:
         w_cost = max(0.0, float(weights.get("total_cost", 0.0)))
     elif "flight" in weights or "cost" in weights:
         w_cost = max(0.0, float(weights.get("flight", 0.0))) + max(0.0, float(weights.get("cost", 0.0)))
     else:
-        w_cost = 1.0 / 3.0
+        w_cost = 0.25
 
-    w_weather = max(0.0, float(weights.get("weather", 0.0)))
-    w_safety = max(0.0, float(weights.get("safety", 0.0)))
+    w_weather = max(0.0, float(weights.get("weather", 0.0))) if "weather" in weights else 0.25
+    w_safety = max(0.0, float(weights.get("safety", 0.0))) if "safety" in weights else 0.25
+    w_experience = max(0.0, float(weights.get("experience", 0.0))) if "experience" in weights else 0.25
 
-    total_w = w_cost + w_weather + w_safety
+    total_w = w_cost + w_weather + w_safety + w_experience
     if total_w > 0:
         w_cost /= total_w
         w_weather /= total_w
         w_safety /= total_w
+        w_experience /= total_w
     else:
-        w_cost = w_weather = w_safety = 1.0 / 3.0
+        w_cost = w_weather = w_safety = w_experience = 0.25
 
     # 1. Min / Max értékek a normalizáláshoz
     all_total_costs = [c["raw_metrics"]["total_trip_cost_huf"] for c in candidates_raw]
@@ -215,13 +217,13 @@ def calculate_destination_rankings(
 
     try:
         print("\n" + "="*85)
-        print("[DESTINATION MATCHER] 3-PILLERES EGYSEGES DONTESI LEVEZETES")
+        print("[DESTINATION MATCHER] 4-PILLERES EGYSEGES DONTESI LEVEZETES (EXPERIENCE-ENABLED)")
         print("="*85)
-        print(f"Aktív Súlyok: Teljes Költség={w_cost:.2f}, Időjárás={w_weather:.2f}, Biztonság={w_safety:.2f}")
+        print(f"Aktív Súlyok: Költség={w_cost:.2f}, Időjárás={w_weather:.2f}, Biztonság={w_safety:.2f}, Élmények={w_experience:.2f}")
         print(f"Teljes utazási költség tartomány: {min_total_cost:,.0f} Ft — {max_total_cost:,.0f} Ft")
         print(f"Célhőmérséklet (Nappali csúcs): {target_temp}°C")
         print("-"*85)
-        print(f"{'Város':<18} | {'Összköltség (Ft)':<16} | {'Nappal (°C)':<11} | {'Bizt':<4} | {'Pontszám':<8}")
+        print(f"{'Város':<18} | {'Összköltség (Ft)':<16} | {'Nappal (°C)':<11} | {'Bizt':<4} | {'Élmény':<6} | {'Pontszám':<8}")
         print("-"*85)
     except Exception:
         pass
@@ -244,11 +246,57 @@ def calculate_destination_rankings(
         # 3. Biztonsági pontszám (Numbeo Safety Index 0-100 skálázva 0.0 - 1.0-ra)
         s_safety = round(max(0.0, min(1.0, m["safety_index"] / 100.0)), 3)
 
-        # Végső Súlyozott Pontszám (0 - 100)
+        # 4. Élmény és Aktivitás profil betöltése az ultra-gyors gyorsítótárból (<1ms)
+        dest_id_candidate = str(c.get("id", "")).upper()
+        if "_" not in dest_id_candidate:
+            country_code = (c.get("country") or "XX")[:2].upper()
+            city_slug = str(c.get("city") or c.get("name", "")).upper().replace(" ", "_")
+            dest_id_candidate = f"{country_code}_{city_slug}"
+
+        from app.services.experience.cache import experience_cache
+        exp_profile = experience_cache.get_destination_profile(dest_id_candidate)
+        if not exp_profile and "bari" in str(c.get("name", "")).lower():
+            exp_profile = experience_cache.get_destination_profile("IT_BARI")
+
+        # --- Experience subscore: prefer new ExperienceVector, fallback to legacy ---
+        vibe_vector = None
+        vibe_summary = ""
+        top_dims = []
+        hidden_gem = 0.0
+
+        if exp_profile:
+            vibe_vector = exp_profile.get("experience_vector", {})
+
+        if vibe_vector and vibe_vector.get("dimensions"):
+            # Use the mean of the top-5 Bayesian-smoothed dimension absolutes (0-100 -> 0-1)
+            dims = vibe_vector["dimensions"]
+            excl = {"tourist_intensity"}
+            scores_100 = sorted(
+                [v["absolute"] for k, v in dims.items() if k not in excl],
+                reverse=True
+            )
+            top5_avg = sum(scores_100[:5]) / max(len(scores_100[:5]), 1)
+            # Confidence-weighted: penalise very low data_confidence
+            conf = vibe_vector.get("data_confidence", 0.7)
+            s_exp = round(min(1.0, (top5_avg / 100.0) * (0.6 + conf * 0.4)), 3)
+            vibe_summary = vibe_vector.get("vibe_summary", "")
+            top_dims = vibe_vector.get("top_dimensions", [])
+            hidden_gem = vibe_vector.get("hidden_gem_score", 0.0)
+        elif exp_profile:
+            # Legacy fallback
+            total_ent = exp_profile.get("summary", {}).get("total_entities", 0)
+            walk_pct = exp_profile.get("walkability", {}).get("walkability_density", 50)
+            rain_cnt = exp_profile.get("weather_resilience", {}).get("rain_safe_count", 0)
+            s_exp = round(min(1.0, (min(150, total_ent) / 100.0) * 0.5 + (walk_pct / 100.0) * 0.3 + min(1.0, rain_cnt / 20.0) * 0.2), 3)
+        else:
+            s_exp = 0.75  # Kiegyensúlyozott kiinduló érték még nem indexelt városoknak
+
+        # Végső Súlyozott Pontszám (0 - 100) 4 Pillér alapján
         final_score_raw = (
             w_cost * s_cost +
             w_weather * s_weather +
-            w_safety * s_safety
+            w_safety * s_safety +
+            w_experience * s_exp
         ) * 100.0
         final_score = round(final_score_raw, 1)
 
@@ -267,6 +315,15 @@ def calculate_destination_rankings(
             reasons_pos.append(f"☀️ Ideális nappali klíma ({m['temp_max']}°C, cél: {target_temp}°C)")
         if w_safety > 0 and s_safety >= 0.70:
             reasons_pos.append(f"🛡️ Kiemelkedő közbiztonság ({int(m['safety_index'])}/100)")
+        if w_experience > 0 and s_exp >= 0.70:
+            if vibe_summary:
+                reasons_pos.append(f"🏛️ {vibe_summary}")
+            elif exp_profile:
+                tot = exp_profile.get("summary", {}).get("total_entities", 0)
+                wp = exp_profile.get("walkability", {}).get("walkability_density", 50)
+                reasons_pos.append(f"🏛️ Gazdag élménykínálat ({tot}+ látnivaló, {wp}% sétálható)")
+            else:
+                reasons_pos.append("🏛️ Gazdag kulturális és programkínálat")
 
         if not reasons_pos:
             reasons_pos.append("⚖️ Kiegyensúlyozott paraméterek a megadott prioritások alapján")
@@ -280,7 +337,7 @@ def calculate_destination_rankings(
             tradeoff = f"🌡️ Érezhető hőmérséklet-eltérés (Nappal: {m['temp_max']}°C)"
 
         try:
-            print(f"{c['name']:<18} | {m['total_trip_cost_huf']:>15,.0f} | {m['temp_max']:>10.1f} | {m['safety_index']:>4.0f} | {final_score:>6.1f}p")
+            print(f"{c['name']:<18} | {m['total_trip_cost_huf']:>15,.0f} | {m['temp_max']:>10.1f} | {m['safety_index']:>4.0f} | {s_exp*100:>5.0f}p | {final_score:>6.1f}p")
         except Exception:
             pass
 
@@ -295,12 +352,14 @@ def calculate_destination_rankings(
             "subscores": {
                 "total_cost": s_cost,
                 "weather": s_weather,
-                "safety": s_safety
+                "safety": s_safety,
+                "experience": s_exp
             },
             "weights": {
                 "total_cost": round(w_cost, 2),
                 "weather": round(w_weather, 2),
-                "safety": round(w_safety, 2)
+                "safety": round(w_safety, 2),
+                "experience": round(w_experience, 2)
             },
             "metrics": {
                 "flight_price_formatted": f"{int(m['flight_price_huf']):,} Ft".replace(",", " "),
@@ -323,6 +382,7 @@ def calculate_destination_rankings(
                 "numbeo_breakdown": m.get("cost_breakdown", {}),
                 "adults": adults
             },
+            "experience_profile": exp_profile,
             "highlights": reasons_pos[:2],
             "tradeoff": tradeoff,
             "explanation": " • ".join(reasons_pos[:2]) + (f" | Kompromisszum: {tradeoff}" if tradeoff else "")

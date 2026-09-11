@@ -1,0 +1,63 @@
+{
+  "source": "wikipedia",
+  "source_id": "25200720",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Castello Normanno-Svevo (Bari)",
+  "raw_payload": {
+    "type": "standard",
+    "title": "Castello Normanno-Svevo (Bari)",
+    "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Castello Normanno-Svevo (Bari)</span></span>",
+    "namespace": {
+      "id": 0,
+      "text": ""
+    },
+    "wikibase_item": "Q790430",
+    "titles": {
+      "canonical": "Castello_Normanno-Svevo_(Bari)",
+      "normalized": "Castello Normanno-Svevo (Bari)",
+      "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Castello Normanno-Svevo (Bari)</span></span>"
+    },
+    "pageid": 25200720,
+    "thumbnail": {
+      "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e7/Bari_BW_2016-10-19_12-32-30.jpg/330px-Bari_BW_2016-10-19_12-32-30.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 330,
+      "height": 220
+    },
+    "originalimage": {
+      "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e7/Bari_BW_2016-10-19_12-32-30.jpg/3840px-Bari_BW_2016-10-19_12-32-30.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 5540,
+      "height": 3694
+    },
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1292005999",
+    "tid": "ec244d28-38c5-11f0-9f4c-9a12b5281876",
+    "timestamp": "2025-05-24T17:38:37Z",
+    "description": "Castle in Bari, Italy",
+    "description_source": "local",
+    "coordinates": {
+      "lat": 41.12861111,
+      "lon": 16.86638889
+    },
+    "content_urls": {
+      "desktop": {
+        "page": "https://en.wikipedia.org/wiki/Castello_Normanno-Svevo_(Bari)",
+        "revisions": "https://en.wikipedia.org/wiki/Castello_Normanno-Svevo_(Bari)?action=history",
+        "edit": "https://en.wikipedia.org/wiki/Castello_Normanno-Svevo_(Bari)?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Castello_Normanno-Svevo_(Bari)"
+      },
+      "mobile": {
+        "page": "https://en.wikipedia.org/wiki/Castello_Normanno-Svevo_(Bari)",
+        "revisions": "https://en.wikipedia.org/wiki/Special:History/Castello_Normanno-Svevo_(Bari)",
+        "edit": "https://en.wikipedia.org/wiki/Castello_Normanno-Svevo_(Bari)?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Castello_Normanno-Svevo_(Bari)"
+      }
+    },
+    "extract": "The Castello Normanno-Svevo, also known as the u Castídde in the Barese dialect, is a castle in the Apulian city of Bari, Italy.",
+    "extract_html": "<p>The <b>Castello Normanno-Svevo</b>, also known as the <b>u Castídde</b> in the Barese dialect, is a castle in the Apulian city of Bari, Italy.</p>",
+    "dist_meters": 1360.7
+  },
+  "license": "CC-BY-SA 4.0",
+  "retrieved_at": "2026-09-11T09:23:31.532899",
+  "parser_version": "v1.0"
+}

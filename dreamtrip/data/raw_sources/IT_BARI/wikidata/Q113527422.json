@@ -1,0 +1,18 @@
+{
+  "source": "wikidata",
+  "source_id": "Q113527422",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Biblioteca dei ragazzi e delle ragazze di Bari",
+  "raw_payload": {
+    "qid": "Q113527422",
+    "label": "Biblioteca dei ragazzi e delle ragazze di Bari",
+    "instance_of": "http://www.wikidata.org/entity/Q124750618",
+    "instance_of_label": "biblioteca di un ente territoriale italiano",
+    "location_wkt": "Point(16.8754489 41.1039768)",
+    "wikipedia_url": null,
+    "image_url": null
+  },
+  "license": "CC-0",
+  "retrieved_at": "2026-09-11T09:23:31.465150",
+  "parser_version": "v1.0"
+}

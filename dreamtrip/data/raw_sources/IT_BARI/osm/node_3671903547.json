@@ -1,0 +1,21 @@
+{
+  "source": "osm",
+  "source_id": "node/3671903547",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Cittadella Mediterranea della Scienza",
+  "raw_payload": {
+    "type": "node",
+    "id": 3671903547,
+    "lat": 41.1230848,
+    "lon": 16.8173423,
+    "tags": {
+      "addr:street": "Viale Luigi Corigliano",
+      "name": "Cittadella Mediterranea della Scienza",
+      "tourism": "museum",
+      "wikidata": "Q72685303"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

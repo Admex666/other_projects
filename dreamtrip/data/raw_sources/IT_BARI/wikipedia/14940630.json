@@ -1,0 +1,53 @@
+{
+  "source": "wikipedia",
+  "source_id": "14940630",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Orto Botanico dell'Università di Bari",
+  "raw_payload": {
+    "type": "standard",
+    "title": "Orto Botanico dell'Università di Bari",
+    "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Orto Botanico dell&#039;Università di Bari</span></span>",
+    "namespace": {
+      "id": 0,
+      "text": ""
+    },
+    "wikibase_item": "Q7105063",
+    "titles": {
+      "canonical": "Orto_Botanico_dell'Università_di_Bari",
+      "normalized": "Orto Botanico dell'Università di Bari",
+      "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Orto Botanico dell&#039;Università di Bari</span></span>"
+    },
+    "pageid": 14940630,
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1344281028",
+    "tid": "33b8214e-2395-11f1-a79a-bf46ede5f45c",
+    "timestamp": "2026-03-19T13:11:55Z",
+    "description": "Botanical garden in Bari, Apulia, Italy",
+    "description_source": "local",
+    "coordinates": {
+      "lat": 41.10759,
+      "lon": 16.883073
+    },
+    "content_urls": {
+      "desktop": {
+        "page": "https://en.wikipedia.org/wiki/Orto_Botanico_dell'Universit%C3%A0_di_Bari",
+        "revisions": "https://en.wikipedia.org/wiki/Orto_Botanico_dell'Universit%C3%A0_di_Bari?action=history",
+        "edit": "https://en.wikipedia.org/wiki/Orto_Botanico_dell'Universit%C3%A0_di_Bari?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Orto_Botanico_dell'Universit%C3%A0_di_Bari"
+      },
+      "mobile": {
+        "page": "https://en.wikipedia.org/wiki/Orto_Botanico_dell'Universit%C3%A0_di_Bari",
+        "revisions": "https://en.wikipedia.org/wiki/Special:History/Orto_Botanico_dell'Universit%C3%A0_di_Bari",
+        "edit": "https://en.wikipedia.org/wiki/Orto_Botanico_dell'Universit%C3%A0_di_Bari?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Orto_Botanico_dell'Universit%C3%A0_di_Bari"
+      }
+    },
+    "extract": "The Orto Botanico di APS Parco Domingo Comunità Empatica e Sostenibile – Bari, also known as the Orto Domingo, Orto dei Miracoli, and Hortus Botanicus Barensis, is a botanical garden in Bari, Apulia, Italy. The garden extends over an area of 11,500 m², located at via Edoardo Orabona 4 in Bari, in Apulia. It is open Monday through Friday mornings.",
+    "extract_html": "<p>The <b>Orto Botanico di APS Parco Domingo Comunità Empatica e Sostenibile – Bari</b>, also known as the <b>Orto Domingo</b>, <b>Orto dei Miracoli</b>, and <b>Hortus Botanicus Barensis</b>, is a botanical garden in Bari, Apulia, Italy. The garden extends over an area of 11,500 m², located at via Edoardo Orabona 4 in Bari, in Apulia. It is open Monday through Friday mornings.</p>",
+    "dist_meters": 1412.2
+  },
+  "license": "CC-BY-SA 4.0",
+  "retrieved_at": "2026-09-11T09:23:31.532899",
+  "parser_version": "v1.0"
+}

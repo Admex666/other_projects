@@ -1,0 +1,23 @@
+{
+  "source": "osm",
+  "source_id": "node/5357181962",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Cippo lo Monaco",
+  "raw_payload": {
+    "type": "node",
+    "id": 5357181962,
+    "lat": 41.093328,
+    "lon": 16.7526491,
+    "tags": {
+      "archaeological_site": "megalith",
+      "historic": "archaeological_site",
+      "megalith_type": "menhir",
+      "name": "Cippo lo Monaco",
+      "wikidata": "Q3792804",
+      "wikipedia": "it:Il Monaco (menhir)"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

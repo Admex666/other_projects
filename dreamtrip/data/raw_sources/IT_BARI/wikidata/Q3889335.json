@@ -1,0 +1,18 @@
+{
+  "source": "wikidata",
+  "source_id": "Q3889335",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Palaflorio",
+  "raw_payload": {
+    "qid": "Q3889335",
+    "label": "Palaflorio",
+    "instance_of": "http://www.wikidata.org/entity/Q1076486",
+    "instance_of_label": "impianto sportivo",
+    "location_wkt": "Point(16.906638888 41.101527777)",
+    "wikipedia_url": null,
+    "image_url": "http://commons.wikimedia.org/wiki/Special:FilePath/Palaflorio%20Bari%20Italy.jpeg"
+  },
+  "license": "CC-0",
+  "retrieved_at": "2026-09-11T09:23:31.465150",
+  "parser_version": "v1.0"
+}

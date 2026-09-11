@@ -1,0 +1,18 @@
+{
+  "source": "wikidata",
+  "source_id": "Q3891035",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Palazzo Valerio-Longo",
+  "raw_payload": {
+    "qid": "Q3891035",
+    "label": "Palazzo Valerio-Longo",
+    "instance_of": "http://www.wikidata.org/entity/Q16560",
+    "instance_of_label": "palazzo",
+    "location_wkt": "Point(16.782737 41.081128)",
+    "wikipedia_url": null,
+    "image_url": "http://commons.wikimedia.org/wiki/Special:FilePath/Palazzo%20velerio%20longo%202.jpg"
+  },
+  "license": "CC-0",
+  "retrieved_at": "2026-09-11T09:18:22.623549",
+  "parser_version": "v1.0"
+}

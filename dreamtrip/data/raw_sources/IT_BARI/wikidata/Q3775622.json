@@ -1,0 +1,18 @@
+{
+  "source": "wikidata",
+  "source_id": "Q3775622",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Grande meridiana di Bari",
+  "raw_payload": {
+    "qid": "Q3775622",
+    "label": "Grande meridiana di Bari",
+    "instance_of": "http://www.wikidata.org/entity/Q80793",
+    "instance_of_label": "orologio solare",
+    "location_wkt": "Point(16.874932 41.102637)",
+    "wikipedia_url": null,
+    "image_url": "http://commons.wikimedia.org/wiki/Special:FilePath/Grande-meridiana-di-bari-con-targa.jpg"
+  },
+  "license": "CC-0",
+  "retrieved_at": "2026-09-11T09:23:31.465150",
+  "parser_version": "v1.0"
+}

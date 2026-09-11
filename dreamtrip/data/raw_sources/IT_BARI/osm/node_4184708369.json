@@ -1,0 +1,20 @@
+{
+  "source": "osm",
+  "source_id": "node/4184708369",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Nascita della Nuova Città",
+  "raw_payload": {
+    "type": "node",
+    "id": 4184708369,
+    "lat": 41.126061,
+    "lon": 16.8718347,
+    "tags": {
+      "historic": "memorial",
+      "memorial": "plaque",
+      "name": "Nascita della Nuova Città"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

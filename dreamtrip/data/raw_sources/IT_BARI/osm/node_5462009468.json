@@ -1,0 +1,25 @@
+{
+  "source": "osm",
+  "source_id": "node/5462009468",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Busto di Michele Gervasio",
+  "raw_payload": {
+    "type": "node",
+    "id": 5462009468,
+    "lat": 41.0876068,
+    "lon": 16.9995813,
+    "tags": {
+      "historic": "memorial",
+      "inscription": "Michele Gervasio\nArcheologo",
+      "material": "stone",
+      "memorial": "bust",
+      "name": "Busto di Michele Gervasio",
+      "start_date": "1961",
+      "wikidata": "Q61651595",
+      "wikimedia_commons": "Category:Busto Michele Gervasio (Bari)"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

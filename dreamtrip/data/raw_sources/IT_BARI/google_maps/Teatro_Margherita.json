@@ -1,0 +1,18 @@
+{
+  "source": "google_maps",
+  "source_id": "Teatro+Margherita",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Teatro Margherita",
+  "raw_payload": {
+    "name": "Teatro Margherita",
+    "href": "https://www.google.com/maps/place/Teatro+Margherita/data=!4m7!3m6!1s0x1347e866982ad4d1:0x3748578188be923d!8m2!3d41.1264206!4d16.8728911!16s%2Fm%2F03m4hg4!19sChIJ0dQqmGboRxMRPZK-iIFXSDc?authuser=0&hl=en&g_ep=EgoyMDI2MDkwOC4wIJJjKgBIAVAD&rclk=1",
+    "rating": 4.6,
+    "review_count": 2298,
+    "category": null,
+    "lat": 41.1264206,
+    "lon": 16.8728911
+  },
+  "license": "Proprietary / Web Data",
+  "retrieved_at": "2026-09-11T09:23:42.135929",
+  "parser_version": "v1.0"
+}

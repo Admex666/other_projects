@@ -1,0 +1,21 @@
+{
+  "source": "osm",
+  "source_id": "node/7994789415",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Parco Urbano Asi",
+  "raw_payload": {
+    "type": "node",
+    "id": 7994789415,
+    "lat": 41.0955116,
+    "lon": 16.7788637,
+    "tags": {
+      "addr:city": "Modugno",
+      "addr:street": "Viale delle Margherite",
+      "leisure": "park",
+      "name": "Parco Urbano Asi"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

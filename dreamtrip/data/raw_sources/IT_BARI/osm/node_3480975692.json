@@ -1,0 +1,20 @@
+{
+  "source": "osm",
+  "source_id": "node/3480975692",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Busto di Giuseppe Massari",
+  "raw_payload": {
+    "type": "node",
+    "id": 3480975692,
+    "lat": 41.125698,
+    "lon": 16.8725263,
+    "tags": {
+      "artwork_type": "bust",
+      "name": "Busto di Giuseppe Massari",
+      "tourism": "artwork"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

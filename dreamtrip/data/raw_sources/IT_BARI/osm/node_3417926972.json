@@ -1,0 +1,19 @@
+{
+  "source": "osm",
+  "source_id": "node/3417926972",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Erbario di Villa la rocca",
+  "raw_payload": {
+    "type": "node",
+    "id": 3417926972,
+    "lat": 41.1116002,
+    "lon": 16.8806259,
+    "tags": {
+      "name": "Erbario di Villa la rocca",
+      "tourism": "museum"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

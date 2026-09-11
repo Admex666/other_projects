@@ -1,0 +1,61 @@
+{
+  "source": "wikipedia",
+  "source_id": "21044301",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Pinacoteca metropolitana di Bari",
+  "raw_payload": {
+    "type": "standard",
+    "title": "Pinacoteca metropolitana di Bari",
+    "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Pinacoteca metropolitana di Bari</span></span>",
+    "namespace": {
+      "id": 0,
+      "text": ""
+    },
+    "wikibase_item": "Q3388587",
+    "titles": {
+      "canonical": "Pinacoteca_metropolitana_di_Bari",
+      "normalized": "Pinacoteca metropolitana di Bari",
+      "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Pinacoteca metropolitana di Bari</span></span>"
+    },
+    "pageid": 21044301,
+    "thumbnail": {
+      "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/51/Bari%2C_palazzo_della_provincia%2C_di_luigi_baffa%2C_1935%2C_01.jpg/330px-Bari%2C_palazzo_della_provincia%2C_di_luigi_baffa%2C_1935%2C_01.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 330,
+      "height": 291
+    },
+    "originalimage": {
+      "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/51/Bari%2C_palazzo_della_provincia%2C_di_luigi_baffa%2C_1935%2C_01.jpg/3840px-Bari%2C_palazzo_della_provincia%2C_di_luigi_baffa%2C_1935%2C_01.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 4053,
+      "height": 3576
+    },
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1355897538",
+    "tid": "e5077721-5783-11f1-94ad-874eda7f3876",
+    "timestamp": "2026-05-24T15:19:02Z",
+    "coordinates": {
+      "lat": 41.1214,
+      "lon": 16.8816
+    },
+    "content_urls": {
+      "desktop": {
+        "page": "https://en.wikipedia.org/wiki/Pinacoteca_metropolitana_di_Bari",
+        "revisions": "https://en.wikipedia.org/wiki/Pinacoteca_metropolitana_di_Bari?action=history",
+        "edit": "https://en.wikipedia.org/wiki/Pinacoteca_metropolitana_di_Bari?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Pinacoteca_metropolitana_di_Bari"
+      },
+      "mobile": {
+        "page": "https://en.wikipedia.org/wiki/Pinacoteca_metropolitana_di_Bari",
+        "revisions": "https://en.wikipedia.org/wiki/Special:History/Pinacoteca_metropolitana_di_Bari",
+        "edit": "https://en.wikipedia.org/wiki/Pinacoteca_metropolitana_di_Bari?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Pinacoteca_metropolitana_di_Bari"
+      }
+    },
+    "extract": "The Pinacoteca metropolitana di Bari or Pinacoteca C. Giaquinto is a public gallery of paintings and museum of artworks in the city of Bari, Italy. The museum displays a range of artistic works connected to the region of Apulia.",
+    "extract_html": "<p>The <b>Pinacoteca metropolitana di Bari</b> or <b>Pinacoteca C. Giaquinto</b> is a public gallery of paintings and museum of artworks in the city of Bari, Italy. The museum displays a range of artistic works connected to the region of Apulia.</p>",
+    "dist_meters": 942.8
+  },
+  "license": "CC-BY-SA 4.0",
+  "retrieved_at": "2026-09-11T09:23:31.532899",
+  "parser_version": "v1.0"
+}

@@ -1,0 +1,18 @@
+{
+  "source": "google_maps",
+  "source_id": "Regional+Directorate+of+Museums",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Regional Directorate of Museums",
+  "raw_payload": {
+    "name": "Regional Directorate of Museums",
+    "href": "https://www.google.com/maps/place/Regional+Directorate+of+Museums/data=!4m7!3m6!1s0x1347e8624956b501:0xb9f19c24a79b5d72!8m2!3d41.1309566!4d16.8688307!16s%2Fm%2F09g9jph!19sChIJAbVWSWLoRxMRcl2bpySc8bk?authuser=0&hl=en&g_ep=EgoyMDI2MDkwOC4wIJJjKgBIAVAD&rclk=1",
+    "rating": 4.3,
+    "review_count": 3117,
+    "category": null,
+    "lat": 41.1309566,
+    "lon": 16.8688307
+  },
+  "license": "Proprietary / Web Data",
+  "retrieved_at": "2026-09-11T09:23:42.135929",
+  "parser_version": "v1.0"
+}

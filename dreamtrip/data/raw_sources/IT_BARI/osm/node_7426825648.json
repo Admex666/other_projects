@@ -1,0 +1,26 @@
+{
+  "source": "osm",
+  "source_id": "node/7426825648",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Casa di Pulcinella",
+  "raw_payload": {
+    "type": "node",
+    "id": 7426825648,
+    "lat": 41.1320935,
+    "lon": 16.8397327,
+    "tags": {
+      "addr:housename": "Arena della Vittoria",
+      "addr:housenumber": "4/a",
+      "addr:postcode": "70132",
+      "addr:street": "Via di Maratona",
+      "amenity": "theatre",
+      "level": "0",
+      "name": "Casa di Pulcinella",
+      "theatre:genre": "marionette",
+      "website": "http://www.casadipulcinella.it/"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

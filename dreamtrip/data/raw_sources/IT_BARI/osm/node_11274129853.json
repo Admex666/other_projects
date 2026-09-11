@@ -1,0 +1,20 @@
+{
+  "source": "osm",
+  "source_id": "node/11274129853",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Alla memoria vittima bullismo",
+  "raw_payload": {
+    "type": "node",
+    "id": 11274129853,
+    "lat": 41.0741888,
+    "lon": 16.8700593,
+    "tags": {
+      "artwork_type": "mural",
+      "name": "Alla memoria vittima bullismo",
+      "tourism": "artwork"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

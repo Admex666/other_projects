@@ -1,0 +1,53 @@
+{
+  "source": "wikipedia",
+  "source_id": "39946498",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Accademia di Belle Arti di Bari",
+  "raw_payload": {
+    "type": "standard",
+    "title": "Accademia di Belle Arti di Bari",
+    "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Accademia di Belle Arti di Bari</span></span>",
+    "namespace": {
+      "id": 0,
+      "text": ""
+    },
+    "wikibase_item": "Q15178043",
+    "titles": {
+      "canonical": "Accademia_di_Belle_Arti_di_Bari",
+      "normalized": "Accademia di Belle Arti di Bari",
+      "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Accademia di Belle Arti di Bari</span></span>"
+    },
+    "pageid": 39946498,
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1370621320",
+    "tid": "432316bf-9dda-11f1-90dd-3a23afbfd0d5",
+    "timestamp": "2026-08-22T03:33:38Z",
+    "description": "Art school in Bari, Italy",
+    "description_source": "local",
+    "coordinates": {
+      "lat": 41.1108,
+      "lon": 16.8769
+    },
+    "content_urls": {
+      "desktop": {
+        "page": "https://en.wikipedia.org/wiki/Accademia_di_Belle_Arti_di_Bari",
+        "revisions": "https://en.wikipedia.org/wiki/Accademia_di_Belle_Arti_di_Bari?action=history",
+        "edit": "https://en.wikipedia.org/wiki/Accademia_di_Belle_Arti_di_Bari?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Accademia_di_Belle_Arti_di_Bari"
+      },
+      "mobile": {
+        "page": "https://en.wikipedia.org/wiki/Accademia_di_Belle_Arti_di_Bari",
+        "revisions": "https://en.wikipedia.org/wiki/Special:History/Accademia_di_Belle_Arti_di_Bari",
+        "edit": "https://en.wikipedia.org/wiki/Accademia_di_Belle_Arti_di_Bari?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Accademia_di_Belle_Arti_di_Bari"
+      }
+    },
+    "extract": "The Accademia di Belle Arti di Bari is a public tertiary academy of art in Bari, in Apulia in southern Italy. It was established on 1 October 1970 and was formally approved by presidential decree on 15 March 1973.",
+    "extract_html": "<p>The <b>Accademia di Belle Arti di Bari</b> is a public tertiary academy of art in Bari, in Apulia in southern Italy. It was established on 1 October 1970 and was formally approved by presidential decree on 15 March 1973.</p>",
+    "dist_meters": 816.2
+  },
+  "license": "CC-BY-SA 4.0",
+  "retrieved_at": "2026-09-11T09:23:31.532899",
+  "parser_version": "v1.0"
+}

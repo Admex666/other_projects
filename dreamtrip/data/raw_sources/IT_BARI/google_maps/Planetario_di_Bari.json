@@ -1,0 +1,18 @@
+{
+  "source": "google_maps",
+  "source_id": "Planetario+di+Bari",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Planetario di Bari",
+  "raw_payload": {
+    "name": "Planetario di Bari",
+    "href": "https://www.google.com/maps/place/Planetario+di+Bari/data=!4m7!3m6!1s0x1347e8a32e45bfc1:0xd96b0f3b535cb4b1!8m2!3d41.1371006!4d16.8377828!16s%2Fg%2F1pp2vb9zk!19sChIJwb9FLqPoRxMRsbRcUzsPa9k?authuser=0&hl=en&g_ep=EgoyMDI2MDkwOC4wIJJjKgBIAVAD&rclk=1",
+    "rating": 4.5,
+    "review_count": 143,
+    "category": null,
+    "lat": 41.1371006,
+    "lon": 16.8377828
+  },
+  "license": "Proprietary / Web Data",
+  "retrieved_at": "2026-09-11T09:23:42.135929",
+  "parser_version": "v1.0"
+}

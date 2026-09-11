@@ -1,0 +1,18 @@
+{
+  "source": "google_maps",
+  "source_id": "%D0%AE%D0%BB%D1%96%D1%8F+%D0%B3%D1%96%D0%B4+%D0%B2+%D0%91%D0%B0%D1%80%D1%96+%D1%96+%D1%82%D1%83%D1%80+%D0%BF%D0%BE+%D0%90%D0%BF%D1%83%D0%BB%D1%96%D1%97.+Iuliia+Ostapchuk",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Юлія гід в Барі і тур по Апулії. Iuliia Ostapchuk",
+  "raw_payload": {
+    "name": "Юлія гід в Барі і тур по Апулії. Iuliia Ostapchuk",
+    "href": "https://www.google.com/maps/place/%D0%AE%D0%BB%D1%96%D1%8F+%D0%B3%D1%96%D0%B4+%D0%B2+%D0%91%D0%B0%D1%80%D1%96+%D1%96+%D1%82%D1%83%D1%80+%D0%BF%D0%BE+%D0%90%D0%BF%D1%83%D0%BB%D1%96%D1%97.+Iuliia+Ostapchuk/data=!4m7!3m6!1s0x1347e95f02c27c0b:0xee5542434b07bce4!8m2!3d41.1251586!4d16.8639818!16s%2Fg%2F11ft_7hf96!19sChIJC3zCAl_pRxMR5LwHS0NCVe4?authuser=0&hl=en&g_ep=EgoyMDI2MDkwOC4wIJJjKgBIAVAD&rclk=1",
+    "rating": 5,
+    "review_count": 21,
+    "category": null,
+    "lat": 41.1251586,
+    "lon": 16.8639818
+  },
+  "license": "Proprietary / Web Data",
+  "retrieved_at": "2026-09-11T09:23:42.135929",
+  "parser_version": "v1.0"
+}

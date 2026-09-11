@@ -1,7 +1,6 @@
 import secrets
 from fastapi import Request
 from typing import Optional, Dict
-from app.services.user_service import verify_user_login
 
 # Alapértelmezett vészhelyzeti fiókok (Csak ha az adatbázis teljesen offline)
 FALLBACK_USERS: Dict[str, str] = {
@@ -16,8 +15,12 @@ sessions: Dict[str, str] = {}
 
 def verify_credentials(username: str, password: str) -> bool:
     # 1. Hitelesítés a Supabase felhős adatbázisból
-    if verify_user_login(username, password):
-        return True
+    try:
+        from app.services.user_service import verify_user_login
+        if verify_user_login(username, password):
+            return True
+    except Exception:
+        pass
     # 2. Vészhelyzeti offline fallback
     return username in FALLBACK_USERS and FALLBACK_USERS[username] == password
 

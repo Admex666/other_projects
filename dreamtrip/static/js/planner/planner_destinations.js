@@ -291,11 +291,42 @@
                                     <span class="material-symbols-outlined" style="font-size: 14px;">payments</span>
                                     ${m.daily_cost_huf_formatted || m.daily_cost_formatted || '~16 000 Ft/nap'}
                                 </span>
+                                ${dest.subscores?.experience !== undefined ? `
+                                <span style="background: rgba(37, 99, 235, 0.08); color: var(--primary); border: 1px solid rgba(37, 99, 235, 0.25); padding: 5px 11px; border-radius: 8px; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700;" title="Aktivitási és élménygazdagsági index">
+                                    <span class="material-symbols-outlined" style="font-size: 14px;">attractions</span>
+                                    Élmény: ${Math.round(dest.subscores.experience * 100)}/100
+                                </span>
+                                ` : ''}
                             </div>
+
+                            <!-- EXPERIENCE PROFILE BLOCK -->
+                            ${dest.experience_profile ? `
+                            <div style="background: rgba(37, 99, 235, 0.04); border: 1px solid rgba(37, 99, 235, 0.16); border-radius: 12px; padding: 11px 14px; margin-bottom: 14px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                    <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--primary); display: flex; align-items: center; gap: 5px;">
+                                        <span class="material-symbols-outlined" style="font-size: 15px;">explore</span>
+                                        <span>Élmény & Aktivitás Kínálat</span>
+                                    </span>
+                                    <span style="font-size: 11.5px; font-weight: 800; font-family: var(--font-mono); color: var(--primary); background: var(--accent-glow); padding: 2px 8px; border-radius: 6px;">
+                                        ${dest.experience_profile.summary?.total_entities || 0}+ látnivaló
+                                    </span>
+                                </div>
+                                <div style="display: flex; flex-wrap: wrap; gap: 8px; font-size: 11.5px; color: var(--text-secondary); margin-bottom: 6px;">
+                                    <span>🚶 <strong>${dest.experience_profile.walkability?.walkability_density || 100}%</strong> gyalogosan bejárható</span>
+                                    <span>•</span>
+                                    <span>☔ <strong>${dest.experience_profile.weather_resilience?.rain_safe_count || 0}</strong> esőbiztos helyszín</span>
+                                </div>
+                                ${dest.experience_profile.highlights && dest.experience_profile.highlights.length > 0 ? `
+                                <div style="font-size: 11px; color: var(--text-muted); line-height: 1.4;">
+                                    <strong style="color: var(--text-main);">Kiemelt:</strong> ${dest.experience_profile.highlights.slice(0, 3).map(h => h.name).join(' · ')}
+                                </div>
+                                ` : ''}
+                            </div>
+                            ` : ''}
 
                             <!-- INDOKLÁS -->
                             <div style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.55; margin-bottom: 18px; background: var(--bg-surface-subtle); padding: 10px 13px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
-                                ${dest.explanation || 'Kiváló időjárás és kedvező megélhetési költségek.'}
+                                ${dest.explanation || 'Kiváló időjárás, pezsgő kulturális élmények és kedvező megélhetési költségek.'}
                             </div>
                         </div>
 

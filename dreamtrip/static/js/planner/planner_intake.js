@@ -210,7 +210,8 @@
                 const ahpEl = document.getElementById('dna_card_ahp_summary');
                 if (ahpEl && state.intake.ahp_weights) {
                     const w = state.intake.ahp_weights;
-                    ahpEl.innerHTML = `Költség: ${w.total_cost}% · Időjárás: ${w.weather}% · Biztonság: ${w.safety}%`;
+                    const expStyle = state.intake.dest_promethee?.experience?.style_name ? `<div style="font-size: 11px; color: var(--text-muted); font-weight: 600; margin-top: 3px;">Fókusz: ${state.intake.dest_promethee.experience.style_name}</div>` : '';
+                    ahpEl.innerHTML = `Költség: ${w.total_cost}% · Klíma: ${w.weather}% · Biztonság: ${w.safety}% · Élmények: ${w.experience || 25}%${expStyle}`;
                 }
 
                 const promEl = document.getElementById('dna_card_prom_summary');

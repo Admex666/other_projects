@@ -256,6 +256,36 @@
                 hasAny = true;
             }
 
+            // 5. ÉLMÉNYEK ÉS PROGRAMOK BELÉPŐJEGYEI
+            const acts = trip.activities?.selected_activities 
+                || (window.PlannerState && window.PlannerState.selectedActivities) 
+                || [];
+            if (acts && acts.length > 0) {
+                let programCostPerPerson = 0;
+                acts.forEach(a => {
+                    const pl = String(a.price_level || '1').toLowerCase();
+                    if (pl === 'free' || pl === '0') programCostPerPerson += 0;
+                    else if (pl === 'budget' || pl === '1') programCostPerPerson += 2500;
+                    else if (pl === 'moderate' || pl === '2') programCostPerPerson += 6500;
+                    else if (pl === 'premium' || pl === '3' || pl === '4') programCostPerPerson += 18000;
+                    else programCostPerPerson += 3500;
+                });
+                const activitiesTotalHuf = programCostPerPerson * totalPersons;
+
+                items.push({
+                    key: 'activities',
+                    icon: '🎟️',
+                    name: 'Élmények & programok belépői',
+                    desc: `${acts.length} db kiválasztott élmény (${trip.destination?.name || 'Célállomás'})`,
+                    formula: `${programCostPerPerson.toLocaleString()} Ft / fő × ${totalPersons} fő`,
+                    amount: activitiesTotalHuf,
+                    badge: `${acts.length} program`,
+                    isEstimated: true
+                });
+                totalHuf += activitiesTotalHuf;
+                hasAny = true;
+            }
+
             const perPersonTotal = totalPersons > 0 ? Math.round(totalHuf / totalPersons) : totalHuf;
 
             return {

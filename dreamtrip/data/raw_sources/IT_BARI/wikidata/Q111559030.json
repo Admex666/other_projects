@@ -1,0 +1,18 @@
+{
+  "source": "wikidata",
+  "source_id": "Q111559030",
+  "destination_id": "IT_BARI",
+  "name_candidate": "cimitero di Carbonara",
+  "raw_payload": {
+    "qid": "Q111559030",
+    "label": "cimitero di Carbonara",
+    "instance_of": "http://www.wikidata.org/entity/Q39614",
+    "instance_of_label": "cimitero",
+    "location_wkt": "Point(16.87657 41.07771)",
+    "wikipedia_url": null,
+    "image_url": null
+  },
+  "license": "CC-0",
+  "retrieved_at": "2026-09-11T09:23:31.465150",
+  "parser_version": "v1.0"
+}

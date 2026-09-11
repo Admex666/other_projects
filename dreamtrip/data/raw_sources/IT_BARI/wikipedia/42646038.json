@@ -1,0 +1,63 @@
+{
+  "source": "wikipedia",
+  "source_id": "42646038",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Marconi railway station",
+  "raw_payload": {
+    "type": "standard",
+    "title": "Marconi railway station",
+    "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Marconi railway station</span></span>",
+    "namespace": {
+      "id": 0,
+      "text": ""
+    },
+    "wikibase_item": "Q3970041",
+    "titles": {
+      "canonical": "Marconi_railway_station",
+      "normalized": "Marconi railway station",
+      "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Marconi railway station</span></span>"
+    },
+    "pageid": 42646038,
+    "thumbnail": {
+      "source": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Bari_Marconi_station.JPG/330px-Bari_Marconi_station.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 330,
+      "height": 248
+    },
+    "originalimage": {
+      "source": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Bari_Marconi_station.JPG/3840px-Bari_Marconi_station.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 4320,
+      "height": 3240
+    },
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1371195712",
+    "tid": "6ac2e945-a037-11f1-b082-c7d80fa35b14",
+    "timestamp": "2026-08-25T03:45:30Z",
+    "description": "Railway station in Italy",
+    "description_source": "local",
+    "coordinates": {
+      "lat": 41.11694444,
+      "lon": 16.8875
+    },
+    "content_urls": {
+      "desktop": {
+        "page": "https://en.wikipedia.org/wiki/Marconi_railway_station",
+        "revisions": "https://en.wikipedia.org/wiki/Marconi_railway_station?action=history",
+        "edit": "https://en.wikipedia.org/wiki/Marconi_railway_station?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Marconi_railway_station"
+      },
+      "mobile": {
+        "page": "https://en.wikipedia.org/wiki/Marconi_railway_station",
+        "revisions": "https://en.wikipedia.org/wiki/Special:History/Marconi_railway_station",
+        "edit": "https://en.wikipedia.org/wiki/Marconi_railway_station?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Marconi_railway_station"
+      }
+    },
+    "extract": "Marconi railway station is a railway station in the Italian city of Bari, in the Province of Bari, Apulia. It opened on 31 May 1992 and lies on the Adriatic Railway (Ancona–Lecce). The train services are operated by Trenitalia.",
+    "extract_html": "<p><b>Marconi railway station</b> is a railway station in the Italian city of Bari, in the Province of Bari, Apulia. It opened on 31 May 1992 and lies on the Adriatic Railway (Ancona–Lecce). The train services are operated by Trenitalia.</p>",
+    "dist_meters": 1306.9
+  },
+  "license": "CC-BY-SA 4.0",
+  "retrieved_at": "2026-09-11T09:23:31.532899",
+  "parser_version": "v1.0"
+}

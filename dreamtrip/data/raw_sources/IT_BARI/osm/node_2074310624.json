@@ -1,0 +1,22 @@
+{
+  "source": "osm",
+  "source_id": "node/2074310624",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Azetium",
+  "raw_payload": {
+    "type": "node",
+    "id": 2074310624,
+    "lat": 41.0300791,
+    "lon": 17.0185823,
+    "tags": {
+      "historic": "ruins",
+      "name": "Azetium",
+      "tourism": "attraction",
+      "wikidata": "Q48800950",
+      "wikipedia": "it:Azetium"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

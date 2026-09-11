@@ -1,0 +1,18 @@
+{
+  "source": "wikidata",
+  "source_id": "Q121214310",
+  "destination_id": "IT_BARI",
+  "name_candidate": "chiesa di San Girolamo",
+  "raw_payload": {
+    "qid": "Q121214310",
+    "label": "chiesa di San Girolamo",
+    "instance_of": "http://www.wikidata.org/entity/Q16970",
+    "instance_of_label": "chiesa",
+    "location_wkt": "Point(16.835536 41.122494)",
+    "wikipedia_url": null,
+    "image_url": null
+  },
+  "license": "CC-0",
+  "retrieved_at": "2026-09-11T09:23:31.465150",
+  "parser_version": "v1.0"
+}

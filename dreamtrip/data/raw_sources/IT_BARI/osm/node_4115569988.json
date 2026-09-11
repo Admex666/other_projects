@@ -1,0 +1,21 @@
+{
+  "source": "osm",
+  "source_id": "node/4115569988",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Una goccia può diventare oceano",
+  "raw_payload": {
+    "type": "node",
+    "id": 4115569988,
+    "lat": 41.0406137,
+    "lon": 16.8251831,
+    "tags": {
+      "artist_name": "Gianni Roppo",
+      "artwork_type": "mural",
+      "name": "Una goccia può diventare oceano",
+      "tourism": "artwork"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

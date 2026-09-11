@@ -1,0 +1,18 @@
+{
+  "source": "wikidata",
+  "source_id": "Q61651047",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Monumento ai caduti della guerra mondiale 1915/1918",
+  "raw_payload": {
+    "qid": "Q61651047",
+    "label": "Monumento ai caduti della guerra mondiale 1915/1918",
+    "instance_of": "http://www.wikidata.org/entity/Q5003624",
+    "instance_of_label": "monumento commemorativo",
+    "location_wkt": "Point(16.870544 41.074018)",
+    "wikipedia_url": null,
+    "image_url": "http://commons.wikimedia.org/wiki/Special:FilePath/CarbonaraDSCF7536.jpg"
+  },
+  "license": "CC-0",
+  "retrieved_at": "2026-09-11T09:23:31.465150",
+  "parser_version": "v1.0"
+}

@@ -1,0 +1,18 @@
+{
+  "source": "google_maps",
+  "source_id": "Palazzo+Mincuzzi",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Palazzo Mincuzzi",
+  "raw_payload": {
+    "name": "Palazzo Mincuzzi",
+    "href": "https://www.google.com/maps/place/Palazzo+Mincuzzi/data=!4m7!3m6!1s0x1347e860be04ebf3:0xd8cb8313c3297ef6!8m2!3d41.1232442!4d16.8694458!16s%2Fg%2F11byy4_dss!19sChIJ8-sEvmDoRxMR9n4pwxODy9g?authuser=0&hl=en&g_ep=EgoyMDI2MDkwOC4wIJJjKgBIAVAD&rclk=1",
+    "rating": 4.7,
+    "review_count": 1804,
+    "category": null,
+    "lat": 41.1232442,
+    "lon": 16.8694458
+  },
+  "license": "Proprietary / Web Data",
+  "retrieved_at": "2026-09-11T09:23:42.135929",
+  "parser_version": "v1.0"
+}

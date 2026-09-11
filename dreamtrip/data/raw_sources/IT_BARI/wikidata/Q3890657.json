@@ -1,0 +1,18 @@
+{
+  "source": "wikidata",
+  "source_id": "Q3890657",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Palazzo Piepoli",
+  "raw_payload": {
+    "qid": "Q3890657",
+    "label": "Palazzo Piepoli",
+    "instance_of": "http://www.wikidata.org/entity/Q16560",
+    "instance_of_label": "palazzo",
+    "location_wkt": "Point(16.78145 41.082475)",
+    "wikipedia_url": null,
+    "image_url": "http://commons.wikimedia.org/wiki/Special:FilePath/Palazzo%20piepoli.jpg"
+  },
+  "license": "CC-0",
+  "retrieved_at": "2026-09-11T09:18:22.623549",
+  "parser_version": "v1.0"
+}

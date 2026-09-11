@@ -50016,15 +50016,15 @@
     ]
   },
   "bucharest_ro": {
-    "timestamp": 1783248086.2782133,
+    "timestamp": 1789121619.0687058,
     "pois": [
       {
         "id": "mock_bucharest_ro_attraction_0",
         "city_id": "bucharest_ro",
         "name": "Főtér és Történelmi Városközpont",
         "type": "attraction",
-        "rating": 4.6,
-        "user_ratings_total": 10623,
+        "rating": 4.7,
+        "user_ratings_total": 1258,
         "price_level": 0,
         "opening_hours": {
           "open_now": true,
@@ -50111,19 +50111,19 @@
           ]
         },
         "location": {
-          "lat": 44.44411513069137,
-          "lng": 26.103056714777956
+          "lat": 44.41065200602258,
+          "lng": 26.114123200723167
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Bukarest, Main Street 43."
+        "address": "Bukarest, Main Street 98."
       },
       {
         "id": "mock_bucharest_ro_attraction_1",
         "city_id": "bucharest_ro",
         "name": "Királyi Palota és Vármúzeum",
         "type": "attraction",
-        "rating": 4.8,
-        "user_ratings_total": 8381,
+        "rating": 4.9,
+        "user_ratings_total": 7798,
         "price_level": 2,
         "opening_hours": {
           "open_now": true,
@@ -50210,19 +50210,19 @@
           ]
         },
         "location": {
-          "lat": 44.44492607841642,
-          "lng": 26.099024819822663
+          "lat": 44.432192557695885,
+          "lng": 26.113411091743632
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Bukarest, Main Street 58."
+        "address": "Bukarest, Main Street 119."
       },
       {
         "id": "mock_bucharest_ro_attraction_2",
         "city_id": "bucharest_ro",
         "name": "Modern Művészeti Galéria",
         "type": "attraction",
-        "rating": 4.2,
-        "user_ratings_total": 2816,
+        "rating": 4.3,
+        "user_ratings_total": 3574,
         "price_level": 1,
         "opening_hours": {
           "open_now": true,
@@ -50309,19 +50309,19 @@
           ]
         },
         "location": {
-          "lat": 44.41345278843412,
-          "lng": 26.113322636466272
+          "lat": 44.41151065066095,
+          "lng": 26.114586205308964
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Bukarest, Main Street 5."
+        "address": "Bukarest, Main Street 7."
       },
       {
         "id": "mock_bucharest_ro_attraction_3",
         "city_id": "bucharest_ro",
         "name": "Botanikus Kert és Pálmaház",
         "type": "attraction",
-        "rating": 4.6,
-        "user_ratings_total": 2443,
+        "rating": 4.5,
+        "user_ratings_total": 5681,
         "price_level": 1,
         "opening_hours": {
           "open_now": true,
@@ -50408,19 +50408,19 @@
           ]
         },
         "location": {
-          "lat": 44.44577173209704,
-          "lng": 26.112723286800087
+          "lat": 44.42651803831835,
+          "lng": 26.10078718731821
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Bukarest, Main Street 88."
+        "address": "Bukarest, Main Street 24."
       },
       {
         "id": "mock_bucharest_ro_attraction_4",
         "city_id": "bucharest_ro",
         "name": "Szent Katedrális",
         "type": "attraction",
-        "rating": 4.9,
-        "user_ratings_total": 3718,
+        "rating": 4.7,
+        "user_ratings_total": 10680,
         "price_level": 0,
         "opening_hours": {
           "open_now": true,
@@ -50507,19 +50507,19 @@
           ]
         },
         "location": {
-          "lat": 44.41026913368979,
-          "lng": 26.085635435291678
+          "lat": 44.42007730211017,
+          "lng": 26.100581051017166
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Bukarest, Main Street 58."
+        "address": "Bukarest, Main Street 86."
       },
       {
         "id": "mock_bucharest_ro_attraction_5",
         "city_id": "bucharest_ro",
         "name": "Néprajzi Szabadtéri Múzeum",
         "type": "attraction",
-        "rating": 4.5,
-        "user_ratings_total": 892,
+        "rating": 4.6,
+        "user_ratings_total": 543,
         "price_level": 1,
         "opening_hours": {
           "open_now": true,
@@ -50606,19 +50606,19 @@
           ]
         },
         "location": {
-          "lat": 44.434856633225536,
-          "lng": 26.086498428045815
+          "lat": 44.41192051500108,
+          "lng": 26.099630728044172
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Bukarest, Main Street 42."
+        "address": "Bukarest, Main Street 66."
       },
       {
         "id": "mock_bucharest_ro_attraction_6",
         "city_id": "bucharest_ro",
         "name": "Városi Népkert és Csónakázótó",
         "type": "attraction",
-        "rating": 4.6,
-        "user_ratings_total": 6861,
+        "rating": 4.4,
+        "user_ratings_total": 4245,
         "price_level": 0,
         "opening_hours": {
           "open_now": true,
@@ -50705,11 +50705,11 @@
           ]
         },
         "location": {
-          "lat": 44.4343269582048,
-          "lng": 26.08981625171566
+          "lat": 44.413936357277045,
+          "lng": 26.099283681258104
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Bukarest, Main Street 87."
+        "address": "Bukarest, Main Street 14."
       },
       {
         "id": "mock_bucharest_ro_attraction_7",
@@ -50717,7 +50717,7 @@
         "name": "Tudományos és Technológiai Központ",
         "type": "attraction",
         "rating": 4.6,
-        "user_ratings_total": 1659,
+        "user_ratings_total": 2877,
         "price_level": 2,
         "opening_hours": {
           "open_now": true,
@@ -50804,19 +50804,19 @@
           ]
         },
         "location": {
-          "lat": 44.420208403793275,
-          "lng": 26.09456477747661
+          "lat": 44.437352368753196,
+          "lng": 26.111673987561115
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Bukarest, Main Street 123."
+        "address": "Bukarest, Main Street 33."
       },
       {
         "id": "mock_bucharest_ro_restaurant_0",
         "city_id": "bucharest_ro",
         "name": "Bistro Bukarest - Helyi Ízek",
         "type": "restaurant",
-        "rating": 4.7,
-        "user_ratings_total": 696,
+        "rating": 4.8,
+        "user_ratings_total": 1369,
         "price_level": 2,
         "opening_hours": {
           "open_now": true,
@@ -50903,11 +50903,11 @@
           ]
         },
         "location": {
-          "lat": 44.42983608726716,
-          "lng": 26.114350979399457
+          "lat": 44.43643308845335,
+          "lng": 26.090493207407178
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Bukarest, Main Street 77."
+        "address": "Bukarest, Main Street 36."
       },
       {
         "id": "mock_bucharest_ro_restaurant_1",
@@ -50915,7 +50915,7 @@
         "name": "La Piazza Trattoria",
         "type": "restaurant",
         "rating": 4.6,
-        "user_ratings_total": 536,
+        "user_ratings_total": 601,
         "price_level": 2,
         "opening_hours": {
           "open_now": true,
@@ -51002,19 +51002,19 @@
           ]
         },
         "location": {
-          "lat": 44.41815209231456,
-          "lng": 26.085289170100513
+          "lat": 44.407473692792315,
+          "lng": 26.100543513343613
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Bukarest, Main Street 145."
+        "address": "Bukarest, Main Street 36."
       },
       {
         "id": "mock_bucharest_ro_restaurant_2",
         "city_id": "bucharest_ro",
         "name": "Gourmet Garden Fine Dining",
         "type": "restaurant",
-        "rating": 4.8,
-        "user_ratings_total": 244,
+        "rating": 4.9,
+        "user_ratings_total": 212,
         "price_level": 3,
         "opening_hours": {
           "open_now": true,
@@ -51101,19 +51101,19 @@
           ]
         },
         "location": {
-          "lat": 44.418767191700155,
-          "lng": 26.10898704678603
+          "lat": 44.42487644071661,
+          "lng": 26.11139671430126
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Bukarest, Main Street 48."
+        "address": "Bukarest, Main Street 125."
       },
       {
         "id": "mock_bucharest_ro_restaurant_3",
         "city_id": "bucharest_ro",
         "name": "The Rusty Anchor Fish & Chips",
         "type": "restaurant",
-        "rating": 4.3,
-        "user_ratings_total": 248,
+        "rating": 4.2,
+        "user_ratings_total": 640,
         "price_level": 1,
         "opening_hours": {
           "open_now": true,
@@ -51200,11 +51200,11 @@
           ]
         },
         "location": {
-          "lat": 44.426124960606785,
-          "lng": 26.098534049938504
+          "lat": 44.434110669745586,
+          "lng": 26.095390579435083
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Bukarest, Main Street 125."
+        "address": "Bukarest, Main Street 46."
       },
       {
         "id": "mock_bucharest_ro_restaurant_4",
@@ -51212,7 +51212,7 @@
         "name": "Burger & Craft Beer House",
         "type": "restaurant",
         "rating": 4.4,
-        "user_ratings_total": 1622,
+        "user_ratings_total": 1470,
         "price_level": 2,
         "opening_hours": {
           "open_now": true,
@@ -51299,19 +51299,19 @@
           ]
         },
         "location": {
-          "lat": 44.40865911643397,
-          "lng": 26.105531806108445
+          "lat": 44.43187783506063,
+          "lng": 26.09900826393491
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Bukarest, Main Street 20."
+        "address": "Bukarest, Main Street 25."
       },
       {
         "id": "mock_bucharest_ro_restaurant_5",
         "city_id": "bucharest_ro",
         "name": "Zöld Kert Vegetáriánus Étterem",
         "type": "restaurant",
-        "rating": 4.5,
-        "user_ratings_total": 769,
+        "rating": 4.4,
+        "user_ratings_total": 303,
         "price_level": 2,
         "opening_hours": {
           "open_now": true,
@@ -51398,11 +51398,11 @@
           ]
         },
         "location": {
-          "lat": 44.43184747584625,
-          "lng": 26.112294179519566
+          "lat": 44.428007856213185,
+          "lng": 26.103232728794215
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Bukarest, Main Street 32."
+        "address": "Bukarest, Main Street 149."
       },
       {
         "id": "mock_bucharest_ro_cafe_0",
@@ -51410,7 +51410,7 @@
         "name": "The Daily Grind Specialty Cafe",
         "type": "cafe",
         "rating": 4.9,
-        "user_ratings_total": 492,
+        "user_ratings_total": 434,
         "price_level": 1,
         "opening_hours": {
           "open_now": true,
@@ -51497,19 +51497,19 @@
           ]
         },
         "location": {
-          "lat": 44.41481532200394,
-          "lng": 26.109348264571107
+          "lat": 44.41703305805214,
+          "lng": 26.104968103783484
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Bukarest, Main Street 19."
+        "address": "Bukarest, Main Street 127."
       },
       {
         "id": "mock_bucharest_ro_cafe_1",
         "city_id": "bucharest_ro",
         "name": "Vintage Coffee & Bookshop",
         "type": "cafe",
-        "rating": 4.6,
-        "user_ratings_total": 527,
+        "rating": 4.7,
+        "user_ratings_total": 1127,
         "price_level": 1,
         "opening_hours": {
           "open_now": true,
@@ -51596,19 +51596,19 @@
           ]
         },
         "location": {
-          "lat": 44.41116231861311,
-          "lng": 26.091787839368966
+          "lat": 44.41590217001372,
+          "lng": 26.122203405208378
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Bukarest, Main Street 140."
+        "address": "Bukarest, Main Street 63."
       },
       {
         "id": "mock_bucharest_ro_cafe_2",
         "city_id": "bucharest_ro",
         "name": "Central Park Espresso Bar",
         "type": "cafe",
-        "rating": 4.3,
-        "user_ratings_total": 498,
+        "rating": 4.4,
+        "user_ratings_total": 763,
         "price_level": 1,
         "opening_hours": {
           "open_now": true,
@@ -51695,19 +51695,19 @@
           ]
         },
         "location": {
-          "lat": 44.44283068384631,
-          "lng": 26.1141572713784
+          "lat": 44.408498150043165,
+          "lng": 26.103009637366707
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Bukarest, Main Street 81."
+        "address": "Bukarest, Main Street 36."
       },
       {
         "id": "mock_bucharest_ro_cafe_3",
         "city_id": "bucharest_ro",
         "name": "Grand Patisserie és Kávéház",
         "type": "cafe",
-        "rating": 4.7,
-        "user_ratings_total": 587,
+        "rating": 4.6,
+        "user_ratings_total": 1659,
         "price_level": 2,
         "opening_hours": {
           "open_now": true,
@@ -51794,11 +51794,11 @@
           ]
         },
         "location": {
-          "lat": 44.432701241750955,
-          "lng": 26.103133986800678
+          "lat": 44.4248435516117,
+          "lng": 26.118712048738683
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Bukarest, Main Street 49."
+        "address": "Bukarest, Main Street 6."
       },
       {
         "id": "mock_bucharest_ro_viewpoint_0",
@@ -51806,7 +51806,7 @@
         "name": "Bukarest Panoráma Kilátóterasz",
         "type": "viewpoint",
         "rating": 4.8,
-        "user_ratings_total": 2577,
+        "user_ratings_total": 2928,
         "price_level": 0,
         "opening_hours": {
           "open_now": true,
@@ -51893,11 +51893,11 @@
           ]
         },
         "location": {
-          "lat": 44.42361624550069,
-          "lng": 26.088393877570883
+          "lat": 44.428406667100035,
+          "lng": 26.10127168312717
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Bukarest, Main Street 54."
+        "address": "Bukarest, Main Street 95."
       },
       {
         "id": "mock_bucharest_ro_viewpoint_1",
@@ -51905,7 +51905,7 @@
         "name": "Várhegy Kilátópont",
         "type": "viewpoint",
         "rating": 4.7,
-        "user_ratings_total": 3150,
+        "user_ratings_total": 1540,
         "price_level": 0,
         "opening_hours": {
           "open_now": true,
@@ -51992,11 +51992,11 @@
           ]
         },
         "location": {
-          "lat": 44.431760777629904,
-          "lng": 26.09843658412765
+          "lat": 44.43882553667761,
+          "lng": 26.11498233606715
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Bukarest, Main Street 8."
+        "address": "Bukarest, Main Street 49."
       },
       {
         "id": "mock_bucharest_ro_viewpoint_2",
@@ -52004,7 +52004,7 @@
         "name": "TV-Torony SkyBar",
         "type": "viewpoint",
         "rating": 4.5,
-        "user_ratings_total": 1242,
+        "user_ratings_total": 610,
         "price_level": 2,
         "opening_hours": {
           "open_now": true,
@@ -52091,11 +52091,11 @@
           ]
         },
         "location": {
-          "lat": 44.42343704756246,
-          "lng": 26.088672306716525
+          "lat": 44.43028795695705,
+          "lng": 26.118886355799457
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-        "address": "Bukarest, Main Street 60."
+        "address": "Bukarest, Main Street 87."
       }
     ]
   },

@@ -1,0 +1,19 @@
+{
+  "source": "osm",
+  "source_id": "node/1818981449",
+  "destination_id": "IT_BARI",
+  "name_candidate": "different shops opened every days",
+  "raw_payload": {
+    "type": "node",
+    "id": 1818981449,
+    "lat": 41.1049893,
+    "lon": 16.8798584,
+    "tags": {
+      "amenity": "marketplace",
+      "name": "different shops opened every days"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

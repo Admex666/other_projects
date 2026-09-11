@@ -1,0 +1,30 @@
+{
+  "source": "osm",
+  "source_id": "node/5211288721",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Museo Archeologico di Santa Scolastica",
+  "raw_payload": {
+    "type": "node",
+    "id": 5211288721,
+    "lat": 41.132152,
+    "lon": 16.8709598,
+    "tags": {
+      "addr:city": "Bari",
+      "addr:housenumber": "73",
+      "addr:postcode": "70120",
+      "addr:street": "Via Venezia",
+      "museum": "archaeological",
+      "name": "Museo Archeologico di Santa Scolastica",
+      "opening_hours": "Tu-Sa 09:00-19:00; Su,PH 09:00-13:00; Mo off",
+      "phone": "+39 080 099 0882",
+      "toilets:wheelchair": "yes",
+      "tourism": "museum",
+      "website": "https://www.museoarcheologicosantascolastica.it/index.php/it/",
+      "wheelchair": "yes",
+      "wikidata": "Q62566513"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

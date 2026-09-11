@@ -1,0 +1,18 @@
+{
+  "source": "google_maps",
+  "source_id": "Cathedral+of+Saint+Sabinus",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Cathedral of Saint Sabinus",
+  "raw_payload": {
+    "name": "Cathedral of Saint Sabinus",
+    "href": "https://www.google.com/maps/place/Cathedral+of+Saint+Sabinus/data=!4m7!3m6!1s0x1347e863c84aa8e7:0xfffc3274e4ed84c!8m2!3d41.1285817!4d16.8687875!16s%2Fm%2F076v586!19sChIJ56hKyGPoRxMRTNhOTifD_w8?authuser=0&hl=en&g_ep=EgoyMDI2MDkwOC4wIJJjKgBIAVAD&rclk=1",
+    "rating": 4.7,
+    "review_count": 6486,
+    "category": null,
+    "lat": 41.1285817,
+    "lon": 16.8687875
+  },
+  "license": "Proprietary / Web Data",
+  "retrieved_at": "2026-09-11T09:23:42.135929",
+  "parser_version": "v1.0"
+}

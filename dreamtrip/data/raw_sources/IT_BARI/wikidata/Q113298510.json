@@ -1,0 +1,18 @@
+{
+  "source": "wikidata",
+  "source_id": "Q113298510",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Biblioteca del Dipartimento di scienze geografiche e merceologiche. Sezione di geografia. Università degli studi di Bari",
+  "raw_payload": {
+    "qid": "Q113298510",
+    "label": "Biblioteca del Dipartimento di scienze geografiche e merceologiche. Sezione di geografia. Università degli studi di Bari",
+    "instance_of": "http://www.wikidata.org/entity/Q1622062",
+    "instance_of_label": "biblioteca universitaria",
+    "location_wkt": "Point(16.854582 41.0942658)",
+    "wikipedia_url": null,
+    "image_url": null
+  },
+  "license": "CC-0",
+  "retrieved_at": "2026-09-11T09:23:31.465150",
+  "parser_version": "v1.0"
+}

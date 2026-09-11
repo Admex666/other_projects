@@ -1,0 +1,63 @@
+{
+  "source": "wikipedia",
+  "source_id": "72330221",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Palazzo Mincuzzi",
+  "raw_payload": {
+    "type": "standard",
+    "title": "Palazzo Mincuzzi",
+    "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Palazzo Mincuzzi</span></span>",
+    "namespace": {
+      "id": 0,
+      "text": ""
+    },
+    "wikibase_item": "Q99982349",
+    "titles": {
+      "canonical": "Palazzo_Mincuzzi",
+      "normalized": "Palazzo Mincuzzi",
+      "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Palazzo Mincuzzi</span></span>"
+    },
+    "pageid": 72330221,
+    "thumbnail": {
+      "source": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Bari_-_Palazzo_Mincuzzi_-_1.jpg/330px-Bari_-_Palazzo_Mincuzzi_-_1.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 330,
+      "height": 534
+    },
+    "originalimage": {
+      "source": "https://upload.wikimedia.org/wikipedia/commons/f/fb/Bari_-_Palazzo_Mincuzzi_-_1.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+      "width": 3499,
+      "height": 5662
+    },
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1302828878",
+    "tid": "4d0f1329-6b0f-11f0-b1f3-341b0443dcd1",
+    "timestamp": "2025-07-27T17:29:51Z",
+    "description": "Building in Bari, Italy",
+    "description_source": "local",
+    "coordinates": {
+      "lat": 41.12322222,
+      "lon": 16.86938889
+    },
+    "content_urls": {
+      "desktop": {
+        "page": "https://en.wikipedia.org/wiki/Palazzo_Mincuzzi",
+        "revisions": "https://en.wikipedia.org/wiki/Palazzo_Mincuzzi?action=history",
+        "edit": "https://en.wikipedia.org/wiki/Palazzo_Mincuzzi?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Palazzo_Mincuzzi"
+      },
+      "mobile": {
+        "page": "https://en.wikipedia.org/wiki/Palazzo_Mincuzzi",
+        "revisions": "https://en.wikipedia.org/wiki/Special:History/Palazzo_Mincuzzi",
+        "edit": "https://en.wikipedia.org/wiki/Palazzo_Mincuzzi?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Palazzo_Mincuzzi"
+      }
+    },
+    "extract": "Palazzo Mincuzzi is a historic building situated in Bari, Italy.",
+    "extract_html": "<p><b>Palazzo Mincuzzi</b> is a historic building situated in Bari, Italy.</p>",
+    "dist_meters": 712.5
+  },
+  "license": "CC-BY-SA 4.0",
+  "retrieved_at": "2026-09-11T09:23:31.532899",
+  "parser_version": "v1.0"
+}

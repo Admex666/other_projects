@@ -1,0 +1,19 @@
+{
+  "source": "osm",
+  "source_id": "node/11304931116",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Monumento di Padre Pio",
+  "raw_payload": {
+    "type": "node",
+    "id": 11304931116,
+    "lat": 41.0745262,
+    "lon": 16.7857872,
+    "tags": {
+      "historic": "monument",
+      "name": "Monumento di Padre Pio"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

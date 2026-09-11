@@ -1,0 +1,19 @@
+{
+  "source": "osm",
+  "source_id": "node/3419428913",
+  "destination_id": "IT_BARI",
+  "name_candidate": "frantoio ipogeo Torre Tossa",
+  "raw_payload": {
+    "type": "node",
+    "id": 3419428913,
+    "lat": 41.125092,
+    "lon": 16.8113908,
+    "tags": {
+      "historic": "archaeological_site",
+      "name": "frantoio ipogeo Torre Tossa"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

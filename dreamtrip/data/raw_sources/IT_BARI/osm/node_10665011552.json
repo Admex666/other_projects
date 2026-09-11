@@ -1,0 +1,19 @@
+{
+  "source": "osm",
+  "source_id": "node/10665011552",
+  "destination_id": "IT_BARI",
+  "name_candidate": "parco comunale",
+  "raw_payload": {
+    "type": "node",
+    "id": 10665011552,
+    "lat": 41.0233396,
+    "lon": 16.706856,
+    "tags": {
+      "leisure": "park",
+      "name": "parco comunale"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

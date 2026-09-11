@@ -1,0 +1,18 @@
+{
+  "source": "wikidata",
+  "source_id": "Q3968982",
+  "destination_id": "IT_BARI",
+  "name_candidate": "stazione di Mungivacca",
+  "raw_payload": {
+    "qid": "Q3968982",
+    "label": "stazione di Mungivacca",
+    "instance_of": "http://www.wikidata.org/entity/Q2451577",
+    "instance_of_label": "junction station",
+    "location_wkt": "Point(16.9002 41.0904)",
+    "wikipedia_url": "https://en.wikipedia.org/wiki/Mungivacca_railway_station",
+    "image_url": "http://commons.wikimedia.org/wiki/Special:FilePath/Bari%20Mungivacca%20train%20station.02.jpg"
+  },
+  "license": "CC-0",
+  "retrieved_at": "2026-09-11T09:23:31.465150",
+  "parser_version": "v1.0"
+}

@@ -1,0 +1,19 @@
+{
+  "source": "osm",
+  "source_id": "node/8239944442",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Monumento Robert Baden-Powell",
+  "raw_payload": {
+    "type": "node",
+    "id": 8239944442,
+    "lat": 41.0423561,
+    "lon": 16.888002,
+    "tags": {
+      "historic": "monument",
+      "name": "Monumento Robert Baden-Powell"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

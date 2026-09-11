@@ -1,0 +1,53 @@
+{
+  "source": "wikipedia",
+  "source_id": "46950720",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Conservatory of Bari",
+  "raw_payload": {
+    "type": "standard",
+    "title": "Conservatory of Bari",
+    "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Conservatory of Bari</span></span>",
+    "namespace": {
+      "id": 0,
+      "text": ""
+    },
+    "wikibase_item": "Q16543765",
+    "titles": {
+      "canonical": "Conservatory_of_Bari",
+      "normalized": "Conservatory of Bari",
+      "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Conservatory of Bari</span></span>"
+    },
+    "pageid": 46950720,
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1339812724",
+    "tid": "b811c161-0fee-11f1-a67f-14055c630951",
+    "timestamp": "2026-02-22T13:02:19Z",
+    "description": "School in Bari, Italy",
+    "description_source": "local",
+    "coordinates": {
+      "lat": 41.11595556,
+      "lon": 16.85733889
+    },
+    "content_urls": {
+      "desktop": {
+        "page": "https://en.wikipedia.org/wiki/Conservatory_of_Bari",
+        "revisions": "https://en.wikipedia.org/wiki/Conservatory_of_Bari?action=history",
+        "edit": "https://en.wikipedia.org/wiki/Conservatory_of_Bari?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Conservatory_of_Bari"
+      },
+      "mobile": {
+        "page": "https://en.wikipedia.org/wiki/Conservatory_of_Bari",
+        "revisions": "https://en.wikipedia.org/wiki/Special:History/Conservatory_of_Bari",
+        "edit": "https://en.wikipedia.org/wiki/Conservatory_of_Bari?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Conservatory_of_Bari"
+      }
+    },
+    "extract": "The Niccolò Piccinni Conservatory was founded by the violinist and music critic Giovanni Capaldi in 1925, with headquarters in Villa Bucciero, Bari, Italy. It was the fourteenth music school to arise in Italy. First created as a music education high school, in 1937 it was converted into a conservatory, and was named in honor of eighteenth-century Italian composer Niccolò Piccinni.",
+    "extract_html": "<p>The <b>Niccolò Piccinni Conservatory</b> was founded by the violinist and music critic Giovanni Capaldi in 1925, with headquarters in Villa Bucciero, Bari, Italy. It was the fourteenth music school to arise in Italy. First created as a music education high school, in 1937 it was converted into a conservatory, and was named in honor of eighteenth-century Italian composer Niccolò Piccinni.</p>",
+    "dist_meters": 1226.4
+  },
+  "license": "CC-BY-SA 4.0",
+  "retrieved_at": "2026-09-11T09:23:31.532899",
+  "parser_version": "v1.0"
+}

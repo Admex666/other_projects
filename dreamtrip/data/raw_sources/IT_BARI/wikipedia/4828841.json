@@ -1,0 +1,63 @@
+{
+  "source": "wikipedia",
+  "source_id": "4828841",
+  "destination_id": "IT_BARI",
+  "name_candidate": "University of Bari",
+  "raw_payload": {
+    "type": "standard",
+    "title": "University of Bari",
+    "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">University of Bari</span></span>",
+    "namespace": {
+      "id": 0,
+      "text": ""
+    },
+    "wikibase_item": "Q1236136",
+    "titles": {
+      "canonical": "University_of_Bari",
+      "normalized": "University of Bari",
+      "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">University of Bari</span></span>"
+    },
+    "pageid": 4828841,
+    "thumbnail": {
+      "source": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Facciata_dell%27ateneo_principale_dell%27Universit%C3%A0_degli_Studi_di_Bari_Aldo_Moro.jpg/330px-Facciata_dell%27ateneo_principale_dell%27Universit%C3%A0_degli_Studi_di_Bari_Aldo_Moro.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 330,
+      "height": 236
+    },
+    "originalimage": {
+      "source": "https://upload.wikimedia.org/wikipedia/commons/3/3a/Facciata_dell%27ateneo_principale_dell%27Universit%C3%A0_degli_Studi_di_Bari_Aldo_Moro.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+      "width": 3671,
+      "height": 2622
+    },
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1340010983",
+    "tid": "de4e64ad-10b5-11f1-8a5c-be1f24a7fd06",
+    "timestamp": "2026-02-23T12:47:53Z",
+    "description": "University in Apulia, Italy",
+    "description_source": "local",
+    "coordinates": {
+      "lat": 41.12027778,
+      "lon": 16.86833333
+    },
+    "content_urls": {
+      "desktop": {
+        "page": "https://en.wikipedia.org/wiki/University_of_Bari",
+        "revisions": "https://en.wikipedia.org/wiki/University_of_Bari?action=history",
+        "edit": "https://en.wikipedia.org/wiki/University_of_Bari?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:University_of_Bari"
+      },
+      "mobile": {
+        "page": "https://en.wikipedia.org/wiki/University_of_Bari",
+        "revisions": "https://en.wikipedia.org/wiki/Special:History/University_of_Bari",
+        "edit": "https://en.wikipedia.org/wiki/University_of_Bari?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:University_of_Bari"
+      }
+    },
+    "extract": "The University of Bari Aldo Moro is a public higher education institution founded in 1925 in Bari, Apulia in Southern Italy. The university has a student population of around 40,000.",
+    "extract_html": "<p>The <b>University of Bari Aldo Moro</b> is a public higher education institution founded in 1925 in Bari, Apulia in Southern Italy. The university has a student population of around 40,000.</p>",
+    "dist_meters": 462.7
+  },
+  "license": "CC-BY-SA 4.0",
+  "retrieved_at": "2026-09-11T09:23:31.532899",
+  "parser_version": "v1.0"
+}

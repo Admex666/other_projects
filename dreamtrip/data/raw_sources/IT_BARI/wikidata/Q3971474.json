@@ -1,0 +1,18 @@
+{
+  "source": "wikidata",
+  "source_id": "Q3971474",
+  "destination_id": "IT_BARI",
+  "name_candidate": "stazione meteorologica di Bari Palese",
+  "raw_payload": {
+    "qid": "Q3971474",
+    "label": "stazione meteorologica di Bari Palese",
+    "instance_of": "http://www.wikidata.org/entity/Q190107",
+    "instance_of_label": "stazione meteorologica",
+    "location_wkt": "Point(16.78 41.13)",
+    "wikipedia_url": null,
+    "image_url": null
+  },
+  "license": "CC-0",
+  "retrieved_at": "2026-09-11T09:23:31.465150",
+  "parser_version": "v1.0"
+}

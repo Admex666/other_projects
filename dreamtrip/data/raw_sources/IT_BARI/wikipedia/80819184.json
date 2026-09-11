@@ -1,0 +1,53 @@
+{
+  "source": "wikipedia",
+  "source_id": "80819184",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Bari Courthouse",
+  "raw_payload": {
+    "type": "standard",
+    "title": "Bari Courthouse",
+    "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Bari Courthouse</span></span>",
+    "namespace": {
+      "id": 0,
+      "text": ""
+    },
+    "wikibase_item": "Q124029066",
+    "titles": {
+      "canonical": "Bari_Courthouse",
+      "normalized": "Bari Courthouse",
+      "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Bari Courthouse</span></span>"
+    },
+    "pageid": 80819184,
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1343735808",
+    "tid": "aac38ed8-20dd-11f1-b78e-55c0fded3a83",
+    "timestamp": "2026-03-16T02:13:05Z",
+    "description": "Judiciary building in Bari, Italy",
+    "description_source": "local",
+    "coordinates": {
+      "lat": 41.12330556,
+      "lon": 16.85648611
+    },
+    "content_urls": {
+      "desktop": {
+        "page": "https://en.wikipedia.org/wiki/Bari_Courthouse",
+        "revisions": "https://en.wikipedia.org/wiki/Bari_Courthouse?action=history",
+        "edit": "https://en.wikipedia.org/wiki/Bari_Courthouse?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Bari_Courthouse"
+      },
+      "mobile": {
+        "page": "https://en.wikipedia.org/wiki/Bari_Courthouse",
+        "revisions": "https://en.wikipedia.org/wiki/Special:History/Bari_Courthouse",
+        "edit": "https://en.wikipedia.org/wiki/Bari_Courthouse?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Bari_Courthouse"
+      }
+    },
+    "extract": "The Bari Courthouse is a judicial complex located on Piazza Enrico De Nicola in Bari, Italy.",
+    "extract_html": "<p>The <b>Bari Courthouse</b> is a judicial complex located on Piazza Enrico De Nicola in Bari, Italy.</p>",
+    "dist_meters": 1464
+  },
+  "license": "CC-BY-SA 4.0",
+  "retrieved_at": "2026-09-11T09:23:31.532899",
+  "parser_version": "v1.0"
+}

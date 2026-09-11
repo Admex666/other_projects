@@ -1,0 +1,18 @@
+{
+  "source": "google_maps",
+  "source_id": "Nana%27s+Beach",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Nana's Beach",
+  "raw_payload": {
+    "name": "Nana's Beach",
+    "href": "https://www.google.com/maps/place/Nana%27s+Beach/data=!4m7!3m6!1s0x1347efa29d894c5b:0xc45da233d573c7a9!8m2!3d41.1531817!4d16.7866708!16s%2Fg%2F11qg4yln_g!19sChIJW0yJnaLvRxMRqcdz1TOiXcQ?authuser=0&hl=en&g_ep=EgoyMDI2MDkwOC4wIJJjKgBIAVAD&rclk=1",
+    "rating": 3.9,
+    "review_count": 69,
+    "category": null,
+    "lat": 41.1531817,
+    "lon": 16.7866708
+  },
+  "license": "Proprietary / Web Data",
+  "retrieved_at": "2026-09-11T09:23:42.135929",
+  "parser_version": "v1.0"
+}

@@ -1,0 +1,18 @@
+{
+  "source": "wikidata",
+  "source_id": "Q3735795",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Ex monastero di Santa Maria della Croce",
+  "raw_payload": {
+    "qid": "Q3735795",
+    "label": "Ex monastero di Santa Maria della Croce",
+    "instance_of": "http://www.wikidata.org/entity/Q25550691",
+    "instance_of_label": "palazzo comunale",
+    "location_wkt": "Point(16.78104 41.082313)",
+    "wikipedia_url": null,
+    "image_url": null
+  },
+  "license": "CC-0",
+  "retrieved_at": "2026-09-11T09:18:22.623549",
+  "parser_version": "v1.0"
+}

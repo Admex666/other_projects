@@ -1,0 +1,63 @@
+{
+  "source": "wikipedia",
+  "source_id": "1457027",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Province of Bari",
+  "raw_payload": {
+    "type": "standard",
+    "title": "Province of Bari",
+    "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Province of Bari</span></span>",
+    "namespace": {
+      "id": 0,
+      "text": ""
+    },
+    "wikibase_item": "Q16123",
+    "titles": {
+      "canonical": "Province_of_Bari",
+      "normalized": "Province of Bari",
+      "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Province of Bari</span></span>"
+    },
+    "pageid": 1457027,
+    "thumbnail": {
+      "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/30/Lungomare_%28Bari%29_01.jpg/330px-Lungomare_%28Bari%29_01.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 330,
+      "height": 205
+    },
+    "originalimage": {
+      "source": "https://upload.wikimedia.org/wikipedia/commons/3/30/Lungomare_%28Bari%29_01.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+      "width": 3645,
+      "height": 2268
+    },
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1363956542",
+    "tid": "5a164644-7ecd-11f1-ac11-8f5f6637f91c",
+    "timestamp": "2026-07-13T15:13:07Z",
+    "description": "Former province of Apulia, Italy",
+    "description_source": "local",
+    "coordinates": {
+      "lat": 41.12527778,
+      "lon": 16.86666667
+    },
+    "content_urls": {
+      "desktop": {
+        "page": "https://en.wikipedia.org/wiki/Province_of_Bari",
+        "revisions": "https://en.wikipedia.org/wiki/Province_of_Bari?action=history",
+        "edit": "https://en.wikipedia.org/wiki/Province_of_Bari?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Province_of_Bari"
+      },
+      "mobile": {
+        "page": "https://en.wikipedia.org/wiki/Province_of_Bari",
+        "revisions": "https://en.wikipedia.org/wiki/Special:History/Province_of_Bari",
+        "edit": "https://en.wikipedia.org/wiki/Province_of_Bari?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Province_of_Bari"
+      }
+    },
+    "extract": "The province of Bari was a province in the Apulia region of Italy. Its capital was the city of Bari.",
+    "extract_html": "<p>The <b>province of Bari</b> was a province in the Apulia region of Italy. Its capital was the city of Bari.</p>",
+    "dist_meters": 1009.5
+  },
+  "license": "CC-BY-SA 4.0",
+  "retrieved_at": "2026-09-11T09:23:31.532899",
+  "parser_version": "v1.0"
+}

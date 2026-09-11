@@ -1,0 +1,18 @@
+{
+  "source": "wikidata",
+  "source_id": "Q3968988",
+  "destination_id": "IT_BARI",
+  "name_candidate": "stazione di Bari Sant'Andrea",
+  "raw_payload": {
+    "qid": "Q3968988",
+    "label": "stazione di Bari Sant'Andrea",
+    "instance_of": "http://www.wikidata.org/entity/Q55488",
+    "instance_of_label": "stazione ferroviaria",
+    "location_wkt": "Point(16.830593 41.105456)",
+    "wikipedia_url": null,
+    "image_url": "http://commons.wikimedia.org/wiki/Special:FilePath/Bari%20Sant%27Andrea%20train%20station.02.jpg"
+  },
+  "license": "CC-0",
+  "retrieved_at": "2026-09-11T09:23:31.465150",
+  "parser_version": "v1.0"
+}

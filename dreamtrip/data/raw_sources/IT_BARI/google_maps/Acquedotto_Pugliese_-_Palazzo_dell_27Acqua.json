@@ -1,0 +1,18 @@
+{
+  "source": "google_maps",
+  "source_id": "Acquedotto+Pugliese+-+Palazzo+dell%27Acqua",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Acquedotto Pugliese - Palazzo dell'Acqua",
+  "raw_payload": {
+    "name": "Acquedotto Pugliese - Palazzo dell'Acqua",
+    "href": "https://www.google.com/maps/place/Acquedotto+Pugliese+-+Palazzo+dell%27Acqua/data=!4m7!3m6!1s0x1347e867a439953b:0x6f9895423bc13e62!8m2!3d41.1233695!4d16.8740233!16s%2Fg%2F11c60jtml0!19sChIJO5U5pGfoRxMRYj7BO0KVmG8?authuser=0&hl=en&g_ep=EgoyMDI2MDkwOC4wIJJjKgBIAVAD&rclk=1",
+    "rating": 4.6,
+    "review_count": 329,
+    "category": null,
+    "lat": 41.1233695,
+    "lon": 16.8740233
+  },
+  "license": "Proprietary / Web Data",
+  "retrieved_at": "2026-09-11T09:23:42.135929",
+  "parser_version": "v1.0"
+}

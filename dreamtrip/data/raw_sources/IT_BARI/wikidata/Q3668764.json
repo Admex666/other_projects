@@ -1,0 +1,18 @@
+{
+  "source": "wikidata",
+  "source_id": "Q3668764",
+  "destination_id": "IT_BARI",
+  "name_candidate": "chiesa di Maria Santissima Assunta",
+  "raw_payload": {
+    "qid": "Q3668764",
+    "label": "chiesa di Maria Santissima Assunta",
+    "instance_of": "http://www.wikidata.org/entity/Q16970",
+    "instance_of_label": "chiesa",
+    "location_wkt": "Point(16.784064 41.082806)",
+    "wikipedia_url": null,
+    "image_url": "http://commons.wikimedia.org/wiki/Special:FilePath/Chiesa%20dell%27assunta-modugno%202.jpg"
+  },
+  "license": "CC-0",
+  "retrieved_at": "2026-09-11T09:18:22.623549",
+  "parser_version": "v1.0"
+}

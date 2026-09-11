@@ -1,0 +1,18 @@
+{
+  "source": "wikidata",
+  "source_id": "Q113551067",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Masseria Prete",
+  "raw_payload": {
+    "qid": "Q113551067",
+    "label": "Masseria Prete",
+    "instance_of": "http://www.wikidata.org/entity/Q1416696",
+    "instance_of_label": "tenuta",
+    "location_wkt": "Point(16.814361 41.122879)",
+    "wikipedia_url": null,
+    "image_url": "http://commons.wikimedia.org/wiki/Special:FilePath/Bari%20-%20Masseria%20di%20adelfia%202023-09-23%2016-41-46%20001.jpg"
+  },
+  "license": "CC-0",
+  "retrieved_at": "2026-09-11T09:23:31.465150",
+  "parser_version": "v1.0"
+}

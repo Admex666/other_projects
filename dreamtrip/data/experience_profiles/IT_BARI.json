@@ -1,0 +1,155 @@
+{
+  "destination_id": "IT_BARI",
+  "city_name": "Bari",
+  "country": "Italy",
+  "total_activities_count": 266,
+  "category_distribution": {
+    "culture_history": 226,
+    "nature_viewpoint": 13,
+    "active_adventure": 12,
+    "beach_coastal": 7,
+    "food_market": 8
+  },
+  "top_experiences_summary": [
+    {
+      "entity_id": "exp_it_bari_basilica_of_st_nicholas___bari",
+      "name": "Basilica of St Nicholas | Bari",
+      "category": "culture_history",
+      "subcategory": "church_cathedral",
+      "rating": 4.8,
+      "review_count": 24035,
+      "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/af/%22Die_Basilika_San_Nicola_ist_auch_heute_noch_ein_bedeutendes_Pilgerziel%22_01.jpg/330px-%22Die_Basilika_San_Nicola_ist_auch_heute_noch_ein_bedeutendes_Pilgerziel%22_01.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "lat": 41.1303137,
+      "lon": 16.8701375,
+      "description": "The Pontifical Basilica of Saint Nicholas is a church in Bari, southern Italy, that holds wide religious significance throughout Europe and ..."
+    },
+    {
+      "entity_id": "exp_it_bari_palazzo_mincuzzi",
+      "name": "Palazzo Mincuzzi",
+      "category": "culture_history",
+      "subcategory": "castle_fortress",
+      "rating": 4.7,
+      "review_count": 1804,
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Bari_-_Palazzo_Mincuzzi_-_1.jpg/330px-Bari_-_Palazzo_Mincuzzi_-_1.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "lat": 41.1232442,
+      "lon": 16.8694458,
+      "description": "Palazzo Mincuzzi is a historic building situated in Bari, Italy...."
+    },
+    {
+      "entity_id": "exp_it_bari_teatro_margherita",
+      "name": "Teatro Margherita",
+      "category": "beach_coastal",
+      "subcategory": "public_beach",
+      "rating": 4.6,
+      "review_count": 2298,
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Teatro_Margherita_dall%27alto.jpg/330px-Teatro_Margherita_dall%27alto.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "lat": 41.1264206,
+      "lon": 16.8728911,
+      "description": "Teatro Margherita is a former theatre in the city of Bari, Apulia on the east coast of Italy. Its predecessor, a wooden structure called Var..."
+    },
+    {
+      "entity_id": "exp_it_bari_castello_svevo_di_bari",
+      "name": "Castello Svevo di Bari",
+      "category": "culture_history",
+      "subcategory": "castle_fortress",
+      "rating": 4.3,
+      "review_count": 4167,
+      "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e7/Bari_BW_2016-10-19_12-32-30.jpg/330px-Bari_BW_2016-10-19_12-32-30.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "lat": 41.127901,
+      "lon": 16.8663979,
+      "description": "The Castello Normanno-Svevo, also known as the u Castídde in the Barese dialect, is a castle in the Apulian city of Bari, Italy...."
+    },
+    {
+      "entity_id": "exp_it_bari_cathedral_of_saint_sabinus",
+      "name": "Cathedral of Saint Sabinus",
+      "category": "culture_history",
+      "subcategory": "church_cathedral",
+      "rating": 4.7,
+      "review_count": 6486,
+      "image_url": null,
+      "lat": 41.1285817,
+      "lon": 16.8687875,
+      "description": null
+    },
+    {
+      "entity_id": "exp_it_bari_russian_orthodox_church_of_sai",
+      "name": "Russian Orthodox Church of Saint Nicholas",
+      "category": "culture_history",
+      "subcategory": "church_cathedral",
+      "rating": 4.6,
+      "review_count": 1047,
+      "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fa/La_Chiesa_Russa_Ortodossa_di_Bari.jpg/330px-La_Chiesa_Russa_Ortodossa_di_Bari.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "lat": 41.1100323,
+      "lon": 16.8722299,
+      "description": "The Russian Orthodox Church of Saint Nicholas is an Eastern Orthodox church building in Bari, Italy...."
+    },
+    {
+      "entity_id": "exp_it_bari_lungomare_araldo_di_crollalanz",
+      "name": "Lungomare Araldo di Crollalanza",
+      "category": "culture_history",
+      "subcategory": "landmark",
+      "rating": 4.6,
+      "review_count": 7016,
+      "image_url": null,
+      "lat": 41.1237589,
+      "lon": 16.8762465,
+      "description": null
+    },
+    {
+      "entity_id": "exp_it_bari_parco_2_giugno",
+      "name": "Parco 2 Giugno",
+      "category": "nature_viewpoint",
+      "subcategory": "park_garden",
+      "rating": 4.2,
+      "review_count": 9897,
+      "image_url": null,
+      "lat": 41.1025005,
+      "lon": 16.8747697,
+      "description": null
+    },
+    {
+      "entity_id": "exp_it_bari_regional_directorate_of_museum",
+      "name": "Regional Directorate of Museums",
+      "category": "culture_history",
+      "subcategory": "museum",
+      "rating": 4.3,
+      "review_count": 3117,
+      "image_url": null,
+      "lat": 41.1309566,
+      "lon": 16.8688307,
+      "description": null
+    },
+    {
+      "entity_id": "exp_it_bari_bari_old_town_sea_wall",
+      "name": "Bari Old Town Sea Wall",
+      "category": "culture_history",
+      "subcategory": "landmark",
+      "rating": 4.7,
+      "review_count": 658,
+      "image_url": null,
+      "lat": 41.1278619,
+      "lon": 16.8728495,
+      "description": null
+    }
+  ],
+  "vibe_scores": {
+    "cultural_depth": 10.0,
+    "nature_scenic": 10.0,
+    "beach_leisure": 10.0,
+    "culinary_lifestyle": 10.0,
+    "active_exploration": 10.0,
+    "walkability": 10.0
+  },
+  "confidence_level": 0.92,
+  "last_synced_at": "2026-09-11T09:42:07.265022",
+  "persona_suitability": {
+    "culture_aficionado": 100,
+    "solo_explorer": 100,
+    "couples_romantic": 100,
+    "family_friendly": 100,
+    "foodie_local": 100,
+    "beach_seeker": 100
+  },
+  "rain_safe_count": 64,
+  "walkability_score": 10.0
+}

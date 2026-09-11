@@ -1,0 +1,18 @@
+{
+  "source": "wikidata",
+  "source_id": "Q779805",
+  "destination_id": "IT_BARI",
+  "name_candidate": "aeroporto di Bari-Palese",
+  "raw_payload": {
+    "qid": "Q779805",
+    "label": "aeroporto di Bari-Palese",
+    "instance_of": "http://www.wikidata.org/entity/Q94993988",
+    "instance_of_label": "aerodromo commerciale",
+    "location_wkt": "Point(16.760594444 41.138855555)",
+    "wikipedia_url": "https://en.wikipedia.org/wiki/Bari_Karol_Wojty%C5%82a_Airport",
+    "image_url": "http://commons.wikimedia.org/wiki/Special:FilePath/Bari%20Airport%20seen%20from%20sea%20closeup.jpg"
+  },
+  "license": "CC-0",
+  "retrieved_at": "2026-09-11T09:18:22.623549",
+  "parser_version": "v1.0"
+}

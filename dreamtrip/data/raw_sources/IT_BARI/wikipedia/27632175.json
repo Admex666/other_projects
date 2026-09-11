@@ -1,0 +1,63 @@
+{
+  "source": "wikipedia",
+  "source_id": "27632175",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Teatro Petruzzelli",
+  "raw_payload": {
+    "type": "standard",
+    "title": "Teatro Petruzzelli",
+    "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Teatro Petruzzelli</span></span>",
+    "namespace": {
+      "id": 0,
+      "text": ""
+    },
+    "wikibase_item": "Q845510",
+    "titles": {
+      "canonical": "Teatro_Petruzzelli",
+      "normalized": "Teatro Petruzzelli",
+      "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Teatro Petruzzelli</span></span>"
+    },
+    "pageid": 27632175,
+    "thumbnail": {
+      "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1c/Bari_-_Teatro_Petruzzelli_-_Fa%C3%A7ade.jpg/330px-Bari_-_Teatro_Petruzzelli_-_Fa%C3%A7ade.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 330,
+      "height": 220
+    },
+    "originalimage": {
+      "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1c/Bari_-_Teatro_Petruzzelli_-_Fa%C3%A7ade.jpg/3840px-Bari_-_Teatro_Petruzzelli_-_Fa%C3%A7ade.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 6062,
+      "height": 4041
+    },
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1302829099",
+    "tid": "8b0c3798-6b0f-11f0-9d8d-0ceef4188263",
+    "timestamp": "2025-07-27T17:31:35Z",
+    "description": "Opera house in Bari, Italy",
+    "description_source": "local",
+    "coordinates": {
+      "lat": 41.123542,
+      "lon": 16.872774
+    },
+    "content_urls": {
+      "desktop": {
+        "page": "https://en.wikipedia.org/wiki/Teatro_Petruzzelli",
+        "revisions": "https://en.wikipedia.org/wiki/Teatro_Petruzzelli?action=history",
+        "edit": "https://en.wikipedia.org/wiki/Teatro_Petruzzelli?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Teatro_Petruzzelli"
+      },
+      "mobile": {
+        "page": "https://en.wikipedia.org/wiki/Teatro_Petruzzelli",
+        "revisions": "https://en.wikipedia.org/wiki/Special:History/Teatro_Petruzzelli",
+        "edit": "https://en.wikipedia.org/wiki/Teatro_Petruzzelli?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Teatro_Petruzzelli"
+      }
+    },
+    "extract": "The Teatro Petruzzelli is the largest theatre of the city of Bari and the fourth Italian theatre by size.",
+    "extract_html": "<p>The <b>Teatro Petruzzelli</b> is the largest theatre of the city of Bari and the fourth Italian theatre by size.</p>",
+    "dist_meters": 720.1
+  },
+  "license": "CC-BY-SA 4.0",
+  "retrieved_at": "2026-09-11T09:23:31.532899",
+  "parser_version": "v1.0"
+}

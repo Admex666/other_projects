@@ -1,0 +1,62 @@
+{
+  "source": "wikipedia",
+  "source_id": "23235",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Pakistan",
+  "raw_payload": {
+    "type": "standard",
+    "title": "Pakistan",
+    "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Pakistan</span></span>",
+    "namespace": {
+      "id": 0,
+      "text": ""
+    },
+    "wikibase_item": "Q843",
+    "titles": {
+      "canonical": "Pakistan",
+      "normalized": "Pakistan",
+      "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Pakistan</span></span>"
+    },
+    "pageid": 23235,
+    "thumbnail": {
+      "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/32/Flag_of_Pakistan.svg/330px-Flag_of_Pakistan.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 330,
+      "height": 220
+    },
+    "originalimage": {
+      "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/32/Flag_of_Pakistan.svg/960px-Flag_of_Pakistan.svg.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 900,
+      "height": 600
+    },
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1372901922",
+    "tid": "4216b065-a719-11f1-9740-d00ccafdb887",
+    "timestamp": "2026-09-02T21:57:15Z",
+    "description": "Country in South Asia",
+    "description_source": "local",
+    "coordinates": {
+      "lat": 30,
+      "lon": 70
+    },
+    "content_urls": {
+      "desktop": {
+        "page": "https://en.wikipedia.org/wiki/Pakistan",
+        "revisions": "https://en.wikipedia.org/wiki/Pakistan?action=history",
+        "edit": "https://en.wikipedia.org/wiki/Pakistan?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Pakistan"
+      },
+      "mobile": {
+        "page": "https://en.wikipedia.org/wiki/Pakistan",
+        "revisions": "https://en.wikipedia.org/wiki/Special:History/Pakistan",
+        "edit": "https://en.wikipedia.org/wiki/Pakistan?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Pakistan"
+      }
+    },
+    "extract": "Pakistan, officially the Islamic Republic of Pakistan, is a country in South Asia. It is the fifth-most populous country, with a population of over 241.5 million, having the second-largest Muslim population in the world as of 2023. Islamabad is the nation's capital, while Karachi is its largest city and financial centre. Pakistan is the 33rd-largest country by area. Bounded by the Arabian Sea on the south, the Gulf of Oman on the southwest, and the Sir Creek on the southeast, it shares land borders with India to the east; Afghanistan to the west; Iran to the southwest; and China to the northeast. It shares a maritime border with Oman in the Gulf of Oman, and is separated from Tajikistan in the northwest by Afghanistan's narrow Wakhan Corridor.",
+    "extract_html": "<p><b>Pakistan</b>, officially the <b>Islamic Republic of Pakistan</b>, is a country in South Asia. It is the fifth-most populous country, with a population of over 241.5 million, having the second-largest Muslim population in the world as of 2023. Islamabad is the nation's capital, while Karachi is its largest city and financial centre. Pakistan is the 33rd-largest country by area. Bounded by the Arabian Sea on the south, the Gulf of Oman on the southwest, and the Sir Creek on the southeast, it shares land borders with India to the east; Afghanistan to the west; Iran to the southwest; and China to the northeast. It shares a maritime border with Oman in the Gulf of Oman, and is separated from Tajikistan in the northwest by Afghanistan's narrow Wakhan Corridor.</p>"
+  },
+  "license": "CC-BY-SA 4.0",
+  "retrieved_at": "2026-09-11T09:18:22.649874",
+  "parser_version": "v1.0"
+}

@@ -1,0 +1,61 @@
+{
+  "source": "wikipedia",
+  "source_id": "15311172",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Teatro Piccinni",
+  "raw_payload": {
+    "type": "standard",
+    "title": "Teatro Piccinni",
+    "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Teatro Piccinni</span></span>",
+    "namespace": {
+      "id": 0,
+      "text": ""
+    },
+    "wikibase_item": "Q845517",
+    "titles": {
+      "canonical": "Teatro_Piccinni",
+      "normalized": "Teatro Piccinni",
+      "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Teatro Piccinni</span></span>"
+    },
+    "pageid": 15311172,
+    "thumbnail": {
+      "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d4/Bari_teatro_piccinni.jpg/330px-Bari_teatro_piccinni.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 330,
+      "height": 248
+    },
+    "originalimage": {
+      "source": "https://upload.wikimedia.org/wikipedia/commons/d/d4/Bari_teatro_piccinni.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+      "width": 512,
+      "height": 384
+    },
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1226046900",
+    "tid": "21eb222e-1cc4-11ef-87fe-1733d0ec870a",
+    "timestamp": "2024-05-28T07:30:18Z",
+    "coordinates": {
+      "lat": 41.126274,
+      "lon": 16.867404
+    },
+    "content_urls": {
+      "desktop": {
+        "page": "https://en.wikipedia.org/wiki/Teatro_Piccinni",
+        "revisions": "https://en.wikipedia.org/wiki/Teatro_Piccinni?action=history",
+        "edit": "https://en.wikipedia.org/wiki/Teatro_Piccinni?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Teatro_Piccinni"
+      },
+      "mobile": {
+        "page": "https://en.wikipedia.org/wiki/Teatro_Piccinni",
+        "revisions": "https://en.wikipedia.org/wiki/Special:History/Teatro_Piccinni",
+        "edit": "https://en.wikipedia.org/wiki/Teatro_Piccinni?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Teatro_Piccinni"
+      }
+    },
+    "extract": "Teatro Piccinni is a theatre in the city of Bari, Apulia on the east coast of Italy. It was founded in 1854 and opened on 30 May of that year. It was named in honor of eighteenth-century composer Niccolò Piccinni who was born in Bari.",
+    "extract_html": "<p><b>Teatro Piccinni</b> is a theatre in the city of Bari, Apulia on the east coast of Italy. It was founded in 1854 and opened on 30 May of that year. It was named in honor of eighteenth-century composer Niccolò Piccinni who was born in Bari.</p>",
+    "dist_meters": 1087.4
+  },
+  "license": "CC-BY-SA 4.0",
+  "retrieved_at": "2026-09-11T09:23:31.532899",
+  "parser_version": "v1.0"
+}

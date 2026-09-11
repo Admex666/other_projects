@@ -1,0 +1,62 @@
+{
+  "source": "wikipedia",
+  "source_id": "521726",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Harar",
+  "raw_payload": {
+    "type": "standard",
+    "title": "Harar",
+    "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Harar</span></span>",
+    "namespace": {
+      "id": 0,
+      "text": ""
+    },
+    "wikibase_item": "Q190184",
+    "titles": {
+      "canonical": "Harar",
+      "normalized": "Harar",
+      "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Harar</span></span>"
+    },
+    "pageid": 521726,
+    "thumbnail": {
+      "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4a/City_Gate%2C_Harar_Jugol_%2814464345823%29.jpg/330px-City_Gate%2C_Harar_Jugol_%2814464345823%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 330,
+      "height": 402
+    },
+    "originalimage": {
+      "source": "https://upload.wikimedia.org/wikipedia/commons/4/4a/City_Gate%2C_Harar_Jugol_%2814464345823%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+      "width": 840,
+      "height": 1024
+    },
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1373444634",
+    "tid": "fa01c32e-a990-11f1-bd5a-f80a8341e50f",
+    "timestamp": "2026-09-06T01:19:16Z",
+    "description": "Capital of Harari Region, Ethiopia",
+    "description_source": "local",
+    "coordinates": {
+      "lat": 9.31111111,
+      "lon": 42.12777778
+    },
+    "content_urls": {
+      "desktop": {
+        "page": "https://en.wikipedia.org/wiki/Harar",
+        "revisions": "https://en.wikipedia.org/wiki/Harar?action=history",
+        "edit": "https://en.wikipedia.org/wiki/Harar?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Harar"
+      },
+      "mobile": {
+        "page": "https://en.wikipedia.org/wiki/Harar",
+        "revisions": "https://en.wikipedia.org/wiki/Special:History/Harar",
+        "edit": "https://en.wikipedia.org/wiki/Harar?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Harar"
+      }
+    },
+    "extract": "Harar, known historically by the indigenous as Harar-Gey or simply Gey, is a walled city in eastern Ethiopia. It is also known in Arabic as the City of Saints.",
+    "extract_html": "<p><b>Harar</b>, known historically by the indigenous as <b>Harar-Gey</b> or simply <b>Gey</b>, is a walled city in eastern Ethiopia. It is also known in Arabic as <b>the City of Saints</b>.</p>"
+  },
+  "license": "CC-BY-SA 4.0",
+  "retrieved_at": "2026-09-11T09:18:22.649874",
+  "parser_version": "v1.0"
+}

@@ -1,0 +1,21 @@
+{
+  "source": "osm",
+  "source_id": "node/5358759497",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Cippo di Strada Torre di Brengola",
+  "raw_payload": {
+    "type": "node",
+    "id": 5358759497,
+    "lat": 41.1402384,
+    "lon": 16.7517892,
+    "tags": {
+      "historic": "memorial",
+      "name": "Cippo di Strada Torre di Brengola",
+      "source": "http://www.pugliaindifesa.org/cippo-di-via-torre-brencola-a-palese.html",
+      "year": "1669"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

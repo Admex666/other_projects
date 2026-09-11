@@ -1,0 +1,18 @@
+{
+  "source": "google_maps",
+  "source_id": "Archaeological+Museum+of+Santa+Scolastica",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Archaeological Museum of Santa Scolastica",
+  "raw_payload": {
+    "name": "Archaeological Museum of Santa Scolastica",
+    "href": "https://www.google.com/maps/place/Archaeological+Museum+of+Santa+Scolastica/data=!4m7!3m6!1s0x1347e87cabf6fc13:0x5e836b604794a838!8m2!3d41.1321122!4d16.8710272!16s%2Fg%2F1260_yss1!19sChIJE_z2q3zoRxMROKiUR2Brg14?authuser=0&hl=en&g_ep=EgoyMDI2MDkwOC4wIJJjKgBIAVAD&rclk=1",
+    "rating": 4.6,
+    "review_count": 884,
+    "category": null,
+    "lat": 41.1321122,
+    "lon": 16.8710272
+  },
+  "license": "Proprietary / Web Data",
+  "retrieved_at": "2026-09-11T09:23:42.135929",
+  "parser_version": "v1.0"
+}

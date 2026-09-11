@@ -1,0 +1,23 @@
+{
+  "source": "osm",
+  "source_id": "node/1770255640",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Porto di Santo Spirito",
+  "raw_payload": {
+    "type": "node",
+    "id": 1770255640,
+    "lat": 41.1644193,
+    "lon": 16.7511273,
+    "tags": {
+      "leisure": "marina",
+      "name": "Porto di Santo Spirito",
+      "seamark:harbour:category": "marina",
+      "seamark:name": "Porto di Santo Spirito",
+      "seamark:type": "harbour",
+      "website": "http://www.portosantospirito.it/"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

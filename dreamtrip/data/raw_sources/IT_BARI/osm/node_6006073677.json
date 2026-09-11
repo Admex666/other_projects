@@ -1,0 +1,19 @@
+{
+  "source": "osm",
+  "source_id": "node/6006073677",
+  "destination_id": "IT_BARI",
+  "name_candidate": "BLUorg",
+  "raw_payload": {
+    "type": "node",
+    "id": 6006073677,
+    "lat": 41.121101,
+    "lon": 16.8756672,
+    "tags": {
+      "amenity": "arts_centre",
+      "name": "BLUorg"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

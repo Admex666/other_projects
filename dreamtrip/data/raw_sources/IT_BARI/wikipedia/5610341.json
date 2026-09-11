@@ -1,0 +1,63 @@
+{
+  "source": "wikipedia",
+  "source_id": "5610341",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Basilica of Saint Nicholas, Bari",
+  "raw_payload": {
+    "type": "standard",
+    "title": "Basilica of Saint Nicholas, Bari",
+    "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Basilica of Saint Nicholas, Bari</span></span>",
+    "namespace": {
+      "id": 0,
+      "text": ""
+    },
+    "wikibase_item": "Q550514",
+    "titles": {
+      "canonical": "Basilica_of_Saint_Nicholas,_Bari",
+      "normalized": "Basilica of Saint Nicholas, Bari",
+      "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Basilica of Saint Nicholas, Bari</span></span>"
+    },
+    "pageid": 5610341,
+    "thumbnail": {
+      "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/af/%22Die_Basilika_San_Nicola_ist_auch_heute_noch_ein_bedeutendes_Pilgerziel%22_01.jpg/330px-%22Die_Basilika_San_Nicola_ist_auch_heute_noch_ein_bedeutendes_Pilgerziel%22_01.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 330,
+      "height": 181
+    },
+    "originalimage": {
+      "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/af/%22Die_Basilika_San_Nicola_ist_auch_heute_noch_ein_bedeutendes_Pilgerziel%22_01.jpg/3840px-%22Die_Basilika_San_Nicola_ist_auch_heute_noch_ein_bedeutendes_Pilgerziel%22_01.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 5818,
+      "height": 3197
+    },
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1367240274",
+    "tid": "7a17959f-8df7-11f1-80a3-0bc404e3d9f9",
+    "timestamp": "2026-08-01T22:22:27Z",
+    "description": "Church in Bari, Italy",
+    "description_source": "local",
+    "coordinates": {
+      "lat": 41.13026111,
+      "lon": 16.87028056
+    },
+    "content_urls": {
+      "desktop": {
+        "page": "https://en.wikipedia.org/wiki/Basilica_of_Saint_Nicholas%2C_Bari",
+        "revisions": "https://en.wikipedia.org/wiki/Basilica_of_Saint_Nicholas%2C_Bari?action=history",
+        "edit": "https://en.wikipedia.org/wiki/Basilica_of_Saint_Nicholas%2C_Bari?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Basilica_of_Saint_Nicholas%2C_Bari"
+      },
+      "mobile": {
+        "page": "https://en.wikipedia.org/wiki/Basilica_of_Saint_Nicholas%2C_Bari",
+        "revisions": "https://en.wikipedia.org/wiki/Special:History/Basilica_of_Saint_Nicholas%2C_Bari",
+        "edit": "https://en.wikipedia.org/wiki/Basilica_of_Saint_Nicholas%2C_Bari?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Basilica_of_Saint_Nicholas%2C_Bari"
+      }
+    },
+    "extract": "The Pontifical Basilica of Saint Nicholas is a church in Bari, southern Italy, that holds wide religious significance throughout Europe and the Christian world.",
+    "extract_html": "<p>The <b>Pontifical Basilica of Saint Nicholas</b> is a church in Bari, southern Italy, that holds wide religious significance throughout Europe and the Christian world.</p>",
+    "dist_meters": 1469.7
+  },
+  "license": "CC-BY-SA 4.0",
+  "retrieved_at": "2026-09-11T09:23:31.532899",
+  "parser_version": "v1.0"
+}

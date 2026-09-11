@@ -1,0 +1,34 @@
+{
+  "source": "osm",
+  "source_id": "node/676344208",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Faro Punta San Cataldo",
+  "raw_payload": {
+    "type": "node",
+    "id": 676344208,
+    "lat": 41.1391069,
+    "lon": 16.8450504,
+    "tags": {
+      "man_made": "lighthouse",
+      "name": "Faro Punta San Cataldo",
+      "seamark:information": "Oc.R. shown about 0.7 km. WSW.Reserve light range 18M.",
+      "seamark:light:character": "Fl",
+      "seamark:light:colour": "white",
+      "seamark:light:group": "3",
+      "seamark:light:height": "66",
+      "seamark:light:period": "20",
+      "seamark:light:range": "24",
+      "seamark:light:reference": "E 2232",
+      "seamark:light:sequence": "0.2+(3.8)+0.2+(3.8)+0.2+(11.8)",
+      "seamark:name": "Punta San Cataldo",
+      "seamark:type": "light_major",
+      "source": "US NGA Pub. 113. 2010-10-22.",
+      "tourism": "attraction",
+      "wikidata": "Q3378175",
+      "wikipedia": "en:Bari Light"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

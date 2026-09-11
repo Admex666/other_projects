@@ -1,0 +1,18 @@
+{
+  "source": "wikidata",
+  "source_id": "Q30290175",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Istituto di Ricerca sulle Acque",
+  "raw_payload": {
+    "qid": "Q30290175",
+    "label": "Istituto di Ricerca sulle Acque",
+    "instance_of": "http://www.wikidata.org/entity/Q13226383",
+    "instance_of_label": "servizio",
+    "location_wkt": "Point(16.815625 41.117346)",
+    "wikipedia_url": null,
+    "image_url": null
+  },
+  "license": "CC-0",
+  "retrieved_at": "2026-09-11T09:23:31.465150",
+  "parser_version": "v1.0"
+}

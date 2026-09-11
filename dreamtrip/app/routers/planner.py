@@ -59,9 +59,10 @@ class MasterPlannerIntake(BaseModel):
     hotel_types: Optional[List[str]] = None
     breakfast: bool = False
     amenities: Optional[List[str]] = None
-    weight_total_cost: float = 34.0
-    weight_weather: float = 33.0
-    weight_safety: float = 33.0
+    weight_total_cost: float = 25.0
+    weight_weather: float = 25.0
+    weight_safety: float = 25.0
+    weight_experience: float = 25.0
     ahp_comparisons: Optional[Dict[str, float]] = None
     ahp_weights: Optional[Dict[str, float]] = None
     dummy_mode: Optional[bool] = False
@@ -147,9 +148,10 @@ def run_planner_destinations_task(user_key: str, data: MasterPlannerIntake, is_d
             planner_dest_status[user_key]["status_text"] = txt
 
         weights = data.ahp_weights or {
-            "total_cost": getattr(data, "weight_total_cost", 34.0),
+            "total_cost": getattr(data, "weight_total_cost", 25.0),
             "weather": data.weight_weather,
-            "safety": data.weight_safety
+            "safety": data.weight_safety,
+            "experience": getattr(data, "weight_experience", 25.0)
         }
 
         m_int = 9

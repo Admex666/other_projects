@@ -1,0 +1,19 @@
+{
+  "source": "osm",
+  "source_id": "node/11341609515",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Porta del Portello",
+  "raw_payload": {
+    "type": "node",
+    "id": 11341609515,
+    "lat": 41.0819971,
+    "lon": 16.7792355,
+    "tags": {
+      "historic": "city_gate",
+      "name": "Porta del Portello"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

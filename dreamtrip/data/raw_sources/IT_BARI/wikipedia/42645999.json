@@ -1,0 +1,63 @@
+{
+  "source": "wikipedia",
+  "source_id": "42645999",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Bari Parco Sud railway station",
+  "raw_payload": {
+    "type": "standard",
+    "title": "Bari Parco Sud railway station",
+    "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Bari Parco Sud railway station</span></span>",
+    "namespace": {
+      "id": 0,
+      "text": ""
+    },
+    "wikibase_item": "Q3968986",
+    "titles": {
+      "canonical": "Bari_Parco_Sud_railway_station",
+      "normalized": "Bari Parco Sud railway station",
+      "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Bari Parco Sud railway station</span></span>"
+    },
+    "pageid": 42645999,
+    "thumbnail": {
+      "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d4/Stazione_di_Bari_Parco_Sud_-_Ingresso_da_Via_Liside_%28particolare_stazione%29.jpg/330px-Stazione_di_Bari_Parco_Sud_-_Ingresso_da_Via_Liside_%28particolare_stazione%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 330,
+      "height": 248
+    },
+    "originalimage": {
+      "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d4/Stazione_di_Bari_Parco_Sud_-_Ingresso_da_Via_Liside_%28particolare_stazione%29.jpg/3840px-Stazione_di_Bari_Parco_Sud_-_Ingresso_da_Via_Liside_%28particolare_stazione%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 4032,
+      "height": 3024
+    },
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1370801705",
+    "tid": "18a0903f-9eaa-11f1-aa03-ff7429beaaaa",
+    "timestamp": "2026-08-23T04:21:22Z",
+    "description": "Railway station in Bari, Italy",
+    "description_source": "local",
+    "coordinates": {
+      "lat": 41.11472222,
+      "lon": 16.89805556
+    },
+    "content_urls": {
+      "desktop": {
+        "page": "https://en.wikipedia.org/wiki/Bari_Parco_Sud_railway_station",
+        "revisions": "https://en.wikipedia.org/wiki/Bari_Parco_Sud_railway_station?action=history",
+        "edit": "https://en.wikipedia.org/wiki/Bari_Parco_Sud_railway_station?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Bari_Parco_Sud_railway_station"
+      },
+      "mobile": {
+        "page": "https://en.wikipedia.org/wiki/Bari_Parco_Sud_railway_station",
+        "revisions": "https://en.wikipedia.org/wiki/Special:History/Bari_Parco_Sud_railway_station",
+        "edit": "https://en.wikipedia.org/wiki/Bari_Parco_Sud_railway_station?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Bari_Parco_Sud_railway_station"
+      }
+    },
+    "extract": "Bari Parco Sud is a railway station in the Italian city of Bari, in the Province of Bari, Apulia. The station opened on 14 December 2004 and lies on the Adriatic Railway (Ancona–Lecce). The train services are operated by Trenitalia.",
+    "extract_html": "<p><b>Bari Parco Sud</b> is a railway station in the Italian city of Bari, in the Province of Bari, Apulia. The station opened on 14 December 2004 and lies on the Adriatic Railway (Ancona–Lecce). The train services are operated by Trenitalia.</p>",
+    "dist_meters": 2207
+  },
+  "license": "CC-BY-SA 4.0",
+  "retrieved_at": "2026-09-11T09:23:31.532899",
+  "parser_version": "v1.0"
+}

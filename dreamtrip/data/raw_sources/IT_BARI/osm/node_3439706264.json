@@ -1,0 +1,19 @@
+{
+  "source": "osm",
+  "source_id": "node/3439706264",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Chiesa dell'anno 1000",
+  "raw_payload": {
+    "type": "node",
+    "id": 3439706264,
+    "lat": 41.1238187,
+    "lon": 16.7512683,
+    "tags": {
+      "name": "Chiesa dell'anno 1000",
+      "tourism": "viewpoint"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

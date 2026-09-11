@@ -1,0 +1,18 @@
+{
+  "source": "google_maps",
+  "source_id": "Castello+Svevo+di+Bari",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Castello Svevo di Bari",
+  "raw_payload": {
+    "name": "Castello Svevo di Bari",
+    "href": "https://www.google.com/maps/place/Castello+Svevo+di+Bari/data=!4m7!3m6!1s0x1347e8621723fe7f:0xd7dccf940ba920c2!8m2!3d41.127901!4d16.8663979!16s%2Fg%2F11f3jfkpx5!19sChIJf_4jF2LoRxMRwiCpC5TP3Nc?authuser=0&hl=en&g_ep=EgoyMDI2MDkwOC4wIJJjKgBIAVAD&rclk=1",
+    "rating": 4.3,
+    "review_count": 4167,
+    "category": null,
+    "lat": 41.127901,
+    "lon": 16.8663979
+  },
+  "license": "Proprietary / Web Data",
+  "retrieved_at": "2026-09-11T09:23:42.135929",
+  "parser_version": "v1.0"
+}

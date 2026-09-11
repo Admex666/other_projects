@@ -1,0 +1,58 @@
+{
+  "source": "wikipedia",
+  "source_id": "159620",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Tourism in Italy",
+  "raw_payload": {
+    "type": "standard",
+    "title": "Tourism in Italy",
+    "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Tourism in Italy</span></span>",
+    "namespace": {
+      "id": 0,
+      "text": ""
+    },
+    "wikibase_item": "Q2166497",
+    "titles": {
+      "canonical": "Tourism_in_Italy",
+      "normalized": "Tourism in Italy",
+      "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Tourism in Italy</span></span>"
+    },
+    "pageid": 159620,
+    "thumbnail": {
+      "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/de/Colosseo_2020.jpg/330px-Colosseo_2020.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 330,
+      "height": 231
+    },
+    "originalimage": {
+      "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/de/Colosseo_2020.jpg/3840px-Colosseo_2020.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 12051,
+      "height": 8442
+    },
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1367476499",
+    "tid": "120c9fc7-8f18-11f1-9634-29b4d3186b80",
+    "timestamp": "2026-08-03T08:48:17Z",
+    "description": "",
+    "description_source": "local",
+    "content_urls": {
+      "desktop": {
+        "page": "https://en.wikipedia.org/wiki/Tourism_in_Italy",
+        "revisions": "https://en.wikipedia.org/wiki/Tourism_in_Italy?action=history",
+        "edit": "https://en.wikipedia.org/wiki/Tourism_in_Italy?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Tourism_in_Italy"
+      },
+      "mobile": {
+        "page": "https://en.wikipedia.org/wiki/Tourism_in_Italy",
+        "revisions": "https://en.wikipedia.org/wiki/Special:History/Tourism_in_Italy",
+        "edit": "https://en.wikipedia.org/wiki/Tourism_in_Italy?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Tourism_in_Italy"
+      }
+    },
+    "extract": "Tourism in Italy is one of the largest economic sectors of the country. With 61,5 million international tourists in 2025, Italy is the fifth-most visited country in international tourism arrivals. According to 2018 estimates by the Bank of Italy, the tourism sector directly generates more than five per cent of the national GDP and represents over six per cent of the employed. As of 2023, Italy is the world's ninth-largest travel and tourism market, with the sector contributing approximately $231.3 billion to the country's GDP.",
+    "extract_html": "<p><b>Tourism in Italy</b> is one of the largest economic sectors of the country. With 61,5 million international tourists in 2025, Italy is the fifth-most visited country in international tourism arrivals. According to 2018 estimates by the Bank of Italy, the tourism sector directly generates more than five per cent of the national GDP and represents over six per cent of the employed. As of 2023, Italy is the world's ninth-largest travel and tourism market, with the sector contributing approximately $231.3 billion to the country's GDP.</p>"
+  },
+  "license": "CC-BY-SA 4.0",
+  "retrieved_at": "2026-09-11T09:18:22.649874",
+  "parser_version": "v1.0"
+}

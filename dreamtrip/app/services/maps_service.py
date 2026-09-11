@@ -338,7 +338,49 @@ def get_city_pois(city_name: str, city_id: str, lat: float, lng: float, bypass_c
             if pois_list:
                 return pois_list
                 
-    # 2. Új adatok lekérése
+    # 2. Check Optivoya Experience & Activity Engine (Real Scraped & Verified Entities)
+    try:
+        from app.services.experience.cache import experience_cache
+        dest_candidate = city_id.upper()
+        if "_" not in dest_candidate:
+            dest_candidate = f"IT_{city_name.upper().replace(' ', '_')}" if "bari" in city_name.lower() else f"XX_{city_name.upper().replace(' ', '_')}"
+        exp_entities = experience_cache.get_destination_entities(dest_candidate)
+        if not exp_entities and "bari" in city_name.lower():
+            exp_entities = experience_cache.get_destination_entities("IT_BARI")
+
+        if exp_entities:
+            print(f"[INFO] Using real Optivoya Experience Engine activities for {city_name} ({len(exp_entities)} places)!")
+            pois = []
+            for e in exp_entities:
+                e_cat = e.get("category", "")
+                sub = e.get("subcategory", "")
+                if "beach" in e_cat or "nature" in e_cat or "viewpoint" in sub:
+                    poi_type = "viewpoint"
+                elif "food" in e_cat or "market" in sub:
+                    poi_type = "restaurant"
+                elif "cafe" in sub:
+                    poi_type = "cafe"
+                else:
+                    poi_type = "attraction"
+
+                pois.append(POI(
+                    id=e.get("entity_id"),
+                    city_id=city_id,
+                    name=e.get("canonical_name"),
+                    type=poi_type,
+                    rating=e.get("rating") or 4.5,
+                    user_ratings_total=e.get("review_count") or 100,
+                    price_level=e.get("price_level", "moderate"),
+                    opening_hours=standard_hours,
+                    location=POILocation(lat=e.get("lat") or lat, lng=e.get("lon") or lng),
+                    image_url=e.get("image_urls", [None])[0] if e.get("image_urls") else "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+                    address=f"{city_name}, Italy"
+                ))
+            return pois
+    except Exception as e:
+        print(f"[WARN] Experience Engine POI lookup fallback: {e}")
+
+    # 3. Új adatok lekérése külső Google API-ból vagy Mock
     api_key = get_google_maps_api_key()
     
     try:

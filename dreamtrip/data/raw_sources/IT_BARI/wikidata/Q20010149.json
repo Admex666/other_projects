@@ -1,0 +1,18 @@
+{
+  "source": "wikidata",
+  "source_id": "Q20010149",
+  "destination_id": "IT_BARI",
+  "name_candidate": "centrale termoelettrica Bari",
+  "raw_payload": {
+    "qid": "Q20010149",
+    "label": "centrale termoelettrica Bari",
+    "instance_of": "http://www.wikidata.org/entity/Q200297",
+    "instance_of_label": "centrale termoelettrica",
+    "location_wkt": "Point(16.835136111 41.117272222)",
+    "wikipedia_url": null,
+    "image_url": null
+  },
+  "license": "CC-0",
+  "retrieved_at": "2026-09-11T09:23:31.465150",
+  "parser_version": "v1.0"
+}

@@ -1,0 +1,58 @@
+{
+  "source": "wikipedia",
+  "source_id": "378928",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Conversano",
+  "raw_payload": {
+    "type": "standard",
+    "title": "Conversano",
+    "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Conversano</span></span>",
+    "namespace": {
+      "id": 0,
+      "text": ""
+    },
+    "wikibase_item": "Q51825",
+    "titles": {
+      "canonical": "Conversano",
+      "normalized": "Conversano",
+      "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Conversano</span></span>"
+    },
+    "pageid": 378928,
+    "thumbnail": {
+      "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b7/Conversano-Castellofotoaerea.jpg/330px-Conversano-Castellofotoaerea.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 330,
+      "height": 195
+    },
+    "originalimage": {
+      "source": "https://upload.wikimedia.org/wikipedia/commons/b/b7/Conversano-Castellofotoaerea.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+      "width": 1510,
+      "height": 890
+    },
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1346515634",
+    "tid": "23923fa4-2da0-11f1-a2fc-c45c0c4353a1",
+    "timestamp": "2026-04-01T07:55:24Z",
+    "description": "Comune in Apulia, Italy",
+    "description_source": "local",
+    "content_urls": {
+      "desktop": {
+        "page": "https://en.wikipedia.org/wiki/Conversano",
+        "revisions": "https://en.wikipedia.org/wiki/Conversano?action=history",
+        "edit": "https://en.wikipedia.org/wiki/Conversano?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Conversano"
+      },
+      "mobile": {
+        "page": "https://en.wikipedia.org/wiki/Conversano",
+        "revisions": "https://en.wikipedia.org/wiki/Special:History/Conversano",
+        "edit": "https://en.wikipedia.org/wiki/Conversano?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Conversano"
+      }
+    },
+    "extract": "Conversano is an ancient town and comune in the Metropolitan City of Bari, Apulia, south-eastern Italy. It is 30 kilometres (19 mi) southeast of Bari and 7 kilometres (4 mi) from the Adriatic coast, at 219 metres (719 ft) above sea level.",
+    "extract_html": "<p><b>Conversano</b> is an ancient town and <i>comune</i> in the Metropolitan City of Bari, Apulia, south-eastern Italy. It is 30 kilometres (19 mi) southeast of Bari and 7 kilometres (4 mi) from the Adriatic coast, at 219 metres (719 ft) above sea level.</p>"
+  },
+  "license": "CC-BY-SA 4.0",
+  "retrieved_at": "2026-09-11T09:18:22.649874",
+  "parser_version": "v1.0"
+}

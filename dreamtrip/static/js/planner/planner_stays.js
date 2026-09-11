@@ -272,8 +272,8 @@
                 });
             }
 
-            if (window.PlannerSummary) {
-                window.PlannerSummary.renderFinalSummary();
+            if (window.PlannerActivities) {
+                window.PlannerActivities.initActivities();
             }
             state.setStep(4);
         },

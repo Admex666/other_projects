@@ -1,0 +1,18 @@
+{
+  "source": "wikidata",
+  "source_id": "Q113359337",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Biblioteca Maurogiovanni",
+  "raw_payload": {
+    "qid": "Q113359337",
+    "label": "Biblioteca Maurogiovanni",
+    "instance_of": "http://www.wikidata.org/entity/Q1076099",
+    "instance_of_label": "biblioteca scolastica",
+    "location_wkt": "Point(16.8723695 41.0780603)",
+    "wikipedia_url": null,
+    "image_url": null
+  },
+  "license": "CC-0",
+  "retrieved_at": "2026-09-11T09:23:31.465150",
+  "parser_version": "v1.0"
+}

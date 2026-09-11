@@ -1,0 +1,19 @@
+{
+  "source": "osm",
+  "source_id": "node/6509042585",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Arco",
+  "raw_payload": {
+    "type": "node",
+    "id": 6509042585,
+    "lat": 41.1311358,
+    "lon": 16.8700155,
+    "tags": {
+      "name": "Arco",
+      "tourism": "attraction"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

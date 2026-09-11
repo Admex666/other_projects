@@ -1,0 +1,19 @@
+{
+  "source": "osm",
+  "source_id": "node/11341609504",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Porta della Staccata",
+  "raw_payload": {
+    "type": "node",
+    "id": 11341609504,
+    "lat": 41.0806836,
+    "lon": 16.7826905,
+    "tags": {
+      "historic": "city_gate",
+      "name": "Porta della Staccata"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

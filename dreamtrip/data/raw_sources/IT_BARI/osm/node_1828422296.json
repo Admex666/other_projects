@@ -1,0 +1,19 @@
+{
+  "source": "osm",
+  "source_id": "node/1828422296",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Piccolo teatro",
+  "raw_payload": {
+    "type": "node",
+    "id": 1828422296,
+    "lat": 41.112942,
+    "lon": 16.8717853,
+    "tags": {
+      "amenity": "theatre",
+      "name": "Piccolo teatro"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

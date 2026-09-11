@@ -1,0 +1,20 @@
+{
+  "source": "osm",
+  "source_id": "node/7054772024",
+  "destination_id": "IT_BARI",
+  "name_candidate": "tutti i caduti 2 guerra moandiale",
+  "raw_payload": {
+    "type": "node",
+    "id": 7054772024,
+    "lat": 41.0739408,
+    "lon": 16.8705299,
+    "tags": {
+      "historic": "memorial",
+      "memorial": "statue",
+      "name": "tutti i caduti 2 guerra moandiale"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

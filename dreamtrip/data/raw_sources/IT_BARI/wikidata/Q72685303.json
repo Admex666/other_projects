@@ -1,0 +1,18 @@
+{
+  "source": "wikidata",
+  "source_id": "Q72685303",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Cittadella Mediterranea della Scienza",
+  "raw_payload": {
+    "qid": "Q72685303",
+    "label": "Cittadella Mediterranea della Scienza",
+    "instance_of": "http://www.wikidata.org/entity/Q33506",
+    "instance_of_label": "museo",
+    "location_wkt": "Point(16.817342 41.123085)",
+    "wikipedia_url": null,
+    "image_url": null
+  },
+  "license": "CC-0",
+  "retrieved_at": "2026-09-11T09:23:31.465150",
+  "parser_version": "v1.0"
+}

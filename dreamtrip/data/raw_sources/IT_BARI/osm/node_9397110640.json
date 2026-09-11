@@ -1,0 +1,25 @@
+{
+  "source": "osm",
+  "source_id": "node/9397110640",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Spazio Microba",
+  "raw_payload": {
+    "type": "node",
+    "id": 9397110640,
+    "lat": 41.1273836,
+    "lon": 16.8625988,
+    "tags": {
+      "addr:city": "Bari",
+      "addr:housenumber": "46",
+      "addr:postcode": "70122",
+      "addr:street": "Via Giambattista Bonazzi",
+      "fee": "yes",
+      "name": "Spazio Microba",
+      "operator": "microba.it",
+      "tourism": "gallery"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

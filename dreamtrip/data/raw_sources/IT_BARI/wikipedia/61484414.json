@@ -1,0 +1,62 @@
+{
+  "source": "wikipedia",
+  "source_id": "61484414",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Miramare di Rimini",
+  "raw_payload": {
+    "type": "standard",
+    "title": "Miramare di Rimini",
+    "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Miramare di Rimini</span></span>",
+    "namespace": {
+      "id": 0,
+      "text": ""
+    },
+    "wikibase_item": "Q3858773",
+    "titles": {
+      "canonical": "Miramare_di_Rimini",
+      "normalized": "Miramare di Rimini",
+      "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Miramare di Rimini</span></span>"
+    },
+    "pageid": 61484414,
+    "thumbnail": {
+      "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/df/Miramare%2C_47924_Rimini_RN%2C_Italy_-_panoramio.jpg/330px-Miramare%2C_47924_Rimini_RN%2C_Italy_-_panoramio.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 330,
+      "height": 186
+    },
+    "originalimage": {
+      "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/df/Miramare%2C_47924_Rimini_RN%2C_Italy_-_panoramio.jpg/3840px-Miramare%2C_47924_Rimini_RN%2C_Italy_-_panoramio.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 4888,
+      "height": 2756
+    },
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1370948438",
+    "tid": "5bf80f3d-9f3d-11f1-b639-e73bf5e65ae4",
+    "timestamp": "2026-08-23T21:55:31Z",
+    "description": "Suburb of Rimini, Italy",
+    "description_source": "local",
+    "coordinates": {
+      "lat": 44.0302,
+      "lon": 12.6183
+    },
+    "content_urls": {
+      "desktop": {
+        "page": "https://en.wikipedia.org/wiki/Miramare_di_Rimini",
+        "revisions": "https://en.wikipedia.org/wiki/Miramare_di_Rimini?action=history",
+        "edit": "https://en.wikipedia.org/wiki/Miramare_di_Rimini?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Miramare_di_Rimini"
+      },
+      "mobile": {
+        "page": "https://en.wikipedia.org/wiki/Miramare_di_Rimini",
+        "revisions": "https://en.wikipedia.org/wiki/Special:History/Miramare_di_Rimini",
+        "edit": "https://en.wikipedia.org/wiki/Miramare_di_Rimini?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Miramare_di_Rimini"
+      }
+    },
+    "extract": "Miramare di Rimini, more commonly known simply as Miramare, is the southernmost suburb and frazione of the city of Rimini, Italy. Situated on the Adriatic coast, the seaside resort lies 5 km (3.1 mi) southeast of Rimini's city centre and borders the municipality of Riccione.",
+    "extract_html": "<p><b>Miramare di Rimini</b>, more commonly known simply as <b>Miramare</b>, is the southernmost suburb and <span><i lang=\"it\">frazione</i></span> of the city of Rimini, Italy. Situated on the Adriatic coast, the seaside resort lies 5 km (3.1 mi) southeast of Rimini's city centre and borders the municipality of Riccione.</p>"
+  },
+  "license": "CC-BY-SA 4.0",
+  "retrieved_at": "2026-09-11T09:18:22.649874",
+  "parser_version": "v1.0"
+}

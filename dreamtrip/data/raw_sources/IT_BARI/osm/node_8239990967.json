@@ -1,0 +1,21 @@
+{
+  "source": "osm",
+  "source_id": "node/8239990967",
+  "destination_id": "IT_BARI",
+  "name_candidate": "San Padre Pio da Pietrelcina",
+  "raw_payload": {
+    "type": "node",
+    "id": 8239990967,
+    "lat": 41.0411484,
+    "lon": 16.8810001,
+    "tags": {
+      "denomination": "catholic",
+      "historic": "monument",
+      "name": "San Padre Pio da Pietrelcina",
+      "religion": "christian"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

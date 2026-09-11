@@ -1,0 +1,18 @@
+{
+  "source": "wikidata",
+  "source_id": "Q16609166",
+  "destination_id": "IT_BARI",
+  "name_candidate": "stazione di Europa",
+  "raw_payload": {
+    "qid": "Q16609166",
+    "label": "stazione di Europa",
+    "instance_of": "http://www.wikidata.org/entity/Q22808403",
+    "instance_of_label": "stazione sotterranea",
+    "location_wkt": "Point(16.7814 41.1353)",
+    "wikipedia_url": "https://en.wikipedia.org/wiki/Bari_Europa_railway_station",
+    "image_url": "http://commons.wikimedia.org/wiki/Special:FilePath/Bari%20-%20stazione%20ferroviaria%20Europa.jpg"
+  },
+  "license": "CC-0",
+  "retrieved_at": "2026-09-11T09:23:31.465150",
+  "parser_version": "v1.0"
+}

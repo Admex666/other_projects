@@ -1,0 +1,62 @@
+{
+  "source": "wikipedia",
+  "source_id": "3238720",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Riccione",
+  "raw_payload": {
+    "type": "standard",
+    "title": "Riccione",
+    "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Riccione</span></span>",
+    "namespace": {
+      "id": 0,
+      "text": ""
+    },
+    "wikibase_item": "Q111888",
+    "titles": {
+      "canonical": "Riccione",
+      "normalized": "Riccione",
+      "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Riccione</span></span>"
+    },
+    "pageid": 3238720,
+    "thumbnail": {
+      "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/68/La_costa_di_Riccione.jpg/330px-La_costa_di_Riccione.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 330,
+      "height": 160
+    },
+    "originalimage": {
+      "source": "https://upload.wikimedia.org/wikipedia/commons/6/68/La_costa_di_Riccione.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+      "width": 1920,
+      "height": 933
+    },
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1370417532",
+    "tid": "5613e923-9cfd-11f1-9c0f-e8149e7252dc",
+    "timestamp": "2026-08-21T01:12:11Z",
+    "description": "Comune in Emilia-Romagna, Italy",
+    "description_source": "local",
+    "coordinates": {
+      "lat": 44,
+      "lon": 12.65
+    },
+    "content_urls": {
+      "desktop": {
+        "page": "https://en.wikipedia.org/wiki/Riccione",
+        "revisions": "https://en.wikipedia.org/wiki/Riccione?action=history",
+        "edit": "https://en.wikipedia.org/wiki/Riccione?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Riccione"
+      },
+      "mobile": {
+        "page": "https://en.wikipedia.org/wiki/Riccione",
+        "revisions": "https://en.wikipedia.org/wiki/Special:History/Riccione",
+        "edit": "https://en.wikipedia.org/wiki/Riccione?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Riccione"
+      }
+    },
+    "extract": "Riccione is a comune (municipality) in the Province of Rimini, Emilia-Romagna, northern Italy.",
+    "extract_html": "<p><b>Riccione</b> is a <span><i lang=\"it\">comune</i></span> (municipality) in the Province of Rimini, Emilia-Romagna, northern Italy.</p>"
+  },
+  "license": "CC-BY-SA 4.0",
+  "retrieved_at": "2026-09-11T09:18:22.649874",
+  "parser_version": "v1.0"
+}

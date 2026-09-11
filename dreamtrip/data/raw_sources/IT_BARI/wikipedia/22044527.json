@@ -1,0 +1,63 @@
+{
+  "source": "wikipedia",
+  "source_id": "22044527",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Bari Cathedral",
+  "raw_payload": {
+    "type": "standard",
+    "title": "Bari Cathedral",
+    "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Bari Cathedral</span></span>",
+    "namespace": {
+      "id": 0,
+      "text": ""
+    },
+    "wikibase_item": "Q383884",
+    "titles": {
+      "canonical": "Bari_Cathedral",
+      "normalized": "Bari Cathedral",
+      "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Bari Cathedral</span></span>"
+    },
+    "pageid": 22044527,
+    "thumbnail": {
+      "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/26/Bari_Cathedral%2C_Italy.jpg/330px-Bari_Cathedral%2C_Italy.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 330,
+      "height": 236
+    },
+    "originalimage": {
+      "source": "https://upload.wikimedia.org/wikipedia/commons/2/26/Bari_Cathedral%2C_Italy.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+      "width": 3110,
+      "height": 2221
+    },
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1374091877",
+    "tid": "7b0ad34d-ac89-11f1-b742-1082ddcd8593",
+    "timestamp": "2026-09-09T20:03:10Z",
+    "description": "Cathedral in Bari, Apulia, Italy",
+    "description_source": "local",
+    "coordinates": {
+      "lat": 41.128532,
+      "lon": 16.868943
+    },
+    "content_urls": {
+      "desktop": {
+        "page": "https://en.wikipedia.org/wiki/Bari_Cathedral",
+        "revisions": "https://en.wikipedia.org/wiki/Bari_Cathedral?action=history",
+        "edit": "https://en.wikipedia.org/wiki/Bari_Cathedral?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Bari_Cathedral"
+      },
+      "mobile": {
+        "page": "https://en.wikipedia.org/wiki/Bari_Cathedral",
+        "revisions": "https://en.wikipedia.org/wiki/Special:History/Bari_Cathedral",
+        "edit": "https://en.wikipedia.org/wiki/Bari_Cathedral?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Bari_Cathedral"
+      }
+    },
+    "extract": "Bari Cathedral, or Cathedral of Saint Sabinus, is the cathedral of Bari, in Apulia, southern Italy. The cathedral is the seat of the Archbishop of Bari-Bitonto, as it was previously of the archbishops, earlier bishops, of Bari. It is dedicated to Saint Sabinus, a bishop of Canosa, whose relics were brought here in the 9th century. It is senior to, though less famous than, Apulia's Basilica of St Nicholas.",
+    "extract_html": "<p><b>Bari Cathedral</b>, or <b>Cathedral of Saint Sabinus</b>, is the cathedral of Bari, in Apulia, southern Italy. The cathedral is the seat of the Archbishop of Bari-Bitonto, as it was previously of the archbishops, earlier bishops, of Bari. It is dedicated to Saint Sabinus, a bishop of Canosa, whose relics were brought here in the 9th century. It is senior to, though less famous than, Apulia's Basilica of St Nicholas.</p>",
+    "dist_meters": 1295.1
+  },
+  "license": "CC-BY-SA 4.0",
+  "retrieved_at": "2026-09-11T09:23:31.532899",
+  "parser_version": "v1.0"
+}

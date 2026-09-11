@@ -1,0 +1,20 @@
+{
+  "source": "osm",
+  "source_id": "node/3454208796",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Area Archeologica del Castello",
+  "raw_payload": {
+    "type": "node",
+    "id": 3454208796,
+    "lat": 41.1285786,
+    "lon": 16.8659616,
+    "tags": {
+      "historic": "archaeological_site",
+      "name": "Area Archeologica del Castello",
+      "wheelchair": "yes"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

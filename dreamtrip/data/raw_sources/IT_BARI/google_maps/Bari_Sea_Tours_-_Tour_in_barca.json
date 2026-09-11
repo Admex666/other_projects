@@ -1,0 +1,18 @@
+{
+  "source": "google_maps",
+  "source_id": "Bari+Sea+Tours+-+Tour+in+barca",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Bari Sea Tours - Tour in barca",
+  "raw_payload": {
+    "name": "Bari Sea Tours - Tour in barca",
+    "href": "https://www.google.com/maps/place/Bari+Sea+Tours+-+Tour+in+barca/data=!4m7!3m6!1s0x1347e9882ffe3a81:0xc82c94b26d1e8210!8m2!3d41.127234!4d16.8726802!16s%2Fg%2F11t53y3q2r!19sChIJgTr-L4jpRxMREIIebbKULMg?authuser=0&hl=en&g_ep=EgoyMDI2MDkwOC4wIJJjKgBIAVAD&rclk=1",
+    "rating": 4.8,
+    "review_count": 164,
+    "category": null,
+    "lat": 41.127234,
+    "lon": 16.8726802
+  },
+  "license": "Proprietary / Web Data",
+  "retrieved_at": "2026-09-11T09:23:42.135929",
+  "parser_version": "v1.0"
+}

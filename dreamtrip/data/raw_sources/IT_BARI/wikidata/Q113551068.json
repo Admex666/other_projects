@@ -1,0 +1,18 @@
+{
+  "source": "wikidata",
+  "source_id": "Q113551068",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Masseria Scanzano",
+  "raw_payload": {
+    "qid": "Q113551068",
+    "label": "Masseria Scanzano",
+    "instance_of": "http://www.wikidata.org/entity/Q1416696",
+    "instance_of_label": "tenuta",
+    "location_wkt": "Point(16.903238 41.071614)",
+    "wikipedia_url": null,
+    "image_url": null
+  },
+  "license": "CC-0",
+  "retrieved_at": "2026-09-11T09:23:31.465150",
+  "parser_version": "v1.0"
+}

@@ -1,0 +1,26 @@
+{
+  "source": "osm",
+  "source_id": "node/9348416598",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Spazio 13",
+  "raw_payload": {
+    "type": "node",
+    "id": 9348416598,
+    "lat": 41.1246725,
+    "lon": 16.8560676,
+    "tags": {
+      "addr:city": "Bari",
+      "addr:housenumber": "8",
+      "addr:postcode": "70123",
+      "addr:street": "Via Colonello de Cristoforis",
+      "amenity": "arts_centre",
+      "name": "Spazio 13",
+      "opening_hours": "Mo-Fr 10:00-20:00",
+      "website": "https://spazio13.org",
+      "wheelchair": "yes"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

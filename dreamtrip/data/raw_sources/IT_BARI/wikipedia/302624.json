@@ -1,0 +1,62 @@
+{
+  "source": "wikipedia",
+  "source_id": "302624",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Ioannina",
+  "raw_payload": {
+    "type": "standard",
+    "title": "Ioannina",
+    "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Ioannina</span></span>",
+    "namespace": {
+      "id": 0,
+      "text": ""
+    },
+    "wikibase_item": "Q183199",
+    "titles": {
+      "canonical": "Ioannina",
+      "normalized": "Ioannina",
+      "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Ioannina</span></span>"
+    },
+    "pageid": 302624,
+    "thumbnail": {
+      "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e5/Ioannina_Montage_L.png/330px-Ioannina_Montage_L.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 330,
+      "height": 451
+    },
+    "originalimage": {
+      "source": "https://upload.wikimedia.org/wikipedia/commons/e/e5/Ioannina_Montage_L.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+      "width": 1005,
+      "height": 1374
+    },
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1372732663",
+    "tid": "4507990a-a66c-11f1-abad-aa8b5c86c167",
+    "timestamp": "2026-09-02T01:18:57Z",
+    "description": "Capital and largest city of Epirus, Greece",
+    "description_source": "local",
+    "coordinates": {
+      "lat": 39.66361111,
+      "lon": 20.85222222
+    },
+    "content_urls": {
+      "desktop": {
+        "page": "https://en.wikipedia.org/wiki/Ioannina",
+        "revisions": "https://en.wikipedia.org/wiki/Ioannina?action=history",
+        "edit": "https://en.wikipedia.org/wiki/Ioannina?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Ioannina"
+      },
+      "mobile": {
+        "page": "https://en.wikipedia.org/wiki/Ioannina",
+        "revisions": "https://en.wikipedia.org/wiki/Special:History/Ioannina",
+        "edit": "https://en.wikipedia.org/wiki/Ioannina?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Ioannina"
+      }
+    },
+    "extract": "Ioannina, often called Yanina, is the capital and largest city of the Ioannina regional unit and of Epirus, an administrative region in northwestern Greece.",
+    "extract_html": "<p><b>Ioannina</b>, often called <b>Yanina</b>, is the capital and largest city of the Ioannina regional unit and of Epirus, an administrative region in northwestern Greece.</p>"
+  },
+  "license": "CC-BY-SA 4.0",
+  "retrieved_at": "2026-09-11T09:18:22.649874",
+  "parser_version": "v1.0"
+}

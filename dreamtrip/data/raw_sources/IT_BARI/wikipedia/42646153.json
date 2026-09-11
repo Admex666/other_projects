@@ -1,0 +1,53 @@
+{
+  "source": "wikipedia",
+  "source_id": "42646153",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Brigata Bari railway station",
+  "raw_payload": {
+    "type": "standard",
+    "title": "Brigata Bari railway station",
+    "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Brigata Bari railway station</span></span>",
+    "namespace": {
+      "id": 0,
+      "text": ""
+    },
+    "wikibase_item": "Q3969120",
+    "titles": {
+      "canonical": "Brigata_Bari_railway_station",
+      "normalized": "Brigata Bari railway station",
+      "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Brigata Bari railway station</span></span>"
+    },
+    "pageid": 42646153,
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1370882735",
+    "tid": "f1c575fd-9f08-11f1-a66e-8b80c4c2c436",
+    "timestamp": "2026-08-23T15:40:19Z",
+    "description": "Railway station in Bari, Italy",
+    "description_source": "local",
+    "coordinates": {
+      "lat": 41.11805556,
+      "lon": 16.85166667
+    },
+    "content_urls": {
+      "desktop": {
+        "page": "https://en.wikipedia.org/wiki/Brigata_Bari_railway_station",
+        "revisions": "https://en.wikipedia.org/wiki/Brigata_Bari_railway_station?action=history",
+        "edit": "https://en.wikipedia.org/wiki/Brigata_Bari_railway_station?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Brigata_Bari_railway_station"
+      },
+      "mobile": {
+        "page": "https://en.wikipedia.org/wiki/Brigata_Bari_railway_station",
+        "revisions": "https://en.wikipedia.org/wiki/Special:History/Brigata_Bari_railway_station",
+        "edit": "https://en.wikipedia.org/wiki/Brigata_Bari_railway_station?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Brigata_Bari_railway_station"
+      }
+    },
+    "extract": "Brigata Bari is a railway station in the Italian city of Bari, in the Province of Bari, Apulia. The station lies on the Bari–Barletta railway.",
+    "extract_html": "<p><b>Brigata Bari</b> is a railway station in the Italian city of Bari, in the Province of Bari, Apulia. The station lies on the Bari–Barletta railway.</p>",
+    "dist_meters": 1698.3
+  },
+  "license": "CC-BY-SA 4.0",
+  "retrieved_at": "2026-09-11T09:23:31.532899",
+  "parser_version": "v1.0"
+}

@@ -1,0 +1,18 @@
+{
+  "source": "wikidata",
+  "source_id": "Q113551064",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Masseria Carbone",
+  "raw_payload": {
+    "qid": "Q113551064",
+    "label": "Masseria Carbone",
+    "instance_of": "http://www.wikidata.org/entity/Q1416696",
+    "instance_of_label": "tenuta",
+    "location_wkt": "Point(16.910459 41.102868)",
+    "wikipedia_url": null,
+    "image_url": null
+  },
+  "license": "CC-0",
+  "retrieved_at": "2026-09-11T09:23:31.465150",
+  "parser_version": "v1.0"
+}

@@ -1,0 +1,19 @@
+{
+  "source": "osm",
+  "source_id": "node/3673897794",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Monumento ai Caduti",
+  "raw_payload": {
+    "type": "node",
+    "id": 3673897794,
+    "lat": 41.0249184,
+    "lon": 16.710648,
+    "tags": {
+      "historic": "memorial",
+      "name": "Monumento ai Caduti"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

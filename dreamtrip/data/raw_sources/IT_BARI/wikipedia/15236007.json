@@ -1,0 +1,63 @@
+{
+  "source": "wikipedia",
+  "source_id": "15236007",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Archdiocese of Bari-Bitonto",
+  "raw_payload": {
+    "type": "standard",
+    "title": "Archdiocese of Bari-Bitonto",
+    "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Archdiocese of Bari-Bitonto</span></span>",
+    "namespace": {
+      "id": 0,
+      "text": ""
+    },
+    "wikibase_item": "Q541341",
+    "titles": {
+      "canonical": "Archdiocese_of_Bari-Bitonto",
+      "normalized": "Archdiocese of Bari-Bitonto",
+      "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Archdiocese of Bari-Bitonto</span></span>"
+    },
+    "pageid": 15236007,
+    "thumbnail": {
+      "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/26/Bari_Cathedral%2C_Italy.jpg/330px-Bari_Cathedral%2C_Italy.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 330,
+      "height": 236
+    },
+    "originalimage": {
+      "source": "https://upload.wikimedia.org/wikipedia/commons/2/26/Bari_Cathedral%2C_Italy.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+      "width": 3110,
+      "height": 2221
+    },
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1359500121",
+    "tid": "260231a8-68db-11f1-8f20-51d3d29ba8e3",
+    "timestamp": "2026-06-15T16:56:27Z",
+    "description": "Roman Catholic archdiocese in Italy",
+    "description_source": "local",
+    "coordinates": {
+      "lat": 41.12833333,
+      "lon": 16.86833333
+    },
+    "content_urls": {
+      "desktop": {
+        "page": "https://en.wikipedia.org/wiki/Archdiocese_of_Bari-Bitonto",
+        "revisions": "https://en.wikipedia.org/wiki/Archdiocese_of_Bari-Bitonto?action=history",
+        "edit": "https://en.wikipedia.org/wiki/Archdiocese_of_Bari-Bitonto?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Archdiocese_of_Bari-Bitonto"
+      },
+      "mobile": {
+        "page": "https://en.wikipedia.org/wiki/Archdiocese_of_Bari-Bitonto",
+        "revisions": "https://en.wikipedia.org/wiki/Special:History/Archdiocese_of_Bari-Bitonto",
+        "edit": "https://en.wikipedia.org/wiki/Archdiocese_of_Bari-Bitonto?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Archdiocese_of_Bari-Bitonto"
+      }
+    },
+    "extract": "The Archdiocese of Bari-Bitonto is Metropolitan Latin archdiocese of the Catholic Church in the administrative Bari province, Puglia (Apulia) region, southeastern Italy, created in 1986, when the historical diocese of Bitonto was subsumed in the Archdiocese of Bari.",
+    "extract_html": "<p>The <b>Archdiocese of Bari-Bitonto</b> is Metropolitan Latin archdiocese of the Catholic Church in the administrative Bari province, Puglia (Apulia) region, southeastern Italy, created in 1986, when the historical diocese of Bitonto was subsumed in the <b>Archdiocese of Bari</b>.</p>",
+    "dist_meters": 1284.3
+  },
+  "license": "CC-BY-SA 4.0",
+  "retrieved_at": "2026-09-11T09:23:31.532899",
+  "parser_version": "v1.0"
+}

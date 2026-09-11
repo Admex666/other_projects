@@ -1,0 +1,63 @@
+{
+  "source": "wikipedia",
+  "source_id": "42548696",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Bari Sud Est railway station",
+  "raw_payload": {
+    "type": "standard",
+    "title": "Bari Sud Est railway station",
+    "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Bari Sud Est railway station</span></span>",
+    "namespace": {
+      "id": 0,
+      "text": ""
+    },
+    "wikibase_item": "Q3968991",
+    "titles": {
+      "canonical": "Bari_Sud_Est_railway_station",
+      "normalized": "Bari Sud Est railway station",
+      "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Bari Sud Est railway station</span></span>"
+    },
+    "pageid": 42548696,
+    "thumbnail": {
+      "source": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Bari_Sud_Est_railway_station.JPG/330px-Bari_Sud_Est_railway_station.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 330,
+      "height": 248
+    },
+    "originalimage": {
+      "source": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Bari_Sud_Est_railway_station.JPG/3840px-Bari_Sud_Est_railway_station.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 4320,
+      "height": 3240
+    },
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1370801724",
+    "tid": "1d6544a1-9eaa-11f1-b98e-41d220e8b593",
+    "timestamp": "2026-08-23T04:21:30Z",
+    "description": "Railway station in Bari, Italy",
+    "description_source": "local",
+    "coordinates": {
+      "lat": 41.11722222,
+      "lon": 16.87972222
+    },
+    "content_urls": {
+      "desktop": {
+        "page": "https://en.wikipedia.org/wiki/Bari_Sud_Est_railway_station",
+        "revisions": "https://en.wikipedia.org/wiki/Bari_Sud_Est_railway_station?action=history",
+        "edit": "https://en.wikipedia.org/wiki/Bari_Sud_Est_railway_station?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Bari_Sud_Est_railway_station"
+      },
+      "mobile": {
+        "page": "https://en.wikipedia.org/wiki/Bari_Sud_Est_railway_station",
+        "revisions": "https://en.wikipedia.org/wiki/Special:History/Bari_Sud_Est_railway_station",
+        "edit": "https://en.wikipedia.org/wiki/Bari_Sud_Est_railway_station?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Bari_Sud_Est_railway_station"
+      }
+    },
+    "extract": "Bari Sud Est railway station is a railway station in Bari, Italy. It is located on the Bari–Martina Franca–Taranto railway. The train services and the railway infrastructure are operated by Ferrovie del Sud Est.",
+    "extract_html": "<p><b>Bari Sud Est railway station</b> is a railway station in Bari, Italy. It is located on the Bari–Martina Franca–Taranto railway. The train services and the railway infrastructure are operated by Ferrovie del Sud Est.</p>",
+    "dist_meters": 655.4
+  },
+  "license": "CC-BY-SA 4.0",
+  "retrieved_at": "2026-09-11T09:23:31.532899",
+  "parser_version": "v1.0"
+}

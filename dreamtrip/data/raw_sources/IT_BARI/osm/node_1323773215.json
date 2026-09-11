@@ -1,0 +1,27 @@
+{
+  "source": "osm",
+  "source_id": "node/1323773215",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Lega Navale Bari",
+  "raw_payload": {
+    "type": "node",
+    "id": 1323773215,
+    "lat": 41.1305891,
+    "lon": 16.8615468,
+    "tags": {
+      "harbour": "yes",
+      "leisure": "marina",
+      "maxdraft": "3m -6m",
+      "name": "Lega Navale Bari",
+      "operator": "Lega Navale Italiana",
+      "seamark:harbour:category": "marina",
+      "seamark:name": "Lega Navale Italiana",
+      "seamark:type": "harbour",
+      "vhf": "16",
+      "website": "https://www.leganavale.it/portale/sezioni/index.asp?ID_sezione=154"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

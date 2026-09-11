@@ -100,3 +100,80 @@ async def save_criteria(data: DestCriteria, request: Request):
     session = get_dest_session(user)
     session["criteria"] = data.criteria
     return {"status": "ok"}
+
+
+# ====================================================================
+# EXPERIENCE & ACTIVITY INTELLIGENCE V2 ENDPOINTS
+# ====================================================================
+
+@router.get("/api/destinations/{destination_id}/experience-profile")
+@router.get("/api/v2/destinations/{destination_id}/experience-profile")
+async def get_destination_experience_profile(destination_id: str):
+    """Instant lookup (<2ms) of pre-aggregated experience profile from ultra-fast cache."""
+    from app.services.experience.cache import experience_cache
+    profile = experience_cache.get_destination_profile(destination_id)
+    if not profile and "bari" in destination_id.lower():
+        profile = experience_cache.get_destination_profile("IT_BARI")
+    if not profile:
+        raise HTTPException(status_code=404, detail="Experience profile not found for destination")
+    return profile
+
+@router.get("/api/destinations/{destination_id}/activities")
+@router.get("/api/v2/destinations/{destination_id}/activities")
+async def get_destination_activities(
+    destination_id: str,
+    category: Optional[str] = None,
+    persona: Optional[str] = None,
+    price_level: Optional[str] = None,
+    indoor_outdoor: Optional[str] = None
+):
+    """Returns canonical experience entities for destination with optional multi-dimensional filters."""
+    from app.services.experience.cache import experience_cache
+    dest_key = destination_id.upper()
+    if not dest_key.startswith("IT_") and "bari" in dest_key.lower():
+        dest_key = "IT_BARI"
+
+    entities = experience_cache.get_destination_entities(dest_key, category=category)
+    if not entities and "bari" in destination_id.lower():
+        entities = experience_cache.get_destination_entities("IT_BARI", category=category)
+
+    # Apply filters
+    filtered = entities
+    if persona:
+        filtered = [e for e in filtered if persona in e.get("metadata", {}).get("persona_tags", [])]
+    if price_level:
+        filtered = [e for e in filtered if e.get("price_level") == price_level]
+    if indoor_outdoor:
+        filtered = [e for e in filtered if e.get("metadata", {}).get("indoor_outdoor") == indoor_outdoor]
+
+    return {
+        "destination_id": dest_key,
+        "count": len(filtered),
+        "activities": filtered
+    }
+
+@router.get("/api/destinations/{destination_id}/itinerary")
+@router.get("/api/v2/destinations/{destination_id}/itinerary")
+async def get_destination_itinerary(
+    destination_id: str,
+    days: int = 3,
+    start_date: Optional[str] = None,
+    persona: Optional[str] = None,
+    selected_activities: Optional[str] = None
+):
+    """Generates an intelligent multi-day activity itinerary using the walkability graph and temporal slots."""
+    from app.services.experience.trip_generator import trip_generator
+    dest_key = destination_id.upper()
+    if not dest_key.startswith("IT_") and "bari" in dest_key.lower():
+        dest_key = "IT_BARI"
+
+    selected_ids = [s.strip() for s in selected_activities.split(",") if s.strip()] if selected_activities else None
+
+    itinerary = trip_generator.generate_trip_itinerary(
+        destination_id=dest_key,
+        num_days=days,
+        start_date_str=start_date,
+        persona=persona,
+        selected_activity_ids=selected_ids
+    )
+    return itinerary

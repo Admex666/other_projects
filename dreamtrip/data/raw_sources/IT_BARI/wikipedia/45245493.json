@@ -1,0 +1,63 @@
+{
+  "source": "wikipedia",
+  "source_id": "45245493",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Bari Centrale railway station",
+  "raw_payload": {
+    "type": "standard",
+    "title": "Bari Centrale railway station",
+    "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Bari Centrale railway station</span></span>",
+    "namespace": {
+      "id": 0,
+      "text": ""
+    },
+    "wikibase_item": "Q790420",
+    "titles": {
+      "canonical": "Bari_Centrale_railway_station",
+      "normalized": "Bari Centrale railway station",
+      "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Bari Centrale railway station</span></span>"
+    },
+    "pageid": 45245493,
+    "thumbnail": {
+      "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3b/Sezione_storica_della_stazione_centrale_di_Bari.jpg/330px-Sezione_storica_della_stazione_centrale_di_Bari.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 330,
+      "height": 248
+    },
+    "originalimage": {
+      "source": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3b/Sezione_storica_della_stazione_centrale_di_Bari.jpg/3840px-Sezione_storica_della_stazione_centrale_di_Bari.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 4032,
+      "height": 3024
+    },
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1370801660",
+    "tid": "0f1726f7-9eaa-11f1-b191-a921935f7e08",
+    "timestamp": "2026-08-23T04:21:06Z",
+    "description": "Railway station in Bari, Italy",
+    "description_source": "local",
+    "coordinates": {
+      "lat": 41.11805556,
+      "lon": 16.87
+    },
+    "content_urls": {
+      "desktop": {
+        "page": "https://en.wikipedia.org/wiki/Bari_Centrale_railway_station",
+        "revisions": "https://en.wikipedia.org/wiki/Bari_Centrale_railway_station?action=history",
+        "edit": "https://en.wikipedia.org/wiki/Bari_Centrale_railway_station?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Bari_Centrale_railway_station"
+      },
+      "mobile": {
+        "page": "https://en.wikipedia.org/wiki/Bari_Centrale_railway_station",
+        "revisions": "https://en.wikipedia.org/wiki/Special:History/Bari_Centrale_railway_station",
+        "edit": "https://en.wikipedia.org/wiki/Bari_Centrale_railway_station?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Bari_Centrale_railway_station"
+      }
+    },
+    "extract": "Bari Centrale is the main railway station of the Italian city of Bari, capital of Apulia. It is one of the most important railway stations in Italy, with an annual ridership of 14 million.",
+    "extract_html": "<p><b>Bari Centrale</b> is the main railway station of the Italian city of Bari, capital of Apulia. It is one of the most important railway stations in Italy, with an annual ridership of 14 million.</p>",
+    "dist_meters": 191.4
+  },
+  "license": "CC-BY-SA 4.0",
+  "retrieved_at": "2026-09-11T09:23:31.532899",
+  "parser_version": "v1.0"
+}

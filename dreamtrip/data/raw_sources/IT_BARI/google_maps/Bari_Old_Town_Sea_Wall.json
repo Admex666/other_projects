@@ -1,0 +1,18 @@
+{
+  "source": "google_maps",
+  "source_id": "Bari+Old+Town+Sea+Wall",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Bari Old Town Sea Wall",
+  "raw_payload": {
+    "name": "Bari Old Town Sea Wall",
+    "href": "https://www.google.com/maps/place/Bari+Old+Town+Sea+Wall/data=!4m7!3m6!1s0x1347e99a502de48b:0xd07355249227e6d4!8m2!3d41.1278619!4d16.8728495!16s%2Fg%2F11qmc81vg8!19sChIJi-QtUJrpRxMR1OYnkiRVc9A?authuser=0&hl=en&g_ep=EgoyMDI2MDkwOC4wIJJjKgBIAVAD&rclk=1",
+    "rating": 4.7,
+    "review_count": 658,
+    "category": null,
+    "lat": 41.1278619,
+    "lon": 16.8728495
+  },
+  "license": "Proprietary / Web Data",
+  "retrieved_at": "2026-09-11T09:23:42.135929",
+  "parser_version": "v1.0"
+}

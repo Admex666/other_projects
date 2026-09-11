@@ -1,0 +1,18 @@
+{
+  "source": "google_maps",
+  "source_id": "Russian+Orthodox+Church+of+Saint+Nicholas",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Russian Orthodox Church of Saint Nicholas",
+  "raw_payload": {
+    "name": "Russian Orthodox Church of Saint Nicholas",
+    "href": "https://www.google.com/maps/place/Russian+Orthodox+Church+of+Saint+Nicholas/data=!4m7!3m6!1s0x1347e850dc14f661:0x74aa4b4e92d9145!8m2!3d41.1100323!4d16.8722299!16s%2Fg%2F121bwrf1!19sChIJYfYU3FDoRxMRRZEt6bSkSgc?authuser=0&hl=en&g_ep=EgoyMDI2MDkwOC4wIJJjKgBIAVAD&rclk=1",
+    "rating": 4.6,
+    "review_count": 1047,
+    "category": null,
+    "lat": 41.1100323,
+    "lon": 16.8722299
+  },
+  "license": "Proprietary / Web Data",
+  "retrieved_at": "2026-09-11T09:23:42.135929",
+  "parser_version": "v1.0"
+}

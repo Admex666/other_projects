@@ -1,0 +1,19 @@
+{
+  "source": "osm",
+  "source_id": "node/6356150485",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Torre Normanna di Adelfia",
+  "raw_payload": {
+    "type": "node",
+    "id": 6356150485,
+    "lat": 41.0042686,
+    "lon": 16.8673547,
+    "tags": {
+      "historic": "castle",
+      "name": "Torre Normanna di Adelfia"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

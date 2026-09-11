@@ -1,0 +1,20 @@
+{
+  "source": "osm",
+  "source_id": "node/11313845756",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Statua di Padre Pio",
+  "raw_payload": {
+    "type": "node",
+    "id": 11313845756,
+    "lat": 41.1122356,
+    "lon": 16.862813,
+    "tags": {
+      "artwork_type": "statue",
+      "name": "Statua di Padre Pio",
+      "tourism": "artwork"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

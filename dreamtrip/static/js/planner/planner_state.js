@@ -90,6 +90,7 @@
         selectedFlight: null,
         stays: [],
         selectedStay: null,
+        selectedActivities: [],
 
         canAccessStep(stepNum) {
             if (stepNum === 0) return true; // Preferenciák mindig elérhető
@@ -106,7 +107,11 @@
                 return Boolean(this.selectedDest && this.selectedFlight && this.stays && this.stays.length > 0);
             }
             if (stepNum === 4) {
-                // Összegzés csak akkor, ha van kiválasztott célállomás + járat + szállás
+                // Programok csak akkor, ha van kiválasztott célállomás + járat + szállás
+                return Boolean(this.selectedDest && this.selectedFlight && this.selectedStay);
+            }
+            if (stepNum === 5) {
+                // Kész Terv csak akkor, ha van kiválasztott célállomás + járat + szállás
                 return Boolean(this.selectedDest && this.selectedFlight && this.selectedStay);
             }
             return false;
@@ -118,7 +123,7 @@
                 // Ha a felhasználó egy még nem elérhető lépésre kattintott, jelezzük finoman
                 const toastFn = window.showToast || (window.TripCart && window.TripCart.showToast);
                 if (typeof toastFn === 'function') {
-                    const stepNames = ["Preferenciák", "Célállomás", "Járat", "Szállás", "Kész Terv"];
+                    const stepNames = ["Preferenciák", "Célállomás", "Járat", "Szállás", "Programok", "Kész Terv"];
                     toastFn(`Kérlek először fejezd be a korábbi lépést a(z) "${stepNames[stepNum] || stepNum}" feloldásához!`, 'info');
                 }
                 return false;
@@ -128,7 +133,7 @@
                 window.OptivoyaTelemetry.trackEvent('step_navigation', 'master_planner', {
                     to_step: stepNum,
                     from_step: this.step,
-                    step_name: ["Preferenciák", "Célállomás", "Járat", "Szállás", "Kész Terv"][stepNum] || String(stepNum)
+                    step_name: ["Preferenciák", "Célállomás", "Járat", "Szállás", "Programok", "Kész Terv"][stepNum] || String(stepNum)
                 });
             }
 
@@ -141,8 +146,10 @@
                 window.PlannerFlights.renderFlights();
             } else if (stepNum === 3 && window.PlannerStays && this.stays && this.stays.length > 0) {
                 window.PlannerStays.renderStays();
-            } else if (stepNum === 4 && window.PlannerSummary) {
-                window.PlannerSummary.renderSummary();
+            } else if (stepNum === 4 && window.PlannerActivities) {
+                window.PlannerActivities.initActivities();
+            } else if (stepNum === 5 && window.PlannerSummary) {
+                window.PlannerSummary.renderFinalSummary();
             }
 
             this.updateStepperUI();
@@ -155,7 +162,7 @@
         },
 
         updateStepperUI() {
-            for (let i = 0; i <= 4; i++) {
+            for (let i = 0; i <= 5; i++) {
                 const node = document.getElementById(`stepNode${i}`);
                 const conn = document.getElementById(`stepConn${i}`);
                 const sec = document.getElementById(`wizardStep${i}`);
@@ -192,7 +199,7 @@
 
 
         showLoader(title, subtitle) {
-            for (let i = 0; i <= 4; i++) {
+            for (let i = 0; i <= 5; i++) {
                 const sec = document.getElementById(`wizardStep${i}`);
                 if (sec) sec.style.display = 'none';
             }

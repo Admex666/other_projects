@@ -1,0 +1,18 @@
+{
+  "source": "wikidata",
+  "source_id": "Q3670424",
+  "destination_id": "IT_BARI",
+  "name_candidate": "chiesa di San Giovanni Battista",
+  "raw_payload": {
+    "qid": "Q3670424",
+    "label": "chiesa di San Giovanni Battista",
+    "instance_of": "http://www.wikidata.org/entity/Q16970",
+    "instance_of_label": "chiesa",
+    "location_wkt": "Point(16.779891055 41.082983805)",
+    "wikipedia_url": null,
+    "image_url": null
+  },
+  "license": "CC-0",
+  "retrieved_at": "2026-09-11T09:18:22.623549",
+  "parser_version": "v1.0"
+}

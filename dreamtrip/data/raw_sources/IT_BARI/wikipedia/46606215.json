@@ -1,0 +1,61 @@
+{
+  "source": "wikipedia",
+  "source_id": "46606215",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Port of Bari",
+  "raw_payload": {
+    "type": "standard",
+    "title": "Port of Bari",
+    "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Port of Bari</span></span>",
+    "namespace": {
+      "id": 0,
+      "text": ""
+    },
+    "wikibase_item": "Q3909209",
+    "titles": {
+      "canonical": "Port_of_Bari",
+      "normalized": "Port of Bari",
+      "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Port of Bari</span></span>"
+    },
+    "pageid": 46606215,
+    "thumbnail": {
+      "source": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Bari_terminal_crociere.jpg/330px-Bari_terminal_crociere.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 330,
+      "height": 216
+    },
+    "originalimage": {
+      "source": "https://upload.wikimedia.org/wikipedia/commons/1/11/Bari_terminal_crociere.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+      "width": 437,
+      "height": 286
+    },
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1254854043",
+    "tid": "7f5c4e12-98b6-11ef-b09c-75b9ba3142c1",
+    "timestamp": "2024-11-02T01:05:06Z",
+    "coordinates": {
+      "lat": 41.13,
+      "lon": 16.85
+    },
+    "content_urls": {
+      "desktop": {
+        "page": "https://en.wikipedia.org/wiki/Port_of_Bari",
+        "revisions": "https://en.wikipedia.org/wiki/Port_of_Bari?action=history",
+        "edit": "https://en.wikipedia.org/wiki/Port_of_Bari?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Port_of_Bari"
+      },
+      "mobile": {
+        "page": "https://en.wikipedia.org/wiki/Port_of_Bari",
+        "revisions": "https://en.wikipedia.org/wiki/Special:History/Port_of_Bari",
+        "edit": "https://en.wikipedia.org/wiki/Port_of_Bari?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Port_of_Bari"
+      }
+    },
+    "extract": "The Port of Bari is a port serving Bari, southeastern Italy. The port of Bari is traditionally considered Europe's door to the Balkan Peninsula and the Middle East, and is a multipurpose port able to meet all operational requirements. Among the largest ports on the Adriatic, in 2012 the port of Bari handled about 2 million passengers, of which about 650,000 were cruise passengers. Cruise ship companies operating at the port include AIDA, Costa Crociere, MSC Crociere, Phoenix Reisen, Celebrity Cruises and Royal Caribbean International. After the fall of the Western Empire, the Greeks had control of Bari.",
+    "extract_html": "<p>The <b>Port of Bari</b> is a port serving Bari, southeastern Italy. The port of Bari is traditionally considered Europe's door to the Balkan Peninsula and the Middle East, and is a multipurpose port able to meet all operational requirements. Among the largest ports on the Adriatic, in 2012 the port of Bari handled about 2 million passengers, of which about 650,000 were cruise passengers. Cruise ship companies operating at the port include AIDA, Costa Crociere, MSC Crociere, Phoenix Reisen, Celebrity Cruises and Royal Caribbean International. After the fall of the Western Empire, the Greeks had control of Bari.</p>",
+    "dist_meters": 2328.6
+  },
+  "license": "CC-BY-SA 4.0",
+  "retrieved_at": "2026-09-11T09:23:31.532899",
+  "parser_version": "v1.0"
+}

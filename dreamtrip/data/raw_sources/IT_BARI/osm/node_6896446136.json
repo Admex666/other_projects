@@ -1,0 +1,20 @@
+{
+  "source": "osm",
+  "source_id": "node/6896446136",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Busto di Cesare Battisti",
+  "raw_payload": {
+    "type": "node",
+    "id": 6896446136,
+    "lat": 41.1211726,
+    "lon": 16.8674014,
+    "tags": {
+      "historic": "memorial",
+      "memorial": "bust",
+      "name": "Busto di Cesare Battisti"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

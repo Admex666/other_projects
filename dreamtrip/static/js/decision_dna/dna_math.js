@@ -8,22 +8,32 @@
 
     const DNAMath = {
         calculateAllAHP(state) {
-            // 1. Destination AHP (3x3: Total Cost, Weather, Safety)
+            // 1. Destination AHP (4x4: Total Cost, Weather, Safety, Experience)
+            const a_cw = scaleValues[state.dest_ahp?.total_cost_vs_weather ?? 3];
+            const a_cs = scaleValues[state.dest_ahp?.total_cost_vs_safety ?? 3];
+            const a_ce = scaleValues[state.dest_ahp?.total_cost_vs_experience ?? 3];
+            const a_ws = scaleValues[state.dest_ahp?.weather_vs_safety ?? 3];
+            const a_we = scaleValues[state.dest_ahp?.weather_vs_experience ?? 3];
+            const a_se = scaleValues[state.dest_ahp?.safety_vs_experience ?? 3];
+
             const mDest = [
-                [1.0, scaleValues[state.dest_ahp.total_cost_vs_weather], scaleValues[state.dest_ahp.total_cost_vs_safety]],
-                [1.0 / scaleValues[state.dest_ahp.total_cost_vs_weather], 1.0, scaleValues[state.dest_ahp.weather_vs_safety]],
-                [1.0 / scaleValues[state.dest_ahp.total_cost_vs_safety], 1.0 / scaleValues[state.dest_ahp.weather_vs_safety], 1.0]
+                [1.0, a_cw, a_cs, a_ce],
+                [1.0 / a_cw, 1.0, a_ws, a_we],
+                [1.0 / a_cs, 1.0 / a_ws, 1.0, a_se],
+                [1.0 / a_ce, 1.0 / a_we, 1.0 / a_se, 1.0]
             ];
             const gDest = [
-                Math.cbrt(mDest[0][0] * mDest[0][1] * mDest[0][2]),
-                Math.cbrt(mDest[1][0] * mDest[1][1] * mDest[1][2]),
-                Math.cbrt(mDest[2][0] * mDest[2][1] * mDest[2][2])
+                Math.pow(mDest[0][0] * mDest[0][1] * mDest[0][2] * mDest[0][3], 0.25),
+                Math.pow(mDest[1][0] * mDest[1][1] * mDest[1][2] * mDest[1][3], 0.25),
+                Math.pow(mDest[2][0] * mDest[2][1] * mDest[2][2] * mDest[2][3], 0.25),
+                Math.pow(mDest[3][0] * mDest[3][1] * mDest[3][2] * mDest[3][3], 0.25)
             ];
-            const tDest = gDest[0] + gDest[1] + gDest[2];
+            const tDest = gDest[0] + gDest[1] + gDest[2] + gDest[3];
             state.calculated_weights.dest = {
                 total_cost: Math.round((gDest[0] / tDest) * 100),
                 weather: Math.round((gDest[1] / tDest) * 100),
-                safety: Math.round((gDest[2] / tDest) * 100)
+                safety: Math.round((gDest[2] / tDest) * 100),
+                experience: Math.round((gDest[3] / tDest) * 100)
             };
 
             // 2. Flight AHP (3x3: Price, Duration, Stops)

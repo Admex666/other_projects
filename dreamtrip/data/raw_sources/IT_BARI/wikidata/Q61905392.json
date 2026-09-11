@@ -1,0 +1,18 @@
+{
+  "source": "wikidata",
+  "source_id": "Q61905392",
+  "destination_id": "IT_BARI",
+  "name_candidate": "La costellazione di Re Sole",
+  "raw_payload": {
+    "qid": "Q61905392",
+    "label": "La costellazione di Re Sole",
+    "instance_of": "http://www.wikidata.org/entity/Q4989906",
+    "instance_of_label": "monumento",
+    "location_wkt": "Point(16.83975 41.13172)",
+    "wikipedia_url": null,
+    "image_url": "http://commons.wikimedia.org/wiki/Special:FilePath/08A2054.png"
+  },
+  "license": "CC-0",
+  "retrieved_at": "2026-09-11T09:23:31.465150",
+  "parser_version": "v1.0"
+}

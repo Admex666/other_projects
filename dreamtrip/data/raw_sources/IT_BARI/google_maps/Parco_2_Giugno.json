@@ -1,0 +1,18 @@
+{
+  "source": "google_maps",
+  "source_id": "Parco+2+Giugno",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Parco 2 Giugno",
+  "raw_payload": {
+    "name": "Parco 2 Giugno",
+    "href": "https://www.google.com/maps/place/Parco+2+Giugno/data=!4m7!3m6!1s0x1347e852cf856555:0xb08b823dde662341!8m2!3d41.1025005!4d16.8747697!16s%2Fg%2F119vsmlmz!19sChIJVWWFz1LoRxMRQSNm3j2Ci7A?authuser=0&hl=en&g_ep=EgoyMDI2MDkwOC4wIJJjKgBIAVAD&rclk=1",
+    "rating": 4.2,
+    "review_count": 9897,
+    "category": null,
+    "lat": 41.1025005,
+    "lon": 16.8747697
+  },
+  "license": "Proprietary / Web Data",
+  "retrieved_at": "2026-09-11T09:23:42.135929",
+  "parser_version": "v1.0"
+}

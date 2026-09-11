@@ -1,0 +1,61 @@
+{
+  "source": "wikipedia",
+  "source_id": "5105612",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Bari Grand Prix",
+  "raw_payload": {
+    "type": "standard",
+    "title": "Bari Grand Prix",
+    "displaytitle": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Bari Grand Prix</span></span>",
+    "namespace": {
+      "id": 0,
+      "text": ""
+    },
+    "wikibase_item": "Q1421853",
+    "titles": {
+      "canonical": "Bari_Grand_Prix",
+      "normalized": "Bari Grand Prix",
+      "display": "<span lang=\"en\" dir=\"ltr\"><span class=\"mw-page-title-main\">Bari Grand Prix</span></span>"
+    },
+    "pageid": 5105612,
+    "thumbnail": {
+      "source": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Circuit-lungomare-bari-1947-%28openstreetmap%29.png/330px-Circuit-lungomare-bari-1947-%28openstreetmap%29.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
+      "width": 330,
+      "height": 220
+    },
+    "originalimage": {
+      "source": "https://upload.wikimedia.org/wikipedia/commons/4/49/Circuit-lungomare-bari-1947-%28openstreetmap%29.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+      "width": 900,
+      "height": 600
+    },
+    "lang": "en",
+    "dir": "ltr",
+    "revision": "1372383074",
+    "tid": "6456d698-a543-11f1-bd49-7f5fef62d8ec",
+    "timestamp": "2026-08-31T13:53:49Z",
+    "coordinates": {
+      "lat": 41.13083333,
+      "lon": 16.84888889
+    },
+    "content_urls": {
+      "desktop": {
+        "page": "https://en.wikipedia.org/wiki/Bari_Grand_Prix",
+        "revisions": "https://en.wikipedia.org/wiki/Bari_Grand_Prix?action=history",
+        "edit": "https://en.wikipedia.org/wiki/Bari_Grand_Prix?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Bari_Grand_Prix"
+      },
+      "mobile": {
+        "page": "https://en.wikipedia.org/wiki/Bari_Grand_Prix",
+        "revisions": "https://en.wikipedia.org/wiki/Special:History/Bari_Grand_Prix",
+        "edit": "https://en.wikipedia.org/wiki/Bari_Grand_Prix?action=edit",
+        "talk": "https://en.wikipedia.org/wiki/Talk:Bari_Grand_Prix"
+      }
+    },
+    "extract": "The Bari Grand Prix was a Grand Prix road race, held in Bari, Italy, between 1947 and 1956. The course was 3.449 miles (6 km) and, except for 1956, was run in an anticlockwise direction. In 1953 the race was not contested.",
+    "extract_html": "<p>The <b>Bari Grand Prix</b> was a Grand Prix road race, held in Bari, Italy, between 1947 and 1956. The course was 3.449 miles (6 km) and, except for 1956, was run in an anticlockwise direction. In 1953 the race was not contested.</p>",
+    "dist_meters": 2459.1
+  },
+  "license": "CC-BY-SA 4.0",
+  "retrieved_at": "2026-09-11T09:23:31.532899",
+  "parser_version": "v1.0"
+}

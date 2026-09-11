@@ -1,0 +1,19 @@
+{
+  "source": "osm",
+  "source_id": "node/1495490311",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Anfiteatro della Pace",
+  "raw_payload": {
+    "type": "node",
+    "id": 1495490311,
+    "lat": 41.1042386,
+    "lon": 16.9110766,
+    "tags": {
+      "amenity": "theatre",
+      "name": "Anfiteatro della Pace"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

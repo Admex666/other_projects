@@ -1,0 +1,19 @@
+{
+  "source": "osm",
+  "source_id": "node/11341609514",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Porta del Suburbio",
+  "raw_payload": {
+    "type": "node",
+    "id": 11341609514,
+    "lat": 41.0817394,
+    "lon": 16.7812888,
+    "tags": {
+      "historic": "city_gate",
+      "name": "Porta del Suburbio"
+    }
+  },
+  "license": "ODbL",
+  "retrieved_at": "2026-09-11T09:23:28.960651",
+  "parser_version": "v1.0"
+}

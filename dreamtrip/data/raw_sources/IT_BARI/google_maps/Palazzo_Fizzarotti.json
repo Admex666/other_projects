@@ -1,0 +1,18 @@
+{
+  "source": "google_maps",
+  "source_id": "Palazzo+Fizzarotti",
+  "destination_id": "IT_BARI",
+  "name_candidate": "Palazzo Fizzarotti",
+  "raw_payload": {
+    "name": "Palazzo Fizzarotti",
+    "href": "https://www.google.com/maps/place/Palazzo+Fizzarotti/data=!4m7!3m6!1s0x1347e88a5e36a5ef:0xa644ca812e84c86f!8m2!3d41.125912!4d16.8634719!16s%2Fg%2F11c1l73z7z!19sChIJ76U2XoroRxMRb8iELoHKRKY?authuser=0&hl=en&g_ep=EgoyMDI2MDkwOC4wIJJjKgBIAVAD&rclk=1",
+    "rating": 4.5,
+    "review_count": 398,
+    "category": null,
+    "lat": 41.125912,
+    "lon": 16.8634719
+  },
+  "license": "Proprietary / Web Data",
+  "retrieved_at": "2026-09-11T09:23:42.135929",
+  "parser_version": "v1.0"
+}
