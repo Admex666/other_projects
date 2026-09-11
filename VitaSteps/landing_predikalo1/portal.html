@@ -1801,54 +1801,53 @@
 
                 const shipTogetherEmail = document.getElementById('ship-together-email')?.value.trim().toLowerCase() || null;
 
-                // Save to runs table via backend endpoint
+                // Save to runs table via backend endpoint (with retries)
                 const session = (await supabaseClient.auth.getSession())?.data?.session;
                 const token = session?.access_token;
 
-                let pushAlreadySent = false;
                 let backendOk = false;
+                let lastError = null;
 
-                try {
-                    const apiRes = await fetch('/api/submit-proof', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-                        },
-                        body: JSON.stringify({
-                            run_id: runId,
-                            run_ids: targetIds,
-                            proof_urls: uploadedUrls,
-                            ship_together_with: shipTogetherEmail
-                        })
-                    });
+                for (let attempt = 1; attempt <= 3; attempt++) {
+                    try {
+                        const apiRes = await fetch('/api/submit-proof', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                            },
+                            body: JSON.stringify({
+                                run_id: runId,
+                                run_ids: targetIds,
+                                proof_urls: uploadedUrls,
+                                ship_together_with: shipTogetherEmail
+                            })
+                        });
 
-                    if (apiRes.ok) {
-                        const apiData = await apiRes.json();
-                        if (apiData.success) {
-                            backendOk = true;
-                            pushAlreadySent = !!apiData.pushbullet_sent;
+                        if (apiRes.ok) {
+                            const apiData = await apiRes.json();
+                            if (apiData.success) {
+                                backendOk = true;
+                                break;
+                            } else {
+                                lastError = new Error(apiData.error || 'Szerveroldali hiba');
+                            }
+                        } else {
+                            const errorText = await apiRes.text().catch(() => '');
+                            lastError = new Error(`HTTP ${apiRes.status}: ${errorText || apiRes.statusText}`);
                         }
+                    } catch (apiErr) {
+                        lastError = apiErr;
                     }
-                } catch (apiErr) {
-                    console.warn('[portal] Backend /api/submit-proof failed, using direct client fallback:', apiErr);
+
+                    if (attempt < 3) {
+                        await new Promise(r => setTimeout(r, 1000 * attempt));
+                    }
                 }
 
-                // If backend was not reached or failed, save directly to Supabase runs table
                 if (!backendOk) {
-                    const { error: directDbError } = await supabaseClient
-                        .from('runs')
-                        .update({
-                            proof_submitted: true,
-                            proof_urls: uploadedUrls,
-                            proof_submitted_at: new Date().toISOString(),
-                            ship_together_with: shipTogetherEmail
-                        })
-                        .in('id', targetIds);
-
-                    if (directDbError) {
-                        throw new Error('Adatbázis mentési hiba: ' + directDbError.message);
-                    }
+                    console.error('[portal] Failed to submit proof to backend after 3 attempts:', lastError);
+                    throw new Error('A képek feltöltése sikerült, de a mentést a szerver nem tudta megerősíteni. Kérlek próbáld meg újra, vagy jelezd nekünk! Hiba: ' + (lastError?.message || 'Hálózati hiba'));
                 }
 
 
