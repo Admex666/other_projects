@@ -49,14 +49,38 @@
             const amenityBoxes = document.querySelectorAll('input[name="amenities"]:checked');
             const selectedAmenities = Array.from(amenityBoxes).map(cb => cb.value);
 
+            const _today = new Date();
+            _today.setHours(0, 0, 0, 0);
+            const _addDays = (d, n) => { const r = new Date(d); r.setDate(r.getDate() + n); return r; };
+            const _toIso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+            const _defOut = _toIso(_addDays(_today, 21));
+            const _defIn = _toIso(_addDays(_today, 28));
+            const _defOutWindowEnd = _toIso(_addDays(_today, 35));
+            const _defInWindowStart = _toIso(_addDays(_today, 28));
+            const _defInWindowEnd = _toIso(_addDays(_today, 42));
+
+            const sanitizeDate = (val, fallback) => {
+                if (!val) return fallback;
+                const p = new Date(val);
+                if (isNaN(p) || p < _today) return fallback;
+                return val;
+            };
+
+            const outExact = sanitizeDate(document.getElementById('exact_out_date')?.value, _defOut);
+            const inExact = sanitizeDate(document.getElementById('exact_in_date')?.value, _defIn);
+            const outFrom = sanitizeDate(document.getElementById('interval_out_from')?.value, _defOut);
+            const outTo = sanitizeDate(document.getElementById('interval_out_to')?.value, _defOutWindowEnd);
+            const inFrom = sanitizeDate(document.getElementById('interval_in_from')?.value, _defInWindowStart);
+            const inTo = sanitizeDate(document.getElementById('interval_in_to')?.value, _defInWindowEnd);
+
             let durationVal = 7;
             if (state.date_mode === 'month') {
                 durationVal = parseInt(document.getElementById('month_duration_input')?.value || 7, 10);
             } else if (state.date_mode === 'interval') {
                 durationVal = parseInt(document.getElementById('interval_max_stay_input')?.value || 7, 10);
             } else if (state.date_mode === 'exact') {
-                const d1 = new Date(document.getElementById('exact_out_date')?.value || '2026-09-10');
-                const d2 = new Date(document.getElementById('exact_in_date')?.value || '2026-09-17');
+                const d1 = new Date(outExact);
+                const d2 = new Date(inExact);
                 durationVal = Math.max(1, Math.round((d2 - d1) / (1000 * 60 * 60 * 24)));
             }
 
@@ -65,15 +89,15 @@
                 adults: parseInt(document.getElementById('adults_count')?.value || 2, 10),
                 children: parseInt(document.getElementById('children_count')?.value || 0, 10),
                 date_mode: state.date_mode,
-                year: parseInt(document.getElementById('intake_year')?.value || new Date().getFullYear(), 10),
-                month: document.getElementById('intake_month')?.value || String(new Date().getMonth() + 1),
+                year: parseInt(document.getElementById('intake_year')?.value || _today.getFullYear(), 10),
+                month: document.getElementById('intake_month')?.value || String(_today.getMonth() + 1),
                 duration: durationVal,
-                exact_out_date: document.getElementById('exact_out_date')?.value || "2026-09-10",
-                exact_in_date: document.getElementById('exact_in_date')?.value || "2026-09-17",
-                out_from: document.getElementById('interval_out_from')?.value || "2026-09-01",
-                out_to: document.getElementById('interval_out_to')?.value || "2026-09-15",
-                in_from: document.getElementById('interval_in_from')?.value || "2026-09-08",
-                in_to: document.getElementById('interval_in_to')?.value || "2026-09-30",
+                exact_out_date: outExact,
+                exact_in_date: inExact,
+                out_from: outFrom,
+                out_to: outTo,
+                in_from: inFrom,
+                in_to: inTo,
                 min_stay: parseInt(document.getElementById('interval_min_stay_input')?.value || 5, 10),
                 max_stay: parseInt(document.getElementById('interval_max_stay_input')?.value || 10, 10),
                 target_temp: 24.0,
@@ -89,7 +113,9 @@
                 breakfast: document.getElementById('intake_breakfast')?.checked || false,
                 amenities: selectedAmenities,
                 ahp_weights: state.intake.ahp_weights,
-                stay_weights: state.intake.stay_weights
+                stay_weights: state.intake.stay_weights,
+                experience_preferences: state.intake.experience_preferences,
+                logistics_preferences: state.intake.logistics_preferences
             };
 
             state.showLoader(

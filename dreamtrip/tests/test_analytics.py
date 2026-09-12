@@ -156,6 +156,67 @@ def test_admin_authentication_and_endpoints():
     assert kpi_json["kpis"]["is_filtered"] is True
     assert kpi_json["kpis"]["total_users"] == 1
 
+def test_environment_tracking_and_filtering():
+    # Record test event
+    user_test = "test_advisor_env_unit"
+    evt_test = record_telemetry_event(
+        user_id=user_test,
+        session_id="sess_env_test_99",
+        event_type="search_completed",
+        module="destination_matcher",
+        environment="test",
+        duration_ms=800,
+        results_count=4,
+        success=True
+    )
+    assert evt_test is not None
+
+    # Record prod event
+    evt_prod = record_telemetry_event(
+        user_id=user_test,
+        session_id="sess_env_prod_99",
+        event_type="search_completed",
+        module="flight_intelligence",
+        environment="production",
+        duration_ms=1100,
+        results_count=8,
+        success=True
+    )
+    assert evt_prod is not None
+
+    # Verify KPI counts with environment filters
+    kpis_all = get_analytics_kpis(user_id=user_test)
+    assert kpis_all["total_searches"] >= 2
+    assert "env_counts" in kpis_all
+    assert kpis_all["env_counts"]["production"] >= 1
+    assert kpis_all["env_counts"]["test"] >= 1
+
+    kpis_prod = get_analytics_kpis(user_id=user_test, environment="production")
+    assert kpis_prod["selected_env"] == "production"
+    assert kpis_prod["total_searches"] == 1
+
+    kpis_test = get_analytics_kpis(user_id=user_test, environment="test")
+    assert kpis_test["selected_env"] == "test"
+    assert kpis_test["total_searches"] == 1
+
+    # Verify timeline environment tagging and filtering
+    tl_prod = get_user_timeline(user_id=user_test, environment="production")
+    assert all(e["environment"] == "production" for e in tl_prod)
+
+    tl_test = get_user_timeline(user_id=user_test, environment="test")
+    assert all(e["environment"] == "test" for e in tl_test)
+
+    # Verify API endpoints with env parameter
+    from app.routers.admin import ADMIN_SESSION_TOKEN
+    cookies = {"optivoya_admin_token": ADMIN_SESSION_TOKEN}
+    res_kpis = client.get(f"/api/admin/kpis?user={user_test}&env=production", cookies=cookies)
+    assert res_kpis.status_code == 200
+    assert res_kpis.json()["kpis"]["selected_env"] == "production"
+
+    res_dash = client.get(f"/admin/dashboard?user={user_test}&env=production", cookies=cookies)
+    assert res_dash.status_code == 200
+    assert "PROD" in res_dash.text
+
 def cleanup_test_data():
     from app.core.supabase import get_supabase
     sb = get_supabase()
@@ -176,6 +237,10 @@ if __name__ == "__main__":
     print("Running test_telemetry_recording_and_kpis()...")
     test_telemetry_recording_and_kpis()
     print("[PASS] test_telemetry_recording_and_kpis passed!")
+
+    print("Running test_environment_tracking_and_filtering()...")
+    test_environment_tracking_and_filtering()
+    print("[PASS] test_environment_tracking_and_filtering passed!")
 
     print("Running test_admin_authentication_and_endpoints()...")
     test_admin_authentication_and_endpoints()

@@ -30,12 +30,14 @@ class ClientTelemetryEvent(BaseModel):
     duration_ms: Optional[float] = None
     search_params: Optional[Dict[str, Any]] = None
     meta_data: Optional[Dict[str, Any]] = None
+    environment: Optional[str] = None
 
 @router.post("/api/telemetry/event")
 async def api_record_client_telemetry(event: ClientTelemetryEvent, request: Request):
     from app.core.auth import get_current_user
     user = get_current_user(request) or event.user_id or request.cookies.get("optivoya_user") or "guest"
     session_id = event.session_id or request.headers.get("x-session-id") or request.cookies.get("optivoya_session_id")
+    env = event.environment or request.headers.get("x-environment") or (event.meta_data or {}).get("environment")
     
     evt_id = record_telemetry_event(
         user_id=user,
@@ -45,6 +47,7 @@ async def api_record_client_telemetry(event: ClientTelemetryEvent, request: Requ
         duration_ms=event.duration_ms,
         search_params=event.search_params,
         meta_data=event.meta_data,
+        environment=env,
         success=True
     )
     return JSONResponse({"status": "ok", "event_id": evt_id})
@@ -96,14 +99,17 @@ async def admin_logout():
     return resp
 
 @router.get("/admin/dashboard", response_class=HTMLResponse)
-async def admin_dashboard(request: Request, user: Optional[str] = None):
+async def admin_dashboard(request: Request, user: Optional[str] = None, env: Optional[str] = "all"):
     if not is_admin_authenticated(request):
         return RedirectResponse(url="/admin", status_code=302)
 
-    kpis = get_analytics_kpis(user_id=user)
+    selected_env = "production" if (env or "").lower() in ("prod", "production") else ("test" if (env or "").lower() in ("test", "dev") else "all")
+    target_env = None if selected_env == "all" else selected_env
+
+    kpis = get_analytics_kpis(user_id=user, environment=target_env)
     users = get_all_beta_users()
-    timeline = get_user_timeline(user_id=user, limit=150)
-    sessions = get_user_sessions_summary(user_id=user, limit=50)
+    timeline = get_user_timeline(user_id=user, limit=150, environment=target_env)
+    sessions = get_user_sessions_summary(user_id=user, limit=50, environment=target_env)
 
     selected_users = [u.strip() for u in (user or "").split(",") if u.strip() and u.strip() != "all"]
     selected_user_str = ",".join(selected_users) if selected_users else "all"
@@ -116,28 +122,33 @@ async def admin_dashboard(request: Request, user: Optional[str] = None):
         "sessions": sessions,
         "clarity_project_id": get_clarity_project_id(),
         "selected_users": selected_users,
-        "selected_user": selected_user_str
+        "selected_user": selected_user_str,
+        "selected_env": selected_env,
+        "env_counts": kpis.get("env_counts", {"all": 0, "production": 0, "test": 0})
     })
 
 @router.get("/api/admin/kpis")
-async def api_admin_kpis(request: Request, user: Optional[str] = "all"):
+async def api_admin_kpis(request: Request, user: Optional[str] = "all", env: Optional[str] = "all"):
     if not is_admin_authenticated(request):
         raise HTTPException(status_code=401, detail="Unauthorized")
-    kpis = get_analytics_kpis(user_id=user)
+    target_env = None if env in (None, "all") else env
+    kpis = get_analytics_kpis(user_id=user, environment=target_env)
     return JSONResponse({"status": "ok", "kpis": kpis})
 
 @router.get("/api/admin/timeline")
-async def api_admin_timeline(request: Request, user: Optional[str] = "all"):
+async def api_admin_timeline(request: Request, user: Optional[str] = "all", env: Optional[str] = "all"):
     if not is_admin_authenticated(request):
         raise HTTPException(status_code=401, detail="Unauthorized")
-    timeline = get_user_timeline(user_id=user, limit=150)
+    target_env = None if env in (None, "all") else env
+    timeline = get_user_timeline(user_id=user, limit=150, environment=target_env)
     return JSONResponse({"status": "ok", "events": timeline})
 
 @router.get("/api/admin/sessions")
-async def api_admin_sessions(request: Request, user: Optional[str] = "all"):
+async def api_admin_sessions(request: Request, user: Optional[str] = "all", env: Optional[str] = "all"):
     if not is_admin_authenticated(request):
         raise HTTPException(status_code=401, detail="Unauthorized")
-    sessions = get_user_sessions_summary(user_id=user, limit=50)
+    target_env = None if env in (None, "all") else env
+    sessions = get_user_sessions_summary(user_id=user, limit=50, environment=target_env)
     return JSONResponse({"status": "ok", "sessions": sessions, "clarity_project_id": get_clarity_project_id()})
 
 @router.post("/api/admin/users")

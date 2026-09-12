@@ -4,7 +4,7 @@ type: process
 name: Destination Matching Process
 status: active
 
-description: A felhasználó utazási preferenciáinak (időjárás, repülőjegy árak, biztonság, megélhetési költségek) felmérése és optimális úti célok rangsorolása.
+description: A felhasználó utazási preferenciáinak (költségkeret, éghajlat, biztonság és élményfókusz) felmérése és optimális úti célok 4-pilléres rangsorolása.
 
 source:
   type: code
@@ -20,25 +20,30 @@ related:
   - "[[ahp-weighting]]"
   - "[[numbeo-database]]"
   - "[[flight-intelligence-workflow]]"
+  - "[[experience-vector-and-vibe-profiling]]"
 
 used_by:
   - "[[unified-trip-model]]"
+  - "[[master-planner-wizard]]"
 ---
 
 # Process: Destination Matching Process
 
-A **Destination Matcher** folyamat 2 fő fázisból áll:
+A **Destination Matcher** folyamat fázisai:
 
 ```text
-1. Felhasználói preferenciák megadása
-   (Indulás, Utasok, Hónap, Időtartam, Költségkeret, Hőmérséklet, Biztonság)
+1. Felhasználói preferenciák megadása (Level 1 + Level 2)
+   (Indulás, Utasok, Hónap, Időtartam, Költségkeret, Hőmérséklet, Biztonság, Élményfókusz csipek)
          ↓
-2. Többszempontú pontozás és szűrés (AHP)
-   (Open-Meteo éghajlat + Kiwi járatár + Numbeo megélhetés & biztonság)
+2. Többszempontú 4-pilléres pontozás és szűrés (AHP + Vektoros hasonlóság)
+   - Pillér 1: Kiwi járatár + Numbeo megélhetés (Teljes Utazási Költség)
+   - Pillér 2: Open-Meteo éghajlati illeszkedés (Hőmérséklet & Napsütés)
+   - Pillér 3: Numbeo Közbiztonsági Index
+   - Pillér 4: Level 2 Élményilleszkedés (Vibe Profil koszinusz hasonlóság a preferenciákkal)
          ↓
 3. Célállomás kiválasztása
    (🏆 Kiválasztás → 1-kattintásos handoff a Flight Intelligence-be)
 ```
 
 ## Adatátadás a következő lépésnek
-A kiválasztott célállomás adatai (`name`, `city`, `country`, `duration`, `adults`, `origin`, `numbeo_breakdown`) közvetlenül bekerülnek a `window.TripCart`-ba, és URL paraméterként átadódnak a `/flight-intelligence` felületnek.
+A kiválasztott célállomás adatai (`name`, `city`, `country`, `duration`, `adults`, `origin`, `score`, `experience_vector`, `numbeo_breakdown`) közvetlenül bekerülnek a `window.TripCart`-ba, és átadódnak a következő tervezési lépéseknek.

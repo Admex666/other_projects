@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS public.telemetry_events (
     success BOOLEAN DEFAULT TRUE,
     error_message TEXT,
     meta_data JSONB DEFAULT '{}'::jsonb,
+    environment TEXT DEFAULT 'production', -- production vs test
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -50,6 +51,9 @@ CREATE TABLE IF NOT EXISTS public.telemetry_events (
 ALTER TABLE public.beta_users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.user_sessions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.telemetry_events ENABLE ROW LEVEL SECURITY;
+
+-- Migration for existing databases:
+-- ALTER TABLE public.telemetry_events ADD COLUMN IF NOT EXISTS environment TEXT DEFAULT 'production';
 
 -- Allow full access to backend with API key
 CREATE POLICY "Allow all operations for service and anon keys" ON public.beta_users FOR ALL USING (true) WITH CHECK (true);

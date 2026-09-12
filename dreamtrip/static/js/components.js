@@ -68,7 +68,7 @@ window.initAdvisorDatePicker = function(config) {
         dateSubLabelId,
         hiddenStartInputId,
         hiddenEndInputId,
-        defaultStartDays = 7,
+        defaultStartDays = 21,
         defaultDurationDays = 7,
         minDate = "today",
         onDateChange
@@ -113,24 +113,34 @@ window.initAdvisorDatePicker = function(config) {
 
     // Determine initial dates from inputs or defaults
     const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
     let initialStart = new Date(today);
     initialStart.setDate(today.getDate() + defaultStartDays);
     
     let initialEnd = new Date(initialStart);
     initialEnd.setDate(initialStart.getDate() + defaultDurationDays);
 
+    // Only accept existing input value if it is NOT in the past
     if (startInput && startInput.value) {
         const parsed = new Date(startInput.value);
-        if (!isNaN(parsed)) initialStart = parsed;
+        if (!isNaN(parsed) && parsed >= today) {
+            initialStart = parsed;
+        }
     }
     if (endInput && endInput.value) {
         const parsed = new Date(endInput.value);
-        if (!isNaN(parsed)) initialEnd = parsed;
+        if (!isNaN(parsed) && parsed >= initialStart) {
+            initialEnd = parsed;
+        } else {
+            initialEnd = new Date(initialStart);
+            initialEnd.setDate(initialStart.getDate() + defaultDurationDays);
+        }
     }
 
     const fp = flatpickr(triggerEl, {
         mode: "range",
-        minDate: minDate,
+        minDate: minDate || "today",
         dateFormat: "Y-m-d",
         locale: (typeof flatpickr !== 'undefined' && flatpickr.l10ns && flatpickr.l10ns.hu) ? flatpickr.l10ns.hu : 'default',
         defaultDate: [initialStart, initialEnd],
@@ -152,7 +162,8 @@ window.initAdvisorDatePicker = function(config) {
     // Expose preset helper on fp instance
     fp.applyPreset = function(daysFromNow, durationDays) {
         const s = new Date();
-        s.setDate(s.getDate() + daysFromNow);
+        s.setHours(0, 0, 0, 0);
+        s.setDate(s.getDate() + Math.max(0, daysFromNow));
         const e = new Date(s);
         e.setDate(s.getDate() + durationDays);
         fp.setDate([s, e], true);

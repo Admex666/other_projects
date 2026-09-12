@@ -129,12 +129,12 @@
                             </svg>
                         </div>
                         <input type="text" id="exact_date_picker" class="hidden-date-picker" style="position: absolute; opacity: 0; pointer-events: none; height: 0;">
-                        <input type="hidden" id="exact_out_date" value="2026-09-10">
-                        <input type="hidden" id="exact_in_date" value="2026-09-17">
+                        <input type="hidden" id="exact_out_date" value="">
+                        <input type="hidden" id="exact_in_date" value="">
 
                         <div class="date-preset-pills" style="margin-top: 10px;">
                             <div class="preset-pill" onclick="applyExactPreset(7, 7, this)">Jövő hét (7 nap)</div>
-                            <div class="preset-pill active" onclick="applyExactPreset(20, 7, this)">3 hét múlva</div>
+                            <div class="preset-pill active" onclick="applyExactPreset(21, 7, this)">3 hét múlva</div>
                             <div class="preset-pill" onclick="applyExactPreset(14, 4, this)">Hosszú hétvége (4 nap)</div>
                         </div>
                     </div>
@@ -145,14 +145,14 @@
                             <div>
                                 <label class="form-label" style="font-size: 11px; font-weight: 700; margin-bottom: 4px;">🛫 Odaút időablak:</label>
                                 <input type="text" id="interval_out_picker" class="form-control" style="font-size: 12px; font-weight: 600; padding: 8px 10px; border-radius: 10px; background: var(--bg-surface);" placeholder="Indulási sáv">
-                                <input type="hidden" id="interval_out_from" value="2026-09-01">
-                                <input type="hidden" id="interval_out_to" value="2026-09-15">
+                                <input type="hidden" id="interval_out_from" value="">
+                                <input type="hidden" id="interval_out_to" value="">
                             </div>
                             <div>
                                 <label class="form-label" style="font-size: 11px; font-weight: 700; margin-bottom: 4px;">🛬 Visszaút időablak:</label>
                                 <input type="text" id="interval_in_picker" class="form-control" style="font-size: 12px; font-weight: 600; padding: 8px 10px; border-radius: 10px; background: var(--bg-surface);" placeholder="Visszaút sáv">
-                                <input type="hidden" id="interval_in_from" value="2026-09-10">
-                                <input type="hidden" id="interval_in_to" value="2026-09-28">
+                                <input type="hidden" id="interval_in_from" value="">
+                                <input type="hidden" id="interval_in_to" value="">
                             </div>
                         </div>
 
@@ -346,7 +346,7 @@
         if (exactInput) {
             const today = new Date();
             const defStart = new Date(today);
-            defStart.setDate(today.getDate() + 20);
+            defStart.setDate(today.getDate() + 21);
             const defEnd = new Date(defStart);
             defEnd.setDate(defStart.getDate() + 7);
 

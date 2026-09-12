@@ -3,7 +3,23 @@ import time
 from fastapi import APIRouter, Request, BackgroundTasks, HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from typing import List, Dict, Optional, Any
-from pydantic import BaseModel
+from datetime import datetime, timedelta, timezone
+from pydantic import BaseModel, Field
+
+def _get_future_date(days: int = 21) -> datetime:
+    return datetime.now(timezone.utc).date() + timedelta(days=days)
+
+def _get_default_month() -> str:
+    return str(_get_future_date(21).month)
+
+def _get_default_year() -> int:
+    return _get_future_date(21).year
+
+def _get_default_checkin() -> str:
+    return _get_future_date(21).strftime("%Y-%m-%d")
+
+def _get_default_checkout() -> str:
+    return _get_future_date(28).strftime("%Y-%m-%d")
 
 
 from app.core.config import templates, IS_PRODUCTION
@@ -33,8 +49,8 @@ active_trips: Dict[str, Any] = {}
 class MasterPlannerIntake(BaseModel):
     origin: str = "Budapest"
     date_mode: str = "month"
-    month: str = "9"
-    year: int = 2026
+    month: str = Field(default_factory=_get_default_month)
+    year: int = Field(default_factory=_get_default_year)
     duration: int = 7
     exact_out_date: Optional[str] = None
     exact_in_date: Optional[str] = None
@@ -65,14 +81,18 @@ class MasterPlannerIntake(BaseModel):
     weight_experience: float = 25.0
     ahp_comparisons: Optional[Dict[str, float]] = None
     ahp_weights: Optional[Dict[str, float]] = None
+    # Level 2: Élménykategória-preferenciák (0-100 skálán, opcionális)
+    experience_preferences: Optional[Dict[str, float]] = None
+    # Logisztikai preferenciák (opcionális)
+    logistics_preferences: Optional[Dict[str, Any]] = None
     dummy_mode: Optional[bool] = False
 
 class PlannerFlightSearchRequest(BaseModel):
     origin: str = "Budapest"
     destination: str = "Róma"
     date_mode: str = "month"
-    month: int = 9
-    year: int = 2026
+    month: int = Field(default_factory=lambda: int(_get_default_month()))
+    year: int = Field(default_factory=_get_default_year)
     duration: int = 7
     exact_out_date: Optional[str] = None
     exact_in_date: Optional[str] = None
@@ -95,8 +115,8 @@ class PlannerFlightSearchRequest(BaseModel):
 class PlannerStaySearchRequest(BaseModel):
     city: str = "Róma"
     country: Optional[str] = "Olaszország"
-    checkin: str = "2026-09-10"
-    checkout: str = "2026-09-17"
+    checkin: Optional[str] = None
+    checkout: Optional[str] = None
     adults: int = 2
     min_stars: int = 3
     min_rating: float = 7.5
@@ -183,6 +203,7 @@ def run_planner_destinations_task(user_key: str, data: MasterPlannerIntake, is_d
             exclusions=data.exclusions,
             weights=weights,
             ahp_comparisons=data.ahp_comparisons,
+            experience_preferences=data.experience_preferences,
             progress_callback=on_prog
         )
 
@@ -366,6 +387,30 @@ async def api_planner_search_stays(req: PlannerStaySearchRequest, request: Reque
         or request.cookies.get("planner_dummy_mode") == "1"
         or request.query_params.get("dummy") == "1"
     )
+
+    req_ci = req.checkin or _get_default_checkin()
+    req_co = req.checkout or _get_default_checkout()
+    today_d = datetime.now(timezone.utc).date()
+    try:
+        d_ci = datetime.strptime(req_ci, "%Y-%m-%d").date()
+        if d_ci < today_d:
+            req_ci = _get_default_checkin()
+            req_co = _get_default_checkout()
+    except Exception:
+        req_ci = _get_default_checkin()
+        req_co = _get_default_checkout()
+
+    try:
+        d_ci = datetime.strptime(req_ci, "%Y-%m-%d").date()
+        d_co = datetime.strptime(req_co, "%Y-%m-%d").date()
+        if d_co <= d_ci:
+            req_co = (d_ci + timedelta(days=7)).strftime("%Y-%m-%d")
+    except Exception:
+        req_co = _get_default_checkout()
+
+    req.checkin = req_ci
+    req.checkout = req_co
+
     if is_dummy:
         stays = generate_dummy_stays(req)
         duration_ms = round((time.perf_counter() - t_start) * 1000, 1)
@@ -377,6 +422,8 @@ async def api_planner_search_stays(req: PlannerStaySearchRequest, request: Reque
             search_params={
                 "city": req.city,
                 "country": req.country or "",
+                "checkin": req_ci,
+                "checkout": req_co,
                 "dummy_mode": True
             },
             duration_ms=duration_ms,
@@ -397,8 +444,8 @@ async def api_planner_search_stays(req: PlannerStaySearchRequest, request: Reque
     try:
         from datetime import datetime as dt
         try:
-            d_start = dt.strptime(req.checkin, "%Y-%m-%d")
-            d_end = dt.strptime(req.checkout, "%Y-%m-%d")
+            d_start = dt.strptime(req_ci, "%Y-%m-%d")
+            d_end = dt.strptime(req_co, "%Y-%m-%d")
             num_nights = max(1, (d_end - d_start).days)
         except Exception:
             num_nights = 7
@@ -415,7 +462,7 @@ async def api_planner_search_stays(req: PlannerStaySearchRequest, request: Reque
             city_clean = parts[0].strip()
             country_clean = parts[1].strip()
 
-        cache_key = f"{city_clean.lower()}_{country_clean.lower()}_{req.checkin}_{req.checkout}_{req.adults}_{req.min_stars}_{req.min_rating}_{req.breakfast}"
+        cache_key = f"{city_clean.lower()}_{country_clean.lower()}_{req_ci}_{req_co}_{req.adults}_{req.min_stars}_{req.min_rating}_{req.breakfast}"
         
         # 1. Ellenőrizzük a szerveroldali memóriagyorsítótárat (0 ms)
         if cache_key in _PLANNER_STAYS_CACHE and _PLANNER_STAYS_CACHE[cache_key]:
@@ -440,8 +487,8 @@ async def api_planner_search_stays(req: PlannerStaySearchRequest, request: Reque
                 get_all_stays,
                 city=city_clean,
                 country=country_clean,
-                start_date=req.checkin,
-                end_date=req.checkout,
+                start_date=req_ci,
+                end_date=req_co,
                 adults=req.adults,
                 price_min=p_min_eur,
                 price_max=p_max_eur,

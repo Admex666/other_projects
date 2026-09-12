@@ -6,12 +6,95 @@ Tracks search queries, durations, errors, module usage, and calculates Time Save
 import json
 import uuid
 from typing import Dict, Any, Optional, List, Union
-from datetime import datetime
+from datetime import datetime, timezone
 from app.models.analytics_models import get_db_connection
 from app.core.supabase import get_supabase, is_supabase_configured
 
 # Manual research baseline: egy átlagos utazási tanácsadó manuálisan ~45 percet tölt research-csel ügyfelenként
 MANUAL_RESEARCH_BASELINE_MINUTES = 45.0
+
+
+def _normalize_environment(
+    env_val: Optional[str] = None,
+    meta_data: Optional[Dict[str, Any]] = None,
+    search_params: Optional[Dict[str, Any]] = None,
+    user_id: Optional[str] = None
+) -> str:
+    """Normalizes environment to either 'production' or 'test'."""
+    if env_val:
+        e = str(env_val).lower().strip()
+        if e in ("prod", "production", "live"):
+            return "production"
+        if e in ("test", "testing", "dev", "development", "local", "staging", "demo"):
+            return "test"
+    if meta_data and isinstance(meta_data, dict):
+        if meta_data.get("environment"):
+            e = str(meta_data["environment"]).lower().strip()
+            if e in ("prod", "production", "live"):
+                return "production"
+            if e in ("test", "testing", "dev", "development", "local", "staging", "demo"):
+                return "test"
+        if meta_data.get("dummy_mode") is True:
+            return "test"
+        host = str(meta_data.get("hostname") or "").lower()
+        if any(h in host for h in ("localhost", "127.0.0.1", ".local")):
+            return "test"
+    if search_params and isinstance(search_params, dict) and search_params.get("dummy_mode") is True:
+        return "test"
+    if user_id and str(user_id).lower() in ("default_user", "guest_planner", "test_user"):
+        return "test"
+
+    from app.core.config import APP_ENV, IS_PRODUCTION
+    if IS_PRODUCTION or APP_ENV == "production":
+        return "production"
+    return "test"
+
+
+def _get_event_environment(ev: Dict[str, Any]) -> str:
+    """Extracts normalized environment ('production' vs 'test') from a raw event record."""
+    e = ev.get("environment")
+    if e:
+        e_str = str(e).lower().strip()
+        if e_str in ("prod", "production", "live"):
+            return "production"
+        if e_str in ("test", "testing", "dev", "development", "local", "staging", "demo"):
+            return "test"
+    meta = ev.get("meta_data")
+    if isinstance(meta, str):
+        try:
+            meta = json.loads(meta)
+        except Exception:
+            meta = {}
+    if isinstance(meta, dict):
+        e_meta = meta.get("environment")
+        if e_meta:
+            e_str = str(e_meta).lower().strip()
+            if e_str in ("prod", "production", "live"):
+                return "production"
+            if e_str in ("test", "testing", "dev", "development", "local", "staging", "demo"):
+                return "test"
+        if meta.get("dummy_mode") is True:
+            return "test"
+        host = str(meta.get("hostname") or "").lower()
+        if any(h in host for h in ("localhost", "127.0.0.1", ".local")):
+            return "test"
+    p = ev.get("search_params")
+    if isinstance(p, str):
+        try:
+            p = json.loads(p)
+        except Exception:
+            p = {}
+    if isinstance(p, dict) and p.get("dummy_mode") is True:
+        return "test"
+    uid = str(ev.get("user_id") or "").lower()
+    if uid in ("guest_planner", "default_user", "test_user"):
+        return "test"
+
+    from app.core.config import APP_ENV, IS_PRODUCTION
+    if IS_PRODUCTION or APP_ENV == "production":
+        return "production"
+    return "test"
+
 
 def record_telemetry_event(
     user_id: str,
@@ -23,12 +106,20 @@ def record_telemetry_event(
     results_count: Optional[int] = None,
     success: bool = True,
     error_message: Optional[str] = None,
-    meta_data: Optional[Dict[str, Any]] = None
+    meta_data: Optional[Dict[str, Any]] = None,
+    environment: Optional[str] = None
 ) -> str:
-    """Records an atomic telemetry event in Supabase (or SQLite only if Supabase not configured)."""
+    """Records an atomic telemetry event in Supabase (or SQLite only if Supabase not configured), tagged with environment."""
     event_id = "evt_" + uuid.uuid4().hex[:12]
     clean_user = user_id or "anonymous_guest"
     clean_session = session_id or "sess_" + uuid.uuid4().hex[:8]
+
+    # Normalize environment
+    clean_meta = dict(meta_data or {})
+    norm_env = _normalize_environment(environment, clean_meta, search_params, clean_user)
+    clean_meta["environment"] = norm_env
+
+    now_iso = datetime.now(timezone.utc).isoformat()
 
     if is_supabase_configured():
         sb = get_supabase()
@@ -37,11 +128,11 @@ def record_telemetry_event(
                 # 1. Frissítsük az utolsó aktivitást, HA regisztrált béta tanácsadóról van szó (NEM hozunk létre fantom usert!)
                 if clean_user and clean_user not in ('anonymous_guest', 'anonymous_advisor', 'guest_planner', 'default_user', 'guest', 'guest_user'):
                     sb.table("beta_users").update({
-                        "last_active_at": datetime.utcnow().isoformat()
+                        "last_active_at": now_iso
                     }).eq("username", clean_user).execute()
 
-                # 2. Insert telemetry event
-                sb.table("telemetry_events").insert({
+                # 2. Insert telemetry event (graceful fallback if environment column not in Supabase schema cache yet)
+                payload = {
                     "event_id": event_id,
                     "session_id": clean_session,
                     "user_id": clean_user,
@@ -52,14 +143,23 @@ def record_telemetry_event(
                     "results_count": results_count,
                     "success": success,
                     "error_message": error_message,
-                    "meta_data": meta_data or {}
-                }).execute()
+                    "meta_data": clean_meta,
+                    "environment": norm_env
+                }
+                try:
+                    sb.table("telemetry_events").insert(payload).execute()
+                except Exception as insert_err:
+                    if "environment" in str(insert_err):
+                        payload.pop("environment", None)
+                        sb.table("telemetry_events").insert(payload).execute()
+                    else:
+                        raise insert_err
 
                 # 3. Update session
                 sb.table("user_sessions").upsert({
                     "session_id": clean_session,
                     "user_id": clean_user,
-                    "last_event_at": datetime.utcnow().isoformat()
+                    "last_event_at": now_iso
                 }, on_conflict="session_id").execute()
 
                 return event_id
@@ -72,7 +172,7 @@ def record_telemetry_event(
     conn = get_db_connection()
     cursor = conn.cursor()
     params_json = json.dumps(search_params or {}, ensure_ascii=False)
-    meta_json = json.dumps(meta_data or {}, ensure_ascii=False)
+    meta_json = json.dumps(clean_meta, ensure_ascii=False)
 
     try:
         if clean_user and clean_user not in ('anonymous_guest', 'anonymous_advisor', 'guest_planner', 'default_user'):
@@ -85,11 +185,11 @@ def record_telemetry_event(
         cursor.execute("""
         INSERT INTO telemetry_events (
             event_id, session_id, user_id, event_type, module, 
-            search_params, duration_ms, results_count, success, error_message, meta_data
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            search_params, duration_ms, results_count, success, error_message, meta_data, environment
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             event_id, clean_session, clean_user, event_type, module,
-            params_json, duration_ms, results_count, 1 if success else 0, error_message, meta_json
+            params_json, duration_ms, results_count, 1 if success else 0, error_message, meta_json, norm_env
         ))
 
         cursor.execute("""
@@ -127,10 +227,21 @@ def _normalize_user_filter(user_id: Optional[Union[str, List[str]]]) -> List[str
         return list(dict.fromkeys(parts))
     return []
 
-def get_analytics_kpis(user_id: Optional[Union[str, List[str]]] = None) -> Dict[str, Any]:
-    """Calculates validation KPIs from Supabase or SQLite, filtered by user(s) if specified."""
+def get_analytics_kpis(
+    user_id: Optional[Union[str, List[str]]] = None,
+    environment: Optional[str] = None
+) -> Dict[str, Any]:
+    """Calculates validation KPIs from Supabase or SQLite, filtered by user(s) and environment if specified."""
     target_users = _normalize_user_filter(user_id)
     is_filtered = len(target_users) > 0
+
+    target_env = None
+    if environment:
+        e_low = str(environment).lower().strip()
+        if e_low in ("prod", "production", "live"):
+            target_env = "production"
+        elif e_low in ("test", "testing", "dev", "development", "local", "staging", "demo"):
+            target_env = "test"
 
     sb = get_supabase()
     if sb:
@@ -150,7 +261,23 @@ def get_analytics_kpis(user_id: Optional[Union[str, List[str]]] = None) -> Dict[
                 else:
                     q = q.in_("user_id", target_users)
             events_res = q.execute()
-            events = events_res.data or []
+            all_events = events_res.data or []
+
+            # Environment distribution across all events matching user filter
+            total_events = len(all_events)
+            prod_events = sum(1 for e in all_events if _get_event_environment(e) == "production")
+            test_events = sum(1 for e in all_events if _get_event_environment(e) == "test")
+            env_counts = {
+                "all": total_events,
+                "production": prod_events,
+                "test": test_events
+            }
+
+            # Filter by environment if requested
+            if target_env:
+                events = [e for e in all_events if _get_event_environment(e) == target_env]
+            else:
+                events = all_events
 
             search_events = [e for e in events if e.get("event_type") == "search_completed"]
             total_searches = len(search_events)
@@ -197,7 +324,9 @@ def get_analytics_kpis(user_id: Optional[Union[str, List[str]]] = None) -> Dict[
                 "proposals_exported": proposals_count,
                 "module_usage": module_usage,
                 "is_filtered": is_filtered,
-                "filtered_users": target_users
+                "filtered_users": target_users,
+                "selected_env": target_env or "all",
+                "env_counts": env_counts
             }
         except Exception as e:
             print(f"[ANALYTICS ERROR] Supabase get_analytics_kpis failed: {e}")
@@ -214,7 +343,9 @@ def get_analytics_kpis(user_id: Optional[Union[str, List[str]]] = None) -> Dict[
                     "proposals_exported": 0,
                     "module_usage": {},
                     "is_filtered": is_filtered,
-                    "filtered_users": target_users
+                    "filtered_users": target_users,
+                    "selected_env": target_env or "all",
+                    "env_counts": {"all": 0, "production": 0, "test": 0}
                 }
 
     # Fallback to local SQLite ONLY when Supabase is NOT configured
@@ -224,54 +355,62 @@ def get_analytics_kpis(user_id: Optional[Union[str, List[str]]] = None) -> Dict[
     if is_filtered:
         total_users = len(target_users)
         placeholders = ",".join(["?"] * len(target_users))
-        user_where = f" AND user_id IN ({placeholders})"
-        user_params = target_users
+        user_where = f" WHERE user_id IN ({placeholders})"
+        user_params = list(target_users)
     else:
         cursor.execute("SELECT COUNT(*) FROM beta_users WHERE is_active = 1")
         total_users = cursor.fetchone()[0]
         user_where = ""
         user_params = []
 
-    cursor.execute(f"""
-    SELECT 
-        COUNT(*) as total_searches,
-        SUM(CASE WHEN success = 1 THEN 1 ELSE 0 END) as successful_searches,
-        AVG(CASE WHEN duration_ms IS NOT NULL AND duration_ms > 0 THEN duration_ms ELSE NULL END) as avg_duration_ms
-    FROM telemetry_events
-    WHERE event_type = 'search_completed'{user_where}
-    """, user_params)
-    search_row = cursor.fetchone()
-    total_searches = search_row["total_searches"] or 0
-    successful_searches = search_row["successful_searches"] or 0
-    avg_duration_ms = round(search_row["avg_duration_ms"] or 1800.0, 1)
+    # Fetch all events matching user filter
+    cursor.execute(f"SELECT * FROM telemetry_events{user_where}", user_params)
+    sqlite_rows = [dict(r) for r in cursor.fetchall()]
+    conn.close()
+
+    total_events = len(sqlite_rows)
+    prod_events = sum(1 for e in sqlite_rows if _get_event_environment(e) == "production")
+    test_events = sum(1 for e in sqlite_rows if _get_event_environment(e) == "test")
+    env_counts = {
+        "all": total_events,
+        "production": prod_events,
+        "test": test_events
+    }
+
+    if target_env:
+        events = [e for e in sqlite_rows if _get_event_environment(e) == target_env]
+    else:
+        events = sqlite_rows
+
+    search_events = [e for e in events if e.get("event_type") == "search_completed"]
+    total_searches = len(search_events)
+    successful_searches = len([e for e in search_events if e.get("success")])
+
+    durations = [e.get("duration_ms") for e in search_events if e.get("duration_ms") and e.get("duration_ms") > 0]
+    avg_duration_ms = round(sum(durations) / len(durations), 1) if durations else (1800.0 if total_searches == 0 else 0.0)
     success_rate = round((successful_searches / total_searches * 100), 1) if total_searches > 0 else 100.0
 
-    cursor.execute(f"""
-    SELECT module, COUNT(*) as count 
-    FROM telemetry_events 
-    WHERE event_type IN ('search_completed', 'search_started'){user_where}
-    GROUP BY module
-    """, user_params)
-    module_rows = cursor.fetchall()
-    module_usage = {r["module"]: r["count"] for r in module_rows}
+    module_usage: Dict[str, int] = {}
+    for e in events:
+        if e.get("event_type") in ("search_completed", "search_started"):
+            m = e.get("module") or "other"
+            module_usage[m] = module_usage.get(m, 0) + 1
 
-    cursor.execute(f"SELECT COUNT(*) FROM telemetry_events WHERE event_type = 'proposal_exported'{user_where}", user_params)
-    proposals_count = cursor.fetchone()[0]
+    proposals_count = len([e for e in events if e.get("event_type") == "proposal_exported"])
 
     optivoya_avg_min = (avg_duration_ms / 1000.0) / 60.0
     saved_minutes_per_search = max(5.0, MANUAL_RESEARCH_BASELINE_MINUTES - optivoya_avg_min)
     total_time_saved_hours = round((successful_searches * saved_minutes_per_search) / 60.0, 1)
 
-    cursor.execute(f"""
-    SELECT user_id, COUNT(DISTINCT session_id) as session_count
-    FROM telemetry_events
-    WHERE user_id != 'anonymous_guest'{user_where}
-    GROUP BY user_id
-    HAVING session_count > 1
-    """, user_params)
-    repeat_users_count = len(cursor.fetchall())
-
-    conn.close()
+    user_sessions: Dict[str, set] = {}
+    for e in events:
+        uid = e.get("user_id")
+        sid = e.get("session_id")
+        if uid and uid != "anonymous_guest" and sid:
+            if uid not in user_sessions:
+                user_sessions[uid] = set()
+            user_sessions[uid].add(sid)
+    repeat_users_count = len([uid for uid, sids in user_sessions.items() if len(sids) > 1])
 
     return {
         "total_users": total_users,
@@ -285,13 +424,27 @@ def get_analytics_kpis(user_id: Optional[Union[str, List[str]]] = None) -> Dict[
         "proposals_exported": proposals_count,
         "module_usage": module_usage,
         "is_filtered": is_filtered,
-        "filtered_users": target_users
+        "filtered_users": target_users,
+        "selected_env": target_env or "all",
+        "env_counts": env_counts
     }
 
-def get_user_timeline(user_id: Optional[Union[str, List[str]]] = None, limit: int = 100) -> List[Dict[str, Any]]:
-    """Returns chronologically ordered telemetry events, optionally filtered by user(s)."""
+def get_user_timeline(
+    user_id: Optional[Union[str, List[str]]] = None,
+    limit: int = 100,
+    environment: Optional[str] = None
+) -> List[Dict[str, Any]]:
+    """Returns chronologically ordered telemetry events, optionally filtered by user(s) and environment."""
     target_users = _normalize_user_filter(user_id)
     is_filtered = len(target_users) > 0
+
+    target_env = None
+    if environment:
+        e_low = str(environment).lower().strip()
+        if e_low in ("prod", "production", "live"):
+            target_env = "production"
+        elif e_low in ("test", "testing", "dev", "development", "local", "staging", "demo"):
+            target_env = "test"
 
     sb = get_supabase()
     if sb:
@@ -301,7 +454,8 @@ def get_user_timeline(user_id: Optional[Union[str, List[str]]] = None, limit: in
             users_map = {u["username"]: u for u in (users_res.data or [])}
 
             # 2. Fetch events
-            q = sb.table("telemetry_events").select("*").order("created_at", desc=True).limit(limit)
+            fetch_limit = limit * 3 if target_env else limit
+            q = sb.table("telemetry_events").select("*").order("created_at", desc=True).limit(fetch_limit)
             if is_filtered:
                 if len(target_users) == 1:
                     q = q.eq("user_id", target_users[0])
@@ -312,6 +466,10 @@ def get_user_timeline(user_id: Optional[Union[str, List[str]]] = None, limit: in
 
             timeline = []
             for ev in events:
+                ev_env = _get_event_environment(ev)
+                if target_env and ev_env != target_env:
+                    continue
+
                 uid = ev.get("user_id") or "guest"
                 u_info = users_map.get(uid, {})
                 fn = u_info.get("full_name")
@@ -337,8 +495,11 @@ def get_user_timeline(user_id: Optional[Union[str, List[str]]] = None, limit: in
                     "success": bool(ev.get("success", True)),
                     "error_message": ev.get("error_message"),
                     "meta_data": ev.get("meta_data") or {},
+                    "environment": ev_env,
                     "created_at": str(ev.get("created_at") or "")[:19].replace("T", " ")
                 })
+                if len(timeline) >= limit:
+                    break
             return timeline
         except Exception as e:
             print(f"[ANALYTICS ERROR] Supabase get_user_timeline failed: {e}")
@@ -353,7 +514,7 @@ def get_user_timeline(user_id: Optional[Union[str, List[str]]] = None, limit: in
     SELECT 
         e.id, e.event_id, e.session_id, e.user_id, e.event_type, e.module, 
         e.search_params, e.duration_ms, e.results_count, e.success, e.error_message, 
-        e.meta_data, e.created_at,
+        e.meta_data, e.created_at, e.environment,
         u.full_name, u.company_name
     FROM telemetry_events e
     LEFT JOIN beta_users u ON e.user_id = u.username
@@ -364,14 +525,20 @@ def get_user_timeline(user_id: Optional[Union[str, List[str]]] = None, limit: in
         query += f" WHERE e.user_id IN ({placeholders})"
         params.extend(target_users)
 
+    fetch_limit = limit * 3 if target_env else limit
     query += " ORDER BY e.created_at DESC LIMIT ?"
-    params.append(limit)
+    params.append(fetch_limit)
 
     cursor.execute(query, tuple(params))
     rows = cursor.fetchall()
     
     timeline = []
     for r in rows:
+        row_dict = dict(r)
+        ev_env = _get_event_environment(row_dict)
+        if target_env and ev_env != target_env:
+            continue
+
         p_data = {}
         try:
             p_data = json.loads(r["search_params"]) if r["search_params"] else {}
@@ -399,8 +566,11 @@ def get_user_timeline(user_id: Optional[Union[str, List[str]]] = None, limit: in
             "success": bool(r["success"]),
             "error_message": r["error_message"],
             "meta_data": m_data,
+            "environment": ev_env,
             "created_at": r["created_at"]
         })
+        if len(timeline) >= limit:
+            break
 
     conn.close()
     return timeline
@@ -434,13 +604,15 @@ def format_duration_human(seconds: float) -> str:
 
 def get_user_sessions_summary(
     user_id: Optional[Union[str, List[str]]] = None,
-    limit: int = 50
+    limit: int = 50,
+    environment: Optional[str] = None
 ) -> List[Dict[str, Any]]:
     """
     Összegzi a telemetria eseményeket összefüggő látogatási munkamenetekre (User Journeys).
-    Kiszámítja az egyes sessionök teljes időtartamát, a bejárt útvonalat és a lépések közötti tartózkodási időt (dwell time).
+    Kiszámítja az egyes sessionök teljes időtartamát, a bejárt útvonalat és a lépések közötti tartózkodási időt (dwell time),
+    valamint hozzárendeli a környezetet (production vs test).
     """
-    raw_events = get_user_timeline(user_id=user_id, limit=300)
+    raw_events = get_user_timeline(user_id=user_id, limit=400, environment=environment)
     if not raw_events:
         return []
 
@@ -464,6 +636,11 @@ def get_user_sessions_summary(
         
         uid = first_ev.get("user_id") or "guest"
         user_disp = first_ev.get("user_display") or uid
+
+        # Környezet meghatározása a session eseményei alapján
+        prod_count = sum(1 for e in ev_list if e.get("environment") == "production")
+        test_count = sum(1 for e in ev_list if e.get("environment") == "test")
+        session_env = "production" if prod_count > 0 and prod_count >= test_count else "test"
 
         t_start = _parse_ts(first_ev.get("created_at"))
         t_end = _parse_ts(last_ev.get("created_at"))
@@ -510,7 +687,6 @@ def get_user_sessions_summary(
                 step_dwell_sec = int(meta.get("dwell_sec", 0))
 
             # Szemantikus lépés azonosítása
-            step_obj = None
             if mod == "destination_matcher" and ev_type == "search_completed":
                 searches_count += 1
                 cnt = ev.get("results_count")
@@ -625,6 +801,7 @@ def get_user_sessions_summary(
             "session_id": sid,
             "user_id": uid,
             "user_display": user_disp,
+            "environment": session_env,
             "started_at": str(first_ev.get("created_at") or "")[:19].replace("T", " "),
             "ended_at": str(last_ev.get("created_at") or "")[:19].replace("T", " "),
             "duration_sec": total_duration_sec,

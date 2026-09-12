@@ -47,6 +47,57 @@ class TravelPreferences(BaseModel):
     travel_time_max: int = 12    # hours
     interests: List[str] = Field(default_factory=list) # e.g. ["culture", "food", "nature", "nightlife"]
 
+class ExperiencePreferences(BaseModel):
+    """
+    Level 2 AHP: A felhasználó élménykategória-preferenciái 0-100 skálán.
+    Ezek alapján számítódik az Experience Fit (vektoros hasonlóság a desztináció profiljával).
+    A 0 érték azt jelenti: nem releváns. A 100 a legmagasabb prioritás.
+    """
+    culture: float = 50.0        # Kultúra, történelem, múzeumok, műemlékek
+    gastronomy: float = 50.0     # Gasztronómia, éttermek, piacok, helyi konyha
+    beach: float = 30.0          # Tengerpart, strand, víz
+    nature: float = 40.0         # Természet, panorámák, kirándulás
+    nightlife: float = 25.0      # Éjszakai élet, bárok, szórakozás
+    authenticity: float = 50.0   # Helyi autentikusság, nem-turisztikus hangulat
+    adventure: float = 25.0      # Aktív kikapcsolódás, sport, kaland
+    relaxation: float = 40.0     # Pihenés, lazítás, SPA, wellness
+    family: float = 30.0         # Családbarát programok, gyermekek
+    romance: float = 35.0        # Romantikus hangulat, párok
+    shopping: float = 20.0       # Bevásárlás, piacok, design
+    sightseeing: float = 50.0    # Városnézés, látványosságok
+
+    def to_vector(self) -> Dict[str, float]:
+        """Normalizált vektor visszaadása (összeg=1) a koszinusz-hasonlósághoz."""
+        raw = {
+            "culture": self.culture, "gastronomy": self.gastronomy,
+            "beach": self.beach, "nature": self.nature,
+            "nightlife": self.nightlife, "authenticity": self.authenticity,
+            "adventure": self.adventure, "relaxation": self.relaxation,
+            "family": self.family, "romance": self.romance,
+            "shopping": self.shopping, "sightseeing": self.sightseeing,
+        }
+        total = sum(raw.values())
+        if total > 0:
+            return {k: v / total for k, v in raw.items()}
+        return {k: 1.0 / len(raw) for k in raw}
+
+class LogisticsPreferences(BaseModel):
+    """
+    Logisztikai és napi menetrend preferenciák az itinerary optimalizáláshoz.
+    """
+    transport_modes: List[str] = Field(
+        default_factory=lambda: ["walking", "public_transport"],
+        description="Preferált közlekedési módok: walking, public_transport, taxi, rental_car, mixed"
+    )
+    max_walking_minutes: int = 25          # Maximális gyaloglási hajlandóság (perc)
+    day_start_time: str = "09:00"          # Nap kezdési ideje
+    day_end_time: str = "21:00"            # Nap befejezési ideje
+    lunch_window_start: str = "13:00"      # Ebédszünet kezdete
+    lunch_window_end: str = "14:00"        # Ebédszünet vége
+    dinner_window_start: str = "19:00"     # Vacsoraidő kezdete
+    dinner_window_end: str = "20:30"       # Vacsoraidő vége
+    prefer_morning_sightseeing: bool = True  # Reggeli sétálás / látnivalók preferenciája
+
 class Trip(BaseModel):
     id: str
     user_id: str
@@ -91,6 +142,9 @@ class TripInput(BaseModel):
     budget_strictness: str = "soft"
     exclusions: List[str] = Field(default_factory=list)
     destination_weights: Dict[str, float] = Field(default_factory=dict)
+    # Level 2 AHP: élménykategória-preferenciák és logisztika
+    experience_preferences: Optional[ExperiencePreferences] = Field(default_factory=ExperiencePreferences)
+    logistics_preferences: Optional[LogisticsPreferences] = Field(default_factory=LogisticsPreferences)
 
 class TripDestination(BaseModel):
     name: str
@@ -189,4 +243,7 @@ class UnifiedTrip(BaseModel):
     flight: TripFlightSearch = Field(default_factory=TripFlightSearch)
     accommodation: TripAccommodationSearch = Field(default_factory=TripAccommodationSearch)
     budget: TripBudgetBreakdown = Field(default_factory=TripBudgetBreakdown)
+    experience_preferences: Optional[ExperiencePreferences] = Field(default_factory=ExperiencePreferences)
+    logistics_preferences: Optional[LogisticsPreferences] = Field(default_factory=LogisticsPreferences)
+    trip_score: float = 0.0
 

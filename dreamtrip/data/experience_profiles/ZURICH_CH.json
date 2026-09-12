@@ -1,0 +1,123 @@
+{
+  "destination_id": "ZURICH_CH",
+  "city_name": "Zürich",
+  "country": "Svájc",
+  "total_experiences": 21,
+  "experience_vector": {
+    "destination_id": "ZURICH_CH",
+    "city_name": "Zürich",
+    "country": "Svájc",
+    "peer_group": "european_all",
+    "total_entities": 21,
+    "data_confidence": 0.15,
+    "hidden_gem_score": 1.1,
+    "vibe_summary": "Zürich: kulturaban gazdag, termeszetkoeli Svájci varos - romantikus karakterrel",
+    "top_dimensions": [
+      "culture",
+      "nature",
+      "romance"
+    ],
+    "overall_fit": 0.0,
+    "dimensions": {
+      "culture": {
+        "absolute": 38.7,
+        "relative_z": 0.0,
+        "confidence": 0.209,
+        "freshness": 1.0
+      },
+      "food": {
+        "absolute": 27.4,
+        "relative_z": 0.0,
+        "confidence": 0.343,
+        "freshness": 1.0
+      },
+      "beach": {
+        "absolute": 0.0,
+        "relative_z": 0.0,
+        "confidence": 0.0,
+        "freshness": 1.0
+      },
+      "nature": {
+        "absolute": 36.2,
+        "relative_z": 0.0,
+        "confidence": 0.1,
+        "freshness": 1.0
+      },
+      "nightlife": {
+        "absolute": 0.0,
+        "relative_z": 0.0,
+        "confidence": 0.0,
+        "freshness": 1.0
+      },
+      "romance": {
+        "absolute": 28.2,
+        "relative_z": 0.0,
+        "confidence": 0.254,
+        "freshness": 1.0
+      },
+      "authenticity": {
+        "absolute": 24.4,
+        "relative_z": 0.0,
+        "confidence": 0.357,
+        "freshness": 1.0
+      },
+      "locality": {
+        "absolute": 21.4,
+        "relative_z": 0.0,
+        "confidence": 0.395,
+        "freshness": 1.0
+      },
+      "walkability": {
+        "absolute": 0.0,
+        "relative_z": 0.0,
+        "confidence": 0.0,
+        "freshness": 1.0
+      },
+      "tourist_intensity": {
+        "absolute": 39.2,
+        "relative_z": 0.0,
+        "confidence": 0.037,
+        "freshness": 1.0
+      },
+      "adventure": {
+        "absolute": 26.1,
+        "relative_z": 0.0,
+        "confidence": 0.1,
+        "freshness": 1.0
+      },
+      "family": {
+        "absolute": 0.0,
+        "relative_z": 0.0,
+        "confidence": 0.0,
+        "freshness": 1.0
+      }
+    }
+  },
+  "top_experiences_summary": [
+    {
+      "canonical_name": "Főtér és Történelmi Városközpont",
+      "category": "culture_history",
+      "rating": 4.5
+    },
+    {
+      "canonical_name": "Királyi Palota és Vármúzeum",
+      "category": "culture_history",
+      "rating": 4.8
+    },
+    {
+      "canonical_name": "Modern Művészeti Galéria",
+      "category": "culture_history",
+      "rating": 4.5
+    },
+    {
+      "canonical_name": "Botanikus Kert és Pálmaház",
+      "category": "culture_history",
+      "rating": 4.7
+    },
+    {
+      "canonical_name": "Szent Katedrális",
+      "category": "culture_history",
+      "rating": 4.8
+    }
+  ]
+}

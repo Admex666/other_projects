@@ -21,6 +21,7 @@
         onDepHourChange(val) { return window.PlannerIntake.onDepHourChange(val); },
         setMaxDuration(hours) { return window.PlannerIntake.setMaxDuration(hours); },
         onRatingChange(val) { return window.PlannerIntake.onRatingChange(val); },
+        toggleExperienceTag(cat, el) { return window.PlannerIntake.toggleExperienceTag(cat, el); },
         openDecisionDNA() { return window.PlannerIntake.openDecisionDNA(); },
         openAHPModal() { return window.PlannerIntake.openDecisionDNA(); },
         openStayPrioritiesModal() { return window.PlannerIntake.openDecisionDNA(); },
@@ -77,8 +78,9 @@
                 dateSubLabelId: 'exact_date_sub',
                 hiddenStartInputId: 'exact_out_date',
                 hiddenEndInputId: 'exact_in_date',
-                defaultStartDays: 14,
-                defaultDurationDays: 7
+                defaultStartDays: 21,
+                defaultDurationDays: 7,
+                minDate: "today"
             });
 
             // Interval Mode: Outbound Departure Window Range Picker
@@ -88,8 +90,9 @@
                 dateSubLabelId: 'interval_out_sub',
                 hiddenStartInputId: 'interval_out_from',
                 hiddenEndInputId: 'interval_out_to',
-                defaultStartDays: 7,
+                defaultStartDays: 21,
                 defaultDurationDays: 14,
+                minDate: "today",
                 onDateChange: function (startIso, endIso) {
                     if (startIso && state.interval_in_fp) {
                         state.interval_in_fp.set('minDate', startIso);
@@ -111,16 +114,25 @@
             });
 
             // Interval Mode: Inbound Return Window Range Picker (minDate = earliest outbound)
-            const initialOutFrom = document.getElementById('interval_out_from')?.value || "today";
+            const rawOutFrom = document.getElementById('interval_out_from')?.value;
+            let validatedMinDate = "today";
+            if (rawOutFrom) {
+                const pOut = new Date(rawOutFrom);
+                const t0 = new Date();
+                t0.setHours(0, 0, 0, 0);
+                if (!isNaN(pOut) && pOut >= t0) {
+                    validatedMinDate = rawOutFrom;
+                }
+            }
             state.interval_in_fp = window.initAdvisorDatePicker({
                 triggerElementId: 'interval_in_picker_trigger',
                 datePrimaryLabelId: 'interval_in_primary',
                 dateSubLabelId: 'interval_in_sub',
                 hiddenStartInputId: 'interval_in_from',
                 hiddenEndInputId: 'interval_in_to',
-                minDate: initialOutFrom,
-                defaultStartDays: 14,
-                defaultDurationDays: 22
+                minDate: validatedMinDate,
+                defaultStartDays: 28,
+                defaultDurationDays: 14
             });
         }
 

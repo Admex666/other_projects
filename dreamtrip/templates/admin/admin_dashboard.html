@@ -106,6 +106,107 @@
             color: #ef4444;
         }
 
+        /* Environment Filter Controls */
+        .filter-toolbar {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            padding: 12px 18px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .env-filter-group {
+            display: inline-flex;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            padding: 3px;
+            gap: 3px;
+        }
+        .env-filter-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 6px 14px;
+            border-radius: 7px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s ease;
+            user-select: none;
+        }
+        .env-filter-btn:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.06);
+        }
+        .env-filter-btn.active {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 2px 10px var(--primary-glow);
+        }
+        .env-filter-btn.active.prod {
+            background: #059669;
+            box-shadow: 0 2px 10px rgba(16, 185, 129, 0.35);
+        }
+        .env-filter-btn.active.test {
+            background: #475569;
+            box-shadow: 0 2px 10px rgba(100, 116, 139, 0.35);
+        }
+        .env-count-pill {
+            background: rgba(0, 0, 0, 0.25);
+            padding: 1px 7px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-family: monospace;
+        }
+
+        /* Environment Visual Badges */
+        .env-badge {
+            font-size: 10.5px;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 6px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .env-badge-production {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            color: #34d399;
+        }
+        .env-badge-test {
+            background: rgba(148, 163, 184, 0.15);
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            color: #cbd5e1;
+        }
+        .env-badge-mini {
+            font-size: 9.5px;
+            font-weight: 700;
+            padding: 1px 6px;
+            border-radius: 4px;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+        }
+        .filter-status-bar-inline {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .filter-status-bar-inline.hidden {
+            display: none;
+        }
+
         .kpi-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -522,10 +623,32 @@
 
     <div class="admin-container">
 
-        <!-- ACTIVE FILTER STATUS BAR -->
-        <div id="filterStatusBar" class="filter-status-bar {% if not selected_users %}hidden{% endif %}">
-            <div class="filter-tags-wrap">
-                <span style="font-size: 13px; font-weight: 700; color: #fff;">Szűrt felhasználók:</span>
+        <!-- ENVIRONMENT & USER FILTER TOOLBAR -->
+        <div class="filter-toolbar">
+            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                <span style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Környezet:</span>
+                <div class="env-filter-group" id="envFilterGroup">
+                    <button type="button" class="env-filter-btn {% if selected_env == 'all' %}active{% endif %}" onclick="setEnvFilter('all')">
+                        <span class="material-symbols-outlined" style="font-size: 15px;">apps</span>
+                        Mind (Összes)
+                        <span class="env-count-pill" id="envCountAll">{{ env_counts.all }}</span>
+                    </button>
+                    <button type="button" class="env-filter-btn prod {% if selected_env == 'production' %}active prod{% endif %}" onclick="setEnvFilter('production')">
+                        <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10b981;"></span>
+                        Éles (Production)
+                        <span class="env-count-pill" id="envCountProd">{{ env_counts.production }}</span>
+                    </button>
+                    <button type="button" class="env-filter-btn test {% if selected_env == 'test' %}active test{% endif %}" onclick="setEnvFilter('test')">
+                        <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #94a3b8;"></span>
+                        Teszt / Dev
+                        <span class="env-count-pill" id="envCountTest">{{ env_counts.test }}</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Active User Filter Badges -->
+            <div id="filterStatusBar" class="filter-status-bar-inline {% if not selected_users %}hidden{% endif %}">
+                <span style="font-size: 12px; font-weight: 700; color: #a5b4fc;">Szűrt felhasználók:</span>
                 <div id="filterTagsList" style="display: inline-flex; gap: 6px; flex-wrap: wrap;">
                     {% for u in selected_users %}
                     <span class="filter-tag-pill" data-user="{{ u }}">
@@ -534,9 +657,7 @@
                     </span>
                     {% endfor %}
                 </div>
-            </div>
-            <div style="display: flex; gap: 10px; align-items: center;">
-                <button type="button" class="btn btn-outline btn-sm" onclick="clearAllFilters()" style="padding: 4px 10px; font-size: 11.5px;">Szűrés törlése (Összes mutatása)</button>
+                <button type="button" class="btn btn-outline btn-sm" onclick="clearAllFilters()" style="padding: 2px 8px; font-size: 11px;">Minden tanácsadó</button>
             </div>
         </div>
 
@@ -666,9 +787,12 @@
                             <div class="session-user-info">
                                 <div class="user-avatar" style="width:30px; height:30px; font-size:12px;">{{ s.user_id[:2]|upper }}</div>
                                 <div>
-                                    <div style="font-weight: 700; font-size: 13.5px; color: #fff;">
+                                    <div style="font-weight: 700; font-size: 13.5px; color: #fff; display: flex; align-items: center; gap: 8px;">
                                         {{ s.user_display }}
                                         <span style="font-size: 11.5px; color: var(--text-muted); font-weight: normal;">• @{{ s.user_id }}</span>
+                                        <span class="env-badge env-badge-{{ s.environment }}">
+                                            {% if s.environment == 'production' %}🟢 PROD{% else %}🧪 TEST{% endif %}
+                                        </span>
                                     </div>
                                     <div style="font-size: 11px; color: var(--text-muted);">
                                         Kezdés: {{ s.started_at }}
@@ -740,6 +864,7 @@
                                 <div class="event-header">
                                     <div style="display: flex; align-items: center; gap: 8px;">
                                         <span class="event-module-badge badge-{{ ev.module.split('_')[0] }}">{{ ev.module }}</span>
+                                        <span class="env-badge-mini env-badge-{{ ev.environment }}">{{ ev.environment|upper }}</span>
                                         <strong style="font-size: 12.5px;">{{ ev.event_type }}</strong>
                                         {% if ev.event_type == 'button_click' and ev.meta_data.button_text %}
                                         <span style="font-size: 12px; color: #cbd5e1; font-weight:600;">„{{ ev.meta_data.button_text }}”</span>
@@ -849,8 +974,14 @@
     </div>
 
     <script>
-        // State for active user filter
+        // State for active filters
         let selectedUsers = new Set({{ selected_users | tojson }});
+        let selectedEnv = {{ selected_env | tojson }} || 'all';
+
+        function setEnvFilter(env) {
+            selectedEnv = env;
+            updateFilterView();
+        }
 
         function handleUserItemClick(e, username) {
             // Prevent double handling if checkbox was directly clicked
@@ -890,10 +1021,24 @@
             const userParam = userArr.length > 0 ? userArr.join(',') : 'all';
 
             // 1. Update URL without reloading page
-            const newUrl = userArr.length > 0 ? `/admin/dashboard?user=${encodeURIComponent(userParam)}` : '/admin/dashboard';
+            const params = new URLSearchParams();
+            if (userArr.length > 0) params.set('user', userParam);
+            if (selectedEnv && selectedEnv !== 'all') params.set('env', selectedEnv);
+            const newUrl = params.toString() ? `/admin/dashboard?${params.toString()}` : '/admin/dashboard';
             window.history.pushState(null, '', newUrl);
 
-            // 2. Update UI checkboxes & active item highlights
+            // 2. Update Environment Filter Buttons UI
+            document.querySelectorAll('.env-filter-btn').forEach(btn => {
+                btn.classList.remove('active', 'prod', 'test');
+            });
+            const activeBtn = document.querySelector(`.env-filter-btn[onclick*="'${selectedEnv}'"]`);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+                if (selectedEnv === 'production') activeBtn.classList.add('prod');
+                if (selectedEnv === 'test') activeBtn.classList.add('test');
+            }
+
+            // 3. Update UI checkboxes & active item highlights
             document.querySelectorAll('.user-item').forEach(item => {
                 const cb = item.querySelector('.user-checkbox');
                 if (cb) {
@@ -904,33 +1049,35 @@
                 }
             });
 
-            // 3. Update Filter Bar
+            // 4. Update Filter Bar
             const bar = document.getElementById('filterStatusBar');
             const tagsList = document.getElementById('filterTagsList');
             const scopeSubtitle = document.getElementById('timelineScopeSubtitle');
 
+            const envLabel = selectedEnv === 'production' ? ' [PROD]' : (selectedEnv === 'test' ? ' [TEST]' : '');
+
             if (userArr.length > 0) {
-                bar.classList.remove('hidden');
-                tagsList.innerHTML = userArr.map(u => `
+                if (bar) bar.classList.remove('hidden');
+                if (tagsList) tagsList.innerHTML = userArr.map(u => `
                     <span class="filter-tag-pill" data-user="${u}">
                         @${u}
                         <span class="filter-tag-remove" onclick="removeUserFilter('${u}')">✕</span>
                     </span>
                 `).join('');
-                scopeSubtitle.innerText = `— @${userArr.join(', @')}`;
+                if (scopeSubtitle) scopeSubtitle.innerText = `— @${userArr.join(', @')}${envLabel}`;
                 document.getElementById('kpiLabelUsers').innerText = 'Kijelölt Tanácsadók';
             } else {
-                bar.classList.add('hidden');
-                tagsList.innerHTML = '';
-                scopeSubtitle.innerText = '(Összes felhasználó)';
+                if (bar) bar.classList.add('hidden');
+                if (tagsList) tagsList.innerHTML = '';
+                if (scopeSubtitle) scopeSubtitle.innerText = `(Összes felhasználó)${envLabel}`;
                 document.getElementById('kpiLabelUsers').innerText = 'Béta Felhasználók';
             }
 
-            // 4. Fetch dynamic filtered KPIs & Sessions from API
+            // 5. Fetch dynamic filtered KPIs & Sessions from API
             try {
                 const [kpisRes, sessionsRes] = await Promise.all([
-                    fetch(`/api/admin/kpis?user=${encodeURIComponent(userParam)}`),
-                    fetch(`/api/admin/sessions?user=${encodeURIComponent(userParam)}`)
+                    fetch(`/api/admin/kpis?user=${encodeURIComponent(userParam)}&env=${encodeURIComponent(selectedEnv)}`),
+                    fetch(`/api/admin/sessions?user=${encodeURIComponent(userParam)}&env=${encodeURIComponent(selectedEnv)}`)
                 ]);
 
                 if (kpisRes.ok) {
@@ -961,6 +1108,16 @@
             document.getElementById('kpiAvgDurationSec').innerText = `${k.avg_duration_sec}s`;
             document.getElementById('kpiAvgDurationMs').innerText = `${k.avg_duration_ms} ms latency`;
             document.getElementById('kpiProposals').innerText = k.proposals_exported;
+
+            // Update environment pill counts
+            if (k.env_counts) {
+                const elAll = document.getElementById('envCountAll');
+                const elProd = document.getElementById('envCountProd');
+                const elTest = document.getElementById('envCountTest');
+                if (elAll && k.env_counts.all !== undefined) elAll.innerText = k.env_counts.all;
+                if (elProd && k.env_counts.production !== undefined) elProd.innerText = k.env_counts.production;
+                if (elTest && k.env_counts.test !== undefined) elTest.innerText = k.env_counts.test;
+            }
         }
 
         function toggleSessionEvents(id, btn) {
@@ -1006,6 +1163,11 @@
                     </a>
                 ` : '';
 
+                const sessEnv = s.environment || 'test';
+                const envBadgeHtml = sessEnv === 'production' 
+                    ? '<span class="env-badge env-badge-production">🟢 PROD</span>' 
+                    : '<span class="env-badge env-badge-test">🧪 TEST</span>';
+
                 // Journey Nodes
                 let journeyHtml = '';
                 if (s.journey_path && s.journey_path.length > 0) {
@@ -1038,6 +1200,10 @@
                     const modPrefix = mod.split('_')[0];
                     const p = ev.search_params || {};
                     const meta = ev.meta_data || {};
+                    const evEnv = ev.environment || 'test';
+                    const evEnvBadge = evEnv === 'production'
+                        ? '<span class="env-badge-mini env-badge-production">PROD</span>'
+                        : '<span class="env-badge-mini env-badge-test">TEST</span>';
 
                     const isBtnClick = ev.event_type === 'button_click';
                     const btnLabel = isBtnClick && meta.button_text ? `<span style="font-size: 12px; color: #cbd5e1; font-weight:600;">„${meta.button_text}”</span>` : '';
@@ -1069,6 +1235,7 @@
                             <div class="event-header">
                                 <div style="display: flex; align-items: center; gap: 8px;">
                                     <span class="event-module-badge badge-${modPrefix}">${mod}</span>
+                                    ${evEnvBadge}
                                     <strong style="font-size: 12.5px;">${ev.event_type}</strong>
                                     ${btnLabel}
                                 </div>
@@ -1097,9 +1264,10 @@
                             <div class="session-user-info">
                                 <div class="user-avatar" style="width:30px; height:30px; font-size:12px;">${userInitials}</div>
                                 <div>
-                                    <div style="font-weight: 700; font-size: 13.5px; color: #fff;">
+                                    <div style="font-weight: 700; font-size: 13.5px; color: #fff; display: flex; align-items: center; gap: 8px;">
                                         ${s.user_display}
                                         <span style="font-size: 11.5px; color: var(--text-muted); font-weight: normal;">• @${s.user_id}</span>
+                                        ${envBadgeHtml}
                                     </div>
                                     <div style="font-size: 11px; color: var(--text-muted);">
                                         Kezdés: ${s.started_at}

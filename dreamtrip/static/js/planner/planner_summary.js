@@ -25,6 +25,58 @@
                 subEl.innerText = `${d?.name || d?.city || 'Célállomás'} utazás • ${adults} felnőtt • ${nights} éjszaka ${outDate ? `(${outDate} – ${inDate})` : ''}`;
             }
 
+            // 1b. Unified TripScore calculation & banner rendering
+            const destScore = d?.score || 75;
+            const flightScore = f?.relevance_pct || 78;
+            const stayScore = Math.min(99, (s?.rating || 8.8) * 10);
+            const actsCount = (state.selectedActivities || []).length;
+            const expScore = Math.min(98, 65 + (actsCount * 4));
+            const effHours = f?.effective_vacation_hours || 16;
+            
+            const rawTripScore = (destScore * 0.25) + (flightScore * 0.25) + (stayScore * 0.25) + (expScore * 0.25);
+            const finalTripScore = Math.round(Math.max(50, Math.min(99, rawTripScore)));
+            
+            const tsVal = document.getElementById('tripScoreValue');
+            const tsTitle = document.getElementById('tripScoreTitle');
+            const tsHigh = document.getElementById('tripScoreHighlights');
+            const tsTime = document.getElementById('tripScoreEffectiveTime');
+            
+            if (tsVal) tsVal.innerText = `${finalTripScore}/100`;
+            if (tsTime) tsTime.innerText = `+${Math.round(effHours)} óra hasznos idő`;
+            if (tsTitle) {
+                if (finalTripScore >= 88) tsTitle.innerText = "Kiemelkedő Összhang & Prémium Illeszkedés";
+                else if (finalTripScore >= 78) tsTitle.innerText = "Kiváló Összhang & Kiegyensúlyozott Csomag";
+                else tsTitle.innerText = "Jó Ár-Érték Arányú Utazási Terv";
+            }
+            if (tsHigh) {
+                const highlights = [];
+                if (d?.name) highlights.push(`${d.name} (${Math.round(destScore)}p desztináció)`);
+                if (f?.airline || f?.out_airline) highlights.push(`${f.airline || f.out_airline} (${f.out_stops === 0 ? 'Közvetlen' : 'Átszállásos'})`);
+                if (s?.name) highlights.push(`${s.name} (${s.rating || 8.5}★ szállás)`);
+                if (actsCount > 0) highlights.push(`${actsCount} kiválasztott élmény`);
+                tsHigh.innerText = highlights.join(' • ');
+            }
+
+            // Sync enriched TripScore & preferences to active trip store
+            if (window.TripStore) {
+                window.TripStore.setTripScore({
+                    score: finalTripScore,
+                    effective_vacation_hours: effHours,
+                    title: tsTitle ? tsTitle.innerText : "Kiváló Összhang & Kiegyensúlyozott Csomag",
+                    dest_score: destScore,
+                    flight_score: flightScore,
+                    stay_score: stayScore,
+                    exp_score: expScore,
+                    highlights: tsHigh ? tsHigh.innerText : ""
+                });
+                if (state.selectedActivities && state.selectedActivities.length > 0) {
+                    window.TripStore.setActivities(state.selectedActivities);
+                }
+                if (state.intake?.experience_preferences || state.intake?.logistics_preferences) {
+                    window.TripStore.setPreferences(state.intake.experience_preferences, state.intake.logistics_preferences);
+                }
+            }
+
             // 2. Célállomás kártya
             const sumDestName = document.getElementById('sumDestName');
             if (sumDestName) sumDestName.innerText = `${d?.name || d?.city || ''}${d?.country ? ', ' + d.country : ''}`;
@@ -156,6 +208,12 @@
                 if (selectedIds) {
                     queryParams.set('selected_activities', selectedIds);
                 }
+                if (state?.intake?.logistics_preferences) {
+                    const lp = state.intake.logistics_preferences;
+                    if (lp.day_start) queryParams.set('day_start', lp.day_start);
+                    if (lp.day_end) queryParams.set('day_end', lp.day_end);
+                    if (lp.max_walking_minutes) queryParams.set('max_walk', lp.max_walking_minutes);
+                }
                 const res = await fetch(`/api/destinations/${encodeURIComponent(formattedDestId)}/itinerary?${queryParams.toString()}`);
                 if (!res.ok) {
                     throw new Error(`HTTP ${res.status}`);
@@ -164,6 +222,9 @@
                 window.PlannerState.currentItinerary = data;
                 window.PlannerState.activeItineraryDay = 0;
                 this.renderItinerary(data, 0);
+                if (window.TripStore) {
+                    window.TripStore.setItinerary(data);
+                }
             } catch (err) {
                 console.warn("Could not load dynamic itinerary, rendering fallback:", err);
                 box.innerHTML = `
@@ -275,6 +336,12 @@
                             </div>
                             <h4 class="itinerary-slot-title">${slot.title}</h4>
                             ${slot.description ? `<p style="margin: 4px 0 0; font-size: 12.5px; color: var(--text-secondary); line-height: 1.5;">${slot.description}</p>` : ''}
+                            ${slot.transit_recommendation ? `
+                            <div style="margin-top: 6px; font-size: 11px; font-weight: 700; color: #d97706; background: rgba(245, 158, 11, 0.1); padding: 3px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px;">
+                                <span class="material-symbols-outlined" style="font-size: 14px;">directions_bus</span>
+                                <span>${slot.transit_recommendation}</span>
+                            </div>
+                            ` : ''}
                         </div>
                     </div>
                     ${walkDivider}

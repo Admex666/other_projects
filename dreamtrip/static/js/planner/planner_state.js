@@ -4,6 +4,22 @@
  */
 
 (function () {
+    const _now = new Date();
+    _now.setHours(0, 0, 0, 0);
+    const _addDays = (d, n) => {
+        const r = new Date(d);
+        r.setDate(r.getDate() + n);
+        return r;
+    };
+    const _toIso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    
+    // Default departure: 3 weeks (21 days) from today
+    const _defOut = _addDays(_now, 21);
+    const _defIn = _addDays(_defOut, 7);
+    const _outWindowEnd = _addDays(_defOut, 14);
+    const _inWindowStart = _addDays(_defOut, 7);
+    const _inWindowEnd = _addDays(_defOut, 21);
+
     const PlannerState = {
         step: 0,
         date_mode: 'exact',
@@ -46,14 +62,15 @@
             adults: 2,
             children: 0,
             date_mode: "exact",
-            month: "9",
+            month: String(_defOut.getMonth() + 1),
+            year: _defOut.getFullYear(),
             duration: 7,
-            exact_out_date: "2026-09-10",
-            exact_in_date: "2026-09-17",
-            out_from: "2026-09-01",
-            out_to: "2026-09-15",
-            in_from: "2026-09-08",
-            in_to: "2026-09-30",
+            exact_out_date: _toIso(_defOut),
+            exact_in_date: _toIso(_defIn),
+            out_from: _toIso(_defOut),
+            out_to: _toIso(_outWindowEnd),
+            in_from: _toIso(_inWindowStart),
+            in_to: _toIso(_inWindowEnd),
             min_stay: 5,
             max_stay: 10,
             has_departure_pref: false,
@@ -67,9 +84,28 @@
             breakfast: false,
             amenities: [],
             ahp_weights: {
-                total_cost: 34.0,
-                weather: 33.0,
-                safety: 33.0
+                total_cost: 25.0,
+                weather: 25.0,
+                safety: 25.0,
+                experience: 25.0
+            },
+            experience_preferences: {
+                culture: 70,
+                gastronomy: 80,
+                beach: 50,
+                nature: 60,
+                nightlife: 40,
+                authenticity: 75,
+                relaxation: 60,
+                adventure: 40
+            },
+            logistics_preferences: {
+                day_start: "09:00",
+                day_end: "20:00",
+                lunch_window: "13:00-14:00",
+                dinner_window: "19:30-21:00",
+                max_walking_minutes: 30,
+                preferred_transit: "walking"
             },
             promethee_params: {
                 price: { type: 5, q: 5000, p: 35000 },

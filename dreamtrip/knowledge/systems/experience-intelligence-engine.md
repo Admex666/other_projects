@@ -29,6 +29,7 @@ related:
   - "[[experience-ingestion-pipeline]]"
   - "[[experience-entity]]"
   - "[[ADR-009-experience-activity-intelligence-engine]]"
+  - "[[destination-search-stability-and-cache-optimization]]"
   - "[[run-experience-pipeline]]"
   - "[[destination-matching]]"
   - "[[supabase-database]]"
@@ -108,12 +109,15 @@ A rendszer 6 egymásra épülő fázisban működik:
 * **Sétálhatósági Gráf:** 500 méteren belüli szomszédok feltérképezése a gyalogos útiterv-készítéshez.
 
 ### 5. Fázis: Profil Generátor & Ultra-Gyors Cache
-* Többszintű gyorsítótár:
-  1. **L1 Memória:** Python szótár < 1 ms lekérdezési idővel a keresési kérésekhez.
-  2. **L2 Supabase:** `public.destination_experience_profiles` tábla perzisztens tárolásra.
-  3. **L3 Lemezes Cache:** `data/experience_profiles/{id}.json`.
+* Többszintű, rekurzióbiztos gyorsítótár:
+  1. **L1 Memória:** Python szótár < 0.01 ms lekérdezési idővel, negatív gyorsítótárazással (`None` eltárolása nem profilozott városokhoz a felesleges ismételt lekérdezések elkerülésére).
+  2. **L2 Helyi Lemezes Cache:** `data/experience_profiles/{id}.json` (<0.1 ms gyors elérés, még a hálózati réteg előtt).
+  3. **L3 Távoli Supabase:** `public.destination_experience_profiles` tábla perzisztens tárolásra.
+  4. **L4 Fallback Generátor:** POI cache-ből és `maps_service`-ből történő profilozás `check_experience_engine=False` védelemmel, kizárva a kölcsönös rekurziót. Lásd: [[destination-search-stability-and-cache-optimization]].
 
 ### 6. Fázis: Kérés-idejű Integráció
-* **Destination Matcher:** A desztinációs kártyák a felületen azonnal megjelenítik a valós programok számát, kiemelt látnivalókat és kategóriákat.
-* **Complete Trip Generator:** Intelligens napi útiterv generálás a sétálhatósági gráf alapján, felesleges városon belüli ingázás nélkül.
+* **Destination Matcher:** A desztinációs kártyák a felületen azonnal megjelenítik a valós programok számát, kiemelt látnivalókat, a Vibe profilt és a Level 2 koszinusz illeszkedési pontszámot.
+* **Személyre Szabott Ajánló Motor („Ezeket ajánljuk nektek”):** Kanonikus élmények rangsorolása `fit_score` és magyar nyelvű ajánlási indoklás kíséretében.
+* **Complete Trip Generator:** Intelligens napi útiterv generálás a sétálhatósági gráf alapján, a felhasználó által megadott napi idősávokhoz (`day_start`, `day_end`) és sétakorláthoz (`max_walking_minutes`) igazítva.
+* **Automatikus Tranzit Ajánlások:** Túl nagy séta-távolság esetén automatikus közlekedési/taxi javaslat beillesztése.
 * **Kiszolgáló REST Végpontok:** `/api/v2/destinations/{id}/experience-profile`, `/api/v2/destinations/{id}/activities`, `/api/v2/destinations/{id}/itinerary`.

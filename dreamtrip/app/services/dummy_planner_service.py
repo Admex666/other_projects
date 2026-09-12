@@ -6,7 +6,7 @@ Kizárólag jogosult tesztelőknek (username='bean' vagy admin / id IN (1, 2)).
 import time
 import pandas as pd
 from typing import List, Dict, Any, Optional
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from app.services.destination_service import get_filtered_destinations
 from app.services.accommodation_market_service import generate_market_benchmark_stays
@@ -145,17 +145,20 @@ def generate_dummy_destinations(intake_data: Any) -> List[Dict[str, Any]]:
     duration = max(1, int(getattr(intake_data, "duration", 7) or 7))
     
     weights = getattr(intake_data, "ahp_weights", None) or {
-        "total_cost": getattr(intake_data, "weight_total_cost", 34.0),
-        "weather": getattr(intake_data, "weight_weather", 33.0),
-        "safety": getattr(intake_data, "weight_safety", 33.0)
+        "total_cost": getattr(intake_data, "weight_total_cost", 25.0),
+        "weather": getattr(intake_data, "weight_weather", 25.0),
+        "safety": getattr(intake_data, "weight_safety", 25.0),
+        "experience": getattr(intake_data, "weight_experience", 25.0)
     }
 
-    w_cost = float(weights.get("total_cost", 34.0)) / 100.0
-    w_weather = float(weights.get("weather", 33.0)) / 100.0
-    w_safety = float(weights.get("safety", 33.0)) / 100.0
+    w_cost = float(weights.get("total_cost", 25.0)) / 100.0
+    w_weather = float(weights.get("weather", 25.0)) / 100.0
+    w_safety = float(weights.get("safety", 25.0)) / 100.0
+    w_experience = float(weights.get("experience", 25.0)) / 100.0
 
     exclusions = getattr(intake_data, "exclusions", []) or []
     preferred_regions = getattr(intake_data, "preferred_regions", []) or []
+    exp_prefs = getattr(intake_data, "experience_preferences", None)
 
     candidates = []
     for name, prof in DUMMY_DEST_PROFILES.items():
@@ -178,8 +181,24 @@ def generate_dummy_destinations(intake_data: Any) -> List[Dict[str, Any]]:
         
         safety_score = float(prof["safety"])
 
-        # Összesített súlyozott pontszám
-        composite_score = round((w_cost * cost_score) + (w_weather * weather_score) + (w_safety * safety_score), 1)
+        # Élmény pontszám (Experience Fit)
+        exp_score = float(prof.get("experience_score", 82.0))
+        if exp_prefs and isinstance(exp_prefs, dict):
+            # Ha van egyedi preferencia megadva, finomhangoljuk a szimulált élményt
+            top_user_pref = max(exp_prefs.items(), key=lambda item: item[1])[0] if exp_prefs else ""
+            if top_user_pref in ("gastronomy", "culture") and name in ("Róma", "Barcelona", "Lisszabon"):
+                exp_score = min(96.0, exp_score + 8.0)
+            elif top_user_pref in ("beach", "relaxation") and name in ("Nizza", "Barcelona", "Valencia"):
+                exp_score = min(96.0, exp_score + 8.0)
+
+        # Összesített súlyozott pontszám (4 pillér)
+        composite_score = round(
+            (w_cost * cost_score) + 
+            (w_weather * weather_score) + 
+            (w_safety * safety_score) + 
+            (w_experience * exp_score), 
+            1
+        )
         composite_score = max(55.0, min(99.0, composite_score))
 
         candidates.append({
@@ -238,21 +257,50 @@ def generate_dummy_flights(req: Any) -> List[Dict[str, Any]]:
     origin_airport = "BUD"
 
     # Dátumok megállapítása
+    today_date = datetime.now(timezone.utc).date()
+    default_out_date = today_date + timedelta(days=21)
+    default_in_date = default_out_date + timedelta(days=duration_days)
+
     if getattr(req, "exact_out_date", None) and getattr(req, "exact_in_date", None):
         out_date_str = req.exact_out_date
         in_date_str = req.exact_in_date
+        try:
+            d_out = datetime.strptime(out_date_str, "%Y-%m-%d").date()
+            if d_out < today_date:
+                out_date_str = default_out_date.strftime("%Y-%m-%d")
+                in_date_str = default_in_date.strftime("%Y-%m-%d")
+        except Exception:
+            out_date_str = default_out_date.strftime("%Y-%m-%d")
+            in_date_str = default_in_date.strftime("%Y-%m-%d")
     elif getattr(req, "out_from", None):
         out_date_str = req.out_from
         try:
-            d_out = datetime.strptime(req.out_from, "%Y-%m-%d")
-            in_date_str = (d_out + timedelta(days=duration_days)).strftime("%Y-%m-%d")
+            d_out = datetime.strptime(req.out_from, "%Y-%m-%d").date()
+            if d_out < today_date:
+                out_date_str = default_out_date.strftime("%Y-%m-%d")
+                in_date_str = default_in_date.strftime("%Y-%m-%d")
+            else:
+                in_date_str = (d_out + timedelta(days=duration_days)).strftime("%Y-%m-%d")
         except Exception:
-            in_date_str = "2026-09-17"
+            out_date_str = default_out_date.strftime("%Y-%m-%d")
+            in_date_str = default_in_date.strftime("%Y-%m-%d")
     else:
-        year = getattr(req, "year", 2026) or 2026
-        month = getattr(req, "month", 9) or 9
-        out_date_str = f"{year}-{int(month):02d}-12"
-        in_date_str = f"{year}-{int(month):02d}-19"
+        req_year = getattr(req, "year", None)
+        req_month = getattr(req, "month", None)
+        if req_year and req_month:
+            try:
+                y = int(req_year)
+                m = int(req_month)
+                if y < today_date.year or (y == today_date.year and m < today_date.month):
+                    y = today_date.year + 1
+                out_date_str = f"{y}-{m:02d}-12"
+                in_date_str = (datetime(y, m, 12).date() + timedelta(days=duration_days)).strftime("%Y-%m-%d")
+            except Exception:
+                out_date_str = default_out_date.strftime("%Y-%m-%d")
+                in_date_str = default_in_date.strftime("%Y-%m-%d")
+        else:
+            out_date_str = default_out_date.strftime("%Y-%m-%d")
+            in_date_str = default_in_date.strftime("%Y-%m-%d")
 
     base_price = profile.get("base_flight_huf", 32000)
 
@@ -355,8 +403,34 @@ def generate_dummy_stays(req: Any) -> List[Dict[str, Any]]:
     """
     city_clean = getattr(req, "city", "Róma").strip()
     country_clean = getattr(req, "country", "").strip()
-    checkin = getattr(req, "checkin", "2026-09-12")
-    checkout = getattr(req, "checkout", "2026-09-19")
+    today_date = datetime.now(timezone.utc).date()
+    default_ci = (today_date + timedelta(days=21)).strftime("%Y-%m-%d")
+    default_co = (today_date + timedelta(days=28)).strftime("%Y-%m-%d")
+
+    raw_ci = getattr(req, "checkin", None)
+    raw_co = getattr(req, "checkout", None)
+
+    checkin = default_ci
+    if raw_ci:
+        try:
+            d_ci = datetime.strptime(raw_ci, "%Y-%m-%d").date()
+            if d_ci >= today_date:
+                checkin = raw_ci
+        except Exception:
+            checkin = default_ci
+
+    checkout = default_co
+    if raw_co:
+        try:
+            d_co = datetime.strptime(raw_co, "%Y-%m-%d").date()
+            d_ci = datetime.strptime(checkin, "%Y-%m-%d").date()
+            if d_co > d_ci:
+                checkout = raw_co
+            else:
+                checkout = (d_ci + timedelta(days=7)).strftime("%Y-%m-%d")
+        except Exception:
+            checkout = default_co
+
     adults = max(1, int(getattr(req, "adults", 2) or 2))
     hotel_types = getattr(req, "hotel_types", None)
     breakfast = bool(getattr(req, "breakfast", False))

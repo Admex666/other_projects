@@ -6,8 +6,24 @@ Handles Destination Calculation, Flight Ranking (PROMETHEE II), Stay Aggregation
 from fastapi import APIRouter, Request, BackgroundTasks, HTTPException
 from fastapi.responses import JSONResponse
 from typing import List, Dict, Optional, Any
-from pydantic import BaseModel
+from datetime import datetime, timedelta, timezone
+from pydantic import BaseModel, Field
 import os
+
+def _get_future_date(days: int = 21) -> datetime:
+    return datetime.now(timezone.utc).date() + timedelta(days=days)
+
+def _get_default_month() -> str:
+    return str(_get_future_date(21).month)
+
+def _get_default_year() -> int:
+    return _get_future_date(21).year
+
+def _get_default_checkin() -> str:
+    return _get_future_date(21).strftime("%Y-%m-%d")
+
+def _get_default_checkout() -> str:
+    return _get_future_date(28).strftime("%Y-%m-%d")
 
 from app.models.models import UnifiedTrip
 from app.services.planner_service import (
@@ -33,8 +49,8 @@ def get_current_user_from_req(request: Request) -> Optional[str]:
 class MasterPlannerIntake(BaseModel):
     origin: str = "Budapest"
     date_mode: str = "month"
-    month: str = "9"
-    year: int = 2026
+    month: str = Field(default_factory=_get_default_month)
+    year: int = Field(default_factory=_get_default_year)
     duration: int = 7
     exact_out_date: Optional[str] = None
     exact_in_date: Optional[str] = None
@@ -62,15 +78,19 @@ class MasterPlannerIntake(BaseModel):
     weight_total_cost: float = 34.0
     weight_weather: float = 33.0
     weight_safety: float = 33.0
+    weight_experience: float = 25.0
     ahp_comparisons: Optional[Dict[str, float]] = None
     ahp_weights: Optional[Dict[str, float]] = None
+    experience_preferences: Optional[Dict[str, float]] = None
+    logistics_preferences: Optional[Dict[str, Any]] = None
+    dummy_mode: Optional[bool] = False
 
 class PlannerFlightSearchRequest(BaseModel):
     origin: str = "Budapest"
     destination: str = "Róma"
     date_mode: str = "month"
-    month: int = 9
-    year: int = 2026
+    month: int = Field(default_factory=lambda: int(_get_default_month()))
+    year: int = Field(default_factory=_get_default_year)
     duration: int = 7
     exact_out_date: Optional[str] = None
     exact_in_date: Optional[str] = None
@@ -92,8 +112,8 @@ class PlannerFlightSearchRequest(BaseModel):
 class PlannerStaySearchRequest(BaseModel):
     city: str = "Róma"
     country: Optional[str] = "Olaszország"
-    checkin: str = "2026-09-10"
-    checkout: str = "2026-09-17"
+    checkin: Optional[str] = None
+    checkout: Optional[str] = None
     adults: int = 2
     min_stars: int = 3
     min_rating: float = 7.5
@@ -117,9 +137,10 @@ def run_planner_destinations_task(user_key: str, data: MasterPlannerIntake):
             planner_dest_status[user_key]["status_text"] = txt
 
         weights = data.ahp_weights or {
-            "total_cost": getattr(data, "weight_total_cost", 34.0),
-            "weather": data.weight_weather,
-            "safety": data.weight_safety
+            "total_cost": getattr(data, "weight_total_cost", 25.0),
+            "weather": getattr(data, "weight_weather", 25.0),
+            "safety": getattr(data, "weight_safety", 25.0),
+            "experience": getattr(data, "weight_experience", 25.0)
         }
 
         m_int = 9
@@ -151,6 +172,7 @@ def run_planner_destinations_task(user_key: str, data: MasterPlannerIntake):
             exclusions=data.exclusions,
             weights=weights,
             ahp_comparisons=data.ahp_comparisons,
+            experience_preferences=data.experience_preferences,
             progress_callback=on_prog
         )
 

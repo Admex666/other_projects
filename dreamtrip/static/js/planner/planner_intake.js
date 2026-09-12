@@ -131,13 +131,16 @@
         },
 
         applyExactPreset(daysFromNow, durationDays, btn) {
+            const validDays = Math.max(0, parseInt(daysFromNow, 10) || 0);
+            const validDur = Math.max(1, parseInt(durationDays, 10) || 7);
             if (window.PlannerState && window.PlannerState.exact_fp) {
-                window.PlannerState.exact_fp.applyPreset(daysFromNow, durationDays);
+                window.PlannerState.exact_fp.applyPreset(validDays, validDur);
             } else {
                 const s = new Date();
-                s.setDate(s.getDate() + daysFromNow);
+                s.setHours(0, 0, 0, 0);
+                s.setDate(s.getDate() + validDays);
                 const e = new Date(s);
-                e.setDate(s.getDate() + durationDays);
+                e.setDate(s.getDate() + validDur);
                 const formatIso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
                 const outInp = document.getElementById('exact_out_date');
                 const inInp = document.getElementById('exact_in_date');
@@ -196,6 +199,23 @@
             if (badge) badge.innerText = txt;
         },
 
+        toggleExperienceTag(cat, el) {
+            const state = window.PlannerState;
+            if (!state) return;
+            if (!state.intake.experience_preferences) {
+                state.intake.experience_preferences = {};
+            }
+            const current = state.intake.experience_preferences[cat] || 25;
+            const isHigh = current >= 70;
+            const newVal = isHigh ? 20 : 85;
+            state.intake.experience_preferences[cat] = newVal;
+            if (el) {
+                if (newVal >= 70) el.classList.add('active');
+                else el.classList.remove('active');
+            }
+            this.updateDecisionDNACard();
+        },
+
         updateDecisionDNACard() {
             const unconf = document.getElementById('dna_unconfigured_view');
             const conf = document.getElementById('dna_configured_view');
@@ -210,8 +230,21 @@
                 const ahpEl = document.getElementById('dna_card_ahp_summary');
                 if (ahpEl && state.intake.ahp_weights) {
                     const w = state.intake.ahp_weights;
-                    const expStyle = state.intake.dest_promethee?.experience?.style_name ? `<div style="font-size: 11px; color: var(--text-muted); font-weight: 600; margin-top: 3px;">Fókusz: ${state.intake.dest_promethee.experience.style_name}</div>` : '';
-                    ahpEl.innerHTML = `Költség: ${w.total_cost}% · Klíma: ${w.weather}% · Biztonság: ${w.safety}% · Élmények: ${w.experience || 25}%${expStyle}`;
+                    const expNames = {
+                        gastronomy: "Gasztronómia",
+                        culture: "Kultúra",
+                        authenticity: "Autentikusság",
+                        beach: "Tengerpart",
+                        nature: "Természet",
+                        relaxation: "Pihenés",
+                        nightlife: "Éjszakai élet",
+                        adventure: "Kaland"
+                    };
+                    const activeExp = Object.entries(state.intake.experience_preferences || {})
+                        .filter(([k, v]) => v >= 60)
+                        .map(([k, v]) => expNames[k] || k);
+                    const expTagsStr = activeExp.length > 0 ? `<div style="font-size: 11px; color: var(--text-muted); font-weight: 600; margin-top: 3px;">Fókusz: ${activeExp.join(', ')}</div>` : '';
+                    ahpEl.innerHTML = `Költség: ${w.total_cost}% · Klíma: ${w.weather}% · Biztonság: ${w.safety}% · Élmények: ${w.experience || 25}%${expTagsStr}`;
                 }
 
                 const promEl = document.getElementById('dna_card_prom_summary');

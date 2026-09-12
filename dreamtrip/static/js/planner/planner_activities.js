@@ -96,12 +96,26 @@
                 const res = await fetch(`/api/destinations/${encodeURIComponent(formattedDestId)}/activities`);
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 const data = await res.json();
-                this.allActivities = data.activities || [];
+                
+                const recMap = {};
+                if (data.recommended && Array.isArray(data.recommended)) {
+                    data.recommended.forEach(r => {
+                        recMap[r.entity_id] = r;
+                    });
+                }
+                this.allActivities = (data.activities || []).map(a => {
+                    const r = recMap[a.entity_id];
+                    if (r) {
+                        return { ...a, fit_score: r.fit_score, recommendation_reason: r.recommendation_reason };
+                    }
+                    return a;
+                });
+                this.allActivities.sort((x, y) => (y.fit_score || 0) - (x.fit_score || 0));
 
                 // Ha még nincsenek kijelölt programok, alapértelmezetten jelöljük ki az ajánlott/flagship helyeket (max 8-10 db)
                 if (!state.selectedActivities || state.selectedActivities.length === 0) {
                     const defaultSelected = this.allActivities
-                        .filter(a => a.metadata?.quality_tier === 'flagship' || (a.rating >= 4.5 && a.review_count > 200))
+                        .filter(a => (a.fit_score && a.fit_score >= 80) || a.metadata?.quality_tier === 'flagship' || (a.rating >= 4.5 && a.review_count > 200))
                         .slice(0, 8);
                     
                     state.selectedActivities = defaultSelected.length > 0 
@@ -284,13 +298,20 @@
                             <h4 style="font-size: 15px; font-weight: 800; color: var(--text-main); margin: 0 0 6px; line-height: 1.3;">${a.canonical_name}</h4>
                             
                             <!-- RATING & REVIEWS -->
-                            <div style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-secondary); margin-bottom: 10px;">
+                            <div style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-secondary); margin-bottom: 8px;">
                                 <span style="display: inline-flex; align-items: center; gap: 2px; color: #f59e0b; font-weight: 700;">
                                     ★ ${(a.rating || 4.5).toFixed(1)}
                                 </span>
                                 <span>•</span>
                                 <span>${(a.review_count || 150).toLocaleString()} értékelés</span>
                             </div>
+
+                            ${a.recommendation_reason ? `
+                            <div style="margin-bottom: 10px; font-size: 11px; font-weight: 700; color: var(--primary); background: rgba(37, 99, 235, 0.08); padding: 4px 8px; border-radius: 6px; border: 1px solid rgba(37, 99, 235, 0.2); display: flex; align-items: center; gap: 5px;">
+                                <span class="material-symbols-outlined" style="font-size: 13px;">auto_awesome</span>
+                                <span>${a.recommendation_reason}</span>
+                            </div>
+                            ` : ''}
 
                             <!-- DESCRIPTION -->
                             <p style="font-size: 12.5px; color: var(--text-muted); line-height: 1.4; margin: 0 0 14px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">

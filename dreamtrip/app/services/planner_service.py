@@ -4,6 +4,7 @@ import time
 import numpy as np
 import pandas as pd
 from typing import List, Dict, Any, Optional
+from datetime import datetime, timedelta, timezone
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from app.services.destination_service import get_filtered_destinations
@@ -75,6 +76,7 @@ def calculate_planner_destinations_sync(
     exclusions: Optional[List[str]] = None,
     weights: Optional[Dict[str, float]] = None,
     ahp_comparisons: Optional[Dict[str, float]] = None,
+    experience_preferences: Optional[Dict[str, float]] = None,
     progress_callback=None
 ) -> List[Dict[str, Any]]:
     """
@@ -93,8 +95,21 @@ def calculate_planner_destinations_sync(
     origin_clean = origin.split("(")[0].strip()
     tokens = scraper.get_kiwi_tokens(headless=True)
 
-    # Dátum paraméterek feloldása date_mode alapján
+    # Dátum paraméterek feloldása date_mode alapján (múltbeli dátumok kizárása)
+    today_date = datetime.now(timezone.utc).date()
+    default_out = today_date + timedelta(days=21)
+    default_in = default_out + timedelta(days=duration_days)
+
     if date_mode == "exact" and exact_out_date and exact_in_date:
+        try:
+            d1_dt = pd.to_datetime(exact_out_date).date()
+            if d1_dt < today_date:
+                exact_out_date = default_out.strftime("%Y-%m-%d")
+                exact_in_date = default_in.strftime("%Y-%m-%d")
+        except Exception:
+            exact_out_date = default_out.strftime("%Y-%m-%d")
+            exact_in_date = default_in.strftime("%Y-%m-%d")
+
         actual_out_from = exact_out_date
         actual_out_to = exact_out_date
         actual_in_from = exact_in_date
@@ -112,6 +127,16 @@ def calculate_planner_destinations_sync(
             actual_min_stay = duration_days
             actual_max_stay = duration_days
     elif date_mode == "interval" and out_from and out_to:
+        try:
+            d_out_dt = pd.to_datetime(out_from).date()
+            if d_out_dt < today_date:
+                out_from = default_out.strftime("%Y-%m-%d")
+                out_to = (default_out + timedelta(days=14)).strftime("%Y-%m-%d")
+                in_from = (default_out + timedelta(days=7)).strftime("%Y-%m-%d")
+                in_to = (default_out + timedelta(days=21)).strftime("%Y-%m-%d")
+        except Exception:
+            pass
+
         actual_out_from = out_from
         actual_out_to = out_to
         actual_min_stay = int(min_stay) if min_stay is not None else max(1, duration_days - 2)
@@ -187,7 +212,8 @@ def calculate_planner_destinations_sync(
         candidates_raw=results,
         weights=w_dict or {"total_cost": 34.0, "weather": 33.0, "safety": 33.0},
         target_temp=target_temp,
-        adults=adults
+        adults=adults,
+        experience_preferences=experience_preferences
     )
 
     if progress_callback:
@@ -229,7 +255,20 @@ def search_and_rank_planner_flights(
 
     tokens = scraper.get_kiwi_tokens(headless=True)
     
+    today_date = datetime.now(timezone.utc).date()
+    default_out = today_date + timedelta(days=21)
+    default_in = default_out + timedelta(days=duration_days)
+
     if date_mode == "exact" and exact_out_date and exact_in_date:
+        try:
+            d1_dt = pd.to_datetime(exact_out_date).date()
+            if d1_dt < today_date:
+                exact_out_date = default_out.strftime("%Y-%m-%d")
+                exact_in_date = default_in.strftime("%Y-%m-%d")
+        except Exception:
+            exact_out_date = default_out.strftime("%Y-%m-%d")
+            exact_in_date = default_in.strftime("%Y-%m-%d")
+
         date_out_start = exact_out_date
         date_out_end = exact_out_date
         date_in_start = exact_in_date
@@ -243,6 +282,16 @@ def search_and_rank_planner_flights(
         actual_min_stay = duration_days
         actual_max_stay = duration_days
     elif date_mode == "interval" and out_from and out_to:
+        try:
+            d_out_dt = pd.to_datetime(out_from).date()
+            if d_out_dt < today_date:
+                out_from = default_out.strftime("%Y-%m-%d")
+                out_to = (default_out + timedelta(days=14)).strftime("%Y-%m-%d")
+                in_from = (default_out + timedelta(days=7)).strftime("%Y-%m-%d")
+                in_to = (default_out + timedelta(days=21)).strftime("%Y-%m-%d")
+        except Exception:
+            pass
+
         date_out_start = out_from
         date_out_end = out_to
         actual_min_stay = int(min_stay) if min_stay is not None else max(1, duration_days - 2)

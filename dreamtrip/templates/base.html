@@ -73,14 +73,13 @@
         </div>
 
         <div class="nav-actions" style="display: flex; align-items: center; gap: 12px;">
-            <!-- Speciális keresők gomb & menü (Új lapon nyílik meg) -->
-            <a href="/tools" target="_blank" class="btn-tools-hub" title="Speciális Keresők Hub megnyitása új lapon" style="font-size: 12px; font-weight: 700; color: var(--text-secondary); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; background: var(--bg-surface); padding: 7px 14px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); transition: all 0.2s ease; box-shadow: var(--shadow-sm);">
-                <span>Speciális Keresők</span>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                    <polyline points="15 3 21 3 21 9"></polyline>
-                    <line x1="10" y1="14" x2="21" y2="3"></line>
+            <!-- Beállítások gomb & menü -->
+            <a href="/tools" target="_blank" class="btn-tools-hub" title="Beállítások" style="font-size: 12px; font-weight: 700; color: var(--text-secondary); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; background: var(--bg-surface); padding: 7px 14px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); transition: all 0.2s ease; box-shadow: var(--shadow-sm);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
                 </svg>
+                <span>Beállítások</span>
             </a>
 
             <!-- Theme toggle button -->
@@ -108,7 +107,7 @@
                         <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); font-weight: 700;">Bejelentkezve mint</div>
                         <div style="font-size: 14px; font-weight: 800; color: var(--text-primary);">{{ user }}</div>
                     </div>
-                    <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); font-weight: 700; padding: 4px 12px;">Speciális Keresők (Deep-Dive)</div>
+                    <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); font-weight: 700; padding: 4px 12px;">Beállítások & Eszközök</div>
                     <a href="/tools" target="_blank" class="dropdown-item-link" style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; font-size: 13px; font-weight: 600; color: var(--text-primary); text-decoration: none; border-radius: 8px; transition: background 0.15s ease;">
                         <span class="material-symbols-outlined" style="font-size: 18px; color: var(--primary);">build</span>
                         <span>Eszközök & Keresők Hub ↗</span>

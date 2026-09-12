@@ -38,6 +38,10 @@ TRIP
 ├── DESTINATION (selected, score, climate, numbeo)
 ├── FLIGHT (search_params, shortlist[], selected_flight)
 ├── ACCOMMODATION (search_params, shortlist[], selected_accommodation)
+├── ACTIVITIES (selected_activities, scheduled daily itinerary)
+├── EXPERIENCE_PREFERENCES (gastronomy, culture, authenticity, nature, beach, active)
+├── LOGISTICS_PREFERENCES (day_start, day_end, max_walking_minutes)
+├── TRIP_SCORE (unified 0-100 score, effective_vacation_hours, 4-pillar harmony)
 └── BUDGET (itemized Numbeo math breakdown)
 ```
 

@@ -20,11 +20,14 @@ code:
 related:
   - "[[flight]]"
   - "[[kiwi-scraper]]"
+  - "[[ahp-weighting]]"
   - "[[promethee-ranking]]"
+  - "[[effective-vacation-time]]"
   - "[[accommodation-search-workflow]]"
 
 used_by:
   - "[[unified-trip-model]]"
+  - "[[master-planner-wizard]]"
 ---
 
 # Process: Flight Intelligence Workflow
@@ -36,13 +39,13 @@ A repülőjegy-keresési folyamat lépései:
    (Origin, Destination, Dátumablak, Kiwi GraphQL lekérdezés)
          ↓
 2. AHP preferenciák és szűrők beállítása (/flight-intelligence-filter)
-   (Ár vs. Menetidő vs. Átszállások súlyozása)
+   (Ár vs. Menetidő vs. Átszállások súlyozása + Hasznos Nyaralási Idő kalkuláció)
          ↓
 3. PROMETHEE II rangsorolás és megjelenítés (/flight-results)
-   (Kártyás és táblázatos nézet, relevancia % kalkuláció)
+   (Kártyás és táblázatos nézet, relevancia % kalkuláció, Effective Vacation Time bónusz)
          ↓
 4. Járat rögzítése a tervben (addFlightToCart)
-   (Dátumok, éjszakák, árak rögzítése a UnifiedTrip objektumban)
+   (Dátumok, éjszakák, árak, hasznos idő rögzítése a UnifiedTrip objektumban)
          ↓
 5. Elsődleges CTA megjelenítése:
    "→ Szállások keresése (2026. szept. 10–17. · 7 éj)"

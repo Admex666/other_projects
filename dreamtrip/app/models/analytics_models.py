@@ -72,9 +72,19 @@ def init_analytics_db():
         success INTEGER DEFAULT 1,
         error_message TEXT,
         meta_data TEXT,           -- Extra JSON telemetry
+        environment TEXT DEFAULT 'test', -- production vs test
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
     """)
+
+    # Safe column migration check for existing SQLite databases
+    cursor.execute("PRAGMA table_info(telemetry_events)")
+    existing_cols = [r[1] for r in cursor.fetchall()]
+    if "environment" not in existing_cols:
+        try:
+            cursor.execute("ALTER TABLE telemetry_events ADD COLUMN environment TEXT DEFAULT 'test'")
+        except Exception:
+            pass
 
     # Default starter users if not present
     cursor.execute("SELECT COUNT(*) FROM beta_users")

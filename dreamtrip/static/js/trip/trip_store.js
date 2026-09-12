@@ -43,6 +43,13 @@
                 shortlist: [],
                 selected_accommodation: null
             },
+            activities: {
+                selected_activities: [],
+                itinerary: null
+            },
+            experience_preferences: null,
+            logistics_preferences: null,
+            trip_score: null,
             budget: {
                 flight_total_huf: 0,
                 accommodation_total_huf: 0,
@@ -313,6 +320,33 @@
             this.saveTrip(trip);
             const names = { 'budget': 'Takarékos', 'standard': 'Átlagos', 'comfort': 'Kényelmes' };
             if (window.TripDrawer) window.TripDrawer.showToast(`🍽️ Étkezési profil: ${names[profileKey] || profileKey}`, '🍽️');
+        },
+
+        setActivities(activitiesList) {
+            const trip = this.getTrip();
+            if (!trip.activities) trip.activities = { selected_activities: [], itinerary: null };
+            trip.activities.selected_activities = activitiesList || [];
+            this.saveTrip(trip);
+        },
+
+        setItinerary(itineraryData) {
+            const trip = this.getTrip();
+            if (!trip.activities) trip.activities = { selected_activities: [], itinerary: null };
+            trip.activities.itinerary = itineraryData || null;
+            this.saveTrip(trip);
+        },
+
+        setTripScore(scoreData) {
+            const trip = this.getTrip();
+            trip.trip_score = scoreData || null;
+            this.saveTrip(trip);
+        },
+
+        setPreferences(expPrefs, logPrefs) {
+            const trip = this.getTrip();
+            if (expPrefs) trip.experience_preferences = expPrefs;
+            if (logPrefs) trip.logistics_preferences = logPrefs;
+            this.saveTrip(trip);
         },
 
         clearCart() {

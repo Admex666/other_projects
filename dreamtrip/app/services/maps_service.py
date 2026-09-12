@@ -148,6 +148,89 @@ def fetch_pois_from_google(city_name: str, city_id: str, lat: float, lng: float,
             
     return final_pois
 
+# Nyitvatartási sablonok (Module-level for universal availability across POI generators)
+STANDARD_HOURS = {
+    "open_now": True,
+    "periods": [
+        {
+            "close": {"day": d, "time": "1800"},
+            "open": {"day": d, "time": "0900"}
+        } for d in range(7)
+    ],
+    "weekday_text": [
+        "Monday: 9:00 AM – 6:00 PM",
+        "Tuesday: 9:00 AM – 6:00 PM",
+        "Wednesday: 9:00 AM – 6:00 PM",
+        "Thursday: 9:00 AM – 6:00 PM",
+        "Friday: 9:00 AM – 6:00 PM",
+        "Saturday: 9:00 AM – 6:00 PM",
+        "Sunday: 9:00 AM – 6:00 PM"
+    ]
+}
+
+RESTAURANT_HOURS = {
+    "open_now": True,
+    "periods": [
+        {
+            "close": {"day": d, "time": "2200"},
+            "open": {"day": d, "time": "1130"}
+        } for d in range(7)
+    ],
+    "weekday_text": [
+        "Monday: 11:30 AM – 10:00 PM",
+        "Tuesday: 11:30 AM – 10:00 PM",
+        "Wednesday: 11:30 AM – 10:00 PM",
+        "Thursday: 11:30 AM – 10:00 PM",
+        "Friday: 11:30 AM – 10:00 PM",
+        "Saturday: 11:30 AM – 10:00 PM",
+        "Sunday: 11:30 AM – 10:00 PM"
+    ]
+}
+
+CAFE_HOURS = {
+    "open_now": True,
+    "periods": [
+        {
+            "close": {"day": d, "time": "2000"},
+            "open": {"day": d, "time": "0730"}
+        } for d in range(7)
+    ],
+    "weekday_text": [
+        "Monday: 7:30 AM – 8:00 PM",
+        "Tuesday: 7:30 AM – 8:00 PM",
+        "Wednesday: 7:30 AM – 8:00 PM",
+        "Thursday: 7:30 AM – 8:00 PM",
+        "Friday: 7:30 AM – 8:00 PM",
+        "Saturday: 8:00 AM – 8:00 PM",
+        "Sunday: 8:00 AM – 8:00 PM"
+    ]
+}
+
+VIEWPOINT_HOURS = {
+    "open_now": True,
+    "periods": [
+        {
+            "close": {"day": d, "time": "2359"},
+            "open": {"day": d, "time": "0000"}
+        } for d in range(7)
+    ],
+    "weekday_text": [
+        "Monday: Open 24 hours",
+        "Tuesday: Open 24 hours",
+        "Wednesday: Open 24 hours",
+        "Thursday: Open 24 hours",
+        "Friday: Open 24 hours",
+        "Saturday: Open 24 hours",
+        "Sunday: Open 24 hours"
+    ]
+}
+
+# Aliases for backward compatibility
+standard_hours = STANDARD_HOURS
+restaurant_hours = RESTAURANT_HOURS
+cafe_hours = CAFE_HOURS
+viewpoint_hours = VIEWPOINT_HOURS
+
 def generate_mock_pois(city_name: str, city_id: str, lat: float, lng: float) -> List[POI]:
     """Valósághű szimulált POI-k generálása, ha nincs API kulcs vagy hiba történt."""
     print(f"[INFO] Mock POI adatok generálása ehhez a városhoz: {city_name} ({city_id})...")
@@ -186,83 +269,6 @@ def generate_mock_pois(city_name: str, city_id: str, lat: float, lng: float) -> 
     }
     
     mock_pois = []
-    
-    # Nyitvatartási sablonok
-    standard_hours = {
-        "open_now": True,
-        "periods": [
-            {
-                "close": {"day": d, "time": "1800"},
-                "open": {"day": d, "time": "0900"}
-            } for d in range(7)
-        ],
-        "weekday_text": [
-            "Monday: 9:00 AM – 6:00 PM",
-            "Tuesday: 9:00 AM – 6:00 PM",
-            "Wednesday: 9:00 AM – 6:00 PM",
-            "Thursday: 9:00 AM – 6:00 PM",
-            "Friday: 9:00 AM – 6:00 PM",
-            "Saturday: 9:00 AM – 6:00 PM",
-            "Sunday: 9:00 AM – 6:00 PM"
-        ]
-    }
-    
-    restaurant_hours = {
-        "open_now": True,
-        "periods": [
-            {
-                "close": {"day": d, "time": "2200"},
-                "open": {"day": d, "time": "1130"}
-            } for d in range(7)
-        ],
-        "weekday_text": [
-            "Monday: 11:30 AM – 10:00 PM",
-            "Tuesday: 11:30 AM – 10:00 PM",
-            "Wednesday: 11:30 AM – 10:00 PM",
-            "Thursday: 11:30 AM – 10:00 PM",
-            "Friday: 11:30 AM – 10:00 PM",
-            "Saturday: 11:30 AM – 10:00 PM",
-            "Sunday: 11:30 AM – 10:00 PM"
-        ]
-    }
-    
-    cafe_hours = {
-        "open_now": True,
-        "periods": [
-            {
-                "close": {"day": d, "time": "2000"},
-                "open": {"day": d, "time": "0730"}
-            } for d in range(7)
-        ],
-        "weekday_text": [
-            "Monday: 7:30 AM – 8:00 PM",
-            "Tuesday: 7:30 AM – 8:00 PM",
-            "Wednesday: 7:30 AM – 8:00 PM",
-            "Thursday: 7:30 AM – 8:00 PM",
-            "Friday: 7:30 AM – 8:00 PM",
-            "Saturday: 8:00 AM – 8:00 PM",
-            "Sunday: 8:00 AM – 8:00 PM"
-        ]
-    }
-    
-    viewpoint_hours = {
-        "open_now": True,
-        "periods": [
-            {
-                "close": {"day": d, "time": "2359"},
-                "open": {"day": d, "time": "0000"}
-            } for d in range(7)
-        ],
-        "weekday_text": [
-            "Monday: Open 24 hours",
-            "Tuesday: Open 24 hours",
-            "Wednesday: Open 24 hours",
-            "Thursday: Open 24 hours",
-            "Friday: Open 24 hours",
-            "Saturday: Open 24 hours",
-            "Sunday: Open 24 hours"
-        ]
-    }
     
     # Generálunk POI-kat
     for p_type, templates in poi_templates.items():
@@ -314,7 +320,7 @@ def generate_mock_pois(city_name: str, city_id: str, lat: float, lng: float) -> 
             
     return mock_pois
 
-def get_city_pois(city_name: str, city_id: str, lat: float, lng: float, bypass_cache: bool = False) -> List[POI]:
+def get_city_pois(city_name: str, city_id: str, lat: float, lng: float, bypass_cache: bool = False, check_experience_engine: bool = True) -> List[POI]:
     """
     Lekéri a város POI-jait. Ellenőrzi a cache-t, és ha nem létezik vagy lejárt,
     akkor a Google Places API-t hívja (ha van kulcs), egyébként Mock adatokat ad vissza.
@@ -339,46 +345,68 @@ def get_city_pois(city_name: str, city_id: str, lat: float, lng: float, bypass_c
                 return pois_list
                 
     # 2. Check Optivoya Experience & Activity Engine (Real Scraped & Verified Entities)
-    try:
-        from app.services.experience.cache import experience_cache
-        dest_candidate = city_id.upper()
-        if "_" not in dest_candidate:
-            dest_candidate = f"IT_{city_name.upper().replace(' ', '_')}" if "bari" in city_name.lower() else f"XX_{city_name.upper().replace(' ', '_')}"
-        exp_entities = experience_cache.get_destination_entities(dest_candidate)
-        if not exp_entities and "bari" in city_name.lower():
-            exp_entities = experience_cache.get_destination_entities("IT_BARI")
+    if check_experience_engine:
+        try:
+            from app.services.experience.cache import experience_cache
+            dest_candidate = city_id.upper()
+            if "_" not in dest_candidate:
+                dest_candidate = f"IT_{city_name.upper().replace(' ', '_')}" if "bari" in city_name.lower() else f"XX_{city_name.upper().replace(' ', '_')}"
+            exp_entities = experience_cache.get_destination_entities(dest_candidate)
+            if not exp_entities and "bari" in city_name.lower():
+                exp_entities = experience_cache.get_destination_entities("IT_BARI")
 
-        if exp_entities:
-            print(f"[INFO] Using real Optivoya Experience Engine activities for {city_name} ({len(exp_entities)} places)!")
-            pois = []
-            for e in exp_entities:
-                e_cat = e.get("category", "")
-                sub = e.get("subcategory", "")
-                if "beach" in e_cat or "nature" in e_cat or "viewpoint" in sub:
-                    poi_type = "viewpoint"
-                elif "food" in e_cat or "market" in sub:
-                    poi_type = "restaurant"
-                elif "cafe" in sub:
-                    poi_type = "cafe"
-                else:
-                    poi_type = "attraction"
+            if exp_entities:
+                print(f"[INFO] Using real Optivoya Experience Engine activities for {city_name} ({len(exp_entities)} places)!")
+                pois = []
+                for e in exp_entities:
+                    e_cat = e.get("category", "")
+                    sub = e.get("subcategory", "")
+                    if "beach" in e_cat or "nature" in e_cat or "viewpoint" in sub:
+                        poi_type = "viewpoint"
+                        h = VIEWPOINT_HOURS
+                    elif "food" in e_cat or "market" in sub:
+                        poi_type = "restaurant"
+                        h = RESTAURANT_HOURS
+                    elif "cafe" in sub:
+                        poi_type = "cafe"
+                        h = CAFE_HOURS
+                    else:
+                        poi_type = "attraction"
+                        h = STANDARD_HOURS
 
-                pois.append(POI(
-                    id=e.get("entity_id"),
-                    city_id=city_id,
-                    name=e.get("canonical_name"),
-                    type=poi_type,
-                    rating=e.get("rating") or 4.5,
-                    user_ratings_total=e.get("review_count") or 100,
-                    price_level=e.get("price_level", "moderate"),
-                    opening_hours=standard_hours,
-                    location=POILocation(lat=e.get("lat") or lat, lng=e.get("lon") or lng),
-                    image_url=e.get("image_urls", [None])[0] if e.get("image_urls") else "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
-                    address=f"{city_name}, Italy"
-                ))
-            return pois
-    except Exception as e:
-        print(f"[WARN] Experience Engine POI lookup fallback: {e}")
+                    # Safe price level mapping for POI model (expects Optional[int])
+                    raw_p = e.get("price_level", 1)
+                    if isinstance(raw_p, int):
+                        p_lvl = raw_p
+                    elif isinstance(raw_p, str):
+                        p_map = {"free": 0, "budget": 1, "moderate": 2, "premium": 3, "luxury": 4}
+                        p_lvl = p_map.get(raw_p.lower(), 1)
+                    else:
+                        p_lvl = 1
+
+                    pois.append(POI(
+                        id=e.get("entity_id") or f"{city_id}_{abs(hash(e.get('canonical_name', '')))}",
+                        city_id=city_id,
+                        name=e.get("canonical_name") or "Élmény",
+                        type=poi_type,
+                        rating=e.get("rating") or 4.5,
+                        user_ratings_total=e.get("review_count") or 100,
+                        price_level=p_lvl,
+                        opening_hours=h,
+                        location=POILocation(lat=e.get("lat") or lat, lng=e.get("lon") or lng),
+                        image_url=e.get("image_urls", [None])[0] if e.get("image_urls") else "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+                        address=e.get("description") or f"{city_name}"
+                    ))
+                if pois:
+                    pois_json_ready = [p.dict() if hasattr(p, "dict") else p for p in pois]
+                    cache[city_id] = {
+                        "timestamp": time.time(),
+                        "pois": pois_json_ready
+                    }
+                    save_poi_cache(cache)
+                    return pois
+        except Exception as e:
+            print(f"[WARN] Experience Engine POI lookup fallback: {e}")
 
     # 3. Új adatok lekérése külső Google API-ból vagy Mock
     api_key = get_google_maps_api_key()

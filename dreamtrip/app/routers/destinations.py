@@ -146,10 +146,14 @@ async def get_destination_activities(
     if indoor_outdoor:
         filtered = [e for e in filtered if e.get("metadata", {}).get("indoor_outdoor") == indoor_outdoor]
 
+    from app.services.experience.trip_generator import trip_generator
+    recommended = trip_generator.generate_recommended_experiences(dest_key, persona=persona, limit=8)
+
     return {
         "destination_id": dest_key,
         "count": len(filtered),
-        "activities": filtered
+        "activities": filtered,
+        "recommended": recommended
     }
 
 @router.get("/api/destinations/{destination_id}/itinerary")
@@ -159,7 +163,10 @@ async def get_destination_itinerary(
     days: int = 3,
     start_date: Optional[str] = None,
     persona: Optional[str] = None,
-    selected_activities: Optional[str] = None
+    selected_activities: Optional[str] = None,
+    day_start: Optional[str] = None,
+    day_end: Optional[str] = None,
+    max_walk: Optional[int] = None
 ):
     """Generates an intelligent multi-day activity itinerary using the walkability graph and temporal slots."""
     from app.services.experience.trip_generator import trip_generator
@@ -168,12 +175,17 @@ async def get_destination_itinerary(
         dest_key = "IT_BARI"
 
     selected_ids = [s.strip() for s in selected_activities.split(",") if s.strip()] if selected_activities else None
+    logistics = {}
+    if day_start: logistics["day_start_time"] = day_start
+    if day_end: logistics["day_end_time"] = day_end
+    if max_walk: logistics["max_walking_minutes"] = max_walk
 
     itinerary = trip_generator.generate_trip_itinerary(
         destination_id=dest_key,
         num_days=days,
         start_date_str=start_date,
         persona=persona,
-        selected_activity_ids=selected_ids
+        selected_activity_ids=selected_ids,
+        logistics=logistics
     )
     return itinerary

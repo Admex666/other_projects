@@ -1,3 +1,4 @@
+import math
 import time
 import numpy as np
 import pandas as pd
@@ -175,17 +176,43 @@ def evaluate_destination_candidate(
         }
     }
 
+# ---------------------------------------------------------------------------
+# Segédfüggvény: koszinusz-hasonlóság két szótár-vektor között (0.0 - 1.0)
+# ---------------------------------------------------------------------------
+def _cosine_similarity(user_vec: Dict[str, float], dest_vec: Dict[str, float]) -> float:
+    """
+    Koszinusz-hasonlóság két dimenzió-szótár között.
+    Csak a közös kulcsokat veszi figyelembe; ismeretlen dimenziókra 0-t feltételez.
+    Visszatér: 0.0 (teljesen ellentétes) … 1.0 (tökéletes egyezés).
+    """
+    common_keys = set(user_vec.keys()) & set(dest_vec.keys())
+    if not common_keys:
+        return 0.5  # nincs info → semleges érték
+    dot = sum(user_vec[k] * dest_vec[k] for k in common_keys)
+    norm_u = math.sqrt(sum(user_vec[k] ** 2 for k in common_keys))
+    norm_d = math.sqrt(sum(dest_vec[k] ** 2 for k in common_keys))
+    if norm_u == 0 or norm_d == 0:
+        return 0.5
+    return dot / (norm_u * norm_d)
+
+
 def calculate_destination_rankings(
     candidates_raw: List[Dict[str, Any]],
     weights: Dict[str, float],
     target_temp: float = 24.0,
-    adults: int = 2
+    adults: int = 2,
+    experience_preferences: Optional[Dict[str, float]] = None
 ) -> List[Dict[str, Any]]:
     """
-    Kiszámítja a desztinációk rangsorát a tiszta 3-Pilléres Döntési Modell (Total Cost + Weather + Safety) szerint.
-    
+    Kiszámítja a desztinációk rangsorát a 4-Pilléres Döntési Modell alapján.
+
+    Ha experience_preferences meg van adva, az Experience Fit (s_exp) koszinusz-
+    hasonlóság alapján számítódik a felhasználó preferencia-vektora és a desztináció
+    ExperienceVector dimenziói között — azaz teljesen személyre szabott pontszám.
+    Ha nincs megadva, az eredeti top-5 átlag-heurisztika marad fallback-ként.
+
     Képlet:
-    Total Score = (w_total_cost * s_total_cost + w_weather * s_weather + w_safety * s_safety) * 100
+    Total Score = (w_cost*s_cost + w_weather*s_weather + w_safety*s_safety + w_exp*s_exp) * 100
     """
     if not candidates_raw:
         return []
@@ -258,38 +285,84 @@ def calculate_destination_rankings(
         if not exp_profile and "bari" in str(c.get("name", "")).lower():
             exp_profile = experience_cache.get_destination_profile("IT_BARI")
 
-        # --- Experience subscore: prefer new ExperienceVector, fallback to legacy ---
+        # --- Experience Fit: vektoros hasonlóság (Level 2 AHP) ---
         vibe_vector = None
         vibe_summary = ""
         top_dims = []
         hidden_gem = 0.0
+        s_exp_raw = None  # None = még nem számítottuk
 
         if exp_profile:
             vibe_vector = exp_profile.get("experience_vector", {})
 
         if vibe_vector and vibe_vector.get("dimensions"):
-            # Use the mean of the top-5 Bayesian-smoothed dimension absolutes (0-100 -> 0-1)
             dims = vibe_vector["dimensions"]
-            excl = {"tourist_intensity"}
-            scores_100 = sorted(
-                [v["absolute"] for k, v in dims.items() if k not in excl],
-                reverse=True
-            )
-            top5_avg = sum(scores_100[:5]) / max(len(scores_100[:5]), 1)
-            # Confidence-weighted: penalise very low data_confidence
             conf = vibe_vector.get("data_confidence", 0.7)
-            s_exp = round(min(1.0, (top5_avg / 100.0) * (0.6 + conf * 0.4)), 3)
             vibe_summary = vibe_vector.get("vibe_summary", "")
             top_dims = vibe_vector.get("top_dimensions", [])
             hidden_gem = vibe_vector.get("hidden_gem_score", 0.0)
+
+            if experience_preferences:
+                # --- LEVEL 2 AHP: Koszinusz-hasonlóság (személyre szabott) ---
+                # Felhasználó preferencia-vektora (0-100 skálán, normalizált)
+                total_pref = sum(experience_preferences.values()) or 1.0
+                user_norm = {k: v / total_pref for k, v in experience_preferences.items()}
+
+                # Desztináció ExperienceVector dimenziói (absolute: 0-100 → normalizált)
+                # Az ExperienceVector dimenzió nevei egyeznek az ExperiencePreferences nevekkel
+                # kivéve: gastronomy→food, sightseeing→culture (fallback alias mapping)
+                _ALIAS = {
+                    "gastronomy": "food",
+                    "sightseeing": "culture",
+                    "relaxation": "wellness_spa",
+                    "shopping": "shopping",
+                    "family": "family",
+                    "adventure": "adventure",
+                    "nightlife": "nightlife",
+                    "romance": "romance",
+                    "beach": "beach",
+                    "nature": "nature",
+                    "culture": "culture",
+                    "authenticity": "authenticity",
+                }
+                dest_raw = {}
+                excl = {"tourist_intensity"}
+                for dim_key, dim_val in dims.items():
+                    if dim_key not in excl:
+                        dest_raw[dim_key] = dim_val.get("absolute", 50.0) if isinstance(dim_val, dict) else float(dim_val)
+                # Alias mapping: leképezzük a user dimenziókat a dest dimenziókra
+                dest_mapped = {}
+                for ukey, uval in user_norm.items():
+                    dest_key = _ALIAS.get(ukey, ukey)
+                    if dest_key in dest_raw:
+                        dest_mapped[ukey] = dest_raw[dest_key] / 100.0
+                    elif ukey in dest_raw:
+                        dest_mapped[ukey] = dest_raw[ukey] / 100.0
+                    else:
+                        dest_mapped[ukey] = 0.35  # prior: gyenge jelenlét
+                # Koszinusz-hasonlóság (0-1)
+                cos_sim = _cosine_similarity(user_norm, dest_mapped)
+                # Confidence-weighted: alacsony adat → régiós prior irányba húzódik
+                s_exp_raw = cos_sim * (0.6 + conf * 0.4)
+            else:
+                # --- Eredeti heurisztika: top-5 dimenzió átlaga ---
+                excl = {"tourist_intensity"}
+                scores_100 = sorted(
+                    [v["absolute"] if isinstance(v, dict) else float(v)
+                     for k, v in dims.items() if k not in excl],
+                    reverse=True
+                )
+                top5_avg = sum(scores_100[:5]) / max(len(scores_100[:5]), 1)
+                s_exp_raw = (top5_avg / 100.0) * (0.6 + conf * 0.4)
+
         elif exp_profile:
-            # Legacy fallback
+            # Legacy fallback (nincs ExperienceVector, csak summary)
             total_ent = exp_profile.get("summary", {}).get("total_entities", 0)
             walk_pct = exp_profile.get("walkability", {}).get("walkability_density", 50)
             rain_cnt = exp_profile.get("weather_resilience", {}).get("rain_safe_count", 0)
-            s_exp = round(min(1.0, (min(150, total_ent) / 100.0) * 0.5 + (walk_pct / 100.0) * 0.3 + min(1.0, rain_cnt / 20.0) * 0.2), 3)
-        else:
-            s_exp = 0.75  # Kiegyensúlyozott kiinduló érték még nem indexelt városoknak
+            s_exp_raw = (min(150, total_ent) / 100.0) * 0.5 + (walk_pct / 100.0) * 0.3 + min(1.0, rain_cnt / 20.0) * 0.2
+
+        s_exp = round(min(1.0, s_exp_raw if s_exp_raw is not None else 0.75), 3)
 
         # Végső Súlyozott Pontszám (0 - 100) 4 Pillér alapján
         final_score_raw = (
@@ -301,8 +374,13 @@ def calculate_destination_rankings(
         final_score = round(final_score_raw, 1)
 
         # Kerekített összegek ezer forintra (pl. 267 837 -> 268 000 Ft)
-        total_cost_rounded = int(round(m["total_trip_cost_huf"] / 1000.0) * 1000)
-        daily_cost_rounded = int(round(m["daily_cost_huf"] / 1000.0) * 1000) if m["daily_cost_huf"] >= 10000 else int(round(m["daily_cost_huf"] / 500.0) * 500)
+        total_trip_val = m.get("total_trip_cost_huf", 250000.0)
+        daily_cost_val = m.get("daily_cost_huf", 16000.0)
+        temp_max_val = m.get("temp_max", m.get("avg_temp", 24.0))
+        safety_idx_val = m.get("safety_index", 70.0)
+
+        total_cost_rounded = int(round(total_trip_val / 1000.0) * 1000)
+        daily_cost_rounded = int(round(daily_cost_val / 1000.0) * 1000) if daily_cost_val >= 10000 else int(round(daily_cost_val / 500.0) * 500)
         
         total_cost_str = f"{total_cost_rounded:,}".replace(",", " ")
         daily_cost_str = f"{daily_cost_rounded:,}".replace(",", " ")
@@ -312,9 +390,9 @@ def calculate_destination_rankings(
         if w_cost > 0 and s_cost >= 0.70:
             reasons_pos.append(f"💰 Kedvező teljes utazási költség (~{total_cost_str} Ft)")
         if w_weather > 0 and s_weather >= 0.80:
-            reasons_pos.append(f"☀️ Ideális nappali klíma ({m['temp_max']}°C, cél: {target_temp}°C)")
+            reasons_pos.append(f"☀️ Ideális nappali klíma ({temp_max_val}°C, cél: {target_temp}°C)")
         if w_safety > 0 and s_safety >= 0.70:
-            reasons_pos.append(f"🛡️ Kiemelkedő közbiztonság ({int(m['safety_index'])}/100)")
+            reasons_pos.append(f"🛡️ Kiemelkedő közbiztonság ({int(safety_idx_val)}/100)")
         if w_experience > 0 and s_exp >= 0.70:
             if vibe_summary:
                 reasons_pos.append(f"🏛️ {vibe_summary}")
@@ -332,12 +410,12 @@ def calculate_destination_rankings(
         if w_cost > 0 and s_cost <= 0.30:
             tradeoff = f"💰 Magasabb összköltség (~{total_cost_str} Ft)"
         elif w_safety > 0 and s_safety <= 0.45:
-            tradeoff = f"⚠️ Átlagos közbiztonsági szint ({int(m['safety_index'])}/100)"
+            tradeoff = f"⚠️ Átlagos közbiztonsági szint ({int(safety_idx_val)}/100)"
         elif w_weather > 0 and s_weather <= 0.40:
-            tradeoff = f"🌡️ Érezhető hőmérséklet-eltérés (Nappal: {m['temp_max']}°C)"
+            tradeoff = f"🌡️ Érezhető hőmérséklet-eltérés (Nappal: {temp_max_val}°C)"
 
         try:
-            print(f"{c['name']:<18} | {m['total_trip_cost_huf']:>15,.0f} | {m['temp_max']:>10.1f} | {m['safety_index']:>4.0f} | {s_exp*100:>5.0f}p | {final_score:>6.1f}p")
+            print(f"{c['name']:<18} | {total_trip_val:>15,.0f} | {temp_max_val:>10.1f} | {safety_idx_val:>4.0f} | {s_exp*100:>5.0f}p | {final_score:>6.1f}p")
         except Exception:
             pass
 
@@ -346,8 +424,8 @@ def calculate_destination_rankings(
             "name": c["name"],
             "city": c["city"],
             "country": c["country"],
-            "region": c["region"],
-            "image": c["image"],
+            "region": c.get("region", "Europe"),
+            "image": c.get("image", ""),
             "score": final_score,
             "subscores": {
                 "total_cost": s_cost,
@@ -362,23 +440,23 @@ def calculate_destination_rankings(
                 "experience": round(w_experience, 2)
             },
             "metrics": {
-                "flight_price_formatted": f"{int(m['flight_price_huf']):,} Ft".replace(",", " "),
-                "flight_price_per_person_formatted": f"~{int(m['flight_price_huf'] / max(1, adults)):,} Ft / fő".replace(",", " "),
-                "flight_price_raw": m["flight_price_huf"],
-                "flight_duration": f"{m['flight_duration_h']} óra",
+                "flight_price_formatted": f"{int(m.get('flight_price_huf', 50000)):,} Ft".replace(",", " "),
+                "flight_price_per_person_formatted": f"~{int(m.get('flight_price_huf', 50000) / max(1, adults)):,} Ft / fő".replace(",", " "),
+                "flight_price_raw": m.get("flight_price_huf", 50000.0),
+                "flight_duration": f"{m.get('flight_duration_h', 2.5)} óra",
                 "daily_cost_formatted": f"~{daily_cost_str} Ft / nap",
                 "daily_cost_huf_formatted": f"~{daily_cost_str} Ft / nap",
-                "daily_cost_raw": m["daily_cost_eur"],
-                "daily_cost_huf": m["daily_cost_huf"],
+                "daily_cost_raw": m.get("daily_cost_eur", 40.0),
+                "daily_cost_huf": daily_cost_val,
                 "total_trip_cost_formatted": f"~{total_cost_str} Ft",
-                "total_trip_cost_raw": m["total_trip_cost_huf"],
+                "total_trip_cost_raw": total_trip_val,
                 "est_hotel_cost_huf": m.get("est_hotel_cost_huf", 0),
                 "nightly_hotel_cost_huf": m.get("nightly_hotel_cost_huf", 0),
                 "stay_source": m.get("stay_source", "cozycozy_market_cache"),
-                "temp_formatted": f"Nappal: {int(m['temp_max'])}°C / Éjjel: {int(m['temp_min'])}°C",
-                "temp_avg": m["temp_max"],
-                "safety_formatted": f"{int(m['safety_index'])}/100 (Numbeo)",
-                "safety_raw": m["safety_index"],
+                "temp_formatted": f"Nappal: {int(temp_max_val)}°C / Éjjel: {int(m.get('temp_min', temp_max_val - 7))}°C",
+                "temp_avg": temp_max_val,
+                "safety_formatted": f"{int(safety_idx_val)}/100 (Numbeo)",
+                "safety_raw": safety_idx_val,
                 "numbeo_breakdown": m.get("cost_breakdown", {}),
                 "adults": adults
             },

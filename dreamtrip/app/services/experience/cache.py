@@ -47,13 +47,25 @@ class ExperienceMemoryCache:
         """Ultra-fast lookup of a destination's experience profile (<1ms if in L1)."""
         dest_upper = destination_id.upper()
 
-        # 1. Check L1 Memory Cache
+        # 1. Check L1 Memory Cache (handles both hits and cached None misses)
         now = time.time()
         if dest_upper in self._l1_profiles:
             if (now - self._last_fetched.get(dest_upper, 0)) < self.TTL_SECONDS:
                 return self._l1_profiles[dest_upper]
 
-        # 2. Check Supabase
+        # 2. Check Disk Cache (<1ms local read, before network call)
+        disk_path = os.path.join(CACHE_DIR, f"{dest_upper}.json")
+        if os.path.exists(disk_path):
+            try:
+                with open(disk_path, "r", encoding="utf-8") as f:
+                    profile = json.load(f)
+                    self._l1_profiles[dest_upper] = profile
+                    self._last_fetched[dest_upper] = now
+                    return profile
+            except Exception:
+                pass
+
+        # 3. Check Supabase (remote database)
         try:
             from app.core.supabase import get_supabase, is_supabase_configured
             if is_supabase_configured():
@@ -66,18 +78,6 @@ class ExperienceMemoryCache:
                         return profile
         except Exception as e:
             print(f"[CACHE WARN] Supabase profile fetch failed: {e}")
-
-        # 3. Check Disk Cache
-        disk_path = os.path.join(CACHE_DIR, f"{dest_upper}.json")
-        if os.path.exists(disk_path):
-            try:
-                with open(disk_path, "r", encoding="utf-8") as f:
-                    profile = json.load(f)
-                    self._l1_profiles[dest_upper] = profile
-                    self._last_fetched[dest_upper] = now
-                    return profile
-            except Exception:
-                pass
 
         # 4. Fallback: Auto-generate from destination entities if available
         entities = self.get_destination_entities(dest_upper)
@@ -115,6 +115,9 @@ class ExperienceMemoryCache:
             except Exception as e:
                 print(f"[CACHE WARN] Auto-generating profile failed: {e}")
 
+        # Negative cache in L1 memory so unindexed destinations don't repeat lookups
+        self._l1_profiles[dest_upper] = None
+        self._last_fetched[dest_upper] = now
         return None
 
     def get_destination_entities(self, destination_id: str, category: Optional[str] = None) -> List[Dict[str, Any]]:
@@ -151,6 +154,8 @@ class ExperienceMemoryCache:
                 return [e for e in fallback_entities if e.get("category") == category]
             return fallback_entities
 
+        # Negative cache empty result in L1 memory
+        self._l1_entities[dest_upper] = []
         return []
 
     def _load_fallback_entities(self, dest_upper: str) -> List[Dict[str, Any]]:
@@ -170,7 +175,7 @@ class ExperienceMemoryCache:
             except Exception as e:
                 print(f"[CACHE WARN] Reading poi_cache failed: {e}")
 
-        # If not found in poi_cache, try maps_service
+        # If not found in poi_cache, try maps_service (break recursion with check_experience_engine=False)
         if not pois:
             try:
                 from app.services.destination_service import load_all_destinations
@@ -178,7 +183,7 @@ class ExperienceMemoryCache:
                 all_dests = load_all_destinations()
                 matched = next((d for d in all_dests if d.get("id", "").upper() == dest_upper or d.get("name", "").upper() in dest_upper), None)
                 if matched:
-                    raw_pois = get_city_pois(matched["name"], matched["id"], matched["lat"], matched["lon"])
+                    raw_pois = get_city_pois(matched["name"], matched["id"], matched["lat"], matched["lon"], check_experience_engine=False)
                     pois = [p.__dict__ if hasattr(p, "__dict__") else p for p in raw_pois]
             except Exception as e:
                 print(f"[CACHE WARN] maps_service POI fallback failed: {e}")

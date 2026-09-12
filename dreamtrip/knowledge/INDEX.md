@@ -62,25 +62,26 @@ Ez a fájl az Optivoya (DreamTrip) projekt navigációs térképe. Minden lénye
 ---
 
 ## 💡 Concepts (Koncepciók)
-* [[unified-trip-model]] — A három modult összefogó közös utazási adatmodell és kézfogási elv.
-* [[ahp-weighting]] — Analytic Hierarchy Process (AHP) páros összehasonlító döntési mátrix.
+* [[unified-trip-model]] — A modulokat összefogó közös utazási adatmodell és kézfogási elv.
+* [[ahp-weighting]] — Analytic Hierarchy Process (AHP) páros összehasonlító döntési mátrix (4 pillér & Level 2 koszinusz hasonlóság).
 * [[promethee-ranking]] — PROMETHEE II többkritériumos preferenciarangsorolási algoritmus.
 * [[guided-progressive-decision-flow]] — Vezérelt progresszív döntési folyamat és Zero Analysis-Paralysis alapelv.
 * [[numbeo-cost-model]] — Hivatalos Numbeo étkezési és helyi közlekedési fogyasztói kosár modell.
 * [[honest-scraping-policy]] — Transzparens hibakezelés mesterséges dummy adatok helyett.
 * [[progressive-async-prefetching]] — Progresszív aszinkron előtöltés és multi-tier gyorsítótárazás.
 * [[experience-graph-modeling]] — Többforrásos (OSM, Wikidata, Wiki, Google) élménygráf szintézis és modellezés.
+* [[experience-vector-and-vibe-profiling]] — Bayes-i simított és robusztus Z-score Vibe Profiling célállomásokra.
 
 
 ---
 
 ## 🔄 Processes (Folyamatok)
-* [[master-planner-wizard]] — Master Travel Planner: integrált 4-lépéses end-to-end utazástervező varázsló.
-* [[destination-matching]] — Úticél-keresési és éghajlat/ár/biztonság optimalizálási folyamat.
-* [[flight-intelligence-workflow]] — Élő repülőjegy gyűjtés, AHP súlyozás és PROMETHEE rangsorolás.
+* [[master-planner-wizard]] — Master Travel Planner: integrált 5-lépéses end-to-end utazástervező varázsló.
+* [[destination-matching]] — Úticél-keresési és 4-pilléres (költség, klíma, biztonság, élmény) optimalizálási folyamat.
+* [[flight-intelligence-workflow]] — Élő repülőjegy gyűjtés, AHP súlyozás, PROMETHEE rangsorolás és hasznos nyaralási idő.
 * [[accommodation-search-workflow]] — Zárolt dátumú szálláskeresés és kényelmi szűrés.
-* [[proposal-generation]] — B2B ügyfélajánlat exportálása tételes képletekkel.
-* [[itinerary-optimization]] — Időkorlátos és távolságoptimalizált napi útiterv készítés.
+* [[proposal-generation]] — B2B ügyfélajánlat exportálása tételes képletekkel, TripScore-ral és napi útitervvel.
+* [[itinerary-optimization]] — Időkorlátos és távolságoptimalizált napi útiterv készítés tranzit javaslatokkal.
 * [[experience-ingestion-pipeline]] — Célállomások élmény- és programkínálatának 6 fázisú begyűjtési és profilozási munkafolyamata.
 
 ---
@@ -105,6 +106,8 @@ Ez a fájl az Optivoya (DreamTrip) projekt navigációs térképe. Minden lénye
 * [[accommodation-nightly-rate]] — Éjszakánkénti és teljes szállásköltség.
 * [[safety-index]] — Numbeo Közbiztonsági Index (0–100 skála).
 * [[promethee-phi-net]] — PROMETHEE II Net Outranking Flow relevanciaérték.
+* [[effective-vacation-time]] — Helyszíni hasznos nyaralási idő (órában), menetrendi idősávok alapján.
+* [[unified-trip-score]] — Harmonizált 0–100 minőségi mutató a 4 pillér összhangjára és élménydiverzitására.
 * [[response-time-latency]] — Válaszidő és keresési késleltetés (ms), rétegekre és szolgáltatásokra bontva.
 
 
@@ -126,6 +129,7 @@ Ez a fájl az Optivoya (DreamTrip) projekt navigációs térképe. Minden lénye
 
 ## 🧠 Learnings (Megfigyelések & Tanulságok)
 * [[LEARNING-003-stitch-ui-design-principles]] — Stitch UI Benchmark: AI-slop tünetek felszámolása és prémium dizájn.
+* [[destination-search-stability-and-cache-optimization]] — Célállomás-keresés és 4-pilléres döntési mátrix stabilizálás, rekurziómentes POI fallback és L1 negatív gyorsítótárazás.
 * [[kiwi-pagination-and-tokens]] — Kiwi GraphQL keresési tokenek és lapozás sajátosságai.
 * [[jinja-template-block-inheritance]] — Jinja2 szkript blokkok öröklődése a lebegő kosár rendereléséhez.
 * [[mobile-viewport-overflow-fixed-bars]] — Keskeny mobilképernyők (440px) és lebegő elemek illesztése.

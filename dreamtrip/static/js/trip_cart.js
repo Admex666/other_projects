@@ -20,6 +20,10 @@
         removeFlight() { return window.TripStore.removeFlight(); },
         removeStay() { return window.TripStore.removeStay(); },
         setDiningProfile(profileKey) { return window.TripStore.setDiningProfile(profileKey); },
+        setActivities(acts) { return window.TripStore.setActivities(acts); },
+        setItinerary(itin) { return window.TripStore.setItinerary(itin); },
+        setTripScore(score) { return window.TripStore.setTripScore(score); },
+        setPreferences(exp, log) { return window.TripStore.setPreferences(exp, log); },
         clearCart() { return window.TripStore.clearCart(); },
 
         // 2. COST CALCULATION ENGINE

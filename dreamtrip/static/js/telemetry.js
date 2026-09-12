@@ -62,20 +62,34 @@
             }
         },
 
+        // Environment Detection (production vs test)
+        getEnvironment() {
+            if (window.OPTIVOYA_ENV) return window.OPTIVOYA_ENV;
+            const host = (window.location.hostname || '').toLowerCase();
+            if (host === 'localhost' || host === '127.0.0.1' || host.endsWith('.local') || host.includes('test') || host.includes('dev')) {
+                return 'test';
+            }
+            return 'production';
+        },
+
         trackEvent(eventType, module = 'master_planner', metaData = {}, searchParams = {}) {
             const now = Date.now();
             const dwellMs = Math.max(0, now - lastActionTime);
             const dwellSec = Math.round(dwellMs / 1000);
             lastActionTime = now;
+            const env = this.getEnvironment();
 
             const payload = {
                 session_id: this.sessionId,
                 user_id: this.userId,
+                environment: env,
                 event_type: eventType,
                 module: module,
                 duration_ms: dwellMs,
                 meta_data: {
                     ...metaData,
+                    environment: env,
+                    hostname: window.location.hostname,
                     dwell_ms: dwellMs,
                     dwell_sec: dwellSec,
                     url: window.location.pathname,
@@ -85,8 +99,9 @@
             };
 
             // Also tag Clarity if relevant
-            if (window.clarity && (metaData.button_text || metaData.destination)) {
+            if (window.clarity) {
                 try {
+                    window.clarity("set", "environment", env);
                     if (metaData.destination) window.clarity("set", "destination", String(metaData.destination));
                     if (metaData.action) window.clarity("set", "last_action", String(metaData.action));
                 } catch (err) {}
