@@ -391,7 +391,7 @@ ${invoiceItems}${shippingItem}
                 const portalLink = `https://vitastepsss.vercel.app/portal.html?email=${encodeURIComponent(email)}`;
                 const isPilisK = (campaignKey === 'pilis');
                 const locationName = isPilisK ? 'Nagy-Kevély' : 'Prédikálószék';
-                const challengePeriod = isPilisK ? '2026. augusztus 1. és szeptember 18.' : '2026. május 28. és június 30.';
+                const challengePeriod = isPilisK ? '2026. augusztus 1. és szeptember 27.' : '2026. május 28. és június 30.';
 
                 const participantNames = medals.map(m => m.name).filter(Boolean);
                 let greetingNames = firstName;
