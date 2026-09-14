@@ -126,7 +126,7 @@ def send_feedback_email(name, email, campaign):
         html = f"""
         <html>
         <body>
-            <p>Szia {first_name}!</p>
+            <p>Kedves {first_name}!</p>
             <p>Látjuk a Foxpost rendszerében, hogy a <strong>{campaign_name} érmed</strong> sikeresen megérkezett! Reméljük, elégedett vagy vele.</p>
             <p>Kérjük, szánj rá 2 percet, és oszd meg velünk a véleményedet az alábbi linken:</p>
             <p><a href="{portal_link}">Vélemény megosztása és Oklevél letöltése</a></p>

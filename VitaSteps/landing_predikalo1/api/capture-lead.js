@@ -122,7 +122,7 @@ module.exports = async (req, res) => {
                     .replace(/\{\{KALANDKONYV_URL\}\}/g, kalandkonyvUrl);
             } else {
                 console.warn('Template file not found at:', templatePath);
-                emailHtml = `<p>Szia ${cleanName}!<br>Itt éred el a Kalandkönyvet és a túraútvonalakat: <a href="${unlockUrl}">Megnyitás</a></p>`;
+                emailHtml = `<p>Kedves ${cleanName}!<br>Itt éred el a Kalandkönyvet és a túraútvonalakat: <a href="${unlockUrl}">Megnyitás</a></p>`;
             }
 
             await transporter.sendMail({

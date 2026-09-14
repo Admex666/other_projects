@@ -122,7 +122,7 @@ module.exports = async (req, res) => {
                 const congratsHtml = `
                 <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #0b0f19; color: #ffffff; border-radius: 8px;">
                   <h1 style="color: #c4ff00; text-align: center;">🏆 Szuper teljesítés!</h1>
-                  <p>Szia <strong>${runnerName}</strong>,</p>
+                  <p>Kedves <strong>${runnerName}</strong>,</p>
                   <p>Gratulálunk! Az adminisztrátorunk ellenőrizte és <strong>jóváhagyta</strong> a beküldött igazolásodat a <strong>${campaignName}</strong> kihíváson! 🎉</p>
                   <p>Hatalmas gratuláció a sikeres teljesítésedhez! ${shippingText}</p>
                   
