@@ -363,9 +363,16 @@ function renderRunsTable(runs, container) {
 
         let statusText = '';
         if (run.completed) {
-            statusText = shipment.shipped
-                ? `<span class="shipped-badge badge-shipped">Feladva (${shipment.tracking_code || 'Foxpost'})</span>`
-                : `<span class="shipped-badge badge-waiting">Jóváhagyva (Szállításra vár)</span>`;
+            const isReceived = !!(shipment.received || shipment.received_at || run.received_date);
+            const isShipped = !!(shipment.shipped || shipment.shipped_at || run.shipped);
+            if (isReceived) {
+                const rDate = shipment.received_at || run.received_date;
+                statusText = `<span class="shipped-badge badge-received">📬 Megérkezett${rDate ? ' (' + formatDate(rDate) + ')' : ''}</span>`;
+            } else if (isShipped) {
+                statusText = `<span class="shipped-badge badge-shipped">🚚 Feladva (${shipment.tracking_code || 'Foxpost'})</span>`;
+            } else {
+                statusText = `<span class="shipped-badge badge-waiting">⏳ Feladandó</span>`;
+            }
         } else if (run.proof_submitted) {
             statusText = `<span class="badge badge-pending">Igazolásra vár</span>`;
         } else {

@@ -1,8 +1,20 @@
 // ===== ADMIN LOGISTICS & FOXPOST MODULE =====
 
-let logisticsSubFilter = 'pending'; // 'pending', 'shipped', 'all'
+let logisticsSubFilter = 'pending'; // 'pending' (Feladandó), 'shipped' (Már feladva), 'received' (Megérkezett), 'all'
 let logisticsSearch = '';
 let logisticsHideTest = true;
+
+function isRunShipped(run) {
+    if (!run) return false;
+    const s = getShipment(run);
+    return !!(s.shipped || s.shipped_at || run.shipped);
+}
+
+function isRunReceived(run) {
+    if (!run) return false;
+    const s = getShipment(run);
+    return !!(s.received || s.received_at || run.received_date);
+}
 
 function getGroupedRunIds(run) {
     if (!run) return [];
@@ -13,7 +25,7 @@ function getGroupedRunIds(run) {
     const shipment = getShipment(run);
     const dest = shipment.parcel_id || shipment.home_address || '';
     const trackingCode = shipment.tracking_code || '';
-    const isShipped = !!shipment.shipped;
+    const isShipped = isRunShipped(run);
 
     const matched = allRuns.filter(r => {
         if (r.id === run.id) return true;
@@ -22,7 +34,7 @@ function getGroupedRunIds(run) {
         const rShipment = getShipment(r);
         const rDest = rShipment.parcel_id || rShipment.home_address || '';
         const rTracking = rShipment.tracking_code || '';
-        const rShipped = !!rShipment.shipped;
+        const rShipped = isRunShipped(r);
 
         // Never group a shipped parcel with an unshipped parcel
         if (isShipped !== rShipped) return false;
@@ -63,10 +75,11 @@ function renderLogistics(container) {
 
     // Filter by sub-filter
     let filtered = completedRuns.filter(run => {
-        const shipment = getShipment(run);
-        const isShipped = !!shipment.shipped;
-        if (logisticsSubFilter === 'pending') return !isShipped;
-        if (logisticsSubFilter === 'shipped') return isShipped;
+        const isShipped = isRunShipped(run);
+        const isReceived = isRunReceived(run);
+        if (logisticsSubFilter === 'pending' || logisticsSubFilter === 'to_ship') return !isShipped;
+        if (logisticsSubFilter === 'shipped') return isShipped && !isReceived;
+        if (logisticsSubFilter === 'received') return isReceived;
         return true;
     });
 
@@ -79,22 +92,24 @@ function renderLogistics(container) {
             const serial = (run.serial_number || '').toLowerCase();
             const shipment = getShipment(run);
             const tracking = (shipment.tracking_code || '').toLowerCase();
-            return name.includes(logisticsSearch) || email.includes(logisticsSearch) || serial.includes(logisticsSearch) || tracking.includes(logisticsSearch);
+            const parcel = (shipment.parcel_name || '').toLowerCase();
+            return name.includes(logisticsSearch) || email.includes(logisticsSearch) || serial.includes(logisticsSearch) || tracking.includes(logisticsSearch) || parcel.includes(logisticsSearch);
         });
     }
 
-    const totalWaiting = completedRuns.filter(r => !getShipment(r).shipped).length;
-    const totalShipped = completedRuns.filter(r => getShipment(r).shipped).length;
+    const totalToShip = completedRuns.filter(r => !isRunShipped(r)).length;
+    const totalShipped = completedRuns.filter(r => isRunShipped(r) && !isRunReceived(r)).length;
+    const totalReceived = completedRuns.filter(r => isRunReceived(r)).length;
 
     // 1. Compute Consolidated Packing List
-    const unshippedCompleted = completedRuns.filter(r => !getShipment(r).shipped);
+    const unshippedCompleted = completedRuns.filter(r => !isRunShipped(r));
     const packingGroups = [];
     const processedRunIds = new Set();
 
     unshippedCompleted.forEach(run => {
         if (processedRunIds.has(run.id)) return;
         const groupRunIds = getGroupedRunIds(run);
-        const groupRuns = groupRunIds.map(id => allRuns.find(r => r.id === id)).filter(Boolean).filter(r => r.completed && !getShipment(r).shipped);
+        const groupRuns = groupRunIds.map(id => allRuns.find(r => r.id === id)).filter(Boolean).filter(r => r.completed && !isRunShipped(r));
         groupRunIds.forEach(id => processedRunIds.add(id));
         if (groupRuns.length > 0) packingGroups.push(groupRuns);
     });
@@ -187,11 +202,21 @@ function renderLogistics(container) {
         const isPhoneValid = rawPhone && rawPhone.replace(/\D/g, '').length >= 9;
         const isLockerValid = method !== 'foxpost' || (shipment.parcel_id && String(shipment.parcel_id).trim() !== '');
 
+        const isShipped = isRunShipped(run);
+        const isReceived = isRunReceived(run);
+
         let details = '–';
         if (method === 'foxpost') {
-            details = `🦊 ${shipment.parcel_name || 'Foxpost automata'} (${shipment.parcel_id || '<span style="color:#ef4444;font-weight:bold;">NINCS AUTOMATA ID</span>'})${shipment.tracking_code ? '<br>📦 Csomagszám: <b>' + shipment.tracking_code + '</b>' : ''}`;
+            const trackingBadge = shipment.tracking_code ? '<br>📦 Csomagszám: <b>' + shipment.tracking_code + '</b>' : '';
+            const statusIndicator = isReceived 
+                ? ' <span style="color:#38bdf8; font-size:0.75rem; font-weight:700;">(Átvéve)</span>' 
+                : (isShipped ? ' <span style="color:#22c55e; font-size:0.75rem; font-weight:700;">(Úton)</span>' : '');
+            details = `🦊 ${shipment.parcel_name || 'Foxpost automata'} (${shipment.parcel_id || '<span style="color:#ef4444;font-weight:bold;">NINCS AUTOMATA ID</span>'})${trackingBadge}${statusIndicator}`;
         } else if (method === 'home') {
-            details = `🏠 Házhoz: ${shipment.home_address || 'Cím nélkül'}`;
+            const statusIndicator = isReceived 
+                ? ' <span style="color:#38bdf8; font-size:0.75rem; font-weight:700;">(Átvéve)</span>' 
+                : (isShipped ? ' <span style="color:#22c55e; font-size:0.75rem; font-weight:700;">(Úton)</span>' : '');
+            details = `🏠 Házhoz: ${shipment.home_address || 'Cím nélkül'}${statusIndicator}`;
         }
 
         // Calculate total medals in this specific package
@@ -204,9 +229,16 @@ function renderLogistics(container) {
             ? `<span style="background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.4); color: #d8b4fe; padding: 0.2rem 0.5rem; border-radius: 6px; font-weight: 700; font-size: 0.72rem; display: inline-flex; align-items: center; gap: 0.3rem;" title="Egy csomagban küldött érmek: ${packageSerialsText}">📦 <b>${packageMedalsCount} db érem</b> (${packageSerialsText})</span>`
             : `<span style="background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-mid); padding: 0.2rem 0.45rem; border-radius: 6px; font-size: 0.72rem;">📦 1 db érem</span>`;
 
-        const statusText = shipment.shipped
-            ? `<span class="shipped-badge badge-shipped">✅ Feladva (${packageMedalsCount} db érem a csomagban)</span>`
-            : `<span class="shipped-badge badge-waiting">⏳ Szállításra vár (${packageMedalsCount} db érem)</span>`;
+        let statusText = '';
+        if (isReceived) {
+            const rDate = shipment.received_at || run.received_date;
+            statusText = `<span class="shipped-badge badge-received">📬 Megérkezett${rDate ? ' (' + formatDate(rDate) + ')' : ''}</span>`;
+        } else if (isShipped) {
+            const sDate = shipment.shipped_at;
+            statusText = `<span class="shipped-badge badge-shipped">🚚 Már feladva${sDate ? ' (' + formatDate(sDate) + ')' : ''} (${packageMedalsCount} db)</span>`;
+        } else {
+            statusText = `<span class="shipped-badge badge-waiting">⏳ Feladandó (${packageMedalsCount} db érem)</span>`;
+        }
 
         const phoneDisplay = isPhoneValid
             ? `<span>${phone}</span>`
@@ -258,11 +290,14 @@ function renderLogistics(container) {
         <!-- Logistics Table Toolbar -->
         <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
             <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
-                <button class="logistics-sub-tab ${logisticsSubFilter === 'pending' ? 'active' : ''}" onclick="setLogisticsSubFilter('pending')">
-                    ⏳ Szállításra vár (${totalWaiting})
+                <button class="logistics-sub-tab ${logisticsSubFilter === 'pending' || logisticsSubFilter === 'to_ship' ? 'active' : ''}" onclick="setLogisticsSubFilter('pending')">
+                    ⏳ Feladandó (${totalToShip})
                 </button>
                 <button class="logistics-sub-tab ${logisticsSubFilter === 'shipped' ? 'active' : ''}" onclick="setLogisticsSubFilter('shipped')">
-                    ✅ Már feladva (${totalShipped})
+                    🚚 Már feladva (${totalShipped})
+                </button>
+                <button class="logistics-sub-tab ${logisticsSubFilter === 'received' ? 'active' : ''}" onclick="setLogisticsSubFilter('received')">
+                    📬 Megérkezett (${totalReceived})
                 </button>
                 <button class="logistics-sub-tab ${logisticsSubFilter === 'all' ? 'active' : ''}" onclick="setLogisticsSubFilter('all')">
                     Összes (${completedRuns.length})
@@ -277,7 +312,6 @@ function renderLogistics(container) {
                 <button id="btn-mark-shipped" class="btn btn-orange" style="margin: 0; padding: 0.45rem 1rem; font-size: 0.82rem;" onclick="triggerMarkShipped(this)" disabled>
                     📦 Feladottnak jelölés (<span id="selected-ship-count">0</span>)
                 </button>
-            </div>
         </div>
 
         <div class="table-container">
@@ -337,10 +371,10 @@ function updateLogisticsButtonsState() {
     if (countShip) countShip.textContent = checkedCount;
 
     if (btnSubmit) {
-        btnSubmit.disabled = checkedCount === 0 || logisticsSubFilter === 'shipped';
+        btnSubmit.disabled = checkedCount === 0 || logisticsSubFilter === 'shipped' || logisticsSubFilter === 'received';
     }
     if (btnShip) {
-        btnShip.disabled = checkedCount === 0 || logisticsSubFilter === 'shipped';
+        btnShip.disabled = checkedCount === 0 || logisticsSubFilter === 'shipped' || logisticsSubFilter === 'received';
     }
 }
 
@@ -388,7 +422,7 @@ async function triggerSubmitFoxpost(btn) {
 
     const eligible = selected.filter(r => {
         const shipment = getShipment(r);
-        return (shipment.method || 'foxpost') === 'foxpost' && !shipment.shipped;
+        return (shipment.method || 'foxpost') === 'foxpost' && !isRunShipped(r);
     });
 
     if (eligible.length === 0) {
