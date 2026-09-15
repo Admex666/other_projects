@@ -25,13 +25,15 @@ used_by:
 
 # Run (Challenge Entry / Teljesítés)
 
-A **Run** represents a single paid participation in a specific VitaSteps challenge. It is assigned a strictly limited, unique serial number (e.g. `#006/100` or `#006/100-PK`).
+A **Run** represents a single paid participation in a specific VitaSteps challenge. It is assigned a strictly limited, unique serial number (e.g. `#006/100` or `#006/100-PK`). The serial number belongs to the **run entry** — the physical medals themselves are **not** individually numbered.
 
 ## Lifecycle States
 1. **Registered / Pending (`!proof_submitted && !completed`):** The runner has purchased entry and received their welcome pack and GPX/guidebook.
 2. **Proof Submitted (`proof_submitted = true && !completed`):** The runner completed the route and uploaded their GPX track or photos via [[proof-verification|Proof Verification]].
 3. **Approved / Completed (`completed = true`):** The verification was approved in [[admin-panel|Admin Panel]]. Diploma is generated and congratulatory email is sent.
-4. **Shipped (`shipments.shipped = true`):** The physical medal has been packaged and dispatched via [[foxpost]].
+4. **To Ship / Feladandó (`completed = true && shipments.shipped = false`):** Approved but not yet dispatched. Appears in the admin logistics "Feladandó" tab.
+5. **Shipped / Már feladva (`shipments.shipped = true && !shipments.received_at`):** The physical medal has been packaged and dispatched via [[foxpost]]. Appears in the "Már feladva" tab.
+6. **Received / Megérkezett (`shipments.received_at IS NOT NULL`):** The parcel has been collected from the Foxpost locker. Tracked automatically by `daily_tracking.py`. Appears in the "Megérkezett" tab.
 
 ## Data Model (Supabase `runs` table)
 * `id`: UUID (Primary Key)
@@ -47,4 +49,5 @@ A **Run** represents a single paid participation in a specific VitaSteps challen
 * `completed`: Boolean
 * `completion_date`: String (`YYYY.MM.DD`)
 * `diploma_url`: String (Direct URL to the generated online diploma)
+* `received_date`: Timestamp (Set by `daily_tracking.py` when Foxpost confirms locker pickup)
 * `ship_together_with`: String (Optional email of partner for combined shipping)

@@ -28,6 +28,8 @@ Foxpost is the primary shipping provider for physical medal fulfillment in Hunga
    * Pre-validates Hungarian mobile phone numbers and locker IDs before dispatch.
    * Isolates validation errors to prevent single-order malformations from rejecting entire batches.
    * Returns generated `CLFOX...` barcodes and assigns them to Supabase `shipments.tracking_code`.
-3. **Daily Lifecycle Cron (`scripts/daily_tracking.py`):** Runs daily to sync parcel state transitions:
-   * `created` $\rightarrow$ `in_transit` $\rightarrow$ `arrived_in_locker` $\rightarrow$ `delivered` $\rightarrow$ triggers review feedback email.
+3. **Daily Lifecycle Cron (`scripts/daily_tracking.py`):** Runs daily via GitHub Actions to sync parcel state transitions:
+   * `created` $\rightarrow$ `in_transit` $\rightarrow$ `arrived_in_locker` $\rightarrow$ `delivered`.
+   * On Foxpost status `RECEIVE` or `HDRECEIVE`, sets `shipments.received_at` and `runs.received_date` timestamps.
+   * This data powers the admin "Megérkezett" logistics tab.
 4. **Unit Shipping Cost:** Base locker shipping fee is **1 141 HUF + VAT = ~1 250 HUF / parcel**.

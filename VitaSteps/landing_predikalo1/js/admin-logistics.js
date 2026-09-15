@@ -16,6 +16,12 @@ function isRunReceived(run) {
     return !!(s.received || s.received_at || run.received_date);
 }
 
+function isValidTrackingCode(code) {
+    if (!code) return false;
+    const clean = String(code).trim();
+    return clean.length >= 5 && clean !== '-' && clean !== '–' && clean.toUpperCase() !== 'N/A';
+}
+
 function getGroupedRunIds(run) {
     if (!run) return [];
     const runner = run.runners || {};
@@ -39,9 +45,20 @@ function getGroupedRunIds(run) {
         // Never group a shipped parcel with an unshipped parcel
         if (isShipped !== rShipped) return false;
 
-        // If both already shipped, only group if they share the exact same tracking code
+        // If both already shipped:
         if (isShipped && rShipped) {
-            return trackingCode && rTracking && trackingCode === rTracking;
+            // Only group by tracking code if BOTH have a REAL, valid tracking code
+            if (isValidTrackingCode(trackingCode) && isValidTrackingCode(rTracking)) {
+                return trackingCode === rTracking;
+            }
+            // If tracking code is missing or placeholder '-', do NOT group by tracking code!
+            // Fall back to companion / order / email rules:
+            if (orderId && r.order_id && orderId === r.order_id) return true;
+            if (email && rEmail && email === rEmail) return true;
+            const rShipTogether = (r.ship_together_with || '').toLowerCase().trim();
+            if (shipTogether && (shipTogether === rEmail || shipTogether === rShipTogether)) return true;
+            if (rShipTogether && (rShipTogether === email)) return true;
+            return false;
         }
 
         // Neither is shipped yet: check destination match
@@ -235,9 +252,11 @@ function renderLogistics(container) {
             statusText = `<span class="shipped-badge badge-received">📬 Megérkezett${rDate ? ' (' + formatDate(rDate) + ')' : ''}</span>`;
         } else if (isShipped) {
             const sDate = shipment.shipped_at;
-            statusText = `<span class="shipped-badge badge-shipped">🚚 Már feladva${sDate ? ' (' + formatDate(sDate) + ')' : ''} (${packageMedalsCount} db)</span>`;
+            const countSuffix = packageMedalsCount > 1 ? ` (${packageMedalsCount} db)` : '';
+            statusText = `<span class="shipped-badge badge-shipped">🚚 Már feladva${sDate ? ' (' + formatDate(sDate) + ')' : ''}${countSuffix}</span>`;
         } else {
-            statusText = `<span class="shipped-badge badge-waiting">⏳ Feladandó (${packageMedalsCount} db érem)</span>`;
+            const countSuffix = packageMedalsCount > 1 ? ` (${packageMedalsCount} db érem)` : '';
+            statusText = `<span class="shipped-badge badge-waiting">⏳ Feladandó${countSuffix}</span>`;
         }
 
         const phoneDisplay = isPhoneValid

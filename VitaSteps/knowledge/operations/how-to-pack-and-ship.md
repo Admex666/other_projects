@@ -20,15 +20,20 @@ Follow this procedure when preparing a physical shipping batch:
 ## Step 1: Open Admin Logistics Panel
 1. Open `admin.html` in your browser and enter the admin password (`vitasteps2026admin`).
 2. Click the **🦊 Logisztika (Foxpost)** tab.
+3. Click the **📦 Feladandó** sub-tab to view only approved-but-not-yet-shipped packages.
 
 ## Step 2: Review Packing Guide
 1. Click to expand **📦 Csomagolási és Kiszállítási Segédlet** at the top.
 2. For each package listed:
    - Check the exact campaign and medal items needed (e.g. `1x 🏔️ Prédikálószék + 1x 🌌 Nagy-Kevély`).
-   - Place the corresponding physical medals into the padded envelope or box (the physical medals are not numbered).
+   - Place the corresponding physical medals into the padded envelope or box (the physical medals are **not** individually numbered — the serial number belongs to the run entry).
 
 ## Step 3: Dispatch via Foxpost API
 1. In the logistics table below, select the checkboxes for the packages you have prepared.
 2. Click the **🦊 Foxpost API Feladás** button.
-3. Confirm the dialog prompt. The system will create the parcels in Foxpost, retrieve barcodes, update tracking codes in Supabase, and mark the items as `Feladva` (Shipped).
+3. Confirm the dialog prompt. The system will create the parcels in Foxpost, retrieve barcodes, update tracking codes in Supabase, and mark the items as `Már feladva` (Shipped).
 4. Print the generated Foxpost labels and drop the packages at your local Foxpost locker.
+
+## After Dispatch
+Items move to the **📬 Már feladva** tab. Once `daily_tracking.py` detects Foxpost locker pickup (status `RECEIVE`/`HDRECEIVE`), they automatically transition to the **✅ Megérkezett** tab.
+

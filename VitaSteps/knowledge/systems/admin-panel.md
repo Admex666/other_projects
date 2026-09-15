@@ -37,6 +37,10 @@ The VitaSteps Admin Dashboard is a password-protected Single Page Application (`
 * Sikeresen hitelesített és oklevéllel ellátott teljesítők archívuma.
 
 ### 3. 🦊 Logisztika (Foxpost)
+* **Háromfázisú státuszkezelés:**
+  - `📦 Feladandó`: Jóváhagyott, de még nem feladott csomagok (`completed=true`, `shipped=false`).
+  - `📬 Már feladva`: Foxpost-on keresztül feladott, úton lévő csomagok (`shipped=true`, `received_at=NULL`).
+  - `✅ Megérkezett`: Foxpost automatán átvett csomagok (`received_at IS NOT NULL`), a `daily_tracking.py` alapján frissítve.
 * **Csomagolási és Kiszállítási Segédlet:** Kártyás nézet, amely kampányonként részletezi a borítékba teendő érmek sorszámait és darabszámát (több kampányos összevonás támogatása azonos címzettnél).
 * **1-Kattintásos Foxpost API Feladás:** Csomagok automatikus létrehozása, vonalkódok generálása és követési kód szinkronizáció.
 
