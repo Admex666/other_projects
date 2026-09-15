@@ -27,7 +27,11 @@
 
             const outDate = (fl.out_dep_time || fl.out_date || '').split('T')[0];
             const inDate = (fl.in_dep_time || fl.in_date || '').split('T')[0];
-            const nights = fl.stay_days || fl.exact_stay_nights || state.intake.duration || 7;
+
+            const nights = window.calculateExactFlightNights ? window.calculateExactFlightNights(fl, state.intake.duration || 7) : (fl.stay_days || fl.exact_stay_nights || 7);
+            fl.stay_days = nights;
+            fl.exact_stay_nights = nights;
+
             const destCity = state.selectedDest?.name || state.selectedDest?.city || 'Célállomás';
             const destCountry = state.selectedDest?.country || 'Olaszország';
 
@@ -68,6 +72,7 @@
                         country: destCountry,
                         checkin: outDate,
                         checkout: inDate,
+                        stay_nights: nights,
                         adults: state.intake.adults,
                         min_stars: state.intake.hotel_min_stars,
                         min_rating: state.intake.hotel_min_rating,
@@ -81,6 +86,15 @@
                 const data = await res.json();
                 if (data.status === 'ok') {
                     state.stays = data.stays || [];
+                    state.stays.forEach(s => {
+                        s.stay_nights = nights;
+                        if (s.price_per_night_huf) {
+                            s.price_total_huf = Math.round(s.price_per_night_huf * nights);
+                        } else if (s.price_huf) {
+                            s.price_per_night_huf = s.price_huf;
+                            s.price_total_huf = Math.round(s.price_huf * nights);
+                        }
+                    });
                     state.setSessionCache(cacheKey, state.stays);
                     this.renderStays();
                     state.setStep(3);
@@ -99,7 +113,8 @@
             if (!fl || !state) return;
             const outDate = (fl.out_dep_time || fl.out_date || '').split('T')[0];
             const inDate = (fl.in_dep_time || fl.in_date || '').split('T')[0];
-            const nights = fl.stay_days || fl.exact_stay_nights || state.intake.duration || 7;
+            
+            const nights = window.calculateExactFlightNights ? window.calculateExactFlightNights(fl, state.intake.duration || 7) : (fl.stay_days || fl.exact_stay_nights || 7);
             const destCity = state.selectedDest?.name || state.selectedDest?.city || 'Célállomás';
             const destCountry = state.selectedDest?.country || 'Olaszország';
             const cacheKey = `stays_${destCity}_${destCountry}_${outDate}_${inDate}_${nights}_${state.intake.adults}_${state.intake.hotel_min_stars}_${state.intake.hotel_min_rating}_${state.intake.breakfast}_${(state.intake.hotel_types || []).join(',')}_${(state.intake.amenities || []).join(',')}`;
@@ -119,6 +134,7 @@
                         country: destCountry,
                         checkin: outDate,
                         checkout: inDate,
+                        stay_nights: nights,
                         adults: state.intake.adults,
                         min_stars: state.intake.hotel_min_stars,
                         min_rating: state.intake.hotel_min_rating,
@@ -130,6 +146,15 @@
                 });
                 const data = await res.json();
                 if (data.status === 'ok' && data.stays && data.stays.length > 0) {
+                    data.stays.forEach(s => {
+                        s.stay_nights = nights;
+                        if (s.price_per_night_huf) {
+                            s.price_total_huf = Math.round(s.price_per_night_huf * nights);
+                        } else if (s.price_huf) {
+                            s.price_per_night_huf = s.price_huf;
+                            s.price_total_huf = Math.round(s.price_huf * nights);
+                        }
+                    });
                     state.setSessionCache(cacheKey, data.stays);
                     console.log(`[PREFETCH SUCCESS] Stays prefetched and cached for ${destCity} (${outDate} - ${inDate})`);
                 }
@@ -163,9 +188,11 @@
             const maxRating = allRatings.length ? Math.max(...allRatings) : 10.0;
 
             container.innerHTML = state.stays.map((stay, idx) => {
-                const priceTotal = stay.price_total_huf || (stay.price_per_night_huf ? stay.price_per_night_huf * (state.selectedFlight?.stay_days || 7) : stay.price_huf || 120000);
-                const nights = state.selectedFlight?.stay_days || state.intake.duration || 7;
-                const pricePerNight = stay.price_per_night_huf || Math.round(priceTotal / nights);
+                const nights = (window.calculateExactFlightNights && state.selectedFlight) 
+                    ? window.calculateExactFlightNights(state.selectedFlight, stay.stay_nights || state.intake.duration || 7) 
+                    : (state.selectedFlight?.exact_stay_nights || state.selectedFlight?.stay_days || stay.stay_nights || 7);
+                const pricePerNight = stay.price_per_night_huf || (stay.price_total_huf ? Math.round(stay.price_total_huf / nights) : Math.round((stay.price_huf || 120000) / nights));
+                const priceTotal = (stay.price_per_night_huf && nights) ? Math.round(stay.price_per_night_huf * nights) : (stay.price_total_huf || Math.round(pricePerNight * nights));
                 const rating = stay.rating_score ? (stay.rating_score > 10 ? (stay.rating_score / 10).toFixed(1) : parseFloat(stay.rating_score).toFixed(1)) : 8.5;
                 const stars = stay.stars || (stay.accommodation_type === '$HOTEL' ? 4 : 3);
                 const provider = stay.provider || 'Booking.com';
@@ -224,11 +251,11 @@
                                     <div>
                                         <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">Teljes ár (${nights} éjszaka):</div>
                                         <div style="font-size: 20px; font-weight: 900; color: var(--primary); font-family: var(--font-mono); line-height: 1.1;">
-                                            ${Math.round(priceTotal).toLocaleString()} Ft
+                                            ${Math.round(priceTotal).toLocaleString()}&nbsp;Ft
                                         </div>
                                     </div>
                                     <div style="font-size: 11.5px; color: var(--text-muted); font-weight: 600; text-align: right;">
-                                        ~${Math.round(pricePerNight).toLocaleString()} Ft / éj
+                                        ~${Math.round(pricePerNight).toLocaleString()}&nbsp;Ft / éj
                                     </div>
                                 </div>
 
@@ -254,8 +281,9 @@
             if (!stay) return;
 
             state.selectedStay = stay;
-            const nights = state.selectedFlight?.stay_days || state.intake.duration;
-            const priceTotal = stay.price_total_huf || (stay.price_per_night_huf ? stay.price_per_night_huf * nights : stay.price_huf || 120000);
+            const nights = state.selectedFlight?.exact_stay_nights || state.selectedFlight?.stay_days || stay.stay_nights || (stay.checkout && stay.checkin ? Math.max(1, Math.round((new Date(stay.checkout) - new Date(stay.checkin)) / 86400000)) : null) || state.intake.duration || 7;
+            const pricePerNight = stay.price_per_night_huf || (stay.price_total_huf ? Math.round(stay.price_total_huf / nights) : Math.round((stay.price_huf || 120000) / nights));
+            const priceTotal = (stay.price_per_night_huf && nights) ? Math.round(stay.price_per_night_huf * nights) : (stay.price_total_huf || Math.round(pricePerNight * nights));
 
             if (window.TripCart) {
                 window.TripCart.setStay({

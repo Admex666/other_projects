@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from typing import List, Dict, Optional, Union, Any
 from datetime import date, datetime
 
@@ -147,6 +147,10 @@ class TripInput(BaseModel):
     logistics_preferences: Optional[LogisticsPreferences] = Field(default_factory=LogisticsPreferences)
 
 class TripDestination(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    id: Optional[str] = None
+    dest_id: Optional[str] = None
     name: str
     city: str
     country: str = ""
@@ -165,6 +169,8 @@ class TripDestination(BaseModel):
     image: Optional[str] = None
 
 class TripFlightItem(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
     id: Optional[str] = None
     airline: str = "Járat"
     price_total_huf: float = 0.0
@@ -185,12 +191,16 @@ class TripFlightItem(BaseModel):
     booking_url: Optional[str] = None
 
 class TripFlightSearch(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
     search_params: Dict[str, Any] = Field(default_factory=dict)
     ahp_weights: Dict[str, float] = Field(default_factory=dict)
     shortlist: List[TripFlightItem] = Field(default_factory=list)
     selected_flight: Optional[TripFlightItem] = None
 
 class TripAccommodationItem(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
     id: Optional[str] = None
     name: str = "Szállás"
     stars: int = 3
@@ -208,6 +218,8 @@ class TripAccommodationItem(BaseModel):
     booking_url: Optional[str] = None
 
 class TripAccommodationSearch(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
     search_params: Dict[str, Any] = Field(default_factory=dict)
     preferences: Dict[str, Any] = Field(default_factory=dict)
     shortlist: List[TripAccommodationItem] = Field(default_factory=list)
@@ -224,6 +236,8 @@ class TripBudgetItem(BaseModel):
     is_estimated: bool = False
 
 class TripBudgetBreakdown(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
     flight_total_huf: float = 0.0
     accommodation_total_huf: float = 0.0
     food_total_huf: float = 0.0
@@ -233,6 +247,8 @@ class TripBudgetBreakdown(BaseModel):
     items: List[TripBudgetItem] = Field(default_factory=list)
 
 class UnifiedTrip(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
     trip_id: str
     user_id: Optional[str] = "default_user"
     created_at: Optional[str] = None
@@ -245,5 +261,7 @@ class UnifiedTrip(BaseModel):
     budget: TripBudgetBreakdown = Field(default_factory=TripBudgetBreakdown)
     experience_preferences: Optional[ExperiencePreferences] = Field(default_factory=ExperiencePreferences)
     logistics_preferences: Optional[LogisticsPreferences] = Field(default_factory=LogisticsPreferences)
-    trip_score: float = 0.0
+    trip_score: Optional[Union[float, Dict[str, Any]]] = 0.0
+    activities: Optional[Dict[str, Any]] = None
+    dining_profile: Optional[str] = "standard"
 

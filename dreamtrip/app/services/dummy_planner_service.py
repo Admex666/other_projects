@@ -363,6 +363,13 @@ def generate_dummy_flights(req: Any) -> List[Dict[str, Any]]:
     ]
 
     flights = []
+    try:
+        d1 = datetime.strptime(out_date_str, "%Y-%m-%d").date()
+        d2 = datetime.strptime(in_date_str, "%Y-%m-%d").date()
+        calc_nights = max(1, (d2 - d1).days)
+    except Exception:
+        calc_nights = duration_days
+
     for idx, tpl in enumerate(flight_templates):
         if direct_only and tpl["stops"] > 0:
             continue
@@ -388,7 +395,8 @@ def generate_dummy_flights(req: Any) -> List[Dict[str, Any]]:
             "in_arr_airport": origin_airport,
             "price_huf": total_price,
             "total_price_huf": total_price,
-            "stay_days": duration_days,
+            "stay_days": calc_nights,
+            "exact_stay_nights": calc_nights,
             "stay_diff_days": 0.0,
             "phi_net": tpl["phi_net"],
             "relevance_pct": tpl["relevance"],
@@ -409,6 +417,8 @@ def generate_dummy_stays(req: Any) -> List[Dict[str, Any]]:
 
     raw_ci = getattr(req, "checkin", None)
     raw_co = getattr(req, "checkout", None)
+    raw_nights = getattr(req, "stay_nights", None)
+    eff_nights = int(raw_nights) if (raw_nights and int(raw_nights) > 0) else None
 
     checkin = default_ci
     if raw_ci:
@@ -427,7 +437,15 @@ def generate_dummy_stays(req: Any) -> List[Dict[str, Any]]:
             if d_co > d_ci:
                 checkout = raw_co
             else:
-                checkout = (d_ci + timedelta(days=7)).strftime("%Y-%m-%d")
+                nights_delta = eff_nights or 7
+                checkout = (d_ci + timedelta(days=nights_delta)).strftime("%Y-%m-%d")
+        except Exception:
+            nights_delta = eff_nights or 7
+            checkout = (d_ci + timedelta(days=nights_delta)).strftime("%Y-%m-%d")
+    elif eff_nights:
+        try:
+            d_ci = datetime.strptime(checkin, "%Y-%m-%d").date()
+            checkout = (d_ci + timedelta(days=eff_nights)).strftime("%Y-%m-%d")
         except Exception:
             checkout = default_co
 

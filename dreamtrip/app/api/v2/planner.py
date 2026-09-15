@@ -108,6 +108,11 @@ class PlannerFlightSearchRequest(BaseModel):
     max_duration_h: Optional[float] = None
     weights: Optional[Dict[str, float]] = None
     promethee_params: Optional[Dict[str, Any]] = None
+    preferred_out_days: Optional[List[int]] = None
+    preferred_in_days: Optional[List[int]] = None
+    preferred_out_time: Optional[str] = None
+    preferred_in_time: Optional[str] = None
+    dummy_mode: Optional[bool] = False
 
 class PlannerStaySearchRequest(BaseModel):
     city: str = "Róma"
@@ -232,7 +237,11 @@ async def api_planner_search_flights(req: PlannerFlightSearchRequest, request: R
             departure_pref=req.departure_pref,
             max_duration_h=req.max_duration_h,
             weights=req.weights,
-            promethee_params=req.promethee_params
+            promethee_params=req.promethee_params,
+            preferred_out_days=req.preferred_out_days,
+            preferred_in_days=req.preferred_in_days,
+            preferred_out_time=req.preferred_out_time,
+            preferred_in_time=req.preferred_in_time
         )
 
         return JSONResponse({"status": "ok", "count": len(flights), "flights": flights})

@@ -51,24 +51,27 @@ used_by:
 A **Master Travel Planner** a platform legmagasabb szintű folyamata, amely összeköti a teljes utazástervezést egyetlen gördülékeny, 5-lépéses folyamatban:
 
 ```text
-0. Lépés: Unified Intake & Személyre Szabott Prioritások
-   (Kiwi élő autocomplete, 3 Dátummód + Flatpickr naptár, 4-Pilléres Decision DNA [Költség, Klíma, Biztonság, Élmények], Élményfókusz csipek és Logisztikai keret)
-         ↓
+0. Lépés: Unified Intake & Személyre Szabott Prioritások (Kötelező Döntési DNS)
+   (Kiwi élő autocomplete, 3 Dátummód + Flatpickr naptár, Kétfázisú döntési jóváhagyás: 1. Szempontok kiválasztása & jóváhagyása -> 2. Max. 5 páros összehasonlítás 9-pontos Saaty-skálán, kimaradó párok geometriai tranzitivitásával, egyetlen dinamikus fő CTA gomb)
+         ↓ (🎯 Prioritások rögzítése aktiválja a keresést)
 1. Lépés: Célállomás kiválasztása
-   (4-pilléres AHP + Level 2 Vektoros Koszinusz Hasonlóság + Élmény & Vibe profil badge-ek: látnivalószám, sétálhatósági %, kiemelt nevezetességek)
+   (Valós élménykategóriák, dinamikusan színezett hőmérséklet-jelvény, kiemelt látnivalók összegzése robotikus kommentek nélkül)
          ↓ (🏆 Kiválasztás -> Automatikus járatkeresés indul a háttérben)
 2. Lépés: Járat kiválasztása
-   (Kiwi GraphQL retúr járatok + PROMETHEE II rangsorolás + Effective Vacation Time bónusz számítás)
-         ↓ (✈️ Kiválasztás -> Automatikus szálláskeresés indul, járatdátumok zárolva)
+   (Kiwi GraphQL retúr járatok + PROMETHEE II rangsorolás + H–V kizárólagos nap-szűrés + preferált indulási időpontok + kerek egész napos tartózkodási illeszkedés)
+         ↓ (✈️ Kiválasztás -> Automatikus szálláskeresés indul, járatdátumok és éjszakák szigorúan zárolva)
 3. Lépés: Szállás kiválasztása
-   (Cozycozy élő szállásaggregáció a pontos éjszakaszámra + kategória/típus/reggeli/felszereltség szűrés)
+   (Cozycozy élő szállásaggregáció a pontos éjszakaszámra + kategória/típus/reggeli/felszereltség szűrés, 100%-os ár és éjszakaszám szinkronizáció)
          ↓ (🏨 Kiválasztás -> Programválasztó)
 4. Lépés: Programok Kiválasztása („Ezeket ajánljuk nektek”)
-   (Kanonikus élménykatalógus személyre szabott fit score-ral, kategóriaszűrőkkel, időtartammal és belépődíj-becsléssel)
+   (Kanonikus élménykatalógus dinamikus városkód-feloldással, kategóriaszűrőkkel, időtartammal és belépődíj-becsléssel)
          ↓ (🎭 Tovább az összesítéshez)
 5. Lépés: Kész Terv, Unified TripScore & B2B Ajánlat Export
    (0-100 TripScore banner hasznos idővel, Napi Útiterv sétaidőkkel és tranzit javaslatokkal, tételes Numbeo költségvetés, 1-kattintásos PDF/Print)
 ```
+
+> [!NOTE]
+> **Asztali TripCart élmény:** Nagyképernyőn (Desktop) a lebegő kosár a jobb alsó sarokban dokkol, és közvetlenül a jobb oldalról besikló részletes fiókká nyílik. Mobilon megmarad az alsó hüvelykujj-elérésű sáv.
 
 ---
 

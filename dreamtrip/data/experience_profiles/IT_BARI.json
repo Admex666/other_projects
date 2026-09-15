@@ -151,5 +151,74 @@
     "beach_seeker": 100
   },
   "rain_safe_count": 64,
-  "walkability_score": 10.0
+  "walkability_score": 10.0,
+  "experience_vector": {
+    "dimensions": {
+      "food": {
+        "absolute": 92.0,
+        "relative_z": 1.47,
+        "confidence": 0.85,
+        "freshness": 1.0
+      },
+      "beach": {
+        "absolute": 88.0,
+        "relative_z": 1.2,
+        "confidence": 0.85,
+        "freshness": 1.0
+      },
+      "romance": {
+        "absolute": 86.0,
+        "relative_z": 1.07,
+        "confidence": 0.85,
+        "freshness": 1.0
+      },
+      "authenticity": {
+        "absolute": 92.0,
+        "relative_z": 1.47,
+        "confidence": 0.85,
+        "freshness": 1.0
+      },
+      "culture": {
+        "absolute": 86.0,
+        "relative_z": 1.07,
+        "confidence": 0.85,
+        "freshness": 1.0
+      },
+      "nature": {
+        "absolute": 74.0,
+        "relative_z": 0.27,
+        "confidence": 0.85,
+        "freshness": 1.0
+      },
+      "nightlife": {
+        "absolute": 78.0,
+        "relative_z": 0.53,
+        "confidence": 0.85,
+        "freshness": 1.0
+      },
+      "adventure": {
+        "absolute": 68.0,
+        "relative_z": -0.13,
+        "confidence": 0.85,
+        "freshness": 1.0
+      },
+      "locality": {
+        "absolute": 88.0,
+        "relative_z": 1.2,
+        "confidence": 0.85,
+        "freshness": 1.0
+      },
+      "walkability": {
+        "absolute": 84.0,
+        "relative_z": 0.93,
+        "confidence": 0.85,
+        "freshness": 1.0
+      }
+    },
+    "top_dimensions": [
+      "food",
+      "authenticity",
+      "beach"
+    ]
+  }
 }

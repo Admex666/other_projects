@@ -243,7 +243,11 @@ def search_and_rank_planner_flights(
     departure_pref: str = "any",
     max_duration_h: Optional[float] = None,
     weights: Optional[Dict[str, float]] = None,
-    promethee_params: Optional[Dict[str, Any]] = None
+    promethee_params: Optional[Dict[str, Any]] = None,
+    preferred_out_days: Optional[List[int]] = None,
+    preferred_in_days: Optional[List[int]] = None,
+    preferred_out_time: Optional[str] = None,
+    preferred_in_time: Optional[str] = None
 ) -> List[Dict[str, Any]]:
     """
     Lekéri és PROMETHEE II szerint rangsorolja a járatokat az összes dátummód (exact/interval/month) támogatásával,
@@ -414,6 +418,26 @@ def search_and_rank_planner_flights(
     if max_duration_h and max_duration_h > 0:
         df = df[(df['out_duration_h'] <= max_duration_h) & (df['in_duration_h'] <= max_duration_h)]
 
+    # HARD CONSTRAINT: Preferált utazási napok szűrése odaútra (0=Hétfő ... 6=Vasárnap)
+    if preferred_out_days and len(preferred_out_days) > 0 and 'out_dep_time' in df.columns:
+        try:
+            out_weekdays = pd.to_datetime(df['out_dep_time']).dt.weekday
+            filtered_out = df[out_weekdays.isin(preferred_out_days)]
+            if not filtered_out.empty:
+                df = filtered_out
+        except Exception as ex:
+            print(f"[PREF OUT DAYS FILTER WARN] {ex}")
+
+    # HARD CONSTRAINT: Preferált utazási napok szűrése visszaútra (0=Hétfő ... 6=Vasárnap)
+    if preferred_in_days and len(preferred_in_days) > 0 and 'in_dep_time' in df.columns:
+        try:
+            in_weekdays = pd.to_datetime(df['in_dep_time']).dt.weekday
+            filtered_in = df[in_weekdays.isin(preferred_in_days)]
+            if not filtered_in.empty:
+                df = filtered_in
+        except Exception as ex:
+            print(f"[PREF IN DAYS FILTER WARN] {ex}")
+
     # Indulási napszak szűrés ha meg van adva
     if departure_pref in ["morning", "afternoon", "evening"] and 'out_dep_time' in df.columns:
         try:
@@ -463,26 +487,43 @@ def search_and_rank_planner_flights(
     else:
         df['g4_stay_diff'] = (df['stay_days'] - target_dur).abs()
 
-    # g5: Indulási napszak eltérése az ideálistól (óra) [Min]
-    target_dep_hour = None
-    if departure_pref == "morning":
-        target_dep_hour = 9.0
-    elif departure_pref == "afternoon":
-        target_dep_hour = 14.0
-    elif departure_pref == "evening":
-        target_dep_hour = 19.0
-
-    if target_dep_hour is not None and 'out_dep_time' in df.columns:
+    # g5: Indulási napszak és pontos időpont preferenciális eltérése (óra) [Min]
+    target_out_hour = None
+    if preferred_out_time and ":" in preferred_out_time:
         try:
-            dep_hours = pd.to_datetime(df['out_dep_time']).dt.hour + pd.to_datetime(df['out_dep_time']).dt.minute / 60.0
-            # Körkörös távolság a nap 24 órájában
-            df['g5_dep_diff'] = dep_hours.apply(
-                lambda h: min(abs(h - target_dep_hour), 24.0 - abs(h - target_dep_hour))
-            )
+            parts = preferred_out_time.split(":")
+            target_out_hour = float(parts[0]) + float(parts[1]) / 60.0
         except Exception:
-            df['g5_dep_diff'] = 0.0
-    else:
-        df['g5_dep_diff'] = 0.0
+            pass
+    elif departure_pref == "morning":
+        target_out_hour = 9.0
+    elif departure_pref == "afternoon":
+        target_out_hour = 14.0
+    elif departure_pref == "evening":
+        target_out_hour = 19.0
+
+    target_in_hour = None
+    if preferred_in_time and ":" in preferred_in_time:
+        try:
+            parts = preferred_in_time.split(":")
+            target_in_hour = float(parts[0]) + float(parts[1]) / 60.0
+        except Exception:
+            pass
+
+    df['g5_dep_diff'] = 0.0
+    if target_out_hour is not None and 'out_dep_time' in df.columns:
+        try:
+            out_hours = pd.to_datetime(df['out_dep_time']).dt.hour + pd.to_datetime(df['out_dep_time']).dt.minute / 60.0
+            df['g5_dep_diff'] += out_hours.apply(lambda h: min(abs(h - target_out_hour), 24.0 - abs(h - target_out_hour)))
+        except Exception:
+            pass
+
+    if target_in_hour is not None and 'in_dep_time' in df.columns:
+        try:
+            in_hours = pd.to_datetime(df['in_dep_time']).dt.hour + pd.to_datetime(df['in_dep_time']).dt.minute / 60.0
+            df['g5_dep_diff'] += in_hours.apply(lambda h: min(abs(h - target_in_hour), 24.0 - abs(h - target_in_hour)))
+        except Exception:
+            pass
 
     # 2. Súlyok dinamikus felépítése az AHP és felhasználói preferenciákból
     # Konkrét dátumok esetén w_stay = 0, intervallum esetén w_stay aktív
@@ -490,7 +531,8 @@ def search_and_rank_planner_flights(
     w_price = 0.40 if date_mode == "exact" else 0.35
     w_time = 0.35 if date_mode == "exact" else 0.25
     w_stops = 0.25 if date_mode == "exact" else 0.15
-    w_dep = 0.05 if target_dep_hour is not None else 0.0
+    has_target_dep = (target_out_hour is not None or target_in_hour is not None)
+    w_dep = 0.05 if has_target_dep else 0.0
 
     if weights:
         cost_weight = float(weights.get("total_cost", weights.get("cost", weights.get("flight", 34)))) / 100.0
@@ -498,7 +540,7 @@ def search_and_rank_planner_flights(
         rem = max(0.20, 1.0 - w_price)
         if date_mode == "exact":
             w_stay = 0.0
-            if target_dep_hour is not None:
+            if has_target_dep:
                 w_time = rem * 0.50
                 w_stops = rem * 0.35
                 w_dep = rem * 0.15
@@ -507,7 +549,7 @@ def search_and_rank_planner_flights(
                 w_stops = rem * 0.42
                 w_dep = 0.0
         else:
-            if target_dep_hour is not None:
+            if has_target_dep:
                 w_time = rem * 0.35
                 w_stops = rem * 0.25
                 w_stay = rem * 0.25
@@ -617,7 +659,7 @@ def search_and_rank_planner_flights(
     
     for idx, r in enumerate(results_list):
         r["rank"] = idx + 1
-        r["stay_diff_days"] = round(float(r.get("g4_stay_diff", 0)), 1)
+        r["stay_diff_days"] = int(round(abs(float(r.get("stay_days", target_dur)) - target_dur)))
         r["total_duration_h"] = round(float(r.get("g2_duration", 0)), 1)
 
     print(f"\n[PROMETHEE II FLIGHT ENGINE] {n} járatkombináció kiértékelve. Súlyok: Ár={w_vec[0]:.2f}, Idő={w_vec[1]:.2f}, Átszállás={w_vec[2]:.2f}, Tartózkodás={w_vec[3]:.2f}, Napszak={w_vec[4]:.2f}")

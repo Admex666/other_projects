@@ -216,10 +216,28 @@
             this.updateDecisionDNACard();
         },
 
+        toggleFlightDay(direction, day, el) {
+            const state = window.PlannerState;
+            if (!state) return;
+            const key = direction === 'out' ? 'preferred_out_days' : 'preferred_in_days';
+            if (!state.intake[key]) state.intake[key] = [];
+            const idx = state.intake[key].indexOf(day);
+            if (idx > -1) {
+                state.intake[key].splice(idx, 1);
+                if (el) el.classList.remove('active');
+            } else {
+                state.intake[key].push(day);
+                if (el) el.classList.add('active');
+            }
+        },
+
         updateDecisionDNACard() {
             const unconf = document.getElementById('dna_unconfigured_view');
             const conf = document.getElementById('dna_configured_view');
-            const submitBtn = document.getElementById('btn_submit_main_planner');
+            const mainCtaBtn = document.getElementById('btn_main_step0_cta');
+            const mainCtaIcon = document.getElementById('btn_main_step0_cta_icon');
+            const mainCtaLabel = document.getElementById('btn_main_step0_cta_label');
+            const mainCtaSubtext = document.getElementById('btn_main_step0_cta_subtext');
             const state = window.PlannerState;
             if (!state) return;
 
@@ -264,51 +282,61 @@
                     stayEl.innerHTML = `${stars} · ${rating} ${bf}`;
                 }
 
-                if (submitBtn) {
-                    submitBtn.innerHTML = `<span>Célállomások Keresése & Tervezés Indítása →</span>`;
-                    submitBtn.onclick = () => window.PlannerDestinations.startPlanning();
-                }
+                if (mainCtaIcon) mainCtaIcon.innerText = 'travel_explore';
+                if (mainCtaLabel) mainCtaLabel.innerText = 'Célállomások Keresése & Tervezés Indítása →';
+                if (mainCtaSubtext) mainCtaSubtext.innerText = 'A rendszer az egyéni szempontjaid alapján rangsorolja a legmegfelelőbb európai úti célokat.';
             } else {
                 if (unconf) unconf.style.display = 'flex';
                 if (conf) conf.style.display = 'none';
 
-                if (submitBtn) {
-                    submitBtn.innerHTML = `<span>Célállomások Keresése & Tervezés Indítása →</span>`;
-                    submitBtn.onclick = () => window.PlannerDestinations.startPlanning();
-                }
+                if (mainCtaIcon) mainCtaIcon.innerText = 'tune';
+                if (mainCtaLabel) mainCtaLabel.innerText = 'Saját szempontok beállítása (A kereséshez kötelező) →';
+                if (mainCtaSubtext) mainCtaSubtext.innerText = 'Kattints a gombra a prioritásaid rögzítéséhez, hogy a rendszer a te igényeidre szabhassa a javaslatokat!';
             }
         },
 
         openDecisionDNA() {
-            if (!window.DecisionDNAWizard || !window.PlannerState) return;
+            if (!window.DecisionDNAWizard) {
+                console.error("[PlannerIntake] DecisionDNAWizard is not loaded!");
+                return;
+            }
+            if (!window.PlannerState) {
+                console.error("[PlannerIntake] PlannerState is not loaded!");
+                return;
+            }
             const state = window.PlannerState;
-            new window.DecisionDNAWizard({
-                initialIntake: state.intake,
-                onSave: function (savedDNA) {
-                    if (savedDNA.ahp_weights) state.intake.ahp_weights = savedDNA.ahp_weights;
-                    if (savedDNA.flight_ahp_weights) state.intake.flight_ahp_weights = savedDNA.flight_ahp_weights;
-                    if (savedDNA.stay_ahp_weights) state.intake.stay_ahp_weights = savedDNA.stay_ahp_weights;
-                    if (savedDNA.promethee_params) state.intake.promethee_params = savedDNA.promethee_params;
-                    if (savedDNA.dest_promethee) state.intake.dest_promethee = savedDNA.dest_promethee;
-                    if (savedDNA.stay_promethee) state.intake.stay_promethee = savedDNA.stay_promethee;
-                    if (savedDNA.stay) {
-                        state.intake.hotel_min_stars = savedDNA.stay.hotel_min_stars;
-                        state.intake.hotel_min_rating = savedDNA.stay.hotel_min_rating;
-                        state.intake.breakfast = savedDNA.stay.breakfast;
-                        state.intake.hotel_types = savedDNA.stay.hotel_types;
-                        state.intake.amenities = savedDNA.stay.amenities;
-                    }
-                    state.criteria_completed = true;
-                    PlannerIntake.updateDecisionDNACard();
+            try {
+                const wizard = new window.DecisionDNAWizard({
+                    initialIntake: state.intake,
+                    onSave: function (savedDNA) {
+                        if (savedDNA.ahp_weights) state.intake.ahp_weights = savedDNA.ahp_weights;
+                        if (savedDNA.flight_ahp_weights) state.intake.flight_ahp_weights = savedDNA.flight_ahp_weights;
+                        if (savedDNA.stay_ahp_weights) state.intake.stay_ahp_weights = savedDNA.stay_ahp_weights;
+                        if (savedDNA.promethee_params) state.intake.promethee_params = savedDNA.promethee_params;
+                        if (savedDNA.dest_promethee) state.intake.dest_promethee = savedDNA.dest_promethee;
+                        if (savedDNA.stay_promethee) state.intake.stay_promethee = savedDNA.stay_promethee;
+                        if (savedDNA.stay) {
+                            state.intake.hotel_min_stars = savedDNA.stay.hotel_min_stars;
+                            state.intake.hotel_min_rating = savedDNA.stay.hotel_min_rating;
+                            state.intake.breakfast = savedDNA.stay.breakfast;
+                            state.intake.hotel_types = savedDNA.stay.hotel_types;
+                            state.intake.amenities = savedDNA.stay.amenities;
+                        }
+                        state.criteria_completed = true;
+                        PlannerIntake.updateDecisionDNACard();
 
-                    if (window.TripCart) {
-                        window.TripCart.showToast("Döntési DNS élesítve! Célállomások betöltése...", "🧬");
-                    }
+                        if (window.TripCart) {
+                            window.TripCart.showToast("Döntési DNS élesítve! Célállomások betöltése...", "🧬");
+                        }
 
-                    // Invariant: Changing DNA triggers a fresh destination search and clears downstream selections
-                    window.PlannerDestinations.startPlanning();
-                }
-            }).show();
+                        // Invariant: Changing DNA triggers a fresh destination search and clears downstream selections
+                        window.PlannerDestinations.startPlanning();
+                    }
+                });
+                wizard.show();
+            } catch (e) {
+                console.error("[PlannerIntake] Exception inside openDecisionDNA:", e);
+            }
         }
     };
 

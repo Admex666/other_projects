@@ -480,8 +480,11 @@ def create_return_combinations(
     
     for _, out_flight in outbound_df.iterrows():
         for _, in_flight in inbound_df.iterrows():
-            # Ellenőrzés: visszaút később van-e mint odaút
-            stay_days = (in_flight["dep_time"] - out_flight["arr_time"]).days
+            out_dep_dt = pd.to_datetime(out_flight["dep_time"])
+            in_dep_dt = pd.to_datetime(in_flight["dep_time"])
+            
+            # Pontos naptári éjszakák száma (pl. 10.12 - 10.14 = 2 éjszaka)
+            stay_days = (in_dep_dt.date() - out_dep_dt.date()).days
             
             if stay_days < min_stay_days:
                 continue
@@ -523,6 +526,7 @@ def create_return_combinations(
                 
                 # Összesített
                 "stay_days": stay_days,
+                "exact_stay_nights": stay_days,
                 "total_price_huf": total_price_huf,
                 "total_price_eur": total_price_eur,
                 "total_stops": out_flight["stops"] + in_flight["stops"]

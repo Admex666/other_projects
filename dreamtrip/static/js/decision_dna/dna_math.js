@@ -1,86 +1,152 @@
 /**
  * Optivoya — Decision DNA Mathematical Engine
  * Saaty Pairwise Comparison matrix geometric mean calculation & parameter stepping.
+ * Supports dynamic active criteria subsets: inactive criteria receive 0% weight,
+ * while active criteria are computed via Saaty AHP geometric mean and normalized to 100%.
  */
 
 (function () {
-    const scaleValues = [9.0, 5.0, 3.0, 1.0, 1.0 / 3.0, 1.0 / 5.0, 1.0 / 9.0];
+    // 9-point Saaty AHP scale: 9, 7, 5, 3, 1, 1/3, 1/5, 1/7, 1/9 (center index 4 = 1.0)
+    const scaleValues = [9.0, 7.0, 5.0, 3.0, 1.0, 1.0 / 3.0, 1.0 / 5.0, 1.0 / 7.0, 1.0 / 9.0];
+
+    function computeAHPWeights(allKeys, activeKeys, pairMap, storageObj) {
+        const result = {};
+        allKeys.forEach(k => { result[k] = 0; });
+        const effectiveActive = (activeKeys && activeKeys.length > 0) 
+            ? activeKeys.filter(k => allKeys.includes(k)) 
+            : [...allKeys];
+
+        if (effectiveActive.length === 0) {
+            allKeys.forEach(k => { result[k] = Math.round(100 / allKeys.length); });
+            return result;
+        }
+
+        if (effectiveActive.length === 1) {
+            result[effectiveActive[0]] = 100;
+            return result;
+        }
+
+        const n = effectiveActive.length;
+        const M = [];
+        for (let i = 0; i < n; i++) {
+            M[i] = [];
+            for (let j = 0; j < n; j++) {
+                M[i][j] = (i === j) ? 1.0 : null;
+            }
+        }
+
+        // Fill known direct and reverse pairs
+        for (let i = 0; i < n; i++) {
+            for (let j = 0; j < n; j++) {
+                if (i !== j) {
+                    const k1 = effectiveActive[i];
+                    const k2 = effectiveActive[j];
+                    const directPair = pairMap[`${k1}:${k2}`];
+                    const reversePair = pairMap[`${k2}:${k1}`];
+                    if (directPair && storageObj?.[directPair] !== undefined) {
+                        const sliderIdx = storageObj[directPair] ?? 4;
+                        M[i][j] = scaleValues[sliderIdx] || 1.0;
+                    } else if (reversePair && storageObj?.[reversePair] !== undefined) {
+                        const sliderIdx = storageObj[reversePair] ?? 4;
+                        const val = scaleValues[sliderIdx] || 1.0;
+                        M[i][j] = 1.0 / val;
+                    }
+                }
+            }
+        }
+
+        // Complete any missing pair (e.g. capped at 5 comparisons) using geometric transitivity
+        for (let i = 0; i < n; i++) {
+            for (let j = 0; j < n; j++) {
+                if (i !== j && M[i][j] === null) {
+                    let prod = 1.0;
+                    let count = 0;
+                    for (let k = 0; k < n; k++) {
+                        if (k !== i && k !== j && M[i][k] !== null && M[k][j] !== null) {
+                            prod *= (M[i][k] * M[k][j]);
+                            count++;
+                        }
+                    }
+                    if (count > 0) {
+                        M[i][j] = Math.pow(prod, 1.0 / count);
+                    } else {
+                        M[i][j] = 1.0;
+                    }
+                }
+            }
+        }
+
+        const geom = [];
+        let totalGeom = 0.0;
+        for (let i = 0; i < n; i++) {
+            let prod = 1.0;
+            for (let j = 0; j < n; j++) {
+                prod *= M[i][j];
+            }
+            geom[i] = Math.pow(prod, 1.0 / n);
+            totalGeom += geom[i];
+        }
+
+        let sumW = 0;
+        let maxIdx = 0;
+        let maxVal = -1;
+        for (let i = 0; i < n; i++) {
+            const w = Math.round((geom[i] / totalGeom) * 100);
+            result[effectiveActive[i]] = w;
+            sumW += w;
+            if (w > maxVal) {
+                maxVal = w;
+                maxIdx = i;
+            }
+        }
+
+        if (sumW !== 100 && effectiveActive.length > 0) {
+            result[effectiveActive[maxIdx]] += (100 - sumW);
+        }
+        return result;
+    }
+
+    const destKeys = ['total_cost', 'weather', 'safety', 'experience'];
+    const destPairMap = {
+        'total_cost:weather': 'total_cost_vs_weather',
+        'total_cost:safety': 'total_cost_vs_safety',
+        'total_cost:experience': 'total_cost_vs_experience',
+        'weather:safety': 'weather_vs_safety',
+        'weather:experience': 'weather_vs_experience',
+        'safety:experience': 'safety_vs_experience'
+    };
+
+    const flightKeys = ['price', 'duration', 'stops'];
+    const flightPairMap = {
+        'price:duration': 'price_vs_duration',
+        'price:stops': 'price_vs_stops',
+        'duration:stops': 'duration_vs_stops'
+    };
+
+    const stayKeys = ['price', 'rating', 'location', 'amenities'];
+    const stayPairMap = {
+        'price:rating': 'price_vs_rating',
+        'price:location': 'price_vs_location',
+        'price:amenities': 'price_vs_amenities',
+        'rating:location': 'rating_vs_location',
+        'rating:amenities': 'rating_vs_amenities',
+        'location:amenities': 'location_vs_amenities'
+    };
 
     const DNAMath = {
         calculateAllAHP(state) {
-            // 1. Destination AHP (4x4: Total Cost, Weather, Safety, Experience)
-            const a_cw = scaleValues[state.dest_ahp?.total_cost_vs_weather ?? 3];
-            const a_cs = scaleValues[state.dest_ahp?.total_cost_vs_safety ?? 3];
-            const a_ce = scaleValues[state.dest_ahp?.total_cost_vs_experience ?? 3];
-            const a_ws = scaleValues[state.dest_ahp?.weather_vs_safety ?? 3];
-            const a_we = scaleValues[state.dest_ahp?.weather_vs_experience ?? 3];
-            const a_se = scaleValues[state.dest_ahp?.safety_vs_experience ?? 3];
+            if (!state.calculated_weights) {
+                state.calculated_weights = { dest: {}, flight: {}, stay: {} };
+            }
 
-            const mDest = [
-                [1.0, a_cw, a_cs, a_ce],
-                [1.0 / a_cw, 1.0, a_ws, a_we],
-                [1.0 / a_cs, 1.0 / a_ws, 1.0, a_se],
-                [1.0 / a_ce, 1.0 / a_we, 1.0 / a_se, 1.0]
-            ];
-            const gDest = [
-                Math.pow(mDest[0][0] * mDest[0][1] * mDest[0][2] * mDest[0][3], 0.25),
-                Math.pow(mDest[1][0] * mDest[1][1] * mDest[1][2] * mDest[1][3], 0.25),
-                Math.pow(mDest[2][0] * mDest[2][1] * mDest[2][2] * mDest[2][3], 0.25),
-                Math.pow(mDest[3][0] * mDest[3][1] * mDest[3][2] * mDest[3][3], 0.25)
-            ];
-            const tDest = gDest[0] + gDest[1] + gDest[2] + gDest[3];
-            state.calculated_weights.dest = {
-                total_cost: Math.round((gDest[0] / tDest) * 100),
-                weather: Math.round((gDest[1] / tDest) * 100),
-                safety: Math.round((gDest[2] / tDest) * 100),
-                experience: Math.round((gDest[3] / tDest) * 100)
-            };
+            const activeDest = state.active_criteria?.dest || destKeys;
+            state.calculated_weights.dest = computeAHPWeights(destKeys, activeDest, destPairMap, state.dest_ahp);
 
-            // 2. Flight AHP (3x3: Price, Duration, Stops)
-            const mFlight = [
-                [1.0, scaleValues[state.flight_ahp.price_vs_duration], scaleValues[state.flight_ahp.price_vs_stops]],
-                [1.0 / scaleValues[state.flight_ahp.price_vs_duration], 1.0, scaleValues[state.flight_ahp.duration_vs_stops]],
-                [1.0 / scaleValues[state.flight_ahp.price_vs_stops], 1.0 / scaleValues[state.flight_ahp.duration_vs_stops], 1.0]
-            ];
-            const gFlight = [
-                Math.cbrt(mFlight[0][0] * mFlight[0][1] * mFlight[0][2]),
-                Math.cbrt(mFlight[1][0] * mFlight[1][1] * mFlight[1][2]),
-                Math.cbrt(mFlight[2][0] * mFlight[2][1] * mFlight[2][2])
-            ];
-            const tFlight = gFlight[0] + gFlight[1] + gFlight[2];
-            state.calculated_weights.flight = {
-                price: Math.round((gFlight[0] / tFlight) * 100),
-                duration: Math.round((gFlight[1] / tFlight) * 100),
-                stops: Math.round((gFlight[2] / tFlight) * 100)
-            };
+            const activeFlight = state.active_criteria?.flight || flightKeys;
+            state.calculated_weights.flight = computeAHPWeights(flightKeys, activeFlight, flightPairMap, state.flight_ahp);
 
-            // 3. Stay AHP (4x4: Price, Rating, Location, Amenities)
-            const a_pr = scaleValues[state.stay_ahp.price_vs_rating];
-            const a_pl = scaleValues[state.stay_ahp.price_vs_location];
-            const a_pa = scaleValues[state.stay_ahp.price_vs_amenities];
-            const a_rl = scaleValues[state.stay_ahp.rating_vs_location];
-            const a_ra = scaleValues[state.stay_ahp.rating_vs_amenities];
-            const a_la = scaleValues[state.stay_ahp.location_vs_amenities];
-
-            const mStay = [
-                [1.0, a_pr, a_pl, a_pa],
-                [1.0 / a_pr, 1.0, a_rl, a_ra],
-                [1.0 / a_pl, 1.0 / a_rl, 1.0, a_la],
-                [1.0 / a_pa, 1.0 / a_ra, 1.0 / a_la, 1.0]
-            ];
-            const gStay = [
-                Math.pow(mStay[0][0] * mStay[0][1] * mStay[0][2] * mStay[0][3], 0.25),
-                Math.pow(mStay[1][0] * mStay[1][1] * mStay[1][2] * mStay[1][3], 0.25),
-                Math.pow(mStay[2][0] * mStay[2][1] * mStay[2][2] * mStay[2][3], 0.25),
-                Math.pow(mStay[3][0] * mStay[3][1] * mStay[3][2] * mStay[3][3], 0.25)
-            ];
-            const tStay = gStay[0] + gStay[1] + gStay[2] + gStay[3];
-            state.calculated_weights.stay = {
-                price: Math.round((gStay[0] / tStay) * 100),
-                rating: Math.round((gStay[1] / tStay) * 100),
-                location: Math.round((gStay[2] / tStay) * 100),
-                amenities: Math.round((gStay[3] / tStay) * 100)
-            };
+            const activeStay = state.active_criteria?.stay || stayKeys;
+            state.calculated_weights.stay = computeAHPWeights(stayKeys, activeStay, stayPairMap, state.stay_ahp);
         },
 
         stepValue(obj, key, param, dir, callback) {

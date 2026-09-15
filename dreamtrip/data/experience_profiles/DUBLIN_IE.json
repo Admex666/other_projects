@@ -2,121 +2,109 @@
   "destination_id": "DUBLIN_IE",
   "city_name": "Dublin",
   "country": "Írország",
-  "total_experiences": 21,
+  "total_experiences": 32,
   "experience_vector": {
     "destination_id": "DUBLIN_IE",
     "city_name": "Dublin",
     "country": "Írország",
     "peer_group": "european_all",
-    "total_entities": 21,
+    "total_entities": 32,
     "data_confidence": 0.15,
     "hidden_gem_score": 1.1,
-    "vibe_summary": "Dublin: kulturaban gazdag, termeszetkoeli Írországi varos - romantikus karakterrel",
+    "vibe_summary": "Dublin: kulturaban gazdag, pezsgo ejszakai elettel rendelkezo utazasi celpont.",
     "top_dimensions": [
-      "culture",
-      "nature",
-      "romance"
+      "nightlife",
+      "authenticity",
+      "culture"
     ],
     "overall_fit": 0.0,
     "dimensions": {
-      "culture": {
-        "absolute": 38.8,
-        "relative_z": 0.0,
-        "confidence": 0.209,
-        "freshness": 1.0
-      },
-      "food": {
-        "absolute": 27.4,
-        "relative_z": 0.0,
-        "confidence": 0.343,
-        "freshness": 1.0
-      },
-      "beach": {
-        "absolute": 0.0,
-        "relative_z": 0.0,
-        "confidence": 0.0,
-        "freshness": 1.0
-      },
-      "nature": {
-        "absolute": 36.1,
-        "relative_z": 0.0,
-        "confidence": 0.1,
-        "freshness": 1.0
-      },
       "nightlife": {
-        "absolute": 0.0,
-        "relative_z": 0.0,
-        "confidence": 0.0,
-        "freshness": 1.0
-      },
-      "romance": {
-        "absolute": 28.2,
-        "relative_z": 0.0,
-        "confidence": 0.254,
+        "absolute": 95.0,
+        "relative_z": 1.67,
+        "confidence": 0.85,
         "freshness": 1.0
       },
       "authenticity": {
-        "absolute": 24.4,
-        "relative_z": 0.0,
-        "confidence": 0.357,
+        "absolute": 95.0,
+        "relative_z": 1.67,
+        "confidence": 0.85,
         "freshness": 1.0
       },
-      "locality": {
-        "absolute": 21.4,
-        "relative_z": 0.0,
-        "confidence": 0.395,
+      "culture": {
+        "absolute": 91.0,
+        "relative_z": 1.4,
+        "confidence": 0.85,
         "freshness": 1.0
       },
-      "walkability": {
-        "absolute": 0.0,
-        "relative_z": 0.0,
-        "confidence": 0.0,
+      "food": {
+        "absolute": 84.0,
+        "relative_z": 0.93,
+        "confidence": 0.85,
         "freshness": 1.0
       },
-      "tourist_intensity": {
-        "absolute": 39.2,
-        "relative_z": 0.0,
-        "confidence": 0.037,
+      "romance": {
+        "absolute": 80.0,
+        "relative_z": 0.67,
+        "confidence": 0.85,
+        "freshness": 1.0
+      },
+      "nature": {
+        "absolute": 76.0,
+        "relative_z": 0.4,
+        "confidence": 0.85,
         "freshness": 1.0
       },
       "adventure": {
-        "absolute": 26.1,
+        "absolute": 70.0,
         "relative_z": 0.0,
-        "confidence": 0.1,
+        "confidence": 0.85,
         "freshness": 1.0
       },
-      "family": {
-        "absolute": 0.0,
-        "relative_z": 0.0,
-        "confidence": 0.0,
+      "beach": {
+        "absolute": 30.0,
+        "relative_z": -2.67,
+        "confidence": 0.85,
+        "freshness": 1.0
+      },
+      "locality": {
+        "absolute": 90.0,
+        "relative_z": 1.33,
+        "confidence": 0.85,
+        "freshness": 1.0
+      },
+      "walkability": {
+        "absolute": 88.0,
+        "relative_z": 1.2,
+        "confidence": 0.85,
         "freshness": 1.0
       }
     }
   },
   "top_experiences_summary": [
     {
-      "canonical_name": "Főtér és Történelmi Városközpont",
-      "category": "culture_history",
-      "rating": 4.5
-    },
-    {
-      "canonical_name": "Királyi Palota és Vármúzeum",
+      "canonical_name": "Trinity College & Kells Könyve",
       "category": "culture_history",
       "rating": 4.9
     },
     {
-      "canonical_name": "Modern Művészeti Galéria",
-      "category": "culture_history",
-      "rating": 4.5
+      "canonical_name": "Guinness Storehouse Kilátó Bárral",
+      "category": "food_market",
+      "rating": 4.9
     },
     {
-      "canonical_name": "Botanikus Kert és Pálmaház",
+      "canonical_name": "Temple Bar Macskaköves Utcái és Élőzene",
       "category": "culture_history",
-      "rating": 4.5
+      "rating": 4.7
     },
     {
-      "canonical_name": "Szent Katedrális",
+      "canonical_name": "Dublin Vár & Szent Patrik Katedrális",
       "category": "culture_history",
+      "rating": 4.7
+    },
+    {
+      "canonical_name": "Phoenix Park & Vadaspark",
+      "category": "nature_viewpoint",
       "rating": 4.8
     }
   ]

@@ -9,6 +9,12 @@
         // Step Navigation
         goToStep(stepNum) { return window.PlannerState.setStep(stepNum); },
         startPlanning() { return window.PlannerDestinations.startPlanning(); },
+        handleMainStep0CTA() {
+            if (window.PlannerState && window.PlannerState.criteria_completed) {
+                return this.startPlanning();
+            }
+            return this.openDecisionDNA();
+        },
 
         // Intake & Preferences
         setOrigin(city) { return window.PlannerIntake.setOrigin(city); },
@@ -36,6 +42,7 @@
         recalculateDestinations() { return window.PlannerDestinations.recalculateDestinations(); },
 
         // Flights Step
+        toggleFlightDay(direction, day, el) { return window.PlannerIntake.toggleFlightDay(direction, day, el); },
         selectFlight(index) { return window.PlannerFlights.selectFlight(index); },
         recalculateFlights() { return window.PlannerFlights.recalculateFlights(); },
 

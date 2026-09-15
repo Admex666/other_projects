@@ -110,6 +110,10 @@ class PlannerFlightSearchRequest(BaseModel):
     max_duration_h: Optional[float] = None
     weights: Optional[Dict[str, float]] = None
     promethee_params: Optional[Dict[str, Any]] = None
+    preferred_out_days: Optional[List[int]] = None
+    preferred_in_days: Optional[List[int]] = None
+    preferred_out_time: Optional[str] = None
+    preferred_in_time: Optional[str] = None
     dummy_mode: Optional[bool] = False
 
 class PlannerStaySearchRequest(BaseModel):
@@ -117,6 +121,7 @@ class PlannerStaySearchRequest(BaseModel):
     country: Optional[str] = "Olaszország"
     checkin: Optional[str] = None
     checkout: Optional[str] = None
+    stay_nights: Optional[int] = None
     adults: int = 2
     min_stars: int = 3
     min_rating: float = 7.5
@@ -337,7 +342,11 @@ async def api_planner_search_flights(req: PlannerFlightSearchRequest, request: R
             departure_pref=req.departure_pref,
             max_duration_h=req.max_duration_h,
             weights=req.weights,
-            promethee_params=req.promethee_params
+            promethee_params=req.promethee_params,
+            preferred_out_days=req.preferred_out_days,
+            preferred_in_days=req.preferred_in_days,
+            preferred_out_time=req.preferred_out_time,
+            preferred_in_time=req.preferred_in_time
         )
 
         duration_ms = round((time.perf_counter() - t0) * 1000, 1)
@@ -389,30 +398,51 @@ async def api_planner_search_stays(req: PlannerStaySearchRequest, request: Reque
     )
 
     req_ci = req.checkin or _get_default_checkin()
-    req_co = req.checkout or _get_default_checkout()
+    req_co = req.checkout
     today_d = datetime.now(timezone.utc).date()
+    
+    # Calculate effective nights from explicit stay_nights if provided
+    effective_nights = int(req.stay_nights) if (req.stay_nights and req.stay_nights > 0) else None
+
     try:
         d_ci = datetime.strptime(req_ci, "%Y-%m-%d").date()
         if d_ci < today_d:
             req_ci = _get_default_checkin()
-            req_co = _get_default_checkout()
+            d_ci = datetime.strptime(req_ci, "%Y-%m-%d").date()
     except Exception:
         req_ci = _get_default_checkin()
-        req_co = _get_default_checkout()
+        d_ci = datetime.strptime(req_ci, "%Y-%m-%d").date()
+
+    if not req_co:
+        nights_delta = effective_nights or 7
+        req_co = (d_ci + timedelta(days=nights_delta)).strftime("%Y-%m-%d")
+    else:
+        try:
+            d_co = datetime.strptime(req_co, "%Y-%m-%d").date()
+            if d_co <= d_ci:
+                nights_delta = effective_nights or 7
+                req_co = (d_ci + timedelta(days=nights_delta)).strftime("%Y-%m-%d")
+        except Exception:
+            nights_delta = effective_nights or 7
+            req_co = (d_ci + timedelta(days=nights_delta)).strftime("%Y-%m-%d")
 
     try:
-        d_ci = datetime.strptime(req_ci, "%Y-%m-%d").date()
-        d_co = datetime.strptime(req_co, "%Y-%m-%d").date()
-        if d_co <= d_ci:
-            req_co = (d_ci + timedelta(days=7)).strftime("%Y-%m-%d")
+        d_start = datetime.strptime(req_ci, "%Y-%m-%d").date()
+        d_end = datetime.strptime(req_co, "%Y-%m-%d").date()
+        num_nights = effective_nights or max(1, (d_end - d_start).days)
     except Exception:
-        req_co = _get_default_checkout()
+        num_nights = effective_nights or 7
 
     req.checkin = req_ci
     req.checkout = req_co
+    req.stay_nights = num_nights
 
     if is_dummy:
         stays = generate_dummy_stays(req)
+        for st in stays:
+            st['stay_nights'] = num_nights
+            if st.get('price_per_night_huf'):
+                st['price_total_huf'] = st['price_per_night_huf'] * num_nights
         duration_ms = round((time.perf_counter() - t_start) * 1000, 1)
         record_telemetry_event(
             user_id=user,
@@ -424,6 +454,7 @@ async def api_planner_search_stays(req: PlannerStaySearchRequest, request: Reque
                 "country": req.country or "",
                 "checkin": req_ci,
                 "checkout": req_co,
+                "stay_nights": num_nights,
                 "dummy_mode": True
             },
             duration_ms=duration_ms,
@@ -442,13 +473,6 @@ async def api_planner_search_stays(req: PlannerStaySearchRequest, request: Reque
         })
 
     try:
-        from datetime import datetime as dt
-        try:
-            d_start = dt.strptime(req_ci, "%Y-%m-%d")
-            d_end = dt.strptime(req_co, "%Y-%m-%d")
-            num_nights = max(1, (d_end - d_start).days)
-        except Exception:
-            num_nights = 7
 
         eur_rate = get_eur_huf_rate()
         p_min_eur = 0

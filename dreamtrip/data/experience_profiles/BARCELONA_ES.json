@@ -2,120 +2,108 @@
   "destination_id": "BARCELONA_ES",
   "city_name": "Barcelona",
   "country": "Spanyolország",
-  "total_experiences": 21,
+  "total_experiences": 42,
   "experience_vector": {
     "destination_id": "BARCELONA_ES",
     "city_name": "Barcelona",
     "country": "Spanyolország",
     "peer_group": "european_all",
-    "total_entities": 21,
+    "total_entities": 42,
     "data_confidence": 0.15,
     "hidden_gem_score": 1.1,
-    "vibe_summary": "Barcelona: kulturaban gazdag, termeszetkoeli Spanyolországi varos - romantikus karakterrel",
+    "vibe_summary": "Barcelona: kulturaban gazdag, tengerparti strand-hangulatu utazasi celpont.",
     "top_dimensions": [
       "culture",
-      "nature",
-      "romance"
+      "beach",
+      "food"
     ],
     "overall_fit": 0.0,
     "dimensions": {
       "culture": {
-        "absolute": 38.6,
-        "relative_z": 0.0,
-        "confidence": 0.209,
-        "freshness": 1.0
-      },
-      "food": {
-        "absolute": 27.4,
-        "relative_z": 0.0,
-        "confidence": 0.343,
+        "absolute": 94.0,
+        "relative_z": 1.6,
+        "confidence": 0.85,
         "freshness": 1.0
       },
       "beach": {
-        "absolute": 0.0,
-        "relative_z": 0.0,
-        "confidence": 0.0,
+        "absolute": 88.0,
+        "relative_z": 1.2,
+        "confidence": 0.85,
         "freshness": 1.0
       },
-      "nature": {
-        "absolute": 36.1,
-        "relative_z": 0.0,
-        "confidence": 0.1,
+      "food": {
+        "absolute": 88.0,
+        "relative_z": 1.2,
+        "confidence": 0.85,
         "freshness": 1.0
       },
       "nightlife": {
-        "absolute": 0.0,
-        "relative_z": 0.0,
-        "confidence": 0.0,
+        "absolute": 85.0,
+        "relative_z": 1.0,
+        "confidence": 0.85,
         "freshness": 1.0
       },
       "romance": {
-        "absolute": 28.1,
-        "relative_z": 0.0,
-        "confidence": 0.254,
+        "absolute": 78.0,
+        "relative_z": 0.53,
+        "confidence": 0.85,
         "freshness": 1.0
       },
-      "authenticity": {
-        "absolute": 24.4,
-        "relative_z": 0.0,
-        "confidence": 0.357,
-        "freshness": 1.0
-      },
-      "locality": {
-        "absolute": 21.4,
-        "relative_z": 0.0,
-        "confidence": 0.395,
-        "freshness": 1.0
-      },
-      "walkability": {
-        "absolute": 0.0,
-        "relative_z": 0.0,
-        "confidence": 0.0,
-        "freshness": 1.0
-      },
-      "tourist_intensity": {
-        "absolute": 39.1,
-        "relative_z": 0.0,
-        "confidence": 0.037,
+      "nature": {
+        "absolute": 65.0,
+        "relative_z": -0.33,
+        "confidence": 0.85,
         "freshness": 1.0
       },
       "adventure": {
-        "absolute": 26.1,
+        "absolute": 70.0,
         "relative_z": 0.0,
-        "confidence": 0.1,
+        "confidence": 0.85,
         "freshness": 1.0
       },
-      "family": {
-        "absolute": 0.0,
-        "relative_z": 0.0,
-        "confidence": 0.0,
+      "authenticity": {
+        "absolute": 80.0,
+        "relative_z": 0.67,
+        "confidence": 0.85,
+        "freshness": 1.0
+      },
+      "locality": {
+        "absolute": 82.0,
+        "relative_z": 0.8,
+        "confidence": 0.85,
+        "freshness": 1.0
+      },
+      "walkability": {
+        "absolute": 88.0,
+        "relative_z": 1.2,
+        "confidence": 0.85,
         "freshness": 1.0
       }
     }
   },
   "top_experiences_summary": [
     {
-      "canonical_name": "Főtér és Történelmi Városközpont",
+      "canonical_name": "Sagrada Família (Gaudí Remekműve)",
       "category": "culture_history",
+      "rating": 4.9
+    },
+    {
+      "canonical_name": "Park Güell & Mozaik Terasz",
+      "category": "nature_viewpoint",
+      "rating": 4.8
+    },
+    {
+      "canonical_name": "Gótikus Negyed & La Rambla",
+      "category": "culture_history",
+      "rating": 4.7
+    },
+    {
+      "canonical_name": "Barceloneta Tengerpart",
+      "category": "beach_coastal",
       "rating": 4.6
     },
     {
-      "canonical_name": "Királyi Palota és Vármúzeum",
-      "category": "culture_history",
-      "rating": 4.6
-    },
-    {
-      "canonical_name": "Modern Művészeti Galéria",
-      "category": "culture_history",
-      "rating": 4.4
-    },
-    {
-      "canonical_name": "Botanikus Kert és Pálmaház",
-      "category": "culture_history",
-      "rating": 4.6
-    },
-    {
-      "canonical_name": "Szent Katedrális",
+      "canonical_name": "Casa Batlló",
       "category": "culture_history",
       "rating": 4.8
     }

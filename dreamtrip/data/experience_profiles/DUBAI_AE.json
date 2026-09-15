@@ -2,122 +2,110 @@
   "destination_id": "DUBAI_AE",
   "city_name": "Dubaj",
   "country": "Egyesült Arab Emírségek",
-  "total_experiences": 21,
+  "total_experiences": 44,
   "experience_vector": {
     "destination_id": "DUBAI_AE",
     "city_name": "Dubaj",
     "country": "Egyesült Arab Emírségek",
     "peer_group": "european_all",
-    "total_entities": 21,
+    "total_entities": 44,
     "data_confidence": 0.15,
     "hidden_gem_score": 1.0,
-    "vibe_summary": "Dubaj: kulturaban gazdag, termeszetkoeli Egyesült Arab Emírségeki varos - romantikus karakterrel",
+    "vibe_summary": "Dubaj: izgalmas kalandlehetosegeket kinalo, kivalo gasztronomiai elmenyekkel rendelkezo utazasi celpont.",
     "top_dimensions": [
-      "culture",
-      "nature",
-      "romance"
+      "adventure",
+      "food",
+      "nightlife"
     ],
     "overall_fit": 0.0,
     "dimensions": {
-      "culture": {
-        "absolute": 38.7,
-        "relative_z": 0.0,
-        "confidence": 0.209,
-        "freshness": 1.0
-      },
-      "food": {
-        "absolute": 27.4,
-        "relative_z": 0.0,
-        "confidence": 0.343,
-        "freshness": 1.0
-      },
-      "beach": {
-        "absolute": 0.0,
-        "relative_z": 0.0,
-        "confidence": 0.0,
-        "freshness": 1.0
-      },
-      "nature": {
-        "absolute": 36.1,
-        "relative_z": 0.0,
-        "confidence": 0.1,
+      "adventure": {
+        "absolute": 92.0,
+        "relative_z": 1.47,
+        "confidence": 0.85,
         "freshness": 1.0
       },
       "nightlife": {
-        "absolute": 0.0,
-        "relative_z": 0.0,
-        "confidence": 0.0,
+        "absolute": 90.0,
+        "relative_z": 1.33,
+        "confidence": 0.85,
+        "freshness": 1.0
+      },
+      "food": {
+        "absolute": 91.0,
+        "relative_z": 1.4,
+        "confidence": 0.85,
+        "freshness": 1.0
+      },
+      "beach": {
+        "absolute": 86.0,
+        "relative_z": 1.07,
+        "confidence": 0.85,
         "freshness": 1.0
       },
       "romance": {
-        "absolute": 28.1,
-        "relative_z": 0.0,
-        "confidence": 0.254,
+        "absolute": 83.0,
+        "relative_z": 0.87,
+        "confidence": 0.85,
+        "freshness": 1.0
+      },
+      "culture": {
+        "absolute": 72.0,
+        "relative_z": 0.13,
+        "confidence": 0.85,
+        "freshness": 1.0
+      },
+      "nature": {
+        "absolute": 52.0,
+        "relative_z": -1.2,
+        "confidence": 0.85,
         "freshness": 1.0
       },
       "authenticity": {
-        "absolute": 24.3,
-        "relative_z": 0.0,
-        "confidence": 0.357,
+        "absolute": 68.0,
+        "relative_z": -0.13,
+        "confidence": 0.85,
         "freshness": 1.0
       },
       "locality": {
-        "absolute": 21.4,
+        "absolute": 70.0,
         "relative_z": 0.0,
-        "confidence": 0.395,
+        "confidence": 0.85,
         "freshness": 1.0
       },
       "walkability": {
-        "absolute": 0.0,
-        "relative_z": 0.0,
-        "confidence": 0.0,
-        "freshness": 1.0
-      },
-      "tourist_intensity": {
-        "absolute": 39.2,
-        "relative_z": 0.0,
-        "confidence": 0.037,
-        "freshness": 1.0
-      },
-      "adventure": {
-        "absolute": 26.1,
-        "relative_z": 0.0,
-        "confidence": 0.1,
-        "freshness": 1.0
-      },
-      "family": {
-        "absolute": 0.0,
-        "relative_z": 0.0,
-        "confidence": 0.0,
+        "absolute": 65.0,
+        "relative_z": -0.33,
+        "confidence": 0.85,
         "freshness": 1.0
       }
     }
   },
   "top_experiences_summary": [
     {
-      "canonical_name": "Főtér és Történelmi Városközpont",
-      "category": "culture_history",
-      "rating": 4.7
+      "canonical_name": "Burj Khalifa Kilátóterasz (148. emelet)",
+      "category": "nature_viewpoint",
+      "rating": 4.9
     },
     {
-      "canonical_name": "Királyi Palota és Vármúzeum",
-      "category": "culture_history",
-      "rating": 4.7
-    },
-    {
-      "canonical_name": "Modern Művészeti Galéria",
-      "category": "culture_history",
-      "rating": 4.3
-    },
-    {
-      "canonical_name": "Botanikus Kert és Pálmaház",
-      "category": "culture_history",
-      "rating": 4.4
-    },
-    {
-      "canonical_name": "Szent Katedrális",
+      "canonical_name": "Dubai Mall & Táncoló Szökőkút",
       "category": "culture_history",
       "rating": 4.8
+    },
+    {
+      "canonical_name": "Pálma-sziget (Palm Jumeirah)",
+      "category": "nature_viewpoint",
+      "rating": 4.8
+    },
+    {
+      "canonical_name": "Vörös Dűnés Sivatagi Szafari",
+      "category": "nature_viewpoint",
+      "rating": 4.9
+    },
+    {
+      "canonical_name": "Al Fahidi Történelmi Negyed & Aranybazár",
+      "category": "culture_history",
+      "rating": 4.6
     }
   ]
 }

@@ -275,54 +275,53 @@ def calculate_destination_rankings(
 
         # 4. Élmény és Aktivitás profil betöltése az ultra-gyors gyorsítótárból (<1ms)
         dest_id_candidate = str(c.get("id", "")).upper()
-        if "_" not in dest_id_candidate:
-            country_code = (c.get("country") or "XX")[:2].upper()
-            city_slug = str(c.get("city") or c.get("name", "")).upper().replace(" ", "_")
-            dest_id_candidate = f"{country_code}_{city_slug}"
-
         from app.services.experience.cache import experience_cache
         exp_profile = experience_cache.get_destination_profile(dest_id_candidate)
+
+        if not exp_profile:
+            city_slug = str(c.get("city") or c.get("name", "")).upper().replace(" ", "_")
+            country_code = (c.get("country") or "XX")[:2].upper()
+            exp_profile = (
+                experience_cache.get_destination_profile(f"{city_slug}_{country_code}")
+                or experience_cache.get_destination_profile(f"{country_code}_{city_slug}")
+            )
         if not exp_profile and "bari" in str(c.get("name", "")).lower():
             exp_profile = experience_cache.get_destination_profile("IT_BARI")
 
-        # --- Experience Fit: vektoros hasonlóság (Level 2 AHP) ---
+        # --- Experience Fit: preferencia-illeszkedés ---
         vibe_vector = None
         vibe_summary = ""
         top_dims = []
         hidden_gem = 0.0
-        s_exp_raw = None  # None = még nem számítottuk
+        s_exp_raw = None
 
         if exp_profile:
             vibe_vector = exp_profile.get("experience_vector", {})
 
         if vibe_vector and vibe_vector.get("dimensions"):
             dims = vibe_vector["dimensions"]
-            conf = vibe_vector.get("data_confidence", 0.7)
             vibe_summary = vibe_vector.get("vibe_summary", "")
             top_dims = vibe_vector.get("top_dimensions", [])
             hidden_gem = vibe_vector.get("hidden_gem_score", 0.0)
 
-            if experience_preferences:
-                # --- LEVEL 2 AHP: Koszinusz-hasonlóság (személyre szabott) ---
-                # Felhasználó preferencia-vektora (0-100 skálán, normalizált)
+            if experience_preferences and sum(experience_preferences.values()) > 0:
+                # Személyre szabott illeszkedés a felhasználó választott élményelemeivel (Súlyozott dimenzió-illeszkedés)
                 total_pref = sum(experience_preferences.values()) or 1.0
-                user_norm = {k: v / total_pref for k, v in experience_preferences.items()}
+                user_norm = {k: float(v) / total_pref for k, v in experience_preferences.items()}
 
-                # Desztináció ExperienceVector dimenziói (absolute: 0-100 → normalizált)
-                # Az ExperienceVector dimenzió nevei egyeznek az ExperiencePreferences nevekkel
-                # kivéve: gastronomy→food, sightseeing→culture (fallback alias mapping)
                 _ALIAS = {
                     "gastronomy": "food",
+                    "food": "food",
                     "sightseeing": "culture",
-                    "relaxation": "wellness_spa",
-                    "shopping": "shopping",
-                    "family": "family",
+                    "culture": "culture",
+                    "relaxation": "romance",
+                    "shopping": "locality",
+                    "family": "locality",
                     "adventure": "adventure",
                     "nightlife": "nightlife",
                     "romance": "romance",
                     "beach": "beach",
                     "nature": "nature",
-                    "culture": "culture",
                     "authenticity": "authenticity",
                 }
                 dest_raw = {}
@@ -330,39 +329,34 @@ def calculate_destination_rankings(
                 for dim_key, dim_val in dims.items():
                     if dim_key not in excl:
                         dest_raw[dim_key] = dim_val.get("absolute", 50.0) if isinstance(dim_val, dict) else float(dim_val)
-                # Alias mapping: leképezzük a user dimenziókat a dest dimenziókra
-                dest_mapped = {}
-                for ukey, uval in user_norm.items():
+
+                # Dimenzió-súlyozott illeszkedési átlag (0.0 - 1.0)
+                weighted_fit = 0.0
+                for ukey, uweight in user_norm.items():
                     dest_key = _ALIAS.get(ukey, ukey)
-                    if dest_key in dest_raw:
-                        dest_mapped[ukey] = dest_raw[dest_key] / 100.0
-                    elif ukey in dest_raw:
-                        dest_mapped[ukey] = dest_raw[ukey] / 100.0
-                    else:
-                        dest_mapped[ukey] = 0.35  # prior: gyenge jelenlét
-                # Koszinusz-hasonlóság (0-1)
-                cos_sim = _cosine_similarity(user_norm, dest_mapped)
-                # Confidence-weighted: alacsony adat → régiós prior irányba húzódik
-                s_exp_raw = cos_sim * (0.6 + conf * 0.4)
+                    dim_score = dest_raw.get(dest_key, dest_raw.get(ukey, 40.0))
+                    weighted_fit += uweight * (dim_score / 100.0)
+
+                s_exp_raw = min(1.0, max(0.30, weighted_fit))
             else:
-                # --- Eredeti heurisztika: top-5 dimenzió átlaga ---
                 excl = {"tourist_intensity"}
                 scores_100 = sorted(
                     [v["absolute"] if isinstance(v, dict) else float(v)
                      for k, v in dims.items() if k not in excl],
                     reverse=True
                 )
-                top5_avg = sum(scores_100[:5]) / max(len(scores_100[:5]), 1)
-                s_exp_raw = (top5_avg / 100.0) * (0.6 + conf * 0.4)
+                top3_avg = sum(scores_100[:3]) / max(len(scores_100[:3]), 1)
+                total_ent = exp_profile.get("total_experiences") or exp_profile.get("summary", {}).get("total_entities", 25)
+                ent_bonus = min(1.0, total_ent / 45.0)
+                s_exp_raw = min(1.0, max(0.40, (top3_avg / 100.0) * 0.80 + ent_bonus * 0.20))
 
         elif exp_profile:
-            # Legacy fallback (nincs ExperienceVector, csak summary)
-            total_ent = exp_profile.get("summary", {}).get("total_entities", 0)
-            walk_pct = exp_profile.get("walkability", {}).get("walkability_density", 50)
-            rain_cnt = exp_profile.get("weather_resilience", {}).get("rain_safe_count", 0)
-            s_exp_raw = (min(150, total_ent) / 100.0) * 0.5 + (walk_pct / 100.0) * 0.3 + min(1.0, rain_cnt / 20.0) * 0.2
+            total_ent = exp_profile.get("total_experiences") or exp_profile.get("summary", {}).get("total_entities", 20)
+            s_exp_raw = min(1.0, max(0.5, (total_ent / 30.0) * 0.8))
+        else:
+            s_exp_raw = 0.70
 
-        s_exp = round(min(1.0, s_exp_raw if s_exp_raw is not None else 0.75), 3)
+        s_exp = round(min(1.0, max(0.2, s_exp_raw)), 3)
 
         # Végső Súlyozott Pontszám (0 - 100) 4 Pillér alapján
         final_score_raw = (
@@ -455,6 +449,8 @@ def calculate_destination_rankings(
                 "stay_source": m.get("stay_source", "cozycozy_market_cache"),
                 "temp_formatted": f"Nappal: {int(temp_max_val)}°C / Éjjel: {int(m.get('temp_min', temp_max_val - 7))}°C",
                 "temp_avg": temp_max_val,
+                "temp_raw": temp_max_val,
+                "temp_celsius": temp_max_val,
                 "safety_formatted": f"{int(safety_idx_val)}/100 (Numbeo)",
                 "safety_raw": safety_idx_val,
                 "numbeo_breakdown": m.get("cost_breakdown", {}),

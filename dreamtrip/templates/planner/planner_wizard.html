@@ -370,7 +370,7 @@
 
             <div class="advisor-panel" style="margin-bottom: 24px; border: 1.5px solid var(--border-subtle); background: var(--bg-surface-subtle); border-radius: 20px; padding: 20px 24px;">
                 <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.5;">
-                    Válaszd ki a számodra legfontosabb élményelemeket! A döntési motor ezek alapján számítja ki a városok személyre szabott <strong style="color: var(--primary);">Élmény-illeszkedési (Experience Fit)</strong> vektorát.
+                    Jelöld be, milyen élmények és hangulatok vonzanak a legjobban! Ezzel segíted a rendszert, hogy olyan városokat ajánljon, amelyek a te utazási stílusodhoz és vágyaidhoz a legjobban passzolnak (pl. gasztronómia, gazdag kultúra vagy tengerparti pihenés).
                 </div>
                 <div id="experience_chips_grid" style="display: flex; gap: 10px; flex-wrap: wrap;">
                     <div class="preset-pill active" data-category="gastronomy" onclick="Wizard.toggleExperienceTag('gastronomy', this)" style="flex: initial; padding: 8px 14px; font-size: 12.5px; display: inline-flex; align-items: center; gap: 6px;">
@@ -411,19 +411,17 @@
 
             <div id="decision_dna_container" class="advisor-panel" style="margin-bottom: 28px; border: 1.5px solid var(--border-strong); background: var(--bg-surface-subtle); border-radius: 20px; padding: 24px; position: relative; overflow: hidden;">
                 
-                <!-- UNCONFIGURED STATE -->
+                <!-- UNCONFIGURED STATE (WARNING/CALLOUT) -->
                 <div id="dna_unconfigured_view" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
-                    <div style="max-width: 480px;">
-                        <div style="font-size: 17px; font-weight: 800; color: var(--text-main); margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
-                            Állítsd be az utazási prioritásaidat!
+                    <div>
+                        <div style="font-size: 17px; font-weight: 800; color: var(--text-main); margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+                            <span class="material-symbols-outlined" style="font-size: 22px; color: var(--primary);">tune</span>
+                            <span>Állítsd be az utazási prioritásaidat!</span>
                         </div>
-                        <div style="font-size: 13px; color: var(--text-muted); line-height: 1.5;">
-                            Egyetlen egyszerű folyamatban határozhatod meg, hogy mi a legfontosabb: a jó idő, az olcsó repülőjegy, a kényelmes utazási idő vagy a szállás minősége.
+                        <div style="font-size: 13.5px; color: var(--text-muted); line-height: 1.5; max-width: 680px;">
+                            A keresés elindításához határozd meg, hogy mi a legfontosabb számodra: az olcsó repülőjegy, a jó idő, a biztonság vagy a gazdag élménykínálat. Csak a számodra releváns szempontok vesznek részt a döntésben.
                         </div>
                     </div>
-                    <button type="button" class="btn btn-primary" onclick="Wizard.openDecisionDNA()" style="padding: 14px 28px; font-size: 14.5px; font-weight: 800; border-radius: 14px; box-shadow: 0 4px 18px rgba(37, 99, 235, 0.35);">
-                        <span>Saját szempontok beállítása →</span>
-                    </button>
                 </div>
 
                 <!-- CONFIGURED STATE (DNA CARD) -->
@@ -476,14 +474,14 @@
 
             </div>
 
-            <!-- FŐ CTA GOMB: TERVEZÉS INDÍTÁSA -->
+            <!-- EGYETLEN FŐ CTA GOMB -->
             <div style="margin-top: 28px; border-top: 1px solid var(--border-subtle); padding-top: 24px;">
-                <button type="button" id="btn_submit_main_planner" class="btn btn-primary" onclick="Wizard.startPlanning()" style="width: 100%; box-sizing: border-box; padding: 14px 16px; font-size: clamp(13px, 3.5vw, 16px); font-weight: 800; border-radius: 14px; box-shadow: 0 4px 20px rgba(37, 99, 235, 0.4); display: flex; align-items: center; justify-content: center; gap: 8px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                    <span class="btn-label-full">Célállomások Keresése & Tervezés Indítása →</span>
-                    <span class="btn-label-short" style="display:none;">Célállomások Keresése →</span>
+                <button type="button" id="btn_main_step0_cta" class="btn btn-primary" onclick="Wizard.handleMainStep0CTA()" style="width: 100%; box-sizing: border-box; padding: 16px 18px; font-size: clamp(14px, 3.8vw, 16.5px); font-weight: 800; border-radius: 14px; box-shadow: 0 4px 20px rgba(37, 99, 235, 0.4); display: flex; align-items: center; justify-content: center; gap: 10px; text-align: center;">
+                    <span id="btn_main_step0_cta_icon" class="material-symbols-outlined" style="font-size: 20px;">tune</span>
+                    <span id="btn_main_step0_cta_label">Saját szempontok beállítása (A kereséshez kötelező) →</span>
                 </button>
-                <div style="margin-top: 8px; font-size: 12px; color: var(--text-muted); text-align: center;">
-                    A rendszer az egyéni szempontjaid alapján rangsorolja a legmegfelelőbb európai úti célokat.
+                <div id="btn_main_step0_cta_subtext" style="margin-top: 8px; font-size: 12px; color: var(--text-muted); text-align: center;">
+                    Kattints a gombra a prioritásaid rögzítéséhez, hogy a rendszer a te igényeidre szabhassa a javaslatokat!
                 </div>
             </div>
             <style>
@@ -491,6 +489,14 @@
                     #btn_submit_main_planner .btn-label-full  { display: none; }
                     #btn_submit_main_planner .btn-label-short { display: inline !important; }
                     #btn_submit_main_planner { white-space: normal; text-overflow: unset; overflow: visible; }
+                }
+                .day-pill {
+                    min-width: 32px;
+                    padding: 4px 8px;
+                    text-align: center;
+                    font-size: 11.5px;
+                    font-weight: 700;
+                    cursor: pointer;
                 }
             </style>
 
@@ -572,15 +578,72 @@
             <summary style="padding: 12px 18px; font-weight: 700; font-size: 13.5px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
                 <span style="display: flex; align-items: center; gap: 6px;">
                     <span class="material-symbols-outlined" style="font-size: 17px; color: var(--primary);">flight</span>
-                    <span>Járat preferenciák módosítása (Átszállások, menetidő)</span>
+                    <span>Járat preferenciák: Preferált napok & időpontok, közvetlen járat</span>
                 </span>
                 <span style="font-size: 12px; color: var(--primary);">Kattints a megnyitáshoz ▾</span>
             </summary>
-            <div style="padding: 18px; border-top: 1px solid var(--border-subtle); display: flex; gap: 20px; flex-wrap: wrap;">
-                <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600;">
-                    <input type="checkbox" id="mod_direct_only" onchange="Wizard.recalculateFlights()"> Csak közvetlen járatok
-                </label>
-                <button type="button" class="btn btn-secondary btn-sm" onclick="Wizard.recalculateFlights()">Szűrés alkalmazása</button>
+            <div style="padding: 18px; border-top: 1px solid var(--border-subtle); display: flex; flex-direction: column; gap: 16px;">
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+                    <!-- ODAÚT PREFERENCIÁK -->
+                    <div style="background: var(--bg-surface-subtle); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 14px;">
+                        <div style="font-size: 12.5px; font-weight: 800; color: var(--primary); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                            <span class="material-symbols-outlined" style="font-size: 16px;">flight_takeoff</span>
+                            <span>Odaút preferenciák</span>
+                        </div>
+                        
+                        <label style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 5px;">
+                            Preferált indulási napok (kizárólagos szűrés):
+                        </label>
+                        <div id="flight_out_days_grid" style="display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 10px;">
+                            <button type="button" class="preset-pill day-pill" data-day="0" onclick="Wizard.toggleFlightDay('out', 0, this)">H</button>
+                            <button type="button" class="preset-pill day-pill" data-day="1" onclick="Wizard.toggleFlightDay('out', 1, this)">K</button>
+                            <button type="button" class="preset-pill day-pill" data-day="2" onclick="Wizard.toggleFlightDay('out', 2, this)">Sze</button>
+                            <button type="button" class="preset-pill day-pill" data-day="3" onclick="Wizard.toggleFlightDay('out', 3, this)">Cs</button>
+                            <button type="button" class="preset-pill day-pill" data-day="4" onclick="Wizard.toggleFlightDay('out', 4, this)">P</button>
+                            <button type="button" class="preset-pill day-pill" data-day="5" onclick="Wizard.toggleFlightDay('out', 5, this)">Szo</button>
+                            <button type="button" class="preset-pill day-pill" data-day="6" onclick="Wizard.toggleFlightDay('out', 6, this)">V</button>
+                        </div>
+
+                        <label style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 4px;">
+                            Preferált indulási időpont:
+                        </label>
+                        <input type="time" id="mod_flight_out_time" class="form-control" style="padding: 6px 10px; font-size: 12.5px; border-radius: 8px; width: 100%; max-width: 140px;" onchange="Wizard.recalculateFlights()" value="10:00">
+                    </div>
+
+                    <!-- VISSZAÚT PREFERENCIÁK -->
+                    <div style="background: var(--bg-surface-subtle); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 14px;">
+                        <div style="font-size: 12.5px; font-weight: 800; color: var(--primary); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                            <span class="material-symbols-outlined" style="font-size: 16px;">flight_land</span>
+                            <span>Visszaút preferenciák</span>
+                        </div>
+                        
+                        <label style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 5px;">
+                            Preferált hazautazási napok (kizárólagos szűrés):
+                        </label>
+                        <div id="flight_in_days_grid" style="display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 10px;">
+                            <button type="button" class="preset-pill day-pill" data-day="0" onclick="Wizard.toggleFlightDay('in', 0, this)">H</button>
+                            <button type="button" class="preset-pill day-pill" data-day="1" onclick="Wizard.toggleFlightDay('in', 1, this)">K</button>
+                            <button type="button" class="preset-pill day-pill" data-day="2" onclick="Wizard.toggleFlightDay('in', 2, this)">Sze</button>
+                            <button type="button" class="preset-pill day-pill" data-day="3" onclick="Wizard.toggleFlightDay('in', 3, this)">Cs</button>
+                            <button type="button" class="preset-pill day-pill" data-day="4" onclick="Wizard.toggleFlightDay('in', 4, this)">P</button>
+                            <button type="button" class="preset-pill day-pill" data-day="5" onclick="Wizard.toggleFlightDay('in', 5, this)">Szo</button>
+                            <button type="button" class="preset-pill day-pill" data-day="6" onclick="Wizard.toggleFlightDay('in', 6, this)">V</button>
+                        </div>
+
+                        <label style="font-size: 11.5px; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 4px;">
+                            Preferált indulási időpont:
+                        </label>
+                        <input type="time" id="mod_flight_in_time" class="form-control" style="padding: 6px 10px; font-size: 12.5px; border-radius: 8px; width: 100%; max-width: 140px;" onchange="Wizard.recalculateFlights()" value="18:00">
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; padding-top: 8px;">
+                    <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600;">
+                        <input type="checkbox" id="mod_direct_only" onchange="Wizard.recalculateFlights()"> Csak közvetlen járatok
+                    </label>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="Wizard.recalculateFlights()">Szűrés & Újrarangsorolás</button>
+                </div>
             </div>
         </details>
 
@@ -860,6 +923,12 @@
 {% endblock %}
 
 {% block scripts %}
+<!-- Decision DNA Modules -->
+<script src="/static/js/decision_dna/dna_math.js"></script>
+<script src="/static/js/decision_dna/dna_dest_step.js"></script>
+<script src="/static/js/decision_dna/dna_flight_step.js"></script>
+<script src="/static/js/decision_dna/dna_stay_step.js"></script>
+<script src="/static/js/decision_dna/dna_summary_step.js"></script>
 <script src="/static/js/decision_dna_wizard.js"></script>
 <!-- Modular Planner Architecture -->
 <script src="/static/js/planner/planner_state.js"></script>

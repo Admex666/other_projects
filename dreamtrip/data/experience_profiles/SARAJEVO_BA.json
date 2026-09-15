@@ -2,122 +2,110 @@
   "destination_id": "SARAJEVO_BA",
   "city_name": "Szarajevó",
   "country": "Bosznia-Hercegovina",
-  "total_experiences": 21,
+  "total_experiences": 26,
   "experience_vector": {
     "destination_id": "SARAJEVO_BA",
     "city_name": "Szarajevó",
     "country": "Bosznia-Hercegovina",
     "peer_group": "european_all",
-    "total_entities": 21,
+    "total_entities": 26,
     "data_confidence": 0.15,
     "hidden_gem_score": 1.0,
-    "vibe_summary": "Szarajevó: kulturaban gazdag, termeszetkoeli Bosznia-Hercegovinai varos - romantikus karakterrel",
+    "vibe_summary": "Szarajevó: kulturaban gazdag, kivalo gasztronomiai elmenyekkel rendelkezo utazasi celpont.",
     "top_dimensions": [
+      "authenticity",
       "culture",
-      "nature",
-      "romance"
+      "food"
     ],
     "overall_fit": 0.0,
     "dimensions": {
       "culture": {
-        "absolute": 38.7,
-        "relative_z": 0.0,
-        "confidence": 0.209,
-        "freshness": 1.0
-      },
-      "food": {
-        "absolute": 27.5,
-        "relative_z": 0.0,
-        "confidence": 0.343,
-        "freshness": 1.0
-      },
-      "beach": {
-        "absolute": 0.0,
-        "relative_z": 0.0,
-        "confidence": 0.0,
-        "freshness": 1.0
-      },
-      "nature": {
-        "absolute": 36.2,
-        "relative_z": 0.0,
-        "confidence": 0.1,
-        "freshness": 1.0
-      },
-      "nightlife": {
-        "absolute": 0.0,
-        "relative_z": 0.0,
-        "confidence": 0.0,
-        "freshness": 1.0
-      },
-      "romance": {
-        "absolute": 28.2,
-        "relative_z": 0.0,
-        "confidence": 0.254,
+        "absolute": 97.0,
+        "relative_z": 1.8,
+        "confidence": 0.85,
         "freshness": 1.0
       },
       "authenticity": {
-        "absolute": 24.3,
-        "relative_z": 0.0,
-        "confidence": 0.357,
+        "absolute": 99.0,
+        "relative_z": 1.93,
+        "confidence": 0.85,
         "freshness": 1.0
       },
-      "locality": {
-        "absolute": 21.5,
-        "relative_z": 0.0,
-        "confidence": 0.395,
+      "food": {
+        "absolute": 92.0,
+        "relative_z": 1.47,
+        "confidence": 0.85,
         "freshness": 1.0
       },
-      "walkability": {
-        "absolute": 0.0,
-        "relative_z": 0.0,
-        "confidence": 0.0,
-        "freshness": 1.0
-      },
-      "tourist_intensity": {
-        "absolute": 39.4,
-        "relative_z": 0.0,
-        "confidence": 0.037,
+      "romance": {
+        "absolute": 84.0,
+        "relative_z": 0.93,
+        "confidence": 0.85,
         "freshness": 1.0
       },
       "adventure": {
-        "absolute": 26.1,
-        "relative_z": 0.0,
-        "confidence": 0.1,
+        "absolute": 80.0,
+        "relative_z": 0.67,
+        "confidence": 0.85,
         "freshness": 1.0
       },
-      "family": {
-        "absolute": 0.0,
-        "relative_z": 0.0,
-        "confidence": 0.0,
+      "nature": {
+        "absolute": 82.0,
+        "relative_z": 0.8,
+        "confidence": 0.85,
+        "freshness": 1.0
+      },
+      "nightlife": {
+        "absolute": 74.0,
+        "relative_z": 0.27,
+        "confidence": 0.85,
+        "freshness": 1.0
+      },
+      "beach": {
+        "absolute": 10.0,
+        "relative_z": -4.0,
+        "confidence": 0.85,
+        "freshness": 1.0
+      },
+      "locality": {
+        "absolute": 92.0,
+        "relative_z": 1.47,
+        "confidence": 0.85,
+        "freshness": 1.0
+      },
+      "walkability": {
+        "absolute": 86.0,
+        "relative_z": 1.07,
+        "confidence": 0.85,
         "freshness": 1.0
       }
     }
   },
   "top_experiences_summary": [
     {
-      "canonical_name": "Főtér és Történelmi Városközpont",
+      "canonical_name": "Baščaršija Oszmán Bazár és Sebilj Kút",
       "category": "culture_history",
-      "rating": 4.6
+      "rating": 4.9
     },
     {
-      "canonical_name": "Királyi Palota és Vármúzeum",
+      "canonical_name": "Latin Híd (1914-es Merénylet Helyszíne)",
       "category": "culture_history",
       "rating": 4.8
     },
     {
-      "canonical_name": "Modern Művészeti Galéria",
-      "category": "culture_history",
-      "rating": 4.5
+      "canonical_name": "Trebević Hegyi Felvonó és Bobpálya",
+      "category": "nature_viewpoint",
+      "rating": 4.8
     },
     {
-      "canonical_name": "Botanikus Kert és Pálmaház",
+      "canonical_name": "Gazi Huszrev Bég Mecset",
       "category": "culture_history",
-      "rating": 4.6
+      "rating": 4.8
     },
     {
-      "canonical_name": "Szent Katedrális",
+      "canonical_name": "Szarajevói Alagút Múzeum (Tunnel of Hope)",
       "category": "culture_history",
-      "rating": 4.7
+      "rating": 4.9
     }
   ]
 }

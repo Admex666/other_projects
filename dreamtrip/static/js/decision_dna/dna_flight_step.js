@@ -8,11 +8,16 @@
     const DNAFlightStep = {
         renderFlightAHP(wizard, container) {
             const pairs = [
-                { id: 'price_vs_duration', name1: 'Repjegy Ár', name2: 'Menetidő (Időtartam)', desc: 'Olcsóbb repjegy vagy lényegesen rövidebb utazási idő?' },
-                { id: 'price_vs_stops', name1: 'Repjegy Ár', name2: 'Közvetlen Járat (0 átszállás)', desc: 'Spórolás egy átszállással vagy ragaszkodás a közvetlen járathoz?' },
-                { id: 'duration_vs_stops', name1: 'Menetidő', name2: 'Átszállások Száma', desc: 'Rövidebb menetidő vagy kényelmes, átszállásmentes út?' }
+                { id: 'price_vs_duration', c1: 'price', c2: 'duration', name1: 'Repjegy Ár', name2: 'Menetidő (Időtartam)', desc: 'Olcsóbb repjegy vagy lényegesen rövidebb utazási idő?' },
+                { id: 'price_vs_stops', c1: 'price', c2: 'stops', name1: 'Repjegy Ár', name2: 'Közvetlen Járat (0 átszállás)', desc: 'Spórolás egy átszállással vagy ragaszkodás a közvetlen járathoz?' },
+                { id: 'duration_vs_stops', c1: 'duration', c2: 'stops', name1: 'Menetidő', name2: 'Átszállások Száma', desc: 'Rövidebb menetidő vagy kényelmes, átszállásmentes út?' }
             ];
-            wizard.renderPairwiseMatrix(container, '3. Lépés: Repülőjárat Súlyozás (Páros Összehasonlítás)', 'Melyik tényező mennyire fontosabb számodra a járatok rangsorolásakor?', pairs, 'flight_ahp');
+            const criteriaList = [
+                { key: 'price', label: '💰 Repjegy Ár' },
+                { key: 'duration', label: '⏱️ Menetidő' },
+                { key: 'stops', label: '🔄 Átszállások Száma' }
+            ];
+            wizard.renderPairwiseMatrix(container, '3. Lépés: Repülőjárat Súlyozás (Páros Összehasonlítás)', 'Válaszd ki a releváns szempontokat, majd határozd meg az arányokat:', pairs, 'flight_ahp', 'flight', criteriaList);
         },
 
         renderFlightScenarios(wizard, container) {
@@ -24,19 +29,25 @@
             const pDurQ = durCfg.q < 1 ? `${Math.round(durCfg.q * 60)} perc` : `${durCfg.q} óra`;
             const pDurP = `${durCfg.p} óra`;
 
+            const active = state.active_criteria?.flight || ['price', 'duration', 'stops'];
+            const isPriceActive = active.includes('price');
+            const isDurActive = active.includes('duration');
+            const isStopsActive = active.includes('stops');
+
             const isPriceChosen = state.chosen_cards.flight_price !== null;
-            const isDurUnlocked = state.unlocked.flight_dur || isPriceChosen;
+            const isDurUnlocked = state.unlocked.flight_dur || (!isPriceActive || isPriceChosen);
             const isDurChosen = state.chosen_cards.flight_dur !== null;
-            const isStopsUnlocked = state.unlocked.flight_stops || isDurChosen;
+            const isStopsUnlocked = state.unlocked.flight_stops || (isDurUnlocked && (!isDurActive || isDurChosen));
             const isStopsChosen = state.chosen_cards.flight_stops !== null;
 
             container.innerHTML = `
                 <div style="margin-bottom: 18px;">
                     <h4 style="margin: 0 0 4px 0; font-size: 16.5px; font-weight: 800; color: var(--text-main);">4. Lépés: Járat Döntési Helyzetek</h4>
-                    <p style="margin: 0; font-size: 12.5px; color: var(--text-muted);">Válaszd ki a döntési szabályokat a járat 3 fő kritériumára (Ár, Menetidő, Átszállás):</p>
+                    <p style="margin: 0; font-size: 12.5px; color: var(--text-muted);">A kiválasztott releváns járat-szempontoknál finomhangold a döntési szabályokat:</p>
                 </div>
 
                 <!-- 1. REPJEGY ÁR SZITUÁCIÓ -->
+                ${isPriceActive ? `
                 <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 18px; padding: 18px; margin-bottom: 16px;">
                     <div style="font-size: 13px; font-weight: 800; color: var(--text-main); margin-bottom: 10px;">
                         1. Hogyan gondolkodsz a repjegyárakról két járat között?
@@ -82,12 +93,14 @@
                         </div>
                     ` : ''}
                 </div>
+                ` : ''}
 
                 <!-- 2. MENETIDŐ SZITUÁCIÓ -->
+                ${isDurActive ? `
                 <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 18px; padding: 18px; margin-bottom: 16px; opacity: ${isDurUnlocked ? '1.0' : '0.45'}; pointer-events: ${isDurUnlocked ? 'auto' : 'none'}; filter: ${isDurUnlocked ? 'none' : 'grayscale(30%)'}; transition: all 0.3s ease;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                         <div style="font-size: 13px; font-weight: 800; color: var(--text-main);">2. Hogyan viszonyulsz a plusz utazási időhöz?</div>
-                        ${!isDurUnlocked ? '<span style="font-size: 11px; font-weight: 700; color: var(--text-muted);">Válaszd ki az 1. pontot a feloldáshoz</span>' : ''}
+                        ${!isDurUnlocked ? '<span style="font-size: 11px; font-weight: 700; color: var(--text-muted);">Válaszd ki az előző pontot a feloldáshoz</span>' : ''}
                     </div>
                     
                     <div class="dna-scenario-grid" style="margin-bottom: ${isDurChosen ? '12px' : '0'};">
@@ -130,12 +143,14 @@
                         </div>
                     ` : ''}
                 </div>
+                ` : ''}
 
                 <!-- 3. ÁTSZÁLLÁSOK SZITUÁCIÓ -->
+                ${isStopsActive ? `
                 <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 18px; padding: 18px; opacity: ${isStopsUnlocked ? '1.0' : '0.45'}; pointer-events: ${isStopsUnlocked ? 'auto' : 'none'}; filter: ${isStopsUnlocked ? 'none' : 'grayscale(30%)'}; transition: all 0.3s ease;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                         <div style="font-size: 13px; font-weight: 800; color: var(--text-main);">3. Hogyan viszonyulsz az átszálláshoz?</div>
-                        ${!isStopsUnlocked ? '<span style="font-size: 11px; font-weight: 700; color: var(--text-muted);">Válaszd ki a 2. pontot a feloldáshoz</span>' : ''}
+                        ${!isStopsUnlocked ? '<span style="font-size: 11px; font-weight: 700; color: var(--text-muted);">Válaszd ki az előző pontot a feloldáshoz</span>' : ''}
                     </div>
 
                     <div class="dna-scenario-grid" style="margin-bottom: ${isStopsChosen ? '12px' : '0'};">
@@ -166,6 +181,7 @@
                         </div>
                     ` : ''}
                 </div>
+                ` : ''}
             `;
         }
     };

@@ -8,14 +8,20 @@
     const DNAStayStep = {
         renderStayAHP(wizard, container) {
             const pairs = [
-                { id: 'price_vs_rating', name1: 'Ár / Éjszaka', name2: 'Vendégértékelés (Minőség)', desc: 'Kedvezőbb ár vagy magasabb vendégértékelés?' },
-                { id: 'price_vs_location', name1: 'Ár / Éjszaka', name2: 'Központi Elhelyezkedés', desc: 'Olcsóbb külvárosibb szállás vagy sétálóutcás belváros?' },
-                { id: 'price_vs_amenities', name1: 'Ár / Éjszaka', name2: 'Reggeli & Szolgáltatások', desc: 'Alacsonyabb szobaár vagy gazdag reggeli és wellness szolgáltatások?' },
-                { id: 'rating_vs_location', name1: 'Vendégértékelés', name2: 'Központi Elhelyezkedés', desc: 'Kiváló 9.0+ értékelés vagy köpésnyire lévő belváros?' },
-                { id: 'rating_vs_amenities', name1: 'Vendégértékelés', name2: 'Reggeli & Szolgáltatások', desc: 'Magas minőségi pontszám vagy extra ellátási csomag?' },
-                { id: 'location_vs_amenities', name1: 'Központi Elhelyezkedés', name2: 'Reggeli & Szolgáltatások', desc: 'Központi lokáció vagy kényelmi felszereltség a fontosabb?' }
+                { id: 'price_vs_rating', c1: 'price', c2: 'rating', name1: 'Ár / Éjszaka', name2: 'Vendégértékelés (Minőség)', desc: 'Kedvezőbb ár vagy magasabb vendégértékelés?' },
+                { id: 'price_vs_location', c1: 'price', c2: 'location', name1: 'Ár / Éjszaka', name2: 'Központi Elhelyezkedés', desc: 'Olcsóbb külvárosibb szállás vagy sétálóutcás belváros?' },
+                { id: 'price_vs_amenities', c1: 'price', c2: 'amenities', name1: 'Ár / Éjszaka', name2: 'Reggeli & Szolgáltatások', desc: 'Alacsonyabb szobaár vagy gazdag reggeli és wellness szolgáltatások?' },
+                { id: 'rating_vs_location', c1: 'rating', c2: 'location', name1: 'Vendégértékelés', name2: 'Központi Elhelyezkedés', desc: 'Kiváló 9.0+ értékelés vagy köpésnyire lévő belváros?' },
+                { id: 'rating_vs_amenities', c1: 'rating', c2: 'amenities', name1: 'Vendégértékelés', name2: 'Reggeli & Szolgáltatások', desc: 'Magas minőségi pontszám vagy extra ellátási csomag?' },
+                { id: 'location_vs_amenities', c1: 'location', c2: 'amenities', name1: 'Központi Elhelyezkedés', name2: 'Reggeli & Szolgáltatások', desc: 'Központi lokáció vagy kényelmi felszereltség a fontosabb?' }
             ];
-            wizard.renderPairwiseMatrix(container, '5. Lépés: Szállás Súlyozás (Páros Összehasonlítás)', 'Melyik szempont mennyire fontosabb számodra a szállások rangsorolásakor?', pairs, 'stay_ahp');
+            const criteriaList = [
+                { key: 'price', label: '💰 Ár / Éjszaka' },
+                { key: 'rating', label: '⭐ Vendégértékelés' },
+                { key: 'location', label: '📍 Központi Elhelyezkedés' },
+                { key: 'amenities', label: '☕ Reggeli & Szolgáltatások' }
+            ];
+            wizard.renderPairwiseMatrix(container, '5. Lépés: Szállás Súlyozás (Páros Összehasonlítás)', 'Jelöld be a fontos szempontokat és hangold be az egymáshoz viszonyított súlyukat:', pairs, 'stay_ahp', 'stay', criteriaList);
         },
 
         renderStayScenarios(wizard, container) {
@@ -24,18 +30,24 @@
             const sRating = state.stay_promethee.rating;
             const filters = state.stay_filters;
 
+            const active = state.active_criteria?.stay || ['price', 'rating', 'location', 'amenities'];
+            const isPriceActive = active.includes('price');
+            const isRatingActive = active.includes('rating');
+            const isLocActive = active.includes('location');
+
             const isPriceChosen = state.chosen_cards.stay_price !== null;
-            const isRatingUnlocked = state.unlocked.stay_rating || isPriceChosen;
+            const isRatingUnlocked = state.unlocked.stay_rating || (!isPriceActive || isPriceChosen);
             const isRatingChosen = state.chosen_cards.stay_rating !== null;
-            const isLocUnlocked = state.unlocked.stay_filters || isRatingChosen;
+            const isLocUnlocked = state.unlocked.stay_filters || (isRatingUnlocked && (!isRatingActive || isRatingChosen));
 
             container.innerHTML = `
                 <div style="margin-bottom: 18px;">
                     <h4 style="margin: 0 0 4px 0; font-size: 16.5px; font-weight: 800; color: var(--text-main);">6. Lépés: Szállás Döntési Helyzetek & Kategóriák</h4>
-                    <p style="margin: 0; font-size: 12.5px; color: var(--text-muted);">Válaszd ki a szállás döntési szabályait (Ár, Értékelés, Elhelyezkedés):</p>
+                    <p style="margin: 0; font-size: 12.5px; color: var(--text-muted);">A kiválasztott releváns szállás-szempontoknál finomhangold a döntési szabályokat:</p>
                 </div>
 
                 <!-- 1. SZÁLLÁS ÁR SZITUÁCIÓ -->
+                ${isPriceActive ? `
                 <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 18px; padding: 18px; margin-bottom: 16px;">
                     <div style="font-size: 13px; font-weight: 800; color: var(--text-main); margin-bottom: 10px;">
                         1. Hogyan viszonyulsz az éjszakánkénti szobaárhoz?
@@ -81,12 +93,14 @@
                         </div>
                     ` : ''}
                 </div>
+                ` : ''}
 
                 <!-- 2. VENDÉGÉRTÉKELÉS SZITUÁCIÓ -->
+                ${isRatingActive ? `
                 <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 18px; padding: 18px; margin-bottom: 16px; opacity: ${isRatingUnlocked ? '1.0' : '0.45'}; pointer-events: ${isRatingUnlocked ? 'auto' : 'none'}; filter: ${isRatingUnlocked ? 'none' : 'grayscale(30%)'}; transition: all 0.3s ease;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                         <div style="font-size: 13px; font-weight: 800; color: var(--text-main);">2. Hogyan viszonyulsz a vendégértékeléshez?</div>
-                        ${!isRatingUnlocked ? '<span style="font-size: 11px; font-weight: 700; color: var(--text-muted);">Válaszd ki az 1. pontot a feloldáshoz</span>' : ''}
+                        ${!isRatingUnlocked ? '<span style="font-size: 11px; font-weight: 700; color: var(--text-muted);">Válaszd ki az előző pontot a feloldáshoz</span>' : ''}
                     </div>
 
                     <div class="dna-scenario-grid" style="margin-bottom: ${isRatingChosen ? '12px' : '0'};">
@@ -129,14 +143,16 @@
                         </div>
                     ` : ''}
                 </div>
+                ` : ''}
 
                 <!-- 3. ELHELYEZKEDÉS & SZŰRŐK SZITUÁCIÓ -->
                 <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 18px; padding: 18px; opacity: ${isLocUnlocked ? '1.0' : '0.45'}; pointer-events: ${isLocUnlocked ? 'auto' : 'none'}; filter: ${isLocUnlocked ? 'none' : 'grayscale(30%)'}; transition: all 0.3s ease;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                         <div style="font-size: 13px; font-weight: 800; color: var(--text-main);">3. Elhelyezkedési és kategória preferenciák</div>
-                        ${!isLocUnlocked ? '<span style="font-size: 11px; font-weight: 700; color: var(--text-muted);">Válaszd ki a 2. pontot a feloldáshoz</span>' : ''}
+                        ${!isLocUnlocked ? '<span style="font-size: 11px; font-weight: 700; color: var(--text-muted);">Válaszd ki az előző pontot a feloldáshoz</span>' : ''}
                     </div>
 
+                    ${isLocActive ? `
                     <div class="dna-scenario-grid" style="margin-bottom: 14px;">
                         <div onclick="window.DecisionDNAInstance.selectScenario('stay_loc', 'A', 5)" style="cursor: pointer; padding: 12px; border-radius: 12px; border: 2px solid ${state.chosen_cards.stay_loc === 'A' ? 'var(--primary)' : 'var(--border-subtle)'}; background: ${state.chosen_cards.stay_loc === 'A' ? 'rgba(37, 99, 235, 0.08)' : 'var(--bg-card)'};">
                             <div style="font-weight: 800; font-size: 12px; color: var(--primary); margin-bottom: 4px;">A) Rugalmas lokáció</div>
@@ -148,6 +164,7 @@
                             <div style="font-size: 11.5px; color: var(--text-muted);">Kifejezetten sétálótávolságra lévő, frekventált vagy belvárosi szállást keresek.</div>
                         </div>
                     </div>
+                    ` : ''}
 
                     <!-- Minőségi Kategória & Slider -->
                     <div class="dna-scenario-grid" style="gap: 12px;">

@@ -205,7 +205,7 @@
             };
 
             const tempDiffs = state.destinations.map(d => {
-                const t = d.metrics?.temp_raw ?? d.metrics?.temp_celsius;
+                const t = d.metrics?.temp_avg ?? d.metrics?.temp_raw ?? d.metrics?.temp_celsius;
                 return (t !== null && t !== undefined) ? Math.abs(t - targetTemp) : null;
             });
             const flightPrices = state.destinations.map(d => d.metrics?.flight_price_raw || d.metrics?.flight_price_huf || null);
@@ -267,7 +267,7 @@
                 const m = dest.metrics || {};
 
                 // Relative evaluation for each metric:
-                const tempRaw = m.temp_raw ?? m.temp_celsius ?? null;
+                const tempRaw = m.temp_avg ?? m.temp_raw ?? m.temp_celsius ?? null;
                 const tempDiff = (tempRaw !== null && tempRaw !== undefined) ? Math.abs(tempRaw - targetTemp) : null;
                 const tempStyle = getRelativeStyle(tempDiff, tempStats, false); // Lower distance to target temp is better
 
@@ -280,90 +280,102 @@
                 const costRaw = m.daily_cost_raw_huf || ((m.daily_cost_raw || 35) * 400);
                 const costStyle = getRelativeStyle(costRaw, costStats, false); // Lower daily cost is better
 
-                const score = Math.round(dest.score || 85);
-                const scoreStyle = getRelativeStyle(score, scoreStats, true);
-
                 return `
-                    <div class="advisor-main-card dest-card-hover" style="background: var(--bg-surface); border: 1.5px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 22px; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.25s ease; position: relative;">
-                        <div>
-                            <!-- FEJLÉC & RANG -->
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px;">
-                                <div>
-                                    <span style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">#${dest.rank || (idx + 1)} Célállomás</span>
-                                    <h3 style="font-size: 20px; font-weight: 800; color: var(--text-main); margin: 2px 0 0;">${dest.name}</h3>
-                                    <div style="font-size: 13px; color: var(--text-secondary); font-weight: 500;">${dest.country}</div>
-                                </div>
-                                <div style="text-align: right; background: ${scoreStyle.bg}; padding: 7px 13px; border-radius: var(--radius-md); border: 1px solid ${scoreStyle.border}; flex-shrink: 0; margin-left: 12px;">
-                                    <div style="font-size: 18px; font-weight: 800; color: ${scoreStyle.color}; font-family: var(--font-mono);">${score}/100</div>
-                                    <div style="font-size: 10px; font-weight: 700; color: ${scoreStyle.color}; text-transform: uppercase; opacity: 0.85;">Illeszkedés</div>
-                                </div>
+                    <div class="planner-dest-card" style="background: var(--bg-surface); border: 1.5px solid var(--border-subtle); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; transition: all 0.2s ease;">
+                        
+                        <!-- KÉP ÉS OVERLAY SÁVOK -->
+                        <div style="position: relative; height: 180px; overflow: hidden; background: var(--bg-surface-subtle);">
+                            <img src="${dest.image || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=600&q=80'}" alt="${dest.name}" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=600&q=80'">
+                            <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(15, 23, 42, 0.75) 0%, transparent 60%);"></div>
+                            
+                            <!-- RANG ÉS PONTSZÁM -->
+                            <div style="position: absolute; top: 12px; left: 12px; display: flex; gap: 8px;">
+                                <span style="background: rgba(15, 23, 42, 0.75); color: #fff; font-weight: 800; font-size: 12px; padding: 4px 10px; border-radius: 20px; backdrop-filter: blur(6px); border: 1px solid rgba(255, 255, 255, 0.15);">
+                                    #${dest.rank || (idx + 1)} Választás
+                                </span>
                             </div>
 
-                            <!-- RELATIVE COLOR-CODED METRIC PILLS -->
+                            <div style="position: absolute; top: 12px; right: 12px;">
+                                <span style="background: var(--primary); color: #fff; font-weight: 800; font-size: 13px; padding: 4px 10px; border-radius: 20px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4); font-family: var(--font-mono);">
+                                    ★ ${dest.score || 85} pont
+                                </span>
+                            </div>
+
+                            <!-- VÁROS NÉV ÉS ORSZÁG -->
+                            <div style="position: absolute; bottom: 12px; left: 16px; right: 16px; color: #fff;">
+                                <h3 style="font-size: 20px; font-weight: 800; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">${dest.name}</h3>
+                                <div style="font-size: 12.5px; opacity: 0.9; text-shadow: 0 1px 2px rgba(0,0,0,0.5); font-weight: 500;">${dest.country} • ${dest.region || 'Európa'}</div>
+                            </div>
+                        </div>
+
+                        <!-- TARTALOM & METRIKÁK -->
+                        <div style="padding: 16px; flex: 1; display: flex; flex-direction: column;">
+                            
+                            <!-- RELATÍV PILL METRIKÁK -->
                             <div style="display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 14px;">
-                                <span style="${pillStyle(tempStyle)}" title="Hőmérséklet a célállomáson (eltérés a preferált ${targetTemp}°C-hoz)">
-                                    <span class="material-symbols-outlined" style="font-size: 14px;">wb_sunny</span>
-                                    ${m.temp_formatted || (tempRaw !== null ? Math.round(tempRaw) + '°C' : '~24°C')}
+                                <span style="${pillStyle(tempStyle)}" title="Várható nappali csúcshőmérséklet (Cél: ${targetTemp}°C)">
+                                    <span class="material-symbols-outlined" style="font-size: 14px;">thermostat</span>
+                                    ${m.temp_formatted ? m.temp_formatted.split('/')[0].trim() : `${tempRaw || 22}°C`}
                                 </span>
-                                <span style="${pillStyle(flightStyle)}" title="Repülőjegy ár a mezőny többi célállomásához viszonyítva">
+                                <span style="${pillStyle(flightStyle)}" title="Becsült retúr repülőjegy ára 1 főre">
                                     <span class="material-symbols-outlined" style="font-size: 14px;">flight</span>
-                                    ${m.flight_price_formatted || 'Kedvező ár'}
+                                    ${m.flight_price_per_person_formatted || '~45 000 Ft / fő'}
                                 </span>
-                                <span style="${pillStyle(safetyStyle)}" title="Biztonsági index a mezőnyhöz viszonyítva">
+                                <span style="${pillStyle(safetyStyle)}" title="Numbeo Közbiztonsági Index (0-100)">
                                     <span class="material-symbols-outlined" style="font-size: 14px;">shield</span>
-                                    Biztonság: ${safetyRaw !== null ? Math.round(safetyRaw) : 60}/100
+                                    Biztonság: ${Math.round(m.safety_raw || 65)}/100
                                 </span>
-                                <span style="${pillStyle(costStyle)}" title="Napi megélhetési költségek a többi úti célhoz mérve">
-                                    <span class="material-symbols-outlined" style="font-size: 14px;">payments</span>
-                                    ${m.daily_cost_huf_formatted || m.daily_cost_formatted || '~16 000 Ft/nap'}
+                                <span style="${pillStyle(costStyle)}" title="Helyi megélhetési és napi költési költség / fő">
+                                    <span class="material-symbols-outlined" style="font-size: 14px;">wallet</span>
+                                    ${m.daily_cost_formatted || '~25 000 Ft / nap'}
                                 </span>
                                 ${dest.subscores?.experience !== undefined ? `
-                                <span style="background: rgba(37, 99, 235, 0.08); color: var(--primary); border: 1px solid rgba(37, 99, 235, 0.25); padding: 5px 11px; border-radius: 8px; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700;" title="Aktivitási és élménygazdagsági index">
+                                <span style="background: rgba(37, 99, 235, 0.08); color: var(--primary); border: 1px solid rgba(37, 99, 235, 0.25); padding: 5px 11px; border-radius: 8px; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700;" title="Személyre szabott élmény-illeszkedési index">
                                     <span class="material-symbols-outlined" style="font-size: 14px;">attractions</span>
                                     Élmény: ${Math.round(dest.subscores.experience * 100)}/100
                                 </span>
                                 ` : ''}
                             </div>
 
-                            <!-- EXPERIENCE PROFILE BLOCK -->
+                            <!-- EXPERIENCE HIGHLIGHTS & VIBE BLOCK -->
                             ${dest.experience_profile ? `
-                            <div style="background: rgba(37, 99, 235, 0.04); border: 1px solid rgba(37, 99, 235, 0.16); border-radius: 12px; padding: 11px 14px; margin-bottom: 14px;">
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <div style="background: rgba(37, 99, 235, 0.04); border: 1px solid rgba(37, 99, 235, 0.16); border-radius: 12px; padding: 12px 14px; margin-bottom: 16px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                                     <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--primary); display: flex; align-items: center; gap: 5px;">
                                         <span class="material-symbols-outlined" style="font-size: 15px;">explore</span>
-                                        <span>Élmény & Aktivitás Kínálat</span>
+                                        <span>Élmények & Karakter</span>
                                     </span>
                                     <span style="font-size: 11.5px; font-weight: 800; font-family: var(--font-mono); color: var(--primary); background: var(--accent-glow); padding: 2px 8px; border-radius: 6px;">
-                                        ${dest.experience_profile.summary?.total_entities || 0}+ látnivaló
+                                        ${dest.experience_profile.total_experiences || dest.experience_profile.experience_vector?.total_entities || 20}+ élmény
                                     </span>
                                 </div>
-                                <div style="display: flex; flex-wrap: wrap; gap: 8px; font-size: 11.5px; color: var(--text-secondary); margin-bottom: 6px;">
-                                    <span>🚶 <strong>${dest.experience_profile.walkability?.walkability_density || 100}%</strong> gyalogosan bejárható</span>
-                                    <span>•</span>
-                                    <span>☔ <strong>${dest.experience_profile.weather_resilience?.rain_safe_count || 0}</strong> esőbiztos helyszín</span>
+                                ${dest.experience_profile.experience_vector?.top_dimensions && dest.experience_profile.experience_vector.top_dimensions.length > 0 ? `
+                                <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px;">
+                                    ${dest.experience_profile.experience_vector.top_dimensions.map(dim => {
+                                        const dimLabels = { culture: '🏛️ Kultúra', nature: '🌿 Természet', romance: '🍷 Romantika', food: '🍽️ Gasztronómia', beach: '🏖️ Strand', nightlife: '🍸 Éjszakai élet', adventure: '🧗 Kaland', authenticity: '🏺 Helyi élet' };
+                                        return `<span style="font-size: 11px; font-weight: 700; background: var(--bg-surface); border: 1px solid var(--border-subtle); padding: 2px 7px; border-radius: 6px; color: var(--text-secondary);">${dimLabels[dim] || dim}</span>`;
+                                    }).join('')}
                                 </div>
-                                ${dest.experience_profile.highlights && dest.experience_profile.highlights.length > 0 ? `
-                                <div style="font-size: 11px; color: var(--text-muted); line-height: 1.4;">
-                                    <strong style="color: var(--text-main);">Kiemelt:</strong> ${dest.experience_profile.highlights.slice(0, 3).map(h => h.name).join(' · ')}
+                                ` : ''}
+                                ${dest.experience_profile.top_experiences_summary && dest.experience_profile.top_experiences_summary.length > 0 ? `
+                                <div style="font-size: 11.5px; color: var(--text-secondary); line-height: 1.45;">
+                                    <strong style="color: var(--text-main);">Kiemelt látnivalók:</strong> ${dest.experience_profile.top_experiences_summary.slice(0, 3).map(h => h.canonical_name || h.name).join(' · ')}
                                 </div>
                                 ` : ''}
                             </div>
                             ` : ''}
-
-                            <!-- INDOKLÁS -->
-                            <div style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.55; margin-bottom: 18px; background: var(--bg-surface-subtle); padding: 10px 13px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
-                                ${dest.explanation || 'Kiváló időjárás, pezsgő kulturális élmények és kedvező megélhetési költségek.'}
-                            </div>
                         </div>
 
                         <!-- CTA BUTTON -->
-                        <button type="button" class="btn btn-primary" onclick="Wizard.selectDestination(${idx})" style="width: 100%; padding: 12px 16px; font-size: 13.5px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; border-radius: var(--radius-md);">
-                            <span>${dest.name} — Járatok keresése</span>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                                <polyline points="12 5 19 12 12 19"></polyline>
-                            </svg>
-                        </button>
+                        <div style="padding: 0 16px 16px 16px;">
+                            <button type="button" class="btn btn-primary" onclick="Wizard.selectDestination(${idx})" style="width: 100%; padding: 12px 16px; font-size: 13.5px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; border-radius: var(--radius-md);">
+                                <span>${dest.name} — Járatok keresése</span>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    <polyline points="12 5 19 12 12 19"></polyline>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 `;
             }).join('');
@@ -382,8 +394,14 @@
             state.stays = [];
             state.selectedStay = null;
 
+            const cityClean = (dest.city || dest.name || '').toUpperCase().replace(/\s+/g, '_');
+            const countryCode = (dest.country ? dest.country.slice(0, 2) : 'EU').toUpperCase();
+            const destId = dest.id || dest.dest_id || `${cityClean}_${countryCode}`;
+
             if (window.TripCart) {
                 window.TripCart.setDestination({
+                    id: destId,
+                    dest_id: destId,
                     name: dest.name,
                     city: dest.city || dest.name,
                     country: dest.country,

@@ -17,7 +17,9 @@
             // 1. Dátumok & éjszakák
             const outDate = (f?.out_date || f?.out_dep_time || state.intake.exact_out_date || '').split('T')[0];
             const inDate = (f?.in_date || f?.in_dep_time || state.intake.exact_in_date || '').split('T')[0];
-            const nights = f?.exact_stay_nights || f?.stay_days || f?.nights || s?.nights || state.intake.duration || 7;
+            const nights = (window.calculateExactFlightNights && f) 
+                ? window.calculateExactFlightNights(f, state.intake.duration || 7) 
+                : (f?.exact_stay_nights || f?.stay_days || f?.nights || s?.nights || state.intake.duration || 7);
             const adults = state.intake.adults || cartTrip?.input?.adults || 2;
 
             const subEl = document.getElementById('summarySubtitle');
@@ -170,7 +172,20 @@
             }
 
             // 6. Napi élmény útiterv betöltése és renderelése
-            const destId = d?.dest_id || d?.id || 'IT_BARI';
+            const city = (d?.city || d?.name || '').toLowerCase();
+            let destId = d?.dest_id || d?.id;
+            if (!destId || (destId === 'IT_BARI' && !city.includes('bari'))) {
+                if (city.includes('bukarest') || city.includes('bucharest')) destId = 'BUCHAREST_RO';
+                else if (city.includes('róma') || city.includes('rome')) destId = 'ROME_IT';
+                else if (city.includes('barcelona')) destId = 'BARCELONA_ES';
+                else if (city.includes('párizs') || city.includes('paris')) destId = 'PARIS_FR';
+                else if (city.includes('berlin')) destId = 'BERLIN_DE';
+                else if (city.includes('prága') || city.includes('prague')) destId = 'PRAGUE_CZ';
+                else if (city.includes('bécs') || city.includes('vienna')) destId = 'VIENNA_AT';
+                else if (city.includes('bari')) destId = 'IT_BARI';
+                else destId = `${(d?.city || d?.name || 'DEST').toUpperCase().replace(/\s+/g, '_')}_${(d?.country ? d.country.slice(0, 2) : 'EU').toUpperCase()}`;
+            }
+
             const persona = state.intake.dest_promethee?.experience?.persona || 'culture_aficionado';
             const personaSelect = document.getElementById('itineraryPersonaSelect');
             if (personaSelect) {
@@ -184,11 +199,9 @@
             if (!box) return;
 
             let formattedDestId = String(destId).toUpperCase();
-            if (!formattedDestId.includes('_') && formattedDestId.length > 3) {
-                if (formattedDestId.includes('BARI')) formattedDestId = 'IT_BARI';
-                else if (formattedDestId.includes('ROM')) formattedDestId = 'IT_ROME';
-                else formattedDestId = 'IT_BARI';
-            }
+            if (formattedDestId.includes('BUCHAREST') || formattedDestId.includes('BUKAREST')) formattedDestId = 'BUCHAREST_RO';
+            else if (formattedDestId.includes('BARI')) formattedDestId = 'IT_BARI';
+            else if (formattedDestId.includes('ROME') || formattedDestId.includes('ROMA')) formattedDestId = 'ROME_IT';
 
             box.innerHTML = `
                 <div style="text-align: center; padding: 28px; color: var(--text-muted); font-size: 13.5px;">
@@ -238,9 +251,25 @@
 
         reloadItineraryWithPersona(newPersona) {
             const state = window.PlannerState;
-            const d = state.selectedDest || (window.TripCart ? window.TripCart.getTrip()?.destination : null);
-            const nights = state.intake.duration || 3;
-            const destId = d?.dest_id || d?.id || 'IT_BARI';
+            const cartTrip = window.TripCart ? window.TripCart.getTrip() : null;
+            const f = state.selectedFlight || cartTrip?.flight?.selected_flight;
+            const d = state.selectedDest || cartTrip?.destination;
+            const nights = (window.calculateExactFlightNights && f) 
+                ? window.calculateExactFlightNights(f, state.intake.duration || 3) 
+                : (f?.exact_stay_nights || f?.stay_days || f?.nights || state.intake.duration || 3);
+            const city = (d?.city || d?.name || '').toLowerCase();
+            let destId = d?.dest_id || d?.id;
+            if (!destId || (destId === 'IT_BARI' && !city.includes('bari'))) {
+                if (city.includes('bukarest') || city.includes('bucharest')) destId = 'BUCHAREST_RO';
+                else if (city.includes('róma') || city.includes('rome')) destId = 'ROME_IT';
+                else if (city.includes('barcelona')) destId = 'BARCELONA_ES';
+                else if (city.includes('párizs') || city.includes('paris')) destId = 'PARIS_FR';
+                else if (city.includes('berlin')) destId = 'BERLIN_DE';
+                else if (city.includes('prága') || city.includes('prague')) destId = 'PRAGUE_CZ';
+                else if (city.includes('bécs') || city.includes('vienna')) destId = 'VIENNA_AT';
+                else if (city.includes('bari')) destId = 'IT_BARI';
+                else destId = `${(d?.city || d?.name || 'DEST').toUpperCase().replace(/\s+/g, '_')}_${(d?.country ? d.country.slice(0, 2) : 'EU').toUpperCase()}`;
+            }
             this.loadItinerary(destId, nights, newPersona);
         },
 

@@ -214,7 +214,23 @@
                 adults: adults,
                 phi_net: data.phi_net || null,
                 rank: data.rank || null,
-                exact_stay_nights: data.stay_days || data.exact_stay_nights || trip.input.duration_days || 7,
+                exact_stay_nights: (function() {
+                    const outDateStr = (data.out_date || data.out_dep_time || '').split('T')[0];
+                    const inDateStr = (data.in_date || data.in_dep_time || '').split('T')[0];
+                    if (outDateStr && inDateStr) {
+                        const p1 = outDateStr.split('-').map(Number);
+                        const p2 = inDateStr.split('-').map(Number);
+                        if (p1.length === 3 && p2.length === 3) {
+                            const utc1 = Date.UTC(p1[0], p1[1] - 1, p1[2]);
+                            const utc2 = Date.UTC(p2[0], p2[1] - 1, p2[2]);
+                            const diffDays = Math.round((utc2 - utc1) / (1000 * 60 * 60 * 24));
+                            if (diffDays > 0) return diffDays;
+                        }
+                    }
+                    if (data.exact_stay_nights && Number(data.exact_stay_nights) > 0) return Number(data.exact_stay_nights);
+                    if (data.stay_days && Number(data.stay_days) > 0) return Number(data.stay_days);
+                    return trip.input.duration_days || 7;
+                })(),
                 booking_token: data.booking_token || null
             };
 

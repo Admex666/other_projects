@@ -33,6 +33,27 @@
         return `${h}ó ${m}p`;
     }
 
+    function calculateExactFlightNights(fl, fallback = 7) {
+        if (!fl) return fallback;
+        const outDateStr = (fl.out_dep_time || fl.out_arr_time || fl.out_date || '').split('T')[0].split(' ')[0];
+        const inDateStr = (fl.in_dep_time || fl.in_arr_time || fl.in_date || '').split('T')[0].split(' ')[0];
+        if (outDateStr && inDateStr) {
+            const p1 = outDateStr.split('-').map(Number);
+            const p2 = inDateStr.split('-').map(Number);
+            if (p1.length === 3 && p2.length === 3) {
+                const utc1 = Date.UTC(p1[0], p1[1] - 1, p1[2]);
+                const utc2 = Date.UTC(p2[0], p2[1] - 1, p2[2]);
+                const diffDays = Math.round((utc2 - utc1) / (1000 * 60 * 60 * 24));
+                if (diffDays > 0) return diffDays;
+            }
+        }
+        if (fl.exact_stay_nights && Number(fl.exact_stay_nights) > 0) return Number(fl.exact_stay_nights);
+        if (fl.stay_nights && Number(fl.stay_nights) > 0) return Number(fl.stay_nights);
+        if (fl.stay_days && Number(fl.stay_days) > 0) return Number(fl.stay_days);
+        return fallback;
+    }
+    window.calculateExactFlightNights = calculateExactFlightNights;
+
     function getPercentileStyle(val, minVal, maxVal, lowerIsBetter = true) {
         if (minVal === maxVal || isNaN(val)) {
             return { bg: 'rgba(16, 185, 129, 0.12)', text: '#059669', border: 'rgba(16, 185, 129, 0.25)', label: 'Kiváló' };
@@ -60,7 +81,12 @@
             if (fCity) fCity.innerText = destName;
             if (fDetails) fDetails.innerText = `${state.intake.origin} → ${destName} • ${state.intake.adults} felnőtt • ${state.intake.duration} nap`;
 
-            const cacheKey = `fl_${destName}_${state.intake.origin}_${state.intake.date_mode}_${state.intake.exact_out_date}_${state.intake.exact_in_date}_${state.intake.out_from}_${state.intake.out_to}_${state.intake.in_to}_${state.intake.min_stay}_${state.intake.max_stay}_${state.intake.adults}_${state.intake.flight_direct_only}_${state.intake.flight_max_stops}_${state.intake.preferred_departure_time}_${JSON.stringify(state.intake.ahp_weights || {})}_${JSON.stringify(state.intake.promethee_params || {})}`;
+            const prefOutDays = state.intake.preferred_out_days || [];
+            const prefInDays = state.intake.preferred_in_days || [];
+            const prefOutTime = state.intake.preferred_out_time || document.getElementById('mod_flight_out_time')?.value || null;
+            const prefInTime = state.intake.preferred_in_time || document.getElementById('mod_flight_in_time')?.value || null;
+
+            const cacheKey = `fl_${destName}_${state.intake.origin}_${state.intake.date_mode}_${state.intake.exact_out_date}_${state.intake.exact_in_date}_${state.intake.out_from}_${state.intake.out_to}_${state.intake.in_to}_${state.intake.min_stay}_${state.intake.max_stay}_${state.intake.adults}_${state.intake.flight_direct_only}_${state.intake.flight_max_stops}_${state.intake.preferred_departure_time}_${prefOutDays.join(',')}_${prefInDays.join(',')}_${prefOutTime}_${prefInTime}_${JSON.stringify(state.intake.ahp_weights || {})}_${JSON.stringify(state.intake.promethee_params || {})}`;
 
             if (!forceRefresh) {
                 const cached = state.getSessionCache(cacheKey);
@@ -106,6 +132,10 @@
                         max_stops: state.intake.flight_max_stops,
                         departure_pref: state.intake.preferred_departure_time,
                         max_duration_h: state.intake.max_flight_duration_h,
+                        preferred_out_days: prefOutDays,
+                        preferred_in_days: prefInDays,
+                        preferred_out_time: prefOutTime,
+                        preferred_in_time: prefInTime,
                         weights: state.intake.ahp_weights,
                         promethee_params: state.intake.promethee_params,
                         dummy_mode: Boolean(state.dummy_mode)
@@ -168,14 +198,16 @@
                 const inArrAirport = fl.in_arr_airport || outDepAirport;
 
                 const airline = fl.out_carriers || fl.out_airline || fl.in_carriers || fl.in_airline || 'Légitársaság';
-                const nights = fl.stay_days || fl.exact_stay_nights || state.intake.duration || 7;
+                const nights = calculateExactFlightNights(fl, state.intake.duration || 7);
+                fl.stay_days = nights;
+                fl.exact_stay_nights = nights;
                 const priceTotal = fl.total_price_huf || fl.price_total_huf || fl.price_huf || 0;
                 const adults = Math.max(1, state.intake.adults || 1);
                 const pricePerPerson = Math.round(priceTotal / adults);
                 const relevancePct = fl.relevance_pct || Math.round((fl.phi_net !== undefined ? (fl.phi_net + 1) / 2 : 0.85) * 100);
                 const isTop = idx === 0;
-                const stayDiff = fl.stay_diff_days !== undefined ? fl.stay_diff_days : 0;
-                const stayFitText = stayDiff === 0 ? 'Tökéletes időtartam' : `±${stayDiff} nap eltérés`;
+                const stayDiff = fl.stay_diff_days !== undefined ? Math.round(fl.stay_diff_days) : 0;
+                const stayFitText = stayDiff === 0 ? 'Tökéletes időtartam' : (stayDiff > 0 ? `+${stayDiff} nap eltérés` : `${stayDiff} nap eltérés`);
 
                 const totalDur = (fl.out_duration_h || 0) + (fl.in_duration_h || 0);
                 const priceHeatmap = getPercentileStyle(priceTotal, minPrice, maxPrice, true);
@@ -311,7 +343,10 @@
 
             const outDate = (fl.out_dep_time || fl.out_date || '').split('T')[0];
             const inDate = (fl.in_dep_time || fl.in_date || '').split('T')[0];
-            const nights = fl.stay_days || fl.exact_stay_nights || state.intake.duration;
+
+            const nights = calculateExactFlightNights(fl, state.intake.duration || 7);
+            fl.stay_days = nights;
+            fl.exact_stay_nights = nights;
 
             if (window.TripCart) {
                 const flightPrice = fl.total_price_huf || fl.price_total_huf || fl.price_huf || 0;
@@ -344,6 +379,10 @@
             if (!state) return;
             const directCb = document.getElementById('mod_direct_only');
             if (directCb) state.intake.flight_direct_only = directCb.checked;
+            const outTimeInp = document.getElementById('mod_flight_out_time');
+            if (outTimeInp && outTimeInp.value) state.intake.preferred_out_time = outTimeInp.value;
+            const inTimeInp = document.getElementById('mod_flight_in_time');
+            if (inTimeInp && inTimeInp.value) state.intake.preferred_in_time = inTimeInp.value;
 
             state.selectedFlight = null;
             state.stays = [];

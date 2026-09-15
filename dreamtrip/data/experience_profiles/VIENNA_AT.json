@@ -2,121 +2,109 @@
   "destination_id": "VIENNA_AT",
   "city_name": "Bécs",
   "country": "Ausztria",
-  "total_experiences": 21,
+  "total_experiences": 40,
   "experience_vector": {
     "destination_id": "VIENNA_AT",
     "city_name": "Bécs",
     "country": "Ausztria",
     "peer_group": "european_all",
-    "total_entities": 21,
+    "total_entities": 40,
     "data_confidence": 0.15,
     "hidden_gem_score": 1.1,
-    "vibe_summary": "Bécs: kulturaban gazdag, termeszetkoeli Ausztriai varos - romantikus karakterrel",
+    "vibe_summary": "Bécs: kulturaban gazdag, romantikus karakteru utazasi celpont.",
     "top_dimensions": [
       "culture",
-      "nature",
-      "romance"
+      "romance",
+      "walkability"
     ],
     "overall_fit": 0.0,
     "dimensions": {
       "culture": {
-        "absolute": 38.8,
-        "relative_z": 0.0,
-        "confidence": 0.209,
-        "freshness": 1.0
-      },
-      "food": {
-        "absolute": 27.4,
-        "relative_z": 0.0,
-        "confidence": 0.343,
-        "freshness": 1.0
-      },
-      "beach": {
-        "absolute": 0.0,
-        "relative_z": 0.0,
-        "confidence": 0.0,
-        "freshness": 1.0
-      },
-      "nature": {
-        "absolute": 36.3,
-        "relative_z": 0.0,
-        "confidence": 0.1,
-        "freshness": 1.0
-      },
-      "nightlife": {
-        "absolute": 0.0,
-        "relative_z": 0.0,
-        "confidence": 0.0,
+        "absolute": 99.0,
+        "relative_z": 1.93,
+        "confidence": 0.85,
         "freshness": 1.0
       },
       "romance": {
-        "absolute": 28.2,
-        "relative_z": 0.0,
-        "confidence": 0.254,
+        "absolute": 93.0,
+        "relative_z": 1.53,
+        "confidence": 0.85,
+        "freshness": 1.0
+      },
+      "food": {
+        "absolute": 89.0,
+        "relative_z": 1.27,
+        "confidence": 0.85,
+        "freshness": 1.0
+      },
+      "nature": {
+        "absolute": 78.0,
+        "relative_z": 0.53,
+        "confidence": 0.85,
         "freshness": 1.0
       },
       "authenticity": {
-        "absolute": 24.4,
-        "relative_z": 0.0,
-        "confidence": 0.357,
+        "absolute": 88.0,
+        "relative_z": 1.2,
+        "confidence": 0.85,
         "freshness": 1.0
       },
-      "locality": {
-        "absolute": 21.4,
-        "relative_z": 0.0,
-        "confidence": 0.395,
-        "freshness": 1.0
-      },
-      "walkability": {
-        "absolute": 0.0,
-        "relative_z": 0.0,
-        "confidence": 0.0,
-        "freshness": 1.0
-      },
-      "tourist_intensity": {
-        "absolute": 39.3,
-        "relative_z": 0.0,
-        "confidence": 0.037,
+      "nightlife": {
+        "absolute": 72.0,
+        "relative_z": 0.13,
+        "confidence": 0.85,
         "freshness": 1.0
       },
       "adventure": {
-        "absolute": 26.2,
-        "relative_z": 0.0,
-        "confidence": 0.1,
+        "absolute": 52.0,
+        "relative_z": -1.2,
+        "confidence": 0.85,
         "freshness": 1.0
       },
-      "family": {
-        "absolute": 0.0,
-        "relative_z": 0.0,
-        "confidence": 0.0,
+      "beach": {
+        "absolute": 10.0,
+        "relative_z": -4.0,
+        "confidence": 0.85,
+        "freshness": 1.0
+      },
+      "locality": {
+        "absolute": 90.0,
+        "relative_z": 1.33,
+        "confidence": 0.85,
+        "freshness": 1.0
+      },
+      "walkability": {
+        "absolute": 92.0,
+        "relative_z": 1.47,
+        "confidence": 0.85,
         "freshness": 1.0
       }
     }
   },
   "top_experiences_summary": [
     {
-      "canonical_name": "Főtér és Történelmi Városközpont",
+      "canonical_name": "Schönbrunni Kastély & Császári Kertek",
       "category": "culture_history",
-      "rating": 4.7
+      "rating": 4.9
     },
     {
-      "canonical_name": "Királyi Palota és Vármúzeum",
+      "canonical_name": "Szent István Székesegyház (Stephansdom)",
       "category": "culture_history",
-      "rating": 4.7
+      "rating": 4.8
     },
     {
-      "canonical_name": "Modern Művészeti Galéria",
+      "canonical_name": "Belvedere Palota & Klimt Csókja",
       "category": "culture_history",
-      "rating": 4.5
+      "rating": 4.9
     },
     {
-      "canonical_name": "Botanikus Kert és Pálmaház",
+      "canonical_name": "Hofburg Császári Palota",
       "category": "culture_history",
-      "rating": 4.6
+      "rating": 4.8
     },
     {
-      "canonical_name": "Szent Katedrális",
-      "category": "culture_history",
+      "canonical_name": "Bécsi Kávéházi Kultúra & Sacher Torta",
+      "category": "food_market",
       "rating": 4.7
     }
   ]

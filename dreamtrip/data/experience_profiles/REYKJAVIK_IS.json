@@ -2,122 +2,110 @@
   "destination_id": "REYKJAVIK_IS",
   "city_name": "Reykjavík",
   "country": "Izland",
-  "total_experiences": 21,
+  "total_experiences": 30,
   "experience_vector": {
     "destination_id": "REYKJAVIK_IS",
     "city_name": "Reykjavík",
     "country": "Izland",
     "peer_group": "european_all",
-    "total_entities": 21,
+    "total_entities": 30,
     "data_confidence": 0.15,
     "hidden_gem_score": 1.1,
-    "vibe_summary": "Reykjavík: kulturaban gazdag, termeszetkoeli Izlandi varos - romantikus karakterrel",
+    "vibe_summary": "Reykjavík: termeszetkozeli, izgalmas kalandlehetosegeket kinalo utazasi celpont.",
     "top_dimensions": [
-      "culture",
       "nature",
-      "romance"
+      "adventure",
+      "authenticity"
     ],
     "overall_fit": 0.0,
     "dimensions": {
-      "culture": {
-        "absolute": 38.7,
-        "relative_z": 0.0,
-        "confidence": 0.209,
-        "freshness": 1.0
-      },
-      "food": {
-        "absolute": 27.4,
-        "relative_z": 0.0,
-        "confidence": 0.343,
-        "freshness": 1.0
-      },
-      "beach": {
-        "absolute": 0.0,
-        "relative_z": 0.0,
-        "confidence": 0.0,
-        "freshness": 1.0
-      },
       "nature": {
-        "absolute": 36.1,
-        "relative_z": 0.0,
-        "confidence": 0.1,
-        "freshness": 1.0
-      },
-      "nightlife": {
-        "absolute": 0.0,
-        "relative_z": 0.0,
-        "confidence": 0.0,
-        "freshness": 1.0
-      },
-      "romance": {
-        "absolute": 28.1,
-        "relative_z": 0.0,
-        "confidence": 0.254,
-        "freshness": 1.0
-      },
-      "authenticity": {
-        "absolute": 24.4,
-        "relative_z": 0.0,
-        "confidence": 0.357,
-        "freshness": 1.0
-      },
-      "locality": {
-        "absolute": 21.4,
-        "relative_z": 0.0,
-        "confidence": 0.395,
-        "freshness": 1.0
-      },
-      "walkability": {
-        "absolute": 0.0,
-        "relative_z": 0.0,
-        "confidence": 0.0,
-        "freshness": 1.0
-      },
-      "tourist_intensity": {
-        "absolute": 39.2,
-        "relative_z": 0.0,
-        "confidence": 0.037,
+        "absolute": 99.0,
+        "relative_z": 1.93,
+        "confidence": 0.85,
         "freshness": 1.0
       },
       "adventure": {
-        "absolute": 26.1,
-        "relative_z": 0.0,
-        "confidence": 0.1,
+        "absolute": 96.0,
+        "relative_z": 1.73,
+        "confidence": 0.85,
         "freshness": 1.0
       },
-      "family": {
-        "absolute": 0.0,
-        "relative_z": 0.0,
-        "confidence": 0.0,
+      "romance": {
+        "absolute": 86.0,
+        "relative_z": 1.07,
+        "confidence": 0.85,
+        "freshness": 1.0
+      },
+      "authenticity": {
+        "absolute": 88.0,
+        "relative_z": 1.2,
+        "confidence": 0.85,
+        "freshness": 1.0
+      },
+      "culture": {
+        "absolute": 75.0,
+        "relative_z": 0.33,
+        "confidence": 0.85,
+        "freshness": 1.0
+      },
+      "food": {
+        "absolute": 78.0,
+        "relative_z": 0.53,
+        "confidence": 0.85,
+        "freshness": 1.0
+      },
+      "nightlife": {
+        "absolute": 72.0,
+        "relative_z": 0.13,
+        "confidence": 0.85,
+        "freshness": 1.0
+      },
+      "beach": {
+        "absolute": 20.0,
+        "relative_z": -3.33,
+        "confidence": 0.85,
+        "freshness": 1.0
+      },
+      "locality": {
+        "absolute": 85.0,
+        "relative_z": 1.0,
+        "confidence": 0.85,
+        "freshness": 1.0
+      },
+      "walkability": {
+        "absolute": 80.0,
+        "relative_z": 0.67,
+        "confidence": 0.85,
         "freshness": 1.0
       }
     }
   },
   "top_experiences_summary": [
     {
-      "canonical_name": "Főtér és Történelmi Városközpont",
-      "category": "culture_history",
-      "rating": 4.6
+      "canonical_name": "Kék Lagúna Geotermikus Gyógyfürdő",
+      "category": "nature_viewpoint",
+      "rating": 4.9
     },
     {
-      "canonical_name": "Királyi Palota és Vármúzeum",
+      "canonical_name": "Hallgrímskirkja Katedrális & Kilátó",
+      "category": "culture_history",
+      "rating": 4.8
+    },
+    {
+      "canonical_name": "Arany Körút (Gullfoss & Geysir)",
+      "category": "nature_viewpoint",
+      "rating": 4.9
+    },
+    {
+      "canonical_name": "Harpa Koncertpalota & Régi Kikötő",
       "category": "culture_history",
       "rating": 4.7
     },
     {
-      "canonical_name": "Modern Művészeti Galéria",
-      "category": "culture_history",
-      "rating": 4.4
-    },
-    {
-      "canonical_name": "Botanikus Kert és Pálmaház",
-      "category": "culture_history",
-      "rating": 4.5
-    },
-    {
-      "canonical_name": "Szent Katedrális",
-      "category": "culture_history",
-      "rating": 4.7
+      "canonical_name": "Északi Fény (Aurora Borealis) Szafari",
+      "category": "nature_viewpoint",
+      "rating": 5.0
     }
   ]
 }

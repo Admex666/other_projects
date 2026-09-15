@@ -8,14 +8,20 @@
     const DNADestStep = {
         renderDestAHP(wizard, container) {
             const pairs = [
-                { id: 'total_cost_vs_weather', name1: 'Teljes Költség', name2: 'Klíma / Időjárás', desc: 'Olcsóbb utazás vagy garantáltan kellemes időjárás?' },
-                { id: 'total_cost_vs_safety', name1: 'Teljes Költség', name2: 'Közbiztonság', desc: 'Alacsonyabb összköltség vagy kiemelkedő biztonsági index?' },
-                { id: 'total_cost_vs_experience', name1: 'Teljes Költség', name2: 'Élmények & Látnivalók', desc: 'Alacsonyabb költség vagy gazdag látnivaló- és élménykínálat?' },
-                { id: 'weather_vs_safety', name1: 'Klíma / Időjárás', name2: 'Közbiztonság', desc: 'Ideális időjárás vagy a maximális biztonság a fontosabb?' },
-                { id: 'weather_vs_experience', name1: 'Klíma / Időjárás', name2: 'Élmények & Látnivalók', desc: 'Tökéletes klíma és napsütés vagy világhírű látnivalók és programok?' },
-                { id: 'safety_vs_experience', name1: 'Közbiztonság', name2: 'Élmények & Látnivalók', desc: 'Maximális nyugalom/biztonság vagy nyüzsgő, élményekkel teli nagyváros?' }
+                { id: 'total_cost_vs_weather', c1: 'total_cost', c2: 'weather', name1: 'Teljes Költség', name2: 'Klíma / Időjárás', desc: 'Olcsóbb utazás vagy garantáltan kellemes időjárás?' },
+                { id: 'total_cost_vs_safety', c1: 'total_cost', c2: 'safety', name1: 'Teljes Költség', name2: 'Közbiztonság', desc: 'Alacsonyabb összköltség vagy kiemelkedő biztonsági index?' },
+                { id: 'total_cost_vs_experience', c1: 'total_cost', c2: 'experience', name1: 'Teljes Költség', name2: 'Élmények & Látnivalók', desc: 'Alacsonyabb költség vagy gazdag látnivaló- és élménykínálat?' },
+                { id: 'weather_vs_safety', c1: 'weather', c2: 'safety', name1: 'Klíma / Időjárás', name2: 'Közbiztonság', desc: 'Ideális időjárás vagy a maximális biztonság a fontosabb?' },
+                { id: 'weather_vs_experience', c1: 'weather', c2: 'experience', name1: 'Klíma / Időjárás', name2: 'Élmények & Látnivalók', desc: 'Tökéletes klíma és napsütés vagy világhírű látnivalók és programok?' },
+                { id: 'safety_vs_experience', c1: 'safety', c2: 'experience', name1: 'Közbiztonság', name2: 'Élmények & Látnivalók', desc: 'Maximális nyugalom/biztonság vagy nyüzsgő, élményekkel teli nagyváros?' }
             ];
-            wizard.renderPairwiseMatrix(container, '1. Lépés: Célállomás Súlyozás (Páros Összehasonlítás)', 'Melyik szempont mennyire fontosabb számodra a desztináció kiválasztásakor?', pairs, 'dest_ahp');
+            const criteriaList = [
+                { key: 'total_cost', label: '💰 Költség / Büdzsé' },
+                { key: 'weather', label: '☀️ Klíma / Időjárás' },
+                { key: 'safety', label: '🛡️ Közbiztonság' },
+                { key: 'experience', label: '🏛️ Élmények & Látnivalók' }
+            ];
+            wizard.renderPairwiseMatrix(container, '1. Lépés: Célállomás Súlyozás (Páros Összehasonlítás)', 'Válaszd ki a releváns szempontokat, majd finomhangold a relatív fontosságukat:', pairs, 'dest_ahp', 'dest', criteriaList);
         },
 
         renderDestScenarios(wizard, container) {
@@ -24,21 +30,28 @@
             const cTemp = state.dest_promethee.temp;
             const cSafe = state.dest_promethee.safety;
 
+            const active = state.active_criteria?.dest || ['total_cost', 'weather', 'safety', 'experience'];
+            const isCostActive = active.includes('total_cost');
+            const isTempActive = active.includes('weather');
+            const isSafeActive = active.includes('safety');
+            const isExpActive = active.includes('experience');
+
             const isCostChosen = state.chosen_cards.dest_cost !== null;
-            const isTempUnlocked = state.unlocked.dest_temp || isCostChosen;
+            const isTempUnlocked = state.unlocked.dest_temp || (!isCostActive || isCostChosen);
             const isTempChosen = state.chosen_cards.dest_temp !== null;
-            const isSafeUnlocked = state.unlocked.dest_safety || isTempChosen;
+            const isSafeUnlocked = state.unlocked.dest_safety || (isTempUnlocked && (!isTempActive || isTempChosen));
             const isSafeChosen = state.chosen_cards.dest_safety !== null;
-            const isExpUnlocked = state.unlocked.dest_exp || isSafeChosen;
+            const isExpUnlocked = state.unlocked.dest_exp || (isSafeUnlocked && (!isSafeActive || isSafeChosen));
             const isExpChosen = state.chosen_cards.dest_exp !== null;
 
             container.innerHTML = `
                 <div style="margin-bottom: 18px;">
                     <h4 style="margin: 0 0 4px 0; font-size: 16.5px; font-weight: 800; color: var(--text-main);">2. Lépés: Célállomás Döntési Helyzetek</h4>
-                    <p style="margin: 0; font-size: 12.5px; color: var(--text-muted);">Minden kritériumnál válaszd ki a döntési stílusodat (A vagy B), majd finomhangold a mondatot:</p>
+                    <p style="margin: 0; font-size: 12.5px; color: var(--text-muted);">A kiválasztott releváns kritériumoknál válaszd ki a döntési stílusodat (A vagy B):</p>
                 </div>
 
                 <!-- 1. KÖLTSÉG SZITUÁCIÓ -->
+                ${isCostActive ? `
                 <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 18px; padding: 18px; margin-bottom: 16px;">
                     <div style="font-size: 13px; font-weight: 800; color: var(--text-main); margin-bottom: 10px;">
                         1. Hogyan gondolkodsz az úti cél összköltségéről?
@@ -84,12 +97,14 @@
                         </div>
                     ` : ''}
                 </div>
+                ` : ''}
 
                 <!-- 2. HŐMÉRSÉKLET SZITUÁCIÓ -->
+                ${isTempActive ? `
                 <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 18px; padding: 18px; margin-bottom: 16px; opacity: ${isTempUnlocked ? '1.0' : '0.45'}; pointer-events: ${isTempUnlocked ? 'auto' : 'none'}; filter: ${isTempUnlocked ? 'none' : 'grayscale(30%)'}; transition: all 0.3s ease;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                         <div style="font-size: 13px; font-weight: 800; color: var(--text-main);">2. Mennyire vagy szigorú az időjárással?</div>
-                        ${!isTempUnlocked ? '<span style="font-size: 11px; font-weight: 700; color: var(--text-muted);">Válaszd ki az 1. pontot a feloldáshoz</span>' : ''}
+                        ${!isTempUnlocked ? '<span style="font-size: 11px; font-weight: 700; color: var(--text-muted);">Válaszd ki az előző pontot a feloldáshoz</span>' : ''}
                     </div>
                     
                     <div class="dna-scenario-grid" style="margin-bottom: ${isTempChosen ? '12px' : '0'};">
@@ -132,12 +147,14 @@
                         </div>
                     ` : ''}
                 </div>
+                ` : ''}
 
                 <!-- 3. BIZTONSÁG SZITUÁCIÓ -->
+                ${isSafeActive ? `
                 <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 18px; padding: 18px; margin-bottom: 16px; opacity: ${isSafeUnlocked ? '1.0' : '0.45'}; pointer-events: ${isSafeUnlocked ? 'auto' : 'none'}; filter: ${isSafeUnlocked ? 'none' : 'grayscale(30%)'}; transition: all 0.3s ease;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                         <div style="font-size: 13px; font-weight: 800; color: var(--text-main);">3. Hogyan tekintesz a közbiztonságra?</div>
-                        ${!isSafeUnlocked ? '<span style="font-size: 11px; font-weight: 700; color: var(--text-muted);">Válaszd ki a 2. pontot a feloldáshoz</span>' : ''}
+                        ${!isSafeUnlocked ? '<span style="font-size: 11px; font-weight: 700; color: var(--text-muted);">Válaszd ki az előző pontot a feloldáshoz</span>' : ''}
                     </div>
 
                     <div class="dna-scenario-grid" style="margin-bottom: ${isSafeChosen ? '12px' : '0'};">
@@ -180,12 +197,14 @@
                         </div>
                     ` : ''}
                 </div>
+                ` : ''}
 
                 <!-- 4. ÉLMÉNY ÉS PROGRAM STÍLUS SZITUÁCIÓ -->
+                ${isExpActive ? `
                 <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 18px; padding: 18px; opacity: ${isExpUnlocked ? '1.0' : '0.45'}; pointer-events: ${isExpUnlocked ? 'auto' : 'none'}; filter: ${isExpUnlocked ? 'none' : 'grayscale(30%)'}; transition: all 0.3s ease;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                         <div style="font-size: 13px; font-weight: 800; color: var(--text-main);">4. Milyen jellegű élményeket és programokat keresel leginkább?</div>
-                        ${!isExpUnlocked ? '<span style="font-size: 11px; font-weight: 700; color: var(--text-muted);">Válaszd ki a 3. pontot a feloldáshoz</span>' : ''}
+                        ${!isExpUnlocked ? '<span style="font-size: 11px; font-weight: 700; color: var(--text-muted);">Válaszd ki az előző pontot a feloldáshoz</span>' : ''}
                     </div>
 
                     <div class="dna-scenario-grid" style="margin-bottom: ${isExpChosen ? '12px' : '0'};">
@@ -206,6 +225,7 @@
                         </div>
                     ` : ''}
                 </div>
+                ` : ''}
             `;
         }
     };

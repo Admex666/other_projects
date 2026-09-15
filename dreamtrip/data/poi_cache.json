@@ -5,9 +5,9 @@
       {
         "id": "mock_ny_us_attraction_0",
         "city_id": "ny_us",
-        "name": "Főtér és Történelmi Városközpont",
+        "name": "Central Park & Bethesda Terasz",
         "type": "attraction",
-        "rating": 4.7,
+        "rating": 4.9,
         "user_ratings_total": 5847,
         "price_level": 0,
         "opening_hours": {
@@ -104,9 +104,9 @@
       {
         "id": "mock_ny_us_attraction_1",
         "city_id": "ny_us",
-        "name": "Királyi Palota és Vármúzeum",
+        "name": "Empire State Building & Top of the Rock",
         "type": "attraction",
-        "rating": 4.8,
+        "rating": 4.9,
         "user_ratings_total": 12437,
         "price_level": 2,
         "opening_hours": {
@@ -203,9 +203,9 @@
       {
         "id": "mock_ny_us_attraction_2",
         "city_id": "ny_us",
-        "name": "Modern Művészeti Galéria",
+        "name": "Times Square & Broadway",
         "type": "attraction",
-        "rating": 4.3,
+        "rating": 4.8,
         "user_ratings_total": 3897,
         "price_level": 1,
         "opening_hours": {
@@ -302,9 +302,9 @@
       {
         "id": "mock_ny_us_attraction_3",
         "city_id": "ny_us",
-        "name": "Botanikus Kert és Pálmaház",
+        "name": "Szabadság-szobor & Ellis Island",
         "type": "attraction",
-        "rating": 4.6,
+        "rating": 4.8,
         "user_ratings_total": 3116,
         "price_level": 1,
         "opening_hours": {
@@ -401,9 +401,9 @@
       {
         "id": "mock_ny_us_attraction_4",
         "city_id": "ny_us",
-        "name": "Szent Katedrális",
+        "name": "High Line & Hudson Yards",
         "type": "attraction",
-        "rating": 4.7,
+        "rating": 4.8,
         "user_ratings_total": 6687,
         "price_level": 0,
         "opening_hours": {
@@ -2089,9 +2089,9 @@
       {
         "id": "mock_barcelona_es_attraction_0",
         "city_id": "barcelona_es",
-        "name": "Főtér és Történelmi Városközpont",
+        "name": "Sagrada Família (Gaudí Remekműve)",
         "type": "attraction",
-        "rating": 4.6,
+        "rating": 4.9,
         "user_ratings_total": 5843,
         "price_level": 0,
         "opening_hours": {
@@ -2188,9 +2188,9 @@
       {
         "id": "mock_barcelona_es_attraction_1",
         "city_id": "barcelona_es",
-        "name": "Királyi Palota és Vármúzeum",
+        "name": "Park Güell & Mozaik Terasz",
         "type": "attraction",
-        "rating": 4.6,
+        "rating": 4.8,
         "user_ratings_total": 2314,
         "price_level": 2,
         "opening_hours": {
@@ -2287,9 +2287,9 @@
       {
         "id": "mock_barcelona_es_attraction_2",
         "city_id": "barcelona_es",
-        "name": "Modern Művészeti Galéria",
+        "name": "Gótikus Negyed & La Rambla",
         "type": "attraction",
-        "rating": 4.4,
+        "rating": 4.7,
         "user_ratings_total": 2610,
         "price_level": 1,
         "opening_hours": {
@@ -2386,7 +2386,7 @@
       {
         "id": "mock_barcelona_es_attraction_3",
         "city_id": "barcelona_es",
-        "name": "Botanikus Kert és Pálmaház",
+        "name": "Barceloneta Tengerpart",
         "type": "attraction",
         "rating": 4.6,
         "user_ratings_total": 2465,
@@ -2485,7 +2485,7 @@
       {
         "id": "mock_barcelona_es_attraction_4",
         "city_id": "barcelona_es",
-        "name": "Szent Katedrális",
+        "name": "Casa Batlló",
         "type": "attraction",
         "rating": 4.8,
         "user_ratings_total": 4813,
@@ -4173,9 +4173,9 @@
       {
         "id": "mock_rome_it_attraction_0",
         "city_id": "rome_it",
-        "name": "Főtér és Történelmi Városközpont",
+        "name": "Colosseum & Forum Romanum",
         "type": "attraction",
-        "rating": 4.6,
+        "rating": 4.9,
         "user_ratings_total": 6076,
         "price_level": 0,
         "opening_hours": {
@@ -4272,9 +4272,9 @@
       {
         "id": "mock_rome_it_attraction_1",
         "city_id": "rome_it",
-        "name": "Királyi Palota és Vármúzeum",
+        "name": "Vatikáni Múzeumok & Sixtus-kápolna",
         "type": "attraction",
-        "rating": 4.7,
+        "rating": 4.9,
         "user_ratings_total": 12383,
         "price_level": 2,
         "opening_hours": {
@@ -4371,9 +4371,9 @@
       {
         "id": "mock_rome_it_attraction_2",
         "city_id": "rome_it",
-        "name": "Modern Művészeti Galéria",
+        "name": "Trevi-kút & Spanyol Lépcső",
         "type": "attraction",
-        "rating": 4.4,
+        "rating": 4.8,
         "user_ratings_total": 1813,
         "price_level": 1,
         "opening_hours": {
@@ -4470,9 +4470,9 @@
       {
         "id": "mock_rome_it_attraction_3",
         "city_id": "rome_it",
-        "name": "Botanikus Kert és Pálmaház",
+        "name": "Pantheon",
         "type": "attraction",
-        "rating": 4.6,
+        "rating": 4.9,
         "user_ratings_total": 4303,
         "price_level": 1,
         "opening_hours": {
@@ -4569,9 +4569,9 @@
       {
         "id": "mock_rome_it_attraction_4",
         "city_id": "rome_it",
-        "name": "Szent Katedrális",
+        "name": "Trastevere Gasztronómiai Negyed",
         "type": "attraction",
-        "rating": 4.9,
+        "rating": 4.7,
         "user_ratings_total": 12049,
         "price_level": 0,
         "opening_hours": {
@@ -6257,9 +6257,9 @@
       {
         "id": "mock_bali_id_attraction_0",
         "city_id": "bali_id",
-        "name": "Főtér és Történelmi Városközpont",
+        "name": "Ubud Majomerdő & Művészpiac",
         "type": "attraction",
-        "rating": 4.5,
+        "rating": 4.8,
         "user_ratings_total": 13279,
         "price_level": 0,
         "opening_hours": {
@@ -6356,9 +6356,9 @@
       {
         "id": "mock_bali_id_attraction_1",
         "city_id": "bali_id",
-        "name": "Királyi Palota és Vármúzeum",
+        "name": "Tanah Lot Tengeri Sziklatemplom",
         "type": "attraction",
-        "rating": 4.7,
+        "rating": 4.8,
         "user_ratings_total": 7344,
         "price_level": 2,
         "opening_hours": {
@@ -6455,9 +6455,9 @@
       {
         "id": "mock_bali_id_attraction_2",
         "city_id": "bali_id",
-        "name": "Modern Művészeti Galéria",
+        "name": "Tegallalang Rizsteraszok",
         "type": "attraction",
-        "rating": 4.4,
+        "rating": 4.9,
         "user_ratings_total": 955,
         "price_level": 1,
         "opening_hours": {
@@ -6554,9 +6554,9 @@
       {
         "id": "mock_bali_id_attraction_3",
         "city_id": "bali_id",
-        "name": "Botanikus Kert és Pálmaház",
+        "name": "Uluwatu Sziklaszirtek & Kecak Tánc",
         "type": "attraction",
-        "rating": 4.4,
+        "rating": 4.9,
         "user_ratings_total": 3162,
         "price_level": 1,
         "opening_hours": {
@@ -6653,9 +6653,9 @@
       {
         "id": "mock_bali_id_attraction_4",
         "city_id": "bali_id",
-        "name": "Szent Katedrális",
+        "name": "Seminyak Naplementés Tengerpart",
         "type": "attraction",
-        "rating": 4.8,
+        "rating": 4.7,
         "user_ratings_total": 3075,
         "price_level": 0,
         "opening_hours": {
@@ -8341,9 +8341,9 @@
       {
         "id": "mock_reykjavik_is_attraction_0",
         "city_id": "reykjavik_is",
-        "name": "Főtér és Történelmi Városközpont",
+        "name": "Kék Lagúna Geotermikus Gyógyfürdő",
         "type": "attraction",
-        "rating": 4.6,
+        "rating": 4.9,
         "user_ratings_total": 14907,
         "price_level": 0,
         "opening_hours": {
@@ -8440,9 +8440,9 @@
       {
         "id": "mock_reykjavik_is_attraction_1",
         "city_id": "reykjavik_is",
-        "name": "Királyi Palota és Vármúzeum",
+        "name": "Hallgrímskirkja Katedrális & Kilátó",
         "type": "attraction",
-        "rating": 4.7,
+        "rating": 4.8,
         "user_ratings_total": 8194,
         "price_level": 2,
         "opening_hours": {
@@ -8539,9 +8539,9 @@
       {
         "id": "mock_reykjavik_is_attraction_2",
         "city_id": "reykjavik_is",
-        "name": "Modern Művészeti Galéria",
+        "name": "Arany Körút (Gullfoss & Geysir)",
         "type": "attraction",
-        "rating": 4.4,
+        "rating": 4.9,
         "user_ratings_total": 3584,
         "price_level": 1,
         "opening_hours": {
@@ -8638,9 +8638,9 @@
       {
         "id": "mock_reykjavik_is_attraction_3",
         "city_id": "reykjavik_is",
-        "name": "Botanikus Kert és Pálmaház",
+        "name": "Harpa Koncertpalota & Régi Kikötő",
         "type": "attraction",
-        "rating": 4.5,
+        "rating": 4.7,
         "user_ratings_total": 4506,
         "price_level": 1,
         "opening_hours": {
@@ -8737,9 +8737,9 @@
       {
         "id": "mock_reykjavik_is_attraction_4",
         "city_id": "reykjavik_is",
-        "name": "Szent Katedrális",
+        "name": "Északi Fény (Aurora Borealis) Szafari",
         "type": "attraction",
-        "rating": 4.7,
+        "rating": 5.0,
         "user_ratings_total": 7281,
         "price_level": 0,
         "opening_hours": {
@@ -10425,9 +10425,9 @@
       {
         "id": "mock_tokyo_jp_attraction_0",
         "city_id": "tokyo_jp",
-        "name": "Főtér és Történelmi Városközpont",
+        "name": "Senso-ji Templom & Asakusa",
         "type": "attraction",
-        "rating": 4.8,
+        "rating": 4.9,
         "user_ratings_total": 1766,
         "price_level": 0,
         "opening_hours": {
@@ -10524,7 +10524,7 @@
       {
         "id": "mock_tokyo_jp_attraction_1",
         "city_id": "tokyo_jp",
-        "name": "Királyi Palota és Vármúzeum",
+        "name": "Shibuya Kereszteződés & Hachiko",
         "type": "attraction",
         "rating": 4.8,
         "user_ratings_total": 2926,
@@ -10623,9 +10623,9 @@
       {
         "id": "mock_tokyo_jp_attraction_2",
         "city_id": "tokyo_jp",
-        "name": "Modern Művészeti Galéria",
+        "name": "Meiji-szentély & Yoyogi Park",
         "type": "attraction",
-        "rating": 4.3,
+        "rating": 4.9,
         "user_ratings_total": 2025,
         "price_level": 1,
         "opening_hours": {
@@ -10722,7 +10722,7 @@
       {
         "id": "mock_tokyo_jp_attraction_3",
         "city_id": "tokyo_jp",
-        "name": "Botanikus Kert és Pálmaház",
+        "name": "Akihabara Technológiai és Anime Negyed",
         "type": "attraction",
         "rating": 4.7,
         "user_ratings_total": 4312,
@@ -10821,7 +10821,7 @@
       {
         "id": "mock_tokyo_jp_attraction_4",
         "city_id": "tokyo_jp",
-        "name": "Szent Katedrális",
+        "name": "Tsukiji Külső Halpiac & Street Food",
         "type": "attraction",
         "rating": 4.8,
         "user_ratings_total": 13933,
@@ -12509,9 +12509,9 @@
       {
         "id": "mock_santorini_gr_attraction_0",
         "city_id": "santorini_gr",
-        "name": "Főtér és Történelmi Városközpont",
+        "name": "Oia Naplemente és Kék Kupolák",
         "type": "attraction",
-        "rating": 4.5,
+        "rating": 5.0,
         "user_ratings_total": 4295,
         "price_level": 0,
         "opening_hours": {
@@ -12608,9 +12608,9 @@
       {
         "id": "mock_santorini_gr_attraction_1",
         "city_id": "santorini_gr",
-        "name": "Királyi Palota és Vármúzeum",
+        "name": "Fira Kaldera Sziklasétány",
         "type": "attraction",
-        "rating": 4.6,
+        "rating": 4.9,
         "user_ratings_total": 23066,
         "price_level": 2,
         "opening_hours": {
@@ -12707,9 +12707,9 @@
       {
         "id": "mock_santorini_gr_attraction_2",
         "city_id": "santorini_gr",
-        "name": "Modern Művészeti Galéria",
+        "name": "Vörös Tengerpart (Red Beach)",
         "type": "attraction",
-        "rating": 4.5,
+        "rating": 4.7,
         "user_ratings_total": 1521,
         "price_level": 1,
         "opening_hours": {
@@ -12806,9 +12806,9 @@
       {
         "id": "mock_santorini_gr_attraction_3",
         "city_id": "santorini_gr",
-        "name": "Botanikus Kert és Pálmaház",
+        "name": "Akrotiri Régészeti Lelőhely",
         "type": "attraction",
-        "rating": 4.6,
+        "rating": 4.8,
         "user_ratings_total": 1293,
         "price_level": 1,
         "opening_hours": {
@@ -12905,9 +12905,9 @@
       {
         "id": "mock_santorini_gr_attraction_4",
         "city_id": "santorini_gr",
-        "name": "Szent Katedrális",
+        "name": "Kamari Fekete Homokos Strand",
         "type": "attraction",
-        "rating": 4.8,
+        "rating": 4.6,
         "user_ratings_total": 12913,
         "price_level": 0,
         "opening_hours": {
@@ -14593,9 +14593,9 @@
       {
         "id": "mock_amsterdam_nl_attraction_0",
         "city_id": "amsterdam_nl",
-        "name": "Főtér és Történelmi Városközpont",
+        "name": "Rijksmuseum & Van Gogh Múzeum",
         "type": "attraction",
-        "rating": 4.5,
+        "rating": 4.9,
         "user_ratings_total": 1251,
         "price_level": 0,
         "opening_hours": {
@@ -14692,9 +14692,9 @@
       {
         "id": "mock_amsterdam_nl_attraction_1",
         "city_id": "amsterdam_nl",
-        "name": "Királyi Palota és Vármúzeum",
+        "name": "Grachtengordel Csatornahajózás",
         "type": "attraction",
-        "rating": 4.9,
+        "rating": 4.8,
         "user_ratings_total": 5277,
         "price_level": 2,
         "opening_hours": {
@@ -14791,9 +14791,9 @@
       {
         "id": "mock_amsterdam_nl_attraction_2",
         "city_id": "amsterdam_nl",
-        "name": "Modern Művészeti Galéria",
+        "name": "Anne Frank Ház",
         "type": "attraction",
-        "rating": 4.4,
+        "rating": 4.8,
         "user_ratings_total": 1351,
         "price_level": 1,
         "opening_hours": {
@@ -14890,9 +14890,9 @@
       {
         "id": "mock_amsterdam_nl_attraction_3",
         "city_id": "amsterdam_nl",
-        "name": "Botanikus Kert és Pálmaház",
+        "name": "Jordaan Hangulatos Sikátorai",
         "type": "attraction",
-        "rating": 4.4,
+        "rating": 4.7,
         "user_ratings_total": 875,
         "price_level": 1,
         "opening_hours": {
@@ -14989,9 +14989,9 @@
       {
         "id": "mock_amsterdam_nl_attraction_4",
         "city_id": "amsterdam_nl",
-        "name": "Szent Katedrális",
+        "name": "Vondelpark & Virágpiac (Bloemenmarkt)",
         "type": "attraction",
-        "rating": 4.9,
+        "rating": 4.6,
         "user_ratings_total": 17193,
         "price_level": 0,
         "opening_hours": {
@@ -16677,9 +16677,9 @@
       {
         "id": "mock_dubai_ae_attraction_0",
         "city_id": "dubai_ae",
-        "name": "Főtér és Történelmi Városközpont",
+        "name": "Burj Khalifa Kilátóterasz (148. emelet)",
         "type": "attraction",
-        "rating": 4.7,
+        "rating": 4.9,
         "user_ratings_total": 4041,
         "price_level": 0,
         "opening_hours": {
@@ -16776,9 +16776,9 @@
       {
         "id": "mock_dubai_ae_attraction_1",
         "city_id": "dubai_ae",
-        "name": "Királyi Palota és Vármúzeum",
+        "name": "Dubai Mall & Táncoló Szökőkút",
         "type": "attraction",
-        "rating": 4.7,
+        "rating": 4.8,
         "user_ratings_total": 23851,
         "price_level": 2,
         "opening_hours": {
@@ -16875,9 +16875,9 @@
       {
         "id": "mock_dubai_ae_attraction_2",
         "city_id": "dubai_ae",
-        "name": "Modern Művészeti Galéria",
+        "name": "Pálma-sziget (Palm Jumeirah)",
         "type": "attraction",
-        "rating": 4.3,
+        "rating": 4.8,
         "user_ratings_total": 2913,
         "price_level": 1,
         "opening_hours": {
@@ -16974,9 +16974,9 @@
       {
         "id": "mock_dubai_ae_attraction_3",
         "city_id": "dubai_ae",
-        "name": "Botanikus Kert és Pálmaház",
+        "name": "Vörös Dűnés Sivatagi Szafari",
         "type": "attraction",
-        "rating": 4.4,
+        "rating": 4.9,
         "user_ratings_total": 1768,
         "price_level": 1,
         "opening_hours": {
@@ -17073,9 +17073,9 @@
       {
         "id": "mock_dubai_ae_attraction_4",
         "city_id": "dubai_ae",
-        "name": "Szent Katedrális",
+        "name": "Al Fahidi Történelmi Negyed & Aranybazár",
         "type": "attraction",
-        "rating": 4.8,
+        "rating": 4.6,
         "user_ratings_total": 12284,
         "price_level": 0,
         "opening_hours": {
@@ -18761,9 +18761,9 @@
       {
         "id": "mock_paris_fr_attraction_0",
         "city_id": "paris_fr",
-        "name": "Főtér és Történelmi Városközpont",
+        "name": "Eiffel-torony & Champ-de-Mars",
         "type": "attraction",
-        "rating": 4.7,
+        "rating": 4.9,
         "user_ratings_total": 6075,
         "price_level": 0,
         "opening_hours": {
@@ -18860,7 +18860,7 @@
       {
         "id": "mock_paris_fr_attraction_1",
         "city_id": "paris_fr",
-        "name": "Királyi Palota és Vármúzeum",
+        "name": "Louvre Múzeum & Mona Lisa",
         "type": "attraction",
         "rating": 4.9,
         "user_ratings_total": 23752,
@@ -18959,9 +18959,9 @@
       {
         "id": "mock_paris_fr_attraction_2",
         "city_id": "paris_fr",
-        "name": "Modern Művészeti Galéria",
+        "name": "Montmartre & Sacré-Cœur Bazilika",
         "type": "attraction",
-        "rating": 4.3,
+        "rating": 4.8,
         "user_ratings_total": 1351,
         "price_level": 1,
         "opening_hours": {
@@ -19058,9 +19058,9 @@
       {
         "id": "mock_paris_fr_attraction_3",
         "city_id": "paris_fr",
-        "name": "Botanikus Kert és Pálmaház",
+        "name": "Notre-Dame & Szajna-parti Séta",
         "type": "attraction",
-        "rating": 4.7,
+        "rating": 4.8,
         "user_ratings_total": 3475,
         "price_level": 1,
         "opening_hours": {
@@ -19157,9 +19157,9 @@
       {
         "id": "mock_paris_fr_attraction_4",
         "city_id": "paris_fr",
-        "name": "Szent Katedrális",
+        "name": "Diadalív & Champs-Élysées",
         "type": "attraction",
-        "rating": 4.8,
+        "rating": 4.7,
         "user_ratings_total": 2627,
         "price_level": 0,
         "opening_hours": {
@@ -20845,9 +20845,9 @@
       {
         "id": "mock_lisbon_pt_attraction_0",
         "city_id": "lisbon_pt",
-        "name": "Főtér és Történelmi Városközpont",
+        "name": "Belém-torony & Jerónimos-kolostor",
         "type": "attraction",
-        "rating": 4.6,
+        "rating": 4.9,
         "user_ratings_total": 1620,
         "price_level": 0,
         "opening_hours": {
@@ -20944,9 +20944,9 @@
       {
         "id": "mock_lisbon_pt_attraction_1",
         "city_id": "lisbon_pt",
-        "name": "Királyi Palota és Vármúzeum",
+        "name": "Sárga 28-as Villamos & Alfama Negyed",
         "type": "attraction",
-        "rating": 4.7,
+        "rating": 4.8,
         "user_ratings_total": 8026,
         "price_level": 2,
         "opening_hours": {
@@ -21043,9 +21043,9 @@
       {
         "id": "mock_lisbon_pt_attraction_2",
         "city_id": "lisbon_pt",
-        "name": "Modern Művészeti Galéria",
+        "name": "Szent György Vár (Castelo de São Jorge)",
         "type": "attraction",
-        "rating": 4.4,
+        "rating": 4.7,
         "user_ratings_total": 2925,
         "price_level": 1,
         "opening_hours": {
@@ -21142,9 +21142,9 @@
       {
         "id": "mock_lisbon_pt_attraction_3",
         "city_id": "lisbon_pt",
-        "name": "Botanikus Kert és Pálmaház",
+        "name": "Miradouro de Santa Luzia Kilátó",
         "type": "attraction",
-        "rating": 4.7,
+        "rating": 4.9,
         "user_ratings_total": 3326,
         "price_level": 1,
         "opening_hours": {
@@ -21241,9 +21241,9 @@
       {
         "id": "mock_lisbon_pt_attraction_4",
         "city_id": "lisbon_pt",
-        "name": "Szent Katedrális",
+        "name": "Time Out Market Gasztronómiai Vásárcsarnok",
         "type": "attraction",
-        "rating": 4.9,
+        "rating": 4.7,
         "user_ratings_total": 2176,
         "price_level": 0,
         "opening_hours": {
@@ -22929,9 +22929,9 @@
       {
         "id": "mock_bangkok_th_attraction_0",
         "city_id": "bangkok_th",
-        "name": "Főtér és Történelmi Városközpont",
+        "name": "Királyi Palota & Smaragd Buddha",
         "type": "attraction",
-        "rating": 4.6,
+        "rating": 4.9,
         "user_ratings_total": 3085,
         "price_level": 0,
         "opening_hours": {
@@ -23028,7 +23028,7 @@
       {
         "id": "mock_bangkok_th_attraction_1",
         "city_id": "bangkok_th",
-        "name": "Királyi Palota és Vármúzeum",
+        "name": "Wat Arun (A Hajnal Temploma)",
         "type": "attraction",
         "rating": 4.9,
         "user_ratings_total": 10384,
@@ -23127,9 +23127,9 @@
       {
         "id": "mock_bangkok_th_attraction_2",
         "city_id": "bangkok_th",
-        "name": "Modern Művészeti Galéria",
+        "name": "Chatuchak Hétvégi Piac",
         "type": "attraction",
-        "rating": 4.6,
+        "rating": 4.8,
         "user_ratings_total": 2196,
         "price_level": 1,
         "opening_hours": {
@@ -23226,7 +23226,7 @@
       {
         "id": "mock_bangkok_th_attraction_3",
         "city_id": "bangkok_th",
-        "name": "Botanikus Kert és Pálmaház",
+        "name": "Chao Phraya Folyami Expresszhajózás",
         "type": "attraction",
         "rating": 4.7,
         "user_ratings_total": 5411,
@@ -23325,9 +23325,9 @@
       {
         "id": "mock_bangkok_th_attraction_4",
         "city_id": "bangkok_th",
-        "name": "Szent Katedrális",
+        "name": "Khao San Road Éjszakai Street Food",
         "type": "attraction",
-        "rating": 4.8,
+        "rating": 4.6,
         "user_ratings_total": 12818,
         "price_level": 0,
         "opening_hours": {
@@ -25013,9 +25013,9 @@
       {
         "id": "mock_sydney_au_attraction_0",
         "city_id": "sydney_au",
-        "name": "Főtér és Történelmi Városközpont",
+        "name": "Sydney Operaház & Harbour Bridge",
         "type": "attraction",
-        "rating": 4.6,
+        "rating": 5.0,
         "user_ratings_total": 9468,
         "price_level": 0,
         "opening_hours": {
@@ -25112,9 +25112,9 @@
       {
         "id": "mock_sydney_au_attraction_1",
         "city_id": "sydney_au",
-        "name": "Királyi Palota és Vármúzeum",
+        "name": "Bondi to Coogee Partmenti Sétaút",
         "type": "attraction",
-        "rating": 4.7,
+        "rating": 4.9,
         "user_ratings_total": 19959,
         "price_level": 2,
         "opening_hours": {
@@ -25211,9 +25211,9 @@
       {
         "id": "mock_sydney_au_attraction_2",
         "city_id": "sydney_au",
-        "name": "Modern Művészeti Galéria",
+        "name": "Manly Komp & Körkörös Kikötő",
         "type": "attraction",
-        "rating": 4.5,
+        "rating": 4.8,
         "user_ratings_total": 2958,
         "price_level": 1,
         "opening_hours": {
@@ -25310,9 +25310,9 @@
       {
         "id": "mock_sydney_au_attraction_3",
         "city_id": "sydney_au",
-        "name": "Botanikus Kert és Pálmaház",
+        "name": "Taronga Zoo Vadvédelmi Park",
         "type": "attraction",
-        "rating": 4.6,
+        "rating": 4.8,
         "user_ratings_total": 4738,
         "price_level": 1,
         "opening_hours": {
@@ -25409,9 +25409,9 @@
       {
         "id": "mock_sydney_au_attraction_4",
         "city_id": "sydney_au",
-        "name": "Szent Katedrális",
+        "name": "Királyi Botanikus Kert",
         "type": "attraction",
-        "rating": 4.8,
+        "rating": 4.7,
         "user_ratings_total": 7811,
         "price_level": 0,
         "opening_hours": {
@@ -27097,9 +27097,9 @@
       {
         "id": "mock_berlin_de_attraction_0",
         "city_id": "berlin_de",
-        "name": "Főtér és Történelmi Városközpont",
+        "name": "Brandenburgi Kapu & Pariser Platz",
         "type": "attraction",
-        "rating": 4.7,
+        "rating": 4.9,
         "user_ratings_total": 2815,
         "price_level": 0,
         "opening_hours": {
@@ -27196,9 +27196,9 @@
       {
         "id": "mock_berlin_de_attraction_1",
         "city_id": "berlin_de",
-        "name": "Királyi Palota és Vármúzeum",
+        "name": "Reichstag Üvegkupolája",
         "type": "attraction",
-        "rating": 4.6,
+        "rating": 4.8,
         "user_ratings_total": 16579,
         "price_level": 2,
         "opening_hours": {
@@ -27295,9 +27295,9 @@
       {
         "id": "mock_berlin_de_attraction_2",
         "city_id": "berlin_de",
-        "name": "Modern Művészeti Galéria",
+        "name": "Múzeum-sziget (Pergamon & Neues Museum)",
         "type": "attraction",
-        "rating": 4.3,
+        "rating": 4.9,
         "user_ratings_total": 1258,
         "price_level": 1,
         "opening_hours": {
@@ -27394,9 +27394,9 @@
       {
         "id": "mock_berlin_de_attraction_3",
         "city_id": "berlin_de",
-        "name": "Botanikus Kert és Pálmaház",
+        "name": "East Side Gallery & Berlini Fal",
         "type": "attraction",
-        "rating": 4.6,
+        "rating": 4.8,
         "user_ratings_total": 4915,
         "price_level": 1,
         "opening_hours": {
@@ -27493,9 +27493,9 @@
       {
         "id": "mock_berlin_de_attraction_4",
         "city_id": "berlin_de",
-        "name": "Szent Katedrális",
+        "name": "Alexanderplatz & TV-Torony",
         "type": "attraction",
-        "rating": 4.8,
+        "rating": 4.6,
         "user_ratings_total": 13782,
         "price_level": 0,
         "opening_hours": {
@@ -29181,9 +29181,9 @@
       {
         "id": "mock_london_uk_attraction_0",
         "city_id": "london_uk",
-        "name": "Főtér és Történelmi Városközpont",
+        "name": "Big Ben & Westminster Apátság",
         "type": "attraction",
-        "rating": 4.8,
+        "rating": 4.9,
         "user_ratings_total": 11416,
         "price_level": 0,
         "opening_hours": {
@@ -29280,9 +29280,9 @@
       {
         "id": "mock_london_uk_attraction_1",
         "city_id": "london_uk",
-        "name": "Királyi Palota és Vármúzeum",
+        "name": "Tower Bridge & Londoni Tower",
         "type": "attraction",
-        "rating": 4.8,
+        "rating": 4.9,
         "user_ratings_total": 17814,
         "price_level": 2,
         "opening_hours": {
@@ -29379,9 +29379,9 @@
       {
         "id": "mock_london_uk_attraction_2",
         "city_id": "london_uk",
-        "name": "Modern Művészeti Galéria",
+        "name": "British Museum & Rosetta Kő",
         "type": "attraction",
-        "rating": 4.3,
+        "rating": 4.9,
         "user_ratings_total": 815,
         "price_level": 1,
         "opening_hours": {
@@ -29478,7 +29478,7 @@
       {
         "id": "mock_london_uk_attraction_3",
         "city_id": "london_uk",
-        "name": "Botanikus Kert és Pálmaház",
+        "name": "London Eye Óriáskerék",
         "type": "attraction",
         "rating": 4.7,
         "user_ratings_total": 4406,
@@ -29577,9 +29577,9 @@
       {
         "id": "mock_london_uk_attraction_4",
         "city_id": "london_uk",
-        "name": "Szent Katedrális",
+        "name": "Borough Market Termelői Piac",
         "type": "attraction",
-        "rating": 4.9,
+        "rating": 4.8,
         "user_ratings_total": 7321,
         "price_level": 0,
         "opening_hours": {
@@ -31265,9 +31265,9 @@
       {
         "id": "mock_vienna_at_attraction_0",
         "city_id": "vienna_at",
-        "name": "Főtér és Történelmi Városközpont",
+        "name": "Schönbrunni Kastély & Császári Kertek",
         "type": "attraction",
-        "rating": 4.7,
+        "rating": 4.9,
         "user_ratings_total": 11284,
         "price_level": 0,
         "opening_hours": {
@@ -31364,9 +31364,9 @@
       {
         "id": "mock_vienna_at_attraction_1",
         "city_id": "vienna_at",
-        "name": "Királyi Palota és Vármúzeum",
+        "name": "Szent István Székesegyház (Stephansdom)",
         "type": "attraction",
-        "rating": 4.7,
+        "rating": 4.8,
         "user_ratings_total": 14162,
         "price_level": 2,
         "opening_hours": {
@@ -31463,9 +31463,9 @@
       {
         "id": "mock_vienna_at_attraction_2",
         "city_id": "vienna_at",
-        "name": "Modern Művészeti Galéria",
+        "name": "Belvedere Palota & Klimt Csókja",
         "type": "attraction",
-        "rating": 4.5,
+        "rating": 4.9,
         "user_ratings_total": 3972,
         "price_level": 1,
         "opening_hours": {
@@ -31562,9 +31562,9 @@
       {
         "id": "mock_vienna_at_attraction_3",
         "city_id": "vienna_at",
-        "name": "Botanikus Kert és Pálmaház",
+        "name": "Hofburg Császári Palota",
         "type": "attraction",
-        "rating": 4.6,
+        "rating": 4.8,
         "user_ratings_total": 5243,
         "price_level": 1,
         "opening_hours": {
@@ -31661,7 +31661,7 @@
       {
         "id": "mock_vienna_at_attraction_4",
         "city_id": "vienna_at",
-        "name": "Szent Katedrális",
+        "name": "Bécsi Kávéházi Kultúra & Sacher Torta",
         "type": "attraction",
         "rating": 4.7,
         "user_ratings_total": 13891,
@@ -33349,9 +33349,9 @@
       {
         "id": "mock_zurich_ch_attraction_0",
         "city_id": "zurich_ch",
-        "name": "Főtér és Történelmi Városközpont",
+        "name": "Zürichi Óváros (Altstadt) & Lindenhof",
         "type": "attraction",
-        "rating": 4.5,
+        "rating": 4.8,
         "user_ratings_total": 8395,
         "price_level": 0,
         "opening_hours": {
@@ -33448,7 +33448,7 @@
       {
         "id": "mock_zurich_ch_attraction_1",
         "city_id": "zurich_ch",
-        "name": "Királyi Palota és Vármúzeum",
+        "name": "Zürichi-tó Partisétány és Hajózás",
         "type": "attraction",
         "rating": 4.8,
         "user_ratings_total": 11802,
@@ -33547,9 +33547,9 @@
       {
         "id": "mock_zurich_ch_attraction_2",
         "city_id": "zurich_ch",
-        "name": "Modern Művészeti Galéria",
+        "name": "Uetliberg Panoráma Kilátóhegy",
         "type": "attraction",
-        "rating": 4.5,
+        "rating": 4.9,
         "user_ratings_total": 2306,
         "price_level": 1,
         "opening_hours": {
@@ -33646,7 +33646,7 @@
       {
         "id": "mock_zurich_ch_attraction_3",
         "city_id": "zurich_ch",
-        "name": "Botanikus Kert és Pálmaház",
+        "name": "Grossmünster Katedrális",
         "type": "attraction",
         "rating": 4.7,
         "user_ratings_total": 5393,
@@ -33745,9 +33745,9 @@
       {
         "id": "mock_zurich_ch_attraction_4",
         "city_id": "zurich_ch",
-        "name": "Szent Katedrális",
+        "name": "Svájci Nemzeti Múzeum",
         "type": "attraction",
-        "rating": 4.8,
+        "rating": 4.7,
         "user_ratings_total": 6960,
         "price_level": 0,
         "opening_hours": {
@@ -35433,9 +35433,9 @@
       {
         "id": "mock_brussels_be_attraction_0",
         "city_id": "brussels_be",
-        "name": "Főtér és Történelmi Városközpont",
+        "name": "Grand-Place (Aranydíszes Főtér)",
         "type": "attraction",
-        "rating": 4.6,
+        "rating": 4.9,
         "user_ratings_total": 5809,
         "price_level": 0,
         "opening_hours": {
@@ -35532,7 +35532,7 @@
       {
         "id": "mock_brussels_be_attraction_1",
         "city_id": "brussels_be",
-        "name": "Királyi Palota és Vármúzeum",
+        "name": "Atomium & Mini-Europe",
         "type": "attraction",
         "rating": 4.7,
         "user_ratings_total": 16898,
@@ -35631,9 +35631,9 @@
       {
         "id": "mock_brussels_be_attraction_2",
         "city_id": "brussels_be",
-        "name": "Modern Művészeti Galéria",
+        "name": "Királyi Szépművészeti Múzeum",
         "type": "attraction",
-        "rating": 4.4,
+        "rating": 4.8,
         "user_ratings_total": 3860,
         "price_level": 1,
         "opening_hours": {
@@ -35730,9 +35730,9 @@
       {
         "id": "mock_brussels_be_attraction_3",
         "city_id": "brussels_be",
-        "name": "Botanikus Kert és Pálmaház",
+        "name": "Szent Mihály és Szent Gudula Székesegyház",
         "type": "attraction",
-        "rating": 4.4,
+        "rating": 4.7,
         "user_ratings_total": 4975,
         "price_level": 1,
         "opening_hours": {
@@ -35829,9 +35829,9 @@
       {
         "id": "mock_brussels_be_attraction_4",
         "city_id": "brussels_be",
-        "name": "Szent Katedrális",
+        "name": "Belga Csokoládé & Waffel Kóstolótúra",
         "type": "attraction",
-        "rating": 4.8,
+        "rating": 4.9,
         "user_ratings_total": 12396,
         "price_level": 0,
         "opening_hours": {
@@ -37517,9 +37517,9 @@
       {
         "id": "mock_prague_cz_attraction_0",
         "city_id": "prague_cz",
-        "name": "Főtér és Történelmi Városközpont",
+        "name": "Károly Híd és Szoborgaléria",
         "type": "attraction",
-        "rating": 4.5,
+        "rating": 4.9,
         "user_ratings_total": 5474,
         "price_level": 0,
         "opening_hours": {
@@ -37616,7 +37616,7 @@
       {
         "id": "mock_prague_cz_attraction_1",
         "city_id": "prague_cz",
-        "name": "Királyi Palota és Vármúzeum",
+        "name": "Prágai Vár & Szent Vitus Katedrális",
         "type": "attraction",
         "rating": 4.9,
         "user_ratings_total": 17572,
@@ -37715,9 +37715,9 @@
       {
         "id": "mock_prague_cz_attraction_2",
         "city_id": "prague_cz",
-        "name": "Modern Művészeti Galéria",
+        "name": "Óvárosi Tér & Csillagászati Óra (Orloj)",
         "type": "attraction",
-        "rating": 4.3,
+        "rating": 4.8,
         "user_ratings_total": 2744,
         "price_level": 1,
         "opening_hours": {
@@ -37814,9 +37814,9 @@
       {
         "id": "mock_prague_cz_attraction_3",
         "city_id": "prague_cz",
-        "name": "Botanikus Kert és Pálmaház",
+        "name": "Petřín Kilátótorony és Rózsakert",
         "type": "attraction",
-        "rating": 4.6,
+        "rating": 4.7,
         "user_ratings_total": 5351,
         "price_level": 1,
         "opening_hours": {
@@ -37913,7 +37913,7 @@
       {
         "id": "mock_prague_cz_attraction_4",
         "city_id": "prague_cz",
-        "name": "Szent Katedrális",
+        "name": "Tradicionális Cseh Sörfőzdék",
         "type": "attraction",
         "rating": 4.8,
         "user_ratings_total": 6204,
@@ -39601,9 +39601,9 @@
       {
         "id": "mock_warsaw_pl_attraction_0",
         "city_id": "warsaw_pl",
-        "name": "Főtér és Történelmi Városközpont",
+        "name": "Újjáépített Történelmi Óváros",
         "type": "attraction",
-        "rating": 4.7,
+        "rating": 4.8,
         "user_ratings_total": 12130,
         "price_level": 0,
         "opening_hours": {
@@ -39700,9 +39700,9 @@
       {
         "id": "mock_warsaw_pl_attraction_1",
         "city_id": "warsaw_pl",
-        "name": "Királyi Palota és Vármúzeum",
+        "name": "Királyi Várkastély (Zamek Królewski)",
         "type": "attraction",
-        "rating": 4.7,
+        "rating": 4.8,
         "user_ratings_total": 10668,
         "price_level": 2,
         "opening_hours": {
@@ -39799,9 +39799,9 @@
       {
         "id": "mock_warsaw_pl_attraction_2",
         "city_id": "warsaw_pl",
-        "name": "Modern Művészeti Galéria",
+        "name": "Łazienki Királyi Park & Chopin Emlékmű",
         "type": "attraction",
-        "rating": 4.5,
+        "rating": 4.9,
         "user_ratings_total": 2778,
         "price_level": 1,
         "opening_hours": {
@@ -39898,9 +39898,9 @@
       {
         "id": "mock_warsaw_pl_attraction_3",
         "city_id": "warsaw_pl",
-        "name": "Botanikus Kert és Pálmaház",
+        "name": "Kultúra és Tudomány Palotája Kilátó",
         "type": "attraction",
-        "rating": 4.4,
+        "rating": 4.6,
         "user_ratings_total": 5222,
         "price_level": 1,
         "opening_hours": {
@@ -39997,7 +39997,7 @@
       {
         "id": "mock_warsaw_pl_attraction_4",
         "city_id": "warsaw_pl",
-        "name": "Szent Katedrális",
+        "name": "Varsói Felkelés Múzeuma",
         "type": "attraction",
         "rating": 4.9,
         "user_ratings_total": 14414,
@@ -41685,9 +41685,9 @@
       {
         "id": "mock_copenhagen_dk_attraction_0",
         "city_id": "copenhagen_dk",
-        "name": "Főtér és Történelmi Városközpont",
+        "name": "Nyhavn Színes Kikötője és Sétánya",
         "type": "attraction",
-        "rating": 4.7,
+        "rating": 4.9,
         "user_ratings_total": 8768,
         "price_level": 0,
         "opening_hours": {
@@ -41784,9 +41784,9 @@
       {
         "id": "mock_copenhagen_dk_attraction_1",
         "city_id": "copenhagen_dk",
-        "name": "Királyi Palota és Vármúzeum",
+        "name": "Tivoli Kertek Történelmi Vidámpark",
         "type": "attraction",
-        "rating": 4.9,
+        "rating": 4.8,
         "user_ratings_total": 6703,
         "price_level": 2,
         "opening_hours": {
@@ -41883,9 +41883,9 @@
       {
         "id": "mock_copenhagen_dk_attraction_2",
         "city_id": "copenhagen_dk",
-        "name": "Modern Művészeti Galéria",
+        "name": "Amalienborg Királyi Palota",
         "type": "attraction",
-        "rating": 4.3,
+        "rating": 4.7,
         "user_ratings_total": 3805,
         "price_level": 1,
         "opening_hours": {
@@ -41982,7 +41982,7 @@
       {
         "id": "mock_copenhagen_dk_attraction_3",
         "city_id": "copenhagen_dk",
-        "name": "Botanikus Kert és Pálmaház",
+        "name": "Kis Hableány Szobra & Kastellet",
         "type": "attraction",
         "rating": 4.6,
         "user_ratings_total": 1214,
@@ -42081,7 +42081,7 @@
       {
         "id": "mock_copenhagen_dk_attraction_4",
         "city_id": "copenhagen_dk",
-        "name": "Szent Katedrális",
+        "name": "Torvehallerne Skandináv Gasztrocsarnok",
         "type": "attraction",
         "rating": 4.8,
         "user_ratings_total": 1928,
@@ -43769,9 +43769,9 @@
       {
         "id": "mock_stockholm_se_attraction_0",
         "city_id": "stockholm_se",
-        "name": "Főtér és Történelmi Városközpont",
+        "name": "Gamla Stan (Középkori Óváros)",
         "type": "attraction",
-        "rating": 4.8,
+        "rating": 4.9,
         "user_ratings_total": 4321,
         "price_level": 0,
         "opening_hours": {
@@ -43868,9 +43868,9 @@
       {
         "id": "mock_stockholm_se_attraction_1",
         "city_id": "stockholm_se",
-        "name": "Királyi Palota és Vármúzeum",
+        "name": "Vasa Múzeum (17. századi hadihajó)",
         "type": "attraction",
-        "rating": 4.7,
+        "rating": 4.9,
         "user_ratings_total": 17055,
         "price_level": 2,
         "opening_hours": {
@@ -43967,9 +43967,9 @@
       {
         "id": "mock_stockholm_se_attraction_2",
         "city_id": "stockholm_se",
-        "name": "Modern Művészeti Galéria",
+        "name": "Stockholmi Királyi Palota",
         "type": "attraction",
-        "rating": 4.3,
+        "rating": 4.7,
         "user_ratings_total": 601,
         "price_level": 1,
         "opening_hours": {
@@ -44066,9 +44066,9 @@
       {
         "id": "mock_stockholm_se_attraction_3",
         "city_id": "stockholm_se",
-        "name": "Botanikus Kert és Pálmaház",
+        "name": "Skansen Szabadtéri Néprajzi Múzeum",
         "type": "attraction",
-        "rating": 4.7,
+        "rating": 4.8,
         "user_ratings_total": 1669,
         "price_level": 1,
         "opening_hours": {
@@ -44165,7 +44165,7 @@
       {
         "id": "mock_stockholm_se_attraction_4",
         "city_id": "stockholm_se",
-        "name": "Szent Katedrális",
+        "name": "Stockholmi Szigetvilág Hajókirándulás",
         "type": "attraction",
         "rating": 4.9,
         "user_ratings_total": 14618,
@@ -45853,9 +45853,9 @@
       {
         "id": "mock_oslo_no_attraction_0",
         "city_id": "oslo_no",
-        "name": "Főtér és Történelmi Városközpont",
+        "name": "Vigeland Szoborpark",
         "type": "attraction",
-        "rating": 4.7,
+        "rating": 4.9,
         "user_ratings_total": 9415,
         "price_level": 0,
         "opening_hours": {
@@ -45952,9 +45952,9 @@
       {
         "id": "mock_oslo_no_attraction_1",
         "city_id": "oslo_no",
-        "name": "Királyi Palota és Vármúzeum",
+        "name": "Oslói Operaház Tetőterasza",
         "type": "attraction",
-        "rating": 4.7,
+        "rating": 4.8,
         "user_ratings_total": 16022,
         "price_level": 2,
         "opening_hours": {
@@ -46051,9 +46051,9 @@
       {
         "id": "mock_oslo_no_attraction_2",
         "city_id": "oslo_no",
-        "name": "Modern Művészeti Galéria",
+        "name": "Akershus Erőd & Kikötő",
         "type": "attraction",
-        "rating": 4.4,
+        "rating": 4.7,
         "user_ratings_total": 3762,
         "price_level": 1,
         "opening_hours": {
@@ -46150,9 +46150,9 @@
       {
         "id": "mock_oslo_no_attraction_3",
         "city_id": "oslo_no",
-        "name": "Botanikus Kert és Pálmaház",
+        "name": "Munch Múzeum (A Sikoly)",
         "type": "attraction",
-        "rating": 4.5,
+        "rating": 4.8,
         "user_ratings_total": 1737,
         "price_level": 1,
         "opening_hours": {
@@ -46249,7 +46249,7 @@
       {
         "id": "mock_oslo_no_attraction_4",
         "city_id": "oslo_no",
-        "name": "Szent Katedrális",
+        "name": "Holmenkollen Sísánc és Panoráma",
         "type": "attraction",
         "rating": 4.8,
         "user_ratings_total": 17987,
@@ -47937,7 +47937,7 @@
       {
         "id": "mock_helsinki_fi_attraction_0",
         "city_id": "helsinki_fi",
-        "name": "Főtér és Történelmi Városközpont",
+        "name": "Helsinki Fehér Katedrális & Szenátus Tér",
         "type": "attraction",
         "rating": 4.8,
         "user_ratings_total": 7525,
@@ -48036,9 +48036,9 @@
       {
         "id": "mock_helsinki_fi_attraction_1",
         "city_id": "helsinki_fi",
-        "name": "Királyi Palota és Vármúzeum",
+        "name": "Suomenlinna Tengeri Erődrendszer (UNESCO)",
         "type": "attraction",
-        "rating": 4.8,
+        "rating": 4.9,
         "user_ratings_total": 22130,
         "price_level": 2,
         "opening_hours": {
@@ -48135,9 +48135,9 @@
       {
         "id": "mock_helsinki_fi_attraction_2",
         "city_id": "helsinki_fi",
-        "name": "Modern Művészeti Galéria",
+        "name": "Temppeliaukio (Sziklatemplom)",
         "type": "attraction",
-        "rating": 4.5,
+        "rating": 4.7,
         "user_ratings_total": 1254,
         "price_level": 1,
         "opening_hours": {
@@ -48234,9 +48234,9 @@
       {
         "id": "mock_helsinki_fi_attraction_3",
         "city_id": "helsinki_fi",
-        "name": "Botanikus Kert és Pálmaház",
+        "name": "Löyly Autentikus Finn Tengerparti Szauna",
         "type": "attraction",
-        "rating": 4.4,
+        "rating": 4.9,
         "user_ratings_total": 2178,
         "price_level": 1,
         "opening_hours": {
@@ -48333,9 +48333,9 @@
       {
         "id": "mock_helsinki_fi_attraction_4",
         "city_id": "helsinki_fi",
-        "name": "Szent Katedrális",
+        "name": "Piactér (Kauppatori) és Régi Vásárcsarnok",
         "type": "attraction",
-        "rating": 4.9,
+        "rating": 4.7,
         "user_ratings_total": 4056,
         "price_level": 0,
         "opening_hours": {
@@ -50021,9 +50021,9 @@
       {
         "id": "mock_dublin_ie_attraction_0",
         "city_id": "dublin_ie",
-        "name": "Főtér és Történelmi Városközpont",
+        "name": "Trinity College & Kells Könyve",
         "type": "attraction",
-        "rating": 4.5,
+        "rating": 4.9,
         "user_ratings_total": 10965,
         "price_level": 0,
         "opening_hours": {
@@ -50120,7 +50120,7 @@
       {
         "id": "mock_dublin_ie_attraction_1",
         "city_id": "dublin_ie",
-        "name": "Királyi Palota és Vármúzeum",
+        "name": "Guinness Storehouse Kilátó Bárral",
         "type": "attraction",
         "rating": 4.9,
         "user_ratings_total": 6974,
@@ -50219,9 +50219,9 @@
       {
         "id": "mock_dublin_ie_attraction_2",
         "city_id": "dublin_ie",
-        "name": "Modern Művészeti Galéria",
+        "name": "Temple Bar Macskaköves Utcái és Élőzene",
         "type": "attraction",
-        "rating": 4.5,
+        "rating": 4.7,
         "user_ratings_total": 3414,
         "price_level": 1,
         "opening_hours": {
@@ -50318,9 +50318,9 @@
       {
         "id": "mock_dublin_ie_attraction_3",
         "city_id": "dublin_ie",
-        "name": "Botanikus Kert és Pálmaház",
+        "name": "Dublin Vár & Szent Patrik Katedrális",
         "type": "attraction",
-        "rating": 4.5,
+        "rating": 4.7,
         "user_ratings_total": 5060,
         "price_level": 1,
         "opening_hours": {
@@ -50417,7 +50417,7 @@
       {
         "id": "mock_dublin_ie_attraction_4",
         "city_id": "dublin_ie",
-        "name": "Szent Katedrális",
+        "name": "Phoenix Park & Vadaspark",
         "type": "attraction",
         "rating": 4.8,
         "user_ratings_total": 14439,
@@ -52105,9 +52105,9 @@
       {
         "id": "mock_tallinn_ee_attraction_0",
         "city_id": "tallinn_ee",
-        "name": "Főtér és Történelmi Városközpont",
+        "name": "Tallinn Középkori Óvárosa (UNESCO)",
         "type": "attraction",
-        "rating": 4.7,
+        "rating": 4.9,
         "user_ratings_total": 13060,
         "price_level": 0,
         "opening_hours": {
@@ -52204,9 +52204,9 @@
       {
         "id": "mock_tallinn_ee_attraction_1",
         "city_id": "tallinn_ee",
-        "name": "Királyi Palota és Vármúzeum",
+        "name": "Toompea Várhegy & Kohtuotsa Kilátó",
         "type": "attraction",
-        "rating": 4.7,
+        "rating": 4.9,
         "user_ratings_total": 8722,
         "price_level": 2,
         "opening_hours": {
@@ -52303,9 +52303,9 @@
       {
         "id": "mock_tallinn_ee_attraction_2",
         "city_id": "tallinn_ee",
-        "name": "Modern Művészeti Galéria",
+        "name": "Alekszandr Nyevszkij Katedrális",
         "type": "attraction",
-        "rating": 4.4,
+        "rating": 4.8,
         "user_ratings_total": 1607,
         "price_level": 1,
         "opening_hours": {
@@ -52402,7 +52402,7 @@
       {
         "id": "mock_tallinn_ee_attraction_3",
         "city_id": "tallinn_ee",
-        "name": "Botanikus Kert és Pálmaház",
+        "name": "Kadriorg Barokk Palota és Park",
         "type": "attraction",
         "rating": 4.7,
         "user_ratings_total": 3850,
@@ -52501,9 +52501,9 @@
       {
         "id": "mock_tallinn_ee_attraction_4",
         "city_id": "tallinn_ee",
-        "name": "Szent Katedrális",
+        "name": "Telliskivi Kreatív Városnegyed",
         "type": "attraction",
-        "rating": 4.9,
+        "rating": 4.8,
         "user_ratings_total": 8476,
         "price_level": 0,
         "opening_hours": {
@@ -54189,9 +54189,9 @@
       {
         "id": "mock_riga_lv_attraction_0",
         "city_id": "riga_lv",
-        "name": "Főtér és Történelmi Városközpont",
+        "name": "Feketefejűek Háza & Városháza Tér",
         "type": "attraction",
-        "rating": 4.8,
+        "rating": 4.9,
         "user_ratings_total": 1117,
         "price_level": 0,
         "opening_hours": {
@@ -54288,9 +54288,9 @@
       {
         "id": "mock_riga_lv_attraction_1",
         "city_id": "riga_lv",
-        "name": "Királyi Palota és Vármúzeum",
+        "name": "Rigai Dóm & Középkori Óváros",
         "type": "attraction",
-        "rating": 4.7,
+        "rating": 4.8,
         "user_ratings_total": 3154,
         "price_level": 2,
         "opening_hours": {
@@ -54387,9 +54387,9 @@
       {
         "id": "mock_riga_lv_attraction_2",
         "city_id": "riga_lv",
-        "name": "Modern Művészeti Galéria",
+        "name": "Art Nouveau (Szecessziós) Építészeti Negyed",
         "type": "attraction",
-        "rating": 4.5,
+        "rating": 4.9,
         "user_ratings_total": 1939,
         "price_level": 1,
         "opening_hours": {
@@ -54486,9 +54486,9 @@
       {
         "id": "mock_riga_lv_attraction_3",
         "city_id": "riga_lv",
-        "name": "Botanikus Kert és Pálmaház",
+        "name": "Szent Péter Templom Toronykilátó",
         "type": "attraction",
-        "rating": 4.4,
+        "rating": 4.8,
         "user_ratings_total": 1558,
         "price_level": 1,
         "opening_hours": {
@@ -54585,9 +54585,9 @@
       {
         "id": "mock_riga_lv_attraction_4",
         "city_id": "riga_lv",
-        "name": "Szent Katedrális",
+        "name": "Rigai Központi Piac (Zeppelin Hangárok)",
         "type": "attraction",
-        "rating": 4.8,
+        "rating": 4.7,
         "user_ratings_total": 4261,
         "price_level": 0,
         "opening_hours": {
@@ -56273,9 +56273,9 @@
       {
         "id": "mock_vilnius_lt_attraction_0",
         "city_id": "vilnius_lt",
-        "name": "Főtér és Történelmi Városközpont",
+        "name": "Gediminas Vártorony & Panoráma",
         "type": "attraction",
-        "rating": 4.7,
+        "rating": 4.9,
         "user_ratings_total": 14539,
         "price_level": 0,
         "opening_hours": {
@@ -56372,9 +56372,9 @@
       {
         "id": "mock_vilnius_lt_attraction_1",
         "city_id": "vilnius_lt",
-        "name": "Királyi Palota és Vármúzeum",
+        "name": "Szent Anna Gótikus Templom",
         "type": "attraction",
-        "rating": 4.6,
+        "rating": 4.9,
         "user_ratings_total": 23152,
         "price_level": 2,
         "opening_hours": {
@@ -56471,9 +56471,9 @@
       {
         "id": "mock_vilnius_lt_attraction_2",
         "city_id": "vilnius_lt",
-        "name": "Modern Művészeti Galéria",
+        "name": "Užupis Független Művész Köztársaság",
         "type": "attraction",
-        "rating": 4.3,
+        "rating": 4.8,
         "user_ratings_total": 1607,
         "price_level": 1,
         "opening_hours": {
@@ -56570,9 +56570,9 @@
       {
         "id": "mock_vilnius_lt_attraction_3",
         "city_id": "vilnius_lt",
-        "name": "Botanikus Kert és Pálmaház",
+        "name": "Vilniusi Katedrális és Harangtorony",
         "type": "attraction",
-        "rating": 4.5,
+        "rating": 4.8,
         "user_ratings_total": 2935,
         "price_level": 1,
         "opening_hours": {
@@ -56669,7 +56669,7 @@
       {
         "id": "mock_vilnius_lt_attraction_4",
         "city_id": "vilnius_lt",
-        "name": "Szent Katedrális",
+        "name": "Három Kereszt Hegy",
         "type": "attraction",
         "rating": 4.7,
         "user_ratings_total": 11127,
@@ -58357,9 +58357,9 @@
       {
         "id": "mock_istanbul_tr_attraction_0",
         "city_id": "istanbul_tr",
-        "name": "Főtér és Történelmi Városközpont",
+        "name": "Hagia Sophia Történelmi Bazilika",
         "type": "attraction",
-        "rating": 4.8,
+        "rating": 4.9,
         "user_ratings_total": 3050,
         "price_level": 0,
         "opening_hours": {
@@ -58456,7 +58456,7 @@
       {
         "id": "mock_istanbul_tr_attraction_1",
         "city_id": "istanbul_tr",
-        "name": "Királyi Palota és Vármúzeum",
+        "name": "Kék Mecset (Sultanahmet)",
         "type": "attraction",
         "rating": 4.8,
         "user_ratings_total": 8032,
@@ -58555,9 +58555,9 @@
       {
         "id": "mock_istanbul_tr_attraction_2",
         "city_id": "istanbul_tr",
-        "name": "Modern Művészeti Galéria",
+        "name": "Topkapi Palota & Hárem",
         "type": "attraction",
-        "rating": 4.6,
+        "rating": 4.8,
         "user_ratings_total": 418,
         "price_level": 1,
         "opening_hours": {
@@ -58654,9 +58654,9 @@
       {
         "id": "mock_istanbul_tr_attraction_3",
         "city_id": "istanbul_tr",
-        "name": "Botanikus Kert és Pálmaház",
+        "name": "Nagy Bazár & Fűszerbazár",
         "type": "attraction",
-        "rating": 4.7,
+        "rating": 4.8,
         "user_ratings_total": 2527,
         "price_level": 1,
         "opening_hours": {
@@ -58753,9 +58753,9 @@
       {
         "id": "mock_istanbul_tr_attraction_4",
         "city_id": "istanbul_tr",
-        "name": "Szent Katedrális",
+        "name": "Boszporusz Naplementés Hajótúra",
         "type": "attraction",
-        "rating": 4.7,
+        "rating": 4.9,
         "user_ratings_total": 2735,
         "price_level": 0,
         "opening_hours": {
@@ -60441,9 +60441,9 @@
       {
         "id": "mock_valletta_mt_attraction_0",
         "city_id": "valletta_mt",
-        "name": "Főtér és Történelmi Városközpont",
+        "name": "Szent János Társkatedrális & Caravaggio",
         "type": "attraction",
-        "rating": 4.7,
+        "rating": 4.9,
         "user_ratings_total": 5331,
         "price_level": 0,
         "opening_hours": {
@@ -60540,9 +60540,9 @@
       {
         "id": "mock_valletta_mt_attraction_1",
         "city_id": "valletta_mt",
-        "name": "Királyi Palota és Vármúzeum",
+        "name": "Felső Barrakka Kertek & Grand Harbour",
         "type": "attraction",
-        "rating": 4.7,
+        "rating": 4.9,
         "user_ratings_total": 8753,
         "price_level": 2,
         "opening_hours": {
@@ -60639,9 +60639,9 @@
       {
         "id": "mock_valletta_mt_attraction_2",
         "city_id": "valletta_mt",
-        "name": "Modern Művészeti Galéria",
+        "name": "Nagymesteri Palota",
         "type": "attraction",
-        "rating": 4.4,
+        "rating": 4.7,
         "user_ratings_total": 913,
         "price_level": 1,
         "opening_hours": {
@@ -60738,9 +60738,9 @@
       {
         "id": "mock_valletta_mt_attraction_3",
         "city_id": "valletta_mt",
-        "name": "Botanikus Kert és Pálmaház",
+        "name": "Fort Saint Elmo Hadimúzeum",
         "type": "attraction",
-        "rating": 4.5,
+        "rating": 4.7,
         "user_ratings_total": 2975,
         "price_level": 1,
         "opening_hours": {
@@ -60837,7 +60837,7 @@
       {
         "id": "mock_valletta_mt_attraction_4",
         "city_id": "valletta_mt",
-        "name": "Szent Katedrális",
+        "name": "Sliema & Vittoriosa Tradicionális Kompozás",
         "type": "attraction",
         "rating": 4.8,
         "user_ratings_total": 3965,
@@ -62525,9 +62525,9 @@
       {
         "id": "mock_larnaca_cy_attraction_0",
         "city_id": "larnaca_cy",
-        "name": "Főtér és Történelmi Városközpont",
+        "name": "Finikoudes Pálmafás Tengerparti Sétány",
         "type": "attraction",
-        "rating": 4.6,
+        "rating": 4.7,
         "user_ratings_total": 10948,
         "price_level": 0,
         "opening_hours": {
@@ -62624,7 +62624,7 @@
       {
         "id": "mock_larnaca_cy_attraction_1",
         "city_id": "larnaca_cy",
-        "name": "Királyi Palota és Vármúzeum",
+        "name": "Szent Lázár 9. századi Kőtemplom",
         "type": "attraction",
         "rating": 4.8,
         "user_ratings_total": 5948,
@@ -62723,9 +62723,9 @@
       {
         "id": "mock_larnaca_cy_attraction_2",
         "city_id": "larnaca_cy",
-        "name": "Modern Művészeti Galéria",
+        "name": "Larnacai Sóstó és Flamingóles",
         "type": "attraction",
-        "rating": 4.6,
+        "rating": 4.7,
         "user_ratings_total": 419,
         "price_level": 1,
         "opening_hours": {
@@ -62822,9 +62822,9 @@
       {
         "id": "mock_larnaca_cy_attraction_3",
         "city_id": "larnaca_cy",
-        "name": "Botanikus Kert és Pálmaház",
+        "name": "Mackenzie Strand & Beach Bárjai",
         "type": "attraction",
-        "rating": 4.4,
+        "rating": 4.6,
         "user_ratings_total": 4699,
         "price_level": 1,
         "opening_hours": {
@@ -62921,9 +62921,9 @@
       {
         "id": "mock_larnaca_cy_attraction_4",
         "city_id": "larnaca_cy",
-        "name": "Szent Katedrális",
+        "name": "Hala Sultan Tekke Mecset",
         "type": "attraction",
-        "rating": 4.9,
+        "rating": 4.6,
         "user_ratings_total": 15252,
         "price_level": 0,
         "opening_hours": {
@@ -64609,9 +64609,9 @@
       {
         "id": "mock_luxembourg_lu_attraction_0",
         "city_id": "luxembourg_lu",
-        "name": "Főtér és Történelmi Városközpont",
+        "name": "Bock Kazamaták Sziklaerődítmény (UNESCO)",
         "type": "attraction",
-        "rating": 4.6,
+        "rating": 4.8,
         "user_ratings_total": 1938,
         "price_level": 0,
         "opening_hours": {
@@ -64708,7 +64708,7 @@
       {
         "id": "mock_luxembourg_lu_attraction_1",
         "city_id": "luxembourg_lu",
-        "name": "Királyi Palota és Vármúzeum",
+        "name": "Grund Festői Völgynegyed",
         "type": "attraction",
         "rating": 4.9,
         "user_ratings_total": 16925,
@@ -64807,9 +64807,9 @@
       {
         "id": "mock_luxembourg_lu_attraction_2",
         "city_id": "luxembourg_lu",
-        "name": "Modern Művészeti Galéria",
+        "name": "Nagyhercegi Palota (Palais Grand-Ducal)",
         "type": "attraction",
-        "rating": 4.4,
+        "rating": 4.7,
         "user_ratings_total": 503,
         "price_level": 1,
         "opening_hours": {
@@ -64906,9 +64906,9 @@
       {
         "id": "mock_luxembourg_lu_attraction_3",
         "city_id": "luxembourg_lu",
-        "name": "Botanikus Kert és Pálmaház",
+        "name": "Pont Adolphe Ívhíd",
         "type": "attraction",
-        "rating": 4.5,
+        "rating": 4.7,
         "user_ratings_total": 5930,
         "price_level": 1,
         "opening_hours": {
@@ -65005,9 +65005,9 @@
       {
         "id": "mock_luxembourg_lu_attraction_4",
         "city_id": "luxembourg_lu",
-        "name": "Szent Katedrális",
+        "name": "Chemin de la Corniche Panoráma Sétány",
         "type": "attraction",
-        "rating": 4.8,
+        "rating": 4.9,
         "user_ratings_total": 13371,
         "price_level": 0,
         "opening_hours": {
@@ -66693,9 +66693,9 @@
       {
         "id": "mock_split_hr_attraction_0",
         "city_id": "split_hr",
-        "name": "Főtér és Történelmi Városközpont",
+        "name": "Diocletianus Római Császári Palotája",
         "type": "attraction",
-        "rating": 4.8,
+        "rating": 4.9,
         "user_ratings_total": 1724,
         "price_level": 0,
         "opening_hours": {
@@ -66792,7 +66792,7 @@
       {
         "id": "mock_split_hr_attraction_1",
         "city_id": "split_hr",
-        "name": "Királyi Palota és Vármúzeum",
+        "name": "Riva Pálmafás Tengerparti Sétány",
         "type": "attraction",
         "rating": 4.8,
         "user_ratings_total": 5280,
@@ -66891,9 +66891,9 @@
       {
         "id": "mock_split_hr_attraction_2",
         "city_id": "split_hr",
-        "name": "Modern Művészeti Galéria",
+        "name": "Marjan Erdei Park és Kilátó",
         "type": "attraction",
-        "rating": 4.3,
+        "rating": 4.8,
         "user_ratings_total": 1612,
         "price_level": 1,
         "opening_hours": {
@@ -66990,7 +66990,7 @@
       {
         "id": "mock_split_hr_attraction_3",
         "city_id": "split_hr",
-        "name": "Botanikus Kert és Pálmaház",
+        "name": "Szent Domnius Katedrális és Harangtorony",
         "type": "attraction",
         "rating": 4.7,
         "user_ratings_total": 2146,
@@ -67089,9 +67089,9 @@
       {
         "id": "mock_split_hr_attraction_4",
         "city_id": "split_hr",
-        "name": "Szent Katedrális",
+        "name": "Bačvice Homokos Tengerpart",
         "type": "attraction",
-        "rating": 4.8,
+        "rating": 4.5,
         "user_ratings_total": 12947,
         "price_level": 0,
         "opening_hours": {
@@ -68777,9 +68777,9 @@
       {
         "id": "mock_sofia_bg_attraction_0",
         "city_id": "sofia_bg",
-        "name": "Főtér és Történelmi Városközpont",
+        "name": "Alekszandr Nyevszkij Katedrális",
         "type": "attraction",
-        "rating": 4.5,
+        "rating": 4.9,
         "user_ratings_total": 8021,
         "price_level": 0,
         "opening_hours": {
@@ -68876,7 +68876,7 @@
       {
         "id": "mock_sofia_bg_attraction_1",
         "city_id": "sofia_bg",
-        "name": "Királyi Palota és Vármúzeum",
+        "name": "Vitosha Hegység és Panoráma",
         "type": "attraction",
         "rating": 4.8,
         "user_ratings_total": 24647,
@@ -68975,9 +68975,9 @@
       {
         "id": "mock_sofia_bg_attraction_2",
         "city_id": "sofia_bg",
-        "name": "Modern Művészeti Galéria",
+        "name": "Szent György Rotunda (4. század)",
         "type": "attraction",
-        "rating": 4.4,
+        "rating": 4.7,
         "user_ratings_total": 3101,
         "price_level": 1,
         "opening_hours": {
@@ -69074,9 +69074,9 @@
       {
         "id": "mock_sofia_bg_attraction_3",
         "city_id": "sofia_bg",
-        "name": "Botanikus Kert és Pálmaház",
+        "name": "Központi Ásványfürdő és Történeti Múzeum",
         "type": "attraction",
-        "rating": 4.5,
+        "rating": 4.7,
         "user_ratings_total": 2534,
         "price_level": 1,
         "opening_hours": {
@@ -69173,9 +69173,9 @@
       {
         "id": "mock_sofia_bg_attraction_4",
         "city_id": "sofia_bg",
-        "name": "Szent Katedrális",
+        "name": "Vitosha Bulváros Sétálóutca",
         "type": "attraction",
-        "rating": 4.9,
+        "rating": 4.6,
         "user_ratings_total": 12919,
         "price_level": 0,
         "opening_hours": {
@@ -70861,9 +70861,9 @@
       {
         "id": "mock_belgrade_rs_attraction_0",
         "city_id": "belgrade_rs",
-        "name": "Főtér és Történelmi Városközpont",
+        "name": "Kalemegdan Erőd & Száva-Duna Torkolat",
         "type": "attraction",
-        "rating": 4.6,
+        "rating": 4.9,
         "user_ratings_total": 6584,
         "price_level": 0,
         "opening_hours": {
@@ -70960,9 +70960,9 @@
       {
         "id": "mock_belgrade_rs_attraction_1",
         "city_id": "belgrade_rs",
-        "name": "Királyi Palota és Vármúzeum",
+        "name": "Szent Száva Katedrális (Ortodox Csoda)",
         "type": "attraction",
-        "rating": 4.7,
+        "rating": 4.9,
         "user_ratings_total": 2401,
         "price_level": 2,
         "opening_hours": {
@@ -71059,9 +71059,9 @@
       {
         "id": "mock_belgrade_rs_attraction_2",
         "city_id": "belgrade_rs",
-        "name": "Modern Művészeti Galéria",
+        "name": "Skadarlija Bohém Macskaköves Negyed",
         "type": "attraction",
-        "rating": 4.6,
+        "rating": 4.8,
         "user_ratings_total": 467,
         "price_level": 1,
         "opening_hours": {
@@ -71158,9 +71158,9 @@
       {
         "id": "mock_belgrade_rs_attraction_3",
         "city_id": "belgrade_rs",
-        "name": "Botanikus Kert és Pálmaház",
+        "name": "Knez Mihailova Sétálóutca",
         "type": "attraction",
-        "rating": 4.5,
+        "rating": 4.7,
         "user_ratings_total": 1438,
         "price_level": 1,
         "opening_hours": {
@@ -71257,9 +71257,9 @@
       {
         "id": "mock_belgrade_rs_attraction_4",
         "city_id": "belgrade_rs",
-        "name": "Szent Katedrális",
+        "name": "Ada Ciganlija Szigeti Strand & Sport",
         "type": "attraction",
-        "rating": 4.8,
+        "rating": 4.6,
         "user_ratings_total": 14654,
         "price_level": 0,
         "opening_hours": {
@@ -72945,7 +72945,7 @@
       {
         "id": "mock_tirana_al_attraction_0",
         "city_id": "tirana_al",
-        "name": "Főtér és Történelmi Városközpont",
+        "name": "Szkander bég Tér & Nemzeti Történeti Múzeum",
         "type": "attraction",
         "rating": 4.7,
         "user_ratings_total": 8762,
@@ -73044,9 +73044,9 @@
       {
         "id": "mock_tirana_al_attraction_1",
         "city_id": "tirana_al",
-        "name": "Királyi Palota és Vármúzeum",
+        "name": "Dajti Expressz Kötélpálya és Nemzeti Park",
         "type": "attraction",
-        "rating": 4.7,
+        "rating": 4.9,
         "user_ratings_total": 11868,
         "price_level": 2,
         "opening_hours": {
@@ -73143,9 +73143,9 @@
       {
         "id": "mock_tirana_al_attraction_2",
         "city_id": "tirana_al",
-        "name": "Modern Művészeti Galéria",
+        "name": "Bunk'Art 1 és 2 Földalatti Bunker Múzeumok",
         "type": "attraction",
-        "rating": 4.3,
+        "rating": 4.8,
         "user_ratings_total": 1226,
         "price_level": 1,
         "opening_hours": {
@@ -73242,9 +73242,9 @@
       {
         "id": "mock_tirana_al_attraction_3",
         "city_id": "tirana_al",
-        "name": "Botanikus Kert és Pálmaház",
+        "name": "Pazari i Ri (Új Bazár és Friss Ételek)",
         "type": "attraction",
-        "rating": 4.6,
+        "rating": 4.7,
         "user_ratings_total": 1379,
         "price_level": 1,
         "opening_hours": {
@@ -73341,7 +73341,7 @@
       {
         "id": "mock_tirana_al_attraction_4",
         "city_id": "tirana_al",
-        "name": "Szent Katedrális",
+        "name": "Blloku Élénk Éttermi és Bár Negyed",
         "type": "attraction",
         "rating": 4.7,
         "user_ratings_total": 12790,
@@ -75029,9 +75029,9 @@
       {
         "id": "mock_ljubljana_si_attraction_0",
         "city_id": "ljubljana_si",
-        "name": "Főtér és Történelmi Városközpont",
+        "name": "Ljubljanai Várhegy & Várkilátó",
         "type": "attraction",
-        "rating": 4.7,
+        "rating": 4.9,
         "user_ratings_total": 2336,
         "price_level": 0,
         "opening_hours": {
@@ -75128,7 +75128,7 @@
       {
         "id": "mock_ljubljana_si_attraction_1",
         "city_id": "ljubljana_si",
-        "name": "Királyi Palota és Vármúzeum",
+        "name": "Hármas Híd és Sárkány Híd",
         "type": "attraction",
         "rating": 4.8,
         "user_ratings_total": 14573,
@@ -75227,9 +75227,9 @@
       {
         "id": "mock_ljubljana_si_attraction_2",
         "city_id": "ljubljana_si",
-        "name": "Modern Művészeti Galéria",
+        "name": "Ljubljanica Folyóparti Kávézók és Hajózás",
         "type": "attraction",
-        "rating": 4.3,
+        "rating": 4.9,
         "user_ratings_total": 1796,
         "price_level": 1,
         "opening_hours": {
@@ -75326,9 +75326,9 @@
       {
         "id": "mock_ljubljana_si_attraction_3",
         "city_id": "ljubljana_si",
-        "name": "Botanikus Kert és Pálmaház",
+        "name": "Tivoli Park és Művészeti Galéria",
         "type": "attraction",
-        "rating": 4.6,
+        "rating": 4.7,
         "user_ratings_total": 4955,
         "price_level": 1,
         "opening_hours": {
@@ -75425,9 +75425,9 @@
       {
         "id": "mock_ljubljana_si_attraction_4",
         "city_id": "ljubljana_si",
-        "name": "Szent Katedrális",
+        "name": "Központi Vásárcsarnok és Helyi Ízek",
         "type": "attraction",
-        "rating": 4.9,
+        "rating": 4.7,
         "user_ratings_total": 4483,
         "price_level": 0,
         "opening_hours": {
@@ -77113,9 +77113,9 @@
       {
         "id": "mock_sarajevo_ba_attraction_0",
         "city_id": "sarajevo_ba",
-        "name": "Főtér és Történelmi Városközpont",
+        "name": "Baščaršija Oszmán Bazár és Sebilj Kút",
         "type": "attraction",
-        "rating": 4.6,
+        "rating": 4.9,
         "user_ratings_total": 5296,
         "price_level": 0,
         "opening_hours": {
@@ -77212,7 +77212,7 @@
       {
         "id": "mock_sarajevo_ba_attraction_1",
         "city_id": "sarajevo_ba",
-        "name": "Királyi Palota és Vármúzeum",
+        "name": "Latin Híd (1914-es Merénylet Helyszíne)",
         "type": "attraction",
         "rating": 4.8,
         "user_ratings_total": 18166,
@@ -77311,9 +77311,9 @@
       {
         "id": "mock_sarajevo_ba_attraction_2",
         "city_id": "sarajevo_ba",
-        "name": "Modern Művészeti Galéria",
+        "name": "Trebević Hegyi Felvonó és Bobpálya",
         "type": "attraction",
-        "rating": 4.5,
+        "rating": 4.8,
         "user_ratings_total": 3249,
         "price_level": 1,
         "opening_hours": {
@@ -77410,9 +77410,9 @@
       {
         "id": "mock_sarajevo_ba_attraction_3",
         "city_id": "sarajevo_ba",
-        "name": "Botanikus Kert és Pálmaház",
+        "name": "Gazi Huszrev Bég Mecset",
         "type": "attraction",
-        "rating": 4.6,
+        "rating": 4.8,
         "user_ratings_total": 2241,
         "price_level": 1,
         "opening_hours": {
@@ -77509,9 +77509,9 @@
       {
         "id": "mock_sarajevo_ba_attraction_4",
         "city_id": "sarajevo_ba",
-        "name": "Szent Katedrális",
+        "name": "Szarajevói Alagút Múzeum (Tunnel of Hope)",
         "type": "attraction",
-        "rating": 4.7,
+        "rating": 4.9,
         "user_ratings_total": 4809,
         "price_level": 0,
         "opening_hours": {
@@ -79197,9 +79197,9 @@
       {
         "id": "mock_funchal_pt_attraction_0",
         "city_id": "funchal_pt",
-        "name": "Főtér és Történelmi Városközpont",
+        "name": "Monte Palace Trópusi Kert & Felvonó",
         "type": "attraction",
-        "rating": 4.6,
+        "rating": 5.0,
         "user_ratings_total": 13655,
         "price_level": 0,
         "opening_hours": {
@@ -79296,9 +79296,9 @@
       {
         "id": "mock_funchal_pt_attraction_1",
         "city_id": "funchal_pt",
-        "name": "Királyi Palota és Vármúzeum",
+        "name": "Cabo Girão Sziklaszirtek (Üvegkilátó)",
         "type": "attraction",
-        "rating": 4.8,
+        "rating": 4.9,
         "user_ratings_total": 18409,
         "price_level": 2,
         "opening_hours": {
@@ -79395,9 +79395,9 @@
       {
         "id": "mock_funchal_pt_attraction_2",
         "city_id": "funchal_pt",
-        "name": "Modern Művészeti Galéria",
+        "name": "25 Fontes Levada Túraútvonal",
         "type": "attraction",
-        "rating": 4.4,
+        "rating": 4.9,
         "user_ratings_total": 2542,
         "price_level": 1,
         "opening_hours": {
@@ -79494,7 +79494,7 @@
       {
         "id": "mock_funchal_pt_attraction_3",
         "city_id": "funchal_pt",
-        "name": "Botanikus Kert és Pálmaház",
+        "name": "Mercado dos Lavradores Egzotikus Gyümölcspiac",
         "type": "attraction",
         "rating": 4.7,
         "user_ratings_total": 5686,
@@ -79593,9 +79593,9 @@
       {
         "id": "mock_funchal_pt_attraction_4",
         "city_id": "funchal_pt",
-        "name": "Szent Katedrális",
+        "name": "Tradicionális Fából Készült Szánkózás (Carreiros)",
         "type": "attraction",
-        "rating": 4.7,
+        "rating": 4.8,
         "user_ratings_total": 1891,
         "price_level": 0,
         "opening_hours": {
@@ -81272,6 +81272,2090 @@
         },
         "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
         "address": "Madeira (Funchal), Main Street 71."
+      }
+    ]
+  },
+  "bucharest_ro": {
+    "timestamp": 1789473231.297264,
+    "pois": [
+      {
+        "id": "mock_bucharest_ro_attraction_0",
+        "city_id": "bucharest_ro",
+        "name": "Parlamenti Palota (Világ 2. legnagyobb épülete)",
+        "type": "attraction",
+        "rating": 4.8,
+        "user_ratings_total": 1623,
+        "price_level": 0,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "1800"
+              },
+              "open": {
+                "day": 0,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "1800"
+              },
+              "open": {
+                "day": 1,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "1800"
+              },
+              "open": {
+                "day": 2,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "1800"
+              },
+              "open": {
+                "day": 3,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "1800"
+              },
+              "open": {
+                "day": 4,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "1800"
+              },
+              "open": {
+                "day": 5,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "1800"
+              },
+              "open": {
+                "day": 6,
+                "time": "0900"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 9:00 AM – 6:00 PM",
+            "Tuesday: 9:00 AM – 6:00 PM",
+            "Wednesday: 9:00 AM – 6:00 PM",
+            "Thursday: 9:00 AM – 6:00 PM",
+            "Friday: 9:00 AM – 6:00 PM",
+            "Saturday: 9:00 AM – 6:00 PM",
+            "Sunday: 9:00 AM – 6:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 44.430605524272664,
+          "lng": 26.1144629023416
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Bukarest, Main Street 129."
+      },
+      {
+        "id": "mock_bucharest_ro_attraction_1",
+        "city_id": "bucharest_ro",
+        "name": "Lipscani Óváros és Kávézók",
+        "type": "attraction",
+        "rating": 4.7,
+        "user_ratings_total": 3506,
+        "price_level": 2,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "1800"
+              },
+              "open": {
+                "day": 0,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "1800"
+              },
+              "open": {
+                "day": 1,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "1800"
+              },
+              "open": {
+                "day": 2,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "1800"
+              },
+              "open": {
+                "day": 3,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "1800"
+              },
+              "open": {
+                "day": 4,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "1800"
+              },
+              "open": {
+                "day": 5,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "1800"
+              },
+              "open": {
+                "day": 6,
+                "time": "0900"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 9:00 AM – 6:00 PM",
+            "Tuesday: 9:00 AM – 6:00 PM",
+            "Wednesday: 9:00 AM – 6:00 PM",
+            "Thursday: 9:00 AM – 6:00 PM",
+            "Friday: 9:00 AM – 6:00 PM",
+            "Saturday: 9:00 AM – 6:00 PM",
+            "Sunday: 9:00 AM – 6:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 44.41177022070189,
+          "lng": 26.09946018451037
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Bukarest, Main Street 31."
+      },
+      {
+        "id": "mock_bucharest_ro_attraction_2",
+        "city_id": "bucharest_ro",
+        "name": "Román Athenaeum Koncertterem",
+        "type": "attraction",
+        "rating": 4.9,
+        "user_ratings_total": 2820,
+        "price_level": 1,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "1800"
+              },
+              "open": {
+                "day": 0,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "1800"
+              },
+              "open": {
+                "day": 1,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "1800"
+              },
+              "open": {
+                "day": 2,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "1800"
+              },
+              "open": {
+                "day": 3,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "1800"
+              },
+              "open": {
+                "day": 4,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "1800"
+              },
+              "open": {
+                "day": 5,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "1800"
+              },
+              "open": {
+                "day": 6,
+                "time": "0900"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 9:00 AM – 6:00 PM",
+            "Tuesday: 9:00 AM – 6:00 PM",
+            "Wednesday: 9:00 AM – 6:00 PM",
+            "Thursday: 9:00 AM – 6:00 PM",
+            "Friday: 9:00 AM – 6:00 PM",
+            "Saturday: 9:00 AM – 6:00 PM",
+            "Sunday: 9:00 AM – 6:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 44.432908150849784,
+          "lng": 26.095175189482102
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Bukarest, Main Street 48."
+      },
+      {
+        "id": "mock_bucharest_ro_attraction_3",
+        "city_id": "bucharest_ro",
+        "name": "Dimitrie Gusti Szabadtéri Falumúzeum",
+        "type": "attraction",
+        "rating": 4.8,
+        "user_ratings_total": 3306,
+        "price_level": 1,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "1800"
+              },
+              "open": {
+                "day": 0,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "1800"
+              },
+              "open": {
+                "day": 1,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "1800"
+              },
+              "open": {
+                "day": 2,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "1800"
+              },
+              "open": {
+                "day": 3,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "1800"
+              },
+              "open": {
+                "day": 4,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "1800"
+              },
+              "open": {
+                "day": 5,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "1800"
+              },
+              "open": {
+                "day": 6,
+                "time": "0900"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 9:00 AM – 6:00 PM",
+            "Tuesday: 9:00 AM – 6:00 PM",
+            "Wednesday: 9:00 AM – 6:00 PM",
+            "Thursday: 9:00 AM – 6:00 PM",
+            "Friday: 9:00 AM – 6:00 PM",
+            "Saturday: 9:00 AM – 6:00 PM",
+            "Sunday: 9:00 AM – 6:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 44.437273029834735,
+          "lng": 26.11256527243585
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Bukarest, Main Street 22."
+      },
+      {
+        "id": "mock_bucharest_ro_attraction_4",
+        "city_id": "bucharest_ro",
+        "name": "Herăstrău Park és Csónakázótó",
+        "type": "attraction",
+        "rating": 4.7,
+        "user_ratings_total": 10089,
+        "price_level": 0,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "1800"
+              },
+              "open": {
+                "day": 0,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "1800"
+              },
+              "open": {
+                "day": 1,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "1800"
+              },
+              "open": {
+                "day": 2,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "1800"
+              },
+              "open": {
+                "day": 3,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "1800"
+              },
+              "open": {
+                "day": 4,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "1800"
+              },
+              "open": {
+                "day": 5,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "1800"
+              },
+              "open": {
+                "day": 6,
+                "time": "0900"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 9:00 AM – 6:00 PM",
+            "Tuesday: 9:00 AM – 6:00 PM",
+            "Wednesday: 9:00 AM – 6:00 PM",
+            "Thursday: 9:00 AM – 6:00 PM",
+            "Friday: 9:00 AM – 6:00 PM",
+            "Saturday: 9:00 AM – 6:00 PM",
+            "Sunday: 9:00 AM – 6:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 44.4189997561769,
+          "lng": 26.105884617323202
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Bukarest, Main Street 59."
+      },
+      {
+        "id": "mock_bucharest_ro_attraction_5",
+        "city_id": "bucharest_ro",
+        "name": "Néprajzi Szabadtéri Múzeum",
+        "type": "attraction",
+        "rating": 4.6,
+        "user_ratings_total": 1499,
+        "price_level": 1,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "1800"
+              },
+              "open": {
+                "day": 0,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "1800"
+              },
+              "open": {
+                "day": 1,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "1800"
+              },
+              "open": {
+                "day": 2,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "1800"
+              },
+              "open": {
+                "day": 3,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "1800"
+              },
+              "open": {
+                "day": 4,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "1800"
+              },
+              "open": {
+                "day": 5,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "1800"
+              },
+              "open": {
+                "day": 6,
+                "time": "0900"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 9:00 AM – 6:00 PM",
+            "Tuesday: 9:00 AM – 6:00 PM",
+            "Wednesday: 9:00 AM – 6:00 PM",
+            "Thursday: 9:00 AM – 6:00 PM",
+            "Friday: 9:00 AM – 6:00 PM",
+            "Saturday: 9:00 AM – 6:00 PM",
+            "Sunday: 9:00 AM – 6:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 44.40991900560012,
+          "lng": 26.089434955104863
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Bukarest, Main Street 15."
+      },
+      {
+        "id": "mock_bucharest_ro_attraction_6",
+        "city_id": "bucharest_ro",
+        "name": "Városi Népkert és Csónakázótó",
+        "type": "attraction",
+        "rating": 4.4,
+        "user_ratings_total": 1385,
+        "price_level": 0,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "1800"
+              },
+              "open": {
+                "day": 0,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "1800"
+              },
+              "open": {
+                "day": 1,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "1800"
+              },
+              "open": {
+                "day": 2,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "1800"
+              },
+              "open": {
+                "day": 3,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "1800"
+              },
+              "open": {
+                "day": 4,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "1800"
+              },
+              "open": {
+                "day": 5,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "1800"
+              },
+              "open": {
+                "day": 6,
+                "time": "0900"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 9:00 AM – 6:00 PM",
+            "Tuesday: 9:00 AM – 6:00 PM",
+            "Wednesday: 9:00 AM – 6:00 PM",
+            "Thursday: 9:00 AM – 6:00 PM",
+            "Friday: 9:00 AM – 6:00 PM",
+            "Saturday: 9:00 AM – 6:00 PM",
+            "Sunday: 9:00 AM – 6:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 44.435497843522185,
+          "lng": 26.117975459574865
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Bukarest, Main Street 108."
+      },
+      {
+        "id": "mock_bucharest_ro_attraction_7",
+        "city_id": "bucharest_ro",
+        "name": "Tudományos és Technológiai Központ",
+        "type": "attraction",
+        "rating": 4.6,
+        "user_ratings_total": 1762,
+        "price_level": 2,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "1800"
+              },
+              "open": {
+                "day": 0,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "1800"
+              },
+              "open": {
+                "day": 1,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "1800"
+              },
+              "open": {
+                "day": 2,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "1800"
+              },
+              "open": {
+                "day": 3,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "1800"
+              },
+              "open": {
+                "day": 4,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "1800"
+              },
+              "open": {
+                "day": 5,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "1800"
+              },
+              "open": {
+                "day": 6,
+                "time": "0900"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 9:00 AM – 6:00 PM",
+            "Tuesday: 9:00 AM – 6:00 PM",
+            "Wednesday: 9:00 AM – 6:00 PM",
+            "Thursday: 9:00 AM – 6:00 PM",
+            "Friday: 9:00 AM – 6:00 PM",
+            "Saturday: 9:00 AM – 6:00 PM",
+            "Sunday: 9:00 AM – 6:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 44.437751353594805,
+          "lng": 26.121652076998306
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Bukarest, Main Street 146."
+      },
+      {
+        "id": "mock_bucharest_ro_restaurant_0",
+        "city_id": "bucharest_ro",
+        "name": "Bistro Bukarest - Helyi Ízek",
+        "type": "restaurant",
+        "rating": 4.7,
+        "user_ratings_total": 834,
+        "price_level": 2,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2200"
+              },
+              "open": {
+                "day": 0,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2200"
+              },
+              "open": {
+                "day": 1,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2200"
+              },
+              "open": {
+                "day": 2,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2200"
+              },
+              "open": {
+                "day": 3,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2200"
+              },
+              "open": {
+                "day": 4,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2200"
+              },
+              "open": {
+                "day": 5,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2200"
+              },
+              "open": {
+                "day": 6,
+                "time": "1130"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 44.41048839297568,
+          "lng": 26.088495752843798
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Bukarest, Main Street 82."
+      },
+      {
+        "id": "mock_bucharest_ro_restaurant_1",
+        "city_id": "bucharest_ro",
+        "name": "La Piazza Trattoria",
+        "type": "restaurant",
+        "rating": 4.5,
+        "user_ratings_total": 496,
+        "price_level": 2,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2200"
+              },
+              "open": {
+                "day": 0,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2200"
+              },
+              "open": {
+                "day": 1,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2200"
+              },
+              "open": {
+                "day": 2,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2200"
+              },
+              "open": {
+                "day": 3,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2200"
+              },
+              "open": {
+                "day": 4,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2200"
+              },
+              "open": {
+                "day": 5,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2200"
+              },
+              "open": {
+                "day": 6,
+                "time": "1130"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 44.418470821337024,
+          "lng": 26.09787988339288
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Bukarest, Main Street 22."
+      },
+      {
+        "id": "mock_bucharest_ro_restaurant_2",
+        "city_id": "bucharest_ro",
+        "name": "Gourmet Garden Fine Dining",
+        "type": "restaurant",
+        "rating": 4.9,
+        "user_ratings_total": 505,
+        "price_level": 3,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2200"
+              },
+              "open": {
+                "day": 0,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2200"
+              },
+              "open": {
+                "day": 1,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2200"
+              },
+              "open": {
+                "day": 2,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2200"
+              },
+              "open": {
+                "day": 3,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2200"
+              },
+              "open": {
+                "day": 4,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2200"
+              },
+              "open": {
+                "day": 5,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2200"
+              },
+              "open": {
+                "day": 6,
+                "time": "1130"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 44.412449783838916,
+          "lng": 26.117151870516842
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Bukarest, Main Street 134."
+      },
+      {
+        "id": "mock_bucharest_ro_restaurant_3",
+        "city_id": "bucharest_ro",
+        "name": "The Rusty Anchor Fish & Chips",
+        "type": "restaurant",
+        "rating": 4.3,
+        "user_ratings_total": 262,
+        "price_level": 1,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2200"
+              },
+              "open": {
+                "day": 0,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2200"
+              },
+              "open": {
+                "day": 1,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2200"
+              },
+              "open": {
+                "day": 2,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2200"
+              },
+              "open": {
+                "day": 3,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2200"
+              },
+              "open": {
+                "day": 4,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2200"
+              },
+              "open": {
+                "day": 5,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2200"
+              },
+              "open": {
+                "day": 6,
+                "time": "1130"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 44.43525803955733,
+          "lng": 26.111697483040757
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Bukarest, Main Street 149."
+      },
+      {
+        "id": "mock_bucharest_ro_restaurant_4",
+        "city_id": "bucharest_ro",
+        "name": "Burger & Craft Beer House",
+        "type": "restaurant",
+        "rating": 4.4,
+        "user_ratings_total": 1361,
+        "price_level": 2,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2200"
+              },
+              "open": {
+                "day": 0,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2200"
+              },
+              "open": {
+                "day": 1,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2200"
+              },
+              "open": {
+                "day": 2,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2200"
+              },
+              "open": {
+                "day": 3,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2200"
+              },
+              "open": {
+                "day": 4,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2200"
+              },
+              "open": {
+                "day": 5,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2200"
+              },
+              "open": {
+                "day": 6,
+                "time": "1130"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 44.42730932171705,
+          "lng": 26.11677328477499
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Bukarest, Main Street 97."
+      },
+      {
+        "id": "mock_bucharest_ro_restaurant_5",
+        "city_id": "bucharest_ro",
+        "name": "Zöld Kert Vegetáriánus Étterem",
+        "type": "restaurant",
+        "rating": 4.6,
+        "user_ratings_total": 477,
+        "price_level": 2,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2200"
+              },
+              "open": {
+                "day": 0,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2200"
+              },
+              "open": {
+                "day": 1,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2200"
+              },
+              "open": {
+                "day": 2,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2200"
+              },
+              "open": {
+                "day": 3,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2200"
+              },
+              "open": {
+                "day": 4,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2200"
+              },
+              "open": {
+                "day": 5,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2200"
+              },
+              "open": {
+                "day": 6,
+                "time": "1130"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 44.4336794335562,
+          "lng": 26.11896971614658
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Bukarest, Main Street 137."
+      },
+      {
+        "id": "mock_bucharest_ro_cafe_0",
+        "city_id": "bucharest_ro",
+        "name": "The Daily Grind Specialty Cafe",
+        "type": "cafe",
+        "rating": 4.8,
+        "user_ratings_total": 528,
+        "price_level": 1,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2000"
+              },
+              "open": {
+                "day": 0,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2000"
+              },
+              "open": {
+                "day": 1,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2000"
+              },
+              "open": {
+                "day": 2,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2000"
+              },
+              "open": {
+                "day": 3,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2000"
+              },
+              "open": {
+                "day": 4,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2000"
+              },
+              "open": {
+                "day": 5,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2000"
+              },
+              "open": {
+                "day": 6,
+                "time": "0730"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 7:30 AM – 8:00 PM",
+            "Tuesday: 7:30 AM – 8:00 PM",
+            "Wednesday: 7:30 AM – 8:00 PM",
+            "Thursday: 7:30 AM – 8:00 PM",
+            "Friday: 7:30 AM – 8:00 PM",
+            "Saturday: 8:00 AM – 8:00 PM",
+            "Sunday: 8:00 AM – 8:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 44.43785843385083,
+          "lng": 26.1075218838551
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Bukarest, Main Street 106."
+      },
+      {
+        "id": "mock_bucharest_ro_cafe_1",
+        "city_id": "bucharest_ro",
+        "name": "Vintage Coffee & Bookshop",
+        "type": "cafe",
+        "rating": 4.5,
+        "user_ratings_total": 839,
+        "price_level": 1,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2000"
+              },
+              "open": {
+                "day": 0,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2000"
+              },
+              "open": {
+                "day": 1,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2000"
+              },
+              "open": {
+                "day": 2,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2000"
+              },
+              "open": {
+                "day": 3,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2000"
+              },
+              "open": {
+                "day": 4,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2000"
+              },
+              "open": {
+                "day": 5,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2000"
+              },
+              "open": {
+                "day": 6,
+                "time": "0730"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 7:30 AM – 8:00 PM",
+            "Tuesday: 7:30 AM – 8:00 PM",
+            "Wednesday: 7:30 AM – 8:00 PM",
+            "Thursday: 7:30 AM – 8:00 PM",
+            "Friday: 7:30 AM – 8:00 PM",
+            "Saturday: 8:00 AM – 8:00 PM",
+            "Sunday: 8:00 AM – 8:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 44.43049177202111,
+          "lng": 26.086529987683473
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Bukarest, Main Street 44."
+      },
+      {
+        "id": "mock_bucharest_ro_cafe_2",
+        "city_id": "bucharest_ro",
+        "name": "Central Park Espresso Bar",
+        "type": "cafe",
+        "rating": 4.5,
+        "user_ratings_total": 308,
+        "price_level": 1,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2000"
+              },
+              "open": {
+                "day": 0,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2000"
+              },
+              "open": {
+                "day": 1,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2000"
+              },
+              "open": {
+                "day": 2,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2000"
+              },
+              "open": {
+                "day": 3,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2000"
+              },
+              "open": {
+                "day": 4,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2000"
+              },
+              "open": {
+                "day": 5,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2000"
+              },
+              "open": {
+                "day": 6,
+                "time": "0730"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 7:30 AM – 8:00 PM",
+            "Tuesday: 7:30 AM – 8:00 PM",
+            "Wednesday: 7:30 AM – 8:00 PM",
+            "Thursday: 7:30 AM – 8:00 PM",
+            "Friday: 7:30 AM – 8:00 PM",
+            "Saturday: 8:00 AM – 8:00 PM",
+            "Sunday: 8:00 AM – 8:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 44.40713692761889,
+          "lng": 26.100772066427457
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Bukarest, Main Street 115."
+      },
+      {
+        "id": "mock_bucharest_ro_cafe_3",
+        "city_id": "bucharest_ro",
+        "name": "Grand Patisserie és Kávéház",
+        "type": "cafe",
+        "rating": 4.7,
+        "user_ratings_total": 1455,
+        "price_level": 2,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2000"
+              },
+              "open": {
+                "day": 0,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2000"
+              },
+              "open": {
+                "day": 1,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2000"
+              },
+              "open": {
+                "day": 2,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2000"
+              },
+              "open": {
+                "day": 3,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2000"
+              },
+              "open": {
+                "day": 4,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2000"
+              },
+              "open": {
+                "day": 5,
+                "time": "0730"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2000"
+              },
+              "open": {
+                "day": 6,
+                "time": "0730"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 7:30 AM – 8:00 PM",
+            "Tuesday: 7:30 AM – 8:00 PM",
+            "Wednesday: 7:30 AM – 8:00 PM",
+            "Thursday: 7:30 AM – 8:00 PM",
+            "Friday: 7:30 AM – 8:00 PM",
+            "Saturday: 8:00 AM – 8:00 PM",
+            "Sunday: 8:00 AM – 8:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 44.429906541647725,
+          "lng": 26.109179717295852
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Bukarest, Main Street 123."
+      },
+      {
+        "id": "mock_bucharest_ro_viewpoint_0",
+        "city_id": "bucharest_ro",
+        "name": "Bukarest Panoráma Kilátóterasz",
+        "type": "viewpoint",
+        "rating": 4.8,
+        "user_ratings_total": 1835,
+        "price_level": 0,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2359"
+              },
+              "open": {
+                "day": 0,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2359"
+              },
+              "open": {
+                "day": 1,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2359"
+              },
+              "open": {
+                "day": 2,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2359"
+              },
+              "open": {
+                "day": 3,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2359"
+              },
+              "open": {
+                "day": 4,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2359"
+              },
+              "open": {
+                "day": 5,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2359"
+              },
+              "open": {
+                "day": 6,
+                "time": "0000"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: Open 24 hours",
+            "Tuesday: Open 24 hours",
+            "Wednesday: Open 24 hours",
+            "Thursday: Open 24 hours",
+            "Friday: Open 24 hours",
+            "Saturday: Open 24 hours",
+            "Sunday: Open 24 hours"
+          ]
+        },
+        "location": {
+          "lat": 44.429636117217825,
+          "lng": 26.10054673428502
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Bukarest, Main Street 16."
+      },
+      {
+        "id": "mock_bucharest_ro_viewpoint_1",
+        "city_id": "bucharest_ro",
+        "name": "Várhegy Kilátópont",
+        "type": "viewpoint",
+        "rating": 4.8,
+        "user_ratings_total": 5645,
+        "price_level": 0,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2359"
+              },
+              "open": {
+                "day": 0,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2359"
+              },
+              "open": {
+                "day": 1,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2359"
+              },
+              "open": {
+                "day": 2,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2359"
+              },
+              "open": {
+                "day": 3,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2359"
+              },
+              "open": {
+                "day": 4,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2359"
+              },
+              "open": {
+                "day": 5,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2359"
+              },
+              "open": {
+                "day": 6,
+                "time": "0000"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: Open 24 hours",
+            "Tuesday: Open 24 hours",
+            "Wednesday: Open 24 hours",
+            "Thursday: Open 24 hours",
+            "Friday: Open 24 hours",
+            "Saturday: Open 24 hours",
+            "Sunday: Open 24 hours"
+          ]
+        },
+        "location": {
+          "lat": 44.4383728134456,
+          "lng": 26.084900191565602
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Bukarest, Main Street 87."
+      },
+      {
+        "id": "mock_bucharest_ro_viewpoint_2",
+        "city_id": "bucharest_ro",
+        "name": "TV-Torony SkyBar",
+        "type": "viewpoint",
+        "rating": 4.3,
+        "user_ratings_total": 727,
+        "price_level": 2,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2359"
+              },
+              "open": {
+                "day": 0,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2359"
+              },
+              "open": {
+                "day": 1,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2359"
+              },
+              "open": {
+                "day": 2,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2359"
+              },
+              "open": {
+                "day": 3,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2359"
+              },
+              "open": {
+                "day": 4,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2359"
+              },
+              "open": {
+                "day": 5,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2359"
+              },
+              "open": {
+                "day": 6,
+                "time": "0000"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: Open 24 hours",
+            "Tuesday: Open 24 hours",
+            "Wednesday: Open 24 hours",
+            "Thursday: Open 24 hours",
+            "Friday: Open 24 hours",
+            "Saturday: Open 24 hours",
+            "Sunday: Open 24 hours"
+          ]
+        },
+        "location": {
+          "lat": 44.43692996073594,
+          "lng": 26.093436493373506
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "Bukarest, Main Street 123."
       }
     ]
   }

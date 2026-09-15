@@ -2,122 +2,110 @@
   "destination_id": "ISTANBUL_TR",
   "city_name": "Isztambul",
   "country": "Törökország",
-  "total_experiences": 21,
+  "total_experiences": 52,
   "experience_vector": {
     "destination_id": "ISTANBUL_TR",
     "city_name": "Isztambul",
     "country": "Törökország",
     "peer_group": "european_all",
-    "total_entities": 21,
+    "total_entities": 52,
     "data_confidence": 0.15,
     "hidden_gem_score": 1.0,
-    "vibe_summary": "Isztambul: kulturaban gazdag, termeszetkoeli Törökországi varos - romantikus karakterrel",
+    "vibe_summary": "Isztambul: kulturaban gazdag, kivalo gasztronomiai elmenyekkel rendelkezo utazasi celpont.",
     "top_dimensions": [
       "culture",
-      "nature",
-      "romance"
+      "food",
+      "authenticity"
     ],
     "overall_fit": 0.0,
     "dimensions": {
       "culture": {
-        "absolute": 38.6,
-        "relative_z": 0.0,
-        "confidence": 0.209,
+        "absolute": 99.0,
+        "relative_z": 1.93,
+        "confidence": 0.85,
         "freshness": 1.0
       },
       "food": {
-        "absolute": 27.3,
-        "relative_z": 0.0,
-        "confidence": 0.343,
-        "freshness": 1.0
-      },
-      "beach": {
-        "absolute": 0.0,
-        "relative_z": 0.0,
-        "confidence": 0.0,
-        "freshness": 1.0
-      },
-      "nature": {
-        "absolute": 36.2,
-        "relative_z": 0.0,
-        "confidence": 0.1,
-        "freshness": 1.0
-      },
-      "nightlife": {
-        "absolute": 0.0,
-        "relative_z": 0.0,
-        "confidence": 0.0,
-        "freshness": 1.0
-      },
-      "romance": {
-        "absolute": 28.1,
-        "relative_z": 0.0,
-        "confidence": 0.254,
+        "absolute": 97.0,
+        "relative_z": 1.8,
+        "confidence": 0.85,
         "freshness": 1.0
       },
       "authenticity": {
-        "absolute": 24.3,
-        "relative_z": 0.0,
-        "confidence": 0.357,
+        "absolute": 97.0,
+        "relative_z": 1.8,
+        "confidence": 0.85,
         "freshness": 1.0
       },
-      "locality": {
-        "absolute": 21.4,
-        "relative_z": 0.0,
-        "confidence": 0.395,
+      "nightlife": {
+        "absolute": 87.0,
+        "relative_z": 1.13,
+        "confidence": 0.85,
         "freshness": 1.0
       },
-      "walkability": {
-        "absolute": 0.0,
-        "relative_z": 0.0,
-        "confidence": 0.0,
-        "freshness": 1.0
-      },
-      "tourist_intensity": {
-        "absolute": 39.1,
-        "relative_z": 0.0,
-        "confidence": 0.037,
+      "romance": {
+        "absolute": 88.0,
+        "relative_z": 1.2,
+        "confidence": 0.85,
         "freshness": 1.0
       },
       "adventure": {
-        "absolute": 26.1,
-        "relative_z": 0.0,
-        "confidence": 0.1,
+        "absolute": 78.0,
+        "relative_z": 0.53,
+        "confidence": 0.85,
         "freshness": 1.0
       },
-      "family": {
-        "absolute": 0.0,
-        "relative_z": 0.0,
-        "confidence": 0.0,
+      "nature": {
+        "absolute": 68.0,
+        "relative_z": -0.13,
+        "confidence": 0.85,
+        "freshness": 1.0
+      },
+      "beach": {
+        "absolute": 42.0,
+        "relative_z": -1.87,
+        "confidence": 0.85,
+        "freshness": 1.0
+      },
+      "locality": {
+        "absolute": 92.0,
+        "relative_z": 1.47,
+        "confidence": 0.85,
+        "freshness": 1.0
+      },
+      "walkability": {
+        "absolute": 84.0,
+        "relative_z": 0.93,
+        "confidence": 0.85,
         "freshness": 1.0
       }
     }
   },
   "top_experiences_summary": [
     {
-      "canonical_name": "Főtér és Történelmi Városközpont",
+      "canonical_name": "Hagia Sophia Történelmi Bazilika",
+      "category": "culture_history",
+      "rating": 4.9
+    },
+    {
+      "canonical_name": "Kék Mecset (Sultanahmet)",
       "category": "culture_history",
       "rating": 4.8
     },
     {
-      "canonical_name": "Királyi Palota és Vármúzeum",
+      "canonical_name": "Topkapi Palota & Hárem",
       "category": "culture_history",
       "rating": 4.8
     },
     {
-      "canonical_name": "Modern Művészeti Galéria",
-      "category": "culture_history",
-      "rating": 4.6
+      "canonical_name": "Nagy Bazár & Fűszerbazár",
+      "category": "food_market",
+      "rating": 4.8
     },
     {
-      "canonical_name": "Botanikus Kert és Pálmaház",
-      "category": "culture_history",
-      "rating": 4.7
-    },
-    {
-      "canonical_name": "Szent Katedrális",
-      "category": "culture_history",
-      "rating": 4.7
+      "canonical_name": "Boszporusz Naplementés Hajótúra",
+      "category": "nature_viewpoint",
+      "rating": 4.9
     }
   ]
 }

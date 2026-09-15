@@ -72,8 +72,19 @@
             const state = window.PlannerState;
             if (!state) return;
 
-            const d = state.selectedDest || (window.TripCart ? window.TripCart.getTrip()?.destination : null);
-            const destId = d?.dest_id || d?.id || 'IT_BARI';
+            const city = (d?.city || d?.name || '').toLowerCase();
+            let destId = d?.dest_id || d?.id;
+            if (!destId || (destId === 'IT_BARI' && !city.includes('bari'))) {
+                if (city.includes('bukarest') || city.includes('bucharest')) destId = 'BUCHAREST_RO';
+                else if (city.includes('róma') || city.includes('rome')) destId = 'ROME_IT';
+                else if (city.includes('barcelona')) destId = 'BARCELONA_ES';
+                else if (city.includes('párizs') || city.includes('paris')) destId = 'PARIS_FR';
+                else if (city.includes('berlin')) destId = 'BERLIN_DE';
+                else if (city.includes('prága') || city.includes('prague')) destId = 'PRAGUE_CZ';
+                else if (city.includes('bécs') || city.includes('vienna')) destId = 'VIENNA_AT';
+                else if (city.includes('bari')) destId = 'IT_BARI';
+                else destId = `${(d?.city || d?.name || 'DEST').toUpperCase().replace(/\s+/g, '_')}_${(d?.country ? d.country.slice(0, 2) : 'EU').toUpperCase()}`;
+            }
 
             const grid = document.getElementById('activitiesGrid');
             if (grid) {
@@ -88,10 +99,9 @@
             this.isLoading = true;
             try {
                 let formattedDestId = String(destId).toUpperCase();
-                if (!formattedDestId.includes('_') && formattedDestId.length > 3) {
-                    if (formattedDestId.includes('BARI')) formattedDestId = 'IT_BARI';
-                    else if (formattedDestId.includes('ROM')) formattedDestId = 'IT_ROME';
-                }
+                if (formattedDestId.includes('BUCHAREST') || formattedDestId.includes('BUKAREST')) formattedDestId = 'BUCHAREST_RO';
+                else if (formattedDestId.includes('BARI')) formattedDestId = 'IT_BARI';
+                else if (formattedDestId.includes('ROME') || formattedDestId.includes('ROMA')) formattedDestId = 'ROME_IT';
 
                 const res = await fetch(`/api/destinations/${encodeURIComponent(formattedDestId)}/activities`);
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
