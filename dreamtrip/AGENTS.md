@@ -99,3 +99,33 @@ Before completing a task, verify against `[[DEFINITION_OF_DONE]]` and `[[QUALITY
    ```bash
    python scripts/knowledge/validate.py
    ```
+
+---
+
+## 7. AI Operations Hub & Specialized Subagent Grid
+
+This project is integrated into the central **AI Operations Hub** (`E:\Data\AI_ops`).
+Live Mission Control is available at: `http://localhost:3300`.
+
+### Specialized Subagent Personas & Responsibilities
+
+| Subagent Persona | Primary Responsibilities | Core Purpose / Invariant Guard | Hub Skill Reference |
+| :--- | :--- | :--- | :--- |
+| 🧠 **Product / Decision Architect** (`decision_architect`) | Planner logika, Trip modell, scoring modellek, AHP prioritások, trade-offok. | Ő őrzi, hogy ne feature-halmaz, hanem valódi Decision Engine épüljön. | `E:\Data\AI_ops\skills\product-decision-architect\SKILL.md` |
+| 🔬 **Travel Intelligence Agent** (`travel_intelligence`) | Destination & Experience KG, adatforrások, vibe profilok, Numbeo modellek, enrichment. | Az Optivoya „utazási tudása” és adatbázisa innen származik. | `E:\Data\AI_ops\skills\travel-intelligence\SKILL.md` |
+| 🤖 **AI / Optimization Agent** (`ai_optimization`) | Recommendation engine, TripScore, diversity ranking, itinerary & constraint optimization. | A rendszer intelligenciája, többcélú optimalizálása itt koncentrálódik. | `E:\Data\AI_ops\skills\ai-optimization\SKILL.md` |
+| 🗺️ **Maps & Routing Agent** (`maps_routing`) | Google/OSM/routing API-k, travel time kalkuláció, nyitvatartási idők, transzfer logisztika. | A fizikailag és időben reális napi útiterv és logisztikai megvalósíthatóság garanciája. | `E:\Data\AI_ops\skills\maps-routing\SKILL.md` |
+| 💻 **Full-Stack Engineer Agent** (`fullstack_engineer`) | Backend (FastAPI) + frontend (HTML/CSS/JS) + API útvonalak + state management + integrációk. | A tényleges termék, a reszponzív UI és a robusztus architektúra implementációja. | `E:\Data\AI_ops\skills\fullstack-engineer\SKILL.md` |
+| 🧪 **QA / Validation Agent** (`qa_validator`) | Automated tests, golden trips, regressziós tesztek, human-vs-AI benchmark, gráf integritás. | Megakadályozza, hogy „működő”, de hibás döntéseket adó rendszert építsünk. | `E:\Data\AI_ops\skills\qa-validation\SKILL.md` |
+| 📊 **B2B Product / Growth Agent** (`b2b_growth`) | Advisor workflow, usability, pricing modell, üzleti validáció, telemetria és piacra lépés. | Biztosítja, hogy a platform ne csak technikailag jó, hanem üzletileg is sikeres legyen. | `E:\Data\AI_ops\skills\b2b-growth\SKILL.md` |
+
+### Central Task & Memory Synchronization
+- **Log a new task:**
+  ```powershell
+  python scripts/ai_ops_bridge.py log-task --title "Task title" --agent decision_architect --priority high
+  ```
+- **Sync active work items & memories to Mission Control:**
+  ```powershell
+  python scripts/ai_ops_bridge.py sync
+  ```
+

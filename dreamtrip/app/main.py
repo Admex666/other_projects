@@ -14,7 +14,7 @@ from app.core.auth import USERS, sessions, verify_credentials, create_session, g
 from app.services.destination_service import load_all_destinations
 
 # Import Modular Routers
-from app.routers import auth, planner, flights, stays, destinations, trip, admin
+from app.routers import auth, planner, flights, stays, destinations, trip, admin, b2b
 from app.services.analytics_service import record_telemetry_event
 
 @asynccontextmanager
@@ -86,6 +86,7 @@ app.include_router(flights.router)
 app.include_router(stays.router)
 app.include_router(destinations.router)
 app.include_router(trip.router)
+app.include_router(b2b.router)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))

@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optivoya for Travel Advisors — B2B Utazási Döntési Motor</title>
+    <meta name="description" content="Készíts komplett, ellenőrzött utazási ajánlatot és részletes napi élménytervet 3 perc alatt a megszokott 4 óra helyett. Többszolgáltatós szállásaggregáció, intelligens járattervezés és 100% white-label ügyféldosszié.">
+    
+    <!-- Google Fonts & Material Symbols (Design System Compliance) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="/static/css/b2b_landing.css">
+</head>
+<body class="b2b-landing-body">
+
+    <!-- Sticky Navigation -->
+    <header class="b2b-nav">
+        <div class="b2b-container b2b-nav-inner">
+            <a href="/b2b" class="b2b-brand">
+                <img src="/static/logo.png" alt="Optivoya Logo" class="b2b-logo-img">
+                <span class="b2b-brand-name">Optivoya</span>
+                <span class="b2b-brand-badge">FOR ADVISORS</span>
+            </a>
+            
+            <nav class="b2b-nav-menu">
+                <ul class="b2b-nav-links">
+                    <li><a href="#comparison" class="b2b-nav-link">Munkafolyamat</a></li>
+                    <li><a href="#scenario" class="b2b-nav-link">Ügyféleset</a></li>
+                    <li><a href="#modules" class="b2b-nav-link">Döntési Modulok</a></li>
+                    <li><a href="#calculator" class="b2b-nav-link">Megtakarítási Kalkulátor</a></li>
+                    <li><a href="#faq" class="b2b-nav-link">Gyakori Kérdések</a></li>
+                </ul>
+            </nav>
+            
+            <div class="b2b-nav-actions">
+                <button class="btn-b2b-secondary trigger-access-gate nav-btn-desktop-only" data-cta-name="nav_planner_demo" style="font-size: 13.5px; padding: 8px 16px;">
+                    <span class="material-symbols-outlined" style="font-size: 16px; color: #34d399;">lock</span>
+                    <span>Élő Tervező Demó</span>
+                </button>
+                <button class="btn-b2b-primary trigger-beta-modal" data-cta-name="nav_beta_access" style="font-size: 13.5px; padding: 8px 18px;">
+                    <span>Béta Hozzáférés</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="b2b-hero">
+        <div class="b2b-container">
+            <div class="b2b-pill-notice">
+                <span class="material-symbols-outlined" style="font-size: 16px;">data_object</span>
+                <span>NEM CHATBOT — 100.000+ VALÓS ADATPONTRA ÉPÜLŐ DÖNTÉSI MOTOR</span>
+            </div>
+            
+            <h1 class="b2b-hero-title">
+                Könnyítsd meg és gyorsítsd fel a munkád: készíts hibátlan utazási ajánlatot 3 perc alatt
+            </h1>
+            
+            <p class="b2b-hero-subtitle">
+                Felejtsd el a tucatnyi böngészőfül közötti, órákon át tartó kézi keresgélést, a naptári éjszakák számolgatását és a fárasztó Excel-másolást. Az Optivoya nem egy kitalált árakkal hallucináló ChatGPT: több mint 100.000 valós, élő piaci adatpontot mérlegel az utazó pontos preferenciáival, és azonnal átadható, professzionális ajánlattá formálja.
+            </p>
+            
+            <!-- Proof & Trust Pills -->
+            <div class="b2b-hero-proof-pills">
+                <div class="b2b-proof-pill">
+                    <span class="material-symbols-outlined icon">verified</span>
+                    <span>0% Hallucináció (100.000+ valós, élő adatpont)</span>
+                </div>
+                <div class="b2b-proof-pill">
+                    <span class="material-symbols-outlined icon">bolt</span>
+                    <span>4 óra helyett 3 perc munka / ügyfél</span>
+                </div>
+                <div class="b2b-proof-pill">
+                    <span class="material-symbols-outlined icon">verified_user</span>
+                    <span>100% White-Label (Saját márkanévvel továbbítható)</span>
+                </div>
+                <div class="b2b-proof-pill">
+                    <span class="material-symbols-outlined icon">percent</span>
+                    <span>0% Jutaléklevonás (Közvetlen foglalási linkek)</span>
+                </div>
+            </div>
+            
+            <div class="b2b-hero-cta-wrap">
+                <button class="btn-b2b-primary trigger-beta-modal" data-cta-name="hero_beta_request" style="font-size: 15px; padding: 13px 26px;">
+                    <span class="material-symbols-outlined" style="font-size: 19px;">login</span>
+                    <span>Béta Hozzáférés Kérése</span>
+                </button>
+                <a href="#calculator" class="btn-b2b-secondary track-cta-btn" data-cta-name="hero_scroll_calculator" style="font-size: 15px; padding: 13px 24px;">
+                    <span class="material-symbols-outlined" style="font-size: 19px;">calculate</span>
+                    <span>Havi Megtakarítás Számítása</span>
+                </a>
+            </div>
+            
+            <!-- Quick KPI Stats Bar -->
+            <div class="b2b-kpi-bar">
+                <div class="b2b-kpi-item">
+                    <div class="b2b-kpi-num" style="color: #34d399;">75-80%</div>
+                    <div class="b2b-kpi-label">Kutatási & Összehasonlítási Időmegtakarítás</div>
+                </div>
+                <div class="b2b-kpi-item">
+                    <div class="b2b-kpi-num" style="color: #ffffff;">180 mp</div>
+                    <div class="b2b-kpi-label">Teljes, Ellenőrzött Ajánlat Generálása</div>
+                </div>
+                <div class="b2b-kpi-item">
+                    <div class="b2b-kpi-num" style="color: #34d399;">100%</div>
+                    <div class="b2b-kpi-label">Valós, Azonnal Foglalható Piaci Árak</div>
+                </div>
+                <div class="b2b-kpi-item">
+                    <div class="b2b-kpi-num" style="color: #a7f540;">3-4x</div>
+                    <div class="b2b-kpi-label">Több Kiszolgált Ügyfél Azonos Munkaidőben</div>
+                </div>
+            </div>
+
+            <!-- Anti-AI / 100k Data Point Engine Callout Box -->
+            <div class="b2b-engine-trust-box">
+                <div class="b2b-engine-trust-header">
+                    <span class="b2b-section-tag" style="color: #34d399;">MIÉRT NEM CHATGPT VAGY EGY ÚJABB AI WRAPPER?</span>
+                    <h2 style="font-size: clamp(22px, 3.5vw, 30px); font-weight: 800; margin-bottom: 12px; color: #ffffff;">
+                        Nem légből kapott szövegeket generálunk, hanem több százezer adatpontot elemzünk
+                    </h2>
+                    <p style="font-size: 14.5px; color: var(--b2b-text-secondary); line-height: 1.6; max-width: 720px; margin: 0 auto;">
+                        A legtöbb „utazási AI” csupán általános nyelvi modellekből összefércelt sablon, amely nem ismeri az élő járatárakat, nem létező szállodákat ajánl és fizikailag lehetetlen napi programokat talál ki. Az Optivoya egy mérnöki pontosságú <strong>Döntési Motor</strong>.
+                    </p>
+                </div>
+                
+                <div class="b2b-engine-trust-grid">
+                    <!-- Card 1: Generic AI / ChatGPT Flaws -->
+                    <div class="b2b-engine-card warning-card">
+                        <div class="b2b-engine-icon-wrap" style="background: rgba(244, 63, 94, 0.15); color: #f43f5e;">
+                            <span class="material-symbols-outlined">block</span>
+                        </div>
+                        <div class="b2b-engine-title" style="color: #fca5a5;">Általános AI & ChatGPT</div>
+                        <div class="b2b-engine-desc">
+                            Nyelvi statisztikák alapján próbál útitervet írni, de semmilyen valós foglalási és logisztikai rálátása sincs.
+                        </div>
+                        <ul class="b2b-engine-list" style="color: #f87171;">
+                            <li><span style="font-weight: bold; color: #f43f5e;">&times;</span> Kitalált, nem létező árak és kamuszállások</li>
+                            <li><span style="font-weight: bold; color: #f43f5e;">&times;</span> Zárt vagy megszűnt látványosságok</li>
+                            <li><span style="font-weight: bold; color: #f43f5e;">&times;</span> Éjszakai érkezések figyelmen kívül hagyása</li>
+                            <li><span style="font-weight: bold; color: #f43f5e;">&times;</span> Zéró valós foglalási link vagy garancia</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Card 2: 100k+ Live Data Points -->
+                    <div class="b2b-engine-card highlight-card">
+                        <div class="b2b-engine-icon-wrap" style="background: var(--b2b-primary-subtle); color: #34d399;">
+                            <span class="material-symbols-outlined">database</span>
+                        </div>
+                        <div class="b2b-engine-title" style="color: #34d399;">100.000+ Valós Adatpont</div>
+                        <div class="b2b-engine-desc">
+                            Determinisztikus adatfolyamok és valós idejű aggregáció közvetlen piaci forrásokból.
+                        </div>
+                        <ul class="b2b-engine-list" style="color: var(--b2b-text-main);">
+                            <li><span style="color: #34d399; font-weight: bold;">&#10003;</span> <strong>Élő járatárak & menetrendek</strong> (Kiwi API)</li>
+                            <li><span style="color: #34d399; font-weight: bold;">&#10003;</span> <strong>100+ szállásszolgáltató</strong> valós szobái</li>
+                            <li><span style="color: #34d399; font-weight: bold;">&#10003;</span> <strong>Open-Meteo</strong> 10 éves mikroklíma modellek</li>
+                            <li><span style="color: #34d399; font-weight: bold;">&#10003;</span> <strong>Numbeo</strong> empirikus helyi költségindexek</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Card 3: Multi-Objective Preference Balancing -->
+                    <div class="b2b-engine-card highlight-card">
+                        <div class="b2b-engine-icon-wrap" style="background: var(--b2b-primary-subtle); color: #a7f540;">
+                            <span class="material-symbols-outlined">tune</span>
+                        </div>
+                        <div class="b2b-engine-title" style="color: #a7f540;">Személyre Szabott Súlyozás</div>
+                        <div class="b2b-engine-desc">
+                            Többváltozós matematikai optimalizáció (AHP) az utazó valódi igényei szerint.
+                        </div>
+                        <ul class="b2b-engine-list" style="color: var(--b2b-text-main);">
+                            <li><span style="color: #a7f540; font-weight: bold;">&#10003;</span> Költségkeret vs. kényelem finomhangolása</li>
+                            <li><span style="color: #a7f540; font-weight: bold;">&#10003;</span> Gasztro, kultúra, romantika vagy pihenés</li>
+                            <li><span style="color: #a7f540; font-weight: bold;">&#10003;</span> <strong>+12–18 óra hasznos helyi idő optimalizáció</strong></li>
+                            <li><span style="color: #a7f540; font-weight: bold;">&#10003;</span> <strong>100% hallucinációmentes, azonnal foglalható</strong></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Before vs After Comparison (Dramatizing the Real Advisor Pain) -->
+    <section class="b2b-section" id="comparison">
+        <div class="b2b-container">
+            <div class="b2b-section-header">
+                <span class="b2b-section-tag">A Munkafolyamat Valósága</span>
+                <h2 class="b2b-section-title">Hogyan telik ma a tervezés — és milyen az Optivoyával?</h2>
+                <p class="b2b-section-desc">
+                    Nézd meg a különbséget a hagyományos szétaprózott böngészés és az integrált döntési motor között.
+                </p>
+            </div>
+            
+            <div class="b2b-comparison-box">
+                <div class="b2b-comparison-grid">
+                    <!-- Left: Legacy Pain -->
+                    <div class="b2b-comp-col legacy">
+                        <div class="b2b-comp-col-header">
+                            <div class="b2b-comp-col-title" style="color: #f43f5e;">
+                                <span class="material-symbols-outlined">warning</span>
+                                <span>HAGYOMÁNYOS FOLYAMAT (FÁRASZTÓ KÁOSZ)</span>
+                            </div>
+                            <span style="font-size: 12px; font-family: var(--font-mono); color: #f43f5e; font-weight: 700;">3.5 - 4.5 ÓRA</span>
+                        </div>
+                        <ul class="b2b-comp-list legacy">
+                            <li>
+                                <span class="bullet">&times;</span>
+                                <span><strong>14+ nyitott böngészőfül:</strong> Járatkeresők, szállásoldalak, térképek, véleményportálok, blogok és Excel táblázatok.</span>
+                            </li>
+                            <li>
+                                <span class="bullet">&times;</span>
+                                <span><strong>Kézi éjszakaszámítás:</strong> Ha a gép éjfél után érkezik vagy kora reggel indul, kézzel kell korrigálni a naptári éjszakákat a szállásnál.</span>
+                            </li>
+                            <li>
+                                <span class="bullet">&times;</span>
+                                <span><strong>Másolgatás Wordbe és Excelbe:</strong> Az árakat és leírásokat kézzel kell kimásolni, formázni és kalkulálni.</span>
+                            </li>
+                            <li>
+                                <span class="bullet">&times;</span>
+                                <span><strong>Bizonytalan kliens:</strong> Az ügyfél nem érti, miért a 20.000 Ft-tal drágább jegyet javaslod, amíg hosszasan nem magyarázod a menetrendet.</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Right: Optivoya OS -->
+                    <div class="b2b-comp-col optivoya">
+                        <div class="b2b-comp-col-header">
+                            <div class="b2b-comp-col-title" style="color: #10b981;">
+                                <span class="material-symbols-outlined">check_circle</span>
+                                <span>OPTIVOYA DÖNTÉSI RENDSZER</span>
+                            </div>
+                            <span style="font-size: 12px; font-family: var(--font-mono); color: #34d399; font-weight: 800;">~3 PERC ÖSSZESEN</span>
+                        </div>
+                        <ul class="b2b-comp-list optivoya">
+                            <li>
+                                <span class="bullet">&#10003;</span>
+                                <span><strong>1 integrált munkafelület:</strong> Célállomás-illesztés, élő menetrendek és 100+ szállásszolgáltató egyetlen szűrőlogikában.</span>
+                            </li>
+                            <li>
+                                <span class="bullet">&#10003;</span>
+                                <span><strong>Automatikus naptári szinkron:</strong> A járat kiválasztásakor a szálláskereső automatikusan a pontos éjszakaszámra és dátumablakra szűr.</span>
+                            </li>
+                            <li>
+                                <span class="bullet">&#10003;</span>
+                                <span><strong>Hasznos nyaralási idő kalkuláció:</strong> Azonnal megmutatja, hogy a javasolt opció +14.5 óra helyi élményidőt ad az ügyfélnek.</span>
+                            </li>
+                            <li>
+                                <span class="bullet">&#10003;</span>
+                                <span><strong>1 kattintásos white-label export:</strong> Professzionális utazási dosszié részletes napi sétaútvonallal a saját logóddal.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Messy Client Scenario Breakdown -->
+    <section class="b2b-section" id="scenario" style="background: var(--b2b-bg-surface);">
+        <div class="b2b-container">
+            <div class="b2b-section-header">
+                <span class="b2b-section-tag">Valós Esettanulmány</span>
+                <h2 class="b2b-section-title">Hogyan old meg egy tipikus, homályos ügyfélkérést?</h2>
+                <p class="b2b-section-desc">
+                    Ismerős a helyzet, amikor az ügyfél nem konkrét várost kér, hanem egy laza élményt határoz meg?
+                </p>
+            </div>
+            
+            <div class="b2b-scenario-box">
+                <div class="b2b-scenario-grid">
+                    <!-- Client Request -->
+                    <div class="b2b-scenario-client">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                            <span class="material-symbols-outlined" style="color: var(--b2b-primary);">chat</span>
+                            <span style="font-weight: 700; font-size: 14px; text-transform: uppercase; font-family: var(--font-mono); color: var(--b2b-primary);">Ügyfél WhatsApp üzenete:</span>
+                        </div>
+                        <blockquote style="font-style: italic; color: #e2e8f0; font-size: 15px; line-height: 1.6; border-left: 3px solid var(--b2b-primary); padding-left: 14px; margin-bottom: 16px;">
+                            „Szia Anna! Október közepén mennénk a párommal 3-4 napra valami hangulatos, meleg helyre (20°C felett), ahol fantasztikus a kaja, van mit megnézni, és kényelmes a repülő. A keretünk max. 450.000 Ft mindennel együtt. Mit javasolsz?”
+                        </blockquote>
+                        <div style="font-size: 12.5px; color: var(--b2b-text-muted);">
+                            Hagyományos válasz: 2 napos kutatás, 3 körös egyeztetés.
+                        </div>
+                    </div>
+                    
+                    <!-- Optivoya Resolution -->
+                    <div class="b2b-scenario-engine">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                            <span style="font-weight: 700; font-size: 14px; text-transform: uppercase; font-family: var(--font-mono); color: #34d399; display: flex; align-items: center; gap: 6px;">
+                                <span class="material-symbols-outlined" style="font-size: 18px;">psychology</span>
+                                <span>Optivoya Döntési Megoldás (90 mp alatt):</span>
+                            </span>
+                            <span style="background: var(--b2b-accent-emerald-subtle); color: #34d399; font-size: 11px; font-weight: 700; font-family: var(--font-mono); padding: 2px 8px; border-radius: 4px;">VERIFIED MATCH</span>
+                        </div>
+                        <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 13.5px;">
+                            <li style="display: flex; gap: 8px;">
+                                <span class="material-symbols-outlined" style="color: #34d399; font-size: 18px;">check</span>
+                                <span><strong>Rangsorolt célállomás:</strong> Róma (Kultúra 99p, Gasztro 96p, 22°C átlagos mikroklíma, alacsony helyi árindex).</span>
+                            </li>
+                            <li style="display: flex; gap: 8px;">
+                                <span class="material-symbols-outlined" style="color: #34d399; font-size: 18px;">check</span>
+                                <span><strong>Optimális járat:</strong> 10.12. 06:15 oda, 10.14. 21:30 vissza (+14.5 óra hasznos helyi idő).</span>
+                            </li>
+                            <li style="display: flex; gap: 8px;">
+                                <span class="material-symbols-outlined" style="color: #34d399; font-size: 18px;">check</span>
+                                <span><strong>Szállás & Napi Élményterv:</strong> 4★ belvárosi hotel (97.000 Ft / 2 éj) + 3 napos sétaútvonal. Csomagár: 184.200 Ft (bőven a 450k-s kereten belül).</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Core Modules Showcase (Interactive Tabbed Tour with Real Photos & Itineraries) -->
+    <section class="b2b-section" id="modules">
+        <div class="b2b-container">
+            <div class="b2b-section-header">
+                <span class="b2b-section-tag">Rendszermodulok</span>
+                <h2 class="b2b-section-title">A dedikált utazási döntéstámogató motorok</h2>
+                <p class="b2b-section-desc">
+                    Ismerd meg az Optivoya 4 alappillérét a célállomás-szűréstől a napi élménytervezésig.
+                </p>
+            </div>
+            
+            <!-- Tab Buttons -->
+            <div class="b2b-tab-buttons">
+                <button class="b2b-tab-btn active" data-tab="tabMatcher">
+                    <span class="material-symbols-outlined">explore</span>
+                    <span>1. Célállomás Matcher</span>
+                </button>
+                <button class="b2b-tab-btn" data-tab="tabFlights">
+                    <span class="material-symbols-outlined">flight_takeoff</span>
+                    <span>2. Járat Intelligencia</span>
+                </button>
+                <button class="b2b-tab-btn" data-tab="tabStays">
+                    <span class="material-symbols-outlined">hotel</span>
+                    <span>3. Szállás Benchmark</span>
+                </button>
+                <button class="b2b-tab-btn" data-tab="tabDossier">
+                    <span class="material-symbols-outlined">map</span>
+                    <span>4. Napi Élmények & Dosszié</span>
+                </button>
+            </div>
+            
+            <!-- Tab Panels -->
+            <!-- Tab 1: Matcher -->
+            <div class="b2b-tab-content-panel active" id="tabMatcher">
+                <div class="b2b-module-row">
+                    <div class="b2b-module-content">
+                        <span class="b2b-module-tag">KUTATÁSI & PROFILOZÓ MOTOR</span>
+                        <h3 class="b2b-module-heading">Célállomás Matcher & 10-Dimenziós Élményprofilok</h3>
+                        <p class="b2b-module-p">
+                            A rendszer 41 kanonikus európai desztinációt elemez valós mikroklíma-modellek, biztonsági és helyi megélhetési indexek, valamint 10-dimenziós élménykarakter alapján.
+                        </p>
+                        <ul class="b2b-module-features">
+                            <li><span class="material-symbols-outlined mat-icon">category</span> <strong>10-dimenziós élményprofilozás:</strong> Kultúra, Gasztronómia, Tengerpart, Romantika, Éjszakai élet valós matematikai súlyozással.</li>
+                            <li><span class="material-symbols-outlined mat-icon">thermostat</span> <strong>Klíma- & Szezonális Szűrés:</strong> Garantáltan a kívánt hőmérsékleti tartományba eső városok listázása.</li>
+                            <li><span class="material-symbols-outlined mat-icon">payments</span> <strong>Objektív Helyi Árszínvonal:</strong> Megbízható empirikus becslés étkezési, látványossági és helyi szolgáltatási kiadásokra.</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Visual: Real Destination Card -->
+                    <div class="b2b-module-visual">
+                        <div class="b2b-platform-card">
+                            <div class="b2b-card-img-wrap">
+                                <img src="https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=800&q=80" alt="Róma Colosseum" class="b2b-card-img">
+                                <div class="b2b-card-overlay-badge">
+                                    <span class="material-symbols-outlined" style="font-size: 14px;">verified</span>
+                                    <span>96% MATCH</span>
+                                </div>
+                                <div class="b2b-card-overlay-tag">
+                                    <span>Kultúra & Gasztronómia</span>
+                                </div>
+                            </div>
+                            <div class="b2b-card-body">
+                                <div class="b2b-card-title-row">
+                                    <div>
+                                        <div class="b2b-card-title">Róma & Lazio (Olaszország)</div>
+                                        <div class="b2b-card-subtitle">Kiemelkedő őszi hangulat, gazdag ókori örökség</div>
+                                    </div>
+                                    <span style="font-family: var(--font-mono); font-size: 14px; font-weight: 800; color: #34d399;">22°C</span>
+                                </div>
+                                <div class="b2b-pill-row">
+                                    <span class="b2b-metric-pill">Kultúra: <strong>99p</strong></span>
+                                    <span class="b2b-metric-pill">Gasztronómia: <strong>96p</strong></span>
+                                    <span class="b2b-metric-pill">Éjszakai élet: <strong>88p</strong></span>
+                                    <span class="b2b-metric-pill">Biztonság: <strong>85p</strong></span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; font-size: 12px; font-family: var(--font-mono); border-top: 1px solid var(--b2b-border-subtle); padding-top: 8px;">
+                                    <span style="color: var(--b2b-text-secondary);">Helyi megélhetési szint:</span>
+                                    <span style="color: #ffffff; font-weight: 700;">Kedvező ár-érték arány</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tab 2: Flights -->
+            <div class="b2b-tab-content-panel" id="tabFlights">
+                <div class="b2b-module-row">
+                    <div class="b2b-module-content">
+                        <span class="b2b-module-tag">MENETREND-OPTIMALIZÁLÓ MOTOR</span>
+                        <h3 class="b2b-module-heading">Menetrend & Hasznos Élményidő Optimalizáció</h3>
+                        <p class="b2b-module-p">
+                            A legtöbb kereső kizárólag a legolcsóbb jegyet helyezi előtérbe — függetlenül attól, hogy az hajnali kelést vagy elvesztegetett nyaralási órákat jelent. Az Optivoya többkritériumos döntési algoritmusa a valós hasznos helyi élményidőt és a kényelmet optimalizálja.
+                        </p>
+                        <ul class="b2b-module-features">
+                            <li><span class="material-symbols-outlined mat-icon">timelapse</span> <strong>Hasznos Nyaralási Idő:</strong> +12–18 óra aktív idő a célállomáson korai odaút és késői visszaút intelligens kombinációjával.</li>
+                            <li><span class="material-symbols-outlined mat-icon">balance</span> <strong>Többszempontú Rangsorolás:</strong> Ár, repülési idő, átszállások száma és indulási napszak együttes kiértékelése.</li>
+                            <li><span class="material-symbols-outlined mat-icon">calendar_today</span> <strong>Pontos Naptári Éjszakák:</strong> Automatikus dátum- és éjszakaszinkronizáció a szállásaggregátor felé.</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Visual: Real Flight Card -->
+                    <div class="b2b-module-visual">
+                        <div class="b2b-platform-card" style="padding: 18px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span class="material-symbols-outlined" style="color: #34d399; font-size: 22px;">flight_takeoff</span>
+                                    <span style="font-weight: 800; font-size: 15px; color: #ffffff;">Optimális Repülési Menetrend</span>
+                                </div>
+                                <span style="background: var(--b2b-accent-emerald-subtle); color: #34d399; font-weight: 800; font-family: var(--font-mono); padding: 3px 8px; border-radius: 4px; font-size: 11px;">#1 AJÁNLOTT JÁRAT</span>
+                            </div>
+                            
+                            <!-- Outbound -->
+                            <div class="b2b-flight-segment" style="margin-bottom: 8px;">
+                                <div style="font-size: 11px; color: var(--b2b-text-muted); font-family: var(--font-mono); text-transform: uppercase;">Odaút · 10.12. (Péntek)</div>
+                                <div class="b2b-flight-row">
+                                    <div><strong>06:15</strong> BUD</div>
+                                    <div style="color: var(--b2b-text-muted); font-size: 11px; display: flex; align-items: center; gap: 4px;">
+                                        <span style="height: 1px; width: 30px; background: #475569;"></span>
+                                        <span>2ó 05p · Közvetlen</span>
+                                        <span style="height: 1px; width: 30px; background: #475569;"></span>
+                                    </div>
+                                    <div><strong>08:20</strong> FCO</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Inbound -->
+                            <div class="b2b-flight-segment" style="margin-bottom: 12px;">
+                                <div style="font-size: 11px; color: var(--b2b-text-muted); font-family: var(--font-mono); text-transform: uppercase;">Visszaút · 10.14. (Vasárnap)</div>
+                                <div class="b2b-flight-row">
+                                    <div><strong>21:30</strong> FCO</div>
+                                    <div style="color: var(--b2b-text-muted); font-size: 11px; display: flex; align-items: center; gap: 4px;">
+                                        <span style="height: 1px; width: 30px; background: #475569;"></span>
+                                        <span>2ó 05p · Közvetlen</span>
+                                        <span style="height: 1px; width: 30px; background: #475569;"></span>
+                                    </div>
+                                    <div><strong>23:35</strong> BUD</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Highlight Gain -->
+                            <div class="b2b-flight-highlight-bar">
+                                <span class="material-symbols-outlined" style="font-size: 16px;">timelapse</span>
+                                <span>+14.5 óra extra hasznos nyaralási idő a helyszínen</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tab 3: Stays -->
+            <div class="b2b-tab-content-panel" id="tabStays">
+                <div class="b2b-module-row">
+                    <div class="b2b-module-content">
+                        <span class="b2b-module-tag">SZÁLLÁSAGGREGÁCIÓS MOTOR</span>
+                        <h3 class="b2b-module-heading">Szállásaggregáció & Minőségi Benchmark</h3>
+                        <p class="b2b-module-p">
+                            Több mint 100 szállásfoglaló oldal kínálata egyetlen felületen összegezve. A rendszer a repülőjárat pontos érkezési és indulási dátumablakára keres, és automatikusan számolja az éjszakánkénti és teljes csomagárakat.
+                        </p>
+                        <ul class="b2b-module-features">
+                            <li><span class="material-symbols-outlined mat-icon">star</span> <strong>Értékelési & Ár Benchmark:</strong> Azonnal látható, melyik szállás tartozik a helyi piac felső 20%-ába.</li>
+                            <li><span class="material-symbols-outlined mat-icon">filter_alt</span> <strong>Szolgáltatásszűrők:</strong> 3-4-5★ kategória, reggeli opciók és belvárosi elhelyezkedés.</li>
+                            <li><span class="material-symbols-outlined mat-icon">sync_alt</span> <strong>Pontos Naptári Szinkron:</strong> 0% hibaarány az éjszakák számolásában késői érkezés esetén is.</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Visual: Real Stay Card with Image -->
+                    <div class="b2b-module-visual">
+                        <div class="b2b-platform-card">
+                            <div class="b2b-card-img-wrap">
+                                <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80" alt="Hotel Artemide Roma" class="b2b-card-img">
+                                <div class="b2b-card-overlay-badge" style="border-color: rgba(245,158,11,0.5); color: #fbbf24;">
+                                    <span class="material-symbols-outlined" style="font-size: 14px;">star</span>
+                                    <span>9.3 / 10 KIVÁLÓ</span>
+                                </div>
+                                <div class="b2b-card-overlay-tag">
+                                    <span>4★ Belvárosi Szálloda</span>
+                                </div>
+                            </div>
+                            <div class="b2b-card-body">
+                                <div class="b2b-card-title-row">
+                                    <div>
+                                        <div class="b2b-card-title">Hotel Artemide (4★)</div>
+                                        <div class="b2b-card-subtitle">Róma Belváros, Via Nazionale · 600m a Colosseumtól</div>
+                                    </div>
+                                </div>
+                                <div class="b2b-pill-row">
+                                    <span class="b2b-metric-pill">Ingyenes büféreggeli</span>
+                                    <span class="b2b-metric-pill">Spa & Wellness</span>
+                                    <span class="b2b-metric-pill">Hangszigetelt szobák</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--b2b-border-subtle); padding-top: 10px; font-family: var(--font-mono);">
+                                    <div style="font-size: 12px; color: var(--b2b-text-secondary);">48.500 Ft / éj</div>
+                                    <div style="font-size: 14px; font-weight: 800; color: #34d399;">97.000 Ft (2 éjszaka, 2 felnőtt)</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tab 4: Itinerary & Dossier (Highlighted Experience Plan) -->
+            <div class="b2b-tab-content-panel" id="tabDossier">
+                <div class="b2b-module-row">
+                    <div class="b2b-module-content">
+                        <span class="b2b-module-tag">ÉLMÉNYTERVEZÉS & ÜGYFÉLDOSSZIÉ</span>
+                        <h3 class="b2b-module-heading">Napi Programterv & 100% White-Label Dosszié</h3>
+                        <p class="b2b-module-p">
+                            Generálj azonnal átadható, strukturált napi sétaútvonalat és professzionális ajánlati dossziét a saját vállalkozásod nevével és elérhetőségeivel. A kliens nem csak árakat kap, hanem egy lenyűgöző napi programtervet.
+                        </p>
+                        <ul class="b2b-module-features">
+                            <li><span class="material-symbols-outlined mat-icon">map</span> <strong>Strukturált Napi Sétaútvonalak:</strong> Kiemelt látnivalók, nyitvatartások és logikus gyalogos távolságok napokra bontva.</li>
+                            <li><span class="material-symbols-outlined mat-icon">restaurant</span> <strong>Gasztronómiai & Kulturális Pontok:</strong> Autentikus helyi éttermek és kávézók ajánlása.</li>
+                            <li><span class="material-symbols-outlined mat-icon">branding_watermark</span> <strong>Saját Logó & Arculat:</strong> 100% white-label megosztható digitális link vagy nyomtatható PDF.</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Visual: Real Itinerary Plan -->
+                    <div class="b2b-module-visual">
+                        <div class="b2b-platform-card" style="padding: 18px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--b2b-border-subtle); padding-bottom: 8px;">
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <span class="material-symbols-outlined" style="color: #34d399; font-size: 18px;">map</span>
+                                    <span style="font-weight: 800; font-size: 13.5px; color: #ffffff;">VISTA BOUTIQUE TRAVEL — RÓMA DOSSZIÉ</span>
+                                </div>
+                                <span style="font-size: 11px; font-family: var(--font-mono); color: #34d399;">TripScore: 94/100</span>
+                            </div>
+                            
+                            <div class="b2b-itinerary-box">
+                                <!-- Day 1 -->
+                                <div class="b2b-itinerary-day">
+                                    <span class="b2b-day-badge">1. NAP</span>
+                                    <div class="b2b-day-content">
+                                        <div class="b2b-day-title">Érkezés (08:20) & Trastevere Gasztroséta</div>
+                                        <div class="b2b-day-desc">Transzfer a hotelbe, Pantheon, Piazza Navona, esti autentikus tésztaélmény Trasteverében (3.8 km séta).</div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Day 2 -->
+                                <div class="b2b-itinerary-day">
+                                    <span class="b2b-day-badge">2. NAP</span>
+                                    <div class="b2b-day-content">
+                                        <div class="b2b-day-title">Colosseum & Vatikáni Múzeumok</div>
+                                        <div class="b2b-day-desc">Reggeli Colosseum & Forum Romanum túra, délutáni Szent Péter bazilika és Vatikáni Múzeumok látogatás.</div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Day 3 -->
+                                <div class="b2b-itinerary-day">
+                                    <span class="b2b-day-badge">3. NAP</span>
+                                    <div class="b2b-day-content">
+                                        <div class="b2b-day-title">Villa Borghese Panoráma & Hazautazás (21:30)</div>
+                                        <div class="b2b-day-desc">Spanyol lépcső, Borghese park panoráma kilátás, kényelmes vacsora és esti transzfer a reptérre.</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-top: 12px; background: rgba(0,0,0,0.3); border-radius: 6px; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; font-family: var(--font-mono); font-size: 12px;">
+                                <span>Csomagár összesen (2 fő):</span>
+                                <strong style="color: #34d399; font-size: 14px;">184.200 Ft</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Methodological Benchmark Table (Zero vendor names, pure workflow comparison) -->
+    <section class="b2b-section" style="background: var(--b2b-bg-surface);">
+        <div class="b2b-container">
+            <div class="b2b-section-header">
+                <span class="b2b-section-tag">Módszertani Összehasonlítás</span>
+                <h2 class="b2b-section-title">Munkafolyamat Benchmark: Kézi Munka vs. Optivoya</h2>
+                <p class="b2b-section-desc">
+                    Egy 4 fős, gasztro-kulturális utazási ajánlat és napi programterv összeállításának mérési adatai hagyományos módszerrel és az Optivoya döntési motorjával.
+                </p>
+            </div>
+            
+            <div class="b2b-table-responsive">
+                <table style="width: 100%; min-width: 600px; border-collapse: collapse; text-align: left; font-size: 14px;">
+                    <thead>
+                        <tr style="background: var(--b2b-bg-surface-elevated); border-bottom: 1px solid var(--b2b-border-subtle);">
+                            <th style="padding: 16px 20px; font-weight: 700; color: var(--b2b-text-secondary);">Szempont / Fázis</th>
+                            <th style="padding: 16px 20px; font-weight: 700; color: #ef4444;">Hagyományos Manuális Munka</th>
+                            <th style="padding: 16px 20px; font-weight: 700; color: #34d399;">Optivoya Döntési Rendszerrel</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid var(--b2b-border-subtle);">
+                            <td style="padding: 14px 20px; font-weight: 600;">Járat- és menetrendkutatás</td>
+                            <td style="padding: 14px 20px; color: var(--b2b-text-secondary);">60–90 perc (Járatkeresők, légitársasági oldalak böngészése)</td>
+                            <td style="padding: 14px 20px; color: #ffffff; font-weight: 600;">15 másodperc (Többkritériumos rangsorolt menetrend)</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--b2b-border-subtle);">
+                            <td style="padding: 14px 20px; font-weight: 600;">Szállás- és éjszakaszámítás</td>
+                            <td style="padding: 14px 20px; color: var(--b2b-text-secondary);">45–60 perc (Szállásportálok szűrése, dátumok kézi egyeztetése)</td>
+                            <td style="padding: 14px 20px; color: #ffffff; font-weight: 600;">20 másodperc (Automatikus szinkron a járat naptári éjszakáihoz)</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--b2b-border-subtle);">
+                            <td style="padding: 14px 20px; font-weight: 600;">Helyi élményterv & költségbecslés</td>
+                            <td style="padding: 14px 20px; color: var(--b2b-text-secondary);">60–120 perc (Térképek, blogok, kézi program- és Excel táblázatírás)</td>
+                            <td style="padding: 14px 20px; color: #ffffff; font-weight: 600;">30 másodperc (Strukturált napi sétaútvonal + költési modell)</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--b2b-border-subtle); background: var(--b2b-bg-surface-subtle);">
+                            <td style="padding: 14px 20px; font-weight: 700;">Összesített munkaidő / ügyfél</td>
+                            <td style="padding: 14px 20px; font-weight: 700; color: #ef4444; font-family: var(--font-mono);">3.5 – 4.5 ÓRA</td>
+                            <td style="padding: 14px 20px; font-weight: 800; color: #34d399; font-family: var(--font-mono); font-size: 15px;">~3 PERC ÖSSZESEN</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 14px 20px; font-weight: 600;">Ügyféldöntési egyértelműség</td>
+                            <td style="padding: 14px 20px; color: var(--b2b-text-secondary);">Bizonytalanság a menetrendi és minőségi kompromisszumok miatt</td>
+                            <td style="padding: 14px 20px; color: #ffffff;">Világos indoklás: +15 óra helyi élményidő és napi program bemutatása</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Value & ROI Calculator (with Role Presets) -->
+    <section class="b2b-section" id="calculator">
+        <div class="b2b-container">
+            <div class="b2b-section-header">
+                <span class="b2b-section-tag">Megtakarítási Kalkulátor</span>
+                <h2 class="b2b-section-title">Számold ki a várható havi munkaidő-megtakarítást!</h2>
+                <p class="b2b-section-desc">
+                    Válassz egy gyors profilt vagy állítsd be a saját számaidat a felszabaduló órák és a pénzügyi érték megtekintéséhez.
+                </p>
+            </div>
+            
+            <div class="b2b-calc-section">
+                <!-- 1-Click Role Presets -->
+                <div class="b2b-preset-bar">
+                    <span class="b2b-preset-label">Gyors profilok:</span>
+                    <button type="button" class="btn-preset active" data-clients="10" data-hours="4" data-rate="12000">Egyéni Tanácsadó (10 ügyfél/hó)</button>
+                    <button type="button" class="btn-preset" data-clients="25" data-hours="4" data-rate="15000">Boutique Iroda (25 ügyfél/hó)</button>
+                    <button type="button" class="btn-preset" data-clients="40" data-hours="5" data-rate="20000">Prémium Concierge (40 ügyfél/hó)</button>
+                </div>
+                
+                <div class="b2b-calc-grid">
+                    <!-- Left: Sliders -->
+                    <div class="b2b-calc-inputs">
+                        <!-- Slider 1: Clients / Month -->
+                        <div class="b2b-slider-group">
+                            <div class="b2b-slider-header">
+                                <label for="calcClients" class="b2b-slider-label">
+                                    <span class="material-symbols-outlined" style="font-size: 18px; color: var(--b2b-primary);">group</span>
+                                    <span>Havi kiszolgált ügyfélszám:</span>
+                                </label>
+                                <span class="b2b-slider-val" id="calcClientsVal">10 ügyfél / hó</span>
+                            </div>
+                            <input type="range" id="calcClients" class="b2b-range-slider" min="1" max="60" value="10" step="1">
+                        </div>
+                        
+                        <!-- Slider 2: Research Hours / Client -->
+                        <div class="b2b-slider-group">
+                            <div class="b2b-slider-header">
+                                <label for="calcHours" class="b2b-slider-label">
+                                    <span class="material-symbols-outlined" style="font-size: 18px; color: var(--b2b-primary);">timer</span>
+                                    <span>Átlagos manuális kutatási idő / ügyfél:</span>
+                                </label>
+                                <span class="b2b-slider-val" id="calcHoursVal">4 óra / ügyfél</span>
+                            </div>
+                            <input type="range" id="calcHours" class="b2b-range-slider" min="1" max="10" value="4" step="0.5">
+                        </div>
+                        
+                        <!-- Slider 3: Hourly Rate -->
+                        <div class="b2b-slider-group">
+                            <div class="b2b-slider-header">
+                                <label for="calcRate" class="b2b-slider-label">
+                                    <span class="material-symbols-outlined" style="font-size: 18px; color: var(--b2b-primary);">monetization_on</span>
+                                    <span>Becsült tanácsadói óradíj:</span>
+                                </label>
+                                <span class="b2b-slider-val" id="calcRateVal">12.000 Ft / óra</span>
+                            </div>
+                            <input type="range" id="calcRate" class="b2b-range-slider" min="5000" max="35000" value="12000" step="1000">
+                        </div>
+                    </div>
+                    
+                    <!-- Right: Results Card -->
+                    <div class="b2b-calc-results">
+                        <div class="b2b-calc-results-title">Kalkulált Havi Megtakarítás:</div>
+                        
+                        <div class="b2b-result-highlight">
+                            <div class="b2b-result-large-num" id="outHoursSaved">30 óra / hó</div>
+                            <div class="b2b-result-sublabel">Megtakarított munkaidő havonta (konzervatív 75%-os időcsökkenés)</div>
+                        </div>
+                        
+                        <div class="b2b-result-highlight" style="background: var(--b2b-primary-subtle); border-color: var(--b2b-primary-border);">
+                            <div class="b2b-result-large-num" id="outMoneySaved" style="color: #34d399;">+360.000 Ft</div>
+                            <div class="b2b-result-sublabel">Havi felszabaduló pénzügyi érték / új ügyfélszerzési kapacitás</div>
+                        </div>
+                        
+                        <div class="b2b-result-breakdown">
+                            <span style="color: var(--b2b-text-secondary);">Jelenlegi manuális időigény:</span>
+                            <strong id="outManualHours">40 óra / hó</strong>
+                        </div>
+                        <div class="b2b-result-breakdown">
+                            <span style="color: var(--b2b-text-secondary);">Éves megtakarítási érték:</span>
+                            <strong id="outAnnualSaved" style="color: #34d399;">~4.320.000 Ft / év</strong>
+                        </div>
+                        <div class="b2b-result-breakdown">
+                            <span style="color: var(--b2b-text-secondary);">Kapacitásbővülési potenciál:</span>
+                            <strong id="outCapacityGain" style="color: #a7f540;">+25 extra ügyfél</strong>
+                        </div>
+                        
+                        <button class="btn-b2b-primary trigger-beta-modal" style="width: 100%; margin-top: 6px;">
+                            <span>Béta Hozzáférés Kérése Ezzel a Kalkulációval</span>
+                            <span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Objection Buster FAQ Accordion (Addressing Real Advisor Skepticism) -->
+    <section class="b2b-section" id="faq" style="background: var(--b2b-bg-surface);">
+        <div class="b2b-container">
+            <div class="b2b-section-header">
+                <span class="b2b-section-tag">Gyakori Kérdések</span>
+                <h2 class="b2b-section-title">Kérdések, amelyek felmerülhetnek benned</h2>
+                <p class="b2b-section-desc">
+                    Minden fontos információ a működésről, adatbiztonságról és a béta program részleteiről.
+                </p>
+            </div>
+            
+            <div class="b2b-faq-list">
+                <div class="b2b-faq-item">
+                    <div class="b2b-faq-question">
+                        <span>Látja az ügyfelem az Optivoya nevet vagy a belső kalkulációimat?</span>
+                        <span class="material-symbols-outlined faq-icon">expand_more</span>
+                    </div>
+                    <div class="b2b-faq-answer">
+                        Nem. Az Optivoya 100% white-label munkafelületként működik. Az elkészült ajánlati dossziét és napi programtervet a saját logóddal, vállalkozásod nevével, egyedi árréseddel és elérhetőségeiddel adhatod át az ügyfélnek, legyen szó digitális linkről vagy nyomtatható PDF-ről.
+                    </div>
+                </div>
+                
+                <div class="b2b-faq-item">
+                    <div class="b2b-faq-question">
+                        <span>Valósak és azonnal lefoglalhatóak az árak?</span>
+                        <span class="material-symbols-outlined faq-icon">expand_more</span>
+                    </div>
+                    <div class="b2b-faq-answer">
+                        Igen. Nem generatív AI hallucinációkat vagy becsült átlagokat használunk. A rendszer közvetlenül a valós idejű globális járathálózati és többszolgáltatós szállásaggregációs csatornákhoz kapcsolódik, így a megjelenített járatok, menetrendek és szobaárak valósak és azonnal foglalhatók.
+                    </div>
+                </div>
+                
+                <div class="b2b-faq-item">
+                    <div class="b2b-faq-question">
+                        <span>Miben különbözik az Optivoya egy egyszerű ChatGPT-től vagy a hagyományos keresőktől?</span>
+                        <span class="material-symbols-outlined faq-icon">expand_more</span>
+                    </div>
+                    <div class="b2b-faq-answer">
+                        A nyelvi modellek gyakran hallucinálnak nem létező járatokat vagy elavult árakat adnak meg, és nem látják a valós készleteket. A hagyományos keresők pedig nem számolnak a célállomáson tölthető hasznos nyaralási idővel, és nem hangolják össze a járatot a szállás naptári éjszakáival. Az Optivoya egy algoritmikus döntési motor, amely a teljes utazási láncot optimalizálja.
+                    </div>
+                </div>
+                
+                <div class="b2b-faq-item">
+                    <div class="b2b-faq-question">
+                        <span>Mennyibe kerül a Béta program, és mi történik utána?</span>
+                        <span class="material-symbols-outlined faq-icon">expand_more</span>
+                    </div>
+                    <div class="b2b-faq-answer">
+                        A Béta időszak alatt a hozzáférés 100%-ban díjmentes a jóváhagyott partnereinknek. A hivatalos induláskor a korai béta tesztelők számára garantáljuk az örökös kedvezményes Alapítói (Founder) előfizetési csomagot.
+                    </div>
+                </div>
+                
+                <div class="b2b-faq-item">
+                    <div class="b2b-faq-question">
+                        <span>Le kell töltenem vagy telepítenem bármit?</span>
+                        <span class="material-symbols-outlined faq-icon">expand_more</span>
+                    </div>
+                    <div class="b2b-faq-answer">
+                        Nem. Az Optivoya teljesen felhőalapú rendszer, amely bármilyen modern asztali vagy mobil böngészőből azonnal elérhető. Nincs szükség bonyolult integrációra vagy szoftvertelepítésre.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trust & Core Architectural Layers (No third-party brand names) -->
+    <section class="b2b-section" style="padding-top: 10px;">
+        <div class="b2b-container">
+            <div class="b2b-section-header" style="margin-bottom: 24px;">
+                <span class="b2b-section-tag">Architektúra & Adatintegritás</span>
+                <h2 class="b2b-section-title" style="font-size: 26px;">Hiteles, Többcsatornás Adatkapcsolat</h2>
+            </div>
+            
+            <div class="b2b-trust-grid">
+                <div class="b2b-trust-card">
+                    <div class="b2b-trust-icon"><span class="material-symbols-outlined" style="color: #10b981;">flight</span></div>
+                    <div class="b2b-trust-title">Globális Járathálózati Adatok</div>
+                    <div class="b2b-trust-text">Élő járatárak és valós repülési menetrendek 100+ légitársaság közvetlen hálózatából.</div>
+                </div>
+                
+                <div class="b2b-trust-card">
+                    <div class="b2b-trust-icon"><span class="material-symbols-outlined" style="color: #10b981;">hotel</span></div>
+                    <div class="b2b-trust-title">Többszolgáltatós Szállásaggregáció</div>
+                    <div class="b2b-trust-text">Több mint 100 szállásfoglaló portál valós idejű készletének és árainak összegzése.</div>
+                </div>
+                
+                <div class="b2b-trust-card">
+                    <div class="b2b-trust-icon"><span class="material-symbols-outlined" style="color: #10b981;">wb_sunny</span></div>
+                    <div class="b2b-trust-title">Mikroklíma & Szezonális Modellek</div>
+                    <div class="b2b-trust-text">Valós idejű és historikus időjárási minták a garantáltan ideális célállomás-ajánláshoz.</div>
+                </div>
+                
+                <div class="b2b-trust-card">
+                    <div class="b2b-trust-icon"><span class="material-symbols-outlined" style="color: #10b981;">query_stats</span></div>
+                    <div class="b2b-trust-title">Helyi Árszínvonal & Költségmodell</div>
+                    <div class="b2b-trust-text">Objektív helyi megélhetési és látogatottsági indexek a reális napi költségvetéshez.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA Banner -->
+    <section class="b2b-section" style="text-align: center;">
+        <div class="b2b-container">
+            <div style="background: var(--b2b-bg-card); border: 1px solid var(--b2b-primary-border); border-radius: var(--b2b-radius-lg); padding: 48px 28px; box-shadow: var(--b2b-shadow-md);">
+                <h2 style="font-size: 32px; font-weight: 800; margin-bottom: 12px;">Készen állsz áramvonalasítani az utazástervezést?</h2>
+                <p style="font-size: 16px; color: var(--b2b-text-secondary); max-width: 620px; margin: 0 auto 28px auto;">
+                    Csatlakozz a korlátozott létszámú B2B Béta programunkhoz, és teszteld díjmentesen az Optivoya döntési motorját a saját ügyfeleidnél.
+                </p>
+                <button class="btn-b2b-primary trigger-beta-modal" data-cta-name="bottom_banner_beta_request" style="font-size: 15px; padding: 14px 30px;">
+                    <span class="material-symbols-outlined" style="font-size: 19px;">login</span>
+                    <span>Béta Hozzáférés Kérése</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Beta Lead Capture / Access Gate Modal -->
+    <div class="b2b-modal-backdrop" id="b2bBetaModal">
+        <div class="b2b-modal-card">
+            <button class="b2b-modal-close" id="b2bModalClose">&times;</button>
+            
+            <div id="b2bModalHeaderWrap" style="margin-bottom: 20px;">
+                <span class="b2b-brand-badge" id="b2bModalBadge" style="margin-bottom: 6px; display: inline-block;">B2B BÉTA PROGRAM</span>
+                <h3 id="b2bModalTitle" style="font-size: 22px; font-weight: 800; color: #ffffff;">Jelentkezés az Optivoya Béta Hozzáféréshez</h3>
+                <p id="b2bModalDesc" style="font-size: 13.5px; color: var(--b2b-text-secondary); margin-top: 2px;">
+                    Add meg az adataidat, és a jóváhagyást követően megküldjük a személyre szabott hozzáférést.
+                </p>
+            </div>
+            
+            <form id="b2bBetaForm">
+                <input type="hidden" id="leadCtaSource" value="unknown">
+                <div class="b2b-form-group">
+                    <label for="leadName" class="b2b-form-label">Teljes Név *</label>
+                    <input type="text" id="leadName" class="b2b-form-input" placeholder="pl. Kovács Anna" required>
+                </div>
+                
+                <div class="b2b-form-group">
+                    <label for="leadEmail" class="b2b-form-label">Szakmai Email Cím *</label>
+                    <input type="email" id="leadEmail" class="b2b-form-input" placeholder="pl. anna@travelagency.hu" required>
+                </div>
+                
+                <div class="b2b-form-row-2col">
+                    <div class="b2b-form-group">
+                        <label for="leadAgency" class="b2b-form-label">Ügynökség / Vállalkozás</label>
+                        <input type="text" id="leadAgency" class="b2b-form-input" placeholder="pl. Vista Travel / Egyéni">
+                    </div>
+                    
+                    <div class="b2b-form-group">
+                        <label for="leadAgencyType" class="b2b-form-label">Tevékenységi Kör</label>
+                        <select id="leadAgencyType" class="b2b-form-select">
+                            <option value="independent_advisor">Független Utazási Tanácsadó</option>
+                            <option value="boutique_agency">Boutique Utazási Iroda</option>
+                            <option value="corporate_concierge">Corporate / Concierge Iroda</option>
+                            <option value="tour_operator">Tour Operator</option>
+                            <option value="other">Egyéb Turisztikai Szakember</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="b2b-form-row-2col">
+                    <div class="b2b-form-group">
+                        <label for="leadClients" class="b2b-form-label">Havi Ügyfélszám</label>
+                        <input type="number" id="leadClients" class="b2b-form-input" placeholder="10" min="1" max="500">
+                    </div>
+                    
+                    <div class="b2b-form-group">
+                        <label for="leadHourlyRate" class="b2b-form-label">Becsült Óradíj (Ft)</label>
+                        <input type="number" id="leadHourlyRate" class="b2b-form-input" placeholder="12000" min="1000" max="100000">
+                    </div>
+                </div>
+                
+                <div class="b2b-form-group">
+                    <label for="leadCurrentTools" class="b2b-form-label">Jelenleg használt eszközök a tervezéshez</label>
+                    <input type="text" id="leadCurrentTools" class="b2b-form-input" placeholder="pl. Skyscanner, Booking, Excel, Google Docs">
+                </div>
+                
+                <div class="b2b-form-group">
+                    <label for="leadMessage" class="b2b-form-label">Megjegyzés (opcionális)</label>
+                    <textarea id="leadMessage" class="b2b-form-textarea" rows="2" placeholder="Kérdés vagy megjegyzés..."></textarea>
+                </div>
+                
+                <button type="submit" id="leadSubmitBtn" class="btn-b2b-primary" style="width: 100%; padding: 12px; font-size: 14.5px; margin-top: 6px;">
+                    <span>Jelentkezés Beküldése</span>
+                    <span class="material-symbols-outlined" style="font-size: 17px;">arrow_forward</span>
+                </button>
+                
+                <div style="text-align: center; margin-top: 10px; font-size: 11px; color: var(--b2b-text-muted);">
+                    Adataidat kizárólag a B2B Béta hozzáférés biztosítására használjuk fel.
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="b2b-footer">
+        <div class="b2b-container b2b-footer-inner">
+            <div class="b2b-brand" style="font-size: 16px;">
+                <img src="/static/logo.png" alt="Optivoya" class="b2b-logo-img" style="width: 28px; height: 28px;">
+                <span class="b2b-brand-name" style="font-size: 17px;">Optivoya</span>
+                <span class="b2b-brand-badge" style="font-size: 9px;">DECISION INTELLIGENCE</span>
+            </div>
+            
+            <div class="b2b-footer-copy">
+                &copy; 2026 Optivoya Travel Decision Intelligence. Minden jog fenntartva.
+            </div>
+            
+            <div style="display: flex; gap: 14px; font-size: 12.5px;">
+                <button class="b2b-footer-link trigger-access-gate" data-cta-name="footer_master_planner">Master Planner</button>
+                <button class="b2b-footer-link trigger-access-gate" data-cta-name="footer_destination_matcher">Célállomás Matcher</button>
+                <button class="b2b-footer-link trigger-access-gate" data-cta-name="footer_flight_intelligence">Járat Kereső</button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Modules -->
+    <script src="/static/js/b2b/landing_calculator.js"></script>
+    <script src="/static/js/b2b/landing_lead.js"></script>
+</body>
+</html>
