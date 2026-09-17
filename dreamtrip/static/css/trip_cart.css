@@ -700,6 +700,11 @@
     background: var(--bg-surface-subtle);
     border: 1px solid var(--border-subtle);
     border-radius: 14px;
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .step-node {

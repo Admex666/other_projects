@@ -47,11 +47,12 @@ Ez a fájl az Optivoya (DreamTrip) projekt navigációs térképe. Minden lénye
 ---
 
 ## 🔨 Work Items (Munkaszervezés)
-
+* [[WORK-003-advisor-workspace-v1]] — Optivoya Advisor Workspace v1 fázisonkénti feladatlista és ellenőrző négyzetei.
 
 ---
 
 ## 🏛️ Entities (Entitások)
+* [[trip-case]] — A B2B Advisor Workspace elsődleges ügy- és döntéstámogató aggregátuma.
 * [[trip]] — Az utazás központi aggregált entitása (UnifiedTrip).
 * [[destination]] — Úti cél város, éghajlati és költségadatokkal.
 * [[flight]] — Retúr vagy egyirányú repülőjárat ajánlat.
@@ -87,6 +88,7 @@ Ez a fájl az Optivoya (DreamTrip) projekt navigációs térképe. Minden lénye
 ---
 
 ## ⚙️ Systems (Rendszerek)
+* [[advisor-workspace-blueprint]] — Optivoya Advisor Workspace v1 Teljes Rendszer Blueprint és Műszaki Architektúra.
 * [[master-planner-blueprint]] — Master Planner Teljes Rendszer Blueprint és Műszaki/Üzleti Architektúra.
 * [[fastapi-backend]] — Python FastAPI aszinkron backend szerver és REST végpontok.
 * [[supabase-database]] — Supabase Cloud PostgreSQL & PostgREST telemetria és béta felhasználói adatbázis.

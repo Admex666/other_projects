@@ -281,7 +281,33 @@ Az Optivoya három rétegű bevételi pillérre épül:
 * **Teszteltség és Megbízhatóság:**
   * 100%-ban validált tudásgráf (`scripts/knowledge/validate.py`).
   * Hibamentes, szigorú JavaScript kódkészlet.
+  * **Teljeskörű Playwright E2E Tesztcsomag (`tests/e2e/`):** Automatikus böngésző-interakciós tesztek, amelyek lefedik a teljes 5-lépéses Golden Flow-t, a szűrőket, a modálokat és a reszponzív nézeteket.
 * **Következő Lépés a Co-founderrel:**
   * Béta felhasználói tesztelés és konverziós tölcsér mérés.
   * Affiliate partnerek éles szerződéseinek véglegesítése.
   * Mobil PWA és B2B értékesítési csatornák elindítása.
+
+---
+
+## 9. Automatizált E2E Tesztelési Architektúra (Playwright Test Suite)
+
+A Master Planner és a B2B landing stabilitását egy szisztematikus, headless Chromium alapú Playwright E2E tesztcsomag garantálja (`tests/e2e/`):
+
+### Főbb Tesztcsoportok:
+1. **Master Planner Golden Flow (`test_master_planner_e2e.py`):**
+   * `test_planner_page_load_and_elements`: Oldalbetöltés és 0 fatális konzolhiba ellenőrzése.
+   * `test_step0_intake_controls_and_presets`: Gyorsválasztó pilulák, felnőtt/gyermek számlálók, naptári módváltás (Exact vs. Interval), stílus-chipek.
+   * `test_decision_dna_modal_workflow`: Kétfázisú döntési DNS modál megnyitása, szempontok kijelölése és AHP/PROMETHEE súlyok mentése.
+   * `test_full_golden_flow_dummy_mode`: A teljes 5-lépéses útvonal (Célállomás választás $\to$ Járat kiválasztás $\to$ Szállás benchmark $\to$ Élmények $\to$ Kész Terv & Lebegő Kosár) szimulálása.
+   * `test_stepper_back_and_forward_navigation`: Lépések közötti közvetlen ugrás és állapotmegőrzés.
+   * `test_mobile_viewport_no_horizontal_overflow`: 375px mobil nézet (iPhone SE) túlcsordulás-mentességének validálása.
+2. **B2B Landing & Kalkulátor (`test_b2b_landing_e2e.py`):**
+   * Értékajánlat és Anti-ChatGPT blokk megléte.
+   * ROI Kalkulátor csúszkák és 1-kattintásos profil-presetek dinamikus számítása.
+   * Béta Hozzáférési Kapu (Access Gate) modál megnyitása és űrlapellenőrzése.
+   * Mobil layout és gombelrendezés ellenőrzése.
+
+### Futtatási Parancs:
+```powershell
+python -m pytest tests/e2e/ -v
+```

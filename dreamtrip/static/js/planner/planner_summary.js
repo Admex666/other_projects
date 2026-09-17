@@ -14,17 +14,20 @@
             const f = state.selectedFlight || cartTrip?.flight?.selected_flight || cartTrip?.flight;
             const s = state.selectedStay || cartTrip?.accommodation?.selected_accommodation || cartTrip?.accommodation;
 
-            // 1. Dátumok & éjszakák
+            // 1. Dátumok & éjszakák & napok
             const outDate = (f?.out_date || f?.out_dep_time || state.intake.exact_out_date || '').split('T')[0];
             const inDate = (f?.in_date || f?.in_dep_time || state.intake.exact_in_date || '').split('T')[0];
             const nights = (window.calculateExactFlightNights && f) 
-                ? window.calculateExactFlightNights(f, state.intake.duration || 7) 
-                : (f?.exact_stay_nights || f?.stay_days || f?.nights || s?.nights || state.intake.duration || 7);
+                ? window.calculateExactFlightNights(f, state.intake.nights || (state.intake.duration ? Math.max(1, state.intake.duration - 1) : 3)) 
+                : (f?.exact_stay_nights || f?.nights || s?.nights || state.intake.nights || (state.intake.duration ? Math.max(1, state.intake.duration - 1) : 3));
+            const days = (outDate && inDate)
+                ? Math.max(1, Math.round((new Date(inDate) - new Date(outDate)) / (1000 * 60 * 60 * 24)) + 1)
+                : (f?.days || state.intake.duration || (nights + 1));
             const adults = state.intake.adults || cartTrip?.input?.adults || 2;
 
             const subEl = document.getElementById('summarySubtitle');
             if (subEl) {
-                subEl.innerText = `${d?.name || d?.city || 'Célállomás'} utazás • ${adults} felnőtt • ${nights} éjszaka ${outDate ? `(${outDate} – ${inDate})` : ''}`;
+                subEl.innerText = `${d?.name || d?.city || 'Célállomás'} utazás • ${adults} felnőtt • ${days} nap (${nights} éjszaka) ${outDate ? `(${outDate} – ${inDate})` : ''}`;
             }
 
             // 1b. Unified TripScore calculation & banner rendering
@@ -142,7 +145,7 @@
                     <div style="background: var(--bg-surface-subtle); border: 1px solid var(--border-subtle); border-radius: 18px; padding: 24px; margin-top: 10px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
                             <h3 style="font-size: 16px; font-weight: 800; color: var(--text-main); margin: 0;">Tételes Költségkalkuláció</h3>
-                            <span style="font-size: 12px; font-weight: 700; color: var(--primary);">${b.days} nap / ${b.totalPersons} fő</span>
+                            <span style="font-size: 12px; font-weight: 700; color: var(--primary);">${b.days} nap (${b.nights || Math.max(1, b.days - 1)} éj) / ${b.totalPersons} fő</span>
                         </div>
 
                         <div style="display: flex; flex-direction: column; gap: 12px;">
@@ -191,7 +194,7 @@
             if (personaSelect) {
                 personaSelect.value = persona;
             }
-            this.loadItinerary(destId, nights, persona);
+            this.loadItinerary(destId, days, persona);
         },
 
         async loadItinerary(destId, days, persona) {
@@ -255,8 +258,13 @@
             const f = state.selectedFlight || cartTrip?.flight?.selected_flight;
             const d = state.selectedDest || cartTrip?.destination;
             const nights = (window.calculateExactFlightNights && f) 
-                ? window.calculateExactFlightNights(f, state.intake.duration || 3) 
-                : (f?.exact_stay_nights || f?.stay_days || f?.nights || state.intake.duration || 3);
+                ? window.calculateExactFlightNights(f, state.intake.nights || (state.intake.duration ? Math.max(1, state.intake.duration - 1) : 3)) 
+                : (f?.exact_stay_nights || f?.nights || state.intake.nights || (state.intake.duration ? Math.max(1, state.intake.duration - 1) : 3));
+            const outDate = (f?.out_date || f?.out_dep_time || state.intake.exact_out_date || '').split('T')[0];
+            const inDate = (f?.in_date || f?.in_dep_time || state.intake.exact_in_date || '').split('T')[0];
+            const days = (outDate && inDate)
+                ? Math.max(1, Math.round((new Date(inDate) - new Date(outDate)) / (1000 * 60 * 60 * 24)) + 1)
+                : (f?.days || state.intake.duration || (nights + 1));
             const city = (d?.city || d?.name || '').toLowerCase();
             let destId = d?.dest_id || d?.id;
             if (!destId || (destId === 'IT_BARI' && !city.includes('bari'))) {
@@ -270,7 +278,7 @@
                 else if (city.includes('bari')) destId = 'IT_BARI';
                 else destId = `${(d?.city || d?.name || 'DEST').toUpperCase().replace(/\s+/g, '_')}_${(d?.country ? d.country.slice(0, 2) : 'EU').toUpperCase()}`;
             }
-            this.loadItinerary(destId, nights, newPersona);
+            this.loadItinerary(destId, days, newPersona);
         },
 
         switchItineraryDay(dayIdx) {
@@ -426,10 +434,11 @@
             if (trip.flight?.selected_flight) {
                 state.selectedFlight = trip.flight.selected_flight;
                 const fl = trip.flight.selected_flight;
+                const flNights = fl.exact_stay_nights || fl.nights || state.intake.nights || (state.intake.duration ? Math.max(1, state.intake.duration - 1) : 3);
                 const stayFl = document.getElementById('stayContextFlight');
-                if (stayFl) stayFl.innerText = `${fl.airline || 'Járat'} (${fl.out_date} – ${fl.in_date} · ${fl.exact_stay_nights || state.intake.duration} éj)`;
+                if (stayFl) stayFl.innerText = `${fl.airline || 'Járat'} (${fl.out_date} – ${fl.in_date} · ${flNights} éj)`;
                 const stayNights = document.getElementById('stayNightsCount');
-                if (stayNights) stayNights.innerText = fl.exact_stay_nights || state.intake.duration;
+                if (stayNights) stayNights.innerText = flNights;
             }
 
             // 3. Stay

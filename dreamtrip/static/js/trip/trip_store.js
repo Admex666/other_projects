@@ -228,13 +228,42 @@
                         }
                     }
                     if (data.exact_stay_nights && Number(data.exact_stay_nights) > 0) return Number(data.exact_stay_nights);
+                    if (data.nights && Number(data.nights) > 0) return Number(data.nights);
+                    if (data.stay_days && Number(data.stay_days) > 0) return Math.max(1, Number(data.stay_days) - 1);
+                    return trip.input.duration_days ? Math.max(1, trip.input.duration_days - 1) : 6;
+                })(),
+                days: (function() {
+                    const outDateStr = (data.out_date || data.out_dep_time || '').split('T')[0];
+                    const inDateStr = (data.in_date || data.in_dep_time || '').split('T')[0];
+                    if (outDateStr && inDateStr) {
+                        const p1 = outDateStr.split('-').map(Number);
+                        const p2 = inDateStr.split('-').map(Number);
+                        if (p1.length === 3 && p2.length === 3) {
+                            const utc1 = Date.UTC(p1[0], p1[1] - 1, p1[2]);
+                            const utc2 = Date.UTC(p2[0], p2[1] - 1, p2[2]);
+                            const diffDays = Math.round((utc2 - utc1) / (1000 * 60 * 60 * 24));
+                            if (diffDays > 0) return diffDays + 1;
+                        }
+                    }
+                    if (data.days && Number(data.days) > 0) return Number(data.days);
                     if (data.stay_days && Number(data.stay_days) > 0) return Number(data.stay_days);
-                    return trip.input.duration_days || 7;
+                    return (data.exact_stay_nights ? Number(data.exact_stay_nights) + 1 : (trip.input.duration_days || 7));
                 })(),
                 booking_token: data.booking_token || null
             };
 
+            flightItem.stay_days = flightItem.days;
+            flightItem.nights = flightItem.exact_stay_nights;
+
             trip.flight.selected_flight = flightItem;
+
+            // Synchronize trip duration and nights with the selected flight!
+            trip.input.duration_days = flightItem.days;
+            trip.input.nights = flightItem.exact_stay_nights;
+            if (trip.destination) {
+                trip.destination.duration = flightItem.days;
+                trip.destination.nights = flightItem.exact_stay_nights;
+            }
 
             if (flightItem.out_date && flightItem.in_date) {
                 trip.accommodation.search_params.checkin = flightItem.out_date;

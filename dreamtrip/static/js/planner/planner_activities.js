@@ -72,10 +72,12 @@
             const state = window.PlannerState;
             if (!state) return;
 
-            const city = (d?.city || d?.name || '').toLowerCase();
-            let destId = d?.dest_id || d?.id;
+            const d = state.selectedDest || (window.TripCart ? window.TripCart.getTrip()?.destination : null) || {};
+            const city = (d.city || d.name || '').toLowerCase();
+            let destId = d.id || d.dest_id;
             if (!destId || (destId === 'IT_BARI' && !city.includes('bari'))) {
-                if (city.includes('bukarest') || city.includes('bucharest')) destId = 'BUCHAREST_RO';
+                if (city.includes('valletta')) destId = 'VALLETTA_MT';
+                else if (city.includes('bukarest') || city.includes('bucharest')) destId = 'BUCHAREST_RO';
                 else if (city.includes('róma') || city.includes('rome')) destId = 'ROME_IT';
                 else if (city.includes('barcelona')) destId = 'BARCELONA_ES';
                 else if (city.includes('párizs') || city.includes('paris')) destId = 'PARIS_FR';
@@ -83,7 +85,7 @@
                 else if (city.includes('prága') || city.includes('prague')) destId = 'PRAGUE_CZ';
                 else if (city.includes('bécs') || city.includes('vienna')) destId = 'VIENNA_AT';
                 else if (city.includes('bari')) destId = 'IT_BARI';
-                else destId = `${(d?.city || d?.name || 'DEST').toUpperCase().replace(/\s+/g, '_')}_${(d?.country ? d.country.slice(0, 2) : 'EU').toUpperCase()}`;
+                else destId = `${(d.city || d.name || 'DEST').toUpperCase().replace(/\s+/g, '_')}_${(d.country ? d.country.slice(0, 2) : 'EU').toUpperCase()}`;
             }
 
             const grid = document.getElementById('activitiesGrid');

@@ -267,7 +267,7 @@
                             <div class="trip-card-main-info">${f.airline || 'Légitársaság'} (Retúr járat)</div>
                             <div class="trip-card-sub-info">
                                 ${f.out_date ? `Odaút: ${String(f.out_date).split('T')[0].split(' ')[0]}` : ''} ${f.in_date ? `• Visszaút: ${String(f.in_date).split('T')[0].split(' ')[0]}` : ''}
-                                (${f.exact_stay_nights || f.stay_days || 7} éjszaka)
+                                (${f.days || (f.exact_stay_nights ? f.exact_stay_nights + 1 : (f.stay_days || 4))} nap / ${f.exact_stay_nights || f.nights || (f.stay_days ? f.stay_days - 1 : 3)} éjszaka)
                             </div>
                             <div class="trip-card-price-badge">${Math.round(f.price_total_huf || f.price_huf || 0).toLocaleString()} Ft (${f.adults || 1} főre)</div>
                         </div>
@@ -324,7 +324,7 @@
                         <div class="trip-breakdown-card">
                             <div class="trip-breakdown-header">
                                 <span>Tételes Költségkalkuláció</span>
-                                <span style="font-size: 11px; font-weight: 600; color: var(--primary);">${breakdown.days} nap / ${breakdown.totalPersons} fő</span>
+                                <span style="font-size: 11px; font-weight: 600; color: var(--primary);">${breakdown.days} nap (${breakdown.nights || Math.max(1, breakdown.days - 1)} éj) / ${breakdown.totalPersons} fő</span>
                             </div>
 
                             <!-- DINING PROFILE SELECTOR -->

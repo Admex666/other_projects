@@ -344,9 +344,21 @@
             const outDate = (fl.out_dep_time || fl.out_date || '').split('T')[0];
             const inDate = (fl.in_dep_time || fl.in_date || '').split('T')[0];
 
-            const nights = calculateExactFlightNights(fl, state.intake.duration || 7);
-            fl.stay_days = nights;
+            const nights = calculateExactFlightNights(fl, state.intake.nights || (state.intake.duration ? Math.max(1, state.intake.duration - 1) : 3));
+            const exactDays = (outDate && inDate)
+                ? Math.max(1, Math.round((new Date(inDate) - new Date(outDate)) / (1000 * 60 * 60 * 24)) + 1)
+                : (fl.days || (nights + 1));
+
+            fl.stay_days = exactDays;
             fl.exact_stay_nights = nights;
+            fl.nights = nights;
+            fl.days = exactDays;
+
+            // Synchronize PlannerState intake with the selected flight duration
+            state.intake.duration = exactDays;
+            state.intake.nights = nights;
+            if (outDate) state.intake.exact_out_date = outDate;
+            if (inDate) state.intake.exact_in_date = inDate;
 
             if (window.TripCart) {
                 const flightPrice = fl.total_price_huf || fl.price_total_huf || fl.price_huf || 0;
@@ -364,7 +376,9 @@
                     stops: stopsCount,
                     out_stops: stopsCount,
                     exact_stay_nights: nights,
-                    stay_days: nights,
+                    nights: nights,
+                    stay_days: exactDays,
+                    days: exactDays,
                     adults: state.intake.adults
                 });
             }

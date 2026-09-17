@@ -91,7 +91,18 @@
             let totalHuf = 0;
             let hasAny = false;
 
-            const days = trip.flight?.selected_flight?.exact_stay_nights || trip.destination?.duration || trip.input.duration_days || 7;
+            const nights = trip.flight?.selected_flight?.exact_stay_nights 
+                || trip.flight?.selected_flight?.nights 
+                || (trip.flight?.selected_flight?.stay_days ? Math.max(1, trip.flight.selected_flight.stay_days - 1) : null)
+                || trip.accommodation?.selected_accommodation?.nights
+                || (trip.input?.duration_days ? Math.max(1, trip.input.duration_days - 1) : 6);
+
+            const days = trip.flight?.selected_flight?.days 
+                || (trip.flight?.selected_flight?.exact_stay_nights ? trip.flight.selected_flight.exact_stay_nights + 1 : null)
+                || trip.destination?.duration 
+                || trip.input?.duration_days 
+                || (nights + 1);
+
             const adults = trip.input.adults || (trip.destination ? trip.destination.adults : 2) || 2;
             const children = trip.input.children || 0;
             const totalPersons = Math.max(1, adults + children);
@@ -135,14 +146,14 @@
             const selStay = trip.accommodation?.selected_accommodation;
             if (selStay && (selStay.price_total_huf || selStay.price_huf)) {
                 const stayTotal = Math.round(selStay.price_total_huf || selStay.price_huf);
-                const nights = parseInt(selStay.nights, 10) || days;
-                const perNight = Math.round(stayTotal / Math.max(1, nights));
+                const stayNights = parseInt(selStay.nights, 10) || nights;
+                const perNight = Math.round(stayTotal / Math.max(1, stayNights));
                 items.push({
                     key: 'stay',
                     icon: '',
                     name: 'Szállásköltség',
-                    desc: `${selStay.name} (${nights} éjszaka)`,
-                    formula: `${perNight.toLocaleString()} Ft / éj × ${nights} éjszaka`,
+                    desc: `${selStay.name} (${stayNights} éjszaka)`,
+                    formula: `${perNight.toLocaleString()} Ft / éj × ${stayNights} éjszaka`,
                     amount: stayTotal,
                     badge: 'Rögzített',
                     isEstimated: false
@@ -151,13 +162,13 @@
                 hasAny = true;
             } else if (trip.destination) {
                 const estNightHuf = 28000;
-                const stayEst = estNightHuf * days;
+                const stayEst = estNightHuf * nights;
                 items.push({
                     key: 'stay',
                     icon: '',
                     name: 'Szállásköltség (Irányadó 3-4 csillagos hotel)',
                     desc: `Átlagos 3-4 csillagos szállodai éjszaka`,
-                    formula: `~${estNightHuf.toLocaleString()} Ft / éj × ${days} éjszaka`,
+                    formula: `~${estNightHuf.toLocaleString()} Ft / éj × ${nights} éjszaka`,
                     amount: stayEst,
                     badge: 'Irányár',
                     isEstimated: true
@@ -293,6 +304,7 @@
                 totalHuf,
                 perPersonTotal,
                 days,
+                nights,
                 adults,
                 children,
                 totalPersons,

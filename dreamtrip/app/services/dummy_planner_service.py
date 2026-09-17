@@ -164,8 +164,12 @@ def generate_dummy_destinations(intake_data: Any) -> List[Dict[str, Any]]:
     for name, prof in DUMMY_DEST_PROFILES.items():
         if name.lower() in [e.lower() for e in exclusions]:
             continue
-        if preferred_regions and "all" not in preferred_regions and prof["region"] not in preferred_regions:
-            continue
+        if preferred_regions and "all" not in preferred_regions:
+            pref_lower = [r.lower() for r in preferred_regions]
+            prof_reg = prof["region"].lower()
+            is_match = prof_reg in pref_lower or (prof_reg == "europe" and any("europe" in r for r in pref_lower))
+            if not is_match:
+                continue
 
         flight_price = prof["base_flight_huf"] * adults
         daily_cost = prof["daily_cost_huf"]

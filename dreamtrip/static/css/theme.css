@@ -142,7 +142,7 @@
 }
 
 /* Base resets & typography */
-* {
+*, *::before, *::after {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -153,13 +153,12 @@ html {
     background-color: var(--bg-base);
     color: var(--text-main);
     color-scheme: light dark;
-    /* Prevent elastic over-scroll past page end */
-    overscroll-behavior: none;
-    height: 100%;
+    min-height: 100%;
+    overflow-x: clip;
 }
 
 body {
-    min-height: 100%;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     font-family: var(--font-body);
@@ -168,8 +167,13 @@ body {
     transition: background-color var(--transition-normal), color var(--transition-normal);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /* Prevent rubber-band / bounce scroll past content */
-    overscroll-behavior: none;
+    overflow-x: clip;
+}
+
+/* Universal text wrap protection */
+h1, h2, h3, h4, h5, h6, p, label, span, strong, div, .btn, .advisor-panel, .advisor-main-card {
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 /* Headlines kapják a feszes Plus Jakarta Sans-t */

@@ -412,7 +412,7 @@
                         <div class="doc-meta">
                             <div><strong>Azonosító:</strong> ${trip.trip_id || 'TRIP-' + Math.random().toString(36).substring(2, 8).toUpperCase()}</div>
                             <div><strong>Készült:</strong> ${new Date().toLocaleDateString('hu-HU')}</div>
-                            <div><strong>Utazók:</strong> ${breakdown.totalPersons} fő (${breakdown.days} nap / ${Math.max(1, breakdown.days - 1)} éjszaka)</div>
+                            <div><strong>Utazók:</strong> ${breakdown.totalPersons} fő (${breakdown.days} nap / ${breakdown.nights || Math.max(1, breakdown.days - 1)} éjszaka)</div>
                         </div>
                     </div>
 
