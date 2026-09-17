@@ -181,7 +181,7 @@ def fetch_orders_summary(target_date: date) -> list:
 
 # ─── Supabase: Medals sold (runs count) ─────────────────────────────────────
 
-def fetch_medals_sold(target_date: date, campaign_key: str) -> int:
+def fetch_medals_sold(target_date: date, campaign_key: str = "") -> int:
     """Count runs created on target_date matching the campaign (= actual medals sold)."""
     date_str = target_date.isoformat()
     next_day = (target_date + timedelta(days=1)).isoformat()
@@ -195,6 +195,8 @@ def fetch_medals_sold(target_date: date, campaign_key: str) -> int:
     rows = supabase_request("GET", path)
     if not isinstance(rows, list):
         return 0
+    if not campaign_key:
+        return len(rows)
     return sum(
         1 for r in rows
         if is_same_campaign(r.get("campaign"), campaign_key)
@@ -203,8 +205,8 @@ def fetch_medals_sold(target_date: date, campaign_key: str) -> int:
 
 # ─── Supabase: Shipped packages today ───────────────────────────────────────
 
-def fetch_shipped_today(target_date: date, campaign_key: str) -> int:
-    """Count packages actually shipped today for a campaign."""
+def fetch_shipped_today(target_date: date, campaign_key: str = "") -> int:
+    """Count packages actually shipped today for a campaign or all."""
     date_str = target_date.isoformat()
     next_day = (target_date + timedelta(days=1)).isoformat()
     try:
@@ -213,17 +215,55 @@ def fetch_shipped_today(target_date: date, campaign_key: str) -> int:
             f"?shipped_at=gte.{date_str}T00:00:00Z"
             f"&shipped_at=lt.{next_day}T00:00:00Z"
             "&shipped=eq.true"
-            "&select=id,runs!inner(campaign)"
+            "&select=id,runs(campaign)"
         )
         rows = supabase_request("GET", path)
         if not isinstance(rows, list):
             return 0
+        if not campaign_key:
+            return len(rows)
         return sum(
             1 for r in rows
             if is_same_campaign((r.get("runs") or {}).get("campaign"), campaign_key)
         )
     except Exception:
         return 0
+
+
+# ─── Supabase: Leads summary ────────────────────────────────────────────────
+
+def fetch_leads_summary(target_date: date) -> tuple:
+    """Returns (total_unique_leads, converted_leads) for target_date."""
+    date_str = target_date.isoformat()
+    next_day = (target_date + timedelta(days=1)).isoformat()
+    path = (
+        "leads"
+        f"?created_at=gte.{date_str}T00:00:00Z"
+        f"&created_at=lt.{next_day}T00:00:00Z"
+        "&select=email,converted"
+    )
+    try:
+        rows = supabase_request("GET", path)
+        if not isinstance(rows, list) or len(rows) == 0:
+            return 0, 0
+        emails = [r.get("email", "").lower().strip() for r in rows if r.get("email")]
+        unique_emails = list(set(emails))
+        total_leads = len(unique_emails)
+
+        # Check buyer conversions from runners
+        r_rows = supabase_request("GET", "runners?select=email,runs(id)")
+        buyer_emails = set()
+        if isinstance(r_rows, list):
+            buyer_emails = {
+                r.get("email", "").lower().strip()
+                for r in r_rows
+                if r.get("email") and r.get("runs") and len(r.get("runs")) > 0
+            }
+        converted_count = sum(1 for e in unique_emails if e in buyer_emails)
+        return total_leads, converted_count
+    except Exception as e:
+        print(f"   ⚠️ Leads fetch warning: {e}")
+        return 0, 0
 
 
 # ─── marketing_targets ───────────────────────────────────────────────────────
@@ -435,31 +475,6 @@ def run_for_date(target_date: date):
             f"      Profit: {profit_sign}{fmtf(gross_profit)} ({margin_pct}%) | Cashflow: {cf_sign}{fmtf(net_cashflow)}"
         )
 
-        # Pushbullet text
-        pushbullet_lines.append(
-            f"\n{'='*40}\n"
-            f"{campaign_key}  [{status}]\n"
-            f"{'='*40}\n"
-            f"\n[MARKETING]\n"
-            f"  Spend:     {fmtf(spend)}\n"
-            f"  Purchases: {purchases} db\n"
-            f"  CPA:       {fmtf(cpa)}  |  ROAS: {roas:.2f}x\n"
-            f"  CTR:       {row['ctr']:.2f}%  |  Reach: {row['reach']:,}\n"
-            f"\n[EREDMÉNYKIMUTATÁS]\n"
-            f"  (+) Bruttó bevétel:  {fmtf(revenue)}\n"
-            f"  (-) Stripe díj:      {fmtf(stripe_fees)}\n"
-            f"  (-) Éremköltség:     {fmtf(medal_costs)}  ({medals_sold} db x {fmtf(medal_unit_cost)})\n"
-            f"  (-) Szállítás:       {fmtf(shipping_costs)}  ({shipped_today} csomag x {fmtf(shipping_unit_cost)})\n"
-            f"  (-) Marketing:       {fmtf(spend)}\n"
-            f"  = Nettó profit:      {profit_sign}{fmtf(gross_profit)}  ({margin_pct}%) [{profit_icon}]\n"
-            f"\n[CASHFLOW]\n"
-            f"  (+) Stripe nettó:    {fmtf(stripe_net)}\n"
-            f"  (-) Meta:            {fmtf(spend)}\n"
-            f"  (-) Éremgyártás:     {fmtf(medal_costs)}\n"
-            f"  (-) Szállítás:       {fmtf(shipping_costs)}\n"
-            f"  = Net Cashflow:      {cf_sign}{fmtf(net_cashflow)} [{cf_icon}]\n"
-        )
-
         # Collect for CSV export
         row["cpa"]  = cpa
         row["roas"] = roas
@@ -467,8 +482,85 @@ def run_for_date(target_date: date):
     # Automatically synchronize daily rows into meta_kreativ_napi_riport.csv
     update_creative_csv(rows, target_date)
 
-    print("\n5/5  Pushbullet értesítés küldése...")
-    pushbullet_lines.append("\nvitastepsss.vercel.app/admin.html")
+    # 5. Build Aggregated Pushbullet Notification
+    print("\n5/5  Pushbullet összesített értesítés összeállítása és küldése...")
+    
+    # 5a. Leads summary
+    leads_count, converted_count = fetch_leads_summary(target_date)
+    leads_line = (
+        f"👥 Új érdeklődők (lead): {leads_count} fő ({converted_count} konvertált)"
+        if leads_count > 0
+        else "👥 Új érdeklődők (lead): 0 db"
+    )
+
+    # 5b. Revenue breakdown
+    total_revenue = sum(r["revenue"] for r in rows)
+    total_purchases = sum(r["purchases"] for r in rows)
+
+    sorted_by_rev = sorted(rows, key=lambda x: (x["revenue"], x["spend"]), reverse=True)
+    rev_lines = []
+    for r in sorted_by_rev:
+        ad_name = r.get("ad_name") or r.get("campaign_name") or "Hirdetés"
+        rev = r.get("revenue", 0.0)
+        purch = r.get("purchases", 0)
+        if rev > 0 or purch > 0:
+            rev_lines.append(f"  • {ad_name}: +{fmtf(rev)} ({purch} db)")
+        else:
+            rev_lines.append(f"  • {ad_name}: +0 Ft")
+
+    # 5c. Marketing spend breakdown (including 27% VAT)
+    net_marketing_spend = sum(r["spend"] for r in rows)
+    marketing_vat = round(net_marketing_spend * 0.27, 0)
+    gross_marketing_spend = round(net_marketing_spend * 1.27, 0)
+
+    sorted_by_spend = sorted(rows, key=lambda x: x["spend"], reverse=True)
+    spend_lines = []
+    for r in sorted_by_spend:
+        ad_name = r.get("ad_name") or r.get("campaign_name") or "Hirdetés"
+        ad_net = r.get("spend", 0.0)
+        ad_gross = round(ad_net * 1.27, 0)
+        spend_lines.append(f"    - {ad_name}: -{fmtf(ad_gross)} (nettó {fmtf(ad_net)})")
+
+    # 5d. Medals & Unit Costs
+    total_medals_sold = fetch_medals_sold(target_date, "")
+    default_target = targets[0] if targets else {}
+    medal_unit_cost = float(default_target.get("medal_cost", 1630))
+    shipping_unit_cost = float(default_target.get("shipping_cost", 1141))
+
+    total_medal_costs = round(total_medals_sold * medal_unit_cost, 0)
+    total_stripe_fees = round(total_revenue * STRIPE_PCT + STRIPE_FIXED * total_purchases, 0) if total_revenue > 0 else 0.0
+    total_shipped_today = fetch_shipped_today(target_date, "")
+    total_shipping_costs = round(total_shipped_today * shipping_unit_cost, 0)
+
+    # 5e. Total Costs & Net Profit
+    total_costs = gross_marketing_spend + total_medal_costs + total_stripe_fees + total_shipping_costs
+    net_profit = round(total_revenue - total_costs, 0)
+    profit_sign = "+" if net_profit >= 0 else ""
+    margin_pct = round(net_profit / total_revenue * 100, 1) if total_revenue > 0 else 0.0
+    profit_icon = "PROFIT 🟢" if net_profit >= 0 else "VESZTESÉG 🔴"
+
+    overall_roas = round(total_revenue / net_marketing_spend, 2) if net_marketing_spend > 0 else 0.0
+    overall_cpa = round(gross_marketing_spend / total_purchases, 0) if total_purchases > 0 else 0.0
+
+    pushbullet_lines = [
+        f"📊 VitaSteps Napi Riport – {target_date}\n",
+        f"{leads_line}\n",
+        f"💰 ÖSSZESÍTETT BRUTTÓ BEVÉTEL: +{fmtf(total_revenue)} ({total_purchases} db)",
+        *rev_lines,
+        "",
+        f"💸 ÖSSZESÍTETT KÖLTSÉGEK: -{fmtf(total_costs)}",
+        f"  • Marketing (+27% ÁFA): -{fmtf(gross_marketing_spend)} (nettó {fmtf(net_marketing_spend)} + ÁFA {fmtf(marketing_vat)})",
+        *spend_lines,
+        f"  • Éremköltség: -{fmtf(total_medal_costs)} ({total_medals_sold} db x {fmtf(medal_unit_cost)})" if total_medal_costs > 0 else "  • Éremköltség: 0 Ft",
+        f"  • Stripe tranzakciós díj: -{fmtf(total_stripe_fees)}" if total_stripe_fees > 0 else "  • Stripe tranzakciós díj: 0 Ft",
+        f"  • Szállítás: -{fmtf(total_shipping_costs)} ({total_shipped_today} csomag x {fmtf(shipping_unit_cost)})" if total_shipping_costs > 0 else "  • Szállítás: 0 Ft",
+        "",
+        f"🏆 NETTÓ PROFIT: {profit_sign}{fmtf(net_profit)} ({margin_pct}%) [{profit_icon}]",
+        f"📈 Összesített ROAS: {overall_roas:.2f}x | CPA: {fmtf(overall_cpa) if total_purchases > 0 else '–'}",
+        "",
+        "🔗 vitastepsss.vercel.app/admin.html"
+    ]
+
     pushbullet_send(f"VitaSteps {target_date}", "\n".join(pushbullet_lines))
     print("   ✅ Értesítés elküldve!\n")
     print(f"=== Kész: {target_date} ===\n")
