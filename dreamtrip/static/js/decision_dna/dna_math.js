@@ -150,15 +150,72 @@
         },
 
         stepValue(obj, key, param, dir, callback) {
+            if (!obj) return;
+            if (!param) {
+                const step = 2500;
+                let val = (obj[key] || 0) + (dir * step);
+                if (val < 0) val = 0;
+                obj[key] = parseFloat(val.toFixed(2));
+                if (typeof callback === 'function') callback();
+                return;
+            }
             const cfg = obj[key];
+            if (!cfg) return;
             const isQ = param === 'q';
             const step = isQ ? (cfg.stepQ || 1000) : (cfg.stepP || 5000);
             let val = cfg[param] + (dir * step);
             if (val < 0) val = 0;
             cfg[param] = parseFloat(val.toFixed(2));
             if (typeof callback === 'function') callback();
+        },
+
+        setValue(obj, key, param, value, callback) {
+            if (!obj) return;
+            let val = parseFloat(value);
+            if (isNaN(val) || val < 0) val = 0;
+            if (!param) {
+                obj[key] = parseFloat(val.toFixed(2));
+                if (typeof callback === 'function') callback();
+                return;
+            }
+            const cfg = obj[key];
+            if (!cfg) return;
+            cfg[param] = parseFloat(val.toFixed(2));
+            if (typeof callback === 'function') callback();
+        },
+
+        // --- Revealed Preference & Tipping Point Derivation Logic ---
+        deriveVTTS(deltaCostHuf, deltaHours) {
+            if (!deltaHours || deltaHours <= 0) return 8000;
+            return Math.round(deltaCostHuf / deltaHours);
+        },
+
+        deriveFlightAHPFromTipping(tippingSavingHuf, deltaHours = 3.0, vRef = 8000) {
+            const vtts = this.deriveVTTS(tippingSavingHuf, deltaHours);
+            const ratio = vRef / Math.max(vtts, 500);
+            let priceVsDurationIdx = 4; // default equal (1.0)
+            if (ratio > 2.5) priceVsDurationIdx = 1;       // 7.0 (Price much more important)
+            else if (ratio > 1.4) priceVsDurationIdx = 2;  // 5.0 (Price more important)
+            else if (ratio > 1.1) priceVsDurationIdx = 3;  // 3.0 (Price slightly more)
+            else if (ratio > 0.85) priceVsDurationIdx = 4; // 1.0 (Equal)
+            else if (ratio > 0.55) priceVsDurationIdx = 5; // 1/3 (Time slightly more)
+            else if (ratio > 0.35) priceVsDurationIdx = 6; // 1/5 (Time more important)
+            else priceVsDurationIdx = 7;                   // 1/7 (Time much more important)
+            return { vtts, ratio, priceVsDurationIdx };
+        },
+
+        derivePrometheeFlightThresholds(tippingSavingHuf, deltaHours = 3.0) {
+            const pPrice = Math.max(5000, tippingSavingHuf);
+            const qPrice = Math.round(pPrice * 0.15 / 1000) * 1000;
+            const pDuration = parseFloat(deltaHours.toFixed(1));
+            const qDuration = parseFloat((deltaHours * 0.2).toFixed(1));
+            return {
+                price: { q: qPrice, p: pPrice },
+                duration: { q: qDuration, p: pDuration }
+            };
         }
     };
 
     window.DNAMath = DNAMath;
 })();
+

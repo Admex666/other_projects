@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="hu" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optivoya Advisor Workspace — Travel Decision Intelligence</title>
+    
+    <!-- Design System Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    
+    <!-- Core Theme Styles -->
+    <link rel="stylesheet" href="/static/css/theme.css">
+    <link rel="stylesheet" href="/static/css/components.css">
+    
+    <style>
+        :root {
+            --sidebar-width: 260px;
+            --header-height: 64px;
+            --b2b-primary: #0284c7;
+            --b2b-primary-hover: #0369a1;
+            --b2b-accent: #38bdf8;
+            --b2b-bg-dark: #090d16;
+            --b2b-surface: #0f172a;
+            --b2b-card: #131d33;
+            --b2b-border: rgba(255, 255, 255, 0.08);
+            --b2b-border-focus: rgba(56, 189, 248, 0.4);
+        }
+
+        body {
+            background-color: var(--b2b-bg-dark);
+            color: #f8fafc;
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            height: 100vh;
+            display: flex;
+        }
+
+        /* --- Advisor App Shell Grid --- */
+        #advisorApp {
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- Left Navigation Sidebar --- */
+        .advisor-sidebar {
+            width: var(--sidebar-width);
+            background: var(--b2b-surface);
+            border-right: 1px solid var(--b2b-border);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            z-index: 20;
+        }
+
+        .sidebar-brand {
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--b2b-border);
+        }
+
+        .brand-badge {
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            background: rgba(14, 165, 233, 0.15);
+            color: var(--b2b-accent);
+            padding: 3px 7px;
+            border-radius: 6px;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+
+        .sidebar-nav {
+            padding: 16px 12px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .nav-section-title {
+            font-size: 10.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #64748b;
+            padding: 8px 12px 4px 12px;
+            margin-top: 8px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 13.5px;
+            font-weight: 600;
+            transition: all 0.15s ease;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .nav-item:hover {
+            color: #f1f5f9;
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .nav-item.active {
+            color: #fff;
+            background: rgba(14, 165, 233, 0.12);
+            border-color: rgba(56, 189, 248, 0.25);
+        }
+
+        .nav-item .material-symbols-outlined {
+            font-size: 20px;
+            color: inherit;
+        }
+
+        .nav-badge {
+            margin-left: auto;
+            font-size: 11px;
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(255, 255, 255, 0.08);
+            color: #cbd5e1;
+            padding: 2px 7px;
+            border-radius: 10px;
+        }
+
+        /* --- Main Content Area --- */
+        .advisor-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            background: radial-gradient(circle at top right, rgba(14, 165, 233, 0.04), transparent 60%);
+        }
+
+        /* --- Header Context Bar --- */
+        .advisor-header {
+            height: var(--header-height);
+            background: var(--b2b-surface);
+            border-bottom: 1px solid var(--b2b-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 28px;
+            gap: 20px;
+            flex-shrink: 0;
+        }
+
+        .header-search {
+            position: relative;
+            width: 380px;
+        }
+
+        .header-search input {
+            width: 100%;
+            background: var(--b2b-card);
+            border: 1px solid var(--b2b-border);
+            border-radius: 10px;
+            padding: 8px 14px 8px 38px;
+            color: #f1f5f9;
+            font-size: 13px;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .header-search input:focus {
+            border-color: var(--b2b-accent);
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+        }
+
+        .header-search .material-symbols-outlined {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+            font-size: 18px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .shortcut-badge {
+            font-size: 11px;
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #94a3b8;
+            margin-left: 6px;
+        }
+
+        /* --- Scrollable Body View --- */
+        .advisor-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 28px;
+        }
+
+        /* --- KPI Metric Cards Grid --- */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .kpi-card {
+            background: var(--b2b-card);
+            border: 1px solid var(--b2b-border);
+            border-radius: 14px;
+            padding: 18px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.15s ease, border-color 0.15s ease;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--b2b-border-focus);
+        }
+
+        .kpi-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .kpi-value {
+            font-size: 26px;
+            font-weight: 800;
+            font-family: 'JetBrains Mono', monospace;
+            color: #fff;
+            line-height: 1;
+        }
+
+        .kpi-subtext {
+            font-size: 11.5px;
+            color: #64748b;
+        }
+
+        /* --- Case Status Badge --- */
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .status-brief { background: rgba(148, 163, 184, 0.15); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.3); }
+        .status-researching { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
+        .status-shortlist { background: rgba(251, 191, 36, 0.15); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.3); }
+        .status-proposal { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+        .status-closed { background: rgba(52, 211, 153, 0.15); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3); }
+
+        /* --- Case Cards Grid --- */
+        .case-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 16px;
+        }
+
+        .case-card {
+            background: var(--b2b-card);
+            border: 1px solid var(--b2b-border);
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .case-card:hover {
+            border-color: var(--b2b-accent);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        /* --- Modal Dialogs --- */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-card {
+            background: var(--b2b-surface);
+            border: 1px solid var(--b2b-border);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 640px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            overflow: hidden;
+            animation: fadeInScale 0.2s ease;
+        }
+
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.96); }
+            to { opacity: 1; transform: scale(1.0); }
+        }
+    </style>
+</head>
+<body>
+    <div id="advisorApp">
+        <!-- Sidebar Navigation -->
+        <aside class="advisor-sidebar">
+            <div class="sidebar-brand">
+                <div style="width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #0284c7, #38bdf8); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 18px;">
+                    O
+                </div>
+                <div>
+                    <div style="font-weight: 800; font-size: 15px; letter-spacing: -0.01em; color: #fff;">Optivoya</div>
+                    <div class="brand-badge">Advisor Workspace</div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section-title">Munkafolyamat</div>
+                <div class="nav-item active" data-view="dashboard" onclick="window.AdvisorNavigation.navigate('dashboard')">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <span>Dashboard</span>
+                </div>
+                <div class="nav-item" data-view="cases" onclick="window.AdvisorNavigation.navigate('cases')">
+                    <span class="material-symbols-outlined">folder_open</span>
+                    <span>Aktív Ügyek</span>
+                    <span class="nav-badge" id="navActiveCasesCount">2</span>
+                </div>
+                <div class="nav-item" data-view="clients" onclick="window.AdvisorNavigation.navigate('clients')">
+                    <span class="material-symbols-outlined">group</span>
+                    <span>Ügyfelek (CRM)</span>
+                    <span class="nav-badge" id="navClientsCount">2</span>
+                </div>
+
+                <div class="nav-section-title">Intelligencia & Kimenetek</div>
+                <div class="nav-item" data-view="research" onclick="window.AdvisorNavigation.navigate('research')">
+                    <span class="material-symbols-outlined">auto_awesome</span>
+                    <span>Intelligence Lab</span>
+                </div>
+                <div class="nav-item" data-view="proposals" onclick="window.AdvisorNavigation.navigate('proposals')">
+                    <span class="material-symbols-outlined">description</span>
+                    <span>Ajánlatok</span>
+                </div>
+
+                <div class="nav-section-title">Ügynökség</div>
+                <div class="nav-item" data-view="settings" onclick="window.AdvisorNavigation.navigate('settings')">
+                    <span class="material-symbols-outlined">settings</span>
+                    <span>Beállítások & Ráták</span>
+                </div>
+            </nav>
+
+            <div style="padding: 16px; border-top: 1px solid var(--b2b-border); display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.15);">
+                <div style="width: 34px; height: 34px; border-radius: 50%; background: #0284c7; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px;">
+                    Á
+                </div>
+                <div style="flex: 1; overflow: hidden;">
+                    <div style="font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="advisorProfileName">Ádám (Lead Advisor)</div>
+                    <div style="font-size: 11px; color: #64748b;" id="advisorAgencyName">Optivoya Premier</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Shell -->
+        <main class="advisor-main">
+            <!-- Top Header Context Bar -->
+            <header class="advisor-header">
+                <div class="header-search">
+                    <span class="material-symbols-outlined">search</span>
+                    <input type="text" id="globalAdvisorSearch" placeholder="Keresés ügyfelek, ügyek vagy úti célok között... (/)" oninput="window.AdvisorDashboard.handleSearch(this.value)">
+                </div>
+
+                <div class="header-actions">
+                    <button type="button" class="btn btn-secondary" onclick="window.AdvisorNavigation.openNewClientModal()" style="font-size: 13px; padding: 8px 14px; border-radius: 8px;">
+                        <span class="material-symbols-outlined" style="font-size: 18px; margin-right: 4px;">person_add</span>
+                        Új Ügyfél <span class="shortcut-badge">C</span>
+                    </button>
+                    
+                    <button type="button" class="btn btn-primary" onclick="window.AdvisorNavigation.openNewCaseModal()" style="font-size: 13px; padding: 8px 16px; border-radius: 8px; background: #0284c7;">
+                        <span class="material-symbols-outlined" style="font-size: 18px; margin-right: 4px;">add_circle</span>
+                        Új Ügy Létrehozása <span class="shortcut-badge" style="background: rgba(0,0,0,0.25); color: #fff;">N</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dynamic View Container -->
+            <div class="advisor-body" id="advisorMainContent">
+                <!-- Content injected dynamically via advisor_dashboard.js -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals (New Case & New Client) -->
+    <div id="newCaseModal" class="modal-overlay" onclick="if(event.target===this) window.AdvisorNavigation.closeModals()">
+        <div class="modal-card">
+            <div style="padding: 18px 24px; border-bottom: 1px solid var(--b2b-border); display: flex; justify-content: space-between; align-items: center;">
+                <div style="font-weight: 800; font-size: 16px;">✨ Új Utazási Ügy (Trip Case) Létrehozása</div>
+                <button type="button" onclick="window.AdvisorNavigation.closeModals()" style="background:none; border:none; color:#64748b; font-size:20px; cursor:pointer;">✕</button>
+            </div>
+            
+            <form id="newCaseForm" onsubmit="window.AdvisorDashboard.submitNewCase(event)" style="padding: 24px; display: flex; flex-direction: column; gap: 16px; overflow-y: auto;">
+                <div>
+                    <label class="form-label" style="font-size: 12px; font-weight: 700; color: #94a3b8;">Ügyfél kiválasztása *</label>
+                    <select id="caseClientSelect" required class="form-control" style="width:100%; background:var(--b2b-card); border-color:var(--b2b-border); color:#fff; padding:10px; border-radius:8px;">
+                        <!-- Injected dynamically -->
+                    </select>
+                </div>
+
+                <div>
+                    <label class="form-label" style="font-size: 12px; font-weight: 700; color: #94a3b8;">Ügy Megnevezése / Célja *</label>
+                    <input type="text" id="caseTitleInput" required placeholder="pl. London Családi Hétvége & Múzeumok" class="form-control" style="width:100%; background:var(--b2b-card); border-color:var(--b2b-border); color:#fff; padding:10px; border-radius:8px;">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div>
+                        <label class="form-label" style="font-size: 12px; font-weight: 700; color: #94a3b8;">Indulási Hely (Origin)</label>
+                        <input type="text" id="caseOriginInput" value="BUD" class="form-control" style="width:100%; background:var(--b2b-card); border-color:var(--b2b-border); color:#fff; padding:10px; border-radius:8px;">
+                    </div>
+                    <div>
+                        <label class="form-label" style="font-size: 12px; font-weight: 700; color: #94a3b8;">Úti cél / Jelöltek</label>
+                        <input type="text" id="caseDestInput" value="London" placeholder="pl. London, Barcelona" class="form-control" style="width:100%; background:var(--b2b-card); border-color:var(--b2b-border); color:#fff; padding:10px; border-radius:8px;">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div>
+                        <label class="form-label" style="font-size: 12px; font-weight: 700; color: #94a3b8;">Célzott Összbüdzsé (Ft)</label>
+                        <input type="number" id="caseBudgetInput" value="500000" step="10000" class="form-control" style="width:100%; background:var(--b2b-card); border-color:var(--b2b-border); color:#fff; padding:10px; border-radius:8px;">
+                    </div>
+                    <div>
+                        <label class="form-label" style="font-size: 12px; font-weight: 700; color: #94a3b8;">Időtartam (napok)</label>
+                        <input type="number" id="caseDurationInput" value="4" min="1" max="30" class="form-control" style="width:100%; background:var(--b2b-card); border-color:var(--b2b-border); color:#fff; padding:10px; border-radius:8px;">
+                    </div>
+                </div>
+
+                <div style="padding-top: 10px; display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="button" onclick="window.AdvisorNavigation.closeModals()" class="btn btn-secondary">Mégse</button>
+                    <button type="submit" class="btn btn-primary" style="background: #0284c7;">Ügy Indítása →</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Client Modal -->
+    <div id="newClientModal" class="modal-overlay" onclick="if(event.target===this) window.AdvisorNavigation.closeModals()">
+        <div class="modal-card">
+            <div style="padding: 18px 24px; border-bottom: 1px solid var(--b2b-border); display: flex; justify-content: space-between; align-items: center;">
+                <div style="font-weight: 800; font-size: 16px;">👤 Új Ügyfél Rögzítése</div>
+                <button type="button" onclick="window.AdvisorNavigation.closeModals()" style="background:none; border:none; color:#64748b; font-size:20px; cursor:pointer;">✕</button>
+            </div>
+            
+            <form id="newClientForm" onsubmit="window.AdvisorDashboard.submitNewClient(event)" style="padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+                <div>
+                    <label class="form-label" style="font-size: 12px; font-weight: 700; color: #94a3b8;">Ügyfél Teljes Neve / Családnév *</label>
+                    <input type="text" id="clientNameInput" required placeholder="pl. Mészáros András & Zsófia" class="form-control" style="width:100%; background:var(--b2b-card); border-color:var(--b2b-border); color:#fff; padding:10px; border-radius:8px;">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div>
+                        <label class="form-label" style="font-size: 12px; font-weight: 700; color: #94a3b8;">E-mail cím</label>
+                        <input type="email" id="clientEmailInput" placeholder="ugyfel@example.com" class="form-control" style="width:100%; background:var(--b2b-card); border-color:var(--b2b-border); color:#fff; padding:10px; border-radius:8px;">
+                    </div>
+                    <div>
+                        <label class="form-label" style="font-size: 12px; font-weight: 700; color: #94a3b8;">Telefonszám</label>
+                        <input type="tel" id="clientPhoneInput" placeholder="+36 30 123 4567" class="form-control" style="width:100%; background:var(--b2b-card); border-color:var(--b2b-border); color:#fff; padding:10px; border-radius:8px;">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="form-label" style="font-size: 12px; font-weight: 700; color: #94a3b8;">Címkék / Kategóriák (vesszővel elválasztva)</label>
+                    <input type="text" id="clientTagsInput" placeholder="VIP, Family, CityBreak, Premium" class="form-control" style="width:100%; background:var(--b2b-card); border-color:var(--b2b-border); color:#fff; padding:10px; border-radius:8px;">
+                </div>
+
+                <div>
+                    <label class="form-label" style="font-size: 12px; font-weight: 700; color: #94a3b8;">Jegyzetek & Különleges Kérések</label>
+                    <textarea id="clientNotesInput" rows="3" placeholder="pl. Csendes szobák preferáltak, ételallergia, reggeli mindig szükséges..." class="form-control" style="width:100%; background:var(--b2b-card); border-color:var(--b2b-border); color:#fff; padding:10px; border-radius:8px;"></textarea>
+                </div>
+
+                <div style="padding-top: 10px; display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="button" onclick="window.AdvisorNavigation.closeModals()" class="btn btn-secondary">Mégse</button>
+                    <button type="submit" class="btn btn-primary" style="background: #0284c7;">Ügyfél Mentése</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Frontend Scripts -->
+    <script src="/static/js/advisor/advisor_api.js"></script>
+    <script src="/static/js/advisor/advisor_state.js"></script>
+    <script src="/static/js/advisor/advisor_navigation.js"></script>
+    <script src="/static/js/advisor/advisor_clients.js"></script>
+    <script src="/static/js/advisor/advisor_brief.js"></script>
+    <script src="/static/js/advisor/advisor_research.js"></script>
+    <script src="/static/js/advisor/advisor_dashboard.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            await window.AdvisorState.init();
+            window.AdvisorNavigation.init();
+            window.AdvisorDashboard.render();
+        });
+    </script>
+</body>
+</html>

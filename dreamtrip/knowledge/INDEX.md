@@ -88,7 +88,9 @@ Ez a fájl az Optivoya (DreamTrip) projekt navigációs térképe. Minden lénye
 ---
 
 ## ⚙️ Systems (Rendszerek)
+* [[shared-intelligence-layer]] — Az Optivoya közös, leválasztott döntési motor rétege (AHP, PROMETHEE, Kiwi, Cozycozy, TripScore, Proposal).
 * [[advisor-workspace-blueprint]] — Optivoya Advisor Workspace v1 Teljes Rendszer Blueprint és Műszaki Architektúra.
+
 * [[master-planner-blueprint]] — Master Planner Teljes Rendszer Blueprint és Műszaki/Üzleti Architektúra.
 * [[fastapi-backend]] — Python FastAPI aszinkron backend szerver és REST végpontok.
 * [[supabase-database]] — Supabase Cloud PostgreSQL & PostgREST telemetria és béta felhasználói adatbázis.

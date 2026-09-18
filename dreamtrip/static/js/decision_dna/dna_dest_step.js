@@ -70,28 +70,16 @@
                     </div>
 
                     ${isCostChosen ? `
-                        <div style="background: linear-gradient(135deg, #0f172a, #1e293b); color: #fff; padding: 14px 18px; border-radius: 14px; font-size: 13.5px; line-height: 2.1; animation: fadeInScale 0.2s ease;">
+                        <div style="background: linear-gradient(135deg, #0f172a, #1e293b); color: #fff; padding: 14px 18px; border-radius: 14px; font-size: 13.5px; line-height: 2.2; animation: fadeInScale 0.2s ease;">
                             ${cCost.type === 5 ? `
                                 „Legfeljebb 
-                                <span style="display: inline-flex; align-items: center; gap: 3px; background: rgba(56, 189, 248, 0.2); border: 1px solid #38bdf8; border-radius: 6px; padding: 1px 6px;">
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.dest_promethee, 'cost', 'q', -1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">−</button>
-                                    <strong style="color:#38bdf8; font-family:var(--font-mono);">${cCost.q.toLocaleString()} Ft</strong>
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.dest_promethee, 'cost', 'q', 1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">+</button>
-                                </span>
+                                ${wizard.renderNumericControl({ objName: 'dest_promethee', key: 'cost', param: 'q', value: cCost.q, unit: 'Ft', min: 0, max: 100000, step: 1000, inputWidth: '80px' })}
                                 összköltség különbség még <strong>nem számít</strong> nekem két város között, de 
-                                <span style="display: inline-flex; align-items: center; gap: 3px; background: rgba(56, 189, 248, 0.2); border: 1px solid #38bdf8; border-radius: 6px; padding: 1px 6px;">
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.dest_promethee, 'cost', 'p', -1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">−</button>
-                                    <strong style="color:#38bdf8; font-family:var(--font-mono);">${cCost.p.toLocaleString()} Ft</strong>
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.dest_promethee, 'cost', 'p', 1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">+</button>
-                                </span>
+                                ${wizard.renderNumericControl({ objName: 'dest_promethee', key: 'cost', param: 'p', value: cCost.p, unit: 'Ft', min: 5000, max: 250000, step: 5000, inputWidth: '85px' })}
                                 felett már <strong>egyértelműen az olcsóbb úti cél</strong> a nyerő.”
                             ` : `
                                 „Már a legkisebb költségkülönbség is számít, és 
-                                <span style="display: inline-flex; align-items: center; gap: 3px; background: rgba(56, 189, 248, 0.2); border: 1px solid #38bdf8; border-radius: 6px; padding: 1px 6px;">
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.dest_promethee, 'cost', 'p', -1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">−</button>
-                                    <strong style="color:#38bdf8; font-family:var(--font-mono);">${cCost.p.toLocaleString()} Ft</strong>
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.dest_promethee, 'cost', 'p', 1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">+</button>
-                                </span>
+                                ${wizard.renderNumericControl({ objName: 'dest_promethee', key: 'cost', param: 'p', value: cCost.p, unit: 'Ft', min: 5000, max: 250000, step: 5000, inputWidth: '85px' })}
                                 különbségnél már <strong>100%-ban az olcsóbb desztináció</strong> felé billen a mérleg.”
                             `}
                         </div>
@@ -120,28 +108,16 @@
                     </div>
 
                     ${isTempChosen ? `
-                        <div style="background: linear-gradient(135deg, #0f172a, #1e293b); color: #fff; padding: 14px 18px; border-radius: 14px; font-size: 13.5px; line-height: 2.1; animation: fadeInScale 0.2s ease;">
+                        <div style="background: linear-gradient(135deg, #0f172a, #1e293b); color: #fff; padding: 14px 18px; border-radius: 14px; font-size: 13.5px; line-height: 2.2; animation: fadeInScale 0.2s ease;">
                             ${cTemp.type === 5 ? `
                                 „Legfeljebb 
-                                <span style="display: inline-flex; align-items: center; gap: 3px; background: rgba(56, 189, 248, 0.2); border: 1px solid #38bdf8; border-radius: 6px; padding: 1px 6px;">
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.dest_promethee, 'temp', 'q', -1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">−</button>
-                                    <strong style="color:#38bdf8; font-family:var(--font-mono);">±${cTemp.q} °C</strong>
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.dest_promethee, 'temp', 'q', 1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">+</button>
-                                </span>
+                                ${wizard.renderNumericControl({ objName: 'dest_promethee', key: 'temp', param: 'q', value: cTemp.q, unit: '°C', min: 0, max: 10, step: 0.5, inputWidth: '60px' })}
                                 eltérés a kívánt hőfoktól még <strong>ugyanolyan jó nekem</strong>, de 
-                                <span style="display: inline-flex; align-items: center; gap: 3px; background: rgba(56, 189, 248, 0.2); border: 1px solid #38bdf8; border-radius: 6px; padding: 1px 6px;">
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.dest_promethee, 'temp', 'p', -1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">−</button>
-                                    <strong style="color:#38bdf8; font-family:var(--font-mono);">±${cTemp.p} °C</strong>
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.dest_promethee, 'temp', 'p', 1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">+</button>
-                                </span>
+                                ${wizard.renderNumericControl({ objName: 'dest_promethee', key: 'temp', param: 'p', value: cTemp.p, unit: '°C', min: 1, max: 20, step: 0.5, inputWidth: '60px' })}
                                 eltérés felett már <strong>kifejezetten gyengébbnek</strong> tekintem.”
                             ` : `
                                 „Minden egyes fok eltérés azonnal számít, és 
-                                <span style="display: inline-flex; align-items: center; gap: 3px; background: rgba(56, 189, 248, 0.2); border: 1px solid #38bdf8; border-radius: 6px; padding: 1px 6px;">
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.dest_promethee, 'temp', 'p', -1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">−</button>
-                                    <strong style="color:#38bdf8; font-family:var(--font-mono);">±${cTemp.p} °C</strong>
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.dest_promethee, 'temp', 'p', 1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">+</button>
-                                </span>
+                                ${wizard.renderNumericControl({ objName: 'dest_promethee', key: 'temp', param: 'p', value: cTemp.p, unit: '°C', min: 1, max: 20, step: 0.5, inputWidth: '60px' })}
                                 eltérésnél már <strong>100%-ban a pontosabb célpont</strong> a preferált.”
                             `}
                         </div>
@@ -170,58 +146,18 @@
                     </div>
                     
                     ${isSafeChosen ? `
-                        <div style="background: linear-gradient(135deg, #0f172a, #1e293b); color: #fff; padding: 14px 18px; border-radius: 14px; font-size: 13.5px; line-height: 2.1; animation: fadeInScale 0.2s ease;">
+                        <div style="background: linear-gradient(135deg, #0f172a, #1e293b); color: #fff; padding: 14px 18px; border-radius: 14px; font-size: 13.5px; line-height: 2.2; animation: fadeInScale 0.2s ease;">
                             ${cSafe.type === 5 ? `
                                 „Legfeljebb 
-                                <span style="display: inline-flex; align-items: center; gap: 3px; background: rgba(56, 189, 248, 0.2); border: 1px solid #38bdf8; border-radius: 6px; padding: 1px 6px;">
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.dest_promethee, 'safety', 'q', -1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">−</button>
-                                    <strong style="color:#38bdf8; font-family:var(--font-mono);">${cSafe.q} pont</strong>
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.dest_promethee, 'safety', 'q', 1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">+</button>
-                                </span>
-                                biztonsági pontszám különbség még <strong>elhanyagolható</strong>, de 
-                                <span style="display: inline-flex; align-items: center; gap: 3px; background: rgba(56, 189, 248, 0.2); border: 1px solid #38bdf8; border-radius: 6px; padding: 1px 6px;">
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.dest_promethee, 'safety', 'p', -1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">−</button>
-                                    <strong style="color:#38bdf8; font-family:var(--font-mono);">${cSafe.p} pont</strong>
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.dest_promethee, 'safety', 'p', 1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">+</button>
-                                </span>
-                                különbség felett már <strong>kizárólag a biztonságosabb város</strong> a preferált.”
+                                ${wizard.renderNumericControl({ objName: 'dest_promethee', key: 'safety', param: 'q', value: cSafe.q, unit: 'pont', min: 0, max: 20, step: 1, inputWidth: '55px' })}
+                                pont biztonsági eltérés még <strong>nem számít</strong> két úti cél között, de 
+                                ${wizard.renderNumericControl({ objName: 'dest_promethee', key: 'safety', param: 'p', value: cSafe.p, unit: 'pont', min: 2, max: 40, step: 1, inputWidth: '55px' })}
+                                pont felett már <strong>kifejezetten a biztonságosabb úti cél</strong> a preferált.”
                             ` : `
                                 „Minden egyes pont biztonsági előny számít, és 
-                                <span style="display: inline-flex; align-items: center; gap: 3px; background: rgba(56, 189, 248, 0.2); border: 1px solid #38bdf8; border-radius: 6px; padding: 1px 6px;">
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.dest_promethee, 'safety', 'p', -1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">−</button>
-                                    <strong style="color:#38bdf8; font-family:var(--font-mono);">${cSafe.p} pont</strong>
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.dest_promethee, 'safety', 'p', 1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">+</button>
-                                </span>
-                                pontkülönbségnél már <strong>100%-ban a biztonságosabb úti cél</strong> felé billen a mérleg.”
+                                ${wizard.renderNumericControl({ objName: 'dest_promethee', key: 'safety', param: 'p', value: cSafe.p, unit: 'pont', min: 2, max: 40, step: 1, inputWidth: '55px' })}
+                                pont különbségnél már <strong>100%-ban a biztonságosabb város</strong> a nyerő.”
                             `}
-                        </div>
-                    ` : ''}
-                </div>
-                ` : ''}
-
-                <!-- 4. ÉLMÉNY ÉS PROGRAM STÍLUS SZITUÁCIÓ -->
-                ${isExpActive ? `
-                <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 18px; padding: 18px; opacity: ${isExpUnlocked ? '1.0' : '0.45'}; pointer-events: ${isExpUnlocked ? 'auto' : 'none'}; filter: ${isExpUnlocked ? 'none' : 'grayscale(30%)'}; transition: all 0.3s ease;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                        <div style="font-size: 13px; font-weight: 800; color: var(--text-main);">4. Milyen jellegű élményeket és programokat keresel leginkább?</div>
-                        ${!isExpUnlocked ? '<span style="font-size: 11px; font-weight: 700; color: var(--text-muted);">Válaszd ki az előző pontot a feloldáshoz</span>' : ''}
-                    </div>
-
-                    <div class="dna-scenario-grid" style="margin-bottom: ${isExpChosen ? '12px' : '0'};">
-                        <div onclick="window.DecisionDNAInstance.selectScenario('dest_exp', 'A', 'culture_aficionado')" style="cursor: pointer; padding: 12px; border-radius: 12px; border: 2px solid ${state.chosen_cards.dest_exp === 'A' ? 'var(--primary)' : 'var(--border-subtle)'}; background: ${state.chosen_cards.dest_exp === 'A' ? 'rgba(37, 99, 235, 0.08)' : 'var(--bg-card)'};">
-                            <div style="font-weight: 800; font-size: 12px; color: var(--primary); margin-bottom: 4px;">A) Történelmi látnivalók & Kulturális ikonok</div>
-                            <div style="font-size: 11.5px; color: var(--text-muted);">Várak, múzeumok, óvárosi bazilikák és építészeti csodák felfedezése.</div>
-                        </div>
-
-                        <div onclick="window.DecisionDNAInstance.selectScenario('dest_exp', 'B', 'foodie_local')" style="cursor: pointer; padding: 12px; border-radius: 12px; border: 2px solid ${state.chosen_cards.dest_exp === 'B' ? 'var(--primary)' : 'var(--border-subtle)'}; background: ${state.chosen_cards.dest_exp === 'B' ? 'rgba(37, 99, 235, 0.08)' : 'var(--bg-card)'};">
-                            <div style="font-weight: 800; font-size: 12px; color: var(--primary); margin-bottom: 4px;">B) Helyi gasztronómia & Hangulatos séta</div>
-                            <div style="font-size: 11.5px; color: var(--text-muted);">Óvárosi terek, piacok, kávézók és tengerparti séták élvezete kötetlenül.</div>
-                        </div>
-                    </div>
-                    
-                    ${isExpChosen ? `
-                        <div style="background: linear-gradient(135deg, #0f172a, #1e293b); color: #fff; padding: 14px 18px; border-radius: 14px; font-size: 13.5px; line-height: 1.8; animation: fadeInScale 0.2s ease;">
-                            „A programtervezéskor <strong>${state.chosen_cards.dest_exp === 'A' ? 'a kiemelt történelmi látnivalók és kulturális örökségek' : 'a helyi gasztronómiai élmények, a kávézók és a hangulatos séták'}</strong> élveznek prioritást.”
                         </div>
                     ` : ''}
                 </div>
@@ -232,3 +168,4 @@
 
     window.DNADestStep = DNADestStep;
 })();
+

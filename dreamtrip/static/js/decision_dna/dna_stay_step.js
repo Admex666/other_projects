@@ -66,28 +66,16 @@
                     </div>
 
                     ${isPriceChosen ? `
-                        <div style="background: linear-gradient(135deg, #0f172a, #1e293b); color: #fff; padding: 14px 18px; border-radius: 14px; font-size: 13.5px; line-height: 2.1; animation: fadeInScale 0.2s ease;">
+                        <div style="background: linear-gradient(135deg, #0f172a, #1e293b); color: #fff; padding: 14px 18px; border-radius: 14px; font-size: 13.5px; line-height: 2.2; animation: fadeInScale 0.2s ease;">
                             ${sPrice.type === 5 ? `
                                 „Legfeljebb 
-                                <span style="display: inline-flex; align-items: center; gap: 3px; background: rgba(56, 189, 248, 0.2); border: 1px solid #38bdf8; border-radius: 6px; padding: 1px 6px;">
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.stay_promethee, 'price', 'q', -1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">−</button>
-                                    <strong style="color:#38bdf8; font-family:var(--font-mono);">${sPrice.q.toLocaleString()} Ft / éj</strong>
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.stay_promethee, 'price', 'q', 1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">+</button>
-                                </span>
+                                ${wizard.renderNumericControl({ objName: 'stay_promethee', key: 'price', param: 'q', value: sPrice.q, unit: 'Ft / éj', min: 0, max: 20000, step: 500, inputWidth: '75px' })}
                                 különbség még <strong>nem számít</strong> két szálloda között, de 
-                                <span style="display: inline-flex; align-items: center; gap: 3px; background: rgba(56, 189, 248, 0.2); border: 1px solid #38bdf8; border-radius: 6px; padding: 1px 6px;">
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.stay_promethee, 'price', 'p', -1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">−</button>
-                                    <strong style="color:#38bdf8; font-family:var(--font-mono);">${sPrice.p.toLocaleString()} Ft / éj</strong>
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.stay_promethee, 'price', 'p', 1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">+</button>
-                                </span>
+                                ${wizard.renderNumericControl({ objName: 'stay_promethee', key: 'price', param: 'p', value: sPrice.p, unit: 'Ft / éj', min: 2000, max: 60000, step: 1000, inputWidth: '85px' })}
                                 felett már <strong>kifejezetten az olcsóbb opció</strong> a nyerő.”
                             ` : `
                                 „Minden forint árelőny azonnal számít, és 
-                                <span style="display: inline-flex; align-items: center; gap: 3px; background: rgba(56, 189, 248, 0.2); border: 1px solid #38bdf8; border-radius: 6px; padding: 1px 6px;">
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.stay_promethee, 'price', 'p', -1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">−</button>
-                                    <strong style="color:#38bdf8; font-family:var(--font-mono);">${sPrice.p.toLocaleString()} Ft / éj</strong>
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.stay_promethee, 'price', 'p', 1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">+</button>
-                                </span>
+                                ${wizard.renderNumericControl({ objName: 'stay_promethee', key: 'price', param: 'p', value: sPrice.p, unit: 'Ft / éj', min: 2000, max: 60000, step: 1000, inputWidth: '85px' })}
                                 árkülönbségnél már <strong>100%-ban az olcsóbb szállás</strong> a preferált.”
                             `}
                         </div>
@@ -116,28 +104,16 @@
                     </div>
                     
                     ${isRatingChosen ? `
-                        <div style="background: linear-gradient(135deg, #0f172a, #1e293b); color: #fff; padding: 14px 18px; border-radius: 14px; font-size: 13.5px; line-height: 2.1; animation: fadeInScale 0.2s ease;">
+                        <div style="background: linear-gradient(135deg, #0f172a, #1e293b); color: #fff; padding: 14px 18px; border-radius: 14px; font-size: 13.5px; line-height: 2.2; animation: fadeInScale 0.2s ease;">
                             ${sRating.type === 5 ? `
                                 „Legfeljebb 
-                                <span style="display: inline-flex; align-items: center; gap: 3px; background: rgba(56, 189, 248, 0.2); border: 1px solid #38bdf8; border-radius: 6px; padding: 1px 6px;">
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.stay_promethee, 'rating', 'q', -1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">−</button>
-                                    <strong style="color:#38bdf8; font-family:var(--font-mono);">${sRating.q} pont</strong>
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.stay_promethee, 'rating', 'q', 1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">+</button>
-                                </span>
+                                ${wizard.renderNumericControl({ objName: 'stay_promethee', key: 'rating', param: 'q', value: sRating.q, unit: 'pont', min: 0, max: 1.5, step: 0.1, inputWidth: '55px' })}
                                 értékelésbeli különbség még <strong>elhanyagolható</strong>, de 
-                                <span style="display: inline-flex; align-items: center; gap: 3px; background: rgba(56, 189, 248, 0.2); border: 1px solid #38bdf8; border-radius: 6px; padding: 1px 6px;">
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.stay_promethee, 'rating', 'p', -1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">−</button>
-                                    <strong style="color:#38bdf8; font-family:var(--font-mono);">${sRating.p} pont</strong>
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.stay_promethee, 'rating', 'p', 1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">+</button>
-                                </span>
+                                ${wizard.renderNumericControl({ objName: 'stay_promethee', key: 'rating', param: 'p', value: sRating.p, unit: 'pont', min: 0.2, max: 3.0, step: 0.1, inputWidth: '55px' })}
                                 előny már <strong>egyértelmű minőségi fölényt</strong> jelent.”
                             ` : `
                                 „Minden tized pont előny számít, és 
-                                <span style="display: inline-flex; align-items: center; gap: 3px; background: rgba(56, 189, 248, 0.2); border: 1px solid #38bdf8; border-radius: 6px; padding: 1px 6px;">
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.stay_promethee, 'rating', 'p', -1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">−</button>
-                                    <strong style="color:#38bdf8; font-family:var(--font-mono);">${sRating.p} pont</strong>
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.stay_promethee, 'rating', 'p', 1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">+</button>
-                                </span>
+                                ${wizard.renderNumericControl({ objName: 'stay_promethee', key: 'rating', param: 'p', value: sRating.p, unit: 'pont', min: 0.2, max: 3.0, step: 0.1, inputWidth: '55px' })}
                                 pontelőnynél már <strong>100%-ban a magasabbra értékelt opció</strong> a preferált.”
                             `}
                         </div>

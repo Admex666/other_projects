@@ -321,7 +321,55 @@
             if (window.DNAMath) {
                 window.DNAMath.stepValue(obj, key, param, dir, () => this.render());
             }
-        }
+        },
+
+        setDirectValue(obj, key, param, val, shouldRender = true) {
+            if (window.DNAMath) {
+                window.DNAMath.setValue(obj, key, param, val, () => {
+                    this.persistState();
+                    if (shouldRender) this.render();
+                });
+            }
+        },
+
+        renderNumericControl(opts) {
+            const {
+                objName,
+                key,
+                param,
+                value,
+                unit = '',
+                min = 0,
+                max = 100000,
+                step = 1000,
+                label = '',
+                inputWidth = '85px'
+            } = opts;
+
+            const inputId = `dna_num_${key}_${param || 'val'}`;
+            const sliderId = `dna_slide_${key}_${param || 'val'}`;
+            const paramArg = param ? `'${param}'` : 'null';
+
+            return `
+                <span class="dna-numeric-pill" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(15, 23, 42, 0.6); border: 1.5px solid rgba(56, 189, 248, 0.4); border-radius: 8px; padding: 2px 8px; vertical-align: middle; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
+                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.${objName}, '${key}', ${paramArg}, -1)" style="background:rgba(255,255,255,0.08); border:none; color:#fff; border-radius:4px; width:20px; height:20px; line-height:1; cursor:pointer; font-weight:900; display:flex; align-items:center; justify-content:center;">−</button>
+                    
+                    <input type="number" id="${inputId}" value="${value}" min="${min}" max="${max}" step="${step}" 
+                        onchange="window.DecisionDNAInstance.setDirectValue(window.DecisionDNAInstance.state.${objName}, '${key}', ${paramArg}, this.value)"
+                        oninput="const s=document.getElementById('${sliderId}'); if(s) s.value=this.value;"
+                        style="width: ${inputWidth}; background: transparent; border: none; border-bottom: 1px dashed #38bdf8; color: #38bdf8; font-family: var(--font-mono); font-weight: 800; font-size: 13px; text-align: right; padding: 0 2px; outline: none;" />
+                    
+                    <span style="font-size: 11.5px; color: #94a3b8; font-weight: 700; font-family: var(--font-mono);">${unit}</span>
+                    
+                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.${objName}, '${key}', ${paramArg}, 1)" style="background:rgba(255,255,255,0.08); border:none; color:#fff; border-radius:4px; width:20px; height:20px; line-height:1; cursor:pointer; font-weight:900; display:flex; align-items:center; justify-content:center;">+</button>
+                    
+                    <input type="range" id="${sliderId}" min="${min}" max="${max}" step="${step}" value="${value}"
+                        oninput="const n=document.getElementById('${inputId}'); if(n) n.value=this.value;"
+                        onchange="window.DecisionDNAInstance.setDirectValue(window.DecisionDNAInstance.state.${objName}, '${key}', ${paramArg}, this.value)"
+                        style="width: 70px; height: 4px; accent-color: #38bdf8; cursor: pointer; margin-left: 2px;" />
+                </span>
+            `;
+        },
 
         selectScenario(groupKey, chosenCard, typeNum) {
             this.state.chosen_cards[groupKey] = chosenCard;
@@ -334,13 +382,8 @@
                 this.state.unlocked.dest_safety = true;
             } else if (groupKey === 'dest_safety') {
                 this.state.dest_promethee.safety.type = typeNum;
-                this.state.unlocked.dest_exp = true;
-            } else if (groupKey === 'dest_exp') {
-                this.state.dest_promethee.experience = {
-                    persona: typeNum,
-                    style_name: chosenCard === 'A' ? 'Kulturális és ikonikus látnivalók' : 'Helyi gasztronómia & Séta'
-                };
             } else if (groupKey === 'flight_price') {
+
                 this.state.flight_promethee.price.type = typeNum;
                 this.state.unlocked.flight_dur = true;
             } else if (groupKey === 'flight_dur') {

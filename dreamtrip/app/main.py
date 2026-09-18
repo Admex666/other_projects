@@ -14,8 +14,12 @@ from app.core.auth import USERS, sessions, verify_credentials, create_session, g
 from app.services.destination_service import load_all_destinations
 
 # Import Modular Routers
-from app.routers import auth, planner, flights, stays, destinations, trip, admin, b2b
+from app.routers import auth, planner, flights, stays, destinations, trip, admin, b2b, advisor_api
 from app.services.analytics_service import record_telemetry_event
+from fastapi.templating import Jinja2Templates
+from app.core.config import TEMPLATES_DIR
+
+templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -87,6 +91,13 @@ app.include_router(stays.router)
 app.include_router(destinations.router)
 app.include_router(trip.router)
 app.include_router(b2b.router)
+app.include_router(advisor_api.router)
+
+@app.get("/advisor")
+async def advisor_workspace_view(request: Request):
+    """Desktop-first B2B Advisor Workspace Shell."""
+    return templates.TemplateResponse("advisor/advisor_workspace.html", {"request": request})
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))

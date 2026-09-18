@@ -13,7 +13,7 @@ from datetime import datetime
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 
 from app.core.config import TEMPLATES_DIR
 from app.services.analytics_service import record_telemetry_event
@@ -25,8 +25,9 @@ AI_OPS_DB_PATH = r"E:\Data\AI_ops\store\ai_ops.db"
 
 class B2BLeadRequest(BaseModel):
     name: str
-    email: EmailStr
+    email: str
     agency_name: Optional[str] = None
+
     agency_type: Optional[str] = "independent_advisor" # independent_advisor, boutique_agency, corporate_concierge, other
     clients_per_month: Optional[int] = 10
     research_hours_per_client: Optional[float] = 4.0

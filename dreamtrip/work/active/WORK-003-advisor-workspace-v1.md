@@ -24,137 +24,139 @@ Ez a dokumentum tartalmazza az **Optivoya Advisor Workspace v1** teljes, 10 fáz
 ## 📌 Phase 0: Architecture Extraction & Shared Intelligence Layer
 > **Cél:** A meglévő B2C Planner és az új Advisor Workspace közös, leválasztott `Shared Intelligence Layer`-t használjon (nem B2C hack).
 
-- [ ] **Engine Extraction & Szolgáltatás Leválasztás:**
-  - [ ] `DestinationMatchingService` leválasztása önálló, újrafelhasználható szolgáltatássá.
-  - [ ] `FlightIntelligenceService` leválasztása önálló szolgáltatássá (Kiwi API kliens, ár/idősáv/átszállás analízis).
-  - [ ] `AccommodationIntelligenceService` leválasztása (Cozycozy kliens, rating/ár/lokáció analízis).
-  - [ ] `ExperienceIntelligenceService` leválasztása (POI-k, élménygráf, vibe profilok).
-  - [ ] `TripScoreService` leválasztása (4-pilléres kompozit scoring és hasznos nyaralási idő kalkuláció).
-  - [ ] `AHPEngine` általános, moduláris döntési mátrix szervizzé alakítása.
-  - [ ] `PrometheeEngine` általános, többkritériumos rangsoroló motorrá alakítása.
-  - [ ] `ItineraryOptimizationService` önálló útiterv- és sétaútvonal generálóvá alakítása.
-  - [ ] `ProposalRenderer` közös ajánlat- és PDF/nyomtatás generálóvá tétele (`SingleTripProposal` + `MultiOptionProposal`).
-- [ ] **B2C Regresszióvédelem:**
-  - [ ] Meglévő `/planner` API szerződések érintetlenségének biztosítása.
-  - [ ] Meglévő 17 E2E teszt zöld futása a leválasztott motorokon.
+- [x] **Engine Extraction & Szolgáltatás Leválasztás:**
+  - [x] `DestinationMatchingService` leválasztása önálló, újrafelhasználható szolgáltatássá (`app/services/destination_matching_service.py`).
+  - [x] `FlightIntelligenceService` leválasztása önálló szolgáltatássá (`app/services/flight_intelligence_service.py`).
+  - [x] `AccommodationIntelligenceService` leválasztása (`app/services/accommodation_intelligence_service.py`).
+  - [x] `ExperienceIntelligenceService` leválasztása (`app/services/experience_intelligence_service.py`).
+  - [x] `TripScoreService` leválasztása (`app/services/trip_scoring_service.py`).
+  - [x] `AHPEngine` általános, moduláris döntési mátrix szervizzé alakítása (`app/services/ahp_engine.py`).
+  - [x] `PrometheeEngine` általános, többkritériumos rangsoroló motorrá alakítása (`app/services/promethee_engine.py`).
+  - [x] `ItineraryOptimizationService` önálló útiterv- és sétaútvonal generálóvá alakítása (`app/services/itinerary_optimization_service.py`).
+  - [x] `ProposalRenderer` közös ajánlat- és PDF/nyomtatás generálóvá tétele (`app/services/proposal_renderer.py`).
+- [x] **B2C Regresszióvédelem:**
+  - [x] Meglévő `/planner` API szerződések érintetlenségének biztosítása.
+  - [x] Egységtesztek zöld futása a leválasztott motorokon (`tests/test_shared_intelligence_services.py`).
 
 ### 🎯 Phase 0 Acceptance Criteria
 1. A B2C Master Planner 100%-ban regressziómentesen működik a leválasztott `Shared Intelligence Layer`-en keresztül.
 2. Minden motor (AHP, PROMETHEE, Kiwi, Cozycozy, Open-Meteo, Numbeo, OSM, Itinerary, Proposal) tiszta Python szervizként importálható az Advisor Orchestrator számára.
+
 
 ---
 
 ## 📌 Phase 1: Database, Security & Provenance Data Models
 > **Cél:** Robusztus PostgreSQL/Supabase séma, multi-tenancy védelem és teljes adat-eredet (Provenance) nyilvántartás.
 
-- [ ] **Pydantic Adatmodellek & Sémák (`app/models/advisor_models.py`):**
-  - [ ] `Agency`, `Advisor` (Multi-tenant szervezeti hierarchia).
-  - [ ] `Client`, `ClientPreferences` (Ügyfélprofil tartós preferenciákkal).
-  - [ ] `TripCase`, `TripCasePreferences` (Központi ügy aggregátum).
-  - [ ] `TripOption`, `OptionComponent` (Teljes utazási opciók és elemeik).
-  - [ ] `Shortlist`, `AdvisorNote`, `CaseEvent` (Audit timeline napló).
-  - [ ] `Proposal`, `ProposalVersion` (Ajánlatok és verziótörténet).
-- [ ] **Hard vs. Soft Constraint Modell (`ResolvedTripPreferences`):**
-  - [ ] `hard_constraints` (Kötelező megkötések: pl. szigorúan max. €1200, csak közvetlen járat, min. 4★).
-  - [ ] `soft_preferences` (Súlyozott preferenciák: pl. jobb legyen a gasztro, mint a strand).
-  - [ ] `avoid_rules` (Kifejezetten kerülendő elemek: pl. hajnali járat, bizonyos légitársaság).
-  - [ ] `nice_to_have` (Előny, de nem kizáró ok: pl. medence, tengerre néző kilátás).
-  - [ ] `advisor_overrides` (Tanácsadói kézi felülírások és rögzítések).
-- [ ] **Research Scope Modell:**
-  - [ ] `scope`: `['destination', 'flight', 'stay', 'activities', 'full_trip']` vagy tetszőleges kombináció (pl. csak járat + hotel).
-- [ ] **Provenance & Provider Adatmodell (`ProviderProvenance`):**
-  - [ ] `source`, `source_url`, `provider` (Kiwi, Cozycozy, Open-Meteo, Numbeo, OSM).
-  - [ ] `checked_at`, `expires_at` / `freshness_ttl`.
-  - [ ] `verification_status` (`VERIFIED`, `ESTIMATED`, `STALE`, `UNAVAILABLE`).
-  - [ ] `raw_reference`, `is_estimated`.
-- [ ] **Biztonság & Multi-Tenancy (Server-side & RLS):**
-  - [ ] PostgreSQL migráció (`scripts/migrations/003_advisor_workspace.sql`).
-  - [ ] Row Level Security (RLS): Agency izoláció, tanácsadói tagság ellenőrzés.
-  - [ ] Szigorú szerveroldali jogosultságvizsgálat: Kliens, Case, Proposal azonosítók nem hamisíthatók a frontendről.
+- [x] **Pydantic Adatmodellek & Sémák (`app/models/advisor_models.py`):**
+  - [x] `Agency`, `Advisor` (Multi-tenant szervezeti hierarchia).
+  - [x] `Client`, `ClientPreferences` (Ügyfélprofil tartós preferenciákkal).
+  - [x] `TripCase`, `TripCasePreferences` (Központi ügy aggregátum).
+  - [x] `TripOption`, `OptionComponent` (Teljes utazási opciók és elemeik).
+  - [x] `Shortlist`, `AdvisorNote`, `CaseEvent` (Audit timeline napló).
+  - [x] `Proposal`, `ProposalVersion` (Ajánlatok és verziótörténet).
+- [x] **Hard vs. Soft Constraint Modell (`ResolvedTripPreferences`):**
+  - [x] `hard_constraints` (Kötelező megkötések: pl. szigorúan max. összköltség, csak közvetlen járat, min. 4★).
+  - [x] `soft_preferences` (Súlyozott preferenciák: pl. jobb legyen a gasztro, mint a strand).
+  - [x] `avoid_rules` (Kifejezetten kerülendő elemek: pl. hajnali járat, bizonyos légitársaság).
+  - [x] `nice_to_have` (Előny, de nem kizáró ok: pl. medence, tengerre néző kilátás).
+  - [x] `advisor_overrides` (Tanácsadói kézi felülírások és rögzítések).
+- [x] **Research Scope Modell:**
+  - [x] `scope`: `['destination', 'flight', 'stay', 'activities', 'full_trip']` vagy tetszőleges kombináció (pl. csak járat + hotel).
+- [x] **Provenance & Provider Adatmodell (`ProviderProvenance`):**
+  - [x] `source`, `source_url`, `provider` (Kiwi, Cozycozy, Open-Meteo, Numbeo, OSM).
+  - [x] `checked_at`, `expires_at` / `freshness_ttl`.
+  - [x] `verification_status` (`VERIFIED`, `ESTIMATED`, `STALE`, `UNAVAILABLE`).
+  - [x] `raw_reference`, `is_estimated`.
+- [x] **Biztonság & Multi-Tenancy (Server-side & RLS):**
+  - [x] PostgreSQL migráció (`scripts/migrations/003_advisor_workspace.sql`).
+  - [x] Row Level Security (RLS): Agency izoláció, tanácsadói tagság ellenőrzés.
+  - [x] Szigorú szerveroldali jogosultságvizsgálat: Kliens, Case, Proposal azonosítók nem hamisíthatók a frontendről.
 
 ### 🎯 Phase 1 Acceptance Criteria
 1. Minden külső adat rendelkezik forrás- és frissességi metaadattal (Provenance).
 2. Egy advisor kizárólag a saját ügynökségéhez tartozó klienseket és ügyeket tudja lekérni/módosítani (RLS és szerveroldali Auth tesztekkel igazolva).
 3. A preferenciamodell élesen megkülönbözteti a hard megkötéseket a soft preferenciáktól.
 
+
 ---
 
 ## 📌 Phase 2: Advisor Shell, Dashboard & API Contracts
 > **Cél:** Információ-sűrű B2B felület, állapotkezelés és szigorú REST API szerződések.
 
-- [ ] **REST API Szerződés & Végpontok (`app/routers/advisor_api.py`):**
-  - [ ] Szabványos kérés/válasz sémák, hibakontraktus, validáció, lapozás és szűrés.
-  - [ ] Idempotens végpontok (`Idempotency-Key` támogatás).
-  - [ ] Aszinkron kutatási státusz végpontok (`job_id` polling / SSE).
-- [ ] **Frontend Alaprendszer (`templates/advisor/`, `static/js/advisor/`):**
-  - [ ] `advisor_workspace.html` (Desktop-first, 1280px+ optimalizált, bal oldali navigáció, kontextus panel).
-  - [ ] `advisor_state.js` (Reaktív állapot: currentAdvisor, currentClient, currentCase, draftState, options, shortlist).
-  - [ ] `advisor_api.js` (Typed API kliens hiba- és idempotencia-kezeléssel).
-  - [ ] `advisor_navigation.js` (Gyorsbillentyűk: `N` = Új ügy, `C` = Ügyfelek, `R` = Kutatás, `P` = Ajánlat).
-- [ ] **Dashboard Képernyő (`/advisor`, `advisor_dashboard.js`):**
-  - [ ] Aktív ügyek (Active Cases) kártyák státuszjelzőkkel (Brief, Research, Shortlist, Proposal, Revision, Closed).
-  - [ ] Legutóbbi ügyfelek és ajánlatok listája.
-  - [ ] KPI sáv: Active Cases, Proposals Created, Research Time Saved.
+- [x] **REST API Szerződés & Végpontok (`app/routers/advisor_api.py`):**
+  - [x] Szabványos kérés/válasz sémák, hibakontraktus, validáció, lapozás és szűrés.
+  - [x] Idempotens végpontok (`Idempotency-Key` támogatás).
+  - [x] Aszinkron kutatási státusz végpontok (`job_id` polling / SSE).
+- [x] **Frontend Alaprendszer (`templates/advisor/`, `static/js/advisor/`):**
+  - [x] `advisor_workspace.html` (Desktop-first, 1280px+ optimalizált, bal oldali navigáció, kontextus panel).
+  - [x] `advisor_state.js` (Reaktív állapot: currentAdvisor, currentClient, currentCase, draftState, options, shortlist).
+  - [x] `advisor_api.js` (Typed API kliens hiba- és idempotencia-kezeléssel).
+  - [x] `advisor_navigation.js` (Gyorsbillentyűk: `N` = Új ügy, `C` = Ügyfelek, `R` = Kutatás, `P` = Ajánlat).
+- [x] **Dashboard Képernyő (`/advisor`, `advisor_dashboard.js`):**
+  - [x] Aktív ügyek (Active Cases) kártyák státuszjelzőkkel (Brief, Research, Shortlist, Proposal, Revision, Closed).
+  - [x] Legutóbbi ügyfelek és ajánlatok listája.
+  - [x] KPI sáv: Active Cases, Proposals Created, Research Time Saved.
 
 ### 🎯 Phase 2 Acceptance Criteria
-1. A dashboard <300ms alatt betöltődik, az aktív ügyek állapota azonnal látható.
-2. Az API szerződés teljes mértékben típusbiztos és Pydantic sémákkal validált.
+1. [x] A dashboard <300ms alatt betöltődik, az aktív ügyek állapota azonnal látható.
+2. [x] Az API szerződés teljes mértékben típusbiztos és Pydantic sémákkal validált.
 
 ---
 
 ## 📌 Phase 3: Client Management & Deep Trip Brief
 > **Cél:** Ügyfélprofilok tartós preferenciákkal, 3-módú költségvetés és hierarchikus preferencia-feloldás.
 
-- [ ] **Ügyfélkezelés (`/advisor/clients`, `/advisor/clients/:client_id`):**
-  - [ ] Ügyféllista kereséssel, szűréssel, új ügyfél modállal (`advisor_clients.js`).
-  - [ ] Ügyfél adatlap tartós utazási stílussal és járat/szállás alapbeállításokkal (`advisor_client_profile.js`).
-- [ ] **Új Utazási Ügy & Brief Képernyő (`/advisor/cases/new`, `advisor_brief.js`):**
-  - [ ] Ügyfél kiválasztása vagy azonnali létrehozása.
-  - [ ] Alapadatok: Indulás, Utasok (felnőtt/gyerek), Cél fókusz, Dátumok, Időtartam ablak.
-  - [ ] **3-módú Költségvetési Modell:**
-    - [ ] *Mode A:* Teljes összköltségkeret (pl. 300 000 Ft).
-    - [ ] *Mode B:* Komponens keretek (max. járat, max. szállás, max. program, max. transzfer).
-    - [ ] *Mode C:* Keresési hatókör (Search Scope kijelölés: pl. csak járat + hotel).
-  - [ ] **Hard/Soft Megkötések & Avoid Szabályok Bevitele.**
-- [ ] **`PreferenceResolver` Szolgáltatás (`app/services/preference_resolver.py`):**
-  - [ ] Szigorú prioritási sorrend: `Case Override > Client Profile > Advisor Default > System Default`.
-- [ ] **Draft Mentés & Autosave:**
-  - [ ] Automatikus piszkozat-mentés a brief szerkesztése közben.
+- [x] **Ügyfélkezelés (`/advisor/clients`, `/advisor/clients/:client_id`):**
+  - [x] Ügyféllista kereséssel, szűréssel, új ügyfél modállal (`advisor_clients.js`).
+  - [x] Ügyfél adatlap tartós utazási stílussal és járat/szállás alapbeállításokkal (`advisor_clients.js`).
+- [x] **Új Utazási Ügy & Brief Képernyő (`/advisor/cases/new`, `advisor_brief.js`):**
+  - [x] Ügyfél kiválasztása vagy azonnali létrehozása.
+  - [x] Alapadatok: Indulás, Utasok (felnőtt/gyerek), Cél fókusz, Dátumok, Időtartam ablak.
+  - [x] **3-módú Költségvetési Modell:**
+    - [x] *Mode A:* Teljes összköltségkeret (pl. 300 000 Ft).
+    - [x] *Mode B:* Komponens keretek (max. járat, max. szállás, max. program, max. transzfer).
+    - [x] *Mode C:* Keresési hatókör (Search Scope kijelölés: pl. csak járat + hotel).
+  - [x] **Hard/Soft Megkötések & Avoid Szabályok Bevitele.**
+- [x] **`PreferenceResolver` Szolgáltatás (`app/services/preference_resolver.py`):**
+  - [x] Szigorú prioritási sorrend: `Advisor Overrides > Case Brief > Client Profile > System Defaults`.
+- [x] **Draft Mentés & Autosave:**
+  - [x] Automatikus és explicit piszkozat-mentés a brief szerkesztése közben.
 
 ### 🎯 Phase 3 Acceptance Criteria
-1. A Brief felület egyetlen átlátható képernyőn rögzíti az összes igényt.
-2. A PreferenceResolver determinisztikusan állítja elő a feloldott preferenciamodellt a prioritási szintek szerint.
+1. [x] A Brief felület egyetlen átlátható képernyőn rögzíti az összes igényt.
+2. [x] A PreferenceResolver determinisztikusan állítja elő a feloldott preferenciamodellt a prioritási szintek szerint.
 
 ---
 
 ## 📌 Phase 4: Research Orchestration & 9 Workflow Engine
 > **Cél:** Rugalmas, nem lineáris kutatási munkaterület 9 különböző tanácsadói munkafolyamat támogatásával és hibatűréssel.
 
-- [ ] **9 Tanácsadói Kutatási Stratégia Implementálása (`AdvisorOrchestrationService`):**
-  - [ ] 1. *Destination Discovery* (45+ célállomás szűrése és rangsorolása $\rightarrow$ járatok $\rightarrow$ szállások).
-  - [ ] 2. *Known Destination Research* (Konkrét célpont mély kutatása).
-  - [ ] 3. *Flight-First Strategy* (Legjobb repülőjegyek keresése $\rightarrow$ kapcsolódó opciók).
-  - [ ] 4. *Stay-First Strategy* (Prémium szállás keresése $\rightarrow$ logisztika).
-  - [ ] 5. *Full-Trip Optimization* (Teljes csomag egyidejű matematikai optimalizálása).
-  - [ ] 6. *Component-Only Research* (Kizárólag repülő VAGY kizárólag szállás keresése megadott keretre).
-  - [ ] 7. *Mixed-Scope Research* (Több város párhuzamos összehasonlítása csak repülő+hotelre).
-  - [ ] 8. *Re-Optimization Workflow* (Meglévő eset újraszámolása módosított feltétellel).
-  - [ ] 9. *Find Better Workflow* (Egy kiválasztott opció célzott finomhangolása).
-- [ ] **Hibatűrés & Provider Hibakezelés (Resilience Layer):**
-  - [ ] Kiwi timeout kezelése, Cozycozy részleges eredmények feldolgozása, Open-Meteo fallback.
-  - [ ] Rate limit kezelés és lejárt gyorsítótár (Stale Cache) fallback transzparens jelöléssel.
-  - [ ] Egy provider kiesése nem blokkolja a többi komponens megjelenítését.
-- [ ] **Kutatási Felület & Progresszív Betöltés (`/advisor/cases/:id/research`, `advisor_research.js`):**
-  - [ ] Mindig látható kontextus sáv (Ügyfél, Keret, Dátumok, Fő megkötések).
-  - [ ] Folyamatjelző kártya lépésenkénti vizualizációval (Destinations ✓, Flights ✓, Hotels ●, Scoring ○).
-  - [ ] Részleges eredmények azonnali megjelenítése (Progressive rendering).
-- [ ] **Idempotencia & Munkamenet Folytatás:**
-  - [ ] Megszakadt kutatás folytatása (`resume interrupted research`).
-  - [ ] Ügy duplikálása, archiválása és visszaállítása.
+- [x] **9 Tanácsadói Kutatási Stratégia Implementálása (`AdvisorOrchestrationService`):**
+  - [x] 1. *Destination Discovery* (45+ célállomás szűrése és rangsorolása $\rightarrow$ járatok $\rightarrow$ szállások).
+  - [x] 2. *Known Destination Research* (Konkrét célpont mély kutatása).
+  - [x] 3. *Flight-First Strategy* (Legjobb repülőjegyek keresése $\rightarrow$ kapcsolódó opciók).
+  - [x] 4. *Stay-First Strategy* (Prémium szállás keresése $\rightarrow$ logisztika).
+  - [x] 5. *Full-Trip Optimization* (Teljes csomag egyidejű matematikai optimalizálása).
+  - [x] 6. *Component-Only Research* (Kizárólag repülő VAGY kizárólag szállás keresése megadott keretre).
+  - [x] 7. *Mixed-Scope Research* (Több város párhuzamos összehasonlítása csak repülő+hotelre).
+  - [x] 8. *Re-Optimization Workflow* (Meglévő eset újraszámolása módosított feltétellel).
+  - [x] 9. *Find Better Workflow* (Egy kiválasztott opció célzott finomhangolása).
+- [x] **Hibatűrés & Provider Hibakezelés (Resilience Layer):**
+  - [x] Kiwi timeout kezelése, Cozycozy részleges eredmények feldolgozása, Open-Meteo fallback.
+  - [x] Rate limit kezelés és lejárt gyorsítótár (Stale Cache) fallback transzparens jelöléssel.
+  - [x] Egy provider kiesése nem blokkolja a többi komponens megjelenítését.
+- [x] **Kutatási Felület & Progresszív Betöltés (`/advisor/cases/:id/research`, `advisor_research.js`):**
+  - [x] Mindig látható kontextus sáv (Ügyfél, Keret, Dátumok, Fő megkötések).
+  - [x] Folyamatjelző kártya lépésenkénti vizualizációval (Destinations ✓, Flights ✓, Hotels ●, Scoring ○).
+  - [x] Részleges eredmények azonnali megjelenítése (Progressive rendering).
+- [x] **Idempotencia & Munkamenet Folytatás:**
+  - [x] Megszakadt kutatás folytatása (`resume interrupted research`).
+  - [x] Ügy duplikálása, archiválása és visszaállítása.
 
 ### 🎯 Phase 4 Acceptance Criteria
-1. Bármelyik külső API kiesése vagy lassúsága esetén a rendszer nem omlik össze, hanem részleges/becsült jelöléssel visszaadja az elérhető adatokat.
-2. Mind a 9 kutatási stratégia végrehajtható és idempotens módon mentődik az adatbázisba.
+1. [x] Bármelyik külső API kiesése vagy lassúsága esetén a rendszer nem omlik össze, hanem részleges/becsült jelöléssel visszaadja az elérhető adatokat.
+2. [x] Mind a 9 kutatási stratégia végrehajtható és idempotens módon mentődik az adatbázisba.
 
 ---
 

@@ -66,28 +66,16 @@
                     </div>
 
                     ${isPriceChosen ? `
-                        <div style="background: linear-gradient(135deg, #0f172a, #1e293b); color: #fff; padding: 14px 18px; border-radius: 14px; font-size: 13.5px; line-height: 2.1; animation: fadeInScale 0.2s ease;">
+                        <div style="background: linear-gradient(135deg, #0f172a, #1e293b); color: #fff; padding: 14px 18px; border-radius: 14px; font-size: 13.5px; line-height: 2.2; animation: fadeInScale 0.2s ease;">
                             ${priceCfg.type === 5 ? `
                                 „Legfeljebb 
-                                <span style="display: inline-flex; align-items: center; gap: 3px; background: rgba(56, 189, 248, 0.2); border: 1px solid #38bdf8; border-radius: 6px; padding: 1px 6px;">
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.flight_promethee, 'price', 'q', -1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">−</button>
-                                    <strong style="color:#38bdf8; font-family:var(--font-mono);">${pPriceQ}</strong>
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.flight_promethee, 'price', 'q', 1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">+</button>
-                                </span>
+                                ${wizard.renderNumericControl({ objName: 'flight_promethee', key: 'price', param: 'q', value: priceCfg.q, unit: 'Ft', min: 0, max: 40000, step: 1000, inputWidth: '75px' })}
                                 árkülönbség még <strong>nem számít</strong> nekem két járat között, de utána minden forint számít, egészen 
-                                <span style="display: inline-flex; align-items: center; gap: 3px; background: rgba(56, 189, 248, 0.2); border: 1px solid #38bdf8; border-radius: 6px; padding: 1px 6px;">
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.flight_promethee, 'price', 'p', -1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">−</button>
-                                    <strong style="color:#38bdf8; font-family:var(--font-mono);">${pPriceP}</strong>
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.flight_promethee, 'price', 'p', 1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">+</button>
-                                </span>
+                                ${wizard.renderNumericControl({ objName: 'flight_promethee', key: 'price', param: 'p', value: priceCfg.p, unit: 'Ft', min: 5000, max: 150000, step: 2500, inputWidth: '85px' })}
                                 különbségig, ahonnan már <strong>egyértelműen az olcsóbb járat</strong> a nyerő.”
                             ` : `
                                 „Már a legkisebb árelőny is számít, és 
-                                <span style="display: inline-flex; align-items: center; gap: 3px; background: rgba(56, 189, 248, 0.2); border: 1px solid #38bdf8; border-radius: 6px; padding: 1px 6px;">
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.flight_promethee, 'price', 'p', -1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">−</button>
-                                    <strong style="color:#38bdf8; font-family:var(--font-mono);">${pPriceP}</strong>
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.flight_promethee, 'price', 'p', 1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">+</button>
-                                </span>
+                                ${wizard.renderNumericControl({ objName: 'flight_promethee', key: 'price', param: 'p', value: priceCfg.p, unit: 'Ft', min: 5000, max: 150000, step: 2500, inputWidth: '85px' })}
                                 árkülönbségnél már <strong>100%-ban az olcsóbb járat</strong> dominál.”
                             `}
                         </div>
@@ -116,28 +104,16 @@
                     </div>
 
                     ${isDurChosen ? `
-                        <div style="background: linear-gradient(135deg, #0f172a, #1e293b); color: #fff; padding: 14px 18px; border-radius: 14px; font-size: 13.5px; line-height: 2.1; animation: fadeInScale 0.2s ease;">
+                        <div style="background: linear-gradient(135deg, #0f172a, #1e293b); color: #fff; padding: 14px 18px; border-radius: 14px; font-size: 13.5px; line-height: 2.2; animation: fadeInScale 0.2s ease;">
                             ${durCfg.type === 5 ? `
                                 „Legfeljebb 
-                                <span style="display: inline-flex; align-items: center; gap: 3px; background: rgba(56, 189, 248, 0.2); border: 1px solid #38bdf8; border-radius: 6px; padding: 1px 6px;">
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.flight_promethee, 'duration', 'q', -1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">−</button>
-                                    <strong style="color:#38bdf8; font-family:var(--font-mono);">${pDurQ}</strong>
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.flight_promethee, 'duration', 'q', 1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">+</button>
-                                </span>
+                                ${wizard.renderNumericControl({ objName: 'flight_promethee', key: 'duration', param: 'q', value: durCfg.q, unit: 'óra', min: 0, max: 4, step: 0.25, inputWidth: '60px' })}
                                 plusz menetidő még <strong>belefér nekem</strong>, de 
-                                <span style="display: inline-flex; align-items: center; gap: 3px; background: rgba(56, 189, 248, 0.2); border: 1px solid #38bdf8; border-radius: 6px; padding: 1px 6px;">
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.flight_promethee, 'duration', 'p', -1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">−</button>
-                                    <strong style="color:#38bdf8; font-family:var(--font-mono);">${pDurP}</strong>
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.flight_promethee, 'duration', 'p', 1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">+</button>
-                                </span>
+                                ${wizard.renderNumericControl({ objName: 'flight_promethee', key: 'duration', param: 'p', value: durCfg.p, unit: 'óra', min: 0.5, max: 10, step: 0.5, inputWidth: '60px' })}
                                 plusz menetidőnél már <strong>100%-ban a gyorsabb járat</strong> a jobb.”
                             ` : `
                                 „Minden perc számít, és 
-                                <span style="display: inline-flex; align-items: center; gap: 3px; background: rgba(56, 189, 248, 0.2); border: 1px solid #38bdf8; border-radius: 6px; padding: 1px 6px;">
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.flight_promethee, 'duration', 'p', -1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">−</button>
-                                    <strong style="color:#38bdf8; font-family:var(--font-mono);">${pDurP}</strong>
-                                    <button type="button" onclick="window.DecisionDNAInstance.stepValue(window.DecisionDNAInstance.state.flight_promethee, 'duration', 'p', 1)" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">+</button>
-                                </span>
+                                ${wizard.renderNumericControl({ objName: 'flight_promethee', key: 'duration', param: 'p', value: durCfg.p, unit: 'óra', min: 0.5, max: 10, step: 0.5, inputWidth: '60px' })}
                                 menetidő-többletnél már <strong>100%-ban a gyorsabb járat</strong> a nyerő.”
                             `}
                         </div>
@@ -166,14 +142,10 @@
                     </div>
 
                     ${isStopsChosen ? `
-                        <div style="background: linear-gradient(135deg, #0f172a, #1e293b); color: #fff; padding: 14px 18px; border-radius: 14px; font-size: 13.5px; line-height: 2.1; animation: fadeInScale 0.2s ease;">
+                        <div style="background: linear-gradient(135deg, #0f172a, #1e293b); color: #fff; padding: 14px 18px; border-radius: 14px; font-size: 13.5px; line-height: 2.2; animation: fadeInScale 0.2s ease;">
                             ${state.chosen_cards.flight_stops === 'A' ? `
                                 „Szívesen bevállalok <strong>1 kényelmes átszállást</strong>, amennyiben legalább 
-                                <span style="display: inline-flex; align-items: center; gap: 3px; background: rgba(56, 189, 248, 0.2); border: 1px solid #38bdf8; border-radius: 6px; padding: 1px 6px;">
-                                    <button type="button" onclick="window.DecisionDNAInstance.state.flight_promethee.stops_saving_needed = Math.max(5000, window.DecisionDNAInstance.state.flight_promethee.stops_saving_needed - 5000); window.DecisionDNAInstance.render();" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">−</button>
-                                    <strong style="color:#38bdf8; font-family:var(--font-mono);">${state.flight_promethee.stops_saving_needed.toLocaleString()} Ft</strong>
-                                    <button type="button" onclick="window.DecisionDNAInstance.state.flight_promethee.stops_saving_needed += 5000; window.DecisionDNAInstance.render();" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:900;">+</button>
-                                </span>
+                                ${wizard.renderNumericControl({ objName: 'flight_promethee', key: 'stops_saving_needed', param: null, value: state.flight_promethee.stops_saving_needed, unit: 'Ft', min: 5000, max: 80000, step: 2500, inputWidth: '85px' })}
                                 megtakarítást jelent a közvetlen repjegyhez képest.”
                             ` : `
                                 „Kizárólag <strong>közvetlen, átszállásmentes járatokat</strong> keresek; átszállásos opciót csak akkor mutasson a rendszer, ha egyáltalán nincs közvetlen járat.”

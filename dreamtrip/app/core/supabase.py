@@ -11,6 +11,7 @@ from app.core.config import ENV_PATH
 load_dotenv(dotenv_path=ENV_PATH, override=True)
 
 _supabase_client = None
+_supabase_init_attempted = False
 
 def get_supabase_config():
     url = (os.getenv("SUPABASE_URL") or "").strip().strip('"').strip("'")
@@ -23,9 +24,14 @@ def is_supabase_configured() -> bool:
 
 def get_supabase():
     """Returns a singleton Supabase client instance if configured."""
-    global _supabase_client
+    global _supabase_client, _supabase_init_attempted
     if _supabase_client is not None:
         return _supabase_client
+
+    if _supabase_init_attempted:
+        return None
+
+    _supabase_init_attempted = True
 
     if not is_supabase_configured():
         return None
@@ -36,6 +42,10 @@ def get_supabase():
         _supabase_client = create_client(url, key)
         print(f"[SUPABASE] Connected successfully to {url}")
         return _supabase_client
+    except ImportError:
+        # Supabase package not installed, fail silently and use local fallback
+        return None
     except Exception as e:
         print(f"[SUPABASE ERROR] Failed to initialize Supabase client: {e}")
         return None
+
