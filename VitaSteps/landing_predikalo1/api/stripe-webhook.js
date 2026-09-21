@@ -283,21 +283,50 @@ module.exports = async (req, res) => {
 
                 const today = new Date().toISOString().split('T')[0];
 
-                // Build line items for invoice – one per medal + shipping if applicable
-                const invoiceItems = medals.map(medal =>
-                    `    <tetel>
+                // Build line items for invoice from Stripe line_items (preserves exact discounts and quantities)
+                let stripeItems = [];
+                try {
+                    const lineItemsResp = await stripe.checkout.sessions.listLineItems(session.id, { limit: 100 });
+                    stripeItems = lineItemsResp.data || [];
+                } catch (liErr) {
+                    console.warn('Could not list line items in webhook:', liErr.message);
+                }
+
+                let invoiceItems = '';
+                if (stripeItems.length > 0) {
+                    invoiceItems = stripeItems.map(item => {
+                        const itemName = item.description || `${campaignName} érem`;
+                        const qty = item.quantity || 1;
+                        const totalAmountHuf = Math.round((item.amount_total || 0) / 100);
+                        const unitAmountHuf = qty > 0 ? Math.round(totalAmountHuf / qty) : totalAmountHuf;
+
+                        return `    <tetel>
+      <megnevezes>${itemName}</megnevezes>
+      <mennyiseg>${qty}.0</mennyiseg>
+      <mennyisegiEgyseg>db</mennyisegiEgyseg>
+      <nettoEgysegar>${unitAmountHuf}</nettoEgysegar>
+      <afakulcs>AAM</afakulcs>
+      <nettoErtek>${totalAmountHuf}</nettoErtek>
+      <afaErtek>0</afaErtek>
+      <bruttoErtek>${totalAmountHuf}</bruttoErtek>
+    </tetel>`;
+                    }).join('\n');
+                } else {
+                    const singlePrice = medals.length > 0 ? Math.round((totalPaid - (deliveryMethod === 'home' ? 1200 : 0)) / medals.length) : medalPrice;
+                    const medalItems = medals.map(medal =>
+                        `    <tetel>
       <megnevezes>${campaignName} Nevezési díj (${medal.distance}) – ${medal.name}</megnevezes>
       <mennyiseg>1.0</mennyiseg>
       <mennyisegiEgyseg>db</mennyisegiEgyseg>
-      <nettoEgysegar>${medalPrice}</nettoEgysegar>
+      <nettoEgysegar>${singlePrice}</nettoEgysegar>
       <afakulcs>AAM</afakulcs>
-      <nettoErtek>${medalPrice}</nettoErtek>
+      <nettoErtek>${singlePrice}</nettoErtek>
       <afaErtek>0</afaErtek>
-      <bruttoErtek>${medalPrice}</bruttoErtek>
+      <bruttoErtek>${singlePrice}</bruttoErtek>
     </tetel>`
-                ).join('\n');
+                    ).join('\n');
 
-                const shippingItem = deliveryMethod === 'home' ? `
+                    const shippingItem = deliveryMethod === 'home' ? `
     <tetel>
       <megnevezes>Házhozszállítás (Magyar Posta)</megnevezes>
       <mennyiseg>1.0</mennyiseg>
@@ -308,6 +337,9 @@ module.exports = async (req, res) => {
       <afaErtek>0</afaErtek>
       <bruttoErtek>1200</bruttoErtek>
     </tetel>` : '';
+
+                    invoiceItems = `${medalItems}${shippingItem}`;
+                }
 
                 const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <xmlszamla xmlns="http://www.szamlazz.hu/xmlszamla" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.szamlazz.hu/xmlszamla https://www.szamlazz.hu/szamla/docs/xmlszamla.xsd">
