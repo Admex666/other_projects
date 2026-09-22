@@ -8,7 +8,7 @@
     <!-- Design System Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     
     <!-- Core Theme Styles -->
@@ -19,25 +19,48 @@
         :root {
             --sidebar-width: 260px;
             --header-height: 64px;
-            --b2b-primary: #0284c7;
-            --b2b-primary-hover: #0369a1;
-            --b2b-accent: #38bdf8;
-            --b2b-bg-dark: #090d16;
-            --b2b-surface: #0f172a;
-            --b2b-card: #131d33;
+            
+            /* Canonical Optivoya Palette: Pine Green & Fresh Chartreuse */
+            --primary: #003710;
+            --primary-light: #1c4e24;
+            --primary-hover: #266b31;
+            --secondary: #406900;
+            --secondary-container: #a7f540;
+            --on-secondary-container: #1c3800;
+            
+            /* Material 3 Dark Surface Hierarchy (Deep Forest Slate) */
+            --b2b-bg-dark: #0b110d;
+            --b2b-surface: #101712;
+            --b2b-card: #151e18;
+            --b2b-card-hover: #1a271f;
             --b2b-border: rgba(255, 255, 255, 0.08);
-            --b2b-border-focus: rgba(56, 189, 248, 0.4);
+            --b2b-border-subtle: rgba(167, 245, 64, 0.15);
+            --b2b-border-focus: #a7f540;
+            
+            /* Typography & Colors */
+            --text-main: #f1f5f2;
+            --text-secondary: #c2cbc3;
+            --text-muted: #8a948c;
+            
+            --font-display: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            --font-body: 'Inter', -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
         }
 
         body {
             background-color: var(--b2b-bg-dark);
-            color: #f8fafc;
-            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            color: var(--text-main);
+            font-family: var(--font-body);
             margin: 0;
             padding: 0;
             overflow-x: hidden;
             height: 100vh;
             display: flex;
+        }
+
+        h1, h2, h3, h4, .font-display {
+            font-family: var(--font-display);
+            letter-spacing: -0.015em;
         }
 
         /* --- Advisor App Shell Grid --- */
@@ -60,7 +83,7 @@
         }
 
         .sidebar-brand {
-            padding: 18px 20px;
+            padding: 16px 20px;
             display: flex;
             align-items: center;
             gap: 12px;
@@ -69,14 +92,15 @@
 
         .brand-badge {
             font-size: 10px;
-            font-weight: 800;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.08em;
-            background: rgba(14, 165, 233, 0.15);
-            color: var(--b2b-accent);
-            padding: 3px 7px;
-            border-radius: 6px;
-            border: 1px solid rgba(56, 189, 248, 0.3);
+            letter-spacing: 0.06em;
+            background: rgba(167, 245, 64, 0.12);
+            color: var(--secondary-container);
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid rgba(167, 245, 64, 0.25);
+            font-family: var(--font-mono);
         }
 
         .sidebar-nav {
@@ -92,7 +116,7 @@
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.06em;
-            color: #64748b;
+            color: var(--text-muted);
             padding: 8px 12px 4px 12px;
             margin-top: 8px;
         }
@@ -101,26 +125,27 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 10px 14px;
-            border-radius: 10px;
-            color: #94a3b8;
+            padding: 9px 12px;
+            border-radius: 8px;
+            color: var(--text-secondary);
             text-decoration: none;
-            font-size: 13.5px;
-            font-weight: 600;
+            font-size: 13px;
+            font-weight: 500;
             transition: all 0.15s ease;
             cursor: pointer;
             border: 1px solid transparent;
         }
 
         .nav-item:hover {
-            color: #f1f5f9;
+            color: var(--text-main);
             background: rgba(255, 255, 255, 0.04);
         }
 
         .nav-item.active {
-            color: #fff;
-            background: rgba(14, 165, 233, 0.12);
-            border-color: rgba(56, 189, 248, 0.25);
+            color: #ffffff;
+            background: rgba(167, 245, 64, 0.12);
+            border-color: rgba(167, 245, 64, 0.25);
+            font-weight: 600;
         }
 
         .nav-item .material-symbols-outlined {
@@ -131,11 +156,11 @@
         .nav-badge {
             margin-left: auto;
             font-size: 11px;
-            font-family: 'JetBrains Mono', monospace;
+            font-family: var(--font-mono);
             background: rgba(255, 255, 255, 0.08);
-            color: #cbd5e1;
+            color: var(--text-secondary);
             padding: 2px 7px;
-            border-radius: 10px;
+            border-radius: 6px;
         }
 
         /* --- Main Content Area --- */
@@ -145,10 +170,10 @@
             flex-direction: column;
             height: 100vh;
             overflow: hidden;
-            background: radial-gradient(circle at top right, rgba(14, 165, 233, 0.04), transparent 60%);
+            background: radial-gradient(circle at top right, rgba(167, 245, 64, 0.03), transparent 60%);
         }
 
-        /* --- Header Context Bar --- */
+        /* --- Header Context Bar & Breadcrumbs --- */
         .advisor-header {
             height: var(--header-height);
             background: var(--b2b-surface);
@@ -156,14 +181,88 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 28px;
-            gap: 20px;
+            padding: 0 24px;
+            gap: 16px;
             flex-shrink: 0;
+        }
+
+        #headerBreadcrumbs {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .breadcrumb-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: color 0.15s ease;
+            white-space: nowrap;
+            font-weight: 500;
+        }
+
+        .breadcrumb-item:hover {
+            color: #ffffff;
+        }
+
+        .breadcrumb-separator {
+            color: var(--text-muted);
+            font-size: 12px;
+            user-select: none;
+        }
+
+        .breadcrumb-current {
+            color: #ffffff;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .active-case-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(167, 245, 64, 0.08);
+            border: 1px solid rgba(167, 245, 64, 0.25);
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 12px;
+            color: #f1f5f2;
+            white-space: nowrap;
+            margin-left: 8px;
+        }
+
+        .btn-exit-case {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: var(--text-secondary);
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 10px;
+            margin-left: 4px;
+            transition: background 0.15s ease;
+        }
+
+        .btn-exit-case:hover {
+            background: rgba(239, 68, 68, 0.8);
+            color: #fff;
         }
 
         .header-search {
             position: relative;
-            width: 380px;
+            width: 280px;
         }
 
         .header-search input {
@@ -171,16 +270,16 @@
             background: var(--b2b-card);
             border: 1px solid var(--b2b-border);
             border-radius: 10px;
-            padding: 8px 14px 8px 38px;
+            padding: 8px 14px 8px 36px;
             color: #f1f5f9;
-            font-size: 13px;
+            font-size: 12.5px;
             outline: none;
             transition: all 0.2s ease;
         }
 
         .header-search input:focus {
-            border-color: var(--b2b-accent);
-            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+            border-color: var(--secondary-container);
+            box-shadow: 0 0 0 3px rgba(167, 245, 64, 0.15);
         }
 
         .header-search .material-symbols-outlined {
@@ -188,25 +287,37 @@
             left: 10px;
             top: 50%;
             transform: translateY(-50%);
-            color: #64748b;
-            font-size: 18px;
+            color: var(--text-muted);
+            font-size: 17px;
         }
 
         .header-actions {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
         .shortcut-badge {
             font-size: 11px;
-            font-family: 'JetBrains Mono', monospace;
+            font-family: var(--font-mono);
             background: rgba(255, 255, 255, 0.06);
             border: 1px solid rgba(255, 255, 255, 0.15);
             padding: 2px 6px;
             border-radius: 4px;
-            color: #94a3b8;
+            color: var(--text-secondary);
             margin-left: 6px;
+        }
+
+        /* --- Sidebar Active Case Box --- */
+        .sidebar-case-box {
+            background: rgba(167, 245, 64, 0.06);
+            border: 1px solid rgba(167, 245, 64, 0.2);
+            border-radius: 10px;
+            padding: 10px 12px;
+            margin: 8px 12px 12px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
 
         /* --- Scrollable Body View --- */
@@ -227,7 +338,7 @@
         .kpi-card {
             background: var(--b2b-card);
             border: 1px solid var(--b2b-border);
-            border-radius: 14px;
+            border-radius: 12px;
             padding: 18px 20px;
             display: flex;
             flex-direction: column;
@@ -239,28 +350,28 @@
 
         .kpi-card:hover {
             transform: translateY(-2px);
-            border-color: var(--b2b-border-focus);
+            border-color: rgba(167, 245, 64, 0.3);
         }
 
         .kpi-label {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
-            color: #94a3b8;
+            color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 0.04em;
+            letter-spacing: 0.05em;
         }
 
         .kpi-value {
             font-size: 26px;
-            font-weight: 800;
-            font-family: 'JetBrains Mono', monospace;
-            color: #fff;
+            font-weight: 700;
+            font-family: var(--font-mono);
+            color: #ffffff;
             line-height: 1;
         }
 
         .kpi-subtext {
             font-size: 11.5px;
-            color: #64748b;
+            color: var(--text-muted);
         }
 
         /* --- Case Status Badge --- */
@@ -269,18 +380,19 @@
             align-items: center;
             gap: 6px;
             font-size: 11px;
-            font-weight: 700;
+            font-weight: 600;
             padding: 3px 10px;
-            border-radius: 20px;
+            border-radius: 6px;
             text-transform: uppercase;
             letter-spacing: 0.04em;
+            font-family: var(--font-mono);
         }
 
-        .status-brief { background: rgba(148, 163, 184, 0.15); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.3); }
-        .status-researching { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
-        .status-shortlist { background: rgba(251, 191, 36, 0.15); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.3); }
-        .status-proposal { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
-        .status-closed { background: rgba(52, 211, 153, 0.15); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3); }
+        .status-brief { background: rgba(148, 163, 184, 0.12); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.25); }
+        .status-researching { background: rgba(167, 245, 64, 0.12); color: var(--secondary-container); border: 1px solid rgba(167, 245, 64, 0.25); }
+        .status-shortlist { background: rgba(251, 191, 36, 0.12); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.25); }
+        .status-proposal { background: rgba(168, 85, 247, 0.12); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.25); }
+        .status-closed { background: rgba(52, 211, 153, 0.12); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.25); }
 
         /* --- Case Cards Grid --- */
         .case-cards-grid {
@@ -292,7 +404,7 @@
         .case-card {
             background: var(--b2b-card);
             border: 1px solid var(--b2b-border);
-            border-radius: 16px;
+            border-radius: 12px;
             padding: 20px;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -302,9 +414,46 @@
         }
 
         .case-card:hover {
-            border-color: var(--b2b-accent);
+            border-color: rgba(167, 245, 64, 0.3);
+            background: var(--b2b-card-hover);
             transform: translateY(-2px);
             box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        /* --- Buttons --- */
+        .btn {
+            font-family: var(--font-body);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-decoration: none;
+            border: 1px solid transparent;
+        }
+
+        .btn-primary {
+            background: var(--primary-light);
+            color: #ffffff;
+            border-color: rgba(167, 245, 64, 0.25);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            border-color: var(--secondary-container);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text-main);
+            border-color: var(--b2b-border);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
         }
 
         /* --- Modal Dialogs --- */
@@ -312,7 +461,7 @@
             position: fixed;
             inset: 0;
             background: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(4px);
             display: none;
             align-items: center;
             justify-content: center;
@@ -323,7 +472,7 @@
         .modal-card {
             background: var(--b2b-surface);
             border: 1px solid var(--b2b-border);
-            border-radius: 20px;
+            border-radius: 14px;
             width: 100%;
             max-width: 640px;
             max-height: 90vh;
@@ -345,40 +494,66 @@
         <!-- Sidebar Navigation -->
         <aside class="advisor-sidebar">
             <div class="sidebar-brand">
-                <div style="width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #0284c7, #38bdf8); display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 18px;">
-                    O
-                </div>
-                <div>
-                    <div style="font-weight: 800; font-size: 15px; letter-spacing: -0.01em; color: #fff;">Optivoya</div>
+                <img src="/static/logo.png" alt="Optivoya Logo" style="height: 32px; width: auto; object-fit: contain;">
+                <div style="display: flex; flex-direction: column; gap: 2px;">
+                    <div style="font-family: var(--font-display); font-weight: 800; font-size: 15px; letter-spacing: -0.02em; color: var(--text-main);">Optivoya</div>
                     <div class="brand-badge">Advisor Workspace</div>
                 </div>
             </div>
 
             <nav class="sidebar-nav">
-                <div class="nav-section-title">Munkafolyamat</div>
+                <div class="nav-section-title">Globális Munkaterület</div>
                 <div class="nav-item active" data-view="dashboard" onclick="window.AdvisorNavigation.navigate('dashboard')">
                     <span class="material-symbols-outlined">dashboard</span>
                     <span>Dashboard</span>
-                </div>
-                <div class="nav-item" data-view="cases" onclick="window.AdvisorNavigation.navigate('cases')">
-                    <span class="material-symbols-outlined">folder_open</span>
-                    <span>Aktív Ügyek</span>
-                    <span class="nav-badge" id="navActiveCasesCount">2</span>
                 </div>
                 <div class="nav-item" data-view="clients" onclick="window.AdvisorNavigation.navigate('clients')">
                     <span class="material-symbols-outlined">group</span>
                     <span>Ügyfelek (CRM)</span>
                     <span class="nav-badge" id="navClientsCount">2</span>
                 </div>
-
-                <div class="nav-section-title">Intelligencia & Kimenetek</div>
-                <div class="nav-item" data-view="research" onclick="window.AdvisorNavigation.navigate('research')">
-                    <span class="material-symbols-outlined">auto_awesome</span>
-                    <span>Intelligence Lab</span>
+                <div class="nav-item" data-view="cases" onclick="window.AdvisorNavigation.navigate('cases')">
+                    <span class="material-symbols-outlined">folder_open</span>
+                    <span>Összes Ügy (Cases)</span>
+                    <span class="nav-badge" id="navActiveCasesCount">2</span>
                 </div>
-                <div class="nav-item" data-view="proposals" onclick="window.AdvisorNavigation.navigate('proposals')">
-                    <span class="material-symbols-outlined">description</span>
-                    <span>Ajánlatok</span>
+
+                <!-- Active Case Dedicated Section (Hierarchical Scope) -->
+                <div id="sidebarActiveCaseSection" style="display: none; margin-top: 14px;">
+                    <div class="sidebar-case-box">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 6px;">
+                            <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--secondary-container); letter-spacing: 0.05em; font-family: var(--font-mono);">Aktív Ügy</div>
+                            <button type="button" class="btn-exit-case" onclick="window.AdvisorNavigation.exitActiveCase()" title="Bezárás / Vissza az ügyekhez">✕</button>
+                        </div>
+                        <div style="font-size: 13px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: var(--font-display);" id="sidebarActiveCaseTitle">Ügy Címe</div>
+                        <div style="font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="sidebarActiveCaseClient">Ügyfél</div>
+                    </div>
+
+                    <div class="nav-section-title" style="padding-top: 0;">Ügy Intelligenciák & Kimenetek</div>
+                    <div class="nav-item" data-view="brief" onclick="window.AdvisorNavigation.navigate('brief')">
+                        <span class="material-symbols-outlined">tune</span>
+                        <span>1. Brief & Megkötések</span>
+                    </div>
+                    <div class="nav-item" data-view="research" onclick="window.AdvisorNavigation.navigate('research')">
+                        <span class="material-symbols-outlined">travel_explore</span>
+                        <span>2. Intelligence Lab</span>
+                    </div>
+                    <div class="nav-item" data-view="options" onclick="window.AdvisorNavigation.navigate('options')">
+                        <span class="material-symbols-outlined">auto_awesome</span>
+                        <span>3. 3 Döntési Archetípus</span>
+                    </div>
+                    <div class="nav-item" data-view="compare" onclick="window.AdvisorNavigation.navigate('compare')">
+                        <span class="material-symbols-outlined">compare_arrows</span>
+                        <span>4. Összehasonlítás</span>
+                    </div>
+                    <div class="nav-item" data-view="proposals" onclick="window.AdvisorNavigation.navigate('proposals')">
+                        <span class="material-symbols-outlined">description</span>
+                        <span>5. Ügyfélajánlat</span>
+                    </div>
+                    <div class="nav-item" data-view="timeline" onclick="window.AdvisorNavigation.navigate('timeline')">
+                        <span class="material-symbols-outlined">timeline</span>
+                        <span>6. Idővonal & Audit</span>
+                    </div>
                 </div>
 
                 <div class="nav-section-title">Ügynökség</div>
@@ -388,36 +563,42 @@
                 </div>
             </nav>
 
-            <div style="padding: 16px; border-top: 1px solid var(--b2b-border); display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.15);">
-                <div style="width: 34px; height: 34px; border-radius: 50%; background: #0284c7; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px;">
+            <div style="padding: 16px; border-top: 1px solid var(--b2b-border); display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.2);">
+                <div style="width: 34px; height: 34px; border-radius: 50%; background: var(--primary-light); color: var(--secondary-container); border: 1px solid rgba(167, 245, 64, 0.3); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; font-family: var(--font-mono);">
                     Á
                 </div>
                 <div style="flex: 1; overflow: hidden;">
-                    <div style="font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="advisorProfileName">Ádám (Lead Advisor)</div>
-                    <div style="font-size: 11px; color: #64748b;" id="advisorAgencyName">Optivoya Premier</div>
+                    <div style="font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-main);" id="advisorProfileName">Ádám (Lead Advisor)</div>
+                    <div style="font-size: 11px; color: var(--text-muted);" id="advisorAgencyName">Optivoya Premier</div>
                 </div>
             </div>
         </aside>
 
         <!-- Main Content Shell -->
         <main class="advisor-main">
-            <!-- Top Header Context Bar -->
+            <!-- Top Header Context Bar with Breadcrumbs -->
             <header class="advisor-header">
-                <div class="header-search">
-                    <span class="material-symbols-outlined">search</span>
-                    <input type="text" id="globalAdvisorSearch" placeholder="Keresés ügyfelek, ügyek vagy úti célok között... (/)" oninput="window.AdvisorDashboard.handleSearch(this.value)">
+                <div id="headerBreadcrumbs">
+                    <!-- Injected dynamically via AdvisorNavigation.updateHeaderBreadcrumbs -->
                 </div>
 
-                <div class="header-actions">
-                    <button type="button" class="btn btn-secondary" onclick="window.AdvisorNavigation.openNewClientModal()" style="font-size: 13px; padding: 8px 14px; border-radius: 8px;">
-                        <span class="material-symbols-outlined" style="font-size: 18px; margin-right: 4px;">person_add</span>
-                        Új Ügyfél <span class="shortcut-badge">C</span>
-                    </button>
-                    
-                    <button type="button" class="btn btn-primary" onclick="window.AdvisorNavigation.openNewCaseModal()" style="font-size: 13px; padding: 8px 16px; border-radius: 8px; background: #0284c7;">
-                        <span class="material-symbols-outlined" style="font-size: 18px; margin-right: 4px;">add_circle</span>
-                        Új Ügy Létrehozása <span class="shortcut-badge" style="background: rgba(0,0,0,0.25); color: #fff;">N</span>
-                    </button>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="header-search">
+                        <span class="material-symbols-outlined">search</span>
+                        <input type="text" id="globalAdvisorSearch" placeholder="Keresés ügyfél, ügy vagy célpont... (/)" oninput="window.AdvisorDashboard.handleSearch(this.value)">
+                    </div>
+
+                    <div class="header-actions">
+                        <button type="button" class="btn btn-secondary" onclick="window.AdvisorNavigation.openNewClientModal()" style="font-size: 12.5px; padding: 7px 12px;">
+                            <span class="material-symbols-outlined" style="font-size: 17px; margin-right: 4px;">person_add</span>
+                            Új Ügyfél <span class="shortcut-badge">C</span>
+                        </button>
+                        
+                        <button type="button" class="btn btn-primary" onclick="window.AdvisorNavigation.openNewCaseModal()" style="font-size: 12.5px; padding: 7px 14px;">
+                            <span class="material-symbols-outlined" style="font-size: 17px; margin-right: 4px;">add_circle</span>
+                            Új Ügy <span class="shortcut-badge" style="background: rgba(0,0,0,0.3); color: var(--secondary-container);">N</span>
+                        </button>
+                    </div>
                 </div>
             </header>
 
@@ -432,48 +613,48 @@
     <div id="newCaseModal" class="modal-overlay" onclick="if(event.target===this) window.AdvisorNavigation.closeModals()">
         <div class="modal-card">
             <div style="padding: 18px 24px; border-bottom: 1px solid var(--b2b-border); display: flex; justify-content: space-between; align-items: center;">
-                <div style="font-weight: 800; font-size: 16px;">✨ Új Utazási Ügy (Trip Case) Létrehozása</div>
-                <button type="button" onclick="window.AdvisorNavigation.closeModals()" style="background:none; border:none; color:#64748b; font-size:20px; cursor:pointer;">✕</button>
+                <div style="font-weight: 700; font-size: 16px; font-family: var(--font-display); color: #fff;">Új Utazási Ügy (Trip Case) Létrehozása</div>
+                <button type="button" onclick="window.AdvisorNavigation.closeModals()" style="background:none; border:none; color:var(--text-muted); font-size:20px; cursor:pointer;">✕</button>
             </div>
             
             <form id="newCaseForm" onsubmit="window.AdvisorDashboard.submitNewCase(event)" style="padding: 24px; display: flex; flex-direction: column; gap: 16px; overflow-y: auto;">
                 <div>
-                    <label class="form-label" style="font-size: 12px; font-weight: 700; color: #94a3b8;">Ügyfél kiválasztása *</label>
+                    <label class="form-label" style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Ügyfél kiválasztása *</label>
                     <select id="caseClientSelect" required class="form-control" style="width:100%; background:var(--b2b-card); border-color:var(--b2b-border); color:#fff; padding:10px; border-radius:8px;">
                         <!-- Injected dynamically -->
                     </select>
                 </div>
 
                 <div>
-                    <label class="form-label" style="font-size: 12px; font-weight: 700; color: #94a3b8;">Ügy Megnevezése / Célja *</label>
+                    <label class="form-label" style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Ügy Megnevezése / Célja *</label>
                     <input type="text" id="caseTitleInput" required placeholder="pl. London Családi Hétvége & Múzeumok" class="form-control" style="width:100%; background:var(--b2b-card); border-color:var(--b2b-border); color:#fff; padding:10px; border-radius:8px;">
                 </div>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                     <div>
-                        <label class="form-label" style="font-size: 12px; font-weight: 700; color: #94a3b8;">Indulási Hely (Origin)</label>
-                        <input type="text" id="caseOriginInput" value="BUD" class="form-control" style="width:100%; background:var(--b2b-card); border-color:var(--b2b-border); color:#fff; padding:10px; border-radius:8px;">
+                        <label class="form-label" style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Indulási Hely (Origin)</label>
+                        <input type="text" id="caseOriginInput" value="BUD" class="form-control" style="width:100%; background:var(--b2b-card); border-color:var(--b2b-border); color:#fff; padding:10px; border-radius:8px; font-family:var(--font-mono);">
                     </div>
                     <div>
-                        <label class="form-label" style="font-size: 12px; font-weight: 700; color: #94a3b8;">Úti cél / Jelöltek</label>
+                        <label class="form-label" style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Úti cél / Jelöltek</label>
                         <input type="text" id="caseDestInput" value="London" placeholder="pl. London, Barcelona" class="form-control" style="width:100%; background:var(--b2b-card); border-color:var(--b2b-border); color:#fff; padding:10px; border-radius:8px;">
                     </div>
                 </div>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                     <div>
-                        <label class="form-label" style="font-size: 12px; font-weight: 700; color: #94a3b8;">Célzott Összbüdzsé (Ft)</label>
-                        <input type="number" id="caseBudgetInput" value="500000" step="10000" class="form-control" style="width:100%; background:var(--b2b-card); border-color:var(--b2b-border); color:#fff; padding:10px; border-radius:8px;">
+                        <label class="form-label" style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Célzott Összbüdzsé (Ft)</label>
+                        <input type="number" id="caseBudgetInput" value="500000" step="10000" class="form-control" style="width:100%; background:var(--b2b-card); border-color:var(--b2b-border); color:#fff; padding:10px; border-radius:8px; font-family:var(--font-mono);">
                     </div>
                     <div>
-                        <label class="form-label" style="font-size: 12px; font-weight: 700; color: #94a3b8;">Időtartam (napok)</label>
-                        <input type="number" id="caseDurationInput" value="4" min="1" max="30" class="form-control" style="width:100%; background:var(--b2b-card); border-color:var(--b2b-border); color:#fff; padding:10px; border-radius:8px;">
+                        <label class="form-label" style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Időtartam (napok)</label>
+                        <input type="number" id="caseDurationInput" value="4" min="1" max="30" class="form-control" style="width:100%; background:var(--b2b-card); border-color:var(--b2b-border); color:#fff; padding:10px; border-radius:8px; font-family:var(--font-mono);">
                     </div>
                 </div>
 
                 <div style="padding-top: 10px; display: flex; justify-content: flex-end; gap: 10px;">
-                    <button type="button" onclick="window.AdvisorNavigation.closeModals()" class="btn btn-secondary">Mégse</button>
-                    <button type="submit" class="btn btn-primary" style="background: #0284c7;">Ügy Indítása →</button>
+                    <button type="button" onclick="window.AdvisorNavigation.closeModals()" class="btn btn-secondary" style="padding: 8px 16px;">Mégse</button>
+                    <button type="submit" class="btn btn-primary" style="padding: 8px 20px;">Ügy Indítása →</button>
                 </div>
             </form>
         </div>
@@ -483,40 +664,40 @@
     <div id="newClientModal" class="modal-overlay" onclick="if(event.target===this) window.AdvisorNavigation.closeModals()">
         <div class="modal-card">
             <div style="padding: 18px 24px; border-bottom: 1px solid var(--b2b-border); display: flex; justify-content: space-between; align-items: center;">
-                <div style="font-weight: 800; font-size: 16px;">👤 Új Ügyfél Rögzítése</div>
-                <button type="button" onclick="window.AdvisorNavigation.closeModals()" style="background:none; border:none; color:#64748b; font-size:20px; cursor:pointer;">✕</button>
+                <div style="font-weight: 700; font-size: 16px; font-family: var(--font-display); color: #fff;">Új Ügyfél Rögzítése</div>
+                <button type="button" onclick="window.AdvisorNavigation.closeModals()" style="background:none; border:none; color:var(--text-muted); font-size:20px; cursor:pointer;">✕</button>
             </div>
             
             <form id="newClientForm" onsubmit="window.AdvisorDashboard.submitNewClient(event)" style="padding: 24px; display: flex; flex-direction: column; gap: 16px;">
                 <div>
-                    <label class="form-label" style="font-size: 12px; font-weight: 700; color: #94a3b8;">Ügyfél Teljes Neve / Családnév *</label>
+                    <label class="form-label" style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Ügyfél Teljes Neve / Családnév *</label>
                     <input type="text" id="clientNameInput" required placeholder="pl. Mészáros András & Zsófia" class="form-control" style="width:100%; background:var(--b2b-card); border-color:var(--b2b-border); color:#fff; padding:10px; border-radius:8px;">
                 </div>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                     <div>
-                        <label class="form-label" style="font-size: 12px; font-weight: 700; color: #94a3b8;">E-mail cím</label>
+                        <label class="form-label" style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">E-mail cím</label>
                         <input type="email" id="clientEmailInput" placeholder="ugyfel@example.com" class="form-control" style="width:100%; background:var(--b2b-card); border-color:var(--b2b-border); color:#fff; padding:10px; border-radius:8px;">
                     </div>
                     <div>
-                        <label class="form-label" style="font-size: 12px; font-weight: 700; color: #94a3b8;">Telefonszám</label>
-                        <input type="tel" id="clientPhoneInput" placeholder="+36 30 123 4567" class="form-control" style="width:100%; background:var(--b2b-card); border-color:var(--b2b-border); color:#fff; padding:10px; border-radius:8px;">
+                        <label class="form-label" style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Telefonszám</label>
+                        <input type="tel" id="clientPhoneInput" placeholder="+36 30 123 4567" class="form-control" style="width:100%; background:var(--b2b-card); border-color:var(--b2b-border); color:#fff; padding:10px; border-radius:8px; font-family:var(--font-mono);">
                     </div>
                 </div>
 
                 <div>
-                    <label class="form-label" style="font-size: 12px; font-weight: 700; color: #94a3b8;">Címkék / Kategóriák (vesszővel elválasztva)</label>
+                    <label class="form-label" style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Címkék / Kategóriák (vesszővel elválasztva)</label>
                     <input type="text" id="clientTagsInput" placeholder="VIP, Family, CityBreak, Premium" class="form-control" style="width:100%; background:var(--b2b-card); border-color:var(--b2b-border); color:#fff; padding:10px; border-radius:8px;">
                 </div>
 
                 <div>
-                    <label class="form-label" style="font-size: 12px; font-weight: 700; color: #94a3b8;">Jegyzetek & Különleges Kérések</label>
+                    <label class="form-label" style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Jegyzetek & Különleges Kérések</label>
                     <textarea id="clientNotesInput" rows="3" placeholder="pl. Csendes szobák preferáltak, ételallergia, reggeli mindig szükséges..." class="form-control" style="width:100%; background:var(--b2b-card); border-color:var(--b2b-border); color:#fff; padding:10px; border-radius:8px;"></textarea>
                 </div>
 
                 <div style="padding-top: 10px; display: flex; justify-content: flex-end; gap: 10px;">
-                    <button type="button" onclick="window.AdvisorNavigation.closeModals()" class="btn btn-secondary">Mégse</button>
-                    <button type="submit" class="btn btn-primary" style="background: #0284c7;">Ügyfél Mentése</button>
+                    <button type="button" onclick="window.AdvisorNavigation.closeModals()" class="btn btn-secondary" style="padding: 8px 16px;">Mégse</button>
+                    <button type="submit" class="btn btn-primary" style="padding: 8px 20px;">Ügyfél Mentése</button>
                 </div>
             </form>
         </div>
@@ -529,6 +710,12 @@
     <script src="/static/js/advisor/advisor_clients.js"></script>
     <script src="/static/js/advisor/advisor_brief.js"></script>
     <script src="/static/js/advisor/advisor_research.js"></script>
+    <script src="/static/js/advisor/advisor_options.js"></script>
+    <script src="/static/js/advisor/advisor_option_compare.js"></script>
+    <script src="/static/js/advisor/advisor_find_better.js"></script>
+    <script src="/static/js/advisor/advisor_relaxation.js"></script>
+    <script src="/static/js/advisor/advisor_proposal.js"></script>
+    <script src="/static/js/advisor/advisor_timeline.js"></script>
     <script src="/static/js/advisor/advisor_dashboard.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {

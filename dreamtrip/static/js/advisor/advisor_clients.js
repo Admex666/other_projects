@@ -31,8 +31,8 @@
             modal.innerHTML = `
                 <div class="modal-card" style="max-width: 680px;">
                     <div style="padding: 18px 24px; border-bottom: 1px solid var(--b2b-border); display: flex; justify-content: space-between; align-items: center;">
-                        <div style="font-weight: 800; font-size: 16px;" id="clientModalTitle">👤 Ügyfél Adatlap & Tartós Preferenciák</div>
-                        <button type="button" onclick="document.getElementById('clientDetailModal').style.display='none'" style="background:none; border:none; color:#64748b; font-size:20px; cursor:pointer;">✕</button>
+                        <div style="font-weight: 700; font-size: 16px; font-family: var(--font-display); color: #fff;" id="clientModalTitle">Ügyfél Adatlap & Tartós Preferenciák</div>
+                        <button type="button" onclick="document.getElementById('clientDetailModal').style.display='none'" style="background:none; border:none; color:var(--text-muted); font-size:20px; cursor:pointer;">✕</button>
                     </div>
 
                     <form id="clientDetailForm" onsubmit="window.AdvisorClients.saveClientProfile(event)" style="padding: 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px;">
@@ -40,36 +40,36 @@
 
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                             <div>
-                                <label class="form-label" style="font-size: 11.5px; font-weight: 700; color: #94a3b8;">Név *</label>
+                                <label class="form-label" style="font-size: 11.5px; font-weight: 600; color: var(--text-secondary);">Név *</label>
                                 <input type="text" id="editClientName" required class="form-control" style="width:100%; background:var(--b2b-card); border-color:var(--b2b-border); color:#fff; padding:8px 12px; border-radius:8px;">
                             </div>
                             <div>
-                                <label class="form-label" style="font-size: 11.5px; font-weight: 700; color: #94a3b8;">E-mail *</label>
+                                <label class="form-label" style="font-size: 11.5px; font-weight: 600; color: var(--text-secondary);">E-mail *</label>
                                 <input type="email" id="editClientEmail" required class="form-control" style="width:100%; background:var(--b2b-card); border-color:var(--b2b-border); color:#fff; padding:8px 12px; border-radius:8px;">
                             </div>
                         </div>
 
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                             <div>
-                                <label class="form-label" style="font-size: 11.5px; font-weight: 700; color: #94a3b8;">Telefonszám</label>
-                                <input type="tel" id="editClientPhone" class="form-control" style="width:100%; background:var(--b2b-card); border-color:var(--b2b-border); color:#fff; padding:8px 12px; border-radius:8px;">
+                                <label class="form-label" style="font-size: 11.5px; font-weight: 600; color: var(--text-secondary);">Telefonszám</label>
+                                <input type="tel" id="editClientPhone" class="form-control" style="width:100%; background:var(--b2b-card); border-color:var(--b2b-border); color:#fff; padding:8px 12px; border-radius:8px; font-family:var(--font-mono);">
                             </div>
                             <div>
-                                <label class="form-label" style="font-size: 11.5px; font-weight: 700; color: #94a3b8;">Címkék (vesszővel elválasztva)</label>
+                                <label class="form-label" style="font-size: 11.5px; font-weight: 600; color: var(--text-secondary);">Címkék (vesszővel elválasztva)</label>
                                 <input type="text" id="editClientTags" class="form-control" style="width:100%; background:var(--b2b-card); border-color:var(--b2b-border); color:#fff; padding:8px 12px; border-radius:8px;">
                             </div>
                         </div>
 
                         <!-- Tartós Utazási Preferenciák (Travel DNA) -->
                         <div style="background: var(--b2b-card); border: 1px solid var(--b2b-border); border-radius: 12px; padding: 16px; margin-top: 6px;">
-                            <div style="font-weight: 800; font-size: 13px; color: var(--b2b-accent); margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+                            <div style="font-weight: 700; font-size: 13px; color: var(--secondary-container); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; font-family: var(--font-display);">
                                 <span class="material-symbols-outlined" style="font-size: 18px;">tune</span>
                                 Tartós Utazási Preferenciák (Automatikusan öröklődik új ügyekre)
                             </div>
 
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
                                 <div>
-                                    <label class="form-label" style="font-size: 11px; font-weight: 700; color: #94a3b8;">Min. Hotel Csillag</label>
+                                    <label class="form-label" style="font-size: 11px; font-weight: 600; color: var(--text-secondary);">Min. Hotel Csillag</label>
                                     <select id="editClientMinStars" class="form-control" style="width:100%; background:var(--b2b-surface); border-color:var(--b2b-border); color:#fff; padding:8px; border-radius:8px;">
                                         <option value="0">Bármilyen</option>
                                         <option value="3">3★ vagy jobb</option>
@@ -79,15 +79,15 @@
                                 </div>
                                 <div>
                                     <div style="display: flex; justify-content: space-between;">
-                                        <label class="form-label" style="font-size: 11px; font-weight: 700; color: #94a3b8;">Min. Értékelés:</label>
-                                        <strong id="editClientRatingDisp" style="color: var(--b2b-accent); font-family: 'JetBrains Mono', monospace; font-size: 12px;">8.0+</strong>
+                                        <label class="form-label" style="font-size: 11px; font-weight: 600; color: var(--text-secondary);">Min. Értékelés:</label>
+                                        <strong id="editClientRatingDisp" style="color: var(--secondary-container); font-family: var(--font-mono); font-size: 12px;">8.0+</strong>
                                     </div>
                                     <input type="range" id="editClientMinRating" min="7.0" max="9.5" step="0.1" value="8.0" style="width:100%;" oninput="document.getElementById('editClientRatingDisp').innerText = this.value + '+';">
                                 </div>
                             </div>
 
                             <div style="display: flex; gap: 16px; align-items: center; margin-top: 8px;">
-                                <label style="font-size: 12px; color: #cbd5e1; display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                                <label style="font-size: 12px; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; cursor: pointer;">
                                     <input type="checkbox" id="editClientDirectOnly">
                                     <span>Csak közvetlen járatok preferáltak</span>
                                 </label>
@@ -95,13 +95,13 @@
                         </div>
 
                         <div>
-                            <label class="form-label" style="font-size: 11.5px; font-weight: 700; color: #94a3b8;">Általános Jegyzetek</label>
+                            <label class="form-label" style="font-size: 11.5px; font-weight: 600; color: var(--text-secondary);">Általános Jegyzetek</label>
                             <textarea id="editClientNotes" rows="2" class="form-control" style="width:100%; background:var(--b2b-card); border-color:var(--b2b-border); color:#fff; padding:8px 12px; border-radius:8px;"></textarea>
                         </div>
 
                         <div style="padding-top: 10px; display: flex; justify-content: flex-end; gap: 10px;">
-                            <button type="button" onclick="document.getElementById('clientDetailModal').style.display='none'" class="btn btn-secondary">Mégse</button>
-                            <button type="submit" class="btn btn-primary" style="background: #0284c7;">Mentés</button>
+                            <button type="button" onclick="document.getElementById('clientDetailModal').style.display='none'" class="btn btn-secondary" style="padding: 8px 16px;">Mégse</button>
+                            <button type="submit" class="btn btn-primary" style="padding: 8px 20px;">Mentés</button>
                         </div>
                     </form>
                 </div>

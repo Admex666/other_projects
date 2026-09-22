@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ proposal.title }} — Optivoya Travel Advisory</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+    <style>
+        :root {
+            --primary: #003710;
+            --primary-container: #1c4e24;
+            --secondary: #406900;
+            --secondary-container: #a7f540;
+            --text-main: #191c1b;
+            --text-secondary: #4a554e;
+            --text-muted: #727e75;
+            --bg-base: #f8faf8;
+            --card-bg: #ffffff;
+            --border: #e1e7e2;
+            --font-main: 'Inter', -apple-system, sans-serif;
+            --font-display: 'Plus Jakarta Sans', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        body {
+            font-family: var(--font-main);
+            color: var(--text-main);
+            background: #eef2ef;
+            margin: 0;
+            padding: 40px 20px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .paper-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 55, 16, 0.08);
+            border: 1px solid var(--border);
+            padding: 48px;
+            position: relative;
+        }
+
+        .print-toolbar {
+            max-width: 900px;
+            margin: 0 auto 20px auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            border: 1px solid transparent;
+            transition: all 0.15s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-container);
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            color: var(--text-main);
+            border-color: var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-base);
+        }
+
+        /* Proposal Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 24px;
+            margin-bottom: 30px;
+        }
+
+        .agency-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .agency-logo {
+            height: 38px;
+            width: auto;
+        }
+
+        .agency-title {
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 18px;
+            color: var(--primary);
+            letter-spacing: -0.02em;
+        }
+
+        .proposal-meta {
+            text-align: right;
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-family: var(--font-mono);
+        }
+
+        .proposal-title {
+            font-family: var(--font-display);
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 0 0 12px 0;
+            letter-spacing: -0.02em;
+        }
+
+        .client-intro {
+            font-size: 14.5px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            background: var(--bg-base);
+            border-left: 4px solid var(--secondary-container);
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 36px;
+            white-space: pre-line;
+        }
+
+        /* Option Presentation Cards */
+        .option-card {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 24px;
+            margin-bottom: 24px;
+            background: #ffffff;
+            page-break-inside: avoid;
+        }
+
+        .option-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 14px;
+            margin-bottom: 16px;
+        }
+
+        .archetype-badge {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--primary);
+            background: rgba(167, 245, 64, 0.3);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            display: inline-block;
+            margin-bottom: 4px;
+        }
+
+        .option-title {
+            font-family: var(--font-display);
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin: 0;
+        }
+
+        .price-box {
+            text-align: right;
+        }
+
+        .total-price {
+            font-family: var(--font-mono);
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .price-per-person {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+        }
+
+        .components-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .component-item {
+            background: var(--bg-base);
+            border-radius: 8px;
+            padding: 12px 14px;
+            font-size: 13px;
+        }
+
+        .component-item-title {
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .why-box {
+            background: rgba(0, 55, 16, 0.04);
+            border-radius: 8px;
+            padding: 12px 14px;
+            font-size: 12.5px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .recommendation-box {
+            background: var(--primary);
+            color: #ffffff;
+            border-radius: 10px;
+            padding: 20px 24px;
+            margin-top: 36px;
+            page-break-inside: avoid;
+        }
+
+        .recommendation-title {
+            font-family: var(--font-display);
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--secondary-container);
+            margin: 0 0 6px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .footer {
+            margin-top: 40px;
+            border-top: 1px solid var(--border);
+            padding-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Print Optimization */
+        @media print {
+            body {
+                background: #ffffff;
+                padding: 0;
+                color: #000000;
+            }
+
+            .print-toolbar {
+                display: none !important;
+            }
+
+            .paper-container {
+                box-shadow: none;
+                border: none;
+                padding: 0;
+                max-width: 100%;
+            }
+
+            .btn {
+                display: none !important;
+            }
+
+            .recommendation-box {
+                background: #f1f5f2 !important;
+                color: #000000 !important;
+                border: 1px solid #c2cbc3 !important;
+            }
+
+            .recommendation-title {
+                color: #003710 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="print-toolbar">
+        <button type="button" class="btn btn-secondary" onclick="window.history.back()">
+            <span class="material-symbols-outlined" style="font-size: 16px;">arrow_back</span>
+            Vissza a Munkaterülethez
+        </button>
+        <button type="button" class="btn btn-primary" onclick="window.print()">
+            <span class="material-symbols-outlined" style="font-size: 16px;">print</span>
+            Ajánlat Nyomtatása / Mentés PDF-ként
+        </button>
+    </div>
+
+    <div class="paper-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="agency-brand">
+                <img src="/static/logo.png" alt="Optivoya Logo" class="agency-logo">
+                <div>
+                    <div class="agency-title">{{ proposal.agency_name }}</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">Személyre Szabott Prémium Utazási Tanácsadás</div>
+                </div>
+            </div>
+            <div class="proposal-meta">
+                <div>AJÁNLATSZÁM: <strong>{{ proposal.id }}</strong></div>
+                <div>VERZIÓ: <strong>v{{ proposal.version }}</strong></div>
+                <div>DÁTUM: {{ proposal.created_at.strftime('%Y-%m-%d') if proposal.created_at and proposal.created_at.strftime is defined else (proposal.created_at[:10] if proposal.created_at else '2026-09-22') }}</div>
+            </div>
+        </div>
+
+        <!-- Title & Intro -->
+        <h1 class="proposal-title">{{ proposal.title }}</h1>
+        <div class="client-intro">{{ proposal.client_intro }}</div>
+
+        <!-- Options Section -->
+        <div style="font-size: 14px; font-weight: 700; color: var(--primary); text-transform: uppercase; font-family: var(--font-mono); margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 6px;">
+            Összeállított Döntési Opciók ({{ proposal.options_snapshot|length }} Archetípus)
+        </div>
+
+        {% for opt in proposal.options_snapshot %}
+        {% if not proposal.selected_option_ids or opt.id in proposal.selected_option_ids %}
+        <div class="option-card">
+            <div class="option-header">
+                <div>
+                    <div class="archetype-badge">{{ opt.archetype|upper }}</div>
+                    <h3 class="option-title">{{ opt.title }}</h3>
+                    <div style="font-size: 12.5px; color: var(--text-secondary); margin-top: 2px;">{{ opt.destination.city }}, {{ opt.destination.country }}</div>
+                </div>
+                <div class="price-box">
+                    <div class="total-price">{{ "{:,.0f}".format(opt.total_price_huf).replace(",", " ") }} Ft</div>
+                    <div class="price-per-person">{{ "{:,.0f}".format(opt.price_per_person_huf).replace(",", " ") }} Ft / fő (teljes csomag)</div>
+                </div>
+            </div>
+
+            <div class="components-grid">
+                <div class="component-item">
+                    <div class="component-item-title">
+                        <span class="material-symbols-outlined" style="font-size: 14px;">flight</span>
+                        Repülőjárat & Menetrend
+                    </div>
+                    <div style="font-weight: 600; color: var(--text-main);">{{ opt.flight.airline or 'Menetrend szerinti járat' }}</div>
+                    <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">
+                        {{ 'Közvetlen járat' if opt.flight.stops == 0 else opt.flight.stops ~ ' átszállás' }} • {{ opt.flight.duration_minutes }} perc
+                    </div>
+                </div>
+
+                <div class="component-item">
+                    <div class="component-item-title">
+                        <span class="material-symbols-outlined" style="font-size: 14px;">hotel</span>
+                        Hitelesített Szállás
+                    </div>
+                    <div style="font-weight: 600; color: var(--text-main);">{{ opt.stay.name or 'Ajánlott Prémium Szállás' }}</div>
+                    <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">
+                        {{ '★' * opt.stay.stars if opt.stay.stars else 'Kiemelt Szállás' }} • {{ opt.stay.rating_normalized or 8.8 }}/10 vendégértékelés
+                    </div>
+                </div>
+            </div>
+
+            {% if opt.why_this_option %}
+            <div class="why-box">
+                <strong>Miért ez a választás?</strong> {{ opt.why_this_option }}
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+        {% endfor %}
+
+        <!-- Advisor Recommendation -->
+        {% if proposal.recommendation_summary %}
+        <div class="recommendation-box">
+            <div class="recommendation-title">Tanácsadói Javaslat & Összegzés</div>
+            <div style="font-size: 13.5px; line-height: 1.6;">{{ proposal.recommendation_summary }}</div>
+        </div>
+        {% endif %}
+
+        <!-- Footer -->
+        <div class="footer">
+            <div>Generálva az <strong>Optivoya Advisor Workspace</strong> által</div>
+            <div>Minden ár tájékoztató jellegű és a szabad kapacitás függvényében érvényes.</div>
+        </div>
+    </div>
+
+</body>
+</html>

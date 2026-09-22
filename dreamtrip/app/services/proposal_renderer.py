@@ -127,7 +127,7 @@ class ProposalRenderer:
                     <div class="detail-row">
                         <strong>🏨 Szállás:</strong> {stay.get('name', 'Szállás')} ({stay.get('stars', 3)}★ · {stay.get('rating', 8.5)}/10)
                     </div>
-                    {f'<div class="detail-row" style="margin-top: 8px; font-style: italic; color: #0284c7;">💡 {opt.get("why_this_option", "")}</div>' if opt.get("why_this_option") else ''}
+                    {f'<div class="detail-row" style="margin-top: 8px; font-style: italic; color: #1c4e24;">💡 {opt.get("why_this_option", "")}</div>' if opt.get("why_this_option") else ''}
                 </div>
             </div>
             """
@@ -139,8 +139,8 @@ class ProposalRenderer:
     <title>{case_title} — {agency_name}</title>
     <style>
         body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #0f172a; line-height: 1.5; padding: 40px; max-width: 900px; margin: 0 auto; }}
-        .header {{ border-bottom: 2px solid #0f172a; padding-bottom: 20px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: flex-end; }}
-        .agency-brand {{ font-size: 14px; font-weight: 800; color: #2563eb; text-transform: uppercase; letter-spacing: 0.5px; }}
+        .header {{ border-bottom: 2px solid #003710; padding-bottom: 20px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: flex-end; }}
+        .agency-brand {{ font-size: 14px; font-weight: 800; color: #003710; text-transform: uppercase; letter-spacing: 0.5px; }}
         .option-card {{ border: 1.5px solid #cbd5e1; border-radius: 16px; padding: 24px; margin-bottom: 24px; page-break-inside: avoid; }}
         .option-header {{ display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid #f1f5f9; padding-bottom: 14px; margin-bottom: 14px; }}
         .badge {{ font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; background: #e0f2fe; color: #0369a1; }}

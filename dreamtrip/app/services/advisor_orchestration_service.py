@@ -21,6 +21,7 @@ from app.services.flight_intelligence_service import FlightIntelligenceService
 from app.services.accommodation_intelligence_service import AccommodationIntelligenceService
 from app.services.experience_intelligence_service import ExperienceIntelligenceService
 from app.services.trip_scoring_service import TripScoreService
+from app.services.multi_option_engine import MultiOptionEngine
 
 logger = logging.getLogger(__name__)
 
@@ -153,10 +154,17 @@ class AdvisorOrchestrationService:
                 )
 
             elapsed = round(time.time() - start_time, 3)
+            raw_candidates = result.get("candidates", [])
+            archetypes = MultiOptionEngine.generate_archetypes(
+                raw_candidates,
+                resolved,
+                trip_case.total_budget_huf
+            )
+
             job_record["status"] = "completed"
             job_record["progress_pct"] = 100
             job_record["elapsed_seconds"] = elapsed
-            job_record["candidates"] = result.get("candidates", [])
+            job_record["candidates"] = archetypes or raw_candidates
             job_record["destinations_pool"] = result.get("destinations_pool", [])
             job_record["flights_pool"] = result.get("flights_pool", [])
             job_record["stays_pool"] = result.get("stays_pool", [])
@@ -510,8 +518,19 @@ class AdvisorOrchestrationService:
         job["steps_completed"].append(f"Executing 'Find Better' tuning for component: {target_component}")
 
         dest_info = cls._get_destination_meta(destination)
-        flights = cls._fetch_flights_safe(origin, destination, out_date, in_date, adults, resolved, job)
-        stays = cls._fetch_stays_safe(destination, dest_info.get("country", ""), out_date, in_date, adults, resolved, job)
+        existing_candidates = cls._CANDIDATES_POOL.get(trip_case.id, [])
+        if existing_candidates:
+            # Fast in-memory candidate re-ranking from existing pool
+            flights = [c.get("flight") for c in existing_candidates if c.get("flight")]
+            stays = [c.get("stay") for c in existing_candidates if c.get("stay")]
+            if not flights:
+                flights = cls._fetch_flights_safe(origin, destination, out_date, in_date, adults, resolved, job)
+            if not stays:
+                stays = cls._generate_fallback_stays(destination, dest_info.get("country", ""))
+        else:
+            flights = cls._fetch_flights_safe(origin, destination, out_date, in_date, adults, resolved, job)
+            stays = cls._fetch_stays_safe(destination, dest_info.get("country", ""), out_date, in_date, adults, resolved, job)
+            
         activities = ExperienceIntelligenceService.get_curated_activities(destination, dest_info.get("country", ""), duration_days)
 
         if target_component == "flight":
@@ -573,7 +592,8 @@ class AdvisorOrchestrationService:
 
         except Exception as e:
             logger.warning(f"Live flight search failed or timed out: {e}. Activating fallback flight intelligence.")
-            job["warnings"].append(f"Kiwi API élőszolgáltatás nem elérhető ({e}). Becsült járatadatok használva.")
+            if isinstance(job, dict):
+                job.setdefault("warnings", []).append(f"Kiwi API élőszolgáltatás nem elérhető ({e}). Becsült járatadatok használva.")
 
         # Resilient fallback mock flight candidates
         return [
@@ -618,7 +638,8 @@ class AdvisorOrchestrationService:
 
         except Exception as e:
             logger.warning(f"Live accommodation scraper failed: {e}. Activating fallback accommodation model.")
-            job["warnings"].append(f"Cozycozy szállásadatbázis nem elérhető ({e}). Becsült szállásadatok használva.")
+            if isinstance(job, dict):
+                job.setdefault("warnings", []).append(f"Cozycozy szállásadatbázis nem elérhető ({e}). Becsült szállásadatok használva.")
 
         # Resilient fallback stays
         duration = 7

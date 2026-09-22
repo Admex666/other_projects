@@ -95862,5 +95862,2089 @@
         "address": "Vienna, Main Street 26."
       }
     ]
+  },
+  "london": {
+    "timestamp": 1790077105.1756232,
+    "pois": [
+      {
+        "id": "mock_london_uk_attraction_0",
+        "city_id": "london",
+        "name": "Főtér és Történelmi Városközpont",
+        "type": "attraction",
+        "rating": 4.7,
+        "user_ratings_total": 3203,
+        "price_level": 0,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "1800"
+              },
+              "open": {
+                "day": 0,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "1800"
+              },
+              "open": {
+                "day": 1,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "1800"
+              },
+              "open": {
+                "day": 2,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "1800"
+              },
+              "open": {
+                "day": 3,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "1800"
+              },
+              "open": {
+                "day": 4,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "1800"
+              },
+              "open": {
+                "day": 5,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "1800"
+              },
+              "open": {
+                "day": 6,
+                "time": "0900"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 9:00 AM – 6:00 PM",
+            "Tuesday: 9:00 AM – 6:00 PM",
+            "Wednesday: 9:00 AM – 6:00 PM",
+            "Thursday: 9:00 AM – 6:00 PM",
+            "Friday: 9:00 AM – 6:00 PM",
+            "Saturday: 9:00 AM – 6:00 PM",
+            "Sunday: 9:00 AM – 6:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 51.52490364007308,
+          "lng": -0.1320071094559255
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "London, Main Street 92."
+      },
+      {
+        "id": "mock_london_uk_attraction_1",
+        "city_id": "london",
+        "name": "Királyi Palota és Vármúzeum",
+        "type": "attraction",
+        "rating": 4.8,
+        "user_ratings_total": 16611,
+        "price_level": 2,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "1800"
+              },
+              "open": {
+                "day": 0,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "1800"
+              },
+              "open": {
+                "day": 1,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "1800"
+              },
+              "open": {
+                "day": 2,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "1800"
+              },
+              "open": {
+                "day": 3,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "1800"
+              },
+              "open": {
+                "day": 4,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "1800"
+              },
+              "open": {
+                "day": 5,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "1800"
+              },
+              "open": {
+                "day": 6,
+                "time": "0900"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 9:00 AM – 6:00 PM",
+            "Tuesday: 9:00 AM – 6:00 PM",
+            "Wednesday: 9:00 AM – 6:00 PM",
+            "Thursday: 9:00 AM – 6:00 PM",
+            "Friday: 9:00 AM – 6:00 PM",
+            "Saturday: 9:00 AM – 6:00 PM",
+            "Sunday: 9:00 AM – 6:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 51.497148107453015,
+          "lng": -0.1106674623559304
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "London, Main Street 83."
+      },
+      {
+        "id": "mock_london_uk_attraction_2",
+        "city_id": "london",
+        "name": "Modern Művészeti Galéria",
+        "type": "attraction",
+        "rating": 4.4,
+        "user_ratings_total": 3528,
+        "price_level": 1,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "1800"
+              },
+              "open": {
+                "day": 0,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "1800"
+              },
+              "open": {
+                "day": 1,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "1800"
+              },
+              "open": {
+                "day": 2,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "1800"
+              },
+              "open": {
+                "day": 3,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "1800"
+              },
+              "open": {
+                "day": 4,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "1800"
+              },
+              "open": {
+                "day": 5,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "1800"
+              },
+              "open": {
+                "day": 6,
+                "time": "0900"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 9:00 AM – 6:00 PM",
+            "Tuesday: 9:00 AM – 6:00 PM",
+            "Wednesday: 9:00 AM – 6:00 PM",
+            "Thursday: 9:00 AM – 6:00 PM",
+            "Friday: 9:00 AM – 6:00 PM",
+            "Saturday: 9:00 AM – 6:00 PM",
+            "Sunday: 9:00 AM – 6:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 51.524637225584726,
+          "lng": -0.1298572321139962
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "London, Main Street 13."
+      },
+      {
+        "id": "mock_london_uk_attraction_3",
+        "city_id": "london",
+        "name": "Botanikus Kert és Pálmaház",
+        "type": "attraction",
+        "rating": 4.6,
+        "user_ratings_total": 5027,
+        "price_level": 1,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "1800"
+              },
+              "open": {
+                "day": 0,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "1800"
+              },
+              "open": {
+                "day": 1,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "1800"
+              },
+              "open": {
+                "day": 2,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "1800"
+              },
+              "open": {
+                "day": 3,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "1800"
+              },
+              "open": {
+                "day": 4,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "1800"
+              },
+              "open": {
+                "day": 5,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "1800"
+              },
+              "open": {
+                "day": 6,
+                "time": "0900"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 9:00 AM – 6:00 PM",
+            "Tuesday: 9:00 AM – 6:00 PM",
+            "Wednesday: 9:00 AM – 6:00 PM",
+            "Thursday: 9:00 AM – 6:00 PM",
+            "Friday: 9:00 AM – 6:00 PM",
+            "Saturday: 9:00 AM – 6:00 PM",
+            "Sunday: 9:00 AM – 6:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 51.52572811229884,
+          "lng": -0.14770190960873936
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "London, Main Street 29."
+      },
+      {
+        "id": "mock_london_uk_attraction_4",
+        "city_id": "london",
+        "name": "Szent Katedrális",
+        "type": "attraction",
+        "rating": 4.8,
+        "user_ratings_total": 3052,
+        "price_level": 0,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "1800"
+              },
+              "open": {
+                "day": 0,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "1800"
+              },
+              "open": {
+                "day": 1,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "1800"
+              },
+              "open": {
+                "day": 2,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "1800"
+              },
+              "open": {
+                "day": 3,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "1800"
+              },
+              "open": {
+                "day": 4,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "1800"
+              },
+              "open": {
+                "day": 5,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "1800"
+              },
+              "open": {
+                "day": 6,
+                "time": "0900"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 9:00 AM – 6:00 PM",
+            "Tuesday: 9:00 AM – 6:00 PM",
+            "Wednesday: 9:00 AM – 6:00 PM",
+            "Thursday: 9:00 AM – 6:00 PM",
+            "Friday: 9:00 AM – 6:00 PM",
+            "Saturday: 9:00 AM – 6:00 PM",
+            "Sunday: 9:00 AM – 6:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 51.509845871254285,
+          "lng": -0.12777418919888697
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "London, Main Street 115."
+      },
+      {
+        "id": "mock_london_uk_attraction_5",
+        "city_id": "london",
+        "name": "Néprajzi Szabadtéri Múzeum",
+        "type": "attraction",
+        "rating": 4.6,
+        "user_ratings_total": 3355,
+        "price_level": 1,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "1800"
+              },
+              "open": {
+                "day": 0,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "1800"
+              },
+              "open": {
+                "day": 1,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "1800"
+              },
+              "open": {
+                "day": 2,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "1800"
+              },
+              "open": {
+                "day": 3,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "1800"
+              },
+              "open": {
+                "day": 4,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "1800"
+              },
+              "open": {
+                "day": 5,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "1800"
+              },
+              "open": {
+                "day": 6,
+                "time": "0900"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 9:00 AM – 6:00 PM",
+            "Tuesday: 9:00 AM – 6:00 PM",
+            "Wednesday: 9:00 AM – 6:00 PM",
+            "Thursday: 9:00 AM – 6:00 PM",
+            "Friday: 9:00 AM – 6:00 PM",
+            "Saturday: 9:00 AM – 6:00 PM",
+            "Sunday: 9:00 AM – 6:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 51.525525073234355,
+          "lng": -0.1251371965778179
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "London, Main Street 110."
+      },
+      {
+        "id": "mock_london_uk_attraction_6",
+        "city_id": "london",
+        "name": "Városi Népkert és Csónakázótó",
+        "type": "attraction",
+        "rating": 4.4,
+        "user_ratings_total": 5501,
+        "price_level": 0,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "1800"
+              },
+              "open": {
+                "day": 0,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "1800"
+              },
+              "open": {
+                "day": 1,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "1800"
+              },
+              "open": {
+                "day": 2,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "1800"
+              },
+              "open": {
+                "day": 3,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "1800"
+              },
+              "open": {
+                "day": 4,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "1800"
+              },
+              "open": {
+                "day": 5,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "1800"
+              },
+              "open": {
+                "day": 6,
+                "time": "0900"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 9:00 AM – 6:00 PM",
+            "Tuesday: 9:00 AM – 6:00 PM",
+            "Wednesday: 9:00 AM – 6:00 PM",
+            "Thursday: 9:00 AM – 6:00 PM",
+            "Friday: 9:00 AM – 6:00 PM",
+            "Saturday: 9:00 AM – 6:00 PM",
+            "Sunday: 9:00 AM – 6:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 51.509298011674296,
+          "lng": -0.13852060164900848
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "London, Main Street 2."
+      },
+      {
+        "id": "mock_london_uk_attraction_7",
+        "city_id": "london",
+        "name": "Tudományos és Technológiai Központ",
+        "type": "attraction",
+        "rating": 4.7,
+        "user_ratings_total": 2737,
+        "price_level": 2,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "1800"
+              },
+              "open": {
+                "day": 0,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "1800"
+              },
+              "open": {
+                "day": 1,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "1800"
+              },
+              "open": {
+                "day": 2,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "1800"
+              },
+              "open": {
+                "day": 3,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "1800"
+              },
+              "open": {
+                "day": 4,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "1800"
+              },
+              "open": {
+                "day": 5,
+                "time": "0900"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "1800"
+              },
+              "open": {
+                "day": 6,
+                "time": "0900"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 9:00 AM – 6:00 PM",
+            "Tuesday: 9:00 AM – 6:00 PM",
+            "Wednesday: 9:00 AM – 6:00 PM",
+            "Thursday: 9:00 AM – 6:00 PM",
+            "Friday: 9:00 AM – 6:00 PM",
+            "Saturday: 9:00 AM – 6:00 PM",
+            "Sunday: 9:00 AM – 6:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 51.48979671120201,
+          "lng": -0.1401138729190508
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "London, Main Street 103."
+      },
+      {
+        "id": "mock_london_uk_restaurant_0",
+        "city_id": "london",
+        "name": "Bistro London - Helyi Ízek",
+        "type": "restaurant",
+        "rating": 4.6,
+        "user_ratings_total": 1304,
+        "price_level": 2,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2200"
+              },
+              "open": {
+                "day": 0,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2200"
+              },
+              "open": {
+                "day": 1,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2200"
+              },
+              "open": {
+                "day": 2,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2200"
+              },
+              "open": {
+                "day": 3,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2200"
+              },
+              "open": {
+                "day": 4,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2200"
+              },
+              "open": {
+                "day": 5,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2200"
+              },
+              "open": {
+                "day": 6,
+                "time": "1130"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 51.49931687451414,
+          "lng": -0.1285793062203801
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "London, Main Street 31."
+      },
+      {
+        "id": "mock_london_uk_restaurant_1",
+        "city_id": "london",
+        "name": "La Piazza Trattoria",
+        "type": "restaurant",
+        "rating": 4.6,
+        "user_ratings_total": 2329,
+        "price_level": 2,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2200"
+              },
+              "open": {
+                "day": 0,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2200"
+              },
+              "open": {
+                "day": 1,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2200"
+              },
+              "open": {
+                "day": 2,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2200"
+              },
+              "open": {
+                "day": 3,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2200"
+              },
+              "open": {
+                "day": 4,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2200"
+              },
+              "open": {
+                "day": 5,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2200"
+              },
+              "open": {
+                "day": 6,
+                "time": "1130"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 51.49128287278222,
+          "lng": -0.11554666444711187
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "London, Main Street 103."
+      },
+      {
+        "id": "mock_london_uk_restaurant_2",
+        "city_id": "london",
+        "name": "Gourmet Garden Fine Dining",
+        "type": "restaurant",
+        "rating": 4.9,
+        "user_ratings_total": 152,
+        "price_level": 3,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2200"
+              },
+              "open": {
+                "day": 0,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2200"
+              },
+              "open": {
+                "day": 1,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2200"
+              },
+              "open": {
+                "day": 2,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2200"
+              },
+              "open": {
+                "day": 3,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2200"
+              },
+              "open": {
+                "day": 4,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2200"
+              },
+              "open": {
+                "day": 5,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2200"
+              },
+              "open": {
+                "day": 6,
+                "time": "1130"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 51.50869612824047,
+          "lng": -0.11418721454604817
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "London, Main Street 88."
+      },
+      {
+        "id": "mock_london_uk_restaurant_3",
+        "city_id": "london",
+        "name": "The Rusty Anchor Fish & Chips",
+        "type": "restaurant",
+        "rating": 4.4,
+        "user_ratings_total": 318,
+        "price_level": 1,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2200"
+              },
+              "open": {
+                "day": 0,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2200"
+              },
+              "open": {
+                "day": 1,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2200"
+              },
+              "open": {
+                "day": 2,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2200"
+              },
+              "open": {
+                "day": 3,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2200"
+              },
+              "open": {
+                "day": 4,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2200"
+              },
+              "open": {
+                "day": 5,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2200"
+              },
+              "open": {
+                "day": 6,
+                "time": "1130"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 51.50255430009271,
+          "lng": -0.13197300001381382
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "London, Main Street 67."
+      },
+      {
+        "id": "mock_london_uk_restaurant_4",
+        "city_id": "london",
+        "name": "Burger & Craft Beer House",
+        "type": "restaurant",
+        "rating": 4.4,
+        "user_ratings_total": 1482,
+        "price_level": 2,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2200"
+              },
+              "open": {
+                "day": 0,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2200"
+              },
+              "open": {
+                "day": 1,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2200"
+              },
+              "open": {
+                "day": 2,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2200"
+              },
+              "open": {
+                "day": 3,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2200"
+              },
+              "open": {
+                "day": 4,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2200"
+              },
+              "open": {
+                "day": 5,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2200"
+              },
+              "open": {
+                "day": 6,
+                "time": "1130"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 51.51906505307068,
+          "lng": -0.146040261574189
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "London, Main Street 143."
+      },
+      {
+        "id": "mock_london_uk_restaurant_5",
+        "city_id": "london",
+        "name": "Zöld Kert Vegetáriánus Étterem",
+        "type": "restaurant",
+        "rating": 4.4,
+        "user_ratings_total": 859,
+        "price_level": 2,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2200"
+              },
+              "open": {
+                "day": 0,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2200"
+              },
+              "open": {
+                "day": 1,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2200"
+              },
+              "open": {
+                "day": 2,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2200"
+              },
+              "open": {
+                "day": 3,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2200"
+              },
+              "open": {
+                "day": 4,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2200"
+              },
+              "open": {
+                "day": 5,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2200"
+              },
+              "open": {
+                "day": 6,
+                "time": "1130"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 51.51876535843452,
+          "lng": -0.13458068651121746
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "London, Main Street 130."
+      },
+      {
+        "id": "mock_london_uk_cafe_0",
+        "city_id": "london",
+        "name": "The Daily Grind Specialty Cafe",
+        "type": "restaurant",
+        "rating": 4.8,
+        "user_ratings_total": 218,
+        "price_level": 1,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2200"
+              },
+              "open": {
+                "day": 0,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2200"
+              },
+              "open": {
+                "day": 1,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2200"
+              },
+              "open": {
+                "day": 2,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2200"
+              },
+              "open": {
+                "day": 3,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2200"
+              },
+              "open": {
+                "day": 4,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2200"
+              },
+              "open": {
+                "day": 5,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2200"
+              },
+              "open": {
+                "day": 6,
+                "time": "1130"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 51.51333606085945,
+          "lng": -0.11256588633689969
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "London, Main Street 116."
+      },
+      {
+        "id": "mock_london_uk_cafe_1",
+        "city_id": "london",
+        "name": "Vintage Coffee & Bookshop",
+        "type": "restaurant",
+        "rating": 4.5,
+        "user_ratings_total": 1193,
+        "price_level": 1,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2200"
+              },
+              "open": {
+                "day": 0,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2200"
+              },
+              "open": {
+                "day": 1,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2200"
+              },
+              "open": {
+                "day": 2,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2200"
+              },
+              "open": {
+                "day": 3,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2200"
+              },
+              "open": {
+                "day": 4,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2200"
+              },
+              "open": {
+                "day": 5,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2200"
+              },
+              "open": {
+                "day": 6,
+                "time": "1130"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 51.526062068386864,
+          "lng": -0.1331619447494667
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "London, Main Street 126."
+      },
+      {
+        "id": "mock_london_uk_cafe_2",
+        "city_id": "london",
+        "name": "Central Park Espresso Bar",
+        "type": "restaurant",
+        "rating": 4.3,
+        "user_ratings_total": 106,
+        "price_level": 1,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2200"
+              },
+              "open": {
+                "day": 0,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2200"
+              },
+              "open": {
+                "day": 1,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2200"
+              },
+              "open": {
+                "day": 2,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2200"
+              },
+              "open": {
+                "day": 3,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2200"
+              },
+              "open": {
+                "day": 4,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2200"
+              },
+              "open": {
+                "day": 5,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2200"
+              },
+              "open": {
+                "day": 6,
+                "time": "1130"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 51.506964704896426,
+          "lng": -0.12738655945470106
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "London, Main Street 44."
+      },
+      {
+        "id": "mock_london_uk_cafe_3",
+        "city_id": "london",
+        "name": "Grand Patisserie és Kávéház",
+        "type": "restaurant",
+        "rating": 4.5,
+        "user_ratings_total": 1063,
+        "price_level": 2,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2200"
+              },
+              "open": {
+                "day": 0,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2200"
+              },
+              "open": {
+                "day": 1,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2200"
+              },
+              "open": {
+                "day": 2,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2200"
+              },
+              "open": {
+                "day": 3,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2200"
+              },
+              "open": {
+                "day": 4,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2200"
+              },
+              "open": {
+                "day": 5,
+                "time": "1130"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2200"
+              },
+              "open": {
+                "day": 6,
+                "time": "1130"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: 11:30 AM – 10:00 PM",
+            "Tuesday: 11:30 AM – 10:00 PM",
+            "Wednesday: 11:30 AM – 10:00 PM",
+            "Thursday: 11:30 AM – 10:00 PM",
+            "Friday: 11:30 AM – 10:00 PM",
+            "Saturday: 11:30 AM – 10:00 PM",
+            "Sunday: 11:30 AM – 10:00 PM"
+          ]
+        },
+        "location": {
+          "lat": 51.487602379657304,
+          "lng": -0.13993107318644646
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "London, Main Street 8."
+      },
+      {
+        "id": "mock_london_uk_viewpoint_0",
+        "city_id": "london",
+        "name": "London Panoráma Kilátóterasz",
+        "type": "viewpoint",
+        "rating": 4.8,
+        "user_ratings_total": 1845,
+        "price_level": 0,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2359"
+              },
+              "open": {
+                "day": 0,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2359"
+              },
+              "open": {
+                "day": 1,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2359"
+              },
+              "open": {
+                "day": 2,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2359"
+              },
+              "open": {
+                "day": 3,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2359"
+              },
+              "open": {
+                "day": 4,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2359"
+              },
+              "open": {
+                "day": 5,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2359"
+              },
+              "open": {
+                "day": 6,
+                "time": "0000"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: Open 24 hours",
+            "Tuesday: Open 24 hours",
+            "Wednesday: Open 24 hours",
+            "Thursday: Open 24 hours",
+            "Friday: Open 24 hours",
+            "Saturday: Open 24 hours",
+            "Sunday: Open 24 hours"
+          ]
+        },
+        "location": {
+          "lat": 51.514485524123884,
+          "lng": -0.13497377684458
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "London, Main Street 62."
+      },
+      {
+        "id": "mock_london_uk_viewpoint_1",
+        "city_id": "london",
+        "name": "Várhegy Kilátópont",
+        "type": "viewpoint",
+        "rating": 4.8,
+        "user_ratings_total": 2278,
+        "price_level": 0,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2359"
+              },
+              "open": {
+                "day": 0,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2359"
+              },
+              "open": {
+                "day": 1,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2359"
+              },
+              "open": {
+                "day": 2,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2359"
+              },
+              "open": {
+                "day": 3,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2359"
+              },
+              "open": {
+                "day": 4,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2359"
+              },
+              "open": {
+                "day": 5,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2359"
+              },
+              "open": {
+                "day": 6,
+                "time": "0000"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: Open 24 hours",
+            "Tuesday: Open 24 hours",
+            "Wednesday: Open 24 hours",
+            "Thursday: Open 24 hours",
+            "Friday: Open 24 hours",
+            "Saturday: Open 24 hours",
+            "Sunday: Open 24 hours"
+          ]
+        },
+        "location": {
+          "lat": 51.52020813296272,
+          "lng": -0.13683401865108505
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "London, Main Street 46."
+      },
+      {
+        "id": "mock_london_uk_viewpoint_2",
+        "city_id": "london",
+        "name": "TV-Torony SkyBar",
+        "type": "viewpoint",
+        "rating": 4.4,
+        "user_ratings_total": 1232,
+        "price_level": 2,
+        "opening_hours": {
+          "open_now": true,
+          "periods": [
+            {
+              "close": {
+                "day": 0,
+                "time": "2359"
+              },
+              "open": {
+                "day": 0,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 1,
+                "time": "2359"
+              },
+              "open": {
+                "day": 1,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 2,
+                "time": "2359"
+              },
+              "open": {
+                "day": 2,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 3,
+                "time": "2359"
+              },
+              "open": {
+                "day": 3,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 4,
+                "time": "2359"
+              },
+              "open": {
+                "day": 4,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 5,
+                "time": "2359"
+              },
+              "open": {
+                "day": 5,
+                "time": "0000"
+              }
+            },
+            {
+              "close": {
+                "day": 6,
+                "time": "2359"
+              },
+              "open": {
+                "day": 6,
+                "time": "0000"
+              }
+            }
+          ],
+          "weekday_text": [
+            "Monday: Open 24 hours",
+            "Tuesday: Open 24 hours",
+            "Wednesday: Open 24 hours",
+            "Thursday: Open 24 hours",
+            "Friday: Open 24 hours",
+            "Saturday: Open 24 hours",
+            "Sunday: Open 24 hours"
+          ]
+        },
+        "location": {
+          "lat": 51.50330096411212,
+          "lng": -0.12182799348719393
+        },
+        "image_url": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400&q=80",
+        "address": "London, Main Street 87."
+      }
+    ]
   }
 }

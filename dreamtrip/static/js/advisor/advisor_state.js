@@ -20,6 +20,8 @@
                 },
                 cases: [],
                 clients: [],
+                activeCaseId: null,
+                activeClientId: null,
                 currentCase: null,
                 currentClient: null,
                 currentView: 'dashboard',
@@ -29,6 +31,38 @@
             };
 
             this.listeners = [];
+        }
+
+        setActiveCase(caseId) {
+            this.state.activeCaseId = caseId;
+            if (caseId) {
+                const c = this.state.cases.find(item => item.id === caseId);
+                if (c && c.client_id) {
+                    this.state.activeClientId = c.client_id;
+                }
+            }
+            this.notify();
+        }
+
+        setActiveClient(clientId) {
+            this.state.activeClientId = clientId;
+            this.notify();
+        }
+
+        getActiveCase() {
+            if (!this.state.activeCaseId) return null;
+            return this.state.cases.find(c => c.id === this.state.activeCaseId) || null;
+        }
+
+        getActiveClient() {
+            if (this.state.activeClientId) {
+                return this.state.clients.find(cl => cl.id === this.state.activeClientId) || null;
+            }
+            const activeCase = this.getActiveCase();
+            if (activeCase && activeCase.client_id) {
+                return this.state.clients.find(cl => cl.id === activeCase.client_id) || null;
+            }
+            return null;
         }
 
         subscribe(callback) {

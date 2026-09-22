@@ -33,6 +33,13 @@ related:
   - "[[proposal-generation]]"
   - "[[ahp-weighting]]"
   - "[[promethee-ranking]]"
+  - "[[ANTI_AI_SLOP_POLICY]]"
+  - "[[DESIGN_SYSTEM]]"
+  - "[[DESIGN_PRINCIPLES]]"
+  - "[[UX_PRINCIPLES]]"
+  - "[[UX_PATTERNS]]"
+  - "[[QUALITY_GATES]]"
+  - "[[DEFINITION_OF_DONE]]"
 
 used_by:
   - "[[fastapi-backend]]"
@@ -89,3 +96,11 @@ Advisor ─────────┘
 - **Side-by-Side Comparison & Why This Option?:** Adatvezérelt előny/hátrány magyarázatok és relatív különbségek mátrixa.
 - **Constraint Relaxation Engine:** 0 találat esetén strukturált ok-okozati diagnózis és 1-kattintásos enyhítési javaslatok (pl. +€40 budget $\rightarrow$ 7 opció).
 - **Multi-Option Proposal:** 1–3 opciós ügyfélajánlat szerkesztő, verziókezelés (v1, v2, v3) és nyomtatás/PDF export.
+
+## 7. Dizájnrendszer, Anti-AI-Slop & Minőségbiztosítás
+- **Brand & Színvilág (`[[DESIGN_SYSTEM]]`):** Mély fenyőzöld (`--primary: #003710`), Chartreuse akcentus (`--secondary-container: #a7f540`), hivatalos Optivoya logó (`/static/logo.png`).
+- **Anti-AI-Slop Invariánsok (`[[ANTI_AI_SLOP_POLICY]]`):** 0% generikus kék/lila neon gradient, 0% emoji-spam, 0% buzzword, funkcionális Material 3 felületi rétegződés.
+- **Tipográfiai Hierarchia:** Plus Jakarta Sans (főcímek), Inter (szövegek/gombok), JetBrains Mono (pénzügyi és menetrendi adatok).
+- **UX & Plain Language (`[[UX_PRINCIPLES]]`):** 4 valódi állapot (Empty, Loading, Error, Success), kognitív terhelés minimalizálása, szakzsargon mellőzése a felületen.
+- **Minőségi Kapuk (`[[QUALITY_GATES]]`, `[[DEFINITION_OF_DONE]]`):** Minden fázis automatizált tesztekkel és 100%-os tudásgráf validációval zárul.
+

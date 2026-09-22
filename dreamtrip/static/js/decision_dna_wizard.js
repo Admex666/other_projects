@@ -321,7 +321,7 @@
             if (window.DNAMath) {
                 window.DNAMath.stepValue(obj, key, param, dir, () => this.render());
             }
-        },
+        }
 
         setDirectValue(obj, key, param, val, shouldRender = true) {
             if (window.DNAMath) {
@@ -330,7 +330,7 @@
                     if (shouldRender) this.render();
                 });
             }
-        },
+        }
 
         renderNumericControl(opts) {
             const {
@@ -369,7 +369,7 @@
                         style="width: 70px; height: 4px; accent-color: #38bdf8; cursor: pointer; margin-left: 2px;" />
                 </span>
             `;
-        },
+        }
 
         selectScenario(groupKey, chosenCard, typeNum) {
             this.state.chosen_cards[groupKey] = chosenCard;

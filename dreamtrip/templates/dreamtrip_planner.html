@@ -368,14 +368,16 @@
     <script>
         // URL paraméterek beolvasása
         const urlParams = new URLSearchParams(window.location.search);
-        const cityId = urlParams.get('city_id');
-        const cityName = urlParams.get('city_name');
-        const cityLat = parseFloat(urlParams.get('lat'));
-        const cityLng = parseFloat(urlParams.get('lng'));
-        const startDate = urlParams.get('start_date');
-        const endDate = urlParams.get('end_date');
+        const cityId = urlParams.get('city_id') || 'barcelona';
+        const cityName = urlParams.get('city_name') || 'Barcelona';
+        const cityLat = parseFloat(urlParams.get('lat')) || 41.3851;
+        const cityLng = parseFloat(urlParams.get('lng')) || 2.1734;
+        const startDate = urlParams.get('start_date') || '2026-06-01';
+        const endDate = urlParams.get('end_date') || '2026-06-05';
 
-        document.getElementById('tripTitle').innerText = `${cityName} Útiterv`;
+        if (document.getElementById('tripTitle')) {
+            document.getElementById('tripTitle').innerText = `${cityName} Útiterv`;
+        }
 
         let itineraryData = []; // Az összes nap adata
         let allPois = []; // A város összes elérhető helye

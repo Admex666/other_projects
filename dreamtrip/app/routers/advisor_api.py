@@ -11,7 +11,8 @@ from datetime import datetime, date
 import uuid
 from pydantic import BaseModel, Field
 from fastapi import APIRouter, HTTPException, Query, Header, Request, status
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi.templating import Jinja2Templates
 
 from app.models.advisor_models import (
     Agency, AgencyBranding, Advisor, Client, ClientPreferences,
@@ -23,6 +24,16 @@ from app.models.advisor_models import (
 )
 from app.services.trip_scoring_service import TripScoreService
 from app.services.preference_resolver import PreferenceResolver
+from app.services.multi_option_engine import MultiOptionEngine
+from app.services.relative_comparison_service import RelativeComparisonService
+from app.services.constraint_relaxation_service import ConstraintRelaxationService
+from app.services.verification_service import VerificationService
+from app.services.trip_risk_service import TripRiskService
+from app.services.proposal_service import ProposalService
+from app.services.timeline_reoptimization_service import TimelineReoptimizationService
+from app.services.advisor_orchestration_service import AdvisorOrchestrationService, ResearchStrategy
+
+templates = Jinja2Templates(directory="templates")
 
 router = APIRouter(prefix="/api/advisor", tags=["Advisor Workspace"])
 
@@ -40,8 +51,8 @@ AGENCIES_STORE: Dict[str, Agency] = {
         slug="optivoya-premier",
         branding=AgencyBranding(
             company_name="Optivoya Premier Travel",
-            primary_color="#0284c7",
-            accent_color="#38bdf8",
+            primary_color="#003710",
+            accent_color="#a7f540",
             contact_email="vip@optivoya.com"
         )
     )
@@ -618,6 +629,764 @@ async def archive_case(case_id: str):
     trip_case.status = TripCaseStatus.CLOSED
     trip_case.updated_at = utc_now()
     return {"status": "success", "case": trip_case.model_dump()}
+
+
+# ─────────────────────────────────────────────────────────────
+# MULTI-OPTION & ARCHETYPES (PHASE 5)
+# ─────────────────────────────────────────────────────────────
+
+@router.post("/cases/{case_id}/options/generate")
+async def generate_case_options(case_id: str):
+    """
+    Generates 3 distinct, decision-ready archetypes (BEST OVERALL, BEST VALUE, BEST EXPERIENCE)
+    from the candidate pool using MultiOptionEngine.
+    """
+    trip_case = CASES_STORE.get(case_id)
+    if not trip_case:
+        raise HTTPException(status_code=404, detail="Case not found.")
+
+    client = CLIENTS_STORE.get(trip_case.client_id)
+    candidates = AdvisorOrchestrationService._CANDIDATES_POOL.get(case_id, [])
+
+    # If no candidates in pool yet, execute rapid full-trip research first
+    if not candidates:
+        job = AdvisorOrchestrationService.execute_research(
+            trip_case=trip_case,
+            client=client,
+            strategy=ResearchStrategy.FULL_TRIP_OPTIMIZATION
+        )
+        candidates = job.get("candidates", [])
+
+    resolved = PreferenceResolver.resolve_preferences(trip_case, client)
+    archetypes = MultiOptionEngine.generate_archetypes(
+        candidates=candidates,
+        preferences=resolved,
+        target_budget_huf=trip_case.total_budget_huf
+    )
+
+    # Convert to TripOption domain models and persist into OPTIONS_STORE
+    trip_options: List[TripOption] = []
+    for cand in archetypes:
+        opt = TripOption(
+            id=cand.get("id") or generate_uuid(),
+            case_id=case_id,
+            archetype=OptionArchetype(cand.get("archetype", "best_overall")),
+            title=cand.get("title", "Utazási Csomag"),
+            tagline=cand.get("tagline", ""),
+            destination=cand.get("destination", {"city": "Barcelona", "country": "Spanyolország"}),
+            flight=cand.get("flight", {}),
+            stay=cand.get("stay", {}),
+            activities=cand.get("activities", []),
+            total_price_huf=float(cand.get("total_price_huf", 250000)),
+            price_per_person_huf=float(cand.get("price_per_person_huf", 125000)),
+            trip_score=int(round(float(cand.get("trip_score", 85)))),
+            why_this_option=cand.get("why_this_option", ""),
+            tradeoffs=cand.get("tradeoffs", []),
+            verification_status=VerificationStatus(cand.get("verification_status", "VERIFIED")),
+            is_pinned=cand.get("is_pinned", False)
+        )
+        trip_options.append(opt)
+
+    OPTIONS_STORE[case_id] = trip_options
+    
+    # Advance status to SHORTLIST if in RESEARCH
+    if trip_case.status in [TripCaseStatus.BRIEF, TripCaseStatus.RESEARCH]:
+        trip_case.status = TripCaseStatus.SHORTLIST
+        trip_case.updated_at = utc_now()
+
+    return {
+        "status": "success",
+        "case_id": case_id,
+        "total_options": len(trip_options),
+        "options": [o.model_dump() for o in trip_options]
+    }
+
+
+@router.get("/cases/{case_id}/options")
+async def get_case_options(case_id: str):
+    """Returns the current shortlisted 3 Archetype options for a case."""
+    trip_case = CASES_STORE.get(case_id)
+    if not trip_case:
+        raise HTTPException(status_code=404, detail="Case not found.")
+
+    options = OPTIONS_STORE.get(case_id, [])
+    return {
+        "status": "success",
+        "case_id": case_id,
+        "total": len(options),
+        "options": [o.model_dump() for o in options]
+    }
+
+
+# ─────────────────────────────────────────────────────────────
+# RELATIVE COMPARISON, WHY THIS OPTION & ADVISOR OVERRIDES (PHASE 6)
+# ─────────────────────────────────────────────────────────────
+
+class UpdateOptionRequest(BaseModel):
+    title: Optional[str] = None
+    tagline: Optional[str] = None
+    total_price_huf: Optional[float] = None
+    price_per_person_huf: Optional[float] = None
+    why_this_option: Optional[str] = None
+    override_reason: Optional[str] = None
+    tradeoffs: Optional[List[str]] = None
+    flight: Optional[Dict[str, Any]] = None
+    stay: Optional[Dict[str, Any]] = None
+    activities: Optional[List[Dict[str, Any]]] = None
+
+class SwapComponentRequest(BaseModel):
+    component_type: str                         # "flight", "stay", "destination"
+    new_component_id: str
+    override_reason: Optional[str] = None
+
+class ReorderOptionsRequest(BaseModel):
+    ordered_option_ids: List[str]
+    override_reason: Optional[str] = None
+
+class FindBetterRequest(BaseModel):
+    option_id: str
+    target_component: str                       # "flight", "stay", "price", "activities"
+    goal: str                                   # "lower_price", "direct_flight", "higher_stars", "more_activities"
+
+UpdateOptionRequest.model_rebuild()
+SwapComponentRequest.model_rebuild()
+ReorderOptionsRequest.model_rebuild()
+FindBetterRequest.model_rebuild()
+
+
+@router.get("/cases/{case_id}/compare")
+async def get_case_options_comparison(case_id: str):
+    """
+    Computes and returns side-by-side relative comparison matrix and
+    natural language trade-off explanations across the case's shortlisted options.
+    """
+    trip_case = CASES_STORE.get(case_id)
+    if not trip_case:
+        raise HTTPException(status_code=404, detail="Case not found.")
+
+    options = OPTIONS_STORE.get(case_id, [])
+    if not options:
+        # Fallback: check candidate pool
+        candidates = AdvisorOrchestrationService._CANDIDATES_POOL.get(case_id, [])
+        if candidates:
+            # Auto-generate options
+            client = CLIENTS_STORE.get(trip_case.client_id)
+            resolved = PreferenceResolver.resolve_preferences(trip_case, client)
+            archetypes = MultiOptionEngine.generate_archetypes(candidates, resolved, trip_case.total_budget_huf)
+            options = [TripOption(**cand) if isinstance(cand, dict) else cand for cand in archetypes]
+            OPTIONS_STORE[case_id] = options
+
+    options_dicts = [o.model_dump() if hasattr(o, "model_dump") else o for o in options]
+    matrix = RelativeComparisonService.compute_comparison_matrix(options_dicts)
+
+    return {
+        "status": "success",
+        "case_id": case_id,
+        "comparison": matrix
+    }
+
+
+@router.put("/cases/{case_id}/options/{option_id}")
+async def update_case_option(case_id: str, option_id: str, payload: UpdateOptionRequest):
+    """
+    Whitebox Advisor Override: Updates an option's parameters, title, or components
+    with transparent justification tracking.
+    """
+    trip_case = CASES_STORE.get(case_id)
+    if not trip_case:
+        raise HTTPException(status_code=404, detail="Case not found.")
+
+    options = OPTIONS_STORE.get(case_id, [])
+    target = next((o for o in options if o.id == option_id), None)
+    if not target:
+        raise HTTPException(status_code=404, detail="Option not found in case shortlist.")
+
+    if payload.title is not None: target.title = payload.title
+    if payload.tagline is not None: target.tagline = payload.tagline
+    if payload.total_price_huf is not None: target.total_price_huf = payload.total_price_huf
+    if payload.price_per_person_huf is not None: target.price_per_person_huf = payload.price_per_person_huf
+    if payload.why_this_option is not None: target.why_this_option = payload.why_this_option
+    if payload.tradeoffs is not None: target.tradeoffs = payload.tradeoffs
+    if payload.flight is not None: target.flight = payload.flight
+    if payload.stay is not None: target.stay = payload.stay
+    if payload.activities is not None: target.activities = payload.activities
+
+    if payload.override_reason:
+        target.key_highlights.append(f"Tanácsadói megjegyzés: {payload.override_reason}")
+
+    trip_case.updated_at = utc_now()
+    return {"status": "success", "updated_option": target.model_dump()}
+
+
+@router.post("/cases/{case_id}/options/{option_id}/swap-component")
+async def swap_option_component(case_id: str, option_id: str, payload: SwapComponentRequest):
+    """
+    Swaps a component (flight/stay) in a shortlisted option with another candidate from the research pool.
+    """
+    trip_case = CASES_STORE.get(case_id)
+    if not trip_case:
+        raise HTTPException(status_code=404, detail="Case not found.")
+
+    options = OPTIONS_STORE.get(case_id, [])
+    target = next((o for o in options if o.id == option_id), None)
+    if not target:
+        raise HTTPException(status_code=404, detail="Option not found.")
+
+    candidates = AdvisorOrchestrationService._CANDIDATES_POOL.get(case_id, [])
+    source = next((c for c in candidates if c.get("id") == payload.new_component_id), None)
+    if not source:
+        raise HTTPException(status_code=404, detail="Source candidate component not found in pool.")
+
+    if payload.component_type == "flight":
+        target.flight = source.get("flight", {})
+    elif payload.component_type == "stay":
+        target.stay = source.get("stay", {})
+
+    # Recompute total price
+    flight_price = target.flight.get("price_huf", 0)
+    stay_price = target.stay.get("price_huf", 0)
+    target.total_price_huf = flight_price + stay_price
+    target.price_per_person_huf = target.total_price_huf / max(trip_case.adults + trip_case.children, 1)
+
+    if payload.override_reason:
+        target.key_highlights.append(f"Elemcsere indoklása: {payload.override_reason}")
+
+    trip_case.updated_at = utc_now()
+    return {"status": "success", "option": target.model_dump()}
+
+
+@router.post("/cases/{case_id}/options/reorder")
+async def reorder_case_options(case_id: str, payload: ReorderOptionsRequest):
+    """
+    Reorders the 3 shortlisted options based on advisor preference.
+    """
+    trip_case = CASES_STORE.get(case_id)
+    if not trip_case:
+        raise HTTPException(status_code=404, detail="Case not found.")
+
+    options = OPTIONS_STORE.get(case_id, [])
+    opt_map = {o.id: o for o in options}
+    
+    reordered = []
+    for opt_id in payload.ordered_option_ids:
+        if opt_id in opt_map:
+            reordered.append(opt_map[opt_id])
+
+    # Append any unmentioned options
+    for o in options:
+        if o not in reordered:
+            reordered.append(o)
+
+    OPTIONS_STORE[case_id] = reordered
+    trip_case.updated_at = utc_now()
+    return {"status": "success", "options": [o.model_dump() for o in reordered]}
+
+
+@router.post("/cases/{case_id}/find-better")
+async def find_better_component(case_id: str, payload: FindBetterRequest):
+    """
+    Executes a targeted replacement search (Find Better Tuning) for a component.
+    """
+    trip_case = CASES_STORE.get(case_id)
+    if not trip_case:
+        raise HTTPException(status_code=404, detail="Case not found.")
+
+    client = CLIENTS_STORE.get(trip_case.client_id)
+    result = AdvisorOrchestrationService.execute_research(
+        trip_case=trip_case,
+        client=client,
+        strategy=ResearchStrategy.FIND_BETTER,
+        custom_params={
+            "target_component": payload.target_component,
+            "goal": payload.goal,
+            "option_id": payload.option_id
+        }
+    )
+
+    return {
+        "status": "success",
+        "case_id": case_id,
+        "target_component": payload.target_component,
+        "better_candidates": result.get("candidates", [])
+    }
+
+
+# ─────────────────────────────────────────────────────────────
+# CONSTRAINT RELAXATION, VERIFICATION & RISK ENGINE (PHASE 7)
+# ─────────────────────────────────────────────────────────────
+
+class ApplyRelaxationRequest(BaseModel):
+    relaxation_id: str
+    patch: Dict[str, Any]
+
+ApplyRelaxationRequest.model_rebuild()
+
+
+@router.post("/cases/{case_id}/diagnose-constraints")
+async def diagnose_case_constraints(case_id: str):
+    """
+    Diagnoses conflicting constraints and returns quantified 1-click relaxation proposals.
+    """
+    trip_case = CASES_STORE.get(case_id)
+    if not trip_case:
+        raise HTTPException(status_code=404, detail="Case not found.")
+
+    client = CLIENTS_STORE.get(trip_case.client_id)
+    resolved = PreferenceResolver.resolve_preferences(trip_case, client)
+    raw_inventory = AdvisorOrchestrationService._CANDIDATES_POOL.get(case_id, [])
+
+    diagnosis = ConstraintRelaxationService.diagnose_and_suggest(
+        trip_case=trip_case,
+        preferences=resolved,
+        raw_inventory_pool=raw_inventory
+    )
+    return {"status": "success", "diagnosis": diagnosis}
+
+
+@router.post("/cases/{case_id}/apply-relaxation")
+async def apply_case_relaxation(case_id: str, payload: ApplyRelaxationRequest):
+    """
+    Applies an advisor-approved relaxation patch and re-synthesizes 3 Archetypes.
+    """
+    trip_case = CASES_STORE.get(case_id)
+    if not trip_case:
+        raise HTTPException(status_code=404, detail="Case not found.")
+
+    # Apply patch
+    trip_case = ConstraintRelaxationService.apply_relaxation(
+        trip_case=trip_case,
+        relaxation_id=payload.relaxation_id,
+        patch_data=payload.patch
+    )
+    trip_case.updated_at = utc_now()
+
+    # Re-run archetype synthesis
+    client = CLIENTS_STORE.get(trip_case.client_id)
+    resolved = PreferenceResolver.resolve_preferences(trip_case, client)
+    candidates = AdvisorOrchestrationService._CANDIDATES_POOL.get(case_id, [])
+
+    archetypes = MultiOptionEngine.generate_archetypes(
+        candidates=candidates,
+        preferences=resolved,
+        target_budget_huf=trip_case.total_budget_huf
+    )
+
+    trip_options: List[TripOption] = []
+    for cand in archetypes:
+        opt = TripOption(
+            id=cand.get("id") or generate_uuid(),
+            case_id=case_id,
+            archetype=OptionArchetype(cand.get("archetype", "best_overall")),
+            title=cand.get("title", "Utazási Csomag"),
+            tagline=cand.get("tagline", ""),
+            destination=cand.get("destination", {"city": "Barcelona", "country": "Spanyolország"}),
+            flight=cand.get("flight", {}),
+            stay=cand.get("stay", {}),
+            activities=cand.get("activities", []),
+            total_price_huf=float(cand.get("total_price_huf", 250000)),
+            price_per_person_huf=float(cand.get("price_per_person_huf", 125000)),
+            trip_score=int(round(float(cand.get("trip_score", 85)))),
+            why_this_option=cand.get("why_this_option", ""),
+            tradeoffs=cand.get("tradeoffs", []),
+            verification_status=VerificationStatus(cand.get("verification_status", "VERIFIED")),
+            is_pinned=cand.get("is_pinned", False)
+        )
+        trip_options.append(opt)
+
+    OPTIONS_STORE[case_id] = trip_options
+
+    return {
+        "status": "success",
+        "case_id": case_id,
+        "relaxation_id": payload.relaxation_id,
+        "updated_options_count": len(trip_options),
+        "options": [o.model_dump() for o in trip_options]
+    }
+
+
+@router.get("/cases/{case_id}/verification-status")
+async def get_case_verification_status(case_id: str):
+    """
+    Returns provenance timestamps, data sources, and verification status for all shortlisted options.
+    """
+    trip_case = CASES_STORE.get(case_id)
+    if not trip_case:
+        raise HTTPException(status_code=404, detail="Case not found.")
+
+    options = OPTIONS_STORE.get(case_id, [])
+    options_dicts = [o.model_dump() if hasattr(o, "model_dump") else o for o in options]
+
+    verifications = [
+        VerificationService.verify_trip_option(opt)
+        for opt in options_dicts
+    ]
+
+    return {
+        "status": "success",
+        "case_id": case_id,
+        "verifications": verifications
+    }
+
+
+@router.get("/cases/{case_id}/risks")
+async def get_case_risks(case_id: str):
+    """
+    Returns detected operational risks (layover, late arrivals, city taxes) across case options.
+    """
+    trip_case = CASES_STORE.get(case_id)
+    if not trip_case:
+        raise HTTPException(status_code=404, detail="Case not found.")
+
+    options = OPTIONS_STORE.get(case_id, [])
+    options_dicts = [o.model_dump() if hasattr(o, "model_dump") else o for o in options]
+
+    risk_evaluation = TripRiskService.evaluate_case_risks(options_dicts)
+
+    return {
+        "status": "success",
+        "case_id": case_id,
+        "risks": risk_evaluation
+    }
+
+
+# ─────────────────────────────────────────────────────────────
+# SHORTLIST & MULTI-OPTION PROPOSALS (PHASE 8)
+# ─────────────────────────────────────────────────────────────
+
+class CreateProposalRequest(BaseModel):
+    title: Optional[str] = None
+    client_intro: Optional[str] = None
+    advisor_notes: Optional[str] = None
+    recommendation_summary: Optional[str] = None
+    selected_option_ids: Optional[List[str]] = None
+
+CreateProposalRequest.model_rebuild()
+
+
+class UpdateProposalRequest(BaseModel):
+    title: Optional[str] = None
+    client_intro: Optional[str] = None
+    advisor_notes: Optional[str] = None
+    recommendation_summary: Optional[str] = None
+    selected_option_ids: Optional[List[str]] = None
+    status: Optional[str] = None
+
+UpdateProposalRequest.model_rebuild()
+
+
+class NewProposalVersionRequest(BaseModel):
+    reason: Optional[str] = None
+
+NewProposalVersionRequest.model_rebuild()
+
+
+@router.get("/cases/{case_id}/proposals")
+async def list_case_proposals(case_id: str):
+    """Lists all generated proposal versions for a given trip case."""
+    proposals = [p for p in PROPOSALS_STORE.values() if p.get("case_id") == case_id]
+    proposals.sort(key=lambda x: x.get("version", 1), reverse=True)
+    return {
+        "status": "success",
+        "case_id": case_id,
+        "total": len(proposals),
+        "proposals": proposals
+    }
+
+
+@router.post("/cases/{case_id}/proposals", status_code=status.HTTP_201_CREATED)
+async def create_case_proposal(case_id: str, payload: CreateProposalRequest):
+    """Generates a new Client Proposal snapshot from the current shortlisted options."""
+    trip_case = CASES_STORE.get(case_id)
+    if not trip_case:
+        raise HTTPException(status_code=404, detail="Case not found.")
+
+    client = CLIENTS_STORE.get(trip_case.client_id)
+    if not client:
+        raise HTTPException(status_code=404, detail="Client not found.")
+
+    options = OPTIONS_STORE.get(case_id, [])
+    options_dicts = [o.model_dump() if hasattr(o, "model_dump") else o for o in options]
+
+    if not options_dicts:
+        # If options not generated yet, generate them
+        resolved = PreferenceResolver.resolve_preferences(trip_case, client)
+        candidates = AdvisorOrchestrationService._CANDIDATES_POOL.get(case_id, [])
+        options_dicts = MultiOptionEngine.generate_archetypes(
+            candidates=candidates,
+            preferences=resolved,
+            target_budget_huf=trip_case.total_budget_huf
+        )
+
+    # Filter selected options if provided
+    if payload.selected_option_ids:
+        filtered_opts = [o for o in options_dicts if o.get("id") in payload.selected_option_ids]
+        if filtered_opts:
+            options_dicts = filtered_opts
+
+    proposal_doc = ProposalService.create_proposal(
+        trip_case=trip_case,
+        client=client,
+        options=options_dicts,
+        title=payload.title,
+        client_intro=payload.client_intro,
+        advisor_notes=payload.advisor_notes,
+        recommendation_summary=payload.recommendation_summary
+    )
+
+    PROPOSALS_STORE[proposal_doc["id"]] = proposal_doc
+
+    # Advance TripCase status to PROPOSAL
+    trip_case.status = TripCaseStatus.PROPOSAL
+    trip_case.updated_at = utc_now()
+
+    return {
+        "status": "success",
+        "proposal": proposal_doc
+    }
+
+
+@router.get("/proposals/{proposal_id}")
+async def get_proposal(proposal_id: str):
+    """Fetches a specific proposal snapshot by ID."""
+    proposal = PROPOSALS_STORE.get(proposal_id)
+    if not proposal:
+        raise HTTPException(status_code=404, detail="Proposal not found.")
+    return {"status": "success", "proposal": proposal}
+
+
+@router.put("/proposals/{proposal_id}")
+async def update_proposal(proposal_id: str, payload: UpdateProposalRequest):
+    """Updates editable client-facing text, options selection, or private advisor notes."""
+    proposal = PROPOSALS_STORE.get(proposal_id)
+    if not proposal:
+        raise HTTPException(status_code=404, detail="Proposal not found.")
+
+    updated = ProposalService.update_proposal(
+        proposal=proposal,
+        title=payload.title,
+        client_intro=payload.client_intro,
+        advisor_notes=payload.advisor_notes,
+        recommendation_summary=payload.recommendation_summary,
+        selected_option_ids=payload.selected_option_ids,
+        status=payload.status
+    )
+    PROPOSALS_STORE[proposal_id] = updated
+
+    return {"status": "success", "proposal": updated}
+
+
+@router.post("/proposals/{proposal_id}/new-version")
+async def create_new_proposal_version(proposal_id: str, payload: NewProposalVersionRequest):
+    """Branches a new proposal version (v2, v3...) from an existing proposal."""
+    base_proposal = PROPOSALS_STORE.get(proposal_id)
+    if not base_proposal:
+        raise HTTPException(status_code=404, detail="Base proposal not found.")
+
+    case_id = base_proposal.get("case_id")
+    options = OPTIONS_STORE.get(case_id, [])
+    options_dicts = [o.model_dump() if hasattr(o, "model_dump") else o for o in options]
+    if not options_dicts:
+        options_dicts = base_proposal.get("options_snapshot", [])
+
+    new_version_doc = ProposalService.create_next_version(
+        base_proposal=base_proposal,
+        updated_options=options_dicts,
+        reason=payload.reason
+    )
+
+    PROPOSALS_STORE[new_version_doc["id"]] = new_version_doc
+
+    return {
+        "status": "success",
+        "proposal": new_version_doc
+    }
+
+
+@router.get("/proposals/{proposal_id}/preview", response_class=HTMLResponse)
+async def preview_proposal_print(proposal_id: str, request: Request):
+    """Renders the A4 print-ready & exportable client proposal HTML."""
+    proposal = PROPOSALS_STORE.get(proposal_id)
+    if not proposal:
+        raise HTTPException(status_code=404, detail="Proposal not found.")
+
+    return templates.TemplateResponse(
+        request=request,
+        name="advisor/proposal_print.html",
+        context={"proposal": proposal}
+    )
+
+
+# ─────────────────────────────────────────────────────────────
+# CLIENT FEEDBACK, TIMELINE & RE-OPTIMIZATION (PHASE 9)
+# ─────────────────────────────────────────────────────────────
+
+class RecordFeedbackRequest(BaseModel):
+    proposal_id: str
+    feedback_category: str = Field(default="general")
+    feedback_text: str = Field(..., min_length=2)
+    client_sentiment: str = Field(default="NEUTRAL")
+
+RecordFeedbackRequest.model_rebuild()
+
+
+class ReoptimizeCaseRequest(BaseModel):
+    proposal_id: str
+    reoptimization_reason: Optional[str] = None
+    constraint_overrides: Optional[Dict[str, Any]] = None
+
+ReoptimizeCaseRequest.model_rebuild()
+
+
+class LogTimelineEventRequest(BaseModel):
+    event_type: str = Field(default="MANUAL_NOTE")
+    title: str = Field(..., min_length=2)
+    description: str = Field(..., min_length=2)
+    metadata: Optional[Dict[str, Any]] = None
+
+LogTimelineEventRequest.model_rebuild()
+
+
+@router.get("/cases/{case_id}/timeline")
+async def get_case_timeline(case_id: str):
+    """Returns the complete chronological audit trail of events for a trip case."""
+    trip_case = CASES_STORE.get(case_id)
+    if not trip_case:
+        raise HTTPException(status_code=404, detail="Case not found.")
+
+    events = TimelineReoptimizationService.get_case_timeline(case_id)
+    
+    # If no events logged yet, generate baseline events from case creation
+    if not events:
+        TimelineReoptimizationService.log_event(
+            case_id=case_id,
+            event_type="CASE_CREATED",
+            title="Utazási Ügy Létrehozva",
+            description=f"Ügy címe: {trip_case.title}. Indulási pont: {trip_case.origin}, fókusz: {trip_case.destination_focus}."
+        )
+        events = TimelineReoptimizationService.get_case_timeline(case_id)
+
+    return {
+        "status": "success",
+        "case_id": case_id,
+        "total_events": len(events),
+        "timeline": events
+    }
+
+
+@router.post("/cases/{case_id}/timeline", status_code=status.HTTP_201_CREATED)
+async def log_manual_timeline_event(case_id: str, payload: LogTimelineEventRequest):
+    """Manually records an advisor note or external activity onto the case timeline."""
+    trip_case = CASES_STORE.get(case_id)
+    if not trip_case:
+        raise HTTPException(status_code=404, detail="Case not found.")
+
+    event = TimelineReoptimizationService.log_event(
+        case_id=case_id,
+        event_type=payload.event_type,
+        title=payload.title,
+        description=payload.description,
+        metadata=payload.metadata
+    )
+
+    return {"status": "success", "event": event}
+
+
+@router.post("/cases/{case_id}/feedback", status_code=status.HTTP_201_CREATED)
+async def record_client_feedback(case_id: str, payload: RecordFeedbackRequest):
+    """Captures client feedback against a proposal version and updates case timeline."""
+    trip_case = CASES_STORE.get(case_id)
+    if not trip_case:
+        raise HTTPException(status_code=404, detail="Case not found.")
+
+    proposal = PROPOSALS_STORE.get(payload.proposal_id)
+    if not proposal:
+        raise HTTPException(status_code=404, detail="Proposal not found.")
+
+    feedback_doc = TimelineReoptimizationService.record_feedback(
+        case_id=case_id,
+        proposal_id=payload.proposal_id,
+        feedback_category=payload.feedback_category,
+        feedback_text=payload.feedback_text,
+        client_sentiment=payload.client_sentiment
+    )
+
+    # Set case status to REVISION
+    trip_case.status = TripCaseStatus.REVISION
+    trip_case.updated_at = utc_now()
+
+    return {
+        "status": "success",
+        "feedback": feedback_doc
+    }
+
+
+@router.post("/cases/{case_id}/reoptimize")
+async def execute_case_reoptimization(case_id: str, payload: ReoptimizeCaseRequest):
+    """
+    Executes 1-click re-optimization based on modified constraints,
+    generating a new proposal version (v2, v3...) without restarting the intake flow.
+    """
+    trip_case = CASES_STORE.get(case_id)
+    if not trip_case:
+        raise HTTPException(status_code=404, detail="Case not found.")
+
+    client = CLIENTS_STORE.get(trip_case.client_id)
+    if not client:
+        raise HTTPException(status_code=404, detail="Client not found.")
+
+    base_proposal = PROPOSALS_STORE.get(payload.proposal_id)
+    if not base_proposal:
+        raise HTTPException(status_code=404, detail="Base proposal not found.")
+
+    candidates = AdvisorOrchestrationService._CANDIDATES_POOL.get(case_id, [])
+    if not candidates:
+        candidates = base_proposal.get("options_snapshot", [])
+
+    reopt_result = TimelineReoptimizationService.execute_reoptimization(
+        trip_case=trip_case,
+        client=client,
+        base_proposal=base_proposal,
+        candidates_pool=candidates,
+        constraint_overrides=payload.constraint_overrides,
+        reoptimization_reason=payload.reoptimization_reason
+    )
+
+    new_proposal = reopt_result["new_proposal"]
+    PROPOSALS_STORE[new_proposal["id"]] = new_proposal
+    OPTIONS_STORE[case_id] = [
+        TripOption(
+            id=o.get("id"),
+            case_id=case_id,
+            archetype=OptionArchetype(o.get("archetype", "best_overall")),
+            title=o.get("title", ""),
+            tagline=o.get("tagline", ""),
+            destination=o.get("destination", {"city": "Barcelona", "country": "Spanyolország"}),
+            flight=o.get("flight", {}),
+            stay=o.get("stay", {}),
+            activities=o.get("activities", []),
+            total_price_huf=float(o.get("total_price_huf", 250000)),
+            price_per_person_huf=float(o.get("price_per_person_huf", 125000)),
+            trip_score=int(round(float(o.get("trip_score", 85)))),
+            why_this_option=o.get("why_this_option", ""),
+            tradeoffs=o.get("tradeoffs", []),
+            verification_status=VerificationStatus(o.get("verification_status", "VERIFIED")),
+            is_pinned=o.get("is_pinned", False)
+        )
+        for o in reopt_result["new_options"]
+    ]
+
+    return {
+        "status": "success",
+        "case_id": case_id,
+        "version": reopt_result["version"],
+        "new_proposal_id": new_proposal["id"],
+        "proposal": new_proposal
+    }
+
+
+
+
+
 
 
 
