@@ -561,16 +561,33 @@
                     <span class="material-symbols-outlined">settings</span>
                     <span>Beállítások & Ráták</span>
                 </div>
+
+                <!-- Alkalmazásváltó gombok -->
+                <div class="nav-section-title">Alkalmazások</div>
+                <a href="/planner" class="nav-item" style="text-decoration: none; color: inherit;" title="Átlépés a Master Plannerre">
+                    <span class="material-symbols-outlined" style="color: #38bdf8;">travel_explore</span>
+                    <span>Master Planner</span>
+                    <span class="material-symbols-outlined" style="font-size: 14px; margin-left: auto; color: var(--text-muted);">arrow_forward</span>
+                </a>
+                <a href="/hub" class="nav-item" style="text-decoration: none; color: inherit;" title="Vissza a Hubba">
+                    <span class="material-symbols-outlined" style="color: #cbd5e1;">apps</span>
+                    <span>Alkalmazásválasztó</span>
+                </a>
             </nav>
 
-            <div style="padding: 16px; border-top: 1px solid var(--b2b-border); display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.2);">
-                <div style="width: 34px; height: 34px; border-radius: 50%; background: var(--primary-light); color: var(--secondary-container); border: 1px solid rgba(167, 245, 64, 0.3); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; font-family: var(--font-mono);">
-                    Á
+            <div style="padding: 14px 16px; border-top: 1px solid var(--b2b-border); display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.2);">
+                <div style="display: flex; align-items: center; gap: 10px; overflow: hidden;">
+                    <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary-light); color: var(--secondary-container); border: 1px solid rgba(167, 245, 64, 0.3); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; font-family: var(--font-mono); flex-shrink: 0;">
+                        {{ (user or 'A')[:2]|upper }}
+                    </div>
+                    <div style="overflow: hidden;">
+                        <div style="font-size: 12.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-main);" id="advisorProfileName">{{ user or 'B2B Advisor' }}</div>
+                        <div style="font-size: 10.5px; color: var(--secondary-container); font-weight: 600; text-transform: uppercase;" id="advisorAgencyName">{{ role or 'ADVISOR' }}</div>
+                    </div>
                 </div>
-                <div style="flex: 1; overflow: hidden;">
-                    <div style="font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-main);" id="advisorProfileName">Ádám (Lead Advisor)</div>
-                    <div style="font-size: 11px; color: var(--text-muted);" id="advisorAgencyName">Optivoya Premier</div>
-                </div>
+                <a href="/logout" title="Kijelentkezés" style="color: #ef4444; display: flex; align-items: center; padding: 4px; border-radius: 6px; text-decoration: none;">
+                    <span class="material-symbols-outlined" style="font-size: 18px;">logout</span>
+                </a>
             </div>
         </aside>
 
@@ -588,6 +605,11 @@
                         <input type="text" id="globalAdvisorSearch" placeholder="Keresés ügyfél, ügy vagy célpont... (/)" oninput="window.AdvisorDashboard.handleSearch(this.value)">
                     </div>
 
+                    <a href="/planner" class="btn btn-secondary" style="font-size: 12px; padding: 7px 12px; text-decoration: none; color: #38bdf8; border-color: rgba(56, 189, 248, 0.3);" title="Ugrás a Master Travel Plannerre">
+                        <span class="material-symbols-outlined" style="font-size: 16px; margin-right: 4px;">travel_explore</span>
+                        Master Planner ↗
+                    </a>
+
                     <div class="header-actions">
                         <button type="button" class="btn btn-secondary" onclick="window.AdvisorNavigation.openNewClientModal()" style="font-size: 12.5px; padding: 7px 12px;">
                             <span class="material-symbols-outlined" style="font-size: 17px; margin-right: 4px;">person_add</span>
@@ -601,6 +623,7 @@
                     </div>
                 </div>
             </header>
+
 
             <!-- Dynamic View Container -->
             <div class="advisor-body" id="advisorMainContent">

@@ -23,7 +23,7 @@ def _get_default_checkout() -> str:
 
 
 from app.core.config import templates, IS_PRODUCTION
-from app.core.auth import get_current_user, is_dummy_mode_allowed
+from app.core.auth import get_current_user, is_dummy_mode_allowed, is_advisor_user, get_user_role
 from app.models.models import UnifiedTrip
 from app.services.planner_service import (
     calculate_planner_destinations_sync,
@@ -255,13 +255,20 @@ def run_planner_destinations_task(user_key: str, data: MasterPlannerIntake, is_d
 @router.get("/planner", response_class=HTMLResponse)
 async def master_planner_page(request: Request):
     user = get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/", status_code=303)
     dummy_allowed = is_dummy_mode_allowed(user)
+    is_advisor = is_advisor_user(user)
+    role = get_user_role(user)
     return templates.TemplateResponse("planner/planner_wizard.html", {
         "request": request,
         "user": user,
+        "role": role,
+        "is_advisor": is_advisor,
         "dummy_mode_allowed": dummy_allowed,
         "is_production": IS_PRODUCTION
     })
+
 
 # API Endpoints
 @router.post("/api/planner/init-destinations")

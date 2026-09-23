@@ -18,9 +18,10 @@ from app.services.analytics_service import (
     get_user_sessions_summary,
     record_telemetry_event
 )
-from app.services.user_service import get_all_beta_users, create_beta_user, toggle_user_active
+from app.services.user_service import get_all_beta_users, create_beta_user, toggle_user_active, update_user_role
 
 router = APIRouter(tags=["Admin & Analytics"])
+
 
 class ClientTelemetryEvent(BaseModel):
     event_type: str = "button_click"
@@ -60,8 +61,19 @@ def get_admin_password() -> str:
     return raw.strip().strip('"').strip("'")
 
 def is_admin_authenticated(request: Request) -> bool:
+    # 1. Admin cookie token check
     token = request.cookies.get("optivoya_admin_token")
-    return token is not None and token == ADMIN_SESSION_TOKEN
+    if token is not None and token == ADMIN_SESSION_TOKEN:
+        return True
+        
+    # 2. Main app user session check (ha adam vagy admin szerepkörű fiókkal van bejelentkezve)
+    from app.core.auth import get_current_user, is_admin_user
+    user = get_current_user(request)
+    if user and is_admin_user(user):
+        return True
+        
+    return False
+
 
 @router.get("/admin", response_class=HTMLResponse)
 async def admin_entry(request: Request):
@@ -159,6 +171,7 @@ async def api_create_user(
     full_name: str = Form(""),
     company_name: str = Form(""),
     email: str = Form(""),
+    role: str = Form("advisor"),
     notes: str = Form("")
 ):
     if not is_admin_authenticated(request):
@@ -170,7 +183,8 @@ async def api_create_user(
         full_name=full_name,
         company_name=company_name,
         email=email,
-        notes=notes
+        notes=notes,
+        role=role
     )
     if res.get("status") == "ok":
         return RedirectResponse(url="/admin/dashboard?msg=user_created", status_code=302)
@@ -183,3 +197,11 @@ async def api_toggle_user(request: Request, user_id: int):
         raise HTTPException(status_code=401, detail="Unauthorized")
     success = toggle_user_active(user_id)
     return JSONResponse({"status": "ok", "user_id": user_id, "updated": success})
+
+@router.post("/api/admin/users/{user_id}/role")
+async def api_update_user_role_route(request: Request, user_id: int, role: str = Form(...)):
+    if not is_admin_authenticated(request):
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    success = update_user_role(user_id, role)
+    return JSONResponse({"status": "ok", "user_id": user_id, "role": role, "updated": success})
+

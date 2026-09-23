@@ -739,17 +739,30 @@
                 <div class="user-list" id="usersListContainer">
                     {% for u in users %}
                     <div class="user-item {% if u.username in selected_users %}active{% endif %}" onclick="handleUserItemClick(event, '{{ u.username }}')">
-                        <div style="display: flex; align-items: center;">
+                        <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;">
                             <input type="checkbox" class="user-checkbox" value="{{ u.username }}" {% if u.username in selected_users %}checked{% endif %} onclick="handleCheckboxClick(event, '{{ u.username }}')">
                             <div class="user-avatar">{{ u.username[:2]|upper }}</div>
-                            <div style="margin-left: 12px;">
-                                <div style="font-weight: 700; font-size: 14px;">{{ u.full_name }}</div>
+                            <div style="overflow: hidden;">
+                                <div style="font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                                    <span>{{ u.full_name }}</span>
+                                    {% if u.role == 'admin' %}
+                                    <span style="font-size: 9.5px; font-weight: 800; background: rgba(168, 85, 247, 0.2); color: #c084fc; padding: 1px 6px; border-radius: 4px; border: 1px solid rgba(168, 85, 247, 0.3);">ADMIN</span>
+                                    {% elif u.role == 'advisor' %}
+                                    <span style="font-size: 9.5px; font-weight: 800; background: rgba(167, 245, 64, 0.15); color: #a7f540; padding: 1px 6px; border-radius: 4px; border: 1px solid rgba(167, 245, 64, 0.3);">ADVISOR</span>
+                                    {% else %}
+                                    <span style="font-size: 9.5px; font-weight: 800; background: rgba(56, 189, 248, 0.15); color: #38bdf8; padding: 1px 6px; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.3);">PLANNER ONLY</span>
+                                    {% endif %}
+                                </div>
                                 <div style="font-size: 12px; color: var(--text-muted);">@{{ u.username }} • {{ u.company_name }}</div>
                             </div>
                         </div>
-                        <div style="text-align: right;">
-                            <div style="font-size: 13px; font-weight: 700; color: var(--primary);">{{ u.successful_searches }} keresés</div>
-                            <div style="font-size: 11px; color: var(--text-muted);">{{ u.last_active_at[:10] }}</div>
+                        <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 4px;" onclick="event.stopPropagation()">
+                            <select onchange="changeUserRole('{{ u.id }}', this.value, event)" title="Szerepkör módosítása" style="font-size: 11px; font-weight: 700; background: rgba(0,0,0,0.4); border: 1px solid var(--border-subtle); border-radius: 6px; color: #cbd5e1; padding: 2px 6px; cursor: pointer;">
+                                <option value="advisor" {% if u.role == 'advisor' %}selected{% endif %}>Advisor</option>
+                                <option value="planner" {% if u.role == 'planner' %}selected{% endif %}>Planner Csak</option>
+                                <option value="admin" {% if u.role == 'admin' %}selected{% endif %}>Admin</option>
+                            </select>
+                            <div style="font-size: 11px; color: var(--text-muted);">{{ u.successful_searches }} keresés • {{ u.last_active_at[:10] }}</div>
                         </div>
                     </div>
                     {% endfor %}
@@ -961,9 +974,18 @@
                     <input type="email" name="email" placeholder="eva@evatravel.hu">
                 </div>
                 <div class="form-row">
+                    <label>Szerepkör & Jogosultság *</label>
+                    <select name="role" style="width: 100%; padding: 10px 14px; background: rgba(11, 15, 25, 0.8); border: 1px solid var(--border-subtle); border-radius: 10px; color: #fff;">
+                        <option value="advisor" selected>B2B Tanácsadó (Teljes hozzáférés: Planner + Advisor Workspace)</option>
+                        <option value="planner">Standard Felhasználó (Kizárólag Master Planner)</option>
+                        <option value="admin">Adminisztrátor (Teljes hozzáférés + Admin Pult)</option>
+                    </select>
+                </div>
+                <div class="form-row">
                     <label>Megjegyzések / Hivatkozás</label>
                     <textarea name="notes" rows="2" placeholder="pl. LinkedIn outbound kontakt, 5 fős boutique iroda"></textarea>
                 </div>
+
 
                 <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:24px;">
                     <button type="button" class="btn btn-outline" onclick="closeCreateUserModal()">Mégse</button>
@@ -1317,6 +1339,27 @@
         function closeCreateUserModal() {
             document.getElementById('createUserModal').classList.remove('open');
         }
+
+        async function changeUserRole(userId, newRole, event) {
+            if (event) event.stopPropagation();
+            try {
+                const formData = new FormData();
+                formData.append('role', newRole);
+                const res = await fetch(`/api/admin/users/${userId}/role`, {
+                    method: 'POST',
+                    body: formData
+                });
+                if (res.ok) {
+                    window.location.reload();
+                } else {
+                    alert('Hiba történt a jogosultság módosításakor!');
+                }
+            } catch (e) {
+                console.error('Role update error:', e);
+                alert('Nem sikerült módosítani a jogosultságot: ' + e);
+            }
+        }
     </script>
 </body>
+
 </html>

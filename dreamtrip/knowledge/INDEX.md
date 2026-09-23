@@ -101,6 +101,7 @@ Ez a fájl az Optivoya (DreamTrip) projekt navigációs térképe. Minden lénye
 * [[google-places-service]] — Google Places POI és értékelés szolgáltatás.
 * [[trip-cart-engine]] — Kliensoldali JavaScript állapotkezelő és lebegő sáv/fiók UI.
 * [[experience-intelligence-engine]] — Többforrásos élmény- és aktivitás-intelligencia alrendszer és többszintű gyorsítótár.
+* [[app-hub-and-workspace-switcher]] — Alkalmazásválasztó Hub és Munkaterület-Gyorsváltó Rendszer.
 
 ---
 
@@ -128,6 +129,8 @@ Ez a fájl az Optivoya (DreamTrip) projekt navigációs térképe. Minden lénye
 * [[ADR-007-fastapi-router-modularization]] — FastAPI Monolit Dekompozíció és Moduláris APIRouter Architektúra.
 * [[ADR-008-supabase-cloud-database]] — Supabase Cloud PostgreSQL & Telemetry Adatbázis Bevezetése.
 * [[ADR-009-experience-activity-intelligence-engine]] — Az Élmény- és Aktivitás-Intelligencia Rendszer 6 fázisú architektúrája.
+* [[ADR-010-dual-auth-and-app-switcher]] — Kettős Bejelentkezés, Alkalmazásválasztó Hub és Szerepkör-alapú Hozzáféréskezelés.
+
 
 
 ---

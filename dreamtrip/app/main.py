@@ -93,10 +93,25 @@ app.include_router(trip.router)
 app.include_router(b2b.router)
 app.include_router(advisor_api.router)
 
+from fastapi.responses import RedirectResponse
+from app.core.auth import is_advisor_user, get_user_role
+
 @app.get("/advisor")
 async def advisor_workspace_view(request: Request):
     """Desktop-first B2B Advisor Workspace Shell."""
-    return templates.TemplateResponse("advisor/advisor_workspace.html", {"request": request})
+    user = get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/", status_code=303)
+    if not is_advisor_user(user):
+        return RedirectResponse(url="/planner?error=advisor_access_required", status_code=303)
+    role = get_user_role(user)
+    return templates.TemplateResponse("advisor/advisor_workspace.html", {
+        "request": request,
+        "user": user,
+        "role": role,
+        "is_advisor": True
+    })
+
 
 
 if __name__ == "__main__":

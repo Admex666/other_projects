@@ -143,7 +143,11 @@ def verify_user_login(username: str, password: str) -> bool:
         return True
     return False
 
-def create_beta_user(username: str, password: str, full_name: str = "", company_name: str = "", email: str = "", notes: str = "") -> Dict[str, Any]:
+def create_beta_user(username: str, password: str, full_name: str = "", company_name: str = "", email: str = "", notes: str = "", role: str = "advisor") -> Dict[str, Any]:
+    role_val = (role or "advisor").strip().lower()
+    if role_val not in ("advisor", "admin", "planner"):
+        role_val = "advisor"
+        
     if is_supabase_configured():
         sb = get_supabase()
         if sb:
@@ -155,10 +159,12 @@ def create_beta_user(username: str, password: str, full_name: str = "", company_
                     "company_name": company_name.strip(),
                     "email": email.strip(),
                     "notes": notes.strip(),
+                    "role": role_val,
                     "is_active": True
                 }).execute()
                 if res.data:
-                    return {"status": "ok", "username": username}
+                    u_id = res.data[0].get("id") if isinstance(res.data, list) and len(res.data) > 0 else None
+                    return {"status": "ok", "username": username, "role": role_val, "user_id": u_id}
             except Exception as e:
                 return {"status": "error", "error": f"Supabase felhasználó létrehozási hiba: {str(e)}"}
         return {"status": "error", "error": "Supabase nem elérhető"}
@@ -168,16 +174,39 @@ def create_beta_user(username: str, password: str, full_name: str = "", company_
     cursor = conn.cursor()
     try:
         cursor.execute("""
-        INSERT INTO beta_users (username, password_hash, full_name, company_name, email, notes, is_active)
-        VALUES (?, ?, ?, ?, ?, ?, 1)
-        """, (username.strip(), password.strip(), full_name.strip(), company_name.strip(), email.strip(), notes.strip()))
+        INSERT INTO beta_users (username, password_hash, full_name, company_name, email, notes, role, is_active)
+        VALUES (?, ?, ?, ?, ?, ?, ?, 1)
+        """, (username.strip(), password.strip(), full_name.strip(), company_name.strip(), email.strip(), notes.strip(), role_val))
         conn.commit()
         user_id = cursor.lastrowid
         conn.close()
-        return {"status": "ok", "user_id": user_id, "username": username}
+        return {"status": "ok", "user_id": user_id, "username": username, "role": role_val}
     except Exception as e:
         conn.close()
         return {"status": "error", "error": f"Felhasználónév már létezik vagy érvénytelen: {str(e)}"}
+
+def update_user_role(user_id: Any, new_role: str) -> bool:
+    role_val = (new_role or "advisor").strip().lower()
+    if role_val not in ("advisor", "admin", "planner"):
+        role_val = "advisor"
+
+    if is_supabase_configured():
+        sb = get_supabase()
+        if sb:
+            try:
+                sb.table("beta_users").update({"role": role_val}).eq("id", user_id).execute()
+                return True
+            except Exception as e:
+                print(f"[USER SERVICE ERROR] Supabase update_user_role failed: {e}")
+        return False
+
+    # Fallback to local SQLite ONLY when Supabase is NOT configured
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE beta_users SET role = ? WHERE id = ?", (role_val, user_id))
+    conn.commit()
+    conn.close()
+    return True
 
 def toggle_user_active(user_id: Any) -> bool:
     if is_supabase_configured():
@@ -200,6 +229,7 @@ def toggle_user_active(user_id: Any) -> bool:
     conn.commit()
     conn.close()
     return True
+
 
 def update_user_activity(username: str):
     if is_supabase_configured():
