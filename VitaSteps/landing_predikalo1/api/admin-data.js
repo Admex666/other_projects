@@ -363,6 +363,21 @@ module.exports = async (req, res) => {
             });
         }
 
+        // Feedbacks Analytics Data
+        if (type === 'feedbacks') {
+            const { data: feedbacks, error: fErr } = await supabase
+                .from('feedbacks')
+                .select('*, runs(id, name, serial_number, campaign, shipped, created_at, runners(name, email, phone))')
+                .order('created_at', { ascending: false });
+
+            if (fErr) throw fErr;
+
+            return res.status(200).json({
+                success: true,
+                feedbacks: feedbacks || []
+            });
+        }
+
         // Marketing Analytics Data
         if (type === 'marketing') {
             const creativeRows = getCreativeCsvData();

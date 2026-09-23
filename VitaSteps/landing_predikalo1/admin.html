@@ -229,6 +229,7 @@
             <button class="filter-tab active" onclick="setFilter('pending')" id="tab-pending">⏳ Várakozó</button>
             <button class="filter-tab" onclick="setFilter('approved')" id="tab-approved">✅ Jóváhagyott</button>
             <button class="filter-tab" onclick="setFilter('all')" id="tab-all">📋 Összes</button>
+            <button class="filter-tab" onclick="setFilter('feedbacks')" id="tab-feedbacks" style="border: 1px solid rgba(236, 72, 153, 0.4); color: #ec4899;">💬 Visszajelzések</button>
             <button class="filter-tab" onclick="setFilter('logistics')" id="tab-logistics" style="margin-left: auto; border: 1px solid rgba(249, 115, 22, 0.4); color: #f97316;">🦊 Logisztika & Csomagolás</button>
             <button class="filter-tab" onclick="setFilter('marketing')" id="tab-marketing" style="border: 1px solid rgba(196, 255, 0, 0.4); color: #c4ff00;">📊 Marketing</button>
             <button class="filter-tab" onclick="setFilter('finance')" id="tab-finance" style="border: 1px solid rgba(56, 189, 248, 0.4); color: #38bdf8;">💳 Pénzügy & Cashflow</button>
@@ -239,6 +240,46 @@
             <div class="empty-state">
                 <div class="icon">⏳</div>
                 <div>Adatok betöltése...</div>
+            </div>
+        </div>
+
+        <!-- VISSZAJELZÉSEK (FEEDBACKS) MODUL SCREEN -->
+        <div id="section-feedbacks" style="display: none;">
+            <!-- Fejléc & Szűrők -->
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h2 style="font-size: 1.25rem; font-weight: 800; color: #fff; margin: 0;">💬 Résztvevői Visszajelzések & Értékelések</h2>
+                    <div style="font-size: 0.8rem; color: var(--text-mid); margin-top: 0.2rem;">Érem minőség, csomagolás, NPS pontszámok és szöveges vélemények a teljesítőktől.</div>
+                </div>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <button class="btn btn-grey" style="width: auto; padding: 0.45rem 0.85rem; font-size: 0.82rem;" onclick="loadFeedbacks()">
+                        🔄 Frissítés
+                    </button>
+                </div>
+            </div>
+
+            <!-- Kampány & Alszűrők Sáv -->
+            <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.5rem; display: flex; gap: 1rem; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;" id="fb-campaign-tabs">
+                    <button class="mkt-tab active" onclick="setFbCampaign('all')" id="fb-camp-all">♾️ Mindkét kihívás</button>
+                    <button class="mkt-tab" onclick="setFbCampaign('pilis')" id="fb-camp-pilis">⭐ Nagy-Kevély</button>
+                    <button class="mkt-tab" onclick="setFbCampaign('predikalo')" id="fb-camp-predikalo">🏔️ Prédikálószék</button>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;" id="fb-filter-tabs">
+                    <button class="mkt-tab active" onclick="setFbRatingFilter('all')" id="fb-filter-all">Összes</button>
+                    <button class="mkt-tab" onclick="setFbRatingFilter('5star')" id="fb-filter-5star">⭐ 5 Csillagos</button>
+                    <button class="mkt-tab" onclick="setFbRatingFilter('with_text')" id="fb-filter-with_text">📝 Szöveges vélemények</button>
+                    <button class="mkt-tab" onclick="setFbRatingFilter('with_photo')" id="fb-filter-with_photo">📸 Fotós</button>
+                </div>
+
+                <div style="min-width: 200px;">
+                    <input type="text" placeholder="Keresés név, email, szöveg..." class="input-text" style="width: 100%; margin-bottom: 0; padding: 0.4rem 0.8rem; font-size: 0.82rem;" oninput="handleFbSearch(event)">
+                </div>
+            </div>
+
+            <div id="fb-content-container">
+                <div class="empty-state"><span class="loading-spinner"></span><div style="margin-top:0.5rem">Visszajelzések betöltése...</div></div>
             </div>
         </div>
 
@@ -309,6 +350,7 @@
 <!-- Modular Scripts -->
 <script src="js/admin-core.js"></script>
 <script src="js/admin-proofs.js"></script>
+<script src="js/admin-feedbacks.js"></script>
 <script src="js/admin-logistics.js"></script>
 <script src="js/admin-marketing.js"></script>
 <script src="js/admin-finance.js"></script>

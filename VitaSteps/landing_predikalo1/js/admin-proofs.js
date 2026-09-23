@@ -132,18 +132,23 @@ function setFilter(filter) {
 
     const isMkt = filter === 'marketing';
     const isFin = filter === 'finance';
+    const isFb = filter === 'feedbacks';
     const proofListEl = document.getElementById('proof-list');
     const mktEl = document.getElementById('section-marketing');
     const finEl = document.getElementById('section-finance');
+    const fbEl = document.getElementById('section-feedbacks');
 
-    if (proofListEl) proofListEl.style.display = (isMkt || isFin) ? 'none' : '';
+    if (proofListEl) proofListEl.style.display = (isMkt || isFin || isFb) ? 'none' : '';
     if (mktEl) mktEl.style.display = isMkt ? 'block' : 'none';
     if (finEl) finEl.style.display = isFin ? 'block' : 'none';
+    if (fbEl) fbEl.style.display = isFb ? 'block' : 'none';
 
     if (isFin) {
         loadFinance();
     } else if (isMkt) {
         loadMarketing();
+    } else if (isFb) {
+        loadFeedbacks();
     } else {
         renderList();
     }
